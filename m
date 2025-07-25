@@ -1,123 +1,148 @@
-Return-Path: <linux-kernel+bounces-746151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A41B123B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:21:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C900B123B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5236C7BAEDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:20:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21E9A1CC75AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F028F6E;
-	Fri, 25 Jul 2025 18:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE55242D83;
+	Fri, 25 Jul 2025 18:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tctxKcUN"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3URGN9S"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002051C860B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617858F6E;
+	Fri, 25 Jul 2025 18:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753467693; cv=none; b=EVlMjYR7wcwuFky16DmkBnDb9OdKHtceccCf1lKwA6pg0Say6gzZ6u7wuXEHoJ0kziJJjgS8FhI1qrf5EI/4MAVdlbVmnKRLMtCkae3Jki8dWms4M/O3mf79seH4lnPtl6716auT6KgRJMsqpGc0iWDCdg/c8wZL8QwGRZdBRLQ=
+	t=1753467749; cv=none; b=M/fBGujy4pgLojnHRX+u+OiFWVSTjFZp3qypZnA7Y2+sNvdaFwvlK2WzeI21kk80Z7ocLpCn5SC218XQ6IjKrKvJuDvtHOltVbXVe71+mN2pHo2j0hJgPt0SiwJnFZ37M7WSESNO9K+BcMmXnc2KboFn1ek2JiafApuzp6biPQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753467693; c=relaxed/simple;
-	bh=GIr52zleFwu2eEPwKn3CzW/cCTYb+FEUP4KL2XLJQzI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HKo/ICE4MFz1KdGOUvirPMtKpgOhMkXog3bUk0h2SNgRLxKK1AzEIfikpN+PUQAZ9STcW82Bo0rxpZLHyu0zZ6LDSpLgJdDGG4KnhggzzhvkyDs9e3RbWB9lIKvEp2K20SvtJYuaJX69ohhv2z21vuGuLnwTBn3mPjKICRUQ/6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tctxKcUN; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-87653e3adc6so93676439f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:21:30 -0700 (PDT)
+	s=arc-20240116; t=1753467749; c=relaxed/simple;
+	bh=mav+SN8G51+FKZ172ZyrH23tzjpXQF7aNwFTGdrDGa4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OxPOxUwx/CKIGiSizoQ4REQNX1QAJw5bPGayLZyWWXAzWGkbeX/vKX9j9cYoZHvRbc7JgL17vKrSg2U6U+LQOmBsWN+zPgQY5kZyAWvqw55UPdQG6U48d24wqlNer+nHn1Xj+PX8+53/FLauTxJ65OMQeZDTr8RjPwHxDpCyNL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z3URGN9S; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4e80d19c7ebso1565411137.3;
+        Fri, 25 Jul 2025 11:22:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753467690; x=1754072490; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1753467747; x=1754072547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BXcKol1McKvTjcvK+Gvpwmco8x2EGt21oUQ32BuDOlQ=;
-        b=tctxKcUN54M2hrNeVizfhoEWlfGbEvYeT3gcQTO0gyk3j/D9hHULNnBoxez4u1rFie
-         ci3qYqRXOUMyMcIDFC1AoL35vJ9VSdSFptuPrX0/g2Uw7C+ORjwlsdYOmCWDvPJc05FW
-         JHkp8VtRfOWpgIbQMXxb+mBZotCeGNsaoA6acO0k9zpb3NZAMkJHDJvyCTkGiTEQkIpK
-         La3JIdkD4fpjK7FuIn1M6gdmMvx6Uoe3EFI2FyCnpW+tavPCSEmh5lQ8Lc9/MjwMSnsX
-         FyUHq1iI1Fvq9k+G41zC1vIa7BAS+T8eoDQ+SuF7O+PHs625L1kAwx3H9cNLE0OsdrZ4
-         KEbQ==
+        bh=bDdrXU0H5darvHsz+EX2SqTmuwLmazQOdrWR9KxJ/3I=;
+        b=Z3URGN9SXaUSNilekgWsHJfk8wJl+e5iewIxZQ55lw7Ltq6XbHR/GKb9csrREXRaiE
+         hSwCstv3N51h8MeaERpoVkSIA4ScF1uxPFT8rivZsNw1AJ7CBPi+9HLQraF5hWj+pjfS
+         4wLwbB2k3CbiRN9VzQAyPr6J7brW54dHQp9F1JApaXxeZ9aP2CNE2JxiRJG7g7W2AYvW
+         KqY6xFDvS0/nf4jTeYxjMsRslUgrLJ4xYBZldwhY1+lnPyDZu95kDBx/s84JZPeJ0hCv
+         51h3MHFFPec2mXE5H/4ymlPaVCt5pYLVdmrbOauMlVE93rZYCgI4PKoSB0FQOGm3IYv4
+         8E1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753467690; x=1754072490;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753467747; x=1754072547;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BXcKol1McKvTjcvK+Gvpwmco8x2EGt21oUQ32BuDOlQ=;
-        b=cj9NCjxSs59HREo+9tHH+kK2Ou/+Lf1CRWD2jKfrbtJX3F0pyPiQs1s8VtJi3EwLzV
-         5ZNbj+RK1nINNDTlMgT5Kz52Hq8XJnPLE4C8+HXsz6fo0eiOm2WZMXAL8eQr46doakb+
-         lseuhq6cFySSRqbwquYlIuppS++zH6mllzv3UPOFhcSbt26X4JKGM2kuz57BNyQfc7EI
-         teEmp2U/BiDGBJUHrXUFPAQJDlQp87Z8p+om1l8LYqEK8XJ4DTQvvOUGP+J/j+rPpr6O
-         hGdG4uDo+N/JRSiktuavHBchYgM1/6tOJUhKqdKtYs9tIriHpJxVKIvkpGZhpHSMyFJD
-         GmdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVfBBG/gIaF/CkU6aKAo4v7r4Z/wLkgKMqOLoYBaQClSaAUtyihlSTbqEJuQpaJHJ9ZEHdw0Q2d+zTwsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbGVIBaWwMHV1jOZbwhay3H4dfp38AxBNnc6r5Tj3IW+nNDigV
-	WCuuefpBV60qcjaN0JCubb0FYY6iMTvE0eZDuDj/FJbE8KUBS5hG4VE/5AwJRmkK2SI=
-X-Gm-Gg: ASbGncuNlTmZzdsQ7HlNWxLUsFsVL2tA26RB1QRbJJu3QOE+ebj56Pauh0z4ctAV9Jm
-	vPC250+YHG/VBm3m1xIeBJbkE4+Dx9zHmW+evD962Pji2b1Hj3OB9DDrmquvi47TzIO0woSnoLy
-	RmQPefizFcwX26n0XT8Slg2I3IXe0naVoWB4bY/t9yBcQv3Fckt5vnIL37Do6QleT+UyVvb4Xkp
-	qhmeZlVAVoW7OcUqY0ZirDDNetGb+4RY7AhnIwl8xj3TD3DEGaS/nZFs56afKxQMX5qrzm32sh2
-	9yLedtNmthnq28uMml0R3BHVw61e5cXJXySu4qdCkWERUcOOL4Qu72PYkQxlKt4J8PesPoDOogb
-	Y//lOi//C24aJ
-X-Google-Smtp-Source: AGHT+IFLXYQ0jDVk1FSpHmh6JYPHrFtRg8noGavUKgAIqDPFowo9HqHWonzGQTsKS5YLFfnYaszn7g==
-X-Received: by 2002:a05:6e02:2490:b0:3df:154d:aa60 with SMTP id e9e14a558f8ab-3e3c5322bdemr54633665ab.22.1753467689699;
-        Fri, 25 Jul 2025 11:21:29 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-508c91c9687sm107313173.21.2025.07.25.11.21.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 11:21:29 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>, 
- Christian Mazakas <christian.mazakas@gmail.com>, 
- Michael de Lang <michael@volt-software.nl>, 
- io-uring Mailing List <io-uring@vger.kernel.org>, 
- GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>, 
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250725175913.2598891-1-ammarfaizi2@gnuweeb.org>
-References: <20250725175913.2598891-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing 0/2] liburing fixes
-Message-Id: <175346768877.681403.14218875042208173659.b4-ty@kernel.dk>
-Date: Fri, 25 Jul 2025 12:21:28 -0600
+        bh=bDdrXU0H5darvHsz+EX2SqTmuwLmazQOdrWR9KxJ/3I=;
+        b=NyNLKsWc3dkQBDXY5QxuvYlcni2etxWYDXiALOEtlgYjkwJzCSCXqlUGLKAbYHIrYD
+         fR48wshyPl3wMjz3Zo0c75ItzYFgQ23Opd2DQwWZoIhMbjpnwA6om6MJ6Syg+oP57ikS
+         BO+51EKdrjZpAfmXWAho0Uj6Ab2VCeRVakOzSXzbJCrn/rdI7XsOkVz+Mwp+cCNw7Dvk
+         AJL6UaC7M/uR0C75DQcHynMF12vCQDOrARaFbAdM5A0GMF40lHQLp7UXf/fVSujbn8p4
+         +2r9qCogZSQzECTnNfPHuM0SlI5NyKg8wDxBFeyJpHeQzDShjFl6k3aPmjVv0LWvLHl0
+         PdcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMDtTEho0BnMAOKCdTb4BRoBITu6VsjdRvfptipigHA1cgnrNX3RLSmvFIBr6cHb821oOcGbMC0jJ8aos=@vger.kernel.org, AJvYcCXxRdnp0ZMJvmqehVq5KmfFJGbajeIPSPmpkcMmnzluy/2dlsuGK2QQzwgjCWqfapzyoS1KCZ011NMPN8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO5ZG9E6bLR7EOgd4J7HuGR/YcY9Xia8ILULPdhJih/4VicYOw
+	RMiJRKV4uA1aArszJ+1aKfIbq4jJMtjbaddJG+8Gp5noxTybSAugDt4DayP4n29c5Q9giPB3Wo9
+	1IEjAdx7fTeq4YGKF0eiA64qqWToe3vs=
+X-Gm-Gg: ASbGncv3PZPiDuQ2qhY2NWC5lonSUTS1otuuNgyA748JEeip07v2trB4e12Yz4Efy9K
+	7wYwt+XahqEHtyayXPobgyw8z03jpE2jNuZV18cyhHbo0221zqWdMTVJxQOKvLGOS8WD/lvVKb2
+	57Xffs//e9IXD4w53PmQLrAWBJMwt4lsOBQ8kaAkdJ3SaV29ijvnxonuGMWl9GSDLh60znCFEVD
+	rERKVXimI54MTjhAoTIY4lSYfvwrDfgzkohPh0=
+X-Google-Smtp-Source: AGHT+IGVL44bVMfh/XTRvXgIEQR9AztKLyaZJXURVCJhhoUvvp6/9jZx5/Fg9QIlXvemUbw3WOW4FaC6NumapJjWIyA=
+X-Received: by 2002:a05:6102:6cf:b0:4e9:b60a:441 with SMTP id
+ ada2fe7eead31-4fa3fd91775mr1534186137.13.1753467747115; Fri, 25 Jul 2025
+ 11:22:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+References: <20250723230927.109534-1-sperezglz@gmail.com> <87o6takqd3.wl-tiwai@suse.de>
+ <aIICZmB5-7gj1M6W@vaman>
+In-Reply-To: <aIICZmB5-7gj1M6W@vaman>
+From: =?UTF-8?Q?Sergio_P=C3=A9rez?= <sperezglz@gmail.com>
+Date: Fri, 25 Jul 2025 12:22:16 -0600
+X-Gm-Features: Ac12FXwNXnWPJjUUGZtf0PogYHGSrWtcK1NvRZlNPLdVDy5GL33fmT2YmaY-a7M
+Message-ID: <CAMCbnuYVELzWU0jZm8LcSEVRigOz+P1Fmk9suunr63asFjMFiQ@mail.gmail.com>
+Subject: Re: [PATCH] soundwire: sysfs_emit() expects a buffer of size PAGE_SIZE
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>, yung-chuan.liao@linux.intel.com, 
+	pierre-louis.bossart@linux.dev, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+All right, then, this will be handled with a different approach.
 
-On Sat, 26 Jul 2025 00:59:11 +0700, Ammar Faizi wrote:
-> Hopefully, not too late for 2.12. Two small final fixes here:
-> 
->   - Fix build error when using address sanitizer due to missing
->     `IORING_OP_PIPE` in `sanitize.c`.
-> 
->   - Don't use `IOURINGINLINE` on `__io_uring_prep_poll_mask` as it
->     is not a function that should be exported in the FFI API.
-> 
-> [...]
+Thanks,
+Sergio
 
-Applied, thanks!
-
-[1/2] sanitize: Fix missing `IORING_OP_PIPE`
-      commit: ed54d3b7e324220f70dac48b83df4e61763bf844
-[2/2] liburing: Don't use `IOURINGINLINE` on `__io_uring_prep_poll_mask`
-      commit: 6d3d27bc42733f5a407424c76aadcc84bd4b0cf0
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+El jue, 24 jul 2025 a la(s) 3:52=E2=80=AFa.m., Vinod Koul (vkoul@kernel.org=
+) escribi=C3=B3:
+>
+> On 24-07-25, 09:19, Takashi Iwai wrote:
+> > On Thu, 24 Jul 2025 01:09:25 +0200,
+> > Sergio Perez Gonzalez wrote:
+> > >
+> > > In read_buffer_show(), allocate sufficient memory to pass on to
+> > > sysfs_emit(), which expects a buffer of size PAGE_SIZE.
+> > >
+> > > Link: https://scan7.scan.coverity.com/#/project-view/53936/11354?sele=
+ctedIssue=3D1648019
+> > > Fixes: 35323d8ab811 ("soundwire: replace scnprintf() with sysfs_emit(=
+) for sysfs consistency")
+> > > Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
+> > > ---
+> > >  drivers/soundwire/debugfs.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.=
+c
+> > > index 825f7abbad32..08fb1e29026e 100644
+> > > --- a/drivers/soundwire/debugfs.c
+> > > +++ b/drivers/soundwire/debugfs.c
+> > > @@ -306,12 +306,12 @@ static int cmd_go(void *data, u64 value)
+> > >  DEFINE_DEBUGFS_ATTRIBUTE(cmd_go_fops, NULL,
+> > >                      cmd_go, "%llu\n");
+> > >
+> > > -#define MAX_LINE_LEN 128
+> > > -
+> > >  static int read_buffer_show(struct seq_file *s_file, void *data)
+> > >  {
+> > > -   char buf[MAX_LINE_LEN];
+> > >     int i;
+> > > +   char *buf __free(kfree) =3D kzalloc(PAGE_SIZE, GFP_KERNEL);
+> > > +   if (!buf)
+> > > +           return -ENOMEM;
+> >
+> > IMO, it's better to scratch the whole previous change.
+> > It makes little sense to allocate a large buffer here just for the
+> > temporary formatting.
+> >
+> > Moreover, *_show() functions there take seq_file pointer, and you can
+> > just use seq_printf() directly.  The sysfs/kobject show callback is
+> > with the a fixed PAGE_SIZE buffer, hence sysfs_emit() is useful, but
+> > in this case, it's a completely different story.
+>
+> Agree, dropped now!
+>
+> --
+> ~Vinod
 
