@@ -1,104 +1,121 @@
-Return-Path: <linux-kernel+bounces-745894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1DEB12023
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:30:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9EFB1202B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F8D566AAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C6217EB67
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39331E5701;
-	Fri, 25 Jul 2025 14:30:27 +0000 (UTC)
-Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695A920110B;
+	Fri, 25 Jul 2025 14:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbLlQ58t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9387015B971
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C117C190472;
+	Fri, 25 Jul 2025 14:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753453827; cv=none; b=XSetAeqGlR6Q8tng8ylylIhflRdEaHzsY/QsSbDNq4FhRbzwXr+OeaNfYbiKbmCbyAHVVEo8qvUAYNl3B3Ybio2Rqir5cCh0bxX8tUM+/N06KQzhp4fRrtuiAGhnvDsIQ5G8N68opF+sY+ztgsDALVxq+5L908v6lm5+GeKMLaA=
+	t=1753454024; cv=none; b=G29ERqLzk1eqCfW7foSemCyVZNssewxztZGaQ7C7iWxcqHojpS/XHM3OXMPJIUjguLA4NMTEhSp/PzytrH7eIaMGkGreSX6VEfWyx1i2vy+c8g7il9s96iBAsXBOH5b4swvNyFvFhw9n8MhmcaZDIZtTgnDtwUesdTZd0S8tfR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753453827; c=relaxed/simple;
-	bh=Fj1hfO2kIkR/Yz1RFGe7vt2a8YGAliWI4Gpsy0dyQus=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SzAb155RkoI+1loK+L/hN1aWNMdrck7RRjjZkB6u1PdbgJTvC/n/xlWQrBn8+WJHfphzeOY8R7AISNMjqQO5MdCqVVLlEB4RY8LVxFQ8NBshjGXF6EmjKlvpLB1xf70f/G+yXnz1uH/ypXsg/4ukB+qx+IfSrQQMs3P9mrmiGe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2F847449AA;
-	Fri, 25 Jul 2025 14:30:21 +0000 (UTC)
-Message-ID: <77437392-5d68-4620-ba05-08eba133b547@ghiti.fr>
-Date: Fri, 25 Jul 2025 16:30:21 +0200
+	s=arc-20240116; t=1753454024; c=relaxed/simple;
+	bh=dZJ+XcQoCX8HZqiKQVLfki/ABIy/u4NDULHsqYfvNe8=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=u5qDYMXxcNm058H7JpjD3rOvWHcyO1pvCgX+EE8gzE9nb4i+gDWXqVCkM+LilmztqZVR3OvyEWFkb0tDxh2dbybxJlpBRGGEPiRehT48PuiGY4V6mD0ioUgGO8m5yz53G3GIZebnSc/4pspgGRhhQamKbH9kivemgOZq6xq0WL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbLlQ58t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F54C4CEE7;
+	Fri, 25 Jul 2025 14:33:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753454024;
+	bh=dZJ+XcQoCX8HZqiKQVLfki/ABIy/u4NDULHsqYfvNe8=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=YbLlQ58tkJJKVbeGdJP8IL64Amk0A7Ix7z7VFGT9r30GRlgjoXwjDmFguIX43y21S
+	 1QqHUcFGePVCD/Y1Vrn5N9oAJeVWJlXjykWWW4QrwZB/eO49Ud6BowN+2I/bLnSfQb
+	 yeqaKYjnDETgBeesKdvZ1cyVIM7k2EA1Ohr6sgpauTXihsI7Dy1AI+Y8U3g38zgov0
+	 yqQdHAeXQ2hvLmZRsAfLWrtCyDRTUcW1PRTpXOL69/hnQqfkQ2bt9SJdf5gMupVerV
+	 uz+16UqZ8ZRJQ4WaWrqMPKtUH7u5+FXeYLpdP+oYPr1ihIHSuLMrIjrBOahMMS9ZeW
+	 VuvXBxpqFN5tg==
+Date: Fri, 25 Jul 2025 09:33:43 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] riscv: pack rv64 thread_info better
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>,
- linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Deepak Gupta <debug@rivosinc.com>
-References: <20250722160556.2216925-2-rkrcmar@ventanamicro.com>
- <20250722160556.2216925-5-rkrcmar@ventanamicro.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250722160556.2216925-5-rkrcmar@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekfeejjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdeguefhhfevueejteevveeikeelkedvffdufeelveeggfeikeekgfeghfdttdevnecukfhppeelhedrudeguddruddtvddrudekieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelhedrudeguddruddtvddrudekiedphhgvlhhopegluddtrddutddrudegiedrvddujegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepjedprhgtphhtthhopehrkhhrtghmrghrsehvvghnthgrnhgrmhhitghrohdrtghomhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmp
- dhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopeguvggsuhhgsehrihhvohhsihhntgdrtghomh
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: cros-qcom-dts-watchers@chromium.org, 
+ Bjorn Andersson <andersson@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konradybcio@kernel.org>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <20250725050216.526327-1-krishna.kurapati@oss.qualcomm.com>
+References: <20250725050216.526327-1-krishna.kurapati@oss.qualcomm.com>
+Message-Id: <175345393876.1190053.13346690295209363754.robh@kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: sc7280: Flatten primary usb
+ controller node
 
 
-On 7/22/25 18:05, Radim Krčmář wrote:
-> On rv64, preempt_count and cpu were both 32-bit followed by 64-bit, so
-> placing one in the hole saves 8 bytes in the struct.
->
-> Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
+On Fri, 25 Jul 2025 10:32:16 +0530, Krishna Kurapati wrote:
+> Flatten primary usb controller node and update to using latest
+> bindings and flattened driver approach.
+> 
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
 > ---
->   arch/riscv/include/asm/thread_info.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
-> index f5916a70879a..c267d6bd838e 100644
-> --- a/arch/riscv/include/asm/thread_info.h
-> +++ b/arch/riscv/include/asm/thread_info.h
-> @@ -53,6 +53,7 @@
->   struct thread_info {
->   	unsigned long		flags;		/* low level flags */
->   	int                     preempt_count;  /* 0=>preemptible, <0=>BUG */
-> +	int			cpu;
->   	/*
->   	 * These stack pointers are overwritten on every system call or
->   	 * exception.  SP is also saved to the stack it can be recovered when
-> @@ -60,7 +61,6 @@ struct thread_info {
->   	 */
->   	long			kernel_sp;	/* Kernel stack pointer */
->   	long			user_sp;	/* User stack pointer */
-> -	int			cpu;
->   	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
->   #ifdef CONFIG_SHADOW_CALL_STACK
->   	void			*scs_base;
+> Link to RFC:
+> https://lore.kernel.org/all/20250720072125.1514823-1-krishna.kurapati@oss.qualcomm.com/
+> 
+> Changes in v2:
+> Fixed base address.
+> 
+>  .../boot/dts/qcom/qcm6490-fairphone-fp5.dts   |  6 +-
+>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts      |  7 +--
+>  .../boot/dts/qcom/qcm6490-shift-otter.dts     |  6 +-
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  |  6 +-
+>  .../arm64/boot/dts/qcom/sc7280-herobrine.dtsi |  6 +-
+>  arch/arm64/boot/dts/qcom/sc7280-idp.dts       |  6 +-
+>  arch/arm64/boot/dts/qcom/sc7280-idp.dtsi      |  6 +-
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi          | 59 ++++++++-----------
+>  .../boot/dts/qcom/sm7325-nothing-spacewar.dts |  6 +-
+>  9 files changed, 42 insertions(+), 66 deletions(-)
+> 
 
 
-Great, that now fits into a cacheline. I guess other structures would 
-deserve the same attention.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-You can add:
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Thanks,
+  pip3 install dtschema --upgrade
 
-Alex
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250725 (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250725050216.526327-1-krishna.kurapati@oss.qualcomm.com:
+
+arch/arm64/boot/dts/qcom/sc7280-idp.dtb: usb@8cf8800 (qcom,sc7280-dwc3): 'dr_mode' does not match any of the regexes: '^pinctrl-[0-9]+$', '^usb@[0-9a-f]+$'
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+
+
+
+
 
 
