@@ -1,87 +1,47 @@
-Return-Path: <linux-kernel+bounces-745393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EC6B11953
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:42:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1199B11955
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4853AB7D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:41:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182EC17EFD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9620E2BD59C;
-	Fri, 25 Jul 2025 07:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DA62BE7B8;
+	Fri, 25 Jul 2025 07:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZpJVzVF3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OqcWCYGk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB863262FED
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36C82BE02C;
+	Fri, 25 Jul 2025 07:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753429311; cv=none; b=j3eJmhyvlvTIbIPCkzj79IakiCyDiDgDnQTJgQmeW8L0/JuZt9Kphd90G0xpdWgswrcUUclcdgHpEMy0Yd+MbbnR3u4NAnSH8BtiFFmkgl5Gnp7Cea7iTG8OrQ+doUR1j29YUTbHyB2YxEv0WK1NlBk8an0KC0L20etBoED7PSE=
+	t=1753429314; cv=none; b=cRvcyLKJlCtGDK60F9kWFuY4itQLME06LGw7w05Sa6Tsa0ZxkViINc21B8/uIYo3KUkWaUllFN1FURXNDmIuWVfRCaIGWgDBq774PzbyZSUxp2ZNwGU1lsg5BAYuFEU0iNsE59tGg/tdQ40xkEZFBmh52fXEbvKjiLp9km3ksi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753429311; c=relaxed/simple;
-	bh=n1Yy/vTkWVnAzcoZkx86CwPsntqa+uYX/R9vQ+HZ1ZE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IJHwvZhwsWbwzrYTbABt4d9xB9K1/xM54o3KfO7ndGcj/AXp3rg0wd98nbO7jiZK3gTImL1EuFWjonix6G5vqntNL2+m8gVBi1ikGoX7DC6DTtsq6ceAhVoA1FUFqDny/xBK6r/cjGD7cvwYq064xEG2OQgrcqqJuiXE91aQQCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZpJVzVF3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753429308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fojekgEPv9cG6AwX1yoB6wU+2LN4S+SisKL82eDezBY=;
-	b=ZpJVzVF3S7wwWyt1XpkL935O9hH1IYZnzEE9bdDezWDTWitRxchm8b8Lbls5HW1nQPYt4G
-	DIoXi1Hti9jQj5yroURCtGoVQZGWMiXYo8k18eLqL8Hax66EbtiC8sQdgYTchUyUc0Q6cR
-	OkJ7lzVxrZtjiA4JjjPjpzz2eaw8F+k=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-374-MUtMDaxCNGOQTErCrQT8iw-1; Fri, 25 Jul 2025 03:41:46 -0400
-X-MC-Unique: MUtMDaxCNGOQTErCrQT8iw-1
-X-Mimecast-MFC-AGG-ID: MUtMDaxCNGOQTErCrQT8iw_1753429305
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4562985ac6aso14131665e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:41:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753429305; x=1754034105;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fojekgEPv9cG6AwX1yoB6wU+2LN4S+SisKL82eDezBY=;
-        b=aeFMyBkLceidICMMELZbeSr0gOJHjhd93GOAwT55SN/4wfLaUrWALYyCfGISM7fJiL
-         dTGklMIVBPZo684C0Xx89bWETCqc3QlYJ5DJOQ7jcMJSn9MONWbMUtDHW3yNP6ryk/5w
-         MG+tr8D4iqnd0+vFDJEJi0+kf24oFYRoD0CZA1U89mDY0D0IBEkIvVpm9ls6Susv6caM
-         /h9E1CC1t012EZrKuvBH4VT8hBC9qyQmmO5HaDrmA0OfhQWxTJ25fM2JZnpTpR7uHMVu
-         rVmdcFvwlhWbO94MTMAP4Un+XEw5JJDPApdeJt8z+nxQJOD/B/luz4mPJy+Mhmj15USe
-         VLFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPV0n0abdNRfY4GufLWe9Q6jtfA9PYWQ5FYyNuXyEuH7DALlxDjvYCTdn2hunyH8tBpGJg9NLmbbMMyIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx4boTAPziOMkvs4lpO7E95zDDsdNH4aZFGzLAb+eUOydN9YXk
-	k7VRnOb0MQhf+aKjx6zN/FBrYcK5szZR+6umDVseL2Cw045BcRcLcv2fJ83UgstEaWpk+bXypyU
-	CqKP5ZhR+06UgfimyOg/AwU3GzuhlbKcviS51VdriOKJ3DfW9Bvz+vNK8/tihHrH2UA==
-X-Gm-Gg: ASbGncvPJe8xrRufmh9ejE5fbkFr7xqjYEMXjHyeUlQgy/aga1GKpiRgS3J7tb1Bote
-	2WWF60KQ2gQZv4ptGVpW9vGSXqumViHgTu2ph6KGhkoOJwH2j8Kkbzy517lgtsT2jP1zUHhPLEo
-	b4UjZACPqSZzLdxuwu/vlRmnDhpc2WrSwZQQ4rPWxR3r6CdzNK2Hgbzz+muFzcEQQh4a+VY2+wl
-	z9F+L11H1UbO2NoGzAwbDSq+3e1lfws3arDxwRV4RTOU+r3aq2+LIuSeqcdvAw54iBEySYIVfMZ
-	QMHxQQnlBZFC6bI6IVfDheczmq2JgP+ykSjjqONDU+FomJmOe22EZKhXuZc0iJP8QfpioTJGlcU
-	izS67Em2zZFQ6yMYR30jLSlCjhhvgoVsGBw/1Sz2V1V6OT65cVNUg7CAxhbiufzpKo2M=
-X-Received: by 2002:a05:6000:144d:b0:3a6:f2d7:e22b with SMTP id ffacd0b85a97d-3b7766009c3mr809020f8f.18.1753429304674;
-        Fri, 25 Jul 2025 00:41:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIWm3B6b2z+ebRCjowB14VjtygW8iNzKNHxLAdIdSnF3kZaCH9XvX8UiUDWhVKBpKo+7YJVg==
-X-Received: by 2002:a05:6000:144d:b0:3a6:f2d7:e22b with SMTP id ffacd0b85a97d-3b7766009c3mr808995f8f.18.1753429304202;
-        Fri, 25 Jul 2025 00:41:44 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1a:f400:5a9f:b1bf:4bb3:99b1? (p200300d82f1af4005a9fb1bf4bb399b1.dip0.t-ipconnect.de. [2003:d8:2f1a:f400:5a9f:b1bf:4bb3:99b1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc6e5e1sm4412643f8f.28.2025.07.25.00.41.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 00:41:43 -0700 (PDT)
-Message-ID: <d242b6c4-8be4-4294-a399-ead2339f08b1@redhat.com>
-Date: Fri, 25 Jul 2025 09:41:42 +0200
+	s=arc-20240116; t=1753429314; c=relaxed/simple;
+	bh=+oqH1MFh0BVgLR6cjPHsZ04ng4bYIfUcQCNQ4tKmWi4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=P36tXMnD/BulnY2+CIC/tIei0gg1qPS7kF1pFwjgFNRmyrHbhQel+XtGfnPCa87RGaSvYAN2oE0xqlBODXYu93HNvUFStoMWfmZEQi9YnV8aVcH7XAt1MTM64z358WLPA95T9QGHvvPw+YUhirxdFqXWd6xrNJjRRD6hOSfdJQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OqcWCYGk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FA54C4CEE7;
+	Fri, 25 Jul 2025 07:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753429314;
+	bh=+oqH1MFh0BVgLR6cjPHsZ04ng4bYIfUcQCNQ4tKmWi4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=OqcWCYGkZZjKAXS0oyQgUnyxOiO5YSu7EEyvEwzY0aFdXeonUNISxbTwyT8zG2f/J
+	 VO6lec445cOUHa9UF2myCCnl3vxSPv1Xr8qDDjgcngt1Rwp+zZ14SQipD+/IrTer6J
+	 Mj8oFL3cQINUMxpvC9TLtoYX+ZQNbWA6u5xFe/nN8UvmyBPZhTcbASae9uf5iJjVGh
+	 uXxOiDpwnbomzV5mUj4I8TKoRWex6SDdOu1TqW6aFd3cO+df9LoCAPCe9LXw6/u+EQ
+	 V8JViaZIU7tDLwwVF1ZkJTzBas0tqrna01soWBYkUtJR5L4RygSHCC4TfrYRSxJ7mX
+	 kT39XLIdOHE5g==
+Message-ID: <3c2ce865-0f9b-4b8b-a4c7-d869c6a4f717@kernel.org>
+Date: Fri, 25 Jul 2025 09:41:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,105 +49,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] mm/mseal: update madvise() logic
-From: David Hildenbrand <david@redhat.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
-References: <cover.1752687069.git.lorenzo.stoakes@oracle.com>
- <ec480dc1fd4ce04bb11c0acac6c6da78dc6f4156.1752687069.git.lorenzo.stoakes@oracle.com>
- <202507241352.22634450C9@keescook>
- <e0a22433-541c-40b0-92bb-34b0596db642@redhat.com>
- <ef111032-e108-4771-9202-b8cdab278422@redhat.com>
- <202507241528.A73E1178@keescook>
- <28bf0b31-8b51-4acd-ae09-890a952501f4@redhat.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: interrupt-controller: aspeed: Add
+ parent node compatibles and refine documentation
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Kevin Chen <kevin_chen@aspeedtech.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
+References: <20250722095156.1672873-1-ryan_chen@aspeedtech.com>
+ <20250722095156.1672873-2-ryan_chen@aspeedtech.com>
+ <a9294387-ce7f-482e-89e1-7c85feaeeee9@kernel.org>
+ <OS8PR06MB754125722911782DBB3CFEFCF25FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <OS8PR06MB75418DB8CDD04D506EB13215F259A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <28bf0b31-8b51-4acd-ae09-890a952501f4@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <OS8PR06MB75418DB8CDD04D506EB13215F259A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 25.07.25 00:47, David Hildenbrand wrote:
-> On 25.07.25 00:29, Kees Cook wrote:
->> On Thu, Jul 24, 2025 at 11:41:04PM +0200, David Hildenbrand wrote:
->>> On 24.07.25 23:32, David Hildenbrand wrote:
->>>>> As an aside, why should discard work in this case even without step 4?
->>>>> Wouldn't setting "read-only" imply you don't want the memory to change
->>>>> out from under you? I guess I'm not clear on the semantics: how do memory
->>>>> protection bits map to madvise actions like this?
->>>>
->>>> They generally don't affect MADV_DONTNEED behavior. The only documented
->>>> (man page) reason for EPERM in the man page is related to MADV_HWPOISON.
->>>>
->>>
->>> (Exception: MADV_POPULATE_READ/MADV_POPULATE_WRITE requires corresponding
->>> permissions)
->>
->> Shouldn't an MADV action that changes memory contents require the W bit
->> though?
+On 25/07/2025 09:18, Ryan Chen wrote:
 > 
+>> Subject: RE: [PATCH v3 1/2] dt-bindings: interrupt-controller: aspeed: Add parent
+>> node compatibles and refine documentation
+>>
+>>> Subject: Re: [PATCH v3 1/2] dt-bindings: interrupt-controller: aspeed:
+>>> Add parent node compatibles and refine documentation
+>>>
+>>> On 22/07/2025 11:51, Ryan Chen wrote:
+>>>> The AST2700 SoC contains two independent top-level interrupt
+>>>> controllers
+>>>> (INTC0 and INTC1), each responsible for handling different
+>>>> peripheral groups and occupying separate register spaces. Above
+>>>> them, PSP(CA35) GIC controller acts as the root interrupt
+>>>> aggregator. Accurately describing this hierarchical hardware
+>>>> structure in the device tree requires distinct compatible strings for the parent
+>> nodes of INTC0 and INTC1.
+>>>>
+>>>> - Adds 'aspeed,ast2700-intc0' and 'aspeed,ast2700-intc1' compatible
+>>>> strings for parent interrupt controller nodes. (in addition to the
+>>>> existing 'aspeed,ast2700-intc-ic' for child nodes)
+>>>
+>>> I don't understand how this solves your problem at all. Look at old
+>>> diagram - is it correct? If not, what makes you think that new diagram is
+>> correct?
+>>>
+>>> What is the meaning of existing binding and existing intc-ic compatible?
+>>>
+>> The new parent nodes (aspeed,ast2700-intc0/intc1) make the device tree layout
+>> match the actual hardware separation shown in the SoC datasheet.
+>> This allows us to register the full resource region, allocate platform resources
+>> properly, and cleanly extend/debug in the future.
+>>
+>> The previous "aspeed,ast2700-intc-ic" compatible only describes the interrupt
+>> controller instance, not the full register block. In practice, with only a single child
+>> node, there is no way to:
+>> map and manage the entire address space for each INTC block (0x12100000 and
+>> 0x14c18000), or cleanly expose debug features that must access
+>> routing/protection registers outside the intc-ic range.
+>>
+>> The old diagram was incomplete, since it implied that the interrupt controller
+>> block had only the intc-ic instance, but in hardware each INTC region contains
+>> multiple functions and register ranges.
+>>
+>> This binding change is mainly for clarity and correctness, aligning DT and driver
+>> with the real SoC register map and future-proofing for debug/maintenance.
+>>>
+>>>> - Clarifies the relationship and function of INTC0 parent
+>>>>  (intc0_0~x: child), INTC1 parent (intc1_0~x: child), and the GIC
+>>>> in the documentation.
+>>>> - Updates block diagrams and device tree examples to illustrate  the
+>>>> hierarchy and compatible usage.
+>>>> - Refines documentation and example formatting.
+>>>>
+>>>> This change allows the device tree and driver to distinguish between
+>>>> parent (top-level) and child (group) interrupt controller nodes,
+>>>> enabling more precise driver matching SOC register space allocation.
+>>>
+>>> And how it was not possible before? That's poor argument especially
+>>> that DT does not have to ever distinguish that.
+>>>
+> 
+> Hi Krzysztof,
+> 
+> I wanted to follow up on my previous explanation about separating parent and child nodes for AST2700 INTC in the device tree.
+> There is other SoCs, such as Marvell’s CP110 ICU, also use a similar approach to separate parent controller and functional child nodes in the device tree, as shown here:
+> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/interrupt-controller/marvell%2Ccp110-icu.yaml#L74-L98
+> Do you need me to provide further details or additional about our SOC design information?
+> Or is there anything specific you’d like clarified regarding the motivation or the binding structure?
 
-Pondering about this some more, at least MADV_DONTNEED is mostly a 
-cheaper way of doing mmap(MAP_FIXED): in other word, zap everything but 
-leave the original mapping unchanged.
+Start properly wrapping your email responses. All of them are
+misformatted, all the time!
 
-So if you allow for mmap(MAP_FIXED) -- ignore any permissions bits, of 
-course -- nothing really wrong about allowing MADV_DONTNEED.
+You got replies from two DT binding maintainers. Work with that.
 
-With mseal(), it got all weird I am afraid, because we have this 
-exception list, and apparently, it has holes. :(
-
--- 
-Cheers,
-
-David / dhildenb
-
+Best regards,
+Krzysztof
 
