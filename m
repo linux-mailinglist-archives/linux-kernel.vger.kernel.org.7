@@ -1,181 +1,138 @@
-Return-Path: <linux-kernel+bounces-746142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95BA2B1239F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:11:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E3DB123A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB4E67B73D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 275883B4E39
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FC42F0053;
-	Fri, 25 Jul 2025 18:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D352EE99D;
+	Fri, 25 Jul 2025 18:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGzw35ga"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QZytguFe"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD26928C865;
-	Fri, 25 Jul 2025 18:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C43F1A23A4
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753467051; cv=none; b=mMU4AcmwhSJvcrSP2ZSlFIx8+y/zt9uiTiomHJ8ZrSkZ1kmzMeTzINTJFL9g053+M7GwpKSUmYhQCxIhX8iqRp6C0YGwfuk8C6+FEu4XPtMpYyF3Sscpsdhgwbf0JhmLLGsUS5AqwRK1zIETCP0sIWmq9V8GojCBqSplenjJQms=
+	t=1753467135; cv=none; b=K2DKnFGCG+tLu7qnCdsXXEOHSrL1SKhusEtFFBelPOZiRfI4/ygfIXWCeOenZmx1UuiobhGr6vKD+sj4NOO9isUD2Rc620ppU2pHZEbumE+58vnwXus73gbXSnEXvaBDL3BRPU9ai5fQaa25duWB5VoKalAQK3lff+YO5zDKCJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753467051; c=relaxed/simple;
-	bh=ri7jZCPA0DuqHqHzf3trIUgc4pLAhXJnKkCs7V2+7sI=;
+	s=arc-20240116; t=1753467135; c=relaxed/simple;
+	bh=9YaUMw2uo4BIlLWMKZ+PThCgBBHtaJO7cpthxwOFSoA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmPQsOyJY1f4MCxTcrYlZc4YBM5fpLzPGU/2NI4miz3TsAACwO7mCgzTaREDUUurJ8yTBWcK5NsYrd1zKcYBjfdc6i5oZh2YegA0FQMO67cNjtiDDJAAWYDZ7ilm22nswUMiUsQlc606fmcwvL9JvsgzzACNkO7d//HPi4OjG8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGzw35ga; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21D2FC4CEE7;
-	Fri, 25 Jul 2025 18:10:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753467051;
-	bh=ri7jZCPA0DuqHqHzf3trIUgc4pLAhXJnKkCs7V2+7sI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IGzw35ga3OQ59CyvGtuk2QLwuybS3IELuNLY9mFhjKQhkAgyeOWTTij5StjKAYitj
-	 BQomCsvSUxK+cNQaB0WcAR+HF5rieI6Dj/HzG18FplUyWsnGrMzqlk464c4vkg8anY
-	 mTsDmxXfnMT5cBhNL1vEKsnIk8ocVbHd8RdVG8wpkCDluhgVvmBHU/L37KGbIoIGuD
-	 2zI4wdHdtO4QBlPZZ0Mq/KNIlhc1+jXqIMU6SED3nvteXGJ+wa6TEaPskzXjaja6Fi
-	 cvJGCicMsuEMKT5W9aTRFbyZfqj7/gn+lXJYSCnftpRRFZ1IiusnrGbmScb518FV1C
-	 oLLvgnllFaPTQ==
-Date: Fri, 25 Jul 2025 19:10:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: E Shattow <e@freeshell.de>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	William Qiu <william.qiu@starfivetech.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: dts: starfive: jh7110-common: drop no-sdio
- property from mmc1
-Message-ID: <20250725-disorder-graceless-23c95454244d@spud>
-References: <20250724075600.239522-1-e@freeshell.de>
- <20250724-equal-limb-2922f240961e@spud>
- <43c5908c-c478-4e00-b1e5-955296e4ec24@freeshell.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nyQJ6L/YRgzoJ2pNdtFA2r4cQS+QfCOglj7xCwXxVuY5AreB4CAnVOpFqLVhRLSAoABYudHLDPbiAD/01o5C8LNBYW4zBJ0iXuPR23WymNGMhsPLCkTttox/yUOyRgGLQRdZGk56It9EBBVTaRTn9Io+Fpwc1/IGvA7EbgpysTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QZytguFe; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4562b2d98bcso4885e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:12:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753467132; x=1754071932; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9lqZ8GbVGbsyusC/rotoXs+VvnR4ndEH+/csO6rB//g=;
+        b=QZytguFeukCmj0YInwqamgrRYpPBE50oZGxwvLlDOJrGMiqrn2yz1QGnQZYj3aToSP
+         iQSB+ANhejsbPfSONRFlJsicwoj9Gr03CbbzMEt/s1Z1+TVm58xnGxdEbP4l5vOas/C2
+         h9Y+j/jycidLsdEUuiqdz0jZJ9nhE7pZ7mPcQ9HpFoCLdWACfc4aIeQamc/MrBtQD4TZ
+         2uGBV6NjphqS0VsUmqpNWIqerdUIAonQT0Ix/cdTTHtfx4fx98t7zl+QjkHHFuiwsgKW
+         zkZkwnz8AH36YAcpc355Y3nAf2YykqsrDX9MQsIzsgQ/Da6cblpYyS5iYJgxDIT+Jx17
+         HcmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753467132; x=1754071932;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9lqZ8GbVGbsyusC/rotoXs+VvnR4ndEH+/csO6rB//g=;
+        b=jcC7kdmzIrGwJdO9EF71EPbxna4QBLt6vRQtfT3XxnFDBh2iw6Dl+YxvXDvvywmkUa
+         YDLTjwOt0QYLsW1EVx4rcoEynbdiFkwDYkwivssLqnLBExUdfAVY8ed8+o5j3InmTaWX
+         3NquxYHGTso4tuaxSRssj7/h+EKFEaWIX4+virPL5LD7bDJq5m2wpqN/0WpLciAG2jc/
+         aNKvG4Ktd8oogw0Vcu74iJDbPfA9KmbEzPjsdOwpmFtbxJPuW1eUxu3RgcYwlbLCX/ku
+         YwEACdDxjq2IuQqxruAS+YSZ944cZ/nXuMuYM1YIlW1GsImCVC1/8KLZjqXcNPK0ELWb
+         bGTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVg1Psydhkw/1YvV5ythTfUPySgyrt7D/0qulzbbE9H93JE1Tg5+ZPVr2oQOYaQj1muGkAw382AEU21VYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7HiZ2kxLvy5RTT1Uuyb6mI9dosGwTFhI7NczciiFRBqG3/gc4
+	SWR6Xh1yK8b1N1QL3YYCln+jgaE/y7LzJLhPgEpOs32uXYTn63nMWNmqERL1LojXMQ==
+X-Gm-Gg: ASbGncs5TrrQIuYrIJjBBqh5d51EmcGSAq3q4J4P4VoLBTJSwKttla6hvaep46BEFcM
+	wQoVlQXE2nnTdARa24/Hbkl8E2ExsV1xN6aPhM1vcxnwjn1xGD+Ckxtg/p/FSsjNseKFcT3YqqI
+	m1iD8jCCO5zu1jgh5uQsJWBXtKUN88tEW9rZnq8CT+2zqGbsFSjhBp12Aq7kRC0m/ocJfemPXeE
+	2Gb4EEZr6kK2uZ28Dv/LKFKCWwsx4C0FKXpdDWGaDTZO2CNEl/NYihZGAJNiHZJddRosKRw0EEC
+	dqBum3xESJAbDwNQKiSa0wPpQ2m+KaU+oqLhprOGUkgOjuIHj3IDa1uLHYjJpPh7vTUbhyFXw9I
+	BEjzPnWdoAGPoBkNlrycHnKUIi+dxoZN9zQFppQHP5g8VEnrbqA606gIfaA==
+X-Google-Smtp-Source: AGHT+IE7dLSNdxnS09UIaiZLtGTzBKRWFvjjxpSelV/vNcmga84rxmjNvK3BLMJqQyO32AXbSKfYAg==
+X-Received: by 2002:a05:600c:5289:b0:455:fb2e:95e9 with SMTP id 5b1f17b1804b1-4587c1f7c41mr47125e9.6.1753467131632;
+        Fri, 25 Jul 2025 11:12:11 -0700 (PDT)
+Received: from google.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705377e5sm61620255e9.7.2025.07.25.11.12.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 11:12:11 -0700 (PDT)
+Date: Fri, 25 Jul 2025 18:12:07 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Pranjal Shrivastava <praan@google.com>, jgg@nvidia.com, will@kernel.org,
+	joro@8bytes.org, robin.murphy@arm.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
+ get_viommu_size
+Message-ID: <aIPI9xv-HxTPWMUp@google.com>
+References: <20250721200444.1740461-1-nicolinc@nvidia.com>
+ <20250721200444.1740461-3-nicolinc@nvidia.com>
+ <aIDlsUvF2Xbdelvx@google.com>
+ <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
+ <aIEwzM7mKUI8-h9U@google.com>
+ <aIKd1owebUNQeN1-@google.com>
+ <aIKqaGMMpsIuAVab@Asurada-Nvidia>
+ <aINL66r_1NO3Nx-f@google.com>
+ <aIOvt+atxTQp57R/@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vFc/GG+76alb8wgR"
-Content-Disposition: inline
-In-Reply-To: <43c5908c-c478-4e00-b1e5-955296e4ec24@freeshell.de>
-
-
---vFc/GG+76alb8wgR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aIOvt+atxTQp57R/@Asurada-Nvidia>
 
-On Thu, Jul 24, 2025 at 10:13:47PM -0700, E Shattow wrote:
-> On 7/24/25 09:51, Conor Dooley wrote:
-> > On Thu, Jul 24, 2025 at 12:55:53AM -0700, E Shattow wrote:
-> >> Drop no-sdio property avoids a delete-property on variant board dts
-> >> having an SDIO wireless module connected to mmc1.
-> >=20
-> > I'm struggling to understand why this change is correct.
-> >=20
-> > If there are specific boards that have wireless modules connected
-> > instead of using sdcards, how come the no-sdio property isn't moved to =
-the
-> > the boards that do have sdcard slots?
->=20
-> Why is 'no-sdio' property there to begin with...
->=20
-> > The property was added for the visionfive 2, and only on mmc1, so should
-> > it be retained for boards that match the visionfive 2 in terms of how
-> > they use mmc?
->=20
-> Ref.:
-> https://lore.kernel.org/lkml/20221207131731.1291517-4-william.qiu@starfiv=
-etech.com/
->=20
-> My theory is VisionFive2 board hardware can support connecting up some
-> SDIO module there with ready-made available adapters, it may be possible
-> (if unusual) that would work? SDIO is 4-wide and some voltage
-> requirements, and a couple of GPIO, so I'm aware that's a stretch of a
-> statement but it could be done without soldering. I wouldn't expect it,
-> but why restrict this everywhere inheriting from jh7110-common.dtsi with
-> 'no-sdio' and then (needs testing!) if it doesn't matter one way or the
+On Fri, Jul 25, 2025 at 09:24:23AM -0700, Nicolin Chen wrote:
+> On Fri, Jul 25, 2025 at 09:18:35AM +0000, Mostafa Saleh wrote:
+> > > > > > On Wed, Jul 23, 2025 at 01:37:53PM +0000, Pranjal Shrivastava wrote:
+> > > > > > > On Mon, Jul 21, 2025 at 01:04:44PM -0700, Nicolin Chen wrote:
+> > > > Had the
+> > > > vintf_size rejected it, we wouldn't be calling the init op.
+> > > 
+> > > A data corruption could happen any time, not related to the
+> > > init op. A concurrent buggy thread can overwrite the vIOMMU
+> > > object when a write access to its adjacent memory overflows.
+> > 
+> > Can you please elaborate on that, as memory corruption can happen
+> > any time event after the next check and there is no way to defend
+> > against that?
+> 
+> That narrative is under a condition (in the context) "when there
+> is a kernel bug corrupting data" :)
+> 
+> E.g. some new lines of code allocates a wrong size of memory and
+> writes above the size. If that memory is near this vIOMMU object
+> it might overwrite to this vIOMMU object that this function gets.
+> 
+> This certainly won't happen if everything is sane.
 
-In case it was not clear, I am not questioning removing it from the
-common file, just that you're removing it entirely.
+I see, but I don't think we should do anything about that, there are
+100s of structs in the kernel, we can't add checks everywhere, and I
+don't see anything special about this path to add an assertion, this
+kind of defensive programming isn't really helpful. We just need to
+review any new code properly :)
 
-> other for VisionFive2 just drop it I think as being inaccurate/unnecessar=
-y?
->=20
-> JH7110 CPU supports two interfaces of SDIO3.0/eMMC so it's not clear to
-> me if there's some reason for 'no-sdio' property to be there. Does
-> allowing SDIO (?) break eMMC and SD Card devices, is it destructive?
->=20
-> Not knowing what 'no-sdio' does technically I dropped the property and
-> tested with the hardware I do have. The 'no-sdio' property
-> present/absent does not appear to do anything user-impactful on Pine64
-> Star64 that has SD Card slot on mmc1, and as would be expected on Milk-V
-> Mars CM Lite WiFi when there's an SDIO module at mmc1 it then fails to
-> initialize if 'no-sdio' property is present.
+Thanks,
+Mostafa
 
-The original addition looks very intentional - however I didn't look at
-the commit message itself last night, just the diff. I wonder if "no-sdio"
-and "no-mmc" were just added because William intended to restrict SD
-cards since sdio1 is the SD card slot, rather than because the use of
-sdio or mmc commands during init would cause problems. The wording of "Set
-sdioo node to emmc and set sdio1 node to sd" is what makes me think
-that.
-
-> > Could you add an explanation for why removing this entirely is the right
-> > thing to do, rather than only removing it for these variant boards?
->=20
-> Yes, I can rephrase a bit like "relax no-sdio restriction on mmc1 for
-> jh7110 boards", or else reconsider the approach. I was going to approach
-> with `/delete-property/ no-sdio;` later elsewhere but after testing on
-> Pine64 Star64 with similar configuration to VisionFive2 mmc interfaces,
-> and knowing that Milk-V Mars CM Lite WiFi detects AP6256 SDIO peripheral
-> at mmc1 when this property is dropped (and with a few additional
-> things)... I prefer to reduce the problems that would need to be avoided.
-
-I think using /delete-property/ would be unwise, properties shouldn't be
-in the common dtsi if they are not, in fact, common.
-
-> I have done all the testing I can do with hardware I have. As-is it's
-> just like I wrote, we'll have to solicit some testing feedback on that
-> and wait to learn what this does for the other boards.
-
-I'd kinda be inclined to apply this diff, with a better commit message,
-shortly after -rc1, unless someone comes forward with a justification
-for it being there on the vf2. I figure it's only in the common dtsi
-because it was not problematic until now cos noone tried to use the sdio
-aspect.
-
-> Aside, anyone want to chime in what is the utility of 'no-sdio'
-> property, how do you know from a schematic if it is appropriate, can it
-> be simply dropped as I suggest for JH7110 boards?
-
-My (limited) understanding, mostly from looking at the caps in
-mmc/host.h because I find the binding description obtuse, is that these
-properties (no-sdio and no-mmc) block the use of commands that would
-cause a device to malfunction. They don't appear to be required at all just
-because the board layout doesn't support these types of devices.
-
-Conor.
-
---vFc/GG+76alb8wgR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaIPIpgAKCRB4tDGHoIJi
-0mBcAQD+A96JAVhCxAjxPYXSaFPQqB2LxWezej/NuFO0RC1CHwEAy2m06gpZsX5l
-9XUN6qKUEUe8ijVeBcUwf9m8mN75SQI=
-=EhER
------END PGP SIGNATURE-----
-
---vFc/GG+76alb8wgR--
+> 
+> Nicolin
 
