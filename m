@@ -1,207 +1,375 @@
-Return-Path: <linux-kernel+bounces-745246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6728DB1172D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:43:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C52B11724
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106325670CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C0C188D31F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7D423C4FF;
-	Fri, 25 Jul 2025 03:42:42 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14E1239E77;
+	Fri, 25 Jul 2025 03:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aTJlMP3g"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2088.outbound.protection.outlook.com [40.107.237.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4331922F16E;
-	Fri, 25 Jul 2025 03:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753414962; cv=none; b=iDE79asoQFr5dX6g7fnnDG8DwSssJDZx6YW1sWhQibRDdE3xOJyCCq3qzstveKAieC2Cw+5LMdCdBfc8aLjkKpTUMh8bd96CuHX5DVbcrH1BXC9cN78IXAxQkDk4eOUeYnl5ael9fgMzpPuH73YAD/+pfV7TB/i09LvZI51rcRk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753414962; c=relaxed/simple;
-	bh=KsadSjeTXuC0tvA9XZtW9NEyqKfUsGTFSnPcwTZFjmk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LwxczkwWxM5AuxsnFQ5V93YxiyuYcIfWDw1+ah8fvVve0sTJIGM4b/0rEpNP5YtTXFJ8ZOFDWWtpJ1iRio7VeAJBesBCmcReLr+EOxtNl0O3C8be6jEXj8MOlTWipGLAYygOLVbeOl76rP3upqUwIYDNlB/7BWRofdw/KX8/oic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bpDGR3vRnzKHLxX;
-	Fri, 25 Jul 2025 11:42:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4FD681A0F86;
-	Fri, 25 Jul 2025 11:42:38 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3QBEr_YJoP+2eBQ--.51659S7;
-	Fri, 25 Jul 2025 11:42:38 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH 3/3] md: factor out a helper add_spare()
-Date: Fri, 25 Jul 2025 11:36:05 +0800
-Message-Id: <20250725033605.3147379-4-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250725033605.3147379-1-yukuai1@huaweicloud.com>
-References: <20250725033605.3147379-1-yukuai1@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E932E3718;
+	Fri, 25 Jul 2025 03:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753414746; cv=fail; b=kgIj+xkQpW2Hi5uAp5wOsIdmHUhYfXGAsxvL5BWJng4/mgZ4REZRYi4EFwj7ID9McY3cDTUBggxpOYkd5mR67tsi0aVtY6nHOXZNn7SdlX+N8umY0GfwP0xUG9i0NPHvnZtUd1D+bQvVWu2Zx6v6xrYiAEe7esFYU/wtCt2/3lQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753414746; c=relaxed/simple;
+	bh=uPlMycLTqJ/3+U1jNE8+OR2vv1kRXmGYPpg++niknIQ=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=bVAR6vmulGhFMlea5uZYCGqPh5Xyze17IpImCHlYQ0kH6Q8ctvko3fHloQAlfrw4+HcqtB+9b/tiwC1ET8DiBupCpebczwtenqWrma7ZFoxYwmDByRlGi71B7p/myrANAutkWailc6dwE4oBA0v4Ran+jHQNO18g0fpAX4yFzjs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aTJlMP3g; arc=fail smtp.client-ip=40.107.237.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NLD3s04ZfJLnRzoCenlX+2mwfxaCNjkNV5My8KmjGKBBvGdXDSygCjC+yZf23Zodl3JMUigIHd+4+x4Oi3c3DaJalGa+3b6xi4nIO7d8yM0xi17sF1SQiTD459EEVRfPQAlTB/WJadXBLLu29BlBnFwLKSpeEQ9J+a4+yvtSQxvrwQM0GlawAhoS25usoE3qgfvxau0lvsula0Ca/fDTMbNejfwHSWQjFvhDaOZ3LCZrcJyy5TGxXxaZ0lStkrIK+kAb99++59NWGpdPU4/eiGChrt6Xg4CsJ/+j+difgHux9vkP4/9UfP5WhShCnD6G34gkRd21xdFknUYCMegsuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=59TvI6tj6GC414ET551NlbhQTfsDprNIfdv3eKSnQpA=;
+ b=vz1RJjo6+lPeR+BGBCd/Qgucg0HpJ9cQqQymwzG2vNnbQL/yrHvnWz7EyBw+4jpEp3KhW2/S57nLDz7n/UGpdE7U2aVsBKmonj3VjHSdY1TtdTwCkqoZ4sK66PreqI4MfoB/cyojmZHwQ8uFZNDVayhKT+Xn6wyg3D8NFL0cdGbAys/AzZixC+x3uK2zcKEkQnt7AKnW+Uz2CRZ8cqUFOJ84aKL8JzOfm/xiZGQi8GCZTcWCq7kbltdeCI4LyVjpeHoHw8jVo5V0VmJjQkxrxnGevM+dvcQbhb9PSsJDcpQzp6dtDtUvv2ISKnRabMbkU1DNd3LygsEsttOLmFa2tA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=59TvI6tj6GC414ET551NlbhQTfsDprNIfdv3eKSnQpA=;
+ b=aTJlMP3gQbPpCw3DQ69DhM0uzKUBO7bEdYylTg+4UWHLMcQ5jvLGkOso0eG0SrNHlgPYlcIGrjj/Ym89S5ityybZpQaAqGIel9d14qoou1e7dnKOFF03CrznOfNo3UCffjucG+CdYWWMzEmc1AY3gbAb7nJINw5JLvGrZhsF5Cs5s6aIN2V83ORpeEb12nK4q+c9ImwPr7pg0QpawnQdr8rn7wHCG0fwA8jn88pK6jO1SzVYsOI9r7cYXLw9ciSivQO+BNO9vYsP4e0t+klFKhRpBanH6BcpS/yyRab7spGIKr/UlZtZOnzQ1JxMGMNGxvJU7UVgTPORU2HhnKF2lw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CY1PR12MB9603.namprd12.prod.outlook.com (2603:10b6:930:108::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Fri, 25 Jul
+ 2025 03:39:01 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8964.019; Fri, 25 Jul 2025
+ 03:39:01 +0000
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 25 Jul 2025 12:38:57 +0900
+Message-Id: <DBKTNE4OF0IB.3C32NVHQ9UKQ3@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH 1/3] rust: add `num` module with `PowerOfTwo` type
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250620-num-v1-0-7ec3d3fb06c9@nvidia.com>
+ <20250620-num-v1-1-7ec3d3fb06c9@nvidia.com>
+ <DASWS1A63LYM.399CKUDL4Z7UC@kernel.org>
+In-Reply-To: <DASWS1A63LYM.399CKUDL4Z7UC@kernel.org>
+X-ClientProxiedBy: TYCP286CA0234.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c7::6) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3QBEr_YJoP+2eBQ--.51659S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr4rtFW7CF13Cr48Xw1xuFg_yoWrGryDpa
-	1ft3W5Gr4UArWfua1DWFyDGa43Gw18WrZ7try3ua4fAwnIkr1kK3WrXFyUAry5Aa9Y9F43
-	Aw4Utr4UCr18KF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWUAVWUtw
-	CF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUAVWUtwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
-	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVF
-	xhVjvjDU0xZFpf9x0JU9J5rUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY1PR12MB9603:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9ecf53fb-bddf-44e7-bedb-08ddcb2ccb2e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|10070799003|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?azVZaVh3c2I1VWtZZytwT2p1N1lTVzVINjVyMi9pSmp0K1lUN3BSQXRaSEZ0?=
+ =?utf-8?B?cUpZbHg4Z1I4MXp2ZU15L0hsSGEwcXV3R29hdVAveXlZbmZsWitaVVIveDhU?=
+ =?utf-8?B?eVcxeHVneEZHREtmejh0SDduZFJuVE0zeHFrZ2xCZ01DMjZ5V25pSUZNTHlp?=
+ =?utf-8?B?V3RnSHdueEJ6QkpDUSsxK0d0YUswUzdJU2YyampqN2MzTTVOTlExTmJlL1Bq?=
+ =?utf-8?B?MFhXRlplMlBxNCttZVMzYjVLdTU2eHZsTGIxbzJqdTZOVFhIV21NWHJDZnl1?=
+ =?utf-8?B?OTZQOVhsaldzQVlRTnBCa1JWRWxEY0gwNnJMcmxrc0QyRWoybnBqS1pITWZx?=
+ =?utf-8?B?MFFuUEk2NnZkT3JvMklJbktGa2c1eGhrY1VLRkxVUDRiZGpwUWpGL25YeERo?=
+ =?utf-8?B?L0lhRDdBcDR2K1QyL0loeno4TEk3UFhJOW5OZFVyN2ZyVTJCUU1vSlZQcVRJ?=
+ =?utf-8?B?TVBkb1RHWmpJLzArcGZNalkwWko1THlQWlBrYytqQ0xhQ3N1L1p0SWtnRlRF?=
+ =?utf-8?B?MXoybi9wK3JxNnJySHJHejV0QzN0MUVQdkRPQ1N2bG5hK25uSEM1a2NtbUxS?=
+ =?utf-8?B?NktlYURQY0txeG56QTZpMWJwY1lQQytDN2RkZ0hYNCt4NnVyTE9DVTJjOTZ4?=
+ =?utf-8?B?b0FTenRRQjgrcE5FdUVzbWZqSnhHbHR0NWdZUDNWcllteVBoQlJxa0g2S0Ux?=
+ =?utf-8?B?WlE0T1RadFRHYzRpWHhhalZkUG50bkh4MVZiZktkM0ZPZ1hlYzdTYW51SkJY?=
+ =?utf-8?B?a0UyS3NTeHZoNmpUTnJrbWhtQ3hZOEgzc0FIaTRudzRWanBKcVhwWHY5cFRp?=
+ =?utf-8?B?cElIenhjZGJsWElvQnV1cDlPbU5POUlJdEdPNUE3S013R0UyWHExMWw4UTQz?=
+ =?utf-8?B?QkNnU01ORXNZaGZBdk16Zjl5aDFycUFIeDNxWmxnanZ4dEIzU2lib2UzOTha?=
+ =?utf-8?B?THF0bEpMZ0RWVTZuTjYvcDlYV1A3RStIK2NHdEc4OG54dDc4VjNoMHM2d2Iy?=
+ =?utf-8?B?TzdBWWJHNUJXdHFrVEhrTUZBRHFBSnhxNUlFUFlVS3R5ZG1pNGdDenZqQlFn?=
+ =?utf-8?B?OFI4ajNDZDNGc2srSHBoOVhLUnJJdmR6dXNYNlZUVzBScWdRZldoR2k1UDlS?=
+ =?utf-8?B?ZDByR0tHT1VNMG9ITDNZYXBGY1YyZDlMT3ZjdmIzajYwMFN0ZVVSaWsrSzZ1?=
+ =?utf-8?B?VHJmK3pWVE1CUCtVbnVjVUt0a0xFbmdpeGlQajBnWFBsYW43M09MSVVheTgw?=
+ =?utf-8?B?MnlHa0lEV05SYVNXT3VNTmlpV29ZUGxRTjNRUS9jMjVVSE9RUWlkNHJpQ2R2?=
+ =?utf-8?B?YXRldDBXMUFvV3VEbk5QbnRDaVYwdS9LaG0vYUcybzNuR0cwWGtZQ3BVSndp?=
+ =?utf-8?B?WWhRaElTcDF4RC9nMGdPcDZrSnNqVHQyL3h1bXVDZjc2akxJUVh4MC93U0w0?=
+ =?utf-8?B?ZXhVdE8yeFd6SGkrOWtDL3lwRWJXYU1BV3RJR2VySnVPbDY2c2N5L1pnaDQz?=
+ =?utf-8?B?ZEYyL01kRjlhdVNkQjRaWWc1QWp3eHNGbWcwb1JqMGMzVXJCZFJTYmE0WDZZ?=
+ =?utf-8?B?ejdXRm1HbnFBcWhETWxNZXFja0lPUmhMY1FXYlRuOHdmSjJZQ0F5cllOZlhO?=
+ =?utf-8?B?TXJBaWdUb0lXT1RxRzZGbDlhUHVvU0xuL01tL3Y5VHJkMjVRV241eW52enpG?=
+ =?utf-8?B?S2I3TGVBazYyZnJZNDhjeVh4L1dSdDNjZGxWVUxzc3UvOUVXZmN1L2hIZUpa?=
+ =?utf-8?B?c2VsRGZUQXJERWN0QWp3NVNieG4xMkNtVkJqdnM0OEZQeFJoYXBLSTlmMGJY?=
+ =?utf-8?B?ZTlhRmNzdTFUbk00K2dLZWZnZWY3YjAxMTdudHBXcFNXakc2Unc3bFpMS1RQ?=
+ =?utf-8?B?UWZRYnE2TnV6T3BDZllRTTc3K3R2dU1MSHZKMUJOeTk1SjRUYUU0RFJ1OVRZ?=
+ =?utf-8?B?eXVVNm1SYXdmSEFjS2o2NGdXNlhzejZnQUw5RGtVUm4wdHd1eWd5djUwc0Yv?=
+ =?utf-8?B?VkNJSklTR3hRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(10070799003)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bmcvNHczOXNDaTQ0aVNyRGxjNlhUc0NyTEd3QmZwTEYvSzJjWjhxY1hwZ240?=
+ =?utf-8?B?cHByWkJaZGVvNTF5cHNYY3p2QU0zTVNBdjd3UFVZZEJnUitXLzFrL25hYy9C?=
+ =?utf-8?B?ekcyNG5HMlloTzdRQWlyNnpGUldtSzNJTDFScHk0N3RTczMwRWY0OXQrT2ZD?=
+ =?utf-8?B?M3phWm9IalFLUUdCellKbjRPMkdZMFZGUlRmcGZBdVozd253SmVZY21rRUlp?=
+ =?utf-8?B?eXVtdStST2xOSy9CbnljdEdDQUE1eVJ6TGJnOGpsVEdtUXk0NXBFaldyT0dz?=
+ =?utf-8?B?SThJZjJHY0U5clJjV3pLMXpIMDNQYWtnRmQyMlRMRGpzS2FSMU1RK3FSZm1m?=
+ =?utf-8?B?QjN1VmJiK0xDUklPQ2JMMGlJaDI2U1RYRGIweGhpZ09MTUlkc2lMT1lzMEhj?=
+ =?utf-8?B?YmJBQ3Q5ck9KY2tOWGxncCsybzdNaVlYUW9wS1lqT09RenM4S3pwS0FjWC95?=
+ =?utf-8?B?aVlhOWxFRTZHZjRiWk5sdXArMUh5cjNHVmZWRVNiMDc4M24vYlFUTHR2cDFL?=
+ =?utf-8?B?WkErdEo3QTNKYlgzMDllL09MNmkrSFRReU9la0dTZ2h4NHdTN01BVUZaL1lR?=
+ =?utf-8?B?aytWWjE5a1Voc21kSjhxanljNGMzSVhuUmZUaWtVV2llenA1Ly92Q25yNCtF?=
+ =?utf-8?B?S000aDl4SGc4eUpDNjI2ZXFxM0RiRyt2WStiem1SWWU3aTRlUjFqTkRLOGV5?=
+ =?utf-8?B?NlVDcDZkSjBCN3pGNG1pdnJKdXlKcE5uTDE2VkdDMHFFZHRiNE9iWENGVGFw?=
+ =?utf-8?B?MTRMaEg0alZqV0twczI1UUw1QXIrNUVwZEQ1dk9MeXdkWGJNWHE1N0IrSzht?=
+ =?utf-8?B?bUM4MGk2bkEzRzJacm90SFlGVkpFVDdzZ3puS3Y4Um8xdkdUdVBFWFFUaXRE?=
+ =?utf-8?B?bUprdng2RWpROEZUdEhLVlJQWTFEODQ0anFPdjMxZlZ6b3NaZHhQL0pMMGtC?=
+ =?utf-8?B?SEw1Z2tJbEJ5T2pLdVQzbmlyNkR6VVVqQlRuKzBzR1VJNGVwSFQ3QjNMekda?=
+ =?utf-8?B?NmVGVStjNHBnMlRjK3NEUlVPcWxQdmhXVnJ0RkVTSDhGZDFpemFxdlU4bks1?=
+ =?utf-8?B?UkdEZExQd1JHN1JHYVluYU1sb3lkdFJURHg2RTZZR2pFb0psMUxaVUh4dm1Z?=
+ =?utf-8?B?RjIyMUlEWkNFU05VaG96aHpUMEJuYTBFSVBBdGJ4M0RMdlhHaXB1R0lXa0J4?=
+ =?utf-8?B?VWw2QWlUa2ZHcnFtSExmcENyVURSYXhxUGJaOHZwYVpRNE8vUm95V1h2a1Jv?=
+ =?utf-8?B?Q3BTb3hxY1F0SkZOeWZqOGx4aDVyQzlIVUtmNmlsZUtVY1ltazVzOXFEYUUy?=
+ =?utf-8?B?aDNYbUwxOVQvRlkrMllqMEp1eVlEVnZ3SFNBL0tSckZvVDc0YTBuZVRPTks1?=
+ =?utf-8?B?bG5aNnNGWEVwK2w0ZUlERW9DUGp0d0kzZlFCMGxXRU5hVGRuVzg2MHl1alA4?=
+ =?utf-8?B?MUNJZDVLQXRDVTcxQXM0ZFlPdER4eUxENlF5ZDhORzNoQzVVUCtFSTRHWU4w?=
+ =?utf-8?B?L2MreEVQeGdKaFF2dzBJRmlPbFhXT1ZKbStGbVNncXIxdlRpQlhQVmg0YTM1?=
+ =?utf-8?B?c3k4bjB3QVpvVWZVRXBwZWx1MFUxS3FvdjUrNHBXdVhxOG54UDZSSjMyL21h?=
+ =?utf-8?B?VkVPNVNBdEtsMzBpcVQzQURzSDBnMG1ua2tHRUVhU3hLOGZ4U01COFFVMWtW?=
+ =?utf-8?B?UzRlRUZjT3BleW1pZ3R2YmVadTN1STR6Y0t5Tkg5R29XNUluc0ZBcmkrK0p1?=
+ =?utf-8?B?T1JFbDZCNzhkeGJYc2xMa3pKek1haHZLS3o5a3JVN0xTSWJhSjNtTGRIY3Jh?=
+ =?utf-8?B?Uy9WTEF3YlYyaHNQSGQzb0cwQzJVSEk5ZTBDL292MDlNVzZwUU5FVHlBRUQw?=
+ =?utf-8?B?bXlBdTlMUXhlSnFyRlhCQ2xoT1FTTnlWMnJkOU9BbGQ0MWtSZ1NBOFlaN2R3?=
+ =?utf-8?B?bHhQU1VYZXdKckdkRytSTkwxMjlVbStHOEV5OThtamxkdkZhOWFvdk4yaEpK?=
+ =?utf-8?B?cXdtZEx0V1p0MThKUWFOWmk4aUkwOXl1ZlhGMXlMeE9tcFFIUWRGNFg1T2FI?=
+ =?utf-8?B?bkdBdWlncnZRVUx5UkFlWDh1ZmFJWHJPMlRzZDBuZnU4OW1PdjZHRTU2eTEy?=
+ =?utf-8?B?VlozNDY4RXNmZFFYbVk0akJLc2oxY3duaHNaZXhNTHg5M3hHWmhjazhYMUhF?=
+ =?utf-8?Q?in53PSZxZA9A1PM5kDSYR5F30YQUJtcGj+GsNb/St8Qc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ecf53fb-bddf-44e7-bedb-08ddcb2ccb2e
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 03:39:00.8373
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QFQHNNPEkAKcJZKo64rS3H04DtXbREaAVeHkeZ6weV+LT++fRPyZ6aji4o0xPjXyoi9/jfJpqMl6Kwsg2PAL+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9603
 
-From: Yu Kuai <yukuai3@huawei.com>
+Hi Benno,
 
-md-cluster will call remove_and_add_spares() to activate spare, factor out
-a helper add_spare() to do this directly and make code cleaner.
+Sorry, took some time to come back to this!
 
-Also remove the parameter 'this' for remove_and_add_spares(), since all
-callers pass in NULL now.
+On Sun Jun 22, 2025 at 5:11 PM JST, Benno Lossin wrote:
+> On Fri Jun 20, 2025 at 3:14 PM CEST, Alexandre Courbot wrote:
+>> +/// An unsigned integer which is guaranteed to be a power of 2.
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// The stored value is guaranteed to be a power of two.
+>> +#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+>> +#[repr(transparent)]
+>> +pub struct PowerOfTwo<T>(T);
+>> +
+>> +macro_rules! power_of_two_impl {
+>> +    ($($t:ty),+) =3D> {
+>> +        $(
+>> +            impl PowerOfTwo<$t> {
+>
+> I tried to use this type in a doctest like this:
+>
+>     use kernel::num::PowerOfTwo;
+>   =20
+>     fn new(x: usize) -> PowerOfTwo<usize> {
+>         PowerOfTwo::new(1 << x)
+>     }
+>
+> And it doesn't compile :(
+>
+>     error[E0034]: multiple applicable items in scope
+>         --> rust/doctests_kernel_generated.rs:4930:17
+>          |
+>     4930 |     PowerOfTwo::new(1 << x)
+>          |                 ^^^ multiple `new` found
+>          |
+>          =3D note: candidate #1 is defined in an impl for the type `Power=
+OfTwo<u128>`
+>          =3D note: candidate #2 is defined in an impl for the type `Power=
+OfTwo<u16>`
+>          =3D note: candidate #3 is defined in an impl for the type `Power=
+OfTwo<u32>`
+>          =3D note: candidate #4 is defined in an impl for the type `Power=
+OfTwo<u64>`
+>          =3D note: and 2 others
+>    =20
+>     error: aborting due to 1 previous error
+>
+> The problem is that the function `new` exists 6 times for each of the
+> integer types. You can write `PowerOfTwo::<usize>::new()` instead, but
+> that's annoying...
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/md.c | 64 +++++++++++++++++++++++++++----------------------
- 1 file changed, 35 insertions(+), 29 deletions(-)
+This should go away as we switch to the non-generic `Alignment` type
+thankfully.
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index aea1bf7acf41..841effe742cf 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -96,8 +96,6 @@ static struct workqueue_struct *md_wq;
- static struct workqueue_struct *md_misc_wq;
- struct workqueue_struct *md_bitmap_wq;
- 
--static int remove_and_add_spares(struct mddev *mddev,
--				 struct md_rdev *this);
- static void remove_spare(struct md_rdev *rdev, bool recovery);
- static void mddev_detach(struct mddev *mddev);
- static void export_rdev(struct md_rdev *rdev, struct mddev *mddev);
-@@ -9490,36 +9488,44 @@ static void remove_spares(struct mddev *mddev)
- 		remove_spare(rdev, true);
- }
- 
--static int remove_and_add_spares(struct mddev *mddev,
--				 struct md_rdev *this)
-+static bool add_spare(struct md_rdev *rdev, bool recovery)
-+{
-+	struct mddev *mddev = rdev->mddev;
-+	bool spare;
-+
-+	/* Mustn't add devices when resync thread is running */
-+	if (!recovery && test_bit(MD_RECOVERY_RUNNING, &mddev->recovery))
-+		return false;
-+
-+	spare = rdev_is_spare(rdev);
-+	if (!rdev_addable(rdev))
-+		return spare;
-+
-+	if (!test_bit(Journal, &rdev->flags))
-+		rdev->recovery_offset = 0;
-+
-+	if (mddev->pers->hot_add_disk(mddev, rdev) != 0)
-+		return spare;
-+
-+	/* failure here is OK */
-+	sysfs_link_rdev(mddev, rdev);
-+	if (!test_bit(Journal, &rdev->flags))
-+		spare = true;
-+
-+	md_new_event();
-+	set_bit(MD_SB_CHANGE_DEVS, &mddev->sb_flags);
-+	return spare;
-+}
-+
-+static int remove_and_add_spares(struct mddev *mddev)
- {
- 	struct md_rdev *rdev;
- 	int spares = 0;
- 
--	if (this && test_bit(MD_RECOVERY_RUNNING, &mddev->recovery))
--		/* Mustn't remove devices when resync thread is running */
--		return 0;
--
- 	remove_spares(mddev);
--
--	rdev_for_each(rdev, mddev) {
--		if (this && this != rdev)
--			continue;
--		if (rdev_is_spare(rdev))
-+	rdev_for_each(rdev, mddev)
-+		if (add_spare(rdev, true))
- 			spares++;
--		if (!rdev_addable(rdev))
--			continue;
--		if (!test_bit(Journal, &rdev->flags))
--			rdev->recovery_offset = 0;
--		if (mddev->pers->hot_add_disk(mddev, rdev) == 0) {
--			/* failure here is OK */
--			sysfs_link_rdev(mddev, rdev);
--			if (!test_bit(Journal, &rdev->flags))
--				spares++;
--			md_new_event();
--			set_bit(MD_SB_CHANGE_DEVS, &mddev->sb_flags);
--		}
--	}
- 
- 	return spares;
- }
-@@ -9550,7 +9556,7 @@ static bool md_choose_sync_action(struct mddev *mddev, int *spares)
- 	 * also removed and re-added, to allow the personality to fail the
- 	 * re-add.
- 	 */
--	*spares = remove_and_add_spares(mddev, NULL);
-+	*spares = remove_and_add_spares(mddev);
- 	if (*spares) {
- 		clear_bit(MD_RECOVERY_SYNC, &mddev->recovery);
- 		clear_bit(MD_RECOVERY_CHECK, &mddev->recovery);
-@@ -9595,7 +9601,7 @@ static void md_start_sync(struct work_struct *ws)
- 		 * As we only add devices that are already in-sync, we can
- 		 * activate the spares immediately.
- 		 */
--		remove_and_add_spares(mddev, NULL);
-+		remove_and_add_spares(mddev);
- 		goto not_running;
- 	}
- 
-@@ -10118,7 +10124,7 @@ static void check_sb_changes(struct mddev *mddev, struct md_rdev *rdev)
- 					rdev2->saved_raid_disk = -1;
- 				else
- 					rdev2->saved_raid_disk = role;
--				ret = remove_and_add_spares(mddev, rdev2);
-+				ret = add_spare(rdev2, false);
- 				pr_info("Activated spare: %pg\n",
- 					rdev2->bdev);
- 				/* wakeup mddev->thread here, so array could
--- 
-2.39.2
+>
+> We probably need an `Integer` trait and then do
+>
+>     impl<I: Integer> PowerOfTwo<I> {
+>         pub const fn new(value: I) -> Self;
+>     }
+>
+>> +                /// Validates that `v` is a power of two at build-time,=
+ and returns it wrapped into
+>> +                /// [`PowerOfTwo`].
+>> +                ///
+>> +                /// A build error is triggered if `v` cannot be asserte=
+d to be a power of two.
+>> +                ///
+>> +                /// # Examples
+>> +                ///
+>> +                /// ```
+>> +                /// use kernel::num::PowerOfTwo;
+>> +                ///
+>> +                #[doc =3D concat!("let v =3D PowerOfTwo::<", stringify!=
+($t), ">::new(16);")]
+>> +                /// assert_eq!(v.value(), 16);
+>> +                /// ```
+>> +                #[inline(always)]
+>> +                pub const fn new(v: $t) -> Self {
+>> +                    build_assert!(v.count_ones() =3D=3D 1);
+>
+> Why not `v.is_power_of_two()`?
 
+Why not indeed. :) Fixed.
+
+>
+>> +                    Self(v)
+>
+> Missing `// INVARIANT` comment.
+
+Added (and in other places as well).
+
+>
+>> +                }
+>> +
+>> +                /// Validates that `v` is a power of two at runtime, an=
+d returns it wrapped into
+>> +                /// [`PowerOfTwo`].
+>> +                ///
+>> +                /// [`None`] is returned if `v` was not a power of two.
+>> +                ///
+>> +                /// # Examples
+>> +                ///
+>> +                /// ```
+>> +                /// use kernel::num::PowerOfTwo;
+>> +                ///
+>> +                #[doc =3D concat!(
+>> +                    "assert_eq!(PowerOfTwo::<",
+>> +                    stringify!($t),
+>> +                    ">::try_new(16), Some(PowerOfTwo::<",
+>> +                    stringify!($t),
+>> +                    ">::new(16)));"
+>> +                )]
+>> +                #[doc =3D concat!(
+>> +                    "assert_eq!(PowerOfTwo::<",
+>> +                    stringify!($t),
+>> +                    ">::try_new(15), None);"
+>> +                )]
+>> +                /// ```
+>> +                #[inline(always)]
+>> +                pub const fn try_new(v: $t) -> Option<Self> {
+>
+> Maybe `new_checked` is a better name, since it doesn't return a result?
+
+Definitely.
+
+>
+>> +                    match v.count_ones() {
+>
+> Why not `is_power_of_two()`?
+
+Fixed, thanks.
+
+>
+>> +                        1 =3D> Some(Self(v)),
+>
+> Missing `// INVARIANT` comment.
+>
+>> +                        _ =3D> None,
+>> +                    }
+>> +                }
+>> +
+>> +                /// Returns the value of this instance.
+>> +                ///
+>> +                /// It is guaranteed to be a power of two.
+>> +                ///
+>> +                /// # Examples
+>> +                ///
+>> +                /// ```
+>> +                /// use kernel::num::PowerOfTwo;
+>> +                ///
+>> +                #[doc =3D concat!("let v =3D PowerOfTwo::<", stringify!=
+($t), ">::new(16);")]
+>> +                /// assert_eq!(v.value(), 16);
+>> +                /// ```
+>> +                #[inline(always)]
+>> +                pub const fn value(self) -> $t {
+>> +                    self.0
+>
+> Let's add:
+>
+>     if !self.0.is_power_of_two() {
+>         core::hint::unreachable_unchecked()
+>     }
+>     self.0
+
+Sure. Is it to enable compiler optimizations by making assumptions about
+the returned value?
+
+>
+>> +                }
+>> +
+>> +                /// Returns the mask corresponding to `self.value() - 1=
+`.
+>> +                ///
+>> +                /// # Examples
+>> +                ///
+>> +                /// ```
+>> +                /// use kernel::num::PowerOfTwo;
+>> +                ///
+>> +                #[doc =3D concat!("let v =3D PowerOfTwo::<", stringify!=
+($t), ">::new(0x10);")]
+>> +                /// assert_eq!(v.mask(), 0xf);
+>> +                /// ```
+>> +                #[inline(always)]
+>> +                pub const fn mask(self) -> $t {
+>> +                    self.0.wrapping_sub(1)
+>
+> Then use `self.value().wrapping_sub(1)` here instead to also propagate
+> the information.
+
+Ack.
 
