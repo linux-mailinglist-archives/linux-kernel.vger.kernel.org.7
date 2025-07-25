@@ -1,149 +1,209 @@
-Return-Path: <linux-kernel+bounces-745282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5446B117D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:16:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC24AB117CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8C801CE2896
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:16:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9022E3A8B3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37A81DD0D4;
-	Fri, 25 Jul 2025 05:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F2024167F;
+	Fri, 25 Jul 2025 05:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Gff68kFJ"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="xbeqNasq"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011043.outbound.protection.outlook.com [52.101.70.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21E229A2
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753420575; cv=none; b=CEADMXp9Vtd+QfoCny8LM3i430OF+NHWhjAvdagbA4OOzaa01ICWPv7TL/xOoCej9UFp00Amh8cFdLT0MGCoiJc5EbqoK4hl457v2+lRaF0PcGQLLDQkiFsaIMrYmf9nEu6SaFD2cxrjLr0pX7jR0lspqXyfkyU2pihfJnqOlTY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753420575; c=relaxed/simple;
-	bh=u9Po8QJ0SoeHzsv7ehzf9BPDQrZxUb5H+lUg8jT0cwM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mRiu9QrMxDgXBfy5ildhOOPCwAQMpa5d44yWWNzQYZCMrG/pi7zG5elNLVhHFo1f5300lWTttKEY9IAi3fCdW+jh8wzEHY7ifx5eIavvmUHnNS/ss7pc3kyPJ3RR1xH59Iz0eSffRhk4/MQjGVHHFamr2sDxDqYPoafSAxsPZ40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Gff68kFJ; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 772e3086691611f0b33aeb1e7f16c2b6-20250725
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=46G8DD90VVrhpEQm7Mku51SwaoXM/jFS2E0FifwksX4=;
-	b=Gff68kFJapmJYc1HJaAaIb2H6p55MIXAlkoUokMjyuvf2WMs1ies4gkkUfrr86bbec0LBCpNpdlSqzBvJbE+kLxlRm0Uo0vUITNoXU/rbePsr9jPGCS9XN74GSYgxPp7nTc6w1YazN7s6sSy99n4ZWZtkyMMWnpvfbGvcnYmWiM=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.2,REQID:d2e55737-b199-420a-b213-72b9c61e06f1,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:9eb4ff7,CLOUDID:e94a3c50-93b9-417a-b51d-915a29f1620f,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102,TC:nil,Content:0|50,EDM
-	:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
-	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 772e3086691611f0b33aeb1e7f16c2b6-20250725
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <akash.tyagi@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1036085591; Fri, 25 Jul 2025 13:16:05 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 25 Jul 2025 13:16:04 +0800
-Received: from mtisdccf01.mediatek.inc (10.18.1.155) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 25 Jul 2025 13:16:02 +0800
-From: akash.tyagi <akash.tyagi@mediatek.com>
-To: <david@redhat.com>
-CC: <akash.tyagi@mediatek.com>, <akpm@linux-foundation.org>, <vbabka@suse.cz>,
-	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
-	<surenb@google.com>, <mhocko@suse.com>, <jackmanb@google.com>,
-	<hannes@cmpxchg.org>, <ziy@nvidia.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-	<chinwen.chang@mediatek.com>
-Subject: Re: [RFC PATCH] mm/page_alloc: Add PCP list for THP CMA
-Date: Fri, 25 Jul 2025 10:38:10 +0530
-Message-ID: <20250725050810.1164957-1-akash.tyagi@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <67a54f31-e568-427a-8fc8-9791fd34e11b@redhat.com>
-References: <67a54f31-e568-427a-8fc8-9791fd34e11b@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E9623D287
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753420266; cv=fail; b=qBjmEJ7AsAL1PmSZU6swjxbKL3LkXIGYlfQCvlAcjrUl4u6VBy6UhrM8q/FEk6b0/b+bW5gfBY1JYhOLCqPJYEiHkiBbZJDePOcq5ldLuHLR1Jl2FLLiHMYsQYl7BjAndSeRsBkO54I72slZbkWJ0+wr1RKsaJRdcJO7cZrXb6M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753420266; c=relaxed/simple;
+	bh=rmIF4MszWBB9esekWHRjfY5kK7F6p+w5vmqSDypE3TQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Zfl4rIAFJi1CNxCWtsAVAlNPG2lttaMYtwAgO4h46WtYBTAlJu+QO7NWixW0uEgHeQKb+w9IxKhXD0JbBMoLeZs4GI2w2qFwJG68e91BQNF35BR+xj9D3VVX+blB6YQIoYqu8CyC+jjDocBI8BK9jhvwzIFisQe88SAm2NDnVkY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=xbeqNasq; arc=fail smtp.client-ip=52.101.70.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wkvMfAbA2AyhzTSRsnRegUQf/IvnGKvekhkbmAMmwlemIWwunQaW9EN4+tVqVr2xZ3SToaJbLrxdDvQxFS+0lzQy+Xv1n4MdDhdPGqV+4050mE484NCv5sQSN8sWzMJdjo6+CM1ZziR2D3IUP3dpUiTtXTHfjbrAKGww1u0fnuDqjAslL3BHVqjOQIm3ttTRMruKtb/s7bji/G9pyVV6MYvKBBHxJm6X8Fq96hatjwkhrCSORHE8c9lQR2z6pj+qHx5j2kO3zYuXn+ptp0oyAuVJyU5Jesfh8PB0ftGEQNsDW17wrjzZjAi7vuDfwqS4tqs5cl5fBGsGQ01v8gTQBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xf+euri3PXdj/odpV/Fc8xke4ort1SVEH0aP83kZYSQ=;
+ b=gmBkj5DOKPgL2edkUO/CfcCrFEYMUv1xGanL97GdHjkYIYTkS4ua8/qCGJGvKVvzyqYNtYPXwLHayPHrfB4xjO8iynPLcsiVVf6ktAIK8A7zXXWC8/pf7ddSU0bg9jIU0W9aJtctlEOhKhvRXb54Eg8zpxCcyIaEZu7cWxTZjcEnrWzZBGI+RnI2wDuYpyNgbC27x1X9MO8KIomeo9LTxiYphbmaBTG0/EkH4wn/bJVWPDWrY8dxJgC5wsbvtLCU5YFfjmI/kHsocm6XR4fRPHxxfruaGEX6dCRVdCnXJ0/GCjGoXjGNxj4MniDlbXgEvi7i04au6Vuo5JTa3gCTnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xf+euri3PXdj/odpV/Fc8xke4ort1SVEH0aP83kZYSQ=;
+ b=xbeqNasqR1mPbHMlYI0Ik375dWHFEdH7WaFhipWT9SVxvNw7huzszlc5nHCFEoWWV2TxaAnA0EpPR9SrQ5DA/2jhzYzkZjsRT/pVJ6eKqUdZ59VH3ysySA4Zm/fnE0ZjZW6bBfO54tIdV3n8M/cgUiotlT+Gw0sVM2f/4wt6dRTOMrfqMpEuYzib4qZ1oZnytnN78Sarf2WiRx0oE+cqER5hFgUFT6Ie7rD+xWl861VQ9I/N7NY2W/7KeHfClNQq9bdKhpfyEBwRpXac5bDOnH/HD5smFmki1TvZQjup0dFqKuqmTxTvXxI2FBrxg5EToPx/dDZVw/G6hOkOYW7rnw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU2PR04MB8582.eurprd04.prod.outlook.com (2603:10a6:10:2d9::24)
+ by DU2PR04MB8808.eurprd04.prod.outlook.com (2603:10a6:10:2e3::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.23; Fri, 25 Jul
+ 2025 05:10:55 +0000
+Received: from DU2PR04MB8582.eurprd04.prod.outlook.com
+ ([fe80::c96e:12f1:67b7:ed74]) by DU2PR04MB8582.eurprd04.prod.outlook.com
+ ([fe80::c96e:12f1:67b7:ed74%3]) with mapi id 15.20.8964.023; Fri, 25 Jul 2025
+ 05:10:55 +0000
+Message-ID: <cc7b6fe7-db3f-46a8-ab79-90624ec8f4d0@oss.nxp.com>
+Date: Fri, 25 Jul 2025 08:10:52 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/20] clocksource/drivers/vf_pit: Rework the base address
+ usage
+Content-Language: en-GB
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
+Cc: S32@nxp.com, linux-kernel@vger.kernel.org
+References: <20250705160129.3688026-1-daniel.lezcano@linaro.org>
+ <20250705160129.3688026-4-daniel.lezcano@linaro.org>
+ <6b478a82-5087-44b6-b2e6-acb494fe1e22@oss.nxp.com>
+ <c51c45ef-e769-406f-ac2f-53c90bc78d8d@linaro.org>
+From: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
+In-Reply-To: <c51c45ef-e769-406f-ac2f-53c90bc78d8d@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4P189CA0021.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5db::12) To DU2PR04MB8582.eurprd04.prod.outlook.com
+ (2603:10a6:10:2d9::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8582:EE_|DU2PR04MB8808:EE_
+X-MS-Office365-Filtering-Correlation-Id: 514721e5-ea87-4c96-40f1-08ddcb39a221
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|19092799006|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Qlg4YU15dFpHaS9OQXVBdzJHN1NzclpLcERrUGtocTR1RFB3aXptQWhJNjZC?=
+ =?utf-8?B?K2tMdTZPUHNOU2NMSFVRQzV3eWRvNmh6K3FiL0wrRkhxUHVJenZnNEt3b2tn?=
+ =?utf-8?B?Mkl2VDZTSFFnamNKOGp4Q0VRcnE4OHdDOEZ0VzZQaWsyUFBGdkFnQ1llY1lE?=
+ =?utf-8?B?dHFiR2VjYWdvZk9EUFREMjhrMXcrUzNZbkZCQTQ0aVJPQkVLdTJSZFpJWG56?=
+ =?utf-8?B?QkhaQlZ5Y09obDAxSmZVSVo5aXJxRjJNcVRDMEF3ekMzUS9qN0J0c2lHYkhq?=
+ =?utf-8?B?dG5PTk5HeEZERFRjZVJzVTVldjJBTmlGeTZ3VGszWTFua1RYTmYwVEg4bkRN?=
+ =?utf-8?B?WGFqZjh6Sks3Yk1pakJWcEhFeXROdDRScmwzVjRxSDY1TFZNNklPYkh6UE5Z?=
+ =?utf-8?B?ZGZ1WVhrcTVTYTJmYVI5NzJiV1VuV0dFbUU4cTBUVjh2Q0xXaFBrRGpCcFlo?=
+ =?utf-8?B?YU5lbUV2OG9yTEZ5Q01LYnZ6Y282dlZqbUxySi9naXcwYjRUN1FrMmhYVnM2?=
+ =?utf-8?B?S2gwNjNTc3pOOUs5dVNjZDRxU2pHZzB3Z1pWOHpFelg0MkxSNXo5RndiNEFT?=
+ =?utf-8?B?VDRjU2RnL2JxOWdyVU9uSHVQY002ZWhtN3ZRQ0tpZ3ZHNTJvREx1cVN5dzdx?=
+ =?utf-8?B?eUxxKytCOVhIRG5YMU0xUHJJZHFEZ3g1RjNBRjhHejM5U1oyVjBNS2liS0tV?=
+ =?utf-8?B?WkxUUlNSMzVod05rOXEvKytGOHNwNjZ2UUpUMUppV2h4OG9HdXlXQ0tybExU?=
+ =?utf-8?B?cUZyM3BGbFVSeWEzNk5RVXZWRjF2dXhwSUJ1alBkbWlsU2Y0dGJ4ZkJPZFFs?=
+ =?utf-8?B?ZUdOc3U1aEdBU1lZL1lIVTBwd2UreVZCcEVTNElQYW5aTFkxVk53R1VCQzZO?=
+ =?utf-8?B?dDVBck1OMkw5VmFza24zUEY0Ly9nOUkrR3JBZWxLYzA2a0t3NWcxb24wcy9h?=
+ =?utf-8?B?OVBZZkxSbTJnT2JVbUlKMDAxVTh6TWlqVG1NRC93OUxjTDFYSEFhb0JmNU9t?=
+ =?utf-8?B?ZTBrOEZlSG1PNHZtSHAwOVZmRGxuVkN6S082N0llK0Q2ZnRCc3VRYkNWUXJG?=
+ =?utf-8?B?dHhLYlRxNVJSWVBienVLTDc1bUpNSlA2N3VQU1B4ZEJYb2ZrNlBvNU5tcjVG?=
+ =?utf-8?B?elg4c1VtTHErZ3IwQVc2d1ZINEEwZk1IQ3ZNQ3lrUFpHZnk5QmJPOG15MVhz?=
+ =?utf-8?B?M3paME1xK0pDMlYrMHg1QTF3dkZxWGNHalJMTGtDL1NtUmRTVHVyOTM1T3k3?=
+ =?utf-8?B?eDlCa0lZaENxeThkOWZiQldJdUdHdGdqS3pqWnRGdnhtYnB0TC9GdFJ0NW5m?=
+ =?utf-8?B?bXBBdnk2Sk9STlc2VU1ZNk1uUmFSTVluNzhnNG40NW9vZCtVZjh0YXEwS2xY?=
+ =?utf-8?B?TjVtOU5GL3dvdGMyUnV2QlpNaW9hWXBuZThiSkRrUjE3S0tiVzIzUzdYV2dK?=
+ =?utf-8?B?SmJpQmVwb0NITEVvcnArVjhOVEhXenRRTDUzVXROaElxa0VSTjJOS2lSNXp4?=
+ =?utf-8?B?Nms4K1ljTk8xa21uNzNwMEFraTRZSE5FcHFVM1EyRTlCV09FVGdwTTJGRnd4?=
+ =?utf-8?B?WFN5ekZDWUI1T1J4ZE8xbks5YitmSGN2NEpKL3p2MlBKWG5rbU51VW1WRnpt?=
+ =?utf-8?B?U21PY0Z3N0ZuZHNSdStlbzFtajhReDdGeU1LWkNoalRBWUdOcE9vUmRha0hW?=
+ =?utf-8?B?Tkdlby9UT2VEWU1SN1l2cnQ5Z0YybDNuZWZ0dmRjYU40dTUraVJhMUt6Uzhr?=
+ =?utf-8?B?TzcxWkp1eTMwcVFqWjc0L3B1dzBTV1NjOFNqNmMyODZ6ZFZyUTRtNEpDV2lH?=
+ =?utf-8?B?MFhWci9MSW15bUFWaVcwMTE5ckF6eHNpY2ZsRWUrQ0xnSVFNVjlvZGpJZmp0?=
+ =?utf-8?B?emZlalB0STkxNlBjOXQ4WENDSkhHQysyVEhPYS8xblpjZGgwRlpXc0UxWmh3?=
+ =?utf-8?Q?zX8SFNpAVGE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8582.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?U1pnTkZVbHRNQ2MvZkFzZ296OUdyVTZRbTdEZWN5cFZacjVNMEFnbHNtQkY1?=
+ =?utf-8?B?WGo3SktMNC9vUUlmTzBUZjdBVWdFVGRFN0RKNk1ZMWdUY1I3NHNNOWZIWGpP?=
+ =?utf-8?B?QzBVd0VXVDlZeURmZlZQdWJkZmkxM1Z0M3U0VjNIL0NocE91OWdSVlhTQ0No?=
+ =?utf-8?B?VUFPdHp6bkErRzMvaXpBbm53cHQrT1AxbzY2UmVOYkRTWEQ2Y1hXTnJDQ2Rj?=
+ =?utf-8?B?cHZTYmJ4bFpsMytWQW5xMGtlcGdhQUVobkVucTY1ZW96NkdLYVhpd3NYVWJq?=
+ =?utf-8?B?aG0ra285SUhMQnc1ODNBUXZqdk9PNHRiZ0RTL1RnMEtiY056Sml4c2JqVlNx?=
+ =?utf-8?B?UXZybTJqTllOUVBFQTE2M1JKSFVLdUtodlVyeWdFMlNjZk9pMEpKU3BiOGEw?=
+ =?utf-8?B?S2RQU1VqcmVvR0QwUjRZc2F5VGNkVmw2ZWM3cS96OU9aWkl1UW05WExWTzlJ?=
+ =?utf-8?B?ZDdETGhQVHNLTW00WEZtMXBHZzVoTW5XZHM0N1pyRXRKYUc0UTZ5Um1PU3NB?=
+ =?utf-8?B?RjYwUm1FS3J5RzhlQmFrMXFxeWRwTm50TkU3alVvZi9RTUJTSTRxdTlISXBq?=
+ =?utf-8?B?Y1NSNFNsdUZ4TmRHc2VLOTNZTXZJQnY5ckY1S0NLZVI3RG5YbFVtQlQ3RmdD?=
+ =?utf-8?B?UU5Ydk1iTjZ6SlV2Wk5DcTBEODNTTjJhN3VvOHlUNlA5SllLK3Y5cEhGbFNM?=
+ =?utf-8?B?enVGanByMVh5a2J5ZzZTWnJlR2R4elUyTGc0Z2ZWMWp6ZVpscGZRbjI5M3pK?=
+ =?utf-8?B?V1U5ZW5jSEtpVnVxWWttdkdwMjhGRit4RVo5b1NQOFZLYnhrNndNL3BETUU2?=
+ =?utf-8?B?SHNJQ3g4MVpzT2tIeWo1VHNtVm9mSlhuN1lNWitqQWN0WjVWNkkwRnBNc1Ix?=
+ =?utf-8?B?bTltY1c3a0RmUEg5UjlIU1BEemNWYXpPT0JQblNmcU5iUE8yRklJY1BCazV2?=
+ =?utf-8?B?NnFlZE5sMnJrSTdVSnhrT1FiWVdOeDVEMG5RRkZlN2hzTWxkdTRCUWduY3hp?=
+ =?utf-8?B?WHIzWk05WnJJaitOYmtYK25HZjlDZ3huNml0bFBSUlhXYWlVOWM3MzRoaGlU?=
+ =?utf-8?B?d3RZang5eStpeGs5THc5UGd4NFNUdUl2MWlvVG10VjZGZUlhUWRwbkJTQWNR?=
+ =?utf-8?B?QWlFYS9UYmdvZmVwVHF5OWhRWlpValdlZ00zT1F0Ri9oeFdLNldFdWExcmw3?=
+ =?utf-8?B?UlJ3dlhkRTN2dG5MdkNqZ2RDdC9QSDN6S1BPdlZXRTFTWldobEFkTXU2eWxN?=
+ =?utf-8?B?dEd0djB6NmhCZEtPNmdudC9qRlZRc1FRZWVlelNCcG9wRmcyWUF3REVsU0Z2?=
+ =?utf-8?B?NXJrYjYwRWtzMUVmS2NaQnBzVjVGZTdNMHNQbVRGeitxQnJFTmlUZzNYTHpK?=
+ =?utf-8?B?d01UWWJiL25YMVdZSHFBdWpMalB3SGNwNTJUa1pJRWdqcnQ0a01yYS8zWVY0?=
+ =?utf-8?B?ZmVDcWJyQUhoTjBwOWRTbnl6YUpaR0tibDlxa3owUXJFVjY3RGVva3NhejFB?=
+ =?utf-8?B?V0ZQUE9CLzA3VC9pMzlEajFXZi9vQ0QrTmx6OTBRbzh2aVZ5djc3bjlBdHpz?=
+ =?utf-8?B?cTlkTndwMEtha3FLd1NDaW9iWmpoRitjRHIyakgxU2g5aEJQV010YnAvMXUy?=
+ =?utf-8?B?KzdoNVkySlpnRjZ2RTltaitrVjhLT1RNd3RPejh5RUk3UHdoeDJTR2p4SGtW?=
+ =?utf-8?B?T1IzUmp3amRWdmtvdTMxZVN5QmRRWFZ1VnJpUDZwWjFEWVdOcmpyY1FTS1lB?=
+ =?utf-8?B?WlVrS1JpUGpaZjh6R3ZQVXdxSzBwWThTa1VibThWQnprYlE5cjF4UW5idEVs?=
+ =?utf-8?B?NEo5dVJkdmcyeUFVeGl6bHhrSjRNYXFnT3hzVEdEWWVvdHo2UUs4eCtGcnY2?=
+ =?utf-8?B?RCs0dEpBZzNBMzVydmNBYkxXcUtjRkptVFJhbDNIQ0d2TVhVNDFHMDR4UENr?=
+ =?utf-8?B?Rng1QWo3UHhrbUUyUXpydklIQ0N6T09VaVJqQ2wxWXNSUTRIUVdIOEpicVB2?=
+ =?utf-8?B?d1J5RjVzMHc0WnJtTGlMZXJtQ0tFU2JuUXpJVXE0R0VWajZBczY5UEVYeklq?=
+ =?utf-8?B?clNhL3lMdkdkbURrQ0pUeW5HTVJiZ2NiWTZhU0xlaEFNY0lVM2FXUkxSZG1R?=
+ =?utf-8?B?Z3U2V29JcnFCWENMYVJBQzZHcVMwNFZhMzRvS3ZPQmdEM0l4K0JkeGR5ODlx?=
+ =?utf-8?Q?fHoTqgmwhkZp30YwPj8tkqI=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 514721e5-ea87-4c96-40f1-08ddcb39a221
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8582.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 05:10:55.5331
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uREzdYaOvk8U9ik1Fip6FGoH0+s+MfVQGfFoqiz409SuRKKsPlKMvzuXTo6ErDOC24ng2EoHs8q2BELY3Qe+xHDELmbc5Hao3+Pl22tDdL4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8808
 
-Hi David,
+On 7/24/2025 8:29 PM, Daniel Lezcano wrote:
+> On 07/07/2025 14:03, Ghennadi Procopciuc wrote:
+>> On 7/5/2025 7:01 PM, Daniel Lezcano wrote:
+>> [...]
+>>
+>>> -static int __init pit_clockevent_init(struct pit_timer *pit, unsigned long rate, int irq)
+>>> +static int __init pit_clockevent_init(struct pit_timer *pit, void __iomem *base,
+>>> +                      unsigned long rate, int irq)
+>>>   {
+>>> +    /*
+>>> +     * PIT0 and PIT1 can be chained to build a 64-bit timer, so
+>>> +     * choose PIT3 as clockevent and leave PIT0 and PIT1 unused
+>>> +     * for anyone else who needs them.
+>>> +     */
+>>> +    pit->clkevt_base = base + PIT_CH(3);
+>>> +
+>>
+>> This description is somewhat misleading, as it refers to PIT instances, whereas the code actually operates on PIT channels 0 and 1.
+>>
+> Actually it is what we have already in the driver, it is just moved around. I'll take the opportunity to change the content if it matters. What about:
+> 
+> "The channels 0 and 1 can be chained to build a 64-bit timer. Let's use the channel 3 as a clockevent and leave the channels 0 and 1 unused for anyone else who needs them."
+> 
+> ?
 
-Thank you for your feedback.
+Sounds more accurate. Thx.
 
-We encountered this issue in the Android Common Kernel (version 6.12), which uses PCP lists for CMA pages.
-
-page_owner trace-
-Page allocated via order 9, mask 0x52dc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_ZERO), pid 1, tgid 1 (swapper/0), ts 1065952310 ns
-PFN 0x23d200 type Unmovable Block 4585 type CMA Flags 0x4000000000000040(head|zone=1|kasantag=0x0)
- post_alloc_hook+0x228/0x230
- prep_new_page+0x28/0x148
- get_page_from_freelist+0x19d0/0x1a38
- __alloc_pages_noprof+0x1b0/0x440
- ___kmalloc_large_node+0xb4/0x1ec
- __kmalloc_large_node_noprof+0x2c/0xec
- __kmalloc_node_noprof+0x39c/0x548
- __kvmalloc_node_noprof+0xd8/0x18c
- nf_ct_alloc_hashtable+0x64/0x108
- nf_nat_init+0x3c/0xf8
- do_one_initcall+0x150/0x3c0
- do_initcall_level+0xa4/0x15c
- do_initcalls+0x70/0xc0
- do_basic_setup+0x1c/0x28
- kernel_init_freeable+0xcc/0x130
- kernel_init+0x20/0x1ac
- 
-This UNMOVABLE page was allocated from CMA, but it could not be migrated - so CMA alloc failed
-At first, we fixed this by adding CMA THP pages to the movable THP PCP list.  
-This fixed the issue of CMA pages being put in the wrong list, but now any movable allocation can use these CMA pages.
-
-Later, we saw that a movable allocation used a CMA page and was pinned by __filemap_get_folio(). This page was pinned for too long, and eventually, CMA allocation failed
-
-page_owner trace-
-Page allocated via order 0, mask 0x140c48(GFP_NOFS|__GFP_COMP|__GFP_HARDWALL|__GFP_MOVABLE), pid 1198, tgid 1194 (ccci_mdinit), ts 17918751965 ns
-PFN 0x207233 type Movable Block 4153 type CMA Flags 0x4020000000008224(referenced|lru|workingset|private|zone=1|kasantag=0x0)
- post_alloc_hook+0x23c/0x254
- prep_new_page+0x28/0x148
- get_page_from_freelist+0x19d8/0x1a40
- __alloc_pages_noprof+0x1a8/0x430
- __folio_alloc_noprof+0x14/0x5c
- __filemap_get_folio+0x1bc/0x430
- bdev_getblk+0xd4/0x294
- __read_extent_tree_block+0x6c/0x260
- ext4_find_extent+0x22c/0x3dc
- ext4_ext_map_blocks+0x88/0x173c
- ext4_map_query_blocks+0x54/0xe0
- ext4_map_blocks+0xf8/0x518
- _ext4_get_block+0x70/0x188
- ext4_get_block+0x18/0x24
- ext4_block_write_begin+0x154/0x62c
- ext4_write_begin+0x20c/0x630
-Page has been migrated, last migrate reason: compaction
-Charged to memcg /
-
-
-Currently, free_unref_page treats CMA pages as movable. So, some MOVABLE allocations may use these CMA pages and pinned them. Later, when CMA needs these pages, these pages failed to migrate.
-free_unref_page()/free_unref_folios
-	migratetype = get_pfnblock_migratetype(page, pfn);
-	if (unlikely(migratetype >= MIGRATE_PCPTYPES)) {
-		migratetype = MIGRATE_MOVABLE;
-	}
-
-
-Best Regards,
-Akash Tyagi
+-- 
+Regards,
+Ghennadi
 
