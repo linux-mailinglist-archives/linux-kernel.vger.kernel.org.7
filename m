@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-746381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4EFEB125F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:05:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF2BB125FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7310AA2CE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926C51CC15B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2BC25BEE1;
-	Fri, 25 Jul 2025 21:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A650325D8F0;
+	Fri, 25 Jul 2025 21:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lSm7JxjL"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Pb1/uN8e"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E880246BA5
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22818224225;
+	Fri, 25 Jul 2025 21:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753477548; cv=none; b=BvkUMZ+r1KWWEutagpmGIUww0urteZK+D7jl6BZg1WiNvOajNcJ7uyh2KIPzE8EsSMeawr/QbwE3BW0wafqBdy/sVo0qCw1upW0RVbQm50EEsKMPUkIu8XhtV4AdWwNdvjdXFThiRoTVS2ePf8GVMiDQv1lAa27/wS65cvmolvw=
+	t=1753477738; cv=none; b=gm8BphntC+Ni8ELKurBGrtYo4U4OIpfoDr/5N1Y86vo/YJJiDeYpT2iHS1s0rZNCblQJ405dcWFOcEikaJuxljxZpUbhipe2sjPbhz5g8DuO/wvvOk/v2BOMiXgULnwKBUjPSnaNRAN5PpXN/OfZzGrkEriOWTZv+XGfBb3boJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753477548; c=relaxed/simple;
-	bh=nf+R02+pjhtsyUzumbeTBX0BQg3tdsTFzeaRhqxDnK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aKCF0rQESeXWwEoZutkWR6zEVPMr8umi/L/c6AaRthL0nwEnReq7KJ19B2QwBUHuW1HQCLJtN5vo8gkDwH+8mGFbwmBJpXOZQH9VLLcxyxWM51B8fXwMSsVsQEEf7GtXCSrq4JMCom/7Q9dWvqcWP8ybCpogaZMDf3xd6cXku/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lSm7JxjL; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0b2ead33cso453397966b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:05:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753477545; x=1754082345; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nf+R02+pjhtsyUzumbeTBX0BQg3tdsTFzeaRhqxDnK4=;
-        b=lSm7JxjL+CYh6d8ZxdjRBVpt2Jl0L+nSkHTz2iA1LsQynGvbYcO6x08i3UybMl/ymY
-         ZK/E6LbLd6p/e98nDJVqhtW75SiWEfMi3eCOxQMV4o/ZGgC3n33XNAa9gdDTa+HaekSt
-         maVvcXN/2NxBPBYzQe1tGVgn49DrJDoNBywMIB+b+t8uW7Q/so+lw0VEMaXy4AQ+kCjl
-         O59r8bI6GYN8w6CEgjDrMgmWT7A+TL9OarfMSjnYQEkO5VcTZvQShKKynHczd/ZYov+P
-         /qAA/B1SublRcAaIU8AU1lPHH5bjhWrwMZikq9L5bUVkodhFVLSvi+NGXO5RpicGX3+A
-         wzDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753477545; x=1754082345;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nf+R02+pjhtsyUzumbeTBX0BQg3tdsTFzeaRhqxDnK4=;
-        b=XwqntV64IEGUreuQVamxAjIUJo64dBFDenI8+6ocOPvwzTTLCM00XEOE6DqZ3j+WPr
-         xPdPjckMiKr0bpBr/n+6TN4SfN6fsvw01srt0o4rXKC/K8S7LHkHiUgY9mJR3TwF94N1
-         G2f3QjmZAaWtCdmRLDP6LnVMhgVXYRZK9e+vhqIXt89x7gotN4kr1xkcc7tnilPNdfoI
-         r/WbInROkteCMp71Z1XV/Qgo8bK8KIpdni4Jlqi9j1VAoH5gay6G4L8mfrXrxi9MPh7Q
-         P7ZaVf+WWDii4LJnzNyQwGxQZ1DAdw9mu85QKov87MSn9Al+eR+trVr6EsWJKQVdiMVg
-         8N4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXOpVvAIpneJLuqhS63h1yTvVE3qWmGuepknuomMsixtmu6x+AsNGtdEu70494t1T1RwmmzNZLyfB3SBBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNNkzdPBYRVXD0QerA61GDhU4YdhKZJfsM2YfiIS60AI+Q0qrk
-	oyNWLJQq/Oy7jehMjGVjsD7XSmxDSAZJZlxAqrfKFRT156lIbwWl21f/T6UKXwmjGqBPgtGt8DR
-	WHryJeUiRF7t6GA4yTHVJ0ZtgATmxMxarfwpwNr+g
-X-Gm-Gg: ASbGncvP0dbrXbo7e8zfsSd7FVbHi93nSGk392U6PrqaDagTZ2CVpLMuJ5qVleW2rFH
-	y6puL1UG5F9y+Ls/lJfs+Wt5uYHux7go5MB2tZCqDLoQj9lE1v12W1tEOUBBMsn/nMomK10C7Tk
-	Zy53og1WJsisox8KCLo5OVqtPVcG1Cpn/VL1LdwQ6Jlps0jzRKrtRSIaLBXwa1sl/J4x2FuBMgv
-	uN7Cj/ni4eJa4p4ume59k0e78LCxPdzby4YKTdUQPVp1/IZ
-X-Google-Smtp-Source: AGHT+IELAu9YuIK2gpEKQqlX6S6RNRCmG5Auv842Kcma0vF6HvouVSX2qV6UIVxCupefMMHOEt8vR1Wv6bnzwGZ3g9w=
-X-Received: by 2002:a17:907:7743:b0:ae3:6dc7:1ac3 with SMTP id
- a640c23a62f3a-af4c3c4c1c5mr740099366b.15.1753477545147; Fri, 25 Jul 2025
- 14:05:45 -0700 (PDT)
+	s=arc-20240116; t=1753477738; c=relaxed/simple;
+	bh=15RyTr4RmZ9HnrJ3N7IHIqyT4wgzIOUmPBJRpd+Hzoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GFngUNjJfq0M3gMX2QA0r2DxeVaK55Tq+V7oo2W3IvTtQohsjNfOYu0Omkn1WDhHYigtI68tBdTTBVAbL7L+JbVfAmjjTA/FFYd3XxDdluuSgkWtnpCqyOqQTUp3AjAZIAc3vk+OBTjpRb7WgJckia6aXcvUOao7pBta7vbAbpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Pb1/uN8e; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bpgTf6025zm174C;
+	Fri, 25 Jul 2025 21:08:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1753477731; x=1756069732; bh=bRiZPnDhWKDfdU+eRq8PCZeA
+	SI8wNiw7DOE1Rlr/5No=; b=Pb1/uN8epUgzcEivLUfApsnXyhMHKXDpnvyDke9Y
+	HHwLfr2d+HamUy0Y0ity/gc3+pPqFLm1GWkE1PBCyG2YLHZmC2keMtMGTZhKPnnb
+	e77Pd+B2Vvb1+mRseZNH3zKKtP4cS2qWjaSNVXuMw5KuzvZQjroHAxuTZlin2653
+	M5Fr6GtrQtjljqrMmkFfoAXSOhw4tkIJ3OvOsaI2KfVR0AkQHaIcEuqx+iVhdUrj
+	kddkr5de6Nnp1uKMNKJfQt9fZEPKG2uiLe4u+3fAHpKlNrnbUiwH2D/EUXRDytxP
+	xUYIKNUHFZ371ToUwhU2BGouxeCDpMOrUCsKvMCPVtI/Gg==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Y5oojwscMG0B; Fri, 25 Jul 2025 21:08:51 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bpgTN2xV8zm0yQP;
+	Fri, 25 Jul 2025 21:08:38 +0000 (UTC)
+Message-ID: <c57a2ca7-b0c9-4e52-9d9d-5c06c7f56f1a@acm.org>
+Date: Fri, 25 Jul 2025 14:08:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701210230.2985885-4-zecheng@google.com> <202507161052.ed3213f4-lkp@intel.com>
-In-Reply-To: <202507161052.ed3213f4-lkp@intel.com>
-From: Zecheng Li <zecheng@google.com>
-Date: Fri, 25 Jul 2025 17:05:32 -0400
-X-Gm-Features: Ac12FXxmKByQmwfUb0QXa5wHOkURuD6CJej7ElHNuDTDyyw5-98nj6F_odDj5k0
-Message-ID: <CAJUgMyKAcnJyZbKpZu=MxpSRav3KEr4n2U4-xZJ96QN_aHT8hQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] sched/fair: Allocate both cfs_rq and sched_entity
- with per-cpu
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	aubrey.li@linux.intel.com, yu.c.chen@intel.com, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Xu Liu <xliuprof@google.com>, 
-	Blake Jones <blakejones@google.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Josh Don <joshdon@google.com>, Madadi Vineeth Reddy <vineethr@linux.ibm.com>, zli94@ncsu.edu
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] scsi: ufs: core: move some irq handling back to
+ hardirq (with time limit)
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>,
+ Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com,
+ linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
+ <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 
-Gentle ping on this patch series.
+On 7/25/25 7:16 AM, Andr=C3=A9 Draszik wrote:
+> -	for_each_set_bit(tag, &completed_reqs, hba->nutrs)
+> +	for_each_set_bit(tag, &completed_reqs, hba->nutrs) {
+>   		ufshcd_compl_one_cqe(hba, tag, NULL);
+> +		__clear_bit(tag, &completed_reqs);
+> +		if (time_limit && time_after_eq(jiffies, time_limit))
+> +			break;
+> +	}
 
-I'll be communicating from a new email address, zli94@ncsu.edu as I'll
-soon lose access to my current corp account.
+Has it been considered to use time_is_before_eq_jiffies(time_limit)
+instead of open-coding it?
 
-On Wed, Jul 16, 2025 at 4:51=E2=80=AFAM kernel test robot <oliver.sang@inte=
-l.com> wrote:
->
->
->
-> Hello,
->
-> kernel test robot noticed a 8.8% improvement of stress-ng.session.ops_per=
-_sec on:
->
->
-> commit: ac215b990e70e247344522e1736fd878cb3c25b6 ("[PATCH v3 3/3] sched/f=
-air: Allocate both cfs_rq and sched_entity with per-cpu")
-> url: https://github.com/intel-lab-lkp/linux/commits/Zecheng-Li/sched-fair=
--Co-locate-cfs_rq-and-sched_entity/20250702-050528
-> patch link: https://lore.kernel.org/all/20250701210230.2985885-4-zecheng@=
-google.com/
-> patch subject: [PATCH v3 3/3] sched/fair: Allocate both cfs_rq and sched_=
-entity with per-cpu
+> @@ -5636,15 +5670,34 @@ static int ufshcd_poll(struct Scsi_Host *shost,=
+ unsigned int queue_num)
+>   	WARN_ONCE(completed_reqs & ~hba->outstanding_reqs,
+>   		  "completed: %#lx; outstanding: %#lx\n", completed_reqs,
+>   		  hba->outstanding_reqs);
+> -	hba->outstanding_reqs &=3D ~completed_reqs;
+> +
+> +	if (completed_reqs) {
+> +		pending =3D __ufshcd_transfer_req_compl(hba, completed_reqs,
+> +						      time_limit);
+> +		completed_reqs &=3D ~pending;
+> +		hba->outstanding_reqs &=3D ~completed_reqs;
+> +	}
+> +
+>   	spin_unlock_irqrestore(&hba->outstanding_lock, flags);
+>  =20
+> -	if (completed_reqs)
+> -		__ufshcd_transfer_req_compl(hba, completed_reqs);
 
-It's great to see the kernel test robot can measure the improvement of
-this patch.
+This change moves the __ufshcd_transfer_req_compl() call from outside to
+inside the critical section. I expect this to impact performance
+negatively because it makes it significantly more likely that the
+command submission code will have to wait while the completion code is
+holding hba->outstanding_lock. Can this be avoided, e.g. by limiting the
+number of commands that are completed instead of the time spent in
+interrupt context? usecs_to_jiffies(HARDIRQ_TIMELIMIT) will round up
+the time limit anyway from 20 microseconds to 1/HZ (one millisecond?).
+
+Thanks,
+
+Bart.
 
