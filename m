@@ -1,246 +1,398 @@
-Return-Path: <linux-kernel+bounces-745111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C02B11511
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:16:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0E4B11516
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F0A8174B95
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:16:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4FA1CE4FA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6C62C190;
-	Fri, 25 Jul 2025 00:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12AE3594E;
+	Fri, 25 Jul 2025 00:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OINqxZWP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hEDFMjUI"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2070.outbound.protection.outlook.com [40.107.100.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF4FC2D1
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753402604; cv=none; b=Lyx9yaW53sLTLVDcZ0oGSMNZw4QBmm2fOSCNiOiF4FOjZq6g92SKKbl3gZGCr7sCzSRW1jAutSMD2QD+iUwB/hkcfFwzx8TcHcvy5COt3jgXYs1GH/FpZBra2cV0eTs52J6WrV92MsHbF8pp/dryzbI9ts63wHNVxog/70fozYc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753402604; c=relaxed/simple;
-	bh=w2tyNT/8zoaQV6BVtt0r0C477qGXxBDbaNhaTrvP1xA=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qHoEDZCyT3qM6JcOKtAbr3hMOqYT8qWng1zxQwmt501/qFabD4DBd0thfQACizA8T/g4UDFKVJhBdeGZXlSrLRjGVC9Oeo0BVs2A6MuMI8ywrX7vsXGSTlsCRkCOSHMbiPX3wD9jCGN7mwYVL0E7hgBrKx+PVQKo0f+gMHuGNEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OINqxZWP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753402600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yxkCG1yTGps2VHoOjMaTU3xu9TxGhl6vX8auTC53uYs=;
-	b=OINqxZWPfXvegwvmhZIpkTVN13fnbJzaHLVmke9RtV7aQTH1sVoPqtbE3uQPJsqR8lvG3V
-	wdhW7XzWxQa/F/JVZiQcn9nQKAUOkmtH5i4oWBnyJkLYbGkfdhP/eh9HlLQRsreReGEogx
-	myVIvvaKuSEXuLvl/FgY4hpvJLwS3aI=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-612-An-0zhFOOsiQROSsproUUQ-1; Thu, 24 Jul 2025 20:16:39 -0400
-X-MC-Unique: An-0zhFOOsiQROSsproUUQ-1
-X-Mimecast-MFC-AGG-ID: An-0zhFOOsiQROSsproUUQ_1753402598
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c7c30d8986so456261385a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 17:16:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753402598; x=1754007398;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yxkCG1yTGps2VHoOjMaTU3xu9TxGhl6vX8auTC53uYs=;
-        b=a3kYbRMriLR5UqDkyiS/z7ehtISyuIj8/Gnzef6X6f8XUuMC/AVIzyA2qwLm2aTCXp
-         ziMn2BcWROEtbkeH8775QKBnjbjsIrLb/HR+MQv2yaVDMQzdinEpDCdC6hkn1+5fsZwp
-         lBLJOnB8e7vzsdEMkKKhQC1bsXLI2HicdjyrT2sNKkVaK6oyiixXGmZ4ggkUUxdQRQIi
-         4W3uunu4AvLMYR0tvBG7XYuSaycn2avNTPI0HGFV53eTu/efVdHAZdhakF6BoEhUj5kJ
-         QymphTI2taJjpPnIe1f6G6oGh7lgG6u2+AQO+GDlmJcJ1ND8hYDzoPkqTjlM8MNXIFgz
-         heag==
-X-Gm-Message-State: AOJu0YwBWUWmsD8m0V2hpFDhvmylR1NaE1Le6DzmS5VCjMMIq5m4+wmu
-	8Bfte1l+ncTO8JrXrBPp8MdgL5gr/iwkFjvyMZOJyyACQ+trQcpgnshq4T6EEwOwHy5WgcJHBWT
-	nJCDAwZBEUiM7z05UysFxtqs9qPEHUb2aYCb6hApAxgY2H/gyIF5ZEGrhS5eAQdzm9g==
-X-Gm-Gg: ASbGncvI+l7gTdNahTP1CZFoEmQwuIhk9ElUByGoj4KbrnpdF7R6eQkyK0R18pk3QNs
-	5V2wb3ZQj7wQ83/qFbGtBDcNo2gqeVKU4jsyk56uQrQePXwdXtp54JgjQXGjoguP7fH5GwPCTKq
-	cvKJ/aq1AxflnejeqzGMhVAYbEpol+ZXpuCeEYovnQr8il5pHpH2RXk5aAOV+W8swByuAvPOHVJ
-	HkJRjECndhyKKTtq4TNUPBuO+AcOQ9B9Tko61Ufc89AIlAjIa5PtadJz2Xmu0gbeWvQ27XsfMHs
-	aNxIN1/MontNCBE9lFhawyzpAjkU9SsmPhFOU1ozRHQrkFT3BRoG8dHuI/t4YD/ahOf6mudLCAG
-	C3sxkbzkz5Q==
-X-Received: by 2002:a05:620a:a0b:b0:7e3:3da8:1d06 with SMTP id af79cd13be357-7e62a194985mr933152485a.54.1753402598273;
-        Thu, 24 Jul 2025 17:16:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIxp8r8rY48I41C8InfUkbbre2eucccOUajs9doqLqYJz5vXJaT0VW2+hA21MpNGYwWsFNDA==
-X-Received: by 2002:a05:620a:a0b:b0:7e3:3da8:1d06 with SMTP id af79cd13be357-7e62a194985mr933148885a.54.1753402597708;
-        Thu, 24 Jul 2025 17:16:37 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e632e38544sm186374085a.71.2025.07.24.17.16.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 17:16:36 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <6a27ffeb-a79b-4623-9ad3-392973a1fcce@redhat.com>
-Date: Thu, 24 Jul 2025 20:16:35 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C7B1362;
+	Fri, 25 Jul 2025 00:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753402653; cv=fail; b=lzzsEZmILZTxbRNkeHULbPhlxcgt9UXdBGFO3ekLNLgwM4incIFCHWkq4FbyjA2Lje9p197lVsVHFADOMe+ktm87hJIOHFOjnT7f9dbLVkM794AnoeW63e2VfOS7VhBTL3/j1xReCJoj1hzAGfSr3RG0OUd2OEeYFKF22wCehV8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753402653; c=relaxed/simple;
+	bh=HcgEYhbHumBVIIGYv+kT/nPcw4iMSpU5MamwfLFiD1E=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tiw+shz6mWXZIFox7yRMV4v3KhdFS7TXS+3MRitCN8dk9qUcrqY1dats0nrQBM+MnopQ9MNeeNWhrwcHy2z8ULasEW4XGfyZYIqnF/SgM6dIlIEqK92PaLJcLjcUxaiVkzAbJ90rE2w/pRHudbqaMMeElR9GDNoj1GYJ7kdzkX4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hEDFMjUI; arc=fail smtp.client-ip=40.107.100.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y4z1Ce4mEj3pqSMX8BlLmNJIDhFpnJxJ1+DyVLy19WCrjRdriOvDscbDSf04MI3eHpgNMjhNCSsh+70O8JHftMUNwyyD9Rcz0QCxiF2XzuvvAXyoGCFpjT5jx43pWRm8MdfeCVHXbW+on25FhxpTAHl9m1d7yfZbJ5Txm84V3pk6cougjrdwteXnkhF5r1FHVCnkHPuFulP5CjuEpOIhB8M5FpU6Qv4YuMNJXFwuzt/0FERfdWyl0osTWhZOv5svPoYFK7ZpNMlik35Yn1OwhEJILtrKFD2LwuX8jxBTqirsPFqMWP9SkvS7tgCcmuAUAF1s6jxJbFEvHWGxvCOmBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7C9pYEMRnMf97J1Zk6uTbXTCyub+/MpvvyBl6fx93PI=;
+ b=NckPWEPGvbSUBXHObT70KhlRt+6tMuiFBeVS7MaYSxkX6OGzzDEisMjIaaOWgJi/irfqKDGh8JUvwNPwz1tvewQ12VsAX9STuHOF3Azpzoo0Wqcaqm5FgTC2z65TsToxysiU4Bb6//ZVUwgSahoz2wfWBtnDJyrBcKFjqS4QMCMUnqkPWqAOri2xeY5jyVfgATbnRQhdWL7ETKtAjx1X+eMXuBNQRX/PeyHoMzWk5BDn45aS1Ue09SRZHb8rK9cyj+cl20BfP6Q2lj96SBDNP9MHo7m/8cKXcQVxbNOOSSsY16SMR55KXQcL9KmkLou9+/FziRUt+ReBRLn3vczu0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7C9pYEMRnMf97J1Zk6uTbXTCyub+/MpvvyBl6fx93PI=;
+ b=hEDFMjUIeFxb0iPcXXdUmyfnhaYiYYaGwk6dUHJgYJslF9kluzMiJSoS8vtlqhbJ9+qgJBfIq0vz+n+ihsG6+sM0Bmj7d66VRTZnCydigFiUZa+oQT1X0ExOZDPE8ZDXotlxz5X3GCBXkgTLmi+ArJNt13vGlSv57gUJtO+RKVIN0amFcVXKxmOvpnmFopghKA/VvJTnVlTobz5gySdcKKWQLQMT3UPnyxidqy3tWSNi0vfQbnJNEt1qFG2DfFp9VMqCmUyH8z3JjoA255gUsqYXlUsGpCglyOH9fcvxt3p6fbKZALtLq7XHBXv+sWR1NmguNT7qmsaUNHSqbZZfYA==
+Received: from DM3PR11MB8736.namprd11.prod.outlook.com (2603:10b6:0:47::9) by
+ LV8PR11MB8747.namprd11.prod.outlook.com (2603:10b6:408:206::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.39; Fri, 25 Jul 2025 00:17:27 +0000
+Received: from DM3PR11MB8736.namprd11.prod.outlook.com
+ ([fe80::b929:8bd0:1449:67f0]) by DM3PR11MB8736.namprd11.prod.outlook.com
+ ([fe80::b929:8bd0:1449:67f0%5]) with mapi id 15.20.8901.028; Fri, 25 Jul 2025
+ 00:17:27 +0000
+From: <Tristram.Ha@microchip.com>
+To: <horms@kernel.org>
+CC: <Woojung.Huh@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
+	<kuba@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <maxime.chevallier@bootlin.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+	<marex@denx.de>, <UNGLinuxDriver@microchip.com>,
+	<devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next v4 4/7] net: dsa: microchip: Use different
+ registers for KSZ8463
+Thread-Topic: [PATCH net-next v4 4/7] net: dsa: microchip: Use different
+ registers for KSZ8463
+Thread-Index:
+ AQHb+Et23Zt1PEXlIkK/NsvHKZPcN7Q6zkiAgAABfwCABDF2wIAA6f4AgACpFhCAAUD4AIAALLEQ
+Date: Fri, 25 Jul 2025 00:17:26 +0000
+Message-ID:
+ <DM3PR11MB87360DB5CDD47DF4A64FC33BEC59A@DM3PR11MB8736.namprd11.prod.outlook.com>
+References: <20250719012106.257968-1-Tristram.Ha@microchip.com>
+ <20250719012106.257968-5-Tristram.Ha@microchip.com>
+ <20250720101703.GQ2459@horms.kernel.org>
+ <20250720102224.GR2459@horms.kernel.org>
+ <DM3PR11MB873641FBBF2A79E787F13877EC5FA@DM3PR11MB8736.namprd11.prod.outlook.com>
+ <20250723162158.GJ1036606@horms.kernel.org>
+ <DM3PR11MB87369E36CA76C1BB7C78CEB7EC5EA@DM3PR11MB8736.namprd11.prod.outlook.com>
+ <20250724213556.GG1266901@horms.kernel.org>
+In-Reply-To: <20250724213556.GG1266901@horms.kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM3PR11MB8736:EE_|LV8PR11MB8747:EE_
+x-ms-office365-filtering-correlation-id: 4c3b19f0-213e-455c-7384-08ddcb10a2ee
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?50FnVfED95o0lWBwdzEtlJm1vprKyNNpZKFW7ED+m6Tp3bmIBhKHAQBbc5hh?=
+ =?us-ascii?Q?MFOGWqTvfiIvbeaCYm0f4NVhHHAm1p6KEFcrvPBYa1cF9aOnRJpdcEE768iR?=
+ =?us-ascii?Q?2AYQ/e1/oHxpYGpKK0sWvnKFSPsK1pUnB1dwM94U27sMekGjzCHzeodDMWgY?=
+ =?us-ascii?Q?Z41OhvyyeD0C8TSJjAdSqt2v5ki84/kky4EzqKEwPz7YVLMZoa6sbAJUaoyB?=
+ =?us-ascii?Q?hIlZVSzuobMI3/tY8ObZuD/HRlK9vj2825VeitmP0Qy4i21LlPvZKmJMHGQy?=
+ =?us-ascii?Q?crawJaIm28oWLBudqKYCfbjvvU2YFMYSg7Jn/3nly81ylQ9C3KDlNzEvmv1D?=
+ =?us-ascii?Q?ekDpV6R+4sXS8v2fz3HDjm1I/KB70XeBUCQM3+/sQ+0akkKKnRMah+io846g?=
+ =?us-ascii?Q?Y/pPNehujZ0/GNKlwYwCRTJglmkbY6rYkgBsEPnQoQTlh9UqhpyJCZhbktq+?=
+ =?us-ascii?Q?+1L5TzWAHXCRP4frfZn9kqw0fRZLYPjrQFAE2I4VLIr5UCzBNeX+CzVk0DTX?=
+ =?us-ascii?Q?O50b05H/GLkRTgu3SMy0ToO0zwM0Rb+TX4hfVT2EvaAuMQA4h/I+LkRestOL?=
+ =?us-ascii?Q?0l5eIOrIgQuUSFG60Kj3Uj80AK3oms52oYP4+zMCDGslpkNin+ws70EhCDzo?=
+ =?us-ascii?Q?Wy9cXz//6gKdgxBsQ90wbK8wACiuU63FpPac+dPU6L56KtreLwl3IG06welI?=
+ =?us-ascii?Q?8v/wr62RoYV65nvbdJiQFNZdpzu4rhemRo2CzOmhACkzctM+MtcDvqh+61pF?=
+ =?us-ascii?Q?mEpyAGz87J4W7NNFJWzaOIautSLFkdTbbtPyDg6l8JHRRfAZshJY93c/mkt+?=
+ =?us-ascii?Q?3Bwq7C5JYvNTkw5kXytVnJEF1oGBIbhqpw8DqP/l7jeJEkdjPmCrx6uDyDAP?=
+ =?us-ascii?Q?zpsvJRg++lq2ugCYfesbGWdcVH5DOSC8PaER0oyKh6b6Xc01uTtT2K8oIUj+?=
+ =?us-ascii?Q?ePM1mZ2U2g1DC+WTCP3xCduG0yKm4YeleS4o/iDWXlO9+KQAP+xaQnSiuXUd?=
+ =?us-ascii?Q?WzzRkPHsofFEfcDyDLadVaaNavjbioXeiL5mlW92a1ALYEJ4dJH/1xCgQ5tp?=
+ =?us-ascii?Q?D8X+3t5L+WvYxocopAzYnq0zk3Ids0ZMxZROu1srr+vNA5pgSE21+a1u44nf?=
+ =?us-ascii?Q?pMuz1Mv1s05UYV6dj0F8DJiQX0Jq0VCmuCiTngBfx+uWfZ7GLW9Xl2w0vDp5?=
+ =?us-ascii?Q?I3TtZmnvAonrCGkYiOwGWNmozPkYm1NA0YEiJCjEcsaMkeCdez8+tix+vxN/?=
+ =?us-ascii?Q?vkIBLdoAM7aJGMxASiyVwBOKEPmwIX6ddeeijF4BTaybjpXXnx7XxYujIOe4?=
+ =?us-ascii?Q?hxF9UEhACj5d0jQSYhG9Ms69RhhAyekLE3z7rQbjm5HftoZrykMAD4uyEgyV?=
+ =?us-ascii?Q?XjCYoUAoxhkyf8AIIfyWtlEOUu+4gdhUNidIfMpvl/F+n7tN4MhVrMA0DTiH?=
+ =?us-ascii?Q?IoQqIGC7txLKq7XgKyp0h76Pp9sROoeughaJP2vagVGkZmUt1Q8ZzObX0U9y?=
+ =?us-ascii?Q?0JW3D3A7iSNDwv0=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PR11MB8736.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?gnJBvaHmXfkcVYOvD23OLE9twczTLrtmDtzdPyEz2YzG/Ogm+YCpLuQBKiEu?=
+ =?us-ascii?Q?D81Krn37o2mkZGdXPKivmfwjACjpmEs/onmr8mB5/o+YA2xqreBdbgQd/lS7?=
+ =?us-ascii?Q?D8xU9upvJGZ5DGfJwuHPjabAUa4uZoZU8KcNqjUSmrvjDYCnp/JgsbBhIPJU?=
+ =?us-ascii?Q?LdAWTOXKQoL08+neJtI6ZScNyztAM0xEDvEwotyc7GkevAs9icjPw5R7cDvf?=
+ =?us-ascii?Q?wYnRMSDsVheDdANmC/7jTnwYISnysDbL9kCSqO5s3S6KS0FYw4a8rkzJYFAf?=
+ =?us-ascii?Q?GWOmXuvetPB4Pw9ctLPBn0orZZbR4I2dTfttBOj+ZbuahwC/IDdUl0klHhbi?=
+ =?us-ascii?Q?qUXkARfl1P1cqEzyQTF31Y1BoVD5Ligjk71EgRW58GfFn5tECRex0zuCDzOW?=
+ =?us-ascii?Q?pxnWfcpFpQqqg93sMSbdq7ybY2Nvg//ffj9SgQjvSMgnc0EPcr/MieVoq35N?=
+ =?us-ascii?Q?+vAv688sUhhiU+RV9Oq4/Tkp3dlqpPITmeYMJRr+nViReba7mJLjXR0+tFiA?=
+ =?us-ascii?Q?++G/aibfS582Zcb3v0ocsQOlDXsBABLSGsIoq0FgAClU6mL1QcesW02TOsbi?=
+ =?us-ascii?Q?fKMULDf80nHOfx+fTbu5l0vUgALvkKttLN0lWZ9JJMFhXW6FRq9ZfolkS1Bh?=
+ =?us-ascii?Q?axseGzSdcj9MBivHrxbkmDRQbECHctJYjEfREM6Gr4mOsFVmhScVtM6HofkB?=
+ =?us-ascii?Q?IBsGG7E08omiaLsvurpCa+s4cCGZLOmxwSSX05hBgTWqI/lRmdqoJm6NHh4w?=
+ =?us-ascii?Q?a1RpR4utX7KmXDGd2nkWFm/FGxsvLVIwqE5Y2QeTEnC0qjoZW1kQZHGLfWnH?=
+ =?us-ascii?Q?2y0qezZT6Wn/+mRYQ7BYSw8Ar7++3fPqKdJDe1n56h+W964aZo1guesrvGWx?=
+ =?us-ascii?Q?OmsSg/B6cJ5Pg5+C6DVQr6Wzbt14STHtvBHh2LVdix92mNlVxADN9dudRkH1?=
+ =?us-ascii?Q?HVeCYuzjTzEIb5M5gDgAZW69ptSLhiOOgJRwaIqcySJz1he82TnkV31V9N1c?=
+ =?us-ascii?Q?wETK+DLO2bb2xEzh8YBxjxJYp5J7H3x2LWJO3cZ2r4ShcGmPg/SxPu6Z7BhH?=
+ =?us-ascii?Q?brbYgt04UgW6TzVEKNimsErg5gRpxXFBTG8f36J/p4Ci325ba9M7O+PVBYg9?=
+ =?us-ascii?Q?RJ4WvxGHQ+l44zVS6IycXBuH3uV+8hDoHdknskvuXJPW/nJ0+n1DGwjCaglu?=
+ =?us-ascii?Q?nM/LerbybBl4EmvVralh0v0KQW+R7mOp+9uD2XD39mEv59KC8Y7OIi8neBez?=
+ =?us-ascii?Q?xitRYJ0t7IzvSpkBOp4p3nEZrUa3LSwrkVbwvBNTLqTp9SWaJzvSBHvVYSZJ?=
+ =?us-ascii?Q?SkntCwRF+UfGttkhAAVGndXtBA3SdnNrdnoKOKFZ+UBn/QrTP3TpPAZRrMTC?=
+ =?us-ascii?Q?rpM7iuRcw3Tezo1XQyyNWay5CjgP0Lj5Sw3Q2MpsLi2MGix865vOBCFR/dX+?=
+ =?us-ascii?Q?Ts4I3VWBQXkoRz2Ad4jSTnxEYrKXBHQVBDuFqHfL931oBKXKaghIwdPC4zth?=
+ =?us-ascii?Q?FUd97fB47IW/Fonvz2FxPx5kqoXL4MY/ZV1MGGy0vL2BhW7XyIlSkzkHQcmw?=
+ =?us-ascii?Q?qXixlmUkgiIfCYNKsnPZEh3NWe+Gix+HW68jvU0q?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: locking problems in iwlwifi? was Re: 6.16-rcX: crashing way too
- often on thinkpad X220
-To: John Ogness <jogness@linutronix.de>, Waiman Long <llong@redhat.com>,
- Pavel Machek <pavel@ucw.cz>, Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- peterz@infradead.org, will@kernel.org, miriam.rachel.korenblit@intel.com,
- linux-wireless@vger.kernel.org, Petr Mladek <pmladek@suse.com>
-References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz> <aID6XPLXuGo+ViTm@duo.ucw.cz>
- <aIEC4t2EICdgomZV@duo.ucw.cz> <874iv2stk3.ffs@tglx> <87zfcurexx.ffs@tglx>
- <aIJqC/0ZPhgaNdkf@duo.ucw.cz>
- <71548e22-9f3c-469e-a59d-f921da59d927@redhat.com>
- <848qkdtlsl.fsf@jogness.linutronix.de>
-Content-Language: en-US
-In-Reply-To: <848qkdtlsl.fsf@jogness.linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM3PR11MB8736.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c3b19f0-213e-455c-7384-08ddcb10a2ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2025 00:17:26.9609
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: DDzHYRvOqT6op9lpuTAaiQb7sAWhcee80Fglds3NWjNK9IuKbncwecH/uDGvHemKPx3OtCf7wOtqnXei0zAuT3zsfNFszmU+tOMhpssG0+c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8747
 
-On 7/24/25 3:45 PM, John Ogness wrote:
-> On 2025-07-24, Waiman Long <llong@redhat.com> wrote:
->> On 7/24/25 1:15 PM, Pavel Machek wrote:
->>> Hi!
->>>
->>> On Wed 2025-07-23 19:32:10, Thomas Gleixner wrote:
->>>> On Wed, Jul 23 2025 at 19:31, Thomas Gleixner wrote:
->>>>> On Wed, Jul 23 2025 at 17:42, Pavel Machek wrote:
->>>>>> Did kernel boot on console (w/o X), and got this: not sure if it is
->>>>>> related.
->>>>>> [  402.125635] ------------[ cut here ]------------
->>>>>> [  402.125638] raw_local_irq_restore() called with IRQs enabled
->>>>>> [  402.125645] WARNING: CPU: 3 PID: 387 at kernel/locking/irqflag-debug.c:10 warn_bogus_irq_restore+0x25/0x30
->>>>>> [  402.125654] Modules linked in:
->>>>>> [  402.125661] CPU: 3 UID: 0 PID: 387 Comm: kworker/u16:5 Tainted: G S                  6.16.0-rc7+ #303 PREEMPT(voluntary)
->>>>>> [  402.125667] Tainted: [S]=CPU_OUT_OF_SPEC
->>>>>> [  402.125668] Hardware name: LENOVO 4291W3B/4291W3B, BIOS 8DET73WW (1.43 ) 10/12/2016
->>>>>> [  402.125671] Workqueue: events_unbound cfg80211_wiphy_work
->>>>>> [  402.125678] RIP: 0010:warn_bogus_irq_restore+0x25/0x30
->>>>>> [  402.125683] Code: 90 90 90 90 90 80 3d 51 3d dc 00 00 74 05 c3 cc cc cc cc 55 48 c7 c7 c0 4f c9 85 48 89 e5 c6 05 38 3d dc 00 01 e8 9b d8 e6 fe <0f> 0b 5d c3 cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
->>>>>> [  402.125686] RSP: 0018:ffffc9000173fb30 EFLAGS: 00010282
->>>>>> [  402.125691] RAX: 0000000000000000 RBX: ffffffff8616b460 RCX: 0000000000000000
->>>>>> [  402.125694] RDX: 0000000000000003 RSI: 0000000000000027 RDI: 00000000ffffffff
->>>>>> [  402.125696] RBP: ffffc9000173fb30 R08: 0000000028935f32 R09: 0000000000000001
->>>>>> [  402.125699] R10: 0000000000000044 R11: ffff888100ba52c8 R12: 0000000000000001
->>>>>> [  402.125702] R13: ffffc9000173fbcb R14: ffffffff84301224 R15: 0000000000000000
->>>>>> [  402.125704] FS:  0000000000000000(0000) GS:ffff88829007f000(0000) knlGS:0000000000000000
->>>>>> [  402.125707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>> [  402.125710] CR2: 000055967d471ee0 CR3: 0000000006046001 CR4: 00000000000606b0
->>>>>> [  402.125713] Call Trace:
->>>>>> [  402.125716]  <TASK>
->>>>>> [  402.125719]  console_flush_all+0x41e/0x460
->>>>> Can you please decode this, so we can see which part of that code it is?
->>>> And enable lockdep so that we can see where the interrupts were enabled?
->>> Enabled lockdep and got this one. It seems resume with bad wifi signal
->>> does it on 6.16...?
->>>
->>> Is it any good? Any decoding needed?
->>>
->>> ...
->>> [   32.361445] CPU2 is up
->>> [   32.361729] smpboot: Booting Node 0 Processor 3 APIC 0x3
->>> [   32.361982] Disabled fast string operations
->>> [   32.366800] CPU3 is up
->>> [   32.370186] ACPI: PM: Waking up from system sleep state S3
->>> [   32.393904] ACPI: EC: interrupt unblocked
->>> [   32.396000] sdhci-pci 0000:0d:00.0: MMC controller base frequency changed to 50Mhz.
->>> [   32.409738] ACPI: EC: event unblocked
->>> [   32.470808] iwlwifi 0000:03:00.0: Radio type=0x1-0x2-0x0
->>> [   32.687300] usb 2-1.4: reset full-speed USB device number 4 using ehci-pci
->>> [   32.758329] ata2: SATA link down (SStatus 0 SControl 300)
->>> [   32.758375] ata3: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
->>> [   32.762316] ata5: SATA link down (SStatus 0 SControl 300)
->>> [   32.764585] ata3.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE LOCK) filtered out
->>> [   32.764593] ata3.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) filtered out
->>> [   32.771931] sd 2:0:0:0: [sdb] Starting disk
->>> [   32.777439] ata3.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE LOCK) filtered out
->>> [   32.777450] ata3.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) filtered out
->>> [   32.782731] ata3.00: configured for UDMA/133
->>> [   32.786846] iwlwifi 0000:03:00.0: Radio type=0x1-0x2-0x0
->>> [   32.858513] usb 2-1.3: reset full-speed USB device number 3 using ehci-pci
->>> [   33.026331] usb 2-1.6: reset high-speed USB device number 5 using ehci-pci
->>> [   33.662583] psmouse serio1: synaptics: queried max coordinates: x [..5472], y [..4448]
->>> [   33.810033] PM: resume devices took 1.404 seconds
->>> [   33.841597] OOM killer enabled.
->>> [   33.841808] ACPI: \_SB_.PCI0.LPC_.EC__.BAT1: docking
->>> [   33.843280] Restarting tasks: Starting
->>> [   33.849066] ACPI: \_SB_.PCI0.LPC_.EC__.BAT1: Unable to dock!
->>> [   33.852744] Restarting tasks: Done
->>> [   33.888306] PM: suspend exit
->>> [   33.941831] Bluetooth: hci0: BCM: chip id 63
->>> [   33.944910] Bluetooth: hci0: BCM: features 0x07
->>> [   33.961985] Bluetooth: hci0: BCM20702A
->>> [   33.962628] Bluetooth: hci0: BCM20702A1 (001.002.014) build 0000
->>> [   33.970094] Bluetooth: hci0: BCM: firmware Patch file not found, tried:
->>> [   33.970993] Bluetooth: hci0: BCM: 'brcm/BCM20702A1-0a5c-21e6.hcd'
->>> [   33.971410] Bluetooth: hci0: BCM: 'brcm/BCM-0a5c-21e6.hcd'
->>> [   34.032198] Bluetooth: MGMT ver 1.23
->>> [   34.838285] ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
->>> [   35.166235] ata1.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE LOCK) filtered out
->>> [   35.167828] ata1.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) filtered out
->>> [   35.206578] sd 0:0:0:0: [sda] Starting disk
->>> [   35.238578] ata1.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE LOCK) filtered out
->>> [   35.240197] ata1.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) filtered out
->>> [   35.278928] ata1.00: configured for UDMA/133
->>> [   35.613471] e1000e 0000:00:19.0 enp0s25: NIC Link is Down
->>> [   54.283825] wlp3s0: authenticate with c8:3a:35:f0:ad:f1 (local address=a0:88:b4:62:a7:30)
->>>
->>> [   54.284095] ================================
->>> [   54.284097] WARNING: inconsistent lock state
->>> [   54.284100] 6.16.0-rc7+ #305 Tainted: G S
->>> [   54.284104] --------------------------------
->>> [   54.284105] inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
->>> [   54.284108] wpa_supplicant/2940 [HC0[0]:SC0[0]:HE0:SE1] takes:
->>> [   54.284114] ffffffff86263fe0 (console_owner){+.?.}-{0:0}, at: console_lock_spinning_enable+0x3d/0x60
->> The lockdep warning just means that console_owner_lock is acquired both
->> in softirq context and in task context with interrupt enabled. That can
->> leads to deadlock. So the remedy is to always take console_owner_lock
->> with interrupt disabled, i.e. with
->> raw_spin_lock_irqsave/raw_spin_lock_irqrestore.
-> There are only 3 functions using this lock:
->
-> 1. console_lock_spinning_enable()
-> 2. console_lock_spinning_disable_and_check()
-> 3. console_trylock_spinning()
->
-> For all call sites of 1 and 2, it is surrounded by
-> printk_safe_enter_irqsave()/_exit_irqrestore() calls. These explicitly
-> call local_irq_save()/_restore().
->
-> For 3, it explicitly calls
-> printk_safe_enter_irqsave()/_exit_irqrestore().
->
-> I wonder if this is a false positive because console_trylock_spinning()
-> annotates the acquire after re-enabling interrupts:
->
-> static int console_trylock_spinning(void)
-> {
-> 	...
-> 	printk_safe_exit_irqrestore(flags);
-> 	...
-> 	mutex_acquire(&console_lock_dep_map, 0, 1, _THIS_IP_);
-> 	...
-> }
->
-> As to the crashing problem at hand, it might be faster to bisect the
-> wireless-next-2025-05-22 merge.
+> On Thu, Jul 24, 2025 at 02:28:56AM +0000, Tristram.Ha@microchip.com wrote=
+:
+> > > On Wed, Jul 23, 2025 at 02:25:27AM +0000, Tristram.Ha@microchip.com w=
+rote:
+> > > > > On Sun, Jul 20, 2025 at 11:17:03AM +0100, Simon Horman wrote:
+> > > > > > On Fri, Jul 18, 2025 at 06:21:03PM -0700, Tristram.Ha@microchip=
+.com
+> wrote:
+> > > > > > > From: Tristram Ha <tristram.ha@microchip.com>
+> > > > > > >
+> > > > > > > KSZ8463 does not use same set of registers as KSZ8863 so it i=
+s necessary
+> > > > > > > to change some registers when using KSZ8463.
+> > > > > > >
+> > > > > > > Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> > > > > > > ---
+> > > > > > > v3
+> > > > > > > - Replace cpu_to_be16() with swab16() to avoid compiler warni=
+ng
+> > > > > >
+> > > > > > ...
+> > > > > >
+> > > > > > > diff --git a/drivers/net/dsa/microchip/ksz_common.c
+> > > > > b/drivers/net/dsa/microchip/ksz_common.c
+> > > > > >
+> > > > > > ...
+> > > > > >
+> > > > > > > @@ -2980,10 +2981,15 @@ static int ksz_setup(struct dsa_switc=
+h *ds)
+> > > > > > >     }
+> > > > > > >
+> > > > > > >     /* set broadcast storm protection 10% rate */
+> > > > > > > -   regmap_update_bits(ksz_regmap_16(dev), regs[S_BROADCAST_C=
+TRL],
+> > > > > > > -                      BROADCAST_STORM_RATE,
+> > > > > > > -                      (BROADCAST_STORM_VALUE *
+> > > > > > > -                      BROADCAST_STORM_PROT_RATE) / 100);
+> > > > > > > +   storm_mask =3D BROADCAST_STORM_RATE;
+> > > > > > > +   storm_rate =3D (BROADCAST_STORM_VALUE *
+> > > > > BROADCAST_STORM_PROT_RATE) / 100;
+> > > > > > > +   if (ksz_is_ksz8463(dev)) {
+> > > > > > > +           storm_mask =3D swab16(storm_mask);
+> > > > > > > +           storm_rate =3D swab16(storm_rate);
+> > > > > > > +   }
+> > > > > > > +   regmap_update_bits(ksz_regmap_16(dev),
+> > > > > > > +                      reg16(dev, regs[S_BROADCAST_CTRL]),
+> > > > > > > +                      storm_mask, storm_rate);
+> > > > > >
+> > > > > > Hi Tristram,
+> > > > > >
+> > > > > > I am confused by the use of swab16() here.
+> > > > > >
+> > > > > > Let us say that we are running on a little endian host (likely)=
+.
+> > > > > > Then the effect of this is to pass big endian values to regmap_=
+update_bits().
+> > > > > >
+> > > > > > But if we are running on a big endian host, the opposite will b=
+e true:
+> > > > > > little endian values will be passed to regmap_update_bits().
+> > > > > >
+> > > > > >
+> > > > > > Looking at KSZ_REGMAP_ENTRY() I see:
+> > > > > >
+> > > > > > #define KSZ_REGMAP_ENTRY(width, swp, regbits, regpad, regalign)=
+         \
+> > > > > >         {                                                      =
+         \
+> > > > > >               ...
+> > > > > >                 .reg_format_endian =3D REGMAP_ENDIAN_BIG,      =
+           \
+> > > > > >                 .val_format_endian =3D REGMAP_ENDIAN_BIG       =
+           \
+> > > > > >         }
+> > > > >
+> > > > > Update; I now see this in another patch of the series:
+> > > > >
+> > > > > +#define KSZ8463_REGMAP_ENTRY(width, swp, regbits, regpad, regali=
+gn)    \
+> > > > > +       {                                                        =
+       \
+> > > > >                 ...
+> > > > > +               .reg_format_endian =3D REGMAP_ENDIAN_BIG,        =
+         \
+> > > > > +               .val_format_endian =3D REGMAP_ENDIAN_LITTLE      =
+         \
+> > > > > +       }
+> > > > >
+> > > > > Which I understand to mean that the hardware is expecting little =
+endian
+> > > > > values. But still, my concerns raised in my previous email of thi=
+s
+> > > > > thread remain.
+> > > > >
+> > > > > And I have a question: does this chip use little endian register =
+values
+> > > > > whereas other chips used big endian register values?
+> > > > >
+> > > > > >
+> > > > > > Which based on a skimming the regmap code implies to me that
+> > > > > > regmap_update_bits() should be passed host byte order values
+> > > > > > which regmap will convert to big endian when writing out
+> > > > > > these values.
+> > > > > >
+> > > > > > It is unclear to me why changing the byte order of storm_mask
+> > > > > > and storm_rate is needed here. But it does seem clear that
+> > > > > > it will lead to inconsistent results on big endian and little
+> > > > > > endian hosts.
+> > > >
+> > > > The broadcast storm value 0x7ff is stored in registers 6 and 7 in K=
+SZ8863
+> > > > where register 6 holds the 0x7 part while register 7 holds the 0xff=
+ part.
+> > > > In KSZ8463 register 6 is defined as 16-bit where the 0x7 part is he=
+ld in
+> > > > lower byte and the 0xff part is held in higher byte.  It is necessa=
+ry to
+> > > > swap the bytes when the value is passed to the 16-bit write functio=
+n.
+> > >
+> > > Perhaps naively, I would have expected
+> > >
+> > >         .val_format_endian =3D REGMAP_ENDIAN_LITTLE
+> > >
+> > > to handle writing the 16-bit value 0x7ff such that 0x7 is in
+> > > the lower byte, while 0xff is in the upper byte. Is that not the case=
+?
+> > >
+> > > If not, do you get the desired result by removing the swab16() calls
+> > > and using
+> > >
+> > >         .val_format_endian =3D REGMAP_ENDIAN_BIG
+> > >
+> > > But perhaps I misunderstand how .val_format_endian works.
+> > >
+> > > >
+> > > > All other KSZ switches use 8-bit access with automatic address incr=
+ease
+> > > > so a write to register 0 with value 0x12345678 means 0=3D0x12, 1=3D=
+0x34,
+> > > > 2=3D0x56, and 3=3D0x78.
+> >
+> > It is not about big-endian or little-endian.  It is just the presentati=
+on
+> > of this register is different between KSZ8863 and KSZ8463.  KSZ8863 use=
+s
+> > big-endian for register value as the access is 8-bit and the address is
+> > automatically increased by 1.  Writing a value 0x03ff to register 6 mea=
+ns
+> > 6=3D0x03 and 7=3D0xff.  The actual SPI transfer commands are "02 06 03 =
+ff."
+> > KSZ8463 uses little-endian for register value as the access is fixed at
+> > 8-bit, 16-bit, or 32-bit.  Writing 0x03ff results in the actual SPI
+> > transfer commands "80 70 ff 03" where the correct commands are
+> > "80 70 03 ff."
+>=20
+> The difference between expressing a 16-bit value as "ff 03" and "03 ff"
+> sounds a lot like endianness to me.
+>=20
+> "ff 03" is the little endian representation of 0x3ff.
+> "03 ff" is the big endian representation of 0x3ff.
+>=20
+> I am very confused as to why you say "KSZ8463 uses little-endian for
+> register value". And then go on to say that the correct transfer command =
+is
+> "02 06 03 ff", where the value in that command is "03 ff." That looks lik=
+e
+> a big endian value to me.
+>=20
+>=20
+> In my reading of your code, it takes a host byte order value, and swappin=
+g
+> it's byte order. It is then passing it to an API that expects a host byte
+> order value. I think it would be much better to avoid doing that. This is
+> my main point.
+>=20
+> Let us consider the (likely) case that the host is little endian.  The
+> value (and mask) are byte swapped, becoming big endian.  Thisbig endian
+> value (and mask) is passed to regmap_update_bits().
+>=20
+> Now let us assume that, because REGMAP_ENDIAN_LITTLE is used,
+> they then pass through something like cpu_to_le16().
+> That's a noop on a little endian system. So the value remains big endian.
+>=20
+> Next, let us consider a big endian host.
+> The value (and mask) are byte swapped, becoming little endian.
+> This little endian value (and mask) is passed to regmap_update_bits().
+>=20
+> Then, let us assume that, because REGMAP_ENDIAN_LITTLE is used,
+> they then pass through something like cpu_to_le16().
+> This is a byte-swap on big endian hosts.
+> So the value (and mask) become big endian.
+>=20
+> The result turns out to be the same for little endian and big endian host=
+s,
+> which is nice. But now let us assume that instead of passing byte-swapped
+> values to APIs that expect host byte order values, we instead pass host
+> byte order values and use REGMAP_ENDIAN_BIG.
+>=20
+> In this case the host byte order values are passed to regmap_update_bits(=
+).
+> Then, as per our earlier assumptions, because REGMAP_ENDIAN_BIG is used,
+> the value (and mask) pass through cpu_to_be16 or similar. After which the=
+y
+> are big endian. The same result as above. But without passing byte-swappe=
+d
+> values to APIs that expect host byte order values.
+>=20
+> Is my understanding of the effect of REGMAP_ENDIAN_LITTLE and
+> REGMAP_ENDIAN_BIG incorrect? Is some other part of my reasoning faulty?
+>=20
+>=20
+> I feel that we are talking past each other.
+> Let's try to find a common understanding.
 
-I am sorry for confusing conole_owner_lock with the console_owner 
-lockdep map. Yes, this lockdep splat should be a false positive. You do 
-need to put the mutex_acquire before printk_safe_exit_irqrestore() to 
-avoid this splat.
+It is really about the register definition of this specific register.
+In KSZ8863 when presenting in 16-bit the value is 0x07ff, but in KSZ8463
+it is 0xff07.  It is the fault of the hardware to define such value.
 
-Cheers,
-Longman
+Note that in the new patch KSZ8463 SPI driver implements its own access
+functions, so native mode is used instead and there is no automatic
+swapping depending on the big-endian or little-endian format.  Still this
+code is needed to program the register correctly.
 
 
