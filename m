@@ -1,132 +1,103 @@
-Return-Path: <linux-kernel+bounces-746382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF2BB125FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:09:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDC4B12604
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926C51CC15B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:09:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2B8AC4713
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A650325D8F0;
-	Fri, 25 Jul 2025 21:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DC725D53C;
+	Fri, 25 Jul 2025 21:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Pb1/uN8e"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apYQtwuZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22818224225;
-	Fri, 25 Jul 2025 21:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6392625CC69;
+	Fri, 25 Jul 2025 21:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753477738; cv=none; b=gm8BphntC+Ni8ELKurBGrtYo4U4OIpfoDr/5N1Y86vo/YJJiDeYpT2iHS1s0rZNCblQJ405dcWFOcEikaJuxljxZpUbhipe2sjPbhz5g8DuO/wvvOk/v2BOMiXgULnwKBUjPSnaNRAN5PpXN/OfZzGrkEriOWTZv+XGfBb3boJQ=
+	t=1753477757; cv=none; b=BReewvSItSS2rr0LeYiyYgIQVzuH6hWCaxG5FaTDRNo1N/IyMAaKzNf59bMgJd7aR+zTEzOYgoPrFNwp1fkWIfPjX6dbor1vdVu+PzfCIJzxbVSRVQfyewKxUPYyQWeUkRjegs6Q4c+0FSWcE2TEXzZ11srfSCa5DlxqAU0HotQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753477738; c=relaxed/simple;
-	bh=15RyTr4RmZ9HnrJ3N7IHIqyT4wgzIOUmPBJRpd+Hzoc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GFngUNjJfq0M3gMX2QA0r2DxeVaK55Tq+V7oo2W3IvTtQohsjNfOYu0Omkn1WDhHYigtI68tBdTTBVAbL7L+JbVfAmjjTA/FFYd3XxDdluuSgkWtnpCqyOqQTUp3AjAZIAc3vk+OBTjpRb7WgJckia6aXcvUOao7pBta7vbAbpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Pb1/uN8e; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bpgTf6025zm174C;
-	Fri, 25 Jul 2025 21:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1753477731; x=1756069732; bh=bRiZPnDhWKDfdU+eRq8PCZeA
-	SI8wNiw7DOE1Rlr/5No=; b=Pb1/uN8epUgzcEivLUfApsnXyhMHKXDpnvyDke9Y
-	HHwLfr2d+HamUy0Y0ity/gc3+pPqFLm1GWkE1PBCyG2YLHZmC2keMtMGTZhKPnnb
-	e77Pd+B2Vvb1+mRseZNH3zKKtP4cS2qWjaSNVXuMw5KuzvZQjroHAxuTZlin2653
-	M5Fr6GtrQtjljqrMmkFfoAXSOhw4tkIJ3OvOsaI2KfVR0AkQHaIcEuqx+iVhdUrj
-	kddkr5de6Nnp1uKMNKJfQt9fZEPKG2uiLe4u+3fAHpKlNrnbUiwH2D/EUXRDytxP
-	xUYIKNUHFZ371ToUwhU2BGouxeCDpMOrUCsKvMCPVtI/Gg==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Y5oojwscMG0B; Fri, 25 Jul 2025 21:08:51 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bpgTN2xV8zm0yQP;
-	Fri, 25 Jul 2025 21:08:38 +0000 (UTC)
-Message-ID: <c57a2ca7-b0c9-4e52-9d9d-5c06c7f56f1a@acm.org>
-Date: Fri, 25 Jul 2025 14:08:37 -0700
+	s=arc-20240116; t=1753477757; c=relaxed/simple;
+	bh=OIsCnW+40UMSUhVeIOmMDekEzJwiUoSrnJ4nPIagwfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=aQp+ICJQ/2sFAGqlcaEV2ueSmnGT179+DAduUwlFQn8QO8H65YlIYqJtn+CWKkJiYacqMusvYHO9rqXKFhdzeu0UnLI4j8yik2B3VCUgWbbVMkwzAE8lRM9aysgosrsnmlbOHKUvGSHYc44XRRiukQVxLd/67oWSeQZDi3EKo90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apYQtwuZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B18FAC4CEE7;
+	Fri, 25 Jul 2025 21:09:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753477754;
+	bh=OIsCnW+40UMSUhVeIOmMDekEzJwiUoSrnJ4nPIagwfU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=apYQtwuZIMyedbEqbSYOMeFj2JtJex90IE3y7FNfBPpoue1ZbN6ZtVcU6SdBpcu7O
+	 rVPfpnZDuRWy/KlgXRq8WqvjV0pYqzi4IjWRLBGv89OrTDwSeTsfpxjT+C6COz7nfn
+	 RbESEUtK9nCTdAuznD+QPCfcIP1pTOMKmrBjuCUFzfXpW1iWUx48TNxiYMkS22hUYg
+	 d+xvYr0Xt0q3VTcw2IEVxeB3+SVgbGGF3tWTdKem6oRKUUYju3VoVnyFPD56vbgURg
+	 kSVJMBhYssYpCpRu/+U8ZRXjd7di83EQtSiirdHcQsHDh2aGiT3hJJbtIz2Etv+k0K
+	 G/j16V1gBUOuQ==
+Date: Fri, 25 Jul 2025 16:09:13 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
+	mattc@purestorage.com, Jonathan.Cameron@huawei.com,
+	bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de,
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+	oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
+	anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
+	peterz@infradead.org, tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v9 1/2] PCI: trace: Add a generic RAS tracepoint for
+ hotplug event
+Message-ID: <20250725210913.GA3130903@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] scsi: ufs: core: move some irq handling back to
- hardirq (with time limit)
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>,
- Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com,
- linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
- <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723033108.61587-2-xueshuai@linux.alibaba.com>
 
-On 7/25/25 7:16 AM, Andr=C3=A9 Draszik wrote:
-> -	for_each_set_bit(tag, &completed_reqs, hba->nutrs)
-> +	for_each_set_bit(tag, &completed_reqs, hba->nutrs) {
->   		ufshcd_compl_one_cqe(hba, tag, NULL);
-> +		__clear_bit(tag, &completed_reqs);
-> +		if (time_limit && time_after_eq(jiffies, time_limit))
-> +			break;
-> +	}
+On Wed, Jul 23, 2025 at 11:31:07AM +0800, Shuai Xue wrote:
+> Hotplug events are critical indicators for analyzing hardware health,
+> and surprise link downs can significantly impact system performance and
+> reliability.
+> 
+> Define a new TRACING_SYSTEM named "pci", add a generic RAS tracepoint
+> for hotplug event to help health checks. Add enum pci_hotplug_event in
+> include/uapi/linux/pci.h so applications like rasdaemon can register
+> tracepoint event handlers for it.
+> 
+> The output is like below:
+> 
+> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
+> $ cat /sys/kernel/debug/tracing/trace_pipe
+>     <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_DOWN
+> 
+>     <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_NOT_PRESENT
 
-Has it been considered to use time_is_before_eq_jiffies(time_limit)
-instead of open-coding it?
+I asked about documentation earlier [1], but didn't see any response.
+I think these tracepoints are important and will be widely used, so it
+seems like some kind of user guide would be helpful.
 
-> @@ -5636,15 +5670,34 @@ static int ufshcd_poll(struct Scsi_Host *shost,=
- unsigned int queue_num)
->   	WARN_ONCE(completed_reqs & ~hba->outstanding_reqs,
->   		  "completed: %#lx; outstanding: %#lx\n", completed_reqs,
->   		  hba->outstanding_reqs);
-> -	hba->outstanding_reqs &=3D ~completed_reqs;
-> +
-> +	if (completed_reqs) {
-> +		pending =3D __ufshcd_transfer_req_compl(hba, completed_reqs,
-> +						      time_limit);
-> +		completed_reqs &=3D ~pending;
-> +		hba->outstanding_reqs &=3D ~completed_reqs;
-> +	}
-> +
->   	spin_unlock_irqrestore(&hba->outstanding_lock, flags);
->  =20
-> -	if (completed_reqs)
-> -		__ufshcd_transfer_req_compl(hba, completed_reqs);
+> Suggested-by: Lukas Wunner <lukas@wunner.de>
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-This change moves the __ufshcd_transfer_req_compl() call from outside to
-inside the critical section. I expect this to impact performance
-negatively because it makes it significantly more likely that the
-command submission code will have to wait while the completion code is
-holding hba->outstanding_lock. Can this be avoided, e.g. by limiting the
-number of commands that are completed instead of the time spent in
-interrupt context? usecs_to_jiffies(HARDIRQ_TIMELIMIT) will round up
-the time limit anyway from 20 microseconds to 1/HZ (one millisecond?).
+Nit: I assume this came from the patch I had applied to pci/trace, but
+you shouldn't include any sign-offs from people to whom you send
+patches [2].
 
-Thanks,
+Bjorn
 
-Bart.
+[1] https://lore.kernel.org/all/20250717192950.GA2594528@bhelgaas/#t
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.13#n449
 
