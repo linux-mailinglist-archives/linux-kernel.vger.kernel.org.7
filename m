@@ -1,177 +1,97 @@
-Return-Path: <linux-kernel+bounces-745929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72688B1208E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:07:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CE6B1209D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3158F3B2706
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AA735A4622
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87592E975D;
-	Fri, 25 Jul 2025 15:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332BB2ED877;
+	Fri, 25 Jul 2025 15:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8lqdrPn"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRByOjHn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C719A18991C;
-	Fri, 25 Jul 2025 15:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F49218991C;
+	Fri, 25 Jul 2025 15:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753456041; cv=none; b=Ke2Lxbvc37GEJ77jaiGMXZttBqXyop7G5NbG7LV2bFx3luumdxrsrj9ZJke8YXYOu25DLkpcIRrof6QBV5fJjoW/WTj9iOKJLMy85jWrdh7t77u4PwhWUIBKLYWuT4P+3OCvnNbLGloJi6sLUbQfS7iloW5agxuMchxjWKesh1w=
+	t=1753456046; cv=none; b=rgtpM6uvLOQcD9MpGO2dV1GVKxhHl54d+jf+OL8rZLGzTxqRCaYY5ng4dG8UESTLmPzmQ3r4w8qFAJErZTSGFVIFpA2CW5hIP74lnkTPNdFANoSN8FoiZeCYJ/I8fk8ZSXelDrQ8jXwKYzEK1kaR+vpXMp4ojdNbV2B1+JiERL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753456041; c=relaxed/simple;
-	bh=TVc4c4n5XswwFHAXB4YLfPag9XQKK6X5rm69nPh63I8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nEd2r2S8F48xs75zZWHPKyDR8bpFO8nXyv1GZcC+Dn22fBKi3p0R9/icecZNWbn5d+MHdPKFzRKTOofYY2X0QfGxciGVr0eZMrHBKIA5JoEh9Mbx6uhuVeTZTLm9d+o/yf8crLLxJ+uMuLIrgakthesavp7kfSrkigHqVorOTJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8lqdrPn; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-749248d06faso2002486b3a.2;
-        Fri, 25 Jul 2025 08:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753456039; x=1754060839; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GYfDRgw7sEYugLsg5YTlXCmEjHaYQEe19wJispc5WtA=;
-        b=Z8lqdrPntSh2DByCbJErEMrIT4I0JQCkDhn64uHR/I+614NDRnKc4wlk5ru8R9roqm
-         Gm5xpRZRnrs72vnXHcGYk0aCJu7d2CSi6CsRMmjjDhhXgOPXWjKlbbAeYnNC/dkEUpXv
-         FLtorSs8qZyP4+y4CgbI7uwfAIPu1Mk43odoB78plMz09yuPMNfIUp6gHy6y5blljb/y
-         gVt30LZD7NcT9Dm0Zq8YCAELAVdqEo/wJOOtQAMef9a/JbXux9/c9Rm9vYkUsy5QMZth
-         JHmeYNJTuF/ZIIQWMdcguSMEY6ExUtxJKfMZKTD5rlXHTakz/xUXw2ov8vm8YHoJIzln
-         vWjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753456039; x=1754060839;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GYfDRgw7sEYugLsg5YTlXCmEjHaYQEe19wJispc5WtA=;
-        b=hDTJMCOGv7Mm/e6cHAYagSAg6gojTzx3BTse/4ZoEP/4SPMwY3e2E1pRmmb8+SWjur
-         E0Wy7z8WJ2OBncHz8/qUIhB8cOmb0ys3/0G+85K3wclmb037isX/soBonyDiCjRGxAUP
-         JsA/yP6OT7gCa1IRF5JokObHs+NhzrabOrJRZ8q1pUiduigb+UmsoTDk4sjyhIXpNUNE
-         ewsl/MCzWczHbRanQo+ICldTwsZEcO4x8hKJaDVWiJW9cckD+khubEuCmwvQr6W2eZuv
-         BjMLfPc+l7PAF/8bEYVrq53ma0yKi7bHacqpJdoIb+5vBIL1N5jkjOeQujzFUneR4ETy
-         bKoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtGN87c/capLd1wbNh/a9kwXfT2DCtDWDWDeV0t9LUncIy6K8SZirMizrolTQ4Qg/W4WvkmQKxrXsLdL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/vOt7s+O9fxBFJ54OZFQ3mU/VlN3QNjemBJKYQ16jFBGHoDAu
-	R+4fWyX2EknxoqTLkwLIsGfEJDcRcizqSR4wdzVo9KBYsmw5hwlyGiQBj8Wr+w==
-X-Gm-Gg: ASbGncstm8y13Bt9Qd5/fsuFUFtjM+gl+XVQPFS+U61PVfsnsUWKuAAEBUD4vTehIJt
-	FlW0do++jGAkEmRvL/2BcNbDgPuHKBybEhq5DZ0sRTjQcOS0+sGMT/sXmlUuRZoFALQ55JZffOJ
-	fplBGj5qm8iswfpYmiX2vazEXHT8pCZvgoN9rDcmKgMIysrNwZDCMp/vzzvaJIEDY/CHwUGXMrT
-	pvC4DqjwoC/X8o6hYUexqjqU4s6HD8sigrOZnCD8r9QtUdYDS93CLRF3vzeD+Q+FBCl+BZeUcG8
-	kAEBrf1eGjr81G367kxLIZIyb+FhC5DwGqpMsmOguOCCvYmsTOYdvEBNiVKLkqlrf+nnNr7Utz7
-	3kewUbDDdo5NDE8mRrNSK
-X-Google-Smtp-Source: AGHT+IEtT+8mPPG71q8ntm/07DZ9mO25bz4MKWLmGEROingYExB4ZRov26BTa3buTb80X6t3sIdP2w==
-X-Received: by 2002:a17:90b:2e0e:b0:311:f05b:86a5 with SMTP id 98e67ed59e1d1-31e776207cfmr3892643a91.0.1753456038425;
-        Fri, 25 Jul 2025 08:07:18 -0700 (PDT)
-Received: from hiagonb ([2804:1b3:a7c1:ed11:1206:361d:4c46:cefb])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e75753d1asm1623317a91.40.2025.07.25.08.07.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 08:07:17 -0700 (PDT)
-Date: Fri, 25 Jul 2025 12:07:13 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: linux-remoteproc@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org,
-	Hiago De Franco <hiago.franco@toradex.com>
-Subject: System can not go into suspend when remoteproc is probed on AM62X
-Message-ID: <20250725150713.barg5lhqr4reoxv3@hiagonb>
+	s=arc-20240116; t=1753456046; c=relaxed/simple;
+	bh=Ba1sOIBAzvxqki+3uQJqRL0TrBLWOJfMHJfhHCh42yw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DXYny/EK1g78z8vu9iMgF6TkOE3SctDWWEoyZ54oK3EosEpeDhEHubbltuRmC2NZwJ3ka0BXXtfwnoM9thrf5xjchdPg7ybW2AZjAlbOasU2kZomgRp/UrAvewoSF7b0KEgv9tkNRfCGrvKXxia5A+IUGKNVfZpLEZb/spkiOsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRByOjHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77589C4CEEB;
+	Fri, 25 Jul 2025 15:07:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753456046;
+	bh=Ba1sOIBAzvxqki+3uQJqRL0TrBLWOJfMHJfhHCh42yw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KRByOjHnYwZHgkjq4FRbprKJ5mdkn1qxfstLphLZGMBffWql3nQ1t4HMNQfvegH/j
+	 t/WEx6jJ+k7dostiBqmXmsBs+/spHyauVtlanb6/E2GWLWGy39ICBle2pNWN2BB4eE
+	 VjScY0QcW4UAIoUu+RzAoQ/LMagEKAvflEWK2FQjoHbXNX+s1kv79jZAhG0neUAyNp
+	 Nf/fn4txUHeT6ENIG6hkXGUHHWO83UqJvPXfeXpqBu9FEpJmVIaazCD6Cz+pxsvtnO
+	 983PaaxwT+G7ry4zjhpxLFGrptg5jt5fmQmd+bo04m/yBDoFfwD3u6O69mi0udgiI1
+	 I2/J0OItegL1w==
+Message-ID: <a05133e0-0331-46ce-ab50-c423e40a3879@kernel.org>
+Date: Fri, 25 Jul 2025 17:07:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] rust: transmute: add `as_bytes` method for `AsBytes`
+ trait
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Robin Murphy <robin.murphy@arm.com>, Andreas Hindborg
+ <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ "Christian S. Lima" <christiansantoslima21@gmail.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250725-as_bytes-v2-1-c6584c211a6c@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250725-as_bytes-v2-1-c6584c211a6c@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello everyone,
+On 7/25/25 3:08 PM, Alexandre Courbot wrote:
+> diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
+> index 1c7d43771a37b90150de86699f114a2ffb84db91..d4036986a3d7fb97e5da3e121e9590ad23b784e9 100644
+> --- a/rust/kernel/transmute.rs
+> +++ b/rust/kernel/transmute.rs
+> @@ -47,7 +47,16 @@ macro_rules! impl_frombytes {
+>   ///
+>   /// Values of this type may not contain any uninitialized bytes. This type must not have interior
+>   /// mutability.
+> -pub unsafe trait AsBytes {}
+> +pub unsafe trait AsBytes {
+> +    /// Returns `self` as a slice of bytes.
+> +    fn as_bytes(&self) -> &[u8] {
+> +        let data = (self as *const Self).cast::<u8>();
 
-I noticed something that I am trying to debug, maybe you have any idea
-or tips to help me debugging this issue.
+I'd probably use from_ref() instead. With that,
 
-On AM62 and AM62P SoCs that I tested, when the remote proc driver is
-probed, suspend to RAM mode does not work anymore. Without the
-remote proc driver enabled, everything works just fine.
+	Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
-See the driver being probed with AM62 and Cortex M4:
-
-root@verdin-am62-15479173:~# dmesg | grep -i -E "remoteproc|rproc|omap-mailbox"
-[   10.321304] omap-mailbox 29000000.mailbox: omap mailbox rev 0x66fc9100
-[   10.518369] k3-m4-rproc 5000000.m4fss: assigned reserved memory node m4f-dma-memory@9cb00000
-[   10.560055] k3-m4-rproc 5000000.m4fss: configured M4F for remoteproc mode
-[   10.600283] remoteproc remoteproc0: 5000000.m4fss is available
-[   10.615269] remoteproc remoteproc0: Direct firmware load for am62-mcu-m4f0_0-fw failed with error -2
-[   10.650058] remoteproc remoteproc0: powering up 5000000.m4fss
-[   10.677073] remoteproc remoteproc0: Direct firmware load for am62-mcu-m4f0_0-fw failed with error -2
-[   10.696173] remoteproc remoteproc0: request_firmware failed: -2
-[   11.953278] remoteproc remoteproc1: 30074000.pru is available
-[   11.985475] remoteproc remoteproc2: 30078000.pru is available
-
-And then when trying to to go into suspend:
-
-root@verdin-am62-15479173:~# echo mem > /sys/power/state
-[   41.727649] PM: suspend entry (deep)
-[   41.738557] Filesystems sync: 0.006 seconds
-[   41.751535] Freezing user space processes
-[   41.758692] Freezing user space processes completed (elapsed 0.002 seconds)
-[   41.765763] OOM killer disabled.
-[   41.768999] Freezing remaining freezable tasks
-[   41.774858] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-[   41.782333] printk: Suspending console(s) (use no_console_suspend to debug)
-[   41.830945] omap-mailbox 29000000.mailbox: fifo 1 has unexpected unread messages
-[   41.830980] omap-mailbox 29000000.mailbox: PM: dpm_run_callback(): platform_pm_suspend returns -16
-[   41.831013] omap-mailbox 29000000.mailbox: PM: failed to suspend: error -16
-[   41.831040] PM: Some devices failed to suspend, or early wake event detected
-[   41.851206] am65-cpsw-nuss 8000000.ethernet: set new flow-id-base 19
-[   41.861919] am65-cpsw-nuss 8000000.ethernet end0: PHY [8000f00.mdio:00] driver [TI DP83867] (irq=354)
-[   41.862921] am65-cpsw-nuss 8000000.ethernet end0: configuring for phy/rgmii-rxid link mode
-[   41.868493] usb-conn-gpio connector: repeated role: device
-[   42.012894] OOM killer enabled.
-[   42.016050] Restarting tasks: Starting
-[   42.024121] Restarting tasks: Done
-[   42.033660] random: crng reseeded on system resumption
-[   42.040482] PM: suspend exit
-
-I believe the issue happens at this line:
-
-[   41.830945] omap-mailbox 29000000.mailbox: fifo 1 has unexpected unread messages
-
-When the remoteproc driver is probed, the omap-mailbox drivers sends a
-message to Cortex-M4 which is not consumed. Please notice in this case
-there is no firmware running on M4, the driver is only set to "okay"
-into the DTB.
-
-See the debug message with the message being sent ("hfranco"):
-
-root@verdin-am62-15479173:~# dmesg | grep -i -E "remoteproc|rproc|omap-mailbox|hfranco"
-[   10.321304] omap-mailbox 29000000.mailbox: omap mailbox rev 0x66fc9100
-[   10.518369] k3-m4-rproc 5000000.m4fss: assigned reserved memory node m4f-dma-memory@9cb00000
-[   10.560055] k3-m4-rproc 5000000.m4fss: configured M4F for remoteproc mode
-[   10.577664] hfranco: sending msg 0xffffff03, name mbox-m4-0
-[   10.600283] remoteproc remoteproc0: 5000000.m4fss is available
-[   10.615269] remoteproc remoteproc0: Direct firmware load for am62-mcu-m4f0_0-fw failed with error -2
-[   10.650058] remoteproc remoteproc0: powering up 5000000.m4fss
-[   10.677073] remoteproc remoteproc0: Direct firmware load for am62-mcu-m4f0_0-fw failed with error -2
-[   10.696173] remoteproc remoteproc0: request_firmware failed: -2
-[   11.953278] remoteproc remoteproc1: 30074000.pru is available
-[   11.985475] remoteproc remoteproc2: 30078000.pru is available
-
-AFAIK, the message in sent when 'send_data' callback is called inside
-mailbox.c, which triggers omap_mbox_chan_send_data() from
-omap-mailbox.c. If I skip this message, suspend to RAM works again, as
-the mailbox will be empty.
-
-Do you know why this message needs to be sent? Is there a way we can
-overcome this issue? Commit 9f0cee984a25 ("mailbox/omap: check for any
-unread messages during suspend") introduced this check.
-
-I will be happy to send patches to address this issue.
-
-Thanks!
-
-Hiago.
+> +        let len = size_of_val(self);
+> +
+> +        // SAFETY: `data` is non-null and valid for `len * sizeof::<u8>()` bytes.
+> +        unsafe { core::slice::from_raw_parts(data, len) }
+> +    }
+> +}
 
