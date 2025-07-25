@@ -1,177 +1,140 @@
-Return-Path: <linux-kernel+bounces-745770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8ACB11E50
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:16:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F22B11E56
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44BD1CE3A13
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:17:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0A077A4EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34867246BD3;
-	Fri, 25 Jul 2025 12:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CCB246BC9;
+	Fri, 25 Jul 2025 12:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yiKrQ5XO"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NEEhQoUi"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BAA246BAF
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A0119343B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753445800; cv=none; b=AZdz9r23zi0t+JYte3SgWoOVqFcZVBM1OwfbyJB1NbeqwcLuIdkKiDyvg53S8Jf8WUBT9+3N3+hbNap8Z7H6Jx0+sT549PngrL0j84Qci+DRmfkmuX6CG1IYRq/sz1PYGD735LM+wDyluMRUD2hDZG8CTE5BeONPK9nP25cxFLc=
+	t=1753445978; cv=none; b=BIT3nnXww5CSmJ6o8jTtszwNWWQ0ftGY4lsVdYLArLwddi7lRe3Uz0UoaXtqeeUs55PlLRwznA8wz+l+DpkdseNZnBLiO7Inbl42tFz3tO9FZMRQ4WDVR4u92fU81L0AYDExtCinevZafs1l19uXS/ztKVr7VVmwVKSfv4e7HEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753445800; c=relaxed/simple;
-	bh=RPodm9Ldenuy/H5haDTN8fCr5D6oW2GFg9ixFEFNSgU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ORZ9H2uKyg0ZDKGKSGfcwa6jawdrs9hTc+Zt7LyVg5wX+1wna9nbbihlw/xTtAm4x7im3T2AKL8H2aUkjFuZ7RXP7hUhXMCZ9/RCJc9XN06LSZjvmLFOd5XV2RvDG7ddgx/B0DtAgIC5fiZMa+f2eM4fJTthpBUxD3NizJCeTqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yiKrQ5XO; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4561b43de62so79855e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:16:37 -0700 (PDT)
+	s=arc-20240116; t=1753445978; c=relaxed/simple;
+	bh=C0Hps5C7VVp6TMJa5SSauLjDYas/RuYUmWcHmSjZVvE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=MZuY35olHil2Kr5X+W5SLYJaModDEaNr5J6qPTpQfqMODapIaosPg7s3XjhVFPmhuPQwcGCkfZb1L+qn2wKC4FJ+O2SBZkpOJDdy6Nvg1su0c6EfTZJmHdZ4S0ak4Xob450bftrIEmE6SMZd2xDrp/i5XQpCoFoL0S+qyKK2ssA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NEEhQoUi; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23dea2e01e4so26129455ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:19:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753445796; x=1754050596; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v8A06zzov4fRzg2AP/VvqP9aaecoBJtmC4l+aze+HnM=;
-        b=yiKrQ5XODZA3GZ6OFdM1DZFowEprQrn4bjxUsiLPhd2/Qu6PjWpynA6z4qf9ix2MFv
-         EdaWSZ+CdSXdBFkA++pYKtBuVLfPtGCcar+SbkBR2GGKVk2iC2aeuOc12Tb51yGQQ8N7
-         tzSgQMf9Oxi/BJziuxWsxOsdKbEGrl6vgtwGYqRK+n3c1cISIfPPk5pmtgc8B/fCjI0H
-         gyX/A4dQ244y192KA5ClBuUxnwPGTj7dTa6N1TisCBidPlvKXI0hP0F6qN2oYKZoeju7
-         nBCefnHoDwAhZwSAjW5b0v0r3VNflTbwl7zrtt7y7E7LTsX0tY4HnXItHJDeZm2Um7LX
-         bVCA==
+        d=linaro.org; s=google; t=1753445976; x=1754050776; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NeMfxo6+NjtkxLuUXyqyKSelgastqUQJsatQRBwVL9M=;
+        b=NEEhQoUi8aw7gVz9S7RUOn0EpZ6sZZBXtdJhETduRQNut86xa6uyvjlOruHOaLwWGR
+         lIW5aBvdlp85Ug95xubBgEZOo0g8a/yo++wCr/q2vYpREYRPVU4SbxtynPTp/cf/908U
+         /x6gbiG7nVFLwJL6q9DQ9gJ/Wr7uwpz1FHxn09e5Kq1bUVfErW1Qd842MKNhEeFLi1Fg
+         N3MzTG+cPj4ymf2D7381kHxktIS508x8YDBGfEOG1Kv9GF8sziy6vhCpIPo/9eIZ1F6n
+         ydKd+rcO3PBm1Q2Aqw+dK300JTFpKBqeGKQYVn9GMw6F2LE2pUYQIFL0sbICZDYHZ3U0
+         nkew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753445796; x=1754050596;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v8A06zzov4fRzg2AP/VvqP9aaecoBJtmC4l+aze+HnM=;
-        b=xCuYkfZVXf/VwT+SBa5Pn637npgjurmRRS5XNbtSSRI6fkmVr4dXQp0gkZgA8jrakI
-         l52DNnKG1cNL4FcqztBJVo/Tm1gEevSgVJRXytXdqG7oXwc/emqVTHoKPnfs82+M4JFb
-         700FnPAVgCX8vYZopQWhRPkMUYwqPCi0CMtyC5ZkjYHTe1+mglsV3sYCgRBqXjgSTWHa
-         SPquSqy4krXhr5VLyiroM5qTfmCngNSVhkpB8dtqEHHFM5tmxnUKmVfmlB/oTA47Y++2
-         8Ttw8EHT1rBwkiSMoxTVYAl2+gjaE0aLZSJ4IdtZ6v9AH48W1zPFRZdpJEKwvUSjvEd6
-         /Ohw==
-X-Forwarded-Encrypted: i=1; AJvYcCXG7Ujhd5P98qkNnQL4XirRRh3PYyvh9f93dm6eu1K/ysRE4LhuRUSVzPWbl+OhYMwhi2W+qxm4lfgAjTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Y2j/RyZ6UHMsryOzHxfPYl28ObBkl/l7gz0HuLQwx068Ce8c
-	6RB6mvxnkoOV3cv5Sb09j0AcpkhYqT0n8p2S7YacJBVVFFc+vTDQS8MN68HNEeVJvg==
-X-Gm-Gg: ASbGncud7On12TOjNCFVfvXbhgOIyoj+FHJyqzbiOvwennA2aRf1mCcT2vRkO6BRQqP
-	rGI9xC5ZeviCSewWM0TGtILc9SChVqkEbtgEMd45Gffb18+mEYdelc3JDAGZik3WDYp/79F53Y7
-	rjLKDvnpUo8+53XsjcKljFCGMIj9j7Px3aItkUWMIQpb+xjCT2/i3ZdSAKVpzvXD5Sx13nGCbTL
-	36iH2UoSYuQfLRKyEWY1gm4615htX/1JQmWJ8VQNjC7gXxhpO5mMYhc/DyPcoFUlpS4SBESdoql
-	ctLGUVkdfxClRH65+xGExbHB8E/8FO5tbQpdR6lntGN2YGORAqJ/USiSqONktR+WDNipambm7GZ
-	zYIYWlxkIPQ==
-X-Google-Smtp-Source: AGHT+IGciF+4vEIkN/QlW54EKn9w/jC8q5NchVG0Sr8U59/ARVTa0iNrkl49Gr+973iUxiCoTLx16g==
-X-Received: by 2002:a05:600c:548b:b0:455:fb2e:95e9 with SMTP id 5b1f17b1804b1-458730cfd06mr1672715e9.6.1753445795587;
-        Fri, 25 Jul 2025 05:16:35 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:5214:94de:bd29:e79d])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b76fc605a4sm4916829f8f.14.2025.07.25.05.16.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 05:16:34 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Fri, 25 Jul 2025 14:16:24 +0200
-Subject: [PATCH v2] mm/rmap: Add anon_vma lifetime debug check
+        d=1e100.net; s=20230601; t=1753445976; x=1754050776;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NeMfxo6+NjtkxLuUXyqyKSelgastqUQJsatQRBwVL9M=;
+        b=OkvN2qvRe0nkyzbu3Qba65QuMCcoTzhigHGOWPv3I8k5jM+aIyKbuMr1YrN30572jR
+         VUAPZmJVyiCQKmewBdeIqMXKMST7BVI49WIYbd53yWupShWV8dnp8OtWx/RGsdpHi/yj
+         357vr2Zx0KRjZrmJ++sFWdOZCWyqpWx+w3FOMI2hk/SBc9bzKQ1c4QcA2iHDZyIrquLf
+         7vxGjlx3TEHfuPSmFTV9qsZAj+wm25Txc6tcaLK2ZgEZb/vjpqiY3M/371qfSAzmHeVJ
+         2A4/RNhogukwLB1p8WfHCE9nMAzc0pCI0Bnn1ruH6akt/nj/+1GBAdg7AdrABc+RR6qZ
+         T2Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKglw20BTnwU0NxhsD8YSsbMNjmPuS8SP71tBnY4T3xXXcN4LnSwYBwbC71kAtGjElW8MU4u3sHcWRb4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIRKb2lPf7rhnDbnuftitscWbivNU/5k448OlJC4pjpl45UaZn
+	4UbY1Zyp4XTjIxlwtDdFDpiedYahrvlXk0PBrD6MoEk9HPU2UcWPYSbuP8uFLlI8ejSlRltlPOb
+	PnG+ZRktdOibZ0uJhMYDKxiBKRodAgeSxsuBCpCQzWw==
+X-Gm-Gg: ASbGncuKwMJAyC2zqMHf6BSkrhlhRiuOg4JEgUoLL6i0ZjCvPxMBbZoxScf9uQpteZF
+	D2mpEFBI1M5Xmrv11vMqe/EOeTT6WKVILXTyEnV7b2SVvdQBe0K7qPis9EKIGp3BHefdHqs45W4
+	u6F4KO6mAkJQoz3CHkGaDJ9X3ClLWxfmcXYO1Sbi8vgQfdl0u5EvXeH5XiZ2MHO0QfW6esOHj0P
+	LISelvWOwKuI6Z+epPbPy0um3/sIlpxk2vyjy4=
+X-Google-Smtp-Source: AGHT+IGdYljlX5X3dzqQG4BZUzWT+e8A4L5gJt/XoCo4bLpcHRLiUWIeX/SHGfQbsZ8DVFMGkkjaR0FrY9REWiry2is=
+X-Received: by 2002:a17:903:1b05:b0:234:b743:c7a4 with SMTP id
+ d9443c01a7336-23fb30e42a3mr30388225ad.38.1753445975730; Fri, 25 Jul 2025
+ 05:19:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250725-anonvma-uaf-debug-v2-1-bc3c7e5ba5b1@google.com>
-X-B4-Tracking: v=1; b=H4sIAJd1g2gC/32NQQ7CIBBFr9LM2jFAahBX3qPpAsqUklgwYImm4
- e5iD+DyveS/v0Om5CnDrdshUfHZx9BAnDqYFh0cobeNQTBxYVL0qEMMZdW46Rktmc2hVtYwMj2
- X0kDbPRPN/n00h7Hx4vMrps9xUfjP/qsVjhyFUldl7dST0HcXo3vQeYorjLXWL2nQBm6zAAAA
-X-Change-ID: 20250724-anonvma-uaf-debug-a9db0eb4177b
-To: Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@redhat.com>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Rik van Riel <riel@surriel.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753445791; l=2822;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=RPodm9Ldenuy/H5haDTN8fCr5D6oW2GFg9ixFEFNSgU=;
- b=2aXvVOIInCdwGZjckt0AFw/FmLGP7KvAWt58w6Phvj1VFsc79j9yuxuT9YQ416/22q2uKcSkZ
- SpdyefrwB9RCL/p7QsSAyU1j7eMRm1X9VRAhUvVMJ+pTw/0yPy2nNZJ
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 25 Jul 2025 17:49:24 +0530
+X-Gm-Features: Ac12FXwd36DF0XFKorhLZXh2IFhKm9PTaX7sVXvKuHjnNnv3_TFODhgbB7WE3cU
+Message-ID: <CA+G9fYs2LDdWX-w=7JA26tkYN450qg0230H9mfB-PymqmPsZ4Q@mail.gmail.com>
+Subject: next-20250725 nomadik-rng.c undefined reference to `amba_release_regions'
+To: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-If an anon folio is mapped into userspace, its anon_vma must be alive,
-otherwise rmap walks can hit UAF.
+Regressions noticed while building x86_64 and s390 builds with gcc-13
+toolchain with allyesconfig on the Linux next-20250725 tag.
 
-There have been syzkaller reports a few months ago[1][2] of UAF in rmap
-walks that seems to indicate that there can be pages with elevated mapcount
-whose anon_vma has already been freed, but I think we never figured out
-what the cause is; and syzkaller only hit these UAFs when memory pressure
-randomly caused reclaim to rmap-walk the affected pages, so it of course
-didn't manage to create a reproducer.
+First seen on the Linux next-20250725
+Good: next-20250724
+Bad:  next-20250725
 
-Add a VM_WARN_ON_FOLIO() when we add/remove mappings of anonymous folios to
-hopefully catch such issues more reliably.
+Regression Analysis:
+- New regression? Yes
+- Reproducibility? Yes
 
-[1] https://lore.kernel.org/r/67abaeaf.050a0220.110943.0041.GAE@google.com
-[2] https://lore.kernel.org/r/67a76f33.050a0220.3d72c.0028.GAE@google.com
+* s390, build
+  - gcc-13-allyesconfig
 
-Acked-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Signed-off-by: Jann Horn <jannh@google.com>
----
-Changes in v2:
-- applied akpm's fixup (use FOLIO_MAPPING_ANON, ...)
-- remove CONFIG_DEBUG_VM check and use folio_test_* helpers (David)
-- more verbose comment (Lorenzo)
-- replaced "page" mentions with "folio" in commit message
-- Link to v1: https://lore.kernel.org/r/20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com
----
- include/linux/rmap.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+* x86_64, build
+  - gcc-13-allyesconfig
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 20803fcb49a7..6cd020eea37a 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -449,6 +449,28 @@ static inline void __folio_rmap_sanity_checks(const struct folio *folio,
- 	default:
- 		VM_WARN_ON_ONCE(true);
- 	}
-+
-+	/*
-+	 * Anon folios must have an associated live anon_vma as long as they're
-+	 * mapped into userspace.
-+	 * Note that the atomic_read() mainly does two things:
-+	 *
-+	 * 1. In KASAN builds with CONFIG_SLUB_RCU_DEBUG, it causes KASAN to
-+	 *    check that the associated anon_vma has not yet been freed (subject
-+	 *    to KASAN's usual limitations). This check will pass if the
-+	 *    anon_vma's refcount has already dropped to 0 but an RCU grace
-+	 *    period hasn't passed since then.
-+	 * 2. If the anon_vma has not yet been freed, it checks that the
-+	 *    anon_vma still has a nonzero refcount (as opposed to being in the
-+	 *    middle of an RCU delay for getting freed).
-+	 */
-+	if (folio_test_anon(folio) && !folio_test_ksm(folio)) {
-+		unsigned long mapping = (unsigned long)folio->mapping;
-+		struct anon_vma *anon_vma;
-+
-+		anon_vma = (void *)(mapping - FOLIO_MAPPING_ANON);
-+		VM_WARN_ON_FOLIO(atomic_read(&anon_vma->refcount) == 0, folio);
-+	}
- }
- 
- /*
+Build regression: next-20250725 nomadik-rng.c undefined reference to
+`amba_release_regions'
 
----
-base-commit: 1d1c610e32ab2489c49fccb7472a6bef136a0a8b
-change-id: 20250724-anonvma-uaf-debug-a9db0eb4177b
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
--- 
-Jann Horn <jannh@google.com>
+## Build log
+x86_64-linux-gnu-ld: nomadik-rng.c:(.text+0x6fa057a): undefined
+reference to `amba_release_regions'
+x86_64-linux-gnu-ld: nomadik-rng.c:(.text+0x6fa05a0): undefined
+reference to `amba_release_regions'
 
+## Source
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Project: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250725/
+* Git sha: d7af19298454ed155f5cf67201a70f5cf836c842
+* Git describe: 6.16.0-rc7-next-20250725
+* kernel version: next-20250725
+* Architectures: x86_64 s390
+* Toolchains: gcc-13
+* Kconfigs: allyesconfig
+
+## Test
+* Test log: https://qa-reports.linaro.org/api/testruns/29245454/log_file/
+* Test details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250725/log-parser-build-gcc/general-ld-undefined-reference-undefined-reference-to-amba_release_regions/
+* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/30LiIUwnkUApDe74DgNCqkngoPB
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/30LiIUwnkUApDe74DgNCqkngoPB/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/30LiIUwnkUApDe74DgNCqkngoPB/config
+
+## steps to reproduce
+ * tuxmake --runtime podman --target-arch x86_64 --toolchain gcc-13
+--kconfig allyesconfig
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
