@@ -1,168 +1,210 @@
-Return-Path: <linux-kernel+bounces-746002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45901B121C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:18:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1D4B121BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499E53A98F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:16:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35B197BA43D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E432EF9DB;
-	Fri, 25 Jul 2025 16:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28AE2EFDA4;
+	Fri, 25 Jul 2025 16:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClZJji21"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="gSmnJG5m"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E04E2EF9CD;
-	Fri, 25 Jul 2025 16:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753460121; cv=none; b=D1OShj+Wo23ZZR4gHiqC1xDpdoULl4kbnvC/pUkGl92QUQxUllxYAuVCYYcIc45uyHbHlOQ7+EeuMghC2SoUpfptwzykj1gLfvOzBER9BT1dmqnEYf+kXzA8qJHPJ2vgAbjHwefdVNnKDXMvYoUU6AwNoKbwceZCmc1+sd5ZkG4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753460121; c=relaxed/simple;
-	bh=fh0CjKHTZvu0FuhvdnqoJwzPfDDNX+QCT7SyJ14PPQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uwmDzzZNt4w/bZy4krBuZ+jK8TWoE59bWkoT3JKiDCgBDlT5p8RhIVxa/vGRnFnlV8A7x5RR6GrjyRdAMwdRibJOjP5IQSs8UNJQ9soqYARS4DUooKDWwPn7JV8rWHy4y3gDPQdwO+r2G4tmxJcREcBcXMhWIpSvzd/AzWaQM8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClZJji21; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-313f68bc519so1811684a91.0;
-        Fri, 25 Jul 2025 09:15:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753460117; x=1754064917; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3cFi0vD7YessLF2r15au7TPe/jon8lIosOISFCfh1VM=;
-        b=ClZJji21xibaWUctuamOxgpSpc2mWYLC7998HFSvr1waknytKwxETK8Js3VFTMQ3st
-         lxN422PYDdPWmCmxYPmGJ0irMB6Gg17Q+DdlenHEHDTfUfhU3Y0cMkLlLFm4UFU5gNUR
-         oETKHBBn5amByFsXcXmSEJZ+veccns0GrT9o90P5no93Iw/RbC/99DCFfMCbVrP6/8+P
-         374xghyt9uYjMrFAHJM08VWmSKmW6Ql5Ohy8qrjzqHKJIQHEqfnD6W+XVsfcfyFIRWB1
-         Ig4X7hyp2culaIF0aVN0Rw38hMdeNk6otrr1ctr22KHSFReZcKVlLPaBFfGfpnn/2Q3Y
-         fH3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753460117; x=1754064917;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3cFi0vD7YessLF2r15au7TPe/jon8lIosOISFCfh1VM=;
-        b=wQ1yysnnMZkcn7A0GnIxjSZwUQeFyGIcRjxf1dJsyGvUMbb4i3W3T14CFD/61VqIMz
-         LYUtFl3To5gdYQNHGA6kx+yDccz6vnwfcoQqAWuq6a+UAAtIbj+Bydd21W3wENsHnsJS
-         1HHBo7x3kvln/nEGdZk27XWkLXz7vMrMd0oplVmhtRHgzXNPfLs20tGXPLQBiWK7MZW0
-         whiX3GyQKFgW+u20uKOyvtFAtwRwnpFHkDfJN4/moK75h9xe1MERnn2IIWZbMHk7B1mD
-         ZtYayb8AVbi6MzkP2EIMA/g4XhTdRx5WTVLNuVnBZdeUvm4l5n9gvZCS43ZnccoyGQs8
-         +WRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUi3m+v8hkx9HctBTWWskhwgEsD2PSCxatVbf9KKzDmOg74mjxFDmQg1whw5ztTe5aYXu7nT7zr@vger.kernel.org, AJvYcCVvAOTc6O/THNH1+pEYMqn/tu/RFCWzEz/5wmwhhPJIGw4/cPzoSTX01461covuPJy4I+v7DuaWInqGlTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdzJhe5aTVF0Zwllkj6hkCoBUEN3urDpr3ElxOcYBGmRuC6186
-	o+MhLa6rkrsosPalcg8Dc7jIGqVkRFlmqR9/jYsjYrJ4LM5lKeQxlxYt89pJu5/6uQg=
-X-Gm-Gg: ASbGnct8SJRoLRAZRny46nkCGJKHDC8qOAmDer8kRKBv9GE7/JxN0xazyxaAffPxOvV
-	DGE9lsJxJbIVx2kzfAbo6ngARIG7NZdRmQIQElW6YASDoO/wj9MsbVbmqHEVap0F8N/9D2zH2xv
-	lryfWQZ8EsVW1LMeA4WfKEUiL4TQPY9mvGG5j30DlRmQ++VzOz1jPP1hqEEURnFS83hhgWfCrCm
-	JBepGoHYE9EYv+AXLrCvjV6oX6gpO2xWdocZwmaQkSMvYTIEr8qMGAQGsDxxvp9i+UiXbuwM/35
-	Ov7RF7WxotcxpQczeq9r+0RITlMg9ossGTp4VWw0/KNi9c1RQpI6m/UBxSbceACvW8ulUqgghed
-	IND1+6Fxy1xLAGF3hmWDlRMehJxn35O1AbYa2FezNjisx7RLR/wwY
-X-Google-Smtp-Source: AGHT+IEmBI+tcBrcxIwV7kA6wcfnWlRhgQZw2jycq881kY+fEq6W73LTONd/xlqvx9aFZrbYHRbH9Q==
-X-Received: by 2002:a17:90b:134e:b0:311:9c9a:58ca with SMTP id 98e67ed59e1d1-31e7788a6aemr3965185a91.8.1753460117304;
-        Fri, 25 Jul 2025 09:15:17 -0700 (PDT)
-Received: from BM5220 (118-232-8-190.dynamic.kbronet.com.tw. [118.232.8.190])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-31e832fb879sm61604a91.6.2025.07.25.09.15.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 09:15:17 -0700 (PDT)
-From: Zenm Chen <zenmchen@gmail.com>
-To: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: pkshih@realtek.com,
-	hildawu@realtek.com,
-	max.chou@realtek.com,
-	rtl8821cerfe2@gmail.com,
-	usbwifi2024@gmail.com,
-	Zenm Chen <zenmchen@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] Bluetooth: btusb: Add USB ID 2001:332a for D-Link AX9U rev. A1
-Date: Sat, 26 Jul 2025 00:14:32 +0800
-Message-ID: <20250725161432.5401-1-zenmchen@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030F12EFD93;
+	Fri, 25 Jul 2025 16:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753460126; cv=pass; b=doyFAYuMVFiFWLgCpMGWTH65hzr5jB6zSo+MWRg+ZR7u1cZfW8Hh3DQVtgyI3+nk4mVdoVl3umK3fKWp0E4pB9xcEkC+M9jiu8hCPbPNaUMnHvAHRowdEMks98OHJRPdE99tXUzoXFHtCHuoBXSdHwMe5wpn/hndWz5s/4qi7mg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753460126; c=relaxed/simple;
+	bh=A7ksU1bvZAG9k7j6F5UZQWe/Z8XScE+seNtXItM5jmg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pizaZY0iLk41jAV4k6EzsehbDQXN4l8YBe5FazDaEB6v75rowcZMyVE6H56lnTohtr7XeTzCkb1PnUUHB/IMvoKzaw7AUqOch3GUxzf3UHlYufnKPftjR51Ax3aGYilrdGnmHBX9CYIaWtl8gGgSVx+7dMqp0V1YSj8Wr3l0P2M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=gSmnJG5m; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753460106; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=J1WA3IXrUGpGOYPbJ9ZgPNX3m5pjoql//Rr6QiIc0/a8DBBksmQ6Urkzjn0zI4196iWY1/1X1jMvjsQ44piT4vILeaSE0eQNEggv24Spa9fFuAf/kdu+oWsjwOJcDYBpK6bZdu+MDwrs9Qz5Vd2LlIjUi3uB60ZWEHINF2DtbjQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753460106; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Cbvvomnbtrld2kTiEXZvpI4lmoKBMsw0XyhLoXt6moE=; 
+	b=OhcsiiYmHKW98rgFm52+kLIPJ3dkkEVTs9egwzepqjos4A/F7IAIwM/mD+5JMK5OxOlfj5+r6YKF1Ib1q72j+dAIR60pAVe6WJ5Dvns329k1yXGEk0yXuMcFRz0OMwYPjeEVYZEFjxh70IoyYvlfJTwSg7JAR/kiyFR08/63oAM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753460106;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Cbvvomnbtrld2kTiEXZvpI4lmoKBMsw0XyhLoXt6moE=;
+	b=gSmnJG5mXW1NZv6+BgCGA3dQ3uyWcDxxMDLgCjLBnlGi/41pNAthyUzhEjKn46Xz
+	L2wgQRachDsuZ9/aNUBvl7aPr1GNcFBZAmrahf/XnrKu6N6s1utp8pqakF4IR//WlZ+
+	SuiaYNM3/SDvkdrqTCE1Ys/HxfPS+HTfKFmS8JkI=
+Received: by mx.zohomail.com with SMTPS id 175346010455174.4659064233291;
+	Fri, 25 Jul 2025 09:15:04 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 01/19] gpu: nova-core: register: minor grammar and
+ spelling fixes
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250718-nova-regs-v2-1-7b6a762aa1cd@nvidia.com>
+Date: Fri, 25 Jul 2025 13:14:49 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Beata Michalska <beata.michalska@arm.com>,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>,
+ steven.price@arm.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B1AA6359-7854-4284-B533-F5CA3C18AF34@collabora.com>
+References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
+ <20250718-nova-regs-v2-1-7b6a762aa1cd@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Add USB ID 2001:332a for D-Link AX9U rev. A1 which is based on a Realtek
-RTL8851BU chip.
+Hi Alex. Thank you and John for working on this in general. It will be =
+useful
+for the whole ecosystem! :)=20
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below:
+> On 18 Jul 2025, at 04:26, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> From: John Hubbard <jhubbard@nvidia.com>
+>=20
+> There is only one top-level macro in this file at the moment, but the
+> "macros.rs" file name allows for more. Change the wording so that it
+> will remain valid even if additional macros are added to the file.
+>=20
+> Fix a couple of spelling errors and grammatical errors, and break up a
+> run-on sentence, for clarity.
+>=20
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> drivers/gpu/nova-core/regs/macros.rs | 14 +++++++-------
+> 1 file changed, 7 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/gpu/nova-core/regs/macros.rs =
+b/drivers/gpu/nova-core/regs/macros.rs
+> index =
+cdf668073480ed703c89ffa8628f5c9de6494687..864d1e83bed2979f5661e038f4c9fd87=
+d33f69a7 100644
+> --- a/drivers/gpu/nova-core/regs/macros.rs
+> +++ b/drivers/gpu/nova-core/regs/macros.rs
+> @@ -1,17 +1,17 @@
+> // SPDX-License-Identifier: GPL-2.0
+>=20
+> -//! Macro to define register layout and accessors.
+> +//! `register!` macro to define register layout and accessors.
 
-T:  Bus=03 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=2001 ProdID=332a Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=802.11ax WLAN Adapter
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 8 Cls=ff(vend.) Sub=ff Prot=ff Driver=rtw89_8851bu_git
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=0a(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=0b(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=0c(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I would have kept this line as-is. Users will most likely know the name =
+of the
+macro already. At this point, they will be looking for what it does, so
+mentioning "register" here is a bit redundant IMHO.
 
-Cc: stable@vger.kernel.org # 6.12.x
-Signed-off-by: Zenm Chen <zenmchen@gmail.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
+> //!
+> //! A single register typically includes several fields, which are =
+accessed through a combination
+> //! of bit-shift and mask operations that introduce a class of =
+potential mistakes, notably because
+> //! not all possible field values are necessarily valid.
+> //!
+> -//! The macro in this module allow to define, using an intruitive and =
+readable syntax, a dedicated
+> -//! type for each register with its own field accessors that can =
+return an error is a field's value
+> -//! is invalid.
+> +//! The `register!` macro in this module provides an intuitive and =
+readable syntax for defining a
+> +//! dedicated type for each register. Each such type comes with its =
+own field accessors that can
+> +//! return an error if a field's value is invalid.
+>=20
+> -/// Defines a dedicated type for a register with an absolute offset, =
+alongside with getter and
+> -/// setter methods for its fields and methods to read and write it =
+from an `Io` region.
+> +/// Defines a dedicated type for a register with an absolute offset, =
+including getter and setter
+> +/// methods for its fields and methods to read and write it from an =
+`Io` region.
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 8085fabad..3595a8bad 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -522,6 +522,8 @@ static const struct usb_device_id quirks_table[] = {
- 	/* Realtek 8851BU Bluetooth devices */
- 	{ USB_DEVICE(0x3625, 0x010b), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x2001, 0x332a), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 
- 	/* Realtek 8852AE Bluetooth devices */
- 	{ USB_DEVICE(0x0bda, 0x2852), .driver_info = BTUSB_REALTEK |
--- 
-2.50.1
++cc Steven Price,
+
+Sorry for hijacking this patch, but I think that we should be more =
+flexible and
+allow for non-literal offsets in the macro.
+
+In Tyr, for example, some of the offsets need to be computed at runtime, =
+i.e.:
+
++pub(crate) struct AsRegister(usize);
++
++impl AsRegister {
++    fn new(as_nr: usize, offset: usize) -> Result<Self> {
++        if as_nr >=3D 32 {
++            Err(EINVAL)
++        } else {
++            Ok(AsRegister(mmu_as(as_nr) + offset))
++        }
++    }
+
+Or:
+
++pub(crate) struct Doorbell(usize);
++
++impl Doorbell {
++    pub(crate) fn new(doorbell_id: usize) -> Self {
++        Doorbell(0x80000 + (doorbell_id * 0x10000))
++    }
+
+I don't think this will work with the current macro, JFYI.
+
+> ///
+> /// Example:
+> ///
+> @@ -24,7 +24,7 @@
+> /// ```
+> ///
+> /// This defines a `BOOT_0` type which can be read or written from =
+offset `0x100` of an `Io`
+> -/// region. It is composed of 3 fields, for instance `minor_revision` =
+is made of the 4 less
+> +/// region. It is composed of 3 fields, for instance `minor_revision` =
+is made of the 4 least
+> /// significant bits of the register. Each field can be accessed and =
+modified using accessor
+> /// methods:
+> ///
+>=20
+> --=20
+> 2.50.1
+>=20
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
 
