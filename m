@@ -1,234 +1,188 @@
-Return-Path: <linux-kernel+bounces-745710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B61B11D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08911B11D6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9980A1C27081
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C6D189D9AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4E62E6137;
-	Fri, 25 Jul 2025 11:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AD42E62D8;
+	Fri, 25 Jul 2025 11:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jx1lljtM"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bmqA9+hG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C938E2114;
-	Fri, 25 Jul 2025 11:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C120F2114;
+	Fri, 25 Jul 2025 11:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753442540; cv=none; b=W7/bC1wUB1O3vK8WtXziosiqzTkMfetAZeTGLWCrIpjQnqYxk/Nlc2oj4cPgOh3FEMqrK/46bHeWjg3D4hxQFRinGpIIneQJ6HF7dClD+lot4hputBegRW6b7/H5te4hbv/39JjvmhGX0Syi+MYK7KzdbScNQzeZ6dvyXhX1MzI=
+	t=1753442651; cv=none; b=XFTycr+Pl7CgySLXFL/+eqXSBoXm6QUMlx+scH/mfsqw9GwnIOcdMuRyww21LmDAKX43yVVvGKAzyVsM0dKQt27PgZkxYYw2X/Na/aZEoWpwGI8IE3hg6N6x9Z9QqlOCcCokvjVmPuUiCUyxDKE44wtXklIE57qFQynZBrO7OUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753442540; c=relaxed/simple;
-	bh=fZuK3vdmjJWaBTc7PamARiPpTkZpxcdOqQIZTB73QlM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ohoYG5rEjNoeVjOb+fX70c6JwW5p140lnnxArtyQD240o4vOGfwnHBDAxAl2IlAIz7M0BDk5oVpg0vYRLVKLKcRIyy44Vnv4+oykfISMF6xdXRsPxlvYRO2QeqH2QagJ2hFYBvD1z3IsHsJ1HqvsRzh96p7V7mifI+suWgJ7SDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jx1lljtM; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-23dc5bcf49eso26044465ad.2;
-        Fri, 25 Jul 2025 04:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753442538; x=1754047338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ADeETAaHqfwPNv47VY+2a6NqZqg/PEaiSFoloJQbRjk=;
-        b=Jx1lljtMzuT0m5VpNoGhEp4micnltFkmKTk/VTuLNa/8WgLVgEPBhPL9hVNJnUzzAh
-         HySa4ktHNfJKEAxqX+z7Fk8MxnpcbKh9wi0KDAOtMMxc80e0ZkHXrh6I5dDCwcKxCDIj
-         /Fvp0pvEr9BFAPVJrzamgXfwyYlwPQgsH1RaLsGuJUToLNOrHu6LlDltGbAkEOQItBnA
-         LP4Kxrk9WdPnh2LKNgmZeYdlSu2xYo5o4+0oKSTxVU6Pi36fSjPuLEcAzjL019yceEY2
-         nb5Yio0DqJs7lwGhJ4t6IR0PmJ2FmcRcdaf4EKHd1BIQCGJIJL4yKSZaeSrvYVI8sI2i
-         slNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753442538; x=1754047338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ADeETAaHqfwPNv47VY+2a6NqZqg/PEaiSFoloJQbRjk=;
-        b=orrKmC1eJOwCMyN2MZVyTBrSFmfLJR9SQc+D1NG/dYGLilHdwgdZhwVcMU7D/Go8YC
-         oxoR+9rmHgOKxPeNe4ge6+mR9erSaSEAPS6Mum3I2CVBRG+B6oqMGSHTuLzvTuXYJRZn
-         8DC6vlVqlZxCOFPWtNnk5mACWMF1msHqcw/RAKIYt/bcl1wJede3s1TNDzuTuZ66C58x
-         epiySbPj92YMazpCeQR7CQ0NWhCRzxxsat0TcBXaXLS5bLvLZXTbLPz3GHns1jb0etLi
-         iyoYvyJgv5oK7kAUgn0/2LxdE9A3Kq9lwB+KqN3Zk3k+irHYGa2JOSkzGCRkTuNa1jMp
-         wh/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUh0LGni5EGKN83Fe2qUJdfC/2VFr12IEzXccdhcgK63hV4gF/NsN/5FvTSMWgf00Fdf+0+Lo4XNhlN@vger.kernel.org, AJvYcCVuScbPNv7XFA2y8FfQYFcafj86GGcK+TNP72ZvdNQp06ziZmed/jPb+OBsOpsQkCwdONOLVSxZnT2a+TbA@vger.kernel.org, AJvYcCVwDJy7nuDXeuk/eX4YaSxBC9afu0uTsefJldMa6tCSwuuLzDlS154SQB+D0EgVFeDoTnRy542HjUyG@vger.kernel.org, AJvYcCWjiaV1L5hczHVpSvdr3GnxBuQBzgHYqof87VEgyX8NKoyusd/xpV6L2M/9iPgqa/iKNI+5AwqtYIPS5rwP@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC7tR1mB6vJ349B22C3/hM610lt01pxO3DO9Fn0P2f3sy4zStz
-	QMzEoAyeIpJ4F5suLGuy9kTUSiXvQfkGf2wW2Nuop09I1dSvY+AzEdeeNZJ8nd1qpihqnZ3V26z
-	8+unT8O+m/5M8j3dmz9jWpYHPhHRE2ec=
-X-Gm-Gg: ASbGnctD+TqCDLolje63K70nMPhoBh0qZvMNhRBLffgh9mTNDRraoJIQIAgeejASr9d
-	ISgcXcL0dP0zhMVtr9Vo0GATmx9hB2on0fTvbbAE5MSG3/KNx0Ws0zPxYI/RnVkBJCFkbDhlU1d
-	KoJhzvtWiOap3v+Tl3oKFln5mYUHaOFtcaJggrJc3DW22Yh4ddw+IcR1QufVFvuI238jNaPztwr
-	odw
-X-Google-Smtp-Source: AGHT+IFm+YK+Y2hJQQ1hmtCwNSUBVL0UvD5jayHigUFo6GG8rs5V2CGFs8VME+5GxbAPEVs93coICnPBamAwKQyY/yk=
-X-Received: by 2002:a17:902:ccc4:b0:234:e8db:432d with SMTP id
- d9443c01a7336-23fb3166c33mr22847705ad.39.1753442538032; Fri, 25 Jul 2025
- 04:22:18 -0700 (PDT)
+	s=arc-20240116; t=1753442651; c=relaxed/simple;
+	bh=++66ni+hWLvKnoZxAIdLffVnFQpHvjiJ/1hbvKkf9y4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HB4lb12fAzvcBd0f2pwJTG0xP+cYzNBXdwrfJsehmQtE3Vjkw7vuEEK8o8kZRWAgKMwJUrvvcbAPcPuR6hxIqlqQ2Ub6cGFPDICznEF5ZO4Kv86gvoXHcpUPfXKTXbyuc1gX6GY1hxSi2HkfB28Bgjz12X7is5LucJuv2kOG0lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bmqA9+hG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P9EKd3001090;
+	Fri, 25 Jul 2025 11:23:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=Rih3g8CxOzFoTHxyHT4XlmN/DrVkdGL21oJ
+	qnOuVf0Q=; b=bmqA9+hGZxHLFcEhguEV1100s55eIs0A8CBB9MGmBI2bb5klBeI
+	mJopSAw/JNXbp06zfbCrK1pCs3QG8uGCjsjirk7/+7OOE9B1cDHi4siCoSZPyyfS
+	sOcsySQ+I2hEZVfRV+47yoCPwz1hKuMmD7DC6ydEq0LVtiNcMiXWT6nsl4unKdRm
+	ayq1R9PetesyswRmk00lIeVvzvYPJLl51HPeEUsZBfx5xfSYJ0gFFE8T8s81rv9H
+	NR+tFYr9A2H1I3KYdZlUCHbZyRGQkavwSOhOuM3RF/oCCozK6D9m9M8g57WG3eVY
+	Y6co5npA7vSNgdBU0UgUjiXCnd79YipHjzg==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2xhubf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 11:23:59 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56PBNu84024518;
+	Fri, 25 Jul 2025 11:23:56 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4804emt82c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 11:23:56 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56PBNt4P024512;
+	Fri, 25 Jul 2025 11:23:56 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 56PBNt6p024509
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 11:23:55 +0000
+Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id 2594620EDA; Fri, 25 Jul 2025 19:23:54 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Subject: [PATCH v9 0/2] pci: qcom: Add QCS615 PCIe support
+Date: Fri, 25 Jul 2025 19:23:44 +0800
+Message-Id: <20250725112346.614316-1-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714221545.5615-1-romank@linux.microsoft.com> <20250714221545.5615-11-romank@linux.microsoft.com>
-In-Reply-To: <20250714221545.5615-11-romank@linux.microsoft.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Fri, 25 Jul 2025 19:21:42 +0800
-X-Gm-Features: Ac12FXyz3bssr1OLL9BFtYmc0Edy0F9YKk5P-0fTYGoeZUcLahAw8xTcKbOlq4Q
-Message-ID: <CAMvTesADrxV4vwU_mqYygm1bE39PKLZaaL-wLPT8snATRVkwNg@mail.gmail.com>
-Subject: Re: [PATCH hyperv-next v4 10/16] Drivers: hv: Rename the SynIC enable
- and disable routines
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: alok.a.tiwari@oracle.com, arnd@arndb.de, bp@alien8.de, corbet@lwn.net, 
-	dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com, 
-	hpa@zytor.com, kys@microsoft.com, mhklinux@outlook.com, mingo@redhat.com, 
-	rdunlap@infradead.org, tglx@linutronix.de, Tianyu.Lan@microsoft.com, 
-	wei.liu@kernel.org, linux-arch@vger.kernel.org, linux-coco@lists.linux.dev, 
-	linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com, 
-	benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ky72DWZBWDXL8MxZVsc3NChfb9cUSbk2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA5NiBTYWx0ZWRfX4AfAwiXwGi24
+ VmsMJBivSSH43RkSbcf1N6RC+2JIC7rT5kJdr28eqmV93TAbPzPB9tQaIEuHnN2LVCbNcbhulIT
+ gZpBKUWz+ZAdnfH1sJUFzw2wog1bI0Un1oT2fFsmVf9gmF7vdbx//jIK7eSSIaOZNzdn39p6BPj
+ RX2Qn0K1EQ9RTeBs9ezSoazCTfhFThM9QCJhnyIYZNHXZ7zxE6UhtLyK1SlN/bU5Q2CWMrVSlhd
+ nWwAGudXeCKoiX3z5lxsbvsEbUiAfsj/4jROlEAdLoKrBV9e514LN4FmXFDMvMhT+GNaBqStTcB
+ X0Y5MXl//pEa9BPRyYEbBm+vCoMCWapsEUWGkvR+HHfSFOj5zfmO9Zsm41rVjXbhc7oBAFSX3EB
+ Qfo5irtd/HMlJcFyyh6OUKZhN80IEcKYHzLUxrOgpxQkKZRKkUM4ZCmuzCCxfCvMyTqoCtM+
+X-Proofpoint-GUID: ky72DWZBWDXL8MxZVsc3NChfb9cUSbk2
+X-Authority-Analysis: v=2.4 cv=S8bZwJsP c=1 sm=1 tr=0 ts=6883694f cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=nFUSFbzN6SMpi5LfgmsA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_03,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 lowpriorityscore=0 mlxlogscore=772 bulkscore=0 impostorscore=0
+ spamscore=0 malwarescore=0 adultscore=0 suspectscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507250096
 
-On Tue, Jul 15, 2025 at 6:16=E2=80=AFAM Roman Kisel <romank@linux.microsoft=
-.com> wrote:
->
-> The confidential VMBus requires support for the both hypervisor
-> facing SynIC and the paravisor one.
->
-> Rename the functions that enable and disable SynIC with the
-> hypervisor. No functional changes.
->
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> ---
->  drivers/hv/channel_mgmt.c |  2 +-
->  drivers/hv/hv.c           | 11 ++++++-----
->  drivers/hv/hyperv_vmbus.h |  4 ++--
->  drivers/hv/vmbus_drv.c    |  6 +++---
->  4 files changed, 12 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-> index 6f87220e2ca3..ca2fe10c110a 100644
-> --- a/drivers/hv/channel_mgmt.c
-> +++ b/drivers/hv/channel_mgmt.c
-> @@ -845,7 +845,7 @@ static void vmbus_wait_for_unload(void)
->                         /*
->                          * In a CoCo VM the hyp_synic_message_page is not=
- allocated
->                          * in hv_synic_alloc(). Instead it is set/cleared=
- in
-> -                        * hv_synic_enable_regs() and hv_synic_disable_re=
-gs()
-> +                        * hv_hyp_synic_enable_regs() and hv_hyp_synic_di=
-sable_regs()
->                          * such that it is set only when the CPU is onlin=
-e. If
->                          * not all present CPUs are online, the message p=
-age
->                          * might be NULL, so skip such CPUs.
-> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> index a8669843c56e..94a81bb3c8c7 100644
-> --- a/drivers/hv/hv.c
-> +++ b/drivers/hv/hv.c
-> @@ -266,9 +266,10 @@ void hv_synic_free(void)
->  }
->
->  /*
-> - * hv_synic_enable_regs - Initialize the Synthetic Interrupt Controller.
-> + * hv_hyp_synic_enable_regs - Initialize the Synthetic Interrupt Control=
-ler
-> + * with the hypervisor.
->   */
-> -void hv_synic_enable_regs(unsigned int cpu)
-> +void hv_hyp_synic_enable_regs(unsigned int cpu)
->  {
->         struct hv_per_cpu_context *hv_cpu =3D
->                 per_cpu_ptr(hv_context.cpu_context, cpu);
-> @@ -334,14 +335,14 @@ void hv_synic_enable_regs(unsigned int cpu)
->
->  int hv_synic_init(unsigned int cpu)
->  {
-> -       hv_synic_enable_regs(cpu);
-> +       hv_hyp_synic_enable_regs(cpu);
->
->         hv_stimer_legacy_init(cpu, VMBUS_MESSAGE_SINT);
->
->         return 0;
->  }
->
-> -void hv_synic_disable_regs(unsigned int cpu)
-> +void hv_hyp_synic_disable_regs(unsigned int cpu)
->  {
->         struct hv_per_cpu_context *hv_cpu =3D
->                 per_cpu_ptr(hv_context.cpu_context, cpu);
-> @@ -528,7 +529,7 @@ int hv_synic_cleanup(unsigned int cpu)
->  always_cleanup:
->         hv_stimer_legacy_cleanup(cpu);
->
-> -       hv_synic_disable_regs(cpu);
-> +       hv_hyp_synic_disable_regs(cpu);
->
->         return ret;
->  }
-> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-> index 16b5cf1bca19..2873703d08a9 100644
-> --- a/drivers/hv/hyperv_vmbus.h
-> +++ b/drivers/hv/hyperv_vmbus.h
-> @@ -189,10 +189,10 @@ extern int hv_synic_alloc(void);
->
->  extern void hv_synic_free(void);
->
-> -extern void hv_synic_enable_regs(unsigned int cpu);
-> +extern void hv_hyp_synic_enable_regs(unsigned int cpu);
->  extern int hv_synic_init(unsigned int cpu);
->
-> -extern void hv_synic_disable_regs(unsigned int cpu);
-> +extern void hv_hyp_synic_disable_regs(unsigned int cpu);
->  extern int hv_synic_cleanup(unsigned int cpu);
->
->  /* Interface */
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index 72940a64b0b6..13aca5abc7d8 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -2809,7 +2809,7 @@ static void hv_crash_handler(struct pt_regs *regs)
->          */
->         cpu =3D smp_processor_id();
->         hv_stimer_cleanup(cpu);
-> -       hv_synic_disable_regs(cpu);
-> +       hv_hyp_synic_disable_regs(cpu);
->  };
->
->  static int hv_synic_suspend(void)
-> @@ -2834,14 +2834,14 @@ static int hv_synic_suspend(void)
->          * interrupts-disabled context.
->          */
->
-> -       hv_synic_disable_regs(0);
-> +       hv_hyp_synic_disable_regs(0);
->
->         return 0;
->  }
->
->  static void hv_synic_resume(void)
->  {
-> -       hv_synic_enable_regs(0);
-> +       hv_hyp_synic_enable_regs(0);
->
->         /*
->          * Note: we don't need to call hv_stimer_init(0), because the tim=
-er
-> --
-> 2.43.0
->
->
+This series adds document, phy, configs support for PCIe in QCS615.
 
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
---=20
-Thanks
-Tianyu Lan
+This series depend on the dt-bindings change
+https://lore.kernel.org/all/20250521-topic-8150_pcie_drop_clocks-v1-0-3d42e84f6453@oss.qualcomm.com/
+
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+---
+Have following changes:
+	- Add a new Document the QCS615 PCIe Controller
+	- Add configurations in devicetree for PCIe, including registers, clocks, interrupts and phy setting sequence.
+	- Add configurations in devicetree for PCIe, platform related gpios, PMIC regulators, etc.
+
+Changes in v9:
+- Patch rebased
+- Link to v8: https://lore.kernel.org/all/20250703095630.669044-1-ziyue.zhang@oss.qualcomm.com/
+
+Changes in v8:
+- Fix scripts/checkpatch.pl error (Krzystof)
+- Link to v7: https://lore.kernel.org/all/20250702103549.712039-1-ziyue.zhang@oss.qualcomm.com/
+
+Changes in v7:
+- Add Fixes tag to phy bindings patch (Johan)
+- QCS615 is Gen3 controller but Gen2 phy, so limited max link speed to Gen2.
+- Remove eq-presets-8gts and oppopp-8000000 for only support Gen2.
+- Link to v6: https://lore.kernel.org/all/t6bwkld55a2dcozxz7rxnvdgpjis6oveqzkh4s7nvxgikws4rl@fn2sd7zlabhe/
+
+Changes in v6:
+- Change PCIe equalization setting to one lane
+- Add reviewed by tags
+- Link to v5: https://lore.kernel.org/all/t6bwkld55a2dcozxz7rxnvdgpjis6oveqzkh4s7nvxgikws4rl@fn2sd7zlabhe/
+
+Changes in v5:
+- Drop qcs615-pcie.yaml and use sm8150, as qcs615 is the downgraded
+  version of sm8150, which can share the same yaml.
+- Drop compatible enrty in driver and use sm8150's enrty (Krzysztof)
+- Fix the DT format problem (Konrad)
+- Link to v4: https://lore.kernel.org/all/20250507031559.4085159-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v4:
+- Fixed compile error found by kernel test robot(Krzysztof)
+- Update DT format (Konrad & Krzysztof)
+- Remove QCS8550 compatible use QCS615 compatible only (Konrad)
+- Update phy dt bindings to fix the dtb check errors.
+- Link to v3: https://lore.kernel.org/all/20250310065613.151598-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v3:
+- Update qcs615 dt-bindings to fit the qcom-soc.yaml (Krzysztof & Dmitry)
+- Removed the driver patch and using fallback method (Mani)
+- Update DT format, keep it same with the x1e801000.dtsi (Konrad)
+- Update DT commit message (Bojor)
+- Link to v2: https://lore.kernel.org/all/20241122023314.1616353-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v2:
+- Update commit message for qcs615 phy
+- Update qcs615 phy, using lowercase hex
+- Removed redundant function
+- split the soc dtsi and the platform dts into two changes
+- Link to v1: https://lore.kernel.org/all/20241118082619.177201-1-quic_ziyuzhan@quicinc.com/
+
+
+Krishna chaitanya chundru (2):
+  arm64: dts: qcom: qcs615: enable pcie
+  arm64: dts: qcom: qcs615-ride: Enable PCIe interface
+
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts |  42 +++++++
+ arch/arm64/boot/dts/qcom/sm6150.dtsi     | 138 +++++++++++++++++++++++
+ 2 files changed, 180 insertions(+)
+
+
+base-commit: d7af19298454ed155f5cf67201a70f5cf836c842
+-- 
+2.34.1
+
 
