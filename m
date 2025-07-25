@@ -1,456 +1,275 @@
-Return-Path: <linux-kernel+bounces-745500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49EDEB11ACE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF718B11AD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 300A71CC77B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:27:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0CD31CC77A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53D72D1913;
-	Fri, 25 Jul 2025 09:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDD62D193B;
+	Fri, 25 Jul 2025 09:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="L28BA0w7";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="L28BA0w7"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013024.outbound.protection.outlook.com [40.107.162.24])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QRe8xlX1"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F702046A9
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.24
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753435647; cv=fail; b=bhGA3V60O5792rQUetwdeUFU02qeL1PunEgDVdEv3+tcoalXmJwVFCld/s5mbjNT8MtmUvU0xKCsmT8VCcWLkk7DxR2j3AzBsfqVIfGjkreNZ7uTxdXtqdY0/8tiLWzCvlf/Gdura+RQ2n3+j6Dsv2JlR5OQ3L+8+4Dywms3ebk=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753435647; c=relaxed/simple;
-	bh=5/x1QQTcxMNHcJzpESnS46MtSquGOgsFt/V372gFel8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RPHQPVcB5wVBWrkGSw/aSjiqb3FeqGA1sZ1TKC60MbdHLm1luNZ+arpopNTrcP4/zzO6ExMTlkG2zT7Sg16QrSdzbkKJTBTQlx5ufnu3lJDSb1INaB1zkz4upM1J3OvXZPC51xsoyNptR8ZGZ4OI1VuM5dWEbilwe8cc4zsi+XU=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=L28BA0w7; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=L28BA0w7; arc=fail smtp.client-ip=40.107.162.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=GboB5T2K/1R2qJbp0CcLC6e/o0T0jExYbHerWGa8/fblPtQSRselSwI5Q26YUmSCQ3NI5NFiVCtEbpKyowbz3d6K3Si/Kyc9HdTiYhrSIi6fm5wnLS6ZcCj074YNGIzBdF6mtf/zuAswzlh3cQA8ER3SbOwetqpffWxJtNRAlzFXyFB80X+dz9qEs7o1eEYFPzmN3Ek3kawn6wvjXdIHizr73MvSXphNEb40hjorhOnwWg05uL3IwjP9aQr4nxdEviSaRZGNHmY83w78ugEcIRty6WiWXUaq/vjgeOszO8RJGr4B+E+Rc8tSxFF8tmRgpmqsgbq7jTsxH/mVLJgoTw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OogyNLxgPnFbznhnQAefALFeKC/Nf3x2pbH4HZ6ZqOY=;
- b=L3fd3ZS6TxFuMaUi6ErnLZZTN8Dlmn/GJTf9cpZE9eJlFu37j9mF3kGbZFbkw+FCafvwmocSAT7WQpNBmxcxlgEyM+KxylCI6B5CHu9qtQKzwR3gNfQF8YKcWTWyPNRvhj3H1k9VeeAvFy3IoH5Gdf04CW1F5m112mEOvtpYOfjA6h9rgf2zlBKHQpKOEh09J8qyl8IocxJcp+uOXSGhNq3A4SrSjmIM6XWEowdyZwcLWCP2ZUyNPDn+vWKGSoseScL0WAGFKdBM5gVar1MFEz3ynNT0ZbPMYFsAq8OxHdb4rD7SiOaYvDMTfo7RTqVqkFu+5dgwznzBUeoEWxNbWg==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=collabora.com smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OogyNLxgPnFbznhnQAefALFeKC/Nf3x2pbH4HZ6ZqOY=;
- b=L28BA0w704Dl/n7Dqn67cLsnkrXzKg/k8e6ydI678B9rdPtuK9bQltsn93b6Mm1puFuElnWDCY8eOKaWtQ6pJyWp+B5tQV2HylFJxEEBEUmiKAWoFYq8MPcP+pRu1p95FsUBH6tVc68sele3Ll1p9lc6mhAnoQGmAPJq3V6Ath8=
-Received: from DU2PR04CA0281.eurprd04.prod.outlook.com (2603:10a6:10:28c::16)
- by DB9PR08MB6490.eurprd08.prod.outlook.com (2603:10a6:10:25a::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Fri, 25 Jul
- 2025 09:27:22 +0000
-Received: from DU2PEPF00028D0E.eurprd03.prod.outlook.com
- (2603:10a6:10:28c:cafe::c8) by DU2PR04CA0281.outlook.office365.com
- (2603:10a6:10:28c::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.22 via Frontend Transport; Fri,
- 25 Jul 2025 09:27:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DU2PEPF00028D0E.mail.protection.outlook.com (10.167.242.22) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.20
- via Frontend Transport; Fri, 25 Jul 2025 09:27:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cHHwtRXxoSmV1R5WT2H6JKp1pqPzAe5WhkOWpJRROj+3EIPAEZdEPsLiI+XqrvqDxGdXjhsiDiMy54OG8ObrrYp5ACfz52J75sKNZOCx46KMt9FUlHoIVAAGlc/iBW0U2pOqd1PHtRfxSmuA9R4gf1J4LkbcEX8A62QM/3pD/HVbpzLzJA4qtlEXiwLbIxZ7ZkAZtLlJJHKcWBHX57u9kJZs8fIgmf57tk2Q4jYmwpqHJ03iOKhjz3oBaE2VKAdEk9j/joOPjn0twzXDjokx/9lkoQmhKHvWrf2Y9VhwoqoI5C9qTFn+CbnCpZGQZmAJV4yRAOV4YYs9Vz0A3L5bUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OogyNLxgPnFbznhnQAefALFeKC/Nf3x2pbH4HZ6ZqOY=;
- b=HjfNDzL4fKDvEKieYemrGg/xD8r8gZG3hwfwArF3UN7fU0P3oViqq0xsZ42J9HkykAg4XgUZ8qdEvYvbEeEw5BRFBUg4nCK2v1eFvAszwKCnXw4diWHnJzuWgFHaUl3+DpRzdp7HJ0fZuw2cbWF2ibQSvptNYssGWBqfaFtIwi7GCZPg+kIRWhvQuIh3GrP1zaSlLSMMzYs51gU3QzYPyMBfwUSLE12613m9klh/LEFvkiepGcC5eIno+nAvIJxon067YDeE87gpMSJ/J+hrm+RQ1RCWcsD8B1P1Xm2isGhFH1FeUHg1OKcFz8V8Rl3sJtpuy9DrY5lXWFZq0v3/hA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OogyNLxgPnFbznhnQAefALFeKC/Nf3x2pbH4HZ6ZqOY=;
- b=L28BA0w704Dl/n7Dqn67cLsnkrXzKg/k8e6ydI678B9rdPtuK9bQltsn93b6Mm1puFuElnWDCY8eOKaWtQ6pJyWp+B5tQV2HylFJxEEBEUmiKAWoFYq8MPcP+pRu1p95FsUBH6tVc68sele3Ll1p9lc6mhAnoQGmAPJq3V6Ath8=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM9PR08MB6820.eurprd08.prod.outlook.com (2603:10a6:20b:30f::8)
- by AS8PR08MB8947.eurprd08.prod.outlook.com (2603:10a6:20b:5b3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.29; Fri, 25 Jul
- 2025 09:26:47 +0000
-Received: from AM9PR08MB6820.eurprd08.prod.outlook.com
- ([fe80::65e1:f4ac:8b74:fea0]) by AM9PR08MB6820.eurprd08.prod.outlook.com
- ([fe80::65e1:f4ac:8b74:fea0%4]) with mapi id 15.20.8943.024; Fri, 25 Jul 2025
- 09:26:47 +0000
-Message-ID: <8a65cc81-92cf-48e9-90b7-645a1fc94ef8@arm.com>
-Date: Fri, 25 Jul 2025 10:26:46 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/7] drm/panthor: Add suspend, resume and reset
- handling
-Content-Language: en-GB
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <cover.1747148172.git.lukas.zapolskas@arm.com>
- <ae6144b6f6ccbd2c035956ce5085ae7fbb5ec96e.1747148172.git.lukas.zapolskas@arm.com>
- <2vdubr5ieiuwmy7j6bogyzhpz27hsvaaeaktuqtuhm3nvgsnkv@jhy2f2pb3hyz>
-From: Lukas Zapolskas <lukas.zapolskas@arm.com>
-In-Reply-To: <2vdubr5ieiuwmy7j6bogyzhpz27hsvaaeaktuqtuhm3nvgsnkv@jhy2f2pb3hyz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0196.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:318::6) To AM9PR08MB6820.eurprd08.prod.outlook.com
- (2603:10a6:20b:30f::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AABE2857C6;
+	Fri, 25 Jul 2025 09:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753435679; cv=none; b=p1eEMxiRfOOuDbdLJsyp/78hK0NN8oX8eMPCqb8UV9ZQRgjj2QWoyEE4DAotyC/FxExOZFESFp1nyz1CFNHyKrQluEtDaTso/FoCn3uIADJ7KLyTWbl7fFLdI53MjLNn271QPsp2TunmwfHcApSdPZ+9q/P+0GGcG3jF1MQJNZ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753435679; c=relaxed/simple;
+	bh=8nxuPO3GBI6Esz2olFnLCd25KPkJjdXvnuaE6yHt/P0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EaR+FKCSTeN+jupxGq96C594SSl5etBgTt5QSmpwE9MkMs5Zk+ebNP9pRL2m7wMlZQ8xdeFJpnWNExwdQT13OmrKgttRNxHbOuVQ96CYqeW+8h/YyOCgtGwJ/Pa+kvY65EiN8I1CJDwZwRuglmz9PaFm7vjDxlE5IQHNUzTLdX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=QRe8xlX1; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 35B13C0B;
+	Fri, 25 Jul 2025 11:27:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753435634;
+	bh=8nxuPO3GBI6Esz2olFnLCd25KPkJjdXvnuaE6yHt/P0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QRe8xlX1T/JyyphBO7wdyX7TV2TG8aeFCEtSvSn3nELQljXT9CfYrFd5DaQVLtcLZ
+	 uz2TAvoRHWudck9KziDU4jBoF6r44toee4hBMx7Tcqhyh0SeXlAZdvb1iAYerO5/U5
+	 xlJSgm97JNy97uAIDdneenHXqDgjIilxdCYWwq0I=
+Date: Fri, 25 Jul 2025 12:27:49 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: hans@jjverkuil.nl
+Cc: Julien Vuillaumier <julien.vuillaumier@nxp.com>,
+	Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
+	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+	ribalda@chromium.org, jai.luthra@ideasonboard.com,
+	laurentiu.palcu@nxp.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, LnxRevLi@nxp.com,
+	celine.laurencin@nxp.com
+Subject: Re: [RFC 0/2] Add standard exposure and gain controls for multiple
+ captures
+Message-ID: <20250725092749.GX11202@pendragon.ideasonboard.com>
+References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
+ <20250715235952.GE19299@pendragon.ideasonboard.com>
+ <20250716001205.GG19299@pendragon.ideasonboard.com>
+ <38e022d0-cc8f-4df2-8a81-69513c854035@nxp.com>
+ <dddcad1a-1f0a-4ecc-8093-8a75ec24d2ec@nxp.com>
+ <20250723150206.GE6719@pendragon.ideasonboard.com>
+ <ae5ce461-0be5-4e00-8f6b-9c65ec6e66dc@jjverkuil.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM9PR08MB6820:EE_|AS8PR08MB8947:EE_|DU2PEPF00028D0E:EE_|DB9PR08MB6490:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08d86b7d-3157-49d9-94ec-08ddcb5d7587
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?dnhSZ3ZMOE1vV3QvUTdVcWJ1YTJIYUVqNkk3emtoeVB1SDFFQ1R3TjdvN1Yx?=
- =?utf-8?B?eEtDRThpQlpRWjJHWEdJTDA1U3pYc0hDRDJtOFBHSFJrYnZucHdkZDBWbVNZ?=
- =?utf-8?B?WEx6M3lZOGJXTFZHODVuUFlqbkN3Nk9zUGdYSjR5UzdNNEp4alk0RXQ5bTZl?=
- =?utf-8?B?NFY5aExEV004Q3A0aUJ0S2N3eklmVnRCbEUxT1g2YmR0aEFQNDlVeXZmdysr?=
- =?utf-8?B?cU16UUpGb1dHVmE0VmhyNElhM2VxajNXLzhkWlEyMVdkSkZDZUVwMjRwUUlI?=
- =?utf-8?B?eXBmMVpidzA1aGtUR2sxMEo4aWJ6V2pnUUpFbkE3N01kNUxkVjVDcHducktP?=
- =?utf-8?B?cWg3ejI0MU54UTJudm5TdXBzbzZpNmJkeDNoUWRGMHRJdCtCTkIvSkszQnRH?=
- =?utf-8?B?bUJzZVBFd1YyY1Fpc08rTUttbFlqaDZRN2JqQWhOM09IK0h2UUE0S2JzeThF?=
- =?utf-8?B?dmZyS052b1EzWENkSlk3K05vbm9samVNcVplQk1RK0VldXI4RWNRSFBubGZz?=
- =?utf-8?B?Tk12VHhqeDlnSnZvYnVnVkFBdHFRNndaUDF2ZkMxMTNZVHZNUll4SEdxd3NV?=
- =?utf-8?B?azR1Y3Btb2E5U2ZoR3hFa0l0TG4wcEZOeEJBVytPOXdDWE4zMXhKT0hxY1E2?=
- =?utf-8?B?Ly9WVVlveWRiNVZmU0VXLzhQSGczU2IwcHhuc2RCRy9oeitMMWQvYXR3Skly?=
- =?utf-8?B?TVNFNERWZFBCL2JVY1NvdWZSWHFPUktIYWxKWG10Qlo0aXdnTm5wbU5aWVJN?=
- =?utf-8?B?WU5BNG5oU0hZSVZOMnp3NkZXc1ZURHZsWWV6bHNWa1FZMGRNMllCZlV6RHU3?=
- =?utf-8?B?Z1E3N1pYMXlRQnZ1U2hCR21nQldVZmY0OWpOVU5RR0ozTWFLamJINUlUa2R1?=
- =?utf-8?B?c0dvNkQrQ0l2ZUhFT29KYXhrZ3h4d0J1TEkrcDBvL0FHNmtpMGxDZUxzWDJM?=
- =?utf-8?B?NVBLazVsNE90OVd2ejV2V2RnYU5IaFdENHhTd3AvSWM2NE03OXZ0THFGNCt6?=
- =?utf-8?B?b0hmWTV5aDdwSDIycnVvUUdZU2RsaFlvOER1SnNLcitvaUtGS29TcVRud1Fj?=
- =?utf-8?B?ckRtRUxxTENwOWFvT2ZibDVML1dBVUNNZk42R2xFS3VvL3M1RGNHR25JZzQy?=
- =?utf-8?B?ZVhhcWZtSTR2TnFaVnY2SGI4QnhZaU55OHRwbG1hL1RrSjZtc3JTV09jTnNl?=
- =?utf-8?B?bUEyTmY3VXRUZk9vVlFhcnVuYVdyT0hyYTMwK3VpMHMvR3hQZ2FMVXBMaXdL?=
- =?utf-8?B?QzZEREpGaEhaL2dIaEFvblU0dGNnenNQeVRyejhoMTlyMFEvcGtURDJjZ0Nq?=
- =?utf-8?B?TXNGMHc4Zk9hOVVad1RFMDRIVWJKNFBzRGEydE04YVRmVGZZZUlWdWl2bkRV?=
- =?utf-8?B?UklramtIVHY0UEZ1NDdpY3RBWWlCY1dHLzU4aFJxdTJuZ25RczRrbVdXbE4y?=
- =?utf-8?B?TUFoYUNZQXpjUmRGMjNQTVRicDJhTlI3bnZFWm9FREpwZ0pMMkxRc3pSUDdj?=
- =?utf-8?B?eXkwYi9Fa0JBQnpQcm9WMGtXT1NqTUxpUW9CZHE3b3VoQS9iK3dhRjhibWND?=
- =?utf-8?B?T3Rxa1o3THUyT0tJZ0p4YTkvdXh3NURQZWNiQjVCSjQxcXhQSHRGYTNQQkxl?=
- =?utf-8?B?NDNQSXQ5V0ZEekhCYVhpREUxK1EvSThyVDhYV1RBdHgrN0hFbjZNZy9iMWZY?=
- =?utf-8?B?Sml0aFJIVk1FNUZoMllMcjRGaGs2UC9IeU5rdkk0cy85dDc3OGJLNmkvTkRv?=
- =?utf-8?B?enBONEU3WUZsazl0NmR3MHdTSDNhWmJHRHE5T2FCQy9ENnZMbVdIaXp5VHlI?=
- =?utf-8?B?N3ErRitLVUplbXlOenp6aEhXN2ZlTVNlOWN3aGs0dENVdnlKZFUyMTFTanNN?=
- =?utf-8?B?emZZRk1RbTdueFQ0YjhaSU01cFZlNlRxRjRuN2hIcXRjakE9PQ==?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB6820.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB8947
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU2PEPF00028D0E.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	a4ce4912-1014-49e4-eb59-08ddcb5d60cf
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|35042699022|14060799003|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YU85bW5adnBRNTdUakdxeGFnQWZIakcvVkh1YjREUERqRWFxNnJRK0hsU0cr?=
- =?utf-8?B?aGJQQmpxNzhsSFVZZmQwM3JUNUU3VTlpbmZoZUVrcmg1WGZ0NTVxWkF4SVVE?=
- =?utf-8?B?RDhIQjlaL2luQmZCTWVMK0RsaThTL05CMWtnUFBBRGlnVXVOOTFvbHFHU0xk?=
- =?utf-8?B?STg4K3NpSklYaVNtVDJucDhRVDdtYTRnUGd1bUhzQ2hWMkFOaHpPZ2VnOXoy?=
- =?utf-8?B?b09ZTmlxMzlpVXM2YVBvZlp1SlR0SXdyS3lWSDZFaFNqaWo5S2UxTzJUY2lq?=
- =?utf-8?B?T0w1dEFXZy90Q3NrZjB5TW1zQ21QclJMS3ZqcTdESUZmbUY4SndSSHoxdHBk?=
- =?utf-8?B?bmNXV2NLY0poWHQ1anBHUW1HMGhiN3JVTFFabUpCZGMrVmhKVmRvcjdyeHBN?=
- =?utf-8?B?UWJqR0ZaK0FSS3JxLzU5a0J3WG1adGZaZUg4ajJ1djYzT0diTjJLaXpld2hG?=
- =?utf-8?B?N1FqWGx0VGtiVWpTWElmbnRXY2NibDdhSGlkS0tJTWsyS2dXYW5wcmtLdUZ4?=
- =?utf-8?B?MXZtTWVTSGVEQm9teDl5TVNTOU1QV0Fjcyt6dWx2SXF4Q0RLR2k2UkNVZENJ?=
- =?utf-8?B?QmtVY05nVlVPSFBkbGxEcStseWpRZmROdEEwU3ExZWQwcGZyR1ZldW5ieDA1?=
- =?utf-8?B?S1RLWXc2K0tjWXdOb2pqMUZQS0JvTXVkNFBXUUpicG1EeHNBOU96VHl3cHRu?=
- =?utf-8?B?YWRaZ2xzakFQbXJLbTJQNldiZXdHWVYvdDZEb2t2Z1Q1K1Njcm9uUVRBNm1P?=
- =?utf-8?B?WngwVjdJQlYwMFh5U2M2bXRUWU9tUG5tcmZYY09YUVVVUitubEszY21iQndG?=
- =?utf-8?B?cEl0V1R4U09ka203WnVxNnZwMHBRWkxoWjFYNDdndUY0RVQrbkdaZDZpSmV4?=
- =?utf-8?B?UlVHeUhBNmdRd09vblZLSWg3UEQ1VmpSUUlrckMrS1NVcDRFS2xObENjYVY3?=
- =?utf-8?B?NEZTckdOS0V5Z0U5Y0FRMC81d3dOWTdrYmljeFkxaE1VS05jMFQ1Sk93T3BR?=
- =?utf-8?B?MW9HQXVKQ0NDakFQQ0k0c3VCQ1Z5UGZnUFBGQkdGQjhYUDN3Ri9uRGtrWnY4?=
- =?utf-8?B?a3kxOTlVOXBEekZ6d3FJaVdSTnJ1dmZyWjkrSm1WSlJpbTd6UmswOGU0MW5F?=
- =?utf-8?B?c0IrMmJndXphOUI5Yk5IbVZHNlpVMU1UVEQvYng4bWtOR0dpaFJ1K1I0WUFh?=
- =?utf-8?B?cWRzbDF4Zk1JUjlLWmVIRytNeGVKRGpKMWc4UmRLYmQ1ZlFxS0t6ZTRwMldy?=
- =?utf-8?B?Ui9UU0NPNGxScHd6SjFTcjVMc1F1bm1yaDF6N0oyMkZiaTFKMVZMOUtDa1U1?=
- =?utf-8?B?VzF3ZmVXOWFTVy9YWGx0YXBOelo4WGhXeVNkQVdNaE9BdzJ3eE9qVjQ5enEr?=
- =?utf-8?B?NVdZa3FSeWJUc2ZjaFRMVlZ6MXRYZzVOT1ptckVrUmd2SzVjS0J5SXorNzN1?=
- =?utf-8?B?UjlNdm5yTi9uT3hKbHlNNW1MTnhYS0thNW9qaUlqNjZCTXkwdElyOUVnYjJh?=
- =?utf-8?B?VXMrYStzQktMVHU0WFYwcXFDZS9zaEh4L0JtUUI4YVQ3SksyUThMRnc1KzFG?=
- =?utf-8?B?blN6SUlXajFVM2JDcUE4OVM1Nk5xS1lQdHQ0ZHdvTzVVand3MkcrZTF3MWdw?=
- =?utf-8?B?OXRTWGZVNlRYc2xEZjVmOEhLckpDbVErV1d4aHpqbW1ZT2U0R2RYRjBodnpL?=
- =?utf-8?B?WW5mdEhxVmNwQ216TjVXWVQwUWFhRVl4d2tuTmo1WTF4MXZDaUg4bUZLY2lF?=
- =?utf-8?B?dlVUOFRoa0NHSloyL1R1M2lvVG4yN0NQR1R4ckwzZWRYSytGbmQzbG1lVEh4?=
- =?utf-8?B?cERicVJUbkNLQW5JNzhqZW5BTWdGSVk0ZHdSbCtJelFZcmoxWEVtT1F1QVdE?=
- =?utf-8?B?eWRXWHdYYXBKSGt0Um52eWdYY2lkdUdxNmNnSDdldnR6c214RGNPNmpqUGRx?=
- =?utf-8?B?bUt6L2FMYWZyOWMyYXd4R2dSUHUwYy96b05WSnFwcVpEWlJTUnVEa3lraE03?=
- =?utf-8?B?TkpucHFlVC9qazhIUlkySHZ4b1Y1QkhpTy9IVG41VVZkSmtHSDR1aXJFK2Mv?=
- =?utf-8?Q?Ogq05h?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(35042699022)(14060799003)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 09:27:21.9593
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08d86b7d-3157-49d9-94ec-08ddcb5d7587
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU2PEPF00028D0E.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB6490
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ae5ce461-0be5-4e00-8f6b-9c65ec6e66dc@jjverkuil.nl>
 
+Hi Hans,
 
-
-On 18/07/2025 16:01, Adrián Larumbe wrote:
-> On 16.05.2025 16:49, Lukas Zapolskas wrote:
->> The sampler must disable and re-enable counter sampling around suspends,
->> and must re-program the FW interface after a reset to avoid losing
->> data.
->>
->> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
->> ---
->>  drivers/gpu/drm/panthor/panthor_device.c |   7 +-
->>  drivers/gpu/drm/panthor/panthor_perf.c   | 102 +++++++++++++++++++++++
->>  drivers/gpu/drm/panthor/panthor_perf.h   |   6 ++
->>  3 files changed, 114 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
->> index 7ac985d44655..92624a8717c5 100644
->> --- a/drivers/gpu/drm/panthor/panthor_device.c
->> +++ b/drivers/gpu/drm/panthor/panthor_device.c
->> @@ -139,6 +139,7 @@ static void panthor_device_reset_work(struct work_struct *work)
->>  	if (!drm_dev_enter(&ptdev->base, &cookie))
->>  		return;
->>
->> +	panthor_perf_pre_reset(ptdev);
->>  	panthor_sched_pre_reset(ptdev);
->>  	panthor_fw_pre_reset(ptdev, true);
->>  	panthor_mmu_pre_reset(ptdev);
->> @@ -148,6 +149,7 @@ static void panthor_device_reset_work(struct work_struct *work)
->>  	ret = panthor_fw_post_reset(ptdev);
->>  	atomic_set(&ptdev->reset.pending, 0);
->>  	panthor_sched_post_reset(ptdev, ret != 0);
->> +	panthor_perf_post_reset(ptdev);
->>  	drm_dev_exit(cookie);
->>
->>  	if (ret) {
->> @@ -496,8 +498,10 @@ int panthor_device_resume(struct device *dev)
->>  			ret = panthor_device_resume_hw_components(ptdev);
->>  		}
->>
->> -		if (!ret)
->> +		if (!ret) {
->>  			panthor_sched_resume(ptdev);
->> +			panthor_perf_resume(ptdev);
->> +		}
->>
->>  		drm_dev_exit(cookie);
->>
->> @@ -561,6 +565,7 @@ int panthor_device_suspend(struct device *dev)
->>  		/* We prepare everything as if we were resetting the GPU.
->>  		 * The end of the reset will happen in the resume path though.
->>  		 */
->> +		panthor_perf_suspend(ptdev);
->>  		panthor_sched_suspend(ptdev);
->>  		panthor_fw_suspend(ptdev);
->>  		panthor_mmu_suspend(ptdev);
->> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
->> index 97603b168d2d..438319cf71ab 100644
->> --- a/drivers/gpu/drm/panthor/panthor_perf.c
->> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
->> @@ -1845,6 +1845,76 @@ void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_per
->>  	}
->>  }
->>
->> +static int panthor_perf_sampler_resume(struct panthor_perf_sampler *sampler)
->> +{
->> +	int ret;
->> +
->> +	if (!atomic_read(&sampler->enabled_clients))
->> +		return 0;
->> +
->> +	ret = panthor_perf_fw_start_sampling(sampler->ptdev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return 0;
->> +}
->> +
->> +static int panthor_perf_sampler_suspend(struct panthor_perf_sampler *sampler)
->> +{
->> +	int ret;
->> +
->> +	if (!atomic_read(&sampler->enabled_clients))
->> +		return 0;
->> +
->> +	ret = panthor_perf_fw_stop_sampling(sampler->ptdev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return 0;
->> +}
->> +
->> +/**
->> + * panthor_perf_suspend - Prepare the performance counter subsystem for system suspend.
->> + * @ptdev: Panthor device.
->> + *
->> + * Indicate to the performance counters that the system is suspending.
->> + *
->> + * This function must not be used to handle MCU power state transitions: just before MCU goes
->> + * from on to any inactive state, an automatic sample will be performed by the firmware, and
->> + * the performance counter firmware state will be restored on warm boot.
->> + *
->> + * Return: 0 on success, negative error code on failure.
->> + */
->> +int panthor_perf_suspend(struct panthor_device *ptdev)
->> +{
->> +	struct panthor_perf *perf = ptdev->perf;
->> +
->> +	if (!perf)
->> +		return 0;
->> +
->> +	return panthor_perf_sampler_suspend(&perf->sampler);
->> +}
->> +
->> +/**
->> + * panthor_perf_resume - Resume the performance counter subsystem after system resumption.
->> + * @ptdev: Panthor device.
->> + *
->> + * Indicate to the performance counters that the system has resumed. This must not be used
->> + * to handle MCU state transitions, for the same reasons as detailed in the kerneldoc for
->> + * @panthor_perf_suspend.
->> + *
->> + * Return: 0 on success, negative error code on failure.
->> + */
->> +int panthor_perf_resume(struct panthor_device *ptdev)
->> +{
->> +	struct panthor_perf *perf = ptdev->perf;
->> +
->> +	if (!perf)
->> +		return 0;
->> +
->> +	return panthor_perf_sampler_resume(&perf->sampler);
->> +}
+On Fri, Jul 25, 2025 at 11:01:11AM +0200, Hans Verkuil wrote:
+> On 23/07/2025 17:02, Laurent Pinchart wrote:
+> > On Tue, Jul 22, 2025 at 11:53:53AM +0200, Julien Vuillaumier wrote:
+> >> On 20/07/2025 20:56, Mirela Rabulea wrote:
+> >>> On 7/16/25 03:12, Laurent Pinchart wrote:
+> >>>> On Wed, Jul 16, 2025 at 02:59:54AM +0300, Laurent Pinchart wrote:
+> >>>>> On Fri, Jul 11, 2025 at 01:05:42AM +0300, Mirela Rabulea wrote:
+> >>>>>> Add new standard controls as U32 arrays, for sensors with multiple
+> >>>>>> captures: V4L2_CID_EXPOSURE_MULTI, V4L2_CID_AGAIN_MULTI and
+> >>>>>> V4L2_CID_DGAIN_MULTI. These will be particularly useful for sensors
+> >>>>>> that have multiple captures, but the HDR merge is done inside the 
+> >>>>>> sensor,
+> >>>>>> in the end exposing a single stream, but still requiring AEC control
+> >>>>>> for all captures.
+> >>>>>
+> >>>>> It's also useful for sensors supporting DOL or DCG with HDR merge being
+> >>>>> performed outside of the sensor.
+> >>>>
+> >>>> Regarless of where HDR merge is implemented, we will also need controls
+> >>>> to select the HDR mode. We have V4L2_CID_HDR_SENSOR_MODE, which doesn't
+> >>>> standardize the values, and that's not good enough. At least for DOL and
+> >>>> DCG with HDR merge implemented outside of the sensor, we need to
+> >>>> standardize the modes.
+> >>>>
+> >>>> Can you tell which sensor(s) you're working with ?
+> >>>
+> >>> We are working mostly with these 3:
+> >>> Omnivision's os08a20 (2 exposures staggered hdr, each exposure on a 
+> >>> separate virtual channel, there are also other hdr modes which we do not 
+> >>> use)
+> >>> Omnivision ox05b1s (RGB-Ir with context switching based on group holds, 
+> >>> 1 context optimized for RGB, the other context optimized for Ir, each 
+> >>> context on a different virtual channel)
+> >>> Omnivision ox03c10 (4 exposures, hdr merge in sensor).
+> >>>
+> >>>>>> All controls are in the same class, so they could all be set
+> >>>>>> atomically via VIDIOC_S_EXT_CTRLS, this could turn out to be
+> >>>>>> useful in case of sensors with context switching.
+> >>>>>
+> >>>>> Agreed, we should be able to set them all. Are we still unable to set
+> >>>>> controls from multiple classes atomatically ? I thought that limitation
+> >>>>> has been lifted.
+> >>>
+> >>> Maybe I need some background check on this, but looking at kernel tag 
+> >>> next-20250718, this comment still lies in the documentation:
+> >>> "These ioctls allow the caller to get or set multiple controls
+> >>> atomically. Control IDs are grouped into control classes (see
+> >>> :ref:`ctrl-class`) and all controls in the control array must belong
+> >>> to the same control class."
+> >>>
+> >>> Maybe it needs to be updated, or not...since there is also this check in 
+> >>> check_ext_ctrls():
+> >>>      /* Check that all controls are from the same control class. */
+> >>>      for (i = 0; i < c->count; i++) {
+> >>>          if (V4L2_CTRL_ID2WHICH(c->controls[i].id) != c->which) {
+> >>>              c->error_idx = ioctl == VIDIOC_TRY_EXT_CTRLS ? i :
+> >>>                                        c->count;
+> >>>              return false;
+> >>>          }
+> >>>      }
+> > 
+> > This only when c->which is set to a control class. If you set it to
+> > V4L2_CTRL_WHICH_CUR_VAL (equal to 0) then you can set (or get) controls
+> > from multiple classes in one go.
 > 
-> In the two previous functions, you return an int, but you never used it
-> from where they're called. 
-
-Thanks, will drop the return values from the perf_{suspend,resume} functions.
-
-> Also, in both of them, for the sake of
-> coherence, I'd get rid of the *sampler* subcalls because later in
-> 'panthor_perf_pre_reset' and 'panthor_perf_post_reset' you manipulate the
-> sampler directly without referring it to another function. The functions
-> are short enough for us to be able to inline the content of
-> 'panthor_perf_sampler_resume' into 'panthor_perf_resume'.
+> That's correct. Early implementations of the control framework required
+> that all controls were from the same control class, but later I dropped
+> that requirement and you can just set 'which' to 0 and it no longer matters.
 > 
-
-Will do.
-
->> +
->>  /**
->>   * panthor_perf_unplug - Terminate the performance counter subsystem.
->>   * @ptdev: Panthor device.
->> @@ -1878,3 +1948,35 @@ void panthor_perf_unplug(struct panthor_device *ptdev)
->>
->>  	ptdev->perf = NULL;
->>  }
->> +
->> +void panthor_perf_pre_reset(struct panthor_device *ptdev)
->> +{
->> +	struct panthor_perf_sampler *sampler;
->> +
->> +	if (!ptdev || !ptdev->perf)
->> +		return;
->> +
->> +	sampler = &ptdev->perf->sampler;
->> +
->> +	if (!atomic_read(&sampler->enabled_clients))
->> +		return;
->> +
->> +	panthor_perf_fw_stop_sampling(sampler->ptdev);
->> +}
->> +
->> +void panthor_perf_post_reset(struct panthor_device *ptdev)
->> +{
->> +	struct panthor_perf_sampler *sampler;
->> +
->> +	if (!ptdev || !ptdev->perf)
->> +		return;
+> >>> There is also another inconvenient, the VIDIOC_S_EXT_CTRLS does not 
+> >>> reach the v4l2 subdevice driver, what we get in the sensor driver is a 
+> >>> set of .s_ctrl calls. I don't know about other sensors, but for the 
+> >>> Omivision sensors which I am familiar with, the group holds feature 
+> >>> could be used to get multiple registers to be applied atomically in the 
+> >>> same frame, but the sensor driver would need to know when to start and 
+> >>> when to end filling the group hold with the desired registers. If there 
+> >>> is some similar feature in other sensors, I think the VIDIOC_S_EXT_CTRLS 
+> >>> should have a corresponding v4l2-subdev operation, so that it can be 
+> >>> implemented in the sensor subdevice driver. This would probably require 
+> >>> some changes in the v4l2 core, as currently the subdev_do_ioctl() 
+> >>> function does not let the VIDIOC_S_EXT_CTRLS go to the subdevice.
+> >>>
+> >>> Laurent, Hans, any thoughts on this?
+> > 
+> > I can think of at least 3 ways to handle this.
+> > 
+> > The first method would be to group all controls in a cluster. That way
+> > you will get a single .s_ctrl() call per VIDIOC_S_EXT_CTRLS. You will
+> > have to iterate over the controls to see which ones have changed, and
+> > configure the sensor accordingly. This short-circuits the logic in the
+> > control framework that dispatches individual controls to separate
+> > .s_ctrl() calls (or rather still goes through that logic, but doesn't
+> > make use of it), and requires reimplementing it manually in the
+> > .s_ctrl() handler. It's not ideal.
 > 
-> In both this function and the preceding one, ptdev is meant to be
-> available by the time they're called, so I'd turn the check of ptdev not
-> being null into a drm_WARN().
->
-
-I'll drop the check for the ptdev entirely, since it looks like there will 
-be other issues before these functions are even called if it's null, and 
-add the drm_WARN_ON_ONCE for the perf pointer, since that should also be 
-initialized by this point. 
-
->> +
->> +	sampler = &ptdev->perf->sampler;
->> +
->> +	if (!atomic_read(&sampler->enabled_clients))
->> +		return;
->> +
->> +	panthor_perf_fw_write_sampler_config(sampler);
->> +
->> +	panthor_perf_fw_start_sampling(sampler->ptdev);
->> +}
->> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
->> index c482198b6fbd..fc08a5440a35 100644
->> --- a/drivers/gpu/drm/panthor/panthor_perf.h
->> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
->> @@ -13,6 +13,8 @@ struct panthor_file;
->>  struct panthor_perf;
->>
->>  int panthor_perf_init(struct panthor_device *ptdev);
->> +int panthor_perf_suspend(struct panthor_device *ptdev);
->> +int panthor_perf_resume(struct panthor_device *ptdev);
->>  void panthor_perf_unplug(struct panthor_device *ptdev);
->>
->>  int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf *perf,
->> @@ -30,5 +32,9 @@ void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_per
->>
->>  void panthor_perf_report_irq(struct panthor_device *ptdev, u32 status);
->>
->> +void panthor_perf_pre_reset(struct panthor_device *ptdev);
->> +
->> +void panthor_perf_post_reset(struct panthor_device *ptdev);
->> +
->>  #endif /* __PANTHOR_PERF_H__ */
->>
->> --
->> 2.33.0.dirty
+> This should work out-of-the-box.
 > 
+> > The second method would be to add new .begin() and .end() (name to be
+> > bikeshedded) control operations. I experimented with this a while ago to
+> > expose group hold to userspace, but never upstreamed the patches as I
+> > didn't really need them in the end. Alternatively, the VIDIOC_S_EXT_CTRL
+> > could be exposed to drivers, allowing them to implement begin/end
+> > operations before and after calling the control framework. I don't have
+> > a strong preference (maybe Hans would).
 > 
-> Adrian Larumbe
+> I wonder if you could make 'HOLD_BEGIN' and 'HOLD_END' button controls, and
+> start and end the control array in VIDIOC_S_EXT_CTRLS with it. There are
+> some issues that need to be figured out, but I think this is doable.
 
+That seems needlessly complicated for userspace. Ultimately, what we
+want in userspace is to set several controls in an atomic way. What
+mechanism the sensor and driver use for this should be internal. As we
+already have a way to set multiple controls in the V4L2 API, I don't see
+a reason to introduce more userspace complexity.
+
+> > I increasingly think that the control framework doesn't provide the best
+> > value for subdevs. It has been developed for video devices, and for
+> > subdevs in video-centric devices where subdevs are hidden behind a video
+> > device, but not for MC-centric use cases where subdevs are exposed to
+> > userspace. The third option would be to implement something better,
+> > dropping the useless features and adding support for the needs of modern
+> > devices, but that would be much more work.
+> > 
+> >>>>>> Each element of the array will hold an u32 value (exposure or gain)
+> >>>>>> for one capture. The size of the array is up to the sensor driver which
+> >>>>>> will implement the controls and initialize them via 
+> >>>>>> v4l2_ctrl_new_custom().
+> >>>>>> With this approach, the user-space will have to set valid values
+> >>>>>> for all the captures represented in the array.
+> >>>>>
+> >>>>> I'll comment on the controls themselves in patch 2/2.
+> >>>>>
+> >>>>>> The v4l2-core only supports one scalar min/max/step value for the
+> >>>>>> entire array, and each element is validated and adjusted to be within
+> >>>>>> these bounds in v4l2_ctrl_type_op_validate(). The significance for the
+> >>>>>> maximum value for the exposure control could be "the max value for the
+> >>>>>> long exposure" or "the max value for the sum of all exposures". If none
+> >>>>>> of these is ok, the sensor driver can adjust the values as supported and
+> >>>>>> the user space can use the TRY operation to query the sensor for the
+> >>>>>> minimum or maximum values.
+> >>>>>
+> >>>>> Hmmmm... I wonder if we would need the ability to report different
+> >>>>> limits for different array elements. There may be over-engineering
+> >>>>> though, my experience with libcamera is that userspace really needs
+> >>>>> detailed information about those controls, and attempting to convey the
+> >>>>> precise information through the kernel-userspace API is bound to fail.
+> >>>>> That's why we implement a sensor database in libcamera, with information
+> >>>>> about how to convert control values to real gain and exposure time.
+> >>>>> Exposing (close to) raw register values and letting userspace handle the
+> >>>>> rest may be better.
+> >>>
+> >>> Julien, any thoughts on this?
+> >>
+> >> Reporting min/max value per array element could have made sense for some 
+> >> controls. For instance we have a HDR sensor whose long capture analog 
+> 
+> Actually, support for this exists. See the VIDIOC_G_EXT_CTRLS documentation
+> and look for V4L2_CTRL_WHICH_DEF_VAL/V4L2_CTRL_WHICH_MIN_VAL/V4L2_CTRL_WHICH_MAX_VAL.
+
+Ah thanks.
+
+> >> gain range is different from the shorter captures gain. Conversely, it 
+> >> may not work well for the multi-capture exposure control where the 
+> >> constraint can be more about the sum of the exposures for each capture 
+> >> rather than the individual exposure values. In that case, exposing 
+> >> min/max values per array element does not really help the user space.
+> >>
+> >> Thus, having the user space to have the necessary insight into each 
+> >> sensor specifics for its AEC control seems to be the versatile option.
+> > 
+> > Then I think we should look at a libcamera implementation alongside with
+> > this patch series, and review them together.
+> > 
+> >>> If we don't need to report different limits for different array 
+> >>> elements, we are fine, just we need to document better what those limits 
+> >>> stand for in case of arrays.
+> >>>
+> >>>>>> Mirela Rabulea (2):
+> >>>>>>    LF-15161-6: media: Add exposure and gain controls for multiple
+> >>>>>>      captures
+> >>>>>>    LF-15161-7: Documentation: media: Describe exposure and gain 
+> >>>>>> controls
+> >>>>>>      for multiple captures
+> >>>>>
+> >>>>> Did you forget to remove the LF-* identifiers ? :-)
+> >>>
+> >>> Yes, at least in the cover-letter, my bad :(
+> >>>
+> >>> Thanks for feedback.
+> >>>
+> >>>>>>   .../media/v4l/ext-ctrls-image-source.rst             | 12 ++++++++++++
+> >>>>>>   drivers/media/v4l2-core/v4l2-ctrls-defs.c            |  8 ++++++++
+> >>>>>>   include/uapi/linux/v4l2-controls.h                   |  3 +++
+> >>>>>>   3 files changed, 23 insertions(+)
+
+-- 
+Regards,
+
+Laurent Pinchart
 
