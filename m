@@ -1,106 +1,142 @@
-Return-Path: <linux-kernel+bounces-745384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C1EB1192E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF2AB11932
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853633AA662
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:29:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 709FB3A9F66
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E902BD59C;
-	Fri, 25 Jul 2025 07:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B852046BA;
+	Fri, 25 Jul 2025 07:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uF3OAXrh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PktTho9E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DCF2BD59B;
-	Fri, 25 Jul 2025 07:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302D821C16E;
+	Fri, 25 Jul 2025 07:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753428602; cv=none; b=Uon+oFDBy89wSaG5Cx3ELyuDCVuDu2nFtlmqfGHo2IdoLgG2ca2Q6RNRY5irU3oUIAkxbfxtAe5RIF/7giXaelKMBqx02BI9aOkvK92ULcQHdw9WrI+ThvvPtGt6reYUy1PD9xxNABUeyZ5rNWk8sT3LCpoQswxBiKgOXQmeoXk=
+	t=1753428626; cv=none; b=u76eaJSwrws7kqUUbbiCT8W1K9CIDnbIYL4ifF4FzQmZU5uACfmqf70DL7M5pYXZR/uwuCUtDVsShdKf29xfvCAVviOADhQdzS+N1U0+HmRMco7a/waJqtXuvd/5cZHPLzu8azGzqLgSjygkVGVLhzxOlXlWIXWSQ17qRUGBO2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753428602; c=relaxed/simple;
-	bh=VsBUVIq/j+r7AHbQ4ytPSRI1voy8+67A4EX8tCplsAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lOz4Oro78UH8s4BUANM78KgTpuNOS/DyyDnx6sO9ATHjRUbk/k8zIYPW+gcsLM8keGZBlVpD4vhwtVTTk12EpaVGc2jdwmgpgyjFFNx5XtCBQzOi5nMyhjUXdI+/SUhEDJMzkTFNAyKyiZsDJSWry9x1SVxcssw5v7nVD6YS3P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uF3OAXrh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E71E3C4CEE7;
-	Fri, 25 Jul 2025 07:29:58 +0000 (UTC)
+	s=arc-20240116; t=1753428626; c=relaxed/simple;
+	bh=nua92x0daTGPAa9Lcxv8VEukL2BqG6YUkO/iJsGHqfA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KBc/sryH8pMjsxK2XUOPlkTgoVcXXsm8doMuafGRpx/v5a+H9c2s6a5zG5tvhUqLYn5a5tXmnSegc9TX7Q+fuNpNnig1cQhKXaJ7GvOwe9Q4gkSinYkHky98/DXrn4vfQLBrL99Dz6Jg9f/X+TOhb4+ZGFXchx1W1j74/M+HlVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PktTho9E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1BCCC4CEF7;
+	Fri, 25 Jul 2025 07:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753428602;
-	bh=VsBUVIq/j+r7AHbQ4ytPSRI1voy8+67A4EX8tCplsAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uF3OAXrhjTurG/QT8dpeU7/K2QQM3EpzbggdyjfaomTXEbXChflQHD3scmNhrTZeO
-	 cRTeRCq6xKGtizCzR+OEfr1fN2gr9ugSmY9hz+IFaEJCA1FQTsKEu6i2Rha74pc7+k
-	 VgJJvOKZXZapWxIqIizDBy7A85Mqz+pMkGEmnB62nXTT6xvEh1nMzlFlGWxnVZJ8KS
-	 RYISKevmUgrwox4gNcEPblZAjYhWdr+mTfiNZeuqNQcIXgFCtgVikTQN3jrwQnQkOL
-	 orJuWcai5U2TgDkL1KQ26vhyS0MT0LFBQJ31ZUZEyd5ONRvvGzfCIgPY1+sM/PWtQi
-	 6vkBA7fjXBCHg==
-Date: Fri, 25 Jul 2025 08:29:56 +0100
-From: Simon Horman <horms@kernel.org>
-To: Tristram.Ha@microchip.com
-Cc: Woojung.Huh@microchip.com, andrew@lunn.ch, olteanv@gmail.com,
-	kuba@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, maxime.chevallier@bootlin.com,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	marex@denx.de, UNGLinuxDriver@microchip.com,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 4/7] net: dsa: microchip: Use different
- registers for KSZ8463
-Message-ID: <20250725072956.GH1266901@horms.kernel.org>
-References: <20250719012106.257968-1-Tristram.Ha@microchip.com>
- <20250719012106.257968-5-Tristram.Ha@microchip.com>
- <20250720101703.GQ2459@horms.kernel.org>
- <20250720102224.GR2459@horms.kernel.org>
- <DM3PR11MB873641FBBF2A79E787F13877EC5FA@DM3PR11MB8736.namprd11.prod.outlook.com>
- <20250723162158.GJ1036606@horms.kernel.org>
- <DM3PR11MB87369E36CA76C1BB7C78CEB7EC5EA@DM3PR11MB8736.namprd11.prod.outlook.com>
- <20250724213556.GG1266901@horms.kernel.org>
- <DM3PR11MB87360DB5CDD47DF4A64FC33BEC59A@DM3PR11MB8736.namprd11.prod.outlook.com>
+	s=k20201202; t=1753428625;
+	bh=nua92x0daTGPAa9Lcxv8VEukL2BqG6YUkO/iJsGHqfA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PktTho9E1qwbQ/oaxMdmeQZJbUc0K+8IsdTr+SwJFzoGdb0F6AeGY5Vqj4wuy38lH
+	 V23AMLL1R3Vn6AmmcLnifTbF6b/hkCJco73Njoa9ggokJklTYud+ujwle460wD7KAX
+	 DjJ2gEFn6v5RyCa1QrR9oSmtTXwEQtkP3xuy7DpNJJZ00olhAuIU/anO3JAeKbLO9W
+	 FTc2c0xKTsd6RDULQyZSrAiSFGdD+5X9rw/QPtOlr+Qqd1+jg4AawKXpgpP6NDf1lx
+	 y5i6bwaAHzg+gxvZLvK4hCxqKwuPoE0GGyAd9K+CtqwmECNBrVrhyPp2IdnlnqPih+
+	 o9LZ/32NZtH0Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ufCsp-001GT7-59;
+	Fri, 25 Jul 2025 08:30:23 +0100
+Date: Fri, 25 Jul 2025 08:30:21 +0100
+Message-ID: <86frek9182.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Justin Stitt <justinstitt@google.com>
+Cc: James Morse <james.morse@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Tom Rix <trix@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 6.1.y] KVM: arm64: silence -Wuninitialized-const-pointer warning
+In-Reply-To: <20250724-b4-clidr-unint-const-ptr-v1-1-67c4d620b6b6@google.com>
+References: <20250724-b4-clidr-unint-const-ptr-v1-1-67c4d620b6b6@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM3PR11MB87360DB5CDD47DF4A64FC33BEC59A@DM3PR11MB8736.namprd11.prod.outlook.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: justinstitt@google.com, james.morse@arm.com, alexandru.elisei@arm.com, suzuki.poulose@arm.com, oliver.upton@linux.dev, catalin.marinas@arm.com, will@kernel.org, nathan@kernel.org, trix@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Jul 25, 2025 at 12:17:26AM +0000, Tristram.Ha@microchip.com wrote:
-> > On Thu, Jul 24, 2025 at 02:28:56AM +0000, Tristram.Ha@microchip.com wrote:
-> > > > On Wed, Jul 23, 2025 at 02:25:27AM +0000, Tristram.Ha@microchip.com wrote:
-> > > > > > On Sun, Jul 20, 2025 at 11:17:03AM +0100, Simon Horman wrote:
-> > > > > > > On Fri, Jul 18, 2025 at 06:21:03PM -0700, Tristram.Ha@microchip.com
-> > wrote:
+[Dropping a few emails from the list, as they are very likely to
+ simply bounce]
 
-...
-
-> > I feel that we are talking past each other.
-> > Let's try to find a common understanding.
+On Fri, 25 Jul 2025 02:15:28 +0100,
+Justin Stitt <justinstitt@google.com> wrote:
 > 
-> It is really about the register definition of this specific register.
-> In KSZ8863 when presenting in 16-bit the value is 0x07ff, but in KSZ8463
-> it is 0xff07.  It is the fault of the hardware to define such value.
+> A new warning in Clang 22 [1] complains that @clidr passed to
+> get_clidr_el1() is an uninitialized const pointer. get_clidr_el1()
+> doesn't really care since it casts away the const-ness anyways.
+> 
+> Silence the warning by initializing the struct.
+> 
+> This patch won't apply to anything past v6.1 as this code section was
+> reworked in Commit 7af0c2534f4c ("KVM: arm64: Normalize cache configuration").
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 7c8c5e6a9101e ("arm64: KVM: system register handling")
 
-If the behaviour of this register is different to others, then I guess a
-special case is a reasonable approach. Although I would have thought there
-is a better way.
+No, this really doesn't fix anything other than paper over an
+overzealous warning.
 
-I would suggest adding a comment to the code explaining that this is a
-special case. And I would suggest revisiting this if more special cases are
-needed.
+> Link: https://github.com/llvm/llvm-project/commit/00dacf8c22f065cb52efb14cd091d441f19b319e [1]
+> Signed-off-by: Justin Stitt <justinstitt@google.com>
+> ---
+>  arch/arm64/kvm/sys_regs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index f4a7c5abcbca..d7ebd7387221 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -2948,7 +2948,7 @@ int kvm_sys_reg_table_init(void)
+>  {
+>  	bool valid = true;
+>  	unsigned int i;
+> -	struct sys_reg_desc clidr;
+> +	struct sys_reg_desc clidr = {0};
+>  
+>  	/* Make sure tables are unique and in order. */
+>  	valid &= check_sysreg_table(sys_reg_descs, ARRAY_SIZE(sys_reg_descs), false);
+> 
 
-> Note that in the new patch KSZ8463 SPI driver implements its own access
-> functions, so native mode is used instead and there is no automatic
-> swapping depending on the big-endian or little-endian format.  Still this
-> code is needed to program the register correctly.
+Frankly, this sort of things is the worse you can do, as
 
-Thanks for taking time to respond to my questions.
-I think we should let the matter rest here.
+- it perpetuates a bad design
+
+- it is completely pointless, as you pointed out
+
+- it is only going to make it harder to backport other patches
+
+The correct fix would be to backport the series described in
+e8789ab7047a8, which should be easy enough to apply. it would also
+make 6.1 less of a terrible kernel.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
