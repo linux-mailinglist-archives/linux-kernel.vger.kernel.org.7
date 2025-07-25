@@ -1,127 +1,142 @@
-Return-Path: <linux-kernel+bounces-746078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36922B122E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:19:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACCFB122E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1475847C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:19:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E8E5847FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC172EF2B9;
-	Fri, 25 Jul 2025 17:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FCC2EE975;
+	Fri, 25 Jul 2025 17:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kyag1WVd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLfeMeOs"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39AB1D63C7
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1376B2749C0
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753463949; cv=none; b=SEWq6r3unAumTVkJJyTlXBYkZ0rf8JpnPFw+Z2n7CyLcArBRkOje2nyztoyMiYnm1C3vWDACowPFRvzaxwsTtW9QYMsfeBBEHzpAMAEXtyL5TC/9GdO986A/aWTxTErYONhDTocJrp0ORn1t5/n+6rVu6DkGgPQhTQ7JrB7d1XM=
+	t=1753463978; cv=none; b=m/2pBZXzsMym3IxyBp6rXBQ0hbTMZitt6cr1rhl4nxZ8EDppgp6VNffQ2sDMazBfvVJtnRbIC1+G0rxC6DNjI2Shg8qT3XPYkyQBJfOgW4fByBAthqsIPnY7Y8UQ72cVP6G/G2Jdqi1E8ZWFeEIX4IuW3e5SQjjm0UvqojDE9QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753463949; c=relaxed/simple;
-	bh=Iry0RrzUK7STj5zlGmX1/iYQfryskFbG2JBARt0IGEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mjksBi3VTFJmitZDhfPQueg75kFBrcROO3OSZWRGv/6CeruM6KQLhZEyzVbgKMZPxm1uVaIYVWQFUebfXeo8oi2VVZrAPZQ4fOsrvMmh+QOj6VhSUnGX+PoihyrFia6TAi2JDqutv/TL6n8NDn6tgXkX8lRvutdjFHrXjQ9QyJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kyag1WVd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753463947;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mhNXg4Znv9oLyolvuPc9tKeQwr0BaKn0+lOoZWLaNX8=;
-	b=Kyag1WVd+0vMhq3FURU6eUKd/wFi5/ERY9FS58Hs0QfcjqWyJcviFM2igHnV7rRIjfJBEE
-	P9s/gc9mQEM5Bjb13jrJ7tIM21Kw/6XRCDAbgvibhHFq0C1FEZCsyjsZN0e+0MPyAYwu/a
-	NHAOQoZpAlp28FLceoIjqBgUFUT6kew=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-KHltYVInMjyuO3TSx3lsMw-1; Fri,
- 25 Jul 2025 13:19:02 -0400
-X-MC-Unique: KHltYVInMjyuO3TSx3lsMw-1
-X-Mimecast-MFC-AGG-ID: KHltYVInMjyuO3TSx3lsMw_1753463941
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8749518001C6;
-	Fri, 25 Jul 2025 17:19:00 +0000 (UTC)
-Received: from [10.45.224.176] (unknown [10.45.224.176])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D76C9195608D;
-	Fri, 25 Jul 2025 17:18:56 +0000 (UTC)
-Message-ID: <ea9f9931-95d9-4f7d-abba-eb7fae408977@redhat.com>
-Date: Fri, 25 Jul 2025 19:18:55 +0200
+	s=arc-20240116; t=1753463978; c=relaxed/simple;
+	bh=Y1KSUYsyaE6HbJs2IIuCubCrplcn/uqjWMb9Oub3kMw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dMKMC/bMiyFN5+GmOPoi34xlah40nJT3PKff0YfleDIUfZv6e764kC8YqoZCrqrr2NlVa+1NOmkUDLccT0CEu0vsZJp2hdnU2yWPKn+qV12vhICUTgRMsOtMjyhtWZQNLKxSz7as924Wr4Vg2jE/JW054Nmo4W63dlDKekdkf9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLfeMeOs; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6129ff08877so5438307a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:19:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753463975; x=1754068775; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FMKeCN6G97kMJOA2iye1JNWo2RzUVGDnYFn5d9NsQ9g=;
+        b=GLfeMeOshPnSRKo5L/dIZVR8pqyU3ImNfOmOjNjG2h0JVraGcBJkR0nnm2TmVVmx4Q
+         zKYjMwP5vukk57YdEZOXFB+0jMh+6tvEe4TF54ReiCb/xuRjipr5It+EUTLhGzt1qCnQ
+         0ZNnLzlEqve56vAJqo5fUkWjCu9qBxH3jpGcpxrzexQpBc6whNix455HoI4Upp/FM8s4
+         VhAzr+gS5VlDay3ImEOXw3qE57SYfBLcl2dJdldEEWx89UjcqOJgiXjuYvW4WuBsDojW
+         T3uJ5XZFBJ+Y018JzbmsD+gj8eWkLF1Af+8LyZeggbh1Ohx/vCxxkgp6MWblc7QOAP4n
+         +tgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753463975; x=1754068775;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FMKeCN6G97kMJOA2iye1JNWo2RzUVGDnYFn5d9NsQ9g=;
+        b=Ttl0i+TCVOYenUPZgnyKDnbHSbxRT4eueYaTKmpmInnBhlek1FO5nkzoPbXvGsMWQV
+         fddH4fc2HlU2oIKXWPhQKiAMPF5uaojVHLXxX1DXgyuFWy8ytUGUelKKeVYGNyMGCcHq
+         BM4jaUZsowYeYidNTNBJUt2CuEapKhZCekvOcGdKZQfXqXMTsbXJzxMBgsKJ3DAR36pk
+         E8LSwP86YJXhA83fvH0Dbh8ylxPmJJNy60jIlTU3WGyPr4Ldror+8E3yP13AaO37P4wS
+         yyqnOqUMxwE+RdrmKUwqygP+9irk9CDmMjAOalSUnhlym48zd+nhc7DzxUhByC/frN56
+         I7Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjMgVHec4MY+UHxLVW9w8PyrbkjChkNRs/N+lYkKRyufXg/+/hf52mkIUlbeDQ/dMe5XemwPQWcHif+qY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySmqRJBpzgARVIJFUDyjhBp1lpQ8fZblFiRcjM8NlZBWQqZ+90
+	6ycQDm+RncgcnbsACUSZGbDFBb6d2R8Of/Lpq/mTJfYHPODVRNBQDLEe
+X-Gm-Gg: ASbGncvjhjcQLLX2akkQRipS6AbO00xKFsGenHtVwRU+8DtuDL7oWLAt6DZiMd8jv2l
+	9aLtqwijl6outzS94+lUgTtj/25HGMzcJtiOGO1d1pQ1JxHpie4E1phmkNL1jA60+ZUVKqPTklM
+	2rDEpvdjzd/PT7LfxcQBPpiq25wBxrKS5Y6ZXHF8UzA3FNWJut1Bwppm+aJS/hZ5FpCV2G/wAtx
+	dxvr8CqZ/xJPSOXBs2GvsJr9wb2NNZTJq2jV2ujg6D8pE+e1TvLYYvUbWvw6Z2pRZRG5pGI/iIy
+	uLjmF4lmgJek0GeTS+DNjONL/7VoZ7khuKnwynwbVoV32sBkk5exg0m1Hmjg69kOizOs9Tz7Tu8
+	v5JPSCjWiV3h/hLGFt0xPCFwSS7LlAq4Co11iOykZJti55OR+Fx1eCj8FYvaoGA3DtJC/YlUSj/
+	zzlqsnKw==
+X-Google-Smtp-Source: AGHT+IEaEmCiIoGrZas9PLfSl62sSWOiTuZrFdkBEM7IJKU/GlPZfysTiUH5h5P0uHyk7NJHEItEiw==
+X-Received: by 2002:a17:907:3d46:b0:ae3:52ae:b0d2 with SMTP id a640c23a62f3a-af61df5289dmr370816266b.18.1753463974809;
+        Fri, 25 Jul 2025 10:19:34 -0700 (PDT)
+Received: from PC01.localdomain (094190205166.static.ipv4.heldenvannu.net. [94.190.205.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635a61103sm18857066b.70.2025.07.25.10.19.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 10:19:34 -0700 (PDT)
+From: Bruce Qin <bqn9090@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: bqn9090@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH v3] staging: rtl8723bs: fix if-statement alignment and line continuation in rtw_ap.c
+Date: Fri, 25 Jul 2025 19:19:33 +0200
+Message-ID: <20250725171933.10027-1-bqn9090@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2025072552-filled-glacier-1e9d@gregkh>
+References: <2025072552-filled-glacier-1e9d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/5] dpll: zl3073x: Add support for devlink flash
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Prathosh Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
- Petr Oros <poros@redhat.com>
-References: <20250725154136.1008132-1-ivecera@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20250725154136.1008132-1-ivecera@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 8bit
 
-On 25. 07. 25 5:41 odp., Ivan Vecera wrote:
-> Add functionality for accessing device hardware registers, loading
-> firmware bundles, and accessing the device's internal flash memory,
-> and use it to implement the devlink flash functionality.
-> 
-> Patch breakdown:
-> Patch1: helpers to access hardware registers
-> Patch2: low level functions to access flash memory
-> Patch3: support to load firmware bundles
-> Patch4: refactoring device initialization and helper functions
->          for stopping and resuming device normal operation
-> Patch5: devlink .flash_update callback implementation
-> 
-> Ivan Vecera (5):
->    dpll: zl3073x: Add functions to access hardware registers
->    dpll: zl3073x: Add low-level flash functions
->    dpll: zl3073x: Add firmware loading functionality
->    dpll: zl3073x: Refactor DPLL initialization
->    dpll: zl3073x: Implement devlink flash callback
-> 
->   Documentation/networking/devlink/zl3073x.rst |  14 +
->   drivers/dpll/zl3073x/Makefile                |   2 +-
->   drivers/dpll/zl3073x/core.c                  | 362 +++++++---
->   drivers/dpll/zl3073x/core.h                  |  32 +
->   drivers/dpll/zl3073x/devlink.c               |  92 ++-
->   drivers/dpll/zl3073x/devlink.h               |   3 +
->   drivers/dpll/zl3073x/flash.c                 | 674 +++++++++++++++++++
->   drivers/dpll/zl3073x/flash.h                 |  29 +
->   drivers/dpll/zl3073x/fw.c                    | 495 ++++++++++++++
->   drivers/dpll/zl3073x/fw.h                    |  52 ++
->   drivers/dpll/zl3073x/regs.h                  |  51 ++
->   11 files changed, 1715 insertions(+), 91 deletions(-)
->   create mode 100644 drivers/dpll/zl3073x/flash.c
->   create mode 100644 drivers/dpll/zl3073x/flash.h
->   create mode 100644 drivers/dpll/zl3073x/fw.c
->   create mode 100644 drivers/dpll/zl3073x/fw.h
+This patch fixes several style issues in a multiline if-statement:
 
-Self nacked, need to fix warnings found by clang (not identified by
-gcc).
+- Moved '&&' to the end of the previous line to follow logical
+  continuation style
+- Fixed indentation to align with the opening parenthesis of the expression
+- Avoided ending a line with an open parenthesis '('
+- Moved closing ')' to the end of the last expression line
+  (as suggested by the maintainer)
 
-Ivan
+These changes improve readability
+  and conform to Linux kernel coding conventions.
+No functional changes.
+
+Signed-off-by: Bruce Qin <bqn9090@gmail.com>
+---
+Changes in v3:
+- Wrapped commit message lines at 72 columns (checkpatch warning resolved).
+- Ensured only one copy is submitted (per Greg's feedback).
+- Carried forward the fix from v2 (closing ')' adjustment 
+  as suggested by Greg).
+- Thanks again to Greg Kroah-Hartman for the helpful review!
+
+ drivers/staging/rtl8723bs/core/rtw_ap.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
+index 383a6f7c06f4..c652e0cd35f3 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ap.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+@@ -258,11 +258,9 @@ void expire_timeout_chk(struct adapter *padapter)
+ 		} else {
+ 			/* TODO: Aging mechanism to digest frames in sleep_q to */
+ 			/* avoid running out of xmitframe */
+-			if (psta->sleepq_len > (NR_XMITFRAME / pstapriv->asoc_list_cnt)
+-				&& padapter->xmitpriv.free_xmitframe_cnt < ((
+-					NR_XMITFRAME / pstapriv->asoc_list_cnt
+-				) / 2)
+-			)
++			if (psta->sleepq_len > (NR_XMITFRAME / pstapriv->asoc_list_cnt) &&
++			    padapter->xmitpriv.free_xmitframe_cnt <
++					((NR_XMITFRAME / pstapriv->asoc_list_cnt) / 2))
+ 				wakeup_sta_to_xmit(padapter, psta);
+ 		}
+ 	}
+-- 
+2.43.0
 
 
