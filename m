@@ -1,121 +1,89 @@
-Return-Path: <linux-kernel+bounces-745535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1258BB11B4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:56:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96FB7B11B56
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E519189B7A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:56:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D549AA821F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20A72D3A83;
-	Fri, 25 Jul 2025 09:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="RW9yXgut";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="JnidZ9xa"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711D32D5423;
+	Fri, 25 Jul 2025 09:58:26 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345B52D3734;
-	Fri, 25 Jul 2025 09:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4762D46BA;
+	Fri, 25 Jul 2025 09:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753437351; cv=none; b=rPl9G8niT/+A1jHaYX4tcjgZiLgXiR0sG7vNqaR+sUw6KxZC9t0KRex/6tUHBp8lfPiC6ZgMyi3GVG14Igvv9M34XupSlPbP4RQVzze53i7WLMuOAG3aE+RdE2pFOc07hb9oLGVnjW8Eb5Whhvi+XAKeuktRTHPWtNQUGGPJo2o=
+	t=1753437506; cv=none; b=kTtwcDwEdmAhEDBIds4HysiW9a6K03aQUUNu4xU7vxK8kebs8jzm+5iY2sYuFO7jDjtZXnmmU7aen3PQiA8SKUsnFIr6Q+So0EWP3j4m4yqzPIgV2zN7nm+cZqLUAn3hGu6q/lQCP4VqniGNxRiTMul8bK9I96UfL08lfAwVyrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753437351; c=relaxed/simple;
-	bh=obxzbRARWp61SAgr4OuGSyuQbiBqYc6yJPDRw1+VWFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=asX8DGEkU6R6qrIaeC/pwnMWCDGcmXmRNsDog1l7WTX/ZZ+vko1mdH54QcVG1s+ryURDZTWH5U1i2zRDDSLZ8AIRn5nMpIkyMY/6qV3dP/70Rptg+q1ZZImXxRaDKzXvd5YUjh7mAVUuj9NZEw02JUhZ9K99KoLO0HP6ZlsNK/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=RW9yXgut; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=JnidZ9xa; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 1C41460272; Fri, 25 Jul 2025 11:55:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1753437341;
-	bh=UynE9Asxg2hIcZ+zLWqbX0Hja+9AhIsgeadpl92uNQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RW9yXgutzmmpvsQ2npdmWr33e7Oi5h/NwPgf782L6PTblPuuaRoL86pNIuL4gF5o5
-	 Yxay7k+3cbFOVvcC8gsG84GpEl3/ItwVPZXEETdSQIPjUI+vhcg54XsIXs+wWGFWoZ
-	 lh3muGxpndKamr9+StUXd9She/o3bp2gKPjXmiQDEr3h2TnuzEtwQBEHrk5n1myy7y
-	 s2HZk1+j4f1xJloeE6YaHd4YEY5n+EHdd37LqR9cPNQqsrbHj2Ou/P4MTDtmAPIInF
-	 MUixzLD/U3KtPHR8yxrSKpgvcd81gBD5FW2uRt2oy2RmgjCvXp3u5p5040v0ZluBg0
-	 4Izs8QqWkIbHg==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id C028660251;
-	Fri, 25 Jul 2025 11:55:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1753437338;
-	bh=UynE9Asxg2hIcZ+zLWqbX0Hja+9AhIsgeadpl92uNQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JnidZ9xaZ29WUBKCefYXULw6SHvmz/xszjzq11DjCpkyzU5WXlQasxad7LSe96eKR
-	 jiECGQUVZDIVJEPUm30qQAf3+73yH8xDdXzl/m3IH0M4bdyyBlZDe+z8vnD3B3XZeJ
-	 E9kKlUF70d0RPiJBUylFFoL+KO3ZKnsJE1NjS9ycxwjPEwtqdgcp95ZLmZV7ZCByJg
-	 iYR+t2vLkSfhiBfMZZODOdm10ykakiKwyZ/lJzqjyPIH9Fj04hbtMLv67OqtykDOPH
-	 9RfwCJ7C0lpItbkkDrH43CsEw5190KXIeRA3bGBPhFgwq/2aqyLVvZLSibSfOI+Hl+
-	 ajAHw+hvAxvWw==
-Date: Fri, 25 Jul 2025 11:55:34 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Florian Westphal <fw@strlen.de>
-Cc: lvxiafei <xiafei_xupt@163.com>, coreteam@netfilter.org,
-	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
-	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
-	lvxiafei@sensetime.com, netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH V2] netfilter: nf_conntrack: table full detailed log
-Message-ID: <aINUlqscselprHTd@calendula>
-References: <20250508081313.57914-1-xiafei_xupt@163.com>
- <20250522091954.47067-1-xiafei_xupt@163.com>
- <aIA0kYa1oi6YPQX8@calendula>
- <aIJQqacIH7jAzoEa@strlen.de>
- <aILC8COcZTQsj6sG@calendula>
- <aILH9Z_C3V7BH6of@strlen.de>
+	s=arc-20240116; t=1753437506; c=relaxed/simple;
+	bh=5pOPhajBbxWRHUanALO1t6Y++n2BiPrJFpZteErUpKI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lAxgs+D7Ykv7A5eDbN3pIgZ7UqtpkwIMwog1Gw6QG/VsnzcKdwdijOMAgIQ4bMGCoSSItCgeupkLdboprcu32YSizfFl70L6zyJ8Ws2u310+E87KFcEUH+jq8XX4FnAsmPHYZXXtxtXqu0NsL2eczvYafRAt9QJLqIwHUl1OAoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 654382003FD;
+	Fri, 25 Jul 2025 11:58:15 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 29143200219;
+	Fri, 25 Jul 2025 11:58:15 +0200 (CEST)
+Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id AE525180007B;
+	Fri, 25 Jul 2025 17:58:13 +0800 (+08)
+From: Lakshay Piplani <lakshay.piplani@nxp.com>
+To: linux-kernel@vger.kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	linux-hwmon@vger.kernel.org,
+	corbet@lwn.net,
+	linux-doc@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org
+Cc: vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com,
+	shashank.rebbapragada@nxp.com,
+	Lakshay Piplani <lakshay.piplani@nxp.com>
+Subject: [PATCH 1/2] dt-bindings: hwmon: (lm75) Add binding for NXP P3T1750
+Date: Fri, 25 Jul 2025 15:28:10 +0530
+Message-Id: <20250725095811.2717763-1-lakshay.piplani@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aILH9Z_C3V7BH6of@strlen.de>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Fri, Jul 25, 2025 at 01:55:33AM +0200, Florian Westphal wrote:
-> Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> > I was thinking, does the packet logging exposes already the
-> > net->ns.inum? IIUC the goal is to find what netns is dropping what
-> > packet and the reason for the packet drop, not only in this case but
-> > in every case, to ease finding the needle in the stack. If so, then it
-> > probably makes sense to consolidate this around nf_log()
-> > infrastructure.
-> 
-> No, it doesn't.  It also depends on the backend:
-> for syslog, nothing will be logged unless nf_log_all_netns sysctl is
-> enabled.
-> 
-> For nflog, it is logged, to the relevant namespaces ulogd, or not in
-> case that netns doesn't have ulogd running.
-> 
-> For syslog one could extend nf_log_dump_packet_common() but I'm not sure
-> how forgiving existing log parsers are when this gets additional
-> field.
-> 
-> Also, would (in case we use this for the "table full" condition), should
-> this log unconditionally or does it need a new sysctl?
-> 
-> Does it need auto-ratelimit (probably yes, its called during packet
-> flood so we dont want to flood syslog/ulog)?
+Add "nxp,p3t1750" to the lm75 compatible list.
 
-Yes, such extension would need to answer these questions.
+Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+---
+ Documentation/devicetree/bindings/hwmon/lm75.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > Anyway, maybe I'm overdoing, I'll be fine with this approach if you
-> > consider it good enough to improve the situation.
-> 
-> I think its better than current state of affairs since it at least
-> allows to figure out which netns is experiencing this.
+diff --git a/Documentation/devicetree/bindings/hwmon/lm75.yaml b/Documentation/devicetree/bindings/hwmon/lm75.yaml
+index c38255243f57..d0fa98eb38b1 100644
+--- a/Documentation/devicetree/bindings/hwmon/lm75.yaml
++++ b/Documentation/devicetree/bindings/hwmon/lm75.yaml
+@@ -29,6 +29,7 @@ properties:
+       - maxim,max31726
+       - maxim,mcp980x
+       - nxp,p3t1755
++      - nxp,p3t1750
+       - nxp,pct2075
+       - st,stds75
+       - st,stlm75
+-- 
+2.25.1
 
-Thanks for explaining, let's take this patch as is then.
 
