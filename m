@@ -1,80 +1,272 @@
-Return-Path: <linux-kernel+bounces-745212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E4BB116AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:49:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEAFB116AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCF711C86944
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24CFAE39EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7812B23ABB6;
-	Fri, 25 Jul 2025 02:49:37 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 0C898230BD2;
-	Fri, 25 Jul 2025 02:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C960238140;
+	Fri, 25 Jul 2025 02:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="chhSYBS2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E672222A7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753411777; cv=none; b=BDJTTRO2RzrNC79pTWxUdq5wQDejOoB6h/cexAEOBGMAaAI32PeYpiU1Puic/QDiJ7BgPF4ExKoAtHpwVW3tzqBW4iYV9phlwUYE/ZucjJufm0IQzri9uT8k2+1R50NQGM9tHGfFsqFrvcPaPNwLJtb0J6MIHZzoKdSJP3CDwQ4=
+	t=1753411772; cv=none; b=E+5XNpLe7OD3dfosZlQ0cqwEQYseP+LbHNtTKyP1pzSHgBBo4fTXntgJyEKJAhHR+ePV56OxcH/MjbeFpjxNbkQ3iFbT2H8MpQ1pLteHwdAv6I4zLrRNUoRk2fgyruktzsV9O78qFHZgqlxltnUHSiFJEneAeFk0A6hDqigFX90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753411777; c=relaxed/simple;
-	bh=bu26tGuEinAdBeSGy8/0dQi7Mta9faIB03YdcSPptrk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cixipY+vrtJo1qpWlc3asX0cSXOLlp0KrSfBQ9Xhp3JVTRqQ8XuUDgIH4TO4+7DI54VLCTDm0EQT9AJu6+se67fITryRHqdHmEoerq2Sq56g82V7Ix1F6ABah3CWf7JfQApt50Z65PP6EYCe0IcB0AW8L+FXIOyqTvWEWD1q1XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from liqiong-suma.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 82BB560187F56;
-	Fri, 25 Jul 2025 10:49:17 +0800 (CST)
-X-MD-Sfrom: liqiong@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Li Qiong <liqiong@nfschina.com>
-To: Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Li Qiong <liqiong@nfschina.com>
-Subject: [PATCH] mm: slub: fix dereference invalid pointer in alloc_consistency_checks
-Date: Fri, 25 Jul 2025 10:48:54 +0800
-Message-Id: <20250725024854.1201926-1-liqiong@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1753411772; c=relaxed/simple;
+	bh=vxtCP6QkbOBgrlQQ7Wh/a0P73x8NHPDiucr6P6dbIFU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iz+8WpoLfXHF6ByPW+D0BbskGPg5i11n/GnsbNyf2ll+ZH3ev1WjkWbbxljRP7QbwoZ8FfBp7rQAJe0nqA9mqUuP6MYiZySzFndDmajte7eUkBVGV+q9mPIarvIXTht1IImRVlTxU8qYD7EAXtUrVq/dJMMwZQTTBlCnu2tdZlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=chhSYBS2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753411769;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fZ0lgYFYfJK224S3zXbRX1LGwYZBTG3nIJjbcFvGSV8=;
+	b=chhSYBS21JF0NaZDxcU9pPJ87KsZX/12B7hWynN1Ssplyyc2z+5VpQJ87eMVWGJ/5tBCfN
+	cmRGd3dIRhhbg7WjUuVpQuHIJp5B8KPNWlJ2/DS07ObYI2Hw11wM7u5j6UPLeynR3ju2sc
+	E1lHY4WjRwTK1dLhRvciuVhV+6gElmA=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-621-tVHZ4XLJOoS8zZ9j66Xd_Q-1; Thu, 24 Jul 2025 22:49:27 -0400
+X-MC-Unique: tVHZ4XLJOoS8zZ9j66Xd_Q-1
+X-Mimecast-MFC-AGG-ID: tVHZ4XLJOoS8zZ9j66Xd_Q_1753411766
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-32b37b118a3so6771541fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:49:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753411766; x=1754016566;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fZ0lgYFYfJK224S3zXbRX1LGwYZBTG3nIJjbcFvGSV8=;
+        b=SegNBUx0JAq4fhxpHi/E5VBt3jy33jyxtHmwGMQ4AnJC8ERFR5kewDqKJKAfBZcZ2I
+         Eg/mImidggsMnx0jM1VeIEHWvOcy6NllQ6CwonZ8s0iLGZdzFE4vcgn6fdjpE3irmnO3
+         hlefXPEa4dKTXHkqV29Yi6MGcvCgLhBXZllb6ei+lWfOrOmNbWg6J+W5f123MMmDkNoz
+         MxWnpv1dXUdnQSKB71xnqv0EwWGKP6hZDEpCNcoV6+3G3K4qwNsslaQN6TcZti/lVmXf
+         zL79hQZkABLGkkmDrfzVvAAOwD+NPae0XhSLA4Iu/YTGQexojuDN0YyTc1HSscL6Zn4t
+         abvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+OLhEKnGXHh+G3W+U9UpSxz6qLmNOj2zK8MPuNSD5aISKaB1Z5R+NpEZhWIIdi6FpwlU/hFLfh4gjz9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmJejj257sdnx4I4AXxvTuiVY20Ff8X5oM1dyh4g5zbN2wU0+K
+	wiaGVYWhEpgT5srRzdPzs1ZNalzv+alWy518bjIRYxiue865cFsqd+Y5wD6HVM9BkVqpBXGbelR
+	R2KV5KisFHVhMoGt4uSa69JWn5QjrKZN9LuZga3LPDyiQJMzBx/1PAeQBEkeFZck3aX6hHwMZO9
+	WJ2nKthSyD2ullotPmOMke9LFdSIdb0LnCKQ8QxBsZ
+X-Gm-Gg: ASbGncvbpRM2nsIUSUqq4Q0X7NFVRNGV/SxpuKdfy7dUnZ4/jKMbzOjZHpdT4qKMaOD
+	PJVPEE+rRPe7nA5BH2rJw8p0sDdxLWJpj4jmiKzdYdOA/pYbAHsVMkev7h9QH0e2J+gVecjfT1D
+	tjwrwdXkQaXgc033jHMINqPQ==
+X-Received: by 2002:a05:651c:1a0b:b0:30b:d156:9e7e with SMTP id 38308e7fff4ca-331ee6e824dmr885961fa.2.1753411765698;
+        Thu, 24 Jul 2025 19:49:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHQRwU+fBO2gJ0Klw8iv1V53UE1zsTUdTisZNk79KClcJnexOygytGSzsHpUABT2h4sm5PWtSw35+l2O9Pau2o=
+X-Received: by 2002:a05:651c:1a0b:b0:30b:d156:9e7e with SMTP id
+ 38308e7fff4ca-331ee6e824dmr885821fa.2.1753411765224; Thu, 24 Jul 2025
+ 19:49:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250707012711.376844-1-yukuai1@huaweicloud.com> <20250707012711.376844-4-yukuai1@huaweicloud.com>
+In-Reply-To: <20250707012711.376844-4-yukuai1@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Fri, 25 Jul 2025 10:49:13 +0800
+X-Gm-Features: Ac12FXwrBo6_nZg5lsK-OJiB6DGQ8ksgwpwTq6q9oUVHeDEhmJPbXv8MqQjZQmU
+Message-ID: <CALTww2-wL0AyuoZTveOEBaVvFdAGYiD+=hgrMPD_kupGf1y4+g@mail.gmail.com>
+Subject: Re: [PATCH v5 03/15] md/md-bitmap: remove the parameter 'init' for bitmap_ops->resize()
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org, 
+	yukuai3@huawei.com, dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
+	johnny.chenyi@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In object_err(), need dereference the 'object' pointer, it may cause
-a invalid pointer fault. Use slab_err() instead.
+On Mon, Jul 7, 2025 at 9:36=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> wr=
+ote:
+>
+> From: Yu Kuai <yukuai3@huawei.com>
+>
+> It's set to 'false' for all callers, hence it's useless and can be
+> removed.
+>
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/dm-raid.c    | 2 +-
+>  drivers/md/md-bitmap.c  | 5 ++---
+>  drivers/md/md-bitmap.h  | 3 +--
+>  drivers/md/md-cluster.c | 2 +-
+>  drivers/md/raid1.c      | 2 +-
+>  drivers/md/raid10.c     | 8 ++++----
+>  drivers/md/raid5.c      | 2 +-
+>  7 files changed, 11 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+> index d296770478b2..9757c32ea1f5 100644
+> --- a/drivers/md/dm-raid.c
+> +++ b/drivers/md/dm-raid.c
+> @@ -4068,7 +4068,7 @@ static int raid_preresume(struct dm_target *ti)
+>                 int chunksize =3D to_bytes(rs->requested_bitmap_chunk_sec=
+tors) ?: mddev->bitmap_info.chunksize;
+>
+>                 r =3D mddev->bitmap_ops->resize(mddev, mddev->dev_sectors=
+,
+> -                                             chunksize, false);
+> +                                             chunksize);
+>                 if (r)
+>                         DMERR("Failed to resize bitmap");
+>         }
+> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+> index bd694910b01b..fc7282304b00 100644
+> --- a/drivers/md/md-bitmap.c
+> +++ b/drivers/md/md-bitmap.c
+> @@ -2594,15 +2594,14 @@ static int __bitmap_resize(struct bitmap *bitmap,=
+ sector_t blocks,
+>         return ret;
+>  }
+>
+> -static int bitmap_resize(struct mddev *mddev, sector_t blocks, int chunk=
+size,
+> -                        bool init)
+> +static int bitmap_resize(struct mddev *mddev, sector_t blocks, int chunk=
+size)
+>  {
+>         struct bitmap *bitmap =3D mddev->bitmap;
+>
+>         if (!bitmap)
+>                 return 0;
+>
+> -       return __bitmap_resize(bitmap, blocks, chunksize, init);
+> +       return __bitmap_resize(bitmap, blocks, chunksize, false);
+>  }
+>
+>  static ssize_t
+> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+> index 59e9dd45cfde..28c1f1c1cc83 100644
+> --- a/drivers/md/md-bitmap.h
+> +++ b/drivers/md/md-bitmap.h
+> @@ -64,8 +64,7 @@ struct md_bitmap_stats {
+>  struct bitmap_operations {
+>         bool (*enabled)(struct mddev *mddev);
+>         int (*create)(struct mddev *mddev);
+> -       int (*resize)(struct mddev *mddev, sector_t blocks, int chunksize=
+,
+> -                     bool init);
+> +       int (*resize)(struct mddev *mddev, sector_t blocks, int chunksize=
+);
+>
+>         int (*load)(struct mddev *mddev);
+>         void (*destroy)(struct mddev *mddev);
+> diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+> index 94221d964d4f..db6bbc8eebbc 100644
+> --- a/drivers/md/md-cluster.c
+> +++ b/drivers/md/md-cluster.c
+> @@ -630,7 +630,7 @@ static int process_recvd_msg(struct mddev *mddev, str=
+uct cluster_msg *msg)
+>                 if (le64_to_cpu(msg->high) !=3D mddev->pers->size(mddev, =
+0, 0))
+>                         ret =3D mddev->bitmap_ops->resize(mddev,
+>                                                         le64_to_cpu(msg->=
+high),
+> -                                                       0, false);
+> +                                                       0);
+>                 break;
+>         default:
+>                 ret =3D -1;
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 3a31e230727c..39ebe0fadacd 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -3329,7 +3329,7 @@ static int raid1_resize(struct mddev *mddev, sector=
+_t sectors)
+>             mddev->array_sectors > newsize)
+>                 return -EINVAL;
+>
+> -       ret =3D mddev->bitmap_ops->resize(mddev, newsize, 0, false);
+> +       ret =3D mddev->bitmap_ops->resize(mddev, newsize, 0);
+>         if (ret)
+>                 return ret;
+>
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index b74780af4c22..d2ef96be0150 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -4233,7 +4233,7 @@ static int raid10_resize(struct mddev *mddev, secto=
+r_t sectors)
+>             mddev->array_sectors > size)
+>                 return -EINVAL;
+>
+> -       ret =3D mddev->bitmap_ops->resize(mddev, size, 0, false);
+> +       ret =3D mddev->bitmap_ops->resize(mddev, size, 0);
+>         if (ret)
+>                 return ret;
+>
+> @@ -4502,7 +4502,7 @@ static int raid10_start_reshape(struct mddev *mddev=
+)
+>                 newsize =3D raid10_size(mddev, 0, conf->geo.raid_disks);
+>
+>                 if (!mddev_is_clustered(mddev)) {
+> -                       ret =3D mddev->bitmap_ops->resize(mddev, newsize,=
+ 0, false);
+> +                       ret =3D mddev->bitmap_ops->resize(mddev, newsize,=
+ 0);
+>                         if (ret)
+>                                 goto abort;
+>                         else
+> @@ -4524,13 +4524,13 @@ static int raid10_start_reshape(struct mddev *mdd=
+ev)
+>                             MD_FEATURE_RESHAPE_ACTIVE)) || (oldsize =3D=
+=3D newsize))
+>                         goto out;
+>
+> -               ret =3D mddev->bitmap_ops->resize(mddev, newsize, 0, fals=
+e);
+> +               ret =3D mddev->bitmap_ops->resize(mddev, newsize, 0);
+>                 if (ret)
+>                         goto abort;
+>
+>                 ret =3D mddev->cluster_ops->resize_bitmaps(mddev, newsize=
+, oldsize);
+>                 if (ret) {
+> -                       mddev->bitmap_ops->resize(mddev, oldsize, 0, fals=
+e);
+> +                       mddev->bitmap_ops->resize(mddev, oldsize, 0);
+>                         goto abort;
+>                 }
+>         }
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index 7ec61ee7b218..999752ec636e 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -8322,7 +8322,7 @@ static int raid5_resize(struct mddev *mddev, sector=
+_t sectors)
+>             mddev->array_sectors > newsize)
+>                 return -EINVAL;
+>
+> -       ret =3D mddev->bitmap_ops->resize(mddev, sectors, 0, false);
+> +       ret =3D mddev->bitmap_ops->resize(mddev, sectors, 0);
+>         if (ret)
+>                 return ret;
+>
+> --
+> 2.39.2
+>
+>
 
-Signed-off-by: Li Qiong <liqiong@nfschina.com>
----
- mm/slub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 31e11ef256f9..3a2e57e2e2d7 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1587,7 +1587,7 @@ static inline int alloc_consistency_checks(struct kmem_cache *s,
- 		return 0;
- 
- 	if (!check_valid_pointer(s, slab, object)) {
--		object_err(s, slab, object, "Freelist Pointer check fails");
-+		slab_err(s, slab, "Freelist Pointer (0x%p) check fails", object);
- 		return 0;
- 	}
- 
--- 
-2.30.2
+Looks good to me.
+Reviewed-by: Xiao Ni <xni@redhat.com>
 
 
