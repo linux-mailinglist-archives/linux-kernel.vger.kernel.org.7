@@ -1,212 +1,141 @@
-Return-Path: <linux-kernel+bounces-746089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE49B12305
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:30:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59711B12306
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F8AEAC6807
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:30:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C02C1CE1C02
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AC32EFD87;
-	Fri, 25 Jul 2025 17:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F193C291C05;
+	Fri, 25 Jul 2025 17:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HZKnCSK7"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="og+ouuGa"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F399E48CFC
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE40B48CFC
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753464623; cv=none; b=FhssesNhNBt0oVyB+DbheXWDIX9XC9heVOfuEfc3bd/pUkYKTWw/Vmp0rMKdf2Ztu0msHuPC3F9aaeeOE9Spo+3mcoUq7JvtZJPWaJLgU3mMfXQkK+ed8PdSMpMg5E6diHqUwQ+JYdCMdrjqZuB7YWFyoU96EWqmQKeSNywYb4A=
+	t=1753464634; cv=none; b=N30O0UxDflhhB/uwKKya6zABnV+nQ691JtvLx3vqraAkr/YL5NEjPPk7353YZ+TLZ3kQC0b0dZ6rdidplnyRw4xVGYubw7JepERuxNaMAEgC99UQ1JEbIMHWtzVQEvtJERWz+F6PcUBpELuozdfLZTlkbFAMBIo3Wr/27bf+AiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753464623; c=relaxed/simple;
-	bh=6biO4cxCQOdK34SRChV5Rp8sQXu6WVbGWI+bNmSGfug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hmllp07J6Qata1YfgQON+NUtBFPnSsE/IHdTSszwrOmbS75hlV5YdIx4QfOUjep4KQGx8n/48yd0n2oiIGj8rCBKaXuVX1o5Hr/jrHqYxMgnuc2T8UZ8dERNjNJsyBRc+HoMnRb4VgzagdUaGBY8J92qYcjBrRD+rURyPWabA8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HZKnCSK7; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2ffb27793fdso14628fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753464621; x=1754069421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zQ0Bu/BvQWMgs0y0itEC4STNhBs0pVrCSveit39+ORc=;
-        b=HZKnCSK7e5Khs1utkN1/zsOJYFyfa2QdtvbBLnKCTkPYcGdyY7s/lplAtJi4LAEP5D
-         fo6/EgoUrmfQ7nQTTqfY3+vVdt5KUnXb+a5wSDSdRUm+O3SdTRU4yNHeQfxbrTcL2Ma+
-         WnLFc32hZOu1rB7qvi+6cFvaM/oHdc7Rxii9c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753464621; x=1754069421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zQ0Bu/BvQWMgs0y0itEC4STNhBs0pVrCSveit39+ORc=;
-        b=S+E/yIpJtmryjWHhVuWbZDJPjtdp7NOXQzZ8eg1VoPf9e7x+7l9yJCxXttz3RRwzbX
-         ET2kFw2XIERBwF7Aj6A/yKOejSI7VciLrzF0Xcn/NhhspWe6CPCrR4X9uOEtLAJEyV/g
-         kVjdWt+5ZAgtlFbn1MLWAF0a5Z5S8C/MFxutYsYQ3AzIp/7qU+mFSQMAB1UvObE1ySsz
-         3dL4uBnvV6EyFrkySQoWve69v0e/sZoLxZ3sFQOtfOvd5KmsfU8aWrKHociWrSPFM3B9
-         BEvjvfr5Ub9RejvydqlViWbFP543nB3kcR9e4UVonrq3cj1bVidp0gj2p1UOpZBu57Sa
-         hn8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUvqc2gr8WBwY47N+/2E+cv0bvP4gW/xYh8lK4UKci1X4yvHsFZQoZDB0O5+Emi2BEQwo4EjGy4+jAhd9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/CmdM+qN0/yxLYXGXnDAh4nXI9IqKWFIw0foTL0FEwoNDvxBw
-	GBcShT3CF5+q9rCMj5zcPZAXreC9dgVAkMPenFGDhU26kLYk0v/QteNoHERMIUBLCsV35kPngrx
-	eqTFSws4ywEusbx6SLXoaCcnX77SrR44LY6S4RjGR
-X-Gm-Gg: ASbGncvij9i/xI5QLXQu5Xm4XHas6Y4i3lT0VYeDsTJs6QUf13oUnHpLF1zcoYkPH3L
-	ItYfAR2nwl0xph9NXrd8SIM9aOMsZfHY1waxXEB4JnbCUkFXFUZ50+/tw0rsuVGryEKmdLrtYf/
-	OazFgyErIkwSlP0bv4S/YM/rVdKukDIJmJ0A1qync30Zu0yysKssGNihAjSRh77mbtAFxi3fm/v
-	/gXC8TlDD1wdqVI3R8FeqyAJ09o3Z8esXnnOCrxypI=
-X-Google-Smtp-Source: AGHT+IHnkJmphoDh/b+ws8PYtxQHNySEY2goMZD4LausV3pkCZsARdu+y7zcV959yuoTBZwdv797T/qXFyB5w/Sg2pc=
-X-Received: by 2002:a05:6871:610e:b0:297:2582:c66c with SMTP id
- 586e51a60fabf-30701615412mr696302fac.0.1753464620858; Fri, 25 Jul 2025
- 10:30:20 -0700 (PDT)
+	s=arc-20240116; t=1753464634; c=relaxed/simple;
+	bh=+q1qJLsEHbLvu1F0pgq1Drfko8EUrkvrNLAQmy+383A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YA7QLceEGDpcefc22IHwnr7vTB5dL6yuwuymDWJiyvpSiatE99LeRDc2ELZVxgjwjYbizQd3acD7X/ASjPNxhezPCynq1X0tTCS+SaZhSsO7+gkLvJFmGoe0ufolVK9dXlaXZyWHCYGbBT5llhC5rOokMQL4W4TCb00WfQFHuQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=og+ouuGa; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bfae2bbc-b440-4d47-8ce7-1d39a33b108e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753464629;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2pDROfUQq42wBzo1Q0k5++y7V8eH2Gqhj7GH+jwyDrY=;
+	b=og+ouuGaUitinxolY4bcJ4qTaP7TMDOWc0bIepbsTCR/6Ql1JpK0GML8Px8onBGf/pfmZ7
+	J89pxXxDVUqwgVb6yatuABcQG+/E5SXwzu0UdMY8yFsRDFjVfj5GoIqrSQJfoVlEi6bC5u
+	94KR81NjkTl2x7leeuy5Bq2163RPRQg=
+Date: Fri, 25 Jul 2025 10:30:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1753431105.git.lorenzo.stoakes@oracle.com> <dd50984eff1e242b5f7f0f070a3360ef760e06b8.1753431105.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <dd50984eff1e242b5f7f0f070a3360ef760e06b8.1753431105.git.lorenzo.stoakes@oracle.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 25 Jul 2025 10:30:08 -0700
-X-Gm-Features: Ac12FXz_xBH_L3lj7AJvo6vEKgPTtF4nqiSbTlrCYQYJlbOo0M4g2knFYQTFhzg
-Message-ID: <CABi2SkVeHWt+SKWWodXUNhXZi1Wv9YazEOGWEUJLvgPbopqBrA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] mm/mseal: simplify and rename VMA gap check
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Lorenzo,
-
-On Fri, Jul 25, 2025 at 1:30=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> The check_mm_seal() function is doing something general - checking whethe=
-r
-> a range contains only VMAs (or rather that it does NOT contain any
-> unmapped regions).
->
-> So rename this function to range_contains_unmapped().
->
-Thanks for keeping the comments.
-
-In the prior version of this patch, I requested that we keep the
-check_mm_seal()  and its comments. And this version keeps the comments
-but removes the check_mm_seal() name.
-
-As I said, check_mm_seal() with its comments is a contract for
-entry-check for mseal().  My understanding is that you are going to
-move range_contains_unmapped() to vma.c. When that happens, mseal()
-will lose this entry-check contract.
-
-Contact is a great way to hide implementation details. Could you
-please keep check_mm_seal() in mseal.c and create
-range_contains_unmapped() in vma.c. Then you can refactor as needed.
-
-Thanks and regards,
--Jeff
+Subject: Re: [PATCH bpf-next 1/1] bpf: fix WARNING in __bpf_prog_ret0_warn
+ when jit failed
+Content-Language: en-GB
+To: Felix Fietkau <nbd@nbd.name>, KaFai Wan <mannkafai@gmail.com>,
+ ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250526133358.2594176-1-mannkafai@gmail.com>
+ <2e267b4b-0540-45d8-9310-e127bf95fc63@nbd.name>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <2e267b4b-0540-45d8-9310-e127bf95fc63@nbd.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
+On 7/22/25 6:28 AM, Felix Fietkau wrote:
+> Hi,
+>
+> On 26.05.25 15:33, KaFai Wan wrote:
+>> syzkaller reported an issue:
+>>
+>> WARNING: CPU: 3 PID: 217 at kernel/bpf/core.c:2357 
+>> __bpf_prog_ret0_warn+0xa/0x20 kernel/bpf/core.c:2357
+>> Modules linked in:
+>> CPU: 3 UID: 0 PID: 217 Comm: kworker/u32:6 Not tainted 
+>> 6.15.0-rc4-syzkaller-00040-g8bac8898fe39 #0 PREEMPT(full)
+>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+>> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+>> Workqueue: ipv6_addrconf addrconf_dad_work
+>> RIP: 0010:__bpf_prog_ret0_warn+0xa/0x20 kernel/bpf/core.c:2357
+>> RSP: 0018:ffffc900031f6c18 EFLAGS: 00010293
+>> RAX: 0000000000000000 RBX: ffffc9000006e000 RCX: 1ffff9200000dc06
+>> RDX: ffff8880234ba440 RSI: ffffffff81ca6979 RDI: ffff888031e93040
+>> RBP: ffffc900031f6cb8 R08: 0000000000000001 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000000 R12: ffff88802b61e010
+>> R13: ffff888031e93040 R14: 00000000000000a0 R15: ffff88802c3d4800
+>> FS:  0000000000000000(0000) GS:ffff8880d6ce2000(0000) 
+>> knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 000055557b6d2ca8 CR3: 000000002473e000 CR4: 0000000000352ef0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> Call Trace:
+>>   <TASK>
+>>   bpf_dispatcher_nop_func include/linux/bpf.h:1316 [inline]
+>>   __bpf_prog_run include/linux/filter.h:718 [inline]
+>>   bpf_prog_run include/linux/filter.h:725 [inline]
+>>   cls_bpf_classify+0x74a/0x1110 net/sched/cls_bpf.c:105
+>>   ...
+>>
+>> When creating bpf program, 'fp->jit_requested' depends on 
+>> bpf_jit_enable.
+>> Currently the value of bpf_jit_enable is available from 0 to 2, 0 
+>> means use
+>> interpreter and not jit, 1 and 2 means need to jit. When
+>> CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is permanently set
+>> to 1, when it's not set or disabled, we can set bpf_jit_enable via proc.
+>>
+>> This issue is triggered because of CONFIG_BPF_JIT_ALWAYS_ON is not set
+>> and bpf_jit_enable is set to 1, causing the arch to attempt JIT the 
+>> prog,
+>> but jit failed due to FAULT_INJECTION. As a result, incorrectly
+>> treats the program as valid, when the program runs it calls
+>> `__bpf_prog_ret0_warn` and triggers the WARN_ON_ONCE(1).
+>>
+>> Reported-by: syzbot+0903f6d7f285e41cdf10@syzkaller.appspotmail.com
+>> Closes: 
+>> https://lore.kernel.org/bpf/6816e34e.a70a0220.254cdc.002c.GAE@google.com
+>> Fixes: fa9dd599b4da ("bpf: get rid of pure_initcall dependency to 
+>> enable jits")
+>> Signed-off-by: KaFai Wan <mannkafai@gmail.com>
+>
+> I think this patch may have caused a regression in configurations with 
+> CONFIG_BPF_JIT_DEFAULT_ON=y when programs can't be JITed. Attaching 
+> the program fails with error -ENOTSUPP.
 
+Could you explain why there is an issue here?
+CONFIG_BPF_JIT_DEFAULT_ON=y but prog cannot be jit'ed. So the end result is to return -ENOTSUPP.
+It looks okay to me since the jit is required but jit failed, the only choice for the kernel
+is to return an error.
 
+>
+> Please see https://github.com/openwrt/openwrt/issues/19405 for more 
+> information.
+>
+> - Felix
 
-> Additionally simplify the logic, we are simply checking whether the last
-> vma->vm_end has either a VMA starting after it or ends before the end
-> parameter.
->
-> This check is rather dubious, so it is sensible to keep it local to
-> mm/mseal.c as at a later stage it may be removed, and we don't want any
-> other mm code to perform such a check.
->
-> No functional change intended.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> ---
->  mm/mseal.c | 39 ++++++++++++++++-----------------------
->  1 file changed, 16 insertions(+), 23 deletions(-)
->
-> diff --git a/mm/mseal.c b/mm/mseal.c
-> index adbcc65e9660..1059322add34 100644
-> --- a/mm/mseal.c
-> +++ b/mm/mseal.c
-> @@ -38,31 +38,28 @@ static int mseal_fixup(struct vma_iterator *vmi, stru=
-ct vm_area_struct *vma,
->  }
->
->  /*
-> - * Check for do_mseal:
-> - * 1> start is part of a valid vma.
-> - * 2> end is part of a valid vma.
-> - * 3> No gap (unallocated address) between start and end.
-> - * 4> map is sealable.
-> + * Does the [start, end) range contain any unmapped memory?
-> + *
-> + * We ensure that:
-> + * - start is part of a valid VMA.
-> + * - end is part of a valid VMA.
-> + * - no gap (unallocated memory) exists between start and end.
->   */
-> -static int check_mm_seal(unsigned long start, unsigned long end)
-> +static bool range_contains_unmapped(struct mm_struct *mm,
-> +               unsigned long start, unsigned long end)
->  {
->         struct vm_area_struct *vma;
-> -       unsigned long nstart =3D start;
-> +       unsigned long prev_end =3D start;
->         VMA_ITERATOR(vmi, current->mm, start);
->
-> -       /* going through each vma to check. */
->         for_each_vma_range(vmi, vma, end) {
-> -               if (vma->vm_start > nstart)
-> -                       /* unallocated memory found. */
-> -                       return -ENOMEM;
-> -
-> -               if (vma->vm_end >=3D end)
-> -                       return 0;
-> +               if (vma->vm_start > prev_end)
-> +                       return true;
->
-> -               nstart =3D vma->vm_end;
-> +               prev_end =3D vma->vm_end;
->         }
->
-> -       return -ENOMEM;
-> +       return prev_end < end;
->  }
->
->  /*
-> @@ -184,14 +181,10 @@ int do_mseal(unsigned long start, size_t len_in, un=
-signed long flags)
->         if (mmap_write_lock_killable(mm))
->                 return -EINTR;
->
-> -       /*
-> -        * First pass, this helps to avoid
-> -        * partial sealing in case of error in input address range,
-> -        * e.g. ENOMEM error.
-> -        */
-> -       ret =3D check_mm_seal(start, end);
-> -       if (ret)
-> +       if (range_contains_unmapped(mm, start, end)) {
-> +               ret =3D -ENOMEM;
->                 goto out;
-> +       }
->
->         /*
->          * Second pass, this should success, unless there are errors
-> --
-> 2.50.1
->
 
