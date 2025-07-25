@@ -1,95 +1,236 @@
-Return-Path: <linux-kernel+bounces-745521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09899B11B1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC85AB11B1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 237831CE0369
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:47:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5538F7A948F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08C4238C3A;
-	Fri, 25 Jul 2025 09:46:43 +0000 (UTC)
-Received: from out198-23.us.a.mail.aliyun.com (out198-23.us.a.mail.aliyun.com [47.90.198.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE46232368;
+	Fri, 25 Jul 2025 09:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VcL9njX+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCBB242909;
-	Fri, 25 Jul 2025 09:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA45A930
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753436803; cv=none; b=iUj9EJ5wy/4MckY98X5u9IYUZ8sPlYE04wB6yNqxxDMID4F5XeQEwZhIy0TOHcDO8yE7rWAGzagIMcEtTWDmHbAiDUF1AEMugSar28fihbqyrw5kYwKq/pJFIiICS7yhZGeu3Xzt7dKxFXbldb5L2yc8y+gajHn1NbRJL3IaHmk=
+	t=1753436784; cv=none; b=ATwF6P7TxN3O3ZD3dmcCk5SZHhYiaR+2KP9Hp9+rvK2ACS4f2Wr1gYI5ckJuadvv1jmk7U5YAT94+0P/1EWcbbePFxe9jrwSrcQVzzujDuGvt47RnB1BJNrrF3aXW7tjRGXn8bns+1HhBkZJEYry33+zAtfyssyOUTjRd3S9w2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753436803; c=relaxed/simple;
-	bh=4wnJjAo2Le0HqaN2yjtxk+3ltfijy3eh6GPwj2j0Ns4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b3Xmi0W3T7U6pdFO7hspASlo1d0sZps6HV+X/Gtgeop8weCIHE58FBrVhX1iFv5AgF+XZ3dIYOmu1eE0XL1q6clxUYH9/jRrrE/pnx2Yc5pYh0h9LqyobCyFDGJDnK0dnGTE0+JLw+TS9w+3tlaHlh0g7nyM5LQnuT22TRTpltY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=47.90.198.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
-Received: from ubuntu-VirtualBox..(mailfrom:wangweidong.a@awinic.com fp:SMTPD_---.dyCry-a_1753436764 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 25 Jul 2025 17:46:06 +0800
-From: wangweidong.a@awinic.com
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	zhujun2@cmss.chinamobile.com,
-	wangweidong.a@awinic.com,
-	thorsten.blum@linux.dev,
-	colin.i.king@gmail.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: yijiangtao@awinic.com
-Subject: [PATCH next v1] ASoC: codecs: Add acpi_match_table for aw88399 driver
-Date: Fri, 25 Jul 2025 17:46:02 +0800
-Message-ID: <20250725094602.10017-1-wangweidong.a@awinic.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1753436784; c=relaxed/simple;
+	bh=fAi3fTdmKeT2RXc2t8agAS9HC6qiTvMJKY26QG415JE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=njgj8MItNaexwUjzDw+xW562cxO6mvSuHR9ZmTgqtjO/9hYn1TJH0OShkt4vNOrNi4Nwgr87QxtFm0GuVxGvzPU6sK/jbZV5OqWNus9g8raR+QMdOgwPQPyRIAnimJZBNNAvQHrDL+fuDEsep2x3DpkvI6VkXn21h0eAEH7+k1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VcL9njX+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753436778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=faaaZtliI3/9YxGb/+TtNxd57UPwg/2TggleAWIPx/A=;
+	b=VcL9njX+ysbPAZcJcRcn6nIW/ILw7j/uAL1k9WTk1b8nD/moUJ4hFWG3E9rKBoDhmjSYYl
+	QVrJ27UTG+QcVmi3JbealPcO6Laz1PwmXdQ9fbitLV1PgOQUJv6EqgTFp3d/+qhe+dQKRr
+	+J5uhzFCczQWKEdTOYw5RbJwaFSHypY=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-425-eLLef2BbNtCoXKkAaIBNfg-1; Fri, 25 Jul 2025 05:46:16 -0400
+X-MC-Unique: eLLef2BbNtCoXKkAaIBNfg-1
+X-Mimecast-MFC-AGG-ID: eLLef2BbNtCoXKkAaIBNfg_1753436776
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4538f375e86so15479545e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:46:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753436776; x=1754041576;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=faaaZtliI3/9YxGb/+TtNxd57UPwg/2TggleAWIPx/A=;
+        b=MY3AymiAd/W73onqcLGCyY9W6gWXrHVPmq/fTk5Ns6jQ7F4vbxHMbji39tEpof0/lb
+         B9S4wa1+E1BcSblSOQDP4kRyjk0ketmiplKI3PhNJeK9V9/uuw3XehYuhC3PcQfydBtJ
+         j4nPHyg3zDewEK9O2BqAGnVCELZlH4f8Dh3z0lwtIl55uOd3onDcmI21yNqu0HJIgOsX
+         4RX6pr8xpCM8GCjrRJaRtiuWiKQgzhwTl/bF0nB+l1Z0+inhV7sUbf8qMox7LfJ2r0o8
+         OuATjFfE53os+p7GJQArAmSJlDWZkRHF4hzzcss7j7zm6t4Gp13GwZ8B3/XpLq7/qaxR
+         DuIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVi/8ZRGNZi0Nlt2+fR4pSY4VWizyGx1169zOfrGo08FzVq0gVDL9bJxw4KIeAbmDdc1rt+3uI7MolCDJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHNLr2GdDhxlPBTX4UP+oAiKnER+BqrblZ9AoTTlYKvM7r8DRF
+	6+V1quu649QFRiHkvhC2CFn3T4N0FYNkYI7PTbtL8zkvcM82lqSgoxVval/ptL3cUEbTLn6+s0Y
+	eNZNwrg6MXr5bg2V6VFwKJnziDUWWJXOGv4bgjpVYQAPrcKeQXh1W5ohoWToXcXxAeQ==
+X-Gm-Gg: ASbGnctjdPChEc1q+HATEbEhGZEvLjORsK9A5+DQWn7g11qMBqikwJPC4rTBl7RtExQ
+	rcIXZ+3ofWrnja4PoAYDSnfi+V0Z28k6ZDWBiNfGZivYSl0ZNfV7ycMPUbCR/BuiMzwaDuhwjfC
+	u01h1CEeT8Y1TXvDNORt2sxODg4I0AWje/nINrDeiWaRnyGvMMG/HbFYEnlK6Dey+TQF/rAZFz8
+	G/KTSnnwkmoC31UkPqNxtYFVn5JL8XuKjW4Lxrx8fPdWINywJ0t+J+624KjCVqavFKlCFiATChD
+	NoVp1uKYCB/4Jq+96U5dpNoaMKHY6E34u2mZpdjb5S8i2J7ZTbe9mmC5CR7fOogzS4Hfn3JFHa1
+	E7TLH9GKjYptBNCEPrUjr3yP4yHsenE85rQQnIiO/wj+dzHSfTY8TGLq6mEh+WbZrGFg=
+X-Received: by 2002:a05:600c:c059:20b0:441:a715:664a with SMTP id 5b1f17b1804b1-45876e74536mr5456765e9.20.1753436775644;
+        Fri, 25 Jul 2025 02:46:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEoa9HpfTRy4Lj08i/N3rWIm1AseMs1WcMYAu9tdaTVNPBh8JTCYaWhAP6NnneexqsPU6GKow==
+X-Received: by 2002:a05:600c:c059:20b0:441:a715:664a with SMTP id 5b1f17b1804b1-45876e74536mr5456595e9.20.1753436775127;
+        Fri, 25 Jul 2025 02:46:15 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1a:f400:5a9f:b1bf:4bb3:99b1? (p200300d82f1af4005a9fb1bf4bb399b1.dip0.t-ipconnect.de. [2003:d8:2f1a:f400:5a9f:b1bf:4bb3:99b1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45870532b43sm48224365e9.2.2025.07.25.02.46.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 02:46:14 -0700 (PDT)
+Message-ID: <aa839e3a-11f3-49e1-8c3b-a60106c8d165@redhat.com>
+Date: Fri, 25 Jul 2025 11:46:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] mm/mseal: update madvise() logic
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+References: <cover.1752687069.git.lorenzo.stoakes@oracle.com>
+ <ec480dc1fd4ce04bb11c0acac6c6da78dc6f4156.1752687069.git.lorenzo.stoakes@oracle.com>
+ <4f66d89a-631a-43eb-b4f9-c9a0b44caaae@redhat.com>
+ <692f9624-e440-4cf2-8202-861c679ddb73@lucifer.local>
+ <0ad414a1-9a57-4050-a7b6-fdea08aebbd1@redhat.com>
+ <507a09cf-291c-4886-92e7-9d9cc294a247@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <507a09cf-291c-4886-92e7-9d9cc294a247@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Weidong Wang <wangweidong.a@awinic.com>
+>>
+>> Well, there is long-term pinning that can break COW and other weird stuff
+>> like FOLL_FORCE. Most of the latter probably holds the mmap lock in write
+>> mode. Probably.
+> 
+> Well GUP uses read lock.
 
-Add acpi_match_table to the aw88399 driver so that
-it can be used on more platforms.
+Right, so it can race with MADV_DONTNEED.
 
-Signed-off-by: Weidong Wang <wangweidong.a@awinic.com>
----
- sound/soc/codecs/aw88399.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> 
+> FOLL_FORCE won't override anything as we have this check in check_vma_flags():
+> 
+> 	if (write) {
+> 		if (!vma_anon &&
+> 		    !writable_file_mapping_allowed(vma, gup_flags))
+> 			return -EFAULT;
+> 
+> 		if (!(vm_flags & VM_WRITE) || (vm_flags & VM_SHADOW_STACK)) {
+> 			if (!(gup_flags & FOLL_FORCE))
+> 				return -EFAULT;
+> 			/*
+> 			 * We used to let the write,force case do COW in a
+> 			 * VM_MAYWRITE VM_SHARED !VM_WRITE vma, so ptrace could
+> 			 * set a breakpoint in a read-only mapping of an
+> 			 * executable, without corrupting the file (yet only
+> 			 * when that file had been opened for writing!).
+> 			 * Anon pages in shared mappings are surprising: now
+> 			 * just reject it.
+> 			 */
+> 			if (!is_cow_mapping(vm_flags))
+> 				return -EFAULT;
+> 		}
+> 	}
+> 
+> With:
+> 
+> static inline bool is_cow_mapping(vm_flags_t flags)
+> {
+> 	return (flags & (VM_SHARED | VM_MAYWRITE)) == VM_MAYWRITE;
+> }
+> 
 
-diff --git a/sound/soc/codecs/aw88399.c b/sound/soc/codecs/aw88399.c
-index bad3ad6b8c0e..c23e70d64d0c 100644
---- a/sound/soc/codecs/aw88399.c
-+++ b/sound/soc/codecs/aw88399.c
-@@ -2330,9 +2330,18 @@ static const struct i2c_device_id aw88399_i2c_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, aw88399_i2c_id);
- 
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id aw88399_acpi_match[] = {
-+	{ "AWDZ8399", 0 },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(acpi, aw88399_acpi_match);
-+#endif
-+
- static struct i2c_driver aw88399_i2c_driver = {
- 	.driver = {
- 		.name = AW88399_I2C_NAME,
-+		.acpi_match_table = ACPI_PTR(aw88399_acpi_match),
- 	},
- 	.probe = aw88399_i2c_probe,
- 	.id_table = aw88399_i2c_id,
+Not sure what you mean. Using FOLL_FORCE you can write into MAP_PRIVATE 
+R/O mappings. Particular useful for installing breakpoints into loaded 
+executables etc.
 
-base-commit: d7af19298454ed155f5cf67201a70f5cf836c842
+is_cow_mapping() tells you exactly that: the only place where we can 
+have anon folios is when we have a MAP_PRIVATE mapping (!VM_SHARED) that 
+can be writable, for example, through mprotect(PROT_WRITE) (VM_MAYWRITE).
+
+A MAP_PRIVATE R/O file mapping matches is_cow_mapping().
+
+> So - we explicitly disallow FOLL_FORCE write override for CoW file-backed
+> mappings.
+> 
+> Obviously if FOLL_FORCE is not set, then we're ALSO not allowed to get past a
+> FOLL_WRITE and !VM_WRITE situation.
+> 
+>>
+>>>
+>>> Hmm maybe I'll soften on this anon_vma idea then. Maybe it is a 'cheap fix' to
+>>> rule out the _usual_ cases.
+>>
+>> Yeah, something to evaluate.
+> 
+> I'm thinking more and more we're probably actually safe with !vma->anon_vma ||
+> !(vma->vm_flags & VM_MAYWRITE).
+
+I think there are possible races, the question is how much you care 
+about them.
+
+In case of CoW-unsharing, you're not actually discarding data, because 
+the page in the anon folio is to maintain a copy of the pagecache page 
+(of course, they can go out of sync, but that's a different discussion).
+
 -- 
-2.47.0
+Cheers,
+
+David / dhildenb
 
 
