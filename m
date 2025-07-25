@@ -1,104 +1,344 @@
-Return-Path: <linux-kernel+bounces-745593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8E4B11BFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:15:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7301B11C02
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766233AA27B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:14:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5201CE4A9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78212E040C;
-	Fri, 25 Jul 2025 10:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E21D2E5B10;
+	Fri, 25 Jul 2025 10:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="ErFCgoW+"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsyH1QmA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDEE2D4B57;
-	Fri, 25 Jul 2025 10:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461D02E543E;
+	Fri, 25 Jul 2025 10:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753438286; cv=none; b=N9F4Gkta7oAZ4/VTGMWTyjcA8JeaA1j4enbqDHn3o1hwroJeGt86zs3U4hTQxtTxn63X6YPiXqZI5sYqvPVd/m/4fWPnK5dzMbkMkYddxh7jxVS1R/EAkibJD86jid7dtThLc4xEXdXm7qC6f4P3rLC3kXLe6SbKOsGe0DyR9m8=
+	t=1753438310; cv=none; b=tCw8fEvTBOummEQyGdWbhGwZL7OHCzM/lF4gcRT+/UncMhavZy4J3D6evJjnHOtKYtpdojd9YpCvK149e0StbuvM3gl/JcEOb+YNDnT1RhQQrfg0qXpywTGrDnfg2ALx/U/p7VuZZ9hkxhkREIw+9wPedaXNwk8j54wwItAoO+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753438286; c=relaxed/simple;
-	bh=Y0NGzviS//zgPCetOZDyVSnAQYlAnfiWPQZqqEoQwaA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d49FtzWQ7NQTS9OUarued2ueDMAnc87+HO99PNNvnVqqaGd2RhdBW+Ef4F/nTmSePhUsglKCzxGgW4WcNrSILL74w1IqqUCQJhYYsqTY/TygmdMe+fSm5FSVzUunDcMM2pToHSij2XuYyvi8P2KmVsl8bfRw0GNz3UYrWPK/ksM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=ErFCgoW+; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56PAB6MV02155828, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1753438266; bh=u32WEzkrMgsZujZ4agV5ma6Y2EJblAQoh+w0amwLue4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=ErFCgoW+UYR2GTlQSeBsi8PEW1XC7+Y2enAVtCEfqmtebakEI2K81gpCPlleF7yIJ
-	 CQhDCtaOXDkFrzip21eaVcUJsuhGW45KjhqZGdIeBXiC2+W8t4z6QVKkuX/9Y9IuLB
-	 uvpSwGJj2d5oBKYocw/vWvrgSzfJU6Uf4wgJEkozJtFe0SqX3xIbarF3mj4/8HyM9L
-	 sxZ9kbYmvAm+khQJXLRebAHfB7kxIJPO6bglXaLEyD+nBBmM2vcrP0KDPrheBzGwBe
-	 iWHIe3Sy8VApkhdCy+tl2xEwI5ypB8awKfi7MnF0lfe1lHQawawmZ1bid7N20Iiz+d
-	 p1182CYAXXb6w==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56PAB6MV02155828
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Jul 2025 18:11:06 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 25 Jul 2025 18:11:07 +0800
-Received: from sw-server.localdomain (172.22.102.1) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 25 Jul 2025 18:11:06 +0800
-From: <shumingf@realtek.com>
-To: <vkoul@kernel.org>, <vinod.koul@linaro.org>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <flove@realtek.com>, <oder_chiou@realtek.com>, <jack.yu@realtek.com>,
-        <derek.fang@realtek.com>, Shuming Fan <shumingf@realtek.com>
-Subject: [PATCH] soundwire: debugfs: add SCP_SDCA_IntStatX and SCP_SDCA_IntMaskX registers
-Date: Fri, 25 Jul 2025 18:11:00 +0800
-Message-ID: <20250725101100.1106673-1-shumingf@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753438310; c=relaxed/simple;
+	bh=aQi8U07nJiWlsTT5drTwPLEyTiRfoLQE1Ei661AEFGg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=lGmFzkSoel3ji9RB9FOLVRpHFQ8McZswd9h6ENTfGCoK2c72D9WyD+5pWsgoYFvgX6nIITUXBsoKEqjoJaFGyvcD+X/Yz5dH8IZ93SqF/oA/UC/v9h+h6LanNNYY/3qnxj00vrWQkeyHT8CfvKYnprtQrkSvlgeNqB+4Hbshok0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsyH1QmA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7759CC4CEEF;
+	Fri, 25 Jul 2025 10:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753438310;
+	bh=aQi8U07nJiWlsTT5drTwPLEyTiRfoLQE1Ei661AEFGg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BsyH1QmAEBaDpMXgiYVtkjMpPj6V3kdLijfyR9LCzGs54en6ZqJOZYtrpi0+yt/2r
+	 myuxb5HZpN0baWKw1JbQDQN04E0jM1uhDgpD7S2xCj0cC72/gN2EsjiR/oFr8O5ZVo
+	 iP4xsUyaC3NMWnsGETUdTMjJYIx8qLEJQTH2g5KYE2NgRztVfrSojIMt+CVTnfoF9c
+	 EsbY7fbhIJFf8DpUyqOawdvOSAAfc9d2I67P9Be1NqZ8wWdw6p210IHTOV47n0/EOo
+	 WtGUI5J8hQXn4O8HoAIrgepshehOLCKYg9kSW0S4Z1ByVJixrrFbpnzBWwE/YOGLxh
+	 t5MbMJZiUHw3g==
+Date: Fri, 25 Jul 2025 19:11:43 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
+ <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo
+ <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, David Laight
+ <David.Laight@ACULAB.COM>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <thomas@t-8ch.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv6 perf/core 09/22] uprobes/x86: Add uprobe syscall to
+ speed up uprobe
+Message-Id: <20250725191143.fabe4f33abf0856780ec1f0e@kernel.org>
+In-Reply-To: <20250720112133.244369-10-jolsa@kernel.org>
+References: <20250720112133.244369-1-jolsa@kernel.org>
+	<20250720112133.244369-10-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS01.realtek.com.tw (172.21.6.94)
-X-KSE-ServerInfo: RTEXMBS01.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Shuming Fan <shumingf@realtek.com>
+On Sun, 20 Jul 2025 13:21:19 +0200
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-This patch added SCP_SDCA_IntStatX and SCP_SDCA_IntMaskX registers.
+> Adding new uprobe syscall that calls uprobe handlers for given
+> 'breakpoint' address.
+> 
+> The idea is that the 'breakpoint' address calls the user space
+> trampoline which executes the uprobe syscall.
+> 
+> The syscall handler reads the return address of the initial call
+> to retrieve the original 'breakpoint' address. With this address
+> we find the related uprobe object and call its consumers.
+> 
+> Adding the arch_uprobe_trampoline_mapping function that provides
+> uprobe trampoline mapping. This mapping is backed with one global
+> page initialized at __init time and shared by the all the mapping
+> instances.
+> 
+> We do not allow to execute uprobe syscall if the caller is not
+> from uprobe trampoline mapping.
+> 
+> The uprobe syscall ensures the consumer (bpf program) sees registers
+> values in the state before the trampoline was called.
+> 
 
-Signed-off-by: Shuming Fan <shumingf@realtek.com>
----
- drivers/soundwire/debugfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+Looks good to me.
 
-diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.c
-index 3099ea074f10..b07f4127e464 100644
---- a/drivers/soundwire/debugfs.c
-+++ b/drivers/soundwire/debugfs.c
-@@ -91,6 +91,8 @@ static int sdw_slave_reg_show(struct seq_file *s_file, void *data)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 	for (i = SDW_SCP_DEVID_0; i <= SDW_SCP_DEVID_5; i++)
- 		ret += sdw_sprintf(slave, buf, ret, i);
-+	for (i = SDW_SCP_SDCA_INT1; i <= SDW_SCP_SDCA_INTMASK4; i++)
-+		ret += sdw_sprintf(slave, buf, ret, i);
- 	for (i = SDW_SCP_FRAMECTRL_B0; i <= SDW_SCP_BUSCLOCK_SCALE_B0; i++)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 	for (i = SDW_SCP_FRAMECTRL_B1; i <= SDW_SCP_BUSCLOCK_SCALE_B1; i++)
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks!
+
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+>  arch/x86/kernel/uprobes.c              | 139 +++++++++++++++++++++++++
+>  include/linux/syscalls.h               |   2 +
+>  include/linux/uprobes.h                |   1 +
+>  kernel/events/uprobes.c                |  17 +++
+>  kernel/sys_ni.c                        |   1 +
+>  6 files changed, 161 insertions(+)
+> 
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> index cfb5ca41e30d..9fd1291e7bdf 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -345,6 +345,7 @@
+>  333	common	io_pgetevents		sys_io_pgetevents
+>  334	common	rseq			sys_rseq
+>  335	common	uretprobe		sys_uretprobe
+> +336	common	uprobe			sys_uprobe
+>  # don't use numbers 387 through 423, add new calls after the last
+>  # 'common' entry
+>  424	common	pidfd_send_signal	sys_pidfd_send_signal
+> diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> index 6c4dcbdd0c3c..d18e1ae59901 100644
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
+> @@ -752,6 +752,145 @@ void arch_uprobe_clear_state(struct mm_struct *mm)
+>  	hlist_for_each_entry_safe(tramp, n, &state->head_tramps, node)
+>  		destroy_uprobe_trampoline(tramp);
+>  }
+> +
+> +static bool __in_uprobe_trampoline(unsigned long ip)
+> +{
+> +	struct vm_area_struct *vma = vma_lookup(current->mm, ip);
+> +
+> +	return vma && vma_is_special_mapping(vma, &tramp_mapping);
+> +}
+> +
+> +static bool in_uprobe_trampoline(unsigned long ip)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	bool found, retry = true;
+> +	unsigned int seq;
+> +
+> +	rcu_read_lock();
+> +	if (mmap_lock_speculate_try_begin(mm, &seq)) {
+> +		found = __in_uprobe_trampoline(ip);
+> +		retry = mmap_lock_speculate_retry(mm, seq);
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	if (retry) {
+> +		mmap_read_lock(mm);
+> +		found = __in_uprobe_trampoline(ip);
+> +		mmap_read_unlock(mm);
+> +	}
+> +	return found;
+> +}
+> +
+> +/*
+> + * See uprobe syscall trampoline; the call to the trampoline will push
+> + * the return address on the stack, the trampoline itself then pushes
+> + * cx, r11 and ax.
+> + */
+> +struct uprobe_syscall_args {
+> +	unsigned long ax;
+> +	unsigned long r11;
+> +	unsigned long cx;
+> +	unsigned long retaddr;
+> +};
+> +
+> +SYSCALL_DEFINE0(uprobe)
+> +{
+> +	struct pt_regs *regs = task_pt_regs(current);
+> +	struct uprobe_syscall_args args;
+> +	unsigned long ip, sp;
+> +	int err;
+> +
+> +	/* Allow execution only from uprobe trampolines. */
+> +	if (!in_uprobe_trampoline(regs->ip))
+> +		goto sigill;
+> +
+> +	err = copy_from_user(&args, (void __user *)regs->sp, sizeof(args));
+> +	if (err)
+> +		goto sigill;
+> +
+> +	ip = regs->ip;
+> +
+> +	/*
+> +	 * expose the "right" values of ax/r11/cx/ip/sp to uprobe_consumer/s, plus:
+> +	 * - adjust ip to the probe address, call saved next instruction address
+> +	 * - adjust sp to the probe's stack frame (check trampoline code)
+> +	 */
+> +	regs->ax  = args.ax;
+> +	regs->r11 = args.r11;
+> +	regs->cx  = args.cx;
+> +	regs->ip  = args.retaddr - 5;
+> +	regs->sp += sizeof(args);
+> +	regs->orig_ax = -1;
+> +
+> +	sp = regs->sp;
+> +
+> +	handle_syscall_uprobe(regs, regs->ip);
+> +
+> +	/*
+> +	 * Some of the uprobe consumers has changed sp, we can do nothing,
+> +	 * just return via iret.
+> +	 */
+> +	if (regs->sp != sp) {
+> +		/* skip the trampoline call */
+> +		if (args.retaddr - 5 == regs->ip)
+> +			regs->ip += 5;
+> +		return regs->ax;
+> +	}
+> +
+> +	regs->sp -= sizeof(args);
+> +
+> +	/* for the case uprobe_consumer has changed ax/r11/cx */
+> +	args.ax  = regs->ax;
+> +	args.r11 = regs->r11;
+> +	args.cx  = regs->cx;
+> +
+> +	/* keep return address unless we are instructed otherwise */
+> +	if (args.retaddr - 5 != regs->ip)
+> +		args.retaddr = regs->ip;
+> +
+> +	regs->ip = ip;
+> +
+> +	err = copy_to_user((void __user *)regs->sp, &args, sizeof(args));
+> +	if (err)
+> +		goto sigill;
+> +
+> +	/* ensure sysret, see do_syscall_64() */
+> +	regs->r11 = regs->flags;
+> +	regs->cx  = regs->ip;
+> +	return 0;
+> +
+> +sigill:
+> +	force_sig(SIGILL);
+> +	return -1;
+> +}
+> +
+> +asm (
+> +	".pushsection .rodata\n"
+> +	".balign " __stringify(PAGE_SIZE) "\n"
+> +	"uprobe_trampoline_entry:\n"
+> +	"push %rcx\n"
+> +	"push %r11\n"
+> +	"push %rax\n"
+> +	"movq $" __stringify(__NR_uprobe) ", %rax\n"
+> +	"syscall\n"
+> +	"pop %rax\n"
+> +	"pop %r11\n"
+> +	"pop %rcx\n"
+> +	"ret\n"
+> +	".balign " __stringify(PAGE_SIZE) "\n"
+> +	".popsection\n"
+> +);
+> +
+> +extern u8 uprobe_trampoline_entry[];
+> +
+> +static int __init arch_uprobes_init(void)
+> +{
+> +	tramp_mapping_pages[0] = virt_to_page(uprobe_trampoline_entry);
+> +	return 0;
+> +}
+> +
+> +late_initcall(arch_uprobes_init);
+> +
+>  #else /* 32-bit: */
+>  /*
+>   * No RIP-relative addressing on 32-bit
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index e5603cc91963..b0cc60f1c458 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -998,6 +998,8 @@ asmlinkage long sys_ioperm(unsigned long from, unsigned long num, int on);
+>  
+>  asmlinkage long sys_uretprobe(void);
+>  
+> +asmlinkage long sys_uprobe(void);
+> +
+>  /* pciconfig: alpha, arm, arm64, ia64, sparc */
+>  asmlinkage long sys_pciconfig_read(unsigned long bus, unsigned long dfn,
+>  				unsigned long off, unsigned long len,
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index b40d33aae016..b6b077cc7d0f 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -239,6 +239,7 @@ extern unsigned long uprobe_get_trampoline_vaddr(void);
+>  extern void uprobe_copy_from_page(struct page *page, unsigned long vaddr, void *dst, int len);
+>  extern void arch_uprobe_clear_state(struct mm_struct *mm);
+>  extern void arch_uprobe_init_state(struct mm_struct *mm);
+> +extern void handle_syscall_uprobe(struct pt_regs *regs, unsigned long bp_vaddr);
+>  #else /* !CONFIG_UPROBES */
+>  struct uprobes_state {
+>  };
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index acec91a676b7..cbba31c0495f 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -2772,6 +2772,23 @@ static void handle_swbp(struct pt_regs *regs)
+>  	rcu_read_unlock_trace();
+>  }
+>  
+> +void handle_syscall_uprobe(struct pt_regs *regs, unsigned long bp_vaddr)
+> +{
+> +	struct uprobe *uprobe;
+> +	int is_swbp;
+> +
+> +	guard(rcu_tasks_trace)();
+> +
+> +	uprobe = find_active_uprobe_rcu(bp_vaddr, &is_swbp);
+> +	if (!uprobe)
+> +		return;
+> +	if (!get_utask())
+> +		return;
+> +	if (arch_uprobe_ignore(&uprobe->arch, regs))
+> +		return;
+> +	handler_chain(uprobe, regs);
+> +}
+> +
+>  /*
+>   * Perform required fix-ups and disable singlestep.
+>   * Allow pending signals to take effect.
+> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> index c00a86931f8c..bf5d05c635ff 100644
+> --- a/kernel/sys_ni.c
+> +++ b/kernel/sys_ni.c
+> @@ -392,3 +392,4 @@ COND_SYSCALL(setuid16);
+>  COND_SYSCALL(rseq);
+>  
+>  COND_SYSCALL(uretprobe);
+> +COND_SYSCALL(uprobe);
+> -- 
+> 2.50.1
+> 
+
+
 -- 
-2.34.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
