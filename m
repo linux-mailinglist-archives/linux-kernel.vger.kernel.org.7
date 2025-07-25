@@ -1,145 +1,90 @@
-Return-Path: <linux-kernel+bounces-746407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BD2B12668
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:02:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAA9B1266C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513021C85A25
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:02:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4133E3B9DB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C9624C07A;
-	Fri, 25 Jul 2025 22:02:08 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B67C2472AE;
+	Fri, 25 Jul 2025 22:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGXEiP9f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431401DE892;
-	Fri, 25 Jul 2025 22:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969A41D5AD4;
+	Fri, 25 Jul 2025 22:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753480928; cv=none; b=gHlgd3RuTePiXaKzjvr8rCDNbVupQbhGfrmf9fdd7yWphuUUJNAHdQth6UHNWG9oWVnClplgml5wpgkflftbJVm7yNfi1oq64YYg68SqLsCbTV5M47qlnzHi/5qeZwKl1Jxq/UmT+i3kBcf1ZGteMWxM6UCUQnjElx9opLWDMh0=
+	t=1753481192; cv=none; b=uA+IBeSQJkuA0/vNQWhYABazePNXJb/lNvc1hsp99/RQOCVgFfe1fYTAfvHzgC/qCww+ZQDijHaKZXkE0yXXRqqXj+7wDSfvYwr3mu9L0p5dWflTXFzmKQcZ/QTnZa5RO1KKrxdU6MMgocHfQWPmsccTpsmUqhjid4sb+hXPGzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753480928; c=relaxed/simple;
-	bh=GnglZ0b04kKrNto5bDI5PFafyFbK9Qb0DQrrkAtwt0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o8fqCAJn4XI/EDP2Gmg25iV5oCKX6hDlAij1CKdtgPOinD6kiWFVrkZrZOY5eohNxP9oJo40c4heu0OqkE3v/to+9wxz7G+mCK9qefDvZDCktUjHN0Jjto+6ZVEDX6zQNILuj6mXQgdZib2UFH9H5UtyyVhSAw/P8p5mkzc+3m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.2.202] (p5dc557dd.dip0.t-ipconnect.de [93.197.87.221])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 11ADB61E64848;
-	Sat, 26 Jul 2025 00:01:38 +0200 (CEST)
-Message-ID: <947f69ec-c66d-4182-aa96-e3e320760131@molgen.mpg.de>
-Date: Sat, 26 Jul 2025 00:01:36 +0200
+	s=arc-20240116; t=1753481192; c=relaxed/simple;
+	bh=clZUi51w5Y3WNCYThAxjDWm+xSvKEptvaJBuWipIds0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=O2z/vXMvJyXAQHfGlrTcaaXnxwY9Z9Xn6uPiMcqfddQKFlCN5KKeI8EP6GxMa9ns4/BSl3MMpXewUpfyamJWxy4brcGznAYkwG7qzTa4CQgO76ycz9aEUEhiNr97uFgyIrU8tmuwzY3iJ7PQDugJUZHl05uuuAhTIzLfSD0EfMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGXEiP9f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 085C2C4CEE7;
+	Fri, 25 Jul 2025 22:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753481192;
+	bh=clZUi51w5Y3WNCYThAxjDWm+xSvKEptvaJBuWipIds0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=SGXEiP9fOT/FB5zrTci4DNRUON1Bqsh0E3Arkbj13OopfmDbA679IsLTsSIhVUE6V
+	 8IBXdLc4lvEiwThZSZuw0Mv2UohsonlKRR05lhHKzYEU8rQ0Esukw5514T/YOGLOkT
+	 0C9XgV5biF3KErpB8AIuVhO7AGRt+itYS4v/1yiW8PQK3JMGfp5yB6mHHdbmcEriIl
+	 vlFRSGETZM+xOIryj8yidTIosODGoKovS1lHMruOAXhxm8CKTqrMh/gtE+zY+FXDwm
+	 XsJsQ2iEM4No6//69TN8UCoR9NQ0yQVE02GQ0E4LOO9S23lyS0Ql1sHYSBqjEC9U4/
+	 oT+RvT45Ft/tg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btusb: Add USB ID 2001:332a for D-Link AX9U
- rev. A1
-To: Zenm Chen <zenmchen@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- marcel@holtmann.org, luiz.dentz@gmail.com, pkshih@realtek.com,
- hildawu@realtek.com, max.chou@realtek.com, rtl8821cerfe2@gmail.com,
- usbwifi2024@gmail.com, stable@vger.kernel.org
-References: <20250725161432.5401-1-zenmchen@gmail.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250725161432.5401-1-zenmchen@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 26 Jul 2025 00:06:27 +0200
+Message-Id: <DBLH7D150TY4.2PIYWAVS3JYA8@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: add "DEVICE I/O & IRQ [RUST]" entry
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <patches@lists.linux.dev>, "Daniel Almeida" <daniel.almeida@collabora.com>
+To: "Miguel Ojeda" <ojeda@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250725202840.2251768-1-ojeda@kernel.org>
+In-Reply-To: <20250725202840.2251768-1-ojeda@kernel.org>
 
-Dear Chen,
+On Fri Jul 25, 2025 at 10:28 PM CEST, Miguel Ojeda wrote:
+> This entry will handle device I/O patches and abstractions (such as
+> memory-mapped IO and system resources series [1]), as well as IRQ ones
+> (such as the `request_irq` series [2]).
+>
+> Patches will flow through driver-core, at least for the time being.
+>
+> Danilo, Alice and Daniel will maintain it.
+>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: Alice Ryhl <aliceryhl@google.com>
+> Cc: Daniel Almeida <daniel.almeida@collabora.com>
+> Link: https://lore.kernel.org/rust-for-linux/20250717-topics-tyr-platform=
+_iomem-v15-0-beca780b77e3@collabora.com/ [1]
+> Link: https://lore.kernel.org/rust-for-linux/20250715-topics-tyr-request_=
+irq2-v7-0-d469c0f37c07@collabora.com/ [2]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
+Thanks -- gonna pick it up together with the IRQ abstractions after -rc1 an=
+d
+once ready.
 
-Thank you for your patch.
-
-Am 25.07.25 um 18:14 schrieb Zenm Chen:
-> Add USB ID 2001:332a for D-Link AX9U rev. A1 which is based on a Realtek
-> RTL8851BU chip.
-> 
-> The information in /sys/kernel/debug/usb/devices about the Bluetooth
-> device is listed as the below:
-> 
-> T:  Bus=03 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-> D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-> P:  Vendor=2001 ProdID=332a Rev= 0.00
-> S:  Manufacturer=Realtek
-> S:  Product=802.11ax WLAN Adapter
-> S:  SerialNumber=00e04c000001
-> C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=500mA
-> A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=01
-> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-> E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-> I:* If#= 2 Alt= 0 #EPs= 8 Cls=ff(vend.) Sub=ff Prot=ff Driver=rtw89_8851bu_git
-> E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=0a(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=0b(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=0c(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> 
-> Cc: stable@vger.kernel.org # 6.12.x
-> Signed-off-by: Zenm Chen <zenmchen@gmail.com>
-> ---
->   drivers/bluetooth/btusb.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 8085fabad..3595a8bad 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -522,6 +522,8 @@ static const struct usb_device_id quirks_table[] = {
->   	/* Realtek 8851BU Bluetooth devices */
->   	{ USB_DEVICE(0x3625, 0x010b), .driver_info = BTUSB_REALTEK |
->   						     BTUSB_WIDEBAND_SPEECH },
-> +	{ USB_DEVICE(0x2001, 0x332a), .driver_info = BTUSB_REALTEK |
-> +						     BTUSB_WIDEBAND_SPEECH },
-
-I’d sort according to `USB_DEVICE(0x2001`.
-
->   
->   	/* Realtek 8852AE Bluetooth devices */
->   	{ USB_DEVICE(0x0bda, 0x2852), .driver_info = BTUSB_REALTEK |
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
+- Danilo
 
