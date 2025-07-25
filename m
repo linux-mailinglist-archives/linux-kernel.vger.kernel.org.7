@@ -1,332 +1,192 @@
-Return-Path: <linux-kernel+bounces-746214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F42B12440
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:46:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEBA3B12441
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FB51CE064E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:46:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A66D83AA8C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E022550AF;
-	Fri, 25 Jul 2025 18:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EE0246BA7;
+	Fri, 25 Jul 2025 18:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1Dtd0fVP"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2049.outbound.protection.outlook.com [40.107.223.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="DpUkpJ/I"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFE3111BF;
-	Fri, 25 Jul 2025 18:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753469188; cv=fail; b=iMKgywzRxFH/xcK8aawfHs+f523DLu26Cz9eBMCkfUHAT2EvqAe9e7BF6n+joMc/PmX1Ehts3RF03mPsni3DUwvud+OM1iTYDn3zRaDlvKe62w9/XbMuL15Bphryfx1R+ZCL2Q54z5/9mtaxxZnjOO9HREYG2R7IryQR9lisMEI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753469188; c=relaxed/simple;
-	bh=WRKcuDfQOKrZ/qX1373coXdL9F3NSSPKBGfVXxFVJyo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NWRVh5ASaVvg7uqYjjpu94TSRC/xtN05Z2aCvri7lnovUonYhiCgrqBqaQn108rjncHioJfxRj7AG9TLizBrVhaA27pjhLYTmec+aga7Mz6zvKI92W//pkBPodI9Jd9n80NBhOOAi21wmDsn4Zf2uRE9bvacFKqhzr7WBWSGIxI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1Dtd0fVP; arc=fail smtp.client-ip=40.107.223.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ipqx2BeLnQBIwQMIfjAQz75EFH4PD/Yi4qn6K1LLRDkyDBtiLXNa9v2setIPp7SIbzNwOVvf1I0jqaezxzJ0+JlfIJRBTDOnKv/72VzeaC5W3P9WhCvtypsXvfMU1opWjxjGO3er71+Q2KLYAHiLp0Usbpmhf8+lZmU4lhcsaaXan2Ss/v+07gbeFfohfNvs9RNNOiJDAA6+rDjJ9k67O/QhqTApIp7asmEqYN9Pmc/mhjdG22qV5qlcVUrAnGrDlnjSHTBd1fSbXJ0SOZGnQKZmdN+c/eJL8H8PASeQisI+9ZExeqyCS8NykAB/cd1QGXzGJ6NTaPw44KokzEWjuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w463DuW0ZckE3r12fldrxT3b1fcLJF6ofaycEZmSPDc=;
- b=CjOPK3XmrjJgE8wExWfRFOGOtO+he0Z26Kam9FbAWc5gvHIhGLgjGhHLfEFqlYx+NMgDwOP7mj5gfnzlmRliagtOi3rhofTfOZiYGA8SzupVdZJaDITCfkmkvRx1TlE+OhQP4MC5RgVtq4LazGleYVsCZ1eUmn6J6vx590seXYBR1cpXXjsIkiOoR1AVuUvfUC5paQ7jHfpGlndvzXyEQ+yaeGc5drsws9IwyTd966wDV+bSfTD3iKN2akwyXYL+nRAQRFTRld5o7hjxJaelnL2+CoXxAiWVKHw2WRN7/JKghoABhVWPZWN7kjS0zuQeZ1jeFCEonmybEQnlpAwD6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w463DuW0ZckE3r12fldrxT3b1fcLJF6ofaycEZmSPDc=;
- b=1Dtd0fVPVvN1kCQxz0Y1YlpZLLFpK7a7/kO0n7WjRgrI8PZl2b95jV14RiljEP0hwsjqqjpk41bu172jIHRKg4FK89r1R1HJTpKcv54l64NnddL9xQuhBDTlQt7OWgA2TFDwCizYmqbZv/bMHHIK1t9nG768e+Wjba6ScqgOmsQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
- by PH7PR12MB5903.namprd12.prod.outlook.com (2603:10b6:510:1d7::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Fri, 25 Jul
- 2025 18:46:23 +0000
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::ae6a:9bdd:af5b:e9ad]) by BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::ae6a:9bdd:af5b:e9ad%6]) with mapi id 15.20.8943.029; Fri, 25 Jul 2025
- 18:46:23 +0000
-Message-ID: <b063801d-af60-461d-8112-2614ebb3ac26@amd.com>
-Date: Fri, 25 Jul 2025 13:46:18 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/7] KVM: SEV: Add SEV-SNP CipherTextHiding support
-To: Tom Lendacky <thomas.lendacky@amd.com>,
- Kim Phillips <kim.phillips@amd.com>, corbet@lwn.net, seanjc@google.com,
- pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- john.allen@amd.com, herbert@gondor.apana.org.au, davem@davemloft.net,
- akpm@linux-foundation.org, rostedt@goodmis.org, paulmck@kernel.org
-Cc: nikunj@amd.com, Neeraj.Upadhyay@amd.com, aik@amd.com, ardb@kernel.org,
- michael.roth@amd.com, arnd@arndb.de, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <cover.1752869333.git.ashish.kalra@amd.com>
- <44866a07107f2b43d99ab640680eec8a08e66ee1.1752869333.git.ashish.kalra@amd.com>
- <9132edc0-1bc2-440a-ac90-64ed13d3c30c@amd.com>
- <03068367-fb6e-4f97-9910-4cf7271eae15@amd.com>
-Content-Language: en-US
-From: "Kalra, Ashish" <ashish.kalra@amd.com>
-In-Reply-To: <03068367-fb6e-4f97-9910-4cf7271eae15@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA9PR03CA0029.namprd03.prod.outlook.com
- (2603:10b6:806:20::34) To BL3PR12MB9049.namprd12.prod.outlook.com
- (2603:10b6:208:3b8::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBFF111BF
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753469229; cv=none; b=OxiYf9E1s8EVG00PzsVmTHHCoo/uHuFv5Rc4G8CLk5zdpbCAxfUxDFE470Baa5XvoAupZGUu7bPX6IXhCZSxjnIJ1If6vxTd/KKOSOXDmwVx4HEdjWm4XwpBKeMddt7KjUY0GXBvpx2A9clrZ++eRc69vu9FX79X7wOL8a/hKYU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753469229; c=relaxed/simple;
+	bh=EGkW/C+4hWEaA0d3bON2slcM922fbVtxtPeh7Ud0hI4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Zgn/XQr9wXJbviEedEGzDQ5dupdRUnHIZnNbOPb3ycwKxsPu8pNaK2cMsfNoRND24paap+fVdQIuPy9jauQSEbnFeXyvOMQXZYqZS4HW8Pnu+EvS/zOQ9H7bFW1pd2F97gwJ8RKuBSuwUgFWHsOZW6LV2uqzw3QVdrGZTjZO/Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=DpUkpJ/I; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b7766698eeso114095f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1753469226; x=1754074026; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2PcwJfFG0dMINHTXL+EGs7wi5PgpNiUrzuZGSnnkqAU=;
+        b=DpUkpJ/I+KTR27nWP2ZTIQTH33GCaUJEbl7FZTNv+l0GXki+jASCcczgMkAfbPssil
+         MliCwxYGHc3iW5AjyCnhrkhPFjfLcq/XRUJMPsTPVK3N4Mna6igXGqu4nFyR8kU5Q9rI
+         pMgbrwASRs6+5U2zvd3OixNN5r2RN2XARz7xiRmfc4/vDRgx9TFPgdZbLp0vXuOrDaX3
+         FxUV507zz5RoyWX0zM5jUqxnhNlHSZHUzaCrn9HH4WLmdyCMKkJcNT8YzNHlQW0Pm6Ue
+         hHqE/sqvWfOrmcFNEiDqm4R4SU9iIU6x+1YARfiNOjve3dkDLOja4rglRqFZxFTm6gd8
+         xu9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753469226; x=1754074026;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2PcwJfFG0dMINHTXL+EGs7wi5PgpNiUrzuZGSnnkqAU=;
+        b=VLuJumqfzDmszymW4ZeepNmHH4OjTGsPhl7JhrWqStiS+APDDP0JFbh2QZkJPi7Z1R
+         iZuJWSh8M86agm76Q7so8mhMt2DA0A3IlbruOCXmLYvwBJ3Vxsjlvuxw1BmIP7aGTl0c
+         MWMiiS0aNHqIQW8VBv5kQmdb+yGFFfJ4Tm1+KkA5jT/TFiApEzvQ9AkfwvUkBMA6ss2p
+         4aoCW1OPsJ7M6odT1CoiAQgCZ8c2AUInna5LEMKg2EqdHscclRzrHpem13COmE6do6a2
+         P6nPDEaXlUU4GKk5lQL/vFgMK0w6PajVt+ShIm8zBXtFf+7MpXqU13kSdVO28HHe+q9v
+         Nolw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcYQN+nkHyTm1BIn6FCmYvsqDAbOGbc4Q9+0Z0YZKq8u/X1cigYtyIHxbKoFNaJci3/huZudDb6kYxcN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ15EqDXx72HRsXccJiGdTjHzzapo3kcI09TtnjGNWdPp1Zl3Z
+	BU3lNlOm0bMeLl8j/FSHLpBfIP+d95p2kvpk7EtB6BrXZ8ZQrtqDfx1PlJGYlke2Tdw=
+X-Gm-Gg: ASbGncuDiQ26c/f3pKaBhmVvDMpogQvR2vIAFBXaX0h6ik+tijoFFROIbF6arSSexSc
+	M6MLgBwah7/V2Qx5AKwuxUNd6zUL2XuT0bbMrwZAzf4i43au0qzykrGZVdmgjiD5fiic5iVhtFM
+	wR+D9enOMn3Mc+GU3Mm63zgH3i8vMR1EnBfopxZfTM9aiRAwIkpTHfFJ6j17MOqB6wweC9Xc4wk
+	APWstsWSDx4cWhWwBnNPR6TNgMeebM82u7nm5CuC2kQxg+JvBEiHGvM/BFHBrwzAiisWg3mHE2n
+	0ev/WPtFQvpq93zIhfi4e/mmDe2ZFZyRatyhn7DTBdi3sdNtoBktgnEZ6fmAUtpKXajn/kQjEl2
+	YSKYCcq1ZazUgdAx/Ldz73io9P5pvMw==
+X-Google-Smtp-Source: AGHT+IERcnhDoDHJATyBIDHX/Fz368IlSTKTvTxrXpoOV1OgdXYCGFXhA0fSjBPI2vbo+UxnHhV7RQ==
+X-Received: by 2002:a05:6000:1889:b0:3a3:61ab:86c2 with SMTP id ffacd0b85a97d-3b776732d2cmr1202211f8f.7.1753469225927;
+        Fri, 25 Jul 2025 11:47:05 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:8c15:2281:5347:b367])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b778f26cc1sm574187f8f.82.2025.07.25.11.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 11:47:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|PH7PR12MB5903:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0869226b-ef40-4980-bb96-08ddcbab8d5f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SXFIRGtpV0Focm9BSWlMS1Q0Rm55VXg5dC9Wc3JzZitwRUtFVzlIeTdaMkJX?=
- =?utf-8?B?UTVWdndPelp0L201N3Y0Z0ZOYk1NV1M1N0s0ajFvU3pxQ1M0WUxXRzNrenB5?=
- =?utf-8?B?L21mV1ppdlNwT1d0UnBJSDZqK0ZZU3NCbFRjL3NGalhweUpqMmRYY25CSklq?=
- =?utf-8?B?aTBnWCtVWkFhNWdBbXFhZXlxU1dCWTI2N1dXM2UySDArV1JoKzhwQTA1ekZ2?=
- =?utf-8?B?eXZySGZpd2FPRVpiejAwVnEyZmFuUjFPMGVDOHBFWGlqdTRTOEpVWE5jOVQ5?=
- =?utf-8?B?NklZVUo2cG5LRnFxYkN4NmhOU1dldFFpbHhMcUt6ZVo0V0VFRWNHZzhwNzFz?=
- =?utf-8?B?V1hkUVA3MUNRRytLMjFXelAwanNlY25pTnlQckFyaERuZVc0bkhBZ2xvSXNt?=
- =?utf-8?B?UlRrMlhDUHpncmdHMzMxOG9SWEVLUUZLNkt1SVlKUCs5ZUhSZmtqTWl5Sm1s?=
- =?utf-8?B?dmxXNFlYYUVyUktKYjVoVFVRWmVDQ09WMmNjbmRZQ2hRS2xZN01qemdDVGhQ?=
- =?utf-8?B?c2d0QXdVU1BST2RFOU5lZFZDNXMrMHB4SEcrM1R4VEQzVktvM2JQa2s3UkhF?=
- =?utf-8?B?WlJ1b1UwS1FoQ2MraU9ieU9iTUt2eWVQaHBDcG5oZ1dxbHg2M2t5OWR0ZHlH?=
- =?utf-8?B?VkJ3WWUzUW5ZS00ySUhlYk5Kb1pMbmJ2S1I0QjdUQ2dtbE9aVXdpaFE5dTZK?=
- =?utf-8?B?T3haR0xacGJNOHg1QzNIRU80NnRMVFNtWG85M0pmU2tBYkM3bXlyNHJqR2pJ?=
- =?utf-8?B?dFlGY09uMTgrOXpOdG9jWHdTeEt2bHU0a25TUERRdnVLRGg3Zmx1U0s1aW5Z?=
- =?utf-8?B?RG5SUWdwMm1MdlVlS2c4MW8xL3hUTU1vTnBDRVB0TTlJRDJ2VElycHhiY3l3?=
- =?utf-8?B?Yk5DcEh6TEcrUXlPK0JTYmxMWU1RNU01aEk3ckd2V05tYy9KRlZrSW1MUG9X?=
- =?utf-8?B?cU44SkFvWXFlcFBRdjdUaUdjWm9IMktZNzVQcUpRRVMzN0U5L2dtNmpwZHZL?=
- =?utf-8?B?NDlNUUx6ZFRFU3RjWkFUMEs3aFA5NWxnR0VKQ0FsQ0czUWNSV1lmV0dJMXNU?=
- =?utf-8?B?MitSTStZMVc1TGNXand3aEVLRy80b2lub00yWGNzRERhUDlUdTBVY0kvQ2tE?=
- =?utf-8?B?alFmT3FTNVJBY2hMMzFvdXRuVGNTcThXSFl3M1BvTTNoQmNsRTZWSUgrK2pX?=
- =?utf-8?B?WXdkaUFpWWROUHl5Y3czc2FJOXUvQURwdHlFOTNqVE8zSjd6TmtIK0lmMjRx?=
- =?utf-8?B?MlloUTE2Wnh5RlFMUXhMbHpRZWlOWVdVcDVoVEw0UnJhYjFLVDNHV0lheUFm?=
- =?utf-8?B?M1dtdjM3ZTVsVzdRazRLeFRDaUZmUGZIVm9hOWdPZUFWcVJMQzkwdkRGM0FQ?=
- =?utf-8?B?UHhIRVlrYjVjYmN1SVlRWW5IbFFBclRrM2FRbFJIZXR6aFkrQ3BaaG9tNm9F?=
- =?utf-8?B?RlZWSXY2THBNTEw1V0NScTJuR21RN0VuVm1ENld0U1JGNUN4VXF6em0xbmZq?=
- =?utf-8?B?QmNSUWgwTEgxNURjU1dQT3lOdVdPb0lCRmR5MUdiSE9ONnZQY0t3b3dpWGJK?=
- =?utf-8?B?MyttS2EzOU1EeC9pZkE5STVnQnhGcXdBQTBVZ2NycndQQjhrNkhxNWpkVjAv?=
- =?utf-8?B?N1lLMUtrNWczakNDVXl2SHFvU3htWFFzdVdxRmJERlppTmZDaGM5dnlhSi81?=
- =?utf-8?B?a3FPVjNDZHd6VWhXSVUzM2lmZjlqamZVc3ZrZy9EYlhEcDNRSlVwbkV1VWFr?=
- =?utf-8?B?NFk5WGZXRU5NaUhHSklicVh6aWtRMzAyemV5cWZvSHFreUg1cS9GYmJvZmVI?=
- =?utf-8?B?UTBhSzlMZjNla091ZXFWRE0zZnlZU0ROTVJjWlo5Y3VwbWNIb0kzMEp5QkQ4?=
- =?utf-8?B?czJmTU5TSjhoRFIvWU1UWkJkbTJFTUdMWHRQbjluWmpQaXNXTmdSK0RsSUZF?=
- =?utf-8?B?cWF6MyszOE1iSkhmeUI0LzlMbysxZ1BhVHh5VU92UWNIaDlENHNCQkUwdE1G?=
- =?utf-8?B?a3F3dTVVbldRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SFBOYU02UWkwTWluTzB0aU1JMERYRTZIUE10YjBxUVR6SG9QTC9KNS9aT3N1?=
- =?utf-8?B?K1NkWUlWWGU3Sjd1NjN6dHFsMkl0UnZoTllVTVlYNm00dmhyY3BkL1IyUTZS?=
- =?utf-8?B?NU1Mbk1FOW1WWHFqa3JYZTJxcmpLMDFsN2pRVEo2VXU0QXcvY09pWm9oOFdT?=
- =?utf-8?B?SCsvVlZMdnpJbUx1QXVMREUxM1NlL2JDUVg4QVYweUJzSU4zSVRUTGFITVM5?=
- =?utf-8?B?N3l5MVNBRDZNVE5WRlE5TWFpL1lGT0NONms4ZC9nd3picmVIL3o1ZEdEQTJQ?=
- =?utf-8?B?SnpyUVFOYUpJb2lCMWpVckh6TUp1U2lBVy85RWt1bk9GbDJJMFVXTDhCajZ3?=
- =?utf-8?B?ckVSZUN2aGlqdk1wYnZBdWNpcGVMMnZQK0VEVGJrVkdwSFNJY3hneFUvWTZk?=
- =?utf-8?B?MDRGNnh2T2d5cDJuNnZGVkwvSWpEeEo2RFZ6dldqdWJGdENsM1RiYVZBbTNX?=
- =?utf-8?B?L3FEMmZGQnIxYVFWTkl2czVLUjBpM0dJNVQ1SGpnTThmd1RFbGVMUkQvWjQv?=
- =?utf-8?B?a0Jyc0grb0YyYklDWlNjVXBwbzQrZVBtSUdmR1RKSUhMSUdHRmdnOHZEZVh0?=
- =?utf-8?B?UHdDSlYyUFRPU2RQUUxvWkhnOTZPcFYrMXdOR0V6QzQvMGI0Z0sxaFNVQ01T?=
- =?utf-8?B?UktmY1puZ2tFdUZTRmV0SWFmOU5TOFpEcjA1R08vdVRLcCtLVnpjdjc1NmdK?=
- =?utf-8?B?THdseEhSZHFkcjlzRm9xZ2cxVi84RG5FelMzNlpXT2c0cjF6eVJqK1BXcVNR?=
- =?utf-8?B?Z1VITCs5OE8xWmNjekJHQWtNSmh6c0xOMEtkZEZDbFduOSt0aCtFWXgzcExx?=
- =?utf-8?B?SXBxUmFyVytaNjhyNThNOUNVOHFOSnVpZEFSVnNpOWMxQ1JNQXBCc3F2cDFB?=
- =?utf-8?B?NlhkcWcrM3gxVVQxbmNRZGFobUVZOXg1dWtpY091SGRBQ0w2OUh3NUdPSkt4?=
- =?utf-8?B?MkdRbXdaQzVhZXNQY2xUUmxSN1l3SGUxRjIwODNYRzh5VmtqekkxbUNSTWI1?=
- =?utf-8?B?YjgycTdYSkhLLzgyako2YTBMekVLMkRjdVprT3M2UDltV3A1amwvMjdJS2Iv?=
- =?utf-8?B?Nmhxd3g4dXlNUTV3WnB2QWdJOHNpbjlhZDlKQVlUa0dmbTJ4RXEyVGlNaFBB?=
- =?utf-8?B?aXdyQ3U1YUdIS1lqQkhXdDVaL1ZnMDNvQWdKOXBEYi9vV3J2Wi9ZOVFON0tO?=
- =?utf-8?B?dnRXWlFhOHJIU1F6UTNXMDJkczcvTnJiUXA1dlMwN2dNUlF6OWRLZ0JsMUEx?=
- =?utf-8?B?b3YxVVNBbWV5SEdva0pWQXZ2ZWF2MUlKUGtDUWpheDl2R2Q4Q2RUQjBENnYx?=
- =?utf-8?B?QkJLdkVBVnVzTDFhblRqT2VHbjlZTEJoUGVVK3hhcXlrbU9qTElFUVF1VWNr?=
- =?utf-8?B?djV5NGYrdHdCcHZYVVFkdUllVi93TFYzQzRuY3I1MmxnY0VYMnhtR0lkNjRa?=
- =?utf-8?B?cnlPVCsybFJ2aHZ4NWV5Qi9YVTJ0YlR0SDdaeHQ3eC8vL1d4RHh3cFpJd2lF?=
- =?utf-8?B?MjZEeUsyYW10QUR6N21DQkNVLzlUSEpNL01BYzFtQ3FzM0NMcjFpMVd6TXBn?=
- =?utf-8?B?N1ArQk8wQTJBTy9HWlZNYXZUSzFBYzF1bEpQQk40c3dOQy85NFBwd3BHL2xO?=
- =?utf-8?B?ZzFlQThyWDRxTkhabTI3VTlKOU1BcFNCTGRHM0NVclBqcXFqS1Y1b0tpNlBu?=
- =?utf-8?B?SmU3Z3F0NVBYZzNwaXVIcGNPall0RUY4dzdiV2NwZjJIVkMyY3B6dUVGc1Fr?=
- =?utf-8?B?aVBUM2lIellacENSbWZYaG9nYVNNL2VlU05MZEhjVDZnSVVReURXZUhSWkRj?=
- =?utf-8?B?VEhqOGJrbGZtWHAwZzZtM1NGMXVpd1orMmpISGZRWnNscThpSm5wdmFUQnd5?=
- =?utf-8?B?aHUzZU5PaW0vT1k1Yi83b2ZNTjhUUHpoUzlZc0dyQm9veEtmTVRyUSs5V0wv?=
- =?utf-8?B?ck1Ob0V5MVBvU2ZkMnd2eGNzam5nSllSZW1wclJDOGxudWFuZFc0bUtyTkE1?=
- =?utf-8?B?aUc4czVVdlBVeVlQYUpFYW9wdmtXYzNrb1JyS0JqeHgwRHhTUG5DbmhpYXVC?=
- =?utf-8?B?YnMzWEVtaVBBdjMzaTZPdWc1MjdBUG1QbFpNQXRTaGRPU05WVjZ4TzE2c1Nt?=
- =?utf-8?Q?jZL2j6WCK39oZOP5N5EP3aKjW?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0869226b-ef40-4980-bb96-08ddcbab8d5f
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 18:46:23.0258
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qvddy3ZlR68BQZjVuEV5hj7FyHkmVHrxrOgy/2qp/Jy4fmW/i5Bj+Ng3U/WOwBMZCs3hIe4mE5JWaruGy7HkfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5903
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 25 Jul 2025 20:47:04 +0200
+Message-Id: <DBLCYPBLQBSQ.170ND7Z93GPK4@ventanamicro.com>
+Subject: Re: [PATCH] riscv: Add sysctl to control discard of vstate during
+ syscall
+Cc: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+To: "Vivian Wang" <wangruikang@iscas.ac.cn>, "Drew Fustini"
+ <fustini@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>,
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, "Alexandre Ghiti"
+ <alex@ghiti.fr>, "Paul Walmsley" <paul.walmsley@sifive.com>, "Samuel
+ Holland" <samuel.holland@sifive.com>, "Drew Fustini"
+ <dfustini@tenstorrent.com>, "Andy Chiu" <andybnac@gmail.com>, "Conor
+ Dooley" <conor.dooley@microchip.com>, <linux-riscv@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+References: <20250719033912.1313955-1-fustini@kernel.org>
+ <cc82c938-def3-4df6-9fc9-fc321af7d54a@iscas.ac.cn>
+ <DBL2588APTCA.2XUKQCJ0DW89C@ventanamicro.com>
+ <feb3549f-da91-4eaa-a624-b9f35db6ba3c@iscas.ac.cn>
+In-Reply-To: <feb3549f-da91-4eaa-a624-b9f35db6ba3c@iscas.ac.cn>
 
+2025-07-25T23:01:03+08:00, Vivian Wang <wangruikang@iscas.ac.cn>:
+> On 7/25/25 18:18, Radim Kr=C4=8Dm=C3=A1=C5=99 wrote:
+>> 2025-07-24T05:55:54+08:00, Vivian Wang <wangruikang@iscas.ac.cn>:
+>>> On 7/19/25 11:39, Drew Fustini wrote:
+>>>> From: Drew Fustini <dfustini@tenstorrent.com>
+>>>> Clobbering the vector registers can significantly increase system call
+>>>> latency for some implementations. To mitigate this performance impact,=
+ a
+>>>> policy mechanism is provided to administrators, distro maintainers, an=
+d
+>>>> developers to control vector state discard in the form of a sysctl kno=
+b:
+>>> So I had an idea: Is it possible to avoid repeatedly discarding the
+>>> state on every syscall by setting VS to Initial after discarding, and
+>>> avoiding discarding when VS is Initial? So:
+>>>
+>>> if (VS =3D=3D Clean || VS =3D=3D Dirty) {
+>>> =C2=A0 =C2=A0 clobber;
+>>> =C2=A0 =C2=A0 VS =3D Initial;
+>>> }
+>>>
+>>> This would avoid this problem with syscall-heavy user programs while
+>>> adding minimum overhead for everything else.
+>> I think your proposal improves the existing code, but if a userspace is
+>> using vectors, it's likely also restoring them after a syscall, so the
+>> state would immediately get dirty, and the next syscall would again
+>> needlessly clobber vector registers.
+>
+> Without any data to back it up, I would say that my understanding is
+> that this should be a rare case, only happening if e.g. someone is
+> adding printf debugging to their vector code. Otherwise, vector loops
+> should not have syscalls in them.
+>
+> A more reasonable worry would be programs using RVV everywhere in all
+> sorts of common operations. In that case, alternating syscalls and
+> vectors would make the discarding wasteful.
 
+Good point.  Yeah, auto-vectorization might be hindered.
 
-On 7/25/2025 1:28 PM, Tom Lendacky wrote:
-> On 7/25/25 12:58, Kim Phillips wrote:
->> Hi Ashish,
->>
->> For patches 1 through 6 in this series:
->>
->> Reviewed-by: Kim Phillips <kim.phillips@amd.com>
->>
->> For this 7/7 patch, consider making the simplification changes I've supplied
->> in the diff at the bottom of this email: it cuts the number of lines for
->> check_and_enable_sev_snp_ciphertext_hiding() in half.
-> 
-> Not sure that change works completely... see below.
-> 
->>
->> Thanks,
->>
->> Kim
->>
->> On 7/21/25 9:14 AM, Ashish Kalra wrote:
->>> From: Ashish Kalra <ashish.kalra@amd.com>
-> 
->>
->>
->> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
->> index 7ac0f0f25e68..bd0947360e18 100644
->> --- a/arch/x86/kvm/svm/sev.c
->> +++ b/arch/x86/kvm/svm/sev.c
->> @@ -59,7 +59,7 @@ static bool sev_es_debug_swap_enabled = true;
->>  module_param_named(debug_swap, sev_es_debug_swap_enabled, bool, 0444);
->>  static u64 sev_supported_vmsa_features;
->>
->> -static char ciphertext_hiding_asids[16];
->> +static char ciphertext_hiding_asids[10];
->>  module_param_string(ciphertext_hiding_asids, ciphertext_hiding_asids,
->>              sizeof(ciphertext_hiding_asids), 0444);
->>  MODULE_PARM_DESC(ciphertext_hiding_asids, "  Enable ciphertext hiding for
->> SEV-SNP guests and specify the number of ASIDs to use ('max' to utilize
->> all available SEV-SNP ASIDs");
->> @@ -2970,42 +2970,22 @@ static bool is_sev_snp_initialized(void)
->>
->>  static bool check_and_enable_sev_snp_ciphertext_hiding(void)
->>  {
->> -    unsigned int ciphertext_hiding_asid_nr = 0;
->> -
->> -    if (!ciphertext_hiding_asids[0])
->> -        return false;
-> 
-> If the parameter was never specified
->> -
->> -    if (!sev_is_snp_ciphertext_hiding_supported()) {
->> -        pr_warn("Module parameter ciphertext_hiding_asids specified but
->> ciphertext hiding not supported\n");
->> -        return false;
->> -    }
-> 
-> Removing this block will create an issue below.
-> 
->> -
->> -    if (isdigit(ciphertext_hiding_asids[0])) {
->> -        if (kstrtoint(ciphertext_hiding_asids, 10,
->> &ciphertext_hiding_asid_nr))
->> -            goto invalid_parameter;
->> -
->> -        /* Do sanity check on user-defined ciphertext_hiding_asids */
->> -        if (ciphertext_hiding_asid_nr >= min_sev_asid) {
->> -            pr_warn("Module parameter ciphertext_hiding_asids (%u)
->> exceeds or equals minimum SEV ASID (%u)\n",
->> -                ciphertext_hiding_asid_nr, min_sev_asid);
->> -            return false;
->> -        }
->> -    } else if (!strcmp(ciphertext_hiding_asids, "max")) {
->> -        ciphertext_hiding_asid_nr = min_sev_asid - 1;
->> +    if (!strcmp(ciphertext_hiding_asids, "max")) {
->> +        max_snp_asid = min_sev_asid - 1;
->> +        return true;
->>      }
+In the worst case, users could just notice that it's slowing programs
+down, and disable it without looking for the cause.
 
-As Tom has already pointed out, we will try enabling ciphertext hiding with SNP_INIT_EX even if ciphertext hiding feature is not supported and enabled.
+>> Preserving the vector state still seems better for userspaces that use
+>> both vectors and syscalls.
+>
+> If we can expect e.g. userspace programs to primarily repeatedly use RVV
+> with no syscalls between loops, *or* primarily repeatedly use syscalls
+> with rare occurrences of RVV between syscalls. This way, the primarily
+> syscall programs can benefit from slightly switching, since there's no
+> need to save and restore state for those most of the time. In effect,
+> syscalls serves as a hint that RVV is over.
 
-We do need to make these basic checks, i.e., if the parameter has been specified and if ciphertext hiding feature is supported and enabled, 
-before doing any further processing.
+This would need deeper analysis, and we will probably never be correct
+with a system-wide policy regardless -- a room for prctl?
 
-Why should we even attempt to do any parameter comparison, parameter conversion or sanity checks if the parameter has not been specified and/or
-ciphertext hiding feature itself is not supported and enabled.
+I think there might be a lot of programs that have a repeating pattern
+of compute -> syscall (e.g. to write results), and clobbering is losing
+performance if a program does more than a single loop per switch.
 
-I believe this function should be simple and understandable which it is.
+>                                             The primarily RVV programs
+> should not be switching as much - if they are, that's a sign of CPU
+> resources being oversubscribed.
 
-Thanks,
-Ashish
+Yes, but clobbering only gives benefits on a switch, so we don't want to
+clobber if there are more syscall than switches.
 
->>
->> -    if (ciphertext_hiding_asid_nr) {
->> -        max_snp_asid = ciphertext_hiding_asid_nr;
->> -        min_sev_es_asid = max_snp_asid + 1;
->> -        pr_info("SEV-SNP ciphertext hiding enabled\n");
->> -
->> -        return true;
->> +    /* Do sanity check on user-defined ciphertext_hiding_asids */
->> +    if (kstrtoint(ciphertext_hiding_asids,
->> sizeof(ciphertext_hiding_asids), &max_snp_asid) ||
-> 
-> The second parameter is supposed to be the base, this gets lucky because
-> you changed the size of the ciphertext_hiding_asids to 10.
-> 
->> +        max_snp_asid >= min_sev_asid ||
->> +        !sev_is_snp_ciphertext_hiding_supported()) {
->> +        pr_warn("ciphertext_hiding not supported, or invalid
->> ciphertext_hiding_asids \"%s\", or !(0 < %u < minimum SEV ASID %u)\n",
->> +            ciphertext_hiding_asids, max_snp_asid, min_sev_asid);
->> +        max_snp_asid = min_sev_asid - 1;
->> +        return false;
->>      }
->>
->> -invalid_parameter:
->> -    pr_warn("Module parameter ciphertext_hiding_asids (%s) invalid\n",
->> -        ciphertext_hiding_asids);
->> -    return false;
->> +    return true;
->>  }
->>
->>  void __init sev_hardware_setup(void)
->> @@ -3122,8 +3102,11 @@ void __init sev_hardware_setup(void)
->>           * ASID range into separate SEV-ES and SEV-SNP ASID ranges with
->>           * the SEV-SNP ASID starting at 1.
->>           */
->> -        if (check_and_enable_sev_snp_ciphertext_hiding())
->> +        if (check_and_enable_sev_snp_ciphertext_hiding()) {
->> +            pr_info("SEV-SNP ciphertext hiding enabled\n");
->>              init_args.max_snp_asid = max_snp_asid;
->> +            min_sev_es_asid = max_snp_asid + 1;
-> 
-> If "max" was specified, but ciphertext hiding isn't enabled, you've now
-> changed min_sev_es_asid to an incorrect value and will be trying to enable
-> ciphertext hiding during initialization.
-> 
-> Thanks,
-> Tom
-> 
->> +        }
->>          if (sev_platform_init(&init_args))
->>              sev_supported = sev_es_supported = sev_snp_supported = false;
->>          else if (sev_snp_supported)
->>
-> 
+Well, there is a way: a syscall could just set VS=3DInitial, and if
+userspace doesn't dirty vector registers, a restore would set the
+registers to whatever the initial state is.
+No vector registers touched on syscall, or save.
 
+This works as we don't have to do anything when "clobbering" -- the
+registers are unspecified after a syscall.
+The downside is that users might (incorrectly) depend on the unspecified
+value without dirtying, so the unspecified value could change at an
+arbitrary point, which would provide some interesting debugging cases.
+
+(And it's still suboptimal if software actually wants to preserve
+ vectors across syscalls.)
+
+> Having said all of that, I am actually slightly more interested in why
+> vmv.v.vi is *so slow* on SiFive X280. I wonder if there would be a more
+> microarchitectural favorable ways to just put a bunch of ones in some
+> vector registers? Would 0 be better?
+
+No idea, and there are a lot of options to try, but it would be quite
+sad if we had to have special case for each implementation.
+
+Thanks.
 
