@@ -1,449 +1,158 @@
-Return-Path: <linux-kernel+bounces-745614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D5EB11C2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:21:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD7BB11C28
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2F621894DEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:22:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00702166AC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7452DE6F3;
-	Fri, 25 Jul 2025 10:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C11E2DC322;
+	Fri, 25 Jul 2025 10:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b888ev3Z"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/Qcyc+f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F5822A808
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A46022A808;
+	Fri, 25 Jul 2025 10:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753438891; cv=none; b=anH4jFOEzSCXnkaYYnUjGZfsz5HgSwWwNSYpJzCp/2NsUNsPyqmgtKM3Xrou1uueHgb528j7Aq24EFMwNTs6G+X65PhwRr9xuaiYgmVqGpUt3RVGxvakCW5ijpl7hitJqD+epixlKCLbGENRFjTw8Pfj9QdS+62dTdPAergLxN8=
+	t=1753438869; cv=none; b=Yo9gp5xQJE443lIFojEfFtkqocfkqzcbkp8Jg4Mo4UETbqomR0SE8/kewVOSVspSVJ+u3+Wyv5D3LHIZo1Z7UYxc+xcxed0aaavU2mJOOOsz4uF9ZhDmNcCgld9FTB1wRbW1tN75URxo8BBJC0KFVVLVNRSFek8Acdz63xaSecY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753438891; c=relaxed/simple;
-	bh=M9zRN6meZKtGT6+HFdqmkc3rNV55S6CINfCe6M8ixNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QsFZjILw+OS3YufnUhR7Cb0glsYVQJaqvGsMQokeFVBL/xZ7wUZ3JEkWB8ofVmX+e3a+jZRatMdG8ubO2uHxoplz7kriS/MYoR3S9DrWQu7oVrdlNHfL42YHlWmvr9+SY08llacNQPOKScX1IKHRcGptreoV9KkYdghWhTRrOe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b888ev3Z; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b7f41d3e6so22612961fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 03:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753438876; x=1754043676; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gp1YEfuqIXq6d0PdrnSf3arbkeHySOCi7PIZYhRL5Sw=;
-        b=b888ev3ZOq3xvn1oIE+Nqb5C9WJVpaZTpkdr04VPXAnI+5U4vElVDBTFYirlkqBzna
-         YTjS/RegUBOIVFWUykdmSAGtdil/hEruNIUOdNY7paUSMJio4onuk65hflUwOMYjOsmB
-         Yd8nWaqre2v2pTbJhkd2gN/KBL4aszK9sngmZTA5YRshtx1mR/dNUXasU4f2RgpGc2IC
-         7Ywa89InA53T06GJxjtuiWmS2+vNWrMdjGQVLXoNbVfbFACIpI4FkziQiglsNUuItE3O
-         o8rneZ1meHDqdzHOWR8J96AM7ZMjhzz6Y6RYXM4xi2eU54dSa9sjmOtvJIMuyqX8WYo5
-         oL+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753438876; x=1754043676;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gp1YEfuqIXq6d0PdrnSf3arbkeHySOCi7PIZYhRL5Sw=;
-        b=M1K0yVXdiE9Pu6mLwctM+Y78iPAppIaNU/M2nrjjqIYH2wk2cCxDvp0K1eSFU5XbsZ
-         MjGeAuMJxvCuW1hjJ6Pv9J5STtF8FyXOL5nryChzFo9jiWlX7l7HfHhnnLUCK3hnvA+2
-         kLwxooRcFBvL2vUphD417dLVnYTrKkSn/e9xZ4Xq6Ugtna9winxful0QWuEmeHQhiYPL
-         7OGDMcu7vNWQzy05ZRc1j3jF9/algIIlzHyvSe94WtrkxOBsoOghsmFryMbf0eP5F5LM
-         6+csiHm9NWEwE5sV1+X7aJBzrqFBlPCs0sqs1IhFklCYX3IqkCDYPfrKi+ZznMFo2WOB
-         X7pA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2w3kUWs6nHmo9ph6q2rIpkFYz2hpgdgU594h/nHukh1CPCFILa3myDia5LJqPAwrXtuZr5AXRZH7awes=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6koBmvT/gkPlf57al/oa6JvWfmIp5ckxNwtR9/6ZBSyXlsUfQ
-	RA+LSHIf8iwwn/ydwCArS6nWR9LlsQUDIA271K9RZqA6bSoXRuyLXTYMlYeBM/zuaRSMLmXcHth
-	50oNESPQbdi9bOlUmn4Bg5hJzcx+ZUzmOlJmtjUhosFLAnxeGXcE6vB7S
-X-Gm-Gg: ASbGncvLpb74iI7XE22CxsEhryi1JkTEs9GcM+5Pzeo7F+H4kD/9t/4CSh77owrbtRm
-	6CzvEKUV/QH+012X73t8K12L0Xarkns2Dln0raitVULrdTSTrq4vDjbah7HhBE+HAJXaZz5dvzI
-	xVbbn+bSPDjaQ8yTNfNxgwuDziqDvPZ5Yv322DxsbCU6mrdIQyezEUeERA0KUCXoQAPwdWjlnMK
-	3D7npJOnCzdQtESuhu6jtpFVlpuQKKdjbDeV4LQ
-X-Google-Smtp-Source: AGHT+IG07bpkhKk1OdngxygFB258kiGhEvWpLt8JOswdr+lvNQKaPqtTfSRfwv7MMXK+hGNqdHWQg6s0eNV/r6TNBII=
-X-Received: by 2002:a05:651c:154b:b0:32a:6c39:8939 with SMTP id
- 38308e7fff4ca-331ee3a7267mr5616091fa.19.1753438875508; Fri, 25 Jul 2025
- 03:21:15 -0700 (PDT)
+	s=arc-20240116; t=1753438869; c=relaxed/simple;
+	bh=CQaDYEvyI/89r3xyhVKCo7dR35Wb+w1sxKMA6thkqOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pZou22PTNZRpatg0VCsVpRylkqVCdyoGEP76DwSnZLn/pGPz6U9x060gGmp1eSGMdlFNw8mWYh3vgxvZodLGal+8KvStz9wdHVM2Y7GF0oKQ6V6SPBhNIX736qNFuLUFn/b865S4CFbVUtNmTJ14HLMPy0TnrC4pmhOx6kbaK4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/Qcyc+f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC36C4CEE7;
+	Fri, 25 Jul 2025 10:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753438869;
+	bh=CQaDYEvyI/89r3xyhVKCo7dR35Wb+w1sxKMA6thkqOM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f/Qcyc+fJLIRbdioNuXv9/ezHm21Kz0V4EjSRH8ZjKkdcP2ciCtSGF+IO1j0LNQa/
+	 0UF2dFKTJDao/bKaNPGD1wn5WFGgBBO+kjemXiyJ89p4pS0e29l43kfPfcRLHy/pay
+	 /C7jMetkMklMttCN+NgN2Sf8yp1yu2+QcSsHz9P2e7Gq6Fs91COMBPYWgQf+v0wflj
+	 9YfDfKS0n3wSS1rFPRILqfmn1+egy6Q/MhFLX/xxo5X456ZTpBnpNbJmo8K2vWSq3Z
+	 6S/l6UZltTFjx7grMGwHSm1QK3U8r2FfzXEPzrXjkGY5LL6++x77CG8oDUwHmkeHgN
+	 WqKWih64fnCtQ==
+Message-ID: <3653febf-0c36-48ca-9d51-7cf93e5b25f1@kernel.org>
+Date: Fri, 25 Jul 2025 19:21:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626134158.3385080-1-glider@google.com> <20250626134158.3385080-7-glider@google.com>
- <CACT4Y+b_KkqF0dm8OM1VUfwzDph6gHisk2amkk9RrLiGV24s9A@mail.gmail.com> <CAG_fn=VymVR+RNeeNOkVaOD3tpY=MFwP-8vU+w0+H5vS7jWMMA@mail.gmail.com>
-In-Reply-To: <CAG_fn=VymVR+RNeeNOkVaOD3tpY=MFwP-8vU+w0+H5vS7jWMMA@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 25 Jul 2025 12:21:03 +0200
-X-Gm-Features: Ac12FXzB-4uT0A5_3McI7aYw4DcEvHFODfUUTellt0zHb6zfyQMlJVZmc60jnmI
-Message-ID: <CACT4Y+Zaov2rynD0T_SVbZ4_s+fqMnUg961PcaJ=mg40D34BPQ@mail.gmail.com>
-Subject: Re: [PATCH v2 06/11] kcov: x86: introduce CONFIG_KCOV_UNIQUE
-To: Alexander Potapenko <glider@google.com>
-Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
-	kasan-dev@googlegroups.com, x86@kernel.org, 
-	Aleksandr Nogikh <nogikh@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] blk-ioc: add a new helper ioc_lookup_icq_rcu()
+To: Yu Kuai <yukuai1@huaweicloud.com>, jack@suse.cz, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250725070547.3953398-1-yukuai1@huaweicloud.com>
+ <20250725070547.3953398-2-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250725070547.3953398-2-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 25 Jul 2025 at 12:07, Alexander Potapenko <glider@google.com> wrote=
-:
->
-> On Wed, Jul 9, 2025 at 5:01=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com>=
- wrote:
-> >
-> > On Thu, 26 Jun 2025 at 15:42, Alexander Potapenko <glider@google.com> w=
-rote:
-> > >
-> > > The new config switches coverage instrumentation to using
-> > >   __sanitizer_cov_trace_pc_guard(u32 *guard)
-> > > instead of
-> > >   __sanitizer_cov_trace_pc(void)
-> > >
-> > > This relies on Clang's -fsanitize-coverage=3Dtrace-pc-guard flag [1].
-> > >
-> > > Each callback receives a unique 32-bit guard variable residing in the
-> > > __sancov_guards section. Those guards can be used by kcov to deduplic=
-ate
-> > > the coverage on the fly.
-> > >
-> > > As a first step, we make the new instrumentation mode 1:1 compatible
-> > > with the old one.
-> > >
-> > > [1] https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-pcs-wi=
-th-guards
-> > >
-> > > Cc: x86@kernel.org
-> > > Signed-off-by: Alexander Potapenko <glider@google.com>
-> > >
-> > > ---
-> > > Change-Id: Iacb1e71fd061a82c2acadf2347bba4863b9aec39
-> > >
-> > > v2:
-> > >  - Address comments by Dmitry Vyukov
-> > >    - rename CONFIG_KCOV_ENABLE_GUARDS to CONFIG_KCOV_UNIQUE
-> > >    - update commit description and config description
-> > >  - Address comments by Marco Elver
-> > >    - rename sanitizer_cov_write_subsequent() to kcov_append_to_buffer=
-()
-> > >    - make config depend on X86_64 (via ARCH_HAS_KCOV_UNIQUE)
-> > >    - swap #ifdef branches
-> > >    - tweak config description
-> > >    - remove redundant check for CONFIG_CC_HAS_SANCOV_TRACE_PC_GUARD
-> > > ---
-> > >  arch/x86/Kconfig                  |  1 +
-> > >  arch/x86/kernel/vmlinux.lds.S     |  1 +
-> > >  include/asm-generic/vmlinux.lds.h | 14 ++++++-
-> > >  include/linux/kcov.h              |  2 +
-> > >  kernel/kcov.c                     | 61 +++++++++++++++++++++--------=
---
-> > >  lib/Kconfig.debug                 | 24 ++++++++++++
-> > >  scripts/Makefile.kcov             |  4 ++
-> > >  scripts/module.lds.S              | 23 ++++++++++++
-> > >  tools/objtool/check.c             |  1 +
-> > >  9 files changed, 110 insertions(+), 21 deletions(-)
-> > >
-> > > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > > index e21cca404943e..d104c5a193bdf 100644
-> > > --- a/arch/x86/Kconfig
-> > > +++ b/arch/x86/Kconfig
-> > > @@ -93,6 +93,7 @@ config X86
-> > >         select ARCH_HAS_FORTIFY_SOURCE
-> > >         select ARCH_HAS_GCOV_PROFILE_ALL
-> > >         select ARCH_HAS_KCOV                    if X86_64
-> > > +       select ARCH_HAS_KCOV_UNIQUE             if X86_64
-> > >         select ARCH_HAS_KERNEL_FPU_SUPPORT
-> > >         select ARCH_HAS_MEM_ENCRYPT
-> > >         select ARCH_HAS_MEMBARRIER_SYNC_CORE
-> > > diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.=
-lds.S
-> > > index cda5f8362e9da..8076e8953fddc 100644
-> > > --- a/arch/x86/kernel/vmlinux.lds.S
-> > > +++ b/arch/x86/kernel/vmlinux.lds.S
-> > > @@ -372,6 +372,7 @@ SECTIONS
-> > >                 . =3D ALIGN(PAGE_SIZE);
-> > >                 __bss_stop =3D .;
-> > >         }
-> > > +       SANCOV_GUARDS_BSS
-> > >
-> > >         /*
-> > >          * The memory occupied from _text to here, __end_of_kernel_re=
-serve, is
-> > > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/=
-vmlinux.lds.h
-> > > index 58a635a6d5bdf..875c4deb66208 100644
-> > > --- a/include/asm-generic/vmlinux.lds.h
-> > > +++ b/include/asm-generic/vmlinux.lds.h
-> > > @@ -102,7 +102,8 @@
-> > >   * sections to be brought in with rodata.
-> > >   */
-> > >  #if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_=
-LTO_CLANG) || \
-> > > -defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
-> > > +       defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLA=
-NG) || \
-> > > +       defined(CONFIG_KCOV_UNIQUE)
-> > >  #define TEXT_MAIN .text .text.[0-9a-zA-Z_]*
-> > >  #else
-> > >  #define TEXT_MAIN .text
-> > > @@ -121,6 +122,17 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_=
-PROPELLER_CLANG)
-> > >  #define SBSS_MAIN .sbss
-> > >  #endif
-> > >
-> > > +#if defined(CONFIG_KCOV_UNIQUE)
-> > > +#define SANCOV_GUARDS_BSS                      \
-> > > +       __sancov_guards(NOLOAD) : {             \
-> > > +               __start___sancov_guards =3D .;    \
-> > > +               *(__sancov_guards);             \
-> > > +               __stop___sancov_guards =3D .;     \
-> > > +       }
-> > > +#else
-> > > +#define SANCOV_GUARDS_BSS
-> > > +#endif
-> > > +
-> > >  /*
-> > >   * GCC 4.5 and later have a 32 bytes section alignment for structure=
-s.
-> > >   * Except GCC 4.9, that feels the need to align on 64 bytes.
-> > > diff --git a/include/linux/kcov.h b/include/linux/kcov.h
-> > > index 0e425c3524b86..dd8bbee6fe274 100644
-> > > --- a/include/linux/kcov.h
-> > > +++ b/include/linux/kcov.h
-> > > @@ -107,6 +107,8 @@ typedef unsigned long long kcov_u64;
-> > >  #endif
-> > >
-> > >  void __sanitizer_cov_trace_pc(void);
-> > > +void __sanitizer_cov_trace_pc_guard(u32 *guard);
-> > > +void __sanitizer_cov_trace_pc_guard_init(uint32_t *start, uint32_t *=
-stop);
-> > >  void __sanitizer_cov_trace_cmp1(u8 arg1, u8 arg2);
-> > >  void __sanitizer_cov_trace_cmp2(u16 arg1, u16 arg2);
-> > >  void __sanitizer_cov_trace_cmp4(u32 arg1, u32 arg2);
-> > > diff --git a/kernel/kcov.c b/kernel/kcov.c
-> > > index ff7f118644f49..8e98ca8d52743 100644
-> > > --- a/kernel/kcov.c
-> > > +++ b/kernel/kcov.c
-> > > @@ -195,27 +195,15 @@ static notrace unsigned long canonicalize_ip(un=
-signed long ip)
-> > >         return ip;
-> > >  }
-> > >
-> > > -/*
-> > > - * Entry point from instrumented code.
-> > > - * This is called once per basic-block/edge.
-> > > - */
-> > > -void notrace __sanitizer_cov_trace_pc(void)
-> > > +static notrace void kcov_append_to_buffer(unsigned long *area, int s=
-ize,
-> > > +                                         unsigned long ip)
-> > >  {
-> > > -       struct task_struct *t;
-> > > -       unsigned long *area;
-> > > -       unsigned long ip =3D canonicalize_ip(_RET_IP_);
-> > > -       unsigned long pos;
-> > > -
-> > > -       t =3D current;
-> > > -       if (!check_kcov_mode(KCOV_MODE_TRACE_PC, t))
-> > > -               return;
-> > > -
-> > > -       area =3D t->kcov_state.area;
-> > >         /* The first 64-bit word is the number of subsequent PCs. */
-> > > -       pos =3D READ_ONCE(area[0]) + 1;
-> > > -       if (likely(pos < t->kcov_state.size)) {
-> > > -               /* Previously we write pc before updating pos. Howeve=
-r, some
-> > > -                * early interrupt code could bypass check_kcov_mode(=
-) check
-> > > +       unsigned long pos =3D READ_ONCE(area[0]) + 1;
-> > > +
-> > > +       if (likely(pos < size)) {
-> > > +               /*
-> > > +                * Some early interrupt code could bypass check_kcov_=
-mode() check
-> > >                  * and invoke __sanitizer_cov_trace_pc(). If such int=
-errupt is
-> > >                  * raised between writing pc and updating pos, the pc=
- could be
-> > >                  * overitten by the recursive __sanitizer_cov_trace_p=
-c().
-> > > @@ -226,7 +214,40 @@ void notrace __sanitizer_cov_trace_pc(void)
-> > >                 area[pos] =3D ip;
-> > >         }
-> > >  }
-> > > +
-> > > +/*
-> > > + * Entry point from instrumented code.
-> > > + * This is called once per basic-block/edge.
-> > > + */
-> > > +#ifdef CONFIG_KCOV_UNIQUE
-> > > +void notrace __sanitizer_cov_trace_pc_guard(u32 *guard)
-> > > +{
-> > > +       if (!check_kcov_mode(KCOV_MODE_TRACE_PC, current))
-> > > +               return;
-> > > +
-> > > +       kcov_append_to_buffer(current->kcov_state.area,
-> > > +                             current->kcov_state.size,
-> > > +                             canonicalize_ip(_RET_IP_));
-> > > +}
-> > > +EXPORT_SYMBOL(__sanitizer_cov_trace_pc_guard);
-> > > +
-> > > +void notrace __sanitizer_cov_trace_pc_guard_init(uint32_t *start,
-> > > +                                                uint32_t *stop)
-> > > +{
-> > > +}
-> > > +EXPORT_SYMBOL(__sanitizer_cov_trace_pc_guard_init);
-> > > +#else /* !CONFIG_KCOV_UNIQUE */
-> > > +void notrace __sanitizer_cov_trace_pc(void)
-> > > +{
-> > > +       if (!check_kcov_mode(KCOV_MODE_TRACE_PC, current))
-> > > +               return;
-> > > +
-> > > +       kcov_append_to_buffer(current->kcov_state.area,
-> > > +                             current->kcov_state.size,
-> > > +                             canonicalize_ip(_RET_IP_));
-> > > +}
-> > >  EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
-> > > +#endif
-> > >
-> > >  #ifdef CONFIG_KCOV_ENABLE_COMPARISONS
-> > >  static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u6=
-4 ip)
-> > > @@ -254,7 +275,7 @@ static void notrace write_comp_data(u64 type, u64=
- arg1, u64 arg2, u64 ip)
-> > >         start_index =3D 1 + count * KCOV_WORDS_PER_CMP;
-> > >         end_pos =3D (start_index + KCOV_WORDS_PER_CMP) * sizeof(u64);
-> > >         if (likely(end_pos <=3D max_pos)) {
-> > > -               /* See comment in __sanitizer_cov_trace_pc(). */
-> > > +               /* See comment in kcov_append_to_buffer(). */
-> > >                 WRITE_ONCE(area[0], count + 1);
-> > >                 barrier();
-> > >                 area[start_index] =3D type;
-> > > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > > index f9051ab610d54..24dcb721dbb0b 100644
-> > > --- a/lib/Kconfig.debug
-> > > +++ b/lib/Kconfig.debug
-> > > @@ -2156,6 +2156,8 @@ config ARCH_HAS_KCOV
-> > >  config CC_HAS_SANCOV_TRACE_PC
-> > >         def_bool $(cc-option,-fsanitize-coverage=3Dtrace-pc)
-> > >
-> > > +config CC_HAS_SANCOV_TRACE_PC_GUARD
-> > > +       def_bool $(cc-option,-fsanitize-coverage=3Dtrace-pc-guard)
-> > >
-> > >  config KCOV
-> > >         bool "Code coverage for fuzzing"
-> > > @@ -2172,6 +2174,28 @@ config KCOV
-> > >
-> > >           For more details, see Documentation/dev-tools/kcov.rst.
-> > >
-> > > +config ARCH_HAS_KCOV_UNIQUE
-> > > +       bool
-> > > +       help
-> > > +         An architecture should select this when it can successfully
-> > > +         build and run with CONFIG_KCOV_UNIQUE.
-> > > +
-> > > +config KCOV_UNIQUE
-> > > +       depends on KCOV
-> > > +       depends on CC_HAS_SANCOV_TRACE_PC_GUARD && ARCH_HAS_KCOV_UNIQ=
-UE
-> > > +       bool "Use coverage guards for KCOV"
-> > > +       help
-> > > +         Use coverage guards instrumentation for KCOV, passing
-> > > +         -fsanitize-coverage=3Dtrace-pc-guard to the compiler.
-> >
-> > I think this should talk about the new mode, the new ioctl's, and
-> > visible differences for end users first.
->
-> Something like this, maybe?
->
->           This option enables KCOV's unique program counter (PC)
-> collection mode,
->           which deduplicates PCs on the fly when the KCOV_UNIQUE_ENABLE i=
-octl is
->           used.
->
->           This significantly reduces the memory footprint for coverage da=
-ta
->           collection compared to trace mode, as it prevents the kernel fr=
-om
->           storing the same PC multiple times.
->           Enabling this mode incurs a slight increase in kernel binary si=
-ze.
->
->
+On 7/25/25 16:05, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> ioc_lookup_icq() is used by bfq to lookup bfqq from IO path, the helper
+> have to be protected by queue_lock, which is too heavy. Hence add a new
+> helper that is lookless, this is safe because both request_queue and ioc
+> can be pinged by IO that is still issuing.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/blk-ioc.c | 34 ++++++++++++++++++++++++++++++++++
+>  block/blk.h     |  1 +
+>  2 files changed, 35 insertions(+)
+> 
+> diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+> index ce82770c72ab..4945b48dfdb6 100644
+> --- a/block/blk-ioc.c
+> +++ b/block/blk-ioc.c
+> @@ -343,6 +343,40 @@ struct io_cq *ioc_lookup_icq(struct request_queue *q)
+>  }
+>  EXPORT_SYMBOL(ioc_lookup_icq);
+>  
+> +/**
+> + * ioc_lookup_icq_rcu - lookup io_cq from ioc in io path
+> + * @q: the associated request_queue
+> + *
+> + * Look up io_cq associated with @ioc - @q pair from @ioc. Must be called from
+> + * io issue path, either return NULL if current issue io to @q for the first
+> + * time, or return a valid icq.
+> + */
+> +struct io_cq *ioc_lookup_icq_rcu(struct request_queue *q)
+> +{
+> +	struct io_context *ioc = current->io_context;
+> +	struct io_cq *icq;
+> +
+> +	WARN_ON_ONCE(percpu_ref_is_zero(&q->q_usage_counter));
 
-Looks good to me.
+I do not think this is necessary.
 
-> > > +         Every coverage callback is associated with a global variabl=
-e that
-> > > +         allows to efficiently deduplicate coverage at collection ti=
-me.
-> > > +         This drastically reduces the buffer size required for cover=
-age
-> > > +         collection.
-> > > +
-> > > +         This config comes at a cost of increased binary size (4 byt=
-es of .bss
-> > > +         plus 1-2 instructions to pass an extra parameter, per basic=
- block).
-> > > +
-> > >  config KCOV_ENABLE_COMPARISONS
-> > >         bool "Enable comparison operands collection by KCOV"
-> > >         depends on KCOV
-> > > diff --git a/scripts/Makefile.kcov b/scripts/Makefile.kcov
-> > > index 67e8cfe3474b7..0b17533ef35f6 100644
-> > > --- a/scripts/Makefile.kcov
-> > > +++ b/scripts/Makefile.kcov
-> > > @@ -1,5 +1,9 @@
-> > >  # SPDX-License-Identifier: GPL-2.0-only
-> > > +ifeq ($(CONFIG_KCOV_UNIQUE),y)
-> > > +kcov-flags-y                                   +=3D -fsanitize-cover=
-age=3Dtrace-pc-guard
-> > > +else
-> > >  kcov-flags-$(CONFIG_CC_HAS_SANCOV_TRACE_PC)    +=3D -fsanitize-cover=
-age=3Dtrace-pc
-> > > +endif
-> > >  kcov-flags-$(CONFIG_KCOV_ENABLE_COMPARISONS)   +=3D -fsanitize-cover=
-age=3Dtrace-cmp
-> > >  kcov-flags-$(CONFIG_GCC_PLUGIN_SANCOV)         +=3D -fplugin=3D$(obj=
-tree)/scripts/gcc-plugins/sancov_plugin.so
-> > >
-> > > diff --git a/scripts/module.lds.S b/scripts/module.lds.S
-> > > index 450f1088d5fd3..314b56680ea1a 100644
-> > > --- a/scripts/module.lds.S
-> > > +++ b/scripts/module.lds.S
-> > > @@ -64,6 +64,29 @@ SECTIONS {
-> > >                 MOD_CODETAG_SECTIONS()
-> > >         }
-> > >  #endif
-> > > +
-> > > +#ifdef CONFIG_KCOV_UNIQUE
-> > > +       __sancov_guards(NOLOAD) : {
-> > > +               __start___sancov_guards =3D .;
-> > > +               *(__sancov_guards);
-> > > +               __stop___sancov_guards =3D .;
-> > > +       }
-> > > +
-> > > +       .text : {
-> > > +               *(.text .text.[0-9a-zA-Z_]*)
-> > > +               *(.text..L*)
-> > > +       }
-> >
-> > Why do we need these here? .text does not look specific to CONFIG_KCOV_=
-UNIQUE.
-> > Is it because of constructors/destructors emitted by the compiler, and
-> > .init.text/.exit.text don't work w/o .text?
-> > A comment here would be useful.
->
-> This is because the compiler creates duplicate .init.text/.exit.text,
-> making the module loader unhappy.
-> I'll add a comment.
+> +
+> +	if (!ioc)
+> +		return NULL;
+> +
+> +	icq = rcu_dereference(ioc->icq_hint);
+> +	if (icq && icq->q == q)
+> +		return icq;
+> +
+> +	icq = radix_tree_lookup(&ioc->icq_tree, q->id);
+> +	if (!icq)
+> +		return NULL;
+> +
+> +	if (WARN_ON_ONCE(icq->q != q))
+> +		return NULL;
+> +
+> +	rcu_assign_pointer(ioc->icq_hint, icq);
+> +	return icq;
+> +}
+> +EXPORT_SYMBOL(ioc_lookup_icq_rcu);
 
-Yes, a comment would help.
+Patch 2 calls this function with the rcu_read_lock() held. Why not move that rcu
+read lock here inside this function ? That is how ioc_lookup_icq() was doing
+things, with code that is more compact than this.
+
+And since ioc_lookup_icq() was already using RCU, it seems that the only change
+you need is to remove the "lockdep_assert_held(&q->queue_lock);" from that
+function to endup with the same above functionality. So why all the churn ?
+
+Another question is: is it safe to call radix_tree_lookup() without any lock
+held ? What if this races with a radix tree insertion ? (I may be wrong here as
+I am not familiar with that code).
+
+> +
+>  /**
+>   * ioc_create_icq - create and link io_cq
+>   * @q: request_queue of interest
+> diff --git a/block/blk.h b/block/blk.h
+> index 468aa83c5a22..ef31b3ec1c69 100644
+> --- a/block/blk.h
+> +++ b/block/blk.h
+> @@ -461,6 +461,7 @@ static inline void req_set_nomerge(struct request_queue *q, struct request *req)
+>   */
+>  struct io_cq *ioc_find_get_icq(struct request_queue *q);
+>  struct io_cq *ioc_lookup_icq(struct request_queue *q);
+> +struct io_cq *ioc_lookup_icq_rcu(struct request_queue *q);
+>  #ifdef CONFIG_BLK_ICQ
+>  void ioc_clear_queue(struct request_queue *q);
+>  #else
+
+
+-- 
+Damien Le Moal
+Western Digital Research
 
