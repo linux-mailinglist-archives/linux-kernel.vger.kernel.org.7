@@ -1,86 +1,139 @@
-Return-Path: <linux-kernel+bounces-745206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE80B11693
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:42:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084BEB116A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FFC87BA085
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:40:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4728AA3722
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB3D23770A;
-	Fri, 25 Jul 2025 02:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075E9230BD2;
+	Fri, 25 Jul 2025 02:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q05+ipRq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NnZNDbMp"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168DE54F81;
-	Fri, 25 Jul 2025 02:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95F422ACEF
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753411325; cv=none; b=YnSYsgT7MNKlyAeebW7r+D71WELXNVe34YwDkFTgvBRTvy9VPdsLNumjyRRsdEqhjTd8Uf228NlC382OcebaUIRz1XBAIRZhg2VQxNW9m/GFjjpajyyCo+tUECZf7uIGy3nTjAKURZ7UoN+aFkM1wEfl3XuMYNYADOkdkPYepqU=
+	t=1753411438; cv=none; b=fHahXrjL15XrbgiLH3vLCTswUBJquVxldwJsj3qT1RElDiwIuBZYBqTPXUgU7AGpWUkX8NhliiE1X9kLqs7c3syyQceMyvDRYygK1cpUXnHx0nFw2Wf4C2w0kQEWtFO58C55dtBi9QhWJkFlLm5YjB9gnxbAIshEybVsWRBr73w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753411325; c=relaxed/simple;
-	bh=/Wzdxi+FPpqqrFYqJSRrwfVEvytWS2E7haaA0G+djCQ=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=pLl8qMv0SX3aD4KC79S7bHbGJJ7X3G+Ujfm0wpM/dt4Lq9kk+ZxCbVU23iZ+I+HuVeFUAlZRvw5nOLwt7Pbk/J5nn+DFeLT+YU+LzKgnyPkYICEviPwL8FubZL3my3LU4WwA5W4t7m9aoUOr4l8nRpvbHVN0c1dQ9rOVWe3dTKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q05+ipRq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C483C4CEED;
-	Fri, 25 Jul 2025 02:42:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753411324;
-	bh=/Wzdxi+FPpqqrFYqJSRrwfVEvytWS2E7haaA0G+djCQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Q05+ipRqgOKM9ulQakC4Kame56xoZ1ktwQHG4p2XBCrUmptyrixMs8W8cOvssYCow
-	 SWBf+2skMIYvclwUtHY3/YFK/UX5AOCoBMWxcxUT+YeFIVQTbZIcuYEaoeKhX+kXrL
-	 01haOR6mUd1yntkZX/f/zSjiuWUpVAGqlXdf/koCEXeNHG3VB7H29ygNRZyoj3sFUL
-	 A6KVg7mtkASoNgEZNnRSwB8hVkUFf27iIQS1H3cqfbmhKC0LqxQ4/cYT6MhfoLaXah
-	 SlU7/TNbf8Q1pyv3YMZU7dZscywJvpjvS2DtoFSV9jHEbJU+w9gbw7JY3uNfDhvqdY
-	 Uh5du55PTEkEQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753411438; c=relaxed/simple;
+	bh=7hlZomtnwSEYXgOyb5FEyanHu7jwB5H+48d2zwgeTUg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JF7GKiHnLcWH6Wu9GATtNkMZ8C3DWwDabAa1RYOsQepJ401MNogb5itDiagEbzGXm5ykSRtUq/4+ax0FDWdGVGNaE/myXvFO8LHonSpxZMv07WYbmjHjPLGBqTBZT11RSawdFhnlZ4+9NqMIyEyzKHeiPZcLK8hyDcZ8eLMkhPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NnZNDbMp; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8bd171826cso1325720276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:43:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1753411436; x=1754016236; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FySz+cRu8BfNFHOSnCCE2y4s68tkhJQYIqvY80ZJOyg=;
+        b=NnZNDbMp6cO1yeqOxSzJnQHbtkt8YjbLFdeK2oiZJOaqEDKfGwtANFCOytqsmHBnpX
+         g07As2ZGtKdnx632yB3Fo9nZEHYkmlOZHr9gFo4Gv0zp4ApBc/Qw54MEV+efM0iYV+KP
+         IEIcpQ4n72+XHkp9T3xNcDnZPqnTvL1EMN65rZ87N8iTXGgt44UuNPtTt3pTIptjd37W
+         pddb1v+TIbQR7xW5DgCVpRkCSqmnWMmn7KUz/I+wews+3ls06v544i3VBezGGny3IT6u
+         P3hkZfT7U9DezUjN59PpiI/S/tyuzjwSkZgO9ok+oht6MEh3NAkQvLz9Q0YaWb/0xwvK
+         XhpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753411436; x=1754016236;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FySz+cRu8BfNFHOSnCCE2y4s68tkhJQYIqvY80ZJOyg=;
+        b=hTDBQm1pC21bdmKdH9hjukr/MdHQu3MfCgv7gPkcQQpuzaZIzmtBpGSzfQHhvvfToD
+         nhqR0QV/e+DGzobR21zNeU1H3EjrBqcv19Xf+eHF50fLGK2uaLtmz/hJEA7dfUOXrQO1
+         odEd++UIGH1i1t7rCy6/jBR6A5CqvOOt3Z/ZIqKwCUYhcL5zLZu8p7wwSXZVlzheueUs
+         sDqeD/nGxoS0xGl9Qxy2u2q7F2sYJoZLyyOI4qxroBKDrWiQK6qqRqiPSsMDXy8QImwN
+         ut3L2dz9XYVd9Bgvdbn34XzwA/4cvQi4SQBjUoOVnfErP9scvF/Bk/xUcnMpDr2TmRqc
+         b8xA==
+X-Forwarded-Encrypted: i=1; AJvYcCWD9XRM6grYlhiLYluz/wLBo1YK9gwlecGtceEZ9dKL7xGX8DZZBUB75zr/BoJrAiL7zFSXku5gm1ynRZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbaeEI+JWIzUSd5m5n2IuntyLbSt4gwRP7hWbHD57bvDP2VnZn
+	PMb4Lfrw8LtGPCtgwWSUGPyT3yQsPyjgrHGjHAvf6X1h52FyLVyeKjGCOE4ACCFX/AEGwHLdtpu
+	X0Xs2p5qUpRxRURECEmMxwRxdq+T2dggLso3d8ey/
+X-Gm-Gg: ASbGncuKMCAYcXLGdkcE2NyKwP+ZTCp2zVlSGMVGHKsOCUbodFyRk85KHuC7hCQaUOc
+	y8aZ6c+8nwlW8lNoecfMrEen1nPnvLjRdYV7EODC6UNA0ub2jYakSk7p0VOVtZaaEEtx8UQwcbt
+	EILLNTpnUf3GaeDlq4tj6VGpJbgoxPdFvv8BY0Jyf0JQwRKkf8ZvpV2pm8OHTZ+Wase3CPWwH06
+	7usOfQ=
+X-Google-Smtp-Source: AGHT+IGy0kReF31F1j3wAaPhrwrQg7J25T0JtgcUwvIMbS5nqsDq9A60L8ppu0vixFFhHxaUG+UyC2kOcMggzd4esWk=
+X-Received: by 2002:a05:6902:1747:b0:e8d:9f9a:79bd with SMTP id
+ 3f1490d57ef6-e8df1134dbemr143078276.17.1753411435973; Thu, 24 Jul 2025
+ 19:43:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
+ <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CAHC9VhS3qY=+DVYqzkgbHLETUo4KgQ17qr_BC3pn9TeG+cr8Mg@mail.gmail.com> <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
+In-Reply-To: <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 24 Jul 2025 22:43:44 -0400
+X-Gm-Features: Ac12FXx7R_BHZgXqsCbTxD-hHKdNeH-KBiya6C276YAbabcH3l3gvX9QAvZbV9M
+Message-ID: <CAHC9VhQ+4=J=nf2Yeb_QACVD4-d3_aUScpBAZhGyj7_+z+mBEw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Secure Boot lock down
+To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, Xiu Jianfeng <xiujianfeng@huawei.com>, 
+	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Yue Haibing <yuehaibing@huawei.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
+	Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250704070356.1683992-9-apatel@ventanamicro.com>
-References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704070356.1683992-9-apatel@ventanamicro.com>
-Subject: Re: [PATCH v8 08/24] dt-bindings: clock: Add RPMI clock service message proxy bindings
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Anup Patel <apatel@ventanamicro.com>, Conor Dooley <conor.dooley@microchip.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Anup Patel <apatel@ventanamicro.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Date: Thu, 24 Jul 2025 19:42:03 -0700
-Message-ID: <175341132347.3513.7184287611040628050@lazor>
-User-Agent: alot/0.11
 
-Quoting Anup Patel (2025-07-04 00:03:40)
-> Add device tree bindings for the RPMI clock service group based
-> message proxy implemented by the SBI implementation (machine mode
-> firmware or hypervisor).
->=20
-> The RPMI clock service group is defined by the RISC-V platform
-> management interface (RPMI) specification.
->=20
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-[...]
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller {
+On Thu, Jul 24, 2025 at 8:59=E2=80=AFAM Nicolas Bouchinet
+<nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
+>
+> Hi Hamza, thanks for your patch.
+>
+> Thanks, Paul, for the forward.
+>
+> Sorry for the delay, we took a bit of time to do some lore archaeology
+> and discuss it with Xiu.
+>
+> As you might know, this has already been through debates in 2017 [1]. At
+> that time, the decision was not to merge this behavior.
+>
+> Distros have indeed carried downstream patches reflecting this behavior
+> for a long time and have been affected by vulnerabilities like
+> CVE-2025-1272 [2], which is caused by the magic sprinkled in
+> setup_arch().
+>
+> While your implementation looks cleaner to me. One of the points in
+> previous debates was to have a Lockdown side Kconfig knob to enable or
+> not this behavior. It would gate the registration of the Lockdown LSM to
+> the security_lock_kernel_down() hook.
+>
+> However, what bothers me is that with this patch, if UEFI Secure Boot is
+> activated and a user wants to disable Lockdown, they need to go through
+> disabling Secure Boot. I'm really not fond of that. A user shouldn't
+> have to be forced to disable security firmware settings because of a
+> kernel feature.
+>
+> We thus might want to add a way to disable Lockdown through kernel
+> cmdline.
 
-Maybe the name should be 'clock-service' then? I don't understand SBI so
-not sure why this is in DT to begin with. Is something consuming this
-node? Or a driver is binding to it?
+One can enable/disable "normal" LSMs via the "lsm=3D" kernel command
+line option, however, as Lockdown is an "early" LSM, it is enabled
+prior to the command line option parsing in the kernel so that isn't
+really an option unless we add some mechanism to later disable
+Lockdown during the "normal" LSM initialization phase when the command
+line options are available.  This would result in a window of time
+during very early boot where Lockdown would be enabled, before being
+disabled, but I have no idea how problematic that might be for users.
 
-> +        compatible =3D "riscv,rpmi-mpxy-clock";
-> +        mboxes =3D <&rpmi_shmem_mbox 0x8>;
-> +        riscv,sbi-mpxy-channel-id =3D <0x1000>;
-> +    };
+--=20
+paul-moore.com
 
