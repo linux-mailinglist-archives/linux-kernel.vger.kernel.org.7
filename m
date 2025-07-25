@@ -1,134 +1,96 @@
-Return-Path: <linux-kernel+bounces-746128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CC0B1237A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:04:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F28B12385
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE4AF7B30C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:02:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70E1C540208
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E134025C804;
-	Fri, 25 Jul 2025 18:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED3A2F002C;
+	Fri, 25 Jul 2025 18:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDoP2bde"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="FcPBDz27"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1061FECAB;
-	Fri, 25 Jul 2025 18:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2567323D2A8;
+	Fri, 25 Jul 2025 18:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753466643; cv=none; b=BPfD7b+PzQhi+FQT1Urau2GPu491D38diiApD+oxrfElJZWUv7KqwHmVwIkV2IIxwq2hn62Vwr8k7E/HnmztMcEs5SWWiIAmxFX3m8DK4OZ+AntF76yf2JHzDEtCwV8C9SGhEvGgSDwjRsnzTQhvXTRGlveo1yGdK19yGWCNAGY=
+	t=1753466750; cv=none; b=dJsdPN7lfAE+kq9asdBf4zPWvfDckdf8wnogVZvHDPaNRUTme5M8fXkPflAUgotYXnyLGENcF9+sLs6JuxZ9mOjmIqPJKCv+vwJNpXWPDR+Lh6vDAaoG58/A7m3VktQf5xftozbpxfgp4DGNoTOVfQdeoFDCJcGX2I1AXMrWBLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753466643; c=relaxed/simple;
-	bh=t1ElelA+AA/2eA0Ed3WXAKbt0xtm+gc2ukuMnnrTE0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p8FjmgrSmJkL9HgvLGV0fNEC06eN3CDRcM7jcaHNjGlxsMvSL6yTYwrf8nHQVr5163nxIPI5PeaspwLb75d5hOHd2lW042/FqFefBC9GgKdaXxjHOmE8FDqq24tPhfbuMVzOgbRiTE0Ev/1ekeSJ/pfwTu0dDsvr5Ikz5dSK+pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gDoP2bde; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23602481460so25592495ad.0;
-        Fri, 25 Jul 2025 11:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753466641; x=1754071441; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YiBSr+Y9I1a7gYBTBbf9MjCA23vsvTi18jLkmTr9ZuQ=;
-        b=gDoP2bdezyy5ufmp9ZToEjiONrY6ILr6o/1fr50oScZoZInQZ3k2uQo8nPV4Oq5Vy0
-         iKjLpzxenmDLUiZdeHgHSsJlrqYNc81FpAHyBPMUaGzsIYQL4NAnvw3/Bof/E2XWJelu
-         E/1THo33X1RNPKVO5VoHR6wGl6YhHk1Ty1Oc8SQZD5+POyK0awnHBEt6lWK4vLu7jJXi
-         ZacrFvNVoDNdeEf3xRRISnEwSTf68JMeAl69b1L6I0AFgR/ny+TrfGQeflHIp/YIef/B
-         8rSrrjQuVudqYgG3Zn6uOg3Zh2wHQpK0vvZybOYKzu3I2/ZgBK5VlM/yQA9QWoEEnHHI
-         UxGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753466641; x=1754071441;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YiBSr+Y9I1a7gYBTBbf9MjCA23vsvTi18jLkmTr9ZuQ=;
-        b=mK5nASL69tv6AjixNBhX6WXx9FXcnp9mWaWOvbZuObYxXUc8LEFTztm5WmpGB/wo3f
-         oduKnLGlwDqo8NvI+xOJl/Zxb9SEGeP9mfRxOEt0quCnVyrKkJlWr/ngVkZpyU4xgZ7a
-         X2ty6gxGQEy3MzyCOD3N8EuIi2l08fJ3QmCYdHxj90j0EVURcXAIqkK0NSvEZnv5wUFf
-         if2YlI6/vHhBVjvjggTfgNqYsfqdliUz+jMppqHjUFQyoNrbjNkxJpgHCHlvu9JwYO5r
-         Ew8KsXWbULN1jTu7a8d0WeUu16SyBoCeaVEWxDn8w/rrcoBAm3Vn4UK9DygrNvbZPf0g
-         Y3Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmCLqPTPPGbLvXuNKogAYOf/S2NPDUA33JsJHp2tjSIGwKIqZzKigPpladIV8VHhNcrULgq/E7@vger.kernel.org, AJvYcCXIngND36vMLS3GxXnwxFrF4wl0MVH++HQ83+H0pGz/QMCYRaYXo70+snzQBZkofVnU3ZnS7euoRsqgBAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8UXhlvGq8G6ofKprK3FR2a0UGD9S+Fnk7q7+j4ndoGNFj7cox
-	w+O278S9WNvmkDx9WPB9IakVJ8hcvHtWbglDCQxRPZp6YEfn1PxfvkFm
-X-Gm-Gg: ASbGncvsBWHdzmk5Zky94FGd4rF6CjySTXYYsPmoosdIPDBdMkw+vq/R+ckkpu5tGA7
-	6g9fBp/20X3G4pEavn3weCThSvU948NpbxX3V8MbU2XRdOheUIWfXVj8SBRhRlKLifGmx8zBeuL
-	oU+kr60SAf7J+Q1jOPsjjEHrMYEzdDNmGjx3TzWazOszM9epP9q9LfSVslxHxrhUt8xlB85PyXH
-	3xyIUNwVhvkGLCQ9BxJpPDyRaMfrhpI3NMcwr0ofFtg+lalxMg1ZeEc+UKRJmpkuSHlCb17OJBf
-	mL+/Z9DeiZnky0TvZQO1J5KYQlNCWnlzRKoZalQAMIrYygYEyj2FzsNsvbVt2MI/hD/kU6AmpBx
-	eJTE1EyuBVOmAn3m4pEs57RwASQ==
-X-Google-Smtp-Source: AGHT+IFWBHpa1pjnELupSorF8h9dbYaDoUC9qL1FEZ/Kp948tO4ShFFH+LE0kHus4iTgvDF+HlM1YA==
-X-Received: by 2002:a17:903:1a87:b0:225:abd2:5e4b with SMTP id d9443c01a7336-23fb3084dc6mr41756345ad.16.1753466641192;
-        Fri, 25 Jul 2025 11:04:01 -0700 (PDT)
-Received: from localhost ([129.210.115.104])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe512cafsm2018095ad.124.2025.07.25.11.04.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 11:04:00 -0700 (PDT)
-Date: Fri, 25 Jul 2025 11:03:59 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Maher Azzouzi <maherazz04@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jhs@mojatatu.com, jiri@resnulli.us,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, Ferenc Fejes <fejes@inf.elte.hu>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH net] net/sched: mqprio: fix stack out-of-bounds write in
- tc entry parsing
-Message-ID: <aIPHD7Ktk8Q2kyrL@pop-os.localdomain>
-References: <20250722155121.440969-1-maherazz04@gmail.com>
- <20250723125521.GA2459@horms.kernel.org>
+	s=arc-20240116; t=1753466750; c=relaxed/simple;
+	bh=RbaHXKOumQvn00PCmVrWI0kuNbT0c/19c0zosGE1V1s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E2/Fj8Au46fhOlMx+1pykxHhZZymxD2ch8XAeJtFyKbFAid1ZhSNQDkjka/I61kduTWwWyasiPhqhvGHULmUwkPwnMC0evPd7c63AP3hFBZuvE/0SV07DFOj1WT2UaJZ42icyM0FF9EEKtet5tqxRPW/fIxYjPLGZccG4RZhpyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=FcPBDz27; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1753466362;
+	bh=RbaHXKOumQvn00PCmVrWI0kuNbT0c/19c0zosGE1V1s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
+	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=FcPBDz27zuUqwmeqgjFeFBnsW2niRJGJObJ6Xb8N/3wXw16SCBmITsJK0LbeKZ5Vy
+	 +JJBKFl7EelWwM5rhDNGa8HuMATxNPo4X+Wuk9BRuINkLwjrWPxJsfotjbbd3y6DxU
+	 K3U/GKxiCdZXHs4EMIFZ9Xh/hGHBS0koVIN4J6RZ0TSY4YPLiWiODnRFSfBJ281Yl2
+	 GpilVm04eU46vZH8wx2IevOlStR6uORz+4buMamXHErdpGstpg6rdcpahTkwd/Zn1E
+	 t+sT45uKZ/XBSiOgm3WgEC15EL8b/A7XFj4CV3E855z0nltjc1y6Mqg4K7tx1L88mF
+	 8lu5qJLHe2Ekg==
+Received: from integral2.. (unknown [182.253.126.144])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 12BE32109AB5;
+	Fri, 25 Jul 2025 17:59:19 +0000 (UTC)
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+	Christian Mazakas <christian.mazakas@gmail.com>,
+	Michael de Lang <michael@volt-software.nl>,
+	io-uring Mailing List <io-uring@vger.kernel.org>,
+	GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH liburing 0/2] liburing fixes
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Sat, 26 Jul 2025 00:59:11 +0700
+Message-Id: <20250725175913.2598891-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250723125521.GA2459@horms.kernel.org>
 
-On Wed, Jul 23, 2025 at 01:55:21PM +0100, Simon Horman wrote:
-> + Ferenc and Vladimir
-> 
-> On Tue, Jul 22, 2025 at 04:51:21PM +0100, Maher Azzouzi wrote:
-> > From: MaherAzzouzi <maherazz04@gmail.com>
-> 
-> nit: space between your names please
-> 
-> > 
-> > TCA_MQPRIO_TC_ENTRY_INDEX is validated using
-> > NLA_POLICY_MAX(NLA_U32, TC_QOPT_MAX_QUEUE), which allows the value
-> > TC_QOPT_MAX_QUEUE (16). This leads to a 4-byte out-of-bounds stack write in
-> > the fp[] array, which only has room for 16 elements (0–15).
-> > 
-> > Fix this by changing the policy to allow only up to TC_QOPT_MAX_QUEUE - 1.
-> > 
-> > Fixes: f62af20bed2d ("net/sched: mqprio: allow per-TC user input of FP adminStatus")
-> > Reported-by: Maher Azzouzi <maherazz04@gmail.com>
-> 
-> I don't think there is any need to include a Reported-by tag if
-> you are also the patch author.
+Hi Jens,
 
-+1
+Hopefully, not too late for 2.12. Two small final fixes here:
 
-> 
-> > Signed-off-by: Maher Azzouzi <maherazz04@gmail.com>
-> 
-> I agree with your analysis and that this is a good fix.
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
+  - Fix build error when using address sanitizer due to missing
+    `IORING_OP_PIPE` in `sanitize.c`.
 
-Reviewed-by: Cong Wang <xiyou.wangcong@gmail.com>
+  - Don't use `IOURINGINLINE` on `__io_uring_prep_poll_mask` as it
+    is not a function that should be exported in the FFI API.
+
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+
+Ammar Faizi (2):
+  sanitize: Fix missing `IORING_OP_PIPE`
+  liburing: Don't use `IOURINGINLINE` on `__io_uring_prep_poll_mask`
+
+ src/include/liburing.h | 2 +-
+ src/sanitize.c         | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
 
-Thanks for the patch.
+base-commit: ec856cecab2ed4bcbdba2b06a8c7cb5a52083c28
+-- 
+Ammar Faizi
+
 
