@@ -1,183 +1,138 @@
-Return-Path: <linux-kernel+bounces-745995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C93B1216E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:04:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13236B12170
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75CC5188F0B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:04:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A8D15477AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF572EE998;
-	Fri, 25 Jul 2025 16:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519CC2EE98B;
+	Fri, 25 Jul 2025 16:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DOitb12f"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2079.outbound.protection.outlook.com [40.107.236.79])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MVHx51AG"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989782BB17;
-	Fri, 25 Jul 2025 16:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753459449; cv=fail; b=dgNqQqL9Xt0LdIslhDOZNhzEgbUeWmOt78FxLVanB28HgGcTmtCqseF5/eXb8Pl91Zzo48Yysip8PgjqZtI4BxmRV/rtTbdNhlW2d0QmKOywBcuKhj88ZWyFEtfI+j0dM9caqPTPU2kuITBKCX5/CO8jGnbBZa/XnzHUpEu1jrw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753459449; c=relaxed/simple;
-	bh=LwkALrNXflbuCzH4705AYomAX5TL0kfB704r1SgkBdc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLmqsjdDXxP63sTJq7XZ00c8Xx5MktSOGH5LIkUx9tg1qydmNQK9/4/KZ8Txzv3EcvgdvpULN3+FiN/sw1hOFhkDX/hveKUpZnKogLaf+JpuXkIACvWb6c0ntcD85enrPJj4sjv2HDGYNfvqofTE4Fcra5bvRM1U9MWlZH6MY+Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DOitb12f; arc=fail smtp.client-ip=40.107.236.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QgWNVlbRk9YidnlCROEc43djdo43jVDcDYO9J4y6XPb6qWYGgRIPrr4z+a7n1uECPgW3eKNXA7mWUXju9k75vxy/vgewySMQ3K8e0DxmU7FZ2It5jjHUau/ztjs0ZVZFaPuEoz/H9fWiaE/yCkQM81NlVPfC+ezivIz4ZNZ98s8221WHKnfNB7jN5wZWySjOE1LY/FQvReUdkFN8DoHG3KJojg+aZqfAiM6g+3T9QfYdHWGr4V9zdBJIbQyZF9zpayhigTAY1a7vLiw4k8753m48bcPSCD0OS+cukp7HlYFeFUSZBs5nYSkNAESi9mItJYhCgGupqVavrwHzapapMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IXuJBt8uESMxPtma12oy3ryy0D/QoFBH9o+obC74e1E=;
- b=YDmJpPjztS9j0FhzYpJU26Ueb6kTm51+qCwGSUkjOqEhiyVWb/F4gRbLgeoF76Mt2oiAJ7WuzV/ovXXMHDp1+cX65sXpjSLhCb9p8DS2vqNNt2MqGNax4n1ZyD4P7EaAv5NSLMiqqPoDhUbd3HQTLR58lPE+MM4Tz3NofTi1mvISkh8KvqDAyeOAYU6sXudSXYerii9KiJUfkowCzui4oU8FMXsFNqoyeVCNBXf8o94yXxuCBcDn/SBoGYDNeVp3KHHOrV+gD5FnASlfK6Ywc6hUFRthmfs/IfRh97K7cpfSDWJkCwnjRgaPSRVTAZJzLqiUCvu3KPCtrQrqDjfyCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IXuJBt8uESMxPtma12oy3ryy0D/QoFBH9o+obC74e1E=;
- b=DOitb12fdwa9Z+Xx7LRMj6gipvVHwy3e/n80yQm/xitOxcFSAVBnXd/wkdxTTaGalBdIcZykq9Kkrz/OkRFBMzeACkyl1e30RSN18WF2PjRbKP25UesPp2MpbmjeMbhkGGGNQns+Lz5RHtLH5Vssezgv25k3WK8kf/rRSZY6xWXyXG59dpeLF1wHCH2GGoAEA6Cm6kbEyaeH4UWK/aJlevFOxDHCmhQc2yguDa4ycwvdA3N1Rs033pFeoFSGNUb37wKuyhNkN1p4k/Mef4yXKL0OOPEp89pDOnYYVGSB6mFgKbpud/krXmsByWxD5Xwv+M8o9g2wC1KP6p9RcNevXw==
-Received: from BL1P222CA0022.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:2c7::27)
- by IA1PR12MB8310.namprd12.prod.outlook.com (2603:10b6:208:3ff::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.23; Fri, 25 Jul
- 2025 16:04:04 +0000
-Received: from BN3PEPF0000B072.namprd04.prod.outlook.com
- (2603:10b6:208:2c7:cafe::ca) by BL1P222CA0022.outlook.office365.com
- (2603:10b6:208:2c7::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.24 via Frontend Transport; Fri,
- 25 Jul 2025 16:04:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B072.mail.protection.outlook.com (10.167.243.117) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.20 via Frontend Transport; Fri, 25 Jul 2025 16:04:03 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 25 Jul
- 2025 09:03:41 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 25 Jul
- 2025 09:03:41 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.6)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 25 Jul 2025 09:03:40 -0700
-Date: Fri, 25 Jul 2025 09:03:39 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Pranjal Shrivastava <praan@google.com>
-CC: <jgg@nvidia.com>, <will@kernel.org>, <joro@8bytes.org>,
-	<robin.murphy@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
- get_viommu_size
-Message-ID: <aIOq2ysFPfZsNUix@Asurada-Nvidia>
-References: <20250721200444.1740461-1-nicolinc@nvidia.com>
- <20250721200444.1740461-3-nicolinc@nvidia.com>
- <aIDlsUvF2Xbdelvx@google.com>
- <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
- <aIEwzM7mKUI8-h9U@google.com>
- <aIKd1owebUNQeN1-@google.com>
- <aIKqaGMMpsIuAVab@Asurada-Nvidia>
- <aIMR6xxR3Jdpy8kX@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D675B2BB17
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753459552; cv=none; b=Vu9DtVSCc9GP/8H4Sw0WTfl3/vnx9JDepsElFh/neJ2Xdmfhvnhz55/e7GeYLlCuV+/39f+t7qCjs6uFl3m2AEU9SH4tTo0m/Mkt0BShhPPxq/694lP5lIHpT5F0yEizlggN++26eMnDKGtXEhyDmw15yy/Ajz+cTzcRTfge3gM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753459552; c=relaxed/simple;
+	bh=YgPAnx9vFCwOx9iFj2kTW3xM7JALaN+r1UZ4mK4q20g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kp8TPtV0Jt5JwbfwhQ0IVdnvCrawVN1cjI+Rq1Zbk3J0LqC2kaM0gtvB+JbWrUVE1/f4eBf/C6kKSDsq5HscCrqq2vz4JuIxv2X+mVWQS+4wG7lImZ0q3fiJ47LEcPtGdwkLkK6ZJ3LEhADHzGrTua/K2QJawWP8XNVUyjpsHHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MVHx51AG; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c7241cc9-2b20-4f32-8ae2-93f40d12fc85@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753459538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g87AqOwyJOiheBSqVuAlI8MtvTXH78Z8e5bHHseWHY=;
+	b=MVHx51AGl+3SbE3RFIiWpv1PxlGsaOafEwYgmp3ig5tdja/tjCdzHveO9mLfKnEH7O/yUy
+	mFgJ1jvmGvH0iQRAKqGYOK/16t3rYgdgVXYqDGF3jo2+UIViufvlLh6mfD0Gk2eEQPF2rJ
+	4RG5WA/L41c8YRSuxajkw/Ui4DEbCQQ=
+Date: Fri, 25 Jul 2025 09:05:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aIMR6xxR3Jdpy8kX@google.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B072:EE_|IA1PR12MB8310:EE_
-X-MS-Office365-Filtering-Correlation-Id: b00a2cb5-0501-4c5c-b677-08ddcb94e038
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Tym/+y54IxzZ3gRwPP192A/sbKKZNPEeU25WIqr6/myEp3XQKbC0kUac0Lob?=
- =?us-ascii?Q?RWHPjPmBekPmVuwv3884IBN7P+VPuOvuyibj67S4JIB855RCMuW4HgI7Nal3?=
- =?us-ascii?Q?ZRSwNjNZcFGf8FnY/bYn/ScKlRTWn7Y+O0bd8QbfI0tHVoyiaUGMvwgCsGEa?=
- =?us-ascii?Q?kLSNrUHo/en/mgfDE4nRij7giHPdpBy2puPRVrrbFhxvSbpB6FpecvmbdS3K?=
- =?us-ascii?Q?aTU9tjvRoKIlRMT2IYw6NrOPjqx+1iDx/ZA/QMm6pukiB4LWVc7YDCcSus/S?=
- =?us-ascii?Q?8orYNZgdj39UZJtp4egDyGfHXRMmdNkD+ZAhRO+tk2P5ut+cuEYiXY5gtFBr?=
- =?us-ascii?Q?j97TaXl5sSAoIiyVQ/hfbkFrE65uCsbEtFI0LhjHUe6W8Nrupa7u1YeDFEJj?=
- =?us-ascii?Q?9JiSLt3KpYE1jZN0ofm/TXX8THkOddBebsw0IDbBHhhfVfC5BfB7Vin57cOg?=
- =?us-ascii?Q?HhnxkmWunsFB3YHuOVKncRYp0D9r7EHkrEA0jrLG4lxKyxNZe9yYXyQXay5y?=
- =?us-ascii?Q?/vQGHZaBNcAGEevolU/pg0DzvRe31MBfLcBV/oDrREUPnAdTpcOHxaagCa3n?=
- =?us-ascii?Q?vDVfzKky9dLnqb45dujbvxlGqrjSeIEIPFZfY9ydso/tSXV1rU+6xsAkQTj0?=
- =?us-ascii?Q?il6VWclPZ5GuWGoJIc2Pg2EbFf2lCJmKTsTxxtx6mmvIPpqBwWHKIuscLzKh?=
- =?us-ascii?Q?/glQbG5ve4PFkDwaP9DQa3ouG0CRMqsoyb6xIwNNSlqTjUW0aWx9OnX0rvgl?=
- =?us-ascii?Q?l/ejyRtlm2eGZ7tzPsMEgKVETNeaXkXdVV2P88TN8dyjdcZAXNHbKKP2m2A8?=
- =?us-ascii?Q?jkMgq8oxk+1cGYNTePh3A/b+u8aWbD7WNuNlMIqiYKoA9tesPyQO6xG2+KNF?=
- =?us-ascii?Q?3hXP4901fFaTa5BaUkz5T0QPhlEstK+e9XcKkhAp6/lQFY4u248/OGlvAndY?=
- =?us-ascii?Q?Djjpp6XsJba4D+q0igMWeQVTLkEtgUbJxnnmwpSJpJg+Vor4NBPmHBOvB49N?=
- =?us-ascii?Q?EJ5i5tCnpo6NG+J4AqDA+JV1CcaMxbqbCtLSvkMzJFl+8/RHaBJ2nyig7hUU?=
- =?us-ascii?Q?11Jk6fW46FF7PzsuT6mfFpr1NnAxN+01nPtak0APrkPGs7pZwCsvBiuztWCv?=
- =?us-ascii?Q?h4c1kA954C2BfjiNt8galkLDTXKVJVQ8vzk6A4WdIH+7WVhJCjtSkGZCmsqS?=
- =?us-ascii?Q?8JGTvqsYRTMyEJ9Eiwj17iPx13Y7uaDFg7xiKHRSRcIcHZprR0pPzTjAUy33?=
- =?us-ascii?Q?Ez8SQ/nnfi0/UBHqUvPRD3G8Ufkl2pzX2VkCZxcU/QMIXxYOf2Sn5+KNfkXl?=
- =?us-ascii?Q?/ePBDHGnxq3KUZ+BLkTj9XcAlrKfDvFqrI/kwRK3qplQNAfJ1v1x9x94C+Fw?=
- =?us-ascii?Q?9QwfeD3qugeZLkRKDHx01q0jpDdEHCGxFXghH08wrUbmCcP9s0K4MwKw+0lK?=
- =?us-ascii?Q?TXoyoG7ekAwFOnY/6s95YyJEuKYKriG/oN4WUAClxcMqZl/mGDjQXY5yfkJp?=
- =?us-ascii?Q?aEWKNnqmOS+vWeRwy6mNo0rv4FIOgPmU6Lzl?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 16:04:03.2095
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b00a2cb5-0501-4c5c-b677-08ddcb94e038
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B072.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8310
+Subject: Re: [PATCH bpf-next 0/4] Use correct destructor kfunc types
+Content-Language: en-GB
+To: Sami Tolvanen <samitolvanen@google.com>, bpf@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250724223225.1481960-6-samitolvanen@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250724223225.1481960-6-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jul 25, 2025 at 05:11:07AM +0000, Pranjal Shrivastava wrote:
-> On Thu, Jul 24, 2025 at 02:49:28PM -0700, Nicolin Chen wrote:
-> I'm agreeing with all of it, it's just that the comment says something 
-> was rejected in by the size op, which raises confusion as to why we're
-> in the init op. The init op rejecting something due to data corruption
-> is a different thing..
-> 
-> I totally get the point about data corruption, i.e.:
-> 
-> size op -> returned something valid
-> <data corruption>
-> init op -> rejecting corrupted type
-> 
-> Wheras I was just trying to understand a case where as per the comment:
-> "Unsupported type was rejected in tegra241_cmdqv_get_vintf_size()", 
-> i.e. ->size op returned 0, yet we ended up calling the init op
 
-Is the updated one in v4 fine to you?
 
-/*
- * Unsupported type should be rejected by tegra241_cmdqv_get_vintf_size.
- * Seeing one here indicates a kernel bug or some data corruption.
- */
+On 7/24/25 3:32 PM, Sami Tolvanen wrote:
+> Hi folks,
+>
+> While running BPF self-tests with CONFIG_CFI_CLANG (Clang Control
+> Flow Integrity) enabled, I ran into a couple of CFI failures
+> in bpf_obj_free_fields() caused by type mismatches between
+> the btf_dtor_kfunc_t function pointer type and the registered
+> destructor functions.
+>
+> It looks like we can't change the argument type for these
+> functions to match btf_dtor_kfunc_t because the verifier doesn't
+> like void pointer arguments for functions used in BPF programs,
+> so this series fixes the issue by adding stubs with correct types
+> to use as destructors for each instance of this I found in the
+> kernel tree.
+>
+> The last patch changes btf_check_dtor_kfuncs() to enforce the
+> function type when CFI is enabled, so we don't end up registering
+> destructors that panic the kernel. Perhaps this is something we
+> could enforce even without CONFIG_CFI_CLANG?
 
-Nicolin
+I tried your patch set on top of latest bpf-next. The problem
+still exists with the following error:
+
+[   71.976265] CFI failure at bpf_obj_free_fields+0x298/0x620 (target: __bpf_crypto_ctx_release+0x0/0x10; expected type: 0xc1113566)
+[   71.980134] Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+...
+
+
+The following is the CFI related config items:
+
+$ grep CFI .config
+CONFIG_CFI_AUTO_DEFAULT=y
+CONFIG_FUNCTION_PADDING_CFI=11
+CONFIG_ARCH_SUPPORTS_CFI_CLANG=y
+CONFIG_ARCH_USES_CFI_TRAPS=y
+CONFIG_CFI_CLANG=y
+# CONFIG_CFI_ICALL_NORMALIZE_INTEGERS is not set
+CONFIG_HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG=y
+CONFIG_HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC=y
+# CONFIG_CFI_PERMISSIVE is not set
+
+Did I miss anything?
+
+>
+> Sami
+>
+> ---
+>
+> Sami Tolvanen (4):
+>    bpf: crypto: Use the correct destructor kfunc type
+>    bpf: net_sched: Use the correct destructor kfunc type
+>    selftests/bpf: Use the correct destructor kfunc type
+>    bpf, btf: Enforce destructor kfunc type with CFI
+>
+>   kernel/bpf/btf.c                                     | 7 +++++++
+>   kernel/bpf/crypto.c                                  | 7 ++++++-
+>   net/sched/bpf_qdisc.c                                | 7 ++++++-
+>   tools/testing/selftests/bpf/test_kmods/bpf_testmod.c | 7 ++++++-
+>   4 files changed, 25 insertions(+), 3 deletions(-)
+>
+>
+> base-commit: 95993dc3039e29dabb9a50d074145d4cb757b08b
+
 
