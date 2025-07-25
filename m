@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-746094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9704AB12314
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:39:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD60B1231A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD3EAE051C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:39:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FC25A21A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F7A2EFD9C;
-	Fri, 25 Jul 2025 17:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D332EFDA0;
+	Fri, 25 Jul 2025 17:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5CVIGVB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBPmXkuS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A3E2EFD83;
-	Fri, 25 Jul 2025 17:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8BE1FDA61;
+	Fri, 25 Jul 2025 17:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753465189; cv=none; b=OkjUTkbq/vS2rh60/YmrPLB3yr2RgXOh1Ah60V2zyHUxsWuRqQufA4QhhCs1ucgHeypWm7ehO79mSwJFSCG4ATqhqmoegLp6czrSJyYrvwj9pQtOKYPehVt0mQwwZYhfNDHglJRq5qFrFI/riVv9IeAjCin9XR/sOoxjFQYr79Y=
+	t=1753465353; cv=none; b=aRm5mRIyjThrzn6wd0BW8ucm++fbVB1BdkT8Fz/XmZANjeYZTIcceZ6EA4k2tSh+jaOVdhUWezEf8WObcFbsX8Sc6R0J5Okj2Yki6dHuRW15AoKNFHTD+fGuURde3vPTsI0MRlyoLF877E2Z4fh/W8WQvjIGivqCaYteLWgpklw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753465189; c=relaxed/simple;
-	bh=WgJWl7erYwlBGAgNf9PftPX5Y5QAmyu3frFvneg9Tss=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=jbREuOYhh7DBw3FFM7t35Tcm6ULXnDSc/pDNzjXmHydPoJ2eYfIdPOUygOj6tycnSiydLrb7Ffd4FeGcLyeb69PvtIngAWfUgXdJKlqX2RqmRUuNOtpplwI1YCONtOSivNH7AvTqGJSF+4W6JUnkpPD5js/DMlCz5HrozifbEvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5CVIGVB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71CBEC4CEE7;
-	Fri, 25 Jul 2025 17:39:48 +0000 (UTC)
+	s=arc-20240116; t=1753465353; c=relaxed/simple;
+	bh=DLNukM6xeX8mDdNfXUUkU55B99plFgyDwDCwtBLI/ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PXhwx9LC+cDwEXw4ZkmN5SNGnmjISCUBbSnSTzm2+svdHdrBNVWfH4jAJu7k1pdOo6ZVgypFufblYAEsQ1GBvWgUvlgzrThYBWVCwp5sqrWUt6Eiog1KlAg2yqeewp1zF3bm2Niqsljrz7j4XnQXRDynbd6RR5Ju450+SiPMzMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBPmXkuS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47DA7C4CEE7;
+	Fri, 25 Jul 2025 17:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753465188;
-	bh=WgJWl7erYwlBGAgNf9PftPX5Y5QAmyu3frFvneg9Tss=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=A5CVIGVBM9C9+il4yzH9bsJEq5g58gdJE+uu3dfOc/YalARDCgpwXkBQXNSGiwgDM
-	 dfNs8N79wKhi5uZdxdiZQ70FlsDqruMrSwhpbn4jlbsm5ARuA1kSiNLCiMMmdmu7RU
-	 +2mv/owWdGW3FEvLFBjqhFaIPJ+zr5pJTtZ3yZ1jevmnP2mQ5AZtOjYOEFd3km87p0
-	 04OdaTOA6ql1AqpPbQ3zdBFeI5u/NBWv3UkQycqDWs2kVvuAwttpZ21HeMOkSHC0T9
-	 t5l2I3ZNzTb2VaJ+Zw8zyvS/0Qsl2KAemA9FFquynpmSIm5xqxT2Ex/lMdO4OOelDM
-	 4EWSM8OvtcRvQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CB2383BF5B;
-	Fri, 25 Jul 2025 17:40:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1753465352;
+	bh=DLNukM6xeX8mDdNfXUUkU55B99plFgyDwDCwtBLI/ws=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UBPmXkuSK6/BZ2AR5onqsfiXkdCUDG0Ni/ipuHLrFMeoe1kLMAlyeI0JkIuZ0BXFA
+	 vaxrcJ36vqfmg+pCoOPU7GyqHAHT9NZ/AUkc51p7ARC40cj2hPnvDWwG2OeE+CFDGu
+	 4llc13MuAbA9IiAVfDcPhd5q4/Ptu3UN2tf4XRwCDoUhvvJUkqQufg49xmJnnAuXlN
+	 M5sJFtMCG8qLebZWIlJsaYCn6evKoLVrclOXBJ859C9KbQqA3MjP8VI3jfZtt6CS4n
+	 txnXfJfKdlFQYUN+RTPJ2yMRxdBP9jEFoDLWoOE/ZVc39Ny/G3VCXczcGru5zQP3Ea
+	 1aOQZP1lfeS0g==
+Date: Fri, 25 Jul 2025 10:42:31 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Schmidt
+ <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
+Subject: Re: [PATCH net-next 0/5] dpll: zl3073x: Add support for devlink
+ flash
+Message-ID: <20250725104231.0307b4d1@kernel.org>
+In-Reply-To: <ea9f9931-95d9-4f7d-abba-eb7fae408977@redhat.com>
+References: <20250725154136.1008132-1-ivecera@redhat.com>
+	<ea9f9931-95d9-4f7d-abba-eb7fae408977@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: Fix typos
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175346520601.3214620.17200447923640485752.git-patchwork-notify@kernel.org>
-Date: Fri, 25 Jul 2025 17:40:06 +0000
-References: <20250723201528.2908218-1-helgaas@kernel.org>
-In-Reply-To: <20250723201528.2908218-1-helgaas@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bhelgaas@google.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Fri, 25 Jul 2025 19:18:55 +0200 Ivan Vecera wrote:
+> Self nacked, need to fix warnings found by clang (not identified by
+> gcc).
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Thanks for the note, I suppose you updated the patchwork state
+yourself? Please prefer using pw-bot commands in networking and bpf.
 
-On Wed, 23 Jul 2025 15:15:05 -0500 you wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Fix typos in comments and error messages.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/net/ethernet/amazon/ena/ena_admin_defs.h     |  2 +-
->  drivers/net/ethernet/broadcom/b44.c                  |  2 +-
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c      |  2 +-
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c  |  4 ++--
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_fw_defs.h  |  2 +-
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c     |  2 +-
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h       |  2 +-
->  drivers/net/ethernet/broadcom/bnxt/bnxt.c            |  2 +-
->  drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c      |  2 +-
->  drivers/net/ethernet/broadcom/tg3.c                  |  2 +-
->  drivers/net/ethernet/cavium/liquidio/octeon_main.h   |  2 +-
->  drivers/net/ethernet/cavium/liquidio/octeon_nic.h    |  4 ++--
->  drivers/net/ethernet/chelsio/cxgb/pm3393.c           |  8 ++++----
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h           |  2 +-
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c      |  4 ++--
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32.c    |  4 ++--
->  drivers/net/ethernet/chelsio/cxgb4/sge.c             |  2 +-
->  drivers/net/ethernet/chelsio/cxgb4/t4_hw.c           |  2 +-
->  drivers/net/ethernet/chelsio/cxgb4vf/sge.c           |  2 +-
->  drivers/net/ethernet/chelsio/cxgb4vf/t4vf_hw.c       |  2 +-
->  drivers/net/ethernet/dec/tulip/tulip_core.c          |  2 +-
->  drivers/net/ethernet/faraday/ftgmac100.c             |  2 +-
->  drivers/net/ethernet/hisilicon/hns3/hns3_enet.c      |  4 ++--
->  .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c  |  2 +-
->  drivers/net/ethernet/huawei/hinic/hinic_hw_eqs.c     |  2 +-
->  drivers/net/ethernet/huawei/hinic/hinic_hw_mbox.c    |  2 +-
->  drivers/net/ethernet/intel/i40e/i40e_ptp.c           |  2 +-
->  drivers/net/ethernet/intel/ice/devlink/port.h        |  2 +-
->  drivers/net/ethernet/intel/ice/ice_base.c            |  2 +-
->  drivers/net/ethernet/intel/ice/ice_lib.c             |  2 +-
->  drivers/net/ethernet/intel/ice/ice_ptp_hw.c          |  2 +-
->  drivers/net/ethernet/intel/igc/igc_mac.c             |  2 +-
->  drivers/net/ethernet/intel/ixgbevf/vf.c              |  2 +-
->  drivers/net/ethernet/marvell/mvneta_bm.h             |  2 +-
->  .../net/ethernet/marvell/octeontx2/af/rvu_cn10k.c    |  2 +-
->  drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c  |  2 +-
->  drivers/net/ethernet/marvell/pxa168_eth.c            |  6 +++---
->  drivers/net/ethernet/mellanox/mlx5/core/en.h         |  2 +-
->  drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c      |  2 +-
->  drivers/net/ethernet/micrel/ks8842.c                 |  2 +-
->  drivers/net/ethernet/neterion/s2io.c                 |  4 ++--
->  drivers/net/ethernet/pensando/ionic/ionic_if.h       |  2 +-
->  drivers/net/ethernet/qlogic/qed/qed_dev.c            |  2 +-
->  drivers/net/ethernet/qlogic/qed/qed_ptp.c            |  2 +-
->  drivers/net/ethernet/qlogic/qla3xxx.c                |  2 +-
->  .../net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c    |  2 +-
->  drivers/net/ethernet/qualcomm/emac/emac-sgmii.c      |  2 +-
->  drivers/net/ethernet/sfc/mcdi_pcol.h                 |  6 +++---
->  drivers/net/ethernet/sfc/siena/farch.c               |  2 +-
->  drivers/net/ethernet/sfc/siena/mcdi_pcol.h           | 12 ++++++------
->  drivers/net/ethernet/sfc/tc_encap_actions.c          |  2 +-
->  drivers/net/ethernet/smsc/smsc911x.c                 |  2 +-
->  .../net/ethernet/stmicro/stmmac/stmmac_platform.c    |  2 +-
->  drivers/net/ethernet/sun/niu.c                       |  2 +-
->  drivers/net/ethernet/sun/niu.h                       |  4 ++--
->  drivers/net/ethernet/sun/sunhme.c                    |  2 +-
->  drivers/net/ethernet/sun/sunqe.h                     |  2 +-
->  drivers/net/ethernet/tehuti/tehuti.c                 |  2 +-
->  58 files changed, 77 insertions(+), 77 deletions(-)
+(BTW net-next is closed already)
 
-Here is the summary with links:
-  - net: Fix typos
-    https://git.kernel.org/netdev/net-next/c/fe09560f8241
+Quoting documentation:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+  Updating patch status
+  ~~~~~~~~~~~~~~~~~~~~~
+  
+  Contributors and reviewers do not have the permissions to update patch
+  state directly in patchwork. Patchwork doesn't expose much information
+  about the history of the state of patches, therefore having multiple
+  people update the state leads to confusion.
+  
+  Instead of delegating patchwork permissions netdev uses a simple mail
+  bot which looks for special commands/lines within the emails sent to
+  the mailing list. For example to mark a series as Changes Requested
+  one needs to send the following line anywhere in the email thread::
+  
+    pw-bot: changes-requested
+  
+  As a result the bot will set the entire series to Changes Requested.
+  This may be useful when author discovers a bug in their own series
+  and wants to prevent it from getting applied.
+  
+  The use of the bot is entirely optional, if in doubt ignore its existence
+  completely. Maintainers will classify and update the state of the patches
+  themselves. No email should ever be sent to the list with the main purpose
+  of communicating with the bot, the bot commands should be seen as metadata.
+  
+  The use of the bot is restricted to authors of the patches (the ``From:``
+  header on patch submission and command must match!), maintainers of
+  the modified code according to the MAINTAINERS file (again, ``From:``
+  must match the MAINTAINERS entry) and a handful of senior reviewers.
+  
+  Bot records its activity here:
+  
+    https://netdev.bots.linux.dev/pw-bot.html
+  
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#updating-patch-status
 
