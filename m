@@ -1,128 +1,84 @@
-Return-Path: <linux-kernel+bounces-745119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9E4B11529
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:19:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDEEB1152F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D915A3ABEA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:19:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD184E609D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0201B6D06;
-	Fri, 25 Jul 2025 00:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41421288A2;
+	Fri, 25 Jul 2025 00:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="A4SZpy6I"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BhGyERed"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC1B19CC27;
-	Fri, 25 Jul 2025 00:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0493835949
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753402698; cv=none; b=Ak3KYVApsPGeN4x6U6n2Uu/PetsPmuzTn2WfFNJ0sx3fbwaVk/KGr5Sk8z7b7rj8etVKX7M+iDhiQoHWPxT4EhYvTm6glToliA1aZCb/dkOyb6tRP0Vv/j/Lu0X4QQU9WDGoQXBheFRMPdRG6o8K6882dbLd1JQX0E8sWCuP4xM=
+	t=1753402812; cv=none; b=fBT1Ynvn2rqt+66grMcPCF/557M6b0+1kwqPsslpjp5BYvQm74Mfr+aJHx/gEEMl32D1E0gT9PdQEu8DZxyR0ESSJxw4MM7NcWfRr3JzBGeusg2GTG1j7ei7EJ9sB2+FRnjTjTOalcuZUIvgGfDqS2LPjIx/NotweYx3Zb5CBPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753402698; c=relaxed/simple;
-	bh=KV62NoXC9aWiyFqUrd583Tuwhbt7qTYtiziCYEan+zg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g+3uSEDYKeBEE9xhph/NpQwBSMgRpoC5PxtCjGgpAcKSaUavk9TLYpUw4fxf2oNG3hbHzD8Q1OH4xEOigtw2b4Jksvpbvze82Abb7tpLc56fEjTGpUA5+FVsk1xEv/H+l0cS7jD4SloKnH813IaCX8PmJqTZqPsjj/RhfJHlY8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=A4SZpy6I; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1753402697; x=1784938697;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=KV62NoXC9aWiyFqUrd583Tuwhbt7qTYtiziCYEan+zg=;
-  b=A4SZpy6ITNRtHioJgDOO8jgf6Yz0wMzT+M1VhyYQQN/vE3PMRxDGityI
-   IZPUTB46lmdBZNUstu2F2lEcBMP9bFTmnh78g9oPxrzVxaET+yjOCvdVQ
-   fnD6zFEuPSNC+O8yotIj1YQM6Dbz5BnZ+CEs6vYyzUqP3ekBoAH7Q9IX1
-   rfOvnqVY1CZyBMfy2IHZ60qmtJ98CErKazLcbM4Mybj6onRCEG4+sSl3D
-   e/YpMVCu3HUFyh7jZ79J2XcAFqqeIB7Tr1wjrDDlVItGXwESbC9X4+/D1
-   Lz9zpqT3yh9RBHmfLhMl8WAG+qdfzdlg3JJm1Z20kqF2QjGOhNiadk90f
-   g==;
-X-CSE-ConnectionGUID: pRt2tG6dTs6yrFFGZ+6lXw==
-X-CSE-MsgGUID: M4iAdzUXSJqV72C4LyzTjg==
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="43875719"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jul 2025 17:18:14 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 24 Jul 2025 17:17:55 -0700
-Received: from pop-os.microchip.com (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Thu, 24 Jul 2025 17:17:54 -0700
-From: <Tristram.Ha@microchip.com>
-To: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>
-CC: Maxime Chevallier <maxime.chevallier@bootlin.com>, Simon Horman
-	<horms@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Marek Vasut <marex@denx.de>,
-	<UNGLinuxDriver@microchip.com>, <devicetree@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tristram Ha
-	<tristram.ha@microchip.com>
-Subject: [PATCH net-next v6 6/6] net: dsa: microchip: Disable PTP function of KSZ8463
-Date: Thu, 24 Jul 2025 17:17:53 -0700
-Message-ID: <20250725001753.6330-7-Tristram.Ha@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250725001753.6330-1-Tristram.Ha@microchip.com>
-References: <20250725001753.6330-1-Tristram.Ha@microchip.com>
+	s=arc-20240116; t=1753402812; c=relaxed/simple;
+	bh=6oWoQS0KDdTSfqPVNvYgaX1tpp8E7ImtovxTgv8batk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MD8Fin9MF9VdhVYqMRoa3vjUcEL7L9EGVeNrn2SCAsVVzzAfmdCPMp5hHlfqOKGyeAxAqat1ZqnpK5NOPCgRXbZqTa4neZKCn1HhxLuwoT+P6nDTMVZkWDntH19HSALylVFoUbzaiSDwv0+3WVHSzo+u1jDR0fpU51zaLM62bKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BhGyERed; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=4P+w3vSTMHUr1hNRLBxl7UjYefaMy8nDONhfQiLxz6g=; b=BhGyERedkNNjLicgs9l5uK6Zvt
+	sj2gp/CKwyxY2tadA+Zxmx+K80/kx2GLjqJsmd6RhQt30/NHWSW+lV4oFPltYIOoejl+6AaOyZbAe
+	vxJPQciAv6jTWvKsV4K6yj2cdpMSih5BniZc95AWPmNzSyxYcR64YH8IAFOVqDGuOUZ9lEgtYNCCC
+	JCJy561hz5AZn0pjSTurOVLuIxHZadEL8C6TeErHtOuY+xMNWuWewdanzEiWfYSaNQcpdweUEw8Fz
+	NyVDtj6DvLw3rrq2W8Cd4O63yHYyDe0JkgcWAY/vaylUHyafC737UcBKJx/35mza+pj8rdpvaN4e3
+	lvBpoy1A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uf6AS-00000009fdO-1624;
+	Fri, 25 Jul 2025 00:20:08 +0000
+Date: Fri, 25 Jul 2025 01:20:08 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Cc: syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] [wireless?] general protection fault in
+ simple_recursive_removal (5)
+Message-ID: <20250725002008.GX2580412@ZenIV>
+References: <20250724064051.431879-2-moonhee.lee.ca@gmail.com>
+ <20250724155832.GU2580412@ZenIV>
+ <CAF3JpA6FguWASZM98DWsvEasOAHH2WVkSmcY0D-V6V=-DFjoJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <CAF3JpA6FguWASZM98DWsvEasOAHH2WVkSmcY0D-V6V=-DFjoJQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Tristram Ha <tristram.ha@microchip.com>
+On Thu, Jul 24, 2025 at 10:29:47AM -0700, Moon Hee Lee wrote:
+> On Thu, Jul 24, 2025 at 8:58 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > It might paper over the specific reproducer, but that's not a fix...
+> > I'm not familiar with that code; will check the details, but in
+> > this form it is obviously still racy.
+> 
+> Thanks for the feedback, Al.
+> 
+> Agreed, this only papers over the issue. I'm tracing the
+> sta_info_destroy() path to confirm the race and will follow up with a
+> proper fix if confirmed.
 
-The PTP function of KSZ8463 is on by default.  However, its proprietary
-way of storing timestamp directly in a reserved field inside the PTP
-message header is not suitable for use with the current Linux PTP stack
-implementation.  It is necessary to disable the PTP function to not
-interfere the normal operation of the MAC.
-
-Note the PTP driver for KSZ switches does not work for KSZ8463 and is not
-activated for it.
-
-Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
----
- drivers/net/dsa/microchip/ksz8.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/net/dsa/microchip/ksz8.c b/drivers/net/dsa/microchip/ksz8.c
-index 62224426a9bd..c400e1c0369e 100644
---- a/drivers/net/dsa/microchip/ksz8.c
-+++ b/drivers/net/dsa/microchip/ksz8.c
-@@ -1760,6 +1760,17 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
- 					   KSZ8463_REG_DSP_CTRL_6,
- 					   COPPER_RECEIVE_ADJUSTMENT, 0);
- 		}
-+
-+		/* Turn off PTP function as the switch's proprietary way of
-+		 * handling timestamp is not supported in current Linux PTP
-+		 * stack implementation.
-+		 */
-+		regmap_update_bits(ksz_regmap_16(dev),
-+				   KSZ8463_PTP_MSG_CONF1,
-+				   PTP_ENABLE, 0);
-+		regmap_update_bits(ksz_regmap_16(dev),
-+				   KSZ8463_PTP_CLK_CTRL,
-+				   PTP_CLK_ENABLE, 0);
- 	}
- }
- 
--- 
-2.34.1
-
+Note that if you have nested subtrees, you have to be very careful
+about removals - after all, removal of the bigger one drops the
+references we are holding to the roots of the smaller ones.
 
