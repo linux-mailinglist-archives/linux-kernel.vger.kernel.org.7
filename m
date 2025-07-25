@@ -1,410 +1,413 @@
-Return-Path: <linux-kernel+bounces-745937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75E1B120B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:17:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1DAB120B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAE4C1CE53A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:17:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94C725A2D70
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FB01FDA61;
-	Fri, 25 Jul 2025 15:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E791C700D;
+	Fri, 25 Jul 2025 15:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pBHMpKY+"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2081.outbound.protection.outlook.com [40.107.94.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuV/e8V8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE868635C;
-	Fri, 25 Jul 2025 15:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753456624; cv=fail; b=RfYYGMOIqH2w9B1htB127phRiTNr7CykDHJfK+C7rk52aPj88IfSRey7zy+mGghcuW99M3/IIjb9CWppL4HXhXGgKX/DWaUUJl3hjuJfMccy86wNvby7oinkEEKqr81jNgQw8U/RosrabwQO2PHTlcQNTCRqE7Josjsl6nDsfQo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753456624; c=relaxed/simple;
-	bh=NSP9GJey5v1ZGofuO+xZerkOzmFXSIH4ayeGlsm+PdE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Yxffu61kqRVNdU2trW6Ou4QqeROhO9JKZ6WmTjgh4BbW7fRUiHWcf+3YvpkpNsT2wm83eciI+s9NsE3au/WW24EhdHLrEnXybyfHLnkKlQN+kHqsg6UQA5NiQHgoAU54TO8KvYRR1tYgunDZK8Mld60jzEK0v93LarVdP1jy6bc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pBHMpKY+; arc=fail smtp.client-ip=40.107.94.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R3orMDsNG1oXdt0GcIkSGwiSn9oe6fH6xOYG2PI+h9RWd6Xs9NaVgZ9yFeoKHP9/Oov/mCHisvMtfxv5T0si65HabfvvoBCurfGDc4DPLOe6lIM4vg4+p8kq8JFDJPGfvcv0+goOkJmFrjwx9Y8iU0SIj8jsCi8I62Y0hgjtzeCS6eHvKfR0lVH0CUIBfZ8khyyUywHFjk4KpQAmHmLtKgCjyNGGHmQ7kPO63L+lO2hEIt/XkwYUIi0WPh6kVka5jzv9q0vujh6SF8Fnt441SAdVrlYeOxsniU6IK7vX6LqqPNs8LXrHU7QXc4lUG5f3l6dD9o7gCn4xu86CxoCjnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pwrki9tpTzbQWJff0zcmLVtEj2hBaG94rtZezlCQqS8=;
- b=LvWcTJfvnknhm0tIXC0SGKP5pJCLELa784j16VeSoJKXXT1WgBOLCcqOcvzG50lvbPknK4v80MxbvXp8nMwD8aMA6IWAKbMYnb9NcAwNRobh/Kq7USZHWEBMahvaKseSlYPEg63dx8XUFC8M1b7DiCgXBxkiithqwUZ98ahF6Wzeq1ShEOPALxN/kE5nPbAPQlZigFpqnoYD+FiIkncCGPpgD9LvF8rpXGRF9rMFddsEf4P4syKgNsPXEjpN+BhHS86qNpBayVr/Ztrvxh4O4MkPe5KoIol9s+RAamVeVr9mNJ9iDXnFcEZOp2bjNR4vmOEYPAAT4piH7pylPyDtDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pwrki9tpTzbQWJff0zcmLVtEj2hBaG94rtZezlCQqS8=;
- b=pBHMpKY+h3rVrwD8/Ys3qvhWukZc/To6FH03h4n67WJeirg65TLwqjx1u93RVAw1zZ7IfTWDTcYAz/VADxaX83wDkjG3oSQ2bTQr4T8kTe5UicHhGw27ncsycLGh/nixtxV/ZFzWM2xHmOJjKbQsPgwjSOQnAmW6HVktY/0LOZQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
- by DS5PPF482CFEB7D.namprd12.prod.outlook.com (2603:10b6:f:fc00::64a) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.29; Fri, 25 Jul
- 2025 15:17:00 +0000
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::ae6a:9bdd:af5b:e9ad]) by BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::ae6a:9bdd:af5b:e9ad%6]) with mapi id 15.20.8943.029; Fri, 25 Jul 2025
- 15:17:00 +0000
-Message-ID: <ed5b4ee0-3827-4d9c-81eb-99f3ea219c93@amd.com>
-Date: Fri, 25 Jul 2025 10:16:57 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] crypto: ccp - Add new API for extending HV_Fixed
- Pages
-To: Tom Lendacky <thomas.lendacky@amd.com>, john.allen@amd.com,
- herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: seanjc@google.com, pbonzini@redhat.com, michael.roth@amd.com,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1753389962.git.ashish.kalra@amd.com>
- <a5dfa1b5e73286c2d7a2d38422577aff9de48226.1753389962.git.ashish.kalra@amd.com>
- <ff83d1e4-5fbd-360a-22ea-10efd71ff2d9@amd.com>
-Content-Language: en-US
-From: "Kalra, Ashish" <ashish.kalra@amd.com>
-In-Reply-To: <ff83d1e4-5fbd-360a-22ea-10efd71ff2d9@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0082.namprd04.prod.outlook.com
- (2603:10b6:806:121::27) To BL3PR12MB9049.namprd12.prod.outlook.com
- (2603:10b6:208:3b8::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ACB77111;
+	Fri, 25 Jul 2025 15:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753456660; cv=none; b=urXExu8AqLmYOS+nBHnuLbsgiGFOmIN4kT1+AUZCEw2K4iqnsCMqMrNn182PPO9QdCJqbk0PZgF9tdtdafWydRyUNx8MZrGXbwZ18MyYG7PeIWTP3vjVFJOfsEE5g2oHN3HppuJ+0MORZ+L3G+F+sFKmmLU3CT9nN7D7MedjUOo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753456660; c=relaxed/simple;
+	bh=RrkIjoBgPsDOFuLEAY5y7BZILpfdNA1yyYi/AaRkMmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sVHRodA4b/eps1TMwAZMUrapOaxprOm8R8IsPT9VyWlNsXHEKfjVa+0iHti8EeEU24fPhjBOr8z4Ah1oEcF84EhZF46WczQfnaBeX1XK3ZnnXnl6f7tacugbRETGwXGY610MsSr4wXt0U8dVDqVJl6sHkSjkSTfSyY87KKOrSvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuV/e8V8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E14C4CEE7;
+	Fri, 25 Jul 2025 15:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753456660;
+	bh=RrkIjoBgPsDOFuLEAY5y7BZILpfdNA1yyYi/AaRkMmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VuV/e8V8IPnzCkjSCdHqeePoqkmQ8VQ8dLHY4BDIDau+5ppgt3Rp42ooyTU5TnUEq
+	 esh0f3JGs+T6NNLBvKPFXFjXMsy9MZUiGrjTPzsnoWvD8fn6HsnuP9UA4Sa5STEHwB
+	 8n+x9V4HVyjS0obwPOCdx1+lljyqsY8mrzQzkP2WijWYyGwAVeaOxE+J7Fpr8KHqEm
+	 RwZYme5s3YynzFv7F9DvI857WnXdCA/DGWjtCejZlppZRH56TR3+YwV6vPiNcDXBgL
+	 Hk8nKLyEpWGLeinoND+qrc8ReC6znnbKewtol5NjH4zwwVYiAeWugSIUXmV+O6l8Np
+	 0uwrfhFOK69fQ==
+Date: Fri, 25 Jul 2025 17:17:37 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH 00/32] drm/mipi-dsi: avoid DSI host drivers to have
+ pointers to DSI devices
+Message-ID: <20250725-dramatic-illegal-rattlesnake-d3e78c@houat>
+References: <20250625-drm-dsi-host-no-device-ptr-v1-0-e36bc258a7c5@bootlin.com>
+ <20250707-strange-warm-bear-cb4ee8@houat>
+ <20250707115853.128f2e6f@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|DS5PPF482CFEB7D:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1478cb8-84ff-42c3-beb7-08ddcb8e4d70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U0J4ZjErSTZRdjBkN1BnV3libDhpd2dtTHZGMXZxc1FjcEVNMjlzVm9laWZK?=
- =?utf-8?B?TlBoRExBRGs2c1hmYXdoMm9TNE9RaEZpOWdSc3prNmF2QUk3aHlxbTF6cUh3?=
- =?utf-8?B?b25rY2JBQnBSSXFFM3ljeGRseVl5bXNoOG9hV0RQaVZ3Zmo2OUJpbG5RZ2E4?=
- =?utf-8?B?K3NoZnpUUVVFQmtMdW5rci9uVTY1OXBCank3d1lEaDBpNkczM0hLVEZlS2lw?=
- =?utf-8?B?c0p4SU9rbVVodjN3VTNITDdObkpXY3F5RFlPajBodElLYkRoS2Uwc3QzNnpp?=
- =?utf-8?B?ZlFOeW9iRkdVNTh1S2xOcnIwdTZiempVd0xkMWRTSmEweUZIL0FRNmYxUlhC?=
- =?utf-8?B?cldPbWJ6Y2tqeVo4Y0VlWHJ2MFl3UEhuWGRGQnljZFpOZ2liOXZlV0U3aFRi?=
- =?utf-8?B?cHlGVmlEVjgvZUlHMG5oRDRVaFo5TGhUUTJCTUZzQmlHQW1WOTlDaFU3ZENv?=
- =?utf-8?B?bHhPeUJnMFJSMHhvb3FVYWZobE9XL0hKdzI1NDBLb2VHbnlUWTFtRjJXS3hx?=
- =?utf-8?B?VzdSQkE3cmtpL0V4clFUZ0Q0MzZIREdZcEtXVXlzaGxZZ2k5RTQvL0pNdy9m?=
- =?utf-8?B?NUVZVmk1UmhwVWFIWXlrOVMwcXRGTnNtclozZ1JSQUhVTUhrdmlUTzYyYTBG?=
- =?utf-8?B?Y1BHNWp1dENoMnBINHZtd2ZPY2xqWGovSEZZM052K1NmcXVneTlUdG5RZWVV?=
- =?utf-8?B?aG9kZ1pNNUZyN1VKTWRSYjF5akVvTy96ZFN1MVlMMHdUaUdsQk5QYUt5MGVv?=
- =?utf-8?B?ZTE0dUlIaGZvRWd5dTNIZ3JyYkNGRkVUUUNEbHcrYXZTbkZFRXNCWFRKVlh1?=
- =?utf-8?B?bXRDdVV1ekZYTEpKL2I0T085Q01XTURLMDdCK29nZnpTUjVmK0VDbFN1d1ha?=
- =?utf-8?B?ZTBkU050ckZXdGtCNXMvcUpGNkVDNkRpcDNRVldQS2tseVNtdS8zei84cDg3?=
- =?utf-8?B?cUhJNVZCaEZWd0Z0eGlkRXV2K2NTaC94RER0REY5eFBPMGhlb1oyWXYwcU5O?=
- =?utf-8?B?NEkyWlpiUHhXTEZSSEVrbjJZZjlKZ1JvTGcrdUFHYUE4UGxPWXhMY0VWU0Iy?=
- =?utf-8?B?MGc3dVgxQTEyTHNjYklXU3AxRGVEVlpnUUR3bGwxc2ZCRk5GQllBRytvWGdX?=
- =?utf-8?B?SVF0a1BpbGJ1dlhIaFFPdDhKTGJXM1l0NkVBRXlpNDJNRGFCalZVRisvUkE0?=
- =?utf-8?B?Q25vMWxsdDhUWEgxT1pKS3lFZmFHVmRteDgrV2FlRzdIZDRyZ2dIUDkvbHF5?=
- =?utf-8?B?S2JZcXd1T05wV1daTkpjVGRWMUI5NEUvQXpQS1VXVVMySkMvcWhwTGhEaWR4?=
- =?utf-8?B?bENSeWZXTW9LZmNrcVJsajZmZXBqRlV1eTdYZ01EWktXbG5sNVRTM3Nnd0c2?=
- =?utf-8?B?Mm42MmlSZzlPb1lPaEMva0NUWE9Cenh3UFhwSzlURXR2Qzd6WnZIbHdSekF3?=
- =?utf-8?B?b2d6NFRUbTJGdjlhQ0tDRVI1YmxRQmY5QzZWdzIxT2UvQ0pGZ0tTUlpuL0dF?=
- =?utf-8?B?NFVIN1krZDZXeElCTXVqbnhMODE0QW5xb2pTTUUwSW1FejMvUzh3Rk1iRTJO?=
- =?utf-8?B?Qm9GWmN0TFhHd3F3bVdIWEo2Q1VXREpRZVF0bWNNbWRneWhvKzRCVDd6YVJv?=
- =?utf-8?B?RjFKSDF2cXVGc3oyK0U5M21TVlIycG9hb0MvQTIvZWpEV1ZTbTNqTDRsVmV6?=
- =?utf-8?B?Y0ErR2U3cStBTllIejFXamJ6QWJrRVdMRFVvYWFpNTVnQzZRUHZYbVhIYVpz?=
- =?utf-8?B?aExPN2Y1YzhLTENpUDFnNlZlYjR3dU85RDloRTNnNzZFZkRwYXh0WFJhbE5R?=
- =?utf-8?B?QzJHQldNcDlwYlRhTDZmVUNvMXp0RGZVZWJmdVMzbDlJMnZhN1Y5RHc0RWhx?=
- =?utf-8?B?MUp3VVZ3N0JsQXdEMEpOTC9zQTc3bkxrb240TFo2emNXOElubms5c0kxRUZs?=
- =?utf-8?Q?iFBhqCQndSA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dlRBMTNQRm45eXFUeFByZFh0QlRGN2dYb2prUmJHYVh6WUhabmRzc3Ird3lB?=
- =?utf-8?B?d0wxR0hXN1h6akZrUjhDZ1l4TTlYMXV1Tnk2KytlS2hSc0I2U0NkKzh6Skg3?=
- =?utf-8?B?Y0tKY2VUdXZMRHJNNzFRNm1sVWpPbHFDNHF6ekZwcDUyQWIyQm9ISVVKN2ZU?=
- =?utf-8?B?VWR2QlZHcWVKUTRvT05uZ245LzdjZnV4WU5PNCtRdHBpM2FXemd6ejZFVWUw?=
- =?utf-8?B?MEEzUmw5MmpoUTJlNXZGbUFleDRCQjJPTWo3RWF1eGViZjNiSDlOdE1uNzRH?=
- =?utf-8?B?YWt4MGMwZTVpSUNUdTc3OFRSUWF5YVd0N0hndkJNbDhKTGVGSUl2Z0dJajcy?=
- =?utf-8?B?TTc2Mk5wNnV5S1BwbHRkeHRxeGdZVkQ4RE02RTBRK1daVWZjQ2Z2ZFplZHRx?=
- =?utf-8?B?c2o5R3RqRkNXeTJpU0hCRnlyR3NjbGRTOVNNTFdtcmdUQUZVYTJNYnRQV3hz?=
- =?utf-8?B?cEp3NDZRRCtZQWpEVGMxT2xpWkZ4em80dVdJempReE9xQnNBaTdpWVp4YnRv?=
- =?utf-8?B?YzNKeHFudGxYMzNvR2N5K3RueVhRTk9wZ0d6VmdIUWI4ZEtKeTVPZFkvU290?=
- =?utf-8?B?Q1JUanA1Mm5kajlPWHkrUEE3MDZUYjBmcXVnRnpXcnJlakI4NWlhUzh1dFI1?=
- =?utf-8?B?NkZBLzlPQnFHdEZsVFNZVHg1MDNueCtnR05MN04ycWxqdDl0Y3BVS1VHVTV0?=
- =?utf-8?B?L1d5R1lPcGhHdlZRVlltZm1lTHZqYTY0SVFLNTYySlE4Sm0xRXlVQ3ZXVmxt?=
- =?utf-8?B?MEhqaUo4TSszeEtneENmT3VRb3hFVVJYOWVGczlYRFVDdXQzYzJEMUIrVGpQ?=
- =?utf-8?B?cjB6WWFCcmI1QjFTNnM4U0ZsdUNDaEhSR0s2YnVlSzBQVWt5MzlHNVNCdjc1?=
- =?utf-8?B?bUVUTUNIU1BRbk1sYTBLajlxRVY2NU93Q2hOU2dUcEc1R0Rwc0lxN2srQm1L?=
- =?utf-8?B?OEgzVWRiY2hTLzRXb2FSQkpiVUJ4V0dvWHhlczkwT0twcjFqejkrUloxMGJE?=
- =?utf-8?B?WXQ3M01aWFRJRi80TkRrUEpTV2tROEloMUpUTUJiMGNrSDljd1lZZ1NHbUkx?=
- =?utf-8?B?WlpUZmRSV3Y0dmZKb20zUUVVUmsrMXRSSExvMUsyOGJjMUV4RzlSYXpsSkg1?=
- =?utf-8?B?eWR0MDNQU0FUMTFlVjVjK1c0bTFVVDVVWEJzSWxHeEdpSENqY2JQV2VsM3Yz?=
- =?utf-8?B?KzFRdk5YaU5XNmIxdDduYnpWTVNUdGRFZEsvd1dSNXJjaXRENDd6aDdKRk5p?=
- =?utf-8?B?OFVXTllkSU8rOXd0WTkvN1lDZWl1N05hS3BLL0VpYVdCNkQ3STRFRk01WGpU?=
- =?utf-8?B?ekJxbkpUYWpWSVFTcHA4YnNqenl0bmlVUjFSeEF6dSt2TkViN3M3R1BRMjFj?=
- =?utf-8?B?eHVJVHMzYnZNNGlFMk1pd0lwbmttek01ZzZ0WjVJRk1KYy9aK2xxUy90N2RU?=
- =?utf-8?B?N1ljcm1uMWwyRE9UMnp1VDJLc3Iya2hIbjBteld5TTBkWVM4clV0eDFRSWoz?=
- =?utf-8?B?Zm5wS2xnWTNXWkdnMkJRY1FTZlU0NFZJYytRUStGSi9ZWmY4Yy94ZVhuWVpj?=
- =?utf-8?B?VDZlcmJnTjhCQmxqdTQ4bkNadTJ6QkdxeXpXY1VpYWcyM1hlQjcyUEo3eUxI?=
- =?utf-8?B?ME9iUnpXc3JyOVJSZkJwcW5uWnhjUU1tcE1OSk53U2tJZnEyb1QwT3ZJRmln?=
- =?utf-8?B?Ly92czlFM3dlZXBNaUFvRk53ZnhNOWpVWnJHaEkxK2JnRjVlemVuTE1yNVNU?=
- =?utf-8?B?L2dod09yS3I2V0VGbkxjUXpuWkRtSEpDa2NoaW9RSVI2dStyV29nSGVxN2Y4?=
- =?utf-8?B?UDdCakVjbnBIZUQ2NjIrNUJObjNqZlhYVy8xMXk2OU5IS29oYThjSStVYjBD?=
- =?utf-8?B?L3UrY2lEVmtkRVJvc09qYlF5czNWMTluSVhiOTFBOFk3RDU1ZzdwMGl5czhw?=
- =?utf-8?B?UzVtWjdxOUJ3TUhuMytZQmZBay9QeDdWSUtqVDR4UXZaY3NlOVdGUytRTTR1?=
- =?utf-8?B?UVQ1b0lEbFVQSG0xdUVoV3FKWlZkVzM2KzdVTHJBQ2ZLOTJ3a28xb3VLaHhh?=
- =?utf-8?B?dVFwTVdUVzRvb2dRZXhiUWdqWW5PUzhybGlyWGNvN3pnSnRlRUxybFBkSlVI?=
- =?utf-8?Q?yuf86Zi4az2YYNJs2ZsTowf4b?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1478cb8-84ff-42c3-beb7-08ddcb8e4d70
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 15:17:00.3601
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0rYJnetQKd0/mmkrtaXeWL2lPBYni0oluDup5uHNsJ9oQTFaHL/C9onqFUuSl0TXGVS345ztRQqYumfE4J6azg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF482CFEB7D
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="4rj2w5lefdmnjl55"
+Content-Disposition: inline
+In-Reply-To: <20250707115853.128f2e6f@booty>
 
-Hello Tom,
 
-On 7/25/2025 9:28 AM, Tom Lendacky wrote:
-> On 7/24/25 16:14, Ashish Kalra wrote:
->> From: Ashish Kalra <ashish.kalra@amd.com>
->>
->> Implement new API to add support for extending the HV_Fixed pages list
->> passed to SNP_INIT_EX.
->>
->> Adds a simple list based interface to extend the HV_Fixed pages list
->> for PSP sub-devices such as the SFS driver.
->>
->> Suggested-by: Thomas.Lendacky@amd.com <Thomas.Lendacky@amd.com>
->> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
->> ---
->>  drivers/crypto/ccp/sev-dev.c | 88 ++++++++++++++++++++++++++++++++++++
->>  drivers/crypto/ccp/sev-dev.h |  3 ++
->>  2 files changed, 91 insertions(+)
->>
->> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
->> index e058ba027792..c3ff40cd7a96 100644
->> --- a/drivers/crypto/ccp/sev-dev.c
->> +++ b/drivers/crypto/ccp/sev-dev.c
->> @@ -82,6 +82,14 @@ MODULE_FIRMWARE("amd/amd_sev_fam19h_model1xh.sbin"); /* 4th gen EPYC */
->>  static bool psp_dead;
->>  static int psp_timeout;
->>  
->> +struct snp_hv_fixed_pages_entry {
->> +	u64 base;
->> +	int npages;
->> +	struct list_head list;
->> +};
->> +static LIST_HEAD(snp_hv_fixed_pages);
->> +static DEFINE_SPINLOCK(snp_hv_fixed_pages_lock);
->> +
->>  /* Trusted Memory Region (TMR):
->>   *   The TMR is a 1MB area that must be 1MB aligned.  Use the page allocator
->>   *   to allocate the memory, which will return aligned memory for the specified
->> @@ -1073,6 +1081,76 @@ static void snp_set_hsave_pa(void *arg)
->>  	wrmsrq(MSR_VM_HSAVE_PA, 0);
->>  }
->>  
->> +int snp_insert_hypervisor_fixed_pages_list(u64 paddr, int npages)
->> +{
->> +	struct snp_hv_fixed_pages_entry *entry;
->> +
->> +	spin_lock(&snp_hv_fixed_pages_lock);
-> 
-> Please use guard() so that you don't have to issue spin_unlock() anywhere.
-> 
->> +
->> +	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
->> +	if (!entry) {
->> +		spin_unlock(&snp_hv_fixed_pages_lock);
->> +		return -ENOMEM;
->> +	}
->> +	entry->base = paddr;
->> +	entry->npages = npages;
->> +	list_add_tail(&entry->list, &snp_hv_fixed_pages);
-> 
-> You're creating this API that can now be called at any time. Either
-> restrict it to when SNP is not initialized or add support to issue
-> SNP_PAGE_SET_STATE.
-> 
-> I would suggest that you return an error for now if SNP is initialized.
-> 
+--4rj2w5lefdmnjl55
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 00/32] drm/mipi-dsi: avoid DSI host drivers to have
+ pointers to DSI devices
+MIME-Version: 1.0
 
-Ok.
+Hi Luca,
 
->> +
->> +	spin_unlock(&snp_hv_fixed_pages_lock);
->> +
->> +	return 0;
->> +}
->> +
->> +void snp_delete_hypervisor_fixed_pages_list(u64 paddr)
->> +{
-> 
-> Not sure you can have this...  Once a page is marked HV_FIXED it can't be
-> changed unless SNP (SNPEn bit in SYS_CFG MSR) is disabled, which doesn't
-> happen until reboot.
-> 
-> So users of this interface will have to leak pages since they can't be
-> released back to the general allocation pool for chance they get used for
-> an SNP guest.
-> 
-> So this API should probably be deleted.
-> 
-> Or you change this to a driver HV_FIXED allocation/free setup where this
-> performs the allocation and adds the memory to the list and the free API
-> leaks the page.
+On Mon, Jul 07, 2025 at 11:58:53AM +0200, Luca Ceresoli wrote:
+> On Mon, 7 Jul 2025 08:16:49 +0200
+> Maxime Ripard <mripard@kernel.org> wrote:
+> > On Wed, Jun 25, 2025 at 06:45:04PM +0200, Luca Ceresoli wrote:
+> > > This series is the first attempt at avoiding DSI host drivers to have
+> > > pointers to DSI devices (struct mipi_dsi_device), as discussed during=
+ the
+> > > Linux Plumbers Conference 2024 with Maxime and Dmitry.
+> > >=20
+> > > It is working, but I consider this a draft in order to discuss and
+> > > challenge the proposed approach.
+> > >=20
+> > > Overall work
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >=20
+> > > This is part of the work towards removal of bridges from a still exis=
+ting
+> > > DRM pipeline without use-after-free. The grand plan as discussed in [=
+1].
+> > > Here's the work breakdown (=E2=9E=9C marks the current series):
+> > >=20
+> > >  1. =E2=80=A6 add refcounting to DRM bridges (struct drm_bridge)
+> > >     (based on devm_drm_bridge_alloc() [0])
+> > >     A. =E2=9C=94 add new alloc API and refcounting (in v6.16-rc1)
+> > >     B. =E2=9C=94 convert all bridge drivers to new API (now in drm-mi=
+sc-next)
+> > >     C. =E2=9C=94 kunit tests (now in drm-misc-next)
+> > >     D. =E2=80=A6 add get/put to drm_bridge_add/remove() + attach/deta=
+ch()
+> > >          and warn on old allocation pattern (under review)
+> > >     E. =E2=80=A6 add get/put on drm_bridge accessors
+> > >        1. =E2=80=A6 drm_bridge_chain_get_first_bridge() + add a clean=
+up action
+> > >        2. =E2=80=A6 drm_bridge_chain_get_last_bridge()
+> > >        3. drm_bridge_get_prev_bridge()
+> > >        4. drm_bridge_get_next_bridge()
+> > >        5. drm_for_each_bridge_in_chain()
+> > >        6. drm_bridge_connector_init
+> > >        7. of_drm_find_bridge
+> > >        8. drm_of_find_panel_or_bridge, *_of_get_bridge
+> > >     F. debugfs improvements
+> > >  2. handle gracefully atomic updates during bridge removal
+> > >  3. =E2=9E=9C avoid DSI host drivers to have dangling pointers to DSI=
+ devices
+> > >       (this series)
+> > >  4. finish the hotplug bridge work, removing the "always-disconnected"
+> > >     connector, moving code to the core and potentially removing the
+> > >     hotplug-bridge itself (this needs to be clarified as points 1-3 a=
+re
+> > >     developed)
+> > >=20
+> > > [0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7=
+fc1e629b715ea3d1ba537ef2da95eec
+> > > [1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6=
+f2c9c3058@bootlin.com/t/#u
+> > >=20
+> > > Motivation
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >=20
+> > > The motivation for this series is that with hot-pluggable hardware a =
+DSI
+> > > device can be disconnected from the DSI host at runtime, and later on
+> > > reconnected, potentially with a different model having different bus
+> > > parameters.
+> > >=20
+> > > DSI host drivers currently receive a struct mipi_dsi_device pointer i=
+n the
+> > > attach callback and some store it permanently for later access to the=
+ bur
+> > > format data (lanes, channel, pixel format etc). The stored pointer can
+> > > become dangling if the device is removed, leading to a use-after-free.
+> > >=20
+> > > Currently the data exchange between DSI host and device happens prima=
+rily
+> > > by two means:
+> > >=20
+> > >  * the device requests attach, detach and message transfer to the hos=
+t by
+> > >    calling mipi_dsi_attach/detach/transfer which in turn call the cal=
+lbacks
+> > >    in struct mipi_dsi_host_ops
+> > >     - for this to work, struct mipi_dsi_device has a pointer to the h=
+ost:
+> > >       this is OK because the goal is supporting hotplug of the "remot=
+e"
+> > >       part of the DRM pipeline
+> > >  * the host accesses directly the fields of struct mipi_dsi_device, to
+> > >    which it receives a pointer in the .attach and .detach callbacks
+> > >=20
+> > > The second bullet is the problematic one, which we want to remove.
+> > >=20
+> > > Strategy
+> > > =3D=3D=3D=3D=3D=3D=3D=3D
+> > >=20
+> > > I devised two possible strategies to address it:
+> > >=20
+> > >  1. change the host ops to not pass a struct mipi_dsi_device, but ins=
+tead
+> > >     to pass only a copy of the needed information (bus format mainly)=
+, so
+> > >     the host driver does never access any info from the device
+> > >    =20
+> > >  2. let the host get info from the device as needed, but without havi=
+ng a
+> > >     pointer to it; this is be based on:
+> > >      - storing a __private mipi_dsi_device pointer in struct mipi_dsi=
+_host
+> > >      - adding getters to the DSI core for the host to query the needed
+> > >        info, e.g. drm_mipi_dsi_host_get_device_lanes(host) (the gette=
+rs
+> > >        would be allowed to dereference the device pointer)
+> > >=20
+> > > This series implements strategy 1. It does so by adding a .attach_new=
+ host
+> > > op, which does not take a mipi_dsi_device pointer, and converting mos=
+t host
+> > > drivers to it. Once all drivers are converted, the old op can be remo=
+ved,
+> > > and .attach_new renamed to .attach. =20
+> >=20
+> > I don't recall discussing this particular aspect at Plumbers, so sorry
+> > if we're coming back to the same discussion we had.
+> >=20
+> > I'm not necessarily opposed to changing the MIPI-DSI bus API, but I
+> > don't think changing the semantics to remove the fact that a particular
+> > device is connected or not is a good idea.
+> >=20
+> > I would have expected to have bus driver (maybe) take a device pointer
+> > at attach, and drop it at detach.
+> >=20
+> > Then, when we detect the hotplug of a DSI device, we detach it from its
+> > parent, and we're done.
+> >=20
+> > What prevents us from using that approach?
+>=20
+> I probably should have done a recap of the whole discussion, so let me
+> do it now.
+>=20
+> It all starts with one fact: a DSI device can be disconnected and then
+> a different one connected later on, having a different DSI bus format
+> (lanes, channel, mode flags, whatever).
+
+So, I know that you're not going to be super happy about it, but some
+parts of mipi_dsi_device shouldn't really belong in mipi_dsi_device at
+the moment.
+
+The virtual channel definitely belongs there, but formats for example
+aren't really fixed by the hardware itself. If we're looking at bridges
+as a whole, it would make much more sense for formats to be exposed
+through the bus format API bridges provide.
+
+Lanes are kind of like that too, since they somewhat depend on the rate.
+
+> A detach/attach sequence would handle that, but only in the simple
+> case when there is a host/device pair. Let's how consider this
+> topology:
+>                                                      =20
+>                 =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90                 =20
+>                 =E2=94=82    DSI bridge    =E2=94=82                 =20
+> =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=90  A  =E2=94=82                  =E2=94=82  B  =
+=E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> =E2=94=82 DSI host=E2=94=9C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=96=BA=
+=E2=94=82device        host=E2=94=9C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=96=BA=E2=94=82DSI device =E2=94=82
+> =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=98     =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98     =E2=94=
+=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=98
+
+So, in this case, the DSI bridge is both a DSI device on bus A, and a
+DSI host on bus B?
+
+Do we have hardware like that?
+
+> Here link A is always connected, link B is hot-pluggable. When the tail
+> device is removed and a different one plugged, a detach/attach sequence
+> can update the bus format on the DSI bridge, but then the DSI bridge
+> cannot update the format on the first host without faking a
+> detach/attach that does not map a real event.
+>=20
+> The above topology is probably not common, but it is exactly what the
+> hotplug-bridge introduces [0]. Whether the hotplug-bridge will have to
+> eventually exist or not to support hotplug is still to be defined, but
+> regardless there is another problematic aspect.
+
+Another way out would be to evaluate a different solution to that
+problem that wouldn't involve creating an intermediate bridge.
+
+> The second problematic aspect is that several DSI host drivers will not
+> even drm_bridge_add() until they have an attached DSI device. One such
+> example is samsung-dsim, which calls drm_bridge_add()
+> in samsung_dsim_host_attach().
+
+I guess in this case, you mean a DSI host that is a device of a !DSI
+bus, right?
+
+> When such a driver implements the first DSI host, the DSI bridge must
+> register a DSI device before the DRM card can be instantiated. See the
+> lengthy comment before hotplug_bridge_dsi_attach() in [0] for more
+> gory details, but the outcome is that the hotplug-bridge needs to
+> attach a DSI device with a fake format once initially just to let the
+> DRM card probe, and the detach and reattach with the correct format
+> once an actual DSI device is connected at the tail.
+
+I guess that's one thing that would be solved by moving the formats out
+of mipi_dsi_device. The other bridges compute this at atomic_check time,
+so way after the bridge has been attached, and thus this wouldn't be a
+worry anymore.
+
+> [0] https://lore.kernel.org/all/20240917-hotplug-drm-bridge-v4-4-bc4dfee6=
+1be6@bootlin.com/
+>=20
+> The above would be improved if the DSI host API provided a way to
+> notify to the host about a bus format change, which is however not
+> present currently.
+>=20
+> The naive solution would be adding a new DSI host op:
+>=20
+>  struct mipi_dsi_host_ops {
+>  	int (*attach)(struct mipi_dsi_host *host,
+>  		      struct mipi_dsi_device *dsi);
+>  	int (*detach)(struct mipi_dsi_host *host,
+>  		      struct mipi_dsi_device *dsi);
+> +	int (*bus_fmt_changed)(struct mipi_dsi_host *host,
+> + 		      struct mipi_dsi_device *dsi);
+>  	ssize_t (*transfer)(struct mipi_dsi_host *host,
+>  			    const struct mipi_dsi_msg *msg);
+>  };
+>=20
+> This would allow reduce the current sequence:
+>  1. attach with dummy format (no tail device yet)
+>  2. fake detach
+>  3. attach
+>=20
+> with:
+>  1. attach with dummy format (no tail device yet)
+>  2. update format
 >
+> Adding such a new op would be part of chapter 4 of this work, being it
+> quite useless without hotplug.
+>=20
+> However while reasoning about this I noticed the DSI host drivers peek
+> into the struct mipi_dsi_device fields to read the format, so there is
+> no sort of isolation between host and device. Introducing a struct to
+> contain all the format fields looked like a good improvement in terms
+> of code organization.
 
-Again, as you mentioned above this API interface is restricted to use till SNP is initialized,
-so i think we can still have this (to handle cases where a sub-device init failure path
-needs to remove it's HV_Fixed page from the list). So probably i can have this with a
-check for SNP being already initialized and returning an error if it is, allowing the
-user to leak the page ? 
- 
->> +	struct snp_hv_fixed_pages_entry *entry, *nentry;
->> +
->> +	spin_lock(&snp_hv_fixed_pages_lock);
->> +	list_for_each_entry_safe(entry, nentry, &snp_hv_fixed_pages, list) {
->> +		if (entry->base == paddr) {
->> +			list_del(&entry->list);
->> +			kfree(entry);
->> +			break;
->> +		}
->> +	}
->> +	spin_unlock(&snp_hv_fixed_pages_lock);
->> +}
->> +
->> +static int snp_extend_hypervisor_fixed_pages(struct sev_data_range_list *range_list)
->> +{
->> +	struct sev_data_range *range = &range_list->ranges[range_list->num_elements];
->> +	struct snp_hv_fixed_pages_entry *entry;
->> +	int new_element_count, ret = 0;
->> +
->> +	spin_lock(&snp_hv_fixed_pages_lock);
-> 
-> guard()
-> 
->> +	if (list_empty(&snp_hv_fixed_pages))
->> +		goto out;
->> +
->> +	new_element_count = list_count_nodes(&snp_hv_fixed_pages) +
->> +			    range_list->num_elements;
->> +
->> +	/*
->> +	 * Ensure the list of HV_FIXED pages that will be passed to firmware
->> +	 * do not exceed the page-sized argument buffer.
->> +	 */
->> +	if (new_element_count * sizeof(struct sev_data_range) +
->> +	    sizeof(struct sev_data_range_list) > PAGE_SIZE) {
->> +		ret = -E2BIG;
->> +		goto out;
->> +	}
->> +
->> +	list_for_each_entry(entry, &snp_hv_fixed_pages, list) {
->> +		range->base = entry->base;
->> +		range->page_count = entry->npages;
-> 
-> Will there be an issue if the size is not 2MB aligned? I think a PSMASH
-> will be done, but something to test if you are going to allow any page
-> alignment and page count.
-> 
+Most importantly, looking at a couple of DSI drivers, it doesn't look
+like any use the format outside of atomic_pre_enable / atomic_enable, so
+if the format was provided in the bridge state, it would work fine.
 
-I believe that SNP_INIT_EX can add HV_Fixed pages which are not 2MB size aligned.
+> Yet another aspect is that several host drivers keep a pointer to the
+> device, and thus in case of format change in the DSI device they might
+> be reading different fields at different moments, ending up with an
+> inconsistent format.
+>=20
+> The above considerations, which are all partially overlapped, led me to
+> the idea of introducing a struct to exchange a DSI bus format, to be
+> exchanged as a whole ("atomically") between host and device. What's
+> your opinion about introducing such a struct?
+>=20
+> The second aspect of this series is not passing pointers, and that's
+> the core topic you questioned. I realize it is not strictly necessary
+> to reach the various goals discussed in this e-mail. The work I'm doing
+> on the drm_bridge struct is actually a way to store a pointer while
+> avoiding use-after-free, so that can obviously be done for a simpler
+> scenario such as DSI host-device. However I thought not passing a
+> pointer would be a more radical solution: if a driver receives no
+> pointer, then it cannot by mistake keep it stored when it shouldn't,
+> maybe in a rare case within a complex driver where it is hard to spot.
 
-Here is a sub list of HV_Fixed pages being passed to SNP_INIT_EX: 
+I'm not too worried about pointers. I mean, yes, it's a footgun, yes,
+you can create unsafe behaviors with them, but as long as we have some
+kind of mechanism to essentially give you a pointer and revoke it, which
+attach / detach is, it's fine.
 
-[   25.940837] base 0x0, count 1
-[   25.940838] base 0xa0000, count 96
-[   25.940839] base 0x75b60000, count 75
-[   25.940839] base 0x75c60000, count 928
-[   25.940840] base 0x88965000, count 83
-[   25.940841] base 0x8a40c000, count 1
-[   25.940841] base 0x8e14d000, count 48187
-[   25.940842] base 0x99d88000, count 235
-[   25.940842] base 0x99e73000, count 1153
-[   25.940843] base 0x9a2f4000, count 12043
-[   25.940844] base 0x9fffa000, count 5
-[   25.940844] base 0xa0000000, count 65536
-[   25.940845] base 0xb4000000, count 1
-[   25.940845] base 0xb5080000, count 1
-[   25.940846] base 0xbe100000, count 1
-[   25.940847] base 0xbf000000, count 1
-[   25.940847] base 0xd0080000, count 1
-[   25.940848] base 0xd1100000, count 1
-[   25.940848] base 0xec400000, count 1
-...
-...
+We'll catch the rest during review, just like access to freed pointers,
+or pointers stored without taking a reference.
 
->> +		range++;
->> +	}
->> +	range_list->num_elements = new_element_count;
->> +out:
->> +	spin_unlock(&snp_hv_fixed_pages_lock);
->> +
->> +	return ret;
->> +}
->> +
->>  static int snp_filter_reserved_mem_regions(struct resource *rs, void *arg)
->>  {
->>  	struct sev_data_range_list *range_list = arg;
->> @@ -1163,6 +1241,16 @@ static int __sev_snp_init_locked(int *error)
->>  			return rc;
->>  		}
->>  
->> +		/*
->> +		 * Extend the HV_Fixed pages list with HV_Fixed pages added from other
->> +		 * PSP sub-devices such as SFS. Warn if the list can't be extended
->> +		 * but continue with SNP_INIT_EX.
->> +		 */
->> +		rc = snp_extend_hypervisor_fixed_pages(snp_range_list);
->> +		if (rc)
->> +			dev_warn(sev->dev,
->> +				 "SEV: SNP_INIT_EX extend HV_Fixed pages failed rc = %d\n", rc);
-> 
-> If you aren't going to do anything with the error other than print a
-> warning, this should be moved to the snp_extend_hypervisor_fixed_pages()
-> function and have it be a void function.
->
-Ok.
- 
-> I would assume we'll see a failure in the SFS component if this fails, though.
+> I'll be OK to change the approach and keep the pointer passed in the
+> attach/detach ops, if that is the best option. However I'd like to have
+> your opinion about the above topics before working towards that
+> direction, and ensure I fully grasp the usefulness of keeping the
+> pointer.
+>=20
+> Post scriptum. The very initial issue that led to all this discussion
+> when writing the hotplug-bridge driver is that the samsung-dsim driver
+> will not drm_bridge_add() until a DSI device does .attach to it. Again,
+> see the comments before hotplug_bridge_dsi_attach() in [0] for details.
+> However by re-examining the driver for the N-th time now from a new
+> POV, I _think_ this is not correct and potentially easy to solve. But thi=
+s leads to one fundamental question:
 
-Yes, SFS or any other sub-device component will fail in this case, but i don't want to abort
-SNP_INIT_EX in this case.
+That's certainly surprising to me, but I know that the DSI setup can be
+a pain. I struggled in the past with the ordering with the component
+framework, and I wouldn't be too surprised if those were attempts to
+work around some of these issues.
 
-Thanks,
-Ashish
+vc4_dsi seems to have a similar construct. Understanding why they both
+do something like this, and updating the doc[1] to reflect it would be a
+good idea I think, so we can frame the problem properly, and then try to
+find a solution for it.
 
-> 
-> Thanks,
-> Tom
-> 
->> +
->>  		memset(&data, 0, sizeof(data));
->>  		data.init_rmp = 1;
->>  		data.list_paddr_en = 1;
->> diff --git a/drivers/crypto/ccp/sev-dev.h b/drivers/crypto/ccp/sev-dev.h
->> index 3e4e5574e88a..444d7fffd801 100644
->> --- a/drivers/crypto/ccp/sev-dev.h
->> +++ b/drivers/crypto/ccp/sev-dev.h
->> @@ -65,4 +65,7 @@ void sev_dev_destroy(struct psp_device *psp);
->>  void sev_pci_init(void);
->>  void sev_pci_exit(void);
->>  
->> +int snp_insert_hypervisor_fixed_pages_list(u64 paddr, int npages);
->> +void snp_delete_hypervisor_fixed_pages_list(u64 paddr);
->> +
->>  #endif /* __SEV_DEV_H */
+Maxime
 
+1: https://docs.kernel.org/gpu/drm-kms-helpers.html#special-care-with-mipi-=
+dsi-bridges
+
+--4rj2w5lefdmnjl55
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaIOgCAAKCRAnX84Zoj2+
+dvcLAYDSUlST3u3RQ6hPoTm2NycR4zDnYeJ2st+dvYoAiUn/32lR3AU+RoRdO4WQ
+kyEHTdoBgK+kXCgOdtzUKeKmEEuSb/B5h8WDeQm8IPZpVBdSqVgGzlFOSnwAdkg2
+nGyw3Q6WeQ==
+=yuia
+-----END PGP SIGNATURE-----
+
+--4rj2w5lefdmnjl55--
 
