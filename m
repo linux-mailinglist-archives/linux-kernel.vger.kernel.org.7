@@ -1,133 +1,118 @@
-Return-Path: <linux-kernel+bounces-745257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63722B11753
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:14:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D25B11757
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63C01CC3835
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:14:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 649837B868A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4F023AE66;
-	Fri, 25 Jul 2025 04:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+PaacS2"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68551E5B7B;
+	Fri, 25 Jul 2025 04:15:06 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9E62E36EC;
-	Fri, 25 Jul 2025 04:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBA72376FD;
+	Fri, 25 Jul 2025 04:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753416856; cv=none; b=RptSgHC2xL9z4/mFJnf9VAdxsQk2rrqPs1nI46YHD9KQLMG90VtiXip1bCAq3xFxYTVANDuA7W0Do01PlR5vjkWKnBKnzgR5R/0RfaETXCZ3oOCOdbJg0w2+WOlFqIjo881RNgTaXiIIa6XOjBw7CralD9Eb1DiBe3y5LHFkIDM=
+	t=1753416906; cv=none; b=ETyY4Y5n7iOvEZBjoFEy06PmaQk5qSDVnihw4aJH7umqP8eIcXJ9WfYLN309i8Edw8yw5jirPZtg+vAGGjhHKsBGSsLzsOlR+ZiQtxjW8GdHt3U+8QTzpskRZ+dGtTdT3c71Z1U01bzjlL1ieYldjgKOifqI46I1VL3m9HWqrCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753416856; c=relaxed/simple;
-	bh=+pn4z0ImaHtJwReAXKr+jjjCoFUB95rQqq8hiGXTxdA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KZysnpfm3JnpImQ8DMwPPRRhLhkg11/0FASL04QQPvuqWPrAlnnvqxCs4F8r0XUo0/7tyt1yFpAYofFWHndxw2ha+olwLuivizw++IIr+F18uWxIMn52V60kcO5pvSS4zkwTWa1ksN/cQlqfXBgH6g3oAAbTGUF6AK0JT7WCkAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+PaacS2; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2353a2bc210so16387895ad.2;
-        Thu, 24 Jul 2025 21:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753416854; x=1754021654; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cRwRxycYYk9J656HpTEAdKZ3WukDqnxUbViNBovsoWc=;
-        b=B+PaacS2lCUNEvwws+uZFQc4SIqJVdv7erzTUY6IA7PYNsXSRn5Glp6f0cFjOlgP3U
-         f5bBrE4JdMzgOjdgAr+Sj51jMSxlPb8q39h3l7Mdj6n3v4nmcwgRtavEckrPube8Gxe9
-         tkoPU7eUJnkF5dFSz4tgm53XGz3C7i4r5t5jNivisv6hBswaQv4qwkANhAWzDkLo/hEp
-         88EewM12XiPyQhXUnN3ejmerYFK4DDm3BSP0Z9JaZCKgA3zt1limYkqcBP4IL/Tyll/q
-         Y0crJp5eq8AWsARqCsdIq79NysnEI1YdhvKGTstJrbyJw4ov1+8h+eZms9AxPRy/sUGx
-         Mo5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753416854; x=1754021654;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cRwRxycYYk9J656HpTEAdKZ3WukDqnxUbViNBovsoWc=;
-        b=cdvbtn2amjal5y7Rfm0Isa+uVd9o2sfrIdtxZU77ByJFfdqAIMproletKap+U8yFvn
-         43+g4EJlZWdSJQy6GAy4skuyBdB8JCK+7tj6gcRfKhbHaxgptbjkbVx4mym6SJg0ZSH7
-         4iZuGAh39Z2DHowcMPlL3mt56fJSedKn2xToXWU5QibNrB6mJV6tv+QYgeoNC0YbdtUq
-         m2h2srLKMsGbEdnpBvOBofGDAp9t4IFZ7cEMNmAVl0isCVx4yFmvSs+jei4H/AZNpSnK
-         otxujAeC+giy0j0D97BQ11rDxhEQNTV6mDMGRFv8YcRRr/75mOf/b4OqEJtBd5i/Au2K
-         U21g==
-X-Forwarded-Encrypted: i=1; AJvYcCXxMLcpRbUmuo5b/DjojZoDllXei0js5oWzQlfVKoZD8vfKUL/RvHWKWWA5OzTnx0NZw051sQGodFOExEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcd9ZEeqlN8d8FD7U6pqNT44c3iMJDRRgzmUtgmjM29KUuL/fP
-	X8u6en0EbQD9NGzwYqH6xC62Tq/BaLC4CYy6KUQnPqPlYLFr5F02Iymu
-X-Gm-Gg: ASbGncvQk2fgtf8mOS+c+F/TBC2D7eO2jZBK4KR7fJ8CL9ka62wUJEq4CFooHbohibH
-	SVeZI1WQit7HeNAitQh/1jTKg/Qlz0bRMphIkHO6othXYxyqMohizvWP7cNrXj9pt2SBXhW7fHn
-	6SRbK6yxsW7J6uzIYdDVA92rsXMAlpiza2OclhDx43jpQu07jp/Jyv25JBdvng7Sy77kiU9jDdG
-	p/u4jM2JMfT6zZrAHVpwge0ueVoioOO6iXpTyTH1NoJ37tfK52c1iCe8cL5s0eU5xs5G1ssmQoQ
-	MMOcZHCo2IcUYnyJnzwVnWzD6G3cAQb40xhouzyaIpx9zHPgBQyBQG2H8Vx+60NsxDUEza7zmnx
-	ihcl3sDbuWZv3+e6hE5QJPisNy1UXtZpkfyCB4xawXzkpEQvbgp0FhpDn
-X-Google-Smtp-Source: AGHT+IEfGhyMvv7biK65HhfruGEzYaI5wloB/sqor7XnJ7lUm5lnZ7KHWGUWt/UC031SOzEST1HhPg==
-X-Received: by 2002:a17:902:ce86:b0:234:d7b2:2ac5 with SMTP id d9443c01a7336-23fb3047e00mr8428685ad.21.1753416854288;
-        Thu, 24 Jul 2025 21:14:14 -0700 (PDT)
-Received: from fedora (181-162-135-125.baf.movistar.cl. [181.162.135.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fadc8f669sm6794165ad.12.2025.07.24.21.14.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 21:14:13 -0700 (PDT)
-From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org,
+	s=arc-20240116; t=1753416906; c=relaxed/simple;
+	bh=G1ZRIhwsDY/i2THgnj9UW52wTj+jsb2hqWUHpwFEffI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=POjFBsN+PqLrLgHCIU4GZpTMev+cV4uIf1g9LGO7AlBnbxHDbsn29q+3lJUGMLsangdOITctnHGlVdw0IqPE1JRfStwH693O04iV/bsa5DABBUOYJfg1TLmEmYiMAIrt14aOD1BWOdxanQemL7nUUVnt2yYnYhWyQZHQ3dZwdyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: eac4a9b6690d11f0b29709d653e92f7d-20250725
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:ee36c781-47fb-4fe5-9ee1-75c8a63a48d0,IP:0,U
+	RL:0,TC:0,Content:17,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:17
+X-CID-META: VersionHash:6493067,CLOUDID:adc5edde5a777f37626b98d417e1adbd,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: eac4a9b6690d11f0b29709d653e92f7d-20250725
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1868079376; Fri, 25 Jul 2025 12:14:54 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 0DEF4E008FA3;
+	Fri, 25 Jul 2025 12:14:54 +0800 (CST)
+X-ns-mid: postfix-688304BD-8455324
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 0C9D7E008FA2;
+	Fri, 25 Jul 2025 12:14:52 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: "rafael J . wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: zhenglifeng <zhenglifeng1@huawei.com>,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Ignacio Pena <ignacio.pena87@gmail.com>
-Subject: [PATCH] block: Fix typo 'programm' -> 'program'
-Date: Fri, 25 Jul 2025 00:14:16 -0400
-Message-ID: <20250725041416.73567-1-ignacio.pena87@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v2] cpufreq: Avoid get_governor() for first policy
+Date: Fri, 25 Jul 2025 12:14:50 +0800
+Message-Id: <20250725041450.68754-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-Fix spelling mistake.
+When a cpufreq driver registers the first policy, it may attempt to
+initialize the policy governor from `last_governor`. However, this is
+meaningless for the first policy instance, because `last_governor` is
+only updated when policies are removed (e.g. during CPU offline).
 
-No functional change.
+The `last_governor` mechanism is intended to restore the previously
+used governor across CPU hotplug events. For the very first policy,
+there is no "previous governor" to restore, so calling
+get_governor(last_governor) is unnecessary and potentially confusing.
 
-Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
+This patch skips looking up `last_governor` when registering the first
+policy. Instead, it directly uses the default governor after all
+governors have been registered and are available.
+
+This avoids meaningless lookups, reduces unnecessary module reference
+handling, and simplifies the initial policy path.
+
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+
 ---
- block/blk-crypto-profile.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in v2:
+ - Fix the case where the governor is NULL.
+---
+---
+ drivers/cpufreq/cpufreq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/block/blk-crypto-profile.c b/block/blk-crypto-profile.c
-index 81918f6e0..72462b6f4 100644
---- a/block/blk-crypto-profile.c
-+++ b/block/blk-crypto-profile.c
-@@ -237,7 +237,7 @@ EXPORT_SYMBOL_GPL(blk_crypto_keyslot_index);
-  *	      will be stored here.  blk_crypto_put_keyslot() must be called
-  *	      later to release it.  Otherwise, NULL will be stored here.
-  *
-- * If the device has keyslots, this gets a keyslot that's been programmed with
-+ * If the device has keyslots, this gets a keyslot that's been programed with
-  * the specified key.  If the key is already in a slot, this reuses it;
-  * otherwise this waits for a slot to become idle and programs the key into it.
-  *
-@@ -278,7 +278,7 @@ blk_status_t blk_crypto_get_keyslot(struct blk_crypto_profile *profile,
- 
- 		/*
- 		 * If we're here, that means there wasn't a slot that was
--		 * already programmed with the key. So try to program it.
-+		 * already programed with the key. So try to program it.
- 		 */
- 		if (!list_empty(&profile->idle_slots))
- 			break;
-@@ -412,7 +412,7 @@ int __blk_crypto_evict_key(struct blk_crypto_profile *profile,
-  * blk_crypto_reprogram_all_keys() - Re-program all keyslots.
-  * @profile: The crypto profile
-  *
-- * Re-program all keyslots that are supposed to have a key programmed.  This is
-+ * Re-program all keyslots that are supposed to have a key programed.  This is
-  * intended only for use by drivers for hardware that loses its keys on reset.
-  *
-  * Context: Process context. Takes and releases profile->lock.
--- 
-2.50.1
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index d7426e1d8bdd..1aa559f53479 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1122,7 +1122,8 @@ static int cpufreq_init_policy(struct cpufreq_polic=
+y *policy)
+=20
+ 	if (has_target()) {
+ 		/* Update policy governor to the one used before hotplug. */
+-		gov =3D get_governor(policy->last_governor);
++		if (policy->last_governor[0] !=3D '\0')
++			gov =3D get_governor(policy->last_governor);
+ 		if (gov) {
+ 			pr_debug("Restoring governor %s for cpu %d\n",
+ 				 gov->name, policy->cpu);
+--=20
+2.25.1
 
 
