@@ -1,132 +1,109 @@
-Return-Path: <linux-kernel+bounces-746024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18882B12207
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:30:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09829B122B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F2C1C8179F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D3713A4A4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02ED11F462D;
-	Fri, 25 Jul 2025 16:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313752EF9B6;
+	Fri, 25 Jul 2025 17:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="pE4Yj3S2"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="QwPbWJ/O"
+Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DF2374D1
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753461017; cv=pass; b=nsy9//loy2Mp494x95Cx7PRnV2iJluHxi2VKeE39Qg32aLR/rYhP/bPKD3Awf4mDKkv/qhkPJYfCUaITY+5Ar4ZhCIP9E9pJ9dXIXxRaOVb8e4Y7CyCXLSsqGWXk2rxNL9IZI+4OpRtYI8s6OtzVeK1PdNHWUtWv3W+3oz8b4LA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753461017; c=relaxed/simple;
-	bh=x0EtQta/5k2J6Ni5cItYFjcIO3DeluIxw4qZ5J6tZI0=;
-	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
-	 Content-Type; b=L3wHamfKGJ56p6w8j9I/y0IWi0jF6SPD9dZ5XJxuDvPPMcgs7FrCYE42DH38p8HOtZ76QEIJtF8FwpjGvs44G/diIKgV/ooj9zL5chxhxiEZclwdmzAkTMU+o4QhZgWIIrT7fb7B215eZLPKX7nekpiDSJ5bJxFGffVgg6E8RII=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=pE4Yj3S2; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1753461001; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aEUfV3gZVITtA1V4+T10FU6Zp2cRgW/Vw5mIpQxxGoDgll87FQIaTDiIXFo5ZVo4vzQzc/qnq5oLr6gI9nJSvkDMs3NCtiKVnSWKzD6AchL1uKpJpgr0F8VVDPEMhoif9W7vuvqQfP9NKwaKyiMlUZT1D3Wk1NBPAS77+YxQjs8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753461001; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=V7UB6j/9y8mHrSKKCeR3NkchjsE3+xKogIfJfdZ88s0=; 
-	b=GFU9/Ul0PVlcWPc8Ahil1Rsp5NWpbSGc+r5+ZPzm5Y5yMqTHz3BY/oac4k3LAsb0Ox3FVqtp8pQv3nSve8M/0sNt4yvw1j3TiuV+fipIYkNZucGgLUPG1RIbti9Ds7Js0M1PPEXDF7Qdz+IMAX2YTKClak8orVT1a1qzOgrjPtI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753461001;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=V7UB6j/9y8mHrSKKCeR3NkchjsE3+xKogIfJfdZ88s0=;
-	b=pE4Yj3S2YyEqZb3A5ZEkjA2Va9iGhnyexrnASyMU0nA9Zqz/hPDuOFX7ocJMDxTV
-	lB3Q9O0vvF/ug/RyVl7uEk7CXR+qcSBj6rIjR9HtW0VZQj332/Q29s48VDEBOMb9Ixm
-	3wAyQIQE65qqK25mrV2+n1P/XI3XiMNWZqdACOXU=
-Received: by mx.zohomail.com with SMTPS id 1753460998721142.7352358306208;
-	Fri, 25 Jul 2025 09:29:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E884D2EF647;
+	Fri, 25 Jul 2025 17:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753463405; cv=none; b=BAnztAuWLs63FTFtTO0lHKwJVL6+pkagiqLz8+p/mRSRrdnKTsrIqF7MW5hxiV94xIw9mfUNUQsSirg4gzf7h7r2kp0PCRAjQG7bhu/poEwy0ysrf7coOlVHURcKPP40ZoXMrLNZ92SIFdXB4efFEkjWPZ4a1EQi8pguSiBLWfY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753463405; c=relaxed/simple;
+	bh=oVAaxXaaVQWWWIQFP0Hh2cN/zmIiJIe6UurtigGiPfw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Subject; b=YjzPXixvijKPa37jLy4uSPfdLFzrMXPiztM9EOHIZ6W6MU3K9AiCsWJ7wq3M8iXEP6cXziVQYEwilkHBY7oljfZBfVonE7RzooQdbuE/D8PHdRHQ/dysJHBGzN1E3iZ9bq1QgaJL5do/M77avwQ/YZPC+0AvbZ8kwPCFbbgfdIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=QwPbWJ/O; arc=none smtp.client-ip=204.191.154.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
+	MIME-Version:Date:Message-ID:content-disposition;
+	bh=f47Ky90dFPkL1Ya+qWKSgUqpFHN5ODLjpNudWVSb5u8=; b=QwPbWJ/OWzQX8Q226ojxfza0WS
+	hTwTo6/vPF246VLRi+47uocSVLkOn0eD6rbMZRZD07tT3AUM6z95tZTUeAEDALmOKRCr9SwWCtSWo
+	Vl40IAQDTTCjPykxMQJzgZjUrWmcuoWHdCN8wv2e2ot8dxaFvJW7K4bmnXuC/9eazXKfZuuVimmSg
+	tGZI0VE8yThg0M2uXVwtlJ46NYkhpaiehvoG18/F/CMQ0pf9gs/S0p4bVOocrwE1PtjveEbBVRg1u
+	Kb4oYtEyAdpejHSKoYmOlKpt55+jX9YkR+phKZwkr98AAn+Xl4RiugB4uevi4n7lK1TZ6DnW/l4Ya
+	BaSNp5Dg==;
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <logang@deltatee.com>)
+	id 1ufLJz-006C5W-2Q;
+	Fri, 25 Jul 2025 10:31:00 -0600
+Message-ID: <b32ae619-6c4a-46fc-a368-6ad4e245d581@deltatee.com>
+Date: Fri, 25 Jul 2025 10:30:46 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: "Alexandre Ghiti" <alex@ghiti.fr>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>
-In-Reply-To: <e7499ddb-04f6-4891-bbce-38bb80a87401@ghiti.fr>
-Cc: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] riscv: mm: Use mmu-type from FDT to limit SATP mode
-Message-ID: <18558b7c6df10da0.2100f58a3d0fe250.7de105a1ea2dd0f@Mac>
-Date: Fri, 25 Jul 2025 16:29:56 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+To: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+ Jens Axboe <axboe@kernel.dk>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
+ <jglisse@redhat.com>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mm@kvack.org, linux-pci@vger.kernel.org,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Vivek Kasireddy <vivek.kasireddy@intel.com>, Will Deacon <will@kernel.org>
+References: <cover.1753274085.git.leonro@nvidia.com>
+ <82e62eb59afcd39b68ae143573d5ed113a92344e.1753274085.git.leonro@nvidia.com>
+ <20250724080313.GA31887@lst.de> <20250724081321.GT402218@unreal>
+Content-Language: en-CA
+From: Logan Gunthorpe <logang@deltatee.com>
+In-Reply-To: <20250724081321.GT402218@unreal>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: leon@kernel.org, hch@lst.de, alex.williamson@redhat.com, jgg@nvidia.com, akpm@linux-foundation.org, bhelgaas@google.com, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, axboe@kernel.dk, jglisse@redhat.com, joro@8bytes.org, kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, linux-pci@vger.kernel.org, m.szyprowski@samsung.com, robin.murphy@arm.com, sumit.semwal@linaro.org, vivek.kasireddy@intel.com, will@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Level: 
+Subject: Re: [PATCH 05/10] PCI/P2PDMA: Export pci_p2pdma_map_type() function
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
-On 25/07/2025 16:04, Alexandre Ghiti wrote:
-> On 7/21/25 18:53, Junhui Liu wrote:
->> Some RISC-V implementations may hang when attempting to write an
->> unsupported SATP mode, even though the latest RISC-V specification
->> states such writes should have no effect. To avoid this issue, the
->> logic for selecting SATP mode has been refined:
+
+
+On 2025-07-24 02:13, Leon Romanovsky wrote:
+> On Thu, Jul 24, 2025 at 10:03:13AM +0200, Christoph Hellwig wrote:
+>> On Wed, Jul 23, 2025 at 04:00:06PM +0300, Leon Romanovsky wrote:
+>>> From: Leon Romanovsky <leonro@nvidia.com>
+>>>
+>>> Export the pci_p2pdma_map_type() function to allow external modules
+>>> and subsystems to determine the appropriate mapping type for P2PDMA
+>>> transfers between a provider and target device.
 >>
->> The kernel now determines the SATP mode limit by taking the minimum of
->> the value specified by the kernel command line (noXlvl) and the
->> "mmu-type" property in the device tree (FDT). If only one is specified,
->> use that.
->> - If the resulting limit is sv48 or higher, the kernel will probe SATP
->>    modes from this limit downward until a supported mode is found.
->> - If the limit is sv39, the kernel will directly use sv39 without
->>    probing.
->>
->> This ensures SATP mode selection is safe and compatible with both
->> hardware and user configuration, minimizing the risk of hangs.
->>
->> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
->> ---
->>   arch/riscv/kernel/pi/fdt_early.c | 40 +++++++++++++++++++++++++++++++++=
-+++++++
->>   arch/riscv/kernel/pi/pi.h        |  1 +
->>   arch/riscv/mm/init.c             | 11 ++++++++---
->>   3 files changed, 49 insertions(+), 3 deletions(-)
->>
+>> External modules have no business doing this.
+> 
+> VFIO PCI code is built as module. There is no way to access PCI p2p code
+> without exporting functions in it.
 
-[...]
+The solution that would make more sense to me would be for either
+dma_iova_try_alloc() or another helper in dma-iommu.c to handle the
+P2PDMA case. dma-iommu.c already uses those same interfaces and thus
+there would be no need to export the low level helpers from the p2pdma code.
 
->=20
-> I guess it's more convenient to use the 'mmu-type' property on this core=
-=20
-> rather than using no4lvl right?
-
-Yes, It's hard to ensure that all the users are aware of the need to use
-the 'no4lvl', and the cmdline args can easily be overridden by the
-bootloader or users if a `bootargs =3D "no4lvl"` is defined in the device
-tree. Therefore, relying on the 'mmu-type' property is more robust and
-user-friendly.
-
->=20
-> Anyway, what you implemented matches the description of the 'mmu-type'=20
-> binding, so:
->=20
-> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->=20
-> I'll take that for 6.17.
-
-Thanks!
-
->=20
-> Thanks,
->=20
-> Alex
-
---=20
-Best regards,
-Junhui Liu
-
+Logan
 
