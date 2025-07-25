@@ -1,72 +1,49 @@
-Return-Path: <linux-kernel+bounces-745482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C62B11A8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:07:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C269B11A8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0351CE21A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51E80561C80
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E5B272E5C;
-	Fri, 25 Jul 2025 09:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="U7Ux1+UT"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E613B271A6A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E0B272E4A;
+	Fri, 25 Jul 2025 09:08:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5E11C84C6
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753434455; cv=none; b=jRXUh3nFLmuE4XDJov7sfxyoqfBeTv1y9N83wAliSqzmrl0KdxcQCiec0Ikarrv1xDXm9x4/tK2krbhiaGT251jS3iQeW5lLV1yV8aubAp6tdR8FnNBf02qQ0AWRdvTVS2Spv5CDKRvJoom5DVN6FPptXJWaYyvFe7+ku4frcMo=
+	t=1753434513; cv=none; b=EJtPiZ8CKmL5nrEwphnr0vCCTlymjmyK5rnX0p80FOktKInj4IIQsjEHgrM6AgHbyuLAXSLuj24jPVDu6E+xED+68vEJeg8iYu/+pDWKL6qWa+YbLvyHCOYIZq2gtL2KiKmYXmqHIQzFP0s6mLzNE+npGgxqNWEYatGYl1K88NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753434455; c=relaxed/simple;
-	bh=CHLH3AiFiQHhmy2doh6A67quhE347Z+Zppa97UuIeG0=;
+	s=arc-20240116; t=1753434513; c=relaxed/simple;
+	bh=De6jJ9WFKxdiSckwlbxEIJ8N2MPXJWidcPZwaY2r0ig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVSI0AwnI1YsIR0GoBwBAYaAphod2tE5uvcWYQY5qkON3vRu18BnKzqXURhRFTJouRMe7+38NcWSmVjlwroyOVXsiNUoEc6aMlzfE/RJxFoggi5vf4UdPFzg+VuC3+cfHlLitr9v1TJCg4cE3aHyyXMuahBYj6c096X9wz7OUe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=U7Ux1+UT; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Lp5Z9iTH+ugecgyteyY+wMw9FDVhLK20NW464bjciOY=; b=U7Ux1+UTOOBLVFWeNvZ1LYBq4G
-	sS9UgAN7zUZWKWn4drP3pitmFQmIx9UmmoQDDvzbvEoUr731eiz7C+b8wIZItA/QEA9jnJtMpZa3z
-	9lNW4USW6c89aICyrodbuMP7SYh0Z5oPwJBgzupGZ9aMq35XWQNfHt4nyOZm5ZRUb98i2VnzqS1cM
-	dWRyfEwMSbDueGtu9E2uzKzhehLhAvUID33OLyv82Ew5iWrAbzLeUWBQevSkSHvvPhxqDEgz6TBtO
-	tArbcH2RsZEQME6uOr1J6iTTa2wKU6x1XLmGNBYzJDa6Qe8aJbWhaVjntrCQwLbXkBr+CqZIBbX2y
-	NnLvR+0g==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56256)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ufEOl-0004Zz-27;
-	Fri, 25 Jul 2025 10:07:27 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ufEOi-0001di-3A;
-	Fri, 25 Jul 2025 10:07:25 +0100
-Date: Fri, 25 Jul 2025 10:07:24 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>, kees@kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: next-20250723 arm atags_to_fdt.c undefined reference to
- `__sanitizer_cov_stack_depth'
-Message-ID: <aINJTDD3je4XJ6VO@shell.armlinux.org.uk>
-References: <CA+G9fYtBk8qnpWvoaFwymCx5s5i-5KXtPGpmf=_+UKJddCOnLA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GX3K74Nf8nR+hfWg22UngihOb+NU9hS3HW9H+ZLuMjkrI3RHxcYvm9WVNg+8FbMb6mz8SycMOX04aSo1yK1xjHtTzBWQ7Lo2uIFgvc4RPapfMFcfO1uPdpFnIGCTMZX7J9XA+E6zq+cqka61+xJIk0SLfdWwxm6j3HCugtTXf70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D2F5176C;
+	Fri, 25 Jul 2025 02:08:24 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B08203F66E;
+	Fri, 25 Jul 2025 02:08:29 -0700 (PDT)
+Date: Fri, 25 Jul 2025 10:08:23 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: Re: build failure with crosstools gcc 15.1.0
+Message-ID: <aINJh-WFKHhxZ3fW@J2N7QTR9R3>
+References: <8362b484-ea77-4825-8ccb-d5acad660102@oss.qualcomm.com>
+ <617201f8-1ad7-4403-b195-8c80d35ea30f@app.fastmail.com>
+ <aIIOn-5Zndlb2tDG@J2N7QTR9R3>
+ <b2feb2ec-9e69-4ab4-b75a-6c7f287c763d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,40 +52,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYtBk8qnpWvoaFwymCx5s5i-5KXtPGpmf=_+UKJddCOnLA@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <b2feb2ec-9e69-4ab4-b75a-6c7f287c763d@app.fastmail.com>
 
-On Fri, Jul 25, 2025 at 01:59:02PM +0530, Naresh Kamboju wrote:
-> Regressions noticed while building arm builds with gcc-13 and gcc-8
-> toolchains on the Linux next-20250723 to next-20250725 tags.
+On Thu, Jul 24, 2025 at 05:37:11PM +0200, Arnd Bergmann wrote:
+> On Thu, Jul 24, 2025, at 12:44, Mark Rutland wrote:
+> > On Fri, Jul 04, 2025 at 03:25:49PM +0200, Arnd Bergmann wrote:
+> >> On Mon, Jun 23, 2025, at 21:52, Jeff Johnson wrote:
+> >> > vmlinux.o: warning: objtool: ncsi_process_next_channel() falls through 
+> >> > to next function ncsi_channel_monitor.cold()
+> >> > vmlinux.o: error: objtool [elf.c:1360]: elf_write: elf_update failed: 
+> >> 
+> >> Sorry for the late reply, have you figured it out in the meantime?
+> >> 
+> >> I couldn't immediately reproduce it, so it may already be fixed
+> >> in linux-next.
+> >
+> > $ git clean -fdx
+> > $ usekorg 15.1.0 make ARCH=x86_64 CROSS_COMPILE=x86_64-linux- defconfig
+> > $ usekorg 15.1.0 make ARCH=x86_64 CROSS_COMPILE=x86_64-linux- -j56
 > 
-> First seen on the Linux next-20250723
-> Good: next-20250722
-> Bad:  next-20250723 and next-20250725
-> 
-> Regression Analysis:
-> - New regression? Yes
-> - Reproducibility? Yes
-> 
-> ## Build regressions
-> * arm, build
->   - gcc-13-lkftconfig-hardening
->   - gcc-8-lkftconfig-hardening
-> 
-> Build regression: next-20250723 arm atags_to_fdt.c undefined reference
-> to `__sanitizer_cov_stack_depth'
+> This is very close to what I use. I assume you are also on an arm64
+> host here?
 
-"cov" suggests "coverty", and that the symbol is not available in the
-kernel suggests that coverty isn't supported.
+Nope, this was on an x86-64 host running Debian 11.10.
 
-Maybe some kind of new support has been added, but no one has told the
-arm developers, and thus bits needed for it aren't present.
+I *DON'T* see this when building on an arm64 host running Debain 12.11,
+using the (arm64 builds of) the GCC 15.1.0 binaries from kernel.org.
 
-Honestly, I'm not going to worry about it. If someone wishes to
-contribute 32-bit arm support, then fine, otherwise I'll just ignore
-this.
+That suggests this is down to something on the build host. Given that
+the failure is seen at a call to elf_update() (which is part of libelf):
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+	/* Write all changes to the file. */
+	if (elf_update(elf->elf, ELF_C_WRITE) < 0) {
+		ERROR_ELF("elf_update");
+		return -1;
+	}
+
+... I suspect the version of libelf might have something to do with it.
+
+The x86 host has libelf-dev 0.183-1 whereas the arm64 host has
+libelf-dev 0.188-2.1, so maybe there's something added or fixed between
+those versions.
+
+Otherwise, looking at the resulting .config files, the only differences
+are:
+
+* The x86 host has:
+
+  CONFIG_PAHOLE_VERSION=120
+  CONFIG_CC_HAS_MARCH_NATIVE=y
+  # CONFIG_X86_NATIVE_CPU is not set
+
+* The arm64 host has:
+
+  CONFIG_PAHOLE_VERSION=124
+
+... and otherwise everything else is the same.
+
+AFAICT, pahole shouldn't affect the build since none of the BTF options
+are selected.
+
+Mark.
 
