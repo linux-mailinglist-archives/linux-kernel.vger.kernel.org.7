@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-746329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE644B12597
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:34:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 944F0B12599
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 305EBAA6996
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67BE11CC01B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2490225B30E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9B125B692;
 	Fri, 25 Jul 2025 20:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBzfVGiG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LxDYlbmc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D1025A32E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07BA25A352
 	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753475658; cv=none; b=HokVqP2rid9/r74+YRId8jPlWDaO2A0AAk5VM6ehqUKr9UBVnL7rVpp73FWWaYn2yi9S0WtHG+RVMiZNDf9Mb4AtDfL0Ie/jgS5ScYnMgqtFasUclZ4I/O88IGU5yxRvNEahUWwg/9sFq0wHO/Nbcc9zlvbm4ng3xWwCjsH45gw=
+	t=1753475658; cv=none; b=J6b7N59xsSu2dd8Y3pQOxKw5M+ppOdY8S71VzYTMQc3zMlclGXxE1rWE7kFITO78SvImoJpMKmsKl5iIUNh6+C/phCspQqVVor7Bt0ybQPiMz/r6oIxbyBO55iOhX0clpGLlcgENkpxa6khrFXrTVmGQXbgDNCyGB8yQhAerhoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753475658; c=relaxed/simple;
-	bh=lJAJPMjorckSa1MQsNEN+TaX/8IGzovjdFYDSD0sZwE=;
+	bh=vLVShok0cMXltuEHQ/ZOFR7qvRYl1xl7zH6FxAy5Phc=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=ck9mma9cXedLHVLIfAaKVXfqkqchATaPUQJQRafDjORhlIAmoAHlHgeQMLATkDkViAPBrE/43+GNmXfkLcyvA/Cdb+cMUcXt6FTBmSgHblmKfBIpzAVnTsqJP0nl4Diygwq5GAi+UI9IjxrluTTN2f2WdAnvrU+I5381NRWHX0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pBzfVGiG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27815C4CEE7;
+	 Content-Type; b=kJ11BiCE6hRo0jB02FrFgu1RjRo4SIAqhW65/gUrv4lqH8qUBoHVXcLNGu8R+xktHh449HOhYuDKNW7SBgXZfwOM/BnxRDaS215H2Z9jH9S5Qfpi+E5LZjuXdvOkvEILKk4VyZZTIODfst8PuU5Yf3gYZtjn/VWCsjv1+vSPcfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LxDYlbmc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D3CDC4CEF8;
 	Fri, 25 Jul 2025 20:34:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1753475658;
-	bh=lJAJPMjorckSa1MQsNEN+TaX/8IGzovjdFYDSD0sZwE=;
+	bh=vLVShok0cMXltuEHQ/ZOFR7qvRYl1xl7zH6FxAy5Phc=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=pBzfVGiGNB0nILUaeuCTqQXD5cRLnDwGRWYE0enal5hCs0mxN/r7bXqhoGrCgOfzF
-	 g0NMl45Mmxnm7PqDm6VoaA4ef+43lN0yMwj18zuqTteAhXpi0NkUgbsz4yhBhy8HyF
-	 t8jYfQ61fmhPpn9V3dzyVTknO01dnR+tT6eBN8/SWtWrbZ/WEg+fV7zUvjkQY09TfT
-	 qNjQiqD+3ZgeQ5Ph+Sz8h9+T7Kr+XvdlAC7dV4+aMJIvCYS/lwEOdpuM6z9VovghAs
-	 so5wwvsnzjt95OhbZJdLBYQYJ8PT5WdmVwMKhGZSDlaJtPQ/AtYIAuuVSchbL/DmCg
-	 a2x31dBqIfwPA==
+	b=LxDYlbmcM3QpRznRHmDlcxRlkQZDbbvufapeqa7H2jS/kAoeFNBah9kP4mSazIUif
+	 KpX3nY433mdLcCLr82Gc3NMbB8xs1tnYBH6Xp2P3oj/Owm3qE/u/EnLIckMat4vUXT
+	 /t14/rgpiM8Ng/6z9o36wW+S+fBDIcUgruH9t5VqST5UrxTW4lLEO//COPumN5j5xy
+	 ree8/nT4ERhbmHAt/fhT4EQA+CrcutcXr2SWrEN9ND4EUR+4C1uHfaua1ir8Tqf+sL
+	 5HhjS6XwCfwGyDKphiq97oh5LB9uJnRs1iJBzmmULdZNz8RI3javTxMpHJydAHYhli
+	 EHsoR3MHhz+Qg==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1ufP7Y-00000001QcN-14vN;
+	id 1ufP7Y-00000001Qcs-1mjn;
 	Fri, 25 Jul 2025 16:34:24 -0400
-Message-ID: <20250725203424.107916458@kernel.org>
+Message-ID: <20250725203424.278638879@kernel.org>
 User-Agent: quilt/0.68
-Date: Fri, 25 Jul 2025 16:33:58 -0400
+Date: Fri, 25 Jul 2025 16:33:59 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Tomas Glozar <tglozar@redhat.com>,
@@ -57,10 +57,10 @@ Cc: Tomas Glozar <tglozar@redhat.com>,
  Gabriele Monaco <gmonaco@redhat.com>,
  Josh Poimboeuf <jpoimboe@kernel.org>,
  Petr Mladek <pmladek@suse.com>,
- kernel test robot <lkp@intel.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Nam Cao <namcao@linutronix.de>
-Subject: [for-next][PATCH 01/25] objtool: Add vpanic() to the noreturn list
+Subject: [for-next][PATCH 02/25] panic: Fix up description of vpanic()
 References: <20250725203357.087558746@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,11 +72,7 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Nam Cao <namcao@linutronix.de>
 
-vpanic() does not return. However, objtool doesn't know this and gets
-confused:
-kernel/trace/rv/reactor_panic.o: warning: objtool: rv_panic_reaction(): unexpected end of section .text
-
-Add vpanic() to the list of noreturn functions.
+The description above vpanic() has the wrong function name. Fix it up.
 
 Cc: John Ogness <john.ogness@linutronix.de>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
@@ -84,28 +80,29 @@ Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Gabriele Monaco <gmonaco@redhat.com>
 Cc: Josh Poimboeuf <jpoimboe@kernel.org>
 Cc: Petr Mladek <pmladek@suse.com>
-Link: https://lore.kernel.org/073f826ebec18b2bb59cba88606cd865d8039fd2.1752232374.git.namcao@linutronix.de
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202507110826.2ekbVdWZ-lkp@intel.com/
+Link: https://lore.kernel.org/23a7e8add6546b155371b7e0fbb37bb1def13d6e.1752232374.git.namcao@linutronix.de
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/lkml/20250711183802.2d8c124d@canb.auug.org.au/
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- tools/objtool/noreturns.h | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/panic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
-index eacfe3b0a8d1..6a922d046b8e 100644
---- a/tools/objtool/noreturns.h
-+++ b/tools/objtool/noreturns.h
-@@ -38,6 +38,7 @@ NORETURN(mpt_halt_firmware)
- NORETURN(mwait_play_dead)
- NORETURN(nmi_panic_self_stop)
- NORETURN(panic)
-+NORETURN(vpanic)
- NORETURN(panic_smp_self_stop)
- NORETURN(rest_init)
- NORETURN(rewind_stack_and_make_dead)
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 6a1823c383d0..2a499facde13 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -307,7 +307,7 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
+ }
+ 
+ /**
+- * panic - halt the system
++ * vpanic - halt the system
+  * @fmt: The text string to print
+  * @args: Arguments for the format string
+  *
 -- 
 2.47.2
 
