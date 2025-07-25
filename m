@@ -1,134 +1,168 @@
-Return-Path: <linux-kernel+bounces-745957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D015AB120F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:28:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 713C9B120F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C8F61CE64A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1722E1CE662F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CE52EF296;
-	Fri, 25 Jul 2025 15:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E35C2EE61F;
+	Fri, 25 Jul 2025 15:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ypyytbRu"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bmVD4eIs"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499F42EF282
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62461D5165
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753457273; cv=none; b=cm5XVReGXe7o2siASGKVYHT7Fb/SZLzeId+RTL2mVuT8YNjmmpjDhSX8sZYpoE+MzGRYLwAEX8xiHO9Apr94uiyNrEhRs82TrBNoyac6Eh2IyS6ptONd+5cfhys7Sn/hKF+DHVX53DhCRrIMMiB3gxU+57CoQ+W1verTZgy+jJU=
+	t=1753457296; cv=none; b=WQ0xbOSfSMGCmj+HXqewm2w3OysdfkDqH8chnUVJBNq4AbjShjqvX5fXviSZnhOIHNROww1/BYyYN8K+0VEWsniu0h1MMmEnPkQsiJnGTfh9FGbPrzSpqqozrwwbyYHmwOy01LtgGcYO4EGAzz+JMrIGOd6xVRQZp6SBJRl5K8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753457273; c=relaxed/simple;
-	bh=qHHRDqKCIypk5v8SMgVuwGgQI5uVL5DFcbylQ6k7pPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6LhzP+Qo86ZVM9UEk8STIEQRKthMl7C1dmEN6d0UcLYcgU7twEQ/JhGmOhWP1kr6aNtSro1yGJOT3h7kstoCpZwzQRWeFiBrTAIoQfJ7UUFzf66Fsmz23le8SbMD9XnDkU3XXCL4bu2/FBLOvssjElyRWb0xS+3wH4JXLXk8rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ypyytbRu; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235e389599fso223625ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:27:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753457271; x=1754062071; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rYghJYglv5xycj6lEIeN8UVfDvdCip7qw6RMPEir5D4=;
-        b=ypyytbRurIVozhfbBo8qAdoHXn/a+WU06h/Pm8LnByJs3j3xbrf7nsLLScdrGQ4z0Y
-         WKYIhZd9tXgzszbalbwFtNUux/KCgJy/Eybuhrq6cYMUxntlSkJQa5Gd/Ze8FXUauKUo
-         AUmyHBk5qSePA2R4bASLhNGd+D/IBVbBs9SYy+TR/okLiO43us94aX/SFYYCfeFdtOHB
-         2bceUXH2LU8/zLYDDV+fFs2PXoXDxEMYgo6vIEyyGbFgoQaeAU+rB6x1M1nEnSat5QzT
-         5Y2mP+8tqjnC6WkPu2/lDj4km7rrHc8p38KOxyvrzwg5rALOAuoWug9LUuUoQPFVGKJt
-         9Syw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753457271; x=1754062071;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rYghJYglv5xycj6lEIeN8UVfDvdCip7qw6RMPEir5D4=;
-        b=sRPya3JcMnRozqbi4DEwRcEGHU5nNiJjQNHqg/qxMR0Tb14hli0lB+vVWjgNr2FQNU
-         zGXAoB36etKqooVpKrMVeonWJtfp2tjzTYUR7p0/UEfh8rP3PGLRiTM8m2Up+El1khDV
-         jowE9WN57m94eiF37Gjn88s5vTO+UU7X+F1gT3sf/AqFq1nbnCwnch7PVbWGJEJfga1o
-         XkzJnoKXbDJ+2r4tgX8BzckvIlUw0P9X6b5xI2gEk1Dl1LYoBrhhD3hqfkf5DF5SG4YN
-         V2n9uLEvUSvGkZThgAHpndabOgwuNlw+qCpbrlTZccxDVHddNRAeRdYEaALow/udekez
-         C42Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV+mikSFS7tAqHJexMVnSGOkkBY1j9oI566L0F2+8rYKfdwjfXQVoFniUogsT3qqydMQnVa1Sdx2uOAmP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1pMfHl4IReHYaRgF5Pky+wfL8Qjsfkh8bqZ2LYF+1lzn9jwfH
-	dld2iDko7z+I47pJ9ALuN4CbUSllYWHtm9VJdpMK1hcC34VmiHveU9Aayvn8unub4g==
-X-Gm-Gg: ASbGnct//uYg/uA4eB+xPZN7rtmrZbmQEpUCs6S6lz9vzfA88ijjfWIfvCJPot/Eq58
-	w4Mgwl/xtfccM33AlTUXk08YoIE8H5DKGWMe9sR3f47LWN1dmkespZgGn7UstEilZAN6XhjVxQ7
-	zJoLAIV55rFESGJfIU1/eke4zm7Gy3spbNwyvvalEISUmo09C+heWK0ZVjofboZtv5M9xLqFCN9
-	07+aEg9I9qRRHm8sQEmvGcI7Kp3Ywi+7VwQtQvkP1IQZv/YZ5615d+eixq2ElWkd+1RWHa/b7nb
-	2Aitm+KZ+eft/tjkPSL4Pqpc6j1NnjVxu6YkcLnZXnCfBVjEB/tMCWLAvvmuzKVkyAGJKf89g+m
-	aS+17N93cLswEfBbSXbBHa321abKPZmQTIstZwQMlHrGhsFQ0qTRV3WS7bpjfo6e7sZZ5EbS3Hd
-	nnyPnWmQ==
-X-Google-Smtp-Source: AGHT+IECUS4ICPT72rez061zYucyKAEQSZl/Vqzwhl1r3oHDO13mDG6PFiHjVXy9pYhZCAlwaMGg8w==
-X-Received: by 2002:a17:903:1a2b:b0:215:7152:36e4 with SMTP id d9443c01a7336-23fb044e610mr2864835ad.27.1753457271064;
-        Fri, 25 Jul 2025 08:27:51 -0700 (PDT)
-Received: from google.com (106.81.125.34.bc.googleusercontent.com. [34.125.81.106])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe30ae0bsm225725ad.18.2025.07.25.08.27.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 08:27:50 -0700 (PDT)
-Date: Fri, 25 Jul 2025 15:27:45 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Monk Chiang <monk.chiang@sifive.com>,
-	Kito Cheng <kito.cheng@sifive.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
-	llvm@lists.linux.dev, rick.p.edgecombe@intel.com,
-	broonie@kernel.org, cleger@rivosinc.com, apatel@ventanamicro.com,
-	ajones@ventanamicro.com, conor.dooley@microchip.com,
-	charlie@rivosinc.com, samuel.holland@sifive.com, bjorn@rivosinc.com,
-	fweimer@redhat.com, jeffreyalaw@gmail.com,
-	heinrich.schuchardt@canonical.com, andrew@sifive.com,
-	ved@rivosinc.com
-Subject: Re: [PATCH 01/11] riscv: add landing pad for asm routines.
-Message-ID: <20250725152745.GA1724026@google.com>
-References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
- <20250724-riscv_kcfi-v1-1-04b8fa44c98c@rivosinc.com>
+	s=arc-20240116; t=1753457296; c=relaxed/simple;
+	bh=J7X4J+cLLg7qpiL1tXaxLb6R/X2I4vC2GP49KLLiIMI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Eby27IYkTiJ1qyDkdeDcrwlhNuV9Xe9lBPkazGm+b06qzCQbuXcesLc3VSfk45K3aR+DsNhLAc1a1T7cdy9sb8kzO0gF7lhoI1YkvbMY0HjVbYBzSjwndOj0tTaq872VfTA/5zH9aAtHfVaRzazhq0ued7SFpKTJ+S6Wms9UIzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bmVD4eIs; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 902F8441D6;
+	Fri, 25 Jul 2025 15:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753457292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=W4q+49YQT2l30vtbVxxXxy6RyV8DhHrfMHle8faAKM0=;
+	b=bmVD4eIsVTojpcJ4GSdQTGRHFum/Lfzq8sRACxVLdz3gBXiL1UTwlEeUZ1F3bQJt1jCjfq
+	sDKfrwvkYKHklvrh17oUIkvwmNQRSCUZyCThMC0YRS4lZZjM9EnPb1904ywVO4C2BAlQJD
+	uqXeRzmRo2WiXU2dFrmqxcWVWAtVzqCmfJZ/Mp8vUmpOxewZzgxuDOKgD/wKcZr/wzglA+
+	ZHb1iJ8ycy3J2MCu175uSy0hdggcaYAcUpmV5AVCH+2TvLG0NyBFubS6jkkjmbW1aaUGn0
+	rS2rcqxDNCEosxu0YEqaiA/jDHbce+vTSZXTCcT7+ctsVTKD6frgNEJRySXvxQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Date: Fri, 25 Jul 2025 17:28:03 +0200
+Subject: [PATCH] samsung-dsim: move drm_bridge_add() call to probe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724-riscv_kcfi-v1-1-04b8fa44c98c@rivosinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250725-drm-bridge-samsung-dsim-add-in-probe-v1-1-b23d29c23fbd@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAIKig2gC/x2NQQqEMAwAvyI5G+h2reJ+RTxUEzWHVknYRRD/v
+ sXjMDBzgbEKG3yqC5R/YrLnAq+6gnmLeWUUKgze+eA6H5A04aRCxVhM9s0rkknCSISS8dB9Yuz
+ m0PTv1sWld1BSh/Ii57MZxvv+A8pKoUx2AAAA
+X-Change-ID: 20250725-drm-bridge-samsung-dsim-add-in-probe-7c549360af90
+To: Inki Dae <inki.dae@samsung.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekfeeklecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleeuheehfefgkefhgfekgeefueektdefkeefveetudfgjeegteefkeduvedugeegnecuffhomhgrihhnpehlphgtrdgvvhgvnhhtshdpkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedruddukegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepjfhuihdrrfhusehgvghhvggrlhhthhgtrghrvgdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepjhhonhgrs
+ heskhifihgsohhordhsvgdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrghgrghnsegrmhgrrhhulhgrshholhhuthhiohhnshdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Thu, Jul 24, 2025 at 04:36:54PM -0700, Deepak Gupta wrote:
-> SYM_* macros are used to define assembly routines. In this patch series,
-> re-define those macros in risc-v arch specific include file to include
-> a landing pad instruction at the beginning. This is done only when the
-> compiler flag for landing pad is enabled (i.e. __riscv_zicfilp).
-> 
-> TODO: Update `lpad 0` with `lpad %lpad_hash(name)` after toolchain
-> support.
+This bridge driver calls drm_bridge_add() in the DSI host .attach callback
+instead of in the probe function. This looks strange, even though
+apparently not a problem for currently supported use cases.
 
-I glanced through the proposed signature based landing pad labeling
-scheme, but didn't see any mentions of lpad_hash for labeling assembly
-functions. Is there more information somewhere about how this is going
-to be implemented?
+However it is a problem for supporting hotplug of DRM bridges, which is in
+the works [0][1][2]. The problematic case is when this DSI host is always
+present while its DSI device is hot-pluggable. In such case with the
+current code the DRM card will not be populated until after the DSI device
+attaches to the host, and which could happen a very long time after
+booting, or even not happen at all.
 
-Sami
+Supporting hotplug in the latest public draft is based on an ugly
+workaround in the hotplug-bridge driver code. This is visible in the
+hotplug_bridge_dsi_attach implementation and documentation in [3] (but
+keeping in mind that workaround is complicated as it is also circumventing
+another problem: updating the DSI host format when the DSI device gets
+connected).
+
+As a preliminary step to supporting hotplug in a proper way, and also make
+this driver cleaner, move drm_bridge_add() at probe time, so that the
+bridge is available during boot.
+
+However simply moving drm_bridge_add() prevents populating the whole card
+when the hot-pluggable addon is not present at boot, for another
+reason. The reason is:
+
+ * now the encoder driver finds this bridge instead of getting
+   -EPROBE_DEFER as before
+ * but it cannot attach it because the bridge attach function in turn tries
+   to attach to the following bridge, which has not yet been hot-plugged
+
+This needs to be fixed in the bridge attach function by simply returning
+-EPROBE_DEFER ifs the following bridge (i.e. the DSI device) is not yet
+present.
+
+[0] https://lpc.events/event/18/contributions/1750/
+[1] https://lore.kernel.org/lkml/20240924174254.711c7138@booty/
+[2] https://lore.kernel.org/lkml/20250723-drm-bridge-alloc-getput-for_each_bridge-v1-0-be8f4ae006e9@bootlin.com/
+[3] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-4-bc4dfee61be6@bootlin.com/
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+ drivers/gpu/drm/bridge/samsung-dsim.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+index c4997795db18280903570646b0a5b2c03b666307..173f730edb3707823b0a85460968a11b8206b508 100644
+--- a/drivers/gpu/drm/bridge/samsung-dsim.c
++++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+@@ -1633,6 +1633,9 @@ static int samsung_dsim_attach(struct drm_bridge *bridge,
+ {
+ 	struct samsung_dsim *dsi = bridge_to_dsi(bridge);
+ 
++	if (!dsi->out_bridge)
++		return -EPROBE_DEFER;
++
+ 	return drm_bridge_attach(encoder, dsi->out_bridge, bridge,
+ 				 flags);
+ }
+@@ -1749,8 +1752,6 @@ static int samsung_dsim_host_attach(struct mipi_dsi_host *host,
+ 		     mipi_dsi_pixel_format_to_bpp(device->format),
+ 		     device->mode_flags);
+ 
+-	drm_bridge_add(&dsi->bridge);
+-
+ 	/*
+ 	 * This is a temporary solution and should be made by more generic way.
+ 	 *
+@@ -2011,6 +2012,8 @@ int samsung_dsim_probe(struct platform_device *pdev)
+ 			goto err_disable_runtime;
+ 	}
+ 
++	drm_bridge_add(&dsi->bridge);
++
+ 	return 0;
+ 
+ err_disable_runtime:
+
+---
+base-commit: e48123c607a0db8b9ad02f83c8c3d39918dbda06
+change-id: 20250725-drm-bridge-samsung-dsim-add-in-probe-7c549360af90
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
