@@ -1,145 +1,408 @@
-Return-Path: <linux-kernel+bounces-746384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44094B12609
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E46B1260B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C6E1CE6E34
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:09:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF71AE48EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A93525E46A;
-	Fri, 25 Jul 2025 21:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14CD25DB13;
+	Fri, 25 Jul 2025 21:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeXGADP4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yTJdZBkB"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80AD925CC75;
-	Fri, 25 Jul 2025 21:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FD625C6F9
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753477763; cv=none; b=Dt2ywL8rSEG7QCLw6QJIyb5Bqwa4GfzMBU2Zd7LIei7sd5yYoIkuN3cxvmHTevstyv+2k+P6w4buvMbykQEIldjEnQ2FbpKZaNs5D9dJH2u/qsQAmqseqtjd6SmaN8UeVWafDjFCA33JDjRMSpzGCr5zebeBnSpZqNOb0ecE8/I=
+	t=1753477788; cv=none; b=WGQBVGjqqviyTg1Ylw6hDTDnHaw5S9cclx3dI0urGjuPyF0Ii2GWvtliNV7trC2dVIXpwbsYFVaRc6wFBgIt4AXPTSIg/Ai6AdQ4Vd9uuD+T8y8m30aj5ffFKJlPkB+klYfridzc+61o3kI3mDyI46a76xJ1+oRs1Kl71oaUt+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753477763; c=relaxed/simple;
-	bh=sKZPH5aGqoMpNfxgwrfhIX0s6sqAPGYcI0cyVH7GSeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sBcUwOLMmoonzyhIFv7iQH0eds1AN07CLZEcK2owTEyJEGUYSGiMKE1sU231HFgJrPdNcHWRRzmQObOk3U4cMsAqXD3glI40zNYvr4BkL51ojuq0Kj8318Ox2a224tTk4iWArMMc7F7rMP7mPqrQTIRqJrIrFOx4xAzypfRprX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeXGADP4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF9B7C4CEE7;
-	Fri, 25 Jul 2025 21:09:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753477763;
-	bh=sKZPH5aGqoMpNfxgwrfhIX0s6sqAPGYcI0cyVH7GSeU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=UeXGADP4I3UDVgDL6nXtFYDXECgC6KSMcjKec5PIjsOq3OgF+gpP+c/BRZ0Uujq+m
-	 lpWOEqHqzDTh6vEDAzHAfaA+KnS/WZ/9AhacYNGkmi4ILau+Mjqhu4p6f1P+3osQHu
-	 mfYfNL67QwCX9PaPRn2Q5Ootac+8ve8BhWxgdn7ZAs1vynrEoPiF1G6XzCNAeUkUXj
-	 TK0PHhyQ2zOlWzofx/4GEpxXgQzJu+cvQ3pTk/YYlGU9JWQejlpEv+1d0enEvQQeHQ
-	 gcY4R3E/0jANufYCoczZa+96ktJja3fjVnrKCrXBKOy6CLXgwJ5GC8b7NeOwJkH8pz
-	 lZB3TlQr2a8Bg==
-Date: Fri, 25 Jul 2025 16:09:21 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
-	mattc@purestorage.com, Jonathan.Cameron@huawei.com,
-	bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de,
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-	oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
-	anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
-	peterz@infradead.org, tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v9 2/2] PCI: trace: Add a RAS tracepoint to monitor link
- speed changes
-Message-ID: <20250725210921.GA3131414@bhelgaas>
+	s=arc-20240116; t=1753477788; c=relaxed/simple;
+	bh=wvTDL+zOKqwWvkUcACWSz8TqPKdKWNZr23YLmnm/Sjs=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=J+cgm754Rh9K1e69/c/eXoI1yVf7QM5WZgGXAIMHdaAvWK5ZMQEFZCPaFMvZSXkak6jtT4PlXtydx0DHZnhDMHC3AcD987bK5A6swaNYkKfyqz3IWY8ujjbezeKcYLWBE6P8B7fcx6je30VaK1WSud1nuA4NG21d9y7MXlZ1wIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yTJdZBkB; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-553b5165cf5so3250523e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:09:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753477783; x=1754082583; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=T9yVgfr+aozEM8DGDxueuGs5udBY/KGw9B4OydgnYPo=;
+        b=yTJdZBkBYio84/FKRa6AApTNJMlM5v4ii+DEX3uRQssDFyXlnsuFAnhm84WS6ICEns
+         ofV2cP9mQ/Z0B7o2k05T4IlvVfzmd8lnhlAQbcWKeKGT1xeMtE3vKHPFooI8i5UzgKF6
+         A2oNAy1WdEUd7dd2hlr6MjXo6SfPCnLvQRYWp1ffVXRua7IU1c4Gyyt26fm88QxPEY/H
+         nRmM9aFL/WLzK/1f8myhNO7wEFsZz5ndLy8wEDV7gRGTfnbAks1pWd5kHvxLFX003la+
+         WprbBhy2BI8Bk2hAlIMP5ihaUPPW+KHvy/CKzwoheww6TMcNj+dzvu3CTVmMAM5hAAus
+         s1tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753477783; x=1754082583;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T9yVgfr+aozEM8DGDxueuGs5udBY/KGw9B4OydgnYPo=;
+        b=XfBj8Xm52lHTgtfMhr/z8zZIM0yKNa1Tcze/VyK7Q9VSBTjrgkX1mAB01I/R3LhNDe
+         Cr4H8vzWxPeOSzOzz/RR+Kaux6rowQW2TKmSNR+NVcKhXhHTfcvJM2S7SkuvrFSR3ya0
+         hseVTRvafiYLexZcx1iKyTYsJmdYUGLvgmfN5J7DVSKSDLNEjeKQFXUnaNAmLNGrvIEh
+         hk1Zh2d1u9pRdBO5RD2/KzlmJTdaffNqetJTYZCG7uXPc9bax3i2L2mVONWkUFxovK0h
+         BReOy1BfEdvBNQo2GNZVbew4taxZIyV1RuKET9OWLA1FMDwGhMaLpm+4uBgVQ0VTj2Re
+         SNxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSW0/fOzlVqtDP8qELV8I+DeZVodURr/JpbCEEeiE0nBL9KaM1pwxI2VONHBKqGqh2Mdi4I2ANKcqBgXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy397OJ4kx7oltUf9TLu3a2pnw9n5uINSidX+iuj+SCcgQjV1US
+	5f1kZ1avw0UzBnJ+fIAGIGVlEiGCl4Mh9XUZ42v8HEOMV6dSOMkQrSdUyabJegexg+OE06xyU/m
+	9V2l+2fPRygs8x+Z39BwLR/yExj6ixppkKH49nKUN
+X-Gm-Gg: ASbGncuVyZ7fF56LbAkPsWWq6U7hMJWcddSSjYbzhDdbq7DDG5brcy2m9meOwTP8FJo
+	qAycxluXV+kAISX12zFygH2jtRD5nTuAdbD6OGLDRnOx7c7Rlcwwpc3jLVFr370Xn3h7edyURJP
+	Sv5HoH7gXXl5TSnMvJaNt4QDCXMONVi/I0xSDkl//M5B6es8yeEbHN9Q6tknQ/3dHeXyP8kQIZB
+	ZKZC/OkVJg6WEnTtw==
+X-Google-Smtp-Source: AGHT+IGifILpKS3IG4n2+Ac2OUBO1CSxWtRZEAmcxqV6hPcbzuvYWZQOYdDp5cujkq3frMLW9Pr3x1TwH8tzdEFfJbU=
+X-Received: by 2002:a05:6512:1585:b0:558:f694:a65e with SMTP id
+ 2adb3069b0e04-55b5f4ab853mr988146e87.34.1753477782471; Fri, 25 Jul 2025
+ 14:09:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723033108.61587-3-xueshuai@linux.alibaba.com>
+From: Olivier Tuchon <tcn@google.com>
+Date: Fri, 25 Jul 2025 23:09:26 +0200
+X-Gm-Features: Ac12FXzQQGZ4NvFNY6vEn7KyJ4TvhCeqEXMq_9ovtI_Y8BpOS296TQL0DrwN-k8
+Message-ID: <CALU+5Vb8kFrR_HMOrBDktxEEQE4d4qBTijVpSdSQz4d3qXsfJQ@mail.gmail.com>
+Subject: [PATCH v2] usb: gadget: Address review comments and include missing files
+To: Greg KH <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 23, 2025 at 11:31:08AM +0800, Shuai Xue wrote:
-> PCIe link speed degradation directly impacts system performance and
-> often indicates hardware issues such as faulty devices, physical layer
-> problems, or configuration errors.
-> 
-> To this end, add a RAS tracepoint to monitor link speed changes,
-> enabling proactive health checks and diagnostic analysis.
-> 
-> The output is like below:
-> 
-> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_link_event/enable
-> $ cat /sys/kernel/debug/tracing/trace_pipe
-> cat /sys/kernel/debug/tracing/trace_pipe
->            <...>-119     [002] .....   125.776171: pci_hp_event: 0000:00:03.0 slot:30, event:CARD_PRESENT
-> 
->            <...>-119     [002] .....   125.776197: pci_hp_event: 0000:00:03.0 slot:30, event:LINK_UP
-> 
->    irq/57-pciehp-119     [002] .....   125.904335: pcie_link_event: 0000:00:03.0 type:4, reason:4, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:16.0 GT/s PCIe, width:1, flit_mode:0, status:DLLLA
-> 
->    irq/57-pciehp-119     [002] .....   125.907051: pcie_link_event: 0000:00:03.0 type:4, reason:0, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:16.0 GT/s PCIe, width:1, flit_mode:0, status:DLLLA
+This patch addresses feedback on v1 from greg k-h and Alan Stern. It
+also includes files that were missing from the initial submission.
 
-I guess this example would actually require both of these enables, right?
+The following changes have been made:
+  - correct initial coding style issue (spaces for tabs)
+  - add missing file required for the feature to build and run
+  - improve FIFO full handling by truncating event data instead of
+    dropping the event entirely
+  - avoid capturing redundant data for IN submissions
 
-  echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
-  echo 1 > /sys/kernel/debug/tracing/events/pci/pci_link_event/enable
+Signed-off-by: Olivier Tuchon <tcn@google.com>
+---
+ drivers/usb/Kconfig                     |  2 +
+ drivers/usb/Makefile                    |  1 +
+ drivers/usb/gadget/udc/core.c           | 78 +++++++++++++++++++++++++
+ drivers/usb/gadget_mon/Kconfig          | 20 +++----
+ drivers/usb/gadget_mon/gadgetmon_main.c | 41 ++++++++-----
+ include/linux/usb/gadget.h              | 23 ++++++++
+ 6 files changed, 141 insertions(+), 24 deletions(-)
 
-> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
+index abf8c6cdea9e..b615035cc7c6 100644
+--- a/drivers/usb/Kconfig
++++ b/drivers/usb/Kconfig
+@@ -107,6 +107,8 @@ source "drivers/usb/core/Kconfig"
 
-I don't think I've suggested anything that really warrants this ;)
+ source "drivers/usb/mon/Kconfig"
 
-> ...
-> @@ -292,7 +292,7 @@ int pciehp_check_link_status(struct controller *ctrl)
->  {
->  	struct pci_dev *pdev = ctrl_dev(ctrl);
->  	bool found;
-> -	u16 lnk_status, linksta2;
-> +	u16 lnk_status;
->  
->  	if (!pcie_wait_for_link(pdev, true)) {
->  		ctrl_info(ctrl, "Slot(%s): No link\n", slot_name(ctrl));
-> @@ -319,8 +319,7 @@ int pciehp_check_link_status(struct controller *ctrl)
->  		return -1;
->  	}
->  
-> -	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA2, &linksta2);
-> -	__pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status, linksta2);
-> +	pcie_update_link_speed(ctrl->pcie->port->subordinate, PCIE_HOTPLUG);
++source "drivers/usb/gadget_mon/Kconfig"
++
+ source "drivers/usb/host/Kconfig"
 
-It kind of bugs me that the hot-add flow reads LNKSTA three times and
-generates both pci_hp_event LINK_UP and link_event tracepoints:
+ source "drivers/usb/renesas_usbhs/Kconfig"
+diff --git a/drivers/usb/Makefile b/drivers/usb/Makefile
+index 949eca0adebe..2539151a5366 100644
+--- a/drivers/usb/Makefile
++++ b/drivers/usb/Makefile
+@@ -62,6 +62,7 @@ obj-$(CONFIG_USB_MUSB_HDRC) += musb/
+ obj-$(CONFIG_USB_CHIPIDEA) += chipidea/
+ obj-$(CONFIG_USB_RENESAS_USBHS) += renesas_usbhs/
+ obj-$(CONFIG_USB_GADGET) += gadget/
++obj-$(CONFIG_USB_GADGET_MON) += gadget_mon/
 
-  pciehp_handle_presence_or_link_change
-    link_active = pciehp_check_link_active()
-      pcie_capability_read_word(PCI_EXP_LNKSTA)
-    if (link_active)
-      ctrl_info(ctrl, "Slot(%s): Link Up\n")
-      trace_pci_hp_event(PCI_HOTPLUG_LINK_UP)
-      pciehp_enable_slot
-        __pciehp_enable_slot
-          board_added
-            pciehp_check_link_status
-              pcie_capability_read_word(PCI_EXP_LNKSTA)
-              pcie_update_link_speed
-                pcie_capability_read_word(PCI_EXP_LNKSTA)
-                pcie_capability_read_word(PCI_EXP_LNKSTA2)
-                trace_pcie_link_event(<REASON>)
+ obj-$(CONFIG_USBIP_CORE) += usbip/
 
-Maybe there are good reasons for reading LNKSTA three times, but it
-does make me raise my eyebrows.  Not that this is a performance path,
-but it just offends my sense of propriety.
+diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+index d709e24c1fd4..a7d22ef3ad74 100644
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -28,6 +28,16 @@ static DEFINE_IDA(gadget_id_numbers);
 
-And maybe we need both a bare LINK_UP event and a link_event with all
-the details, but again it seems a little weird to me that there are
-two tracepoints when there's really only one event and we know all the
-link_event information from the very first LNKSTA read.
+ static const struct bus_type gadget_bus_type;
 
-Bjorn
++/* ------------------------------------------------------------------------- */
++
++/* USB Gadget monitoring */
++#if IS_ENABLED(CONFIG_USB_GADGET_MON)
++static DEFINE_MUTEX(gadget_mon_lock);
++static const struct usb_gadget_mon_operations *gadget_mon_ops;
++#endif
++
++/* ------------------------------------------------------------------------- */
++
+ /**
+  * struct usb_udc - describes one usb device controller
+  * @driver: the gadget driver pointer. For use by the class code
+@@ -302,6 +312,18 @@ int usb_ep_queue(struct usb_ep *ep,
+ out:
+  trace_usb_ep_queue(ep, req, ret);
+
++#if IS_ENABLED(CONFIG_USB_GADGET_MON)
++ if (unlikely(rcu_access_pointer(gadget_mon_ops))) {
++ const struct usb_gadget_mon_operations *ops;
++
++ rcu_read_lock();
++ ops = rcu_dereference(gadget_mon_ops);
++ if (ops)
++ ops->request_queue(ep, req, ret);
++ rcu_read_unlock();
++ }
++#endif /* CONFIG_USB_GADGET_MON */
++
+  return ret;
+ }
+ EXPORT_SYMBOL_GPL(usb_ep_queue);
+@@ -996,6 +1018,18 @@ void usb_gadget_giveback_request(struct usb_ep *ep,
+
+  trace_usb_gadget_giveback_request(ep, req, 0);
+
++#if IS_ENABLED(CONFIG_USB_GADGET_MON)
++ if (unlikely(rcu_access_pointer(gadget_mon_ops))) {
++ const struct usb_gadget_mon_operations *ops;
++
++ rcu_read_lock();
++ ops = rcu_dereference(gadget_mon_ops);
++ if (ops)
++ ops->request_giveback(ep, req);
++ rcu_read_unlock();
++ }
++#endif /* CONFIG_USB_GADGET_MON */
++
+  req->complete(ep, req);
+ }
+ EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
+@@ -1925,6 +1959,50 @@ static void __exit usb_udc_exit(void)
+ }
+ module_exit(usb_udc_exit);
+
++/* ------------------------------------------------------------------------- */
++
++/* USB Gadget monitoring */
++#if IS_ENABLED(CONFIG_USB_GADGET_MON)
++/*
++ * register_gadget_monitor - Register a monitoring module.
++ * @ops: the monitoring operations to register
++ *
++ * Allows a monitoring module to register its callbacks. Returns -EBUSY
++ * if a monitor is already registered
++ */
++int register_gadget_monitor(const struct usb_gadget_mon_operations *ops)
++{
++ int ret = 0;
++
++ mutex_lock(&gadget_mon_lock);
++ if (gadget_mon_ops)
++ ret = -EBUSY;
++ else
++ rcu_assign_pointer(gadget_mon_ops, ops);
++ mutex_unlock(&gadget_mon_lock);
++
++ return ret;
++}
++EXPORT_SYMBOL_GPL(register_gadget_monitor);
++
++/*
++ * unregister_gadget_monitor - Unregister a monitoring module.
++ * @ops: the monitoring operations to unregister
++ *
++ * A module must call this to unregister its callbacks before exiting
++ */
++void unregister_gadget_monitor(const struct usb_gadget_mon_operations *ops)
++{
++ mutex_lock(&gadget_mon_lock);
++ if (gadget_mon_ops == ops)
++ rcu_assign_pointer(gadget_mon_ops, NULL);
++ mutex_unlock(&gadget_mon_lock);
++
++ synchronize_rcu();
++}
++EXPORT_SYMBOL_GPL(unregister_gadget_monitor);
++#endif
++
+ MODULE_DESCRIPTION("UDC Framework");
+ MODULE_AUTHOR("Felipe Balbi <balbi@ti.com>");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/usb/gadget_mon/Kconfig b/drivers/usb/gadget_mon/Kconfig
+index 113423a2a96f..bfda5c006909 100644
+--- a/drivers/usb/gadget_mon/Kconfig
++++ b/drivers/usb/gadget_mon/Kconfig
+@@ -4,18 +4,18 @@
+ #
+
+ config USB_GADGET_MON
+-  tristate "Gadget-side USB monitor"
+-  depends on USB_GADGET
+-  help
+-    This option enables a low-level monitor for the USB gadget
+-    subsystem, similar to what usbmon provides for the host side.
++ tristate "Gadget-side USB monitor"
++ depends on USB_GADGET
++ help
++   This option enables a low-level monitor for the USB gadget
++   subsystem, similar to what usbmon provides for the host side.
+
+-    It creates a character device (/dev/gadgetmon0) that outputs a
+-    stream of all USB request submissions and completions, allowing
+-    for detailed debugging and performance analysis of gadget drivers.
++   It creates a character device (/dev/gadgetmon0) that outputs a
++   stream of all USB request submissions and completions, allowing
++   for detailed debugging and performance analysis of gadget drivers.
+
+-    This is primarily a tool for developers. If you are not developing
+-    or debugging a USB gadget function driver, say N.
++   This is primarily a tool for developers. If you are not developing
++   or debugging a USB gadget function driver, say N.
+
+ config GADGETMON_BUFFER_SIZE_MB
+  int "Buffer size for gadget monitor (in MiB)"
+diff --git a/drivers/usb/gadget_mon/gadgetmon_main.c
+b/drivers/usb/gadget_mon/gadgetmon_main.c
+index 9017f91808ae..4597f10abc5e 100644
+--- a/drivers/usb/gadget_mon/gadgetmon_main.c
++++ b/drivers/usb/gadget_mon/gadgetmon_main.c
+@@ -50,7 +50,8 @@ static void gadgetmon_event(enum
+gadgetmon_event_type event_type,
+  unsigned long flags;
+  struct gadgetmon_hdr hdr;
+  u32 payload_len;
+- u32 total_len;
++ u32 available_space;
++ u32 payload_to_copy;
+  struct timespec64 ts;
+
+  if (!req || !ep)
+@@ -78,28 +79,32 @@ static void gadgetmon_event(enum
+gadgetmon_event_type event_type,
+  if (payload_len > GADGETMON_DATA_MAX)
+  payload_len = GADGETMON_DATA_MAX;
+  /*
+- * optimization: for an OUT submission (host-to-device), the data
+- * has not yet arrived from the host. The buffer is an empty
+- * placeholder, so its content is not captured to save space.
++ * optimization: for all submission, the buffer data is not yet
++ * relevant. Capture no payload to save significant buffer space.
+  */
+- if (event_type == GADGETMON_EVENT_SUBMIT && hdr.dir == USB_DIR_OUT)
++ if (event_type == GADGETMON_EVENT_SUBMIT)
+  payload_len = 0;
+
+  hdr.data_len = payload_len;
+- total_len = sizeof(hdr) + payload_len;
+
+  /* lock and queue the event into the FIFO */
+  spin_lock_irqsave(&mon_lock, flags);
+
+- if (kfifo_avail(&mon_fifo) < total_len) {
+- /* not enough space, drop the event silently */
++ available_space = kfifo_avail(&mon_fifo);
++
++ /* if the header itself doesn't fit, we must drop the even */
++ if (available_space < sizeof(hdr)) {
+  spin_unlock_irqrestore(&mon_lock, flags);
+  return;
+  }
+
++ payload_to_copy = min(payload_len, available_space - sizeof(hdr));
++ if (payload_to_copy != payload_len)
++ hdr.data_len = payload_to_copy;
++
+  kfifo_in(&mon_fifo, &hdr, sizeof(hdr));
+- if (payload_len > 0)
+- kfifo_in(&mon_fifo, req->buf, payload_len);
++ if (payload_to_copy > 0)
++ kfifo_in(&mon_fifo, req->buf, payload_to_copy);
+
+  spin_unlock_irqrestore(&mon_lock, flags);
+
+@@ -251,13 +256,20 @@ static int __init gadgetmon_init(void)
+  goto err_del_cdev;
+  }
+
+- /* Atomically publish our monitoring functions to the UDC core */
+- rcu_assign_pointer(gadget_mon_ops, &gadget_mon_ops_impl);
++ /* register our monitoring functions with the UDC core */
++ ret = register_gadget_monitor(&gadget_mon_ops_impl);
++ if (ret) {
++ pr_err("gadgetmon: Failed to register monitor, is another one loaded? (%d)\n",
++        ret);
++ goto err_destroy_device;
++ }
+
+  pr_info("gadgetmon: Gadget Monitoring driver loaded\n");
+
+  return 0;
+
++err_destroy_device:
++ device_destroy(mon_class, mon_dev_t);
+ err_del_cdev:
+  cdev_del(&mon_cdev);
+ err_destroy_class:
+@@ -278,8 +290,9 @@ static int __init gadgetmon_init(void)
+  */
+ static void __exit gadgetmon_exit(void)
+ {
+- rcu_assign_pointer(gadget_mon_ops, NULL);
+- synchronize_rcu();
++ pr_info("Gadget Monitoring driver unloading\n");
++
++ unregister_gadget_monitor(&gadget_mon_ops_impl);
+
+  device_destroy(mon_class, mon_dev_t);
+  cdev_del(&mon_cdev);
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index df33333650a0..a263b8ea968f 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -971,4 +971,27 @@ extern void usb_ep_autoconfig_release(struct usb_ep *);
+
+ extern void usb_ep_autoconfig_reset(struct usb_gadget *);
+
++/*-------------------------------------------------------------------------*/
++
++/* USB Gadget monitoring */
++#if IS_ENABLED(CONFIG_USB_GADGET_MON)
++/**
++ * struct usb_gadget_mon_operations - operations for gadget monitoring
++ * @request_queue: Called when a gadget driver queues a request.
++ * @request_giveback: Called just before a request is given back.
++ */
++struct usb_gadget_mon_operations {
++ void (*request_queue)(struct usb_ep *ep, const struct usb_request *req,
++ int status);
++ void (*request_giveback)(struct usb_ep *ep,
++ const struct usb_request *req);
++};
++
++int register_gadget_monitor(const struct usb_gadget_mon_operations *ops);
++void unregister_gadget_monitor(const struct usb_gadget_mon_operations *ops);
++#else
++static inline int register_gadget_monitor(const void *ops) { return 0; }
++static inline void unregister_gadget_monitor(const void *ops) { }
++#endif /* CONFIG_USB_GADGET_MON */
++
+ #endif /* __LINUX_USB_GADGET_H */
+-- 
+2.50.1.487.gc89ff58d15-goog
+
+Changes in v2:
+  - Add optimization to skip capturing IN submissions
+  - Truncate event payload on FIFO full instead of dropping (as
+    suggested)
+  - Added forgotten files (include/linux/usb/gadget.h,
+    drivers/usb/core/Kconfig, drivers/usb/Makefile,
+    drivers/usb/gadget/udc/core.c)
+  - Fixed initial indentation issues
 
