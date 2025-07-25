@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-745899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 338DAB12034
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:38:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5B6B12036
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBD61CE0F6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:38:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B3DAA4AF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAAE1FC7E7;
-	Fri, 25 Jul 2025 14:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4057A202C26;
+	Fri, 25 Jul 2025 14:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yiLsfnqv"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="Ybe5IAlx";
+	dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b="JZYVTCqW"
+Received: from e3i314.smtp2go.com (e3i314.smtp2go.com [158.120.85.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5740F1E5701
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420141E834E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.85.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753454280; cv=none; b=qVhFEOGNxkZtCm0m6VqIU2ryyiUeh9Td+pGoV0n7ZT9gGmVOG69tMUBUdWjwluxZ/tyFtCxPslfvRXCzeQZWG3dVp7D2AfuUnNhX+gDttz0bBq1BPk4TyTDXwM8ju2FhBjg0GSKkrS4xo/LInRWX3Y3mKSav6jFjWO7voMBuDvA=
+	t=1753454312; cv=none; b=d3jOKZ/chqmudZ5GRfyBe6pH3xAIZg+YlG1urP5DbMfyBGwbXi4K36R64fxsrIW1TlPmwZe8Pkmi0F5wJwWnNiaLe6EwktXHx1SiIzU/q2RBSq6HGWZYGdEvKDfoghHw1SdtA4IcUNYzJH5WBsp0wxszMkdEylhWnNmlPVSpjOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753454280; c=relaxed/simple;
-	bh=dagE9sKoD2ehnEY5qPUFePsMYk3AT09hWoqOeJW1pJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ptLnmSbaFs/BnPf+FJFcwC2NHL0+bFO638QVHDtmCBqhLyNXpot1hHTUf7TwNf4uFm2jWO8cM7I8bfafHphHo8n//YDkQXSjClFwny7xnG4lbox8pKsVXYkVROeyaghwnFLJZAqmVkyahJOD+qwFhpzk27ZPH6WfAZA15RTEs+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yiLsfnqv; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4abc0a296f5so28286741cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753454278; x=1754059078; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x8Br67kpHlUcVp1I+AlPTk1fWbNSy9YXckgKLzf2oqc=;
-        b=yiLsfnqvlVeqJnYyvc6fMSHZCSe17w0/kKc83du0V3ersk6Nx5yW/WPVjuaR7/3fqS
-         Rn3wla1cRf6LWJ2O3oTCl1NAZFhPcBRKQPORy62+F08uUZcBOqzg2alZGMswVFpUKD/Z
-         X5yat6MonLYtCZ8+nNCdOlp+GsDpTU3sPhRvlrpaudCBL+tlnvift+QaeAFWGjQ+TnDu
-         eoQBEgsikJLTiDhyIbK8V1l8C++YdLy9szS72f5ZX+zEkmQzMtkC/UCwpFOdgmyITNxP
-         vfknKrN9CTKPLLCF7DZoCSK/56/dI/8Ai6ImKQcreVcUTxwAbKvR1nP/f1YZXckNnHJn
-         FPlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753454278; x=1754059078;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x8Br67kpHlUcVp1I+AlPTk1fWbNSy9YXckgKLzf2oqc=;
-        b=cxhBE2oYF/HQvE4VH1BW/iUmciTluWTQ0B8cZpWvqfubMnC2ZaLPoqc8wpPoJ2DHXu
-         ooQ6z5VHbepRLI4Q6n7McLSUr2nGMovdyq0GpdEEdwNZJDgNFzX8cqNz2HNxrH+ttUr4
-         0Q9hynFhLewJgnF8H1GCnXypnT1LhLjQKSW7HQYW14Xz9p4/ipXBvmK4Zu7s7mxiOrtK
-         gIVVfN7u+NrRzqZ5rTPxeXkyjNceuqRbkwSc9OKJCkQDZkB+gnQsP8Z2/AF0XGXC+p6I
-         Lr817/L6UowWl4zfLezW3p2FpK4cwqXjHjMk+Cj3gw8xJXpYJWBybMi+qKZqK6CGCmMA
-         7Vbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXI327IkEQ6Kh+7VWVy6OoMw47zMmRYcmf/zAmx/QaCfjld+wK/BzgQMh/rAb/wmBopB3eDxrfJU8Wf3L8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsEf9TM8Jn8drQD+OX6mMnCwtH9hxGnGuMgrHOpBCPYoDIlY/2
-	v0WEOl7miJNqcuC6egYFV15e4l0JeoaSEOZRw4TWQyHuKnVOukPWzAo8BynZRrkfg59XXW10ype
-	XOGgMwiPfNtXuXeKgULjMBZi4Ps4fTTqRyVSeNXAQ
-X-Gm-Gg: ASbGncsrtl2+Byo9g3h6+TF+f5omRP3Fiu671qDA0narU572tPDl9CB943gxqFvQDAA
-	wFEowEzlNimDDaBw6RJMYom8rjU51b/qeoBTe6mFQEbeDijnCHNzpHisaCWqoDgraNZuyGjbH96
-	b6e8bhfh8kpGpyqOiV3g3U+9WoWDOGQeFWJiWK/wwtlKTp3WwegGGZ5PM5K/MmmPClY0WbpY5Tq
-	mrMa19/06RvjshtXbcjNMkbxO5kk4ekf1YBiS0u74EvYXXW
-X-Google-Smtp-Source: AGHT+IGCFlQa1n2hjhbJuELkAdoUF/alUJWXQcS3PKXDHSB6Ln7bQ+S7J2oKj+6hjNBKqQ3I2OLw2lnIO8zQ3zGd1oM=
-X-Received: by 2002:a05:6214:1ccc:b0:705:982:3cb8 with SMTP id
- 6a1803df08f44-707204b0ff6mr23039986d6.6.1753454276038; Fri, 25 Jul 2025
- 07:37:56 -0700 (PDT)
+	s=arc-20240116; t=1753454312; c=relaxed/simple;
+	bh=f2gz3zGxkAy/2wDgsqilnhq1wXsz6S26o2PLoxsfPy0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type; b=PwYr4zlFn3hOsHPEQDf9w/36R1RbLuNoYJ+cWa+sCz1yvKO1FnVcS9HBzc4P/QBT++vDwQjtE0br7jT/aNGGqEwf7zw9isfpmPlDJokSA58+hJyHtwOO45dEvNtU5OqGwEnMtQJOxtzyM/KhZB+MHel9bMnAtFbvv9EeKBvLJik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev; spf=pass smtp.mailfrom=em1255854.medip.dev; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=Ybe5IAlx; dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b=JZYVTCqW; arc=none smtp.client-ip=158.120.85.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1255854.medip.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1753454308; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=f2gz3zGxkAy/2wDgsqilnhq1wXsz6S26o2PLoxsfPy0=;
+ b=Ybe5IAlx8IRwvBa/43/jCr5yiijvcj/JreJt052Caz4EllQI9yHdUQkI3j2ER5FG0YkbL
+ LZz4oGFlTUj2Kke5OZNhQ0OKeDFlZPEk19gzep3jzQpchaCj21mr8XkwibyTXi4s4ugOAAd
+ NxO6MohStjknOnKV3JKqi3aPRspVlXcgCWjHQ2yqbN/zn6mwXOppUCjQ2TQA+kaQm0yzxOu
+ l1hetVUOo+Fj12yxdIHgiCA6LhD7TzseaRJiS+S+zMFX2EQML5yBWgfoZ+YvFPnb70s2JbJ
+ /XfB5qxTPthRkrj1uMXisdJaSrGoJgO664Fl9EPCmrwcHuPy6tK4kpM6Vhqg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=medip.dev;
+ i=@medip.dev; q=dns/txt; s=s1255854; t=1753454308; h=from : subject :
+ to : message-id : date;
+ bh=f2gz3zGxkAy/2wDgsqilnhq1wXsz6S26o2PLoxsfPy0=;
+ b=JZYVTCqWpQ7KcdxWayLad8l31IUm7DepJToQHF8dZZlgLUcviBK3OkXDfmegpVRFGRUwH
+ Df8AjVLQI9NKpSmkc+tq3l3s/W9h16HNv2oOPmxjZRF3Y1s8yJcDQokMTYuYdXW5DWZ4sh/
+ ErjcCDBD6H68AygeS4NjOoP5cCQQEWoRQr1Gvp0NdX7b37BVJcp/IVi9OIY2LrhW43rCREU
+ AiF22vALDPDBlMxdL7IkXtJ7ZQ2p82yu79rEZNdHjSGQqrYJE8sdREdDbJWW1H2xOzReIZ4
+ 7ndvcQAOsQeb3OmdvnisTkqjwa8UDPs88J+6rg1fR3VsDYYdE6wMz0xXpU0g==
+Received: from [10.152.250.198] (helo=vilez.localnet)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1-S2G)
+	(envelope-from <edip@medip.dev>)
+	id 1ufJYy-FnQW0hPs3bB-1ILi;
+	Fri, 25 Jul 2025 14:38:20 +0000
+From: Edip Hazuri <edip@medip.dev>
+To: tiwai@suse.de
+Reply-To: 87a54skajh.wl-tiwai@suse.de
+Cc: edip@medip.dev, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+ perex@perex.cz, stable@vger.kernel.org, tiwai@suse.com
+Subject: Re: [PATCH] ALSA: hda/realtek - Fix mute LED for HP Victus 16-r1xxx
+Date: Fri, 25 Jul 2025 17:38:10 +0300
+Message-ID: <5951329.DvuYhMxLoT@vilez>
+In-Reply-To: <87a54skajh.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626134158.3385080-1-glider@google.com> <20250626134158.3385080-11-glider@google.com>
- <CACT4Y+YSfOE6Y9y-8mUwUOyyE-L3PUHUr6PuNX=iu-zyMyv3=A@mail.gmail.com>
-In-Reply-To: <CACT4Y+YSfOE6Y9y-8mUwUOyyE-L3PUHUr6PuNX=iu-zyMyv3=A@mail.gmail.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Fri, 25 Jul 2025 16:37:19 +0200
-X-Gm-Features: Ac12FXy-DhcoJp-qiCmwab46NJ0PZ2JSKLIvCIWT-laejPsOjCULrKUtahAig3I
-Message-ID: <CAG_fn=WSm=u1zOGaPydq89jSw_iiQdSTPSNsd=WbeByLfTVmtw@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] kcov: selftests: add kcov_test
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
-	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1255854m:1255854ay30w_v:1255854sR_qNS80Cz
+X-smtpcorp-track: NgKH3i-bbjk-.bHhPYUlF2STk.-MIirApdVCk
 
-On Wed, Jul 9, 2025 at 5:15=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com> w=
-rote:
->
-> On Thu, 26 Jun 2025 at 15:42, Alexander Potapenko <glider@google.com> wro=
-te:
-> >
-> > Implement test fixtures for testing different combinations of coverage
-> > collection modes:
-> >  - unique and non-unique coverage;
-> >  - collecting PCs and comparison arguments;
-> >  - mapping the buffer as RO and RW.
-> >
-> > To build:
-> >  $ make -C tools/testing/selftests/kcov kcov_test
-> >
-> > Signed-off-by: Alexander Potapenko <glider@google.com>
-> > ---
-> >  MAINTAINERS                              |   1 +
-> >  tools/testing/selftests/kcov/Makefile    |   6 +
-> >  tools/testing/selftests/kcov/kcov_test.c | 364 +++++++++++++++++++++++
->
-> Let's also add 'config' fragment (see e.g. ./dma/config)
-> Otherwise it's impossible to run these tests in automated fashion.
-Done in v3.
+On Friday, July 25, 2025 10:13:38=E2=80=AFAM GMT+03:00 Takashi Iwai wrote:
+> On Thu, 24 Jul 2025 23:07:56 +0200,
+>=20
+> edip@medip.dev wrote:
+> > From: Edip Hazuri <edip@medip.dev>
+> >=20
+> > The mute led on this laptop is using ALC245 but requires a quirk to work
+> > This patch enables the existing quirk for the device.
+> >=20
+> > Tested on Victus 16-r1xxx Laptop. The LED behaviour works
+> > as intended.
+> >=20
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Edip Hazuri <edip@medip.dev>
+>=20
+> The HD-audio code was relocated and split to different files recently
+> (for 6.17 kernel), e.g. this Realtek codec is now located in
+> sound/hda/codecs/realtek/alc269.c.
+>=20
+> As I already closed the changes for 6.16 and it'll be put for
+> 6.17-rc1, could you rebase on for-next branch of sound.git tree and
+> resubmit?
+>=20
+>=20
+> thanks,
+>=20
+> Takashi
+Hi
 
-> > +/* Normally these defines should be provided by linux/kcov.h, but they=
- aren't there yet. */
->
-> Then I think we need to do:
-> #ifndef KCOV_UNIQUE_ENABLE
+I'll rebase and resubmit it as soon as possible
+Thank you
 
-Good point!
+
 
