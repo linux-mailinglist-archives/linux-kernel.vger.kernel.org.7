@@ -1,99 +1,127 @@
-Return-Path: <linux-kernel+bounces-745898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625B3B12032
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 338DAB12034
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DFC41CE0E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:37:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBD61CE0F6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AC7200132;
-	Fri, 25 Jul 2025 14:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAAE1FC7E7;
+	Fri, 25 Jul 2025 14:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gehMEBpP"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yiLsfnqv"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558541C6FE1;
-	Fri, 25 Jul 2025 14:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5740F1E5701
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753454209; cv=none; b=fQtEHdS27OeEZh+yFVRZsMj7mDj9TMNwQjO35uOspjImvc3/Yvi1iSZXP1BZ0ZkUbG+9RxORnzcah67usHB97t7YzhzPrkwDr1NZdomtzL5igPJ+V63iOpEHkZ1MI28AqqFyYiUAvC/LRnBq6YnNbHNzR7kXhGHAX31X5gfqRew=
+	t=1753454280; cv=none; b=qVhFEOGNxkZtCm0m6VqIU2ryyiUeh9Td+pGoV0n7ZT9gGmVOG69tMUBUdWjwluxZ/tyFtCxPslfvRXCzeQZWG3dVp7D2AfuUnNhX+gDttz0bBq1BPk4TyTDXwM8ju2FhBjg0GSKkrS4xo/LInRWX3Y3mKSav6jFjWO7voMBuDvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753454209; c=relaxed/simple;
-	bh=IZUpgyeFcJwifm4ZXyp7YQPiftS7j2IRiJMMhFmctpk=;
+	s=arc-20240116; t=1753454280; c=relaxed/simple;
+	bh=dagE9sKoD2ehnEY5qPUFePsMYk3AT09hWoqOeJW1pJw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PTUW9zIhSfqqmQ/D2gBMd6chSKcgifZHlSNEEm7JvqbOqfVL3jB1t59lAFJPxrwCFGpjwaVI/AS07Mu9BVE2IbWLSU63amc8bDtkVCpE9kBuO3uBqQEIQO+sJGXjSUq4+O+5kVPTaNECzCPGiXE/y+tC9TX30wYCvAA7CGqn8qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gehMEBpP; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2edec6c5511so1419556fac.2;
-        Fri, 25 Jul 2025 07:36:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=ptLnmSbaFs/BnPf+FJFcwC2NHL0+bFO638QVHDtmCBqhLyNXpot1hHTUf7TwNf4uFm2jWO8cM7I8bfafHphHo8n//YDkQXSjClFwny7xnG4lbox8pKsVXYkVROeyaghwnFLJZAqmVkyahJOD+qwFhpzk27ZPH6WfAZA15RTEs+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yiLsfnqv; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4abc0a296f5so28286741cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:37:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753454207; x=1754059007; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zmQ9twC572vgY3H+WN2l+zO5lDHBOnDqF55BMIf7fYw=;
-        b=gehMEBpPEEyTuIUeJPoQLQfDFayWYC6LNZ2Y4gS2VlVqbS9MW/Qgzf7dnyBaSkyKAZ
-         2+jef6IUT+SJy7ndx2RZt7zRv3d6tk5IIkBwjehrXZSmAYIvGKq5Y852OfNHJvKdZGG1
-         oqo1+nxb117XeItY6PxsSFcXnx8Y7oSHEnNxOv5doVYUSGMe29/E8htlVNUGu49WeOLq
-         9YCl/WGK9TsWF32UXIIztwuCu1an/mNWJ7UlR06hH4dYX2C9CNNPRpupMSY+JrEfqFRb
-         F0/zf3f8XhQBZhZgyrwf904sMoHvBw5ZaiI2s30kDOIPWE9eSh9nMaSYFqxDNbHE01Q+
-         i8Uw==
+        d=google.com; s=20230601; t=1753454278; x=1754059078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x8Br67kpHlUcVp1I+AlPTk1fWbNSy9YXckgKLzf2oqc=;
+        b=yiLsfnqvlVeqJnYyvc6fMSHZCSe17w0/kKc83du0V3ersk6Nx5yW/WPVjuaR7/3fqS
+         Rn3wla1cRf6LWJ2O3oTCl1NAZFhPcBRKQPORy62+F08uUZcBOqzg2alZGMswVFpUKD/Z
+         X5yat6MonLYtCZ8+nNCdOlp+GsDpTU3sPhRvlrpaudCBL+tlnvift+QaeAFWGjQ+TnDu
+         eoQBEgsikJLTiDhyIbK8V1l8C++YdLy9szS72f5ZX+zEkmQzMtkC/UCwpFOdgmyITNxP
+         vfknKrN9CTKPLLCF7DZoCSK/56/dI/8Ai6ImKQcreVcUTxwAbKvR1nP/f1YZXckNnHJn
+         FPlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753454207; x=1754059007;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zmQ9twC572vgY3H+WN2l+zO5lDHBOnDqF55BMIf7fYw=;
-        b=DGjNAeAFbc9EdqAj9lB767Pn8b0esqBjPHmZYzN7AEKTEDSU978T6gJrjN6JwWKQlb
-         Ph/G34w8YHqn/Y/9toE8ziD94KIVLayWh+0vqB1ZR0ZOouxvOfiJcOqYkGE14r7JWMSc
-         ZsNVSKPX5XV4+rXZUQBdeJk00njWNQ9pjyN+npzHwYrCLmqHnLPTGYG2RejS3knP5MIS
-         0ijc5JoWc5yfr37OWpgqVuNPByRdCkmiL100rK31DQtehfGmiFDMDhXf95Je8TW1zrf1
-         pNPoV3QgnaZdeRJF/JXl8Ym3/0rR0USJ+Ahw/bxYCx28oGi/X7UReptEFvMdB84p3gIW
-         ejdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOA5+BZwgXf/PGmgVBK8Cqva3EblzGpoLeYv/96ymE1gyVLsshmD0UeM2/K2raygguPp3YMYKwLuJJhwA=@vger.kernel.org, AJvYcCW4M1LOt6TbX6dqfDeTQe9sarexqJ2bLhArI/Mye3YFCWcyzLd6Lc77v7+VnGQkN/jFSSvEYX7OJ8MypeoZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzkPMQtF6Zc/qMy2EcGnHPrqTU+/pKrBRIM71pYK+VNGdK0pWN
-	huo7ltbOj9TH3iG9Nk86oeHamko3jyaBEEXSMILLJE1/lmgpcqaYE5xD7JY8dPgid80GcqaB751
-	plLamnp6rdvej19aniFll21ZUy/nyf3I=
-X-Gm-Gg: ASbGnctKDAsJyWZNBRisyiJzPx3sQga/gExE54ZsyaIeDClmyWHNlAU6vAh/ALZJoBj
-	xQ2Y6mT8koB2lbbyeCJ4HJrDugP8uBXmmsVU9paUr//KkuNZH9XLKC7QJXjN0p9krFCg2EkzKAg
-	sfk2VVucnZw4k0JSXN9wTeI2FoKKjHNdhFBmLsNjGRVr1sRW6O3R8rcFVWrhGXmppkQMuxB5qnk
-	W0KVAUidCMAjwt9SNIB
-X-Google-Smtp-Source: AGHT+IGrfVbCo03vvW/g8BMGChPrgPTj51C0wHN9ndO7rSzkTDaezJg4kAShqx5LuEUGQO434znvazHm+orVozwuYd0=
-X-Received: by 2002:a05:6870:249c:b0:2ff:9953:42f7 with SMTP id
- 586e51a60fabf-30701b47bd4mr1547786fac.35.1753454207290; Fri, 25 Jul 2025
- 07:36:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753454278; x=1754059078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x8Br67kpHlUcVp1I+AlPTk1fWbNSy9YXckgKLzf2oqc=;
+        b=cxhBE2oYF/HQvE4VH1BW/iUmciTluWTQ0B8cZpWvqfubMnC2ZaLPoqc8wpPoJ2DHXu
+         ooQ6z5VHbepRLI4Q6n7McLSUr2nGMovdyq0GpdEEdwNZJDgNFzX8cqNz2HNxrH+ttUr4
+         0Q9hynFhLewJgnF8H1GCnXypnT1LhLjQKSW7HQYW14Xz9p4/ipXBvmK4Zu7s7mxiOrtK
+         gIVVfN7u+NrRzqZ5rTPxeXkyjNceuqRbkwSc9OKJCkQDZkB+gnQsP8Z2/AF0XGXC+p6I
+         Lr817/L6UowWl4zfLezW3p2FpK4cwqXjHjMk+Cj3gw8xJXpYJWBybMi+qKZqK6CGCmMA
+         7Vbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXI327IkEQ6Kh+7VWVy6OoMw47zMmRYcmf/zAmx/QaCfjld+wK/BzgQMh/rAb/wmBopB3eDxrfJU8Wf3L8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsEf9TM8Jn8drQD+OX6mMnCwtH9hxGnGuMgrHOpBCPYoDIlY/2
+	v0WEOl7miJNqcuC6egYFV15e4l0JeoaSEOZRw4TWQyHuKnVOukPWzAo8BynZRrkfg59XXW10ype
+	XOGgMwiPfNtXuXeKgULjMBZi4Ps4fTTqRyVSeNXAQ
+X-Gm-Gg: ASbGncsrtl2+Byo9g3h6+TF+f5omRP3Fiu671qDA0narU572tPDl9CB943gxqFvQDAA
+	wFEowEzlNimDDaBw6RJMYom8rjU51b/qeoBTe6mFQEbeDijnCHNzpHisaCWqoDgraNZuyGjbH96
+	b6e8bhfh8kpGpyqOiV3g3U+9WoWDOGQeFWJiWK/wwtlKTp3WwegGGZ5PM5K/MmmPClY0WbpY5Tq
+	mrMa19/06RvjshtXbcjNMkbxO5kk4ekf1YBiS0u74EvYXXW
+X-Google-Smtp-Source: AGHT+IGCFlQa1n2hjhbJuELkAdoUF/alUJWXQcS3PKXDHSB6Ln7bQ+S7J2oKj+6hjNBKqQ3I2OLw2lnIO8zQ3zGd1oM=
+X-Received: by 2002:a05:6214:1ccc:b0:705:982:3cb8 with SMTP id
+ 6a1803df08f44-707204b0ff6mr23039986d6.6.1753454276038; Fri, 25 Jul 2025
+ 07:37:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725055928.37658-1-suchitkarunakaran@gmail.com> <20250725-violet-mayfly-from-heaven-bd66d2@l-nschier-aarch64>
-In-Reply-To: <20250725-violet-mayfly-from-heaven-bd66d2@l-nschier-aarch64>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Fri, 25 Jul 2025 20:06:35 +0530
-X-Gm-Features: Ac12FXxLCvqxacHGfKq22Qp7FNE6KZuYGxrGkBLSEGqLhmT8ZbaGWHFJ66i0Sqk
-Message-ID: <CAO9wTFiYRb8RDB9cTRsC3yqa6Zja5+QWuew1AZyZs5gPxbdVGw@mail.gmail.com>
-Subject: Re: [PATCH] kconfig/lxdialog: replace strcpy() with strscpy() in inputbox.c
-To: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: masahiroy@kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+References: <20250626134158.3385080-1-glider@google.com> <20250626134158.3385080-11-glider@google.com>
+ <CACT4Y+YSfOE6Y9y-8mUwUOyyE-L3PUHUr6PuNX=iu-zyMyv3=A@mail.gmail.com>
+In-Reply-To: <CACT4Y+YSfOE6Y9y-8mUwUOyyE-L3PUHUr6PuNX=iu-zyMyv3=A@mail.gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Fri, 25 Jul 2025 16:37:19 +0200
+X-Gm-Features: Ac12FXy-DhcoJp-qiCmwab46NJ0PZ2JSKLIvCIWT-laejPsOjCULrKUtahAig3I
+Message-ID: <CAG_fn=WSm=u1zOGaPydq89jSw_iiQdSTPSNsd=WbeByLfTVmtw@mail.gmail.com>
+Subject: Re: [PATCH v2 10/11] kcov: selftests: add kcov_test
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 9, 2025 at 5:15=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com> w=
+rote:
 >
-> Did you compile-test this?  strscpy() is not available for user-space.
+> On Thu, 26 Jun 2025 at 15:42, Alexander Potapenko <glider@google.com> wro=
+te:
+> >
+> > Implement test fixtures for testing different combinations of coverage
+> > collection modes:
+> >  - unique and non-unique coverage;
+> >  - collecting PCs and comparison arguments;
+> >  - mapping the buffer as RO and RW.
+> >
+> > To build:
+> >  $ make -C tools/testing/selftests/kcov kcov_test
+> >
+> > Signed-off-by: Alexander Potapenko <glider@google.com>
+> > ---
+> >  MAINTAINERS                              |   1 +
+> >  tools/testing/selftests/kcov/Makefile    |   6 +
+> >  tools/testing/selftests/kcov/kcov_test.c | 364 +++++++++++++++++++++++
 >
+> Let's also add 'config' fragment (see e.g. ./dma/config)
+> Otherwise it's impossible to run these tests in automated fashion.
+Done in v3.
 
-Hi,
-Apologies. I didn't compile the change earlier since it was just a
-replacement of strcpy with strscpy, and I completely forgot that I was
-working with userspace tools. After seeing your comment, I tried
-compiling it and I encountered an error. Would it be more appropriate
-to use memcpy or strlcpy instead in this case? I'd really appreciate
-your guidance on the correct approach here. Thank you!
+> > +/* Normally these defines should be provided by linux/kcov.h, but they=
+ aren't there yet. */
+>
+> Then I think we need to do:
+> #ifndef KCOV_UNIQUE_ENABLE
+
+Good point!
 
