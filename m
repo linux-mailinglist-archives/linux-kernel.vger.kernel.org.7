@@ -1,110 +1,131 @@
-Return-Path: <linux-kernel+bounces-745208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E00EB116A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7D1B116A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 293A65A44F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:44:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2ED55A4D66
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13143236A73;
-	Fri, 25 Jul 2025 02:44:51 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD288236431;
+	Fri, 25 Jul 2025 02:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZqaEqGK"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602C43A8F7
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4D72746C;
+	Fri, 25 Jul 2025 02:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753411490; cv=none; b=uE3Z3O6DRYzikoWDRqzfY9tW9Khy8MigbfbZ8gJyQjjzB7E2hPM6TE+KbCJPS0m5/h9GUqeg7E3V7x128iDSOJxofxxOa3SnRDlFfZojRiBzt/+5mwSm3joZ0HNmTST/X+Jv8HrDjqAPEmhkJbPCdDguF7bP6f4uMdtXvqrb8kQ=
+	t=1753411655; cv=none; b=j1Eftb8HqZPVtK+45HgqyMtQid7N2P8IhJNpY+4vWuuVi+XUhVo4AOvdj1LrYiaeU56pRcotpzQ+hBWgHSvro3rrB2aiSFZFLTCdy8zj4wWBaePfD6vcBBJP8lNhS4sKOuU54vOtEiNG72G/buv6z/ObsgopAv4ot4h16emNe+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753411490; c=relaxed/simple;
-	bh=fEqmD9G4PRRs8KOXdul3mT+1dRcEHO7xOeY0+oL+4OQ=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=Q5Ct9WhyTEoK/BmVporNfiLYoMoAcuvb17ogTER7o9Ef9XHyIyYVHpNHjj1Nrj6heQ2W8qEzKcxBcShiWMgPS3C3W2BGmeYhpWCoyHQs5jNIYAh1wjVztDyf/+PrCLkLkuNWSu92idALe8mubrPnqKkp2exUsExTgkvPs9OCgKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bpBzT2rZZz8Xs6y;
-	Fri, 25 Jul 2025 10:44:37 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 56P2iOXW045879;
-	Fri, 25 Jul 2025 10:44:24 +0800 (+08)
-	(envelope-from liu.xuemei1@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Fri, 25 Jul 2025 10:44:25 +0800 (CST)
-Date: Fri, 25 Jul 2025 10:44:25 +0800 (CST)
-X-Zmail-TransId: 2afa6882ef89ffffffff99d-eb6b4
-X-Mailer: Zmail v1.0
-Message-ID: <20250725104425229ArF_W-F7CmscLJKs0yoiQ@zte.com.cn>
+	s=arc-20240116; t=1753411655; c=relaxed/simple;
+	bh=rdizep0zrpfkZKg0NfdnQ/QLu8dJHEerhVlSIUnwf+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZr4JFmVPGz2gKQwIQfKaOBO9F0aWZ7nX6JIYd1wNw/PvwclQXwN84xvtRAl7K/RKXi+5mGOt4rw8OqjGQGTaSIPJvI3TE+hQ0N4IeUEjFReZJ64u/ZNgIMnLn8pF43GVbYj02Eu1YanWp1gD/z/MvXtzfrDGK5IA0Ypnv3IgHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GZqaEqGK; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so3077972a12.2;
+        Thu, 24 Jul 2025 19:47:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753411651; x=1754016451; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xc3hDEGPGsCDebYX51sWpA/bxBMOB24GoB4P11DkIaw=;
+        b=GZqaEqGKXOe0ugKfmT52xARzEJCD6mvCoVWkzYveGD3Lu9L/0Rtv9efAo9qZlzKf0r
+         JOvWd+xz4cwgmqc1PDohvBGCWGjlutI1TGEuR9T0oeObVpmnQw965M1ALTqPrlDrtWoN
+         ciPpAuUNct7AB8c3e4AzTED8/OxotV7FSr9Ci4sunkFMVZhgy7CrWW/3rdHJ9yD+tcTE
+         /rMIxONhg/Uo7/uAaeiSl72eO7xw2XVVTakQAaHJjEy0E/sMw4ohKjJWMay4X2KrZSKw
+         LM2dk95m7ScXKDgVs4PVOuYuMLnmo4T9RayrCjRI6yocH2KO3GSYUfhaGir3XUF1H4Ov
+         O/fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753411651; x=1754016451;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xc3hDEGPGsCDebYX51sWpA/bxBMOB24GoB4P11DkIaw=;
+        b=b8XOnmmGzl9K9uGFJOrel3LgdBOWCS7inQTaJG0M4BCCE9uCO/TFoa+oFkTYJCWP4l
+         /OZUjsUyZsc6mqS0VCirDiraht/4v7/9LKBZgoc+/1PlXMimgSLcl9PqpjahulqeJ1ze
+         UW+x5kQjE0bUDjnmS4N8IvM/0GBlSye67lez4Qjf3nQvrGTk/rtEiZMbbJwN8DZDtXq7
+         P19N38JyDPAOcPK+DvXiFqFVw5CYy4xJDOl0wKHANm8WgRVHd9EKl8+glg7mfEUMxKrV
+         f++JXIoIr/p+4ZNdztC1bORxkr/So6epvtVzXcIXdzkSSVW8AniEnHwJU6Mm/oLIEmp7
+         e6TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWY7hzs0dKuorxCCMTw9l/pGDi8o3fpCXTFii6Ya0HomLtWF6iaHzrZ9d0WrR+28UF4ljvs2fl3i6CMzxYx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9PFfvccqgLPwVLvRmhenUdvUdM6xHjwogsjoXaP8Ze3u60+h1
+	OUBhKpThDP59h1FYoVXrGgG6PEx+SUY/I9oIzjOM3FKmvXu2m/eCOpqG
+X-Gm-Gg: ASbGncvPvMgpUeE7nIu9kRm84Sg+KVHOAWSqU8nFVkSUrBvSLKMCKH69125Y7EHSsU9
+	Ih3DRkkG6VbC3ib+NIUooSyfvzgoy8c0eiQSkNddH5gHP8ysNiNPBnOOCnh4MOGdwF4e9BdrBBU
+	p9OEknjIUGOTQloSCLjddP0e3zd1VRRAuh6PhK2m0zpg3rMtu7noJcl8+cptD/qBiZGaW+sFcKu
+	3pm10sl6imcmOplPTa4zbISG6nnk+TZeRRSR1bck1USexUajXvRVqs9tCPOKJnvuJTl4t4cQkws
+	i0S27Q/pCHFw/kfkdn1o8FzFj2aHSETCmjld4iactyFgFXabsQu1gtSpFDN+xKcjDj31HOcYQdW
+	k1SuUg22hadp5Pwalmw6U8w==
+X-Google-Smtp-Source: AGHT+IHalRLNdYC73lbRRqlIizE8OiCJMhgGy8d4kUNVhjNjBAndWdZO49wygHZRXIZ+3UwJxXytHQ==
+X-Received: by 2002:a17:906:f596:b0:ae0:d4f2:dff3 with SMTP id a640c23a62f3a-af619b04c91mr39263566b.58.1753411650558;
+        Thu, 24 Jul 2025 19:47:30 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47ff42ce6sm195436866b.129.2025.07.24.19.47.29
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jul 2025 19:47:30 -0700 (PDT)
+Date: Fri, 25 Jul 2025 02:47:29 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
+	nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+	Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+	Lance Yang <lance.yang@linux.dev>,
+	Alistair Popple <apopple@nvidia.com>
+Subject: Re: [PATCH v2 1/9] mm/huge_memory: move more common code into
+ insert_pmd()
+Message-ID: <20250725024729.emodbzsflthdzyzh@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250717115212.1825089-1-david@redhat.com>
+ <20250717115212.1825089-2-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <liu.xuemei1@zte.com.cn>
-To: <paul.walmsley@sifive.com>
-Cc: <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
-        <spersvold@gmail.com>, <sudeep.holla@arm.com>, <mikisabate@gmail.com>,
-        <robh@kernel.org>, <liu.xuemei1@zte.com.cn>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?wqBbUEFUQ0hdIHJpc2N2OiBjYWNoZWluZm86IGluaXQgY2FjaGUgbGV2ZWxzIHZpYSBmZXRjaF9jYWNoZV9pbmZvIHdoZW4KCiBTTVAgZGlzYWJsZWQ=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 56P2iOXW045879
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: liu.xuemei1@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Fri, 25 Jul 2025 10:44:37 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6882EF95.000/4bpBzT2rZZz8Xs6y
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717115212.1825089-2-david@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-From: Jessica Liu <liu.xuemei1@zte.com.cn>
+On Thu, Jul 17, 2025 at 01:52:04PM +0200, David Hildenbrand wrote:
+>Let's clean it all further up.
+>
+>No functional change intended.
+>
+>Reviewed-by: Oscar Salvador <osalvador@suse.de>
+>Reviewed-by: Alistair Popple <apopple@nvidia.com>
+>Signed-off-by: David Hildenbrand <david@redhat.com>
 
-As described in commit 1845d381f280 ("riscv: cacheinfo: Add back
-init_cache_level() function"), when CONFIG_SMP is undefined, the cache
-hierarchy detection needs to be performed through the init_cache_level(),
-whereas when CONFIG_SMP is defined, this detection is handled during the
-init_cpu_topology() process.
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-Furthermore, while commit 66381d36771e ("RISC-V: Select ACPI PPTT drivers")
-enables cache information retrieval through the ACPI PPTT table, the
-init_of_cache_level() called within init_cache_level() cannot support cache
-hierarchy detection through ACPI PPTT. Therefore, when CONFIG_SMP is
-undefined, we directly invoke the fetch_cache_info function to initialize
-the cache levels.
-
-Signed-off-by: Jessica Liu <liu.xuemei1@zte.com.cn>
----
- arch/riscv/kernel/cacheinfo.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
-index 26b085dbdd07..f81ca963d177 100644
---- a/arch/riscv/kernel/cacheinfo.c
-+++ b/arch/riscv/kernel/cacheinfo.c
-@@ -73,7 +73,11 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
-
- int init_cache_level(unsigned int cpu)
- {
--	return init_of_cache_level(cpu);
-+#ifdef CONFIG_SMP
-+	return 0;
-+#endif
-+
-+	return fetch_cache_info(cpu);
- }
-
- int populate_cache_leaves(unsigned int cpu)
 -- 
-2.25.1
+Wei Yang
+Help you, Help me
 
