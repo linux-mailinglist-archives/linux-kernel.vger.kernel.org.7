@@ -1,83 +1,99 @@
-Return-Path: <linux-kernel+bounces-746378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B164FB125F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:03:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736F5B125F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B823AA2F29
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C601BAA4D32
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4B323D2A4;
-	Fri, 25 Jul 2025 21:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01EF25CC69;
+	Fri, 25 Jul 2025 21:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1h8GthS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UJCLSweH"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793B919F420;
-	Fri, 25 Jul 2025 21:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A392A19F420;
+	Fri, 25 Jul 2025 21:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753477405; cv=none; b=r9/M3/D/gsXl4rE7WzPBUTpyYCCnQrQlMMOr1xMpcPPHyVAOZJ0dtlqKocNAgQzz/p3oC/Yj5WrvpT01dZrijZu1x2hUGViizaLMHGc/uRxUAsY7mhQfuOEUWFS/iuVFMzIYgBL8V2oY+IfNSGuf9GeyRFVKhjD+q2WBpUQctLg=
+	t=1753477453; cv=none; b=ETMNuVkbip7hspLKBR6NV8AEARH/FLzrHFirFR2bQT2Z4yuqZAfo5EW9VMCnu39QH0rAS3eAZP7p3N3ezD0fSSHwKc9RShEbf2I50P7t216BR3MZypYbyZux4iWGeE0oeDaSpko8YgPwQcdq4ihLpt3IUzpVJ3UJcR1SagXYIo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753477405; c=relaxed/simple;
-	bh=FOsCdWH83QAeAkOi+QOm2qqQc5GML3+sqhLFW2F3bHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7UJvQ99zGVx3qrmGyKrwAgQddThK1+5HUkzrjTSzUdaJv88nkzjF4V4P+seoTRcw3nkABaDoGEWbcFze9ucoSlFsj5RpwW+/YwOqUd4joVarp3+DwUT4+4k93ykR/6QzSQLKwvioGkIEIgNNxscrHleZoUFYpiLZiqn6ODKLXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1h8GthS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F6EC4CEE7;
-	Fri, 25 Jul 2025 21:03:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753477405;
-	bh=FOsCdWH83QAeAkOi+QOm2qqQc5GML3+sqhLFW2F3bHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y1h8GthSlD0MRBG8SoVg+DcqqFGP1J1x1zE4lXjVgiVHI6/s9BR6JlzV5TvOGbP+x
-	 2guHLZEosNxeQXAT7Hsuw3qHhGlXo9D1v4uP1OpF68xMTkwruELXSUMbscw7l+5wPu
-	 Z1AMmO7WB3GsZYd6UVX0FeC1PErKDKLyC9S8u7nIsQ+c07T9WlHvQWvNo9z0Ek2m8F
-	 pUgxXBbgvrNk/YDNLCgLJaU5ja5D7/u1mCMjRF6UEm9NSOjDYQpPtP5y/uBFouh0xW
-	 9/FcuwtJ/2NJFo4hsjkzipyJj5gqxG8PVwASVemj/p5p7YJyaTazwlfp43xrefv99f
-	 velleq08wXz4w==
-Date: Fri, 25 Jul 2025 14:03:24 -0700
-From: Kees Cook <kees@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Sasha Levin <sashal@kernel.org>,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, konstantin@linuxfoundation.org,
-	corbet@lwn.net, josh@joshtriplett.org
-Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
-Message-ID: <202507251356.4396F1F@keescook>
-References: <20250725175358.1989323-1-sashal@kernel.org>
- <20250725114114.3b13e7b1@kernel.org>
- <20250725150046.3adb556c@gandalf.local.home>
+	s=arc-20240116; t=1753477453; c=relaxed/simple;
+	bh=ae71SSY4k8u7fVSaq1e7V57M9dJggxOfsvFSJNAagDg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k4daJocpdN7V6Y7t/ZkAA6gPLYub40AlpBqIxBGLrUPfex85SuBmHx+/mtuJ+OCrD6J8Xa2CLNgkiu9PibPwA3JLhhD9ICoDzmv3fDlxy/tGdxmVq7nsbxxDE5A7ojhwLJf7zSILGGAXuuGfYBcrl7C52SSdYq+q+eti5rodhf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UJCLSweH; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=+bXE8AhHOGf+7yevTX3HLs/Rx4czmj8r+67n/jWJR3k=; b=UJCLSweHd2bF9hdZ3DkkV+4A9e
+	IoTWfF6WTz/n/vO8mmTSQz683r2RhFD61j6yfbaQTV3t9CswgXrMOfrf+6kYpNqbWBGYXz/G1QGMW
+	m23LT2/KUFSkFx3Y81ana2i5uNBrrtW4p+7qj1nWVLJDgGXXJL/bUXIRlWnOzV28lsHsoMRzaktQM
+	pLB3utNL4Tt7iqJn/l5LPX3wN2PFdAzT+Y/MPCYyCsf6aPTXxbdlvn1di4okUd6tgZL6A9BVMv+k3
+	6G59dGwmVq5HrmWqmqUmphNQnw2OTnYNFtjjrfCQErHy3aO3qv4MM/YrLvVyPXGqqEMrQzd+FArt2
+	+Y93C9hA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ufPaL-0000000AhWd-1LW0;
+	Fri, 25 Jul 2025 21:04:09 +0000
+Message-ID: <679b2dc9-337f-4b48-8830-add309e2d3e5@infradead.org>
+Date: Fri, 25 Jul 2025 14:04:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725150046.3adb556c@gandalf.local.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for Jul 25 (drivers/net/dsa/b53/b53_common.c)
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, netdev@vger.kernel.org
+References: <20250725124835.53f998d0@canb.auug.org.au>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250725124835.53f998d0@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 25, 2025 at 03:00:46PM -0400, Steven Rostedt wrote:
-> Also, I would argue that it would be useful in the change log as if there's
-> a bug in the generated code, you know who or *what* to blame. Especially if
-> there is a pattern to be found.
 
-Yeah, this is where I feel like it's the most potentially useful. Since
-they are distinctly code-generators, we should include the info to
-identify it. We include version numbers and such the compilers and
-linkers, though they are only informally included in commit logs when
-dealing with specific problems.
 
-Having had to do "find all commits from [set of authors]" research for
-security audits, I would be very unhappy if I had to do this again in
-the future for a specific Agent (used any author), and had to loop lore
-into the process. Yes, it's *doable*, but it'd be very annoying.
+On 7/24/25 7:48 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20250724:
+> 
+
+on ARCH=um SUBARCH=x86_64, when
+# CONFIG_GPIOLIB is not set
+
+../drivers/net/dsa/b53/b53_common.c: In function ‘b53_switch_reset_gpio’:
+../drivers/net/dsa/b53/b53_common.c:952:9: error: implicit declaration of function ‘gpio_set_value’; did you mean ‘pte_set_val’? [-Wimplicit-function-declaration]
+  952 |         gpio_set_value(gpio, 0);
+      |         ^~~~~~~~~~~~~~
+      |         pte_set_val
+../drivers/net/dsa/b53/b53_common.c: In function ‘b53_switch_init’:
+../drivers/net/dsa/b53/b53_common.c:3012:23: error: implicit declaration of function ‘devm_gpio_request_one’ [-Wimplicit-function-declaration]
+ 3012 |                 ret = devm_gpio_request_one(dev->dev, dev->reset_gpio,
+      |                       ^~~~~~~~~~~~~~~~~~~~~
+../drivers/net/dsa/b53/b53_common.c:3013:45: error: ‘GPIOF_OUT_INIT_HIGH’ undeclared (first use in this function)
+ 3013 |                                             GPIOF_OUT_INIT_HIGH, "robo_reset");
+      |                                             ^~~~~~~~~~~~~~~~~~~
+../drivers/net/dsa/b53/b53_common.c:3013:45: note: each undeclared identifier is reported only once for each function it appears in
+
+
+Probably just needs "depends on GPIOLIB" or "select GPIOLIB"...
 
 -- 
-Kees Cook
+~Randy
+
 
