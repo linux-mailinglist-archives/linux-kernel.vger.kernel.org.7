@@ -1,165 +1,99 @@
-Return-Path: <linux-kernel+bounces-746028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9DAB12211
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:33:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 956BEB1221A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9BC17FF30
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:33:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F26D1CC69CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8D72E5B2F;
-	Fri, 25 Jul 2025 16:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F242EE97B;
+	Fri, 25 Jul 2025 16:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCQJsurQ"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7n8Lob4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB534A3C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6389C19E83C;
+	Fri, 25 Jul 2025 16:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753461223; cv=none; b=CeArKlQujpKe18jRuhtortMdya7Al/Y2Gwp7Qz1EKaIjST5defbcAZHG4rle6Wz8XP7AnpVE7jG6gO4u/lxHKn1N0AgT5PlATAUcsBYXEt/YaADJv/nJtPUJFJDdKHe7wDOO+MM7FRlxcn+DXZfLHFC0mRZg5TpnpHiuSoZFJfs=
+	t=1753461387; cv=none; b=po6wUnsJ3L8f9/jgQfEK7IISmyugts5lYUbNfE2hA5SvVRSvzoN2KQEh0toXwqsCpft3H/eXQcg9L6KKsYF0CXatE+3vZ9thinw+5zV/k+8p5KNBAt9xKwIJ5l4hnIGIVg69IMj0aHiuLbMWwBE52Dd6gb3AJ9clUvAo1jRK/XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753461223; c=relaxed/simple;
-	bh=qz36GnD2yxRt9mAPG+aYKKHmn7X5RPXWQd5xMtzkOCc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fPsfkWOL7aSPxA0+ep4UmjyWOHXpQDozMi3IuXQQ3RRsgP4Kz4pOGRvcaH4yIKz8G+gMhcnyZ8mbBeksW5yVnxe3r2QZNqIojeKn8+t9W7kh8uBIUxY1O7/hPTbz1TQMBY+UG4ysKirHHHJPnqzEbBWIBkeHOutUY87Wto2Li50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCQJsurQ; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e8db917573dso1839319276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753461220; x=1754066020; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CuSVB39VTwFvp064jrtVS3lbNZPZ0LiRX/EnLFvU1t0=;
-        b=SCQJsurQd2/5fOx/f+bWacN29D2KvRJgCOqNiTutJNo4RHfYLn5na0A7dihdOTl1wY
-         j0nTkCQ3SGulj5R+yCPrem+YUZ5b4sv/lmA7NVOCx51zDhA+lQ0ruNdwIBkInz3y9DWn
-         EcdrTKtkLrtUViueu7lJDfa7wjlX5YqDD2RZhwAde3yV0KMcZPA1C0Nw+uRfs7/+OonH
-         H7DOC2gVFSM0YZwrp25qQPt7XZXhD5/EJrBEcd7WVvLWrmnOW8ciT17gHpQY6XuM8Yd8
-         APno6Xx2TKvGO08GrA6AvwyctE1qviphMO6fLYBFL+Sr2iMt85AoKz0Q1WpoIOkaqXgb
-         bPTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753461220; x=1754066020;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CuSVB39VTwFvp064jrtVS3lbNZPZ0LiRX/EnLFvU1t0=;
-        b=DF6pPqSVhOTUuTyo6fqTSi0xXVauVCFtEkmsbyLD22SKbbC1wN0hMjI/2xLRbhZS/I
-         cyOS9T6idv8Q+DWv4QkwIzjr2vIo9OZ2kjBqxkhW/N6OLLSIhA2l20sGE4rB1aG28GK1
-         Cxpii6voo+kKIGdB8wy9LiJ89PTIeIh7bNAlO6bYW9qMUj5qrNGGd2CAkNIyQbNh3f2D
-         FdQ5VSiqQHzsLUq4vygPthMGn7xjRhmbEylNbimgEaL6/UpIRY6oNlkQ7j2g2uu5CW9T
-         WwLgplNfkCmNV03AySBJtH6389w5psXf+FC7cyOKnXe5qIsoF5CIP60F5ka5I/v/Vrj7
-         343Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYEhZX3aUQgG5lzdL4F5svIQn1wyMletF7086FJmUwhGNxHZNYNBsnpf02fzHbVpwqHvb/WEavEImKIxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA8B+lnS/DzvxeeoG4UUuLDqGGjMZFAQKbDRbFKQSHdci8xDlk
-	ner52e/t1C/Q90NnXAKoad4WETUWTHu4p0WeGzo0M9LKQtH22oGGcPws
-X-Gm-Gg: ASbGnctolnAYcSySK38ptVmI6/hWmXx/A50uI6O1sw63hHl1oBPbh/5owFy8YyPo32U
-	fFjSopBt7AByqP1OyNoR/DlMK5wQalJLqu3q43oKCQy2mmvSLPIIKNOiPfzggD0t35xL0SVX1Ts
-	EKlOxk2JPGIg8mUNXDKUeoGa3UNBuJPW7sRHW9dEfO8ruE9EwxqL9RXkwU0Jm27Xb27qfMEYV21
-	Nt4Au1eNDo1bbdB4xhl65+DePR1tcQjyrCBunp0itXxdYFSicVM43EyVm+WlBHY/l9yDzMwB6uH
-	jxbbFEXZ8C1CTiG194s5rLdaoSKbLP3TyRWps8KSY3yeIe0/jXeln87P1RpvQwADOdRsNB7W7OC
-	I8LA4knd58YddNZT5ElHJYwwVKQXfZSWZfH6ScEM+
-X-Google-Smtp-Source: AGHT+IFw23rb4EOn1f5E1CRR6PboLxC0Lq7jWPQhC13bhKmS3MQg6viTQTk7iAO7B221UWGTNUczSg==
-X-Received: by 2002:a05:6902:2013:b0:e8b:4455:787d with SMTP id 3f1490d57ef6-e8df1228357mr2550580276.42.1753461220113;
-        Fri, 25 Jul 2025 09:33:40 -0700 (PDT)
-Received: from bijan-laptop.attlocal.net ([2600:1700:680e:c000:79b4:320c:b28d:62])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8df86ea200sm106376276.35.2025.07.25.09.33.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 09:33:39 -0700 (PDT)
-From: Bijan Tabatabai <bijan311@gmail.com>
-To: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	damon@lists.linux.dev
-Cc: sj@kernel.org,
-	akpm@linux-foundation.org,
-	Bijan Tabatabai <bijantabatab@micron.com>
-Subject: [PATCH] mm/damon/vaddr: Skip isolating folios already in destination nid
-Date: Fri, 25 Jul 2025 11:33:00 -0500
-Message-ID: <20250725163300.4602-1-bijan311@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753461387; c=relaxed/simple;
+	bh=68PGpsj8IBEIaD9t411zbBjvKONR3sSiUZwE+hcOFMU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Y6b+cCxI3oP2YUr5xjNle4yp+PVJw6k4z0Hgba9GbLgKI9rN5a0QvlnrYk/y5CgewqPwfVD2dCCmA8ELUIPCHrm+PAFUzHTCYM/pdcjE94MKl+oqpDbej3rNS0eIh7GFnIbPuzL8e4Wh2sg/SFEuaViCN04tWTPn3cBSUrJ7QM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7n8Lob4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B50FCC4CEE7;
+	Fri, 25 Jul 2025 16:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753461386;
+	bh=68PGpsj8IBEIaD9t411zbBjvKONR3sSiUZwE+hcOFMU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=B7n8Lob4UaouthKw8LI16Xl5vmrvrF3iw+Y0RGWmPiDWj2LTEeDrJ2EP+YmGl1+xX
+	 TxFmAgCVxIOug4+91iq2VMDQPxb6hLdqfwXPx9kU+Nqo2naDwTaVcg1WHtljenO44L
+	 1D6tfyoxn4kIS6ATWH5G0Pv9sPCNGON8hn8XURAF7NgV+GnFRRr03F3owzoVNF6lp1
+	 DbZ55mjlLWNVK7OV4ZGRO+yqE6ylwPJ+EYPVBxTQZIdtJTzP4NHottBbGjeXTkSPNg
+	 aDmWXpULkPcr+94ElHWMgdA+6ZyaDl5n2nwN2cbaHB0PsCt6Nf3BPXmK9uxGJnXI3J
+	 I9mlVucZAZqDA==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ zhujun2@cmss.chinamobile.com, thorsten.blum@linux.dev, 
+ colin.i.king@gmail.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, wangweidong.a@awinic.com
+Cc: yijiangtao@awinic.com
+In-Reply-To: <20250725094602.10017-1-wangweidong.a@awinic.com>
+References: <20250725094602.10017-1-wangweidong.a@awinic.com>
+Subject: Re: [PATCH next v1] ASoC: codecs: Add acpi_match_table for aw88399
+ driver
+Message-Id: <175346138441.1147425.11453205352684074445.b4-ty@kernel.org>
+Date: Fri, 25 Jul 2025 17:36:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-a9b2a
 
-From: Bijan Tabatabai <bijantabatab@micron.com>
+On Fri, 25 Jul 2025 17:46:02 +0800, wangweidong.a@awinic.com wrote:
+> Add acpi_match_table to the aw88399 driver so that
+> it can be used on more platforms.
+> 
+> 
 
-damos_va_migrate_dests_add() determines the node a folio should be in
-based on the struct damos_migrate_dests associated with the migration
-scheme and adds the folio to the linked list corresponding to that node
-so it can be migrated later. Currently, folios are isolated and added to
-the list even if they are already in the node they should be in.
+Applied to
 
-In using damon weighted interleave more, I've found that the overhead of
-needlessly adding these folios to the migration lists can be quite
-high. The overhead comes from isolating folios and placing them in the
-migration lists inside of damos_va_migrate_dests_add(), as well as the
-cost of handling those folios in damon_migrate_pages(). This patch
-eliminates that overhead by simply avoiding the addition of folios that
-are already in their intended location to the migration list.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-To show the benefit of this patch, we start the test workload and start
-a DAMON instance attached to that workload with a migrate_hot scheme
-that has one dest field sending data to the local node. This way, we are
-only measuring the overheads of the scheme, and not the cost of migrating
-pages, since data will be allocated to the local node by default.
-I tested with two workloads: the embedding reduction workload used in [1]
-and a microbenchmark that allocates 20GB of data then sleeps, which is
-similar to the memory usage of the embedding reduction workload.
+Thanks!
 
-The time taken in damos_va_migrate_dests_add() and damon_migrate_pages()
-each aggregation interval is shown below.
+[1/1] ASoC: codecs: Add acpi_match_table for aw88399 driver
+      commit: e95122a32e777309412e30dc638dbc88b9036811
 
-Before this patch:
-                       damos_va_migrate_dests_add damon_migrate_pages
-microbenchmark                   ~2ms                      ~3ms
-embedding reduction              ~1s                       ~3s
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-After this patch:
-                       damos_va_migrate_dests_add damon_migrate_pages
-microbenchmark                    0us                      ~40us
-embedding reduction               0us                      ~100us
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-I did not do an in depth analysis for why things are much slower in the
-embedding reduction workload than the microbenchmark. However, I assume
-it's because the embedding reduction workload oversaturates the
-bandwidth of the local memory node, increasing the memory access
-latency, and in turn making the pointer chasing involved in iterating
-through a linked list much slower.
-Regardless of that, this patch results in a significant speedup.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-[1] https://lore.kernel.org/damon/20250709005952.17776-1-bijan311@gmail.com/
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
----
-Sorry I missed this in the original patchset!
-
- mm/damon/vaddr.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-index 7f5dc9c221a0..4404c2ab0583 100644
---- a/mm/damon/vaddr.c
-+++ b/mm/damon/vaddr.c
-@@ -711,6 +711,10 @@ static void damos_va_migrate_dests_add(struct folio *folio,
- 		target -= dests->weight_arr[i];
- 	}
- 
-+	/* If the folio is already in the right node, don't do anything */
-+	if (folio_nid(folio) == dests->node_id_arr[i])
-+		return;
-+
- isolate:
- 	if (!folio_isolate_lru(folio))
- 		return;
--- 
-2.43.5
+Thanks,
+Mark
 
 
