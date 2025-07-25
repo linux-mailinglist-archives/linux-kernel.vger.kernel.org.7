@@ -1,146 +1,121 @@
-Return-Path: <linux-kernel+bounces-746005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEF1B121CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:19:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA6DB121D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE421CE5C61
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:17:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C4F8AC795E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD8C2EFD93;
-	Fri, 25 Jul 2025 16:16:36 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B87D2EF291;
+	Fri, 25 Jul 2025 16:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Mxm8gs1O"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE882EE97B;
-	Fri, 25 Jul 2025 16:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753460195; cv=none; b=gBg+M6XfbjdqQMHph0mWke88LSHqk4/z6Yh1izCo0S8X9rEjz84Kja2lgU0cghDvcZT2wf8FNAUoJq17CNYCqVNY7ac/VG7HVEAISMdDWAtHH0OZvZX8dPMBjsWditpn2JpNJD6tF2sEfRhRRZnox2ZFBRE3RJNRQqo05//6vMw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753460195; c=relaxed/simple;
-	bh=VQ1Sb6bzClPJLyUB37odBN7nVHwdCTVLgyDv6w/LViw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=itoKFUj/HWC1Hh2fmrwyvSyHHrB/puYLn3E6tOQcijqY+WdTfGIDIfbWwqFzI3/O1GlEuvRg4o4eWh9nhF7JcD7QwEjIsaUrC6Ssg3eH1XL6PfZg/Xza8C/dAsZ87ReaYgF/1CukxQF+nM5+XLWGYoPpcNf7dpW2NcIrHnYw4JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae3b336e936so448581666b.3;
-        Fri, 25 Jul 2025 09:16:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753460192; x=1754064992;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k9lVzColSUbzoyzWK1v2ytYya9LR+3IJRUPOrRIrYkE=;
-        b=OKHxCC7KLs+dVooVtYQLip1Un20W5CzcAXXA3e3KXELSGxmo7ppXjbQAB7mYuMiZav
-         mZPqXH5o7poo53+Q3PE11Qa4sc1wNk0sAH/TjdpfxY4+g4a721bVKl1DKcmWDoTbNRiV
-         kr/w8mDevqZp/wFz548LpNwZPZ/rXrh+V0zluRFyAj46nU1D8AcliyXlSlfya9geqrn4
-         RKnEnyJvzKSExaHHonQhiqbxWeaEe2LVRzrxzi7k8zbfO0MnH49tDJSvlsbUKbWVNsDf
-         L/XEg17kEbtv/9MPkbASoAByq0CKbWjWatpeWdjpbMsmmaabU4kU/r4Z75cy/LMaYuUV
-         lczg==
-X-Forwarded-Encrypted: i=1; AJvYcCVj6fu/WQF4vCUzFkxOM40zdLxJCc1eK87l2HxWYio235Vnl0/umXBPtF8Hig19sXwWJSMRucDnld8l@vger.kernel.org, AJvYcCW2mYG22Getv4JmGy2HtA7GSP34/EKqAeqFn82WsxB5iZ4ThdbVglYzeObQHj4ZpfFkfGHnJC9Q0lNK@vger.kernel.org, AJvYcCWNLs9WRHi3nkkPUmbnP5L7yd+iJxfN77ZMaBWrC1m9AZ0v3zqEWisnIP1QrCsSBxJMPQEY7sKvYcGLWg==@vger.kernel.org, AJvYcCXriWbD2Ms2y0srHeq8dQdvteWvVF8Hf40zi9WYJvIndeLEbgZU7tdLnIr36vo4Qn8Dd9j7cgsT8e53IBUR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwONUHGKThdU5Vc7MHh48J9VIP7PLVyKfYuyOAY280/3u+O2yGa
-	DfxzUUhJcr48UaJJFRYEXZc+7h7sg2bdKgsodRuY/O+MZ9HYEHepuMsX
-X-Gm-Gg: ASbGncvUnFEGXRYGj/cJ9VMWbpimMlDLB3t/GV5uFSEp5jistPeW3OuuMfF/O65nihQ
-	IOhZlHVZ8BVq3nw9UNQbhZCT76bKnzcJq3oq5uJLzpyvW9oQwP1EhPF8YrhTKvZGFNxusNYp/23
-	lxylxYyiWDKydvV87AZAdt11hfjy3IJlr+CUr5Lpj8WAXaiIjaSgFNpqqpublgP5hIVotn4Fxmt
-	BD5MeUHbLUDwf0Bilm3NpJjQMCuc9KVmBlC6tl6L6+3LbfLU5l8r3vZIbH42yB1rfboSyIJpmqN
-	tBQoxjEkUH5VCiDpetARBu+vsBGVlhejYTcorAnbCNySHplPoUFz9UnB9IMqUzyqAGPxq5MFv55
-	urcrOsjcTf721BA==
-X-Google-Smtp-Source: AGHT+IHbjaJ8cbbWsPvmFdchaHgB59gZMNGBegBtlGVNhjnCNqWbZSGSDTI+qaKic8T0W3LbKoDy/Q==
-X-Received: by 2002:a17:907:7ea9:b0:ae0:9fdf:25e8 with SMTP id a640c23a62f3a-af61e6368d8mr274930166b.47.1753460191687;
-        Fri, 25 Jul 2025 09:16:31 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:74::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635af9967sm11514466b.131.2025.07.25.09.16.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 09:16:31 -0700 (PDT)
-Date: Fri, 25 Jul 2025 09:16:28 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, 
-	Robert Moore <robert.moore@intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev, osandov@osandov.com, 
-	konrad.wilk@oracle.com, linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-pci@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v3] vmcoreinfo: Track and log recoverable hardware errors
-Message-ID: <ldlansfiesfxf4a6dzp5z2etquz5jgiq6ttx3al6q7sesgros6@xh4lkevbzsow>
-References: <20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org>
- <7ce9731a-b212-4e27-8809-0559eb36c5f2@linux.alibaba.com>
- <4qh2wbcbzdajh2tvki26qe4tqjazmyvbn7v7aqqhkxpitdrexo@ucch4ppo7i4e>
- <fdb5dced-ea5a-48b8-bbb4-fc3ade7f3df8@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE65B239E75;
+	Fri, 25 Jul 2025 16:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753460334; cv=pass; b=CU4eU1rRBv1V7R27OwNbJFgmbRkXqgcQrqSatUZyk7V8DkG7YK4OJYz9siy1bl5a8PlNZL/UG4XXjABRkrO15PgXNm83es24EX3iijSq0fgGWmI5w++kGViEf8fAHgwINrmlEcrtEaEQiIJ5FJuWTStw2u+Ph2sOyiJGxtdb/sI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753460334; c=relaxed/simple;
+	bh=VyLVOo0NyZRA67UdGl1GMbDvYECPSj/OhPj1X9feTlY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=HgRjqw7xAUTGft4g5qkrndTdCCUg5L9MpLF1DfWSRDka6hoZSUsfxZDDhLmnFAaGtJitGxcec5IXlnaCeGXHFz8nYEHpyKMvXIg52vkSe8osMdKipoqIbfARj6vW43ISRkhuHCAN3Z2ok7jNoLo/bIZLbuGrIFqjuopQW2p4lXE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Mxm8gs1O; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753460320; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=E3HnPgc2eBYNDuIYlicEbg96DDSkVOp4CXTYWfixNOV/okz4+kHMrDNCSPDa6U75Kp2gq1/2hWgR1n2nHaM3xqayabBd/QBuggSA1SQoJUnQmZ3pPfJIsN1nU72Psz8eh4hCd3mWrPQtHdFdx83xuKOIYHGtHIZUquDnyPZddcw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753460320; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hNWsklfhKoy2efLRs+iJB61xdGvPIUy/D6YVu5hHEgw=; 
+	b=ZxWp78LS+hhH/aZAUEg7/xZV2zD1x03RIS0QNuEUSdRJ/WLNKn4caRXaVM7uHX5BjYQR5xzAcH27DKv3qs5p9TSPYt/XOVP4jEmzvLIKZDmIk+QTqyAqM18m111KEriyOJ/YFJRH+zRKFb4zVJ/aU1l5UteCcmdaWl/sQGlVK4g=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753460320;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=hNWsklfhKoy2efLRs+iJB61xdGvPIUy/D6YVu5hHEgw=;
+	b=Mxm8gs1Ocl4n8oCJ5x+rZKxCG+K8/Zm+D5ZE3ENQouX7WmiEdg5mE2oQazN5+ALr
+	YOXVTgMMSjiOwB32+yAvo0u5Z972iHRASY7phQQ+IyBk4ETLoQgf73tkfVgTxLeD60d
+	8uwnNbI9mVqsWudzz7ChHDDjnISVQLJvI5yqE1BY=
+Received: by mx.zohomail.com with SMTPS id 1753460317999359.60159706229695;
+	Fri, 25 Jul 2025 09:18:37 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fdb5dced-ea5a-48b8-bbb4-fc3ade7f3df8@linux.alibaba.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 02/19] gpu: nova-core: register: fix typo
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250718-nova-regs-v2-2-7b6a762aa1cd@nvidia.com>
+Date: Fri, 25 Jul 2025 13:18:24 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Beata Michalska <beata.michalska@arm.com>,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6641734C-5331-44BF-B2B3-93CBC2F0E3D6@collabora.com>
+References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
+ <20250718-nova-regs-v2-2-7b6a762aa1cd@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hello Shuai,
 
-On Fri, Jul 25, 2025 at 03:40:58PM +0800, Shuai Xue wrote:
-> > > APEI does not define an error type named GHES. GHES is just a kernel
-> > > driver name. Many hardware error types can be handled in GHES (see
-> > > ghes_do_proc), for example, AER is routed by GHES when firmware-first
-> > > mode is used. As far as I know, firmware-first mode is commonly used in
-> > > production. Should GHES errors be categorized into AER, memory, and CXL
-> > > memory instead?
-> > 
-> > I also considered slicing the data differently initially, but then
-> > realized it would add more complexity than necessary for my needs.
-> > 
-> > If you believe we should further subdivide the data, I’m happy to do so.
-> > 
-> > You’re suggesting a structure like this, which would then map to the
-> > corresponding CPER_SEC_ sections:
-> > 
-> > 	enum hwerr_error_type {
-> > 	HWERR_RECOV_AER,     // maps to CPER_SEC_PCIE
-> > 	HWERR_RECOV_MCE,     // maps to default MCE + CPER_SEC_PCIE
-> 
-> CPER_SEC_PCIE is typo?
 
-Correct, HWERR_RECOV_MCE would map to the regular MCE and not errors
-coming from GHES.
+> On 18 Jul 2025, at 04:26, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> A space was missing between arguments in this invocation.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> drivers/gpu/nova-core/regs/macros.rs | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/nova-core/regs/macros.rs =
+b/drivers/gpu/nova-core/regs/macros.rs
+> index =
+864d1e83bed2979f5661e038f4c9fd87d33f69a7..93e9055d5ebd5f78ea534aafd44d884d=
+a0fce345 100644
+> --- a/drivers/gpu/nova-core/regs/macros.rs
+> +++ b/drivers/gpu/nova-core/regs/macros.rs
+> @@ -116,7 +116,7 @@ macro_rules! register {
+>     ) =3D> {
+>         register!(@common $name @ $offset $(, $comment)?);
+>         register!(@field_accessors $name { $($fields)* });
+> -        register!(@io$name @ + $offset);
+> +        register!(@io $name @ + $offset);
+>     };
+>=20
+>     // Creates a alias register of relative offset register `alias` =
+with its own fields.
+>=20
+> --=20
+> 2.50.1
+>=20
+>=20
 
-> > 	HWERR_RECOV_CXL,     // maps to CPER_SEC_CXL_*
-> > 	HWERR_RECOV_MEMORY,  // maps to CPER_SEC_PLATFORM_MEM
-> > 	}
-> > 
-> > Additionally, what about events related to CPU, Firmware, or DMA
-> > errors—for example, CPER_SEC_PROC, CPER_SEC_FW, CPER_SEC_DMAR? Should we
-> > include those in the classification as well?
-> 
-> I would like to split a error from ghes to its own type,
-> it sounds more reasonable. I can not tell what happened from HWERR_RECOV_AERat all :(
 
-Makes sense. Regarding your answer, I suppose we might want to have
-something like the following:
-
-	enum hwerr_error_type {
-		HWERR_RECOV_MCE,     // maps to errors in do_machine_check()
-		HWERR_RECOV_CXL,     // maps to CPER_SEC_CXL_
-		HWERR_RECOV_PCI,     // maps to AER (pci_dev_aer_stats_incr()) and CPER_SEC_PCIE and CPER_SEC_PCI
-		HWERR_RECOV_MEMORY,  // maps to CPER_SEC_PLATFORM_MEM_
-		HWERR_RECOV_CPU,     // maps to CPER_SEC_PROC_
-		HWERR_RECOV_DMA,     // maps to CPER_SEC_DMAR_
-		HWERR_RECOV_OTHERS,  // maps to CPER_SEC_FW_, CPER_SEC_DMAR_, 
-	}
-
-Is this what you think we should track?
-
-Thanks
---breno
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
