@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-745194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7364FB11663
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:25:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA43B11667
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D6BAC35DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDE21CE4BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58A423185F;
-	Fri, 25 Jul 2025 02:25:22 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE8723183A;
+	Fri, 25 Jul 2025 02:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lh9r7jr/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD39254673;
-	Fri, 25 Jul 2025 02:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E732E36FA;
+	Fri, 25 Jul 2025 02:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753410322; cv=none; b=q1e6gYAyL5c5iiIgsRo79C7cP36M/5prNBjOswLzcwR9GJ73fPsc7RQxmfONm5+VBoHekHxZXSwMWNipoaTjdB14jyxOMRb795E/r2b1cHBn2ECJSa7BywaTMC7sXC5CMHPaoaz/3/Is3efNxMBGcQgw44OsDP+x/khZ3U2XLPM=
+	t=1753410461; cv=none; b=KygYluwpjn+8D+ONOKOF1umW/zL1IHSqMusrdBn1ttWyKbSzw2dzDVzIAbim0Hhw6KW42cutPN3pthWVCA7OfZjTFDloVeTuk5qdrLdNLwtTooDo+0LMJjzoDfgJJcRQze9sobOwj8IOKly0WoB8RL/UqZ9WnJJ1O+KaJZelpNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753410322; c=relaxed/simple;
-	bh=L2idtvIt/1uihIpQ8b9OtDmVC7OmE4x9WnLbp3Mdl9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rvUVEOXR+ZkikOBfVKRIIT7RkXciRp64qru/LOacrFqk/Qkc5w+q6eOfTjKaU8VYCeu4F5+viv8HyXCEkLr5nuXdXXJxEvna/tBg9bMwWY0/1nZXFj9zqwBNMt0yqs5vxWSvxC/M7adAFpIAX2dzjLJi8bABxgn35pzDXgSCL9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 1AC151605AF;
-	Fri, 25 Jul 2025 02:25:12 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 377261B;
-	Fri, 25 Jul 2025 02:25:07 +0000 (UTC)
-Date: Thu, 24 Jul 2025 22:25:10 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: lukas@wunner.de, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, helgaas@kernel.org,
- ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
- Jonathan.Cameron@huawei.com, bhelgaas@google.com, tony.luck@intel.com,
- bp@alien8.de, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
- anil.s.keshavamurthy@intel.com, mark.rutland@arm.com, peterz@infradead.org,
- tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v9 2/2] PCI: trace: Add a RAS tracepoint to monitor link
- speed changes
-Message-ID: <20250724222510.7b00ea79@gandalf.local.home>
-In-Reply-To: <0611d06d-e198-4617-a0ba-3050ca6191c6@linux.alibaba.com>
-References: <20250723033108.61587-1-xueshuai@linux.alibaba.com>
-	<20250723033108.61587-3-xueshuai@linux.alibaba.com>
-	<20250723100559.7f0adb3c@batman.local.home>
-	<0611d06d-e198-4617-a0ba-3050ca6191c6@linux.alibaba.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753410461; c=relaxed/simple;
+	bh=Khfr6GJFMEPyxoF5TtbNyRQfS0y6Twazz2yM+2molDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e5WaFfpnUof97YZwI6urY+UcsWy4xNy+qy6/JbhCDh/WxQspwctNRHwblD0rvxwOFzey83r0G2Bg7pMCjZ41FC/7tfMCl5Pj7o7TsG3U2nxJ/ln3Bz2oHbGnRrO0Kxvje43bB61PFLmJ+3Y66BxI6487uLGSgHF+Ym91j1puxyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lh9r7jr/; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753410459; x=1784946459;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Khfr6GJFMEPyxoF5TtbNyRQfS0y6Twazz2yM+2molDY=;
+  b=Lh9r7jr/DubdmVjebTXg4vwbPAXesuoFlT9XsSkWk6ETSY/rBSfMpw3v
+   Pt9OyY1vmpe4KWS8c2KezZDvlhyUAvsnMVfnEsuZyFTZDlQPKjUUcXz2K
+   wq+bI9EzoU8OuLPpk5e1aP+PVQ40/1/GZqrueoI0xVEG8WzxBr6W3xns9
+   exFfA3XzqwuCP94KCQoMc4XBzG52WOqFLBayHbTJrKtwYgC9P8KN1brAX
+   6vrGXmCjwPVhYiEFKcwEmyDvdYlFjPBcoZIgDpaFDX/Pg6G9G+iqhggFY
+   5Be0ZSYUl5DH+FG2lPP9/cj4NchcYD7orlzmDjaj4+m+BsjzgBsg6tZfu
+   w==;
+X-CSE-ConnectionGUID: LA8oJAhLSvCDYAo4BAdbuQ==
+X-CSE-MsgGUID: LfI585xwQaqLFgRjFc7V+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="43352925"
+X-IronPort-AV: E=Sophos;i="6.16,338,1744095600"; 
+   d="scan'208";a="43352925"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 19:27:39 -0700
+X-CSE-ConnectionGUID: bLSRn50RQC6VQhsJrY0bkA==
+X-CSE-MsgGUID: qPdZrQ5FRW2cHtvxPARCvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,338,1744095600"; 
+   d="scan'208";a="164883627"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 24 Jul 2025 19:27:33 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uf89i-000KzD-0K;
+	Fri, 25 Jul 2025 02:27:30 +0000
+Date: Fri, 25 Jul 2025 10:26:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, jingoohan1@gmail.com, inki.dae@samsung.com,
+	sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
+	alim.akhtar@samsung.com, hjc@rock-chips.com, heiko@sntech.de,
+	andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com,
+	l.stach@pengutronix.de, dianders@chromium.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v3 08/14] drm/bridge: analogix_dp: Apply
+ drm_bridge_connector helper
+Message-ID: <202507251021.A6WmQ4di-lkp@intel.com>
+References: <20250724080304.3572457-9-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 377261B
-X-Stat-Signature: 5hi1kbyyqh1ikfey7kfjuxq3egm7nu3s
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/MoJxA/jhPTrRIoH2xbHAuuPBlBDFxjpY=
-X-HE-Tag: 1753410307-806746
-X-HE-Meta: U2FsdGVkX18vpnF45ei3qcCwLbzlr91TQHIearcao6J5ZztGfnRfW19kN5BvnxAN/U22+6o1JXO8g3V2HBQKK/Dh4hHfsv1VJR0+k0uVanM39RAosoIdgIU/qE7fPZb2nG6C2dYesS/FRb6up+/DZTzCnQEVLD2C9Hlgylm/A/4TXJAxL8nLi8aBmwzmgHvmhdZKmSFdvb8KF/xa9NrmoMuKc8R3hepW33HbDICTu5D1t88ED9XSvBfdZQP1WseE6GIQkYA+peRAw8otaa1Otx4pVhQbrXd6xZPv+tQXLWTH0acraIorK/VhfO5hlOzAHkQ9B28yTeckomcP3gyggadd6QhP57DnTiadCp0j8wm9ukeD5azKm6MuQ1maJM2o+NA8UVGROpMlqduiFTiCAn/Iqvo3jEVAo2HBb95KpLrELTJ2gHgDiAB3TnhjzicPZrckKZYB4B4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724080304.3572457-9-damon.ding@rock-chips.com>
 
-On Fri, 25 Jul 2025 10:11:10 +0800
-Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+Hi Damon,
 
-> For the libtraceevent implementation, I believe we'd
-> need to:
-> 
-> - Add the PCI speed mapping table to libtraceevent
-> - Create a print function similar to other existing parsers
-> - Ensure perf, trace-cmd, and rasdaemon can all benefit from it
-> 
-> Would you like me to investigate the libtraceevent changes, or do you
+kernel test robot noticed the following build errors:
 
-Yeah, just update libtraceevent. In fact, libtraceevent has plugins for
-things like this.
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on next-20250724]
+[cannot apply to drm-exynos/exynos-drm-next rockchip/for-next linus/master v6.16-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-You can use this as an example:
+url:    https://github.com/intel-lab-lkp/linux/commits/Damon-Ding/drm-bridge-analogix_dp-Formalize-the-struct-analogix_dp_device/20250724-160804
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20250724080304.3572457-9-damon.ding%40rock-chips.com
+patch subject: [PATCH v3 08/14] drm/bridge: analogix_dp: Apply drm_bridge_connector helper
+config: x86_64-buildonly-randconfig-003-20250725 (https://download.01.org/0day-ci/archive/20250725/202507251021.A6WmQ4di-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250725/202507251021.A6WmQ4di-lkp@intel.com/reproduce)
 
-  https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/tree/plugins/plugin_jbd2.c
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507251021.A6WmQ4di-lkp@intel.com/
 
-That adds two functions that are used in print fmt strings. Here's one:
+All errors (new ones prefixed by >>):
 
-static unsigned long long
-process_jbd2_dev_to_name(struct trace_seq *s, unsigned long long *args)
-{
-	unsigned int dev = args[0];
-
-	trace_seq_printf(s, "%d:%d", MAJOR(dev), MINOR(dev));
-	return 0;
-}
+>> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1346:12: error: incompatible function pointer types initializing 'enum drm_connector_status (*)(struct drm_bridge *, struct drm_connector *)' with an expression of type 'enum drm_connector_status (struct drm_bridge *)' [-Wincompatible-function-pointer-types]
+    1346 |         .detect = analogix_dp_bridge_detect,
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
 
 
-int TEP_PLUGIN_LOADER(struct tep_handle *tep)
-{
-	tep_register_print_function(tep,
-				    process_jbd2_dev_to_name,
-				    TEP_FUNC_ARG_STRING,
-				    "jbd2_dev_to_name",
-				    TEP_FUNC_ARG_INT,
-				    TEP_FUNC_ARG_VOID);
-[..]
+vim +1346 drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 
-The above defines:
+  1333	
+  1334	static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+  1335		.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+  1336		.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+  1337		.atomic_reset = drm_atomic_helper_bridge_reset,
+  1338		.atomic_pre_enable = analogix_dp_bridge_atomic_pre_enable,
+  1339		.atomic_enable = analogix_dp_bridge_atomic_enable,
+  1340		.atomic_disable = analogix_dp_bridge_atomic_disable,
+  1341		.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
+  1342		.atomic_check = analogix_dp_bridge_atomic_check,
+  1343		.attach = analogix_dp_bridge_attach,
+  1344		.get_modes = analogix_dp_bridge_get_modes,
+  1345		.edid_read = analogix_dp_bridge_edid_read,
+> 1346		.detect = analogix_dp_bridge_detect,
+  1347	};
+  1348	
 
-	char *jbd2_dev_to_name(int arg0);
-
-And when this is found in the parsing, it calls process_jbd2_dev_to_name()
-passing it the arguments that was found in the trace.
-
-You would have something like:
-
-	tep_register_print_function(tep,
-				    process_pci_speed_string,
-				    TEP_FUNC_ARG_STRING,
-				    "pci_speed_string",
-				    TEP_FUNC_ARG_INT,
-				    TEP_FUNC_ARG_VOID);
-
-Which will return a string and take an integer as an argument. Then you
-would just implement the process_pci_speed_string() function to do the same
-thing as the pci_speed_string() does in the kernel.
-
-Oh, and here's the man page for you on tep_register_print_function()
-
-  https://trace-cmd.org/Documentation/libtraceevent/libtraceevent-reg_print_func.html
-
--- Steve
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
