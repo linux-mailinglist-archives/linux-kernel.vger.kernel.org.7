@@ -1,225 +1,307 @@
-Return-Path: <linux-kernel+bounces-746040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22256B12244
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:47:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF6B6B12247
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939B23A96D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:46:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A85D37B2671
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D721A239E75;
-	Fri, 25 Jul 2025 16:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD00C2EF2BE;
+	Fri, 25 Jul 2025 16:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RPe/GuXU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="28DW0cse";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RPe/GuXU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="28DW0cse"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ZcduIwGZ"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0A31FC8
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CD42E5B2F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753462025; cv=none; b=M6j0KDlQrjYTpJa60lSXVF59r3pKjuXbAvnINrv2tnYZedI/htsPi1xgb8ABre8c2IT0vUhTqo8mglaDOhNxO3+eptUbqrJ6e8nTHY6umkhySNInHqpXQMU3Siu/afyQjc4aKccqFj0lPDCTv5NJ1pQ5jb7zM/Wn4bYEfULg/6c=
+	t=1753462035; cv=none; b=dSmhuFQNz3ZZPm8CXlnJPSl4pzTNGgpxdW9VR2HGXZOYMVQWhr3c7uXGphb02vdKrXLuwhOjJdSGubvZucg65eIhxJPB47j6B3wDqjINJneutJ6sy4bD6Lk9uvgOd7xtx27p7CFtQuFQDlfgOVGBCQDBhF4BxYzeqaDQj7Ai+3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753462025; c=relaxed/simple;
-	bh=dvX6HSxxUgO4yBsdzkisVwNfl1ne3OAqQJ68FABi7bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UmSBuEsCm6K1/Cq55RlQhJDPUCKKUJVjAnBE0iaXHrW1Qo3WqORBWcKXKoUrTIGVqMpscMJK/H2vcS0lPm5GvzsBx1toJ+OvqlSwrMdk0r7dmgzvv0l9Ji0PMZfqZkFHBqmnL184DV6BSau6LBGJpaYJXDBcXCuUKWm3RfmlN4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RPe/GuXU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=28DW0cse; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RPe/GuXU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=28DW0cse; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8048E1F78C;
-	Fri, 25 Jul 2025 16:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753462021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=j6rgzcM42r6bNwWrNmvNxe4rewMivcbP9MWQ4KWmjXQ=;
-	b=RPe/GuXUzXjAcbFcMm+vNtrov952mlsyQb6KVQwCox+l3f9HQqAOYMYL9Nsd1DpzPj9vo9
-	9LGLWnM6aZ6Y07ryXiyZqAGTt75jxM//DRLIxgkfJ98yitisRU4lrjF5PgWzreH7843bWD
-	hQW8u7W2qzYCOkvemzDosx/MdKlPuYI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753462021;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=j6rgzcM42r6bNwWrNmvNxe4rewMivcbP9MWQ4KWmjXQ=;
-	b=28DW0cseOpZGtgrR8i5LN7voYD2K/3OfmxEb4dEGj24N7nqx4Ps+Kvmd9x/56yJAKZvF61
-	AOBqpMrgEINuZYAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753462021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=j6rgzcM42r6bNwWrNmvNxe4rewMivcbP9MWQ4KWmjXQ=;
-	b=RPe/GuXUzXjAcbFcMm+vNtrov952mlsyQb6KVQwCox+l3f9HQqAOYMYL9Nsd1DpzPj9vo9
-	9LGLWnM6aZ6Y07ryXiyZqAGTt75jxM//DRLIxgkfJ98yitisRU4lrjF5PgWzreH7843bWD
-	hQW8u7W2qzYCOkvemzDosx/MdKlPuYI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753462021;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=j6rgzcM42r6bNwWrNmvNxe4rewMivcbP9MWQ4KWmjXQ=;
-	b=28DW0cseOpZGtgrR8i5LN7voYD2K/3OfmxEb4dEGj24N7nqx4Ps+Kvmd9x/56yJAKZvF61
-	AOBqpMrgEINuZYAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6CD75134E8;
-	Fri, 25 Jul 2025 16:47:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id v0c2GgW1g2gcfQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 25 Jul 2025 16:47:01 +0000
-Message-ID: <996a7622-219f-4e05-96ce-96bbc70068b0@suse.cz>
-Date: Fri, 25 Jul 2025 18:47:01 +0200
+	s=arc-20240116; t=1753462035; c=relaxed/simple;
+	bh=jkKCZG+haMLK5mAib4dIcJKwt6C+7EOrDNBhMzDTtZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SAmF2bAOLEk3CQmkBgjp+Huj2ajTZtVwQGMU9j4ba34g+umATCcCYdmffXb52UT2M8hYttuqzJ1Yblt1Z2vDlf26dSAeWbHXP800DzA3x6MGpeC/kuaWcJFyTcATn2vXogKMw2BeRXEfRBfrwzkNG68f6dY1CTDDVhnZ0q+VBJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ZcduIwGZ; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-748d982e92cso1609306b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:47:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1753462033; x=1754066833; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vHLTqitS8m73sB1NoWWs/yPMz8aTSpmBU53QgGw/vVs=;
+        b=ZcduIwGZ8tedXpK4odtG3K6fj5PBBERor+hyeXw8Y6UoFuioV8A+Wywx3j08da052z
+         1jILruS24UQTC5DsGgv0lsxbpuV4OfTazNXsV0LVBKID3T/lWkzmRoSpCqP74i/FAOXm
+         lGPcm+TPBvB4sBST+XmtfV9B7HTxG3kgbANC+BTIbRhx8SavNAytQdczUMSVm1YP7Zs5
+         OfOmPHSNUuHXGXaGBZUkOmc2nhDkxc1xYSNShWszsCcDOz4RXWwYRhiZWZyCnFNJM/8i
+         /8b/6FTEqyIbEfYm7xfl/arPi5AzRZrR2fT4bzy4IBgeHD3esNH+OFA8JfDMZzTgex4M
+         SyiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753462033; x=1754066833;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vHLTqitS8m73sB1NoWWs/yPMz8aTSpmBU53QgGw/vVs=;
+        b=IkXDnRVGrDw6AoMXL7YBvUnL8L2xNci7R65QzvHNapnjbmzz4Qkop3AesQnxEHLu+n
+         ynHuktOdvdxoURB00tkh45c93CqMgEgHTqTxDUa+tNzQ3gcMbWxsg/nOXNnODZI7WO8W
+         26uTMBSSeNEIBDCbZtSlEPaRVEURUjY0+tVTV08xrQsGESa2UTUAnZdnEOLO5zrjQAsy
+         QRgsiip6UdEACBkPnR1VM7uu5O8JCUtUPGxUTty8WywHOWTwe4WqLZfJCkFuLEABK9Gy
+         ohhQTi+7ZcbpQitdrfA1WY5eH8VkP8y3BXR2vBj0O2B1Agv5FUKvVPYlRWIkGUhOFKZr
+         +oog==
+X-Forwarded-Encrypted: i=1; AJvYcCWC3K1/quo9vofLJX3zLFt3yTcpOHofjYAu5vznXo88texBgVO1kGF5XPvBEi+mdosh2M7baGNXhj+eEB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3qbRPHdLVzTKaNSVmWzw89PhTPTMYFNhXjRwOSAb0Z2HWpkQX
+	HMaXKqeoNqarptCcR9JyITRxvVDXGuLaOkadMBttvfpJTYOGqa///0X3JviRURLHFAQ=
+X-Gm-Gg: ASbGncvkHaZJq0AlPnvHOAsWdQLICczzGe61UNSsMJQQTokF78DYY+Zw5SMwXmpY2pr
+	5PyvfneShczz+R/CT/AaENkcaawzQNKImfxjVgulZw9kD6WLm4dBi4267/YZJWVMsSaJA3BcSVU
+	5SrJ83J6SB3GAl2aGN0nNOYZlqO0FwJjH4X0FHyQp7k1t3YKjWuVHeKB3KYqxhy3C6goSFboged
+	0s7oVbPcWMAmBopHWf39PvIa1DNBgwt7jvWLNItZkeyCPs1EABWOVoDd4EGJk4+kTSmyjv+1UyD
+	4Opsh8LG0yeLJfNzxwhAI01vjW13dXiCXEhTPBxUluVz0tk25bS0VnzGWt+6Cm56a5uhtBz5H+E
+	iuL4MJ+GGuwWZRTm5489DhbEjQrQHD16k
+X-Google-Smtp-Source: AGHT+IHxx3Jq+s72rQKTRVQE8Bq7kbAijuZ/ZVTSRX63AJDAbUraG/5Y8poHwWgKyEfuOloxC+qeAg==
+X-Received: by 2002:a05:6a00:1790:b0:74c:3547:7f0c with SMTP id d2e1a72fcca58-7633626d5afmr4307957b3a.3.1753462032636;
+        Fri, 25 Jul 2025 09:47:12 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b4d15cfsm119033b3a.119.2025.07.25.09.47.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 09:47:12 -0700 (PDT)
+Date: Fri, 25 Jul 2025 09:47:08 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Will Deacon <will@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Monk Chiang <monk.chiang@sifive.com>,
+	Kito Cheng <kito.cheng@sifive.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
+	llvm@lists.linux.dev, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, cleger@rivosinc.com, apatel@ventanamicro.com,
+	ajones@ventanamicro.com, conor.dooley@microchip.com,
+	charlie@rivosinc.com, samuel.holland@sifive.com, bjorn@rivosinc.com,
+	fweimer@redhat.com, jeffreyalaw@gmail.com,
+	heinrich.schuchardt@canonical.com, andrew@sifive.com,
+	ved@rivosinc.com
+Subject: Re: [PATCH 10/11] scs: generic scs code updated to leverage hw
+ assisted shadow stack
+Message-ID: <aIO1DOrhUTolFWO6@debug.ba.rivosinc.com>
+References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
+ <20250724-riscv_kcfi-v1-10-04b8fa44c98c@rivosinc.com>
+ <20250725161327.GC1724026@google.com>
+ <aIOz_wxxCr8tPgXz@debug.ba.rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: slub: avoid deref of free pointer in sanity checks
- if object is invalid
-Content-Language: en-US
-To: Li Qiong <liqiong@nfschina.com>, Christoph Lameter <cl@gentwo.org>,
- David Rientjes <rientjes@google.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
- Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250725064919.1785537-1-liqiong@nfschina.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
- AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
- jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
- 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
- Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
- QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
- 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
- M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
- r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
- Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
- uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
- lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
- zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
- rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
- khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
- xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
- AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
- Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
- rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
- dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
- m6M14QORSWTLRg==
-In-Reply-To: <20250725064919.1785537-1-liqiong@nfschina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <aIOz_wxxCr8tPgXz@debug.ba.rivosinc.com>
 
-On 7/25/25 08:49, Li Qiong wrote:
-> For debugging, object_err() prints free pointer of the object.
-> However, if check_valid_pointer() returns false for a object,
-> dereferncing `object + s->offset` can lead to a crash. Therefore,
-> print the object's address in such cases.
-> 
-> Fixes: bb192ed9aa71 ("mm/slub: Convert most struct page to struct slab by spatch")
+Sorry forgot to respond to rest of the comments.
 
-That was the last commit to change the line, but the problem existed before,
-AFAICS all the time, so I did:
+On Fri, Jul 25, 2025 at 09:42:39AM -0700, Deepak Gupta wrote:
+>On Fri, Jul 25, 2025 at 04:13:27PM +0000, Sami Tolvanen wrote:
+>>On Thu, Jul 24, 2025 at 04:37:03PM -0700, Deepak Gupta wrote:
+>>>If shadow stack have memory protections from underlying cpu, use those
+>>>protections. arches can define PAGE_KERNEL_SHADOWSTACK to vmalloc such shadow
+>>>stack pages. Hw assisted shadow stack pages grow downwards like regular
+>>>stack. Clang based software shadow call stack grows low to high address.
+>>
+>>Is this the case for all the current hardware shadow stack
+>>implementations? If not, we might want a separate config for the
+>>shadow stack direction instead.
+>
+>Is there something like this for regular stack as well?
+>I could copy same mechanism.
+>
+>>
+>>>Thus this patch addresses some of those needs due to opposite direction
+>>>of shadow stack. Furthermore, hw shadow stack can't be memset because memset
+>>>uses normal stores. Lastly to store magic word at base of shadow stack, arch
+>>>specific shadow stack store has to be performed.
+>>>
+>>>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>>>---
+>>> include/linux/scs.h | 26 +++++++++++++++++++++++++-
+>>> kernel/scs.c        | 38 +++++++++++++++++++++++++++++++++++---
+>>> 2 files changed, 60 insertions(+), 4 deletions(-)
+>>>
+>>>diff --git a/include/linux/scs.h b/include/linux/scs.h
+>>>index 4ab5bdc898cf..6ceee07c2d1a 100644
+>>>--- a/include/linux/scs.h
+>>>+++ b/include/linux/scs.h
+>>>@@ -12,6 +12,7 @@
+>>> #include <linux/poison.h>
+>>> #include <linux/sched.h>
+>>> #include <linux/sizes.h>
+>>>+#include <asm/scs.h>
+>>>
+>>> #ifdef CONFIG_SHADOW_CALL_STACK
+>>>
+>>>@@ -37,22 +38,45 @@ static inline void scs_task_reset(struct task_struct *tsk)
+>>> 	 * Reset the shadow stack to the base address in case the task
+>>> 	 * is reused.
+>>> 	 */
+>>>+#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>>>+	task_scs_sp(tsk) = task_scs(tsk) + SCS_SIZE;
+>>>+#else
+>>> 	task_scs_sp(tsk) = task_scs(tsk);
+>>>+#endif
+>>> }
+>>>
+>>> static inline unsigned long *__scs_magic(void *s)
+>>> {
+>>>+#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>>>+	return (unsigned long *)(s);
+>>>+#else
+>>> 	return (unsigned long *)(s + SCS_SIZE) - 1;
+>>>+#endif
+>>> }
+>>>
+>>> static inline bool task_scs_end_corrupted(struct task_struct *tsk)
+>>> {
+>>> 	unsigned long *magic = __scs_magic(task_scs(tsk));
+>>>-	unsigned long sz = task_scs_sp(tsk) - task_scs(tsk);
+>>>+	unsigned long sz;
+>>>+
+>>>+#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>>>+	sz = (task_scs(tsk) + SCS_SIZE) - task_scs_sp(tsk);
+>>>+#else
+>>>+	sz = task_scs_sp(tsk) - task_scs(tsk);
+>>>+#endif
+>>>
+>>> 	return sz >= SCS_SIZE - 1 || READ_ONCE_NOCHECK(*magic) != SCS_END_MAGIC;
+>>> }
+>>>
+>>>+static inline void __scs_store_magic(unsigned long *s, unsigned long magic_val)
+>>>+{
+>>>+#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>>>+	arch_scs_store(s, magic_val);
+>>>+#else
+>>>+	*__scs_magic(s) = magic_val;
+>>>+#endif
+>>>+}
+>>>+
+>>
+>>I'm not a huge fan of all the ifdefs. We could clean this up by
+>>allowing architectures to simply override some these functions, or at
+>>least use if (IS_ENABLED(CONFIG...)) instead. Will, any thoughts about
+>>this?
 
-    Fixes: 7656c72b5a63 ("SLUB: add macros for scanning objects in a slab")
-    Cc: <stable@vger.kernel.org>
+Yes I don't like it either.
+I'll do something about it in next iteration.
 
-> Signed-off-by: Li Qiong <liqiong@nfschina.com>
+>>
+>>> DECLARE_STATIC_KEY_FALSE(dynamic_scs_enabled);
+>>>
+>>> static inline bool scs_is_dynamic(void)
+>>>diff --git a/kernel/scs.c b/kernel/scs.c
+>>>index d7809affe740..5910c0a8eabd 100644
+>>>--- a/kernel/scs.c
+>>>+++ b/kernel/scs.c
+>>>@@ -11,6 +11,7 @@
+>>> #include <linux/scs.h>
+>>> #include <linux/vmalloc.h>
+>>> #include <linux/vmstat.h>
+>>>+#include <asm-generic/set_memory.h>
+>>>
+>>> #ifdef CONFIG_DYNAMIC_SCS
+>>> DEFINE_STATIC_KEY_FALSE(dynamic_scs_enabled);
+>>>@@ -32,19 +33,31 @@ static void *__scs_alloc(int node)
+>>> {
+>>> 	int i;
+>>> 	void *s;
+>>>+	pgprot_t prot = PAGE_KERNEL;
+>>>+
+>>>+#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>>>+	prot = PAGE_KERNEL_SHADOWSTACK;
+>>>+#endif
+>>
+>>I would rather define the shadow stack protection flags in the header
+>>file and allow them to be overridden in asm/scs.h.
 
-Added to slab/for-next, thanks!
+Yes that's good idea. I'll do that.
 
-> ---
-> v2:
-> - rephrase the commit message, add comment for object_err().
-> ---
->  mm/slub.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 31e11ef256f9..8b24f1cf3079 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -1097,6 +1097,10 @@ static void print_trailer(struct kmem_cache *s, struct slab *slab, u8 *p)
->  			      size_from_object(s) - off);
->  }
->  
-> +/*
-> + * object - should be a valid object.
-> + * check_valid_pointer(s, slab, object) should be true.
-> + */
->  static void object_err(struct kmem_cache *s, struct slab *slab,
->  			u8 *object, const char *reason)
->  {
-> @@ -1587,7 +1591,7 @@ static inline int alloc_consistency_checks(struct kmem_cache *s,
->  		return 0;
->  
->  	if (!check_valid_pointer(s, slab, object)) {
-> -		object_err(s, slab, object, "Freelist Pointer check fails");
-> +		slab_err(s, slab, "Invalid object pointer 0x%p", object);
->  		return 0;
->  	}
->  
+>>
+>>> 	for (i = 0; i < NR_CACHED_SCS; i++) {
+>>> 		s = this_cpu_xchg(scs_cache[i], NULL);
+>>> 		if (s) {
+>>> 			s = kasan_unpoison_vmalloc(s, SCS_SIZE,
+>>> 						   KASAN_VMALLOC_PROT_NORMAL);
+>>>+/*
+>>>+ * If software shadow stack, its safe to memset. Else memset is not
+>>>+ * possible on hw protected shadow stack. memset constitutes stores and
+>>>+ * stores to shadow stack memory are disallowed and will fault.
+>>>+ */
+>>>+#ifndef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>>> 			memset(s, 0, SCS_SIZE);
+>>>+#endif
+>>
+>>This could also be moved to a static inline function that
+>>architectures can override if they have hardware shadow stacks that
+>>cannot be cleared at this point.
 
+Make sense.
+
+>>
+>>> 			goto out;
+>>> 		}
+>>> 	}
+>>>
+>>> 	s = __vmalloc_node_range(SCS_SIZE, 1, VMALLOC_START, VMALLOC_END,
+>>>-				    GFP_SCS, PAGE_KERNEL, 0, node,
+>>>+				    GFP_SCS, prot, 0, node,
+>>> 				    __builtin_return_address(0));
+>>>
+>>> out:
+>>>@@ -59,7 +72,7 @@ void *scs_alloc(int node)
+>>> 	if (!s)
+>>> 		return NULL;
+>>>
+>>>-	*__scs_magic(s) = SCS_END_MAGIC;
+>>>+	__scs_store_magic(__scs_magic(s), SCS_END_MAGIC);
+>>>
+>>> 	/*
+>>> 	 * Poison the allocation to catch unintentional accesses to
+>>>@@ -87,6 +100,16 @@ void scs_free(void *s)
+>>> 			return;
+>>>
+>>> 	kasan_unpoison_vmalloc(s, SCS_SIZE, KASAN_VMALLOC_PROT_NORMAL);
+>>>+	/*
+>>>+	 * Hardware protected shadow stack is not writeable by regular stores
+>>>+	 * Thus adding this back to free list will raise faults by vmalloc
+>>>+	 * It needs to be writeable again. It's good sanity as well because
+>>>+	 * then it can't be inadvertently accesses and if done, it will fault.
+>>>+	 */
+>>>+#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>>>+	set_memory_rw((unsigned long)s, (SCS_SIZE/PAGE_SIZE));
+>>>+#endif
+>>
+>>Another candidate for an arch-specific function to reduce the number
+>>of ifdefs in the generic code.
+
+Yes I'll do these changes in next iteration.
+>>
+>>Sami
 
