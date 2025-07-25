@@ -1,338 +1,330 @@
-Return-Path: <linux-kernel+bounces-745350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5AEB118CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:01:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4260CB118D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8898F1718D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:01:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A1F3B65DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E2625B1FF;
-	Fri, 25 Jul 2025 07:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD06C2868B2;
+	Fri, 25 Jul 2025 07:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Eg23dvYv"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="n7zhhx1D";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="s8DkiNq4"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C9B2857C6
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753426905; cv=none; b=Kz4aE0lCfYah/RbZQ8PSRzvgiJRgfE1LGHqKyXYxNk+ytoa6CkxrcX87Qi/O1e27e050KRBfRk03k3jT5oQ8kIQbz9prUyFC6JAr7v1rM6JQKCndOsAPfE/tSiRY+0FhJfpLkX9b78833dxgXIO/ciHyUjEQz8HnB1bmqJ97qrE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753426905; c=relaxed/simple;
-	bh=7dhx4zM5tB7/zhLCyWfgsDgDtAPPbRUFLEdzDO0AJ6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aaU8SxoafdBtkFEy+eUuI/d8bIQfvUotFbhAyeon+JjpGXjBDAsWHrIdidiT4HNe6lw/VOEZal3aA6gSG2OnWduEsofbx4/NWMZHNOAjBDG7/E46r0v1HqU3nfFNBEoIjyJI/ekXgjrsjlDgGoViCGtn9B1w++y3DEdkgoVZgks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Eg23dvYv; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6070a8f99ffso64277a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:01:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C801A25FA34
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753426938; cv=fail; b=XJGUzYHxFfICyFqz55INhOepmEEc4vYuWblp4YujqznaKFF2tL4rRVnE/nwSls36dFXfm5Dvk8WXQT7ksX8svEf3bVnmXGSmpR2iBzpDBRS85LaeSVucLv7e4pzF884Fvazii3BIm6Z1sZEUIcfg3O+pyoGuYXgScuf/aJoHc7A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753426938; c=relaxed/simple;
+	bh=RQd+avBER3ddqExT6GqeTEai4jpYQGmLQVKcZtuIAMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mnfw/fA1XanHRxeE24m7AtivLXWpeQ8bJb1xRUFBcohMAt+KA94bXa8Irh8aUWKVuF7F+jA/1AvSUAL5tp+/q1sLrL1EOkaFHQdk9Bu6x7D0Zbcq6EpsEldfDyI5MF3M8KellXPDj+MuKVRgfnKHVejpejXpX2Q/ERMmzqJ0DbI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=n7zhhx1D; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=s8DkiNq4; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OLk8Oo024918;
+	Fri, 25 Jul 2025 07:02:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=IUrhnShJIrtRrwJhHR
+	BAei+HQ9DakhJ8qyoOeHKNjmc=; b=n7zhhx1DTnOwPXtqAHtnMw0hV+aMWTdIMf
+	OpZuH5Uwl0n78lKBtsQIqK8vNrSD0HSfF5bJuMVted7g400KhgrFMv5zIkgY3rpc
+	TLoeYOyHwhgT9YLWskDXlndEEuZrZHZofvHYOfyQOXmF3HgUIay5x0j2xad0IvXP
+	g9woyo39PviLGABciyofvJF3GYAhVrgLcOa+6ff4ubmbZedj3ky3Q/cDNVAr8cK3
+	wiUPNH7nSPQSWjVY7ybaEd4YFuecv1WyjQGKB7kYhGIWhm1t30anP64Atzqh8bFI
+	Q9VBd3EioOFLgCf0kRW8CSPhLV865/rZ4mxVNwluqzB/FBXa9Xcg==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 483w1n0euc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Jul 2025 07:02:05 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56P6MOXg005895;
+	Fri, 25 Jul 2025 07:02:04 GMT
+Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010005.outbound.protection.outlook.com [52.101.56.5])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4801tcr2n0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Jul 2025 07:02:04 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WjWPdSwL2yytuvPr7LaN8ny3zMwsgeIBlHA9qGWryn3nnjSGZArOR9C1RuqJYw8+qMd2l3qAnnSPjcFxDlFRWKaTrmmYeF+ntqouqu2PdIFmJDUeh/BzSQGCHVVI+tPq9WEtIkeOjBB2q/Sez2j04w5ctz5fryPF7dy2AN8y97SRIaABgBz1A4O3aGe4BPv7PFG7ognivJ0uuAmAFyXd0lqRr1Mry2jSX9YSl+IUFNwMiDVfCqqZ1PL9pj6vWOKkusTKukST7iUkuxsk0NV73jURVU02N2yU4lnrdi/JrW/K2gSCpo/tnwlZfSnWfAy6u+phtE/3GWXEbnX280U74w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IUrhnShJIrtRrwJhHRBAei+HQ9DakhJ8qyoOeHKNjmc=;
+ b=y4hOqp0SUah/c8X3NAc8nVV9CdAdWJh7ASnewgqt0qm2oNGX5F0nF/8XwljjpmpBj6ae+PbQfiVv0E3DTbwJa7hnGetOGKumrFzWd1EzBpe+Q1dxChNSClVPbgOH1HBwOlZ49eMJwBuE+LxzcHlJJvHS8WcYxUSqytwIfaIxr/cYtdA6fRVIE2Y8D7h6khvM/+w8jGiXX/fZ5yE9l0/aYdf+JWD5iI0LNlm7hYCxhvDpZTjanZbwqJ2pwhWyV51onsS0S2/ksG0wkpDMTwsrWLwkNQDlGwKSkSP0u5L4riLhc5d1k/cxnTDxetCmZqGII3oMDMC3zr1Ev+hn41iz+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753426902; x=1754031702; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=JpVKOJXR9kyoeqmQ1g7Wbt9QrQha91mnE2oeLb46rXU=;
-        b=Eg23dvYv+vVbs/k8gGL45y7UCZ+Fo4VDE2Do2sRw+9C46JjipNdVVUcqWs7udCjIL5
-         PE43oCci10CX41UUvuYeh7hxcz+bYxkvu5xHLaEL49vUT235cbLKOS5uW6ya/h1mHpdd
-         eZCUjVSpCvFoYiOB7wMzOyX8JubsH3WwrHCnsK2wvbVLFQ0bvpcnaPCHLYG13pcZZsgy
-         krHG67wwDNEGrxZLwRxY/5LwTc/uSv3mAEC7jzu6PXAlH7MovWbOKxv0AlTA7khITu+P
-         Jux4mjrspw4x37zaOETm3WXfw+PQ+I4C0zNJWXkXDiGMZXIP6w1v9jouODa74+q2ko60
-         hshA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753426902; x=1754031702;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JpVKOJXR9kyoeqmQ1g7Wbt9QrQha91mnE2oeLb46rXU=;
-        b=fvYrAjSKxDJDdJWTY9dPl914+FiJcqgRbZRLcJro8GYKnK6I7ODQZITiXdNxeZN+Hg
-         AGcRy3mVl16woydpA0CzrnvoozIYe63aJEmCV0aXCj5u1PA6UVAt+sNnn8XRfMO1aaRk
-         EccRbHbGzCWNGFFFzVb72DjnZpvPxVXmqtNH2Qz8LerPfzDzJqGvcGfvkD59kXdAbYZI
-         VNfrneidoO32snu5br88aW+/K6JZjfYiV+Zzrh6CNa6/96i3TvJbvkBq5hFc7ODGTrIG
-         ym4vi1SsjBy+jsf07GNFgC79bRpdzQFfgbD+dkb/JK/y3TjZnn2zZhTlKRlqk4Eg9GEe
-         nk1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMWNNTpfhyax84ESvnboxFqdLLny9X7hCkj2eqg8t1mDc56JdUR9ahmYz4kuChgHALbEk5RFpj8hL1cw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmqZPkRwr3GO5lWMvQhlKXhM85IDHXQqA+V4cii78J0YR3lwwB
-	cFZ/Y1EJS4rqu3PV/9P5XNCTp2Q+HD9sr1UkYbvixWagjA5I7b+cqBFVgw5SZueZeiQ=
-X-Gm-Gg: ASbGnctVr+eLJ+sYnc5EksSyCLkp+Sz/M/Kns9f2cqrEu0iSMgJTTIYBNiV2plDZMok
-	Ayojhs68nZ87DOUw/PNFYDW95cY8It9B/vfk0tXfwgL/rd6SBNC2Pj+/hkQJFslVC19vOkzYAHx
-	M4pwolNLLWsfUBiCzR9MiZKHDL1ginlt22F33zOZuTmTBZspzD4B3vLrMtx8A4xbQEp4+VyyK7B
-	oPtR1Grneu7w5iJRfpOCIF1PXzK86nKULINWZkMiVw8epLBexVN2IGT4Uw0iIU45gNejMVwHqmd
-	6ZuUv/0uTB9N7GowzVK0A1bm4sIOq5SwmJqwPqdAtIB++kAxlmau/W/QHrT/vcQ/CJL3odbBzNx
-	YGryB7hPkPNFLbPNuWLxJa90g4jOIz6W+Ph6WR/V2Og==
-X-Google-Smtp-Source: AGHT+IEnsvu+DtOBwQf2lbjIF393/Fbawzau8Up0k9C8FBeYnqVp9YHxSzUw1/E9eKPPhGd+l0fOfQ==
-X-Received: by 2002:a17:907:2d2b:b0:ade:328a:95d1 with SMTP id a640c23a62f3a-af61cf97e45mr38902866b.10.1753426901599;
-        Fri, 25 Jul 2025 00:01:41 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.203.90])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f44dfa7sm225087066b.82.2025.07.25.00.01.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 00:01:40 -0700 (PDT)
-Message-ID: <8a5ade3f-a263-4ab6-add9-1640db29005e@linaro.org>
-Date: Fri, 25 Jul 2025 09:01:38 +0200
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IUrhnShJIrtRrwJhHRBAei+HQ9DakhJ8qyoOeHKNjmc=;
+ b=s8DkiNq4p09tWceDcbH/t8dyaSNM7JNZ2CLdkZb1M9QfUeVDRcfrosqkkEuPwP7w8SxQJSwk67qgb2NBqmLCaUKWeuBfvQ3ngrx0hsqjN5npRqCtRxCuN13nBuU2COt/HGJtMVLHkarGuKKz8IqT1CvMY4ytZ6r5XOfXlyEqiUQ=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ2PR10MB7810.namprd10.prod.outlook.com (2603:10b6:a03:578::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.25; Fri, 25 Jul
+ 2025 07:02:01 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8964.019; Fri, 25 Jul 2025
+ 07:02:01 +0000
+Date: Fri, 25 Jul 2025 08:01:59 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+Subject: Re: [PATCH v3 2/5] mm/mseal: update madvise() logic
+Message-ID: <692f9624-e440-4cf2-8202-861c679ddb73@lucifer.local>
+References: <cover.1752687069.git.lorenzo.stoakes@oracle.com>
+ <ec480dc1fd4ce04bb11c0acac6c6da78dc6f4156.1752687069.git.lorenzo.stoakes@oracle.com>
+ <4f66d89a-631a-43eb-b4f9-c9a0b44caaae@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f66d89a-631a-43eb-b4f9-c9a0b44caaae@redhat.com>
+X-ClientProxiedBy: LO4P123CA0185.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a4::10) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/8] dt-bindings: gpu: img,powervr-rogue: Add TH1520
- GPU compatible
-To: Michal Wilczynski <m.wilczynski@samsung.com>,
- Matt Coster <Matt.Coster@imgtec.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
- Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns
- <Frank.Binns@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <20250623-apr_14_for_sending-v6-0-6583ce0f6c25@samsung.com>
- <CGME20250623114436eucas1p1ab8455b32937a472f5f656086e38f428@eucas1p1.samsung.com>
- <20250623-apr_14_for_sending-v6-5-6583ce0f6c25@samsung.com>
- <9c82a6bc-c6ff-4656-8f60-9d5fa499b61a@imgtec.com>
- <d154d2d0-3d59-4176-a8fb-3cb754cf2734@samsung.com>
- <e1a3d854-93bc-4771-9b8e-1639ca57b687@kernel.org>
- <d12fd4fb-0adb-40c4-8a0a-c685cd6327b3@samsung.com>
- <27068fd3-92b5-402b-9f3c-fd786db56668@kernel.org>
- <f25c1e7f-bef2-47b1-8fa8-14c9c51087a8@imgtec.com>
- <491b69ce-5a2f-4df1-95af-9318bbe6c9b0@samsung.com>
- <9c4f962d-6877-4a53-b0f3-218930f94e1e@imgtec.com>
- <07410f0c-8369-4683-9143-c79c6cb3f5b0@samsung.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <07410f0c-8369-4683-9143-c79c6cb3f5b0@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ2PR10MB7810:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2da967b1-6333-4fdd-653f-08ddcb492783
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?f0tYjeXPFOmlmAyvbFr9foWpk+OmK/e7QoKVs4Kwv1RJamWDFWrCtdbFtVFj?=
+ =?us-ascii?Q?NDXgj/AK/WxE13mgPKlkjJpmcMvNXO0Em+D3/TO++kBC7QfJYulbv34RljaD?=
+ =?us-ascii?Q?iJsPuoHFkgTpGpHSJBl4M8XInVe5I4LEs0qEXcMxu35+zf+PKLIxvSezWLna?=
+ =?us-ascii?Q?VozelyXxERwrHoSB35+r1V4HXIK5jTjgOzr/yb9dxB4HTAzABAi37kln93+P?=
+ =?us-ascii?Q?TyJIn6SyE79gDCrNE/2zpdTH/nZJSSOxIXYndzGIYVSn6KUhvV+j+yuufCYy?=
+ =?us-ascii?Q?JmBUr7A72pATwEf1yMXE475q5jIa9wMCadF6p+6HTJsuvBYaI6IDbA4o8zSl?=
+ =?us-ascii?Q?SoqEwfw4Q4o2XnBfGy2EtdILiOVur7/7oHHFRoxUP5RUc5hDEBarImSUxD3A?=
+ =?us-ascii?Q?Ky2/YvA00LKEL8pr30EuQK5z6nfu5eTRVvlG01LUnfarYdCcsrXxEaNiCtCP?=
+ =?us-ascii?Q?N0DbfgK5ztjGloVH8yl7elVn3Qttjk/5xsX11r7cWXz8t08b5P8MPdn89dYK?=
+ =?us-ascii?Q?BsmTl4m/rnjRdg3Z34V/MnWhkU4/PHhP6tH+LsGI0LuFBIlrYoUdlrD1dhYC?=
+ =?us-ascii?Q?AiXP1eTf70Qx3iYKnWWmEhvbVWBl3PMtZKy0bofIZZmMMDKU5yjn8CuXgk/H?=
+ =?us-ascii?Q?bP+cOAn2FApn/v8i3TuffxYzLKqGtMC9E2gxq1dD0gVD7bFTYMNw9MQhfUWj?=
+ =?us-ascii?Q?laGLdhj3mH9WuQepQUlvbkohqZR6NpCN5JkgC7X48x7PlMwVjbASWqPJg7aH?=
+ =?us-ascii?Q?4zj2PCBmxWUl/3ZyoPNXEy1m6W7Kg8B92FIlQgv48zO4Rt0kzt1e8Kn1qrKg?=
+ =?us-ascii?Q?Rf5wweI6HvfPzs9ef9PSTFTpvdA8ZbMGBs+Bg/ZExbZ1PtKA/KZMSsI9J2ZY?=
+ =?us-ascii?Q?Dlt7BWUAZD+JKMDJ6SHI18/toV4OZUD1XiqWM5Pb25tqJ8+iuPBqOK4kVkpA?=
+ =?us-ascii?Q?eUKHx6j9q+IHKIiQsgQMeNwbN6TR1QY+SBg0YaD9X6OORqKcokRa4xzw+Tvj?=
+ =?us-ascii?Q?QK3ipBkiZYuBUft5VcZOUYxYco/eBaHOI0/X2eV/uwAlX04yMLic6U9sSFv4?=
+ =?us-ascii?Q?ExgzVOwtZJY/WzWIMMATKHrIziXUX4MFs/3QojFyCOcKP8wo7kNfazUeBxzV?=
+ =?us-ascii?Q?6vNihb4JKZrGKhMzMJRGBkNYvWpgjlPm9hNmppw0oSdpP9RTV6o0OoCbbfEW?=
+ =?us-ascii?Q?Tgmfw6RmGKwWRSLq/PY0Wou4SZ8/MBn96PGhvH78HV9QrQJbSqr0nthlYllm?=
+ =?us-ascii?Q?f5S56Oi2EEOd0B4uxJaC6DC6wnvNPQuYJkVoKoZ1U0+foSkf2yJQhFY/YnKs?=
+ =?us-ascii?Q?v4CkDj4jFcmkE+947BTJqDc7emfmZXERV/Z/VSzK1DpVIEYFfP2WjS9hRngY?=
+ =?us-ascii?Q?0LvsXVMu20egGhZjSmGYp51A6sb/xalA1PYJrJkwK7SR58v6ErFXDM3gG1EW?=
+ =?us-ascii?Q?MXXxumcUHww=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vzxXCvbGoiVURuGREkSylZf2h1vB1/x0e3KS/jEuzqEkZAxgsikJcZKDDNph?=
+ =?us-ascii?Q?nc8qEuhoDMGYUl/OMkhQ/lpT5YWM582icExGhjEaJ9jltWn1qUxAWNPCdPlN?=
+ =?us-ascii?Q?xx04R8LOdIjPiE/DoYl0eEdGcyVlKasHzQ+zSTaPgJVpQVqtzYeaeEH66o6Q?=
+ =?us-ascii?Q?uqxhqjdqBmPsZqbK3nS2XRz8RzskpZ4FT17iGOCP2oSNskIDl3YdEUCvR5hD?=
+ =?us-ascii?Q?lsLv7Bs54ZC69o2oAF6PkVRDYllSVT+b82kJAcN+aqTnHFiodiA1U4wK8oQf?=
+ =?us-ascii?Q?0qu7hj2JCJbZQ3X8q9397vSxeW7NpTlhVg/E2jpbED3HSoD+ODdsqwTuKkyw?=
+ =?us-ascii?Q?RaK6q1599HKYG4Civ1YEj0uuhy9eFr1YWOC/bi8HTPSxh33kJ3dTBuSxIpKy?=
+ =?us-ascii?Q?ersUk/+4NULlsCH61D5vhM3SF+zo+wmBMoLCTtUADdMCLWAR+TOqy8zwl+2x?=
+ =?us-ascii?Q?dgClElMKo3YocE/8IwnhW2rUFCDbA+r/6V8zAtQiKlnhDIlNHW5beMx/Unvk?=
+ =?us-ascii?Q?jx/Av17AiXlDHDxF1GMvDAPeRBgZmotI8frU2G6AuYq63u86s3SCA+GWbzD7?=
+ =?us-ascii?Q?fLjniFY8TzDMxpFn/L5uK/wcHPnWl4NIIKIZjj/Rtu4Ljs6ofCY6ZJAFC69X?=
+ =?us-ascii?Q?KykiCvgbO2pJFtHMXtn9OU/VH684hmUFpOTXb4LJp9N3XhiaKJ7Q3t3pB7nA?=
+ =?us-ascii?Q?uNAFvPI1HlEfJM3l+iosDs11+2ZdIC7dGRzaVO2lKGjWeIWHZIH9DsRfZNTl?=
+ =?us-ascii?Q?rMEa6MLb0h+t7n5wEOHvJY6/JRVdzr40qfXo6KTLTzeAkvmcnztTy3Qvib3U?=
+ =?us-ascii?Q?qSvXLBQUS6v7/KbikYasgioNmogPmOVjCJIxCX6Pr/f+ea+b5oMC0o3fKb01?=
+ =?us-ascii?Q?JdcGz320EeSsHMu3vx+7g0DnfWsIoFj4PUf8PgFDmGQMFjQrXmZJGzY4oU6x?=
+ =?us-ascii?Q?hsX+7moK7NApM2Iu+T0O1QN+iWsxkrr0HKi8YlpuhFYqrR7O6p4pGIEUX1Ca?=
+ =?us-ascii?Q?mzWgD08cCtw3Uv0B3S106IyDvmoavBHG+ozv1WuJupUm3t0Ko58qiKt6SoOt?=
+ =?us-ascii?Q?qiQUWj83TvvtBZilucvY5/oFD6x57kszaOHeBWSIBDlLePvRibzi8SbhEImr?=
+ =?us-ascii?Q?gUGqpgFz2+1B5/9TF7q80rPN/lweqwzrEOw7LwVTURcfPtzLbyxwnOhVXbAq?=
+ =?us-ascii?Q?4OuegKBOi7dcFRmD416c2iXhfp3HW2b6t5UabcimUMad/EWNkCAY2WOukgDN?=
+ =?us-ascii?Q?2aME47FKCrgXOm2gbU16T081lexqG+vTAvvPdYvjr6Up4fX8L0yxOocxHvI+?=
+ =?us-ascii?Q?Ri8zMNbj/L5LKz8D8L/2qylIwkxoAg8murgJM0XeDIsR8MSLQwiD4bWqR7bz?=
+ =?us-ascii?Q?YGvin8/FZ1KWYrCS9M+awBcsKvp67/z67fUwN96lCRMVlWvf14vKqyTjEtga?=
+ =?us-ascii?Q?kjmiTND1VPkjQ1i3EUTcD+xn9oErFmWaOA2+zM7JlKwT1C1XOjWF+c9j2n4f?=
+ =?us-ascii?Q?v4SXD72J5UmxS22motgePxvxcOebkY7x/zu8xlRgNZiVYYtAGm0h/TQHzhwB?=
+ =?us-ascii?Q?wsyHME9nd+0gKjlDCB2CO9aPYgeJS12bTC06G9K58dvv6WXTrSibFJ2janzU?=
+ =?us-ascii?Q?6A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	bkPSjMzbeLru158dBnJ8omg5U3e3vOmLIxJkyyz+2oHN2h3nKbNutK5oSSfXM1L4xO0yDN6CI5fsYP54HQ6lnODqqgqNIIsj8lz4GQEnvD405Ev2OFGfNi0ruvOw8CRPTgr8ZzfrEijO0OZpr6Sz24hOfB7khI9wkhnHWmfPYxSFGe0cYb8MjS46QisECiTg71ZlXVTei0WRe1NZC4cOr/20DAGutYwCVf1rD75n/Y103Yc4qlJ9Ei5sCFuFurEFzuNyrIM7Xb7PwiFxOgyLN7Ta+TimpClfOK2UsCwi5QriHvSwnJbCT7Kk2I72pXPFzrs77aKl9MQ17l9Z+MkDkusLpPBJMXsS2AzhDLKVCVc0WLNT/QwMzogFRO9MBVNEMQ4Xkn1b3q/eF0a/VA7D2BzykQ+bh08TQaWJUNte+6O9kARQe/w8v/+v3MKGoqfsroJmx9bfa2QcrnFzY7z6An6+C+PpmLbyBQznFDztiAn4ECgSqXnmrWiiF5Thm2PNumYwnsQ/jMSjt21mNn5TTBOz1CEfOqfsZAufQEq38DQB0yVB/VEbokxjrG05ngNYya15176pwKkPXz+m+FhOWw6tWtdtZQsXEp54brNYXjs=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2da967b1-6333-4fdd-653f-08ddcb492783
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 07:02:01.3233
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OhuOxzNfg+fg+dNXt0dUWtthOYfy0bjrjPgH0gLEGpF0lKtZYeu5dwoY2f0XP4oUyT/H1FIyWKR/2QfbpPcKA7+mhPwFABcUQRg989qHPvk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7810
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ bulkscore=0 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2507250058
+X-Authority-Analysis: v=2.4 cv=ObmYDgTY c=1 sm=1 tr=0 ts=68832bed cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
+ a=ToJ5T_3QOQPR4NucEjAA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: o8XEgxjzxlmPdP2c9wYtl-PGWbMZb4mH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA1OCBTYWx0ZWRfXzEUqoxQXaTs5
+ MOo3XWiggS5CkFUTIIm2pOnflyqMbjE3CbwO9R8mahdM0dnELHpsoMaS9vtBSpF4KcfEwbiv+6+
+ yXIelp7LvfcobjvB+mNbH2PqOFBXFGJEAHoxVtkzRDaZvEJn5uakTxoYqFVMudvKbxDd2FquoKJ
+ ojhr3H/5RkoFQvJ7K6wWQHWd0Xjr7oYUv+o+z12eTuVHRKwxvqxuO76ENKTrsegOjbk+x77w6Zh
+ 7EMtB/H8m0hZZPrCCYd9G5dO1MXnuo+PUPqcgZHTEP8wlA5HnmkUh6LDYVeJmNekvAscVgplDEj
+ PHTgj9hA5fgDspuz+GgMy5WM07rZDV5eYE25MwXxqAKz/oz4Yg9sBxy9o+diCqrOCuwO9Jf0htL
+ b8qavZCnmjOoK6e6mdrIRm8RPD47u4/DWfyGYW7fsB9NKpx1OCbCHJA0dXlSS2E2kCCKEw0W
+X-Proofpoint-ORIG-GUID: o8XEgxjzxlmPdP2c9wYtl-PGWbMZb4mH
 
-On 23/07/2025 20:25, Michal Wilczynski wrote:
-> 
-> 
-> On 7/23/25 18:50, Matt Coster wrote:
->> On 23/07/2025 17:26, Michal Wilczynski wrote:
->>> On 7/23/25 11:45, Matt Coster wrote:
->>>> On 25/06/2025 15:41, Krzysztof Kozlowski wrote:
->>>>> On 25/06/2025 16:18, Michal Wilczynski wrote:
->>>>>>
->>>>>>
->>>>>> On 6/25/25 15:55, Krzysztof Kozlowski wrote:
->>>>>>> On 25/06/2025 14:45, Michal Wilczynski wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 6/24/25 15:53, Matt Coster wrote:
->>>>>>>>> On 23/06/2025 12:42, Michal Wilczynski wrote:
->>>>>>>>>> Update the img,powervr-rogue.yaml to include the T-HEAD TH1520 SoC's
->>>>>>>>>> specific GPU compatible string.
->>>>>>>>>>
->>>>>>>>>> The thead,th1520-gpu compatible, along with its full chain
->>>>>>>>>> img,img-bxm-4-64, and img,img-rogue, is added to the
->>>>>>>>>> list of recognized GPU types.
->>>>>>>>>>
->>>>>>>>>> The power-domains property requirement for img,img-bxm-4-64 is also
->>>>>>>>>> ensured by adding it to the relevant allOf condition.
->>>>>>>>>>
->>>>>>>>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>>>>>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
->>>>>>>>>> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>>>>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->>>>>>>>>> ---
->>>>>>>>>>  Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 9 ++++++++-
->>>>>>>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->>>>>>>>>> index 4450e2e73b3ccf74d29f0e31e2e6687d7cbe5d65..9b241a0c1f5941dc58a1e23970f6d3773d427c22 100644
->>>>>>>>>> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->>>>>>>>>> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->>>>>>>>>> @@ -21,6 +21,11 @@ properties:
->>>>>>>>>>            # work with newer dts.
->>>>>>>>>>            - const: img,img-axe
->>>>>>>>>>            - const: img,img-rogue
->>>>>>>>>> +      - items:
->>>>>>>>>> +          - enum:
->>>>>>>>>> +              - thead,th1520-gpu
->>>>>>>>>> +          - const: img,img-bxm-4-64
->>>>>>>>>> +          - const: img,img-rogue
->>>>>>>>>>        - items:
->>>>>>>>>>            - enum:
->>>>>>>>>>                - ti,j721s2-gpu
->>>>>>>>>> @@ -93,7 +98,9 @@ allOf:
->>>>>>>>>>        properties:
->>>>>>>>>>          compatible:
->>>>>>>>>>            contains:
->>>>>>>>>> -            const: img,img-axe-1-16m
->>>>>>>>>> +            enum:
->>>>>>>>>> +              - img,img-axe-1-16m
->>>>>>>>>> +              - img,img-bxm-4-64
->>>>>>>>>
->>>>>>>>> This isn't right – BXM-4-64 has two power domains like BXS-4-64. I don't
->>>>>>>>> really know what the right way to handle that in devicetree is given the
->>>>>>>>> TH1520 appears to expose only a top-level domain for the entire GPU, but
->>>>>>>>> there are definitely two separate domains underneath that as far as the
->>>>>>>>> GPU is concerned (see the attached snippet from integration guide).
->>>>>>>>>
->>>>>>>>> Since power nodes are ref-counted anyway, do we just use the same node
->>>>>>>>> for both domains and let the driver up/down-count it twice?
->>>>>>>>
->>>>>>>> Hi Matt,
->>>>>>>>
->>>>>>>> Thanks for the very helpful insight. That's a great point, it seems the
->>>>>>>> SoC's design presents a tricky case for the bindings.
->>>>>>>>
->>>>>>>> I see what you mean about potentially using the same power domain node
->>>>>>>> twice. My only hesitation is that it might be a bit unclear for someone
->>>>>>>> reading the devicetree later. Perhaps another option could be to relax
->>>>>>>> the constraint for this compatible?
->>>>>>>>
->>>>>>>> Krzysztof, we'd be grateful for your thoughts on how to best model this
->>>>>>>> situation.
->>>>>>>
->>>>>>>
->>>>>>> It's your hardware, you should tell us, not me. I don't know how many
->>>>>>> power domains you have there, but for sure it is not one AND two domains
->>>>>>> the same time. It is either one or two, because power domains are not
->>>>>>> the same as regulator supplies.
->>>>>>
->>>>>> Hi Krzysztof, Matt,
->>>>>>
->>>>>> The img,bxm-4-64 GPU IP itself is designed with two separate power
->>>>>> domains. The TH1520 SoC, which integrates this GPU, wires both of these
->>>>>> to a single OS controllable power gate (controlled via mailbox and E902
->>>>>> co-processor).
->>>>>
->>>>> This helps... and also sounds a lot like regulator supplies, not power
->>>>> domains. :/
->>>>
->>>> Apologies for taking so long to get back to you with this, I wanted to
->>>> make sure I had the whole picture from our side before commenting again.
->>>>
->>>> From the GPU side, a "typical" integration of BXM-4-64 would use two
->>>> power domains.
->>>>
->>>> Typically, these domains exist in silicon, regardless of whether they
->>>> are exposed to the host OS, because the SoC's power controller must have
->>>> control over them. As part of normal operation, the GPU firmware (always
->>>> in domain "a" on Rogue) will request the power-up/down of the other
->>>> domains, including during the initial boot sequence. This all happens
->>>> transparently to the OS. The GPU block itself has no power gating at
->>>> that level, it relies entirely on the SoC integration.
->>>>
->>>> However, it turns out (unknown to me until very recently) that this
->>>> functionality is optional. The integrator can opt to forego the
->>>> power-saving functionality afforded by firmware-controlled power gating
->>>> and just throw everything into a single domain, which appears to be
->>>> what's happened here.
->>>>
->>>> My only remaining issue here, then, is the naming. Since this
->>>> integration doesn't use discrete domains, saying it has one domain
->>>> called "a" isn't correct*. We should either:
->>>>
->>>>  - Drop the name altogether for this integration (and others like it
->>>>    that don't use the low-power functionality, if there are any), or
->>>
->>> Hi Matt,
->>>
->>> Thanks for the detailed explanation, that clears things up perfectly.
->>
->> I'm glad I could get to the bottom of this one, it was bothering me too!
->>
->>>
->>> I agree with your assessment. Dropping the power-domain-names property
->>> for this integration seems like the cleanest solution. As you pointed
->>> out, since the OS sees only a single, undifferentiated power domain,
->>> giving it a name like "gpu" would be redundant. This approach correctly
->>> models the hardware without setting a potentially confusing precedent.
->>
->> That seems reasonable. I was very much on the fence for this one, so
->> I'll happily go along with dropping the name altogether.
->>
->> Just to make sure I understand correctly, the change here would be to
->> move "required: - power-domain-names" from "img,img-rogue" to every
->> conditional block that constrains the number of domains?
->>
->> Can we add negative constraints in conditionals? Then we could add
->> "power-domain-names: false" to the "thead,th1520-gpu" conditional block
->> alongside "power-domains: maxItems: 1".
-> 
-> Yeah the diff with v7 would look like so:
-> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> index 263c40c8438e..338746f39cbb 100644
-> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> @@ -89,6 +89,11 @@ allOf:
->          compatible:
->            contains:
->              const: img,img-rogue
-> +      not:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              const: thead,th1520-gpu
+On Fri, Jul 25, 2025 at 12:12:54AM +0200, David Hildenbrand wrote:
+> On 16.07.25 19:38, Lorenzo Stoakes wrote:
+> > The madvise() logic is inexplicably performed in mm/mseal.c - this ought
+> > to be located in mm/madvise.c.
+> >
+> > Additionally can_modify_vma_madv() is inconsistently named and, in
+> > combination with is_ro_anon(), is very confusing logic.
+> >
+> > Put a static function in mm/madvise.c instead - can_madvise_modify() -
+> > that spells out exactly what's happening.  Also explicitly check for an
+> > anon VMA.
+> >
+> > Also add commentary to explain what's going on.
+> >
+> > Essentially - we disallow discarding of data in mseal()'d mappings in
+> > instances where the user couldn't otherwise write to that data.
+> >
+> > Shared mappings are always backed, so no discard will actually truly
+> > discard the data.  Read-only anonymous and MAP_PRIVATE file-backed
+> > mappings are the ones we are interested in.
+> >
+> > We make a change to the logic here to correct a mistake - we must disallow
+> > discard of read-only MAP_PRIVATE file-backed mappings, which previously we
+> > were not.
+> >
+> > The justification for this change is to account for the case where:
+> >
+> > 1. A MAP_PRIVATE R/W file-backed mapping is established.
+> > 2. The mapping is written to, which backs it with anonymous memory.
+> > 3. The mapping is mprotect()'d read-only.
+> > 4. The mapping is mseal()'d.
+>
+> Thinking about this a bit (should have realized this implication earlier)
 
-No, don't do that. Anyway, if you are going to rewrite patch, you MUST
-drop all tags, document it and explicitly ask for re-review.
+Well none of us did...
 
-Best regards,
-Krzysztof
+> ... assuming we have:
+>
+> 1. A MAP_PRIVATE R/O file-backed mapping.
+> 2. The mapping is mseal()'d.
+>
+> We only really have anon folios in there with things like (a) uprobe (b)
+> debugger access (c) similarly weird FOLL_FORCE stuff.
+>
+> Now, most executables/libraries are mapped that way. If someone would rely
+> on MADV_DONTNEED to zap pages in there (to free up memory), that would get
+> rejected.
+
+Right, yes.
+
+This is odd behaviour to me. But I guess this is what Jeff meant by 'detecting
+this' in android.
+
+The documentation is really not specific enough, we need to fix that. It's
+effectively stating any anon mappings are sealed, which is just not true with
+existing semantics.
+
+However I see:
+
+	Memory sealing can automatically be applied by the runtime loader to
+	seal .text and .rodata pages and applications can additionally seal
+	security critical data at runtime.
+
+So yes, we're going to break MADV_DONTNEED of this mappings.
+
+BUT.
+
+Would you really want to MADV_DONTNEED away uprobes etc.?? That seems... very
+strange and broken behaviour no?
+
+Note that, also, mappings of read-only files have VM_SHARED stripped. So they
+become read-only (With ~VM_MAYWRITE).
+
+To be clear this is where the mode of the file is read-only, not that the
+mapping is read-only alone.
+
+So with this change, we'd disallow discard of this.
+
+It'd be pretty odd to mseal() a read-only file-backed mapping and then try to
+discard, but maybe somebody would weirdly rely upon this?
+
+It's inconsistent, as a person MAP_SHARED mapping a file that is read/write but
+mapped read-only (or r/w of course), can discard fine eve if sealed, but if the
+file happens to be read-only can't.
+
+But we could add a VM_MAYWRITE check also.
+
+OK maybe I"m softening on the anon_vma thing see below.
+
+So we could combine these checks to avoid these issues.
+
+
+>
+> Does something like that rely on MADV_DONTNEED working? Good question.
+
+Kees/Jeff? Can you check if android relies on this?
+
+>
+> Checking for anon_vma in addition, ad mentioned in the other thread, would
+> be a "cheap" check to rule out that there are currently anon vmas in there.
+>
+> Well, not 100% reliable, because MADV_DONTNEED can race with page faults ...
+
+But hang on, it's read-only so we shouldn't get racing faults... right?
+
+Hmm maybe I'll soften on this anon_vma idea then. Maybe it is a 'cheap fix' to
+rule out the _usual_ cases.
+
+We're not changing zapping logic for this though, sorry. That's just a crazy
+length to go to.
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+In any case, I'm going to send a version of this with the controversial bit
+stripped so we (hopefully) land the refactorings for 6.17 and can change
+semantics if necessary for 6.18.
+
+Cheers, Lorenzo
 
