@@ -1,91 +1,91 @@
-Return-Path: <linux-kernel+bounces-745252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB375B1173F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:54:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2DFB11741
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDB7AA3666
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A2BB1896FA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44A823AB8D;
-	Fri, 25 Jul 2025 03:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95D323A997;
+	Fri, 25 Jul 2025 03:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MnYW7iKB"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0lVqjOP"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9ADA1EDA1A;
-	Fri, 25 Jul 2025 03:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DFA45948;
+	Fri, 25 Jul 2025 03:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753415639; cv=none; b=R4grjwx8nqBJepmytyxWH3MvS3QkvQ/LraCxfQrkmr6cP2ADoqiQtCFfmb9tGcEy6TUoRRNQnuFDhpHpPvayHgzoPzD6TpsB9aKqPsTaTfH/p21/iZIut2IkR1HaS+in5eoH9b9buZyJtIs+n0WWp8SKaWgj4YF4/uZcxkqqD6k=
+	t=1753415833; cv=none; b=Hgatxo7ZHu6QMcfzPfKOreejVui6xMD0iBwGG/IBEoEx1RqCN9BENxDcvJ0+hSiR9Lr7eeYvvm+HuGDQP/XJspF+VKKYXineT/jXZ3POgWMjPrNXlQ9+U9jFE+jUtZ91sY1AwBmsOCjF/+5Pu5VxyHArfOlM8bbuwsNnb93W18Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753415639; c=relaxed/simple;
-	bh=CCnUIhBvuNE3ssmHP0yUwtVB0bHHyEcOhPSZdLQk+O4=;
+	s=arc-20240116; t=1753415833; c=relaxed/simple;
+	bh=YH6RAbwnXm52oxSTqJO+Stc2BJQy94algtoEFpGIj8g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FirSZsbSkj5zIOiIys0uDHz1X4oT3pGixqlHrmmdCl4t1lhgqc6WoD321AFCnagq139drPY15bQ4z0PK8yZK6Gd7Q4LNMr4atm4KrMdYj4PapK5/7eSf1Om+x5G8lnNkDtX3c4vzITs6IbBpKa/ezHMoV+oDIU4gL/5cZCdUx3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MnYW7iKB; arc=none smtp.client-ip=209.85.215.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHaaJ7cQSCLo3+ZH2/e6+ctbZ1+ACX6QYtorItUw5f2Dgv/L2mYheQGkyUPlcm1G44ixXIFCwAHLHrrUs7UiUmz7TB/aERHafu2OiNCFD+r65AG0fbtfqX2ySmp+BTgBO2TkTX3VMFsUOUw491E0O8ogAEOXW8Df01GUA9HwVEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0lVqjOP; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b3aa2a0022cso1982430a12.1;
-        Thu, 24 Jul 2025 20:53:57 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab39fb71dbso18509631cf.3;
+        Thu, 24 Jul 2025 20:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753415637; x=1754020437; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753415831; x=1754020631; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hW9AXQYKd37BK6sNBYGkdFC2KgxtfKeihilIUBQrgIE=;
-        b=MnYW7iKBOWZSvEmQR+a3gWTtw1N6RbBi+atbq3DcqNGyqsRyJ3E9GnzszX0syCSEvd
-         RIEAwqpK7wgrVDgLkezg0F2wZwtQmAxpPtvYbjcJ9nBGXU1fb8bQvneiJc8LywRiBJGh
-         MQ8zRTNJJ+9p5jfh77iRWE7KUuQTlIzLDVIfOuNLGdbQCDOF55GHBOVJAs6jyiFqSNnp
-         K40GGexVYdErzcN2NuqFhWmmjoyUH6DfiQvMkwmYm9VPzXpQmrnDj0/t/289u+gWABwf
-         N5OKcVbXGY2ygeSTX1WmUEzL8p6eF8vBi+PNOK8ChACItycst2MfSplEjVpLHv0zby50
-         JtqA==
+        bh=qS0Z7r3EX0ZcTNJZb2kibKrC2Xd/v6RxpcgDmAdFoZs=;
+        b=i0lVqjOPizCh0RpKO4dV8YQel8p46raWnGbXZV6XN9Rs0fDDHPmuGRz9quuifQcGnB
+         dBwf80TXyp4b4OAHi1OmXBcCpqfvwyaa6IkolgBgtw0RMOxeUAYPlwbSpA7MLqfsRLfL
+         XSMD19Ywl9FAjYtDlmR4fWekfo4Ck0ZzfURiT2rYH+GVyK6oaOggApFAv1HN3upEQ9ww
+         2tU/LA9UV/rG/wTlAP4D7Fmol1ptu0dyrPul9HmWp/NOtaXFO3TA0G6aeQIxY0qatAn0
+         knViKSbTSPuf/jK+8a5I3P92TTVh6nwDvVBSr80UgHaFRNs3YcJzKJ1dMlOwC/lKaC/K
+         CNpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753415637; x=1754020437;
+        d=1e100.net; s=20230601; t=1753415831; x=1754020631;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hW9AXQYKd37BK6sNBYGkdFC2KgxtfKeihilIUBQrgIE=;
-        b=LQNhmbJ/YYrKDwvMUYYAhGJjZ6i5mAblMcdqYzupF+Wr1gVH7rZE9V69GDiSDwTCO6
-         0NZWq4FcC3HHYbb5Z01n4+GfKs39hEZX+8odpc6vvDEZ+r4SkXUAKDrVz5IP6SHBd2Tb
-         6wheQGnne34ELvR+k3Jy287okvBTUH8KpM9IX4O9cFRbJK6LDDcGtAtdlVZCTXIGCbGo
-         M3ESg+ivX8+MttjXUHV0AWLzXnEGDoE5W2ZTz2JCBYoQevd9xVfv6ahrNJoJulF9Af/x
-         Qc/DCKaaxzg7saUj/Ie8zHAWCBQBO9Tg/6i6+Lu1fRp9RcCBgOGDpiiq1It7t1NMkgFj
-         eMbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwjQGaNJpAsXQGF6+Z8NBODwYfsnYY/Sp8/69YgTKeu+IZjqPBOzCyF+CMPkP31mCxJ1LBJ9hn@vger.kernel.org, AJvYcCWvfcWfHBkAGkDx9Qn0nW/DxwnywGbRGB2+XPkNplPI479ALYriqc+7EywarN/xhDG5pg579cJ210qSrK8fH0vB@vger.kernel.org, AJvYcCXv+e88P7WDGkvfAMnQ6m4zHyoy66C0x5Umj0f7khm95LDylom9hpvMrxgwhRZxu4PTvtlLqfLlI+MXKps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznLuYhCYnzKzwsJ7fOPoGMgTu+QQqHwmrwyc/HJjYq0WhaoVID
-	6iJu9ZOGWy08hGkmarGdkuApKy7/WxXQAzZoDLDTfs8gDo0nab6BAkvX
-X-Gm-Gg: ASbGncsl3hn4JcWYEWyq+k5JLxZTKX1OcSOjRqx4Hp9JoUNovrWUaWF1/GNSB7aam3F
-	8V3T+o4bsZ819XmEgnYpkoWlVoKVRBVWjnsX6k31ZqvzVWt/EtxBr2eyP4ohzer4OT7vJ2+NfR5
-	2ql3jC6CmOobAbFCFz0F2go2EewFy5WlXyvUP28hw4KTWUXPzDDGZoUtPdsk7fnVP+Baon9fJNj
-	QPbrBPY0qlAf7yqWDVDDyDZ54+580XpPH0u+rderuVcAd2hDIbZIavjNY9L0KwHXZpqv19D9Hb1
-	s8HSs8j3V/fhtQkxMEeyWGq9B/YgosWdI+c3VYDn9Mg4aRgspIHpK4CjBiG8Av8goeMEbkq9GKV
-	mJjqf8PtlcGDhJ2j9Vd1gx9fz3Ag=
-X-Google-Smtp-Source: AGHT+IHvF9CWQBmtPvqxjtafnD0suZKb7Z0tVBD4hH4QI/HjjUoanfXRrgETeCN0uVUFNB6oIekj0Q==
-X-Received: by 2002:a05:6a21:33a2:b0:234:8b24:108d with SMTP id adf61e73a8af0-23d70171b24mr462993637.22.1753415636902;
-        Thu, 24 Jul 2025 20:53:56 -0700 (PDT)
-Received: from fedora ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7635561b64csm105688b3a.136.2025.07.24.20.53.51
+        bh=qS0Z7r3EX0ZcTNJZb2kibKrC2Xd/v6RxpcgDmAdFoZs=;
+        b=WcVDVnHnwXFxBSD6g4xMUOirbDlIKRvAeVo7/7oXb07XVjMnw+iE7ZN659WfDnwkjH
+         EUVn6uwQIfZpVghKYemlclqGlixPN98bx2GSAdvQdNi5szJZMCex4AfTl8efcfpz6S8a
+         hYd5QHmCtuS3Viej+gr8HqJATI3auihgW+1ZOsEpe+8Zb8EdaSJ5CPj8IWVzSJFFJGyk
+         pfRuTl5nXPcE+rirPBSflvAFewABKuTTTCUZNynFaY3PrCbgBC/TXpRAhDVnzJ9wLhe5
+         sD78TQktwIWC4Y7hKUriVj2zmnEeqVoyYC3cWvonayQv2Tou6f6wp9vOH7nkxJQf/bkv
+         1JZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoUEMHdHMz0AzgDHAcZa3gA5hqzK70IDFIXiZFG5Z1IV9Z/o4WxY1Axu4mmX/pg7p0sxFktF7cVLJkpgA=@vger.kernel.org, AJvYcCX9ltCjsoxadXa8cAPWN6k7cihQ3OQK8pKH8a5xeGMj2s44BjC18rXnjC1Nj5r61REAOOzKc9Qir4Md@vger.kernel.org
+X-Gm-Message-State: AOJu0YysZVH4Y2tYUtTO5ODDrUcBlP1ht2U3WEFzjbn0GsGB2WhAu4Y3
+	dP2eaxYwuTJwp8fRSlSx/S3TT8UH4VM+tMLNi2fZlVlc8nR+hBhWpviK
+X-Gm-Gg: ASbGncu6Wf4n11/7A7zm8WTahIe3l+1l+Fih2CWaE5wsO/Jf0igTbax+ardSknl5DyU
+	8TqOfJpVZFWx596+ZxKeYniVyg4KQKQoIlRRPsJCwx4x0YXrMeXamBQQl0L81uCmoe3AUVxmJGL
+	+x8C6NKHwa5ZMXFq0w3YaXWbiT/SkJNRNaUk1KMB2rWkI7gOahjZ57Mcj8K7QJI95I01nZOa8RV
+	UeXvNOmO5Q89LX2Ec+1VzxRHG5LsCtsESANyp+sRY8/oseX3Z9PbzE3rtiD+4I3BDDE733PpTN/
+	iGMMUdoqeugOzj7MEdxW5XkMrAd7jH/mNK71V9jNW8fKP9cpBXIMKfHFX3WKquV//TjV3CAgFMh
+	yZrDwXejOaw1P/Q==
+X-Google-Smtp-Source: AGHT+IGkfDM6npOStCLeJgu/CWVD68Q0/nsCWaHQZboVHGGZgry/9g6hSgC9hYmtKfgz39J9kvADNQ==
+X-Received: by 2002:a05:6214:20e3:b0:704:f7d8:edfd with SMTP id 6a1803df08f44-70720602e3cmr5571786d6.50.1753415830648;
+        Thu, 24 Jul 2025 20:57:10 -0700 (PDT)
+Received: from pc ([196.235.221.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70714c88fa3sm16584396d6.91.2025.07.24.20.57.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 20:53:56 -0700 (PDT)
-Date: Fri, 25 Jul 2025 03:53:48 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Xiumei Mu <xmu@redhat.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Long Xin <lxin@redhat.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Shannon Nelson <sln@onemain.com>
-Subject: Re: [PATCH net v2] selftests: rtnetlink.sh: remove esp4_offload
- after test
-Message-ID: <aIL_zAGaP_8HDTS6@fedora>
-References: <6d3a1d777c4de4eb0ca94ced9e77be8d48c5b12f.1753415428.git.xmu@redhat.com>
+        Thu, 24 Jul 2025 20:57:10 -0700 (PDT)
+Date: Fri, 25 Jul 2025 04:57:05 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: mvebu: Use devm_add_action_or_reset()
+Message-ID: <aIMAkbdOyHsiPeph@pc>
+References: <aHsgYALHfQbrgq0t@pc>
+ <20250724164217.GA2942464@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,67 +94,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6d3a1d777c4de4eb0ca94ced9e77be8d48c5b12f.1753415428.git.xmu@redhat.com>
+In-Reply-To: <20250724164217.GA2942464@bhelgaas>
 
-On Fri, Jul 25, 2025 at 11:50:28AM +0800, Xiumei Mu wrote:
-> The esp4_offload module, loaded during IPsec offload tests, should
-> be reset to its default settings after testing.
-> Otherwise, leaving it enabled could unintentionally affect subsequence
-> test cases by keeping offload active.
+On Thu, Jul 24, 2025 at 11:42:17AM -0500, Bjorn Helgaas wrote:
+> On Sat, Jul 19, 2025 at 05:34:40AM +0100, Salah Triki wrote:
 > 
-> Without this fix:
-> $ lsmod | grep offload; ./rtnetlink.sh -t kci_test_ipsec_offload ; lsmod | grep offload;
-> PASS: ipsec_offload
-> esp4_offload           12288  0
-> esp4                   32768  1 esp4_offload
+>   ret = devm_add_action_or_reset(dev, clk_put, port->clk)
 > 
-> With this fix:
-> $ lsmod | grep offload; ./rtnetlink.sh -t kci_test_ipsec_offload ; lsmod | grep offload;
-> PASS: ipsec_offload
-> 
-> Fixes: 2766a11161cc ("selftests: rtnetlink: add ipsec offload API test")
-> Signed-off-by: Xiumei Mu <xmu@redhat.com>
-> Reviewed-by: Shannon Nelson <sln@onemain.com>
-> ---
-> Changes in v2:
-> - add test results in description
-> - Enhanced logic for rmmod esp4_offload
-> - fix shellcheck warning: SC2086 (The quoting issue)
-> ---
+The second argument of devm_add_action_or_reset() is of type void (*)(void *)
+and the argument of clk_put() is of type struct clk *, so I think a cast is
+needed:
 
-nit: extra ---
+ret = devm_add_action_or_reset(dev, (void (*)(void *)) clk_put, port->clk)
 
-Reviewed-by: Hangbin Liu <liuhangbin@gmail.com>
-
-> ---
->  tools/testing/selftests/net/rtnetlink.sh | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/net/rtnetlink.sh b/tools/testing/selftests/net/rtnetlink.sh
-> index 2e8243a65b50..d2298da320a6 100755
-> --- a/tools/testing/selftests/net/rtnetlink.sh
-> +++ b/tools/testing/selftests/net/rtnetlink.sh
-> @@ -673,6 +673,11 @@ kci_test_ipsec_offload()
->  	sysfsf=$sysfsd/ipsec
->  	sysfsnet=/sys/bus/netdevsim/devices/netdevsim0/net/
->  	probed=false
-> +	esp4_offload_probed_default=false
-> +
-> +	if lsmod | grep -q esp4_offload; then
-> +		esp4_offload_probed_default=true
-> +	fi
->  
->  	if ! mount | grep -q debugfs; then
->  		mount -t debugfs none /sys/kernel/debug/ &> /dev/null
-> @@ -766,6 +771,7 @@ EOF
->  	fi
->  
->  	# clean up any leftovers
-> +	! "$esp4_offload_probed_default" && lsmod | grep -q esp4_offload && rmmod esp4_offload
->  	echo 0 > /sys/bus/netdevsim/del_device
->  	$probed && rmmod netdevsim
->  
-> -- 
-> 2.50.1
-> 
+Best regards,
+Salah Triki
 
