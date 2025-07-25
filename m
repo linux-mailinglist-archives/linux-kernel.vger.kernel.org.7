@@ -1,325 +1,273 @@
-Return-Path: <linux-kernel+bounces-745714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0C1CB11D75
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:25:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B475BB11D77
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB3E77B036C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:23:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A474A1CE34B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43042E62CD;
-	Fri, 25 Jul 2025 11:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0632E610E;
+	Fri, 25 Jul 2025 11:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kd5kCC5P"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="nAk8evin"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06D42114;
-	Fri, 25 Jul 2025 11:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025652114
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753442716; cv=none; b=bgdySAoXwP3SVfrtrsPeaAitQ7jaE9goU7Iw9CbPqeuMcbQifrRKWnUe8BdF5Sj7ikyhPYLFQAN4NTz5Df9L5vDEANWzNzOPj/kyY2d3aew3Pke1f80txh4FzbY4zfxWgcvQTO7pEpitBXKBdY3wOso7kVd1ccd7n4ykZPQI/3I=
+	t=1753442814; cv=none; b=dg9jrY9KKux77Q5AuRLJerqZWNY02rMiihVH6y8nFR318wEv8dalsu0ZF9O1kYK++2pdO8NGytKZZF3jiKf+OvvH7EA/N6aMxKn7o2xFCwZpHVclfP49fSsJfN0kG0oJjm41erOk1VWgs9JPRe/8Fq3ObzFMXwBlF7FoBrniQHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753442716; c=relaxed/simple;
-	bh=xK8VrbF+4LF2Q85upYmd+Dntemjwt+k0q3JOPp/Lgrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lN0xAqHRRxo1wWs9vcrXJownq0y5dxAfxuHnwtOteybTZKP00T41SOXFaNLxHSAEWzjasOd7mqxwaPtyzQEtM1k0GOA8eH0gul4Au6EiiDX3jP3/3pawKH0CfKazsmrN2jswb0zyJ2Z+YazPsFDLImfQRTKRI1gOgpeLov9dLDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kd5kCC5P; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AE9C2C64;
-	Fri, 25 Jul 2025 13:24:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753442673;
-	bh=xK8VrbF+4LF2Q85upYmd+Dntemjwt+k0q3JOPp/Lgrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kd5kCC5P/JdBCUc9qQoziKztUKIE1ZR+k6k/NBPlkH89MW0ee1ZVrNsZLV+szLkzz
-	 iG4qJzTxp+UI5lJvB5x3wmN4nOKR+sfA0mOUupsT2MqnV17NYOl8R5G6e6+XFRME42
-	 ib0XG/KArWOKuBuvXBpr1B+Myo6wmV19sJ3JivjY=
-Date: Fri, 25 Jul 2025 14:25:08 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: uvcvideo: Use intf instead of udev for printks
-Message-ID: <20250725112508.GB11202@pendragon.ideasonboard.com>
-References: <20250725-uvc-nousbdev-v1-0-28f5a1fdf544@chromium.org>
- <20250725-uvc-nousbdev-v1-1-28f5a1fdf544@chromium.org>
+	s=arc-20240116; t=1753442814; c=relaxed/simple;
+	bh=0ZJExULLVmMGi4y+Mqs82rijJnvXJ2O+mBZMRl15Ovs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hwRYFpNbGb5im/EX40fg5HPRHDH1gw3HHqVz7wcOzpLXwd4REOPAIkQja/MeMufSp0jMdTZs6GwXxfukf+5Q+9G8apWA+c/9XUvwe4adfXbaBEw15q/5O7QxRUs1aNtuucbjOh6uXrFmXPR9o+aTwXdrEEZ3yyt6Gbjc53z3szE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=nAk8evin; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D35143F73C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1753442809;
+	bh=/9lBchv8Xl3/zU+kUSWuOOJSWBoJGBapA/sirJQnK+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=nAk8evinAH0Sdcbx8SXv7tQry6qarcisyKFC4WD9n0NEImZwXRI8HGHy2cYk/l8Bm
+	 VlVwY5c/J8KdTuh9zNzOvnZ4nSbAQ3kKnruz92HBdubV6abq7SVcBmFghQxlyZ2R99
+	 KBDdiGbSgGwDccF8wdAJkWpReSVTGwKcTigexs+1gDymZg0AgqbEIgz1uyvpxYjsQk
+	 8JccYpideRhFu4mzDV0RDjmAwkbdYwgDd/9Q2iR7JuXbTKqr/dd1wLBTbcJdgb+/t2
+	 fZFchEvtAdATxv+nb6Z6Ay7nACZVSaKz+rUujG6orQH3WqwoL02wHhVD6PQu5gRtaN
+	 HAHH/5TDr/7fw==
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ae3c5ca46f2so159138766b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:26:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753442809; x=1754047609;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9lBchv8Xl3/zU+kUSWuOOJSWBoJGBapA/sirJQnK+E=;
+        b=Zp+TgHC6qG8PwAFQrP/GrFTAfwZB8TDAWMdCLonb9iNhP+caNaen2Kqq4Uy3SucPLT
+         bLf/jDzKpmfjKYVwb+Yv6KEPwTnhTrcWCIAnXQRKBMfOR/wy6oMsXB94abgkHkzSNH78
+         tLX+XHxYfj58nrzxaN2deKSn+pHcgaKqxYKbdg28WOCVPjrnzsxbiH3xTXtkAt3DPky8
+         SyKYJ2os03sSJ5cFi+ZeeFG9IXbz07Ewejky203Sfxl4q67Zvz2ZIGNR1+LiVGQ6DOmp
+         QIJ90usUpa9jVCjwNDIBY9/jURf5ePH+4mzPXmx3yLsbtTb3d+vtNM8M0gp5EfwvKS2z
+         jmzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTBhEMzEvczHZtiPdy46VazOV3kXIsjiyxnbxGfndlzBIAZ1ujrlZbifnWnUaCgJUj/Yk1d5s9Ob6mYYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4IqyqPkfoCdL5Q94p38geAz49DYGGY9AFMvDzZMIXqtL1uomz
+	SCOzstvuS3K7VbyM8CfCO6XbCyK4t4s2t2ro0uOR26FX6Y/Mz0uVG5L4/Bz7Duz4FP7kOmy2k+B
+	J5i5Hx4mitkEsByyk/SvyQ3UAkTcOKs4P2IE5g3NjlQDqnR75vkGTo4TJ/yJoLYi4cKgzgqvJ1d
+	OlO3fnig==
+X-Gm-Gg: ASbGnctU+r16sNbnM2fI6i4NflhJS8yb5CHDOPfpLlmmQv9ngabeE+l+RTI13wl/k1p
+	kOOHkvs6yJBwXvuDukoHRBHt5qP7kHAQZJUTX3L0E3ZLg78ng3y80tC0OQauYYlN+YugwaZyl7L
+	KOsT1TcfdEq+1kpRpHWQON0uA7z4YMG8TiSMKqeV7YmMaLZGNo/OhUh6NOgWPw5Y7TDR/JisYfM
+	/hd7RzHjeMI+w1EdOtHguOXvO9T/B/r9zk1F9LEAjLYi2JPPPI82WjQ8p5wqyP2J/M1aF47ZUtF
+	tVE5t0OUA7Eo33KvZ85WIDdSFU4CfkdIR21wCVqvV9Z2bAH+1ipJWTgjF9gbpxfMb88s+3f8cWp
+	fRDHDP7lFuC5vQ+j5sldvTy2koOGZyAIL6I1H
+X-Received: by 2002:a17:907:868b:b0:ae0:dd95:1991 with SMTP id a640c23a62f3a-af619efda7fmr218778166b.51.1753442808324;
+        Fri, 25 Jul 2025 04:26:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF62wP3IqAMJ1/E1mQqpiMFCO0fY8T1aVjgbgNEGN4i3p5BpL7PdyFIzDt2eRf4SEXlVdUVvQ==
+X-Received: by 2002:a17:907:868b:b0:ae0:dd95:1991 with SMTP id a640c23a62f3a-af619efda7fmr218773366b.51.1753442807745;
+        Fri, 25 Jul 2025 04:26:47 -0700 (PDT)
+Received: from [192.168.103.102] (ip-005-147-080-091.um06.pools.vodafone-ip.de. [5.147.80.91])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-614cd31ac41sm1898416a12.54.2025.07.25.04.26.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 04:26:47 -0700 (PDT)
+Message-ID: <b50da4ef-53ca-4edf-bd74-f5e037a14f99@canonical.com>
+Date: Fri, 25 Jul 2025 13:26:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250725-uvc-nousbdev-v1-1-28f5a1fdf544@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/11] riscv: Kconfig & Makefile for riscv kernel control
+ flow integrity
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
+ rick.p.edgecombe@intel.com, broonie@kernel.org, cleger@rivosinc.com,
+ samitolvanen@google.com, apatel@ventanamicro.com, ajones@ventanamicro.com,
+ conor.dooley@microchip.com, charlie@rivosinc.com, samuel.holland@sifive.com,
+ bjorn@rivosinc.com, fweimer@redhat.com, jeffreyalaw@gmail.com,
+ andrew@sifive.com, ved@rivosinc.com, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Monk Chiang <monk.chiang@sifive.com>,
+ Kito Cheng <kito.cheng@sifive.com>, Justin Stitt <justinstitt@google.com>
+References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
+ <20250724-riscv_kcfi-v1-11-04b8fa44c98c@rivosinc.com>
+Content-Language: en-US
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+In-Reply-To: <20250724-riscv_kcfi-v1-11-04b8fa44c98c@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Ricardo,
-
-On Fri, Jul 25, 2025 at 11:01:29AM +0000, Ricardo Ribalda wrote:
-> The UVC driver is a usb_interface driver. Use the correct device for
-> printks to avoid confusions with other interface drivers associated to
-> the same usb device.
-
-Good idea.
-
-> With this change:
-> uvcvideo 3-6:1.0: Found UVC 1.10 device USB2.0 WebCam (1234:abcd)
+On 25.07.25 01:37, Deepak Gupta wrote:
+> Defines `CONFIG_RISCV_KERNEL_CFI` and selects SHADOW_CALL_STACK
+> and ARCH_HAS_KERNEL_SHADOW_STACK both so that zicfiss can be wired up.
 > 
-> Without this change:
-> usb 3-6: Found UVC 1.10 device USB2.0 WebCam (1234:abcd)
+> Makefile checks if CONFIG_RISCV_KERNEL_CFI is enabled, then light
+> up zicfiss and zicfilp compiler flags. CONFIG_RISCV_KERNEL_CFI is
+> dependent on CONFIG_RISCV_USER_CFI. There is no reason for user to
+> not select support for user cfi while enabling for kernel.
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+> compat vdso don't need fcf-protection (toolchain lacks support).
+> 
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 > ---
->  drivers/media/usb/uvc/uvc_ctrl.c   | 10 +++++-----
->  drivers/media/usb/uvc/uvc_driver.c | 20 ++++++++++----------
->  drivers/media/usb/uvc/uvc_entity.c |  4 ++--
->  drivers/media/usb/uvc/uvc_status.c |  4 ++--
->  drivers/media/usb/uvc/uvc_video.c  |  6 +++---
->  drivers/media/usb/uvc/uvcvideo.h   |  4 ++--
->  6 files changed, 24 insertions(+), 24 deletions(-)
+>   arch/riscv/Kconfig                     | 37 +++++++++++++++++++++++++++++++++-
+>   arch/riscv/Makefile                    |  8 ++++++++
+>   arch/riscv/kernel/compat_vdso/Makefile |  2 +-
+>   arch/riscv/kernel/vdso/Makefile        |  2 +-
+>   4 files changed, 46 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index efe609d7087752cb2ef516eef0fce12acd13e747..669caec2a3c448b8b2b7e03cd2a03a840aba3e92 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1619,7 +1619,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
->  		}
->  
->  		if (ret == -EIO) {
-> -			dev_warn_ratelimited(&chain->dev->udev->dev,
-> +			dev_warn_ratelimited(&chain->dev->intf->dev,
->  					     "UVC non compliance: Error %d querying master control %x (%s)\n",
->  					     ret, master_map->id,
->  					     uvc_map_get_name(master_map));
-> @@ -1643,7 +1643,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
->  
->  	ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, v4l2_ctrl);
->  	if (ret && !mapping->disabled) {
-> -		dev_warn(&chain->dev->udev->dev,
-> +		dev_warn(&chain->dev->intf->dev,
->  			 "UVC non compliance: permanently disabling control %x (%s), due to error %d\n",
->  			 mapping->id, uvc_map_get_name(mapping), ret);
->  		mapping->disabled = true;
-> @@ -1858,7 +1858,7 @@ static int uvc_ctrl_set_handle(struct uvc_control *ctrl, struct uvc_fh *handle)
->  	lockdep_assert_held(&handle->chain->ctrl_mutex);
->  
->  	if (ctrl->handle) {
-> -		dev_warn_ratelimited(&handle->stream->dev->udev->dev,
-> +		dev_warn_ratelimited(&handle->stream->dev->intf->dev,
->  				     "UVC non compliance: Setting an async control with a pending operation.");
->  
->  		if (ctrl->handle == handle)
-> @@ -1956,7 +1956,7 @@ static void uvc_ctrl_status_event_work(struct work_struct *work)
->  	w->urb->interval = dev->int_ep->desc.bInterval;
->  	ret = usb_submit_urb(w->urb, GFP_KERNEL);
->  	if (ret < 0)
-> -		dev_err(&dev->udev->dev,
-> +		dev_err(&dev->intf->dev,
->  			"Failed to resubmit status URB (%d).\n", ret);
->  }
->  
-> @@ -2895,7 +2895,7 @@ int uvc_ctrl_restore_values(struct uvc_device *dev)
->  			if (!ctrl->initialized || !ctrl->modified ||
->  			    (ctrl->info.flags & UVC_CTRL_FLAG_RESTORE) == 0)
->  				continue;
-> -			dev_dbg(&dev->udev->dev,
-> +			dev_dbg(&dev->intf->dev,
->  				"restoring control %pUl/%u/%u\n",
->  				ctrl->info.entity, ctrl->info.index,
->  				ctrl->info.selector);
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index 775bede0d93d9b3e5391914aa395326d3de6a3b1..d09d1286da0f61d5953125df23ed92555585e8f2 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -1868,7 +1868,7 @@ static int uvc_scan_device(struct uvc_device *dev)
->  		uvc_scan_fallback(dev);
->  
->  	if (list_empty(&dev->chains)) {
-> -		dev_info(&dev->udev->dev, "No valid video chain found.\n");
-> +		dev_info(&dev->intf->dev, "No valid video chain found.\n");
->  		return -ENODEV;
->  	}
->  
-> @@ -2092,7 +2092,7 @@ static int uvc_register_terms(struct uvc_device *dev,
->  
->  		stream = uvc_stream_by_id(dev, term->id);
->  		if (stream == NULL) {
-> -			dev_info(&dev->udev->dev,
-> +			dev_info(&dev->intf->dev,
->  				 "No streaming interface found for terminal %u.",
->  				 term->id);
->  			continue;
-> @@ -2128,7 +2128,7 @@ static int uvc_register_chains(struct uvc_device *dev)
->  #ifdef CONFIG_MEDIA_CONTROLLER
->  		ret = uvc_mc_register_entities(chain);
->  		if (ret < 0)
-> -			dev_info(&dev->udev->dev,
-> +			dev_info(&dev->intf->dev,
->  				 "Failed to register entities (%d).\n", ret);
->  #endif
->  	}
-> @@ -2229,23 +2229,23 @@ static int uvc_probe(struct usb_interface *intf,
->  	if (ret < 0)
->  		goto error;
->  
-> -	dev_info(&dev->udev->dev, "Found UVC %u.%02x device %s (%04x:%04x)\n",
-> +	dev_info(&dev->intf->dev, "Found UVC %u.%02x device %s (%04x:%04x)\n",
->  		 dev->uvc_version >> 8, dev->uvc_version & 0xff,
->  		 udev->product ? udev->product : "<unnamed>",
->  		 le16_to_cpu(udev->descriptor.idVendor),
->  		 le16_to_cpu(udev->descriptor.idProduct));
->  
->  	if (dev->quirks != dev->info->quirks) {
-> -		dev_info(&dev->udev->dev,
-> +		dev_info(&dev->intf->dev,
->  			 "Forcing device quirks to 0x%x by module parameter for testing purpose.\n",
->  			 dev->quirks);
-> -		dev_info(&dev->udev->dev,
-> +		dev_info(&dev->intf->dev,
->  			 "Please report required quirks to the linux-media mailing list.\n");
->  	}
->  
->  	if (dev->info->uvc_version) {
->  		dev->uvc_version = dev->info->uvc_version;
-> -		dev_info(&dev->udev->dev, "Forcing UVC version to %u.%02x\n",
-> +		dev_info(&dev->intf->dev, "Forcing UVC version to %u.%02x\n",
->  			 dev->uvc_version >> 8, dev->uvc_version & 0xff);
->  	}
->  
-> @@ -2281,21 +2281,21 @@ static int uvc_probe(struct usb_interface *intf,
->  	/* Initialize the interrupt URB. */
->  	ret = uvc_status_init(dev);
->  	if (ret < 0) {
-> -		dev_info(&dev->udev->dev,
-> +		dev_info(&dev->intf->dev,
->  			 "Unable to initialize the status endpoint (%d), status interrupt will not be supported.\n",
->  			 ret);
->  	}
->  
->  	ret = uvc_gpio_init_irq(dev);
->  	if (ret < 0) {
-> -		dev_err(&dev->udev->dev,
-> +		dev_err(&dev->intf->dev,
->  			"Unable to request privacy GPIO IRQ (%d)\n", ret);
->  		goto error;
->  	}
->  
->  	ret = uvc_meta_init(dev);
->  	if (ret < 0) {
-> -		dev_err(&dev->udev->dev,
-> +		dev_err(&dev->intf->dev,
->  			"Error initializing the metadata formats (%d)\n", ret);
->  		goto error;
->  	}
-> diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-> index cc68dd24eb42dce5b2846ca52a8dfa499c8aed96..3823ac9c8045b3ad8530372fd38983aaafbd775d 100644
-> --- a/drivers/media/usb/uvc/uvc_entity.c
-> +++ b/drivers/media/usb/uvc/uvc_entity.c
-> @@ -140,7 +140,7 @@ int uvc_mc_register_entities(struct uvc_video_chain *chain)
->  	list_for_each_entry(entity, &chain->entities, chain) {
->  		ret = uvc_mc_init_entity(chain, entity);
->  		if (ret < 0) {
-> -			dev_info(&chain->dev->udev->dev,
-> +			dev_info(&chain->dev->intf->dev,
->  				 "Failed to initialize entity for entity %u\n",
->  				 entity->id);
->  			return ret;
-> @@ -150,7 +150,7 @@ int uvc_mc_register_entities(struct uvc_video_chain *chain)
->  	list_for_each_entry(entity, &chain->entities, chain) {
->  		ret = uvc_mc_create_links(chain, entity);
->  		if (ret < 0) {
-> -			dev_info(&chain->dev->udev->dev,
-> +			dev_info(&chain->dev->intf->dev,
->  				 "Failed to create links for entity %u\n",
->  				 entity->id);
->  			return ret;
-> diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-> index ee01dce4b7834b05aab95379191c305cf8cec7f7..d3a3c4125c1fb6c8a5f2ee20bf4f0a9227fe2e46 100644
-> --- a/drivers/media/usb/uvc/uvc_status.c
-> +++ b/drivers/media/usb/uvc/uvc_status.c
-> @@ -215,7 +215,7 @@ static void uvc_status_complete(struct urb *urb)
->  		return;
->  
->  	default:
-> -		dev_warn(&dev->udev->dev,
-> +		dev_warn(&dev->intf->dev,
->  			 "Non-zero status (%d) in status completion handler.\n",
->  			 urb->status);
->  		return;
-> @@ -247,7 +247,7 @@ static void uvc_status_complete(struct urb *urb)
->  	urb->interval = dev->int_ep->desc.bInterval;
->  	ret = usb_submit_urb(urb, GFP_ATOMIC);
->  	if (ret < 0)
-> -		dev_err(&dev->udev->dev,
-> +		dev_err(&dev->intf->dev,
->  			"Failed to resubmit status URB (%d).\n", ret);
->  }
->  
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index 2e377e7b9e81599aca19b800a171cc16a09c1e8a..f044666947a8c59e5bc6b444bb4e01f54df33c80 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -95,14 +95,14 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
->  	 */
->  	if (ret > 0 && query != UVC_GET_INFO) {
->  		memset(data + ret, 0, size - ret);
-> -		dev_warn_once(&dev->udev->dev,
-> +		dev_warn_once(&dev->intf->dev,
->  			      "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
->  			      uvc_query_name(query), cs, unit, ret, size);
->  		return 0;
->  	}
->  
->  	if (ret != -EPIPE) {
-> -		dev_err(&dev->udev->dev,
-> +		dev_err(&dev->intf->dev,
->  			"Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
->  			uvc_query_name(query), cs, unit, ret, size);
->  		return ret < 0 ? ret : -EPIPE;
-> @@ -119,7 +119,7 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
->  	*(u8 *)data = tmp;
->  
->  	if (ret != 1) {
-> -		dev_err_ratelimited(&dev->udev->dev,
-> +		dev_err_ratelimited(&dev->intf->dev,
->  				    "Failed to query (%s) UVC error code control %u on unit %u: %d (exp. 1).\n",
->  				    uvc_query_name(query), cs, unit, ret);
->  		return ret < 0 ? ret : -EPIPE;
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 757254fc4fe930ae61c9d0425f04d4cd074a617e..8507de9ae633c9374b6427c890401a6a09ccb819 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -667,7 +667,7 @@ extern unsigned int uvc_hw_timestamps_param;
->  #define uvc_dbg(_dev, flag, fmt, ...)					\
->  do {									\
->  	if (uvc_dbg_param & UVC_DBG_##flag)				\
-> -		dev_printk(KERN_DEBUG, &(_dev)->udev->dev, fmt,		\
-> +		dev_printk(KERN_DEBUG, &(_dev)->intf->dev, fmt,		\
->  			   ##__VA_ARGS__);				\
->  } while (0)
->  
-> @@ -680,7 +680,7 @@ do {									\
->  #define uvc_warn_once(_dev, warn, fmt, ...)				\
->  do {									\
->  	if (!test_and_set_bit(warn, &(_dev)->warnings))			\
-> -		dev_info(&(_dev)->udev->dev, fmt, ##__VA_ARGS__);	\
-> +		dev_info(&(_dev)->intf->dev, fmt, ##__VA_ARGS__);	\
->  } while (0)
->  
->  /* --------------------------------------------------------------------------
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 385c3d93e378..305ba5787f74 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -245,7 +245,7 @@ config GCC_SUPPORTS_DYNAMIC_FTRACE
+>   	depends on CC_HAS_MIN_FUNCTION_ALIGNMENT || !RISCV_ISA_C
+>   
+>   config HAVE_SHADOW_CALL_STACK
+> -	def_bool $(cc-option,-fsanitize=shadow-call-stack)
+> +	def_bool $(cc-option,-fsanitize=shadow-call-stack) || $(cc-option,-mabi=lp64 -march=rv64ima_zicfilp_zicfiss)
+>   	# https://github.com/riscv-non-isa/riscv-elf-psabi-doc/commit/a484e843e6eeb51f0cb7b8819e50da6d2444d769
+>   	depends on $(ld-option,--no-relax-gp)
+>   
+> @@ -864,6 +864,16 @@ config RISCV_ISA_ZICBOP
+>   
+>   	  If you don't know what to do here, say Y.
+>   
+> +config TOOLCHAIN_HAS_ZICFILP
+> +	bool
+> +	default y
+> +	depends on 64BIT && $(cc-option,-mabi=lp64 -march=rv64ima_zicfilp)
+> +
+> +config TOOLCHAIN_HAS_ZICFISS
+> +	bool
+> +	default y
+> +	depends on 64BIT && $(cc-option,-mabi=lp64 -march=rv64ima_zicfiss)
+> +
+>   config TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI
+>   	def_bool y
+>   	# https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=aed44286efa8ae8717a77d94b51ac3614e2ca6dc
+> @@ -1182,6 +1192,31 @@ config RISCV_USER_CFI
+>   	  space does not get protection "for free".
+>   	  default n.
+>   
+> +config RISCV_KERNEL_CFI
+> +	def_bool n
+> +	bool "hw assisted riscv kernel control flow integrity (kcfi)"
+> +	depends on 64BIT && $(cc-option,-mabi=lp64 -march=rv64ima_zicfilp_zicfiss)
+> +	depends on RISCV_USER_CFI
+> +	select ARCH_SUPPORTS_SHADOW_CALL_STACK
+> +	select SHADOW_CALL_STACK
+> +	select ARCH_HAS_KERNEL_SHADOW_STACK
+> +	help
+> +	  Provides CPU assisted control flow integrity to for riscv kernel.
+> +	  Control flow integrity is provided by implementing shadow stack for
+> +	  backward edge and indirect branch tracking for forward edge. Shadow
+> +	  stack protection is a hardware feature that detects function return
+> +	  address corruption. This helps mitigate ROP attacks. RISCV_KERNEL_CFI
+> +	  selects CONFIG_SHADOW_CALL_STACK which uses software based shadow
+> +	  stack but is unprotected against stray writes. Selecting RISCV_KERNEL_CFI
+> +	  will select CONFIG_DYNAMIC_SCS and will enable hardware assisted shadow
+> +	  stack protection against stray writes.
 
--- 
-Regards,
+Please, consider adding a blank line for better readability.
 
-Laurent Pinchart
+> +	  Indirect branch tracking enforces that all indirect branches must land
+> +	  on a landing pad instruction else CPU will fault. This enables forward
+> +	  control flow (call/jmp) protection in kernel and restricts all indirect
+> +	  call or jump in kernel to a landing pad instruction which mostly likely
+> +	  will be start of the function.
+> +	  default n
+
+For Linux distributions it is important that the same kernel can run 
+both on hardware both with and without CFI support. The description 
+provided does not help to understand if RISCV_KERNEL_CFI=y will result 
+in such a kernel. Please, enumerate the minimum set of extensions needed 
+for supporting a kernel built with RISCV_KERNEL_CFI=y. I guess this will 
+at least include Zimop.
+
+Best regards
+
+Heinrich
+
+> +
+>   endmenu # "Kernel features"
+>   
+>   menu "Boot options"
+> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> index 7128df832b28..6ef30a3d2bc4 100644
+> --- a/arch/riscv/Makefile
+> +++ b/arch/riscv/Makefile
+> @@ -61,8 +61,10 @@ else ifeq ($(CONFIG_LTO_CLANG),y)
+>   endif
+>   
+>   ifeq ($(CONFIG_SHADOW_CALL_STACK),y)
+> +ifndef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>   	KBUILD_LDFLAGS += --no-relax-gp
+>   endif
+> +endif
+>   
+>   # ISA string setting
+>   riscv-march-$(CONFIG_ARCH_RV32I)	:= rv32ima
+> @@ -91,6 +93,12 @@ riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZABHA) := $(riscv-march-y)_zabha
+>   KBUILD_BASE_ISA = -march=$(shell echo $(riscv-march-y) | sed -E 's/(rv32ima|rv64ima)fd([^v_]*)v?/\1\2/')
+>   export KBUILD_BASE_ISA
+>   
+> +ifeq ($(CONFIG_RISCV_KERNEL_CFI),y)
+> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZICFILP) := $(riscv-march-y)_zicfilp
+> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZICFISS) := $(riscv-march-y)_zicfiss
+> +KBUILD_CFLAGS += -fcf-protection=full
+> +KBUILD_AFLAGS += -fcf-protection=full
+> +endif
+>   # Remove F,D,V from isa string for all. Keep extensions between "fd" and "v" by
+>   # matching non-v and non-multi-letter extensions out with the filter ([^v_]*)
+>   KBUILD_CFLAGS += $(KBUILD_BASE_ISA)
+> diff --git a/arch/riscv/kernel/compat_vdso/Makefile b/arch/riscv/kernel/compat_vdso/Makefile
+> index 24e37d1ef7ec..552131bc34d7 100644
+> --- a/arch/riscv/kernel/compat_vdso/Makefile
+> +++ b/arch/riscv/kernel/compat_vdso/Makefile
+> @@ -69,4 +69,4 @@ quiet_cmd_compat_vdsold = VDSOLD  $@
+>   
+>   # actual build commands
+>   quiet_cmd_compat_vdsoas = VDSOAS  $@
+> -      cmd_compat_vdsoas = $(COMPAT_CC) $(a_flags) $(COMPAT_CC_FLAGS) -c -o $@ $<
+> +      cmd_compat_vdsoas = $(COMPAT_CC) $(filter-out -fcf-protection=full, $(a_flags)) $(COMPAT_CC_FLAGS) -c -o $@ $<
+> diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
+> index 2b528d82fa7d..7b1446b63ebc 100644
+> --- a/arch/riscv/kernel/vdso/Makefile
+> +++ b/arch/riscv/kernel/vdso/Makefile
+> @@ -17,7 +17,7 @@ ifdef CONFIG_VDSO_GETRANDOM
+>   vdso-syms += getrandom
+>   endif
+>   
+> -ifdef CONFIG_RISCV_USER_CFI
+> +ifneq ($(CONFIG_RISCV_USER_CFI), $(CONFIG_RISCV_KERNEL_CFI))
+>   CFI_MARCH = _zicfilp_zicfiss
+>   CFI_FULL = -fcf-protection=full
+>   endif
+> 
+
 
