@@ -1,86 +1,100 @@
-Return-Path: <linux-kernel+bounces-745688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EF6B11D1B
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A81B11D1A
 	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31113A79F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66EEF1896C04
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2526E2E543A;
-	Fri, 25 Jul 2025 11:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B055F2E4271;
+	Fri, 25 Jul 2025 11:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N7W6UML2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HoXMdMWr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZkKrH1St";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HoXMdMWr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZkKrH1St"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA7A2405F5;
-	Fri, 25 Jul 2025 11:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2862E6107
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441587; cv=none; b=RNwolRrR1Rrx21o+KZJBB4XubsgU9jRF725ycYgVxegUQF14FzA8wztegfOz+81L+P6NyyYPMr89b8w1BM1ngUe/M3SxzEqoH5cdnlAUP9kyuCjRA0NxOAdy10TMth9aY43eXq5ahrfxch6dMky1bQz4VXtkg2rz/H3ou/EPth4=
+	t=1753441592; cv=none; b=Y8PF8XCsISrEWcCnBgtnKRTQnOJrQDZx+boHFtUQycDxoLj/OYnkrhbCQARzn/5YWitRO17IaDM+CrIAQE2747zhKBZhHi8Sn+QUaEHA3Ca6FdPW4LPtlaVBKafndO3QXgZKmYtiz7lTzkqwhgWE9YzSODIyq8ztq5xI93HxvPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441587; c=relaxed/simple;
-	bh=4ODTp0UV/5yld+rfWin+qb9F8EdCt5NLU8TsGWCsgrM=;
+	s=arc-20240116; t=1753441592; c=relaxed/simple;
+	bh=ptLRnfF3Xh5NbhcBs5N82s1lKj5n3Up3TTRTRt3/vvM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d/OXTiMoniGVq/PncIxi+Y9EyfAsCzmC7+EE/dXtA7R8dbb35Xoag5A/vlzwjcEQ84LrlHdMvbGSKEMshWUr42Fw7rwgaNWVhiZMKfi0I2afm2iS6sn29I0KXRGnWqusW3QvmE2prkeQg/FYrtmPVPxCAwdLbPIrvdJHTr6vR00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N7W6UML2; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753441586; x=1784977586;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4ODTp0UV/5yld+rfWin+qb9F8EdCt5NLU8TsGWCsgrM=;
-  b=N7W6UML2ztUZTEHyCft2dCh8aNbm34grXdmu0y0oQxoz79peKge0D46W
-   xRW0CoNvqgcQYuShaNPfs1Do9CbCtBbTew9yhNZhbJLmXCNh/Ftz25Sl9
-   8xLvxo6d+VNnTFaibVqVR6BdqUwL+jO/5pzuXYITH5AOQpfN9yHI8aaAa
-   AZvzYEa2Sr/D5y3sJBydJz2hca7XNKe94McWIEPEjXlNQoGaYDDr0jePq
-   dpeLJsnbjm+aZsFHpqmTqWhaqbIjMHSxqNp+LxfKwT3caSovdTHIbMNaN
-   Pu2AyNRqqXyedUtAF2X0zBVGLzjuVRMMf6nFeI9bGwIjauO4FIX8szndd
-   w==;
-X-CSE-ConnectionGUID: NwjIlvs1TpeqtyccGEBJqA==
-X-CSE-MsgGUID: tstdTvB7SROMGpNqhHcgoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="73355861"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="73355861"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2025 04:06:25 -0700
-X-CSE-ConnectionGUID: 4dpPtvj9S5OlyM73/KA5iw==
-X-CSE-MsgGUID: DbED2/rCRkSTnILVrQc1Vg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="161593680"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 25 Jul 2025 04:06:18 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ufGFk-000LGp-1A;
-	Fri, 25 Jul 2025 11:06:16 +0000
-Date: Fri, 25 Jul 2025 19:06:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org,
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, l.stach@pengutronix.de
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 5/6] drm/bridge: imx: add driver for HDMI TX Parallel
- Audio Interface
-Message-ID: <202507251859.rtsTHw8u-lkp@intel.com>
-References: <20250724072248.1517569-6-shengjiu.wang@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cfW5k9S9syItiC28VRWvEWAefHOZy1UpIxL11PHPDm+wPsl8AgRboPuEQUSNykVrxOCReeiwjzSYgr4HeBduRyYjKJIxAv7pssE0+YVW8NglXNYhar574mLTC+LnEt6GazUdNZbMqzTJ6gKvAT70E95M3Mbcr8q9cSaprC01/oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HoXMdMWr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZkKrH1St; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HoXMdMWr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZkKrH1St; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A19061F394;
+	Fri, 25 Jul 2025 11:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753441582; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3NbCoCyk6lItwvD4IjtOOkmF1xk6FvWdmI+TimjRgcA=;
+	b=HoXMdMWrsCz02kQnarh7BYQuPZax2eIk0kENY5faRRo63k5Tgp19gJu8SqfiEYKGEaghEh
+	Lzdg7p5ZASYWyUpXKD9BPRauTY4VkK9Aa9I3GqvgYpC/5QQjYDKO0R6hOoHSE6VbWpU+Tn
+	cvl9erXbLPhsqYRfYl+wW3y+ve8+/44=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753441582;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3NbCoCyk6lItwvD4IjtOOkmF1xk6FvWdmI+TimjRgcA=;
+	b=ZkKrH1StTM931qZ9U7NiPaIsxccXrYqgg2TztypgEmiqzYEnqxWQCUlJUGl5DZ/TA7E/j3
+	PemM+gZaD9uAIQDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753441582; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3NbCoCyk6lItwvD4IjtOOkmF1xk6FvWdmI+TimjRgcA=;
+	b=HoXMdMWrsCz02kQnarh7BYQuPZax2eIk0kENY5faRRo63k5Tgp19gJu8SqfiEYKGEaghEh
+	Lzdg7p5ZASYWyUpXKD9BPRauTY4VkK9Aa9I3GqvgYpC/5QQjYDKO0R6hOoHSE6VbWpU+Tn
+	cvl9erXbLPhsqYRfYl+wW3y+ve8+/44=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753441582;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3NbCoCyk6lItwvD4IjtOOkmF1xk6FvWdmI+TimjRgcA=;
+	b=ZkKrH1StTM931qZ9U7NiPaIsxccXrYqgg2TztypgEmiqzYEnqxWQCUlJUGl5DZ/TA7E/j3
+	PemM+gZaD9uAIQDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8EFF1134E8;
+	Fri, 25 Jul 2025 11:06:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id s/jiIi5lg2jTEQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 25 Jul 2025 11:06:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 42AE2A29BE; Fri, 25 Jul 2025 13:06:18 +0200 (CEST)
+Date: Fri, 25 Jul 2025 13:06:18 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	ojaswin@linux.ibm.com, linux@roeck-us.net, yi.zhang@huawei.com, libaokun1@huawei.com, 
+	yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH] ext4: fix crash on test_mb_mark_used kunit tests
+Message-ID: <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
+References: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,122 +103,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724072248.1517569-6-shengjiu.wang@nxp.com>
+In-Reply-To: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-Hi Shengjiu,
+On Fri 25-07-25 10:16:54, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> mb_set_largest_free_order() requires the parameter bb_largest_free_order
+> and the list bb_largest_free_order_node to be initialized, and
+> mb_update_avg_fragment_size() requires the parameter
+> bb_avg_fragment_size_order and bb_avg_fragment_size_node to be
+> initialized too. But the test_mb_mark_used kunit tests do not init these
+> parameters, and trigger the following crash issue.
+> 
+>  Pid: 35, comm: kunit_try_catch Tainted: G W N 6.16.0-rc4-00031-gbbe11dd13a3f-dirty
+>  RIP: 0033:mb_set_largest_free_order+0x5c/0xc0
+>  RSP: 00000000a0883d98  EFLAGS: 00010206
+>  RAX: 0000000060aeaa28 RBX: 0000000060a2d400 RCX: 0000000000000008
+>  RDX: 0000000060aea9c0 RSI: 0000000000000000 RDI: 0000000060864000
+>  RBP: 0000000060aea9c0 R08: 0000000000000000 R09: 0000000060a2d400
+>  R10: 0000000000000400 R11: 0000000060a9cc00 R12: 0000000000000006
+>  R13: 0000000000000400 R14: 0000000000000305 R15: 0000000000000000
+>  Kernel panic - not syncing: Segfault with no mm
+>  CPU: 0 UID: 0 PID: 35 Comm: kunit_try_catch Tainted: G W N 6.16.0-rc4-00031-gbbe11dd13a3f-dirty #36 NONE
+>  Tainted: [W]=WARN, [N]=TEST
+>  Stack:
+>   60210c60 00000200 60a9e400 00000400
+>   40060300280 60864000 60a9cc00 60a2d400
+>   00000400 60aea9c0 60a9cc00 60aea9c0
+>  Call Trace:
+>   [<60210c60>] ? ext4_mb_generate_buddy+0x1f0/0x230
+>   [<60215c3b>] ? test_mb_mark_used+0x28b/0x4e0
+>   [<601df5bc>] ? ext4_get_group_desc+0xbc/0x150
+>   [<600bf1c0>] ? ktime_get_ts64+0x0/0x190
+>   [<60086370>] ? to_kthread+0x0/0x40
+>   [<602b559b>] ? kunit_try_run_case+0x7b/0x100
+>   [<60086370>] ? to_kthread+0x0/0x40
+>   [<602b7850>] ? kunit_generic_run_threadfn_adapter+0x0/0x30
+>   [<602b7862>] ? kunit_generic_run_threadfn_adapter+0x12/0x30
+>   [<60086a51>] ? kthread+0xf1/0x250
+>   [<6004a541>] ? new_thread_handler+0x41/0x60
+>  [ERROR] Test: test_mb_mark_used: 0 tests run!
+> 
+> Fixes: bbe11dd13a3f ("ext4: fix largest free orders lists corruption on mb_optimize_scan switch")
+> Reported-by: Theodore Ts'o <tytso@mit.edu>
+> Closes: https://lore.kernel.org/linux-ext4/20250724145437.GD80823@mit.edu/
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+> This patch applies to the kernel that has only merged bbe11dd13a3f
+> ("ext4: fix largest free orders lists corruption on mb_optimize_scan
+> switch"), but not merged 458bfb991155 ("ext4: convert free groups order
+> lists to xarrays").
 
-kernel test robot noticed the following build errors:
+Hum, I think it would be best to just squash this into bbe11dd13a3f and
+then just rebase & squash the other unittest fixup to the final commit when
+we have to rebase anyway. Because otherwise backports to stable kernel will
+quickly become rather messy.
 
-[auto build test ERROR on shawnguo/for-next]
-[also build test ERROR on robh/for-next tiwai-sound/for-next tiwai-sound/for-linus linus/master v6.16-rc7 next-20250725]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+								Honza
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shengjiu-Wang/dt-bindings-display-imx-add-HDMI-PAI-for-i-MX8MP/20250724-152710
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250724072248.1517569-6-shengjiu.wang%40nxp.com
-patch subject: [PATCH v2 5/6] drm/bridge: imx: add driver for HDMI TX Parallel Audio Interface
-config: nios2-randconfig-002-20250725 (https://download.01.org/0day-ci/archive/20250725/202507251859.rtsTHw8u-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250725/202507251859.rtsTHw8u-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507251859.rtsTHw8u-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c: In function 'imx8mp_hdmi_pai_enable':
->> drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c:20:26: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
-    #define   WTMK_HIGH(n)   FIELD_PREP(WTMK_HIGH_MASK, (n))
-                             ^~~~~~~~~~
-   drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c:53:9: note: in expansion of macro 'WTMK_HIGH'
-     val =  WTMK_HIGH(3) | WTMK_LOW(3);
-            ^~~~~~~~~
->> drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c:59:9: error: implicit declaration of function 'FIELD_PREP_CONST'; did you mean 'FILE_REF_NOREF'? [-Werror=implicit-function-declaration]
-      val = FIELD_PREP_CONST(P_SEL,
-            ^~~~~~~~~~~~~~~~
-            FILE_REF_NOREF
->> drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c:60:12: error: implicit declaration of function '__bf_shf'; did you mean '__ffs64'? [-Werror=implicit-function-declaration]
-               __bf_shf(IEC958_SUBFRAME_PARITY));
-               ^~~~~~~~
-               __ffs64
-   cc1: some warnings being treated as errors
-
-
-vim +/FIELD_PREP +20 drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c
-
-    15	
-    16	#define HTX_PAI_CTRL_EXT		0x04
-    17	#define   WTMK_HIGH_MASK		GENMASK(31, 24)
-    18	#define   WTMK_LOW_MASK			GENMASK(23, 16)
-    19	#define   NUM_CH_MASK			GENMASK(10, 8)
-  > 20	#define   WTMK_HIGH(n)			FIELD_PREP(WTMK_HIGH_MASK, (n))
-    21	#define   WTMK_LOW(n)			FIELD_PREP(WTMK_LOW_MASK, (n))
-    22	
-    23	#define HTX_PAI_FIELD_CTRL		0x08
-    24	#define   B_FILT			BIT(31)
-    25	#define   PARITY_EN			BIT(30)
-    26	#define   END_SEL			BIT(29)
-    27	#define   PRE_SEL			GENMASK(28, 24)
-    28	#define   D_SEL				GENMASK(23, 20)
-    29	#define   V_SEL				GENMASK(19, 15)
-    30	#define   U_SEL				GENMASK(14, 10)
-    31	#define   C_SEL				GENMASK(9, 5)
-    32	#define   P_SEL				GENMASK(4, 0)
-    33	
-    34	#define HTX_PAI_STAT			0x0c
-    35	#define HTX_PAI_IRQ_NOMASK		0x10
-    36	#define HTX_PAI_IRQ_MASKED		0x14
-    37	#define HTX_PAI_IRQ_MASK		0x18
-    38	
-    39	struct imx8mp_hdmi_pai {
-    40		struct device	*dev;
-    41		struct regmap	*regmap;
-    42	};
-    43	
-    44	static void imx8mp_hdmi_pai_enable(struct dw_hdmi *dw_hdmi, int channel,
-    45					   int width, int rate, int non_pcm,
-    46					   int iec958)
-    47	{
-    48		const struct dw_hdmi_plat_data *pdata = dw_hdmi_to_plat_data(dw_hdmi);
-    49		struct imx8mp_hdmi_pai *hdmi_pai = (struct imx8mp_hdmi_pai *)pdata->priv_audio;
-    50		int val;
-    51	
-    52		/* PAI set control extended */
-    53		val =  WTMK_HIGH(3) | WTMK_LOW(3);
-    54		val |= FIELD_PREP(NUM_CH_MASK, channel - 1);
-    55		regmap_write(hdmi_pai->regmap, HTX_PAI_CTRL_EXT, val);
-    56	
-    57		/* IEC60958 format */
-    58		if (iec958) {
-  > 59			val = FIELD_PREP_CONST(P_SEL,
-  > 60					       __bf_shf(IEC958_SUBFRAME_PARITY));
-    61			val |= FIELD_PREP_CONST(C_SEL,
-    62						__bf_shf(IEC958_SUBFRAME_CHANNEL_STATUS));
-    63			val |= FIELD_PREP_CONST(U_SEL,
-    64						__bf_shf(IEC958_SUBFRAME_USER_DATA));
-    65			val |= FIELD_PREP_CONST(V_SEL,
-    66						__bf_shf(IEC958_SUBFRAME_VALIDITY));
-    67			val |= FIELD_PREP_CONST(D_SEL,
-    68						__bf_shf(IEC958_SUBFRAME_SAMPLE_24_MASK));
-    69			val |= FIELD_PREP_CONST(PRE_SEL,
-    70						__bf_shf(IEC958_SUBFRAME_PREAMBLE_MASK));
-    71		} else {
-    72			/* PCM choose 24bit*/
-    73			val = FIELD_PREP(D_SEL, width - 24);
-    74		}
-    75	
-    76		regmap_write(hdmi_pai->regmap, HTX_PAI_FIELD_CTRL, val);
-    77	
-    78		/* PAI start running */
-    79		regmap_write(hdmi_pai->regmap, HTX_PAI_CTRL, ENABLE);
-    80	}
-    81	
-
+ 
+>  fs/ext4/mballoc-test.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
+> index d634c12f1984..ba939be0ec55 100644
+> --- a/fs/ext4/mballoc-test.c
+> +++ b/fs/ext4/mballoc-test.c
+> @@ -802,6 +802,10 @@ static void test_mb_mark_used(struct kunit *test)
+>  	KUNIT_ASSERT_EQ(test, ret, 0);
+>  
+>  	grp->bb_free = EXT4_CLUSTERS_PER_GROUP(sb);
+> +	grp->bb_largest_free_order = -1;
+> +	grp->bb_avg_fragment_size_order = -1;
+> +	INIT_LIST_HEAD(&grp->bb_largest_free_order_node);
+> +	INIT_LIST_HEAD(&grp->bb_avg_fragment_size_node);
+>  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
+>  	for (i = 0; i < TEST_RANGE_COUNT; i++)
+>  		test_mb_mark_used_range(test, &e4b, ranges[i].start,
+> @@ -875,6 +879,10 @@ static void test_mb_free_blocks(struct kunit *test)
+>  	ext4_unlock_group(sb, TEST_GOAL_GROUP);
+>  
+>  	grp->bb_free = 0;
+> +	grp->bb_largest_free_order = -1;
+> +	grp->bb_avg_fragment_size_order = -1;
+> +	INIT_LIST_HEAD(&grp->bb_largest_free_order_node);
+> +	INIT_LIST_HEAD(&grp->bb_avg_fragment_size_node);
+>  	memset(bitmap, 0xff, sb->s_blocksize);
+>  
+>  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
+> -- 
+> 2.46.1
+> 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
