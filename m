@@ -1,131 +1,89 @@
-Return-Path: <linux-kernel+bounces-745219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA47B116C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:56:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E15B116C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AA247AC8C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:54:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDFBC1C27649
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC482397BF;
-	Fri, 25 Jul 2025 02:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfPsKL7I"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150A42397BF;
+	Fri, 25 Jul 2025 02:57:59 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0519FEEAB;
-	Fri, 25 Jul 2025 02:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D16EEAB;
+	Fri, 25 Jul 2025 02:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753412171; cv=none; b=DCsm++b8UI9nEYFCD4WT/L3buWwkWqcARH6TNlTdMokZv0FutJPf/aEX8KYuyJ7RLx52tOksP6kHuy9AV4sgqQqbMfNLeb6iWnUKxt3r9OorPfoR7YUYBviZ+9JkGCvNEJVTFmTYJR1AK7cNwAX6LYuo/BwczSCYh+8a2oJFbWY=
+	t=1753412278; cv=none; b=byIDUmm3qaalDQUmEqwxRjJEij1KF4KktwW9d1NL/fEtLfNO5p0tuPbID8SWd9DgpKOEGrRCpxuR5T05Ob3ZwsAibblgQK80bv7Gue8scGFhSax+ocnjO3cOL9d34OzAHDWxMchnqCEp99LwjHFpc2/BhNZLnHlKk+7ycYU41Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753412171; c=relaxed/simple;
-	bh=e7r351WHBKXYVy/qybPJUX5Acqx5iciPw/mxGw6enRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R4U5s3Fd1urDz3ejrqvwdjmw8Et/8DZzcooFYlgEmoZ11U+TzWrUt7NTt76u5KxpZOv/zfubKeuwYRk9hchbfA4vf+W/9AsLOm1kcO/wELA7bHLTLLAR+7rqa4qpPTo6N/FaBH9Q7SihPPtn7NRByGydYsSPC5k/RDNxX78/vJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mfPsKL7I; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60bf5a08729so3303075a12.0;
-        Thu, 24 Jul 2025 19:56:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753412168; x=1754016968; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FzGOuzDhEi3TMJulLXZr4GFUL3lm8OH7E+i1imGtL3w=;
-        b=mfPsKL7Ii99GWukQQte4H1qUrRDHnYgo0R6oEdqzqEew5i+TF3cIWlCXwAYRyCCU0l
-         F2dkjqLGGWTHhQPUss3feP8iFxvnV7+BZSZ0yqwu8ZVIkWdE9nJ9hfMCphEJgxijKmeM
-         1BuICue+h0aLZUKqLgvXOOrDE3sVoGXx5kN5+YlQhTAd9zGzWKja+oilI5q4cQSNvkpq
-         JhY6WB/z3GjmxFxcxxghR/j5pIqB0hzvtF7BijXLjSWmFYxg/NS/YDV7GYY0T3kcW6jC
-         b/en1kgm9cT5YgnX/03DpxrqBTe5pRJyuuORtvRSjjEVDBk0YWpUFQtfNQVmKyn+oBxu
-         sUbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753412168; x=1754016968;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=FzGOuzDhEi3TMJulLXZr4GFUL3lm8OH7E+i1imGtL3w=;
-        b=VF53MSzI9HRjHG9vdDB2B68Gkqp3Hd2XQECIEoAoYRFFScqMqleT9u/3SMNTkR0HRb
-         C2kmFzG3PE4HjLxs7At7xdsZJcL+lTUagW6qOVo2uKCR6m/+CzU48uC7zTHam6fWuhjh
-         S6zVjEf3N+RoEcuE6qdjRGhZEcfEuElVgGu9lcBmtOsYNJr5sf6UcswkRdDbYdVX2j1l
-         MJjXNBFGVJ0m7FSnJPuMguGJZdPCsCkmk8QgxEn6TxcOWW4MD5NVYkrnAXGb5yhBO6ZX
-         RVxOoHh3xoIf1Cb6y7MW5kUrZ+0BGzyC7prJQAwJfO1tzupMcdz+/e/UXnoxdpjtFDU3
-         c+oA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEz66Ai7vHk0AWOf/UQFSpqBVl2HuwrVSC0tuCq4AngZtFyAkYtC1+tPNVujnfhWn7v8AITi2LlyQknOqX@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH5f9eKeYBia0/3FDL6XXw2lnHuK/APK42MEHvE2u7PnWZBRzi
-	bvoaTUKai9Ef5GvZHY0Uk6zWz/i/uY36MWXaHzIaIUSUoKGPfWmpJWSu
-X-Gm-Gg: ASbGncuupW3J5Ej6Bm/lOSDRFXSK15ccTDhFg8/4tkAPDCV5UISk3eZ1zpuOAAUCkJ8
-	2nEOqybmw1uz53zj7eaxrGd/Q3np3IV2gXllLNDgv+/Q9e0MgLidND44JKNMpWcKijK3hyGnTXV
-	rGwmZYZd4iiJKrydK+1T/ES9SwqT7Iva00GjVlLJQSZK33ho4vU36jh6T5/s3D+7NN6kqDJub3G
-	WDUN7aE9Xn2Bca7GKL280rc2ydeo9pw8htN1Dpph8rI4I7tpFjqE4yi3ZPvJLJYEnrB2D3g72J5
-	CPLZPwdYlU8ZQ5jtfyhL89YnwZk7FzbwKFaxkfj9Dj1dr6IDiWVCjWVboeclIFQxzg4RTzrDpA0
-	DBjRw4lvsZDkTfRonchbN8Eu2Rtv3ooe/
-X-Google-Smtp-Source: AGHT+IHhkClQ6+YPICgV57QIRUaI7tNGak2Dw44PbpFkJLABqr49v5gkdZqRJ5Z7WHZCF0LZz7A43Q==
-X-Received: by 2002:a17:907:3e1d:b0:ade:4593:d7cd with SMTP id a640c23a62f3a-af61c8a6743mr34848666b.13.1753412167981;
-        Thu, 24 Jul 2025 19:56:07 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f44d85esm196204966b.89.2025.07.24.19.56.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jul 2025 19:56:07 -0700 (PDT)
-Date: Fri, 25 Jul 2025 02:56:07 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-	Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
-	Lance Yang <lance.yang@linux.dev>,
-	Alistair Popple <apopple@nvidia.com>
-Subject: Re: [PATCH v2 2/9] mm/huge_memory: move more common code into
- insert_pud()
-Message-ID: <20250725025607.vi7n6wvwmzajcv3q@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250717115212.1825089-1-david@redhat.com>
- <20250717115212.1825089-3-david@redhat.com>
+	s=arc-20240116; t=1753412278; c=relaxed/simple;
+	bh=f/UMZbY8MC7A9ZUgJjvAh4CyHHxUWCBuESUtGELKnZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E/o2EuIwWXX2z4AkhCHd4jtxKbDxCvgwbPHug8G+GZwLNKis3+n1a1xr8oWZNXfTY8p4YHS/ViOIQ6QQj4foZTcrrwSf7QQ6sEVNKh0OZUXbXNTLaPWxWxWQUn9fcNaNI1RvUGtx17HZ7SmGEpHka26KfsmBuQyHqtugJ+xJgQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 313E180318;
+	Fri, 25 Jul 2025 02:57:53 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 8E26B20027;
+	Fri, 25 Jul 2025 02:57:48 +0000 (UTC)
+Date: Thu, 24 Jul 2025 22:57:52 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: kernel test robot <lkp@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ lukas@wunner.de, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ helgaas@kernel.org, ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
+ Jonathan.Cameron@huawei.com, oe-kbuild-all@lists.linux.dev,
+ tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
+ davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
+ peterz@infradead.org, tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v9 2/2] PCI: trace: Add a RAS tracepoint to monitor link
+ speed changes
+Message-ID: <20250724225752.42af5c45@gandalf.local.home>
+In-Reply-To: <4b41e3e2-ebac-48c3-b1a3-ce24a5bed475@linux.alibaba.com>
+References: <20250723033108.61587-3-xueshuai@linux.alibaba.com>
+	<202507240322.nJGdyXsy-lkp@intel.com>
+	<20250724100659.697b5972@batman.local.home>
+	<4b41e3e2-ebac-48c3-b1a3-ce24a5bed475@linux.alibaba.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717115212.1825089-3-david@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: sss3io6n3hnw8p43h7pfm1f4x44m5jxe
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 8E26B20027
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19jcfMhVBqN8ygImD+nGXKd/1XxI6VLNn0=
+X-HE-Tag: 1753412268-21638
+X-HE-Meta: U2FsdGVkX1/MPnrqv2eLnEQVG0SZ4y+N9BHa2JgS74m3VvHFSDTZN8JNGPlQP+U89ajIGWgPuyUHqP5bppbe1owxH2xMB+wqWm4JjBTHpQWRyGoL0bXxdySjDa4OEdHrTt/ccSiLL3EZcM1wuAD68TH+IzV6GoRyyrUIGiBSusQxsle59ecfn+mIvYprxYFgQ1oDPYO/Z8c/EIKPtr3SVBRiCdMxnff8AJqAzKA0uz/5wXbKWwtAFzGGW47KsWaK6jvpAjbDEJZSIgLiJVJGTCJp6+8tomBqVuNiG3+ZVdeErH2S8L2mOHc4lSZugts4dUodwhaV9gFOI/oMAz1PLbzyr6NxwXQCEYkSPtTUwvAaGQV42Fsr/A==
 
-On Thu, Jul 17, 2025 at 01:52:05PM +0200, David Hildenbrand wrote:
->Let's clean it all further up.
->
->No functional change intended.
->
->Reviewed-by: Oscar Salvador <osalvador@suse.de>
->Reviewed-by: Alistair Popple <apopple@nvidia.com>
->Signed-off-by: David Hildenbrand <david@redhat.com>
+On Fri, 25 Jul 2025 10:31:45 +0800
+Shuai Xue <xueshuai@linux.alibaba.com> wrote:
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+> I'm leaning toward option 1 (dedicated trace.c file) as it's the
+> cleanest approach and follows the pattern used in other subsystems. Does
+> that sound reasonable to you?
 
--- 
-Wei Yang
-Help you, Help me
+That's fine, but make sure you have #ifdef CONFIG_FOO around tracepoints
+that are only used when those configs are enabled, otherwise you will get
+warnings.
+
+Well, if they are exported, then the warnings are suppressed.
+
+  https://lore.kernel.org/all/20250725025149.726267838@kernel.org/
+
+-- Steve
 
