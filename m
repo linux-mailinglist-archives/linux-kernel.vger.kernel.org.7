@@ -1,90 +1,98 @@
-Return-Path: <linux-kernel+bounces-746408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AAA9B1266C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:06:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696C1B1266D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4133E3B9DB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:06:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ED921CC4672
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B67C2472AE;
-	Fri, 25 Jul 2025 22:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3EC24E4C3;
+	Fri, 25 Jul 2025 22:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGXEiP9f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NZjc+X4A"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969A41D5AD4;
-	Fri, 25 Jul 2025 22:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360951D5AD4
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 22:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753481192; cv=none; b=uA+IBeSQJkuA0/vNQWhYABazePNXJb/lNvc1hsp99/RQOCVgFfe1fYTAfvHzgC/qCww+ZQDijHaKZXkE0yXXRqqXj+7wDSfvYwr3mu9L0p5dWflTXFzmKQcZ/QTnZa5RO1KKrxdU6MMgocHfQWPmsccTpsmUqhjid4sb+hXPGzg=
+	t=1753481238; cv=none; b=jmy+hme3P9VnMEIboWjEhhh4ZQ2HvXUbX2he09UORqCH1k17pFgyILdHHo0+BofbaZyXj/YLhH/lD3drxIxNzJoRquRq5nNN5Kw8UXFTo8JQZj4Z7tF1J9WhHa4OinQP+iVSjd7MbyhJjl/2WMbdeB2ZtpAmBO64pt+16wIN3/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753481192; c=relaxed/simple;
-	bh=clZUi51w5Y3WNCYThAxjDWm+xSvKEptvaJBuWipIds0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=O2z/vXMvJyXAQHfGlrTcaaXnxwY9Z9Xn6uPiMcqfddQKFlCN5KKeI8EP6GxMa9ns4/BSl3MMpXewUpfyamJWxy4brcGznAYkwG7qzTa4CQgO76ycz9aEUEhiNr97uFgyIrU8tmuwzY3iJ7PQDugJUZHl05uuuAhTIzLfSD0EfMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGXEiP9f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 085C2C4CEE7;
-	Fri, 25 Jul 2025 22:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753481192;
-	bh=clZUi51w5Y3WNCYThAxjDWm+xSvKEptvaJBuWipIds0=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=SGXEiP9fOT/FB5zrTci4DNRUON1Bqsh0E3Arkbj13OopfmDbA679IsLTsSIhVUE6V
-	 8IBXdLc4lvEiwThZSZuw0Mv2UohsonlKRR05lhHKzYEU8rQ0Esukw5514T/YOGLOkT
-	 0C9XgV5biF3KErpB8AIuVhO7AGRt+itYS4v/1yiW8PQK3JMGfp5yB6mHHdbmcEriIl
-	 vlFRSGETZM+xOIryj8yidTIosODGoKovS1lHMruOAXhxm8CKTqrMh/gtE+zY+FXDwm
-	 XsJsQ2iEM4No6//69TN8UCoR9NQ0yQVE02GQ0E4LOO9S23lyS0Ql1sHYSBqjEC9U4/
-	 oT+RvT45Ft/tg==
+	s=arc-20240116; t=1753481238; c=relaxed/simple;
+	bh=P2rijM+RIYnmjzuZgBpO3jYQnTa55l7KM+MuAmQ2DCo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=o3RUCibVWHijiFw24WvQsnF6WeeK1WWvYkUw3Shd9yCvXGiJLWquw1nHhUFnmQVxc7sNnygCqHWrjtWbLSqs8VYf+vZhTCVownGY07XpWTO3KpedObm1l1cplaEESzmqyE/juXovBBo8B2TZhviH/eCpaOloINS5MjYONuKFG5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NZjc+X4A; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74d15d90cdbso2111951b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753481236; x=1754086036; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PK3OXoVC6Y30TkvuLhsH5BMw/hZElD5D/2bg+WaQx+Y=;
+        b=NZjc+X4A3VG8jGwG/W2PgQjkq4sTzfq7KSSHkdiLKpBQ/Cn9iIA2TvcGl10EViFa6/
+         EuDMOIKLdTZNJTy29pygLyuXmoKQfBuj+WXkTuUXaZEzemCcCssm0tz7IH1Qonf0HnDQ
+         vRlaMDXKkWSj4F97CLlV6RRr/+nU6iiOJUMX0g2UD+NYgPZLFS9AIYsCYjnxzGPAc4hU
+         w3NJs+9mYjvB8/Cf3g3n2xt70vW+oiRxsf7fDXsWzK5v36hqlyZrAv0Z2wmlrC5BcwQv
+         PTaIWq3yizcvZAp3tJvTqaM0tGCkX/9KMUeXTx3fYVNzMkq4MzXdlgV2QLqm0WcvCVg+
+         3ptg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753481236; x=1754086036;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PK3OXoVC6Y30TkvuLhsH5BMw/hZElD5D/2bg+WaQx+Y=;
+        b=G6ZW2LRr3hwHsHvEDcut8A4NX9SwIVXDXGycZVKBNer9FCz9afX1AaKHEZvCD30QL9
+         YgOxHuC2eWxLiNkm+hZ4jkSBY7v3MLZiVwppXkDsvXfNC9GXVmEeJ3L1YsBih6fttS5s
+         JOPKd95Gy1Xdyp3jui/lyQLckA+ojyHehW1tqqPls/V79NWlpCN4E2Q5NIhiJsEWcD0F
+         Wng9nwcfcc7wznXuwCPvkm5sWo+UJztofH6koSIaEMYoQx0qkeh9+nxVutwuraxrbCJD
+         0j1gC7bLcOEyavQzLouF5Q7xiO7MZj4efd87ZaeUqeGrupkq3Q7uNRDitH3XorSUznTD
+         8mRg==
+X-Forwarded-Encrypted: i=1; AJvYcCU02kCuUPP6f4xjs17oUovO1Sn5pyptXbxXn5K6F0dLSB5ssp76FwN4MU4JzoPmFYTKGE9ivyzojRDyDjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwTKwjuU1Es2wNSTvoywHxmetSEJA6m/yCkM4xb4T6MI5fgB+Q
+	s+HtbkD1AyXJv1JgzwvRgNHvtwwRBq55LT1Ol1Sd408CVeidJ/YjVKMI+iuH97KSwPpuYFCKamy
+	gtRm6Zw==
+X-Google-Smtp-Source: AGHT+IEb/v+QFi37SiPhuxE5/aZyhho+I//HVjXW8/6nMGuMNYtt9bgpJXuWt6SAZ3STbR+sxren7hgzvnk=
+X-Received: from pfbdo3.prod.google.com ([2002:a05:6a00:4a03:b0:746:2524:8aab])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2d21:b0:742:a0cf:7753
+ with SMTP id d2e1a72fcca58-763344d1933mr5438581b3a.3.1753481236476; Fri, 25
+ Jul 2025 15:07:16 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 25 Jul 2025 15:07:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 26 Jul 2025 00:06:27 +0200
-Message-Id: <DBLH7D150TY4.2PIYWAVS3JYA8@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: add "DEVICE I/O & IRQ [RUST]" entry
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <patches@lists.linux.dev>, "Daniel Almeida" <daniel.almeida@collabora.com>
-To: "Miguel Ojeda" <ojeda@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250725202840.2251768-1-ojeda@kernel.org>
-In-Reply-To: <20250725202840.2251768-1-ojeda@kernel.org>
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250725220713.264711-1-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86: Changes for 6.17
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri Jul 25, 2025 at 10:28 PM CEST, Miguel Ojeda wrote:
-> This entry will handle device I/O patches and abstractions (such as
-> memory-mapped IO and system resources series [1]), as well as IRQ ones
-> (such as the `request_irq` series [2]).
->
-> Patches will flow through driver-core, at least for the time being.
->
-> Danilo, Alice and Daniel will maintain it.
->
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: Daniel Almeida <daniel.almeida@collabora.com>
-> Link: https://lore.kernel.org/rust-for-linux/20250717-topics-tyr-platform=
-_iomem-v15-0-beca780b77e3@collabora.com/ [1]
-> Link: https://lore.kernel.org/rust-for-linux/20250715-topics-tyr-request_=
-irq2-v7-0-d469c0f37c07@collabora.com/ [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+As promised, the storm has arrived :-)
 
-Thanks -- gonna pick it up together with the IRQ abstractions after -rc1 an=
-d
-once ready.
+There are a two anomalies this time around, but thankfully only one conflict,
+and a trivial one at that (details on that in the MMIO Stale Data pull request).
 
-- Danilo
+1. The "no assignment" pull request depends on the IRQs and MMIO Stale Data
+   pull requests.  I created the topic branch based on the IRQs branch (minus
+   one commit that came in later), and then merged in the MMIO branch to create
+   a common base.  All the commits came out as I wanted, but the diff stats
+   generated by `git request-pull` are funky, so I doctored them up, a lot.
+
+2. The "SEV cache maintenance" pull request is based on a tag/branch from the
+   tip tree.  I don't think you need to do anything special here?  Except
+   possibly mention it to Linus if the KVM pull request happens to get sent
+   before the associated tip pull request (which seems unlikely given how they
+   send a bunch of small pulls).
 
