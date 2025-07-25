@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-746264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97D3B124C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:36:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D17B124C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 791427AE6CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:35:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C97181CC4BCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6420A23D280;
-	Fri, 25 Jul 2025 19:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C2B2494F8;
+	Fri, 25 Jul 2025 19:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HidX9jYW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEVosa4Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14C42D052;
-	Fri, 25 Jul 2025 19:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134C52D052;
+	Fri, 25 Jul 2025 19:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753472200; cv=none; b=WqsjQsh/POXILJ5jfmpDwx3N2RvEKBzqPvCzZLO0uwDwQj9aoDGIduMXoAuY4WDKLvDDN9ODQi6X7oCxWXDKvPqnRL3QZCcOPTRCjvCJBFQt0AL3CJ8oQUzYYT4Q/ofFinBxJioeveGzB+4fPSTtIHEm9GjMckJXg1/41dSyKvM=
+	t=1753472282; cv=none; b=u00VZNWbS38UQU7KUZE0hDn1izEuhW0gBHWCcAg5oAZsoIs/IBdeYvBUk+cahvuczqbJDhg/525yLRGNzxqtlhAkbB6juKqgYq9b2jBhEsCTYFVLx05o0RW7UjXOOmPY0+zhdjn+IM4RbVHRhSiy3VaCOZEzhqAUlyeqPso1xPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753472200; c=relaxed/simple;
-	bh=VSgxj2goV+n6GGKzIUMd/swrr83Kq69rPHQxxeyypAw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dGa2IVxQNPVIKeMGi1jw/7eTj7ByhfB953S2I/ATUioj/iObWD9EtDrGX618N7lCgGXg+Ub3vvrwlez99LWGhCP3ppkGVkIer4uBTmosw8dzCQkrEKdXtZuK3tDGPp/4Uf/pcugCp5YLmZrn5J46CGp4DNaK5dG0IC6MUbj03MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HidX9jYW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB68CC4CEE7;
-	Fri, 25 Jul 2025 19:36:39 +0000 (UTC)
+	s=arc-20240116; t=1753472282; c=relaxed/simple;
+	bh=bEox++np+gZQdQ3g0D4Q2QhzZPcdtYtL/cQZzR/t7Iw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wje2uPWBCUePHL62A326Q9SU5ort6P/8C1otyETGSKvRoOqNzSB9xCM97cZq6e8zC1qwBjBpc7/FcHJnqNYgcDHAVPSQPmIXbVFGFWqZBvI43IL3dFmo8NcQD1M/wLUWfCBlDjKHf+md32AK6jTtpPP/ou1YN96lHBGNItHnBu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEVosa4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC82C4CEE7;
+	Fri, 25 Jul 2025 19:38:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753472200;
-	bh=VSgxj2goV+n6GGKzIUMd/swrr83Kq69rPHQxxeyypAw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HidX9jYW+avyV7QJUSPLcMwX+nCkBSnajdFU9hEHohCxtRVLA3a7JKQh0TBeTnEBD
-	 0yBFuQmYzyCxPkpNlp4avKEj3O2XduO6GIvXMT9bGO1pT10wY1DaoBD22NqyQZZ8P0
-	 sd7W/laphrp6u7LBDoWV3/JE3Sa9MUPub4WYrNAD5RoNs3ScGt1EWFtMcRvbQzZk26
-	 cs9KaJcLIUNSUPqd24wHNAbHltfDOn9nssy122au6D3CaVDzwDkexdpGAju8/ygA/s
-	 QUDrAD1gu/yl4OwrCoCFh7vDZEN07IGUdK7/FaAqfd0OTjQHT8LM+LiBPVyx3v5fVj
-	 isomO0jzjD/vg==
-From: SeongJae Park <sj@kernel.org>
-To: Bijan Tabatabai <bijan311@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	damon@lists.linux.dev,
-	akpm@linux-foundation.org,
-	Bijan Tabatabai <bijantabatab@micron.com>
-Subject: Re: [PATCH] mm/damon/vaddr: Skip isolating folios already in destination nid
-Date: Fri, 25 Jul 2025 12:36:37 -0700
-Message-Id: <20250725193637.49389-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250725163300.4602-1-bijan311@gmail.com>
-References: 
+	s=k20201202; t=1753472281;
+	bh=bEox++np+gZQdQ3g0D4Q2QhzZPcdtYtL/cQZzR/t7Iw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rEVosa4QFaazZPCusQ6MQcPhE2rtvJmt8fMdT9bvbCdyZGGJiz7za7O+zWJpPCEAx
+	 to9JgCgdGFNpqTU4q6p49gyGFbPVRUYZvoPZRZgkCGuKy8MaiOjBNUgS9CACztksXE
+	 lJg/2giq9uS2KFs+8WS5RcHRcP8weCU7/LiNjcY/chC/mgi3PtPPrzyOH9LMTiGdzU
+	 VbZadqalxu6bZA5UGrHg7ajAeIwBpCpdA+kz7tVJMtIUEYeUjpEFlBIbXgHEbFbdC/
+	 QNhf2RpfsC56TilmPys5GWtSxhWxqblYPJ6rE8HTARG/v9xiE9CoR/ftAzF0qkBWpu
+	 F7io5uaiHz8sQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCHSET v4 0/9] perf annotate: Support --code-with-type on TUI
+Date: Fri, 25 Jul 2025 12:37:46 -0700
+Message-ID: <20250725193755.12276-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,60 +61,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Fri, 25 Jul 2025 11:33:00 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+Hello,
 
-> From: Bijan Tabatabai <bijantabatab@micron.com>
-> 
-> damos_va_migrate_dests_add() determines the node a folio should be in
-> based on the struct damos_migrate_dests associated with the migration
-> scheme and adds the folio to the linked list corresponding to that node
-> so it can be migrated later. Currently, folios are isolated and added to
-> the list even if they are already in the node they should be in.
-> 
-> In using damon weighted interleave more, I've found that the overhead of
-> needlessly adding these folios to the migration lists can be quite
-> high. The overhead comes from isolating folios and placing them in the
-> migration lists inside of damos_va_migrate_dests_add(), as well as the
-> cost of handling those folios in damon_migrate_pages(). This patch
-> eliminates that overhead by simply avoiding the addition of folios that
-> are already in their intended location to the migration list.
-[...]
-> Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
+The --code-with-type option is to show normal annotate output with type
+information.  It was supported only on --stdio, but this change adds it
+to TUI as well.
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+Arnaldo, please tell me if you still don't like the
+__hist_entry__tui_annotate() but I don't have a better idea for now.
 
-> ---
-> Sorry I missed this in the original patchset!
+v4 changes)
+ * add dso__debuginfo() helper  (Ian)
 
-No worry!
+v3 changes)
+ * hide stack operation and stack canary by default
 
-Andrew, could we squash this into commit 19c1dc15c859 ("mm/damon/vaddr: use
-damos->migrate_dests in migrate_{hot,cold}") on mm-stable?  I think this is
-just a simple fixup.
+v2 changes)
+ * use 'T' key to toggle data type display  (Arnaldo)
+ * display '[Type]' in the title line when it's enabled  (Arnaldo)
+ * show warning when debug info is not available  (Arnaldo)
+ * fix a typo  (Arnaldo)
 
-> 
->  mm/damon/vaddr.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-> index 7f5dc9c221a0..4404c2ab0583 100644
-> --- a/mm/damon/vaddr.c
-> +++ b/mm/damon/vaddr.c
-> @@ -711,6 +711,10 @@ static void damos_va_migrate_dests_add(struct folio *folio,
->  		target -= dests->weight_arr[i];
->  	}
->  
-> +	/* If the folio is already in the right node, don't do anything */
-> +	if (folio_nid(folio) == dests->node_id_arr[i])
-> +		return;
-> +
->  isolate:
->  	if (!folio_isolate_lru(folio))
->  		return;
-> -- 
-> 2.43.5
+Actually the command line option sets the default behavior and users can
+change it by pressing 'T' key in the TUI annotate browser.
 
+The code is also available at 'perf/annotate-code-type-tui-v4' branch at
+https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
 
 Thanks,
-SJ
+Namhyung
+
+Namhyung Kim (9):
+  perf annotate: Rename to __hist_entry__tui_annotate()
+  perf annotate: Remove __annotation_line__write()
+  perf annotate: Pass annotation_print_data to annotation_line__write()
+  perf annotate: Simplify width calculation in annotation_line__write()
+  perf annotate: Add --code-with-type support for TUI
+  perf annotate: Add 'T' hot key to toggle data type display
+  perf annotate: Show warning when debuginfo is not available
+  perf annotate: Hide data-type for stack operation and canary
+  perf annotate: Add dso__debuginfo() helper
+
+ tools/perf/Documentation/perf-annotate.txt |   1 -
+ tools/perf/builtin-annotate.c              |   5 -
+ tools/perf/ui/browsers/annotate.c          |  66 +++++++--
+ tools/perf/ui/browsers/hists.c             |   2 +-
+ tools/perf/util/annotate.c                 | 161 ++++++++++++++-------
+ tools/perf/util/annotate.h                 |  27 ++--
+ tools/perf/util/dso.h                      |  21 +++
+ tools/perf/util/hist.h                     |  12 +-
+ 8 files changed, 203 insertions(+), 92 deletions(-)
+
+-- 
+2.50.1
+
 
