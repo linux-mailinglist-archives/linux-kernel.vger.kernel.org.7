@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-746206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64477B12430
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:40:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09531B12436
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA201CE7969
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D48194E02EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8F224A07C;
-	Fri, 25 Jul 2025 18:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B54253954;
+	Fri, 25 Jul 2025 18:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMa+0sD/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXdkdIKm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F65B2417DE;
-	Fri, 25 Jul 2025 18:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266BD2550D2;
+	Fri, 25 Jul 2025 18:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753468795; cv=none; b=aFgPp7a7/cDO0QHkka7MXkjab/g3lweKP8Fdwy2+s0FhdSN1rvoIfNCkJ1xYqhk+4nphxttj8bkX+UX2IsuqxOWGbVEdheC7iXTzuL7Q6Kyaz7AEq/JOZVbDJ6kKFfDoFf1FKesi2jCEly9akAbjFJtR137RLt7zlNraJ7NI3ec=
+	t=1753468798; cv=none; b=MI+zcWsvsVvHoIsJVf7cZ4tkfElmr3gg8XBaVErH+ohCWZUjUsxejy0tJ2TT5m6sB+9i2bjU6iKdgdJj6fu4RDcWRaPMxRAPFmgWVLmBJa5diACBiD504l3a3KKpkq51n/W8cqK9OjpD2A0fyjIhKFXPvOrxNFdJn70WKfy/l/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753468795; c=relaxed/simple;
-	bh=edIATgke8NGOyIpM94wZwgosXYqSaSxcFFOIOzilcck=;
+	s=arc-20240116; t=1753468798; c=relaxed/simple;
+	bh=zrmTJvK9djwEgOGhMRS+0+NritPDOSCZSiiUHcQBa1U=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=f+eMsolk1QXx21vhG2hCQO3rR4/ZaT9i2oEut7oAz7HXnJ489KxXup/OFHh7Iv9bInmdDvP3DFoVAbn3FRy/WTM2PDNP268rbrvvfwPocqcptT0wWxIGt9/0X+6QHaZexx8JJ20nLJiQFkQ0lM7jv2CwFtaM/bVEwJjJpfTpq9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMa+0sD/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57D8C4CEE7;
-	Fri, 25 Jul 2025 18:39:54 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=JHhHIRgadkdAzdgaxZWvCqes5ASakN/qvmqgxIMAsw3YZnsyNIrzYeZAlD39UienR3MolFk4bRa8G7XIOdhaYqCRS+s7cVHllNGsdKc6GPrZ/wghDAGljtJ9USDeOmt8dz7zbzb0AkSWndtOrM52Y6NLBe63/1LPdGsvH/piHpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXdkdIKm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2BEC4CEEB;
+	Fri, 25 Jul 2025 18:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753468794;
-	bh=edIATgke8NGOyIpM94wZwgosXYqSaSxcFFOIOzilcck=;
+	s=k20201202; t=1753468797;
+	bh=zrmTJvK9djwEgOGhMRS+0+NritPDOSCZSiiUHcQBa1U=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rMa+0sD/aCuywy2NNQyUHVhLdVxJPPGgood/OKrrIkFq8aZpBgD96k+9O4IDn0e5e
-	 j6pQXIx4RPxyxlrptoTTIsHtblq8ZKaYFbaTa1WN1RqJSdzm5H6XlOeJWbUlVA6Ooa
-	 zfRp8YfpZwny2u0Vrd2T955NqpySKJCSyKj8aJps3mDmjuxNA8O68NADoU7fAE+fuz
-	 IOaGqDzWMCYKnYiUcF/1fnKg2+gi8PSYNSgF7f7D2+x03Zin0WA+vye2eFEGNSy/HJ
-	 RX6DKh4/+a9OZzOB23Jo16o8kgimHLKJzx+1CTmnI9O34g89Bh5CctHYcjg8NVlZSK
-	 Zi7hsmKFGp9NQ==
+	b=GXdkdIKm9NZNL91lY66LMGIa4Unt+Tl2/ZSY8pUPz5++ceisFlh8zzFkU4hsV37Cl
+	 I4pv3ISLoDqYe0rT1/yzSEkMt7QQ5XBQMMf7ufuIHGaGHb9PIkE8/rrUiWCn68LF64
+	 4ENxtqly7692q8rqch+43a3+Tx4VL4rMuyVmBZuS4yQIApmoT2T9EN3o9qORp3ACGD
+	 b8LfvFrd5YeJH2xm6bSpEsQkBFSjZeq2wSyght/wbcz6ym7U2HiUx0uMocnzQqJngc
+	 tyNHumqIS4slt+0dEFjJfpqRbr57wVqz7rAmcpKp10rDenaDSPp4wmNQ5dEAnzko+g
+	 9vbj5lu6bXSVQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CB9383BF5B;
-	Fri, 25 Jul 2025 18:40:13 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C22383BF5B;
+	Fri, 25 Jul 2025 18:40:16 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/2] mptcp: track more fallback cases
+Subject: Re: [PATCH net-next] selftests: net: Skip test if IPv6 is not
+ configured
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175346881226.3231025.5908283026020682892.git-patchwork-notify@kernel.org>
-Date: Fri, 25 Jul 2025 18:40:12 +0000
-References: 
- <20250723-net-next-mptcp-track-fallbacks-v1-0-a83cce08f2d5@kernel.org>
-In-Reply-To: 
- <20250723-net-next-mptcp-track-fallbacks-v1-0-a83cce08f2d5@kernel.org>
-To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ <175346881499.3231025.2977855605855058343.git-patchwork-notify@kernel.org>
+Date: Fri, 25 Jul 2025 18:40:14 +0000
+References: <20250723-netcons_test_ipv6-v1-1-41c9092f93f9@debian.org>
+In-Reply-To: <20250723-netcons_test_ipv6-v1-1-41c9092f93f9@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 23 Jul 2025 16:32:22 +0200 you wrote:
-> This series has two patches linked to fallback to TCP:
+On Wed, 23 Jul 2025 10:35:06 -0700 you wrote:
+> Extend the `check_for_dependencies()` function in `lib_netcons.sh` to check
+> whether IPv6 is enabled by verifying the existence of
+> `/proc/net/if_inet6`. Having IPv6 is a now a dependency of netconsole
+> tests. If the file does not exist, the script will skip the test with an
+> appropriate message suggesting to verify if `CONFIG_IPV6` is enabled.
 > 
-> - Patch 1: additional MIB counters for remaining error code paths around
->   fallback
-> 
-> - Patch 2: remove dedicated pr_debug() linked to fallback now that
->   everything should be covered by dedicated MIB counters.
+> This prevents the test to misbehave if IPv6 is not configured.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,1/2] mptcp: track fallbacks accurately via mibs
-    https://git.kernel.org/netdev/net-next/c/c65c2e3bae69
-  - [net-next,2/2] mptcp: remove pr_fallback()
-    https://git.kernel.org/netdev/net-next/c/829fec0244b4
+  - [net-next] selftests: net: Skip test if IPv6 is not configured
+    https://git.kernel.org/netdev/net-next/c/5ec9b15d8dfa
 
 You are awesome, thank you!
 -- 
