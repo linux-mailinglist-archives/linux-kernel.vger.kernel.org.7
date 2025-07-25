@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-746066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F635B122B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:10:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE761B122BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695A9AC07F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3C11CC62B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4172EF66F;
-	Fri, 25 Jul 2025 17:08:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541AF2EE604
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9597F2EF672;
+	Fri, 25 Jul 2025 17:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q6nsBbDk"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722C8226863;
+	Fri, 25 Jul 2025 17:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753463318; cv=none; b=oEhWu+5fcjq5NKOt1I71hk2+i9JuIgmIk39b+RIGi5MfZ1BreOEmkQRCbpT+06T4vgzc4U7ixbn5V6Z7/UxtgZN4ZS+oHHfcoFvdFySY74JdMx8QmC3UhA01g7fXH9IEW4cHYX7r5wbKYBGIoElWO6FkWH5HmMfIBTFTV+ktl00=
+	t=1753463462; cv=none; b=fCpZXEpyr0Eji2XQlVNMUhek4W1VkEh2b6HjHsrloQWVb1hfHWBe/LYbEJRQAbfNzXcuipebiVjqFhfgR3nJTs1F9Fhi4NWLePZeilIOarp2knyTZwPbrAPZQHZXGpSB5kV25VfwxeNCUxnW+PVu47vTUcATZKCHVEC6Lfh92w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753463318; c=relaxed/simple;
-	bh=Dg8EERLMA/G6FhA4fLtbjaMYqi1Ci3suh9nhzu97xiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EuquTzKBKd2o1gSgDWcfzy9ePUTxXJ2Ej+iz9Wi7twPx72Km8qxd7f8jBxqVeeWLJNLVYCNwwhJd3OXPS7IRgyGsJ4IB0NiK8/ezxg4WBmSc1P+fwtCoqzTZ1zw1GZgxJZk4jLxOfc9P22Qc5bAhTSKVNw1tb71STZTr5wQLVYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2A30176C;
-	Fri, 25 Jul 2025 10:08:28 -0700 (PDT)
-Received: from [10.1.197.43] (eglon.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B17A3F66E;
-	Fri, 25 Jul 2025 10:08:32 -0700 (PDT)
-Message-ID: <ccbf2f40-7e69-4b51-953f-113695b8c16e@arm.com>
-Date: Fri, 25 Jul 2025 18:08:31 +0100
+	s=arc-20240116; t=1753463462; c=relaxed/simple;
+	bh=6h7nPOb3zXhqTcv4gANHQ2bvTVhFkIX8nsrG7OgiSdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sT00wUe0XtMQXjrF7AnU2EqFHB287xWu2//ntKD+xiabSSGbIAFZtq0ONHKOmqnw3R2owjUdpusyUUcUi8uxVz2nP+dzZEej1JafrR9XcD0EDP6HhBIyMQDWTCd37R2G63eReke1rUH+kHzlbyYpkkZArN08GeJCm0zOK5a1KG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q6nsBbDk; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IwEj7tW3R8uCNKLY055BKb1g0sfs5+82uKkf0EViQnk=; b=q6nsBbDkqlaOI6zpV6bJS9CTol
+	XAKlVZQqfBwnB2MxRuZJMraL1hXQhohrtGkyp2l9rnDBXoyYn3Sh+LnpRalA0q42B7GYI/SJAAjJw
+	PgiHY4WOGExeZoRYvl7Z41eF5QqDaiLl6thfX1Wuw+s3+QyeGBiCJkwUO1k1co1kpn6o0YrFw6Oow
+	c3r+5XonilGVfG8f9gAz8TZAPMWgh9EFXqdtpi6LaNBIZcFDZzzQ+mucxd7PwH98CWHZVJK3rZj7F
+	wH0HdcOTf10xE07W0zVjM8yCW3RGgOEGaxYy1fuprasrdIFzlT4mbdqQNkyTVnnbKKW5Ik5LLxXPH
+	1PmDyyjA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ufLwZ-0000000FAKW-3dJu;
+	Fri, 25 Jul 2025 17:10:51 +0000
+Date: Fri, 25 Jul 2025 18:10:51 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Li Qiong <liqiong@nfschina.com>, Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] mm: slub: avoid deref of free pointer in sanity
+ checks if object is invalid
+Message-ID: <aIO6m2C8K4SrJ6mp@casper.infradead.org>
+References: <20250725064919.1785537-1-liqiong@nfschina.com>
+ <996a7622-219f-4e05-96ce-96bbc70068b0@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 04/36] cacheinfo: Expose the code to generate a
- cache-id from a device_node
-To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-5-james.morse@arm.com>
- <bfc4d1b5-c8c4-45de-b52a-833486368336@arm.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <bfc4d1b5-c8c4-45de-b52a-833486368336@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <996a7622-219f-4e05-96ce-96bbc70068b0@suse.cz>
 
-Hi Ben,
+On Fri, Jul 25, 2025 at 06:47:01PM +0200, Vlastimil Babka wrote:
+> On 7/25/25 08:49, Li Qiong wrote:
+> > For debugging, object_err() prints free pointer of the object.
+> > However, if check_valid_pointer() returns false for a object,
+> > dereferncing `object + s->offset` can lead to a crash. Therefore,
+> > print the object's address in such cases.
 
-On 14/07/2025 12:40, Ben Horgan wrote:
-> On 7/11/25 19:36, James Morse wrote:
->> The MPAM driver identifies caches by id for use with resctrl. It
->> needs to know the cache-id when probe-ing, but the value isn't set
->> in cacheinfo until device_initcall().
->>
->> Expose the code that generates the cache-id. The parts of the MPAM
->> driver that run early can use this to set up the resctrl structures
->> before cacheinfo is ready in device_initcall().
+I don't know where this patch came from (was it cc'd to linux-mm? i
+don't see it)
 
->> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
->> index 613410705a47..0fdd6358ee73 100644
->> --- a/drivers/base/cacheinfo.c
->> +++ b/drivers/base/cacheinfo.c
->> @@ -207,8 +207,7 @@ static bool match_cache_node(struct device_node *cpu,
->>   #define arch_compact_of_hwid(_x)    (_x)
->>   #endif
->>   -static void cache_of_set_id(struct cacheinfo *this_leaf,
->> -                struct device_node *cache_node)
->> +unsigned long cache_of_calculate_id(struct device_node *cache_node)
->>   {
->>       struct device_node *cpu;
->>       u32 min_id = ~0;
->> @@ -219,15 +218,23 @@ static void cache_of_set_id(struct cacheinfo *this_leaf,
->>           id = arch_compact_of_hwid(id);
->>           if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
->>               of_node_put(cpu);
->> -            return;
->> +            return ~0UL;
->>           }
->>             if (match_cache_node(cpu, cache_node))
->>               min_id = min(min_id, id);
->>       }
->>   -    if (min_id != ~0) {
->> -        this_leaf->id = min_id;
->> +    return min_id;
+> >  
+> > +/*
+> > + * object - should be a valid object.
+> > + * check_valid_pointer(s, slab, object) should be true.
+> > + */
 
-> Looks like some 32bit/64bit confusion. Don't we want to return ~0UL if min_id == ~0?
+This comment is very confusing.  It tries to ape kernel-doc style,
+but if it were kernel-doc, the word before the hyphen should be the name
+of the function, and it isn't.  If we did use kernel-doc for this, we'd
+use @object to denote that we're documenting the argument.
 
-Certainly some confusion - yup, because cache_of_calculate_id() needs to return something
-that is out of range and (u32)-1 might be valid...
+But I don't see the need to pretend this is related to kernel-doc.  This
+would be better:
 
-I think changing min_id to be defined as:
-|	unsigned long min_id = ~0UL;
+/*
+ * 'object' must be a valid pointer into this slab.  ie
+ * check_valid_pointer() would return true
+ */
 
-fixes this - any trip round the loop that doesn't match anything will eventually return ~0UL.
+I'm sure better wording for that is possible ...
 
+> >  	if (!check_valid_pointer(s, slab, object)) {
+> > -		object_err(s, slab, object, "Freelist Pointer check fails");
+> > +		slab_err(s, slab, "Invalid object pointer 0x%p", object);
+> >  		return 0;
 
-Thanks! - I always get the 'UL' suffixes wrong.
+No, the error message is now wrong.  It's not an object, it's the
+freelist pointer.
 
-James
+		slab_err(s, slab, "Invalid freelist pointer %p", object);
+
+(the 0x%p is wrong because it will print 0x twice)
+
+But I think there are even more things wrong here.  Like slab_err() is
+not nerely as severe as slab_bug(), which is what used to be called.
+And object_err() adds a taint, which this skips.
+
+Altogether, this is a poorly thought out patch and should be dropped.
 
