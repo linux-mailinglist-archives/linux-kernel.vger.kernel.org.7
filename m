@@ -1,153 +1,149 @@
-Return-Path: <linux-kernel+bounces-745339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD7EB118A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:48:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF637B118AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25FD3A4943
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:48:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6999916F825
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9A028935A;
-	Fri, 25 Jul 2025 06:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126CD289357;
+	Fri, 25 Jul 2025 06:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="kA2Ca1VE"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qDtxYrmW"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AABF1DED4A;
-	Fri, 25 Jul 2025 06:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7F326CE08;
+	Fri, 25 Jul 2025 06:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753426104; cv=none; b=K+v7Jf7aW84WFQ+C25msUM5qvDFiipbF+piHhDfk23lq/hXbA9iAxnAu68Hvy8QA6HYc0O8kgTTSH3CjiRlhWzxMebuU98JB32CNWq8nTip780uaox2r4QqTvKa56kP80rMf2UFfmIh9nfXlm3SAJD4gjmdikY7mz/jTm4KVCVo=
+	t=1753426141; cv=none; b=sTrhneG+09hsWTG1hCnMDYRzJTBY0BE0sbpoj5KW9z7daOGtBp9r3nFjlXB1DoZIrV739kYXFtRu8cM7h7ev/Hg4hKNIDfdIiuyZdgQmjgX/TVwvTvadIfhGTECxGS07hHFPRNihS7vcfkt8aI/YMHtDbaAwERXou0np1aQz8Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753426104; c=relaxed/simple;
-	bh=t0RQOIyBqE3YmbOxC7nuqmE3vvZwBy0YVSfo71KW9WU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q94wEITm+7KZBfYyFPGLZBaljIcBilIGDogm2pzDtG3JmExbrUgBvkxmAd5Tv+f74X555menmh1k2tW7m8JeQr83ONKafwDHzWvNsZvxxIWvnqk2WoZHSs3SVhfJkxbCRTsL36iWTbU23X9wi+b2YnrcWOhPPOio+2Ou0raBhpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=kA2Ca1VE; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ONWTB4017766;
-	Thu, 24 Jul 2025 23:48:12 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=VsdCnqeVtcIXjji2Xkezl2I
-	6NJ1McmMUj7UlVEQ76G8=; b=kA2Ca1VEaMhvE2d+7wWN0tSiZENq3xKr8NvZxP9
-	ARixdWCZZeXl7i/bffrOrfpSgo0XLm7KZtlrLzI9YRXNJi9J5DhUXojuiwbNNoxM
-	g6XC2QAD8e19r/YFqxu9LsOV91XejU3FNXUlgTGzgj+iJNjyZoAB9S3xvQEbHIsV
-	csYwi/ONQQQ3OdhIQB064Ah24qiM8HBv3CnlnfDy2wJwSM56iTQP3txx06diYFJo
-	e4q/iNfPoz0KZqTibbcqeaxIccMol3ujhiTdfJ2Lm0lvZTo/aFyTAj70vjM3kiyj
-	2X0vJAdr3qS4JQVysYBV3VZveC9czUDudiG3B6lHyiSNx8Q==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 483xk90nys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 23:48:11 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 24 Jul 2025 23:48:11 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 24 Jul 2025 23:48:11 -0700
-Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with ESMTP id CA93C3F7092;
-	Thu, 24 Jul 2025 23:48:05 -0700 (PDT)
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Hariprasad Kelam <hkelam@marvell.com>,
-        Sunil Goutham
-	<sgoutham@marvell.com>,
-        Linu Cherian <lcherian@marvell.com>,
-        Geetha sowjanya
-	<gakula@marvell.com>,
-        Jerin Jacob <jerinj@marvell.com>,
-        Subbaraya Sundeep
-	<sbhatta@marvell.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>,
-        Ratheesh Kannoth <rkannoth@marvell.com>
-Subject: [net] Octeontx2-af: Skip overlap check for SPI field
-Date: Fri, 25 Jul 2025 12:18:02 +0530
-Message-ID: <20250725064802.2440356-1-hkelam@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753426141; c=relaxed/simple;
+	bh=EhsjRfFYi3TvNj8OhAOcDUzuJCghcHQBsGT8pu3uvtE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hAUcL4QLenZtXrrYObSX4GlSaMdOaS8pP0OThLm8plidFFiTTC07jW4yAUoyG4mH93baFcUbQzLcpT5xIq8WJe0c2rOT5Dv5KDEyJKXXnrej3LoI4f3rLdlFdL7LPDEKLden8cJ1y4G4O1DzPoctK9NTXzI+UXNIu1G2HrhZdr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qDtxYrmW; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753426109; x=1754030909; i=markus.elfring@web.de;
+	bh=EhsjRfFYi3TvNj8OhAOcDUzuJCghcHQBsGT8pu3uvtE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=qDtxYrmW81a2M89hMT63Tl7fPQwA8J74fMeP9qf/cNRvGdQCgoG/vjNbQqCOCnnH
+	 CSyxb9MV0DEg7G4u5JxeYNWy1K0NXKLGIscP0DNzVceVBiojW/ZSbSYuI1e91civ9
+	 PRZB3mVIfjUvh3P0HorP/+QxmEoiAETxuSOR8P4LpRV/KZvK7KHVYPkpjvbhPLN6u
+	 pFGPQGZUEat+ljlb/1pz37Htj+WUwkH+pQY+pnlQNKc+4wQv5+AtfEoTL5PfT2T+D
+	 eOYjDS2ZLOzsgPfBOYZvPnH+XSIrsJWpM87YYShRwmCRP06BC/e2DsOy1kLv0EQrh
+	 2qDRCfhiWVeAF9yIKA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.216]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjBRZ-1uBNmb46VR-00job7; Fri, 25
+ Jul 2025 08:48:29 +0200
+Message-ID: <c43d27e6-7953-478a-89d7-c08576443cac@web.de>
+Date: Fri, 25 Jul 2025 08:48:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=bK8WIO+Z c=1 sm=1 tr=0 ts=688328ab cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=Wb1JkmetP80A:10 a=M5GUcnROAAAA:8 a=-rsMC5T0QWJERi4EvSYA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: qIvzkw-eXah94ZhvdJXv8hf2SVHcX-Jv
-X-Proofpoint-GUID: qIvzkw-eXah94ZhvdJXv8hf2SVHcX-Jv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA1NiBTYWx0ZWRfX5/IbVUuLQIcd bIqS3wBA5PpsIYtVZjlwwoXZwot2W+rweyu2Yln7NnobtvGVzUaJ3WNTEaG3sFaRT6tFQW/O6dN T6yBErlIsxt1JPo4+zTrCGKB05HIVu28Eovp40XZQ7AvBxJ2hoc6S/kad3K652hM8LfmjmcLLBN
- NFz/usIUJOG/IavVhJgCMe2hxPHVvsFf2WpqZAwALGhECGAgUqFq4F1VkiORIi8qR45PQ3NU/LP +mxyC1vAghgL09VZq+tnAgggJvKu5xlNKw/m0T+7A05YkC0kP4Mq3qVQz/BA12cnE8+gRbuHepz yxY3wd3mDjsjoHUC1/Ihbr3EBw1vCm2POo7j+3b5+RHDKlbazZ97FUZ5WOWoDnQi5Jo/wkEOESp
- cQonXKNLPW1qIG4ooSSV63re/ll9vCtGKqwlYbatIvJ8AB2vxLxUPHRMixJ6P1yGyX3loNV2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 0/2] Drivers: hv: Introduce new driver - mshv_vtl
+To: Naman Jain <namjain@linux.microsoft.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Michael Kelley <mhklinux@outlook.com>,
+ linux-hyperv@vger.kernel.org
+Cc: Roman Kisel <romank@linux.microsoft.com>,
+ Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ Alok Tiwari <alok.a.tiwari@oracle.com>, "Paul E. McKenney"
+ <paulmck@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20250724082547.195235-1-namjain@linux.microsoft.com>
+ <fe2487c2-1af1-49e2-985e-a5b724b00e88@web.de>
+ <558412b1-d90a-486a-8af4-f5c906c04cca@linux.microsoft.com>
+ <8cfe5678-b8c0-471c-8ad2-2c232c4bbc24@web.de>
+ <5160e0ab-f588-481c-9585-98b6f2944407@linux.microsoft.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <5160e0ab-f588-481c-9585-98b6f2944407@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8wSr+TTFmQDknorCUMFO0KR5Qq7cojlV63KXCiNK89SPimqJi7n
+ 1W3EPfj6/AJiQ6Lq7EGtbfFUkVGjx2T01+ZEoAO2wDzPuHbAbHFxZzRdMUM98UQqSa2XEcm
+ /0Q7kFfRnX0zO8AXUbWJhHbduO27Pv3ZvaduCQv/aSiVoGAxT5G9TkQiv2UEQiJ4qAe3zh3
+ EC1jxMZ0E17ZGOlk5jX1Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wW7Y7hudLko=;C1Qi+IciQncNCGvridVPVpyZNwI
+ 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
 
-Octeontx2/CN10K silicon supports generating a 256-bit key per packet.
-The specific fields to be extracted from a packet for key generation
-are configurable via a Key Extraction (MKEX) Profile.
+> I have one other usage of rcu_read_lock/unlock in the code, which I feel=
+ is=C2=A0fine=C2=A0in=C2=A0its=C2=A0current=C2=A0form.
 
-The AF driver scans the configured extraction profile to ensure that
-fields from upper layers do not overwrite fields from lower layers in
-the key.
+You may use another lock guard accordingly, don't you?
+https://elixir.bootlin.com/linux/v6.16-rc7/source/include/linux/rcupdate.h=
+#L1155-L1167
 
-Example Packet Field Layout:
-LA: DMAC + SMAC
-LB: VLAN
-LC: IPv4/IPv6
-LD: TCP/UDP
-
-Valid MKEX Profile Configuration:
-
-LA   -> DMAC   -> key_offset[0-5]
-LC   -> SIP    -> key_offset[20-23]
-LD   -> SPORT  -> key_offset[30-31]
-
-Invalid MKEX profile configuration:
-
-LA   -> DMAC   -> key_offset[0-5]
-LC   -> SIP    -> key_offset[20-23]
-LD   -> SPORT  -> key_offset[2-3]  // Overlaps with DMAC field
-
-In another scenario, if the MKEX profile is configured to extract
-the SPI field from both AH and ESP headers at the same key offset,
-the driver rejecting this configuration. In a regular traffic,
-ipsec packet will be having either AF(LD) or ESP (LE). This patch
-relaxes the check for the same.
-
-Fixes: 12aa0a3b93f3 ("octeontx2-af: Harden rule validation.")
-Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
----
- drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-index 1b765045aa63..d8d491a01e5b 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-@@ -607,7 +607,7 @@ static void npc_set_features(struct rvu *rvu, int blkaddr, u8 intf)
- 			*features &= ~BIT_ULL(NPC_OUTER_VID);
- 
- 	/* Set SPI flag only if AH/ESP and IPSEC_SPI are in the key */
--	if (npc_check_field(rvu, blkaddr, NPC_IPSEC_SPI, intf) &&
-+	if (npc_is_field_present(rvu, NPC_IPSEC_SPI, intf) &&
- 	    (*features & (BIT_ULL(NPC_IPPROTO_ESP) | BIT_ULL(NPC_IPPROTO_AH))))
- 		*features |= BIT_ULL(NPC_IPSEC_SPI);
- 
--- 
-2.34.1
-
+Regards,
+Markus
 
