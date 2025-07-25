@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-745231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D336B116F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:19:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF08B116F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:19:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A555A3FE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13ECF1899D9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E29239E7E;
-	Fri, 25 Jul 2025 03:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A80C23BCED;
+	Fri, 25 Jul 2025 03:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeGUR07I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pM7yVE7O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F7023505F;
-	Fri, 25 Jul 2025 03:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB4E239E79;
+	Fri, 25 Jul 2025 03:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753413567; cv=none; b=cLYoXDBzNXdK2VHT5OtpqTofuclGYKVka8K3gAEh6osm0RoEKVN0OZb1mfuE+UFYh8Fr1/GDq6zn5twhFtf5v0dUr8QgpYdo7LV8vel9jzLAN3KkELncSDQpKqulUjNTG5kVkakkgNOUH9O33Hy/XSr/8vveMDzHwLOhhG4fk98=
+	t=1753413568; cv=none; b=E4rboDwOrlOF5ZvWuHHu+13KhvUjLaiI1lf4/KCtAtp59Ksdbe/xI9UJB7uTWpBhhnCdURXYngaPVmvEw2FCVEGUJdx34gOQ8xLoqMs7YIoOrBcD/MUpz0OYCa1rvulVSwOi8OLbsMFbz8D41CsrweuyAUPrDcNY1m52taDrM2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753413567; c=relaxed/simple;
-	bh=JJN33OJIwpY19nsSYMGwbgXfV0/0i1MvwbuPrqV/Nao=;
+	s=arc-20240116; t=1753413568; c=relaxed/simple;
+	bh=ab8UTnCME71O74SywAdSri8BPpfuR06qmysNi2ruFns=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Sx24xwiGLyaWBy2NjxpFpsFQzdHQEm49yyZH3mxMnJYtaOZo5tmPUZ9FbHPqOetJfHczbc0t8OM4gzPwCnxNXsqOLNPJqO8AP/4E999JnYkwFp9uWYtyjEWpqxblzPqFr0XDyLfMWcUp744Wjz/gR9+QeuNPNe8SJ8e3g/+q1Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eeGUR07I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA65DC4CEF1;
-	Fri, 25 Jul 2025 03:19:26 +0000 (UTC)
+	 Message-Id:Subject; b=ls3/RTe5GG2Rsnq+cq6aEZmXbRhvfX+13TOHUygaIjbkmd7wP2tG6B7VdEZ1lklkM3m9bQxi4EFPmDxwm9pX+j6QdQcz7L2Zf0UNYPtACptlx97kEa8W4/h5KWCSbPttrK017xVPXAH3g2fFJ8K+ZuWF6lF6TGy1Bh4ZiCcUojU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pM7yVE7O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B72AAC4CEF1;
+	Fri, 25 Jul 2025 03:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753413566;
-	bh=JJN33OJIwpY19nsSYMGwbgXfV0/0i1MvwbuPrqV/Nao=;
+	s=k20201202; t=1753413567;
+	bh=ab8UTnCME71O74SywAdSri8BPpfuR06qmysNi2ruFns=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=eeGUR07IdCKgve9nSgolOGQ/dcftANCWfwl9DdRj4dFyuAwGNWoEoQRcR9EafhETe
-	 sUWldYRa8NByM6H/VhkhGo1RKxvVQn2RatjZqR0Aw3xzzxUodfj36ImBNRaS+qprAC
-	 66pEIT3JPJ4GEgnvLZG1jyPSl3q6dLyOoPA9sub/eW7qUC6aYxIf7EPQjee+Zfwx/q
-	 G+Q5UBM/1gc3ZGltdKQIPFKiok0qXuRMbSz37NWwJFyYRhx/pfKoFFFiqu0zOx3BBw
-	 0C8FIRHHWs7wrs3xuKGWw4/V3alBHvFL6oGq5kadhB/rEjTZbyM8j2hIEG+35okvfu
-	 OiOteLAt+UPKQ==
-Date: Thu, 24 Jul 2025 22:19:25 -0500
+	b=pM7yVE7OH0xzIrM4F7ITpYdgieZWAmRa3ev8YeazIsXompU7U92+kO5WSDR7p04E0
+	 nThQ0Vhj0bgHSXMHxOMHsiicBZgR6qEz86Ma8lhYcyOuh40aWd0Hx04GC/yOC86O5q
+	 kSFhQEykjCsSX2B9kz7WNDM6SF4vhCE6dFqpj4mvMpvinNp3dNUifbMmyrXITfKPj/
+	 +e06WmQ9p2QalJtIRr6DN/7o/n0KWb1qIqqTc/ogpFNX2V0WAC+a/rfsFxWt6lP+yw
+	 S1gDO2iF1/ywxBcI/m4HXs6HO0EwO31v+dA+XLgK6ynYVJCPSRDZIB18cwYXfV4c5Y
+	 l6NtWhb8901Zw==
+Date: Thu, 24 Jul 2025 22:19:27 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,211 +50,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, andersson@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, konradybcio@kernel.org
-To: srinivas.kandagatla@oss.qualcomm.com
-In-Reply-To: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
-References: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
-Message-Id: <175341328198.3754729.2356512730492122653.robh@kernel.org>
-Subject: Re: [PATCH 00/23] arm64: dts: qcom: cleanup DSP audio services
+Cc: Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-aspeed@lists.ozlabs.org, Andrew Lunn <andrew@lunn.ch>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org, 
+ Tao Ren <taoren@meta.com>
+To: rentao.bupt@gmail.com
+In-Reply-To: <20250723233013.142337-1-rentao.bupt@gmail.com>
+References: <20250723233013.142337-1-rentao.bupt@gmail.com>
+Message-Id: <175341328259.3754758.1853821981943315378.robh@kernel.org>
+Subject: Re: [PATCH v3 00/13] ARM: dts: aspeed: Add Meta Darwin dts
 
 
-On Wed, 23 Jul 2025 23:27:14 +0100, srinivas.kandagatla@oss.qualcomm.com wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+On Wed, 23 Jul 2025 16:29:56 -0700, rentao.bupt@gmail.com wrote:
+> From: Tao Ren <rentao.bupt@gmail.com>
 > 
-> All the SoC level dts has exactly same device tree entires for DSP Audio
-> sevices (apr, gpr, afe, apm, asm, adm) and its child devices.
+> The patch series introduces the initial device tree for Meta/Facebook
+> Darwin AST2600 BMC.
 > 
-> It does not make sense to keep copying the same content over and over
-> for each SoC, This patch series moves DSP services to common dtsi file
-> so that it eliminates duplicate content,  makes audio dts much consistent
-> and makes it easy for adding audio support for new SoC.
-> As part of this cleanup, two common dtsi files (elite and audioreach)
-> based on q6dsp framework are added and a SoC level audio.dtsi needs to add
-> the required iommu configuration for the audio stream service.
+> Patches #1, #2 and #3 fixes the DTB warnings in wedge400/fuji dts and
+> ast2600-facebook-netbmc-common.dtsi.
 > 
-> This patch series also addresses another issue found with multiple
-> instances of wsa codec macro, his can lead duplicate dapm widgets
-> and mixers resulting in failing to probe sound-card if both of
-> these instances are part of the dai-link.
+> Patch #4 moves eMMC entries from ast2600-facebook-netbmc-common.dtsi to
+> each BMC platform because eMMC was removed from future Meta Network BMC
+> platforms.
 > 
-> Tested this on X13s, any testing is appreciated.
+> Patch #5 introduces new BMC flash layout with 64MB data partition.
 > 
-> Srinivas Kandagatla (23):
->   arm64: dts: qcom: x1e80100: move dsp audio nodes to dedicated dts
->   arm64: dts: qcom: sc8280xp: use dedicated audioreach dtsi
->   arm64: dts: qcom: sm8650: use dedicated audioreach dtsi
->   arm64: dts: qcom: sm8550: use dedicated audioreach dtsi
->   arm64: dts: qcom: sm8450: use dedicated audioreach dtsi
->   arm64: dts: qcom: sar2130p: use dedicated audioreach dtsi
->   arm64: dts: qcom: sm8350: move dsp audio nodes to dedicated dts
->   arm64: dts: qcom: sm8250: use dedicated elite dtsi
->   arm64: dts: qcom: sm6115: use dedicated elite dtsi
->   arm64: dts: qcom: sdm845: use dedicated elite-audio dtsi
->   arm64: dts: qcom: sdm630: use dedicated elite-audio dtsi
->   arm64: dts: qcom: sc7280: use dedicated elite-audio dtsi
->   arm64: dts: qcom: sc7180: use dedicated elite-audio dtsi
->   arm64: dts: qcom: sm8750: use dedicated audioreach dtsi
->   arm64: dts: qcom: msm8916: use dedicated elite-audio dtsi
->   arm64: dts: qcom: msm8939: use dedicated elite-audio dtsi
->   arm64: dts: qcom: msm8996: use dedicated elite-audio dtsi
->   arm64: dts: qcom: sm6350: use dedicated elite-audio dtsi
->   arm64: dts: qcom: msm8953: use dedicated elite-audio dtsi
->   arm64: dts: qcom: sm8450: add sound prefix for wsa2
->   arm64: dts: qcom: sm8550: add sound prefix for wsa2
->   arm64: dts: qcom: sm8750: add sound prefix for wsa2
->   arm64: dts: qcom: sm8650: add sound prefix for wsa2
+> Patches #6, #7 and #8 add "wedge400-data64-bmc" board. "wedge400-bmc"
+> and "wedge400-data64-bmc" are identical except BMC flash layout.
 > 
->  arch/arm64/boot/dts/qcom/apq8039-t2.dts       |  1 +
->  arch/arm64/boot/dts/qcom/apq8096-db820c.dts   |  1 +
->  arch/arm64/boot/dts/qcom/apq8096-ifc6640.dts  |  1 +
->  .../arm64/boot/dts/qcom/audioreach-audio.dtsi | 45 ++++++++++
->  arch/arm64/boot/dts/qcom/elite-audio.dtsi     | 86 +++++++++++++++++++
->  arch/arm64/boot/dts/qcom/msm8916-audio.dtsi   |  5 ++
->  arch/arm64/boot/dts/qcom/msm8916-pm8916.dtsi  |  1 +
->  arch/arm64/boot/dts/qcom/msm8916.dtsi         | 44 ----------
->  arch/arm64/boot/dts/qcom/msm8929.dtsi         |  1 +
->  arch/arm64/boot/dts/qcom/msm8939-audio.dtsi   |  5 ++
->  arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi  |  1 +
->  .../qcom/msm8939-sony-xperia-kanuti-tulip.dts |  1 +
->  arch/arm64/boot/dts/qcom/msm8939.dtsi         | 44 ----------
->  arch/arm64/boot/dts/qcom/msm8953-audio.dtsi   |  5 ++
->  arch/arm64/boot/dts/qcom/msm8953.dtsi         | 78 +----------------
->  arch/arm64/boot/dts/qcom/msm8996-audio.dtsi   | 14 +++
->  .../boot/dts/qcom/msm8996-oneplus-common.dtsi |  1 +
->  .../dts/qcom/msm8996-sony-xperia-tone.dtsi    |  1 +
->  arch/arm64/boot/dts/qcom/msm8996-v3.0.dtsi    |  1 +
->  .../boot/dts/qcom/msm8996-xiaomi-gemini.dts   |  1 +
->  arch/arm64/boot/dts/qcom/msm8996.dtsi         | 48 +----------
->  arch/arm64/boot/dts/qcom/msm8996pro.dtsi      |  1 +
->  .../boot/dts/qcom/qcm6490-fairphone-fp5.dts   |  1 +
->  arch/arm64/boot/dts/qcom/qcm6490-idp.dts      |  1 +
->  .../boot/dts/qcom/qcm6490-shift-otter.dts     |  1 +
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  |  1 +
->  arch/arm64/boot/dts/qcom/qcs8550.dtsi         |  1 +
->  arch/arm64/boot/dts/qcom/qrb5165-rb5.dts      |  1 +
->  arch/arm64/boot/dts/qcom/sa8540p.dtsi         |  1 +
->  arch/arm64/boot/dts/qcom/sar2130p-audio.dtsi  |  5 ++
->  .../arm64/boot/dts/qcom/sar2130p-qar2130p.dts |  1 +
->  arch/arm64/boot/dts/qcom/sar2130p.dtsi        | 40 +--------
->  .../boot/dts/qcom/sc7180-acer-aspire1.dts     |  1 +
->  arch/arm64/boot/dts/qcom/sc7180-audio.dtsi    |  8 ++
->  arch/arm64/boot/dts/qcom/sc7180-idp.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  |  1 +
->  arch/arm64/boot/dts/qcom/sc7180.dtsi          | 56 +-----------
->  arch/arm64/boot/dts/qcom/sc7280-audio.dtsi    |  8 ++
->  arch/arm64/boot/dts/qcom/sc7280-idp.dtsi      |  1 +
->  arch/arm64/boot/dts/qcom/sc7280-qcard.dtsi    |  1 +
->  arch/arm64/boot/dts/qcom/sc7280.dtsi          | 68 +--------------
->  arch/arm64/boot/dts/qcom/sc8280xp-audio.dtsi  |  9 ++
->  arch/arm64/boot/dts/qcom/sc8280xp-crd.dts     |  1 +
->  .../boot/dts/qcom/sc8280xp-huawei-gaokun3.dts |  1 +
->  .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    |  1 +
->  .../dts/qcom/sc8280xp-microsoft-arcata.dts    |  1 +
->  .../dts/qcom/sc8280xp-microsoft-blackrock.dts |  1 +
->  arch/arm64/boot/dts/qcom/sc8280xp.dtsi        | 38 +-------
->  arch/arm64/boot/dts/qcom/sdm630-audio.dtsi    |  8 ++
->  .../qcom/sdm630-sony-xperia-ganges-kirin.dts  |  1 +
->  .../sdm630-sony-xperia-nile-discovery.dts     |  1 +
->  .../qcom/sdm630-sony-xperia-nile-pioneer.dts  |  1 +
->  .../qcom/sdm630-sony-xperia-nile-voyager.dts  |  1 +
->  arch/arm64/boot/dts/qcom/sdm630.dtsi          | 45 +---------
->  arch/arm64/boot/dts/qcom/sdm845-audio.dtsi    |  8 ++
->  arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi    |  1 +
->  arch/arm64/boot/dts/qcom/sdm845-db845c.dts    |  1 +
->  .../arm64/boot/dts/qcom/sdm845-lg-common.dtsi |  1 +
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts       |  1 +
->  .../boot/dts/qcom/sdm845-oneplus-common.dtsi  |  1 +
->  .../dts/qcom/sdm845-samsung-starqltechn.dts   |  1 +
->  .../boot/dts/qcom/sdm845-shift-axolotl.dts    |  1 +
->  .../dts/qcom/sdm845-sony-xperia-tama.dtsi     |  1 +
->  .../qcom/sdm845-xiaomi-beryllium-common.dtsi  |  1 +
->  .../boot/dts/qcom/sdm845-xiaomi-polaris.dts   |  1 +
->  arch/arm64/boot/dts/qcom/sdm845.dtsi          | 49 +----------
->  arch/arm64/boot/dts/qcom/sdm850.dtsi          |  1 +
->  arch/arm64/boot/dts/qcom/sm4250.dtsi          |  1 +
->  arch/arm64/boot/dts/qcom/sm6115-audio.dtsi    |  8 ++
->  .../boot/dts/qcom/sm6115-fxtec-pro1x.dts      |  1 +
->  arch/arm64/boot/dts/qcom/sm6115.dtsi          | 69 +--------------
->  .../boot/dts/qcom/sm6115p-lenovo-j606f.dts    |  1 +
->  arch/arm64/boot/dts/qcom/sm6350-audio.dtsi    | 17 ++++
->  .../qcom/sm6350-sony-xperia-lena-pdx213.dts   |  1 +
->  arch/arm64/boot/dts/qcom/sm6350.dtsi          | 62 +------------
->  arch/arm64/boot/dts/qcom/sm7125.dtsi          |  1 +
->  arch/arm64/boot/dts/qcom/sm7225.dtsi          |  1 +
->  arch/arm64/boot/dts/qcom/sm7325.dtsi          |  1 +
->  arch/arm64/boot/dts/qcom/sm8250-audio.dtsi    |  8 ++
->  arch/arm64/boot/dts/qcom/sm8250-hdk.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sm8250-mtp.dts       |  1 +
->  .../boot/dts/qcom/sm8250-sony-xperia-edo.dtsi |  1 +
->  .../dts/qcom/sm8250-xiaomi-elish-common.dtsi  |  1 +
->  .../boot/dts/qcom/sm8250-xiaomi-pipa.dts      |  1 +
->  arch/arm64/boot/dts/qcom/sm8250.dtsi          | 53 +-----------
->  arch/arm64/boot/dts/qcom/sm8350-audio.dtsi    |  8 ++
->  arch/arm64/boot/dts/qcom/sm8350-hdk.dts       |  1 +
->  .../qcom/sm8350-microsoft-surface-duo2.dts    |  1 +
->  arch/arm64/boot/dts/qcom/sm8350-mtp.dts       |  1 +
->  .../dts/qcom/sm8350-sony-xperia-sagami.dtsi   |  1 +
->  arch/arm64/boot/dts/qcom/sm8350.dtsi          | 67 +--------------
->  arch/arm64/boot/dts/qcom/sm8450-audio.dtsi    |  5 ++
->  arch/arm64/boot/dts/qcom/sm8450-hdk.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sm8450-qrd.dts       |  1 +
->  .../dts/qcom/sm8450-sony-xperia-nagara.dtsi   |  1 +
->  arch/arm64/boot/dts/qcom/sm8450.dtsi          | 40 +--------
->  arch/arm64/boot/dts/qcom/sm8550-audio.dtsi    | 10 +++
->  arch/arm64/boot/dts/qcom/sm8550-hdk.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sm8550-mtp.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sm8550-qrd.dts       |  1 +
->  .../boot/dts/qcom/sm8550-samsung-q5q.dts      |  1 +
->  .../qcom/sm8550-sony-xperia-yodo-pdx234.dts   |  1 +
->  arch/arm64/boot/dts/qcom/sm8550.dtsi          | 45 +---------
->  arch/arm64/boot/dts/qcom/sm8650-audio.dtsi    | 10 +++
->  arch/arm64/boot/dts/qcom/sm8650-hdk.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sm8650-mtp.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sm8650-qrd.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sm8650.dtsi          | 44 +---------
->  arch/arm64/boot/dts/qcom/sm8750-audio.dtsi    | 10 +++
->  arch/arm64/boot/dts/qcom/sm8750-mtp.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sm8750-qrd.dts       |  1 +
->  arch/arm64/boot/dts/qcom/sm8750.dtsi          | 42 +--------
->  .../boot/dts/qcom/x1-asus-zenbook-a14.dtsi    |  1 +
->  arch/arm64/boot/dts/qcom/x1-crd.dtsi          |  1 +
->  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  |  1 +
->  .../qcom/x1e78100-lenovo-thinkpad-t14s.dtsi   |  1 +
->  .../dts/qcom/x1e80100-asus-vivobook-s15.dts   |  1 +
->  arch/arm64/boot/dts/qcom/x1e80100-audio.dtsi  |  6 ++
->  .../dts/qcom/x1e80100-dell-xps13-9345.dts     |  1 +
->  .../dts/qcom/x1e80100-hp-omnibook-x14.dts     |  1 +
->  .../dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  |  1 +
->  .../dts/qcom/x1e80100-microsoft-romulus.dtsi  |  1 +
->  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts     |  1 +
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 43 +---------
->  124 files changed, 401 insertions(+), 946 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/qcom/audioreach-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/elite-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/msm8916-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/msm8939-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/msm8953-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/msm8996-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sar2130p-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sc7180-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sc7280-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sc8280xp-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm630-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sm6115-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sm6350-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8250-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8350-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8450-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8550-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8650-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8750-audio.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-audio.dtsi
+> Patches #9, #10 and #11 add "fuji-data64-bmc" board. "fuji-bmc" and
+> "fuji-data64-bmc" are identical except BMC flash layout.
+> 
+> Patches #12 and #13 add Meta Darwin BMC and updates devicetree
+> bindings.
+> 
+> Tao Ren (13):
+>   ARM: dts: aspeed: wedge400: Fix DTB warnings
+>   ARM: dts: aspeed: fuji: Fix DTB warnings
+>   ARM: dts: aspeed: Fix DTB warnings in
+>     ast2600-facebook-netbmc-common.dtsi
+>   ARM: dts: aspeed: Move eMMC out of ast2600-facebook-netbmc-common.dtsi
+>   ARM: dts: aspeed: Add facebook-bmc-flash-layout-128-data64.dtsi
+>   dt-bindings: arm: aspeed: add Facebook Wedge400-data64 board
+>   ARM: dts: aspeed: Add Facebook Wedge400-data64 (AST2500) BMC
+>   ARM: dts: aspeed: wedge400: Include wedge400-data64.dts
+>   dt-bindings: arm: aspeed: add Facebook Fuji-data64 board
+>   ARM: dts: aspeed: Add Facebook Fuji-data64 (AST2600) Board
+>   ARM: dts: aspeed: facebook-fuji: Include facebook-fuji-data64.dts
+>   dt-bindings: arm: aspeed: add Facebook Darwin board
+>   ARM: dts: aspeed: Add Facebook Darwin (AST2600) BMC
+> 
+>  .../bindings/arm/aspeed/aspeed.yaml           |    3 +
+>  arch/arm/boot/dts/aspeed/Makefile             |    3 +
+>  .../dts/aspeed/aspeed-bmc-facebook-darwin.dts |   72 +
+>  .../dts/aspeed/aspeed-bmc-facebook-elbert.dts |   12 +
+>  .../aspeed-bmc-facebook-fuji-data64.dts       | 1264 +++++++++++++++++
+>  .../dts/aspeed/aspeed-bmc-facebook-fuji.dts   | 1245 +---------------
+>  .../aspeed-bmc-facebook-wedge400-data64.dts   |  376 +++++
+>  .../aspeed/aspeed-bmc-facebook-wedge400.dts   |  366 +----
+>  .../ast2600-facebook-netbmc-common.dtsi       |   22 +-
+>  .../facebook-bmc-flash-layout-128-data64.dtsi |   60 +
+>  10 files changed, 1804 insertions(+), 1619 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dts
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dts
+>  create mode 100644 arch/arm/boot/dts/aspeed/facebook-bmc-flash-layout-128-data64.dtsi
 > 
 > --
-> 2.50.0
+> 2.47.3
 > 
 > 
 > 
@@ -276,45 +142,118 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: remotes/next/fs-next-11017-gdc9b385a8a2e (best guess, 102/103 blobs matched)
+ Base: remotes/next/fs-next-11017-gdc9b385a8a2e (best guess, 4/6 blobs matched)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250723233013.142337-1-rentao.bupt@gmail.com:
 
-arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): glink-edge:apr:qcom,glink-channels:0: 'adsp_apps' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): glink-edge:apr: 'compatible' is a required property
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): glink-edge:apr: 'qcom,domain' is a required property
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): glink-edge: Unevaluated properties are not allowed ('apr' was unexpected)
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): Unevaluated properties are not allowed ('clock-names', 'clocks', 'glink-edge', 'interrupt-names', 'interrupts-extended', 'power-domain-names', 'power-domains', 'qcom,smem-state-names', 'qcom,smem-states' were unexpected)
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dtb: remoteproc@c200000 (qcom,msm8953-adsp-pil): smd-edge:apr: 'compatible' is a required property
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dtb: remoteproc@c200000 (qcom,msm8953-adsp-pil): smd-edge:apr: 'qcom,domain' is a required property
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dtb: remoteproc@c200000 (qcom,msm8953-adsp-pil): smd-edge: Unevaluated properties are not allowed ('apr' was unexpected)
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dtb: remoteproc@c200000 (qcom,msm8953-adsp-pil): Unevaluated properties are not allowed ('qcom,smem-state-names', 'qcom,smem-states', 'smd-edge' were unexpected)
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dtb: smd-edge: apr: 'compatible' is a required property
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,smd-edge.yaml#
-arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dtb: smd-edge: apr: 'qcom,domain' is a required property
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,smd-edge.yaml#
-arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): glink-edge:apr:qcom,glink-channels:0: 'adsp_apps' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): glink-edge:apr: 'compatible' is a required property
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): glink-edge:apr: 'qcom,domain' is a required property
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): glink-edge: Unevaluated properties are not allowed ('apr' was unexpected)
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
-arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb: remoteproc@15700000 (qcom,sdm660-adsp-pas): Unevaluated properties are not allowed ('clock-names', 'clocks', 'glink-edge', 'interrupt-names', 'interrupts-extended', 'power-domain-names', 'power-domains', 'qcom,smem-state-names', 'qcom,smem-states' were unexpected)
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,adsp.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: timer (arm,armv7-timer): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: bus@1e600000 (aspeed,ast2600-ahbc): compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: syscon@1e6e2000 (aspeed,ast2600-scu): 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^pinctrl-[0-9]+$', '^silicon-id@[0-9a-f]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /ahb/apb/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /ahb/apb/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: adc@1e6e9000 (aspeed,ast2600-adc0): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: adc@1e6e9100 (aspeed,ast2600-adc1): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: crypto@1e6fa000 (aspeed,ast2600-acry): 'aspeed,ahbc' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): reg-io-width: 4 is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): lpc-snoop@80: 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: kcs@24 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: kcs@28 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: kcs@2c (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: kcs@114 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /ahb/apb/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /ahb/apb/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: fsi@1e79b000 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /ahb/apb/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: fsi@1e79b100 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /ahb/apb/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dtb: /ahb/apb/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: /ahb/apb/memory-controller@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2500-sdram-edac']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: /ahb/apb/syscon@1e6e2000/p2a-control@2c: failed to match any schema with compatible: ['aspeed,ast2500-p2a-ctrl']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: /ahb/apb/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2500-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: sd-controller@1e740000 (aspeed,ast2500-sd-controller): sdhci@200: Unevaluated properties are not allowed ('sdhci-caps-mask' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: /ahb/apb/pwm-tacho-controller@1e786000: failed to match any schema with compatible: ['aspeed,ast2500-pwm-tacho']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: lpc@1e789000 (aspeed,ast2500-lpc-v2): reg-io-width: 4 is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: lpc@1e789000 (aspeed,ast2500-lpc-v2): lpc-snoop@90: 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: kcs@24 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: kcs@28 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: kcs@2c (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: kcs@114 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: /ahb/apb/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2500-lhc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dtb: /ahb/apb/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2500-ibt-bmc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb: /ahb/apb/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: timer (arm,armv7-timer): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: bus@1e600000 (aspeed,ast2600-ahbc): compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: syscon@1e6e2000 (aspeed,ast2600-scu): 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^pinctrl-[0-9]+$', '^silicon-id@[0-9a-f]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /ahb/apb/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /ahb/apb/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: adc@1e6e9000 (aspeed,ast2600-adc0): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: adc@1e6e9100 (aspeed,ast2600-adc1): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: crypto@1e6fa000 (aspeed,ast2600-acry): 'aspeed,ahbc' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): reg-io-width: 4 is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): lpc-snoop@80: 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: kcs@24 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: kcs@28 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: kcs@2c (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: kcs@114 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /ahb/apb/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /ahb/apb/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: fsi@1e79b000 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /ahb/apb/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: fsi@1e79b100 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /ahb/apb/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dtb: /ahb/apb/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
 
 
 
