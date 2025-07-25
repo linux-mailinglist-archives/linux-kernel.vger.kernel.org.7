@@ -1,183 +1,220 @@
-Return-Path: <linux-kernel+bounces-745740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA079B11DB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:37:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CBBCB11DB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2615D3B67E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FE2C547412
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44D72E5B18;
-	Fri, 25 Jul 2025 11:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BDF2E6107;
+	Fri, 25 Jul 2025 11:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T8QE7V7P"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="PUNBXaTv"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE9F230BD9;
-	Fri, 25 Jul 2025 11:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D27D230D0E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753443430; cv=none; b=lpMBhBfi9Wlh8UOZbnElLt56a/PXqwebQocCk1riUDAUVORSa6bn1+zjNzm1paszc8XqUl3ve55G0e5VQ8FW7B+i1dExKb92YjsUiEuE3ZQm6v903VIINIj4jJYWq2Ghmz9seUSEL1r+Ps+BRErzHJ9mZlNOIlDgCCrH9zmFqeI=
+	t=1753443587; cv=none; b=m3awlvlHshqk8pvzTG7h8iXhBrWpDzZZ5djjH99UOOrY3XWHM2UKrboOlWWJwa9IpHWf3c/h21K6NWGqg8/7tqU8E5zZtXSdg2aDYGa7LoYBbLsfwXacxEP5NDo+r/hADC2YUQhXp2ey9u7COIdQYTJSFaVGJdhA6KwotX4nUmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753443430; c=relaxed/simple;
-	bh=pPxpMCrAPG85F8fQoO31oOdpGDPi60o9D/2MxwrcJ0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jzdjKxsDzsyF3KrwKBaG3baBs0mPAnVNOfAEwN20iYNW8tCJYpXcFlMacvI+4RKUq5ZVGBeCOlOp+kQpnQ3MiM/yZHB+fEhShw2+1QtXHrp416ypmof0gs5dVHxY76vLCrPHnNXyTBNPuq4FY2PbuAzyqRj7Z+ETvqfa3jN31X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=T8QE7V7P; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id DF59BC66;
-	Fri, 25 Jul 2025 13:36:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753443387;
-	bh=pPxpMCrAPG85F8fQoO31oOdpGDPi60o9D/2MxwrcJ0g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T8QE7V7PQFQOFIat3LpsskLjpc2sNcoy3cpEQ+EIxheNSBZHpw5dft0QyGuLd4Zd9
-	 7eb/XZWu3Au5YT2mRQnrwOUIzUGUpiJ80WTJexR1koZ5cWQKJBsT+EOpLcOTqirIPU
-	 x+40MEXx4eB3HNbeuICc6SRVy175LcpJVqbS6O9s=
-Date: Fri, 25 Jul 2025 14:37:02 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: Sasha Levin <sashal@kernel.org>, Kees Cook <kees@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	corbet@lwn.net, workflows@vger.kernel.org, josh@joshtriplett.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
-Message-ID: <20250725113702.GD11202@pendragon.ideasonboard.com>
-References: <20250724-alluring-fuzzy-tanuki-6e8282@lemur>
- <202507241337.F9595E1D@keescook>
- <aIKhvubVqgeXIlrj@gallifrey>
- <202507241418.34AFD28C@keescook>
- <20250724194556.105803db@gandalf.local.home>
- <202507241651.5E9C803C70@keescook>
- <aILYj62tF_1mDjDO@lappy>
- <aILb-zDiDr4b9u9S@gallifrey>
- <aILjTKk_v8NPxlVJ@lappy>
- <aINqjTAwbQ_xnAw6@gallifrey>
+	s=arc-20240116; t=1753443587; c=relaxed/simple;
+	bh=mKAiBHVsEsd5FWUfD4rkeLeK/BRz/63cyQYbVpkR2pU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iQdU6RZrdlKwUNWu6Dsdw34KKcMChNTI1XkjOiUF9bxhMmm51iBT8TvdLvasupG1rsk+NhOmErmC2R06yfgmnZuoK5QP/p8DApyuaXkmJZ3+mr+e8c8MtTJYQVNiblFLJkS3oJWGMX7hNst2Do4QC91aTOzeyx315qLTXOW40GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=PUNBXaTv; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yAamN9go1GWBowH4grgvGHuyYEmwy0Xef1vXhYyGgbU=; b=PUNBXaTvZM3SmUHZnDAh5xRhJh
+	QVpZ5Op8xG677EtGUmH+IRU/7N2EU+h82dARUiKSrqip/4uSbZYDCTr5Q8p2+N1gePRwDkwEya+W/
+	A4jrfDtFt1fYw79Rt2L4UxOrRtnFdBj9hG/VBD5rD8Dxm4hJnlGzBZQA/dDNDYJXQeBHqKgJPk/XX
+	Q14zquXUPpSgCc6lF2W+0UN4Db7u+I91ilSyoVyM5RkUK8/zdCJKQLziXEXCBU7kDjySsXIu9K4Dd
+	HW7+9Tpo/L/XpcAFLtdIrejARn3zHSMOo5x43YckzAvVgvgqxp4wW8yUqnr5ZXPyhWZrVO83XuNSh
+	2lW0jxDQ==;
+Received: from [189.7.87.79] (helo=[192.168.0.7])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1ufGlu-003gf2-Oe; Fri, 25 Jul 2025 13:39:31 +0200
+Message-ID: <e15c86ee-f53c-4a35-9167-0d846309488d@igalia.com>
+Date: Fri, 25 Jul 2025 08:39:24 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aINqjTAwbQ_xnAw6@gallifrey>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/vc4: plane: Add support for P01[026] and S01[026]
+ formats
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Robert Mader <robert.mader@collabora.com>
+References: <20250724-drm-vc4-extra-formats-v1-1-67fa80597fad@raspberrypi.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <20250724-drm-vc4-extra-formats-v1-1-67fa80597fad@raspberrypi.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 25, 2025 at 11:29:17AM +0000, Dr. David Alan Gilbert wrote:
-> * Sasha Levin (sashal@kernel.org) wrote:
-> > On Fri, Jul 25, 2025 at 01:20:59AM +0000, Dr. David Alan Gilbert wrote:
-> > > * Sasha Levin (sashal@kernel.org) wrote:
-> > > > On Thu, Jul 24, 2025 at 04:54:11PM -0700, Kees Cook wrote:
-> > > > > On Thu, Jul 24, 2025 at 07:45:56PM -0400, Steven Rostedt wrote:
-> > > > > > My thought is to treat AI as another developer. If a developer helps you
-> > > > > > like the AI is helping you, would you give that developer credit for that
-> > > > > > work? If so, then you should also give credit to the tooling that's helping
-> > > > > > you.
-> > > > > >
-> > > > > > I suggested adding a new tag to note any tool that has done non-trivial
-> > > > > > work to produce the patch where you give it credit if it has helped you as
-> > > > > > much as another developer that you would give credit to.
-> > > > >
-> > > > > We've got tags to choose from already in that case:
-> > > > >
-> > > > > Suggested-by: LLM
-> > > > >
-> > > > > or
-> > > > >
-> > > > > Co-developed-by: LLM <not@human.with.legal.standing>
-> > > > > Signed-off-by: LLM <not@human.with.legal.standing>
-> > > > >
-> > > > > The latter seems ... not good, as it implies DCO SoB from a thing that
-> > > > > can't and hasn't acknowledged the DCO.
-> > > > 
-> > > > In my mind, "any tool" would also be something like gcc giving you a
-> > > > "non-trivial" error (think something like a buffer overflow warning that
-> > > > could have been a security issue).
-> > > > 
-> > > > In that case, should we encode the entire toolchain used for developing
-> > > > a patch?
-> > > > 
-> > > > Maybe...
-> > > > 
-> > > > Some sort of semi-standardized shorthand notation of the tooling used to
-> > > > develop a patch could be interesting not just for plain disclosure, but
-> > > > also to be able to trace back issues with patches ("oh! the author
-> > > > didn't see a warning because they use gcc 13 while the warning was added
-> > > > in gcc 14!").
-> > > > 
-> > > > Signed-off-by: John Doe <jd@example.com> # gcc:14.1;ccache:1.2;sparse:4.7;claude-code:0.5
-> > > > 
-> > > > This way some of it could be automated via git hooks and we can recommend
-> > > > a relevant string to add with checkpatch.
-> > > 
-> > > For me there are two separate things:
-> > >  a) A tool that found a problem
-> > >  b) A tool that wrote a piece of code.
-> > > 
-> > > I think the cases you're referring to are all (a), where as I'm mostly
-> > > thinking here about (b).
-> > > In the case of (a) it's normally _one_ of those tools that found it,
-> > > e.g. I see some:
-> > >   Found by gcc -fanalyzer
-> > 
-> > I think that the line between (a) and (b) gets very blurry very fast, so
-> > I'd rather stay out of trying to define it.
-> > 
-> > Running "cargo clippy" on some code might generate a warning as follows:
-> > 
-> > warning: variables can be used directly in the `format!` string
-> >   --> dyad/src/kernel/sha_processing.rs:20:13
-> >    |
-> > 20 |             debug!("git sha {} could not be validated, attempting a second way...", git_sha);
-> >    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >    |
-> >    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
-> >    = note: `#[warn(clippy::uninlined_format_args)]` on by default
-> > help: change this to
-> >    |
-> > 20 -             debug!("git sha {} could not be validated, attempting a second way...", git_sha);
-> > 20 +             debug!("git sha {git_sha} could not be validated, attempting a second way...");
-> > 
-> > As you see, it proposes a fix at the bottom. Should I attribute "cargo
-> > clippy" in my commit message as it wrote some code?
-> > 
-> > Would your answer change if I run "cargo clippy --fix" which would
-> > automatically apply the fix on it's own?
-> > 
-> > We'll be hitting these issues all over the place if we try and draw a
-> > line... For example, with more advances autocompletion: where would you
-> > draw the line between completing variable names and writing an entire
-> > function based on a comment I've made?
+Hi Dave,
+
+On 24/07/25 13:11, Dave Stevenson wrote:
+> There are now formats defined for 2-plane YUV420 at 10, 12,
+> and 16 bit depth using the most significant bits of the 16bit
+> word (P010, P012, and P016), and 3-plane YUV420 at those
+> depths using the least significant bits of the 16 bit word
+> (S010, S012, and S016).
 > 
-> Fuzzy isn't it!
+> VC4_GEN_6 can support all those formats although only using
+> at most 10bits of resolution.
+> Add them as supported formats for all planes, but filtered
+> by hardware revision.
 > 
-> There's at least 3 levels as I see it:
->   1) Reported-by:
->     That's a lot of tools, that generate an error or warning.
->   2) Suggested-by:
->     That covers your example above (hmm including --fix ????)
->   3) Co-authored-by:
->     Where a tool wrote code based on your more abstract instructions
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+> We'd been asked if the S01x YUV formats could be supported on Pi5 as some
+> software codecs produce them.
+> The answer was yes, so this patch adds them and the P01x formats.
+> ---
+>   drivers/gpu/drm/vc4/vc4_plane.c | 54 ++++++++++++++++++++++++++++++++++++++---
+>   drivers/gpu/drm/vc4/vc4_regs.h  |  9 +++++++
+>   2 files changed, 59 insertions(+), 4 deletions(-)
 > 
-> (1) & (2) are taking some existing code and finding errors or light
-> improvements;  I don't think it matters whether the tool is a good
-> old chunk of C or an LLM that's doing it, but how much it's originating.
+> diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
+> index 056d344c5411..3d1342751a80 100644
+> --- a/drivers/gpu/drm/vc4/vc4_plane.c
+> +++ b/drivers/gpu/drm/vc4/vc4_plane.c
+> @@ -36,6 +36,7 @@ static const struct hvs_format {
+>   	u32 pixel_order;
+>   	u32 pixel_order_hvs5;
+>   	bool hvs5_only;
+> +	bool hvs6_only;
 
-Except from a copyright point of view. The situation is quite clear for
-deterministic code generation, it's less so for LLMs.
+Instead of adding a new boolean, what about adding a `enum vc4_gen
+min_gen`? Then, you can just check if `vc4->gen <
+hvs_formats[i].min_gen` in vc4_plane_init().
 
-> (Now I'm leaning more towards Kees's style of using existing tags
-> if we could define a way to do it cleanly).
+Best Regards,
+- Maíra
 
--- 
-Regards,
+>   } hvs_formats[] = {
+>   	{
+>   		.drm = DRM_FORMAT_XRGB8888,
+> @@ -247,6 +248,42 @@ static const struct hvs_format {
+>   		.pixel_order = HVS_PIXEL_ORDER_BGRA,
+>   		.pixel_order_hvs5 = HVS_PIXEL_ORDER_RGBA,
+>   	},
+> +	{
+> +		.drm = DRM_FORMAT_P010,
+> +		.hvs = HVS_PIXEL_FORMAT_YCBCR_YUV420_15_6_2PLANE,
+> +		.pixel_order_hvs5 = HVS_PIXEL_ORDER_XYCBCR,
+> +		.hvs6_only = true,
+> +	},
+> +	{
+> +		.drm = DRM_FORMAT_P012,
+> +		.hvs = HVS_PIXEL_FORMAT_YCBCR_YUV420_15_6_2PLANE,
+> +		.pixel_order_hvs5 = HVS_PIXEL_ORDER_XYCBCR,
+> +		.hvs6_only = true,
+> +	},
+> +	{
+> +		.drm = DRM_FORMAT_P016,
+> +		.hvs = HVS_PIXEL_FORMAT_YCBCR_YUV420_15_6_2PLANE,
+> +		.pixel_order_hvs5 = HVS_PIXEL_ORDER_XYCBCR,
+> +		.hvs6_only = true,
+> +	},
+> +	{
+> +		.drm = DRM_FORMAT_S010,
+> +		.hvs = HVS_PIXEL_FORMAT_YCBCR_YUV420_9_0_3PLANE,
+> +		.pixel_order_hvs5 = HVS_PIXEL_ORDER_XYCBCR,
+> +		.hvs6_only = true,
+> +	},
+> +	{
+> +		.drm = DRM_FORMAT_S012,
+> +		.hvs = HVS_PIXEL_FORMAT_YCBCR_YUV420_11_2_3PLANE,
+> +		.pixel_order_hvs5 = HVS_PIXEL_ORDER_XYCBCR,
+> +		.hvs6_only = true,
+> +	},
+> +	{
+> +		.drm = DRM_FORMAT_S016,
+> +		.hvs = HVS_PIXEL_FORMAT_YCBCR_YUV420_15_6_3PLANE,
+> +		.pixel_order_hvs5 = HVS_PIXEL_ORDER_XYCBCR,
+> +		.hvs6_only = true,
+> +	},
+>   };
+>   
+>   static const struct hvs_format *vc4_get_hvs_format(u32 drm_format)
+> @@ -2490,6 +2527,12 @@ static bool vc4_format_mod_supported(struct drm_plane *plane,
+>   	case DRM_FORMAT_YVU420:
+>   	case DRM_FORMAT_NV16:
+>   	case DRM_FORMAT_NV61:
+> +	case DRM_FORMAT_P010:
+> +	case DRM_FORMAT_P012:
+> +	case DRM_FORMAT_P016:
+> +	case DRM_FORMAT_S010:
+> +	case DRM_FORMAT_S012:
+> +	case DRM_FORMAT_S016:
+>   	default:
+>   		return (modifier == DRM_FORMAT_MOD_LINEAR);
+>   	}
+> @@ -2524,10 +2567,13 @@ struct drm_plane *vc4_plane_init(struct drm_device *dev,
+>   	};
+>   
+>   	for (i = 0; i < ARRAY_SIZE(hvs_formats); i++) {
+> -		if (!hvs_formats[i].hvs5_only || vc4->gen >= VC4_GEN_5) {
+> -			formats[num_formats] = hvs_formats[i].drm;
+> -			num_formats++;
+> -		}
+> +		if (hvs_formats[i].hvs5_only && vc4->gen < VC4_GEN_5)
+> +			continue;
+> +		if (hvs_formats[i].hvs6_only && vc4->gen < VC4_GEN_6_C)
+> +			continue;
+> +
+> +		formats[num_formats] = hvs_formats[i].drm;
+> +		num_formats++;
+>   	}
+>   
+>   	vc4_plane = drmm_universal_plane_alloc(dev, struct vc4_plane, base,
+> diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
+> index 27158be19952..4536e3c0533b 100644
+> --- a/drivers/gpu/drm/vc4/vc4_regs.h
+> +++ b/drivers/gpu/drm/vc4/vc4_regs.h
+> @@ -1079,6 +1079,15 @@ enum hvs_pixel_format {
+>   	HVS_PIXEL_FORMAT_AYUV444_RGB = 15,
+>   	HVS_PIXEL_FORMAT_RGBA1010102 = 16,
+>   	HVS_PIXEL_FORMAT_YCBCR_10BIT = 17,
+> +	/* 10 bit YUV420 formats with data with various alignments */
+> +	HVS_PIXEL_FORMAT_YCBCR_YUV420_15_6_2PLANE = 24,
+> +	HVS_PIXEL_FORMAT_YCBCR_YUV420_15_6_3PLANE = 25,
+> +	HVS_PIXEL_FORMAT_YCBCR_YUV420_13_4_2PLANE = 26,
+> +	HVS_PIXEL_FORMAT_YCBCR_YUV420_13_4_3PLANE = 27,
+> +	HVS_PIXEL_FORMAT_YCBCR_YUV420_11_2_2PLANE = 28,
+> +	HVS_PIXEL_FORMAT_YCBCR_YUV420_11_2_3PLANE = 29,
+> +	HVS_PIXEL_FORMAT_YCBCR_YUV420_9_0_2PLANE = 30,
+> +	HVS_PIXEL_FORMAT_YCBCR_YUV420_9_0_3PLANE = 31,
+>   };
+>   
+>   /* Note: the LSB is the rightmost character shown.  Only valid for
+> 
+> ---
+> base-commit: e48123c607a0db8b9ad02f83c8c3d39918dbda06
+> change-id: 20250724-drm-vc4-extra-formats-1f53e6491cc1
+> 
+> Best regards,
 
-Laurent Pinchart
 
