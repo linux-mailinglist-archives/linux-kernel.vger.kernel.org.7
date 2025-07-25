@@ -1,199 +1,627 @@
-Return-Path: <linux-kernel+bounces-745598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8DBB11C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:17:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C31B11C12
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E74F9AE4749
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:16:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C8073A1BC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626B22E764E;
-	Fri, 25 Jul 2025 10:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A672E88A5;
+	Fri, 25 Jul 2025 10:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bigon.be header.i=@bigon.be header.b="vVoB57PZ"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdYpbayG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBA42E3372
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBEC2E3B18;
+	Fri, 25 Jul 2025 10:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753438352; cv=none; b=sNoCj9tm+IKgxKyN9ZzZM5Mn6At9eNTnfwqkBZTJ3fNBjhwlkecBA2wq9OPCuPSBU0BiHkO4Ju0/R124NMm8nI7B1hU7ox2tXIvfzcWWVwCCXFImIHdTCETJDQY596h/ycX2ofRfDdYbq5wvw32LvDThVEhMzhYEFO33qNSSnqg=
+	t=1753438404; cv=none; b=LGZ7wxKmL/NfsrAB/C4ATRHtQYqc3PbsCXATjkupxGWsnCVlSDgAr5jxhzmZrIFnpZdDxxWFW+0NLNVziUn2t1w3qtWtEQ23nf609heo+9Y5SiZr42UrTLaOQpvR9uxniQ8otQEQcN3WphkdVGfzm2lu1V+j61onxNRPVFZDiuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753438352; c=relaxed/simple;
-	bh=HzdYr6TAFrPloikwWPVtgbN47x8owuMBGbrlRD9d7V0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=Fee/7Y6jjY4d5au2xt5uBTtFE0VdI2yXzMWBJWF1uDrBuJz8ltrHzVYKhteQ0MZ04ldm6znloKAsa60vdiAJW69orhYQ70JTNTX8UE7GPwzzWKS3SWjytItvw6eGrh2K/Ine08UJ+dGtnpwV0mDHWOPE2lsUKItwQnaEmV5Xivc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bigon.be; spf=pass smtp.mailfrom=bigon.be; dkim=pass (2048-bit key) header.d=bigon.be header.i=@bigon.be header.b=vVoB57PZ; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bigon.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bigon.be
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bpNwB0tfFz9slH
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:12:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bigon.be; s=MBO0001;
-	t=1753438346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=bRWeZ/8dBzRH3g8mKfACr0qQdS8AGLysU9VSBvuJ6x8=;
-	b=vVoB57PZxLSDr75eKxiTdvpkDCoPvZKCqb1Wr3UN9mDz1sj82L+hRb35fy0VVevuf1E9tV
-	GGNedW2lq0fBKD2FLS0z3mcFVuI6cmGpWxvAhKQKc8tHSqcqmro3oRPKXFFO+RELriXeeo
-	D8JE9Aan792LKcC1cIVZSP+28l4sg2a/US2r15mKifmXWxTems1AU0yz8TZrGj71af0tow
-	0oqrHz4yITyjSZ4P7drO42tK2DDapMLak5LwgoeMCVm79D//Sq1NJ9qu60h9MU8gnd5Lni
-	xbMwx/3AGufRYCdCK7NIrN2dWYa3LbtkH729jcyFTduuojxRjGYFKo82vYXaLA==
-Message-ID: <c939f4df-b35f-4429-968f-5bf623485af1@bigon.be>
-Date: Fri, 25 Jul 2025 12:12:24 +0200
+	s=arc-20240116; t=1753438404; c=relaxed/simple;
+	bh=VkJ3AAh3kING/7y4TsNtFdlS+U8ybMtol8pJ1H48EF0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UjQ1DkJ1jF52d5YXfAfF/xeDbHLjzCfQe7WCREn6KPWV/IJqp2VxEK4sK3/s/Y1VSU0eFSDxKn2MnC6mLvQSxs8qJmclpWE6WlPqIA7VUbpcO27tFW4onE+id6it4c7N19ajhN8un7x1dcdqJBkIJOA2LZ1l/quLRL+y5Ly0MqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdYpbayG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF26C4CEEF;
+	Fri, 25 Jul 2025 10:13:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753438404;
+	bh=VkJ3AAh3kING/7y4TsNtFdlS+U8ybMtol8pJ1H48EF0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HdYpbayGUc4/+CpCU5CmvhZ1o3h2B8plcgGIQ9WRaTIVRTba5RhRd3soXiezMBC/u
+	 MazUOAk1LL5PYXsjwT3bp/vp7tvLxRa4HB8+YgO71HxN7s7CEa+QOzlaLXC9bl9mcR
+	 wAdcczbXE56bMkz+KA48NSmZuSAuuGDTtmm/23CQdhxkcEsbV7cnc+o3EIpDIoEya3
+	 jBOc+pBh72I8G7b0D3tPgjDENqfD/eNCHxLTz8b8D8jEErwvZESlnNwjfaO7AXhkth
+	 oFRK08FmYwF3pAj8v7GTyVEyhDwId5vGlQBaoDGx+lZsyZZvUaXGMTYngM9UbzGUyq
+	 hcHbs1KyZquow==
+Date: Fri, 25 Jul 2025 19:13:18 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
+ <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo
+ <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, David Laight
+ <David.Laight@ACULAB.COM>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <thomas@t-8ch.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv6 perf/core 10/22] uprobes/x86: Add support to optimize
+ uprobes
+Message-Id: <20250725191318.554f2f3afe27584e03a0eaa2@kernel.org>
+In-Reply-To: <20250720112133.244369-11-jolsa@kernel.org>
+References: <20250720112133.244369-1-jolsa@kernel.org>
+	<20250720112133.244369-11-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Laurent Bigonville <bigon@bigon.be>
-Subject: Realtek Sdcard reader and Intel RST/VMD prevent laptop to properly go
- in s2idle
-To: linux-kernel@vger.kernel.org
-Content-Language: en-US, fr-BE, fr
-Autocrypt: addr=bigon@bigon.be; keydata=
- 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
- Gub8y8YgCrSTibbvx1KRJA==
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hello,
+On Sun, 20 Jul 2025 13:21:20 +0200
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-I've a Dell latitude 5530 that doesn't seems to support S3/suspend and 
-that relies on s2idle instead.
+> Putting together all the previously added pieces to support optimized
+> uprobes on top of 5-byte nop instruction.
+> 
+> The current uprobe execution goes through following:
+> 
+>   - installs breakpoint instruction over original instruction
+>   - exception handler hit and calls related uprobe consumers
+>   - and either simulates original instruction or does out of line single step
+>     execution of it
+>   - returns to user space
+> 
+> The optimized uprobe path does following:
+> 
+>   - checks the original instruction is 5-byte nop (plus other checks)
+>   - adds (or uses existing) user space trampoline with uprobe syscall
+>   - overwrites original instruction (5-byte nop) with call to user space
+>     trampoline
+>   - the user space trampoline executes uprobe syscall that calls related uprobe
+>     consumers
+>   - trampoline returns back to next instruction
+> 
+> This approach won't speed up all uprobes as it's limited to using nop5 as
+> original instruction, but we plan to use nop5 as USDT probe instruction
+> (which currently uses single byte nop) and speed up the USDT probes.
+> 
+> The arch_uprobe_optimize triggers the uprobe optimization and is called after
+> first uprobe hit. I originally had it called on uprobe installation but then
+> it clashed with elf loader, because the user space trampoline was added in a
+> place where loader might need to put elf segments, so I decided to do it after
+> first uprobe hit when loading is done.
+> 
+> The uprobe is un-optimized in arch specific set_orig_insn call.
+> 
+> The instruction overwrite is x86 arch specific and needs to go through 3 updates:
+> (on top of nop5 instruction)
+> 
+>   - write int3 into 1st byte
+>   - write last 4 bytes of the call instruction
+>   - update the call instruction opcode
+> 
+> And cleanup goes though similar reverse stages:
+> 
+>   - overwrite call opcode with breakpoint (int3)
+>   - write last 4 bytes of the nop5 instruction
+>   - write the nop5 first instruction byte
+> 
+> We do not unmap and release uprobe trampoline when it's no longer needed,
+> because there's no easy way to make sure none of the threads is still
+> inside the trampoline. But we do not waste memory, because there's just
+> single page for all the uprobe trampoline mappings.
+> 
+> We do waste frame on page mapping for every 4GB by keeping the uprobe
+> trampoline page mapped, but that seems ok.
+> 
+> We take the benefit from the fact that set_swbp and set_orig_insn are
+> called under mmap_write_lock(mm), so we can use the current instruction
+> as the state the uprobe is in - nop5/breakpoint/call trampoline -
+> and decide the needed action (optimize/un-optimize) based on that.
+> 
+> Attaching the speed up from benchs/run_bench_uprobes.sh script:
+> 
+> current:
+>         usermode-count :  152.604 ± 0.044M/s
+>         syscall-count  :   13.359 ± 0.042M/s
+> -->     uprobe-nop     :    3.229 ± 0.002M/s
+>         uprobe-push    :    3.086 ± 0.004M/s
+>         uprobe-ret     :    1.114 ± 0.004M/s
+>         uprobe-nop5    :    1.121 ± 0.005M/s
+>         uretprobe-nop  :    2.145 ± 0.002M/s
+>         uretprobe-push :    2.070 ± 0.001M/s
+>         uretprobe-ret  :    0.931 ± 0.001M/s
+>         uretprobe-nop5 :    0.957 ± 0.001M/s
+> 
+> after the change:
+>         usermode-count :  152.448 ± 0.244M/s
+>         syscall-count  :   14.321 ± 0.059M/s
+>         uprobe-nop     :    3.148 ± 0.007M/s
+>         uprobe-push    :    2.976 ± 0.004M/s
+>         uprobe-ret     :    1.068 ± 0.003M/s
+> -->     uprobe-nop5    :    7.038 ± 0.007M/s
+>         uretprobe-nop  :    2.109 ± 0.004M/s
+>         uretprobe-push :    2.035 ± 0.001M/s
+>         uretprobe-ret  :    0.908 ± 0.001M/s
+>         uretprobe-nop5 :    3.377 ± 0.009M/s
+> 
+> I see bit more speed up on Intel (above) compared to AMD. The big nop5
+> speed up is partly due to emulating nop5 and partly due to optimization.
+> 
+> The key speed up we do this for is the USDT switch from nop to nop5:
+>         uprobe-nop     :    3.148 ± 0.007M/s
+>         uprobe-nop5    :    7.038 ± 0.007M/s
+> 
 
-For years now, the laptop is draining a lot of power (50% of the battery 
-over night) when it's (supposedly) in s2idle state, I thought it was normal.
+This also looks good to me.
 
-But I had a new look at this this week and now I seems to realized that 
-it was actually not normal.
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-I ran Intel's s0ix-selftest-tool script and it complains about Intel 
-RST/VMD (RAID stuff) and the integrated Realtek SD card reader.
+Thanks!
 
-I disabled both in the BIOS and s0ix-selftest-tool is now happy and from 
-my quick tests, the battery usage is way lower now in s2idle.
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Acked-by: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  arch/x86/include/asm/uprobes.h |   7 +
+>  arch/x86/kernel/uprobes.c      | 283 ++++++++++++++++++++++++++++++++-
+>  include/linux/uprobes.h        |   6 +-
+>  kernel/events/uprobes.c        |  16 +-
+>  4 files changed, 305 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/uprobes.h b/arch/x86/include/asm/uprobes.h
+> index 678fb546f0a7..1ee2e5115955 100644
+> --- a/arch/x86/include/asm/uprobes.h
+> +++ b/arch/x86/include/asm/uprobes.h
+> @@ -20,6 +20,11 @@ typedef u8 uprobe_opcode_t;
+>  #define UPROBE_SWBP_INSN		0xcc
+>  #define UPROBE_SWBP_INSN_SIZE		   1
+>  
+> +enum {
+> +	ARCH_UPROBE_FLAG_CAN_OPTIMIZE   = 0,
+> +	ARCH_UPROBE_FLAG_OPTIMIZE_FAIL  = 1,
+> +};
+> +
+>  struct uprobe_xol_ops;
+>  
+>  struct arch_uprobe {
+> @@ -45,6 +50,8 @@ struct arch_uprobe {
+>  			u8	ilen;
+>  		}			push;
+>  	};
+> +
+> +	unsigned long flags;
+>  };
+>  
+>  struct arch_uprobe_task {
+> diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> index d18e1ae59901..209ce74ab93f 100644
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
+> @@ -18,6 +18,7 @@
+>  #include <asm/processor.h>
+>  #include <asm/insn.h>
+>  #include <asm/mmu_context.h>
+> +#include <asm/nops.h>
+>  
+>  /* Post-execution fixups. */
+>  
+> @@ -702,7 +703,6 @@ static struct uprobe_trampoline *create_uprobe_trampoline(unsigned long vaddr)
+>  	return tramp;
+>  }
+>  
+> -__maybe_unused
+>  static struct uprobe_trampoline *get_uprobe_trampoline(unsigned long vaddr, bool *new)
+>  {
+>  	struct uprobes_state *state = &current->mm->uprobes_state;
+> @@ -891,6 +891,280 @@ static int __init arch_uprobes_init(void)
+>  
+>  late_initcall(arch_uprobes_init);
+>  
+> +enum {
+> +	EXPECT_SWBP,
+> +	EXPECT_CALL,
+> +};
+> +
+> +struct write_opcode_ctx {
+> +	unsigned long base;
+> +	int expect;
+> +};
+> +
+> +static int is_call_insn(uprobe_opcode_t *insn)
+> +{
+> +	return *insn == CALL_INSN_OPCODE;
+> +}
+> +
+> +/*
+> + * Verification callback used by int3_update uprobe_write calls to make sure
+> + * the underlying instruction is as expected - either int3 or call.
+> + */
+> +static int verify_insn(struct page *page, unsigned long vaddr, uprobe_opcode_t *new_opcode,
+> +		       int nbytes, void *data)
+> +{
+> +	struct write_opcode_ctx *ctx = data;
+> +	uprobe_opcode_t old_opcode[5];
+> +
+> +	uprobe_copy_from_page(page, ctx->base, (uprobe_opcode_t *) &old_opcode, 5);
+> +
+> +	switch (ctx->expect) {
+> +	case EXPECT_SWBP:
+> +		if (is_swbp_insn(&old_opcode[0]))
+> +			return 1;
+> +		break;
+> +	case EXPECT_CALL:
+> +		if (is_call_insn(&old_opcode[0]))
+> +			return 1;
+> +		break;
+> +	}
+> +
+> +	return -1;
+> +}
+> +
+> +/*
+> + * Modify multi-byte instructions by using INT3 breakpoints on SMP.
+> + * We completely avoid using stop_machine() here, and achieve the
+> + * synchronization using INT3 breakpoints and SMP cross-calls.
+> + * (borrowed comment from smp_text_poke_batch_finish)
+> + *
+> + * The way it is done:
+> + *   - Add an INT3 trap to the address that will be patched
+> + *   - SMP sync all CPUs
+> + *   - Update all but the first byte of the patched range
+> + *   - SMP sync all CPUs
+> + *   - Replace the first byte (INT3) by the first byte of the replacing opcode
+> + *   - SMP sync all CPUs
+> + */
+> +static int int3_update(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+> +		       unsigned long vaddr, char *insn, bool optimize)
+> +{
+> +	uprobe_opcode_t int3 = UPROBE_SWBP_INSN;
+> +	struct write_opcode_ctx ctx = {
+> +		.base = vaddr,
+> +	};
+> +	int err;
+> +
+> +	/*
+> +	 * Write int3 trap.
+> +	 *
+> +	 * The swbp_optimize path comes with breakpoint already installed,
+> +	 * so we can skip this step for optimize == true.
+> +	 */
+> +	if (!optimize) {
+> +		ctx.expect = EXPECT_CALL;
+> +		err = uprobe_write(auprobe, vma, vaddr, &int3, 1, verify_insn,
+> +				   true /* is_register */, false /* do_update_ref_ctr */,
+> +				   &ctx);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	smp_text_poke_sync_each_cpu();
+> +
+> +	/* Write all but the first byte of the patched range. */
+> +	ctx.expect = EXPECT_SWBP;
+> +	err = uprobe_write(auprobe, vma, vaddr + 1, insn + 1, 4, verify_insn,
+> +			   true /* is_register */, false /* do_update_ref_ctr */,
+> +			   &ctx);
+> +	if (err)
+> +		return err;
+> +
+> +	smp_text_poke_sync_each_cpu();
+> +
+> +	/*
+> +	 * Write first byte.
+> +	 *
+> +	 * The swbp_unoptimize needs to finish uprobe removal together
+> +	 * with ref_ctr update, using uprobe_write with proper flags.
+> +	 */
+> +	err = uprobe_write(auprobe, vma, vaddr, insn, 1, verify_insn,
+> +			   optimize /* is_register */, !optimize /* do_update_ref_ctr */,
+> +			   &ctx);
+> +	if (err)
+> +		return err;
+> +
+> +	smp_text_poke_sync_each_cpu();
+> +	return 0;
+> +}
+> +
+> +static int swbp_optimize(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+> +			 unsigned long vaddr, unsigned long tramp)
+> +{
+> +	u8 call[5];
+> +
+> +	__text_gen_insn(call, CALL_INSN_OPCODE, (const void *) vaddr,
+> +			(const void *) tramp, CALL_INSN_SIZE);
+> +	return int3_update(auprobe, vma, vaddr, call, true /* optimize */);
+> +}
+> +
+> +static int swbp_unoptimize(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+> +			   unsigned long vaddr)
+> +{
+> +	return int3_update(auprobe, vma, vaddr, auprobe->insn, false /* optimize */);
+> +}
+> +
+> +static int copy_from_vaddr(struct mm_struct *mm, unsigned long vaddr, void *dst, int len)
+> +{
+> +	unsigned int gup_flags = FOLL_FORCE|FOLL_SPLIT_PMD;
+> +	struct vm_area_struct *vma;
+> +	struct page *page;
+> +
+> +	page = get_user_page_vma_remote(mm, vaddr, gup_flags, &vma);
+> +	if (IS_ERR(page))
+> +		return PTR_ERR(page);
+> +	uprobe_copy_from_page(page, vaddr, dst, len);
+> +	put_page(page);
+> +	return 0;
+> +}
+> +
+> +static bool __is_optimized(uprobe_opcode_t *insn, unsigned long vaddr)
+> +{
+> +	struct __packed __arch_relative_insn {
+> +		u8 op;
+> +		s32 raddr;
+> +	} *call = (struct __arch_relative_insn *) insn;
+> +
+> +	if (!is_call_insn(insn))
+> +		return false;
+> +	return __in_uprobe_trampoline(vaddr + 5 + call->raddr);
+> +}
+> +
+> +static int is_optimized(struct mm_struct *mm, unsigned long vaddr, bool *optimized)
+> +{
+> +	uprobe_opcode_t insn[5];
+> +	int err;
+> +
+> +	err = copy_from_vaddr(mm, vaddr, &insn, 5);
+> +	if (err)
+> +		return err;
+> +	*optimized = __is_optimized((uprobe_opcode_t *)&insn, vaddr);
+> +	return 0;
+> +}
+> +
+> +static bool should_optimize(struct arch_uprobe *auprobe)
+> +{
+> +	return !test_bit(ARCH_UPROBE_FLAG_OPTIMIZE_FAIL, &auprobe->flags) &&
+> +		test_bit(ARCH_UPROBE_FLAG_CAN_OPTIMIZE, &auprobe->flags);
+> +}
+> +
+> +int set_swbp(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+> +	     unsigned long vaddr)
+> +{
+> +	if (should_optimize(auprobe)) {
+> +		bool optimized = false;
+> +		int err;
+> +
+> +		/*
+> +		 * We could race with another thread that already optimized the probe,
+> +		 * so let's not overwrite it with int3 again in this case.
+> +		 */
+> +		err = is_optimized(vma->vm_mm, vaddr, &optimized);
+> +		if (err)
+> +			return err;
+> +		if (optimized)
+> +			return 0;
+> +	}
+> +	return uprobe_write_opcode(auprobe, vma, vaddr, UPROBE_SWBP_INSN,
+> +				   true /* is_register */);
+> +}
+> +
+> +int set_orig_insn(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+> +		  unsigned long vaddr)
+> +{
+> +	if (test_bit(ARCH_UPROBE_FLAG_CAN_OPTIMIZE, &auprobe->flags)) {
+> +		struct mm_struct *mm = vma->vm_mm;
+> +		bool optimized = false;
+> +		int err;
+> +
+> +		err = is_optimized(mm, vaddr, &optimized);
+> +		if (err)
+> +			return err;
+> +		if (optimized) {
+> +			err = swbp_unoptimize(auprobe, vma, vaddr);
+> +			WARN_ON_ONCE(err);
+> +			return err;
+> +		}
+> +	}
+> +	return uprobe_write_opcode(auprobe, vma, vaddr, *(uprobe_opcode_t *)&auprobe->insn,
+> +				   false /* is_register */);
+> +}
+> +
+> +static int __arch_uprobe_optimize(struct arch_uprobe *auprobe, struct mm_struct *mm,
+> +				  unsigned long vaddr)
+> +{
+> +	struct uprobe_trampoline *tramp;
+> +	struct vm_area_struct *vma;
+> +	bool new = false;
+> +	int err = 0;
+> +
+> +	vma = find_vma(mm, vaddr);
+> +	if (!vma)
+> +		return -EINVAL;
+> +	tramp = get_uprobe_trampoline(vaddr, &new);
+> +	if (!tramp)
+> +		return -EINVAL;
+> +	err = swbp_optimize(auprobe, vma, vaddr, tramp->vaddr);
+> +	if (WARN_ON_ONCE(err) && new)
+> +		destroy_uprobe_trampoline(tramp);
+> +	return err;
+> +}
+> +
+> +void arch_uprobe_optimize(struct arch_uprobe *auprobe, unsigned long vaddr)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	uprobe_opcode_t insn[5];
+> +
+> +	/*
+> +	 * Do not optimize if shadow stack is enabled, the return address hijack
+> +	 * code in arch_uretprobe_hijack_return_addr updates wrong frame when
+> +	 * the entry uprobe is optimized and the shadow stack crashes the app.
+> +	 */
+> +	if (shstk_is_enabled())
+> +		return;
+> +
+> +	if (!should_optimize(auprobe))
+> +		return;
+> +
+> +	mmap_write_lock(mm);
+> +
+> +	/*
+> +	 * Check if some other thread already optimized the uprobe for us,
+> +	 * if it's the case just go away silently.
+> +	 */
+> +	if (copy_from_vaddr(mm, vaddr, &insn, 5))
+> +		goto unlock;
+> +	if (!is_swbp_insn((uprobe_opcode_t*) &insn))
+> +		goto unlock;
+> +
+> +	/*
+> +	 * If we fail to optimize the uprobe we set the fail bit so the
+> +	 * above should_optimize will fail from now on.
+> +	 */
+> +	if (__arch_uprobe_optimize(auprobe, mm, vaddr))
+> +		set_bit(ARCH_UPROBE_FLAG_OPTIMIZE_FAIL, &auprobe->flags);
+> +
+> +unlock:
+> +	mmap_write_unlock(mm);
+> +}
+> +
+> +static bool can_optimize(struct arch_uprobe *auprobe, unsigned long vaddr)
+> +{
+> +	if (memcmp(&auprobe->insn, x86_nops[5], 5))
+> +		return false;
+> +	/* We can't do cross page atomic writes yet. */
+> +	return PAGE_SIZE - (vaddr & ~PAGE_MASK) >= 5;
+> +}
+>  #else /* 32-bit: */
+>  /*
+>   * No RIP-relative addressing on 32-bit
+> @@ -904,6 +1178,10 @@ static void riprel_pre_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+>  static void riprel_post_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+>  {
+>  }
+> +static bool can_optimize(struct arch_uprobe *auprobe, unsigned long vaddr)
+> +{
+> +	return false;
+> +}
+>  #endif /* CONFIG_X86_64 */
+>  
+>  struct uprobe_xol_ops {
+> @@ -1270,6 +1548,9 @@ int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (can_optimize(auprobe, addr))
+> +		set_bit(ARCH_UPROBE_FLAG_CAN_OPTIMIZE, &auprobe->flags);
+> +
+>  	ret = branch_setup_xol_ops(auprobe, &insn);
+>  	if (ret != -ENOSYS)
+>  		return ret;
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index b6b077cc7d0f..08ef78439d0d 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -192,7 +192,7 @@ struct uprobes_state {
+>  };
+>  
+>  typedef int (*uprobe_write_verify_t)(struct page *page, unsigned long vaddr,
+> -				     uprobe_opcode_t *insn, int nbytes);
+> +				     uprobe_opcode_t *insn, int nbytes, void *data);
+>  
+>  extern void __init uprobes_init(void);
+>  extern int set_swbp(struct arch_uprobe *aup, struct vm_area_struct *vma, unsigned long vaddr);
+> @@ -204,7 +204,8 @@ extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
+>  extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma, unsigned long vaddr, uprobe_opcode_t,
+>  			       bool is_register);
+>  extern int uprobe_write(struct arch_uprobe *auprobe, struct vm_area_struct *vma, const unsigned long opcode_vaddr,
+> -			uprobe_opcode_t *insn, int nbytes, uprobe_write_verify_t verify, bool is_register, bool do_update_ref_ctr);
+> +			uprobe_opcode_t *insn, int nbytes, uprobe_write_verify_t verify, bool is_register, bool do_update_ref_ctr,
+> +			void *data);
+>  extern struct uprobe *uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
+>  extern int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool);
+>  extern void uprobe_unregister_nosync(struct uprobe *uprobe, struct uprobe_consumer *uc);
+> @@ -240,6 +241,7 @@ extern void uprobe_copy_from_page(struct page *page, unsigned long vaddr, void *
+>  extern void arch_uprobe_clear_state(struct mm_struct *mm);
+>  extern void arch_uprobe_init_state(struct mm_struct *mm);
+>  extern void handle_syscall_uprobe(struct pt_regs *regs, unsigned long bp_vaddr);
+> +extern void arch_uprobe_optimize(struct arch_uprobe *auprobe, unsigned long vaddr);
+>  #else /* !CONFIG_UPROBES */
+>  struct uprobes_state {
+>  };
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index cbba31c0495f..e54081beeab9 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -192,7 +192,7 @@ static void copy_to_page(struct page *page, unsigned long vaddr, const void *src
+>  }
+>  
+>  static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t *insn,
+> -			 int nbytes)
+> +			 int nbytes, void *data)
+>  {
+>  	uprobe_opcode_t old_opcode;
+>  	bool is_swbp;
+> @@ -492,12 +492,13 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+>  		bool is_register)
+>  {
+>  	return uprobe_write(auprobe, vma, opcode_vaddr, &opcode, UPROBE_SWBP_INSN_SIZE,
+> -			    verify_opcode, is_register, true /* do_update_ref_ctr */);
+> +			    verify_opcode, is_register, true /* do_update_ref_ctr */, NULL);
+>  }
+>  
+>  int uprobe_write(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+>  		 const unsigned long insn_vaddr, uprobe_opcode_t *insn, int nbytes,
+> -		 uprobe_write_verify_t verify, bool is_register, bool do_update_ref_ctr)
+> +		 uprobe_write_verify_t verify, bool is_register, bool do_update_ref_ctr,
+> +		 void *data)
+>  {
+>  	const unsigned long vaddr = insn_vaddr & PAGE_MASK;
+>  	struct mm_struct *mm = vma->vm_mm;
+> @@ -531,7 +532,7 @@ int uprobe_write(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+>  		goto out;
+>  	folio = page_folio(page);
+>  
+> -	ret = verify(page, insn_vaddr, insn, nbytes);
+> +	ret = verify(page, insn_vaddr, insn, nbytes, data);
+>  	if (ret <= 0) {
+>  		folio_put(folio);
+>  		goto out;
+> @@ -2697,6 +2698,10 @@ bool __weak arch_uretprobe_is_alive(struct return_instance *ret, enum rp_check c
+>  	return true;
+>  }
+>  
+> +void __weak arch_uprobe_optimize(struct arch_uprobe *auprobe, unsigned long vaddr)
+> +{
+> +}
+> +
+>  /*
+>   * Run handler and ask thread to singlestep.
+>   * Ensure all non-fatal signals cannot interrupt thread while it singlesteps.
+> @@ -2761,6 +2766,9 @@ static void handle_swbp(struct pt_regs *regs)
+>  
+>  	handler_chain(uprobe, regs);
+>  
+> +	/* Try to optimize after first hit. */
+> +	arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
+> +
+>  	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
+>  		goto out;
+>  
+> -- 
+> 2.50.1
+> 
 
-There is no difference whether the kernel SDcard reader module 
-(rtsx_pci/rtsx_pci_sdmmc) is loaded or not.
 
-Checking PCI Devices D3 States:
-[  133.377966] intel_ish_ipc 0000:00:12.0: PCI PM: Suspend power state: D0
-[  133.378112] intel_ish_ipc 0000:00:12.0: PCI PM: Skipped
-[  133.380685] i801_smbus 0000:00:1f.4: PCI PM: Suspend power state: D0
-[  133.380699] i801_smbus 0000:00:1f.4: PCI PM: Skipped
-[  133.389974] proc_thermal_pci 0000:00:04.0: PCI PM: Suspend power 
-state: D3hot
-[  133.390090] nvme 10000:e1:00.0: PCI PM: Suspend power state: D3hot
-[  133.390673] snd_hda_intel 0000:00:1f.3: PCI PM: Suspend power state: 
-D3hot
-[  133.390744] i915 0000:00:02.0: PCI PM: Suspend power state: D3hot
-[  133.392965] mei_me 0000:00:16.0: PCI PM: Suspend power state: D3hot
-[  133.394565] rtsx_pci 0000:71:00.0: PCI PM: Suspend power state: D3hot
-[  133.394830] e1000e 0000:00:1f.6: PCI PM: Suspend power state: D3hot
-[  133.395923] intel-lpss 0000:00:15.1: PCI PM: Suspend power state: D3hot
-[  133.396238] xhci_hcd 0000:00:14.0: PCI PM: Suspend power state: D3hot
-[  133.396372] iwlwifi 0000:00:14.3: PCI PM: Suspend power state: D3hot
-[  133.398157] xhci_hcd 0000:00:0d.0: PCI PM: Suspend power state: D3cold
-[  133.399158] pcieport 0000:00:07.1: PCI PM: Suspend power state: D3cold
-[  133.402331] pcieport 10000:e0:06.0: PCI PM: Suspend power state: D3hot
-[  133.403157] pcieport 0000:00:07.0: PCI PM: Suspend power state: D3cold
-[  133.414710] vmd 0000:00:0e.0: PCI PM: Suspend power state: D3hot
-[  133.420276] pcieport 0000:00:1d.0: PCI PM: Suspend power state: D3hot
-[  133.423235] thunderbolt 0000:00:0d.2: PCI PM: Suspend power state: D3cold
-
-
-Checking PCI Devices tree diagram:
--[0000:00]-+-00.0  Intel Corporation Alder Lake-U15 Host and DRAM Controller
-            +-02.0  Intel Corporation Alder Lake-UP3 GT2 [Iris Xe Graphics]
-            +-04.0  Intel Corporation Alder Lake Innovation Platform 
-Framework Processor Participant
-            +-06.0  Intel Corporation RST VMD Managed Controller
-            +-07.0-[01-38]--
-            +-07.1-[39-70]--
-            +-08.0  Intel Corporation 12th Gen Core Processor Gaussian & 
-Neural Accelerator
-            +-0d.0  Intel Corporation Alder Lake-P Thunderbolt 4 USB 
-Controller
-            +-0d.2  Intel Corporation Alder Lake-P Thunderbolt 4 NHI #0
-            +-0e.0  Intel Corporation Volume Management Device NVMe RAID 
-Controller
-            +-12.0  Intel Corporation Alder Lake-P Integrated Sensor Hub
-            +-14.0  Intel Corporation Alder Lake PCH USB 3.2 xHCI Host 
-Controller
-            +-14.2  Intel Corporation Alder Lake PCH Shared SRAM
-            +-14.3  Intel Corporation Alder Lake-P PCH CNVi WiFi
-            +-15.0  Intel Corporation Alder Lake PCH Serial IO I2C 
-Controller #0
-            +-15.1  Intel Corporation Alder Lake PCH Serial IO I2C 
-Controller #1
-            +-16.0  Intel Corporation Alder Lake PCH HECI Controller
-            +-1d.0-[71]----00.0  Realtek Semiconductor Co., Ltd. RTS525A 
-PCI Express Card Reader
-            +-1f.0  Intel Corporation Alder Lake PCH eSPI Controller
-            +-1f.3  Intel Corporation Alder Lake PCH-P High Definition 
-Audio Controller
-            +-1f.4  Intel Corporation Alder Lake PCH-P SMBus Host Controller
-            +-1f.5  Intel Corporation Alder Lake-P PCH SPI Controller
-            \-1f.6  Intel Corporation Ethernet Connection (16) I219-LM
--[10000:e0]---06.0-[e1]----00.0  Micron Technology Inc 3400 NVMe SSD 
-[Hendrix]
-
-Pcieport is not in D3cold:
-10000:e0:06.0
-0000:00:1d.0
-
-Full logs on: https://bugzilla.kernel.org/show_bug.cgi?id=220362 and 
-https://bugzilla.kernel.org/show_bug.cgi?id=218500
-
-An idea?
-
-Kind regards,
-
-Laurent Bigonville
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
