@@ -1,192 +1,148 @@
-Return-Path: <linux-kernel+bounces-745807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23620B11F08
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:54:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526FFB11F15
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 603237B2D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79FF9AA101A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C452ECD2E;
-	Fri, 25 Jul 2025 12:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90922ED16A;
+	Fri, 25 Jul 2025 12:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aWeHC8nj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=gmx.co.uk header.i=alex.dewar@gmx.co.uk header.b="Mw16jiEV"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F3D226173
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5C92ECEA0;
+	Fri, 25 Jul 2025 12:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753448053; cv=none; b=GYaQ4/xkMoneK1lxMRZLpVvJOGeKcz8n7rjC++hUamfzOrxrtuBjOLCzrHOO0SC08K3fy07ybMwLWX5eiUMQiQ/FAM52Dn6gzvN01iT8T9zPPsdKibUW2Pqyfv7tWTTTx70pu1F4tpFzZE+KFNvzSNWIhy280eHtsGywUSwoLs0=
+	t=1753448294; cv=none; b=LHW9MTGcxbJuJRraeetV2OHJNALr3f508jWdkR3C6mjO5jlo4yBa7kDGkkIMrdhggN7WfVPsPtKinLKC+RQWM/Ku2tX64rS4+5s4Jd4hlpxEXnayhlR4J01/6uYBUcFEjx9U9geDY8ONjk4Jx+yMQaE7uStptXrrxDdFLCMqtLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753448053; c=relaxed/simple;
-	bh=n6Pv49YI2ixqQxeXeoElRqTOz7LINnIIS8q9IK1ssoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vx/sL9/LsnwsG46OTUXmRh46De7rE3PAQPUMQICKVAAH3bys9k8HgVG+MQKM4GjXxlsKprjRBdgjzXUz8/0+1Fg87zkCcWBbWWpcrQ9qcf0dVGHnLaOfj2D/0rftVsGe9U1jySzGEVNCIIYJ1B6e0hCBYIxlV8yDzfN4nx7qqt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aWeHC8nj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753448050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gnS/9RA0O+Nr1ONscGv61A0UEDWCGQVb3k03oaKVO74=;
-	b=aWeHC8nj6VZbcK9974JxiBBC6l7VDvQx2FWAWPAs+CpzDnYU3KKO9ZyaunVXkFU9uzaM5K
-	IvXmR2BBqjuBjzeB30kFCpHZeXa+dEaC0dmhUKrSmCuoacomIsORO3s9/k0sVuUFhBpEHA
-	k9A6gg7tN2ZTFzGXmhia2fE1me9g+38=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-552-tQEqS80nOXG2JpXM3WAirA-1; Fri, 25 Jul 2025 08:54:09 -0400
-X-MC-Unique: tQEqS80nOXG2JpXM3WAirA-1
-X-Mimecast-MFC-AGG-ID: tQEqS80nOXG2JpXM3WAirA_1753448048
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f6ba526eso1552936f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:54:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753448048; x=1754052848;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gnS/9RA0O+Nr1ONscGv61A0UEDWCGQVb3k03oaKVO74=;
-        b=xS13D6PtDkOHC38qUinVQqrMgiIFftrmRYjzhNpNwm66s8JygGYMGjV/L+2bPqVraP
-         mr7jTBiaJVTW0CXpx6O8Fl8WzOcm0ereKYWjBqi7I10/p9urBAgS1ifdXPLRVHHEbdbf
-         r5dyZippB58ee9wshbQfIy4LFELz2iGpwZOs/y9A5oKTw+wTFWlfgEgw64Op6HNVp+az
-         pLO3IXOu5HhhhuG6xkzq/dznGXkFPWe5DT5ZhXmNM8apvyJ173oS/wT3oAjBlJl53jgm
-         NiS+GCaJTycYZM38xLfv+Vkzo9oaGxjVdkV2KBH6pkYPbAm5gAd9nHjAZ4TWRWeItxLN
-         TMlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQISbeocWVFMmXjhbD+D/m/HzE6e6sW0wTW1Z7Xz/ICVOWkxGBYMcLDN1ObqkdczkIjouKAHAGu9XI8yA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5NL6vDlg6oXjSn2MHr5O2OBEthHSDj2ir9lnYiO5HprlaXxhg
-	2RNIUq6kefJJMOHVxX685DydgBi4noD98vE2RiuDMI4MDyAkf73re7ZU7mRSApI26tSvklNV3aE
-	8QIA7urSbupC8vMh2vzP7BXMt6CpcXBvclYsPspVii5pJJO6IzU4SAJ/huEIEpAS2Bg==
-X-Gm-Gg: ASbGnctEfhuSLbltPT90o7BLO9EjkiWIr64A9jD4aZTNcyCeG7XndnEI7DD3naYcWDC
-	v6ODLKAf4XjdqcK3wepWJ97r7hNqy62o3cEEKK0+r2dx24qyby5G+I5AFKvv4QGmG4SsKnCtIW0
-	4nDzPN605NqMc7coFCif8yi7Hi5lgDgpVFX5YA8a0y8WLGwcPp+2JtCRj2lEhkJcnfyOSaRsoWB
-	I53Ry1wA2RfXHjq4Yiuffqtwex6tcCyLjWVsRt6lqpD8BQ7N2wwmdb5VNiTmbZkNJIlEcQxuYMy
-	fZv8Wg5a6Oa8icdaYXbGFYS6D4/LM6ce8cbBdH/8dfNiWfD5d4N98Pg1G8aDpx6hVFV1ogJh3xe
-	FV9rmMu4k+/o=
-X-Received: by 2002:a5d:584a:0:b0:3b6:463:d886 with SMTP id ffacd0b85a97d-3b77673ccd7mr1532675f8f.20.1753448048278;
-        Fri, 25 Jul 2025 05:54:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGnV/rTUIg6XNZcuQXqD7Mby5vL1dPZ+EQSiUq6okt35LgK8UVlU5ZqK2/bmlNQOz46/9c5Tw==
-X-Received: by 2002:a5d:584a:0:b0:3b6:463:d886 with SMTP id ffacd0b85a97d-3b77673ccd7mr1532648f8f.20.1753448047723;
-        Fri, 25 Jul 2025 05:54:07 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705377dasm53895725e9.4.2025.07.25.05.54.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 05:54:07 -0700 (PDT)
-Message-ID: <5fce419c-622f-4eda-ab92-86deaf0db5ca@redhat.com>
-Date: Fri, 25 Jul 2025 14:54:06 +0200
+	s=arc-20240116; t=1753448294; c=relaxed/simple;
+	bh=Ewbo8OyyELq9FpCF4mhFANUa5E4RG6vau0NG25J9gQI=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=L1q7b4LSe0z3sZm5qkK9KxXjAUmtbsB0hEUOGxokTD1ybpJFKGDvR8HuwSqah7ZhfVY2H9uKHK47qQ1o7X0OoyZUC5K9zSXQ7nYSdFCjlBhl3LnibdqM0Xam1eRfqtikYmLkUI7cAz6+zYXTB82ZaP+J4ZBtqN3moff9fom35t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.co.uk; spf=pass smtp.mailfrom=gmx.co.uk; dkim=pass (2048-bit key) header.d=gmx.co.uk header.i=alex.dewar@gmx.co.uk header.b=Mw16jiEV; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.co.uk;
+	s=s31663417; t=1753448289; x=1754053089; i=alex.dewar@gmx.co.uk;
+	bh=Ewbo8OyyELq9FpCF4mhFANUa5E4RG6vau0NG25J9gQI=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Mw16jiEVhgDV94sGN+5zbjezYrPs6tp/IzLey0LJOy3k3KRGHScMszmEX2ZH/ayI
+	 4pJBVNmCZCShL3Gl6kWhuFsC7mKYduDDb7ySopB5D244vXAVzkVNMbOhNPwv8Ly48
+	 v81vkRr+XggZI6BOtFsNP1x9gIH4eNeVlEPZAhcKI7qrxm8LkfNgfIAPiH60g7yf+
+	 omV4cnbJiHX/IsBEwPXmRP0yTcNl0X0reyHwd8h+nun66v87GkDUc79vazSFcDwV7
+	 SPTFeN1BO24LMbcg/sHa+857yR3oQz7YVyoiS/Y64z/cCRpMuvldpkMFoO7UcRkz5
+	 chlGDoY7jAvmII1lpA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.123] ([51.9.245.27]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MPokD-1v0NE2209r-00QbwQ; Fri, 25
+ Jul 2025 14:58:09 +0200
+Message-ID: <28505baeb52acbb6befc3091d198a8bd8a270493.camel@gmx.co.uk>
+Subject: Failing to resume from suspend on AMD Zen 2 machine
+From: Alex Dewar <alex.dewar@gmx.co.uk>
+To: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Date: Fri, 25 Jul 2025 13:58:09 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net: pppoe: implement GRO support
-To: Alexander Lobakin <aleksander.lobakin@intel.com>,
- Felix Fietkau <nbd@nbd.name>
-Cc: netdev@vger.kernel.org, Michal Ostrowski <mostrows@earthlink.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250716081441.93088-1-nbd@nbd.name>
- <5f250beb-6a81-42b2-bf6f-da02c04cbf15@redhat.com>
- <0861d960-d1e7-4b51-b320-c2e033b49f12@nbd.name>
- <46fd972c-14d9-4876-8df5-1212f6530971@intel.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <46fd972c-14d9-4876-8df5-1212f6530971@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:BF8mbN8S2qM1zFgflkQ0YoNB1lkkjnK1CI3wfzNDay7Mgm9ciim
+ 1q6NyrG9JL9+g8AuUWyPenPXpmmplxaRJ+aMnxwvYMxaf7gN3JEVfsPYDcHR6zPbSVy35ye
+ frOAdinCFaMumWyJJ7POfSAyfrRjKzK3y8r5AhRJeW/CGIZocXKiDP9m1LRxmPG3HBhIFf3
+ zZNdWhHO25hz9wBml0Efg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:qOZhrevXZzE=;5WRy6Rfc09RQYx4gPC5lwzTr+QH
+ 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
+ qOZnpNqaXJddTrgtSEbkf+kvWAhCcnRo=
 
-On 7/25/25 2:42 PM, Alexander Lobakin wrote:
-> From: Felix Fietkau <nbd@nbd.name> Date: Tue, 22 Jul 2025 10:56:10 +0200
->> On 22.07.25 10:36, Paolo Abeni wrote:
->>> On 7/16/25 10:14 AM, Felix Fietkau wrote:
->>>> +static struct sk_buff *pppoe_gro_receive(struct list_head *head,
->>>> +                     struct sk_buff *skb)
->>>> +{
->>>> +    const struct packet_offload *ptype;
->>>> +    unsigned int hlen, off_pppoe;
->>>> +    struct sk_buff *pp = NULL;
->>>> +    struct pppoe_hdr *phdr;
->>>> +    struct sk_buff *p;
->>>> +    __be16 type;
->>>> +    int flush = 1;
->>>
->>> Minor nit: please respect the reverse christmas tree order above
->>
->> Will do
->>
->>>> +    off_pppoe = skb_gro_offset(skb);
->>>> +    hlen = off_pppoe + sizeof(*phdr) + 2;
->>>> +    phdr = skb_gro_header(skb, hlen, off_pppoe);
->>>> +    if (unlikely(!phdr))
->>>> +        goto out;
->>>> +
->>>> +    /* ignore packets with padding or invalid length */
->>>> +    if (skb_gro_len(skb) != be16_to_cpu(phdr->length) + hlen - 2)
->>>> +        goto out;
->>>> +
->>>> +    NAPI_GRO_CB(skb)->network_offsets[NAPI_GRO_CB(skb)->encap_mark]
->>>> = hlen;
->>>> +
->>>> +    type = pppoe_hdr_proto(phdr);
->>>> +    if (!type)
->>>> +        goto out;
->>>> +
->>>> +    ptype = gro_find_receive_by_type(type);
->>>> +    if (!ptype)
->>>> +        goto out;
->>>> +
->>>> +    flush = 0;
->>>> +
->>>> +    list_for_each_entry(p, head, list) {
->>>> +        struct pppoe_hdr *phdr2;
->>>> +
->>>> +        if (!NAPI_GRO_CB(p)->same_flow)
->>>> +            continue;
->>>> +
->>>> +        phdr2 = (struct pppoe_hdr *)(p->data + off_pppoe);
->>>> +        if (compare_pppoe_header(phdr, phdr2))
->>>> +            NAPI_GRO_CB(p)->same_flow = 0;
->>>> +    }
->>>> +
->>>> +    skb_gro_pull(skb, sizeof(*phdr) + 2);
->>>> +    skb_gro_postpull_rcsum(skb, phdr, sizeof(*phdr) + 2);
->>>> +
->>>> +    pp = ptype->callbacks.gro_receive(head, skb);
->>>
->>> Here you can use INDIRECT_CALL_INET()
->>
->> I did that in the initial version, but then I got reports of build
->> failures with the patch:
->>
->> ERROR: modpost: "inet_gro_receive" [drivers/net/ppp/pppoe.ko] undefined!
->> ERROR: modpost: "inet_gro_complete" [drivers/net/ppp/pppoe.ko] undefined!
->>
->> Should I leave it out, or export inet_gro_receive/complete?
-> 
-> Could be exported I'd say. This would allows more modules to implement
-> GRO support.
-> INDIRECT_CALL() here gives good boosts here, at least I got some after
-> switching VLAN and TEB code several years ago.
-> 
-> If everyone is fine with exporting, I'd say those need to be exported as
-> GPL-only.
+Hi,
 
-Thanks Olek, I was almost missing this!
+I'm running an AMD desktop machine (Zen 2). At some point suspend and
+resume worked fine, but a few releases ago, something broke and now it
+fails to resume. I should probably have sent a message as soon as I
+noticed, but I've been getting by without it and figured it might
+resolve itself anyway.
 
-I agree with exporting GPL-only the symbols.
+What happens is that the system appears to suspend fine, but when I
+press the power button it *seems* to briefly wake (the LED stops
+flashing and the fans start) but then it goes back into a suspended
+state (fans stop, LED starts blinking). If I then press the power
+button again, it powers up and I can see my lockscreen, but the system
+is not responsive to user input.
 
-Thanks,
+This problem happens *almost* every time I suspend, however, if I've
+only recently booted the system and just have a few processes running
+(i.e. my window manager and normal system services) then it suspends
+and resumes fine. If I then open a browser etc. then it stops working.
 
-Paolo
+What extra info can I provide you with to make this a useful bug
+report? (I also have an AMD GPU -- maybe that's the culprit?)
 
+I'm running the stock Arch Linux kernel (v6.15.7). I also tried the
+latest commit on mainline (2942242dde89) but had the same result.
+
+Best,
+Alex
 
