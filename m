@@ -1,64 +1,59 @@
-Return-Path: <linux-kernel+bounces-746032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CBEB12225
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:39:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A28B12232
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2F658045C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:39:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24F201CE5476
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5D41A2396;
-	Fri, 25 Jul 2025 16:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469792EF646;
+	Fri, 25 Jul 2025 16:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/3owUOe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iexTPIGI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9553D3BBF2;
-	Fri, 25 Jul 2025 16:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6AE3BBF2;
+	Fri, 25 Jul 2025 16:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753461537; cv=none; b=YjLR4Vvsd93S5FBvZIzXq70INHBb9xxgno438wDYscABca76Zm+RAtg+JyP1AbI0AQuT6yintnfLCTHStERAGDmeRzqEa236Hi+RjMy58zkqWWjkRPhIPf/FFddtb/hQNTqT/abNyB6TczbV7UHqtKrtRnqmM7F7LRokSSzBc3E=
+	t=1753461672; cv=none; b=TmVFIAnjBizJyMsrNRIImE98kFHNj1i4IaiUUNYaMvi8mvk7uiOZ1lmjCjVMs2fppglMmurH3RBegnV/80rUrbny4UaEBZmFPZWLlyKIQxKPZhqv+CrKa7dRaojrZjiwI0hBX6u/eGK4AatPNVEHp2dw3yCtsK3h1x758sgg474=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753461537; c=relaxed/simple;
-	bh=ph09R88EGj0H43KIRGl9OnKpp1uyR+qA9PEna2s/QNo=;
+	s=arc-20240116; t=1753461672; c=relaxed/simple;
+	bh=+dn6kR5l0+iBlWJDGE+X3wOpJqP16In+19yWwfuvOXg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYYeLy7WZHHTwc1c/M2COHwXAEg/gHBjPqgi/bkFQ0gq5UqSfxWEazr9I1Cn8rbGp6itf+Xvxy6sek6qhbSlC82ydUkcQqCBE52WbimYjBLWGxzx9G6MfRMyziK0KqS4JaWVNpTw8yodaAm1p+qb6RnOVdm1QP1SYoCdyOO4kiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/3owUOe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 292A6C4CEE7;
-	Fri, 25 Jul 2025 16:38:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kA49YfQwmWsm3qn2yiVZsGl9B0ZLtBtu2Cg2WIa0zIn9fUE8z1Jmfp+qZiuGW0pmH28IBThKJV1Cyq5mC9XZiK4i51TzvIyVj+9iCT2O9uV37OstgK2T284f9u+lkzr1PCzWM91iyFG3bF2BzYTVtI4Rbwq04bq1HtAcEogsjZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iexTPIGI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0533AC4CEE7;
+	Fri, 25 Jul 2025 16:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753461537;
-	bh=ph09R88EGj0H43KIRGl9OnKpp1uyR+qA9PEna2s/QNo=;
+	s=k20201202; t=1753461672;
+	bh=+dn6kR5l0+iBlWJDGE+X3wOpJqP16In+19yWwfuvOXg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r/3owUOetdGfJ7NIolrwZMMOxRlDHBwquuCvs3fYNgdlE2+s8SrMe8N7hMu5JJ0ow
-	 /ZSz+d6zYcTZgVq3fXq12zRN68fSteTIG+YZuZgHFb1Y2NZwlTz0aXkGzTnLzICNZz
-	 agu2z5TUwRfLzLCs2DoHCEbueY0ip/cwCXEUqR1LOUOd7aHYtd7nfm0H1i5Lr1OR2+
-	 fHQ+sfSBfvmQld5NyMrp8iwsHrEFcEOCRDX13kdNHhj8c+tZJFNyGTE0a/Eta35aPU
-	 ioYtyNmXsuDO+cSmQVU54BwWFBJllFSsUzsc1PrAwLU4ia/+Lk8ST893Eqh525HBxB
-	 phA7AsoV+ZP8w==
-Date: Fri, 25 Jul 2025 09:38:51 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Justin Stitt <justinstitt@google.com>, Marc Zyngier <maz@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Tom Rix <trix@redhat.com>,
-	Christopher Covington <cov@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, stable@vger.kernel.org
-Subject: Re: [PATCH 6.1.y] KVM: arm64: silence -Wuninitialized-const-pointer
- warning
-Message-ID: <20250725163851.GB684490@ax162>
-References: <20250724-b4-clidr-unint-const-ptr-v1-1-67c4d620b6b6@google.com>
- <2025072553-chevy-starter-565e@gregkh>
+	b=iexTPIGI6sf5i4M49WzUR/f188G1IgLsRU9y93Rrgp+zcQqnJtt6X5AiZwKeJlapI
+	 2gmyrmC3hXOqqM+Eu00ds49GM+ObZNO4oZ/q/HmwTlUwXtRd9QPbh85+jtEXGvYVPu
+	 Dp7noayYIlmgcUQpz7Q6T7t6HZD/awZAPY+MoHaCy5A/GMZfmHUpuWIo2EC7Gztr2V
+	 dByuwrrkY0GEjezSTDepuDKpWEKbO1toxACBcXEuI+FMt0+VJjcYAtGkl1V6H8Cpmc
+	 pP0Cpg+WQj/5u+MsyG6MuhgfzDt0sYqffj7QV2axnXI6FfxB5mjHkv636ZcU0HfnGx
+	 cg0Hgrl6/UUnw==
+Date: Fri, 25 Jul 2025 17:41:06 +0100
+From: Simon Horman <horms@kernel.org>
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>
+Cc: shannon.nelson@amd.com, brett.creeley@amd.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	corbet@lwn.net, jgg@ziepe.ca, leon@kernel.org,
+	andrew+netdev@lunn.ch, allen.hubbe@amd.com, nikhil.agarwal@amd.com,
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 03/14] net: ionic: Export the APIs from net driver to
+ support device commands
+Message-ID: <20250725164106.GI1367887@horms.kernel.org>
+References: <20250723173149.2568776-1-abhijit.gangurde@amd.com>
+ <20250723173149.2568776-4-abhijit.gangurde@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,37 +62,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025072553-chevy-starter-565e@gregkh>
+In-Reply-To: <20250723173149.2568776-4-abhijit.gangurde@amd.com>
 
-On Fri, Jul 25, 2025 at 10:58:05AM +0200, Greg KH wrote:
-> On Thu, Jul 24, 2025 at 06:15:28PM -0700, Justin Stitt wrote:
-> > A new warning in Clang 22 [1] complains that @clidr passed to
-> > get_clidr_el1() is an uninitialized const pointer. get_clidr_el1()
-> > doesn't really care since it casts away the const-ness anyways.
+On Wed, Jul 23, 2025 at 11:01:38PM +0530, Abhijit Gangurde wrote:
+> RDMA driver needs to establish admin queues to support admin operations.
+> Export the APIs to send device commands for the RDMA driver.
 > 
-> Is clang-22 somehow now a supported kernel for the 6.1.y tree?  Last I
-> looked, Linus's tree doesn't even build properly for it, so why worry
-> about this one just yet?
+> Reviewed-by: Shannon Nelson <shannon.nelson@amd.com>
+> Signed-off-by: Abhijit Gangurde <abhijit.gangurde@amd.com>
 
-Our goal is to have tip of tree LLVM / clang be able to build any
-supported branch of the kernel so that whenever it branches and
-releases, the fixes for it are already present in released kernel
-versions so users can just pick them up and go. We are going to have to
-worry about this at some point since it is a stable-only issue so why
-not tackle it now?
+Hi Abhijit,
 
-> > Silence the warning by initializing the struct.
-> 
-> Why not fix the compiler not to do this instead?  We hate doing foolish
-> work-arounds for broken compilers.
+Perhaps I misunderstand things, or otherwise am on the wrong track here.
+But this seems to open the possibility of users of ionic_adminq_post_wait(),
+outside the Ethernet driver, executing a wide range or admin commands.
+It seems to me that it would be nice to narrow that surface.
 
-While casting away the const from the pointer in this case is "fine"
-because the object it pointed to was not const, I am fairly certain it
-is undefined behavior to cast away the const from a pointer to a const
-object, see commit 12051b318bc3 ("mips: avoid explicit UB in assignment
-of mips_io_port_base") for an exampile, so I am not sure the warning is
-entirely unreasonable.
-
-Cheers,
-Nathan
+...
 
