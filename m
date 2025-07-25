@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-746113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 180C9B1234D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:54:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6D1B1234F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388031CE2EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6FE4581BED
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AEB2EFDB6;
-	Fri, 25 Jul 2025 17:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242142F002D;
+	Fri, 25 Jul 2025 17:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITpUD1xS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVTRZj27"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D102EFDA7;
-	Fri, 25 Jul 2025 17:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1202EFDBD;
+	Fri, 25 Jul 2025 17:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753466042; cv=none; b=nkXYZrYzbpe1AfRLkj9vNDdI/PNcdeNhKusmtzS0Jl4Slzdi0/jF39TPM+gVQRRe7eHLUHckgXURV1amhXCPmd2RcJyFu7n8n5LipdYQQSIB2w46lbfs44XFtypjxe+kCtALHiIHyBJ/ee0IVtHuMs9whdJR5iHNxb0DEPHocL0=
+	t=1753466044; cv=none; b=iNrO0UCXK6xwESciz6SWGIfy0mGF+fO839iQ8VG4GjsvPaMa6p9eZXpcM0ZkIZtdkG1CmFiLhmHPpyAvH3Z8JNjoaK3jl9oJin6AppCAcFYYBIiuaS9Mkc7RJ7hRWYl34Zdv71qn3t+rTbhoQ7r0pUGY9zYjOBgQWtUGURgzsZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753466042; c=relaxed/simple;
-	bh=aNHTPcPmJgTe6jlcMuYedphKpF139DO8jV3SXEgqtRE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rGymVvVELHO9KbthwuXQxxS8Z6UVnvniIBfSDgZERbvHa5PsaTWYwPV5hFZO+tqizSRDnnhG6/ALTduRjhP+7siDGC1811t3SKMiVnxgZopguWXkmRRH32qugKv5eym8MObEsJqro869yOQaQuK17kIxGs4sTFKtq9bYw9pJ5E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITpUD1xS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B204FC4CEE7;
-	Fri, 25 Jul 2025 17:54:00 +0000 (UTC)
+	s=arc-20240116; t=1753466044; c=relaxed/simple;
+	bh=2GxaTK4CkQ28Mf7+PHK9cNeBUB7/wit3MFYBmfWYlZI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WHXaPvg2SB1HeLP0KNiH4r9YVChZsQNAlwFNzr02tNTRY90483pBJoSiJih1wznCkiaWFHSd6PWYyeOiR0cnPCwVDhsOCxUdzq8B5f3X5SYOgAztq6En9asUUN6caj02vudmeXhSHkEesI4YLsUHicQY30W8BA7LwTWtVhpee9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVTRZj27; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87052C4CEF6;
+	Fri, 25 Jul 2025 17:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753466042;
-	bh=aNHTPcPmJgTe6jlcMuYedphKpF139DO8jV3SXEgqtRE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ITpUD1xS7m9scpB3DouFV8OZPwR+tZfpNHAwRIbkzdpyShaUrC5ilLE52zT5SEO/S
-	 Nc+Vzc1Q56IGmqeXofIifnHmS8+TNfM8j3+aWDgHHE/pfkSAZR9NlTLK7BSf9UqQE8
-	 G90LKTfo96V5iwpJ5v7AMzE13/1a9HsGVa/VUW6At4v+sGdU3BHU8tKV+H9YWQrEp5
-	 X1s19oU8mgWZP2lAwG+IaYwR4R5TFeQ/7G+kenhg+rZUWP9PA26okPBmZS/cCY3S/v
-	 TDPdP/8YnssarUFdO0g6DgYHwjiOzHw8pq0XM9d/ghq1xURbBIhx+PVfmDMVMOJP2e
-	 sRt0B5kLKMlpQ==
+	s=k20201202; t=1753466044;
+	bh=2GxaTK4CkQ28Mf7+PHK9cNeBUB7/wit3MFYBmfWYlZI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bVTRZj27xwrTyBvXH2pL63WDZb6qiBSf675gAW/fVsBZ7MSqNH+SdVdOhYAg13z2J
+	 hDDo7i+NasQ1orROfRufXbzuA03AVfaDJwnfi/F3IkfKY+HDsVlRySJj0rol7hw3uM
+	 yI2IJEWYkmE9tGGAR83e8dJBdT7QkAvLinrLnuB9FISrXpGiSB7QFX7uLa+sMRWTxQ
+	 4ZM3uwIYfVWnvrGZArZrH0U/8Lbb1ZPvvSUs1lIAsbw/Ly1Mwj7Rp44OOPbfnUgxms
+	 +bWCoQpkHGFHI2jnJIYD7uEuMwl96v+Xo3jgLEUxsIj/o6zaj8pAclamp6B3Vv+2y1
+	 JT6uKkwey/7OQ==
 From: Sasha Levin <sashal@kernel.org>
 To: workflows@vger.kernel.org,
 	linux-doc@vger.kernel.org,
@@ -49,10 +50,12 @@ Cc: rostedt@goodmis.org,
 	corbet@lwn.net,
 	josh@joshtriplett.org,
 	Sasha Levin <sashal@kernel.org>
-Subject: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
-Date: Fri, 25 Jul 2025 13:53:56 -0400
-Message-Id: <20250725175358.1989323-1-sashal@kernel.org>
+Subject: [RFC 1/2] AI: Add unified AI coding assistant configuration
+Date: Fri, 25 Jul 2025 13:53:57 -0400
+Message-Id: <20250725175358.1989323-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250725175358.1989323-1-sashal@kernel.org>
+References: <20250725175358.1989323-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,93 +64,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series adds unified configuration and documentation for AI
-coding assistants working with the Linux kernel codebase. As AI tools
-become increasingly common in software development, it's important to
-establish clear guidelines for their use in kernel development.
+Create a single source of truth for AI instructions in
+Documentation/AI/main.md with symlinks for all major AI coding
+assistants:
+- CLAUDE.md (Claude Code)
+- .github/copilot-instructions.md (GitHub Copilot)
+- .cursorrules (Cursor)
+- .codeium/instructions.md (Codeium)
+- .continue/context.md (Continue)
+- .windsurfrules (Windsurf)
+- Documentation/AIder.conf.yml (Aider)
 
-The series consists of two patches:
-
-1. The first patch adds unified configuration files for various AI
-coding assistants (Claude, GitHub Copilot, Cursor, Codeium, Continue,
-Windsurf, and Aider). These are all symlinked to a central documentation
-file to ensure consistency across tools.
-
-2. The second patch adds the actual rules and documentation that guide
-AI assistants on Linux kernel development practices, including:
-   - Following kernel coding standards
-   - Respecting the development process
-   - Properly attributing AI-generated contributions
-   - Understanding licensing requirements
-
-The examples below demonstrate how these guidelines work in practice, showing
-proper AI attribution in commits and the assistant's understanding of kernel
-documentation requirements.
-
-All AI assistants are required to identify themselves in commits using
-Co-developed-by tags, ensuring full transparency about AI involvement in
-code development.
-
-"Hello world" test:
-
-	$ claude -p "do you need to attribute your commits?"
-	Yes, according to the CLAUDE.md file in this Linux kernel repository, I must identify myself as an AI assistant in commits by including:
-
-	```
-	Co-developed-by: Claude claude-opus-4-20250514
-	```
-
-	I should NOT add a Signed-off-by tag - only you (the human developer) should add that, as it represents a legal certification.
-
-
-Example patch creation with Claude Code:
-
-	$ claude -p "Fix the dont -> don't typo in @Documentation/power/opp.rst. Commit the result"
-	Done! The typo has been fixed and committed.
-
-
-And the resulting patch (no manual edits):
-
-	From 7613561f430920803d945b3cd53aa81440d4f6f0 Mon Sep 17 00:00:00 2001
-	From: Sasha Levin <sashal@kernel.org>
-	Date: Fri, 25 Jul 2025 13:38:43 -0400
-	Subject: [PATCH] Documentation: power: opp: Fix typo dont -> don't
-
-	Fix a typo in the OPP documentation where "dont" was missing an apostrophe.
-
-	Co-developed-by: Claude claude-opus-4-20250514
-	---
-	 Documentation/power/opp.rst | 2 +-
-	 1 file changed, 1 insertion(+), 1 deletion(-)
-
-	diff --git a/Documentation/power/opp.rst b/Documentation/power/opp.rst
-	index 1b7f1d854f14a..3eae4b955a63b 100644
-	--- a/Documentation/power/opp.rst
-	+++ b/Documentation/power/opp.rst
-	@@ -149,7 +149,7 @@ dev_pm_opp_find_freq_exact
-
-	         opp = dev_pm_opp_find_freq_exact(dev, 1000000000, false);
-	         dev_pm_opp_put(opp);
-	-        /* dont operate on the pointer.. just do a sanity check.. */
-	+        /* don't operate on the pointer.. just do a sanity check.. */
-	         if (IS_ERR(opp)) {
-	                pr_err("frequency not disabled!\n");
-	                /* trigger appropriate actions.. */
-
-
-Sasha Levin (2):
-  AI: Add unified AI coding assistant configuration
-  AI: Add initial set of rules and docs
-
- .aider.conf.yml                 |  1 +
- .codeium/instructions.md        |  1 +
- .continue/context.md            |  1 +
- .cursorrules                    |  1 +
- .github/copilot-instructions.md |  1 +
- .windsurfrules                  |  1 +
- CLAUDE.md                       |  1 +
- Documentation/AI/main.md        | 71 +++++++++++++++++++++++++++++++++
- 8 files changed, 78 insertions(+)
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ .aider.conf.yml                 | 1 +
+ .codeium/instructions.md        | 1 +
+ .continue/context.md            | 1 +
+ .cursorrules                    | 1 +
+ .github/copilot-instructions.md | 1 +
+ .windsurfrules                  | 1 +
+ CLAUDE.md                       | 1 +
+ Documentation/AI/main.md        | 5 +++++
+ 8 files changed, 12 insertions(+)
  create mode 120000 .aider.conf.yml
  create mode 120000 .codeium/instructions.md
  create mode 120000 .continue/context.md
@@ -157,6 +95,73 @@ Sasha Levin (2):
  create mode 120000 CLAUDE.md
  create mode 100644 Documentation/AI/main.md
 
+diff --git a/.aider.conf.yml b/.aider.conf.yml
+new file mode 120000
+index 0000000000000..201abbf2af4de
+--- /dev/null
++++ b/.aider.conf.yml
+@@ -0,0 +1 @@
++Documentation/AI/main.md
+\ No newline at end of file
+diff --git a/.codeium/instructions.md b/.codeium/instructions.md
+new file mode 120000
+index 0000000000000..69274c2ad2f60
+--- /dev/null
++++ b/.codeium/instructions.md
+@@ -0,0 +1 @@
++../Documentation/AI/main.md
+\ No newline at end of file
+diff --git a/.continue/context.md b/.continue/context.md
+new file mode 120000
+index 0000000000000..69274c2ad2f60
+--- /dev/null
++++ b/.continue/context.md
+@@ -0,0 +1 @@
++../Documentation/AI/main.md
+\ No newline at end of file
+diff --git a/.cursorrules b/.cursorrules
+new file mode 120000
+index 0000000000000..201abbf2af4de
+--- /dev/null
++++ b/.cursorrules
+@@ -0,0 +1 @@
++Documentation/AI/main.md
+\ No newline at end of file
+diff --git a/.github/copilot-instructions.md b/.github/copilot-instructions.md
+new file mode 120000
+index 0000000000000..69274c2ad2f60
+--- /dev/null
++++ b/.github/copilot-instructions.md
+@@ -0,0 +1 @@
++../Documentation/AI/main.md
+\ No newline at end of file
+diff --git a/.windsurfrules b/.windsurfrules
+new file mode 120000
+index 0000000000000..201abbf2af4de
+--- /dev/null
++++ b/.windsurfrules
+@@ -0,0 +1 @@
++Documentation/AI/main.md
+\ No newline at end of file
+diff --git a/CLAUDE.md b/CLAUDE.md
+new file mode 120000
+index 0000000000000..201abbf2af4de
+--- /dev/null
++++ b/CLAUDE.md
+@@ -0,0 +1 @@
++Documentation/AI/main.md
+\ No newline at end of file
+diff --git a/Documentation/AI/main.md b/Documentation/AI/main.md
+new file mode 100644
+index 0000000000000..959ba50568f57
+--- /dev/null
++++ b/Documentation/AI/main.md
+@@ -0,0 +1,5 @@
++# Linux Kernel Development AI Instructions
++
++This is the Linux kernel repository. When working with this codebase, you must follow the following rules:
++
++- [ TODO ]
 -- 
 2.39.5
 
