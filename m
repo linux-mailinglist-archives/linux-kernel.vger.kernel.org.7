@@ -1,186 +1,131 @@
-Return-Path: <linux-kernel+bounces-746304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9579B12524
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:06:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64353B12525
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4EA6587BC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3F21CE4766
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC04E255E2F;
-	Fri, 25 Jul 2025 20:05:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5AF25742C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BAD25484D;
 	Fri, 25 Jul 2025 20:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyelXsIA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB7A25394C;
+	Fri, 25 Jul 2025 20:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753473956; cv=none; b=FnumYyePOtK3q39MioGkfq3cEr51DE5ebVO7dQQFnWDTGdn3J9c3SGa/kkbrMrN9gO+H6Br9mg1PB6ZClKUHUgZRvzvp+mDEeOBJNjMxcrLPpVUyy13o9UR9bRtZYD+aH8so9YsNNu+Cu8g7uWEbA8B8Lnib23R1TdaVjjPMcBs=
+	t=1753473954; cv=none; b=ZG6gof6eLu9QwUQvB+/uBT8wYspmZckGK0yAac0ak1GkFEfB0gyFVy4nu+ROp3THExpb16CKoKCAtjfuXJmqSgY5a4WN7lfyuk0HrnOY6JAZK5pALNWoNtO94Lswx5d8562YN9TOCxk6y1Wqpk4C+uuKR73et0jQHXcn+W+ZFq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753473956; c=relaxed/simple;
-	bh=ODc8BUbdLA0Xu8RNO9sp6CmCixwXABeVZzZOWA0RFI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rKkB8HcfYG0fbD88iYz/4pn81reApyDPq/AkGnWwDR5ORHovnl4T+d7mwQrP6iCm/FelVeE+SVnm0hCHeFYYuSOHh8Uc4zYM+u325CAc534wi8IsglLXjzfiPKKaj3O74dsGn6iqZYCihyOo/RRyMKRYv9CdZ+L4voXXcXHl1OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BFC91A00;
-	Fri, 25 Jul 2025 13:05:47 -0700 (PDT)
-Received: from [10.57.4.83] (unknown [10.57.4.83])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A7893F6A8;
-	Fri, 25 Jul 2025 13:05:48 -0700 (PDT)
-Message-ID: <751e7ece-8640-4653-b308-96da6731b8e7@arm.com>
-Date: Fri, 25 Jul 2025 21:05:46 +0100
+	s=arc-20240116; t=1753473954; c=relaxed/simple;
+	bh=g2WzQFr3XlSVhxYsYXEJidrp/xLBxEV9BriIPkl2wlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=FbiwuRrPPAWX0o8h26XHqOtNXYDpdKz1ofIXs8KBNijxtfKaMBmEYjXnGfeEBgy7YPKbrLZ0MnkCkmtJF5vHjFQwOLtGpXAVvqyPgw4Wsa4SpL17JJBNU4wjT+rzIhBr6FSXU+DVpdPivOrj/j7/u2Xmaz/iZq0Bqo/8e+5AZ/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyelXsIA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7625FC4CEE7;
+	Fri, 25 Jul 2025 20:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753473953;
+	bh=g2WzQFr3XlSVhxYsYXEJidrp/xLBxEV9BriIPkl2wlQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=LyelXsIAUkSDgayHx5WlSCn2IBr/53eET/KOcNlrb5ifj0YBxd8gUiDNgCXfFiO6u
+	 Tvcro6wVSNlw6hjmYXZncX+QdUwGMEJkGgkDlsbpMjOuJaxuwlHl71OKaKcUY/SfHI
+	 cq8z9DDb8SDhmOnsWGsp960SJTuJH0LhLOKz4WGC4gjQ1PzKI3n8Ocm1ZuWf5X0Z9O
+	 kr7J81Sje3Px4SZo/pELyDK3gOK0i+ifJhjE3tB31GNCEuyMH+Ne+2p2U9j6w5QUPd
+	 2Vrpe6R6AjzQOm+CXPguxSTekXrpHQIJfxJuHlja3ZMR7bAJm7hX/s09J8z3+WyJH1
+	 DOaFSsez2mxEg==
+Date: Fri, 25 Jul 2025 15:05:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Hans Zhang <18255117159@163.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	Keith Busch <kbusch@kernel.org>,
+	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Jiwei Sun <sunjw10@lenovo.com>, Niklas Cassel <cassel@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: fix out-of-bounds stack access
+Message-ID: <20250725200552.GA3111469@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] dma-mapping: migrate to physical address-based API
-To: Leon Romanovsky <leon@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Jonathan Corbet <corbet@lwn.net>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Alexander Potapenko <glider@google.com>,
- Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- iommu@lists.linux.dev, virtualization@lists.linux.dev,
- kasan-dev@googlegroups.com, linux-trace-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <cover.1750854543.git.leon@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <cover.1750854543.git.leon@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725090633.2481650-1-arnd@kernel.org>
 
-On 2025-06-25 2:18 pm, Leon Romanovsky wrote:
-> This series refactors the DMA mapping to use physical addresses
-> as the primary interface instead of page+offset parameters. This
-> change aligns the DMA API with the underlying hardware reality where
-> DMA operations work with physical addresses, not page structures.
-
-That is obvious nonsense - the DMA *API* does not exist in "hardware 
-reality"; the DMA API abstracts *software* operations that must be 
-performed before and after the actual hardware DMA operation in order to 
-preserve memory coherency etc.
-
-Streaming DMA API callers get their buffers from alloc_pages() or 
-kmalloc(); they do not have physical addresses, they have a page or 
-virtual address. The internal operations of pretty much every DMA API 
-implementation that isn't a no-op also require a page and/or virtual 
-address. It is 100% logical for the DMA API interfaces to take a page or 
-virtual address (and since virt_to_page() is pretty trivial, we already 
-consolidated the two interfaces ages ago).
-
-Yes, once you get right down to the low-level arch_sync_dma_*() 
-interfaces that passes a physical address, but that's mostly an artefact 
-of them being factored out of old dma_sync_single_*() implementations 
-that took a (physical) DMA address. Nearly all of them then use __va() 
-or phys_to_virt() to actually consume it. Even though it's a 
-phys_addr_t, the implicit guarantee that it represents page-backed 
-memory is absolutely vital.
-
-Take a step back; what do you imagine that a DMA API call on a 
-non-page-backed physical address could actually *do*?
-
-- Cache maintenance? No, it would be illogical for a P2P address to be 
-cached in a CPU cache, and anyway it would almost always crash because 
-it requires page-backed memory with a virtual address.
-
-- Bounce buffering? Again no, that would be illogical, defeat the entire 
-point of a P2P operation, and anyway would definitely crash because it 
-requires page-backed memory with a virtual address.
-
-- IOMMU mappings? Oh hey look that's exactly what dma_map_resource() has 
-been doing for 9 years. Not to mention your new IOMMU API if callers 
-want to be IOMMU-aware (although without the same guarantee of not also 
-doing the crashy things.)
-
-- Debug tracking? Again, already taken care of by dma_map_resource().
-
-- Some entirely new concept? Well, I'm eager to be enlightened if so!
-
-But given what we do already know of from decades of experience, obvious 
-question: For the tiny minority of users who know full well when they're 
-dealing with a non-page-backed physical address, what's wrong with using 
-dma_map_resource?
-
-Does it make sense to try to consolidate our p2p infrastructure so 
-dma_map_resource() could return bus addresses where appropriate? Yes, 
-almost certainly, if it makes it more convenient to use. And with only 
-about 20 users it's not too impractical to add some extra arguments or 
-even rejig the whole interface if need be. Indeed an overhaul might even 
-help solve the current grey area as to when it should take dma_range_map 
-into account or not for platform devices.
-
-> The series consists of 8 patches that progressively convert the DMA
-> mapping infrastructure from page-based to physical address-based APIs:
-
-And as a result ends up making said DMA mapping infrastructure slightly 
-more complicated and slightly less efficient for all its legitimate 
-users, all so one or two highly specialised users can then pretend to 
-call it in situations where it must be a no-op anyway? Please explain 
-convincingly why that is not a giant waste of time.
-
-Are we trying to remove struct page from the kernel altogether? If yes, 
-then for goodness' sake lead with that, but even then I'd still prefer 
-to see the replacements for critical related infrastructure like 
-pfn_valid() in place before we start trying to reshape the DMA API to fit.
-
-Thanks,
-Robin.
-
-> The series maintains backward compatibility by keeping the old
-> page-based API as wrapper functions around the new physical
-> address-based implementations.
+On Fri, Jul 25, 2025 at 11:06:28AM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Thanks
+> The newly added PCI_FIND_NEXT_EXT_CAP function calls a helper that
+> stores a result using a 32-bit pointer, but passes a shorter local
+> variable into it. gcc-15 warns about this undefined behavior:
 > 
-> Leon Romanovsky (8):
->    dma-debug: refactor to use physical addresses for page mapping
->    dma-mapping: rename trace_dma_*map_page to trace_dma_*map_phys
->    iommu/dma: rename iommu_dma_*map_page to iommu_dma_*map_phys
->    dma-mapping: convert dma_direct_*map_page to be phys_addr_t based
->    kmsan: convert kmsan_handle_dma to use physical addresses
->    dma-mapping: fail early if physical address is mapped through platform
->      callback
->    dma-mapping: export new dma_*map_phys() interface
->    mm/hmm: migrate to physical address-based DMA mapping API
+> In function 'cdns_pcie_read_cfg',
+>     inlined from 'cdns_pcie_find_capability' at drivers/pci/controller/cadence/pcie-cadence.c:31:9:
+> drivers/pci/controller/cadence/pcie-cadence.c:22:22: error: write of 32-bit data outside the bound of destination object, data truncated into 8-bit [-Werror=extra]
+>    22 |                 *val = cdns_pcie_readb(pcie, where);
+>       |                 ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> In function 'dw_pcie_read_cfg',
+>     inlined from 'dw_pcie_find_capability' at drivers/pci/controller/dwc/pcie-designware.c:234:9:
+> drivers/pci/controller/dwc/pcie-designware.c:225:22: error: write of 32-bit data outside the bound of destination object, data truncated into 8-bit [-Werror=extra]
+>   225 |                 *val = dw_pcie_readb_dbi(pci, where);
+>       |                 ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 > 
->   Documentation/core-api/dma-api.rst |  4 +-
->   arch/powerpc/kernel/dma-iommu.c    |  4 +-
->   drivers/iommu/dma-iommu.c          | 14 +++----
->   drivers/virtio/virtio_ring.c       |  4 +-
->   include/linux/dma-map-ops.h        |  8 ++--
->   include/linux/dma-mapping.h        | 13 ++++++
->   include/linux/iommu-dma.h          |  7 ++--
->   include/linux/kmsan.h              | 12 +++---
->   include/trace/events/dma.h         |  4 +-
->   kernel/dma/debug.c                 | 28 ++++++++-----
->   kernel/dma/debug.h                 | 16 ++++---
->   kernel/dma/direct.c                |  6 +--
->   kernel/dma/direct.h                | 13 +++---
->   kernel/dma/mapping.c               | 67 +++++++++++++++++++++---------
->   kernel/dma/ops_helpers.c           |  6 +--
->   mm/hmm.c                           |  8 ++--
->   mm/kmsan/hooks.c                   | 36 ++++++++++++----
->   tools/virtio/linux/kmsan.h         |  2 +-
->   18 files changed, 159 insertions(+), 93 deletions(-)
+> Change the macro to remove the invalid cast and extend the target
+> variables as needed.
 > 
+> Fixes: 1b07388f32e1 ("PCI: Refactor extended capability search into PCI_FIND_NEXT_EXT_CAP()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+Squashed into that commit, thanks, Arnd!
+
+  https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=2502a619108b
+
+> ---
+>  drivers/pci/pci.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index da5912c2017c..ac954584d991 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -109,17 +109,17 @@ int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 size,
+>  ({									\
+>  	int __ttl = PCI_FIND_CAP_TTL;					\
+>  	u8 __id, __found_pos = 0;					\
+> -	u8 __pos = (start);						\
+> -	u16 __ent;							\
+> +	u32 __pos = (start);						\
+> +	u32 __ent;							\
+>  									\
+> -	read_cfg(args, __pos, 1, (u32 *)&__pos);			\
+> +	read_cfg(args, __pos, 1, &__pos);				\
+>  									\
+>  	while (__ttl--) {						\
+>  		if (__pos < PCI_STD_HEADER_SIZEOF)			\
+>  			break;						\
+>  									\
+>  		__pos = ALIGN_DOWN(__pos, 4);				\
+> -		read_cfg(args, __pos, 2, (u32 *)&__ent);		\
+> +		read_cfg(args, __pos, 2, &__ent);			\
+>  									\
+>  		__id = FIELD_GET(PCI_CAP_ID_MASK, __ent);		\
+>  		if (__id == 0xff)					\
+> -- 
+> 2.39.5
+> 
 
