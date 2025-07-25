@@ -1,201 +1,179 @@
-Return-Path: <linux-kernel+bounces-746306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51AA8B12530
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:16:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B3AB12536
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 369917AC17E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:14:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEBBF3B40DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A94259CB2;
-	Fri, 25 Jul 2025 20:15:52 +0000 (UTC)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA7F259CB2;
+	Fri, 25 Jul 2025 20:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="No1tfu5l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2432923FC42;
-	Fri, 25 Jul 2025 20:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D390F244691;
+	Fri, 25 Jul 2025 20:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753474551; cv=none; b=d4u8EjPbCHmTGo3r8MMF1dXTqsthIubnNMcS6XOgIbkixmTo44nIaDPAgvYyA0DSPgAdphyf/oGZ1xj9F80d/zNu70Y+ez5E8cyxxceuBIPOej9y7lnJj+59WVT9lV6wg/sg84PtXBenpKW6vubspf3urrNLUypB5EgC2BWoxOc=
+	t=1753474660; cv=none; b=Kgki+dAiz8RKGrCiuKSIW1ncNUCRxIzljQxTrb5FgeB7FWQTQR/AhncrXWP1n97slF5ha2yAXZWqFF1xMcMZEhFhoCMODN1zPHH2TZPXyVJD/0Xo8FIF0T7dw/mPFCHSD9KyyEgQnpw+l1NbTzCTFl/dX6KU9eH5aI8v5WXR5wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753474551; c=relaxed/simple;
-	bh=/F/JVr3SNg41VeueRzHG4AAT+V7CIIpptHyNH6dHFVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IcUB28tLEinLSwWu7HCbfAA55whyFTwwfOu6Mfy24E1m/wOf5mSfxS4GCTxIXFBIGkNWH5+TeKpP7WNFHgrFhHsSkvpmAMtPOFmyEJ/YxAgqShL270rwebjy5XA5vN8LwasTJWFMo9gkzp+XoQis+4AGWtDpf8Ax/KOc+li1GxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-312a806f002so189977a91.3;
-        Fri, 25 Jul 2025 13:15:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753474548; x=1754079348;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iDxcanwU1JbetZe9oiUEN/n+YFfsJR7sLnCsAScdPD4=;
-        b=GWzYuI81eY1X72eJgxyvXx2sQpAsSrzUQmSYdEpnc4DpDX0/0kldu9BwO+nKlsz7BN
-         dtsfCKGJtiVOaeRLhr3ZV4M1KLJweYOqRrgntJmyjOypQY/8JgM0+8kg66hANcr/e6rT
-         Id75/1qCRWsi44PUQlK+xKkGKihg42nhZhBtcSSCVT8fV9Ml4EL3A/2eAv+CxaxcUpoR
-         Qnxh29L6n8wx7ZjxdUQLY4OAjBKQUWTlV9eXH0zXhKG7LU/epBpCSMx44vZOvKuuxyBu
-         CXgMZuBGLQqnP4QNTv+iiVEsNISdlnE5gth/WYieCZtTeYfaP00ZsBHlozmUTWpZ5KCM
-         Tb1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUE9TNv9E1PdFB72RQ9PJfP8rmK1knEi5NpCN9lGrzfmFhlcwkKHuns99k6kd2twl0taiuPFx0hlALa@vger.kernel.org, AJvYcCVUWFCr8gxRzLkLql9Mn7MuLkOGDxoFVbzFq8hm6tjpj5y75QWHtxp4D78oBFov/m6bmgQ8y4yQRNGoFB4=@vger.kernel.org, AJvYcCXvhE5FElbLxh1xQL6uHKK4XclU36kK4A7bCCW51KqtgpaBWQa5ZorEI+CKNTu5unejExBkvpa4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMmu+vHvTt8CTtIOsWSIAngtIbxGX725m3gUASpqPEfgpQxI37
-	eHJ6eh+m4XJhhWCq2e/DyTib2vQauVh+3HH9/0WNayO3WrVmuNgnhwcoUre87Kob
-X-Gm-Gg: ASbGncukmV4XUjeBfGC/c1T0lXEcLWclaouQChU2YlGUlkUuFeNzDmST7RE2ydeBRng
-	kKSBIY212oqBDORIL8Gp83LulYAR88rvgFmXNdfAiPD78PaKkxxKPZy+V3rgpprgcm6Vui0m22P
-	jWJmNBnpQZVkUePqjaWEheblwpv0/bcfkIYSDfGDefZ0UPmAxOjowIN4C122IV01mknnqJyB/mO
-	R67+0pdBVhid8wUavOX7IgjGPDQyKFHeJqLarEgCNdY8sXSkeeGxgs19/JDOhQ6R1DEfrUZsos1
-	/ectSayzMA3LMBCNSYMUysn6tv2YBS4su8SmVrEJVWV4gZmVw5znX5gciVVAP3UdSFkvLMlQR2U
-	14t4xEjBkEFg6
-X-Google-Smtp-Source: AGHT+IFWfq/YuZlLKXEbKR6CH+4VjCjJlJjC/Hbgbn/0EjkusqP9d4OK3YW1DW7j/4gOzB0opFCTOA==
-X-Received: by 2002:a17:90b:4ad2:b0:313:f9fc:7214 with SMTP id 98e67ed59e1d1-31e77873f60mr1854586a91.1.1753474548387;
-        Fri, 25 Jul 2025 13:15:48 -0700 (PDT)
-Received: from localhost ([218.152.98.97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e832fb798sm346993a91.8.2025.07.25.13.15.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 13:15:47 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Byungchul Park <byungchul@sk.com>,
-	max.byungchul.park@gmail.com,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Michelle Jin <shjy180909@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	stable@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	syzkaller@googlegroups.com,
-	linux-usb@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: [PATCH] kcov, usb: Fix invalid context sleep in softirq path on PREEMPT_RT
-Date: Fri, 25 Jul 2025 20:14:01 +0000
-Message-ID: <20250725201400.1078395-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753474660; c=relaxed/simple;
+	bh=4q+06f8cylW8rH3fxRvSafOleQcceRS31FgGbp4I+ug=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=WqO0OvcB/FKpqGfsZlAvSvfjfjZ9DMoUdnWdHJOhdw29mM5E6QTYf4alFG8Qb0GgY/l2rga8tJa0j27iP06w9gi6Egh2murzZDdrzPYyRTip2Zd6uTQwmNTQNCflVgAG1M+O5wgUb7IVDf0iHyQuHTX8cwmEQ861K8PEFVj6wwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=No1tfu5l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D7AC4CEE7;
+	Fri, 25 Jul 2025 20:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753474658;
+	bh=4q+06f8cylW8rH3fxRvSafOleQcceRS31FgGbp4I+ug=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=No1tfu5lRYYw8/dUL0Oq6mhhxkkkSda4ybob4JDAYJjKPPH6TETXOofyQMs9cM+EN
+	 0WhUutjlEhqJvt2fgEsvVp22m0qAORNtxcUnjCBkmNolu4TOHdR0kZ0+DMYHsJJw0a
+	 tEfz3ElFzttHtk5E+Fw9omxOm9zOlFZw2YGzqfdUUg1dAIbkV2eyV7ogOaOyRCqqtJ
+	 NdacH8S9w5OVgI2F9HgJ7C8jKtwJwN12iK/8FN8BZbu8GaYMMWz+aUD0bGsH1TaWO9
+	 Td+An7KaQKtdUpWRJkTsUibsFrLuBfSetr8fAXi9LuuOBQ3vEdFBsBYjga4DLUmE6O
+	 6EzI8CCgIl9Kw==
+Date: Fri, 25 Jul 2025 15:17:37 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Hoan Tran <hoan@os.amperecomputing.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Magnus Damm <magnus.damm@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Phil Edworthy <phil.edworthy@renesas.com>, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Serge Semin <fancer.lancer@gmail.com>
+To: Herve Codina <herve.codina@bootlin.com>
+In-Reply-To: <20250725152618.32886-1-herve.codina@bootlin.com>
+References: <20250725152618.32886-1-herve.codina@bootlin.com>
+Message-Id: <175347460968.1818600.10181737500574754533.robh@kernel.org>
+Subject: Re: [PATCH 0/6] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
 
-When fuzzing USB with syzkaller on a PREEMPT_RT enabled kernel, following
-bug is triggered in the ksoftirqd context.
 
-| BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-| in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 30, name: ksoftirqd/1
-| preempt_count: 0, expected: 0
-| RCU nest depth: 2, expected: 2
-| CPU: 1 UID: 0 PID: 30 Comm: ksoftirqd/1 Tainted: G        W           6.16.0-rc1-rt1 #11 PREEMPT_RT
-| Tainted: [W]=WARN
-| Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8 05/13/2025
-| Call trace:
-|  show_stack+0x2c/0x3c (C)
-|  __dump_stack+0x30/0x40
-|  dump_stack_lvl+0x148/0x1d8
-|  dump_stack+0x1c/0x3c
-|  __might_resched+0x2e4/0x52c
-|  rt_spin_lock+0xa8/0x1bc
-|  kcov_remote_start+0xb0/0x490
-|  __usb_hcd_giveback_urb+0x2d0/0x5e8
-|  usb_giveback_urb_bh+0x234/0x3c4
-|  process_scheduled_works+0x678/0xd18
-|  bh_worker+0x2f0/0x59c
-|  workqueue_softirq_action+0x104/0x14c
-|  tasklet_action+0x18/0x8c
-|  handle_softirqs+0x208/0x63c
-|  run_ksoftirqd+0x64/0x264
-|  smpboot_thread_fn+0x4ac/0x908
-|  kthread+0x5e8/0x734
-|  ret_from_fork+0x10/0x20
+On Fri, 25 Jul 2025 17:26:09 +0200, Herve Codina wrote:
+> Hi,
+> 
+> This series adds support for GPIO and GPIO IRQ mux available in the
+> RZ/N1 SoCs.
+> 
+> The first two patches of the series add support for GPIO (binding update
+> and device-tree description).
+> 
+> Other patches are related to GPIO interrupts and GPIO IRQ multiplexer.
+> 
+> In the RZ/N1 SoCs, GPIO interrupts are wired to a GPIO IRQ multiplexer.
+> 
+> This multiplexer does nothing but select 8 GPIO IRQ lines out of the 96
+> available to wire them to the GIC input lines.
+> 
+> One upstreaming attempt have been done previously by Phil Edworthy [1]
+> but the series has never been applied.
+> 
+> Based on my understanding, I have fully reworked the driver proposed by
+> Phil and removed the IRQ domain. Indeed, the device doesn't handle
+> interrupts. It just routes signals.
+> 
+> Also, as an interrupt-map property is used, the driver cannot be
+> involved as an interrupt controller itself. It is a nexus node.
+> 
+> With that in mind, patch 3 is related to the binding, patch 4 introduces
+> an helper to parse the interrupt-map property. This parsing is needed by
+> the driver. Indeed, the lines routing is defined by the interrupt-map
+> property and the driver needs to set registers to apply this routing.
+> 
+> The last two patches are the driver itself and the RZ/N1 device-tree
+> description update to have the support for the GPIO interrupts.
+> 
+> [1] https://lore.kernel.org/all/20190219155511.28507-1-phil.edworthy@renesas.com/
+> 
+> Best regards,
+> Hervé
+> 
+> Herve Codina (6):
+>   dt-bindings: gpio: snps,dw-apb: Add support for Renesas RZ/N1
+>   ARM: dts: r9a06g032: Add GPIO controllers
+>   dt-bindings: soc: renesas: Add the Renesas RZ/N1 GPIO Interrupt
+>     Multiplexer
+>   of/irq: Introduce of_irq_foreach_imap
+>   soc: renesas: Add support for Renesas RZ/N1 GPIO Interrupt Multiplexer
+>   ARM: dts: r9a06g032: Add support for GPIO interrupts
+> 
+>  .../bindings/gpio/snps,dw-apb-gpio.yaml       |   8 +-
+>  .../soc/renesas/renesas,rzn1-gpioirqmux.yaml  |  99 ++++++++++
+>  arch/arm/boot/dts/renesas/r9a06g032.dtsi      | 172 ++++++++++++++++++
+>  drivers/of/irq.c                              |  70 +++++++
+>  drivers/soc/renesas/Kconfig                   |   4 +
+>  drivers/soc/renesas/Makefile                  |   1 +
+>  drivers/soc/renesas/rzn1_irqmux.c             | 169 +++++++++++++++++
+>  include/linux/of_irq.h                        |  11 ++
+>  8 files changed, 533 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,rzn1-gpioirqmux.yaml
+>  create mode 100644 drivers/soc/renesas/rzn1_irqmux.c
+> 
+> --
+> 2.50.1
+> 
+> 
+> 
 
-To reproduce on PREEMPT_RT kernel:
 
- $ git remote add rt-devel git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git
- $ git fetch rt-devel
- $ git checkout -b v6.16-rc1-rt1 v6.16-rc1-rt1
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-I have attached the syzlang and the C source code converted by syz-prog2c:
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Link: https://gist.github.com/kzall0c/9455aaa246f4aa1135353a51753adbbe
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Then, run with a PREEMPT_RT config.
+  pip3 install dtschema --upgrade
 
-This issue was introduced by commit
-f85d39dd7ed8 ("kcov, usb: disable interrupts in kcov_remote_start_usb_softirq").
 
-However, this creates a conflict on PREEMPT_RT kernels. The local_irq_save()
-call establishes an atomic context where sleeping is forbidden. Inside this
-context, kcov_remote_start() is called, which on PREEMPT_RT uses sleeping
-locks (spinlock_t and local_lock_t are mapped to rt_mutex). This results in
-a sleeping function called from invalid context.
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.16-rc3-23-g03a28dc39838 (exact match)
 
-On PREEMPT_RT, interrupt handlers are threaded, so the re-entrancy scenario
-is already safely handled by the existing local_lock_t and the global
-kcov_remote_lock within kcov_remote_start(). Therefore, the outer
-local_irq_save() is not necessary.
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
 
-This preserves the intended re-entrancy protection for non-RT kernels while
-resolving the locking violation on PREEMPT_RT kernels.
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/renesas/' for 20250725152618.32886-1-herve.codina@bootlin.com:
 
-After making this modification and testing it, syzkaller fuzzing the
-PREEMPT_RT kernel is now running without stopping on latest announced
-Real-time Linux.
+arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dtb: gpio@5000b000 (renesas,r9a06g032-gpio): 'gpio@0', 'gpio@1' do not match any of the regexes: '^gpio-(port|controller)@[0-9a-f]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/gpio/snps,dw-apb-gpio.yaml#
+arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dtb: gpio@5000c000 (renesas,r9a06g032-gpio): 'gpio@0', 'gpio@1' do not match any of the regexes: '^gpio-(port|controller)@[0-9a-f]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/gpio/snps,dw-apb-gpio.yaml#
+arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dtb: gpio@5000d000 (renesas,r9a06g032-gpio): 'gpio@0', 'gpio@1' do not match any of the regexes: '^gpio-(port|controller)@[0-9a-f]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/gpio/snps,dw-apb-gpio.yaml#
+arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dtb: gpio@5000b000 (renesas,r9a06g032-gpio): 'gpio@0', 'gpio@1' do not match any of the regexes: '^gpio-(port|controller)@[0-9a-f]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/gpio/snps,dw-apb-gpio.yaml#
+arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dtb: gpio@5000c000 (renesas,r9a06g032-gpio): 'gpio@0', 'gpio@1' do not match any of the regexes: '^gpio-(port|controller)@[0-9a-f]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/gpio/snps,dw-apb-gpio.yaml#
+arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dtb: gpio@5000d000 (renesas,r9a06g032-gpio): 'gpio@0', 'gpio@1' do not match any of the regexes: '^gpio-(port|controller)@[0-9a-f]+$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/gpio/snps,dw-apb-gpio.yaml#
 
-Link: https://lore.kernel.org/linux-rt-devel/20250610080307.LMm1hleC@linutronix.de/
-Fixes: f85d39dd7ed8 ("kcov, usb: disable interrupts in kcov_remote_start_usb_softirq")
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Byungchul Park <byungchul@sk.com>
-Cc: stable@vger.kernel.org
-Cc: kasan-dev@googlegroups.com
-Cc: syzkaller@googlegroups.com
-Cc: linux-usb@vger.kernel.org
-Cc: linux-rt-devel@lists.linux.dev
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
----
- include/linux/kcov.h | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/kcov.h b/include/linux/kcov.h
-index 75a2fb8b16c3..c5e1b2dd0bb7 100644
---- a/include/linux/kcov.h
-+++ b/include/linux/kcov.h
-@@ -85,7 +85,9 @@ static inline unsigned long kcov_remote_start_usb_softirq(u64 id)
- 	unsigned long flags = 0;
- 
- 	if (in_serving_softirq()) {
-+#ifndef CONFIG_PREEMPT_RT
- 		local_irq_save(flags);
-+#endif
- 		kcov_remote_start_usb(id);
- 	}
- 
-@@ -96,7 +98,9 @@ static inline void kcov_remote_stop_softirq(unsigned long flags)
- {
- 	if (in_serving_softirq()) {
- 		kcov_remote_stop();
-+#ifndef CONFIG_PREEMPT_RT
- 		local_irq_restore(flags);
-+#endif
- 	}
- }
- 
--- 
-2.50.0
+
+
 
 
