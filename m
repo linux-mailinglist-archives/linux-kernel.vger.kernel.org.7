@@ -1,165 +1,119 @@
-Return-Path: <linux-kernel+bounces-745680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB832B11CFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:00:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4219DB11D06
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A711C84ADC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:00:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EFD41C83D2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03332E610E;
-	Fri, 25 Jul 2025 10:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74022D6604;
+	Fri, 25 Jul 2025 11:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LouPv15I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Uve6UZA/"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF9E2E5B32;
-	Fri, 25 Jul 2025 10:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57E423815D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441197; cv=none; b=Vj9vaOIrq5odjzBLXfPWCaJfzIAsc6SOTDaeRtEahmVZO+5XE+dRJjW76L/hQsrDmS6ApvLUW2CnYMUuKIUbsuMmvK3ltuM1eC2bWzn73okTfqCppr9HNn92UHdx/mTbA+L0PfBtwb1jOQ3O4Rc72s19UuucSSb0uPFKKPwt0Lk=
+	t=1753441296; cv=none; b=D24Uwl67q33G5eksU6bsmVsJoGKHMJ1IBuRlFSaFsLUQveQnITHzA7UcyX1LpaMh3EHUHp5VwgWo7D7fXRMVrLZatFGg+3vzH75pl8MT7y5ZIY3TKsSHXDuuSEnOYPHSrfK2HAV3x69PLiL1eaAzh9ut+sddWMrKl4rJbEt74p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441197; c=relaxed/simple;
-	bh=bUcU0cDobyQLiDEp8CMj60WJQEIv2TENj1HTo6Qkt9A=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IKbBN5kk8dFo/6/sCjc5gDMTc/0rFYxiYroYzLaSea2n4ixFeACMfJ3Ie58IUlbTtqinAGckQS2Y3JBxa19z5d6/2OsIUdZfQiJWScblEPLj69+vWYZh9AKiggOyK3rx6VkERqlAULjWjthfYEeHvSZbU4SfBQVnDdLalbD/iY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LouPv15I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98D28C4CEE7;
-	Fri, 25 Jul 2025 10:59:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753441196;
-	bh=bUcU0cDobyQLiDEp8CMj60WJQEIv2TENj1HTo6Qkt9A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LouPv15IyL7WQztlYQATxazBJpsdsDswdQ1iYdVQB47FExi3Dm+QBnsxhItQ0IiFS
-	 Hsk1jXWPip8IpipAwm4pGCQQK4YTIKep8GzyKNciqYHe5ZyTJDdWhhJh/ZpucUZGm6
-	 HBZPVLkjihDL11jcyUeLTnicx/K4Wqjwc+GGEZG74BnubN1vSE5s+4/a7ueysM9PB1
-	 RZbPaJ4W00Kfuam5WTmxs7iY12nWVUwlXCGk/ucYDYfKDOafO8twOA2QnZ7ABFzHpT
-	 J8E1/KWOzzU4aq1sE0Qpdu4GtGOuzLQf4W6TpoS4/goTfNbrEL+mFtCsIlBB96TJMu
-	 NsRa76FZ+ffbw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ufG9a-001JSg-4Q;
-	Fri, 25 Jul 2025 11:59:54 +0100
-Date: Fri, 25 Jul 2025 11:59:52 +0100
-Message-ID: <86ecu48riv.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Cc: Eric Auger <eauger@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	seanjc@google.com,
-	darren@os.amperecomputing.com
-Subject: Re: [RFC PATCH v2 0/9] KVM: Enable Nested Virt selftests
-In-Reply-To: <ccd8caba-95b9-450e-afb1-deb0c42b781b@os.amperecomputing.com>
-References: <20250512105251.577874-1-gankulkarni@os.amperecomputing.com>
-	<92c7e99c-5574-422c-92f1-62d5cde58fec@redhat.com>
-	<7bf7bd52-7553-42a7-afdb-a5e95f8699b5@os.amperecomputing.com>
-	<86a56veiyy.wl-maz@kernel.org>
-	<3be548bf-aee4-46ab-bcbf-15bf629b24da@os.amperecomputing.com>
-	<86jz58c5ut.wl-maz@kernel.org>
-	<9d5d82f1-b488-4b0a-98c2-27e95d63fc5c@os.amperecomputing.com>
-	<867c12czux.wl-maz@kernel.org>
-	<ccd8caba-95b9-450e-afb1-deb0c42b781b@os.amperecomputing.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1753441296; c=relaxed/simple;
+	bh=0yfVLDdU0XkdfYkF/JwPWmIHkTBXq9aKwos97aDQtZc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rwytI8sVY0q8BTZE4f2BaMQ2cwvpacp/chzBHbb8psMUxfn7FUInY1EVxLKzNIlHSFxIRNoXHfqeou3eFgSB+aUeZqYOr3NeRUhu5DYdVjtwEP5pwWhhMD/+ld6FoPYm2T1xjPOcDwUj1g2W9UTqssrkq9fAKC7iJb7k4jxBSSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Uve6UZA/; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32ac42bb4e4so20888371fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753441293; x=1754046093; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=maOU4GuJF9epvvoL4BiDwdQ8hzIgQDIuqpbrf2fuD7E=;
+        b=Uve6UZA/LAFW/ti4jJbRCuhUjxhgjEjzg80+VpsT0f3poX2yhchYteZj4t6BusWJRV
+         PiCfaC/l+Gvon2N48XsKe1jrQhbs1nXs1VMev/s3kAp9fYLr6GW2EzB6TuiM2tOMsdU/
+         sh4moalyzwBYAXhzYHSZkHIqIyvSjkbpn9i94=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753441293; x=1754046093;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=maOU4GuJF9epvvoL4BiDwdQ8hzIgQDIuqpbrf2fuD7E=;
+        b=iQ2kFPOj7eB6GyE6Vmci7qcIcTc+f1cRytvgsALG6vLJWNBkMZIhu/4Su4lKIKdWRp
+         wG+l0XyBlSJQhm/NVQJYiF1nYfb6BPwQt/qndOMtXBVkb/qNYxKC1Rjzbv7THHcfZ7MI
+         JH2IklK1i8Xo5aPFFBUevs2pGKRxZQ6KrxUZ6UnoPgxSmwTaA8n2mPLBrHex+dLvgOoA
+         Agk022sjYE3kE6eHSauaktJ4yiHKELvDANug1HGo8vWFiEORKceVdbInl35vzu3P7VNQ
+         ZMEIV07UNeUkJCa37PjT0b00/sFUYjql7e5s/U3fleBADhUTarLV2PocBr6upRUvvzKt
+         4Mrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXChQwdKUV+cc8boTJDbf3EsJpt7dh0L5RRJn3lJyAsRJthFRxg0/KU2fD1Uk8B+EZpgpYHq2PolcGM1Vo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv3k8NhrSz6evGbxWkoxyQVjDy2coz5o5UXFAK1mhY9+ysnnfB
+	wek/pUnam1tvasNgqHqXw+GopCiRPzHMeT1E5pUEwloVOhG4vYcBUmG2FSgyUBuZdw==
+X-Gm-Gg: ASbGncvNtRvCwhWEojXjREj1GXqYLX67xOdxHj5q/fYCZE+0mUYUN9DFomTF7cFTwmt
+	WV70dcfm2QFeQe1Euylxvk+IhwQb9sHM+NkEK6udQiyW9H9orPeDStlyaH4O6qYyIzusOHF225h
+	OKNt7ZQ18PDw6ToEBJxajA4tQLMNDj8Dv3BlkEc6CecbBIohl3yY0tDcwhjo0OnSVHr8J0To//r
+	UwVpWM6nOgLZ02kZ2eTva7S8021Ufkx4Yj6Ct7yYGvViuACPlZMa3CI0RXgQZyl9bUf/msoZ3vx
+	hAfVOE/HcPPJ1hAPOLWpnT+Mdr/EwGG7JmYnc7qqXMH8zvZ3NtE/2YTnBB+H08MWJH9OiLUG/OW
+	Lho7x2YVdZUT53lmyHlWZlUn9YAz+atopCz1XX0a75wBH9KAvjhGGVDsm+74n26jJUgqLiaY/zt
+	XCGo+xc1SSgH4W
+X-Google-Smtp-Source: AGHT+IGpk7pe7k1+G8UlqPiH4vZl4lVjiF++dwtYeQnbapf3I11U45+wBvNivszwo1QeIPCaE3dOuw==
+X-Received: by 2002:a05:651c:408f:b0:32a:6a85:f294 with SMTP id 38308e7fff4ca-331ee760b32mr2546641fa.35.1753441292692;
+        Fri, 25 Jul 2025 04:01:32 -0700 (PDT)
+Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-331e8940156sm4187141fa.97.2025.07.25.04.01.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 04:01:32 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH 0/2] media: uvcvideo: Use dev->intf for printk
+Date: Fri, 25 Jul 2025 11:01:28 +0000
+Message-Id: <20250725-uvc-nousbdev-v1-0-28f5a1fdf544@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, eauger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, seanjc@google.com, darren@os.amperecomputing.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAhkg2gC/x3MQQqAIBBA0avIrBNM0aSrRIvSqWajoSSBePek5
+ Vv8XyFjIswwswoJC2WKoWMcGLhrCydy8t0ghdRikpo/xfEQn7x7LByVVUoY460W0JM74UHvv1v
+ W1j5metVZXgAAAA==
+X-Change-ID: 20250725-uvc-nousbdev-e3833066d850
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
 
-On Fri, 25 Jul 2025 11:01:05 +0100,
-Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
-> 
-> 
-> Hi Marc,
-> 
-> On 6/23/2025 7:41 PM, Marc Zyngier wrote:
-> > On Mon, 23 Jun 2025 11:31:32 +0100,
-> > Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
-> >> 
-> >> On 6/19/2025 5:15 PM, Marc Zyngier wrote:
-> >>>>    >
-> >>>>> Also, running EL2 is the least of our worries, because that's pretty
-> >>>>> easy to deal with. It is running at EL1/0 when EL2 is present that is
-> >>>>> interesting, and I see no coverage on that front.
-> >>>> 
-> >>>> Sorry, I did not get this comment fully.
-> >>>> When we run selftest on Host with -g option, the guest code will run in vEL2 as L1.
-> >>>> This is implemented as per comment in V1.
-> >>>> 
-> >>>> When we run same selftest from L1 shell, then guest_code will be running in EL0/1 like running from L0.
-> >>> 
-> >>> What good does this bring us if we need to boot a full guest OS to run
-> >>> tests? What we need is synthetic tests that implement the whole stack:
-> >>> 
-> >>> - L1 guest hypervisor
-> >>> - L2 guest hypervisor
-> >>> - L2 guest
-> >>> - L3 guest hypervisor
-> >>> - L3 guest
-> >>> - [...]
-> >> 
-> >> IIUC, selftest leverages host OS support and uses various IOCTLs to
-> >> support the guest_code run. Are you saying to implement all this
-> >> again (without OS help) in guest_code to run it as hypervisor and
-> >> launch guest_code2 as NestedVM?.
-> > 
-> > The whole point of having small selftests is to run something that is
-> > simpler several orders of magnitude simpler than the full blown
-> > OS/hypervisor. So indeed, I'm asking for selftests that build chains
-> > of guests up to some level and verify that the nesting, as described
-> > in the architecture, works correctly.
-> > 
-> 
-> Do you see value in the patches as they are, without the changes to
-> support the bare-metal hypervisor in guest or will you only consider
-> them if they are first reworked to support the recursive guests?
+We have been using the usb device for printk in the driver, this makes
+it difficult to distinguish the logging from this driver from other
+interface drivers associated to the same usb device.
 
-Running existing tests at EL2 may an interesting goal, but the way
-you've gone about it is really wrong. These tests are not about
-"nested", they are about running at EL2. So getting rid of all the
-"nested" nonsense in patch #1 and focusing on the *two* flavours of
-EL2 would be a good start.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Ricardo Ribalda (2):
+      media: uvcvideo: Use intf instead of udev for printks
+      media: uvcvideo: Do not re-reference dev->udev
 
-Also, EL2 tests shouldn't be optional. If EL2 is available, the test
-should run, without any option, and things like
+ drivers/media/usb/uvc/uvc_ctrl.c   | 10 +++++-----
+ drivers/media/usb/uvc/uvc_driver.c | 22 +++++++++++-----------
+ drivers/media/usb/uvc/uvc_entity.c |  4 ++--
+ drivers/media/usb/uvc/uvc_status.c |  4 ++--
+ drivers/media/usb/uvc/uvc_video.c  |  6 +++---
+ drivers/media/usb/uvc/uvcvideo.h   |  4 ++--
+ 6 files changed, 25 insertions(+), 25 deletions(-)
+---
+base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
+change-id: 20250725-uvc-nousbdev-e3833066d850
 
-+	if (is_nested)
-+		vm = nv_vm_create_with_vcpus_gic(1, &vcpu, &gic_fd, guest_main);
-+	else
-+		vm = vm_create_with_one_vcpu(&vcpu, guest_main);
-
-are just non-starters. You just need to either get rid of the whole
-vm_create_with_one_vcpu() nonsense, or teach it to take an execution
-context.
-
-But the real NV tests are not optional either. They need to happen,
-and I don't have the confidence that they will if I agree to what you
-are suggesting. Because it's been months since I asked for these
-things, and not much has happened in the interval.
-
-	M.
-
+Best regards,
 -- 
-Without deviation from the norm, progress is not possible.
+Ricardo Ribalda <ribalda@chromium.org>
+
 
