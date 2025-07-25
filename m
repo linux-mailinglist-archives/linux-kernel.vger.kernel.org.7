@@ -1,150 +1,413 @@
-Return-Path: <linux-kernel+bounces-746459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1327B126E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:33:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D524BB126EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12471CC7A82
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:33:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CB84E3D96
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0063A231849;
-	Fri, 25 Jul 2025 22:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C5723ABAA;
+	Fri, 25 Jul 2025 22:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HH2ujMH6"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="geXk94jT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D165A1A76DA
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 22:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3501DE892
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 22:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753482811; cv=none; b=Af1MLKFIf6fcbLeZWWhi4HldSnlW1xznwW0ziclmaWIwvLRMQgj4mYypilEQjlV8eJkbvzhZ02zfwFeLjWE2NTxW57Cf0JyOfp6bxudtHQPLsZyPmnBiHW3hjpl8EtragG9khoEfcddRwJGIcqOjxhoskbSjUVgLjF1iEgTwIqk=
+	t=1753482972; cv=none; b=NI2NT3vwNPzIgFUFzbvpeEsX7rp8IwolmoxgT41FCtVlE1oZJzn9h4n3mb+DXbeCHubDIhqDG3Hem0cwNZqHPVn8UWYitXkxlmLUKKEIyFDTy3/jlcDhLC2//+4XEOiDpCtJ5YgrISbHNw4PM13rwaOKuB2m5QiUF8TAsWdejZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753482811; c=relaxed/simple;
-	bh=txE8BMZpsZ2kkTIDh3zdqRzVj6ArWtR36OkbFFuXxvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VWDNF923SE21XXODqPVfxpBqZ0Fv+dEs45MPk5GgLq9h+VILNr62jrwFeGUV5YEv68RXcYQcKvX2EqLKMNAUjftkrGKB0Z/Ouz9dPckDflEI58muQ3el7Zsi1NGXUnNhtVXHICXH6T11mXXHvSiJ5oys1UUAL7J6whFy5d08xtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HH2ujMH6; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-70478ba562aso36681536d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:33:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753482809; x=1754087609; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DZx9C4w4Iks3YnDwOlCIT9lKf9VPFQAC9ENFEkPTScg=;
-        b=HH2ujMH6Mlf+e2qMl3OHgYs5kiHCWMFn2DNG+y399bIbDy3hpoTugaZclms0G5ewkr
-         1rNAIqnT97wYGkYSZrQXQYw3Py3ggq6QGzxfZb5RKlGZUiqnaUvMZsLIV5WMDdjt14Th
-         sMclIXtPfpOuM+8XH6+NleKcMB/C+936kY0/Kzy8Gwccjz8iYBXa+MChFjnq6RbUtHbb
-         BRN33GYXgZ8OldPR5flpe2M7DXrSdFoq+BlM1kLYVKrf6SJHx+KSj+EncOT5s9Sk57rF
-         ZpSrFgCKaJp82Yfq3kFAfcrfwR6X/7g3uyfV0llP7Mg48/pJUBP62TQo81GXiIu1QUUq
-         MXXQ==
+	s=arc-20240116; t=1753482972; c=relaxed/simple;
+	bh=mm+eWX66NCSma7+1pbQITTRUhZ910X1BziV/UlSEaHw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gAHfixml9ifvFm7qp1zofr28Yxb/8w95mVB8ZSBOAfu4KzA3cyUmhKHQkzH6Wuu9DvuhkteO5BeZVQVJO7lfrPF4DhC+pRriGJZ/us/QubZeJtU6DyrVrN2a4FRGe6EZoLUnt7QNYWI1/8pEHBpO9iil2Hkc6s4U+HBUfXmaYSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=geXk94jT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753482969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a9d5B9fr4Nfm+zF43cKINLpDPc+Ji1sf50+7PmWlTvU=;
+	b=geXk94jT1qLx3GlMVVZgf/mFvEaT8NrA1HCyUWwLfPcjNBgcU2llOQjeJXpNlAPat6EJa6
+	evIIOk3lNgiS8XqszxhShQUzjRN3Ir0gwe+vHKyOPFmO1hm20f9lf6CZyi2KE19qWcZFlA
+	Svshf8BOiQw3GoJT9ziRyQaFlnbYXAs=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-70-zIQqbE81OjGIad53_ceEnw-1; Fri, 25 Jul 2025 18:36:07 -0400
+X-MC-Unique: zIQqbE81OjGIad53_ceEnw-1
+X-Mimecast-MFC-AGG-ID: zIQqbE81OjGIad53_ceEnw_1753482967
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-707cf1b0ecbso42025047b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:36:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753482809; x=1754087609;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DZx9C4w4Iks3YnDwOlCIT9lKf9VPFQAC9ENFEkPTScg=;
-        b=I2UvVSVEv4sOKoMxQlgqLHVVcUvHdbjsbVVwmB6YERQS+zBI4P3VrgNuH0E+xpbspV
-         sQtyCzhekl8xlEpU2YOhdoTFJfHc7TS4OWKmGMXoDJhyrbErsMOzl3JcW5skjrpqq2Pr
-         8ze/LGKsrZD1OYisQXkaOJNon+GIQ4CwMtuWlt30WNeyQibSXfYh1eqf4R4/twCftcPE
-         xT6jjfOCU9bqFgnqCtwEe9Sax+PbMZMVC3Bn7E1ya2mmaRo/fu759KGvUFq21z4JCehs
-         BGoGuCplxEIVbqgP+XIspTEXWBiBrOZ9Mrcn/z9r2TxpKHTRCC0lH2a8mmENv9sk9pC6
-         iAow==
-X-Forwarded-Encrypted: i=1; AJvYcCVH8oLwM9uEdqIZ9sZlcrs4fcmR8JLDpWyqJQm5C95A4oG0ILC306eSVbjk4/5dVGaWGJNKOmU7+2iAC5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj2AwvHzPH8kjr+jm3ChEFWr/Oq2ujD+CoZI0aKZ7KN6y980cE
-	Jf66yPeAd1qVrgrAr1nSzoiUCwau0Yo/zZUP67rFWvB1NwKTKQFio7Wu
-X-Gm-Gg: ASbGncsbwBQG5dVKxP6DQ1e1QuSeVutaGRTvgSH9d4W/rYQyp3Aigm/igbfJ+cNJ6nz
-	FZ0427g4cclVollg1yfWG4Fm0SeBNXLIrq3KIMpV/RYJZvW2ROBLbZlxhtuBkVhZJhUdr8YVPFd
-	sVYKO5PztmipZuF56FG6hMAc4S+354hl60Z4Fxsh37S2sOqHDiDr3bhZM8qipg6sUC3VCmZp4ne
-	gS4jjeTx/QAubBXnX0vHO/zcxBd2Lkecgb/mTx0QESRredY0H/UUYFwGh/C/u+U3eBaR74R2ymg
-	6RutFKfD56giCdOQN1ysvVwROCnS/602/qvNCc12asCMQb4Ps1oXS0H/5T4iKEMl2Hl48CLXr22
-	a0AfcnwNvIMQdRncCv7vJucihInlGdegjw5hfVO4P1dQT
-X-Google-Smtp-Source: AGHT+IE8q+VAxVumQBkfL5m1N5HZKLBfbQY08yA51T0F8c6w/KmQDKfIYUx8eXD3BjyfwcUIEGcAUw==
-X-Received: by 2002:a05:6214:413:b0:707:757:aef1 with SMTP id 6a1803df08f44-70713a92ca5mr101122406d6.2.1753482808572;
-        Fri, 25 Jul 2025 15:33:28 -0700 (PDT)
-Received: from [192.168.12.218] ([172.58.119.119])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae995456c8sm5287341cf.22.2025.07.25.15.33.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 15:33:28 -0700 (PDT)
-Message-ID: <cabaaa35-5207-439d-b09d-bea741194535@gmail.com>
-Date: Fri, 25 Jul 2025 15:33:28 -0700
+        d=1e100.net; s=20230601; t=1753482967; x=1754087767;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a9d5B9fr4Nfm+zF43cKINLpDPc+Ji1sf50+7PmWlTvU=;
+        b=s2SxXLY+0Zt0TCMCr5uOrYpkjnFbyGAugly6pyAT1zfKtGkcWDtU9WmmtCm/zR8JHe
+         42FwVTKdG1xq5Hlg0scxhRE1UeWHhnFAzz5bIbBqC5tYrBPlDS1o3+fmNcfQZCYcvo0O
+         XudEQTGUsC4v8vmVff3+OppJdNbzvWG18Uzf7LsAOWxjKN2jV+DoKjoqMfJ0SQnYimwp
+         8L12l9N+BWOLczy4j1790if23C0HR3biVbhtMO/J+9ueqahe7LpBDkuwjrt0Y4qCddMN
+         VN2tT0KKt76wx9mhA6f+yvS6XbMORJeWE78VFyK5gGK+YF5r1pqTlzCY7L6mvTRi2RCn
+         WgDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Yo8c74myfu48aWo7mqRtDH4P/nRmbfNpOxUYAH+72IMedCf8XV2IE2gJkZwCmxT4ZDjCNN8L3e2tbuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDxU/nthGM+wOhth2mnffMqq+n1AArGLgA+ZpIv9XCqDVdgD39
+	vFmK5b23kngCR7v6Vffp+VC903T/bVVkIYjyXPxh4vY/58dtQCB2v0NO6Xr1x8B3k4SYfIuLXbk
+	wdd0mh/mA3y+Ah8DMPerYMsPIGQErLMVrpezRS4Gm7YGPhABU07rA93iD0/aMyBr6fWkn87Rqpk
+	rBDp2dhkX9OMbenQuyhAHHFlxZqfPI+F2F4nD8QkCD
+X-Gm-Gg: ASbGnctWeiXW5lT9LxbzYmgh6SMv9xkzJOHJZt2jKa5BhPKs007vkyaTv7K/5fjOxZb
+	irKlsfJyU8BR/6JjOZDAvlV0kLY+lrAD4wsH+YcBjJ//murf4bqNbFjon7THHRyP+IU8itVRaIw
+	8gqXOqILzHV79JytKArZVHNoM=
+X-Received: by 2002:a05:690c:d90:b0:714:268:a9f8 with SMTP id 00721157ae682-719e341e6a9mr44682377b3.27.1753482966568;
+        Fri, 25 Jul 2025 15:36:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEpjppnEr5ljWGh9tArrsIJ5IRH6CVauDHUkUdyxGIimReaTFjjdrsPrpmlcjRIbGNsIDizaerPjiiSlgiVQZ4=
+X-Received: by 2002:a05:690c:d90:b0:714:268:a9f8 with SMTP id
+ 00721157ae682-719e341e6a9mr44681987b3.27.1753482965992; Fri, 25 Jul 2025
+ 15:36:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/topology: clear freecpu bit on detach
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- linux-kernel@vger.kernel.org
-References: <20250422194853.1636334-1-opendmb@gmail.com>
-Content-Language: en-US
-From: Doug Berger <opendmb@gmail.com>
-In-Reply-To: <20250422194853.1636334-1-opendmb@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250714003207.113275-1-npache@redhat.com> <20250714003207.113275-2-npache@redhat.com>
+ <02aa93fa-b179-48b9-a319-264be0e027a0@lucifer.local>
+In-Reply-To: <02aa93fa-b179-48b9-a319-264be0e027a0@lucifer.local>
+From: Nico Pache <npache@redhat.com>
+Date: Fri, 25 Jul 2025 16:35:39 -0600
+X-Gm-Features: Ac12FXy8rwzZlL0SK2QdvPBGS9FXasbUCB1K3oRqNSBr9kuXSbYU0DuDKRZp-pg
+Message-ID: <CAA1CXcAv=zSRwos-j7VeYuJRXRqUPy3VUZ06HuQ5u+6krG8woA@mail.gmail.com>
+Subject: Re: [PATCH v9 01/14] khugepaged: rename hpage_collapse_* to collapse_*
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
+	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
+	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
+	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
+	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
+	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I have observed a separate hazard that can occur when offlining a CPU
-that is not addressed by this work around.
-
-I intend to submit a more targeted solution to this issue in the near 
-future, so please continue to disregard this submission :).
-
-Thanks,
-     Doug
-
-On 4/22/2025 12:48 PM, Doug Berger wrote:
-> There is a hazard in the deadline scheduler where an offlined CPU
-> can have its free_cpus bit left set in the def_root_domain when
-> the schedutil cpufreq governor is used. This can allow a deadline
-> thread to be pushed to the runqueue of a powered down CPU which
-> breaks scheduling. The details can be found here:
-> https://lore.kernel.org/lkml/20250110233010.2339521-1-opendmb@gmail.com
-> 
-> The free_cpus mask is expected to be cleared by set_rq_offline();
-> however, the hazard occurs before the root domain is made online
-> during CPU hotplug so that function is not invoked for the CPU
-> that is being made active.
-> 
-> This commit works around the issue by ensuring the free_cpus bit
-> for a CPU is always cleared when the CPU is removed from a
-> root_domain. This likely makes the call of cpudl_clear_freecpu()
-> in rq_offline_dl() fully redundant, but I have not removed it
-> here because I am not certain of all flows.
-> 
-> It seems likely that a better solution is possible from someone
-> more familiar with the scheduler implementation, but this
-> approach is minimally invasive from someone who is not.
-> 
-> Signed-off-by: Doug Berger <opendmb@gmail.com>
-> ---
->   kernel/sched/topology.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index a2a38e1b6f18..c10c5385031f 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -496,6 +496,7 @@ void rq_attach_root(struct rq *rq, struct root_domain *rd)
->   			set_rq_offline(rq);
->   
->   		cpumask_clear_cpu(rq->cpu, old_rd->span);
-> +		cpudl_clear_freecpu(&old_rd->cpudl, rq->cpu);
->   
->   		/*
->   		 * If we don't want to free the old_rd yet then
+On Fri, Jul 25, 2025 at 10:44=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> Hm it seems you missed some places:
+Hehe I did notice that after running the git rebase --exec script
+David showed me. Already fixed, it will be in the V10!
+>
+> mm/khugepaged.c: In function =E2=80=98collapse_scan_mm_slot=E2=80=99:
+> mm/khugepaged.c:2466:43: error: implicit declaration of function =E2=80=
+=98hpage_collapse_scan_file=E2=80=99; did you mean =E2=80=98collapse_scan_f=
+ile=E2=80=99? [-Wimplicit-function-declaration]
+>  2466 |                                 *result =3D hpage_collapse_scan_f=
+ile(mm,
+>       |                                           ^~~~~~~~~~~~~~~~~~~~~~~=
+~
+>       |                                           collapse_scan_file
+> mm/khugepaged.c:2471:45: error: implicit declaration of function =E2=80=
+=98hpage_collapse_test_exit_or_disable=E2=80=99; did you mean =E2=80=98coll=
+apse_test_exit_or_disable=E2=80=99? [-Wimplicit-function-declaration]
+>  2471 |                                         if (hpage_collapse_test_e=
+xit_or_disable(mm))
+>       |                                             ^~~~~~~~~~~~~~~~~~~~~=
+~~~~~~~~~~~~~~
+>       |                                             collapse_test_exit_or=
+_disable
+> mm/khugepaged.c:2480:43: error: implicit declaration of function =E2=80=
+=98hpage_collapse_scan_pmd=E2=80=99; did you mean =E2=80=98collapse_scan_pm=
+d=E2=80=99? [-Wimplicit-function-declaration]
+>  2480 |                                 *result =3D hpage_collapse_scan_p=
+md(mm, vma,
+>       |                                           ^~~~~~~~~~~~~~~~~~~~~~~
+>       |                                           collapse_scan_pmd
+> mm/khugepaged.c: At top level:
+> mm/khugepaged.c:2278:12: error: =E2=80=98collapse_scan_file=E2=80=99 defi=
+ned but not used [-Werror=3Dunused-function]
+>  2278 | static int collapse_scan_file(struct mm_struct *mm, unsigned long=
+ addr,
+>       |            ^~~~~~~~~~~~~~~~~~
+> mm/khugepaged.c:1271:12: error: =E2=80=98collapse_scan_pmd=E2=80=99 defin=
+ed but not used [-Werror=3Dunused-function]
+>  1271 | static int collapse_scan_pmd(struct mm_struct *mm,
+>       |            ^~~~~~~~~~~~~~~~~
+>
+> Other than this it LGTM, so once you fix this stuff up you can get a tag =
+:)
+Awesome Thanks!
+>
+> On Sun, Jul 13, 2025 at 06:31:54PM -0600, Nico Pache wrote:
+> > The hpage_collapse functions describe functions used by madvise_collaps=
+e
+> > and khugepaged. remove the unnecessary hpage prefix to shorten the
+> > function name.
+> >
+> > Reviewed-by: Zi Yan <ziy@nvidia.com>
+> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Signed-off-by: Nico Pache <npache@redhat.com>
+> > ---
+> >  mm/khugepaged.c | 46 +++++++++++++++++++++++-----------------------
+> >  1 file changed, 23 insertions(+), 23 deletions(-)
+> >
+> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> > index a55fb1dcd224..eb0babb51868 100644
+> > --- a/mm/khugepaged.c
+> > +++ b/mm/khugepaged.c
+> > @@ -402,14 +402,14 @@ void __init khugepaged_destroy(void)
+> >       kmem_cache_destroy(mm_slot_cache);
+> >  }
+> >
+> > -static inline int hpage_collapse_test_exit(struct mm_struct *mm)
+> > +static inline int collapse_test_exit(struct mm_struct *mm)
+> >  {
+> >       return atomic_read(&mm->mm_users) =3D=3D 0;
+> >  }
+> >
+> > -static inline int hpage_collapse_test_exit_or_disable(struct mm_struct=
+ *mm)
+> > +static inline int collapse_test_exit_or_disable(struct mm_struct *mm)
+> >  {
+> > -     return hpage_collapse_test_exit(mm) ||
+> > +     return collapse_test_exit(mm) ||
+> >              test_bit(MMF_DISABLE_THP, &mm->flags);
+> >  }
+> >
+> > @@ -444,7 +444,7 @@ void __khugepaged_enter(struct mm_struct *mm)
+> >       int wakeup;
+> >
+> >       /* __khugepaged_exit() must not run from under us */
+> > -     VM_BUG_ON_MM(hpage_collapse_test_exit(mm), mm);
+> > +     VM_BUG_ON_MM(collapse_test_exit(mm), mm);
+> >       if (unlikely(test_and_set_bit(MMF_VM_HUGEPAGE, &mm->flags)))
+> >               return;
+> >
+> > @@ -503,7 +503,7 @@ void __khugepaged_exit(struct mm_struct *mm)
+> >       } else if (mm_slot) {
+> >               /*
+> >                * This is required to serialize against
+> > -              * hpage_collapse_test_exit() (which is guaranteed to run
+> > +              * collapse_test_exit() (which is guaranteed to run
+> >                * under mmap sem read mode). Stop here (after we return =
+all
+> >                * pagetables will be destroyed) until khugepaged has fin=
+ished
+> >                * working on the pagetables under the mmap_lock.
+> > @@ -838,7 +838,7 @@ struct collapse_control khugepaged_collapse_control=
+ =3D {
+> >       .is_khugepaged =3D true,
+> >  };
+> >
+> > -static bool hpage_collapse_scan_abort(int nid, struct collapse_control=
+ *cc)
+> > +static bool collapse_scan_abort(int nid, struct collapse_control *cc)
+> >  {
+> >       int i;
+> >
+> > @@ -873,7 +873,7 @@ static inline gfp_t alloc_hugepage_khugepaged_gfpma=
+sk(void)
+> >  }
+> >
+> >  #ifdef CONFIG_NUMA
+> > -static int hpage_collapse_find_target_node(struct collapse_control *cc=
+)
+> > +static int collapse_find_target_node(struct collapse_control *cc)
+> >  {
+> >       int nid, target_node =3D 0, max_value =3D 0;
+> >
+> > @@ -892,7 +892,7 @@ static int hpage_collapse_find_target_node(struct c=
+ollapse_control *cc)
+> >       return target_node;
+> >  }
+> >  #else
+> > -static int hpage_collapse_find_target_node(struct collapse_control *cc=
+)
+> > +static int collapse_find_target_node(struct collapse_control *cc)
+> >  {
+> >       return 0;
+> >  }
+> > @@ -912,7 +912,7 @@ static int hugepage_vma_revalidate(struct mm_struct=
+ *mm, unsigned long address,
+> >       struct vm_area_struct *vma;
+> >       unsigned long tva_flags =3D cc->is_khugepaged ? TVA_ENFORCE_SYSFS=
+ : 0;
+> >
+> > -     if (unlikely(hpage_collapse_test_exit_or_disable(mm)))
+> > +     if (unlikely(collapse_test_exit_or_disable(mm)))
+> >               return SCAN_ANY_PROCESS;
+> >
+> >       *vmap =3D vma =3D find_vma(mm, address);
+> > @@ -985,7 +985,7 @@ static int check_pmd_still_valid(struct mm_struct *=
+mm,
+> >
+> >  /*
+> >   * Bring missing pages in from swap, to complete THP collapse.
+> > - * Only done if hpage_collapse_scan_pmd believes it is worthwhile.
+> > + * Only done if khugepaged_scan_pmd believes it is worthwhile.
+> >   *
+> >   * Called and returns without pte mapped or spinlocks held.
+> >   * Returns result: if not SCAN_SUCCEED, mmap_lock has been released.
+> > @@ -1071,7 +1071,7 @@ static int alloc_charge_folio(struct folio **foli=
+op, struct mm_struct *mm,
+> >  {
+> >       gfp_t gfp =3D (cc->is_khugepaged ? alloc_hugepage_khugepaged_gfpm=
+ask() :
+> >                    GFP_TRANSHUGE);
+> > -     int node =3D hpage_collapse_find_target_node(cc);
+> > +     int node =3D collapse_find_target_node(cc);
+> >       struct folio *folio;
+> >
+> >       folio =3D __folio_alloc(gfp, HPAGE_PMD_ORDER, node, &cc->alloc_nm=
+ask);
+> > @@ -1257,7 +1257,7 @@ static int collapse_huge_page(struct mm_struct *m=
+m, unsigned long address,
+> >       return result;
+> >  }
+> >
+> > -static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+> > +static int collapse_scan_pmd(struct mm_struct *mm,
+> >                                  struct vm_area_struct *vma,
+> >                                  unsigned long address, bool *mmap_lock=
+ed,
+> >                                  struct collapse_control *cc)
+> > @@ -1371,7 +1371,7 @@ static int hpage_collapse_scan_pmd(struct mm_stru=
+ct *mm,
+> >                * hit record.
+> >                */
+> >               node =3D folio_nid(folio);
+> > -             if (hpage_collapse_scan_abort(node, cc)) {
+> > +             if (collapse_scan_abort(node, cc)) {
+> >                       result =3D SCAN_SCAN_ABORT;
+> >                       goto out_unmap;
+> >               }
+> > @@ -1440,7 +1440,7 @@ static void collect_mm_slot(struct khugepaged_mm_=
+slot *mm_slot)
+> >
+> >       lockdep_assert_held(&khugepaged_mm_lock);
+> >
+> > -     if (hpage_collapse_test_exit(mm)) {
+> > +     if (collapse_test_exit(mm)) {
+> >               /* free mm_slot */
+> >               hash_del(&slot->hash);
+> >               list_del(&slot->mm_node);
+> > @@ -1733,7 +1733,7 @@ static void retract_page_tables(struct address_sp=
+ace *mapping, pgoff_t pgoff)
+> >               if (find_pmd_or_thp_or_none(mm, addr, &pmd) !=3D SCAN_SUC=
+CEED)
+> >                       continue;
+> >
+> > -             if (hpage_collapse_test_exit(mm))
+> > +             if (collapse_test_exit(mm))
+> >                       continue;
+> >               /*
+> >                * When a vma is registered with uffd-wp, we cannot recyc=
+le
+> > @@ -2255,7 +2255,7 @@ static int collapse_file(struct mm_struct *mm, un=
+signed long addr,
+> >       return result;
+> >  }
+> >
+> > -static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned lon=
+g addr,
+> > +static int collapse_scan_file(struct mm_struct *mm, unsigned long addr=
+,
+> >                                   struct file *file, pgoff_t start,
+> >                                   struct collapse_control *cc)
+> >  {
+> > @@ -2312,7 +2312,7 @@ static int hpage_collapse_scan_file(struct mm_str=
+uct *mm, unsigned long addr,
+> >               }
+> >
+> >               node =3D folio_nid(folio);
+> > -             if (hpage_collapse_scan_abort(node, cc)) {
+> > +             if (collapse_scan_abort(node, cc)) {
+> >                       result =3D SCAN_SCAN_ABORT;
+> >                       folio_put(folio);
+> >                       break;
+> > @@ -2362,7 +2362,7 @@ static int hpage_collapse_scan_file(struct mm_str=
+uct *mm, unsigned long addr,
+> >       return result;
+> >  }
+> >
+> > -static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *r=
+esult,
+> > +static unsigned int collapse_scan_mm_slot(unsigned int pages, int *res=
+ult,
+> >                                           struct collapse_control *cc)
+> >       __releases(&khugepaged_mm_lock)
+> >       __acquires(&khugepaged_mm_lock)
+> > @@ -2400,7 +2400,7 @@ static unsigned int khugepaged_scan_mm_slot(unsig=
+ned int pages, int *result,
+> >               goto breakouterloop_mmap_lock;
+> >
+> >       progress++;
+> > -     if (unlikely(hpage_collapse_test_exit_or_disable(mm)))
+> > +     if (unlikely(collapse_test_exit_or_disable(mm)))
+> >               goto breakouterloop;
+> >
+> >       vma_iter_init(&vmi, mm, khugepaged_scan.address);
+> > @@ -2408,7 +2408,7 @@ static unsigned int khugepaged_scan_mm_slot(unsig=
+ned int pages, int *result,
+> >               unsigned long hstart, hend;
+> >
+> >               cond_resched();
+> > -             if (unlikely(hpage_collapse_test_exit_or_disable(mm))) {
+> > +             if (unlikely(collapse_test_exit_or_disable(mm))) {
+> >                       progress++;
+> >                       break;
+> >               }
+> > @@ -2430,7 +2430,7 @@ static unsigned int khugepaged_scan_mm_slot(unsig=
+ned int pages, int *result,
+> >                       bool mmap_locked =3D true;
+> >
+> >                       cond_resched();
+> > -                     if (unlikely(hpage_collapse_test_exit_or_disable(=
+mm)))
+> > +                     if (unlikely(collapse_test_exit_or_disable(mm)))
+> >                               goto breakouterloop;
+> >
+> >                       VM_BUG_ON(khugepaged_scan.address < hstart ||
+> > @@ -2490,7 +2490,7 @@ static unsigned int khugepaged_scan_mm_slot(unsig=
+ned int pages, int *result,
+> >        * Release the current mm_slot if this mm is about to die, or
+> >        * if we scanned all vmas of this mm.
+> >        */
+> > -     if (hpage_collapse_test_exit(mm) || !vma) {
+> > +     if (collapse_test_exit(mm) || !vma) {
+> >               /*
+> >                * Make sure that if mm_users is reaching zero while
+> >                * khugepaged runs here, khugepaged_exit will find
+> > @@ -2544,7 +2544,7 @@ static void khugepaged_do_scan(struct collapse_co=
+ntrol *cc)
+> >                       pass_through_head++;
+> >               if (khugepaged_has_work() &&
+> >                   pass_through_head < 2)
+> > -                     progress +=3D khugepaged_scan_mm_slot(pages - pro=
+gress,
+> > +                     progress +=3D collapse_scan_mm_slot(pages - progr=
+ess,
+> >                                                           &result, cc);
+> >               else
+> >                       progress =3D pages;
+> > --
+> > 2.50.0
+> >
+>
 
 
