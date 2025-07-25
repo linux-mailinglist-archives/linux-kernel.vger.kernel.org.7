@@ -1,113 +1,107 @@
-Return-Path: <linux-kernel+bounces-745834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94FB8B11F60
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:30:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11980B11F58
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBB0C580835
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2834E4245
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F278113A244;
-	Fri, 25 Jul 2025 13:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2DD2ED860;
+	Fri, 25 Jul 2025 13:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="h2m7zhlu"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rxztm1Zg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140459475
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D0877111;
+	Fri, 25 Jul 2025 13:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753450253; cv=none; b=aSXXXjkvFZpTkk13HCPMW/DjdK7zbhEFf7uoz9heY5PLWZewO/QNer2UHUiCdSTPOi3/ExUwX+XRR4OtX8WbnCi1Jd4bxW3aOUOExrnR7AsxxyxDLfaO1lOGcl3XOKqhgj9g8avVvds+u6z6E1DKqQzH6ANuUVm/tJrm9PBpAwc=
+	t=1753450070; cv=none; b=dd0L9izse7V8nVClVBftEnjeQlXvazJAPY/Y4fg99aiz/5v1b+ayKRROJIIEFCvhG2cERU1ZTAPfR4M3LEHpxrI/jJHLgnWGWc7ZtVa6rKksoqYUTcEJhwKDPebgF5S3t1iwoTL0wTbVPosKHM5+/yd1ZluQ93cQtM7NSkEwcPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753450253; c=relaxed/simple;
-	bh=AFsV0usjt86lovH5mvsK/2BeBPrgAG25O/0Mf8BwRF0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JReT2Zf6p6Gx/6iYKzEG12wToJuMChXJR74eVpqQ4J+j1pqvQ9ELK2bA/VR3XUjrtcwYstQQMtbeJm7e7Ev4VNzX0vVlRkH6FadNNmnvz5YdhkCU0eCUlZ79o2cVbqWZcQTYOpG1eiGC5njC69M7bkSRKhYk9WbeYraFRLn/E3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=h2m7zhlu; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1753450206;
-	bh=O8wzE8tH/Y17Uk4jPlIamrwz3jhcPfWByFA+NtEuEl4=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=h2m7zhluj/vC0iZca6HjrkqSn9X8JWd7yC/lSoW2QQzzyMwP5F1DsDMt5MHJgfa1i
-	 KkvosWeFwtpPwKmO03nKpYOEOnNDBIo+I+2M6/vPUeUXpsvWnUphQKUZBmOwwj0XOK
-	 fGxuiLpQSMIj0nrLN/rIunzFLk27nW+HLeU6WpzA=
-X-QQ-mid: zesmtpgz9t1753450170t5bc23faa
-X-QQ-Originating-IP: sHW5lqbKDHnR5SkWwRvRC8NqCmHqjs5kNCy4ePgYHqM=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 25 Jul 2025 21:29:28 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 12710551630611873458
-EX-QQ-RecipientCnt: 8
-From: Wentao Guan <guanwentao@uniontech.com>
-To: chenhuacai@kernel.org
-Cc: kernel@xen0n.name,
-	xry111@xry111.site,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	wangyuli@uniontech.com,
-	zhanjun@uniontech.com,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: [PATCH] LoongArch: vDSO: remove -nostdlib complier flag
-Date: Fri, 25 Jul 2025 21:26:51 +0800
-Message-Id: <20250725132651.1974717-1-guanwentao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1753450070; c=relaxed/simple;
+	bh=lXb0UAkdLRBZEl2w236QgUTKNdJI4nqMaBIkSJhUt1A=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=J/+sBV9bmtsU+mntYsGJqXD7W37UcSoBQa1Rl80M5N27aya5H4AP/NygjRJURxcAdggs2I3H+RuHfGRFf/xG/zh9+SC3290KhYPIahDIsTJUn3cKidzgtEHdMZZaf+bZmvVt4PdEYEYJbqew7fycYYG/G1fsEENTi12Mtycs0fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rxztm1Zg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD9A8C4CEE7;
+	Fri, 25 Jul 2025 13:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753450070;
+	bh=lXb0UAkdLRBZEl2w236QgUTKNdJI4nqMaBIkSJhUt1A=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Rxztm1Zg2BICuHOgdxuDU8E9XunHZYswcsJQky0leSQJM08JMEmbEaovz3Zcw9p0j
+	 5mfj1jIkSKLGMNg0L82YL1dxB/BtBYatXGCCvpH9at9O9fLl5j0kgG/WEIN7y6y1XH
+	 PTaYC43Cvv9GXvkxGo/uhMuJOgV0VQMpsB+GZm7FsnnIiAWqBzF1GNxzntz/+MFiBH
+	 IC8tBuHIgCdKuRipxJPpKnUjaE3itoHmfUAGscGFSUgpQDcfhF2DqhV+MTz6zYF1WS
+	 oV/qTCl+tLpQguthUMBDg3Mir5PfyXvTK/APP5UVVkWYPb5I9jf6Xuo6ue9JyApvYQ
+	 TjPbM4i2uvlfQ==
+Date: Fri, 25 Jul 2025 08:27:49 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: NAtipnnbTPeayADMvfoNCP7BWo7l63XJ11w3FPknwaXtBwYP6U20U/wm
-	sVMu6DW+48C392BBt/4gSX971WYxOwW1qzjZEuR3G11p6ztJ3X1CgCJblpF7MHvj3Z5f67v
-	ZXcvQgNzJfUjNFxkijdITu6ZD6A1D3id9Of3XHYD+K5ZUd/Fb3YxChoilCFhwrIYCx63wLX
-	D4f4c0k+HAuj72ygUiuQ+RB0+zY+Qjf2DQrkKcbFTVXAkELYLJxl7r6MAkmyOY3Jbrj9z/I
-	61MOhUwHsQvy6r4YBEVhxCG4UNDcvGjdJhZ3GhYGnnFrzp+nrsMjJuYb9dVpCNoKHPgAQZu
-	goQwzKizL2QK66PP2+CRZ39+FYCIALCmR6/UenScSzIoLnphu1/kIZsDAN7gL1eJMthlp0Y
-	xDaN/eFLjzvyiS4fOm/V9hd6bNqYtlC+vXATdCB1nk0mxW9W66YR3p8luHJgXAvGqKE+lNZ
-	WGEhPot/lNyrAKPdMJhBl1YAyjmL+WgOZjGyrCogbVgsfC06UmtyM0wkkM7XYYyc9oMjdx8
-	22huSlKodN4cIsa6Putrz5i9j/PqkCjyy052HtdE3EGuohlIAdgSzJHmL4Zq7KFG0n7fZRR
-	Nz6DFUskpcrSMXbyxV4ddxHXq188XPl11mS3ThFr627rX0eVXV9dgHopyzzWj5MyjId2EfP
-	YTBIHTXupod+tWjeR7uCf3wXPWCkGadeJkMUnQuMAyHGe4RNPkVBhKM513kroJWF9Reqymp
-	9jjtKnd7zohVBmxz1v33tdz7uiQfY01IqL7fbPLgBmK4abiwuEeMYFUab9T51sJUkzYhYh5
-	fSkVaPG927WfH7k8A3VNMxe22Q7MNy2p7X6+HQ0dVKZWKfJV0nKyx27jQBZELkxtiHMj6TY
-	EtTKa5A1W8ZccfqF+SWtbhRa6trjoiiotLry4iUnitzPkYm437oj/zNBDgf3/9ZCwCpxHnQ
-	McW+6mKaufkZ6O0rosjRkSf9yZXp4R5uz8S8QLmpibEkoomypbP2k67b/tLCtTvcg6MFj8u
-	lFODj5svxSSU71fBpL+Oc+qq2Uce8ESA+kp9GRwUQT5pe5RR5d
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Daniel Thompson <danielt@kernel.org>, Helge Deller <deller@gmx.de>, 
+ linux-fbdev@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org, 
+ linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>
+To: Maud Spierings <maudspierings@gocontroll.com>
+In-Reply-To: <20250725-max25014-v1-1-0e8cce92078e@gocontroll.com>
+References: <20250725-max25014-v1-0-0e8cce92078e@gocontroll.com>
+ <20250725-max25014-v1-1-0e8cce92078e@gocontroll.com>
+Message-Id: <175345006903.1002291.4212198267952446360.robh@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: backlight: Add max25014 bindings
 
-It is clear to remove the -nostdlib for ld, it is similar to commit
-bdbf2038fbf4 ("MIPS: VDSO: remove -nostdlib compiler flag").
 
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
----
- arch/loongarch/vdso/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, 25 Jul 2025 13:09:23 +0200, Maud Spierings wrote:
+> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+> with intgrated boost controller.
+> 
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> ---
+>  .../bindings/leds/backlight/maxim,max25014.yaml    | 78 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  5 ++
+>  2 files changed, 83 insertions(+)
+> 
 
-diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefile
-index ccd2c5e135c6..d8316f993482 100644
---- a/arch/loongarch/vdso/Makefile
-+++ b/arch/loongarch/vdso/Makefile
-@@ -36,7 +36,7 @@ endif
- 
- # VDSO linker flags.
- ldflags-y := -Bsymbolic --no-undefined -soname=linux-vdso.so.1 \
--	$(filter -E%,$(KBUILD_CFLAGS)) -nostdlib -shared --build-id -T
-+	$(filter -E%,$(KBUILD_CFLAGS)) -shared --build-id -T
- 
- #
- # Shared build commands.
--- 
-2.20.1
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.example.dtb: backlight@6f (maxim,max25014): Unevaluated properties are not allowed ('bl-name' was unexpected)
+	from schema $id: http://devicetree.org/schemas/leds/backlight/maxim,max25014.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250725-max25014-v1-1-0e8cce92078e@gocontroll.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
