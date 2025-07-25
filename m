@@ -1,145 +1,102 @@
-Return-Path: <linux-kernel+bounces-745773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A049B11E58
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21906B11E5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72673AAEDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9691CC61F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06D12472B9;
-	Fri, 25 Jul 2025 12:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5E7247296;
+	Fri, 25 Jul 2025 12:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOTYUv2m"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="uQBRNsr/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EC8246BC7;
-	Fri, 25 Jul 2025 12:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40A81A38F9;
+	Fri, 25 Jul 2025 12:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753446046; cv=none; b=GPEOMnkajtRNHcUWG6dA+WV/fUlD9kZCGcwV5vvp/C/pU6NU2YWKlzA7Rutrzf5nN3pPwlgP1ikKHL0dkk2xtbWlZr7VIIK5SnT+4/+gveNcdboLiMZx0EmFy4r0c0r/LtKXpBqNbQmbEzTqdEKdq3r81iXYSe+HJzGHQA6vBiM=
+	t=1753446095; cv=none; b=D6mq3e9iqSmQV4jadol+XhL66hASzfCKVrpo7/qFA+lzPqHAfbeT+vXKEtnFajhyDL+pl8G3LjZ1oFnCnEA9NhRjycKrxNOdn0STsYtighdCHw9IcAwNzJVMZ4NDgYxIDdGK6rOoFste8MUY5A07opVH43CT+aGHeAlwN16t9Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753446046; c=relaxed/simple;
-	bh=1Cp7zc6lqPvU29V2fbv1NcFYqTlUMGp8N+HlDjlY+jo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gs0zQyGVsN1fvylnY11UNlljYDO8eLhabQMdvMr4IcPAglbalKW02ObY5NrVHGHQOUKp6mNbl3mihMQVf2LcnZ0jjzdW7a0JgHTcRoq+e5653D5jOhdWWw14AMgyt+0sySloqO1SV+xyNe+An6pHv8rbN5M2HfcILwL1KFGQOJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FOTYUv2m; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4561514c7f0so20881545e9.0;
-        Fri, 25 Jul 2025 05:20:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753446043; x=1754050843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VA1aVk5ATgGwWP5YvZwY73Pqu6/2aciSmLuZYBAcU5o=;
-        b=FOTYUv2mTCGrzaxYBRYfR7g3m0poAUIJduXfw9ZqR8JSahWDMrMz+CR3QIRHUTvgH8
-         PRKMWwpFSMtv2htt+fQ7IL1WqArlHiUOpTW0RJ0WiyKo0FTQHlY/uEbVV1h+jEBW9qbL
-         zwoqCYv+qYBdIngC17MJsMJRazEGqq13ShymFlnbgkJzIh1s4h40FdPvLc1pOicRdKm1
-         8KxE2haCLNa7aa1hVXsCYFZ8VTrSwmmly2urLsYz4aUCZ6JbiUnPm63UJIesO5XASaN6
-         6De7WW/uln/ri3/lWgU6+hZf7gZ3d3iSlNL4+Kw3SbLJf66t9xAIBn2kThKDYRiQ7rmr
-         4ELA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753446043; x=1754050843;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VA1aVk5ATgGwWP5YvZwY73Pqu6/2aciSmLuZYBAcU5o=;
-        b=E9TEgbwb1HaXB/vM+iJFDthj5/RoB+bE536leL4mBWtXpviDwBXxgVesAX4RkV7zr3
-         MjZC2iJtARr5IhWVoa9EylcMFYuBGMgUd7e5Ea0dO1YQuOWYcdT1IwExIlnxOhNHtHF3
-         ImwGOuDUvda/68nAUKfC+igq89YraOoJ7Ht3BnaaqpfTHRbALCLOMl3cpQ/NOsSLM9mc
-         ql0lKy46zWVQZ2ropl0CJZGZYh3zVfO6WEGCgpJZukjWKraRe8Z/2Ev+cl9+qJBblC3x
-         5AAfhzFj0qGjHc/IWDTndNo43LXhJBqFakpbzshm57FHg9vG2/sQ0/yiNWrf4aatFl2d
-         fTYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYivzv4vVz+D0ewu8qyikloKLTJxt3kjQUCkfmt4tS2J9J2/enqmnp+vQfPBbRz4a8gNj2Cyka+FhRCLQ=@vger.kernel.org, AJvYcCXoZSyPCYIlw1EbmKMfJxuunAzo4WZhI8Cktno7x2nNpkNn79AGcZ/P1Jj7BlohIRovsy5c/gnbySHIGSOA6gI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWfCMD/VmPcA2RLv0I9S4eTSodZoIlSaR6vm/FHMpIflMAH8oi
-	KgfNyE4ThW9hJxJkCIrjUKB2saOt+TbVoeD+2aScA6/SovJcz1kIRxp4
-X-Gm-Gg: ASbGncvumY8w17xhuHT50lFc0GLpj1aNhBChQ02M9Il0SZQc6o5fGthkd9t2egvY0CJ
-	hagfT/5MQ+BhS3rJEv3wLv/LsgAMt1GC5QAjn0owpG2Sy0ivtCd5Plsm6DTZGt0m32P8L88pyuI
-	w8uoln3655EWQ5aGjxTJ5IIJmQecV4No2yuksTEIbqpggKeTFTsJucPbu9aFqjfihJzyyafCx2O
-	ran/fSbOFCUc9sIc+SQo3LD3xaTtDOrzKPF56kUlaf8tQPKTRNCLbh0SI5oxtsUxKdIKnJWuGGW
-	U20dNVupXlq3TVKEYRMo+uXXoAF0saSB6P9UpOKoFiNSLs2oRpveBSLoWBDCqH7wYhTogJlZczV
-	e/gjg5bTDMOjyclbwa5apDM/L+HQc/R29nYA=
-X-Google-Smtp-Source: AGHT+IHSdaknPrqijioY9HDWLiOWQTIycCby2q675AueD5MlPYeEPC0uzrUjYIL3oulhKhqiN6JSTw==
-X-Received: by 2002:a05:600c:8b11:b0:456:1d34:97a with SMTP id 5b1f17b1804b1-4587631561fmr18307095e9.9.1753446042665;
-        Fri, 25 Jul 2025 05:20:42 -0700 (PDT)
-Received: from ?IPV6:2001:871:22a:3587::1ad1? ([2001:871:22a:3587::1ad1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587054f686sm51705225e9.14.2025.07.25.05.20.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 05:20:42 -0700 (PDT)
-Message-ID: <5b2951af-517b-4d5c-887f-417f486fd9a2@gmail.com>
-Date: Fri, 25 Jul 2025 14:20:40 +0200
+	s=arc-20240116; t=1753446095; c=relaxed/simple;
+	bh=jBrw0DN+ddgb8gdLkmqFxOubLYhz6GlmgDXhA61fNr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNcHaouz7++HgNVRWPvUFc5IEN6kOpRA8MLHYu+T2Sj+pw0WUBPa8YyoJIOfAETfKDBTKyVtIzUwElebSqeHYeJ6MQShJK7M7BTcM0zPYTl7HemWhBy0gsla3LlIqspmp/eQ3kHN68a9jWvN79aXlbSGPA7pghJoxIel/bA+bos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=uQBRNsr/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=VzEE2wp1KsYSjP5PjapuI6k/BdRSLopq4SwBxJM0G+g=; b=uQBRNsr/1NXyUp9/NeMDwD2uZD
+	Ube38Esxgns0WJBBo/eDNAdjTih+kR/vEPXVFJ1eBAsBktukl1ZJfTLioqdpPgqorYpTyOpUBcnLL
+	dRpVlobuCGe1TjWAPImiP/wd0ITU/R20PjoPuf0FSnrcQzWZc7edKNsom8LXnqCSvk5w=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ufHQL-002rXl-Fq; Fri, 25 Jul 2025 14:21:17 +0200
+Date: Fri, 25 Jul 2025 14:21:17 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel@collabora.com
+Subject: Re: [PATCH] arm64: dts: rockchip: use MAC TX delay for ROCK 4D
+Message-ID: <add11c8d-34b1-476c-96b3-964eb2a3de6e@lunn.ch>
+References: <20250724-rk3576-rock4d-phy-timings-v1-1-1cdce2b4aca4@kernel.org>
+ <f22243f5-759a-4ff2-8d14-6edb49d87c52@lunn.ch>
+ <mqoyjn7mnq6tmt6n6oev4wa3herjaxlupml2fmcampwiajvj4a@r5zs4d3jdm5p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: nova-drm: fix 32-bit arm build
-To: Miguel Ojeda <ojeda@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Alex Gaynor <alex.gaynor@gmail.com>
-Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-References: <20250724165441.2105632-1-ojeda@kernel.org>
-Content-Language: en-US, de-DE
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-In-Reply-To: <20250724165441.2105632-1-ojeda@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mqoyjn7mnq6tmt6n6oev4wa3herjaxlupml2fmcampwiajvj4a@r5zs4d3jdm5p>
 
-Hi Miguel,
-
-On 24.07.25 6:54 PM, Miguel Ojeda wrote:
-> In 32-bit arm, the build fails with:
+> > Have you tried "rgmii-id" and small values for tx_delay? If the
+> > hardware needs 2.1ns, for example, the MAC could add 0.1ns and the PHY
+> > adds the default 2ns. That would allow you to conform to the DT
+> > binding.
 > 
->     error[E0308]: mismatched types
->       --> drivers/gpu/drm/nova/file.rs:42:28
->        |
->     42 |         getparam.set_value(value);
->        |                  --------- ^^^^^ expected `u64`, found `u32`
->        |                  |
->        |                  arguments to this method are incorrect
->        |
->     note: method defined here
->       --> drivers/gpu/drm/nova/uapi.rs:29:12
->        |
->     29 |     pub fn set_value(&self, v: u64) {
->        |            ^^^^^^^^^        ------
->     help: you can convert a `u32` to a `u64`
->        |
->     42 |         getparam.set_value(value.into());
->        |                                 +++++++
+> The MAC code (drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c) looks
+> like this, so "rgmii-id" results in no MAC delays being applied:
 > 
-> The reason is that `Getparam::set_value` takes a `u64` (from the UAPI),
-> but `pci::Device::resource_len()` returns a `resource_size_t`, which is a
-> `phys_addr_t`, which may be 32- or 64-bit.
+> 	case PHY_INTERFACE_MODE_RGMII:
+> 		bsp_priv->ops->set_to_rgmii(bsp_priv, bsp_priv->tx_delay,
+> 					    bsp_priv->rx_delay);
+> 		break;
+> 	case PHY_INTERFACE_MODE_RGMII_ID:
+> 		bsp_priv->ops->set_to_rgmii(bsp_priv, 0, 0);
+> 		break;
+> 	case PHY_INTERFACE_MODE_RGMII_RXID:
+> 		bsp_priv->ops->set_to_rgmii(bsp_priv, bsp_priv->tx_delay, 0);
+> 		break;
+> 	case PHY_INTERFACE_MODE_RGMII_TXID:
+> 		bsp_priv->ops->set_to_rgmii(bsp_priv, 0, bsp_priv->rx_delay);
+> 		break;
+>     ...
 > 
-> Thus add an `into()` call to support the 32-bit case, while allowing the
-> Clippy lint that complains in the 64-bit case where the type is the same.
-> 
-> Fixes: cdeaeb9dd762 ("drm: nova-drm: add initial driver skeleton")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
-> As discussed, it may be best to have a newtype, or at least a function
-> to perform this -- here it is the minimal fix nevertheless.
+> Also the default values (if properties are missing in DT) are
+> rx_delay=0x10 and tx_delay=0x30, so changing this logic risks
+> breaking some boards :(
 
-I agree we should at least have a specific conversion function, but for now:
+Just as an experiment, could you enable setting delays for
+PHY_INTERFACE_MODE_RGMII_ID and see if small values do work for you.
 
-Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+If they do, we can then figure out a way to actually do it without
+breaking other boards.
 
-Cheers Christian
-
-
+	Andrew
 
