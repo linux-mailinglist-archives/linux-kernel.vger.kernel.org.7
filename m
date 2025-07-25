@@ -1,205 +1,135 @@
-Return-Path: <linux-kernel+bounces-745862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19280B11FBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:05:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 676BBB11FD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9362FAE1E5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD443AA4B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8B01E0B91;
-	Fri, 25 Jul 2025 14:04:49 +0000 (UTC)
-Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603AD1FC0E2;
+	Fri, 25 Jul 2025 14:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="s17j6S4M"
+Received: from smtp88.iad3a.emailsrvr.com (smtp88.iad3a.emailsrvr.com [173.203.187.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB3F191F92
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB21C1DFE09
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753452289; cv=none; b=W40lBMwu5FsI/AzF2piZoPmsCCLEtc1FmN9HMR4xUnppTgMDcKRZlmQ+v5mJYv88ZK2nRwburK+kKUJkYAPec6ZuTAkW+OsP+ERscOoQExHblgBblqjGvbnHTE/RnT3uHFggRr1VRz8oJtzZZra8ZG+NCYcILrFNxChBrSjw2QY=
+	t=1753452705; cv=none; b=O7aPMBPrUSxeXSFFj4rgA0tpCLgDXAaHT9wh0pUayMtaiERgPktZFtwArYxFcL20dbn/zCwIROYdPhiFgC0az5weIBPfYZGKaScnCWt5A1gg4wH8IkRiiNDEQQIavcHFLCWQBbrXvBTgpwBwT+BWJeYy0Vqy7Via24ucncYqYfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753452289; c=relaxed/simple;
-	bh=fFIgSeEylmyExTQHJYtSPkY2IdENL5npCDiYbZ70ADE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VMmYK8t91pSKV66fCmu7rNXRpXBZPzqGF4t/ghKBITzBZaAD+f7VG1YTj2zhXhyQ6dlHiayLdstLeNvHwswpw4ddG/l7jvvPvZZvA41s+tN1LWRt+PXJ3h/YVFu1+bBEnAJpuvkwFJn6fb1qRkACMA7mq+o420o7mgPvPXTyvqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BA0FE4496E;
-	Fri, 25 Jul 2025 14:04:36 +0000 (UTC)
-Message-ID: <e7499ddb-04f6-4891-bbce-38bb80a87401@ghiti.fr>
-Date: Fri, 25 Jul 2025 16:04:35 +0200
+	s=arc-20240116; t=1753452705; c=relaxed/simple;
+	bh=lkIWUunyv3x/dZPZ/tcijNWfCqbJR26FnC55X/GlDi0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GXTta+gRf4XqVISiodfOck0BmkT5nWZ57aoLrEOp397wYnAC6kZ6dGo9iyiogp00fjRWsGD6dbf5uLx4RHLFfs6EMKNSDCM6GZ57Ik+OmcAcb3caxF08ITex/iSLl1+gCKD5f5zJiXywZ3FAzhHffcK4CW/u5Np6ecmoJubekvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=s17j6S4M; arc=none smtp.client-ip=173.203.187.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+Received: from smtp78.iad3a.emailsrvr.com (relay.iad3a.rsapps.net [172.27.255.110])
+	by smtp28.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTPS id 6DD0138A7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:53:43 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1753448016;
+	bh=lkIWUunyv3x/dZPZ/tcijNWfCqbJR26FnC55X/GlDi0=;
+	h=From:To:Subject:Date:From;
+	b=s17j6S4M9YteohsTH9vchjxZvjniukgjiZJDiYMI+9hq/NXmD+bvwuHtDi/m2T8eO
+	 WFGGEgFOehxkzf3Zo55Sfas+EItgahBGKNqiVFxwhhXLn8lu9zGZV5bUItNRYSKwJv
+	 BFrye3Z0ykFpzj0FpOO+eHw+Y2VWTw/36or1aNcI=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp26.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 3CF454276;
+	Fri, 25 Jul 2025 08:53:35 -0400 (EDT)
+From: Ian Abbott <abbotti@mev.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	syzbot+a5e45f768aab5892da5d@syzkaller.appspotmail.com,
+	syzbot+fb4362a104d45ab09cf9@syzkaller.appspotmail.com,
+	stable@vger.kernel.org,
+	Arnaud Lecomte <contact@arnaud-lcm.com>
+Subject: [PATCH] comedi: Fix use of uninitialized memory in do_insn_ioctl() and do_insnlist_ioctl()
+Date: Fri, 25 Jul 2025 13:53:24 +0100
+Message-ID: <20250725125324.80276-1-abbotti@mev.co.uk>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] riscv: mm: Use mmu-type from FDT to limit SATP mode
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250722-satp-from-fdt-v1-0-5ba22218fa5f@pigmoral.tech>
- <20250722-satp-from-fdt-v1-2-5ba22218fa5f@pigmoral.tech>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250722-satp-from-fdt-v1-2-5ba22218fa5f@pigmoral.tech>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekfeejvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppeelhedrudeguddruddtvddrudekieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelhedrudeguddruddtvddrudekiedphhgvlhhopegluddtrddutddrudegiedrvddujegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehjuhhnhhhuihdrlhhiuhesphhighhmohhrrghlrdhtvggthhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhop
- ehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+Content-Transfer-Encoding: 8bit
+X-Classification-ID: 52ef133e-236b-42a9-97f2-65e8f65113a2-1-2
 
-On 7/21/25 18:53, Junhui Liu wrote:
-> Some RISC-V implementations may hang when attempting to write an
-> unsupported SATP mode, even though the latest RISC-V specification
-> states such writes should have no effect. To avoid this issue, the
-> logic for selecting SATP mode has been refined:
->
-> The kernel now determines the SATP mode limit by taking the minimum of
-> the value specified by the kernel command line (noXlvl) and the
-> "mmu-type" property in the device tree (FDT). If only one is specified,
-> use that.
-> - If the resulting limit is sv48 or higher, the kernel will probe SATP
->    modes from this limit downward until a supported mode is found.
-> - If the limit is sv39, the kernel will directly use sv39 without
->    probing.
->
-> This ensures SATP mode selection is safe and compatible with both
-> hardware and user configuration, minimizing the risk of hangs.
->
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-> ---
->   arch/riscv/kernel/pi/fdt_early.c | 40 ++++++++++++++++++++++++++++++++++++++++
->   arch/riscv/kernel/pi/pi.h        |  1 +
->   arch/riscv/mm/init.c             | 11 ++++++++---
->   3 files changed, 49 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/kernel/pi/fdt_early.c b/arch/riscv/kernel/pi/fdt_early.c
-> index 9bdee2fafe47e4a889132ebe2d0d360717c464e9..a12ff8090f190331f555d9e22ce4d1b3e940bceb 100644
-> --- a/arch/riscv/kernel/pi/fdt_early.c
-> +++ b/arch/riscv/kernel/pi/fdt_early.c
-> @@ -3,6 +3,7 @@
->   #include <linux/init.h>
->   #include <linux/libfdt.h>
->   #include <linux/ctype.h>
-> +#include <asm/csr.h>
->   
->   #include "pi.h"
->   
-> @@ -183,3 +184,42 @@ bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name)
->   
->   	return ret;
->   }
-> +
-> +/**
-> + *  set_satp_mode_from_fdt - determine SATP mode based on the MMU type in fdt
-> + *
-> + * @dtb_pa: physical address of the device tree blob
-> + *
-> + *  Returns the SATP mode corresponding to the MMU type of the first enabled CPU,
-> + *  0 otherwise
-> + */
-> +u64 set_satp_mode_from_fdt(uintptr_t dtb_pa)
-> +{
-> +	const void *fdt = (const void *)dtb_pa;
-> +	const char *mmu_type;
-> +	int node, parent;
-> +
-> +	parent = fdt_path_offset(fdt, "/cpus");
-> +	if (parent < 0)
-> +		return 0;
-> +
-> +	fdt_for_each_subnode(node, fdt, parent) {
-> +		if (!fdt_node_name_eq(fdt, node, "cpu"))
-> +			continue;
-> +
-> +		if (!fdt_device_is_available(fdt, node))
-> +			continue;
-> +
-> +		mmu_type = fdt_getprop(fdt, node, "mmu-type", NULL);
-> +		if (!mmu_type)
-> +			break;
-> +
-> +		if (!strcmp(mmu_type, "riscv,sv39"))
-> +			return SATP_MODE_39;
-> +		else if (!strcmp(mmu_type, "riscv,sv48"))
-> +			return SATP_MODE_48;
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-> diff --git a/arch/riscv/kernel/pi/pi.h b/arch/riscv/kernel/pi/pi.h
-> index 21141d84fea603fdfc439e12a8c3216f1527c65f..3fee2cfddf7cfb8179af6f2d9b69a0d5e412fad7 100644
-> --- a/arch/riscv/kernel/pi/pi.h
-> +++ b/arch/riscv/kernel/pi/pi.h
-> @@ -14,6 +14,7 @@ u64 get_kaslr_seed(uintptr_t dtb_pa);
->   u64 get_kaslr_seed_zkr(const uintptr_t dtb_pa);
->   bool set_nokaslr_from_cmdline(uintptr_t dtb_pa);
->   u64 set_satp_mode_from_cmdline(uintptr_t dtb_pa);
-> +u64 set_satp_mode_from_fdt(uintptr_t dtb_pa);
->   
->   bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name);
->   
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index d03e02a92379f2338a4f4df0ab797a7859b83dfc..0f30fa875abf92a201579ac6469958b0d95b5a58 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -816,6 +816,7 @@ static __meminit pgprot_t pgprot_from_va(uintptr_t va)
->   
->   #if defined(CONFIG_64BIT) && !defined(CONFIG_XIP_KERNEL)
->   u64 __pi_set_satp_mode_from_cmdline(uintptr_t dtb_pa);
-> +u64 __pi_set_satp_mode_from_fdt(uintptr_t dtb_pa);
->   
->   static void __init disable_pgtable_l5(void)
->   {
-> @@ -855,18 +856,22 @@ static void __init set_mmap_rnd_bits_max(void)
->    * underlying hardware: establish 1:1 mapping in 4-level page table mode
->    * then read SATP to see if the configuration was taken into account
->    * meaning sv48 is supported.
-> + * The maximum SATP mode is limited by both the command line and the "mmu-type"
-> + * property in the device tree, since some platforms may hang if an unsupported
-> + * SATP mode is attempted.
->    */
->   static __init void set_satp_mode(uintptr_t dtb_pa)
->   {
->   	u64 identity_satp, hw_satp;
->   	uintptr_t set_satp_mode_pmd = ((unsigned long)set_satp_mode) & PMD_MASK;
-> -	u64 satp_mode_cmdline = __pi_set_satp_mode_from_cmdline(dtb_pa);
-> +	u64 satp_mode_limit = min_not_zero(__pi_set_satp_mode_from_cmdline(dtb_pa),
-> +					   __pi_set_satp_mode_from_fdt(dtb_pa));
->   
->   	kernel_map.page_offset = PAGE_OFFSET_L5;
->   
-> -	if (satp_mode_cmdline == SATP_MODE_48) {
-> +	if (satp_mode_limit == SATP_MODE_48) {
->   		disable_pgtable_l5();
-> -	} else if (satp_mode_cmdline == SATP_MODE_39) {
-> +	} else if (satp_mode_limit == SATP_MODE_39) {
->   		disable_pgtable_l5();
->   		disable_pgtable_l4();
->   		return;
->
+syzbot reports a KMSAN kernel-infoleak in `do_insn_ioctl()`.  A kernel
+buffer is allocated to hold `insn->n` samples (each of which is an
+`unsigned int`).  For some instruction types, `insn->n` samples are
+copied back to user-space, unless an error code is being returned.  The
+problem is that not all the instruction handlers that need to return
+data to userspace fill in the whole `insn->n` samples, so that there is
+an information leak.  There is a similar syzbot report for
+`do_insnlist_ioctl()`, although it does not have a reproducer for it at
+the time of writing.
 
-I guess it's more convenient to use the 'mmu-type' property on this core 
-rather than using no4lvl right?
+One culprit is `insn_rw_emulate_bits()` which is used as the handler for
+`INSN_READ` or `INSN_WRITE` instructions for subdevices that do not have
+a specific handler for that instruction, but do have an `INSN_BITS`
+handler.  For `INSN_READ` it only fills in at most 1 sample, so if
+`insn->n` is greater than 1, the remaining `insn->n - 1` samples copied
+to userspace will be uninitialized kernel data.
 
-Anyway, what you implemented matches the description of the 'mmu-type' 
-binding, so:
+Another culprit is `vm80xx_ai_insn_read()` in the "vm80xx" driver.  It
+never returns an error, even if it fails to fill the buffer.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Fix it in `do_insn_ioctl()` and `do_insnlist_ioctl()` by making sure
+that uninitialized parts of the allocated buffer are zeroed before
+handling each instruction.
 
-I'll take that for 6.17.
+Thanks to Arnaud Lecomte for their fix to `do_insn_ioctl()`.  That fix
+replaced the call to `kmalloc_array()` with `kcalloc()`, but it is not
+always necessary to clear the whole buffer.
 
-Thanks,
+Fixes: ed9eccbe8970 ("Staging: add comedi core")
+Reported-by: syzbot+a5e45f768aab5892da5d@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=a5e45f768aab5892da5d
+Reported-by: syzbot+fb4362a104d45ab09cf9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=fb4362a104d45ab09cf9
+Cc: <stable@vger.kernel.org> #5.13+
+Cc: Arnaud Lecomte <contact@arnaud-lcm.com>
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+---
+Cherry picks to fix this for 5.4.y and 5.10.y not yet available.
+---
+ drivers/comedi/comedi_fops.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Alex
+diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
+index 23b7178522ae..7e2f2b1a1c36 100644
+--- a/drivers/comedi/comedi_fops.c
++++ b/drivers/comedi/comedi_fops.c
+@@ -1587,6 +1587,9 @@ static int do_insnlist_ioctl(struct comedi_device *dev,
+ 				memset(&data[n], 0, (MIN_SAMPLES - n) *
+ 						    sizeof(unsigned int));
+ 			}
++		} else {
++			memset(data, 0, max_t(unsigned int, n, MIN_SAMPLES) *
++					sizeof(unsigned int));
+ 		}
+ 		ret = parse_insn(dev, insns + i, data, file);
+ 		if (ret < 0)
+@@ -1670,6 +1673,8 @@ static int do_insn_ioctl(struct comedi_device *dev,
+ 			memset(&data[insn->n], 0,
+ 			       (MIN_SAMPLES - insn->n) * sizeof(unsigned int));
+ 		}
++	} else {
++		memset(data, 0, n_data * sizeof(unsigned int));
+ 	}
+ 	ret = parse_insn(dev, insn, data, file);
+ 	if (ret < 0)
+-- 
+2.47.2
 
 
