@@ -1,159 +1,177 @@
-Return-Path: <linux-kernel+bounces-745267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882A0B11779
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3941B1177D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2B3AC87B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:34:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B835E1CE0797
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985DD23E320;
-	Fri, 25 Jul 2025 04:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6B323CEE5;
+	Fri, 25 Jul 2025 04:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zWhTHaP/"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4R8mCiH"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590E23594E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9F03594E;
+	Fri, 25 Jul 2025 04:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753418108; cv=none; b=SdG+hSRmAVaajVuprUaGpJPLiNDFaGx57wGuRQ4sAbMe+gv2e3zFMuwIFxRxDRgYMcIIs+Jac0I4Tp4KLl9JoirjrBztYB+nZLX0GYhxjDE72LPti3Tr8vuHyKIYOTDnxCw772jBfZGMsLpHfQHC58/ivGUx7WUCpVtuv/AAXYk=
+	t=1753418257; cv=none; b=WBakyrHkNSIht/9rmYWQORClGCAd6w4KYSYViq1NlLS3fq1Z+34LsCnRzR1Kj9IIzDMEKcTGCdLU7Y13AwSO+XnvnRrRkb5CeY6mUWOmVZ4Afo/CXGnSM6tynjSH7zu/BB8EFUeyVjmM6cIOuKdTVukdYLxszhuLpqWGXB5KC0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753418108; c=relaxed/simple;
-	bh=QgL4dd5Vz7uJ6t2HYw0hKjGiE8pdrDFtByWDT0GxhyI=;
+	s=arc-20240116; t=1753418257; c=relaxed/simple;
+	bh=FrGZQqhqiJNfiy8XaaJy1KHk9OErj3qSStWy5M2KbD4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tLG5jbAzeS3oiOjEw7NKng7JNMiK+pWG/SFRm6l+iSngwi3pVnVTGWaBxhopNEOZf+C38zdicutZXbHjnKyg3Z+jV6SAhgOM0aJNaIrwa9IFisGypDjBN2bv5MyKmv7XvDzlyrEl9OS0oyidbFSSOGDp7051sKHm5cMsEj+yzIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zWhTHaP/; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-718425f1172so18509467b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:35:06 -0700 (PDT)
+	 To:Cc:Content-Type; b=Jbf98UtvlgpnnLzU1NnPNSXiXN/Gyywub5UWBv58e7kxGSOnRcWtJN/AR5wA4ju/1kPbjmD3N7dPouLq0ySMBnMZH++mdYPUwPJ27bSt1Z/vBSKWmgt0JbH9E8tNz6YUB/GNBWui6TniuJR7xV8LmYt2WM5uHWGMz80eFzfLthY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4R8mCiH; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae0d758c3a2so276025666b.2;
+        Thu, 24 Jul 2025 21:37:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753418105; x=1754022905; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753418254; x=1754023054; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VI39K57CdQ86d6d0aFYHUvCEXJfJb9qVK/y2Z3jHq6o=;
-        b=zWhTHaP/vn/+CJ9c0IdQsLjQg8gU8fJHCkhSOQeHqpk+LaUcrzWQ/2mzINwEVMD83B
-         bGk3jckLpxXotxeGW7D3xF3/w/Sp1UiZRv/DWs/AoHOrrEdd8LjyzLaYuYykC7UuhXBH
-         5Gm/+C1Jb9XUsgyP/Lq+aYVY1Z1ciHXKX+CupX/PyJ6Tn28Ehw0AxY0/23bKOaemWiBt
-         i5m6OFHXh7GcEPChkDpWExB1jtfbm0/WH3XkhiisEFsjlVeIMJnQSqMjyShF7VV7FDzq
-         h+l1XlER+5hTvUW65pQ0KE04YltYA5NqBXLUTKohZB29s4Qyoxa7QFPWRB1zcTSL30t8
-         hj5Q==
+        bh=V5qfbmAa22Zw0aVP198gDNOWjHFGpsuuIMHC3dQwPbw=;
+        b=B4R8mCiHUj2bexIt9R5ydzYJR5aDTomeFd2Z+9RLYCLtlRQHas9dxPbfNBaqbqioth
+         p513fQgeqOvSCr5Re6oNdJ4RharZgNglvkhOXr6MANkrb8f71GuXVGycBZQPz1vAfNgo
+         qPPRKj/VTjdp1CDnhabkU004Xz9g/8binJl+V2b/MI4CD2EjlxdLoMDJsZBAmM+BQPIg
+         BjLcHPpQyuoegFe/IEpzwJKpPSa9qKrH9zwoLJwC2Mf21bWXK3UQ4DDsx2DkK7ODpMrA
+         JWeKu3cutnZ8/YytR7VCIriw01jmB2h5CsirJhsdvHCa/GDKweyD0j9azV6vR7oobWDA
+         HUnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753418105; x=1754022905;
+        d=1e100.net; s=20230601; t=1753418254; x=1754023054;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VI39K57CdQ86d6d0aFYHUvCEXJfJb9qVK/y2Z3jHq6o=;
-        b=IwkxuLg8XU4zcmf7iDIlhGLGkYsJA3iWuR3Z5tgTseFm+Gz8KOQrxp1qpx2ej1WTOn
-         QCrWMvWp+plTLdN7ST8hYI/G8vgFhVks3L+8oIyCRSII+kJjTjSfK+ld6G7GRvrkRWXx
-         8meawZzkUbL+u8incqoKXUenZtkGgfTe+sgD5I5R56hZQU08yNo+eqFotBboXyf3Zq4t
-         F2Sgf1kSJIp7xNbhsF2m0B22FIU8wuGGpT+rdWi5fvdmElJmaH2akEbvAtBuvov12/68
-         bm6w7kX5n3FteFZQVzpkq7sm00FgJaar0gtfBbh0XJa21YLTpgcPwEFwD4Pvb8tMFasX
-         r2Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2S//2oQQmWD4z9cW5N5ibr1WmGxF4upojjO9r54rr+Qyed7ou2IM0ZxYVWj+SdsyRhzUNuTVI1tNSVMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhvs8jfxQs2WLXgM0paCpCTlHAYkSq/2WC4omob3UADbrWfK29
-	WrXDcuQwT2REpcTi6HjW/Eek6+XVNv1wvmlFTLsbCRFgEoCIv9zHgihFd4LLpgDvB7GF627kbMh
-	LMXy9SPYdz58PDH2ospn+2qnKj1AEbrR4c7S284+tsg==
-X-Gm-Gg: ASbGncs5Fobp0sObzMXJ/PO6RR/s8XL+a2qJ0Ai6DM2Ea/qOpbLGrWUdvQ160IK2HDw
-	lYnA+p7zkCFa6B3HezTYlG4wNlif69gTtsM8eSjpTDoEUbOzUKd1B8XRWexRFwucEr62Q2CHthN
-	inyAdH5ORB3syaFONL+9JkNYq5dMjxgFtR/JoSOeVVhN2sfiiLjwwHH7w2q5sJeDY/aY3wiGCei
-	o5S/fc=
-X-Google-Smtp-Source: AGHT+IFJ9XzJp6Xgxj0QLlNaKvOqYQXU71T6tCJTyQCg4SCr1RJUJwWNJFlJ0weWOTfAVwxY6VMJ4E1O+l5CAaib/pU=
-X-Received: by 2002:a05:690c:60c5:b0:702:52af:7168 with SMTP id
- 00721157ae682-719e37735b4mr7086307b3.2.1753418105293; Thu, 24 Jul 2025
- 21:35:05 -0700 (PDT)
+        bh=V5qfbmAa22Zw0aVP198gDNOWjHFGpsuuIMHC3dQwPbw=;
+        b=pMBIkwMNHX+EtZRGavFi9HW971eBf3Pe6L9d24xSM11/vq7BQeCFqOvUdpsT/rrygB
+         un6BbyFq3Jy0TG8AbAKi+024r+2lg0TrvJwbIhUAflul77NDYlCDWlBP916lzvgm055F
+         sKbcUwaXFaaRxM1CzuxqkKYt83vzBPjIP8G5ZVVMu4oHRWtd2YTajJs+Vw6Z5b73S8M/
+         KVhdLmSuMiQknk/CO+pubwMNGq99I0JD8UZXSfiQHei9AzoPZ/TM5pMTtWME3PVEg5x/
+         juYi1TkeA9t99v6YHpvhtpYfF162cvSmWQ3kk+2o3NPs3De93uczpG5FuspyiOqN38cM
+         +x4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWfu5mBAv512+L6IKbju1XlEX+XoxkXeU0QmWVEyE4J/L/I07ulCsaWp7kCAEfkhRq0DgMph2y7avYOag==@vger.kernel.org, AJvYcCXzkHNN1kzU6Q9evWABI8H6TlD/0XNCNJmf6yw6H6qr/CdUodo5EUWATCzbiwS50jS4v/tiVpgG6Py2wFQo@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrS5bCHFaLJmXhDZMZoVvEpFF8Ahje2tBB/EqeHdA7FHZPFpq7
+	1L+AdQvHyCo0sgfYGgSe3xviTAwZnP6FnFkgfgtpFoxKYYGJtl25rptptOKYdEGga9z+OChOCt/
+	K6wrA8k0n5IVPvyiSeoIXLSeWUpfLNmgowc3HQ3vd
+X-Gm-Gg: ASbGnct/RhsxsVdkRP+JHjaHHnLK18119lE3X9VFSKhWc7ZSaBlEK7rc+jYqHUcXDqe
+	NmHs+MpRH4Q3hMFdUY1g5GqbuFxg/4rmUQfrHCTW2vE15YvBGa9VnVC+PAH/e/6QpKHAZZBzqiu
+	9qUJXYB0fDaqQC4eNA4d5xuVbYKFCvzln1VIp9naWFjnbtHS0tF4GCM3rQqpJLWV8bDQf10r7Uj
+	Gs+yQRWaiFPxBOyEBcr4mN35Oao9D3b/ZOQ02SkpGoyj3vY
+X-Google-Smtp-Source: AGHT+IHN4e+8xOJtDrQmUijtD9Yq0H/dZiT8+QWZHZqgY+m3xxDFwmJUyWJnbohaK8bPXNhfTi3ahO5MmQ3Z9S+XUoU=
+X-Received: by 2002:a17:907:2d28:b0:ae0:da2f:dcf3 with SMTP id
+ a640c23a62f3a-af61a0f7525mr61470466b.59.1753418253526; Thu, 24 Jul 2025
+ 21:37:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org> <20250724111345.47889-7-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250724111345.47889-7-krzysztof.kozlowski@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 24 Jul 2025 23:34:54 -0500
-X-Gm-Features: Ac12FXznxCvoXznkWVOuS7v8nJpWf44pmIfF2zVk3lxzJ_JMee-Hqsv_4Ncl66s
-Message-ID: <CAPLW+4=XmFYvD1tmXXX53ORHp-Ued3_tCZoFCi=ch35aBuYO5Q@mail.gmail.com>
-Subject: Re: [PATCH 3/4] dt-bindings: iio: adc: samsung,exynos-adc: Use
- correct IRQ level in example
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lucas Stankus <lucas.p.stankus@gmail.com>, Puranjay Mohan <puranjay@kernel.org>, 
-	Dan Robertson <dan@dlrobertson.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Dragos Bogdan <dragos.bogdan@analog.com>, 
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>, 
-	Alexandru Tachici <alexandru.tachici@analog.com>, Stefan Popa <stefan.popa@analog.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Stephan Gerhold <stephan@gerhold.net>, 
-	Ceclan Dumitru <dumitru.ceclan@analog.com>, Alexandru Lazar <alazar@startmail.com>, 
-	Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Angelo Compagnucci <angelo.compagnucci@gmail.com>, Mike Looijmans <mike.looijmans@topic.nl>, 
-	David Heidelberg <david@ixit.cz>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Andreas Klinger <ak@it-klinger.de>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20250711084708.2714436-1-arnd@kernel.org> <szmagqqo6lx36ozaqd5qf72xnzoi4e23jbfehjli6rfbvhps6w@if2cvmlgvmxv>
+ <b6346235-cc66-4ce0-8768-52a1a89fd699@app.fastmail.com> <u67ijiie6n2w3crfpuipprrmkocja7bxadlo3sbr47w7hysjgj@rjduhmczwwdz>
+In-Reply-To: <u67ijiie6n2w3crfpuipprrmkocja7bxadlo3sbr47w7hysjgj@rjduhmczwwdz>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Fri, 25 Jul 2025 10:06:55 +0530
+X-Gm-Features: Ac12FXwTiBt13Lx9Z4RABH16IySuYuSuKUjMY43hsoMpk7aPA4d3WeI2CipenNs
+Message-ID: <CACzX3AsRd__fXb9=CJPTTJC494SDnYAtYrN2=+bZgMCvM6UQDg@mail.gmail.com>
+Subject: Re: [PATCH] [v2] block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>, Anuj Gupta <anuj20.g@samsung.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Kanchan Joshi <joshi.k@samsung.com>, 
+	Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@infradead.org>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+	Caleb Sander Mateos <csander@purestorage.com>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Alexey Dobriyan <adobriyan@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 6:14=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Thu, Jul 24, 2025 at 3:46=E2=80=AFPM Klara Modin <klarasmodin@gmail.com>=
+ wrote:
 >
-> The interrupt line to GIC is IRQ_TYPE_LEVEL_HIGH, so use that instead of
-> "none".  Also replace the hard-coded GIC_SPI flag.
+> On 2025-07-18 07:56:49 +0200, Arnd Bergmann wrote:
+> > On Fri, Jul 18, 2025, at 01:37, Klara Modin wrote:
+> >
+> > >> diff --git a/block/ioctl.c b/block/ioctl.c
+> > >> index 9ad403733e19..af2e22e5533c 100644
+> > >> --- a/block/ioctl.c
+> > >> +++ b/block/ioctl.c
+> > >> @@ -566,9 +566,11 @@ static int blkdev_common_ioctl(struct block_dev=
+ice *bdev, blk_mode_t mode,
+> > >>                           void __user *argp)
+> > >>  {
+> > >>    unsigned int max_sectors;
+> > >> +  int ret;
+> > >>
+> > >> -  if (_IOC_NR(cmd) =3D=3D _IOC_NR(FS_IOC_GETLBMD_CAP))
+> > >> -          return blk_get_meta_cap(bdev, cmd, argp);
+> > >
+> > >> +  ret =3D blk_get_meta_cap(bdev, cmd, argp);
+> > >> +  if (ret !=3D -ENOIOCTLCMD)
+> > >> +          return ret;
+> > >
+> > > This check seems to be incomplete. In the case when BLK_DEV_INTEGRITY=
+ is
+> > > disabled the ioctl can never complete as blk_get_meta_cap will then
+> > > always return -EOPNOTSUPP. Or should the !BLK_DEV_INTEGRITY stub be
+> > > changed to return -ENOIOCTLCMD instead?
+> >
+> > Ah, I did miss the stub.
+> >
+> > > It makes e.g. cryptsetup fail in my initramfs. Adding -EOPNOTSUPP to =
+the
+> > > check fixes it for me:
+> > >
+> > > diff --git a/block/ioctl.c b/block/ioctl.c
+> > > index af2e22e5533c..7d5361fd1b7d 100644
+> > > --- a/block/ioctl.c
+> > > +++ b/block/ioctl.c
+> > > @@ -569,7 +569,7 @@ static int blkdev_common_ioctl(struct block_devic=
+e
+> > > *bdev, blk_mode_t mode,
+> > >     int ret;
+> > >
+> > >     ret =3D blk_get_meta_cap(bdev, cmd, argp);
+> > > -   if (ret !=3D -ENOIOCTLCMD)
+> > > +   if (ret !=3D -EOPNOTSUPP && ret !=3D -ENOIOCTLCMD)
+> > >             return ret;
+> > >
+> > >     switch (cmd) {
+> >
+> > I think returning -ENOIOCTLCMD from the stub makes more sense,
+> > but I don't know what the motivation for the -EOPNOTSUPP was.
+> >
+> >      Arnd
 >
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> Should I send a patch changing the stub? At least from reading
+> Documentation/driver-api/ioctl.rst it seems clear that only -ENOIOCTLCMD
+> or -ENOTTY is correct when the command number is unknown.
+>
+> I didn't find any particular reason in 9eb22f7fedfc ("fs: add ioctl to
+> query metadata and protection info capabilities") for the -EOPNOTSUPP
+> return.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Hi Klara,
 
->  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml    | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+Thanks for pointing this out =E2=80=94 I had originally used -EOPNOTSUPP
+because the ioctl command is recognized, but the operation isn=E2=80=99t
+supported when CONFIG_BLK_DEV_INTEGRITY=3Dn.
+That said, I agree that returning -ENOIOCTLCMD from the stub might be
+more appropriate in this context.
+
+Thanks,
+Anuj
+
 >
-> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc=
-.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-> index 4e40f6bed5db..8069e99ddac8 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-> @@ -128,10 +128,12 @@ allOf:
->
->  examples:
->    - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
->      adc: adc@12d10000 {
->          compatible =3D "samsung,exynos-adc-v1";
->          reg =3D <0x12d10000 0x100>;
-> -        interrupts =3D <0 106 0>;
-> +        interrupts =3D <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
->          #io-channel-cells =3D <1>;
->
->          clocks =3D <&clock 303>;
-> @@ -152,11 +154,12 @@ examples:
->
->    - |
->      #include <dt-bindings/clock/exynos3250.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->
->      adc@126c0000 {
->          compatible =3D "samsung,exynos3250-adc";
->          reg =3D <0x126c0000 0x100>;
-> -        interrupts =3D <0 137 0>;
-> +        interrupts =3D <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
->          #io-channel-cells =3D <1>;
->
->          clocks =3D <&cmu CLK_TSADC>,
-> --
-> 2.48.1
->
+> Regards,
+> Klara Modin
 >
 
