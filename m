@@ -1,196 +1,129 @@
-Return-Path: <linux-kernel+bounces-745853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C543B11FA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:54:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFF0B11FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E276541CE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:54:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DECE016D53A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C1E1A23A4;
-	Fri, 25 Jul 2025 13:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1C71DE4F6;
+	Fri, 25 Jul 2025 14:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qkyxUIg/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mylSVgUc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qkyxUIg/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mylSVgUc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="EHENJhpt"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7A81A314D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9710510F1;
+	Fri, 25 Jul 2025 14:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753451628; cv=none; b=YSnk4rN98icQzmXkA7w82uUZiENgblELiwY9Of0+cEU3wsOjTbIlWvUSzDpoxCbv/ipnM9VldpL6wqn+Y548B1Wqu8wsJo5Bllv0AhDxkimBkJgqHfwUuK2qg9QeMBxWm6rWRu5s5tHGS4BzvDyby6K1H+N7An08R0iK5Ivq6eY=
+	t=1753452078; cv=none; b=eizwXm4x40YWLAkLZ4g3BW87TAMtXVgW/M77oyCfzHElDM+Dt0TsLBlAXAwmf9CslSulBE2Kv1WcqvxMbHCPUep94xRiDS3hITI2ZVnSfed+3GMaji/zGwObWVL2k7nspjkahWlRS8bZ4gBfI84ULerm3dXiLrbBUp+QxYQJ1d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753451628; c=relaxed/simple;
-	bh=IR/Vi22XVrrga8blVhc5NOXTYz8qtv3NSPAWFSX1P5k=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QmAP8wwoYV6GLC5yt2RJd8Rjj+/t226oYmw0CDLPcCHy7hJPcGMd9vJIkm5pPmjm+ba0FRK3kz48QncTja9syHb+aTRnrXutkk6wMI2+KLSLWUU1pGE2B8O5q6+ZtJtBOUgudshWaOOdUghY6sFBtS/WxR9sRtFcKuVMcUZm96A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qkyxUIg/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mylSVgUc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qkyxUIg/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mylSVgUc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B36081F76C;
-	Fri, 25 Jul 2025 13:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753451624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3cLK0Ic1lz58928Iz6K8Vh5T63JlZ6JcRUL5uTD0Itw=;
-	b=qkyxUIg/j6I2c6xZhFuAxziL5yLCr3g50BeV6GoGssj/qsdFAmnIUXHW7OPe/tbdDt2RsN
-	S4ttrCCXwQWLPoga/dRUVJ0uggiE7RSIZRs+frRE2uhRkuKw5xjPBvsGH52be/79yK6Cjg
-	rTEQjZvcULAQuNn9/bofiZK6UoFZBkk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753451624;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3cLK0Ic1lz58928Iz6K8Vh5T63JlZ6JcRUL5uTD0Itw=;
-	b=mylSVgUcVKuEv9k7BkSdSINn67s4iOAFvfHbTAHh8KkZET+ZjUZdazgN/4GOtwNLO6kjme
-	3bU10snn4yapTXCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753451624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3cLK0Ic1lz58928Iz6K8Vh5T63JlZ6JcRUL5uTD0Itw=;
-	b=qkyxUIg/j6I2c6xZhFuAxziL5yLCr3g50BeV6GoGssj/qsdFAmnIUXHW7OPe/tbdDt2RsN
-	S4ttrCCXwQWLPoga/dRUVJ0uggiE7RSIZRs+frRE2uhRkuKw5xjPBvsGH52be/79yK6Cjg
-	rTEQjZvcULAQuNn9/bofiZK6UoFZBkk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753451624;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3cLK0Ic1lz58928Iz6K8Vh5T63JlZ6JcRUL5uTD0Itw=;
-	b=mylSVgUcVKuEv9k7BkSdSINn67s4iOAFvfHbTAHh8KkZET+ZjUZdazgN/4GOtwNLO6kjme
-	3bU10snn4yapTXCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16F511373A;
-	Fri, 25 Jul 2025 13:53:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zCFeBGiMg2iXRwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 25 Jul 2025 13:53:44 +0000
-Date: Fri, 25 Jul 2025 15:53:43 +0200
-Message-ID: <87cy9oidg8.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Joris Verhaegen <verhaegen@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	kernel-team@android.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-arm-msm@vger.kernel.org,
-	sound-open-firmware@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/3] ALSA: compress_offload: Add 64-bit safe timestamp API
-In-Reply-To: <20250725114249.2086974-1-verhaegen@google.com>
-References: <20250725114249.2086974-1-verhaegen@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1753452078; c=relaxed/simple;
+	bh=CU/ofPcM/4/31XAsGzsSMeFb1aVoCrvt6kL7NaWtHiU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B+MnTXuSv5ioR4HEr9GJVn3tHDaMxX4T5NDqJ6/PEGHsqG+QiB/nK70Yq/ITTrb19gIiNoNGuLySOBcNd1TG4r/keaojmEUD4I3a2eMBi7cwpjglNXxJdCpn+QYZqyiOSWe6GyC+oHO46xvSNnM56adu5HIy6VANmlFQhWn2bBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=EHENJhpt; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id E69301D1A;
+	Fri, 25 Jul 2025 13:52:57 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=EHENJhpt;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id C7FA12302;
+	Fri, 25 Jul 2025 13:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1753451661;
+	bh=XERKZUg/mSTGqo3b6VJtn4q+/PRdwVrweknVT9vWgnc=;
+	h=From:To:CC:Subject:Date;
+	b=EHENJhpt+Erc+3kdzeeDpP8aVnliX60cIimbGnBxooKRug3QbnmrkyHP+JBDTpBqL
+	 VKtASoDe/nfYuyGEEoEH7H0ATe17p0bHnwr38TbyRqnAGn1LWXsfGV900XCzxLHcSb
+	 hscmdNckkIWUi+eVsPhHyV+BPLXG6Noo118Vf4oI=
+Received: from localhost.localdomain (172.30.20.191) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 25 Jul 2025 16:54:20 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <torvalds@linux-foundation.org>
+CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] ntfs3: bugfixes for 6.17
+Date: Fri, 25 Jul 2025 15:54:11 +0200
+Message-ID: <20250725135411.4064-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,perex.cz,suse.com,gmail.com,intel.com,linux.intel.com,linux.dev,nxp.com,linux.alibaba.com,socionext.com,android.com,vger.kernel.org,opensource.cirrus.com,alsa-project.org,lists.infradead.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLtwg9tyn6faipwn1aqsxq4m86)];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -1.80
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Fri, 25 Jul 2025 13:42:42 +0200,
-Joris Verhaegen wrote:
-> 
-> The current compress offload timestamping API relies on struct
-> snd_compr_tstamp, whose cumulative counters like copied_total are
-> defined as __u32. On long-running high-resolution audio streams, these
-> 32-bit counters can overflow, causing incorrect availability
-> calculations.
-> 
-> This patch series transitions to a 64-bit safe API to solve the problem
-> while maintaining perfect backward compatibility with the existing UAPI.
-> The pointer operation is reworked to use a new timestamp struct with
-> 64-bit fields for the cumulative counters, named snd_compr_tstamp64.
-> ASoC drivers are updated to use the 64-bit structures. Corresponding
-> ioctls are added to expose them to user-space.
-> 
-> The series is structured as follows:
-> 
-> Patch 1: Updates the pointer op, refactors the core logic and ASoC
-> drivers to use it, and defines the new UAPI structs.
-> 
-> Patch 2: Exposes the SNDRV_COMPRESS_TSTAMP64 ioctl.
-> 
-> Patch 3: Exposes the corresponding SNDRV_COMPRESS_AVAIL64 ioctl.
-> 
-> This series has been tested on a Pixel 9 device. All compress offload
-> use cases, including long-running playback, were verified to work
-> correctly with the new 64-bit API.
-> 
-> Thanks,
-> Joris (George) Verhaegen
-> 
-> Signed-off-by: Joris Verhaegen <verhaegen@google.com>
+Please pull this branch containing ntfs3 code for 6.17.
 
-Through a quick glance, the patches look OK, but since it's too late
-for 6.17 merge window for such a non-trivial core API change, so I'll
-postpone the merge for 6.18.
+Regards,
+Konstantin
 
+----------------------------------------------------------------
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
-thanks,
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
-Takashi
+are available in the Git repository at:
+
+  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.17
+
+for you to fetch changes up to a49f0abd8959048af18c6c690b065eb0d65b2d21:
+
+  Revert "fs/ntfs3: Replace inode_trylock with inode_lock" (2025-07-08 09:42:21 +0200)
+
+----------------------------------------------------------------
+Changes for 6.17-rc1
+
+Added:
+    sanity check for file name;
+    mark live inode as bad and avoid any operations.
+
+Fixed:
+    handling of symlinks created in windows;
+    creation of symlinks for relative path.
+
+Changed:
+    cancel setting inode as bad after removing name fails;
+    revert "replace inode_trylock with inode_lock".
+
+----------------------------------------------------------------
+Edward Adam Davis (1):
+      fs/ntfs3: cancle set bad inode after removing name fails
+
+Konstantin Komarov (2):
+      fs/ntfs3: Exclude call make_bad_inode for live nodes.
+      Revert "fs/ntfs3: Replace inode_trylock with inode_lock"
+
+Lizhi Xu (1):
+      fs/ntfs3: Add sanity check for file name
+
+Rong Zhang (2):
+      fs/ntfs3: fix symlinks cannot be handled correctly
+      fs/ntfs3: correctly create symlink for relative path
+
+ fs/ntfs3/dir.c     |  6 ++--
+ fs/ntfs3/file.c    | 37 +++++++++++++++++++++-
+ fs/ntfs3/frecord.c | 31 +++++++++++++------
+ fs/ntfs3/fsntfs.c  |  6 +++-
+ fs/ntfs3/inode.c   | 91 ++++++++++++++++++++++++++++++++++--------------------
+ fs/ntfs3/namei.c   | 26 +++++++++++-----
+ fs/ntfs3/ntfs.h    |  3 +-
+ fs/ntfs3/ntfs_fs.h | 17 ++++++++--
+ fs/ntfs3/xattr.c   | 22 +++++++++++--
+ 9 files changed, 178 insertions(+), 61 deletions(-)
 
