@@ -1,207 +1,140 @@
-Return-Path: <linux-kernel+bounces-745866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19ADBB11FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:10:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0AEB11FF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DEC17C975
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:10:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3E095662C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748D21E834F;
-	Fri, 25 Jul 2025 14:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EED722DA1F;
+	Fri, 25 Jul 2025 14:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="SHsKMy4W"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="XAo7NM2g"
+Received: from smtp126.iad3a.emailsrvr.com (smtp126.iad3a.emailsrvr.com [173.203.187.126])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4F41DFE09
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DAD1E86E;
+	Fri, 25 Jul 2025 14:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.126
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753452627; cv=none; b=MkAYrfM/XCN8ctqRIzo28ZbWmMD8ixZLRExjQsVbhixQi5Sf8vKxnWcTeUhn9MZstBrLPezS4HMceyA5GhpM0xe3uhoAjCyV3As6g26QBDwd3F5jhc42/kMcuJ2v9HCF8aUwAOQc3JGWLaIqDB8RJ0kfweg6CaICZVEVnehSFA0=
+	t=1753453008; cv=none; b=s0oZdt1UDQVpJATMMIlZ8VZcaM0hKCwYQFVD7rXgeO22qFoIyyYk2ZMIgTrgq9AFcDw8yW3ixJCFLaJDdH9UWbCNrQLOLS2c2VEtK2IQ6vwS+ybmgRMWcdcJebH0O4xAW4FIqdw7Ajfxey5ayUtRkfveAMgOi5twasAf1FPB+1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753452627; c=relaxed/simple;
-	bh=XXwJERhTFmbWjCdF0fhV0tx9/bF8PCxbGdYEPIf/O3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5GkfN59dxFSInFriFj/6vir3wXylZUgQ07IwRGnq3qI8D9U136EYehXFmNDtpcKNq8bQxry7shinXNsuVfYpn5qQNVkvnFubn40F8RTRJd6Cp1bSIUAhwgkkb/4LSqRNGymeteMOgSFhF0xfdbnJRdF/nFQObayBpuUcBOeQzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=SHsKMy4W; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7490acf57b9so1565043b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:10:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1753452625; x=1754057425; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jf/mOhm/oVbqNLjepUkvAGKUCLK5QqEVSdfRhcGCSHg=;
-        b=SHsKMy4WYL1r4bQ+4ZRJdxoomTxGIAq3YxVM+WeUAfmYwSd3UPYPx1ZNnPAXlRJw1+
-         7+YSTZeorZqqEpTYk3kZ9wzWE0tLO29169fOStE1chrqaaNpjr28/zaWTjkAWqLDjSJt
-         fd3z1GZENrwiM3iLb2OQhpx+N1GTKXMRRTdoVU2ZOm4+/A19LWiOe7C3iyzlRfhvdrqs
-         ZwrHUhmvonlh/fbJJQx03R9U4YJ6aQDGygfQSOHmw26rld/b5eOj5M1T/RTh3R+wQG8P
-         1obIwJZloKCNiHdVKG/pGEfRSnrjBjKmV9Ed4Ksgq74a7Tyc8fSx9xU+EYlyQrAmUB+V
-         gbmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753452625; x=1754057425;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jf/mOhm/oVbqNLjepUkvAGKUCLK5QqEVSdfRhcGCSHg=;
-        b=A5qw6HYQebjtXWD/Es6Kd7xCMeDnKd71BWgKewLGRMElK2fIQ1tgMtMVjlNkSXXD3R
-         J2CP7+XA09jYUPVRD/FrFD1aiwQwgMoxVMkdHklk0aOfVzIUft+u+t/OUv53keZ4lhGl
-         wztiEUvIzpTe5kSNDA0KC4pbh3RqGnTEz+BNExhIaMqC6jjaPAjt3G0/dcoHkJ+nEk4I
-         n4tvKmDNx8Nza1CfJNf4FUwXKt/YbCOZjXKr/1pkdt5cyFYlmH3ou1Pa6WHNPybgWdn/
-         HEybcJVa7gB79h0fZ2MQhK2Nnh1jQ04u3LpOmey6xOqY8jruVhDUeZLnczZdMuNlK2+k
-         kVfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcJD4lzQwDwRLEmdhmaRgbX3Z2vEcgDfqEJOaShEzPW6ZSpd2YYa5cKaKzEkFjUw3fYhdfdHqkWdY39DE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB0CFnwRBXo9/XFwDzOJsVnhCF4lkkLNW1akBoxzW8AkxEhNx/
-	0xtpaqh6K46JwTkMew8VDJfGeiMoyuPpQA9/Y82sKnF8ecXU0CxxK/Z6LM4A9VpKZjE=
-X-Gm-Gg: ASbGncuuUE2Z/bUMveymCFkFqRBY2nTk9RuupmtImWf8e9NgJbdvO6HrOBHXrEBh13l
-	CugIqdihcM37uSfEgK66PGheipuRMVjivxLqoDzP2rTkojB2mHz+1dt/lSTw29WSa9ULbz+Z9X/
-	kjp5S3e4xCji0Ail/4LZjpZLeMcWgNZnEgQJThytyrP3kX6U5hZ9U1WcKRZEpElu8F9sOk1Vfyi
-	HFuaKldX6whem4c5q9KtagOJe4g2CqO5FicwetseN0sUY6oo4KzxjTCbAKq35QxeLv1tu4sc+sY
-	YjsMthEIUz/Ld5f44t0xlBRkwFGYvmBw2imznrKGXAwTJBhBt1NacpUBYA5Cb597lZeRdA6hB9b
-	oT37u4wBtj4+22xAvHpjSAYQTESwneB4wfd/kpi4Dfsc=
-X-Google-Smtp-Source: AGHT+IHNN/h9IcORot4a3xhdjrHaAp7ln5/qPNI4g6XxmpxQs89n8kgWy8jMRw30pgwpyInfWpB5eg==
-X-Received: by 2002:a05:6a00:1142:b0:749:456:4082 with SMTP id d2e1a72fcca58-76335849218mr3090044b3a.1.1753452625116;
-        Fri, 25 Jul 2025 07:10:25 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761b0615d7fsm3945846b3a.105.2025.07.25.07.10.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 07:10:24 -0700 (PDT)
-Date: Fri, 25 Jul 2025 07:10:21 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
-	llvm@lists.linux.dev, rick.p.edgecombe@intel.com,
-	broonie@kernel.org, cleger@rivosinc.com, samitolvanen@google.com,
-	apatel@ventanamicro.com, ajones@ventanamicro.com,
-	conor.dooley@microchip.com, charlie@rivosinc.com,
-	samuel.holland@sifive.com, bjorn@rivosinc.com, fweimer@redhat.com,
-	jeffreyalaw@gmail.com, andrew@sifive.com, ved@rivosinc.com,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Monk Chiang <monk.chiang@sifive.com>,
-	Kito Cheng <kito.cheng@sifive.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH 01/11] riscv: add landing pad for asm routines.
-Message-ID: <aIOQTSVNkC1RztDW@debug.ba.rivosinc.com>
-References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
- <20250724-riscv_kcfi-v1-1-04b8fa44c98c@rivosinc.com>
- <2ba0c09d-2783-4dce-a889-06e16abbde61@canonical.com>
+	s=arc-20240116; t=1753453008; c=relaxed/simple;
+	bh=ROLl58S+gJn/fUlsYyFBY1CY+gNDyUCGFs17XipEzP4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=plpHY723eLdPb/+nsd0zln/EjaHFOK9ctnC9dk1PWMfXIj6xWOhIQ3d0oJkBf/sKPhCWuO9hm4KUbtYOV1C6Ahqd3KNvnYfHELPiu/SkISiOt3Qt90ayaHvwVJsHm5UnB6IrgnaA2amOgESLfJqzt/YosMhCsEzVo0dMr2FpNig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=XAo7NM2g; arc=none smtp.client-ip=173.203.187.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1753452644;
+	bh=ROLl58S+gJn/fUlsYyFBY1CY+gNDyUCGFs17XipEzP4=;
+	h=From:To:Subject:Date:From;
+	b=XAo7NM2gg0RCt1UO0i718dYffzgkoMzIHTpa0Oy6ODLRKIiJEa5UWhi71VAYX6PqH
+	 RDPHp2IG9oFTMl9ZQG6yaIKIPT3F/U4fkYW9s2QBwyMAB/OoqKiRV1TaIVv8whgxqf
+	 Y4SqeGlZ3zddUguroZzFLWRM3jt5jK7Op2yKYw+0=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp8.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 24C2C50C5;
+	Fri, 25 Jul 2025 10:10:44 -0400 (EDT)
+From: Ian Abbott <abbotti@mev.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] comedi: Make insn_rw_emulate_bits() do insn->n samples
+Date: Fri, 25 Jul 2025 15:10:34 +0100
+Message-ID: <20250725141034.87297-1-abbotti@mev.co.uk>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <2ba0c09d-2783-4dce-a889-06e16abbde61@canonical.com>
+Content-Transfer-Encoding: 8bit
+X-Classification-ID: 27552962-6841-452b-823c-acad1dc1325a-1-1
 
-On Fri, Jul 25, 2025 at 08:13:29AM +0200, Heinrich Schuchardt wrote:
->On 25.07.25 01:36, Deepak Gupta wrote:
->>SYM_* macros are used to define assembly routines. In this patch series,
->>re-define those macros in risc-v arch specific include file to include
->>a landing pad instruction at the beginning. This is done only when the
->>compiler flag for landing pad is enabled (i.e. __riscv_zicfilp).
->>
->>TODO: Update `lpad 0` with `lpad %lpad_hash(name)` after toolchain
->>support.
->>
->>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->>---
->>  arch/riscv/include/asm/linkage.h | 42 ++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 42 insertions(+)
->>
->>diff --git a/arch/riscv/include/asm/linkage.h b/arch/riscv/include/asm/linkage.h
->>index 9e88ba23cd2b..162774b81158 100644
->>--- a/arch/riscv/include/asm/linkage.h
->>+++ b/arch/riscv/include/asm/linkage.h
->>@@ -6,7 +6,49 @@
->>  #ifndef _ASM_RISCV_LINKAGE_H
->>  #define _ASM_RISCV_LINKAGE_H
->>+#ifdef __ASSEMBLY__
->>+#include <asm/assembler.h>
->>+#endif
->>+
->>  #define __ALIGN		.balign 4
->>  #define __ALIGN_STR	".balign 4"
->>+#ifdef __riscv_zicfilp
->>+/*
->>+ * A landing pad instruction is needed at start of asm routines
->>+ * re-define macros for asm routines to have a landing pad at
->>+ * the beginning of function. Currently use label value of 0x1.
->
->Your code below uses label value 0 which disables tag checking. As 
->long as we don't have tool support for calculating function hashes 
->that is an appropriate approach.
->
+The `insn_rw_emulate_bits()` function is used as a default handler for
+`INSN_READ` instructions for subdevices that have a handler for
+`INSN_BITS` but not for `INSN_READ`.  Similarly, it is used as a default
+handler for `INSN_WRITE` instructions for subdevices that have a handler
+for `INSN_BITS` but not for `INSN_WRITE`. It works by emulating the
+`INSN_READ` or `INSN_WRITE` instruction handling with a constructed
+`INSN_BITS` instruction.  However, `INSN_READ` and `INSN_WRITE`
+instructions are supposed to be able read or write multiple samples,
+indicated by the `insn->n` value, but `insn_rw_emulate_bits()` currently
+only handles a single sample.  For `INSN_READ`, the comedi core will
+copy `insn->n` samples back to user-space.  (That triggered KASAN
+kernel-infoleak errors when `insn->n` was greater than 1, but that is
+being fixed more generally elsewhere in the comedi core.)
 
-Yes I made the fix at other place where function prototype was determined
-to be static (see `call_on_irq_stack` in entry.S)
+Make `insn_rw_emulate_bits()` either handle `insn->n` samples, or return
+an error, to conform to the general expectation for `INSN_READ` and
+`INSN_WRITE` handlers.
 
-In this patch, it wasn't possible.
+Fixes: ed9eccbe8970 ("Staging: add comedi core")
+Cc: <stable@vger.kernel.org> # 5.13+
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+---
+For 5.4.y and 5.10.y, this patch conflicts with submitted patches for
+upstream commit e9cb26291d00 ("comedi: Fix use of uninitialized data in
+insn_rw_emulate_bits()").
+---
+ drivers/comedi/drivers.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
->%s/Currently use label value of 0x1./Label value 0x0 disables tag checking./
->
+diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
+index f1dc854928c1..c9ebaadc5e82 100644
+--- a/drivers/comedi/drivers.c
++++ b/drivers/comedi/drivers.c
+@@ -620,11 +620,9 @@ static int insn_rw_emulate_bits(struct comedi_device *dev,
+ 	unsigned int chan = CR_CHAN(insn->chanspec);
+ 	unsigned int base_chan = (chan < 32) ? 0 : chan;
+ 	unsigned int _data[2];
++	unsigned int i;
+ 	int ret;
+ 
+-	if (insn->n == 0)
+-		return 0;
+-
+ 	memset(_data, 0, sizeof(_data));
+ 	memset(&_insn, 0, sizeof(_insn));
+ 	_insn.insn = INSN_BITS;
+@@ -635,18 +633,21 @@ static int insn_rw_emulate_bits(struct comedi_device *dev,
+ 	if (insn->insn == INSN_WRITE) {
+ 		if (!(s->subdev_flags & SDF_WRITABLE))
+ 			return -EINVAL;
+-		_data[0] = 1U << (chan - base_chan);		     /* mask */
+-		_data[1] = data[0] ? (1U << (chan - base_chan)) : 0; /* bits */
++		_data[0] = 1U << (chan - base_chan);		/* mask */
+ 	}
++	for (i = 0; i < insn->n; i++) {
++		if (insn->insn == INSN_WRITE)
++			_data[1] = data[i] ? _data[0] : 0;	/* bits */
+ 
+-	ret = s->insn_bits(dev, s, &_insn, _data);
+-	if (ret < 0)
+-		return ret;
++		ret = s->insn_bits(dev, s, &_insn, _data);
++		if (ret < 0)
++			return ret;
+ 
+-	if (insn->insn == INSN_READ)
+-		data[0] = (_data[1] >> (chan - base_chan)) & 1;
++		if (insn->insn == INSN_READ)
++			data[i] = (_data[1] >> (chan - base_chan)) & 1;
++	}
+ 
+-	return 1;
++	return insn->n;
+ }
+ 
+ static int __comedi_device_postconfig_async(struct comedi_device *dev,
+-- 
+2.47.2
 
-Thanks its lingering from earlier. Will fix it.
-
->Best regards
->
->Heinrich
->
->>+ * Eventually, label should be calculated as a hash over function
->>+ * signature.
->>+ */
->>+#define SYM_FUNC_START(name)				\
->>+	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)	\
->>+	lpad 0;
->>+
->>+#define SYM_FUNC_START_NOALIGN(name)			\
->>+	SYM_START(name, SYM_L_GLOBAL, SYM_A_NONE)	\
->>+	lpad 0;
->>+
->>+#define SYM_FUNC_START_LOCAL(name)			\
->>+	SYM_START(name, SYM_L_LOCAL, SYM_A_ALIGN)	\
->>+	lpad 0;
->>+
->>+#define SYM_FUNC_START_LOCAL_NOALIGN(name)		\
->>+	SYM_START(name, SYM_L_LOCAL, SYM_A_NONE)	\
->>+	lpad 0;
->>+
->>+#define SYM_FUNC_START_WEAK(name)			\
->>+	SYM_START(name, SYM_L_WEAK, SYM_A_ALIGN)	\
->>+	lpad 0;
->>+
->>+#define SYM_FUNC_START_WEAK_NOALIGN(name)		\
->>+	SYM_START(name, SYM_L_WEAK, SYM_A_NONE)		\
->>+	lpad 0;
->>+
->>+#define SYM_TYPED_FUNC_START(name)				\
->>+	SYM_TYPED_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)	\
->>+	lpad 0;
->>+
->>+#endif
->>+
->>  #endif /* _ASM_RISCV_LINKAGE_H */
->>
->
 
