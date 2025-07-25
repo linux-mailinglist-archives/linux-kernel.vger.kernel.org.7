@@ -1,186 +1,187 @@
-Return-Path: <linux-kernel+bounces-745451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37D3B11A2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:45:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D42B11A3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8667561988
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:45:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CEF67BAE88
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115A51EDA1A;
-	Fri, 25 Jul 2025 08:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D8820127B;
+	Fri, 25 Jul 2025 08:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OoM8Ezxy"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=belden.com header.i=@belden.com header.b="JyiTJ1fD"
+Received: from mx0a-00015a02.pphosted.com (mx0a-00015a02.pphosted.com [205.220.166.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68780219E0
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA121FC3
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753433133; cv=none; b=fHchAhfBtc5BeLXlWn1I/aN0kXY3GmE7P6oCNmMdvMpbB4LmVbPHVpdssBGUf+3zTGSSBIndxO7Y01DLH5yWs+zER34xspTaC/uzRjBJSWM/OA8yToyYOce+WXSLbi86trkrrr8vCAXB/9q8Zf5KQ1hy6z2T30DsQxoLDw4FELE=
+	t=1753433401; cv=none; b=LTMzZSbdmOJoPYMwvf9q2CGL04RwAPN1EwXmCKb4Y0J31dqZMKMN2Wa3scPHEk6O+JAnBQsmUD6L2dZKgIh6SVZwealM68NfiCydYMRT6fEbFq9Km1G5EBCJfrvC3oDJ2NRG/+Bjl0cIZ+lIRIzueUGghSCib/IGmpq0xTZCl18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753433133; c=relaxed/simple;
-	bh=xGANVMF2dWuVCsWN8+I6Kz4YfD3ch1oyz/LsQCjJ8+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SJYaJ+85QUIHLmrKL/AhOxWRc1zQw/9lEINI9yGECIhslJf+kyLpy69DVX0lnQsClXX0psyCi9rcqUXD0H15xm8jTKdDeOE1Myu7xGsfVBqSQjg2U1qIHoNDqqfgaWVKUhvRNNuio/VsQu6MvTtF0iS9fZY1lzaybkh/OJe1qTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OoM8Ezxy; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4563a57f947so14230095e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753433129; x=1754037929; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fiOi7M9IeQ+/7DA3YnW9XKEAkbfV4pJGPhG8hDHADkI=;
-        b=OoM8Ezxy+taigEmPyTV9ULpwL/HlfJUxrU9mbJwC2tRObHYki6kDHQS+RCYQ/MIuDm
-         BWGg1CTviQHJeHlvhLsPObpmZ8Nxc1KbjrKtrBGx+2/Zkw9ZGbPLWxrX3gKSXmA1E8bU
-         vAeh87XSPsECnmTYZEFgTT0OmWue7bm07LfYjK1xcPwjxc/X/XlHZUpoB11XjjgNdDos
-         WYSz9xg6m4i7GORKQCCJW6DiqIoxMTVuK4lvfVbNf4Om0vTsX+Om/o69h3lhvxTLkIHh
-         t3ncTomIGl+7NeVneO6U9FMoGGEeFfHyJfA59uP/evMdnOtTawieHL+bflNSvFpwFfTK
-         UIaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753433129; x=1754037929;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fiOi7M9IeQ+/7DA3YnW9XKEAkbfV4pJGPhG8hDHADkI=;
-        b=qC4B8UfueKBN3pgny42AI38sUwCvQXdoYOGdkmjBAoTI1u7Mw0hrvPQhQ4y78v9ycK
-         48S9c8XNlMcEO3rtSisqCv54qqhiRAsovVZnkqLJtm50g482MK89pHFIIqALSQxYAIYg
-         gfxlNWPqeS3CZZJIQagx/gJAMyimNzkuUqhlv2EhjlQ1vEagJQ5lUm06X1vbyiRrWHNj
-         VG7lJGHSQwBByjtE5+H95lY8n6gWSnlXGBb+ykfQdAedZATXAd7vgGEBrgUy0iViUBv6
-         2nTiTjqvkZkF3RcHYvmQjUAiLfGRJp7A2FP3U1nNt6OyZuW0aCffIpSXwju0Pe9Ddp5a
-         DRuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaCfUN42rYwhrRB0gMPsbNK1xfmLhZI5zdubnB3upOoaJvPTbjAWJIPRsYGBAf3DyRPOYo4aUrAHVNiJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAQL9yqZ3XRU0wOzxzgppe2qrjJTRfh4hXiF6u5wonZsVTUY1t
-	xw3J0A8AuonOML7/Sz42bueMN5mg7vZKSryktbWI0E840RoXUbjcpbJmOvwbfzoy0Pg=
-X-Gm-Gg: ASbGncvvMh6RJfJII1UcJmRVAx1B55xUSHl1Ri/oK4OmvN3pWRz5klenJQ4r+opSJ6e
-	y0Hz4fFizxqB8QWksxv/rtFOeHbNncx5j3ExDwyOuuB9tfs5QrbHtvO4fR429eHrqtL/5mU6BKJ
-	WNdTSGCTFzDIYhE/ldboX37FElayoVdBCgtcKl42/W4fXnj7BQbrnVF+4/AbP0rlbxrzpBjx32d
-	1jmUtsiSLVQPa+gmsjWFKCpwU0zpLOp8qL+PTWSkp+PKj+QkhMhxTRTO6C4wDEOn/054C1f71nX
-	Jj/6XJrenIJFN6zHv5KvMQz2t8OMtECa/GRbxKsNGJv2fvHjznccS51YCbHyCQPbCicrKYEuMv9
-	XS/hw1rRHqlaC6mNysKUkD6WVPwM=
-X-Google-Smtp-Source: AGHT+IGr0PvB3BndUJjSS9kG3O/gNXghvVYeFYDKeqpUNDpaISXj6KCONZSa8uNvTsi4A58GUNun/w==
-X-Received: by 2002:a05:6000:4021:b0:3a5:8991:64b7 with SMTP id ffacd0b85a97d-3b77137beefmr3824470f8f.26.1753433129557;
-        Fri, 25 Jul 2025 01:45:29 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b773768440sm2731164f8f.24.2025.07.25.01.45.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 01:45:29 -0700 (PDT)
-Message-ID: <4c1161d3-fc7d-4b3c-8197-7b632e85280f@linaro.org>
-Date: Fri, 25 Jul 2025 09:45:27 +0100
+	s=arc-20240116; t=1753433401; c=relaxed/simple;
+	bh=DgudFAr7p+t76bJMfc4BjnbZuVWo1ZU+/SClggvoUdI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c8ri7pj+iS6Mdi/0vGLD0rxSHLs93MzMAYUFJ79HLZ58W4oD8L1ahwSkoTnO4c42k2ujc1uAI/WPVOj1e2J63e4Mg0d839Nt2ugfszDsWLK3Pufn2cIQOhgepsLQodiDyZswdC2Z/LjaeE2/Mv/AIXk3fePNEIs5oCgRohVvuI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=belden.com; spf=pass smtp.mailfrom=belden.com; dkim=pass (2048-bit key) header.d=belden.com header.i=@belden.com header.b=JyiTJ1fD; arc=none smtp.client-ip=205.220.166.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=belden.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=belden.com
+Received: from pps.filterd (m0382794.ppops.net [127.0.0.1])
+	by mx0a-00015a02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P71V0G004927;
+	Fri, 25 Jul 2025 04:46:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=belden.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=podpps1; bh=4x8Y8o1TqVh46b7zVbS+AEaUUdZ4AZhwmgb08
+	SoOMcs=; b=JyiTJ1fDLP1+wxMGl2K31L9nUZMIoMtkmf2XJYcCMBjyJ/GQqzGy8
+	Lli6OeE6MvqyPntvoegFwtJ1si8cyjtXgC4a/2DPAlrb5iXdv9tW6kcr9GfQcoio
+	ANHcctRb87cQ9sPTqHu1efpWw2IckdARe3u0pgHmXj9SFqQN0PJ8d9yfMB+X3fkl
+	sO2Dca7o7CyQtDmbmgT+vZlYVTAGe6yI/gJdLA3vakMoaVs6NIsr0uNmpEWQGd42
+	Cay4igKnLo0MLYd6R2vu5XRTcieSQRIptVit0NmkrUOofh3ujcur2YB8INzNRwhR
+	ow6MkQao6BqrMwwHdefZz62QjmtLtk5Ag==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-00015a02.pphosted.com (PPS) with ESMTPS id 483w3jgxjp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 25 Jul 2025 04:46:46 -0400 (EDT)
+Received: from m0382794.ppops.net (m0382794.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56P8kk4F030189;
+	Fri, 25 Jul 2025 04:46:46 -0400
+Received: from relay2.belden.com ([12.161.118.81])
+	by mx0a-00015a02.pphosted.com (PPS) with ESMTPS id 483w3jgxjk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 25 Jul 2025 04:46:45 -0400 (EDT)
+Received: from pps.filterd (dcric1ppa02pb.mcp.local [127.0.0.1])
+	by dcric1ppa02pb.mcp.local (8.18.1.2/8.18.1.2) with ESMTP id 56ONTLte017715;
+	Fri, 25 Jul 2025 04:52:07 -0400
+Received: from chbrn1lab0001 ([10.1.2.1])
+	by dcric1ppa02pb.mcp.local (PPS) with ESMTPS id 4806pvqc31-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 04:52:07 -0400
+Received: from chbrn1rnd0001.netmodule.intranet (chbrn1lab0001.netmodule.intranet [10.121.114.100])
+	by chbrn1lab0001 (Postfix) with ESMTP id D15C33A01C7;
+	Fri, 25 Jul 2025 08:46:42 +0000 (UTC)
+From: Aleksandar Gerasimovski <aleksandar.gerasimovski@belden.com>
+To: linux-kernel@vger.kernel.org, afd@ti.com, s-vadapalli@ti.com
+Cc: Aleksandar Gerasimovski <aleksandar.gerasimovski@belden.com>
+Subject: [PATCH] phy: ti: gmii-sel: fix rgmii_id mode config
+Date: Fri, 25 Jul 2025 08:46:40 +0000
+Message-Id: <20250725084640.845760-1-aleksandar.gerasimovski@belden.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/10] coresight: Fix and improve clock usage
-To: Leo Yan <leo.yan@arm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Yeoreum Yun <yeoreum.yun@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 mlxlogscore=722
+ adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507250074
+X-Proofpoint-GUID: 8kN7q0lqcXysx9vW3LLjc4Rd_wIPI3YJ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA3MiBTYWx0ZWRfX4A7sAu8s/bRR
+ EDUbk/DmCg1ohigLEUN7LcQivZOwWzVBg/sHZhZHYqxDkFR50eDjXzkqX/k5Fu6jdUL1cxjPLGW
+ SsNKaIH0YeseNn+lSpHQV5eV2WXEmKseXzpwDk+HzmYX6okzc7h5TrW8WxWncUSQlxaBCtVzmd8
+ WHqZgEDaDwiES5cY4b6r4yWlp33ym928LsVGAOvKWysU/OCz5TEzjNRg0ulRyYuAi7v635pz9BH
+ a43BlgBl9bkJW+7YHOiQIDMcii1q3dDVa5/5L91IvUKKfTPrB3f8GBAbKa7NWCTppnvtc0m2Tij
+ DFkmL+6kwzP88Xy9YGkLP0QVLjZtlVA6KGqKTVE7HwxB5xn4XmAVRICPx3Byi+Nv+375LKErmhx
+ tVbhbF0IeYp87DQMXO6vPW1DTjvYmGOGIUBrNxu0DGQTHb0Pfw9C4IL0BsJut6GuXStDzId2
+X-Proofpoint-ORIG-GUID: SVgQy44b3ZPEFpRIwzEreTrJP3Abn5zY
+X-Authority-Analysis: v=2.4 cv=LKVmQIW9 c=1 sm=1 tr=0 ts=68834476 cx=c_pps
+ a=cuOCxa8MntS3/AsasmU/aA==:117 a=cuOCxa8MntS3/AsasmU/aA==:17
+ a=Wb1JkmetP80A:10 a=WDlp8lUfAAAA:8 a=MSXI9gdaubPL58eQSmAA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 priorityscore=1501 impostorscore=0 adultscore=0 spamscore=0
+ mlxlogscore=943 mlxscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507250072
+X-Proofpoint-TriggeredRule: module.spam.rule.outbound_notspam
+
+Without setting this bit the RGMII_ID link does not work reliably,
+we have found this thanks to the U-boot cpsw-nuss driver that is
+setting it. The bit is undocumented in the AM64x reference manual
+(see CTRLMMR_ENET1_CTRL register).
+
+This problem is not visible if the Kernel is booted by a U-boot
+with enabled networking, in our case we see the problem as the
+U-boot networking is not used, and it is disabled.
+
+Signed-off-by: Aleksandar Gerasimovski <aleksandar.gerasimovski@belden.com>
+---
+ drivers/phy/ti/phy-gmii-sel.c | 41 ++++++++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.c
+index ff5d5e29629f..60a1312acf33 100644
+--- a/drivers/phy/ti/phy-gmii-sel.c
++++ b/drivers/phy/ti/phy-gmii-sel.c
+@@ -210,19 +210,44 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_soc_dm814 = {
+ 
+ static const
+ struct reg_field phy_gmii_sel_fields_am654[][PHY_GMII_SEL_LAST] = {
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2), },
+-	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2), },
++	{
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0, 4, 4),
++	},
++	{
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x4, 4, 4),
++	},
++	{
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x8, 4, 4),
++	},
++	{
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0xC, 4, 4),
++	},
++	{
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x10, 4, 4),
++	},
++	{
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x14, 4, 4),
++	},
++	{
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x18, 4, 4),
++	},
++	{
++		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2),
++		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x1C, 4, 4),
++	},
+ };
+ 
+ static const
+ struct phy_gmii_sel_soc_data phy_gmii_sel_soc_am654 = {
+ 	.use_of_data = true,
++	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE),
+ 	.regfields = phy_gmii_sel_fields_am654,
+ };
+ 
+-- 
+2.34.1
 
 
-
-On 24/07/2025 4:22 pm, Leo Yan wrote:
-> This series fixes and improves clock usage in the Arm CoreSight drivers.
-> 
-> Based on the DT binding documents, the trace clock (atclk) is defined in
-> some CoreSight modules, but support is absent. In most cases, the issue
-> is hidden because the atclk clock is shared by multiple CoreSight
-> modules and the clock is enabled anyway by other drivers. The first
-> three patches address this issue.
-> 
-> The programming clock (pclk) management in CoreSight drivers does not
-> use the devm_XXX() variant APIs, the drivers needs to manually disable
-> and release clocks for errors and for normal module exit.  However, the
-> drivers miss to disable clocks during module exit. The atclk may also
-> not be disabled in CoreSight drivers during module exit. By using devm
-> APIs, patches 04 and 05 fix clock disabling issues.
-> 
-> Another issue is pclk might be enabled twice in init phase - once by
-> AMBA bus driver, and again by CoreSight drivers. This is fixed in
-> patch 06.
-> 
-> Patches 07 to 10 refactor the clock related code. Patch 07 consolidates
-> the clock initialization into a central place. Patch 08 polishes driver
-> data allocation. Patch 09 makes the clock enabling sequence consistent.
-> Patch 09 removes redundant condition checks and adds error handling in
-> runtime PM.
-> 
-> This series has been verified on Arm64 Juno platform, for both DT and
-> ACPI modes.
-> 
-
-Tested on N1SDP with ACPI:
-
-Tested-by: James Clark <james.clark@linaro.org>
-
-> ---
-> Changes in v5:
-> - Skip clock management for ACPI devices (Suzuki).
-> - Link to v4: https://lore.kernel.org/r/20250627-arm_cs_fix_clock_v4-v4-0-0ce0009c38f8@arm.com
-> 
-> Changes in v4:
-> - Separated patch 07 into two patches, one is for clock consolidation
->    and another is for polishing driver data allocation (Anshuman).
-> 
-> Changes in v3:
-> - Updated subjects for patches 04 and 05 (Anshuman).
-> - Refined condition checking "if (dev_is_amba(dev))" in patch 07
->    (Anshuman).
-> 
-> ---
-> Leo Yan (10):
->        coresight: tmc: Support atclk
->        coresight: catu: Support atclk
->        coresight: etm4x: Support atclk
->        coresight: Appropriately disable programming clocks
->        coresight: Appropriately disable trace bus clocks
->        coresight: Avoid enable programming clock duplicately
->        coresight: Consolidate clock enabling
->        coresight: Refactor driver data allocation
->        coresight: Make clock sequence consistent
->        coresight: Refactor runtime PM
-> 
->   drivers/hwtracing/coresight/coresight-catu.c       | 53 ++++++++---------
->   drivers/hwtracing/coresight/coresight-catu.h       |  1 +
->   drivers/hwtracing/coresight/coresight-core.c       | 48 ++++++++++++++++
->   drivers/hwtracing/coresight/coresight-cpu-debug.c  | 41 +++++---------
->   drivers/hwtracing/coresight/coresight-ctcu-core.c  | 24 +++-----
->   drivers/hwtracing/coresight/coresight-etb10.c      | 18 ++----
->   drivers/hwtracing/coresight/coresight-etm3x-core.c | 17 ++----
->   drivers/hwtracing/coresight/coresight-etm4x-core.c | 32 ++++++-----
->   drivers/hwtracing/coresight/coresight-etm4x.h      |  4 +-
->   drivers/hwtracing/coresight/coresight-funnel.c     | 66 ++++++++--------------
->   drivers/hwtracing/coresight/coresight-replicator.c | 63 ++++++++-------------
->   drivers/hwtracing/coresight/coresight-stm.c        | 34 +++++------
->   drivers/hwtracing/coresight/coresight-tmc-core.c   | 48 ++++++++--------
->   drivers/hwtracing/coresight/coresight-tmc.h        |  2 +
->   drivers/hwtracing/coresight/coresight-tpiu.c       | 36 +++++-------
->   include/linux/coresight.h                          | 31 +---------
->   16 files changed, 228 insertions(+), 290 deletions(-)
-> ---
-> base-commit: a80198ba650f50d266d7fc4a6c5262df9970f9f2
-> change-id: 20250627-arm_cs_fix_clock_v4-e24b1e1f8920
-> 
-> Best regards,
-
+**********************************************************************
+DISCLAIMER:
+Privileged and/or Confidential information may be contained in this message. If you are not the addressee of this message, you may not copy, use or deliver this message to anyone. In such event, you should destroy the message and kindly notify the sender by reply e-mail. It is understood that opinions or conclusions that do not relate to the official business of the company are neither given nor endorsed by the company. Thank You.
 
