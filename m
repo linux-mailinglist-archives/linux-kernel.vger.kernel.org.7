@@ -1,172 +1,173 @@
-Return-Path: <linux-kernel+bounces-746111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C02B12342
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BA2B1234B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356B13BFD71
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10C914E58FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AB42EFDBC;
-	Fri, 25 Jul 2025 17:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BC42EFDB5;
+	Fri, 25 Jul 2025 17:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rRk/10Ix"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="YHJbqExK"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC712EFDA3;
-	Fri, 25 Jul 2025 17:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753465801; cv=none; b=LKVBCARU0UxI3764Hc+Ti8+badYIG1jSO6+PxqvPuGhd8/N5HAawUiJpoBxM3I6mTO8KgGIrsWE5BaGBMPnAZIKDPF/zwSyon1J7Vzbu9xHZqXS+rEtp74ej8PFkQxLJtSwcmwtYklbJn5uo7wIAe9wYDE6rPqHcPHE6TUy7gyA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753465801; c=relaxed/simple;
-	bh=B8h1iG2EgVjLNoI1RMhXF367XsgIqzMlmdAWYCPbjrQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uG+7ZC+RJSZSqOoz2QOP1BOFubbEFvHSNX5ePG+qkRm2+mVebGj2JTD5qDs9YPJQT119qqElujQ+Qxi86nrhLV8+7YsMvbn0F1CDGMIJGl+UWMfv6ihaW5OQV/tMHwIOLt0/79a8wcikW8WBVECx1+uuVou20//Hl76JZUhhGUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rRk/10Ix; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56PHnc3d2251811;
-	Fri, 25 Jul 2025 12:49:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753465778;
-	bh=+eBwJup3Yjm99HHyJ3Azuh5yfqVuAmBeRvTWq8BjN1Y=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=rRk/10Ix0X2smb4WE4ZUcNvU3FwYJWosRBjhlZORYEwD18orQCFeJEdiljeIaqR2w
-	 LrKV6RqWOaeGA3QvBh7Tpbysec16MIv+DxoJJ//NkeyX2g0NNRO/MWpev6OMWEuDFP
-	 Ly0mLMGHwG2FObKZhFIO7QgJTH5CMw7bfwAe02ds=
-Received: from DFLE20.ent.ti.com (dfle20.ent.ti.com [10.64.6.57])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56PHncUf2468477
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 25 Jul 2025 12:49:38 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE20.ent.ti.com
- (10.64.6.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.1748.24; Fri, 25 Jul
- 2025 12:49:38 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 25 Jul 2025 12:49:38 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56PHnb9c2388126;
-	Fri, 25 Jul 2025 12:49:37 -0500
-Message-ID: <30d4bf10-274d-485c-84dd-7cbb8157efab@ti.com>
-Date: Fri, 25 Jul 2025 12:49:37 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF631FC3;
+	Fri, 25 Jul 2025 17:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753466025; cv=pass; b=SnKhIb5iO0cyquwtSlNFzrWg8V+RhltZYeLYcUx7xYR03uD7miFMbm8hMIZlDGAk+UKijYygeQkiZSwaHgF44lGVNjLXSMYGVdDMMIt/z0NRYoR6IRWAcr11C6Tp8SZvRnUXm5pWzHVrZglWOAYhSAAY+ZMKmBHhdoTwrNDFTBQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753466025; c=relaxed/simple;
+	bh=tJSD1yOrKcZN25HjRGQPhTe2es/5JkO42M0Dh8GJUCs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=JYpXtsxd3HJgyrXcZ3O5CIVjeJMZjwNZrJ5WojC8DpzVL4yGa2bccY+COENBCuQcikAfbyTaIZnpWa5448YJv1oOGjz8GsEMD1sZHh5oxULubpaXLRAl6qMOBl9C1Ycac+hCogYnREJCokkk5a1U1Xf9M5K7dRB6ccJzpTIhDJY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=YHJbqExK; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753466007; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jqtrjjYj6HTKfmj3aX84YVPfuEOQmzDFm9YNESPruAdi7c1IrBwq3zs6UUB3JNHFCcCwsZiKqIfBMvjpEWmpZMLMNjrvRxtEQBQK5ZaX+dyc1jdPircTEiWNmN27EudqehStmj1mR06THbEEx5hSI41iZpsBR8rlM8k1KWCLg/k=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753466007; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NPAGT4yPF+2r+2IWTtbeSzxA57WIMP0lOCJNqfVPWGw=; 
+	b=WV+PSbnBOovgOZeIlpLRWWjxSsNPIxcuhrSreltZjIuMgc+XkaGbSiHDcUY6BNXWZ8+3GmwqqqPDLqEY3ui8NI3vkxQ05ANrvagsmrA7IWQ42IxTnUhDD+sBSvvyoaBcqmyA7bZ1+3iN+AslqygayKkMEcma7ED1/xmo0XMqHVc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753466006;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=NPAGT4yPF+2r+2IWTtbeSzxA57WIMP0lOCJNqfVPWGw=;
+	b=YHJbqExK1umQIJ37NmjiJjzRbUQgNx0/hET6kydrgiqguVRDqEweR5Dc8yvGnUuf
+	v9ttzki2C+3toJhVTXpm3rIy65Q/uCYhnZeG6aaiuUOlhVV8+BjGnWSBSKLUhG5YUaZ
+	c5YU7VwYDFwJzE3xZke5mocBRayaqsxAeebwPPzY=
+Received: by mx.zohomail.com with SMTPS id 1753466003670980.98516398806;
+	Fri, 25 Jul 2025 10:53:23 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] Documentation: dma-buf: heaps: Add naming guidelines
-To: Maxime Ripard <mripard@kernel.org>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        "T.J. Mercier" <tjmercier@google.com>,
-        Jonathan Corbet <corbet@lwn.net>
-CC: Jared Kangas <jkangas@redhat.com>,
-        Mattijs Korpershoek
-	<mkorpershoek@kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Bagas Sanjaya
-	<bagasdotme@gmail.com>
-References: <20250717-dma-buf-heap-names-doc-v3-1-d2dbb4b95ef6@kernel.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250717-dma-buf-heap-names-doc-v3-1-d2dbb4b95ef6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 12/19] gpu: nova-core: register: generate correct
+ `Default` implementation
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250718-nova-regs-v2-12-7b6a762aa1cd@nvidia.com>
+Date: Fri, 25 Jul 2025 14:53:09 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Beata Michalska <beata.michalska@arm.com>,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F7ED4635-7F50-4D92-B72B-08D000CD6E26@collabora.com>
+References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
+ <20250718-nova-regs-v2-12-7b6a762aa1cd@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On 7/17/25 3:10 AM, Maxime Ripard wrote:
-> We've discussed a number of times of how some heap names are bad, but
-> not really what makes a good heap name.
-> 
-> Let's document what we expect the heap names to look like.
-> 
-> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+
+
+> On 18 Jul 2025, at 04:26, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> The `Default` implementation of a register should be the aggregate of
+> the default values of all its fields, and not simply be zeroed.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
-> Changes in v3:
-> - Grammar, spelling fixes
-> - Remove the cacheable / uncacheable name suggestion
-> - Link to v2: https://lore.kernel.org/r/20250616-dma-buf-heap-names-doc-v2-1-8ae43174cdbf@kernel.org
-> 
-> Changes in v2:
-> - Added justifications for each requirement / suggestions
-> - Added a mention and example of buffer attributes
-> - Link to v1: https://lore.kernel.org/r/20250520-dma-buf-heap-names-doc-v1-1-ab31f74809ee@kernel.org
-> ---
->   Documentation/userspace-api/dma-buf-heaps.rst | 35 +++++++++++++++++++++++++++
->   1 file changed, 35 insertions(+)
-> 
-> diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Documentation/userspace-api/dma-buf-heaps.rst
-> index 535f49047ce6450796bf4380c989e109355efc05..3ee4e7961fe390ba356a2125d53b060546c3e4a6 100644
-> --- a/Documentation/userspace-api/dma-buf-heaps.rst
-> +++ b/Documentation/userspace-api/dma-buf-heaps.rst
-> @@ -21,5 +21,40 @@ following heaps:
->      usually created either through the kernel commandline through the
->      `cma` parameter, a memory region Device-Tree node with the
->      `linux,cma-default` property set, or through the `CMA_SIZE_MBYTES` or
->      `CMA_SIZE_PERCENTAGE` Kconfig options. Depending on the platform, it
->      might be called ``reserved``, ``linux,cma``, or ``default-pool``.
+> drivers/gpu/nova-core/regs/macros.rs | 26 +++++++++++++++++++++++---
+> 1 file changed, 23 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/gpu/nova-core/regs/macros.rs =
+b/drivers/gpu/nova-core/regs/macros.rs
+> index =
+485cac806e4a6578059c657f3b31f15e361becbd..f0942dc29210f703fddd4d86b758173f=
+75b3477a 100644
+> --- a/drivers/gpu/nova-core/regs/macros.rs
+> +++ b/drivers/gpu/nova-core/regs/macros.rs
+> @@ -112,14 +112,14 @@ macro_rules! register {
+>=20
+>     // All rules below are helpers.
+>=20
+> -    // Defines the wrapper `$name` type, as well as its relevant =
+implementations (`Debug`, `BitOr`,
+> -    // and conversion to the value type) and field accessor methods.
+> +    // Defines the wrapper `$name` type, as well as its relevant =
+implementations (`Debug`,
+> +    // `Default`, `BitOr`, and conversion to the value type) and =
+field accessor methods.
+>     (@core $name:ident $(, $comment:literal)? { $($fields:tt)* }) =3D> =
+{
+>         $(
+>         #[doc=3D$comment]
+>         )?
+>         #[repr(transparent)]
+> -        #[derive(Clone, Copy, Default)]
+> +        #[derive(Clone, Copy)]
+>         pub(crate) struct $name(u32);
+>=20
+>         impl ::core::ops::BitOr for $name {
+> @@ -162,6 +162,7 @@ fn from(reg: $name) -> u32 {
+>             )*
+>         });
+>         register!(@debug $name { $($field;)* });
+> +        register!(@default $name { $($field;)* });
+>     };
+>=20
+>     // Defines all the field getter/methods methods for `$name`.
+> @@ -321,6 +322,25 @@ fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) =
+-> ::core::fmt::Result {
+>         }
+>     };
+>=20
+> +    // Generates the `Default` implementation for `$name`.
+> +    (@default $name:ident { $($field:ident;)* }) =3D> {
+> +        /// Returns a value for the register where all fields are set =
+to their default value.
+> +        impl ::core::default::Default for $name {
+> +            fn default() -> Self {
+> +                #[allow(unused_mut)]
+> +                let mut value =3D Self(Default::default());
 > +
-> +Naming Convention
-> +=================
+> +                ::kernel::macros::paste!(
+> +                $(
+> +                value.[<set_ $field>](Default::default());
+> +                )*
+> +                );
 > +
-> +``dma-buf`` heaps name should meet a number of constraints:
+> +                value
+> +            }
+> +        }
+> +    };
 > +
-> +- The name must be stable, and must not change from one version to the other.
-> +  Userspace identifies heaps by their name, so if the names ever change, we
-> +  would be likely to introduce regressions.
-> +
-> +- The name must describe the memory region the heap will allocate from, and
-> +  must uniquely identify it in a given platform. Since userspace applications
-> +  use the heap name as the discriminant, it must be able to tell which heap it
-> +  wants to use reliably if there's multiple heaps.
-> +
-> +- The name must not mention implementation details, such as the allocator. The
-> +  heap driver will change over time, and implementation details when it was
-> +  introduced might not be relevant in the future.
-> +
-> +- The name should describe properties of the buffers that would be allocated.
-> +  Doing so will make heap identification easier for userspace. Such properties
-> +  are:
-> +
-> +  - ``contiguous`` for physically contiguous buffers;
-> +
-> +  - ``protected`` for encrypted buffers not accessible the OS;
-> +
-> +- The name may describe intended usage. Doing so will make heap identification
-> +  easier for userspace applications and users.
-> +
-> +For example, assuming a platform with a reserved memory region located at the
-> +RAM address 0x42000000, intended to allocate video framebuffers, physically
-> +contiguous, and backed by the CMA kernel allocator, good names would be
-> +``memory@42000000-cacheable-contiguous`` or ``video@42000000``, but
+>     // Generates the IO accessors for a fixed offset register.
+>     (@io $name:ident @ $offset:expr) =3D> {
+>         #[allow(dead_code)]
+>=20
+> --=20
+> 2.50.1
+>=20
+>=20
 
-You dropped "cacheable" but left it here in the suggested names, maybe
-replace with "protected" here. Otherwise, LGTM,
+Also very neat.
 
-Reviewed-by: Andrew Davis <afd@ti.com>
-
-> +``cma-video`` wouldn't.
-> 
-> ---
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> change-id: 20250520-dma-buf-heap-names-doc-31261aa0cfe6
-> 
-> Best regards,
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
 
