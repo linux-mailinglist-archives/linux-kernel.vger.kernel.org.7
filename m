@@ -1,223 +1,246 @@
-Return-Path: <linux-kernel+bounces-745689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A81B11D1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:06:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 201FAB11D1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66EEF1896C04
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E791899CE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B055F2E4271;
-	Fri, 25 Jul 2025 11:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950572E54CA;
+	Fri, 25 Jul 2025 11:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HoXMdMWr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZkKrH1St";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HoXMdMWr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZkKrH1St"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uleDv8os"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2060.outbound.protection.outlook.com [40.107.93.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2862E6107
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441592; cv=none; b=Y8PF8XCsISrEWcCnBgtnKRTQnOJrQDZx+boHFtUQycDxoLj/OYnkrhbCQARzn/5YWitRO17IaDM+CrIAQE2747zhKBZhHi8Sn+QUaEHA3Ca6FdPW4LPtlaVBKafndO3QXgZKmYtiz7lTzkqwhgWE9YzSODIyq8ztq5xI93HxvPg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441592; c=relaxed/simple;
-	bh=ptLRnfF3Xh5NbhcBs5N82s1lKj5n3Up3TTRTRt3/vvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cfW5k9S9syItiC28VRWvEWAefHOZy1UpIxL11PHPDm+wPsl8AgRboPuEQUSNykVrxOCReeiwjzSYgr4HeBduRyYjKJIxAv7pssE0+YVW8NglXNYhar574mLTC+LnEt6GazUdNZbMqzTJ6gKvAT70E95M3Mbcr8q9cSaprC01/oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HoXMdMWr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZkKrH1St; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HoXMdMWr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZkKrH1St; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A19061F394;
-	Fri, 25 Jul 2025 11:06:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753441582; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3NbCoCyk6lItwvD4IjtOOkmF1xk6FvWdmI+TimjRgcA=;
-	b=HoXMdMWrsCz02kQnarh7BYQuPZax2eIk0kENY5faRRo63k5Tgp19gJu8SqfiEYKGEaghEh
-	Lzdg7p5ZASYWyUpXKD9BPRauTY4VkK9Aa9I3GqvgYpC/5QQjYDKO0R6hOoHSE6VbWpU+Tn
-	cvl9erXbLPhsqYRfYl+wW3y+ve8+/44=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753441582;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3NbCoCyk6lItwvD4IjtOOkmF1xk6FvWdmI+TimjRgcA=;
-	b=ZkKrH1StTM931qZ9U7NiPaIsxccXrYqgg2TztypgEmiqzYEnqxWQCUlJUGl5DZ/TA7E/j3
-	PemM+gZaD9uAIQDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753441582; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3NbCoCyk6lItwvD4IjtOOkmF1xk6FvWdmI+TimjRgcA=;
-	b=HoXMdMWrsCz02kQnarh7BYQuPZax2eIk0kENY5faRRo63k5Tgp19gJu8SqfiEYKGEaghEh
-	Lzdg7p5ZASYWyUpXKD9BPRauTY4VkK9Aa9I3GqvgYpC/5QQjYDKO0R6hOoHSE6VbWpU+Tn
-	cvl9erXbLPhsqYRfYl+wW3y+ve8+/44=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753441582;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3NbCoCyk6lItwvD4IjtOOkmF1xk6FvWdmI+TimjRgcA=;
-	b=ZkKrH1StTM931qZ9U7NiPaIsxccXrYqgg2TztypgEmiqzYEnqxWQCUlJUGl5DZ/TA7E/j3
-	PemM+gZaD9uAIQDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8EFF1134E8;
-	Fri, 25 Jul 2025 11:06:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id s/jiIi5lg2jTEQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 25 Jul 2025 11:06:22 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 42AE2A29BE; Fri, 25 Jul 2025 13:06:18 +0200 (CEST)
-Date: Fri, 25 Jul 2025 13:06:18 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	ojaswin@linux.ibm.com, linux@roeck-us.net, yi.zhang@huawei.com, libaokun1@huawei.com, 
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH] ext4: fix crash on test_mb_mark_used kunit tests
-Message-ID: <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
-References: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBB32E4271
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753441611; cv=fail; b=kYjtkgnsQxG6Ovn2RPWq7xNwaCbKiEnOVpxAaXAFVTsHAxV1jn6fvWE9a99tZepUDQmElNLKo4Y780Qsct7tF4cEiD6fpqNycUVFDnptF8f8lE8xKnPGQwun97EiIgqf5n2tbvdBeU58zftQ7GAI0X7y18ma/+FxOnYYdYrkiNA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753441611; c=relaxed/simple;
+	bh=oMW8vtfsat9VwvLp3+zTwm0VobUF0GVgcAYrEv47Pek=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tBh6pTgwG/tef52J6P3/4DpHdHaI8i81+wLCYDBGOxkFw0SSjbBsaDoTWlgCdaCa4zrx3g6hZ6G8/CaKru+K5JDnRHkp7WEeauQIqqTJrYKku+tgL+K535wc3xAY0V/rKxM2rfKKV2w6d64uAMElobpe8lm8WzVv4w86579edvg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uleDv8os; arc=fail smtp.client-ip=40.107.93.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ltcWMtTFGKWNwFnBgLMfojF9PE353du/VQu8sZolutIXJJHVlaSeRsAbvgbmkwv4AmjQh7Vuh+iZ5Ig5BPuejP0qIA1ImWrecfbwa43JIxmN7OkBfcku+X60xL4DwIssIPBjanArOWj9kB0oiVSBjDIZTsdW6BsFVAvt9c04xAphM7Bww6MjEkBK3NoAuT7hieHOOeaC9h/W7RLcgvO/vCf+nXjwmb5nXWNfpI2sc4OHT34CTYZFzXJnKIngqq1hHZSMpUwk+B9bL8rIIu22WydeXIs8wxmo6tn6QOHgUVB3T3fuc3Y/hAjFHDfR0Eg6RexuEwFVr1ZX9xBVynA3Ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OQZQgusDJwskkNj29B8gmgPc0LYwhBHnG1hJ97nbXVU=;
+ b=TWdvD+uDOOQdjN2t/Mud57bdRJPIFLYsoZgibcsmWwV68r17js3PFKGkWpSKF4OVygoSV/S8cZe7oEj2DF2vqST5OMyQV0k/fv3b0kQJjhVHLZEtVN+shUb2AmxMCVd43g3UoU3HG34fwnvusGFrtglgEjMz8/mwkWuUpJTHxhfEYF67ad111abNgJZzFRv1L5fOYoigg1q3Z1q1Zu3D7wg6wC7fo5EPv+1aF26KbN6szQKo3LcPA0RxQ6qUuZOGezI2jB5UOoQc9HrzuG0pQkGizj+YQ3jU6wxqHBi+DQwo4mg4K2OfV8iqemNclhJxWBYkhSLuvb2+126rVZiyDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OQZQgusDJwskkNj29B8gmgPc0LYwhBHnG1hJ97nbXVU=;
+ b=uleDv8osZsalY+6tGdXYJ46+RCH0Lq7xqm4FlQQjuc7mbpIiFg44fE1fU35z6G+gCVavUJBU/dprdH0HqEcGMNGvJZkTfZHOvdv8JBXSahp7cZzWyWLlOECewbCUISwXuWcjmzIiC8LzDmk81uOk8GupFd0sidKyVJjws8vdS88=
+Received: from MW4PR03CA0068.namprd03.prod.outlook.com (2603:10b6:303:b6::13)
+ by BY5PR12MB4274.namprd12.prod.outlook.com (2603:10b6:a03:206::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Fri, 25 Jul
+ 2025 11:06:44 +0000
+Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
+ (2603:10b6:303:b6:cafe::c1) by MW4PR03CA0068.outlook.office365.com
+ (2603:10b6:303:b6::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.22 via Frontend Transport; Fri,
+ 25 Jul 2025 11:06:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8964.20 via Frontend Transport; Fri, 25 Jul 2025 11:06:44 +0000
+Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Jul
+ 2025 06:06:39 -0500
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>
+CC: Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
+	<peterz@infradead.org>, "Xin Li (Intel)" <xin@zytor.com>, Pawan Gupta
+	<pawan.kumar.gupta@linux.intel.com>, <linux-kernel@vger.kernel.org>, "Mario
+ Limonciello" <mario.limonciello@amd.com>, "Gautham R. Shenoy"
+	<gautham.shenoy@amd.com>, Babu Moger <babu.moger@amd.com>, "Suravee
+ Suthikulpanit" <suravee.suthikulpanit@amd.com>, K Prateek Nayak
+	<kprateek.nayak@amd.com>
+Subject: [PATCH v2 0/3] x86/cpu/topology: Work around the nuances of virtualization on AMD/Hygon
+Date: Fri, 25 Jul 2025 11:06:19 +0000
+Message-ID: <20250725110622.59743-1-kprateek.nayak@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|BY5PR12MB4274:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ccd0459-3b37-41ef-1a40-08ddcb6b5763
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ye8lMu9toLZYelKBWncbsu2/khWn5I+VYB073cFCfmd1c2syxT8vXS0rtVK9?=
+ =?us-ascii?Q?twAimzQYSJejS/y8+W9KNeP1z1Kfjr8GL6/PVtxgrcHItQnMiCzYeoyV1MNa?=
+ =?us-ascii?Q?RP8smnL1JHNfR+SX+vTmwSljhuvclC//xSrO2yST+L8r7idOMbK5mK+KIg08?=
+ =?us-ascii?Q?62TiIS3nozQ5HodUKlVYtRlbsYHnzb1lX2B5dUcm69yF4JW7Y/V0oryM6LJB?=
+ =?us-ascii?Q?rEYkaA80nB/loA1kkU3CHC8nBlX3YOW4uyaUnMqmsf3hO84xq6JBNvwa0Sdn?=
+ =?us-ascii?Q?sRgqdCQgnVs4tkA3Vdr80V+5xCD+8HT4hEXmwWc+F/hyQpflq4rYbVD0hCCL?=
+ =?us-ascii?Q?nGpqOdt/Hn1OzTNkC/RJMdc2WrEp/4N6VkUE9FIiWtj1IaY8sJKz+ym29FxB?=
+ =?us-ascii?Q?PlY9gF/uN0gXikdx++NsQUgcKqomW3nLlHc1H/EKSHFO0N/yPWAJkUt1DqOF?=
+ =?us-ascii?Q?s97UTcb+csjeeNzLZ7pwhtKk7tlQzh4GPi4Ma3PSdMjbIzGFEb7NKh1zDbj1?=
+ =?us-ascii?Q?p+Ilu4FTeP04Q2G6/HoL61hVZCmmGj/fPQ+91YymlgWp5e78Q0QPYgh8hIuY?=
+ =?us-ascii?Q?LldLT9CBtS9WodjhuANQqS2HBEB8gwDcTHDcTiX6KMJ85n6MTWqfZAu3wujs?=
+ =?us-ascii?Q?hdfetY0j+loLyadDLAFilOKQXr6js4St+VKlMIzLyWByxmUVkmfLd8zAQXqG?=
+ =?us-ascii?Q?IeP7AEk/RRLxiJjCUEkFYeo8oNUpNtj3tvPDMWsPuGG3q3DL/TUuLzMTbr2X?=
+ =?us-ascii?Q?gukdyYMPkgARBrzsuawhMGgkpLtbynZQLGaTQWKdyVwoRcRdddLvF77mzSMm?=
+ =?us-ascii?Q?72NZb9Xh5NVEJ3BPRH//D4UBAPja4vhbqCEYdIemwm8B4JH2BpUG4TmSiPti?=
+ =?us-ascii?Q?YBw7TdZIXvt6lWfGecTHW9tws6O+uJ7RddnIEOkjrs1hCV0y3LRFGsWSqKK8?=
+ =?us-ascii?Q?MGF0V1GROJxl68SmKcBCtszd6vJEkjUi4xyplbnPgXP/ITlukN3RoD2e4+YE?=
+ =?us-ascii?Q?9Kp6zwLdW0gG+c+F17aqc2HAHEVUudYK0NcNox1iBuDxYXcpYh3RhE2EtIqw?=
+ =?us-ascii?Q?LTw0Bg/jyj2Sd3C2TsCqCek+8g3F9/XJI+parB0hZ5xpndSAtnWNYD8PyxgA?=
+ =?us-ascii?Q?ziCivBeDW61TsPYmk04C7bWxcdZpyv7VQVYIqiIumEq+3PWZDw716EuVTAI0?=
+ =?us-ascii?Q?fZzsJbTQi9gMgILzW0+mhZ829eOjVTCpQujki25ZY3Vl7pZoSJ6N+uVkP66S?=
+ =?us-ascii?Q?knEaJBhdE7InHZljC7/yp4Yb3M7z1YAWKXbfczkgSf70uTa3DXWOhN7+2TXL?=
+ =?us-ascii?Q?5C8m9Z901GbKNGgN0BXo0DnTHaei/x7VvkXfY6MxmcJo3zSM0tWowntTr1Nb?=
+ =?us-ascii?Q?x0R4qv/qDlIjoHMzUmSYAs8h8SMILIL1F881iRhJulPtyUr51R6BgjtPsutS?=
+ =?us-ascii?Q?XkqM6EVLLhRc1pDujJ89zdzUFQS3sUwMlPdgosqgR+2hukhnxFlsdW5GSdcQ?=
+ =?us-ascii?Q?I2P9v0I78qmMgGxNsDx8quiTy+MBzgYhpYHTuLWLhtb2y4ViZpqLZOHy+Q?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 11:06:44.3680
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ccd0459-3b37-41ef-1a40-08ddcb6b5763
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCBE.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4274
 
-On Fri 25-07-25 10:16:54, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> mb_set_largest_free_order() requires the parameter bb_largest_free_order
-> and the list bb_largest_free_order_node to be initialized, and
-> mb_update_avg_fragment_size() requires the parameter
-> bb_avg_fragment_size_order and bb_avg_fragment_size_node to be
-> initialized too. But the test_mb_mark_used kunit tests do not init these
-> parameters, and trigger the following crash issue.
-> 
->  Pid: 35, comm: kunit_try_catch Tainted: G W N 6.16.0-rc4-00031-gbbe11dd13a3f-dirty
->  RIP: 0033:mb_set_largest_free_order+0x5c/0xc0
->  RSP: 00000000a0883d98  EFLAGS: 00010206
->  RAX: 0000000060aeaa28 RBX: 0000000060a2d400 RCX: 0000000000000008
->  RDX: 0000000060aea9c0 RSI: 0000000000000000 RDI: 0000000060864000
->  RBP: 0000000060aea9c0 R08: 0000000000000000 R09: 0000000060a2d400
->  R10: 0000000000000400 R11: 0000000060a9cc00 R12: 0000000000000006
->  R13: 0000000000000400 R14: 0000000000000305 R15: 0000000000000000
->  Kernel panic - not syncing: Segfault with no mm
->  CPU: 0 UID: 0 PID: 35 Comm: kunit_try_catch Tainted: G W N 6.16.0-rc4-00031-gbbe11dd13a3f-dirty #36 NONE
->  Tainted: [W]=WARN, [N]=TEST
->  Stack:
->   60210c60 00000200 60a9e400 00000400
->   40060300280 60864000 60a9cc00 60a2d400
->   00000400 60aea9c0 60a9cc00 60aea9c0
->  Call Trace:
->   [<60210c60>] ? ext4_mb_generate_buddy+0x1f0/0x230
->   [<60215c3b>] ? test_mb_mark_used+0x28b/0x4e0
->   [<601df5bc>] ? ext4_get_group_desc+0xbc/0x150
->   [<600bf1c0>] ? ktime_get_ts64+0x0/0x190
->   [<60086370>] ? to_kthread+0x0/0x40
->   [<602b559b>] ? kunit_try_run_case+0x7b/0x100
->   [<60086370>] ? to_kthread+0x0/0x40
->   [<602b7850>] ? kunit_generic_run_threadfn_adapter+0x0/0x30
->   [<602b7862>] ? kunit_generic_run_threadfn_adapter+0x12/0x30
->   [<60086a51>] ? kthread+0xf1/0x250
->   [<6004a541>] ? new_thread_handler+0x41/0x60
->  [ERROR] Test: test_mb_mark_used: 0 tests run!
-> 
-> Fixes: bbe11dd13a3f ("ext4: fix largest free orders lists corruption on mb_optimize_scan switch")
-> Reported-by: Theodore Ts'o <tytso@mit.edu>
-> Closes: https://lore.kernel.org/linux-ext4/20250724145437.GD80823@mit.edu/
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
-> This patch applies to the kernel that has only merged bbe11dd13a3f
-> ("ext4: fix largest free orders lists corruption on mb_optimize_scan
-> switch"), but not merged 458bfb991155 ("ext4: convert free groups order
-> lists to xarrays").
+When running an AMD guest on QEMU with > 255 cores, the following FW_BUG
+was noticed with recent kernels:
 
-Hum, I think it would be best to just squash this into bbe11dd13a3f and
-then just rebase & squash the other unittest fixup to the final commit when
-we have to rebase anyway. Because otherwise backports to stable kernel will
-quickly become rather messy.
+    [Firmware Bug]: CPU 512: APIC ID mismatch. CPUID: 0x0000 APIC: 0x0200
 
-								Honza
+Naveen, Sairaj debugged the cause to commit c749ce393b8f ("x86/cpu: Use
+common topology code for AMD") where, after the rework, the initial
+APICID was set using the CPUID leaf 0x8000001e EAX[31:0] as opposed to
+the value from CPUID leaf 0xb EDX[31:0] previously.
 
- 
->  fs/ext4/mballoc-test.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
-> index d634c12f1984..ba939be0ec55 100644
-> --- a/fs/ext4/mballoc-test.c
-> +++ b/fs/ext4/mballoc-test.c
-> @@ -802,6 +802,10 @@ static void test_mb_mark_used(struct kunit *test)
->  	KUNIT_ASSERT_EQ(test, ret, 0);
->  
->  	grp->bb_free = EXT4_CLUSTERS_PER_GROUP(sb);
-> +	grp->bb_largest_free_order = -1;
-> +	grp->bb_avg_fragment_size_order = -1;
-> +	INIT_LIST_HEAD(&grp->bb_largest_free_order_node);
-> +	INIT_LIST_HEAD(&grp->bb_avg_fragment_size_node);
->  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
->  	for (i = 0; i < TEST_RANGE_COUNT; i++)
->  		test_mb_mark_used_range(test, &e4b, ranges[i].start,
-> @@ -875,6 +879,10 @@ static void test_mb_free_blocks(struct kunit *test)
->  	ext4_unlock_group(sb, TEST_GOAL_GROUP);
->  
->  	grp->bb_free = 0;
-> +	grp->bb_largest_free_order = -1;
-> +	grp->bb_avg_fragment_size_order = -1;
-> +	INIT_LIST_HEAD(&grp->bb_largest_free_order_node);
-> +	INIT_LIST_HEAD(&grp->bb_avg_fragment_size_node);
->  	memset(bitmap, 0xff, sb->s_blocksize);
->  
->  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
-> -- 
-> 2.46.1
-> 
+This led us down a rabbit hole of XTOPOEXT vs TOPOEXT support, preferred
+order of their parsing, and QEMU nuances like [1] where QEMU 0's out the
+CPUID leaf 0x8000001e on CPUs where Core ID crosses 255 fearing a
+Core ID collision in the 8 bit field which leads to the reported FW_BUG.
+
+Following were major observations during the debug which the two
+patches address respectively:
+
+1. The support for CPUID leaf 0xb is independent of the TOPOEXT feature
+   and is rather linked to the x2APIC enablement. On baremetal, this has
+   not been a problem since TOPOEXT support (Fam 0x15 and above)
+   predates the support for CPUID leaf 0xb (Fam 0x17[Zen2] and above)
+   however, in virtualized environment, the support for x2APIC can be
+   enabled independent of topoext where QEMU expects the guest to parse
+   the topology and the APICID from CPUID leaf 0xb.
+
+2. Since CPUID leaf 0x8000001e cannot represent Core ID without
+   collision for guests with > 255 cores, and QEMU 0's out the entire
+   leaf when Core ID crosses 255. Prefer initial APIC read from the
+   XTOPOEXT leaf before falling back to the APICID from 0x8000001e
+   which is still better than 8-bit APICID from leaf 0x1 EBX[31:24].
+
+More details are enclosed in the commit logs.
+
+Ideally, these changes should not affect baremetal AMD/Hygon platforms
+as they have supported TOPOEXT long before the support for CPUID leaf
+0xb and the extended CPUID leaf 0x80000026 (famous last words).
+
+Patch 3 is yak shaving to simplify the flow and avoid passing around
+"has_topoext" when the same can be discovered using
+X86_FEATURE_XTOPOLOGY.
+
+This series has been tested on baremetal Zen1 (contains topoext but not
+0xb leaf), Zen3 (contains both topoext and 0xb leaf), and Zen4 (contains
+topoext, 0xb leaf, and 0x80000026 leaf) servers with no changes
+observed in "/sys/kernel/debug/x86/topo/" directory.
+
+The series was also tested on 255 and 512 vCPU (each vCPU is an
+individual core from QEMU topology being passed) EPYC-Genoa guest with
+and without x2apic and topoext enabled and this series solves the FW_BUG
+seen on guest with > 255 VCPUs. No changes observed in
+"/sys/kernel/debug/x86/topo/" for all other cases without warning.
+0xb leaf is provided unconditionally on these guests (with or without
+topoext, even with x2apic disabled on guests with <= 255 vCPU).
+
+In all the cases initial_apicid matched the apicid in
+"/sys/kernel/debug/x86/topo/" after applying this series.
+
+Relevant bits of QEMU cmdline used during testing are as follows:
+
+    qemu-system-x86_64 \
+    -enable-kvm -m 32G -smp cpus=512,cores=512 \
+    -cpu EPYC-Genoa,x2apic=on,kvm-msi-ext-dest-id=on,+kvm-pv-unhalt,kvm-pv-tlb-flush,kvm-pv-ipi,kvm-pv-sched-yield,[-topoext]  \
+    -machine q35,kernel_irqchip=split \
+    -global kvm-pit.lost_tick_policy=discard
+    ...
+
+References:
+
+[1] https://github.com/qemu/qemu/commit/35ac5dfbcaa4b
+
+Series is based on tip:x86/cpu at commit 65f55a301766 ("x86/CPU/AMD: Add
+CPUID faulting support")
+---
+Changelog v1..v2:
+
+o Collected tags from Naveen. (Thank you for testing!)
+
+o Rebased the series on tip:x86/cpu.
+
+o Swapped Patch 1 and Patch 2 from v1.
+
+o Merged the body of two if blocks in Patch 1 to allow for cleanup in
+  Patch 3.
+---
+K Prateek Nayak (3):
+  x86/cpu/topology: Use initial APICID from XTOPOEXT on AMD/HYGON
+  x86/cpu/topology: Always try cpu_parse_topology_ext() on AMD/Hygon
+  x86/cpu/topology: Check for X86_FEATURE_XTOPOLOGY instead of passing
+    has_topoext
+
+ arch/x86/kernel/cpu/topology_amd.c | 48 ++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 23 deletions(-)
+
+
+base-commit: 65f55a30176662ee37fe18b47430ee30b57bfc98
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
