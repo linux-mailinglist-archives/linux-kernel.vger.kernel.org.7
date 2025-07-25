@@ -1,47 +1,84 @@
-Return-Path: <linux-kernel+bounces-745306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6146CB11832
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26373B11835
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99F9F5659CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:01:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A24E3B1B9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FE5284684;
-	Fri, 25 Jul 2025 06:01:34 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id D9AF127F19F;
-	Fri, 25 Jul 2025 06:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886B2284B25;
+	Fri, 25 Jul 2025 06:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="A8qTrCfz";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="VbWMIsUg"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5486928134C;
+	Fri, 25 Jul 2025 06:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753423293; cv=none; b=K9Ry/MgJCNVwM3cFAtK75Ki0BwTiO8cHV3piH3dQC8ceSFyxmm6Lr+MnZKC8M/Tj1vLKgqAB0Z+Ri4SpB6TZL2YuQl8cugA9zJmmmHosqr7neukXBwKYyffFsXeK50MuAF3y5cm5hjpk14EWhtF9lBU9UNfNHtSVhJQV2jhl6Tc=
+	t=1753423324; cv=none; b=k/5XpqJraUjXFd6SK5I/if9Dl63M6BG2BCuQzURuh7zCkoAnvKl8FDpadzCrTM7zVXn2J8beNzvVySm2RYG5yAcjN2C/q02PIIXeRT1RG4cLaW4DIqkGjcmEUedcAgJLnNwZmBKWbU9zGvx2NU0GgANJooCmcxU/RkrWZbkfLD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753423293; c=relaxed/simple;
-	bh=sIZ0MbeFvICbFqZ06S1DiZL/3SGp4hFYp2eCTHKFdyI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=GrJG371zl13nCL86wBy+fIMOuGq3QJESAauLkt6HvWGebCj8FL/Dob9SsweyT/eZaBZ6I8sbiheRytuXtNf3D0Ypg6n5djzZHS7WhgIxpjhTe350voPD01qU1FXPK2yNUoUZ/qwTl4T9ltNNOQjNzdbyidgReipwsG9M26H0f2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id AAC596018CCD3;
-	Fri, 25 Jul 2025 14:01:24 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] usb: xhci: print xhci->xhc_state when queue_command failed
-Date: Fri, 25 Jul 2025 14:01:18 +0800
-Message-Id: <20250725060117.1773770-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250725031308.1355371-1-suhui@nfschina.com>
+	s=arc-20240116; t=1753423324; c=relaxed/simple;
+	bh=YRw7rFcDu4vNvOdSRQLyK0d6LASTLKXnrjMnLq+m7Ks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UX8pO7gNn15uT8xdtKRTIxpSXbNct0p8JxVn4nKwZmsgvlsreLTITL6U+8GG/NtE9KS37Y9BKyEucG7rr++vHrDwR2cQdRmJYVAisM+Fq5jQTzcIaS11lEotmln+gY2CYmaaC4F2bBt1zJXBcDge+FfWu1avOEMZq58vo8xAPK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=A8qTrCfz; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=VbWMIsUg reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1753423323; x=1784959323;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gIjF0WLoJjIsLlPCbmDEL7SMVw5aD5pTVu3bKIXQuW4=;
+  b=A8qTrCfze0P/e6iCm7mfDXoF0gb4NQc9Zp5grB8MUsi88ltRbQ1zDqJ5
+   YNM9JBvqpBkIYHSR6KdU5wgA31YMoxKBV9GV+1YoUHqcKTF4GbOFRs0JO
+   hVU8ixqr1xnjgth+kHamP1YJYYAbhM8ukFW5RXnuxJZynnSRixPOZNEX7
+   ZTce0Do6Vx6XHMHrDWCt3EUdjMkCCy9eWam2ncpbutRlzO7wxAYe3ycK1
+   WHIZxcsBXAPJDoEBiIAD5ibxX3+FkmNhtCeMDbu3fWdVu6j1Vo6jxfXM+
+   Ir1bdtHrI4JWB7MqXKBKO3rnmVJlpFI1UwK7WOtUAs6AAwo2uO3LNi6Wa
+   g==;
+X-CSE-ConnectionGUID: tlaNM64zQbS/EQVWluh68A==
+X-CSE-MsgGUID: 7EQxuGH/R3O0c8k3t8Rv2Q==
+X-IronPort-AV: E=Sophos;i="6.16,338,1744063200"; 
+   d="scan'208";a="45412710"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 25 Jul 2025 08:01:59 +0200
+X-CheckPoint: {68831DD7-1A-4FC15ADB-CD71293B}
+X-MAIL-CPID: 34F13FDAA2F1E88CBE740EB9BBCB8E95_0
+X-Control-Analysis: str=0001.0A00210F.68831D5C.0053,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 911FE160F69;
+	Fri, 25 Jul 2025 08:01:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1753423314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gIjF0WLoJjIsLlPCbmDEL7SMVw5aD5pTVu3bKIXQuW4=;
+	b=VbWMIsUgUy7EWPX+DTUHgI808r/pem+uKeOoLAcdqD7GktqxL7BnBTJ+3hetENyiSsjkBc
+	NrCnN+imsh6MkoOBFDlpcJhoCI7+VuyXwTmE97l4tRVp22aXwIsHZ/3IfTKsSEcmQkCv1l
+	udi5eTjtvxU8oc+dR6QocEykd25/f2stwkoc9jbGIruOHLIb50rnhyFyqx+Pk0K2PfnlL4
+	OaZx2h0DaCePSCCCVh8AYkElS5BfELSED8KT9XMhKGmFw8gBBoq7Bt0QzaAVJMu4+Q+uCv
+	2id01y/sqwnoAjdpIitF0AlOrsOFOUaOOkogO3YhE7iK5974SDXxvyCgwFDydg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] dt-bindings: mmc: fsl,esdhc: Add explicit reference to mmc-controller-common
+Date: Fri, 25 Jul 2025 08:01:51 +0200
+Message-ID: <20250725060152.262094-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,38 +86,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-When encounters some errors like these:
-xhci_hcd 0000:4a:00.2: xHCI dying or halted, can't queue_command
-xhci_hcd 0000:4a:00.2: FIXME: allocate a command ring segment
-usb usb5-port6: couldn't allocate usb_device
+Even though it is referenced by mmc/mmc-controller.yaml it still raises
+the warning:
+  esdhc@1560000 (fsl,ls1021a-esdhc): Unevaluated properties are not allowed ('bus-width' was unexpected)
 
-It's hard to know whether xhc_state is dying or halted. So it's better
-to print xhc_state's value which can help locate the resaon of the bug.
+Adding an explicit reference fixes this.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
-v2:
- - Print xhci->xhc_state with hex style.
+I don't know if this is a tooling problem or whatever. I would have
+expected that mmc-controller-common.yaml is added via
+mmc-controller.yaml. But apparently this is missing resulting in the
+given warning. Hence adding the reference
 
- drivers/usb/host/xhci-ring.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/mmc/fsl,esdhc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 94c9c9271658..131e7530ec4a 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -4372,7 +4372,8 @@ static int queue_command(struct xhci_hcd *xhci, struct xhci_command *cmd,
+diff --git a/Documentation/devicetree/bindings/mmc/fsl,esdhc.yaml b/Documentation/devicetree/bindings/mmc/fsl,esdhc.yaml
+index 62087cf920df8..f45e592901e24 100644
+--- a/Documentation/devicetree/bindings/mmc/fsl,esdhc.yaml
++++ b/Documentation/devicetree/bindings/mmc/fsl,esdhc.yaml
+@@ -90,6 +90,7 @@ required:
  
- 	if ((xhci->xhc_state & XHCI_STATE_DYING) ||
- 		(xhci->xhc_state & XHCI_STATE_HALTED)) {
--		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command\n");
-+		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command. state: 0x%x\n",
-+			 xhci->xhc_state);
- 		return -ESHUTDOWN;
- 	}
+ allOf:
+   - $ref: sdhci-common.yaml#
++  - $ref: mmc-controller-common.yaml#
+ 
+ unevaluatedProperties: false
  
 -- 
-2.30.2
+2.43.0
 
 
