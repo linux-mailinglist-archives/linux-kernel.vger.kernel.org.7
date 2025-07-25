@@ -1,200 +1,128 @@
-Return-Path: <linux-kernel+bounces-745607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB411B11C24
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:20:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD5CDB11C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F21383B81F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58EF41CE4E62
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D322D9EF8;
-	Fri, 25 Jul 2025 10:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548902D6412;
+	Fri, 25 Jul 2025 10:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mwVXwIYT"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Oli8JsCc"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123432D94AB
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9971EE03B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753438696; cv=none; b=BWQmigWSXlxeSydybPyptTQJPu53r2KWtZEANUflT88aTD0CmcbXledVh/pj+P4hCh+UUFQ0uYHCm6zCbYhAqS7Rc6KxA/Kz1OKkwLbp38bgmPoKB/dyW7Flav5oPMaeYNBuLCEAQVzUjkoV4oPWm4eUsoxxrcL4gg0OD/BE+Zo=
+	t=1753438708; cv=none; b=BgRqRJIsjKCqun6bPbkVkX0LgNmSKhok8gKhxgoSp0XtmuC1crQjKIyN7fefU32nVKhRk/Swx8dISHugbooBx9fP9Zm+OfPCvE+8owPaIzV21mqQ9ggJllY7pVNCLzHiOVsli+xEQzMXcxbujXPZ0tTwxiRuuJfccvIlqiC1ShE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753438696; c=relaxed/simple;
-	bh=2XXVnmKfKOuWrZjQTjDdYxCXEPvU5YjHEeLez+QHVDs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wi3ZSgcTQBAEvOXpx+lamfdJtKiLkpadymlZ+WkAjquaACsISqpzxrhiHy/rkJkwvyeOUClOGPYBItKxagdi2Cb89wDLtwAuzOduzxBjFJ+owbudVMdAcTnf1/F86IK8pm8ZUCRs9QhwVNAsRDl22arJJaqlTCEpz9Owqsz0rBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mwVXwIYT; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4f2f2f22c1aso1140255137.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 03:18:14 -0700 (PDT)
+	s=arc-20240116; t=1753438708; c=relaxed/simple;
+	bh=YYZ9wBxVry26yCtTrzlfpW7Eh8IcQ/VBZk5LVzMoGIg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=QfiKTvZ2T+QlNbuCqxYKeLd5Qg7G3GBM0wUTYwc6nvXo41rN3C1rWx5ZGomAi1asGIELDV4dVW8rGqDXdfws6E/jdSCdZAzgf1QZP9SG08LipfMw+8XsZMGyJagtETikPZk4F8J06LWVqvqtpE/jYWiZbZMqzVnYCuT0QTKIY7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Oli8JsCc; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4eed70f24so114518f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 03:18:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753438694; x=1754043494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=ventanamicro.com; s=google; t=1753438705; x=1754043505; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s9CPe4n6W7cHa+GL0hIjIVMWtvIyx6LwWGjspV/N2Ok=;
-        b=mwVXwIYTfSfVo8CJ1H3a68QRzCngDA76zmNtN8/yBQWboq1G84DT+G5sBf9Cbm0/pw
-         oVlB4aR9yrEodIPE4z1kVMKuWat2WvdOgJKYypHNb+MrJgiKw6LDp/ZZ0mF6qvlg7i8I
-         OYspRLpGiQpbBok2vqwLj4dITzRn4F1R20+Vo=
+        bh=YYZ9wBxVry26yCtTrzlfpW7Eh8IcQ/VBZk5LVzMoGIg=;
+        b=Oli8JsCciYFcKf/JOZnc9ARtSfNr9CyxWQn2Y34sC+QlCvP4Qi1iGE8GhAmLC6vEPL
+         kuGeLByS0HjD7zFACl2iQ/SxMdwWFBjR0Fy+w8RSMzDqvui9Ksi4gVhi5uO6wz/25YIM
+         n07dm6vEOpRtcLzctK46LzCvhiVb43NOFw+UXlC7xlxX1PbyjY621jIgazLipPq/YTxo
+         6veVj0t9RMW6b/6ST8g1Z8M3R5CtYHwNrv79WeeqkLvkV+45yLiVKBoe3iuU3wHQgvpz
+         /dcpIZj8Jg21WibPI+1G55wMQvgoAQWRMTVnTHIe17ttOKNqefWsGwgSgZEmjZNcnCiA
+         oKfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753438694; x=1754043494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s9CPe4n6W7cHa+GL0hIjIVMWtvIyx6LwWGjspV/N2Ok=;
-        b=kXQ2h6aQlecLq3AmLKpaj9Qx90xbR8W72JLZjUkzswxvk/9/FLbAhE0lJVlOiW2l4j
-         cymSiOalvHaqqRbgafyVzwgWqPmvGlevtiDTFG9fU1f9ifEPz60ZYVpOjZr7seXuT3tf
-         VAOxtURTYIOxHYY9M2nj/6iU9eDSH3+CesJIym84b47ORr65expyBO7yKpOBYbR4BbMH
-         YYgizVq7l3cZMvNXUgY8+Ytd+ayfif4yS138sDuk8aQFu5JJFncmnUdOZpHZFg7Wq/AR
-         QI11WSVSfNO+tYScNGbtef9lI116ffz1WJSvniF597Z6jEc80c42d1A0uAJ6JDQOigx5
-         H0+g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6hHFO2XJYFHQVKtOi0XHHge0v2zBR1jtcKBloAlBxAYRP5EMSMrUSUEyipuYW4CDyF6xF66xdqy5avX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTRpMfV+fS3ZTTQ3okEqFLQdu/f3zmdd2hLWiw1EaTfoV6DXlS
-	iSQn6l1IVG/Lfe5U3s+Z41vvVwhsSpT1ZPfL9l3w7mStrlvP/Fotz3ELpF8Hm7uV8BSrGWWL9WC
-	bbtM=
-X-Gm-Gg: ASbGncsNTJzrkUx9FHfG6RMpBvUIwsiGODtb4Bze9R1Gg5FaFV8gXanxKBgT7vbjLVW
-	FIhBfAsBF4UprGHJkme1RukaXbWfgIiJFg9P0IYlIIoLsEJyxGObKHkycSGeISVfDxRw9DtEZwN
-	C6D8YntQQ61BlXfnlol3l+QaUG5l+/SpAW04tatbAfntqWqvyMNfishtxoCvT+/qdIEZOJX/VUQ
-	AGlikUSAS7iAclceuwHgDxq9GZRh3HgZXyPDH9LGrowo+Fk5FToiBJUFdU6trf2ingc7tKBQoTe
-	3dDvqqJB7MePVAPEYqbKSS/ULyfoe8BynMyhSeCKONzPwPPry41gi7FoWtcjXWPODlGoutc5r2f
-	xufFoetvxABJiy0R+3NSz/YRlcyz/j5+CMauNQ6Wo/Nk/Rv+K/v1SWQmpxg==
-X-Google-Smtp-Source: AGHT+IGMEqbvyWeaAZazbuPkBjZhYoslaRRz8x/ppuRU3wF1T4fX6Nf/ny83RDvXF5HlF/EfyB84Ig==
-X-Received: by 2002:a05:6102:3051:b0:4df:e510:242e with SMTP id ada2fe7eead31-4fa2eb0c863mr2335908137.5.1753438693978;
-        Fri, 25 Jul 2025 03:18:13 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b6fb64b61sm612567241.17.2025.07.25.03.18.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 03:18:13 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4f2f2f22c1aso1140234137.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 03:18:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVhh0+V883cmVgYpPO6aczDR7nYL7PsxoaNrs76Ckjggr9k5SRnInH5d0Q53pLtFIa7P55Ce8G55uaoI0w=@vger.kernel.org
-X-Received: by 2002:a05:6102:1623:b0:4fa:dd4:6877 with SMTP id
- ada2fe7eead31-4fa2eb0ce5dmr2502816137.4.1753438693359; Fri, 25 Jul 2025
- 03:18:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753438705; x=1754043505;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YYZ9wBxVry26yCtTrzlfpW7Eh8IcQ/VBZk5LVzMoGIg=;
+        b=caJGneqxje/F05Yg0NTFa77uOj7374kWh8gc8afTFhiqRLk1XhEeEPdOobph4m34es
+         wfbIF3EW8Z07zQLLMhE9TxNSxs4EbaY/EZ6ZMHnmNmiNNuDi+/lr2kQClYm+JS8U1x9I
+         bGZcNx1wDJa8UeP+7ihiUC1UWqKbtJbyNe3ZNUuOqF4gqrOsok3iaUsAWdyOy+wi5H4/
+         0C1knxrljTY5Cw+KgF8+FSvf38FPxwKQbLrq+UC2XY40Dr+sW/LVhb7+YjtQB8Expx3L
+         VdG9PUU1j3TSNOuefoJWEAsUB8luG9k7Mi6C4yR9Y9sQwwgVrKh78tBY4m0FupPkha+B
+         272g==
+X-Forwarded-Encrypted: i=1; AJvYcCVhH1bTyZTvtYGUi4TUQNcvJExPdn/hZy6CpQaihW4wmc+uOv/hwu0HQoSNDvieCYyJ7Lpv74uibE1aZL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsxF2lPHL316xZNlAsyy182QxVLei0seTppUNI7pKFGYHyQz/B
+	aZDgHFkbrKzJmeoHPlmnj1sxVuTngogucnyG+XXG6TfxtixuB+TackPQhBe0yazzbv0=
+X-Gm-Gg: ASbGncum66KWxnz7fPFM6syphGQjhfKjy/LSy8JKuoWcklUUKgRjHXR7VLTxkPZcA8g
+	A9QYBV3wjHB0eV4ChDt2yVgnpSVf5o0sGQZoVrjSGoQnZlfROHl6YvQ5wdsV16UuHm8cuBJAoDt
+	b/K4AOFwvfTwIXKPDOsI051sEgdPzvYMr4AU820hCYHeZSyoydCLnW0uuR825u455r8K4eaFH2+
+	E6gCTx3uexc3CRBvgllul7zy33Dy4RjrL1Bd70KazzOnN/QH9K9ryEPjN6OmgT8soxHnQZm2MTV
+	/cBhvkmVpEVbsV0eMy3rE3tdlJaRKGufZ8ySLwjS4AgWq8MYsuRSmKZFk/nUd39UxjDRvyQNtEZ
+	2ZItovn/Bheg3ypHWOjWqjbJjMizO1A==
+X-Google-Smtp-Source: AGHT+IGn5WRAMtlU5cklPYxIOVfVV5fz2fA+h+TjIZKCuxFwKLN9BLlRRKIt3jUZj5c42/6P+CdRHg==
+X-Received: by 2002:a05:6000:430c:b0:3a4:f912:86af with SMTP id ffacd0b85a97d-3b7766d2f23mr452692f8f.2.1753438704893;
+        Fri, 25 Jul 2025 03:18:24 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:8c15:2281:5347:b367])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b76fc7724esm4655765f8f.32.2025.07.25.03.18.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 03:18:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com> <20250724083914.61351-31-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250724083914.61351-31-angelogioacchino.delregno@collabora.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Fri, 25 Jul 2025 18:17:35 +0800
-X-Gmail-Original-Message-ID: <CAC=S1niM4ddPSaOM9uMRQuUS8HwPw+gtxe9kGUggWQx6uio5eA@mail.gmail.com>
-X-Gm-Features: Ac12FXzF0-E5XCOaIf5MFeMvqjYMvWSzSdwqzh1uEwhsUpfXPcd-rqBecXNopmU
-Message-ID: <CAC=S1niM4ddPSaOM9uMRQuUS8HwPw+gtxe9kGUggWQx6uio5eA@mail.gmail.com>
-Subject: Re: [PATCH 30/38] arm64: dts: mediatek: pumpkin-common: Fix pinctrl
- node names
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, 
-	daniel.lezcano@linaro.org, mwalle@kernel.org, devicetree@vger.kernel.org, 
-	linus.walleij@linaro.org, linux-remoteproc@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	olivia.wen@mediatek.com, shane.chien@mediatek.com, linux-gpio@vger.kernel.org, 
-	linux-phy@lists.infradead.org, airlied@gmail.com, simona@ffwll.ch, 
-	herbert@gondor.apana.org.au, jassisinghbrar@gmail.com, jiaxin.yu@mediatek.com, 
-	andy.teng@mediatek.com, chunfeng.yun@mediatek.com, jieyy.yang@mediatek.com, 
-	chunkuang.hu@kernel.org, conor+dt@kernel.org, jitao.shi@mediatek.com, 
-	p.zabel@pengutronix.de, arnd@arndb.de, kishon@kernel.org, 
-	kyrie.wu@mediatek.corp-partner.google.com, maarten.lankhorst@linux.intel.com, 
-	tinghan.shen@mediatek.com, mripard@kernel.org, ck.hu@mediatek.com, 
-	broonie@kernel.org, eugen.hristev@linaro.org, houlong.wei@mediatek.com, 
-	matthias.bgg@gmail.com, tglx@linutronix.de, mchehab@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, granquet@baylibre.com, 
-	sam.shih@mediatek.com, mathieu.poirier@linaro.org, fparent@baylibre.com, 
-	andersson@kernel.org, sean.wang@kernel.org, linux-sound@vger.kernel.org, 
-	lgirdwood@gmail.com, vkoul@kernel.org, linux-crypto@vger.kernel.org, 
-	tzimmermann@suse.de, atenart@kernel.org, krzk+dt@kernel.org, 
-	linux-media@vger.kernel.org, davem@davemloft.net
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 25 Jul 2025 12:18:23 +0200
+Message-Id: <DBL2588APTCA.2XUKQCJ0DW89C@ventanamicro.com>
+Cc: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+To: "Vivian Wang" <wangruikang@iscas.ac.cn>, "Drew Fustini"
+ <fustini@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>,
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, "Alexandre Ghiti"
+ <alex@ghiti.fr>, "Paul Walmsley" <paul.walmsley@sifive.com>, "Samuel
+ Holland" <samuel.holland@sifive.com>, "Drew Fustini"
+ <dfustini@tenstorrent.com>, "Andy Chiu" <andybnac@gmail.com>, "Conor
+ Dooley" <conor.dooley@microchip.com>, <linux-riscv@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH] riscv: Add sysctl to control discard of vstate during
+ syscall
+References: <20250719033912.1313955-1-fustini@kernel.org>
+ <cc82c938-def3-4df6-9fc9-fc321af7d54a@iscas.ac.cn>
+In-Reply-To: <cc82c938-def3-4df6-9fc9-fc321af7d54a@iscas.ac.cn>
 
-On Thu, Jul 24, 2025 at 5:50=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+2025-07-24T05:55:54+08:00, Vivian Wang <wangruikang@iscas.ac.cn>:
+> On 7/19/25 11:39, Drew Fustini wrote:
+>> From: Drew Fustini <dfustini@tenstorrent.com>
+>> Clobbering the vector registers can significantly increase system call
+>> latency for some implementations. To mitigate this performance impact, a
+>> policy mechanism is provided to administrators, distro maintainers, and
+>> developers to control vector state discard in the form of a sysctl knob:
 >
-> Fix the pinctrl node names to adhere to the bindings, as the main
-> pin node is supposed to be named like "uart0-pins" and the pinmux
-> node named like "pins-bus".
+> So I had an idea: Is it possible to avoid repeatedly discarding the
+> state on every syscall by setting VS to Initial after discarding, and
+> avoiding discarding when VS is Initial? So:
 >
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+> if (VS =3D=3D Clean || VS =3D=3D Dirty) {
+> =C2=A0 =C2=A0 clobber;
+> =C2=A0 =C2=A0 VS =3D Initial;
+> }
+>
+> This would avoid this problem with syscall-heavy user programs while
+> adding minimum overhead for everything else.
 
-Reviewed-by: Fei Shao <fshao@chromium.org>
+I think your proposal improves the existing code, but if a userspace is
+using vectors, it's likely also restoring them after a syscall, so the
+state would immediately get dirty, and the next syscall would again
+needlessly clobber vector registers.
 
-> ---
->  .../boot/dts/mediatek/pumpkin-common.dtsi      | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi b/arch/arm6=
-4/boot/dts/mediatek/pumpkin-common.dtsi
-> index a356db5fcc5f..805fb82138a8 100644
-> --- a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-> @@ -198,8 +198,8 @@ &usb_phy {
->  };
->
->  &pio {
-> -       gpio_keys_default: gpiodefault {
-> -               pins_cmd_dat {
-> +       gpio_keys_default: gpio-keys-pins {
-> +               pins-cmd-dat {
->                         pinmux =3D <MT8516_PIN_42_KPCOL0__FUNC_GPIO42>,
->                                  <MT8516_PIN_43_KPCOL1__FUNC_GPIO43>;
->                         bias-pull-up;
-> @@ -207,7 +207,7 @@ pins_cmd_dat {
->                 };
->         };
->
-> -       i2c0_pins_a: i2c0 {
-> +       i2c0_pins_a: i2c0-pins {
->                 pins1 {
->                         pinmux =3D <MT8516_PIN_58_SDA0__FUNC_SDA0_0>,
->                                  <MT8516_PIN_59_SCL0__FUNC_SCL0_0>;
-> @@ -215,7 +215,7 @@ pins1 {
->                 };
->         };
->
-> -       i2c2_pins_a: i2c2 {
-> +       i2c2_pins_a: i2c2-pins {
->                 pins1 {
->                         pinmux =3D <MT8516_PIN_60_SDA2__FUNC_SDA2_0>,
->                                  <MT8516_PIN_61_SCL2__FUNC_SCL2_0>;
-> @@ -223,21 +223,21 @@ pins1 {
->                 };
->         };
->
-> -       tca6416_pins: pinmux_tca6416_pins {
-> -               gpio_mux_rst_n_pin {
-> +       tca6416_pins: tca6416-pins {
-> +               pins-mux-rstn {
->                         pinmux =3D <MT8516_PIN_65_UTXD1__FUNC_GPIO65>;
->                         output-high;
->                 };
->
-> -               gpio_mux_int_n_pin {
-> +               pins-mux-intn {
->                         pinmux =3D <MT8516_PIN_64_URXD1__FUNC_GPIO64>;
->                         input-enable;
->                         bias-pull-up;
->                 };
->         };
->
-> -       ethernet_pins_default: ethernet {
-> -               pins_ethernet {
-> +       ethernet_pins_default: ethernet-pins {
-> +               pins-eth {
->                         pinmux =3D <MT8516_PIN_0_EINT0__FUNC_EXT_TXD0>,
->                                  <MT8516_PIN_1_EINT1__FUNC_EXT_TXD1>,
->                                  <MT8516_PIN_5_EINT5__FUNC_EXT_RXER>,
-> --
-> 2.50.1
->
->
+Preserving the vector state still seems better for userspaces that use
+both vectors and syscalls.
 
