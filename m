@@ -1,79 +1,203 @@
-Return-Path: <linux-kernel+bounces-745396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9116B1195B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B10EB1195D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA32F3AC05C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:44:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92C005A0A0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F062828937D;
-	Fri, 25 Jul 2025 07:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478FF2264BA;
+	Fri, 25 Jul 2025 07:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7nEkoGU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ovdWbjDI"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4446941A8F;
-	Fri, 25 Jul 2025 07:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250E41A8F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753429520; cv=none; b=Szqv1NhT/2gGiKsHocdTXQT3bA0SLLKMDS/R58vJDloWfezQAD8v5kufz1C7amD1z8EdWEUTHPkBaaGJkN4goRkqzgeQ9avPt30l2bb/0ggxOIsmDPlipWNgVQ8IrfZv6O1pWmPOEBNa9R06isMfC7KE0Y1dPkv5QUzqv+DOdIA=
+	t=1753429617; cv=none; b=ZpID+ThugfAc7ZTn+/27DFSGrEB7BZ10s11HB73k4sEPQ24O9I4XG3C+WrNHlTwSDUEeliDsgI82vm9a9tDGOQGG4/IDlhET587ZKY4kskeOduzIfbvqV4zdn66kr9Uyf6Xm9wc6sAHxlfcJYE6MwQdGSvJMoaondjhN/LCRBX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753429520; c=relaxed/simple;
-	bh=clcYxE5Wx51OdBHA9h9oopi2+l4nXhAbyNOMVavvEhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vgr3PD7eMmGqZJD/hg0NzuqG3XGtfYV8hw0PyXAIcQzTci9S1lbv1LMP6efgJQ75/xuUE5alx075cCWbhppyJfpjYQkOioEkhm+pT+Tv0tZ3PwfYYL8GUc0Fn6ipiWsK0AQB2czVjHQn6MY7XB89eiagPp3ZbbIMp+MRANKInH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7nEkoGU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C1D0C4CEF4;
-	Fri, 25 Jul 2025 07:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753429519;
-	bh=clcYxE5Wx51OdBHA9h9oopi2+l4nXhAbyNOMVavvEhk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j7nEkoGU5gbaiALcyHoH7ZDNAR+4xBy1vr8IDdJcy6FOte+FmxF/HCANtCfgviWSb
-	 2k0j/Cg8TLP94JRcZH//H2g8hrQ+HCeU1e3o9zFvux4YsZK8pHkhuBfh54tXlIDlv0
-	 oj/DvvJN8iRqVhTqoDJxba+aIrMVnY/72kjUYjZ86am0uwut4uq2TDzkprsNXK6jgP
-	 3W6kOel/vkaA7+FaIfCAQ16vuz8Y/JkbHYDciC9aCatA2B7fXKE5Bm3Vzzu/YEeDit
-	 Uhh8UiEOhAeaE8ZN7iJznkAwuX3bbXpeJ7VVukojYb0kssKUyUTWLiGjOF0/TCER4e
-	 5baL8ualUQlig==
-Date: Fri, 25 Jul 2025 09:45:17 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] dt-bindings: clock: qcom: document the Glymur
- Global Clock Controller
-Message-ID: <20250725-incredible-nippy-sloth-67a31e@kuoka>
-References: <20250724-glymur_clock_controllers-v2-0-ab95c07002b4@oss.qualcomm.com>
- <20250724-glymur_clock_controllers-v2-6-ab95c07002b4@oss.qualcomm.com>
+	s=arc-20240116; t=1753429617; c=relaxed/simple;
+	bh=34DD8H2+Z6KlSIaicPMNy3O9pkf5PxLSFzAJOpGsKbM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SwDTmu1+EU4zX1nkgdNc1EX73sxB69vVjhXbSU+qaHxKC+eWATVrMiDMHUTeQVpWWrer0sctLtzIpTKsJfhQQ08ylysn/SAjSvw7s0yroK37vliiX0xwgWApXzyYfFZffbo8tHG5LfBREOXGoPauNXBeDAQDUEG6Y9ulMSnln2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ovdWbjDI; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-451d6ade159so12713815e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753429614; x=1754034414; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=836wKJCS1zkb/cl0er8y0E0+FHJwc8OMFKAP6VyLp+k=;
+        b=ovdWbjDINCzIoL9aG1ePJ5c6/+SjnPdf8Kshag/L5jkNbj3/09KX4yhNDzSX7GgAFU
+         S3mrn6+cPSc98urycADOxnV69vx3WG1wVPuCC141B6YlXivjVE7UYArL++0XkhLuBUry
+         slW3IvNJttE0+L4LR6TL70Y7lYS9PrtA3eOSpWkte9n+pHf+5J1jsTDBMBwCdXJJyc1Z
+         rREcgnMz12fw+seDpayyhSizplyzMOi+VvTittMBdnrH00PtAgFNDtYDIrqdYqQ/CDK4
+         FR5k8i9xjGyBo36AYVEhcyGGqNvSj8f1EG8mDHSFooMXa0ZPYB9Kh2UnaTsA/jWIKt36
+         97OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753429614; x=1754034414;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=836wKJCS1zkb/cl0er8y0E0+FHJwc8OMFKAP6VyLp+k=;
+        b=jRM0X3z81KWOgVZUA/a40yEfFntlUJSuJ/wsZa/zXgeIQgJDNIn0uZ/UI5aXvEuweT
+         5O2bzgLWGopO7j7Xzuz5hOWVflsMUVdDv4uHYNLQhXo7+1By7nVLXk6gviXqC0NGUc3X
+         iubkA/ZSN9kXgG1aFQK5EUFRPxEGkKlU/Z4VxM4TVu6oB7odrrVXm1K0schWsmNDCPl5
+         wEw0WsZaryuEnteoZDyG34z8ytQP2Gh9Xz++UR1LP7rKK9/Av6k9nFb5ub9MVnilQYS/
+         XVOVd5Ra+DdKAU0fMPE+/80LE12fKWeXFD/PqNGndPlGKFnOn6BBVsFKrvvWViIefBe7
+         IZGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnQ26KRcks38E/okR6njW84LF4TsWgp4ppFyoxuMBvNrfN1DugGYkwER/5ar9Djsf2LR97tXEAxuGnRDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvqZKOVYRiDqZnDfe1KT71NfTHic17PmkGtnO0p5Fe+t06rGwA
+	2FxKmpdZ5icf+Hm5nIKJmMyKwwWBY8wfFyyoEFWGabZRccm0NI6n8os/TybidgSIdwNlTreQh8+
+	1vpVcU08=
+X-Gm-Gg: ASbGncth5dbv1/qbjCroEo4BS3QXYRgKdzGa+R/WQxs30YDjSfVEdQsgFQFaal0yvyZ
+	yiKbSaQEGtArhQc33bhnxAYoopRgi7f/2FkXHH9VtZh7pXUVaHcKuzgcOQco8nLdRKxnK8jghjH
+	d3ahV36Z2eEfAuFH7MBEJEoeUK1KH6ZFg4ss84tQpCSh+ahPcuXehUYn6/0ltlO5yVKn0q9VkJU
+	eXOh0/f5uk6vA23gY0gpp0SjtxiRIG2gNH7seUaXUBh8VY8EXvsXm+CIGMHasw17NvegaDilfCI
+	4NOLXW2Ko4CKHiI4ZyAIAkeJaE1qS7h90ZIpLJOD0ohHv97Wqyii2MXSXpTOJfbCEyYsBz7Ndvh
+	i2+CfUSDKK9AAqZe4MtziPEt+lOBjGqWpKg==
+X-Google-Smtp-Source: AGHT+IFmX2Q2h8loW9vaQcV9TVyMRQYZUnDzAWrlOvz28hhJWNeZiXzEXKGA8gZBkEHjSlAi/xPQ1Q==
+X-Received: by 2002:a05:600c:64c7:b0:456:24db:2efb with SMTP id 5b1f17b1804b1-4587631e23dmr7043865e9.15.1753429614087;
+        Fri, 25 Jul 2025 00:46:54 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3c3c:6b37:9b23:6049])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc60595sm4313345f8f.4.2025.07.25.00.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 00:46:53 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpio: remove legacy GPIO line value setter callbacks
+Date: Fri, 25 Jul 2025 09:46:50 +0200
+Message-ID: <20250725074651.14002-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250724-glymur_clock_controllers-v2-6-ab95c07002b4@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 02:59:14PM +0530, Taniya Das wrote:
-> Add device tree bindings for the Glymur Global Clock Controller to provide
-> a standardized way of describing the clock controller's properties and
-> behavior.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-That's not a correct reason to add bindings. Why would we care about
-standardized way of describing clock controller properties for Glymur?
+With no more users of the legacy GPIO line value setters - .set() and
+.set_multiple() - we can now remove them from the kernel.
 
-No, explain what is the hardware you are here documenting.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Note that this patch may trigger build bot error reports as it's not
+valid until all GPIO drivers are converted upstream treewide.I intend to
+wait until all relevant trees are upstream and then send this patch on
+top during the upcoming merge window.
 
-Best regards,
-Krzysztof
+I have a second patch[1] that I will probably send directly to Torvalds
+as it's almost 4000 lines of diff. It renames the callbacks back to their
+original names.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git/commit/?h=gpio/devel&id=e27a47cfa1fdbfa754664ae3dbac450008831fa0
+
+ drivers/gpio/gpiolib.c      | 27 ++++++---------------------
+ include/linux/gpio/driver.h |  7 -------
+ 2 files changed, 6 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a93d2a9355e2..9ac4c23d656a 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1037,11 +1037,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	int base = 0;
+ 	int ret;
+ 
+-	/* Only allow one set() and one set_multiple(). */
+-	if ((gc->set && gc->set_rv) ||
+-	    (gc->set_multiple && gc->set_multiple_rv))
+-		return -EINVAL;
+-
+ 	/*
+ 	 * First: allocate and populate the internal stat container, and
+ 	 * set up the struct device.
+@@ -2891,19 +2886,14 @@ static int gpiochip_set(struct gpio_chip *gc, unsigned int offset, int value)
+ 
+ 	lockdep_assert_held(&gc->gpiodev->srcu);
+ 
+-	if (WARN_ON(unlikely(!gc->set && !gc->set_rv)))
++	if (WARN_ON(unlikely(!gc->set_rv)))
+ 		return -EOPNOTSUPP;
+ 
+-	if (gc->set_rv) {
+-		ret = gc->set_rv(gc, offset, value);
+-		if (ret > 0)
+-			ret = -EBADE;
++	ret = gc->set_rv(gc, offset, value);
++	if (ret > 0)
++		ret = -EBADE;
+ 
+-		return ret;
+-	}
+-
+-	gc->set(gc, offset, value);
+-	return 0;
++	return ret;
+ }
+ 
+ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
+@@ -2919,7 +2909,7 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
+ 	 * output-only, but if there is then not even a .set() operation it
+ 	 * is pretty tricky to drive the output line.
+ 	 */
+-	if (!guard.gc->set && !guard.gc->set_rv && !guard.gc->direction_output) {
++	if (!guard.gc->set_rv && !guard.gc->direction_output) {
+ 		gpiod_warn(desc,
+ 			   "%s: missing set() and direction_output() operations\n",
+ 			   __func__);
+@@ -3673,11 +3663,6 @@ static int gpiochip_set_multiple(struct gpio_chip *gc,
+ 		return ret;
+ 	}
+ 
+-	if (gc->set_multiple) {
+-		gc->set_multiple(gc, mask, bits);
+-		return 0;
+-	}
+-
+ 	/* set outputs if the corresponding mask bit is set */
+ 	for_each_set_bit(i, mask, gc->ngpio) {
+ 		ret = gpiochip_set(gc, i, test_bit(i, bits));
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 4b984e8f8fcd..90567dde7d8e 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -347,8 +347,6 @@ struct gpio_irq_chip {
+  * @get: returns value for signal "offset", 0=low, 1=high, or negative error
+  * @get_multiple: reads values for multiple signals defined by "mask" and
+  *	stores them in "bits", returns 0 on success or negative error
+- * @set: **DEPRECATED** - please use set_rv() instead
+- * @set_multiple: **DEPRECATED** - please use set_multiple_rv() instead
+  * @set_rv: assigns output value for signal "offset", returns 0 on success or
+  *          negative error value
+  * @set_multiple_rv: assigns output values for multiple signals defined by
+@@ -445,11 +443,6 @@ struct gpio_chip {
+ 	int			(*get_multiple)(struct gpio_chip *gc,
+ 						unsigned long *mask,
+ 						unsigned long *bits);
+-	void			(*set)(struct gpio_chip *gc,
+-						unsigned int offset, int value);
+-	void			(*set_multiple)(struct gpio_chip *gc,
+-						unsigned long *mask,
+-						unsigned long *bits);
+ 	int			(*set_rv)(struct gpio_chip *gc,
+ 					  unsigned int offset,
+ 					  int value);
+-- 
+2.48.1
 
 
