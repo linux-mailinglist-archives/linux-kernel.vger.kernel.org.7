@@ -1,89 +1,121 @@
-Return-Path: <linux-kernel+bounces-745811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F196EB11F1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:00:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32884B11F1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0578AC0B86
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:00:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 460CE1CE2B0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5255B23F405;
-	Fri, 25 Jul 2025 13:00:31 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57702405F9;
+	Fri, 25 Jul 2025 13:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LTMIha5L"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98368635D;
-	Fri, 25 Jul 2025 13:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E37F8635D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753448431; cv=none; b=RkTgZSpqLwgohhgMpcMopHXzCPQ6gqIUWgyRsSFIqGaHAfJb/yreV+QcX8UCbBBF61kGlRrsGBGGQ0hjoFfZ4bY+jVOvhSiauM1sreF4E27b2ZEnDAEs5zzHHylkwBigKxTABLToN06c4YrhycjdhcAwaIHKwQ0UIYhSwj1334U=
+	t=1753448490; cv=none; b=GNSYMxGTk+K289Adj/xDKH0PbgJdInYobA0nEoG3UEW4Z9MIoeFJ0/yAgGiuQOBXn0+JEieTkt/6jTCQuEWe56ufjfK+4uxfDeamVBtGSSj2CQFFObDNEPYEEYFs4917gXCSQWBYmgQMskYAnTMqDtO6n2o/WNhWEPk5VxS9SrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753448431; c=relaxed/simple;
-	bh=knUYahf+MguxiIDnk05qiukxSE9mY7K8IL5uVUew2mk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cOHnR0zJqluEmi8j5KQ8MZMpoYZFby0Nf7SZyUAVRmZOeJzka0BchrRRB8QszxCKc4M0QtcEPcnd+WzrkH5m/+wSQKlX4tc+1gc3h+wCGfDHJqFa9+z6cJdv+62L/SP6C4eTq0F939Y54dR45VBRuqV95G+dUD3kPfy6cKtSfN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 196D2140764;
-	Fri, 25 Jul 2025 13:00:21 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 28C6F2002B;
-	Fri, 25 Jul 2025 13:00:19 +0000 (UTC)
-Date: Fri, 25 Jul 2025 09:00:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tracing: sched: Hide numa events under
- CONFIG_NUMA_BALANCING
-Message-ID: <20250725090024.64157cd6@gandalf.local.home>
-In-Reply-To: <708b26cc-e888-44d1-a7eb-ba37dea23a89@linux.ibm.com>
-References: <20250612100552.39672cf9@batman.local.home>
-	<708b26cc-e888-44d1-a7eb-ba37dea23a89@linux.ibm.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753448490; c=relaxed/simple;
+	bh=YqJNmVi6pq8/MNIC1pcZbfwITTv0HOp+QsTpp/paTWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jwy7N107J8iaRKgam+vKoAqNKav1S8icv9TJvR323Yo/4ugCo7fEzAPKZcrbMpChwf7gjf61EYsYxlvX2uQiL1+QDbQVPsKuVUTL3ZP/c0Q1g4VefIf/P3CeuWGRzPZKWvzmb6/pUWwF6MZcAYdEZHWqz0RGlouwBmyeC8AREgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LTMIha5L; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 25 Jul 2025 15:00:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753448476;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gutNXS9Y0HT6UAb0t0FG6hv1oTyJPV52YMEDtiNk+4c=;
+	b=LTMIha5LgqdpnhfVvGUzVr/VBu3pBfJmkrmUWKuZ+UG82kNkRTj3dZzB4zAHf+/v8KcpTh
+	5yrBnFRucFAkmzCm/TUSPPf1mXMolb/gWZPsPi6FA4BMsJnPCfdfgWKq1eGAbjfBH8nNmh
+	ERip48/3OJo97Wcs3NIq2mOlbAy+dbI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Nicolas Schier <nicolas.schier@linux.dev>
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Cc: masahiroy@kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Subject: Re: [PATCH] kconfig/lxdialog: replace strcpy() with strscpy() in
+ inputbox.c
+Message-ID: <20250725-violet-mayfly-from-heaven-bd66d2@l-nschier-aarch64>
+References: <20250725055928.37658-1-suchitkarunakaran@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ynguarhiuu4jshf7curd3p3yp6bttj1r
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 28C6F2002B
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/EJ+fNlUCAt/6QpuJy6Yd+7NGpHqGTenY=
-X-HE-Tag: 1753448419-174715
-X-HE-Meta: U2FsdGVkX1/tb8rOoL9JOd1AL8EEuTRS+UHfk5GH0RZ9SGSV51slbU/88pPYv8YyqbPeN2LaxNy1IvnUzcRJCMH0rrkVtVlarAn2UKS6w+XGY9WzWK1BfSkxWAxqoCJWYtGjLsQC7GEW+17T79Y6NecFEvlYTIiz1/b2UNV2YnfxzBuH82jYxOnietieRw9tNn6dnlzYUHDIgFCMo632QALV+9y0dgIL2j8xXtRJEkHGLL6YRfKLys6FWH5qcs07jksM13IpSzMOAk25oGgtoULX4wZ+XEf4irpHJkTX0Dhz5YYayF7Cln6HQd0D3i2r6aV7Zo4ZAKadyGGeBFl2vtfeDYpQq4x2W5xED4N19htE0g+kC6ejK5oC1UBdXbWhDuiqNYGK0b12eQJB8oSFIA==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="N82fKxdJzeNZZ0RL"
+Content-Disposition: inline
+In-Reply-To: <20250725055928.37658-1-suchitkarunakaran@gmail.com>
+Organization: AVM GmbH
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 23 Jul 2025 15:14:26 +0530
-Shrikanth Hegde <sshegde@linux.ibm.com> wrote:
 
-> On 6/12/25 19:35, Steven Rostedt wrote:
-> > From: Steven Rostedt <rostedt@goodmis.org>
-> > 
-> > The events sched_move_numa, sched_stick_numa and sched_swap_numa are only
-> > called when CONFIG_NUMA_BALANCING is configured. As each event can take up
-> > to 5K of memory in text and meta data regardless if they are used or not,
-> > they should not be defined when used.  
-> 
-> they should be defined when used?
+--N82fKxdJzeNZZ0RL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That was supposed to be: "they should not be defined when unused."
+On Fri, Jul 25, 2025 at 11:29:28AM +0530, Suchit Karunakaran wrote:
+> strcpy() performs no bounds checking and can lead to buffer overflows if
+> the input string exceeds the destination buffer size. Replace it with
+> strscpy(), which ensures the input is always NULL-terminated and
+> prevents overflows.
+>=20
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> ---
+>  scripts/kconfig/lxdialog/inputbox.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdial=
+og/inputbox.c
+> index 3c6e24b20f5b..8880ccaffa0b 100644
+> --- a/scripts/kconfig/lxdialog/inputbox.c
+> +++ b/scripts/kconfig/lxdialog/inputbox.c
+> @@ -40,7 +40,7 @@ int dialog_inputbox(const char *title, const char *prom=
+pt, int height, int width
+>  	if (!init)
+>  		instr[0] =3D '\0';
+>  	else
+> -		strcpy(instr, init);
+> +		strscpy(instr, init, MAX_LEN + 1);
 
-Thanks for pointing it out.
+Did you compile-test this?  strscpy() is not available for user-space.
 
-> 
-> Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+Kind regards,
+Nicolas
 
-Thanks!
+--N82fKxdJzeNZZ0RL
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- Steve
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEDv+Fiet06YHnC6RpiMa8nIiabbgFAmiDf/8ACgkQiMa8nIia
+bbjlvA/9FRkUxIkN5aHaFiPItBUMZeSTGzUDRqp67kJQJnUrBVFYsZZTVmvqtgZk
+HBw5RABq0WA7LHtPG9zsVsRi8b6vK25xbSrFF6V2st3e4BqxBmfLx4Mvw1XxnSFJ
+BcFxZAiI/OuBJmTalmekbtzZYBzTk3FFdhJZwpPSfYnvxHJuxz9Cww8iWpSQZO6S
++ctpdKQq05pisdgz3vSgQP0pp8njL4NUgl1u3tulqMbeom7WVwvCkS5JXaopzIRb
+30eoaN5NKhQlN/yJKPkDQDj+mUYac4hD7M4GDnF031K0ToCzs/UUx96XURE2UdKQ
+965D0sM43ZJHt0QSiKOV8yytZ8uFewQgjZb9B+OpkBDYL6r1lR5FOkRoglgekhTX
+My/WbmDbWxkPVC8HdvDu4AGAuJlCBpW5AgLf91D5+PHha859ekToIbq35dMyrnhS
+Zi428c1uH1Jg+Vr97P3ek6IJzGk7y/NjR66jeWfXmCQAIch2S5AuUPa4d8O+G5E+
+DpmEZoP8X0jmrMa2qYMUY99KgMtTfzzoiMqEzBXRamQojQBpDIP087RjSbZS1vzB
+PAJML0S4Dx5AF3fWxbS09QiZnVl5MdWMoaQQXIEYS4bFSMP00tIC2ojEGzk7IIKn
+PAzP5xiQZp/2YcjXKnwmPiFoZaYYf3i/FSIUEOnh0JOwN4EXPT0=
+=izPZ
+-----END PGP SIGNATURE-----
+
+--N82fKxdJzeNZZ0RL--
 
