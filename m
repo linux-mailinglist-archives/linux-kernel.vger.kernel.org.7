@@ -1,321 +1,463 @@
-Return-Path: <linux-kernel+bounces-745450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBB8B11A2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:45:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C7EB11A27
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CA6A7B9943
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877F71C87A1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B022C08C1;
-	Fri, 25 Jul 2025 08:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3157D2BF3D7;
+	Fri, 25 Jul 2025 08:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JpdC6Zch"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cl0QEFjv"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255102BD5B2;
-	Fri, 25 Jul 2025 08:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753433090; cv=fail; b=ISDnMX50AL2ZpAL5JRcILaIrxsgxWJf+a/AqNsDY1XK0Ntb/iK7fna93QWF4eppoEnikbxG5GfcOzPBalb7mwvmVgtmgKHAYoLMhxFEDh3eRG0ePVnIrMXMMT+X1glxBxdkglcnUt24xyKltZi09Q/rLBETNh86Zv0wyRT7lz+o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753433090; c=relaxed/simple;
-	bh=Vnkm0woEXkLvAca3NQCppOHg8/PLiPgD4m9y99FspKU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=adRougys9pPI8Ld9+kXpmIzo8NPXwjD+pUqzWpDk5iVAwCXZUGKSk1DZxtSVXf8jlnqdWhJh7AgIQqdaqmBIDQwBlKAtAUxPm9Nn/100QJvW+R6De3W6gv0R+zb6cHe8BxAuFZWIL3npiuvqitbVAD87cMNrbKki1tCQVCtG5zs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JpdC6Zch; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753433088; x=1784969088;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:mime-version:content-transfer-encoding;
-  bh=Vnkm0woEXkLvAca3NQCppOHg8/PLiPgD4m9y99FspKU=;
-  b=JpdC6ZchvtuGF/sxpw28MEGlmLwOvknM82Nu9CxyM7f2WEoVXHmiQQfR
-   1xkyBsQR+1rfiUYZJaQcdmTPiQDhBio2yIdk7EWeu+zfCn2QEG9yTnLfv
-   8mc4ilp9aea/P3Q2dgk1bCS5gX4KYXR7KnzCbdifTV52deXHK+ZHSZN1I
-   ZJfCz7EbKmlvvkm928+4pVs3QsebHTjJYEMxBTEsPAxaIU7SLaoRBlyp0
-   8gitxFFCRRAhtE8NhVzlpeIseFQLN54TzULxqJb91tjPoNBIgl+dbD4bQ
-   nwS7rhx/hyXFbiBVQxkhHMeewzEOA/2U1U4oYZnamVoflXlpE1TjCD6bh
-   g==;
-X-CSE-ConnectionGUID: dfkcwgPhR2mwSp3zmOiRug==
-X-CSE-MsgGUID: bDPNGVJxSCykWpQDprdUMw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="59417629"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="59417629"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2025 01:44:47 -0700
-X-CSE-ConnectionGUID: pFBzT3uVT1m7YqSVIim9Jw==
-X-CSE-MsgGUID: bCYdv8lhQni/HmhVM6VPZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="161268366"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2025 01:44:46 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 25 Jul 2025 01:44:45 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Fri, 25 Jul 2025 01:44:45 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (40.107.100.43)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 25 Jul 2025 01:44:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nvQDUSfW3r78sE6R+T4iGFGLN//G4OML38v9gWDSBsQ0kyo0PGvFTzG1tmjJDV/CUa8klruvH9yYYIfduYDGnbCYdKHh1SQfg52rcajojd1qk71iPt3U0a7kwlOg9St5JUPqE+ckuiZKZefGsogk1Opa/Dj0rEbiY/BEWDdWS1oEGQdfId4G70N1W6ekyzXLGIa7s3P8RyyQ9er7Vx+8BBWljZxrp85WG40NqjLXJHnPEyfuugzaqsb6wWrUZ6s8exdqWyzmbhSysiUsmUrer2/J5rwTpdpdCR02SRX8/elehBURBKULzpdO3i7XxCJ2bF3WCqjo3FlWX4GS4wHQdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V6MSccMqEqqxZpRJPoKDptCD5sL4jgHBddmlLxKQzJw=;
- b=CmIGN6ny8Yo8E9GW1bzTAXd3/5bU6Hb8xWoRn0Ztnlb8oIlbHPzjX4Jojxt7VQFUWP9BZRAaQRcYLb6CpnDkAjjZ2V4HXleccvHnUnDt5Cq8NKLG78k89k+Pawk02BeusnE8jHULBVNDOZ2BGoYygprsRNB25gAcRMJHM4uiwFqJBPbSJ7Aopgvbpu3Wl4WSEnd+sedeyz5qTtOkcwXM29csf3lro/Odh47LMjUklrLwFSfycuYjFbDeJifOPSJ4AfzUG+vQtVEbC8/9n4XfXXsReob06zCyOa7iWkSHtm5BPoDz3nYUS+pfAXxWB9+f/phHY/+nRrqyKaNfc1kp2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5400.namprd11.prod.outlook.com (2603:10b6:208:311::20)
- by MN6PR11MB8218.namprd11.prod.outlook.com (2603:10b6:208:47c::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Fri, 25 Jul
- 2025 08:44:38 +0000
-Received: from BL1PR11MB5400.namprd11.prod.outlook.com
- ([fe80::4da3:f9f3:4dc4:43ec]) by BL1PR11MB5400.namprd11.prod.outlook.com
- ([fe80::4da3:f9f3:4dc4:43ec%6]) with mapi id 15.20.8964.023; Fri, 25 Jul 2025
- 08:44:38 +0000
-From: "Zavras, Alexios" <alexios.zavras@intel.com>
-To: Richard Fontana <rfontana@redhat.com>, "Maciej W. Rozycki"
-	<macro@orcam.me.uk>
-CC: Segher Boessenkool <segher@kernel.crashing.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Christoph Hellwig <hch@infradead.org>, "Thomas
- Huth" <thuth@redhat.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, "Michael
- Ellerman" <mpe@ellerman.id.au>, Thomas Gleixner <tglx@linutronix.de>,
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>, J Lovejoy
-	<opensource@jilayne.com>
-Subject: Re: [PATCH v2] powerpc: Replace the obsolete address of the FSF
-Thread-Topic: [PATCH v2] powerpc: Replace the obsolete address of the FSF
-Thread-Index: AQHb8iWnIlYuMC4FKk2vMUMFgL6wM7Qsa6cAgAAVcACAAAX6gIAAAK6AgAABnICAAOCFAIAAJIaAgAADjQCAAYfdAIAA9ZmAgBKKlnE=
-Date: Fri, 25 Jul 2025 08:44:38 +0000
-Message-ID: <BL1PR11MB54001A9B7367BD109A9B581D8959A@BL1PR11MB5400.namprd11.prod.outlook.com>
-References: <20250711053509.194751-1-thuth@redhat.com>
- <2025071125-talon-clammy-4971@gregkh>
- <9f7242e8-1082-4a5d-bb6e-a80106d1b1f9@redhat.com>
- <2025071152-name-spoon-88e8@gregkh> <aHC-Ke2oLri_m7p6@infradead.org>
- <2025071119-important-convene-ab85@gregkh>
- <CAC1cPGx0Chmz3s+rd5AJAPNCuoyZX-AGC=hfp9JPAG_-H_J6vw@mail.gmail.com>
- <aHGafTZTcdlpw1gN@gate>
- <CAC1cPGzLK8w2e=vz3rgPwWBkqs_2estcbPJgXD-RRx4GjdcB+A@mail.gmail.com>
- <alpine.DEB.2.21.2507122332310.45111@angie.orcam.me.uk>
- <CAC1cPGwa=0zSL_c+HrjQoPryus6w_LCw9Cha7uENKHqCKOQkRQ@mail.gmail.com>
-In-Reply-To: <CAC1cPGwa=0zSL_c+HrjQoPryus6w_LCw9Cha7uENKHqCKOQkRQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5400:EE_|MN6PR11MB8218:EE_
-x-ms-office365-filtering-correlation-id: 47618906-f43a-4871-0848-08ddcb577d6e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?REhLc1p1dVlSTGhSVjBDbUI1d0lQUWF2bmV1N3d1ek5wTjBwRnQ5ZnFDK3Uv?=
- =?utf-8?B?QVI1M2tKOVZjQWhaRkNybXdRRFZEZFBobEI1RVdNN1NPWVV5WXhVNnRrMnB4?=
- =?utf-8?B?WDhJdDVWRVJ2eGc4NFRGenpueVkvVkZ0SHplTzEyMk5Wc0w1d3oyUThrVVJz?=
- =?utf-8?B?RENKWVd4cGh2UDFXTTJyZS9rK1FaMHl4RGVKM280SklOdE9LSVVZdmRtbi95?=
- =?utf-8?B?d01CSmFLa2s4RFpEbFVqc1ZzS2Q0ZlZpMkhtNVh0OFgzUTNVTHhYZWQ4eWVm?=
- =?utf-8?B?L01Cdzc2WklrOUhFdlNNNE5jVGZrTk8yUE1VM3N1T1locW9FS0grSnBJVHVO?=
- =?utf-8?B?YjgyTDBOSHR2MFhYNXl0WmJyYXVZRmN0U2gvalIwOVdtYjlabnBzbnlhNHhX?=
- =?utf-8?B?cytQcTJiUzN2bWlxQzkybnFXdlNHcnlGa2pYWlluWVM3UVNHWTVjVVl3RndR?=
- =?utf-8?B?UVVubnVwZ2tPa05hMFpnemNOcmExL3NPZjZ6UUxnelhCditWMldMU3l1eHZB?=
- =?utf-8?B?Y2NxTVZZS3dIOVdZdlFZRmdMekEvemdZRC9FRkZVYisyUXBUUHpWb2huK25F?=
- =?utf-8?B?N2R1bmtYSVBiMm95WDhCZ1VPU1NtdCtVS1JhR0E0bzVuQzF4UStwOHFlVUNS?=
- =?utf-8?B?RFNaVmE0b3dveDNZODgzcmx1MEt3UzJYYmwyWVRaaXIwZUQzaDF2OHV3Zlls?=
- =?utf-8?B?V2tsVk8xWlVnYmc3ckgxM0h6elBOSGVsQk85NkhXL1NlSEU4bitzeXBHRmp2?=
- =?utf-8?B?dnJBa2FXOXJPWWRFblkwMG5TSm9kMjFpZDBtV1lqZFJ4VzI1eDZpVjRSTnMx?=
- =?utf-8?B?N2VESFdNU2xId3QyZUVVMVR2bW1jN1ZUT2JMQUxEMGxrUDkxZjc4Z2tXUlAw?=
- =?utf-8?B?bnA4R09sQU80eVB1K2dUNXkwSkw2SVU3QkROdDF5S2JoNmEyRnQzZnY4dnlm?=
- =?utf-8?B?NDRQa050ZUNtbVRXbXo5VXRQczFoK1o1eENuQkJXckorV3ZQc2thcWN4Zm9V?=
- =?utf-8?B?SGxmcU5JdFljV2xQd3JhQ21XVWwzRnRQZW94dnlGMUdFNUp5YktFbW9oUWpI?=
- =?utf-8?B?czdNUSt2NWU5VmtCU21nb2NjTWwvYUZyUkx1QVR2dzJjakpEM1JvWUdnTWln?=
- =?utf-8?B?Lzg2WFJUc1JETzRSMWcyUFRkZTJaZkljb3diZVhrWnpMN1pzR1RmOUorQzhv?=
- =?utf-8?B?dkZDZGJxQzlGM1NhK2x2ZzNhOVN6enBJVFNyOUszRVQ5SEp5cmQxSDM4cHlk?=
- =?utf-8?B?Sm5lVzhnY0tsYjN6aVFldlh5OWU4NEJoNjhyUDdqMlRETVZZWlo4bndOY2FS?=
- =?utf-8?B?bHoxaHFXYXV0aUtBZWc2RjJidEwzbEZhbzlpRzYrenhhekJrQks5WGIwME4w?=
- =?utf-8?B?ZXNtZmsxaEQvSThsRDB1bFpiSFlYUUJnM1RwMURXUm54eWdNWWZqUlhvdUUr?=
- =?utf-8?B?dXpoNXdNWG5JZnhKNDliVjdsWUN6Qk1DSVJSL2lZenV2ZHg3eEcvKzIxcCtZ?=
- =?utf-8?B?OWxiNTNUamxsOHdiVElKM2c4bDdidTZyNi81dkNrTHVLN2N1TDdJcklpZnlS?=
- =?utf-8?B?d0N2UXpHTU5ySG5IQVpTemp2cTFXL1RVa2NNdmd3T3RWTWFJWTFoUzYxdWRV?=
- =?utf-8?B?dllielNBQ2F2NzlKTlNicXl5Q0NsTm10dHZzcTV0KzNGNDg3alc1L3ZwcEY4?=
- =?utf-8?B?bjFEN1ZvMmlGTlpycVZ6R2t0b0k1Y2tjUEhQeFU2TmVmdTRTcnQ2Y3R4L0xM?=
- =?utf-8?B?cVZpeFY0bFpYTTViZmFxcTU1YkhtbHh4RUwyVmRXbWlkbzBac1d6bndZcGg2?=
- =?utf-8?B?UDZQSy9yalcxSy84YzZLM0NqdWhVa2RUVUZnZ3hZem5OdHhmQzkzWUNibnBl?=
- =?utf-8?B?WndUYzlCODBhdEljQVhFV0JYdTVWM3NZRm4rdmVHNEprWlFheXVtcVd1aTR3?=
- =?utf-8?Q?C/QcO3qD3JG+0zl/F+hkzKmHB+vTDnpZ?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5400.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NG9oUVEyL0tyT1NTdUw0bmtyMUVhb2V6a0QyUVcwdjJUajM1aWg1dHQvU2sv?=
- =?utf-8?B?WkJGbGpLSlJFSUcwNHVhU3VhNm94SEorZ00yanM0WFh4K2tkakdISmg4RS8y?=
- =?utf-8?B?eHlvcEVyb2dBdTc0UVp5LzdmL3ZjNi9SWS9BWEI3TmYwZWd1ckRnRnYxNXF3?=
- =?utf-8?B?TU9mWlNJZXpyalNWS2R5MmxTd1JpTXNBWFlSNVhCdkRDZ0NaR1RRdjFOMVZN?=
- =?utf-8?B?UnA2d0dyRW9CVnRvSFEzYnZvSEsweXNRVC9nbkZhSzMxb3VDemQ2L1Q2VU9w?=
- =?utf-8?B?NXQ4anl3NGdhTnp4eStYS3lrOU1HTFdlblkydDBNVlh5YXNYKy8ycC9NakFm?=
- =?utf-8?B?WUF5bGVHSC9iRlVOTW5xRkY3NENhZnRaRVJPdTFPcVdUMU1MRW9QaXNpOThm?=
- =?utf-8?B?QkdrOXNud0thQjFPK1E4dERVUS9wYlpvSU1ML0ttRERqRHJNNWoxY1J5WXlZ?=
- =?utf-8?B?cGVvRE5lZkh3MEg2N3lIajkxZ2hLVnQrZzY2OHBoM3NDZ3ZSamFjR2k0S29V?=
- =?utf-8?B?VkNCWVdCWk1YdEJnSnRjc3d4S1NpM0xMK1lkRHlXSkJEQTl0VTgwamxpMkdF?=
- =?utf-8?B?MGNheFltN2RRVjVLYitLNDdFWUE2SnNJNlgzWmRnbzVUU0JiOGtRdE05aEVJ?=
- =?utf-8?B?V3VoaGZXVDk3Q2JOREV4WFhCbnFQbFlwRmNLZ1Y0ZEIvaWxGWlBzd2xiQlJD?=
- =?utf-8?B?djhYSy9JMS9ZODIwcEp6SlFxSkFYRXNsY0ZpdTZUME9hS25MK2Z5aU0rNFR3?=
- =?utf-8?B?VHFwOUNIemoxV3pJTVJ6akZSUWJ0ZkIvbXJJSXJ3VUhHYzdCWGJxbkova0g4?=
- =?utf-8?B?d0ZwUGFUMll2Yjl1UVBKdy9DcmZXZVhtbjFiVCs4SU10KzlFaFFCVGxMZ3hG?=
- =?utf-8?B?NUZSQ0RjSkFqVFlyWDFNK0lXbXFPRGQ0THpvcmx5TjJmRnNTTDdiZ3Jic0Mx?=
- =?utf-8?B?UDVOZW1TMVdVSk0wa0V4UVpHT2paSWpVbXMzNmZnNUUrWWNVWklhQldTSlVq?=
- =?utf-8?B?ZnN2aVlPazBCZE5WUEFLZ0ZOY1ZmU3RGOTJic1piMWR4ZzZob2hCSEErUG0z?=
- =?utf-8?B?Q1BlbThDaXNYamgxQStmeWwwSWhFOTNEdGZRWVRiWmFFZGcvK2Jkb21wTENH?=
- =?utf-8?B?d05iaTY5TFl6UXB2NloyODVFWFZUUDduKzNWMDZSLzh3NnF0OG1PbmpOanZ5?=
- =?utf-8?B?TlAvaGR2dXAyQlJtSk9iMGM5OEpCMlNGa2pPUm9YaEVtemtscVNVdE9sOW1n?=
- =?utf-8?B?NlVXZ25UMm9kYXByaDRVSlVWcVd4dy9SS2VadXhlQ1R1MU1NYkdmODVOMGpn?=
- =?utf-8?B?N0RtZEVSQUZSbmtpeEJmbERibWxjSG5NMWlidGJPWXJTeUJzMVhkT0JmVVlz?=
- =?utf-8?B?ZXIvZjRtbWNPT0YwbmMvQ3NhbWFYM2JiZDFydFBrYm0zRUVYKzRIV3RCTXhG?=
- =?utf-8?B?dHJBQUttNmg4bHk2Qm5aVWs2c0l1NkxhenVzdXdlL2ROZDR5b0NuZjF2WHh3?=
- =?utf-8?B?WHowTStRdVVrZTk2blo2d0tMOHljV2Y3dlhvempXb2YyQWNkcGRrNHVULy9T?=
- =?utf-8?B?eW5lS2Uzb08wWFNsZERlOTBqellTSVpyUkd5NGFIeFB2V3hxZWRlUW56WE9Q?=
- =?utf-8?B?WldCZG5TT21NSDZ5QVlSNXMyWXhDeFQ4UlFhbkoycGkwdTdEQjd5MGZISUpp?=
- =?utf-8?B?VzJYa1hwMCtmOWc4ZXcvaU83bm1QVFVUN1NhdUQyQVFJUFNTU3cvRS9sVTEz?=
- =?utf-8?B?cFdvdFFwUlNTcDA2SDFKUTRBcEcwVzFSRmxOelRQN1dFRnF5Ui9Sa2g3UndP?=
- =?utf-8?B?TTJ6NjNDaTZtUkZwbzdZZWJSb29CZVY4eGZQRnk2MWpSa2JralBDVDRDbEFD?=
- =?utf-8?B?cmV6dktkT0FMM1FEYmVSUzBzejJFd0NQYUllL0dSTWV5RlpWQnJsVFV1SDNu?=
- =?utf-8?B?MjJRelJLRUt3cE9HZUpKTDh0WHI4TEZwc1U4dUlRTVN0S1BuSFg5dHRUanBo?=
- =?utf-8?B?aTB0M054Z1pVc3R2UUo1bE5GL005UGdoTTBJZUxUMUk2TzhnbmVyaTE2cEZH?=
- =?utf-8?B?dkJ0bEtUdUVLU2dWSkhudlBTbVg0SEZMQWJidmdzV2xUSzVBNGNMaVVSbThz?=
- =?utf-8?Q?eXWZk/6bGFIouIZWxrlQcXtb4?=
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211E317D2;
+	Fri, 25 Jul 2025 08:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753433079; cv=none; b=WceBF5wo9WozaHLcuVXmduTj3tcc0VmcAedJDDyH3vNl22Xt2vOYQuAmvXR6cd/m+XxezJRMxMBL24xyGDEGpyPh7QsIF0dTEgdX1PatltHuH4wRLzeuBYK8WsjsqQxxqqvvl863sZ7aJoXLLMbB6j35U7rZ7zpPdw5Jtifkh9Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753433079; c=relaxed/simple;
+	bh=v2vlE5uWbU1Puw8y8wPaxzo0Fzm793g1ZDrNAVqW0lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zn5JQo4Ksst+HXP5ToKcLePN3bI3bfHQ95hAiYq59ZCoaWd3FPDQ+k4qsobBJYO1q9hDik/zqewNBfmL9B6o3g6T1Q7cZyFm1SoEuGOWDIcnVcRbprmJ5UqjKpQdINgQvRwbw4TEYugmSU3eYHLOX2IyqA/ZpXRDCSFhInJb+0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cl0QEFjv; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6097d144923so4166950a12.1;
+        Fri, 25 Jul 2025 01:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753433075; x=1754037875; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rG7isa9DnjNPqFBQJMevyeVveUJwhY7Mn6J7Kotx83E=;
+        b=cl0QEFjv1x5T+FL5FAFNSrWcpZf+barPGUmljGAbWrnBEPUCyXB68sgDsHgf40IQGm
+         yFSAgLzc/fq3yetCZ2tnAYkMIbUQ+M9R79pcYtVnGWVpV0NSjOszEVhfSfvzIWNaQJd0
+         I2/D814MgXZlPHjjWYD9EIW9WdSBH8IUmf6i4crBBTUbxFRWrXGB5iDFdwIalOedJ/Zd
+         AAlpPE6BBw+sojcLLCKJe+gUpmkIMzYt+LgIkWlv27a5PDgqTQgPNLK/AZx+POZudLEQ
+         fmMH0H8iB4d2KuYSegxqDP5RAe7rjXeOBgQ7v3t52bkO8wpl0nAnAwbEgjJzxCdcbnsd
+         nc6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753433075; x=1754037875;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rG7isa9DnjNPqFBQJMevyeVveUJwhY7Mn6J7Kotx83E=;
+        b=iZ2HiQdeJDxDiGEzCYFoLv4HYeQ0E6ymYNGDbwpICi22pbzUIrkCdvFI8K0IJmkul1
+         YRh414BZWy+QXhtCqCJRf/YUITp3/sDPNZRly1MMLGVxFI13huJNnXF+7yfkLQQ4bveB
+         97tgT+P/aM300T8n0OhSej3peaQvGU9UqQKLNlCs+8xHHP+j5A4sUosfCwKcjoCgJFZh
+         QOoPdZHjUk9ThGEkYWQv7HpsuJ6z4OkVAgZf1ei1/Vt1xi6TUcZBLlvUXXnWNTaQksnd
+         EXLA49XF1PXGiVNwzKWR9qfmTHkzT/OOpULJJsLrFSOzeFc87ilI8gNMDkUtC5ieAvDs
+         blHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiKKaSTIenr6TLDRpOUrNubVhVrM9rZVRxYSOpHYfepDgGVZ5qlcNzAhiMzS0id2kPhFeVmhccTNY=@vger.kernel.org, AJvYcCXuTIrxdkHVamrmglgSocZBlJGzB1IXGXUgLLHs9nbYqvOLp7L5zt/5KEWBrDPkGwNeRyBr7I1xqsn3flSA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxARPBGpKiDmyV0OdMrb9ralpgmykcG6kyyLwRWpzck8JaJ2HR7
+	AjtlrpD4lL3fUqD/W/qpqiH+o9iKNwCqU0E9momTJKnEVclNHRG21Phv
+X-Gm-Gg: ASbGncvnXWEWswkO/LDNyZ4AIRqssn8RuSQ2a4WwLclXVZuwOzCJyA6zoOrdYvX9NGx
+	Deivv/oT334tZOxeSmxzdoat98kdibjrROUW7MFUGIJtC6XB3xdgcljyX7P/gfHUblEovw4NaAz
+	a9mrJegqaXQufkdlWamBktSg12IgMgWS3VOGx3GFzyee9T4I4jULFtSWrOcFbD1cQqhO7XzXudc
+	ymVtBicD+BiUZv1SbwUGf57gsqd4tPDrSCw4Dxqjfn/QQ+eBz+FT6qFZq5D30NfvVTYsQ6aP3L3
+	/MaJbaMI2TxkiulpQpK4cToDA7YwuHgysLSyQ5fHSvYPeIce4rUqtoPPXpC4uZFspO/uBfzm0/h
+	U6iCiUrPRl1gaFjdXKGCmZ4g=
+X-Google-Smtp-Source: AGHT+IEzTIo4aLymcS+GMCx+IwML2PygqRMBBI0YfPS8QeKR++dF6Hdme/PQWGF7hx4qly2irjGwHw==
+X-Received: by 2002:a05:6402:50cb:b0:607:2e08:f3e6 with SMTP id 4fb4d7f45d1cf-614f05f6207mr1088580a12.17.1753433074935;
+        Fri, 25 Jul 2025 01:44:34 -0700 (PDT)
+Received: from nsa ([95.214.217.20])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-614cd336253sm1878476a12.65.2025.07.25.01.44.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 01:44:34 -0700 (PDT)
+Date: Fri, 25 Jul 2025 09:44:48 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] iio: adc: ad7173: support changing filter type
+Message-ID: <evxvva62zqwusoizcoeds6bojjdc4z5chtdeaikaxuliftvfde@xuctkxp45437>
+References: <20250710-iio-adc-ad7137-add-filter-support-v1-0-acffe401c4d2@baylibre.com>
+ <20250710-iio-adc-ad7137-add-filter-support-v1-3-acffe401c4d2@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5400.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47618906-f43a-4871-0848-08ddcb577d6e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2025 08:44:38.2979
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OpGI0TAtN7j7bCgElnLnXPUjar19tfXdAzTpK0uwd8Y5U38I44tn93mPd1LEIh1eHV62pJ/mZNgloPxk9qjf57utrPgempIb/B2EoX7MMgI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8218
-X-OriginatorOrg: intel.com
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250710-iio-adc-ad7137-add-filter-support-v1-3-acffe401c4d2@baylibre.com>
 
-RllJLCBJJ3ZlIHVwZGF0ZWQgdGhlIGRlZmluaXRpb24gb2YgdGhlIFNQRFggIkdOVS1jb21waWxl
-ci1leGNlcHRpb24iCnRvIGluY2x1ZGUgYm90aCB2YXJpYW50cyBvZiAiY29tcGlsZWQgd2l0aCBH
-Q0MiIGFuZCAiY29tcGlsZWQgd2l0aCBhIEdOVSBjb21waWxlciIuCkl0IHdpbGwgYmUgcHVibGlz
-aGVkIGluIHRoZSBuZXh0IHJlbGVhc2Ugb2YgdGhlIFNQRFggTGljZW5zZSBMaXN0LgoKVGhlcmVm
-b3JlLCBpdCBzaG91bGQgYmUgdXNlZCB0byBtYXJrIHRoZXNlIGZpbGVzCihJIHRoaW5rIEkgY291
-bnRlZCA3IGluc3RhbmNlcyBvZiB0aGlzIHRleHQgaW4ga2VybmVsIGZpbGVzKS4KCi0tIHp2ciAt
-LQoKCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcm9tOsKgUmlj
-aGFyZCBGb250YW5hIDxyZm9udGFuYUByZWRoYXQuY29tPgpTZW50OsKgU3VuZGF5LCBKdWx5IDEz
-LCAyMDI1IDE1OjI3ClRvOsKgTWFjaWVqIFcuIFJvenlja2kgPG1hY3JvQG9yY2FtLm1lLnVrPgpD
-YzrCoFNlZ2hlciBCb2Vzc2Vua29vbCA8c2VnaGVyQGtlcm5lbC5jcmFzaGluZy5vcmc+OyBHcmVn
-IEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsgQ2hyaXN0b3BoIEhl
-bGx3aWcgPGhjaEBpbmZyYWRlYWQub3JnPjsgVGhvbWFzIEh1dGggPHRodXRoQHJlZGhhdC5jb20+
-OyBNYWRoYXZhbiBTcmluaXZhc2FuIDxtYWRkeUBsaW51eC5pYm0uY29tPjsgTWljaGFlbCBFbGxl
-cm1hbiA8bXBlQGVsbGVybWFuLmlkLmF1PjsgVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9u
-aXguZGU+OyBOaWNob2xhcyBQaWdnaW4gPG5waWdnaW5AZ21haWwuY29tPjsgQ2hyaXN0b3BoZSBM
-ZXJveSA8Y2hyaXN0b3BoZS5sZXJveUBjc2dyb3VwLmV1PjsgbGludXhwcGMtZGV2QGxpc3RzLm96
-bGFicy5vcmcgPGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnPjsgbGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZyA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IGt2bUB2Z2VyLmtl
-cm5lbC5vcmcgPGt2bUB2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1zcGR4QHZnZXIua2VybmVsLm9y
-ZyA8bGludXgtc3BkeEB2Z2VyLmtlcm5lbC5vcmc+OyBKIExvdmVqb3kgPG9wZW5zb3VyY2VAamls
-YXluZS5jb20+ClN1YmplY3Q6wqBSZTogW1BBVENIIHYyXSBwb3dlcnBjOiBSZXBsYWNlIHRoZSBv
-YnNvbGV0ZSBhZGRyZXNzIG9mIHRoZSBGU0YKCgpPbiBTYXQsIEp1bCAxMiwgMjAyNSBhdCA2OjQ4
-4oCvUE0gTWFjaWVqIFcuIFJvenlja2kgPG1hY3JvQG9yY2FtLm1lLnVrPiB3cm90ZToKCj4KCj4g
-T24gRnJpLCAxMSBKdWwgMjAyNSwgUmljaGFyZCBGb250YW5hIHdyb3RlOgoKPgoKPiA+ID4gPiB3
-aGlsZSB0aGlzIG9uZToKCj4gPiA+ID4KCj4gPiA+ID7CoCAqwqDCoMKgIEFzIGEgc3BlY2lhbCBl
-eGNlcHRpb24sIGlmIHlvdSBsaW5rIHRoaXMgbGlicmFyeSB3aXRoIGZpbGVzCgo+ID4gPiA+wqAg
-KsKgwqDCoCBjb21waWxlZCB3aXRoIEdDQyB0byBwcm9kdWNlIGFuIGV4ZWN1dGFibGUsIHRoaXMg
-ZG9lcyBub3QgY2F1c2UKCj4gPiA+ID7CoCAqwqDCoMKgIHRoZSByZXN1bHRpbmcgZXhlY3V0YWJs
-ZSB0byBiZSBjb3ZlcmVkIGJ5IHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZS4KCj4gPiA+
-ID7CoCAqwqDCoMKgIFRoaXMgZXhjZXB0aW9uIGRvZXMgbm90IGhvd2V2ZXIgaW52YWxpZGF0ZSBh
-bnkgb3RoZXIgcmVhc29ucyB3aHkKCj4gPiA+ID7CoCAqwqDCoMKgIHRoZSBleGVjdXRhYmxlIGZp
-bGUgbWlnaHQgYmUgY292ZXJlZCBieSB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UuCgo+
-ID4gPiA+Cgo+ID4gPiA+IGRvZXMgbm90IHNlZW0gdG8gYmUgaW4gdGhlIFNQRFggZXhjZXB0aW9u
-IGxpc3QuIEl0IGlzIHZlcnkgc2ltaWxhciB0bwoKPiA+ID4gPiBgR05VLWNvbXBpbGVyLWV4Y2Vw
-dGlvbmAgZXhjZXB0IGl0IHNwZWNpZmljYWxseSBtZW50aW9ucyBHQ0MgaW5zdGVhZAoKPiA+ID4g
-PiBvZiBzYXlpbmcgImEgR05VIGNvbXBpbGVyIi4KCj4gPiA+Cgo+ID4gPiBodHRwczovL3NwZHgu
-b3JnL2xpY2Vuc2VzL0dOVS1jb21waWxlci1leGNlcHRpb24uaHRtbAoKPiA+ID4KCj4gPiA+IGlz
-IGV4YWN0bHkgdGhpcy4KCj4gPgoKPiA+IE5vLCBiZWNhdXNlIGBHTlUtY29tcGlsZXItZXhjZXB0
-aW9uYCBhcyBkZWZpbmVkIGhlcmUKCj4gPiBodHRwczovL2dpdGh1Yi5jb20vc3BkeC9saWNlbnNl
-LWxpc3QtWE1ML2Jsb2IvbWFpbi9zcmMvZXhjZXB0aW9ucy9HTlUtY29tcGlsZXItZXhjZXB0aW9u
-LnhtbAoKPiA+IGFzc3VtZXMgdXNlIG9mIHRoZSB0ZXJtICJHQ0MiIHJhdGhlciB0aGFuICJhIEdO
-VSBjb21waWxlciIuCgo+Cgo+wqAgSSBkb24ndCBrbm93IHdoYXQgdGhlIGxlZ2FsIHN0YXR1cyBv
-ZiB0aGUgc3RhdGVtZW50IHJlZmVycmVkIGlzLCBob3dldmVyCgo+IHRoZSBvcmlnaW5hbCBleGNl
-cHRpb24gYXMgcHVibGlzaGVkWzFdIGJ5IEZTRiBzYXlzOgoKPgoKPiAnIkdDQyIgbWVhbnMgYSB2
-ZXJzaW9uIG9mIHRoZSBHTlUgQ29tcGlsZXIgQ29sbGVjdGlvbiwgd2l0aCBvciB3aXRob3V0Cgo+
-IG1vZGlmaWNhdGlvbnMsIGdvdmVybmVkIGJ5IHZlcnNpb24gMyAob3IgYSBzcGVjaWZpZWQgbGF0
-ZXIgdmVyc2lvbikgb2YgdGhlCgo+IEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIChHUEwpIHdp
-dGggdGhlIG9wdGlvbiBvZiB1c2luZyBhbnkgc3Vic2VxdWVudAoKPiB2ZXJzaW9ucyBwdWJsaXNo
-ZWQgYnkgdGhlIEZTRi4nCgoKCj4gd2hpY2ggSSB0aGluayBtYWtlcyBpdCBjbGVhciB0aGF0ICJH
-Q0MiIGlzIGEgY29sbGVjdGlvbiBvZiAiR05VIGNvbXBpbGVycyIKCj4gYW5kIHRoZXJlZm9yZSB0
-aGUgdHdvIHRlcm1zIGFyZSBzeW5vbnltb3VzIHRvIGVhY2ggb3RoZXIgZm9yIHRoZSBwdXJwb3Nl
-Cgo+IG9mIHNhaWQgZXhjZXB0aW9uIChpbiB0aGUgb2xkIGRheXMgIkdDQyIgc3Rvb2QgZm9yICJH
-TlUgQyBDb21waWxlciIsIGJ1dAoKPiB0aGUgb2xkIG1lYW5pbmcgbWFrZXMgbm8gc2Vuc2UgYW55
-bW9yZSBub3cgdGhhdCB3ZSBoYXZlIGNvbXBpbGVycyBmb3IgQWRhLAoKPiBGb3J0cmFuIGFuZCBt
-YW55IG90aGVyIGxhbmd1YWdlcyBpbmNsdWRlZCBpbiBHQ0MpLgoKPgoKPsKgIE5CIHVwIHRvIGRh
-dGUgdmVyc2lvbnMgb2YgQ1JUIGNvZGUgcmVmZXIgdG8gdGhlIGV4Y2VwdGlvbiBhcyBwdWJsaXNo
-ZWQKCj4gcmF0aGVyIHRoYW4gcGFzdGluZyBhbiBvbGQgdmVyc2lvbiBvZiBpdHMgdGV4dDoKCj4K
-Cj4gJ1VuZGVyIFNlY3Rpb24gNyBvZiBHUEwgdmVyc2lvbiAzLCB5b3UgYXJlIGdyYW50ZWQgYWRk
-aXRpb25hbAoKPiBwZXJtaXNzaW9ucyBkZXNjcmliZWQgaW4gdGhlIEdDQyBSdW50aW1lIExpYnJh
-cnkgRXhjZXB0aW9uLCB2ZXJzaW9uCgo+IDMuMSwgYXMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNv
-ZnR3YXJlIEZvdW5kYXRpb24uJwoKPgoKPiBSZWZlcmVuY2VzOgoKPgoKPiBbMV0gIkdDQyBSdW50
-aW1lIExpYnJhcnkgRXhjZXB0aW9uIiwgdmVyc2lvbiAzLjEsCgo+wqDCoMKgwqAgPGh0dHBzOi8v
-d3d3LmdudS5vcmcvbGljZW5zZXMvZ2NjLWV4Y2VwdGlvbi0zLjEuaHRtbD4KCgoKSSB0aGluayB3
-ZSdyZSBiYXNpY2FsbHkgdGFsa2luZyBwYXN0IGVhY2ggb3RoZXIuIFRoZSBkZWZpbml0aW9uIG9m
-CgoiR0NDIiBpbiB0aGUgR0NDIHJ1bnRpbWUgbGlicmFyeSBleGNlcHRpb24gMy4xIGlzIGlycmVs
-ZXZhbnQgYmVjYXVzZQoKdGhhdCBmaWxlIGRvZXMgbm90IHJlZmVyIHRvIHRoYXQgZXhjZXB0aW9u
-LiBJbiBTUERYLCBsaWNlbnNlIChhbmQKCmV4Y2VwdGlvbikgaWRlbnRpZmllcnMgYXJlIHByZWNp
-c2VseSBkZWZpbmVkLiBVbmxlc3MgSSdtIG1pc3NpbmcKCnNvbWV0aGluZyB0aGVyZSBpcyBubyBv
-ZmZpY2lhbCBTUERYIGlkZW50aWZpZXIgdGhhdCBjb3JyZXNwb25kcyB0bwoKdGhpcyB0ZXh0OgoK
-CgrCoCBBcyBhIHNwZWNpYWwgZXhjZXB0aW9uLCBpZiB5b3UgbGluayB0aGlzIGxpYnJhcnkgd2l0
-aCBmaWxlcwoKwqAgY29tcGlsZWQgd2l0aCBHQ0MgdG8gcHJvZHVjZSBhbiBleGVjdXRhYmxlLCB0
-aGlzIGRvZXMgbm90IGNhdXNlCgrCoCB0aGUgcmVzdWx0aW5nIGV4ZWN1dGFibGUgdG8gYmUgY292
-ZXJlZCBieSB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UuCgrCoCBUaGlzIGV4Y2VwdGlv
-biBkb2VzIG5vdCBob3dldmVyIGludmFsaWRhdGUgYW55IG90aGVyIHJlYXNvbnMgd2h5CgrCoCB0
-aGUgZXhlY3V0YWJsZSBmaWxlIG1pZ2h0IGJlIGNvdmVyZWQgYnkgdGhlIEdOVSBHZW5lcmFsIFB1
-YmxpYyBMaWNlbnNlLgoKCgpJJ20gbm90IHBlcnNvbmFsbHkgYSBtYWpvciBzdXBwb3J0ZXIgb2Yg
-U1BEWCBhbmQgSSdtIHRoZSBsYXN0IHBlcnNvbgoKd2hvIHdvdWxkIHdhbnQgdG8gYmUgYXNzb2Np
-YXRlZCB3aXRoIFNQRFggcGVkYW50aWNpc20gYnV0IGl0J3MgYQoKc3RhbmRhcmQgYW5kIGlmIHRo
-ZSBMaW51eCBrZXJuZWwgcHJvamVjdCBpcyBnb2luZyB0byB1c2UgaXQgSU1PIGl0CgpzaG91bGQg
-Y29uZm9ybSB0byB0aGF0IHN0YW5kYXJkLCBvdGhlcndpc2UgeW91J3JlIGJhc2ljYWxseSBtYWtp
-bmcgYWQKCmhvYyBkZWZpbml0aW9ucyBvZiBwc2V1ZG8tU1BEWCBleHByZXNzaW9ucyBvciByZWRl
-ZmluaXRpb25zIG9mCgphbHJlYWR5LWRlZmluZWQgU1BEWCBpZGVudGlmaWVycywgd2hpY2ggc2Vl
-bXMgdG8gZGVmZWF0IHRoZSBwdXJwb3NlIG9mCgp1c2luZyBTUERYIGV4cHJlc3Npb25zIGF0IGFs
-bC4gVW5kZXIgdGhhdCBzdGFuZGFyZCwgdGhlcmUgaXMgY3VycmVudGx5CgpubyBTUERYIGlkZW50
-aWZpZXIgcmVwcmVzZW50aW5nIHRoZSBhYm92ZSB0ZXh0IChhcyBmYXIgYXMgSSBjYW4gdGVsbCku
-CgpUaGUgc29sdXRpb24gaXMgZWl0aGVyIHRvIHByb3Bvc2UgYSBtb2RpZmljYXRpb24gb2YKCmBH
-TlUtY29tcGlsZXItZXhjZXB0aW9uYCBzbyB0aGF0ICJHQ0MiIGlzIGFjY2VwdGVkIGFzIGFuIGFs
-dGVybmF0aXZlCgp0byAiYSBHTlUgY29tcGlsZXIiLCBvciB0byBwcm9wb3NlIGEgbmV3IGV4Y2Vw
-dGlvbiB0byBiZSBhZGRlZCB0bwoKU1BEWCdzIGV4Y2VwdGlvbiBsaXN0LCBvciB0byB1c2UgYSBj
-dXN0b20tZGVmaW5lZCBgQWRkaXRpb25SZWYtYAoKaWRlbnRpZmllci4KCgoKUmljaGFyZAoKCgoK
-CkludGVsIERldXRzY2hsYW5kIEdtYkgNClJlZ2lzdGVyZWQgQWRkcmVzczogQW0gQ2FtcGVvbiAx
-MCwgODU1NzkgTmV1YmliZXJnLCBHZXJtYW55DQpUZWw6ICs0OSA4OSA5OSA4ODUzLTAsIHd3dy5p
-bnRlbC5kZQ0KTWFuYWdpbmcgRGlyZWN0b3JzOiBTZWFuIEZlbm5lbGx5LCBKZWZmcmV5IFNjaG5l
-aWRlcm1hbiwgVGlmZmFueSBEb29uIFNpbHZhDQpDaGFpcnBlcnNvbiBvZiB0aGUgU3VwZXJ2aXNv
-cnkgQm9hcmQ6IE5pY29sZSBMYXUNClJlZ2lzdGVyZWQgT2ZmaWNlOiBNdW5pY2gNCkNvbW1lcmNp
-YWwgUmVnaXN0ZXI6IEFtdHNnZXJpY2h0IE11ZW5jaGVuIEhSQiAxODY5MjgK
+On Thu, Jul 10, 2025 at 05:39:52PM -0500, David Lechner wrote:
+> Add support for changing the filter type to the ad7173 driver.
+> 
+> This family of chips by default uses a sinc5+sinc1 filter. There are
+> also optional post-filters that can be added in this configuration for
+> various 50/60Hz rejection purposes. The sinc3 filter doesn't have any
+> post-filters and handles the output data rate (ODR) a bit differently.
+> Here, we've opted to use SINC3_MAPx to get the maximum possible
+> sampling frequencies with the SINC3 filter.
+> 
+> Adding support consists of adding the filter_type and
+> filter_type_available attributes, making the sampling_frequency
+> attribute aware of the filter type, and programming the filter
+> parameters when we configure the channel of the ADC for reading
+> a sample.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7173.c | 186 +++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 181 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> index 01d78d531d6c024dd92fff21b8b2afb750092b66..c235096fbad4aeb77a7385001a16bc0ecd603f46 100644
+> --- a/drivers/iio/adc/ad7173.c
+> +++ b/drivers/iio/adc/ad7173.c
+> @@ -8,6 +8,7 @@
+>   *  AD7175-8/AD7176-2/AD7177-2
+>   *
+>   * Copyright (C) 2015, 2024 Analog Devices, Inc.
+> + * Copyright (C) 2025 BayLibre, SAS
+>   */
+>  
+>  #include <linux/array_size.h>
+> @@ -149,7 +150,12 @@
+>  					       (pin2) < st->info->num_voltage_in && \
+>  					       (pin2) >= st->info->num_voltage_in_div)
+>  
+> -#define AD7173_FILTER_ODR0_MASK		GENMASK(5, 0)
+> +#define AD7173_FILTER_SINC3_MAP		BIT(15)
+> +#define AD7173_FILTER_SINC3_MAP_DIV	GENMASK(14, 0)
+> +#define AD7173_FILTER_ENHFILTEN		BIT(11)
+> +#define AD7173_FILTER_ENHFILT_MASK	GENMASK(10, 8)
+> +#define AD7173_FILTER_ORDER		BIT(6)
+> +#define AD7173_FILTER_ODR_MASK		GENMASK(5, 0)
+>  #define AD7173_MAX_CONFIGS		8
+>  #define AD4111_OW_DET_THRSH_MV		300
+>  
+> @@ -190,6 +196,15 @@ struct ad7173_device_info {
+>  	u8 num_gpios;
+>  };
+>  
+> +enum ad7173_filter_type {
+> +	AD7173_FILTER_SINC3,
+> +	AD7173_FILTER_SINC5_SINC1,
+> +	AD7173_FILTER_SINC5_SINC1_PF1,
+> +	AD7173_FILTER_SINC5_SINC1_PF2,
+> +	AD7173_FILTER_SINC5_SINC1_PF3,
+> +	AD7173_FILTER_SINC5_SINC1_PF4,
+> +};
+> +
+>  struct ad7173_channel_config {
+>  	/* Openwire detection threshold */
+>  	unsigned int openwire_thrsh_raw;
+> @@ -205,8 +220,10 @@ struct ad7173_channel_config {
+>  	struct_group(config_props,
+>  		bool bipolar;
+>  		bool input_buf;
+> +		u16 sinc3_ord_div;
 
+typo? ord -> odr?
+
+>  		u8 sinc5_odr_index;
+>  		u8 ref_sel;
+> +		enum ad7173_filter_type filter_type;
+>  	);
+>  };
+>  
+> @@ -266,6 +283,24 @@ static const unsigned int ad7175_sinc5_data_rates[] = {
+>  	5000,					/* 20    */
+>  };
+>  
+> +/**
+> + * ad7173_sinc3_ord_div_from_odr() - Convert ODR to divider value
+> + * @odr_millihz: ODR (sampling_frequency) in milliHz
+> + * Returns: Divider value for SINC3 filter to pass.
+> + */
+> +static u16 ad7173_sinc3_ord_div_from_odr(u32 odr_millihz)
+
+same typo in the func name?
+
+> +{
+> +	/*
+> +	 * Divider is f_MOD (1 MHz) / 32 / ODR. ODR freq is in milliHz, so
+> +	 * we need to convert f_MOD to the same units. When SING_CYC=1 or
+> +	 * multiple channels are enabled (currently always the case), there
+> +	 * is an additional factor of 3.
+> +	 */
+> +	u32 div = DIV_ROUND_CLOSEST(MEGA * MILLI, odr_millihz * 32 * 3);
+> +	/* Avoid divide by 0 and limit to register field size. */
+> +	return clamp(div, 1U, AD7173_FILTER_SINC3_MAP_DIV);
+> +}
+> +
+>  static unsigned int ad4111_current_channel_config[] = {
+>  	/* Ain sel: pos        neg    */
+>  	0x1E8, /* 15:IIN0+    8:IIN0− */
+> @@ -369,6 +404,47 @@ static const struct iio_enum ad7173_syscalib_mode_enum = {
+>  	.get = ad7173_get_syscalib_mode
+>  };
+>  
+> +static const char * const ad7173_filter_types_str[] = {
+> +	[AD7173_FILTER_SINC3] = "sinc3",
+> +	[AD7173_FILTER_SINC5_SINC1] = "sinc5+sinc1",
+> +	[AD7173_FILTER_SINC5_SINC1_PF1] = "sinc5+sinc1+pf1",
+> +	[AD7173_FILTER_SINC5_SINC1_PF2] = "sinc5+sinc1+pf2",
+> +	[AD7173_FILTER_SINC5_SINC1_PF3] = "sinc5+sinc1+pf3",
+> +	[AD7173_FILTER_SINC5_SINC1_PF4] = "sinc5+sinc1+pf4",
+> +};
+> +
+> +static int ad7173_set_filter_type(struct iio_dev *indio_dev,
+> +				  const struct iio_chan_spec *chan,
+> +				  unsigned int val)
+> +{
+> +	struct ad7173_state *st = iio_priv(indio_dev);
+> +
+> +	if (!iio_device_claim_direct(indio_dev))
+> +		return -EBUSY;
+> +
+> +	st->channels[chan->address].cfg.filter_type = val;
+> +	st->channels[chan->address].cfg.live = false;
+> +
+> +	iio_device_release_direct(indio_dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad7173_get_filter_type(struct iio_dev *indio_dev,
+> +				  const struct iio_chan_spec *chan)
+> +{
+> +	struct ad7173_state *st = iio_priv(indio_dev);
+> +
+> +	return st->channels[chan->address].cfg.filter_type;
+> +}
+
+I know, I'm usual picky with this but FWIW, the above is a possible data
+race. Anyways, still up to you...
+
+- Nuno Sá
+
+> +
+> +static const struct iio_enum ad7173_filter_type_enum = {
+> +	.items = ad7173_filter_types_str,
+> +	.num_items = ARRAY_SIZE(ad7173_filter_types_str),
+> +	.set = ad7173_set_filter_type,
+> +	.get = ad7173_get_filter_type,
+> +};
+> +
+>  static const struct iio_chan_spec_ext_info ad7173_chan_spec_ext_info[] = {
+>  	{
+>  		.name = "sys_calibration",
+> @@ -379,6 +455,16 @@ static const struct iio_chan_spec_ext_info ad7173_chan_spec_ext_info[] = {
+>  		 &ad7173_syscalib_mode_enum),
+>  	IIO_ENUM_AVAILABLE("sys_calibration_mode", IIO_SHARED_BY_TYPE,
+>  			   &ad7173_syscalib_mode_enum),
+> +	IIO_ENUM("filter_type", IIO_SEPARATE, &ad7173_filter_type_enum),
+> +	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_TYPE,
+> +			   &ad7173_filter_type_enum),
+> +	{ }
+> +};
+> +
+> +static const struct iio_chan_spec_ext_info ad7173_temp_chan_spec_ext_info[] = {
+> +	IIO_ENUM("filter_type", IIO_SEPARATE, &ad7173_filter_type_enum),
+> +	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_TYPE,
+> +			   &ad7173_filter_type_enum),
+>  	{ }
+>  };
+>  
+> @@ -582,14 +668,18 @@ static bool ad7173_setup_equal(const struct ad7173_channel_config *cfg1,
+>  		      sizeof(struct {
+>  				     bool bipolar;
+>  				     bool input_buf;
+> +				     u16 sinc3_ord_div;
+>  				     u8 sinc5_odr_index;
+>  				     u8 ref_sel;
+> +				     enum ad7173_filter_type filter_type;
+>  			     }));
+>  
+>  	return cfg1->bipolar == cfg2->bipolar &&
+>  	       cfg1->input_buf == cfg2->input_buf &&
+> +	       cfg1->sinc3_ord_div == cfg2->sinc3_ord_div &&
+>  	       cfg1->sinc5_odr_index == cfg2->sinc5_odr_index &&
+> -	       cfg1->ref_sel == cfg2->ref_sel;
+> +	       cfg1->ref_sel == cfg2->ref_sel &&
+> +	       cfg1->filter_type == cfg2->filter_type;
+>  }
+>  
+>  static struct ad7173_channel_config *
+> @@ -630,6 +720,7 @@ static int ad7173_load_config(struct ad7173_state *st,
+>  {
+>  	unsigned int config;
+>  	int free_cfg_slot, ret;
+> +	u8 post_filter_enable, post_filter_select;
+>  
+>  	free_cfg_slot = ida_alloc_range(&st->cfg_slots_status, 0,
+>  					st->info->num_configs - 1, GFP_KERNEL);
+> @@ -649,8 +740,49 @@ static int ad7173_load_config(struct ad7173_state *st,
+>  	if (ret)
+>  		return ret;
+>  
+> +	/*
+> +	 * When SINC3_MAP flag is enabled, the rest of the register has a
+> +	 * different meaning. We are using this option to allow the most
+> +	 * possible sampling frequencies with SINC3 filter.
+> +	 */
+> +	if (cfg->filter_type == AD7173_FILTER_SINC3)
+> +		return ad_sd_write_reg(&st->sd, AD7173_REG_FILTER(free_cfg_slot), 2,
+> +				       FIELD_PREP(AD7173_FILTER_SINC3_MAP, 1) |
+> +				       FIELD_PREP(AD7173_FILTER_SINC3_MAP_DIV,
+> +						  cfg->sinc3_ord_div));
+> +
+> +	switch (cfg->filter_type) {
+> +	case AD7173_FILTER_SINC5_SINC1_PF1:
+> +		post_filter_enable = 1;
+> +		post_filter_select = 2;
+> +		break;
+> +	case AD7173_FILTER_SINC5_SINC1_PF2:
+> +		post_filter_enable = 1;
+> +		post_filter_select = 3;
+> +		break;
+> +	case AD7173_FILTER_SINC5_SINC1_PF3:
+> +		post_filter_enable = 1;
+> +		post_filter_select = 5;
+> +		break;
+> +	case AD7173_FILTER_SINC5_SINC1_PF4:
+> +		post_filter_enable = 1;
+> +		post_filter_select = 6;
+> +		break;
+> +	default:
+> +		post_filter_enable = 0;
+> +		post_filter_select = 0;
+> +		break;
+> +	}
+> +
+>  	return ad_sd_write_reg(&st->sd, AD7173_REG_FILTER(free_cfg_slot), 2,
+> -			       AD7173_FILTER_ODR0_MASK & cfg->sinc5_odr_index);
+> +			       FIELD_PREP(AD7173_FILTER_SINC3_MAP, 0) |
+> +			       FIELD_PREP(AD7173_FILTER_ENHFILT_MASK,
+> +					  post_filter_enable) |
+> +			       FIELD_PREP(AD7173_FILTER_ENHFILTEN,
+> +					  post_filter_select) |
+> +			       FIELD_PREP(AD7173_FILTER_ORDER, 0) |
+> +			       FIELD_PREP(AD7173_FILTER_ODR_MASK,
+> +					  cfg->sinc5_odr_index));
+>  }
+>  
+>  static int ad7173_config_channel(struct ad7173_state *st, int addr)
+> @@ -1183,6 +1315,13 @@ static int ad7173_read_raw(struct iio_dev *indio_dev,
+>  			return -EINVAL;
+>  		}
+>  	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		if (st->channels[chan->address].cfg.filter_type == AD7173_FILTER_SINC3) {
+> +			/* Inverse operation of ad7173_sinc3_ord_div_from_odr() */
+> +			*val = MEGA;
+> +			*val2 = 3 * 32 * st->channels[chan->address].cfg.sinc3_ord_div;
+> +			return IIO_VAL_FRACTIONAL;
+> +		}
+> +
+>  		reg = st->channels[chan->address].cfg.sinc5_odr_index;
+>  
+>  		*val = st->info->sinc5_data_rates[reg] / MILLI;
+> @@ -1221,6 +1360,10 @@ static int ad7173_write_raw(struct iio_dev *indio_dev,
+>  	 *
+>  	 * This will cause the reading of CH1 to be actually done once every
+>  	 * 200.16ms, an effective rate of 4.99sps.
+> +	 *
+> +	 * Both the sinc5 and sinc3 rates are set here so that if the filter
+> +	 * type is changed, the requested rate will still be set (aside from
+> +	 * rounding differences).
+>  	 */
+>  	case IIO_CHAN_INFO_SAMP_FREQ:
+>  		freq = val * MILLI + val2 / MILLI;
+> @@ -1230,6 +1373,7 @@ static int ad7173_write_raw(struct iio_dev *indio_dev,
+>  
+>  		cfg = &st->channels[chan->address].cfg;
+>  		cfg->sinc5_odr_index = i;
+> +		cfg->sinc3_ord_div = ad7173_sinc3_ord_div_from_odr(freq);
+>  		cfg->live = false;
+>  		break;
+>  
+> @@ -1246,17 +1390,40 @@ static int ad7173_update_scan_mode(struct iio_dev *indio_dev,
+>  				   const unsigned long *scan_mask)
+>  {
+>  	struct ad7173_state *st = iio_priv(indio_dev);
+> +	u16 sinc3_count = 0;
+> +	u16 sinc3_div = 0;
+>  	int i, j, k, ret;
+>  
+>  	for (i = 0; i < indio_dev->num_channels; i++) {
+> -		if (test_bit(i, scan_mask))
+> +		const struct ad7173_channel_config *cfg = &st->channels[i].cfg;
+> +
+> +		if (test_bit(i, scan_mask)) {
+> +			if (cfg->filter_type == AD7173_FILTER_SINC3) {
+> +				sinc3_count++;
+> +
+> +				if (sinc3_div == 0) {
+> +					sinc3_div = cfg->sinc3_ord_div;
+> +				} else if (sinc3_div != cfg->sinc3_ord_div) {
+> +					dev_err(&st->sd.spi->dev,
+> +						"All enabled channels must have the same sampling_frequency for sinc3 filter_type\n");
+> +					return -EINVAL;
+> +				}
+> +			}
+> +
+>  			ret = ad7173_set_channel(&st->sd, i);
+> -		else
+> +		} else {
+>  			ret = ad_sd_write_reg(&st->sd, AD7173_REG_CH(i), 2, 0);
+> +		}
+>  		if (ret < 0)
+>  			return ret;
+>  	}
+>  
+> +	if (sinc3_count && sinc3_count < bitmap_weight(scan_mask, indio_dev->num_channels)) {
+> +		dev_err(&st->sd.spi->dev,
+> +			"All enabled channels must have sinc3 filter_type\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	/*
+>  	 * On some chips, there are more channels that setups, so if there were
+>  	 * more unique setups requested than the number of available slots,
+> @@ -1415,6 +1582,7 @@ static const struct iio_chan_spec ad7173_temp_iio_channel_template = {
+>  		.storagebits = 32,
+>  		.endianness = IIO_BE,
+>  	},
+> +	.ext_info = ad7173_temp_chan_spec_ext_info,
+>  };
+>  
+>  static void ad7173_disable_regulators(void *data)
+> @@ -1655,7 +1823,11 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
+>  		chan_st_priv->cfg.bipolar = false;
+>  		chan_st_priv->cfg.input_buf = st->info->has_input_buf;
+>  		chan_st_priv->cfg.ref_sel = AD7173_SETUP_REF_SEL_INT_REF;
+> +		chan_st_priv->cfg.sinc3_ord_div = ad7173_sinc3_ord_div_from_odr(
+> +			st->info->sinc5_data_rates[st->info->odr_start_value]
+> +		);
+>  		chan_st_priv->cfg.sinc5_odr_index = st->info->odr_start_value;
+> +		chan_st_priv->cfg.filter_type = AD7173_FILTER_SINC5_SINC1;
+>  		chan_st_priv->cfg.openwire_comp_chan = -1;
+>  		st->adc_mode |= AD7173_ADC_MODE_REF_EN;
+>  		if (st->info->data_reg_only_16bit)
+> @@ -1727,7 +1899,11 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
+>  		chan->scan_index = chan_index;
+>  		chan->channel = ain[0];
+>  		chan_st_priv->cfg.input_buf = st->info->has_input_buf;
+> +		chan_st_priv->cfg.sinc3_ord_div = ad7173_sinc3_ord_div_from_odr(
+> +			st->info->sinc5_data_rates[st->info->odr_start_value]
+> +		);
+>  		chan_st_priv->cfg.sinc5_odr_index = st->info->odr_start_value;
+> +		chan_st_priv->cfg.filter_type = AD7173_FILTER_SINC5_SINC1;
+>  		chan_st_priv->cfg.openwire_comp_chan = -1;
+>  
+>  		chan_st_priv->cfg.bipolar = fwnode_property_read_bool(child, "bipolar");
+> 
+> -- 
+> 2.43.0
+> 
 
