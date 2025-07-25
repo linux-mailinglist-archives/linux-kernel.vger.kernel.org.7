@@ -1,141 +1,212 @@
-Return-Path: <linux-kernel+bounces-745295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E000B11810
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:49:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE94B11814
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F4837A6978
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:47:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FB6A7AFC6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703D124468D;
-	Fri, 25 Jul 2025 05:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8ABA244677;
+	Fri, 25 Jul 2025 05:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sFxUG9Br"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8RrNpDB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DBA1E260C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEDF23BCE2
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753422554; cv=none; b=ONRASiX7kxZT+7PB+ao2mmvq8Vi7LsTaqHeQOYPP2pmodJjr08UJfFnoChI6Xd7Z78pStElE1Vb2YzGukxEF21/Ham99Macbgs2H6TLlvCVoHpWt8PdWk0xdOBocWwe3g3wGSS6mMo+66PmTzuHTpuIRPsSw9D6+DeyWG8zoc6M=
+	t=1753422615; cv=none; b=ZZCwM6cxKOMvgSWawcMuzvikObb1yMlrWG5sDOrAPMjpa8B9J24PdclLeV/RCSKf95i5RKawxc1rtIVgoc9K0zsETuk4w/vOTX+fXTJfjPjYNAwCO/vHK4eQ4DRIJmUshvgRrSMsYp6LceA1AgJiroeyaF1MGdWrCinvqnoF3a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753422554; c=relaxed/simple;
-	bh=kt81b78tGqE2fXMs1hgKSZPNjtRJ+zYxTvIAg+AkKBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SbT3FjDJiNz4XNZ9c64OAxc/kfw5vxtd2phUjViPeWawSSRu/NYKCgyyQv1VFkHwBkGGiA9G4sYNWvKOFRz0/c7Oej6O4Fb/Bjq2AkNFdV/cDQ2Y4vYTCUkgRSaRho5HWWw6YqkHS5p9UGPCKBD5/ts7CGQyub57HpvF4Tmxz2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sFxUG9Br; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23aeac7d77aso17169545ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 22:49:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753422552; x=1754027352; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hskrk8phHu4wT3pcdJrDYqFkEsU4W/M9XPNUZYaY9go=;
-        b=sFxUG9BrBmSyUk8Z4eclTrW5qOPSE2xPjEW9Zjug/PP2fDxw++MaP9VS7qx6lMEx4v
-         FkG7/yVwom5NQUKjlRE2zDlDK3Mh4avEgGs0WW9fPiZVmkkbGDV1OpS4lpvuLFGmkGS0
-         IbrZyBVdWrxCbWegkQs67EmZbwWeLQwd1f8D7Vgm7RSvEus9DRlA2xkYMGNUZXj3/PfF
-         bFK3qiPUPmsrXqcnQNFQU9k2GgH4EG014BhROPh8cY0ier5EnaR2HstW3lvWPLsk+iiw
-         676XSRv18A/M5q5Gz0ZHgOtQDG8VUMFrSUtdDSoZvf67JAiUU3ib98RdSEskj/iUf6Px
-         b8nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753422552; x=1754027352;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hskrk8phHu4wT3pcdJrDYqFkEsU4W/M9XPNUZYaY9go=;
-        b=JjBwT/drgfgrp7MLu0FG2JqBSpcuhBWA7lHLMpY9qVpKg17LmvVo+860CMGA4ZVL/T
-         ecf1uovtz9zrLAkABeFwmVi3zfPVtSsGg1hxQkG3i1LU4T6edpZP9U7xc6HETzbEAsxt
-         cVQCSo6jGeKYmGzN51kPHdif2Qat4W3IVxwRolCsYvKNYoFp5zTBOrpXzitUkKgpAZ4Q
-         xkM2MCz11R4YfRikdi4EZIVNENRcU6wUUQoAB+LYPy9aSHuIxroYxFL0rBHc68e9+/wa
-         r0UQokQG5wNF/iKoVXELZa2Lxaq2+uJ4TOMlnsiL6tidWn7Nqri5acouzP925XbEVVS8
-         IfLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUINZ0sEqBUM/tFV0qNhg4rf9RlFH7EnEUzD4uX1g8TG4ICLyw2SOlNzYdPec5oxQcNIplfIPINPJYmWyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDgR00cDSbeDkvdmQL6Mt3SINwMIg0yebT5eZSNuMmDGnXVIkW
-	MPv1r7G469DWDYg6wJ6b7TV1B9cyGx6nv/Ys05/GQfg3cs3hf0gtclqBkGfr6thbjymo2zXPNcJ
-	JVL+G
-X-Gm-Gg: ASbGncvIj9lq/BiWRsSYxIbpRECZl72x9SJDgOyOurIVqcxxW2yBbLp5ORPw3FegG5E
-	+rkEGXlPrWeTbJdeefwBNQXpDKfyAffSuoQE4R7yZ/Wad2owVRaUvC/Ocw+hQEkqSo2WmbP9Wu0
-	0nu6wF7WSAKYJiAD6bnXIBj2hHmU34a5RoL90EH65JA6NbdTD0w/QKtt3BgvkYfuhicnsb3EC7e
-	3r9HlW16/fR6Wr6xbkegsYwigwA1pirxDya8ov/iHjon3CAZ2amdttRhGd40aq1v9HoQhmXyYwx
-	qIOLO7fB1FoDyAlIlO95EtdiigYAOGQdvkbRYra2ghU5scNUuC0lCl2aJ5W99j+koCtY8SBtcaO
-	k8JZZv3PytUUFokSc2E/ZSME=
-X-Google-Smtp-Source: AGHT+IEFuvuyjcT7lJtRzHLQ3JJkqLEhR4KgQjICzcTCzi4yg8xUN1GJ2tFV3c36Z7EcNgPK0alcHA==
-X-Received: by 2002:a17:902:e78e:b0:234:9375:e07c with SMTP id d9443c01a7336-23fb3171f12mr9502175ad.46.1753422552072;
-        Thu, 24 Jul 2025 22:49:12 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f6c07f942sm2626823a12.7.2025.07.24.22.49.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 22:49:11 -0700 (PDT)
-Date: Fri, 25 Jul 2025 11:19:09 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "rafael J . wysocki" <rafael@kernel.org>,
-	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cpufreq: Avoid get_governor() for first policy
-Message-ID: <20250725054909.gplhe37mstwvkuv6@vireshk-i7>
-References: <20250725041450.68754-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1753422615; c=relaxed/simple;
+	bh=BGjXsUnNjLE7O41aldkupZWLOiDewT6Hs1fr1D63K1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XdHYVAPpllc1hBAi1vKpbXmqhhfqDHLOnmZSvP4ObiLl4S0o9QyxdgJ2VE2IjSmFu2DHwPjk8Xpn0G5nKOctq4hWqX666Sc1BYfCSaeY3Z/hJmrLxm8/HCmcLS/kvmzgP7V1XCprCLu0AEFRkTPyNqeWfWkct38yeS1V/55s18w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8RrNpDB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BF8AC4CEE7;
+	Fri, 25 Jul 2025 05:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753422614;
+	bh=BGjXsUnNjLE7O41aldkupZWLOiDewT6Hs1fr1D63K1c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D8RrNpDBV3QGCenq/W5CMdUMA/dks0uOADljV8y1fH7ojMR6Q/jG2p5zX+m0SuTPO
+	 r2qgrjFOan12YSJbUTxmO/ot3Lv0NnC7jHZ1wAaHqgmse3CJtRg5HZ1r8Lf8I2caMG
+	 Zqg8A+Pr+NwEdAHfwKrkdB1ukLL4xsK1Rhd74I8a+HWaq+I2fuQ/hDI4HpgFMbIVsi
+	 Vn7MmgckdNbBXMV7lyc9jwGUzOwdjyLmV0ThgM9IBdheRHIystMvkGQk/AFbN/m6QP
+	 DO8K/ioilJCwEcR7ohhA9vOvhJainVFQg10EDwY/xE4Ei1GMsV9FO+kYr7k0eG5Pt8
+	 PR7au4Oi41yqg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v3] mkfs.f2fs: support -C [no]hashonly to control linear lookup fallback
+Date: Fri, 25 Jul 2025 13:49:22 +0800
+Message-ID: <20250725054922.3972265-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725041450.68754-1-zhangzihuan@kylinos.cn>
+Content-Transfer-Encoding: 8bit
 
-On 25-07-25, 12:14, Zihuan Zhang wrote:
-> When a cpufreq driver registers the first policy, it may attempt to
-> initialize the policy governor from `last_governor`. However, this is
-> meaningless for the first policy instance, because `last_governor` is
-> only updated when policies are removed (e.g. during CPU offline).
-> 
-> The `last_governor` mechanism is intended to restore the previously
-> used governor across CPU hotplug events. For the very first policy,
-> there is no "previous governor" to restore, so calling
-> get_governor(last_governor) is unnecessary and potentially confusing.
-> 
-> This patch skips looking up `last_governor` when registering the first
-> policy. Instead, it directly uses the default governor after all
-> governors have been registered and are available.
-> 
-> This avoids meaningless lookups, reduces unnecessary module reference
-> handling, and simplifies the initial policy path.
-> 
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> 
-> ---
-> Changes in v2:
->  - Fix the case where the governor is NULL.
-> ---
-> ---
->  drivers/cpufreq/cpufreq.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index d7426e1d8bdd..1aa559f53479 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -1122,7 +1122,8 @@ static int cpufreq_init_policy(struct cpufreq_policy *policy)
->  
->  	if (has_target()) {
->  		/* Update policy governor to the one used before hotplug. */
-> -		gov = get_governor(policy->last_governor);
-> +		if (policy->last_governor[0] != '\0')
-> +			gov = get_governor(policy->last_governor);
->  		if (gov) {
->  			pr_debug("Restoring governor %s for cpu %d\n",
->  				 gov->name, policy->cpu);
+It provides a way to disable linear lookup fallback during mkfs.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Behavior summary:
+			Android		Distro
+By default		disabled	enabled
 
+Android case:
+
+1.1) Disable linear lookup:
+- mkfs.f2fs -f -g android -O casefold -C utf8:hashonly /dev/vdb
+- dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+s_encoding_flags                        [0x       2 : 2]
+
+1.2) Enable linear lookup:
+- mkfs.f2fs -f -g android -O casefold -C utf8:nohashonly /dev/vdb
+- dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+s_encoding_flags                        [0x       0 : 0]
+
+1.3) By default:
+- mkfs.f2fs -f -g android -O casefold -C utf8 /dev/vdb
+Info: set default linear_lookup option: disable
+- dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+s_encoding_flags                        [0x       2 : 2]
+
+Distro case:
+
+2.1) Disable linear lookup:
+- mkfs.f2fs -f -O casefold -C utf8:hashonly /dev/vdb
+- dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+s_encoding_flags                        [0x       2 : 2]
+
+2.2) Enable linear lookup:
+- mkfs.f2fs -f -O casefold -C utf8:nohashonly /dev/vdb
+- dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+s_encoding_flags                        [0x       0 : 0]
+
+2.3) By default:
+- mkfs.f2fs -f -O casefold -C utf8 /dev/vdb
+- dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+s_encoding_flags                        [0x       0 : 0]
+
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v3:
+- honor [no]hashonly flag for Android case
+- update testcase and output
+ include/f2fs_fs.h       |  3 ++-
+ lib/libf2fs.c           |  6 ++++++
+ man/mkfs.f2fs.8         |  9 ++++++++-
+ mkfs/f2fs_format.c      | 11 +++++++++++
+ mkfs/f2fs_format_main.c |  3 ++-
+ 5 files changed, 29 insertions(+), 3 deletions(-)
+
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index f7268d1..a8da8fa 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -1478,7 +1478,8 @@ enum {
+ 
+ /* feature list in Android */
+ enum {
+-	F2FS_FEATURE_NAT_BITS = 0x0001,
++	F2FS_FEATURE_NAT_BITS		= 0x0001,
++	F2FS_FEATURE_LINEAR_LOOKUP	= 0x0002,
+ };
+ 
+ /* nolinear lookup tune */
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 2f012c8..1a496b7 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -1424,6 +1424,7 @@ static const struct enc_flags {
+ 	char *param;
+ } encoding_flags[] = {
+ 	{ F2FS_ENC_STRICT_MODE_FL, "strict" },
++	{ F2FS_ENC_NO_COMPAT_FALLBACK_FL, "hashonly"}
+ };
+ 
+ /* Return a positive number < 0xff indicating the encoding magic number
+@@ -1485,6 +1486,11 @@ int f2fs_str2encoding_flags(char **param, __u16 *flags)
+ 					*flags |= fl->flag;
+ 				}
+ 
++				if (fl->flag == F2FS_ENC_NO_COMPAT_FALLBACK_FL)
++					c.nolinear_lookup = neg ?
++						LINEAR_LOOKUP_ENABLE :
++						LINEAR_LOOKUP_DISABLE;
++
+ 				goto next_flag;
+ 			}
+ 		}
+diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
+index 8b3b0cc..fcb227c 100644
+--- a/man/mkfs.f2fs.8
++++ b/man/mkfs.f2fs.8
+@@ -232,10 +232,17 @@ Use UTF-8 for casefolding.
+ .I flags:
+ .RS 1.2i
+ .TP 1.2i
+-.B strict
++.B [no]strict
+ This flag specifies that invalid strings should be rejected by the filesystem.
+ Default is disabled.
+ .RE
++.RS 1.2i
++.TP 1.2i
++.B [no]hashonly
++This flag specifies that linear lookup fallback is off during lookup, to turn
++off linear lookup fallback, use nohashonly flag.
++For android case, it will disable linear lookup by default.
++.RE
+ .RE
+ .TP
+ .BI \-q
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 2680bd3..04dfc20 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -671,6 +671,17 @@ static int f2fs_prepare_super_block(void)
+ 	memcpy(sb->init_version, c.version, VERSION_LEN);
+ 
+ 	if (c.feature & F2FS_FEATURE_CASEFOLD) {
++		/*
++		 * if [no]hashonly option is not assigned, let's disable
++		 * linear lookup fallback by default for Android case.
++		 */
++		if ((c.nolinear_lookup == LINEAR_LOOKUP_DEFAULT) &&
++			(c.disabled_feature & F2FS_FEATURE_LINEAR_LOOKUP)) {
++			c.s_encoding_flags |= F2FS_ENC_NO_COMPAT_FALLBACK_FL;
++			MSG(0, "Info: set default linear_lookup option: %s\n",
++				c.s_encoding_flags & F2FS_ENC_NO_COMPAT_FALLBACK_FL ?
++				"disable" : "enable");
++		}
+ 		set_sb(s_encoding, c.s_encoding);
+ 		set_sb(s_encoding_flags, c.s_encoding_flags);
+ 	}
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index f0bec4f..8f8e975 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -143,7 +143,8 @@ static void add_default_options(void)
+ 		force_overwrite = 1;
+ 		c.wanted_sector_size = F2FS_BLKSIZE;
+ 		c.root_uid = c.root_gid = 0;
+-		c.disabled_feature |= F2FS_FEATURE_NAT_BITS;
++		c.disabled_feature |= F2FS_FEATURE_NAT_BITS |
++					F2FS_FEATURE_LINEAR_LOOKUP;
+ 
+ 		/* RO doesn't need any other features */
+ 		if (c.feature & F2FS_FEATURE_RO)
 -- 
-viresh
+2.49.0
+
 
