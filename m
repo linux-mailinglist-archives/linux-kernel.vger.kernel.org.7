@@ -1,300 +1,119 @@
-Return-Path: <linux-kernel+bounces-746361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96FA6B125C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:45:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC998B125C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 542D03AF9CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:44:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1040B561E99
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0A325B692;
-	Fri, 25 Jul 2025 20:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1918C25B1CB;
+	Fri, 25 Jul 2025 20:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkW6DJXA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H3lVmFoR"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AEE25B30E;
-	Fri, 25 Jul 2025 20:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75FB8F5B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753476305; cv=none; b=MzUiq3MeD3owORD1zKd7LP7P8oUrmXMIvbCz8SfExeVax7nQK580pPSLiNvx9FoEwEXbE9VLWpdbFCe4yC0rIQonQihvPj99kSDE0X5wRg0tAVLinBV8x0ow9ABB+d0EGORHuOlqNj0BH0FjRRhLAjli6h/rcd/z8vzOp6OprfI=
+	t=1753476349; cv=none; b=uRdkLe4mt9gL9u3uDU6pSbi6Btw7FbofbaYJLUwygdJXhHTT9LS+5aO6QR7Mi4MgK9keJhtpOwEVhf2xLamNX2rrB1kZ8QQTpTisQakqDhs+q15S9ZS8f0r9a2dMx/YapuEJm7BMxBY5hKbbKFbuqgV8Xmzp5gcrTqlPE7kU5GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753476305; c=relaxed/simple;
-	bh=TSv9glcM2lIp/pJtvRRP9I3bMN+OB/xZq/jx8F38Ks0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Shbq3EajpPpDSs6zyTbJaJ1ZkAgn71BZA4w7Mn05wKqipGZSe9bHuIAD4Wo7GIXfE+dKvVkWfEli5mmdwzgNWKUeoQtZu7Qw4j+pqHJn7Qj+CrgZ1M2PMi60jYl3Nv8jAkkAOeWtNvVe3l2My7ibVqKEvGTMhcSHZq5ibQVx1+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkW6DJXA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33B2CC4CEE7;
-	Fri, 25 Jul 2025 20:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753476305;
-	bh=TSv9glcM2lIp/pJtvRRP9I3bMN+OB/xZq/jx8F38Ks0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tkW6DJXAKDLsx1l+RBedjJ0vpWFngIwAedKAK5fwco8NppOqSVQER76cRMKSHubT6
-	 pri7WPQFezqRSuk8Xj9YBSXIDpmDRiXnwfEQZ3VA8HUUYrSp0p0llwR1i8dkuKGRSJ
-	 XzSL49Zt4mTQvBluYsTyXiBKMQ0g70mAU3p6935HKrQaVDtYqXEspUGalAsbb2zr9K
-	 4O/DU6bMBbE9CjlBTj0EgM73Vhz5sq3NHIR61+xWFIgjrLf8B9ppQEqpqfOattaSwV
-	 PZE6uz0Wuv4kongxFFalADK0pbsUCMNBcLrQjwfiARgox0XF6SugndVdew6rbYCVG3
-	 hFbwUd/bCnEoQ==
-Date: Fri, 25 Jul 2025 22:44:59 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH] man/man2/mremap.2: describe multiple mapping move, shrink
-Message-ID: <siwe6k4ks44mvdzy7rmir2pmf7547gqxknuoppcn54pkh4lwdb@lko3ecfdjtda>
-References: <20250723174634.75054-1-lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1753476349; c=relaxed/simple;
+	bh=ML3wJzicutJ7pzzOS8eBw3LcVt5abqgOJBY1Oc5SJuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XE+bfwg0/JqGxkHTWDuwCoDhru835DUIQaGWEDtxO6lBx3+yGE/bVU7JyTVdMu0+frm1WLvqfIm2PNpb963V39gVQtc6iTDKg9gLitdhJyGNNVsmgQOxwwd0p1wwX9ibybI7CA8aFO/OLmHIta64WZxDCbwN9PPznak/hPZ7KvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H3lVmFoR; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55a25635385so2916933e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:45:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753476346; x=1754081146; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dkFV7hywCaEtlGf8Q7mOLQIOdrHzvmI6g+XiRXRO/yU=;
+        b=H3lVmFoRNQwYPfeO9iBYuLeITvT5MfGwDaTZSBL4vFsmPXyN4MmzuptVIqFGk/RsET
+         V/nHPKAft0ZeRN2EubE69vkH4mDwygKZHC1snpsD1wZ1XTeMAtllKdA5qBuZ4bjo3zox
+         lEtQEPDLGrheUbzzUcji3f0r6dzdxRBscfxo/xi8BI9/54iqIzuX0awLnvnyWcJgJmzq
+         xsseyVYJ2PVzIcU8ai65heX8iQGEgZDdr3ojx+ImVw1cdeWSwNCKWyogwVGmiog42dQE
+         z4gKNr5JPLRcAIwzscs5B+PMlvkYMDQ9+aytomfLp5js/YrucUtkBlpW8qt/W5ULTj39
+         fNyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753476346; x=1754081146;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dkFV7hywCaEtlGf8Q7mOLQIOdrHzvmI6g+XiRXRO/yU=;
+        b=jyFaAw2VPIowkjr/jXyKeDerAqLcyxmgWglaaSxb3IB1KnlygNDL4Wc9Zjtv0d5jJw
+         uLVUbFPQ+6Jr2IayqqE33fBn5vsrFXNRU3xHB88w75F4+Z04vV1GHUMpXeMC2ajfjlz5
+         S8a5bV1YuyaPIBWN34X7dwtENQ071y+SXkxIuGP56R+3C4DjLDsxra5iNaAuCEI+q1bh
+         Xa/TvekSIBrQZp5r0zLUBb0VEt5/IxOew3zaIhHlfxLcz9BkjTwNB6Q4u92JQ+dS5GmA
+         /ax0ztgdj46QmwPC/gRGmOTpgbmSy1UJIKPSm5VjcatTuq1M/5QvIuAyFqKQcmzgUuFZ
+         5Sqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG0wNNZt5PpvAwUec0EdsBgnU4cYovGBkeKMJf6IKYQlJCYj/n8zAd7kRdrZRB2wRVskThQqsLcIGe+HE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIq2E8EhAJUBHbk5BHtswqh4Ws2PTZYge0ljO96v/otYkSyHoQ
+	yUAB2En7ECllbgRtxitktg3xdAJBLWfd6zNqUI9wLetbsC9NP0W8g+guvtltgB8woaqQWr2S0iY
+	P5bS/e8tvgrA84jOnUUs15Y36KW6Df/jpvQ5dy843
+X-Gm-Gg: ASbGncuLCWBT9Q83XivfpVA32ruxne0otg67AFyHeBIIWzdUOfTfNJdOXP42YMCjbFW
+	MKQXXZKX9c/dJL8Sl532PlWCx9/Z5ixdL2m1Ur9T9y8EeUR1S5hYm3NU6Yfp8XjRPCTOiPr7EE2
+	bgUYLSQ4xZ3bh7jq1WoHQUsfUqXfOPZBdnvzAG2/t4sXxXpw++JdwmVJBJlxcL6oIRzhwAGhMfI
+	rF9XQAkCZXNSfveug==
+X-Google-Smtp-Source: AGHT+IHH48TMpDfzEN/GY0NLk20jn5GyvCErTtW6GyBV2cgMPoLiDuPLD9Pt+FDD3Nt+B3TDEvgLB3LL4Rp8lrPZ7CM=
+X-Received: by 2002:a05:6512:ac8:b0:553:cf7d:7283 with SMTP id
+ 2adb3069b0e04-55b5f4808cfmr1002884e87.33.1753476345590; Fri, 25 Jul 2025
+ 13:45:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q2kjujlkwk6vx2gp"
-Content-Disposition: inline
-In-Reply-To: <20250723174634.75054-1-lorenzo.stoakes@oracle.com>
+References: <CALU+5Va_zeqS5YK7v3HNvDKkg8srqc87P5ZaQUK5tGFUMyNrkg@mail.gmail.com>
+ <42f4753a-f7db-49a3-ba40-8743a78684b4@rowland.harvard.edu>
+In-Reply-To: <42f4753a-f7db-49a3-ba40-8743a78684b4@rowland.harvard.edu>
+From: Olivier Tuchon <tcn@google.com>
+Date: Fri, 25 Jul 2025 22:45:29 +0200
+X-Gm-Features: Ac12FXxD8K4ZtrkE9PBWaB_iYkwnoMBGmcB3aMxN41S6-C5rqYsj2xJeiUdU8XU
+Message-ID: <CALU+5VYnZfp2CqXqn7X14J5pGsXyHDOcC5mOCZx4nKA6tjzO2Q@mail.gmail.com>
+Subject: Re: [PATCH] usb: gadget: Add gadgetmon traffic monitor
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+> > The UDC core is modified to add an optional monitoring interface defined
+> > by struct usb_gadget_mon_operations in <linux/usb/gadget.h>.
+>
+> This does not appear in the patch.  Was it left out by mistake?
 
---q2kjujlkwk6vx2gp
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH] man/man2/mremap.2: describe multiple mapping move, shrink
-References: <20250723174634.75054-1-lorenzo.stoakes@oracle.com>
-MIME-Version: 1.0
-In-Reply-To: <20250723174634.75054-1-lorenzo.stoakes@oracle.com>
+My bad, sorry for this silly mistake.
+Files will be included in the next patch.
 
-Hi Lorenzo,
+> Do you expect that other gadget monitoring modules will be written?
+> If they are, assignment to the global pointer should be handled by a
+> routine in the gadget core, not in the monitoring module as done here.
 
-On Wed, Jul 23, 2025 at 06:46:34PM +0100, Lorenzo Stoakes wrote:
-> There is pre-existing logic that appears to be undocumented for an mremap=
-()
-> shrink operation, where it turns out that the usual 'input range must span
-> a single mapping' requirement no longer applies.
->=20
-> In fact, it turns out that the input range specified by [old_address,
-> old_size) may span any number of mappings, as long old_address resides at
-> or within a mapping and [old_address, new_size) spans only a single
-> mapping.
->=20
-> Explicitly document this.
->=20
-> In addition, document the new behaviour introduced in Linux 6.17 whereby =
-it
-> is now possible to move multiple mappings in a single operation, as long =
-as
-> the operation is purely a move, that is old_size is equal to new_size and
-> MREMAP_FIXED is specified.
+I have no plan to write another one but designing the API to support it
+is a very interesting approach. I implemented it in the next patch.
 
-Please separate the new behavior into a separate patch.  Each patch
-should change one thing only.
+> There should be a similar optimization for IN givebacks.  The data to
+> be transferred to the host was already recorded by the submission
+> hook, so you can save space by not copying it a second time during the
+> giveback.
 
+After a couple of tests, I found that the payload at the Submit ('S') stage
+is often meaningless (zero-filled) for both IN and OUT transfers or the
+payload size is already set to zero.
+I simplified the logic to drop the payload for ALL Submit events.
+Fixed in the next patch.
 
-Have a lovely night!
-Alex
+> Would it be better to keep the event but drop the tail end of the data?
+Thanks, excellent suggestion. I implemented it in the next patch.
 
->=20
-> To make things clearer, also describe this 'pure move' operation, before
-> expanding upon it to describe the newly introduced behaviour.
->=20
-> This change also explains the limitations of of this method and the
-> possibility of partial failure.
->=20
-> Finally, we pluralise language where it makes sense to so the documentati=
-on
-> does not contradict either this new capability nor the pre-existing edge
-> case.
->=20
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  man/man2/mremap.2 | 93 +++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 82 insertions(+), 11 deletions(-)
->=20
-> diff --git a/man/man2/mremap.2 b/man/man2/mremap.2
-> index 2168ca728..c1a9e7397 100644
-> --- a/man/man2/mremap.2
-> +++ b/man/man2/mremap.2
-> @@ -25,18 +25,56 @@ moving it at the same time (controlled by the
->  argument and
->  the available virtual address space).
->  .P
-> +Mappings can simply be moved by specifying equal
-> +.I old_size
-> +and
-> +.I new_size
-> +and specifying
-> +.IR new_address ,
-> +see the description of
-> +.B MREMAP_FIXED
-> +below.
-> +Since Linux 6.17,
-> +while
->  .I old_address
-> -is the old address of the virtual memory block that you
-> -want to expand (or shrink).
-> +must reside within a mapping,
-> +.I old_size
-> +may span multiple mappings
-> +which do not have to be
-> +adjacent to one another.
-> +.P
-> +Equally, if the operation performs a shrink,
-> +that is if
-> +.I old_size
-> +is greater than
-> +.IR new_size ,
-> +then
-> +.I old_size
-> +may also span multiple mappings
-> +which do not have to be
-> +adjacent to one another.
-> +However in this case,
-> +.I new_size
-> +must span only a single mapping.
-> +.P
-> +If the operation is neither a simple move
-> +nor a shrink,
-> +then
-> +.I old_size
-> +must span only a single mapping.
-> +.P
-> +.I old_address
-> +is the old address of the first virtual memory block that you
-> +want to expand, shrink, and/or move.
->  Note that
->  .I old_address
->  has to be page aligned.
->  .I old_size
-> -is the old size of the
-> -virtual memory block.
-> +is the size of the range containing
-> +virtual memory blocks to be manipulated.
->  .I new_size
->  is the requested size of the
-> -virtual memory block after the resize.
-> +virtual memory blocks after the resize.
->  An optional fifth argument,
->  .IR new_address ,
->  may be provided; see the description of
-> @@ -105,13 +143,43 @@ If
->  is specified, then
->  .B MREMAP_MAYMOVE
->  must also be specified.
-> +.IP
-> +Since Linux 6.17,
-> +if
-> +.I old_size
-> +is equal to
-> +.I new_size
-> +and
-> +.B MREMAP_FIXED
-> +is specified, then
-> +.I old_size
-> +may span beyond the mapping in which
-> +.I old_address
-> +resides.
-> +In this case,
-> +gaps between mappings in the original range
-> +are maintained in the new range.
-> +The whole operation is performed atomically
-> +unless an error arises,
-> +in which case the operation may be partially
-> +completed,
-> +that is,
-> +some mappings may be moved and others not.
-> +.IP
-> +
-> +Moving multiple mappings is not permitted if
-> +any of those mappings have either
-> +been registered with
-> +.BR userfaultfd (2) ,
-> +or map drivers that
-> +specify their own custom address mapping logic.
->  .TP
->  .BR MREMAP_DONTUNMAP " (since Linux 5.7)"
->  .\" commit e346b3813067d4b17383f975f197a9aa28a3b077
->  This flag, which must be used in conjunction with
->  .BR MREMAP_MAYMOVE ,
-> -remaps a mapping to a new address but does not unmap the mapping at
-> -.IR old_address .
-> +remaps mappings to a new address but does not unmap them
-> +from their original address.
->  .IP
->  The
->  .B MREMAP_DONTUNMAP
-> @@ -149,13 +217,13 @@ mapped.
->  See NOTES for some possible applications of
->  .BR MREMAP_DONTUNMAP .
->  .P
-> -If the memory segment specified by
-> +If the memory segments specified by
->  .I old_address
->  and
->  .I old_size
-> -is locked (using
-> +are locked (using
->  .BR mlock (2)
-> -or similar), then this lock is maintained when the segment is
-> +or similar), then this lock is maintained when the segments are
->  resized and/or relocated.
->  As a consequence, the amount of memory locked by the process may change.
->  .SH RETURN VALUE
-> @@ -188,7 +256,10 @@ virtual memory address for this process.
->  You can also get
->  .B EFAULT
->  even if there exist mappings that cover the
-> -whole address space requested, but those mappings are of different types.
-> +whole address space requested, but those mappings are of different types,
-> +and the
-> +.BR mremap ()
-> +operation being performed does not support this.
->  .TP
->  .B EINVAL
->  An invalid argument was given.
-> --=20
-> 2.50.1
->=20
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---q2kjujlkwk6vx2gp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiD7MsACgkQ64mZXMKQ
-wqmHXA/8DAG8114OPhYz3ll89YdJ+SrCt45AJseHz/iZJXbsN8/SKPG5D3kIjRkd
-fh9AkafnjJB6W7CVCdIggNBh/elaL9rS6tKHckRE1LPGHfnT39Qt4nMovwXFTfhr
-IfGKpuRo6pC2icAWYw/2D1TRG3kWHwueO5IXQY8aRS/KYtBFjj3+k8MSVmiP/BK7
-ZsTKGcd8G1UMpa2u8pmMmI3GJy1PFaog1WJV30pkW3TybTalzaLjQ5Csr4NZO1fD
-7U8KgE2KZrCc+/qoZPC733NH6sMn3TWeiQnn9R4a5dQ4lJeSWsr7FI5094AN/eVI
-0V2Lh9jUIEJXWCFdiS3f+gfg0MWvVGdqh9HQOFQJi8fNNQJy6/BUrrlofc1k90IM
-cCMNeqrzGPuDrkBEC7hL6+WYu7ag9ONTinAWUs6R0Zi68ovJbFg/EVlvbt3EPOtd
-8Bd4yXhp/5iG83Nlov7KKQjoq/5OVoaWpRBqgQ/Xr72DHkfVeeiK7UdV92tZW4mv
-e+avwcX6F74xeIWCKsB6+1pXMKzmBhh5pAa6cJF2VuCC9EJcCQ03wSQqzJyoBO1s
-Qf8koa58XPykw/mPFK1AlEfuCF0RNjCO9mbvWLjjTcsDhJPPI77+WR2S8gutiU5r
-Q5AflQJCJnxjx2SCRkX9y6+exnODS8anHnKi7o3gYp8n93cFAiw=
-=AP9b
------END PGP SIGNATURE-----
-
---q2kjujlkwk6vx2gp--
+Thank you for your review, Alan.
 
