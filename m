@@ -1,81 +1,144 @@
-Return-Path: <linux-kernel+bounces-745454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB595B11A35
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FA3B11A37
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E58562522
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:48:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4F31CE114D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB482046A9;
-	Fri, 25 Jul 2025 08:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999601F2BA4;
+	Fri, 25 Jul 2025 08:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dZkVJsIy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miHprvFx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3324C1FC3;
-	Fri, 25 Jul 2025 08:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96D1FC3;
+	Fri, 25 Jul 2025 08:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753433284; cv=none; b=C/txG0xGNsQRdaK1oIbDUhJbTVJYKlPqLyFIcfXDqI10buNZt/dQRCfrYxrFWGufzgsODSAYhyqqusfSHAmkVZHGc2ipABfQY2d9FsVwbZ+cPORWZ4pGNXb/NJArNcXDjVAF79fhWGkb6VEA0D5ZfO8ZDeksBT9xKT073PClpt4=
+	t=1753433300; cv=none; b=US9+J1i8HSbm278rHoFt0ZdIkZ/hp8Bj/v4qOg3+qb2ak25o9tsGbxrSbjVhXOtPDlbv9GHdXRWHkuWvotOTdaT4NpYLNhuolHEX9xLmgPFAxNUvZf0na4Q6WxnSMIb64/LaX3cmPmVa0mdyzYXFKpTXCzBLmz9k1djvO0C4UsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753433284; c=relaxed/simple;
-	bh=hvj1ihctKw1L0QQ+ZZnC1o5z1A/89BDCxlya0HhhA2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VlwylcSLPOsyCFficBj9vAsPgvCCKQLU6U60hhIyRgq2mFuh5wrR5OBNK8C9zqov5qQyzdY/DspLdO/J2q3NmXYC1LsBb/JwJnLh6FRDLcjdqoUcx/4D9OylF+EJ0N20emfLZMY6PqL58zzPfZDk/6gru0Z584cLC0zz5lDKKYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dZkVJsIy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3676BC4CEE7;
-	Fri, 25 Jul 2025 08:48:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753433283;
-	bh=hvj1ihctKw1L0QQ+ZZnC1o5z1A/89BDCxlya0HhhA2o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dZkVJsIyf8hrZaEdD1ZeQtn18XWQiB0s4iW9iIWwz8ExWUEDhqv/grSDG3fnrd3Vj
-	 ZWTJH323hdcBvHjBhvO1L5PCFMyXAAyWORhUUDqun9oFWEZaHlKsLDDRRXKR777cPo
-	 uDxvtMFtP0tL4XsreS+8XH5V4egV5NNE4txe+7YE=
-Date: Fri, 25 Jul 2025 10:48:00 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Prashanth K <prashanth.k@oss.qualcomm.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: dwc3: qcom: Add shutdown handler
-Message-ID: <2025072542-bleep-parting-3e7a@gregkh>
-References: <20250725062158.2418961-1-prashanth.k@oss.qualcomm.com>
+	s=arc-20240116; t=1753433300; c=relaxed/simple;
+	bh=EwAtmyR0kMv8l1AdAG5vtKyOKjmw06VLhEKfxX4RGTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RClqt1GEO4o4K3OY6e/rrKZbDXkUQfSV4l6rIiTRSk9ELZ/Q0fLz/zQwt6U+fipK1ntx0ZFbv1EMMdhE3J/cwkBTnWCj+TiUXlwi8bDabA+No3/WKrv3VX8FocZ1eTZRc9A6xyPT7scogfp1W5bRc7GxdPAnul33i6yVH4mEv5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miHprvFx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD714C4CEE7;
+	Fri, 25 Jul 2025 08:48:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753433298;
+	bh=EwAtmyR0kMv8l1AdAG5vtKyOKjmw06VLhEKfxX4RGTo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=miHprvFxB1dhNx7Nz1jlGp0x8mhCM6iRCsrt3AylbwU1UUvSubjMo55u3Rp7Hs6Lo
+	 RmpZHj2X/66IwdiWQgw9/uLJIMvdtpPvWI79bjqxSziNB4f5dkgDMaDOCr1xfnNX46
+	 pYm4U9vQW0C1ThFCoSbvC2TRdZ/3WNbTLv6EtluQP5az9X8gUXg03dL+5TIHM2DfeZ
+	 ofG/i4zJE0tYCxh+45puhjvKij8UPX8lSwhqFhrMaMn/gJzEHs9BXNmwTSA43Z9iGS
+	 o5qWTbZ+vR9InSC8E3Uv3fOOs/C8Eu3jP0j9ptw7ibd5zFaqH3IcvA9ezgYab08wy2
+	 J/ck/mO26/X9A==
+Message-ID: <1635e663-24b6-48f8-b781-67284d832db7@kernel.org>
+Date: Fri, 25 Jul 2025 10:48:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725062158.2418961-1-prashanth.k@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clocksource/drivers/exynos_mct: Fix section mismatch from
+ the module conversion
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de,
+ willmcvicker@google.com
+Cc: linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-samsung-soc@vger.kernel.org>
+References: <20250620181719.1399856-6-willmcvicker@google.com>
+ <20250715121834.2059191-1-daniel.lezcano@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250715121834.2059191-1-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 25, 2025 at 11:51:58AM +0530, Prashanth K wrote:
-> Currently during system reboot, SMMU disables its translations
-> while devices like USB may still be actively using DMA buffers.
-> This can lead to NOC errors and system crashes due to invalid
-> memory access.
+On 15/07/2025 14:18, Daniel Lezcano wrote:
+> The function register_current_timer_delay() when compiling on ARM32
+> fails with a section mismatch. That is resulting from the module
+> conversion where the function exynos4_clocksource_init() is called
+> from mct_init_dt(). This one had its __init annotation removed to for
+> the module loading.
 > 
-> Address this by adding a shutdown callback to dwc3-qcom, which
-> ensures proper teardown of UDC stack and prevents DWC3 controller
-> from accessing memory after SMMU translation is disabled. Reuse
-> the existing remove callback for this purpose.
+> Fix this by adding the __init_or_module annotation for the functions:
+>  - mct_init_dt()
+>  - mct_init_spi()
+>  - mct_init_dt()
 > 
-> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
+> Compiled on ARM32 + MODULES=no, ARM64 + MODULES=yes, ARM64 +
+> MODULES=no
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 > ---
->  drivers/usb/dwc3/dwc3-qcom.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  drivers/clocksource/exynos_mct.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-What commit id does this fix?  Or is this just a new feature?
+Did anyone applied this or any other fix?
 
-thanks,
+Next builds are still broken.
+https://krzk.eu/#/builders/12/builds/3365
 
-greg k-h
+Please revert untested patches if there is no consensus for fixes
+
+It's really surprising that original patchset was not even built by
+defconfigs (and I assume it was not even asked to be built by LKP).
+
+Best regards,
+Krzysztof
 
