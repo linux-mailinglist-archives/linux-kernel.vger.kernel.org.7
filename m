@@ -1,110 +1,142 @@
-Return-Path: <linux-kernel+bounces-745601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E68DB11C10
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:17:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C505B11C05
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC1E2B40854
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:15:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23EF31CE4B31
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0E82E9EA7;
-	Fri, 25 Jul 2025 10:13:39 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081182E6D01;
+	Fri, 25 Jul 2025 10:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKtQTykI"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D922E9721;
-	Fri, 25 Jul 2025 10:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0502E62B2;
+	Fri, 25 Jul 2025 10:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753438419; cv=none; b=I/2a+5uMtPYQmfkA1Bo92YQrtijI0zUZaEsKONVyzS2htBW8NG94TclcuPIopkk/UZVNuqRrpOy0g19n1X6PXoWCD++tFveeK4vEVGJCGjlQFXcWrn9e+VXwaa3txwT7ZtkOgZEcgbbHN/2vgUY+gkII/DXnYYqeCK3qAL2eRHU=
+	t=1753438331; cv=none; b=cG44P1Uc2xCoxS96qVY3sf7qJuLJvIP2G5lJcftYbCmVpYn1QZu1N2NJlPOVdCzg8GdazsUm91X/H6geJ36RycMBn00qi5G3yl7x7ZKnijGAIex6VzraNlu9fjt7L7ErfTKtwVv51MfeuC5QSSr70Xfp7MhssKwavq22QZOC8Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753438419; c=relaxed/simple;
-	bh=kRroiVwN8VC5mjdK3a+UEFHGD7+4HV0iLUxuCRe43nY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ShXaIQm0evKGiMy4pGDCvCRO1OF+pFrCH4EufE3MnOzO/LwwHQx6jMiEXdNkh5cR74DMwYOexLYLpGgQXTBUyIzfU7uUzHBPCjLT1Nc/P6hFWDa800qttWrytsm6BaVRaqDzND8MANmeR70F1/3h9wNGgKR2neypvg9xdl1LQaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz1t1753438310t6f10c101
-X-QQ-Originating-IP: hrXMJrjX1v5SmrXvU/RFaoTkBlV+D++VqopZO1o9Pdc=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 25 Jul 2025 18:11:48 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17354701733030372774
-Date: Fri, 25 Jul 2025 18:11:47 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Simon Horman <horms@kernel.org>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, corbet@lwn.net, gur.stavi@huawei.com,
-	maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com,
-	lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
-	geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
-	lukas.bulwahn@redhat.com, alexanderduyck@fb.com,
-	richardcochran@gmail.com, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/15] net: rnpgbe: Add basic mbx ops support
-Message-ID: <B257A91F74F6FCCD+20250725101147.GA365950@nic-Precision-5820-Tower>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <20250721113238.18615-4-dong100@mucse.com>
- <20250722113542.GG2459@horms.kernel.org>
- <78BE2D403125AFDD+20250723030705.GB169181@nic-Precision-5820-Tower>
- <7d191bc9-98cf-4122-8343-7aa5f741d16c@lunn.ch>
+	s=arc-20240116; t=1753438331; c=relaxed/simple;
+	bh=XCCZTAuVv6rM5KqAiymcvEOfSpnqAYJ05ZeeCfAeMD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=szK/vHsWKuUiu/KWL1TPoKeRsm0AA4jIfc9Pi7JR/xdFPxbxVRZ7yP2Y+2jqu/U13YDa28R+aICH9WK5Ny9NEdItmH9qasSX5n01myKs9bV2Od3gV+mNBxlfP1WQPHOdG7BN+bn3cNW/nBJb1ydQkmn5sFCrfcty4bLpMC1Iybw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKtQTykI; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-41eaf97416eso1299120b6e.0;
+        Fri, 25 Jul 2025 03:12:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753438329; x=1754043129; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Li8Q1/8bXeawqWYN0f/7F76ImwBBFl72CHl1v4y+PLY=;
+        b=PKtQTykI7MJLn2f39R7k6tcldK+iyPClqQUcFdzt70ZafVvgY5cdAx2K6WeXabLVTQ
+         uWwRpOYFxA4lNZu/Dm65KnWzZlxiamZjpTyJ0oMN+NWFqFiCGO9eWfv3NVViHzdLPIlV
+         SEQfJOXwKQCnSUwLsXB1JwZaoDzc4lxlb7s0mYsvgTgQj0Qsjk5l732J3iDQ/nNnClWU
+         NW2WRyVDeReq5jrGIQz5jv3RPLnjltw9BUSv6dX067o9OpuY61T+hkHgRa9zd3B76QEG
+         WeoJigRWnOK9yedXlOWzNq0+p/Vp2wguFNukgZKtMI93T1Y0R74okmKSb8Nftk9oX34Z
+         8kNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753438329; x=1754043129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Li8Q1/8bXeawqWYN0f/7F76ImwBBFl72CHl1v4y+PLY=;
+        b=ADcVt/apsSSj55yGfjz+90cruWqCVlLPyTl4cHDoaevMU9A16GTGRsl3cpPNXsxTfm
+         x4hcTZCE4VKZT0IuPrcwhf8WfLBkx8pHBVCm9ix+44nYN7tKHULI7UZ7L9mLEhxhR0G1
+         9n3tL0gHeqCEB0jwCUDQv1UF69fsFpWIm+uIaITkIeF7zBAJVhRxWGKkWQ3HwKGTfVZf
+         zu/tIbcK4twO61RXGTsdhCrUkGqGX6rQA5PJYmgc0TU1YOacr70I1H5kdTDlA+LENzsd
+         A9Y0RAFyBsuYrGjjiOEvne6DMQJayUBAV6VXKmCp1G5ziAZ/zD/avlQ7osgAUUTLS9Cw
+         9sIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJk4YCgM/ppveUg3+CKIg8DCVu2fkHnQJnDr06hlGvUKC6xIUVrnC3unJ1kh/dkx9lCCsARDSs2LTXjjk=@vger.kernel.org, AJvYcCXrf6icup83Wpy6Yy9DgHWpbZc1fjQkUBKvWMSQMg0gN4m7K08fO+xihgci0Z5LuB7gQDk5zslPYKX9Sozk@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEZTHcV0WM2vEOyfFc/O87/PteiB424zTJw/fwdaYXyqKbzXn/
+	JWa6/gxO3TYxIY388e/M44p5ZRpp1JqQM4bhSKnYAp77IYPqx8fRjER5nRo7BOgAt3QFgXFnnQe
+	8GkARNMBeU5boZawEcsXepZf40IxQvLU=
+X-Gm-Gg: ASbGncu7ckNdZBynQPPIP3LqdC3hoyZ8MSEjX/Jus8CGkG9WhrOEFeLzsCs6KW7my7n
+	GfTKFX7BaeMXsgaSAOsDr0sJO5Gg6MBQ7Tm6nLPgEfEg+pcGOvJzc3/xQQcDoPMgTOxvGgebP2b
+	7iTr/vxOeLISdNChMvTvcVgW6xD65RxklU8IjMnvq+Dwjn/jTd43TZ591EiM8kOo0SRG6Tv/uTQ
+	NSynfug2vvYdH5b2vY=
+X-Google-Smtp-Source: AGHT+IGHB83pYzy5pyfm99vaRBBCdZk4KX+KT5ViJGvx8qXjZCmgLd679d9uosj/HkweSM/0GXEa6THJnnUWuwPv08o=
+X-Received: by 2002:a05:6808:170c:b0:40b:711:377d with SMTP id
+ 5614622812f47-42bba0ed70amr483979b6e.18.1753438328742; Fri, 25 Jul 2025
+ 03:12:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d191bc9-98cf-4122-8343-7aa5f741d16c@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Mdc3TkmnJyI/+YOumia0fMkiIQ3IF+TcSl1ZjGBSlfohOREivgBA9soq
-	BT55KohU0cCwMVq1Hn5qrRJr+4DgKhv1P1LOGDV8HZJAOMk5RNOtp2vM8yFo5gLUBsqJrsW
-	58UoWXTEHFkHA6lalgrxmtpyY0WnzGy2YUGxTnfqNE+QFCGTBk4Vez7sobeA3J/IYYs4VlG
-	hy+87ZyXv/gRALtHjJ90WIXhyXBWReu9WXUdHZbasITtNjp7ytjlrjdcF7EEGqfd87sx4iT
-	cumEjRi0QaWDKcl5HzVQmDiiAPCmpvPGM9+0DNWzryeRwqYiWzhvR86txTBlnZHdVmtknro
-	Xp7aUfQZlVqo/T6rbhg514LZ2AnMa/iCPWhPsnMnz6oQdQJw3RTJnSzFdIx7IHu4FuoP0Pd
-	Y1GF+13lG4rGXY9tuZ0IfdHw5QNCVLzWKzWYSyFoub3op3ziVdG+It/dNAZiR64dMS3MBCK
-	n1Ctljuurrs9jGuOTp2NyM8R2hCHOwIJMIDMeVRodbil9BtZ1+8z7hsKP6L7VGWRJTgqmde
-	lmUCjMSyqIHyii/7yIzD5zHWKPVs0MLIPhWLqOS/JS/3x9MV6AYk3MxucOzqGOoB9SI429C
-	PxksrIQ4EMTbsmjcBNSAGFnHYFet0elNnQy58iqZeAkRE4MRgPQ6hVjwXAW4S2pSjmsdHq/
-	XQnKM1eXDh3H6PZy91kJpooj27sGQam6bSrfAtFco2yLCvrr0i1Jntfr0zspiiJMMTLfkFq
-	nVedLPPkVq3DuWvCS6P5p+MRwm9sFr1O4BiXfabf/INxDTIT91cCaf13sa+WtHIYTGV7ym3
-	7TPQCjDUBc4DeI2DtEmijT+xC6q0fJtm1waYRrPTDOtBkZmCTp4pz21NzHoUupf8+pEKGsy
-	uCZx77NoHBZHGRihV3bIgekKFW1vTdBurhG5Nd4QkGrJPB2U8tdPv+yD2CQoBMa33GbI8mB
-	u3dsQRan5oJSUof4AyuQS02eveW+vrXk0KLeJveJuQdYwyHJcXqzyDVv2SfMqGH1aQxW755
-	x8VRkfE5ZRB2B6O+BSRMTuu7NI3y7kboGq32KRGg==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+References: <20250725055928.37658-1-suchitkarunakaran@gmail.com> <f020e62b-5186-4461-8fe9-de64d35de488@gmail.com>
+In-Reply-To: <f020e62b-5186-4461-8fe9-de64d35de488@gmail.com>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Fri, 25 Jul 2025 15:41:56 +0530
+X-Gm-Features: Ac12FXyGeL9MCePha8mADnZZ3s0Yd1cw-jApyUYA_m3RLyXBbVTSAsTj9dYMESA
+Message-ID: <CAO9wTFi9xEB_G-CwMxDxWbNcNCRHp9ps5sGj2U9w7YZgBzV1rg@mail.gmail.com>
+Subject: Re: [PATCH] kconfig/lxdialog: replace strcpy() with strscpy() in inputbox.c
+To: Franco Martelli <martellif67@gmail.com>
+Cc: masahiroy@kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 04:38:00PM +0200, Andrew Lunn wrote:
-> > > Flagged by W=1 builds with Clang 20.1.8, and Smatch.
-> > > 
-> > > > +}
-> > > 
-> > > ...
-> > > 
-> > 
-> > Got it, I will fix this.
-> > Maybe my clang (10.0.0) is too old, I will update it and 
-> > try W=1 again.
-> 
-> 10.0.0 was released 24 Mar 2020. That is a five year old compiler!
-> 
-> Try something a bit more modern.
-> 
-> 	Andrew
-> 
+On Fri, 25 Jul 2025 at 15:23, Franco Martelli <martellif67@gmail.com> wrote=
+:
+>
+> On 25/07/25 at 07:59, Suchit Karunakaran wrote:
+> > strcpy() performs no bounds checking and can lead to buffer overflows i=
+f
+> > the input string exceeds the destination buffer size. Replace it with
+> > strscpy(), which ensures the input is always NULL-terminated and
+> > prevents overflows.
+> >
+> > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> > ---
+> >   scripts/kconfig/lxdialog/inputbox.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdi=
+alog/inputbox.c
+> > index 3c6e24b20f5b..8880ccaffa0b 100644
+> > --- a/scripts/kconfig/lxdialog/inputbox.c
+> > +++ b/scripts/kconfig/lxdialog/inputbox.c
+> > @@ -40,7 +40,7 @@ int dialog_inputbox(const char *title, const char *pr=
+ompt, int height, int width
+> >       if (!init)
+> >               instr[0] =3D '\0';
+> >       else
+> > -             strcpy(instr, init);
+> > +             strscpy(instr, init, MAX_LEN + 1);
+> >
+> >   do_resize:
+> >       if (getmaxy(stdscr) <=3D (height - INPUTBOX_HEIGHT_MIN))
+>
+> perhaps it's better to sanitize the whole code in
+> script/kconfig not only in lxdialog/inputbox.c
+>
+> $ grep -Rn strcpy scripts/kconfig/*
+> scripts/kconfig/confdata.c:143: strcpy(depfile_path +
+> depfile_prefix_len, name);
+> scripts/kconfig/lxdialog/util.c:348:    strcpy(tempstr, prompt);
+> scripts/kconfig/lxdialog/inputbox.c:43:         strcpy(instr, init);
+> scripts/kconfig/symbol.c:764:   strcpy(val, newval);
+> scripts/kconfig/util.c:55:      strcpy(gs.s, "\0");
+>
+> because the script "checkpatch.pl" emits a warning
+> whether strcpy() function is used:
+>
+> WARNING: Prefer strscpy over strcpy - see:
+> https://github.com/KSPP/linux/issues/88
+>
 
-Ok, I have update it, and got the warning.
-
-Thanks for your feedback.
+Hi Franco, I wanted to get feedback on this first before proceeding
+further. If the code change looks good to you, I=E2=80=99ll go ahead and
+submit patches for the other places as well. Thanks!
 
