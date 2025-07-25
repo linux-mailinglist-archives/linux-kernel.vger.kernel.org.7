@@ -1,246 +1,169 @@
-Return-Path: <linux-kernel+bounces-745615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D974B11C30
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:22:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D769B11C38
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705C6189046E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5394E761B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EC62DCF50;
-	Fri, 25 Jul 2025 10:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF13D2DCF6E;
+	Fri, 25 Jul 2025 10:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="A7IbpD6w"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2059.outbound.protection.outlook.com [40.107.220.59])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hh6ujQXk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33F3234966;
-	Fri, 25 Jul 2025 10:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753438938; cv=fail; b=hjRKTC4v1T6XEJj+QX8u6rVogC5UsRKKZ80KL0QGCduDnX9Zg2unDa+OJM7+qmjqVGdFrF7APLJpOEmtUtvI9Me18yGA5bj5+e8KzHCix6pg+3zcg49rM24SYVsCH/0GOnErGQ/RIySuOMmZtzAYgB50QIItbzhPYtaQumVe/no=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753438938; c=relaxed/simple;
-	bh=pylHlrMO6mCuXbgseCyoQs4TdupJm6pmf76BuRq0UKo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ubDzUjtFRCxaugJWkuFJcan183FAtz4NdfOXw3GNrdrvm+D6c4K7wPglu3hi8C6FjM9xE3PQ3hywvEztkG2gz3IvPBBiAhoc4yFjt22SzTEBQWj5u7tqHQ7RYVjnmauvsUyoVSTeqB0nkp7D8lS6gbsBhk4eM/HzTvtOZ75Wh1o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=A7IbpD6w; arc=fail smtp.client-ip=40.107.220.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wXqg8VGJbku2HD7IyhZd84mK4P87+MNectJ7b9giuaWgrByXfzjMSCTfWR7nhGy5WEEIEilNZN3zLzV5zy/CmB8iPqkcmDudfxQ4gVJkxu1UX3tKn2NTVQ/YtimSpV0BJ8Cf7eHvAn3OYpycyYz3ELJ0lQMBTjkQuSvkhsmK6w8+dpaqv/YvfPzbLn3Kk5IzdSXji8A6YiHvnQGqUi7vCR5avfyS4j7NdbJdGRwQtidl8FSCX0sQjRtV9LAc2TT3uEPskrcLxoHCG7ilFx1Mar9VZmfHlti63T1cuopxQ88JaJQVFHjctTbxL51WMP/E+zPNe/1GrnFhidvcoXbVxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PPwNe0v4SDcG4FP1Vz7hSGHSr6y5FZd7ez46Hpn6Iz4=;
- b=Az/x6YcOOXqAObxKpBqxLaj3Z6CMsX9WtrKTgeHWXiZsJyLsRe8T4ZfxCNyepCo42ti8hABpsGijbEg0cGaVA2zOiSGbRTt1PP4E4MTSs7MT+M/5nqDQs+fbwWmJaATCL71KUxPOAsuyeJnxUlLHACgFHrhS9w//11un4IQanWqTjbJtw2zy07na+6s7TXQ2HWO3ICUof36XuL2FWlThAv4Vs88CwDdOimFW/UmtwRcXAQxaiJAjQvtptAzTMsg8Q3CYZZ2StVU+yNM+fwCAC+mX3v3CQlB/Y/1qxXjryxFUI5tl2lkbMEU2DoR5nl/vSRd5Ui3Ex+Y5fYPFdBIAlg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PPwNe0v4SDcG4FP1Vz7hSGHSr6y5FZd7ez46Hpn6Iz4=;
- b=A7IbpD6wtGQEyKo2uXFRKokcaDLF7jDSPhdr8HP0zICUOwfKx6LDOCZQKt5q7sonWO9tsbCoZVcAsNp+3vJse8Z/QAdZhx9/DJ8dtxwKin/F7uBl1fpLO6iuqtntLUENfo5Z4FZ21DQsi3W0aRb1cG5A7qyPtaLtxsHmspVLtts=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
- by SA1PR12MB6972.namprd12.prod.outlook.com (2603:10b6:806:24f::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.23; Fri, 25 Jul
- 2025 10:22:12 +0000
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7%3]) with mapi id 15.20.8964.021; Fri, 25 Jul 2025
- 10:22:11 +0000
-Message-ID: <12fb4d09-6b94-4f54-86b8-8a3ac0949151@amd.com>
-Date: Fri, 25 Jul 2025 18:22:03 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
-To: Sultan Alsawaf <sultan@kerneltoast.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- Svetoslav.Stoilov@amd.com, bin.du@amd.com
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <aIEmJXNpNN0QF233@sultan-box>
-Content-Language: en-US
-From: "Du, Bin" <bin.du@amd.com>
-In-Reply-To: <aIEmJXNpNN0QF233@sultan-box>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0102.apcprd02.prod.outlook.com
- (2603:1096:4:92::18) To PH8PR12MB7446.namprd12.prod.outlook.com
- (2603:10b6:510:216::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927F02DA777;
+	Fri, 25 Jul 2025 10:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753438980; cv=none; b=TptoTEHaX3w6cmUXF//q6UBJxyA95p6j7RoRuTdtpOdVz+1/ubZNa+C88UPXq56YndO93Dt900uXUP2TqCV4b/Sk0TrHw95braxWWe9kha7DCvMI4sYc8LotN3maRwEloiDjHdeY4XVjy8mzWdFKv5AuUJmgu4Ii019VQGC5ATw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753438980; c=relaxed/simple;
+	bh=DoBptU7WgQjjp3I2VdAKCGZvrHgfiOMQFawDaIBPBOs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C5ieqhEBOZFS+PGOLUParbLhSibkWjMRJhvjIWXB2q+ebyzggyA4HXFqBkNrxSNfIxT7c9DKMK6pQeM4wmerVsYgFcQhkWpSNMS3g/vY87MvmLQ//Bp8PE6o8TONYbLxAijimLKf2pMYmRWefywaNcjftu9JEsz9f3iL45HTQR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hh6ujQXk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P9JXb1025827;
+	Fri, 25 Jul 2025 10:22:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=iIbZHbS9s9W6ttGKX/iKrJbEeTlLeZNA0hs
+	TF5Hj6BY=; b=hh6ujQXkCl1w/fwCbBcmzIrCNP7oJRkv/v+nPQVWj38C2Bftq0k
+	auTknlIB9qxlYNAyLOGbVMp8Qeun2pB4p8bvYl5+SbdnTWZuz5D6cewMEKGR1VWD
+	fXt0ulbryhiBPKBL4aJv4IKtQAq9G64506aqQzgSVHBNLI8pPLnVyVSShQjRsxkA
+	kS8KsHq1ZV78La+5ljVwfW5q8HJKNlMNn+hbX+jxHMkzZbzD6+Sr78ciPzXQDHvZ
+	q4HXYwO3O9ClEqenUSkMKLDraHlLXVWYQMM593PrZWqTf95qQGd5Rh8dMq90azEd
+	80WMvPf6kPkQUolPV4nNqQkw2yvZWLqPwiA==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w30spkc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 10:22:48 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56PAMYeH027666;
+	Fri, 25 Jul 2025 10:22:34 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4804emsyu0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 10:22:34 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56PAMYGq027650;
+	Fri, 25 Jul 2025 10:22:34 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 56PAMX8Z027644
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 10:22:34 +0000
+Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id DC1BA210CE; Fri, 25 Jul 2025 18:22:32 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
+        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Subject: [PATCH v7 0/3] pci: qcom: drop unrelated clock and add link_down reset for sa8775p
+Date: Fri, 25 Jul 2025 18:22:28 +0800
+Message-Id: <20250725102231.3608298-1-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|SA1PR12MB6972:EE_
-X-MS-Office365-Filtering-Correlation-Id: f112db67-7b66-435a-8281-08ddcb651e1d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SitiakwvOGNiUURVVjBWczRoMWFXRUxnN3E5Y2RGYk1VbDdtbC9XODNkdlFV?=
- =?utf-8?B?a1RrU3QrN0h4R0tiUDBKZDk0M1U1NzRYUUZlMmd5TCtyVW13Y1pRNnJVWVZy?=
- =?utf-8?B?T29Sc200dnYvN0cyUW9Hby9mb3Y2MHJlNTRPQkFFblVkL1VTRng3YmN6WkFo?=
- =?utf-8?B?S2ZkUWdXVDE4WVFhRDJhTFh0NHZIeStyZFpxNlBYOFI2RmpZZ0NoYTFlY3ZQ?=
- =?utf-8?B?ZGIxMlMvUHR6L1VqNnVmMkFFY28rT0pTaEc4ZW9ZQzhhazlHaC9zQWVUeXhr?=
- =?utf-8?B?b0NoME8yMkRncjVPYXloR0JOT21hNERua0FKak4rRjNNNEZLRTVMMjdBcml5?=
- =?utf-8?B?dXY2NHpIaEs1NVZIY1phd0NwQVY2UTJHTCs0bDNMNGhSNHFyMzgzaEpnYnQw?=
- =?utf-8?B?Z1FYZkRhRzMrYWhSQU14VUxXMHBXNG9jU0RLbUxQeG1BdnMwd0J5MmNuNGpn?=
- =?utf-8?B?emZBSjNycGRoYkRSbVZDODBlSEY2VjlQVWVGTm0rbnVDRFRGTXViSFBmSHVX?=
- =?utf-8?B?eXVleG5zc3ZpYXhGa3ovMG5oMWRHeFJVaXlkc2Q5cURIMHFvY0lnbGUvS0lW?=
- =?utf-8?B?bmlTSU9va1BwK3ZlbTIzV29tVXhmKysxcUZFT1dSakFiQ25kbFpDWUhUaEZ1?=
- =?utf-8?B?VFVGNnlja3ZkOU1rN3l3UGlSUkZXVWp0R25YbjZiWCt0K2JvYnRNSFY0Z1Jv?=
- =?utf-8?B?SzdZT3k2QU04Mkx0a1UrMTl6Q2U4amlyU3lGczdxUEpGbmJMVmpmSSt5MmQ2?=
- =?utf-8?B?OHVPdGZTOXcyQVFJN3lLZTI3Tm5oVDF2cnJ3TkVBamVJUyt0TGw1eklDMjBU?=
- =?utf-8?B?dmt6LzVYdHErV2lGYWRJYjNlVHpGbGRhdEV0VDVsblJ0ck1jbzhSSE0yWERN?=
- =?utf-8?B?WmFON1NaajhLREQzVm4yQ25va0dQWXE1N0JaREVDVGtKNXJSOGJiSkcvUXN1?=
- =?utf-8?B?K2pGa2ZaMExBREZibXJ6ZXNpQ2dZNjFKamJ1M3MxTHgwQWZRZk44TE9LS3Qy?=
- =?utf-8?B?Q25PSWgyMlJXTy9JK25xcWlwRnI0QndXd2djN2xlUE9NeThJWUJxaGNZOSsx?=
- =?utf-8?B?VDUwZDZMb1RjUzBIUUhkS21aOUUvZjBTbm41eEJjRGRzVG5SZCtqMzVBTk9V?=
- =?utf-8?B?ZHBUUDJrSnZXZ01oNG9Bb2xIVW9vQTQzaXJHNTMvdWtsQVloT2JOOVU1cjlT?=
- =?utf-8?B?OUFLRENhN0ZQZkFpbzZwRGJWcUR1VlRmZG95YUdrRnc3amdXbXJNdFNnRDRo?=
- =?utf-8?B?amVMSGpGamxDTFdwMUxBU0hWNWprTHZpYk5DbzVSZmpmWmRuTHhIZE1ySnBZ?=
- =?utf-8?B?Sy92R3A5M3RQa1pMUXVpSjAzWURoZ1Y1U1ZVd3A5OURQY3ZKU0V5dS9WLzY5?=
- =?utf-8?B?Y0lUeHdLZG9PZVhDRC9VWWRvK09vMEYxeUNxQ0Q2NnlYbXpLcklnY3VNSUpn?=
- =?utf-8?B?SlhqOE1uc3VGbUg3MmhTR3RraXBRbytZNFNzS1l6aXpBWEZIMElNTkhaL2ZJ?=
- =?utf-8?B?MzRCdjJMSmwybnhFVkxPeTJ5VVcvNEZPRy9GMmMrM25mNnVrMUdTcGc3ZW9l?=
- =?utf-8?B?T1paZllaaHhsdkNLVUlpWmx3MlBibVZoSkE5MHFWNTJ1elRmZW9ETTI3L3BX?=
- =?utf-8?B?MFdlcGE4bWUrTUh5ZS9OSEVhY2diNHVaVE1NdkZLSm1sdlpwaUFkc3VSVTZy?=
- =?utf-8?B?aktRNnUvQVRkYWVvWERSRnladkFJNFIzRkczSmFqNXI5L3lNRVlMY1kvUDB2?=
- =?utf-8?B?c3VwSWx0dEo1ZFNmazdSNWxiS3oyNmtCdmh6cU9tei91a0NQOXNQNXp3bDBL?=
- =?utf-8?B?d3U3dTVRTWhOeW9ZcXMvbEJKY3RraUQ0R0VjSWpLbE5jK09WQU1rbkUyQ3dU?=
- =?utf-8?Q?tSb5CazOco3A0?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZnBBQldPd0hDUDR6UEJ5WjBBQzY0dDRsaENpNnJDMUpqWHBFN0hOOGVqTjZj?=
- =?utf-8?B?NUhxVEtqeUNKeWIrS0tqUkNNaDRKaGpQUEdwYXJKTW5YeUJOTzJpcHRUVk5M?=
- =?utf-8?B?V3Z4YWdrOXhnRW5Mcm9RNTFJeFV1eVQvWEh1MFE1d0huTlJyRmtWTGt4VFZU?=
- =?utf-8?B?ZE9SWUJ6ZGIyY2I1UHpQVWg2dmhvVFFOOEppRkVUaWN0QWREb1A5U25nd0pH?=
- =?utf-8?B?amNTV1VEZ3h6Wm50cjJ0ZEhQc3FjbElBUHFLZ1B5V3ppUWhyWkZoQmRYN1hH?=
- =?utf-8?B?bVlWdmdmbGFqU0lkblEvN05Oa1FzSmJqSWVpZUk4c0l2SkpRMHpNMUpvK0J1?=
- =?utf-8?B?eTJJWEN6NlFra2pRSU1WMGx6UTIvdVZBc1EvVjlWOEF5Ly9lQVVWNnArUnlt?=
- =?utf-8?B?UHJTNDliNnBkdmpQdWZnQmxoTk1EVUtha0IwQ1BzR25PL2xFeXFsRzU1Mzk3?=
- =?utf-8?B?TndwQXd4anJsRXJDY3dMVU5kYnlqYS9sY0xKWTIrdUpkUnRkcjdKd2I2bTdP?=
- =?utf-8?B?amMwU3FMOG1xay9zaTFBNHJGcGxPdG5INWVXRTN4SkdFdTB2SjJiTlRVU0hu?=
- =?utf-8?B?WWYvbWtFMnhwVFdoRGpIaGlMZU5PVDlzYmlZV3IyMFp4dE05SUV2U1FEV2hq?=
- =?utf-8?B?c3lKS004czNLWXBCMWtYaGYwK05XQnF3VldVVVF3RUlSWnlFSE9SNnFmZTZW?=
- =?utf-8?B?ZUJRWlJIQ2hRYVppbzliU1Q5L1ZQK1Q4bGZ3QVdMTjZOSnBTbWpuanBid0NZ?=
- =?utf-8?B?c2tncEFwS3pHV3RNZHI3cERhcW45L3Z2UWp3c04wbTF5b0hEVTgrQkZkQ2I1?=
- =?utf-8?B?ZDdIQ25QWWx6RDV3eDd4ajdGcXBTVCtiMVpKSXF6M21NSzFSUjNFYzljSVRu?=
- =?utf-8?B?YUFWK1h5Y1BtTCtQYnBHeWFsejE0K1hCOGIxUlFEMlVqTy9OY2E2clhjN0JO?=
- =?utf-8?B?VHlVcjFkbW9tRTNPZXRFcGdKWXZ0Ty9FRzZGd2diOUNRaDNuTWFFU3JkZGNJ?=
- =?utf-8?B?cHBwTkNmUmlsT1YrTWVMY0U2UEpVSlpKSmxLYzlzUFl6MHkzTlVhZ1gxRzJD?=
- =?utf-8?B?VU1CVzNlaDV2ZTNwRG1rdWF4ZkQ4Tyt4cGFaRGEzWXl3bHZuYzZiRUoydG91?=
- =?utf-8?B?RjAwb2haL3l6TWlWYXB5UlpYQnZmUng2K1MrNjR0ZlY2TUpDN3dha3d3N2tL?=
- =?utf-8?B?a0lEeHBWbmJnZ3Y0SmNkWEJyRm5yRlpvdjU3aUJBd0M0ZllCbmFSUmV1Rjc4?=
- =?utf-8?B?MUxUSVBDbWJZUHpJN0xwdU1aMk43bkNhUyt4MXRRdWg4cTZrNlEwOGJ1TEhB?=
- =?utf-8?B?Y3MzNkNHZ0l2eDdOOW1wclpnUDhIWEtFdU0rL0tzRjAydlAxSmI0WGdlZW5x?=
- =?utf-8?B?TGZ2eXJJR082eWY5VWFXSUp2dU9vcVM5c01SRThYUkd4QUhUek05WXdCS2Rw?=
- =?utf-8?B?NUd5WnBldTRzTGdTMTd4bTJxK05La2hHTlBFbnUwQmVTS1ptWmlRakZSVHZr?=
- =?utf-8?B?WDNUcVp5OVZ6SXBGeGxHK3dwdWhZVXBDN3pOckhPUk9TUHl6R0tLbHpDVmY2?=
- =?utf-8?B?RTZjUDR3bXE3ZUtHc0lmcTF1bFh6b1BHbXJUZXVsWnRZUTBwQnBvNGwvK01w?=
- =?utf-8?B?Z3Z3bjRuQkFXYmxxQU93ZEg3a0g5N0E4R05lbUpsWnF1VzVrYWpLRnhnUVRK?=
- =?utf-8?B?ZnJoZXcxTTFzN0NTcmJLbjUxd0YvOFJiVjJEMHlkVHQvRHBnUXhpUS9WS0RB?=
- =?utf-8?B?ditzT1dSZHRRL0N0bGpRMCs0bDdkbW9xRnJmdkd1dm5zaDRMZkFRSEVqOHpS?=
- =?utf-8?B?ZHJRQm0rY2NXSjNpUHVkWlBkNHRMQTZTL3UycUI3MHpYY0lLN2hYQUE2RzRW?=
- =?utf-8?B?QUp1QWxsZFhrUzFFQ0FlM0Q1c3duTWF2a1JrNUJNc01yaC84VUMvUDN1Nzgr?=
- =?utf-8?B?OVVKRlhoeklBdW90aEMyRTI4S3NHK0Q1TTc3bFpzMWkydi80MktaM3hWQ2c2?=
- =?utf-8?B?OTVPU1RGSWtxK2ozRWRkVTFHSGNucWJudHh1QlNHOFdaRk94TnNpQzduNWo5?=
- =?utf-8?B?WXdVRjdlMncrNWMzVHRiUTRPVGtRb24wUzJDMm1KcFg1QUZuMXZtcHRVMTBm?=
- =?utf-8?Q?dGtQ=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f112db67-7b66-435a-8281-08ddcb651e1d
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 10:22:11.6951
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XQVF4+oTTPAV1H0+Z5SukhmB825RUggFvb99KnZfUrv88a6TAK1xZ6JxNe1VSDju
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6972
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=WtArMcfv c=1 sm=1 tr=0 ts=68835af8 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=5rr6ixAOVb5IYiBHoQ4A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 5Qn9hx-4didi1S5_QmRg8LsScOF2GS54
+X-Proofpoint-ORIG-GUID: 5Qn9hx-4didi1S5_QmRg8LsScOF2GS54
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA4OCBTYWx0ZWRfXz4oCkU5nm/ZI
+ uMclcfVO1gENEt5OM8cgVfLIGAhKMy/rnRC8yfVmdCoEFm8CHVyyu/WFVmIvz7YgKGPrU03HWAv
+ 97qpPOC6uHt/YjtRgbHeTMhU5k8qMVDyQQEz3GFF5dZTTIF1dTKulySqI2xG8KYvUC+O/mDWzcO
+ J17dfUKmJYYxBclKvI5KxTVSriys3LYCr+GDNQce3RW3xp9g6bMVW4k1ZaMf45dAChFufKh1/65
+ suzVNFbg5Evqj6fH0wE0MqL1rXWbbquh3fWOC7NsJNNIMevItUfJSxgCs9i6P6epkavhK06rHWI
+ aLElJt2iKZrUKkiW+kJH5ae/LfSWJLfnFuAKN1YBXHU0apFZiW6cuX/ks4+hgV5BE0Kh5otVM+i
+ tOr5CdmWzHdTNF82t09Edr+UHr5KM8f76w0J9ZwEkCrE105Ssx19Xmp26UGOMz/IFHo+LPle
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_03,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ mlxscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507250088
 
-Hi Sultan,
+This series drop gcc_aux_clock in pcie phy, the pcie aux clock should 
+be gcc_phy_aux_clock. And sa8775p platform support link_down reset in
+hardware, so add it for both pcie0 and pcie1 to provide a better user
+experience.
 
-[1] is for kernel 6.8, believe it can't be applied to 6.15. We didn't 
-verify on 6.15 but we are really glad to help, would you please provide 
-some info,
-1. Suppose you are using Ubuntu, right? What's the version?
-2. 6.15, do you mean https://github.com/torvalds/linux/tree/v6.15 ?
+Have follwing changes:
+  - Update pcie phy bindings for sa8775p.
+  - Document link_down reset.
+  - Remove aux clock from pcie phy.
+  - Add link_down reset for pcie.
 
-After your confirmation, we'll see what we can do to enable your camera 
-quickly and easily
+Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
 
-Regards,
-Bin
+Changes in v7:
+- Fixed rebase confict
+- Link to v6: https://lore.kernel.org/all/20250725095302.3408875-1-ziyue.zhang@oss.qualcomm.com/
 
-On 7/24/2025 2:12 AM, Sultan Alsawaf wrote:
-> On Wed, Jun 18, 2025 at 05:19:51PM +0800, Bin Du wrote:
->> AMD ISP4 is the AMD image processing gen 4 which can be found in HP ZBook Ultra G1a 14 inch Mobile Workstation PC ( Ryzen AI Max 385)
->> (https://ubuntu.com/certified/202411-36043)
->> This patch series introduces the initial driver support for the AMD ISP4.
->>
->> Patch summary:
->> - Powers up/off and initializes ISP HW
->> - Configures and kicks off ISP FW
->> - Interacts with APP using standard V4l2 interface by video node
->> - Controls ISP HW and interacts with ISP FW to do image processing
->> - Support enum/set output image format and resolution
->> - Support queueing buffer from app and dequeueing ISP filled buffer to App
->> - Starts/stops sensor and mipi csi when camera App starts/stops streaming.
->> - It supports libcamera ver0.2 SimplePipeline
->> - It is verified on qv4l2, cheese and qcam
->> - It is verified together with following patches
->> 	platform/x86: Add AMD ISP platform config for OV05C10 (https://lore.kernel.org/all/20250514215623.522746-1-pratap.nirujogi@amd.com/)
->> 	media: i2c: Add OV05C10 camera sensor driver (https://lore.kernel.org/all/20250408221246.911508-1-pratap.nirujogi@amd.com/)
->> 	pinctrl: amd: isp411: Add amdisp GPIO pinctrl (https://github.com/torvalds/linux/commit/e97435ab09f3ad7b6a588dd7c4e45a96699bbb4a)
->> 	i2c: amd-isp: Add ISP i2c-designware driver (https://github.com/torvalds/linux/commit/d6263c468a761cd4c89887073614394ac48441e1)
->> 	drm/amd/amdgpu: Add GPIO resources required for amdisp (https://gitlab.freedesktop.org/agd5f/linux/-/commit/ad0f5966ed8297aa47b3184192b00b7379ae0758)
-> 
-> Hi,
-> 
-> I have the Ryzen AI MAX+ 395 SKU of the HP ZBook Ultra G1a 14.
-> 
-> I cannot for the life of me get the webcam working under Linux. The webcam works
-> under Windows so it's not a hardware issue.
-> 
-> With this patchset and all of the patches you link here applied to 6.15, I get
-> the following errors:
->    [   11.970038] amd_isp_i2c_designware amd_isp_i2c_designware: Unknown Synopsys component type: 0xffffffff
->    [   11.973162] amd_isp_i2c_designware amd_isp_i2c_designware: error -19: i2c_dw_probe failed
-> 
-> With the old ispkernel code from February [1] applied on 6.15, the webcam
-> indicator LED lights up but there's no image. I see these messages at boot:
->    [    9.449005] amd_isp_capture amd_isp_capture.1.auto: amdgpu: AMD ISP v4l2 device registered
->    [    9.489005] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: The OV05 sensor device is added to the ISP I2C bus
->    [    9.529012] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
->    [    9.554046] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
->    [    9.554174] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
->    [    9.580022] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
-> 
-> And then the kernel crashes due to the same use-after-free issues I pointed out
-> in my other email [2].
-> 
-> Any idea what's going on?
-> 
-> [1] https://github.com/amd/Linux_ISP_Kernel/commit/c6d42584fbd0aa42cc91ecf16dc5c4f3dfea0bb4
-> [2] https://lore.kernel.org/r/aIEiJL83pOYO8lUJ@sultan-box
-> 
-> Thanks,
-> Sultan
+Changes in v6:
+- Update phy bindings commit msg(Johan)
+- Add Acked-by tag
+- Link to v5: https://lore.kernel.org/all/20250718081718.390790-1-ziyue.zhang@oss.qualcomm.com/
+
+Changes in v5:
+- Update phy bindings(Johan)
+- Link to v4: https://lore.kernel.org/all/20250718071207.160988-1-ziyue.zhang@oss.qualcomm.com/
+
+Changes in v4:
+- Update phy bindings, and commit msg(Johan)
+- Add ABI break commit msg
+- Link to v3: https://lore.kernel.org/linux-arm-msm/20250625090048.624399-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v3:
+- Update phy bindings, remove phy_aux clock (Johan)
+- Update DT binding's description (Johan)
+- Link to v2: https://lore.kernel.org/all/20250617021617.2793902-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v2:
+- Change link_down reset from optional to mandatory(Konrad)
+- Link to v1: https://lore.kernel.org/all/20250529035416.4159963-1-quic_ziyuzhan@quicinc.com/
+
+Ziyue Zhang (3):
+  dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
+  arm64: dts: qcom: sa8775p: remove aux clock from pcie phy
+  arm64: dts: qcom: sa8775p: add link_down reset for pcie
+
+ .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |  4 +-
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 42 ++++++++++++-------
+ 2 files changed, 28 insertions(+), 18 deletions(-)
+
+
+base-commit: d7af19298454ed155f5cf67201a70f5cf836c842
+-- 
+2.34.1
 
 
