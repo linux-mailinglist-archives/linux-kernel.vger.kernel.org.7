@@ -1,254 +1,128 @@
-Return-Path: <linux-kernel+bounces-745997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC0CBB12179
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:10:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B505B1217E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93451C8762A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:10:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDCFAC528A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8332EF295;
-	Fri, 25 Jul 2025 16:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70412EF297;
+	Fri, 25 Jul 2025 16:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XVcwjVWw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="joLBJxms";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XVcwjVWw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="joLBJxms"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a1GdaUB3"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C172BB17
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A68B2EE606
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753459803; cv=none; b=NTs1iMoKQVN/NcgW8ePdAwpxJkhjfH1CiVozOquZ4FWywx7Cx53kI1Yb1YJbLMNp53l89zGRvfIQ3EFvOkjKU/ishP2etDnGgcZ9FkwTsQImRfEH9iB6ILqJPI8TIDFb34WNdeTOHyiv05S1MAl4WAugTgpGAOXP77rZyNLwMYQ=
+	t=1753460005; cv=none; b=byjncTeDpdRsWnEb97Eie3cNZOQUg/3fcZHUmk8xjhF5vM1JXRo3B0ewbLxbRSwuON4DUqnLn0B435bPHDInS6G3Ei1T9ygCbHc8JtA0vf5AUolNlLucL+IPa/AjDOxaC0th+wMddF/bhSO14O1xtAulMGFKKgUTCg9PORK4AaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753459803; c=relaxed/simple;
-	bh=nA5PzzSn24HJ353yCbVh/NhjcA52KJF8UioOO2CRN2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yg7tLTXlgMgHCwIYGKc5xWm2duRzrFZIvSB5DpU5YVwEvYxcyzSqLDMfWp0H17aJyDXmfz/UF9aDORwnCmkDZ9bksist81D0xVlRQTxJT56v4ykfM2Zd8B2j1z/807viZ8pFlkOxYXRqw5/t0bguy557Ewo+KgyTqz+iQWI4Be8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XVcwjVWw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=joLBJxms; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XVcwjVWw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=joLBJxms; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A23131F795;
-	Fri, 25 Jul 2025 16:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753459799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1753460005; c=relaxed/simple;
+	bh=vTpbd0BP2L6tPWRLZ509TtVKssBkd0klbMWWaSLeeWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uaiy6f+x5EBg+P5Z/P/FiDblGwvnghiCH328a3g08C44xtuJHa8RPvs6SVL9YatKDuJdy1ty68T0UeRvIAMNGiQOh4ynazq3Vnvhq2ZiEOMPgdWA+jFTzossQVp+YqWLtl8IcnDHEVxp3Omroi5jb4lJSD++X6VWYJOfPyhkhNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a1GdaUB3; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6bab8404-f830-4855-be83-df57705491f9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753459990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RzzmnXod3F0xmGwLsBojXwSu1vrDZ6qn6GXPgitsM9w=;
-	b=XVcwjVWwLOmuPeyvvzcKu6+bKkyqBF3SSTuwP6rxranRakJapb9n748pYq5hVlVpvF5qSM
-	ddOYqQbDH6zXWpwOaBzSN0eKKyhK1r1fPcZVJyaop+d5oKWaARJYMQHl+WIOVoUrT93k4t
-	33DvwIcRyZOmQ3qwB4vfh0LjV/FLLtc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753459799;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RzzmnXod3F0xmGwLsBojXwSu1vrDZ6qn6GXPgitsM9w=;
-	b=joLBJxmseqJsd02nTj8ecCUWc37VgYFtYN97kNYGAS2ICUJuEIyy5BXLyEO7igU/iVR3Rt
-	3JCL5jlSRC5zL+Dw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XVcwjVWw;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=joLBJxms
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753459799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RzzmnXod3F0xmGwLsBojXwSu1vrDZ6qn6GXPgitsM9w=;
-	b=XVcwjVWwLOmuPeyvvzcKu6+bKkyqBF3SSTuwP6rxranRakJapb9n748pYq5hVlVpvF5qSM
-	ddOYqQbDH6zXWpwOaBzSN0eKKyhK1r1fPcZVJyaop+d5oKWaARJYMQHl+WIOVoUrT93k4t
-	33DvwIcRyZOmQ3qwB4vfh0LjV/FLLtc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753459799;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RzzmnXod3F0xmGwLsBojXwSu1vrDZ6qn6GXPgitsM9w=;
-	b=joLBJxmseqJsd02nTj8ecCUWc37VgYFtYN97kNYGAS2ICUJuEIyy5BXLyEO7igU/iVR3Rt
-	3JCL5jlSRC5zL+Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C96561373A;
-	Fri, 25 Jul 2025 16:09:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VA5fLVasg2iecgAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Fri, 25 Jul 2025 16:09:58 +0000
-Date: Fri, 25 Jul 2025 17:09:57 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Bernard Metzler <BMT@zurich.ibm.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jakub Kicinski <kuba@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Tom Talpey <tom@talpey.com>, 
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, 
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH] RDMA/siw: Fix the sendmsg byte count in siw_tcp_sendpages
-Message-ID: <l5cavrkmzvebjqz62ttdajqc24q3fksxogiibv4tiee7c3j2lk@skxdyrnsqgmm>
-References: <20250723104123.190518-1-pfalcato@suse.de>
- <DS0SPRMB00679C99808A4D85BAB6DADF995FA@DS0SPRMB0067.namprd15.prod.outlook.com>
- <nwtutmewgtziygnp7drmhdxpenrbxumrjprcz7ls2afwub5lwf@due2djp7llv5>
- <DS0SPRMB006759C349217E60D43F923B995FA@DS0SPRMB0067.namprd15.prod.outlook.com>
+	bh=iRWnqQggMPPeHBerbCQybKqJBdoR2jYJWymSZs5VvRM=;
+	b=a1GdaUB3hA1rLLby3rC4NSVZZevqwc72Qcv6T84csnpMi+/OmKarf0ZjOpJrei2Bg02CHk
+	veA4gw3vtyzIzyRVc3uVLDUz409OlegP60NbfknrwMMgrLkmR0W6oLMlkUfjPI6atdX2Q3
+	jgZa/k6tyiy9OUoeuMOVXYL08kAWPuU=
+Date: Fri, 25 Jul 2025 09:13:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DS0SPRMB006759C349217E60D43F923B995FA@DS0SPRMB0067.namprd15.prod.outlook.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: A23131F795
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+Subject: Re: [PATCH bpf-next 1/4] bpf: crypto: Use the correct destructor
+ kfunc type
+Content-Language: en-GB
+To: Sami Tolvanen <samitolvanen@google.com>, bpf@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250724223225.1481960-6-samitolvanen@google.com>
+ <20250724223225.1481960-7-samitolvanen@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250724223225.1481960-7-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 23, 2025 at 04:49:30PM +0000, Bernard Metzler wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Pedro Falcato <pfalcato@suse.de>
-> > Sent: Wednesday, 23 July 2025 17:49
-> > To: Bernard Metzler <BMT@zurich.ibm.com>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>; Leon Romanovsky <leon@kernel.org>;
-> > Vlastimil Babka <vbabka@suse.cz>; Jakub Kicinski <kuba@kernel.org>; David
-> > Howells <dhowells@redhat.com>; Tom Talpey <tom@talpey.com>; linux-
-> > rdma@vger.kernel.org; linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > stable@vger.kernel.org; kernel test robot <oliver.sang@intel.com>
-> > Subject: [EXTERNAL] Re: [PATCH] RDMA/siw: Fix the sendmsg byte count in
-> > siw_tcp_sendpages
-> > 
-> > On Wed, Jul 23, 2025 at 02:52:12PM +0000, Bernard Metzler wrote:
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Pedro Falcato <pfalcato@suse.de>
-> > > > Sent: Wednesday, 23 July 2025 12:41
-> > > > To: Jason Gunthorpe <jgg@ziepe.ca>; Bernard Metzler
-> > <BMT@zurich.ibm.com>;
-> > > > Leon Romanovsky <leon@kernel.org>; Vlastimil Babka <vbabka@suse.cz>
-> > > > Cc: Jakub Kicinski <kuba@kernel.org>; David Howells
-> > <dhowells@redhat.com>;
-> > > > Tom Talpey <tom@talpey.com>; linux-rdma@vger.kernel.org; linux-
-> > > > kernel@vger.kernel.org; linux-mm@kvack.org; Pedro Falcato
-> > > > <pfalcato@suse.de>; stable@vger.kernel.org; kernel test robot
-> > > > <oliver.sang@intel.com>
-> > > [snip]
-> > > > ---
-> > > >  drivers/infiniband/sw/siw/siw_qp_tx.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c
-> > > > b/drivers/infiniband/sw/siw/siw_qp_tx.c
-> > > > index 3a08f57d2211..9576a2b766c4 100644
-> > > > --- a/drivers/infiniband/sw/siw/siw_qp_tx.c
-> > > > +++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
-> > > > @@ -340,11 +340,11 @@ static int siw_tcp_sendpages(struct socket *s,
-> > struct
-> > > > page **page, int offset,
-> > > >  		if (!sendpage_ok(page[i]))
-> > > >  			msg.msg_flags &= ~MSG_SPLICE_PAGES;
-> > > >  		bvec_set_page(&bvec, page[i], bytes, offset);
-> > > > -		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-> > > > +		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, bytes);
-> > > >
-> > > >  try_page_again:
-> > > >  		lock_sock(sk);
-> > > > -		rv = tcp_sendmsg_locked(sk, &msg, size);
-> > > > +		rv = tcp_sendmsg_locked(sk, &msg, bytes);
-> > > >  		release_sock(sk);
-> > > >
-> > >
-> > > Pedro, many thanks for catching this! I completely
-> > > missed it during my too sloppy review of that patch.
-> > > It's a serious bug which must be fixed asap.
-> > > BUT, looking closer, I do not see the offset being taken
-> > > into account when retrying a current segment. So,
-> > > resend attempts seem to send old data which are already
-> > > out. Shouldn't the try_page_again: label be above
-> > > bvec_set_page()??
-> > 
-> > This was raised off-list by Vlastimil - I think it's harmless to bump (but
-> > not use)
-> > the offset here, because by reusing the iov_iter we progressively consume
-> > the data
-> > (it keeps its own size and offset tracking internally). So the only thing
-> > we
-> > need to track is the size we pass to tcp_sendmsg_locked[1].
-> > 
 
-Hi,
 
-Sorry for the delay.
+On 7/24/25 3:32 PM, Sami Tolvanen wrote:
+> With CONFIG_CFI_CLANG enabled, the kernel strictly enforces that
+> indirect function calls use a function pointer type that matches the
+> target function. I ran into the following type mismatch when running
+> BPF self-tests:
+>
+>    CFI failure at bpf_obj_free_fields+0x190/0x238 (target:
+>      bpf_crypto_ctx_release+0x0/0x94; expected type: 0xa488ebfc)
+>    Internal error: Oops - CFI: 00000000f2008228 [#1]  SMP
+>    ...
+>
+> As bpf_crypto_ctx_release() is also used in BPF programs and using
+> a void pointer as the argument would make the verifier unhappy, add
+> a simple stub function with the correct type and register it as the
+> destructor kfunc instead.
+>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>   kernel/bpf/crypto.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/bpf/crypto.c b/kernel/bpf/crypto.c
+> index 94854cd9c4cc..b703b1d1c282 100644
+> --- a/kernel/bpf/crypto.c
+> +++ b/kernel/bpf/crypto.c
+> @@ -261,6 +261,11 @@ __bpf_kfunc void bpf_crypto_ctx_release(struct bpf_crypto_ctx *ctx)
+>   		call_rcu(&ctx->rcu, crypto_free_cb);
+>   }
+>   
+> +__bpf_kfunc void __bpf_crypto_ctx_release(void *ctx)
 
-> Ah okay, I didn't know that. Are we sure? I am currently travelling and have
-> only limited possibilities to try out things. I just looked up other
+We are not really creating a kfunc here. The function is merely
+to be used for destructor. So you can replace '__bpf_kfunc' with
+'__used __retain'.
 
-I'm not 100% sure, and if some more authoritative voice (David, or Jakub for
-the net side) could confirm my analysis, it would be great.
+> +{
+> +	bpf_crypto_ctx_release(ctx);
+> +}
+> +
+>   static int bpf_crypto_crypt(const struct bpf_crypto_ctx *ctx,
+>   			    const struct bpf_dynptr_kern *src,
+>   			    const struct bpf_dynptr_kern *dst,
+> @@ -368,7 +373,7 @@ static const struct btf_kfunc_id_set crypt_kfunc_set = {
+>   
+>   BTF_ID_LIST(bpf_crypto_dtor_ids)
+>   BTF_ID(struct, bpf_crypto_ctx)
+> -BTF_ID(func, bpf_crypto_ctx_release)
+> +BTF_ID(func, __bpf_crypto_ctx_release)
+>   
+>   static int __init crypto_kfunc_init(void)
+>   {
 
-> use cases and found one in net/tls/tls_main.c#L197. Here the loop looks
-> very similar, but it works as I was suggesting (taking offset into account
-> and re-initializing new bvec in case of partial send).
-> 
-> > If desired (and if my logic is correct!) I can send a v2 deleting that bit.
-> > 
-> 
-> So yes if that's all save, please. We shall not have dead code.
-
-Understood. I'll send a v2 resetting the bvec and iov_iter if we get no further
-feedback in the meanwhile.
-
-> 
-> Thanks!
-> Bernard.
-> > 
-> > [1] Assuming tcp_sendmsg_locked guarantees it will never consume something
-> > out
-> > of the iovec_iter without reporting it as bytes copied, which from a code
-> > reading
-> > it seems like it won't...
-> > 
-> > 
-> > --
-> > Pedro
-
--- 
-Pedro
 
