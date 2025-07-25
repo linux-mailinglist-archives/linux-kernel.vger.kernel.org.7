@@ -1,314 +1,384 @@
-Return-Path: <linux-kernel+bounces-745902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B116B12038
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:39:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB74AB1203A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 655BF17F306
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:39:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D631D560892
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33717200132;
-	Fri, 25 Jul 2025 14:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="v4v8Kdm4"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A502D1EFF9B;
+	Fri, 25 Jul 2025 14:39:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED1C1C6FE1
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63B31C6FE1
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753454354; cv=none; b=b7DdNwP/uYoMPtcquXR7V+mmkUyQu41JAViFD1ycmH/wJfAoPtDn206zkFrl1pVPQYEJjnsiEX8/MZxIjkQt4IEAV5rcnxz86J5XGw1ymGifCaQemzc7uNo84e4uCMl6qGp9NtnvuYTLr6YoanLIi8JlgGbKF9x5+jC1VYbAIQs=
+	t=1753454369; cv=none; b=SawYjjD4G/kAc1B8qSOA24SNIuEb1Ud+gvBYmRGS1RyLW3PtnScWaVkjrvR27v+CT/r/702K7y6YCDbAqwmzLp9qnrllSPE5KJmckatwaqTGU31MwL1x6Kt1PDZQuA1HyBWh8v51/HkMp0/ZeTw83Gw4/2sPsx4woF1o8gj6eag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753454354; c=relaxed/simple;
-	bh=jWtKEViyRsx4wGGZi+nhAcShNNGvOY5lw4zpCDS5WhE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rAwIyhnM+E3eXR1CxUv0YjFxBOI8r/K25iXq4+tnKlHv/o/EAdSKDDaB1mPrJSvXsOGnSQgD3MZQqfV3lvq1zZVjQoOoctZkF+IJFKDWpiZpo7o8CQyKGDLTYjxxuIw4NAcoGyO+KSKA5KvoQ+M6Glz5+DSZC0NlrDMMxXpI54Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=v4v8Kdm4; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E2C643F731
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1753454347;
-	bh=4mUY+1XR4b/e27uHYcOnJJ9KFj0pqpjkndNzpVgnRDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=v4v8Kdm4w8ue8cMYd9velwgpVtTHeQHMxeEq1WpTxwsIxhFZ2I5jiP0CUC54OjfQv
-	 4nsDtdKNhwV2N40gcRm44wBQ3MYj+Mo7BpHApFlp0CNYaEMNyd6h4IT9lrGD8WwS7k
-	 wqeNgRUFzbbdwglcPozBPSXz54N5cJzvHbAxHAPs1ODnQZVhqZZyYpFf0ib/yAdkMk
-	 nbicCmHPa/uzH3/GyF2QkJhmPBYuyMGK2baKlsH0EIgPM0IWlXS+9GNTUmnAq5ofFY
-	 ONvwXT0OGXAcm+AlhO8ThVrcteBTWh31M29j4Qt5cBsNaZPRjYuzMSODYtqEoVAF6H
-	 SlwkrRjlX+MOg==
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-606b62ce2d4so2200181a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:39:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753454347; x=1754059147;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4mUY+1XR4b/e27uHYcOnJJ9KFj0pqpjkndNzpVgnRDU=;
-        b=P+YOHXWot1+zZld5MHWg6bM1fQhZbkMolyI4jGqCSc1hbjm1p7+kiMWQjiA+I5c6aH
-         V1chCvr1s09EWrR3n3BlJzxxCwr0kPU7dQr9ZUM/sOuUTOCYSxrUU/w0khDA9zuzY+Zt
-         lF4/gmpX4qW5SkuvfUfMZPZ0QDkLEkSWLWlMnoc5xx+EuS9SkSsXLkbQYqBCwsYVT4CF
-         2R5rLf0tXPOvBWegSfUVkSEonDhc0lC+qsuqmDuQ0ZIkT5BrPWNGPDW8OQNO6FW+wwjV
-         Qeedk7AYcI+T3CZc0597cb6z5z1JbLHt27ZZ7JAvnKGcaxFB3J8Lt79slTUiAtoO0yuK
-         rgog==
-X-Forwarded-Encrypted: i=1; AJvYcCWErVynVtRxLGohEU+efNBh5MDm+DuQ6mtw4aNafm+f/iYDfmjWsFoaBZAL7+KR3TshtZ2aSmVwhL/XpTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCUHQWuW95J3D4yB77aiWkeHD0IuGYEg9hG01GpoGFZve7K8Yl
-	eoTtM3VbhM926P4oFXIrMSNwSy543hBlOAtCjFOF9/QoZuWY7IvfsVQfgO3SY/uKWPvK8ow3Z+r
-	EECbLgZ2AQRARxki9SmNHh/X91udQAhBgjS5v6mhG5HCwCtuZfZLrqVMOu9MCMzmLBSnlgePTfx
-	nydrttPg==
-X-Gm-Gg: ASbGnctjTLMyof5a0RzzbvR0FyIn+1qi3UJ1rm9q1gwL67miM/0hIQd/G3/nKnVCSUi
-	6JMemDYxFPE8lntf3fWTX4iHuNM44L+8X6JPI5PqLBxHO2PZYxYJ6LHPaGmI+LQfOvaCrhz2p5U
-	dDsYoUUUNkBfuwYRSOus3I4YNAAVVJ3lYPVA8ourUWHn9ydUP/sq2zOZjnpPI/2FxyZ31WTMOQb
-	C4zfSCCXW/9OJw75SH4V6ceiicfvWc/9dsjHMHow3dJP9WLzZ1LWYg9tKDPh6YlL9194jxFVXKL
-	UQ/YCVPikeGdMPk1yusdMpM4xBcNhE9ao1e7gvNVIK2ktWOmM1soqlYtQ3oUVaM0sbX92cbCaK3
-	j9ZInu99u8ExaL/WIEqy1k0rURDMkccKGLAQt5htLZmxnMXk=
-X-Received: by 2002:a05:6402:84f:b0:612:a507:5b23 with SMTP id 4fb4d7f45d1cf-614f1bbef74mr2314224a12.11.1753454347275;
-        Fri, 25 Jul 2025 07:39:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF14h0UnqVMVE8DmU1HkI4HkVFGaC2n5jgqzt8HvQEsuyPWhXxWakRNoUb1Vt7GxR2EJttOLg==
-X-Received: by 2002:a05:6402:84f:b0:612:a507:5b23 with SMTP id 4fb4d7f45d1cf-614f1bbef74mr2314178a12.11.1753454346728;
-        Fri, 25 Jul 2025 07:39:06 -0700 (PDT)
-Received: from [192.168.103.102] (dynamic-046-114-110-103.46.114.pool.telefonica.de. [46.114.110.103])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-614cd2fd3b1sm2185550a12.40.2025.07.25.07.39.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 07:39:05 -0700 (PDT)
-Message-ID: <06955781-118d-4208-af28-cfbabd7d57c2@canonical.com>
-Date: Fri, 25 Jul 2025 16:39:02 +0200
+	s=arc-20240116; t=1753454369; c=relaxed/simple;
+	bh=kOeJpxLCbh4jPKYEFWkDyvd+t/2xkeDPPnkdhOHf/l4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rbHzSY6Ea3NamtsVskfcdCN2Num+oKrqZHGb6C2QS1EdntIONfs5QRbtdvhJZj1+AupPF6ZYLtHMDR+TD3sNCsj5+QqsTbjcX8b/GD73a+WsBnFahy9PpSbv7FOlzhxQ/1oVAbGHb4cN9tvvXK/aLgEcpuN+icGoeJw1YAMSixc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D83C4CEF6;
+	Fri, 25 Jul 2025 14:39:28 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Catalin Marinas <cmarinas@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] arm64 updates for 6.17
+Date: Fri, 25 Jul 2025 15:39:25 +0100
+Message-Id: <20250725143925.1674618-1-catalin.marinas@arm.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] riscv: Kconfig & Makefile for riscv kernel control
- flow integrity
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
- rick.p.edgecombe@intel.com, broonie@kernel.org, cleger@rivosinc.com,
- samitolvanen@google.com, apatel@ventanamicro.com, ajones@ventanamicro.com,
- conor.dooley@microchip.com, charlie@rivosinc.com, samuel.holland@sifive.com,
- bjorn@rivosinc.com, fweimer@redhat.com, jeffreyalaw@gmail.com,
- andrew@sifive.com, ved@rivosinc.com, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Monk Chiang <monk.chiang@sifive.com>,
- Kito Cheng <kito.cheng@sifive.com>, Justin Stitt <justinstitt@google.com>
-References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
- <20250724-riscv_kcfi-v1-11-04b8fa44c98c@rivosinc.com>
- <b50da4ef-53ca-4edf-bd74-f5e037a14f99@canonical.com>
- <aIOTauktSYmw2LUV@debug.ba.rivosinc.com>
-Content-Language: en-US
-From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-In-Reply-To: <aIOTauktSYmw2LUV@debug.ba.rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 25.07.25 16:23, Deepak Gupta wrote:
-> On Fri, Jul 25, 2025 at 01:26:44PM +0200, Heinrich Schuchardt wrote:
->> On 25.07.25 01:37, Deepak Gupta wrote:
->>> Defines `CONFIG_RISCV_KERNEL_CFI` and selects SHADOW_CALL_STACK
->>> and ARCH_HAS_KERNEL_SHADOW_STACK both so that zicfiss can be wired up.
->>>
->>> Makefile checks if CONFIG_RISCV_KERNEL_CFI is enabled, then light
->>> up zicfiss and zicfilp compiler flags. CONFIG_RISCV_KERNEL_CFI is
->>> dependent on CONFIG_RISCV_USER_CFI. There is no reason for user to
->>> not select support for user cfi while enabling for kernel.
->>>
->>> compat vdso don't need fcf-protection (toolchain lacks support).
->>>
->>> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->>> ---
->>>  arch/riscv/Kconfig                     | 37 ++++++++++++++++++++++++ 
->>> +++++++++-
->>>  arch/riscv/Makefile                    |  8 ++++++++
->>>  arch/riscv/kernel/compat_vdso/Makefile |  2 +-
->>>  arch/riscv/kernel/vdso/Makefile        |  2 +-
->>>  4 files changed, 46 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->>> index 385c3d93e378..305ba5787f74 100644
->>> --- a/arch/riscv/Kconfig
->>> +++ b/arch/riscv/Kconfig
->>> @@ -245,7 +245,7 @@ config GCC_SUPPORTS_DYNAMIC_FTRACE
->>>      depends on CC_HAS_MIN_FUNCTION_ALIGNMENT || !RISCV_ISA_C
->>>  config HAVE_SHADOW_CALL_STACK
->>> -    def_bool $(cc-option,-fsanitize=shadow-call-stack)
->>> +    def_bool $(cc-option,-fsanitize=shadow-call-stack) || $(cc- 
->>> option,-mabi=lp64 -march=rv64ima_zicfilp_zicfiss)
->>>      # https://github.com/riscv-non-isa/riscv-elf-psabi-doc/commit/ 
->>> a484e843e6eeb51f0cb7b8819e50da6d2444d769
->>>      depends on $(ld-option,--no-relax-gp)
->>> @@ -864,6 +864,16 @@ config RISCV_ISA_ZICBOP
->>>        If you don't know what to do here, say Y.
->>> +config TOOLCHAIN_HAS_ZICFILP
->>> +    bool
->>> +    default y
->>> +    depends on 64BIT && $(cc-option,-mabi=lp64 -march=rv64ima_zicfilp)
->>> +
->>> +config TOOLCHAIN_HAS_ZICFISS
->>> +    bool
->>> +    default y
->>> +    depends on 64BIT && $(cc-option,-mabi=lp64 -march=rv64ima_zicfiss)
->>> +
->>>  config TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI
->>>      def_bool y
->>>      # https://sourceware.org/git/?p=binutils- 
->>> gdb.git;a=commit;h=aed44286efa8ae8717a77d94b51ac3614e2ca6dc
->>> @@ -1182,6 +1192,31 @@ config RISCV_USER_CFI
->>>        space does not get protection "for free".
->>>        default n.
->>> +config RISCV_KERNEL_CFI
->>> +    def_bool n
->>> +    bool "hw assisted riscv kernel control flow integrity (kcfi)"
->>> +    depends on 64BIT && $(cc-option,-mabi=lp64 - 
->>> march=rv64ima_zicfilp_zicfiss)
->>> +    depends on RISCV_USER_CFI
->>> +    select ARCH_SUPPORTS_SHADOW_CALL_STACK
->>> +    select SHADOW_CALL_STACK
->>> +    select ARCH_HAS_KERNEL_SHADOW_STACK
->>> +    help
->>> +      Provides CPU assisted control flow integrity to for riscv kernel.
->>> +      Control flow integrity is provided by implementing shadow 
->>> stack for
->>> +      backward edge and indirect branch tracking for forward edge. 
->>> Shadow
->>> +      stack protection is a hardware feature that detects function 
->>> return
->>> +      address corruption. This helps mitigate ROP attacks. 
->>> RISCV_KERNEL_CFI
->>> +      selects CONFIG_SHADOW_CALL_STACK which uses software based shadow
->>> +      stack but is unprotected against stray writes. Selecting 
->>> RISCV_KERNEL_CFI
->>> +      will select CONFIG_DYNAMIC_SCS and will enable hardware 
->>> assisted shadow
->>> +      stack protection against stray writes.
->>
->> Please, consider adding a blank line for better readability.
-> 
-> Noted. Will do.
-> 
->>
->>> +      Indirect branch tracking enforces that all indirect branches 
->>> must land
->>> +      on a landing pad instruction else CPU will fault. This enables 
->>> forward
->>> +      control flow (call/jmp) protection in kernel and restricts all 
->>> indirect
->>> +      call or jump in kernel to a landing pad instruction which 
->>> mostly likely
->>> +      will be start of the function.
->>> +      default n
->>
->> For Linux distributions it is important that the same kernel can run 
->> both on hardware both with and without CFI support. The description 
->> provided does not help to understand if RISCV_KERNEL_CFI=y will result 
->> in such a kernel. Please, enumerate the minimum set of extensions 
->> needed for supporting a kernel built with RISCV_KERNEL_CFI=y. I guess 
->> this will at least include Zimop.
-> 
-> Yes, it is expected anyone selecting this config is going to take this 
-> kernel to
-> a RVA23 hardware. RVA23 mandates zimop and thus shouldn't be an issue on 
-> such a
-> hardware. Anyone selecting this config and trying to run this kernel on 
-> hardware
-> prior to RVA23 will run into issues. I can add a comment here to 
-> highlight that.
-> 
-> I assume you wanted that awareness and goal is not maintain compat of same
-> kernel between RVA20 and RVA23 hardware, right?
+From: Catalin Marinas <cmarinas@kernel.org>
 
-I am aware that this option is not RVA20 compatible. Could we either 
-mention RVA23 or Zimop here so users will understand the implications.
+Hi Linus,
 
-Best regards
+Please pull the arm64 updates below. A quick summary - perf support for
+Branch Record Buffer Extensions (BRBE), typical PMU hardware updates,
+small additions to MTE for store-only tag checking and exposing
+non-address bits to signal handlers, HAVE_LIVEPATCH enabled on arm64,
+VMAP_STACK forced on. There is also a TLBI optimisation on hardware that
+does not require break-before-make when changing the user PTEs between
+contiguous and non-contiguous. These patches touch the iommu/SMMU code.
+More details in the tag.
 
-Heinrich
+Thanks.
 
-> 
->>
->> Best regards
->>
->> Heinrich
->>
->>> +
->>>  endmenu # "Kernel features"
->>>  menu "Boot options"
->>> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
->>> index 7128df832b28..6ef30a3d2bc4 100644
->>> --- a/arch/riscv/Makefile
->>> +++ b/arch/riscv/Makefile
->>> @@ -61,8 +61,10 @@ else ifeq ($(CONFIG_LTO_CLANG),y)
->>>  endif
->>>  ifeq ($(CONFIG_SHADOW_CALL_STACK),y)
->>> +ifndef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
->>>      KBUILD_LDFLAGS += --no-relax-gp
->>>  endif
->>> +endif
->>>  # ISA string setting
->>>  riscv-march-$(CONFIG_ARCH_RV32I)    := rv32ima
->>> @@ -91,6 +93,12 @@ riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZABHA) := 
->>> $(riscv-march-y)_zabha
->>>  KBUILD_BASE_ISA = -march=$(shell echo $(riscv-march-y) | sed -E 's/ 
->>> (rv32ima|rv64ima)fd([^v_]*)v?/\1\2/')
->>>  export KBUILD_BASE_ISA
->>> +ifeq ($(CONFIG_RISCV_KERNEL_CFI),y)
->>> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZICFILP) := $(riscv-march-y)_zicfilp
->>> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZICFISS) := $(riscv-march-y)_zicfiss
->>> +KBUILD_CFLAGS += -fcf-protection=full
->>> +KBUILD_AFLAGS += -fcf-protection=full
->>> +endif
->>>  # Remove F,D,V from isa string for all. Keep extensions between "fd" 
->>> and "v" by
->>>  # matching non-v and non-multi-letter extensions out with the filter 
->>> ([^v_]*)
->>>  KBUILD_CFLAGS += $(KBUILD_BASE_ISA)
->>> diff --git a/arch/riscv/kernel/compat_vdso/Makefile b/arch/riscv/ 
->>> kernel/compat_vdso/Makefile
->>> index 24e37d1ef7ec..552131bc34d7 100644
->>> --- a/arch/riscv/kernel/compat_vdso/Makefile
->>> +++ b/arch/riscv/kernel/compat_vdso/Makefile
->>> @@ -69,4 +69,4 @@ quiet_cmd_compat_vdsold = VDSOLD  $@
->>>  # actual build commands
->>>  quiet_cmd_compat_vdsoas = VDSOAS  $@
->>> -      cmd_compat_vdsoas = $(COMPAT_CC) $(a_flags) $(COMPAT_CC_FLAGS) 
->>> -c -o $@ $<
->>> +      cmd_compat_vdsoas = $(COMPAT_CC) $(filter-out -fcf- 
->>> protection=full, $(a_flags)) $(COMPAT_CC_FLAGS) -c -o $@ $<
->>> diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/ 
->>> vdso/Makefile
->>> index 2b528d82fa7d..7b1446b63ebc 100644
->>> --- a/arch/riscv/kernel/vdso/Makefile
->>> +++ b/arch/riscv/kernel/vdso/Makefile
->>> @@ -17,7 +17,7 @@ ifdef CONFIG_VDSO_GETRANDOM
->>>  vdso-syms += getrandom
->>>  endif
->>> -ifdef CONFIG_RISCV_USER_CFI
->>> +ifneq ($(CONFIG_RISCV_USER_CFI), $(CONFIG_RISCV_KERNEL_CFI))
->>>  CFI_MARCH = _zicfilp_zicfiss
->>>  CFI_FULL = -fcf-protection=full
->>>  endif
->>>
->>
+The following changes since commit ef8923e6c051a98164c2889db943df9695a39888:
 
+  arm64: efi: Fix KASAN false positive for EFI runtime stack (2025-07-04 14:47:06 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-upstream
+
+for you to fetch changes up to 5b1ae9de71335865d06ff0e60eadcf368a735edf:
+
+  Merge branch 'for-next/feat_mte_store_only' into for-next/core (2025-07-24 16:03:34 +0100)
+
+----------------------------------------------------------------
+arm64 updates for 6.17:
+
+Perf and PMU updates:
+
+ - Add support for new (v3) Hisilicon SLLC and DDRC PMUs
+
+ - Add support for Arm-NI PMU integrations that share interrupts between
+   clock domains within a given instance
+
+ - Allow SPE to be configured with a lower sample period than the
+   minimum recommendation advertised by PMSIDR_EL1.Interval
+
+ - Add suppport for Arm's "Branch Record Buffer Extension" (BRBE)
+
+ - Adjust the perf watchdog period according to cpu frequency changes
+
+ - Minor driver fixes and cleanups
+
+Hardware features:
+
+ - Support for MTE store-only checking (FEAT_MTE_STORE_ONLY)
+
+ - Support for reporting the non-address bits during a synchronous MTE
+   tag check fault (FEAT_MTE_TAGGED_FAR)
+
+ - Optimise the TLBI when folding/unfolding contiguous PTEs on hardware
+   with FEAT_BBM (break-before-make) level 2 and no TLB conflict aborts
+
+Software features:
+
+ - Enable HAVE_LIVEPATCH after implementing arch_stack_walk_reliable()
+   and using the text-poke API for late module relocations
+
+ - Force VMAP_STACK always on and change arm64_efi_rt_init() to use
+   arch_alloc_vmap_stack() in order to avoid KASAN false positives
+
+ACPI:
+
+ - Improve SPCR handling and messaging on systems lacking an SPCR table
+
+Debug:
+
+ - Simplify the debug exception entry path
+
+ - Drop redundant DBG_MDSCR_* macros
+
+Kselftests:
+
+ - Cleanups and improvements for SME, SVE and FPSIMD tests
+
+Miscellaneous:
+
+ - Optimise loop to reduce redundant operations in contpte_ptep_get()
+
+ - Remove ISB when resetting POR_EL0 during signal handling
+
+ - Mark the kernel as tainted on SEA and SError panic
+
+ - Remove redundant gcs_free() call
+
+----------------------------------------------------------------
+Ada Couprie Diaz (13):
+      arm64: debug: clean up single_step_handler logic
+      arm64: refactor aarch32_break_handler()
+      arm64: debug: call software breakpoint handlers statically
+      arm64: debug: call step handlers statically
+      arm64: debug: remove break/step handler registration infrastructure
+      arm64: entry: Add entry and exit functions for debug exceptions
+      arm64: debug: split hardware breakpoint exception entry
+      arm64: debug: refactor reinstall_suspended_bps()
+      arm64: debug: split single stepping exception entry
+      arm64: debug: split hardware watchpoint exception entry
+      arm64: debug: split brk64 exception entry
+      arm64: debug: split bkpt32 exception entry
+      arm64: debug: remove debug exception registration infrastructure
+
+Alok Tiwari (3):
+      perf/cxlpmu: Fix devm_kcalloc() argument order in cxl_pmu_probe()
+      perf/cxlpmu: Remove unintended newline from IRQ name format string
+      perf/cxlpmu: Fix typos in cxl_pmu.c comments and documentation
+
+Anshuman Khandual (6):
+      arm64/debug: Drop redundant DBG_MDSCR_* macros
+      KVM: selftests: Change MDSCR_EL1 register holding variables as uint64_t
+      arm64/sysreg: Add BRBE registers and fields
+      arm64: Handle BRBE booting requirements
+      KVM: arm64: nvhe: Disable branch generation in nVHE guests
+      arm64/mm: Drop redundant addr increment in set_huge_pte_at()
+
+Breno Leitao (9):
+      arm64: Mandate VMAP_STACK
+      arm64: efi: Remove CONFIG_VMAP_STACK check
+      arm64: Remove CONFIG_VMAP_STACK conditionals from THREAD_SHIFT and THREAD_ALIGN
+      arm64: remove CONFIG_VMAP_STACK conditionals from irq stack setup
+      arm64: remove CONFIG_VMAP_STACK conditionals from traps overflow stack
+      arm64: remove CONFIG_VMAP_STACK checks from stacktrace overflow logic
+      arm64: remove CONFIG_VMAP_STACK checks from SDEI stack handling
+      arm64: remove CONFIG_VMAP_STACK checks from entry code
+      arm64: Mark kernel as tainted on SAE and SError panic
+
+Catalin Marinas (4):
+      arm64: cpufeature: Introduce MATCH_ALL_EARLY_CPUS capability type
+      arm64: Kconfig: Keep selects somewhat alphabetically ordered
+      Merge branches 'for-next/livepatch', 'for-next/user-contig-bbml2', 'for-next/misc', 'for-next/acpi', 'for-next/debug-entry', 'for-next/feat_mte_tagged_far', 'for-next/kselftest', 'for-next/mdscr-cleanup' and 'for-next/vmap-stack', remote-tracking branch 'arm64/for-next/perf' into for-next/core
+      Merge branch 'for-next/feat_mte_store_only' into for-next/core
+
+Colin Ian King (1):
+      perf: imx9_perf: make the read-only array mask static const
+
+Dylan Hatch (1):
+      arm64/module: Use text-poke API for late relocations.
+
+Jeremy Linton (1):
+      arm64/gcs: task_gcs_el0_enable() should use passed task
+
+Junhao He (5):
+      drivers/perf: hisi: Simplify the probe process for each DDRC version
+      drivers/perf: hisi: Add support for HiSilicon DDRC v3 PMU driver
+      drivers/perf: hisi: Use ACPI driver_data to retrieve SLLC PMU information
+      drivers/perf: hisi: Add support for HiSilicon SLLC v3 PMU driver
+      drivers/perf: hisi: Relax the event number check of v2 PMUs
+
+Kevin Brodsky (1):
+      arm64: signal: Remove ISB when resetting POR_EL0
+
+Leo Yan (1):
+      perf: arm_spe: Relax period restriction
+
+Li Chen (2):
+      ACPI: Return -ENODEV from acpi_parse_spcr() when SPCR support is disabled
+      ACPI: Suppress misleading SPCR console message when SPCR table is absent
+
+Mark Brown (11):
+      kselftest/arm64: Convert tpidr2 test to use kselftest.h
+      kselftest/arm64: Fix check for setting new VLs in sve-ptrace
+      kselftest/arm64: Fix test for streaming FPSIMD write in sve-ptrace
+      kselftest/arm64: Specify SVE data when testing VL set in sve-ptrace
+      arm64/gcs: Don't call gcs_free() when releasing task_struct
+      kselftest/arm4: Provide local defines for AT_HWCAP3
+      kselftest/arm64: Allow sve-ptrace to run on SME only systems
+      kselftest/arm64: Test FPSIMD format data writes via NT_ARM_SVE in fp-ptrace
+      kselftest/arm64: Test SME on SME only systems in fp-ptrace
+      kselftest/arm64: Fix SVE write data generation for SME only systems
+      kselftest/arm64: Handle attempts to disable SM on SME only systems
+
+Mark Rutland (1):
+      arm64: stacktrace: Check kretprobe_find_ret_addr() return value
+
+Masahiro Yamada (2):
+      arm64: pi: use 'targets' instead of extra-y in Makefile
+      arm64: fix unnecessary rebuilding when CONFIG_DEBUG_EFI=y
+
+Mikołaj Lenczewski (3):
+      arm64: Add BBM Level 2 cpu feature
+      iommu/arm: Add BBM Level 2 smmu feature
+      arm64/mm: Elide tlbi in contpte_convert() under BBML2
+
+Rob Herring (Arm) (1):
+      perf: arm_pmuv3: Add support for the Branch Record Buffer Extension (BRBE)
+
+Robin Murphy (4):
+      perf/arm-ni: Set initial IRQ affinity
+      perf/arm-cmn: Reduce stack usage during discovery
+      perf/arm: Add missing .suppress_bind_attrs
+      perf/arm-ni: Consolidate CPU affinity handling
+
+Shouping Wang (1):
+      perf/arm-ni: Support sharing IRQs within an NI instance
+
+Song Liu (2):
+      arm64: stacktrace: Implement arch_stack_walk_reliable()
+      arm64: Implement HAVE_LIVEPATCH
+
+Xavier Xia (1):
+      arm64/mm: Optimize loop to reduce redundant operations of contpte_ptep_get
+
+Yeoreum Yun (18):
+      arm64/cpufeature: Add FEAT_MTE_TAGGED_FAR feature
+      arm64: Report address tag when FEAT_MTE_TAGGED_FAR is supported
+      KVM: arm64: Expose FEAT_MTE_TAGGED_FAR feature to guest
+      kselftest/arm64: Add MTE_FAR hwcap test
+      kselftest/arm64/mte: Register mte signal handler with SA_EXPOSE_TAGBITS
+      kselftest/arm64/mte: Check MTE_FAR feature is supported
+      kselftest/arm64/mte: Add address tag related macro and function
+      kselftest/arm64/mte: Add verification for address tag in signal handler
+      kselftest/arm64/mte: Refactor check_mmap_option test
+      kselftest/arm64/mte: Add mtefar tests on check_mmap_options
+      arm64/cpufeature: Add MTE_STORE_ONLY feature
+      prctl: Introduce PR_MTE_STORE_ONLY
+      arm64/kernel: Support store-only mte tag check
+      arm64/hwcaps: Add MTE_STORE_ONLY hwcaps
+      KVM: arm64: Expose MTE_STORE_ONLY feature to guest
+      kselftest/arm64/abi: Add MTE_STORE_ONLY feature hwcap test
+      kselftest/arm64/mte: Preparation for mte store only test
+      kselftest/arm64/mte: Add MTE_STORE_ONLY testcases
+
+Yicong Yang (3):
+      watchdog/perf: Provide function for adjusting the event period
+      arm64/watchdog_hld: Add a cpufreq notifier for update watchdog thresh
+      drivers/perf: hisi: Support PMUs with no interrupt
+
+Zhiyuan Dai (1):
+      perf/arm-cmn: Broaden module description for wider interconnect support
+
+ Documentation/arch/arm64/booting.rst               |  21 +
+ Documentation/arch/arm64/elf_hwcaps.rst            |   6 +
+ Documentation/arch/arm64/tagged-pointers.rst       |  11 +-
+ arch/arm64/Kconfig                                 |   4 +
+ arch/arm64/include/asm/assembler.h                 |   4 +-
+ arch/arm64/include/asm/cpufeature.h                |  28 +
+ arch/arm64/include/asm/debug-monitors.h            |  40 +-
+ arch/arm64/include/asm/el2_setup.h                 |  71 +-
+ arch/arm64/include/asm/exception.h                 |  14 +-
+ arch/arm64/include/asm/gcs.h                       |   2 +-
+ arch/arm64/include/asm/hwcap.h                     |   2 +
+ arch/arm64/include/asm/kgdb.h                      |  12 +
+ arch/arm64/include/asm/kprobes.h                   |   8 +
+ arch/arm64/include/asm/kvm_host.h                  |   2 +
+ arch/arm64/include/asm/memory.h                    |   6 +-
+ arch/arm64/include/asm/processor.h                 |   2 +
+ arch/arm64/include/asm/stacktrace.h                |   6 +-
+ arch/arm64/include/asm/sysreg.h                    |  16 +-
+ arch/arm64/include/asm/system_misc.h               |   4 -
+ arch/arm64/include/asm/thread_info.h               |   5 +-
+ arch/arm64/include/asm/traps.h                     |   6 +
+ arch/arm64/include/asm/uprobes.h                   |  11 +
+ arch/arm64/include/uapi/asm/hwcap.h                |   2 +
+ arch/arm64/kernel/Makefile                         |   2 +-
+ arch/arm64/kernel/acpi.c                           |  10 +-
+ arch/arm64/kernel/cpufeature.c                     | 116 ++-
+ arch/arm64/kernel/cpuinfo.c                        |   2 +
+ arch/arm64/kernel/debug-monitors.c                 | 277 +++----
+ arch/arm64/kernel/efi.c                            |   5 -
+ arch/arm64/kernel/entry-common.c                   | 156 +++-
+ arch/arm64/kernel/entry.S                          |   6 -
+ arch/arm64/kernel/hw_breakpoint.c                  |  60 +-
+ arch/arm64/kernel/irq.c                            |  13 -
+ arch/arm64/kernel/kgdb.c                           |  39 +-
+ arch/arm64/kernel/module.c                         | 101 ++-
+ arch/arm64/kernel/mte.c                            |  11 +-
+ arch/arm64/kernel/pi/Makefile                      |   2 +-
+ arch/arm64/kernel/probes/kprobes.c                 |  31 +-
+ arch/arm64/kernel/probes/kprobes_trampoline.S      |   2 +-
+ arch/arm64/kernel/probes/uprobes.c                 |  24 +-
+ arch/arm64/kernel/process.c                        |  13 +-
+ arch/arm64/kernel/sdei.c                           |   8 +-
+ arch/arm64/kernel/signal.c                         |   7 +-
+ arch/arm64/kernel/stacktrace.c                     |  59 +-
+ arch/arm64/kernel/traps.c                          |  84 +-
+ arch/arm64/kernel/watchdog_hld.c                   |  58 ++
+ arch/arm64/kvm/debug.c                             |   4 +
+ arch/arm64/kvm/hyp/nvhe/debug-sr.c                 |  32 +
+ arch/arm64/kvm/hyp/nvhe/switch.c                   |   2 +-
+ arch/arm64/kvm/sys_regs.c                          |  11 +-
+ arch/arm64/mm/contpte.c                            | 211 ++++-
+ arch/arm64/mm/fault.c                              |  83 +-
+ arch/arm64/mm/gcs.c                                |   6 -
+ arch/arm64/mm/hugetlbpage.c                        |   2 +-
+ arch/arm64/mm/proc.S                               |   2 +-
+ arch/arm64/tools/cpucaps                           |   3 +
+ arch/arm64/tools/sysreg                            | 132 +++
+ drivers/firmware/efi/libstub/Makefile.zboot        |   2 +-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c    |   3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c        |   3 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h        |   2 +
+ drivers/perf/Kconfig                               |  11 +
+ drivers/perf/Makefile                              |   1 +
+ drivers/perf/arm-cmn.c                             |  20 +-
+ drivers/perf/arm-ni.c                              | 153 ++--
+ drivers/perf/arm_brbe.c                            | 805 +++++++++++++++++++
+ drivers/perf/arm_brbe.h                            |  47 ++
+ drivers/perf/arm_pmu.c                             |  16 +-
+ drivers/perf/arm_pmuv3.c                           | 107 ++-
+ drivers/perf/arm_spe_pmu.c                         |  18 +-
+ drivers/perf/cxl_pmu.c                             |  12 +-
+ drivers/perf/fsl_imx9_ddr_perf.c                   |   8 +-
+ drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c      | 354 ++++----
+ drivers/perf/hisilicon/hisi_uncore_hha_pmu.c       |   6 +-
+ drivers/perf/hisilicon/hisi_uncore_pa_pmu.c        |   2 +-
+ drivers/perf/hisilicon/hisi_uncore_pmu.c           |  11 +-
+ drivers/perf/hisilicon/hisi_uncore_pmu.h           |   2 +
+ drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c      | 220 +++--
+ include/linux/acpi.h                               |   2 +-
+ include/linux/nmi.h                                |   2 +
+ include/linux/perf/arm_pmu.h                       |   8 +
+ include/uapi/linux/prctl.h                         |   2 +
+ kernel/watchdog_perf.c                             |  22 +
+ tools/testing/selftests/arm64/abi/Makefile         |   2 +-
+ tools/testing/selftests/arm64/abi/hwcap.c          |  16 +
+ tools/testing/selftests/arm64/abi/tpidr2.c         | 140 +---
+ tools/testing/selftests/arm64/fp/fp-ptrace.c       |  77 +-
+ tools/testing/selftests/arm64/fp/sve-ptrace.c      |  12 +-
+ .../selftests/arm64/mte/check_buffer_fill.c        |  12 +-
+ .../selftests/arm64/mte/check_child_memory.c       |   8 +-
+ .../selftests/arm64/mte/check_hugetlb_options.c    |  10 +-
+ .../selftests/arm64/mte/check_ksm_options.c        |   6 +-
+ .../selftests/arm64/mte/check_mmap_options.c       | 890 +++++++++++++++++++--
+ tools/testing/selftests/arm64/mte/check_prctl.c    |  29 +-
+ .../selftests/arm64/mte/check_tags_inclusion.c     |  10 +-
+ tools/testing/selftests/arm64/mte/check_user_mem.c |   4 +-
+ .../testing/selftests/arm64/mte/mte_common_util.c  |  84 +-
+ .../testing/selftests/arm64/mte/mte_common_util.h  |   9 +-
+ tools/testing/selftests/arm64/mte/mte_def.h        |   8 +
+ .../testing/selftests/kvm/arm64/debug-exceptions.c |   4 +-
+ 100 files changed, 3768 insertions(+), 1249 deletions(-)
+ create mode 100644 drivers/perf/arm_brbe.c
+ create mode 100644 drivers/perf/arm_brbe.h
 
