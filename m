@@ -1,329 +1,749 @@
-Return-Path: <linux-kernel+bounces-745238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38304B1170D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F0DB11716
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B5217C945
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:25:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF47056015D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D41C239E61;
-	Fri, 25 Jul 2025 03:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F729236431;
+	Fri, 25 Jul 2025 03:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f61OXOAU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iu3PKD2U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E32886329;
-	Fri, 25 Jul 2025 03:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6D32E3718;
+	Fri, 25 Jul 2025 03:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753413949; cv=none; b=kcyz5jMOUP7ARtH8CgPcYX1wk7nDUQQISV9Zlg0izCQGCIRVmg/uv+BK8oJ7FnDT4GlFojg7s7VBNbgsJuowcK9tGZZpyUD6Kf3XyfLI84mmgA2Y8UI7QqF0EieI9pF1oYpWSW2WDCkG71bs2lMXq7rXo6rx3GTr+wCAwo8AyYE=
+	t=1753414353; cv=none; b=KdBfVgyZPLmk65CKQPWq5wjTVZVrCSFgwEUg9/J7W8aaCCKqzYGogjkYfohgVEytNR0s1Npjh5x/cTxPqDNBMdxu59bp3USbGH2mYYCgtEJc2+wwH3jk0Ppwljld1RldnDyvsZX4/pAiLxgs2Up5n0trUTrk0tgGAPs0O4Ij7kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753413949; c=relaxed/simple;
-	bh=ru9P5gglzGYtzMPAbAWQEENrZ3jfJKcYTMOz5gRV4B8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Juine4t37NzlxbHUkQDHene6CnEN870LT5bV0YO7kUe6bCfZhqc1iF8jcD+b/K77okhKCvO+0zLz3+iPvY4MekrU0oTwjCRxbPIWZH1W0JwZTfxlhagqGsDLhQqdTARDHX8E8VGTnblXIF8HdG6HSUQ9K4XnxzUbS+1MCb+0ixU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f61OXOAU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA87C4AF09;
-	Fri, 25 Jul 2025 03:25:48 +0000 (UTC)
+	s=arc-20240116; t=1753414353; c=relaxed/simple;
+	bh=6GOFpbgMacJO6biPlSBbSrI7lCJ7lnJXaXEhfpcspTU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i1sg0UYz3hcHr9pHBRWUZt2mDK/iafkD8/sCjUytXKCb4OCbmCInx/7clSFw79YkGgqWnHkCyFBdUXHvZxHcbF2KsrkLldZEc8kQZYd/DssKrTEa0Nzg4X3FvxZcz8nEaM26KxqwAR8eWG9vixc1r745gEbqaiaK6PLxkhqVqX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iu3PKD2U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE2BFC4CEE7;
+	Fri, 25 Jul 2025 03:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753413948;
-	bh=ru9P5gglzGYtzMPAbAWQEENrZ3jfJKcYTMOz5gRV4B8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f61OXOAUm4yu2i5SKlz1YbYUB/BJzT9xGyvRxuVAGpzMT2tDvuopfOeA2lt2AJq6H
-	 GO4hFY30r+74hR2G6F1XglBB81gpeoJv2ezLyr3gHTupBauZk+ZMyCnNK3VDLhnmgY
-	 iqSA96N4PdCN4z5WsILRSnOIUkBfXE9inizK0EMdnUUJJVzQn31X/Z0jEEZ0GqXylq
-	 hpTa7KIZx40iC5g/mqrezzq6hIPhAPalha6Qwd/GSO48LT6tOEssoSgsOGgqQEgqn2
-	 IcjNnUWy7jdVo9bZy9l0hAH9cGAGoxbgroTuketDtkWr3xHc6pI7jl1FFrnXOqp5Gw
-	 1kRRq6HqJAjdw==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0de0c03e9so250037266b.2;
-        Thu, 24 Jul 2025 20:25:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWkyPy741j0w6vkWFJIZsKJUNbRhrdbdkoVDriJZFzIGe9QRDVbxVmEjOUQUqANVxLaaTd3DZDoQPbgOWPl@vger.kernel.org, AJvYcCX8ivvavbwYGagMYryqyBBwrW8OzL0BD4GzYkGgnNqBXrsK9u0A+zj7K8lfJuK8exINpNxBul9XsnsT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSP2NCENDzbNloDF5LgTRmW2ld7+SWCsi4aswfj85gHbdYKnqL
-	5IjJ64dqkGR3oTkfldpjnPCS8SSGN6Q+1bh5FezqU8D13YD4GlfVKYwXk8XW+25LXVkJXsa8f1v
-	kLlEGGtauG3WJ14ar9ErUfH7lVGWulw==
-X-Google-Smtp-Source: AGHT+IF+agF7WZFSJUlrP9ySUL34Tt9kNJbk0LHlMHXBUQFUAyaxgmcWaEQcfUno6qyj6AQ9mOBZFrHznA/URFmzSWo=
-X-Received: by 2002:a17:907:8691:b0:ae3:7113:d6f1 with SMTP id
- a640c23a62f3a-af61cf9830fmr42823366b.25.1753413947121; Thu, 24 Jul 2025
- 20:25:47 -0700 (PDT)
+	s=k20201202; t=1753414351;
+	bh=6GOFpbgMacJO6biPlSBbSrI7lCJ7lnJXaXEhfpcspTU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Iu3PKD2UdPJYK1Qxs4wAwlONI8uCzx8PlXfyOiB+fry2WO5nTTh7vNArnVDikxhjs
+	 tsbbMY6MJGHyHTZKCT7oRXG9qnJvOSLrHNxBAhBmuoPWNByr8a14M3ABkK5akJUzLc
+	 Lk7BTJiJQmsUt+h7D/xLNHFNslz2LG7tOLjxPv7EfDgAbU+7A3EjhGSn1AstIe1SyV
+	 MT5+ZcGXOmVAOlfDNe3tZaA22kfjk4xiQ8nqmC1XvqnxbIHHBFAvrLkG5GwfexIgSD
+	 uw/Bj8MGxaXxR9Lkdx6WNcW/Uu5B4DzUezmO7cIoMiFEyzL5F8oORDnv3j4o7hcCNj
+	 fRZyrEG6uyTtg==
+Message-ID: <7be95f26-3443-4ef1-9761-a9e1551f2ec5@kernel.org>
+Date: Thu, 24 Jul 2025 22:32:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723222350.200094-1-donalds@nvidia.com> <175341328135.3754696.5873094296930738476.robh@kernel.org>
-In-Reply-To: <175341328135.3754696.5873094296930738476.robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 24 Jul 2025 22:25:35 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJwgbWa0sPVgdxMchPfa1hR8o-=wRh4UgoK3QfDdW+S+g@mail.gmail.com>
-X-Gm-Features: Ac12FXzNXNpCRi5fyD7BKC9WuufjuvbhZvOU4OiUZdjanN-WVw0Xe6BrUFww0vw
-Message-ID: <CAL_JsqJwgbWa0sPVgdxMchPfa1hR8o-=wRh4UgoK3QfDdW+S+g@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] Adding device tree and binding for NVIDIA GB200-UT3.0b
-To: Donald Shannon <donalds@nvidia.com>
-Cc: conor+dt@kernel.org, openbmc@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	krzk+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, 
-	linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] crypto: ccp - Add AMD Seamless Firmware Servicing
+ (SFS) driver
+To: Ashish Kalra <Ashish.Kalra@amd.com>, thomas.lendacky@amd.com,
+ john.allen@amd.com, herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: seanjc@google.com, pbonzini@redhat.com, michael.roth@amd.com,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1753389962.git.ashish.kalra@amd.com>
+ <82acbf87e782c482ebd8d80092b5ad47d1f4b854.1753389962.git.ashish.kalra@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+Autocrypt: addr=superm1@gmail.com; keydata=
+ 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
+In-Reply-To: <82acbf87e782c482ebd8d80092b5ad47d1f4b854.1753389962.git.ashish.kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 10:19=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org=
-> wrote:
->
->
-> On Wed, 23 Jul 2025 15:23:48 -0700, Donald Shannon wrote:
-> > Patch 1 adds the binding for the NVIDIA GB200-UT3.0b platform.
-> > Patch 2 adds the device tree for the NVIDIA GB200-UT3.0b platform.
-> >
-> > This is an Aspeed AST2600 based unit testing platform for GB200.
-> > UT3.0b is different than nvidia-gb200nvl-bmc due to networking topology
-> > differences, additional gpio expanders, and voltage regulator gating
-> > some devices.
-> >
-> > Reference to Ast2600 SOC [1].
-> > Reference to Blackwell GB200NVL Platform [2].
-> >
-> > Link: https://www.aspeedtech.com/server_ast2600/ [1]
-> > Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 =
-[2]
-> > Signed-off-by: Donald Shannon <donalds@nvidia.com>
-> > ---
-> > Changes v1 -> v2:
-> >   - Changed phy-mode to rgmii-id [Lunn]
-> >   - Removed redundant max-speed for mac0 [Lunn]
-> >   - Fixed typo from gb200nvl to gb200 in Makefile
-> > Changes v2 -> v3:
-> >  - Fixed whitespace issues [Krzysztof]
-> >  - Fixed schema validation issues from my end ( there are still issues
-> >  with the aspeed dtsi file that are not related to this new dts)
-> >  [Herring]
-> >  - Reordered to follow style guide [Krzysztof]
-> >  - Removed redundant status okays
-> >  - Changed vcc to vdd for the power gating on the gpio expanders
-> > Changes v3 -> v4:
-> >   - Added changelog [Krzysztof]
-> >   - Added nvidia,gb200-ut30b board binding [Krzysztof]
-> >   - Removed unused imports
-> >   - Reordered a couple other style guide violations
-> >   - Added back in a couple needed "status okay"s
-> > Changes v4 -> v5:
-> >  - Resumed my patch after a pause
-> >  - Don't plan to make this include of nvidia-gb200nvl-bmc due to some
-> >  platform differences
-> >  - Fixed io expanders that weren't gated by the 3.3V standby regulator
-> >  - Fixed incorrect interrupt pin for one IO expander
-> >  - Removed some IO expanders and I2C busses
-> > Changes v5 -> v6:
-> >  - Fixed subject line
-> >  - Added missing gpio-key compatible type to buttons
-> > Changes v6 -> v7:
-> >   - Removed Acked-by Krzysztof
-> > ---
-> >
-> > Donald Shannon (2):
-> >   dt-bindings: arm: aspeed: Add NVIDIA GB200-UT3.0b  board
-> >   ARM: dts: aspeed: Add NVIDIA GB200 UT3.0b board
-> >
-> >  .../bindings/arm/aspeed/aspeed.yaml           |    1 +
-> >  arch/arm/boot/dts/aspeed/Makefile             |    1 +
-> >  .../aspeed/aspeed-bmc-nvidia-gb200-ut30b.dts  | 1028 +++++++++++++++++
-> >  3 files changed, 1030 insertions(+)
-> >  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut=
-30b.dts
-> >
-> >
-> > base-commit: 05adbee3ad528100ab0285c15c91100e19e10138
-> > --
-> > 2.43.0
-> >
-> >
-> >
->
->
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->
->   pip3 install dtschema --upgrade
->
->
-> This patch series was applied (using b4) to base:
->  Base: using specified base-commit 05adbee3ad528100ab0285c15c91100e19e101=
-38
->
-> If this is not the correct base, please add 'base-commit' tag
-> (or use b4 which does this automatically)
->
-> New warnings running 'make CHECK_DTBS=3Dy for arch/arm/boot/dts/aspeed/' =
-for 20250723222350.200094-1-donalds@nvidia.com:
->
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: timer (arm,ar=
-mv7-timer): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/timer/arm,arch_tim=
-er.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /sdram@1e6e00=
-00: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac=
-', 'syscon']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: bus@1e600000 =
-(aspeed,ast2600-ahbc): compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too=
- long
->         from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600=
--ahbc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: syscon@1e6e20=
-00 (aspeed,ast2600-scu): 'smp-memram@180' does not match any of the regexes=
-: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(=
-@[0-9a-f]+)?$', '^pinctrl-[0-9]+$', '^silicon-id@[0-9a-f]+$'
->         from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00=
--scu.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/sysc=
-on@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['a=
-speed,ast2600-smpmem']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/disp=
-lay@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-=
-gfx', 'syscon']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: adc@1e6e9000 =
-(aspeed,ast2600-adc0): 'interrupts' does not match any of the regexes: '^pi=
-nctrl-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast=
-2600-adc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: adc@1e6e9100 =
-(aspeed,ast2600-adc1): 'interrupts' does not match any of the regexes: '^pi=
-nctrl-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast=
-2600-adc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: crypto@1e6fa0=
-00 (aspeed,ast2600-acry): 'aspeed,ahbc' does not match any of the regexes: =
-'^pinctrl-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2=
-600-acry.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: lpc@1e789000 =
-(aspeed,ast2600-lpc-v2): reg-io-width: 4 is not of type 'object'
->         from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yam=
-l#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: lpc@1e789000 =
-(aspeed,ast2600-lpc-v2): lpc-snoop@80: 'clocks' does not match any of the r=
-egexes: '^pinctrl-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yam=
-l#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@24 (aspee=
-d,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctr=
-l-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast240=
-0-kcs-bmc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@28 (aspee=
-d,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctr=
-l-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast240=
-0-kcs-bmc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@2c (aspee=
-d,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctr=
-l-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast240=
-0-kcs-bmc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@114 (aspe=
-ed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinct=
-rl-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast240=
-0-kcs-bmc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/lpc@=
-1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast26=
-00-lhc']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/lpc@=
-1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2=
-600-ibt-bmc']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: sdc@1e740000 =
-(aspeed,ast2600-sd-controller): sdhci@1e740100:compatible: ['aspeed,ast2600=
--sdhci', 'sdhci'] is too long
->         from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.y=
-aml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: sdc@1e740000 =
-(aspeed,ast2600-sd-controller): sdhci@1e740200:compatible: ['aspeed,ast2600=
--sdhci', 'sdhci'] is too long
->         from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.y=
-aml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/sdc@=
-1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspe=
-ed,ast2600-sdhci', 'sdhci']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/sdc@=
-1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspe=
-ed,ast2600-sdhci', 'sdhci']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: fsi@1e79b000 =
-(aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi=
--master'] is too long
->         from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600=
--fsi-master.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/fsi@=
-1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-=
-master', 'fsi-master']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: fsi@1e79b100 =
-(aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi=
--master'] is too long
->         from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600=
--fsi-master.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/fsi@=
-1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-=
-master', 'fsi-master']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/dma-=
-controller@1e79e000: failed to match any schema with compatible: ['aspeed,a=
-st2600-udma']
 
-All of the below warnings you are introducing...
 
-And yeah, all the ones above are existing, but I don't see a lot of
-progress fixing them. It seems no one adding their board cares about
-the SoC warnings given the lack of progress on aspeed stuff. Maybe new
-boards need to be rejected without some improvements...
+On 7/24/25 4:16 PM, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
+> 
+> AMD Seamless Firmware Servicing (SFS) is a secure method to allow
+> non-persistent updates to running firmware and settings without
+> requiring BIOS reflash and/or system reset.
+> 
+> SFS does not address anything that runs on the x86 processors and
+> it can be used to update ASP firmware, modules, register settings
+> and update firmware for other microprocessors like TMPM, etc.
+> 
+> SFS driver support adds ioctl support to communicate the SFS
+> commands to the ASP/PSP by using the TEE mailbox interface.
+> 
+> The Seamless Firmware Servicing (SFS) driver is added as a
+> PSP sub-device.
+> 
+> For detailed information, please look at the SFS specifications:
+> https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/58604.pdf
+> 
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> ---
+>   drivers/crypto/ccp/Makefile         |   3 +-
+>   drivers/crypto/ccp/psp-dev.c        |  20 ++
+>   drivers/crypto/ccp/psp-dev.h        |   8 +-
+>   drivers/crypto/ccp/sfs.c            | 316 ++++++++++++++++++++++++++++
+>   drivers/crypto/ccp/sfs.h            |  53 +++++
+>   include/linux/psp-platform-access.h |   2 +
+>   include/uapi/linux/psp-sfs.h        |  87 ++++++++
+>   7 files changed, 487 insertions(+), 2 deletions(-)
+>   create mode 100644 drivers/crypto/ccp/sfs.c
+>   create mode 100644 drivers/crypto/ccp/sfs.h
+>   create mode 100644 include/uapi/linux/psp-sfs.h
+> 
+> diff --git a/drivers/crypto/ccp/Makefile b/drivers/crypto/ccp/Makefile
+> index 394484929dae..9b876bfb1289 100644
+> --- a/drivers/crypto/ccp/Makefile
+> +++ b/drivers/crypto/ccp/Makefile
+> @@ -13,7 +13,8 @@ ccp-$(CONFIG_CRYPTO_DEV_SP_PSP) += psp-dev.o \
+>                                      tee-dev.o \
+>                                      platform-access.o \
+>                                      dbc.o \
+> -                                   hsti.o
+> +                                   hsti.o \
+> +				   sfs.o
+>   
+>   obj-$(CONFIG_CRYPTO_DEV_CCP_CRYPTO) += ccp-crypto.o
+>   ccp-crypto-objs := ccp-crypto-main.o \
+> diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
+> index 1c5a7189631e..8c4ad225ad67 100644
+> --- a/drivers/crypto/ccp/psp-dev.c
+> +++ b/drivers/crypto/ccp/psp-dev.c
+> @@ -17,6 +17,7 @@
+>   #include "psp-dev.h"
+>   #include "sev-dev.h"
+>   #include "tee-dev.h"
+> +#include "sfs.h"
+>   #include "platform-access.h"
+>   #include "dbc.h"
+>   #include "hsti.h"
+> @@ -182,6 +183,17 @@ static int psp_check_tee_support(struct psp_device *psp)
+>   	return 0;
+>   }
+>   
+> +static int psp_check_sfs_support(struct psp_device *psp)
+> +{
+> +	/* Check if device supports SFS feature */
+> +	if (!psp->capability.sev) {
 
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio=
--keys): button-power: 'anyOf' conditional failed, one must be fixed:
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio=
--keys): button-power: 'oneOf' conditional failed, one must be fixed:
->                 'interrupts' is a required property
->                 'interrupts-extended' is a required property
->         'gpios' is a required property
->         from schema $id: http://devicetree.org/schemas/input/gpio-keys.ya=
-ml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio=
--keys): button-power: 'linux,code' is a required property
->         from schema $id: http://devicetree.org/schemas/input/gpio-keys.ya=
-ml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio=
--keys): button-power: Unevaluated properties are not allowed ('gpio' was un=
-expected)
->         from schema $id: http://devicetree.org/schemas/input/gpio-keys.ya=
-ml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio=
--keys): button-uid: 'anyOf' conditional failed, one must be fixed:
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio=
--keys): button-uid: 'oneOf' conditional failed, one must be fixed:
->                 'interrupts' is a required property
->                 'interrupts-extended' is a required property
->         'gpios' is a required property
->         from schema $id: http://devicetree.org/schemas/input/gpio-keys.ya=
-ml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio=
--keys): button-uid: 'linux,code' is a required property
->         from schema $id: http://devicetree.org/schemas/input/gpio-keys.ya=
-ml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio=
--keys): button-uid: Unevaluated properties are not allowed ('gpio' was unex=
-pected)
->         from schema $id: http://devicetree.org/schemas/input/gpio-keys.ya=
-ml#
+Should this be psp->capability.sfs?
 
-'gpio' has been deprecated for only about 10 years. Maybe 15...
+> +		dev_dbg(psp->dev, "psp does not support SFS\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static int psp_init(struct psp_device *psp)
+>   {
+>   	int ret;
+> @@ -198,6 +210,12 @@ static int psp_init(struct psp_device *psp)
+>   			return ret;
+>   	}
+>   
+> +	if (!psp_check_sfs_support(psp)) {
+> +		ret = sfs_dev_init(psp);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>   	if (psp->vdata->platform_access) {
+>   		ret = platform_access_dev_init(psp);
+>   		if (ret)
+> @@ -302,6 +320,8 @@ void psp_dev_destroy(struct sp_device *sp)
+>   
+>   	tee_dev_destroy(psp);
+>   
+> +	sfs_dev_destroy(psp);
+> +
+>   	dbc_dev_destroy(psp);
+>   
+>   	platform_access_dev_destroy(psp);
+> diff --git a/drivers/crypto/ccp/psp-dev.h b/drivers/crypto/ccp/psp-dev.h
+> index e43ce87ede76..268c83f298cb 100644
+> --- a/drivers/crypto/ccp/psp-dev.h
+> +++ b/drivers/crypto/ccp/psp-dev.h
+> @@ -32,7 +32,8 @@ union psp_cap_register {
+>   		unsigned int sev			:1,
+>   			     tee			:1,
+>   			     dbc_thru_ext		:1,
+> -			     rsvd1			:4,
+> +			     sfs			:1,
+> +			     rsvd1			:3,
+>   			     security_reporting		:1,
+>   			     fused_part			:1,
+>   			     rsvd2			:1,
+> @@ -68,6 +69,7 @@ struct psp_device {
+>   	void *tee_data;
+>   	void *platform_access_data;
+>   	void *dbc_data;
+> +	void *sfs_data;
+>   
+>   	union psp_cap_register capability;
+>   };
+> @@ -118,12 +120,16 @@ struct psp_ext_request {
+>    * @PSP_SUB_CMD_DBC_SET_UID:		Set UID for DBC
+>    * @PSP_SUB_CMD_DBC_GET_PARAMETER:	Get parameter from DBC
+>    * @PSP_SUB_CMD_DBC_SET_PARAMETER:	Set parameter for DBC
+> + * @PSP_SUB_CMD_SFS_GET_FW_VERS:	Get firmware versions for ASP and other MP
+> + * @PSP_SUB_CMD_SFS_UPDATE:		Command to load, verify and execute SFS package
+>    */
+>   enum psp_sub_cmd {
+>   	PSP_SUB_CMD_DBC_GET_NONCE	= PSP_DYNAMIC_BOOST_GET_NONCE,
+>   	PSP_SUB_CMD_DBC_SET_UID		= PSP_DYNAMIC_BOOST_SET_UID,
+>   	PSP_SUB_CMD_DBC_GET_PARAMETER	= PSP_DYNAMIC_BOOST_GET_PARAMETER,
+>   	PSP_SUB_CMD_DBC_SET_PARAMETER	= PSP_DYNAMIC_BOOST_SET_PARAMETER,
+> +	PSP_SUB_CMD_SFS_GET_FW_VERS	= PSP_SFS_GET_FW_VERSIONS,
+> +	PSP_SUB_CMD_SFS_UPDATE		= PSP_SFS_UPDATE,
+>   };
+>   
+>   int psp_extended_mailbox_cmd(struct psp_device *psp, unsigned int timeout_msecs,
+> diff --git a/drivers/crypto/ccp/sfs.c b/drivers/crypto/ccp/sfs.c
+> new file mode 100644
+> index 000000000000..cbca01a884e1
+> --- /dev/null
+> +++ b/drivers/crypto/ccp/sfs.c
+> @@ -0,0 +1,316 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * AMD Secure Processor Seamless Firmware Servicing support.
+> + *
+> + * Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
+> + *
+> + * Author: Ashish Kalra <ashish.kalra@amd.com>
+> + */
+> +
+> +#include <linux/firmware.h>
+> +
+> +#include "sfs.h"
+> +#include "sev-dev.h"
+> +
+> +#define SFS_DEFAULT_TIMEOUT		(10 * MSEC_PER_SEC)
+> +#define SFS_MAX_PAYLOAD_SIZE		(2 * 1024 * 1024)
+> +#define ORDER_2MB 9
+> +
+> +/* SFS Status values */
+> +#define SFS_SUCCESS			0x00
+> +#define SFS_INVALID_TOTAL_SIZE		0x02
+> +#define SFS_INVALID_PKG_SIZE		0x04
+> +#define SFS_DISABLED			0x05
+> +#define SFS_INVALID_CUST_SIGN		0x06
+> +#define SFS_INVALID_AMD_SIGN		0x07
+> +#define SFS_INTERNAL_ERROR		0x08
+> +#define SFS_CUST_SIGN_NOT_ALLOWED	0x09
+> +#define SFS_INVALID_BASE_PATCH_LVL	0x0A
+> +#define SFS_INVALID_CURR_PATCH_LVL	0x0B
+> +#define SFS_INVALID_NEW_PATCH_LVL	0x0C
+> +#define SFS_INVALID_SUBCOMMAND		0x0D
+> +#define SFS_PROTECTION_FAIL		0x0E
+> +#define SFS_BUSY			0x0F
+> +#define SFS_FW_VERSION_MISMATCH	0x10
+> +#define SFS_SYS_VERSION_MISMATCH	0x11
+> +#define SFS_SEV_STILL_INITIALIZED	0x12
+> +
+> +static bool sfs_initialized;
+> +
+> +static int send_sfs_cmd(struct psp_sfs_device *sfs_dev, int msg)
+> +{
+> +	int ret;
+> +
+> +	*sfs_dev->result = 0;
+> +	sfs_dev->command_hdr->ext_req.header.sub_cmd_id = msg;
+> +
+> +	ret = psp_extended_mailbox_cmd(sfs_dev->psp,
+> +					SFS_DEFAULT_TIMEOUT,
+> +					(struct psp_ext_request *)sfs_dev->command_hdr);
+> +	if (ret == -EIO) {
+> +		dev_dbg(sfs_dev->dev,
+> +			 "msg 0x%x failed with PSP error: 0x%x\n",
+> +			 msg, *sfs_dev->result);
+> +		dev_dbg(sfs_dev->dev,
+> +			 "msg 0x%x extended status: 0x%x\n",
+> +			 msg, *(u32 *)sfs_dev->payload);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int send_sfs_get_fw_versions(struct psp_sfs_device *sfs_dev)
+> +{
+> +	int ret;
+> +
+> +	sfs_dev->payload_size = &sfs_dev->command_hdr->ext_req.header.payload_size;
+> +	sfs_dev->result = &sfs_dev->command_hdr->ext_req.header.status;
+> +	sfs_dev->payload = &sfs_dev->command_hdr->ext_req.buf;
+> +	sfs_dev->pkg_hdr = (void *)sfs_dev->command_hdr + PAGE_SIZE;
+> +	sfs_dev->header_size = sizeof(struct psp_ext_req_buffer_hdr);
+> +
+> +	/*
+> +	 * SFS_GET_FW_VERSIONS command needs the output buffer to be
+> +	 * initialized to 0xC7 in every byte.
+> +	 */
+> +	memset(sfs_dev->pkg_hdr, 0xc7, PAGE_SIZE);
+> +	*sfs_dev->payload_size = 2 * PAGE_SIZE;
+> +
+> +	ret = send_sfs_cmd(sfs_dev, PSP_SFS_GET_FW_VERSIONS);
+> +
+> +	return ret;
+> +}
+> +
+> +static int send_sfs_update_package(struct psp_sfs_device *sfs_dev, char *payload_name)
+> +{
+> +	char payload_path[PAYLOAD_NAME_SIZE];
+> +	const struct firmware *firmware;
+> +	unsigned long package_size;
+> +	int ret;
+> +
+> +	sprintf(payload_path, "amd/%s", payload_name);
+> +
+> +	ret = firmware_request_nowarn(&firmware, payload_path, sfs_dev->dev);
+> +	if (ret < 0) {
+> +		dev_warn(sfs_dev->dev, "firmware request fail %d\n", ret);
+> +		return -ENOENT;
+> +	}
+> +
+> +	/* SFS Update Package should be 64KB aligned */
+> +	package_size = ALIGN(firmware->size + PAGE_SIZE, 0x10000U);
+> +
+> +	/*
+> +	 * SFS command buffer is a pre-allocated 2MB buffer, fail update package
+> +	 * if SFS payload is larger than the pre-allocated command buffer.
+> +	 */
+> +	if (package_size > SFS_MAX_PAYLOAD_SIZE) {
+> +		dev_warn(sfs_dev->dev,
+> +			 "SFS payload size %ld larger than maximum supported payload size of 2MB\n",
+> +			 package_size);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	sfs_dev->payload_size = &sfs_dev->command_hdr->ext_req.header.payload_size;
+> +	sfs_dev->result = &sfs_dev->command_hdr->ext_req.header.status;
+> +	sfs_dev->payload = &sfs_dev->command_hdr->ext_req.buf;
+> +	sfs_dev->pkg_hdr = (void *)sfs_dev->command_hdr + PAGE_SIZE;
+> +	sfs_dev->header_size = sizeof(struct psp_ext_req_buffer_hdr);
+> +
+> +	/*
+> +	 * Copy firmware data to a kernel allocated contiguous
+> +	 * memory region.
+> +	 */
+> +	memcpy(sfs_dev->pkg_hdr, firmware->data, firmware->size);
+> +	*sfs_dev->payload_size = package_size;
+> +
+> +	ret = send_sfs_cmd(sfs_dev, PSP_SFS_UPDATE);
+> +
+> +	release_firmware(firmware);
+> +	return ret;
+> +}
+> +
+> +static long sfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct psp_device *psp_master = psp_get_master_device();
+> +	void __user *argp = (void __user *)arg;
+> +	char payload_name[PAYLOAD_NAME_SIZE];
+> +	struct psp_sfs_device *sfs_dev;
+> +	int ret;
+> +
+> +	if (!psp_master || !psp_master->sfs_data)
+> +		return -ENODEV;
+> +	sfs_dev = psp_master->sfs_data;
+> +
+> +	if (!sfs_initialized)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&sfs_dev->ioctl_mutex);
 
-Rob
+As it's new code, how about using guard(mutex) instead?  Then you don't 
+need to have goto unlock in the failure cases and can just return the 
+error directly.
+
+> +
+> +	switch (cmd) {
+> +	case SFSIOCFWVERS:
+> +		dev_dbg(sfs_dev->dev, "in SFSIOCFWVERS\n");
+> +
+> +		ret = send_sfs_get_fw_versions(sfs_dev);
+> +		if (ret && ret != -EIO)
+> +			goto unlock;
+> +		/*
+> +		 * return SFS status and extended status back to userspace
+> +		 * if PSP status indicated command error.
+> +		 */
+> +		if (copy_to_user(argp, sfs_dev->pkg_hdr, PAGE_SIZE))
+> +			ret = -EFAULT;
+> +		if (copy_to_user(argp + PAGE_SIZE, sfs_dev->result, sizeof(u32)))
+> +			ret = -EFAULT;
+> +		if (copy_to_user(argp + PAGE_SIZE + sizeof(u32), sfs_dev->payload, sizeof(u32)))
+> +			ret = -EFAULT;
+> +		break;
+> +	case SFSIOCUPDATEPKG:
+> +		dev_dbg(sfs_dev->dev, "in SFSIOCUPDATEPKG\n");
+> +
+> +		if (copy_from_user(payload_name, argp, PAYLOAD_NAME_SIZE)) {
+> +			ret = -EFAULT;
+> +			goto unlock;
+> +		}
+> +
+> +		ret = send_sfs_update_package(sfs_dev, payload_name);
+> +		if (ret && ret != -EIO)
+> +			goto unlock;
+> +		/*
+> +		 * return SFS status and extended status back to userspace
+> +		 * if PSP status indicated command error.
+> +		 */
+> +		if (copy_to_user(argp + PAYLOAD_NAME_SIZE, sfs_dev->result, sizeof(u32)))
+> +			ret = -EFAULT;
+> +		if (copy_to_user(argp + PAYLOAD_NAME_SIZE + sizeof(u32), sfs_dev->payload,
+> +				 sizeof(u32)))
+> +			ret = -EFAULT;
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +	}
+> +
+> +unlock:
+> +	mutex_unlock(&sfs_dev->ioctl_mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct file_operations sfs_fops = {
+> +	.owner	= THIS_MODULE,
+> +	.unlocked_ioctl = sfs_ioctl,
+> +};
+> +
+> +void sfs_dev_destroy(struct psp_device *psp)
+> +{
+> +	struct psp_sfs_device *sfs_dev = psp->sfs_data;
+> +	int ret;
+> +
+> +	if (!sfs_dev)
+> +		return;
+> +
+> +	/*
+> +	 * TODO: free pre-allocated 2MB command buffer,
+> +	 * if SEV-SNP is initialized the command buffer has
+> +	 * been marked HV_Fixed and HV_Fixed pages remain
+> +	 * in that state till system reset, they cannot be
+> +	 * released back to the page allocator.
+> +	 *
+> +	 */
+> +	snp_delete_hypervisor_fixed_pages_list(page_to_pfn(sfs_dev->page) << PAGE_SHIFT);
+> +
+> +	ret = set_memory_wb((unsigned long)page_address(sfs_dev->page), 512);
+> +	if (ret)
+> +		dev_dbg(sfs_dev->dev, "set memory wb failed\n");
+> +
+> +	sfs_initialized = false;
+> +	misc_deregister(&sfs_dev->char_dev);
+> +	mutex_destroy(&sfs_dev->ioctl_mutex);
+> +	psp->sfs_data = NULL;
+> +}
+> +
+> +int sfs_dev_init(struct psp_device *psp)
+> +{
+> +	struct device *dev = psp->dev;
+> +	struct psp_sfs_device *sfs_dev;
+> +	struct page *page;
+> +	u64 cmd_buf_paddr;
+> +	int ret;
+> +
+> +	/*
+> +	 * SFS feature support can be detected on multiple devices but the SFS
+> +	 * FW commands must be issued on the master. During probe, we do not
+> +	 * know the master hence we create /dev/sfs on the first device probe.
+> +	 */
+> +	if (sfs_initialized)
+> +		return 0;
+> +
+> +	sfs_dev = devm_kzalloc(dev, sizeof(*sfs_dev), GFP_KERNEL);
+> +	if (!sfs_dev)
+> +		return -ENOMEM;
+> +
+> +	BUILD_BUG_ON(sizeof(struct sfs_command) > PAGE_SIZE);
+> +
+> +	/*
+> +	 * Pre-allocate static 2MB command buffer for all SFS commands.
+> +	 */
+> +	page = alloc_pages(GFP_KERNEL | __GFP_ZERO, ORDER_2MB);
+> +	if (!page)
+> +		return -ENOMEM;
+> +	sfs_dev->page = page;
+> +	sfs_dev->command_hdr = page_address(page);
+> +	cmd_buf_paddr = page_to_pfn(sfs_dev->page) << PAGE_SHIFT;
+> +
+> +	/*
+> +	 * If SEV-SNP is enabled the SFS command buffer needs to
+> +	 * transitioned to HV_Fixed page state.
+> +	 */
+> +	dev_dbg(sfs_dev->dev, "cmdbuf page pa 0x%llx to be marked as HV_Fixed\n",
+> +		cmd_buf_paddr);
+> +
+> +	ret = snp_insert_hypervisor_fixed_pages_list(cmd_buf_paddr, 512);
+> +	if (ret) {
+> +		dev_dbg(sfs_dev->dev, "cmdbuf page failed insertion in HV-Fixed page list\n");
+> +		goto cleanup_cmd_buf;
+> +	}
+> +
+> +	/*
+> +	 * Buffers used for communication with different processors, x86 to ASP
+> +	 * in this case must be mapped as non-cacheable.
+> +	 */
+> +	ret = set_memory_uc((unsigned long)page_address(page), 512);
+> +	if (ret) {
+> +		dev_dbg(sfs_dev->dev, "set memory uc failed\n");
+> +		goto cleanup_cmd_buf_after_hv_fixed;
+> +	}
+> +
+> +	dev_dbg(sfs_dev->dev, "cmdbuf page va 0x%lx marked as UnCacheable\n",
+> +		(unsigned long)sfs_dev->command_hdr);
+> +
+> +	psp->sfs_data = sfs_dev;
+> +	sfs_dev->dev = dev;
+> +	sfs_dev->psp = psp;
+> +
+> +	dev_dbg(sfs_dev->dev, "seamless firmware serviving support is available\n");
+
+servicing
+
+> +
+> +	sfs_dev->char_dev.minor = MISC_DYNAMIC_MINOR;
+> +	sfs_dev->char_dev.name = "sfs";
+> +	sfs_dev->char_dev.fops = &sfs_fops;
+> +	sfs_dev->char_dev.mode = 0600;
+> +	ret = misc_register(&sfs_dev->char_dev);
+> +	if (ret)
+> +		goto cleanup_cmd_buf_after_hv_fixed;
+> +
+> +	mutex_init(&sfs_dev->ioctl_mutex);
+> +	sfs_initialized = true;
+> +
+> +	return 0;
+> +
+> +cleanup_cmd_buf_after_hv_fixed:
+> +	snp_delete_hypervisor_fixed_pages_list(cmd_buf_paddr);
+> +cleanup_cmd_buf:
+> +	__free_pages(page, ORDER_2MB);
+> +	psp->sfs_data = NULL;
+> +	devm_kfree(dev, sfs_dev);
+> +
+> +	return ret;
+> +}
+> diff --git a/drivers/crypto/ccp/sfs.h b/drivers/crypto/ccp/sfs.h
+> new file mode 100644
+> index 000000000000..89b7792af076
+> --- /dev/null
+> +++ b/drivers/crypto/ccp/sfs.h
+> @@ -0,0 +1,53 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * AMD Platform Security Processor (PSP) Seamless Firmware (SFS) Support.
+> + *
+> + * Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
+> + *
+> + * Author: Ashish Kalra <ashish.kalra@amd.com>
+> + */
+> +
+> +#ifndef __SFS_H__
+> +#define __SFS_H__
+> +
+> +#include <uapi/linux/psp-sfs.h>
+> +
+> +#include <linux/device.h>
+> +#include <linux/miscdevice.h>
+> +#include <linux/psp-sev.h>
+> +#include <linux/psp-platform-access.h>
+> +#include <linux/set_memory.h>
+> +
+> +#include <asm/sev.h>
+> +
+> +#include "psp-dev.h"
+> +
+> +struct psp_sfs_device {
+> +	struct device *dev;
+> +	struct psp_device *psp;
+> +
+> +	struct sfs_command *command_hdr;
+> +
+> +	struct mutex ioctl_mutex;
+> +
+> +	struct miscdevice char_dev;
+> +
+> +	struct page *page;
+> +
+> +	/* used to abstract communication path */
+> +	u32	header_size;
+> +	u32	*payload_size;
+> +	u32	*result;
+> +	void	*payload;
+> +	void	*pkg_hdr;
+> +};
+> +
+> +struct sfs_command {
+> +	struct psp_ext_request ext_req;
+> +};
+> +
+> +void sfs_dev_destroy(struct psp_device *psp);
+> +int sfs_dev_init(struct psp_device *psp);
+> +void sfs_pci_init(void);
+> +
+> +#endif /* __SFS_H__ */
+> diff --git a/include/linux/psp-platform-access.h b/include/linux/psp-platform-access.h
+> index 1504fb012c05..540abf7de048 100644
+> --- a/include/linux/psp-platform-access.h
+> +++ b/include/linux/psp-platform-access.h
+> @@ -7,6 +7,8 @@
+>   
+>   enum psp_platform_access_msg {
+>   	PSP_CMD_NONE			= 0x0,
+> +	PSP_SFS_GET_FW_VERSIONS,
+> +	PSP_SFS_UPDATE,
+>   	PSP_CMD_HSTI_QUERY		= 0x14,
+>   	PSP_I2C_REQ_BUS_CMD		= 0x64,
+>   	PSP_DYNAMIC_BOOST_GET_NONCE,
+> diff --git a/include/uapi/linux/psp-sfs.h b/include/uapi/linux/psp-sfs.h
+> new file mode 100644
+> index 000000000000..e752fa041683
+> --- /dev/null
+> +++ b/include/uapi/linux/psp-sfs.h
+> @@ -0,0 +1,87 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+> +/*
+> + * Userspace interface for AMD Seamless Firmware Servicing (SFS)
+> + *
+> + * Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
+> + *
+> + * Author: Ashish Kalra <ashish.kalra@amd.com>
+> + */
+> +
+> +#ifndef __PSP_SFS_USER_H__
+> +#define __PSP_SFS_USER_H__
+> +
+> +#include <linux/types.h>
+> +
+> +/**
+> + * SFS: AMD Seamless Firmware Support (SFS) interface
+> + */
+> +
+> +#define PAYLOAD_NAME_SIZE		64
+> +#define TEE_EXT_CMD_BUFFER_SIZE	4096
+> +
+> +/**
+> + * struct sfs_user_get_fw_versions - get current level of base firmware (output).
+> + * @blob:                  current level of base firmware for ASP and patch levels (input/output).
+> + * @sfs_status:            32-bit SFS status value (output).
+> + * @sfs_extended_status:   32-bit SFS extended status value (output).
+> + */
+> +struct sfs_user_get_fw_versions {
+> +	__u8	blob[TEE_EXT_CMD_BUFFER_SIZE];
+> +	__u32	sfs_status;
+> +	__u32	sfs_extended_status;
+> +} __packed;
+> +
+> +/**
+> + * struct sfs_user_update_package - update SFS package (input).
+> + * @payload_name:          name of SFS package to load, verify and execute (input).
+> + * @sfs_status:            32-bit SFS status value (output).
+> + * @sfs_extended_status:   32-bit SFS extended status value (output).
+> + */
+> +struct sfs_user_update_package {
+> +	char	payload_name[PAYLOAD_NAME_SIZE];
+> +	__u32	sfs_status;
+> +	__u32	sfs_extended_status;
+> +} __packed;
+> +
+> +/**
+> + * Seamless Firmware Support (SFS) IOC
+> + *
+> + * possible return codes for all SFS IOCTLs:
+> + *  0:          success
+> + *  -EINVAL:    invalid input
+> + *  -E2BIG:     excess data passed
+> + *  -EFAULT:    failed to copy to/from userspace
+> + *  -EBUSY:     mailbox in recovery or in use
+> + *  -ENODEV:    driver not bound with PSP device
+> + *  -EACCES:    request isn't authorized
+> + *  -EINVAL:    invalid parameter
+> + *  -ETIMEDOUT: request timed out
+> + *  -EAGAIN:    invalid request for state machine
+> + *  -ENOENT:    not implemented
+> + *  -ENFILE:    overflow
+> + *  -EPERM:     invalid signature
+> + *  -EIO:       unknown error
+> + */
+> +#define SFS_IOC_TYPE	'S'
+> +
+> +/**
+> + * SFSIOCFWVERS - returns blob containing FW versions
+> + *                ASP provides the current level of Base Firmware for the ASP
+> + *                and the other microprocessors as well as current patch
+> + *                level(s).
+> + */
+> +#define SFSIOCFWVERS	_IOWR(SFS_IOC_TYPE, 0x1, struct sfs_user_get_fw_versions)
+> +
+> +/**
+> + * SFSIOCUPDATEPKG - updates package/payload
+> + *                   ASP loads, verifies and executes the SFS package.
+> + *                   By default, the SFS package/payload is loaded from
+> + *                   /lib/firmware/amd, but alternative firmware loading
+> + *                   path can be specified using kernel parameter
+> + *                   firmware_class.path or the firmware loading path
+> + *                   can be customized using sysfs file:
+> + *                   /sys/module/firmware_class/parameters/path.
+> + */
+> +#define SFSIOCUPDATEPKG	_IOWR(SFS_IOC_TYPE, 0x2, struct sfs_user_update_package)
+> +
+> +#endif /* __PSP_SFS_USER_H__ */
+
 
