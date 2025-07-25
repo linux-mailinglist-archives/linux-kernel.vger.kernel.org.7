@@ -1,113 +1,139 @@
-Return-Path: <linux-kernel+bounces-745192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF43B1165D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7364FB11663
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B8A57BBA91
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D6BAC35DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD4922DFB1;
-	Fri, 25 Jul 2025 02:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mKMAT8uD"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58A423185F;
+	Fri, 25 Jul 2025 02:25:22 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F04BBE65
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD39254673;
+	Fri, 25 Jul 2025 02:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753410289; cv=none; b=dfyk1HuMqUQMklw0O8IOVMu4ireQhKEGhs3Pdba23bMk8dOwHmaI0kath/xQZJzRfHT8yAnTCyaKx0TB+7d3xkUJLtHJI47Vqxq+UEh1c/IIkSZmyrL3tgT4O516FfhfjsxkasqLjcY01soHpIoLMAq7XEhM89UtsYY+cIgteFI=
+	t=1753410322; cv=none; b=q1e6gYAyL5c5iiIgsRo79C7cP36M/5prNBjOswLzcwR9GJ73fPsc7RQxmfONm5+VBoHekHxZXSwMWNipoaTjdB14jyxOMRb795E/r2b1cHBn2ECJSa7BywaTMC7sXC5CMHPaoaz/3/Is3efNxMBGcQgw44OsDP+x/khZ3U2XLPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753410289; c=relaxed/simple;
-	bh=cIHbjFIi1PRKZshXzUdlbm3m/wTa0RXFskqetX02gaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JkEfHulZnG6Ypf9qqnBu5DZvnbfbruWWKNWtd/20MLdFK1jBLJ5eI74M9zWvE1zRlThKLC1Ud+ewaoB0bFsPtfa8x7KGtIQMd8JAeLm4lYV8XdWv4NbGsNiQ8sAfTu3a5aH04LM8H7DcvZgjpadFpu6VrRcZUp2OywmWLqyVZSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mKMAT8uD; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <3ecb6ed2-dda8-4557-98aa-52de81c47b6d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753410284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kNha03/xmAX8VYI+r+HiLE7Srno3NMPw0wl2Wi/rdF0=;
-	b=mKMAT8uD0YWkxDyRRyxK9ERP+577ubyvtfIDdRuwqtI5M6G+vCuFU2GBI4sFCy/3GPaVBz
-	r6GDgfMO/Qa4pqlVjvC7P3nwn9PcdxcRKnt3/000XoHs0FYfteFSn7YSQ9UgWAG2tx9Hvl
-	rv03XSca5cvk5EEN/uFRt2LVagTb76A=
-Date: Fri, 25 Jul 2025 10:24:33 +0800
+	s=arc-20240116; t=1753410322; c=relaxed/simple;
+	bh=L2idtvIt/1uihIpQ8b9OtDmVC7OmE4x9WnLbp3Mdl9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rvUVEOXR+ZkikOBfVKRIIT7RkXciRp64qru/LOacrFqk/Qkc5w+q6eOfTjKaU8VYCeu4F5+viv8HyXCEkLr5nuXdXXJxEvna/tBg9bMwWY0/1nZXFj9zqwBNMt0yqs5vxWSvxC/M7adAFpIAX2dzjLJi8bABxgn35pzDXgSCL9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 1AC151605AF;
+	Fri, 25 Jul 2025 02:25:12 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 377261B;
+	Fri, 25 Jul 2025 02:25:07 +0000 (UTC)
+Date: Thu, 24 Jul 2025 22:25:10 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: lukas@wunner.de, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, helgaas@kernel.org,
+ ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
+ Jonathan.Cameron@huawei.com, bhelgaas@google.com, tony.luck@intel.com,
+ bp@alien8.de, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
+ anil.s.keshavamurthy@intel.com, mark.rutland@arm.com, peterz@infradead.org,
+ tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v9 2/2] PCI: trace: Add a RAS tracepoint to monitor link
+ speed changes
+Message-ID: <20250724222510.7b00ea79@gandalf.local.home>
+In-Reply-To: <0611d06d-e198-4617-a0ba-3050ca6191c6@linux.alibaba.com>
+References: <20250723033108.61587-1-xueshuai@linux.alibaba.com>
+	<20250723033108.61587-3-xueshuai@linux.alibaba.com>
+	<20250723100559.7f0adb3c@batman.local.home>
+	<0611d06d-e198-4617-a0ba-3050ca6191c6@linux.alibaba.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] hung_task: Add detection count to hung task warning
- message
-Content-Language: en-US
-To: Andrew Morton <akpm@linux-foundation.org>, Ye Liu <ye.liu@linux.dev>
-Cc: Ye Liu <liuye@kylinos.cn>, linux-kernel@vger.kernel.org
-References: <20250724072326.2031432-1-ye.liu@linux.dev>
- <bdd8f5de-acd5-4c09-b3a4-ec6af54b396c@linux.dev>
- <20250724151035.cc2d421d1b1ed20b89be1917@linux-foundation.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20250724151035.cc2d421d1b1ed20b89be1917@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Rspamd-Queue-Id: 377261B
+X-Stat-Signature: 5hi1kbyyqh1ikfey7kfjuxq3egm7nu3s
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/MoJxA/jhPTrRIoH2xbHAuuPBlBDFxjpY=
+X-HE-Tag: 1753410307-806746
+X-HE-Meta: U2FsdGVkX18vpnF45ei3qcCwLbzlr91TQHIearcao6J5ZztGfnRfW19kN5BvnxAN/U22+6o1JXO8g3V2HBQKK/Dh4hHfsv1VJR0+k0uVanM39RAosoIdgIU/qE7fPZb2nG6C2dYesS/FRb6up+/DZTzCnQEVLD2C9Hlgylm/A/4TXJAxL8nLi8aBmwzmgHvmhdZKmSFdvb8KF/xa9NrmoMuKc8R3hepW33HbDICTu5D1t88ED9XSvBfdZQP1WseE6GIQkYA+peRAw8otaa1Otx4pVhQbrXd6xZPv+tQXLWTH0acraIorK/VhfO5hlOzAHkQ9B28yTeckomcP3gyggadd6QhP57DnTiadCp0j8wm9ukeD5azKm6MuQ1maJM2o+NA8UVGROpMlqduiFTiCAn/Iqvo3jEVAo2HBb95KpLrELTJ2gHgDiAB3TnhjzicPZrckKZYB4B4=
 
+On Fri, 25 Jul 2025 10:11:10 +0800
+Shuai Xue <xueshuai@linux.alibaba.com> wrote:
 
-
-On 2025/7/25 06:10, Andrew Morton wrote:
-> On Thu, 24 Jul 2025 20:06:52 +0800 Lance Yang <lance.yang@linux.dev> wrote:
+> For the libtraceevent implementation, I believe we'd
+> need to:
 > 
->>
->>
->> On 2025/7/24 15:23, Ye Liu wrote:
->>> From: Ye Liu <liuye@kylinos.cn>
->>>
->>> Add [#N] to hung task warnings to show occurrence count.
->>> This helps quickly identify warning order when multiple
->>> messages appear in logs.
->>
->> Hmm... once we have this number, what do we do with it?
+> - Add the PCI speed mapping table to libtraceevent
+> - Create a print function similar to other existing parsers
+> - Ensure perf, trace-cmd, and rasdaemon can all benefit from it
 > 
-> Yes, adding to the changelog a more comprehensive description of the
-> use-cases would help get this patch into Linux.
+> Would you like me to investigate the libtraceevent changes, or do you
 
-Yep, exactly. Please sell this change to us! A good changelog should
-explain not just what the patch does, but why it's necessary ;p
+Yeah, just update libtraceevent. In fact, libtraceevent has plugins for
+things like this.
 
-> 
->> While I totally get the desire for a quick reference number, my thinking
->> is that the hung_task_detect_count counter is the intended and more
->> reliable way for users to check.
-> 
-> But that's what this patch does?  Confused.
+You can use this as an example:
 
-I'm just not sure if this quick reference number is something users
-actually need, as there doesn't seem to be a strong use-case for it yet.
+  https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/tree/plugins/plugin_jbd2.c
 
-My point was that actively checking the sysctl is the proper way to get the
-total count. But of course, if users genuinely need this inline number, I
-have no objection ;)
+That adds two functions that are used in print fmt strings. Here's one:
 
-> 
->> But like I said before, let's see what Andrew thinks ;)
-> 
-> Andrew thinks it's a pain when the title of a patch is changed!
-> Fortunately the changelog had a "Link to v1".
+static unsigned long long
+process_jbd2_dev_to_name(struct trace_seq *s, unsigned long long *args)
+{
+	unsigned int dev = args[0];
 
-https://lore.kernel.org/lkml/20250721031755.1418556-1-ye.liu@linux.dev/
+	trace_seq_printf(s, "%d:%d", MAJOR(dev), MINOR(dev));
+	return 0;
+}
 
-Thanks,
-Lance
 
+int TEP_PLUGIN_LOADER(struct tep_handle *tep)
+{
+	tep_register_print_function(tep,
+				    process_jbd2_dev_to_name,
+				    TEP_FUNC_ARG_STRING,
+				    "jbd2_dev_to_name",
+				    TEP_FUNC_ARG_INT,
+				    TEP_FUNC_ARG_VOID);
+[..]
+
+The above defines:
+
+	char *jbd2_dev_to_name(int arg0);
+
+And when this is found in the parsing, it calls process_jbd2_dev_to_name()
+passing it the arguments that was found in the trace.
+
+You would have something like:
+
+	tep_register_print_function(tep,
+				    process_pci_speed_string,
+				    TEP_FUNC_ARG_STRING,
+				    "pci_speed_string",
+				    TEP_FUNC_ARG_INT,
+				    TEP_FUNC_ARG_VOID);
+
+Which will return a string and take an integer as an argument. Then you
+would just implement the process_pci_speed_string() function to do the same
+thing as the pci_speed_string() does in the kernel.
+
+Oh, and here's the man page for you on tep_register_print_function()
+
+  https://trace-cmd.org/Documentation/libtraceevent/libtraceevent-reg_print_func.html
+
+-- Steve
 
