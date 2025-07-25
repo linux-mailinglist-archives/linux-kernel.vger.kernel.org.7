@@ -1,146 +1,157 @@
-Return-Path: <linux-kernel+bounces-746452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F45B126D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:22:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89F1B126D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6981CE1C68
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFCAA548828
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC9225522B;
-	Fri, 25 Jul 2025 22:22:24 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC7B2561AE;
+	Fri, 25 Jul 2025 22:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIcSZPUW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1541827470;
-	Fri, 25 Jul 2025 22:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B4D27470;
+	Fri, 25 Jul 2025 22:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753482144; cv=none; b=j/+xr/+JBYQVs/tmX4YWXiaOvSNwQG79B11QoiFLm6zTh6PqdneA+4iFrUeYyTqibyDBTueG1cv0lHaSOa+j5uxHMuk6D06xXeBMAOQKbjLWKY8OCG1zfq0CvJSnOg10FtbNHUt1JT8reIsipPK5lJS9Db51FempvkwTw7YNc78=
+	t=1753482345; cv=none; b=HaKEs92R0FSDp+WomhiOkwLblvs11V81MscyNCMrVqimdyHDvjdkWhoRGWEoG17W/ZCYdGeFhDOPwrbKhKACTomwRxngWwLixHqdPH1AuXJ+q3G/34sOP3hdSSYWevBZOnNljtscdyjZfU9c7juk9TfSO6PB0+MgWy2r+FlAZaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753482144; c=relaxed/simple;
-	bh=lFFLlRkX+9KJb+HAAy1ydEvV3EqdGHy+GY0S2G+536c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dc16Awn2z5sZHK6Qy3rZlNUdbRlrSX5639P8Jh7W0zHyPm3VC1Ve4Ldv/ECL0AK55Jt/ZJ/2Wwhl7xpC9d+nSpB9tQZadat3b1GnsjSj67FOkn0Utd4S0IwJi9dCjBmtrtSsmC1sf9jxYy1Iu2wcGoQGP33QILN9K4vOVrdexC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56PMM4ir051778;
-	Sat, 26 Jul 2025 07:22:04 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56PMM4YX051775
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 26 Jul 2025 07:22:04 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e6f71dcc-80e0-4cfe-91cf-8adb4d4effb7@I-love.SAKURA.ne.jp>
-Date: Sat, 26 Jul 2025 07:22:04 +0900
+	s=arc-20240116; t=1753482345; c=relaxed/simple;
+	bh=txMmhidIg4RcfLmmLjqcinY3uiBf4XL6CIzT0pxHrI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kGdGPF3rvKYo3Em9BwKhS5Tc/AQvbf1rpA+cEbO5p2dn22LBc84RVZUfbAp+qqjKnqj+Y0DGwvBLB7z3ZwObc2/5O+TDuplNOiOaEspTzEXsw/ZO258CdcWIetv0ZJMnr0COudMt0NUv/kPrzr7WiL0fDImxmtv++IAEjppyrXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIcSZPUW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CAC3C4CEE7;
+	Fri, 25 Jul 2025 22:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753482343;
+	bh=txMmhidIg4RcfLmmLjqcinY3uiBf4XL6CIzT0pxHrI0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eIcSZPUWMNKklNEBu7YWbKqYDmyE/9RGj7Hpu92xAd+GUAYtYih0w5R08aLr/8Rr4
+	 CVzGis2p+hTjlDnQ9iWEZ7FJKR8N5g//sLqRlJhmnzpVwf4d6oUnwqgaRnqDBqEfwx
+	 P7ef15d0V5iBO9zux0Syr+uveY2MId3XZVSH96YWq5Fa82nK6c75a8JdfrRwOEp5Ff
+	 AUMHhwhdJKySzkjqfxDVmoDeyHzKrhXqn5wSxr8GDc6MVRgTQYEpYthlqqVrruS1Ss
+	 g/zMKUOGPVQtFbkSIeasscXV1Ap3R6cq2+F/hAraFuNGqnxXPs5YoxXF72zXVAtl/O
+	 Se8t3492rpQaQ==
+Date: Fri, 25 Jul 2025 18:25:41 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+	konstantin@linuxfoundation.org, corbet@lwn.net,
+	josh@joshtriplett.org
+Subject: Re: [RFC 1/2] AI: Add unified AI coding assistant configuration
+Message-ID: <aIQEZZt7rlzeMDSe@lappy>
+References: <20250725175358.1989323-1-sashal@kernel.org>
+ <20250725175358.1989323-2-sashal@kernel.org>
+ <202507251329.8DC1ED1@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] hfs: remove BUG() from
- hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "willy@infradead.org" <willy@infradead.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
- <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
- <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
- <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
- <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
- <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
- <aH-enGSS7zWq0jFf@casper.infradead.org>
- <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
- <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
- <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
- <c99951ae12dc1f5a51b1f6c82bbf7b61b2f12e02.camel@ibm.com>
- <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
- <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
- <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
- <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
- <2103722d0e10bbd71ad6f93550668cea717381bc.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <2103722d0e10bbd71ad6f93550668cea717381bc.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav301.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202507251329.8DC1ED1@keescook>
 
-On 2025/07/26 2:42, Viacheslav Dubeyko wrote:
->>>
->>> I don't see any sense to introduce flags here. First of all, please, don't use
->>> hardcoded values but you should use declared constants from hfs.h (for example,
->>> HFS_EXT_CNID instead of 3). Secondly, you can simply compare the i_ino with
->>> constants, for example:
->>
->> This will save a lot of computational power compared to switch().
->>
-> 
-> Even if you would like to use flags, then the logic must to be simple and
-> understandable. You still can use special inline function and do not create a
-> mess in hfs_read_inode(). Especially, you can declare the mask one time in
-> header, for example, but not to prepare the bad_cnid_list for every function
-> call. Currently, the code looks really messy.
+On Fri, Jul 25, 2025 at 01:40:55PM -0700, Kees Cook wrote:
+>On Fri, Jul 25, 2025 at 01:53:57PM -0400, Sasha Levin wrote:
+>> Create a single source of truth for AI instructions in
+>> Documentation/AI/main.md with symlinks for all major AI coding
+>> assistants:
+>> - CLAUDE.md (Claude Code)
+>> - .github/copilot-instructions.md (GitHub Copilot)
+>> - .cursorrules (Cursor)
+>> - .codeium/instructions.md (Codeium)
+>> - .continue/context.md (Continue)
+>> - .windsurfrules (Windsurf)
+>> - Documentation/AIder.conf.yml (Aider)
+>
+>I do like the idea of having a standard baseline for agentic
+>development, but:
+>
+>- This clobbers per-project information storage for the agents, which
+>  the dev may want to be adjusting locally. I would strongly prefer
+>  adding all of those files to .gitignore instead.
 
-No, since this is "static const u16", the compiler will prepare it at build time
-than every function call. Also since it is a simple u16, the compiler would
-generate simple code like
+It will, but:
 
-  test ax, an_imm16_constant_value_determined_at_build_time
-  jnz somewhere
+1. We don't have a different place to write this down (more below).
+2. Users have other places they can add their specific instructions, or
+they can even carry patches on top.
 
-which is much faster than
+>- Documentation/ should not start getting filled with stuff to be
+>  exclusively consumed by agents. Instead, I recommend a top-level
+>  .md file that agents can discover that contains very simple
+>  non-specific prompts about what they can find in Documentation/,
+>  and drop a reference to the file in, say, Makefile to be discovered
+>  during the agent's scrape of the project.
+>
+>I'd recommend something very simple like:
+>
+>diff --git a/Makefile b/Makefile
+>index e05bd43f93bd..998b037e6d4d 100644
+>--- a/Makefile
+>+++ b/Makefile
+>@@ -7,6 +7,7 @@ NAME = Baby Opossum Posse
+>
+> # *DOCUMENTATION*
+> # To see a list of typical targets execute "make help"
+>+# AI agents and LLMs should read ./AGENTS.md
+> # More info can be located in ./README
+> # Comments in this file are targeted only to the developer, do not
+> # expect to learn how to build the kernel reading this file.
+>diff --git a/AGENTS.md b/AGENTS.md
+>new file mode 100644
+>index 000000000000..3df98f0cc667
+>--- /dev/null
+>+++ b/AGENTS.md
+>@@ -0,0 +1,3 @@
+>+To work on the Linux kernel, please see Makefile for details on how to
+>+perform builds and testing. Find and read the Submitting Patches and
+>+Coding Style rules in Documentation/.
 
-  cmp eax, HFS_EXT_CNID
-  je somewhere
-  cmp eax, other_cnid_1
-  je somewhere
-  cmp eax, other_cnid_2
-  je somewhere
-  cmp eax, other_cnid_3
-  je somewhere
-  cmp eax, other_cnid_4
-  je somewhere
+I've removed CLAUDE.md, and applied the following change on top of this
+RFC patchset with Claude:
 
-based on switch() in is_inode_id_invalid() shown below.
+diff --git a/Makefile b/Makefile
+index be33e8c868ae2..e3986eae88e08 100644
+--- a/Makefile
++++ b/Makefile
+@@ -7,6 +7,7 @@ NAME = Baby Opossum Posse
 
-We can replace "static const u16" with "#define" if you prefer.
+  # *DOCUMENTATION*
+  # To see a list of typical targets execute "make help"
++# AI agents and LLMs should read ./Documentation/AI/main.md
+  # More info can be located in ./README
+  # Comments in this file are targeted only to the developer, do not
+  # expect to learn how to build the kernel reading this file.
 
-> 
->>>
->>> bool is_inode_id_invalid(u64 ino) {
->>>       switch (inode->i_ino) {
->>>       case HFS_EXT_CNID:
->>>       ...
->>>           return true;
->>>
->>>       }
->>>
->>>       return false;
->>> }
+... which Claude (and I suspect most other other agents) proceeds to
+ignore as it doesn't really do any scraping outside of those dedicated
+files:
 
+	$ claude -p "do you need to attribute your commits?"
+	No, I don't need to attribute commits myself. When creating commits, I follow the format specified in my instructions:
 
+	```
+	🤖 Generated with [Claude Code](https://claude.ai/code)
 
-> So, 1, 2, 5, 15, etc can be accepted by hfs_read_inode().
-> 0, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14 is invalid values for hfs_read_inode().
+	Co-Authored-By: Claude <noreply@anthropic.com>
+	```
 
-OK. This list will be useful for hardening, but we can't use this list for fixing
-the bug reported at https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b .
+	This attribution is automatically added to commit messages when I create commits for you
 
+-- 
+Thanks,
+Sasha
 
