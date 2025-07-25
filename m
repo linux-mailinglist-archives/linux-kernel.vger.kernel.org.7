@@ -1,189 +1,254 @@
-Return-Path: <linux-kernel+bounces-745609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76426B11C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:19:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80148B11C26
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DB69188A924
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:19:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E1F13A7E13
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FE92D8795;
-	Fri, 25 Jul 2025 10:19:12 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73BE2DC334;
+	Fri, 25 Jul 2025 10:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="flUFeXgN"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DCE2D6405;
-	Fri, 25 Jul 2025 10:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D386D275AE6;
+	Fri, 25 Jul 2025 10:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753438752; cv=none; b=pvkFjSkkbvip9eYA11ouAfWe5tSpQF0mjIl/VdTUTWD+UACN/qRthcmzcpEmB2SFo1kK+hAfA+HLmSdKXayDpBTKL3D+Z43ov4Jd6sYvfTFuuXsuW6CDCC0ida8claVDHpEBlFNhtgYLwCbxyxm9OKbMnhARUZIX8o+2zseTw+U=
+	t=1753438813; cv=none; b=BoJgvk59n2Re5TVbA3ouuMMlGnwN0C5mbIQXnWTlNYkaJAXM9KLbllBHXaoxNHttwR1stFc/GN7uijupTvIsm+x3xvdRs5K+Cv8X2Vl7uypzgqfAA5tB0ixSBVDtIKBvxX3XwuLrgalppBUTU1Xb+gpZCWGvbRq1g9fGyzXsm+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753438752; c=relaxed/simple;
-	bh=qQ/yJCsQkmP5/e/dWKzazsGsjGQ8Clmwyi0em7Uy9DY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ipUqcDZEGN3D/4x3T8UsJE5C0CBNdnur3mAQGKVDfuYLAmRTCqc8mY3Bp2DsxkAj9crzKiteJ8dg3J7ptRbMu/Maaq7VpxrXJp+0UvuatignDYhyjOglIMa9cfZKyBta9aQcfONTX0HEoVXl83mt5vVr3gX6f0BtWO3DrjqySw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c8502472694011f0b29709d653e92f7d-20250725
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:3904e0f8-c2a3-4b9a-a6f8-dec81a948c30,IP:0,U
-	RL:0,TC:0,Content:9,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:9
-X-CID-META: VersionHash:6493067,CLOUDID:9bad97c22f5b24b1cbe184e7b452d44d,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:4|50,EDM:
-	-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA
-	:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: c8502472694011f0b29709d653e92f7d-20250725
-X-User: duanchenghao@kylinos.cn
-Received: from localhost [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 300724971; Fri, 25 Jul 2025 18:19:00 +0800
-Date: Fri, 25 Jul 2025 18:18:57 +0800
-From: Chenghao Duan <duanchenghao@kylinos.cn>
-To: Vincent Li <vincent.mc.li@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	yangtiezhu@loongson.cn, hengqi.chen@gmail.com,
-	chenhuacai@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
-	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	jolsa@kernel.org, kernel@xen0n.name, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, bpf@vger.kernel.org,
-	guodongtai@kylinos.cn, youling.tang@linux.dev,
-	jianghaoran@kylinos.cn
-Subject: Re: [PATCH v4 0/5] Support trampoline for LoongArch
-Message-ID: <20250725101857.GA20688@chenghao-pc>
-References: <20250724141929.691853-1-duanchenghao@kylinos.cn>
- <CAK3+h2zirm6cV2tAbd38RSYSF3=B1qZ+9jm_GZPsAPrMtaozmg@mail.gmail.com>
+	s=arc-20240116; t=1753438813; c=relaxed/simple;
+	bh=TayFG/TjIQP/lUu1JP50K/qbwdUrvUhNJxMJVjizX2k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kWrpSDXzwo9L1RfqZJxpyop/2GD6ZsPD3j3I9Z2l7Uoaz+eFRxcFluwD8ohVXr5e3kik52UpaUTKYtMJvFf/jMSwP/U1lNOpniSc88VKDziFPHLi7zxZA97l2M+4u9GWNwFqTLQjP5xLa3siJfgQmAfMOhgugNqbETDfcQbF8qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=flUFeXgN; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753438803;
+	bh=TayFG/TjIQP/lUu1JP50K/qbwdUrvUhNJxMJVjizX2k=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=flUFeXgNwD5PYk/1DcAUDh2PwZ+98bz6TIlzvNZUzOwQP7pI4QP/7vJbnmECXAf3q
+	 xBaufagoROYQabKbZQxjl75KKOLdRGnYpSIBzn+AECIdh4g8VwrpEYRgieNNVbfmid
+	 7ZN5VsszNX6aOna43vHn6KrZsU3ZOlGkRDI5KU7FhQAMjut+XsCtjUusvLnCBwDkBc
+	 tNpf2UCqmP2jOj3vnXTRAZeD90azK/0xFDZN0zvaf1i7dpOadKcPTgFSc9FsiP/dQ5
+	 oSTXvctvFC12oFackKtOwzaOVQt2i3YnWsgAEJx1ql87T4vI2ysfZUebTZhMNn6ZNT
+	 JddADMcLBqdOA==
+Received: from [192.168.1.90] (unknown [82.79.138.60])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8815317E0CA1;
+	Fri, 25 Jul 2025 12:20:02 +0200 (CEST)
+Message-ID: <bc533603-c7e3-4661-9b1e-ed1818d9f7cc@collabora.com>
+Date: Fri, 25 Jul 2025 13:20:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK3+h2zirm6cV2tAbd38RSYSF3=B1qZ+9jm_GZPsAPrMtaozmg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/9] usb: vhci-hcd: Prevent suspending virtually attached
+ devices
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+To: Shuah Khan <skhan@linuxfoundation.org>,
+ Alan Stern <stern@rowland.harvard.edu>
+Cc: Valentina Manea <valentina.manea.m@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Brian G. Merrell" <bgmerrell@novell.com>, kernel@collabora.com,
+ Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250717-vhci-hcd-suspend-fix-v1-0-2b000cd05952@collabora.com>
+ <20250717-vhci-hcd-suspend-fix-v1-1-2b000cd05952@collabora.com>
+ <42bcf1e1-1bb2-4b63-9790-61393f780202@rowland.harvard.edu>
+ <2a87101f-6bee-4bd1-816a-1dfbe7b4a578@linuxfoundation.org>
+ <e1bf85c8-930c-4f70-86ea-460e1db8e6c6@collabora.com>
+Content-Language: en-US
+In-Reply-To: <e1bf85c8-930c-4f70-86ea-460e1db8e6c6@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 08:30:35AM -0700, Vincent Li wrote:
-> On Thu, Jul 24, 2025 at 7:19 AM Chenghao Duan <duanchenghao@kylinos.cn> wrote:
-> >
-> > v4:
-> > 1. Delete the #3 patch of version V3.
-> >
-> > 2. Add 5 NOP instructions in build_prologue().
-> >    Reserve space for the move_imm + jirl instruction.
-> >
-> > 3. Differentiate between direct jumps and ftrace jumps of trampoline:
-> >    direct jumps skip 5 instructions.
-> >    ftrace jumps skip 2 instructions.
-> >
-> > 4. Remove the generation of BL jump instructions in emit_jump_and_link().
-> >    After the trampoline ends, it will jump to the specified register.
-> >    The BL instruction writes PC+4 to r1 instead of allowing the
-> >    specification of rd.
-> >
-> > -----------------------------------------------------------------------
-> > Historical Version:
-> > v3:
-> > 1. Patch 0003 adds EXECMEM_BPF memory type to the execmem subsystem.
-> >
-> > 2. Align the size calculated by arch_bpf_trampoline_size to page
-> > boundaries.
-> >
-> > 3. Add the flush icache operation to larch_insn_text_copy.
-> >
-> > 4. Unify the implementation of bpf_arch_xxx into the patch
-> > "0004-LoongArch-BPF-Add-bpf_arch_xxxxx-support-for-Loong.patch".
-> >
-> > 5. Change the patch order. Move the patch
-> > "0002-LoongArch-BPF-Update-the-code-to-rename-validate_.patch" before
-> > "0005-LoongArch-BPF-Add-bpf-trampoline-support-for-Loon.patch".
-> >
-> > URL for version v3:
-> > https://lore.kernel.org/all/20250709055029.723243-1-duanchenghao@kylinos.cn/
-> > ---------
-> > v2:
-> > 1. Change the fixmap in the instruction copy function to set_memory_xxx.
-> >
-> > 2. Change the implementation method of the following code.
-> >         - arch_alloc_bpf_trampoline
-> >         - arch_free_bpf_trampoline
-> >         Use the BPF core's allocation and free functions.
-> >
-> >         - bpf_arch_text_invalidate
-> >         Operate with the function larch_insn_text_copy that carries
-> >         memory attribute modifications.
-> >
-> > 3. Correct the incorrect code formatting.
-> >
-> > URL for version v2:
-> > https://lore.kernel.org/all/20250618105048.1510560-1-duanchenghao@kylinos.cn/
-> > ---------
-> > v1:
-> > Support trampoline for LoongArch. The following feature tests have been
-> > completed:
-> >         1. fentry
-> >         2. fexit
-> >         3. fmod_ret
-> >
-> > TODO: The support for the struct_ops feature will be provided in
-> > subsequent patches.
-> >
-> > URL for version v1:
-> > https://lore.kernel.org/all/20250611035952.111182-1-duanchenghao@kylinos.cn/
-> > -----------------------------------------------------------------------
-> >
-> > Chenghao Duan (4):
-> >   LoongArch: Add larch_insn_gen_{beq,bne} helpers
-> >   LoongArch: BPF: Update the code to rename validate_code to
-> >     validate_ctx
-> >   LoongArch: BPF: Add bpf_arch_xxxxx support for Loongarch
-> >   LoongArch: BPF: Add bpf trampoline support for Loongarch
-> >
-> > Tiezhu Yang (1):
-> >   LoongArch: BPF: Add struct ops support for trampoline
-> >
-> >  arch/loongarch/include/asm/inst.h |   3 +
-> >  arch/loongarch/kernel/inst.c      |  60 ++++
-> >  arch/loongarch/net/bpf_jit.c      | 521 +++++++++++++++++++++++++++++-
-> >  arch/loongarch/net/bpf_jit.h      |   6 +
-> >  4 files changed, 589 insertions(+), 1 deletion(-)
-> >
-> > --
-> > 2.25.1
-> >
+On 7/18/25 9:41 AM, Cristian Ciocaltea wrote:
+> Hi Alan, Shuah,
 > 
-> Tested the whole patch series and it resolved the xdp-tool xdp-filter issue
+> On 7/17/25 10:55 PM, Shuah Khan wrote:
+>> On 7/17/25 12:26, Alan Stern wrote:
+>>> On Thu, Jul 17, 2025 at 06:54:50PM +0300, Cristian Ciocaltea wrote:
+>>>> The VHCI platform driver aims to forbid entering system suspend when at
+>>>> least one of the virtual USB ports are bound to an active USB/IP
+>>>> connection.
+>>>>
+>>>> However, in some cases, the detection logic doesn't work reliably, i.e.
+>>>> when all devices attached to the virtual root hub have been already
+>>>> suspended, leading to a broken suspend state, with unrecoverable resume.
+>>>>
+>>>> Ensure the attached devices do not enter suspend by setting the syscore
+>>>> PM flag.
+>>>>
+>>>> Fixes: 04679b3489e0 ("Staging: USB/IP: add client driver")
+>>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>>>> ---
+>>>>   drivers/usb/usbip/vhci_hcd.c | 2 ++
+>>>>   1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+>>>> index e70fba9f55d6a0edf3c5fde56a614dd3799406a1..762b60e10a9415e58147cde2f615045da5804a0e 100644
+>>>> --- a/drivers/usb/usbip/vhci_hcd.c
+>>>> +++ b/drivers/usb/usbip/vhci_hcd.c
+>>>> @@ -765,6 +765,7 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
+>>>>                    ctrlreq->wValue, vdev->rhport);
+>>>>                 vdev->udev = usb_get_dev(urb->dev);
+>>>> +            dev_pm_syscore_device(&vdev->udev->dev, true);
+>>>>               usb_put_dev(old);
+>>>>                 spin_lock(&vdev->ud.lock);
+>>>> @@ -785,6 +786,7 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
+>>>>                       "Not yet?:Get_Descriptor to device 0 (get max pipe size)\n");
+>>>>                 vdev->udev = usb_get_dev(urb->dev);
+>>>> +            dev_pm_syscore_device(&vdev->udev->dev, true);
+>>>>               usb_put_dev(old);
+>>>>               goto out;
+>>>
+>>> This looks very strange indeed.
+>>>
+>>> First, why is vhci_urb_enqueue() the right place to do this?  I should
+>>> think you would want to do this just once per device, at the time it is
+>>> attached.  Not every time a new URB is enqueued.
+>>
+>> Correct. This isn't the right place to do this even if we want to go with
+>> the option to prevent suspend. The possible place to do this would be
+>> from rh_port_connect() in which case you will have access to usb_hcd device.
 > 
-> [root@fedora ~]# xdp-loader status
-> CURRENT XDP PROGRAM STATUS:
-> 
-> Interface        Prio  Program name      Mode     ID   Tag
->   Chain actions
-> --------------------------------------------------------------------------------------
-> lo                     xdp_dispatcher    skb      53   4d7e87c0d30db711
->  =>              10     xdpfilt_alw_all           62
-> 320c53c06933a8fa  XDP_PASS
-> dummy0                 <No XDP program loaded!>
-> sit0                   <No XDP program loaded!>
-> enp0s3f0               <No XDP program loaded!>
-> wlp3s0                 <No XDP program loaded!>
-> 
-> you can add Tested-by: Vincent Li <vincent.mc.li@gmail.com>
+> Oh, I chose to handle this in vhci_urb_enqueue() as it seemed to be the only
+> place where vdev->udev gets assigned.  Now I wonder if that assignment
+> should really be here, but probably I'm missing something obvious as I'm
+> still in the process of getting familiar with the code base.
 
-Hi Vincent,
+After digging a bit further into the process of establishing a virtual
+connection, I concluded rh_port_connect() cannot be used for the syscore
+flag setup since the usb_device instance part of struct vhci_device
+(vdev->udev here) is not yet initialized at that time.  That is because this
+function is called right after the userspace tool responsible for initiating
+a new USB/IP attachment writes the remote device information into sysfs -
+see attach_store() in drivers/usb/usbip/vhci_sysfs.c.
 
-Okay, thank you very much for your support. The existing patch has
-included "Tested-by: Vincent Li vincent.mc.li@gmail.com".
+The earliest execution context providing access to usb_device seems to be
+during the enumeration process, which would explain why the vdev->udev
+assignment has been done in vhci_urb_enqueue().  This should be normally
+needed only when handling USB_REQ_GET_DESCRIPTOR, but for some reason
+there's a reassignment in the USB_REQ_SET_ADDRESS handler as well.  I'd
+assume it's possible that usb_device instance may change after
+USB_REQ_GET_DESCRIPTOR, which is supposed to always precede
+USB_REQ_SET_ADDRESS.
 
-Brs Chenghao
+However, in all my tests done so far the operations where performed on the
+same instance, hence I'm not sure if this is a real possibility or just a
+leftover from downstream/experimental code base.
+
+To remain on the safe side, I'll keep both calls to dev_pm_syscore_device(),
+while adding in each case a comment on top with the relevant information. 
+
+>> This has to be undone from rh_port_disconnect(). Also how does this impact
+>> the usbip_host - we still need to handle usbip_host suspend.
+> 
+> I've only addressed usbip_vhci suspend prevention at the moment, as that was
+> supposed to work.
+> 
+>>>
+>>> Second, how do these devices ever go back to being regular non-syscore
+>>> things?
+> 
+> This only handles the client side, i.e. the virtually attached devices,
+> hence I didn't pay much attention to undo the syscore thing (wasn't
+> straightforward to accomplish via the URB handling path anyway).  I'll
+> definitely fix this up by moving to rh_port_[dis]connect(), as Shuah
+> suggested.
+> 
+>>> Third, if this change isn't merely a temporary placeholder, it certainly
+>>> needs to have a comment in the code to explain what it does and why.
+> 
+> Indeed, will document this.
+> 
+>>> Fourth, does calling dev_pm_syscore_device() really prevent the device
+>>> from going into suspend?  
+> 
+> Yes, this is managed by core PM infra which basically skips processing of
+> any PM callbacks when the flag is set - e.g. see how dev->power.syscore is
+> handled in device_suspend():
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/base/power/main.c?h=v6.16-rc6#n1800
+> 
+>>> What about runtime suspend?  
+> 
+> I think that's a slightly different topic - so far I've been only focused on
+> system suspend.
+> 
+>> And what good
+>>> does it to do prevent the device from being suspended if the entire
+>>> server gets suspended?
+> 
+> As mentioned above, the target for now is to unbreak the system suspend
+> prevention on the client side.  The server side doesn't seem to support it.
+> 
+>>>
+>>> Fifth, the patch description says the purpose is to prevent the server
+>>> from going into system suspend.  
+> 
+> Hmm, I might need to improve the description in this case, as I only
+> mentioned VHCI and the virtual hub/ports, hence I was referring to the
+> client side only.
+> 
+>>> How does marking some devices with
+>>> dev_pm_syscore_device() accomplish this?
+> 
+> Please check the link above.
+> 
+>>
+>> We have been discussing suspend/resume and reboot behavior in another thread
+>> that proposed converting vhci_hcd to use faux bus.
+>>
+>> In addition to what Alan is asking, To handle suspend/resume cleanly, the
+>> following has to happen at a higher level:
+>>
+>> - Let the usbip hots host know client is suspending the connection.
+>>   The physical device isn't suspended on the host.
+>> - suspend the virtual devices and vhci_hcd
+>>
+>> Do the reverse to resume.
+> 
+> Right, I was actually looking into having a proper suspend/resume support
+> rather than just preventing it on the client side (for now), but that's
+> clearly not an easy task to accomplish, as it requires extending the USP/IP
+> protocol and most probably also the user space tools.
+> 
+>>
+>> I would say:
+>>
+>> - We don't want vhci_hcd and usbip_host preventing suspend
+> 
+> That's understandable, but currently vhci_hcd is supposed to prevent
+> suspend, which mostly works but it's unreliable, hence my initial goal was
+> to provide a simple fix for it before attempting to experiment with more
+> invasive changes.
+> 
+>> - It might be cleaner and safer to detach the devices during
+>>   suspend on both ends. This is similar to what happens now when
+>>   usbip host and vhci_hcd are removed.
+>> - Note that usbip_host and vhci_hcd don't fully support suspend and
+>>   resume at the moment.
+> 
+> Thank you both for the initial feedback!
+> 
+> Regards,
+> Cristian
+> 
+
 
