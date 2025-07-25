@@ -1,290 +1,160 @@
-Return-Path: <linux-kernel+bounces-745251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CCDB1173C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:53:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB375B1173F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D8E1C28963
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDB7AA3666
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D05A239E61;
-	Fri, 25 Jul 2025 03:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44A823AB8D;
+	Fri, 25 Jul 2025 03:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vjiXYVt3"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MnYW7iKB"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5074C4A3E;
-	Fri, 25 Jul 2025 03:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9ADA1EDA1A;
+	Fri, 25 Jul 2025 03:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753415572; cv=none; b=OAUI8vseqxS9ubZpyZvPHV6iUeTSbLzqRiHI4D7gPkoh1LNZ8ABhd9vb3512QzWJQ79EulQvL7eXhIrMikczX0AVMuvIhvAQSXtcYpZyJnQfkb0FCHh2czQflfh6KnND9GfDbrwX7ceA9cS9iusQ6dbWv3HKucX4+PtFqcWlCrQ=
+	t=1753415639; cv=none; b=R4grjwx8nqBJepmytyxWH3MvS3QkvQ/LraCxfQrkmr6cP2ADoqiQtCFfmb9tGcEy6TUoRRNQnuFDhpHpPvayHgzoPzD6TpsB9aKqPsTaTfH/p21/iZIut2IkR1HaS+in5eoH9b9buZyJtIs+n0WWp8SKaWgj4YF4/uZcxkqqD6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753415572; c=relaxed/simple;
-	bh=EId7FXSGC20+gdUegarRID1CqmebOZMIMHQlLgQo5Ks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h8NHd/PoT9wt0R4w5Yam59P4AhrYEy9lEDwqsif7TxP7Z1QFVfr68qEFVJlEKcHaBAMUc4wEiC33qSSvd2pym99B5ewCEbANwGIbKSIXUUjFX+OytEJwKNm0F2bXP2nEw1TtmVUs+zsSL42GM0L7iscGy2y+VmoeC8coBUHEkFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vjiXYVt3; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753415566; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=mfu4uFiMvUI8JUko7ejXG7LLjlYmZWWJPSy5UDDoyF8=;
-	b=vjiXYVt32uynU9c1BA1DHKKuyesAxhfq0HdWjvo/PBKIG1muundAKi1fs2i1Pkk2v/zKwQASPk3TTx9Npmb5IdsnzVxE6/nfejJCnYuCDHtMDMVMjCSm/eUduBaU7R3Mp/JM7ApYVMyfX4a4drqpf3hYZcYy6Zaue2lDhHivV9c=
-Received: from 30.74.144.118(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WjvFo.E_1753415565 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 25 Jul 2025 11:52:46 +0800
-Message-ID: <437bdc7a-d570-4602-9715-c716a660e762@linux.alibaba.com>
-Date: Fri, 25 Jul 2025 11:52:45 +0800
+	s=arc-20240116; t=1753415639; c=relaxed/simple;
+	bh=CCnUIhBvuNE3ssmHP0yUwtVB0bHHyEcOhPSZdLQk+O4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FirSZsbSkj5zIOiIys0uDHz1X4oT3pGixqlHrmmdCl4t1lhgqc6WoD321AFCnagq139drPY15bQ4z0PK8yZK6Gd7Q4LNMr4atm4KrMdYj4PapK5/7eSf1Om+x5G8lnNkDtX3c4vzITs6IbBpKa/ezHMoV+oDIU4gL/5cZCdUx3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MnYW7iKB; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b3aa2a0022cso1982430a12.1;
+        Thu, 24 Jul 2025 20:53:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753415637; x=1754020437; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hW9AXQYKd37BK6sNBYGkdFC2KgxtfKeihilIUBQrgIE=;
+        b=MnYW7iKBOWZSvEmQR+a3gWTtw1N6RbBi+atbq3DcqNGyqsRyJ3E9GnzszX0syCSEvd
+         RIEAwqpK7wgrVDgLkezg0F2wZwtQmAxpPtvYbjcJ9nBGXU1fb8bQvneiJc8LywRiBJGh
+         MQ8zRTNJJ+9p5jfh77iRWE7KUuQTlIzLDVIfOuNLGdbQCDOF55GHBOVJAs6jyiFqSNnp
+         K40GGexVYdErzcN2NuqFhWmmjoyUH6DfiQvMkwmYm9VPzXpQmrnDj0/t/289u+gWABwf
+         N5OKcVbXGY2ygeSTX1WmUEzL8p6eF8vBi+PNOK8ChACItycst2MfSplEjVpLHv0zby50
+         JtqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753415637; x=1754020437;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hW9AXQYKd37BK6sNBYGkdFC2KgxtfKeihilIUBQrgIE=;
+        b=LQNhmbJ/YYrKDwvMUYYAhGJjZ6i5mAblMcdqYzupF+Wr1gVH7rZE9V69GDiSDwTCO6
+         0NZWq4FcC3HHYbb5Z01n4+GfKs39hEZX+8odpc6vvDEZ+r4SkXUAKDrVz5IP6SHBd2Tb
+         6wheQGnne34ELvR+k3Jy287okvBTUH8KpM9IX4O9cFRbJK6LDDcGtAtdlVZCTXIGCbGo
+         M3ESg+ivX8+MttjXUHV0AWLzXnEGDoE5W2ZTz2JCBYoQevd9xVfv6ahrNJoJulF9Af/x
+         Qc/DCKaaxzg7saUj/Ie8zHAWCBQBO9Tg/6i6+Lu1fRp9RcCBgOGDpiiq1It7t1NMkgFj
+         eMbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwjQGaNJpAsXQGF6+Z8NBODwYfsnYY/Sp8/69YgTKeu+IZjqPBOzCyF+CMPkP31mCxJ1LBJ9hn@vger.kernel.org, AJvYcCWvfcWfHBkAGkDx9Qn0nW/DxwnywGbRGB2+XPkNplPI479ALYriqc+7EywarN/xhDG5pg579cJ210qSrK8fH0vB@vger.kernel.org, AJvYcCXv+e88P7WDGkvfAMnQ6m4zHyoy66C0x5Umj0f7khm95LDylom9hpvMrxgwhRZxu4PTvtlLqfLlI+MXKps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznLuYhCYnzKzwsJ7fOPoGMgTu+QQqHwmrwyc/HJjYq0WhaoVID
+	6iJu9ZOGWy08hGkmarGdkuApKy7/WxXQAzZoDLDTfs8gDo0nab6BAkvX
+X-Gm-Gg: ASbGncsl3hn4JcWYEWyq+k5JLxZTKX1OcSOjRqx4Hp9JoUNovrWUaWF1/GNSB7aam3F
+	8V3T+o4bsZ819XmEgnYpkoWlVoKVRBVWjnsX6k31ZqvzVWt/EtxBr2eyP4ohzer4OT7vJ2+NfR5
+	2ql3jC6CmOobAbFCFz0F2go2EewFy5WlXyvUP28hw4KTWUXPzDDGZoUtPdsk7fnVP+Baon9fJNj
+	QPbrBPY0qlAf7yqWDVDDyDZ54+580XpPH0u+rderuVcAd2hDIbZIavjNY9L0KwHXZpqv19D9Hb1
+	s8HSs8j3V/fhtQkxMEeyWGq9B/YgosWdI+c3VYDn9Mg4aRgspIHpK4CjBiG8Av8goeMEbkq9GKV
+	mJjqf8PtlcGDhJ2j9Vd1gx9fz3Ag=
+X-Google-Smtp-Source: AGHT+IHvF9CWQBmtPvqxjtafnD0suZKb7Z0tVBD4hH4QI/HjjUoanfXRrgETeCN0uVUFNB6oIekj0Q==
+X-Received: by 2002:a05:6a21:33a2:b0:234:8b24:108d with SMTP id adf61e73a8af0-23d70171b24mr462993637.22.1753415636902;
+        Thu, 24 Jul 2025 20:53:56 -0700 (PDT)
+Received: from fedora ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7635561b64csm105688b3a.136.2025.07.24.20.53.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 20:53:56 -0700 (PDT)
+Date: Fri, 25 Jul 2025 03:53:48 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Xiumei Mu <xmu@redhat.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Long Xin <lxin@redhat.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Shannon Nelson <sln@onemain.com>
+Subject: Re: [PATCH net v2] selftests: rtnetlink.sh: remove esp4_offload
+ after test
+Message-ID: <aIL_zAGaP_8HDTS6@fedora>
+References: <6d3a1d777c4de4eb0ca94ced9e77be8d48c5b12f.1753415428.git.xmu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/8] mm/shmem, swap: improve cached mTHP handling and
- fix potential hung
-To: Kairui Song <ryncsn@gmail.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
- Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250710033706.71042-1-ryncsn@gmail.com>
- <20250710033706.71042-2-ryncsn@gmail.com>
- <CAMgjq7A+DBw=z8RPP-P1hcCH4Mid0txfmKqgqXghoE_v7zGEoA@mail.gmail.com>
- <CAMgjq7DfPXS4PkpGK-zem2L1gZD0dekbAyHa-CPHjf=eonoFXg@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAMgjq7DfPXS4PkpGK-zem2L1gZD0dekbAyHa-CPHjf=eonoFXg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d3a1d777c4de4eb0ca94ced9e77be8d48c5b12f.1753415428.git.xmu@redhat.com>
 
-
-
-On 2025/7/25 02:16, Kairui Song wrote:
-> On Fri, Jul 25, 2025 at 1:02 AM Kairui Song <ryncsn@gmail.com> wrote:
->>
->> On Thu, Jul 10, 2025 at 11:37 AM Kairui Song <ryncsn@gmail.com> wrote:
->>>
->>> From: Kairui Song <kasong@tencent.com>
->>>
->>> The current swap-in code assumes that, when a swap entry in shmem mapping
->>> is order 0, its cached folios (if present) must be order 0 too, which
->>> turns out not always correct.
->>>
->>> The problem is shmem_split_large_entry is called before verifying the
->>> folio will eventually be swapped in, one possible race is:
->>>
->>>      CPU1                          CPU2
->>> shmem_swapin_folio
->>> /* swap in of order > 0 swap entry S1 */
->>>    folio = swap_cache_get_folio
->>>    /* folio = NULL */
->>>    order = xa_get_order
->>>    /* order > 0 */
->>>    folio = shmem_swap_alloc_folio
->>>    /* mTHP alloc failure, folio = NULL */
->>>    <... Interrupted ...>
->>>                                   shmem_swapin_folio
->>>                                   /* S1 is swapped in */
->>>                                   shmem_writeout
->>>                                   /* S1 is swapped out, folio cached */
->>>    shmem_split_large_entry(..., S1)
->>>    /* S1 is split, but the folio covering it has order > 0 now */
->>>
->>> Now any following swapin of S1 will hang: `xa_get_order` returns 0, and
->>> folio lookup will return a folio with order > 0.  The
->>> `xa_get_order(&mapping->i_pages, index) != folio_order(folio)` will always
->>> return false causing swap-in to return -EEXIST.
->>>
->>> And this looks fragile.  So fix this up by allowing seeing a larger folio
->>> in swap cache, and check the whole shmem mapping range covered by the
->>> swapin have the right swap value upon inserting the folio.  And drop the
->>> redundant tree walks before the insertion.
->>>
->>> This will actually improve performance, as it avoids two redundant Xarray
->>> tree walks in the hot path, and the only side effect is that in the
->>> failure path, shmem may redundantly reallocate a few folios causing
->>> temporary slight memory pressure.
->>>
->>> And worth noting, it may seems the order and value check before inserting
->>> might help reducing the lock contention, which is not true.  The swap
->>> cache layer ensures raced swapin will either see a swap cache folio or
->>> failed to do a swapin (we have SWAP_HAS_CACHE bit even if swap cache is
->>> bypassed), so holding the folio lock and checking the folio flag is
->>> already good enough for avoiding the lock contention.  The chance that a
->>> folio passes the swap entry value check but the shmem mapping slot has
->>> changed should be very low.
->>>
->>> Fixes: 809bc86517cc ("mm: shmem: support large folio swap out")
->>> Signed-off-by: Kairui Song <kasong@tencent.com>
->>> Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
->>> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> Cc: <stable@vger.kernel.org>
->>> ---
->>>   mm/shmem.c | 30 +++++++++++++++++++++---------
->>>   1 file changed, 21 insertions(+), 9 deletions(-)
->>
->> Hi All,
->>
->> Just found some issue here with this patch...
->>
->>>
->>> diff --git a/mm/shmem.c b/mm/shmem.c
->>> index 334b7b4a61a0..e3c9a1365ff4 100644
->>> --- a/mm/shmem.c
->>> +++ b/mm/shmem.c
->>> @@ -884,7 +884,9 @@ static int shmem_add_to_page_cache(struct folio *folio,
->>>                                     pgoff_t index, void *expected, gfp_t gfp)
->>>   {
->>>          XA_STATE_ORDER(xas, &mapping->i_pages, index, folio_order(folio));
->>> -       long nr = folio_nr_pages(folio);
->>> +       unsigned long nr = folio_nr_pages(folio);
->>> +       swp_entry_t iter, swap;
->>> +       void *entry;
->>>
->>>          VM_BUG_ON_FOLIO(index != round_down(index, nr), folio);
->>>          VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
->>> @@ -896,14 +898,24 @@ static int shmem_add_to_page_cache(struct folio *folio,
->>>
->>>          gfp &= GFP_RECLAIM_MASK;
->>>          folio_throttle_swaprate(folio, gfp);
->>> +       swap = iter = radix_to_swp_entry(expected);
->>>
->>>          do {
->>>                  xas_lock_irq(&xas);
->>
->> I missed a xas_reset here, also better reset iter value too.
->>
->>> -               if (expected != xas_find_conflict(&xas)) {
->>> -                       xas_set_err(&xas, -EEXIST);
->>> -                       goto unlock;
->>> +               xas_for_each_conflict(&xas, entry) {
->>> +                       /*
->>> +                        * The range must either be empty, or filled with
->>> +                        * expected swap entries. Shmem swap entries are never
->>> +                        * partially freed without split of both entry and
->>> +                        * folio, so there shouldn't be any holes.
->>> +                        */
->>> +                       if (!expected || entry != swp_to_radix_entry(iter)) {
->>> +                               xas_set_err(&xas, -EEXIST);
->>> +                               goto unlock;
->>> +                       }
->>> +                       iter.val += 1 << xas_get_order(&xas);
->>>                  }
->>> -               if (expected && xas_find_conflict(&xas)) {
->>> +               if (expected && iter.val - nr != swap.val) {
->>>                          xas_set_err(&xas, -EEXIST);
->>>                          goto unlock;
->>>                  }
->>> @@ -2323,7 +2335,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
->>>                          error = -ENOMEM;
->>>                          goto failed;
->>>                  }
->>> -       } else if (order != folio_order(folio)) {
->>> +       } else if (order > folio_order(folio)) {
->>>                  /*
->>>                   * Swap readahead may swap in order 0 folios into swapcache
->>>                   * asynchronously, while the shmem mapping can still stores
->>> @@ -2348,15 +2360,15 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
->>>
->>>                          swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
->>>                  }
->>> +       } else if (order < folio_order(folio)) {
->>> +               swap.val = round_down(swap.val, 1 << folio_order(folio));
->>>          }
->>>
->>>   alloced:
->>>          /* We have to do this with folio locked to prevent races */
->>>          folio_lock(folio);
->>>          if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
->>> -           folio->swap.val != swap.val ||
->>> -           !shmem_confirm_swap(mapping, index, swap) ||
->>> -           xa_get_order(&mapping->i_pages, index) != folio_order(folio)) {
->>
->> And this part is incorrect. This `shmem_confirm_swap(mapping, index,
->> swap) ` can't be simply omitted. Some functions below before the
->> shmem_add_to_page_cache shouldn't be called on folios might have
->> already been mapped by others. This shmem_confirm_swap ensures that
->> won't happen.
-
-OK, thanks for the reminding. But could you elaborate a bit? Which 
-function should not be called, and what problem might be caused?
-
->> It may seem like a small change, but it leads to some minor conflicts
->> in one or two following commits, the benchmark result will change too.
->> So I'll have to send a V6 I think.
->>
->> We can remove this `shmem_confirm_swap`, but not in this series I
->> think, maybe after this. Need to re-arrange some functions, with some
->> clean ups for shmem_add_to_page_cache and others.
->>
->>> +           folio->swap.val != swap.val) {
->>>                  error = -EEXIST;
->>>                  goto unlock;
->>>          }
->>> --
->>> 2.50.0
->>>
->>
->> In summary, I'll squash this patch into it and do a rebase of later commits:
->>
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index e3c9a1365ff4..4ca0b665b79e 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -898,9 +898,11 @@ static int shmem_add_to_page_cache(struct folio *folio,
->>
->>          gfp &= GFP_RECLAIM_MASK;
->>          folio_throttle_swaprate(folio, gfp);
->> -       swap = iter = radix_to_swp_entry(expected);
->> +       swap = radix_to_swp_entry(expected);
->>
->>          do {
->> +               iter = swap;
->> +               xas_reset(&xas);
+On Fri, Jul 25, 2025 at 11:50:28AM +0800, Xiumei Mu wrote:
+> The esp4_offload module, loaded during IPsec offload tests, should
+> be reset to its default settings after testing.
+> Otherwise, leaving it enabled could unintentionally affect subsequence
+> test cases by keeping offload active.
 > 
-> Correction: this xas_reset is not needed, the iter = swap is needed.
-
-Indeed, my tests do not cover the scenario where xas_nomem() returns true.
-
->>                  xas_lock_irq(&xas);
->>                  xas_for_each_conflict(&xas, entry) {
->>                          /*
->> @@ -2365,9 +2367,16 @@ static int shmem_swapin_folio(struct inode
->> *inode, pgoff_t index,
->>          }
->>
->>   alloced:
+> Without this fix:
+> $ lsmod | grep offload; ./rtnetlink.sh -t kci_test_ipsec_offload ; lsmod | grep offload;
+> PASS: ipsec_offload
+> esp4_offload           12288  0
+> esp4                   32768  1 esp4_offload
 > 
-> And it needs `nr_pages = folio_nr_pages(folio); index =
-> round_down(index, nr_pages);` here...
+> With this fix:
+> $ lsmod | grep offload; ./rtnetlink.sh -t kci_test_ipsec_offload ; lsmod | grep offload;
+> PASS: ipsec_offload
+> 
+> Fixes: 2766a11161cc ("selftests: rtnetlink: add ipsec offload API test")
+> Signed-off-by: Xiumei Mu <xmu@redhat.com>
+> Reviewed-by: Shannon Nelson <sln@onemain.com>
+> ---
+> Changes in v2:
+> - add test results in description
+> - Enhanced logic for rmmod esp4_offload
+> - fix shellcheck warning: SC2086 (The quoting issue)
+> ---
 
-IIUC, the index alignment should move into the 'order < 
-folio_order(folio)' branch?
+nit: extra ---
 
->> -       /* We have to do this with folio locked to prevent races */
->> +       /*
->> +        * We have to do this with folio locked to prevent races.
->> +        * The shmem_confirm_swap below only checks if the first swap
->> +        * entry matches the folio, that's enough to ensure the folio
->> +        * is not used outside of shmem, as shmem swap entrie
->> +        * and swap cache folios are never partially freed.
->> +        */
->>          folio_lock(folio);
->>          if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
->> +           !shmem_confirm_swap(mapping, index, swap) ||
->>              folio->swap.val != swap.val) {
->>                  error = -EEXIST;
->>                  goto unlock;
->>
->> And I'll do some clean up afterward to get rid of this
->> shmem_confirm_swap. How do you think?
+Reviewed-by: Hangbin Liu <liuhangbin@gmail.com>
 
+> ---
+>  tools/testing/selftests/net/rtnetlink.sh | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/net/rtnetlink.sh b/tools/testing/selftests/net/rtnetlink.sh
+> index 2e8243a65b50..d2298da320a6 100755
+> --- a/tools/testing/selftests/net/rtnetlink.sh
+> +++ b/tools/testing/selftests/net/rtnetlink.sh
+> @@ -673,6 +673,11 @@ kci_test_ipsec_offload()
+>  	sysfsf=$sysfsd/ipsec
+>  	sysfsnet=/sys/bus/netdevsim/devices/netdevsim0/net/
+>  	probed=false
+> +	esp4_offload_probed_default=false
+> +
+> +	if lsmod | grep -q esp4_offload; then
+> +		esp4_offload_probed_default=true
+> +	fi
+>  
+>  	if ! mount | grep -q debugfs; then
+>  		mount -t debugfs none /sys/kernel/debug/ &> /dev/null
+> @@ -766,6 +771,7 @@ EOF
+>  	fi
+>  
+>  	# clean up any leftovers
+> +	! "$esp4_offload_probed_default" && lsmod | grep -q esp4_offload && rmmod esp4_offload
+>  	echo 0 > /sys/bus/netdevsim/del_device
+>  	$probed && rmmod netdevsim
+>  
+> -- 
+> 2.50.1
+> 
 
