@@ -1,127 +1,140 @@
-Return-Path: <linux-kernel+bounces-745747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164BCB11DD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:46:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E648BB11DE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313A91CE3C09
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFFC21CE3D5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F64B2D3A9B;
-	Fri, 25 Jul 2025 11:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D920B2E5B05;
+	Fri, 25 Jul 2025 11:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXBgw4aw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HaM0kJbG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nueOdbnN"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45C81F0E26;
-	Fri, 25 Jul 2025 11:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C106223716;
+	Fri, 25 Jul 2025 11:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753443970; cv=none; b=Zc3CZabQATA25xkYuO2Vv6U80BEOhgHzbICXhSogD8CZK5nNz15l/0ZGM6sofltH1gZSiLplbVCB+S7TK0B51E9HJeIwpU8m8e0/UUbqUkC/wgc75oBntaWpLrYFhMDtCubTGChU4j5VOpcF+gk9epXrUfQztkmiZOL7vhFN4dM=
+	t=1753444138; cv=none; b=jINKH7iPbY3px0m1eF1QDYv1sTgZKPW0gW1rWdWv4MZWEHO71kKp2Z0mLfV0tXeEMmKgc1JCbW0uFfRKAum3vY7jiASd9Eg2DFTDfcqINYtjCXu3bxA8AkKq1v2hUQoLPSj6L1622kHfW1YilAQFW6s1S9TN+guxIhtTin1kCJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753443970; c=relaxed/simple;
-	bh=+hjlXkN8Hsqus96/vV6XNPallvUIdcyL44bZhyX1yrs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FNe5dY0YNdgC8Ct2P+zu2WgXo5NvQx8kVL97ChD2ZY7p1y6cVUjlMhAs3VRuaKfzNtN7vKzIjKBvooxriT3chsbyCj2E3O7pxNv8MnRrZGd2W2Aln2qBwBVTRiNLCrrIsOEB9Ghe/aVDSzW9t8MGrMIeoniOscsYfHIDCJ+k6oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXBgw4aw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC1FDC4CEEF;
-	Fri, 25 Jul 2025 11:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753443969;
-	bh=+hjlXkN8Hsqus96/vV6XNPallvUIdcyL44bZhyX1yrs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hXBgw4awQRjzxpRm/KpZbaKQAahEUxyVBTro3Md7hxbVcn03XseqYiJD+8I63gGAV
-	 DeycYyqtmEMl/Dxmp7c5FvPMxpD+qSrA1E6MbeykWOCNBmWyVvxX3LmuunZ4eYlHTx
-	 XRn673r8cqtP9IjGhp8vfLfWqVv+c+2aZDOuuleGqgbxtfqbmLu2pxGLzo7cmQjYSW
-	 2GvjoI2p1PaJ+73RimnSvS8CCkezkXGpNjbzkyQxow3PR4AG9pEeDA74Vj/6ftDtzQ
-	 9BzwHGmiKwYw507c3zD5pcPMJYEqUmk7XViGa6MDziEOZrXqko4VPxJeZss2pYjBxi
-	 TmksfrgUaEXCw==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>, 
- Alan Stern <stern@rowland.harvard.edu>
-Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
- syzkaller-bugs@googlegroups.com
-In-Reply-To: <8bec1698-5008-428f-8e71-ec002def0c54@rowland.harvard.edu>
-References: <68753a08.050a0220.33d347.0008.GAE@google.com>
- <f6e67c38-8d63-4536-827c-09757a8d5609@rowland.harvard.edu>
- <ea7f1f42-273b-4c07-8bf2-769992dd9ced@rowland.harvard.edu>
- <8bec1698-5008-428f-8e71-ec002def0c54@rowland.harvard.edu>
-Subject: Re: (subset) [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds
- in s32ton (2)
-Message-Id: <175344396758.1172314.17719320132217617249.b4-ty@kernel.org>
-Date: Fri, 25 Jul 2025 13:46:07 +0200
+	s=arc-20240116; t=1753444138; c=relaxed/simple;
+	bh=2klBBy10cACWU9aXMPxCdq2VDb5LAYi2ko4QYviNjiI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gKiyfHwUAWsATwVW+xNgPMgLWJGxwInY5tD2Ydh7dKCSb2AL5Jch3oQdROdt2iemucu1ZAD8qhfUP40u/CcC6adUoGC8nEL4Lg9GQDwDGseyb8EJ85wryuW+OkUsA9iGg+iF2cZI1gaiKqGb23Hp06SVjFumZcFBYr6epjRwdOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HaM0kJbG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nueOdbnN; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 154B41400043;
+	Fri, 25 Jul 2025 07:48:54 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 25 Jul 2025 07:48:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1753444134;
+	 x=1753530534; bh=iX3Sod6bQ4J8kY8g6SMBYCTMuOOksQmjlw0t4ePXhwE=; b=
+	HaM0kJbGFO46KYskNpftCyKLsUBw8uWJ0PpGuXEJbG0yUjKpwOvk3FBPCIEkRhbp
+	3nVZlcigkUYZXSu60eJsJwnqyITBqeQ3GMD5qfK61kjoaSD/hdkTZeXb9jLvw78V
+	TTGc/hHdIL6ccKNcsMO/tb7FhgbOCXkApIlKNmC54zRPI7Yg0rSaNjymTwOeSaOb
+	2FeFqWCjxq0MT2+1xH1dT4Cd6PdslBtB4gBhBiu6w2uB/7OKB263Ob06QgdzEj/T
+	cqCNsO1a94RdAFYqbEavzliOyiaZYPUc6CSBlwYmQrJJfe0VwVBp9Ff1+HgrDyvs
+	MHSg/PwzYgz4e7Geu5W/1g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753444134; x=
+	1753530534; bh=iX3Sod6bQ4J8kY8g6SMBYCTMuOOksQmjlw0t4ePXhwE=; b=n
+	ueOdbnN0rgWHMfsBN1NCsFUULARZXhTLTuC0bfOlfL6uuCISs1NfeetUR3N7Mn+2
+	suERSpgYZHd1fqeH0R5fQB5LGM6qzN/NrAk2CPdd4i0yFkZyDeQuoiWWY2srj2sq
+	3G3lWSI26bQ3IDtK1wcJROmUvuExQtplh65FvBptLjYYVodc5e1cBUPXrxhjAf8P
+	tDtQwBu6jXyOkc8n43Qx3MCIKxW/xq2LIQbmeJ+P0VRDZaw9QDJBvLbYOEc+7CFC
+	J5x67GQpfOPcGMqsFmcMRemw0aF2hQWQ7TnJibpmCc6OU6w3C0EOQyUDOvfwlcvQ
+	U9aa0wOrVTcKEbs0226jw==
+X-ME-Sender: <xms:JW-DaPElu7SGv8YRqTeq07tiNq28gqyD6OUFQKhlkejLWMTdPJ35ZA>
+    <xme:JW-DaMXJ51fbI3lg6CzAhaHRr9pn135DkLVy9wjf8P0gyEwFnmeNEcljXtOcqXRFO
+    7sGfa1k0Uxfj4YyPQY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekfeeghecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeekleffjeetvedvgefhhfeihfen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghp
+    thhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrd
+    gruhhughdrohhrghdrrghupdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgrug
+    gvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrh
+    hnvghlrdhorhhg
+X-ME-Proxy: <xmx:JW-DaLORVqBMetOPbqzHMV92hH-i8JPF9cuGx6RR2_3Mh1SdG5b6Tw>
+    <xmx:JW-DaNVRz6TcnnYubIDplV-CdvY01L0rTzkc57m3t3DGP-oZ2m8wUg>
+    <xmx:JW-DaP059ZTjD6oC7nNlJ66Q37nUB14kwPQ3sImiMCrboRchNpW2VA>
+    <xmx:JW-DaLraAoWWiy4jQMUkbVz_XLqvD6Hh8Thgv_wKsJtQufzwZ-VXlA>
+    <xmx:Jm-DaFlJT9i23Q0VVcgYzNAU9iifzm3xLv97lOm9c1a-dhzwdiM0zq2T>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4EA9A700069; Fri, 25 Jul 2025 07:48:53 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-ThreadId: T8969479896fa1a68
+Date: Fri, 25 Jul 2025 13:48:33 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lee Jones" <lee@kernel.org>, "Stephen Rothwell" <sfr@canb.auug.org.au>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ linux-next <linux-next@vger.kernel.org>
+Message-Id: <a8d0eb68-fac5-4878-be16-05f436a190df@app.fastmail.com>
+In-Reply-To: <20250725113539.GB11056@google.com>
+References: <20250725113657.039aa5ce@canb.auug.org.au>
+ <20250725113539.GB11056@google.com>
+Subject: Re: linux-next: duplicate patch in the mfd tree
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
-On Tue, 15 Jul 2025 15:29:25 -0400, Alan Stern wrote:
-> On Mon, Jul 14, 2025 at 10:10:32AM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    b4b4dbfa96de media: stk1160: use usb_alloc_noncoherent/usb..
-> > git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=15a830f0580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
-> > compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1614418c580000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1257dd82580000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/7301552ad828/disk-b4b4dbfa.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/c559b38fa1b6/vmlinux-b4b4dbfa.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/9c1da8b2a83f/bzImage-b4b4dbfa.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
-> >
-> > usb 4-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor, different from the interface descriptor's value: 9
-> > usb 4-1: New USB device found, idVendor=045e, idProduct=07da, bcdDevice= 0.00
-> > usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-> > usb 4-1: config 0 descriptor??
-> > microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
-> > microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
-> > ------------[ cut here ]------------
-> > UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
-> > shift exponent 4294967295 is too large for 32-bit type 'int'
-> > CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.16.0-rc4-syzkaller-00314-gb4b4dbfa96de #0 PREEMPT(voluntary)
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> > Workqueue: usb_hub_wq hub_event
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:94 [inline]
-> >  dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
-> >  ubsan_epilogue lib/ubsan.c:233 [inline]
-> >  __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
-> >  s32ton.cold+0x37/0x9c drivers/hid/hid-core.c:69
-> >  hid_output_field drivers/hid/hid-core.c:1841 [inline]
-> >  hid_output_report+0x36f/0x4a0 drivers/hid/hid-core.c:1874
-> >  __hid_request+0x1e0/0x3c0 drivers/hid/hid-core.c:1987
-> >  hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
-> >  hidinput_connect+0x1ada/0x2bd0 drivers/hid/hid-input.c:2327
-> 
-> [...]
+On Fri, Jul 25, 2025, at 13:35, Lee Jones wrote:
+> On Fri, 25 Jul 2025, Stephen Rothwell wrote:
+>
+>> The following commit is also in the arm-soc tree as a different commit
+>> (but the same patch):
+>> 
+>>   ba9ae011e837 ("soc: apple: rtkit: Make shmem_destroy optional")
+>> 
+>> This is commit
+>> 
+>>   0445eee835d6 ("soc: apple: rtkit: Make shmem_destroy optional")
+>
+> Odd.  I don't see an applied email for this.
+>
+> This was applied to MFD and a pull-request was provided for the other 
+> subsystems:
+>
+> https://lore.kernel.org/all/20250724102529.GA11056@google.com/
 
-Applied to hid/hid.git (for-6.17/core), thanks!
+This is the one I pulled in
 
-[1/1] HID: core: Harden s32ton() against conversion to 0 bits
-      https://git.kernel.org/hid/hid/c/a6b87bfc2ab5
+https://lore.kernel.org/all/20250722163258.62424-1-sven@kernel.org/
 
-Cheers,
--- 
-Benjamin Tissoires <bentiss@kernel.org>
+I did not see anything from Sven about a shared commit. I can
+throw it out again without too much trouble if you already have
+the contents. The only other commit in that branch is 
+65293c3276de ("soc: apple: Drop default ARCH_APPLE in Kconfig"),
+which I'm sure can wait as it only changes the default.
 
+     Arnd
 
