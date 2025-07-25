@@ -1,105 +1,82 @@
-Return-Path: <linux-kernel+bounces-745225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF6AB116D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:07:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0AFB116DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50215A3779
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:07:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B47ECAC72BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E93B23185F;
-	Fri, 25 Jul 2025 03:06:59 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B90EEAB;
-	Fri, 25 Jul 2025 03:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C7523815F;
+	Fri, 25 Jul 2025 03:13:26 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 2AA55EEAB;
+	Fri, 25 Jul 2025 03:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753412819; cv=none; b=Ntelz++Rz5n5JGZLlOtlUflO9TjBNzZj+vyUSu9xXn1qyvvbeD5NVriC/uoSmU9MRFU7AnNYRMJjMwwmEmgFKPBrKWXSbhuIE/OdFwdc2IlwPgTEKKTOsHO00WDAzIhGUlA56czx/XqS/bmW//tuD5nNIZDqF8egJMDMAQgC5KU=
+	t=1753413206; cv=none; b=seg7a6tRNjv7CJ0ZTrP2q+zOXxSJbRlXKd42WOK8imDx7NXNBlK1WJBeo2HFNPvwy8DlvMsLlmBG6fWjEbgjArInp7nYXGq6g5Orqnm7jger6f0uouo25lhFQnk8YcJF2KTTygERzBqOkes3ES6+jHLFN9Vns+f3T4hKEZScsfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753412819; c=relaxed/simple;
-	bh=dJqlW2RblcHAJp6X/GdaHOKsCm+CMLAEE3v8Md4Vae0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gsZJCCoxZHMr1Lb/vPF1m7TCphZoLhle+RxvKxJa4CobipkxzL4hakwu3BqZf2qrGnJ2NliBJkComUaTWpNpGgHsg5/dO7hh46rv/7pnMzoodHbiBbZyf7j1GfwKVyLShypZkVcscuBq0dtZkxjfhgD0Tj+eND2NLBeb9Fc2oPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id 46C57C05C6;
-	Fri, 25 Jul 2025 03:06:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id CF1B76000A;
-	Fri, 25 Jul 2025 03:06:43 +0000 (UTC)
-Date: Thu, 24 Jul 2025 23:06:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: lukas@wunner.de, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, helgaas@kernel.org,
- ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
- Jonathan.Cameron@huawei.com, bhelgaas@google.com, tony.luck@intel.com,
- bp@alien8.de, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
- anil.s.keshavamurthy@intel.com, mark.rutland@arm.com, peterz@infradead.org,
- tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v9 2/2] PCI: trace: Add a RAS tracepoint to monitor link
- speed changes
-Message-ID: <20250724230647.1875702f@gandalf.local.home>
-In-Reply-To: <d87b1029-b572-4995-82a9-c7d83551900e@linux.alibaba.com>
-References: <20250723033108.61587-1-xueshuai@linux.alibaba.com>
-	<20250723033108.61587-3-xueshuai@linux.alibaba.com>
-	<20250723100559.7f0adb3c@batman.local.home>
-	<0611d06d-e198-4617-a0ba-3050ca6191c6@linux.alibaba.com>
-	<20250724222510.7b00ea79@gandalf.local.home>
-	<d87b1029-b572-4995-82a9-c7d83551900e@linux.alibaba.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753413206; c=relaxed/simple;
+	bh=j2KdwwHHUr/380WtMp4FTDdN7eEHBRQzsk9LhD3LzdE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=geJAzJVrA4iBGoknVb3UD0HPeftAmUTevy6PnxesodnDpZnNxoAeJRPtyCDjoSxmu0YmsRd/Utf+zYN/oRd/rTaT/zQzMfp0/xBqMQ6Jqwwr4smZuPU3ly9s50DNPGf02r+WaoovhVc308IKqJ84V7/otl8cfoeE881upl9fXYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 8DE2060188238;
+	Fri, 25 Jul 2025 11:13:14 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: Su Hui <suhui@nfschina.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: xhci: print xhci->xhc_state when queue_command failed
+Date: Fri, 25 Jul 2025 11:13:09 +0800
+Message-Id: <20250725031308.1355371-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 9wsxr8bkoh8qt36twrwbwtmeywo835ty
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: CF1B76000A
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+7fcpPccKnDaXIHE4xe9rNJz+2XjvTHgI=
-X-HE-Tag: 1753412803-107182
-X-HE-Meta: U2FsdGVkX1/k+D8mWXYcapC/KHUri1LpPc4jinE9J80v71xEGkwFev3acuvX8/KVrGHSjxq5w5ag4KuUxiKefW+rghkE7pZwydLUcqnGMonxSK+u9tHmr/sTUrXdxPR/vxTUOXx91ZK1UT9kXq60zB2mMCmZTHPB5XK4Rr1nQ6KE8WBSMIkMrT79Sxv8R/VAP0YKNqHpOKaCHksGyeuqpOF/BUPHmTBovjpVH3S8Lj+JwjCx7NGOY2FhEMZkf9VcO1Lz1tcsHSay1QJIJ9MBurI2wsDdf3zUS3ZhzYyY4cE2lbraUDaEPlFWRpCo2Mu+pKy1syyLOnWYsjWuqSdPguFQ64O3Px9YC+ATtZPMUl1NwiHE9WRjVA==
+Content-Transfer-Encoding: 8bit
 
-On Fri, 25 Jul 2025 10:59:16 +0800
-Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+When encounters some errors like these:
+xhci_hcd 0000:4a:00.2: xHCI dying or halted, can't queue_command
+xhci_hcd 0000:4a:00.2: FIXME: allocate a command ring segment
+usb usb5-port6: couldn't allocate usb_device
 
-> Thank you so much for the detailed guidance and the excellent example!
-> This makes it much clearer how to implement the libtraceevent support.
-> 
-> Should I include the libtraceevent plugin patch in the same kernel patch
-> series, or submit it separately? I'm not sure about the best practice
-> here.
+It's hard to know whether xhc_state is dying or halted. So it's better
+to print xhc_state's value which can help locate the resaon of the bug.
 
-No, libtraceevent lives outside the kernel tree.
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/usb/host/xhci-ring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
-> > 
-> > -- Steve  
-> 
-> I'll work on the libtraceevent patch and submit it according to your
-> guidance. Thanks again for the clear direction and the documentation
-> link!
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 94c9c9271658..a1a628e849c0 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -4372,7 +4372,8 @@ static int queue_command(struct xhci_hcd *xhci, struct xhci_command *cmd,
+ 
+ 	if ((xhci->xhc_state & XHCI_STATE_DYING) ||
+ 		(xhci->xhc_state & XHCI_STATE_HALTED)) {
+-		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command\n");
++		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command. state: %u\n",
++			 xhci->xhc_state);
+ 		return -ESHUTDOWN;
+ 	}
+ 
+-- 
+2.30.2
 
-Make a patch against: git://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git
-
-Follow the same procedure as you would for submitting to the linux kernel,
-but instead of sending it to LKML, send it to: linux-trace-devel@vger.kernel.org
-
-You don't even need to Cc me. I'll get it from that mailing list.
-
-Patchwork is here: https://patchwork.kernel.org/project/linux-trace-devel/list/
-
--- Steve
 
