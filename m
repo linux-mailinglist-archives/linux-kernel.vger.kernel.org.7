@@ -1,157 +1,153 @@
-Return-Path: <linux-kernel+bounces-745655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C96FB11C9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:37:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA1CB11CA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906C5177323
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE98B189EEB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBE22E425F;
-	Fri, 25 Jul 2025 10:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9C32E2EF7;
+	Fri, 25 Jul 2025 10:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nhwhZOAc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Azssg3zo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kw/XKkDH"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854202DE71E;
-	Fri, 25 Jul 2025 10:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DAC2E040A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753439800; cv=none; b=IRsajDV3xCX32x8g53M07L5jTsUNDYD+02U8/Crx7VsHvGHfxRCIH/50WvFM2s0FYqNRlymrrt2ygbdqypdjt6cumc2gnP9fl77JRPkSPu8eHW6h5AewnFfIk7IDAtuCToPUEv5aGfgjLwKXkHajQD6jSuMieJpg/KXU8AtmH8A=
+	t=1753439963; cv=none; b=QRk7D5WNX3J/9GMdRIEuxc5MFRA4Kiu2NnxKx4T7wIpMiQswaUl7kUKTJB9FdsduFRaZ4UCb0+qp0ZwozFVM0uWbra9F14orMqLwEndwUmYvZWQA2tOC2Tf9X/F+fOhrprTA9Xn21eqxApRmubzMU/8ZrzvkH8HhjIjZNR2uh0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753439800; c=relaxed/simple;
-	bh=/Jd08J9EVwiLu3246KvZ8LuOKEUNrkCntG+atu5i7Kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJLGQ+sMoDGbIwwa7jwxu51WrcH8PmaxBEIDL0uTF2WaDaYlUTf2yf5XXObrl1SB0n3AHCzQdvHwDY4vCfSSUinAIxwHh4veojFxqObvaetbfMvmIkn92T2yqSQQF5YD15JIM9xZVaPTc1wUMH3n7R3ZxPyaQldEqiQ5O2wJH78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nhwhZOAc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Azssg3zo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 25 Jul 2025 12:36:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753439796;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GWa6XDwZlrI75pGJEl2FOxaQVgtHaB/1blTqyZ0nVRI=;
-	b=nhwhZOAcJ+ZDcPLBedCjJyyS3BB4JP1IdK5mFlQWiOV46SuSAF7yeSKh9ldvnw46kIQ8ND
-	CTlKX2Xoq/VGfLdq07OAPvWIc9j649yJ8VSSkt2x9R/AO/rCOPo3MYi/AYw3b4duYU91RU
-	rzmhuJdlbvJyAGuvzCs/X6fqVCf6e5qcM2247hQj+sukc7Sj36pCt1bMA6UbXlqrHLsOti
-	FbpuO6GkJS6QmzGQV+9ZeV4CmgYclTY2Wd59eTg846NSgdR+n6P3mE7b24w+doctP6PmG5
-	yicel8XdJVnCbYsAukxuQKOVdyiO0+5GxW3J01a7SmjqLdgp/lesZAP0UrdXGA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753439796;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GWa6XDwZlrI75pGJEl2FOxaQVgtHaB/1blTqyZ0nVRI=;
-	b=Azssg3zoBERw+p0wPFhhTIjUk5B3/RwZjzSp3dyxeJSednSA8IzlQG3PZRk3OGazInQ4wH
-	b0F3v6qFcQm4UyDw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] kbuild: userprogs: use correct linker when mixing clang
- and GNU ld
-Message-ID: <20250725122604-44874f95-859c-4c0a-b3b0-14b30e00b796@linutronix.de>
-References: <20250724-userprogs-clang-gnu-ld-v1-1-3d3d071e53a7@linutronix.de>
- <20250724231025.GA3620641@ax162>
+	s=arc-20240116; t=1753439963; c=relaxed/simple;
+	bh=DZf8o481vjpJ7QSUoolpwJajFBT1Vwo8xHyfUgSq//c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MpeqtJ1E5CGHPW2FhvTyXfb5crNRtrgvfLx7fRsrvD13XuF+9hdlmIYVbjlbuTnRIggJj701PsldJgv/YMPmrJivZxYeqDRGlr0d9zGglpOxfedB+k5LS2SBWqE1zZaz1Fve5R6hBIscLJ5Jqa6F3HJey/AoxH91gWY4+nULjls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Kw/XKkDH; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4e9b26a5e45so771574137.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 03:39:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753439960; x=1754044760; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PlkE41QL6s4x1GqYESsGC6jimQ+2xKl71+VqMJsnR/Q=;
+        b=Kw/XKkDHCzTvNyIeGqVVim1ICFK5l9l15+EcwNLtsZHKjM1/dNZ+LdQIP8QjPkD9KA
+         CZ2Wzl9NQvQkvopxbkHXOdn6Bun5hbuOkeK7wjIZhEbMiYRUHZgCT/KeAmeYF1EY9WJ9
+         LaSio4wCYmhLDMaML2rWsO7Epr0cPqepBCF8A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753439960; x=1754044760;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PlkE41QL6s4x1GqYESsGC6jimQ+2xKl71+VqMJsnR/Q=;
+        b=GK9zUxWwtZ4DU8xeCmi5OA0tWDicx+yYP/WCKcAnfMLnKmICVpJfOXGJN9Q8G/dGzZ
+         v+BPX8buDaPebnsTLovDDLzBFTDardTloNWje8/KRzs3n+qZF58mWvz4ja9mCPQLWR08
+         sbWt1cjkGuUrTTqnhy4WfRnLYNQVJ8Oc4UzkW1Fe/e8YU13qp3BZqT3n1J2FqISNlVg8
+         Dl/h5qJ5irs7iaSpJrn/E5eRkxFLLyCF+f729N72AEdOLd7dZLbH1dqjWH03XVCSWx7W
+         4tUgHFX6NExeGGgoTh1tyHbSF9Wjq+5FV6IUiQwbzOrfs5omv8SJTlboczTMio/gxYmx
+         fQLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUr/Zwq39KQ+nex1cHhXHF1rfaM2TgskdHbktYvhdLD5KVIy3cRZckA8g09FhR8d2s6A3De+8qv0bVP53o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+c1LvbZOQkegFTH17C2LxSbaNO1mxrZhGSN9tKp3t4pJLt5Sr
+	03pmnVTjoZPmLUPGN0Xzr1pktGTmhYSAJPM8mIJgGP9NPcsaEItMeHSQ82V91I8hypB6kffNp2P
+	9vbhTNA==
+X-Gm-Gg: ASbGnctLQWGOSncCudsQ4Fk6yZcQeJQtSB0ehHJkq6m+Pd1Uo1+STXh2YU/4qrcFpvu
+	V+CRHR47TKTps0DxhPeB/ImmMNKn6oUA/fijxMDKdehINkjIcKoBtJps2mIzxiBdrYjz2nuAgL4
+	uLeXsLdET5heboQH/ZvPqIaO5CgX/gJy1FosvQ5t+eUeCNOZJ1KpRizUCkKnif98SJ8x4nGNAw0
+	sv8c2zcIsZcdSx8NDzQPNwso1amYK9hGX8SrZlpFAjIzTjK7t49qdqMY3XDAl6bEzZTtKam/3lj
+	hTne1+EkjmmEhbC/9xhWvnI+G8LC/W5GwXM6IFE22LnRhuW27EMxzyBg0aRfNs4ddS9fnWc9/wm
+	cDFsp1A4t+3f5zh3MQAG+Z48b00LdzTj8r5jXVkOdY4VrTYaTdmvcQNOWjTU17w==
+X-Google-Smtp-Source: AGHT+IH3czHvXfDLRZr8txSzXBc6qktdwwrCuUi4eQexS2OaaOYnOrJ9LxiiVApTTQAkLXiTUtYQdw==
+X-Received: by 2002:a05:6102:fa0:b0:4e5:a398:b6fa with SMTP id ada2fe7eead31-4fa3fc4d2efmr335664137.3.1753439959633;
+        Fri, 25 Jul 2025 03:39:19 -0700 (PDT)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b6fbb5554sm683458241.28.2025.07.25.03.39.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 03:39:19 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-537a0d384b2so667311e0c.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 03:39:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWFzFFDLbTkP5/4vyye18l0xQsMZugzHsRXMq9J88nXeYQ0toC0rPOx7fDKU2VvrDXS4BKVaOUbD0TceCY=@vger.kernel.org
+X-Received: by 2002:a05:6102:4a8f:b0:4e9:a2bd:b456 with SMTP id
+ ada2fe7eead31-4fa3feb1976mr334393137.12.1753439957846; Fri, 25 Jul 2025
+ 03:39:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250724231025.GA3620641@ax162>
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com> <20250724083914.61351-39-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250724083914.61351-39-angelogioacchino.delregno@collabora.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Fri, 25 Jul 2025 18:38:40 +0800
+X-Gmail-Original-Message-ID: <CAC=S1njc7_+EhDA_HrVsPfhYsrFEmeb5TQ55X+YOKE=NrpoCaA@mail.gmail.com>
+X-Gm-Features: Ac12FXzORC58mPF_B982fHDjnhtiL_-5O2nAq5PI4bkUJDNwvq8vw0VlaVEnRW8
+Message-ID: <CAC=S1njc7_+EhDA_HrVsPfhYsrFEmeb5TQ55X+YOKE=NrpoCaA@mail.gmail.com>
+Subject: Re: [PATCH 38/38] arm64: dts: mediatek: mt8516-pumpkin: Fix machine compatible
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, 
+	daniel.lezcano@linaro.org, mwalle@kernel.org, devicetree@vger.kernel.org, 
+	linus.walleij@linaro.org, linux-remoteproc@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	olivia.wen@mediatek.com, shane.chien@mediatek.com, linux-gpio@vger.kernel.org, 
+	linux-phy@lists.infradead.org, airlied@gmail.com, simona@ffwll.ch, 
+	herbert@gondor.apana.org.au, jassisinghbrar@gmail.com, jiaxin.yu@mediatek.com, 
+	andy.teng@mediatek.com, chunfeng.yun@mediatek.com, jieyy.yang@mediatek.com, 
+	chunkuang.hu@kernel.org, conor+dt@kernel.org, jitao.shi@mediatek.com, 
+	p.zabel@pengutronix.de, arnd@arndb.de, kishon@kernel.org, 
+	kyrie.wu@mediatek.corp-partner.google.com, maarten.lankhorst@linux.intel.com, 
+	tinghan.shen@mediatek.com, mripard@kernel.org, ck.hu@mediatek.com, 
+	broonie@kernel.org, eugen.hristev@linaro.org, houlong.wei@mediatek.com, 
+	matthias.bgg@gmail.com, tglx@linutronix.de, mchehab@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, granquet@baylibre.com, 
+	sam.shih@mediatek.com, mathieu.poirier@linaro.org, fparent@baylibre.com, 
+	andersson@kernel.org, sean.wang@kernel.org, linux-sound@vger.kernel.org, 
+	lgirdwood@gmail.com, vkoul@kernel.org, linux-crypto@vger.kernel.org, 
+	tzimmermann@suse.de, atenart@kernel.org, krzk+dt@kernel.org, 
+	linux-media@vger.kernel.org, davem@davemloft.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 04:10:25PM -0700, Nathan Chancellor wrote:
-> On Thu, Jul 24, 2025 at 10:32:45AM +0200, Thomas Weiﬂschuh wrote:
-> > The userprogs infrastructure does not expect clang being used with GNU ld
-> > and in that case uses /usr/bin/ld for linking, not the configured $(LD).
-> > This fallback is problematic as it will break when cross-compiling.
-> > Mixing clang and GNU ld is used for example when building for SPARC64,
-> > as ld.lld is not sufficient; see Documentation/kbuild/llvm.rst.
-> > 
-> > Relax the check around --ld-path so it gets used for all linkers.
-> > 
-> > Fixes: dfc1b168a8c4 ("kbuild: userprogs: use correct lld when linking through clang")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > ---
-> > Nathan, you originally proposed the check for $(CONFIG_LD_IS_LLD) [0],
-> > could you take a look at this?
-> 
-> I would expect this to be okay but I have not explicitly tested it. I
-> had not considered the case of GNU ld being used since aside from
-> sparc64, there is not another architecture that supports clang but not
-> ld.lld.
+On Thu, Jul 24, 2025 at 5:51=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> This devicetree contained only the SoC compatible but lacked the
+> machine specific one: add a "mediatek,mt8516-pumpkin" compatible
+> to the list to fix dtbs_check warnings.
+>
+> Fixes: 9983822c8cf9 ("arm64: dts: mediatek: add pumpkin board dts")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
 
-FWIW some architectures use GNU ld implicitly with clang because they also link
-through $(CC) but do not use --ld-path. One example is UML, where the vDSO and
-vmlinux are linked this way. But linking vmlinux of UML with ld.lld will
-require changes to at least the linker script. Something for the ClangBuiltLinux
-TODO? There were more examples, but I don't remember them right now.
+Reviewed-by: Fei Shao <fshao@chromium.org>
 
-Longterm --ld-path should probably be added to the global KBUILD_CFLAGS, too.
-
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
-Thanks!
-
-> > ---
-> >  Makefile | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/Makefile b/Makefile
-> > index c09766beb7eff4780574682b8ea44475fc0a5188..e300c6546c845c300edb5f0033719963c7da8f9b 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1134,7 +1134,7 @@ KBUILD_USERCFLAGS  += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD
-> >  KBUILD_USERLDFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
-> 
-> Does KBUILD_USERCFLAGS respect LLVM_IAS? sparc64 does not use the
-> integrated assembler yet (as far as I am aware) so I think we probably
-> need to filter '--prefix=' and '-fno-integrated-as' to avoid further
-> issues with assembling?
-
-No, it isn't respected. On the other hand I didn't yet run into any issues.
-Do we want to fix it proactively?
-
-> >  # userspace programs are linked via the compiler, use the correct linker
-> > -ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_LD_IS_LLD),yy)
-> > +ifneq ($(CONFIG_CC_IS_CLANG),)
-> 
-> At this point, I think this can just become
-> 
->   ifdef CONFIG_CC_IS_CLANG
-
-Absolutetly. The existing conditional above this hunk uses the ifneq
-pattern, so I tried to keep it consistent.
-But the one above uses plain ifdef again...
-Personally I don't care one way or another.
-
-> >  KBUILD_USERLDFLAGS += --ld-path=$(LD)
-> >  endif
-> >  
-> > 
-> > ---
-> > base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
-> > change-id: 20250723-userprogs-clang-gnu-ld-7a1c16fc852d
-> > 
-> > Best regards,
-> > -- 
-> > Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > 
+> ---
+>  arch/arm64/boot/dts/mediatek/mt8516-pumpkin.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8516-pumpkin.dts b/arch/arm64=
+/boot/dts/mediatek/mt8516-pumpkin.dts
+> index cce642c53812..3d3db33a64dc 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8516-pumpkin.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8516-pumpkin.dts
+> @@ -11,7 +11,7 @@
+>
+>  / {
+>         model =3D "Pumpkin MT8516";
+> -       compatible =3D "mediatek,mt8516";
+> +       compatible =3D "mediatek,mt8516-pumpkin", "mediatek,mt8516";
+>
+>         memory@40000000 {
+>                 device_type =3D "memory";
+> --
+> 2.50.1
+>
+>
 
