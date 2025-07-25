@@ -1,204 +1,200 @@
-Return-Path: <linux-kernel+bounces-745523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C16B11B21
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:47:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC923B11B23
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC5E16B0A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF723A4D0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D644C2472BA;
-	Fri, 25 Jul 2025 09:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01392D375A;
+	Fri, 25 Jul 2025 09:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XRZ/FyWU"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/hkvOSs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF5D232368
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0196B23185E;
+	Fri, 25 Jul 2025 09:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753436865; cv=none; b=EVVJ7al/2jVGwqyz0o885aOZUgD+Go2TkhBDA8LcspqZEr7w0qlzUG3q7QDkZHUGK4an0u1daPegBjt3H7rY68QdCSprAxlzhdRhL6bdENtYoq5UZOZxXwFSX9LcsjjEA46HWqa2CZvOFomKOa30wkpzmK+MQJNDBOJZ9uUgIWk=
+	t=1753437046; cv=none; b=S2RFZgNYyYNO5grWi0qXxHzZ1mCUQA7v3dWx9BgOAixwCKrzebtYM170zxhlbl6iTt+7tMsSb+uu7CeYRS3UGT+pwroKEl2cVflvE82vtNnMBF8Cz8ZugbsSzCxi/v9FGtsAel0g6ro6W9+XdyTPbFqPNHk9FeSs+pLh6uFaupk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753436865; c=relaxed/simple;
-	bh=AnECzG+KVzIsiMEl8MwB5ECeASXwIjqQrkhEFDou9m0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=njZ0fd4sjyxVujNY4KcXg2WRxScJh1MpWcZiHRze+nbFK7CksOmOBpptDRNO/L/ayfQvDK8QK9dwAxhl5RsU67Vmf/J3kiJPfG/LSV5FQ/NhPMljW8rfDlYyhdWFlOOibD5AOLBLyqapdy83THRDr8X/ssBsw+dhuU6uvNubOS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XRZ/FyWU; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae3521a124cso40929466b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753436861; x=1754041661; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d++95DEEqRY9z7LqAnuNyrlBAMbvjNxXsrC0i45rWs8=;
-        b=XRZ/FyWUO7T61CD+DfflflWz2Oj8Q4cIj3cQlJUxmURVCHOSmesCi7UeEev7/AQ3Ur
-         yazTVY6vLTj1Ii+7bemqrswwTjoNiKW0CVbYCsN3qDdiMtWrron1J+jA5mgGHwWJNMCH
-         uMLVPCkL4VnG3WBzjBxlgTb+4RBfGQMsky+66d6i5fActeFZOg7eJeax9rlc1pJB3Yr+
-         TvPd+T4vI59NTpjz1Eq0YBCLkLVd8pYjJgywoFfb8SNo4bHM70In2h0bi/+4jVbtR45x
-         HjYIOfq2iOL6E+BnR7z0ewWR8/h+4AU54O3yof2k0YLPAPq9Oruqb1XNTD7NFb1tG2Tv
-         YDPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753436861; x=1754041661;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d++95DEEqRY9z7LqAnuNyrlBAMbvjNxXsrC0i45rWs8=;
-        b=HK1Eqwhr6ckNxTqrXn7xcqgBPOG3OZiSvfpcxZy++hZvFrb5z6mCsMHnm194m8EHaT
-         dmtzDIN061TkLaqSuL7G7t3yEyxpn4x5Nj3sVrABD46GXVZCDTyvd3y9OYhd9U712SIT
-         snY10HiryDSsX9X/z+cBnfOybdrSAoCV0l65caxu++qYS53LXmUg+KXyseAaHEQ5+D2M
-         33LH/fOGIoI9m+A3xcUk+ErNkmIi7jSObQg19BIaW4I3CisxETbJqxvL3bM7uoZvcCBM
-         Q/jDMDJLX0kq0JJUhoXA92jNVB657yZwFf51YfO3ofXlzjI9Y50jdTM1ZcrTkd+3nhB+
-         TBOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLPk29KV5h+gz0E7q+/6FKFKJSIjtlAziwwFpO3B5yZBi4JMtV57xEPBXe0xG+4ptThtpy3H1DeDs+xa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9y2WAbvMZsovG1xDIt/LFVUnxD8KkItZTemYj0yEdPkg7dM/y
-	oBelcUGAiYOA2X27y7ii3cqmux3mvvJgcmFYAQv1lIfjM7ooZ7lidCx5B7hVJaR2mvY=
-X-Gm-Gg: ASbGncsD5k5we/hnCHdC0KhkEiN0lrP394RVBFpEel0yRZOrxwaJWnZ2tir9NB/GTQT
-	Tickquqi83jt4KB06YG1zPbBbs0lhyVmeBuYXROw1axaB5xC8rCiHwgWw6IWTAKZxCC11Qh2luJ
-	GNyQ5IPfjmuY7IbicgkQjdqWHgZDkBeQ6wtM9KDrBPzn3fyc4SlUZ23OWTiitRM6rAabm+DF5Un
-	QKehxt6K4dHLG5AORqKPMyLS/GtQrb1IgLln9KSS1VDnfyi/n7CzGeRTy1SezMVn6QxwE5OVqk1
-	zd9ZIfytyRLYhBfAEPXJ/7UFf8/n4rp76MpN+QXKpAd7IA8knQCVUbE3LboITdDEMaS7B2C4GfT
-	u8AwvPtclipg23IiZyMflzsFHPeehMYdPORpE2Dyowg==
-X-Google-Smtp-Source: AGHT+IGt4Tl+Ezasy8itQmEdKvcNMQR6PoUhq2rRmHXq00x0XuE90hd52Zy9YkCWuEt6FOh+JdkGdw==
-X-Received: by 2002:a17:907:1c8d:b0:ade:902e:7b4b with SMTP id a640c23a62f3a-af61cca78f4mr49006666b.7.1753436861413;
-        Fri, 25 Jul 2025 02:47:41 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.203.90])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f44d8c9sm246902866b.68.2025.07.25.02.47.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 02:47:40 -0700 (PDT)
-Message-ID: <a345528b-1641-4f10-a9ae-6b853f625df4@linaro.org>
-Date: Fri, 25 Jul 2025 11:47:39 +0200
+	s=arc-20240116; t=1753437046; c=relaxed/simple;
+	bh=xQePQ+N/+DWWopIaG3p9/3wx8Et2IPVT55boRDl0mEw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=ixIb0m52TBqxGUjEc519de5syR/Hy13QloISLeEeYNNA8CA/kPRQtbOJ0eZyRGJxiYAFg283OhDi1g4res4Bt2FJpOo39HJXCdcVOI9Y1mAvbpAH6IHFT6DjXxeUixWjjCkat6Muh2OwDrGoRyuG8sakGo5kIwso3MzxLgeGtu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/hkvOSs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B2AC4CEE7;
+	Fri, 25 Jul 2025 09:50:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753437044;
+	bh=xQePQ+N/+DWWopIaG3p9/3wx8Et2IPVT55boRDl0mEw=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=l/hkvOSsOscC7li9Ye1qQv6t8QsDGX/dQ4jUQ5txc7H9OIRR1FhTnswDzSHYr2+CE
+	 6x+2J6tk2r+0v8KpJcfuejNYcJIyv8OLUDCjnA+kg2XqQp/7FfiZhw2voehdGWCh3l
+	 7QaZgCXOxxmKhTGFdBRrD/GtcYF+ulHvmwUoaxnC8z0gD2rH8F93V2FxdizZaDaTa1
+	 rEKdgdfTRErqa7WvcEftRIeF56cISKwGTlDg37Clm2XkrpAQbyTLsHOhx0eScSWewD
+	 YnwVa1ZwpjRL5lk+7NiQU3db3BQ1xQnEHAE5tg3z0VuOF/m2OLXHV1d3RMv3qHmwBS
+	 3NjdCypQ7HhXA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clocksource/drivers/exynos_mct: Revert commits causing
- section mismatches
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Will McVicker <willmcvicker@google.com>,
- Youngmin Nam <youngmin.nam@samsung.com>, Donghoon Yu <hoony.yu@samsung.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250725090349.87730-2-krzysztof.kozlowski@linaro.org>
- <63a6d253-305d-4ffd-9954-7cd665bd332d@linaro.org>
- <2f413942-8126-4d94-b64b-c4a05052b5a1@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <2f413942-8126-4d94-b64b-c4a05052b5a1@linaro.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Fri, 25 Jul 2025 11:50:39 +0200
+Message-Id: <DBL1JZEZB87H.1IMYO79R3H9UM@kernel.org>
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Vlastimil Babka"
+ <vbabka@suse.cz>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, "Uladzislau
+ Rezki" <urezki@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Hui Zhu"
+ <zhuhui@kylinos.cn>, "Geliang Tang" <geliang@kernel.org>
+To: "Hui Zhu" <hui.zhu@linux.dev>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v5 1/2] rust: allocator: add KUnit tests for alignment
+ guarantees
+References: <cover.1753423953.git.zhuhui@kylinos.cn>
+ <da9b2afca02124ec14fc9ac7f2a2a85e5be96bc7.1753423953.git.zhuhui@kylinos.cn>
+In-Reply-To: <da9b2afca02124ec14fc9ac7f2a2a85e5be96bc7.1753423953.git.zhuhui@kylinos.cn>
 
-On 25/07/2025 11:35, Krzysztof Kozlowski wrote:
-> On 25/07/2025 11:28, Daniel Lezcano wrote:
->> On 25/07/2025 11:03, Krzysztof Kozlowski wrote:
->>> Commit 5d86e479193b ("clocksource/drivers/exynos_mct: Add module
->>> support") introduced section mismatch failures.
->>> Commit 7e477e9c4eb4 ("clocksource/drivers/exynos_mct: Fix section
->>> mismatch from the module conversion") replaced these to other section
->>> mismatch failures:
->>>
->>>    WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x164 (section: .text) -> register_current_timer_delay (section: .init.text)
->>>    WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x20c (section: .text) -> register_current_timer_delay (section: .init.text)
->>>    ERROR: modpost: Section mismatches detected.
->>>
->>> No progress on real fixing of these happened (intermediary fix was still
->>> not tested), so revert both commits till the work is prepared correctly.
->>
->> Please don't claim the fix was not tested. I reproduced the section 
-> 
-> 
-> section mismatch code MUST BE tested with enabled DEBUG_SECTION_MISMATCH
-> and disabled SECTION_MISMATCH_WARN_ONLY. If you have warnings which you
-> missed (although if you have warnings what did you fix?), means you did
-> not prepare testing setup.
-> 
->> mismatch, tested it and figured out it was indeed fixing the issue. I 
->> just missed the error because it sounds very close to the first one 
->> reported initially and I did the confusion.
->>
->> The driver is not supposed to be compiled as a module on ARM32.
->>
->> The option tristate "Exynos multi core timer driver" if ARM64 is 
->> misleading. From this change, the defconfig on ARM can do 
->> CONFIG_EXYNOS_MCT=m which should not be allowed.
->>
->> Before getting wild and revert everything, let's try to find a proper 
->> fix for that.
-> 
-> I am not wild here. The issue is there since 9 days.
-BTW, merge window will start anytime soon, so if you do not apply this
-revert and do not fix it soon, it means NOTHING during merge window will
-be tested on Exynos.
+On Fri Jul 25, 2025 at 9:02 AM CEST, Hui Zhu wrote:
+> From: Hui Zhu <zhuhui@kylinos.cn>
+>
+> Add comprehensive tests to verify correct alignment handling in Rust
+> allocator wrappers. The tests validate:
+>
+> That kmalloc respects both standard (128-byte) and page-size
+> (8192-byte) alignments when allocating structs with explicit alignment
+> attributes.
+>
+> That vmalloc correctly handles standard alignments but intentionally
+> rejects allocations requiring alignments larger than its capabilities.
+>
+> That kvmalloc mirrors vmalloc's constraints, accepting standard
+> alignments but rejecting excessive alignment requirements.
+>
+> The test infrastructure uses specialized aligned structs (Blob and
+> LargeAlignBlob) and a test harness (TestAlign) to validate pointer
+> alignment through different allocation paths. This ensures our Rust
+> allocators correctly propagate kernel allocation constraints.
+>
+> Co-developed-by: Geliang Tang <geliang@kernel.org>
+> Signed-off-by: Geliang Tang <geliang@kernel.org>
+> Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
 
-Why?
+Thanks, this looks good. I think it would be good to rebase onto [1], since=
+ it
+will likely land in the same cycle. Additionally, two nits below.
 
-Because my builds for Exynos rely on correct sections and they fail.
-Failed builds means: no boots.
+As a follow-up we could also test alignment in the context of
+Allocator::realloc(), i.e. when growing and shrinking buffers or requesting=
+ a
+different NUMA node.
 
-No boots means no testing.
+[1] https://lore.kernel.org/lkml/20250715135645.2230065-1-vitaly.wool@konsu=
+lko.se/
 
-And if this reaches rc1 (imagine you send fixes AFTER rc1), then all my
-branches will be non-booting as well.
+> ---
+>  rust/kernel/alloc/allocator.rs | 58 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>
+> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator=
+.rs
+> index aa2dfa9dca4c..bcc916240f11 100644
+> --- a/rust/kernel/alloc/allocator.rs
+> +++ b/rust/kernel/alloc/allocator.rs
+> @@ -187,3 +187,61 @@ unsafe fn realloc(
+>          unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, fl=
+ags) }
+>      }
+>  }
+> +
+> +#[macros::kunit_tests(rust_allocator_kunit)]
+> +mod tests {
+> +    use super::*;
+> +    use core::mem::MaybeUninit;
+> +    use kernel::prelude::*;
+> +
 
-Time to "not be wild" was 9 days ago when you received reply from Arnd.
-Now reverting these is the appropriate step. None of this work was
-tested on arm32 Exynos, BTW.
+--8<--
 
-Best regards,
-Krzysztof
+> +    const TEST_SIZE: usize =3D 1024;
+> +    const TEST_LARGE_ALIGN_SIZE: usize =3D kernel::page::PAGE_SIZE * 4;
+> +
+> +    // These two structs are used to test allocating aligned memory.
+> +    // they don't need to be accessed, so they're marked as dead_code.
+> +    #[allow(dead_code)]
+
+This should be #[expect(dead_code)].
+
+> +    #[repr(align(128))]
+> +    struct Blob([u8; TEST_SIZE]);
+> +    #[allow(dead_code)]
+> +    #[repr(align(8192))]
+> +    struct LargeAlignBlob([u8; TEST_LARGE_ALIGN_SIZE]);
+> +
+> +    struct TestAlign<T, A: Allocator>(Box<MaybeUninit<T>, A>);
+> +    impl<T, A: Allocator> TestAlign<T, A> {
+> +        fn new() -> Result<Self> {
+> +            Ok(Self(Box::<_, A>::new_uninit(GFP_KERNEL)?))
+> +        }
+> +
+> +        fn alignment_valid(&self, align: usize) -> bool {
+> +            assert!(align.is_power_of_two());
+> +
+> +            let addr =3D self.0.as_ptr() as usize;
+> +            if addr & (align - 1) !=3D 0 {
+> +                false
+> +            } else {
+> +                true
+> +            }
+
+This can just be
+
+	addr & (align - 1) =3D=3D 0
+
+instead of the conditional clause.
+
+> +        }
+> +    }
+
+We could move all the above into test_alignment() given that it's likely on=
+ly
+needed from there.
+
+> +
+> +    #[test]
+> +    fn test_alignment() -> Result<()> {
+> +        let ta =3D TestAlign::<Blob, Kmalloc>::new()?;
+> +        assert!(ta.alignment_valid(128));
+> +
+> +        let ta =3D TestAlign::<LargeAlignBlob, Kmalloc>::new()?;
+> +        assert!(ta.alignment_valid(8192));
+> +
+> +        let ta =3D TestAlign::<Blob, Vmalloc>::new()?;
+> +        assert!(ta.alignment_valid(128));
+> +
+> +        assert!(TestAlign::<LargeAlignBlob, Vmalloc>::new().is_err());
+> +
+> +        let ta =3D TestAlign::<Blob, KVmalloc>::new()?;
+> +        assert!(ta.alignment_valid(128));
+> +
+> +        assert!(TestAlign::<LargeAlignBlob, KVmalloc>::new().is_err());
+> +
+> +        Ok(())
+> +    }
+> +}
+> --=20
+> 2.43.0
+
 
