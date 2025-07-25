@@ -1,163 +1,206 @@
-Return-Path: <linux-kernel+bounces-745805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B00FB11EFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:46:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEF8B11F19
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5A2E168725
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:46:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861C81CE1A52
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1258B2E36E3;
-	Fri, 25 Jul 2025 12:46:34 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7F72ED840;
+	Fri, 25 Jul 2025 12:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPdO80B9"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B50F134BD
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0F52ED153;
+	Fri, 25 Jul 2025 12:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753447593; cv=none; b=pBhvVBPUAyET8GcJvUyNW8Zl6bYCBYUNQX/iZN8kuAKUcitb2OHlivWU8mfPLzVGvSwSOsrjQC68gukaWU1Nufs9oVtMoLu9RRLWBg37QuW8HFRdtxaS23HxrZB7Xpsn+wwwAO6Xb1sL05uXFiWVfrcrqvxvMs1XvfzFlkndQnM=
+	t=1753448326; cv=none; b=NBLN+8j6pkkk9uUUWVbo0BmO926cSfI3iJZ6WESEiIBqo1fuk28typUY92/PRKP1f8/F4o7nwYJ8SYGQaDCZBBs6jgurgBJPN5S3GOxbUD0+OIuA7a8i+8aLNmFWq3PX/k9TiFCEnxpdIxrD6oT26f4jNNCwbm16Y2O7TKxEzCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753447593; c=relaxed/simple;
-	bh=qm7IYgwWsCevniBDmNoxwlw3iwTZXJXBKMafkaJPtwA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Sbh27yrYP0RCdMl15YkWe9QBoPHlXvIBETSLsvoEd1IXpSat2f6OkALG7gc+humeOrkrHWgMu0hzNcDaKZroeWkTYY4aFjqd5dCGphKfKqwr51IvZK2acR3wmryIpojCULHhvwWCjA0kXPJLot3YArHH6HRuIBSYpHHlPQ+oF8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3df33827a8cso42414285ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:46:31 -0700 (PDT)
+	s=arc-20240116; t=1753448326; c=relaxed/simple;
+	bh=U+l2daCSxoxZop8pSJd81XPpmelPZZWa2K/uyjIKm9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V2O/2Q6uH9eiQ6m5ya1rlbbEwJuw/3JsboN0iOzlyOXfhSPglcWs0Ey0IonKiQt1MbjlufcUs1y7WclNMxP+xcyD7D6k1zBjlzIlLO0lcB3FNCGJG48HjaUE6G06bxDLLH5N0Aka6mkTbAPJjYjT9uWmsv5K4hRCi2OY2UZjknI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPdO80B9; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-235e1d710d8so27074995ad.1;
+        Fri, 25 Jul 2025 05:58:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753448323; x=1754053123; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IRzi0ZZ7lzn256rqqzO9OVR+xH0dahkcse6WfaiH0cE=;
+        b=nPdO80B9jTFuMzhve0uXt2bdD9x2G6QfzgLV5HZbNUMBz+RMEASlMICFTxwBmTMhQv
+         g4Mdzr23ie3WsyMRI0KrEya6CCKuZojAkK2tMz53N5cjLQSgJd/eYD3iqS+NeHheIJBk
+         JU0za/1HU4EfzIeNyW7tx3AcHibYe4CAm55kQxt6V6P+8aNWPmf4G4rbMeOJpFt35j/y
+         N+naT1lgtzR8RzLGgGDZ2ydTmYhuVbkVkcZJiDAC1U0SaaG0tx3JqieoX2diMRK7TdyB
+         mMc3RhX603aOTr1aRbBcdXjmvnS5E5JoDCCrubmW45Y/nd/oTUotRYUZliHnkkAcfg3M
+         tbAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753447591; x=1754052391;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RcOwnNkGMbRm/SAGPNDv3FvzOSvBQBAw0vpb+6DYIB4=;
-        b=oivFsOXDM4XMMPrKp+Mzy3bCSmTQH/t16TYLHAUICEva59F2xIM7lcIh544ejEMbee
-         PMJ7ZG+ezKASrwWmem3AbdZmCksJgoeX+uZud2XkAMJ+ikWrSh0NL5u8A+rlIn6/4ZLI
-         ixUo70P3yL+gYiJNglOuNlV9nAQtZitfy/q86jscDUlB5ilmN1FuRAGNBbYVilHGLRee
-         LubCDKxWOhTJ7xsBMn+0z3gn3CYcD3HX015ylAe67K0kzw0F9DZYq/8eSjKrNrmNqIJC
-         s0yAh1FUTmVd+mWuYtXhNfLYhtz3aVfvZyj9feqPTVDr3nIItJ3tIDQyMtIW2mVEAw+n
-         Rf5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWW82Pwbaq5D+ZBHWGb8pTy1BqPMuMuZKp6xqIoUp7w4M6QeDV/LLbwUCUo9rJXcJAMjbHoBaG+EMWI20c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUODrTMPwEtOKXQkF3sjfUAYQw9BBsGdsAXHADEoC5oHYlQZdm
-	6KCknmZ8L0ui7rRVytYeYuZGZ4BbkAxL62ydBTNVvQU83hJqO2bjrxkgHlWT2+ZyePnPBJgLte7
-	mf8Q8B242+mEWR/TzDzcPuiO9JbgSYGwL0pWxo/hBr98tHJRXcPT2CpMT5ZQ=
-X-Google-Smtp-Source: AGHT+IGhLJ7WPISWlkBBKk0VG56ANSua07lRzc2p1rbmGsljUveQsfjYLhKQDFiB+gfn/k2x9EC/enz4YR91PiOq4KT2/m3G+lxl
+        d=1e100.net; s=20230601; t=1753448323; x=1754053123;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IRzi0ZZ7lzn256rqqzO9OVR+xH0dahkcse6WfaiH0cE=;
+        b=urY59oqh1UQcqJYrE3ktuvlXb8CwwGyjx8prBcXvZVLIebK5xcl/hI5lxNy9jb0ogJ
+         sJfYCnsVPmGWlu7oRavvbHC4FzXsfBWbzc8Fbn9nbj4+DK0wjy6LtkJuTb/D6+womhMi
+         uYojxSVgf4c8+Z7MfHtRL7yldF/hcGLUctgydleS/7fbAB3jjCFYw/XxVUSYXvv7BvDh
+         SBQaQn5nL7fSWz3IFP1drdClzN0GWqSEBPWWELrQGjuA4v9SyR3RA3eBQCH++Ml7ljrh
+         ROwuCg7eAGL2QPSB/Wfa65YebNiYaCXiq9wf1RtvSpbyu33aWPuRN1646+mvgTkTWMwN
+         dxWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNTsNCa/I5hd4RBHAoZIfDXwgLHtK8dDMTKJZY9lC2ry9Iuegz9jfobmrAoaVCE5GK31o51KoRdWM=@vger.kernel.org, AJvYcCWCEkjMs+JYZQzNR+//CJT8bBPZ28NqOiaZ28hBAVgFQsO7WAnWZrw8ZGd4pTv5wAW2CDF8gGH9Q10OHmbk@vger.kernel.org, AJvYcCWvYlIV+33YdHkMYM6POZLUmbwl8C5oV4dxPGdTtrv3hDtr4ZQop6Dmu2k5AQ86N8+wr2xmBC7kefZkyVbSyamV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBohJtLNGygDs0PzKzYRWR4GJX+sGieLN3oX2EuKe+LZw5y2sO
+	vdPxrnrYXlZgpXGV05EJCyE+Mot3ZVKwAs1iH0gXQc+2wzMyLxFIe8A8
+X-Gm-Gg: ASbGncvx+vBvypUhglum1LKI+1gv1wCFU3vyN3+Arm5CULAqplffeECFUkjaVF8IA8p
+	GZxEnAAi5sUVjLApp8CLypQGIELurbe4H3pQSqfkcBwf8Qbfp0Tu27mJ3u3+cjcqfzdDeidbmpS
+	OtppZ1qFJhjijd/txFY+Ve+6h6tcCNMYCGWtfNkhDDeS58xcLpHjTCNra6p1yLp4cfdU8dlIPIu
+	OqMIV5W+44vVHUDaeIz8ERWbdR3dJ4QnQUcVLc32ZvJOWKek+j8BZsAM2sk6w0dYWIiZA4yZqdq
+	b6lzujEDE0xx+4xS3j9jLdissPR9nClrCPubooboc+5cAuBp/8nsd5XUzoQ3hSHnUk05Zg8p0w+
+	fbKYD0UkCpTxTIAbIF1lK22Qcyf8=
+X-Google-Smtp-Source: AGHT+IGAlITfVYzd8DhScqugYjRH2Umn84vSkWnZzDqtOwuyZIYx5kzZZ3ufcrPHnIufB7PqwcJY1w==
+X-Received: by 2002:a17:903:4405:b0:23d:da20:1685 with SMTP id d9443c01a7336-23fb3065804mr32846585ad.4.1753448322695;
+        Fri, 25 Jul 2025 05:58:42 -0700 (PDT)
+Received: from fedora ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fadc8f669sm16852005ad.12.2025.07.25.05.58.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 05:58:42 -0700 (PDT)
+Date: Fri, 25 Jul 2025 12:48:58 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Nikolay Aleksandrov <razor@blackwall.org>
+Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Petr Machata <petrm@nvidia.com>,
+	Amit Cohen <amcohen@nvidia.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/3] bonding: support aggregator selection based
+ on port priority
+Message-ID: <aIN9OtPcnPtkqrks@fedora>
+References: <20250724081632.12921-1-liuhangbin@gmail.com>
+ <20250724081632.12921-3-liuhangbin@gmail.com>
+ <d5b2f8df-8a2e-4319-809a-ec06d8381038@blackwall.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:158b:b0:3df:3110:cc01 with SMTP id
- e9e14a558f8ab-3e3c531f7aemr25617085ab.19.1753447590693; Fri, 25 Jul 2025
- 05:46:30 -0700 (PDT)
-Date: Fri, 25 Jul 2025 05:46:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68837ca6.a00a0220.2f88df.0053.GAE@google.com>
-Subject: [syzbot] [netfilter?] WARNING in nft_socket_init (2)
-From: syzbot <syzbot+a225fea35d7baf8dbdc3@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5b2f8df-8a2e-4319-809a-ec06d8381038@blackwall.org>
 
-Hello,
+On Fri, Jul 25, 2025 at 12:02:02PM +0300, Nikolay Aleksandrov wrote:
+> > diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
+> > index 4a1b2f01fe37..6f8a406ed34a 100644
+> > --- a/drivers/net/bonding/bond_3ad.c
+> > +++ b/drivers/net/bonding/bond_3ad.c
+> > @@ -747,6 +747,20 @@ static int __agg_active_ports(struct aggregator *agg)
+> >  	return active;
+> >  }
+> >  
+> > +static unsigned int __agg_ports_priority(struct aggregator *agg)
+> 
+> const agg?
+> 
+> > +{
+> > +	struct port *port;
+> > +	unsigned int prio = 0;
+> 
+> reverse xmas tree or alternatively you can save a line below with
+> port = agg->lag_ports above
 
-syzbot found the following issue on:
+Thanks, I will fix this.
 
-HEAD commit:    94619ea2d933 Merge tag 'ipsec-next-2025-07-23' of git://gi..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14bf10a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ceda48240b85ec34
-dashboard link: https://syzkaller.appspot.com/bug?extid=a225fea35d7baf8dbdc3
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bf10a2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d27fd4580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/afd64d9816ee/disk-94619ea2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e1755ce1f83b/vmlinux-94619ea2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2061dff2fbf4/bzImage-94619ea2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a225fea35d7baf8dbdc3@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5853 at net/netfilter/nft_socket.c:220 nft_socket_init+0x2f4/0x3d0 net/netfilter/nft_socket.c:220
-Modules linked in:
-CPU: 0 UID: 0 PID: 5853 Comm: syz-executor145 Not tainted 6.16.0-rc6-syzkaller-01673-g94619ea2d933 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:nft_socket_init+0x2f4/0x3d0 net/netfilter/nft_socket.c:220
-Code: 84 c0 0f 85 da 00 00 00 41 88 2c 24 bd 08 00 00 00 e9 ad fe ff ff 89 f3 e8 29 86 07 f8 89 d8 e9 57 ff ff ff e8 1d 86 07 f8 90 <0f> 0b 90 e9 44 ff ff ff 89 e9 80 e1 07 38 c1 0f 8c 87 fd ff ff 48
-RSP: 0018:ffffc9000401f178 EFLAGS: 00010293
-RAX: ffffffff89b8a433 RBX: ffff888077f68020 RCX: ffff888030a8da00
-RDX: 0000000000000000 RSI: 0000000000000100 RDI: 00000000000000ff
-RBP: 00000000000000ff R08: 0000000000000000 R09: ffffffff89b8b21c
-R10: dffffc0000000000 R11: ffffed10299a8e5b R12: 0000000000000100
-R13: ffff8880352ec898 R14: dffffc0000000000 R15: 1ffff1100efed004
-FS:  000055555942b380(0000) GS:ffff888125c15000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000000 CR3: 0000000034702000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- nf_tables_newexpr net/netfilter/nf_tables_api.c:3496 [inline]
- nf_tables_newrule+0x178f/0x2890 net/netfilter/nf_tables_api.c:4327
- nfnetlink_rcv_batch net/netfilter/nfnetlink.c:524 [inline]
- nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:647 [inline]
- nfnetlink_rcv+0x112f/0x2520 net/netfilter/nfnetlink.c:665
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:729
- ____sys_sendmsg+0x505/0x830 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
- __sys_sendmsg net/socket.c:2700 [inline]
- __do_sys_sendmsg net/socket.c:2705 [inline]
- __se_sys_sendmsg net/socket.c:2703 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2703
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7efdcf55c0e9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff48ea8a28 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007efdcf55c0e9
-RDX: 0000000000000000 RSI: 0000200000000000 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007efdcf5a5036
-R13: 00007fff48ea8a60 R14: 00007fff48ea8aa0 R15: 0000000000000000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Hangbin
+> 
+> > +
+> > +	for (port = agg->lag_ports; port;
+> > +	     port = port->next_port_in_aggregator) {
+> > +		if (port->is_enabled)
+> > +			prio += port->actor_port_priority;
+> > +	}
+> 
+> minor nit: {} are unnecessary
+> 
+> > +
+> > +	return prio;
+> > +}
+> > +
+> >  /**
+> >   * __get_agg_bandwidth - get the total bandwidth of an aggregator
+> >   * @aggregator: the aggregator we're looking at
+> > @@ -1695,6 +1709,9 @@ static struct aggregator *ad_agg_selection_test(struct aggregator *best,
+> >  	 * BOND_AD_COUNT: Select by count of ports.  If count is equal,
+> >  	 *     select by bandwidth.
+> >  	 *
+> > +	 * BOND_AD_PRIO: Select by total priority of ports. If priority
+> > +	 *     is equal, select by count.
+> > +	 *
+> >  	 * BOND_AD_STABLE, BOND_AD_BANDWIDTH: Select by bandwidth.
+> >  	 */
+> >  	if (!best)
+> > @@ -1713,6 +1730,14 @@ static struct aggregator *ad_agg_selection_test(struct aggregator *best,
+> >  		return best;
+> >  
+> >  	switch (__get_agg_selection_mode(curr->lag_ports)) {
+> > +	case BOND_AD_PRIO:
+> > +		if (__agg_ports_priority(curr) > __agg_ports_priority(best))
+> > +			return curr;
+> > +
+> > +		if (__agg_ports_priority(curr) < __agg_ports_priority(best))
+> > +			return best;
+> > +
+> > +		fallthrough;
+> >  	case BOND_AD_COUNT:
+> >  		if (__agg_active_ports(curr) > __agg_active_ports(best))
+> >  			return curr;
+> > @@ -1778,6 +1803,10 @@ static int agg_device_up(const struct aggregator *agg)
+> >   * (slaves), and reselect whenever a link state change takes place or the
+> >   * set of slaves in the bond changes.
+> >   *
+> > + * BOND_AD_PRIO: select the aggregator with highest total priority of ports
+> > + * (slaves), and reselect whenever a link state change takes place or the
+> > + * set of slaves in the bond changes.
+> > + *
+> >   * FIXME: this function MUST be called with the first agg in the bond, or
+> >   * __get_active_agg() won't work correctly. This function should be better
+> >   * called with the bond itself, and retrieve the first agg from it.
+> > diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+> > index 2b8606b4e4f5..708ca1f18a00 100644
+> > --- a/drivers/net/bonding/bond_options.c
+> > +++ b/drivers/net/bonding/bond_options.c
+> > @@ -163,6 +163,7 @@ static const struct bond_opt_value bond_ad_select_tbl[] = {
+> >  	{ "stable",    BOND_AD_STABLE,    BOND_VALFLAG_DEFAULT},
+> >  	{ "bandwidth", BOND_AD_BANDWIDTH, 0},
+> >  	{ "count",     BOND_AD_COUNT,     0},
+> > +	{ "prio",      BOND_AD_PRIO,      0},
+> >  	{ NULL,        -1,                0},
+> >  };
+> >  
+> > diff --git a/include/net/bond_3ad.h b/include/net/bond_3ad.h
+> > index bf551ca70359..34495df965f0 100644
+> > --- a/include/net/bond_3ad.h
+> > +++ b/include/net/bond_3ad.h
+> > @@ -26,6 +26,7 @@ enum {
+> >  	BOND_AD_STABLE = 0,
+> >  	BOND_AD_BANDWIDTH = 1,
+> >  	BOND_AD_COUNT = 2,
+> > +	BOND_AD_PRIO = 3,
+> >  };
+> >  
+> >  /* rx machine states(43.4.11 in the 802.3ad standard) */
+> 
 
