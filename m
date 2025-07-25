@@ -1,149 +1,140 @@
-Return-Path: <linux-kernel+bounces-745341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF637B118AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:49:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0F1B118B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6999916F825
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58343AA8528
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126CD289357;
-	Fri, 25 Jul 2025 06:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81779289E04;
+	Fri, 25 Jul 2025 06:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qDtxYrmW"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dbsOCjti"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7F326CE08;
-	Fri, 25 Jul 2025 06:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6E31B6D06;
+	Fri, 25 Jul 2025 06:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753426141; cv=none; b=sTrhneG+09hsWTG1hCnMDYRzJTBY0BE0sbpoj5KW9z7daOGtBp9r3nFjlXB1DoZIrV739kYXFtRu8cM7h7ev/Hg4hKNIDfdIiuyZdgQmjgX/TVwvTvadIfhGTECxGS07hHFPRNihS7vcfkt8aI/YMHtDbaAwERXou0np1aQz8Y8=
+	t=1753426380; cv=none; b=MN2eB6qe+G9O1gvtzp6GY0yDUk1jjSk7NcLcoqlYKn1oQAt4W5rse1H5k3NRO4cap29icXolizVnp2h38nEKlQ65Ty9tAX1tA1MDiuM+BWcs1QKeHNOPj+9L6TTvUt3FI1fijiV7Fwr2GaYQtvFoAufNz8HYtfOkmq9atK1tA9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753426141; c=relaxed/simple;
-	bh=EhsjRfFYi3TvNj8OhAOcDUzuJCghcHQBsGT8pu3uvtE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hAUcL4QLenZtXrrYObSX4GlSaMdOaS8pP0OThLm8plidFFiTTC07jW4yAUoyG4mH93baFcUbQzLcpT5xIq8WJe0c2rOT5Dv5KDEyJKXXnrej3LoI4f3rLdlFdL7LPDEKLden8cJ1y4G4O1DzPoctK9NTXzI+UXNIu1G2HrhZdr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qDtxYrmW; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1753426109; x=1754030909; i=markus.elfring@web.de;
-	bh=EhsjRfFYi3TvNj8OhAOcDUzuJCghcHQBsGT8pu3uvtE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=qDtxYrmW81a2M89hMT63Tl7fPQwA8J74fMeP9qf/cNRvGdQCgoG/vjNbQqCOCnnH
-	 CSyxb9MV0DEg7G4u5JxeYNWy1K0NXKLGIscP0DNzVceVBiojW/ZSbSYuI1e91civ9
-	 PRZB3mVIfjUvh3P0HorP/+QxmEoiAETxuSOR8P4LpRV/KZvK7KHVYPkpjvbhPLN6u
-	 pFGPQGZUEat+ljlb/1pz37Htj+WUwkH+pQY+pnlQNKc+4wQv5+AtfEoTL5PfT2T+D
-	 eOYjDS2ZLOzsgPfBOYZvPnH+XSIrsJWpM87YYShRwmCRP06BC/e2DsOy1kLv0EQrh
-	 2qDRCfhiWVeAF9yIKA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.216]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjBRZ-1uBNmb46VR-00job7; Fri, 25
- Jul 2025 08:48:29 +0200
-Message-ID: <c43d27e6-7953-478a-89d7-c08576443cac@web.de>
-Date: Fri, 25 Jul 2025 08:48:08 +0200
+	s=arc-20240116; t=1753426380; c=relaxed/simple;
+	bh=20nHIXM9x/K8ItS1GIZjz28u6zUrsz6iqx1gk4P+kng=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKLYZ+7UdCXWh4JnwyO4dq+OZy2uItfLDXQAlypXTbfC/ni471MGwRTlpIJFjm5fPPOKA3/IMOtdOHxCaA6tLCcEnodYzcKCJovNI0v0NabcZDN8YIXeneVHGIbpFq4sYYGEHK4u1ZWE+ezsoOM7ihWkPGcC+q1j+Dr/NMIaKD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dbsOCjti; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1753426378; x=1784962378;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=20nHIXM9x/K8ItS1GIZjz28u6zUrsz6iqx1gk4P+kng=;
+  b=dbsOCjti5U4iNybn7zHPoY88W7euhV6aUVJlGAVUCTSQLS1JZ1BvrLc5
+   VikyH5fDjTdFk4/jd017MEXsr/29s610bm96JafGgMLZYAHMdGiOUS4Fj
+   8xqd+Yhda4GFif15wqZYbPttfThlydy2RWKuiMXlrxtHGW0v28Aj+nUmQ
+   cBj6qicch2Dz2/KY6noiqnOU9yHxU/0Fxpmc16VuXdcHHzRnjGbXx34Zi
+   3lKziRAkYvAIjy1RsJV2b/4SmsieKOm3lYcE+lp9FQJjQ14mGE4WtFGjN
+   oE+txhsG9c7uUUMVokSOdjPENXmV43RI+Dk0xzah3bWpmuhQBTcSgzOT5
+   A==;
+X-CSE-ConnectionGUID: CniThB0ESIylVa/zs0YtAg==
+X-CSE-MsgGUID: dlpcnZ9sSd6Uz56B2YqMog==
+X-IronPort-AV: E=Sophos;i="6.16,338,1744095600"; 
+   d="scan'208";a="49739607"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jul 2025 23:52:50 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 24 Jul 2025 23:51:32 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 24 Jul 2025 23:51:32 -0700
+Date: Fri, 25 Jul 2025 08:48:39 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<richardcochran@gmail.com>, <o.rempel@pengutronix.de>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 3/4] net: phy: micrel: Replace hardcoded
+ pages with defines
+Message-ID: <20250725064839.psuzyuxfmyvudfka@DEN-DL-M31836.microchip.com>
+References: <20250724200826.2662658-1-horatiu.vultur@microchip.com>
+ <20250724200826.2662658-4-horatiu.vultur@microchip.com>
+ <aIKbaS8ASndR7Xe_@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 0/2] Drivers: hv: Introduce new driver - mshv_vtl
-To: Naman Jain <namjain@linux.microsoft.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Michael Kelley <mhklinux@outlook.com>,
- linux-hyperv@vger.kernel.org
-Cc: Roman Kisel <romank@linux.microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- Alok Tiwari <alok.a.tiwari@oracle.com>, "Paul E. McKenney"
- <paulmck@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20250724082547.195235-1-namjain@linux.microsoft.com>
- <fe2487c2-1af1-49e2-985e-a5b724b00e88@web.de>
- <558412b1-d90a-486a-8af4-f5c906c04cca@linux.microsoft.com>
- <8cfe5678-b8c0-471c-8ad2-2c232c4bbc24@web.de>
- <5160e0ab-f588-481c-9585-98b6f2944407@linux.microsoft.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <5160e0ab-f588-481c-9585-98b6f2944407@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8wSr+TTFmQDknorCUMFO0KR5Qq7cojlV63KXCiNK89SPimqJi7n
- 1W3EPfj6/AJiQ6Lq7EGtbfFUkVGjx2T01+ZEoAO2wDzPuHbAbHFxZzRdMUM98UQqSa2XEcm
- /0Q7kFfRnX0zO8AXUbWJhHbduO27Pv3ZvaduCQv/aSiVoGAxT5G9TkQiv2UEQiJ4qAe3zh3
- EC1jxMZ0E17ZGOlk5jX1Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wW7Y7hudLko=;C1Qi+IciQncNCGvridVPVpyZNwI
- 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
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <aIKbaS8ASndR7Xe_@shell.armlinux.org.uk>
 
-> I have one other usage of rcu_read_lock/unlock in the code, which I feel=
- is=C2=A0fine=C2=A0in=C2=A0its=C2=A0current=C2=A0form.
+The 07/24/2025 21:45, Russell King (Oracle) wrote:
+> 
+> On Thu, Jul 24, 2025 at 10:08:25PM +0200, Horatiu Vultur wrote:
+> > diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+> > index b04c471c11a4a..d20f028106b7d 100644
+> > --- a/drivers/net/phy/micrel.c
+> > +++ b/drivers/net/phy/micrel.c
+> > @@ -2788,6 +2788,13 @@ static int ksz886x_cable_test_get_status(struct phy_device *phydev,
+> >       return ret;
+> >  }
+> >
+> > +#define LAN_EXT_PAGE_0                                       0
+> > +#define LAN_EXT_PAGE_1                                       1
+> > +#define LAN_EXT_PAGE_2                                       2
+> > +#define LAN_EXT_PAGE_4                                       4
+> > +#define LAN_EXT_PAGE_5                                       5
+> > +#define LAN_EXT_PAGE_31                                      31
 
-You may use another lock guard accordingly, don't you?
-https://elixir.bootlin.com/linux/v6.16-rc7/source/include/linux/rcupdate.h=
-#L1155-L1167
+Hi Russell,
 
-Regards,
-Markus
+> 
+> I don't see the point of this change. This is almost as bad as:
+> 
+> #define ZERO 0
+> #define ONE 1
+> #define TWO 2
+> #define THREE 3
+> ...
+> #define ONE_HUNDRED_AND_FIFTY_FIVE 155
+> etc
+> 
+> It doesn't give us any new information, and just adds extra clutter,
+> making the code less readable.
+> 
+> The point of using register definitions is to describe the purpose
+> of the number, giving the number a meaning, not to just hide the
+> number because we don't want to see such things in C code.
+> 
+> I'm sorry if you were asked to do this in v1, but I think if you
+> were asked to do it, it would've been assuming that the definitions
+> could be more meaningful.
+
+You are right, I have been ask to change this in version 1:
+https://lkml.org/lkml/2025/7/23/672
+
+I have mentioned it that the extended pages don't have any meaningfull
+names also in the register description document. But Oleksij says he
+will be fine with xxxx_EXT_PAGE_0, so maybe I have missunderstood Oleksij
+in what he proposed.
+
+> 
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+
+-- 
+/Horatiu
 
