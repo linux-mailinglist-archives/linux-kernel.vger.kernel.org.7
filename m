@@ -1,206 +1,235 @@
-Return-Path: <linux-kernel+bounces-745810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEF8B11F19
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:58:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5940CB11F05
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861C81CE1A52
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:59:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F345C7AE5C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7F72ED840;
-	Fri, 25 Jul 2025 12:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EAA2ECD07;
+	Fri, 25 Jul 2025 12:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPdO80B9"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ABPYm67S"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0F52ED153;
-	Fri, 25 Jul 2025 12:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DCA1D54D8
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753448326; cv=none; b=NBLN+8j6pkkk9uUUWVbo0BmO926cSfI3iJZ6WESEiIBqo1fuk28typUY92/PRKP1f8/F4o7nwYJ8SYGQaDCZBBs6jgurgBJPN5S3GOxbUD0+OIuA7a8i+8aLNmFWq3PX/k9TiFCEnxpdIxrD6oT26f4jNNCwbm16Y2O7TKxEzCc=
+	t=1753447778; cv=none; b=Aw8959yVbemGQM1ntJw+oXnsEo7lKPXIXr/lZkIjTvPGrbtpymyGrqnZQc2YYr3JMUWpWixMwH0PTG1g2XNV7q+cfq6MBtgDL7akRpKtCycgxcwL8OVthi0rIkfB2KTDoUPw6t++xVDlpcyugYMBKm8FlvZkoqMtSV4WnafNA2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753448326; c=relaxed/simple;
-	bh=U+l2daCSxoxZop8pSJd81XPpmelPZZWa2K/uyjIKm9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V2O/2Q6uH9eiQ6m5ya1rlbbEwJuw/3JsboN0iOzlyOXfhSPglcWs0Ey0IonKiQt1MbjlufcUs1y7WclNMxP+xcyD7D6k1zBjlzIlLO0lcB3FNCGJG48HjaUE6G06bxDLLH5N0Aka6mkTbAPJjYjT9uWmsv5K4hRCi2OY2UZjknI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPdO80B9; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-235e1d710d8so27074995ad.1;
-        Fri, 25 Jul 2025 05:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753448323; x=1754053123; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IRzi0ZZ7lzn256rqqzO9OVR+xH0dahkcse6WfaiH0cE=;
-        b=nPdO80B9jTFuMzhve0uXt2bdD9x2G6QfzgLV5HZbNUMBz+RMEASlMICFTxwBmTMhQv
-         g4Mdzr23ie3WsyMRI0KrEya6CCKuZojAkK2tMz53N5cjLQSgJd/eYD3iqS+NeHheIJBk
-         JU0za/1HU4EfzIeNyW7tx3AcHibYe4CAm55kQxt6V6P+8aNWPmf4G4rbMeOJpFt35j/y
-         N+naT1lgtzR8RzLGgGDZ2ydTmYhuVbkVkcZJiDAC1U0SaaG0tx3JqieoX2diMRK7TdyB
-         mMc3RhX603aOTr1aRbBcdXjmvnS5E5JoDCCrubmW45Y/nd/oTUotRYUZliHnkkAcfg3M
-         tbAw==
+	s=arc-20240116; t=1753447778; c=relaxed/simple;
+	bh=xYpnLtBmmYFoV2Wf0O8DUo26fff34+DluhVeQud508o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OAIgs1BNxRC/K0ZR0OHB3a8eNBROWE0KIDN9f+wlZWMHsKQeIB9cFTc2PKoNmPJeDJrCpATUauu5IRyanuuvwZD9a+h7YRvayEJlUVlX7rbvP4CqSX/ARxLS33WF4XuebIsDBAWnFDAMpYLQPwyKjCKriUGdneH8rufAY+lbt2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ABPYm67S; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P8x0Et026719
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:49:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ktB9Clt7XUZb4vphTZxcSmXCe8grqlTXO7tGnfUfWKA=; b=ABPYm67SexCdXRE7
+	rcMnk/on0toglwEoaYQKB198Ypn89/FV8NC945mpZLg47U/m3vFEIhmwQm16SrcN
+	lPf4nBQ0qGIWkPZiLoO8WTB6+V90LSfOgD1I0ftRePM3lW/KFJdrfgqlPy+FmG4y
+	yZaFV8afFWKkOXqsXdn9SZ4UUVXLR1+REpRL8gPD+oBvE4g9OvUdr/D9vHuA/rhK
+	tv37xQQGdloIw70oko1Co3P51ZjLS6S4cOMTcmipMdxmITsNoDArGztfbj8F8UyK
+	TO1NkwNg8m6Mtadzc5i3TKPydl6xk1VtS49qxFPtbp9RGjuNWa+NF4yj3UoWHu+l
+	vsERoA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2u245v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:49:34 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e33af599bcso331087585a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:49:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753448323; x=1754053123;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IRzi0ZZ7lzn256rqqzO9OVR+xH0dahkcse6WfaiH0cE=;
-        b=urY59oqh1UQcqJYrE3ktuvlXb8CwwGyjx8prBcXvZVLIebK5xcl/hI5lxNy9jb0ogJ
-         sJfYCnsVPmGWlu7oRavvbHC4FzXsfBWbzc8Fbn9nbj4+DK0wjy6LtkJuTb/D6+womhMi
-         uYojxSVgf4c8+Z7MfHtRL7yldF/hcGLUctgydleS/7fbAB3jjCFYw/XxVUSYXvv7BvDh
-         SBQaQn5nL7fSWz3IFP1drdClzN0GWqSEBPWWELrQGjuA4v9SyR3RA3eBQCH++Ml7ljrh
-         ROwuCg7eAGL2QPSB/Wfa65YebNiYaCXiq9wf1RtvSpbyu33aWPuRN1646+mvgTkTWMwN
-         dxWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNTsNCa/I5hd4RBHAoZIfDXwgLHtK8dDMTKJZY9lC2ry9Iuegz9jfobmrAoaVCE5GK31o51KoRdWM=@vger.kernel.org, AJvYcCWCEkjMs+JYZQzNR+//CJT8bBPZ28NqOiaZ28hBAVgFQsO7WAnWZrw8ZGd4pTv5wAW2CDF8gGH9Q10OHmbk@vger.kernel.org, AJvYcCWvYlIV+33YdHkMYM6POZLUmbwl8C5oV4dxPGdTtrv3hDtr4ZQop6Dmu2k5AQ86N8+wr2xmBC7kefZkyVbSyamV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBohJtLNGygDs0PzKzYRWR4GJX+sGieLN3oX2EuKe+LZw5y2sO
-	vdPxrnrYXlZgpXGV05EJCyE+Mot3ZVKwAs1iH0gXQc+2wzMyLxFIe8A8
-X-Gm-Gg: ASbGncvx+vBvypUhglum1LKI+1gv1wCFU3vyN3+Arm5CULAqplffeECFUkjaVF8IA8p
-	GZxEnAAi5sUVjLApp8CLypQGIELurbe4H3pQSqfkcBwf8Qbfp0Tu27mJ3u3+cjcqfzdDeidbmpS
-	OtppZ1qFJhjijd/txFY+Ve+6h6tcCNMYCGWtfNkhDDeS58xcLpHjTCNra6p1yLp4cfdU8dlIPIu
-	OqMIV5W+44vVHUDaeIz8ERWbdR3dJ4QnQUcVLc32ZvJOWKek+j8BZsAM2sk6w0dYWIiZA4yZqdq
-	b6lzujEDE0xx+4xS3j9jLdissPR9nClrCPubooboc+5cAuBp/8nsd5XUzoQ3hSHnUk05Zg8p0w+
-	fbKYD0UkCpTxTIAbIF1lK22Qcyf8=
-X-Google-Smtp-Source: AGHT+IGAlITfVYzd8DhScqugYjRH2Umn84vSkWnZzDqtOwuyZIYx5kzZZ3ufcrPHnIufB7PqwcJY1w==
-X-Received: by 2002:a17:903:4405:b0:23d:da20:1685 with SMTP id d9443c01a7336-23fb3065804mr32846585ad.4.1753448322695;
-        Fri, 25 Jul 2025 05:58:42 -0700 (PDT)
-Received: from fedora ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fadc8f669sm16852005ad.12.2025.07.25.05.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 05:58:42 -0700 (PDT)
-Date: Fri, 25 Jul 2025 12:48:58 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Petr Machata <petrm@nvidia.com>,
-	Amit Cohen <amcohen@nvidia.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/3] bonding: support aggregator selection based
- on port priority
-Message-ID: <aIN9OtPcnPtkqrks@fedora>
-References: <20250724081632.12921-1-liuhangbin@gmail.com>
- <20250724081632.12921-3-liuhangbin@gmail.com>
- <d5b2f8df-8a2e-4319-809a-ec06d8381038@blackwall.org>
+        d=1e100.net; s=20230601; t=1753447773; x=1754052573;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ktB9Clt7XUZb4vphTZxcSmXCe8grqlTXO7tGnfUfWKA=;
+        b=agNP1QLlhsA5TWsoKMtTgdbAfBKtsdBkZNpUrje+83H5ujRwOQyz+ads7cJyrQCVuf
+         iJfuvgQj82sAhToKoLqOQ/kU4YbhBQdvsJoL9HfrvOCUxTwLYW1y8xhfFW8S22AdJx2b
+         R0SfMnaIbJyUdHhgWrM3zTeaeyvwHCsm6dSsDamtpbZwCGP+0R0yqYcjfl9Lok69guA2
+         jT0Qy3ve1t522c9b2maiTp8YQdgkvNtFl65Ye6D5scFjQpz+cWuOGLAC1Wl+6hYCoNEZ
+         R+TtJqcmifpfvm4zF81W+RNs33hfVSfnv/QZlik2xcTCLqSQesTkOcxabvGpci4h/yBN
+         EC1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXA7ajZIc7JqaWUq6sZvMlgIZ456mHFhLyUFqdawPZ7aFREeetfIkEZkzUydJH10TkMestRCFI/J6KY0h8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJEFtkI+J4QFSjTBhQdbNYneg2LTd3NaqpbQCl0+Yh0vsEDHa7
+	WUxL5Zf7rmfd+frhoVPoKNEgeuE9lR3sseivUfGZeoM4aRT8ID12EuKdE8HTGuoh8hn+IcENww8
+	AN7QRTCjGleTT3Tu3r52BUBc8ux97/8ngrrOkVDBuczouHDvD1oTiU9K6pj9ZYSoH4ievPVP3nF
+	kJ6YIcew8feBIEs+Um09R41ry6/Zv3Ud5Mf2Ze3YGKcA==
+X-Gm-Gg: ASbGncvxjr6n+NginAjorH31GzEos20RmeCuhuR3i9M2KHyFSA8wx8xm+hiFjuAaVlP
+	PvDo6gp7wXEg1rOQ4SfNtaIu74Zthn7lvmsjFe8SJFOT/IC3Zx6vl4+6zApwe5xc5U1pW+l1x1T
+	4VcRnDXjZTILPb3K8VrlPrHg==
+X-Received: by 2002:a05:620a:390f:b0:7d0:9782:9b05 with SMTP id af79cd13be357-7e63bf95349mr242089585a.25.1753447773409;
+        Fri, 25 Jul 2025 05:49:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG3B3Slxw3dmstEGvQ2lqJWGYuHcRhehYoPFna2fVt6rcGfPvfJfwPkWozxxa+WwxMVWoB4203Tnjs2zKJO99o=
+X-Received: by 2002:a05:620a:390f:b0:7d0:9782:9b05 with SMTP id
+ af79cd13be357-7e63bf95349mr242084785a.25.1753447772817; Fri, 25 Jul 2025
+ 05:49:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d5b2f8df-8a2e-4319-809a-ec06d8381038@blackwall.org>
+References: <20250722-eud_mode_manager_secure_access-v7-1-40e9a4569895@oss.qualcomm.com>
+ <2025072446-ensnare-hardhead-12f5@gregkh>
+In-Reply-To: <2025072446-ensnare-hardhead-12f5@gregkh>
+From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+Date: Fri, 25 Jul 2025 18:19:21 +0530
+X-Gm-Features: Ac12FXxPQD_LsGbXmGNASbWosoLHJRg9wgIWhieGk75R8qev9bW7u1QVAGGMa3c
+Message-ID: <CAPHGfUMnaJ8HPX=CC_q6m2nbq-ODP=MY_NkcvHjXR8mD9b=tBQ@mail.gmail.com>
+Subject: Re: [PATCH v7] usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through
+ secure calls
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDEwNyBTYWx0ZWRfX7NskUAqqpXBE
+ Ro/qnUk2/n3rqgY+0+4gELkiPdryNXKCjLrtzKsO6jiJ+UIbyetqiAxfxF0nZWmX78E+eKHP462
+ y7dV7GY3mfTpe3qImgiP9OVXSNxDVEngNpy7ZIM3JHD61J9kboA7GkUozbFrf4JH0GGTLAiuLdc
+ n3FWJ6fairOvdrx5gygHThf6ix47HKMYWYsS4/Ka33LGiLHGqRAfMKeI+cThKBaDONP1Ytzi0OV
+ /j9WZh9F0bb7hbk3ocFk28MLlV0hpjLQ1LaKdAWYZbutJk7+6I+HABg2u7vCYrPc98OrpChfTuM
+ XhmeRK2TOMKTqzaJQu1SXp4/CTpj0WyLTADubQCv7hwtnyDgpyiwZFQ38Lpdbml36x/jmX/1Ses
+ SgIQen1QBNBZiZDDmKvQTWJu9FGogMs7YL56MC9Wu6RzM2LpPXhPKpf3izCIXbQ0jStkZq0N
+X-Proofpoint-ORIG-GUID: W0WX2UBlFd2Ga3Z57odGulMaYefVTj9I
+X-Authority-Analysis: v=2.4 cv=FcA3xI+6 c=1 sm=1 tr=0 ts=68837d5f cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=ag1SF4gXAAAA:8
+ a=PQXWc0QCHC5KbQU7H1QA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+ a=TjNXssC_j7lpFel5tvFf:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-Proofpoint-GUID: W0WX2UBlFd2Ga3Z57odGulMaYefVTj9I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_03,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 adultscore=0 suspectscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 clxscore=1015 mlxscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507250107
 
-On Fri, Jul 25, 2025 at 12:02:02PM +0300, Nikolay Aleksandrov wrote:
-> > diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
-> > index 4a1b2f01fe37..6f8a406ed34a 100644
-> > --- a/drivers/net/bonding/bond_3ad.c
-> > +++ b/drivers/net/bonding/bond_3ad.c
-> > @@ -747,6 +747,20 @@ static int __agg_active_ports(struct aggregator *agg)
-> >  	return active;
-> >  }
-> >  
-> > +static unsigned int __agg_ports_priority(struct aggregator *agg)
-> 
-> const agg?
-> 
-> > +{
-> > +	struct port *port;
-> > +	unsigned int prio = 0;
-> 
-> reverse xmas tree or alternatively you can save a line below with
-> port = agg->lag_ports above
+On Thu, Jul 24, 2025 at 3:06=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Jul 22, 2025 at 05:01:53PM +0530, Komal Bajaj wrote:
+> > EUD_MODE_MANAGER2 register is mapped to a memory region that is marked
+> > as read-only for operating system running at EL1, enforcing access
+> > restrictions that prohibit direct memory-mapped writes via writel().
+> >
+> > Attempts to write to this region from HLOS can result in silent failure=
+s
+> > or memory access violations, particularly when toggling EUD (Embedded
+> > USB Debugger) state. To ensure secure register access, modify the drive=
+r
+> > to use qcom_scm_io_writel(), which routes the write operation to Qualco=
+mm
+> > Secure Channel Monitor (SCM). SCM has the necessary permissions to acce=
+ss
+> > protected memory regions, enabling reliable control over EUD state.
+> >
+> > SC7280, the only user of EUD is also affected, indicating that this cou=
+ld
+> > never have worked on a properly fused device.
+> >
+> > Fixes: 9a1bf58ccd44 ("usb: misc: eud: Add driver support for Embedded U=
+SB Debugger(EUD)")
+> > Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> > Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+> > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > ---
+> > Changes in v7:
+> > - Updated the commit message as per Greg's comment
+> > - Link to v6: https://lore.kernel.org/r/20250721-eud_mode_manager_secur=
+e_access-v6-1-fe603325ac04@oss.qualcomm.com
+> >
+> > Changes in v6:
+> > - Propagating the error code from disable_eud(), per Dmitry's suggestio=
+n
+> > - Link to v5: https://lore.kernel.org/r/20250715-eud_mode_manager_secur=
+e_access-v5-1-e769be308d4a@oss.qualcomm.com
+> >
+> > usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through secure calls
+> >
+> > Changes in v5:
+> > * Changed select QCOM_SCM to depends on QCOM_SCM in Kconfig per Greg's =
+review
+> > * Link to v4: https://lore.kernel.org/all/20250709065533.25724-1-komal.=
+bajaj@oss.qualcomm.com/
+> >
+> > Changes in v4:
+> > * Added error logging in disable_eud() for SCM write failures, per Konr=
+ad=E2=80=99s suggestion
+> > * Link to v3: https://lore.kernel.org/all/20250708085208.19089-1-komal.=
+bajaj@oss.qualcomm.com/
+> >
+> > Changes in v3:
+> > * Moved secure write before normal writes
+> > * Added error checking in disable_eud()
+> > * Use ENOMEM error code if platform_get_resource() fails
+> > * Select QCOM_SCM driver if USB_QCOM_EUD is enabled
+> > * Link to v2: https://lore.kernel.org/all/20250627125131.27606-1-komal.=
+bajaj@oss.qualcomm.com/
+> >
+> > Changes in v2:
+> > * Drop separate compatible to be added for secure eud
+> > * Use secure call to access EUD mode manager register
+> > * Link to v1: https://lore.kernel.org/all/20240807183205.803847-1-quic_=
+molvera@quicinc.com/
+> > ---
+> >  drivers/usb/misc/Kconfig    |  1 +
+> >  drivers/usb/misc/qcom_eud.c | 33 ++++++++++++++++++++++++---------
+> >  2 files changed, 25 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
+> > index 6497c4e81e951a14201ad965dadc29f9888f8254..73ebd3257625e4567f33636=
+cdfd756344b9ed4e7 100644
+> > --- a/drivers/usb/misc/Kconfig
+> > +++ b/drivers/usb/misc/Kconfig
+> > @@ -147,6 +147,7 @@ config USB_APPLEDISPLAY
+> >  config USB_QCOM_EUD
+> >       tristate "QCOM Embedded USB Debugger(EUD) Driver"
+> >       depends on ARCH_QCOM || COMPILE_TEST
+> > +     depends on QCOM_SCM
+>
+> You now are preventing this code from ever being able to be built in any
+> testing systems, including mine, so I don't even know if this patch
+> builds or not.
+>
+> You did not even document this in the changelog :(
 
-Thanks, I will fix this.
+QCOM_SCM is essential for QCOM_EUD for its functionality.
+One option I'm considering is using select QCOM_SCM, which ensures
+dependency is enabled when QCOM_EUD is selected. QCOM_SCM facilitates
+communication with secure world, this approach should not cause issues even
+when COMPILE_TEST is enabled on non-ARCH_QCOM platforms.
 
-Hangbin
-> 
-> > +
-> > +	for (port = agg->lag_ports; port;
-> > +	     port = port->next_port_in_aggregator) {
-> > +		if (port->is_enabled)
-> > +			prio += port->actor_port_priority;
-> > +	}
-> 
-> minor nit: {} are unnecessary
-> 
-> > +
-> > +	return prio;
-> > +}
-> > +
-> >  /**
-> >   * __get_agg_bandwidth - get the total bandwidth of an aggregator
-> >   * @aggregator: the aggregator we're looking at
-> > @@ -1695,6 +1709,9 @@ static struct aggregator *ad_agg_selection_test(struct aggregator *best,
-> >  	 * BOND_AD_COUNT: Select by count of ports.  If count is equal,
-> >  	 *     select by bandwidth.
-> >  	 *
-> > +	 * BOND_AD_PRIO: Select by total priority of ports. If priority
-> > +	 *     is equal, select by count.
-> > +	 *
-> >  	 * BOND_AD_STABLE, BOND_AD_BANDWIDTH: Select by bandwidth.
-> >  	 */
-> >  	if (!best)
-> > @@ -1713,6 +1730,14 @@ static struct aggregator *ad_agg_selection_test(struct aggregator *best,
-> >  		return best;
-> >  
-> >  	switch (__get_agg_selection_mode(curr->lag_ports)) {
-> > +	case BOND_AD_PRIO:
-> > +		if (__agg_ports_priority(curr) > __agg_ports_priority(best))
-> > +			return curr;
-> > +
-> > +		if (__agg_ports_priority(curr) < __agg_ports_priority(best))
-> > +			return best;
-> > +
-> > +		fallthrough;
-> >  	case BOND_AD_COUNT:
-> >  		if (__agg_active_ports(curr) > __agg_active_ports(best))
-> >  			return curr;
-> > @@ -1778,6 +1803,10 @@ static int agg_device_up(const struct aggregator *agg)
-> >   * (slaves), and reselect whenever a link state change takes place or the
-> >   * set of slaves in the bond changes.
-> >   *
-> > + * BOND_AD_PRIO: select the aggregator with highest total priority of ports
-> > + * (slaves), and reselect whenever a link state change takes place or the
-> > + * set of slaves in the bond changes.
-> > + *
-> >   * FIXME: this function MUST be called with the first agg in the bond, or
-> >   * __get_active_agg() won't work correctly. This function should be better
-> >   * called with the bond itself, and retrieve the first agg from it.
-> > diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
-> > index 2b8606b4e4f5..708ca1f18a00 100644
-> > --- a/drivers/net/bonding/bond_options.c
-> > +++ b/drivers/net/bonding/bond_options.c
-> > @@ -163,6 +163,7 @@ static const struct bond_opt_value bond_ad_select_tbl[] = {
-> >  	{ "stable",    BOND_AD_STABLE,    BOND_VALFLAG_DEFAULT},
-> >  	{ "bandwidth", BOND_AD_BANDWIDTH, 0},
-> >  	{ "count",     BOND_AD_COUNT,     0},
-> > +	{ "prio",      BOND_AD_PRIO,      0},
-> >  	{ NULL,        -1,                0},
-> >  };
-> >  
-> > diff --git a/include/net/bond_3ad.h b/include/net/bond_3ad.h
-> > index bf551ca70359..34495df965f0 100644
-> > --- a/include/net/bond_3ad.h
-> > +++ b/include/net/bond_3ad.h
-> > @@ -26,6 +26,7 @@ enum {
-> >  	BOND_AD_STABLE = 0,
-> >  	BOND_AD_BANDWIDTH = 1,
-> >  	BOND_AD_COUNT = 2,
-> > +	BOND_AD_PRIO = 3,
-> >  };
-> >  
-> >  /* rx machine states(43.4.11 in the 802.3ad standard) */
-> 
+Alternatively, I could use a conditional depends expression like:
+depends on (ARCH_QCOM && QCOM_SCM) || COMPILE_TEST
+
+This would allow the driver to be built under COMPILE_TEST while ensuring
+QCOM_SCM is present on actual QCOM platforms. However, this would
+require proper stubbing in the qcom_scm driver to avoid build failures duri=
+ng
+compile testing.
+
+Thanks
+Komal
+
+>
+> {sigh}
+>
+> greg k-h
 
