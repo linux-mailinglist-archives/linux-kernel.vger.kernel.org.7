@@ -1,129 +1,177 @@
-Return-Path: <linux-kernel+bounces-745771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6805DB11E51
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:16:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8ACB11E50
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0AD0542AFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:16:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44BD1CE3A13
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750CC247296;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34867246BD3;
 	Fri, 25 Jul 2025 12:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhwJPIXe"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yiKrQ5XO"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FC51EC01B;
-	Fri, 25 Jul 2025 12:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BAA246BAF
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753445800; cv=none; b=Q3sz25sh94RJ7S1p77NI+7LR+oK+rRcx+2enHg8JUuli/cpaGRwcZBzjTu6h0svBJtcnR1LdhoUBeP6LV6ghyzz5oG6ttNi5jDCgs0tHMwwwc0Ct8S3T/49qQnkhyhG4POZyPBPQU3TIS2+PAg/oQAa+EDF6h56ktUdCjsS7zvE=
+	t=1753445800; cv=none; b=AZdz9r23zi0t+JYte3SgWoOVqFcZVBM1OwfbyJB1NbeqwcLuIdkKiDyvg53S8Jf8WUBT9+3N3+hbNap8Z7H6Jx0+sT549PngrL0j84Qci+DRmfkmuX6CG1IYRq/sz1PYGD735LM+wDyluMRUD2hDZG8CTE5BeONPK9nP25cxFLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753445800; c=relaxed/simple;
-	bh=OuG1CTeRyKj1R4vzsa0DIZZsT/WphxujjGAB6utzPSM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EZseZQ/5P+oeFx96TZSqOIW+NMrxoAVNQznihJt8NuGfQVfelUC86tnzhzvgymZJY7FWy38yqtptrnsRLXQf3GKbnuFFyZVov6QniGrekC06rCysdo+W8+Zx5DOV4lOs6qRigAshVb467fa/k+tTgXWdkQbZ5YINDOfgM4WSJZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhwJPIXe; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-32b7123edb9so26507001fa.2;
-        Fri, 25 Jul 2025 05:16:38 -0700 (PDT)
+	bh=RPodm9Ldenuy/H5haDTN8fCr5D6oW2GFg9ixFEFNSgU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ORZ9H2uKyg0ZDKGKSGfcwa6jawdrs9hTc+Zt7LyVg5wX+1wna9nbbihlw/xTtAm4x7im3T2AKL8H2aUkjFuZ7RXP7hUhXMCZ9/RCJc9XN06LSZjvmLFOd5XV2RvDG7ddgx/B0DtAgIC5fiZMa+f2eM4fJTthpBUxD3NizJCeTqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yiKrQ5XO; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4561b43de62so79855e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:16:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753445797; x=1754050597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FWqM+C7auc61yVm1rsNVEwh3eE+ELNPdk6XGXZ1WIxc=;
-        b=HhwJPIXe4fC1draeoaaDc6V3iWFtbgsnuLDiN9QmqvfcS80Z4OcdG09Zm1fogsWFLI
-         EBuB8koGehjpgz3PmGpxDz63sV+wdyerxuTmHp0qP6j1Fa4HW6XDRDJaoXN/QNc2IMzG
-         /LUGRwUAZtHjXM1xfGjI3XF7kGNNqerp87d1N6eccAIhVDGrsAX5EMYxl95FrHOswG4V
-         1IJOo12OjMAmrZIVynLTPi66TPclaWnKRKtFIUvOkI6XN7DckIEPRIRETriHVfkRdGkR
-         0o5Ekl6Yhnr8b6jaMtKTBPN5idmCkwRQeAamZALgG9plx6YfiV+2r4lI6bjK1Eo2LJE7
-         SISg==
+        d=google.com; s=20230601; t=1753445796; x=1754050596; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v8A06zzov4fRzg2AP/VvqP9aaecoBJtmC4l+aze+HnM=;
+        b=yiKrQ5XODZA3GZ6OFdM1DZFowEprQrn4bjxUsiLPhd2/Qu6PjWpynA6z4qf9ix2MFv
+         EdaWSZ+CdSXdBFkA++pYKtBuVLfPtGCcar+SbkBR2GGKVk2iC2aeuOc12Tb51yGQQ8N7
+         tzSgQMf9Oxi/BJziuxWsxOsdKbEGrl6vgtwGYqRK+n3c1cISIfPPk5pmtgc8B/fCjI0H
+         gyX/A4dQ244y192KA5ClBuUxnwPGTj7dTa6N1TisCBidPlvKXI0hP0F6qN2oYKZoeju7
+         nBCefnHoDwAhZwSAjW5b0v0r3VNflTbwl7zrtt7y7E7LTsX0tY4HnXItHJDeZm2Um7LX
+         bVCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753445797; x=1754050597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FWqM+C7auc61yVm1rsNVEwh3eE+ELNPdk6XGXZ1WIxc=;
-        b=M16xb+ROF8aYn6zmSL92V7FN2+/4W5269wjH5mZDSCJLziV5Zs0MEYvutEGQWkaXwG
-         ynob+Zf1QCCb+VKMc3IVNFmkS9gWYODN8Nx/vLvstwY9xMThcpvVXlj/I3Zi7WcEYjZJ
-         nn8nDzRmhpltwNe21sw1ckMz1oz5UN1jI7y9ZMRUK27Jq3fDZsREePFXbh17sHA4yd0n
-         lpfnrTr6xID3V/XGbTnDA2DyleKBiWbrAEkeKMuN10o++RQJC4UkSObNSFHeb7gaWcU0
-         x237er8+mUVmn4k62hpjOPimg9bXtUouDG66eErEuAIITgj+3iMVQxIDtzpGe2G2191K
-         b2yA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGdDJcfOnVbh4h/n0GCOiTvFWBtAhl5REnMkT1hxEHN68EUvSkyWMOhPQQKDLG7zvJA9O59QgKjUdOHEA=@vger.kernel.org, AJvYcCXZzqLefHAbxowoxMxZ+z8EYEUvjbKU+PN0Ezm9q8zXLegL/ng3GESbCGSL24VhgN24UYWq0Z6DbTqJ4mVW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiVVqp/u5ChF4fTGM+L0ke/8QFq6EaNgV+FP6VETjI5H+AL2Lp
-	Q+E7SEzmftALgkUbf8nUCwX0rXgq3QDr/LvxdbaOuwqrwkRPR3VvBkYenuaXECo9TXlfL4C3o4e
-	jvTjChDSC6pEz2unPk0wGuaUIBDYek5M=
-X-Gm-Gg: ASbGnct94VBkxKL61HLY08EQnN0BQK/ywUEZ4bbDOAtTDHxdkg+5C4vBIH0Xm2yyZhU
-	MKipABsPgKK5AaqCdMijfB7Y3+8j7t4yztIIX8pko9U9Hdi919YDu73JyUH3V4BfQtY1HANsFt8
-	0gLNan9L+ibrhKZ0QqABwoAZcB3X0eugv7j+A/QL2RpcFNROq/hKO8ImVfeLqrAp//LEyvLw5gO
-	/VD6iA7jiIW0y8zEmaRv7TVZPBDG/irXBFSrSJ+ag==
-X-Google-Smtp-Source: AGHT+IHyqCZRpQ3iwmGQDc1/6kxptmmlPmdgHw1lqiVZmo2HMouuishREQW96mVd4w6lxf84JBGVClbJXSwOIYFcvQ4=
-X-Received: by 2002:a05:651c:3248:10b0:32b:75d7:fc62 with SMTP id
- 38308e7fff4ca-331ee7aab3dmr3420251fa.38.1753445796930; Fri, 25 Jul 2025
- 05:16:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753445796; x=1754050596;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v8A06zzov4fRzg2AP/VvqP9aaecoBJtmC4l+aze+HnM=;
+        b=xCuYkfZVXf/VwT+SBa5Pn637npgjurmRRS5XNbtSSRI6fkmVr4dXQp0gkZgA8jrakI
+         l52DNnKG1cNL4FcqztBJVo/Tm1gEevSgVJRXytXdqG7oXwc/emqVTHoKPnfs82+M4JFb
+         700FnPAVgCX8vYZopQWhRPkMUYwqPCi0CMtyC5ZkjYHTe1+mglsV3sYCgRBqXjgSTWHa
+         SPquSqy4krXhr5VLyiroM5qTfmCngNSVhkpB8dtqEHHFM5tmxnUKmVfmlB/oTA47Y++2
+         8Ttw8EHT1rBwkiSMoxTVYAl2+gjaE0aLZSJ4IdtZ6v9AH48W1zPFRZdpJEKwvUSjvEd6
+         /Ohw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG7Ujhd5P98qkNnQL4XirRRh3PYyvh9f93dm6eu1K/ysRE4LhuRUSVzPWbl+OhYMwhi2W+qxm4lfgAjTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Y2j/RyZ6UHMsryOzHxfPYl28ObBkl/l7gz0HuLQwx068Ce8c
+	6RB6mvxnkoOV3cv5Sb09j0AcpkhYqT0n8p2S7YacJBVVFFc+vTDQS8MN68HNEeVJvg==
+X-Gm-Gg: ASbGncud7On12TOjNCFVfvXbhgOIyoj+FHJyqzbiOvwennA2aRf1mCcT2vRkO6BRQqP
+	rGI9xC5ZeviCSewWM0TGtILc9SChVqkEbtgEMd45Gffb18+mEYdelc3JDAGZik3WDYp/79F53Y7
+	rjLKDvnpUo8+53XsjcKljFCGMIj9j7Px3aItkUWMIQpb+xjCT2/i3ZdSAKVpzvXD5Sx13nGCbTL
+	36iH2UoSYuQfLRKyEWY1gm4615htX/1JQmWJ8VQNjC7gXxhpO5mMYhc/DyPcoFUlpS4SBESdoql
+	ctLGUVkdfxClRH65+xGExbHB8E/8FO5tbQpdR6lntGN2YGORAqJ/USiSqONktR+WDNipambm7GZ
+	zYIYWlxkIPQ==
+X-Google-Smtp-Source: AGHT+IGciF+4vEIkN/QlW54EKn9w/jC8q5NchVG0Sr8U59/ARVTa0iNrkl49Gr+973iUxiCoTLx16g==
+X-Received: by 2002:a05:600c:548b:b0:455:fb2e:95e9 with SMTP id 5b1f17b1804b1-458730cfd06mr1672715e9.6.1753445795587;
+        Fri, 25 Jul 2025 05:16:35 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:5214:94de:bd29:e79d])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b76fc605a4sm4916829f8f.14.2025.07.25.05.16.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 05:16:34 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Fri, 25 Jul 2025 14:16:24 +0200
+Subject: [PATCH v2] mm/rmap: Add anon_vma lifetime debug check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250706092522.9298-1-pranav.tyagi03@gmail.com> <yq1bjp9rqh5.fsf@ca-mkp.ca.oracle.com>
-In-Reply-To: <yq1bjp9rqh5.fsf@ca-mkp.ca.oracle.com>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Fri, 25 Jul 2025 17:46:24 +0530
-X-Gm-Features: Ac12FXwul_qh-KD85e-MrQnYOfSIuco3toGb2OQLyA0Tzh4yRvOKtzf3etCfmig
-Message-ID: <CAH4c4jKgPv-Mb1=WvOW+jvGMABXcEgaDMxV0Wit32LPgJitekQ@mail.gmail.com>
-Subject: Re: [PATCH] target/core: replace strncpy with strscpy
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250725-anonvma-uaf-debug-v2-1-bc3c7e5ba5b1@google.com>
+X-B4-Tracking: v=1; b=H4sIAJd1g2gC/32NQQ7CIBBFr9LM2jFAahBX3qPpAsqUklgwYImm4
+ e5iD+DyveS/v0Om5CnDrdshUfHZx9BAnDqYFh0cobeNQTBxYVL0qEMMZdW46Rktmc2hVtYwMj2
+ X0kDbPRPN/n00h7Hx4vMrps9xUfjP/qsVjhyFUldl7dST0HcXo3vQeYorjLXWL2nQBm6zAAAA
+X-Change-ID: 20250724-anonvma-uaf-debug-a9db0eb4177b
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@redhat.com>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ Rik van Riel <riel@surriel.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753445791; l=2822;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=RPodm9Ldenuy/H5haDTN8fCr5D6oW2GFg9ixFEFNSgU=;
+ b=2aXvVOIInCdwGZjckt0AFw/FmLGP7KvAWt58w6Phvj1VFsc79j9yuxuT9YQ416/22q2uKcSkZ
+ SpdyefrwB9RCL/p7QsSAyU1j7eMRm1X9VRAhUvVMJ+pTw/0yPy2nNZJ
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-On Fri, Jul 25, 2025 at 7:22=E2=80=AFAM Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
->
-> Pranav,
->
-> > strncpy() is deprecated and its use is discouraged. Replace strncpy()
-> > with safer strscpy() as the p_buf buffer should be NUL-terminated,
-> > since it holds human readable debug output strings.
->
-> If you must do this, please change all the similar occurrences of
-> strncpy() in that file instead of just one of them.
->
-> However, given the fixed size of the buffer and the length of all the
-> defined static strings, what is the actual problem you are fixing?
->
-> --
-> Martin K. Petersen
+If an anon folio is mapped into userspace, its anon_vma must be alive,
+otherwise rmap walks can hit UAF.
 
-Hi Martin,
+There have been syzkaller reports a few months ago[1][2] of UAF in rmap
+walks that seems to indicate that there can be pages with elevated mapcount
+whose anon_vma has already been freed, but I think we never figured out
+what the cause is; and syzkaller only hit these UAFs when memory pressure
+randomly caused reclaim to rmap-walk the affected pages, so it of course
+didn't manage to create a reproducer.
 
-As far as I looked, I could only find the following 4 instances of
-strncpy() for the file target_core_transport.c:
+Add a VM_WARN_ON_FOLIO() when we add/remove mappings of anonymous folios to
+hopefully catch such issues more reliably.
 
-target_core_transport.c:1115:           strncpy(p_buf, buf, p_buf_len);
-target_core_transport.c:1165:           strncpy(p_buf, buf, p_buf_len);
-target_core_transport.c:1225:           strncpy(p_buf, buf, p_buf_len);
-target_core_transport.c:1279:           strncpy(p_buf, buf, p_buf_len);
+[1] https://lore.kernel.org/r/67abaeaf.050a0220.110943.0041.GAE@google.com
+[2] https://lore.kernel.org/r/67a76f33.050a0220.3d72c.0028.GAE@google.com
 
-And I have changed all of them in my patch. Kindly point me out to
-other instances, if I am missing any.
+Acked-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Changes in v2:
+- applied akpm's fixup (use FOLIO_MAPPING_ANON, ...)
+- remove CONFIG_DEBUG_VM check and use folio_test_* helpers (David)
+- more verbose comment (Lorenzo)
+- replaced "page" mentions with "folio" in commit message
+- Link to v1: https://lore.kernel.org/r/20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com
+---
+ include/linux/rmap.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Also, I intended this to be a cleanup patch for the deprecated
-strncpy() function and wanted to replace it with strscpy()
-which is encouraged. No functional changes were intended.
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index 20803fcb49a7..6cd020eea37a 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -449,6 +449,28 @@ static inline void __folio_rmap_sanity_checks(const struct folio *folio,
+ 	default:
+ 		VM_WARN_ON_ONCE(true);
+ 	}
++
++	/*
++	 * Anon folios must have an associated live anon_vma as long as they're
++	 * mapped into userspace.
++	 * Note that the atomic_read() mainly does two things:
++	 *
++	 * 1. In KASAN builds with CONFIG_SLUB_RCU_DEBUG, it causes KASAN to
++	 *    check that the associated anon_vma has not yet been freed (subject
++	 *    to KASAN's usual limitations). This check will pass if the
++	 *    anon_vma's refcount has already dropped to 0 but an RCU grace
++	 *    period hasn't passed since then.
++	 * 2. If the anon_vma has not yet been freed, it checks that the
++	 *    anon_vma still has a nonzero refcount (as opposed to being in the
++	 *    middle of an RCU delay for getting freed).
++	 */
++	if (folio_test_anon(folio) && !folio_test_ksm(folio)) {
++		unsigned long mapping = (unsigned long)folio->mapping;
++		struct anon_vma *anon_vma;
++
++		anon_vma = (void *)(mapping - FOLIO_MAPPING_ANON);
++		VM_WARN_ON_FOLIO(atomic_read(&anon_vma->refcount) == 0, folio);
++	}
+ }
+ 
+ /*
 
-Regards
-Pranav Tyagi
+---
+base-commit: 1d1c610e32ab2489c49fccb7472a6bef136a0a8b
+change-id: 20250724-anonvma-uaf-debug-a9db0eb4177b
+
+-- 
+Jann Horn <jannh@google.com>
+
 
