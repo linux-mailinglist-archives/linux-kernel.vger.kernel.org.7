@@ -1,285 +1,161 @@
-Return-Path: <linux-kernel+bounces-745999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDF5B12190
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85898B121BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0639582FDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4566B1CE6CAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049422EF9C1;
-	Fri, 25 Jul 2025 16:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3622EF64A;
+	Fri, 25 Jul 2025 16:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sn0ycBIv"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VFdm9juM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608DE2EF2A9
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFAD2EE606
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753460019; cv=none; b=T+uQX02ZzMkoGLW4RSUqFcmL3S9+0zVkqQwdk8/JgX/IYtMP1MuINn4aAdOT7hMy276U3YDOLqGC1FQze42cw0EIpGBNSSyrpXoVZk7f3FF98k1kTaEbhm65S6oLODSors12GH4HW+R4TF/lUp0AjYQUU7W+pdeZPwZM2cijq4Q=
+	t=1753460069; cv=none; b=GbF0ru0gx1gSxkVC1X/Bk0UJOZO2feLUGcnaDqlFWrEZSurtAuBfXUDEmTgc5+EXVAlekCGABxUp5mAb3Cgq8QBVI5WPDFLzO9orJk1ZpPSr4eOBRb8b0RWjGk5O5yrg/VYkvsU/O5swrj1PDowmF5iLYe5bFszizxqXBHpLObQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753460019; c=relaxed/simple;
-	bh=x4YQxIKQWr0zlAYssB11RNVL/V9ApQOefS1jUqYP7Z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Paq8Fn3d/4NLNrS4K2qJ3A335TH760cd2Jeu23bZ1tEGRiKETDeEgV10xOapdiN6rL4qRDbz5GWzRQVOkQ7pUhkp8v3Taiy5SCFeceK6C3ygmTZ0mMQ86iYUiwBv3FcX1D2498WLTi9QD3o2SpGXqBuMtSsXv3sDbVgmGSpKkqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sn0ycBIv; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-235e389599fso232075ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753460015; x=1754064815; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CbMA4/IPXQaEHQepmsbHPY7QV6shrVDJW0bf+hd1ByM=;
-        b=Sn0ycBIvHsuysshNn0hv3S1qD6MA6KN8X2DvogWUcPzvrh1z5eYODQKUcRgzxYhkcO
-         o25tPd83KG8V2d5lVddTdKA6XB1wu4CXMPMh6fqTb9eP8Gpr5SHNk/YqZI43Ul3U8Xfp
-         QslyK8Qm9/V7eY2R06So2DnOubkGyDvHGdoFCq7cLBwu8Iada4icBe1NcgEQYq5dQTCM
-         cXu6m8baC0ukrJo5Cf1QL7RcBO4E30+38zepCcNLo9sqjSAAZpiXB69T4VRzmNZK4rUu
-         23riNFx9OcGuX5tf3edOa2kxu1TznsgrvkqCAxgIjMenW4KtODkkZQYyDA3C3XkPhtf2
-         Bjkg==
+	s=arc-20240116; t=1753460069; c=relaxed/simple;
+	bh=zy4+5I7aIssi/rmMSBtYygJxN6pNtn3MaFBiLibPOAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OqcrVfwrHAEbea91GIvuS1lfiLZw5juKiw3TDh1DxFST2axwg2i2Dcri5vZUCwi1567gONTMfq8ujDpmQh8KXf5ZoChLDcF1IHV/OPLeoCi5+sGSM+sfgPkF1ROQ8w7Q1GzMYfCJ80dhkUaxEjGFQdbUEQL0otwmF6qKJ4IA55E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VFdm9juM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P90ALi015704
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:14:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pTRAzXltnnQkXzy/4MfHD1BpN0UeO0JYTlGtIooVxhY=; b=VFdm9juMycnYZSHZ
+	zUXA92nIOBcEnWTYEaYZVS7emlqydaCowoY21CWFScsHSDVVExvYnMTn3+dlby5s
+	4hFLISQiz6TZG5bi9tOohYCb2gCWD9ar+XlLTzhbijgIX5E+1GuC37zcPa/MIpya
+	Oo+QWB/wZTSCWzJFBHyT5vIqi3kLN//g/8yaVMd6jODWQHGtad5rkobIVYMVlpGi
+	QLhQbu1VTEgSBYOY3iL0IqqWARLFc6G4r96pz9jb5jkIpBrByhITf5ekJy3yUGmo
+	cGXUD/bTv2Rbch1TAYQSSp7JiozaHKVfDPiHii4f0OPK+8rFfOAqjLYfe6b2gPOs
+	XMi8ug==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w502nkb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:14:26 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b115fb801bcso2854489a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:14:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753460015; x=1754064815;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CbMA4/IPXQaEHQepmsbHPY7QV6shrVDJW0bf+hd1ByM=;
-        b=WnzYur4ICczsLm7OWFSggsu4oxqR1Ueq+U7P41kqNr8/qBbFN6X5zJ4M34ImZCqYy9
-         VDu4QBbDTxf/Cnnpn6EmJ1CO1DJ6XBnksf1WkREBULB6C+mN7wlco0OGceJLUHXPjD1t
-         SZHRYCJeymbSRI6PjoLRpJ+y2sC//kpr6LJukb6NrAYJCNT8rW4XcOZEp7QjpBmAkK/i
-         jl8vNt9CK+UdPiQqajRYvXqsGharn0DModJnYVcrkYjlXuE4M4z5e1Kb7JWXcCd/72Hd
-         Zbzl0WprH0S3JmKOR4lQqyx/YVd4KvU8LCtSTLgJIubsdn+DFx/egtwx3kKIG5clW5TS
-         vgOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgLQpzolYUEIoCxB7MLzWBISa2iv+lUkeMBLVHWDjp7LtwUE/A38DS6ndFc9HoYnyJA85MkMegC3/KiJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZlheMAXaDwKV3W6vhd5H0zDdktnxhqxTmHNM+p9hlD+Z90zjk
-	ub3ZiWIWJlAT597oWVednXsPuBtjKNOyGEbhPCw21CoMQ2GDTN5GLIDFp9LilNHMUA==
-X-Gm-Gg: ASbGnctBkY5Bdk1PxL97SYgNVsoXRgzYxaS+fDrZaucPZKvwfp9nz+Ib6UHCp9FFfFq
-	+narYqLuHNx8wAr4A4m5v3DBmBY9e2f+RRXOS52aMjpSDTvqhgZlLsSyNCjBwMITzt8+Fwtgwje
-	sSL0TDywaoYYWZawx8S2pMdxoblJp9bel8ADKXI/UjiF8T/JdbXA5+AmXZh8sKNqyFmPhT2I2GU
-	uerzkF4hANYaiyMP7ENsWz8I2wCNdCXgxmQ0AtvO0vR/mLxiL44E0avkJRiQhkAR90S0L3yVmDp
-	Oa3cmprjiea7tZDOVEghlbelVs4KULCZpAfaYvdgaCbX7urDuRJNqnljP8rQbytdzlLSm+p6hLi
-	or1yhMAUpmbbEmKHl1L/nRk2nfALfFdBSWJcpvol/ntfm8b04+i6BIiTIrCOXGFIBlQ==
-X-Google-Smtp-Source: AGHT+IGq4HV4wynITvP6Q3jQAvqNu8aZGXk3r1rzEnuZDeWdHk39Doexv2T5tkYjqpbpWqlrXy/lSA==
-X-Received: by 2002:a17:902:e947:b0:234:b2bf:e67e with SMTP id d9443c01a7336-23fb0309a88mr3165975ad.13.1753460015047;
-        Fri, 25 Jul 2025 09:13:35 -0700 (PDT)
-Received: from google.com (106.81.125.34.bc.googleusercontent.com. [34.125.81.106])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe4fc7a4sm619335ad.120.2025.07.25.09.13.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 09:13:34 -0700 (PDT)
-Date: Fri, 25 Jul 2025 16:13:27 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Deepak Gupta <debug@rivosinc.com>, Will Deacon <will@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Monk Chiang <monk.chiang@sifive.com>,
-	Kito Cheng <kito.cheng@sifive.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
-	llvm@lists.linux.dev, rick.p.edgecombe@intel.com,
-	broonie@kernel.org, cleger@rivosinc.com, apatel@ventanamicro.com,
-	ajones@ventanamicro.com, conor.dooley@microchip.com,
-	charlie@rivosinc.com, samuel.holland@sifive.com, bjorn@rivosinc.com,
-	fweimer@redhat.com, jeffreyalaw@gmail.com,
-	heinrich.schuchardt@canonical.com, andrew@sifive.com,
-	ved@rivosinc.com
-Subject: Re: [PATCH 10/11] scs: generic scs code updated to leverage hw
- assisted shadow stack
-Message-ID: <20250725161327.GC1724026@google.com>
-References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
- <20250724-riscv_kcfi-v1-10-04b8fa44c98c@rivosinc.com>
+        d=1e100.net; s=20230601; t=1753460065; x=1754064865;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pTRAzXltnnQkXzy/4MfHD1BpN0UeO0JYTlGtIooVxhY=;
+        b=SmoM9O50MInHbe0PMPdhqky4ljx9umXelUm4ukTFxXAboixRKEQ7rUr0bSkztV+/TG
+         hlymcfsFZSxnZlvBhmDo7OAtpUsj3MIHcjzsd99sjUV6TTeqxxNIZAeOWBLbxDlQIeAu
+         TovVT0PVIC20NS12SP2AI6e4Vgus3yVBANaM0oHo5aSN5ZOgeVWIowGWM0VqREBLAghu
+         QHkO9Q0s9wyq5mrSCXevovt96CfBBeLKHUEWROhgXTexvdLl6URx+FSnRNLg3EDP17qK
+         dlPliHuJEPts2Bm5bMJPHzTFKL5oXEo3TDtcyv4JNEybgMPa9hZJITLwgiWf9tF+NAcv
+         /Btg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkK+F2bAZpYsJRFZ6irx+Lgig7x0ukceV8RjdVpCu4u60+R2mtXq4XgEMiYhkYwiDtfGPlGXJ13YwynUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlvhcoCuxu319r0KgjnaklhGSH6PSEuquinhIvqez0G5xyrENw
+	tIJnV9ssD/3Qhog+DDDTWrom+cCdJQNLQmd2sTtT+A/iQW4Ln4F9yGYtHUUDIK7fxtQHMWYJX0Z
+	KqfClmOxTQLuMeY6UiF7Uedc7Zx2z2D9AlgVcJ3QDHeNWSypoxClpjA+WcBpuJ6YYzU4=
+X-Gm-Gg: ASbGnctr8FnxQoC0pgykROYopfgxmo9nrUyra7wtJhRPHpfPa0PCF2bJuxgqTpsfFCa
+	xClv8o36qzkwiB0x8RhoS22oO6n+FkfJOc1HNDElb6GKFm/zPjB3O9sYrRiIO1wFSN/K/1qU2Nb
+	8RL3exdP9mlO0ndFNPqGKUJCz0xRu0V99NYT8lS9m23nsN7X1BZeaXba9gGEqWeNTt+p8KBZCqL
+	z9I/DB8H0fPAkI2EA7qn41GLt9ack6ON0yOgsjbfNnuUrJNH15z79I1wDrF9ToZdmJB7lmWraci
+	6YoI1Sa52B8QLXFRMRQSsZ5s3Vwy889UczV16TRdJuT9DKNgXssqvNsCzG4r1pET9LyZqDV/81d
+	iIWyTGMTJEpQpeQ==
+X-Received: by 2002:a05:6a20:7288:b0:239:1c1e:3edf with SMTP id adf61e73a8af0-23d701eaf4cmr4483538637.40.1753460065435;
+        Fri, 25 Jul 2025 09:14:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEH45mowQM24zNVVrDWA1OAKen9/Rncat1udl96ywd3HTaGlMrzSKhS42XbAwTPbo2lmkT86g==
+X-Received: by 2002:a05:6a20:7288:b0:239:1c1e:3edf with SMTP id adf61e73a8af0-23d701eaf4cmr4483464637.40.1753460064981;
+        Fri, 25 Jul 2025 09:14:24 -0700 (PDT)
+Received: from [10.226.59.182] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b8b0c60sm71215b3a.126.2025.07.25.09.14.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 09:14:24 -0700 (PDT)
+Message-ID: <12223a91-82f0-4889-8f07-bfa5833c8ffb@oss.qualcomm.com>
+Date: Fri, 25 Jul 2025 10:14:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724-riscv_kcfi-v1-10-04b8fa44c98c@rivosinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 00/10] New DRM accel driver for Rockchip's RKNN NPU
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+        Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Daniel Stone <daniel@fooishbar.org>, Da Xue <da@libre.computer>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        Robert Foss <rfoss@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250721-6-10-rocket-v9-0-77ebd484941e@tomeuvizoso.net>
+Content-Language: en-US
+From: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+In-Reply-To: <20250721-6-10-rocket-v9-0-77ebd484941e@tomeuvizoso.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: kWre5_s61019c4-dM0TR-CUDdaZFZ1hD
+X-Proofpoint-ORIG-GUID: kWre5_s61019c4-dM0TR-CUDdaZFZ1hD
+X-Authority-Analysis: v=2.4 cv=bKAWIO+Z c=1 sm=1 tr=0 ts=6883ad62 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=e5mUnYsNAAAA:8 a=DISFzqtZAAAA:8
+ a=XWXL-kdBtCKZFopiRrIA:9 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+ a=Vxmtnl_E_bksehYqCbjh:22 a=aug85vrO5LANNmmtkfAW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDEzOSBTYWx0ZWRfX/AB/FelnoRL5
+ 1Yi5kgNR5hV16cf7Qf6XXCJJqi4oym5qigElHp7F2cZI71U/XGMWJlNxxDmupiSvLiCqx4xxDbM
+ 9QohX8ANZYPD5Gf8+2UBIUMbsg9KgVB46JQUm9S+h+lJTE2GvNeUqoKtRw7E0rkKmdRWiZiCeBK
+ 060I1OJFpV2bhnHFkg0vldg8lHcQb4wVs2EuwoIoS0e230SgA/9fKpfsRS1ymGpsM64Vc1aQRLp
+ Dpcnq+feIimP8GHc4d/43UQA372hRTxKJrDIttzrbgq6PcEv4oKsUMpkepIzx1RAe/REmtBC7PM
+ EdFW2kB/1uXu1f0+tTlKqvPJszsCcbMIPLtTcJlVQV9V5xgnrD/g1plLooCpG1qy0e7XH0wxEhi
+ vTF0AfZvmJtPezBMjjOQERlFSlj/6RA0s+bQpGBz6h/vhsvyV361oaonCUJsU9S8/mpNvcUz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_04,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 spamscore=0 mlxlogscore=753 clxscore=1015
+ phishscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507250139
 
-On Thu, Jul 24, 2025 at 04:37:03PM -0700, Deepak Gupta wrote:
-> If shadow stack have memory protections from underlying cpu, use those
-> protections. arches can define PAGE_KERNEL_SHADOWSTACK to vmalloc such shadow
-> stack pages. Hw assisted shadow stack pages grow downwards like regular
-> stack. Clang based software shadow call stack grows low to high address.
-
-Is this the case for all the current hardware shadow stack
-implementations? If not, we might want a separate config for the
-shadow stack direction instead.
-
-> Thus this patch addresses some of those needs due to opposite direction
-> of shadow stack. Furthermore, hw shadow stack can't be memset because memset
-> uses normal stores. Lastly to store magic word at base of shadow stack, arch
-> specific shadow stack store has to be performed.
+On 7/21/2025 3:17 AM, Tomeu Vizoso wrote:
+> This series adds a new driver for the NPU that Rockchip includes in its
+> newer SoCs, developed by them on the NVDLA base.
 > 
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  include/linux/scs.h | 26 +++++++++++++++++++++++++-
->  kernel/scs.c        | 38 +++++++++++++++++++++++++++++++++++---
->  2 files changed, 60 insertions(+), 4 deletions(-)
+> In its current form, it supports the specific NPU in the RK3588 SoC.
 > 
-> diff --git a/include/linux/scs.h b/include/linux/scs.h
-> index 4ab5bdc898cf..6ceee07c2d1a 100644
-> --- a/include/linux/scs.h
-> +++ b/include/linux/scs.h
-> @@ -12,6 +12,7 @@
->  #include <linux/poison.h>
->  #include <linux/sched.h>
->  #include <linux/sizes.h>
-> +#include <asm/scs.h>
->  
->  #ifdef CONFIG_SHADOW_CALL_STACK
->  
-> @@ -37,22 +38,45 @@ static inline void scs_task_reset(struct task_struct *tsk)
->  	 * Reset the shadow stack to the base address in case the task
->  	 * is reused.
->  	 */
-> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
-> +	task_scs_sp(tsk) = task_scs(tsk) + SCS_SIZE;
-> +#else
->  	task_scs_sp(tsk) = task_scs(tsk);
-> +#endif
->  }
->
->  static inline unsigned long *__scs_magic(void *s)
->  {
-> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
-> +	return (unsigned long *)(s);
-> +#else
->  	return (unsigned long *)(s + SCS_SIZE) - 1;
-> +#endif
->  }
->  
->  static inline bool task_scs_end_corrupted(struct task_struct *tsk)
->  {
->  	unsigned long *magic = __scs_magic(task_scs(tsk));
-> -	unsigned long sz = task_scs_sp(tsk) - task_scs(tsk);
-> +	unsigned long sz;
-> +
-> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
-> +	sz = (task_scs(tsk) + SCS_SIZE) - task_scs_sp(tsk);
-> +#else
-> +	sz = task_scs_sp(tsk) - task_scs(tsk);
-> +#endif
->  
->  	return sz >= SCS_SIZE - 1 || READ_ONCE_NOCHECK(*magic) != SCS_END_MAGIC;
->  }
->  
-> +static inline void __scs_store_magic(unsigned long *s, unsigned long magic_val)
-> +{
-> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
-> +	arch_scs_store(s, magic_val);
-> +#else
-> +	*__scs_magic(s) = magic_val;
-> +#endif
-> +}
-> +
+> The userspace driver is part of Mesa and an initial draft can be found at:
+> 
+> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/29698
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
 
-I'm not a huge fan of all the ifdefs. We could clean this up by
-allowing architectures to simply override some these functions, or at
-least use if (IS_ENABLED(CONFIG...)) instead. Will, any thoughts about
-this?
+Patches 1-6 pushed to drm-misc-next.
 
->  DECLARE_STATIC_KEY_FALSE(dynamic_scs_enabled);
->  
->  static inline bool scs_is_dynamic(void)
-> diff --git a/kernel/scs.c b/kernel/scs.c
-> index d7809affe740..5910c0a8eabd 100644
-> --- a/kernel/scs.c
-> +++ b/kernel/scs.c
-> @@ -11,6 +11,7 @@
->  #include <linux/scs.h>
->  #include <linux/vmalloc.h>
->  #include <linux/vmstat.h>
-> +#include <asm-generic/set_memory.h>
->  
->  #ifdef CONFIG_DYNAMIC_SCS
->  DEFINE_STATIC_KEY_FALSE(dynamic_scs_enabled);
-> @@ -32,19 +33,31 @@ static void *__scs_alloc(int node)
->  {
->  	int i;
->  	void *s;
-> +	pgprot_t prot = PAGE_KERNEL;
-> +
-> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
-> +	prot = PAGE_KERNEL_SHADOWSTACK;
-> +#endif
-
-I would rather define the shadow stack protection flags in the header
-file and allow them to be overridden in asm/scs.h.
-
->  	for (i = 0; i < NR_CACHED_SCS; i++) {
->  		s = this_cpu_xchg(scs_cache[i], NULL);
->  		if (s) {
->  			s = kasan_unpoison_vmalloc(s, SCS_SIZE,
->  						   KASAN_VMALLOC_PROT_NORMAL);
-> +/*
-> + * If software shadow stack, its safe to memset. Else memset is not
-> + * possible on hw protected shadow stack. memset constitutes stores and
-> + * stores to shadow stack memory are disallowed and will fault.
-> + */
-> +#ifndef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
->  			memset(s, 0, SCS_SIZE);
-> +#endif
-
-This could also be moved to a static inline function that
-architectures can override if they have hardware shadow stacks that
-cannot be cleared at this point.
-
->  			goto out;
->  		}
->  	}
->  
->  	s = __vmalloc_node_range(SCS_SIZE, 1, VMALLOC_START, VMALLOC_END,
-> -				    GFP_SCS, PAGE_KERNEL, 0, node,
-> +				    GFP_SCS, prot, 0, node,
->  				    __builtin_return_address(0));
->  
->  out:
-> @@ -59,7 +72,7 @@ void *scs_alloc(int node)
->  	if (!s)
->  		return NULL;
->  
-> -	*__scs_magic(s) = SCS_END_MAGIC;
-> +	__scs_store_magic(__scs_magic(s), SCS_END_MAGIC);
->  
->  	/*
->  	 * Poison the allocation to catch unintentional accesses to
-> @@ -87,6 +100,16 @@ void scs_free(void *s)
->  			return;
->  
->  	kasan_unpoison_vmalloc(s, SCS_SIZE, KASAN_VMALLOC_PROT_NORMAL);
-> +	/*
-> +	 * Hardware protected shadow stack is not writeable by regular stores
-> +	 * Thus adding this back to free list will raise faults by vmalloc
-> +	 * It needs to be writeable again. It's good sanity as well because
-> +	 * then it can't be inadvertently accesses and if done, it will fault.
-> +	 */
-> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
-> +	set_memory_rw((unsigned long)s, (SCS_SIZE/PAGE_SIZE));
-> +#endif
-
-Another candidate for an arch-specific function to reduce the number
-of ifdefs in the generic code.
-
-Sami
+-Jeff
 
