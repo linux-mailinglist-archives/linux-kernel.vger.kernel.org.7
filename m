@@ -1,256 +1,149 @@
-Return-Path: <linux-kernel+bounces-746119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF6EB1235D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:57:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F98B12362
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336683B1E65
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D1A3BECC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DE92F0020;
-	Fri, 25 Jul 2025 17:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50312EFDBF;
+	Fri, 25 Jul 2025 17:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GUoipYeI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="scTke37e"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B8248CFC;
-	Fri, 25 Jul 2025 17:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0811134BD;
+	Fri, 25 Jul 2025 17:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753466242; cv=none; b=INne48bsPD12/5Jior8Oull0yhQJs4htW4y318YpozR214F9kUY/O1ghI5SrZoAMyvkZ2Ea4djoxdgGZXIgsptfnrhH6INOZysE1ZiNUCcP7p4BLMXF+zpna0r8uFlCFk9T4JBjzDeDVFl/pnPcO8x+uITfd99ayAMUoCUczLQU=
+	t=1753466289; cv=none; b=W6AwlN7dtygGPa5gFHLgl18JavA8xtbjgegSvlmuhMX0T/viWLUoSDYM1kr/3dSUk83q0oFo94Oh9qMEtKhsxzrdfoc0ZrVddHJy49o3AaJj6e010mkpiylfm8QPsAKEKS+MoHtexsQMmt3Gt2IsRkcOKUCVVg5kugUV7Ml/gpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753466242; c=relaxed/simple;
-	bh=5ldzZ9vyLUpLw7BH0/+el75YcJaK4n9pqdRVPuEkdaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXVEX6nQkbYZb2kG+SOusgIwiGuwF/Bd2EHu+2/8E2SRrEG1d7Ys5VIa43a+okXxZHbhPnwD8G8zqU4oKpXRZdtTSDqr+jPzZ3HcUDI+LgtNUTFewddpEsejBoHh/oXR3QQyPXstOGtbd7LrcK9EB+KxQIuIhizHDPK0QAPhxzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GUoipYeI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 0FEA0C66;
-	Fri, 25 Jul 2025 19:56:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753466197;
-	bh=5ldzZ9vyLUpLw7BH0/+el75YcJaK4n9pqdRVPuEkdaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GUoipYeI4r5hxShSrw8p3pKpANuUknHdeOB6tf2trLpU50/AJJHr2gSz0BvuCacl0
-	 0ntiCKiiL74GFeFu/Ve3GUvIUxwe9JPu+bCOJCB4aVY3Ls/b3dDYN3wABpEzw/GBgk
-	 YM80nWbUZ6egMPhVsFIE1V0L1aIEyGQr47DuN5Yo=
-Date: Fri, 25 Jul 2025 20:57:11 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Alice Yuan <alice.yuan@nxp.com>,
-	Robert Chiras <robert.chiras@nxp.com>,
-	Zhipeng Wang <zhipeng.wang_1@nxp.com>
-Subject: Re: [PATCH v3 2/4] media: nxp: add V4L2 subdev driver for camera
- parallel interface (CPI)
-Message-ID: <20250725175711.GA27425@pendragon.ideasonboard.com>
-References: <20250708-imx8qxp_pcam-v3-0-c8533e405df1@nxp.com>
- <20250708-imx8qxp_pcam-v3-2-c8533e405df1@nxp.com>
- <20250725000404.GW11202@pendragon.ideasonboard.com>
- <aIOk9W/RBKmS8uVQ@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1753466289; c=relaxed/simple;
+	bh=eVtb6MJ3Sj3SJ1kLyP1ByuhVZUTp9cXrMV59WYm2iog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Caiz9ROd4KJSxrEh+J7sSHa5wGaAz/9pzYD04SMQECffWTxDt07Mq+jF55Tun6302d6yGgI1YocFut2VCg0FR6e5If35OvZsZh88CFQ8bXcVo+Zd6Ruhp/QWtHU+xjv3gyuIxhScIEgfDz6P0Kd9uEkcorN3vXwUfXVNJWHDwYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=scTke37e; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56PHvREK2630400
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 25 Jul 2025 10:57:27 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56PHvREK2630400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1753466249;
+	bh=DST4Ds/rbgndE3+yykqR2X7LIyUlLcUfe9t/MvWH1QI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=scTke37eODu/bP5GVIlzmTFelT2cB6LOzoQnbw6bOLo1xv4LNvk2BmTOvZTgzTEep
+	 hd2M+8/nmsu4aES7a7tMxtaAEQSBD3WZ6vY1VzDgNkLx7nzKd65mMKCb/eg0egAKGc
+	 zEbuJy7PgmG2D2ddRDh2dmOJ2zlXJnJTO0Qj72X7hytMjxUYMaFBLR0Oa/wbaYIviD
+	 +PBStieCyMKlhzdV0ioF2QN826es8ak2k8AOPzR2X0JrK0sTUis2pyWqcnM+cxI5iB
+	 9qZqMlzUvareeRMwynm2ucsj2M6BC6QdWA1/c0xyuaUndaiqyn3ETpqrruoU2VDPx1
+	 Za1EGyA6k7lWQ==
+Message-ID: <1584052d-4d8c-4b4e-b65b-318296d47636@zytor.com>
+Date: Fri, 25 Jul 2025 10:57:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aIOk9W/RBKmS8uVQ@lizhi-Precision-Tower-5810>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 16/16] objtool: Validate kCFI calls
+To: Sean Christopherson <seanjc@google.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+        wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        hpa@zytor.com, pbonzini@redhat.com, ardb@kernel.org, kees@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
+        jpoimboe@kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, samitolvanen@google.com, ojeda@kernel.org
+References: <20250714102011.758008629@infradead.org>
+ <20250714103441.496787279@infradead.org> <aIKZnSuTXn9thrf7@google.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aIKZnSuTXn9thrf7@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 25, 2025 at 11:38:29AM -0400, Frank Li wrote:
-> On Fri, Jul 25, 2025 at 03:04:04AM +0300, Laurent Pinchart wrote:
-> > Hi Frank,
-> >
-> > Thank you for the patch.
-> >
-> > On Tue, Jul 08, 2025 at 01:48:43PM -0400, Frank Li via B4 Relay wrote:
-> > > From: Alice Yuan <alice.yuan@nxp.com>
-> > >
-> > > Add a V4L2 sub-device driver for the CPI controller found on i.MX8QXP,
-> > > i.MX8QM, and i.MX93 SoCs. This controller supports parallel camera sensors
-> > > and enables image data capture through a parallel interface.
-> > >
-> > > Signed-off-by: Alice Yuan <alice.yuan@nxp.com>
-> > > Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
-> > > Signed-off-by: Zhipeng Wang <zhipeng.wang_1@nxp.com>
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > > change in v3
-> > > - replace csi with cpi
-> > > - use __free(fwnode_handle) to simpilfy code
-> > > - remove imx91 driver data, which is the same as imx93
-> > >
-> > > change in v2
-> > > - remove MODULE_ALIAS
-> > > - use devm_pm_runtime_enable() and cleanup remove function
-> > > - change output format to 1x16. controller convert 2x8 to 1x16 format
-> > > ---
-> > >  MAINTAINERS                                   |   1 +
-> > >  drivers/media/platform/nxp/Kconfig            |  11 +
-> > >  drivers/media/platform/nxp/Makefile           |   1 +
-> > >  drivers/media/platform/nxp/imx-parallel-cpi.c | 920 ++++++++++++++++++++++++++
-> > >  4 files changed, 933 insertions(+)
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 8ae0667d2bb41fb6a1549bd3b2b33f326cbd1303..14842a3b860a6f23846f12a684eedcbb9eb69e19 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -15112,6 +15112,7 @@ F:	Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> > >  F:	Documentation/devicetree/bindings/media/nxp,imx7-csi.yaml
-> > >  F:	Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> > >  F:	drivers/media/platform/nxp/imx-mipi-csis.c
-> > > +F:	drivers/media/platform/nxp/imx-parallel-cpi.c
-> > >  F:	drivers/media/platform/nxp/imx7-media-csi.c
-> > >  F:	drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> > >
-> > > diff --git a/drivers/media/platform/nxp/Kconfig b/drivers/media/platform/nxp/Kconfig
-> > > index 40e3436669e213fdc5da70821dc0b420e1821f4f..504ae1c6494f331c16124a224421ac7acd433ba5 100644
-> > > --- a/drivers/media/platform/nxp/Kconfig
-> > > +++ b/drivers/media/platform/nxp/Kconfig
-> > > @@ -39,6 +39,17 @@ config VIDEO_IMX_MIPI_CSIS
-> > >  	  Video4Linux2 sub-device driver for the MIPI CSI-2 CSIS receiver
-> > >  	  v3.3/v3.6.3 found on some i.MX7 and i.MX8 SoCs.
-> > >
-> > > +config VIDEO_IMX_PARALLEL_CPI
-> > > +	tristate "NXP i.MX9/i.MX8 Parallel CPI Driver"
-> >
-> > I'd write it in numerical order, "i.MX8/i.MX9"
-> >
-> > > +	depends on ARCH_MXC || COMPILE_TEST
-> > > +	depends on VIDEO_DEV
-> > > +	select MEDIA_CONTROLLER
-> > > +	select V4L2_FWNODE
-> > > +	select VIDEO_V4L2_SUBDEV_API
-> > > +	help
-> > > +	  Video4Linux2 sub-device driver for PARALLEL CPI receiver found
-> > > +	  on some iMX8 and iMX9 SoCs.
-> > > +
-> > >  source "drivers/media/platform/nxp/imx8-isi/Kconfig"
-> > >
-> > >  # mem2mem drivers
-> > > diff --git a/drivers/media/platform/nxp/Makefile b/drivers/media/platform/nxp/Makefile
-> > > index 4d90eb71365259ebdda84ea58483e1c4131d3ac7..5346919d2f1083b51ec99b66981c5d38b3df960c 100644
-> > > --- a/drivers/media/platform/nxp/Makefile
-> > > +++ b/drivers/media/platform/nxp/Makefile
-> > > @@ -7,5 +7,6 @@ obj-y += imx8-isi/
-> > >  obj-$(CONFIG_VIDEO_IMX7_CSI) += imx7-media-csi.o
-> > >  obj-$(CONFIG_VIDEO_IMX8MQ_MIPI_CSI2) += imx8mq-mipi-csi2.o
-> > >  obj-$(CONFIG_VIDEO_IMX_MIPI_CSIS) += imx-mipi-csis.o
-> > > +obj-$(CONFIG_VIDEO_IMX_PARALLEL_CPI) += imx-parallel-cpi.o
-> > >  obj-$(CONFIG_VIDEO_IMX_PXP) += imx-pxp.o
-> > >  obj-$(CONFIG_VIDEO_MX2_EMMAPRP) += mx2_emmaprp.o
-> > > diff --git a/drivers/media/platform/nxp/imx-parallel-cpi.c b/drivers/media/platform/nxp/imx-parallel-cpi.c
-> > > new file mode 100644
-> > > index 0000000000000000000000000000000000000000..718f02bf70c4d0ae74ecf842c1ecb1a1afbcdd45
-> > > --- /dev/null
-> > > +++ b/drivers/media/platform/nxp/imx-parallel-cpi.c
-> > > @@ -0,0 +1,920 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * i.MX Parallel CPI receiver driver.
-> > > + *
-> > > + * Copyright 2019-2025 NXP
-> > > + *
-> > > + */
-> > > +
-> > > +#include <linux/bits.h>
-> > > +#include <linux/clk.h>
-> > > +#include <linux/debugfs.h>
-> >
-> > I don't think you use this.
-> >
-> > > +#include <linux/delay.h>
-> > > +#include <linux/errno.h>
-> > > +#include <linux/interrupt.h>
-> >
-> > I don't think you use this either.
-> >
-> > > +#include <linux/io.h>
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/mutex.h>
-> > > +#include <linux/mfd/syscon.h>
-> >
-> > Alphabetical order please.
-> >
-> > > +#include <linux/of.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/pm_domain.h>
-> >
-> > This doesn't seem needed.
-> >
-> > > +#include <linux/pm_runtime.h>
-> > > +#include <linux/regulator/consumer.h>
-> > > +#include <linux/reset.h>
-> >
-> > Same here.
-> >
-> > > +#include <linux/spinlock.h>
-> >
-> > And here. Please verify all headers, drop the ones you don't need, and
-> > add any you may have forgotten. That includes the media/ headers.
+On 7/24/2025 1:37 PM, Sean Christopherson wrote:
+> On Mon, Jul 14, 2025, Peter Zijlstra wrote:
+>> --- a/arch/x86/kvm/vmx/vmenter.S
+>> +++ b/arch/x86/kvm/vmx/vmenter.S
+>> @@ -361,6 +361,10 @@ SYM_FUNC_END(vmread_error_trampoline)
+>>   
+>>   .section .text, "ax"
+>>   
+>> +#ifndef CONFIG_X86_FRED
+>> +
+>>   SYM_FUNC_START(vmx_do_interrupt_irqoff)
+>>   	VMX_DO_EVENT_IRQOFF CALL_NOSPEC _ASM_ARG1
+>>   SYM_FUNC_END(vmx_do_interrupt_irqoff)
+>> +
+>> +#endif
 > 
-> Do you have good method to check it?
-
-There are tools such as include-what-you-use, but I haven't tested that
-one with the kernel.
-
-> > > +
-> > > +#include <media/v4l2-common.h>
-> > > +#include <media/v4l2-device.h>
-> > > +#include <media/v4l2-event.h>
-> > > +#include <media/v4l2-fwnode.h>
-> > > +#include <media/v4l2-mc.h>
-> > > +#include <media/v4l2-subdev.h>
+> This can go in the previous patch, "x86/fred: KVM: VMX: Always use FRED for IRQs
+> when CONFIG_X86_FRED=y".
 > 
-> ...
-> 
-> > > +
-> > > +	/* Software Reset */
-> > > +	imx_cpi_sw_reset(pcpidev);
-> > > +
-> > > +	/* Config PL Data Type */
-> > > +	val = readl(pcpidev->regs + pdata->if_ctrl_reg);
-> > > +	val |= IF_CTRL_REG_DATA_TYPE(DATA_TYPE_OUT_YUV444);
-> >
-> > Don't you need to clear the field first ? Same everywhere else where
-> > applicable.
-> 
-> imx_cpi_sw_reset() clean all register.
 
-OK. I wonder if you could then replace some (most ? all ?) of the
-read-update-write sequences with plain writes.
+I'm going to test patch 13~15, plus this change in patch 16.
 
-> > > +	writel(val, pcpidev->regs + pdata->if_ctrl_reg);
-> > > +
-> > > +	/* Enable sync Force */
-> > > +	val = readl(pcpidev->regs + pdata->interface_ctrl_reg);
-> > > +	val |= (CPI_CTRL_REG_HSYNC_FORCE_EN | CPI_CTRL_REG_VSYNC_FORCE_EN);
-> > > +	writel(val, pcpidev->regs + pdata->interface_ctrl_reg);
-> 
-> ....
+BTW, there is a declaration for vmx_do_interrupt_irqoff() in
+arch/x86/kvm/vmx/vmx.c, so we'd better also do:
 
--- 
-Regards,
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6945,7 +6945,9 @@ void vmx_load_eoi_exitmap(struct kvm_vcpu *vcpu, 
+u64 *eoi_exit_bitmap)
+         vmcs_write64(EOI_EXIT_BITMAP3, eoi_exit_bitmap[3]);
+  }
 
-Laurent Pinchart
++#ifndef CONFIG_X86_FRED
+  void vmx_do_interrupt_irqoff(unsigned long entry);
++#endif
+  void vmx_do_nmi_irqoff(void);
+
+  static void handle_nm_fault_irqoff(struct kvm_vcpu *vcpu)
 
