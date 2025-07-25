@@ -1,110 +1,141 @@
-Return-Path: <linux-kernel+bounces-745518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42103B11B14
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:43:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB71B11B19
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 390167AE9C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EABA3BA541
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446F62D372F;
-	Fri, 25 Jul 2025 09:43:27 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E822D3A86;
+	Fri, 25 Jul 2025 09:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="l1EcN4F0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9189B291C0C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA51C242D9F;
+	Fri, 25 Jul 2025 09:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753436606; cv=none; b=rAFKf/ndojPoQQjCQAXGf2bj7WVQuKxv+S9aIUDpwu3VDwF9tlgSfPEYmYoI5Vh767K/AWOEey2qvd8HamFOAJm+7L1dR32TiE6TYKD3ufunTMBYxfheONF4mmyqLvfoyGHnKJJnTV5fs8kUZvA2KuzrZUqdUqKW4MnQ9vghgHc=
+	t=1753436666; cv=none; b=Lj0xK34LLrMXGaxV8hdcIKfqfnolyyTxX+pRwCcQSQQ1nfThS4qRrvfw4mBERc8WaeNjmOPPMrOnL+r59cB1kp/FGRp8UyNeQBGoLIDCYMZGfWhz2L+k3Xm1AMY3kEo6pHeKO+tnmH9XDUIIIhuwUQtBV3wd9PBhJe+G4GSSstQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753436606; c=relaxed/simple;
-	bh=Fux21xSbuJ0ZFS/EA9jN72X8tgguqMOGBDqtx1Ps97Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HvTaL/b/Aav5L9EjVgLK6eTlBfA4bRIXUtsOtbDFZ2MKUJj3HJc3t0nAicqA5xhYPL/ddMxbghxh3WJe8QGEKzhs7QxpBvf55JT/3j+mGBLYt9D/a5FKbV5yGiF5FFD+tePB+RW2wAskpNQE1beBrqUlo7dd0Ys7ywO+lqIHudg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [10.48.132.14] (unknown [15.248.2.230])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id E311041D2D;
-	Fri, 25 Jul 2025 09:43:20 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 15.248.2.230) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[10.48.132.14]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <89c2e255-fd5c-4533-8ec2-1864ddf5eaa3@arnaud-lcm.com>
-Date: Fri, 25 Jul 2025 10:43:20 +0100
+	s=arc-20240116; t=1753436666; c=relaxed/simple;
+	bh=LIqDlDVavLMaiRA3G6hgN19ixsjwuYx8keyApXoqouw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m2D4ml6bHqR9PJbK5qOspqmFoEph+PtDydex3ormJnUdzbwtDjUfyuaEE2Dkug6njEvWmocPpzk2RW7k20Z64bC+DetGZIyM8jPsFpofFG1JzTyt4JS/Xn58jf4SJQbwl83BKvCbon7xfNEsPQYy3chPvZ4414Bh/ZbKLlviANU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=l1EcN4F0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B34DDC4CEF4;
+	Fri, 25 Jul 2025 09:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753436666;
+	bh=LIqDlDVavLMaiRA3G6hgN19ixsjwuYx8keyApXoqouw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l1EcN4F08vXdo4F8TqlKVCenzoq5+xsDpu9tKy6qNrjZ3Sl8N5Vw383LYx34TK52x
+	 c/q6/kvVhsfkAca9R9tXArl4j0LTBWJDNkkMNiYL6QHaGsdSzyz7C996Ou8fONIvkF
+	 BkdcCeLJ/ErRBSk5Q30VMbm2yYAildRW1lkw+8oo=
+Date: Fri, 25 Jul 2025 11:44:23 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Wayne Chang <waynec@nvidia.com>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>,
+	Nagarjuna Kristam <nkristam@nvidia.com>, linux-usb@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: Fix trb_virt_to_phys() error value
+Message-ID: <2025072515-dugout-chevy-ccea@gregkh>
+References: <20250725090540.51958-1-fourier.thomas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] comedi: zero-init data in do_insn_ioctl
-To: Ian Abbott <abbotti@mev.co.uk>, hsweeten@visionengravers.com,
- gregkh@linuxfoundation.org,
- syzbot+a5e45f768aab5892da5d@syzkaller.appspotmail.com
-Cc: jannh@google.com, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <20250724210451.108177-1-contact@arnaud-lcm.com>
- <7cc194c0-1ce2-411b-92e3-fb1b6c63f062@mev.co.uk>
-Content-Language: en-US
-From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-In-Reply-To: <7cc194c0-1ce2-411b-92e3-fb1b6c63f062@mev.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175343660144.31009.17424778932350954475@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725090540.51958-1-fourier.thomas@gmail.com>
 
-Hi Ian,
-Thanks for the feedback, I can send the revision of the patch by the end 
-of the day if it is fine for you.
+On Fri, Jul 25, 2025 at 11:05:33AM +0200, Thomas Fourier wrote:
+> 0 is a valid DMA address, so returning DMA_MAPPING_ERROR in
+> trb_virt_to_phys().  Also, dma_mapping_error() wouldn't
+> flag 0 as an error address.
+> Checking the return value directly because the dma_addr
+> does not come directly from dma_map().
+> 
+> Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB device mode controller")
+> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> ---
+>  drivers/usb/gadget/udc/tegra-xudc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+> index 2957316fd3d0..5dd3452bddbc 100644
+> --- a/drivers/usb/gadget/udc/tegra-xudc.c
+> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
+> @@ -900,7 +900,7 @@ static dma_addr_t trb_virt_to_phys(struct tegra_xudc_ep *ep,
+>  	index = trb - ep->transfer_ring;
+>  
+>  	if (WARN_ON(index >= XUDC_TRANSFER_RING_SIZE))
+> -		return 0;
+> +		return DMA_MAPPING_ERROR;
+>  
+>  	return (ep->transfer_ring_phys + index * sizeof(*trb));
+>  }
+> @@ -1480,7 +1480,7 @@ __tegra_xudc_ep_dequeue(struct tegra_xudc_ep *ep,
+>  			deq_ptr = trb_virt_to_phys(ep,
+>  					&ep->transfer_ring[ep->enq_ptr]);
+>  
+> -			if (dma_mapping_error(xudc->dev, deq_ptr)) {
+> +			if (deq_ptr == DMA_MAPPING_ERROR) {
+>  				ret = -EINVAL;
+>  			} else {
+>  				ep_ctx_write_deq_ptr(ep->context, deq_ptr);
+> @@ -2836,7 +2836,7 @@ static void tegra_xudc_reset(struct tegra_xudc *xudc)
+>  
+>  	deq_ptr = trb_virt_to_phys(ep0, &ep0->transfer_ring[ep0->deq_ptr]);
+>  
+> -	if (!dma_mapping_error(xudc->dev, deq_ptr)) {
+> +	if (deq_ptr != DMA_MAPPING_ERROR) {
+>  		ep_ctx_write_deq_ptr(ep0->context, deq_ptr);
+>  		ep_ctx_write_dcs(ep0->context, ep0->pcs);
+>  	}
+> -- 
+> 2.43.0
+> 
+> 
 
+Hi,
 
-On 25/07/2025 10:41, Ian Abbott wrote:
-> On 24/07/2025 22:04, Arnaud Lecomte wrote:
->> KMSAN reported a kernel-infoleak when copying instruction data back to
->> userspace in do_insnlist_ioctl(). The issue occurs because allocated
->> memory buffers weren't properly initialized (not
->> zero initialized)  before being copied to
->> userspace, potentially leaking kernel memory.
->>
->> Reported-by: syzbot+a5e45f768aab5892da5d@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=a5e45f768aab5892da5d
->> Tested-by: syzbot+a5e45f768aab5892da5d@syzkaller.appspotmail.com
->> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
->> ---
->>   drivers/comedi/comedi_fops.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
->> index c83fd14dd7ad..15fee829d14c 100644
->> --- a/drivers/comedi/comedi_fops.c
->> +++ b/drivers/comedi/comedi_fops.c
->> @@ -1636,7 +1636,7 @@ static int do_insn_ioctl(struct comedi_device 
->> *dev,
->>           n_data = MAX_SAMPLES;
->>       }
->>   -    data = kmalloc_array(n_data, sizeof(unsigned int), GFP_KERNEL);
->> +    data = kcalloc(n_data, sizeof(unsigned int), GFP_KERNEL);
->>       if (!data) {
->>           ret = -ENOMEM;
->>           goto error;
->
-> I thought my commit 46d8c744136c ("comedi: Fix initialization of data 
-> for instructions that write to subdevice" would have fixed this as 
-> long as all the driver code was playing nicely, but it seems I was 
-> mistaken.
->
-> I don't think it is necessary to use kcalloc().  The buffer already 
-> gets initialized (partly by `copy_from_user()`) when `insn->insn & 
-> INSN_MASK_WRITE` is non-zero, so it just needs to be initialized when 
-> `insn->insn & INSN_MASK_WRITE` is zero too.
->
-> There is nearly identical code in `do_insnlist_ioctl()` that needs 
-> fixing, so it would be better to fix both at the same time.
->
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
