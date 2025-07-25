@@ -1,139 +1,196 @@
-Return-Path: <linux-kernel+bounces-745852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 325DEB11F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:53:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C543B11FA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDE1BAE0E80
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:53:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E276541CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060DE1B6CE9;
-	Fri, 25 Jul 2025 13:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C1E1A23A4;
+	Fri, 25 Jul 2025 13:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t/6pi6zo"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qkyxUIg/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mylSVgUc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qkyxUIg/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mylSVgUc"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C7114EC46
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7A81A314D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753451610; cv=none; b=XFSFsiEoPPd6vBqZpnP8ISIYiqzeFirS6wrNKdyvOUwizyC8kTxAFRGHCTYJNIbVZ/H7F3UVFLTf3icCwmVuNi4bcnHS6x/jN0PKeoXmrDymEDIxenEqyMro1uTMz3Z4rhQrBXiSZUUYhwyOvQ5slfMB0mFjzRDPp21scW2OC/I=
+	t=1753451628; cv=none; b=YSnk4rN98icQzmXkA7w82uUZiENgblELiwY9Of0+cEU3wsOjTbIlWvUSzDpoxCbv/ipnM9VldpL6wqn+Y548B1Wqu8wsJo5Bllv0AhDxkimBkJgqHfwUuK2qg9QeMBxWm6rWRu5s5tHGS4BzvDyby6K1H+N7An08R0iK5Ivq6eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753451610; c=relaxed/simple;
-	bh=mSDg1GQamFsjMossvkdrmxraz/XzbhlY0Z87GkuJcGA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lr4rizM4djPXuMw7vU2DXOjU2FchR0pY5XQckiimIpnmCFX/c4PFJSnA0KSAdDFA7jeboqRObBeg2Zs/p+r5lM+DKSXyJm5qptxth0oXSI0Z59XDedOOJi5pYbDpE2uogIGlJbO/wxkWYJXM4B19cxhuuUY7H3FV1DFWrXhxxJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t/6pi6zo; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ab9ba884c6so27965601cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753451608; x=1754056408; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U1hAqeYCy6aPtsdaD+a95FJh5xJrvRSfxYY035KZ700=;
-        b=t/6pi6zoCsS8h5gpWMkrh+4YjYMsmFXKuyVUf1ekJ5wuV45hwhvcBs075vXjWoF1MA
-         mseRhluBGxaCardzo4XhLcSytjwqzC4ZIL1LIMcg+/2biIHBqC08U5yCWzG634DA7ygL
-         WybuPAY5/8DorpgnpObC0FZCJA2A0dJXtRs5m/kcIrtjMKlm/2UTO0k0aBrpuqldO5DO
-         0U+0nKyn1yVEWOJt/Z1ifDXq9JMjRMzsqYFgkUVkIAhB0SnOXZxUADF5HPlz8Bd0OCc4
-         kZf91b5cs/DGxuXGRHVEB/SPC32yOjoZ2waX8/j4XaA68sM1jUh1ZXPwmc5KoyUSGnnb
-         hN/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753451608; x=1754056408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U1hAqeYCy6aPtsdaD+a95FJh5xJrvRSfxYY035KZ700=;
-        b=blerw/bjT1GvMb1U0CrOXQIC+HIlLShgkMS3TvlResgP6C7HfZ1VLiPEhwYNA7I/40
-         trHRE9cM4sZ40/RbRCjXtk0kO42vpN/3P5p3A7GAb3Y+E0hA7aSzHCEXFp7079DAbuRE
-         T9o1xdDLAxF4D5tRwq63Xrq5pHLM5efs4PGX83c9vD0sKUYbSUK/uK7A5czFWBKsR/Su
-         7ZP1+YcaMX3WGmoOsXNoCh/o8sT7BPYvI7Ay7Th2ji9xJoWlK2Vm2owJ2kYaawwpg7BU
-         O2JVF7sEFZRZXKNY7irjDvlbbOJQ48FW3e4cQDD2cmUskAhvVaW2xy6/amgjjia5truY
-         KFOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwv2522O0KSczKYFGaQ6jOVJ8aXYJS+8XQOh09BGTTnI/yhwZxUZ1k4yf9oF+37XLmCFAatbXB++Xb7ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA0y7ruPATGcIwN//khSsMh07p/BtC5ffWUu5/TsIK8qEdEqwm
-	nTckfQtHO+sGRDIKMw9mPw8RGIyXJV5p3A72DpDLkdHgxw7u0oCg+Q32Sr8XJ0oVE7N5cFkiv20
-	ilCVPBrbn4Uh2X1CZuQyzXr8OykViPl+vZJnJ+Kj8
-X-Gm-Gg: ASbGncsKlnrDyG7KkLltFuwD6hf7m+C0YHejsHvwns8K3kFvX/fBJFdqUpKZCZBJ2+T
-	1YKNWLIwxN0gCtDyc7+2cwc0bMROSEbJk6v+iXi7ziikbf853F5kNdJdmV7qGAGgd9di6QVj3rk
-	BN/59IYpRkvLKsJsY8F1ePgHLkCUoHHRrk+lLHmie4sbKu5Tz3UQr6a7Gq/qA1YIo8XuJzT3B9m
-	jnf1Ja8cERcekJ3Ng==
-X-Google-Smtp-Source: AGHT+IHOtPZYCcL27DWaCXqhxuZHZ+IobaaCtR9TWuGSz7vT8EhbM2oy7hS2Ze67n30F2CECD1rIf8wpevlL6Pbpo9o=
-X-Received: by 2002:ac8:5804:0:b0:4ab:5d26:db8a with SMTP id
- d75a77b69052e-4ae8e878ec5mr23365041cf.18.1753451607204; Fri, 25 Jul 2025
- 06:53:27 -0700 (PDT)
+	s=arc-20240116; t=1753451628; c=relaxed/simple;
+	bh=IR/Vi22XVrrga8blVhc5NOXTYz8qtv3NSPAWFSX1P5k=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QmAP8wwoYV6GLC5yt2RJd8Rjj+/t226oYmw0CDLPcCHy7hJPcGMd9vJIkm5pPmjm+ba0FRK3kz48QncTja9syHb+aTRnrXutkk6wMI2+KLSLWUU1pGE2B8O5q6+ZtJtBOUgudshWaOOdUghY6sFBtS/WxR9sRtFcKuVMcUZm96A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qkyxUIg/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mylSVgUc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qkyxUIg/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mylSVgUc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B36081F76C;
+	Fri, 25 Jul 2025 13:53:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753451624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3cLK0Ic1lz58928Iz6K8Vh5T63JlZ6JcRUL5uTD0Itw=;
+	b=qkyxUIg/j6I2c6xZhFuAxziL5yLCr3g50BeV6GoGssj/qsdFAmnIUXHW7OPe/tbdDt2RsN
+	S4ttrCCXwQWLPoga/dRUVJ0uggiE7RSIZRs+frRE2uhRkuKw5xjPBvsGH52be/79yK6Cjg
+	rTEQjZvcULAQuNn9/bofiZK6UoFZBkk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753451624;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3cLK0Ic1lz58928Iz6K8Vh5T63JlZ6JcRUL5uTD0Itw=;
+	b=mylSVgUcVKuEv9k7BkSdSINn67s4iOAFvfHbTAHh8KkZET+ZjUZdazgN/4GOtwNLO6kjme
+	3bU10snn4yapTXCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753451624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3cLK0Ic1lz58928Iz6K8Vh5T63JlZ6JcRUL5uTD0Itw=;
+	b=qkyxUIg/j6I2c6xZhFuAxziL5yLCr3g50BeV6GoGssj/qsdFAmnIUXHW7OPe/tbdDt2RsN
+	S4ttrCCXwQWLPoga/dRUVJ0uggiE7RSIZRs+frRE2uhRkuKw5xjPBvsGH52be/79yK6Cjg
+	rTEQjZvcULAQuNn9/bofiZK6UoFZBkk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753451624;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3cLK0Ic1lz58928Iz6K8Vh5T63JlZ6JcRUL5uTD0Itw=;
+	b=mylSVgUcVKuEv9k7BkSdSINn67s4iOAFvfHbTAHh8KkZET+ZjUZdazgN/4GOtwNLO6kjme
+	3bU10snn4yapTXCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16F511373A;
+	Fri, 25 Jul 2025 13:53:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zCFeBGiMg2iXRwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 25 Jul 2025 13:53:44 +0000
+Date: Fri, 25 Jul 2025 15:53:43 +0200
+Message-ID: <87cy9oidg8.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Joris Verhaegen <verhaegen@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	kernel-team@android.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-arm-msm@vger.kernel.org,
+	sound-open-firmware@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] ALSA: compress_offload: Add 64-bit safe timestamp API
+In-Reply-To: <20250725114249.2086974-1-verhaegen@google.com>
+References: <20250725114249.2086974-1-verhaegen@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250725133311.143814-2-fourier.thomas@gmail.com>
-In-Reply-To: <20250725133311.143814-2-fourier.thomas@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 25 Jul 2025 06:53:16 -0700
-X-Gm-Features: Ac12FXz9f_T46FZr6oWHnYPdE1FCnEu_6iCpQgTJrXvhchKkQWpnlpbZ97hSA3c
-Message-ID: <CANn89iJW+4xLsTGU6LU4Y=amciL5Kni=wS1uTKy-wC8pCwNDGQ@mail.gmail.com>
-Subject: Re: [PATCH net] net: ethernet: nixge: Add missing check after DMA map
-To: Thomas Fourier <fourier.thomas@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Moritz Fischer <mdf@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[26];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,perex.cz,suse.com,gmail.com,intel.com,linux.intel.com,linux.dev,nxp.com,linux.alibaba.com,socionext.com,android.com,vger.kernel.org,opensource.cirrus.com,alsa-project.org,lists.infradead.org];
+	R_RATELIMIT(0.00)[to_ip_from(RLtwg9tyn6faipwn1aqsxq4m86)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -1.80
 
-On Fri, Jul 25, 2025 at 6:34=E2=80=AFAM Thomas Fourier <fourier.thomas@gmai=
-l.com> wrote:
->
-> The DMA map functions can fail and should be tested for errors.
->
-> Fixes: 492caffa8a1a ("net: ethernet: nixge: Add support for National Inst=
-ruments XGE netdev")
-> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
-> ---
->  drivers/net/ethernet/ni/nixge.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/ni=
-xge.c
-> index 230d5ff99dd7..027e53023007 100644
-> --- a/drivers/net/ethernet/ni/nixge.c
-> +++ b/drivers/net/ethernet/ni/nixge.c
-> @@ -334,6 +334,10 @@ static int nixge_hw_dma_bd_init(struct net_device *n=
-dev)
->                 phys =3D dma_map_single(ndev->dev.parent, skb->data,
->                                       NIXGE_MAX_JUMBO_FRAME_SIZE,
->                                       DMA_FROM_DEVICE);
-> +               if (dma_mapping_error(ndev->dev.parent, phys)) {
-> +                       dev_kfree_skb_any(skb);
-> +                       goto out;
-> +               }
->
->                 nixge_hw_dma_bd_set_phys(&priv->rx_bd_v[i], phys);
->
-> @@ -645,8 +649,8 @@ static int nixge_recv(struct net_device *ndev, int bu=
-dget)
->                                           NIXGE_MAX_JUMBO_FRAME_SIZE,
->                                           DMA_FROM_DEVICE);
->                 if (dma_mapping_error(ndev->dev.parent, cur_phys)) {
-> -                       /* FIXME: bail out and clean up */
-> -                       netdev_err(ndev, "Failed to map ...\n");
-> +                       dev_kfree_skb_any(new_skb);
-> +                       return packets;
+On Fri, 25 Jul 2025 13:42:42 +0200,
+Joris Verhaegen wrote:
+> 
+> The current compress offload timestamping API relies on struct
+> snd_compr_tstamp, whose cumulative counters like copied_total are
+> defined as __u32. On long-running high-resolution audio streams, these
+> 32-bit counters can overflow, causing incorrect availability
+> calculations.
+> 
+> This patch series transitions to a 64-bit safe API to solve the problem
+> while maintaining perfect backward compatibility with the existing UAPI.
+> The pointer operation is reworked to use a new timestamp struct with
+> 64-bit fields for the cumulative counters, named snd_compr_tstamp64.
+> ASoC drivers are updated to use the 64-bit structures. Corresponding
+> ioctls are added to expose them to user-space.
+> 
+> The series is structured as follows:
+> 
+> Patch 1: Updates the pointer op, refactors the core logic and ASoC
+> drivers to use it, and defines the new UAPI structs.
+> 
+> Patch 2: Exposes the SNDRV_COMPRESS_TSTAMP64 ioctl.
+> 
+> Patch 3: Exposes the corresponding SNDRV_COMPRESS_AVAIL64 ioctl.
+> 
+> This series has been tested on a Pixel 9 device. All compress offload
+> use cases, including long-running playback, were verified to work
+> correctly with the new 64-bit API.
+> 
+> Thanks,
+> Joris (George) Verhaegen
+> 
+> Signed-off-by: Joris Verhaegen <verhaegen@google.com>
 
-Note that this error (and the possible failed
-netdev_alloc_skb_ip_align() at line 641) can leave the queue in a
-frozen state,
-because of a missing
+Through a quick glance, the patches look OK, but since it's too late
+for 6.17 merge window for such a non-trivial core API change, so I'll
+postpone the merge for 6.18.
 
-nixge_dma_write_desc_reg(priv, XAXIDMA_RX_TDESC_OFFSET, tail_p);
 
-Not sure if this driver is actively used...
+thanks,
+
+Takashi
 
