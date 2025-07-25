@@ -1,59 +1,54 @@
-Return-Path: <linux-kernel+bounces-745187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1E3B11650
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:17:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8D4B11652
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64D41CE24E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:17:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 069DB17D160
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EEE22ACEF;
-	Fri, 25 Jul 2025 02:17:15 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AC62264A9;
+	Fri, 25 Jul 2025 02:17:50 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7FE12EBE7;
-	Fri, 25 Jul 2025 02:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E15F1EE032
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753409834; cv=none; b=C8eLpryidjPCYVL0zmHgyz7qVQhnWCmNL76TUhwOuD45d5/pomiQjeBNDfggxk8ez70JrcOLr9S4sDRTdp1h7Oq1+3bt9+hw6NG+cNV8yuN2Mm2nd8q304SpFXJjtisQ8AcalvuAAyGF/csI6z+YRITnEZ6yGA2YiR2NegoSbr4=
+	t=1753409869; cv=none; b=H2wEjWcgaA/y9lYw2knSf3XQ/2R5IwIl+Tgp263aorwmVFuWyRKQuk5YhUBcDTXBqqgdB/3Db7TNNSMM3MF+flAn6TBZfAr+YNK2wnqT6i4TJuM+brWrLnjpvMiG75HTEoezMBF+tRtbFCbOin8iBCEhVs2OcgCXKLNp38IHGR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753409834; c=relaxed/simple;
-	bh=F5wFBAyOipz82vVg8SiBeKX7QDsomIOxOvnKO7R8Ru8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xv2ts3oHRnyxkWTI65oEEuLB+5o5G0OUvozKlMfhYs2rHMa6kAPPBXjUqQwh+JShPHEh6pEzt5vJ9O1lFoPh22mSqw5gES0TAsUQdUj3B1kOeLgC7fV5TW36GXRf8fTtX4kLtaVCTqHwIrts2G+KxACpgr+oyoVNUhFV98Im7Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bpBMn6dZrzYQtJF;
-	Fri, 25 Jul 2025 10:17:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 9D8AB1A06DD;
-	Fri, 25 Jul 2025 10:17:08 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgBHERIc6YJo2RyYBQ--.2848S4;
-	Fri, 25 Jul 2025 10:17:08 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	linux@roeck-us.net,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH] ext4: fix crash on test_mb_mark_used kunit tests
-Date: Fri, 25 Jul 2025 10:16:54 +0800
-Message-ID: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1753409869; c=relaxed/simple;
+	bh=AxhAm3YGoErvD4+o4eGWIvBUboB6VYSXtZ5RN6TXrJw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LiwFLRW7G0mN1FgAUK0KWtI+QQ4F058s3SwdCKD1Os7IwUxf79/MQMtYwn26YeBkfHEb3dX4JH0pcEBbtskCKh+mO2eCMIb+rQAmFFAzQXZW7n/iK53x2Rc5+fGi3HT3LOb9XsUWglz/l2bJ6xRrMor3M/syw1sqmZxjNwfbmvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4bpBKJ63cjzYnRvj;
+	Fri, 25 Jul 2025 10:15:00 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Jul
+ 2025 10:17:39 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Jul
+ 2025 10:17:38 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <linux-f2fs-devel@lists.sourceforge.net>
+CC: <chao@kernel.org>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <wangzijie1@honor.com>
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: directly add newly allocated pre-dirty nat entry to dirty set list
+Date: Fri, 25 Jul 2025 10:17:38 +0800
+Message-ID: <20250725021738.1011413-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <524de02e-31a1-4b98-8601-edaa51d40d56@kernel.org>
+References: <524de02e-31a1-4b98-8601-edaa51d40d56@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,103 +56,234 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHERIc6YJo2RyYBQ--.2848S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr48WrWxJrW3JF4rCrykZrb_yoWrJF1fpa
-	4UKF18KrW8Zr1DAr4fGa4jqw45Kw4DAFW8W34fJ3WUW3ZrA34vyFy8try7Gr45Ar48X3W0
-	yF12v345twn29aUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUoWlkDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain
+X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a011.hihonor.com
+ (10.68.31.243)
 
-From: Zhang Yi <yi.zhang@huawei.com>
+> On 7/22/25 22:36, wangzijie wrote:
+> > When we need to alloc nat entry and set it dirty, we can directly add it to
+> > dirty set list(or initialize its list_head for new_ne) instead of adding it
+> > to clean list and make a move. Introduce init_dirty flag to do it.
+> > 
+> > Signed-off-by: wangzijie <wangzijie1@honor.com>
+> > ---
+> >  fs/f2fs/node.c | 37 ++++++++++++++++++++++++++++++-------
+> >  1 file changed, 30 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index a23db6238..20bcf8559 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -185,7 +185,7 @@ static void __free_nat_entry(struct nat_entry *e)
+> >  
+> >  /* must be locked by nat_tree_lock */
+> >  static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
+> > -	struct nat_entry *ne, struct f2fs_nat_entry *raw_ne, bool no_fail)
+> > +	struct nat_entry *ne, struct f2fs_nat_entry *raw_ne, bool no_fail, bool init_dirty)
+> >  {
+> >  	if (no_fail)
+> >  		f2fs_radix_tree_insert(&nm_i->nat_root, nat_get_nid(ne), ne);
+> > @@ -195,6 +195,11 @@ static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
+> >  	if (raw_ne)
+> >  		node_info_from_raw_nat(&ne->ni, raw_ne);
+> >  
+> > +	if (init_dirty) {
+> > +		nm_i->nat_cnt[TOTAL_NAT]++;
+> > +		return ne;
+> > +	}
+> > +
+> >  	spin_lock(&nm_i->nat_list_lock);
+> >  	list_add_tail(&ne->list, &nm_i->nat_entries);
+> >  	spin_unlock(&nm_i->nat_list_lock);
+> > @@ -256,7 +261,7 @@ static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
+> >  }
+> >  
+> >  static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+> > -						struct nat_entry *ne)
+> > +					struct nat_entry *ne, bool init_dirty)
+> >  {
+> >  	struct nat_entry_set *head;
+> >  	bool new_ne = nat_get_blkaddr(ne) == NEW_ADDR;
+> > @@ -275,6 +280,18 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+> >  
+> >  	set_nat_flag(ne, IS_PREALLOC, new_ne);
+> >  
+> > +	if (init_dirty) {
+> > +		nm_i->nat_cnt[DIRTY_NAT]++;
+> > +		set_nat_flag(ne, IS_DIRTY, true);
+> > +		spin_lock(&nm_i->nat_list_lock);
+> > +		if (new_ne)
+> > +			INIT_LIST_HEAD(&ne->list);
+> > +		else
+> > +			list_add_tail(&ne->list, &head->entry_list);
+> > +		spin_unlock(&nm_i->nat_list_lock);
+> > +		return;
+> > +    }
+> 
+> Nit issue, above blanks should be replaced w/ tab.
 
-mb_set_largest_free_order() requires the parameter bb_largest_free_order
-and the list bb_largest_free_order_node to be initialized, and
-mb_update_avg_fragment_size() requires the parameter
-bb_avg_fragment_size_order and bb_avg_fragment_size_node to be
-initialized too. But the test_mb_mark_used kunit tests do not init these
-parameters, and trigger the following crash issue.
+Ah...my bad :-(
 
- Pid: 35, comm: kunit_try_catch Tainted: G W N 6.16.0-rc4-00031-gbbe11dd13a3f-dirty
- RIP: 0033:mb_set_largest_free_order+0x5c/0xc0
- RSP: 00000000a0883d98  EFLAGS: 00010206
- RAX: 0000000060aeaa28 RBX: 0000000060a2d400 RCX: 0000000000000008
- RDX: 0000000060aea9c0 RSI: 0000000000000000 RDI: 0000000060864000
- RBP: 0000000060aea9c0 R08: 0000000000000000 R09: 0000000060a2d400
- R10: 0000000000000400 R11: 0000000060a9cc00 R12: 0000000000000006
- R13: 0000000000000400 R14: 0000000000000305 R15: 0000000000000000
- Kernel panic - not syncing: Segfault with no mm
- CPU: 0 UID: 0 PID: 35 Comm: kunit_try_catch Tainted: G W N 6.16.0-rc4-00031-gbbe11dd13a3f-dirty #36 NONE
- Tainted: [W]=WARN, [N]=TEST
- Stack:
-  60210c60 00000200 60a9e400 00000400
-  40060300280 60864000 60a9cc00 60a2d400
-  00000400 60aea9c0 60a9cc00 60aea9c0
- Call Trace:
-  [<60210c60>] ? ext4_mb_generate_buddy+0x1f0/0x230
-  [<60215c3b>] ? test_mb_mark_used+0x28b/0x4e0
-  [<601df5bc>] ? ext4_get_group_desc+0xbc/0x150
-  [<600bf1c0>] ? ktime_get_ts64+0x0/0x190
-  [<60086370>] ? to_kthread+0x0/0x40
-  [<602b559b>] ? kunit_try_run_case+0x7b/0x100
-  [<60086370>] ? to_kthread+0x0/0x40
-  [<602b7850>] ? kunit_generic_run_threadfn_adapter+0x0/0x30
-  [<602b7862>] ? kunit_generic_run_threadfn_adapter+0x12/0x30
-  [<60086a51>] ? kthread+0xf1/0x250
-  [<6004a541>] ? new_thread_handler+0x41/0x60
- [ERROR] Test: test_mb_mark_used: 0 tests run!
+> Can we clean up like this?
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index de99b42437c6..60fc2c7b8e10 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -280,30 +280,23 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+> 
+>  	set_nat_flag(ne, IS_PREALLOC, new_ne);
+> 
+> -	if (init_dirty) {
+> -		nm_i->nat_cnt[DIRTY_NAT]++;
+> -		set_nat_flag(ne, IS_DIRTY, true);
+> -		spin_lock(&nm_i->nat_list_lock);
+> -		if (new_ne)
+> -			INIT_LIST_HEAD(&ne->list);
+> -		else
+> -			list_add_tail(&ne->list, &head->entry_list);
+> -		spin_unlock(&nm_i->nat_list_lock);
+> -		return;
+> -    }
+> -
+>  	if (get_nat_flag(ne, IS_DIRTY))
+>  		goto refresh_list;
+> 
+>  	nm_i->nat_cnt[DIRTY_NAT]++;
+> -	nm_i->nat_cnt[RECLAIMABLE_NAT]--;
+> +	if (!init_dirty)
+> +		nm_i->nat_cnt[RECLAIMABLE_NAT]--;
+>  	set_nat_flag(ne, IS_DIRTY, true);
+>  refresh_list:
+>  	spin_lock(&nm_i->nat_list_lock);
+> -	if (new_ne)
+> -		list_del_init(&ne->list);
+> -	else
+> +	if (new_ne) {
+> +		if (init_dirty)
+> +			INIT_LIST_HEAD(&ne->list);
+> +		else
+> +			list_del_init(&ne->list);
+> +	} else {
+>  		list_move_tail(&ne->list, &head->entry_list);
+> +	}
+>  	spin_unlock(&nm_i->nat_list_lock);
+>  }
+> 
+> Thanks,
 
-Fixes: bbe11dd13a3f ("ext4: fix largest free orders lists corruption on mb_optimize_scan switch")
-Reported-by: Theodore Ts'o <tytso@mit.edu>
-Closes: https://lore.kernel.org/linux-ext4/20250724145437.GD80823@mit.edu/
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
-This patch applies to the kernel that has only merged bbe11dd13a3f
-("ext4: fix largest free orders lists corruption on mb_optimize_scan
-switch"), but not merged 458bfb991155 ("ext4: convert free groups order
-lists to xarrays").
+We need to init list_head before using list_move_tail.
+I think we can do more clean up like this, keep refresh_list part code.
 
- fs/ext4/mballoc-test.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
-index d634c12f1984..ba939be0ec55 100644
---- a/fs/ext4/mballoc-test.c
-+++ b/fs/ext4/mballoc-test.c
-@@ -802,6 +802,10 @@ static void test_mb_mark_used(struct kunit *test)
- 	KUNIT_ASSERT_EQ(test, ret, 0);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 20bcf8559..ebb624fa1 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -196,6 +196,7 @@ static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
+ 		node_info_from_raw_nat(&ne->ni, raw_ne);
  
- 	grp->bb_free = EXT4_CLUSTERS_PER_GROUP(sb);
-+	grp->bb_largest_free_order = -1;
-+	grp->bb_avg_fragment_size_order = -1;
-+	INIT_LIST_HEAD(&grp->bb_largest_free_order_node);
-+	INIT_LIST_HEAD(&grp->bb_avg_fragment_size_node);
- 	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
- 	for (i = 0; i < TEST_RANGE_COUNT; i++)
- 		test_mb_mark_used_range(test, &e4b, ranges[i].start,
-@@ -875,6 +879,10 @@ static void test_mb_free_blocks(struct kunit *test)
- 	ext4_unlock_group(sb, TEST_GOAL_GROUP);
+ 	if (init_dirty) {
++		INIT_LIST_HEAD(&ne->list);
+ 		nm_i->nat_cnt[TOTAL_NAT]++;
+ 		return ne;
+ 	}
+@@ -280,23 +281,12 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
  
- 	grp->bb_free = 0;
-+	grp->bb_largest_free_order = -1;
-+	grp->bb_avg_fragment_size_order = -1;
-+	INIT_LIST_HEAD(&grp->bb_largest_free_order_node);
-+	INIT_LIST_HEAD(&grp->bb_avg_fragment_size_node);
- 	memset(bitmap, 0xff, sb->s_blocksize);
+ 	set_nat_flag(ne, IS_PREALLOC, new_ne);
  
- 	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
--- 
-2.46.1
+-	if (init_dirty) {
+-		nm_i->nat_cnt[DIRTY_NAT]++;
+-		set_nat_flag(ne, IS_DIRTY, true);
+-		spin_lock(&nm_i->nat_list_lock);
+-		if (new_ne)
+-			INIT_LIST_HEAD(&ne->list);
+-		else
+-			list_add_tail(&ne->list, &head->entry_list);
+-		spin_unlock(&nm_i->nat_list_lock);
+-		return;
+-    }
+-
+ 	if (get_nat_flag(ne, IS_DIRTY))
+ 		goto refresh_list;
+ 
+ 	nm_i->nat_cnt[DIRTY_NAT]++;
+-	nm_i->nat_cnt[RECLAIMABLE_NAT]--;
++	if (!init_dirty)
++		nm_i->nat_cnt[RECLAIMABLE_NAT]--;
+ 	set_nat_flag(ne, IS_DIRTY, true);
+ refresh_list:
+ 	spin_lock(&nm_i->nat_list_lock);
+
+> > +
+> >  	if (get_nat_flag(ne, IS_DIRTY))
+> >  		goto refresh_list;
+> >  
+> > @@ -441,7 +458,7 @@ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
+> >  	f2fs_down_write(&nm_i->nat_tree_lock);
+> >  	e = __lookup_nat_cache(nm_i, nid, false);
+> >  	if (!e)
+> > -		e = __init_nat_entry(nm_i, new, ne, false);
+> > +		e = __init_nat_entry(nm_i, new, ne, false, false);
+> >  	else
+> >  		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
+> >  				nat_get_blkaddr(e) !=
+> > @@ -458,11 +475,13 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+> >  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> >  	struct nat_entry *e;
+> >  	struct nat_entry *new = __alloc_nat_entry(sbi, ni->nid, true);
+> > +	bool init_dirty = false;
+> >  
+> >  	f2fs_down_write(&nm_i->nat_tree_lock);
+> >  	e = __lookup_nat_cache(nm_i, ni->nid, true);
+> >  	if (!e) {
+> > -		e = __init_nat_entry(nm_i, new, NULL, true);
+> > +		init_dirty = true;
+> > +		e = __init_nat_entry(nm_i, new, NULL, true, true);
+> >  		copy_node_info(&e->ni, ni);
+> >  		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
+> >  	} else if (new_blkaddr == NEW_ADDR) {
+> > @@ -498,7 +517,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+> >  	nat_set_blkaddr(e, new_blkaddr);
+> >  	if (!__is_valid_data_blkaddr(new_blkaddr))
+> >  		set_nat_flag(e, IS_CHECKPOINTED, false);
+> > -	__set_nat_cache_dirty(nm_i, e);
+> > +	__set_nat_cache_dirty(nm_i, e, init_dirty);
+> >  
+> >  	/* update fsync_mark if its inode nat entry is still alive */
+> >  	if (ni->nid != ni->ino)
+> > @@ -2924,6 +2943,7 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+> >  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> >  	struct f2fs_journal *journal = curseg->journal;
+> >  	int i;
+> > +	bool init_dirty;
+> >  
+> >  	down_write(&curseg->journal_rwsem);
+> >  	for (i = 0; i < nats_in_cursum(journal); i++) {
+> > @@ -2934,12 +2954,15 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+> >  		if (f2fs_check_nid_range(sbi, nid))
+> >  			continue;
+> >  
+> > +		init_dirty = false;
+> > +
+> >  		raw_ne = nat_in_journal(journal, i);
+> >  
+> >  		ne = __lookup_nat_cache(nm_i, nid, true);
+> >  		if (!ne) {
+> > +			init_dirty = true;
+> >  			ne = __alloc_nat_entry(sbi, nid, true);
+> > -			__init_nat_entry(nm_i, ne, &raw_ne, true);
+> > +			__init_nat_entry(nm_i, ne, &raw_ne, true, true);
+> >  		}
+> >  
+> >  		/*
+> > @@ -2954,7 +2977,7 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+> >  			spin_unlock(&nm_i->nid_list_lock);
+> >  		}
+> >  
+> > -		__set_nat_cache_dirty(nm_i, ne);
+> > +		__set_nat_cache_dirty(nm_i, ne, init_dirty);
+> >  	}
+> >  	update_nats_in_cursum(journal, -i);
+> >  	up_write(&curseg->journal_rwsem);
 
 
