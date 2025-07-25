@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-745455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FA3B11A37
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:48:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D667B11A3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4F31CE114D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:48:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931BD1707B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999601F2BA4;
-	Fri, 25 Jul 2025 08:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1332459E1;
+	Fri, 25 Jul 2025 08:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miHprvFx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="IfN/1RrF"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96D1FC3;
-	Fri, 25 Jul 2025 08:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8548A1F2BA4
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753433300; cv=none; b=US9+J1i8HSbm278rHoFt0ZdIkZ/hp8Bj/v4qOg3+qb2ak25o9tsGbxrSbjVhXOtPDlbv9GHdXRWHkuWvotOTdaT4NpYLNhuolHEX9xLmgPFAxNUvZf0na4Q6WxnSMIb64/LaX3cmPmVa0mdyzYXFKpTXCzBLmz9k1djvO0C4UsI=
+	t=1753433347; cv=none; b=k967s+2ya4ONUQlZh7HQofJOH7lHBin+8jixKwQs3i8c+azrRXbAaiN6utc2PkI36gGSzZuEq3NAGrH7VGRtwudWr9yYPncsoafVsK41Jq/itO5WWpsReCSw0BYI6D99toXB51Vrp9wi7poZKadzMhTugi+vOTffeRbUaueY9so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753433300; c=relaxed/simple;
-	bh=EwAtmyR0kMv8l1AdAG5vtKyOKjmw06VLhEKfxX4RGTo=;
+	s=arc-20240116; t=1753433347; c=relaxed/simple;
+	bh=mLb2N9Sk52gxfDFaR98oVbkimyev4kEyhPLHisBUWOk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RClqt1GEO4o4K3OY6e/rrKZbDXkUQfSV4l6rIiTRSk9ELZ/Q0fLz/zQwt6U+fipK1ntx0ZFbv1EMMdhE3J/cwkBTnWCj+TiUXlwi8bDabA+No3/WKrv3VX8FocZ1eTZRc9A6xyPT7scogfp1W5bRc7GxdPAnul33i6yVH4mEv5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miHprvFx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD714C4CEE7;
-	Fri, 25 Jul 2025 08:48:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753433298;
-	bh=EwAtmyR0kMv8l1AdAG5vtKyOKjmw06VLhEKfxX4RGTo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=miHprvFxB1dhNx7Nz1jlGp0x8mhCM6iRCsrt3AylbwU1UUvSubjMo55u3Rp7Hs6Lo
-	 RmpZHj2X/66IwdiWQgw9/uLJIMvdtpPvWI79bjqxSziNB4f5dkgDMaDOCr1xfnNX46
-	 pYm4U9vQW0C1ThFCoSbvC2TRdZ/3WNbTLv6EtluQP5az9X8gUXg03dL+5TIHM2DfeZ
-	 ofG/i4zJE0tYCxh+45puhjvKij8UPX8lSwhqFhrMaMn/gJzEHs9BXNmwTSA43Z9iGS
-	 o5qWTbZ+vR9InSC8E3Uv3fOOs/C8Eu3jP0j9ptw7ibd5zFaqH3IcvA9ezgYab08wy2
-	 J/ck/mO26/X9A==
-Message-ID: <1635e663-24b6-48f8-b781-67284d832db7@kernel.org>
-Date: Fri, 25 Jul 2025 10:48:14 +0200
+	 In-Reply-To:Content-Type; b=AxCpHpvtxYzv6cDc9jiDkdhUp+8f/w/5Rawa/wG028wt8Qp+4jeteVhRxdOuQIPkAVvoPb4ANv3AzJJkAjiCNdioTkm2JDgFV1EIpEhdJsDWyjzgfR0a5s2EZlEW+uJD9Nh3CzRalnDQAGbL0M+xfHVy2Q7w55lIHSLZp7rDtFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=IfN/1RrF; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6097d144923so4174356a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:49:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1753433343; x=1754038143; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wbgBxVqvuAaSCTHnKyGAvWS3c7FK3JV6irIi80dt/AA=;
+        b=IfN/1RrFygL+ZxwARMQ11mpRaZn4LauNY1cGiOE5F55rnCEbD3nsumjGn3dWlocqXO
+         9qmco4aZkXo0tcAqEKNc5ClmKQbLBNRMJXNy7MFwB9v1U+84WCz94nGqaln5Rs+OPnEv
+         nMySxJomILi2wJ92QbSwEja4a0LHsT+USdTa9EqGgn0TBxLvS9uRZD4IMVA8dFVnc0Wn
+         y+0Gho9j986qI5NuTNYeIXKihMbLurHQPodqF+fjOy/CcYXjyD46S0DRJJjV9DNpdBIR
+         gxe9lf496P2+ygJi+AOL3yLWyXwIs/DML8DyDXarWhv4NOXvpNPyZNNToTbXI6tfAkDz
+         5G4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753433343; x=1754038143;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wbgBxVqvuAaSCTHnKyGAvWS3c7FK3JV6irIi80dt/AA=;
+        b=FxRkMJv3UCks11+gRR7/pcyc5PkB5ejBEZw76dpY1UBZrQY0ukYlq68yFf85jGk0My
+         6q23F/e1K5llkbHfTDF36XXv5MwomyhO5XKqRdgqzKtwc3566VB+pbC7m8+6OfPaPrEx
+         xiSNu3RWrrUo2mUuzllr7bWNBrdXH6hPadVLR505LGSj4I3n+3llEi6waLoVQRz8ftiD
+         vOq7l3dUxashYM/cDJTfJBR57/4xFcElw/PXmzM5tcFEXsECp2yNPlO6OyAaokb0J/h6
+         o/Zpb+5cSPbFcHDbNJFutqn/y83z6G44EPUpNrg8eZsVAs115EGHB+/z95DmmXV0MVxf
+         XQSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlrvy4OGJZ+yDsgqEd2uMvXnwR3uowzmYLfDxseswESknmEWCL1wPTTK8QmN3Kz2CeuYiAcKpRnskI70I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7bOkpt7MCGnWnw+0L1g+0cf14/aMpsDM6J/cBRZdY7ASd0ci1
+	ON9iArohAyeG6vcR9K+s+vHxUfYsV6EJ2DBWzQpYW+dLxowvoDhNfaTLQIATfCpwRXo=
+X-Gm-Gg: ASbGncuZCKw41xbgB5egAvegfjVGbToWVQYvvbz2B3BidPLIErqBrsshxDhq7Q35yPy
+	j69YuIn9HL8L3CCio2HbZzqP1mk//flA8Q5rFgtY+Vhkii0rzryjLaYm07iGAgjfrGUO3pmVm/W
+	UVInWkc7Bkr4iu39B4WDaJtulwQHRmWfdppJIcjp/FMSoN5khRCb4g5Tjk256uf3ES9V+SVNV/8
+	Chfx357PovI8XbypUnFq3QyN6v4Iu8/Z4qBcAePePX00pr+u2d9tfOOTh9eE9Ku/Nhamm0MkBdG
+	0moKmPda5sCCG1/26deN625PcovVbAQ10mKrkX4hPx2s2UViwSbzw8+FS3wLkCveoi7ilaQ5lAS
+	t2swMBfdLNmgjsSO+fqQRBkZMSlHbFb4mIBqTMbOc6rysh32hb0xWtyUeX2E2fBwT
+X-Google-Smtp-Source: AGHT+IGp/h33UX4VuxGPj+pY0fYttSnIKhYoSPyGHW4EMhc9+8Q1n1iPPrKA8O8mMIX/IrOuoIiu3w==
+X-Received: by 2002:a05:6402:50cb:b0:607:2e08:f3e6 with SMTP id 4fb4d7f45d1cf-614f05f6207mr1099160a12.17.1753433342161;
+        Fri, 25 Jul 2025 01:49:02 -0700 (PDT)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-614cd336253sm1883539a12.65.2025.07.25.01.49.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 01:49:01 -0700 (PDT)
+Message-ID: <367f9bbb-537b-4828-b8c8-cfc9d8ca8c2c@blackwall.org>
+Date: Fri, 25 Jul 2025 11:49:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,96 +81,258 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clocksource/drivers/exynos_mct: Fix section mismatch from
- the module conversion
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de,
- willmcvicker@google.com
-Cc: linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-samsung-soc@vger.kernel.org>
-References: <20250620181719.1399856-6-willmcvicker@google.com>
- <20250715121834.2059191-1-daniel.lezcano@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net 1/2] bonding: send LACPDUs periodically in passive
+ mode after receiving partner's LACPDU
+To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Petr Machata <petrm@nvidia.com>,
+ Amit Cohen <amcohen@nvidia.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Alessandro Zanni <alessandro.zanni87@gmail.com>, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250725062848.18889-1-liuhangbin@gmail.com>
+ <20250725062848.18889-2-liuhangbin@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250715121834.2059191-1-daniel.lezcano@linaro.org>
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20250725062848.18889-2-liuhangbin@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/07/2025 14:18, Daniel Lezcano wrote:
-> The function register_current_timer_delay() when compiling on ARM32
-> fails with a section mismatch. That is resulting from the module
-> conversion where the function exynos4_clocksource_init() is called
-> from mct_init_dt(). This one had its __init annotation removed to for
-> the module loading.
+On 7/25/25 09:28, Hangbin Liu wrote:
+> When `lacp_active` is set to `off`, the bond operates in passive mode, meaning
+> it only "speaks when spoken to." However, the current kernel implementation
+> only sends an LACPDU in response when the partner's state changes.
 > 
-> Fix this by adding the __init_or_module annotation for the functions:
->  - mct_init_dt()
->  - mct_init_spi()
->  - mct_init_dt()
+> As a result, once LACP negotiation succeeds, the actor stops sending LACPDUs
+> until the partner times out and sends an "expired" LACPDU. This causes
+> continuous LACP state flapping.
 > 
-> Compiled on ARM32 + MODULES=no, ARM64 + MODULES=yes, ARM64 +
-> MODULES=no
+> According to IEEE 802.1AX-2014, 6.4.13 Periodic Transmission machine. The
+> values of Partner_Oper_Port_State.LACP_Activity and
+> Actor_Oper_Port_State.LACP_Activity determine whether periodic transmissions
+> take place. If either or both parameters are set to Active LACP, then periodic
+> transmissions occur; if both are set to Passive LACP, then periodic
+> transmissions do not occur.
 > 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> To comply with this, we remove the `!bond->params.lacp_active` check in
+> `ad_periodic_machine()`. Instead, we initialize the actor's port's
+> `LACP_STATE_LACP_ACTIVITY` state based on `lacp_active` setting.
+> 
+> Additionally, we avoid setting the partner's state to
+> `LACP_STATE_LACP_ACTIVITY` in the EXPIRED state, since we should not assume
+> the partner is active by default.
+> 
+> This ensures that in passive mode, the bond starts sending periodic LACPDUs
+> after receiving one from the partner, and avoids flapping due to inactivity.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+
+Shouldn't the fixes tag be lacp_active commit id?
+E.g. 3a755cd8b7c6 ("bonding: add new option lacp_active")
+
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 > ---
->  drivers/clocksource/exynos_mct.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/net/bonding/bond_3ad.c     | 72 ++++++++++++++++++++++--------
+>  drivers/net/bonding/bond_options.c |  1 +
+>  include/net/bond_3ad.h             |  1 +
+>  3 files changed, 56 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
+> index 2fca8e84ab10..aa64b397bb19 100644
+> --- a/drivers/net/bonding/bond_3ad.c
+> +++ b/drivers/net/bonding/bond_3ad.c
+> @@ -95,13 +95,13 @@ static int ad_marker_send(struct port *port, struct bond_marker *marker);
+>  static void ad_mux_machine(struct port *port, bool *update_slave_arr);
+>  static void ad_rx_machine(struct lacpdu *lacpdu, struct port *port);
+>  static void ad_tx_machine(struct port *port);
+> -static void ad_periodic_machine(struct port *port, struct bond_params *bond_params);
+> +static void ad_periodic_machine(struct port *port);
+>  static void ad_port_selection_logic(struct port *port, bool *update_slave_arr);
+>  static void ad_agg_selection_logic(struct aggregator *aggregator,
+>  				   bool *update_slave_arr);
+>  static void ad_clear_agg(struct aggregator *aggregator);
+>  static void ad_initialize_agg(struct aggregator *aggregator);
+> -static void ad_initialize_port(struct port *port, int lacp_fast);
+> +static void ad_initialize_port(struct port *port, struct bond_params *bond_params);
+>  static void ad_enable_collecting(struct port *port);
+>  static void ad_disable_distributing(struct port *port,
+>  				    bool *update_slave_arr);
+> @@ -1307,10 +1307,16 @@ static void ad_rx_machine(struct lacpdu *lacpdu, struct port *port)
+>  			 * case of EXPIRED even if LINK_DOWN didn't arrive for
+>  			 * the port.
+>  			 */
+> -			port->partner_oper.port_state &= ~LACP_STATE_SYNCHRONIZATION;
+>  			port->sm_vars &= ~AD_PORT_MATCHED;
+> +			/* Based on IEEE 8021AX-2014, Figure 6-18 - Receive
+> +			 * machine state diagram, the statue should be
+> +			 * Partner_Oper_Port_State.Synchronization = FALSE;
+> +			 * Partner_Oper_Port_State.LACP_Timeout = Short Timeout;
+> +			 * start current_while_timer(Short Timeout);
+> +			 * Actor_Oper_Port_State.Expired = TRUE;
+> +			 */
+> +			port->partner_oper.port_state &= ~LACP_STATE_SYNCHRONIZATION;
+>  			port->partner_oper.port_state |= LACP_STATE_LACP_TIMEOUT;
+> -			port->partner_oper.port_state |= LACP_STATE_LACP_ACTIVITY;
+>  			port->sm_rx_timer_counter = __ad_timer_to_ticks(AD_CURRENT_WHILE_TIMER, (u16)(AD_SHORT_TIMEOUT));
+>  			port->actor_oper_port_state |= LACP_STATE_EXPIRED;
+>  			port->sm_vars |= AD_PORT_CHURNED;
+> @@ -1417,11 +1423,10 @@ static void ad_tx_machine(struct port *port)
+>  /**
+>   * ad_periodic_machine - handle a port's periodic state machine
+>   * @port: the port we're looking at
+> - * @bond_params: bond parameters we will use
+>   *
+>   * Turn ntt flag on priodically to perform periodic transmission of lacpdu's.
+>   */
+> -static void ad_periodic_machine(struct port *port, struct bond_params *bond_params)
+> +static void ad_periodic_machine(struct port *port)
+>  {
+>  	periodic_states_t last_state;
+>  
+> @@ -1430,8 +1435,7 @@ static void ad_periodic_machine(struct port *port, struct bond_params *bond_para
+>  
+>  	/* check if port was reinitialized */
+>  	if (((port->sm_vars & AD_PORT_BEGIN) || !(port->sm_vars & AD_PORT_LACP_ENABLED) || !port->is_enabled) ||
+> -	    (!(port->actor_oper_port_state & LACP_STATE_LACP_ACTIVITY) && !(port->partner_oper.port_state & LACP_STATE_LACP_ACTIVITY)) ||
+> -	    !bond_params->lacp_active) {
+> +	    (!(port->actor_oper_port_state & LACP_STATE_LACP_ACTIVITY) && !(port->partner_oper.port_state & LACP_STATE_LACP_ACTIVITY))) {
+>  		port->sm_periodic_state = AD_NO_PERIODIC;
+>  	}
+>  	/* check if state machine should change state */
+> @@ -1955,16 +1959,16 @@ static void ad_initialize_agg(struct aggregator *aggregator)
+>  /**
+>   * ad_initialize_port - initialize a given port's parameters
+>   * @port: the port we're looking at
+> - * @lacp_fast: boolean. whether fast periodic should be used
+> + * @bond_params: bond parameters we will use
+>   */
+> -static void ad_initialize_port(struct port *port, int lacp_fast)
+> +static void ad_initialize_port(struct port *port, struct bond_params *bond_params)
+>  {
+>  	static const struct port_params tmpl = {
+>  		.system_priority = 0xffff,
+>  		.key             = 1,
+>  		.port_number     = 1,
+>  		.port_priority   = 0xff,
+> -		.port_state      = 1,
+> +		.port_state      = 0,
 
-Did anyone applied this or any other fix?
+1 == LACP_STATE_ACTIVITY :)
+Just noting that this lets LACP_STATE_ACTIVITY to be set based on lacp_active.
 
-Next builds are still broken.
-https://krzk.eu/#/builders/12/builds/3365
+>  	};
+>  	static const struct lacpdu lacpdu = {
+>  		.subtype		= 0x01,
+> @@ -1982,12 +1986,14 @@ static void ad_initialize_port(struct port *port, int lacp_fast)
+>  		port->actor_port_priority = 0xff;
+>  		port->actor_port_aggregator_identifier = 0;
+>  		port->ntt = false;
+> -		port->actor_admin_port_state = LACP_STATE_AGGREGATION |
+> -					       LACP_STATE_LACP_ACTIVITY;
+> -		port->actor_oper_port_state  = LACP_STATE_AGGREGATION |
+> -					       LACP_STATE_LACP_ACTIVITY;
+> +		port->actor_admin_port_state = LACP_STATE_AGGREGATION;
+> +		port->actor_oper_port_state  = LACP_STATE_AGGREGATION;
+> +		if (bond_params->lacp_active) {
+> +			port->actor_admin_port_state |= LACP_STATE_LACP_ACTIVITY;
+> +			port->actor_oper_port_state  |= LACP_STATE_LACP_ACTIVITY;
+> +		}
+>  
+> -		if (lacp_fast)
+> +		if (bond_params->lacp_fast)
+>  			port->actor_oper_port_state |= LACP_STATE_LACP_TIMEOUT;
+>  
+>  		memcpy(&port->partner_admin, &tmpl, sizeof(tmpl));
+> @@ -2201,7 +2207,7 @@ void bond_3ad_bind_slave(struct slave *slave)
+>  		/* port initialization */
+>  		port = &(SLAVE_AD_INFO(slave)->port);
+>  
+> -		ad_initialize_port(port, bond->params.lacp_fast);
+> +		ad_initialize_port(port, &bond->params);
+>  
+>  		port->slave = slave;
+>  		port->actor_port_number = SLAVE_AD_INFO(slave)->id;
+> @@ -2513,7 +2519,7 @@ void bond_3ad_state_machine_handler(struct work_struct *work)
+>  		}
+>  
+>  		ad_rx_machine(NULL, port);
+> -		ad_periodic_machine(port, &bond->params);
+> +		ad_periodic_machine(port);
+>  		ad_port_selection_logic(port, &update_slave_arr);
+>  		ad_mux_machine(port, &update_slave_arr);
+>  		ad_tx_machine(port);
+> @@ -2883,6 +2889,36 @@ void bond_3ad_update_lacp_rate(struct bonding *bond)
+>  	spin_unlock_bh(&bond->mode_lock);
+>  }
+>  
+> +/**
+> + * bond_3ad_update_lacp_active - change the lacp active
+> + * @bond: bonding struct
+> + *
+> + * When modify lacp_active parameter via sysfs,
+> + * update actor_oper_port_state of each port.
 
-Please revert untested patches if there is no consensus for fixes
+It could also be netlink, right? I'd just say something like:
+Update actor_oper_port_state when lacp_active is modified.
 
-It's really surprising that original patchset was not even built by
-defconfigs (and I assume it was not even asked to be built by LKP).
+> + *
+> + * Hold bond->mode_lock,
+> + * so we can modify port->actor_oper_port_state,
+> + * no matter bond is up or down.
 
-Best regards,
-Krzysztof
+nit: this last part about bond up/down is unnecessary
+
+> + */
+> +void bond_3ad_update_lacp_active(struct bonding *bond)
+> +{
+> +	struct port *port = NULL;
+> +	struct list_head *iter;
+> +	struct slave *slave;
+> +	int lacp_active;
+> +
+> +	lacp_active = bond->params.lacp_active;
+> +	spin_lock_bh(&bond->mode_lock);
+> +	bond_for_each_slave(bond, slave, iter) {
+> +		port = &(SLAVE_AD_INFO(slave)->port);
+> +		if (lacp_active)
+> +			port->actor_oper_port_state |= LACP_STATE_LACP_ACTIVITY;
+> +		else
+> +			port->actor_oper_port_state &= ~LACP_STATE_LACP_ACTIVITY;
+> +	}
+> +	spin_unlock_bh(&bond->mode_lock);
+> +}
+> +
+>  size_t bond_3ad_stats_size(void)
+>  {
+>  	return nla_total_size_64bit(sizeof(u64)) + /* BOND_3AD_STAT_LACPDU_RX */
+> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+> index 1d639a3be6ba..3b6f815c55ff 100644
+> --- a/drivers/net/bonding/bond_options.c
+> +++ b/drivers/net/bonding/bond_options.c
+> @@ -1660,6 +1660,7 @@ static int bond_option_lacp_active_set(struct bonding *bond,
+>  	netdev_dbg(bond->dev, "Setting LACP active to %s (%llu)\n",
+>  		   newval->string, newval->value);
+>  	bond->params.lacp_active = newval->value;
+> +	bond_3ad_update_lacp_active(bond);
+
+To me it looks like this fix needs to be in a separate patch.
+
+>  
+>  	return 0;
+>  }
+> diff --git a/include/net/bond_3ad.h b/include/net/bond_3ad.h
+> index 2053cd8e788a..dba369a2cf27 100644
+> --- a/include/net/bond_3ad.h
+> +++ b/include/net/bond_3ad.h
+> @@ -307,6 +307,7 @@ int bond_3ad_lacpdu_recv(const struct sk_buff *skb, struct bonding *bond,
+>  			 struct slave *slave);
+>  int bond_3ad_set_carrier(struct bonding *bond);
+>  void bond_3ad_update_lacp_rate(struct bonding *bond);
+> +void bond_3ad_update_lacp_active(struct bonding *bond);
+>  void bond_3ad_update_ad_actor_settings(struct bonding *bond);
+>  int bond_3ad_stats_fill(struct sk_buff *skb, struct bond_3ad_stats *stats);
+>  size_t bond_3ad_stats_size(void);
+
 
