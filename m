@@ -1,204 +1,149 @@
-Return-Path: <linux-kernel+bounces-745439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CCAB11A02
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:35:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FD4B119CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA253B0CA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:34:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CD185A165A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9060D2BF019;
-	Fri, 25 Jul 2025 08:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD582BEC41;
+	Fri, 25 Jul 2025 08:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qWl2gG8p"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2044.outbound.protection.outlook.com [40.107.212.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aPKnR/7i"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE9F2940D;
-	Fri, 25 Jul 2025 08:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753432500; cv=fail; b=YxXfbFIlqD1p1rVMhIqNwVijlDlJFLD0Jh0FOv28QQIIddyEsd0HM2FTPFK/Ef+4M+fWAUJFgRsgof16xporW0gCbvDuoS1SrCztMf/hZP3AGkn2giOlFB+DnJTdmpOqrakb3hy8FSgDrkQngRdSfhbL8OB4eOhDKoB617W02Yk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753432500; c=relaxed/simple;
-	bh=AMTlpviCMUHkMCG6jFqg9NKxXuCR0lpTKD86ofv30/Q=;
-	h=References:From:To:CC:Subject:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=UqxzGghHEYEOlgz4QuX+7LoUbWydqxV8FV0bkR81DT1/tptGatauJPggCRpnJpqJ0HMjb3VZh7V/vauZck0xYpVBLoHnlkqU8QZqp1xCgh6ocXtL3x3vjxNYGWm+MgFWn1MVmYOwxIK59FQl2xyXFHQe8WCWuqTFm4Sp748D7Ds=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qWl2gG8p; arc=fail smtp.client-ip=40.107.212.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dhvCH+yEaiLbUi0gvpcnX14Qg6Y1uP/3qzHHlghRWkdufBMdQauPMtDfnwmzhiRsET6Y7dmf+E+4DSomADXWauJke+848V376moFixiyLM/2ti2aV4TmWLMmFMvPNuhLc99EVnpx0r/VQ+etp1eYkAM4mbExuE8n0aQi0DgYuV+WobrE2RqHQCz8c2Z02WVKM6yydcIErkYSRNCR7ZlvnSjYE8m2NaSCWTsfUzWD0tycHKvDMdfbTrjCfQkVUx9mXZCM1GmprQPdXhUJ8SrvLD5/Kzagw43d25K1h0aUM1iO1U4ym11WK9Ox4aWgoNMFGrNxabvEjWXP5M422Hre+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LVocxqT5xa54LQ6I6UDhdU4fVWbs8xvKjunDqLd400w=;
- b=HH8Psob5xXgRnGwYG0xhU/y+YCwZbkJbhiW/4WfnccwZ0/m20LrgmIX7D5hjJIpzj/gtHsphpQjwkwQqO5Op5huJ77K4yDoNrN+WUyjowHKRMGrqdPpS8vYHXYF4IYIv8cz2to5pgj6L/Oi/J74M56mweDnWPcaB7WTmJ5buDqCV/zJxMfXd5AIMvQO3zhSdAiMAnBKU2JB1b1kz8nHYcC5ajdpCbZj96p046sMBd3nfAZ7mVMFghqgs1ecvYVdwa6k3rSHrFw5YKGQNXneLN6JBg9Jw7J7hy7FtYgevOtlKwRhcUMuKYMcwu6M4XNPIR++W/WfGPLpmYmISSkh8jQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LVocxqT5xa54LQ6I6UDhdU4fVWbs8xvKjunDqLd400w=;
- b=qWl2gG8px7ueyYceV/JSze5bP4eIN5U2gCF4Z97FtPQJosMeEUE5oyU288j+7groDLGSfqkuYWNMEZ2yvnwCMgaWrDJpIPaXCsfLQZZcnvRMmAuzZbjCR78zdk04dH+gqhAaby2XZZ8dJ9Edy9/JYCuOXxy4q1K0rc+9YPpAYZ0JkEdx3KL0BzmSdIIFJJUal+XiYbI/SjHLyVViPnU0vMT6cDJWu2k8kOvInQaD7nGvIaxnt19+JW8YLtbC7+DnRO9LjqC8Ozx/I9oWGAmr9ibnf9JIsXPjipxpDgUp8WZ2hszfFHblavHWXZn4+jHcj8YKCpaVDGu7SfPvlzSMHg==
-Received: from BN9PR03CA0045.namprd03.prod.outlook.com (2603:10b6:408:fb::20)
- by LV3PR12MB9438.namprd12.prod.outlook.com (2603:10b6:408:212::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Fri, 25 Jul
- 2025 08:34:53 +0000
-Received: from BN2PEPF00004FBE.namprd04.prod.outlook.com
- (2603:10b6:408:fb:cafe::59) by BN9PR03CA0045.outlook.office365.com
- (2603:10b6:408:fb::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.22 via Frontend Transport; Fri,
- 25 Jul 2025 08:34:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN2PEPF00004FBE.mail.protection.outlook.com (10.167.243.184) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.20 via Frontend Transport; Fri, 25 Jul 2025 08:34:53 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 25 Jul
- 2025 01:34:34 -0700
-Received: from fedora (10.126.230.35) by rnnvmail201.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 25 Jul
- 2025 01:34:27 -0700
-References: <20250709090344.88242-1-liuhangbin@gmail.com>
- <20250709090344.88242-3-liuhangbin@gmail.com>
- <6d4bbed3-472f-4002-abb9-47edf7743779@redhat.com>
- <aIGxI_ctF5RPEph8@fedora> <aIGykkgqktjgLvVI@fedora>
-User-agent: mu4e 1.8.14; emacs 29.4
-From: Petr Machata <petrm@nvidia.com>
-To: Hangbin Liu <liuhangbin@gmail.com>
-CC: Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>, Jay Vosburgh
-	<jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Nikolay Aleksandrov <razor@blackwall.org>, Simon Horman
-	<horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net 2/2] selftests: bonding: add test for passive LACP mode
-Date: Fri, 25 Jul 2025 10:27:48 +0200
-In-Reply-To: <aIGykkgqktjgLvVI@fedora>
-Message-ID: <87ikjgd5yq.fsf@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139912BEC33
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753432155; cv=none; b=IBl71wLSc+NYpRARCVOpDXDUMaGAqmnn8BA741ivJKFTSgLUoSzHhkw86YU8ftg8JLqU0wTUjHgWIoXrGRTf2wYY9g6IbLQ/42GKwJ/sdHdh3pko2QpxrNLgdkemNSoR/iuDrEYOlC9g730Zb9JT6285ImaZM5skCYsEBRBy6Pw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753432155; c=relaxed/simple;
+	bh=Gzfs8ekUj7A3y/LG9Rcdqmp5q5m+aBsb1GKoNaKBk5M=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=R8qngg86tSGzWD6xGb+VQ5oPSyxr+ZxQfbkIqVMaCwD48zw90kPrYMXsmHumnhjljhe6zHXwKRf8fozj7EGNEHQUPDXYgzKLHKUu3c2uvUzBXr1R3TjnmnURrDjaLKLpAjOBKZsEkSCNojVvOJ79oWO80/lVd9k4ZmTvuPr4JWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aPKnR/7i; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b3f7404710aso799598a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753432153; x=1754036953; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6SlG4p7PzGNJex+qeliN43z/Wd9scMaF4+MTCIpEF4U=;
+        b=aPKnR/7i/8GfvGb23PZssKWeCOQ+YnbUSDo8n1ymEHnN6VaBcDI388T00svNojF2/g
+         Zyy7DOCTSOoU8BDRdA8r55gt3ythmN08kfU6WJfwE9qqNIP35Cttqn3YbqxR57xa/+tq
+         cDkku3ER1wKUEBHjGbrNqIyfC0bYGPciqZKnT+mHKKfQ2B0mFxEYcZTPSu0Azrr9Y0gf
+         2S7b42Io2h+vJq/uRwFEa+6T+Ouu8EvDVRC2xVdhq93dvTPoFFdXt7YZkvu6NqOyLmkN
+         KPxCxl+LZDPvhw1i4w17M0t/dCq7xZVj8z2mnvLOvn682E1MdpediUziaFrRHqvUGwu/
+         Y4Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753432153; x=1754036953;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6SlG4p7PzGNJex+qeliN43z/Wd9scMaF4+MTCIpEF4U=;
+        b=EGqqGwVY/wAVn4WyBTe9IF3TYDqZ0CQ4tYCwzmrLXmomqMe0qcJAPSTq/SS9RNr+RD
+         ko6hs5N3wvLUw2dn2zGNmR6ZpHBw5KijaDs1is2JHJY8j8vR9Ies+O2XWnGVqr7g2icS
+         YYv0b4R3sw/2tFJ9gBZPhqn+FP2yF91jvl7PN2wlEZi/GsEON8vRsmigvz+XA8WM5HzI
+         TaGoqSe2YUBGWs05nQ4BffN0m/NPPvXtB7/h5Hetx6+yFtWUzdLrrN3RjF9dhjv1p6mQ
+         GyBwQ8cQvO9vTkd18Si2BjnaXucOW3sM1OjEy5f0qfnmqJPgu9RjTT6Y2TdprLe+P/jk
+         q8HA==
+X-Forwarded-Encrypted: i=1; AJvYcCViI0ra9E7DMMcrpXRQit4v6xEF5NWHuLfAXMIPpbHwi5VpbNYzEfhgpD461rKRGmYykbnlayNS8s111v0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgvOEr9vLADi7T7CmRos0xCXQvxooaUOfRxV2Mcr3m8KcMhCAN
+	mw5fBJKbFv/gYPretAG51/nDcYPw0nOWoJEMAPmIpc2ZD7U4SyXX78zbk8/g4KjaL/RiaR8aUWJ
+	nVZXLui35jDwEkEKRHIBgjteXGKMz0lzVQJr0/er9sA==
+X-Gm-Gg: ASbGncs3mzb68SWB7ihvyi2AwY9OMv3CXh+kswMSHeN/E23k73tgmIgDet62Gis+SsL
+	35gwUWEqL9Ih9ocTKsEt6G+GfL50/s5K5J08WXq4+P9sfaAhDAFFgUy0Y/WX2YXAlkKZecs2sDX
+	srn3C8qYH7C8OOQ5Zol5ellJxG3KNIa6xhuC9u440GBAdQoeZB7lM40+tmTuWPcaOP4FkwJ6r8t
+	R8fum0rJv5mtAWORYsak4jZMcVuX7Y+vfSco4c=
+X-Google-Smtp-Source: AGHT+IFSOXd5d9LlBPfvNONAe739PRS1T7pG7hnn8qLMr/8kfPoBeVKvxu7CgmKTzBsjPnN0S5gW0/AjsKP4cqXAV5c=
+X-Received: by 2002:a17:902:ea0e:b0:234:c8f6:1b11 with SMTP id
+ d9443c01a7336-23fb3167767mr14742145ad.44.1753432153221; Fri, 25 Jul 2025
+ 01:29:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBE:EE_|LV3PR12MB9438:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ec48d5b-b522-42a4-600d-08ddcb56210c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?X5PLCuenFUkY3s9Xj0Gj8mr0B2pDKbT2l/UoNj18RaJqt3C9xOw0JrARWNP3?=
- =?us-ascii?Q?Lf4Ml2RFeEdfogVuWAeAsn4397vEFFTF9Q6cSInZsU+DPbao8CGox2sKML6u?=
- =?us-ascii?Q?Qnya0yPqJ4AsWqXZsQcJ2yhw7xOQjfiogV6ma6IWSAekEO9GbdW/8vgTuNNP?=
- =?us-ascii?Q?p8rck+mfDm4i6chNKVu1j2zsE08uhfXsfd/ot5m8SjWFt3eYPVcWfqUlsBhB?=
- =?us-ascii?Q?dxfniIakexf91NtLslT73i8utMLb89Ev0OhxF5uYGeryY0A7hEOtwL/jXHYz?=
- =?us-ascii?Q?VBQ2hP21/SBDdU7zBhiS0YpN1Ii0oqBQPERv7mLkEnOpKeGOmauFcn98mvXo?=
- =?us-ascii?Q?6gQqaNZ3JSSHY/4eFKxUE/IIX45J65jVljS8CKZeMIzgW3AoffVU7ql9uTE6?=
- =?us-ascii?Q?GrRQakHbnK35MqitlvNIGt5tX9gcIlqRoGUlygNUihQsUFv8qSOBFcu808HP?=
- =?us-ascii?Q?gcv9B8xosbPDkY2Qj+ZjkQUnU5XduRHWy8fOfZMOTTaXVXf6w/QKLUiuPeJO?=
- =?us-ascii?Q?DY6dvbqmwn5td9VAY93c0alAkanBI68Fq8cvPZyzPw7mO2pGn+go08hzYIo9?=
- =?us-ascii?Q?tVOAKyNiYne0JSw6V31y4R/CDKggqYdbSw140pUKDEy9jkYu6e/VEpMBfDTO?=
- =?us-ascii?Q?HeErPJzkaVwIHQYoykZ5JgAYNLPDKgw+uNzwwUapF6LH3x/28DLFPl1WCo15?=
- =?us-ascii?Q?up4HYZP3XePtmyRYPPoONLvI8fXn/GU1UxE2tO4qNdYyvPCSiDAOe7s4qjRY?=
- =?us-ascii?Q?wzypyYAKC7piXWz8KWnDxm2JTQNV+1IzC5waOcaPXn5+5oOWP1ABwsN5mUE3?=
- =?us-ascii?Q?X+PbJllxEdvwKn9FfuDB8lF0zg3lakH1X19I6n7GUyPa0VAD1kSbOyovDjDu?=
- =?us-ascii?Q?dxH++K1nlPEfxdQO8c8C782WgshfelfCiCU5qIMe+zj3yTElH3P3zBzTnihO?=
- =?us-ascii?Q?APzi6V3l5DqOI2hs5PWnARB0v/2YdO1asOIwnWyTCAE8ewTNsVxNfOZ7jh8z?=
- =?us-ascii?Q?V1FtBDKaK4F9tFW3M8QlSNCCdFFX9yDT63BHjQMAUVB+QvFUqBrkXlHzSUsV?=
- =?us-ascii?Q?ew2bxt4WSOqrpQ3sCvruHASev7UTS9suVxGN5hxf2ngXdARLMJA7b3PJkl4p?=
- =?us-ascii?Q?2jq3zANQPJjl0f4AZP59V0uBgayW50bm5cDdYMe8ISo1Kzd2JPil1HYfOmiP?=
- =?us-ascii?Q?0nsg2l1e/ALB+YBQumDKEu5EeixWxvgamIAsqMEaz1pyolp0YtEyRTe/y4Ve?=
- =?us-ascii?Q?6RLJS6nMAtzGJwevW9spG0NJT8Sg5EElMnfn4+b8qDkR1FRSqm0WMu+zGWn3?=
- =?us-ascii?Q?YIK+/GZVFRlTC/oF4I+MkpSohhizPLQ8d7elN5+e6JjLh9svzOZ8r02iZOqK?=
- =?us-ascii?Q?lpzdOF8LcCLSPK7slEbES7/1FrFahDQM00O9t3vW/ed2e422l9h0HyOWHqFO?=
- =?us-ascii?Q?j5M0giZe9ILx+uYD6HCH4iUNszvuuCL5OSYINjYJPq7AfXGB9F5qsU9ZLLRG?=
- =?us-ascii?Q?5hMhr0gQAtD/At4RenEh2xK5PjBxPRSkUAA6?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 08:34:53.6628
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ec48d5b-b522-42a4-600d-08ddcb56210c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FBE.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9438
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 25 Jul 2025 13:59:02 +0530
+X-Gm-Features: Ac12FXzWcEWmXcr7ADQOYVMNJ8JhbU_ZioQdsFR-c7JnlJg189CYfO6gbl9zBIk
+Message-ID: <CA+G9fYtBk8qnpWvoaFwymCx5s5i-5KXtPGpmf=_+UKJddCOnLA@mail.gmail.com>
+Subject: next-20250723 arm atags_to_fdt.c undefined reference to `__sanitizer_cov_stack_depth'
+To: Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, kees@kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Regressions noticed while building arm builds with gcc-13 and gcc-8
+toolchains on the Linux next-20250723 to next-20250725 tags.
 
-Hangbin Liu <liuhangbin@gmail.com> writes:
+First seen on the Linux next-20250723
+Good: next-20250722
+Bad:  next-20250723 and next-20250725
 
-> On Thu, Jul 24, 2025 at 04:06:03AM +0000, Hangbin Liu wrote:
->> On Tue, Jul 15, 2025 at 11:37:54AM +0200, Paolo Abeni wrote:
->> > > diff --git a/tools/testing/selftests/drivers/net/bonding/bond_passive_lacp.sh
->> > > b/tools/testing/selftests/drivers/net/bonding/bond_passive_lacp.sh
->> > > new file mode 100755
->> > > index 000000000000..4cf8a5999aaa
->> > > --- /dev/null
->> > > +++ b/tools/testing/selftests/drivers/net/bonding/bond_passive_lacp.sh
->> > > @@ -0,0 +1,21 @@
->> > > +#!/bin/sh
->> > > +# SPDX-License-Identifier: GPL-2.0
->> > > +#
->> > > +# Testing if bond works with lacp_active = off
->> > > +
->> > > +lib_dir=$(dirname "$0")
->> > > +source ${lib_dir}/bond_topo_lacp.sh
->> > 
->> > shellcheck is not super happy about 'source' usage:
->> > 
->> > In bond_passive_lacp.sh line 7:
->> > source ${lib_dir}/bond_topo_lacp.sh
->> > ^-- SC3046 (warning): In POSIX sh, 'source' in place of '.' is undefined.
->> > ^-- SC3051 (warning): In POSIX sh, 'source' in place of '.' is undefined.
->> > 
->> > either switch to '. ' or use bash instead of 'sh'.
->> 
->> Hi Paolo,
->> 
->> I updated the case and remove the source file bond_topo_lacp.sh.
->> Instead I source the forwarding lib directly like:
->> 
->> lib_dir=$(dirname "$0")
->> source "$lib_dir"/../../../net/forwarding/lib.sh
->> 
->> But this cause shell check unable to find the lib.sh as $lib_dir is get
->> dynamically. This usage is common in selftest. How should we resolves this
->> problem?
->
-> OK, I just disabled this warning.
->
-> # shellcheck disable=SC1091
+Regression Analysis:
+- New regression? Yes
+- Reproducibility? Yes
 
-I believe the point was only about using "." instead of "source". The
-following should have fixed it:
+## Build regressions
+* arm, build
+  - gcc-13-lkftconfig-hardening
+  - gcc-8-lkftconfig-hardening
 
-. ${lib_dir}/bond_topo_lacp.sh
+Build regression: next-20250723 arm atags_to_fdt.c undefined reference
+to `__sanitizer_cov_stack_depth'
 
-... or just use bash as the interpreter, I suspect lib.sh is not
-actually POSIX clean.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+arm-linux-gnueabihf-ld: arch/arm/boot/compressed/atags_to_fdt.o: in
+function `atags_to_fdt':
+arch/arm/boot/compressed/atags_to_fdt.c:135:(.text+0x118): undefined
+reference to `__sanitizer_cov_stack_depth'
+
+## Source
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Project: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250725/
+* Git sha: d7af19298454ed155f5cf67201a70f5cf836c842
+* Git describe: 6.16.0-rc7-next-20250725
+* kernel version: next-20250723 next-20250725
+* Architectures: arm
+* Toolchains: gcc-8 gcc-13
+* Kconfigs: hardening
+
+## Test
+* Test log: https://qa-reports.linaro.org/api/testruns/29244662/log_file/
+* Test details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250725/log-parser-build-gcc/general-ld-undefined-reference-undefined-reference-to-__sanitizer_cov_stack_depth/
+* Test history:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250725/testrun/29244662/suite/build/test/gcc-13-lkftconfig-hardening/history/
+* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/30LiHIefapv5cGlikeKrTz4lSKR
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/30LiHIefapv5cGlikeKrTz4lSKR/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/30LiHIefapv5cGlikeKrTz4lSKR/config
+
+## steps to reproduce
+   *  tuxmake --runtime podman --target-arch arm --toolchain gcc-13 \
+              --kconfig defconfig --kconfig-add
+https://gitlab.com/Linaro/lkft/kernel-fragments/-/raw/main/netdev.config
+\
+              --kconfig-add
+https://gitlab.com/Linaro/lkft/kernel-fragments/-/raw/main/systemd.config
+\
+              --kconfig-add CONFIG_ARM_LPAE=y \
+              --kconfig-add hardening.config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
