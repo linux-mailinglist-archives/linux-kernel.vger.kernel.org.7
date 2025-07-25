@@ -1,53 +1,82 @@
-Return-Path: <linux-kernel+bounces-745505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093AEB11AE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:34:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA4C5B11AE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D4D41702C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:34:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF8617C277
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0397E2D372E;
-	Fri, 25 Jul 2025 09:34:22 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.205.26])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FB22D1F44;
-	Fri, 25 Jul 2025 09:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.205.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD63F2D374E;
+	Fri, 25 Jul 2025 09:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="q0wHufda"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9412D322C;
+	Fri, 25 Jul 2025 09:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753436061; cv=none; b=GijI5TnKFupbIykWQ9asxzp2EwfwXGjVk74VwbZVKYGbvxzcCn2gVvxI+KLYSMTIi8LjjBvHB1s5xiyCD4cafCEFuqntOq+pXC9n7x9Zb8kLnnFDOeS04yx3J1dBijxJoLlq4tCZFOnBz/U3JXiJc5+XqdJcUqTx89o/+ojDc7c=
+	t=1753436107; cv=none; b=JxiqcHm8zxZb0y422JrAyqEkkdsc2fqTS0qlxrCaGQaO+Ko1SSo8XszSN9d7noNmh+VBbl4TPKonFrUeOWSX5YAP4GA7sdhLesdAtA7D8LAtKgA7l2Kk8sqzuE2GX4GXyy90pLB5Ol4yM9uXX+xB6NUwKYgISiaTz4cCqngJv9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753436061; c=relaxed/simple;
-	bh=sZUxaarIDUUaeZo79vCveIHsBRXqdVQike4WSVzQme4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=an7pNiGueq/21nFjFFBUad2t9VZ9IZglmeezM09P9u/ET3N+cmiQybK3zm+QR+gHWWAS13Q2JsMg5kBNjDxzh9oU7Dr2KsuDKsMtS+QPgezZmM3ej3GsnTtbUMzeZQQCq2x6gSXUHuqa6p5g73IKEqscGFmqh4XZCZgfUbqYtII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=52.229.205.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app1 (Coremail) with SMTP id TAJkCgBHaxGJT4No+Ba3AA--.55008S2;
-	Fri, 25 Jul 2025 17:34:04 +0800 (CST)
-From: dongxuyang@eswincomputing.com
-To: p.zabel@pengutronix.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Xuyang Dong <dongxuyang@eswincomputing.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v5 1/2] dt-bindings: reset: eswin: Documentation for eic7700 SoC
-Date: Fri, 25 Jul 2025 17:34:00 +0800
-Message-Id: <20250725093400.724-1-dongxuyang@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20250725093249.669-1-dongxuyang@eswincomputing.com>
-References: <20250725093249.669-1-dongxuyang@eswincomputing.com>
+	s=arc-20240116; t=1753436107; c=relaxed/simple;
+	bh=xJFDqfihKhSVrbq66CEMQR4L+rbjVhnQMnLN6LQ2ZU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TqEmY3WhAVpXmYglJGWiLnTPvgCvBrWMFNQj3PnLSq6wfAlYbww1vqliUCgDsj4EgTdENbKrmqf1ceYQJEy0HJiAVB4MGlEuy2UHHZ3EdHCt9J3XPu1aV/7M13T3j21iNblHWZB4LWDriJo5iB23lyK4t7WXL+BSKM1WzW18dDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=q0wHufda; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OM9FoN023954;
+	Fri, 25 Jul 2025 09:35:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=5dBPYbVmCl7k/jVbj1N9uhGvhjb0Y/pJg2vGVLEW/
+	ec=; b=q0wHufdag8Lfl5ggh/71T7SgtvB7GQLl6Ci/UTYt0Thry/RsF7CamnPVU
+	iDS0ghKD6Aut6waO6Ph+ioU2xsu+Xos0+tAfDI0CieTrQblZREgl/OkWnfj/0Ugn
+	C3JIqPvb+f42t16v5QliWk/NuJ/2fkFANjEHBkzffqMMUvj/23VnzdhOxHi1SFKD
+	NRgeL1ruhaz+glubcshsZhfJlgHZKCt/sRi+p1BfiRNMRj1yZhE8WoqYJwOqvas9
+	R4KX7acB7x2tP6MCrmfMr+Y2l4RK3mJDlxUPmX0bp5fi1pSSZnpPPo1MSd81N1Hf
+	CFs2OCydzcRBZ3cYs+Bkj/WCnxs4w==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 483wcht87v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 09:35:02 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56P5V3WM024985;
+	Fri, 25 Jul 2025 09:35:01 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 480rd2rmv0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 09:35:01 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56P9Yv0A31982326
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Jul 2025 09:34:57 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C19362004D;
+	Fri, 25 Jul 2025 09:34:57 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 91CB22004B;
+	Fri, 25 Jul 2025 09:34:57 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 25 Jul 2025 09:34:57 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+        bpf@vger.kernel.org
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, japo@linux.ibm.com,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>
+Subject: [PATCH bpf] libbpf: eBPF fails on events with auxiliary data
+Date: Fri, 25 Jul 2025 11:34:05 +0200
+Message-ID: <20250725093405.3629253-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,393 +84,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgBHaxGJT4No+Ba3AA--.55008S2
-X-Coremail-Antispam: 1UD129KBjvAXoW3Aw1xAF1ktF4xKF13Jw18Xwb_yoW8GF1xuo
-	WrGFnxJw4UK34IvrZIkw1xW398Cw4xtr1UXrWYq34ftrn7Jr1DKrykArW0grW3trWj9r15
-	Cw4kK3srCrWYkFWrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
-	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
-	x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
-	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42
-	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
-	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI4
-	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
-	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
-	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUrdb1DUUUU
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA3NyBTYWx0ZWRfX+ZENGg3ptU20
+ mJ+2lhkM4SOyVbsL0g5gvB/k3MUtchsRh2/xOa4AQUDCo7N0bz4heh98c0kwesGKcYftbNZMA4S
+ UzuCzziA78Ro8WYtj8q9jjwSHHMg0AtTr/r5Pd1x/2iU6IxKvlI/wzBGoS3qIb8b+7XHkInRHba
+ jhTsD7wV9LKAPVMe3j45dO4b5ze7jgDtDqOxNRtZaaqNVrCp6ynjJpE0BEZpLvYbGw2WXxiSi8/
+ D5gdspoymyUZo4z+ah6liMoue1G9r7B5V4ZcZqvkw6o1LPWwP5cM3zhvEQ0XV3iPWDRt3RZdcda
+ dS8cfKRSXMvV4SJiO52XM3nwaKtShCWKnoj0IISFzJKp8qGKJcgZtgOSmEBQ7jgJy2EAdQESQHl
+ NZ+CrTVneiEUoz5zlHdVwcArgZ8nLm0MoS0/7LstywNS9E0rcmOQf7jC19mv1SE3uQHDCHEA
+X-Proofpoint-GUID: Dm9ofB6kYIjI7E2hbV3DEdJb_nQDepIs
+X-Proofpoint-ORIG-GUID: Dm9ofB6kYIjI7E2hbV3DEdJb_nQDepIs
+X-Authority-Analysis: v=2.4 cv=G+ccE8k5 c=1 sm=1 tr=0 ts=68834fc6 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=Wb1JkmetP80A:10 a=FOH2dFAWAAAA:8 a=1XWaLZrsAAAA:8 a=VnNF1IyMAAAA:8
+ a=_RghCZ_K9Bj0KFtpOxAA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 suspectscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ impostorscore=0 mlxscore=0 adultscore=0 priorityscore=1501 clxscore=1011
+ malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507250077
 
-From: Xuyang Dong <dongxuyang@eswincomputing.com>
+On linux-next
+commit b4c658d4d63d61 ("perf target: Remove uid from target")
+introduces a regression on s390. In fact the regression exists
+on all platforms when the event supports auxiliary data gathering.
 
-Add device tree binding documentation and header file for the ESWIN
-eic7700 reset controller module.
+Command
+   # ./perf record -u 0 -aB --synth=no -- ./perf test -w thloop
+   [ perf record: Woken up 1 times to write data ]
+   [ perf record: Captured and wrote 0.011 MB perf.data ]
+   # ./perf report --stats | grep SAMPLE
+   #
 
-Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+does not generate samples in the perf.data file.
+On x86 command 
+  # sudo perf record -e intel_pt// -u 0 ls
+is broken too.
+
+Looking at the sequence of calls in 'perf record' reveals this
+behavior:
+1. The event 'cycles' is created and enabled:
+   record__open()
+   +-> evlist__apply_filters()
+       +-> perf_bpf_filter__prepare()
+	   +-> bpf_program.attach_perf_event()
+	       +-> bpf_program.attach_perf_event_opts()
+	           +-> __GI___ioctl(..., PERF_EVENT_IOC_ENABLE, ...)
+   The event 'cycles' is enabled and active now. However the event's
+   ring-buffer to store the samples generated by hardware is not
+   allocated yet. This happens now after enabling the event:
+
+2. The event's fd is mmap() to create the ring buffer:
+   record__open()
+   +-> record__mmap()
+       +-> record__mmap_evlist()
+	   +-> evlist__mmap_ex()
+	       +-> perf_evlist__mmap_ops()
+	           +-> mmap_per_cpu()
+	               +-> mmap_per_evsel()
+	                   +-> mmap__mmap()
+	                       +-> perf_mmap__mmap()
+	                           +-> mmap()
+
+   This allocates the ring-buffer for the event 'cycles'.  With mmap()
+   the kernel creates the ring buffer:
+
+   perf_mmap(): kernel function to create the event's ring
+   |            buffer to save the sampled data.
+   |
+   +-> ring_buffer_attach(): Allocates memory for ring buffer.
+       |        The PMU has auxiliary data setup function. The
+       |        has_aux(event) condition is true and the PMU's
+       |        stop() is called to stop sampling. It is not
+       |        restarted:
+       |        if (has_aux(event))
+       |                perf_event_stop(event, 0);
+       |
+       +-> cpumsf_pmu_stop():
+
+   Hardware sampling is stopped. No samples are generated and saved
+   anymore.
+
+3. After the event 'cycles' has been mapped, the event is enabled a
+   second time in:
+   __cmd_record()
+   +-> evlist__enable()
+       +-> __evlist__enable()
+	   +-> evsel__enable_cpu()
+	       +-> perf_evsel__enable_cpu()
+	           +-> perf_evsel__run_ioctl()
+	               +-> perf_evsel__ioctl()
+	                   +-> __GI___ioctl(., PERF_EVENT_IOC_ENABLE, .)
+   The second
+      ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
+   is just a NOP in this case. The first invocation in (1.) sets the
+   event::state to PERF_EVENT_STATE_ACTIVE. The kernel functions
+   perf_ioctl()
+   +-> _perf_ioctl()
+       +-> _perf_event_enable()
+           +-> __perf_event_enable() returns immediately because
+	              event::state is already set to
+		      PERF_EVENT_STATE_ACTIVE.
+
+This happens on s390, because the event 'cycles' offers the possibility
+to save auxilary data. The PMU call backs setup_aux() and
+free_aux() are defined. Without both call back functions,
+cpumsf_pmu_stop() is not invoked and sampling continues.
+
+To remedy this, remove the first invocation of
+   ioctl(..., PERF_EVENT_IOC_ENABLE, ...).
+in step (1.) Create the event in step (1.) and enable it in step (3.)
+after the ring buffer has been mapped.
+
+Output after:
+ # ./perf record -aB --synth=no -u 0 -- ./perf test -w thloop 2
+ [ perf record: Woken up 3 times to write data ]
+ [ perf record: Captured and wrote 0.876 MB perf.data ]
+ # ./perf  report --stats | grep SAMPLE
+              SAMPLE events:      16200  (99.5%)
+              SAMPLE events:      16200
+ #
+
+The software event succeeded before and after the patch:
+ # ./perf record -e cpu-clock -aB --synth=no -u 0 -- ./perf test -w thloop 2
+ [ perf record: Woken up 7 times to write data ]
+ [ perf record: Captured and wrote 2.870 MB perf.data ]
+ # ./perf  report --stats | grep SAMPLE
+              SAMPLE events:      53506  (99.8%)
+              SAMPLE events:      53506
+ #
+
+Fixes: 63f2f5ee856ba ("libbpf: add ability to attach/detach BPF program to perf event")
+To: Andrii Nakryiko <andriin@fb.com>
+To: Ian Rogers <irogers@google.com>
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Tested-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- .../bindings/reset/eswin,eic7700-reset.yaml   |  42 +++
- .../dt-bindings/reset/eswin,eic7700-reset.h   | 298 ++++++++++++++++++
- 2 files changed, 340 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml
- create mode 100644 include/dt-bindings/reset/eswin,eic7700-reset.h
+ tools/lib/bpf/libbpf.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml b/Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml
-new file mode 100644
-index 000000000000..d05a0531dce3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml
-@@ -0,0 +1,42 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/reset/eswin,eic7700-reset.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ESWIN EIC7700 SoC reset controller
-+
-+maintainers:
-+  - Yifeng Huang <huangyifeng@eswincomputing.com>
-+  - Xuyang Dong <dongxuyang@eswincomputing.com>
-+
-+description:
-+  The system reset controller can be used to reset various peripheral
-+  controllers in ESWIN eic7700 SoC.
-+
-+properties:
-+  compatible:
-+    const: eswin,eic7700-reset
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#reset-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/reset/eswin,eic7700-reset.h>
-+
-+    reset-controller@51828000 {
-+        compatible = "eswin,eic7700-reset";
-+        reg = <0x51828000 0x80000>;
-+        #reset-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/reset/eswin,eic7700-reset.h b/include/dt-bindings/reset/eswin,eic7700-reset.h
-new file mode 100644
-index 000000000000..5d25a421195f
---- /dev/null
-+++ b/include/dt-bindings/reset/eswin,eic7700-reset.h
-@@ -0,0 +1,298 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * Device Tree binding constants for EIC7700 reset controller.
-+ *
-+ * Authors:
-+ *	Yifeng Huang <huangyifeng@eswincomputing.com>
-+ *	Xuyang Dong <dongxuyang@eswincomputing.com>
-+ */
-+
-+#ifndef __DT_ESWIN_EIC7700_RESET_H__
-+#define __DT_ESWIN_EIC7700_RESET_H__
-+
-+#define EIC7700_RESET_NOC_NSP		0
-+#define EIC7700_RESET_NOC_CFG		1
-+#define EIC7700_RESET_RNOC_NSP		2
-+#define EIC7700_RESET_SNOC_TCU		3
-+#define EIC7700_RESET_SNOC_U84		4
-+#define EIC7700_RESET_SNOC_PCIE_XSR	5
-+#define EIC7700_RESET_SNOC_PCIE_XMR	6
-+#define EIC7700_RESET_SNOC_PCIE_PR	7
-+#define EIC7700_RESET_SNOC_NPU		8
-+#define EIC7700_RESET_SNOC_JTAG	9
-+#define EIC7700_RESET_SNOC_DSP		10
-+#define EIC7700_RESET_SNOC_DDRC1_P2	11
-+#define EIC7700_RESET_SNOC_DDRC1_P1	12
-+#define EIC7700_RESET_SNOC_DDRC0_P2	13
-+#define EIC7700_RESET_SNOC_DDRC0_P1	14
-+#define EIC7700_RESET_SNOC_D2D		15
-+#define EIC7700_RESET_SNOC_AON		16
-+#define EIC7700_RESET_GPU_AXI		17
-+#define EIC7700_RESET_GPU_CFG		18
-+#define EIC7700_RESET_GPU_GRAY		19
-+#define EIC7700_RESET_GPU_JONES	20
-+#define EIC7700_RESET_GPU_SPU		21
-+#define EIC7700_RESET_DSP_AXI		22
-+#define EIC7700_RESET_DSP_CFG		23
-+#define EIC7700_RESET_DSP_DIV4		24
-+#define EIC7700_RESET_DSP_DIV0		25
-+#define EIC7700_RESET_DSP_DIV1		26
-+#define EIC7700_RESET_DSP_DIV2		27
-+#define EIC7700_RESET_DSP_DIV3		28
-+#define EIC7700_RESET_D2D_AXI		29
-+#define EIC7700_RESET_D2D_CFG		30
-+#define EIC7700_RESET_D2D_PRST		31
-+#define EIC7700_RESET_D2D_RAW_PCS	32
-+#define EIC7700_RESET_D2D_RX		33
-+#define EIC7700_RESET_D2D_TX		34
-+#define EIC7700_RESET_D2D_CORE		35
-+#define EIC7700_RESET_DDR1_ARST	36
-+#define EIC7700_RESET_DDR1_TRACE	37
-+#define EIC7700_RESET_DDR0_ARST	38
-+#define EIC7700_RESET_DDR_CFG		39
-+#define EIC7700_RESET_DDR0_TRACE	40
-+#define EIC7700_RESET_DDR_CORE		41
-+#define EIC7700_RESET_DDR_PRST		42
-+#define EIC7700_RESET_TCU_AXI		43
-+#define EIC7700_RESET_TCU_CFG		44
-+#define EIC7700_RESET_TCU_TBU0		45
-+#define EIC7700_RESET_TCU_TBU1		46
-+#define EIC7700_RESET_TCU_TBU2		47
-+#define EIC7700_RESET_TCU_TBU3		48
-+#define EIC7700_RESET_TCU_TBU4		49
-+#define EIC7700_RESET_TCU_TBU5		50
-+#define EIC7700_RESET_TCU_TBU6		51
-+#define EIC7700_RESET_TCU_TBU7		52
-+#define EIC7700_RESET_TCU_TBU8		53
-+#define EIC7700_RESET_TCU_TBU9		54
-+#define EIC7700_RESET_TCU_TBU10	55
-+#define EIC7700_RESET_TCU_TBU11	56
-+#define EIC7700_RESET_TCU_TBU12	57
-+#define EIC7700_RESET_TCU_TBU13	58
-+#define EIC7700_RESET_TCU_TBU14	59
-+#define EIC7700_RESET_TCU_TBU15	60
-+#define EIC7700_RESET_TCU_TBU16	61
-+#define EIC7700_RESET_NPU_AXI		62
-+#define EIC7700_RESET_NPU_CFG		63
-+#define EIC7700_RESET_NPU_CORE		64
-+#define EIC7700_RESET_NPU_E31CORE	65
-+#define EIC7700_RESET_NPU_E31BUS	66
-+#define EIC7700_RESET_NPU_E31DBG	67
-+#define EIC7700_RESET_NPU_LLC		68
-+#define EIC7700_RESET_HSP_AXI		69
-+#define EIC7700_RESET_HSP_CFG		70
-+#define EIC7700_RESET_HSP_POR		71
-+#define EIC7700_RESET_MSHC0_PHY	72
-+#define EIC7700_RESET_MSHC1_PHY	73
-+#define EIC7700_RESET_MSHC2_PHY	74
-+#define EIC7700_RESET_MSHC0_TXRX	75
-+#define EIC7700_RESET_MSHC1_TXRX	76
-+#define EIC7700_RESET_MSHC2_TXRX	77
-+#define EIC7700_RESET_SATA_ASIC0	78
-+#define EIC7700_RESET_SATA_OOB		79
-+#define EIC7700_RESET_SATA_PMALIVE	80
-+#define EIC7700_RESET_SATA_RBC		81
-+#define EIC7700_RESET_DMA0		82
-+#define EIC7700_RESET_HSP_DMA		83
-+#define EIC7700_RESET_USB0_VAUX	84
-+#define EIC7700_RESET_USB1_VAUX	85
-+#define EIC7700_RESET_HSP_SD1_PRST	86
-+#define EIC7700_RESET_HSP_SD0_PRST	87
-+#define EIC7700_RESET_HSP_EMMC_PRST	88
-+#define EIC7700_RESET_HSP_DMA_PRST	89
-+#define EIC7700_RESET_HSP_SD1_ARST	90
-+#define EIC7700_RESET_HSP_SD0_ARST	91
-+#define EIC7700_RESET_HSP_EMMC_ARST	92
-+#define EIC7700_RESET_HSP_DMA_ARST	93
-+#define EIC7700_RESET_HSP_ETH1_ARST	94
-+#define EIC7700_RESET_HSP_ETH0_ARST	95
-+#define EIC7700_RESET_SATA_ARST	96
-+#define EIC7700_RESET_PCIE_CFG		97
-+#define EIC7700_RESET_PCIE_POWEUP	98
-+#define EIC7700_RESET_PCIE_PERST	99
-+#define EIC7700_RESET_I2C0		100
-+#define EIC7700_RESET_I2C1		101
-+#define EIC7700_RESET_I2C2		102
-+#define EIC7700_RESET_I2C3		103
-+#define EIC7700_RESET_I2C4		104
-+#define EIC7700_RESET_I2C5		105
-+#define EIC7700_RESET_I2C6		106
-+#define EIC7700_RESET_I2C7		107
-+#define EIC7700_RESET_I2C8		108
-+#define EIC7700_RESET_I2C9		109
-+#define EIC7700_RESET_FAN		110
-+#define EIC7700_RESET_PVT0		111
-+#define EIC7700_RESET_PVT1		112
-+#define EIC7700_RESET_MBOX0		113
-+#define EIC7700_RESET_MBOX1		114
-+#define EIC7700_RESET_MBOX2		115
-+#define EIC7700_RESET_MBOX3		116
-+#define EIC7700_RESET_MBOX4		117
-+#define EIC7700_RESET_MBOX5		118
-+#define EIC7700_RESET_MBOX6		119
-+#define EIC7700_RESET_MBOX7		120
-+#define EIC7700_RESET_MBOX8		121
-+#define EIC7700_RESET_MBOX9		122
-+#define EIC7700_RESET_MBOX10		123
-+#define EIC7700_RESET_MBOX11		124
-+#define EIC7700_RESET_MBOX12		125
-+#define EIC7700_RESET_MBOX13		126
-+#define EIC7700_RESET_MBOX14		127
-+#define EIC7700_RESET_MBOX15		128
-+#define EIC7700_RESET_UART0		129
-+#define EIC7700_RESET_UART1		130
-+#define EIC7700_RESET_UART2		131
-+#define EIC7700_RESET_UART3		132
-+#define EIC7700_RESET_UART4		133
-+#define EIC7700_RESET_GPIO0		134
-+#define EIC7700_RESET_GPIO1		135
-+#define EIC7700_RESET_TIMER		136
-+#define EIC7700_RESET_SSI0		137
-+#define EIC7700_RESET_SSI1		138
-+#define EIC7700_RESET_WDT0		139
-+#define EIC7700_RESET_WDT1		140
-+#define EIC7700_RESET_WDT2		141
-+#define EIC7700_RESET_WDT3		142
-+#define EIC7700_RESET_LSP_CFG		143
-+#define EIC7700_RESET_U84_CORE0	144
-+#define EIC7700_RESET_U84_CORE1	145
-+#define EIC7700_RESET_U84_CORE2	146
-+#define EIC7700_RESET_U84_CORE3	147
-+#define EIC7700_RESET_U84_BUS		148
-+#define EIC7700_RESET_U84_DBG		149
-+#define EIC7700_RESET_U84_TRACECOM	150
-+#define EIC7700_RESET_U84_TRACE0	151
-+#define EIC7700_RESET_U84_TRACE1	152
-+#define EIC7700_RESET_U84_TRACE2	153
-+#define EIC7700_RESET_U84_TRACE3	154
-+#define EIC7700_RESET_SCPU_CORE	155
-+#define EIC7700_RESET_SCPU_BUS		156
-+#define EIC7700_RESET_SCPU_DBG		157
-+#define EIC7700_RESET_LPCPU_CORE	158
-+#define EIC7700_RESET_LPCPU_BUS	159
-+#define EIC7700_RESET_LPCPU_DBG	160
-+#define EIC7700_RESET_VC_CFG		161
-+#define EIC7700_RESET_VC_AXI		162
-+#define EIC7700_RESET_VC_MONCFG	163
-+#define EIC7700_RESET_JD_CFG		164
-+#define EIC7700_RESET_JD_AXI		165
-+#define EIC7700_RESET_JE_CFG		166
-+#define EIC7700_RESET_JE_AXI		167
-+#define EIC7700_RESET_VD_CFG		168
-+#define EIC7700_RESET_VD_AXI		169
-+#define EIC7700_RESET_VE_AXI		170
-+#define EIC7700_RESET_VE_CFG		171
-+#define EIC7700_RESET_G2D_CORE		172
-+#define EIC7700_RESET_G2D_CFG		173
-+#define EIC7700_RESET_G2D_AXI		174
-+#define EIC7700_RESET_VI_AXI		175
-+#define EIC7700_RESET_VI_CFG		176
-+#define EIC7700_RESET_VI_DWE		177
-+#define EIC7700_RESET_DVP		178
-+#define EIC7700_RESET_ISP0		179
-+#define EIC7700_RESET_ISP1		180
-+#define EIC7700_RESET_SHUTTR0		181
-+#define EIC7700_RESET_SHUTTR1		182
-+#define EIC7700_RESET_SHUTTR2		183
-+#define EIC7700_RESET_SHUTTR3		184
-+#define EIC7700_RESET_SHUTTR4		185
-+#define EIC7700_RESET_SHUTTR5		186
-+#define EIC7700_RESET_VO_MIPI		187
-+#define EIC7700_RESET_VO_PRST		188
-+#define EIC7700_RESET_VO_HDMI_PRST	189
-+#define EIC7700_RESET_VO_HDMI_PHY	190
-+#define EIC7700_RESET_VO_HDMI		191
-+#define EIC7700_RESET_VO_I2S		192
-+#define EIC7700_RESET_VO_I2S_PRST	193
-+#define EIC7700_RESET_VO_AXI		194
-+#define EIC7700_RESET_VO_CFG		195
-+#define EIC7700_RESET_VO_DC		196
-+#define EIC7700_RESET_VO_DC_PRST	197
-+#define EIC7700_RESET_BOOTSPI_HRST	198
-+#define EIC7700_RESET_BOOTSPI		199
-+#define EIC7700_RESET_ANO1		200
-+#define EIC7700_RESET_ANO0		201
-+#define EIC7700_RESET_DMA1_ARST	202
-+#define EIC7700_RESET_DMA1_HRST	203
-+#define EIC7700_RESET_FPRT		204
-+#define EIC7700_RESET_HBLOCK		205
-+#define EIC7700_RESET_SECSR		206
-+#define EIC7700_RESET_OTP		207
-+#define EIC7700_RESET_PKA		208
-+#define EIC7700_RESET_SPACC		209
-+#define EIC7700_RESET_TRNG		210
-+#define EIC7700_RESET_TIMER0_0		211
-+#define EIC7700_RESET_TIMER0_1		212
-+#define EIC7700_RESET_TIMER0_2		213
-+#define EIC7700_RESET_TIMER0_3		214
-+#define EIC7700_RESET_TIMER0_4		215
-+#define EIC7700_RESET_TIMER0_5		216
-+#define EIC7700_RESET_TIMER0_6		217
-+#define EIC7700_RESET_TIMER0_7		218
-+#define EIC7700_RESET_TIMER0_N		219
-+#define EIC7700_RESET_TIMER1_0		220
-+#define EIC7700_RESET_TIMER1_1		221
-+#define EIC7700_RESET_TIMER1_2		222
-+#define EIC7700_RESET_TIMER1_3		223
-+#define EIC7700_RESET_TIMER1_4		224
-+#define EIC7700_RESET_TIMER1_5		225
-+#define EIC7700_RESET_TIMER1_6		226
-+#define EIC7700_RESET_TIMER1_7		227
-+#define EIC7700_RESET_TIMER1_N		228
-+#define EIC7700_RESET_TIMER2_0		229
-+#define EIC7700_RESET_TIMER2_1		230
-+#define EIC7700_RESET_TIMER2_2		231
-+#define EIC7700_RESET_TIMER2_3		232
-+#define EIC7700_RESET_TIMER2_4		233
-+#define EIC7700_RESET_TIMER2_5		234
-+#define EIC7700_RESET_TIMER2_6		235
-+#define EIC7700_RESET_TIMER2_7		236
-+#define EIC7700_RESET_TIMER2_N		237
-+#define EIC7700_RESET_TIMER3_0		238
-+#define EIC7700_RESET_TIMER3_1		239
-+#define EIC7700_RESET_TIMER3_2		240
-+#define EIC7700_RESET_TIMER3_3		241
-+#define EIC7700_RESET_TIMER3_4		242
-+#define EIC7700_RESET_TIMER3_5		243
-+#define EIC7700_RESET_TIMER3_6		244
-+#define EIC7700_RESET_TIMER3_7		245
-+#define EIC7700_RESET_TIMER3_N		246
-+#define EIC7700_RESET_RTC		247
-+#define EIC7700_RESET_MNOC_SNOC_NSP	248
-+#define EIC7700_RESET_MNOC_VC		249
-+#define EIC7700_RESET_MNOC_CFG		250
-+#define EIC7700_RESET_MNOC_HSP		251
-+#define EIC7700_RESET_MNOC_GPU		252
-+#define EIC7700_RESET_MNOC_DDRC1_P3	253
-+#define EIC7700_RESET_MNOC_DDRC0_P3	254
-+#define EIC7700_RESET_RNOC_VO		255
-+#define EIC7700_RESET_RNOC_VI		256
-+#define EIC7700_RESET_RNOC_SNOC_NSP	257
-+#define EIC7700_RESET_RNOC_CFG		258
-+#define EIC7700_RESET_MNOC_DDRC1_P4	259
-+#define EIC7700_RESET_MNOC_DDRC0_P4	260
-+#define EIC7700_RESET_CNOC_VO_CFG	261
-+#define EIC7700_RESET_CNOC_VI_CFG	262
-+#define EIC7700_RESET_CNOC_VC_CFG	263
-+#define EIC7700_RESET_CNOC_TCU_CFG	264
-+#define EIC7700_RESET_CNOC_PCIE_CFG	265
-+#define EIC7700_RESET_CNOC_NPU_CFG	266
-+#define EIC7700_RESET_CNOC_LSP_CFG	267
-+#define EIC7700_RESET_CNOC_HSP_CFG	268
-+#define EIC7700_RESET_CNOC_GPU_CFG	269
-+#define EIC7700_RESET_CNOC_DSPT_CFG	270
-+#define EIC7700_RESET_CNOC_DDRT1_CFG	271
-+#define EIC7700_RESET_CNOC_DDRT0_CFG	272
-+#define EIC7700_RESET_CNOC_D2D_CFG	273
-+#define EIC7700_RESET_CNOC_CFG		274
-+#define EIC7700_RESET_CNOC_CLMM_CFG	275
-+#define EIC7700_RESET_CNOC_AON_CFG	276
-+#define EIC7700_RESET_LNOC_CFG		277
-+#define EIC7700_RESET_LNOC_NPU_LLC	278
-+#define EIC7700_RESET_LNOC_DDRC1_P0	279
-+#define EIC7700_RESET_LNOC_DDRC0_P0	280
-+
-+#endif /* __DT_ESWIN_EIC7700_RESET_H__ */
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 162ebd16a59f..5973412a1031 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -10960,12 +10960,6 @@ struct bpf_link *bpf_program__attach_perf_event_opts(const struct bpf_program *p
+ 		}
+ 		link->link.fd = pfd;
+ 	}
+-	if (ioctl(pfd, PERF_EVENT_IOC_ENABLE, 0) < 0) {
+-		err = -errno;
+-		pr_warn("prog '%s': failed to enable perf_event FD %d: %s\n",
+-			prog->name, pfd, errstr(err));
+-		goto err_out;
+-	}
+ 
+ 	return &link->link;
+ err_out:
 -- 
-2.17.1
+2.50.0
 
 
