@@ -1,68 +1,85 @@
-Return-Path: <linux-kernel+bounces-745274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F220B1178B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:02:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82B0B117C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D63C3BDA9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:02:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E905B56757E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845E1241682;
-	Fri, 25 Jul 2025 05:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60EC24167F;
+	Fri, 25 Jul 2025 05:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wd4dLo2T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQFelfGo"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64101DED40;
-	Fri, 25 Jul 2025 05:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99AE48CFC;
+	Fri, 25 Jul 2025 05:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753419749; cv=none; b=qMPDKguipWxk7s9GFcpuAIfUR0OkFH9G7nDEbkJRTuG6ol6dTP1OHu1JD6d1JByt+aIpbp9vUzH3IJKnFq/TJ/aTgE3z45bxwpYYN50Md3i7F79VbqLdZ0qaQSeZKyoCRlKh/7AfVgUTJnHyLJn4nlwoAcO0jGu7Y+DxZuoOIO8=
+	t=1753420028; cv=none; b=lGEhpAHZ7MVVrn1MX1QUaexN0L/xNpukdRSssv18wi6s12keDyBhzAXlYKPMaJgRiYge0dTp4uGicnlIorbaUWyQUjAB93PWtrWf8QY/7xdtAhEJWWPtWim7SbvxEn6UFFxLsUOJlRLJ6lLhaDT4xDzYIDrA/5laWm0EE324W00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753419749; c=relaxed/simple;
-	bh=wDByJ5uADwgkr25ymazjxmukAUNM4cHMm2vqVskCphs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAERGeQfO9PlEWKUaOi9XHrfNTA63BJ7LCccnVGd6JocuOxKUg2ua9NbSui+zemGkJ/4G8m6w+E7QSHv6vSmjQlcPOXLx0REWeOeCSSBhUQTKPQP9Z1WI1SP9Khbj2JSCyc3FDt4FD8dTq3MbJuCVHG28GY5Oue0nwnmxOt3qA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wd4dLo2T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE946C4CEF5;
-	Fri, 25 Jul 2025 05:02:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753419748;
-	bh=wDByJ5uADwgkr25ymazjxmukAUNM4cHMm2vqVskCphs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wd4dLo2T/szStSn24bnGbyUfbKYvCzTtBhtlaBgG7nKRFlbJSpb5YnW6oueFA2dru
-	 zyeLW8XIbPSGsNHy7n5zXia/QW5opr+BGL7nTRfLLH8G4I0E260fQLZT6DWu01pDlf
-	 xc9C6Bn/lr0zX4ebXSdvxn2khOHREMigrJ1vq4A0=
-Date: Fri, 25 Jul 2025 07:02:24 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
-	Saravana Kannan <saravanak@google.com>,
-	linux-kernel@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH net v2 1/4] auxiliary: Support hexadecimal ids
-Message-ID: <2025072543-senate-hush-573d@gregkh>
-References: <2025071747-icing-issuing-b62a@gregkh>
- <5d8205e1-b384-446b-822a-b5737ea7bd6c@linux.dev>
- <2025071736-viscous-entertain-ff6c@gregkh>
- <03e04d98-e5eb-41c0-8407-23cccd578dbe@linux.dev>
- <2025071726-ramp-friend-a3e5@gregkh>
- <5ee4bac4-957b-481a-8608-15886da458c2@linux.dev>
- <20250720081705.GE402218@unreal>
- <e4b5e4fa-45c4-4b67-b8f1-7d9ff9f8654f@linux.dev>
- <20250723081356.GM402218@unreal>
- <991cbb9a-a1b5-4ab8-9deb-9ecea203ce0f@linux.dev>
+	s=arc-20240116; t=1753420028; c=relaxed/simple;
+	bh=Ib5FE0QoMMNdFpBA0yVOTPTmH+AZrc74xbL0n+1+S+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OxnnRDQR3ITLc/yCAm9DZr+9Ikq/pn02zcC69ayqBr/wh1tDwqB82+D0qEdhibCK5mrx3leBmbB8ztU+A0VomWM+ALRBgn94jT6KC6Ir4H5hbRtE8CZ5XwR+82NroMuMDtTh5hOakgNrLyCNobIq5ChKpnW2p+GEn6iaALKPlyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQFelfGo; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6fae04a3795so13881746d6.3;
+        Thu, 24 Jul 2025 22:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753420026; x=1754024826; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dRMBoFJ15p7ZT15ip7Hrv1Ml72IqtNL3iXOUPGAitWM=;
+        b=DQFelfGo7d4PGWbxDIGb+PCJvp6qfjQlQ+eg2ILf+sCRY5R8pf4ywlx22q+inRUkUK
+         RA5BcSyW+av0p/vnzkzq+DJpQt5hXURjnpL+NdPCKeaZgj9PehSAlUbihUwt4nHCVIm4
+         snj3UPN6crP02Sq+7Rr3MuC0Y8sf3bPgHDOlXDwf9lU7AffDOnzgg//yMPRnmRYj2UUW
+         rNXrzIRLE+sy0EXGqeT2v47kWIjgJJu0+UsmsThCI3JLeo0R27gmtKQ0wxgSF2aOmIjG
+         DIt2FVI55pzx4nqbpupJFzmgvXJJeZiAcsjnN2bzytbixW+XgTk13WeaUoseoF+neP2K
+         Olyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753420026; x=1754024826;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dRMBoFJ15p7ZT15ip7Hrv1Ml72IqtNL3iXOUPGAitWM=;
+        b=VZ53ghUJSrnBBL7kSUgOIgrd6OkbW52DAUwX4mXCE/hhfZn5oewwdJ0x+ZpTgGfef6
+         YvB19ZDkWHYOOn27T/fk15DAgMC9dhM8vky2PCxBTb5y4rYNwK4K/Yvnq/1646msCyCa
+         Xt+Mdm1FUSmJ3+0EtoUVuLOfysEgJiKL2BzHzQ76HdVVVSr7XcIrI0Ptl3B5SvNkYQti
+         VQS1YCou4IrpF0Owcz0bIVp64WM3UvFZWK1aX4MQ0tl5mAg8xaapZ/hw0/IgnXdWXzG8
+         29OT6PbuacSaWTARPjv1Jl6gVKfRoBOlb0fDMUcuhuZ4jJRa19nJ5D8EPU1F6rUqygfe
+         K1Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEZzfDKOyRQJX4oOfGhVMBdV4opIHJWFQA0eB4gtzGPHi1BAcL8FxA7Bcqx5LVLBlOKD2Am0zgQJg8FBw=@vger.kernel.org, AJvYcCW+5kChB10pMZGgRWSNGDfvm753VVr7JuNRr68U2XdewgmJmEN6CmXmibtv0px5YE2B3lsTBRekamU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGIQQU5hCoLAK52NQwL5o8FqSgLG3kuJoHpaURdgqYTti8ulXr
+	HvmwXGzKIKgSvwJP7jOEdWqOeBx9uLK7jrSZClAymGHOc6zVKgk9ERgi
+X-Gm-Gg: ASbGncs6XaNyCxM60RcBuC5mYz2jSHdk/orKjmELCysGdTp1DPenvJ5yCIdeDO8RD++
+	/LtDjty3WALGWrWechNKVvRR0EIWpJfeYlObEGvkAIxMm+Q5yL1xNOYwi7oOFQsnlzhocjxI488
+	oeMuT1YoS1ME1DXq0Y511W5TZXIoplg13BObVH9uDPyTUio9y32jjdsRNG7TitFLPjWeMW/W04T
+	RBj8Vi4qMAkfnpuwqa85LnAIAIFL89awlEnXs1DX0TN0nvOh1Npi8Trs8+BVGTTjYszlqaSL2Z3
+	zqvunZggwq/WsghHd18uAacL2YJDJqQ7aECVE3oPQXgN8WqarmShFCc6iho59CCRzba7a0Y7/Iq
+	D+ApiP7UZYgtIjw==
+X-Google-Smtp-Source: AGHT+IHYQh1UqAPsmxjHEZ3LJXPXVDx286B6GQMg6QVOuyzTh8PtFKisKHfxCx9RE21vpz1hU/e8jQ==
+X-Received: by 2002:a05:6214:2522:b0:706:ebc2:9da with SMTP id 6a1803df08f44-707204e946dmr6510276d6.2.1753420025809;
+        Thu, 24 Jul 2025 22:07:05 -0700 (PDT)
+Received: from pc ([196.235.221.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7070fb53f7dsm22362996d6.38.2025.07.24.22.07.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 22:07:04 -0700 (PDT)
+Date: Fri, 25 Jul 2025 06:07:01 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: salah.triki@gmail.com
+Subject: [PATCH] thermal: intel: int340x_thermal: Remove acpi_has_method()
+ call
+Message-ID: <aIMQ9RFciI8jmmAh@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,57 +88,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <991cbb9a-a1b5-4ab8-9deb-9ecea203ce0f@linux.dev>
 
-On Thu, Jul 24, 2025 at 09:55:59AM -0400, Sean Anderson wrote:
-> On 7/23/25 04:13, Leon Romanovsky wrote:
-> > On Mon, Jul 21, 2025 at 10:29:32AM -0400, Sean Anderson wrote:
-> >> On 7/20/25 04:17, Leon Romanovsky wrote:
-> >> > On Thu, Jul 17, 2025 at 01:12:08PM -0400, Sean Anderson wrote:
-> >> >> On 7/17/25 12:33, Greg Kroah-Hartman wrote:
-> >> > 
-> >> > <...>
-> >> > 
-> >> >> Anyway, if you really think ids should be random or whatever, why not
-> >> >> just ida_alloc one in axiliary_device_init and ignore whatever's
-> >> >> provided? I'd say around half the auxiliary drivers just use 0 (or some
-> >> >> other constant), which is just as deterministic as using the device
-> >> >> address.
-> >> > 
-> >> > I would say that auxiliary bus is not right fit for such devices. This
-> >> > bus was introduced for more complex devices, like the one who has their
-> >> > own ida_alloc logic.
-> >> 
-> >> I'd say that around 2/3 of the auxiliary drivers that have non-constant
-> >> ids use ida_alloc solely for the auxiliary bus and for no other purpose.
-> >> I don't think that's the kind of complexity you're referring to.
-> >> 
-> >> >> Another third use ida_alloc (or xa_alloc) so all that could be
-> >> >> removed.
-> >> > 
-> >> > These ID numbers need to be per-device.
-> >> 
-> >> Why? They are arbitrary with no semantic meaning, right?
-> > 
-> > Yes, officially there is no meaning, and this is how we would like to
-> > keep it.
-> > 
-> > Right now, they are very correlated with with their respective PCI function number.
-> > Is it important? No, however it doesn't mean that we should proactively harm user
-> > experience just because we can do it.
-> > 
-> > [leonro@c ~]$ l /sys/bus/auxiliary/devices/
-> > ,,,
-> > rwxrwxrwx 1 root root 0 Jul 21 15:25 mlx5_core.rdma.0 -> ../../../devices/pci0000:00/0000:00:02.7/0000:0
-> > 8:00.0/mlx5_core.rdma.0
-> > lrwxrwxrwx 1 root root 0 Jul 21 15:25 mlx5_core.rdma.1 -> ../../../devices/pci0000:00/0000:00:02.7/0000:0
-> > 8:00.1/mlx5_core.rdma
-> 
-> Well, I would certainly like to have semantic meaning for ids. But apparently
-> that is only allowed if you can sneak it past the review process.
+acpi_evaluate_object() returns an error if the needed method does not
+exist. So remove unnecessary acpi_has_method() call.
 
-Do I need to dust off my "make all ids random" patch again and actually
-merge it just to prevent this from happening?
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+---
+ drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-greg k-h
+diff --git a/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c b/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c
+index cb149bcdd7d5..ce5d53be108b 100644
+--- a/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c
++++ b/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c
+@@ -220,9 +220,6 @@ static int acpi_parse_psvt(acpi_handle handle, int *psvt_count, struct psvt **ps
+ 	int i, result = 0;
+ 	struct psvt *psvts;
+ 
+-	if (!acpi_has_method(handle, "PSVT"))
+-		return -ENODEV;
+-
+ 	status = acpi_evaluate_object(handle, "PSVT", NULL, &buffer);
+ 	if (ACPI_FAILURE(status))
+ 		return -ENODEV;
+-- 
+2.43.0
+
 
