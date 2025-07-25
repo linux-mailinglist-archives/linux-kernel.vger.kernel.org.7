@@ -1,196 +1,201 @@
-Return-Path: <linux-kernel+bounces-746249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75DAB12487
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:59:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7D5B12474
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E90AE1A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:59:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1E23586F2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58CA2620D3;
-	Fri, 25 Jul 2025 18:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C42C25743D;
+	Fri, 25 Jul 2025 18:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9vgtE0X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="NU3BDFUt"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A4D25B305;
-	Fri, 25 Jul 2025 18:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753469855; cv=none; b=oyv85wQSH6rxizb0X2xbfSBHQMATwba0hJfMekazPRO6qEGnO/m7uSyDdyKHo94v9/Izx0IY//ZgpStdfOohLgJk7HNps9kz0wzhgraIZ8+37k9M69ZXiMpcwAXD3m9bjGPYURPokNn26wPsSAAoPdEve8W9LgKalrkYDi/HWkk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753469855; c=relaxed/simple;
-	bh=SlunTMynvCXTvjDf/X2VPHqD6dfEMvytmKxKKnIYpHk=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=ekasy9mQbzcoQbUdYB7Gn5Ry4rB1LwWl7otmP9FRWvbjZ989xfjF6P83/tmkEBDlnLqsV76b7PZ4xlUTcveyMY7Sk3u4J0tNB3Jl1F7zKFmON+sDf75VyEMF0qJebe4X46xe1T0KTiZ3xGuHLe1K8wvuoY00KwS/DLeE5rO/bDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9vgtE0X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4736C4CEF9;
-	Fri, 25 Jul 2025 18:57:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753469855;
-	bh=SlunTMynvCXTvjDf/X2VPHqD6dfEMvytmKxKKnIYpHk=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=p9vgtE0XjqOERWZAY+A7yGhrUg5aGIESjUlGKJ0qtXUz5+Ed9cPCPaintMbDAULiH
-	 KRS/lK1crLni2oqaMC9KejP4ZIrZ0ttMs1P83FV3l8xjtakboJ4Dr9hWUsXypWbKGw
-	 PfkLBpTlyJMW+bSG9NWmVjMc+8pUny/fdW0jkIdWTLiX5zW5SduzP1UTNolXxr3oTt
-	 rWS/HM2WnEc0R8lLT+ZD9qkQsGFRYvC0oBt9QG2sfp6U7VhCf1O8ylz11WuImm8QAP
-	 A4IQp8JQFuzA82PHJovnzI+pE2O2ju2IS2W9AsWTUjmUpSnkDFsMmq1vLmVl+E31/c
-	 r1o83jNbThddw==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1ufNbw-00000001N7w-3kf8;
-	Fri, 25 Jul 2025 14:57:40 -0400
-Message-ID: <20250725185740.748555530@kernel.org>
-User-Agent: quilt/0.68
-Date: Fri, 25 Jul 2025 14:55:22 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org,
- x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>,
- Florian Weimer <fweimer@redhat.com>,
- Sam James <sam@gentoo.org>
-Subject: [PATCH v15 10/10] unwind: Finish up unwind when a task exits
-References: <20250725185512.673587297@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D024225394C;
+	Fri, 25 Jul 2025 18:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753469809; cv=pass; b=iickW6fOWmda2KOj20SMNUWV7BR9ZfIELcBSfEMuy7l9om+maom6IDZQVinX6ngM1LoQ/kuUP3SQPY1y28dALSW2sLDquj5yMU29MCtYZYgHa3Zl8MSaeGrdhoCZoSvjos9hZGwk2oAt+0gAT9MtAG/ui3T3bJ2a5JcECZ893Go=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753469809; c=relaxed/simple;
+	bh=VigHQ5VbXX40LCqzfFLMODjqTGl9OmpTAQNkTErOBeI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Wqtg0wtZueBDtyjHA/gI1+dzDxiRFoQ0zx7ThFSVL4f2w+FPp3P1Dp98PTJX4uTVbGFtnkDTx7oc/Qym2ikjAb2EeyjrKBdxtk8RCN8+XAFV+aclI4AbhqX+TNzLf9bD6y4uq2+KxZvJ7NagLTvwVK1T33kZyg7D9wsil39+Wb0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=NU3BDFUt; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753469792; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TWAFnRBmW5sG1SXFpDtSRFAUhdo6qQjgsCzmI9eQxxAKe+rLvdWr2odE6uX1eagrgCVAyEiRKiSbHvZZsLiCsL2wGmpPrWbm9pL9gCInGlzG2VlEfcZlnUIA7Yzg1DeMa4lx6elWrQvmxDP+oZAuR+sYR4lculwEPDOhLjm6HSU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753469792; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=X1uK2olKYL8ou4YyzWVOCVnW71YBYE+pWaxRKyBZkk4=; 
+	b=VkWRvd2nGX6QiUb4d04YIgjivySNXU+WWUsXtdNlWweFtse2271R3NW8sioKFDAnFD14Yq/U4DUc8u3g57ZMzy3CpohZ42nC4r8u5l3/D9iVUz4t3rKclE2+S3CqcJLi3D1xMeWWlAoRHjiau+/Bo2mYW02yr/T48LfUQrSPISk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753469792;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=X1uK2olKYL8ou4YyzWVOCVnW71YBYE+pWaxRKyBZkk4=;
+	b=NU3BDFUt11IbXyU2pj3v4ojTvXzbVWS4GaFa98M5+ndUR0jHdMhH6fpr/H53At79
+	RWbSogIoY0xPUu9BoFx089lbZE/heudpDjVGyshoDl0ODWnuugTgVsgbklwhoDHn9Xl
+	JaMYGhWeFKrVdAHyQOS9nWgfI1heGENozNk3d2f0=
+Received: by mx.zohomail.com with SMTPS id 1753469789200186.12466149981094;
+	Fri, 25 Jul 2025 11:56:29 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 15/19] gpu: nova-core: register: redesign relative
+ registers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250718-nova-regs-v2-15-7b6a762aa1cd@nvidia.com>
+Date: Fri, 25 Jul 2025 15:56:14 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Beata Michalska <beata.michalska@arm.com>,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F19649A8-3002-4BAC-8FBF-095CF67B3946@collabora.com>
+References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
+ <20250718-nova-regs-v2-15-7b6a762aa1cd@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hi Alex,
 
-On do_exit() when a task is exiting, if a unwind is requested and the
-deferred user stacktrace is deferred via the task_work, the task_work
-callback is called after exit_mm() is called in do_exit(). This means that
-the user stack trace will not be retrieved and an empty stack is created.
+> On 18 Jul 2025, at 04:26, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> The relative registers are currently very unsafe to use: callers can
+> specify any constant as the base address for access, meaning they can
+> effectively interpret any I/O address as any relative register.
+>=20
+> Ideally, valid base addresses for a family of registers should be
+> explicitly defined in the code, and could only be used with the =
+relevant
+> registers
+>=20
+> This patch changes the relative register declaration into this:
+>=20
+>    register!(REGISTER_NAME @ BaseTrait[offset] ...
+>=20
+> Where `BaseTrait` is the name of a ZST used as a parameter of the
+> `RegisterBase<>` trait to define a trait unique to a class of =
+register.
+> This specialized trait is then implemented for every type that =
+provides
+> a valid base address, enabling said types to be passed as the base
+> address provider for the register's I/O accessor methods.
+>=20
+> This design thus makes it impossible to pass an unexpected base =
+address
+> to a relative register, and, since the valid bases are all known at
+> compile-time, also guarantees that all I/O accesses are done within =
+the
+> valid bounds of the I/O range.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Instead, add a function unwind_deferred_task_exit() and call it just
-before exit_mm() so that the unwinder can call the requested callbacks
-with the user space stack.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/linux/unwind_deferred.h |  3 +++
- kernel/exit.c                   |  2 ++
- kernel/unwind/deferred.c        | 23 ++++++++++++++++++++---
- 3 files changed, 25 insertions(+), 3 deletions(-)
+I think it would be helpful to showcase a before/after in the commit =
+message. IIUC, we'd go from:
 
-diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
-index 2efbda01e959..26122d00708a 100644
---- a/include/linux/unwind_deferred.h
-+++ b/include/linux/unwind_deferred.h
-@@ -39,6 +39,8 @@ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func);
- int unwind_deferred_request(struct unwind_work *work, u64 *cookie);
- void unwind_deferred_cancel(struct unwind_work *work);
- 
-+void unwind_deferred_task_exit(struct task_struct *task);
-+
- static __always_inline void unwind_reset_info(void)
- {
- 	struct unwind_task_info *info = &current->unwind_info;
-@@ -71,6 +73,7 @@ static inline int unwind_deferred_init(struct unwind_work *work, unwind_callback
- static inline int unwind_deferred_request(struct unwind_work *work, u64 *timestamp) { return -ENOSYS; }
- static inline void unwind_deferred_cancel(struct unwind_work *work) {}
- 
-+static inline void unwind_deferred_task_exit(struct task_struct *task) {}
- static inline void unwind_reset_info(void) {}
- 
- #endif /* !CONFIG_UNWIND_USER */
-diff --git a/kernel/exit.c b/kernel/exit.c
-index bb184a67ac73..1d8c8ac33c4f 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -68,6 +68,7 @@
- #include <linux/rethook.h>
- #include <linux/sysfs.h>
- #include <linux/user_events.h>
-+#include <linux/unwind_deferred.h>
- #include <linux/uaccess.h>
- #include <linux/pidfs.h>
- 
-@@ -938,6 +939,7 @@ void __noreturn do_exit(long code)
- 
- 	tsk->exit_code = code;
- 	taskstats_exit(tsk, group_dead);
-+	unwind_deferred_task_exit(tsk);
- 	trace_sched_process_exit(tsk, group_dead);
- 
- 	/*
-diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
-index a5ef1c1f915e..dc6040aae3ee 100644
---- a/kernel/unwind/deferred.c
-+++ b/kernel/unwind/deferred.c
-@@ -114,7 +114,7 @@ int unwind_user_faultable(struct unwind_stacktrace *trace)
- 	/* Should always be called from faultable context */
- 	might_fault();
- 
--	if (current->flags & PF_EXITING)
-+	if (!current->mm)
- 		return -EINVAL;
- 
- 	if (!info->cache) {
-@@ -147,9 +147,9 @@ int unwind_user_faultable(struct unwind_stacktrace *trace)
- 	return 0;
- }
- 
--static void unwind_deferred_task_work(struct callback_head *head)
-+static void process_unwind_deferred(struct task_struct *task)
- {
--	struct unwind_task_info *info = container_of(head, struct unwind_task_info, work);
-+	struct unwind_task_info *info = &task->unwind_info;
- 	struct unwind_stacktrace trace;
- 	struct unwind_work *work;
- 	unsigned long bits;
-@@ -186,6 +186,23 @@ static void unwind_deferred_task_work(struct callback_head *head)
- 	}
- }
- 
-+static void unwind_deferred_task_work(struct callback_head *head)
-+{
-+	process_unwind_deferred(current);
-+}
-+
-+void unwind_deferred_task_exit(struct task_struct *task)
-+{
-+	struct unwind_task_info *info = &current->unwind_info;
-+
-+	if (!unwind_pending(info))
-+		return;
-+
-+	process_unwind_deferred(task);
-+
-+	task_work_cancel(task, &info->work);
-+}
-+
- /**
-  * unwind_deferred_request - Request a user stacktrace on task kernel exit
-  * @work: Unwind descriptor requesting the trace
--- 
-2.47.2
+/// Putting a `+` before the address of the register makes it relative =
+to a base: the `read` and
+/// `write` methods take a `base` argument that is added to the =
+specified address before access:
+///
+/// ```no_run
+/// register!(CPU_CTL @ +0x0000010, "CPU core control" {
+///    0:0     start as bool, "Start the CPU core";
+/// });
 
+
+To:
+
+/// ```no_run
+/// // Type used to identify the base.
+/// pub(crate) struct CpuCtlBase;
+///
+/// // ZST describing `CPU0`.
+/// struct Cpu0;
+/// impl RegisterBase<CpuCtlBase> for Cpu0 {
+///     const BASE: usize =3D 0x100;
+/// }
+/// // Singleton of `CPU0` used to identify it.
+/// const CPU0: Cpu0 =3D Cpu0;
+///
+/// // ZST describing `CPU1`.
+/// struct Cpu1;
+/// impl RegisterBase<CpuCtlBase> for Cpu1 {
+///     const BASE: usize =3D 0x200;
+/// }
+/// // Singleton of `CPU1` used to identify it.
+/// const CPU1: Cpu1 =3D Cpu1;
+
+So you can still pass whatever base you want, the difference (in this
+particular aspect) is whether it's specified in the macro itself, or as =
+an
+associated constant of RegisterBase<Foo>?
+
+In any case, have you considered what happens when the number of "CPUs" =
+in your
+example grows larger? I can only speak for Tyr, where (IIUC), I'd have =
+to
+define 16 structs, each representing a single AS region, i.e.:
+
++pub(crate) const MMU_BASE: usize =3D 0x2400;
++pub(crate) const MMU_AS_SHIFT: usize =3D 6;
++
++const fn mmu_as(as_nr: usize) -> usize {
++ MMU_BASE + (as_nr << MMU_AS_SHIFT)
++
++pub(crate) struct AsRegister(usize);
++
++impl AsRegister {
++    fn new(as_nr: usize, offset: usize) -> Result<Self> {
++        if as_nr >=3D 32 {
++            Err(EINVAL)
++        } else {
++            Ok(AsRegister(mmu_as(as_nr) + offset))
++        }
++    }
+
+It's still somewhat manageable, but I wonder if there are usecases out =
+there
+(in other drivers/devices) where this number will be even higher, which =
+will
+make this pattern impossible to implement.
+
+Or maybe I misunderstood the usecase?
+
+In any case, the patch itself looks fine to me.
+
+
+[=E2=80=A6]
+
+
+=E2=80=94 Daniel
 
 
