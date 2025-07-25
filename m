@@ -1,74 +1,49 @@
-Return-Path: <linux-kernel+bounces-745228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA849B116E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD12B116E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479A5AC61BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:15:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D4CAC4D0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8998722F772;
-	Fri, 25 Jul 2025 03:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hzDYvTiA"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8911C5F23;
+	Fri, 25 Jul 2025 03:15:29 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F6721421E;
-	Fri, 25 Jul 2025 03:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206BE2746A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 03:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753413348; cv=none; b=nQ043vHLrnoqLlkS2129WvTbASgyY4hs2JMeo1eitt1gu2TS8eELZViqoORd12YNWvflEcY6b2FTc+CwrbZc51PCHC/OxDsaezB/3gSsWTkqx13PbjeVmWqH1s9YLKDw3cY1BCR5LH9eoYIYLLtcbV2dvFCyIcbxEeWOxLoJV+4=
+	t=1753413329; cv=none; b=CyJfo2hcE+nrcxBIpsLcYnhac75f8mkACqGzutPx3NTf8QTREUPCk8SFcQXqHXrB4tQI3W4BFsC/7XoIbqcPplQZMJNVrXrzqNZy0lz/b2/BM0CkrPwz4/aUXA/LU1HKvEYeYcP7wAx7BGx29ryx0hdHCkgTcZ0kIrl4nV1RP3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753413348; c=relaxed/simple;
-	bh=+f8vH1jJCMzg6chIAny7+gs+yTKqcpmYixHrGSnY0RI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hyqo/rMJ4qGF8UjVl6VijyVoD0TkkUUrcK0xS2etXK/catVYepyATkaH60ObdDcD2UnTw/5naaoGECLebppk1fignQYBH0N9MC6y7qw5w49T3iHyry+nc6oX43OebULr+77xAQBLS2gryRfjkMVyfwKQodq9CkXk61kJotq2VMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hzDYvTiA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OM9jXU004457;
-	Fri, 25 Jul 2025 03:15:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=XML+wV
-	DDRUmvGG8qWEzvXc05uJKnipeZiRtxzBQTwjg=; b=hzDYvTiAKOMUcOX1zyQAHZ
-	kuZqt+R66M/2QICVFKkr24WWyFQ6MxARpTmtyERZSQVj1zUYzT6ig+GXXVgExB0B
-	tPiBMeDShbpDE2tFxncG4RK/j5hgz3YSFJT0N1FZF8xirTuI96kQfd3KgpGZwpek
-	Ns58uBvq/u5kTXTnqn4vfkUvhIS39sqd8uJBHX1dit3YE4bahVegrclRGWCbGKsj
-	TYQU4NvC0u9pYbytRpQqqss5HSaYlpvHD/SfMROL7VVgbsOqZuQokSv3AktN1V5r
-	kQngqY3R5xarLpVj/LHSTS6iQCJN8vIhdhMui+fvcYvV3droHiKgfxKh368zrw7g
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 483wcjrrre-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 03:15:20 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56OMvWlu005253;
-	Fri, 25 Jul 2025 03:15:19 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480u8g6ud0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 03:15:19 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56P3FIjD24445492
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Jul 2025 03:15:18 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BB7355804E;
-	Fri, 25 Jul 2025 03:15:18 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C84AB5803F;
-	Fri, 25 Jul 2025 03:15:15 +0000 (GMT)
-Received: from [9.204.206.224] (unknown [9.204.206.224])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 25 Jul 2025 03:15:15 +0000 (GMT)
-Message-ID: <8306ebfd-0836-4ed6-bd2d-0a8039f6a8c6@linux.ibm.com>
-Date: Fri, 25 Jul 2025 08:45:02 +0530
+	s=arc-20240116; t=1753413329; c=relaxed/simple;
+	bh=Id76nfCvrP58gVNn51aNy52/FZfBLf1rPi3lVtNNo7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Sa5rNE/UkApx2EhtbiljzMu12N0el7rsZO3I/D69ZSD+B7EdmQ//znTAWHuNk4lRwVyJdVTSJvclRv6AsC06twQIuXoVLrYCIqmli7LtVWR2auDFJ0R9QsEgvwlB1cwUn+RJ4Zizk+uEl+FPEUWRPR/p1mmjURIMHSsrNwO17R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bpCYl3PMkzYdNB;
+	Fri, 25 Jul 2025 11:10:51 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 591D81402CB;
+	Fri, 25 Jul 2025 11:15:24 +0800 (CST)
+Received: from kwepemq100012.china.huawei.com (7.202.195.195) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 25 Jul 2025 11:15:24 +0800
+Received: from [10.174.177.186] (10.174.177.186) by
+ kwepemq100012.china.huawei.com (7.202.195.195) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 25 Jul 2025 11:15:23 +0800
+Message-ID: <a5c871c8-dc52-4245-8513-94ccc2b46c94@huawei.com>
+Date: Fri, 25 Jul 2025 11:15:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,104 +51,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc/thp: tracing: Hide hugepage events under
- CONFIG_PPC_BOOK3S_64
-To: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>,
-        Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-References: <20250612101259.0ad43e48@batman.local.home>
- <20250724092847.1aa83756@batman.local.home>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <20250724092847.1aa83756@batman.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: xIeP2VPgqZ_7tUbLAhcZoj2tFQPExAmH
-X-Proofpoint-ORIG-GUID: xIeP2VPgqZ_7tUbLAhcZoj2tFQPExAmH
-X-Authority-Analysis: v=2.4 cv=QOloRhLL c=1 sm=1 tr=0 ts=6882f6c8 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=meVymXHHAAAA:8
- a=-C49POrsBXEG1DwCQcYA:9 a=QEXdDO2ut3YA:10 a=2JgSa4NbpEOStq-L5dxp:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDAyNCBTYWx0ZWRfX4txqFrmfvDry
- eeLijhpzzVPIK+Xxy9JnO3plf4ZmR7y/qVKpArEuapN3I/GF2FDDz9rD02EO/ZAlX56pZ2wW4tw
- cAcJbT3SFfG/++B/6J+kuaxV8AHSa0SnDTURgNW/utU/1OVlMsG9AMcmflg7YuPB8Q/zIE5Iyvl
- 50/U4qTyZUpVTZiCjPS2tTMaQPeBBNpPBVz3aUSCTPZA2yTpIpVUrjgMyuAyR00Cr0UYn/OVfPE
- K5vxa9/zfH/JOF/mLoU+tI3uunYzSWR6fhKf0BCIdtoL0BA2d6cmYuLWCzdqyiK/oA7t6utOUDH
- Pxrh/c31yz4PlhU1aLvcnhh5KI+eaC1yHKRow6RBAIMSqgQ/y5Y40+xVRo1Z1cqQ5ma9modXpT8
- KChxayUReuPrbUaztK9FJ7EGGZje1MGm+S8hS+GYL6ij6eAzs4eOs2irdHf47GeTSH2mSQi/
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_01,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=581 adultscore=0 bulkscore=0 malwarescore=0 spamscore=0
- mlxscore=0 impostorscore=0 clxscore=1011 priorityscore=1501 suspectscore=0
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507250024
+Subject: Re: [RFC PATCH] mm/damon: add full LPAE support for memory monitoring
+ above 4GB
+To: SeongJae Park <sj@kernel.org>
+CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<wangkefeng.wang@huawei.com>, <yanquanmin1@huawei.com>
+References: <20250422174301.58953-1-sj@kernel.org>
+From: zuoze <zuoze1@huawei.com>
+In-Reply-To: <20250422174301.58953-1-sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq100012.china.huawei.com (7.202.195.195)
 
 
 
-On 7/24/25 6:58 PM, Steven Rostedt wrote:
+在 2025/4/23 1:43, SeongJae Park 写道:
+> On Tue, 22 Apr 2025 19:50:11 +0800 zuoze <zuoze1@huawei.com> wrote:
 > 
-> Anyone have any issues with this patch? Should I take it in my tree?
+> [...]
+>> Thanks for the patches - I’ve noted the RFC series and user-space
+>> updates. Apologies for the delay; I’ll prioritize reviewing these soon
+>> to verify they meet the intended tracking goals. Appreciate your
+>> patience.
 > 
-> -- Steve
+> No worry.  Please take your time and let me know if there is anything I can
+> help.
+> 
+> I think we can improve the user-space tool support better for usability.  For
+> example, it could find LPAE case, set addr_unit parameter, and convert
+> user-input and output address ranges on its own.  But hopefully the current
+> support allows simple tests of the kernel side change, and we could do such
+> improvement after the kernel side change is made.
 > 
 > 
 
-Acked-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+Hi SJ,
 
-Yes, kindly take it via your tree 
+Apologies for the delayed response. We've verified your patch in our
+environment and confirmed it supports LPAE address monitoring. However,
+we observed some anomalies in the reclaim functionality. During code
+review, we identified a few issues:
 
-Thanks
-Maddy
+The semantic meaning of damon_region changed after addr_unit was
+introduced. The units in damon_addr_range may no longer represent bytes
+directly.
 
-> On Thu, 12 Jun 2025 10:12:59 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+The size returned by damon_sz_region() now requires multiplication by
+addr_unit to get the actual byte count.
+
+Heavy usage of damon_sz_region() and DAMON_MIN_REGION likely requires
+addr_unit-aware adjustments throughout the codebase. While this approach
+works, it would involve considerable changes. What's your perspective on
+how we should proceed?
+
+Best regards,
+Ze Zuo
+
+> Thanks,
+> SJ
 > 
->> From: Steven Rostedt <rostedt@goodmis.org>
->>
->> The events hugepage_set_pmd, hugepage_set_pud, hugepage_update_pmd and
->> hugepage_update_pud are only called when CONFIG_PPC_BOOK3S_64 is defined.
->> As each event can take up to 5K regardless if they are used or not, it's
->> best not to define them when they are not used. Add #ifdef around these
->> events when they are not used.
->>
->> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
->> ---
->> Note, I will be adding code soon that will make unused events cause a warning.
->>
->>  include/trace/events/thp.h | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/include/trace/events/thp.h b/include/trace/events/thp.h
->> index f50048af5fcc..c8fe879d5828 100644
->> --- a/include/trace/events/thp.h
->> +++ b/include/trace/events/thp.h
->> @@ -8,6 +8,7 @@
->>  #include <linux/types.h>
->>  #include <linux/tracepoint.h>
->>  
->> +#ifdef CONFIG_PPC_BOOK3S_64
->>  DECLARE_EVENT_CLASS(hugepage_set,
->>  
->>  	    TP_PROTO(unsigned long addr, unsigned long pte),
->> @@ -66,6 +67,7 @@ DEFINE_EVENT(hugepage_update, hugepage_update_pud,
->>  	    TP_PROTO(unsigned long addr, unsigned long pud, unsigned long clr, unsigned long set),
->>  	    TP_ARGS(addr, pud, clr, set)
+> [...]
 > 
->>  );
->> +#endif /* CONFIG_PPC_BOOK3S_64 */
->>  
->>  DECLARE_EVENT_CLASS(migration_pmd,
->>  
-> 
+
 
 
