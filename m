@@ -1,135 +1,147 @@
-Return-Path: <linux-kernel+bounces-746373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD262B125E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4798B125E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF954E4ADB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06C33A14EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D7925BEE1;
-	Fri, 25 Jul 2025 20:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F9525BF00;
+	Fri, 25 Jul 2025 20:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TqtyCYJR"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SzrkzrFh"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FAC25B1F4
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA0F25B1F4
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753477006; cv=none; b=GgR0DMP+tPy1DcsS3HLzO3+fr9PBHs6fiASLfGuwmB0mmPTelXE9vN5TvrCJW97IfVD/BSyPygcfC269JxbYSKmlTVzKT7r/Kj3KAxsw8/nF3UKLxqR1kSmyi5U7fS+Q9c2NsorEYikV4RXDg5dLXNmQHtLJf86h088AeUE/whU=
+	t=1753476996; cv=none; b=nWefyKFJY/i5o7nbbfnwqCQh2Je0VkLuI0cG9EoZ+7RfSQJFQzpe/5Kbb7vkSHu95bYWjNY/q5kjriAW11P5tXpwIaPTfy79SS9MdsZjyMqUgscqt5Z61iENycNTxoZGeZUzzsuBsoQv2jMPtu02Ji0mS9P3Go84cmur91jrj+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753477006; c=relaxed/simple;
-	bh=ISQVMQ+6UGe/JRiSEdFRVWEuwFrTGkBZB+uGAoDQFJ8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YOkDAN68p2R30TBlHAzdUcXH7XLZbRwj7w9kSKuNH0dnJEOHFohNRFmf8towB7Z5sj1OrzgxCxyZZ5fBbyH6NECXU1yotVQzIJLd1fdZ5l6EOggSeo14//NQMoa9tKP+3f0f7FuLBahIxm8+cOGvctz5YvxQzwCyaEYZkRVToas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TqtyCYJR; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753476991;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5MzeVu9MblIz/dg6abSEtLXGpg6w+W/U0C9TJJ7ePW4=;
-	b=TqtyCYJRApMe8THfUf0ItZVlHY2rcpwlLjrkBOA8j7KkIFj7c+Lj28wFEn7yjYYc9HgyLo
-	X21f+KqKAKrqt0b7dItnmYY2kZqHDBnp/uXf4+QzCbH4PIvf+Y+p5aLgUlo/WG/89dqQxY
-	EtH9/ywMBfYubwaMSd+zTHWYzbfC9no=
+	s=arc-20240116; t=1753476996; c=relaxed/simple;
+	bh=E5bdNz261qKtTQmvwA0gJMEnObQVbdYh+Ixvu70Kq/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iNLN2sGpdd8KYHnsuqAF8hurhglAL1/DeQrlczBRLFNsHYKC2aroEmYeNHUsmcif61Hbt9JF57ajpjkHRbz9WghFRgpXzGRpuVLktrQ5aqdev2PkNQNtw2KnMkd1+BBmcUFitfI7ItpdLr2RJ/LcQnQe19a2NM4Lm3yVa4q4oOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=SzrkzrFh; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e62773cab8so248463885a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:56:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753476994; x=1754081794; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SV8ZxG4aNS+z9YboIvJ/1WYzIOmDJ3h4iBc7Sd4YJ4M=;
+        b=SzrkzrFhETcpS4cgiHMXbCewnblm3lzFBtgTWEPZB9Ll790d5qTjHDzSma0z1qMQEp
+         3cpP1BiN/wtmB5gy/h4MLo5YFKQu59XxWOh/f/CGB+KpuM5PosceDz5dmlE5V3qOY+IQ
+         KXju7voLIlN1y7iqQUHy8AMkRs8GBeRDOZIyo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753476994; x=1754081794;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SV8ZxG4aNS+z9YboIvJ/1WYzIOmDJ3h4iBc7Sd4YJ4M=;
+        b=jCNbLBxzsb+3ERlPXg9Uyq/L+Spl1eq7tVW4eqn/wxRaBYfHSJ3Pu+B7gxQ/aK1enu
+         mEVuy+g1VHgTFUpt7LW4G3einShSNVQ68GHRXyvNON2uWxqj1kr8QwShj3iQ2U+1rbWx
+         tYiPCBOwSITSXZMl0KLA3sHObu9jaJuSzYS9cRDWXfRRAXFR0y/aWbE6WfNkUSlmdrGZ
+         +l/8t35+6Y1F6RSenttUB/R28IRDfCssHRxCs/nM1qRuueAHbcjtpPlqG8rrY5Sir6LL
+         3UNcTjpHnW+2EizUCQlOWEohycEJaymWrGKeegk0g4jlQjurFAJ2cm3s+IqaMAl3jJJQ
+         V1Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUK+A6Hct4EOpQJV5F4o0pBx5OnPWDj9YQAQ5gwBLjlagpVXhm8Mcmvj+U6Xzo+W+gNtmii0fi3X4t2ttM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHUy1XerAgHw9O2/DWJv+VTzg9ZaNfE6I91bYZKFJK9Wr70eto
+	44NfcbvyfbH4H+yd5N0OPGsQ2SfAkEqQKXlSi7yYEm0gf22l0CzSbBN/hksOq/4Cog==
+X-Gm-Gg: ASbGnctj54SrypVWLl+IQthqTosg/URPuIytO5HxBjPxKK45W66oZUa4TSdqyx/dW2r
+	TIKHs9itW6RLt+zUeIOxFyVYWT6pDi0OhCOZSpPt87sL3HsPisH+IBYv3czp0wVH57aER/9+m8X
+	tvOVhAr5n4nt7IYpNHseugIa0r3+AwnkMKWkHMxQacQK45DMgKE9+rW5j2cnO8cFg22VVhEcheN
+	w87y7k4M6WdIv64sSsLknJJMifPEIXcb9Pn/wLnlyxFFodGz4wijwxxpTT2bUmudu+q6YO2cnZb
+	ApKlqc+MRFCJ8KzNnW0guv10z44n7DwQWlQYQgrqk0Au7A732RIv1+rugi5cg1TTUoiE5cWzTRD
+	WMPg2GHSTzl2IW0ggMG+D893YYoyfB0cig8ihD8wBmPXcy5PPpDRab3ynvksP7w==
+X-Google-Smtp-Source: AGHT+IFSTZ+SCGF5izkSCPq5knYBp2oBX5HEqgFo37c7o180TXKO8s7SOGpJoaRPR+w5yNwCG0n6dg==
+X-Received: by 2002:a05:620a:28cd:b0:7e3:4fcb:4f0c with SMTP id af79cd13be357-7e63bfc631amr409670685a.52.1753476993979;
+        Fri, 25 Jul 2025 13:56:33 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e64327d41esm40507385a.15.2025.07.25.13.56.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 13:56:33 -0700 (PDT)
+Message-ID: <a820b204-d02c-4f7a-9364-95b25a1ca3a9@broadcom.com>
+Date: Fri, 25 Jul 2025 13:56:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH V4 19/19] virtio_ring: add in order support
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <20250724064017.26058-20-jasowang@redhat.com>
-Date: Fri, 25 Jul 2025 13:56:15 -0700
-Cc: mst@redhat.com,
- xuanzhuo@linux.alibaba.com,
- eperezma@redhat.com,
- virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E08AB80C-D1A7-483E-9424-4F893B7161B5@linux.dev>
-References: <20250724064017.26058-1-jasowang@redhat.com>
- <20250724064017.26058-20-jasowang@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 4/7] net: dsa: b53: mmap: Add syscon reference
+ and register layout for bcm63268
+To: Kyle Hendry <kylehendrydev@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: noltari@gmail.com, jonas.gorski@gmail.com, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250724035300.20497-1-kylehendrydev@gmail.com>
+ <20250724035300.20497-5-kylehendrydev@gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250724035300.20497-5-kylehendrydev@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jason,
+On 7/23/25 20:52, Kyle Hendry wrote:
+> On bcm63xx SoCs there are registers that control the PHYs in
+> the GPIO controller. Allow the b53 driver to access them
+> by passing in the syscon through the device tree.
+> 
+> Add a structure to describe the ephy control register
+> and add register info for bcm63268.
+> 
+> Signed-off-by: Kyle Hendry <kylehendrydev@gmail.com>
 
-On 23. Jul 2025, at 23:40, Jason Wang wrote:
->=20
-> This patch implements in order support for both split virtqueue and
-> packed virtqueue. Perfomance could be gained for the device where the
-> memory access could be expensive (e.g vhost-net or a real PCI device):
->=20
-> Benchmark with KVM guest:
->=20
-> Vhost-net on the host: (pktgen + XDP_DROP):
->=20
->         in_order=3Doff | in_order=3Don | +%
->    TX:  5.20Mpps     | 6.20Mpps    | +19%
->    RX:  3.47Mpps     | 3.61Mpps    | + 4%
->=20
-> Vhost-user(testpmd) on the host: (pktgen/XDP_DROP):
->=20
-> For split virtqueue:
->=20
->         in_order=3Doff | in_order=3Don | +%
->    TX:  5.60Mpps     | 5.60Mpps    | +0.0%
->    RX:  9.16Mpps     | 9.61Mpps    | +4.9%
->=20
-> For packed virtqueue:
->=20
->         in_order=3Doff | in_order=3Don | +%
->    TX:  5.60Mpps     | 5.70Mpps    | +1.7%
->    RX:  10.6Mpps     | 10.8Mpps    | +1.8%
->=20
-> Benchmark also shows no performance impact for in_order=3Doff for =
-queue
-> size with 256 and 1024.
->=20
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
-
-This is in linux-next now, but I get the following compilation error:
-
-drivers/virtio/virtio_ring.c:2113:40: error: variable 'id' is =
-uninitialized when used here [-Werror,-Wuninitialized]
- 2113 |                 BAD_RING(vq, "id %u out of range\n", id);
-      |                                                      ^~
-drivers/virtio/virtio_ring.c:60:32: note: expanded from macro 'BAD_RING'
-   60 |                         "%s:"fmt, (_vq)->vq.name, ##args);      =
-\
-      |                                                     ^~~~
-./include/linux/dev_printk.h:154:65: note: expanded from macro 'dev_err'
-  154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, =
-dev_fmt(fmt), ##__VA_ARGS__)
-      |                                                                  =
-      ^~~~~~~~~~~
-./include/linux/dev_printk.h:110:23: note: expanded from macro =
-'dev_printk_index_wrap'
-  110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                =
-       \
-      |                                     ^~~~~~~~~~~
-drivers/virtio/virtio_ring.c:2077:19: note: initialize the variable 'id' =
-to silence this warning
- 2077 |         u16 last_used, id, last_used_idx;
-      |                          ^
-      |                           =3D 0
-1 error generated.
-
-Thanks,
-Thorsten
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
