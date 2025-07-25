@@ -1,121 +1,151 @@
-Return-Path: <linux-kernel+bounces-745812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32884B11F1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C4DB11F1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 460CE1CE2B0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:01:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F791CE3AB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57702405F9;
-	Fri, 25 Jul 2025 13:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B62A2ED171;
+	Fri, 25 Jul 2025 13:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LTMIha5L"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a3livB/I"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E37F8635D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D48C139D0A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753448490; cv=none; b=GNSYMxGTk+K289Adj/xDKH0PbgJdInYobA0nEoG3UEW4Z9MIoeFJ0/yAgGiuQOBXn0+JEieTkt/6jTCQuEWe56ufjfK+4uxfDeamVBtGSSj2CQFFObDNEPYEEYFs4917gXCSQWBYmgQMskYAnTMqDtO6n2o/WNhWEPk5VxS9SrY=
+	t=1753448490; cv=none; b=aZxasIKL8e5eo96GxPZcrUmbAc3AA7dswiqV41fVKft6sa4pGckyZH6uHE8gyV4yRoDF39qbcYLxSbsLpWTsr5+ARVp3gcNoAvYbVdWrdXMmX9Sta+GgBtk5lbIML88lNP+YHuiNtRClBnDXH25NAVIIz/keCl0vp+vth4tlAzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753448490; c=relaxed/simple;
-	bh=YqJNmVi6pq8/MNIC1pcZbfwITTv0HOp+QsTpp/paTWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jwy7N107J8iaRKgam+vKoAqNKav1S8icv9TJvR323Yo/4ugCo7fEzAPKZcrbMpChwf7gjf61EYsYxlvX2uQiL1+QDbQVPsKuVUTL3ZP/c0Q1g4VefIf/P3CeuWGRzPZKWvzmb6/pUWwF6MZcAYdEZHWqz0RGlouwBmyeC8AREgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LTMIha5L; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 25 Jul 2025 15:00:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753448476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gutNXS9Y0HT6UAb0t0FG6hv1oTyJPV52YMEDtiNk+4c=;
-	b=LTMIha5LgqdpnhfVvGUzVr/VBu3pBfJmkrmUWKuZ+UG82kNkRTj3dZzB4zAHf+/v8KcpTh
-	5yrBnFRucFAkmzCm/TUSPPf1mXMolb/gWZPsPi6FA4BMsJnPCfdfgWKq1eGAbjfBH8nNmh
-	ERip48/3OJo97Wcs3NIq2mOlbAy+dbI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Nicolas Schier <nicolas.schier@linux.dev>
-To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Cc: masahiroy@kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH] kconfig/lxdialog: replace strcpy() with strscpy() in
- inputbox.c
-Message-ID: <20250725-violet-mayfly-from-heaven-bd66d2@l-nschier-aarch64>
-References: <20250725055928.37658-1-suchitkarunakaran@gmail.com>
+	bh=jZfI/jZo/CFIe92zR3Hl3kPSV3ETk+fIXrCk/bLV0s8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F/Yw/6Pl5GQy7+1FXGa5nRTiwLuDWXZ3KmEKYPtQOWHs3wLRqWyIvX4T8MPQ3aHc4M6O1UWJI7ZA4ioxt3zhJjG2V8yovVDRbNOqTtC2jDcEyI/SWjgKXuYOAx/HFMRC3PxkXhgigQxtU1p5AB1d/MuXnLbnkFA5Ad3jmVlchdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a3livB/I; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55a4e55d3a9so2342917e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:01:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753448487; x=1754053287; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=I2P4xcgVB0EtFaxRQaZIR9o/BHYp+7Qg3ScZYe53eyg=;
+        b=a3livB/IpTtLTosP4U4YdaCcNWQP/vCd8P7rTz1eaq3+AM4JdyB7GvHtdYsYLTpX4h
+         MMjFyx/3djpR8ORf029dY8lAV3HnxHl1mIVjVqiffvcGM8sN3mKglriCJUbtjtC9K4JI
+         PntTa5k9gV82iz9vRpQ9dsEDVIT7sCoz23FPU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753448487; x=1754053287;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I2P4xcgVB0EtFaxRQaZIR9o/BHYp+7Qg3ScZYe53eyg=;
+        b=XFSkvxONJ5wgnvBKRNxUEszPKWVckYRci9BiLp8qoC0/QCmlHfcy+DwFPhsAIgPUGu
+         pVoGTQtFZiqPuF8FWhYng4JrupwLJiocO3vxjRC/OP3sq2JynuaspR3FZiX3bupvaz9G
+         qsB1ioPrWJe+212TlSu97Oxkh5tx4Q9MIWArmcLjR6FhJ84cGOSI4+5/DkkuyVlwlFsR
+         gU5X8n/ALMVitHsyGxDwYnAbgsvj81QAdMPoM9N3JuhUR/45IV4y1G4oL+PrqOdTJL/N
+         vLry8k45vN/xXC82XliKtRmjDCXvj0GdvaNLxrw1JC9ALZXetLpjN9BNQC3//b45/Bdg
+         LZ0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUSNnh8xN+3abldRch8a6axfCFSQwWiRue9/WPd2elMkBcs01T43N623hl7qUvzWOW7jgnTkDk9oSslVXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnCIqNUbYlOpYv/uTbBWmJQOcZgadGmX82UE/lwEwYFPbT/0no
+	rjG5VgcNgGU5PDAyagBZmeyYk4wuLc3tU8QAjl6LhMbob3acZAnpJdcPJITimyRkRL0z+cVsMBh
+	t7Vc=
+X-Gm-Gg: ASbGncuLLvcS1ZtRiB1IvcbEhrfB8gJWXv9IMdQ0/wcvtiS18qTLOS85LtsWN7smrUT
+	KtunS15WN69V+BPvew8C8h3JEbHU3RCEmijsZfmj964nhgDWGzmEs7Yb8XA8YYNaDjOWqMSatKv
+	EZtnmpBCOFH0FvYsutG+F6ICe4PloRTQKr7AhudSARaTQOEXzDL4CGG//w04nM374fsEFJ4lRa3
+	Ji8Ir9nQo8MiVs7yXT7O8mai+D32ZlQH4W7paq4TR78Sl/wIjvG3Ekbx0P4C/oHrYqMTeNgGeFx
+	CTAheD2RrGUJnTB5mC3P8zc931GpVXTBPcO2An6bi2Zk97226PaTn+xnKhl5nGqECKKyb98ZBlJ
+	8UdcZuY7hBXsrxst9z2TbGp2X5oTGr0TYSbBKCJkseCv2SsWbMW5NmIQOGDOXM91XYozmpQQOQ2
+	Y=
+X-Google-Smtp-Source: AGHT+IGFcA18VYduqfijuySLd/bcyS4aJGOZ2qxq82Q3IZIEThDC/YD1mdccIJ9vu9oq+NfachTP9A==
+X-Received: by 2002:a05:6512:b81:b0:55a:2735:fe6a with SMTP id 2adb3069b0e04-55b5f300e7amr535805e87.0.1753448486581;
+        Fri, 25 Jul 2025 06:01:26 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-331e09303adsm7177141fa.94.2025.07.25.06.01.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 06:01:25 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32b43846e8cso17274421fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:01:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWHUE65/FCTMkxI8rmSkGXer/o29VmunzJgP2oOHBHbk8QQL9vAkws4WmO7flFM54Xe/JdRAKr2pOqTBhA=@vger.kernel.org
+X-Received: by 2002:a05:651c:4096:b0:32a:8855:f214 with SMTP id
+ 38308e7fff4ca-331ee825fe7mr3660911fa.27.1753448484875; Fri, 25 Jul 2025
+ 06:01:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="N82fKxdJzeNZZ0RL"
-Content-Disposition: inline
-In-Reply-To: <20250725055928.37658-1-suchitkarunakaran@gmail.com>
-Organization: AVM GmbH
-X-Migadu-Flow: FLOW_OUT
+References: <20250725-uvc-nousbdev-v1-0-28f5a1fdf544@chromium.org>
+ <20250725-uvc-nousbdev-v1-2-28f5a1fdf544@chromium.org> <20250725112659.GC11202@pendragon.ideasonboard.com>
+In-Reply-To: <20250725112659.GC11202@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 25 Jul 2025 15:01:12 +0200
+X-Gmail-Original-Message-ID: <CANiDSCvJwbhxBbc=Wkbj9MG44sWnJ8pZi4vKYK4Akvm4iQH4TQ@mail.gmail.com>
+X-Gm-Features: Ac12FXy-sx-xZRO0nUXAykeQ5qxinWl9sJcG-93KqvB8TDIZ-39fWSG3McaeDBo
+Message-ID: <CANiDSCvJwbhxBbc=Wkbj9MG44sWnJ8pZi4vKYK4Akvm4iQH4TQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: uvcvideo: Do not re-reference dev->udev
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Laurent
+
+On Fri, 25 Jul 2025 at 13:27, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Fri, Jul 25, 2025 at 11:01:30AM +0000, Ricardo Ribalda wrote:
+> > dev->udev is already referenced by the variable udev. Let's use it.
+>
+> The variable is used in a single location. I would probably have dropped
+> it instead, but I don't have a strong preference. If you prefer it this
+> way,
+>
+
+I believe that it is used twice.
+
+Anything works for me. Feel free to change it the way you prefer
+when/if you merge it, or land it as is.
+
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> Please let me know if you will send a patch to drop the variable
+> instead, or if I should merge this one.
+>
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/media/usb/uvc/uvc_driver.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > index d09d1286da0f61d5953125df23ed92555585e8f2..209cedeff59e8be2e96ce79c3d395a5a85a336c6 100644
+> > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > @@ -882,7 +882,7 @@ static int uvc_parse_vendor_control(struct uvc_device *dev,
+> >       unsigned int n, p;
+> >       int handled = 0;
+> >
+> > -     switch (le16_to_cpu(dev->udev->descriptor.idVendor)) {
+> > +     switch (le16_to_cpu(udev->descriptor.idVendor)) {
+> >       case 0x046d:            /* Logitech */
+> >               if (buffer[1] != 0x41 || buffer[2] != 0x01)
+> >                       break;
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
 
---N82fKxdJzeNZZ0RL
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 25, 2025 at 11:29:28AM +0530, Suchit Karunakaran wrote:
-> strcpy() performs no bounds checking and can lead to buffer overflows if
-> the input string exceeds the destination buffer size. Replace it with
-> strscpy(), which ensures the input is always NULL-terminated and
-> prevents overflows.
->=20
-> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-> ---
->  scripts/kconfig/lxdialog/inputbox.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdial=
-og/inputbox.c
-> index 3c6e24b20f5b..8880ccaffa0b 100644
-> --- a/scripts/kconfig/lxdialog/inputbox.c
-> +++ b/scripts/kconfig/lxdialog/inputbox.c
-> @@ -40,7 +40,7 @@ int dialog_inputbox(const char *title, const char *prom=
-pt, int height, int width
->  	if (!init)
->  		instr[0] =3D '\0';
->  	else
-> -		strcpy(instr, init);
-> +		strscpy(instr, init, MAX_LEN + 1);
-
-Did you compile-test this?  strscpy() is not available for user-space.
-
-Kind regards,
-Nicolas
-
---N82fKxdJzeNZZ0RL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEDv+Fiet06YHnC6RpiMa8nIiabbgFAmiDf/8ACgkQiMa8nIia
-bbjlvA/9FRkUxIkN5aHaFiPItBUMZeSTGzUDRqp67kJQJnUrBVFYsZZTVmvqtgZk
-HBw5RABq0WA7LHtPG9zsVsRi8b6vK25xbSrFF6V2st3e4BqxBmfLx4Mvw1XxnSFJ
-BcFxZAiI/OuBJmTalmekbtzZYBzTk3FFdhJZwpPSfYnvxHJuxz9Cww8iWpSQZO6S
-+ctpdKQq05pisdgz3vSgQP0pp8njL4NUgl1u3tulqMbeom7WVwvCkS5JXaopzIRb
-30eoaN5NKhQlN/yJKPkDQDj+mUYac4hD7M4GDnF031K0ToCzs/UUx96XURE2UdKQ
-965D0sM43ZJHt0QSiKOV8yytZ8uFewQgjZb9B+OpkBDYL6r1lR5FOkRoglgekhTX
-My/WbmDbWxkPVC8HdvDu4AGAuJlCBpW5AgLf91D5+PHha859ekToIbq35dMyrnhS
-Zi428c1uH1Jg+Vr97P3ek6IJzGk7y/NjR66jeWfXmCQAIch2S5AuUPa4d8O+G5E+
-DpmEZoP8X0jmrMa2qYMUY99KgMtTfzzoiMqEzBXRamQojQBpDIP087RjSbZS1vzB
-PAJML0S4Dx5AF3fWxbS09QiZnVl5MdWMoaQQXIEYS4bFSMP00tIC2ojEGzk7IIKn
-PAzP5xiQZp/2YcjXKnwmPiFoZaYYf3i/FSIUEOnh0JOwN4EXPT0=
-=izPZ
------END PGP SIGNATURE-----
-
---N82fKxdJzeNZZ0RL--
+-- 
+Ricardo Ribalda
 
