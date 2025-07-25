@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-745348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3283B118C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:00:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7D0B118C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F38E18928BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CE0D4E5ABA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AF2289E36;
-	Fri, 25 Jul 2025 06:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D8C290DA1;
+	Fri, 25 Jul 2025 07:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dQRsPsFz"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QWUSCpTM"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9417A1AC88A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB35254845
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753426790; cv=none; b=s5UkY92kIUzlw2D27McFhz3Gg6+PV44MjFRNDYUdD21wN2ejaEgnnGYPyVjWFgUjHf0i4ApSZgUdVh8uuuLVmptzNODyTsFC1kbAHtYAJuZW2YlKF7Xgvphiv4mjqccNBbn1vw3pFw21CPRXDmYXKFWaZEgJ+lkjbflO6EtVZjs=
+	t=1753426880; cv=none; b=ljotfhvZvX3YLMDUvTOV0V8K+9ne83UYL+Wem4OdtGqMHTD1/uxACEPUo44+fQWOvcN1rO1iRvTwQeEQywsMq2nhcXeWseSwYPmjgdqJrSVKiZtPAUrzxK5iOAh4L80S1B4bMlALmmQkLrcgC8NgrsOu0NuosEVs/Opok0eTfng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753426790; c=relaxed/simple;
-	bh=M0OXB0ted4yUGEY1m2IRAEhPczqv3B5NhgGPsP0IjHg=;
+	s=arc-20240116; t=1753426880; c=relaxed/simple;
+	bh=glUOTthuBg0Mj75i5FhFtm+1COvY/f2AwzlZB6LD8Yo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cPByZTDV6yARVUjEy3rJhgVXfoQGCdX0PZY8pUggmUP2kLK5WV78btbjmO4LL138BT+PDOI8VPlffyTlWbdZKVV4ZFKucewBWCdr/JK+RzwoD+RPq4kIUrZXhxMhHDlL3ppO52BAA67GR5MY8mNCKq0FVKBYPkb38LezE5HJMew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dQRsPsFz; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version; b=NiXvnmwWedv3B2hqIfaaShPAOsvUIiH+d+vLb/6RiwWVJafJIH09YotFGifVVw9mB4p1EYkW8VJLmlf/hULNuPB9xiRFVTsQ1XuaFLYNOa82N8zm1OcWa6Q4k7Bj3BBhj2+tSNzLbLSeGAOs8CMGZ7TYcwFOg9u2piqn3M+ji0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QWUSCpTM; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74b56b1d301so1269322b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:59:48 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-235f9e87f78so20295405ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:01:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1753426788; x=1754031588; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1753426878; x=1754031678; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Tjib0N0C/5W1FPgGnxKMNcyA430T8Vj0E1zwB3+Uks4=;
-        b=dQRsPsFzxbnsuISX614uBcRGDdoge86rSlkKY9WTIU/qsTs5XYIcQP3AOCVxNt1Pys
-         ln+oAicc+AtfJXSF0tmJIvOKmNd/EgWOExbuXVnObwrUtFwcm2Zn2E0xZJiPutfBQlTs
-         dAhvyBrxe85dibRb5NPQd3EVMg8sq9fQmHVdewakaSv2b1NioNxvfiZ5O3FRWQLxS+u5
-         OMZyS5szobRT/4kpPtUbrLVLzxERNGPvxMpMM3T1Q2JKpkzcDsNbCBj9GSVxU51DJ4Jr
-         36s/kBZsVw+AgFlwvHGEeu+f/hLPDzn3DR5wb+RArtFncJgMgKgdZ1U6DdJIdO8SMxS7
-         natg==
+        bh=uC8VgqJ1hxS3HBaKIpxr+jz/YhcoEyBsA0EuNdN/npA=;
+        b=QWUSCpTM44v7Hv8DffmDdaPGZ/9kP6d6QUcNVu2DN05+K1u5vDMCQl0JBeXclt6qAS
+         CLUo1u1+8zhDxG6FamZC8Kz+qoeIz7SAupc+m7XoipEj7YcWmw+JpSgWGaLMhPxwU/o9
+         4r/o30vTZMaNRx6+f83vT+h9eTr0mZOtLAGjyAUnTsTFm1FdTpQgSzCGAhynuMCQjmr0
+         oDh3bIEQFNZ5QICD37TwUP5jFcTgeaVRATMn43vslfmlRYjYhjqG0gxLylwTNByf9hPk
+         nisuCWQHipVtDPpU4DaPXQl9fnGwGK5QArVjGlxR1Y43HdZ+ubq6A31JPZf2kKxJ7jwn
+         6V7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753426788; x=1754031588;
+        d=1e100.net; s=20230601; t=1753426878; x=1754031678;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tjib0N0C/5W1FPgGnxKMNcyA430T8Vj0E1zwB3+Uks4=;
-        b=w0HiAKz2JmU43ncj1SWtLBkIuKBTf4oIqoSY3n7SCN8c+KCOsP1pw6Q5A0dKLkjvlE
-         NhjS0a3E4hCNd+cQUgXKW15ExgMjgMmvehZHuX9Y20PyKpn2G7aTAnHUZyR4r5dFRbxg
-         +CiX9/AZE5gvotKwViiiMeOmTKDPXHj1ob5Ya1BqTaB38Zy9OCHYOlo7b8UebrGCDnCN
-         ZIqDB83oRzl31iTCYXfRSM1ZJSFSlOILy2nJl4xrRhF5kN8HaLlfDIntENEhkPfnIOpJ
-         ZNpZXG7Uc9t0b+8Igkmq9MA/VOyOQ1gtgcIXdV1rnuVRawgEsbcmKzcxaJ12wf8++abe
-         CUvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDVcTu+jwh+1TZZzaI3l7Xv6GpdCYcYEo00ys7mW2ZLxQe01cHdBTTGeCrALGHbWeTjTENiJI7QVxuR00=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9znRRrSym0YyJw1zNjGtrU2KDUv94sdMl7UBIMNNL6fAOLpF1
-	2fpKucyFJ7YHRHN6OCZBJJP1ZYjExj7rRzUdWdUVxpLep9HeDnIZt58ZUtVOHp8FqzE=
-X-Gm-Gg: ASbGncv9oL4LnsFoK2gsfpnNyyfhOo3GnahG3pOym2YA8Muzat4kQiYDeV7FvEwkGRu
-	jJUqgFasIHMZNW+SNKqFALjtPRliV7XsAEMhfHM+97umX3DlygYAUvl+iHf2EaVwIvffEaiUAow
-	tKMKg2t9oX+kPZ5bckhCWTosl23FFmmjfLV/IMIaT7xDmb3k0Kd0sscaOZWq+TfY26LmceoauD9
-	9Jo7+0qOy3BT6L2oSvtkKmm84x/R/VYiHWNEKeyjsjhjJgbECDGcDzkEocTtudrnlMPugf7BIBR
-	awOUXJuFgwkf3oHSpFo4l3b2o6+OzJs9q8PGZDqF7v2JUNAJCA+Nm/wvSi4qV+uut3FMCu4Ii53
-	IhQZleqohnxfLu1dREQgUpSL2hXgDhXLQFf0VdGfwX4dPQi4PJ2g=
-X-Google-Smtp-Source: AGHT+IGDFWL1llphxSV+WXzXHCIbvfIXfDSzx0etwKEoCZ3cJSqZYmwVfE2aHNC7StMOBKVLL67KQQ==
-X-Received: by 2002:a05:6a00:2e1c:b0:739:50c0:b3fe with SMTP id d2e1a72fcca58-763328614ebmr1758142b3a.8.1753426787734;
-        Thu, 24 Jul 2025 23:59:47 -0700 (PDT)
+        bh=uC8VgqJ1hxS3HBaKIpxr+jz/YhcoEyBsA0EuNdN/npA=;
+        b=gvEaord9JX2+yEbzTLTOOwqpWfLfnrTH/1kBJRjUJodukimaBB/lAMdGuXV10LiASu
+         gp4JdoBjv29nfsEPGGWb8ZNZzVxL9KD0gUSbYN2RNLcSFsLZoM9etQvS2ZvJQjaK8Kum
+         JgV5+9vPYVxGtn7Nw7UdY/Zdt18FEi48g5Ro8UiM7AF3SSiYdMa2126UxE6xpB1LeE3W
+         eEk4gOD9q1Btg9eRR9MeWmM6WEeRJW1K7G/2VASH/3UddTAOjoCIY1CbcW4iSxG8ZSCF
+         PGz3L8/ICheJ9l89eDbske8E8Z/8d8RiG9fB9C0QcodEXEC1MCBvdEkVzsBOki1RIfA6
+         N78w==
+X-Forwarded-Encrypted: i=1; AJvYcCUcimnhs4nonllhG8HyRbtLDeHceXL+biEQ/XhYClyGXkRitNlEJZ83PLAX5kidi9z4Z0GX0L6pfVQDrjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlzZOJ7u+NY5BX2T8QtWTfcWZUhZDJWkQNwHQzI4PXE8L8eFoP
+	VCq4COZyG26mmCmT4uC3VOBUcEBLnrPwY5ARavJMDGyT9Gch/qa5uve0/uyeR3/Tmf4=
+X-Gm-Gg: ASbGncvKW5cTf/g/xitbbDQqJ+s8Cv1eDqtYztcvOaLzOeXr67DSso3E2TP1qh/LMJa
+	blsuULiZ/roYFUTSEIOUprwNMRZqvA3P+iY5Q8a0G8osymdY4YDMWOZMiw+OVDMFdTh4dXE70n6
+	mK4AyAR6sy6n4shaTCe/8W5kpQ9QU7ySFWOA+Rha5vJ2ZrYis84XGe8t9cMqVQRbfySbp2s9TxY
+	DdGXEpp3nUFbhASJTdq/OKFmNR8PzLvPtAnPVOVCgpriG8bULyl/qrv+g2GplokqJKabAwh+iQq
+	e4blnKlNw1P4VAK42J1pT3A0sZmOhtK1MoE0l8/sRQsrU9QW/F2HJcGSvv05pvTGwTqZEPfj1J2
+	DFjoPU24Yz8rh4TpinHrfZwJjuISdD7UsZYgjbITTKRj5QWVmmLo=
+X-Google-Smtp-Source: AGHT+IHH6bvAYxaayBdPgxZosRavvzvKeFt758W686KNMaUVJWeBq1sUpAZ0vLh2LG58pdoikFczFQ==
+X-Received: by 2002:a17:902:e801:b0:234:bef7:e227 with SMTP id d9443c01a7336-23fb302672cmr12010825ad.18.1753426878039;
+        Fri, 25 Jul 2025 00:01:18 -0700 (PDT)
 Received: from localhost.localdomain ([139.177.225.228])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761b06199a8sm3147099b3a.112.2025.07.24.23.59.41
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa47846c7sm30252765ad.72.2025.07.25.00.01.11
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 24 Jul 2025 23:59:47 -0700 (PDT)
+        Fri, 25 Jul 2025 00:01:17 -0700 (PDT)
 From: lizhe.67@bytedance.com
 To: alex.williamson@redhat.com,
 	farman@linux.ibm.com
@@ -83,9 +83,9 @@ Cc: akpm@linux-foundation.org,
 	linux-mm@kvack.org,
 	lizhe.67@bytedance.com,
 	peterx@redhat.com
-Subject: Re: [PATCH v4 2/5] vfio/type1: optimize vfio_pin_pages_remote()
-Date: Fri, 25 Jul 2025 14:59:37 +0800
-Message-ID: <20250725065937.65848-1-lizhe.67@bytedance.com>
+Subject: [FIXUP] vfio/type1: correct logic of vfio_find_vpfn()
+Date: Fri, 25 Jul 2025 15:00:54 +0800
+Message-ID: <20250725070054.66497-1-lizhe.67@bytedance.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250724105608.73b05a24.alex.williamson@redhat.com>
 References: <20250724105608.73b05a24.alex.williamson@redhat.com>
@@ -97,220 +97,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Thu, 24 Jul 2025 10:56:08 -0600, alex.williamson@redhat.com wrote:
+From: Li Zhe <lizhe.67@bytedance.com>
+
+In commit 492d1e9f0df7 ("vfio/type1: optimize vfio_pin_pages_remote()"),
+we changes vfio_find_vpfn() from exact-iova matching to the interval
+[iova, iova + PAGE_SIZE), which may cause the following problem.
+
+[  215.671885] ------------[ cut here ]------------
+[  215.671893] WARNING: CPU: 10 PID: 6210 at drivers/vfio/vfio_iommu_type1.c:1204
+vfio_remove_dma+0xda/0xf0 [vfio_iommu_type1]
+[  215.671902] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
+vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
+cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
+s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
+vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
+zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
+sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
+configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
+[  215.671946] CPU: 10 UID: 107 PID: 6210 Comm: qemu-system-s39 Kdump: loaded Not tainted 6.16.0-
+rc7-00005-g4ff8295d8d61 #79 NONE
+[  215.671950] Hardware name: IBM 3906 M05 780 (LPAR)
+[  215.671951] Krnl PSW : 0704c00180000000 000002482f7ee55e (vfio_remove_dma+0xde/0xf0
+[vfio_iommu_type1])
+[  215.671956]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+[  215.671959] Krnl GPRS: 006d010100000000 000000009d8a4c40 000000008f3b1c80 0000000092ffad20
+[  215.671961]            0000000090b57880 006e010100000000 000000008f3b1c80 000000008f3b1cc8
+[  215.671963]            0000000085b3ff00 000000008f3b1cc0 000000008f3b1c80 0000000092ffad20
+[  215.671964]            000003ff867acfa8 000000008f3b1ca0 000001c8b36c3be0 000001c8b36c3ba8
+[  215.671972] Krnl Code: 000002482f7ee550: c0e53ff9fcc8	brasl	%r14,00000248af72dee0
+           000002482f7ee556: a7f4ffcf		brc	15,000002482f7ee4f4
+          #000002482f7ee55a: af000000		mc	0,0
+          >000002482f7ee55e: a7f4ffa9		brc	15,000002482f7ee4b0
+           000002482f7ee562: 0707		bcr	0,%r7
+           000002482f7ee564: 0707		bcr	0,%r7
+           000002482f7ee566: 0707		bcr	0,%r7
+           000002482f7ee568: 0707		bcr	0,%r7
+[  215.672006] Call Trace:
+[  215.672008]  [<000002482f7ee55e>] vfio_remove_dma+0xde/0xf0 [vfio_iommu_type1]
+[  215.672013]  [<000002482f7f03de>] vfio_iommu_type1_detach_group+0x3de/0x5f0 [vfio_iommu_type1]
+[  215.672016]  [<000002482f7d4c4e>] vfio_group_detach_container+0x5e/0x180 [vfio]
+[  215.672023]  [<000002482f7d2ce0>] vfio_group_fops_release+0x50/0x90 [vfio]
+[  215.672027]  [<00000248af25e1ee>] __fput+0xee/0x2e0
+[  215.672031]  [<00000248aef19f18>] task_work_run+0x88/0xd0
+[  215.672036]  [<00000248aeef559a>] do_exit+0x18a/0x4e0
+[  215.672042]  [<00000248aeef5ab0>] do_group_exit+0x40/0xc0
+[  215.672045]  [<00000248aeef5b5e>] __s390x_sys_exit_group+0x2e/0x30
+[  215.672048]  [<00000248afc81e56>] __do_syscall+0x136/0x340
+[  215.672054]  [<00000248afc8da7e>] system_call+0x6e/0x90
+[  215.672058] Last Breaking-Event-Address:
+[  215.672059]  [<000002482f7ee4aa>] vfio_remove_dma+0x2a/0xf0 [vfio_iommu_type1]
+[  215.672062] ---[ end trace 0000000000000000 ]---
+[  219.861940] ------------[ cut here ]------------
+
+...
+
+[  241.164333] ------------[ cut here ]------------
+[  241.164340] kernel BUG at drivers/vfio/vfio_iommu_type1.c:1480!
+[  241.164358] monitor event: 0040 ilc:2 [#1]SMP
+[  241.164363] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
+vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
+cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
+s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
+vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
+zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
+sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
+configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
+[  241.164399] CPU: 14 UID: 107 PID: 6581 Comm: qemu-system-s39 Kdump: loaded Tainted: G        W
+6.16.0-rc7-00005-g4ff8295d8d61 #79 NONE
+[  241.164403] Tainted: [W]=WARN
+[  241.164404] Hardware name: IBM 3906 M05 780 (LPAR)
+[  241.164406] Krnl PSW : 0704e00180000000 000002482f7f132a (vfio_dma_do_unmap+0x4aa/0x4b0
+[vfio_iommu_type1])
+[  241.164413]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+[  241.164415] Krnl GPRS: 0000000000000000 000000000000000b 0000000040000000 000000008cfdcb40
+[  241.164418]            0000000000001001 0000000000000001 0000000000000000 0000000040000000
+[  241.164419]            0000000000000000 0000000000000000 00000001fbe7f140 000000008cfdcb40
+[  241.164421]            000003ff97dacfa8 0000000000000000 00000000871582c0 000001c8b4177cd0
+[  241.164428] Krnl Code: 000002482f7f131e: a7890000		lghi	%r8,0
+           000002482f7f1322: a7f4feeb		brc	15,000002482f7f10f8
+          #000002482f7f1326: af000000		mc	0,0
+          >000002482f7f132a: 0707		bcr	0,%r7
+           000002482f7f132c: 0707		bcr	0,%r7
+           000002482f7f132e: 0707		bcr	0,%r7
+           000002482f7f1330: c0040000803c	brcl	0,000002482f8013a8
+           000002482f7f1336: eb6ff0480024	stmg	%r6,%r15,72(%r15)
+[  241.164458] Call Trace:
+[  241.164459]  [<000002482f7f132a>] vfio_dma_do_unmap+0x4aa/0x4b0 [vfio_iommu_type1]
+[  241.164463]  [<000002482f7f1d08>] vfio_iommu_type1_ioctl+0x1c8/0x370 [vfio_iommu_type1]
+[  241.164466]  [<00000248af27704e>] vfs_ioctl+0x2e/0x70
+[  241.164471]  [<00000248af278610>] __s390x_sys_ioctl+0xe0/0x100
+[  241.164474]  [<00000248afc81e56>] __do_syscall+0x136/0x340
+[  241.164477]  [<00000248afc8da7e>] system_call+0x6e/0x90
+[  241.164481] Last Breaking-Event-Address:
+[  241.164482]  [<000002482f7f1238>] vfio_dma_do_unmap+0x3b8/0x4b0 [vfio_iommu_type1]
+[  241.164486] Kernel panic - not syncing: Fatal exception: panic_on_oops
+
+This patch reverts vfio_find_vpfn() to exact iova matching, thereby
+resolving the issue.
+
+Fixes: 492d1e9f0df7 ("vfio/type1: optimize vfio_pin_pages_remote()")
+Tested-by: Eric Farman <farman@linux.ibm.com>
+Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+---
+ drivers/vfio/vfio_iommu_type1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 6909275e46c2..827e0987fab5 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -344,7 +344,7 @@ static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
  
-> On Thu, 24 Jul 2025 10:40:38 +0800
-> lizhe.67@bytedance.com wrote:
-> 
-> > On Wed, 23 Jul 2025 10:41:34 -0400, farman@linux.ibm.com wrote:
-> >  
-> > > On Wed, 2025-07-23 at 15:09 +0800, lizhe.67@bytedance.com wrote:  
-> > > > On Tue, 22 Jul 2025 12:32:59 -0400, farman@linux.ibm.com wrote:
-> > > >    
-> > > > > On Thu, 2025-07-10 at 16:53 +0800, lizhe.67@bytedance.com wrote:  
-> > > > > > From: Li Zhe <lizhe.67@bytedance.com>
-> > > > > > 
-> > > > > > When vfio_pin_pages_remote() is called with a range of addresses that
-> > > > > > includes large folios, the function currently performs individual
-> > > > > > statistics counting operations for each page. This can lead to significant
-> > > > > > performance overheads, especially when dealing with large ranges of pages.
-> > > > > > Batch processing of statistical counting operations can effectively enhance
-> > > > > > performance.
-> > > > > > 
-> > > > > > In addition, the pages obtained through longterm GUP are neither invalid
-> > > > > > nor reserved. Therefore, we can reduce the overhead associated with some
-> > > > > > calls to function is_invalid_reserved_pfn().
-> > > > > > 
-> > > > > > The performance test results for completing the 16G VFIO IOMMU DMA mapping
-> > > > > > are as follows.
-> > > > > > 
-> > > > > > Base(v6.16-rc4):
-> > > > > > ------- AVERAGE (MADV_HUGEPAGE) --------
-> > > > > > VFIO MAP DMA in 0.047 s (340.2 GB/s)
-> > > > > > ------- AVERAGE (MAP_POPULATE) --------
-> > > > > > VFIO MAP DMA in 0.280 s (57.2 GB/s)
-> > > > > > ------- AVERAGE (HUGETLBFS) --------
-> > > > > > VFIO MAP DMA in 0.052 s (310.5 GB/s)
-> > > > > > 
-> > > > > > With this patch:
-> > > > > > ------- AVERAGE (MADV_HUGEPAGE) --------
-> > > > > > VFIO MAP DMA in 0.027 s (602.1 GB/s)
-> > > > > > ------- AVERAGE (MAP_POPULATE) --------
-> > > > > > VFIO MAP DMA in 0.257 s (62.4 GB/s)
-> > > > > > ------- AVERAGE (HUGETLBFS) --------
-> > > > > > VFIO MAP DMA in 0.031 s (517.4 GB/s)
-> > > > > > 
-> > > > > > For large folio, we achieve an over 40% performance improvement.
-> > > > > > For small folios, the performance test results indicate a
-> > > > > > slight improvement.
-> > > > > > 
-> > > > > > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-> > > > > > Co-developed-by: Alex Williamson <alex.williamson@redhat.com>
-> > > > > > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> > > > > > Acked-by: David Hildenbrand <david@redhat.com>
-> > > > > > ---
-> > > > > >  drivers/vfio/vfio_iommu_type1.c | 83 ++++++++++++++++++++++++++++-----
-> > > > > >  1 file changed, 71 insertions(+), 12 deletions(-)  
-> > > > > 
-> > > > > Hi,
-> > > > > 
-> > > > > Our CI started flagging some crashes running vfio-ccw regressions on the -next kernel beginning with
-> > > > > next-20250717, and bisect points to this particular commit.
-> > > > > 
-> > > > > I can reproduce by cherry-picking this series onto 6.16-rc7, so it's not something else lurking.
-> > > > > Without panic_on_warn, I get a handful of warnings from vfio_remove_dma() (after starting/stopping
-> > > > > guests with an mdev attached), before eventually triggering a BUG() in vfio_dma_do_unmap() running a
-> > > > > hotplug test. I've attached an example of a WARNING before the eventual BUG below. I can help debug
-> > > > > this if more doc is needed, but admit I haven't looked at this patch in any detail yet.
-> > > > > 
-> > > > > Thanks,
-> > > > > Eric
-> > > > > 
-> > > > > [  215.671885] ------------[ cut here ]------------
-> > > > > [  215.671893] WARNING: CPU: 10 PID: 6210 at drivers/vfio/vfio_iommu_type1.c:1204
-> > > > > vfio_remove_dma+0xda/0xf0 [vfio_iommu_type1]
-> > > > > [  215.671902] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
-> > > > > vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
-> > > > > cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
-> > > > > s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
-> > > > > vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
-> > > > > zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
-> > > > > sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
-> > > > > configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
-> > > > > [  215.671946] CPU: 10 UID: 107 PID: 6210 Comm: qemu-system-s39 Kdump: loaded Not tainted 6.16.0-
-> > > > > rc7-00005-g4ff8295d8d61 #79 NONE 
-> > > > > [  215.671950] Hardware name: IBM 3906 M05 780 (LPAR)
-> > > > > [  215.671951] Krnl PSW : 0704c00180000000 000002482f7ee55e (vfio_remove_dma+0xde/0xf0
-> > > > > [vfio_iommu_type1])
-> > > > > [  215.671956]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
-> > > > > [  215.671959] Krnl GPRS: 006d010100000000 000000009d8a4c40 000000008f3b1c80 0000000092ffad20
-> > > > > [  215.671961]            0000000090b57880 006e010100000000 000000008f3b1c80 000000008f3b1cc8
-> > > > > [  215.671963]            0000000085b3ff00 000000008f3b1cc0 000000008f3b1c80 0000000092ffad20
-> > > > > [  215.671964]            000003ff867acfa8 000000008f3b1ca0 000001c8b36c3be0 000001c8b36c3ba8
-> > > > > [  215.671972] Krnl Code: 000002482f7ee550: c0e53ff9fcc8	brasl	%r14,00000248af72dee0
-> > > > >            000002482f7ee556: a7f4ffcf		brc	15,000002482f7ee4f4
-> > > > >           #000002482f7ee55a: af000000		mc	0,0  
-> > > > >           >000002482f7ee55e: a7f4ffa9		brc	15,000002482f7ee4b0  
-> > > > >            000002482f7ee562: 0707		bcr	0,%r7
-> > > > >            000002482f7ee564: 0707		bcr	0,%r7
-> > > > >            000002482f7ee566: 0707		bcr	0,%r7
-> > > > >            000002482f7ee568: 0707		bcr	0,%r7
-> > > > > [  215.672006] Call Trace:
-> > > > > [  215.672008]  [<000002482f7ee55e>] vfio_remove_dma+0xde/0xf0 [vfio_iommu_type1] 
-> > > > > [  215.672013]  [<000002482f7f03de>] vfio_iommu_type1_detach_group+0x3de/0x5f0 [vfio_iommu_type1] 
-> > > > > [  215.672016]  [<000002482f7d4c4e>] vfio_group_detach_container+0x5e/0x180 [vfio] 
-> > > > > [  215.672023]  [<000002482f7d2ce0>] vfio_group_fops_release+0x50/0x90 [vfio] 
-> > > > > [  215.672027]  [<00000248af25e1ee>] __fput+0xee/0x2e0 
-> > > > > [  215.672031]  [<00000248aef19f18>] task_work_run+0x88/0xd0 
-> > > > > [  215.672036]  [<00000248aeef559a>] do_exit+0x18a/0x4e0 
-> > > > > [  215.672042]  [<00000248aeef5ab0>] do_group_exit+0x40/0xc0 
-> > > > > [  215.672045]  [<00000248aeef5b5e>] __s390x_sys_exit_group+0x2e/0x30 
-> > > > > [  215.672048]  [<00000248afc81e56>] __do_syscall+0x136/0x340 
-> > > > > [  215.672054]  [<00000248afc8da7e>] system_call+0x6e/0x90 
-> > > > > [  215.672058] Last Breaking-Event-Address:
-> > > > > [  215.672059]  [<000002482f7ee4aa>] vfio_remove_dma+0x2a/0xf0 [vfio_iommu_type1]
-> > > > > [  215.672062] ---[ end trace 0000000000000000 ]---
-> > > > > [  219.861940] ------------[ cut here ]------------
-> > > > > 
-> > > > > ...
-> > > > > 
-> > > > > [  241.164333] ------------[ cut here ]------------
-> > > > > [  241.164340] kernel BUG at drivers/vfio/vfio_iommu_type1.c:1480!
-> > > > > [  241.164358] monitor event: 0040 ilc:2 [#1]SMP 
-> > > > > [  241.164363] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
-> > > > > vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
-> > > > > cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
-> > > > > s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
-> > > > > vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
-> > > > > zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
-> > > > > sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
-> > > > > configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
-> > > > > [  241.164399] CPU: 14 UID: 107 PID: 6581 Comm: qemu-system-s39 Kdump: loaded Tainted: G        W  
-> > > > > 6.16.0-rc7-00005-g4ff8295d8d61 #79 NONE 
-> > > > > [  241.164403] Tainted: [W]=WARN
-> > > > > [  241.164404] Hardware name: IBM 3906 M05 780 (LPAR)
-> > > > > [  241.164406] Krnl PSW : 0704e00180000000 000002482f7f132a (vfio_dma_do_unmap+0x4aa/0x4b0
-> > > > > [vfio_iommu_type1])
-> > > > > [  241.164413]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
-> > > > > [  241.164415] Krnl GPRS: 0000000000000000 000000000000000b 0000000040000000 000000008cfdcb40
-> > > > > [  241.164418]            0000000000001001 0000000000000001 0000000000000000 0000000040000000
-> > > > > [  241.164419]            0000000000000000 0000000000000000 00000001fbe7f140 000000008cfdcb40
-> > > > > [  241.164421]            000003ff97dacfa8 0000000000000000 00000000871582c0 000001c8b4177cd0
-> > > > > [  241.164428] Krnl Code: 000002482f7f131e: a7890000		lghi	%r8,0
-> > > > >            000002482f7f1322: a7f4feeb		brc	15,000002482f7f10f8
-> > > > >           #000002482f7f1326: af000000		mc	0,0  
-> > > > >           >000002482f7f132a: 0707		bcr	0,%r7  
-> > > > >            000002482f7f132c: 0707		bcr	0,%r7
-> > > > >            000002482f7f132e: 0707		bcr	0,%r7
-> > > > >            000002482f7f1330: c0040000803c	brcl	0,000002482f8013a8
-> > > > >            000002482f7f1336: eb6ff0480024	stmg	%r6,%r15,72(%r15)
-> > > > > [  241.164458] Call Trace:
-> > > > > [  241.164459]  [<000002482f7f132a>] vfio_dma_do_unmap+0x4aa/0x4b0 [vfio_iommu_type1] 
-> > > > > [  241.164463]  [<000002482f7f1d08>] vfio_iommu_type1_ioctl+0x1c8/0x370 [vfio_iommu_type1] 
-> > > > > [  241.164466]  [<00000248af27704e>] vfs_ioctl+0x2e/0x70 
-> > > > > [  241.164471]  [<00000248af278610>] __s390x_sys_ioctl+0xe0/0x100 
-> > > > > [  241.164474]  [<00000248afc81e56>] __do_syscall+0x136/0x340 
-> > > > > [  241.164477]  [<00000248afc8da7e>] system_call+0x6e/0x90 
-> > > > > [  241.164481] Last Breaking-Event-Address:
-> > > > > [  241.164482]  [<000002482f7f1238>] vfio_dma_do_unmap+0x3b8/0x4b0 [vfio_iommu_type1]
-> > > > > [  241.164486] Kernel panic - not syncing: Fatal exception: panic_on_oops  
-> > > > 
-> > > > Thanks for the report. After a review of this commit, it appears that
-> > > > only the changes to vfio_find_vpfn() could plausibly account for the
-> > > > observed issue (I cannot be absolutely certain). Could you kindly test
-> > > > whether the issue persists after applying the following patch?  
-> > > 
-> > > Hi Zhe,
-> > > 
-> > > Thank you for the quick patch! I applied this and ran through a few cycles of the previously-
-> > > problematic tests, and things are holding up great.
-> > > 
-> > > It's probably a fixup to the commit here, but FWIW:
-> > > 
-> > > Tested-by: Eric Farman <farman@linux.ibm.com>
-> > > 
-> > > Thanks,
-> > > Eric  
-> > 
-> > Thank you for your feedback. Also I anticipate that this fix-up patch
-> > will leave the optimizations introduced in the original submission
-> > essentially unaffected.
-> 
-> Hi Zhe,
-> 
-> Thanks for the fix.  Could you please send this as a formal follow-on
-> fix path with Eric's Tested-by and documenting the issue?  Thanks,
+ static inline struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+ {
+-	return vfio_find_vpfn_range(dma, iova, iova + PAGE_SIZE);
++	return vfio_find_vpfn_range(dma, iova, iova + 1);
+ }
+ 
+ static void vfio_link_pfn(struct vfio_dma *dma,
+-- 
+2.20.1
 
-Hi Alex,
-
-I will prepare and resend a fix-up patch.
-
-In my view, the root cause is not this patchset itself; rather, it
-appears that some kernel-space drivers invoke
-vfio_device_container_pin_pages() with an iova that is not
-PAGE_SIZE-aligned (I am not entirely certain. Hi Eric, could you please
-help verify this?). Our current patchset changes vfio_find_vpfn()
-from exact-iova matching to the interval [iova, iova + PAGE_SIZE).
-When vfio_unpin_page_external() removes a struct vfio_pfn, it may
-locate the wrong vpfn. This leaves the vpfn red-black tree non-empty,
-triggering the WARN and BUG reported in the issue. How about we correct
-this logic first, and then reassess whether an alignment check should
-be added inside vfio_device_container_pin_pages().
-
-Please correct me if I am wrong.
-
-Thanks,
-Zhe
-
-> > > > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> > > > --- a/drivers/vfio/vfio_iommu_type1.c
-> > > > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > > > @@ -344,7 +344,7 @@ static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
-> > > >  
-> > > >  static inline struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
-> > > >  {
-> > > > -       return vfio_find_vpfn_range(dma, iova, iova + PAGE_SIZE);
-> > > > +       return vfio_find_vpfn_range(dma, iova, iova + 1);
-> > > >  }  
-> > 
 
