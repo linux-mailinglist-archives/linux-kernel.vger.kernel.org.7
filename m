@@ -1,343 +1,219 @@
-Return-Path: <linux-kernel+bounces-745419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11579B119A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:15:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45225B119AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B1A75648BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:15:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F641CC8497
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDD6186E2E;
-	Fri, 25 Jul 2025 08:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D477E2BEC57;
+	Fri, 25 Jul 2025 08:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hot63Vmd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iFgQGoXV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB088BA36;
-	Fri, 25 Jul 2025 08:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753431337; cv=fail; b=gbUcSIsHroP1rQNxZ25hIQD77RddaMBwAdfFLlBiRdoF3FD6etI9tGem6U6gArEn72Zmja9ivjY/mg4P6ic0IIvV8XmAKlGgl2QF3BBQxLzx5Do+7v6/aqyPtVhIIyEdb1Ky90sRHBCL5red+UBUskkOk7cRl9QctYA0icQ0ncs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753431337; c=relaxed/simple;
-	bh=qpl1yn2/r9yabjRUeM0q21vocTlahv4x8iShM3kQwiM=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hxJ2GuW7q/cN6dQvs3a1Z6CJhNfJCMlounN4sKbG2/pTIMRuZ7W8SzYmsgnqoS2LNNVwD5Nsx/mLGA8NDrqOsfjRGnP59FMfMb5p3KrCbLTLaoc9lRtfCUeOQxW/YDLen1eriTJVSrcurY4VGXxmTNDd4yTDWRnL94ohHxokShE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hot63Vmd; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753431336; x=1784967336;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=qpl1yn2/r9yabjRUeM0q21vocTlahv4x8iShM3kQwiM=;
-  b=Hot63VmdmRdU01INJ/CtYn4bxlRXXVx6EkiCsIXOysYzryh6n92piq8F
-   547OKKInKjHgid+VQud9QsupNbY/fb2NTVJ4Lu3AbXlvKTLveR6vKpHKG
-   k27vlOJ5tvZNdMU9eumVO9kd7otqxAw+lWlrEnwcwpuUIjY7ty/1i5uJq
-   imHB+hMwQ8uefe4bkwAUbtK4+OvU3pW2d6gr6NNruT8gpbqvRLS/6nx5o
-   yoI10B4gE5711z2s7mFSPKW9gXc1vrQAVJ9WRGTlY0VA94WpApSM07qbT
-   lB8ZIbFNBz/92uebCDLSdX07WW3tQKBlfPFrOwYBtSkd/GCODD7HEdErZ
-   w==;
-X-CSE-ConnectionGUID: uikdFpPySdaGkz7z66tg8A==
-X-CSE-MsgGUID: /ZWR+JGyTY+XckpoTji2bg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55618155"
-X-IronPort-AV: E=Sophos;i="6.16,338,1744095600"; 
-   d="scan'208";a="55618155"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2025 01:15:35 -0700
-X-CSE-ConnectionGUID: oVnmCC+hThibZQlyew39GA==
-X-CSE-MsgGUID: sd85YVvaRdS3p0yBpfyxmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,338,1744095600"; 
-   d="scan'208";a="160397600"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2025 01:15:35 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 25 Jul 2025 01:15:34 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Fri, 25 Jul 2025 01:15:34 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.50)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 25 Jul 2025 01:15:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vhkPqX/oqPo7haWgjm5jTvdLN6ikYo47gcoD/nlkrIW3YLnVf9itHSJuoMWOEOJx0u3NsRhiR27nfoUgKYWkGGsimNQrdToiiDjHbpL8vqhZ/XYzK7HkRy/9FLoNxEx4Vn8eCXhv1RODFhGzrtqA7W+h41i68UjXlAVfgVQ6PfEOKm0x4JPwc17x/NOMgGNH8iMxBp+nCB7mIC+/Ir4AX3HfUIu1OzDJROsbbxuZwToFjA8rtYUMenL7K0yUhPMu6Z8IcrwPmC8rQS7uXjvC6l4awJKg3o23vq4h8Ihqh5uMdl28XTt2nEg7079+KGQsePTau7Q9Sn5PhLeknS/29A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jt/jL7wLrZrTqxRl8LiDUcjY3wzifMuET6yRRzUwqKA=;
- b=rbYUw8I3UEhCHw+tlFgS8OWrKxLj+EQpYbnMpm/2bIUvL83Q7rUmJZcnRkSwoR2JPUZnk6rpk36o7ihkynQhsRk/5Ag9sse8suSonhWjRUpvqhCpCmwWf/PGtKcYk4IbHgfbTzBwthPdD/AQNoWhWagNO2/EUoVKxZiMJt+Bq9pQle/90uINB6Zxatkf5yXjPXz1RrQy56zGGtv3FOHuCc697Ej74pFkllz0EsmyTGvuTI0TZVxjBuX9QOId7oP6Nn5QYccq8dOW37vlbCOX7wGx7GnCNqA///AOCbPTADgSQDNgvbUHlwimuJjQObiU2ZAQJ3eN+2A2RPh5PMizdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
- by MW5PR11MB5932.namprd11.prod.outlook.com (2603:10b6:303:1a2::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Fri, 25 Jul
- 2025 08:15:04 +0000
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::eeac:69b0:1990:4905]) by IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::eeac:69b0:1990:4905%5]) with mapi id 15.20.8964.021; Fri, 25 Jul 2025
- 08:15:04 +0000
-Message-ID: <b2e94588-96e4-4afa-b767-e7f05a81dcfa@intel.com>
-Date: Fri, 25 Jul 2025 11:14:59 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: sdhci-of-arasan: Ensure CD logic stabilization
- before power-up
-To: "Potthuri, Sai Krishna" <sai.krishna.potthuri@amd.com>, "Simek, Michal"
-	<michal.simek@amd.com>, Ulf Hansson <ulf.hansson@linaro.org>
-CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
-	"saikrishna12468@gmail.com" <saikrishna12468@gmail.com>
-References: <20250721095357.3783222-1-sai.krishna.potthuri@amd.com>
- <cf04326b-4de4-4637-aa3b-fa1c358b9ae4@intel.com>
- <BY5PR12MB425804611D4B29ADDCC82906DB59A@BY5PR12MB4258.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
- 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
- 4, Domiciled in Helsinki
-In-Reply-To: <BY5PR12MB425804611D4B29ADDCC82906DB59A@BY5PR12MB4258.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU6P191CA0037.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:53f::16) To IA1PR11MB7198.namprd11.prod.outlook.com
- (2603:10b6:208:419::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792DE1E5213
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753431438; cv=none; b=GJfW7pekXgjWyiM31xPn0SGgrKrQYAvrZ6dC9bX4+yDvs/RF3M14X1KzqOJsygqntF0w3fMyWx/nQbkYa50YPUKPPr1YPCdMQTdoZyBb5gqBVuXZcSyP1nZik152q4KQgEIrjkCYQ4X8fb6VnayiQ5z/3h4YOuXuh/yl+KcvuOM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753431438; c=relaxed/simple;
+	bh=GUt9tz6QhKbEM20TY59EPhfaQ3CjaqtAklTBxesc4Fc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hla9edMoYOB4n9dTFERVyELaNt5i8BRjb1Zbm2mBx4e6GYWkY/KzSk3OFjUGd5a7KOGPIK62fMXQrnx00BLZ/HeDkF268/hkGsssKC09Dl9WvSwFMWeJq28NtG6/E97JJnRNR6mIG1JMT57EoT7HuyBgZO01obG3WRiw3+BIc+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iFgQGoXV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OLrVZn004800
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:17:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	G2gAp22n0LVqwKU2EKsAkb8mxd9ndCHkEqEltv8yGrA=; b=iFgQGoXV0uN7DDu9
+	rZKGekjHt51J194Femx/2/Jkn1FbiI+PSbTQvn3lEaSVWtCGH/mlJ2snM333lZcq
+	MvGQwRZvnn5BL/F857Qf0ygn1fUSjlZNID6yf72vlTa4Qx//SQj0RQYsir63f04/
+	4E0NA2o+nSpEc0xCXdQ1DCLFuYzxsbO0dtfnt9j4wtpk/G/jr+lKQ/kbRlsSyLl0
+	9DZWfe8HtUNIhAFXskmMxfZlk7aWyFFNyJp4AjvoQQuOpsUYbMj4eI5MnVTZJSyV
+	7o7tfSvJiCKeIy12KDWu4SF2QNPZreaEfaxSIulfzrwMMrgo344sXvrQJr/03fXX
+	29WkAg==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w539bb2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:17:15 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-748f3613e6aso1138794b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:17:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753431434; x=1754036234;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G2gAp22n0LVqwKU2EKsAkb8mxd9ndCHkEqEltv8yGrA=;
+        b=FGXLYk3dL1BXxyjDTgGd+JTwSINcFvUPFTnv8if8EBBonetAB/keIWhyKB86PwOdl4
+         Bc7pcsDrMt/UbEIA1cFSJRHR7RIJPdjupUYMWFg9d1uOmTtuKCR7Xl1lE4fPetL/OJtD
+         8sXAydtvPMG5C87DxD/yIrjUh4MlJjKp5t5ziQEJMhsmkyqQ+lHqsoK4AaFKSTSJOHUH
+         u6kTutpkhLh8GiNi27jXCOs6dKKU0TqYVs2ZmRn2aRRPeXgCDt5RxTjLBB8qJbIruD5U
+         TNteHChfZHXvIQ80vuTD/3dpT5YfJS8SSGYvnA0719LA/a/qhFp3RzZJ5lpnek+eoWCi
+         xnQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVD/cq59CPzlHfTc0fNuvkxtVNRFOF7SuacI1sRgadgk2yBLfb7L2QramaIKRURDPL+/Fqm0L/uHkdPe04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD+XcgMst2cd7mmZLeIYhX4yRd+SKbUaykYTgPGFtvVhlhIBGu
+	9ALWtA4yCZrgRjwWaouXW7DTenGGA1XmBCFMH5wtwAqc0fdhD6a4+n7SjgBBascD3x8405KtEp+
+	J2aLxw/J+AQ8sMyBb6ARM02qY8Tz7PFFwp8pDivvFy+7BA3wHc2iwG+aoe2VF1b1RE9hRraDQGw
+	M=
+X-Gm-Gg: ASbGncsLCpfQo7L1lUPaAgChO8V0zAnfnUEFjsL7SGjVKlAkH9/obp550V29N4ryH3G
+	kZW1YFllj/FvVc82y2IXO2g/uyd1yFUqok7nYDy7h7Ke2RejeIMVJzq4sebrRnZJ+OFQ0yW36cn
+	DUXckqAxTATkKppNFnX7LvAYuWzl0KY9BTY2kvyM70dkL52CmXsKnmpJZyTeSFt5D8i+cpYNpHT
+	dtAm99PcrGQ95Hj6vhietPlTWwbNtJk3ZyQj+lbiCtE4/1S6+6orzHCMxxSeVL/XgM0gRFlISF4
+	OcuEb/lBAY54nfKUTigqHUTHcPA6ICCRnGL2qewZAcbE6l9DQX+yYAAf6aGNm7kJqczTimACMKR
+	ttEfS9DjMZPZwuvbe6/pb+3w2JCo=
+X-Received: by 2002:a05:6a21:9989:b0:22c:a165:3664 with SMTP id adf61e73a8af0-23d701db921mr1436115637.26.1753431433686;
+        Fri, 25 Jul 2025 01:17:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGd2mTB0BmD98J6BIrb5zukkTqEkg9rlDr+yDIHUMb/P94c38M867StKboWi+F5J7N2YvdZ8w==
+X-Received: by 2002:a05:6a21:9989:b0:22c:a165:3664 with SMTP id adf61e73a8af0-23d701db921mr1436058637.26.1753431433198;
+        Fri, 25 Jul 2025 01:17:13 -0700 (PDT)
+Received: from [10.133.33.78] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761ae1584bfsm3128624b3a.38.2025.07.25.01.17.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 01:17:12 -0700 (PDT)
+Message-ID: <d34ff09d-5a55-4c7a-9eb6-fc0a0f4adcfb@oss.qualcomm.com>
+Date: Fri, 25 Jul 2025 16:17:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|MW5PR11MB5932:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c141786-2477-45f6-7551-08ddcb535bcc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bjJjeHRjL1dIbjJwQjJHZlNvTE1xT0l5UmVBWjRIS0hBSTg1UXNiVEptMXQ4?=
- =?utf-8?B?N0JmT1M0QnBOMDhNQU4yZVdzZU5aaHlnUTRDdUxzUDJkM2JObjZRc1N6UnVI?=
- =?utf-8?B?NGNJZGRGN2xIN2VhWnhSVGk5dDlFYk9LbjJSSzVMb1FjelE5QjlJcWFPeEt0?=
- =?utf-8?B?dEZNSWZxYnp4aytSZHRuQ2pYcVhCU0Q0K2liTmdGNThlNlZsVllHVnpHZTFj?=
- =?utf-8?B?aTJJcnI3SVc0Vm5sWm9WWlMyQlQ0TFV4UmUwbkRPNjB4NmRtbHBtZXhwbkhw?=
- =?utf-8?B?VkpLbFU4TFZoRWZEdFVQWHBtajhmQTZkRnhKeE1obklTejVYc1IzcTA2VHlr?=
- =?utf-8?B?OG5oU011WFJzZldXRnNVQ0J1Y0R4VHpWYmxtbm5tWGROUmllWjJUYklIMkJE?=
- =?utf-8?B?V2FFYU9tVDZhWGswcjZmYm5od1ZQWXZIWnN6c2l4WlRXWUdaODQxakljU3Bs?=
- =?utf-8?B?UWFZK2dkdCs5eUs5ZzlaWWg5cGhwUkdXcFVaN2s1NFI2emQwNlIzQ3c0Zncv?=
- =?utf-8?B?dTVaOEQ5S1ZuQ3BQQTdmQTBFdk91aXhVNmRua3NyMHVqN25obmdEeVZtdWRG?=
- =?utf-8?B?WlZSNGJDckZLKzRCbnFSU24xS2E1cUVoMWNNSFgrOUw2ai84eVhlbm5pYyth?=
- =?utf-8?B?SllqZVpyQ3pLMWFzdHdCL3hKQjAxSGgvKzBrZGw0S3BXVEZKTDFhZlJHQXJt?=
- =?utf-8?B?b3pUS3JiWTViWThIcWNXOTliS0VZYS9pK1lxbGRvelpSN0tta2Z4ek1qYVh0?=
- =?utf-8?B?OXBuQ0lLVjYza3Fxa0o2WFh2Nll5WVdCRWJzUlBjNUxEdStpSWFtRWJmZU8w?=
- =?utf-8?B?YllBQ2llbFFoQUIwKzNSNnRteURXVE5uNWYzcURrblNMN21UbjRlRk5aaHFu?=
- =?utf-8?B?d3dDVWRxaE1JRW1JbDNFSVBFajhzTGZaU0JCbXprcGRtOWdic2tFdXlVNHpL?=
- =?utf-8?B?aHp3Mkh6SlprZnpjLzJRM0NzUm80ZmU4TTdqQmpmZ1lmZkl4Y1JiRERmL2Qw?=
- =?utf-8?B?R1NyVDRObDJyK1hHSXhWNklNUW02NnpjS0lnc3BFYzlqR0NsRTRxY1VOVWFu?=
- =?utf-8?B?RWRrRWdDWXpEMU1LWm9HK2dycWJwbjQ1TXVnK2pudzhrWko0czZpU3BhVXcz?=
- =?utf-8?B?M2kvREpJQW5mNkJLcXdwM01sVXUzMWhWdWRFZ1dPNExKSER6WjVqeUdEU1dE?=
- =?utf-8?B?Q05oV01YQXE3a2xKUDYrbkNmNFd3ay85VEFXVjlyOUJURTMzc1BGYVJzYnBV?=
- =?utf-8?B?ZENYWkJVNUxXT3piQVNHTVVDeGpXakpiNms5ZXNIdmcxRFlVUTducHVVT3B1?=
- =?utf-8?B?OHdVYTZqeWYxeERmbDZ3Um5ycUh6cjdMNHdNR1pieENJc05hb05JSHpWZGdx?=
- =?utf-8?B?QlJ2b3BNdG04WENpS3RqYVEwV2dNeE4zSTdHVFdnbFpCTDEzbnM4Rm5hSVJB?=
- =?utf-8?B?akQyUGphRzQ0QW15L1JpbFJ1YkdvTDU5L1YvYkR5eU83OXRzSGhGNkhWM1cr?=
- =?utf-8?B?ZmE1ZnU4UXovSWtrVEJMNmZIR0trQUxUbUs1SkRSUENlR3c2WFhIbXJkd1Js?=
- =?utf-8?B?L0NqeFdPS2Iza3B3YTQrWTdUcWo5TzZwbWVidE1tREtIaHZTT2tEMUpTSmky?=
- =?utf-8?B?NkZuTnZ0ckpWNlVocFMwZ0lYQjk3dDk3TjdieVRxQzR3bVlSTXVwYWV3cXVv?=
- =?utf-8?B?U0NiVld0MW9JTkpMZHdGeDE4NWVaL2Rkb1M2VStGb0N5WlZRMlJrNno0bmR0?=
- =?utf-8?B?RVkyTjFtVlE1UTRiT1UxK0dxbE5RVUZIeGtneDhUVUhteXJCcUhUS1M2RGNM?=
- =?utf-8?B?YkRqdnRSSHQ0TzRPZzZEL3FoS3RvU2N2dGd0WlhOWTZCQ0p4UlloNHJEeENQ?=
- =?utf-8?B?MDEzTC8xRERnYUNLc0k1Q0ZtMjZVZFdoYzIxaE96ZW5pbmx2bTNuUHB5ZXVp?=
- =?utf-8?Q?+Np/oqN0Dgg=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bG5nZzNHNWlma29oRWdoaDByT3daOWtjZmsxTlpNZXlaUVdGMFUzNFR5Q2Zz?=
- =?utf-8?B?VEttT2pndTZKM21pb1JqRCtVMXBqYTJLNEljZk4yQWx0dkpUclhBRHhSTnhq?=
- =?utf-8?B?OTArN3M2Y2FsbjBzWlBXV2M2TXF2WHc1L2hsSGJqRFFESFdQNVNwNFA1czBW?=
- =?utf-8?B?dDB3WDFNL1ZQbGNhbmtaUUgrVzdPMklrdkdtcDVoN2lMWmVkSWhlbDZNelVz?=
- =?utf-8?B?T3BQc2Ftd0RYSDZjTVcvQXBsNEhpMVRSSGhER0pYbFMvZE1VSGliRUk1Qjdp?=
- =?utf-8?B?NHkzUWI0d2JUS2t5eG5hSEZ0RE9lY3JzdWpRNzI4Z1JJMzFtMTA2dTNCSVo1?=
- =?utf-8?B?SjRkbkFGVml5TXVrWEdmRWc4WVBVUy9hemR6K29qeUJDMTdWRjkzd2JIeGxa?=
- =?utf-8?B?bVl3Um50UVNycnp6N1lLZVdPMWJzZ2VaVTBjc2Rnd0lUS3JCbzZBYUd2aEwx?=
- =?utf-8?B?dzlsenkyc1VBOGFlU3JWL2tvS0NNRzd4RW5kRkFaYWxmK3NUY0NtZkNOY0or?=
- =?utf-8?B?bU9ncHRMd1IwOEpiWkFmMmJsQmNodk9tMXVHUnEzMnBsN0JncVZXSEVYZlM5?=
- =?utf-8?B?bVhTSHZFdjZKWDEyNTQzWGVkRnhpZjJpWE5KaXVjbm42Y0FZYVlFOER5eTlj?=
- =?utf-8?B?U3lFenVsVytQU3QxYnV3Z1Ava1d3LzZlUUFkQnNzdlU3azNGN0p6eGROU0JS?=
- =?utf-8?B?c0gvSU12dGRZdWp6YWo2TGVxekNlMEV2UEVISWllRG5heUorNU1NYTk2WjRZ?=
- =?utf-8?B?eEpLZ0FMdVQrWU53RTFGYWlQSzlIKzhubUZYWVlWU3ZLaE1mSmE0VlNNQ3pN?=
- =?utf-8?B?bEZ1NEJrc0NrUkd6ZjQ5WGF1V2JhZHVzUnJxL3pDbzdNcFh4amk1Sk5EUGhq?=
- =?utf-8?B?a014UE14QlY1ZjlINS9EeVpYcG5za3hDeDh5dmFZQ2FON25DM1UyOUQzbk5J?=
- =?utf-8?B?OFpyWVNiNWpkalJxMHdxa0tGU1dCY1Y3SVBhSGRUMTNuQ0kvR1A2YkRTVUxy?=
- =?utf-8?B?WTZNeVlESjBsTVBhSm5FVWJOSjQrNWc5WEpkWTUrWk9VWWM2Z29VQ1dtandN?=
- =?utf-8?B?ejZ3bWVydHljb0dPVDNXVEJHOEc0WlNLenpJdjBHVFpMOUE5MUdkYy9xMDhk?=
- =?utf-8?B?dkRjbkZtYlB1M1Y1TUZtelRPREszMFBJM3h0WEdmS3MrMlp3T3dubnh4Qmx2?=
- =?utf-8?B?VCtWNjk1MHdiU3pUK1hheWUwNVdueWFOZG1lbVhnWXVqN3lYbTlnbWZ2RStm?=
- =?utf-8?B?UGVzdWg3WFo4aURTYVhBY1dJb1BXMTFPMElIUDQ2U0djS05zUmRZN1pQSkZ4?=
- =?utf-8?B?UWFuakMwdVFkK0ZNamlacnlBa2VXWHR5ZVk1dTJ5SnRMaFJvT09hZGUralcx?=
- =?utf-8?B?ejRNRkZhTFU1L2MvcE9WQlhHSUhUSStGamlLbWxOQ1RxNE9ncHJoQTh5clBa?=
- =?utf-8?B?MEh5OCszSDFQdUJjaE12VTdXaExVdFdyOFNvd2QzU2ZoelJpN2lYS0hDYXhK?=
- =?utf-8?B?R1VnU0JKaTdMWmRJUUJmNkNVUlU2L2Vnd3RrWXdDWDgvNmtsTXhaNVliZWtl?=
- =?utf-8?B?aVBOcW91a0RhVkRFNHU5amxEZ1BUeEVvY3ozbC9qQ2gvT0thMXdlanNvck1j?=
- =?utf-8?B?OVpYYjNudVliTGVxK2h5SVhnK051ajd0a01TV1ZlUENweEk2a0pWK1lwK3Vw?=
- =?utf-8?B?d08zOFJ0cEljbWtKa0wrYU92bGpTQ2hlTXhvdmxPYTFkU3NDWUJMN0QxR3gx?=
- =?utf-8?B?MEg0T01sRXVOYTZERXdHTER3VkNPWWNFZnNaMWI1MWFNMmlHYnRsdi9TbnJh?=
- =?utf-8?B?KzN3d2lnb3M5d1d1UGtsRi9xRzkwek9aeTJWblZQbnNyZ29XQnNyK3M1TEFL?=
- =?utf-8?B?NjhYV0dPTzlYQ09PcHlnTWpxT0lyczUzYnVUMHhBYndWSklQcWFOQ0NhcDlX?=
- =?utf-8?B?QVRodHZiQ1d4WUhobW5manVQakpUZUxkd0s3ZFVyN3ozK3lXNjNpNFRlSm1t?=
- =?utf-8?B?QTZMMFpPSFV6ald0QUpZZjVCMXJtQWdMclBTMDRnZ2lZenV0dTlBZWh2bUF4?=
- =?utf-8?B?bXNoRUc0cnpoazdWaG45emt5R2VhSmdsRVA3a0NZVVVscWJaM0poZ2dxS1FG?=
- =?utf-8?B?Wjh6OFBySzg0cy9vTzR2QnJQaFoxd2poU05PZmZnSzV6Tm11TGJrNmUwVEt6?=
- =?utf-8?B?T2c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c141786-2477-45f6-7551-08ddcb535bcc
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 08:15:04.3348
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S17C0oOtSOnfon50ALt/vWx/ano0IxmnzfKKMWv6BLMXuYDUzJuuuNpI1v1biXfUPoRxr+eF/seRogPtAftOKg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR11MB5932
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] power: supply: core: Add state_of_health power
+ supply property
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@foundries.io>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
+        David Collins <david.collins@oss.qualcomm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
+ <20250530-qcom_battmgr_update-v2-2-9e377193a656@oss.qualcomm.com>
+ <6oixvnhihgjucqaovkayzm6cpi35jfmtwmm67wa6h4nlmhr6w5@ggb7auvjzos2>
+ <cd2964b0-e28e-4ddb-b319-9b65fb78b73c@oss.qualcomm.com>
+ <p5nxjuexggzxttislcaum7vomawnq5fncos7itfib6ysvy6a4k@d5ywmfpqyk3s>
+ <994cb636-50b3-40f8-baaf-0b1afa2e7f53@oss.qualcomm.com>
+ <3ldf7w5cpv4wt63kvewl2a32abx4uohvir7zgefpqly5rytkcn@p5fslnvpnjn3>
+ <4pxg7acm4nuwo7bhiwrtpxdey7v2hanw2tw6vbgp6i6md4q2zx@pxjuymr6ykwr>
+Content-Language: en-US
+From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+In-Reply-To: <4pxg7acm4nuwo7bhiwrtpxdey7v2hanw2tw6vbgp6i6md4q2zx@pxjuymr6ykwr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=AfKxH2XG c=1 sm=1 tr=0 ts=68833d8b cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=Oh2cFVv5AAAA:8 a=VwQbUJbxAAAA:8
+ a=7KI_h5JtWn8X269DZ4AA:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+ a=7KeoIwV6GZqOttXkcoxL:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA2OSBTYWx0ZWRfXxGq4Ncd+BPtu
+ grPS/dtUCK0hr1AwZ4cozi3nuO/reSIn3eKDSTCvukzJsD0JrtG5U3VzhO0B5HXc7NVcsIBNJwo
+ t4HTn9+mAyEZmomFMDJXh6NuPUB5rTchxNtOONzgNR/WuMormuYKNO2kT4Gea8eJjkWBk4MEtuO
+ +DacW7Cl0RyBLtVnGuZv35y8UqrWUMh1rFoNhk2cntXQRb+lQlLhJHRK9sruOuFB7ikOIgQr7ee
+ CquN//MFXMeuNMuQggTu4FfTGcaraDZL2/EkADlL7xx3fzMOSMOS/EcQndSghb4077oZtc6SLqi
+ +oDkz0UkavrRQu36D4KqWRSXF0FmbzCx+gCTJX2/LbmZwQzldb2nLuv7W8EwKYL5JLWeHouSskN
+ R3RA6f+9zFM8bWHeI/MUciMZKkeFO/3COAZip1p+SHkDZ+CRWRRVnWyCGztRejrdwMkPDsrV
+X-Proofpoint-GUID: 0wFuPkPfOJG9wlwUd7P9iQRdXlCM1XOh
+X-Proofpoint-ORIG-GUID: 0wFuPkPfOJG9wlwUd7P9iQRdXlCM1XOh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 spamscore=0
+ impostorscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507250069
 
-On 25/07/2025 08:49, Potthuri, Sai Krishna wrote:
-> [Public]
-> 
-> Hi Adrian,
-> 
->> -----Original Message-----
->> From: Adrian Hunter <adrian.hunter@intel.com>
->> Sent: Thursday, July 24, 2025 9:50 PM
->> To: Potthuri, Sai Krishna <sai.krishna.potthuri@amd.com>; Simek, Michal
->> <michal.simek@amd.com>; Ulf Hansson <ulf.hansson@linaro.org>
->> Cc: linux-mmc@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>;
->> saikrishna12468@gmail.com
->> Subject: Re: [PATCH] mmc: sdhci-of-arasan: Ensure CD logic stabilization before
->> power-up
->>
->> On 21/07/2025 12:53, Sai Krishna Potthuri wrote:
->>> During SD suspend/resume without a full card rescan (when using
->>> non-removable SD cards for rootfs), the SD card initialization may
->>> fail after resume. This occurs because, after a host controller reset,
->>> the card detect logic may take time to stabilize due to debounce logic.
->>> Without waiting for stabilization, the host may attempt powering up
->>> the card prematurely, leading to command timeouts during resume flow.
->>> Add sdhci_arasan_set_power_and_bus_voltage() to wait for the card
->>> detect stable bit before power up the card. Since the stabilization
->>> time is not fixed, a maximum timeout of one second is used to ensure
->>> sufficient wait time for the card detect signal to stabilize.
->>>
->>> Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
->>> ---
->>>  drivers/mmc/host/sdhci-of-arasan.c | 24 ++++++++++++++++++++++--
->>>  1 file changed, 22 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/sdhci-of-arasan.c
->>> b/drivers/mmc/host/sdhci-of-arasan.c
->>> index 42878474e56e..3ce55009ba4a 100644
->>> --- a/drivers/mmc/host/sdhci-of-arasan.c
->>> +++ b/drivers/mmc/host/sdhci-of-arasan.c
->>> @@ -99,6 +99,9 @@
->>>  #define HIWORD_UPDATE(val, mask, shift) \
->>>             ((val) << (shift) | (mask) << ((shift) + 16))
->>>
->>> +#define CD_STABLE_TIMEOUT_US               1000000
->>> +#define CD_STABLE_MAX_SLEEP_US             10
->>> +
->>>  /**
->>>   * struct sdhci_arasan_soc_ctl_field - Field used in sdhci_arasan_soc_ctl_map
->>>   *
->>> @@ -514,6 +517,23 @@ static int sdhci_arasan_voltage_switch(struct
->> mmc_host *mmc,
->>>     return -EINVAL;
->>>  }
->>>
->>> +static void sdhci_arasan_set_power_and_bus_voltage(struct sdhci_host *host,
->> unsigned char mode,
->>> +                                              unsigned short vdd)
->>> +{
->>> +   u32 reg;
->>> +
->>> +   /*
->>> +    * Ensure that the card detect logic has stabilized before powering up, this
->> is
->>> +    * necessary after a host controller reset.
->>> +    */
->>> +   if (mode == MMC_POWER_UP) {
->>> +           readl_poll_timeout(host->ioaddr + SDHCI_PRESENT_STATE, reg,
->> reg & SDHCI_CD_STABLE,
->>> +                              CD_STABLE_MAX_SLEEP_US,
->> CD_STABLE_TIMEOUT_US);
->>> +   }
->>
->> Doesn't need {}
-> Will remove in v2.
 
-Also probably better to access the register in a consistent manner
-i.e. use read_poll_timeout(sdhci_readl,...,host, SDHCI_PRESENT_STATE)
+On 6/22/2025 9:17 AM, Sebastian Reichel wrote:
+> Hi,
+>
+> On Thu, Jun 05, 2025 at 09:34:14AM +0300, Dmitry Baryshkov wrote:
+>> On Thu, Jun 05, 2025 at 02:08:30PM +0800, Fenglin Wu wrote:
+>>> On 6/3/2025 6:35 PM, Dmitry Baryshkov wrote:
+>>>>>>> +What:		/sys/class/power_supply/<supply_name>/state_of_health
+>>>>>>> +Date:		May 2025
+>>>>>>> +Contact:	linux-arm-msm@vger.kernel.org
+>>>>>>> +Description:
+>>>>>>> +		Reports battery power supply state of health in percentage.
+>>>>>>> +
+>>>>>>> +		Access: Read
+>>>>>>> +
+>>>>>>> +		Valid values: 0 - 100 (percent)
+>>>>>> What does it mean that battery has 77% of health?
+>>>>> I will update this to explain it better:
+>>>>>
+>>>>> Reports battery power supply state of health in percentage, indicating that the maximum charge capacity has degraded to that percentage of its original designed capacity.
+>>>> Which basically means that we don't need it in the first place, as we
+>>>> can read capacity_full and capacity_full_design (or energy_full /
+>>>> energy_full_design) and divide one onto another.
+>>> Hmm, it is true in general to quantify how the battery performance has
+>>> degraded over time. However, estimating and calculating for battery state of
+>>> health is much more complicated I think. I am not an expert, but as far as I
+>>> know, different battery management systems might have different algorithms
+>>> to calculate the battery health and report it in as percentage. For example,
+>>> in Qcom battery management firmware, a "soh" parameter is provided as the
+>>> battery health percentage based on the real-time calculations from learning
+>>> capacity, resistance estimation, etc.
+>> Ack, this is more than just full / full_design. Please consider
+>> expanding ABI description (though in the vendor-neutral way).
+> No, Dmitry was right. It is exactly the same.
+>
+> Estimating the battery state of health information is indeed tricky
+> and complicated. The reason for that is that estimating and
+> calculating POWER_SUPPLY_PROP_CHARGE_FULL/POWER_SUPPLY_PROP_ENERGY_FULL
+> (i.e. not the *_FULL_DESIGN) is complicated :)
+>
+> Greetings,
+>
+> -- Sebastian
+Hi Sebastian,
 
-> 
->>
->> Will this work with all Arasan variants?
-> Yes, this is expected to work across all Arasan variants that comply with the standard
-> SDHCI register definitions. The SDHCI_CD_STABLE bit is defined in both the
-> standard SDHCI specification and Arasan's user guide.
-> On Xilinx/AMD Versal and ZynqMP platforms, the CD stable bit is typically set within
-> a few milliseconds. However, to be on the safer side and ensure compatibility across
-> all Arasan variants, a timeout of 1 second is added.
+Thanks for the comment.
 
-A lower timeout would have less issue if there were devices that did
-not have standard CD stable bit behaviour.
+In the qcom_battmgr driver, both POWER_SUPPLY_PROP_CHARGE_FULL and 
+POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN properties are already supported, 
+and CHARGE_FULL is used to represent the learned battery capacity 
+calculated in Qcom BMS. Additionally, the Qcom BMS calculates a 
+comprehensive battery SOH parameter by considering multiple factors, 
+such as changes in battery impedance, learned capacity over time, and 
+charging/discharging cycles. Such as, for the battery impedance change, 
+it is specially important for calculating SOH in scenarios with high 
+load or low temperatures, as only part of the CHARGE_FULL capacity may 
+be usable due to significant voltage drops, especially in aged batteries.
 
-> Please let me know if you prefer to increase the timeout or if this logic should be
-> enabled by a platform specific quirk.
+Hence, we proposed adding "state_of_health" support in power supply ABI 
+to expose this parameter provided in Qcom BMS which is different from 
+the calculation of charge_full / charge_full_design.
 
-If you are 100% confident it won't negatively affect other
-devices, then it is OK.  Otherwise it is better as a quirk.
+Also, Android battery management code [1] is expecting "state_of_health" 
+power supply property and it can use it if it's available.
 
-> 
-> Regards
-> Sai Krishna
-> 
->>
->>> +
->>> +   sdhci_set_power_and_bus_voltage(host, mode, vdd); }
->>> +
->>>  static const struct sdhci_ops sdhci_arasan_ops = {
->>>     .set_clock = sdhci_arasan_set_clock,
->>>     .get_max_clock = sdhci_pltfm_clk_get_max_clock, @@ -521,7 +541,7
->> @@
->>> static const struct sdhci_ops sdhci_arasan_ops = {
->>>     .set_bus_width = sdhci_set_bus_width,
->>>     .reset = sdhci_arasan_reset,
->>>     .set_uhs_signaling = sdhci_set_uhs_signaling,
->>> -   .set_power = sdhci_set_power_and_bus_voltage,
->>> +   .set_power = sdhci_arasan_set_power_and_bus_voltage,
->>>     .hw_reset = sdhci_arasan_hw_reset,
->>>  };
->>>
->>> @@ -570,7 +590,7 @@ static const struct sdhci_ops sdhci_arasan_cqe_ops = {
->>>     .set_bus_width = sdhci_set_bus_width,
->>>     .reset = sdhci_arasan_reset,
->>>     .set_uhs_signaling = sdhci_set_uhs_signaling,
->>> -   .set_power = sdhci_set_power_and_bus_voltage,
->>> +   .set_power = sdhci_arasan_set_power_and_bus_voltage,
->>>     .irq = sdhci_arasan_cqhci_irq,
->>>  };
->>>
-> 
+[1] 
+https://android.googlesource.com/platform/system/core/+/refs/heads/main/healthd/BatteryMonitor.cpp#927
+
+Thanks
+
+Fenglin
 
 
