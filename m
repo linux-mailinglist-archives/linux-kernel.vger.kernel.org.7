@@ -1,137 +1,138 @@
-Return-Path: <linux-kernel+bounces-746308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447A8B12538
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:20:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08AEB1253A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4332F1C82DE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:20:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AD017B48C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34369259CAF;
-	Fri, 25 Jul 2025 20:19:53 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57B6259C9C;
+	Fri, 25 Jul 2025 20:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xn3xpQKN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271F24501A;
-	Fri, 25 Jul 2025 20:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4D44501A;
+	Fri, 25 Jul 2025 20:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753474792; cv=none; b=d1N2r2QdrkYlTUAfHuc9zsyoHYDYGtSHUI22re0Hyi9k0CR7LI6yL71FJu4jvTM9qMi7K8pmOsgQSXOTaA7qEuu4tVYMoFNv6adBMBzkAjfPVqHcB6K9M9FjdsHAQNxSsQPTZUg2jhw+UMz3ldtTXb9bqR6n9CQ/TkYkpQ5Uc3c=
+	t=1753474953; cv=none; b=QpZRoRRSgy7+QL+LHYc//UQU0bgUlQcaVE40aC9tm8Fa/khMzUjhHCTWx7JtK3IykuKxX32a9P8qPw45eqE7GiI//TjjtCzxwcb0bWSt+xYg70XQsYarADHhxvLJvn2mabcfGTPhZ3Km2yUsERVAP5ppTD7OJ/IQ8EUiguXgabc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753474792; c=relaxed/simple;
-	bh=WkPPyL2dVf5CrlxlVJV+yvCs8VFv12qNgjumYRkl2xE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=iUkfsrDWZwsgUJYiilvFmrxhecr222SvHQiSJ65+0aiQf3myMufWuaku6MOvcjqAgDzZFjWbb+sj3cqpI1O4dfv/VNzSno1M1NXYTzNhv/5nZNkCdHv63PuIXCSyJsADIluoe2oRLRvPldpESiMOaP+8ZyJobFyMNlxqBW5dATc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.102] (213.87.128.105) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Fri, 25 Jul
- 2025 23:19:32 +0300
-Message-ID: <697350c4-f54a-4197-96f6-45ed53f08a4a@omp.ru>
-Date: Fri, 25 Jul 2025 23:19:31 +0300
+	s=arc-20240116; t=1753474953; c=relaxed/simple;
+	bh=VQH99R6mUOjHSDPCGQ/ViR+7iWAEIcbC1txnGPFZ6/Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CiM7P67WCGHJcxYraoorhnbkhAW9WLWzOssRJ6QZeEUKlgiWDPaZbFfnjG3XRdckd8+7w/qtwUK6l0eDVNSPF7Mru6b1OOb1aCp3sVlqOo/JFDwLG4DKNRf6dRaq6AoQ9kMhCC0DQnUoZnqSZLQf8b+otxVROU4DhYL/aSj7leA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xn3xpQKN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7431BC4CEE7;
+	Fri, 25 Jul 2025 20:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753474952;
+	bh=VQH99R6mUOjHSDPCGQ/ViR+7iWAEIcbC1txnGPFZ6/Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Xn3xpQKNtMQWwdNsTNuwnldzsyk6Cg6Io1WAhFbdDLx4l3vevNAC1PJEqz7sIPdEK
+	 MJJah0xBI0a6LTP/LXoGzCId2Tba/QeRa8mmHTioJCAOKesx93dWnmoWfT930omNhc
+	 nde22gF9Pga5Qs2XTl4FFcCXQNp5BHlrCeRGzYbCGspeVF+Kr8sguo5PJMsQxT1fWY
+	 8QdIcR+Xt1BsWoLLo1Vo7nbRJ3giTcb8GAIuZXnbQ7XtosUVIAfVEIewEf81/u1xLu
+	 ailRyi0u9QJWp6HFxcOmUYj6qEH3PS/vPEg9wGq6Px94H6wSaLBCbfWri9anFGvdTR
+	 V0guoV8IlfdYA==
+From: SeongJae Park <sj@kernel.org>
+To: zuoze <zuoze1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	yanquanmin1@huawei.com
+Subject: Re: [RFC PATCH] mm/damon: add full LPAE support for memory monitoring above 4GB
+Date: Fri, 25 Jul 2025 13:22:30 -0700
+Message-Id: <20250725202230.49995-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <a5c871c8-dc52-4245-8513-94ccc2b46c94@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] NFSv4: prevent integer overflow while calling
- nfs4_set_lease_period()
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-To: <linux-nfs@vger.kernel.org>, Trond Myklebust <trondmy@kernel.org>, Anna
- Schumaker <anna@kernel.org>
-CC: <linux-kernel@vger.kernel.org>
-References: <f769ad67-fc6b-4101-8bdc-8b41eba73a21@omp.ru>
- <8244b3f4-ea69-46ee-9ba2-6711f516f00b@omp.ru>
-Content-Language: en-US
-Organization: Open Mobile Platform
-In-Reply-To: <8244b3f4-ea69-46ee-9ba2-6711f516f00b@omp.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 07/25/2025 20:00:10
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 195126 [Jul 25 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 63 0.3.63
- 9cc2b4b18bf16653fda093d2c494e542ac094a39
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.128.105 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.128.105 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.128.105
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 07/25/2025 20:02:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 7/25/2025 7:12:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 7/2/25 7:47 PM, Sergey Shtylyov wrote:
-[...]
+On Fri, 25 Jul 2025 11:15:22 +0800 zuoze <zuoze1@huawei.com> wrote:
 
->> The nfs_client::cl_lease_time field (as well as the jiffies variable it's
->> used with) is declared as *unsigned long*, which is 32-bit type on 32-bit
->> arches and 64-bit type on 64-bit arches. When nfs4_set_lease_period() that
->> sets nfs_client::cl_lease_time is called, 32-bit nfs_fsinfo::lease_time
->> field is multiplied by HZ -- that might overflow before being implicitly
->> cast to *unsigned long*. Actually, there's no need to multiply by HZ at all
->> the call sites of nfs4_set_lease_period() -- it makes more sense to do that
->> once, inside that function, calling check_mul_overflow() and capping result
->> at ULONG_MAX on actual overflow...
->>
->> Found by Linux Verification Center (linuxtesting.org) with the Svace static
->> analysis tool.
->>
->> Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
->> Cc: stable@vger.kernel.org
->>
->> ---
->> The patch is against the master branch of Trond Myklebust's linux-nfs.git repo.
->>
->> Changes in version 2:
->> - made use of check_mul_overflow() instead of mul_u32_u32();
->> - capped the multiplication result at ULONG_MAX instead of returning -ERANGE,
->>   keeping nfs4_set_lease_period() *void*;
->> - rewrote the patch description accordingly.
 > 
->    Forgot to say that I had to adjust the patch description to make it clear
-> that the overflow happens on 64-bit arches as well...
+> 
+> 在 2025/4/23 1:43, SeongJae Park 写道:
+> > On Tue, 22 Apr 2025 19:50:11 +0800 zuoze <zuoze1@huawei.com> wrote:
+> > 
+> > [...]
+> >> Thanks for the patches - I’ve noted the RFC series and user-space
+> >> updates. Apologies for the delay; I’ll prioritize reviewing these soon
+> >> to verify they meet the intended tracking goals. Appreciate your
+> >> patience.
+> > 
+> > No worry.  Please take your time and let me know if there is anything I can
+> > help.
+> > 
+> > I think we can improve the user-space tool support better for usability.  For
+> > example, it could find LPAE case, set addr_unit parameter, and convert
+> > user-input and output address ranges on its own.  But hopefully the current
+> > support allows simple tests of the kernel side change, and we could do such
+> > improvement after the kernel side change is made.
+> > 
+> > 
+> 
+> Hi SJ,
+> 
+> Apologies for the delayed response. We've verified your patch in our
+> environment and confirmed it supports LPAE address monitoring.
 
-   Gentle ping!
-   Anna, do you agree with this approach?
+No worry, thank you for testing that :)
 
-> [...]
+> However,
+> we observed some anomalies in the reclaim functionality. During code
+> review, we identified a few issues:
+> 
+> The semantic meaning of damon_region changed after addr_unit was
+> introduced. The units in damon_addr_range may no longer represent bytes
+> directly.
 
-MBR, Sergey
+You're right, and this is an intended change.
 
+> 
+> The size returned by damon_sz_region() now requires multiplication by
+> addr_unit to get the actual byte count.
+
+Again, this is an intended change.  damon_sz_region() callers should aware this
+semantic and updated accordingly, if it could make a real problem otherwise.
+If you found such changes required cases that this patch series is missing,
+could you please list up?
+
+> 
+> Heavy usage of damon_sz_region() and DAMON_MIN_REGION likely requires
+> addr_unit-aware adjustments throughout the codebase. While this approach
+> works, it would involve considerable changes.
+
+It has been a while since I wrote this patch series, but at least while writing
+it, I didn't find such required changes.  Of course I should missed something,
+though.  As I mentioned above, could you please list such changes required
+parts that makes problem?  That would be helpful at finding the path forward.
+
+> What's your perspective on
+> how we should proceed?
+
+Let's see the list of required additional changes with why those are required
+(what problems can happen if such chadnges are not made), and discuss.
+
+
+Thanks,
+SJ
+
+[...]
 
