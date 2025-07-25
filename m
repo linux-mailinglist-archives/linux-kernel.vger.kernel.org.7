@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-745387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375AFB1193B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:33:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94916B1193F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41CCE1C848B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:33:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A7113B4B39
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6611125CC66;
-	Fri, 25 Jul 2025 07:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D5A2BD58F;
+	Fri, 25 Jul 2025 07:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLcBh6xs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfTMcTxS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F414A82;
-	Fri, 25 Jul 2025 07:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A821465A5;
+	Fri, 25 Jul 2025 07:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753428782; cv=none; b=cuYV71f2w9XGh5+vb1mbD2EckDLsYGLWNYpTfy5e9zPun4NQam7QDnTGRpCOqcj14jR18K5lZnpWhgmfu8EbT/T68syBUjt44iRZ6F9xKoW0AoLwvP63WOAo2o8GnCuoNE5uYOhqIJGmKJhr9YdYm/mJXnFFRbMExsTyPbubVws=
+	t=1753429035; cv=none; b=qYvTBZUoOEQh8KAhX++ZEap6vbbiUPQl0AXRiL+xN+Ryj66c2agpCj6T3uQ+WmZwFFSjNJ+uP+o4dJZTxVs6Wdx2kHYUUKzqnrUsXtcBeL36A7Jr/D8GDPro2iuWLR1uFc2I/Hp6EmYMbFMsK63CbWvHPOSyEVcZLuiLME2WYqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753428782; c=relaxed/simple;
-	bh=RT/fwDnGe1qjIsPKvMaRgsEa02/AzXXBqKEFbagKISs=;
+	s=arc-20240116; t=1753429035; c=relaxed/simple;
+	bh=Y6cUVQBCiqpdUy+2d+nrCzSPiT4iFPP1LHs4gH+8b2A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8aZMczqGllDp0JgmxygW2YLqqBRGfKphqb83Mjit2M/TvJfuB6CtU8fkzONLWbZIS6hHrKU2Z2v2bgICh+zRbOYR91uWxesfLc47BzIygyY/3tBt7pONHbaPbxBgoSc6uvc/JDAzza9fxSdUczpBYYfr4RhhzvtgYQLa31g43Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qLcBh6xs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14F7C4CEE7;
-	Fri, 25 Jul 2025 07:32:58 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=BYB/gsDSFy1mn4r2EnzXhtWU01XkAtDn99fJxpBFudpe1dd79Rdueyu9PhEg9wwTSGiBa8FKn8oPOEjoaFJ7M0JDaeMNUVSv/wdP49OZq77kThe3raSHSIAMgtTDePfSCCbxBmZDYOs694AXC7WLyTzsBT7rRe/UgeIUURgK8lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfTMcTxS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE810C4CEE7;
+	Fri, 25 Jul 2025 07:37:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753428782;
-	bh=RT/fwDnGe1qjIsPKvMaRgsEa02/AzXXBqKEFbagKISs=;
+	s=k20201202; t=1753429035;
+	bh=Y6cUVQBCiqpdUy+2d+nrCzSPiT4iFPP1LHs4gH+8b2A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qLcBh6xs2UtKYMDfxxSK6kMKJ1BTvTh2QE26LJYBoRpqxwF5geb++QKfO66u1oI/a
-	 vUaMQHLV8gveKfVtJMTQ2CBWRO8ji/UM9ZnnAp+X5/8M+LQB46ajDlpFn13sFryV0o
-	 wYqknp8UlWoZFVJrcEv4jVJ4DvPwI5SkpJf5zLn/57zOtnljR1BRRhuEijsK/5BX9Y
-	 QYaqy55F6yjidELOX7xRmyCd5qvS94Mc4CIhMGomVLW7Zd5JsTBlBV6Isc4Rf/FRD2
-	 Vs/vPPZMsnHc9WH2CZ+5zLNQhvjZIvFwXN9KOkp5pH99BM5iBIBF8Kyndg2tnejTBy
-	 P1ji3zrLC3r/A==
-Message-ID: <94d3e709-8c8b-40cb-a829-92c2012b4e0a@kernel.org>
-Date: Fri, 25 Jul 2025 09:32:56 +0200
+	b=VfTMcTxSTHLvRE5/d4HaOZmH1wCbDKhKYll15hsCH1t7w2kp/bu32kOYvpZ1nn33v
+	 MFneGjHKkJTgxwnMEmmS3vLQkXU3BwbvC6II7CLHH2eqkde9zbzSbJtf+5IwpipL5n
+	 IMnIg3Ap5YGLUMEhg/gbBRJ0/xMSVxaaoLVXJ8JvEoyo5InQxz9l9J5kLAF9eO1NuS
+	 w0s/GRVLCHu5jUqpfYIZT5R9iFNJ3tNBY2ExIqo7/qPq+xtEBwoOSGFjil91hOHukc
+	 3V2K4EJT6PHt2XaHUUkdIRkCS0BYH8waTW5ckseSnhge2GWTml9Z9+I7xtcVblfz1W
+	 YMATHmMNeFe1w==
+Message-ID: <f1ace942-620e-43fe-93bd-aac184aa7970@kernel.org>
+Date: Fri, 25 Jul 2025 09:37:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: microsoft: Add vmbus
- message-connection-id property
-To: Hardik Garg <hargar@linux.microsoft.com>
-Cc: apais@microsoft.com, cho@microsoft.com, conor+dt@kernel.org,
- decui@microsoft.com, devicetree@vger.kernel.org, haiyangz@microsoft.com,
- hargar@microsoft.com, krzk+dt@kernel.org, kys@microsoft.com,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
- ssengar@linux.microsoft.com, wei.liu@kernel.org
-References: <6d3b5d1e-de1b-4d3b-ba14-7029c51b8e05@kernel.org>
- <1753395133-26061-1-git-send-email-hargar@linux.microsoft.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: usi: allow 64-bit
+ address space
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250723-hypnotic-malkoha-of-trust-9efdb6@kuoka>
+ <3e1d7be9-e99f-41c3-8b0d-aaa426aa9de8@gmail.com>
+ <fbe025c9-2688-49f1-bd94-2cb0a1bbc8d2@kernel.org>
+ <cf7030d4-a686-4edd-9698-1a9c301d1dd0@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,30 +108,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <1753395133-26061-1-git-send-email-hargar@linux.microsoft.com>
+In-Reply-To: <cf7030d4-a686-4edd-9698-1a9c301d1dd0@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/07/2025 00:12, Hardik Garg wrote:
->> Then all guests can use the same value, 0, making this property redundant.
+On 24/07/2025 09:02, Ivaylo Ivanov wrote:
+> On 7/24/25 09:56, Krzysztof Kozlowski wrote:
+>> On 23/07/2025 10:21, Ivaylo Ivanov wrote:
+>>> On 7/23/25 11:15, Krzysztof Kozlowski wrote:
+>>>> On Tue, Jul 22, 2025 at 03:10:36PM +0300, Ivaylo Ivanov wrote:
+>>>>> Some device trees, like the exynos2200 one, configure the root node
+>>>>> with #address-cells and #size-cells set to 2. However, the usi binding
+>>>>> expects 32 bit address space only. Allow these determining properties to
+>>>> So if USI expects 32 bit, then why do we allow 64?
+>>>>
+>>>> Switching this to 2 means you use 64-bit addressing for children
+>>> I don't, but the main point was to avoid defining ranges for every single usi
+>> I do not understand your "I don't", because you do.
 > 
-> No, they cannot use the same value. The protocol requires different connection IDs for different communication paths.
-> For example, a guest communicating with a VTL0 control plane uses a different connection ID than one communicating with
-> a VTL2 control plane. The host specifies this value based on the guest's configuration, and there is no other discovery
-> method available to determine the correct connection ID.
+> I meant it in the "I don't _need_ to explicitly use that, but it's _nice_ to have"
+> way, so I don't have to clutter the nodes with address translations in ranges.
 
-You completely removed entire thread and discussion making it difficult
-to connect to one of 100 or more discussions I am doing.
+It is not nice to have. The address space should not grow above the
+device limits or even above the needs (sometime ago Rob explicitly asked
+for that). Changing to 64-bit just because you do not want to add ranges
+property is not correct, because it misses the main point: what is the
+address space?
 
-Plus wrap your emails according to netiquette rules.
+Changing to 64-bit because that's the address space would be fine, but
+that was not argued here.
 
-The guest should not care about the value. Otherwise what if guests
-decides to ignore your DT property and start using other value? Sniffing
-other guests traffic? Causing conflicts or denial of service?
-
-If different values are important for the host, then all guests should
-use whatever 0 which will map to different values on host by other means
-of your protocol.
+I did not check in the datasheets, but I assume these devices want
+32-bit address space and that's how it should stay.
 
 Best regards,
 Krzysztof
