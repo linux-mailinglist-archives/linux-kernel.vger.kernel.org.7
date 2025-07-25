@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-745534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03274B11B48
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:55:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1258BB11B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34B87175C42
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:55:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E519189B7A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C359B2D375D;
-	Fri, 25 Jul 2025 09:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20A72D3A83;
+	Fri, 25 Jul 2025 09:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="VqoZY45W"
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="RW9yXgut";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="JnidZ9xa"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70DA23185E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345B52D3734;
+	Fri, 25 Jul 2025 09:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753437328; cv=none; b=CFUzJgd+6JUNxDPE7bFEhyCZZFd4mFaru/9qpdT+M9mG0Q1QgJXX/2kx7yvZNJqO0Rk0TyDh6gHai8Ug0NXWGbYbODzLjrtMc+QzUQJfZGYARxeb7omxs2EMsDd01ev7lfqUGNoLxkCGNI/iojv0HDJzcsQMOMoGTF/0hzQP/Fw=
+	t=1753437351; cv=none; b=rPl9G8niT/+A1jHaYX4tcjgZiLgXiR0sG7vNqaR+sUw6KxZC9t0KRex/6tUHBp8lfPiC6ZgMyi3GVG14Igvv9M34XupSlPbP4RQVzze53i7WLMuOAG3aE+RdE2pFOc07hb9oLGVnjW8Eb5Whhvi+XAKeuktRTHPWtNQUGGPJo2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753437328; c=relaxed/simple;
-	bh=MtAZhDajdFu9X9ay94z/QXUgEskUZkD9RToy5eA0J/o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JXfSNJumFr5QlGSKsnqqMBt87v+F0A8A8lA8aoVKTjU/In7aViFslOQRuAwDqMm0AuOeENLXSjE9oxbnKGYQIU7Eu06gHVs8U5/xaaOSqDPEmg42kV036KkUjjGwbPAAo+4dyGbdHcRVpi6SCgd1g7nwdFTRcizByO+TqQB73Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=VqoZY45W; arc=none smtp.client-ip=45.157.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bpNXM6NtyzJ10;
-	Fri, 25 Jul 2025 11:55:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1753437315;
-	bh=sEHd5bRXK6QrLxZdY/xI6qozTbLeIllra8WMp0vMoOk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VqoZY45WI97RTfjZsd1TlwdWLr2vSy1SEC5C0VbappwAK9/Jyye9n5zbwf4Ip1ud0
-	 8t0mpD5NvcwGOU4xU5VdmeBHGxMQHM1ri2Z3d+o0qtOc1AdIcKbORqGMtOgn5UW/5e
-	 usCpQQjOMgt4UCC0HGtrOMscgKWmWsdiV13cBnTo=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bpNXL6z9CzGw0;
-	Fri, 25 Jul 2025 11:55:14 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Brahmajit Das <listout@listout.xyz>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Song Liu <song@kernel.org>,
-	Tingmao Wang <m@maowtm.org>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock update for v6.17-rc1
-Date: Fri, 25 Jul 2025 11:55:11 +0200
-Message-ID: <20250725095511.446960-1-mic@digikod.net>
+	s=arc-20240116; t=1753437351; c=relaxed/simple;
+	bh=obxzbRARWp61SAgr4OuGSyuQbiBqYc6yJPDRw1+VWFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=asX8DGEkU6R6qrIaeC/pwnMWCDGcmXmRNsDog1l7WTX/ZZ+vko1mdH54QcVG1s+ryURDZTWH5U1i2zRDDSLZ8AIRn5nMpIkyMY/6qV3dP/70Rptg+q1ZZImXxRaDKzXvd5YUjh7mAVUuj9NZEw02JUhZ9K99KoLO0HP6ZlsNK/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=RW9yXgut; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=JnidZ9xa; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id 1C41460272; Fri, 25 Jul 2025 11:55:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1753437341;
+	bh=UynE9Asxg2hIcZ+zLWqbX0Hja+9AhIsgeadpl92uNQ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RW9yXgutzmmpvsQ2npdmWr33e7Oi5h/NwPgf782L6PTblPuuaRoL86pNIuL4gF5o5
+	 Yxay7k+3cbFOVvcC8gsG84GpEl3/ItwVPZXEETdSQIPjUI+vhcg54XsIXs+wWGFWoZ
+	 lh3muGxpndKamr9+StUXd9She/o3bp2gKPjXmiQDEr3h2TnuzEtwQBEHrk5n1myy7y
+	 s2HZk1+j4f1xJloeE6YaHd4YEY5n+EHdd37LqR9cPNQqsrbHj2Ou/P4MTDtmAPIInF
+	 MUixzLD/U3KtPHR8yxrSKpgvcd81gBD5FW2uRt2oy2RmgjCvXp3u5p5040v0ZluBg0
+	 4Izs8QqWkIbHg==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id C028660251;
+	Fri, 25 Jul 2025 11:55:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1753437338;
+	bh=UynE9Asxg2hIcZ+zLWqbX0Hja+9AhIsgeadpl92uNQ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JnidZ9xaZ29WUBKCefYXULw6SHvmz/xszjzq11DjCpkyzU5WXlQasxad7LSe96eKR
+	 jiECGQUVZDIVJEPUm30qQAf3+73yH8xDdXzl/m3IH0M4bdyyBlZDe+z8vnD3B3XZeJ
+	 E9kKlUF70d0RPiJBUylFFoL+KO3ZKnsJE1NjS9ycxwjPEwtqdgcp95ZLmZV7ZCByJg
+	 iYR+t2vLkSfhiBfMZZODOdm10ykakiKwyZ/lJzqjyPIH9Fj04hbtMLv67OqtykDOPH
+	 9RfwCJ7C0lpItbkkDrH43CsEw5190KXIeRA3bGBPhFgwq/2aqyLVvZLSibSfOI+Hl+
+	 ajAHw+hvAxvWw==
+Date: Fri, 25 Jul 2025 11:55:34 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Florian Westphal <fw@strlen.de>
+Cc: lvxiafei <xiafei_xupt@163.com>, coreteam@netfilter.org,
+	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+	lvxiafei@sensetime.com, netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org, pabeni@redhat.com
+Subject: Re: [PATCH V2] netfilter: nf_conntrack: table full detailed log
+Message-ID: <aINUlqscselprHTd@calendula>
+References: <20250508081313.57914-1-xiafei_xupt@163.com>
+ <20250522091954.47067-1-xiafei_xupt@163.com>
+ <aIA0kYa1oi6YPQX8@calendula>
+ <aIJQqacIH7jAzoEa@strlen.de>
+ <aILC8COcZTQsj6sG@calendula>
+ <aILH9Z_C3V7BH6of@strlen.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aILH9Z_C3V7BH6of@strlen.de>
 
-Linus,
+On Fri, Jul 25, 2025 at 01:55:33AM +0200, Florian Westphal wrote:
+> Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> > I was thinking, does the packet logging exposes already the
+> > net->ns.inum? IIUC the goal is to find what netns is dropping what
+> > packet and the reason for the packet drop, not only in this case but
+> > in every case, to ease finding the needle in the stack. If so, then it
+> > probably makes sense to consolidate this around nf_log()
+> > infrastructure.
+> 
+> No, it doesn't.  It also depends on the backend:
+> for syslog, nothing will be logged unless nf_log_all_netns sysctl is
+> enabled.
+> 
+> For nflog, it is logged, to the relevant namespaces ulogd, or not in
+> case that netns doesn't have ulogd running.
+> 
+> For syslog one could extend nf_log_dump_packet_common() but I'm not sure
+> how forgiving existing log parsers are when this gets additional
+> field.
+> 
+> Also, would (in case we use this for the "table full" condition), should
+> this log unconditionally or does it need a new sysctl?
+> 
+> Does it need auto-ratelimit (probably yes, its called during packet
+> flood so we dont want to flood syslog/ulog)?
 
-This PR fixes test issues, improves build compatibility, and adds new tests.
+Yes, such extension would need to answer these questions.
 
-Please pull these changes for v6.17-rc1 .  These commits merge cleanly
-with your master branch.  They have been been tested in the latest
-linux-next releases.
+> > Anyway, maybe I'm overdoing, I'll be fine with this approach if you
+> > consider it good enough to improve the situation.
+> 
+> I think its better than current state of affairs since it at least
+> allows to figure out which netns is experiencing this.
 
-Test coverage for security/landlock is unchanged (with Kselftest).
-
-Regards,
- Mickaël
-
---
-The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
-
-  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.17-rc1
-
-for you to fetch changes up to 6803b6ebb8164c1d306600f8836a39b6fceffeec:
-
-  landlock: Fix cosmetic change (2025-07-19 12:44:16 +0200)
-
-----------------------------------------------------------------
-Landlock update for v6.17-rc1
-
-----------------------------------------------------------------
-Brahmajit Das (1):
-      samples/landlock: Fix building on musl libc
-
-Mickaël Salaün (3):
-      selftests/landlock: Fix readlink check
-      selftests/landlock: Add test to check rule tied to covered mount point
-      landlock: Fix cosmetic change
-
-Song Liu (1):
-      selftests/landlock: Fix build of audit_test
-
-Tingmao Wang (1):
-      landlock: Fix warning from KUnit tests
-
- samples/landlock/sandboxer.c                  |  5 +-
- security/landlock/fs.c                        |  1 +
- security/landlock/id.c                        | 69 ++++++++++++++++-----------
- tools/testing/selftests/landlock/audit.h      |  7 +--
- tools/testing/selftests/landlock/audit_test.c |  1 +
- tools/testing/selftests/landlock/fs_test.c    | 40 ++++++++++++++++
- 6 files changed, 92 insertions(+), 31 deletions(-)
+Thanks for explaining, let's take this patch as is then.
 
