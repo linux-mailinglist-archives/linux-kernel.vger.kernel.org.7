@@ -1,196 +1,113 @@
-Return-Path: <linux-kernel+bounces-745909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95636B12056
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5FDB1205A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721501C8615E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E511C87184
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5478C1D9A54;
-	Fri, 25 Jul 2025 14:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC05230BC3;
+	Fri, 25 Jul 2025 14:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dtHYh1MZ"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="GPa00Nq/";
+	dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b="FrVbgU2F"
+Received: from e3i314.smtp2go.com (e3i314.smtp2go.com [158.120.85.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007458F4A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666388F4A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.85.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753454929; cv=none; b=MF4ll4DZ4cUC+Kcznd7NlxhFs/3vQ1Hw/jDN+bv41Jt4lCtjky5OL7P1qm3cNXYa4j1myoMTc92siuTk2Vj/2v0/LRhiEe4DOiWkFGG2JhtgjIBD+2DWVAi2cH/RTeMTw31AgPz3xXymsoQpVw+ogoEzknIU+DoVKmlNCXue7PU=
+	t=1753455086; cv=none; b=oB8z+gO1n7d93umm99pwn4iqYXOez18sTzg6HDyIoFGXq49FUdMl/WbslcFvAxxeYFYewYjPZQYenD3ZWrtXtwver+qTXu2mHCy3F9ylJoIMlss8nr1+v+QLAY6KNLFNlwrlhjq3VNT8BTUFHuhEsNqUkWnRHXtw4iB1f0PSyJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753454929; c=relaxed/simple;
-	bh=I4zM1Gv132DVmDNTiP916g1kjFCLGivg9m+ZyNOMhQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VkEjkgoQaUPg2BTXQjqxJMGZPmHRnpeeOnbSi82a/bx+wg/g4uro/P9qI+sjnEt8VwnqkBdnwgCaTekK0j7YEJCsR9ZF4QVUmaOqJXQ9IQPXQQ7+PS6UT9yA417k9NN0TKCTU63OvQvnDgXuvS6RQjdyq7l1uYgkjPbwdyTWPG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dtHYh1MZ; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso9599a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:48:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753454926; x=1754059726; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6fTiJ/2yQ7EUbjCeVCBz++1COYxUgI84X7sP0FcZaWQ=;
-        b=dtHYh1MZ5qSccLBdHQUOdIw1us6PelSb8xY2gJVKso7tT2KHSS0ZnDI8lXdA+wDtBS
-         QLDyBeXvxKGlXktOVTZjqHTfEUzgecUXU7yNxxTfGZ8VMBxBF6QZpwtWEO9d7ALZHXvF
-         pfZGp8gwbFe58yBFRPCSzBEHAMwUOG6ODXsWZm1wLg3imiSll2LgPdX7CCP3OloLx96/
-         dXm6eIJK11wkDxqrVL/tw/TWkpCdNrSrkIelifnkyEkAiYVtgTqBunjLGPOAkDDTEB32
-         iDFPg2HWoDQi/Yuyfu8vS1m/LUlvnPT3WIt607dOUX0BvR/tRJzk+DxvgjC87PwIlrdV
-         4Tsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753454926; x=1754059726;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6fTiJ/2yQ7EUbjCeVCBz++1COYxUgI84X7sP0FcZaWQ=;
-        b=k0P8cpfQ9aTBKz+zGr8Gzl0n+beVbgJLI08GKzS7RoMh0VJ1TsGSXvo/FzknnY5pWI
-         XAKBUK+Y8kSm3tTG6B6JuqHWd3MR4W+4+rpQqylF2KKgctAV7MtkqMA3pWyXG4AHIlE9
-         iVn1IU5nl1FXsXC/2GXzZO07+iGvDZ8oBVg3n5v5quI6quInZc7xGIZVmECIHf6NQtzV
-         5bGTAWzMqNPiDqdRVQk3rHFMHyDWUuR4wLVN1A3/UVEh+0o1JLl0fwZwW6seyvTlLV70
-         IzQwGK41ThVcUuFg/rohhlHRqM8VuO30xUA66XB/9+2oLAgbR+0cS1KHn3q2Y0m2nYa+
-         Ia6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXXacfQyLR/OeKVRsns7iMG6Vd8nd+onjmxdee+gYAc1v4QmGvZciXOf5tXRcN6NKEavG9Tt7cNXkz6nsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo7kngO6ArIkrmzZKgf3iJJlhexFdmITYwJ/N0nqm6wxePJv4O
-	UWNhMX32rwGa5ReVhUc6HHFoXL8rGfGChs7QZUXjmuCgoNFxyi4qA7XhRbf62CKcD2mdqd4C0mV
-	1uu9POUpFKVxMLpXeJ5UiILDm3FA5GhtNQ9ShRSex
-X-Gm-Gg: ASbGncszF5ITjYtWEjO23G1hVNuwPYMbwPG3NnefNA7kqjfv5PuNVB12GY+Ae3Yqzfi
-	GtBYO7Ns4GZ8SdJ78em/Or87h8I84Ol55N1+FeDsYyyvmTMdWkfQKUpKOMSJ2SaxodDVCKc/iwn
-	Uriy773/jaRLQ7LogDnaWXjmws5qyU/HBP+x7fGkOCr0Oq2vR5h87WWhOZqk5PXqrsEli9g/7Eu
-	DqUYkktd/GmKmR5ZI6LtZfF8C19fjrYALs=
-X-Google-Smtp-Source: AGHT+IFQ5AMiQfPybrXcmBkRC8UMaPAwiYPs8TQcD30T1QIfVF3Vtd6z6dbAtwTEtc6Dd6Sjmp1+B0ZsJ9Yqhgfl2cw=
-X-Received: by 2002:a05:6402:40d1:b0:60e:5391:a9e5 with SMTP id
- 4fb4d7f45d1cf-614ea755d34mr89389a12.5.1753454925860; Fri, 25 Jul 2025
- 07:48:45 -0700 (PDT)
+	s=arc-20240116; t=1753455086; c=relaxed/simple;
+	bh=woIP6dtlEzDY0l3M0VQ4FGnewBR2yOUwHMm735zXzLE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kpeTwzbeThWdxgi0ekMsF7mW1t4MxKyKwKpSA7HImGSMJblGEdCHu/2O94yTjCVUMCE3jbh5myXs0v36qc8TAw+xrNmvgDPl3+wDvQhxwwenB+Fz3HEloEVjuPUu97kRAhZKJfj/5lPQiKxLax87jq5lAJ3QDf6rwp0QXHNR8as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev; spf=pass smtp.mailfrom=em1255854.medip.dev; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=GPa00Nq/; dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b=FrVbgU2F; arc=none smtp.client-ip=158.120.85.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1255854.medip.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1753455081; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=1GYi97gw+l8m43s+LjoRWyK8qB47vHIEsv3nJylYdBM=;
+ b=GPa00Nq/XvonWa0HDOSoQoPYe+ckf3Kb6ebsmLeFzynlWVvxZ9ADN4KS7UOdMD/NY3x7R
+ QCBENdDDtg47GyLNleYMZ0S06SBvI9XCHo1wgztSZHVn7njznlcDz6kTbLqwhO9eDkpH+3e
+ WT7Pnr2LjkZTce1wQ9HmJQwxH1UMmrRoOjvpQfxLkhkRrsSMxXIwvWhlnkGOtrHUzMjfwbK
+ riPMnxlGC2/ECXDZ3medYU5B/FOtUWV+naPbsaVtgcG2CXhxyrzmIDey5szkuksJk2y5LQL
+ +RNxsehH73Y023yOYLR7LlXp05Vrr59I2h6rDQjNRTZmY2WXuQQROeByORuw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=medip.dev;
+ i=@medip.dev; q=dns/txt; s=s1255854; t=1753455081; h=from : subject :
+ to : message-id : date;
+ bh=1GYi97gw+l8m43s+LjoRWyK8qB47vHIEsv3nJylYdBM=;
+ b=FrVbgU2FMyTDo5HyCBIoxTfske/gJgrC9NpEb72cl1R+kYCpTCOwM3WTDcHJDSxRhd5q3
+ p9bMRmxhhWAKit2DLUrZrbaaRrbUyEdWDTZyHaAsNnqg80WBPxySp/nU6miN0Dqe0Cvw7ME
+ V88f38zDs1DU3XCjwbdAr5j8nLiUw3kpSdyx7gQCwnKxlPY8LJm2KamOD1U3NwYQzshRD8J
+ buSNzoevq7s/A5bxX2IKcvOCSi/K9h6se9CyR7mjvHdMsGvHR6J5+cJEo3puLNVJVTryWcS
+ yWYtu8m8ey5NajECKKoKCy712rWxCZWtoK/i41vjJ3SQrEbTymbx3rjpdXmA==
+Received: from [10.152.250.198] (helo=vilez)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1-S2G)
+	(envelope-from <edip@medip.dev>)
+	id 1ufJlS-4o5NDgrj2KV-jQC2;
+	Fri, 25 Jul 2025 14:51:15 +0000
+From: edip@medip.dev
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Edip Hazuri <edip@medip.dev>,
+	stable@vger.kernel.org
+Subject: [PATCH] ALSA: hda/realtek - Fix mute LED for HP Victus 16-r1xxx
+Date: Fri, 25 Jul 2025 17:49:12 +0300
+Message-ID: <20250725144911.49708-2-edip@medip.dev>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com>
- <c3f04c75-a73b-48bb-b56e-7b18e57c2382@lucifer.local> <CAG48ez31aVnoBiMMjUczbmThWnRGmod4yppgMVqf2Nu5-hjU2g@mail.gmail.com>
- <50502c3b-903f-4018-b796-4a158f939593@lucifer.local>
-In-Reply-To: <50502c3b-903f-4018-b796-4a158f939593@lucifer.local>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 25 Jul 2025 16:48:09 +0200
-X-Gm-Features: Ac12FXzAIpPjC-gw79jtBUmPpJHNu7DPT7TU7_vGFytRzjofambUs1vGAWWcnjY
-Message-ID: <CAG48ez1TOULrpJGsUYvRSsrdWBepCJf9jh-xPpurRUXbMmAkuA@mail.gmail.com>
-Subject: Re: [PATCH] mm/rmap: Add anon_vma lifetime debug check
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Rik van Riel <riel@surriel.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1255854m:1255854ay30w_v:1255854s1IhQhYw_2
+X-smtpcorp-track: PLJ5nGETBrB1.ovqtNTgR2Wz1.IB1yTwPUOJs
 
-On Fri, Jul 25, 2025 at 3:49=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> On Fri, Jul 25, 2025 at 02:00:18PM +0200, Jann Horn wrote:
-> > An anon folio may outlive the VMAs it comes from, so it may also
-> > outlive its associated anon_vma.
->
-> Yes, I will share some diagrams I did a while ago to outline this. They'r=
-e
-> ASCII and make you want to cry! :)
->
-> Hmm, if non-root, I wonder if we
+From: Edip Hazuri <edip@medip.dev>
 
-(looks like you stopped typing mid-sentence)
+The mute led on this laptop is using ALC245 but requires a quirk to work
+This patch enables the existing quirk for the device.
 
-> > 2. Removing an anon folio mapping reduces the anon folio's mapcount
-> > before the VMA can go away.
->
-> the anon folio's mapcount? You mean the VMA's? :P
+Tested on Victus 16-r1xxx Laptop. The LED behaviour works
+as intended.
 
-I mean folio_mapcount(folio), which reads folio->_mapcount and
-folio->_large_mapcount.
+v2:
+- adapt the HD-audio code changes and rebase on for-next branch of tiwai/sound.git
+- link to v1: https://lore.kernel.org/linux-sound/20250724210756.61453-2-edip@medip.dev/
 
-> > 4. If the anon-exclusive bit is set, the folio is only mapped in a
-> > single place (otherwise swapout+swapin could erroneously set
-> > RMAP_EXCLUSIVE, causing the swapped-in folio to be associated with the
-> > wrong anon_vma).
->
-> I believe (David?) swapin can cause this not to be the case?
->
-> > 5. When a VMA is associated with an anon_vma, it is always also
-> > associated with the corresponding root anon_vma (necessary because
-> > non-RMAP_EXCLUSIVE swapin falls back to associating the folio with the
-> > root anon_vma).
->
-> OK but we know for sure the UAF is not on a root anon_vma so it's not som=
-e
-> weirdness with trying to access anon_vma->root
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Edip Hazuri <edip@medip.dev>
+---
+ sound/hda/codecs/realtek/alc269.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Ah, right.
+diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/realtek/alc269.c
+index 05019fa73..33ef08d25 100644
+--- a/sound/hda/codecs/realtek/alc269.c
++++ b/sound/hda/codecs/realtek/alc269.c
+@@ -6580,6 +6580,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8c91, "HP EliteBook 660", ALC236_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8c96, "HP", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
+ 	SND_PCI_QUIRK(0x103c, 0x8c97, "HP ZBook", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
++	SND_PCI_QUIRK(0x103c, 0x8c99, "HP Victus 16-r1xxx (MB 8C99)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8c9c, "HP Victus 16-s1xxx (MB 8C9C)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8ca1, "HP ZBook Power", ALC236_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8ca2, "HP ZBook Power", ALC236_FIXUP_HP_GPIO_LED),
+-- 
+2.50.1
 
-> > 6. If two VMAs in the same process have the same ->anon_vma, their
-> > anonvma chains must be the same (otherwise VMA merging can break
-> > stuff).
-> >
->
-> What do you mean the same?
->
-> If you mean they both must have AVC's which ponit to the individual VMAs
-> and each point to the same anon_vma, yes.
-
-Yeah, that.
-
-> God simple isn't it? ;)
-
-Yeah, I prefer to think of this at the slightly higher abstraction
-layer of "which VMAs are tied to which anon_vmas via AVC" and "which
-VMAs use which anon_vmas as their primary anon_vma"; to me, AVCs being
-separate objects is a minor implementation detail caused by the kernel
-only using intrusive lists instead of the kinds of data structures
-that you'd use in almost any other environment.
-(Like, you wouldn't need AVC objects if the references between VMAs
-and anon_vmas were formed with things like maple trees or xarrays, but
-I guess they wouldn't give you the interval tree semantics you want.)
-
-> I verified these numbers with drgn, interesting add a new child doesn't
-> increment refcount...
-
-Yeah - AFAIU a single reference is shared by all the VMAs that are
-tied to an anon_vma via AVC nodes, and a child anon_vma can't be
-associated with a VMA without its parent also being associated with
-the VMA...
-
-> > > We're sort of relying on this
-> > >
-> > > a. being a UAF
-> > >
-> > > b. the thing we're UAF-ing not either corrupting this field or (if th=
-at
-> > >     memory is actually reused as an anon_vma - I'm not familiar with =
-slab
-> > >     caches - so maybe it's quite likely - getting its refcount increm=
-ented.
-> >
-> > KASAN sees the memory read I'm doing with this atomic_read(), so in
-> > KASAN builds, if this is a UAF, it should trigger a KASAN splat
-> > (modulo KASAN limitations around when UAF can be detected). Basically,
-> > in KASAN builds, the actual explicit check I'm doing here is only
-> > relevant if the object has not yet been freed. That's why I wrote the
-> > comment "Part of the purpose of the atomic_read() is to make KASAN
-> > check that the anon_vma is still alive.".
->
-> Hm, I'm confused, how can you detect a UAF if the object cannot yet be
-> freed? :P
->
-> or would that be the case were it not an atomic_read()?
->
-> I guess this permits this to be detected in a timely manner.
-
-If the anon_vma hasn't yet been freed, but its refcount is 0, then
-that's still a bug because we rely on the anon_vma to have a nonzero
-refcount as long as there are folios with a nonzero mapcount that are
-tied to it, and it is likely to allow UAF at a later point.
 
