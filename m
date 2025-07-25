@@ -1,237 +1,180 @@
-Return-Path: <linux-kernel+bounces-745818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8406EB11F2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EEBEB11F2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 523D37B0B64
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:07:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 242097A2916
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192482ED169;
-	Fri, 25 Jul 2025 13:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YFMeJIY7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C604242D99
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D372ECD25;
+	Fri, 25 Jul 2025 13:11:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FE924677A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753448912; cv=none; b=Otw2wNNAHlY11K+NVnmBNdoE8uDUzXf9Fa0D8vuyfVpirtG4jsQu4uesXuaLgOPtc9NBtiIbSeqK+H6HpORxkOOmwsmKYJ1vPtTEHYIo6uqCffSZ+uWroTaFDl9rPIPgz50PjoxnqZXRrW6u5xMDZh987ETk3xoV8SRDoSSo2AE=
+	t=1753449092; cv=none; b=UYuo1DfOSGHrukculbZBtR5o8NPOwJIJXoLOKtZJ7XJgPbIDuvMHLSS5h+MDz7qfP8ybmjMJr50KghV7OK7YjMM7GbpGiQKQ9qJlmPCjnpEiGB9voLAzHKceKRCcVbAqUVGNHyXEchQaVtXdBBBAbh96bzaiGePAS+lWDuqv/vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753448912; c=relaxed/simple;
-	bh=HwzKmT7HoDJ6wlSR5IkxxMdfp+sPMHETQqVzV+OPnI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlQIhNB9Pm6oUuC9sm13qDo047o+1pr8nzBPjcPTc1/UM/3KzXPj504S7katcOHItJ9tpA/ACQ8UnmtSsXvXEY7ms4hiskfolx7Jl+u0PLhgWELZ4uFzkqKfRA4r4hIv6CHlk+sOA2UL/EUTk4Jit7ljqQtRU0uhiO2qXd6Q2/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YFMeJIY7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753448909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vXVoKfgt+eDdtfLoo5jK4LHubyq9Q2bBiLasDQpfjKc=;
-	b=YFMeJIY7jgqKSEFIsnEGPjmoH5hGkda+jIYWU2c9IgQv2n2cOuPqAa7hWfjLkWOPiPudG7
-	6vk3vHkaUqg2mYGIim9vOO+GQ7bhYFE1us9vDdTuqSi18nqHfPI0ndVI9vNW5KX2zHJCWD
-	EtvyYbtZbMNH4IB8HOUbLzLSIFcEZCA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-659-7SPf_Po5O3a1CcLAMNEsrQ-1; Fri, 25 Jul 2025 09:08:28 -0400
-X-MC-Unique: 7SPf_Po5O3a1CcLAMNEsrQ-1
-X-Mimecast-MFC-AGG-ID: 7SPf_Po5O3a1CcLAMNEsrQ_1753448907
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45867ac308dso11315515e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:08:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753448907; x=1754053707;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vXVoKfgt+eDdtfLoo5jK4LHubyq9Q2bBiLasDQpfjKc=;
-        b=SsBfv7CB/tOS1NUtwCaHrjCg9BlS8C5L78yYp6u4PWcSuzo4zPoCNxJjhQ18VTefnf
-         T6gFDaslzcplWhehMnsWWzJo1oqrhQyeutVDAmYRIDG6Wjh95pGt97wvRRZv3p354U6z
-         O5DlyCaojfSsefctYidbWcyfQYgMnkhGz5jYYtiIazHowA5z4gPwiAHoq0B28mZmPWRk
-         EBOll/EGEt4KGxnsqRPc8si9Na7DwGiqFBUAVaeQNONs9dCPvdtwHNoeAYXNGR+F2Ph3
-         OR9ZauCmFjG4KAQ6UzcJ/KmIo9ukUWAALGPoHhOZI9USHPIUUwqTRWBjp63IQqimJcrG
-         oayQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWMmHnqZxYE/a6WSeQJd+E3vQhKYuSESj3IxcjRHZFpplB+yYhTT+zEk4UZHPeyNc3Lq44weUDTKq3NYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT6b/KzcBX7YtQ+tHFcdWkTLFLTdJ5626nsQgpdya54cNxdfH/
-	LylgaWC18FrRxoVPEj1nfANaY9kQxqbltoXi+63178hfDOrrwYwJs5Jn6tFYiZ3JBD5d5usrduX
-	V8EMPPsSHXih8QO7ytuQes71jRBEot907O3BKQWToFegFjog5XNRK79wIYh/1wFePYw==
-X-Gm-Gg: ASbGncvoxC2KAb1FNti5XC/cJOuAkW0DpM3OGFIureHVZZfk4eMoufhr5DL/72Fi23T
-	ppvPLALyuy1czh3XEoKMCiCS4L3eEk1U6vLVg5P2S64Y6R656zzWCFaUcw8PrzizZPNJgzCtkmr
-	6GyphnM+b6KHd8Kq1lik9plxAfw9fIl1WpBtS69Jf2p+aYTM75/Fj8+jsrrG5eBF5s3qtbqWX+1
-	XOnjSssIOMJmW9jiRod6irO8zK86wpA2m3zU31hdJW+hhg/xnwCGND+Jpl7zm383BRshmZdVESu
-	gVz26+VekgEpGc+hX9bDU1BJJ5GveGHdJ6WppEwRYitDNJKSgIOvME8ASfGFNUP8txChOLMu/Vq
-	coJTaG7/ILmncyjYkP4GE3v2L7FbizULcDvS9RS6z6g1Zg6BRAK4QL2Etx3KSjdUG
-X-Received: by 2002:a05:600c:a08e:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-458787dc1fcmr10178415e9.19.1753448907055;
-        Fri, 25 Jul 2025 06:08:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF2RXrdRvbIxRYGYQLphu0lW6ksSFFRRKo/9yzkhDSnD9/0KgQ1xqI1uMWWpky4n4Gl2pL7ag==
-X-Received: by 2002:a05:600c:a08e:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-458787dc1fcmr10177755e9.19.1753448906522;
-        Fri, 25 Jul 2025 06:08:26 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f34:ae00:cf93:b0dc:6bed:abc? (p200300d82f34ae00cf93b0dc6bed0abc.dip0.t-ipconnect.de. [2003:d8:2f34:ae00:cf93:b0dc:6bed:abc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45870532a4csm53826245e9.7.2025.07.25.06.08.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 06:08:25 -0700 (PDT)
-Message-ID: <0905a63e-420e-484f-a98b-19e85fc851fa@redhat.com>
-Date: Fri, 25 Jul 2025 15:08:24 +0200
+	s=arc-20240116; t=1753449092; c=relaxed/simple;
+	bh=8PG3rJqOB7M2ctZ5G9EPBl3zEzvXYL/E/Dg5m10Sf9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b940gAGJA/z+Qvr+bOG9Lp9rtsW2wNyZkQt55XX7b4i8ltqtMGl1t5+wYYOMp+Idl/MGYKGgG4x01MrrC8kcehoL3i8mKY7n+koGfJXjfOM2H7ILglFlu8vS6SDh3FR8E08JHWnZHPx0Cupdew2jMEbE13Qfqu6bau5YQgDJpDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AFA6176C;
+	Fri, 25 Jul 2025 06:11:23 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2701C3F66E;
+	Fri, 25 Jul 2025 06:11:27 -0700 (PDT)
+Date: Fri, 25 Jul 2025 14:11:24 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Lifeng Zheng <zhenglifeng1@huawei.com>
+Cc: <catalin.marinas@arm.com>, <will@kernel.org>, <beata.michalska@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>, <viresh.kumar@linaro.org>,
+	<vincent.guittot@linaro.org>, <yangyicong@hisilicon.com>,
+	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
+	<yubowen8@huawei.com>, <linhongye@h-partners.com>
+Subject: Re: [PATCH v2] arm64: topology: Setup AMU FIE for online CPUs only
+Message-ID: <20250725-courageous-myrtle-manatee-b113b5@sudeepholla>
+References: <20250725102813.1404322-1-zhenglifeng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
- Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Matthew Wilcox <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>
-References: <20250721090942.274650-1-david@redhat.com>
- <3ec01250-0ff3-4d04-9009-7b85b6058e41@gmail.com>
- <601e015b-1f61-45e8-9db8-4e0d2bc1505e@redhat.com>
- <99e25828-641b-490b-baab-35df860760b4@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <99e25828-641b-490b-baab-35df860760b4@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250725102813.1404322-1-zhenglifeng1@huawei.com>
 
-On 25.07.25 00:27, Usama Arif wrote:
+On Fri, Jul 25, 2025 at 06:28:13PM +0800, Lifeng Zheng wrote:
+> When boot with maxcpu=1 restrict, and LPI(Low Power Idle States) is on,
+> only CPU0 will go online. The support AMU flag of CPU0 will be set but the
+> flags of other CPUs will not. This will cause AMU FIE set up fail for CPU0
+> when it shares a cpufreq policy with other CPU(s). After that, when other
+> CPUs are finally online and the support AMU flags of them are set, they'll
+> never have a chance to set up AMU FIE, even though they're eligible.
 > 
->> Hi!
->>
->>>
->>> Over here, with MMF_DISABLE_THP_EXCEPT_ADVISED, MADV_HUGEPAGE will succeed as vm_flags has
->>> VM_HUGEPAGE set, but MADV_COLLAPSE will fail to give a hugepage (as VM_HUGEPAGE is not set
->>> and MMF_DISABLE_THP_EXCEPT_ADVISED is set) which I feel might not be the right behaviour
->>> as MADV_COLLAPSE is "advise" and the prctl flag is PR_THP_DISABLE_EXCEPT_ADVISED?
->>
->> THPs are disabled for these regions, so it's at least consistent with the "disable all", but ...
->>
->>>
->>> This will be checked in multiple places in madvise_collapse: thp_vma_allowable_order,
->>> hugepage_vma_revalidate which calls thp_vma_allowable_order and hpage_collapse_scan_pmd
->>> which also ends up calling hugepage_vma_revalidate.
->>>> A hacky way would be to save and overwrite vma->vm_flags with VM_HUGEPAGE at the start of madvise_collapse
->>> if VM_NOHUGEPAGE is not set, and reset vma->vm_flags to its original value at the end of madvise_collapse
->>> (Not something I am recommending, just throwing it out there).
->>
->> Gah.
->>
->>>
->>> Another possibility is to pass the fact that you are in madvise_collapse to these functions
->>> as an argument, this might look ugly, although maybe not as ugly as hugepage_vma_revalidate
->>> already has collapse control arg, so just need to take care of thp_vma_allowable_orders.
->>
->> Likely this.
->>
->>>
->>> Any preference or better suggestions?
->>
->> What you are asking for is not MMF_DISABLE_THP_EXCEPT_ADVISED as I planned it, but MMF_DISABLE_THP_EXCEPT_ADVISED_OR_MADV_COLLAPSE.
->>
->> Now, one could consider MADV_COLLAPSE an "advise". (I am not opposed to that change)
->>
+> To solve this problem, the process of setting up AMU FIE needs to be
+> modified as follows:
 > 
-> lol yeah I always think of MADV_COLLAPSE as an extreme version of MADV_HUGE (more of a demand
-> than an advice :)), eventhough its not persistant.
-> Which is why I think might be unexpected if MADV_HUGE gives hugepages but MADV_COLLAPSE doesn't
-> (But could just be my opinion).
+> 1. Set up AMU FIE only for the online CPUs.
 > 
->> Indeed, the right way might be telling vma_thp_disabled() whether we are in collapse.
->>
->> Can you try implementing that on top of my patch to see how it looks?
->>
+> 2. Try to set up AMU FIE each time a CPU goes online and do the
+> freq_counters_valid() check for all the online CPUs share the same policy.
+> If this check fails, clear scale freq source of these CPUs, in case they
+> use different source of the freq scale.
 > 
-> My reasoning is that a process that is running with system policy always but with
-> PR_THP_DISABLE_EXCEPT_ADVISED gets THPs in exactly the same behaviour as a process that is running
-> with system policy madvise. This will help us achieve (3) that you mentioned in the
-> commit message:
-> (3) Switch from THP=madvise to THP=always, but keep the old behavior
->       (THP only when advised) for selected workloads.
-> 
-> 
-> I have written quite a few selftests now for prctl SET_THP_DISABLE, both with and without
-> PR_THP_DISABLE_EXCEPT_ADVISED set incorporating your feedback on it. I have all of them passing
-> with the below diff. The diff is slightly ugly, but very simple and hopefully acceptable. If it
-> looks good, I can send a series with everything. Probably make the below diff as a separate patch
-> on top of this patch as its mostly adding an extra arg to functions and would keep the review easier?
+> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> ---
 
-Yes, we should do it as a separate patch, makes our life easier, because 
-that requires more work.
+I have no idea what changed from v1->v2 and no link to v1 for me to
+refer to it and check the delta 🙁.
 
-We require a cleanup first, the boolean parameter for 
-__thp_vma_allowable_orders() is no good.
+>  arch/arm64/kernel/topology.c | 49 ++++++++++++++++++++++++++++++++----
+>  1 file changed, 44 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> index 5d07ee85bdae..d578c496d457 100644
+> --- a/arch/arm64/kernel/topology.c
+> +++ b/arch/arm64/kernel/topology.c
+> @@ -357,12 +357,15 @@ static void amu_fie_setup(const struct cpumask *cpus)
+>  
+>  	/* We are already set since the last insmod of cpufreq driver */
+>  	if (cpumask_available(amu_fie_cpus) &&
+> -	    unlikely(cpumask_subset(cpus, amu_fie_cpus)))
+> +	    cpumask_subset(cpus, amu_fie_cpus))
+>  		return;
+>  
+> -	for_each_cpu(cpu, cpus)
+> -		if (!freq_counters_valid(cpu))
+> +	for_each_cpu(cpu, cpus) {
+> +		if (!freq_counters_valid(cpu)) {
+> +			topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_ARCH, cpus);
+>  			return;
+> +		}
+> +	}
+>  
+>  	if (!cpumask_available(amu_fie_cpus) &&
+>  	    !zalloc_cpumask_var(&amu_fie_cpus, GFP_KERNEL)) {
+> @@ -385,7 +388,7 @@ static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
+>  	struct cpufreq_policy *policy = data;
+>  
+>  	if (val == CPUFREQ_CREATE_POLICY)
+> -		amu_fie_setup(policy->related_cpus);
+> +		amu_fie_setup(policy->cpus);
+>  
+>  	/*
+>  	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
+> @@ -404,10 +407,46 @@ static struct notifier_block init_amu_fie_notifier = {
+>  	.notifier_call = init_amu_fie_callback,
+>  };
+>  
+> +static int cpuhp_topology_online(unsigned int cpu)
+> +{
+> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+> +	cpumask_var_t cpus_to_set;
+> +
+> +	if (!zalloc_cpumask_var(&cpus_to_set, GFP_KERNEL))
+> +		return -ENOMEM;
+> +
+> +	cpumask_copy(cpus_to_set, cpumask_of(cpu));
+> +
+> +	policy = cpufreq_cpu_get(cpu);
+> +	if (policy) {
+> +		cpumask_or(cpus_to_set, cpus_to_set, policy->cpus);
+> +		amu_fie_setup(cpus_to_set);
+> +	}
+> +
+> +	free_cpumask_var(cpus_to_set);
 
-I just pushed something untested to my branch (slightly adjusted patch#1 
-+ 2 more patches), can you have a look at that? (untested ... :) )
+What am I missing here as I don't see the need to for this local
+copy  `cpus_to_set`.
+
+Why can't you just call
+	policy = cpufreq_cpu_get(cpu);
+	if (policy)
+		amu_fie_setup(cpus_to_set);
+
+
+> +	return 0;
+> +}
+> +
+>  static int __init init_amu_fie(void)
+>  {
+> -	return cpufreq_register_notifier(&init_amu_fie_notifier,
+> +	int ret;
+> +
+> +	ret = cpufreq_register_notifier(&init_amu_fie_notifier,
+>  					CPUFREQ_POLICY_NOTIFIER);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+> +					"arm64/topology:online",
+> +					cpuhp_topology_online,
+> +					NULL);
+> +	if (ret < 0) {
+> +		cpufreq_unregister_notifier(&init_amu_fie_notifier,
+> +					    CPUFREQ_POLICY_NOTIFIER);
+> +		return ret;
+> +	}
+> +
+
+Why can't you just set up cpuhp_* first and then cpufreq notifier to avoid
+this unregistering ?
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Regards,
+Sudeep
 
