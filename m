@@ -1,162 +1,152 @@
-Return-Path: <linux-kernel+bounces-745531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0761B11B40
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:54:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D8FB11B42
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D13637B6BBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:52:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB9A3AB647
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378292D6405;
-	Fri, 25 Jul 2025 09:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB9B2D3A85;
+	Fri, 25 Jul 2025 09:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NHU4h2Dk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAZk/4vv"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2E62D46BB;
-	Fri, 25 Jul 2025 09:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC6B2D375A;
+	Fri, 25 Jul 2025 09:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753437215; cv=none; b=ZbxQyi2vo0BTQe25ZVIZ+Xyuhem1mdnUfNiL/FAxK97QUf2wIoeWFgGsMByWR5PsIWLgl+d2BmIX1mTogcXWtEDKaIGWGRs8PhPFzBpZX4LayuQsISAO7hZLM8xXZ9TymnJp/BwCqLMc8fGUKOdUucC+xW+U1ByPdi6EpqU8OOE=
+	t=1753437226; cv=none; b=bAuFSWMFwY1v5MV0tMgPWyXU4aF9PFicpLjVZFcQNNA6tsoYopvLEqqxfUlZUYzNlfDdlfa2R/D6SUionIs7sNKCitmYDXohCjirX8wHv2y+sVCArxhmfXsBU0QlFTI5M8UdLedyYkqO4YtiGBZLs7s70vgGcYz+jWUlnL5ENk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753437215; c=relaxed/simple;
-	bh=yYKz3D7ymOacwbp9D4nGg/5wP2lvzHAjvPOQUFc8AvU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rqQ9IM1Kp7CUUfujIzZ/+OBZg4cp8otp+5bN5m5O1cHzO3YZJsZt3kRb9FdYyhzYB6WdoEWom9iDS+qxgWoV6NK/D1iCkiFeqxbaxpNI9MD71XCT2qsUG6U1ktqSFUzeosBRkcwZAx3SAuoKgf5XoJbRcNzGbb3QB/zuPQcNt/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NHU4h2Dk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P8xFKX018079;
-	Fri, 25 Jul 2025 09:53:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=e2pMOb44GjZ
-	xUmO0PQqWhI/o5itASW+/ugix0zxB83A=; b=NHU4h2DkS4k5pWnMEAVb0Ofcz8e
-	+j1137Oe0cX2OG+Wo2EOAEVOlvDgupHR2JebZU+BNMCjVFJPiZBpmPmCbMhuqR8o
-	G++VmsWJ5Dqlx5oXbp8Y+xpt+AjvLZcdXbQZd8/0JZdTulacgx9fPf+2zZO2uTvo
-	TDr6KMS2n1qi6aLOxe4XSOjx0lvF0RoLiwkEJ2cdBJVOKN7NXYzm5u4QUr/Qq5ed
-	k/v3xRFGHK1a2ASvK7WpfmS+qWAWDCWOHrGW+EQT8yqUV3EgKdb0c95YcXgvMXGB
-	/vx5Ht0G7Lpw6GxvVimXHVuHyB2gkuTXTvbiI+eFisDQsWjN4PeL64RhD2w==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2s1m8w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 09:53:24 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56P9rLl2001606;
-	Fri, 25 Jul 2025 09:53:21 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4804emta1x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 09:53:21 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56P9rLZ5001595;
-	Fri, 25 Jul 2025 09:53:21 GMT
-Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 56P9rKXx001592
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 09:53:21 +0000
-Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id 9CD3E20D5E; Fri, 25 Jul 2025 17:53:19 +0800 (CST)
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v6 3/3] arm64: dts: qcom: sa8775p: add link_down reset for pcie
-Date: Fri, 25 Jul 2025 17:53:02 +0800
-Message-Id: <20250725095302.3408875-4-ziyue.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250725095302.3408875-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250725095302.3408875-1-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1753437226; c=relaxed/simple;
+	bh=61I/HMiVHjNrz0vIaotjhtm+q8kFS8pE00BWLOKLfbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o3jz+BuI1lH4On/twCmfCWbYkH3KDUPGAlzpDyqM1Sn+BtHxNI3N0ndde9Veh8lytT4IZ3H36Crx7Zwp/kn1h7Nu444bGg10GWDppmFYn8pxsOXfsIu7aptCrtd/PgG/lrlmC3gbKpM3RLAgiFHLCzH70lPh4mvR+KzoEvpUgJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAZk/4vv; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so15864565e9.3;
+        Fri, 25 Jul 2025 02:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753437223; x=1754042023; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=S6lNHUAeD8j26I1ynzyj/RanoNhriT1omATCreLCNzg=;
+        b=FAZk/4vvU1JE2k1shJGR+M6gZr0sgxBGEI30T5dFYslnnj2XFkQCSEyQkYjocle4/6
+         nijGAN4wRCPEASHg85A5RZY6sPLx1z1yqmqeg576r7EfxzFf1ekXDaxAoZ0s9T51UvFT
+         mLCxdRz50ymSsE2ybyawWm+bi2T6ANtECCPh40ZX+zaO3QCetY6Fj71wiYAQtZfAAYpM
+         5zsfhV07zTx6RavCd0eFimfgokd/pUkA9S2+O8+fLlkrlIieNiD+iecRcQEBjjWRxcAh
+         viMoZU+CagZzfnz+F2F6r/2q9CNLroKfb2gFnLiNwVzqkK04lI3mU4YOv2r4WahLeRot
+         6cUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753437223; x=1754042023;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S6lNHUAeD8j26I1ynzyj/RanoNhriT1omATCreLCNzg=;
+        b=ZbtO/97R/eWDPa5xNeAbtzgaN3daf0L0H2h6cQZfrJtMXEr0IbxTm9WY9wMR2bj3l4
+         0XzLJT2JAVU5ErCVw9jR1Xb3X3xWZXcAafpmQOqZnm4SYLcsojwnMHD7Ugin8tPzus0h
+         j9UaLFAFVT4EWrZFthEaOR0q3c8MPvb9EgBvwLfi/UE7cRW+8FF8DFZJ3tX9PL6OsCVU
+         t6rpTLYqbUKHC7vanSpl33ktnIgF3lfucrHxzKE31uovf68/gGAU3kRwOeLoiv5yFrVc
+         itUVF8irZOjeXj9DSg8//YVLPXS3VHbr3jGUWQSpEOgdgr4tbpkufzTxywY/Jz0TiNw0
+         x6TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbmdRZVf+lwAS5TBwTQUUYynn1eVNN2vpHZ+8SYEF2SBjya1HjM4ND0BH3UyaF/q3snFNw+wTu94wVQ0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1V/770ynk0ot3BhZRs4XjZ5b576Q61web776sTNapXg9lM1LA
+	OulM5mjzPVOZ8Xao/50KAsJDBVlnv+PmZjpB5/AEE2yg98zp//USM5se
+X-Gm-Gg: ASbGncvnug1FqgJTvPO1WxsWhBlNh0wk++QiARQTAj6SJAHIHR4iHZn94Pv6cEgeMwe
+	0F3XqsWBwZBKECW8mqYECYG/3bwjGj4Qv7IcnJr0CJ71TwVmGoSUbeif1eZ2QfaQDmxb+JZ/blp
+	OlLM5iqDZpNM1gw6y2HfYpfgb3tyB6/BwLniOIaJ9J//aOnDr4U9pBJFJOhj8yTDF5LeMHCZH67
+	mVXJ5KI0tC/1aJUllzTj4HXspqeN1tmmc9ek5fwZ8cis4dL93m/g24AJm8V+TLpKkANt0SSZL0D
+	/DYjS6q8/USiAQpqONb/MIWDd6nAtyZQ5aTLd8eHFkvD4eTVuXVPrk/lFowJZo14rLBwWT2w9hv
+	5GDjjcJJ6wsVRy0gC/fEyjVVcD1TdV+LVvBB6azRrI5JhVPCHlBIIlzHk
+X-Google-Smtp-Source: AGHT+IEXje2nWfsh3rKmtUR15CLNB9cPpTTFM66LlUNcbTqJCczZDV6Oxe5Ag0Lqd0Ujztp2Y13gzw==
+X-Received: by 2002:a05:600c:1c9e:b0:456:18cf:66b5 with SMTP id 5b1f17b1804b1-45878201d55mr4405955e9.22.1753437222791;
+        Fri, 25 Jul 2025 02:53:42 -0700 (PDT)
+Received: from [192.168.0.3] (mob-5-90-141-12.net.vodafone.it. [5.90.141.12])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45870564de8sm48477455e9.23.2025.07.25.02.53.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 02:53:42 -0700 (PDT)
+Message-ID: <f020e62b-5186-4461-8fe9-de64d35de488@gmail.com>
+Date: Fri, 25 Jul 2025 11:53:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 168nhMsRxGLNM_7OomxIDf-R_-CVggXh
-X-Authority-Analysis: v=2.4 cv=IZyHWXqa c=1 sm=1 tr=0 ts=68835414 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=UMluCPnEzjiUAf4N7sYA:9
-X-Proofpoint-GUID: 168nhMsRxGLNM_7OomxIDf-R_-CVggXh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA4NCBTYWx0ZWRfX3vhAIRsI5Fpk
- mhRKDrqgw+ZpyHPq0Kx1IKZGQwLplPNFs9s9JPaWH4XrUCyZ/W19wp104NQ7pNvTAUWZ8QHaAQD
- 3l1SbozbAbQ0qrFQU78OWyh9fUHl8PixldYcFqBgIvME83vVJuR/UALuMma9gKsXuIUO+sVBG1h
- WVIfON3Si4zVnvbbOhDewenG+ZxwdV6t8r77sIT5ShieoILVEu8KoT6xwgX3qq3GARcaF2swjWg
- e8WrBCOgPI1LqDmRPZoIKyihIdngo2qFXAMn6CketfAqeCRSP0z4d7nOwwroPyJLvRUtu1hX2Vr
- q7zn1EM+Q6kcfM/Ta5I6H+kdCcwsgq4Xoa1xLJ/OzSb6DR07Wu7kbaTYA6SCbXY+509hutUr378
- s2idt0EzzQhnAfRR4q4ZQGP6PAcSbW/6EdiF8pwp1CslAllJKaOYBhEEI8nQ8Mccqur4Cz9c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0 adultscore=0
- phishscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507250084
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kconfig/lxdialog: replace strcpy() with strscpy() in
+ inputbox.c
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>, masahiroy@kernel.org,
+ linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ Franco Martelli <martellif67@gmail.com>
+References: <20250725055928.37658-1-suchitkarunakaran@gmail.com>
+Content-Language: en-US
+From: Franco Martelli <martellif67@gmail.com>
+Autocrypt: addr=martellif67@gmail.com; keydata=
+ xjMEXwx9ehYJKwYBBAHaRw8BAQdA8CkGKYFI/MK9U3RPhzE5H/ul7B6bHu/4BIhTf6LLO47N
+ J0ZyYW5jbyBNYXJ0ZWxsaSA8bWFydGVsbGlmNjdAZ21haWwuY29tPsKWBBMWCAA+FiEET9sW
+ 9yyU4uM6QbloXEn0O0LcklAFAmhyroACGwMFCQ0ncuYFCwkIBwIGFQoJCAsCBBYCAwECHgEC
+ F4AACgkQXEn0O0LcklAHVwD9H5JZ52g292FD8w0x6meDD8y/6KkNpzuaLHP6/Oo8kAIBAJsh
+ aMB9LdCBJTMtnxU8JTHtAoGOZ/59UJWeZIkuWJUNzjgEXwx9ehIKKwYBBAGXVQEFAQEHQNP5
+ V2q0H0oiJu89h1SSPgQDtkixXvUvRf1rNLLIcNpPAwEIB8J+BBgWCAAmFiEET9sW9yyU4uM6
+ QbloXEn0O0LcklAFAmhyroACGwwFCQ0ncuYACgkQXEn0O0LcklASVwEAoEkHMEU7mHc0zmAu
+ D2R1PYsDh9+3wQeied5PrF+HdakBAOeSGsf40GBew5umZuM59I04d1uXYAXGMP+jGN2RUtMA
+In-Reply-To: <20250725055928.37658-1-suchitkarunakaran@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SA8775p supports 'link_down' reset on hardware, so add it for both pcie0
-and pcie1, which can provide a better user experience.
+On 25/07/25 at 07:59, Suchit Karunakaran wrote:
+> strcpy() performs no bounds checking and can lead to buffer overflows if
+> the input string exceeds the destination buffer size. Replace it with
+> strscpy(), which ensures the input is always NULL-terminated and
+> prevents overflows.
+> 
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> ---
+>   scripts/kconfig/lxdialog/inputbox.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdialog/inputbox.c
+> index 3c6e24b20f5b..8880ccaffa0b 100644
+> --- a/scripts/kconfig/lxdialog/inputbox.c
+> +++ b/scripts/kconfig/lxdialog/inputbox.c
+> @@ -40,7 +40,7 @@ int dialog_inputbox(const char *title, const char *prompt, int height, int width
+>   	if (!init)
+>   		instr[0] = '\0';
+>   	else
+> -		strcpy(instr, init);
+> +		strscpy(instr, init, MAX_LEN + 1);
+>   
+>   do_resize:
+>   	if (getmaxy(stdscr) <= (height - INPUTBOX_HEIGHT_MIN))
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+perhaps it's better to sanitize the whole code in
+script/kconfig not only in lxdialog/inputbox.c
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 39a4f59d8925..76bced68a2d2 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -7635,8 +7635,11 @@ pcie0: pcie@1c00000 {
- 		iommu-map = <0x0 &pcie_smmu 0x0000 0x1>,
- 			    <0x100 &pcie_smmu 0x0001 0x1>;
- 
--		resets = <&gcc GCC_PCIE_0_BCR>;
--		reset-names = "pci";
-+		resets = <&gcc GCC_PCIE_0_BCR>,
-+			 <&gcc GCC_PCIE_0_LINK_DOWN_BCR>;
-+		reset-names = "pci",
-+			      "link_down";
-+
- 		power-domains = <&gcc PCIE_0_GDSC>;
- 
- 		phys = <&pcie0_phy>;
-@@ -7803,8 +7806,11 @@ pcie1: pcie@1c10000 {
- 		iommu-map = <0x0 &pcie_smmu 0x0080 0x1>,
- 			    <0x100 &pcie_smmu 0x0081 0x1>;
- 
--		resets = <&gcc GCC_PCIE_1_BCR>;
--		reset-names = "pci";
-+		resets = <&gcc GCC_PCIE_1_BCR>,
-+			 <&gcc GCC_PCIE_1_LINK_DOWN_BCR>;
-+		reset-names = "pci",
-+			      "link_down";
-+
- 		power-domains = <&gcc PCIE_1_GDSC>;
- 
- 		phys = <&pcie1_phy>;
+$ grep -Rn strcpy scripts/kconfig/*
+scripts/kconfig/confdata.c:143: strcpy(depfile_path + 
+depfile_prefix_len, name);
+scripts/kconfig/lxdialog/util.c:348:    strcpy(tempstr, prompt);
+scripts/kconfig/lxdialog/inputbox.c:43:         strcpy(instr, init);
+scripts/kconfig/symbol.c:764:   strcpy(val, newval);
+scripts/kconfig/util.c:55:      strcpy(gs.s, "\0");
+
+because the script "checkpatch.pl" emits a warning
+whether strcpy() function is used:
+
+WARNING: Prefer strscpy over strcpy - see: 
+https://github.com/KSPP/linux/issues/88
+
+Kind regards,
 -- 
-2.34.1
-
+Franco Martelli
 
