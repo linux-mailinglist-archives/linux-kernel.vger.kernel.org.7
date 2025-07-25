@@ -1,82 +1,179 @@
-Return-Path: <linux-kernel+bounces-745226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0AFB116DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:13:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA849B116E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B47ECAC72BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:13:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479A5AC61BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C7523815F;
-	Fri, 25 Jul 2025 03:13:26 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 2AA55EEAB;
-	Fri, 25 Jul 2025 03:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8998722F772;
+	Fri, 25 Jul 2025 03:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hzDYvTiA"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F6721421E;
+	Fri, 25 Jul 2025 03:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753413206; cv=none; b=seg7a6tRNjv7CJ0ZTrP2q+zOXxSJbRlXKd42WOK8imDx7NXNBlK1WJBeo2HFNPvwy8DlvMsLlmBG6fWjEbgjArInp7nYXGq6g5Orqnm7jger6f0uouo25lhFQnk8YcJF2KTTygERzBqOkes3ES6+jHLFN9Vns+f3T4hKEZScsfY=
+	t=1753413348; cv=none; b=nQ043vHLrnoqLlkS2129WvTbASgyY4hs2JMeo1eitt1gu2TS8eELZViqoORd12YNWvflEcY6b2FTc+CwrbZc51PCHC/OxDsaezB/3gSsWTkqx13PbjeVmWqH1s9YLKDw3cY1BCR5LH9eoYIYLLtcbV2dvFCyIcbxEeWOxLoJV+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753413206; c=relaxed/simple;
-	bh=j2KdwwHHUr/380WtMp4FTDdN7eEHBRQzsk9LhD3LzdE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=geJAzJVrA4iBGoknVb3UD0HPeftAmUTevy6PnxesodnDpZnNxoAeJRPtyCDjoSxmu0YmsRd/Utf+zYN/oRd/rTaT/zQzMfp0/xBqMQ6Jqwwr4smZuPU3ly9s50DNPGf02r+WaoovhVc308IKqJ84V7/otl8cfoeE881upl9fXYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 8DE2060188238;
-	Fri, 25 Jul 2025 11:13:14 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: xhci: print xhci->xhc_state when queue_command failed
-Date: Fri, 25 Jul 2025 11:13:09 +0800
-Message-Id: <20250725031308.1355371-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1753413348; c=relaxed/simple;
+	bh=+f8vH1jJCMzg6chIAny7+gs+yTKqcpmYixHrGSnY0RI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hyqo/rMJ4qGF8UjVl6VijyVoD0TkkUUrcK0xS2etXK/catVYepyATkaH60ObdDcD2UnTw/5naaoGECLebppk1fignQYBH0N9MC6y7qw5w49T3iHyry+nc6oX43OebULr+77xAQBLS2gryRfjkMVyfwKQodq9CkXk61kJotq2VMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hzDYvTiA; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OM9jXU004457;
+	Fri, 25 Jul 2025 03:15:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=XML+wV
+	DDRUmvGG8qWEzvXc05uJKnipeZiRtxzBQTwjg=; b=hzDYvTiAKOMUcOX1zyQAHZ
+	kuZqt+R66M/2QICVFKkr24WWyFQ6MxARpTmtyERZSQVj1zUYzT6ig+GXXVgExB0B
+	tPiBMeDShbpDE2tFxncG4RK/j5hgz3YSFJT0N1FZF8xirTuI96kQfd3KgpGZwpek
+	Ns58uBvq/u5kTXTnqn4vfkUvhIS39sqd8uJBHX1dit3YE4bahVegrclRGWCbGKsj
+	TYQU4NvC0u9pYbytRpQqqss5HSaYlpvHD/SfMROL7VVgbsOqZuQokSv3AktN1V5r
+	kQngqY3R5xarLpVj/LHSTS6iQCJN8vIhdhMui+fvcYvV3droHiKgfxKh368zrw7g
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 483wcjrrre-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 03:15:20 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56OMvWlu005253;
+	Fri, 25 Jul 2025 03:15:19 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480u8g6ud0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 03:15:19 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56P3FIjD24445492
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Jul 2025 03:15:18 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BB7355804E;
+	Fri, 25 Jul 2025 03:15:18 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C84AB5803F;
+	Fri, 25 Jul 2025 03:15:15 +0000 (GMT)
+Received: from [9.204.206.224] (unknown [9.204.206.224])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 25 Jul 2025 03:15:15 +0000 (GMT)
+Message-ID: <8306ebfd-0836-4ed6-bd2d-0a8039f6a8c6@linux.ibm.com>
+Date: Fri, 25 Jul 2025 08:45:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc/thp: tracing: Hide hugepage events under
+ CONFIG_PPC_BOOK3S_64
+To: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>,
+        Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <20250612101259.0ad43e48@batman.local.home>
+ <20250724092847.1aa83756@batman.local.home>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <20250724092847.1aa83756@batman.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xIeP2VPgqZ_7tUbLAhcZoj2tFQPExAmH
+X-Proofpoint-ORIG-GUID: xIeP2VPgqZ_7tUbLAhcZoj2tFQPExAmH
+X-Authority-Analysis: v=2.4 cv=QOloRhLL c=1 sm=1 tr=0 ts=6882f6c8 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=meVymXHHAAAA:8
+ a=-C49POrsBXEG1DwCQcYA:9 a=QEXdDO2ut3YA:10 a=2JgSa4NbpEOStq-L5dxp:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDAyNCBTYWx0ZWRfX4txqFrmfvDry
+ eeLijhpzzVPIK+Xxy9JnO3plf4ZmR7y/qVKpArEuapN3I/GF2FDDz9rD02EO/ZAlX56pZ2wW4tw
+ cAcJbT3SFfG/++B/6J+kuaxV8AHSa0SnDTURgNW/utU/1OVlMsG9AMcmflg7YuPB8Q/zIE5Iyvl
+ 50/U4qTyZUpVTZiCjPS2tTMaQPeBBNpPBVz3aUSCTPZA2yTpIpVUrjgMyuAyR00Cr0UYn/OVfPE
+ K5vxa9/zfH/JOF/mLoU+tI3uunYzSWR6fhKf0BCIdtoL0BA2d6cmYuLWCzdqyiK/oA7t6utOUDH
+ Pxrh/c31yz4PlhU1aLvcnhh5KI+eaC1yHKRow6RBAIMSqgQ/y5Y40+xVRo1Z1cqQ5ma9modXpT8
+ KChxayUReuPrbUaztK9FJ7EGGZje1MGm+S8hS+GYL6ij6eAzs4eOs2irdHf47GeTSH2mSQi/
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_01,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=581 adultscore=0 bulkscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 impostorscore=0 clxscore=1011 priorityscore=1501 suspectscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507250024
 
-When encounters some errors like these:
-xhci_hcd 0000:4a:00.2: xHCI dying or halted, can't queue_command
-xhci_hcd 0000:4a:00.2: FIXME: allocate a command ring segment
-usb usb5-port6: couldn't allocate usb_device
 
-It's hard to know whether xhc_state is dying or halted. So it's better
-to print xhc_state's value which can help locate the resaon of the bug.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/usb/host/xhci-ring.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 7/24/25 6:58 PM, Steven Rostedt wrote:
+> 
+> Anyone have any issues with this patch? Should I take it in my tree?
+> 
+> -- Steve
+> 
+> 
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 94c9c9271658..a1a628e849c0 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -4372,7 +4372,8 @@ static int queue_command(struct xhci_hcd *xhci, struct xhci_command *cmd,
- 
- 	if ((xhci->xhc_state & XHCI_STATE_DYING) ||
- 		(xhci->xhc_state & XHCI_STATE_HALTED)) {
--		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command\n");
-+		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command. state: %u\n",
-+			 xhci->xhc_state);
- 		return -ESHUTDOWN;
- 	}
- 
--- 
-2.30.2
+Acked-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+
+Yes, kindly take it via your tree 
+
+Thanks
+Maddy
+
+> On Thu, 12 Jun 2025 10:12:59 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+>> From: Steven Rostedt <rostedt@goodmis.org>
+>>
+>> The events hugepage_set_pmd, hugepage_set_pud, hugepage_update_pmd and
+>> hugepage_update_pud are only called when CONFIG_PPC_BOOK3S_64 is defined.
+>> As each event can take up to 5K regardless if they are used or not, it's
+>> best not to define them when they are not used. Add #ifdef around these
+>> events when they are not used.
+>>
+>> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+>> ---
+>> Note, I will be adding code soon that will make unused events cause a warning.
+>>
+>>  include/trace/events/thp.h | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/include/trace/events/thp.h b/include/trace/events/thp.h
+>> index f50048af5fcc..c8fe879d5828 100644
+>> --- a/include/trace/events/thp.h
+>> +++ b/include/trace/events/thp.h
+>> @@ -8,6 +8,7 @@
+>>  #include <linux/types.h>
+>>  #include <linux/tracepoint.h>
+>>  
+>> +#ifdef CONFIG_PPC_BOOK3S_64
+>>  DECLARE_EVENT_CLASS(hugepage_set,
+>>  
+>>  	    TP_PROTO(unsigned long addr, unsigned long pte),
+>> @@ -66,6 +67,7 @@ DEFINE_EVENT(hugepage_update, hugepage_update_pud,
+>>  	    TP_PROTO(unsigned long addr, unsigned long pud, unsigned long clr, unsigned long set),
+>>  	    TP_ARGS(addr, pud, clr, set)
+> 
+>>  );
+>> +#endif /* CONFIG_PPC_BOOK3S_64 */
+>>  
+>>  DECLARE_EVENT_CLASS(migration_pmd,
+>>  
+> 
 
 
