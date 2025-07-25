@@ -1,242 +1,237 @@
-Return-Path: <linux-kernel+bounces-745817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31972B11F29
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:08:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8406EB11F2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1161B161343
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:08:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 523D37B0B64
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402312ED169;
-	Fri, 25 Jul 2025 13:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192482ED169;
+	Fri, 25 Jul 2025 13:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qNZcD53G"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2089.outbound.protection.outlook.com [40.107.94.89])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YFMeJIY7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01EC23F405;
-	Fri, 25 Jul 2025 13:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753448895; cv=fail; b=GFgJ8LrIiXInxRhAE80M+j3AIS1Y1iytEqJ4TycC9Ja9gkMNhQFmd45eThFhGwOa7b3Ar6mvtkNnt0z8T3eMMj20oe4WbJcnc5PWsaNkSlhZfJKWQlLJPxczLJVU2wRSQyu/Qkm6PPjUsQ4q0vil/ef3ILQhX5jZAEM3X/Wjj2E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753448895; c=relaxed/simple;
-	bh=q4TpK5VbVZn71J6ewOJtf1HLQrxEBnrJdPaivRdPsH8=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=hibExhhEL62tyfzTcw2qmtoYoBrOHb19OGw5tMjX6YEF6FUgQwS7SWNrLlKQvcJ1AsklrUCZ8m/eEwZwNBTzpraiMNV9K567lgVp+xXvsIUdh61rtFRYhv3gAFGxtSl2s4gpO3wmHpRxHRsDDH0xX1mWwgKDx+6/A3BuFTkLcpU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qNZcD53G; arc=fail smtp.client-ip=40.107.94.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I7ssLI2MBXBhqPbb5Db2j6pN/9VCmmhpMv0Xd1QDoTeUDO8ejmVypXdpsEIB6Lqw4OqTHEZB/f5PKsBjTTizmwCFVHaDSaPKYGB5z5j1+8SZhBm9CHXRUtQkR4/0+1zhsPbSzxjQ8/V7qNAPeRHC+uiSIYz17eh8+WBpwkye9WjwTzlkppv94Ixm7CTUEs9DL9YBWuiu5ze/Bihf+C/Oa5IOzNrjwAFR3ZbAucR9DUeNA16AXgDcA8M2j33w9g0OUv9b1HAHqB+o4p6Fe1sTN135hvOWWQB5EqAsljGPb5YQnOQmix38VTLmbK7v4MbCrpfUXIxk8Fm5b0BFabEBmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2xrJGerOsSlG4iB6I8LPDze1llQaAeIHCBWZxmD0qks=;
- b=p4AmeuFdTvHJBedcB/W4rUlSGhNXTDUm9cBqULgE65QB6WrUCtzCr+wVyyCYvkp8T9+TOb7aeBH+0np5Qe4AYK+U8AhSziXUWgu1NHu7+jh2RTY2ScDcLrSwYeifiaLkiXpJDty9AZ24wieq3N4KeLYeqGdE8qy5MRTqyvGYjwTlZzpyfKmcY5TySlsM4aoEXwIT+53BX4sLFUe7iR+wbW1wQ7FqxKuj10ivsYTFVnOUWtsfb6w6dIyH0HIJqgNZXAWA5GaSEV8HgKPiEhJ1YZW1AVjZss5nwvNxliDjNhKXc/hCH/C5vkD7/7ckRD5ZB9pjFVhw91rhqF2uBu7AOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2xrJGerOsSlG4iB6I8LPDze1llQaAeIHCBWZxmD0qks=;
- b=qNZcD53G+B28bAjQsSM6tD5EF/DabrW7KV/9z0bwFKFgh2rgTvAVDNFEm6P0QpPgZzD+HuHSdz40YAXyPdcQYvddyWxNLuqAX+y/zHNdff4TqW26p4lSVtU889nd067A5YBvEitGXifgNTHdm8PY14dpyyNVMgQEnBn45mRX4uwng0h+jAjmVwWjc9oOEWQMdwRTC53JxhDnnMIhtaNOuW/9It8yiXktKcv0ho7cxz72mGGw/7YvbAW5S6KY4zJYPubvuUQM4Lxoq+qDZ7PuKBVaCL18UgXky+nE37m9FF05hrDoQDJ3n5VFLzC4kRPwDh5pCRgq5qZad7v0OQhq7g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS7PR12MB8324.namprd12.prod.outlook.com (2603:10b6:8:ec::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.22; Fri, 25 Jul 2025 13:08:08 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8964.019; Fri, 25 Jul 2025
- 13:08:08 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Fri, 25 Jul 2025 22:08:00 +0900
-Subject: [PATCH v2] rust: transmute: add `as_bytes` method for `AsBytes`
- trait
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250725-as_bytes-v2-1-c6584c211a6c@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIAK+Bg2gC/23MQQ6CMBCF4auQWVvTFijqynsYYkqZyiykpEMaC
- endraxd/i8v3w6MkZDhVu0QMRFTmEvoUwVusvMLBY2lQUvdyk63wvJz2FZkYdzglPIaL66Gcl8
- ievoc1KMvPRGvIW6HnNRv/YMkJZQwXhpbd03jzfU+JxrJnl14Q59z/gI2eVBxoQAAAA==
-X-Change-ID: 20250725-as_bytes-6cbc11f2e8c3
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Robin Murphy <robin.murphy@arm.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: "Christian S. Lima" <christiansantoslima21@gmail.com>, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: OSTPR01CA0022.jpnprd01.prod.outlook.com
- (2603:1096:604:221::12) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C604242D99
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753448912; cv=none; b=Otw2wNNAHlY11K+NVnmBNdoE8uDUzXf9Fa0D8vuyfVpirtG4jsQu4uesXuaLgOPtc9NBtiIbSeqK+H6HpORxkOOmwsmKYJ1vPtTEHYIo6uqCffSZ+uWroTaFDl9rPIPgz50PjoxnqZXRrW6u5xMDZh987ETk3xoV8SRDoSSo2AE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753448912; c=relaxed/simple;
+	bh=HwzKmT7HoDJ6wlSR5IkxxMdfp+sPMHETQqVzV+OPnI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JlQIhNB9Pm6oUuC9sm13qDo047o+1pr8nzBPjcPTc1/UM/3KzXPj504S7katcOHItJ9tpA/ACQ8UnmtSsXvXEY7ms4hiskfolx7Jl+u0PLhgWELZ4uFzkqKfRA4r4hIv6CHlk+sOA2UL/EUTk4Jit7ljqQtRU0uhiO2qXd6Q2/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YFMeJIY7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753448909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vXVoKfgt+eDdtfLoo5jK4LHubyq9Q2bBiLasDQpfjKc=;
+	b=YFMeJIY7jgqKSEFIsnEGPjmoH5hGkda+jIYWU2c9IgQv2n2cOuPqAa7hWfjLkWOPiPudG7
+	6vk3vHkaUqg2mYGIim9vOO+GQ7bhYFE1us9vDdTuqSi18nqHfPI0ndVI9vNW5KX2zHJCWD
+	EtvyYbtZbMNH4IB8HOUbLzLSIFcEZCA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-7SPf_Po5O3a1CcLAMNEsrQ-1; Fri, 25 Jul 2025 09:08:28 -0400
+X-MC-Unique: 7SPf_Po5O3a1CcLAMNEsrQ-1
+X-Mimecast-MFC-AGG-ID: 7SPf_Po5O3a1CcLAMNEsrQ_1753448907
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45867ac308dso11315515e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:08:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753448907; x=1754053707;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vXVoKfgt+eDdtfLoo5jK4LHubyq9Q2bBiLasDQpfjKc=;
+        b=SsBfv7CB/tOS1NUtwCaHrjCg9BlS8C5L78yYp6u4PWcSuzo4zPoCNxJjhQ18VTefnf
+         T6gFDaslzcplWhehMnsWWzJo1oqrhQyeutVDAmYRIDG6Wjh95pGt97wvRRZv3p354U6z
+         O5DlyCaojfSsefctYidbWcyfQYgMnkhGz5jYYtiIazHowA5z4gPwiAHoq0B28mZmPWRk
+         EBOll/EGEt4KGxnsqRPc8si9Na7DwGiqFBUAVaeQNONs9dCPvdtwHNoeAYXNGR+F2Ph3
+         OR9ZauCmFjG4KAQ6UzcJ/KmIo9ukUWAALGPoHhOZI9USHPIUUwqTRWBjp63IQqimJcrG
+         oayQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWMmHnqZxYE/a6WSeQJd+E3vQhKYuSESj3IxcjRHZFpplB+yYhTT+zEk4UZHPeyNc3Lq44weUDTKq3NYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT6b/KzcBX7YtQ+tHFcdWkTLFLTdJ5626nsQgpdya54cNxdfH/
+	LylgaWC18FrRxoVPEj1nfANaY9kQxqbltoXi+63178hfDOrrwYwJs5Jn6tFYiZ3JBD5d5usrduX
+	V8EMPPsSHXih8QO7ytuQes71jRBEot907O3BKQWToFegFjog5XNRK79wIYh/1wFePYw==
+X-Gm-Gg: ASbGncvoxC2KAb1FNti5XC/cJOuAkW0DpM3OGFIureHVZZfk4eMoufhr5DL/72Fi23T
+	ppvPLALyuy1czh3XEoKMCiCS4L3eEk1U6vLVg5P2S64Y6R656zzWCFaUcw8PrzizZPNJgzCtkmr
+	6GyphnM+b6KHd8Kq1lik9plxAfw9fIl1WpBtS69Jf2p+aYTM75/Fj8+jsrrG5eBF5s3qtbqWX+1
+	XOnjSssIOMJmW9jiRod6irO8zK86wpA2m3zU31hdJW+hhg/xnwCGND+Jpl7zm383BRshmZdVESu
+	gVz26+VekgEpGc+hX9bDU1BJJ5GveGHdJ6WppEwRYitDNJKSgIOvME8ASfGFNUP8txChOLMu/Vq
+	coJTaG7/ILmncyjYkP4GE3v2L7FbizULcDvS9RS6z6g1Zg6BRAK4QL2Etx3KSjdUG
+X-Received: by 2002:a05:600c:a08e:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-458787dc1fcmr10178415e9.19.1753448907055;
+        Fri, 25 Jul 2025 06:08:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF2RXrdRvbIxRYGYQLphu0lW6ksSFFRRKo/9yzkhDSnD9/0KgQ1xqI1uMWWpky4n4Gl2pL7ag==
+X-Received: by 2002:a05:600c:a08e:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-458787dc1fcmr10177755e9.19.1753448906522;
+        Fri, 25 Jul 2025 06:08:26 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f34:ae00:cf93:b0dc:6bed:abc? (p200300d82f34ae00cf93b0dc6bed0abc.dip0.t-ipconnect.de. [2003:d8:2f34:ae00:cf93:b0dc:6bed:abc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45870532a4csm53826245e9.7.2025.07.25.06.08.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 06:08:25 -0700 (PDT)
+Message-ID: <0905a63e-420e-484f-a98b-19e85fc851fa@redhat.com>
+Date: Fri, 25 Jul 2025 15:08:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS7PR12MB8324:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78894db7-1da3-4518-2efe-08ddcb7c4cb4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|10070799003|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cWN2dWVldlp3MTRrZnRIWUlUMTBGRzJMVkk0TW9OOGVmVk5UVGdrMzI4bWJn?=
- =?utf-8?B?cEV1QW0zYnBxdm9UNElaNExrN21FNkZpdktrUmdvNFNIR1ZpMUx1VkoyVUhK?=
- =?utf-8?B?N1hGT3lIS0RWdmRnZXhrbWlIL0pNRitNa1ZZY283NHFzOElZdHdPNFZqZTFt?=
- =?utf-8?B?bnl4TGwyUFdhMzVXd01jOU9jQjlLeFE3OC9VeEo3ODBodkNYbnFKcVM5aXBP?=
- =?utf-8?B?Um9ZZjhoSUhSMU5uSW9idVM1L3Rnc1RycUlwdXFHSUkxck9wSEZnN0pBdW5N?=
- =?utf-8?B?N0FqcHNvYUxPaDNhZzVjTHNJdkRTeFREL3BRck03K212VFUrYSs5RlZXUW01?=
- =?utf-8?B?bFYzbGVtd1NsVjBGWTl1RFBCK2dIWHo3VDdacW9rOFd4S09aODQ3akVaSVYv?=
- =?utf-8?B?VUFERTBLUytxaWJLdW5JUHh4RE1qVTlBc2xCL0RHbWRxRHg5SHI1QUJ2eWNS?=
- =?utf-8?B?TDdyTTkxVzQrMUg0TWZwM3hvT0kxdVZnVU9ZSHFkemo5dHc5MWpRSHFRWG11?=
- =?utf-8?B?V2JkMUNmdXVsVmF1TFd2eFUwSXpYdjhGMFhPcUE1eElvaWJoeXUvaU5FUzBy?=
- =?utf-8?B?Y21BMlJNMlZIOXRNQVdSK3pIUDdnaHRKcmlwTEJZR25vL3VoNDlKU0VJWDlQ?=
- =?utf-8?B?cTlJVVVjOHZSOERMbzE3VUZITkYzYm5FWUIvYlc1QWRDR2t5SFRKQVlnRkt1?=
- =?utf-8?B?V1ZPbWo3ZU5WY1A5aUdtajFXanNRRjk5VkNKWU1aY294MjRTaDE3VkJDOVdh?=
- =?utf-8?B?YkZpMjREZ0w3YWJ1aVFUVTRsWEZkZVdXd01hT1R4SE9YQ0FRd2hHejJsWnd1?=
- =?utf-8?B?MjM5RjJIejA2aFoydVBkcUtPUmRDbSt1L2VyUzdiYVJRaUpSaWcrZEFrMkFj?=
- =?utf-8?B?YUxXSUp2dFdwSW5WbzZ5TzlhOVp1SUtHOGEzcEVCU1l5VTVaUFAvUy8rcUly?=
- =?utf-8?B?eFRJc2NQQUxUNHlWaU94bDhmeUtBNXJEM2M0TkdmY1JnNmFVQjdmK0R6Qldp?=
- =?utf-8?B?QzFwNU5PSEVjTEF6ZE9VUUhEMjA3OCtJR240QUlkdHZNT29pa3poNVZ0UEhh?=
- =?utf-8?B?WVN5YlpiM1VUUTUzdmRyK2loTXdhUmhwN052MkdSWE5BR1dFYmVvekZIUmo0?=
- =?utf-8?B?RW90WjRQdDdpaFQvN1BsWkppaWlralY1S2gwcE5pZllWUFJXMDZKU0l5ai8x?=
- =?utf-8?B?S251aWEwaUZIZytHS2FEN0I1SGdDaERlNDJHWWFNTmR3OUNRbnVQWWxZVlcy?=
- =?utf-8?B?MFFEMmtDZ216MDJMWkNYL1kwWThlWE1WU0ExSkYzRnl5b3dUblhuYnJ2RUVh?=
- =?utf-8?B?aFpQRjU3WC9Nak15K0x6K0VEVFh5UXRKeXMwNkhIZ1hRTEVLTHIvYWdyK0pG?=
- =?utf-8?B?SWRZS1gvZ2pDMzhHbVp3U1JLQTJlb0FoQTgyOUFJcmFKZndmRGdxOTV4ZTF3?=
- =?utf-8?B?ZlJtenk3V2svYmdLV2xoK0ZTZ3BqYyt1VzJ0S3Q2eC91RWRZY3hTdkRFREZB?=
- =?utf-8?B?MURQa3pjYkNrc0V2YVh5Tk5pUUh3blY3RXpqdHUxU01YemM0UDJhMFQzUmxu?=
- =?utf-8?B?MTQya1dVbjc1MmVXSTdLV2Mwa0UxRXk0OVhjWjZWem5JVjRSTHRjaWYvVDZ2?=
- =?utf-8?B?Tkkzcjd5R2NpSUEvUi9WWnRaVnRjeVh5SkQ3cm14RXQwMkViV0VwbEJXSGV0?=
- =?utf-8?B?Z2lOdGVpQTYxTnloU25odG91eStXOTdFaWYwa25YT25xZVo4MWdmeEQ4Y2tU?=
- =?utf-8?B?OWFCVnZLZkRkMjMrM0tDVEE1QkU1bDRwQ3NDTlJscVBOc0JibVBqYlZMQWk1?=
- =?utf-8?B?bGlidkE2Y3U3UkIycjhCb3ptU25DMmsxbzFXQUk4UzhIYkNheG83MC9rbGVw?=
- =?utf-8?B?T0JGdU9KRjFoUkFibFRTdXh6am1YWDVlTjFVbmRVdHFhUEE1TXNFeHZuRXA4?=
- =?utf-8?B?M1NzYmYyOUt2U1h3TGRvOTZCb3pKdldjRVJFeUdhMTVXWDNScUU3QWp2Rm1l?=
- =?utf-8?Q?G0R9qsW5jTk3wRBd3WSEobfbe0hTKc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eG0zeE5uMzd3MjV5RmJHVThtS2x5RmVKNTdpRlRlaE9scWdhNXF2Y05lU3hq?=
- =?utf-8?B?VHorSlMyT2E0enU1SldZTVE3WWsxVStOOVIrWUZZQjRWL0NaenFwZTFZeFow?=
- =?utf-8?B?Z2QydFlIa1FKc2pHRnlxeFB3OFBjcnVVK2xnaU82ZlZMV0F0TUlWODZ6alVs?=
- =?utf-8?B?UGlpc29OUVhBRFA5N3JYbUJjcUk0RjU0RWtsSHUxUjArNUJPQzJxS2xxUENi?=
- =?utf-8?B?RENNQlpRVGFiMHlnSFdyakF4TmtsS3dxUEFlbFRseFM1M25zQjVxTERSUjl1?=
- =?utf-8?B?eEVTdE5wTVAzZjFvc010OXlxcmU5OW05czBMeVlERnY1bnB3bzhsby9ETzRI?=
- =?utf-8?B?YVgrNGtBcWhSeVdxUkJIRXVCU3FoTE9uYVZ2RXpqd2ZpUGVCU0RXTUQ2Nkc0?=
- =?utf-8?B?KzJ5cGN3encralEyWkI5aFBqYitSbUt3YjRJWitBcGFEMG83TU1OaEdqblVG?=
- =?utf-8?B?WlFOVW1iVG4vQnVZdmZVSlF4R3QwVkJkL2NiK3oxQ0NTZlZjS2hwdk5PcFpI?=
- =?utf-8?B?cTFhTCtnUGdkZjNCTTJlNXNxdVV4M2R6cEhEU1B0UkVFK2hLeTlocVBDNVh6?=
- =?utf-8?B?b0hYY2syR1l3WU5OSXZFcDVicVZwZlYxempRWUt1eU5CVEF4T0JydU5zaEhM?=
- =?utf-8?B?TzFlYlBPbTFGdElHZXAzYkVubTdpb0FnRy8rMXVGTk1GUHkyd3B1V0NpbmVl?=
- =?utf-8?B?ekZIU2w2cENhL3MxU3lZV1p0a1dQWU9zcklMYVYvbEhLeGRzanozdmpGbFNI?=
- =?utf-8?B?ME5MWWtpTyt3cFBKNHdKbXdlL0pEQnBlMElSckxwbkFXeTdSNHJTV29BUktm?=
- =?utf-8?B?a2RZZUhHcWFjRVNVZDJrdG5RZlFGbllrODN5WW5GWkNXQ1JHMjR3VnZyYUpQ?=
- =?utf-8?B?Z3N3OWdURnpmOVA2WTFiM2ZNOGNIUDlwaHhJYzg5VzlOM1g2dllCRDhqenVB?=
- =?utf-8?B?eTErNmdKWnN1d1lWQ3BTY2xwTGFWUGNLVm42akFpbjRobWxmQmdLY0tSZ3VL?=
- =?utf-8?B?cXBBb056V3ZCOXd0UWUvQVcyQStWYUJuSmNZTThuYnlqNDB5TG9WQnM4ay9R?=
- =?utf-8?B?bWNNdjFvS3kwc0xsOUlRSW9JK0c1c3E1Mzl3a1BrcTlDdWFzcE1UbEdkcUJs?=
- =?utf-8?B?M3JpSEQ4Sk9VNXlkUHlUek96dm9FNm02cnhrL3NKQmw4b2J3anhyK2FQbzIx?=
- =?utf-8?B?ckl2b25VNFJjdlNCNDJBaFFmSDlHNWJlSENxMHFPK3RzREhNaGp2NldUNDdD?=
- =?utf-8?B?NjVPS3VnRjNBa3NjRHpyZ21ORjQ3WTFpQUlZajFlVE5FZ2JVeWVwcDJEbXlE?=
- =?utf-8?B?Zm9ObHpBS3dvS21iZHA0Um5Jemtwbi9SMHg4SDFWRjQ2YlgyZzBLMmRxOXJK?=
- =?utf-8?B?VWJkL25XR21RWkI2QytUN1lpT0dkc1Z1ZUN3YlhtNlRTR2FpWDlXTDFqbXJX?=
- =?utf-8?B?cjRKNWo2YTZKc3J2MmRKdUZ0UkJaK3BzRS9wTmNKN2hHRmJWaFhpQ1JpeUx2?=
- =?utf-8?B?ekRCVkYwMTQrcExrM284YmR1NUVvdDZobzlZSmx1RDRtVjdiTkJZcmRsYlVs?=
- =?utf-8?B?MWpsbk9HNlVJMi9GT3NsVjQ1SUU5ejVmWnZMVzRkaldDZUppODlWZW1TUXVR?=
- =?utf-8?B?VWJTZVlFZFBnZllZRGtYODlOaC9aZDZjWE02bUY1RmZmcUhTa2hVaHgxdXha?=
- =?utf-8?B?bmN1RXErN1R1RnEzTnA1UW5PVUlZUS9RUTJEVnB0ZFZxVkZDY3BQUzlhRkwz?=
- =?utf-8?B?YXl3MnJvZkgwRnl2L2NOdU85clhsaTRYcitXcjc1eDVDU0N3T1BsYndoYTl6?=
- =?utf-8?B?OG9jdnlLbDdHelV1U0NLc1QvME5FcmloZXNLWnhpcHNMeG9CdnhXZkhDT0t0?=
- =?utf-8?B?NU82LzFvUG9JVmhIZGFaemZ5U29uS1dNaCtMSmJvV3hhOTJyZ0d6WmVPMHdy?=
- =?utf-8?B?OFBEZU54eFNYMFZDQVMxenM2bDV0OTdhd20vbUZSQTZTb203UldiM0cxT1Uv?=
- =?utf-8?B?RUJDL2xyelZweUZXVVZRUFpMNndqUGhsbXQ1aU54aHh3amFmL2twUWVOaTQ5?=
- =?utf-8?B?MU8raHZ2YzFOR05nRGo0MXFDWlNzUWI2ZldrSVNORWNyTS90SDd5SFI4THhm?=
- =?utf-8?B?Zk9MQ05xVStDOUJzTmhVeEp0ZFhEaWJwbi95bzB3OFpPSXEyUVRnaTJ3bTNY?=
- =?utf-8?Q?pJEUoYVHY+JFNmcT0FGERmR0R35rhcpNHvQlH+xaLiKQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78894db7-1da3-4518-2efe-08ddcb7c4cb4
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 13:08:08.2317
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 48JKHphgmDaB1QMKNcUvmK1RpB6C8b8oBq/OJYzVF9RX6o5q3+rObVxttItvrat5tdNjJ92aN6/47i3nkHMXhA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8324
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
+ exclude VM_HUGEPAGE
+To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
+ Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>
+References: <20250721090942.274650-1-david@redhat.com>
+ <3ec01250-0ff3-4d04-9009-7b85b6058e41@gmail.com>
+ <601e015b-1f61-45e8-9db8-4e0d2bc1505e@redhat.com>
+ <99e25828-641b-490b-baab-35df860760b4@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <99e25828-641b-490b-baab-35df860760b4@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Every type that implements `AsBytes` should be able to provide its byte
-representation. Introduce the `as_bytes` method that returns the
-implementer as a stream of bytes, and provide a default implementation
-that should be suitable for any type that satisfies `AsBytes`'s safety
-requirements.
+On 25.07.25 00:27, Usama Arif wrote:
+> 
+>> Hi!
+>>
+>>>
+>>> Over here, with MMF_DISABLE_THP_EXCEPT_ADVISED, MADV_HUGEPAGE will succeed as vm_flags has
+>>> VM_HUGEPAGE set, but MADV_COLLAPSE will fail to give a hugepage (as VM_HUGEPAGE is not set
+>>> and MMF_DISABLE_THP_EXCEPT_ADVISED is set) which I feel might not be the right behaviour
+>>> as MADV_COLLAPSE is "advise" and the prctl flag is PR_THP_DISABLE_EXCEPT_ADVISED?
+>>
+>> THPs are disabled for these regions, so it's at least consistent with the "disable all", but ...
+>>
+>>>
+>>> This will be checked in multiple places in madvise_collapse: thp_vma_allowable_order,
+>>> hugepage_vma_revalidate which calls thp_vma_allowable_order and hpage_collapse_scan_pmd
+>>> which also ends up calling hugepage_vma_revalidate.
+>>>> A hacky way would be to save and overwrite vma->vm_flags with VM_HUGEPAGE at the start of madvise_collapse
+>>> if VM_NOHUGEPAGE is not set, and reset vma->vm_flags to its original value at the end of madvise_collapse
+>>> (Not something I am recommending, just throwing it out there).
+>>
+>> Gah.
+>>
+>>>
+>>> Another possibility is to pass the fact that you are in madvise_collapse to these functions
+>>> as an argument, this might look ugly, although maybe not as ugly as hugepage_vma_revalidate
+>>> already has collapse control arg, so just need to take care of thp_vma_allowable_orders.
+>>
+>> Likely this.
+>>
+>>>
+>>> Any preference or better suggestions?
+>>
+>> What you are asking for is not MMF_DISABLE_THP_EXCEPT_ADVISED as I planned it, but MMF_DISABLE_THP_EXCEPT_ADVISED_OR_MADV_COLLAPSE.
+>>
+>> Now, one could consider MADV_COLLAPSE an "advise". (I am not opposed to that change)
+>>
+> 
+> lol yeah I always think of MADV_COLLAPSE as an extreme version of MADV_HUGE (more of a demand
+> than an advice :)), eventhough its not persistant.
+> Which is why I think might be unexpected if MADV_HUGE gives hugepages but MADV_COLLAPSE doesn't
+> (But could just be my opinion).
+> 
+>> Indeed, the right way might be telling vma_thp_disabled() whether we are in collapse.
+>>
+>> Can you try implementing that on top of my patch to see how it looks?
+>>
+> 
+> My reasoning is that a process that is running with system policy always but with
+> PR_THP_DISABLE_EXCEPT_ADVISED gets THPs in exactly the same behaviour as a process that is running
+> with system policy madvise. This will help us achieve (3) that you mentioned in the
+> commit message:
+> (3) Switch from THP=madvise to THP=always, but keep the old behavior
+>       (THP only when advised) for selected workloads.
+> 
+> 
+> I have written quite a few selftests now for prctl SET_THP_DISABLE, both with and without
+> PR_THP_DISABLE_EXCEPT_ADVISED set incorporating your feedback on it. I have all of them passing
+> with the below diff. The diff is slightly ugly, but very simple and hopefully acceptable. If it
+> looks good, I can send a series with everything. Probably make the below diff as a separate patch
+> on top of this patch as its mostly adding an extra arg to functions and would keep the review easier?
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-This is the sister patch of [1], providing an `as_bytes` method for
-`AsBytes`.
+Yes, we should do it as a separate patch, makes our life easier, because 
+that requires more work.
 
-It is going to be used in Nova, but should also be universally useful -
-if anything, it felt a bit strange that `AsBytes` did not provide this
-method so far.
+We require a cleanup first, the boolean parameter for 
+__thp_vma_allowable_orders() is no good.
 
-[1] https://lore.kernel.org/rust-for-linux/20250624042802.105623-1-christiansantoslima21@gmail.com/
----
-Changes in v2:
-- Use `size_of_val` to provide a default implementation for both `Sized`
-  and non-`Sized` types, and remove `AsBytesSized`. (thanks Alice!)
-- Link to v1: https://lore.kernel.org/r/20250725-as_bytes-v1-1-6f06a3744f69@nvidia.com
----
- rust/kernel/transmute.rs | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+I just pushed something untested to my branch (slightly adjusted patch#1 
++ 2 more patches), can you have a look at that? (untested ... :) )
 
-diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
-index 1c7d43771a37b90150de86699f114a2ffb84db91..d4036986a3d7fb97e5da3e121e9590ad23b784e9 100644
---- a/rust/kernel/transmute.rs
-+++ b/rust/kernel/transmute.rs
-@@ -47,7 +47,16 @@ macro_rules! impl_frombytes {
- ///
- /// Values of this type may not contain any uninitialized bytes. This type must not have interior
- /// mutability.
--pub unsafe trait AsBytes {}
-+pub unsafe trait AsBytes {
-+    /// Returns `self` as a slice of bytes.
-+    fn as_bytes(&self) -> &[u8] {
-+        let data = (self as *const Self).cast::<u8>();
-+        let len = size_of_val(self);
-+
-+        // SAFETY: `data` is non-null and valid for `len * sizeof::<u8>()` bytes.
-+        unsafe { core::slice::from_raw_parts(data, len) }
-+    }
-+}
- 
- macro_rules! impl_asbytes {
-     ($($({$($generics:tt)*})? $t:ty, )*) => {
-
----
-base-commit: 14ae91a81ec8fa0bc23170d4aa16dd2a20d54105
-change-id: 20250725-as_bytes-6cbc11f2e8c3
-
-Best regards,
 -- 
-Alexandre Courbot <acourbot@nvidia.com>
+Cheers,
+
+David / dhildenb
 
 
