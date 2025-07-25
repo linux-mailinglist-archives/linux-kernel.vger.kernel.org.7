@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-746316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB68EB12565
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:29:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEC4B12567
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10D7416A644
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:29:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C27B99F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0C525DB12;
-	Fri, 25 Jul 2025 20:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AFB25EF87;
+	Fri, 25 Jul 2025 20:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sdm1D4g/"
-Received: from mail-qv1-f74.google.com (mail-qv1-f74.google.com [209.85.219.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pxk5IvdU"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95C325BEFE
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBD725D1F5
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753475306; cv=none; b=pbwYVhXPM74lh42S9Ct7Vr4wL3G4TrIVLkvYJoduNQMAIOVLH4X7QtF5uITENwGQ0Cpjcol4aU0xc/4xtDGD1D2qSyaQie1ERCYAGlvOyFEXBYd3ktGtxnSw6jWZcKnmgZJLpVfWz7/etCutAqwR1vujLoshvuydBF59wQNJUzk=
+	t=1753475307; cv=none; b=ZgL9cSni5zuhnDo3L7tTHhFO5VTVFHSp/CHs1z8SiIUcyqQX1OUN5VjlW0KP5yTgT/p6mXKAQ3rPC9B5dbRY9Wz1oU8k2TLWj3FCaGB+52nURpikQGUMFNZwT3PLkvs23uBCvu+tLXgKJgV/kIqWDHZMDDS3KSZapAZO/KroDN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753475306; c=relaxed/simple;
-	bh=By52Shk1UPL4GrfqyjyVCfkJNBxqdlzE+Cy88LJOfbQ=;
+	s=arc-20240116; t=1753475307; c=relaxed/simple;
+	bh=RsMdV+T8oKe7okrmOS/sDhgJDG36fgIYtZAj1bhrGk0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jr3x324FB2q1CRliU/UJWqBOy/k9bKnyvmNGr/QYxDqV+p1QLdGELl2UEtpLNMaFkfxKNpNErpENjN3AlUjflcoWyAFZZIYRImEIxX+zmaDSbLvKnOC2qAwt/Tqd7cQ7EhnPST8BU58Gr/uWLp0vR/m2yYOE35Pvr7XXqsWkWfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sdm1D4g/; arc=none smtp.client-ip=209.85.219.74
+	 To:Cc:Content-Type; b=QjyJr+NySDoDPTEeBt2VWTfKJNzaHhrGKMbr9ea5z6tDnCkzIRJw9X7hf1ORX7qQ1oTupzsJPiD4xogvkDzpSIDsqqmt+JjoMYlVrUq+476Y8wea4MBjNW+QW7VhuUphOd2F1JkuBCJeJqxjCLigNDS+tv9AONqqN08Tf5csWkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pxk5IvdU; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com
-Received: by mail-qv1-f74.google.com with SMTP id 6a1803df08f44-702b5e87d98so44010926d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:28:24 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-71838151744so37209687b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:28:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753475303; x=1754080103; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753475305; x=1754080105; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRd3Ypg5T3RRql/Fga2dEv1dzwKJJJhwVZRtqvAUzhI=;
-        b=Sdm1D4g/ya1KfsrNkrrX08BoD385GzmzKCaYbl1+eK10Cm8hF496rlwcW50G6Ctvrk
-         biOdoBS1q+gm5kDXf+iF7uibcn0u8Muxt6GKyqEif351a/dd/XSCZPZp3lj9W81Yz8bQ
-         XRMCZNK7vs3YKluwytHkWoN6QmyHPL+OQgFb2c6ZO4QxErm814zgQT9DLixPEYAwNKl7
-         0LcyZXdnoWsjQU225uPSDXSXv+Sq9c52YWgujmiQ9+lJf53jm+wy/jBftMUu+v0jXVUP
-         6ful4FtApQ/CxS8jK7snVbzaEcKiYNrYVRQ82y6syZ31awPCP3qPw20USJBDgsJt4IBO
-         mSZw==
+        bh=NH3grKs9mzJDbjLSRQxCfhlTx/fm7fL4sq33ftQ/Ko4=;
+        b=pxk5IvdURHQ0RGBdMjYbVRhPNdKXSazeJJfaRrPCdWWy6s9gWfDBNz8DL52i7y+blq
+         ylGxVHQ8QZsjYg3Ve6a9yJo1CGxLTkZTqCC4ov4PEDaHAw1z/KJ0yQMUb7olu2RC/s2C
+         1f2DyF2+/DJ67j1gYFqS3bXqACrqIYXX4Ak4BPSXhQjlPlRPZXcA3LlggJEsAsv9q1I0
+         d/dhLLak+TIYdwc9xK39xzqPbvUT1dfbiIPDfx83HJd7qKuiCrwijZlWFgxJt5vmiP87
+         2WcyKBz0aaz/09CEavL4MsyEAoK20yr3rmjhF1dHco1f+rQT6pE77+kKZ/AsVMyirxBr
+         urOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753475303; x=1754080103;
+        d=1e100.net; s=20230601; t=1753475305; x=1754080105;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRd3Ypg5T3RRql/Fga2dEv1dzwKJJJhwVZRtqvAUzhI=;
-        b=aVbcjtdpfMxoWTNN7WHVbJ8cw6WWZ7E68vz5M+DX6WzTR3NGgLBpHPiadv1kkEyx3x
-         xFatflmO0k5WtUF5HRuIsQR2qFW09Fu2VBDKVvflUka8fPy0icvysxIkHLfCjsOWgzzA
-         PoymChtji6UGdwCLk08SbY0HGHUP6rVxTZtOvpgkvVF9d3RxCSi/C2p+UvYf4a6KCxuf
-         jHiWqMDEtoWV0UTQelrV9H9H9akqw7awTbNwmbfYboDO76HWIj7u/9Yx8+5nuBkwDYXq
-         5EXbKKAchFSFnNQGGRWxUAkkOU/epI0LBTvURSuaZ+UW3tOEsP6wsWImvTy7zay/sDTC
-         z9wg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtVs98y7/zXbZrdzKO28ogfap32YYx6PyIHJhqjJoZLIjVkRq1vUxAf4nhJnAf4i6StmLBLuV5qkZw54o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd6H76DETUY35lK+9yDt7y70DNZXt2eEcLkth2asW0+WYd1ktQ
-	DZpzWUr8NobcNBDh4yu99q8t+RQD4r1UFjefzZi582WkFwuXd+QblXA/7RH1Dn136u7VJGMXmMQ
-	Ft9E1mDzKoQ==
-X-Google-Smtp-Source: AGHT+IHkhcJRypn35+rkPwHsygURzzuqfpDQ+MnD/3YOoth7To9Zk50PN2vd/p+Tmd8bCubnWQ5OFkx6kB3s
-X-Received: from qvma10.prod.google.com ([2002:a0c:e34a:0:b0:6fb:482a:50db])
- (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6214:485:b0:702:c4d8:ec02
- with SMTP id 6a1803df08f44-707205ea833mr47604626d6.40.1753475303439; Fri, 25
- Jul 2025 13:28:23 -0700 (PDT)
-Date: Fri, 25 Jul 2025 20:28:06 +0000
+        bh=NH3grKs9mzJDbjLSRQxCfhlTx/fm7fL4sq33ftQ/Ko4=;
+        b=LsMYP7NZfWeXCV215QxwIwT3wjU4ltA4gBAVOLMDJ4kfhW1mj/doqyqWYxHqBGx+mM
+         wqqC1GBwUvqmJbzfFHeaByaoDxwZZ3eA9ASHrXpI1uAt2iTSdAXGvyNou53wOB0EdTDK
+         QnOmlLIT0VG3B4zFUZmHisu32gCzswffEs+ibo4IFI4olO6v9JKM4WFi/hVaYXPN8UCD
+         lFuM2OYkEhwcK1nd1MIRkZyAQL5/8Fv9jqKzyY5GXEkXVGZjMkj7SAh9oTGlZdCb9wv7
+         bQoC/fiq1y1WtdlBS5Qx7iVLjqxR8Iv34L4bqTLcEe+Ifhngi8NR43RraFLHgu08AY3T
+         Snzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPglNh8O6Ti+uqBdOSh3fNImg8schjZ75Ebg9G3xx0ix4JC/RVQ0zWEBG3unG7mhoSv4sMjnmfG39nmfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTL+KMRaEIoa5/WVVoqPuEgek9xXFKEJZ87DudSlaLev+ilBxZ
+	Tb8T5BbX2SJc4cNpFm7k+Tcr9hJlmnas3wl89TDxrxfTRduT23SjhAT1QQAxgoRV71ZkjMiXpqq
+	9q4y8iNFBXg==
+X-Google-Smtp-Source: AGHT+IFA927CeUxwshzc5Vf180U6zjOSOk2doZe+aMZiyiIUWXypDsYJ/hDfFF5wLUe1G7GR4PTltMGsdSel
+X-Received: from ywbje8.prod.google.com ([2002:a05:690c:6f88:b0:70e:86e0:e0bd])
+ (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:4a01:b0:70e:2c7f:2ed4
+ with SMTP id 00721157ae682-719e30b8bccmr46449947b3.0.1753475304908; Fri, 25
+ Jul 2025 13:28:24 -0700 (PDT)
+Date: Fri, 25 Jul 2025 20:28:07 +0000
 In-Reply-To: <20250725202809.1230085-1-zecheng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250725202809.1230085-1-zecheng@google.com>
 X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
-Message-ID: <20250725202809.1230085-4-zecheng@google.com>
-Subject: [PATCH v1 3/6] perf dwarf-aux: Better type matching for stack variables
+Message-ID: <20250725202809.1230085-5-zecheng@google.com>
+Subject: [PATCH v1 4/6] perf annotate: Skip annotating data types to lea instructions
 From: Zecheng Li <zecheng@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,38 +87,30 @@ Cc: Zecheng Li <zli94@ncsu.edu>, Xu Liu <xliuprof@google.com>,
 	Zecheng Li <zecheng@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Utilizes the previous is_breg_access_indirect function to determine if
-the stack location stores the variable itself or the struct it points
-to.
-
-If the DWARF expression shows DW_OP_stack_value without DW_OP_deref, it
-indicates the variable value is the reg + offset itself, and the stack
-location it points to is the dereferenced type.
+Remove type annotation on lea instructions since they are not accessing
+memory. It should be counted as `no_mem_ops`.
 
 Signed-off-by: Zecheng Li <zecheng@google.com>
 ---
- tools/perf/util/dwarf-aux.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/perf/util/annotate.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index 814c96ea509f..4039dbd2b8c0 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -1635,6 +1635,14 @@ static int __die_collect_vars_cb(Dwarf_Die *die_mem, void *arg)
- 	if (die_get_real_type(die_mem, &type_die) == NULL)
- 		return DIE_FIND_CB_SIBLING;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 0dd475a744b6..0d6f85ab9170 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -2729,6 +2729,11 @@ __hist_entry__get_data_type(struct hist_entry *he, struct arch *arch,
+ 		return &stackop_type;
+ 	}
  
-+	if ((ops->atom == DW_OP_fbreg || ops->atom == DW_OP_breg7) &&
-+	    dwarf_tag(&type_die) == DW_TAG_pointer_type &&
-+	    is_breg_access_indirect(ops, nops)) {
-+		/* Get the target type of the pointer */
-+		if (die_get_real_type(&type_die, &type_die) == NULL)
-+			return DIE_FIND_CB_SIBLING;
++	if (!strncmp(dl->ins.name, "lea", 3)) {
++		istat->bad++;
++		return NULL;
 +	}
 +
- 	vt = malloc(sizeof(*vt));
- 	if (vt == NULL)
- 		return DIE_FIND_CB_END;
+ 	for_each_insn_op_loc(&loc, i, op_loc) {
+ 		struct data_loc_info dloc = {
+ 			.arch = arch,
 -- 
 2.50.1.470.g6ba607880d-goog
 
