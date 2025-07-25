@@ -1,132 +1,134 @@
-Return-Path: <linux-kernel+bounces-745926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0E6B1208A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:02:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F8FB12086
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312441C88D9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:02:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 349F3588637
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2CD2ED879;
-	Fri, 25 Jul 2025 15:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DkIOIGsn"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D672BDC33;
+	Fri, 25 Jul 2025 15:01:36 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F085475E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCFA5475E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753455648; cv=none; b=Om0ROflMEaTGYH2mCqy//yLbBIMDT81xq5B1K0+3W3HM2UXORllFaaEtuGPjAYksrT3+H/KKTdYYgcAKkD5XMRxIPaJJkOdKAWvWJW9AGdCrJpZ608GMgXpEgd1gLk8xO3A8XaytjlHLlt3KAI2644E3iflik/rNkpsfbDzBD74=
+	t=1753455696; cv=none; b=CGnbcdwx1qvLzzhJpOElrjaBLqjiRi0m1XF+bRwjW3pzHjag9x+ZGO3zQ9g3yjdaaoN0nYAJW8SLszmXAgpiqqlhigR02WOLtoN8cG1YproDmAbNC9EYRR+fpPrtPEmS2KzWDldZF+G9PG/vJmfxVMLdurUhpdrctqBQTSeXH+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753455648; c=relaxed/simple;
-	bh=Ur7y09Z1+O7SAhqfU0l+0bhkFIVqiFXfGXLpvOTzEww=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N99lLWb3yIBmfLj4a4BEV/kI/ED6t+7E0SMxi4NYaiYHKJ1cRLA9sNiDqgNjbSct4VzvbbrUPEhgQTj2BqoieOdmzYFBO+YchdeVCnAu1+yCPaM+raeo02zhs9RgrL+WFknr24J0nSYxMySTA+hQnvYrtgfBGWryxJ5dAGscK2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DkIOIGsn; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso23929745e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:00:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753455644; x=1754060444; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rI9LR2cRzsXcwfbvdOvrXgKHQ7vsbcB6QBNYtkHWCP4=;
-        b=DkIOIGsnX57qG2z5S9FR0nuPKt9OviXOPgzqt9JwBGAXV7KD0UdXpbWWUSDEgXY7dp
-         v25PoOnpmtyCUX1ITnXQngfZpQk0GoRF1rhlOgRsH4isByrn59045rGQHQYX+qhgJLfs
-         wLM3MpGt1in57XR9FIe59BWIB1thT8ugpU1hOJ1DCtbXljMW5hdOPnfb55iq2QP8i86B
-         W5VpQiby/hxWSszI6jKjJvJ5McYE7MFmERhw70vYmQZPX6nHnG75uvvth0B0/oTZ+mol
-         f7n175VcB3kEdkyt71DQMiM9HAAEapS2sKrPM0XbO5N98ZWQPKmLGbgfi2kcR0IoL+AW
-         EVxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753455644; x=1754060444;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rI9LR2cRzsXcwfbvdOvrXgKHQ7vsbcB6QBNYtkHWCP4=;
-        b=uNOn2IuPsejf+vUzqixXPYgDs+fohFMkqcXiHHaI79Z90RLAqrF/QQmQHuCVzrVkO9
-         FXrWAIbOn8RzqoiqklkEnXvqbufFK0mmruIdM5D/8JrKfjOOXvVEzSoJIW3Pz//JmWgI
-         fDAgAtox0DWd1tMcbthNHliA+g7mlBxDQcaUs8GPtR6VOGSEav0PECk0ZMaXWGlsgRCw
-         mj5EjX6mZMQ8d/Ez1EdwVXt7vlhnUkCt8UY+LPUYSCYz1URcGFc2HhtpC3WkzHj8vNgE
-         hFmp2Gv/fZIZEvRywZQUMmKsAUrV9ZpoNPv38jEbmkJqbEgNpE7vsHm4NAyBcdqrI1YJ
-         Az3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXb04u4ViwcrKpX1of6YUIet9BPVX4d9dirhQucsb954dnrnJPBvlS0Oa5vbyiGwdedHFdKKofRlP8vAV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCmCCP5Pk6qrwmn9+D2xX2J4Pv0Rc/zBbRnvnpMoRMEG+pooRD
-	cmqRGA8d1XzMIhKnt/0EA3xBcEBaez3B46//m7AHRIGdgxXesOr3eTncR8B8WcWf+6c=
-X-Gm-Gg: ASbGncsyZvdGrfOJfIwpFg/+n/OkLa/w37tLhaJT9dmih+h5QDYmYxEmPjmlyySgNXz
-	8Nmx1e9NNbkS899vJG5eWYfbSNJWyNLkP8Bj7EJ+GcVr6IBNFEh2ow/dMSC6iB6890TgmqxxaA1
-	Vu1cCsT8c8/adpnePp7nHeRTx7LWphUftBQrgxrhMBHfXuYl/RHlgovsb8g723OtbpFJqARgWkO
-	215PDYy2LVR+nsyp+M/YHmCCWLaECqay6PR9tsL62NDRjokiG3IFx6cvkrX+wC7kqEZBr8xXQn+
-	lSjs38iiBqLvSDgXlXqzpTsMKEFrXSzIAe5ppLR7xBvl8WgPc/M/h6GmHyCUmEoKLmYbohuCx1T
-	fVoE9DI2jr5L7Ow2+GTrNrRftrg==
-X-Google-Smtp-Source: AGHT+IH1lZBQZz54Wo2dN2kyzN7dZPNkmJl+cdo/n5TC3R0Hp6JT1si9hRUAqGSlMvqiwpVRFDDeYA==
-X-Received: by 2002:a05:6000:22c8:b0:3a4:d6ed:8e00 with SMTP id ffacd0b85a97d-3b776664d53mr2246131f8f.33.1753455644207;
-        Fri, 25 Jul 2025 08:00:44 -0700 (PDT)
-Received: from [10.1.1.59] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778eb2a7asm160745f8f.1.2025.07.25.08.00.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 08:00:43 -0700 (PDT)
-Message-ID: <bc14b93d49ee5ec022c29d5c5568c2c1d1c52ab1.camel@linaro.org>
-Subject: Re: [PATCH] scsi: ufs: core: move some irq handling back to hardirq
- (with time limit)
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Bart Van Assche <bvanassche@acm.org>, Alim Akhtar
- <alim.akhtar@samsung.com>,  Avri Altman <avri.altman@wdc.com>, "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>,  "Martin K. Petersen"
- <martin.petersen@oracle.com>, Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
- <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
- Manivannan Sadhasivam	 <mani@kernel.org>, kernel-team@android.com,
- linux-arm-msm@vger.kernel.org, 	linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date: Fri, 25 Jul 2025 16:00:42 +0100
-In-Reply-To: <2e7c2be8-dc58-4e18-9297-e8690565583b@acm.org>
-References: <20250724-ufshcd-hardirq-v1-1-6398a52f8f02@linaro.org>
-	 <2e7c2be8-dc58-4e18-9297-e8690565583b@acm.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+build2 
+	s=arc-20240116; t=1753455696; c=relaxed/simple;
+	bh=F+oEPgML3aBWZ2h8ARcjW3R3lKARlPBoghijCe2iBnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mqpm1IHC4ib/4kyGJJB104XGQnOLpWXc3lsUkS55MMnuZs/+4DD9WRKPjouJOcDnJwsB4kvf+fbWcwCIfmtcYP22Npj9oeVRw8q+jlteJRjO5cgRSO58aEt1jVjt7Z8DOjI5CpRHx986coQF7qaFQXmyhTteUf6LiBq6S5d8t6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.108] (unknown [114.241.87.235])
+	by APP-03 (Coremail) with SMTP id rQCowADHWHovnINokAgZBw--.10820S2;
+	Fri, 25 Jul 2025 23:01:04 +0800 (CST)
+Message-ID: <feb3549f-da91-4eaa-a624-b9f35db6ba3c@iscas.ac.cn>
+Date: Fri, 25 Jul 2025 23:01:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Add sysctl to control discard of vstate during
+ syscall
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>,
+ Drew Fustini <fustini@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+ Alexandre Ghiti <alex@ghiti.fr>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Drew Fustini <dfustini@tenstorrent.com>, Andy Chiu <andybnac@gmail.com>,
+ Conor Dooley <conor.dooley@microchip.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: linux-riscv <linux-riscv-bounces@lists.infradead.org>
+References: <20250719033912.1313955-1-fustini@kernel.org>
+ <cc82c938-def3-4df6-9fc9-fc321af7d54a@iscas.ac.cn>
+ <DBL2588APTCA.2XUKQCJ0DW89C@ventanamicro.com>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <DBL2588APTCA.2XUKQCJ0DW89C@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowADHWHovnINokAgZBw--.10820S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr47Ww48Ww17Aw4UJry7KFg_yoW5JFWxpa
+	y7Kwn8tw1kAr4fuwnIvr4Iqa1Fyr9ayay5JFn5t3y2ya45GF9YqFs0gayYqFZxArsrCr1j
+	qayfu347Zas8ZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvqb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
+	1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x07betCcUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Thu, 2025-07-24 at 09:02 -0700, Bart Van Assche wrote:
-> On 7/24/25 2:54 AM, Andr=C3=A9 Draszik wrote:
-> > @@ -5656,19 +5689,39 @@ static int ufshcd_poll(struct Scsi_Host *shost,=
- unsigned int queue_num)
-> > =C2=A0=C2=A0	WARN_ONCE(completed_reqs & ~hba->outstanding_reqs,
-> > =C2=A0=C2=A0		=C2=A0 "completed: %#lx; outstanding: %#lx\n", completed_=
-reqs,
-> > =C2=A0=C2=A0		=C2=A0 hba->outstanding_reqs);
-> > -	if (queue_num =3D=3D UFSHCD_POLL_FROM_INTERRUPT_CONTEXT) {
-> > -		/* Do not complete polled requests from interrupt context. */
-> > +	if (time_limit) {
-> > +		/* Do not complete polled requests from hardirq context. */
-> > =C2=A0=C2=A0		ufshcd_clear_polled(hba, &completed_reqs);
-> > =C2=A0=C2=A0	}
->=20
-> This if-statement and the code inside the if-statement probably can be
-> left out. This if-statement was introduced at a time when the block
-> layer did not support completing polled requests from interrupt context.
-> I think that commit b99182c501c3 ("bio: add pcpu caching for non-polling
-> bio_put") enabled support for completing polled requests from interrupt
-> context. Since this patch touches that if-statement, how about removing
-> it with a separate patch that comes before this patch? Polling can be
-> enabled by adding --hipri=3D1 to the fio command line and by using an I/O
-> engine that supports polling, e.g. pvsync2 or io_uring.
 
-Bart, thank you for taking the time to explain and the background info on
-this, very helpful!
+On 7/25/25 18:18, Radim Krčmář wrote:
+> 2025-07-24T05:55:54+08:00, Vivian Wang <wangruikang@iscas.ac.cn>:
+>> On 7/19/25 11:39, Drew Fustini wrote:
+>>> From: Drew Fustini <dfustini@tenstorrent.com>
+>>> Clobbering the vector registers can significantly increase system call
+>>> latency for some implementations. To mitigate this performance impact, a
+>>> policy mechanism is provided to administrators, distro maintainers, and
+>>> developers to control vector state discard in the form of a sysctl knob:
+>> So I had an idea: Is it possible to avoid repeatedly discarding the
+>> state on every syscall by setting VS to Initial after discarding, and
+>> avoiding discarding when VS is Initial? So:
+>>
+>> if (VS == Clean || VS == Dirty) {
+>>     clobber;
+>>     VS = Initial;
+>> }
+>>
+>> This would avoid this problem with syscall-heavy user programs while
+>> adding minimum overhead for everything else.
+> I think your proposal improves the existing code, but if a userspace is
+> using vectors, it's likely also restoring them after a syscall, so the
+> state would immediately get dirty, and the next syscall would again
+> needlessly clobber vector registers.
 
-Cheers,
-Andre'
+Without any data to back it up, I would say that my understanding is
+that this should be a rare case, only happening if e.g. someone is
+adding printf debugging to their vector code. Otherwise, vector loops
+should not have syscalls in them.
+
+A more reasonable worry would be programs using RVV everywhere in all
+sorts of common operations. In that case, alternating syscalls and
+vectors would make the discarding wasteful.
+
+> Preserving the vector state still seems better for userspaces that use
+> both vectors and syscalls.
+
+If we can expect e.g. userspace programs to primarily repeatedly use RVV
+with no syscalls between loops, *or* primarily repeatedly use syscalls
+with rare occurrences of RVV between syscalls. This way, the primarily
+syscall programs can benefit from slightly switching, since there's no
+need to save and restore state for those most of the time. In effect,
+syscalls serves as a hint that RVV is over. The primarily RVV programs
+should not be switching as much - if they are, that's a sign of CPU
+resources being oversubscribed. 
+
+Having said all of that, I am actually slightly more interested in why
+vmv.v.vi is *so slow* on SiFive X280. I wonder if there would be a more
+microarchitectural favorable ways to just put a bunch of ones in some
+vector registers? Would 0 be better?
+
+Vivian "dramforever" Wang
+
 
