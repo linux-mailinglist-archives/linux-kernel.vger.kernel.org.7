@@ -1,94 +1,166 @@
-Return-Path: <linux-kernel+bounces-746109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B755B12339
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:48:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805CBB1233D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B4AAE4485
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:48:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5127216BBFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8712EFDBA;
-	Fri, 25 Jul 2025 17:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62D82EFDAC;
+	Fri, 25 Jul 2025 17:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wDA5KYi9"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="WfkPD5PH"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F53D24291C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753465728; cv=none; b=JHE7kCLFBwRrdd+5E3Yy0o2049XstLBucHxQz3LFeKXBfowpoYmfnKRq0es8Y+E/FK7oneaa5ByUsbDJdHrZhNdp8lqiccF7pygEIyrMLgNLk66fY9ogcWa32sfwkpIey/t6Rt88VlvarSPeCCOLZmuhuCHEPTl5eD0fexzJzX8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753465728; c=relaxed/simple;
-	bh=xW/eRBf28FKWPcdt8VFjDq1uhVkuQiqBuifYuIeI5rc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WNFGlshuBlaROBnEnzAQQR58Eg1UZv8IYG8BX2wdkXbYUnrsz5EG7QGiBmr04Xmzr/4+nspxJMRttg+wbDC3GEro0mQJFscuG+GKZLrTxPH9AuAbP/GT6ekIYw3+/rUdxLPQLEp7aQxL5mVBNUMQNV2qwJyJxgPffVZ/AQzdaPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wDA5KYi9; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7b88650d-e9dd-4c3b-b377-2017b5f982b0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753465724;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xW/eRBf28FKWPcdt8VFjDq1uhVkuQiqBuifYuIeI5rc=;
-	b=wDA5KYi9iMY1zQ4xfOOYElml0bGlurX9QwTvC9slvjA9sLCABlLJYsh8U7cRvFqNh/lxKO
-	cDQmOQ7VOK4nTDrEPsCoiU1jdzMrz4RqZmGs+j4QsLIQaE1Y5lTpd4wqbpD46ABQp55iFF
-	zItWuKgKfmESPUDA00YII8fs6KjkvkE=
-Date: Fri, 25 Jul 2025 10:48:36 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D73F1E1DEC;
+	Fri, 25 Jul 2025 17:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753465781; cv=pass; b=Y3snqvGaVaINBBGb89p3JVk8jB+sSKaOjfsY5A8HO7HsnBVhPTkVN/Cjgpt7iJdAPHEqtH8EJ26PSwmtDbGEqjTyaaYBGRavsV2fcY5wi92kT7CwH2nLbpN7B/5Cfb/2QDwwo9OiOW1+XQDss6/Dten3+4y6TPulxbOgQx3KPDk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753465781; c=relaxed/simple;
+	bh=Co6omVD6qq46O47C9a1PV7dali/amXL688ppAOCwZFQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=glQUnanHQ+lD+l1qLzQO93wlUVCg5v5IygcR3CV0muDDGqnGRx6g4JT0HgLeUoQ4q3+hCedqJ48K+g5S8Lc8DT6ZZYmAvCbFiheSSnsd2VZ1ntqTn4sW6aeO7o1NcGgfdE4BPTF1A/G2RA1+pyLe+qjUUQVa7cH+jRKaI8x9bJ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=WfkPD5PH; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753465764; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kvYg6N2ZoJIXxduKMoPHwdjd1xqRAN62MLvcUVzavG+mvwbt2xGvavJGx0iTsrwpkCHfCvFWeVf7vhlHkF4YOtHWSEhxii67hURhbann3esN40vyQ+As7iLfNpmnz1aFWsG5rt0coLeU98jqdBcVq6Tt0qe0O34O7shrcs6b2H0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753465764; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2Xwr8x+BKUfSlLKO3O+ng3v4MJ3vSU0Ctp+7wpnQ0qs=; 
+	b=k2Z14keX7UvYBb8mwJzAUzxqWE5NHR99CN8NZ44Ut7UuJcVfeWmIIRQODzsVE8qslv3nvWr6BFNeb4+T2VvaJQ+9CZylFM29ngdj3NcPBLFfsZx1Thn6H+AFZFAhINAznfpAJYZePocD7cXnP5DT8BzZwBxaOGpMpij51undEhI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753465764;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=2Xwr8x+BKUfSlLKO3O+ng3v4MJ3vSU0Ctp+7wpnQ0qs=;
+	b=WfkPD5PHmKFfD+wGtklw8Rz+QGPx9vifm3NRfHVBB9cRUwhMSR5MQY8utpSCYXz2
+	HatZ3AN6Z2/wUdmw6rGz23/MLkVu1KlclPjTlDdToJasGsi+KbgHT0zuZTAG9oRXXpV
+	rHzRCZvvN36hxXB1J3jdnu1vNYPGPwpju6m9x+EQ=
+Received: by mx.zohomail.com with SMTPS id 1753465762422919.5367130253645;
+	Fri, 25 Jul 2025 10:49:22 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next 0/4] Use correct destructor kfunc types
-Content-Language: en-GB
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: bpf@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 11/19] gpu: nova-core: register: improve `Debug`
+ implementation
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250718-nova-regs-v2-11-7b6a762aa1cd@nvidia.com>
+Date: Fri, 25 Jul 2025 14:49:08 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Beata Michalska <beata.michalska@arm.com>,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250724223225.1481960-6-samitolvanen@google.com>
- <c7241cc9-2b20-4f32-8ae2-93f40d12fc85@linux.dev>
- <CABCJKud8u_AF6=gWvvYqMeP71kWG3k88jjozEBmXpW9r4YxGKQ@mail.gmail.com>
- <f82341df-bf2a-4913-a58c-e0acdfb245d2@linux.dev>
- <CABCJKueq=a6Y_2YmSDOa-VTCW9jwYPiXq94125EAMoZ5Y6-ypA@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <CABCJKueq=a6Y_2YmSDOa-VTCW9jwYPiXq94125EAMoZ5Y6-ypA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4E14EE9C-727F-49D4-AE01-96CB101705C5@collabora.com>
+References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
+ <20250718-nova-regs-v2-11-7b6a762aa1cd@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
 
 
-On 7/25/25 10:20 AM, Sami Tolvanen wrote:
-> On Fri, Jul 25, 2025 at 9:54 AM Yonghong Song <yonghong.song@linux.dev> wrote:
->> I just tried arm64 with your patch set. CFI crash still happened:
->>
->> CFI failure at tcp_ack+0xe74/0x13cc (target: bpf__tcp_congestion_ops_in_ack_event+0x0/0x78; expected type: 0x64424
->> 87a)
-> This one should fixed by the other series I posted earlier:
->
-> https://lore.kernel.org/bpf/20250722205357.3347626-5-samitolvanen@google.com/
+> On 18 Jul 2025, at 04:26, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> Now that we have an internal rule to dispatch field information where
+> needed, use it to generate a better `Debug` implementation where the =
+raw
+> hexadecimal value of the register is displayed, as well as the `Debug`
+> values of its individual fields.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> drivers/gpu/nova-core/regs/macros.rs | 25 +++++++++++++++----------
+> 1 file changed, 15 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/gpu/nova-core/regs/macros.rs =
+b/drivers/gpu/nova-core/regs/macros.rs
+> index =
+8b081242595de620cbf94b405838a2dac67b8e83..485cac806e4a6578059c657f3b31f15e=
+361becbd 100644
+> --- a/drivers/gpu/nova-core/regs/macros.rs
+> +++ b/drivers/gpu/nova-core/regs/macros.rs
+> @@ -122,16 +122,6 @@ macro_rules! register {
+>         #[derive(Clone, Copy, Default)]
+>         pub(crate) struct $name(u32);
+>=20
+> -        // TODO[REGA]: display the raw hex value, then the value of =
+all the fields. This requires
+> -        // matching the fields, which will complexify the syntax =
+considerably...
+> -        impl ::core::fmt::Debug for $name {
+> -            fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> =
+::core::fmt::Result {
+> -                f.debug_tuple(stringify!($name))
+> -                    .field(&format_args!("0x{0:x}", &self.0))
+> -                    .finish()
+> -            }
+> -        }
+> -
+>         impl ::core::ops::BitOr for $name {
+>             type Output =3D Self;
+>=20
+> @@ -171,6 +161,7 @@ fn from(reg: $name) -> u32 {
+>             ;
+>             )*
+>         });
+> +        register!(@debug $name { $($field;)* });
+>     };
+>=20
+>     // Defines all the field getter/methods methods for `$name`.
+> @@ -316,6 +307,20 @@ pub(crate) fn [<set_ $field>](mut self, value: =
+$to_type) -> Self {
+>         );
+>     };
+>=20
+> +    // Generates the `Debug` implementation for `$name`.
+> +    (@debug $name:ident { $($field:ident;)* }) =3D> {
+> +        impl ::core::fmt::Debug for $name {
+> +            fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> =
+::core::fmt::Result {
+> +                f.debug_struct(stringify!($name))
+> +                    .field("<raw>", &format_args!("{:#x}", &self.0))
+> +                $(
+> +                    .field(stringify!($field), &self.$field())
+> +                )*
+> +                    .finish()
+> +            }
+> +        }
+> +    };
+> +
+>     // Generates the IO accessors for a fixed offset register.
+>     (@io $name:ident @ $offset:expr) =3D> {
+>         #[allow(dead_code)]
+>=20
+> --=20
+> 2.50.1
+>=20
 
-Okay, I see. We can delay arm64 for now and focus on x86 side as I can
-observe some issues with CONFIG_CFI_CLANG.
-
->
-> Sami
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
 
