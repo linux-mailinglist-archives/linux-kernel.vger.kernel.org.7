@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-745526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A174B11B2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B560FB11B74
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E46337B1F4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:50:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E2B3ADF02
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659802D3A7D;
-	Fri, 25 Jul 2025 09:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hF3xZeA3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912DF2D94AB;
+	Fri, 25 Jul 2025 10:01:28 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF9D2D1920;
-	Fri, 25 Jul 2025 09:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1241E2D46DF;
+	Fri, 25 Jul 2025 10:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753437106; cv=none; b=ETmIRQyWA/8etJL3d3f0zeq2N07/oNFpfl/wF4UL0EBNcQx/FDCHiqaKKmFoiAmhZEtf5cIaxmZHovgtYq/yF5vJ94COy8PU+1xRvF2fvgobpfkbakLftd8ga8yUwxrxa9IHH9sCBQvr+LXuaoNgAITtIjxIA84e6pEWDA85cXE=
+	t=1753437688; cv=none; b=YQNkBtKO1ZyF0+d0CtcqdhwFq4XMCfi8C4kUer6YRauCCjbgc41Tva38++/RfjSDl8yDpuGMMEcYaIppINcYVzL2NfYPPKgGikUCHyi9DJLsJCQBk5vxU4RUjJ7iwbdL0F3cLwVdBOuOJg50UnRQ63HW4PAcXFHMqX0Pmxcl0eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753437106; c=relaxed/simple;
-	bh=CslKMzEgNIx06AGoQ7+B9pcd0N2hOUm31pNgdyNe0xQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SMBBfcUJDl/TwLn5RuQcDep1QZkN7J8rxSJA0UH8yR8si4mD0f0Im1C/96S27+IZuJXtl/gfHtHazkJl6N8lTmTio6GyVIHjqeMSyEYxm88g4lGsBGC3VdlMZ5MByaoMGwWcqBkBJJ60no5vYBDbSMkSTixdnKqNX8KCvR/EmeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hF3xZeA3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94577C4CEE7;
-	Fri, 25 Jul 2025 09:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753437106;
-	bh=CslKMzEgNIx06AGoQ7+B9pcd0N2hOUm31pNgdyNe0xQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hF3xZeA3oED1lWe1F0MTD4LkfodA1ZbLBbrtSCZ7ofmL9oFhNjwArAmHpXkizj3Jw
-	 zm5Ld8Cm52fbNhRnCOtjQZ9DV4eQ0rVshGpxJRgogB4iJpk6xJVno9z2WBGov4ZZXz
-	 bhGUD7BKYw7Ba+atf5GSeZ4BdrSnIjM+JTgGzXe+qoz/L8EQixJZbemqmt2MrnWbSp
-	 fzDacgCX3ppehjEoDQiNO/TzOnUrcjwtVTo9ioRlvOS8r0X6SjaNIf/2WUUTsSOXXc
-	 IeozNVGS7LOxpkdLxUt0Wjv99cH0nmde8wgYj+cmbjXYeYvrpNJsAMY1MWGgl2sqMO
-	 HfnQsXQYPpfKQ==
-Date: Fri, 25 Jul 2025 10:51:40 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yibo Dong <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/15] net: rnpgbe: Add build support for rnpgbe
-Message-ID: <20250725095140.GC1367887@horms.kernel.org>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <20250721113238.18615-2-dong100@mucse.com>
- <20250722112909.GF2459@horms.kernel.org>
- <0E9C9DD4FB65EC52+20250723030111.GA169181@nic-Precision-5820-Tower>
- <20250723200934.GO1036606@horms.kernel.org>
- <173AE84ACE4EE2AE+20250724061047.GA153004@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1753437688; c=relaxed/simple;
+	bh=lKLrzCdnI8SoLPBCXEq2qmm2fjjI5TLH0MX9m08dmyw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BDLAgJz65/yAaD66pjRoPG5748aCcfBMWv+nm5Wrap4N2Gny3iRa95aEzPybKyCepIreLmgeulWqdB6WVEuYqqfgiQ3SPEpO0ckgxNHkShM6dkSnIfg1NfXj2I2VIgiW9rGnYBvPNWRboSfJmuKo5WvdG+Xx2aFhR+OriyC0z20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id 3D9975F760;
+	Fri, 25 Jul 2025 11:51:58 +0200 (CEST)
+From: Rolf Eike Beer <eb@emlix.com>
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
+ Shannon Nelson <shannon.nelson@amd.com>,
+ Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas.weissschuh@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ sparclinux@vger.kernel.org,
+ Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas.weissschuh@linutronix.de>
+Subject:
+ Re: [PATCH RFC 08/14] sparc64: vdso: Move syscall fallbacks into header
+Date: Fri, 25 Jul 2025 11:51:51 +0200
+Message-ID: <2376810.ElGaqSPkdT@devpool92.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <20250724-vdso-sparc64-generic-2-v1-8-e376a3bd24d1@linutronix.de>
+References:
+ <20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1@linutronix.de>
+ <20250724-vdso-sparc64-generic-2-v1-8-e376a3bd24d1@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173AE84ACE4EE2AE+20250724061047.GA153004@nic-Precision-5820-Tower>
+Content-Type: multipart/signed; boundary="nextPart4999642.GXAFRqVoOG";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-On Thu, Jul 24, 2025 at 02:10:47PM +0800, Yibo Dong wrote:
-> On Wed, Jul 23, 2025 at 09:09:34PM +0100, Simon Horman wrote:
-> > On Wed, Jul 23, 2025 at 11:01:11AM +0800, Yibo Dong wrote:
-> > > On Tue, Jul 22, 2025 at 12:29:09PM +0100, Simon Horman wrote:
-> > > > On Mon, Jul 21, 2025 at 07:32:24PM +0800, Dong Yibo wrote:
-> > 
-> > ...
-> > 
-> > > But I can't get this warning follow steps in my local:
-> > > ---
-> > > - make x86_64_defconfig
-> > > - make menuconfig  (select my driver rnpgbe to *)
-> > > - make W=1 -j 20
-> > > ---
-> > > if I compile it with 'make W=1 C=1 -j 20', some errors like this:
-> > > ---
-> > > ./include/linux/skbuff.h:978:1: error: directive in macro's argument list
-> > > ./include/linux/skbuff.h:981:1: error: directive in macro's argument list
-> > > ........
-> > > Segmentation fault
-> > > ---
-> > > I also tried to use nipa/tests/patch/build_allmodconfig_warn
-> > > /build_allmodconfig.sh (not run the bot, just copy this sh to source
-> > > code). It seems the same with 'make W=1 C=1 -j 20'.
-> > > Is there something wrong for me? I want to get the warnings locally,
-> > > then I can check it before sending patches. Any suggestions to me, please?
-> > > Thanks for your feedback.
-> > 
-> > I would expect what you are trying to work.
-> 
-> I want to reproduce the warning locally, like this: 
-> 'warning: symbol 'rnpgbe_driver_name' was not declared. Should it be static'
-> Then, I can check codes before sending patches.
+--nextPart4999642.GXAFRqVoOG
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Rolf Eike Beer <eb@emlix.com>
+Date: Fri, 25 Jul 2025 11:51:51 +0200
+Message-ID: <2376810.ElGaqSPkdT@devpool92.emlix.com>
+Organization: emlix GmbH
+MIME-Version: 1.0
 
-Yes, I think that is a very good plan.
+Thomas Wei=C3=9Fschuh wrote:
+> The generic vDSO libraries expected the syscall fallbacks
 
-> > And I certainly would not expect a segmentation fault.
-> > 
-> > I suspect that the version of Sparse you have is causing this problem
-> > (although it is just a wild guess). I would suggest installing
-> > from git. http://git.kernel.org/pub/scm/devel/sparse/sparse.git
-> > 
-> > The current HEAD is commit 0196afe16a50 ("Merge branch 'riscv'").
-> > I have exercised it quite a lot.
-> > 
-> 
-> nice, after installation, it works. I reproduced the warning, thanks.
+"in" missing?
 
-Excellent.
+> asm/vdso/gettimeofday.h. To prepare the adoption of the generic library,
+> move the existing functions there.
 
-> 
-> > For reference, I also use:
-> > GCC 15.1.0 from here: https://mirrors.edge.kernel.org/pub/tools/crosstool/
-> > Clang 20.1.8 from here: https://mirrors.edge.kernel.org/pub/tools/llvm/
-> > (Because they are the latest non -rc compilers available there)
-> > 
-> > 
-> 
+Regards,
+
+Eike
+=2D-=20
+Rolf Eike Beer
+
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
+
+emlix - your embedded Linux partner
+--nextPart4999642.GXAFRqVoOG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCaINTtwAKCRCr5FH7Xu2t
+/MbPA/0dlCLsBzjM6FN8qagJQNydE/tBZ+VyT4fkbivBpk22EBBU/fUMv1cRMBS4
+IHjJZcXzzYjF/INn4F3ER3KmLKU2R2VaSCvqusFVsc2x9aMWFOlyqOPz+usm9up7
+zMndffsEMsHWu9SCiM85zbErgtoGHcu7R52wDWws9wH6W17qhg==
+=gvab
+-----END PGP SIGNATURE-----
+
+--nextPart4999642.GXAFRqVoOG--
+
+
+
 
