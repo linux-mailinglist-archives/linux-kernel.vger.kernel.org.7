@@ -1,109 +1,103 @@
-Return-Path: <linux-kernel+bounces-745842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC50EB11F77
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:41:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3A8B11F78
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20427587D49
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:41:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23394587C68
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4592356CF;
-	Fri, 25 Jul 2025 13:41:23 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8A7224B1F;
+	Fri, 25 Jul 2025 13:42:28 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0501BF58;
-	Fri, 25 Jul 2025 13:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F141BF58
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753450883; cv=none; b=ub2hZRRkLDmos6h+8k0P76hSV2H3mXmtH1YFRNln54xM22+cGq0DClPN9/mGzzgkAM2EeffSzFC7QUZ+ZBpAzDe5H9eYZVsev18Uui/EPMeVIKo+ymYMxWa8ent08l+7JF70Lajs50u+NFxYzM3iGFGd3YzLvD4feD/ajDrXhFw=
+	t=1753450948; cv=none; b=EOTldbJdFUI77nWKi6MEtnQNyWocjEfYDNAYOTEZntDAvycvn5IJ9OChUp1X3APbCnU7rnIyDjBbvZkPLd2RQx2xq/jUgCi9b88slP5wAXElU3zBuwnjHpfUaP+ADHnvEpkkYSGlHifWGANvMkyiwsxKpH+z+KH1XkUZBfIWql4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753450883; c=relaxed/simple;
-	bh=kfH6fjRAy1g7mtemSw3tL6L5tX3YC+GPOTlyThw9MDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rTFgmu0H524niTVRHlMqj919qiK1g3tKJxNHtOwnYFE+/TUsbdixXR0P1XtijxgqHQJWuzmZvRUDi6RWeFnPCUhZAlUy6zVBQCMuHY8tIO+L3p6A35xWojaDKqc4Rsuvwk5PS6NVpycrCZIySRF11WSQUA/2l61yPoWgra497cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id 9C0BDC0782;
-	Fri, 25 Jul 2025 13:41:19 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 6A72B2E;
-	Fri, 25 Jul 2025 13:41:16 +0000 (UTC)
-Date: Fri, 25 Jul 2025 09:41:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
- llvm@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd
- Bergmann <arnd@arndb.de>, Masahiro Yamada <masahiroy@kernel.org>, Nathan
- Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v5 2/3] tracing: Add a tracepoint verification check at
- build time
-Message-ID: <20250725094121.1521e14d@gandalf.local.home>
-In-Reply-To: <a1f2f201-61f9-4564-b0c8-45c4d912bd00@efficios.com>
-References: <20250725025149.726267838@kernel.org>
-	<20250725025213.342188378@kernel.org>
-	<a1f2f201-61f9-4564-b0c8-45c4d912bd00@efficios.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753450948; c=relaxed/simple;
+	bh=UzPrUcTaXQUsxHf/xdDXOod06h8AzgEAFDc4Om9QIu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=eAjwz/gPp01Xb4STMrJSpyWsW6fGLm70gVaJjHIEm67lGdCkwu15RamQT6b/J2XBkKK84h4adGiRgEjvR47DGLOGysoyG7mbsBUb8VCp+VfcO/vFVew/4AXY2t9/TWmWirq2CgcWTPu3AZSnOWMbPQY1e7p8jcSZ7paByJmmTOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B94D143173;
+	Fri, 25 Jul 2025 13:42:15 +0000 (UTC)
+Message-ID: <fa6f5e3c-3452-41ff-ab81-60f5f31ff797@ghiti.fr>
+Date: Fri, 25 Jul 2025 15:42:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6A72B2E
-X-Stat-Signature: ure1t647ois4fo38k6rhy4c9uqmurmty
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19uRVuGWgLultwAjkuw7HeTwr3zo7f/01w=
-X-HE-Tag: 1753450876-168812
-X-HE-Meta: U2FsdGVkX18cFM1KCns0Zb/ASBckcdVX8VeKxGTJURpIdH9biMAT2L48LOIYy3OHLgMzYAOj26l337EeYDIo/Fb0BOaGFvutCbaYbyhLGzPrp10ktyWyk8lSHxUI7TRN6se+ynPIAG+bnp83UIIlqIgE4Cri8jxn4lJmBU0z+p/oodJqYlbUNfHhzAjSrjh/XkfW+9dIY5fYVoHlUZx/clKQkOdJuoI9JSwk1BeZdP5P0W97zprRznFrGQqYXqDQ3TNbbrRXvrSdtnPxsec417ZSlBQyhYQR5LJrdMb9+X+b0e2KhB2ni0jR27L9I247e1JteGZD/NWMEHPIiDmsK/7UHzdgcwfCg26lWe6+HX7Ca0EOWm5uPaNGZ4pPAkMb
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: uaccess: fix __put_user_nocheck for unaligned
+ accesses
+To: Aurelien Jarno <aurelien@aurel32.net>, linux-kernel@vger.kernel.org,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ "open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>
+References: <20250724220853.1969954-1-aurelien@aurel32.net>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250724220853.1969954-1-aurelien@aurel32.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekfeeikecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhhefgvdetjeeigfdvveekgfduheekkeehgfekvddtueegtdevffefjeehkedtgfenucfkphepleehrddugedurddutddvrddukeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepleehrddugedurddutddvrddukeeipdhhvghloheplgdutddruddtrddugeeirddvudejngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheprghurhgvlhhivghnsegruhhrvghlfedvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegtlhgvghgvrhesr
+ hhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-On Fri, 25 Jul 2025 09:15:34 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+Hi Aurélien,
+
+On 7/25/25 00:08, Aurelien Jarno wrote:
+> The type of the value to write should be determined by the size of the
+> destination, not by the value itself, which may be a constant. This
+> aligns the behavior with x86_64, where __typeof__(*(__gu_ptr)) is used
+> to infer the correct type.
+>
+> This fixes an issue in put_cmsg, which was only writing 4 out of 8
+> bytes to the cmsg_len field, causing the glibc tst-socket-timestamp test
+> to fail.
+>
+> Fixes: ca1a66cdd685 ("riscv: uaccess: do not do misaligned accesses in get/put_user()")
+> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> ---
+>   arch/riscv/include/asm/uaccess.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+> index b88a6218b7f24..22e3f52a763d1 100644
+> --- a/arch/riscv/include/asm/uaccess.h
+> +++ b/arch/riscv/include/asm/uaccess.h
+> @@ -311,7 +311,7 @@ do {								\
+>   do {								\
+>   	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&	\
+>   	    !IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr))) {	\
+> -		__inttype(x) ___val = (__inttype(x))x;			\
+> +		__typeof__(*(__gu_ptr)) ___val = (x);		\
+>   		if (__asm_copy_to_user_sum_enabled(__gu_ptr, &(___val), sizeof(*__gu_ptr))) \
+>   			goto label;				\
+>   		break;						\
 
 
-> > Add a verifier that injects a string of the name of the tracepoint it
-> > calls that is added to the discarded section "__tracepoint_check".
-> > For every builtin tracepoint, it's   
-> 
-> its
+Thanks for catching this (I will add the glibc testsuite to our CI).
 
-Weird Al would be ashamed of me!
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-Although, you shouldn't delete the word that comes next in your reply, as
-I can't tell if you were correct or not from the context you kept.
+Thanks,
 
-> 
-> [...]
-> 
-> > +	/*
-> > +	 * The __tracepoint_check section is filled with strings of the
-> > +	 * names of tracepoints (in tracepoint_strings). Create an array
-> > +	 * that points to each string and then sort the array.
-> > +	 */
-> > +	for_each_shdr_str(len, ehdr, check_data_sec) {
-> > +		if (!len)
-> > +			continue;  
-> 
-> The len==0 case would be when this skips section alignment padding when
-> the linker decides to align the beginning of each .o sections, which
-> ends up appearing as zeroed padding within the resulting vmlinux.o
-> section after the individual sections have been stitched together, am I
-> correct ?
+Alex
 
-I'm guessing. But when I walked through it in the debugger, there was more
-zero length strings than strings with content. But it had all the strings I
-was looking for.
 
--- Steve
 
