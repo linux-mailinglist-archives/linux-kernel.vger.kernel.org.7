@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-746327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA573B12594
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:32:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12568B12596
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1410E3B9272
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:32:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317A65664E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86AB25A348;
-	Fri, 25 Jul 2025 20:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="rzwomizJ"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B013254854;
+	Fri, 25 Jul 2025 20:33:53 +0000 (UTC)
+Received: from smtp.blochl.de (mail.blochl.de [151.80.40.192])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA51239E60;
-	Fri, 25 Jul 2025 20:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055A423F421;
+	Fri, 25 Jul 2025 20:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=151.80.40.192
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753475568; cv=none; b=u+GGyt7OuhYxksqEFASE1/8OjBzH8XHGq+rDu1A6VoSTyFXFjn5LESNY/sDkbzah5JINyyyD/BjLahaIipZ89hW5hAW8+3yoBliPxSo7Wn2FTjD8S/uSYdQzo0DRjsN0rx01wCDLh+CZ2twOaozISlNk3p9DBhaoqDlFfYg3qlY=
+	t=1753475632; cv=none; b=MRviHI7k4t6gDzHHJCeUdw762ST0ca1AjT/IqWdk5IwaU27AJiClHLjTtqegHuLJAhjZy1K/ZRXYAsa7Smn8JJw+wpdZ1R/43mCPxbbBUvtr+q8dpUVIBYawkUfZmSd6g3SZRNSZREN3sjimTxoKefNgitTbJJufyzlqSsPmhxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753475568; c=relaxed/simple;
-	bh=7aJC6uaWLGEw1lnbfhHpk8IA2Tli6jwxMfjrL4em60Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpBqeEol/bGIOul4cg1RqY4ykdnkiAouvaJMp15tyKz3vVoAd/R/IIupdcWapN5e7Rhuuk6YZHDimCql/2lTn5SLrrRP3Wu2zVMnV9fvORwOO0LVrtmxwbCAFxGmqpnOI5LLQSvKSscJTl3qhifLExvAlE/tdEXA+AEaMhhJ8s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=rzwomizJ; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=hRwiYsJBZAA+T2dCXWEfTMbwkhCHo5/rLbx54F03w7Y=; b=rzwomizJNlEXyOVd
-	+qFw49Ij7AcMZlaIVveJmSUbR18deas0t9dyFhr9wX+Qzgpd3j6fsP2WEgkArHioC2QRBHUpyNBlr
-	4033Vy1O0qpwVVsXHw1mgD7vSmpuXcWU8Ul0YKV2ZPyoRfX6327dwhNvXRye984aESBJGQxnrMoPJ
-	Xq4ZtRpXwcYmthnjFPw/iYyvcl0PPbm5UORvmk560RPnsj7s6Yj4NHQJmvt62fd/EAirRV5Uo1bkn
-	ODTKHkt0kw4QOV31n4UX4SEKUCIrP1qhzCDLoLrj+x3CdOPofAwF3ddq+1DB96JCSOxyp/Zl+gUan
-	C4O6lWbRantKRL5dJw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1ufP5l-000gsa-2h;
-	Fri, 25 Jul 2025 20:32:33 +0000
-Date: Fri, 25 Jul 2025 20:32:33 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Sasha Levin <sashal@kernel.org>,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, corbet@lwn.net,
-	josh@joshtriplett.org
-Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
-Message-ID: <aIPp4R7Xd_10J2uH@gallifrey>
-References: <20250725175358.1989323-1-sashal@kernel.org>
- <20250725114114.3b13e7b1@kernel.org>
- <20250725150046.3adb556c@gandalf.local.home>
- <20250725125906.1db40a7f@kernel.org>
+	s=arc-20240116; t=1753475632; c=relaxed/simple;
+	bh=Um8nTzh656Pi7VP5BcSWXmH++wVExc/uJZ0Tx3+/PtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kDEDGjqjPEZ6ERgzaNXGFDVEL+vyail0zsMEq2jJXomio3Pdlxj/JCrkrp7CDoTsvcATthF/4eeDp9bDMiiUPoExCgFnYyaf0wjttVj3FxllzaNB7z6S0wi0kREQjt0Yr1kvcK+iqQ+5YfCOTl3Nak9N8BYb9sc8RoXnb1Yee8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blochl.de; spf=pass smtp.mailfrom=blochl.de; arc=none smtp.client-ip=151.80.40.192
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blochl.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blochl.de
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.blochl.de 154C644664AD
+Authentication-Results: mail.blochl.de; dmarc=none (p=none dis=none) header.from=blochl.de
+Authentication-Results: mail.blochl.de; spf=fail smtp.mailfrom=blochl.de
+Received: from WorkKnecht.fritz.box (ppp-93-104-0-143.dynamic.mnet-online.de [93.104.0.143])
+	by smtp.blochl.de (Postfix) with ESMTPSA id 154C644664AD;
+	Fri, 25 Jul 2025 20:33:36 +0000 (UTC)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 1.4.2 at 472b552e6fe8
+Date: Fri, 25 Jul 2025 22:33:31 +0200
+From: Markus =?utf-8?Q?Bl=C3=B6chl?= <markus@blochl.de>
+To: stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, 
+	Anton Nadezhdin <anton.nadezhdin@intel.com>, markus.bloechl@ipetronik.com
+Subject: [PATCH] ice/ptp: fix crosstimestamp reporting
+Message-ID: <20250725-ice_crosstimestamp_reporting-v1-1-3d0473bb7b57@blochl.de>
+X-B4-Tracking: v=1; b=H4sIAELpg2gC/x3MQQqFIBAA0KvErBPKyqKrxCfMpppFKjPyCaK7J
+ y3f5t0gyIQCY3ED45+Egs+oywLcYf2OitZs0JXuqr42ihzOjoNIohMl2TPOjDFwIr+rxejGWN0
+ a1w6Qi8i40fX10+95Xh9SEVhuAAAA
+X-Change-ID: 20250716-ice_crosstimestamp_reporting-b6236a246c48
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250725125906.1db40a7f@kernel.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 20:26:01 up 89 days,  4:39,  1 user,  load average: 0.02, 0.01, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (smtp.blochl.de [0.0.0.0]); Fri, 25 Jul 2025 20:33:36 +0000 (UTC)
 
-* Jakub Kicinski (kuba@kernel.org) wrote:
-> On Fri, 25 Jul 2025 15:00:46 -0400 Steven Rostedt wrote:
-> > On Fri, 25 Jul 2025 11:41:14 -0700
-> > Jakub Kicinski <kuba@kernel.org> wrote:
-> > > On Fri, 25 Jul 2025 13:53:56 -0400 Sasha Levin wrote:  
-> > > > 	Co-developed-by: Claude claude-opus-4-20250514
-> > > > 	---
-> > > > 	 Documentation/power/opp.rst | 2 +-
-> > > > 	 1 file changed, 1 insertion(+), 1 deletion(-)    
-> > > 
-> > > I think we should suggest that the tag is under --- ?
-> > > It's only relevant during the review. Once the patch is committed 
-> > > whether the code was organic or generated by Corp XYZ's Banana AI
-> > > is just free advertising..  
-> > 
-> > What's the difference between that and others using their corporate email?
-> > I even add (Google) to my SoB to denote who is paying me to do the work.
-> 
-> To be clear, it's not my main point, my main point is that 
-> the information is of no proven use right now. As long as
-> committer follows the BKP of adding Link: https://patch.msgid.link/...
-> we can find the metadata later.
-> 
-> We never found the need to attach the exact version of smatch / sparse
-> / cocci that found the bug or "wrote" a patch. Let us not overreact to
-> the AI tools.
+From: Anton Nadezhdin <anton.nadezhdin@intel.com>
 
-People have done it (using inconsistent tags and comments) for things
-like Coverity for years;  some people worry a lot about AI, some not at all;
-adding a tag:
-  a) Lets the people who worry keep of track what our mechanical overlords are
-doing.
-  b) Reviewers who are wary of slop get to cast a careful eye.
-  c) Gives the tools (and their developers) suitable credit.  After all machines
-need love too.
+commit a5a441ae283d upstream.
 
-> > Also, I would argue that it would be useful in the change log as if there's
-> > a bug in the generated code, you know who or *what* to blame. Especially if
-> > there is a pattern to be found.
-> 
-> This touches on explainability of AI. Perhaps the metadata would be
-> interesting for XAI research... not sure that's enough to be lugging
-> those tags in git history.
+Set use_nsecs=true as timestamp is reported in ns. Lack of this result
+in smaller timestamp error window which cause error during phc2sys
+execution on E825 NICs:
+phc2sys[1768.256]: ioctl PTP_SYS_OFFSET_PRECISE: Invalid argument
 
-We carry lots more random stuff in commit messages!
+This problem was introduced in the cited commit which omitted setting
+use_nsecs to true when converting the ice driver to use
+convert_base_to_cs().
 
-Dave
+Testing hints (ethX is PF netdev):
+phc2sys -s ethX -c CLOCK_REALTIME  -O 37 -m
+phc2sys[1769.256]: CLOCK_REALTIME phc offset -5 s0 freq      -0 delay    0
+
+Fixes: d4bea547ebb57 ("ice/ptp: Remove convert_art_to_tsc()")
+Signed-off-by: Anton Nadezhdin <anton.nadezhdin@intel.com>
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Reviewed-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Tested-by: Rinitha S <sx.rinitha@intel.com>
+Signed-off-by: Tony Nguyen <anthony.l.nguyen@intel.com>
+Signed-off-by: Markus Blöchl <markus@blochl.de>
+---
+Hi Greg,
+
+please consider this backport for linux-6.12.y
+
+It fixes a regression from the series around
+d4bea547ebb57 ("ice/ptp: Remove convert_art_to_tsc()")
+which affected multiple drivers and occasionally
+caused phc2sys to fail on ioctl(fd, PTP_SYS_OFFSET_PRECISE, ...).
+
+This was the initial fix for ice but apparently tagging it
+for stable was forgotten during submission.
+
+The hunk was moved around slightly in the upstream commit 
+92456e795ac6 ("ice: Add unified ice_capture_crosststamp")
+from ice_ptp_get_syncdevicetime() into another helper function
+ice_capture_crosststamp() so its indentation and context have changed.
+I adapted it to apply cleanly.
+---
+ drivers/net/ethernet/intel/ice/ice_ptp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/intel/ice/ice_ptp.c b/drivers/net/ethernet/intel/ice/ice_ptp.c
+index 7c6f81beaee4602050b4cf366441a2584507d949..369c968a0117d0f7012241fd3e2c0a45a059bfa4 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ptp.c
++++ b/drivers/net/ethernet/intel/ice/ice_ptp.c
+@@ -2226,6 +2226,7 @@ ice_ptp_get_syncdevicetime(ktime_t *device,
+ 			hh_ts = ((u64)hh_ts_hi << 32) | hh_ts_lo;
+ 			system->cycles = hh_ts;
+ 			system->cs_id = CSID_X86_ART;
++			system->use_nsecs = true;
+ 			/* Read Device source clock time */
+ 			hh_ts_lo = rd32(hw, GLTSYN_HHTIME_L(tmr_idx));
+ 			hh_ts_hi = rd32(hw, GLTSYN_HHTIME_H(tmr_idx));
+
+---
+base-commit: d90ecb2b1308b3e362ec4c21ff7cf0a051b445df
+change-id: 20250716-ice_crosstimestamp_reporting-b6236a246c48
+
+Best regards,
+-- 
+Markus Blöchl <markus@blochl.de>
+
 
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
 
