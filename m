@@ -1,221 +1,269 @@
-Return-Path: <linux-kernel+bounces-745904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038A1B1203E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1524FB12043
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8C45667FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:40:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA46189F430
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F4422333B;
-	Fri, 25 Jul 2025 14:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ED6246764;
+	Fri, 25 Jul 2025 14:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jeuI/77b"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gdPKwstE"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB561E5701;
-	Fri, 25 Jul 2025 14:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83BD2459F9;
+	Fri, 25 Jul 2025 14:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753454432; cv=none; b=U0Hpvgurwf4r6n6iPHBctfOArz0AWpWGwhPzwpeNffqIeWkETaBzdKtpeBGh61V5bme8dyUjMeLv23QZUwIIsJasqoHdjJ31d5Q8a+zZXX07fYYS0AeTMAWRqAfep2V5+yG1aESChNBgWAt15w5xrjLIqZ23CevJQNu0BYX1dI8=
+	t=1753454467; cv=none; b=gAGiZ09O5sZkjmSZiKw2uahXfXjfMIqC1H1yF/Xj4HBzoxfAm445AjIQJE7aapxUhzp31Yxii8tH7+esb8X+q9aXXU5isj0XfltK5Io8sGLIr69o1QeY4XfWlYpaKvPpU6L9O78r7g58xJ6OYC+5Gt+TefrflFpvbq0byQvku0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753454432; c=relaxed/simple;
-	bh=Pe1O6JQBpM96y38GlEwysMUHU2QGMRFxNAE0yGjeyqU=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=i6BrEUYbpkJTPneBdOzxQkWMMj+AnS0HHAiSvle4ep4GL/8auMO4Z+q4679UcqUPnxKG2Og7AaOkMusRRER3dQYQCTDHhgTH8aIG4UUOpnRVEtzRe15l7ofcvUrNSoTJrPUOvlJk5USVlkQniGKZT/WO6uv4JiKC7zXRDKEfLgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jeuI/77b reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8E307982;
-	Fri, 25 Jul 2025 16:39:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753454387;
-	bh=Pe1O6JQBpM96y38GlEwysMUHU2QGMRFxNAE0yGjeyqU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jeuI/77b/1trNj4HKV+BBArKHz6hRUxwdCQmxDOV1ismZ3kfNs/DnLvLzGPHHHsVW
-	 Pn/vKlaF+8Ks6JkxJGa3gblLj+ead7ywPotcOPcA55yiR0DGlN1hUfhvSrt5VC9Y1M
-	 a5wcqS412S/LIACvSjsLsd4ltomOGs21nqCy40p4=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753454467; c=relaxed/simple;
+	bh=sGTl1eo91jSnILZM8TuIOEpIUOHHIl79Ky9Pwbzq9nY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rObG0m9abPzgrzteDEAGsbwUOBrHP/py1UJhvqTBy0DXf/CIGyw1YK6rsmOKIwMCBtslt3yw0CPwwXLKBmzJ6wwaUQhf/EQsWB/kAUkuk3WPUqMtN5sEhZKzzno17Vg2V5ctebEe/Se0jDFmHem6p6vlGlhoD0Y+juO7f85XWIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gdPKwstE; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23f8bcce78dso25893455ad.3;
+        Fri, 25 Jul 2025 07:41:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753454465; x=1754059265; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nKgsPP4zPK7SJVV2IQKnHzdNSGAtC3gfZtrlCNS6aF4=;
+        b=gdPKwstEgeM9pyTh/0lxmg0T2DJI9Zvhzvh87LuMm44ao2R8B4cU6MTnk1jPTxaulZ
+         5mVbCeY/kRfY6dx6kcVuIG2s+kD2TfKDmhHPPBGi7tP5f0PRWlUhlkczW9auh9UOfr6i
+         Vmej1/Irck9tHecjrx8lTe3XE/vH+zedwlFQ255cXywbuXsI9tJiCSCzutkfKqpfQy8v
+         fqvwYfo2e/m0BoiX9asJE/iTJ6GZKSm/cH7z3CJDYPkowl6G/hFu6CfQdQ+bHTGxwFQ0
+         OW2yPOMGS24mlIC9tx7XRb186aMoe7x6i281Y4IMoWa/l+4tFXhCKBnKAs68ZzHXrFD1
+         OtDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753454465; x=1754059265;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nKgsPP4zPK7SJVV2IQKnHzdNSGAtC3gfZtrlCNS6aF4=;
+        b=nuMEUi6nlwCBoiHp17oNSSnM61D2SNaHhqSxArpUOaBjb5ZyUtTW3bNXHdsFK+U3+V
+         gzfeCNJ8sVWm6X4SymHq2USsKs+j7vAS+IPk4aD6k3qb+DJwH5REnzwegdoc+hL771tW
+         qVEAiYUfdWQ1P3OGP4iry0/BsBCRHkJhLId67LKb+EyyWN1O5oMDMnbkPX2Ru3RDARj5
+         890D41vWqHGyZOYn6HINmoGZGXPC5vOpMs4YNs4dJ7Zf7WnGenR8vkHEVKTqnmXitKjz
+         H6WqjNzlfNe8qT4//63sSQ9FC/Qr3DCD1tdpAzPyCVAx3rxJqowe0YE4TOwiCQP2fZss
+         Ov7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUAaw8ZZIv/WK47HLgGMzzD8uySthhoZhpGx4yaFEQwUQjSiIoXKg8yNMh7x1TyC+EyDykKxAfPrn+PW1FO@vger.kernel.org, AJvYcCVm5a9++GO1l5jpom5IWR4faQd1qO58/eaON4W/F9JvnleRpmVq1XGGBbNFLKeTI1x8UTaBBt7nSjskmtAI@vger.kernel.org, AJvYcCWC0UClaNSD4AaHebXCQ+d8rSuVUa+Aa40l9sIH7ecmM7/hRUDj9ymMkLAFmW7SveYPb/2015oHaX55@vger.kernel.org, AJvYcCWFKHSOlZiBG/9MgH1M79BceBCQGOT6vp6NbZmornVkX31K7ML1WRGEU4+OR3hMcOV2vb4vPjDb6mK9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyesOr8msMF4habjoyOMdRXf1zZCTgRgp9ZXYboP2B4YSU4pNM8
+	CCcYOFxOGfPrduip+eTc9rhrdU2hHp9SWYYL1ZqJ36LzP/FbkyP9Kf+5/MBA1uuZu5H80l1q87I
+	N/9Qb3UrHq6VTXHc9hymoov5yzZ68jY3M9Qim
+X-Gm-Gg: ASbGncua5ZftMoUxfhrCa0SCSNpEoLRp3bKTj53l0Tv5Rbm0moKsKUFZyftJzS8is+V
+	XEGZiThEAm5a0GkPwq3dCikN+h+R+UThI0//YGYpMlcUzB4zLci+7PodarjNHu3gANf7/OzFK/M
+	wwJXAHeNtw8KGqtWlTJ9vMrYaSYJsq1ZLRjy0lchU+di2TpqbUD1AN35a2k8bsMffpoptpHKePX
+	qTbSxv0CfrBLks=
+X-Google-Smtp-Source: AGHT+IFePPdNf5mTv+w/Kxg+8bWSXr5Vh2E5/lMd3Me7vurN8JkxVvIEE7J6nQMlYnnWtLKMSDKRAdRJQJFR2RNXDDE=
+X-Received: by 2002:a17:902:c751:b0:234:ed31:fc99 with SMTP id
+ d9443c01a7336-23fb309b836mr26836565ad.21.1753454465068; Fri, 25 Jul 2025
+ 07:41:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250714221545.5615-1-romank@linux.microsoft.com> <20250714221545.5615-13-romank@linux.microsoft.com>
+In-Reply-To: <20250714221545.5615-13-romank@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Fri, 25 Jul 2025 22:40:29 +0800
+X-Gm-Features: Ac12FXxEB_FL3_rT6cHSVkdJsOhCBETxNq543NIYn_bXKIfHCNGG5wd0r0RZbmw
+Message-ID: <CAMvTesBiSOsxywS+JxAB+oAh9i1UEbngAXeZJdi7SWqm9pAd9A@mail.gmail.com>
+Subject: Re: [PATCH hyperv-next v4 12/16] Drivers: hv: Allocate encrypted
+ buffers when requested
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: alok.a.tiwari@oracle.com, arnd@arndb.de, bp@alien8.de, corbet@lwn.net, 
+	dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com, 
+	hpa@zytor.com, kys@microsoft.com, mhklinux@outlook.com, mingo@redhat.com, 
+	rdunlap@infradead.org, tglx@linutronix.de, Tianyu.Lan@microsoft.com, 
+	wei.liu@kernel.org, linux-arch@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com, 
+	benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io> <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io> <aIKi1BkNzNvsf5Tr@smile.fi.intel.com> <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: sakari.ailus@linux.intel.com <sakari.ailus@linux.intel.com>, laurent.pinchart@ideasonboard.com <laurent.pinchart@ideasonboard.com>, Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda <ribalda@chromium.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Hans de Goede <hansg@kernel.org>, =?utf-8?q?Andr=C3=A9?= Apitzsch <git@apitzsch.eu>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Matthias Fend <matthias.fend@emfend.at>, Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Sylvain Petinot <sylvain.petinot@foss.st.com>, Dongcheng Yan <dongcheng.yan@intel.com>, Jingjing Xiong <jingjing.xiong@intel.com>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org <linux-media@vger.kernel.org>, devicetree@vger.kernel.org <devicetree@vger.kernel.org>, linux-kernel@vger.kernel.
- org <linux-kernel@vger.kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Date: Fri, 25 Jul 2025 15:40:24 +0100
-Message-ID: <175345442477.2567018.13588829522231689027@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
 
-Quoting Hardevsinh Palaniya (2025-07-25 06:55:23)
-<snip>
-> > > +static int ov2735_page_access(struct ov2735 *ov2735,
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
-=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD u32 reg, void *val, int *err, bool is_read)
-> > > +{
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD u8 page =3D (reg >> CCI_REG_PRI=
-VATE_SHIFT) & 0xff;
-> >=20
-> > ' & 0xff' part is redundant.
-> >=20
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD u32 addr =3D reg & ~CCI_REG_PRI=
-VATE_MASK;
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD int ret =3D 0;
-> >=20
-> > How is this assignment being used?
-> >=20
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (err && *err)
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD return *err;
-> > > +
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD mutex_lock(&ov2735->page_lock);
-> > > +
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD /* Perform page access before r=
-ead/write */
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (ov2735->current_page !=3D p=
-age) {
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_write(ov2735->cci, O=
-V2735_REG_PAGE_SELECT, page, err);
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (ret)
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
-=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD goto err_mutex_unlock;
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ov2735->current_page =3D page;
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD }
-> > > +
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (is_read)
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_read(ov2735->cci, ad=
-dr, (u64 *)val, err);
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD else
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_write(ov2735->cci, a=
-ddr, *(u64 *)val, err);
-> >=20
-> > Do you really need this castings?
->=20
-> Do you really think this casting is unnecessary?
->=20
+On Tue, Jul 15, 2025 at 6:28=E2=80=AFAM Roman Kisel <romank@linux.microsoft=
+.com> wrote:
+>
+> Confidential VMBus is built around using buffers not shared with
+> the host.
+>
+> Support allocating encrypted buffers when requested.
+>
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> ---
 
-Yes? Well quite probably - I haven't checked myself yet but ..
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+
+>  drivers/hv/channel.c      | 49 +++++++++++++++++++++++----------------
+>  drivers/hv/hyperv_vmbus.h |  3 ++-
+>  drivers/hv/ring_buffer.c  |  5 ++--
+>  3 files changed, 34 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
+> index 35f26fa1ffe7..051eeba800f2 100644
+> --- a/drivers/hv/channel.c
+> +++ b/drivers/hv/channel.c
+> @@ -443,20 +443,23 @@ static int __vmbus_establish_gpadl(struct vmbus_cha=
+nnel *channel,
+>                 return ret;
+>         }
+>
+> -       /*
+> -        * Set the "decrypted" flag to true for the set_memory_decrypted(=
+)
+> -        * success case. In the failure case, the encryption state of the
+> -        * memory is unknown. Leave "decrypted" as true to ensure the
+> -        * memory will be leaked instead of going back on the free list.
+> -        */
+> -       gpadl->decrypted =3D true;
+> -       ret =3D set_memory_decrypted((unsigned long)kbuffer,
+> -                                  PFN_UP(size));
+> -       if (ret) {
+> -               dev_warn(&channel->device_obj->device,
+> -                        "Failed to set host visibility for new GPADL %d.=
+\n",
+> -                        ret);
+> -               return ret;
+> +       gpadl->decrypted =3D !((channel->co_external_memory && type =3D=
+=3D HV_GPADL_BUFFER) ||
+> +               (channel->co_ring_buffer && type =3D=3D HV_GPADL_RING));
+> +       if (gpadl->decrypted) {
+> +               /*
+> +                * The "decrypted" flag being true assumes that set_memor=
+y_decrypted() succeeds.
+> +                * But if it fails, the encryption state of the memory is=
+ unknown. In that case,
+> +                * leave "decrypted" as true to ensure the memory is leak=
+ed instead of going back
+> +                * on the free list.
+> +                */
+> +               ret =3D set_memory_decrypted((unsigned long)kbuffer,
+> +                                       PFN_UP(size));
+> +               if (ret) {
+> +                       dev_warn(&channel->device_obj->device,
+> +                               "Failed to set host visibility for new GP=
+ADL %d.\n",
+> +                               ret);
+> +                       return ret;
+> +               }
+>         }
+>
+>         init_completion(&msginfo->waitevent);
+> @@ -544,8 +547,10 @@ static int __vmbus_establish_gpadl(struct vmbus_chan=
+nel *channel,
+>                  * left as true so the memory is leaked instead of being
+>                  * put back on the free list.
+>                  */
+> -               if (!set_memory_encrypted((unsigned long)kbuffer, PFN_UP(=
+size)))
+> -                       gpadl->decrypted =3D false;
+> +               if (gpadl->decrypted) {
+> +                       if (!set_memory_encrypted((unsigned long)kbuffer,=
+ PFN_UP(size)))
+> +                               gpadl->decrypted =3D false;
+> +               }
+>         }
+>
+>         return ret;
+> @@ -676,12 +681,13 @@ static int __vmbus_open(struct vmbus_channel *newch=
+annel,
+>                 goto error_clean_ring;
+>
+>         err =3D hv_ringbuffer_init(&newchannel->outbound,
+> -                                page, send_pages, 0);
+> +                                page, send_pages, 0, newchannel->co_ring=
+_buffer);
+>         if (err)
+>                 goto error_free_gpadl;
+>
+>         err =3D hv_ringbuffer_init(&newchannel->inbound, &page[send_pages=
+],
+> -                                recv_pages, newchannel->max_pkt_size);
+> +                                recv_pages, newchannel->max_pkt_size,
+> +                                newchannel->co_ring_buffer);
+>         if (err)
+>                 goto error_free_gpadl;
+>
+> @@ -862,8 +868,11 @@ int vmbus_teardown_gpadl(struct vmbus_channel *chann=
+el, struct vmbus_gpadl *gpad
+>
+>         kfree(info);
+>
+> -       ret =3D set_memory_encrypted((unsigned long)gpadl->buffer,
+> -                                  PFN_UP(gpadl->size));
+> +       if (gpadl->decrypted)
+> +               ret =3D set_memory_encrypted((unsigned long)gpadl->buffer=
+,
+> +                                       PFN_UP(gpadl->size));
+> +       else
+> +               ret =3D 0;
+>         if (ret)
+>                 pr_warn("Fail to set mem host visibility in GPADL teardow=
+n %d.\n", ret);
+>
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index 2873703d08a9..beae68a70939 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -200,7 +200,8 @@ extern int hv_synic_cleanup(unsigned int cpu);
+>  void hv_ringbuffer_pre_init(struct vmbus_channel *channel);
+>
+>  int hv_ringbuffer_init(struct hv_ring_buffer_info *ring_info,
+> -                      struct page *pages, u32 pagecnt, u32 max_pkt_size)=
+;
+> +                      struct page *pages, u32 pagecnt, u32 max_pkt_size,
+> +                          bool confidential);
+>
+>  void hv_ringbuffer_cleanup(struct hv_ring_buffer_info *ring_info);
+>
+> diff --git a/drivers/hv/ring_buffer.c b/drivers/hv/ring_buffer.c
+> index 3c9b02471760..05c2cd42fc75 100644
+> --- a/drivers/hv/ring_buffer.c
+> +++ b/drivers/hv/ring_buffer.c
+> @@ -183,7 +183,8 @@ void hv_ringbuffer_pre_init(struct vmbus_channel *cha=
+nnel)
+>
+>  /* Initialize the ring buffer. */
+>  int hv_ringbuffer_init(struct hv_ring_buffer_info *ring_info,
+> -                      struct page *pages, u32 page_cnt, u32 max_pkt_size=
+)
+> +                      struct page *pages, u32 page_cnt, u32 max_pkt_size=
+,
+> +                          bool confidential)
+>  {
+>         struct page **pages_wraparound;
+>         int i;
+> @@ -207,7 +208,7 @@ int hv_ringbuffer_init(struct hv_ring_buffer_info *ri=
+ng_info,
+>
+>         ring_info->ring_buffer =3D (struct hv_ring_buffer *)
+>                 vmap(pages_wraparound, page_cnt * 2 - 1, VM_MAP,
+> -                       pgprot_decrypted(PAGE_KERNEL));
+> +                       confidential ? PAGE_KERNEL : pgprot_decrypted(PAG=
+E_KERNEL));
+>
+>         kfree(pages_wraparound);
+>         if (!ring_info->ring_buffer)
+> --
+> 2.43.0
+>
+>
 
 
-> Please check the definitions of cci_read/write
->=20
-> without this, we can't even build the driver.
-
-How about ... changing the function prototype of ov2735_page_access ?
-
-Then you might be able to build without casts ?
-
-
-> > > +err_mutex_unlock:
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD mutex_unlock(&ov2735->page_lock=
-);
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD return ret;
-> >=20
-> > Hmm... Wouldn't be cleanup.h helpful here?
-> >
-> > > +}
-> >=20
-> > ...
-> >=20
-> > > +static int ov2735_write(struct ov2735 *ov2735, u32 reg, u64 val, int=
- *err)
-> > > +{
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD return ov2735_page_access(ov273=
-5, reg, (void *)&val, err, false);
-> >=20
-> > Why casting?
-> >=20
-> > > +}
-> >=20
-> > ...
-
-<snip>
-
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD /* Apply format settings. */
-> >=20
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD /* Apply customized values from=
- user */
-> >=20
-> > Define a single style for one-line comments and use it everywhere consi=
-stently.
->=20
-> Are you referring to the period at the end of the comment?
-> =20
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD goto error_power_off;
-> >=20
-> > ...
-> >=20
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD devm_pm_runtime_set_active_enab=
-led(ov2735->dev);
-> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD devm_pm_runtime_get_noresume(ov=
-2735->dev);
-> >=20
-> > No error checks? What's the point to use devm and what will happen if t=
-he first
-> > fails, for example?
-> >=20
-> > --
-> > With Best Regards,
-> > Andy Shevchenko
->=20
-> With all due respect,
->=20
-> I completely understand and appreciate the need for multiple rounds of re=
-view.
-> However, where feasible, it would be helpful to receive style-related and=
-=20
-> non-blocking comments earlier in the review process. Iterating on minor i=
-ssues
-> in later versions, especially ones that could have been addressed togethe=
-r=20
-> earlier, can become a bit frustrating at times. I hope you can understand=
- this=20
-> perspective.
-
-I certainly understand that public patch review can be slow and tedious
-at times, but please remember that unless you have paid Andy to review
-this work, there are no contractual 'requirements' on which bits get
-reviewed first. All reviews are helpful, whereever they come in - and
-the goal here is to get as many eyes on code as possible to support high
-quality code being maintained in the linux kernel.
-
-
-Perhaps one path to speed this up in the future might be if you might
-find some time to read more kernel code and also review some other
-kernel patches publicly as well. It might accelerate/help you learn the
-linux coding style sooner to avoid some cycles, and provide more eyes
-where we need them in the community.
-
-Regards
---
-Kieran
-
-
-> Once again, thank you for your time and effort in helping improve the qua=
-lity
-> of the driver.
->=20
-> Best Regards,
-> Hardev
+--=20
+Thanks
+Tianyu Lan
 
