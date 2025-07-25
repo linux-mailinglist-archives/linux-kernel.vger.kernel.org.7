@@ -1,177 +1,171 @@
-Return-Path: <linux-kernel+bounces-746198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367F7B12424
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:39:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAA7B12425
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E536AA79E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:37:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2761D17C8B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D64E255F3C;
-	Fri, 25 Jul 2025 18:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D367253F15;
+	Fri, 25 Jul 2025 18:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EG5IAiSL"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2045.outbound.protection.outlook.com [40.107.237.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gh9Zro7P"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D50724DD1E;
-	Fri, 25 Jul 2025 18:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753468573; cv=fail; b=ZH/DAUPD6Ff4tRi+vtaIfSyVGaaZ1cYhu/Uvh7Dg3IJrcohaiM8L+3rFODTqFVpaIcR3Do1x8FH+0pdwEfNSiiRONUmv64biLvg3quH0DQiC5ELCgONcKCLo3Qq2dlYe16tafCSymBIHmsrxaJinmfzgpIWZOPbtFG2Or7nCEig=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753468573; c=relaxed/simple;
-	bh=f5Nqjzh6EXPYMbyi99k5bDo0f0P8EKuCgP79/ATlVW0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HloPZeiae4s+zoLPXQirb9Cls8+dkxCRPNPvhwx9KGSlsLxYHa2MmHp3XZ9a5/PZTClLL/vGRyGCpB6W39qHFaj0ZzoiDvdfXTeIBe65D8b0wt+Trac1F0gegGkhqiRMcgiJDBOVGHrIOWmzp1ffz9z9l5W39ME1oF8Voou1P9A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EG5IAiSL; arc=fail smtp.client-ip=40.107.237.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NSzg9HWmpEMrJjOYpCrO1jzOloCs1cZ3VQOQ/ekl0DCFF9hvCEy56n8cMrjtvVThT7jqN77MviXWCwVIKrCIPz7N5Sg8DFcbZCNtEt5vonA1paSo92/A2wX2Mw8Tj4Lpm6TP7pKiQp+RmqW8Yt1xCL8OlFL4GtY28+jYUb9zLwOeUW9w6gXmuGrrzP9j7s3FHgHJ/IIjEkaXjgi/nBOnZplvMCDjhK8KYYXRlNQGI9wQKW57gnNTZGQ7tWxSsrK5h002RzxtkagiXvKUvpF8Qhk6XyxA9SDi0zwMZhDPgM3sSFPckGCvRAUCnIouhM8Zx+5gYU03DbGgVe6BkKdplQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x8SDQFOZi2WfKn5FUvR7FwSxJZ+KH2t/WcZAZNXU0mY=;
- b=a+honeNOzMTOnCfFXMfH30c7B2N3ts1+yqRH6tL+oukwoPql1le8yjM+/Xm3PMU1InXDG2WGHiB95kgOPf2A1sg1gm+XOneO6K5fh93gYQRJDxaSG8epJrbuikEMcYX4FSQbebkYkcm6rM/ybO+oeV7iOCEFxXpfhcKT/SmAQMpyvJb1/MLbDcxYii+tYhab03Ouw2F1EduvbIyGSsqHB6wcfo0Nw8LYM7x/Ra7SHSPErZIdyUhKD1DCZHGeHBgpJ1qUHzvhqS01IB+QXgLVY67uLr7tqMk0K63EVa/ZcoIMjrATOnHSJ6224z38z2fPAlBZ8WApeQcAN+gLjvb/8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x8SDQFOZi2WfKn5FUvR7FwSxJZ+KH2t/WcZAZNXU0mY=;
- b=EG5IAiSL13bSCMl5VkQ6UnNM/Hh9mif9qRVKXq8RAv0UswWGZBJBMuTLxeYvNrf8OjQUKlviutM2UHqecKYlk6etUasaQj2wneoj9E8TIy2N2oayw4j04rNZZ/IDBSz96OAo0KCdEgK47vb1YYVAKHF1AAKwBVPzJVV12VAI00M=
-Received: from BYAPR11CA0107.namprd11.prod.outlook.com (2603:10b6:a03:f4::48)
- by DM4PR12MB5723.namprd12.prod.outlook.com (2603:10b6:8:5e::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.21; Fri, 25 Jul 2025 18:36:06 +0000
-Received: from CY4PEPF0000EE3D.namprd03.prod.outlook.com
- (2603:10b6:a03:f4:cafe::2c) by BYAPR11CA0107.outlook.office365.com
- (2603:10b6:a03:f4::48) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.21 via Frontend Transport; Fri,
- 25 Jul 2025 18:36:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE3D.mail.protection.outlook.com (10.167.242.15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8964.20 via Frontend Transport; Fri, 25 Jul 2025 18:36:06 +0000
-Received: from bmoger-ubuntu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Jul
- 2025 13:36:01 -0500
-From: Babu Moger <babu.moger@amd.com>
-To: <corbet@lwn.net>, <tony.luck@intel.com>, <reinette.chatre@intel.com>,
-	<james.morse@arm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>
-CC: <Dave.Martin@arm.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<akpm@linux-foundation.org>, <paulmck@kernel.org>, <rostedt@goodmis.org>,
-	<Neeraj.Upadhyay@amd.com>, <david@redhat.com>, <arnd@arndb.de>,
-	<fvdl@google.com>, <seanjc@google.com>, <jpoimboe@kernel.org>,
-	<pawan.kumar.gupta@linux.intel.com>, <xin@zytor.com>,
-	<manali.shukla@amd.com>, <babu.moger@amd.com>, <tao1.su@linux.intel.com>,
-	<sohil.mehta@intel.com>, <kai.huang@intel.com>, <xiaoyao.li@intel.com>,
-	<peterz@infradead.org>, <xin3.li@intel.com>, <kan.liang@linux.intel.com>,
-	<mario.limonciello@amd.com>, <thomas.lendacky@amd.com>, <perry.yuan@amd.com>,
-	<gautham.shenoy@amd.com>, <chang.seok.bae@intel.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<peternewman@google.com>, <eranian@google.com>
-Subject: [PATCH v16 34/34] MAINTAINERS: resctrl: add myself as reviewer
-Date: Fri, 25 Jul 2025 13:29:53 -0500
-Message-ID: <716f7dd7550b7cce8d4a3b1b29904cdf7224a090.1753467772.git.babu.moger@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1753467772.git.babu.moger@amd.com>
-References: <cover.1753467772.git.babu.moger@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA4E24BCF5
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753468704; cv=none; b=mb24u+Pj5dAc+eXprk4IU7O021WAqkUbZqRyLzf3GalLQO5kmBRXiocLubpMoFOohIPvSAec8DYwabZzYgvRjWZF3TMJK72h9zmXAc4z30DCWvDGkGE2lj93hRnVy+cYrTII15StW8xymrILtkIehimdFwnC/Vb888xC8SPuE0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753468704; c=relaxed/simple;
+	bh=YwRzaFFvyzTPGjng4pvN/sQgScFY2lA5f+URt2Bcz8E=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jtWMEKw2kFhodbe1PIEuegVgIvoH1v8122XDNoyxf1In6Tp/KgX2BX2gKo/CWufVo1ll3JKpRH//4bTEbOGukFeVy2W0y5a0Oi0HNOsvUNeUiaIE6welXjxljjC2dvggLYt93eNVNNqNJcsSrDebeeczEvvVHIiyfC7xsisNO+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gh9Zro7P; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31215090074so3729491a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753468702; x=1754073502; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bf3ro3WF1f1XcnzdODBXczCsKq2ws8mpoYevGDekD60=;
+        b=Gh9Zro7P3PNYUSdCriCSEAWvQjC00MXOHHq5jaGKvaF8JOJ4m1JtVha0HMa9y9Bj8m
+         StdYeFOepC4SgfDmmaru65oPIV7u1+sKGiGtRo0OuI1kXbm0bFmIvV0FfYCVMAyQoDH4
+         yT0T1/kttsiwTIKEtlFnOFYMlck9P+ZTdF5DGFIcUxGdvwMb5biPpLHXEzfJFx7tX+My
+         GbrMIWDBeadikJ2ppkreaMtT6bE16oXoJN9mfPTV2uXe0d2ShpQxQKwWrsjBCnq2Bza3
+         0gkIzWMr5bQkQ8SSKydlO7jlmKKpoa+sg/4Z6V9lD65iIglabH8V5KMK00GHBqaPjmrI
+         Frog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753468702; x=1754073502;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bf3ro3WF1f1XcnzdODBXczCsKq2ws8mpoYevGDekD60=;
+        b=aqOsTEiwYd4RriisJdZo+iw57nYZ33KZC0VZXaLCzjiO+UCdcaDis0w5LL5oDU9swf
+         bsf0xbYVZ7KDOGWOiTDodTqqdseHEuE4xarlc9HVXp41cp8TSN6sKHNQTSYQmpNqj4BI
+         rKAeLqKFxnlLfR6s9BLq4h0DyDQiOPnMqbjF0ofJnvRRFG20yfpfk4QV9NAtXkG1C7F4
+         U0z8CHDBXKvJNm7dxx+lKLF2QVnPZHhZht/ss3IZ53VzSAekoHQIobt3JzqxIDhzB9Ph
+         /zGWaixB2zej2f1+TFMuBmJ3/cW5GLxTLWFH5DIt3jUeMJgge6maGvefCZhRpY/0m/Zs
+         HKGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdb+4yFCWDvK+0e8WBwsSwJIt4IzUKSlZYBD/fnMOiwPqm56ds3Cyek9Rn25N4k+XtYMSQD1P1fuYJTaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZl5eC6ow6EROdYwwkUlYlVft+kLYBeDtLxg3ggB1xvzYsZfz8
+	2n4UNBW7aHb0OB1uK8MmcIW0VXi2PoLJwLw5Rh9zZoYyKMHjRGqkkxAVf71YZBAoWogx9pXeU/a
+	uzI7R7Vc2nKQrZA==
+X-Google-Smtp-Source: AGHT+IFDd1ZsorX/GXo8CDkRtzD+rpcA9l+7YsN+QhQ4zN/p/DyrcsmvPror8tHgM4sWuga4LCTr8Sl3OzC76Q==
+X-Received: from pjbnt17.prod.google.com ([2002:a17:90b:2491:b0:31e:7f86:99c8])
+ (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:3912:b0:31c:260e:55e9 with SMTP id 98e67ed59e1d1-31e77afe6b4mr4652520a91.24.1753468702336;
+ Fri, 25 Jul 2025 11:38:22 -0700 (PDT)
+Date: Fri, 25 Jul 2025 18:37:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3D:EE_|DM4PR12MB5723:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66fd6956-bec7-4387-e1a4-08ddcbaa1e01
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4f5g/lnjpFzGhV9HVpLhyXRx0aZF/nYoEEtwDyiqrYShd14ngsyGApY5D5Nx?=
- =?us-ascii?Q?AHH537U+PfAoEBi94WQ9xkqbf4uldOna/TbiKiaES087DdGnmnBuu2JgpCS9?=
- =?us-ascii?Q?OdijyuDrK+DShx4i6nd7utyqKEXIDJot6UTGSFXhK7hlsJuVq9pX9smNz+Ls?=
- =?us-ascii?Q?hQCLhVZTvnz4e0oKsffOMKvODPtgg9CYjTdEwL/mJDuxq2NfSkYonZ4hWowV?=
- =?us-ascii?Q?ODjwA9BwkwAdBUoz70E4Stcwu8jTIbDfKIlvLLcCh5lzBgpp+Ssr6TVYtv7g?=
- =?us-ascii?Q?Z/6XuUA/CdvfVccjaC1hPDMmVoAqHuVYUTNrI17pyFFxbj14EpmXAaH83GKh?=
- =?us-ascii?Q?UuAlv3bpBzGW3TndjeNIFxy3F/fuSpymHhCXcllBH40seunFKJUHAHRjysAl?=
- =?us-ascii?Q?hOlWgp3x0ePp3zaDBOxg1DWbHrhX17WKnmXcCbhskv1LeF9YR4tDKFJNmerv?=
- =?us-ascii?Q?yiNcXewQHh6/tcMfzUlihr5hJSJpOSkg7lCupKVUbJaFquCHDW+OiaEUl6tU?=
- =?us-ascii?Q?uolxvo70IV6F3vM+Q529/N9Q6XrIQBnmk+SUbqPLs1rBs5sdUNHJSOMFewj1?=
- =?us-ascii?Q?JxY3nDvZmfVDd6mTdWhpPlvffJ8e5XrjtMuSmWr+MU7qep1kgHh4eJ6AVTMK?=
- =?us-ascii?Q?vLT+mfOOeaamw+Ansbi2tO6KlmTbKTy8Dq/6YsqxZhZyz8loj0KgrbKz9jd+?=
- =?us-ascii?Q?NzYE7te0rpgNnOK8dAAdM++cxdORCcQEp4lmaMlNRdzyZUSmEYxD/RucKEAO?=
- =?us-ascii?Q?4yFjI72Fo0twuZYA9suwuU+GWeCIju98eaAij2dSh5Hyu4vzeAuTRpfcxkc0?=
- =?us-ascii?Q?zDTXFemROxZBSM6wQzT/2OXqlALm1s55Hhb2C3zUE5CqfNedAV8xQEiA8Dd8?=
- =?us-ascii?Q?XW2Pk5Qwz47nehOLOtFzW7oqGRt2So2UQ5wbKqLfclYCK2CjRmLNbsP1VFQq?=
- =?us-ascii?Q?oaXs/guiuOK+fqkf/ZbOgsdMA2Vzmjf+axyiTQ4zsgwCkAR4j77wGNmRJiK0?=
- =?us-ascii?Q?Svi2KvXMnymuGLFuNMVsPgUkmAEtzop0+Ra0NprekHkIAiLjljCkpO+bNnTN?=
- =?us-ascii?Q?DWYtbUu8A6iAvEN8fGZ1AOIRQfxrBp4ynNubb3O20GINJCFpHKDL7eWN0vTO?=
- =?us-ascii?Q?tY7MyobZDsbIQ2H6V96lolymPzE25F5nf8r2dG8tTKc+jCxKr/6dfeBvmKIX?=
- =?us-ascii?Q?I9G4U1KOZqQFqYosJwBo0yjqfNwGVS1z0zX7W4e+lnObbUSp7vTVHxSP2zwY?=
- =?us-ascii?Q?UhKYmXAZ3ZhM1+fmU7/v6P9vInG8uJylTfgDPXNbdAeNf5PZU861llwfIlzc?=
- =?us-ascii?Q?uH1JFfQD0fZsEKrm/7hycIQxOycm77MIDUCpQTIGxDsi3bt5f0+T7uzbT5ln?=
- =?us-ascii?Q?EMTgbV9zgOufJcnJyRJlkh+ZPtthhb+2v0gex3+FI1mPKL6apAYp2xbuReP+?=
- =?us-ascii?Q?UlNSpozO41hUPFIN96/UgjyoC2TgqSRuM+1t29YJxoPq8Ym83zkJgsrkqg2o?=
- =?us-ascii?Q?Yh7DCxpniws31OA4SvwU6caoMfGiwtTbzrEL?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 18:36:06.3863
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66fd6956-bec7-4387-e1a4-08ddcbaa1e01
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3D.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5723
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
+Message-ID: <20250725183811.409580-1-cmllamas@google.com>
+Subject: [PATCH v19 0/5] binder: introduce transaction reports via netlink
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tiffany Yang <ynaffit@google.com>, John Stultz <jstultz@google.com>, 
+	Shai Barack <shayba@google.com>, "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
+	Todd Kjos <tkjos@android.com>, Carlos Llamas <cmllamas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-I have been contributing to resctrl for sometime now and I would like to
-help with code reviews as well.
+This series is based on the v17 patchset from Li to add the transaction
+reporting feature. There were several changes introduced in since that
+version (detailed below). However, the motivation for this work remains
+the same:
 
-Signed-off-by: Babu Moger <babu.moger@amd.com>
+> It's a known issue that neither the frozen processes nor the system
+> administration process of the OS can correctly deal with failed binder
+> transactions. The reason is that there's no reliable way for the user
+> space administration process to fetch the binder errors from the kernel
+> binder driver.
+>
+> Android is such an OS suffering from this issue. Since cgroup freezer
+> was used to freeze user applications to save battery, innocent frozen
+> apps have to be killed when they receive sync binder transactions or
+> when their async binder buffer is running out.
+>
+> This patch introduces the Linux generic netlink messages into the binder
+> driver so that the Linux/Android system administration process can
+> listen to important events and take corresponding actions, like stopping
+> a broken app from attacking the OS by sending huge amount of spamming
+> binder transactiions.
+
+=== Changes in v19 ===
+- Fix yamllint issues in Documentation/netlink/specs/binder.yaml
+- Rebased on top of current char-misc-next branch.
+
+=== Changes in v18 ===
+
+The most significant change is that I removed the "setup_report" command
+from the netlink API. So there is no longer a "configuration" step to
+filter out transactions from being reported. Thus, there is also no need
+to add a new selinux policy.
+
+It just doesn't make sense to keep a single global filter that impacts
+all the clients that subscribed to these events. Instead, any filtering
+should now be done at the client side (if at all needed), potentially
+through a BPF program or similar.
+
+Note this makes the implementation way simpler, which is great!
+
+I broke down some of the changes like the tracepoint addition into a
+separate patch and added a couple of preparatory patches to make things
+more convenient.
+
+The previous documentation was also obsolete and placed under the
+admin-guide/ book, which is incorrect. Instead, I decided to move all
+the documentation bits into the YAML spec itself.
+
+Some of the attributes in the report are now optionally included. The
+"to_pid" and "to_tid" are only included if they are known. Similarly,
+the "is_reply" attribute was switch to a "type: flag" and is only
+appended to the report if the transaction is a reply. All this is
+documented in the YAML spec.
+
 ---
-v16: Reinette suggested to add me as a reviewer. I am glad to help as a reviewer.
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+v18: https://lore.kernel.org/all/20250724185922.486207-1-cmllamas@google.com/
+v17: https://lore.kernel.org/all/20250417002005.2306284-1-dualli@chromium.org/
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f697a0c51721..70a2f83145db 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20866,6 +20866,7 @@ M:	Tony Luck <tony.luck@intel.com>
- M:	Reinette Chatre <reinette.chatre@intel.com>
- R:	Dave Martin <Dave.Martin@arm.com>
- R:	James Morse <james.morse@arm.com>
-+R:	Babu Moger <babu.moger@amd.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
- F:	Documentation/filesystems/resctrl.rst
+Carlos Llamas (3):
+  binder: pre-allocate binder_transaction
+  binder: add t->is_async and t->is_reply
+  binder: add tracepoint for netlink reports
+
+Li Li (2):
+  binder: introduce transaction reports via netlink
+  binder: add transaction_report feature entry
+
+ Documentation/netlink/specs/binder.yaml       |  96 +++++++++++
+ MAINTAINERS                                   |   1 +
+ drivers/android/Kconfig                       |   1 +
+ drivers/android/Makefile                      |   2 +-
+ drivers/android/binder.c                      | 158 +++++++++++++-----
+ drivers/android/binder_internal.h             |   4 +-
+ drivers/android/binder_netlink.c              |  32 ++++
+ drivers/android/binder_netlink.h              |  21 +++
+ drivers/android/binder_trace.h                |  37 ++++
+ drivers/android/binderfs.c                    |   8 +
+ include/uapi/linux/android/binder_netlink.h   |  37 ++++
+ .../filesystems/binderfs/binderfs_test.c      |   1 +
+ 12 files changed, 354 insertions(+), 44 deletions(-)
+ create mode 100644 Documentation/netlink/specs/binder.yaml
+ create mode 100644 drivers/android/binder_netlink.c
+ create mode 100644 drivers/android/binder_netlink.h
+ create mode 100644 include/uapi/linux/android/binder_netlink.h
+
 -- 
-2.34.1
+2.50.1.470.g6ba607880d-goog
 
 
