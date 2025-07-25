@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-746253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85672B12495
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86876B1249F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D24517D250
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:05:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9D181702EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367EC257453;
-	Fri, 25 Jul 2025 19:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2A3259C84;
+	Fri, 25 Jul 2025 19:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="QFoQcRq2"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnS9beiT"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAAA242D8B;
-	Fri, 25 Jul 2025 19:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816EE237164
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 19:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753470351; cv=none; b=qRBnYasamxWG5WfLvWfEMApZTPGTVwcApgp6mToD2iXt6T2WqyXERliAAxCP/zOLkCxLbAFr1C7iArv2XmxdESz52s0v3E0YOyUHaGPYz58+O7fT9TtMrJbDfL5tZyZP+MClma7PREoryBTWSscAtv4JjQ7vcfwSArp0AWTxQCI=
+	t=1753470665; cv=none; b=QTsqg/3uTSjBUyCGbxH8649+cGDaT52zwL2WeE8/Wq2GDEZ/fJ/mnMj6biXTetXX85y8PJdWHeOUawfyEkFUxe52LPBFlpxRKbxOEE4cb7n/hUenOoUoS5pQtuf8xOb/sL50v1aiJy/XKioXZ19eUxxL5rWs6xranC/EoV7ZWWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753470351; c=relaxed/simple;
-	bh=mELrDtWGMI1QG93gjCIPHgENUspiCmDd8aU++jDSiTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NA00brlG377Ln273LYJB+4ev+Oz3u9ot8+wOApZVfIZi1/2GiSPPKvL1XxFMHcNk9NyUiW6DlSbLQXa+51chC7tnpkDp9YUb8XoMUepLcDHsFSRzT147JGvO8ETLPxvzMQnkVql0CUQnpmAJjYdAbmb234RyOK4t0sOsMG4lwO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=QFoQcRq2; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 3ABAA1C00BE; Fri, 25 Jul 2025 21:05:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1753470339;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VZp/qEMObXUYLMGlCigrDo0ItwQbn1PmLGaupHV3qjI=;
-	b=QFoQcRq2Js10wMhwWRp3uNsPd4UFFlI2SejV8t4oIKRVzuO4bRePabMMJ5senQgpk0vM9I
-	/cbJb4xhuXguIPU3QqL/80c/+OzQhrehH2K9j+yXqmVrLc1ouRcbxOly4uRokS8XGn0jjc
-	nG6zfZlsYEqn+wGbSx1xdBRA3yOjQes=
-Date: Fri, 25 Jul 2025 21:05:38 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Waiman Long <llong@redhat.com>,
-	kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, will@kernel.org,
-	miriam.rachel.korenblit@intel.com, linux-wireless@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>, John Ogness <jogness@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: locking problems in iwlwifi? was Re: 6.16-rcX: crashing way too
- often on thinkpad X220
-Message-ID: <aIPVghzeOTawpTeT@duo.ucw.cz>
-References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz>
- <aID6XPLXuGo+ViTm@duo.ucw.cz>
- <aIEC4t2EICdgomZV@duo.ucw.cz>
- <874iv2stk3.ffs@tglx>
- <87zfcurexx.ffs@tglx>
- <aIJqC/0ZPhgaNdkf@duo.ucw.cz>
- <71548e22-9f3c-469e-a59d-f921da59d927@redhat.com>
- <dd50a074-0988-4a4d-a78f-7862e87dbab0@redhat.com>
- <877bzxqo39.ffs@tglx>
- <87v7ngpa43.ffs@tglx>
+	s=arc-20240116; t=1753470665; c=relaxed/simple;
+	bh=ohbQ5KF8b/EeqfVu3tRLb4Pn8KVgHa3I47YPvi58yJM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZiCaw022dj7G9tIhDA5it9EvxSP8nj3DiMzi/Hlf2ZRthMsiqS5ZsBp55LWJd3eqki5ku1Mwmx44fQRy3TwqMtVl3F1pOuNaaoQ/+zoCCcg3lTAd07PSVy8GHV/NaxhEgyRvu3Cg0Eq7v/uNT2TJV7B1wrG3dCK/yk6ZEy9iEvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DnS9beiT; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-611d32903d5so2120a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:11:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753470662; x=1754075462; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ohbQ5KF8b/EeqfVu3tRLb4Pn8KVgHa3I47YPvi58yJM=;
+        b=DnS9beiT7uXsPw3bRisI+ErVdWds8WtJYyqV1d5E2WN2ZE0H2wuraqH+6Dl88gV9Nx
+         IqqgSxSFfnH1JEtdCymc9KolcD+WMl9AOtqvqx+sLOAS5P7FxKyHPltmWPOtq+VIvnpC
+         D8HlKLGnF3KG9cEcP3MbZrtG6WtdQTdF4FwHrV7rGNvGJvRZwUJcVQYuBrKswmlivJSI
+         p4U7orPNmLOGN88jwxyzKOss11JcJBKZgTvRnYmDX3mpvRtHJCaYHfxfwG3Sws5gNekF
+         dswdqL0KSeD08UVsbSFKzLgtR60KvO5BYuvUoCDiLHJwTc6tTZJb4bQIfpKNrTBEfugc
+         IFag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753470662; x=1754075462;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ohbQ5KF8b/EeqfVu3tRLb4Pn8KVgHa3I47YPvi58yJM=;
+        b=Vea/0qLx5NnKxdmQO4e9vDh59UGXBKablKFH1DVCFk2cuLsqd4hCpqwFbUnZGepSbt
+         9xG3oU8pBG5Yt9zyGPxaq2epDPWhq2YV5U1Y96X1c+uXenZFqD46Xqm9kP45JUFL9QjO
+         UG5nZ9xLWXUoa4HQAAoEcoLkOd5DGMe85sOBUn54sOgc2PbG06+OqTJ/ZuCzT1AAYJns
+         qXMx9HKSz9qJ8eaJyx4+cxdlkgoh4yVD01k0qXajD+0q8BqX9Z99VqcovU0Jh6n3QVHc
+         NA0qel+9ikcK317ONf9PvyVjmYNu8Aprz8LuV22mmbTEac075rvRcl/eU5+YcjEzUQvW
+         c0bg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgdT9Fxmp+LtfKlZ261r6SdQSZjP8ZzfRQYO3mAXU3i8A3tKX1SRTvtVpTk8iK7Eky0Zwz8miFv0fPR44=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvv4zzsOCFO9UJPZpjTH+bkH155iT9GR7nQ80iArIp6SPWZKJD
+	wgLr8n0UgGF066KaFnldwiG5cZEmhqbDkYpnXM5cY0I9rqQBBDcG+/Pen48FYeDIZ1Jjgp6Hkm/
+	OM/B2a3HMaw7TggsB8DrA9ZDm/TGg8RBqyNtV+FAU
+X-Gm-Gg: ASbGncuIGls6x7xWIVc/qlWzrP7nYLdS98XgFp+40KW/KQL2GkP4ZAw5BP/esy4/DEM
+	OeWh+OpGzviXulCK1Q0TrTupugTksL3tydB6YbvYtY7WQ5xma7qqc8w138JaK14J7bNOfrvzFkL
+	7A5jrMIvGZi9UFk1LRhu9S56jivYZ2XIQ8zv7uRrVQ1RSfQS86L2FLlzAwRan6GTvrTsSf8DEGm
+	WIfmePMFjrjPUn8Lazgp95yJaJnDWyyFxE=
+X-Google-Smtp-Source: AGHT+IFnM9lb8v0yhy+r9g7LlejQ85g1+jN80aPjt0EXGFDmgpf5XaZMiO20Q6d8dkFVzoj7t44+LzAH3gV+dXXjqTY=
+X-Received: by 2002:a05:6402:2088:b0:607:bd2:4757 with SMTP id
+ 4fb4d7f45d1cf-61505ca9e53mr18025a12.1.1753470661523; Fri, 25 Jul 2025
+ 12:11:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="O5ZViAcPiKIAYIsP"
-Content-Disposition: inline
-In-Reply-To: <87v7ngpa43.ffs@tglx>
-
-
---O5ZViAcPiKIAYIsP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <cover.1752232673.git.lorenzo.stoakes@oracle.com>
+ <8f41e72b0543953d277e96d5e67a52f287cdbac3.1752232673.git.lorenzo.stoakes@oracle.com>
+ <CAG48ez0KjHHAWsJo76GuuYYaFCH=3n7axN2ryxy7-Vabp5JA-Q@mail.gmail.com> <892e3e49-dbcd-4c1f-9966-c004d63f52df@lucifer.local>
+In-Reply-To: <892e3e49-dbcd-4c1f-9966-c004d63f52df@lucifer.local>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 25 Jul 2025 21:10:25 +0200
+X-Gm-Features: Ac12FXzH0kaDd1FSHQ6rjBvK5l93OfpQZvkg8iFQz3nK0xtBEz9RE_fXG7JCCE8
+Message-ID: <CAG48ez3qB7W3JqjrkkQ3SRdQNza3Q9noqkgmBg=3F_8vhwQ4gQ@mail.gmail.com>
+Subject: Re: [PATCH v3 09/10] mm/mremap: permit mremap() move of multiple VMAs
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Fri, Jul 25, 2025 at 7:28=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Fri, Jul 25, 2025 at 07:11:49PM +0200, Jann Horn wrote:
+> > On Fri, Jul 11, 2025 at 1:38=E2=80=AFPM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > > Note that any failures encountered will result in a partial move. Sin=
+ce an
+> > > mremap() can fail at any time, this might result in only some of the =
+VMAs
+> > > being moved.
+> > >
+> > > Note that failures are very rare and typically require an out of a me=
+mory
+> > > condition or a mapping limit condition to be hit, assuming the VMAs b=
+eing
+> > > moved are valid.
+> >
+> > Hrm. So if userspace tries to move a series of VMAs with mremap(), and
+> > the operation fails, and userspace assumes the old syscall semantics,
+> > userspace could assume that its memory is still at the old address,
+> > when that's actually not true; and if userspace tries to access it
+> > there, userspace UAF happens?
+>
+> At 6pm on the last day of the cycle? :) dude :) this long week gets ever
+> longer...
 
-> Enable framebuffer and framebuffer console. Add console=3Dtty0 to the
-> kernel command line.
->=20
-> Log into FB console and do
->=20
-> #  echo -e '\033[?17;0;64c'
->=20
-> which enables the software cursor, which in turn enables the above
-> conditional invocation of fbcon_del_cursor_work(). Then force a printk
->=20
-> # echo h >/proc/sysrq-trigger
->=20
-> and watch the show.
+To be clear, I very much do not expect you to instantly reply to
+random patch review mail I send you late on a Friday evening. :P
 
-Heh, fun. Yes, long, long time ago I enabled software cursor. I
-don't normally use the console these days, but I switched to console
-for debugging the wireless problem -- hoping I would catch some kind
-of backtrace on the console.
+> Otherwise for mapping limit we likely hit it right away. I moved all the
+> checks up front for standard VMA/param errors.
 
-Best regards,
-								Pavel
-
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---O5ZViAcPiKIAYIsP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaIPVggAKCRAw5/Bqldv6
-8uTTAJ9Ldr9q7FUaylsnXpqczYVGRjRQHgCgrHnzq+tSSm5J4hfZN2Nkc1plxnQ=
-=geVZ
------END PGP SIGNATURE-----
-
---O5ZViAcPiKIAYIsP--
+Ah, I missed that part.
 
