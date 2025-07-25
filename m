@@ -1,384 +1,221 @@
-Return-Path: <linux-kernel+bounces-745903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB74AB1203A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:39:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038A1B1203E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D631D560892
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:39:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8C45667FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A502D1EFF9B;
-	Fri, 25 Jul 2025 14:39:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F4422333B;
+	Fri, 25 Jul 2025 14:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jeuI/77b"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63B31C6FE1
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB561E5701;
+	Fri, 25 Jul 2025 14:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753454369; cv=none; b=SawYjjD4G/kAc1B8qSOA24SNIuEb1Ud+gvBYmRGS1RyLW3PtnScWaVkjrvR27v+CT/r/702K7y6YCDbAqwmzLp9qnrllSPE5KJmckatwaqTGU31MwL1x6Kt1PDZQuA1HyBWh8v51/HkMp0/ZeTw83Gw4/2sPsx4woF1o8gj6eag=
+	t=1753454432; cv=none; b=U0Hpvgurwf4r6n6iPHBctfOArz0AWpWGwhPzwpeNffqIeWkETaBzdKtpeBGh61V5bme8dyUjMeLv23QZUwIIsJasqoHdjJ31d5Q8a+zZXX07fYYS0AeTMAWRqAfep2V5+yG1aESChNBgWAt15w5xrjLIqZ23CevJQNu0BYX1dI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753454369; c=relaxed/simple;
-	bh=kOeJpxLCbh4jPKYEFWkDyvd+t/2xkeDPPnkdhOHf/l4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rbHzSY6Ea3NamtsVskfcdCN2Num+oKrqZHGb6C2QS1EdntIONfs5QRbtdvhJZj1+AupPF6ZYLtHMDR+TD3sNCsj5+QqsTbjcX8b/GD73a+WsBnFahy9PpSbv7FOlzhxQ/1oVAbGHb4cN9tvvXK/aLgEcpuN+icGoeJw1YAMSixc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D83C4CEF6;
-	Fri, 25 Jul 2025 14:39:28 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Catalin Marinas <cmarinas@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] arm64 updates for 6.17
-Date: Fri, 25 Jul 2025 15:39:25 +0100
-Message-Id: <20250725143925.1674618-1-catalin.marinas@arm.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1753454432; c=relaxed/simple;
+	bh=Pe1O6JQBpM96y38GlEwysMUHU2QGMRFxNAE0yGjeyqU=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=i6BrEUYbpkJTPneBdOzxQkWMMj+AnS0HHAiSvle4ep4GL/8auMO4Z+q4679UcqUPnxKG2Og7AaOkMusRRER3dQYQCTDHhgTH8aIG4UUOpnRVEtzRe15l7ofcvUrNSoTJrPUOvlJk5USVlkQniGKZT/WO6uv4JiKC7zXRDKEfLgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jeuI/77b reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8E307982;
+	Fri, 25 Jul 2025 16:39:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753454387;
+	bh=Pe1O6JQBpM96y38GlEwysMUHU2QGMRFxNAE0yGjeyqU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=jeuI/77b/1trNj4HKV+BBArKHz6hRUxwdCQmxDOV1ismZ3kfNs/DnLvLzGPHHHsVW
+	 Pn/vKlaF+8Ks6JkxJGa3gblLj+ead7ywPotcOPcA55yiR0DGlN1hUfhvSrt5VC9Y1M
+	 a5wcqS412S/LIACvSjsLsd4ltomOGs21nqCy40p4=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io> <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io> <aIKi1BkNzNvsf5Tr@smile.fi.intel.com> <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: sakari.ailus@linux.intel.com <sakari.ailus@linux.intel.com>, laurent.pinchart@ideasonboard.com <laurent.pinchart@ideasonboard.com>, Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda <ribalda@chromium.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Hans de Goede <hansg@kernel.org>, =?utf-8?q?Andr=C3=A9?= Apitzsch <git@apitzsch.eu>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Matthias Fend <matthias.fend@emfend.at>, Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Sylvain Petinot <sylvain.petinot@foss.st.com>, Dongcheng Yan <dongcheng.yan@intel.com>, Jingjing Xiong <jingjing.xiong@intel.com>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org <linux-media@vger.kernel.org>, devicetree@vger.kernel.org <devicetree@vger.kernel.org>, linux-kernel@vger.kernel.
+ org <linux-kernel@vger.kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Date: Fri, 25 Jul 2025 15:40:24 +0100
+Message-ID: <175345442477.2567018.13588829522231689027@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-From: Catalin Marinas <cmarinas@kernel.org>
+Quoting Hardevsinh Palaniya (2025-07-25 06:55:23)
+<snip>
+> > > +static int ov2735_page_access(struct ov2735 *ov2735,
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD u32 reg, void *val, int *err, bool is_read)
+> > > +{
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD u8 page =3D (reg >> CCI_REG_PRI=
+VATE_SHIFT) & 0xff;
+> >=20
+> > ' & 0xff' part is redundant.
+> >=20
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD u32 addr =3D reg & ~CCI_REG_PRI=
+VATE_MASK;
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD int ret =3D 0;
+> >=20
+> > How is this assignment being used?
+> >=20
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (err && *err)
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD return *err;
+> > > +
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD mutex_lock(&ov2735->page_lock);
+> > > +
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD /* Perform page access before r=
+ead/write */
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (ov2735->current_page !=3D p=
+age) {
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_write(ov2735->cci, O=
+V2735_REG_PAGE_SELECT, page, err);
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (ret)
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD goto err_mutex_unlock;
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ov2735->current_page =3D page;
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD }
+> > > +
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (is_read)
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_read(ov2735->cci, ad=
+dr, (u64 *)val, err);
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD else
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_write(ov2735->cci, a=
+ddr, *(u64 *)val, err);
+> >=20
+> > Do you really need this castings?
+>=20
+> Do you really think this casting is unnecessary?
+>=20
 
-Hi Linus,
+Yes? Well quite probably - I haven't checked myself yet but ..
 
-Please pull the arm64 updates below. A quick summary - perf support for
-Branch Record Buffer Extensions (BRBE), typical PMU hardware updates,
-small additions to MTE for store-only tag checking and exposing
-non-address bits to signal handlers, HAVE_LIVEPATCH enabled on arm64,
-VMAP_STACK forced on. There is also a TLBI optimisation on hardware that
-does not require break-before-make when changing the user PTEs between
-contiguous and non-contiguous. These patches touch the iommu/SMMU code.
-More details in the tag.
 
-Thanks.
+> Please check the definitions of cci_read/write
+>=20
+> without this, we can't even build the driver.
 
-The following changes since commit ef8923e6c051a98164c2889db943df9695a39888:
+How about ... changing the function prototype of ov2735_page_access ?
 
-  arm64: efi: Fix KASAN false positive for EFI runtime stack (2025-07-04 14:47:06 +0100)
+Then you might be able to build without casts ?
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-upstream
+> > > +err_mutex_unlock:
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD mutex_unlock(&ov2735->page_lock=
+);
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD return ret;
+> >=20
+> > Hmm... Wouldn't be cleanup.h helpful here?
+> >
+> > > +}
+> >=20
+> > ...
+> >=20
+> > > +static int ov2735_write(struct ov2735 *ov2735, u32 reg, u64 val, int=
+ *err)
+> > > +{
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD return ov2735_page_access(ov273=
+5, reg, (void *)&val, err, false);
+> >=20
+> > Why casting?
+> >=20
+> > > +}
+> >=20
+> > ...
 
-for you to fetch changes up to 5b1ae9de71335865d06ff0e60eadcf368a735edf:
+<snip>
 
-  Merge branch 'for-next/feat_mte_store_only' into for-next/core (2025-07-24 16:03:34 +0100)
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD /* Apply format settings. */
+> >=20
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD /* Apply customized values from=
+ user */
+> >=20
+> > Define a single style for one-line comments and use it everywhere consi=
+stently.
+>=20
+> Are you referring to the period at the end of the comment?
+> =20
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD goto error_power_off;
+> >=20
+> > ...
+> >=20
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD devm_pm_runtime_set_active_enab=
+led(ov2735->dev);
+> > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD devm_pm_runtime_get_noresume(ov=
+2735->dev);
+> >=20
+> > No error checks? What's the point to use devm and what will happen if t=
+he first
+> > fails, for example?
+> >=20
+> > --
+> > With Best Regards,
+> > Andy Shevchenko
+>=20
+> With all due respect,
+>=20
+> I completely understand and appreciate the need for multiple rounds of re=
+view.
+> However, where feasible, it would be helpful to receive style-related and=
+=20
+> non-blocking comments earlier in the review process. Iterating on minor i=
+ssues
+> in later versions, especially ones that could have been addressed togethe=
+r=20
+> earlier, can become a bit frustrating at times. I hope you can understand=
+ this=20
+> perspective.
 
-----------------------------------------------------------------
-arm64 updates for 6.17:
+I certainly understand that public patch review can be slow and tedious
+at times, but please remember that unless you have paid Andy to review
+this work, there are no contractual 'requirements' on which bits get
+reviewed first. All reviews are helpful, whereever they come in - and
+the goal here is to get as many eyes on code as possible to support high
+quality code being maintained in the linux kernel.
 
-Perf and PMU updates:
 
- - Add support for new (v3) Hisilicon SLLC and DDRC PMUs
+Perhaps one path to speed this up in the future might be if you might
+find some time to read more kernel code and also review some other
+kernel patches publicly as well. It might accelerate/help you learn the
+linux coding style sooner to avoid some cycles, and provide more eyes
+where we need them in the community.
 
- - Add support for Arm-NI PMU integrations that share interrupts between
-   clock domains within a given instance
+Regards
+--
+Kieran
 
- - Allow SPE to be configured with a lower sample period than the
-   minimum recommendation advertised by PMSIDR_EL1.Interval
 
- - Add suppport for Arm's "Branch Record Buffer Extension" (BRBE)
-
- - Adjust the perf watchdog period according to cpu frequency changes
-
- - Minor driver fixes and cleanups
-
-Hardware features:
-
- - Support for MTE store-only checking (FEAT_MTE_STORE_ONLY)
-
- - Support for reporting the non-address bits during a synchronous MTE
-   tag check fault (FEAT_MTE_TAGGED_FAR)
-
- - Optimise the TLBI when folding/unfolding contiguous PTEs on hardware
-   with FEAT_BBM (break-before-make) level 2 and no TLB conflict aborts
-
-Software features:
-
- - Enable HAVE_LIVEPATCH after implementing arch_stack_walk_reliable()
-   and using the text-poke API for late module relocations
-
- - Force VMAP_STACK always on and change arm64_efi_rt_init() to use
-   arch_alloc_vmap_stack() in order to avoid KASAN false positives
-
-ACPI:
-
- - Improve SPCR handling and messaging on systems lacking an SPCR table
-
-Debug:
-
- - Simplify the debug exception entry path
-
- - Drop redundant DBG_MDSCR_* macros
-
-Kselftests:
-
- - Cleanups and improvements for SME, SVE and FPSIMD tests
-
-Miscellaneous:
-
- - Optimise loop to reduce redundant operations in contpte_ptep_get()
-
- - Remove ISB when resetting POR_EL0 during signal handling
-
- - Mark the kernel as tainted on SEA and SError panic
-
- - Remove redundant gcs_free() call
-
-----------------------------------------------------------------
-Ada Couprie Diaz (13):
-      arm64: debug: clean up single_step_handler logic
-      arm64: refactor aarch32_break_handler()
-      arm64: debug: call software breakpoint handlers statically
-      arm64: debug: call step handlers statically
-      arm64: debug: remove break/step handler registration infrastructure
-      arm64: entry: Add entry and exit functions for debug exceptions
-      arm64: debug: split hardware breakpoint exception entry
-      arm64: debug: refactor reinstall_suspended_bps()
-      arm64: debug: split single stepping exception entry
-      arm64: debug: split hardware watchpoint exception entry
-      arm64: debug: split brk64 exception entry
-      arm64: debug: split bkpt32 exception entry
-      arm64: debug: remove debug exception registration infrastructure
-
-Alok Tiwari (3):
-      perf/cxlpmu: Fix devm_kcalloc() argument order in cxl_pmu_probe()
-      perf/cxlpmu: Remove unintended newline from IRQ name format string
-      perf/cxlpmu: Fix typos in cxl_pmu.c comments and documentation
-
-Anshuman Khandual (6):
-      arm64/debug: Drop redundant DBG_MDSCR_* macros
-      KVM: selftests: Change MDSCR_EL1 register holding variables as uint64_t
-      arm64/sysreg: Add BRBE registers and fields
-      arm64: Handle BRBE booting requirements
-      KVM: arm64: nvhe: Disable branch generation in nVHE guests
-      arm64/mm: Drop redundant addr increment in set_huge_pte_at()
-
-Breno Leitao (9):
-      arm64: Mandate VMAP_STACK
-      arm64: efi: Remove CONFIG_VMAP_STACK check
-      arm64: Remove CONFIG_VMAP_STACK conditionals from THREAD_SHIFT and THREAD_ALIGN
-      arm64: remove CONFIG_VMAP_STACK conditionals from irq stack setup
-      arm64: remove CONFIG_VMAP_STACK conditionals from traps overflow stack
-      arm64: remove CONFIG_VMAP_STACK checks from stacktrace overflow logic
-      arm64: remove CONFIG_VMAP_STACK checks from SDEI stack handling
-      arm64: remove CONFIG_VMAP_STACK checks from entry code
-      arm64: Mark kernel as tainted on SAE and SError panic
-
-Catalin Marinas (4):
-      arm64: cpufeature: Introduce MATCH_ALL_EARLY_CPUS capability type
-      arm64: Kconfig: Keep selects somewhat alphabetically ordered
-      Merge branches 'for-next/livepatch', 'for-next/user-contig-bbml2', 'for-next/misc', 'for-next/acpi', 'for-next/debug-entry', 'for-next/feat_mte_tagged_far', 'for-next/kselftest', 'for-next/mdscr-cleanup' and 'for-next/vmap-stack', remote-tracking branch 'arm64/for-next/perf' into for-next/core
-      Merge branch 'for-next/feat_mte_store_only' into for-next/core
-
-Colin Ian King (1):
-      perf: imx9_perf: make the read-only array mask static const
-
-Dylan Hatch (1):
-      arm64/module: Use text-poke API for late relocations.
-
-Jeremy Linton (1):
-      arm64/gcs: task_gcs_el0_enable() should use passed task
-
-Junhao He (5):
-      drivers/perf: hisi: Simplify the probe process for each DDRC version
-      drivers/perf: hisi: Add support for HiSilicon DDRC v3 PMU driver
-      drivers/perf: hisi: Use ACPI driver_data to retrieve SLLC PMU information
-      drivers/perf: hisi: Add support for HiSilicon SLLC v3 PMU driver
-      drivers/perf: hisi: Relax the event number check of v2 PMUs
-
-Kevin Brodsky (1):
-      arm64: signal: Remove ISB when resetting POR_EL0
-
-Leo Yan (1):
-      perf: arm_spe: Relax period restriction
-
-Li Chen (2):
-      ACPI: Return -ENODEV from acpi_parse_spcr() when SPCR support is disabled
-      ACPI: Suppress misleading SPCR console message when SPCR table is absent
-
-Mark Brown (11):
-      kselftest/arm64: Convert tpidr2 test to use kselftest.h
-      kselftest/arm64: Fix check for setting new VLs in sve-ptrace
-      kselftest/arm64: Fix test for streaming FPSIMD write in sve-ptrace
-      kselftest/arm64: Specify SVE data when testing VL set in sve-ptrace
-      arm64/gcs: Don't call gcs_free() when releasing task_struct
-      kselftest/arm4: Provide local defines for AT_HWCAP3
-      kselftest/arm64: Allow sve-ptrace to run on SME only systems
-      kselftest/arm64: Test FPSIMD format data writes via NT_ARM_SVE in fp-ptrace
-      kselftest/arm64: Test SME on SME only systems in fp-ptrace
-      kselftest/arm64: Fix SVE write data generation for SME only systems
-      kselftest/arm64: Handle attempts to disable SM on SME only systems
-
-Mark Rutland (1):
-      arm64: stacktrace: Check kretprobe_find_ret_addr() return value
-
-Masahiro Yamada (2):
-      arm64: pi: use 'targets' instead of extra-y in Makefile
-      arm64: fix unnecessary rebuilding when CONFIG_DEBUG_EFI=y
-
-Mikołaj Lenczewski (3):
-      arm64: Add BBM Level 2 cpu feature
-      iommu/arm: Add BBM Level 2 smmu feature
-      arm64/mm: Elide tlbi in contpte_convert() under BBML2
-
-Rob Herring (Arm) (1):
-      perf: arm_pmuv3: Add support for the Branch Record Buffer Extension (BRBE)
-
-Robin Murphy (4):
-      perf/arm-ni: Set initial IRQ affinity
-      perf/arm-cmn: Reduce stack usage during discovery
-      perf/arm: Add missing .suppress_bind_attrs
-      perf/arm-ni: Consolidate CPU affinity handling
-
-Shouping Wang (1):
-      perf/arm-ni: Support sharing IRQs within an NI instance
-
-Song Liu (2):
-      arm64: stacktrace: Implement arch_stack_walk_reliable()
-      arm64: Implement HAVE_LIVEPATCH
-
-Xavier Xia (1):
-      arm64/mm: Optimize loop to reduce redundant operations of contpte_ptep_get
-
-Yeoreum Yun (18):
-      arm64/cpufeature: Add FEAT_MTE_TAGGED_FAR feature
-      arm64: Report address tag when FEAT_MTE_TAGGED_FAR is supported
-      KVM: arm64: Expose FEAT_MTE_TAGGED_FAR feature to guest
-      kselftest/arm64: Add MTE_FAR hwcap test
-      kselftest/arm64/mte: Register mte signal handler with SA_EXPOSE_TAGBITS
-      kselftest/arm64/mte: Check MTE_FAR feature is supported
-      kselftest/arm64/mte: Add address tag related macro and function
-      kselftest/arm64/mte: Add verification for address tag in signal handler
-      kselftest/arm64/mte: Refactor check_mmap_option test
-      kselftest/arm64/mte: Add mtefar tests on check_mmap_options
-      arm64/cpufeature: Add MTE_STORE_ONLY feature
-      prctl: Introduce PR_MTE_STORE_ONLY
-      arm64/kernel: Support store-only mte tag check
-      arm64/hwcaps: Add MTE_STORE_ONLY hwcaps
-      KVM: arm64: Expose MTE_STORE_ONLY feature to guest
-      kselftest/arm64/abi: Add MTE_STORE_ONLY feature hwcap test
-      kselftest/arm64/mte: Preparation for mte store only test
-      kselftest/arm64/mte: Add MTE_STORE_ONLY testcases
-
-Yicong Yang (3):
-      watchdog/perf: Provide function for adjusting the event period
-      arm64/watchdog_hld: Add a cpufreq notifier for update watchdog thresh
-      drivers/perf: hisi: Support PMUs with no interrupt
-
-Zhiyuan Dai (1):
-      perf/arm-cmn: Broaden module description for wider interconnect support
-
- Documentation/arch/arm64/booting.rst               |  21 +
- Documentation/arch/arm64/elf_hwcaps.rst            |   6 +
- Documentation/arch/arm64/tagged-pointers.rst       |  11 +-
- arch/arm64/Kconfig                                 |   4 +
- arch/arm64/include/asm/assembler.h                 |   4 +-
- arch/arm64/include/asm/cpufeature.h                |  28 +
- arch/arm64/include/asm/debug-monitors.h            |  40 +-
- arch/arm64/include/asm/el2_setup.h                 |  71 +-
- arch/arm64/include/asm/exception.h                 |  14 +-
- arch/arm64/include/asm/gcs.h                       |   2 +-
- arch/arm64/include/asm/hwcap.h                     |   2 +
- arch/arm64/include/asm/kgdb.h                      |  12 +
- arch/arm64/include/asm/kprobes.h                   |   8 +
- arch/arm64/include/asm/kvm_host.h                  |   2 +
- arch/arm64/include/asm/memory.h                    |   6 +-
- arch/arm64/include/asm/processor.h                 |   2 +
- arch/arm64/include/asm/stacktrace.h                |   6 +-
- arch/arm64/include/asm/sysreg.h                    |  16 +-
- arch/arm64/include/asm/system_misc.h               |   4 -
- arch/arm64/include/asm/thread_info.h               |   5 +-
- arch/arm64/include/asm/traps.h                     |   6 +
- arch/arm64/include/asm/uprobes.h                   |  11 +
- arch/arm64/include/uapi/asm/hwcap.h                |   2 +
- arch/arm64/kernel/Makefile                         |   2 +-
- arch/arm64/kernel/acpi.c                           |  10 +-
- arch/arm64/kernel/cpufeature.c                     | 116 ++-
- arch/arm64/kernel/cpuinfo.c                        |   2 +
- arch/arm64/kernel/debug-monitors.c                 | 277 +++----
- arch/arm64/kernel/efi.c                            |   5 -
- arch/arm64/kernel/entry-common.c                   | 156 +++-
- arch/arm64/kernel/entry.S                          |   6 -
- arch/arm64/kernel/hw_breakpoint.c                  |  60 +-
- arch/arm64/kernel/irq.c                            |  13 -
- arch/arm64/kernel/kgdb.c                           |  39 +-
- arch/arm64/kernel/module.c                         | 101 ++-
- arch/arm64/kernel/mte.c                            |  11 +-
- arch/arm64/kernel/pi/Makefile                      |   2 +-
- arch/arm64/kernel/probes/kprobes.c                 |  31 +-
- arch/arm64/kernel/probes/kprobes_trampoline.S      |   2 +-
- arch/arm64/kernel/probes/uprobes.c                 |  24 +-
- arch/arm64/kernel/process.c                        |  13 +-
- arch/arm64/kernel/sdei.c                           |   8 +-
- arch/arm64/kernel/signal.c                         |   7 +-
- arch/arm64/kernel/stacktrace.c                     |  59 +-
- arch/arm64/kernel/traps.c                          |  84 +-
- arch/arm64/kernel/watchdog_hld.c                   |  58 ++
- arch/arm64/kvm/debug.c                             |   4 +
- arch/arm64/kvm/hyp/nvhe/debug-sr.c                 |  32 +
- arch/arm64/kvm/hyp/nvhe/switch.c                   |   2 +-
- arch/arm64/kvm/sys_regs.c                          |  11 +-
- arch/arm64/mm/contpte.c                            | 211 ++++-
- arch/arm64/mm/fault.c                              |  83 +-
- arch/arm64/mm/gcs.c                                |   6 -
- arch/arm64/mm/hugetlbpage.c                        |   2 +-
- arch/arm64/mm/proc.S                               |   2 +-
- arch/arm64/tools/cpucaps                           |   3 +
- arch/arm64/tools/sysreg                            | 132 +++
- drivers/firmware/efi/libstub/Makefile.zboot        |   2 +-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c    |   3 +
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c        |   3 +
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h        |   2 +
- drivers/perf/Kconfig                               |  11 +
- drivers/perf/Makefile                              |   1 +
- drivers/perf/arm-cmn.c                             |  20 +-
- drivers/perf/arm-ni.c                              | 153 ++--
- drivers/perf/arm_brbe.c                            | 805 +++++++++++++++++++
- drivers/perf/arm_brbe.h                            |  47 ++
- drivers/perf/arm_pmu.c                             |  16 +-
- drivers/perf/arm_pmuv3.c                           | 107 ++-
- drivers/perf/arm_spe_pmu.c                         |  18 +-
- drivers/perf/cxl_pmu.c                             |  12 +-
- drivers/perf/fsl_imx9_ddr_perf.c                   |   8 +-
- drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c      | 354 ++++----
- drivers/perf/hisilicon/hisi_uncore_hha_pmu.c       |   6 +-
- drivers/perf/hisilicon/hisi_uncore_pa_pmu.c        |   2 +-
- drivers/perf/hisilicon/hisi_uncore_pmu.c           |  11 +-
- drivers/perf/hisilicon/hisi_uncore_pmu.h           |   2 +
- drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c      | 220 +++--
- include/linux/acpi.h                               |   2 +-
- include/linux/nmi.h                                |   2 +
- include/linux/perf/arm_pmu.h                       |   8 +
- include/uapi/linux/prctl.h                         |   2 +
- kernel/watchdog_perf.c                             |  22 +
- tools/testing/selftests/arm64/abi/Makefile         |   2 +-
- tools/testing/selftests/arm64/abi/hwcap.c          |  16 +
- tools/testing/selftests/arm64/abi/tpidr2.c         | 140 +---
- tools/testing/selftests/arm64/fp/fp-ptrace.c       |  77 +-
- tools/testing/selftests/arm64/fp/sve-ptrace.c      |  12 +-
- .../selftests/arm64/mte/check_buffer_fill.c        |  12 +-
- .../selftests/arm64/mte/check_child_memory.c       |   8 +-
- .../selftests/arm64/mte/check_hugetlb_options.c    |  10 +-
- .../selftests/arm64/mte/check_ksm_options.c        |   6 +-
- .../selftests/arm64/mte/check_mmap_options.c       | 890 +++++++++++++++++++--
- tools/testing/selftests/arm64/mte/check_prctl.c    |  29 +-
- .../selftests/arm64/mte/check_tags_inclusion.c     |  10 +-
- tools/testing/selftests/arm64/mte/check_user_mem.c |   4 +-
- .../testing/selftests/arm64/mte/mte_common_util.c  |  84 +-
- .../testing/selftests/arm64/mte/mte_common_util.h  |   9 +-
- tools/testing/selftests/arm64/mte/mte_def.h        |   8 +
- .../testing/selftests/kvm/arm64/debug-exceptions.c |   4 +-
- 100 files changed, 3768 insertions(+), 1249 deletions(-)
- create mode 100644 drivers/perf/arm_brbe.c
- create mode 100644 drivers/perf/arm_brbe.h
+> Once again, thank you for your time and effort in helping improve the qua=
+lity
+> of the driver.
+>=20
+> Best Regards,
+> Hardev
 
