@@ -1,113 +1,99 @@
-Return-Path: <linux-kernel+bounces-746081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E70B122EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:21:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57674B122EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98D87AA5EDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:20:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D588F7BFF80
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B621E2EF9C5;
-	Fri, 25 Jul 2025 17:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E5C2EF675;
+	Fri, 25 Jul 2025 17:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d9EkWudX"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="UBeQvjGL"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67972EE968
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FEB15A87C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753464062; cv=none; b=RvLZM+aPT1cuIRnVnxQvEanOAyb2o7QbYAD07f1s5B/Fx9MDrMtmy1uSDn/3kwUczTleJyongJtFv8xAyw9Pu2IbV4/1NEewismR119MN8mhDiOeMs3VuLbxA0/lhi0l6h/mwOxI1jc81LUwXAMyhRrJsEJqz3MyAbD0e3PEuus=
+	t=1753464162; cv=none; b=o1//UGSdkoGqoDZwztSp+l1Z1IQ/8NkwB8hT/Py3CMCIodETHOrJcs28O+I8UR9gVaLqa1wdYUdt7NDa0cP8o/id66332tEEAIGd/WCA8KPy+/jjVBkdPUI6oU8TG/xLLOdD95KhkKjOrHGGe/t2D4U6IR9LiOM8hSqd1GPlRZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753464062; c=relaxed/simple;
-	bh=ztW5g9Io+DwYXSX5Bjb/sZm/RkMW/CjJ9zOMGyQfjIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oTEKl3L5+XOjo8mYOtheHjKhKhMLH1p3DWcn8TGftDK3UGuvATv3zDgjUkr35Wua9hWduS9i4zrbRGAh4YVErA+Sgr2TJtHM/lxY70NNhz/DVZjmwCwTHmqpEqmxAz+OAUTAgMvW2oeKpQgAu20r/j1JVmQCpCUHotm98AzuicE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d9EkWudX; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23dd9ae5aacso7345ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753464060; x=1754068860; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ztW5g9Io+DwYXSX5Bjb/sZm/RkMW/CjJ9zOMGyQfjIw=;
-        b=d9EkWudX7JQDV9rHyMYMOYx2hVLOx78xGL/5Lmvt8vg98SD38FMzmIl3LAZZLNZ3++
-         7Sac6CNYM8Y9t5IxCz6zh9IaXs5ft7iujKXiJ1Pgdpa3dF5nGTaWUCO6jXB+c1YhchfN
-         2nID9+OIx55YNDCxTvL/FZdFVxQFVlySRpXJ65KrYxV9AIFnAwDuX54a93mfbJ4EyXCk
-         KUTG8Ud2UG+t8Yuczh7O5an/aU8zYMuXbWDLP/ORQFhVrnddmsKDJ6QTHSLYQPswJZm+
-         c4teoeF4BVSWqDHeUs5fvh6x62pVquRiUX7HB4OVB3EcJ1mKN2ifV0Qso7zqsJD75s1u
-         6Dng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753464060; x=1754068860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ztW5g9Io+DwYXSX5Bjb/sZm/RkMW/CjJ9zOMGyQfjIw=;
-        b=Il3gBna4VrqrCXVAD6AL368Exaq14UGd8DEAGedNL2B/zW9fc1kZii/hEFGIGUwnGZ
-         E+kgovVqKP3ZnOnRfRGI/cBs8y9zft0bBUym9ifJuQf0EZAy08Kcow/TCuNLGmhAvnir
-         y5LuwOKEcQQ30eFhMrHfOA3LPt/pRAWYXDWoUQ4TXyACxZj7SfbRWN8X/jnvnMRQnTtc
-         /Uyi93s16RBM5GjlcRWsCZtnRvujqWgHMFV7nVsTTUgCqJJkY/LDa8bgu/Jx6JCEofdz
-         /UTIJjfuD6X6IDbCoyp/pyT3srvLKYcKv0Lg7rKwr0UfNuEkbPzm5QQPr8FRRtQ+1jBw
-         GqVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRkaj/P2bnQU2D3D3gg+oxid+jq6RhSJUuaCbj5AW5Nxdru/n1gkXx9qfqby4LfG38umpvtgLIdpc0f1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYH+7p1JbQGmqmxFYzUfVO73kcBnNWYJ8VhSqdDVxrs9uJdsyZ
-	88qUmO2Ly0DTODgbjsl9ISpXCO1If8AIw3nlC5DVNSWLYCjRUr6GPrNPSbXhzivgfva7yACaxpq
-	rgDgngo2qKwbhmMdry5K1i8fPYQ/pencPmvaNKIkK
-X-Gm-Gg: ASbGnctbjGkhaQQjMurpc/XyCP9O2I9VGDV5EPjV18IMXg1alWoNDmJC2knrchDiTUQ
-	MmAXozASaAw4eZFpqxyZBSYyRUNdfu2X/ylsHkdW3ldDR81YZPGWdGY3AEszlHc3CHux5Ezh2H3
-	4traYUKUZepw2as16IGrGuFi+mijxrcB1/LJhUiesxTA0HqxYG+gzptkUWVpit7lsPPnCH6Knhx
-	1Xq
-X-Google-Smtp-Source: AGHT+IG3La2ZTD3NRSPrjHKZQ5evO30wkrLX+Kpt+QdhR94hbkea+gCEFQx5xnAWugOKKY5PaeRMhwgBkwadUW1udNg=
-X-Received: by 2002:a17:903:2bcb:b0:234:8eeb:d81a with SMTP id
- d9443c01a7336-23fadb18ed0mr3827435ad.16.1753464059728; Fri, 25 Jul 2025
- 10:20:59 -0700 (PDT)
+	s=arc-20240116; t=1753464162; c=relaxed/simple;
+	bh=8ItQbyhf7NafDWJdAJXNcjoXpLICSLa/FAyONgaFzew=;
+	h=Date:Message-ID:From:Subject:To:Cc:In-Reply-To:References; b=gzDkayUmSFDd/BG/yJJoYaRW1f/x34VMT46M8EllXkp6vzGNAI7VAp21StA607eLqrrfW4O5HxbLyttSYn5Z7K02+K4Z1XtxEDv80Qy925XH22qJQZk61JmfmOLiY5L9lMECUz9kzBRibbq4BQW35xMGV/tNsp6RD++nJyRdbwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=UBeQvjGL; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:References:In-Reply-To:Cc:To:
+	Subject:From:Message-ID:Date:Reply-To:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4KtHAaTsJ6vRzIFG4bK8UzOFN7UEnidqzX4TKGLUlmg=; b=UBeQvjGLZt1IX0koXmbePMWnEi
+	1QaQSFS6+HD0IzROa0aOW/N1ExZddK1iBtHfbfkeXeZKL3FASJdxf07ur5fe7cpRyKw2C2GhA5UmA
+	ji92+rA6D7c0OynbkfDFKp4Z+Q3GWHLdeAjzm3a29ZSwGZLRWuXjR09bXtdvBtig94GOhgz6YpBWw
+	HtpoONEcgwxiNethFu89DSwsCGDtts4rFpiboNL+Yr3XbgE6YdxLnUYlI82OnVNwAakx573gp/hL2
+	w/dxkIj5BHNxQunIA5MCifW/w8yPM33pvkeQdr0C1A2VEe8aWs0aGvvsElNN/vYwJC3AyHhkgtpJ3
+	dhlkbpQQ==;
+Received: from [109.54.187.100] (helo=localhost)
+	by imap4.hz.codethink.co.uk with utf8esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1ufM7r-002KOk-Dy; Fri, 25 Jul 2025 18:22:31 +0100
+Date: Fri, 25 Jul 2025 19:22:30 +0200
+Message-ID: <0edd4faab01a9845fd4c847d2e5c465a@codethink.co.uk>
+From: Matteo Martelli <matteo.martelli@codethink.co.uk>
+Subject: Re: [PATCH] sched/deadline: Remove fair-servers from real-time task's
+ bandwidth accounting
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: bsegall@google.com, dietmar.eggemann@arm.com, juri.lelli@redhat.com,
+	linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it, mgorman@suse.de,
+	mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org,
+	vincent.guittot@linaro.org, vschneid@redhat.com,
+	yuri.andriaccio@santannapisa.it
+In-Reply-To: <20250725152804.14224-1-yurand2000@gmail.com>
+References: <86013fcc38e582ab89b9b7e4864cc1bd@codethink.co.uk>
+	<20250725152804.14224-1-yurand2000@gmail.com>
+Sender: matteo.martelli@codethink.co.uk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250724223225.1481960-6-samitolvanen@google.com>
- <c7241cc9-2b20-4f32-8ae2-93f40d12fc85@linux.dev> <CABCJKud8u_AF6=gWvvYqMeP71kWG3k88jjozEBmXpW9r4YxGKQ@mail.gmail.com>
- <f82341df-bf2a-4913-a58c-e0acdfb245d2@linux.dev>
-In-Reply-To: <f82341df-bf2a-4913-a58c-e0acdfb245d2@linux.dev>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Fri, 25 Jul 2025 10:20:21 -0700
-X-Gm-Features: Ac12FXwiLGc5GdsZn_qOja2m3m-3Suv_aTBv8aMYUOQDME3DEqdrTQ3FkvdZlpw
-Message-ID: <CABCJKueq=a6Y_2YmSDOa-VTCW9jwYPiXq94125EAMoZ5Y6-ypA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/4] Use correct destructor kfunc types
-To: Yonghong Song <yonghong.song@linux.dev>
-Cc: bpf@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
-	Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 25, 2025 at 9:54=E2=80=AFAM Yonghong Song <yonghong.song@linux.=
-dev> wrote:
->
-> I just tried arm64 with your patch set. CFI crash still happened:
->
-> CFI failure at tcp_ack+0xe74/0x13cc (target: bpf__tcp_congestion_ops_in_a=
-ck_event+0x0/0x78; expected type: 0x64424
-> 87a)
+Hi Yuri,
 
-This one should fixed by the other series I posted earlier:
+On Fri, 25 Jul 2025 17:28:04 +0200, Yuri Andriaccio <yurand2000@gmail.com> wrote:
+> Hi,
+> 
+> Thank you very much for your testing, I'm very glad to know that the patch works
+> as intended.
+> 
+> At first glance, I think the warnings you are having are related to this bug
+> report that I posted a few days ago:
+> https://lore.kernel.org/all/20250718113848.193139-1-yurand2000@gmail.com/
+> 
+> Juri Lelli checked it out and made a patch that addresses these warns here:
+> https://lore.kernel.org/all/20250721-upstream-fix-dlserver-lessaggressive-b4-v1-1-4ebc10c87e40@redhat.com/
+> 
+> Have you already applied Juri's patch together with mine? If not, I think it
+> should solve those issues you mentioned.
 
-https://lore.kernel.org/bpf/20250722205357.3347626-5-samitolvanen@google.co=
-m/
+No, I dind't apply Juri's patch before the previously mentioned tests.
+I've now applied it on top of yours and I've just rerun the same tests.
+I confirm that stress-ng and runtime variations commands provide the
+same results, but that the warnings are not produced anymore.
 
-Sami
+> 
+> Have a nice day,
+> Yuri
+> 
+
+Best regards,
+Matteo
+
 
