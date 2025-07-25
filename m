@@ -1,131 +1,133 @@
-Return-Path: <linux-kernel+bounces-746010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D2DB121E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:22:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76912B121F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9E7F16446B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC983BAB2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8062EF293;
-	Fri, 25 Jul 2025 16:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ECA2F0C57;
+	Fri, 25 Jul 2025 16:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UOgm3+Yi"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v4p2u1gD"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6971C5D44
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4523E2F003A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753460558; cv=none; b=tyMaKZvSPW9+pYYGngmfGuVATi5yBcyPRyvMDKv0ffwV9YO4Nw3SWJzSDboaikf/8sOjXKcYLrna6rcn907AkIJen2Ks6p/Jo/yaWMe5fQ50x/QK+X+kuj0P7YZRqwpoFMRFNqPm8wWORLxtNuH3+fS6c1/wizE3cpgZFdvvoPM=
+	t=1753460592; cv=none; b=k5Wm7ubbIN/+EgtOzg22hLn+WbDrAOIDIBa5zhcACNveCaIlGOVICVy7m511HOmfM6Ju+f2wnyzIgKy35oQ4t56goYJHtjfWPodffpIslWFIeWIj+Fm/0wFnHPd8PUmlC1dAnB/Irtb8SMMBiDZqQshqvDCQpprMwzmiLql3QBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753460558; c=relaxed/simple;
-	bh=dG8LORNMv4hLV38o9+LQvLvmF4TyNuHF6RVwSF8uMp8=;
+	s=arc-20240116; t=1753460592; c=relaxed/simple;
+	bh=MCf3LWmvVfC4w2iOlCtezE1SdttwqDIvC+7VYe8Hat8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mtRcHmfP8WwmmZ0K5GG6beW9944ydN8GDcP7BXn9Y8lww6MNZQOHOKc8Cbb6f0lg52hQn+2TM8KJVxURHblffjnh02/ezLNdIIh51jKjJtmzjsUjGEGXjtdzpk2sb6ZlnlU4mGIhE4NXKh+2sY4M1VasdM3i9lYL0zm3zUtbY/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UOgm3+Yi; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2ffaeff98bfso403337fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:22:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=K/8tXuZy/N0emHnh/o15aCcZH5es/6IimGJGMSRa/GwWi0ntT333NNHPaC//BBuFkM9HsqFJRtHseR0H1wF1O13/zVAsgSSwDX0dBzgHU0H5afjTt8+GnUnV3OW7UcNUr1fugH61vkluNx6Xnz7r3Vg4zoLPFo113tGdTqwCq7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v4p2u1gD; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2357c61cda7so148005ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:23:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753460556; x=1754065356; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753460590; x=1754065390; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dG8LORNMv4hLV38o9+LQvLvmF4TyNuHF6RVwSF8uMp8=;
-        b=UOgm3+YiaSHrCuRIN6kOf1KZytBdK51zRU1QbcayHjMFbbROeLrgdXsOJPk9BTqOie
-         bilCaF/8PmX2BHRc7HUaLKj1QeBFK7AEYNqfyRPf6H79B/dity7zGkCz7Dd+W6gDEdP+
-         msKETxIheutfWevGI3Ve3MqmZR+OKjiaHEefw=
+        bh=eOBPRmaFhkr1VfnfvoDnAO+QXzN8zO4nX02Uk1KMjOo=;
+        b=v4p2u1gD0NOWyRtndv7Wmsv2tmx5Xd7OI9hhWWC4Fmo13VnzyLxYwnvzwoMUSet+Op
+         OgfYlzy0C5tXd3Wl9VUiBuKBg2xBgjlYGXp4mpBGaX5pVAE/Znh37JRkSGPFbimFA9cx
+         EUkZhlgewn94Y9U8VehdoEKib5+6iggCV9/+NKNs8itD6vn0kajoS1ZlTT3tPXcAB6Fh
+         xDqFT0xZ0bq0t3j/r/pDwCA+4S6/c5U3Pqi0ENNGKbShHIgjCqsSv4NYp+b/9Gd/e1gh
+         GixfFOBoi3wfjeNedqI/a3CAGuSe/go9cUEW7T/Y129d+geMpLaYZYPygKNEdHbSR8Xy
+         Lrrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753460556; x=1754065356;
+        d=1e100.net; s=20230601; t=1753460590; x=1754065390;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dG8LORNMv4hLV38o9+LQvLvmF4TyNuHF6RVwSF8uMp8=;
-        b=F9RLBCCCuMjpWJnJsmu9L2s3ebhhDLaH611RTHuteT4CgREe1SHQTIb0hIg/6BVHjJ
-         Vma8cqfoIQ72GeHp2plduyo1uAMIbhqpMJypTFhVMfWHsRKqnnqnAzsfOOtBVcaePo/T
-         vgIw3oVS/9kldx6CZVT65JUWdpJQbFhOxuDH1UZ0e5vtOmuQH0CjhgmS1gzeOyoUn69w
-         qHVfw0gDv4ysSttJylkyD1Hks1CzK6WTD6lbioskGLnL3R8z9uE9ObiQ64WnriwwznTx
-         uyflJX6Er4YVaWXU8HhPL8R/rIVRZZ7YiIni0YRGxTfgG7WWLezHt9H/3NbcTyttRYCu
-         TMdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNiJwhsqkE0/eaDYdBf9ALVzl5i7t0kpBSSRTT0c6HamYuNCFY227jm17Kzhk/y24GqBf1C4L5pqtNAtk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrfIs1O/gQ6dZg4Ot5Jv7q992Pg7y2CPRX56dFdyEHd4WO0kxb
-	IAZ+yNjwflmEHMD7WGu8lhfhoePqiy6bEo4oFCQhOz/tusp/5R01hb9IatTRHyUF0d105IoabJ6
-	PR91Gn9CI7ghV1vzqaz40sHzEGwjVxSNwXJ5FTnDq
-X-Gm-Gg: ASbGnct0y0ZOvQ+AYc7ixdp5+tv1nrapRYelbOph4Q61MIKJVN0aupLUFatbUoyezoz
-	FQCPoMXo50zo1a2E7hwBRm0OXhs07muJjCulmEj4pf120JoejyQblgtZDQ0PhdB2e5Pun6q3g8r
-	HxlbOm89jiWP5meIGuQjgomRy3upjkfamB7rwgmwBLgZg0RV9CU1lbS5lpfaQe7D/VqHAT6uz/k
-	Xq9tXGfJZSRC9n5MaiabSUC/AJGZr4ZEkQswA==
-X-Google-Smtp-Source: AGHT+IE+9r3hfO5zBRvfZvNR3MWRAD5H7Tw6vqB+Cze1RNE/NgXdJj+e5F7QgK/8TZwJ6pHwkdNSQnKE9BFj7S821Go=
-X-Received: by 2002:a05:6870:a906:b0:2e3:8acd:d48e with SMTP id
- 586e51a60fabf-307020bb42cmr539535fac.9.1753460556314; Fri, 25 Jul 2025
- 09:22:36 -0700 (PDT)
+        bh=eOBPRmaFhkr1VfnfvoDnAO+QXzN8zO4nX02Uk1KMjOo=;
+        b=qY+iR2jdsiEpgeFE2KZ26afk2kvIXTkxsdk86VLU9185PBlV80xzpdHbDA9EKzoDWE
+         pvsxdnV+ZkGyTR2/dHUIpoC1BwnO5dXfhfW3d/1VZoa9JVC3tNztrzkYDUbFyMN1kI0b
+         e8s4N4AldyKaeyTZDHAoF1hEYI5XQ/TY1vNv+X6YxiOH9MoJM4YFsVovA00b5fpY+29O
+         76RjZAruBylVm1CDi7g69j6wrQS7nFVtb4hig/IyodwopxAd6wxzSpyaVmRK6BMkNeMU
+         rRvlQZImH8pmeC04MpIFda3V6MAIyUnOPxE8cLvrpwtBhIKA3UK4tnjVq13vkX6nUMVE
+         jOAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMR5gFKGsi1S2D8F2e8AY8CwWCk2lGDEBmKQXEvSaEtWuoNZ7xV/QBIwlMAi1ROKCORGpP66qC4hDE8C8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7I7Liwv/DMsvUlhg0YC/krPQckMF90IFtZdupdW+Lnq96dWKs
+	mQeHjWZOqelVt8itVkP8PHiVHnE4+bT/I7D+fV1unvYgiAe52gQX9Nw33w04d2ifGmxVH3zOssn
+	jpIizrpAHcI3sUf5dXheKHNIe7Qf+QF433307Xowi
+X-Gm-Gg: ASbGncvUL7NjLOKQk0fddhL/NVwB7UCmfGFKa3LOpabjOCo5CRbBysuk6SXd04BAVCI
+	a5g58a6ROMMp97bmDD4ZUEs+cDeHX3F2D9vy8UzOWpvm3xUzJXVkCUdO8lPhfoZyXhfzDzh6heg
+	Qcc7p6m15whhn14gcz8rh/Aj1Pzuv3XqjwPt2B/2qoShmEYj54XB62tyH6dfPQ0TUu7Da0Jb/70
+	afa
+X-Google-Smtp-Source: AGHT+IGl5iiHRkkzci+gUdFqLMJFBHIWbSieIx+bGFL50yCzQfeZlmr0c4UH6jz8XtwMqFYiJ43X/E0ucoD727+cJ7E=
+X-Received: by 2002:a17:902:ec83:b0:22e:4509:cb86 with SMTP id
+ d9443c01a7336-23fb0432716mr3084215ad.19.1753460590204; Fri, 25 Jul 2025
+ 09:23:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1752687069.git.lorenzo.stoakes@oracle.com>
- <ec480dc1fd4ce04bb11c0acac6c6da78dc6f4156.1752687069.git.lorenzo.stoakes@oracle.com>
- <CABi2SkU75e7tXcpgnLbDhqSJBWVPOvmfMh2uPsU3mUjMUhhYqw@mail.gmail.com>
- <38ed372a-4b27-498e-bb3b-f95792bbbe27@lucifer.local> <9c861191-ac9e-4d26-b2a2-1facfa45de44@redhat.com>
-In-Reply-To: <9c861191-ac9e-4d26-b2a2-1facfa45de44@redhat.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 25 Jul 2025 09:22:23 -0700
-X-Gm-Features: Ac12FXzA-vO48FLSIgwm34Yvy9xCrveF7N2ZBWVVo5aGocgvC73fwOsfOIwjfIY
-Message-ID: <CABi2SkXLnsXzE3HUQndyAY__hZdO2QPDRrgG9+cUvTNSTMH-nw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] mm/mseal: update madvise() logic
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org
+References: <20250724223225.1481960-6-samitolvanen@google.com> <c7241cc9-2b20-4f32-8ae2-93f40d12fc85@linux.dev>
+In-Reply-To: <c7241cc9-2b20-4f32-8ae2-93f40d12fc85@linux.dev>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Fri, 25 Jul 2025 09:22:33 -0700
+X-Gm-Features: Ac12FXx3vnvKmaRrVmdNDaZtOc0Kn1Ho7Fd64VMkmyNNaYB2638tqbZtyHox5bw
+Message-ID: <CABCJKud8u_AF6=gWvvYqMeP71kWG3k88jjozEBmXpW9r4YxGKQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Use correct destructor kfunc types
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: bpf@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
+	Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 2:53=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> >
-> >> 4. We could ask applications to switch to non-destructive madvise,
-> >> like MADV_COLD or MADV_PAGEOUT. Or, another option is that we could
-> >> switch the kernel to use non-destructive madvise implicitly for
-> >> destructive madvise in suitable situations.
-> >
-> > Umm what? I don't understand your point.
-> >
-> >> 5. We could investigate more based on vma->anon_vma
-> >
-> > I have no idea what you mean by this. I am an rmap maintainer and have
-> > worked extensively with anon_vma, what's the point exactly?
->
-> I think, the idea would be to add an additional anon_vma check: so if
-> you have a MAP_PRIVATE file mapping, you could still allow for
-> MADV_DONTNEED if you are sure that there are no anon folios in there.
->
-Yes. That is the theory, thanks for clarifying it for me.
-This is exactly what I was trying to say in my previous response:
+Hi,
 
-"We could try having destructive madvise check
-vma->anon_vma and reject the call if it's true. I haven't had a chance
-to test this theory yet, though."
+On Fri, Jul 25, 2025 at 9:05=E2=80=AFAM Yonghong Song <yonghong.song@linux.=
+dev> wrote:
+>
+> I tried your patch set on top of latest bpf-next. The problem
+> still exists with the following error:
+>
+> [   71.976265] CFI failure at bpf_obj_free_fields+0x298/0x620 (target: __=
+bpf_crypto_ctx_release+0x0/0x10; expected type: 0xc1113566)
+> [   71.980134] Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+> ...
+>
+>
+> The following is the CFI related config items:
+>
+> $ grep CFI .config
+> CONFIG_CFI_AUTO_DEFAULT=3Dy
+> CONFIG_FUNCTION_PADDING_CFI=3D11
+> CONFIG_ARCH_SUPPORTS_CFI_CLANG=3Dy
+> CONFIG_ARCH_USES_CFI_TRAPS=3Dy
+> CONFIG_CFI_CLANG=3Dy
+> # CONFIG_CFI_ICALL_NORMALIZE_INTEGERS is not set
+> CONFIG_HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG=3Dy
+> CONFIG_HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC=3Dy
+> # CONFIG_CFI_PERMISSIVE is not set
+>
+> Did I miss anything?
 
+Interesting. I tested this on arm64 and confirmed that the issue is
+fixed there, so I wonder if we need to use KCFI_REFERENCE() here to
+make sure objtool / x86 runtime patching knows this function actually
+indirectly called. I'll test this on x86 and see what's going on.
 
-> If there is an anon_vma, the only way to find out is actually looking at
-> the page tables.
->
-> To be completely precise, one would have to enlighten the zap logic to
-> refuse to zap if there is any anon folio there, and bail out.
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+Thanks for taking a look!
+
+Sami
 
