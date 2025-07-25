@@ -1,135 +1,79 @@
-Return-Path: <linux-kernel+bounces-745398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78AFBB1195E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:47:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6713B11963
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC511CE20B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:47:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85EF7189C192
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE4E2288D5;
-	Fri, 25 Jul 2025 07:47:22 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D110228937D;
+	Fri, 25 Jul 2025 07:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arGz9KEt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4231F582F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F6A41A8F;
+	Fri, 25 Jul 2025 07:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753429641; cv=none; b=XKdL/TjXziIjjglPeJRRC/vf9x7ENWC7w1SR1EAaaEmVbxy7pv+u8fql+fSdUnCLgzBd+Il5o638VWiUEhUPeVt3wmxWXlShmy0a0sUptbMZm/B0LTY0piVj4WZZf89Pgs3Qws8rbm38+GnOlT3SqFRskSeU8Vr5YAQsQC5RyE0=
+	t=1753429752; cv=none; b=ZfFOYd9b5NwXQv8ubVU8k2rpg1TEn5iqitPY7n2j3kLkn4JWyLyW/9tp4VWr4Wcr0RuChzsbXZE0RIhG2M8hrXMriu6tVvCdtPuKI7t0OhQDHTJ7s/LZkOGQ95e3Dtt123aoOSCX+zq131Pi0FgSC97LjSaPx5v5KpJVmv99QQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753429641; c=relaxed/simple;
-	bh=8ngk64fa6FkvmUq2CM0GJ+Ox+uQSwrPzsdk/GC4hxqs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Dw8/lf0zHnB/lf4MfumtLWNM7eE/qlHMoOSbC0AR5Oaiu2zvXtW2Oe6sMqeP+xWoFdZwgEMUdSEJoyJBkCM8ZTOducPoT3h+TnLLtO115M1iTOHCnqN9kr/lQsgGC/DBE2wWtXs/m/8TQ0kAZY8/+aE4zp7XkjBTvMnykwc9Vx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-87c306a1b38so184134439f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:47:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753429639; x=1754034439;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tJSl+eIQF8BpKc2MZsJf/Bs1fdUt7/D3YqcKYlW+EGI=;
-        b=DDR51qMRwmxV2rZfCaMaa7qrKjceTkW4gaej+utLPwgHsFPHNp31ex8Z5diupCO/XO
-         sGwyGctw1e7VEwKlMouBWI0Rssp4JzZLKubH3id95yTxBOYrUM+KpyVKQoG1hEygjggl
-         HO1nCUByW7RGJodqfVLVzCJg5BnzEhECeu/MELicp4HMgmmyTKKOL7YfZvOq5KWGr0Td
-         2eNKBvh085lvfqncHKPxpS22C4sYzgyEGqrbqncedkASVJcdTuIJdxHTdRaOzVs8pRp9
-         MMkZzofFPo6J/22UqYnGIMY5mDbMEsDRcJy1w8hfQ6qLgkoHkUR7LL5wWNXe1W1f3TQd
-         BDOA==
-X-Gm-Message-State: AOJu0YxLBikL28rdGMhdWzNhAu2QcQ+/rNhCbe+Oo9sj2j60ZoMZj10q
-	k4E2ZfjnhlCrQY25wlVwosidlp1NCQThf7NMNaXN87A4Zd266XvYorlcyLk+vTpL3ha7vQAUlh/
-	DtNR9g1CdQ4vxrp1lERLufZPR5ydLEasxlz/rbEJpAT95FCWmARVq0IcsYy0=
-X-Google-Smtp-Source: AGHT+IFA68EyJflJs4YnJWA/6fBAC9J+D0ODiWbp9NJ78cOoatryVjaiUB1hGj2m+UilPL1+fm++ozJSpD9z2T1lZJlkIjJ8fUEE
+	s=arc-20240116; t=1753429752; c=relaxed/simple;
+	bh=b7t02t/Q3eL6j/CVB7xaaIalybsf4crGHifTvyW67MI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F5jSCuNliL3TEYn5CHrOpr2WKo1Lh8BGr0y9Ylj+7yfoeoMeE1/8WLLXtTVpnjIXzClxVOQD6O3/wk7NeSi7p6t2mD6uV46MhW5wIn32xNFXSbhOLWAmzasRrdEM0mQBRS599DY93vtTSnoU1/WGR+Zyrct3qJF1r69DK8hdLfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arGz9KEt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FEBEC4CEE7;
+	Fri, 25 Jul 2025 07:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753429751;
+	bh=b7t02t/Q3eL6j/CVB7xaaIalybsf4crGHifTvyW67MI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=arGz9KEtyzg38s1B7wJOt5EMuGXepL95RBcBftWsesSD9XQWFbP/9vV6YcUp3Rrmt
+	 69UwnXh7UJzw6PhXKYXbGa1IlW7+Zb0TEEWrJIAA050aRh11+UYzQLOYo3WvlZLf/X
+	 4wiiHHGR1MWqfWY54CZnF2QLtX+6MWaGBF8Tt8hJj3SrjXDC4R/Odrgq6BXVGi+jgr
+	 gITPkpSlHBRMWSn61dqzEBXUMvPi8a6KSIQ7TbvAG30cS9Muj85unRUsS19XwG/9NC
+	 qDJX9kxEpAVLzlYSFIXv72OpIWshm4kFslM56TK4SQhFfgPez8IC9k5YybiJODGzZ9
+	 fZelPxkm5r9RQ==
+Date: Fri, 25 Jul 2025 09:49:09 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: qcom: Document the Glymur
+ TCSR Clock Controller
+Message-ID: <20250725-chubby-spiked-tanuki-eefcd9@kuoka>
+References: <20250724-glymur_clock_controllers-v2-0-ab95c07002b4@oss.qualcomm.com>
+ <20250724-glymur_clock_controllers-v2-2-ab95c07002b4@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c06:b0:3e2:aadb:2be8 with SMTP id
- e9e14a558f8ab-3e3c531027emr10949785ab.15.1753429639499; Fri, 25 Jul 2025
- 00:47:19 -0700 (PDT)
-Date: Fri, 25 Jul 2025 00:47:19 -0700
-In-Reply-To: <686db3ea.050a0220.1ffab7.0028.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68833687.a00a0220.2f88df.0040.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ucma_create_uevent
-From: syzbot <syzbot+a6ffe86390c8a6afc818@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250724-glymur_clock_controllers-v2-2-ab95c07002b4@oss.qualcomm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Thu, Jul 24, 2025 at 02:59:10PM +0530, Taniya Das wrote:
+> Add documentation to support the Glymur Clock Controller, which is
 
-***
+What is "Glymur Clock Controller"? GCC? But this is TCSR? Please write
+accurate commit messages.
 
-Subject: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ucma_create_uevent
-Author: lizhi.xu@windriver.com
+> necessary to provide a complete description of the clock control module.
 
-#syz test
+That's redundant, just describe the hardware.
 
-diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
-index 6e700b974033..89c444c6f317 100644
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -109,6 +109,7 @@ struct ucma_multicast {
- 	u8			join_state;
- 	struct list_head	list;
- 	struct sockaddr_storage	addr;
-+	atomic_t		ref;
- };
- 
- struct ucma_event {
-@@ -257,6 +258,12 @@ static void ucma_copy_ud_event(struct ib_device *device,
- 	dst->qkey = src->qkey;
- }
- 
-+static void ucma_put_mc(struct ucma_multicast *mc)
-+{
-+	if (mc && atomic_dec_and_test(&mc->ref))
-+		kfree(mc);
-+}
-+
- static struct ucma_event *ucma_create_uevent(struct ucma_context *ctx,
- 					     struct rdma_cm_event *event)
- {
-@@ -274,6 +281,7 @@ static struct ucma_event *ucma_create_uevent(struct ucma_context *ctx,
- 			     event->param.ud.private_data;
- 		uevent->resp.uid = uevent->mc->uid;
- 		uevent->resp.id = uevent->mc->id;
-+		ucma_put_mc(uevent->mc);
- 		break;
- 	default:
- 		uevent->resp.uid = ctx->uid;
-@@ -1471,6 +1479,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
- 	mc->ctx = ctx;
- 	mc->join_state = join_state;
- 	mc->uid = cmd->uid;
-+	atomic_set(&mc->ref, 1);
- 	memcpy(&mc->addr, addr, cmd->addr_size);
- 
- 	xa_lock(&multicast_table);
-@@ -1489,6 +1498,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
- 	mutex_unlock(&ctx->mutex);
- 	if (ret)
- 		goto err_xa_erase;
-+	atomic_inc(&mc->ref);
- 
- 	resp.id = mc->id;
- 	if (copy_to_user(u64_to_user_ptr(cmd->response),
-@@ -1513,7 +1523,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
- 	__xa_erase(&multicast_table, mc->id);
- err_free_mc:
- 	xa_unlock(&multicast_table);
--	kfree(mc);
-+	ucma_put_mc(mc);
- err_put_ctx:
- 	ucma_put_ctx(ctx);
- 	return ret;
+Best regards,
+Krzysztof
+
 
