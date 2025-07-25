@@ -1,203 +1,175 @@
-Return-Path: <linux-kernel+bounces-745503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BF6B11ADB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:31:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5CA1B11ADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0A9F3B4017
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:30:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96516AA098A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96B52D320B;
-	Fri, 25 Jul 2025 09:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="H0AgewKN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93A62D0278
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0BC2D3231;
+	Fri, 25 Jul 2025 09:33:17 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2B02882DD;
+	Fri, 25 Jul 2025 09:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753435865; cv=none; b=RZsC9mV0mgPkY7XXVIBPnhjQL/BoHu+if1knouTDIxCdFDKcdY6BYvrrKi9oPB2/zrm3peZsIztoL4DjHaTeMpHfV2YNptKZleJy3P9FJQSCkVsIfonjNBwNUXFI+WRAB2WJvDHAZLTSuwbJRlZTLyrtZTY/6Sry/jGbVFRKXU4=
+	t=1753435996; cv=none; b=PwSI+O+y9h5Hc0GzP7vURqIp8GZQ94CpkHTdXJALgFw1WYyQHrze30hC0uAn6UtS3vBdbfhaCHWJvKKjT49meEwo3ISkRH9X3zkckgEtmTuH5fUE90qgQLLrBFl/pE5YJlQyPyJLMwpVhQR4YxvhqE3ZTXqwUWGgWmerHrQ4awA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753435865; c=relaxed/simple;
-	bh=nUHw6qP239Oq8jyKrq+quvMkdXJhaA8f0RlXWhVYRvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Or0NhUPnOm5I1LVCKlLRY4t8MCMiEqO8hzVlmyvxWH1K3xZwV56ec/YOCFHg83jdnX7VhEo/2W2Q785CuCJnOTeyqjT2XfLWnxgwMA+LDq2VwMYjOJAT03Yx6G/NsLEU+N+wAZpEqugGunZFTRLZhU4kQL+cwJT2y8GTH6RPYf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=H0AgewKN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P97I3c023660
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:31:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UHICGwDwDl8daLhetFxgvsPtxOilAqYGnlpMT/3FILM=; b=H0AgewKNMaOsW8EU
-	f62QnRdnuAMqJkLNTgd73eMxoIxelTBzL/moR+Xlwlx7jqG2DmfoV0xu/YRgdZlB
-	xjV9TT2nKmIbjxQATJhS+BIeiFTG5vIA03BIWcbpbBGzfFltb0IR/rRhLfAtDeRp
-	yeurOMn+YsbaQwf5K4mjwMG/wUExUPmXs+udOFOY/qTko0jTHZ65VCxPNYa4iN/G
-	BiNliyjDAnj3cAD38IzoXaFCZV5OcalSlh8toeYKFqyNMJmeyBeNaJ7mKg2iTo3b
-	BE/W8zYo8dhDtnMyHKfyg9/+nbf4yr4J8Z3r+KlJ6+tb//C+uJb2Tylf7ctol42n
-	MLmBbQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2r9jh0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:31:03 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e33e133f42so53496685a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:31:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753435862; x=1754040662;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHICGwDwDl8daLhetFxgvsPtxOilAqYGnlpMT/3FILM=;
-        b=ACHSXe3BJ6ckbvhDTOu5biVONZjA6zmOJ4ZIhIg6VdJjAQ9b/C1JYi6E2h6+M3Xh4R
-         MQJPsC44Duj8i4e3wWwyPCfnZa8/pwiJ4vj3pO2DIhq+KMNM6YZjOf4X/CCuNfNsqbHG
-         Id9GbxKACD9Jrsy+YLkWvV3FL5iBqar0DAKcLemIuGlH0FViAgpMG9nZyR7nZH1sW97j
-         8TjLYgiAIFL0efeGtQXezhUM91+sSoYCNl9dS53NyYGiJs108diAwNds00nc5TDhAnbN
-         beQqnyNQkDwlAPF0zUCEROUjjOgXre45ecVXeksYo3hoYwQxsU4NnPP5cvrk1L3TLFy9
-         dDpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVc7NStHtLviFdhUXdpaLPOObdJT39e22h9Mgy2vdFaEIsWWqqSqLlnFZQDNMgy165dg3L6wOcdz/zpCpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgSoL+L74A7+QcjOlgd0R08MW2UE6PVwFmq35zl388uITVWn7e
-	hWQLgw+wpr4Xm/BdbNgCtcXvkbj1qH3mk0IBHy+yr3lMqoFL1P5dfaP7RNZkhAwZnMGVlOuW0lC
-	mLtPYbqTGtx3hGc4S+TzAvLWkdPmHmBoWYUBLeGJBPo6To9j+qdVHqmzkBLsv7/YBI4o=
-X-Gm-Gg: ASbGncsx633WIWiNq2nT+z/gK2pnKd6HQyWJNetJrbI0WB48SyPpIv6SDa/9kbprl/b
-	9NaY8BlRXJ9Fq4VjN34NMzRdo6AaxgrnvOim971zqfgSY0cULBJ6l+ZqTEHwogaX5EKYA13IQRt
-	dvqLM+ekODOGpoY36MoERszDJi8hZ0p+sXBbfvFMsq9IgEzqCZ1WcrvKwgEZkrA0td/0WpxAt8N
-	IQQhGUDxsS9i7G2Q7xzIEfEDolFbBbbvZx8u1UwFjZlSVT3kBiICgf48fPzX8wvgZQ9d0zBZzeU
-	5tJ6sOV3emCyXP3xOpRtRa0a2/PFvxkYcb7rDpcaLN6AJAMLc5jW9prRAAUrFYDkN38VmAL9LEW
-	GvGxokasTnJRfFTEx7A==
-X-Received: by 2002:a05:620a:472b:b0:7e3:49b9:d06a with SMTP id af79cd13be357-7e63bfa59f0mr48179585a.9.1753435861408;
-        Fri, 25 Jul 2025 02:31:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2nBHxoBD5pfk+D4HZkaX/oRldqRoW3uOXw1dgDzm0zFAJsz26a1olh1gz5zMUTAt4W1if2w==
-X-Received: by 2002:a05:620a:472b:b0:7e3:49b9:d06a with SMTP id af79cd13be357-7e63bfa59f0mr48176885a.9.1753435860738;
-        Fri, 25 Jul 2025 02:31:00 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47cd650basm240182766b.58.2025.07.25.02.30.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 02:31:00 -0700 (PDT)
-Message-ID: <54b617c1-bd1b-4244-b75d-57eaaa2c083d@oss.qualcomm.com>
-Date: Fri, 25 Jul 2025 11:30:57 +0200
+	s=arc-20240116; t=1753435996; c=relaxed/simple;
+	bh=rbg0v2ueCWt1+GaWQl8ID2VqO35LtDrCr1TYRDMFFGY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GyJ6kvJId+5Npy+33FxFX/Kf0OkwlqJ1Dwy/6FpRweoeoQ+TWqw8aCJR5T8fc0YKMC+k/Xh5sjOpSeGtnTcyvgWgH9d+mpE7aU3CuW6wYkp3bYACSVya4iroRbCndLHy/grBB62t1ZJXTxqCFJ32nfJEuZoX2h6xrayxvuUlPFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgAHppRDT4Noshe3AA--.20831S2;
+	Fri, 25 Jul 2025 17:32:53 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: p.zabel@pengutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v5 0/2] Add driver support for ESWIN eic7700 SoC reset controller
+Date: Fri, 25 Jul 2025 17:32:48 +0800
+Message-Id: <20250725093249.669-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: qcom: Add SM8750 GPU clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250723-topic-8750_gpucc-v2-0-56c93b84c390@oss.qualcomm.com>
- <20250723-topic-8750_gpucc-v2-1-56c93b84c390@oss.qualcomm.com>
- <20250724-blazing-therapeutic-python-1e96ca@kuoka>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250724-blazing-therapeutic-python-1e96ca@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=NfTm13D4 c=1 sm=1 tr=0 ts=68834ed7 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=ZXpw8kv6nMavt5JzddgA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-ORIG-GUID: Y7Wt39yZ7pVPBQStDQJFZonSXFyIVaTK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA4MCBTYWx0ZWRfX46I9Im0s7KYG
- prjcP7G2P0ygGv56bb87qX1n4ykt+pMmPKp2YpupF54jkCQNWmxWnw8fBcYE2EXJbuAUh/cayFl
- MlLw/vH6KIVLjMa2J3ikxuCUTS45JCQyFpz6lUEyqxywu7Az1r/KsfUUkKHx3mrYFsT5ha01qfC
- pM23jxFDMqAD3jVTRy+q5VTxdt5OQ0YDQe10SVbcHoUb7I/miXRbnqbJMnVAIvdkvCP46ikIVFx
- 3/1E93MCghWG4fPZYrtIoiOUFn5LekefLBzCMSCjGqPVp04hpxLVT6ufAY/W+TukM4JcCQoEqG8
- 8BLeR85Spcyr41bOggqIK8cs0BCihLkP4C5oSVenhbaluCqxgwigMRtlv6Br7vYj7GhSLGyfuPg
- X1smwD4zZ23yeURsGx0JPoloeLGx8gtLHi1+CxOkQsyDbEax+K18J4by1L6OdD1q+T/uj2tc
-X-Proofpoint-GUID: Y7Wt39yZ7pVPBQStDQJFZonSXFyIVaTK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
- bulkscore=0 spamscore=0 priorityscore=1501 phishscore=0 mlxscore=0
- mlxlogscore=999 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507250080
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgAHppRDT4Noshe3AA--.20831S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF18WrykZryxtw4kWw1kAFb_yoWruFWrpF
+	4UCry7Gr1Yvr4xXa93t3WF93WSqanxtr45Gr47Jw47uan8Aa4Utr4rtF45AFyDCrZ7Xryf
+	XF17uayF9FyjvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-On 7/24/25 10:18 AM, Krzysztof Kozlowski wrote:
-> On Wed, Jul 23, 2025 at 10:38:48PM +0200, Konrad Dybcio wrote:
->> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>
->> The SM8750 features a "traditional" GPU_CC block, much of which is
->> controlled through the GMU microcontroller. Additionally, there's
->> an separate GX_CC block, where the GX GDSC is moved.
->>
->> Add bindings to accommodate for that.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> ---
->>  .../bindings/clock/qcom,sm8450-gpucc.yaml          |  5 ++
->>  .../bindings/clock/qcom,sm8750-gxcc.yaml           | 61 ++++++++++++++++++++++
->>  include/dt-bindings/clock/qcom,sm8750-gpucc.h      | 53 +++++++++++++++++++
->>  3 files changed, 119 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
->> index 02968632fb3af34d6b3983a6a24aa742db1d59b1..d1b3557ab344b071d16dba4d5c6a267b7ab70573 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
->> @@ -20,6 +20,7 @@ description: |
->>      include/dt-bindings/clock/qcom,sm8550-gpucc.h
->>      include/dt-bindings/reset/qcom,sm8450-gpucc.h
->>      include/dt-bindings/reset/qcom,sm8650-gpucc.h
->> +    include/dt-bindings/reset/qcom,sm8750-gpucc.h
->>      include/dt-bindings/reset/qcom,x1e80100-gpucc.h
->>  
->>  properties:
->> @@ -31,6 +32,7 @@ properties:
->>        - qcom,sm8475-gpucc
->>        - qcom,sm8550-gpucc
->>        - qcom,sm8650-gpucc
->> +      - qcom,sm8750-gpucc
->>        - qcom,x1e80100-gpucc
->>        - qcom,x1p42100-gpucc
->>  
->> @@ -40,6 +42,9 @@ properties:
->>        - description: GPLL0 main branch source
->>        - description: GPLL0 div branch source
->>  
->> +  power-domains:
->> +    maxItems: 1
-> 
-> This should be a different binding or you need to restrict other
-> variants here.
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-Actually looks like this is the same case as the recent videocc changes
-(15 year old technical debt catching up to us..)
+Updates:
 
-I'll send a mass-fixup for this.
+  dt-bindings: reset: eswin: Documentation for eic7700 SoC
+  v4 -> v5:
+    1. Dropped EIC7700_RESET_MAX from bindings.
+    2. Add "Reviewed-by" tag of "Krzysztof Kozlowski" for Patch 1.
+    3. Corrected the link to previous versions.
+    Link to v4: https://lore.kernel.org/all/20250715121427.1466-1-dongxuyang@eswincomputing.com/
 
-Some platforms require 2 and some require 3 entries here. Do I have to
-restrict them very specifically, or can I do:
+  v3 -> v4:
+    1. Remove register offsets in dt-bindings.
+    2. The const value of "#reset-cell" was changed from 2 to 1.
+       Because the offsets were removed from dt-bindings. There are
+       only IDs. And removed the description of it.
+    3. Modify copyright year from 2024 to 2025.
+    4. Redefined the IDs in the dt-bindings and used these to build a
+       reset array in reset driver. Ensure that the reset register and
+       reset value corresponding to the IDs are correct.
+    Link to v3: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
 
-power-domains:
-  description:
-    Power domains required for the clock controller to operate
-  minItems: 2
-  items:
-    - description: CX power domain
-    - description: MX power domain
-    - description: MXC power domain
+  v2 -> v3:
+    1. Drop syscon and simple-mfd from yaml and code, because these are
+       not necessary.
+    2. Update description to introduce reset controller.
+    3. Add reset control indices for dt-bindings.
+    4. Keep the register offsets in dt-bindings.
+    Link to v2: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
 
-?
+  v1 -> v2:
+    1. Clear warnings/errors for using "make dt_binding_check".
+    2. Update example, change parent node from sys-crg to reset-controller
+       for reset yaml.
+    3. Drop the child node and add '#reset-cells' to the parent node.
+    4. Drop the description, because sys-crg block is changed to reset-
+       controller.
+    5. Change hex numbers to decimal numbers going from 0, and drop the
+       not needed hardware numbers.
+    Link to v1: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
 
-Konrad
+  reset: eswin: Add eic7700 reset driver
+  v4 -> v5:
+    1. The value of .max_register is 0x7fffc.
+    2. Converted "to_eswin_reset_data" from macro to inline function.
+    3. Modified EIC7700_RESET_OFFSET to EIC7700_RESET and eic7700_
+       register_offset to eic7700_reset.
+    4. Since EIC7700_RESET_MAX is dropped, used eic7700_reset[] without
+       EIC7700_RESET_MAX.
+    5. Removed function eswin_reset_set, and put regmap_clear_bits in
+       eswin_reset_assert and regmap_set_bits in eswin_reset_deassert.
+    6. Added usleep_range in function eswin_reset_reset which was missed.
+    7. Used ARRAY_SIZE(eic7700_reset) for data->rcdev.nr_resets.
+    8. Use builtin_platform_driver, because reset driver is a reset
+       controller for SoC. Removed eswin_reset_init function.
+    9. Modified eswin_reset_* to eic7700_reset_*.
+    Link to v4: https://lore.kernel.org/all/20250715121427.1466-1-dongxuyang@eswincomputing.com/
+
+  v3 -> v4:
+    1. Add 'const' for the definition. It is 'const struct of_phandle_
+       args *reset_spec = data;'.
+    2. Modify copyright year from 2024 to 2025.
+    3. Included "eswin,eic7700-reset.h" in reset driver.
+    4. Added mapping table for reset IDs.
+    5. Removed of_xlate and idr functions as we are using IDs from DTS.
+    6. Removed .remove function.
+    Link to v3: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
+
+  v2 -> v3:
+    1. Change syscon_node_to_regmap() to MMIO regmap functions, because
+       dropped syscon.
+    2. Add BIT() in function eswin_reset_set() to shift the reset
+       control indices.
+    3. Remove forced type conversions from function eswin_reset_of_
+       xlate_lookup_id().
+    Link to v2: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
+
+  v1 -> v2:
+    1. Modify the code according to the suggestions.
+    2. Use eswin_reset_assert() and eswin_reset_deassert in function
+       eswin_reset_reset().
+    3. Place RESET_EIC7700 in Kconfig and Makefile in order.
+    4. Use dev_err_probe() in probe function.
+    Link to v1: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
+
+Xuyang Dong (2):
+  dt-bindings: reset: eswin: Documentation for eic7700 SoC
+  reset: eswin: Add eic7700 reset driver
+
+ .../bindings/reset/eswin,eic7700-reset.yaml   |  42 ++
+ drivers/reset/Kconfig                         |  10 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-eic7700.c                 | 432 ++++++++++++++++++
+ .../dt-bindings/reset/eswin,eic7700-reset.h   | 298 ++++++++++++
+ 5 files changed, 783 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml
+ create mode 100644 drivers/reset/reset-eic7700.c
+ create mode 100644 include/dt-bindings/reset/eswin,eic7700-reset.h
+
+--
+2.17.1
+
 
