@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-745407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0ECBB11976
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:00:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375AFB1193B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F0F91CC573B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:00:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41CCE1C848B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276A82BE7D9;
-	Fri, 25 Jul 2025 08:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6611125CC66;
+	Fri, 25 Jul 2025 07:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b="OJ4MGAsi"
-Received: from www571.your-server.de (www571.your-server.de [78.46.3.230])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLcBh6xs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805072BF000;
-	Fri, 25 Jul 2025 08:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.3.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F414A82;
+	Fri, 25 Jul 2025 07:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753430414; cv=none; b=G6t1pm8XZKnH4px169pQUxD+NhGHYHxPitp0KuOrnwU5b9Ylk/zMCcHHQwFgPtSWR9p6ixZiYCTht7JCazrzgnZUkj3xJaHxjiKtCCOzXvQCCjFWTLdw6F4OmZP+Sgjb6z6n0OXUUOkyHJ0IHdtBKXBpF4n7Ga2LIar19RZCYfw=
+	t=1753428782; cv=none; b=cuYV71f2w9XGh5+vb1mbD2EckDLsYGLWNYpTfy5e9zPun4NQam7QDnTGRpCOqcj14jR18K5lZnpWhgmfu8EbT/T68syBUjt44iRZ6F9xKoW0AoLwvP63WOAo2o8GnCuoNE5uYOhqIJGmKJhr9YdYm/mJXnFFRbMExsTyPbubVws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753430414; c=relaxed/simple;
-	bh=fJrnu7NHG3y3u91nx9CIzDrr7WItx4fMYcF3H7U3WeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6Y5/eoQJ04aTIipDug0yPQJgGlB5yWcuYzumGlfmjqjvohBdKWgbOyBSAQ2JQOcaQvgf3fDxL2xq5DPdeFebUEeO5GCr9WYMKYTeMEjsX6PZXZZGGRcq2pqhKUzME1or9xybO8H13Mta59fh5eMshGd6UbkBRD+q4s1niaDokE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de; spf=pass smtp.mailfrom=it-klinger.de; dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b=OJ4MGAsi; arc=none smtp.client-ip=78.46.3.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=it-klinger.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=it-klinger.de; s=default2502; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=o+EP3Do08PQClXT7GYUtMCIwfhK/g0y4AnYJ4Vvgafg=; b=OJ4MGAsih65d3KdHgEjNfEeOvo
-	5njU05g94/vGd9bZ7N2rN5p7/I20XFjR88HQHDfN7aNPHjnDpDArsh9YzKzPNUqhBJjncOv/FggqQ
-	H2waoulHyAeHV43A+/tdHn5dzEAnGiE4zIwNe1nmOYsCbfU6lA2zcW0oyihmCuYVRmPadTS9Z/OJl
-	Ocrv0uCGxmTPGjNvozscMQ6uipHZaYc3jwDf4NSpu3HFmCVuQgUFTpXI45kUO6FgUiH6GAslG7QyT
-	U+SeTYnPzjXLaVo4++TA/lpDOH8UPCiNrEssK9rpsB3pubu4uSiyU6v6M076TKpMcmE+ouucnS9eB
-	K7mhoo9w==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www571.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <ak@it-klinger.de>)
-	id 1ufCuc-000FK8-2n;
-	Fri, 25 Jul 2025 09:32:14 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ak@it-klinger.de>)
-	id 1ufCuc-000MgP-0K;
-	Fri, 25 Jul 2025 09:32:14 +0200
-Date: Fri, 25 Jul 2025 09:32:12 +0200
-From: Andreas Klinger <ak@it-klinger.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, lars@metafoo.de,
-	javier.carrasco.cruz@gmail.com, mazziesaccount@gmail.com,
-	arthur.becker@sentec.com, perdaniel.olsson@axis.com,
-	mgonellabolduc@dimonoff.com, muditsharma.info@gmail.com,
-	clamor95@gmail.com, emil.gedenryd@axis.com,
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] iio: light: add support for veml6046x00 RGBIR
- color sensor
-Message-ID: <aIMy_BHJYNA20k-x@mail.your-server.de>
-References: <20250715085810.7679-1-ak@it-klinger.de>
- <20250715085810.7679-3-ak@it-klinger.de>
- <aHdWAUMMH43tIqV4@smile.fi.intel.com>
+	s=arc-20240116; t=1753428782; c=relaxed/simple;
+	bh=RT/fwDnGe1qjIsPKvMaRgsEa02/AzXXBqKEFbagKISs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e8aZMczqGllDp0JgmxygW2YLqqBRGfKphqb83Mjit2M/TvJfuB6CtU8fkzONLWbZIS6hHrKU2Z2v2bgICh+zRbOYR91uWxesfLc47BzIygyY/3tBt7pONHbaPbxBgoSc6uvc/JDAzza9fxSdUczpBYYfr4RhhzvtgYQLa31g43Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qLcBh6xs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14F7C4CEE7;
+	Fri, 25 Jul 2025 07:32:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753428782;
+	bh=RT/fwDnGe1qjIsPKvMaRgsEa02/AzXXBqKEFbagKISs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qLcBh6xs2UtKYMDfxxSK6kMKJ1BTvTh2QE26LJYBoRpqxwF5geb++QKfO66u1oI/a
+	 vUaMQHLV8gveKfVtJMTQ2CBWRO8ji/UM9ZnnAp+X5/8M+LQB46ajDlpFn13sFryV0o
+	 wYqknp8UlWoZFVJrcEv4jVJ4DvPwI5SkpJf5zLn/57zOtnljR1BRRhuEijsK/5BX9Y
+	 QYaqy55F6yjidELOX7xRmyCd5qvS94Mc4CIhMGomVLW7Zd5JsTBlBV6Isc4Rf/FRD2
+	 Vs/vPPZMsnHc9WH2CZ+5zLNQhvjZIvFwXN9KOkp5pH99BM5iBIBF8Kyndg2tnejTBy
+	 P1ji3zrLC3r/A==
+Message-ID: <94d3e709-8c8b-40cb-a829-92c2012b4e0a@kernel.org>
+Date: Fri, 25 Jul 2025 09:32:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4Q/B+VBomn8MKafC"
-Content-Disposition: inline
-In-Reply-To: <aHdWAUMMH43tIqV4@smile.fi.intel.com>
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27709/Thu Jul 24 10:35:45 2025)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: microsoft: Add vmbus
+ message-connection-id property
+To: Hardik Garg <hargar@linux.microsoft.com>
+Cc: apais@microsoft.com, cho@microsoft.com, conor+dt@kernel.org,
+ decui@microsoft.com, devicetree@vger.kernel.org, haiyangz@microsoft.com,
+ hargar@microsoft.com, krzk+dt@kernel.org, kys@microsoft.com,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
+ ssengar@linux.microsoft.com, wei.liu@kernel.org
+References: <6d3b5d1e-de1b-4d3b-ba14-7029c51b8e05@kernel.org>
+ <1753395133-26061-1-git-send-email-hargar@linux.microsoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <1753395133-26061-1-git-send-email-hargar@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 25/07/2025 00:12, Hardik Garg wrote:
+>> Then all guests can use the same value, 0, making this property redundant.
+> 
+> No, they cannot use the same value. The protocol requires different connection IDs for different communication paths.
+> For example, a guest communicating with a VTL0 control plane uses a different connection ID than one communicating with
+> a VTL2 control plane. The host specifies this value based on the guest's configuration, and there is no other discovery
+> method available to determine the correct connection ID.
 
---4Q/B+VBomn8MKafC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You completely removed entire thread and discussion making it difficult
+to connect to one of 100 or more discussions I am doing.
 
-Hi Andy,
+Plus wrap your emails according to netiquette rules.
 
-thanks for the detailed review again. Some comments below.
+The guest should not care about the value. Otherwise what if guests
+decides to ignore your DT property and start using other value? Sniffing
+other guests traffic? Causing conflicts or denial of service?
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> schrieb am Mi, 16. Jul =
-10:34:
-> > +#define	VEML6046X00_GAIN_1          0x0
-> > +#define	VEML6046X00_GAIN_2          0x1
-> > +#define	VEML6046X00_GAIN_0_66       0x2
-> > +#define	VEML6046X00_GAIN_0_5        0x3
->=20
-> Is it defined as hexadecimal in the datasheet? Otherwise use plain decimal
-> numbers.
-
-It's in the datasheet defined exactly the way i did.
-
-> > +static int veml6046x00_validate_part_id(struct veml6046x00_data *data)
-> > +{
-> > +	struct device *dev =3D regmap_get_device(data->regmap);
-> > +	unsigned int part_id;
-> > +	int ret;
-> > +	__le16 reg;
-> > +
-> > +	ret =3D regmap_bulk_read(data->regmap, VEML6046X00_REG_ID,
-> > +			       &reg, sizeof(reg));
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to read ID\n");
-> > +
-> > +	part_id =3D le16_to_cpu(reg);
-> > +	if (part_id !=3D 0x0001)
-> > +		dev_info(dev, "Unknown ID %#04x\n", part_id);
->=20
-> For 0 it will print 0 and not 0x0000. Is it okay?
-
-I just tried and it prints 0x00 if the part_id is 0.
+If different values are important for the host, then all guests should
+use whatever 0 which will map to different values on host by other means
+of your protocol.
 
 Best regards,
-
-Andreas
-
-
---4Q/B+VBomn8MKafC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEE7/NrAFtB/Pj7rTUyyHDM+xwPAVEFAmiDMvwACgkQyHDM+xwP
-AVE3nQwAn6dBiOP/mFu9UJRXKjUpOTi1hawG/b4j5nlhW+rvpvu1YH/cuM9keq9k
-yogxPgs2XsUqE2OlHyS3PnHBJJ26gdegu2ezMudU8mzZQugIRdoEe7JbAvx8q1A6
-6nMU6vBEB9iUPCGMtFOz+e2E5CxHjkdmcuSlHh3LvkplQxmmbrv2dInH2JIBfyL+
-Nrn105vDeaL9V8WtxqDfAKhVzRZizMRANFVxmtjKW9ZKk5423K1qXvFsboqZsnqw
-85iPV4WcDJe5J13dVSZjMPJ/rrp2mlG5au0kBqGpnqbfvV5tWR5s9lhEKtJzx4ia
-t7jwoe9l9er9C2DCz08x6AvVMzUqParTNfPLdsTwpJhARD0ugimewBXN1A+IjQh5
-SXoWLizj3nwbzGAwE9MAiKdDdFDGeWLVWj3j02EUGBePQEf80xJ1zZgdnkMOP+mH
-gQcVe9jRLfk/vbWUTSYSY/7XY6Rwt+A0+wsH4dK9pVxaL5I4X71WdH4DUCKx7CdH
-yjl9L1hB
-=9+VA
------END PGP SIGNATURE-----
-
---4Q/B+VBomn8MKafC--
+Krzysztof
 
