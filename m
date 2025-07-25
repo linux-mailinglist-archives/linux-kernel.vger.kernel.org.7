@@ -1,180 +1,161 @@
-Return-Path: <linux-kernel+bounces-745819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEBEB11F2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:11:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36BCB11F31
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 242097A2916
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D6D16DCE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D372ECD25;
-	Fri, 25 Jul 2025 13:11:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FE924677A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD3B2ED15E;
+	Fri, 25 Jul 2025 13:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g/VOgu8S"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8009C2D46DA
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753449092; cv=none; b=UYuo1DfOSGHrukculbZBtR5o8NPOwJIJXoLOKtZJ7XJgPbIDuvMHLSS5h+MDz7qfP8ybmjMJr50KghV7OK7YjMM7GbpGiQKQ9qJlmPCjnpEiGB9voLAzHKceKRCcVbAqUVGNHyXEchQaVtXdBBBAbh96bzaiGePAS+lWDuqv/vQ=
+	t=1753449126; cv=none; b=ufqZQp/yt9Zu8GbEExbaiRiEY+aL5lJXpQgOXa/hMhLEHD30dAIHD0p0FMGZwKAFwVMnz8ICydZUeKSnZYIK/CXDzzCZgrQ8DmQ22zHDKGMC7J6YTp07P90Of1Ezi5VyAHOnAqk5AuGhczVfCfRrZmJWfLHfywe77Tn5kM0XriI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753449092; c=relaxed/simple;
-	bh=8PG3rJqOB7M2ctZ5G9EPBl3zEzvXYL/E/Dg5m10Sf9A=;
+	s=arc-20240116; t=1753449126; c=relaxed/simple;
+	bh=4eae3oNI/1QzpMOYJGbwbybwLjRh7YnkKjFeCkHKrGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b940gAGJA/z+Qvr+bOG9Lp9rtsW2wNyZkQt55XX7b4i8ltqtMGl1t5+wYYOMp+Idl/MGYKGgG4x01MrrC8kcehoL3i8mKY7n+koGfJXjfOM2H7ILglFlu8vS6SDh3FR8E08JHWnZHPx0Cupdew2jMEbE13Qfqu6bau5YQgDJpDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AFA6176C;
-	Fri, 25 Jul 2025 06:11:23 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2701C3F66E;
-	Fri, 25 Jul 2025 06:11:27 -0700 (PDT)
-Date: Fri, 25 Jul 2025 14:11:24 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Lifeng Zheng <zhenglifeng1@huawei.com>
-Cc: <catalin.marinas@arm.com>, <will@kernel.org>, <beata.michalska@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <viresh.kumar@linaro.org>,
-	<vincent.guittot@linaro.org>, <yangyicong@hisilicon.com>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
-	<yubowen8@huawei.com>, <linhongye@h-partners.com>
-Subject: Re: [PATCH v2] arm64: topology: Setup AMU FIE for online CPUs only
-Message-ID: <20250725-courageous-myrtle-manatee-b113b5@sudeepholla>
-References: <20250725102813.1404322-1-zhenglifeng1@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWQSUGEhctb4mVX3JIOwWH9h1+FceDn29eGtQZ1q/qC3lshQLGvWZ1wMNlYPadfq8TuOM/WYwvaQhT0H7Itj5V6RLMu2MguTb4bqLx+lBXq6H3lBXZEaw/ewqSgLmbwTB5yaF1MxBGiAiwla39zQ7fo/lC++9QdWSumf+p3TxTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g/VOgu8S; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753449122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QE5pNevTgSrBNAfqe5rNVIW9hc1HtsvMNrpjAUoQRU0=;
+	b=g/VOgu8SKOvhS9FLBowRssNRWF3eQy9+hnXRndKKCqPqhhUgmX4r1+h1yqrMusw/t/s9uG
+	o9b8O3tsiQbxqLH/Go/E9EjvKF1E68dhoY/If8c63yYM8rhGhUZXqTbZafEDCBHMP0zkLU
+	tAnjTzn/8fS9817WuYiewVFN98X75No=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-114-9vDTXJJTO3O4EbYUASAHsw-1; Fri, 25 Jul 2025 09:12:00 -0400
+X-MC-Unique: 9vDTXJJTO3O4EbYUASAHsw-1
+X-Mimecast-MFC-AGG-ID: 9vDTXJJTO3O4EbYUASAHsw_1753449120
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4563f15f226so5800535e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:12:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753449119; x=1754053919;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QE5pNevTgSrBNAfqe5rNVIW9hc1HtsvMNrpjAUoQRU0=;
+        b=P2RQeYQ0dbxcSC7aO2Z6hWOiTWO2jvStVKNh++PHzsuSt9bVkuqwxDDe1fK8CwqlpO
+         LJJJZTuvgaO48qvOYjfh3haMF5ZcdnpJUpmu/M5JR+DTSSkvG1iYKVNNTmVy9FfUA1SI
+         pLvU89emXeCOX3II1hr0sNT3TmT5KDRqHo32TaThPu7dwRN//zQ25zc3OJsW1E8C0HR4
+         29zXRwtB/ksMbLXxoAl1o6oqUET6NuSd7nSGtnPGVw+6mcoL6+PiBVcoIyL3ucSgxrRu
+         eaogEVDx96nkZX1f4JrHT4eOjeLHLpMUJxnC/IxGZulZvqaygVdTR7q4qwOJXcvCVPeg
+         8wmg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5QJcu7L5OzIwyWaaLsJNWJSfYpscoY8L/KF9nMRqLsBc1LGtwxHBLKFvubkSr4TeuJv09+L5HtzH18YI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4H3FWnQBA9D/5oa6psYzsMgwrecv26oifnI3TiYhAq2Xc+Tdb
+	bP0mPhWkZvBhgiC2ab52jAUhCSN/3bCwaObeT3+4tqYiU8oV+HYHnEhdG0US7xAm21zd2z8qBL9
+	FJXgn2L3pwnsfGmRKihQ21LewjloWCGackB91IfKNM6i7gtsib6Gh46plKjLPzxhnvg==
+X-Gm-Gg: ASbGncuohYD6AvZuLqgjtXLp1efQbBQK68LJZ5HKJiJ3QcV1Uhbezy1Yz3u300ulWse
+	nPI862PkXim6LuiBShZ9LhOYkmNIFLEk+RROE0Tej53k4UDbmXF4C5KDdSwoWyB+LWLEy2E9j+4
+	Mwup9YvmF79AdHPKj8nXqKvc3wnczsITk85SiNuJtEQJbO7L3/HnJNas2ojRXViY3gUh1QLVGVF
+	ynTsednLf+LfOr4Hvb9i4Ew/BDWvbAyvLB3PpOjlOMRFa5sgri8ff8wpiZQdb3w4gQYOTHYvcJo
+	clevut6h+xEMa6FMpXo5XrfqiFp61HDlVg==
+X-Received: by 2002:a05:600c:3acf:b0:456:f85:469b with SMTP id 5b1f17b1804b1-4587655600fmr18480865e9.25.1753449119515;
+        Fri, 25 Jul 2025 06:11:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTr7oYcrZTiXGPdV3WbWEeF3Uca/G8/N4QJ8yjiu46Cu237Z8e7cthr/VFQgMfq45FcU7ajQ==
+X-Received: by 2002:a05:600c:3acf:b0:456:f85:469b with SMTP id 5b1f17b1804b1-4587655600fmr18480595e9.25.1753449119098;
+        Fri, 25 Jul 2025 06:11:59 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:153d:b500:b346:7481:16b2:6b23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705678c1sm53152895e9.25.2025.07.25.06.11.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 06:11:58 -0700 (PDT)
+Date: Fri, 25 Jul 2025 09:11:56 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"kernelci . org bot" <bot@kernelci.org>,
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: Re: [PATCH] virtio_ring: fix uninitialized used value
+Message-ID: <20250725091129-mutt-send-email-mst@kernel.org>
+References: <20250725083635.73355-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250725102813.1404322-1-zhenglifeng1@huawei.com>
+In-Reply-To: <20250725083635.73355-1-jasowang@redhat.com>
 
-On Fri, Jul 25, 2025 at 06:28:13PM +0800, Lifeng Zheng wrote:
-> When boot with maxcpu=1 restrict, and LPI(Low Power Idle States) is on,
-> only CPU0 will go online. The support AMU flag of CPU0 will be set but the
-> flags of other CPUs will not. This will cause AMU FIE set up fail for CPU0
-> when it shares a cpufreq policy with other CPU(s). After that, when other
-> CPUs are finally online and the support AMU flags of them are set, they'll
-> never have a chance to set up AMU FIE, even though they're eligible.
+On Fri, Jul 25, 2025 at 04:36:35PM +0800, Jason Wang wrote:
+> Buildbot reports uninitialized used:
 > 
-> To solve this problem, the process of setting up AMU FIE needs to be
-> modified as follows:
+> drivers/virtio/virtio_ring.c:2113:40: error: variable 'id' is
+> uninitialized when used here [-Werror,-Wuninitialized]
+>  2113 |                 BAD_RING(vq, "id %u out of range\n", id);
+>       |                                                      ^~
+> drivers/virtio/virtio_ring.c:2077:19: note: initialize the variable
+> 'id' to silence this warning
+>  2077 |         u16 last_used, id, last_used_idx;
+>       |                          ^
+>       |                           = 0
+> 1 error generated.
 > 
-> 1. Set up AMU FIE only for the online CPUs.
+> Fixing this by use last_used instead and drop the complete unused
+> variable id.
 > 
-> 2. Try to set up AMU FIE each time a CPU goes online and do the
-> freq_counters_valid() check for all the online CPUs share the same policy.
-> If this check fails, clear scale freq source of these CPUs, in case they
-> use different source of the freq scale.
-> 
-> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Reported-by: kernelci.org bot <bot@kernelci.org>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+I squashed but I think you should respin.
+also noticed a couple of minor issues.
+
 > ---
-
-I have no idea what changed from v1->v2 and no link to v1 for me to
-refer to it and check the delta 🙁.
-
->  arch/arm64/kernel/topology.c | 49 ++++++++++++++++++++++++++++++++----
->  1 file changed, 44 insertions(+), 5 deletions(-)
+>  drivers/virtio/virtio_ring.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 5d07ee85bdae..d578c496d457 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -357,12 +357,15 @@ static void amu_fie_setup(const struct cpumask *cpus)
->  
->  	/* We are already set since the last insmod of cpufreq driver */
->  	if (cpumask_available(amu_fie_cpus) &&
-> -	    unlikely(cpumask_subset(cpus, amu_fie_cpus)))
-> +	    cpumask_subset(cpus, amu_fie_cpus))
->  		return;
->  
-> -	for_each_cpu(cpu, cpus)
-> -		if (!freq_counters_valid(cpu))
-> +	for_each_cpu(cpu, cpus) {
-> +		if (!freq_counters_valid(cpu)) {
-> +			topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_ARCH, cpus);
->  			return;
-> +		}
-> +	}
->  
->  	if (!cpumask_available(amu_fie_cpus) &&
->  	    !zalloc_cpumask_var(&amu_fie_cpus, GFP_KERNEL)) {
-> @@ -385,7 +388,7 @@ static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
->  	struct cpufreq_policy *policy = data;
->  
->  	if (val == CPUFREQ_CREATE_POLICY)
-> -		amu_fie_setup(policy->related_cpus);
-> +		amu_fie_setup(policy->cpus);
->  
->  	/*
->  	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
-> @@ -404,10 +407,46 @@ static struct notifier_block init_amu_fie_notifier = {
->  	.notifier_call = init_amu_fie_callback,
->  };
->  
-> +static int cpuhp_topology_online(unsigned int cpu)
-> +{
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
-> +	cpumask_var_t cpus_to_set;
-> +
-> +	if (!zalloc_cpumask_var(&cpus_to_set, GFP_KERNEL))
-> +		return -ENOMEM;
-> +
-> +	cpumask_copy(cpus_to_set, cpumask_of(cpu));
-> +
-> +	policy = cpufreq_cpu_get(cpu);
-> +	if (policy) {
-> +		cpumask_or(cpus_to_set, cpus_to_set, policy->cpus);
-> +		amu_fie_setup(cpus_to_set);
-> +	}
-> +
-> +	free_cpumask_var(cpus_to_set);
-
-What am I missing here as I don't see the need to for this local
-copy  `cpus_to_set`.
-
-Why can't you just call
-	policy = cpufreq_cpu_get(cpu);
-	if (policy)
-		amu_fie_setup(cpus_to_set);
-
-
-> +	return 0;
-> +}
-> +
->  static int __init init_amu_fie(void)
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 8f9413acd4e2..7b960ce9a034 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -2074,7 +2074,7 @@ static void *virtqueue_get_buf_ctx_packed_in_order(struct vring_virtqueue *vq,
+>  						   void **ctx)
 >  {
-> -	return cpufreq_register_notifier(&init_amu_fie_notifier,
-> +	int ret;
-> +
-> +	ret = cpufreq_register_notifier(&init_amu_fie_notifier,
->  					CPUFREQ_POLICY_NOTIFIER);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
-> +					"arm64/topology:online",
-> +					cpuhp_topology_online,
-> +					NULL);
-> +	if (ret < 0) {
-> +		cpufreq_unregister_notifier(&init_amu_fie_notifier,
-> +					    CPUFREQ_POLICY_NOTIFIER);
-> +		return ret;
-> +	}
-> +
+>  	unsigned int num = vq->packed.vring.num;
+> -	u16 last_used, id, last_used_idx;
+> +	u16 last_used, last_used_idx;
+>  	bool used_wrap_counter;
+>  	void *ret;
+>  
+> @@ -2110,11 +2110,11 @@ static void *virtqueue_get_buf_ctx_packed_in_order(struct vring_virtqueue *vq,
+>  		*len = vq->packed.desc_state[last_used].total_len;
+>  
+>  	if (unlikely(last_used >= num)) {
+> -		BAD_RING(vq, "id %u out of range\n", id);
+> +		BAD_RING(vq, "id %u out of range\n", last_used);
+>  		return NULL;
+>  	}
+>  	if (unlikely(!vq->packed.desc_state[last_used].data)) {
+> -		BAD_RING(vq, "id %u is not a head!\n", id);
+> +		BAD_RING(vq, "id %u is not a head!\n", last_used);
+>  		return NULL;
+>  	}
+>  
+> -- 
+> 2.39.5
 
-Why can't you just set up cpuhp_* first and then cpufreq notifier to avoid
-this unregistering ?
-
--- 
-Regards,
-Sudeep
 
