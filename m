@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-746347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD10B125B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:38:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D65DB125AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BAB97BDF5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:35:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 402AB7BE0AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F97F268FF1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63912269817;
 	Fri, 25 Jul 2025 20:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlWLQNrm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lzc9WVq+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1165C25EFBC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EA125F96D
 	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753475661; cv=none; b=XgfndTpRk2BK1p7K1qKetkPHg6Yw6dBLEK5x/KmAL1T+CLo+sGh1s0VJ1HB8QT2/dH5G9Q1gP6igCEimfQNvBih100xUGwyWO3xBRrgdmqb/xLHiEGkw9RJDt+jF9r1KYe/o5RAk5/MCgCuH1djBXU/0Ddoj2LWScuLFt6HKl6Y=
+	t=1753475661; cv=none; b=QT/+vFHbuLbamFkp6BDp7PUxassv1LUPbdi33Ay3cSy/QAfuuujll+Gv5LiP7vwpGXh2h+YfWGJLlzMhHAihmWIvjurTjRLXisIvfcHPxOd4fL/sQNbRH5K3DwDmmgWL+SITcZc1/rTTQt2FAr9aDYewd/shv+5Sn8gSSFz59Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753475661; c=relaxed/simple;
-	bh=HmPwwr0STQFM6zKduNr617yvWGb7nAv+yoQY4KfCDz4=;
+	bh=5npNIdNOxU6nl+F6cCfxhjYp6GZooHL2IR9nKtVZYgo=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=CtaqqMK3GYXXKT+kCaytcIG2+byzV95GwVPtNMbPfiKvIvLBPLJJ2hDW2L1l7dAQCADE9/zXLN44G5MM3Zm1xhFL1kXhG3+xCLc+ixS7o+7pvB1F4MeTaoQ0lsMO21Hcy2zdL2Dojny2QTjJ9f3T5mskNNGkaF4aJQyvMuC23NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlWLQNrm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5D8C4CEE7;
-	Fri, 25 Jul 2025 20:34:20 +0000 (UTC)
+	 Content-Type; b=i3Db7NhNhFUPC3VHn9cPK8UMZ4g7kac2oiJptZKOZtLbBHenym02E0Uv3wjaoKHD0V6HZjpuI/21Qz8jenUo0Ns30Bm48vI32aDSFPb9Mpb+ddrVOZykuR0lWmSCdZMx7zoIFpNCYeb+OMs9UfP8ekbwFExrAzsa9X1nvwSO3r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lzc9WVq+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 223C3C4CEF4;
+	Fri, 25 Jul 2025 20:34:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1753475661;
-	bh=HmPwwr0STQFM6zKduNr617yvWGb7nAv+yoQY4KfCDz4=;
+	bh=5npNIdNOxU6nl+F6cCfxhjYp6GZooHL2IR9nKtVZYgo=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=nlWLQNrmlt5OxTVnpiDZ5UZ7q3wCLX696E4r3A91FM2Z87jLJa1TUO9AL4VZa060Y
-	 Bq06jUuZSrB1mE2f66YjYZc/+vrp4leT5rRg/Jq8u6/aqE3ExCdFBIRUoAR5schcrS
-	 YmBRaYTGJ57V62ePpmziIV1a6j4ApaG0pGhW+SYiiyzkCAnFRqZgpod+6zsGvSS0nI
-	 m2y1T/6BpMfIcNNwrOh7ULHsh5RnIzjEJwcG+e22gnLNzOdP7KpX3Pd+VMobaYZJrq
-	 II5+elRwyBOr0rhhU+n6VHEiGn2g4RO0r9D/AVmzGLZnDBPEfb4ixtYgFUNKSNd+Ee
-	 XRQiGUlJQqf7g==
+	b=Lzc9WVq+3C3x0hB1WdjsVutatSsD/e1wJ/LbbSthO/4DehG/W//umUHjYefaiuT2l
+	 C8l/v39eHeIPpOXVOVo5v7Wysx4L6ciZo+UCID6qlKVnCVEwyX8Ye8iih7TTcrJeLj
+	 IwTGPyPrPlwIGycxgdug5riadutLfMeXZUegtBk0BVa5k/AqPipygdrCOUOStMQMZz
+	 mSAFaE+RxJSW8iz40ASHiadC6No5e7sFfpB/vQIUN02zlvYdDbwTR72N9S1JT3qRHo
+	 t43G9u37DL4+kRSaHh+2ExMXwRTZUjNE6xyWRI3LS1jFgnNnG6Mqi3JVcPoMUQp816
+	 LkL/5JPcoutuA==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1ufP7b-00000001Qkq-0Rue;
+	id 1ufP7b-00000001QlM-1ANg;
 	Fri, 25 Jul 2025 16:34:27 -0400
-Message-ID: <20250725203426.960255412@kernel.org>
+Message-ID: <20250725203427.130326086@kernel.org>
 User-Agent: quilt/0.68
-Date: Fri, 25 Jul 2025 16:34:15 -0400
+Date: Fri, 25 Jul 2025 16:34:16 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Tomas Glozar <tglozar@redhat.com>,
@@ -56,7 +56,7 @@ Cc: Tomas Glozar <tglozar@redhat.com>,
  Clark Williams <williams@redhat.com>,
  Nam Cao <namcao@linutronix.de>,
  Gabriele Monaco <gmonaco@redhat.com>
-Subject: [for-next][PATCH 18/25] tools/dot2c: Fix generated files going over 100 column limit
+Subject: [for-next][PATCH 19/25] verification/rvgen: Organise Kconfig entries for nested monitors
 References: <20250725203357.087558746@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,97 +68,138 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Gabriele Monaco <gmonaco@redhat.com>
 
-The dot2c.py script generates all states in a single line. This breaks the
-100 column limit when the state machines are non-trivial.
+The current behaviour of rvgen when running with the -a option is to
+append the necessary lines at the end of the configuration for Kconfig,
+Makefile and tracepoints.
+This is not always the desired behaviour in case of nested monitors:
+while tracepoints are not affected by nesting and the Makefile's only
+requirement is that the parent monitor is built before its children, in
+the Kconfig it is better to have children defined right after their
+parent, otherwise the result has wrong indentation:
 
-Change dot2c.py to generate the states in separate lines in case the
-generated line is going to be too long.
+[*]   foo_parent monitor
+[*]     foo_child1 monitor
+[*]     foo_child2 monitor
+[*]   bar_parent monitor
+[*]     bar_child1 monitor
+[*]     bar_child2 monitor
+[*]   foo_child3 monitor
+[*]   foo_child4 monitor
 
-Also adapt existing monitors with line length over the limit.
+Adapt rvgen to look for a different marker for nested monitors in the
+Kconfig file and append the line right after the last sibling, instead
+of the last monitor.
+Also add the marker when creating a new parent monitor.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Tomas Glozar <tglozar@redhat.com>
 Cc: Juri Lelli <jlelli@redhat.com>
 Cc: Clark Williams <williams@redhat.com>
 Cc: John Kacur <jkacur@redhat.com>
-Link: https://lore.kernel.org/20250723161240.194860-4-gmonaco@redhat.com
-Suggested-by: Nam Cao <namcao@linutronix.de>
+Link: https://lore.kernel.org/20250723161240.194860-5-gmonaco@redhat.com
+Reviewed-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/rv/monitors/snep/snep.h    | 14 ++++++++++++--
- tools/verification/rvgen/rvgen/dot2c.py | 20 +++++++++++---------
- 2 files changed, 23 insertions(+), 11 deletions(-)
+ kernel/trace/rv/Kconfig                     |  5 +++++
+ tools/verification/rvgen/rvgen/container.py | 10 ++++++++++
+ tools/verification/rvgen/rvgen/generator.py | 16 +++++++++++-----
+ 3 files changed, 26 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/trace/rv/monitors/snep/snep.h b/kernel/trace/rv/monitors/snep/snep.h
-index 6d16b9ad931e..4cd9abb77b7b 100644
---- a/kernel/trace/rv/monitors/snep/snep.h
-+++ b/kernel/trace/rv/monitors/snep/snep.h
-@@ -41,8 +41,18 @@ static const struct automaton_snep automaton_snep = {
- 		"schedule_exit"
- 	},
- 	.function = {
--		{ non_scheduling_context_snep, non_scheduling_context_snep, scheduling_contex_snep,               INVALID_STATE },
--		{               INVALID_STATE,               INVALID_STATE,          INVALID_STATE, non_scheduling_context_snep },
-+		{
-+			non_scheduling_context_snep,
-+			non_scheduling_context_snep,
-+			scheduling_contex_snep,
-+			INVALID_STATE
-+		},
-+		{
-+			INVALID_STATE,
-+			INVALID_STATE,
-+			INVALID_STATE,
-+			non_scheduling_context_snep
-+		},
- 	},
- 	.initial_state = non_scheduling_context_snep,
- 	.final_states = { 1, 0 },
-diff --git a/tools/verification/rvgen/rvgen/dot2c.py b/tools/verification/rvgen/rvgen/dot2c.py
-index 6009caf568d9..b9b6f14cc536 100644
---- a/tools/verification/rvgen/rvgen/dot2c.py
-+++ b/tools/verification/rvgen/rvgen/dot2c.py
-@@ -152,28 +152,30 @@ class Dot2c(Automata):
-         max_state_name = max(self.states, key = len).__len__()
-         return max(max_state_name, self.invalid_state_str.__len__())
+diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
+index c11bf7e61ebf..26017378f79b 100644
+--- a/kernel/trace/rv/Kconfig
++++ b/kernel/trace/rv/Kconfig
+@@ -43,6 +43,7 @@ config RV_PER_TASK_MONITORS
  
--    def __get_state_string_length(self):
--        maxlen = self.__get_max_strlen_of_states() + self.enum_suffix.__len__()
--        return "%" + str(maxlen) + "s"
--
-     def get_aut_init_function(self):
-         nr_states = self.states.__len__()
-         nr_events = self.events.__len__()
-         buff = []
+ source "kernel/trace/rv/monitors/wip/Kconfig"
+ source "kernel/trace/rv/monitors/wwnr/Kconfig"
++
+ source "kernel/trace/rv/monitors/sched/Kconfig"
+ source "kernel/trace/rv/monitors/tss/Kconfig"
+ source "kernel/trace/rv/monitors/sco/Kconfig"
+@@ -50,9 +51,13 @@ source "kernel/trace/rv/monitors/snroc/Kconfig"
+ source "kernel/trace/rv/monitors/scpd/Kconfig"
+ source "kernel/trace/rv/monitors/snep/Kconfig"
+ source "kernel/trace/rv/monitors/sncid/Kconfig"
++# Add new sched monitors here
++
+ source "kernel/trace/rv/monitors/rtapp/Kconfig"
+ source "kernel/trace/rv/monitors/pagefault/Kconfig"
+ source "kernel/trace/rv/monitors/sleep/Kconfig"
++# Add new rtapp monitors here
++
+ # Add new monitors here
  
--        strformat = self.__get_state_string_length()
--
-+        maxlen = self.__get_max_strlen_of_states() + len(self.enum_suffix)
-+        tab_braces = 2 * 8 + 2 + 1  # "\t\t{ " ... "}"
-+        comma_space = 2  # ", " count last comma here
-+        linetoolong = tab_braces + (maxlen + comma_space) * nr_events > self.line_length
-         for x in range(nr_states):
--            line = "\t\t{ "
-+            line = "\t\t{\n" if linetoolong else "\t\t{ "
-             for y in range(nr_events):
-                 next_state = self.function[x][y]
-                 if next_state != self.invalid_state_str:
-                     next_state = self.function[x][y] + self.enum_suffix
+ config RV_REACTORS
+diff --git a/tools/verification/rvgen/rvgen/container.py b/tools/verification/rvgen/rvgen/container.py
+index 47d8ab2ad3ec..51f188530b4d 100644
+--- a/tools/verification/rvgen/rvgen/container.py
++++ b/tools/verification/rvgen/rvgen/container.py
+@@ -20,3 +20,13 @@ class Container(generator.RVGenerator):
+         main_h = self.main_h
+         main_h = main_h.replace("%%MODEL_NAME%%", self.name)
+         return main_h
++
++    def fill_kconfig_tooltip(self):
++        """Override to produce a marker for this container in the Kconfig"""
++        container_marker = self._kconfig_marker(self.name) + "\n"
++        result = super().fill_kconfig_tooltip()
++        if self.auto_patch:
++            self._patch_file("Kconfig",
++                             self._kconfig_marker(), container_marker)
++            return result
++        return result + container_marker
+diff --git a/tools/verification/rvgen/rvgen/generator.py b/tools/verification/rvgen/rvgen/generator.py
+index 19d0078a3803..3441385c1177 100644
+--- a/tools/verification/rvgen/rvgen/generator.py
++++ b/tools/verification/rvgen/rvgen/generator.py
+@@ -137,7 +137,8 @@ class RVGenerator:
+         kconfig = kconfig.replace("%%MONITOR_DEPS%%", monitor_deps)
+         return kconfig
  
-+                if linetoolong:
-+                    line += "\t\t\t%s" % next_state
-+                else:
-+                    line += "%*s" % (maxlen, next_state)
-                 if y != nr_events-1:
--                    line = line + strformat % next_state + ", "
-+                    line += ",\n" if linetoolong else ", "
-                 else:
--                    line = line + strformat % next_state + " },"
-+                    line += "\n\t\t}," if linetoolong else " },"
-             buff.append(line)
+-    def __patch_file(self, file, marker, line):
++    def _patch_file(self, file, marker, line):
++        assert self.auto_patch
+         file_to_patch = os.path.join(self.rv_dir, file)
+         content = self._read_file(file_to_patch)
+         content = content.replace(marker, line + "\n" + marker)
+@@ -146,7 +147,7 @@ class RVGenerator:
+     def fill_tracepoint_tooltip(self):
+         monitor_class_type = self.fill_monitor_class_type()
+         if self.auto_patch:
+-            self.__patch_file("rv_trace.h",
++            self._patch_file("rv_trace.h",
+                             "// Add new monitors based on CONFIG_%s here" % monitor_class_type,
+                             "#include <monitors/%s/%s_trace.h>" % (self.name, self.name))
+             return "  - Patching %s/rv_trace.h, double check the result" % self.rv_dir
+@@ -156,10 +157,15 @@ Add this line where other tracepoints are included and %s is defined:
+ #include <monitors/%s/%s_trace.h>
+ """ % (self.rv_dir, monitor_class_type, self.name, self.name)
  
-         return self.__buff_to_string(buff)
++    def _kconfig_marker(self, container=None) -> str:
++        return "# Add new %smonitors here" % (container + " "
++                                              if container else "")
++
+     def fill_kconfig_tooltip(self):
+         if self.auto_patch:
+-            self.__patch_file("Kconfig",
+-                            "# Add new monitors here",
++            # monitors with a container should stay together in the Kconfig
++            self._patch_file("Kconfig",
++                             self._kconfig_marker(self.parent),
+                             "source \"kernel/trace/rv/monitors/%s/Kconfig\"" % (self.name))
+             return "  - Patching %s/Kconfig, double check the result" % self.rv_dir
+ 
+@@ -172,7 +178,7 @@ source \"kernel/trace/rv/monitors/%s/Kconfig\"
+         name = self.name
+         name_up = name.upper()
+         if self.auto_patch:
+-            self.__patch_file("Makefile",
++            self._patch_file("Makefile",
+                             "# Add new monitors here",
+                             "obj-$(CONFIG_RV_MON_%s) += monitors/%s/%s.o" % (name_up, name, name))
+             return "  - Patching %s/Makefile, double check the result" % self.rv_dir
 -- 
 2.47.2
 
