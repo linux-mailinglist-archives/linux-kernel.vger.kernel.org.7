@@ -1,173 +1,219 @@
-Return-Path: <linux-kernel+bounces-745491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D794AB11AB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:17:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E564BB11AB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF31E7A867A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:16:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80AC81CC0D0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1702C325B;
-	Fri, 25 Jul 2025 09:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E489B2D0C75;
+	Fri, 25 Jul 2025 09:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X5VQftU6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="vEf5CKA9"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2089.outbound.protection.outlook.com [40.107.220.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740341519BC
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753435064; cv=none; b=PkE3Sczzu4RZ+eatB/IJVwDiunDrieKHe+j+UupE6JCk5Qp6/bHGujlUVc+KCYcm3QlJgAdV5k3KIWq4MDc5T6OPi+BOrjfqoexDdvDpgouR3T6crJ4y5XM3dvZBXnHGRBMwEc2SsWcDy6kdL2ktBwo/gpwmbseQbuiR2aPBNk0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753435064; c=relaxed/simple;
-	bh=bOBAINPbtYNFViCYV6WDeBjBQ5bXvQbgtV/iznpIBlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QA6GPOS2RBV9pTjYYrc0TefoyV/irFkQWtfKt2XPrVbcemnq82OEYgNZ7JnNxPO16a1wNdV22F2hfl90UEAYHP9q9f0VrNFS24XIBQQcs3M0+PaCyw2cxptKQ3o0MQCp9c6CBMp3Ibl3Kl5oadewfAHi2mO+FA61rmDdsMFfMYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X5VQftU6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P9DaYC015901
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:17:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2KMk/UMFV9pj90RnZdgAu+v7lUkWr8SQyyGYLajB+lk=; b=X5VQftU6nL/LgeEB
-	oA3ZHJiilg2Cr0XlOhY7uQgCURzZfpw276dpG1LCUQbL7dpSn4v1T063GO7U9M+p
-	UfUd4ZI2bsEPrdRn/DdPHScvSoF+5UFzuVr/pyXh6DmO5ww4qvgV+u3KlUQYE7BO
-	bQxYlUoa2vizqLIxHqV4dbsS+RnXmiimGOsi74QCy2LKbZ9baAkfGz9sjXy7EN0J
-	ICpY1EVYyRx046ZbwH+q6eLxFv5fonAZxqRauIX/nfjGhP/d5lZIsdcgbLZ3IXmq
-	4M4Wa/MQ+Y12mOzSx+h088zG9yB6sRdADoZHWkLO7N2GvlzH4NbGRKMWEIZ0X0XM
-	HfFswg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w501h0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:17:42 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ab716c33cdso7378721cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:17:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753435046; x=1754039846;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2KMk/UMFV9pj90RnZdgAu+v7lUkWr8SQyyGYLajB+lk=;
-        b=kRcoTplb0LP+wX48Mk/Yvlbj/FFFpW1EbVMXfZiDqD48swBqwlfAN6Pm1NtWGanYgF
-         Gq0NHykMWIaOVxICI+dpZFvKqM48ewuupYgoe6/L4S5wuGOQzPqsysEceT0BS1q/QEoa
-         gmjea8Gq1reQNdzSo+R0clrtBNeKJnEjqrQTGoJbGtjiFyRMRgzdIfB6a1x8+V9fLCXj
-         Db27gOOppmFvL7rIdla/42F2v3mbi57590epnyA4UhmuzmzuquYrnydQMjM2S0w1YqXt
-         ToCkrp45mfoDK6CyjxhVBByHcYtUS7N+kR8I4BrUECJFbLFuBPCtLoNx8lUSfQmuAaRf
-         9dYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXON7e7qXP5U6ze4I2zPfs7HSLtgw7gBXAeFKACzmOFP2pEzRGnqoEKKdK0bZ9JFlHLBqqqBg8Ps5BZq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFkCtjYYQhZDJyOOdiRdSlZ/XVj+h1uadgKWoWQAs5g+rivcU8
-	Gm6Q/6VPnswhbTSD0H1avX9DVAvbEEh5s5JHsTJonLTDtV26V/rQMmxJopcjM+kgFCfOt2KLlMi
-	qNq27Ufwn3hvLXtFHPGl2KPDpbl7SR8aYIWh4bQtnWcnY0O/215ZxupJgDqX+zNi2X2I=
-X-Gm-Gg: ASbGnctBnZnrDrAvHglqa1KlJQYv3b3R05P3ERv9eaj62hen3jIswtCxm5k5uIDecpo
-	+zaFxdudb0EKZj4z2WeNJ+O8NZpzSskZ78PzyvgUlkeql5EosifBEOtmpWPBhK0TZ6NJ60ge56F
-	gsUZgfzvqSfhXT8JW6c3+7aChLyaeVxgI1T+pijQLoMsROtIYnGZMLhvjF8Eiq+JEr+LDZJmraq
-	HQBpGor0uUsXsq/Ef30Q5b85q2hILIF1PthkuXo2xr3en/z2cixbNrPczd1hzZpzLkZUW+bUxwg
-	I+nCoSszHfz0AYXjyTcMRbF8e5EaS4vz50Pg30cwJoRrsyPRPYWS23yVWnjvVA6Fuv85q9ZwBw+
-	QceRLAbV0xUekfjIi/Q==
-X-Received: by 2002:ac8:5e0a:0:b0:4ab:7daa:d84d with SMTP id d75a77b69052e-4ae8f05f1d6mr5130391cf.14.1753435046012;
-        Fri, 25 Jul 2025 02:17:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHv5/tQIemrC+cdKCLUc8nfT6WzE6Q7lvlNrkKLdqn3e6ZiyHMyr+3x/nQjJZgEZbx5Og6OjQ==
-X-Received: by 2002:ac8:5e0a:0:b0:4ab:7daa:d84d with SMTP id d75a77b69052e-4ae8f05f1d6mr5130201cf.14.1753435045492;
-        Fri, 25 Jul 2025 02:17:25 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47ff42c2fsm234902166b.131.2025.07.25.02.17.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 02:17:24 -0700 (PDT)
-Message-ID: <452c6a6a-3d65-4712-a105-386d8540f2ff@oss.qualcomm.com>
-Date: Fri, 25 Jul 2025 11:17:21 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4C92C375F;
+	Fri, 25 Jul 2025 09:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753435097; cv=fail; b=saix+fSK70sa5gHcCX2dhXlu1Yhii2gDZe/PmET0xqxM23pWm3tFzz25n066IEhJ0ZrPEOHwenj+WgESUL2to4AvBapD/VU2DuJxlkdlso8EVXB0/yzwU6/5euCMyX1l7gdFtkWB29peiMjL0LJ1oQvDpXVG2gjAjH87su4EzhU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753435097; c=relaxed/simple;
+	bh=ZZpy14l+z6gRxP9bqgid4rgQaqdEYrvjQ7ARveyxyzw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=O6BPmSot4V/gbv0++dyk4hgO267Wlr83+wkQ8NVciNSZEMcMtNubTBhp2DFzcKhnlr57yaLFpMm1Y/aUX/ZPU6NV/QVf7YVFWou5w1cBfH2SxoSczOylrI5cy3sFRoGMFxwf7Y5IwakN75TIr5a8zhWIlg2x2+/26DELLq5W+6Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=vEf5CKA9; arc=fail smtp.client-ip=40.107.220.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BpR7IQp9w/0Yb+HLU0O50fmwGZ01+bjRTauWJdYGdXpLw2kmjVjsL99RzeQB8llCjSd7U+vQSWC7Y9w2nb9QSLia+I92yHzGL7uGeF+wWD7Rnw+57dSAwfuDKJdfBAEWd/RkbmvWy+0zPoBctX44NSTLBF5dqq78Nj9ZyT7rZ9l1D4oKSThUcMzaNAuy39LPUs03kflmpxtAS6aBLYpOw0RKnpRRtGZIUuYZf0jcmZOwFnHcmCDEY3rtlT1C6QjlsCB9FZseN35G4b/P8lda9RrpouuNRuWxDYLAcFmgfI6mGijgotvkBKmpQ3+Mk2IsiZ7pwS2D37KazYJheHyZRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pDtuLjL467Rx9/UTD6X8khWbbGNkd0nrmARwnuPajqQ=;
+ b=xYmovTncxhmQ+vhHdrbJjetNdzwhM9iN3OSOdRomrdvI02fL3WVTyZ6PPPgI3uQr4C7qFaEMUG8wYJdZuzwVRcysoazi+1LIyJySSU+8IoeiMtv2xPdW+V+XKUOWcmhiXHnRGYLyus9YRpXwQDLe3321/eDGY5r5hX92u5y0ihxcUG4RhOOswsK8aOX1BlzbJfWEpBK3qG80bX7sKgZzcbYXWdTuW5R7d8VbslqweBE+pY8rvs0isG+F6TMgN1Pl9i683vGbKgoU2wGXsCf8n5u+4wafZaL8b7xYa4EY/wF+a5xF+S9bhMMhIrIXe/566BRogX8upvEaspgiNEwJ5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pDtuLjL467Rx9/UTD6X8khWbbGNkd0nrmARwnuPajqQ=;
+ b=vEf5CKA9cEk2i9wm49Hf+zUA4ZQkMDOZ2NLvLWeY+bgMvc1JBl/GlHYPXcNaZN/3QSUjjLs/hFhJVfu8bRJtk6ZD9pHzzLRmapE0aleMLQZlwNFH+3UM4ELH9FYumY0u0twsjtkMMCk393hthOyLy/l4cfQMvwB0/d4Gsec+cB3ufpnRnyFNhwgEV9ldHNkzvP9s28+X5ga0694xeox0oeEibcQGBIAX6QE2LWEpAWOR/aS46s6EqEFsapC3/QrK1dxYsoktBVHAMFyZ7KgRve7BCMvgwEqGwOdHmpyYXfwMPQYwNyC90w+vAbNhsnOlmrLyJQTSJGYdzm1Ckn+TGA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from DM6PR03MB5371.namprd03.prod.outlook.com (2603:10b6:5:24c::21)
+ by DM4PR03MB6911.namprd03.prod.outlook.com (2603:10b6:8:46::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.24; Fri, 25 Jul
+ 2025 09:18:13 +0000
+Received: from DM6PR03MB5371.namprd03.prod.outlook.com
+ ([fe80::8d3c:c90d:40c:7076]) by DM6PR03MB5371.namprd03.prod.outlook.com
+ ([fe80::8d3c:c90d:40c:7076%3]) with mapi id 15.20.8964.023; Fri, 25 Jul 2025
+ 09:18:12 +0000
+Message-ID: <a71897db-5337-4ee9-a957-3e68dee03afb@altera.com>
+Date: Fri, 25 Jul 2025 14:48:02 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/3] net: stmmac: xgmac: Correct supported speed
+ modes
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Romain Gantois <romain.gantois@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Matthew Gerlach <matthew.gerlach@altera.com>
+References: <20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com>
+ <20250714-xgmac-minor-fixes-v1-2-c34092a88a72@altera.com>
+ <b192c96a-2989-4bdf-ba4f-8b7bcfd09cfa@lunn.ch>
+ <e903cb0f-3970-4ad2-a0a2-ee58551779dc@altera.com>
+ <6fsqayppkyubkucghk5i6m7jjgytajtzm4wxhtdkh7i2v3znk5@vwqbzz5uffyy>
+ <4df7133e-5dcd-4d3d-9a58-d09ad5fd7ec3@altera.com>
+ <tcebsuesjejtk3vmzx77yuo7zil2xciucnnrakubrslwvnndas@utvi4r7ob3xa>
+Content-Language: en-US
+From: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
+In-Reply-To: <tcebsuesjejtk3vmzx77yuo7zil2xciucnnrakubrslwvnndas@utvi4r7ob3xa>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0PR01CA0110.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:11d::7) To DM6PR03MB5371.namprd03.prod.outlook.com
+ (2603:10b6:5:24c::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: qcs9075-evk: Add sound card
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_pkumpatl@quicinc.com,
-        kernel@oss.qualcomm.com
-References: <20250724155632.236675-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250724155632.236675-3-mohammad.rafi.shaik@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250724155632.236675-3-mohammad.rafi.shaik@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: ptiOk87J4sG8yua7Mvp_RnpxtzKwy_-N
-X-Proofpoint-ORIG-GUID: ptiOk87J4sG8yua7Mvp_RnpxtzKwy_-N
-X-Authority-Analysis: v=2.4 cv=bKAWIO+Z c=1 sm=1 tr=0 ts=68834bb6 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=RUmmF2Cuiqa3jFE6LK0A:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA3OCBTYWx0ZWRfXwOkgKJqcoOjN
- Hf3zXerADmmnt6pRsBXvg3sPxp46XiLtJ4H16j7+oXkX6dzMQAb7/fpd0dOLZPhLW/AswkRYC9s
- gtJS0DSu2oOXuhKxNfSed+rNt0be1XW8cn6GkjL+MGg2yLDIeAsy88c+xHlU1q7bwkKhLQ/HQQf
- iBuYdJgp/A+Tqa0Lk0taeIDTeITHOaTHzugDdu2paksJlO3iJ7OMXkuHHoKlgDWCnap8P5o3q8J
- /mtTyPu9J9uIrtA4KQnv7cLuDLpjNEkwc1ZGnCJEieOjv3KcpAVICMBzbnGKI0clzz2SmUeovMo
- 0wgEiwYvScGK/gNNdrxGHEm8jBlUGn0e5wKkz9rY8+HMwnjwA1HwzoybMQ3barcb1/7PR3HUCF3
- f7hUz8xY49NmXtb+K8l6hEGDz30R28CXr0x9/lJYGXyNtIcngUUGvLxxkAxe9Pnmpmz3hSy/
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 spamscore=0 mlxlogscore=999 clxscore=1015
- phishscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507250078
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR03MB5371:EE_|DM4PR03MB6911:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c1e6315-1c00-4753-63ce-08ddcb5c2d8c
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VFRkZEVSUHJIVWtacnh4WStMQnFKWW1FcHE1VGZnNW5NcVBVazhoUzY0SS8z?=
+ =?utf-8?B?cEhNbjUxczZ6c1pRSmRvb2xwdU9DT0djWUM3YUVOK0docSszM3Vjbm52bk43?=
+ =?utf-8?B?c2c1dHBidXZWWFh5Y3RwUGhGQlBoSy9YRzFRTFgyQTZuWU9wOXhsb1d2N1BH?=
+ =?utf-8?B?V2xONjFxdWlOSXhEYkhweFRjV1h3SGZwWFZRQzZMbDU0UGU5cU5HcWpQYzUv?=
+ =?utf-8?B?aHJlNHl2ajdYZTduTGFsUnlZdzlpWUYrTmxzb2dqNFJGNW1YTVN4S2FxRlh6?=
+ =?utf-8?B?Z3VleU9rQ0tNeHQ0QlZCMFFVVllSdkovalV3aUpEbzBmdWlUTDNzbFdRUXFV?=
+ =?utf-8?B?OUxQK05pa3VKU2E2Qnp2RFExbjh3NkxlOXZsM3UxcU51eUhwTCtNbHVMVmtI?=
+ =?utf-8?B?NFh5S0VzaDhNUTNaL3FMaStienQwNHQzWjRtRGZoMDB2eE5xVnU4NERtbzNs?=
+ =?utf-8?B?OVNmcDBMUXpYWVREcjdWZXh0amZpd2k0SFFzcDdlNnl3QUxDNXVaandFazg3?=
+ =?utf-8?B?cm5tWHpNZnNtRmNrQlZtbEx1VDJxNXdBWXhNSlUrRjV2SlcwTVVEMzVCYWox?=
+ =?utf-8?B?RXBrTEthMWRwV2ViZno2QWxFUnNUakdwMktVVkgwK0FNNEM5Mk9Ga0drZXBz?=
+ =?utf-8?B?bVZQRlRGR3NsWHA1K1pyM1hnSUx4Sy9meXVOYXJQZmNsT2sxS3FXV3hiclY5?=
+ =?utf-8?B?NEZ5cUtNUHk5cmIvVWhnTjkvODNoZmtGSlZlNFNpMW02TURJbkFjS2N6T2R5?=
+ =?utf-8?B?cWV5S015OG9ybTlxWVN6bXNoVWtlOEw4ZVU0NjJ1MGFqRDI0UU9YdWRxT1BF?=
+ =?utf-8?B?YU5mT2ZzTmllVW5Ka0NibGhhM0txWGtjQVBudmp0K1ZXT3E4d1Zodkp3bSs5?=
+ =?utf-8?B?aEdLakdwMUNzZGlFb2tpekNZMEZ1c2pibHdCeElFd01qUnB1My9PbGtmdFI0?=
+ =?utf-8?B?V3VPSzNxREd3ZVZyNGF5UUU2T3BXeGhNQUpmL1YzOUtkdWp4SHdCYkFoL0Rk?=
+ =?utf-8?B?WGdNV2hodXNmOVVDTUxnU1pNcDBienQvbHZBNW9PVGg2SFg3ZCtNUGpIeXVG?=
+ =?utf-8?B?eU90ZW9oeXpNNTdoQkpOZkFMNmVEVlV2VEZPTFBTMjBZUTNoTVRiTE5RL2ZF?=
+ =?utf-8?B?aGZ3ZVRuZGlWTkMzSjZMNmRtdndnd0FBeUFzWG9Jb1JJYTlxYVJsU21icSta?=
+ =?utf-8?B?OTQyclUvd1F1azBwMVlTaWh6Qm11TmZ2azhSTitYNVVlNGVsVjhUYSttbFlz?=
+ =?utf-8?B?M3lraTBoRWlYaEh5N2h6OXJnRHBpR2VkMTRtaTZJUUpRRlhOSG01Q0svNkt1?=
+ =?utf-8?B?b1BleStVeUJaaWJleHQramdlODNvYlBzMmZJL1dNb0wxdzgyRWpsWjA4N2g3?=
+ =?utf-8?B?WDR0L0FmZkpuWTAzeHRNWVpwMmRWc0RxV1NDbmM3a1c2c2J5eDA1RWtzRlFS?=
+ =?utf-8?B?QmZwOUM5L29YbGlRcmo1aGFpRVRwRFRpdDduVVNpRE0vVjBnd0g1T1dDcW0y?=
+ =?utf-8?B?OVgrTFZxNGwwVkhlZC9uOVlnVURVaTlqLzk4c3MzQTVwS0Q1OFU3ZmJQY2p6?=
+ =?utf-8?B?TzJTMG9vdzRkVThRaUFFQkwxS2tMVkkvcXZIZk9GTzQ3NDdSdFlVTFY5QkNx?=
+ =?utf-8?B?dE9xUnVjRkozMTRTU2lHYW56eUNCSGdHVEZrLzNsWks5THJmU3hqR0JiZmsz?=
+ =?utf-8?B?d2FEYnRNRHFpa0c2Ri9ObzZ5anc5WW9rNlc0L2hNSmJyQ1oycUFHOVRESkcw?=
+ =?utf-8?B?Q0dIRVU4QlFjV09lK2tEUERlNEsyRGFlM2RIZm5kQ3BXM3paWkl2S04yYkow?=
+ =?utf-8?B?VjczUGlFVXpJM0t6YXYvUVpBSXgrY2U2dXE1NklnbDdjRnU0SWpVc1gzeUlv?=
+ =?utf-8?B?cXBGZ1YxRld5M09BUmNZVEtXTi9NcEE4RldRclRYVDhzc2JuOTd3V25HMURx?=
+ =?utf-8?Q?rpAYVZgPsmA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB5371.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UTJwYTZxVFlrZWJaTHpOeS9QTHp1dlYwK3hkVDR3RE1Ua0Y4Vi9aZnhDSmtB?=
+ =?utf-8?B?RUFmNmFnNG9QTEdiS0gvRWx2eGFzQkgybDlKaXZIZzlVdHNIdUFMRlJzWm8x?=
+ =?utf-8?B?NE1nVjhoZXRVUlNPOUhVRDNyM0RzKzJScWRpb1RuYWJWenZtTW5NeHh6Rm1x?=
+ =?utf-8?B?V1VwTjhBQWtsZzUvQWRpTjRPU1hpd0NEU3ZJZGFJN3MwNTl5ekw4THZMSzVE?=
+ =?utf-8?B?dEdkK2lzUzRSUjc4Z2Q4dUxKRzEzaTFLUDdiWXpxczRmejA4dU5BYTZPMVEr?=
+ =?utf-8?B?U1NyQ1R6UUlWenZ4d3NGZ0F3bFIxQTJBM1FXWm5ZSENqbU9PY25FVW5XZmRO?=
+ =?utf-8?B?d2V1ZUQzQnBzcnJhSHVxVlgrSXlSU3llaHo0aXVUUnhrTUcvRVdSd2wvSlRr?=
+ =?utf-8?B?ZGFVQkdkUVdpYmlKMHB1K2VLTXBRM3oyZXlmdGZac3JaR2NqK0owMnRwVUNL?=
+ =?utf-8?B?azYvY2UzYWFaMFhnbzMxVFJERDZUSFdTWVR1QUZQMEJSRVNPaGJhZ0ZQbVVv?=
+ =?utf-8?B?b0NLVEFybFRROE1PbEFOT2paVU1ud0laQkxiY1BsdGpQa2U3bHRyVU9NamZ0?=
+ =?utf-8?B?eXgrTjhqTjJlWm1UVGFGUUloazE5YmpyaVhXK2k3bVJXekkyWUx1Z3gwcTR5?=
+ =?utf-8?B?NmpOUEhEZ2ZERFVrT3A4UTIxVk1LZit0T0NIOGpJR3prNCtuTFlHSTlZRUVn?=
+ =?utf-8?B?Vm45ZXQ1bXFNSGhPdzBiSUVBTXVSdFVBd2N4V3hmVk1xMDI2Vm10Z1QycUJo?=
+ =?utf-8?B?eHpvZGprMHlaa3pqUnVyUFJpVkhxcGpRRDFpNHFNVFlCdzlLRWprUG12eFVV?=
+ =?utf-8?B?T0Vsek44Y3M0NlhUNWdaeGwzK1YzT1dCNjRYNVM2Qmt2TVFxdnp2SDVsRzA0?=
+ =?utf-8?B?VDR4UzBNMTlkNGVrZjJxWXNCdUMvUDZFRk1zb2ZlZE9lL2NxUnBOUXZwcERQ?=
+ =?utf-8?B?ZmtJZXg3bE9iWEt6d3lGNUxFU0dTQ3ZYY24rMVRXdmxuT3VLRnZGWndkREJJ?=
+ =?utf-8?B?UzR0Ukx1SmFrN3lkSDRhdTdxU0dTM0tuZy9waW5MVFpNckhLWi96K04rc0pG?=
+ =?utf-8?B?R21yeVlKRDNVdkRiQkdyeThvYTBYVHZjV3NWODJKN0M5TGFXdnlwNlVUckU2?=
+ =?utf-8?B?alFWVG1vUlVMQ0FRN2Y5OG5KZDc5KzR1NkpEVzdUM3l4cFhQM1J5OHc3OWsv?=
+ =?utf-8?B?eldoUDdib1I0RHEvT2FaNFgxVXFVL0oreGx6RVBFMnRSS2I3NFUzdzhDVTZi?=
+ =?utf-8?B?MDNZMjcwbVZqN0RQZ3piSUtnWDNpVExvQjZlWm9Ca3pTYmN4OGlCY3IveVFP?=
+ =?utf-8?B?NmJ1SHYwejh0WTY1RENCcmxTOUhKTEltRC9CeXk0aWFlNjlPWjR3ZDdDelJt?=
+ =?utf-8?B?OEZLeG9lTzlSSTJsT1hRNisvZ2xFeFU3dG90ckRiVm9zVXpsejZ1VzdBWnNZ?=
+ =?utf-8?B?MjJvRmNaalN4WHVvVHZuRThRZGI0M3NZU29UMkNrRE9CNkRibjRyM3RUZG9T?=
+ =?utf-8?B?NGpxNVdKTjMrZkgxZ1M2UVNxblRTR2htSHZWRXZiMXNteXNSbzV4ODhQMUYv?=
+ =?utf-8?B?T0EyUFQ0OWtKWG5IYURBd3dmV1VqZEN3NmFyYnd4S0NqUEdJTE52U1dWb21s?=
+ =?utf-8?B?OWpFQUZpSDRvR1lvRGU5OWZOYTBpZGpGeklZSzZZY1R3V0pZaGtLV1Yrb3RV?=
+ =?utf-8?B?K1pubHZ1TVBNQUtJWXF6UXlYNG1nK1haL2RaUGJvR2ZjV01NdXA5eEsrUjFy?=
+ =?utf-8?B?Nm05NGt1SGlGdDZkcndkdERLUkVqZDNuMlFPcXVBcXM5YTdTOGx5dXN5bVN5?=
+ =?utf-8?B?K1B2dFR3WGh3UktwU1VsbWpUVXQzemI1dGliYk1RZ09pa2RTazlBQ1VMa1pl?=
+ =?utf-8?B?ZDFoTURUR0JSQjg1d3NzTXVaSDBJWmkrMzIwdXJaM2NhcXUvdVNTUjNkcFNS?=
+ =?utf-8?B?Q2tCcXJmRWRFVGVmT3gxUCsvY2s1M0JwM3JiOU5aQnR2QnlscTJtMFdKRDJt?=
+ =?utf-8?B?L2VzOHRNVjRPMCsxOFl6NWJLazcvemFXRWd1UWZjNXoxTjZ1UmFlWGZOdllr?=
+ =?utf-8?B?QnludFBOYk8rZG04aHExdjRUaU5xWU9Xc2tSRFRzaEJ0ZTg0bGhTaDJtTU9a?=
+ =?utf-8?B?RUJaUGZzNjErSDBEejdpN2E0NGd0TFFoZjJrSkJmV21YMFlBSG5FREtoOGFE?=
+ =?utf-8?B?elE9PQ==?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c1e6315-1c00-4753-63ce-08ddcb5c2d8c
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB5371.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 09:18:12.6816
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7RCydkH8rcZjN1+jw4iRbkRIeh873Gmjazcegzj+9NOVOx+8UMSszL20F4Y9nLl6DnKprFmLXMesh81qnbhvJnjmTMxiW82UCl6Fnzhu7mg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR03MB6911
 
-On 7/24/25 5:56 PM, Mohammad Rafi Shaik wrote:
-> Add the sound card node with tested playback over max98357a
-> I2S speakers amplifier and I2S mic.
-> 
-> Introduce HS (High-Speed) MI2S pin control support.
-> The I2S max98357a speaker amplifier is connected via HS0 and I2S
-> microphones utilize the HS2 interface.
-> 
-> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> ---
->  .../boot/dts/qcom/qcs9075-iq-9075-evk.dts     | 52 +++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 14 +++++
->  2 files changed, 66 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts b/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
-> index ba8a359d8fee..a2d9aaa641a1 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
-> @@ -5,6 +5,7 @@
->  /dts-v1/;
->  
->  #include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/sound/qcom,q6afe.h>
->  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->  
->  #include "qcs9075-som.dtsi"
-> @@ -20,6 +21,57 @@ aliases {
->  	chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
-> +
-> +	dmic: audio-codec-1 {
-> +		compatible = "dmic-codec";
-> +		#sound-dai-cells = <0>;
-> +		num-channels = <1>;
-> +	};
-> +
-> +	max98357a: audio-codec-0 {
+On 7/24/2025 11:26 PM, Serge Semin wrote:
+>>> DW XGMAC IP-core of v2.x and older don't support 10/100Mbps modes
+>>> neither in the XGMII nor in the GMII interfaces. That's why I dropped
+>>> the 10/100Mbps link capabilities retaining 1G, 2.5G and 10G speeds
+>>> only (the only speeds supported for DW XGMAC 1.20a/2.11a Tx in the
+>>> MAC_Tx_Configuration.SS register field). Although I should have
+>>> dropped the MAC_5000FD too since it has been supported since v3.0
+>>> IP-core version. My bad.(
+>>>
+>>> Starting from DW XGMAC v3.00a IP-core the list of the supported speeds
+>>> has been extended to: 10/100Mbps (MII), 1G/2.5G (GMII), 2.5G/5G/10G
+>>> (XGMII). Thus the more appropriate fix here should take into account
+>>> the IP-core version. Like this:
+>>> 	if (dma_cap->mbps_1000 && MAC_Version.SNPSVER >= 0x30)
+>>> 		dma_cap->mbps_10_100 = 1;
+>>>
+>>> Then you can use the mbps_1000 and mbps_10_100 flags to set the proper
+>>> MAC-capabilities to hw->link.caps in the dwxgmac2_setup() method. I
+>>> would have added the XGMII 2.5G/5G MAC-capabilities setting up to the
+>>> dwxgmac2_setup() method too for the v3.x IP-cores and newer.
+>>
+Hi Serge,
 
-It would make more sense if audio-codec-0 came before audio-codec-1
+Apologies for the multiple emails. I wanted to check specifically on the
+support for 2.5G/5G over XGMII and GMII interfaces. I’ve reviewed the
+v3.10a databook, but it doesn’t mention when support for these speeds
+was first introduced. Could you please confirm on this?
 
-Konrad
+Best Regards,
+Rohan
 
