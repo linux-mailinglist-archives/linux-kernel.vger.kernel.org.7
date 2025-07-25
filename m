@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-745138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E3FB11586
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:05:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCC2B11588
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21175642FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:05:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1CED3A84FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32A1194098;
-	Fri, 25 Jul 2025 01:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C991957FC;
+	Fri, 25 Jul 2025 01:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HXP5UqLi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9PMn74V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D88C28371;
-	Fri, 25 Jul 2025 01:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631A318BBAE;
+	Fri, 25 Jul 2025 01:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753405505; cv=none; b=TAI1oKp3sxJfMlF7CEouEBhrCn1Ma79itjRG80st/Qrpti/CveMvuKKax/2XGCENXRSmjpE7FJ3bDVjQc+2kab8cWx03mnoTUbvFMo8bXWxkA6PZkMpeawePlSfvjvPrRvOdq8gF/jPpayHx7Pr3ynS9yMJLRLq5aW2Kw0oy12s=
+	t=1753405586; cv=none; b=jmvUzVmjpumVDgdM/6TEYBfHG05OmDZqrMTFbzTvYQoqmUC5nYDmd8/fuwByCx+81mW4o6mQnwhZQgPIPg+TM44PqQ8uovGdTZHm1cJJfuP2FPiglwOZptFjfGT43LZw5Hly1XIsERY4foxtD+ZYmD2ZIur9XaWz1WfzUqxLvs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753405505; c=relaxed/simple;
-	bh=tAi5yNbVWJZar85JYgxMKocAfRchNPvqbGllAqQ8wQY=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=pfzLCOPILvwd7X+1bKi2Plq2treI2b+FcqLxIZKCqnOBVA2pyHeOD1p7Kg4np/XIuS/wqevwL+FPXGEwPUHyqJ8Yagn8DCwMwJQ56fSdhyyV2wgeEOAoZAAHMQVmqBYQVWGL9AZ0dMPhsCuVbCPR0KOSf/1wc9i6O+4O9UUbi8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HXP5UqLi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA5EC4CEED;
-	Fri, 25 Jul 2025 01:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1753405504;
-	bh=tAi5yNbVWJZar85JYgxMKocAfRchNPvqbGllAqQ8wQY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HXP5UqLif1X61lXGPABx2KAbUTpnbRg6hpTtBn2nMNaygxT8Ase/sMQtr+pAG10nO
-	 b3LAKC0oGKgS28/tNtifcdkHB7Kat3YQBizSFC9avU4m7SBa85DKyk3DqtQV+Sxb2C
-	 N0HOhwDaozGo8fO7kqrt6Y122N85kyQm6kJK8UJg=
-Date: Thu, 24 Jul 2025 18:05:03 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.16
-Message-Id: <20250724180503.a8a80b0b0c904c1c7f967448@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753405586; c=relaxed/simple;
+	bh=XRod0fl1x5YkTgo5sRuAN3KnxoLUBTn38asgNRfFLg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cEAU4oOj/kFf5iOHWBGj8vBlt7lVFGNyt6a/bva+owPad1xiU4VFs7ZJNkAb/OYHRtfaxRv+hNiZyAeE+NTm6bubmvVUxcIEFZdvf5t+ydHwsFum8qi8QbhoP+cuXRy0FzzAYEVw1P6WuQ7UTzXcX8cmogWm1GTtBd663kTm+G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9PMn74V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B63AC4CEED;
+	Fri, 25 Jul 2025 01:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753405585;
+	bh=XRod0fl1x5YkTgo5sRuAN3KnxoLUBTn38asgNRfFLg8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l9PMn74VGXda+ufmUKF1tASCMGoOASBy2/J9Wbj2ntkUHcAjkwFIfmC7NxjSo5fcB
+	 Vhe2yZJvVczzXpiU86tyq8s7R1McsbeBeo7MBQwGtBwrHtsWA/85obea/sgqMqVv73
+	 VUxpGDWULHfpMiN2Mhs/pdGc8bt2Cit/y+jSIycpACkJ1JmUl+6c268SA2ILUS6z52
+	 NG+HC0i0O+U8L1ZTge0gqR9W34ENfsKk61SRDUwxhSu0cm/5XqjA32D2f3mBT94+iM
+	 HZJP2QgOaL48OGjM7VWo/D2NzuaB68Si4ECuSalFxivhgXUxg3jMPFt9XxQe6NUVva
+	 EfpMzgIO2pRPQ==
+Date: Thu, 24 Jul 2025 21:06:23 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	corbet@lwn.net, workflows@vger.kernel.org, josh@joshtriplett.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
+Message-ID: <aILYj62tF_1mDjDO@lappy>
+References: <20250724175439.76962-1-linux@treblig.org>
+ <20250724-alluring-fuzzy-tanuki-6e8282@lemur>
+ <202507241337.F9595E1D@keescook>
+ <aIKhvubVqgeXIlrj@gallifrey>
+ <202507241418.34AFD28C@keescook>
+ <20250724194556.105803db@gandalf.local.home>
+ <202507241651.5E9C803C70@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <202507241651.5E9C803C70@keescook>
 
+On Thu, Jul 24, 2025 at 04:54:11PM -0700, Kees Cook wrote:
+>On Thu, Jul 24, 2025 at 07:45:56PM -0400, Steven Rostedt wrote:
+>> My thought is to treat AI as another developer. If a developer helps you
+>> like the AI is helping you, would you give that developer credit for that
+>> work? If so, then you should also give credit to the tooling that's helping
+>> you.
+>>
+>> I suggested adding a new tag to note any tool that has done non-trivial
+>> work to produce the patch where you give it credit if it has helped you as
+>> much as another developer that you would give credit to.
+>
+>We've got tags to choose from already in that case:
+>
+>Suggested-by: LLM
+>
+>or
+>
+>Co-developed-by: LLM <not@human.with.legal.standing>
+>Signed-off-by: LLM <not@human.with.legal.standing>
+>
+>The latter seems ... not good, as it implies DCO SoB from a thing that
+>can't and hasn't acknowledged the DCO.
 
-Linus, please pull this batch of hotfixes, thanks.
+In my mind, "any tool" would also be something like gcc giving you a
+"non-trivial" error (think something like a buffer overflow warning that
+could have been a security issue).
 
+In that case, should we encode the entire toolchain used for developing
+a patch?
 
-The following changes since commit db6cc3f4ac2e6cdc898fc9cbc8b32ae1bf56bdad:
+Maybe...
 
-  Revert "sched/numa: add statistics of numa balance task" (2025-07-09 21:07:56 -0700)
+Some sort of semi-standardized shorthand notation of the tooling used to
+develop a patch could be interesting not just for plain disclosure, but
+also to be able to trace back issues with patches ("oh! the author
+didn't see a warning because they use gcc 13 while the warning was added
+in gcc 14!").
 
-are available in the Git repository at:
+Signed-off-by: John Doe <jd@example.com> # gcc:14.1;ccache:1.2;sparse:4.7;claude-code:0.5
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-07-24-18-03
+This way some of it could be automated via git hooks and we can recommend
+a relevant string to add with checkpatch.
 
-for you to fetch changes up to 0dec7201788b9152f06321d0dab46eed93834cda:
-
-  sprintf.h requires stdarg.h (2025-07-24 17:58:00 -0700)
-
-----------------------------------------------------------------
-11 hotfixes.  9 are cc:stable and the remainder address post-6.15 issues
-or aren't considered necessary for -stable kernels.
-
-7 are for MM.
-
-----------------------------------------------------------------
-Akinobu Mita (1):
-      resource: fix false warning in __request_region()
-
-Harry Yoo (1):
-      mm/zsmalloc: do not pass __GFP_MOVABLE if CONFIG_COMPACTION=n
-
-Jason Gunthorpe (1):
-      mm: update MAINTAINERS entry for HMM
-
-Jinjiang Tu (1):
-      mm/vmscan: fix hwpoisoned large folio handling in shrink_folio_list
-
-Marco Elver (1):
-      kasan: use vmalloc_dump_obj() for vmalloc error reports
-
-Nathan Chancellor (1):
-      mm/ksm: fix -Wsometimes-uninitialized from clang-21 in advisor_mode_show()
-
-Ryusuke Konishi (1):
-      nilfs2: reject invalid file types when reading inodes
-
-SeongJae Park (1):
-      mm/damon/core: commit damos_quota_goal->nid
-
-Sergey Senozhatsky (1):
-      mailmap: add entry for Senozhatsky
-
-Stephen Rothwell (1):
-      sprintf.h requires stdarg.h
-
-Zi Yan (1):
-      selftests/mm: fix split_huge_page_test for folio_split() tests
-
- .mailmap                                          |  4 ++++
- CREDITS                                           |  4 ++++
- MAINTAINERS                                       |  3 ++-
- fs/nilfs2/inode.c                                 |  9 ++++++++-
- include/linux/sprintf.h                           |  1 +
- kernel/resource.c                                 |  5 +++--
- mm/damon/core.c                                   | 15 +++++++++++++++
- mm/kasan/report.c                                 |  4 +++-
- mm/ksm.c                                          |  6 +++---
- mm/memory-failure.c                               |  4 ++++
- mm/vmscan.c                                       |  8 ++++++++
- mm/zsmalloc.c                                     |  3 +++
- tools/testing/selftests/mm/split_huge_page_test.c |  3 ++-
- 13 files changed, 60 insertions(+), 9 deletions(-)
-
+-- 
+Thanks,
+Sasha
 
