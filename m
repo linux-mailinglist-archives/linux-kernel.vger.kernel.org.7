@@ -1,175 +1,179 @@
-Return-Path: <linux-kernel+bounces-745667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FF4B11CD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:50:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BDDB11DFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA7F53ABBBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D10566D75
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65BF2E5412;
-	Fri, 25 Jul 2025 10:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1D42E7167;
+	Fri, 25 Jul 2025 11:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UFBbos72"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jZ/qA0iU"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2604914A4F9;
-	Fri, 25 Jul 2025 10:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056972746A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753440641; cv=none; b=nJO622a+Z2Cu0qwkCtEr2XxU2YZFNyGJwZbyNxyh010O65NZxaXa/0ipo0Aqo+t3X8XZmuOsB7aFbzc3mai3ODs8cXXN1D4Gx6+vWCcjfvLM7H2TGeh8KTdHGuXSx0UCiaViWrGw/+dQ/ta3Wikbe3Grmthx5fUdfvb0fQ8d1z4=
+	t=1753444605; cv=none; b=JXcwDg2wEbDQ5K6O/sZDBXwTi/hq89h+P2j2ZUhqBWXoQl+7FKVtV5iRU+Jd5Z1x7u+qDwiaA5HiKdbNtdtig82QFWEfoExAZBQeI45vBRzr8fhbnQxkz9uFWb3dUmKiVqipFzJ542cE+gMyqa+UHd40T65dvWpvya64QpP+1gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753440641; c=relaxed/simple;
-	bh=KHd0GVyxgt29vK8MLf23RF3O3tfRk4C2VjJf/BKNwQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DoXSJ0NuM9OrE1DJZt6zXpoZxIzpTFz7pHyqlffo8363wvgafEUYoGZq2cGgqU+tF23oL+dmonZe90XDNqLDZLt3/RRl+cY2zuSSAqcrmkZSAMvtZBaUx/jlRKF3ZlpWHWG5I0LpAuglXGOuDkdL0T8tt2CAVcaZk16MZpfaPu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UFBbos72; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P9AOTN018948;
-	Fri, 25 Jul 2025 10:50:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5bh0hvMC1PjdJpImLiwjapwCuJypbziWRznl02GU6Ls=; b=UFBbos72VZCd7Rdr
-	8TxZz9VkX3izCSl16/doF7Ve1n6NgEukoJShS5NxDiX4T/K0BEIAanHp4wixFMcJ
-	YrYhLujDhRQw55WTiPLOR+68CQhb4SKmpPj0B7pf9w1wdwqAUQj1Ray+GrfY3kWS
-	FSbuwWWJnw4lqS2Q/1+8w+Mqm6AJPA2N5ADDRBUzvF71n2J33A2lT4wIK01r8df8
-	owdoua3+YCTx23/otjBL8PV+1yTvq42vWPwxVmvV39YSO6BIU0gTBKxzHqGdrj3a
-	AEpUBc04tPp12vildKDGY2M+xV6NnO4NnB4jIlHPZHIMn02GKtrADSro9rcRhjra
-	seYeuA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2s1s5f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 10:50:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56PAoVVF006564
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 10:50:31 GMT
-Received: from [10.216.28.154] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 25 Jul
- 2025 03:50:26 -0700
-Message-ID: <8a149580-5044-4744-b432-9f0eef0a0d31@quicinc.com>
-Date: Fri, 25 Jul 2025 16:20:23 +0530
+	s=arc-20240116; t=1753444605; c=relaxed/simple;
+	bh=70cZJ5+MOSuyvoTc0hRAELy7cfRbFrHaFdQesC+yVH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oI5oAG+6zzHQxCQ0M33+0+3SHXtFJX8an7kDGTdJg3j4gzDFXrV+uzJ9M+ou8ZMWzu5Nicw9YWR0vODLU/O583MmvcGqstfX9CFkLyjJ4moJc8nE/5WmWrCNK1jpFbxjr/m+eKfX9KkboIqjb9ulKMOx2vSUCxSGYYTbZq4Yqro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jZ/qA0iU; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-73e82d2ec9eso1200933a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753444603; x=1754049403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lj71s94DBO5ChtWnhYstkEV7QIcBC/2WSymKueRnDS4=;
+        b=jZ/qA0iU8M7EvloYgZPZiat9JrlSf6RfzP7s3gRIuNYlHY4wpQPs/+i2/yf72PY6hN
+         /QjoYgTFq74e2hNMMmwde3YVyIEUBNLj1WNCoqpTV5ovZkuJUy8uJtSU8tha/StIRtdb
+         Bfz0ErvJsoVi1egmQRKXbwIjvhYFjIOtnouHQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753444603; x=1754049403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lj71s94DBO5ChtWnhYstkEV7QIcBC/2WSymKueRnDS4=;
+        b=M50ZUYIVTJvX8lIoSX4lLcLfAL9bYIgD6+15PU95sA35Z4wQgiaz7iadBH62t+lKq6
+         avMDXN/ZcaNJpAJArgBgtnb69Kpms8Bq2rcNH//H/BVatY1uPikr1h8ojtSxYnD5VP+4
+         VOp67WcNA7PVhrpG1kjIJQsiDNfJPWJo9+dXKjMA5zhXDvtqOOfKnRl4NjW6EaQ/eop8
+         UIN6nzusndthRZkhlCoWRLXc252xuLnNeh5jttTsWiJSAxLL+v5K1OJcXlScK9UoeXap
+         LBmyMn4F8b+zJ7beAB/Gmd6aTyuvDNqKwWXCvyE3vcNycRB7vA63bPbFVSgB5U6NspAc
+         41sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpIQmQyP91WFnGQ03M5FUAsYUZ4yEzvbmkMdasQ7RvopyznbsPlR0amABIZasYrHKySDNaAT5LzyR8siM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVinF+3k48diNsTXsc0orQ9cUxDV6Y4jaBfjzsrf+uRIxmoqfI
+	xPutVurs2flHqQeIz6Mf7y8OW77iiY2sJjeSx0YW7l7N9lpBPA3TfsjBe0mv2rAOci0qI49qnEJ
+	uwkA=
+X-Gm-Gg: ASbGnctjKj6BfC1T8i4bF1WYpo3lzSx4BMjEdrKZjZpeUctRm8KVfHaO1fnMh1ufHRq
+	z43xBtkAWIVo36VFVnuM/yxDfV51gvzB0nsKaODdEjo9vPax3Ld3w6gM0Px6+ejJVwYCp1VqNCG
+	/49eVhU2dOvrIdUaN9W3Hm0u0qDm1VY3L5nYxv/ZJqXGbBY/ky59t3Coqwk5zK2JVvoYXw9v7rZ
+	ECTOGB09SDvO63e7HsOMvB/rjoLttNWBPEhtUx24sP4xqywV2Wqe6xgk89X9+RteSvKAoXMhP/S
+	lDEdok/pcMNqFbipvLA4ze3tRARNgt+wfBfW5KqMysIiYD0EXr321ZBjPzOYXS8+/b/gVWok2DO
+	oBSFFxAz/kuzvbM5Lvvtwg7vtLpr5MxTcFfkxsvSOO08Ngy+lP9s2OEu1H0bCyA==
+X-Google-Smtp-Source: AGHT+IHI/eHIBNFLmMMCCbjC++BCXFP70y29Qb3U8P6ujCcqqil9QA3Se7j8aUpEPvjVQc0RGHCWiQ==
+X-Received: by 2002:a05:6830:44a4:b0:73a:8a8a:5154 with SMTP id 46e09a7af769-7413dbf65e3mr823067a34.3.1753444602771;
+        Fri, 25 Jul 2025 04:56:42 -0700 (PDT)
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com. [209.85.167.175])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7412d2ad6e8sm644284a34.32.2025.07.25.04.56.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 04:56:42 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-41bc2668f85so1269577b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:56:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWJtRJJ2VUTt9jEMUlQXB70RRd2ROldpxJszKxVVPpH+D71nm3FherSq0fAfUqPZgJTTuIyJy32fctPLac=@vger.kernel.org
+X-Received: by 2002:a05:6102:358d:b0:4eb:f003:a636 with SMTP id
+ ada2fe7eead31-4fa3f8f1683mr313640137.0.1753440679035; Fri, 25 Jul 2025
+ 03:51:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] i2c: i2c-qcom-geni: Add Block event interrupt
- support
-To: Vinod Koul <vkoul@kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>
-CC: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        Viken Dadhaniya
-	<quic_vdadhani@quicinc.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <quic_vtanuku@quicinc.com>
-References: <644oygj43z2um42tmmldp3feemgzrdoirzfw7pu27k4zi76bwg@wfxbtgqqgh4p>
- <dc7358a1-ddc5-402e-9024-283f8e46e3b6@quicinc.com>
- <CAO9ioeVuAO6mYpBSpiTW0jhFRPtkubZ5eEskd1yLBHVdR8_YMA@mail.gmail.com>
- <1b55d9d4-f3ff-4cd9-8906-5f370da55732@quicinc.com>
- <28d26c70-178f-413b-b7f8-410c508cfdd7@quicinc.com>
- <CAO9ioeXBwFYL8q7x7_fHvx5YO+qyAXk4wpnfPrku4iY9yBsk0Q@mail.gmail.com>
- <cac5e84b-fbdb-47a9-860d-16a7fa4dc773@quicinc.com>
- <4q3vlydi5xgltd3pcez54alxgrehhfn4pppg47ngwp6y5k7n33@d4d4htntj64k>
- <53dd18ec-9a65-4bf7-8490-ca3eb56ce2a5@quicinc.com>
- <iang2jpe4s6wmbypmtq5uswcm6n6xntqdulyhekcz5k6zxddu3@re3rrr4dso5p>
- <aICMDROkyjzBZFHo@vaman>
-Content-Language: en-US
-From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-In-Reply-To: <aICMDROkyjzBZFHo@vaman>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: P68p_Z1RsZcKhPtwQSyBMGeyR68FpidV
-X-Authority-Analysis: v=2.4 cv=IZyHWXqa c=1 sm=1 tr=0 ts=68836178 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=La7-vtGrAMXfD6w410sA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: P68p_Z1RsZcKhPtwQSyBMGeyR68FpidV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA5MSBTYWx0ZWRfX1z/I87JUNVzD
- 5bwPy9cVP7Vgc1KxLEGFWi8y1zBiY12FviruEmjA9SvX5FqXPIZQbNGxr7zGW7RE0+2fYtiJpU1
- s2oQ19fuLNZ9GB/DBeAO9uduvck90Y/j42W89eU/465+CRc1+3ifhactqWo9EFgOFxZ9FCFeL+b
- XzgzRB3lJ1WMXU2yaEX+GCA7tGyV/fEw1LsJlvATUlsfL7b5AzdSfVUGlCKvkgP7C1Y1+MNi61I
- VRbv5c4ZLGCK5TeWOeUrjaUhIxjsP6SvZ5uRo890TECtRHH40E4sqqpAFel5FpN9VkGAO1WYKtF
- 7ilsnUGu6XTdYRd5JEewcrxoLvbi+oc4Jcy65nvwGJhdfVHrT4z28W+/ePTLfALTQjPOmzV38sI
- b/WraTVyl05oDXU4RwpnM/7ECsKS3HQM+Dy4ZvlxJnUlNREB3ywzFkSeytD20lSp5Xrl21XD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_03,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0 adultscore=0
- phishscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507250091
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com> <20250724083914.61351-25-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250724083914.61351-25-angelogioacchino.delregno@collabora.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Fri, 25 Jul 2025 18:50:41 +0800
+X-Gmail-Original-Message-ID: <CAC=S1nhS8yY6iWNDfv4Lwz8zUJEy0nMxC5MVZGb983hDsg7bhA@mail.gmail.com>
+X-Gm-Features: Ac12FXxJVbrVgIPSlm6u4--DKBHxaHRjM_36IT45XEIgpl9bR5PM8dE-s5Wt-28
+Message-ID: <CAC=S1nhS8yY6iWNDfv4Lwz8zUJEy0nMxC5MVZGb983hDsg7bhA@mail.gmail.com>
+Subject: Re: [PATCH 24/38] arm64: dts: mediatek: mt7986a-bpi-r3: Fix SFP I2C
+ node names
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, 
+	daniel.lezcano@linaro.org, mwalle@kernel.org, devicetree@vger.kernel.org, 
+	linus.walleij@linaro.org, linux-remoteproc@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	olivia.wen@mediatek.com, shane.chien@mediatek.com, linux-gpio@vger.kernel.org, 
+	linux-phy@lists.infradead.org, airlied@gmail.com, simona@ffwll.ch, 
+	herbert@gondor.apana.org.au, jassisinghbrar@gmail.com, jiaxin.yu@mediatek.com, 
+	andy.teng@mediatek.com, chunfeng.yun@mediatek.com, jieyy.yang@mediatek.com, 
+	chunkuang.hu@kernel.org, conor+dt@kernel.org, jitao.shi@mediatek.com, 
+	p.zabel@pengutronix.de, arnd@arndb.de, kishon@kernel.org, 
+	kyrie.wu@mediatek.corp-partner.google.com, maarten.lankhorst@linux.intel.com, 
+	tinghan.shen@mediatek.com, mripard@kernel.org, ck.hu@mediatek.com, 
+	broonie@kernel.org, eugen.hristev@linaro.org, houlong.wei@mediatek.com, 
+	matthias.bgg@gmail.com, tglx@linutronix.de, mchehab@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, granquet@baylibre.com, 
+	sam.shih@mediatek.com, mathieu.poirier@linaro.org, fparent@baylibre.com, 
+	andersson@kernel.org, sean.wang@kernel.org, linux-sound@vger.kernel.org, 
+	lgirdwood@gmail.com, vkoul@kernel.org, linux-crypto@vger.kernel.org, 
+	tzimmermann@suse.de, atenart@kernel.org, krzk+dt@kernel.org, 
+	linux-media@vger.kernel.org, davem@davemloft.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 24, 2025 at 5:49=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> The binding wants the node to be named "i2c-number", alternatively
+> "i2c@address", but those are named "i2c-gpio-number" instead.
+>
+> Rename those to i2c-0, i2c-1 to adhere to the binding and suppress
+> dtbs_check warnings.
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
 
+It'd be nice to mention in v2 (if needed) that this patch also drops
+redundant #address-cells and #size-cells, but it's minor.
 
-On 7/23/2025 12:45 PM, Vinod Koul wrote:
-> On 22-07-25, 15:46, Dmitry Baryshkov wrote:
->> On Tue, Jul 22, 2025 at 05:50:08PM +0530, Jyothi Kumar Seerapu wrote:
->>> On 7/19/2025 3:27 PM, Dmitry Baryshkov wrote:
->>>> On Mon, Jul 07, 2025 at 09:58:30PM +0530, Jyothi Kumar Seerapu wrote:
->>>>> On 7/4/2025 1:11 AM, Dmitry Baryshkov wrote:
->>>>>> On Thu, 3 Jul 2025 at 15:51, Jyothi Kumar Seerapu
-> 
-> [Folks, would be nice to trim replies]
-> 
->>>>> Could you please confirm if can go with the similar approach of unmap the
->>>>> processed TREs based on a fixed threshold or constant value, instead of
->>>>> unmapping them all at once?
->>>>
->>>> I'd still say, that's a bad idea. Please stay within the boundaries of
->>>> the DMA API.
->>>>
->>> I agree with the approach you suggested—it's the GPI's responsibility to
->>> manage the available TREs.
->>>
->>> However, I'm curious whether can we set a dynamic watermark value perhaps
->>> half the available TREs) to trigger unmapping of processed TREs ? This would
->>> allow the software to prepare the next set of TREs while the hardware
->>> continues processing the remaining ones, enabling better parallelism and
->>> throughput.
->>
->> Let's land the simple implementation first, which can then be improved.
->> However I don't see any way to return 'above the watermark' from the DMA
->> controller. You might need to enhance the API.
-> 
-> Traditionally, we set the dma transfers for watermark level and we get a
-> interrupt. So you might want to set the callback for watermark level
-> and then do mapping/unmapping etc in the callback. This is typical model
-> for dmaengines, we should follow that well
-> 
-> BR
+Reviewed-by: Fei Shao <fshao@chromium.org>
 
-Thanks Dmitry and Vinod, I will work on V7 patch for submitting the I2C 
-messages until they fit and and unmap all processed messages together 
-for now.
-
-Regarding the watermark mechanism, looks GENI SE DMA supports watermark 
-interrupts but it appears that GPI DMA doesn't have such provision of 
-watermark.
-
-
+> ---
+>  arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts b/a=
+rch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+> index ed79ad1ae871..6d2762866a1a 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+> @@ -64,23 +64,19 @@ wps-key {
+>         };
+>
+>         /* i2c of the left SFP cage (wan) */
+> -       i2c_sfp1: i2c-gpio-0 {
+> +       i2c_sfp1: i2c-0 {
+>                 compatible =3D "i2c-gpio";
+>                 sda-gpios =3D <&pio 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAI=
+N)>;
+>                 scl-gpios =3D <&pio 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAI=
+N)>;
+>                 i2c-gpio,delay-us =3D <2>;
+> -               #address-cells =3D <1>;
+> -               #size-cells =3D <0>;
+>         };
+>
+>         /* i2c of the right SFP cage (lan) */
+> -       i2c_sfp2: i2c-gpio-1 {
+> +       i2c_sfp2: i2c-1 {
+>                 compatible =3D "i2c-gpio";
+>                 sda-gpios =3D <&pio 18 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAI=
+N)>;
+>                 scl-gpios =3D <&pio 19 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAI=
+N)>;
+>                 i2c-gpio,delay-us =3D <2>;
+> -               #address-cells =3D <1>;
+> -               #size-cells =3D <0>;
+>         };
+>
+>         leds {
+> --
+> 2.50.1
+>
+>
 
