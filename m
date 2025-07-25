@@ -1,161 +1,223 @@
-Return-Path: <linux-kernel+bounces-745684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161B4B11D0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:02:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D398B11D0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CD8171CF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:02:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED878AA3E40
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A137F1BD4F7;
-	Fri, 25 Jul 2025 11:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36E62E542F;
+	Fri, 25 Jul 2025 11:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJiIzFXc"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1qVVbg0c";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IQ7Yl7TB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1qVVbg0c";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IQ7Yl7TB"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EB9217F33;
-	Fri, 25 Jul 2025 11:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653B4217F33
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441332; cv=none; b=elMnxAhP3O2JQcKud+1YHEs52mFw4gYBgojeQD1AjtN6Lo2my84zEKl9KPKPvDIt+wpfyNsKXzdDBzkwajRRYUAQ8xCoOJoTRXJoUsNHjky/nxbf05fxWNndygNfvtOEe1nwokF9De9ty/LMZ4vs4b2CiCSgxeVESDV3MyXoB1w=
+	t=1753441399; cv=none; b=ohqTi8kQbwWSfupiI3Qlj7Nk8OZVMu8at+wIavFQ+OrHI61h1ojLrTSRyMDitNIy9nGEd4j6aGlaCj6PDCav2Pb7pK3eXKcxC9yiu1f0tCb9gtXGZ/DYkbU/51emX5IvUXNqsUqQGjIKv2wgzyrmIpLH8aT8SniS+uga4fWNV5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441332; c=relaxed/simple;
-	bh=Ngio8xfyWIIDwlnM0W+JAkMk7HyR29dVYpj61dVV4ZM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b1uU4NOu1oX/CK4hLs51r+fbDTOaezgVwLtVooiLlQq6Jfrz12wbiEVcGFWIK5V9X0me3INwuSOafvtxGmekeEwfHMrog8lGqy/+TLUXIDoMhlx1BPXXcmQFY3KzkWFV5WYOqUWk7oFZWzjJv7s0DOWyhZAjA6x8lHO7wHTuvi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJiIzFXc; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-53140c33563so1293791e0c.3;
-        Fri, 25 Jul 2025 04:02:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753441329; x=1754046129; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ihcslW5gx76Wnmrg/L2FGmXABDcUFjb21/r/z7IBkg=;
-        b=XJiIzFXcbSUlOdVKOLSBFloURuhSMPMluX2ag01rhZ9qeNuDETt5IcmYxmzhR6xcyS
-         btX6vpdQCORjK2Foe1VU5ZFfrfWcFOfgROtsC/dQxOd5yacyi9e0HXB+tJEDfUNLXoca
-         LvHlTz7EFPfTysDvnFdd13tIAmxm/W/uf26vZEZ43U0Nzn/glSQrg6hzWiRx6x0d3F4O
-         +eWJ4JgvPwu5j2iqwFtvf/gEeUkPLNdW5+fsPxVaJAeDwh1x57Q04BW2ofI3JVOxozyk
-         sSMf1oemodbVrCu8zRKAWUQ18lCOnH/1d7EPUQo/8hemHHE3Cpwlx4N8XuhzOihmBaWa
-         6czQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753441329; x=1754046129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8ihcslW5gx76Wnmrg/L2FGmXABDcUFjb21/r/z7IBkg=;
-        b=FFYbQ7oq2snfySRrnYaPv000anwZrzXwvKcGNNUb1X2Wkq1MWJZVC21oIkNMiC0kGP
-         +P6GWZDF6toJUEhDl2XHzgOXh2ySKjb5LgKRQIZpi78heIlEvwtUb41cw+hOW5YnlJMV
-         2HUgxTZTZg0LzyTjA7JRbQbRoLZJbjmJkUl9bzkqETXaF2b+AGoWBNbMDqfDoFmThuCC
-         wOAAnGciU2oAKGAQMUtnGpdpgHk/QsrVc/BnHWuLMVzvGG6NExzctR7wYzUs67+fL7DP
-         2OK9M82e9tFFO0bGTDjqQ14HpnXymjxZBOJSFSleP0YnFfuamQNQsuDCsRh0tZNZWqW5
-         QFqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKD2ThX1x2TxOfKbb00QsmkEwjJh3hx1zIiVLDJNMvto+ykPgdd8IVYYS+TDBoUjhbLYMX12m1hCA1Ms4=@vger.kernel.org, AJvYcCXqipGXuvIufMINMw/MY7iRQQt0hq8WCDOUwLg7ao5/qYF8Xm6dWiMfEvZUdjKvd9FMwYtMutRlxNd5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRHauJ7GYxKBDK3jmn/YyWRjIRG9VTluEr2HEO8GLE9/lzqhVO
-	2SyehR5hO74uEL/Y5bOlkrPRwHWs/hsFX1P9SlHuiICo0n0Pn0m3b0Am0buxl7qTnL4Yum7zHVY
-	Qs5pXvpLvfeWDDtObB1NsVFnhfDDci2w=
-X-Gm-Gg: ASbGncss49ywqEHdk2VCi4MTcrOtdvrwS2IZam+SX1Hwx4Mx6YjDXp5VtneTrFmGZbb
-	wv2yO1Xh+TnjG2QSznEybz6yrG5nMWXba0WeSe41ZZWudJndyJgmwpbLU7J1LAg5A3UezSKrg0j
-	sYLc4TtMi02E/GyBeiDSh/mKi011e8JIcDLPvsa7XrFXrzUaHCsymTJZCzLhlHPiu8+rPT4kvpz
-	nm0OvlefVPo24CvVsb31zPRbfPNfPf9IBZJBsU=
-X-Google-Smtp-Source: AGHT+IGQMHgfEY7BuclRsjz6OH/7UgX+5R631hDtSjohy25v3ShupItv1BCYnry5FYvFEIhnzI2+C6EvDM+5V5QrM6A=
-X-Received: by 2002:a05:6122:46a8:b0:531:236f:1283 with SMTP id
- 71dfb90a1353d-538db602ff1mr319083e0c.10.1753441328963; Fri, 25 Jul 2025
- 04:02:08 -0700 (PDT)
+	s=arc-20240116; t=1753441399; c=relaxed/simple;
+	bh=1HCvhM8/v368sv2XSQGYflcTmPxz0g2pAwskIND6A2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+MORv4sI3EOOmpZ8bANob4L+oODxrcfqlencrQOvbVfod9DXZho1IoLvoKCKEtOsE78MC3MPnpdJ+4jWleF1sbhWqv6orEwKmeBtmCFldV1SlzQ8SRnmMliz144/0s+5Cin7YDB9jUOAOAdXNWsTPcpXLRLEuTNrVySiZFTCnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1qVVbg0c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IQ7Yl7TB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1qVVbg0c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IQ7Yl7TB; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B5057219CB;
+	Fri, 25 Jul 2025 11:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753441389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LHv7p69bBmFvHqmkqskBjy3X9D31Qb3k5Zh7mzlK8+s=;
+	b=1qVVbg0cvj4BaRFNBGjQFrV6a78xB53lGA6/iBWmQwzcnVYoiUGMyBeK2pI9jV2veylS0Q
+	7sHYQf1fe9m1m7hHGLm/XSr4x4RmX5fTAA9hpra8jdDVP6zvCwhHHcdBCTbwU3kmr8I79g
+	vAlo2l0WHdxl1VCr7SydoeHjb3TyU/c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753441389;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LHv7p69bBmFvHqmkqskBjy3X9D31Qb3k5Zh7mzlK8+s=;
+	b=IQ7Yl7TB/BqjjzGARP1pbWCHEQcT2waBUWLuwfqUqaRlIEgjl1fSU9lxWUeLgiXmLQ9gCM
+	CZ3HM117djSEpiDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753441389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LHv7p69bBmFvHqmkqskBjy3X9D31Qb3k5Zh7mzlK8+s=;
+	b=1qVVbg0cvj4BaRFNBGjQFrV6a78xB53lGA6/iBWmQwzcnVYoiUGMyBeK2pI9jV2veylS0Q
+	7sHYQf1fe9m1m7hHGLm/XSr4x4RmX5fTAA9hpra8jdDVP6zvCwhHHcdBCTbwU3kmr8I79g
+	vAlo2l0WHdxl1VCr7SydoeHjb3TyU/c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753441389;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LHv7p69bBmFvHqmkqskBjy3X9D31Qb3k5Zh7mzlK8+s=;
+	b=IQ7Yl7TB/BqjjzGARP1pbWCHEQcT2waBUWLuwfqUqaRlIEgjl1fSU9lxWUeLgiXmLQ9gCM
+	CZ3HM117djSEpiDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A6E4213A8D;
+	Fri, 25 Jul 2025 11:03:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fY+7KG1kg2jQEAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 25 Jul 2025 11:03:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BE13EA29BE; Fri, 25 Jul 2025 13:02:32 +0200 (CEST)
+Date: Fri, 25 Jul 2025 13:02:32 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	ojaswin@linux.ibm.com, linux@roeck-us.net, yi.zhang@huawei.com, libaokun1@huawei.com, 
+	yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH -next] ext4: fix crash on test_new_blocks_simple kunit
+ tests
+Message-ID: <7jucepiybalo2ddlrlphn4v7hpfp427l3upp5tqfzmsxpq32cg@y4zwyunursjp>
+References: <20250725021550.3177573-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716104334.44020-1-victorshihgli@gmail.com> <d5a0fcf9-4ae0-4d0a-842e-d9475997cdb5@intel.com>
-In-Reply-To: <d5a0fcf9-4ae0-4d0a-842e-d9475997cdb5@intel.com>
-From: Victor Shih <victorshihgli@gmail.com>
-Date: Fri, 25 Jul 2025 19:01:56 +0800
-X-Gm-Features: Ac12FXxlVobuRC8ZRTJ3xs8LnvzOZsLYryZXrXwLx982Oskd-13JLoxCmj_N6RQ
-Message-ID: <CAK00qKCUPOcSrjSuDyHiVsTUw6we029Uq4UjH2Q+JGuZ0KDOww@mail.gmail.com>
-Subject: Re: [PATCH V1] mmc: sdhci-pci-gli: GL9763e: Mask the replay timer
- timeout of AER
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
-	ben.chuang@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
-	Victor Shih <victor.shih@genesyslogic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725021550.3177573-1-yi.zhang@huaweicloud.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,roeck-us.net:email,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On Thu, Jul 24, 2025 at 7:59=E2=80=AFPM Adrian Hunter <adrian.hunter@intel.=
-com> wrote:
->
-> On 16/07/2025 13:43, Victor Shih wrote:
-> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> >
-> > Due to a flaw in the hardware design, the GL9763e replay timer frequent=
-ly
-> > times out when ASPM is enabled. As a result, the warning messages will
-> > often appear in the system log when the system accesses the GL9763e
-> > PCI config. Therefore, the replay timer timeout must be masked.
-> >
-> > Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
-> > ---
-> >  drivers/mmc/host/sdhci-pci-gli.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-=
-pci-gli.c
-> > index 4c2ae71770f7..eb3954729a3c 100644
-> > --- a/drivers/mmc/host/sdhci-pci-gli.c
-> > +++ b/drivers/mmc/host/sdhci-pci-gli.c
-> > @@ -1754,6 +1754,7 @@ static int gl9763e_add_host(struct sdhci_pci_slot=
- *slot)
-> >  static void gli_set_gl9763e(struct sdhci_pci_slot *slot)
-> >  {
-> >       struct pci_dev *pdev =3D slot->chip->pdev;
-> > +     int aer;
-> >       u32 value;
-> >
-> >       pci_read_config_dword(pdev, PCIE_GLI_9763E_VHS, &value);
-> > @@ -1780,6 +1781,14 @@ static void gli_set_gl9763e(struct sdhci_pci_slo=
-t *slot)
-> >       value |=3D FIELD_PREP(GLI_9763E_HS400_RXDLY, GLI_9763E_HS400_RXDL=
-Y_5);
-> >       pci_write_config_dword(pdev, PCIE_GLI_9763E_CLKRXDLY, value);
-> >
-> > +     /* mask the replay timer timeout of AER */
-> > +     aer =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ERR);
-> > +     if (aer) {
-> > +             pci_read_config_dword(pdev, aer + PCI_ERR_COR_MASK, &valu=
-e);
-> > +             value |=3D PCI_ERR_COR_REP_TIMER;
-> > +             pci_write_config_dword(pdev, aer + PCI_ERR_COR_MASK, valu=
-e);
-> > +     }
->
-> The same code is in gl9750_hw_setting() and gl9755_hw_setting()
-> so it could be a separate little function.
->
-> Also should gli_set_gl9763e() be renamed gl9763e_hw_setting() for
-> consistency?
->
-> Also should this have a fixes tag?
->
+On Fri 25-07-25 10:15:50, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> ext4_mb_avg_fragment_size_destroy() requires a valid sbi->s_sb,
+> mb_set_largest_free_order() requires the parameter bb_largest_free_order
+> to be initialized, and mb_update_avg_fragment_size() requires the
+> parameter bb_avg_fragment_size_order to be initialized. But the
+> test_new_blocks_simple kunit tests do not init these parameters, and
+> trigger the following crash issue.
+> 
+>  Pid: 20, comm: kunit_try_catch Tainted: G W N  6.16.0-rc4-ga8a47fa84cc2
+>  RIP: 0033:ext4_mb_release+0x1fc/0x400
+>  RSP: 00000000a0883ed0  EFLAGS: 00010202
+>  RAX: 0000000000000000 RBX: 0000000060a1e400 RCX: 0000000000000002
+>  RDX: 0000000060058fa0 RSI: 0000000000000002 RDI: 0000000000000001
+>  RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000002
+>  R10: 00000000a0883e68 R11: 0000000060374bb0 R12: 000000006012eff0
+>  R13: 00000000603763e0 R14: 0000000060ad92d8 R15: 0000000060c051c0
+>  Kernel panic - not syncing: Segfault with no mm
+>  CPU: 0 UID: 0 PID: 20 Comm: kunit_try_catch Tainted: G W N 6.16.0-rc4-ga8a47fa84cc2 #47 NONE
+>  Tainted: [W]=WARN, [N]=TEST
+>  Stack:
+>   60134c30 400000004 60864000 6092a3c0
+>   00000001 a0803d40 a0803b28 6012eff0
+>   605990e8 60085be0 60864000 602167aa
+>  Call Trace:
+>   [<60134c30>] ? kmem_cache_free+0x0/0x3d0
+>   [<6012eff0>] ? kfree+0x0/0x290
+>   [<60085be0>] ? to_kthread+0x0/0x40
+>   [<602167aa>] ? mbt_kunit_exit+0x2a/0xe0
+>   [<60085be0>] ? to_kthread+0x0/0x40
+>   [<602acd50>] ? kunit_generic_run_threadfn_adapter+0x0/0x30
+>   [<60085be0>] ? to_kthread+0x0/0x40
+>   [<602aaa8a>] ? kunit_try_run_case_cleanup+0x2a/0x40
+>   [<602acd62>] ? kunit_generic_run_threadfn_adapter+0x12/0x30
+>   [<600862c1>] ? kthread+0xf1/0x250
+>   [<6004a521>] ? new_thread_handler+0x41/0x60
+> 
+> Fixes: bbe11dd13a3f ("ext4: fix largest free orders lists corruption on mb_optimize_scan switch")
+> Fixes: 458bfb991155 ("ext4: convert free groups order lists to xarrays")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/linux-ext4/b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net/
+> Tested-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Hi, Adrian
+Looks good. Feel free to add:
 
-Ok, I will update in the next version.
-I think I should only need the stable tag.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thanks, Victor Shih
+								Honza
 
-> > +
-> >       pci_read_config_dword(pdev, PCIE_GLI_9763E_VHS, &value);
-> >       value &=3D ~GLI_9763E_VHS_REV;
-> >       value |=3D FIELD_PREP(GLI_9763E_VHS_REV, GLI_9763E_VHS_REV_R);
->
+> ---
+>  fs/ext4/mballoc-test.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
+> index d634c12f1984..a9416b20ff64 100644
+> --- a/fs/ext4/mballoc-test.c
+> +++ b/fs/ext4/mballoc-test.c
+> @@ -155,6 +155,7 @@ static struct super_block *mbt_ext4_alloc_super_block(void)
+>  	bgl_lock_init(sbi->s_blockgroup_lock);
+>  
+>  	sbi->s_es = &fsb->es;
+> +	sbi->s_sb = sb;
+>  	sb->s_fs_info = sbi;
+>  
+>  	up_write(&sb->s_umount);
+> @@ -802,6 +803,8 @@ static void test_mb_mark_used(struct kunit *test)
+>  	KUNIT_ASSERT_EQ(test, ret, 0);
+>  
+>  	grp->bb_free = EXT4_CLUSTERS_PER_GROUP(sb);
+> +	grp->bb_largest_free_order = -1;
+> +	grp->bb_avg_fragment_size_order = -1;
+>  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
+>  	for (i = 0; i < TEST_RANGE_COUNT; i++)
+>  		test_mb_mark_used_range(test, &e4b, ranges[i].start,
+> @@ -875,6 +878,8 @@ static void test_mb_free_blocks(struct kunit *test)
+>  	ext4_unlock_group(sb, TEST_GOAL_GROUP);
+>  
+>  	grp->bb_free = 0;
+> +	grp->bb_largest_free_order = -1;
+> +	grp->bb_avg_fragment_size_order = -1;
+>  	memset(bitmap, 0xff, sb->s_blocksize);
+>  
+>  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
