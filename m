@@ -1,86 +1,127 @@
-Return-Path: <linux-kernel+bounces-745135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1453BB11580
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:01:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E3FB11586
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2C45A5394
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:01:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21175642FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9726619066B;
-	Fri, 25 Jul 2025 01:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32A1194098;
+	Fri, 25 Jul 2025 01:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S//hzPtk"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HXP5UqLi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5259FC0A;
-	Fri, 25 Jul 2025 01:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D88C28371;
+	Fri, 25 Jul 2025 01:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753405292; cv=none; b=mpUaS6F+LmqU6lHSVbXbJnXCRSRGwR8Zt/E4sTTwnSiey1pUYdFDXXuHxNQureRq6VvbhEfd75IWxYVy3Z6GkoCrPmp/RXbumhgVZO+wHqFNDdBrVYs5AZVnczFUHb8TxgUPt3k+tbKiRq6qcRMFmWmw1tZ19ixsVxAF/IkYIAk=
+	t=1753405505; cv=none; b=TAI1oKp3sxJfMlF7CEouEBhrCn1Ma79itjRG80st/Qrpti/CveMvuKKax/2XGCENXRSmjpE7FJ3bDVjQc+2kab8cWx03mnoTUbvFMo8bXWxkA6PZkMpeawePlSfvjvPrRvOdq8gF/jPpayHx7Pr3ynS9yMJLRLq5aW2Kw0oy12s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753405292; c=relaxed/simple;
-	bh=2xm7u3ygcZYBzCZXGoS/pCUYoBjZBFKnG8HwfR0nmZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MtO3rch5zSk7+104GLb2IAb8QAcdXBQPfH9h21ByzZFzKmOg6uDDArzkF7gr6u2cq+x8IcRlxWvg51ovRVdgznxY0adMjMrphpqDG1EPHnOYH+o2pgS7fOAhBgmK/MeiqxP4Xp6s4kJkJoZ2PJPgSxLVx1zAt/dqts/XD0S2vHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S//hzPtk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E0ECC4CEED;
-	Fri, 25 Jul 2025 01:01:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753405291;
-	bh=2xm7u3ygcZYBzCZXGoS/pCUYoBjZBFKnG8HwfR0nmZA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=S//hzPtkrEJWtjCpMVveiikuo8YGKwG6HXKQsFWNzKhUo1FqN3Qha5XSwann5Qfh0
-	 8qgq16uXtPh7baKfgU3rbq6tF4hAGNaNnQHvApWdE2oqiRU/Rl2yRN7OTZgRC+LXxn
-	 95gkYGtHVCApuf2h0QczyVlYs3RTMESoE1yX5KIsoEK67EeJoHbMmVPZbujbf+67Ma
-	 6pffUAXSOuY4fZWPPtXjlFUUir8R4XmbVwy2pJtTWzTWPWjBRaPHvAY8PNNw9KFuJC
-	 Y7KQ6PuuG/byFbltcIqK/g9BJnpqLoyUYm2flutmNIcZ6+ldBIsg0Y2tKUUqeS9BkW
-	 8WWl+mvi9bumg==
-Date: Thu, 24 Jul 2025 18:01:28 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Jiri Pirko <jiri@nvidia.com>, Jiri Pirko
- <jiri@resnulli.us>, Donald Hunter <donald.hunter@gmail.com>, Jonathan
- Corbet <corbet@lwn.net>, Brett Creeley <brett.creeley@amd.com>, Michael
- Chan <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>,
- "Cai Huoqing" <cai.huoqing@linux.dev>, Tony Nguyen
- <anthony.l.nguyen@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Sunil Goutham <sgoutham@marvell.com>, Linu
- Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin
- Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>, Subbaraya
- Sundeep <sbhatta@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon
- Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>, Ido Schimmel
- <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>, Manish Chopra
- <manishc@marvell.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <intel-wired-lan@lists.osuosl.org>, <linux-rdma@vger.kernel.org>, "Shahar
- Shitrit" <shshitrit@nvidia.com>, Gal Pressman <gal@nvidia.com>
-Subject: Re: [PATCH net-next V2 0/5] Expose grace period delay for devlink
- health reporter
-Message-ID: <20250724180128.338977e3@kernel.org>
-In-Reply-To: <1753390134-345154-1-git-send-email-tariqt@nvidia.com>
-References: <1753390134-345154-1-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1753405505; c=relaxed/simple;
+	bh=tAi5yNbVWJZar85JYgxMKocAfRchNPvqbGllAqQ8wQY=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=pfzLCOPILvwd7X+1bKi2Plq2treI2b+FcqLxIZKCqnOBVA2pyHeOD1p7Kg4np/XIuS/wqevwL+FPXGEwPUHyqJ8Yagn8DCwMwJQ56fSdhyyV2wgeEOAoZAAHMQVmqBYQVWGL9AZ0dMPhsCuVbCPR0KOSf/1wc9i6O+4O9UUbi8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HXP5UqLi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA5EC4CEED;
+	Fri, 25 Jul 2025 01:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1753405504;
+	bh=tAi5yNbVWJZar85JYgxMKocAfRchNPvqbGllAqQ8wQY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HXP5UqLif1X61lXGPABx2KAbUTpnbRg6hpTtBn2nMNaygxT8Ase/sMQtr+pAG10nO
+	 b3LAKC0oGKgS28/tNtifcdkHB7Kat3YQBizSFC9avU4m7SBa85DKyk3DqtQV+Sxb2C
+	 N0HOhwDaozGo8fO7kqrt6Y122N85kyQm6kJK8UJg=
+Date: Thu, 24 Jul 2025 18:05:03 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.16
+Message-Id: <20250724180503.a8a80b0b0c904c1c7f967448@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 24 Jul 2025 23:48:49 +0300 Tariq Toukan wrote:
-> This series by Shahar implements graceful period delay in devlink health
-> reporter, and use it in mlx5e driver.
 
-You waited a week to get back to me with the reply to my comments on v1:
-https://lore.kernel.org/all/6892bb46-e2eb-4373-9ac0-6c43eca78b8e@gmail.com/
-and 10h later, before I had a chance to reply - you submit a v2. 
-Not very demure.
+Linus, please pull this batch of hotfixes, thanks.
+
+
+The following changes since commit db6cc3f4ac2e6cdc898fc9cbc8b32ae1bf56bdad:
+
+  Revert "sched/numa: add statistics of numa balance task" (2025-07-09 21:07:56 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-07-24-18-03
+
+for you to fetch changes up to 0dec7201788b9152f06321d0dab46eed93834cda:
+
+  sprintf.h requires stdarg.h (2025-07-24 17:58:00 -0700)
+
+----------------------------------------------------------------
+11 hotfixes.  9 are cc:stable and the remainder address post-6.15 issues
+or aren't considered necessary for -stable kernels.
+
+7 are for MM.
+
+----------------------------------------------------------------
+Akinobu Mita (1):
+      resource: fix false warning in __request_region()
+
+Harry Yoo (1):
+      mm/zsmalloc: do not pass __GFP_MOVABLE if CONFIG_COMPACTION=n
+
+Jason Gunthorpe (1):
+      mm: update MAINTAINERS entry for HMM
+
+Jinjiang Tu (1):
+      mm/vmscan: fix hwpoisoned large folio handling in shrink_folio_list
+
+Marco Elver (1):
+      kasan: use vmalloc_dump_obj() for vmalloc error reports
+
+Nathan Chancellor (1):
+      mm/ksm: fix -Wsometimes-uninitialized from clang-21 in advisor_mode_show()
+
+Ryusuke Konishi (1):
+      nilfs2: reject invalid file types when reading inodes
+
+SeongJae Park (1):
+      mm/damon/core: commit damos_quota_goal->nid
+
+Sergey Senozhatsky (1):
+      mailmap: add entry for Senozhatsky
+
+Stephen Rothwell (1):
+      sprintf.h requires stdarg.h
+
+Zi Yan (1):
+      selftests/mm: fix split_huge_page_test for folio_split() tests
+
+ .mailmap                                          |  4 ++++
+ CREDITS                                           |  4 ++++
+ MAINTAINERS                                       |  3 ++-
+ fs/nilfs2/inode.c                                 |  9 ++++++++-
+ include/linux/sprintf.h                           |  1 +
+ kernel/resource.c                                 |  5 +++--
+ mm/damon/core.c                                   | 15 +++++++++++++++
+ mm/kasan/report.c                                 |  4 +++-
+ mm/ksm.c                                          |  6 +++---
+ mm/memory-failure.c                               |  4 ++++
+ mm/vmscan.c                                       |  8 ++++++++
+ mm/zsmalloc.c                                     |  3 +++
+ tools/testing/selftests/mm/split_huge_page_test.c |  3 ++-
+ 13 files changed, 60 insertions(+), 9 deletions(-)
+
 
