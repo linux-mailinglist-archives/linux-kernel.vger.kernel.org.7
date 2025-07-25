@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-745868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676BBB11FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:12:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B32D4B120BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD443AA4B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4CF3B4CAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603AD1FC0E2;
-	Fri, 25 Jul 2025 14:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B362EE5F8;
+	Fri, 25 Jul 2025 15:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="s17j6S4M"
-Received: from smtp88.iad3a.emailsrvr.com (smtp88.iad3a.emailsrvr.com [173.203.187.88])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="dJxjij5H"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB21C1DFE09
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0D423ABAB
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753452705; cv=none; b=O7aPMBPrUSxeXSFFj4rgA0tpCLgDXAaHT9wh0pUayMtaiERgPktZFtwArYxFcL20dbn/zCwIROYdPhiFgC0az5weIBPfYZGKaScnCWt5A1gg4wH8IkRiiNDEQQIavcHFLCWQBbrXvBTgpwBwT+BWJeYy0Vqy7Via24ucncYqYfs=
+	t=1753456928; cv=none; b=JVRaOfN9/X7CWwOBpK5uUsyIavoCrx6I0wUh9RwQNuK6d+Sf3kfr2CF7/+YKynNqSCBheuinhQONKL59Ka2xfkefnDwtzgAS7CAwsZwm2+kUNTeWYao/XHWo3r6wdKMVsGLe6YY9npfBNE3PEbRXoWllN2/+TxvyhzVMmia4210=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753452705; c=relaxed/simple;
-	bh=lkIWUunyv3x/dZPZ/tcijNWfCqbJR26FnC55X/GlDi0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GXTta+gRf4XqVISiodfOck0BmkT5nWZ57aoLrEOp397wYnAC6kZ6dGo9iyiogp00fjRWsGD6dbf5uLx4RHLFfs6EMKNSDCM6GZ57Ik+OmcAcb3caxF08ITex/iSLl1+gCKD5f5zJiXywZ3FAzhHffcK4CW/u5Np6ecmoJubekvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=s17j6S4M; arc=none smtp.client-ip=173.203.187.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-Received: from smtp78.iad3a.emailsrvr.com (relay.iad3a.rsapps.net [172.27.255.110])
-	by smtp28.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTPS id 6DD0138A7
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:53:43 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1753448016;
-	bh=lkIWUunyv3x/dZPZ/tcijNWfCqbJR26FnC55X/GlDi0=;
-	h=From:To:Subject:Date:From;
-	b=s17j6S4M9YteohsTH9vchjxZvjniukgjiZJDiYMI+9hq/NXmD+bvwuHtDi/m2T8eO
-	 WFGGEgFOehxkzf3Zo55Sfas+EItgahBGKNqiVFxwhhXLn8lu9zGZV5bUItNRYSKwJv
-	 BFrye3Z0ykFpzj0FpOO+eHw+Y2VWTw/36or1aNcI=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp26.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 3CF454276;
-	Fri, 25 Jul 2025 08:53:35 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	syzbot+a5e45f768aab5892da5d@syzkaller.appspotmail.com,
-	syzbot+fb4362a104d45ab09cf9@syzkaller.appspotmail.com,
-	stable@vger.kernel.org,
-	Arnaud Lecomte <contact@arnaud-lcm.com>
-Subject: [PATCH] comedi: Fix use of uninitialized memory in do_insn_ioctl() and do_insnlist_ioctl()
-Date: Fri, 25 Jul 2025 13:53:24 +0100
-Message-ID: <20250725125324.80276-1-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1753456928; c=relaxed/simple;
+	bh=w6cqLDPAuWWOf3XDsgnT9TheMq0d2PeDxG8bPLIPHH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQaJofaRNFi75Gv4Yx+RpUqS1DZ2T6YA81wMqbZm1SnEHQrWmqxzXUb/I0BjAd/wLTGfqXsLkNYl4kqLMaNNi3YJDCB8qmejsFcbNiuOB6B4s1cBrYOwnIikISnFgQ0J1V1rYejSQo+Fpvo2J3mj9qyJx1ofTU8JFnPt/rxW8Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=dJxjij5H; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-116-187.bstnma.fios.verizon.net [173.48.116.187])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56PFJ19S022191
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 11:19:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1753456745; bh=wBKmwQYCteJSPB4Hw5iOzmxaBx11IomAX7t4BBIedJc=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=dJxjij5H3IZka8UrAhUdDHbTwYomsTNgMcfiGCaxIgsBWkgzaRf+1/kNCJAepJ7Yq
+	 6W3VbkuAxbG5rY4xeDIvuM6HzdnOGNKb25Hq03osoQY5qfoiOg64BHyD5SVqegA4ut
+	 S95N6Ozx9j8vphBGJmTYZUenYAT2qeVHWW3sgPQC7rrMm5ASWmtHWiZQ3uImpry4cz
+	 1ivX7EVEUWh67Q+HXy2Jp5nrFw3hyZRJ/QeplXswFodxXoMpPwsx0mZrOZOKFuGACQ
+	 zmMLq9Obit2reyRC8ZVCuP9zV4hU06DF8R5y6Z93VFbbkZls+JS6SDKAIjUlM0GQt9
+	 WOwfi87BfJqpA==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 774922E00D6; Fri, 25 Jul 2025 09:15:41 -0400 (EDT)
+Date: Fri, 25 Jul 2025 09:15:41 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jan Kara <jack@suse.cz>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, linux@roeck-us.net,
+        yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
+        yangerkun@huawei.com
+Subject: Re: [PATCH] ext4: fix crash on test_mb_mark_used kunit tests
+Message-ID: <20250725131541.GA184259@mit.edu>
+References: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
+ <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: 52ef133e-236b-42a9-97f2-65e8f65113a2-1-2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
 
-syzbot reports a KMSAN kernel-infoleak in `do_insn_ioctl()`.  A kernel
-buffer is allocated to hold `insn->n` samples (each of which is an
-`unsigned int`).  For some instruction types, `insn->n` samples are
-copied back to user-space, unless an error code is being returned.  The
-problem is that not all the instruction handlers that need to return
-data to userspace fill in the whole `insn->n` samples, so that there is
-an information leak.  There is a similar syzbot report for
-`do_insnlist_ioctl()`, although it does not have a reproducer for it at
-the time of writing.
+On Fri, Jul 25, 2025 at 01:06:18PM +0200, Jan Kara wrote:
+> > This patch applies to the kernel that has only merged bbe11dd13a3f
+> > ("ext4: fix largest free orders lists corruption on mb_optimize_scan
+> > switch"), but not merged 458bfb991155 ("ext4: convert free groups order
+> > lists to xarrays").
+> 
+> Hum, I think it would be best to just squash this into bbe11dd13a3f and
+> then just rebase & squash the other unittest fixup to the final commit when
+> we have to rebase anyway. Because otherwise backports to stable kernel will
+> quickly become rather messy.
 
-One culprit is `insn_rw_emulate_bits()` which is used as the handler for
-`INSN_READ` or `INSN_WRITE` instructions for subdevices that do not have
-a specific handler for that instruction, but do have an `INSN_BITS`
-handler.  For `INSN_READ` it only fills in at most 1 sample, so if
-`insn->n` is greater than 1, the remaining `insn->n - 1` samples copied
-to userspace will be uninitialized kernel data.
+What I ended up doing was to add a squashed combination of these two
+commits and dropped it in before the block allocation scalabiltity
+with the following commit description:
 
-Another culprit is `vm80xx_ai_insn_read()` in the "vm80xx" driver.  It
-never returns an error, even if it fails to fill the buffer.
+    ext4: initialize superblock fields in the kballoc-test.c kunit tests
+    
+    Various changes in the "ext4: better scalability for ext4 block
+    allocation" patch series have resulted in kunit test failures, most
+    notably in the test_new_blocks_simple and the test_mb_mark_used tests.
+    The root cause of these failures is that various in-memory ext4 data
+    structures were not getting initialized, and while previous versions
+    of the functions exercised by the unit tests didn't use these
+    structure members, this was arguably a test bug.
+    
+    Since one of the patches in the block allocation scalability patches
+    is a fix which is has a cc:stable tag, this commit also has a
+    cc:stable tag.
+    
+    CC: stable@vger.kernel.org
+    Link: https://lore.kernel.org/r/20250714130327.1830534-1-libaokun1@huawei.com
+    Link: https://patch.msgid.link/20250725021550.3177573-1-yi.zhang@huaweicloud.com
+    Link: https://patch.msgid.link/20250725021654.3188798-1-yi.zhang@huaweicloud.com
+    Reported-by: Guenter Roeck <linux@roeck-us.net>
+    Closes: https://lore.kernel.org/linux-ext4/b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net/
+    Tested-by: Guenter Roeck <linux@roeck-us.net>
+    Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 
-Fix it in `do_insn_ioctl()` and `do_insnlist_ioctl()` by making sure
-that uninitialized parts of the allocated buffer are zeroed before
-handling each instruction.
+Then in the commit "ext4: convert free groups order lists to xarrays"
+which removed list_head, I modified it to remove the linked list
+initialization from mballoc-test.c, since that's the commit which
+removed those structures.
 
-Thanks to Arnaud Lecomte for their fix to `do_insn_ioctl()`.  That fix
-replaced the call to `kmalloc_array()` with `kcalloc()`, but it is not
-always necessary to clear the whole buffer.
+In the future, we should try to make sure that when we modify data
+structures to add or remove struct elements, that we also make sure
+that kunit test should also be updated.  To that end, I've updated the
+kbuild script[1] in xfstests-bld repo so that "kbuild --test" will run
+the Kunit tests.  Hopefully reducing the friction for running tests
+will encourage more kunit tests to be created and so they will kept
+under regular maintenance.
 
-Fixes: ed9eccbe8970 ("Staging: add comedi core")
-Reported-by: syzbot+a5e45f768aab5892da5d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=a5e45f768aab5892da5d
-Reported-by: syzbot+fb4362a104d45ab09cf9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=fb4362a104d45ab09cf9
-Cc: <stable@vger.kernel.org> #5.13+
-Cc: Arnaud Lecomte <contact@arnaud-lcm.com>
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
-Cherry picks to fix this for 5.4.y and 5.10.y not yet available.
----
- drivers/comedi/comedi_fops.c | 5 +++++
- 1 file changed, 5 insertions(+)
+[1] https://github.com/tytso/xfstests-bld/blob/master/kernel-build/kbuild
 
-diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-index 23b7178522ae..7e2f2b1a1c36 100644
---- a/drivers/comedi/comedi_fops.c
-+++ b/drivers/comedi/comedi_fops.c
-@@ -1587,6 +1587,9 @@ static int do_insnlist_ioctl(struct comedi_device *dev,
- 				memset(&data[n], 0, (MIN_SAMPLES - n) *
- 						    sizeof(unsigned int));
- 			}
-+		} else {
-+			memset(data, 0, max_t(unsigned int, n, MIN_SAMPLES) *
-+					sizeof(unsigned int));
- 		}
- 		ret = parse_insn(dev, insns + i, data, file);
- 		if (ret < 0)
-@@ -1670,6 +1673,8 @@ static int do_insn_ioctl(struct comedi_device *dev,
- 			memset(&data[insn->n], 0,
- 			       (MIN_SAMPLES - insn->n) * sizeof(unsigned int));
- 		}
-+	} else {
-+		memset(data, 0, n_data * sizeof(unsigned int));
- 	}
- 	ret = parse_insn(dev, insn, data, file);
- 	if (ret < 0)
--- 
-2.47.2
+Cheers,
 
+					- Ted
 
