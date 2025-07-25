@@ -1,161 +1,147 @@
-Return-Path: <linux-kernel+bounces-745328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F02AB1187D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:26:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76C2B11880
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DF5D1CC558C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8F71CC6AC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B91D2882CB;
-	Fri, 25 Jul 2025 06:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58687288508;
+	Fri, 25 Jul 2025 06:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="IWugx4X+"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LI8COTNG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935732877F9
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151CA1E47AD;
+	Fri, 25 Jul 2025 06:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753424808; cv=none; b=BByqM0XRMjyi9E9AuFur8W5TybYlHBszid3I9b5Z517siKqUq9JLmdPjbZ7dKnSHg+A9q+XQY0hQvHtRsqUBE+D5EspEi1WTX6Y+6eayCo3fSz03BHVOXg1uKNxFdJ1xNYIeegIlkL2vcxXPehjUuaYeGl4o2Bu6lHMXglaTOb4=
+	t=1753424880; cv=none; b=tP3MB3cwbZI4scIhOkqllGh7Ka02MlK5uDffNnPB5r4I17Usmk6DvbTJX3/AFZJyswaQQBsVHEkWpz7HyDJW5EymS3BYe2xmrsv+3Q1e/3cEWnbzNl6yKNpdl04uHtM8DhMhQbjfBn99xWmsX5rZ6wkwNOEEumKcu2+QGZByGtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753424808; c=relaxed/simple;
-	bh=2si2snLINEkjaC7gF7x3f6zLZxI8VdibGsVfnQtcyl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AafYNWRSS9C1B6CP4ZceS6eO4zO5Q6mS8gca+j37G19KC2jgSAOHRtZ4Cu0hV2fYaSwSTR34FUoOsWFhmL/5nftb1snGkelyt8G+lxG0Mb99oA8A7mbZqeOPxd/8Ab4cmzbSX4OfpOCX8GO5nEm7BUVpExlqK8c4dI4BpDZO2nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=IWugx4X+; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 87A1D40308
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1753424804;
-	bh=i7Z45Di1DKvPrIvb2/CHdBXTyeDYviINQxq/IZOTBeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=IWugx4X+bTsW+tLBhJVw7GOYeoC59am65WCy0KgCsDi+PYktPZHpiLqCthurKR+rA
-	 ghChtgIetvXu0gOUcL9NRsVZamJpZNA70B2aQYGDnKH6g38ZG0eWlbICoGXJ2l2v3i
-	 GHd0j4MDN29cWl4TDaXgQ2PNp/vmRR4BTHtzmcEp77tK2jxWIZJwdlfG+UpIYekDdk
-	 LXXNbPUjzYcg3QXOjopn6EEbaXCQ6rNcY/k4kRrXQfUe8jg6oWT40Qgcsl8TApLtdR
-	 kyv29YdXWv6cOxv5wlkdOgnWg2uHvPTAJKTdq8Gk/H5Vriz8HrT4crIQMj/wNfBgna
-	 sYReZIYQB34lQ==
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a523ce0bb2so902542f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:26:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753424803; x=1754029603;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i7Z45Di1DKvPrIvb2/CHdBXTyeDYviINQxq/IZOTBeg=;
-        b=UujVcUhG47nvqZJF+kgRzK0BSybVB7xVjduaBSXojWGAzMBWJ0gQi5koMRFQG+kBf4
-         MB5/3vEIdBD57XEAfkArSN8rAdSALtq151zubCgJUDULPFZ3apzgQnTiJ/FheTxF+GVD
-         k3YcKtG6uA+RwNNmHGIA3wshQVlIOpUOW3f8cqMX2BbUv5VlDHAp3hO5PbU7etgm4jTe
-         h8zyjrfIx2XYfFu184lVg3RSKGzEzEwGsIkgiGeEHwxG1aVLPBKArukefnuwL/kt+Cpf
-         bOfI07oujhxRM0ulvxw0j4aY8LZHAXDr8xD9L2EkCRbTnUqJh3vWzFtwjjU16XfcUt/m
-         FOCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvYfqLk7mtF4oFgS6vCS01rJevMDH98auD53I01nKpRmMuO5jJUW9keHsxUYj1NEOxrq1ab/bzCmNB9VU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCF4MV4JzQZNrbtZHkjOzHdNHuAFXHoSzN6UGRAXGViwJmhoQ/
-	xofzQSxbef/H6I8VXeUoGFaxmwJ06IRXrKgXBaFUhgPtDrAtWDqFnT4nUJHdDY2iltHiL8k/JEM
-	QSj/QYXej98YyLBOb2ePRTisgRP5wMMKrXCuLsOeqsL+mCKaJQ+4kwg0PKt5IPRDrrsy8VJ9TKT
-	2rXc+yCw==
-X-Gm-Gg: ASbGncuLb/MvcHYJJSrXIpo8Wo+vsW8BHxAvmB1/0EYNXTpBhi9KBZbtYQX2tm0GD70
-	07XGFrEB1k3Afz6J+xAZwYGWi0Tin0hZz/vU1EQgb81mw8O8L1OV7pQhKe8sd0JeS5TVXi/YDSx
-	zutiK9JsQZZZoPvkjF/pQj61GTu1zq5J/j8LWCT50/AmF42ooF5rPu0sGKwQsXB7R4c2IyCZ3Wj
-	gDTBBxRmqNQhy7WjXKH+0UsbmxRPevn/iEzYy2SHMWHNmRHTVf6UC8XGKteOqOt54pLJsnLEb8s
-	VzT9JcuMKBRuacvVJeG01MoZpwxXQPKue8sSSCxX9YAultV01V0Lzf9yTllH6DIy1zmHqqHvBKI
-	BhjCABujJ081WNmMEHNCBipRhlOuUIP1q0VmX
-X-Received: by 2002:a05:6000:1a88:b0:3a4:fb7e:5fa6 with SMTP id ffacd0b85a97d-3b77671592amr538371f8f.1.1753424802564;
-        Thu, 24 Jul 2025 23:26:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTcbhP+qpBUFcpUqfk2Wp/N8FXB7Xsc01E0wuMcV6UBfsne+SnFue51uathOre6C5p/D/OcQ==
-X-Received: by 2002:a05:6000:1a88:b0:3a4:fb7e:5fa6 with SMTP id ffacd0b85a97d-3b77671592amr538323f8f.1.1753424802160;
-        Thu, 24 Jul 2025 23:26:42 -0700 (PDT)
-Received: from [192.168.123.154] (ip-005-147-080-091.um06.pools.vodafone-ip.de. [5.147.80.91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcacf0bsm4109538f8f.38.2025.07.24.23.26.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 23:26:41 -0700 (PDT)
-Message-ID: <0532c555-1876-449b-89cb-36ce5394433f@canonical.com>
-Date: Fri, 25 Jul 2025 08:26:39 +0200
+	s=arc-20240116; t=1753424880; c=relaxed/simple;
+	bh=e/ZyDH4WWdJfn9bdaRkj8a5fNMoH+piypyKZpyuRjiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gjgctn7sZ3psKdbZbFjw5lulK8hT5Hq87AN7gAnaWoo1rNnIzGbotfUFm3jtS4iPP5oYg2ykVBRSdmdy6Weq8d4soIaFqNdzQ57EpVJBHqhxgnArQl2QhVBkoR72KRtJt2slzpinwVVfRdDAtW26grS5deY0/yekt3QZVib3jn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LI8COTNG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OM9PDo008091;
+	Fri, 25 Jul 2025 06:27:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=4yGrmkLLgCYTkHhTdUotm3WNf/3d+Y
+	qOyCYfoKmz7k4=; b=LI8COTNGdoJHxx/pJX1VXDM9vwILwCijzsOb1M0a0am3zi
+	ekXKUEapDng1ZO+XggNCPSSC1gIMUWkaG+ToqfESlxu+QlJlh+dH1a9rky3ywCz4
+	C2i4pt0cJ+2uFZXPc9AwvUCq188EiPV9TScnD4P1yLYAVZq9ABs8qRx0zwYJKwCm
+	VvzF754oEF2Pbe7DfNWPaSZi7XTgjdPTvpscX2mnzA57Swc2okHSORoj4KgJQYcB
+	a6S/vOsp1jRc+TpDqUl91/wIoJkfJxm19DztWU7bPTvu1/aq0QYuB7sK37vDjIQA
+	F4JKHLx0g81/fLrfGJDJ5XlAcP98lUf40YeQYFtw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 483wcksfkq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 06:27:45 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56P6RiOL032412;
+	Fri, 25 Jul 2025 06:27:44 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 483wcksfkn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 06:27:44 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56P2r6gS025452;
+	Fri, 25 Jul 2025 06:27:43 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 480npu0fh0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 06:27:43 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56P6Rg9r33292962
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Jul 2025 06:27:42 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ED78920043;
+	Fri, 25 Jul 2025 06:27:41 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AFCC920040;
+	Fri, 25 Jul 2025 06:27:39 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.18.98])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 25 Jul 2025 06:27:39 +0000 (GMT)
+Date: Fri, 25 Jul 2025 11:57:37 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
+ crc check verifier
+Message-ID: <aIMjrunlU04jI2lF@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <1e6dad5f4bdc8107e670cc0bd3ce0fccd0c9037a.1752329098.git.ojaswin@linux.ibm.com>
+ <5211dff7-579b-48ea-8180-72d8c6083400@oracle.com>
+ <aHkAJJkvaWYJu7gC@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <b270bb66-721e-4433-adaf-fe5ae100ca6e@oracle.com>
+ <aH9PwFm06n9KQ0mE@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <7fc0f04e-dcec-47a4-b522-eb5a8b90637c@oracle.com>
+ <aIDozETJ8aLparYV@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <9b9ed959-bda5-4a92-90c7-a621ffe58240@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/11] riscv: indirect jmp in asm that's static in nature
- to use sw guarded jump
-To: Deepak Gupta <debug@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Monk Chiang <monk.chiang@sifive.com>,
- Kito Cheng <kito.cheng@sifive.com>, Justin Stitt <justinstitt@google.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
- rick.p.edgecombe@intel.com, broonie@kernel.org, cleger@rivosinc.com,
- samitolvanen@google.com, apatel@ventanamicro.com, ajones@ventanamicro.com,
- conor.dooley@microchip.com, charlie@rivosinc.com, samuel.holland@sifive.com,
- bjorn@rivosinc.com, fweimer@redhat.com, jeffreyalaw@gmail.com,
- andrew@sifive.com, ved@rivosinc.com
-References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
- <20250724-riscv_kcfi-v1-3-04b8fa44c98c@rivosinc.com>
-Content-Language: en-US
-From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-In-Reply-To: <20250724-riscv_kcfi-v1-3-04b8fa44c98c@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b9ed959-bda5-4a92-90c7-a621ffe58240@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: sYc_7PBpxTvlyPqHDuagicv_eKpY5kS2
+X-Proofpoint-ORIG-GUID: vMzHBz-bSwqd2v5TMvw1ADXB7G6xhMlm
+X-Authority-Analysis: v=2.4 cv=JM47s9Kb c=1 sm=1 tr=0 ts=688323e1 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=z_VCc1e3h6uH1eZaKfUA:9
+ a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA1MCBTYWx0ZWRfX9JeDm/uSvI9i
+ 64NWeb4GGZlGjhk0tjegxTOAYQfET7cOa6hNY+YJO3kxnJu1DIBh3vBFVvIFRRHeE3aW3Y5skXk
+ Snu7cf0foEBenbTROZ522RhAahMUIgA13C99SivCCWa4KAHOncYBl6IAekoZT1t7tMKvbGmrJN6
+ WheFc5abStptoVQl+Z3YR+sATLyOED9qahQaT0NofGmudumyKab+5e0Lejw+PsyOp0Yc0gyaKQ4
+ 7+N6plRiLYyaTuDEkQ0Qtx+6elFUhqabdEOc+i2PA8x01Lvt4JtXCig2kYFSWtkLZloAiHTu1kv
+ 7jwfSZr0bxmG8Q0S34q9Vy9JOgZwOmg5Zj3K8YR0aUhpDsRi5bIKkcG7wKAwbhZb4hatnpYbL5/
+ 1mar8bdD9fHF4lnAi5G/I+YUvMilp2quDcvjDPYWkdz2DiWmUitXtgBFofSEQ4CSXc2DRb1V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_01,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxscore=0 bulkscore=0 mlxlogscore=570 phishscore=0
+ priorityscore=1501 suspectscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
+ malwarescore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507250050
 
-On 25.07.25 01:36, Deepak Gupta wrote:
-> Handwritten `__memset` asm routine perform static jumps within
-> function and uses `a5` to do that. This would require a landing pad
-> instruction at the target. Since its static jump and no memory load is
-> involved, use `t2` instead which is exempt from requiring a landing pad.
+On Wed, Jul 23, 2025 at 05:25:41PM +0100, John Garry wrote:
+> On 23/07/2025 14:51, Ojaswin Mujoo wrote:
+> > > > No, its just something i hardcoded for that particular run. This patch
+> > > > doesn't enforce hardware only atomic writes
+> > > If we are to test this for XFS then we need to ensure that HW atomics are
+> > > available.
+> > Why is that? Now with the verification step happening after writes,
+> > software atomic writes should also pass this test since there are no
+> > racing writes to the verify reads.
 > 
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> Sure, but racing software atomic writes against other software atomic writes
+> is not safe.
+> 
+> Thanks,
+> John
 
-Acked-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+What do you mean by not safe? Does it mean the test can fail? 
 
-> ---
->   arch/riscv/lib/memset.S | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/riscv/lib/memset.S b/arch/riscv/lib/memset.S
-> index da23b8347e2d..c4a318d8eef3 100644
-> --- a/arch/riscv/lib/memset.S
-> +++ b/arch/riscv/lib/memset.S
-> @@ -56,12 +56,12 @@ SYM_FUNC_START(__memset)
->   
->   	/* Jump into loop body */
->   	/* Assumes 32-bit instruction lengths */
-> -	la a5, 3f
-> +	la t2, 3f
->   #ifdef CONFIG_64BIT
->   	srli a4, a4, 1
->   #endif
-> -	add a5, a5, a4
-> -	jr a5
-> +	add t2, t2, a4
-> +	jr t2
->   3:
->   	REG_S a1,        0(t0)
->   	REG_S a1,    SZREG(t0)
-> 
 
 
