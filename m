@@ -1,100 +1,135 @@
-Return-Path: <linux-kernel+bounces-746311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45343B12558
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:27:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C7AB12562
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5661D1CC1F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4695604B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3BF25A343;
-	Fri, 25 Jul 2025 20:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4020F25B31C;
+	Fri, 25 Jul 2025 20:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AivHnx6f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QQZJ18q7"
+Received: from mail-qt1-f202.google.com (mail-qt1-f202.google.com [209.85.160.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201F34501A;
-	Fri, 25 Jul 2025 20:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED872259CBE
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753475264; cv=none; b=RHEF9UlCXyNS58m92T+szZs4TCrJe7Uk/b282XuVwVEFC9whtEW3VPx//VH7wRgr4m0tR9MxM5p+JAhgAH/fVzeZAsCrmHdHIxlMXR9nXpgcA+5DZ+fWDna2DIZXEaqkn5K2O+mMYK0+1wvf/K1IxpO2HWqnrv8FRrd8ADFbbgA=
+	t=1753475303; cv=none; b=WvumlR2jfR2SS8grRmdtSedoCy6Y6UUdPhL2kyjEl20FsEz7bc0HyDlWcDjyJZidX6F15p0kP+odLIwwAtZj86qgVSfNQsG6VLXYb9+tWT5YtV8PkoQczh+i0xT/cQzrrl4DIGWIJIaUQhlfDIIak1kM/DmatDYmmGnlrwIAp8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753475264; c=relaxed/simple;
-	bh=aTUYa4oy4wxPOvc8JecX8ElfkuEQILHtAfALn/xab6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GdAo39b51B28UXqxlN/5s+Tiwk0tyd7wKQikyCtpcnT2BMQQzmY66+BB57Nqgiz7tGtG/9qud2OwnBiEFLSeKmIzb8Q8pZL7rs/IlMaw3H2mqGRcGUWoOoJ5m8PbW0SUAwSIkI1Sl3x6PuBMwYnPtUumL1eo4swD/e2EjCXTa0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AivHnx6f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C85EEC4CEE7;
-	Fri, 25 Jul 2025 20:27:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753475264;
-	bh=aTUYa4oy4wxPOvc8JecX8ElfkuEQILHtAfALn/xab6s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AivHnx6fxOn/tyd89Fe+bvxQTmzuwiKd6XahF2foKADROK61HvS8eG5aqcgsjOwo0
-	 QrEn+cpmRseYPEDN+2lgU6QGI7SWcgLSxrjNGxFM/oXNPP0g/f1sztZ5kRvMK+GsBq
-	 OO1DuTpijsVzwGPHQ8K1/2vhGbRR3SuWmbHvI5JVhuQorMFU1XtVhK6yReD050/FzQ
-	 +u83DVE9OuKOXkCV052rxzX/HVExTYmVgnWa8IowrfBlMwtheKx2ti6lXTQNmGMmsw
-	 J1yqjYwhoBbqr64fW7jtsZdYr/zCSY9zIZ1ZpMs+HRj5QCZBoAuRmyJrBWNJ5NFF6a
-	 kc+jE5j8hHdYA==
-Date: Fri, 25 Jul 2025 15:27:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: ck.hu@mediatek.com, mathieu.poirier@linaro.org,
-	linux-kernel@vger.kernel.org, krzk+dt@kernel.org,
-	linux-media@vger.kernel.org, olivia.wen@mediatek.com,
-	p.zabel@pengutronix.de, broonie@kernel.org,
-	linus.walleij@linaro.org, tzimmermann@suse.de,
-	daniel.lezcano@linaro.org, mchehab@kernel.org, kishon@kernel.org,
-	houlong.wei@mediatek.com, herbert@gondor.apana.org.au,
-	jieyy.yang@mediatek.com, jitao.shi@mediatek.com,
-	shane.chien@mediatek.com, davem@davemloft.net,
-	maarten.lankhorst@linux.intel.com,
-	linux-arm-kernel@lists.infradead.org, simona@ffwll.ch,
-	chunfeng.yun@mediatek.com, airlied@gmail.com,
-	kyrie.wu@mediatek.corp-partner.google.com, mwalle@kernel.org,
-	chunkuang.hu@kernel.org, linux-gpio@vger.kernel.org,
-	linux-sound@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	lgirdwood@gmail.com, linux-mediatek@lists.infradead.org,
-	atenart@kernel.org, vkoul@kernel.org, andy.teng@mediatek.com,
-	linux-crypto@vger.kernel.org, granquet@baylibre.com,
-	matthias.bgg@gmail.com, andersson@kernel.org, conor+dt@kernel.org,
-	jiaxin.yu@mediatek.com, arnd@arndb.de, frank-w@public-files.de,
-	sean.wang@kernel.org, eugen.hristev@linaro.org,
-	sam.shih@mediatek.com, linux-phy@lists.infradead.org,
-	tglx@linutronix.de, mripard@kernel.org, jassisinghbrar@gmail.com,
-	fparent@baylibre.com, devicetree@vger.kernel.org,
-	tinghan.shen@mediatek.com, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 02/38] dt-bindings: display: mediatek,dp: Allow
- DisplayPort AUX bus
-Message-ID: <175347526170.1834693.13284335506775768371.robh@kernel.org>
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
- <20250724083914.61351-3-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1753475303; c=relaxed/simple;
+	bh=gXTJnen5/k7cpoZ23BuEhZhJsM3pfjzHd8tKam8f0t0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=BpbHMJxC81nCPcQfzmATcJwLK19Sxdb+C1667YH5e4lffQG2a8AsRXvX0Rfm9p3An7J8dKAZHTqoLp4pGILO/SGxjwGIBQHrJkIkc8KX3lk593dzsZB5keX2ZLunaArqzYSO+D65ZQWBiOeNJcfn1cWwQ5ocnyj/KwaGghRuJ9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QQZJ18q7; arc=none smtp.client-ip=209.85.160.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com
+Received: by mail-qt1-f202.google.com with SMTP id d75a77b69052e-4ab801d931cso49530821cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:28:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753475300; x=1754080100; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DDk9iD/I/15mfC7z2yZd+qqbmK63SyY3qkF61lMO7hw=;
+        b=QQZJ18q71Swn3pn1i+Rxe4kyr4ifU70cZoNXfZx4nppzyaXlkn9HHNkRvBhpjzkyBd
+         MjCELuAKoFziwzwk16CJrFgPcifgqsPnQ6TpcUehkCWiSpxeNsZIZ5ipqZ2SCaFmKE5a
+         Joj4wE7ulu9aHYczwY1SAf4eLZr1KNRp1PLmNLeiet/5cH9owYhHbOSu6/rFnQXzpG0P
+         DWpOBjkytPV+dUcTZ3GjKjxy/kiw1V/VE2RSnznpcLDutkxlvUp+y/kv9K3caDVm2THW
+         djNyanHBrOT2ZeLzLrom5COxtMJxSredNvktV5xA1z2GbF+2bQzOjUgY1+tWrBaHTIhQ
+         2t0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753475300; x=1754080100;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DDk9iD/I/15mfC7z2yZd+qqbmK63SyY3qkF61lMO7hw=;
+        b=s2RhswgNqv01ymUpwQZIFoYDa6Zt/lCBCUl8M2mB9jXrKC4l8awGLGTwAveq++Y0Zp
+         jUnYv0xOcW1s5JRDFJNzeyFK2B/qit6KHyl6V+3xx0MrTdGsuES3CEllMaN4Q4vv2fUE
+         hP7DaYp0iCMJZk5Zkz43KzPFGACBFvbd2X1MM3pB2HAqYQV8yr1QC1kQCgy1tS9EOCvb
+         vD42gCB+P+1+cQM80RsxqZZmvJblhkRhgGvpmHepkZqCNW9C5IqPmJTeDyzuEJaHC7/b
+         42ozGYMOyoTXmRfjX9AssL1pT6u11K/Uf7Bzjqsg2MjjEMx/mVlVZ1DBkoB6rlrW+vy2
+         cGnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeM+rm0Kpb63raXrofaLDK26Q9E6PeNRnJkJCnA2EsNGhS9EPviXsxJhS7k4RhkE7hEWR+R2k7GHIOTuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlPzzGvljxQJpSvEfUDIlY3BZoZ3YeIbefrKzaJYMb8HgndrG+
+	y16KlsZOxbUIAo1c7dHpJ6RPpBH+MsayOUuQu6/HoPe87OsHFW7YUrcli0CqbdZy0IEZG4G7k1G
+	nsHglpbNgCA==
+X-Google-Smtp-Source: AGHT+IGoW369nQimnMdyOQv3l2inVS2nmeFQHd5UQmHCGbQIndLINbr8efAQFTdyc+N3SnK/40By8NreEylV
+X-Received: from qtei9.prod.google.com ([2002:a05:622a:8c9:b0:4ab:cacc:4c68])
+ (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:ac8:570a:0:b0:4ab:6b08:9dc1
+ with SMTP id d75a77b69052e-4ae8ef9bea7mr50798341cf.19.1753475299804; Fri, 25
+ Jul 2025 13:28:19 -0700 (PDT)
+Date: Fri, 25 Jul 2025 20:28:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724083914.61351-3-angelogioacchino.delregno@collabora.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
+Message-ID: <20250725202809.1230085-1-zecheng@google.com>
+Subject: [PATCH v1 0/6] perf tools: Some improvements on data type profiler
+From: Zecheng Li <zecheng@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Zecheng Li <zli94@ncsu.edu>, Xu Liu <xliuprof@google.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Zecheng Li <zecheng@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi all,
 
-On Thu, 24 Jul 2025 10:38:38 +0200, AngeloGioacchino Del Regno wrote:
-> Like others, the MediaTek DisplayPort controller provides an
-> auxiliary bus: import the common dp-aux-bus.yaml in this binding
-> to allow specifying an aux-bus subnode.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../devicetree/bindings/display/mediatek/mediatek,dp.yaml      | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+I've identified several missing data type annotations within the perf
+tools when annotating the Linux kernel. This patch series improves the
+coverage and correctness of data type annotations.
 
-Applied, thanks!
+Here's a breakdown of the changes:
+
+Patches 1 and 2 fixes direct type matching from DWARF. They fix cases
+with intrusive linked lists (e.g, sched_balance_update_blocked_averages)
+where type information was previously missed.
+
+Patch 3 utilizes this to better determine the types of stack
+variables for instruction tracking.
+
+Patch 4 skips annotations for lea instructions, as these do not involve
+memory access.
+
+Patches 5 and 6 implement a basic idea for register offset tracking
+based on arithmetic operations. While this feature has known limitations
+and may regress in rare cases compared to the original, it generally
+improves offset tracking in most scenarios.
+
+Note: I will be communicating from a new email address, zli94@ncsu.edu,
+as I will soon lose access to my current email account.
+
+Thanks,
+Zecheng
+
+Zecheng Li (6):
+  perf dwarf-aux: Use signed comparison in match_var_offset
+  perf dwarf-aux: More accurate variable type match for breg
+  perf dwarf-aux: Better type matching for stack variables
+  perf annotate: Skip annotating data types to lea instructions
+  perf dwarf-aux: Find pointer type to a type
+  perf annotate: Track arithmetic instructions on pointers
+
+ tools/perf/arch/x86/annotate/instructions.c | 109 ++++++++++++++++-
+ tools/perf/util/annotate-data.c             |  14 ++-
+ tools/perf/util/annotate-data.h             |   6 +
+ tools/perf/util/annotate.c                  |   5 +
+ tools/perf/util/dwarf-aux.c                 | 125 ++++++++++++++++++--
+ tools/perf/util/dwarf-aux.h                 |   4 +
+ 6 files changed, 247 insertions(+), 16 deletions(-)
+
+-- 
+2.50.1.470.g6ba607880d-goog
 
 
