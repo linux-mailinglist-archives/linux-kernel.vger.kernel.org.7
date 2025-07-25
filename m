@@ -1,139 +1,110 @@
-Return-Path: <linux-kernel+bounces-745207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084BEB116A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:44:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E00EB116A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4728AA3722
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:43:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 293A65A44F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075E9230BD2;
-	Fri, 25 Jul 2025 02:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NnZNDbMp"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13143236A73;
+	Fri, 25 Jul 2025 02:44:51 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95F422ACEF
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602C43A8F7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753411438; cv=none; b=fHahXrjL15XrbgiLH3vLCTswUBJquVxldwJsj3qT1RElDiwIuBZYBqTPXUgU7AGpWUkX8NhliiE1X9kLqs7c3syyQceMyvDRYygK1cpUXnHx0nFw2Wf4C2w0kQEWtFO58C55dtBi9QhWJkFlLm5YjB9gnxbAIshEybVsWRBr73w=
+	t=1753411490; cv=none; b=uE3Z3O6DRYzikoWDRqzfY9tW9Khy8MigbfbZ8gJyQjjzB7E2hPM6TE+KbCJPS0m5/h9GUqeg7E3V7x128iDSOJxofxxOa3SnRDlFfZojRiBzt/+5mwSm3joZ0HNmTST/X+Jv8HrDjqAPEmhkJbPCdDguF7bP6f4uMdtXvqrb8kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753411438; c=relaxed/simple;
-	bh=7hlZomtnwSEYXgOyb5FEyanHu7jwB5H+48d2zwgeTUg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JF7GKiHnLcWH6Wu9GATtNkMZ8C3DWwDabAa1RYOsQepJ401MNogb5itDiagEbzGXm5ykSRtUq/4+ax0FDWdGVGNaE/myXvFO8LHonSpxZMv07WYbmjHjPLGBqTBZT11RSawdFhnlZ4+9NqMIyEyzKHeiPZcLK8hyDcZ8eLMkhPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NnZNDbMp; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8bd171826cso1325720276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:43:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1753411436; x=1754016236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FySz+cRu8BfNFHOSnCCE2y4s68tkhJQYIqvY80ZJOyg=;
-        b=NnZNDbMp6cO1yeqOxSzJnQHbtkt8YjbLFdeK2oiZJOaqEDKfGwtANFCOytqsmHBnpX
-         g07As2ZGtKdnx632yB3Fo9nZEHYkmlOZHr9gFo4Gv0zp4ApBc/Qw54MEV+efM0iYV+KP
-         IEIcpQ4n72+XHkp9T3xNcDnZPqnTvL1EMN65rZ87N8iTXGgt44UuNPtTt3pTIptjd37W
-         pddb1v+TIbQR7xW5DgCVpRkCSqmnWMmn7KUz/I+wews+3ls06v544i3VBezGGny3IT6u
-         P3hkZfT7U9DezUjN59PpiI/S/tyuzjwSkZgO9ok+oht6MEh3NAkQvLz9Q0YaWb/0xwvK
-         XhpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753411436; x=1754016236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FySz+cRu8BfNFHOSnCCE2y4s68tkhJQYIqvY80ZJOyg=;
-        b=hTDBQm1pC21bdmKdH9hjukr/MdHQu3MfCgv7gPkcQQpuzaZIzmtBpGSzfQHhvvfToD
-         nhqR0QV/e+DGzobR21zNeU1H3EjrBqcv19Xf+eHF50fLGK2uaLtmz/hJEA7dfUOXrQO1
-         odEd++UIGH1i1t7rCy6/jBR6A5CqvOOt3Z/ZIqKwCUYhcL5zLZu8p7wwSXZVlzheueUs
-         sDqeD/nGxoS0xGl9Qxy2u2q7F2sYJoZLyyOI4qxroBKDrWiQK6qqRqiPSsMDXy8QImwN
-         ut3L2dz9XYVd9Bgvdbn34XzwA/4cvQi4SQBjUoOVnfErP9scvF/Bk/xUcnMpDr2TmRqc
-         b8xA==
-X-Forwarded-Encrypted: i=1; AJvYcCWD9XRM6grYlhiLYluz/wLBo1YK9gwlecGtceEZ9dKL7xGX8DZZBUB75zr/BoJrAiL7zFSXku5gm1ynRZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbaeEI+JWIzUSd5m5n2IuntyLbSt4gwRP7hWbHD57bvDP2VnZn
-	PMb4Lfrw8LtGPCtgwWSUGPyT3yQsPyjgrHGjHAvf6X1h52FyLVyeKjGCOE4ACCFX/AEGwHLdtpu
-	X0Xs2p5qUpRxRURECEmMxwRxdq+T2dggLso3d8ey/
-X-Gm-Gg: ASbGncuKMCAYcXLGdkcE2NyKwP+ZTCp2zVlSGMVGHKsOCUbodFyRk85KHuC7hCQaUOc
-	y8aZ6c+8nwlW8lNoecfMrEen1nPnvLjRdYV7EODC6UNA0ub2jYakSk7p0VOVtZaaEEtx8UQwcbt
-	EILLNTpnUf3GaeDlq4tj6VGpJbgoxPdFvv8BY0Jyf0JQwRKkf8ZvpV2pm8OHTZ+Wase3CPWwH06
-	7usOfQ=
-X-Google-Smtp-Source: AGHT+IGy0kReF31F1j3wAaPhrwrQg7J25T0JtgcUwvIMbS5nqsDq9A60L8ppu0vixFFhHxaUG+UyC2kOcMggzd4esWk=
-X-Received: by 2002:a05:6902:1747:b0:e8d:9f9a:79bd with SMTP id
- 3f1490d57ef6-e8df1134dbemr143078276.17.1753411435973; Thu, 24 Jul 2025
- 19:43:55 -0700 (PDT)
+	s=arc-20240116; t=1753411490; c=relaxed/simple;
+	bh=fEqmD9G4PRRs8KOXdul3mT+1dRcEHO7xOeY0+oL+4OQ=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=Q5Ct9WhyTEoK/BmVporNfiLYoMoAcuvb17ogTER7o9Ef9XHyIyYVHpNHjj1Nrj6heQ2W8qEzKcxBcShiWMgPS3C3W2BGmeYhpWCoyHQs5jNIYAh1wjVztDyf/+PrCLkLkuNWSu92idALe8mubrPnqKkp2exUsExTgkvPs9OCgKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bpBzT2rZZz8Xs6y;
+	Fri, 25 Jul 2025 10:44:37 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 56P2iOXW045879;
+	Fri, 25 Jul 2025 10:44:24 +0800 (+08)
+	(envelope-from liu.xuemei1@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Fri, 25 Jul 2025 10:44:25 +0800 (CST)
+Date: Fri, 25 Jul 2025 10:44:25 +0800 (CST)
+X-Zmail-TransId: 2afa6882ef89ffffffff99d-eb6b4
+X-Mailer: Zmail v1.0
+Message-ID: <20250725104425229ArF_W-F7CmscLJKs0yoiQ@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
- <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <CAHC9VhS3qY=+DVYqzkgbHLETUo4KgQ17qr_BC3pn9TeG+cr8Mg@mail.gmail.com> <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
-In-Reply-To: <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 24 Jul 2025 22:43:44 -0400
-X-Gm-Features: Ac12FXx7R_BHZgXqsCbTxD-hHKdNeH-KBiya6C276YAbabcH3l3gvX9QAvZbV9M
-Message-ID: <CAHC9VhQ+4=J=nf2Yeb_QACVD4-d3_aUScpBAZhGyj7_+z+mBEw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Secure Boot lock down
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, Xiu Jianfeng <xiujianfeng@huawei.com>, 
-	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Yue Haibing <yuehaibing@huawei.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
-	Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+From: <liu.xuemei1@zte.com.cn>
+To: <paul.walmsley@sifive.com>
+Cc: <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
+        <spersvold@gmail.com>, <sudeep.holla@arm.com>, <mikisabate@gmail.com>,
+        <robh@kernel.org>, <liu.xuemei1@zte.com.cn>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?wqBbUEFUQ0hdIHJpc2N2OiBjYWNoZWluZm86IGluaXQgY2FjaGUgbGV2ZWxzIHZpYSBmZXRjaF9jYWNoZV9pbmZvIHdoZW4KCiBTTVAgZGlzYWJsZWQ=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 56P2iOXW045879
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: liu.xuemei1@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Fri, 25 Jul 2025 10:44:37 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6882EF95.000/4bpBzT2rZZz8Xs6y
 
-On Thu, Jul 24, 2025 at 8:59=E2=80=AFAM Nicolas Bouchinet
-<nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
->
-> Hi Hamza, thanks for your patch.
->
-> Thanks, Paul, for the forward.
->
-> Sorry for the delay, we took a bit of time to do some lore archaeology
-> and discuss it with Xiu.
->
-> As you might know, this has already been through debates in 2017 [1]. At
-> that time, the decision was not to merge this behavior.
->
-> Distros have indeed carried downstream patches reflecting this behavior
-> for a long time and have been affected by vulnerabilities like
-> CVE-2025-1272 [2], which is caused by the magic sprinkled in
-> setup_arch().
->
-> While your implementation looks cleaner to me. One of the points in
-> previous debates was to have a Lockdown side Kconfig knob to enable or
-> not this behavior. It would gate the registration of the Lockdown LSM to
-> the security_lock_kernel_down() hook.
->
-> However, what bothers me is that with this patch, if UEFI Secure Boot is
-> activated and a user wants to disable Lockdown, they need to go through
-> disabling Secure Boot. I'm really not fond of that. A user shouldn't
-> have to be forced to disable security firmware settings because of a
-> kernel feature.
->
-> We thus might want to add a way to disable Lockdown through kernel
-> cmdline.
+From: Jessica Liu <liu.xuemei1@zte.com.cn>
 
-One can enable/disable "normal" LSMs via the "lsm=3D" kernel command
-line option, however, as Lockdown is an "early" LSM, it is enabled
-prior to the command line option parsing in the kernel so that isn't
-really an option unless we add some mechanism to later disable
-Lockdown during the "normal" LSM initialization phase when the command
-line options are available.  This would result in a window of time
-during very early boot where Lockdown would be enabled, before being
-disabled, but I have no idea how problematic that might be for users.
+As described in commit 1845d381f280 ("riscv: cacheinfo: Add back
+init_cache_level() function"), when CONFIG_SMP is undefined, the cache
+hierarchy detection needs to be performed through the init_cache_level(),
+whereas when CONFIG_SMP is defined, this detection is handled during the
+init_cpu_topology() process.
 
---=20
-paul-moore.com
+Furthermore, while commit 66381d36771e ("RISC-V: Select ACPI PPTT drivers")
+enables cache information retrieval through the ACPI PPTT table, the
+init_of_cache_level() called within init_cache_level() cannot support cache
+hierarchy detection through ACPI PPTT. Therefore, when CONFIG_SMP is
+undefined, we directly invoke the fetch_cache_info function to initialize
+the cache levels.
+
+Signed-off-by: Jessica Liu <liu.xuemei1@zte.com.cn>
+---
+ arch/riscv/kernel/cacheinfo.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
+index 26b085dbdd07..f81ca963d177 100644
+--- a/arch/riscv/kernel/cacheinfo.c
++++ b/arch/riscv/kernel/cacheinfo.c
+@@ -73,7 +73,11 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
+
+ int init_cache_level(unsigned int cpu)
+ {
+-	return init_of_cache_level(cpu);
++#ifdef CONFIG_SMP
++	return 0;
++#endif
++
++	return fetch_cache_info(cpu);
+ }
+
+ int populate_cache_leaves(unsigned int cpu)
+-- 
+2.25.1
 
