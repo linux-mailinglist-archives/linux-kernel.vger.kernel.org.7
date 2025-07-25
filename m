@@ -1,94 +1,92 @@
-Return-Path: <linux-kernel+bounces-745283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E0DB117D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:19:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B00AB117DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF4258703A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:19:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D345865D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF4C1EA7CF;
-	Fri, 25 Jul 2025 05:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0F91F7060;
+	Fri, 25 Jul 2025 05:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRZz3FCl"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VMdLOQfp"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D508029A2;
-	Fri, 25 Jul 2025 05:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE4429A2;
+	Fri, 25 Jul 2025 05:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753420739; cv=none; b=bGncg25INIJ4OUv7tfDZImcdMHzzmUOPQ8RB0OTu38i03oP1aloS4AH41MICGURfvSAqdBQ/V6vg/9EjE4chPvHYdCd5lCrVDegIZO7DoQgeQOnKGTOPs+xs1P1B7LZm2z6pG3+XKN9xigKSM781xdygIRZbRHXF8CqHd9OKYw0=
+	t=1753420823; cv=none; b=R2r0faT5ZwgatrGUSnzRSG6/OqoNHJxTfsn9HoM4BQ4yZTe46hPVJ1qE39Hcd+A6l/+eAXq2CoIJauHs38MjpKiv8MPPu8ou1PcWQ+TsccFy4XQZJ3yIlYHx9ymdcgl+4tJTcwNJUOYm2vskRHO+fbV+evvKTXpY/polKE+R3qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753420739; c=relaxed/simple;
-	bh=FuTOrNphQ87GZdTd1ZusU/upsjz8QNLi/l8+5ihUqRY=;
+	s=arc-20240116; t=1753420823; c=relaxed/simple;
+	bh=WEET136+AnPYw11pgVjlC8up148t5G8RAovpKhbcgNI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kaL6BK5sNjqYASJvm1pfBW85qNdZE7QhskSyVgYmi+xnaeSG/c752o3+GToVtbA9xaejyY976yNcaWK178BIo04p6SwF7wvFl2hzajg4cUG7S50NHK4U/10tjv1kdVbQzlpnPKOb75b20GcKGo9aw/WYBAxHcvaMDXERifKn7DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRZz3FCl; arc=none smtp.client-ip=209.85.210.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=bqE8F6nTsjYWDijZV9QI2QBYBVWBJlh02XkoM30PIxWWgd1cOETPe/4SpmiDhaJV1G6RbN4jZq3uJ0KNTdR4+zr1JR3rnvc5JXj4uXifNlSeArl7os8GEA/Q6xiQwc+DwNuBXIbTt/nEr0wlfeVA2lUX5vXnAP3e+ceqx/ebmN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VMdLOQfp; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-75ce8f8a3a1so1129099b3a.3;
-        Thu, 24 Jul 2025 22:18:57 -0700 (PDT)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-313154270bbso1807541a91.2;
+        Thu, 24 Jul 2025 22:20:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753420737; x=1754025537; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753420821; x=1754025621; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwlCoX9n3S+W1I2p1kc9IDkLp+xJ/GgTuu9b7/n8qiY=;
-        b=dRZz3FClb8A57RtmdDx01J17YDbfXgaqnH03KO9Fx9A32Vv47IvMBcdO6c1N4WsgA2
-         wNKmQc6Pm+zj50XV6++XAE8atC8EYE/C2zItSeP4v/AJWjGhCkEk7/EYfMqY4shv/z4G
-         HoKiMTPxMBj6vWLCYUDrO0IMrlHAFivEG1O5fjyi37y6PMJGOH6ZanoNG+k6hZrEEXDD
-         bzlVoTp4vrZjIrogEXkhbno1sDBzKbMC5tAWRDr/FvZxEil05lMfbGeo1iS5PqURyogN
-         X7oTUatVThV0IC4VyOzMW+msYWBI+MclGel2BUom/l2N0d+Wg20DFdI5rbz1+5cPGrdr
-         EIPg==
+        bh=nLFW2Etg7f00kiQg1GB1r0zuU1sWnFWDprHgwFRfFp4=;
+        b=VMdLOQfp76UNvQknlx+5zeMAljUvtpwywq36byl3FdxnQ9/Gsl34MfHcUSNa+39/TM
+         Dmc/1Tvly9xFgdgAbAC7YM7bfbv+XyqvWPLvyG0dNxMyCjgIV39a+Z09+B766flStC6k
+         hcCVkz9QaUXYwMg05hKKi4C1sz00SbhxhEGQcTLz8t82DTylvXCWm56QprokVmU1071C
+         t4odXxTxMuqHGnEFlmlNn1lCxJfOueRMc70iswoxkCtlAMwrvISixTROzzszWM1K3uUN
+         fhT0Yq/5vmRGApcxstuSkjlUy9glEwME0D7PYXxRptCl8T4n5b5CTAi3hY2Vk3bLRyet
+         NrAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753420737; x=1754025537;
+        d=1e100.net; s=20230601; t=1753420821; x=1754025621;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hwlCoX9n3S+W1I2p1kc9IDkLp+xJ/GgTuu9b7/n8qiY=;
-        b=CRKd5rIrkn6xRiEgBY3i4IYYULuo5oxq1jFxoB4v/iS9XPPBxFS2oLN39CSvuz+VgP
-         ET7ZJ+tErfeqsZgSc2gTSLnBB0sqY7FCW9nWmQ+iXNW0XNTaR0ENssc0r2oLyb1wClTR
-         +70RN+eO3Z6AQjmciPValEXKujhPAYA9rykTQLDFijEYaJjHExkKXoo0GFPs2WBBgfKZ
-         KLncae9WiYX5Gt+Q68s7LYZjci8FehXo+QQsNr3Ce5jym2lP9hO4aTTPhzPILfXAvoDM
-         FTa2dtLQBF6zGN8dBDefBqT7VNl6gDat2pYU4OxQ7H3YAdQwHnXWiBUKM8aM06vs6nXr
-         B4bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7B/Fgp2tQMFOow3F1TVQCX95/aU57UNEiZKuOFUTd1VC9nhu1YqMDrHFafrC98z8cywglJNzMCsas@vger.kernel.org, AJvYcCXmOSEjkgMRRNy6DftKfOzmzI8v8Plps5vuyVRzxV7vxlLPe+Dz/FC8BDV8isfNyMY3vdbE1W1Qae3L3k3u@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe2TgBRY/z/z7EWNKg6s1SocD+U7gctUHJgLHepmORYu0+qBu6
-	wr8qcqZXp25x32Zd+dDsYPBrReoZzjU5Cgu8MSFIK3sjA4qncWstJlTu
-X-Gm-Gg: ASbGncuIdVMZaEWebuadn1Cr3jcr0Ex3eWUQIQyaxl0puGGJ/xk2QQJ7le7MBUyRVvg
-	nDHkGggbS3JYcHrwE586YtuVGkuPlgbsexCSWdVSZ1OmzAMLvjkRI68CxVFXtcnvtoxWzgYnfwC
-	oS7ITehgmsBNRT3ko2a0AbktmYltadlRBV1diVb2GsrmMa+NnRDJTBK3pwhtgOf9ArB5IgX+wDe
-	PnXof7V/AkhGDZCDMW1rHFu1sYzvMGNh+cmZBIKOIHWf3NvQL4fvMq5C+nr26kbG/PgsFL1QnJJ
-	VESTVNHfAlzTUwpEIsWEntmw0Hou110Q4T15E68v6Y0vfwy1srFeG2jXuvhVxn7BKsjsYI7Uaqh
-	9qv5wYgEYuYPPoJPNhK6reZAhaxLao0O0r+Qr4CxjSs5Uoi2Y++xP4enxYItI05HoTsVcRMQ8T0
-	8=
-X-Google-Smtp-Source: AGHT+IFPixTsfdXK9p29I79UGfIgXeOO9MD+/pKk+rfiR7TaXdWeo4fQpMcFgUkv1hBHXBF3FZnWGw==
-X-Received: by 2002:aa7:88c6:0:b0:748:f80c:b398 with SMTP id d2e1a72fcca58-763382d8395mr881883b3a.15.1753420737003;
-        Thu, 24 Jul 2025 22:18:57 -0700 (PDT)
+        bh=nLFW2Etg7f00kiQg1GB1r0zuU1sWnFWDprHgwFRfFp4=;
+        b=Qg+m/s1nMQW3ZQIJbUlab++FSzgOUCF9XbMw+BDZfFzy+ljAT11y5RA6WPfckD8Y3M
+         cdOQMu23DndqVNNmSeK7rD7HEDUPt08SyHQx86OQDXUnwxP4n061VXX+jRrxSkkvW9au
+         iGsT20ylGiH5p34qgvxZm4u1XQE8HnJ6zgRU/Sg5pVyDKd5YDBD2EJNc4aLYjzAiR2cv
+         zcwR8QDBcC9shNoElS8+DtqgMKwXmVgojhb2hCS2goWZSHLVqycjeNfnXJjNmaTr/qel
+         0JoMf8nQ0LJXHsjvj1UUQiD21c+W+448TLrCUrxF4A/HhOG4hyt0/x7IblJoxCkUOUm/
+         BQVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdW6wq31JGWkOUs8sg7ne5Z90hV2JL6B1RyTnf6zvjxeklii6Q+sep3jgZEYBQzUyClIhBdtVgUhpHhIie@vger.kernel.org, AJvYcCXxPTl9AaNzp60S9twWqb1rQfvDet+ZdVSGZpvH/4vW1YWHB3PlDFe/wJxjw0svw0x4Gl1IBKM5Yy07@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuUJttnOjPwEoDoOVUFSNifn7DJRDamqUp+29u2PcJimVL0cUz
+	i6GRNxSwMbiw6A0BwMD3VwoqDKhaXEnOnXZiFxSu/N5vrSCr3aURuww8
+X-Gm-Gg: ASbGncujjvKI47vlkiKJEOdNxF8XfqcbOHeDJgBKHYNmegKx9f9/hXMWmSCDlAJLDzJ
+	uUldPvS0/nqWNewfJFO+Lvm0e/dk0fl5/pfzHofiuMRld7uDZgqvcysczg1X5wmF9JFs3S8XheL
+	2hppK9AX7iIydjo3uj1adEp+06k2HN2d9w0DnR1kvcrpMANbcPu5SyZqUbTq+ukMTT36MSg2FbC
+	vposei2YWTG6Q+UptTSrxRoo6hqbJHNd512lHTeSlSUdC0rnDXBL907shiIYX0zqLdtaYLUPljz
+	ZCH0f5BO5jioYbSw9FaPEXjBHFy9xzoSDhPDRyalr/Sz1MHvSL9icHj6I/Mq31lV9jkaojhVBkB
+	HsLj3YVIzCj1ezpESyzH50HjfBAngx2y2IkDFHzVU6wgRq8VLnu6ZGbsAAUm6x9QseauBSUN/+G
+	Y=
+X-Google-Smtp-Source: AGHT+IGYNEkx+OPyKPH2NYgCMOjXtnrPHP45w1/H3ht6Anh5i8C5DhT9XfjH7TYWya6okH861qSVtA==
+X-Received: by 2002:a17:90b:2cc4:b0:312:25dd:1c99 with SMTP id 98e67ed59e1d1-31e779fd277mr795087a91.19.1753420821482;
+        Thu, 24 Jul 2025 22:20:21 -0700 (PDT)
 Received: from localhost.localdomain (c-76-133-73-115.hsd1.ca.comcast.net. [76.133.73.115])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761ae15838csm2966301b3a.43.2025.07.24.22.18.55
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e609617aasm2308647a91.0.2025.07.24.22.20.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 22:18:56 -0700 (PDT)
-Date: Thu, 24 Jul 2025 22:18:53 -0700
+        Thu, 24 Jul 2025 22:20:21 -0700 (PDT)
+Date: Thu, 24 Jul 2025 22:20:18 -0700
 From: Tao Ren <rentao.bupt@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
 	Andrew Jeffery <andrew@codeconstruct.com.au>,
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Tao Ren <taoren@meta.com>
-Subject: Re: [PATCH v3 10/13] ARM: dts: aspeed: Add Facebook Fuji-data64
- (AST2600) Board
-Message-ID: <aIMTvUyHGd/ikKY9@localhost.localdomain>
+	Andrew Lunn <andrew@lunn.ch>, Tao Ren <taoren@meta.com>
+Subject: Re: [PATCH v3 07/13] ARM: dts: aspeed: Add Facebook Wedge400-data64
+ (AST2500) BMC
+Message-ID: <aIMUEhoCXU1C8em4@localhost.localdomain>
 References: <20250723233013.142337-1-rentao.bupt@gmail.com>
- <20250723233013.142337-11-rentao.bupt@gmail.com>
- <d09667e5-992e-4ced-ae30-7a4116a72c62@lunn.ch>
- <aIGGdbIX9HaV4dB/@localhost.localdomain>
- <769d6817-ee97-4a23-b013-29bc875a00cb@lunn.ch>
+ <20250723233013.142337-8-rentao.bupt@gmail.com>
+ <20250724-overjoyed-panther-from-camelot-f2ff4f@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,42 +95,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <769d6817-ee97-4a23-b013-29bc875a00cb@lunn.ch>
+In-Reply-To: <20250724-overjoyed-panther-from-camelot-f2ff4f@kuoka>
 
-On Thu, Jul 24, 2025 at 02:53:39PM +0200, Andrew Lunn wrote:
-> On Wed, Jul 23, 2025 at 06:03:49PM -0700, Tao Ren wrote:
-> > On Thu, Jul 24, 2025 at 02:03:20AM +0200, Andrew Lunn wrote:
-> > > > +&mac3 {
-> > > > +	status = "okay";
-> > > > +	phy-mode = "rgmii";
-> > > 
-> > > Does the PCB have extra long clock lines to implement the 2ns delay?
-> > > 
-> > > 	Andrew
-> > 
-> > Hi Andrew,
-> > 
-> > Thank you for catching it. I didn't notice the settings because the file
-> > is copied from the exiting fuji.dts with minor changes.
-> > 
-> > The delay is currently introduced on MAC side (by manually setting SCU
-> > registers), but I guess I can update phy-mode to "rgmii-id" so the delay
-> > can be handled by the PHY?
+On Thu, Jul 24, 2025 at 10:05:40AM +0200, Krzysztof Kozlowski wrote:
+> On Wed, Jul 23, 2025 at 04:30:03PM -0700, rentao.bupt@gmail.com wrote:
+> > +		/*
+> > +		 * PCA9548 (11-0076) provides 8 channels connecting to
+> > +		 * FCM (Fan Controller Module).
+> > +		 */
+> > +		i2c32 = &imux32;
+> > +		i2c33 = &imux33;
+> > +		i2c34 = &imux34;
+> > +		i2c35 = &imux35;
+> > +		i2c36 = &imux36;
+> > +		i2c37 = &imux37;
+> > +		i2c38 = &imux38;
+> > +		i2c39 = &imux39;
+> > +
+> > +		spi2 = &spi_gpio;
+> > +	};
+> > +
+> > +	chosen {
+> > +		stdout-path = &uart1;
+> > +		bootargs = "console=ttyS0,9600n8 root=/dev/ram rw";
 > 
-> That would be good, if it works. The problem with the current code is
-> that those SCU registers are not set as part of the MAC driver, so it
-> is hard to know what value they have.
+> Drop bootargs. You are duplicating stdout path and choice of root is
+> definitely not a mainline user friendly.
 > 
-> 	Andrew
+> Best regards,
+> Krzysztof
 
-Hi Andrew,
-
-I set phy-mode to rgmii-id (letting BCM54616S handle RX/TX delay) and
-cleared SCU350 (MAC3/4 RGMII delay) register, but somehow BMC is not
-reachable over ethernet.
-
-Let me see if I missed other settings. I will drop the mac entry from v4
-if I cannot make it work by next Monday.
+Got it. I will drop bootargs in v4.
 
 Thanks,
 
