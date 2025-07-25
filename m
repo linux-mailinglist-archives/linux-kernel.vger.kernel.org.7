@@ -1,154 +1,141 @@
-Return-Path: <linux-kernel+bounces-746368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED00B125D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E8EB125D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46C765A1024
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:50:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3975E189D0E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39ACB25A352;
-	Fri, 25 Jul 2025 20:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A01425B692;
+	Fri, 25 Jul 2025 20:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="GIjRAtLv"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OjhrxQr+"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056B224EF7F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C07D24EF7F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753476639; cv=none; b=gDilWR+T7EMkzbiKBI5RYo5H6uE/FXuhGgQ3B+30lsgLKZWgec2qgaM8iVZygV6uwKH0oKenw4mvj32/Y+VtWL+SDhR5bckLAcjyvMwonJgCJ3qE3ldxv2fGRp7gbKIMDUf+6ZfCPP6HJJXOlbCzponeEbNgVrKjxFhIuyFdCgI=
+	t=1753476687; cv=none; b=HdmcNGh5GRdz1tRFbnD2rLDqwEPKYASvfmoJmS7xhwu+ortAWau6MT4M2J79owHKBNFTFuDvTKVO/MnyT0nVHSUltH9/6q63X3ZqFTSrU0coTHebXkXmtSev061msGry7WMnN8yM3O8GEtMkS7Itov/U7gC18n4MehmV+9KrIfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753476639; c=relaxed/simple;
-	bh=qOznhkI0sgRd02iZWwCidU/OgKiVAFD924soV3QB2mA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PoDvLCwQBbOQ9G2i7OsTypEtLThoEJnYWrKTlmQRoPRNU9e14Tw9uDHbXOUFaSHEVU4CDtTxYw2zKcHSIHH0YYT0LRKAv2R3CFNEkOnK0j4mKnmquJVgez/JWT+ZxVEAPlYSEaWXAnP11yQx8QghEi5qorI0NqXC4QColNl7dkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=GIjRAtLv; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-235f9ea8d08so24323805ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:50:37 -0700 (PDT)
+	s=arc-20240116; t=1753476687; c=relaxed/simple;
+	bh=FthdTqsDncCCx6NjU7yT98rPjj0CY461gcD1JzafDOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LhPNe5Wvl9yTsR+DA/hAHSLgwp30nenGdh7vXbgKJ5I4Cn9mPKA3MdIe+tGDrEFSExhMsRaeIqzTeK30xTd9A0QKFe7LTudfdh2FXY/kJ6j4PZfbnBpHtdYOWrJ345mHRYvamLBpv5Par0OPcRTbLj632BTYKktsTjqvNtEFpkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OjhrxQr+; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55a25635385so2920668e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:51:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1753476637; x=1754081437; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+7CxWng/6yV3C/vih/JoVMAM53+8hoZqlb7N702ZCEM=;
-        b=GIjRAtLvL2ZyWwvkcHh956iJo5csCp1ddUerQdYtz4DxgxmqDRRrzSJ9KPyIy0AM+v
-         GDiKHN+V1f6s2RQVwtUs/+mefoSngH7ZUm35Fieui0c2GwcDcoHWxG+7jmVlY5uUpGqm
-         aMTQF3EYXmjpbLxIW0ruP/h+VXlrW6ZUERBCmjoo7b36k5vidd0RxV0D0jVwfCvI99Dy
-         KMyPtrFCVbXSjfPeZULVsw7sqxcZqeiqfWYyfpBi6AR8EJ3BPBusvQEheqfiiVafRxPk
-         Fi0HCwbITl4wnNLzByM9UH4i+XLEqSuC/7QxpGGh+TtUylnVmyiJHO5eSj7WeXT/VMiC
-         lN7w==
+        d=google.com; s=20230601; t=1753476684; x=1754081484; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5BT1SS+jMIoUQB40I1MJEAumu30MbcFpZLbewQz58c=;
+        b=OjhrxQr+ioDs4SV22uosvInNx6w6EjDEn+ndoCzOoYmcxC/6vAYxoKq1zkvtDMVsgE
+         6qDjrO6br1mb3QWByg/XBW7e9wb3Gta9APgnkKfvB0Ns6JAff2QaalVRsR76NwU3ymoI
+         QqGhn7ssMxW1qABlYR/syhcPv9dqCgFkH2OZNutXZTgZuefn+fEaE8e91cC7Qo7IlebP
+         iK87DOvNtzdnPOtYCOHRJKEP5iGsY1G2jaIn6ViTzgPU/pGjGaqZeZWa9DQ1s+hsO0B7
+         rvEKTqFZStT89iOSDaI2rpUBtjh/0Cc3/m9nrwU+Y+I0Nv5JbX3dD8+azS80086yllvr
+         u7Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753476637; x=1754081437;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753476684; x=1754081484;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+7CxWng/6yV3C/vih/JoVMAM53+8hoZqlb7N702ZCEM=;
-        b=gGb6V+tVbo6afMZjYZA4t+eO5rY/N+SC07vh0D8nA+trFTS1pN523yPC8dfqBKfE54
-         J1DJUgVu/IJe59J8oI30WyHHvSPMzcSWVj6u+a8HbfLv/rTcuT5HTxen49mIFxEsxGlV
-         0Tz4EChQ8nGEU2pDaeGSQFLhXWyInKI/ufuRJ5buNNk973eMwueFKi5puME8DQYDwJHA
-         mBbjQMO0DYM5Mppk4wcjUuzHu9MfCdgAe9dyh8gP2jeC+ILFli+wD03f3IDyZn57VMcG
-         e0MeJDyn8WnKHdgNeAVOep/QjWVzJjfKd6VoFxJQ4iUNpH/GHEVfwraJ7/bbqBXgmITU
-         kPvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0Mmnp5+NyJaJrk5dXdj2QB61MUdnjkdSx44emThEfHguS8vTEarl6r21/qft/FZkpc+0o5/zJ3uQVNXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyswBfl1oenNpEh+syTH9dZsDsdGOhKXNT4lQJ05hwDspq7vIFw
-	nVZtC//I4Q2yYmn0SRAHBtEHQ/6W5pm8hyXxHksK1rDdb1vpXgJqqhidnOCl26TkyMc=
-X-Gm-Gg: ASbGncv6t49yQTxK6svLIMCVwATTbBnfX2nZGBiS/wXzPS09Rb4l0Mo5t4Io2XEeRxk
-	WSBypzYaneArPBYiymPHvpnVX7m1LEJo9+jNHbtGAF1Y7IjyjJBvrjLMMnmWpAe2RgTBn9jRyyp
-	SFucpS1ZCRcep8A0GMKcy2tl6FHU/euAAJ5Z90xrJ7IbFXT6yx3iBliYwXMrxcJ+8PlvfSb1zBy
-	UWSSc1Um8Om+8sW48sEtvURCfDyxBKpLpkkxqQt8MZDGKFX/Op5Nb5pw8KGzXw4VaMDF1gMEr4r
-	wnOcI/K1TJvwFTzyeGEDHOdSKdaI6ZLYxAo6hbXbQw66L5+RoR6YTH0gvPMm6cYHlqt/bJasKMu
-	LRW6PZqyRMLFvPaKatRWkEMYw1FZmo6lCJ9dbrJl89a7hAg==
-X-Google-Smtp-Source: AGHT+IEDQ87H8ajZgmrcoy7AQkaFkGRZDiUZ3CUFGkJjETMa1Gw2W0pltyotcDJxADSW+OypslSKeg==
-X-Received: by 2002:a17:903:2345:b0:235:e1d6:4e22 with SMTP id d9443c01a7336-23fb3040f6cmr42762535ad.18.1753476637079;
-        Fri, 25 Jul 2025 13:50:37 -0700 (PDT)
-Received: from apollo.purestorage.com ([208.88.152.253])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-23fbe5656adsm3725935ad.188.2025.07.25.13.50.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 13:50:36 -0700 (PDT)
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>
-Cc: Mohamed Khalfella <mkhalfella@purestorage.com>,
-	Hannes Reinecke <hare@kernel.org>,
-	Daniel Wagner <dwagner@suse.de>,
-	Randy Jennings <randyj@purestorage.com>,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nvmet: Initialize discovery subsys after debugfs is initialized
-Date: Fri, 25 Jul 2025 13:50:05 -0700
-Message-ID: <20250725205005.1983426-1-mkhalfella@purestorage.com>
-X-Mailer: git-send-email 2.49.1
+        bh=a5BT1SS+jMIoUQB40I1MJEAumu30MbcFpZLbewQz58c=;
+        b=qC01Gy2FVKyouPOFJ1Zn02oGh/T5weNQp7uyOLX9QkYrpi8amHYNSkqfR0EKLWm5j3
+         gwXLFyig4vlybds9kRMkSqpwzaUeFIZkdInhlxhoz/vntrH1tbhE565bsbmlMXaSwKuP
+         9MVi8OXEl4F63SJaroxTl428EBy9A2ZJctZr/4tR40dP1sxsi+tum/JCLYQZ2hCTxdIX
+         6uromtAgTs4xQ+sX6K4ydvMGeLQPvxGZJpXLM+ff2T/IRe81fHaOrjP0ySoD0MV9RKHC
+         ehYbQZ7nrojjryuefcyUns6hux9lcTgViD0tENZ70y/wO55PAECCmNLVOR12mNqped05
+         0d8Q==
+X-Gm-Message-State: AOJu0YyqxssMPyzCOYACuNGFg93K+opW+Zc4RPlsoYV/cwoYCJxQewnW
+	sv9r57w9h0L41cGLJtgEJcmk6qgu7Jm6MphtixcPIlWv96ivOLvywq1mG1ox/nxkl1YW+iN0GuB
+	gJjd6DQOjSIZbVDrmZZhV7Na4KobwMqvkK195onB9
+X-Gm-Gg: ASbGncswJKitQ1tAqQGsr0L5VBRF0/x3TGKZNM3EPWX9rPEodlyKALWmIgDoN+eDF7q
+	rQJWLfeXyFmGtFpX9fha8yILr27eIuh3aODcGJOURu6bTTeJYzcl5u8MdlqNoC9gzq36kXD0vC8
+	s0Y3SUNKeJhIb3leGtSOPMilj7Dj2bEK1T6D23oYVAAsjkbsLAekiQ2j2N5AFgXXBK805v5hTaD
+	HUzjRf7wGV3tnOltg==
+X-Google-Smtp-Source: AGHT+IH+Jx4ZVR8xsi+R7T5/6uBGsohHzNqjS4AjQ+RbAbQSOQFok2ZyRsJDVjLzhi47t1GIEtgSaXyg0LMrkdLcVa0=
+X-Received: by 2002:a05:6512:1101:b0:55a:521a:6e8a with SMTP id
+ 2adb3069b0e04-55b5f495b6cmr1063198e87.37.1753476684043; Fri, 25 Jul 2025
+ 13:51:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CALU+5Va_zeqS5YK7v3HNvDKkg8srqc87P5ZaQUK5tGFUMyNrkg@mail.gmail.com>
+ <2025072527-entrust-childless-3ae9@gregkh>
+In-Reply-To: <2025072527-entrust-childless-3ae9@gregkh>
+From: Olivier Tuchon <tcn@google.com>
+Date: Fri, 25 Jul 2025 22:51:08 +0200
+X-Gm-Features: Ac12FXxB6lJSsBmXWiJdn2DxsrweBfmgkR5E-bsr6x5D-7RampktPFHTwlVDO4Q
+Message-ID: <CALU+5Va2Onf8AaZx0WEVN4fVY8ErrvHQmRDF+gPFmLEV7HsMiA@mail.gmail.com>
+Subject: Re: [PATCH] usb: gadget: Add gadgetmon traffic monitor
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-During nvme target initialization discovery subsystem is initialized
-before "nvmet" debugfs directory is created. This results in discovery
-subsystem debugfs directory to be created in debugfs root directory.
+> > Signed-off-by: Oliv <tcn@google.com>
+>
+> Doesn't match the From: line :(
 
-nvmet_init() ->
-  nvmet_init_discovery() ->
-    nvmet_subsys_alloc() ->
-      nvmet_debugfs_subsys_setup()
+Indeed, fixed for the next patch.
 
-In other words, the codepath above is exeucted before nvmet_debugfs is
-created. We get /sys/kernel/debug/nqn.2014-08.org.nvmexpress.discovery
-instead of /sys/kernel/debug/nvmet/nqn.2014-08.org.nvmexpress.discovery.
-Move nvmet_init_discovery() call after nvmet_init_debugfs() to fix it.
+> > +config GADGETMON_BUFFER_SIZE_MB
+> > + int "Buffer size for gadget monitor (in MiB)"
+> > + depends on USB_GADGET_MON
+> > + default 4
+> > + help
+> > +   Sets the size of the ring buffer used to transfer event data
+> > +   from the kernel to userspace. A larger buffer reduces the risk
+> > +   of dropping events during high-speed traffic bursts but uses
+> > +   more kernel memory. Value is in Megabytes (MiB).
+>
+> <snip>
+>
+> Patch is totally corrupted with whitespace issues everywhere, making it
+> impossible to apply or even review :(
 
-Fixes: 649fd41420a8 ("nvmet: add debugfs support")
-Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
----
- drivers/nvme/target/core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Arggh, not caught by ./scripts/checkpatch.pl.
+Fixed for the next patch.
 
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index 175c5b6d4dd5..b6247e4afc9c 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -1962,24 +1962,24 @@ static int __init nvmet_init(void)
- 	if (!nvmet_wq)
- 		goto out_free_buffered_work_queue;
- 
--	error = nvmet_init_discovery();
-+	error = nvmet_init_debugfs();
- 	if (error)
- 		goto out_free_nvmet_work_queue;
- 
--	error = nvmet_init_debugfs();
-+	error = nvmet_init_discovery();
- 	if (error)
--		goto out_exit_discovery;
-+		goto out_exit_debugfs;
- 
- 	error = nvmet_init_configfs();
- 	if (error)
--		goto out_exit_debugfs;
-+		goto out_exit_discovery;
- 
- 	return 0;
- 
--out_exit_debugfs:
--	nvmet_exit_debugfs();
- out_exit_discovery:
- 	nvmet_exit_discovery();
-+out_exit_debugfs:
-+	nvmet_exit_debugfs();
- out_free_nvmet_work_queue:
- 	destroy_workqueue(nvmet_wq);
- out_free_buffered_work_queue:
--- 
-2.49.1
+Thanks,
+Olivier
 
+On Fri, 25 Jul 2025 at 17:33, Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> Cool, but:
+>
+> On Fri, Jul 25, 2025 at 05:25:49PM +0200, Olivier Tuchon wrote:
+> > Signed-off-by: Oliv <tcn@google.com>
+>
+> Doesn't match the From: line :(
+>
+> > +config GADGETMON_BUFFER_SIZE_MB
+> > + int "Buffer size for gadget monitor (in MiB)"
+> > + depends on USB_GADGET_MON
+> > + default 4
+> > + help
+> > +   Sets the size of the ring buffer used to transfer event data
+> > +   from the kernel to userspace. A larger buffer reduces the risk
+> > +   of dropping events during high-speed traffic bursts but uses
+> > +   more kernel memory. Value is in Megabytes (MiB).
+>
+> <snip>
+>
+> Patch is totally corrupted with whitespace issues everywhere, making it
+> impossible to apply or even review :(
+>
+> thanks,
+>
+> greg k-h
 
