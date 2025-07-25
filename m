@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-745520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC85AB11B1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:46:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C16B11B21
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5538F7A948F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:45:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC5E16B0A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE46232368;
-	Fri, 25 Jul 2025 09:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D644C2472BA;
+	Fri, 25 Jul 2025 09:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VcL9njX+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XRZ/FyWU"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA45A930
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF5D232368
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753436784; cv=none; b=ATwF6P7TxN3O3ZD3dmcCk5SZHhYiaR+2KP9Hp9+rvK2ACS4f2Wr1gYI5ckJuadvv1jmk7U5YAT94+0P/1EWcbbePFxe9jrwSrcQVzzujDuGvt47RnB1BJNrrF3aXW7tjRGXn8bns+1HhBkZJEYry33+zAtfyssyOUTjRd3S9w2I=
+	t=1753436865; cv=none; b=EVVJ7al/2jVGwqyz0o885aOZUgD+Go2TkhBDA8LcspqZEr7w0qlzUG3q7QDkZHUGK4an0u1daPegBjt3H7rY68QdCSprAxlzhdRhL6bdENtYoq5UZOZxXwFSX9LcsjjEA46HWqa2CZvOFomKOa30wkpzmK+MQJNDBOJZ9uUgIWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753436784; c=relaxed/simple;
-	bh=fAi3fTdmKeT2RXc2t8agAS9HC6qiTvMJKY26QG415JE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=njgj8MItNaexwUjzDw+xW562cxO6mvSuHR9ZmTgqtjO/9hYn1TJH0OShkt4vNOrNi4Nwgr87QxtFm0GuVxGvzPU6sK/jbZV5OqWNus9g8raR+QMdOgwPQPyRIAnimJZBNNAvQHrDL+fuDEsep2x3DpkvI6VkXn21h0eAEH7+k1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VcL9njX+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753436778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=faaaZtliI3/9YxGb/+TtNxd57UPwg/2TggleAWIPx/A=;
-	b=VcL9njX+ysbPAZcJcRcn6nIW/ILw7j/uAL1k9WTk1b8nD/moUJ4hFWG3E9rKBoDhmjSYYl
-	QVrJ27UTG+QcVmi3JbealPcO6Laz1PwmXdQ9fbitLV1PgOQUJv6EqgTFp3d/+qhe+dQKRr
-	+J5uhzFCczQWKEdTOYw5RbJwaFSHypY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-425-eLLef2BbNtCoXKkAaIBNfg-1; Fri, 25 Jul 2025 05:46:16 -0400
-X-MC-Unique: eLLef2BbNtCoXKkAaIBNfg-1
-X-Mimecast-MFC-AGG-ID: eLLef2BbNtCoXKkAaIBNfg_1753436776
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4538f375e86so15479545e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:46:16 -0700 (PDT)
+	s=arc-20240116; t=1753436865; c=relaxed/simple;
+	bh=AnECzG+KVzIsiMEl8MwB5ECeASXwIjqQrkhEFDou9m0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=njZ0fd4sjyxVujNY4KcXg2WRxScJh1MpWcZiHRze+nbFK7CksOmOBpptDRNO/L/ayfQvDK8QK9dwAxhl5RsU67Vmf/J3kiJPfG/LSV5FQ/NhPMljW8rfDlYyhdWFlOOibD5AOLBLyqapdy83THRDr8X/ssBsw+dhuU6uvNubOS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XRZ/FyWU; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae3521a124cso40929466b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:47:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753436861; x=1754041661; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d++95DEEqRY9z7LqAnuNyrlBAMbvjNxXsrC0i45rWs8=;
+        b=XRZ/FyWUO7T61CD+DfflflWz2Oj8Q4cIj3cQlJUxmURVCHOSmesCi7UeEev7/AQ3Ur
+         yazTVY6vLTj1Ii+7bemqrswwTjoNiKW0CVbYCsN3qDdiMtWrron1J+jA5mgGHwWJNMCH
+         uMLVPCkL4VnG3WBzjBxlgTb+4RBfGQMsky+66d6i5fActeFZOg7eJeax9rlc1pJB3Yr+
+         TvPd+T4vI59NTpjz1Eq0YBCLkLVd8pYjJgywoFfb8SNo4bHM70In2h0bi/+4jVbtR45x
+         HjYIOfq2iOL6E+BnR7z0ewWR8/h+4AU54O3yof2k0YLPAPq9Oruqb1XNTD7NFb1tG2Tv
+         YDPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753436776; x=1754041576;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=faaaZtliI3/9YxGb/+TtNxd57UPwg/2TggleAWIPx/A=;
-        b=MY3AymiAd/W73onqcLGCyY9W6gWXrHVPmq/fTk5Ns6jQ7F4vbxHMbji39tEpof0/lb
-         B9S4wa1+E1BcSblSOQDP4kRyjk0ketmiplKI3PhNJeK9V9/uuw3XehYuhC3PcQfydBtJ
-         j4nPHyg3zDewEK9O2BqAGnVCELZlH4f8Dh3z0lwtIl55uOd3onDcmI21yNqu0HJIgOsX
-         4RX6pr8xpCM8GCjrRJaRtiuWiKQgzhwTl/bF0nB+l1Z0+inhV7sUbf8qMox7LfJ2r0o8
-         OuATjFfE53os+p7GJQArAmSJlDWZkRHF4hzzcss7j7zm6t4Gp13GwZ8B3/XpLq7/qaxR
-         DuIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVi/8ZRGNZi0Nlt2+fR4pSY4VWizyGx1169zOfrGo08FzVq0gVDL9bJxw4KIeAbmDdc1rt+3uI7MolCDJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHNLr2GdDhxlPBTX4UP+oAiKnER+BqrblZ9AoTTlYKvM7r8DRF
-	6+V1quu649QFRiHkvhC2CFn3T4N0FYNkYI7PTbtL8zkvcM82lqSgoxVval/ptL3cUEbTLn6+s0Y
-	eNZNwrg6MXr5bg2V6VFwKJnziDUWWJXOGv4bgjpVYQAPrcKeQXh1W5ohoWToXcXxAeQ==
-X-Gm-Gg: ASbGnctjdPChEc1q+HATEbEhGZEvLjORsK9A5+DQWn7g11qMBqikwJPC4rTBl7RtExQ
-	rcIXZ+3ofWrnja4PoAYDSnfi+V0Z28k6ZDWBiNfGZivYSl0ZNfV7ycMPUbCR/BuiMzwaDuhwjfC
-	u01h1CEeT8Y1TXvDNORt2sxODg4I0AWje/nINrDeiWaRnyGvMMG/HbFYEnlK6Dey+TQF/rAZFz8
-	G/KTSnnwkmoC31UkPqNxtYFVn5JL8XuKjW4Lxrx8fPdWINywJ0t+J+624KjCVqavFKlCFiATChD
-	NoVp1uKYCB/4Jq+96U5dpNoaMKHY6E34u2mZpdjb5S8i2J7ZTbe9mmC5CR7fOogzS4Hfn3JFHa1
-	E7TLH9GKjYptBNCEPrUjr3yP4yHsenE85rQQnIiO/wj+dzHSfTY8TGLq6mEh+WbZrGFg=
-X-Received: by 2002:a05:600c:c059:20b0:441:a715:664a with SMTP id 5b1f17b1804b1-45876e74536mr5456765e9.20.1753436775644;
-        Fri, 25 Jul 2025 02:46:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEoa9HpfTRy4Lj08i/N3rWIm1AseMs1WcMYAu9tdaTVNPBh8JTCYaWhAP6NnneexqsPU6GKow==
-X-Received: by 2002:a05:600c:c059:20b0:441:a715:664a with SMTP id 5b1f17b1804b1-45876e74536mr5456595e9.20.1753436775127;
-        Fri, 25 Jul 2025 02:46:15 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1a:f400:5a9f:b1bf:4bb3:99b1? (p200300d82f1af4005a9fb1bf4bb399b1.dip0.t-ipconnect.de. [2003:d8:2f1a:f400:5a9f:b1bf:4bb3:99b1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45870532b43sm48224365e9.2.2025.07.25.02.46.14
+        d=1e100.net; s=20230601; t=1753436861; x=1754041661;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d++95DEEqRY9z7LqAnuNyrlBAMbvjNxXsrC0i45rWs8=;
+        b=HK1Eqwhr6ckNxTqrXn7xcqgBPOG3OZiSvfpcxZy++hZvFrb5z6mCsMHnm194m8EHaT
+         dmtzDIN061TkLaqSuL7G7t3yEyxpn4x5Nj3sVrABD46GXVZCDTyvd3y9OYhd9U712SIT
+         snY10HiryDSsX9X/z+cBnfOybdrSAoCV0l65caxu++qYS53LXmUg+KXyseAaHEQ5+D2M
+         33LH/fOGIoI9m+A3xcUk+ErNkmIi7jSObQg19BIaW4I3CisxETbJqxvL3bM7uoZvcCBM
+         Q/jDMDJLX0kq0JJUhoXA92jNVB657yZwFf51YfO3ofXlzjI9Y50jdTM1ZcrTkd+3nhB+
+         TBOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLPk29KV5h+gz0E7q+/6FKFKJSIjtlAziwwFpO3B5yZBi4JMtV57xEPBXe0xG+4ptThtpy3H1DeDs+xa0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9y2WAbvMZsovG1xDIt/LFVUnxD8KkItZTemYj0yEdPkg7dM/y
+	oBelcUGAiYOA2X27y7ii3cqmux3mvvJgcmFYAQv1lIfjM7ooZ7lidCx5B7hVJaR2mvY=
+X-Gm-Gg: ASbGncsD5k5we/hnCHdC0KhkEiN0lrP394RVBFpEel0yRZOrxwaJWnZ2tir9NB/GTQT
+	Tickquqi83jt4KB06YG1zPbBbs0lhyVmeBuYXROw1axaB5xC8rCiHwgWw6IWTAKZxCC11Qh2luJ
+	GNyQ5IPfjmuY7IbicgkQjdqWHgZDkBeQ6wtM9KDrBPzn3fyc4SlUZ23OWTiitRM6rAabm+DF5Un
+	QKehxt6K4dHLG5AORqKPMyLS/GtQrb1IgLln9KSS1VDnfyi/n7CzGeRTy1SezMVn6QxwE5OVqk1
+	zd9ZIfytyRLYhBfAEPXJ/7UFf8/n4rp76MpN+QXKpAd7IA8knQCVUbE3LboITdDEMaS7B2C4GfT
+	u8AwvPtclipg23IiZyMflzsFHPeehMYdPORpE2Dyowg==
+X-Google-Smtp-Source: AGHT+IGt4Tl+Ezasy8itQmEdKvcNMQR6PoUhq2rRmHXq00x0XuE90hd52Zy9YkCWuEt6FOh+JdkGdw==
+X-Received: by 2002:a17:907:1c8d:b0:ade:902e:7b4b with SMTP id a640c23a62f3a-af61cca78f4mr49006666b.7.1753436861413;
+        Fri, 25 Jul 2025 02:47:41 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.203.90])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f44d8c9sm246902866b.68.2025.07.25.02.47.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 02:46:14 -0700 (PDT)
-Message-ID: <aa839e3a-11f3-49e1-8c3b-a60106c8d165@redhat.com>
-Date: Fri, 25 Jul 2025 11:46:13 +0200
+        Fri, 25 Jul 2025 02:47:40 -0700 (PDT)
+Message-ID: <a345528b-1641-4f10-a9ae-6b853f625df4@linaro.org>
+Date: Fri, 25 Jul 2025 11:47:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,148 +81,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] mm/mseal: update madvise() logic
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
-References: <cover.1752687069.git.lorenzo.stoakes@oracle.com>
- <ec480dc1fd4ce04bb11c0acac6c6da78dc6f4156.1752687069.git.lorenzo.stoakes@oracle.com>
- <4f66d89a-631a-43eb-b4f9-c9a0b44caaae@redhat.com>
- <692f9624-e440-4cf2-8202-861c679ddb73@lucifer.local>
- <0ad414a1-9a57-4050-a7b6-fdea08aebbd1@redhat.com>
- <507a09cf-291c-4886-92e7-9d9cc294a247@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] clocksource/drivers/exynos_mct: Revert commits causing
+ section mismatches
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Will McVicker <willmcvicker@google.com>,
+ Youngmin Nam <youngmin.nam@samsung.com>, Donghoon Yu <hoony.yu@samsung.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250725090349.87730-2-krzysztof.kozlowski@linaro.org>
+ <63a6d253-305d-4ffd-9954-7cd665bd332d@linaro.org>
+ <2f413942-8126-4d94-b64b-c4a05052b5a1@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <507a09cf-291c-4886-92e7-9d9cc294a247@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <2f413942-8126-4d94-b64b-c4a05052b5a1@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
->>
->> Well, there is long-term pinning that can break COW and other weird stuff
->> like FOLL_FORCE. Most of the latter probably holds the mmap lock in write
->> mode. Probably.
-> 
-> Well GUP uses read lock.
-
-Right, so it can race with MADV_DONTNEED.
-
-> 
-> FOLL_FORCE won't override anything as we have this check in check_vma_flags():
-> 
-> 	if (write) {
-> 		if (!vma_anon &&
-> 		    !writable_file_mapping_allowed(vma, gup_flags))
-> 			return -EFAULT;
-> 
-> 		if (!(vm_flags & VM_WRITE) || (vm_flags & VM_SHADOW_STACK)) {
-> 			if (!(gup_flags & FOLL_FORCE))
-> 				return -EFAULT;
-> 			/*
-> 			 * We used to let the write,force case do COW in a
-> 			 * VM_MAYWRITE VM_SHARED !VM_WRITE vma, so ptrace could
-> 			 * set a breakpoint in a read-only mapping of an
-> 			 * executable, without corrupting the file (yet only
-> 			 * when that file had been opened for writing!).
-> 			 * Anon pages in shared mappings are surprising: now
-> 			 * just reject it.
-> 			 */
-> 			if (!is_cow_mapping(vm_flags))
-> 				return -EFAULT;
-> 		}
-> 	}
-> 
-> With:
-> 
-> static inline bool is_cow_mapping(vm_flags_t flags)
-> {
-> 	return (flags & (VM_SHARED | VM_MAYWRITE)) == VM_MAYWRITE;
-> }
-> 
-
-Not sure what you mean. Using FOLL_FORCE you can write into MAP_PRIVATE 
-R/O mappings. Particular useful for installing breakpoints into loaded 
-executables etc.
-
-is_cow_mapping() tells you exactly that: the only place where we can 
-have anon folios is when we have a MAP_PRIVATE mapping (!VM_SHARED) that 
-can be writable, for example, through mprotect(PROT_WRITE) (VM_MAYWRITE).
-
-A MAP_PRIVATE R/O file mapping matches is_cow_mapping().
-
-> So - we explicitly disallow FOLL_FORCE write override for CoW file-backed
-> mappings.
-> 
-> Obviously if FOLL_FORCE is not set, then we're ALSO not allowed to get past a
-> FOLL_WRITE and !VM_WRITE situation.
-> 
->>
+On 25/07/2025 11:35, Krzysztof Kozlowski wrote:
+> On 25/07/2025 11:28, Daniel Lezcano wrote:
+>> On 25/07/2025 11:03, Krzysztof Kozlowski wrote:
+>>> Commit 5d86e479193b ("clocksource/drivers/exynos_mct: Add module
+>>> support") introduced section mismatch failures.
+>>> Commit 7e477e9c4eb4 ("clocksource/drivers/exynos_mct: Fix section
+>>> mismatch from the module conversion") replaced these to other section
+>>> mismatch failures:
 >>>
->>> Hmm maybe I'll soften on this anon_vma idea then. Maybe it is a 'cheap fix' to
->>> rule out the _usual_ cases.
+>>>    WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x164 (section: .text) -> register_current_timer_delay (section: .init.text)
+>>>    WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x20c (section: .text) -> register_current_timer_delay (section: .init.text)
+>>>    ERROR: modpost: Section mismatches detected.
+>>>
+>>> No progress on real fixing of these happened (intermediary fix was still
+>>> not tested), so revert both commits till the work is prepared correctly.
 >>
->> Yeah, something to evaluate.
+>> Please don't claim the fix was not tested. I reproduced the section 
 > 
-> I'm thinking more and more we're probably actually safe with !vma->anon_vma ||
-> !(vma->vm_flags & VM_MAYWRITE).
+> 
+> section mismatch code MUST BE tested with enabled DEBUG_SECTION_MISMATCH
+> and disabled SECTION_MISMATCH_WARN_ONLY. If you have warnings which you
+> missed (although if you have warnings what did you fix?), means you did
+> not prepare testing setup.
+> 
+>> mismatch, tested it and figured out it was indeed fixing the issue. I 
+>> just missed the error because it sounds very close to the first one 
+>> reported initially and I did the confusion.
+>>
+>> The driver is not supposed to be compiled as a module on ARM32.
+>>
+>> The option tristate "Exynos multi core timer driver" if ARM64 is 
+>> misleading. From this change, the defconfig on ARM can do 
+>> CONFIG_EXYNOS_MCT=m which should not be allowed.
+>>
+>> Before getting wild and revert everything, let's try to find a proper 
+>> fix for that.
+> 
+> I am not wild here. The issue is there since 9 days.
+BTW, merge window will start anytime soon, so if you do not apply this
+revert and do not fix it soon, it means NOTHING during merge window will
+be tested on Exynos.
 
-I think there are possible races, the question is how much you care 
-about them.
+Why?
 
-In case of CoW-unsharing, you're not actually discarding data, because 
-the page in the anon folio is to maintain a copy of the pagecache page 
-(of course, they can go out of sync, but that's a different discussion).
+Because my builds for Exynos rely on correct sections and they fail.
+Failed builds means: no boots.
 
--- 
-Cheers,
+No boots means no testing.
 
-David / dhildenb
+And if this reaches rc1 (imagine you send fixes AFTER rc1), then all my
+branches will be non-booting as well.
 
+Time to "not be wild" was 9 days ago when you received reply from Arnd.
+Now reverting these is the appropriate step. None of this work was
+tested on arm32 Exynos, BTW.
+
+Best regards,
+Krzysztof
 
