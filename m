@@ -1,194 +1,263 @@
-Return-Path: <linux-kernel+bounces-748502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F97B141F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 441FDB132A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 462C518C28B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378071892668
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9728B27587C;
-	Mon, 28 Jul 2025 18:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SijdzzaZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FAA7404E;
+	Mon, 28 Jul 2025 00:31:43 +0000 (UTC)
+Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53E222D9E9;
-	Mon, 28 Jul 2025 18:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6BD1548C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 00:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753727240; cv=none; b=a11C0uKqQj2qJO5CEhdW9cR1zD/Wvy2OvxfBjMvPMsKSDBmJXHwNp+ISohfAM4SwkKoigtT08uNtbesIKbDEMtiEYzY+x19TLmyEFJDWcPujGzCoUDCdXz7znLqPuTFM5KjHxB+Z4j2DgcS11oDmJPwq1MED7NN4bljK2lJa1gA=
+	t=1753662703; cv=none; b=R+/g1VMC9loXN9EV6K6MTT0UAyTOxCCPDN5wO1NBpjs5ZfQkldf0ZNQUDZflDzJuIQeMT5zppzYgNad/8hclCArn48kZW+H7VBAcxRxJFpgAaZ0G+ApOvTcgRWkW3sLL0q5rGZtG2UN8J18NstfB+Q/fCCyWWwNpd9H6VBXqn/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753727240; c=relaxed/simple;
-	bh=1KWvItJXFqD5wJqkCmSDFSqTtAe2bsLBE2QHCIAwAAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BSTqFSY4k6os+pHVF6/rVY65ORTEVDir5jxhVqUkDWiRtOXkf5Am8f+Sji2+z1NdJVz20j0g5wf98B4f7k22mT3MQxHXnYW3KDZBqjf+0PoyUwYJhEUp05llKkPVdbywOdrxerXRbpBjUCjwbZPX2gwE22+urzJ8NIXV7H33T58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SijdzzaZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F8F3C4CEE7;
-	Mon, 28 Jul 2025 18:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753727238;
-	bh=1KWvItJXFqD5wJqkCmSDFSqTtAe2bsLBE2QHCIAwAAw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SijdzzaZD/FxmkUkct8cM5nNv8EUrBfusQMDmieOAMDfVguPZFiczkRIsQl7Fe2Ey
-	 dg2VkwC9/EmLdtsyTLzugYoFkD6EEeW7E10tlmhiIVrxCMriPTefIYw0vk9/4zaZ5T
-	 eofSw216aWzM65+lRUf8SK8CH2WN1Hf29q1cmerEIzVa2R+0xoxgmcisXKH2pdoXiZ
-	 ovK3gsBuCN1dgZkjvjVWpPCEhwjyqnaveAiGK0iNtlSpj1Jr/tCUbZK+t+xUFcGAmJ
-	 mcTuVrn1rqmog1QCKQNCJy8NjJPEhVgWixmdcaGz1FKfyq+7Qb4XrS9L29FvfUX+qD
-	 0ZjMy+gppjKUA==
-Date: Wed, 23 Jul 2025 13:34:52 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>, Joel Granados <joel.granados@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] sysctl changes for v6.17-rc1
-Message-ID: <fyahheosszjhz7aacxuctcxvkiket3vwfhsg35fbk4tzieojpo@s33wyvjykkc4>
+	s=arc-20240116; t=1753662703; c=relaxed/simple;
+	bh=UvdjE5KBkNhzXE8qFDpqG0DxbwcDhvY/7FeD0ZxvPT4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TSGSxgOTMEzKTpRJWG3FaoxO5wQexjMwjqG9+rtcR9Pcnd4TUozAW6gkWoNDumtmSrLTiv/7JnxIRct8ihw53kBtEbqIbeIGFOnrYj3rIfVb96fDtqdkYiuFzHLNXPesytVrj2iGU2+MKmC8vfDBU6b9/4mq4Ke9HnezXFBxSsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1753662687-086e23295742b60001-xx1T2L
+Received: from ZXBJMBX02.zhaoxin.com (ZXBJMBX02.zhaoxin.com [10.29.252.6]) by mx1.zhaoxin.com with ESMTP id cb5qBJhZtgGw4G5t (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Mon, 28 Jul 2025 08:31:27 +0800 (CST)
+X-Barracuda-Envelope-From: WeitaoWang-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.6
+Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXBJMBX02.zhaoxin.com
+ (10.29.252.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Mon, 28 Jul
+ 2025 08:31:26 +0800
+Received: from ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f]) by
+ ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f%7]) with mapi id
+ 15.01.2507.044; Mon, 28 Jul 2025 08:31:26 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.6
+Received: from L440.Zhaoxin.com (10.29.8.21) by zxbjmbx1.zhaoxin.com
+ (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Fri, 25 Jul
+ 2025 18:51:02 +0800
+From: Weitao Wang <WeitaoWang-oc@zhaoxin.com>
+To: <gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>,
+	<linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <WeitaoWang@zhaoxin.com>, <wwt8723@163.com>, <CobeChen@zhaoxin.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v2] usb:xhci:Fix slot_id resource race conflict
+Date: Sat, 26 Jul 2025 02:51:01 +0800
+X-ASG-Orig-Subj: [PATCH v2] usb:xhci:Fix slot_id resource race conflict
+Message-ID: <20250725185101.8375-1-WeitaoWang-oc@zhaoxin.com>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="25ufpsxy7z3hbnyc"
-Content-Disposition: inline
-
-
---25ufpsxy7z3hbnyc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx1.zhaoxin.com (10.29.252.163)
+X-Moderation-Data: 7/28/2025 8:31:25 AM
+X-Barracuda-Connect: ZXBJMBX02.zhaoxin.com[10.29.252.6]
+X-Barracuda-Start-Time: 1753662687
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 5890
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: 1.09
+X-Barracuda-Spam-Status: No, SCORE=1.09 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=DATE_IN_FUTURE_06_12, DATE_IN_FUTURE_06_12_2
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.144919
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
+	0.01 DATE_IN_FUTURE_06_12   Date: is 6 to 12 hours after Received: date
+	3.10 DATE_IN_FUTURE_06_12_2 DATE_IN_FUTURE_06_12_2
 
-Linus:
+In such a scenario, device-A with slot_id equal to 1 is disconnecting
+while device-B is enumerating, device-B will fail to enumerate in the
+follow sequence.
 
-Sending the PR early as I'm on PTO next week.
+1.[device-A] send disable slot command
+2.[device-B] send enable slot command
+3.[device-A] disable slot command completed and wakeup waiting thread
+4.[device-B] enable slot command completed with slot_id equal to 1 and
+wakeup waiting thread
+5.[device-B] driver check this slot_id was used by someone(device-A) in
+xhci_alloc_virt_device, this device fails to enumerate as this conflict
+6.[device-A] xhci->devs[slot_id] set to NULL in xhci_free_virt_device
 
-I can make adjustments (if needed) at the end of the merge window as
-I'll be back by then.
+To fix driver's slot_id resources conflict, let the xhci_free_virt_device
+functionm call in the interrupt handler when disable slot command success.
 
-Best
+Cc: stable@vger.kernel.org
+Fixes: 7faac1953ed1 ("xhci: avoid race between disable slot command and hos=
+t runtime suspend")
+Signed-off-by: Weitao Wang <WeitaoWang-oc@zhaoxin.com>
+---
+v1->v2
+ - Adjust the lock position in the function xhci_free_dev.
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+ drivers/usb/host/xhci-hub.c  |  5 +++--
+ drivers/usb/host/xhci-ring.c |  7 +++++--
+ drivers/usb/host/xhci.c      | 35 +++++++++++++++++++++++++----------
+ 3 files changed, 33 insertions(+), 14 deletions(-)
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/sysctl.git sysctl-6.17-rc1
-
-for you to fetch changes up to ffc137c5c195a7c2a0f3bdefd9bafa639ba5a430:
-
-  docs: Downgrade arm64 & riscv from titles to comment (2025-07-23 11:57:05=
- +0200)
-
-----------------------------------------------------------------
-Summary
-
-* Move sysctls out of the kern_table array
-
-  This is the final move of ctl_tables into their respective subsystems. On=
-ly 5
-  (out of the original 50) will remain in kernel/sysctl.c file; these handle
-  either sysctl or common arch variables.
-
-  By decentralizing sysctl registrations, subsystem maintainers regain cont=
-rol
-  over their sysctl interfaces, improving maintainability and reducing the
-  likelihood of merge conflicts.
-
-* docs: Remove false positives from check-sysctl-docs
-
-  Stopped falsely identifying sysctls as undocumented or unimplemented in t=
-he
-  check-sysctl-docs script. This script can now be used to automatically
-  identify if documentation is missing.
-
-* Testing
-
-  All these have been in linux-next since rc3, giving them a solid 3 to 4 w=
-eeks
-  worth of testing. Additionally, sysctl selftests and kunit were also run
-  locally on my x86_64
-
-----------------------------------------------------------------
-Joel Granados (23):
-      module: Move modprobe_path and modules_disabled ctl_tables into the m=
-odule subsys
-      locking/rtmutex: Move max_lock_depth into rtmutex.c
-      rcu: Move rcu_stall related sysctls into rcu/tree_stall.h
-      mm: move randomize_va_space into memory.c
-      parisc/power: Move soft-power into power.c
-      fork: mv threads-max into kernel/fork.c
-      Input: sysrq: mv sysrq into drivers/tty/sysrq.c
-      sysctl: Move tainted ctl_table into kernel/panic.c
-      sysctl: move cad_pid into kernel/pid.c
-      sysctl: Move sysctl_panic_on_stackoverflow to kernel/panic.c
-      sysctl: Remove (very) old file changelog
-      sysctl: Remove superfluous includes from kernel/sysctl.c
-      sysctl: Nixify sysctl.sh
-      sysctl: Removed unused variable
-      uevent: mv uevent_helper into kobject_uevent.c
-      kernel/sys.c: Move overflow{uid,gid} sysctl into kernel/sys.c
-      sysctl: rename kern_table -> sysctl_subsys_table
-      docs: nixify check-sysctl-docs
-      docs: Use skiplist when checking sysctl admin-guide
-      docs: Add awk section for ucount sysctl entries
-      docs: Remove colon from ctltable title in vm.rst
-      docs: Replace spaces with tabs in check-sysctl-docs
-      docs: Downgrade arm64 & riscv from titles to comment
-
- Documentation/admin-guide/sysctl/kernel.rst |  32 ++--
- Documentation/admin-guide/sysctl/vm.rst     |   8 +-
- drivers/parisc/power.c                      |  20 ++-
- drivers/tty/sysrq.c                         |  41 +++++
- include/linux/kmod.h                        |   3 -
- include/linux/module.h                      |   1 -
- include/linux/panic.h                       |   2 -
- include/linux/rtmutex.h                     |   2 +-
- include/linux/sysctl.h                      |   5 -
- kernel/fork.c                               |  20 ++-
- kernel/locking/rtmutex_api.c                |  18 ++
- kernel/module/internal.h                    |   3 +
- kernel/module/main.c                        |  30 +++-
- kernel/panic.c                              |  60 +++++++
- kernel/pid.c                                |  31 ++++
- kernel/rcu/tree_stall.h                     |  33 +++-
- kernel/sys.c                                |  29 +++
- kernel/sysctl.c                             | 270 +-----------------------=
-----
- lib/kobject_uevent.c                        |  20 +++
- mm/memory.c                                 |  18 ++
- scripts/check-sysctl-docs                   | 184 ++++++++++---------
- tools/testing/selftests/sysctl/sysctl.sh    |   2 +-
- 22 files changed, 445 insertions(+), 387 deletions(-)
-
+diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+index 92bb84f8132a..fd8a64aa5779 100644
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -705,10 +705,11 @@ static int xhci_enter_test_mode(struct xhci_hcd *xhci=
+,
+ 			continue;
+=20
+ 		retval =3D xhci_disable_slot(xhci, i);
+-		xhci_free_virt_device(xhci, i);
+-		if (retval)
++		if (retval) {
+ 			xhci_err(xhci, "Failed to disable slot %d, %d. Enter test mode anyway\n=
+",
+ 				 i, retval);
++			xhci_free_virt_device(xhci, i);
++		}
+ 	}
+ 	spin_lock_irqsave(&xhci->lock, *flags);
+ 	/* Put all ports to the Disable state by clear PP */
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 94c9c9271658..93dc28399c3c 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1589,7 +1589,8 @@ static void xhci_handle_cmd_enable_slot(int slot_id, =
+struct xhci_command *comman
+ 		command->slot_id =3D 0;
+ }
+=20
+-static void xhci_handle_cmd_disable_slot(struct xhci_hcd *xhci, int slot_i=
+d)
++static void xhci_handle_cmd_disable_slot(struct xhci_hcd *xhci, int slot_i=
+d,
++					u32 cmd_comp_code)
+ {
+ 	struct xhci_virt_device *virt_dev;
+ 	struct xhci_slot_ctx *slot_ctx;
+@@ -1604,6 +1605,8 @@ static void xhci_handle_cmd_disable_slot(struct xhci_=
+hcd *xhci, int slot_id)
+ 	if (xhci->quirks & XHCI_EP_LIMIT_QUIRK)
+ 		/* Delete default control endpoint resources */
+ 		xhci_free_device_endpoint_resources(xhci, virt_dev, true);
++	if (cmd_comp_code =3D=3D COMP_SUCCESS)
++		xhci_free_virt_device(xhci, slot_id);
+ }
+=20
+ static void xhci_handle_cmd_config_ep(struct xhci_hcd *xhci, int slot_id)
+@@ -1853,7 +1856,7 @@ static void handle_cmd_completion(struct xhci_hcd *xh=
+ci,
+ 		xhci_handle_cmd_enable_slot(slot_id, cmd, cmd_comp_code);
+ 		break;
+ 	case TRB_DISABLE_SLOT:
+-		xhci_handle_cmd_disable_slot(xhci, slot_id);
++		xhci_handle_cmd_disable_slot(xhci, slot_id, cmd_comp_code);
+ 		break;
+ 	case TRB_CONFIG_EP:
+ 		if (!cmd->completion)
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 8a819e853288..6c6f6ebb8953 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3931,13 +3931,14 @@ static int xhci_discover_or_reset_device(struct usb=
+_hcd *hcd,
+ 		 * the USB device has been reset.
+ 		 */
+ 		ret =3D xhci_disable_slot(xhci, udev->slot_id);
+-		xhci_free_virt_device(xhci, udev->slot_id);
+ 		if (!ret) {
+ 			ret =3D xhci_alloc_dev(hcd, udev);
+ 			if (ret =3D=3D 1)
+ 				ret =3D 0;
+ 			else
+ 				ret =3D -EINVAL;
++		} else {
++			xhci_free_virt_device(xhci, udev->slot_id);
+ 		}
+ 		return ret;
+ 	}
+@@ -4085,11 +4086,12 @@ static void xhci_free_dev(struct usb_hcd *hcd, stru=
+ct usb_device *udev)
+ 	for (i =3D 0; i < 31; i++)
+ 		virt_dev->eps[i].ep_state &=3D ~EP_STOP_CMD_PENDING;
+ 	virt_dev->udev =3D NULL;
+-	xhci_disable_slot(xhci, udev->slot_id);
+-
+-	spin_lock_irqsave(&xhci->lock, flags);
+-	xhci_free_virt_device(xhci, udev->slot_id);
+-	spin_unlock_irqrestore(&xhci->lock, flags);
++	ret =3D xhci_disable_slot(xhci, udev->slot_id);
++	if (ret) {
++		spin_lock_irqsave(&xhci->lock, flags);
++		xhci_free_virt_device(xhci, udev->slot_id);
++		spin_unlock_irqrestore(&xhci->lock, flags);
++	}
+=20
+ }
+=20
+@@ -4128,9 +4130,20 @@ int xhci_disable_slot(struct xhci_hcd *xhci, u32 slo=
+t_id)
+=20
+ 	wait_for_completion(command->completion);
+=20
+-	if (command->status !=3D COMP_SUCCESS)
++	if (command->status !=3D COMP_SUCCESS) {
+ 		xhci_warn(xhci, "Unsuccessful disable slot %u command, status %d\n",
+ 			  slot_id, command->status);
++		switch (command->status) {
++		case COMP_COMMAND_ABORTED:
++		case COMP_COMMAND_RING_STOPPED:
++			xhci_warn(xhci, "Timeout while waiting for disable slot command\n");
++			ret =3D -ETIME;
++			break;
++		default:
++			ret =3D -EINVAL;
++			break;
++		}
++	}
+=20
+ 	xhci_free_command(xhci, command);
+=20
+@@ -4243,8 +4256,9 @@ int xhci_alloc_dev(struct usb_hcd *hcd, struct usb_de=
+vice *udev)
+ 	return 1;
+=20
+ disable_slot:
+-	xhci_disable_slot(xhci, udev->slot_id);
+-	xhci_free_virt_device(xhci, udev->slot_id);
++	ret =3D xhci_disable_slot(xhci, udev->slot_id);
++	if (ret)
++		xhci_free_virt_device(xhci, udev->slot_id);
+=20
+ 	return 0;
+ }
+@@ -4381,10 +4395,11 @@ static int xhci_setup_device(struct usb_hcd *hcd, s=
+truct usb_device *udev,
+=20
+ 		mutex_unlock(&xhci->mutex);
+ 		ret =3D xhci_disable_slot(xhci, udev->slot_id);
+-		xhci_free_virt_device(xhci, udev->slot_id);
+ 		if (!ret) {
+ 			if (xhci_alloc_dev(hcd, udev) =3D=3D 1)
+ 				xhci_setup_addressable_virt_dev(xhci, udev);
++		} else {
++			xhci_free_virt_device(xhci, udev->slot_id);
+ 		}
+ 		kfree(command->completion);
+ 		kfree(command);
 --=20
+2.32.0
 
-Joel Granados
-
---25ufpsxy7z3hbnyc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmiAyNwACgkQupfNUreW
-QU9jqwwAj1PyNuUSHKuxgJVMGgW+0jSvvLSHP+idijtw2baDSFyLXbKvFwQixz+/
-+KVncNEixQ0LhUntxSkkTjhtXcRZuiMXDeaKwH1D1NIsQdHQ5QhXAlG0c0gyTnHy
-9picmusmvhBR427lmPz3jWiewRR1o+aATFEVeFdAocp7YeqUWDgKzgHK1Lm8LZE1
-jqJrXeu/bNCXRPWrpAhrDDq7p1/LDJU8HkIk5BwJwBHcGVWi9BCD4XEJBScB7wQf
-QtLVFjqqMfm4DIHojCn1pR6S1xsuScUMvSto2ZrArHG7o+s6vOT1EbArt+M0Yty8
-8FQpAZqljkglcIsuTBhPUE91E4KVOYLFzMbIgKRCDBFI0z6oip89yPCQMOmmWmEI
-/YlhINGuDq3QURgxu4dxFAKYsRrAu1987cEO6v5YQh3TIozrW1ARpNdC2cnp0abx
-KFrr92BXys5G9aiiFbhqcgujPAOx2czXk0tLpQ2fDCqauSFTmBvOgQSSWq6iwuFD
-eb/QEoHC
-=TgYQ
------END PGP SIGNATURE-----
-
---25ufpsxy7z3hbnyc--
 
