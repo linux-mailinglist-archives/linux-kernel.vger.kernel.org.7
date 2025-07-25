@@ -1,117 +1,140 @@
-Return-Path: <linux-kernel+bounces-745686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A081B11D14
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:04:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE06B11D16
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CB1E18846FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:04:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0843189A7E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2ABA2D374E;
-	Fri, 25 Jul 2025 11:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="T5mdr6k7"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F5E2E4271;
+	Fri, 25 Jul 2025 11:04:13 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC489217F33
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC11B22F767;
+	Fri, 25 Jul 2025 11:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441446; cv=none; b=ENsolz46rxQznKLPz3hQ1d3xe76Vi4um6H78pANfCHSAdX/ec8K4Eo28afdjbzuBrc59DvpbUKOWRuYv4+hauMx7qhlisHM7hhA5GQFJ1D/4EK10PaB+R5XXwSMS2h6CPZ0BPThObEVQPTSJYOPX+Vx+n3A2h6TjA9NTj1tUwb4=
+	t=1753441452; cv=none; b=GeyU0KUv5ME2J3347cPFDROaAj6C8laxnOh1/J980dkvHQ4ex8C80AMvPx3KqtjBFkFxz71lrdbTD9mn7Ged5jGIwjg5wXYegbnOGRzYzX6VgyC/kXxziA5ZkwpZidg88/XbmzZqKY8xn/iYYb9qbQcrxG05/2cYuTBHqkyAJlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441446; c=relaxed/simple;
-	bh=FrmVuUO8YGheljp2+zSpl/rMINmRFl6XWGZKsNk7LgU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pIb73Bwi6EzJcD+K3zWVOjYZR9TrIGmOhFV0gQpf/ri/oPQ1V8AR/VoRy1X4pAv5/RlJMgPKliI1Br8uro3AQJe+lvZCUMaX0rmpBVHKrakzS+FvL3TS8Nvs43pgAL8oAdm5kZl73nXy/9GN+ncmb9Mzgzlzw/vLQ0FqI32lWT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=T5mdr6k7; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=uMJvuQ4Jf1U4b0
-	UH+tMMYWcDtn6l0ea5T6mZIYEFjoo=; b=T5mdr6k7WrRFeqPMACogSqKxLCw4xS
-	X8yC55tK5ETsVbL906n1v4+rBkeFe/3dLqp8uWe++hdqmC5ANSWEe3HedU5cyxoI
-	74xqhw6w9BrwI72y1LBEOW/ISzsnK5SGcaLYV2434lotYEcN9N7Ih6+74xSUiI20
-	9G/592L+mDnpdIce4CgXFf4MOmSOQg/LRkJL2vDlr9KhYXhKbgY9/xAX8Q8pdtTO
-	E0hnu/buuXok3FWWm3gn89qszVmKyUw50zfrDaz1bUnd1ih/JtOnaW4Vv8bZqunm
-	HajptmwJIpxk5MgHtgbHNGuM7K/DaJgnQI28hu+fjVfdu6T91MmH97Aw==
-Received: (qmail 2408209 invoked from network); 25 Jul 2025 13:03:49 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Jul 2025 13:03:49 +0200
-X-UD-Smtp-Session: l3s3148p1@pn+F5b46MpwujntZ
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH] regmap: Annotate that MMIO implies fast IO
-Date: Fri, 25 Jul 2025 13:03:27 +0200
-Message-ID: <20250725110337.4303-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1753441452; c=relaxed/simple;
+	bh=SHg2aiCGfo4HynDoTvQeK06rOQbljdSDjYjCRw+z1K8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jwlzBLIh5nHy0f9TvedLKYzsNon9BIR+iAeA67MgTDB0uHq5iMQo+8Fzs63fD8VjWR1ywJi4PRFcoPkv1EJxukyBYpuoX69KyfGc8upA6aEjofTWHU39zba8VdyORnTRAJtQQt0Ab1qv4MlIYVMekJcfumIqA8RhHiLZF0qUgEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bpQ275bFpz6D983;
+	Fri, 25 Jul 2025 19:02:39 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0B8DF1402FE;
+	Fri, 25 Jul 2025 19:04:08 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 25 Jul
+ 2025 13:04:07 +0200
+Date: Fri, 25 Jul 2025 12:04:05 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+CC: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>, Marc Herbert
+	<marc.herbert@linux.intel.com>, <linux-efi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>, Ard Biesheuvel
+	<ardb@kernel.org>, Alison Schofield <alison.schofield@intel.com>, "Vishal
+ Verma" <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, "Dan
+ Williams" <dan.j.williams@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
+	Terry Bowman <terry.bowman@amd.com>, Dave Jiang <dave.jiang@intel.com>,
+	<tony.luck@intel.com>, Gregory Price <gourry@gourry.net>
+Subject: Re: "invalid agent type: 1" in acpi/ghes, cper: Recognize and cache
+ CXL Protocol errors
+Message-ID: <20250725120405.000032d0@huawei.com>
+In-Reply-To: <2937432.AOxP5AVGnv@fdefranc-mobl3>
+References: <20250123084421.127697-1-Smita.KoralahalliChannabasappa@amd.com>
+	<074f5f77-7bef-4857-97fe-b68ee9b0afaf@linux.intel.com>
+	<8e67a97c-530d-4a1c-ab72-3992a6c5db83@linux.intel.com>
+	<2937432.AOxP5AVGnv@fdefranc-mobl3>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Document that using the MMIO helpers will automatically enable the
-'fast_io' parameter. This makes the used locking scheme more transparent
-and avoids superfluous setting of this parameter in drivers.
+On Thu, 24 Jul 2025 16:49:00 +0200
+"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> Hi Marc, Smita,
+>=20
+> On Wednesday, July 23, 2025 9:13:34=E2=80=AFAM Central European Summer Ti=
+me Marc Herbert wrote:
+> >=20
+> > On 2025-07-22 12:24, Marc Herbert wrote: =20
+> > > Hi Smita,
+> > >=20
+> > >   The code below triggers the error "invalid agent type: 1" in Intel
+> > > validation (internal issue 15018133056) =20
+> >=20
+> > The same test case also triggers the other, warning message "CXL CPER no
+> > device serial number".
+> >=20
+> > I heard that "device" serial numbers are only for... devices and that
+> > even then it's not always mandatory. So maybe that other message should
+> > be downgraded from warning to the "info" level?
+> >=20
+> > Marc
+> > =20
+>=20
+> [skip]
+> =20
+> > >> +
+> > >> +	if (prot_err->err_len !=3D sizeof(struct cxl_ras_capability_regs))=
+ {
+> > >> +		pr_err_ratelimited("CXL CPER invalid RAS Cap size (%u)\n",
+> > >> +				   prot_err->err_len);
+> > >> +		return;
+> > >> +	}
+> > >> +
+> > >> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
+> > >> +		pr_warn(FW_WARN "CXL CPER no device serial number\n");
+> > >> + =20
+>=20
+> Maybe this test should be written on the line of the following snippet ta=
+ken=20
+> out from "ACPI: extlog: Trace CPER CXL Protocol Error Section".[1]
+>=20
+> +
+> +	if ((prot_err->agent_type =3D=3D RCD || prot_err->agent_type =3D=3D DEV=
+ICE ||
+> +	     prot_err->agent_type =3D=3D LD || prot_err->agent_type =3D=3D FMLD=
+) &&
+> +	    !(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
+> +		pr_warn_ratelimited(FW_WARN
+> +				    "CXL CPER no device serial number\n");
 
-If this is approved, then I'd send out a series removing the unneeded
-'fast_io' setting from drivers in the tree.
+They are mandatory for CXL type 3 class code devices (and so the LDs here I=
+ think)
+Device and RCD might not be type 3 class code so it may be optional?
 
- include/linux/regmap.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 02b83f5499b8..4e1ac1fbcec4 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -913,7 +913,7 @@ int regmap_attach_dev(struct device *dev, struct regmap *map,
-  * @config: Configuration for register map
-  *
-  * The return value will be an ERR_PTR() on error or a valid pointer to
-- * a struct regmap.
-+ * a struct regmap. Implies 'fast_io'.
-  */
- #define regmap_init_mmio_clk(dev, clk_id, regs, config)			\
- 	__regmap_lockdep_wrapper(__regmap_init_mmio_clk, #config,	\
-@@ -927,7 +927,7 @@ int regmap_attach_dev(struct device *dev, struct regmap *map,
-  * @config: Configuration for register map
-  *
-  * The return value will be an ERR_PTR() on error or a valid pointer to
-- * a struct regmap.
-+ * a struct regmap. Implies 'fast_io'.
-  */
- #define regmap_init_mmio(dev, regs, config)		\
- 	regmap_init_mmio_clk(dev, NULL, regs, config)
-@@ -1138,7 +1138,7 @@ bool regmap_ac97_default_volatile(struct device *dev, unsigned int reg);
-  *
-  * The return value will be an ERR_PTR() on error or a valid pointer
-  * to a struct regmap.  The regmap will be automatically freed by the
-- * device management code.
-+ * device management code. Implies 'fast_io'.
-  */
- #define devm_regmap_init_mmio_clk(dev, clk_id, regs, config)		\
- 	__regmap_lockdep_wrapper(__devm_regmap_init_mmio_clk, #config,	\
-@@ -1153,7 +1153,7 @@ bool regmap_ac97_default_volatile(struct device *dev, unsigned int reg);
-  *
-  * The return value will be an ERR_PTR() on error or a valid pointer
-  * to a struct regmap.  The regmap will be automatically freed by the
-- * device management code.
-+ * device management code. Implies 'fast_io'.
-  */
- #define devm_regmap_init_mmio(dev, regs, config)		\
- 	devm_regmap_init_mmio_clk(dev, NULL, regs, config)
--- 
-2.47.2
+> +
+>=20
+> Thanks,
+>=20
+> Fabio
+>=20
+> [1] https://lore.kernel.org/linux-cxl/20250623145453.1046660-4-fabio.m.de=
+.francesco@linux.intel.com/
+>=20
+>=20
+>=20
+>=20
 
 
