@@ -1,126 +1,128 @@
-Return-Path: <linux-kernel+bounces-746400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB21B1263C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:45:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC68B1263D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA90548521
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:45:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FED81C28C5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13218262FC5;
-	Fri, 25 Jul 2025 21:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA44255F27;
+	Fri, 25 Jul 2025 21:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E4vgcAjh"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GR04n0h2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A74253B71
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D43253B71
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753479865; cv=none; b=U9NyCwyQqLAsTR5Pn0CQX5qzLDSdBybc2AkgndkT7xNxNIbctk8/+WyA6rq0vSPpndrUrSFMarVnDr0RNcVibTaTjsWeJZgiTu43cjfFKfgfnTXJFd+0hX9vv3KNccyj+SUzhU6WeZnpD1WslPuZdS02V+E2JTjeNKIfQ9gGu9Q=
+	t=1753479869; cv=none; b=hiLOV0mUsS+GYTVehSsvass+wpEZ93i4fyqoo6h/Q/ULYP3ebDPZqbSCNb2HSeMEKGYBAgav4FTZy8RqjfbypAcuqWe9VoHoB3W3skbjH/QFj36Imf2pOHxcgySQr3Ug4PkEYhO5132dp+NmjtDLV8roQ7B4qJEjoAqK6e9HHiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753479865; c=relaxed/simple;
-	bh=4N95PHaH5sTwnPpy+bRhfgpn+/S4W3TV/v5oApqGZh8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uWh7G3m9NHI0dtvZjKk4hIRVq9PhI4eq1pbVlFRlaBbH6XgHZ5DgiFo6SW90SffvzkaGwWKFOXpdO1ZeM8oQh8CF2503j3DU4E13xM5YJdVJl+jKfgMr4iAavSgwDVzDF9NLIum8Ho1w2HRq1t4OFwZ5OPcJaJmciqTYDgIs1H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E4vgcAjh; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b3928ad6176so2366629a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:44:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753479863; x=1754084663; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l30q4xjgSSq02GIRwkV5JkxzVEDFHasp0ZpBbR5DA+c=;
-        b=E4vgcAjh3/d6QIa1QrCAD5Z14jDOiLFTxWVtj23ENMutfs/4T6ogUA74HyBeCf6QRB
-         O357dV1oz5L3/s/Ecg5N4EB9mJOo12XULyX6NFEwktlpIM59UmIvZ60S0aENFlRXP894
-         p46biJXreOoLLoH6Ie42tBjjOaHng5BQ6ReF867OxqYKvu/ozo4dd2g8lilDghlUFdlb
-         BrvrQZJF/Y0PMQK2VPft5U4M9GhyFUta1dyPbGOISw3BYIsRHiOxaXPU96H+GVwddWqy
-         57otjQa+vMx22nhx2ARdXH+yy6TlDnF/+zC5eoT7JjbX+gDqsZrIB4yw7sTvoZaXtpoR
-         KHQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753479863; x=1754084663;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l30q4xjgSSq02GIRwkV5JkxzVEDFHasp0ZpBbR5DA+c=;
-        b=E5vkzxYfrjUnTyIHl7pGdgI0uQF2n3xMwBesPfVSa94nxHvg4a8pwK7Na5Dzqriedj
-         Ftvpz4hl9naOco56FbGSCl8e4iDB86gqFdr5sdCMdlSbjAYDkEbB9upr20GER7mIaS20
-         DUwSoK/KB1Ww1qvnB6HmzNVHrMixszYBYQFa+HIpXmojBo3Zo4ia5Uiens+vltXLtAoq
-         pxP6K2jqhT+xfM3UowpdMqkPYjwB4F9Bq3swz98BsqfHR6hBalAaKWFFTUw02KtfYKFO
-         uRDsDMZ7fbF+ZVmysjDdMhTaOMMjeRqLAxp/ridpBULHh9dTo7Xy4GIfmzTTkfhCYD2B
-         rALw==
-X-Forwarded-Encrypted: i=1; AJvYcCX94E3+ytMxcvHk0Awg1nswQn/L8bnBeZd7xx2oB6pVtyQIXHzrnNYHayENxL9YmHjm7f6AKB4LeER60ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl06HsauFH31TiI/WPgC5rlDf///FeJqFvquxPBbhMvSeL0jsz
-	N93tWHq/4OMA5l6558WEBzGEbrvvmt1FnmhyQbxEGrvlEfodG7tqYTC9xCPfwAi45fvAVVhvX7r
-	0gDfmeOOMGU2JJG/W+euG5f3eINrM+Q==
-X-Google-Smtp-Source: AGHT+IH2RmYkNP5u1YAotNL4rM7ZeCOu/AMOj9VOuB47c3yjiujrMv9Bt7p2q0nrdOaoANv0rCoAFl9OMd22HLgNjxw=
-X-Received: from plbld13.prod.google.com ([2002:a17:902:facd:b0:23c:8603:9e00])
- (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:41c1:b0:235:e8da:8d6 with SMTP id d9443c01a7336-23fb3050a7cmr55292785ad.2.1753479863418;
- Fri, 25 Jul 2025 14:44:23 -0700 (PDT)
-Date: Fri, 25 Jul 2025 21:44:06 +0000
-In-Reply-To: <20250725214401.1475224-6-samitolvanen@google.com>
+	s=arc-20240116; t=1753479869; c=relaxed/simple;
+	bh=Ur6WVXT+zlU1qsY+I4gZjcoE9NWvZt+RtiuwS/szdVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gI5JCdkH3QaRBYSS/1wRhiCSgb1esyfmUcUs9LSzCM0z1DO4iicugCKk7riQmCNfInDndzsDVOm82btzYJwVIK9Yr5AE12ffckrCoKfTNTa62Ch8IcCQJYivVRZxJwq0Trvh/SmqBftVk6gX3kjoc05ADyuO9hYCbAx0azYiEkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GR04n0h2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACB2C4CEE7;
+	Fri, 25 Jul 2025 21:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753479868;
+	bh=Ur6WVXT+zlU1qsY+I4gZjcoE9NWvZt+RtiuwS/szdVA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GR04n0h2o7S/xCW5QmNqXw0mx9KKrV7Bou45GpHi+j+ANJPKxQLvZ9PfLOvkLueoV
+	 iewzYhackZhg3IIg+T1egjF9vzT9BPwour7oxs0Wr6PudfsqI3poqM00mQyLWTYBGo
+	 AZanlJD+u8n6eXSv1gyH24ANwMLfV0b6RIzaRaTkMf8G7E12UZt9brJCZ2KWVAWopg
+	 TSEh+G3lWKZsoIUbBonjuCtCzJwprqRRQS5LbTPrnoIJ8g/sLTf5ykqeiYM+8IDg7y
+	 auhemNSr4+RXgkM8j8FyY3KBk4rb6MPxXRweam1z4jN8XErKCM4GvM+aurj3r4zGrB
+	 FdcrV3bIMLVRg==
+From: SeongJae Park <sj@kernel.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Zi Yan <ziy@nvidia.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH] mempolicy: Clarify what RECLAIM_ZONE means
+Date: Fri, 25 Jul 2025 14:44:26 -0700
+Message-Id: <20250725214426.51487-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250725173546.2295177-1-joshua.hahnjy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250725214401.1475224-6-samitolvanen@google.com>
-X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
-X-Developer-Signature: v=1; a=openpgp-sha256; l=853; i=samitolvanen@google.com;
- h=from:subject; bh=4N95PHaH5sTwnPpy+bRhfgpn+/S4W3TV/v5oApqGZh8=;
- b=owGbwMvMwCUWxa662nLh8irG02pJDBnNvxYfqK6uYuzr3vB+Q7EW85RJVqe0m9aG/WMJmGv7W
- u7Ql76JHaUsDGJcDLJiiiwtX1dv3f3dKfXV5yIJmDmsTCBDGLg4BWAiTt6MDOs3y1o8sDI/HfW0
- 5vwd6c83RMwbXjlsZXTZuYv3bleiSy0jw8VaAaa9Ro8KVbdL3hJfqnTB4kaC9QLufzN890hXWZy czggA
-X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
-Message-ID: <20250725214401.1475224-10-samitolvanen@google.com>
-Subject: [PATCH bpf-next v2 4/4] bpf, btf: Enforce destructor kfunc type with CFI
-From: Sami Tolvanen <samitolvanen@google.com>
-To: bpf@vger.kernel.org
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Ensure that registered destructor kfuncs have the same type
-as btf_dtor_kfunc_t to avoid a kernel panic on systems with
-CONFIG_CFI_CLANG enabled.
+Hi Joshua,
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- kernel/bpf/btf.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Fri, 25 Jul 2025 10:35:45 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 0aff814cb53a..2b0ebd46db4a 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -8856,6 +8856,13 @@ static int btf_check_dtor_kfuncs(struct btf *btf, const struct btf_id_dtor_kfunc
- 		 */
- 		if (!t || !btf_type_is_ptr(t))
- 			return -EINVAL;
-+
-+		if (IS_ENABLED(CONFIG_CFI_CLANG)) {
-+			/* Ensure the destructor kfunc type matches btf_dtor_kfunc_t */
-+			t = btf_type_by_id(btf, t->type);
-+			if (!btf_type_is_void(t))
-+				return -EINVAL;
-+		}
- 	}
- 	return 0;
- }
--- 
-2.50.1.470.g6ba607880d-goog
+> The zone_reclaim_mode API controls reclaim behavior when a node runs out of
+> memory. Contrary to its user-facing name, it is internally referred to as
+> "node_reclaim_mode". This is slightly confusing but there is not much we can
+> do given that it has already been exposed to userspace (since at least 2.6).
+> 
+> However, what we can do is to make sure the internal description of what the
+> bits inside zone_reclaim_mode aligns with what it does in practice.
+> Setting RECLAIM_ZONE does indeed run shrink_inactive_list, but a more holistic
+> description would be to explain that zone reclaim modulates whether page
+> allocation (and khugepaged collapsing) prefers reclaiming & attempting to
+> allocate locally or should fall back to the next node in the zonelist.
+> 
+> Change the description to clarify what zone reclaim entails.
+> 
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> ---
+>  include/uapi/linux/mempolicy.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+> index 1f9bb10d1a47..24083809d920 100644
+> --- a/include/uapi/linux/mempolicy.h
+> +++ b/include/uapi/linux/mempolicy.h
+> @@ -69,7 +69,7 @@ enum {
+>   * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
+>   * ABI.  New bits are OK, but existing bits can never change.
+>   */
+> -#define RECLAIM_ZONE	(1<<0)	/* Run shrink_inactive_list on the zone */
+> +#define RECLAIM_ZONE	(1<<0)	/* Prefer reclaiming & allocating locally */
+>  #define RECLAIM_WRITE	(1<<1)	/* Writeout pages during reclaim */
+>  #define RECLAIM_UNMAP	(1<<2)	/* Unmap pages during reclaim */
 
+I agree the new comment is more holistic.  It explains general
+zone_reclaim_mode behavior (how the system works if the mode is turned on by
+having any of rightmost three bits is set) well.  But, I think the old
+description is for the specific mode of it (when the rightmost bit is set), and
+the place is appropriate for that purpose.
+
+What about keeping the old comment but adding the holistic description on the
+upper multi-lines comments block?
+
+And the behavior is also well described in zone_reclaim_mode section of
+Documentation/admin-guide/sysctl/vm.rst document in my opinion.  Maybe putting
+a reference to the doc together for readers who curious about more details
+could also be useful?
+
+
+Thanks,
+SJ
+
+[...]
 
