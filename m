@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-746446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874A9B126C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E21EB126C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3373A4293
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFC50169F63
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0C225522B;
-	Fri, 25 Jul 2025 22:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7727025DAFC;
+	Fri, 25 Jul 2025 22:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acSP1X6h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HnztQay8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE3919D06B;
-	Fri, 25 Jul 2025 22:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D2525B1C5;
+	Fri, 25 Jul 2025 22:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753481826; cv=none; b=qH9amePsQ1z+xf105JvEfCfmkhNTku47o6WVb4s5PUWwp2k2CmZed/3JNsXCTt0qaYqdMuGEPjQ+sW7aVaz2odEe6SDEYueh+3Z0Kmhp3ZW72aQp4rJjvDku9aYZ72Ort9xHW0UFRBp3bPgSiuBdK9iWqU2ee5fT/K5C5vSZnVw=
+	t=1753481828; cv=none; b=AwlNHLOOeWUAzSFed8t2cDLlwofuiObiI64w7KmORQFVOHSwuuyuuLEJ/qmNBuJj1Lpl6nt5zdwqgCgUNPnROCjmiO/i+ZLuWYKlvT0FThGC+9GKIqb9Ox8o2MiKddWFOhmZ5ynFFEcU2kYJSYrIW+NYtMwAzKZTUTi98ehBgdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753481826; c=relaxed/simple;
-	bh=DBCb4FWtpyFIFm67hpEsdJ6fXyQXhExhN7ermn3t7D0=;
+	s=arc-20240116; t=1753481828; c=relaxed/simple;
+	bh=G+iwqFC5dV8xnfd0/OzbXvKTku7ogLqvVCr5bvOryK4=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MgeH9Bnf8PLJrVDld3AS9zFHYYUS7yh/qvoyo1kKGf5+S4AOslFI5x4AuK7DEm34m5nR0ApJsjKPn1QfZqGwQly7gspeVkisk0e8dxgCk7jxL/rw22YSgltJc1wqa8rUlgk8O0h42AveUpLfvh8gWj3KneZDBSxzV1IhtMGsEds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acSP1X6h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39985C4CEE7;
-	Fri, 25 Jul 2025 22:17:06 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=urHKl5sf6TJimz/ZLFiQ7wSY7L2rKabuUf4wh5GOGeKxXxbj3dMcIZMtO3hsTZXG+UYTHH9nHqRSOL0eTj4TU95vpwQulmUuoygxwvzmViSoKvqGAMB/pgFsY7kEuNBhxEwOmiHKFfJVY8yAPGqH9jCHDkeRKb8PjJg4YU3wDpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HnztQay8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F9DC4CEEF;
+	Fri, 25 Jul 2025 22:17:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753481826;
-	bh=DBCb4FWtpyFIFm67hpEsdJ6fXyQXhExhN7ermn3t7D0=;
+	s=k20201202; t=1753481828;
+	bh=G+iwqFC5dV8xnfd0/OzbXvKTku7ogLqvVCr5bvOryK4=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=acSP1X6h+7EnIL9YFvNNuCfxp2b6l++aBIIOXCev0c7qSBM5+gV9kWO0ixLlChp5k
-	 g/McvzbNPVQwYFCoEL0FVNsV0T1wZFhUCNZq+rWyOBA54J2oXIdmwFyusilKpUhuwn
-	 o44PJsRNEaBQh+g41RCfc20GwB37lAzFFThXPOFSIlmnh6ktaAQSoVaifFFa9zMyf4
-	 UNg2FejKyXeiEoXpBEt6O8n5ytLcEvVDpNk8so36Y/GvRVBJ6kVI3eNP6Mww5f/xEI
-	 J69efI/wFEX7oMZie/jZJ1traJC4MhDDdJs+NlB94EwP2qLaU0gjkgmOfNuNfpRtgn
-	 ddVJiSoK4Z+vw==
+	b=HnztQay8hq/Sq/sC15dOqqnKLayttHPlyuhvjwdF+7O2g/ZVOUYK7bztIyesGd/U1
+	 elTmoTwyb1buRdwzUBNncbhSkVJ2iahztXj5fmqq9AXdPn9jBYvTsrTnLW3rfdVrdy
+	 dZlanQqKwHLxqUD6OduWGQ7gsWa/jB3IwFw7sz9MpXSewl2hKTBAT+I4yst5FJ9iKP
+	 IjG392HVJejrQSNPQNMoqb0azoIlo8mRzYbZGy3N3AuGPM4dHwDuoOripOmJfDeYdp
+	 wIZbDxw+oAdoPUVlVULWSbH6XDEbeZppZY9vvAE566F+TIHWXAdD3+tjx0IUv8l6um
+	 I5JAdXwsKxcGw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFAD383BF5B;
-	Fri, 25 Jul 2025 22:17:24 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DC7383BF5B;
+	Fri, 25 Jul 2025 22:17:27 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: phy: micrel: fix KSZ8081/KSZ8091 cable test
+Subject: Re: [PATCH net] net: dsa: microchip: Fix wrong rx drop MIB counter
+ for
+ KSZ8863
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175348184349.3265195.8359629740044567911.git-patchwork-notify@kernel.org>
-Date: Fri, 25 Jul 2025 22:17:23 +0000
-References: <20250723222250.13960-1-fl@n621.de>
-In-Reply-To: <20250723222250.13960-1-fl@n621.de>
-To: Florian Larysch <fl@n621.de>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- Divya.Koppera@microchip.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
+ <175348184625.3265195.11254168994725323739.git-patchwork-notify@kernel.org>
+Date: Fri, 25 Jul 2025 22:17:26 +0000
+References: <20250723030403.56878-1-Tristram.Ha@microchip.com>
+In-Reply-To: <20250723030403.56878-1-Tristram.Ha@microchip.com>
+To:  <Tristram.Ha@microchip.com>
+Cc: linux@rempel-privat.de, m.grzeschik@pengutronix.de,
+ woojung.huh@microchip.com, andrew@lunn.ch, olteanv@gmail.com,
+ maxime.chevallier@bootlin.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, UNGLinuxDriver@microchip.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tristram.ha@microchip.com
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 24 Jul 2025 00:20:42 +0200 you wrote:
-> Commit 21b688dabecb ("net: phy: micrel: Cable Diag feature for lan8814
-> phy") introduced cable_test support for the LAN8814 that reuses parts of
-> the KSZ886x logic and introduced the cable_diag_reg and pair_mask
-> parameters to account for differences between those chips.
+On Tue, 22 Jul 2025 20:04:03 -0700 you wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
 > 
-> However, it did not update the ksz8081_type struct, so those members are
-> now 0, causing no pairs to be tested in ksz886x_cable_test_get_status
-> and ksz886x_cable_test_wait_for_completion to poll the wrong register
-> for the affected PHYs (Basic Control/Reset, which is 0 in normal
-> operation) and exit immediately.
+> When KSZ8863 support was first added to KSZ driver the RX drop MIB
+> counter was somehow defined as 0x105.  The TX drop MIB counter
+> starts at 0x100 for port 1, 0x101 for port 2, and 0x102 for port 3, so
+> the RX drop MIB counter should start at 0x103 for port 1, 0x104 for
+> port 2, and 0x105 for port 3.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: phy: micrel: fix KSZ8081/KSZ8091 cable test
-    https://git.kernel.org/netdev/net/c/49db61c27c4b
+  - [net] net: dsa: microchip: Fix wrong rx drop MIB counter for KSZ8863
+    https://git.kernel.org/netdev/net/c/165a7f5db919
 
 You are awesome, thank you!
 -- 
