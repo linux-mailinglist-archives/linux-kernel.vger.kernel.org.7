@@ -1,414 +1,323 @@
-Return-Path: <linux-kernel+bounces-745466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB894B11A5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:59:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628A0B11A62
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E58815A0D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:59:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47A2C7BC335
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E3124886A;
-	Fri, 25 Jul 2025 08:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A93253B5C;
+	Fri, 25 Jul 2025 08:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rs8Z3b35"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1RH+L5ix"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2082.outbound.protection.outlook.com [40.107.220.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43B623AB94
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753433959; cv=none; b=SGTF59cmpoZ+PzLaNua0Uj5jSN0ojL4BLn3Q4oidUhItfFiUfxxE8yaUG1U0aWQG3/Jgrq6vOrtuliMKPXbrAlNuVsnlHYXih/boKcLz53whrn/+7Y5PVD5+dhORRd26rLb8Qq26KHK1TjaZBhtQyUYF8lB7xoM/YkcVbLs/N0w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753433959; c=relaxed/simple;
-	bh=Epvz5xYDEH6GKKNdQXbFMYOls6Bpp+GEsfDk9aT0VMc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=he0tm2glIwJVpycX+4cLlIsy+vpPOv5fDU3oFpHtdNG+61uN6agRv1iOZLgVv+9a1wEtiuuK99+Q8HD3YpuSq8mluW4oAm5vjBalJ1ZR+0JCSyqdH3t6LvaOs2/eDKKNJkkYBRYYTaqD15LUiPAJhtBzNGpJ0rAfyh5okYIPP5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Rs8Z3b35; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-553b3316160so1963319e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753433956; x=1754038756; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z4AOzOJElgwV0qIorBKZrScQx66fbUFWWoBvz5q4bGY=;
-        b=Rs8Z3b35G9lDFbxqagHt6+uUgLTxBMDLgoKZi+zVrBxR4c4PSIiYuCnvJdgDyFyMWJ
-         lrlNS9D0GmWtckEIZqHnZYNMv3twGnfN0JhGVFujJBpv5TRj3fydPHQWWKDLu6+aZwgq
-         darmExu9em5K0xQDdSZCrEdYHbKjfTCfSJAmw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753433956; x=1754038756;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z4AOzOJElgwV0qIorBKZrScQx66fbUFWWoBvz5q4bGY=;
-        b=opxxjP4rceUSfUBSy7VqfZIewsQe+5E+xB7484QEOT2QLor6hOO9j4TnkKuxdf8ZVx
-         mir8+WGCkBD0SJLPkpsVNa1kPQdqHHnnio1B02/XFIrkV17RV+kbdnLWDVWombBvqysj
-         Jdo77bI3I9qhm5W6QmyW0EvF+vb47bWHctjS6VhSFw+nNIxYPjIDeczQ45vgbxA1EtBX
-         vxPE0/aNx8GnxVgpknPtpgE0l5SOJZSN/eQCtDelj8hv1bloeZbXN8YRH7kDakTZ4oCO
-         Y51xQFI8Hx3wQuU+pHFZfKXVDNjbFPEE6/mvbc8YHIw3CKqHKOD7MSc8++SbtGxkstyF
-         uTVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzDopmpgHn2aCPzBroWk0iUWZSRmxS/Owfs3Oqqb+oq0oIt8DrXCSy4afpwhz56DH1Yirnqf9zQCLBtIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfaIMAgeALuCs9REm76MRLhR0Y+HW12AFFu6qFIDAs+JV1ZTOw
-	eVZ4T+TibUtem1o8cuYtOT5dtUvPzCBHbo9s2zFqwmcL7/Jb6kgpGrMcHIM0XnmDrK92tu1Bvn6
-	iSWA=
-X-Gm-Gg: ASbGncthPF0AtEheQthwywIlhLO0qDa37enU+Y3KBvzjIWERBaiaEV+nyMVOaka/fek
-	wgz5+Wv+qRQlNQhvNBTI55K/E5cnLr6J0u9H1N9wVwQbYAk/XONCpzDV9pdBNW3xZlqZ2HOYtdl
-	gSp15yqgYcDyP2xxulsyIsJM6N7zoSbOk2+vHxIRJ2lJ7+kDi0EHvVPLE/bUiBvrGG0WFQrssk0
-	XDGKpae4O2mcDeDLSHRiQj7wW/7SzzMwXF7PaMZqKhN62+1QK7pBIMmPbUICE6VR7b4M76Ty9wN
-	ZiPXS4P+VjfkslGIihihOC3XxYmFPh5dARaXTCkHmnWqAH36ezLSSXanFEhelA6vMYAwTPCmvdw
-	7lej4suqQLN53WAHNT+EN2IAc939FDYfJ0GNldP4VKg9eZ1WJOxmLZb054Aliw+26
-X-Google-Smtp-Source: AGHT+IHzkY0Ccx0FrONiVVk8xAzTo+kX2LMmx8L0lqgrxh0XdCxnl94Tfo9kYTiX4WrPa2gX4QWnJw==
-X-Received: by 2002:a05:6512:3f12:b0:553:cfa8:dd25 with SMTP id 2adb3069b0e04-55b5f3cf92bmr335524e87.3.1753433955452;
-        Fri, 25 Jul 2025 01:59:15 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b53b21f16sm820488e87.26.2025.07.25.01.59.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 01:59:14 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32b7113ed6bso20117541fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:59:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWCpnfETCt4RtOoTzflwOnhIt9lpGPgNc95EWNDWIfRdVLb2d7c7NFyZ0aLFnKnWvtJTc82AahvFx4Q2lE=@vger.kernel.org
-X-Received: by 2002:a2e:b8ce:0:b0:32b:4773:7aaf with SMTP id
- 38308e7fff4ca-331ee83c6c1mr3694771fa.35.1753433953931; Fri, 25 Jul 2025
- 01:59:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2468C2459F8;
+	Fri, 25 Jul 2025 08:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753433968; cv=fail; b=JrwuWZi/q/9Rlj65t09EblQz+FY6d6FcaIQ73wM4B5aOlyZScBZ8dF6QHvfJqiGzP3g8mSeARqatTVZq80xB2CstTJdn9DPWJ/SM0Wfri5xlABEaydZwZ0J+18zpf4ZJDQHt/kvO02DuBSTsPm5U9T+eRt8YrRvZJtN5Nh4Re7k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753433968; c=relaxed/simple;
+	bh=q3AxWBRtNBCkwLdIBNoboCQdUcNxZXkaZ6mf54AVbHU=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CBTi8jA7DkgYBmTubgAj1TBbgqYrTouU5JHOedVk3KhsZip2/Bcbx+n05TzcAgl+5J6+JGl2WQflWQZ5hsx1KIABzVkMxg5uy1KRxeV+Bb8I4HPY2xKQFts7xXVtFZCVzcvBDWd8BC9OkJg6zarBziAwcawlGLCorK1vWHRc2JQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1RH+L5ix; arc=fail smtp.client-ip=40.107.220.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wZvG460eyY38rbaKPU62LKJOH5dg1+k0SIp40FzFtp9osQ5E5mQiMbTErcvsWiMTKSWhvaENhATt4aL8O9hkLQdN+V+6h4PBkEqp1M8eeAcGDPOKaQ8+2rSaBVt2UTwT7v9MWF48JNArk2LPMslFQsroPKxDaf5u8SOzIOPMhWssCJiLExyb0vtL/GRv/ENbhbXHtngg7Pkh07WrnwZESb2RRxIcWUGxLkkhKWpPCD0wltRsw9mU4Abx0ry2WxgXNaWjPA+NVuw6iX+/ti3YgxqN/PbKemzoqe6yOI1qYz+VWNhfkxAsNECOHc6jFne0Y0+qoKJphu9Hfh2MP8puLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JfkUjYv8j8VYkoIoYgSo1GVeSTims3mm/tlBtKnhmBQ=;
+ b=PDOxIJ2LGD5xQeHnNFtHinajXv7jG6izcXC+Wq6vyXFEgvdsOquJwu5NEuKbBnDfKxrKFphHJSdJLGQRNnHDhBm7VGKkESsqW8pIPqrGEYuNIveKZNtArdlQmWoKGlhObwT5++HCtc3Ysql/H3hUrkMjLxA04eEw9mN/gRPkgLifWTf4iK8pGjZMGRssG7iH0yMZn3ru/aPoydZA4XQlD0ZikIabgztTI+p49j/qIvVn5ScLwzj2VJrr8lkY6hYf7OxumkHzV3DIufxkQteXe8Z/vLqwai2URFUptw3L+O/b2BBjbuiuxMw/QZ3NDb1mCOOb0QGAeguRdNE4cp+REQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JfkUjYv8j8VYkoIoYgSo1GVeSTims3mm/tlBtKnhmBQ=;
+ b=1RH+L5ixsQxMz2CzUzyZa2i/4ou53D2LM7RoIu6upHHGreO9/uQ5yf+y6Fzq7aNxf6GY2CaAM06tvZtKifmqzVBjdTaL3NA6ID88ZITliiMnBCtQvfmwargfP4R3lZkhCQgUSnatNNREQS5lJIMXnScagFSs7csi13DDO7NtUK0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH3PR12MB7523.namprd12.prod.outlook.com (2603:10b6:610:148::13)
+ by PH7PR12MB9176.namprd12.prod.outlook.com (2603:10b6:510:2e9::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Fri, 25 Jul
+ 2025 08:59:23 +0000
+Received: from CH3PR12MB7523.namprd12.prod.outlook.com
+ ([fe80::f722:9f71:3c1a:f216]) by CH3PR12MB7523.namprd12.prod.outlook.com
+ ([fe80::f722:9f71:3c1a:f216%6]) with mapi id 15.20.8964.019; Fri, 25 Jul 2025
+ 08:59:23 +0000
+Message-ID: <06e29d07-e492-4093-88d5-af91c9060a99@amd.com>
+Date: Fri, 25 Jul 2025 14:29:16 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH net-next] amd-xgbe: Configure and retrieve
+ 'tx-usecs' for Tx coalescing
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>, Shyam-sundar.S-k@amd.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250719072608.4048494-1-Vishal.Badole@amd.com>
+ <509add4e-5dff-4f30-b96b-488919fedb77@linux.dev>
+ <e2ee64c4-4923-4691-bcfd-df9222f2c30b@amd.com>
+ <f5e40d58-c956-4ade-9de8-f88c834772f1@linux.dev>
+Content-Language: en-US
+From: "Badole, Vishal" <vishal.badole@amd.com>
+In-Reply-To: <f5e40d58-c956-4ade-9de8-f88c834772f1@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0PR01CA0111.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:11d::17) To CH3PR12MB7523.namprd12.prod.outlook.com
+ (2603:10b6:610:148::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717-uvc-onelocksless-v1-1-91a1b834186a@chromium.org>
- <20250724120840.GL11202@pendragon.ideasonboard.com> <CANiDSCvvAX27u4_qnKxbSqWVWybsZFV-367eSv8ig85-cCeDTw@mail.gmail.com>
- <20250724155101.GA17890@pendragon.ideasonboard.com> <CANiDSCsojmQdCQqYXBFStPwGJ3n+-04_+dqTx+tsUrT+dRSC2Q@mail.gmail.com>
- <20250724200014.GT11202@pendragon.ideasonboard.com>
-In-Reply-To: <20250724200014.GT11202@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 25 Jul 2025 10:59:01 +0200
-X-Gmail-Original-Message-ID: <CANiDSCvfD_j3KhrEU9ajRxC5Wgdp=Anq_PTZkUg7G8-Nof3O4w@mail.gmail.com>
-X-Gm-Features: Ac12FXyUZoN8IWCHRFEqo-qPEo_qvsB-UP_v6qbQ-rSDUJObnSDxRVqW8O02WBk
-Message-ID: <CANiDSCvfD_j3KhrEU9ajRxC5Wgdp=Anq_PTZkUg7G8-Nof3O4w@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: Drop stream->mutex
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hans Verkuil <hans@jjverkuil.nl>
-Content-Type: text/plain; charset="UTF-8"
-
-On Thu, 24 Jul 2025 at 22:00, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Thu, Jul 24, 2025 at 08:15:48PM +0200, Ricardo Ribalda wrote:
-> > On Thu, 24 Jul 2025 at 17:51, Laurent Pinchart wrote:
-> > >
-> > > (CC'ing Hans Verkuil)
-> > >
-> > > On Thu, Jul 24, 2025 at 05:41:06PM +0200, Ricardo Ribalda wrote:
-> > > > On Thu, 24 Jul 2025 at 14:08, Laurent Pinchart wrote:
-> > > > > On Thu, Jul 17, 2025 at 07:56:45AM +0000, Ricardo Ribalda wrote:
-> > > > > > Since commit c93d73c9c2cf ("media: uvcvideo: Use vb2 ioctl and fop
-> > > > > > helpers"), the IOCTLs are serialized. Due to this there is no more need
-> > > > > > to protect ctrl, cur_format or cur_frame from concurrent access.
-> > > > > >
-> > > > > > Drop stream->mutex after thanking it for years of good service.
-> > > > > >
-> > > > > > Use this opportunity to do fix some CodeStyle.
-> > > > >
-> > > > > Is that about the following change only:
-> > > > >
-> > > > > -       if (format == NULL || frame == NULL) {
-> > > > > +       if (!format || !frame)
-> > > > >
-> > > > > or is there something else I missed ?
-> > > >
-> > > > I believe that's it.
-> > > >
-> > > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > > > ---
-> > > > > >  drivers/media/usb/uvc/uvc_driver.c   |  4 ----
-> > > > > >  drivers/media/usb/uvc/uvc_metadata.c |  8 ++------
-> > > > > >  drivers/media/usb/uvc/uvc_v4l2.c     | 39 ++++++++----------------------------
-> > > > > >  drivers/media/usb/uvc/uvcvideo.h     |  6 ------
-> > > > > >  4 files changed, 10 insertions(+), 47 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > > > > > index 775bede0d93d9b3e5391914aa395326d3de6a3b1..3039e6a533b82dd917050d416c9ced8756d69170 100644
-> > > > > > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > > > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > > > > > @@ -183,8 +183,6 @@ static void uvc_stream_delete(struct uvc_streaming *stream)
-> > > > > >       if (stream->async_wq)
-> > > > > >               destroy_workqueue(stream->async_wq);
-> > > > > >
-> > > > > > -     mutex_destroy(&stream->mutex);
-> > > > > > -
-> > > > > >       usb_put_intf(stream->intf);
-> > > > > >
-> > > > > >       kfree(stream->formats);
-> > > > > > @@ -201,8 +199,6 @@ static struct uvc_streaming *uvc_stream_new(struct uvc_device *dev,
-> > > > > >       if (stream == NULL)
-> > > > > >               return NULL;
-> > > > > >
-> > > > > > -     mutex_init(&stream->mutex);
-> > > > > > -
-> > > > > >       stream->dev = dev;
-> > > > > >       stream->intf = usb_get_intf(intf);
-> > > > > >       stream->intfnum = intf->cur_altsetting->desc.bInterfaceNumber;
-> > > > > > diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-> > > > > > index 229e08ff323eed9129d835b24ea2e8085bb713b8..d1d4fade634bd3f8b12bbaa75388db42aecc25ea 100644
-> > > > > > --- a/drivers/media/usb/uvc/uvc_metadata.c
-> > > > > > +++ b/drivers/media/usb/uvc/uvc_metadata.c
-> > > > > > @@ -100,14 +100,10 @@ static int uvc_meta_v4l2_set_format(struct file *file, void *fh,
-> > > > > >        * Metadata buffers would still be perfectly parseable, but it's more
-> > > > > >        * consistent and cleaner to disallow that.
-> > > > > >        */
-> > > > > > -     mutex_lock(&stream->mutex);
-> > > > > > -
-> > > > > >       if (vb2_is_busy(&stream->meta.queue.queue))
-> > > > > > -             ret = -EBUSY;
-> > > > > > -     else
-> > > > > > -             stream->meta.format = fmt->dataformat;
-> > > > > > +             return -EBUSY;
-> > > > > >
-> > > > > > -     mutex_unlock(&stream->mutex);
-> > > > > > +     stream->meta.format = fmt->dataformat;
-> > > > > >
-> > > > > >       return ret;
-> > > > >
-> > > > >         return 0;
-> > > > >
-> > > > > >  }
-> > > > > > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> > > > > > index 160f9cf6e6dbdbf39e3eff56a5d5ea1d977fbe22..d7be4d59f0c73b983aa01321f4acc8f8bf6e83ef 100644
-> > > > > > --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> > > > > > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> > > > > > @@ -329,14 +329,12 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
-> > > > > >        * developers test their webcams with the Linux driver as well as with
-> > > > > >        * the Windows driver).
-> > > > > >        */
-> > > > > > -     mutex_lock(&stream->mutex);
-> > > > > >       if (stream->dev->quirks & UVC_QUIRK_PROBE_EXTRAFIELDS)
-> > > > > >               probe->dwMaxVideoFrameSize =
-> > > > > >                       stream->ctrl.dwMaxVideoFrameSize;
-> > > > > >
-> > > > > >       /* Probe the device. */
-> > > > > >       ret = uvc_probe_video(stream, probe);
-> > > > > > -     mutex_unlock(&stream->mutex);
-> > > > > >       if (ret < 0)
-> > > > > >               return ret;
-> > > > > >
-> > > > > > @@ -395,19 +393,15 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
-> > > > > >       struct uvc_streaming *stream = handle->stream;
-> > > > > >       const struct uvc_format *format;
-> > > > > >       const struct uvc_frame *frame;
-> > > > > > -     int ret = 0;
-> > > > > >
-> > > > > >       if (fmt->type != stream->type)
-> > > > > >               return -EINVAL;
-> > > > > >
-> > > > > > -     mutex_lock(&stream->mutex);
-> > > > > >       format = stream->cur_format;
-> > > > > >       frame = stream->cur_frame;
-> > > > > >
-> > > > > > -     if (format == NULL || frame == NULL) {
-> > > > > > -             ret = -EINVAL;
-> > > > > > -             goto done;
-> > > > > > -     }
-> > > > > > +     if (!format || !frame)
-> > > > > > +             return -EINVAL;
-> > > > > >
-> > > > > >       fmt->fmt.pix.pixelformat = format->fcc;
-> > > > > >       fmt->fmt.pix.width = frame->wWidth;
-> > > > > > @@ -419,9 +413,7 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
-> > > > > >       fmt->fmt.pix.xfer_func = format->xfer_func;
-> > > > > >       fmt->fmt.pix.ycbcr_enc = format->ycbcr_enc;
-> > > > > >
-> > > > > > -done:
-> > > > > > -     mutex_unlock(&stream->mutex);
-> > > > > > -     return ret;
-> > > > > > +     return 0;
-> > > > > >  }
-> > > > > >
-> > > > > >  static int uvc_ioctl_s_fmt(struct file *file, void *fh,
-> > > > > > @@ -441,19 +433,14 @@ static int uvc_ioctl_s_fmt(struct file *file, void *fh,
-> > > > > >       if (ret < 0)
-> > > > > >               return ret;
-> > > > > >
-> > > > > > -     mutex_lock(&stream->mutex);
-> > > > > > -     if (vb2_is_busy(&stream->queue.queue)) {
-> > > > > > -             ret = -EBUSY;
-> > > > > > -             goto done;
-> > > > > > -     }
-> > > > > > +     if (vb2_is_busy(&stream->queue.queue))
-> > > > > > +             return -EBUSY;
-> > > > > >
-> > > > > >       stream->ctrl = probe;
-> > > > > >       stream->cur_format = format;
-> > > > > >       stream->cur_frame = frame;
-> > > > > >
-> > > > > > -done:
-> > > > > > -     mutex_unlock(&stream->mutex);
-> > > > > > -     return ret;
-> > > > > > +     return 0;
-> > > > > >  }
-> > > > > >
-> > > > > >  static int uvc_ioctl_g_parm(struct file *file, void *fh,
-> > > > > > @@ -466,9 +453,7 @@ static int uvc_ioctl_g_parm(struct file *file, void *fh,
-> > > > > >       if (parm->type != stream->type)
-> > > > > >               return -EINVAL;
-> > > > > >
-> > > > > > -     mutex_lock(&stream->mutex);
-> > > > > >       numerator = stream->ctrl.dwFrameInterval;
-> > > > > > -     mutex_unlock(&stream->mutex);
-> > > > > >
-> > > > >
-> > > > > You can drop the blank line here.
-> > > > >
-> > > > > >       denominator = 10000000;
-> > > > > >       v4l2_simplify_fraction(&numerator, &denominator, 8, 333);
-> > > > > > @@ -519,12 +504,9 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
-> > > > > >       uvc_dbg(stream->dev, FORMAT, "Setting frame interval to %u/%u (%u)\n",
-> > > > > >               timeperframe.numerator, timeperframe.denominator, interval);
-> > > > > >
-> > > > > > -     mutex_lock(&stream->mutex);
-> > > > > >
-> > > > >
-> > > > > Double blank line.
-> > > > >
-> > > > > > -     if (uvc_queue_streaming(&stream->queue)) {
-> > > > > > -             mutex_unlock(&stream->mutex);
-> > > > > > +     if (uvc_queue_streaming(&stream->queue))
-> > > > > >               return -EBUSY;
-> > > > > > -     }
-> > > > > >
-> > > > > >       format = stream->cur_format;
-> > > > > >       frame = stream->cur_frame;
-> > > > > > @@ -556,14 +538,11 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
-> > > > > >
-> > > > > >       /* Probe the device with the new settings. */
-> > > > > >       ret = uvc_probe_video(stream, &probe);
-> > > > > > -     if (ret < 0) {
-> > > > > > -             mutex_unlock(&stream->mutex);
-> > > > > > +     if (ret < 0)
-> > > > > >               return ret;
-> > > > > > -     }
-> > > > > >
-> > > > > >       stream->ctrl = probe;
-> > > > > >       stream->cur_frame = frame;
-> > > > > > -     mutex_unlock(&stream->mutex);
-> > > > > >
-> > > > > >       /* Return the actual frame period. */
-> > > > > >       timeperframe.numerator = probe.dwFrameInterval;
-> > > > > > @@ -941,10 +920,8 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
-> > > > > >
-> > > > > >       sel->r.left = 0;
-> > > > > >       sel->r.top = 0;
-> > > > > > -     mutex_lock(&stream->mutex);
-> > > > > >       sel->r.width = stream->cur_frame->wWidth;
-> > > > > >       sel->r.height = stream->cur_frame->wHeight;
-> > > > > > -     mutex_unlock(&stream->mutex);
-> > > > > >
-> > > > > >       return 0;
-> > > > > >  }
-> > > > > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > > > > > index 757254fc4fe930ae61c9d0425f04d4cd074a617e..86765b9d7935f0888476249c3fb826cd7f36b35c 100644
-> > > > > > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > > > > > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > > > > > @@ -469,12 +469,6 @@ struct uvc_streaming {
-> > > > > >       const struct uvc_format *cur_format;
-> > > > > >       const struct uvc_frame *cur_frame;
-> > > > > >
-> > > > > > -     /*
-> > > > > > -      * Protect access to ctrl, cur_format, cur_frame and hardware video
-> > > > > > -      * probe control.
-> > > > > > -      */
-> > > > > > -     struct mutex mutex;
-> > > > > > -
-> > > > >
-> > > > > Could you please instead keep this mutex and drop uvc_video_queue.mutex
-> > > > > ? The rationale is that the same lock is now used to protect the queue
-> > > > > operations and to serialize the ioctls. It's therefore a higher-level
-> > > > > lock, which should be stored in the higher-level object, not in the
-> > > > > queue.
-> > > > >
-> > > > > You can then also drop the lock assignment in uvc_queue.c that reads
-> > > > >
-> > > > >         queue->queue.lock = &queue->mutex;
-> > > > >
-> > > > > as videobuf2 and the V4L2 core will use the video device lock when no
-> > > > > queue lock is set. The comment at the top of uvc_queue.c may need to be
-> > > > > updated.
-> > > >
-> > > > Are we sure that it is exactly the same?
-> > > >
-> > > > There are places in videobuf2-core.c where we do not use video device lock.
-> > > >
-> > > > Eg:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/common/videobuf2/videobuf2-core.c#n2056
-> > > >
-> > > > I'd rather keep the assignment to be in the safe side.
-> > >
-> > > There are lots of places where the vdev lock is used is the queue has no
-> > > lock. Hans, was is an oversight not to do it in __vb2_wait_for_done_vb()
-> > > ? If we don't want to support not setting the queue lock that's OK, but
-> > > we should then drop code that uses vdev->lock instead.
-> > >
-> > > We can keep the assignment for the time being to be safe until that
-> > > issue gets resolved, but I'd still like to use the stream mutex instead
-> > > of the queue mutex.
-> >
-> > The problem with using the stream mutex is that the meta device and
-> > the capture device have the same uvc_streaming, but they need a
-> > different mutex.
-> >
-> > So if you do something like this:
-> >
-> > console0 # yavta -c /dev/video1 &
-> >
-> > console1# yavta -c /dev/video0 &
-> >
-> > You end in a deadlock. Where the DQBUF of video1 do not let you use video0
->
-> Aarrghhh :-(
->
-> I wouldn't expect a deadlock as DQBUF should release the lock when
-> waiting, but still, aarrrrgghhhhh :-(
->
-> > We can add a second mutex to uvc_streaming.... but I think this is a
-> > bit overkill.
-> >
-> > Any ideas?
->
-> I'm thinking it could make sense to move the video_device members of
-> uvc_streaming to uvc_video_queue and rename uvc_video_queue to
-> uvc_video_device. That's a change that should probably be done on top of
-> this patch, as it won't change the location of the mutex.
-
-I have moved the video_device members.
-
-But after playing a bit with renaming uvc_video_queue.... It does not
-look like a good idea. To do it properly we also need to rename
-variables and functions and the change will be pretty massive. Any
-future backport to stable is going to be hell....
-
->
-> > > > > >       /* Buffers queue. */
-> > > > > >       unsigned int frozen : 1;
-> > > > > >       struct uvc_video_queue queue;
-> > > > > >
-> > > > > > ---
-> > > > > > base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
-> > > > > > change-id: 20250716-uvc-onelocksless-b66658e01f89
->
-> --
-> Regards,
->
-> Laurent Pinchart
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7523:EE_|PH7PR12MB9176:EE_
+X-MS-Office365-Filtering-Correlation-Id: 26e28a1c-de08-4010-8693-08ddcb598cae
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WnA0QXhFMkxERVpaNzNxSUlITjc0NkdLYWFleUlEOEd1SW1RY04vRVZOYXda?=
+ =?utf-8?B?OXFnek5NQkErVExGaU1nSnhlRk9FN3FUVHgzNEtNQlJzTTBHd3IveVBNTXBM?=
+ =?utf-8?B?ckNYSFAvWHNuY2RwZ3dJTDJ4Q3hueGwvM3RwNXE0UDFPdlZqQkovckZZUkkx?=
+ =?utf-8?B?V2hXMmtpOEVvbjdUeE5hY1EvNW9QdGlyU0pEUC81YjA2VXJxakl3b1cxNGxY?=
+ =?utf-8?B?clIzOG8zalNCYWwrQjJuVGhKaUFxTkF0aDEwYVl5WlNNM3ZDWk8yWTAralBM?=
+ =?utf-8?B?a1p0bHk3dnZEZEVWTXNvMkVXMHJkRXMwNk9HdHNyMFJ3NVV6OFk1Nm1PMC9n?=
+ =?utf-8?B?UWw0RVVWR0thb3lPN3VmRERpeDFscXRJV2k3U3h3bHppZkpHZ1gvdlpwZ3F0?=
+ =?utf-8?B?L1VCeSsrOFNycGZLNkxEWmNLQlVycFg2cUZualVBcWdodXVLKzc3YTNRZzFF?=
+ =?utf-8?B?M1hoQmR0ckU2S2tvNC9GKyt3ZmRBdXlxVWlJWENERW80UDdxZ3paS0NoUmVk?=
+ =?utf-8?B?VHVTSUVYUCtKU2g3VjA3Sms1Umdhek5laXRYVWRNekFacE9IN25xYnNWQVN5?=
+ =?utf-8?B?VElxNkZqcURWbUhPY2RDRHVEL3RNLzZmeGc1enZSOXdzd3lWYUYyRjEwc2FY?=
+ =?utf-8?B?M3NKMlNjZjhnM0VTVmRjaGJxR2trYWR1a1d2TS8zUGNjZVV4MXpMM0NwVHl1?=
+ =?utf-8?B?VDVMUmtuakFwZEVrZGxPWXdJbTlrNDJIUnRMQitxVTA3MEVrK05YcDZKcFcv?=
+ =?utf-8?B?UGxLZmJHY2tIR09uVjJvMUtCcUJsNkxvMVk2ZnR1SEx1VkRHVmtWUUR3OW4r?=
+ =?utf-8?B?SDJqRUtSNnBkSjhHcm5GSXhWSmNZelJpd1ZzUFNkN1FnV0UzVVBZSjlLSTZ0?=
+ =?utf-8?B?dDFycTB2RmpGNysvek1iUkMvVzRJN2xCOUdhS201MGFYUWdLbmVQK24zeThB?=
+ =?utf-8?B?NDZhQVNOT0FiRnBkNHByYyt6Z1NpeGozVVRhYkF1L3pEaHdDcE1ocVNCblc5?=
+ =?utf-8?B?VmJOZVVMT3JVdUNTRGpMTHhnUG1jMFBWcElvL2Z6NVlXSHNuTGJ3OEc1WVBU?=
+ =?utf-8?B?WHJBcUhld3ZoVVRPZVdBdXgwR0owNHNEd041ZU1sc1BoVDlsd2l1S1VKQlpp?=
+ =?utf-8?B?aTV3bW5lWVNmVlgxRFgwUUdZUlovV05Kbkd1M0Q4NHpOdmg4SngvSEFHZlVW?=
+ =?utf-8?B?ZktnSzlZZXlSQmdTWFRCVFdEV0R4MTVZc3ppSG81bzNJS3phZXg2cGlTWk1o?=
+ =?utf-8?B?R25wY0hXTUJ1Z1piRkd6dUR6TTllMEI5RmpUQW9lOVlVUVlkY2ZhUzVldE5J?=
+ =?utf-8?B?LzlVTlh1bW1qdzZmTk9QTnpyTXByeWxOWjl2YXZBUkhNeGQzVjgzS1RGVG1D?=
+ =?utf-8?B?R3JjVFJCQjFuOXN4NUkvcWJDb2hsbmpOOFBFZFRJWmlOUFc2UTViRW12RDdC?=
+ =?utf-8?B?YVR4c2VlODJGRXpzbDQ3NE1jemptbGZmWlF5VlVYWXp4Rm1MMzhiN2lXdEYv?=
+ =?utf-8?B?aWFqaXk5aXNFOERLa0RhSHNDemZXeTFqZkVJS1IyYlFYaWZnR3FJSERWSXB1?=
+ =?utf-8?B?SDdaVzJzOTl0aEtUYzA5eTRZRGZ6dWFiV2JWUDk4VFA2dGdZNHNmUnkxeUpI?=
+ =?utf-8?B?Mk5jcVJRVTBGUlZvTUdFSU9EeVAzeVozZHhyODNUUGwrSTJHK01yKzJ1S2JX?=
+ =?utf-8?B?Tk01dlpQMlF1RTEyblUzbnRvVW9XaWVjaUJmVHVSSVZXZlBaQUdVZVduN0dj?=
+ =?utf-8?B?N1hhUCt0bFFXL0xubk1ZSTZvbngzZE9Hc2I4U25QQWNYcWx6U0FXeE8vb1h6?=
+ =?utf-8?B?NWQ4UjFDYURLb0Q3V1lqOFJyQmZGYXdLanRLMHhCWDZDRFZVZVA0ZFhvK01F?=
+ =?utf-8?B?NzdLd2hncEpDaFhaWlM2N0szM2p0Vm51MkNTOE5acXVkd0d5NVViVXcvaFU2?=
+ =?utf-8?Q?5NqvZ1TdVKw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7523.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dHB5VmMyZlE1SzB5bTRNMmhvK0lNVXBYd3ZFam5tYUxCL2ZqVU40Zml4RUJt?=
+ =?utf-8?B?aU1hYzBwZCtTSUxFd3ZkTDFUajQ1ZU92dkNPRkdHdTFVTWZrajhnYjJJd2xF?=
+ =?utf-8?B?R2hpZXZwZWFjbHJDRHZCYVE2U2hjNUdNZGM5VFFTNG12dWloMmFSUWJ0TWw5?=
+ =?utf-8?B?Q0liQUovWldJb24wV1g4clpFTFU4UTdwaStrdnF0MEw5cjd4UWtSOGM1eGYy?=
+ =?utf-8?B?NHg5NVZkK0VnclRGWnc1NEpKUWFZL2VxZkd5V2NubW9RVFdnU1pGNllDL0Y1?=
+ =?utf-8?B?ck5KcFJlM1RzcUZpNkpjOGJjelhEd2Qxbm1IbXFDQURJdEtGb3dzK0F5K2l5?=
+ =?utf-8?B?T0dOeVhmeUVJU2EvRC9xN3JvbkR1L2lpaTVNSHpWRVZIRHN6NEF6R0w2Zmlq?=
+ =?utf-8?B?dUJHS3NrUlNsMlV2UHltQnp6dFROK0p0bWlhQmNiUHV2dFNId1NQWWNZaFZZ?=
+ =?utf-8?B?SHYwOGxzTjQ5cDgyU3k2Q3NTMXZVT0UvY3NxQWNwSXBpekdRd0xjV0U5Nlhi?=
+ =?utf-8?B?Mm5vQTVNOUJsQ3VMWUlGS3FtUVMzNm5UdG1IeXA3ZnBqV1FYdzhpVndiYTJF?=
+ =?utf-8?B?K2ovUUNVTTloUG8vZFlyQWF0NmhrekJMUVJJT0tBL21TV2JtcUgwR1JBR0VD?=
+ =?utf-8?B?S2JMaWF6VC9FM1YzMnhEeVErVGZLMTFqUFRsb2tadmg5OTJtTngvaW5KaDdQ?=
+ =?utf-8?B?RHdHSHU0d254emhuTHJSUm5UQjM1azVYU1lsbjVFamYzbUI3b3ZvYVlwT010?=
+ =?utf-8?B?TEF6Qm9DVWZMbXVmUEE4UWRnU2dpVzE0dUVMaUVaVlZYemF4N3d4U1JqMGxZ?=
+ =?utf-8?B?dmsxM0daQ3VidEFpWUFidk9lY2NJU0dkb1J6cTdobkRLMy9HMnhuUDVDQ0U5?=
+ =?utf-8?B?UVFmaGZMOEVrbnVEUWZpdzVBMDl1OXVPUGpORjFHcFZGVGJ6U1ZRWUdvVlpN?=
+ =?utf-8?B?K00zUFN0Ni9GRlNjcEt4dC8xb0xKa1B5eDI3aDNkZysvYnNVSDJOZUgvRlpm?=
+ =?utf-8?B?c3JIcXJyK3hOV2VBY1V4d1k1c2p3bkVLSm9RUFNYdTl3cGVIR1A3R04wZEMr?=
+ =?utf-8?B?dE9uR0tiNXd0UzJsRVVWYlJtak81c0ZhUEVwWXBzK1pzWTFVbmRFa3pzazZr?=
+ =?utf-8?B?UXEweE9HajZBQWh0ek5uQmswVEV5dHpYR1NrZHdIVk91WWU1V1R1WTZZcXJJ?=
+ =?utf-8?B?R1N4TkQ2cGlSREloQ3Vka0sxVi8rZG4xd1NVRnYrNDF3QWRYQmx3anQ4RUFx?=
+ =?utf-8?B?RElUT3l5TVJKN1QyQ2pRL1NlSW1BaHEyTG40MklZL3IycHR6ejRuLzhncEg2?=
+ =?utf-8?B?dDZMWWhNRHpBeEFXYWJxNmM5TnBpcFViYVp0dnZjZHZoTGh5bnpyWnA2WXdM?=
+ =?utf-8?B?RVNubDVqOWRhY3VpLzNKaGZnVzZBN0ZqU2Z0aGlBcWtZOGpjN3ZUMlV2SWVU?=
+ =?utf-8?B?eWoxT3FrdUJ4ZmE1TEZhR00welEzZ2NBK0VPL2hVZWFUYzZYS3ZhTlE1dUVa?=
+ =?utf-8?B?NjJ4clZNNlo3eko0aVBHSHhDU1pwVG9wdnZ5N01yL3k2dFBJQW9XbzVUOXc5?=
+ =?utf-8?B?cXNGNzRJRUdCNmljb2ZUbnZlVDhJKzd1aE92aDVlK0ovUGYzNjBpYXMxWnhJ?=
+ =?utf-8?B?VnpxUWhsVDlITko5MnVQT0hkcDl1R0FqZGdUSHZHcGl1LzNxRDB2V3hHNDln?=
+ =?utf-8?B?NHIyeSt2QitKdG9EWmFHemVUelNNVExaV1JWaDhWOTQvdGIyS3Z0WFYyMG85?=
+ =?utf-8?B?UlE0RVpMeXhVSTdGdU9rb09saFhVM2J4U09oZ1R0WFJubExDR1VlWkdiZWEy?=
+ =?utf-8?B?R0ZsblA3bnQyeXRCZ1RPNXQrODM0TGprcTBnQUFzSXU1S0UzNFNJK0dKMjJB?=
+ =?utf-8?B?N0NQZDBQdVdveERGRDJxektLQkh2QUcyYVRTSVNkc2lvTFBlOCtlcVlJZ05t?=
+ =?utf-8?B?Y2krcXI3Y3lHK1dRVWRxMGRlMFNuckhsTXh3aHQwR3pWRytDMXE0aTNOYmRW?=
+ =?utf-8?B?KzhVeUoyMlpVcUErdjQ0dWhGL0taQ2M3aC9CSzFpc3JjdTJDSkg4WlpNNnlO?=
+ =?utf-8?B?RmxicFI5TlVwSzlOTGcyT1A0UmZNVGRteFhWeU5MUkZONEd3NThtVW9OcUJx?=
+ =?utf-8?Q?lVwKC20mvEa67LslKMIIXwVLp?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26e28a1c-de08-4010-8693-08ddcb598cae
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7523.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 08:59:23.3277
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q2la2sERZLmk7JLYNSXu9ZmF3R0kr4Zfk9Bs3aU1c88Gf/PERfxCdYXrvUz28FznOWvd6ZOxMlCkEP83Dx33Gw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9176
 
 
 
--- 
-Ricardo Ribalda
+On 7/21/2025 3:05 AM, Vadim Fedorenko wrote:
+> On 20.07.2025 19:28, Badole, Vishal wrote:
+>>
+>>
+>> On 7/19/2025 8:46 PM, Vadim Fedorenko wrote:
+>>> On 19.07.2025 08:26, Vishal Badole wrote:
+>>>> Ethtool has advanced with additional configurable options, but the
+>>>> current driver does not support tx-usecs configuration.
+>>>>
+>>>> Add support to configure and retrieve 'tx-usecs' using ethtool, which
+>>>> specifies the wait time before servicing an interrupt for Tx 
+>>>> coalescing.
+>>>>
+>>>> Signed-off-by: Vishal Badole <Vishal.Badole@amd.com>
+>>>> Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+>>>> ---
+>>>>   drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c | 19 +++++++++++++++++--
+>>>>   drivers/net/ethernet/amd/xgbe/xgbe.h         |  1 +
+>>>>   2 files changed, 18 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c b/drivers/ 
+>>>> net/ ethernet/amd/xgbe/xgbe-ethtool.c
+>>>> index 12395428ffe1..362f8623433a 100644
+>>>> --- a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
+>>>> +++ b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
+>>>> @@ -450,6 +450,7 @@ static int xgbe_get_coalesce(struct net_device 
+>>>> *netdev,
+>>>>       ec->rx_coalesce_usecs = pdata->rx_usecs;
+>>>>       ec->rx_max_coalesced_frames = pdata->rx_frames;
+>>>> +    ec->tx_coalesce_usecs = pdata->tx_usecs;
+>>>>       ec->tx_max_coalesced_frames = pdata->tx_frames;
+>>>>       return 0;
+>>>> @@ -463,7 +464,7 @@ static int xgbe_set_coalesce(struct net_device 
+>>>> *netdev,
+>>>>       struct xgbe_prv_data *pdata = netdev_priv(netdev);
+>>>>       struct xgbe_hw_if *hw_if = &pdata->hw_if;
+>>>>       unsigned int rx_frames, rx_riwt, rx_usecs;
+>>>> -    unsigned int tx_frames;
+>>>> +    unsigned int tx_frames, tx_usecs;
+>>>>       rx_riwt = hw_if->usec_to_riwt(pdata, ec->rx_coalesce_usecs);
+>>>>       rx_usecs = ec->rx_coalesce_usecs;
+>>>> @@ -485,9 +486,22 @@ static int xgbe_set_coalesce(struct net_device 
+>>>> *netdev,
+>>>>           return -EINVAL;
+>>>>       }
+>>>> +    tx_usecs = ec->tx_coalesce_usecs;
+>>>>       tx_frames = ec->tx_max_coalesced_frames;
+>>>> +    /* Check if both tx_usecs and tx_frames are set to 0 
+>>>> simultaneously */
+>>>> +    if (!tx_usecs && !tx_frames) {
+>>>> +        netdev_err(netdev,
+>>>> +               "tx_usecs and tx_frames must not be 0 together\n");
+>>>> +        return -EINVAL;
+>>>> +    }
+>>>> +
+>>>>       /* Check the bounds of values for Tx */
+>>>> +    if (tx_usecs > XGMAC_MAX_COAL_TX_TICK) {
+>>>> +        netdev_err(netdev, "tx-usecs is limited to %d usec\n",
+>>>> +               XGMAC_MAX_COAL_TX_TICK);
+>>>> +        return -EINVAL;
+>>>> +    }
+>>>>       if (tx_frames > pdata->tx_desc_count) {
+>>>>           netdev_err(netdev, "tx-frames is limited to %d frames\n",
+>>>>                  pdata->tx_desc_count);
+>>>> @@ -499,6 +513,7 @@ static int xgbe_set_coalesce(struct net_device 
+>>>> *netdev,
+>>>>       pdata->rx_frames = rx_frames;
+>>>>       hw_if->config_rx_coalesce(pdata);
+>>>> +    pdata->tx_usecs = tx_usecs;
+>>>>       pdata->tx_frames = tx_frames;
+>>>>       hw_if->config_tx_coalesce(pdata);
+>>>>
+>>>
+>>> I'm not quite sure, but it looks like it never works. 
+>>> config_tx_coalesce()
+>>> callback equals to xgbe_config_tx_coalesce() which is implemented as:
+>>>
+>>> static int xgbe_config_tx_coalesce(struct xgbe_prv_data *pdata)
+>>> {
+>>>          return 0;
+>>> }
+>>>
+>>> How is it expected to change anything from HW side?
+>>>
+>>
+>> The code analysis reveals that pdata, a pointer to xgbe_prv_data, is 
+>> obtained via netdev_priv(netdev). The tx_usecs member of the 
+>> xgbe_prv_data structure is then updated with the user-specified value 
+>> through this pdata pointer. This updated tx_usecs value propagates 
+>> throughout the codebase wherever TX coalescing functionality is 
+>> referenced.
+>>
+>> We have validated this behavior through log analysis and transmission 
+>> timestamps, confirming the parameter updates are taking effect.
+>>
+>> Since this is a legacy driver implementation where 
+>> xgbe_config_tx_coalesce() currently lacks actual hardware 
+>> configuration logic for TX coalescing parameters, we plan to modernize 
+>> the xgbe driver and eliminate redundant code segments in future releases.
+> 
+> Effectively, when the user asks for the coalescing configuration, the 
+> driver reports values which are not really HW-configured values. At the 
+> same time
+> driver reports correct configuration even though the configuration is not
+> actually supported by the driver and it doesn't configure HW. This 
+> sounds odd.
+> 
+> Why didn't you start with the actual implementation instead of doing this
+> useless copying of values?
+> 
+> 
+Since the XGMAC controller does not provide hardware-level register 
+support for tx_usecs-based TX interrupt coalescing, the driver employs 
+an advanced timer-driven software implementation to achieve interrupt 
+batching and improve performance. The tx_usecs parameter is accessible 
+through the pdata structure pointer, allowing dynamic updates that 
+automatically influence the TX coalescing timer mechanism across the 
+driver implementation.
+>>
+>>>> @@ -830,7 +845,7 @@ static int xgbe_set_channels(struct net_device 
+>>>> *netdev,
+>>>>   }
+>>>>   static const struct ethtool_ops xgbe_ethtool_ops = {
+>>>> -    .supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS |
+>>>> +    .supported_coalesce_params = ETHTOOL_COALESCE_USECS |
+>>>>                        ETHTOOL_COALESCE_MAX_FRAMES,
+>>>>       .get_drvinfo = xgbe_get_drvinfo,
+>>>>       .get_msglevel = xgbe_get_msglevel,
+>>>> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe.h b/drivers/net/ 
+>>>> ethernet/ amd/xgbe/xgbe.h
+>>>> index 42fa4f84ff01..e330ae9ea685 100755
+>>>> --- a/drivers/net/ethernet/amd/xgbe/xgbe.h
+>>>> +++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
+>>>> @@ -272,6 +272,7 @@
+>>>>   /* Default coalescing parameters */
+>>>>   #define XGMAC_INIT_DMA_TX_USECS        1000
+>>>>   #define XGMAC_INIT_DMA_TX_FRAMES    25
+>>>> +#define XGMAC_MAX_COAL_TX_TICK        100000
+>>>>   #define XGMAC_MAX_DMA_RIWT        0xff
+>>>>   #define XGMAC_INIT_DMA_RX_USECS        30
+>>>
+>>
+> 
+
 
