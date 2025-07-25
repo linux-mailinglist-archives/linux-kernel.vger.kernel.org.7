@@ -1,104 +1,146 @@
-Return-Path: <linux-kernel+bounces-746451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC654B126D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:18:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F45B126D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FF433B0E41
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6981CE1C68
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F43E2571AD;
-	Fri, 25 Jul 2025 22:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOLR8Ymm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC9225522B;
+	Fri, 25 Jul 2025 22:22:24 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F2BEAF9;
-	Fri, 25 Jul 2025 22:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1541827470;
+	Fri, 25 Jul 2025 22:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753481911; cv=none; b=ABPBgO3W/rUPJ2eGe9KcjSHbMkNlfRrXruI5Gk2pa7i42w6KGO4u7xHQq8hfkVgyPUsW+Jp171ouqpwbe5wYbO/PBIpiEtNDi1bEZ8J8VfBRkZTgWLEF9rMkZTe5+qAfjdiC+nnD+hGGAjlsd8UUrqENjfT+S56uX+xwUynnkTc=
+	t=1753482144; cv=none; b=j/+xr/+JBYQVs/tmX4YWXiaOvSNwQG79B11QoiFLm6zTh6PqdneA+4iFrUeYyTqibyDBTueG1cv0lHaSOa+j5uxHMuk6D06xXeBMAOQKbjLWKY8OCG1zfq0CvJSnOg10FtbNHUt1JT8reIsipPK5lJS9Db51FempvkwTw7YNc78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753481911; c=relaxed/simple;
-	bh=CGiveRG0F4ZRe38E+iuFBLXGZzwDIfze3JyfGxabL28=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CfqLksAOyZ6u+dqzODSq+D5cLvKbYW+UxGJE0SOxu1njOASzEtoky1AaYwwGxoox2AAUfLxaW3PvAov5tQh7yix05ttt5itZy/+T4zPJV+qjGCyewv/nWu9KtFOIcKHIL/1ph7qjmSHY81ipt5EhcNllO20tNXXAakl2mD4sm9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOLR8Ymm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE6DC4CEE7;
-	Fri, 25 Jul 2025 22:18:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753481911;
-	bh=CGiveRG0F4ZRe38E+iuFBLXGZzwDIfze3JyfGxabL28=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WOLR8Ymm6P4gOv/050K6B7gAqqQ522Hc4yVFoRh0Txi/+d6pnHEvinr6VyqQaqiEA
-	 bxQnFJuEEnj7oYMsnEMoEErRuOv/lEKf4G8F8o4I8JgGJJe7tQJ7TPu30EPv5TtPmB
-	 TgFF13w2d8O/ZVN2wSV1XMPdxfekwZwndLuw7WOmF8YUgK8WGy8nS8+2MoQ3miW9D5
-	 h/j0GodhjKDmBrmN9c4cHX3EL7TIzRTUnEBkaEgjEbwvM9pyADb2unstM7FKhhIKCt
-	 zPXGo3Ns7XsRtMSkFLuV5KImnLI+gKqqIo0FE0sRPdPOzyoddQDDDdZbcBO92/XWBj
-	 9siEB3HNpDhtw==
-Date: Fri, 25 Jul 2025 15:18:29 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Richard Cochran
- <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
- <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>, Andrew Lunn
- <andrew@lunn.ch>
-Subject: Re: [net-next v16 04/12] net: mtip: The L2 switch driver for imx287
-Message-ID: <20250725151829.40bd5f4e@kernel.org>
-In-Reply-To: <20250724223318.3068984-5-lukma@denx.de>
-References: <20250724223318.3068984-1-lukma@denx.de>
-	<20250724223318.3068984-5-lukma@denx.de>
+	s=arc-20240116; t=1753482144; c=relaxed/simple;
+	bh=lFFLlRkX+9KJb+HAAy1ydEvV3EqdGHy+GY0S2G+536c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dc16Awn2z5sZHK6Qy3rZlNUdbRlrSX5639P8Jh7W0zHyPm3VC1Ve4Ldv/ECL0AK55Jt/ZJ/2Wwhl7xpC9d+nSpB9tQZadat3b1GnsjSj67FOkn0Utd4S0IwJi9dCjBmtrtSsmC1sf9jxYy1Iu2wcGoQGP33QILN9K4vOVrdexC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56PMM4ir051778;
+	Sat, 26 Jul 2025 07:22:04 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56PMM4YX051775
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 26 Jul 2025 07:22:04 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <e6f71dcc-80e0-4cfe-91cf-8adb4d4effb7@I-love.SAKURA.ne.jp>
+Date: Sat, 26 Jul 2025 07:22:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] hfs: remove BUG() from
+ hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "willy@infradead.org" <willy@infradead.org>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
+ <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
+ <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
+ <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
+ <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
+ <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
+ <aH-enGSS7zWq0jFf@casper.infradead.org>
+ <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
+ <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
+ <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
+ <c99951ae12dc1f5a51b1f6c82bbf7b61b2f12e02.camel@ibm.com>
+ <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
+ <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
+ <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
+ <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
+ <2103722d0e10bbd71ad6f93550668cea717381bc.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <2103722d0e10bbd71ad6f93550668cea717381bc.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav301.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Fri, 25 Jul 2025 00:33:10 +0200 Lukasz Majewski wrote:
-> +	for (i = 0; i < SWITCH_EPORT_NUMBER; i++) {
-> +		fep->ndev[i] = alloc_netdev(sizeof(struct mtip_ndev_priv),
-> +					    fep->ndev_name[i], NET_NAME_USER,
-> +					    ether_setup);
-> +		if (!fep->ndev[i]) {
-> +			ret = -ENOMEM;
-> +			break;
-> +		}
-> +
-> +		fep->ndev[i]->ethtool_ops = &mtip_ethtool_ops;
-> +		fep->ndev[i]->netdev_ops = &mtip_netdev_ops;
-> +		SET_NETDEV_DEV(fep->ndev[i], &pdev->dev);
-> +
-> +		priv = netdev_priv(fep->ndev[i]);
-> +		priv->dev = fep->ndev[i];
-> +		priv->fep = fep;
-> +		priv->portnum = i + 1;
-> +		fep->ndev[i]->irq = fep->irq;
-> +
-> +		mtip_setup_mac(fep->ndev[i]);
-> +
-> +		ret = register_netdev(fep->ndev[i]);
-> +		if (ret) {
-> +			dev_err(&fep->ndev[i]->dev,
-> +				"%s: ndev %s register err: %d\n", __func__,
-> +				fep->ndev[i]->name, ret);
-> +			break;
-> +		}
+On 2025/07/26 2:42, Viacheslav Dubeyko wrote:
+>>>
+>>> I don't see any sense to introduce flags here. First of all, please, don't use
+>>> hardcoded values but you should use declared constants from hfs.h (for example,
+>>> HFS_EXT_CNID instead of 3). Secondly, you can simply compare the i_ino with
+>>> constants, for example:
+>>
+>> This will save a lot of computational power compared to switch().
+>>
+> 
+> Even if you would like to use flags, then the logic must to be simple and
+> understandable. You still can use special inline function and do not create a
+> mess in hfs_read_inode(). Especially, you can declare the mask one time in
+> header, for example, but not to prepare the bad_cnid_list for every function
+> call. Currently, the code looks really messy.
 
-Error handling in case of register_netdev() still buggy, AFAICT.
--- 
-pw-bot: cr
+No, since this is "static const u16", the compiler will prepare it at build time
+than every function call. Also since it is a simple u16, the compiler would
+generate simple code like
+
+  test ax, an_imm16_constant_value_determined_at_build_time
+  jnz somewhere
+
+which is much faster than
+
+  cmp eax, HFS_EXT_CNID
+  je somewhere
+  cmp eax, other_cnid_1
+  je somewhere
+  cmp eax, other_cnid_2
+  je somewhere
+  cmp eax, other_cnid_3
+  je somewhere
+  cmp eax, other_cnid_4
+  je somewhere
+
+based on switch() in is_inode_id_invalid() shown below.
+
+We can replace "static const u16" with "#define" if you prefer.
+
+> 
+>>>
+>>> bool is_inode_id_invalid(u64 ino) {
+>>>       switch (inode->i_ino) {
+>>>       case HFS_EXT_CNID:
+>>>       ...
+>>>           return true;
+>>>
+>>>       }
+>>>
+>>>       return false;
+>>> }
+
+
+
+> So, 1, 2, 5, 15, etc can be accepted by hfs_read_inode().
+> 0, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14 is invalid values for hfs_read_inode().
+
+OK. This list will be useful for hardening, but we can't use this list for fixing
+the bug reported at https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b .
+
 
