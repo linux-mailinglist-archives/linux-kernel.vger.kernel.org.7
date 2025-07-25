@@ -1,119 +1,115 @@
-Return-Path: <linux-kernel+bounces-745461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0260B11A47
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:54:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DC4B11A4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C36EAC41EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:53:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C48F3586A9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B798A244675;
-	Fri, 25 Jul 2025 08:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F442459E1;
+	Fri, 25 Jul 2025 08:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yca7r8iG"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HDR/DOqj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF7422CBE6;
-	Fri, 25 Jul 2025 08:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C732046A9;
+	Fri, 25 Jul 2025 08:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753433652; cv=none; b=cqNCv/2+WOXO1iLQVAq61bDVyQCHNqcsSVQtCPz01JUeJ5VOHLbQ6zC+Pt9DxBPnyaT7KZIYCfjli0LGlKATAh9qgRvNrvNA9ijgykbpiuB12GKIzTr2btgq9Ib54IborK6dgMj78Zx7IEuyX3WdaDEnPUCwtnxlcM4y3FCUitM=
+	t=1753433685; cv=none; b=AALRHwnca+kauX9cfKQaZYmZoOhyB/iwVAwHaF6UM8+3mGPyFLL77puodDFXdOmQstWOwLa+8qnWbqvnGZjHINWB76E7lNzTdsZVaWPbiMDfxFxRlmN90+c4QMDwSjuNfzXjr14L1sg+UH5bfIjxrmSHoLPwJrrT1mB8ZQCIoOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753433652; c=relaxed/simple;
-	bh=tSfYIZ31g+vLvLIWsAu0i8e7Fhb3tcLvIKszGYITlTA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oBVNtwNX3CcnFsS6ktwMMuXciE0M03O8ae8mijUR4CmlhDaJlUG+xn7pEs75bMmBZUxqQtUsKU+lqqmfLgOmgpuRzmLXz6B0qHmckvQ7fb2iIsTLkJemGKgA7msIYAE9Zs9hj0nPZs+r7GJazZArfIpTu0yok08cVw56diqk0xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yca7r8iG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7040DC4CEE7;
-	Fri, 25 Jul 2025 08:54:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753433651;
-	bh=tSfYIZ31g+vLvLIWsAu0i8e7Fhb3tcLvIKszGYITlTA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Yca7r8iGcZn2qq8huCpS61iSt4c+pF968o1OhEmGCEP4GembZIse7yUqHaD2JmXhL
-	 lu9yoje+pcrLB7ZacfQWY4ElRxc54ATBktBXPd4r2UJ7YA11IWkcU8UhhyhAqgDjnq
-	 vglN2AiHGlfx40e2iBJ+R2fcAhduyaqQfly/r8OrOLhIOOnJ6E4x+CqOJmuUjHRtif
-	 RuPryohOOQlPO6SJQGfJHWT/rD98v/iPV9Ejfgre/ZL4wP45ZeJ6AhYPbpzJMk1FUY
-	 sieDvHZl4wcjKXM33Js8fej0a8d9cCPW5IXie/rmEoELnSX/BZ3tCksBY5s7xVjN8b
-	 rToLjzOgZRsiQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Fri, 25 Jul 2025 10:54:00 +0200
-Message-ID: <20250725-vfs-fixes-067e349ed4dc@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1753433685; c=relaxed/simple;
+	bh=hjFINsVpC6FAHAXLNRPyDkHQkeG1X5fPEVv1tAmDq3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbYwtMusD94W0zKcsNSBSiMYfBD23YPox8yrdKr4D4ipN6qbJOyZCh+8oKUw65svq8woAVgzthoqMy09KioNDyijLg1+vqFYW5Z88+uXa9EM9fcP55QYNuk+Cq6Xv4Gph0/ZKnwziLRj+h8jC5PQp2qWq/twd4xSoD770JVZ5UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HDR/DOqj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16A44C4CEE7;
+	Fri, 25 Jul 2025 08:54:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753433684;
+	bh=hjFINsVpC6FAHAXLNRPyDkHQkeG1X5fPEVv1tAmDq3E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HDR/DOqjdCaRRhBY0sA4QC/wRqKvjm+J8arwxALJwVShl/+cPjod0YfTY7OcN3KNN
+	 4xVH6UY+XTQyMK4V325iyuqO78dXxDGZjNsx7NLWqJYUZksoDFuCadNAipJpkTnhwN
+	 jW6bNXJrdRIPm2Gjw4pVdf/S0eujZusj/w7cQidA=
+Date: Fri, 25 Jul 2025 10:54:41 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+Cc: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Kannappan R <r.kannappan@intel.com>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Pawel Laszczak <pawell@cadence.com>, Ma Ke <make_ruc2021@163.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Luc Bonnafoux <luc.bonnafoux@oss.cyber.gouv.fr>,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	Lukas Wunner <lukas@wunner.de>,
+	Alistair Francis <alistair@alistair23.me>,
+	Oliver Neukum <oneukum@suse.com>
+Subject: Re: [RFC PATCH v2 0/4] Support for usb authentication
+Message-ID: <2025072555-praying-shakiness-121f@gregkh>
+References: <20250711-usb_authentication-v2-0-2878690e6b6d@ssi.gouv.fr>
+ <2025071344-possible-fabric-bbbf@gregkh>
+ <d2ghp3qafwrxiwkrizzxqayzkhu36ke4dolxaloksmz4z5fzpn@paxcer43kru3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1448; i=brauner@kernel.org; h=from:subject:message-id; bh=tSfYIZ31g+vLvLIWsAu0i8e7Fhb3tcLvIKszGYITlTA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ0u2nsezTNOGbbR+bjn0vfMhxaOCc1VXthxe6LFQEu+ oF2TwMKOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACayNJSR4bJD4bF+1nnK18ss lZwbpsUf+h6s0hh84cesgvP/FsZu52f4H/L0StU983LT3wZ1aZttq3d6TXx0XupAg9+jn/8+Xz3 4hxkA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2ghp3qafwrxiwkrizzxqayzkhu36ke4dolxaloksmz4z5fzpn@paxcer43kru3>
 
-Hey Linus,
+Hi,
 
-/* Summary */
-This contains two last-minute fixes for this cycle:
+Let me focus right now on only one thing here:
 
-- Set afs vllist to NULL if addr parsing fails.
+On Mon, Jul 21, 2025 at 04:51:52PM +0200, Nicolas Bouchinet wrote:
+> > > Limitations
+> > > ===========
+> > > 
+> > > The USB authentication protocol come with some inherent limitations, [3]
+> > 
+> > That's a 2018 reference!  Are you saying that the newly designed
+> > protocol was already discussed in 2018 and found lacking?
+> > 
+> As far as we are aware, the last version of the specification [1] is the
+> last is the last version that includes errata from 2019. [3] is a
+> research paper that explored the limitation of the protocol. We are not
+> aware of any evolution since. We saw that SPDM reuses some of the USB
+> specification fields but we are not entirely sure yet if can be used in
+> place of the USB specification and if it fixes the limitations.
 
-- Add a missing check for reaching the end of the string in afs.
+So, this spec has been out since 2019, and it's "broken", AND there are
+no actual devices using this?
 
-/* Testing */
+If there is no hardware out there, I really do not want to be adding new
+features to the kernel for this.  We ripped out wireless usb because the
+thing never actually shipped and was dropped by the vendors.  Let's not
+do that again here.
 
-gcc (Debian 14.2.0-19) 14.2.0
-Debian clang version 19.1.7 (3)
+So if there is no hardware, there's no need for this at all, right?
+Where are the vendors that wrote this spec, and why did they not
+actually add support for this to their devices already?
 
-No build failures or warnings were observed.
+And, most importantly, is Windows going to support this?  Because if it
+is not, then there is no need for us to support it either as no vendor
+is going to only be building a USB device just for Linux systems, right?
 
-/* Conflicts */
+So, where are the vendors?  Without that, this is not going to actually
+go very far at all, and just bit-rot in our tree :(
 
-Merge conflicts with mainline
-=============================
+thanks,
 
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
-
-  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.16-rc8.fixes
-
-for you to fetch changes up to 8b3c655fa2406b9853138142746a39b7615c54a2:
-
-  afs: Set vllist to NULL if addr parsing fails (2025-07-23 13:54:34 +0200)
-
-Please consider pulling these changes from the signed vfs-6.16-rc8.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.16-rc8.fixes
-
-----------------------------------------------------------------
-Edward Adam Davis (1):
-      afs: Set vllist to NULL if addr parsing fails
-
-Leo Stone (1):
-      afs: Fix check for NULL terminator
-
- fs/afs/addr_prefs.c | 2 +-
- fs/afs/cell.c       | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+greg k-h
 
