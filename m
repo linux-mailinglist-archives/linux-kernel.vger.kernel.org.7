@@ -1,146 +1,97 @@
-Return-Path: <linux-kernel+bounces-746292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67F5B124FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FD1B12500
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB408169D4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:58:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0880B5A505F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AE92505A5;
-	Fri, 25 Jul 2025 19:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE201252286;
+	Fri, 25 Jul 2025 19:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHT67RHC"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUdaBZGm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245371FC3;
-	Fri, 25 Jul 2025 19:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124811FC3;
+	Fri, 25 Jul 2025 19:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753473531; cv=none; b=LQ9KJHyngXNFrKz6FYhvcQ5KpzU4Sq1cIplc7x1wTEYL/UW1PuLaa6C6waxc5ecGCeS1TKVUt1PREmD81JbStLul3CmbA46WNFMSJSFobUlMWwD7YnJiGmE+G0DQxtuddRKpIoQOOeV2yXNOp9aVzEemQF7g12BOE+Jm+Z6Ti+A=
+	t=1753473548; cv=none; b=F2U+TBP4XA+rcPXejnezZirsCm3QQZIBEJ11jo7EPQOtqVvhHoA3Js6NPxwbaS97WfxWKz3ec6/SH3bamQiVYUZHq0Ymu6jYXUbDkAx3oAeiAHo9/y0Ex8XNxqTWn3OnClRKvIcuBSf4gQSwepyWwWFD7OCRo7R3PYvmPo/kCdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753473531; c=relaxed/simple;
-	bh=wnLDdonWkyZNp/LHwDNqvNn4gpunPL+ht6uFy+8qW5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bp23tnjkNZbdx1KfD7p4GklD5vPI9xoG0ZgkQfFz2j0jcuKQLf+W1L143QWJvyOfxa2aRYhaFZYKgy2UuTbS9LhcTl2Zzp+2v8QAwvowLm1tXOgmdlIsjSjZh+LWdt96rNb5f5ZglADKh/fUd9xPDYcw2hDqy6xz+/ZowWU1sSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHT67RHC; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23c8f179e1bso29716485ad.1;
-        Fri, 25 Jul 2025 12:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753473529; x=1754078329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UMMc/d97/e3QXVHvtigBiPuITVHUjn0KlgtvdJ11/nw=;
-        b=HHT67RHCAzl/4Vsg27Xqy8caNMtzGLfoOCHCTRm0rrMhut64kg6qvtX4WQXbRm6W1q
-         KURVrjCoF7BTHkYDX4+UByHBoJtJvasyP5gVP1sBtAYMdEB4Qnmh9wjNV1BHBMLxvk60
-         h4pmn4Srs89vYYXU6JLBvkuy+OQz57miVWWon9JQk2XaUKeBHZe07fwoHxxg7NOxWfFt
-         aoI6DYC5l52lLrfcW4/bYkyL5KUetOMFvSxNQEvChVJgQOf39r+nDaIaDZtZ0GJXFDZ8
-         H+/HoZ2vKVhisRrhzXAuBLA8bVPgRx27lost6Z/dCti0yPN3HBcKvyAbjg6iHoxEFkSY
-         2ZIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753473529; x=1754078329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UMMc/d97/e3QXVHvtigBiPuITVHUjn0KlgtvdJ11/nw=;
-        b=jPW2m+fdontj5BPTT2OCMP76GBLppUHsHESqWy33hZzriXc5mAVNz1cNNCd9lyEgXZ
-         Vz/lSybqL1B4rsMubfc+vqYWhka+OQM5drpN5OwYXm0V9+zqNLEAaUVxqxYY0jbOeAzT
-         FOHi22bMu38NGdtEPz5AwgyoPneBG6Y3wBruWTbfpwfxWdEqgAS+RBY6VHveXPyogCB3
-         KlEhDvMJDWEZ/KqCAP4dmxUZBeSvUkg16wrLf5bGbk+ojSpHXUI+6URURGxP0F3cHmek
-         xpcvTuuEE5/E6vdqQ9tdhFmWPXXQ1xrPDG1zyVrjkreYrr9rQ2Xvj1Os5q/Zinl5cFgY
-         C3vg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhUZ8GsEu5meOKt9UfhAXoi6RQ8g1sCGG+8RuuYVWtw1QAsI9xFyKjCs+9br2AwVM4scB0k5eIzR130Pq4@vger.kernel.org, AJvYcCVbbqyhs9jyOSXPFUqdphKQaTpWT0jM2o8JQjSlxO89RVSktCx59XcobbPXZEoHwq0Qgah0KsYzG5+Y@vger.kernel.org, AJvYcCWCtYz06+kkUmicFT8bCxnaGia5/qM6MnPrBC4rLBqGumjNGDq6af4nPuGq2vPXCXOE6SsrbzhVXn/hLJdC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3d3JMJ0O9x8jF+oyCs5gJNd//FQKG+1x6HvgfaQGECVQ3GEP0
-	EGR/rJ7ACc7PwfM+mX8oxN0JBZkJpFVybertueN7Jp5ra/LU0z5OZvYqGuxremwCiC8Yaa89re0
-	o4DsLJIYv+1ZY6dPGf++APM4MV4QGxak=
-X-Gm-Gg: ASbGnctzKwTX6R7jNGlkL90xxYIF/wuHM7D9DGyrQboWyoojO/DFns2xS9NmmsCm6b8
-	f7aLnI8uCEM28X6QzVCUw2r4Kt9c4rO6Tga5CpK3Z0umXQJ81zf/jb0DP6Y9/ipfr7pTjzs1d7b
-	Zj7wvKdSw/qePWk/lLmifGeg31GK+YBoLrTAY2IyUmLkcV/nsSXVrjPFd4abZe0XArPajI0Puei
-	Kvo
-X-Google-Smtp-Source: AGHT+IF1wiCjthMJk20IwfyqQIAQUjuJSdoHbUNgqU6TW0zgoWD2fkO35n1lnbbOM1GE7XoyV4Q/L7Y61n0DPG4wGz4=
-X-Received: by 2002:a17:903:22c8:b0:235:1706:1ff6 with SMTP id
- d9443c01a7336-23fb2f55dd8mr46833325ad.0.1753473529361; Fri, 25 Jul 2025
- 12:58:49 -0700 (PDT)
+	s=arc-20240116; t=1753473548; c=relaxed/simple;
+	bh=SEHfoYAYS7TSO9WYmdMXMA3PCP9Gw9vwFqw8aUosFRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VaO5AZaU0tmgmhuqfur8CNgeSYLJgIpOVWGoWWqKqBVs0RIT+yt+2oOk8N7TtlOUvl9Cf8t+s5UG057D23hZBeOyQe8rmxDnayMED8DgUMx69uKpleYM88I9Vt+IolzGuTH1Ws2MGO4o4Lt0riRb0jDa6LQrPfuO7+O38nB30Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUdaBZGm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 420E2C4CEE7;
+	Fri, 25 Jul 2025 19:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753473547;
+	bh=SEHfoYAYS7TSO9WYmdMXMA3PCP9Gw9vwFqw8aUosFRw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GUdaBZGmRaQHDllmOrirRXuWqOyfCz/2DWMMe/nSFRXD/dGWp8Z9nIL/h1RCxceXU
+	 C+gfJm0R1XnPkjEvNws9QbvGerXuJGD9Aw2u3SgQD1JLSN/UhxPF1KErNNcd/LjUz3
+	 UTf4QA6u/TNxJfIAJbnOD4dqRwxHO9ic1Gf2/qJFF6ueLTTXtBi/n+zHB6OTKp9GND
+	 72hbkHSKrevMsW1g7mrap+86EXj4QTx5mwUQT0ModfFcEMXEnw58Ou50tOeKTVnKOn
+	 HxUh81GKkzPJVeVUlSwFN50Uytkuqu+mavTsXRVBb1LM+qB6nT9k6sGkCP5GRX46oI
+	 +/QFu5+MlwmTg==
+Date: Fri, 25 Jul 2025 12:59:06 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sasha Levin <sashal@kernel.org>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kees@kernel.org,
+ konstantin@linuxfoundation.org, corbet@lwn.net, josh@joshtriplett.org
+Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
+Message-ID: <20250725125906.1db40a7f@kernel.org>
+In-Reply-To: <20250725150046.3adb556c@gandalf.local.home>
+References: <20250725175358.1989323-1-sashal@kernel.org>
+	<20250725114114.3b13e7b1@kernel.org>
+	<20250725150046.3adb556c@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723190308.5945-1-ltykernel@gmail.com> <20250723190308.5945-4-ltykernel@gmail.com>
- <SN6PR02MB4157FC3B69C9E6FB6884CE99D45EA@SN6PR02MB4157.namprd02.prod.outlook.com>
-In-Reply-To: <SN6PR02MB4157FC3B69C9E6FB6884CE99D45EA@SN6PR02MB4157.namprd02.prod.outlook.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Sat, 26 Jul 2025 03:58:12 +0800
-X-Gm-Features: Ac12FXyLcIiVLxayLpw0fyM_Cnqrf8qCXkDeFcpC2BpAB3cqtbpaiV0IpcqDlJU
-Message-ID: <CAMvTesBqMEs+9qYHLSko9L_YGi_nad4g1o1spOcFe1uqssRQag@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 3/4] x86/Hyper-V: Don't use auto-eoi when Secure
- AVIC is available
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>, 
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de" <arnd@arndb.de>, 
-	"Neeraj.Upadhyay@amd.com" <Neeraj.Upadhyay@amd.com>, Tianyu Lan <tiala@microsoft.com>, 
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, 
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 25, 2025 at 7:34=E2=80=AFAM Michael Kelley <mhklinux@outlook.co=
-m> wrote:
->
-> From: Tianyu Lan <ltykernel@gmail.com> Sent: Wednesday, July 23, 2025 12:=
-03 PM
-> >
->
-> I'm nit-picking, but the patch Subject: line prefix should be "x86/hyperv=
-:"
-> for consistency with past patches. Note that there's no capitalization
-> or dash. I know not everyone is consistent on this if you look at the git=
- log
-> for mshyperv.c, but I try to flag it and encourage consistency.
->
-> > Hyper-V doesn't support auto-eoi with Secure AVIC.
-> > So set the HV_DEPRECATING_AEOI_RECOMMENDED flag
-> > to force writing the EIO register after handling an interrupt.
-> >
-> > Signed-off-by: Tianyu Lan <tiala@microsoft.com>
-> > ---
-> >  arch/x86/kernel/cpu/mshyperv.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyp=
-erv.c
-> > index c78f860419d6..8f029650f16c 100644
-> > --- a/arch/x86/kernel/cpu/mshyperv.c
-> > +++ b/arch/x86/kernel/cpu/mshyperv.c
-> > @@ -463,6 +463,8 @@ static void __init ms_hyperv_init_platform(void)
-> >                ms_hyperv.max_vp_index, ms_hyperv.max_lp_index);
-> >
-> >       hv_identify_partition_type();
-> > +     if (cc_platform_has(CC_ATTR_SNP_SECURE_AVIC))
-> > +             ms_hyperv.hints |=3D HV_DEPRECATING_AEOI_RECOMMENDED;
-> >
-> >       if (ms_hyperv.hints & HV_X64_HYPERV_NESTED) {
-> >               hv_nested =3D true;
-> > --
-> > 2.25.1
-> >
->
+On Fri, 25 Jul 2025 15:00:46 -0400 Steven Rostedt wrote:
+> On Fri, 25 Jul 2025 11:41:14 -0700
+> Jakub Kicinski <kuba@kernel.org> wrote:
+> > On Fri, 25 Jul 2025 13:53:56 -0400 Sasha Levin wrote:  
+> > > 	Co-developed-by: Claude claude-opus-4-20250514
+> > > 	---
+> > > 	 Documentation/power/opp.rst | 2 +-
+> > > 	 1 file changed, 1 insertion(+), 1 deletion(-)    
+> > 
+> > I think we should suggest that the tag is under --- ?
+> > It's only relevant during the review. Once the patch is committed 
+> > whether the code was organic or generated by Corp XYZ's Banana AI
+> > is just free advertising..  
+> 
+> What's the difference between that and others using their corporate email?
+> I even add (Google) to my SoB to denote who is paying me to do the work.
 
-Hi Michael:
-  Thanks for your review. Will update.
---=20
-Thanks
-Tianyu Lan
+To be clear, it's not my main point, my main point is that 
+the information is of no proven use right now. As long as
+committer follows the BKP of adding Link: https://patch.msgid.link/...
+we can find the metadata later.
+
+We never found the need to attach the exact version of smatch / sparse
+/ cocci that found the bug or "wrote" a patch. Let us not overreact to
+the AI tools.
+
+> Also, I would argue that it would be useful in the change log as if there's
+> a bug in the generated code, you know who or *what* to blame. Especially if
+> there is a pattern to be found.
+
+This touches on explainability of AI. Perhaps the metadata would be
+interesting for XAI research... not sure that's enough to be lugging
+those tags in git history.
 
