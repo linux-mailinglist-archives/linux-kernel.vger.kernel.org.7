@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-746395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0A9B1262D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E76CB1262F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A8F1C24632
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FDCA3BE3DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454C425485F;
-	Fri, 25 Jul 2025 21:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C2B254AE1;
+	Fri, 25 Jul 2025 21:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDh04UAA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rvxfWT7m"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C87820487E;
-	Fri, 25 Jul 2025 21:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C0D20487E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753479739; cv=none; b=q07wq5Al+j/JPFRNW1bqwOU0i7rIPmXvIhBbrHF91xbBrjyoLtlpEBbkL9Ng1NJTla3gs0h0RJd6kCrjevDNmzJ3KZ5JJbZfmSJ9+FnTwBcUfCJ6Kzj38zEcr7M5qnPQO8PcG2WYPXtO/JH6vyjmNz0ERsQYjVLB6UXKTslE1PQ=
+	t=1753479859; cv=none; b=NfdKwGwmnFCsDHpTW6KSOUr4ZlDRNqXg3g2yR4am6SvWf9dHoXuq5+AJJllGjY8Cys98Qp35mZ5cLcR0AA5r5QuiTdc9Gu1kPgA9bR/Ga0TW24LAAWiFU7owLgSrlBRYmSBkPXMnStEdEq2Q/LzFWhx55H6XrP7H7mmUCxrYYJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753479739; c=relaxed/simple;
-	bh=WinxX6AYbHEm/FkEU/zisNIu3Co8WMWQ1pz0YSaP9OA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q3XaRWQQVz6B2dLfIcxssAtovO5RHWJwaP6hWa9l1FK+GoKl7z7NvWbq4CVL8j8nMXFToMnaXBmuFIxl1sOfAR1lYOoVLUoNQHbT6m/Y0Td7p8LTGWCU7rcSKy1RB3PD4uYZT3JrPIgBreoobBWyXQopGTrZgzeBs5atDfmfbqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDh04UAA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A8DC4CEE7;
-	Fri, 25 Jul 2025 21:42:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753479739;
-	bh=WinxX6AYbHEm/FkEU/zisNIu3Co8WMWQ1pz0YSaP9OA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qDh04UAAl7Nw6S1W9yKm0UpWMvAjMiMCH/wEu6grNQ24heA8bBKOUb5vM3q3VkBHg
-	 E6qqRE5LsweDMV3MYFNUauNrQLDYeFecetNDlqh1y9pTGWFaalTBCCN6b/t0Jr5ibP
-	 rEY96S0VBu0cnYGxWtydXxkE7e/4h+6itUbYDf64YC2axSMbzOHHc0NV0AanraPDXO
-	 xK0+IYanHoS2xmo/J1ZosoRi6L1cUw/xhes5mQ8y/fUGLoWgWmqXWUdUjDqCiuwjX4
-	 ssk9NxCkEwtVEluFwZZr9CX16zpD2OB8JbXUdVnzQHScm1c43beg2CRzbng73mYZ2w
-	 ROU5uC01NJpYQ==
-Date: Fri, 25 Jul 2025 14:42:17 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oscar Maes <oscmaes92@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
- stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ipv4: allow directed broadcast routes to
- use dst hint
-Message-ID: <20250725144217.2617f6bc@kernel.org>
-In-Reply-To: <20250724124942.6895-1-oscmaes92@gmail.com>
-References: <20250724124942.6895-1-oscmaes92@gmail.com>
+	s=arc-20240116; t=1753479859; c=relaxed/simple;
+	bh=bUkj5xSp80OkF0SzfWqXezoXWmIJiBEemdW6yxCyQ8U=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EmLbaaVMteNSY87uHKw3dnSUCZsTy7Uj+cElpMqz6xG+duFyndciIw6AoxZVbgitsxFwGqbOk7GHGIgdS7V38cT4MnU6aifcyzNIg2+NJLg/PZFJd0nMRpybvCjhnY9MCsUJIaMvpC4DGqJnkvoOqg3x34LMQ2DDMjI2AtNWmSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rvxfWT7m; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-748d96b974cso2275468b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753479857; x=1754084657; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3+PZlLRGqHNoXRhoksTGR7fQVcc2exxerOsCnlgIDHE=;
+        b=rvxfWT7mdZSZuqRPl53uJgdlMOsOq7P5UiaqgWkcdhaVRUPjYx03hRwtZSxMPsIcLk
+         oEJDXSgL9wT8WhcdvPEAmXeXCccbXhoTIY62nErGYkRX2oKFzaC2nlzZPsm+xTp9eVVt
+         t8igYZjFe+HpMAVkYOYGQ0NWF+tMlbRu733lz44+rv0IgoI2oUpuEpU/Ipojc0hhSi5x
+         gWMdT3z82+P37tZRMLKkG8mgj1KTE/TJJwUjDII4ju3rSulZGOvxx356T6yVIvctk6vY
+         Ha4eqqu+Dx7Nsf7HD1hn6GfnUo60ok7aI8aQXjNFfpXmk9Gs6IRFomO/wwDckPRCUPvi
+         bjtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753479857; x=1754084657;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3+PZlLRGqHNoXRhoksTGR7fQVcc2exxerOsCnlgIDHE=;
+        b=AvnWnv6llb72Por4ygWk+AnM7MyBOHRp79Er+Vt989bH3JU9UfKRkwSLsE8IH0rvoH
+         l8f1WONwr6T7Ru7uHL6SqD28JDAnTck77KcEJ0oLwd8diAz8vJsWyA0ORjDbafkb87za
+         HpjzK11EqOUitR+IdYJyIsRJMvDkcL73q4nIFFUN6Ua6k4+4+MI48re2KKgE4ILSuZyC
+         47EqWMCvRYu/iBNfxxgn1PRb0lnrSBnmml7GjNtuZdrWDFALwv/cOWBcQFE7166wbltl
+         pI+JnnTKpMGOohFwI4zWjphzrLm2QWWh8iZJnFEgrcQSB+gtiv/lkzZwlFY/EjpETMEJ
+         xWAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0FrmlyBlqasiOcxvGbZuI8pEwMVFXzoJlwmPHJSrBA0gPRwKAl0HI6shEUOhldk0lvGNu+Ec15GVHNZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNBYlguSxSvuW6GKTqaZc6Yk6j+hmPSXTdhkKUNaGTyIGVyA2t
+	PKX1vZO/pGONDdCPanD4L4K+HigXUP0vyAtPqGkibuwc1Q2LaHdsD6bo+ynDRn7ApsVCye1Jxis
+	qYB8bCyi+rHvW5Q4TNoTTmBRrHAoqfw==
+X-Google-Smtp-Source: AGHT+IHihIHLR4bcIDbb4J6+u+bWCkyh8D4Hmzl4BF/uzSbYsdSRlthrIlvEZfBIKL44Yz2X0fpgKx1CWMfeddpUGn0=
+X-Received: from pfjx28.prod.google.com ([2002:aa7:9a5c:0:b0:746:3162:8be1])
+ (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:2394:b0:75f:8239:5c25 with SMTP id d2e1a72fcca58-7633286328dmr4966711b3a.10.1753479856833;
+ Fri, 25 Jul 2025 14:44:16 -0700 (PDT)
+Date: Fri, 25 Jul 2025 21:44:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1773; i=samitolvanen@google.com;
+ h=from:subject; bh=bUkj5xSp80OkF0SzfWqXezoXWmIJiBEemdW6yxCyQ8U=;
+ b=owGbwMvMwCUWxa662nLh8irG02pJDBnNvxb+YQ17aCm5yrPc9GnL5Dsy4YIRamm+PiIZmokfH
+ x9Yd8Sno5SFQYyLQVZMkaXl6+qtu787pb76XCQBM4eVCWQIAxenAEzE4wIjwz3X5/6F9vqbJm6Y
+ EKUpXL8kUWqZVJ6s5p5Fc/bHNtwz1GT4ze501aLVQP3FhL8L5LuaTd5uY67bd/vIJIdXnGanbWV VuQE=
+X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
+Message-ID: <20250725214401.1475224-6-samitolvanen@google.com>
+Subject: [PATCH bpf-next v2 0/4] Use correct destructor kfunc types
+From: Sami Tolvanen <samitolvanen@google.com>
+To: bpf@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Jamal Hadi Salim <jhs@mojatatu.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 24 Jul 2025 14:49:42 +0200 Oscar Maes wrote:
-> Currently, ip_extract_route_hint uses RTN_BROADCAST to decide
-> whether to use the route dst hint mechanism.
-> 
-> This check is too strict, as it prevents directed broadcast
-> routes from using the hint, resulting in poor performance
-> during bursts of directed broadcast traffic.
-> 
-> Fix this in ip_extract_route_hint and modify ip_route_use_hint
-> to preserve the intended behaviour.
+Hi folks,
 
-We are wrapping up our 6.17 material, I think this will need
-to wait for 6.18. In the meantime, would it make sense to add
-a selftest? Sounds like a relatively rare use case, easy to
-regress.
+While running BPF self-tests with CONFIG_CFI_CLANG (Clang Control
+Flow Integrity) enabled, I ran into a couple of CFI failures
+in bpf_obj_free_fields() caused by type mismatches between
+the btf_dtor_kfunc_t function pointer type and the registered
+destructor functions.
 
-> diff --git a/net/ipv4/ip_input.c b/net/ipv4/ip_input.c
-> index fc323994b..1581b98bc 100644
-> --- a/net/ipv4/ip_input.c
-> +++ b/net/ipv4/ip_input.c
-> @@ -589,8 +589,10 @@ static void ip_sublist_rcv_finish(struct list_head *head)
->  static struct sk_buff *ip_extract_route_hint(const struct net *net,
->  					     struct sk_buff *skb, int rt_type)
->  {
-> -	if (fib4_has_custom_rules(net) || rt_type == RTN_BROADCAST ||
-> -	    IPCB(skb)->flags & IPSKB_MULTIPATH)
-> +	const struct iphdr *iph = ip_hdr(skb);
-> +
-> +	if (fib4_has_custom_rules(net) || ipv4_is_lbcast(iph->daddr) ||
-> +	    (iph->daddr == 0 && iph->saddr == 0) || IPCB(skb)->flags & IPSKB_MULTIPATH)
+It looks like we can't change the argument type for these
+functions to match btf_dtor_kfunc_t because the verifier doesn't
+like void pointer arguments for functions used in BPF programs,
+so this series fixes the issue by adding stubs with correct types
+to use as destructors for each instance of this I found in the
+kernel tree.
 
-nit: we still prefer to wrap lines at 80 chars in networking
+The last patch changes btf_check_dtor_kfuncs() to enforce the
+function type when CFI is enabled, so we don't end up registering
+destructors that panic the kernel. Perhaps this is something we
+could enforce even without CONFIG_CFI_CLANG?
+
+Sami
+
+---
+v2:
+- Annotated the stubs with CFI_NOSEAL to fix issues with IBT
+  sealing on x86.
+- Changed __bpf_kfunc to explicit __used __retain.
+
+v1: https://lore.kernel.org/bpf/20250724223225.1481960-6-samitolvanen@google.com/
+
+---
+Sami Tolvanen (4):
+  bpf: crypto: Use the correct destructor kfunc type
+  bpf: net_sched: Use the correct destructor kfunc type
+  selftests/bpf: Use the correct destructor kfunc type
+  bpf, btf: Enforce destructor kfunc type with CFI
+
+ kernel/bpf/btf.c                                     | 7 +++++++
+ kernel/bpf/crypto.c                                  | 9 ++++++++-
+ net/sched/bpf_qdisc.c                                | 9 ++++++++-
+ tools/testing/selftests/bpf/test_kmods/bpf_testmod.c | 9 ++++++++-
+ 4 files changed, 31 insertions(+), 3 deletions(-)
+
+
+base-commit: 95993dc3039e29dabb9a50d074145d4cb757b08b
 -- 
-pw-bot: cr
+2.50.1.470.g6ba607880d-goog
+
 
