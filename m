@@ -1,207 +1,136 @@
-Return-Path: <linux-kernel+bounces-745695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09F6B11D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:08:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FC8B11D30
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390E3AC1264
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:08:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B13173E5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7970239E6B;
-	Fri, 25 Jul 2025 11:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D264F2E4271;
+	Fri, 25 Jul 2025 11:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MzqUor0V"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwNxI0XQ"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E50B217F33
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B812D9EE3;
+	Fri, 25 Jul 2025 11:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441710; cv=none; b=ZseddaYUU2BuLagN9Z7fhGxEnTbddrtkroncGVOQh6j4X3v9wKRZNXF51NbzpZRJD9Db8FSJkwlhHNRtsQb0qc5//GZaeMdtcjHiGAeuHY0Ndt0ngYh849wb6Qh5n3d45CfXwUYWzUMVEcVXenpLg0ZSpvX/wUzHO0ne+OeH3yU=
+	t=1753441756; cv=none; b=B8BbC8J6ja9IQTDaojOtqPcozWN3leJKoWRz+nxIGIiJl7AT3dl5InARX2QfCCjQRbk9YU5bU6/atPWfM/SS5DscCwsD3zsnnMgyEAEKEj9tOya3mkfhLAXtfefjFjfU1ws0Nvx4gZxcl55M5vjL7UO8X4ZFazj+5WoduTgX5kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441710; c=relaxed/simple;
-	bh=ksCfZ8jjDFESXWT4xccpjH20vcLD3xUDLP3BYsYRf3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQeiMQ5l4ixy4zhDDfzU4hebcAg5WfCpWYqx7k9N26d7K5dIkXJJKupPcO5JM6a9b3EzqBMeICwqHCMXNdqrpMheOsvHJjSvMZDlUDN3O2aKFxAi+RLrQlAsZdi/xXJ3MnSpQb+fyLPMEgq27b1boRxOPQEnV+Tc9jSjACoa+sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MzqUor0V; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-af240271376so10756366b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:08:27 -0700 (PDT)
+	s=arc-20240116; t=1753441756; c=relaxed/simple;
+	bh=r6TFW6LEnDFDgljm7T9nclsKj7smdp/z2thlL3Bp7MQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=km27GBAp9M12+gVvCVV978gQRmORYYjE40Y4FQcI6PWlNQ2EB2sT1sDTu+QE0KsrtOGaCU1p/yvWX24GHK5/rrI4pyJDbfX7zQtcpWRHfm3tgg1BQhb4QMrggGzauknVlkWcXj1rl7Zg1hCiPdx5/B4uiG+XZ6qzbQPW1opNO0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwNxI0XQ; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313910f392dso1500508a91.2;
+        Fri, 25 Jul 2025 04:09:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753441706; x=1754046506; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uw5xYz9ljVloUXuYhdtWs7nMIXFU+Uc/d7Zb4IlFZdg=;
-        b=MzqUor0Veh5RooPWyJ7VFzKSueeFvkGNMy35ladK7La7MBcSzoD5mbLijUmMLud/XT
-         Jmh9AGO9urZM7YxVba7OQmcbSMSncEBJtLgzJJxMinH/86we59UQ6Kt+b9DNDhLNhjFn
-         UgV9SrZlVPajc+WxAgLb5vT+ykROA+IEPpIW8rO/Koq2gP8sYB03kFT7d64B4O5Id8Yn
-         MyEg3m6xlEog6FDzSnQTSYHrG+u/1d9lW4S07Pjd/j2GJ/s3MMlMY8DC2AbUlDzZTw+M
-         sJAh1Bdh6Di3HIeM5gg9iLSWGI+HIPlvSgp+K0ArC2jG/TCTP0ONpl+1h6qk1vxLY89Q
-         5ECA==
+        d=gmail.com; s=20230601; t=1753441754; x=1754046554; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G4dcsgHJsiFuB5DH2cQD4a717boBYqK/NeHn/u7KI9k=;
+        b=RwNxI0XQAEQIiS6E1e253nyKMK2uTvj04eFBT3NZkGmF9e0huW1toU+1D3BDPEM4eh
+         Str5whAgWMIo4Y9X6C8Q96JwLoj5Liw01k/G03jgce8r6L/zTMdkwB9e+WSFpapEXpol
+         gO4PKvt3wlFZMORGYj9hZbbiw8FG8mriCizhpDnWB7C8PCKLYBitHsODTeWRbTWWJPVs
+         2H/kw5SI+ChRB6wMx43/ktNmX59i3X25c1U5eaWawE/2gkIiywWuZZ3gJX58To/k09Ic
+         aRwMthLXrg+GIkFuEHwR0mZIsHnaMzGPUm+8Sl57vr/lveQvRZlm4X5Q7PGdLcSMJXUE
+         /pxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753441706; x=1754046506;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Uw5xYz9ljVloUXuYhdtWs7nMIXFU+Uc/d7Zb4IlFZdg=;
-        b=HEiJdXrQNSN9Q7Jirj7tGDNZjlcBTXggPzmzNjCOYBxrFZf1mWoGSSPv1FUk5sLUbX
-         fu3vxIkFNuN4px+UOB3j17qDgZBdikAtzG1dl1vJmZ1HwS5uFmXMcheiFFldrBjbFM0h
-         Hdtgl9eJl6KQQCKxAuSRedVaPH7qGOaA6aVv41WjMDdpbkXTMTubT5mbJFtJdyhRiIhP
-         ajkMGCVI5dB1wmkF07vKiZVJSgqjGFjcPPbRftCvUJgwY7f4zPNiO0SsxaKNcXjCnVwo
-         hIKAa4rcvCL8Ye9k6oycPMM9YEIte9g9/scQILFLFGCjiDAlF2aDT5QvIZ5KzL3FIXFa
-         nUYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXji+iv7HbEpNboNfTc2bUKEQIJmeJ9yhnfq6NIV4GcAsL+ZWatzlhOdlmElp0dtMo1IZTYZwh8GXm44vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxn/GANsg4kk88kpv0EOod5+ySD3GRKupih/bHC0MSN+EjzgtZ
-	+oKCMeyoVTTtwrK0laMicn5jOMMjVimymvTsEZ1zDdz6MVTfbq4KG6bZs1vMYPYwjQI=
-X-Gm-Gg: ASbGnctdfhurp62BaXE18sEiQohM2K/noc8B3Gu/r56g9cMRLu22kBSIuNm6i0ZLtvu
-	unQCXc4Pw3/PPj5N9/fMfqUKdOY5ywWif+EXY8vduyr4oz9KG0+5EcspoSV2LuMwxhD0B9gKR+8
-	DX611Xd7Qa9TJM6s16I8fsX3GCfrag2SETcBdPlJNtGf01DjSUpqqOUCiMlKPBC5SpCFTTETVrs
-	3vEijB7jWAdoOYOB4IYMAIAcm8PB1/EyTMaTzsxx+wpiXugwWieTMHzrq/Q9sVjiubXE25PogQD
-	5MRjGEVm/y2jB0/pIKsC51n9lCsuKfS+aWkU+rxnDL15ep6j1e+sNBdWlNlmdGp1OE5yb+cFyzl
-	OnFGqjr8nkVwMVooxQ7z3lIgNjnBLvF8iILOz90Z/i/hSJ48VV32x
-X-Google-Smtp-Source: AGHT+IGPX2ebFd1G1UY4hjy4nK32/r3TZiGosjelo1wUHJ7aU9RYrlPYLD6uyjWm58/GD1RzAlB50w==
-X-Received: by 2002:a17:906:b894:b0:af6:32b3:2674 with SMTP id a640c23a62f3a-af632b331e2mr3687066b.0.1753441706435;
-        Fri, 25 Jul 2025 04:08:26 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.203.90])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f44eaf5sm253765966b.80.2025.07.25.04.08.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 04:08:25 -0700 (PDT)
-Message-ID: <4d79c8dd-c5fb-442c-ac65-37e7176b0cdd@linaro.org>
-Date: Fri, 25 Jul 2025 13:08:22 +0200
+        d=1e100.net; s=20230601; t=1753441754; x=1754046554;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G4dcsgHJsiFuB5DH2cQD4a717boBYqK/NeHn/u7KI9k=;
+        b=CWpDKsANCEtzPuoBjLUgLlfkKPvlzIQC3TZzxrzBY4RcxNpBeTvb2gOqeVadAoQH/I
+         +keGYh0eGo7vDBuB6h7qTfcxfWYRLUDU8XH0aFYvE6bD6PFbADoqfKGOJbP9BfOKcJQr
+         51q6VB+g8jWb/9F8UY6ZKXMnC8fncw4+VtvqKnZLEcsChuah5Qa3mTvHcOUbOvuvCbOA
+         VxRN8YgGJ0ORKSFLp8XZIRoDqaQK7PV5uZEf1Hp0T8cDsVOGJc6KC+hfP/8Xi19t7gyN
+         LCbX8jLFhBBYqLu6AJqWljRsfvUTw7ENIypsZXtLbU7F6RN04Cf2hhsrIfq2+0UANbVz
+         ozPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTQFHZRs51VWmmh9bzdo2SKcGaKlyjwXS0khxfprM3u8pRBmSXHp+660zJYi3PeIGxpd5P7uXcyH2ia27Q@vger.kernel.org, AJvYcCWGQ2QK/dmY2L2i2juUJp3HyD9ncAcwbdT4465Ki1S4t/nkYqbFLkdTOLqCPdl+F1gN8vH52d/0SymZ@vger.kernel.org, AJvYcCWmp2yT2H/AifgMtNABFmL5W3/5IsoRhdvxMLQhS6cypXcey5TfIWzxYKSDUH6DggOeZzrRZSeIngHE@vger.kernel.org, AJvYcCXEXAg8TrfgXZknSw1vfzqpr+JtV25WLbbKSPHq60xVU0+76rBdITj/v/1BC6I+2hAxLPUslCwKIesmFxmx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4eSLUM5WppKHPa96aHSrBLO5d4LxjVALvKjWxOQxxVzbueTNp
+	N5NfASY045Pl2zK5uK104DnBO6HyPo//aTt7QWwcMdmPkqxVV1SfgeT73XoWJcvN3rJM6ZAzDIR
+	XUR+PatF10wkysZhd4SCcncCUc5p/iEA=
+X-Gm-Gg: ASbGncvS8sI0oWVcHR2vPuXhOG9rn+YUOE2BIdZV7AD7GUQTb8vXwSHAIFh6Ifntolm
+	EjNXEWPDpJYeHruwo6u7khCW8tJG8ZwVcbCebvuo54/P155a3y7BEMSo2lFr/FlXPKq/IVUEG32
+	z+muO+rqRjJeGlTdosf9xU4UXUtU9VtPfGQJqtI2GyslfT+wmvjC9h+0bTE9ksO4DA/GMio2RKR
+	1Xj
+X-Google-Smtp-Source: AGHT+IHzc69ul6W9dr1PZNQjrkdeeaQAbz/elxAykodnDXCU37bqxvv59Sf0g3PkwZUP1bQTMcpl5i4V0RAyNvW6vGY=
+X-Received: by 2002:a17:90a:d40e:b0:313:1e9d:404b with SMTP id
+ 98e67ed59e1d1-31e7783b3c0mr2460183a91.2.1753441754040; Fri, 25 Jul 2025
+ 04:09:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/4] dt-bindings: gpu: img,powervr-rogue: Add TH1520
- GPU compatible
-To: Matt Coster <Matt.Coster@imgtec.com>,
- Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns
- <Frank.Binns@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Drew Fustini <fustini@kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250724-apr_14_for_sending-v8-0-0714bef83c59@samsung.com>
- <CGME20250724141911eucas1p17071ea620f183faff7ca00cad25cf824@eucas1p1.samsung.com>
- <20250724-apr_14_for_sending-v8-2-0714bef83c59@samsung.com>
- <20250725-gainful-saluki-of-mathematics-3c0dd0@kuoka>
- <4461a785-b593-429e-b436-44cd2f1c96eb@imgtec.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <4461a785-b593-429e-b436-44cd2f1c96eb@imgtec.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250714221545.5615-1-romank@linux.microsoft.com> <20250714221545.5615-9-romank@linux.microsoft.com>
+In-Reply-To: <20250714221545.5615-9-romank@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Fri, 25 Jul 2025 19:08:37 +0800
+X-Gm-Features: Ac12FXzPuW-X6w99YdkxRL9JtBmW1hyu8BbtCuoFQLmf7Mp6jVRHMfrBCkYMIAg
+Message-ID: <CAMvTesDEqDKXdFZ6+k6nrvEx-9+HQuC_dOdmoN5SqXmoCEKNXg@mail.gmail.com>
+Subject: Re: [PATCH hyperv-next v4 08/16] Drivers: hv: remove stale comment
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: alok.a.tiwari@oracle.com, arnd@arndb.de, bp@alien8.de, corbet@lwn.net, 
+	dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com, 
+	hpa@zytor.com, kys@microsoft.com, mhklinux@outlook.com, mingo@redhat.com, 
+	rdunlap@infradead.org, tglx@linutronix.de, Tianyu.Lan@microsoft.com, 
+	wei.liu@kernel.org, linux-arch@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com, 
+	benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/07/2025 11:00, Matt Coster wrote:
-> On 25/07/2025 07:59, Krzysztof Kozlowski wrote:
->> On Thu, Jul 24, 2025 at 04:18:59PM +0200, Michal Wilczynski wrote:
->>> Update the img,powervr-rogue.yaml to include the T-HEAD TH1520 SoC's
->>> specific GPU compatible string.
->>>
->>> The thead,th1520-gpu compatible, along with its full chain
->>> img,img-bxm-4-64, and img,img-rogue, is added to the
->>> list of recognized GPU types.
->>>
->>> While the BXM-4-64 GPU IP is designed with two distinct power domains,
->>> the TH1520 SoC integrates it with only a single, unified power gate that
->>> is controllable by the kernel.
->>>
->>> To model this reality correctly while keeping the binding accurate for
->>> other devices, add conditional constraints to the `allOf` section:
->>>  - An if block for thead,th1520-gpu enforces a maximum of one
->>>    power domain and disallows the power-domain-names property.
->>
->> Why?
->>
->> This solves nothing, because you did not change the meaning of power
->> domain entry.
-> 
-> Hi Krzysztof,
-> 
-> Just to clarify, is this an issue that can be resolved by documenting
-> the semantics of ">=1 power domains with names" vs "1 unnamed power
-> domain" in the binding file? Or are you suggesting an alternative method
-> of encoding this information in devicetree?
+On Tue, Jul 15, 2025 at 6:16=E2=80=AFAM Roman Kisel <romank@linux.microsoft=
+.com> wrote:
+>
+> The comment about the x2v shim is ancient and long since incorrect.
+>
+> Remove the incorrect comment.
+>
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> ---
+>  drivers/hv/hv.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+>
+> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> index 816f8a14ff63..820711e954d1 100644
+> --- a/drivers/hv/hv.c
+> +++ b/drivers/hv/hv.c
+> @@ -266,11 +266,7 @@ void hv_synic_free(void)
+>  }
+>
+>  /*
+> - * hv_synic_init - Initialize the Synthetic Interrupt Controller.
+> - *
+> - * If it is already initialized by another entity (ie x2v shim), we need=
+ to
+> - * retrieve the initialized message and event pages.  Otherwise, we crea=
+te and
+> - * initialize the message and event pages.
+> + * hv_synic_enable_regs - Initialize the Synthetic Interrupt Controller.
+>   */
+>  void hv_synic_enable_regs(unsigned int cpu)
+>  {
+> --
+> 2.43.0
+>
+>
 
-Currently, through power-domain names, the first entry in power domains
-is the 'a' domain. We usually prefer this to be explicit - listing items
-- but here, probably due to obviousness of names A and B, it did not happen.
-
-Disallowing power-domain names does magically change existing binding.
-
-I think you should list the power-domains items explicitly for each
-variant (see any of my other standard examples how this is done, e.g.
-clock controllers).
-
-
-Best regards,
-Krzysztof
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+--=20
+Thanks
+Tianyu Lan
 
