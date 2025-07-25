@@ -1,116 +1,151 @@
-Return-Path: <linux-kernel+bounces-746148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04850B123AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:16:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D54B123AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CC4E7B9BBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20194AA5F85
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E97233D9C;
-	Fri, 25 Jul 2025 18:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E00233D9C;
+	Fri, 25 Jul 2025 18:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0cTD0Xe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBgfdy1K"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4878F6E;
-	Fri, 25 Jul 2025 18:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFCD8F6E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753467395; cv=none; b=XW0RRMvrkofB7ljT9dHktiSxLQpKP7xyFUmHXNLH1Nzcq2wMLO+U7yWGUqwWtx3zs9ReI1QeSlBv9BgM5UvjoRN636V/uk49NJloXDHBACVHKZHfcqEgxQgJFp5tf6SKBIX7YzdtAkMETIlCY6dr5RTJvTsB7w/T+/Z0aCi9QyM=
+	t=1753467469; cv=none; b=kmaYQ/RNLbKdslxVozJgAKp8ygy5LOuVoSIJDCLNIfaVJ0hetEyr9ilKGaxr+NS5R3DfJB4n6kJ69k7aWL/2piSSZMNCK//AfBMSP7XJiUJK8NpRpUvA1zqSjsq8NT647GcRuJ9adcDqq0tt26+9WRWSSrIE6ypQnSBWPisparc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753467395; c=relaxed/simple;
-	bh=7nurUaPvO0z2E10IJI3RG/CoEtg+UcViKtixBrX2WWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xl7+sG1WHViBiwqAJA+qzAepWQGF4cWNOuj/jcAZvlmpOhkN1ZC18qWWbHvzlJJx0vZEgCskT9/ztnxDhmQ/S+izyq7+7G7b/FiKwrv8NRw8muKs0Tlbu1i6YAEIbNKpqqMp0y+l4syl6/lJ3RIsgv09enbNwk/5xjHunD2q//c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0cTD0Xe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D77E3C4CEE7;
-	Fri, 25 Jul 2025 18:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753467393;
-	bh=7nurUaPvO0z2E10IJI3RG/CoEtg+UcViKtixBrX2WWg=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V0cTD0XeUFB+hsn1eB7VGtgH8y8GOprsm5L+w5uGn1LDl0cO65Sq0mbGhr2bKd/vU
-	 e1RmVJ8tU6sgLx6y6X35f9EPnZXAbA4S6tzRNYo0UN1J23Vq+8iExNN5hrzCc/+Ri4
-	 7hu60qLRM08fOXjhCuaXmQzGpCy0C6VWsdzQzjx6BX8ltoBjSkjX0qrw7plnJhxMpT
-	 bQZ5RDxCGuUcjzK9Fcl4Oz06nu0xWWugN98IJJqFi3os6IsrNXKlTibU3qdYl5Yw+u
-	 EbuUE6ETjcrgshlTCvkzsu0k73UdD5oTflYdfU/7ZqjNTLPmF4/DqrTXGChaX6ivRm
-	 bQR+TPis9WBXg==
-Message-ID: <b4e52ec1-a385-429e-8768-5e0eae1dc170@kernel.org>
-Date: Sat, 26 Jul 2025 02:16:28 +0800
+	s=arc-20240116; t=1753467469; c=relaxed/simple;
+	bh=nrPdIgDKLj/mpAIfTARNhw3eqSfvxtYnXEcqZbCDtjg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=N3VM5u3UVpYnbmfO4l8QUakvsSgaP/KwDK6/1FNqkwp4IhGfAYSVyv78ElbGJ2G93WaPRTI3hMv4jZndwBNAgIzcEazq9n9VJ5AAbNssyPwM9Oi+dUQDGL7ZUEKtrO5Gs31Z2A4GSQG12kKQy3ud0NOODE9rt/XXcTU0y5hh6pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBgfdy1K; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-70e5e6ab7b8so22811557b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753467467; x=1754072267; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LeM7IuoQIkUR4J2lJM41mRdSF+EtBai/uwDsajCHaho=;
+        b=fBgfdy1KUZHVgzza7Soy0+5QqTOWuJ0TrAIT2eKiGAXL4caKj46RaFZ+24N1aqg/7/
+         GlDo/9F+GYQIZADMuMiWo3zPWsFSMqtxqJEd7+lKD//gxiTOK/aWlIBeDTKoWr9M6koo
+         sKKJjUkePfB60A5baTA7FKV6Vx8rtT+wghxICYL7+GInxTcOUZROMjVgZrKMcTd3D3wX
+         COLOr8DqWWKC/sey+GtCuVPAiC0eMTlU71Rl2XvIiX5p+/CFXB0rTPOmgewKc+qBe2dA
+         Zg6VOeUaic5BUL3lXXyYejz3n0gEqfy0I49AsKqR8H11WkCySZbn7rANjAnyXVUTwAFw
+         Ue5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753467467; x=1754072267;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LeM7IuoQIkUR4J2lJM41mRdSF+EtBai/uwDsajCHaho=;
+        b=TtiLexoBJsefHLQCCVoAFnT7hRAHwOWvJoSlwmXa6g5sMHZt8axpDqUXbtHhgCNub4
+         CTik5VJFHHI2hsuo7ypYtp05M2wFFeQsSac0SLUKwXHo0iiM8smkL2SPODSghRFKtDz/
+         IIxJKahRlEvZMBF2EGGRukQHYgHMS+a1XlezdKQHAHDqSKOarMWxPHn5JO7ujqUSCnxP
+         jtUcgwHPzbm5fjAdzFLLMg/OCucG91jRHhzQUUJW0GFwCfEwhgnE74laHgLsrDp6+6Vb
+         nRl53hOiYsOH8SUnkOXirEKXlCXqkokJWBgrtYIcqRXz2HjcpqEykYeJN4D7xK/5wD7b
+         biQg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/pLZ97HlUP7Kc9qPXNu0VmTqyexqCSUVXwbdPVDbxk3lrnDq7ZJaoVAmlodPTecVxkM3D67q/jId4jPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8MZW1hhVcaLAg0n/jWyPc3L1cDXNBUpRkNvIX8LNSkfDR0OMd
+	CSO5JxLE4jNUCTmNmSyAtKmGtJmMXSB9D58Hhce3GoBxAAG19sqmsWPYr4FzRA==
+X-Gm-Gg: ASbGnct24/CFLZAjEYLiROCqHo6MYBQRl3NcqW0nq1XAAbP3S1SfVe9L3T2jmcxvR22
+	+QaK+0VRj3Eyj6sV3qNldWfgjnMAJEW0wvRVvVIzOq2DZbpodlmZw4LkhconGnQEesY3O/VHTNa
+	hGEVgSdPKcnVaZ0aATjuTsUWbraMzBlJoATmInS5hdimO7P7PM/Nhsuldrb16DAgx2VsjV/C624
+	uVqwXC7Bl8wmzVLcw6XxvFTsaQn5gP3WL5UTUVU5a1sqFd7H7jjp4SCcInZ3ypT583PslcFrb0K
+	7A8cptszli5hQImUs+iS4t3cf49aMoURqDNpfdDYIsx9y5xTDZGDqo3IeqAk0xzV6IS+CD0QTYQ
+	WPnzoPgeci/EO8pYz1eMDNnfRuRHJzjEr
+X-Google-Smtp-Source: AGHT+IH/38TmYy2syg/0GKf0hg71IOf1MWOIAEKCD39p03XO+eVYqErkVKfZE9DTfnNjbia20dJJBw==
+X-Received: by 2002:a05:690c:dd3:b0:70e:779:7e84 with SMTP id 00721157ae682-719e341de28mr36872037b3.27.1753467466968;
+        Fri, 25 Jul 2025 11:17:46 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:4c::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-719f23e85e4sm823477b3.84.2025.07.25.11.17.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 11:17:46 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH] MAINTAINERS: Add missing headers to mempory policy & migration section
+Date: Fri, 25 Jul 2025 11:17:44 -0700
+Message-ID: <20250725181745.2494226-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <d546df23-70df-47a2-9211-2bb971f8834b@redhat.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: yukuai@kernel.org
-Subject: Re: [PATCH 3/3] blk-wbt: doc: Update the doc of the wbt_lat_usec
- interface
-To: Jan Kara <jack@suse.cz>, Tang Yizhou <yizhou.tang@shopee.com>
-Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, tangyeechou@gmail.com
-References: <20250724083001.362882-1-yizhou.tang@shopee.com>
- <20250724083001.362882-4-yizhou.tang@shopee.com>
- <nk2qqgxickxelo6a7ywxwan2fshjkfygzdb6sooe3v4cl5f3ob@kvejyp5t2cmf>
-Content-Language: en-US
-From: Yu Kuai <yukuai@kernel.org>
-In-Reply-To: <nk2qqgxickxelo6a7ywxwan2fshjkfygzdb6sooe3v4cl5f3ob@kvejyp5t2cmf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi,
+On Fri, 25 Jul 2025 20:03:09 +0200 David Hildenbrand <david@redhat.com> wrote:
 
-在 2025/7/25 23:49, Jan Kara 写道:
-> On Thu 24-07-25 16:30:01, Tang Yizhou wrote:
->> From: Tang Yizhou <yizhou.tang@shopee.com>
->>
->> The symbol wb_window_usec cannot be found. Update the doc to reflect the
->> latest implementation, in other words, the cur_win_nsec member of struct
->> rq_wb.
->>
->> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
-> I think the name should be actually 'curr_win_nsec' because that's the name
-> of this value shown in debugfs.
-Agreed, or you can mention both the field in rq_wb and debugfs name.
+> On 25.07.25 19:56, Joshua Hahn wrote:
+> > These two files currently do not belong to any section.
+> > The memory policy & migration section seems to be a good home for them!
+> > 
+> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> > ---
+> >   MAINTAINERS | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index a8bebd0886df..dec8db8b5cc7 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -15838,7 +15838,9 @@ S:	Maintained
+> >   W:	http://www.linux-mm.org
+> >   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> >   F:	include/linux/mempolicy.h
+> > +F:	include/uapi/linux/mempolicy.h
+> 
+> That one is already on that secion on the mm/mm-new branch
 
-Thanks,
-Kuai
->
-> 								Honza
->
->> ---
->>   Documentation/ABI/stable/sysfs-block | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
->> index 4ba771b56b3b..7bb4dce73eca 100644
->> --- a/Documentation/ABI/stable/sysfs-block
->> +++ b/Documentation/ABI/stable/sysfs-block
->> @@ -731,11 +731,11 @@ Contact:	linux-block@vger.kernel.org
->>   Description:
->>   		[RW] If the device is registered for writeback throttling, then
->>   		this file shows the target minimum read latency. If this latency
->> -		is exceeded in a given window of time (see wb_window_usec), then
->> -		the writeback throttling will start scaling back writes. Writing
->> -		a value of '0' to this file disables the feature. Writing a
->> -		value of '-1' to this file resets the value to the default
->> -		setting.
->> +		is exceeded in a given window of time (see the cur_win_nsec
->> +		member of struct rq_wb), then the writeback throttling will
->> +		start scaling back writes. Writing a value of '0' to this file
->> +		disables the feature. Writing a value of '-1' to this file
->> +		resets the value to the default setting.
->>   
->>   
->>   What:		/sys/block/<disk>/queue/write_cache
->> -- 
->> 2.25.1
->>
+Hi David,
 
+Thank you for getting back so quickly : -)
+
+Unfortunately, I can't seem to find this file in MAINTAINERS in mm-new.
+Perhaps I am not looking correctly? Apologies in advance if that is the case.
+My HEAD for mm-new points to dd811f4553a9512501205ba8e58ef1a6af4cb291, for
+your reference.
+
+Thank you again, have a great day!
+Joshua
+
+> >   F:	include/linux/migrate.h
+> > +F:	include/linux/migrate_mode.h
+> 
+> Yeah, that one is missing.
+> 
+> Can you rebase to mm/mm-new? Thanks!
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+
+Sent using hkml (https://github.com/sjp38/hackermail)
 
