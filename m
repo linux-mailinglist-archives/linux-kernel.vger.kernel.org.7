@@ -1,162 +1,111 @@
-Return-Path: <linux-kernel+bounces-746275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96492B124CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:40:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9069EB124CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85F25A0810
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:40:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4B3C7B399D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E52325E44B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2F8248F72;
 	Fri, 25 Jul 2025 19:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQ5CNljF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fMRSmoJP"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF1B24A051;
-	Fri, 25 Jul 2025 19:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C06924886F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 19:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753472293; cv=none; b=OyH6gWAGA+5MHhGnihXmhHfLLsR6hjuRCanipHPcwvlba1qh5sy1yCw5XOUIgO8uBgNGdL41Ic3iNQLxMOQZUyXkx3Q7OfVjJ/8cwxFKlQOvwhZ3ya8w+SZSroq66fv+7V/Y2qdUTkPT4OwlwQPrxj2dPrno+itrWfKP9LSsTWA=
+	t=1753472292; cv=none; b=hhwqMQL1JThS/xhtXWTZaQBThcLlEuwsATOVoeR/EtJyHSDkfgfte809T1Y3GgSv2ysyvn3oCmsolpSzynTE1eeNjb/eXE1gRmNJ4v+CIMkM/Zpq5FNbzlAZQBoUJoh/rupaD5kSqjEovpVTkuC2jsbdvfhYZKbJ8ZiqeGUeCGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753472293; c=relaxed/simple;
-	bh=FBzJE/zcrbCRDFg7+nPtUWKHLbZcikfu52tPxC8ov4c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZVX/ZIFNer3Bc5xPlZKkn072bgQEgA5U/U14II3jwuJyQj+aNM82qBy8tWravUtjdEDCIZvXtJCY5PKW1Wap/fDClFajQY+R9QgDXskytos7YtXS9H7ZzjfTQq01Ei0bL+g/hctTxpkK5RnmdyafmSeEbmdQnbZpawgl1j+fXIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQ5CNljF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2169BC4CEE7;
-	Fri, 25 Jul 2025 19:38:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753472292;
-	bh=FBzJE/zcrbCRDFg7+nPtUWKHLbZcikfu52tPxC8ov4c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nQ5CNljFVqeNeUQ2UO8EiMp5lF4p119riNz/3EoIT8jc4Sti5K9Ny+kPjdzMCCZkb
-	 HD9TialCLBbSwjupC12Yc0WYNXVH9ERBee28/gvhHG7DLs+BOMIMpxnv/HjqoHIc2q
-	 vQ8FPValqp8g6Z86LXJeHAK5D/Q1oCVHfbZqw+dXhaLtkku+ENRCGeg9s8/WoLgbKe
-	 HtpJIq3VKVkxOi/D0gCbRV8aKVvdBDqUBSUqgTUemLdJQAjK811Qp5R3kAULmaRinx
-	 DLdrax19nZQlnMtUQeAC5idHZbL5TsWUz8yKiEGx2fVV8BgvVDjPNy69YibX7ktuly
-	 1gVN/pG0ezbcw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH v4 9/9] perf annotate: Add dso__debuginfo() helper
-Date: Fri, 25 Jul 2025 12:37:55 -0700
-Message-ID: <20250725193755.12276-10-namhyung@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250725193755.12276-1-namhyung@kernel.org>
-References: <20250725193755.12276-1-namhyung@kernel.org>
+	s=arc-20240116; t=1753472292; c=relaxed/simple;
+	bh=Psj/ybT+w7yHjRGqEoZdkGoZJZQMfTo84hs5NgEdwDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m1mgM5lckWLqXugMTiMk/aHaactjW/aWGphyepfFl4vMHQ98h8eLDp4n3pxPf0yxgoKNN9NzWUvXgJBvDy8JDKsqAEEu+wi0Gki8GxOSfeNnmzB72afXmsn1A+F083Sp+/OhtA9FhP+FigATk+lZku3x+KbE5m+TQubwUd9qVt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fMRSmoJP; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23dd9ae5aacso3565ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:38:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753472290; x=1754077090; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CQFQwXEBbAbFlzETHfAUWAGm940UIaytQtny6e8kG6A=;
+        b=fMRSmoJPwqKy0AjKlw/ZvwLac0KtgFxSx+m1G2Iw8H/TTanXyQ2NxUWESU+ibyxIZG
+         KNHh+bn/+Kaoi157zOJVur9MW+B13eEXdKn8klbuwy5bUCCVBpjaRGOi78E828BVrf54
+         5IvzajI+hLRGctw8uXjJAIoR297KUIehKweBA+qX/j8c4hCVNLjHPJQPOazOoCM4i+N2
+         FS45vr/COgfCqj9dwYN4TYNUtUHoqzO8aNGyTBZybZ40+cETJ8XD7NczkBhaUKtYM8Id
+         oSGFsvLZvHOBntIVuzyAwBjKN7REluosSbm8JNxnTYsdF7CwuC0rDVvIQMimToQDWxhm
+         DXYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753472291; x=1754077091;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CQFQwXEBbAbFlzETHfAUWAGm940UIaytQtny6e8kG6A=;
+        b=i+9lGzfOlIe9a7lr1o8bxNaejnUgIor24b8+oBXBzWP5VfU6iCUov8CNxIATP2uCQQ
+         JraXFQwiu7BbferlQPPM2kmllIRTuvn4W691DPLnLpBAbISaWNN7sImq3r5bfkWHvjV1
+         JS2mW+7XVL0rWQk17AwmxXcNOmdWm1JfZ9ICw96ii0cptY80WbqbnSXoiFTcd6lMSsYx
+         ASnGi/Xyb6WzviJUwo5sthg+P1bFjR/ugEbtSyRWsJ5EmBlo+RNx0yKSRuuSTPE1btHK
+         0PljTPP9sMGBNgn5ls8rvVD5l0fcYKRQ3qLWssrwBNIsWlm871lRRYJN3rbG6Vu/i4H+
+         +/8A==
+X-Gm-Message-State: AOJu0YxmnMkrGXK1Rm7ZC81ZApw6/DBBORW6wMFHIMA8Z1QXxgXy9pxl
+	7u1tWv1HlFJkyKm5nH83Bs/Ds9dVIuYaennnOmz6/lWsetUQKAQn4o/hhAm7HPt0RQ==
+X-Gm-Gg: ASbGncs33WHQzgIze05v6y/t9uccji3TdkfaLqB2MwbDhJhb8iDwXsEcMMWiAYJyerr
+	IsqcLHLMyc502yU0HbJIMfGeg9KsBT3O96RxVqJKoiOhgDo2OMxWacqgiuSkgv1keX/hES/xu3l
+	+nRuz0jHVddITQYXbQdrSU1M0SMpeVxSimdmuGfoW5bVUEmKVdh5Xfx3zMWyZGhH0xL9VYV+qbK
+	jKIL4VraMY6mygj4Z7+Yo9FxL1cUn90Q+KEOvJIrGllZLCKQh71np6Okt++Hm4xUxwux0eFKwHQ
+	EJ+h4v4tIgEWvYSMfXnPIy/u80Kczk8p96dPVttdVk8hvdUsmEmLz9jyPkW9y1iYwPWo43MOoEW
+	Xrxb5T4j+TdUEpEZOknhYu94aVIElVcIbfG43KzO7DHlWuR5kjf39tuY3FByw4Pg=
+X-Google-Smtp-Source: AGHT+IEFhyjXrGNPqAlBiUwoozk3VWBc4fA7b+qdbNZ8AvcpxxGDpK2FZYIsprgrDuYDVcNnZV0t5g==
+X-Received: by 2002:a17:902:fc87:b0:234:8eeb:d81a with SMTP id d9443c01a7336-23fbfd1952amr423655ad.16.1753472290353;
+        Fri, 25 Jul 2025 12:38:10 -0700 (PDT)
+Received: from google.com (135.228.125.34.bc.googleusercontent.com. [34.125.228.135])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f58d831sm416736a12.23.2025.07.25.12.38.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 12:38:09 -0700 (PDT)
+Date: Fri, 25 Jul 2025 19:38:02 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Tiffany Yang <ynaffit@google.com>
+Cc: linux-kernel@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>,
+	kernel-team@android.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v2 1/2] binder: Add copyright notice to new kunit files
+Message-ID: <aIPdGso5qmAjq8sz@google.com>
+References: <20250722234508.232228-1-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722234508.232228-1-ynaffit@google.com>
 
-It'd be great if it can get the correct debug information using DSO
-build-Id not just the path name.  Instead of adding new callsites of
-debuginfo__new(), let's add dso__debuginfo() which can hide the access
-using the pathname and help the future conversion.
+On Tue, Jul 22, 2025 at 04:45:06PM -0700, Tiffany Yang wrote:
+> Clean up for the binder_alloc kunit test series. Add a copyright notice
+> to new files, as suggested by Carlos [1].
+> 
+> [1] https://lore.kernel.org/all/CAFuZdDLD=3CBOLSWw3VxCf7Nkf884SSNmt1wresQgxgBwED=eQ@mail.gmail.com/
+> 
+> Fixes: 5e024582f494 ("binder: Scaffolding for binder_alloc KUnit tests")
+> Suggested-by: Carlos Llamas <cmllamas@google.com>
+> Cc: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Tiffany Yang <ynaffit@google.com>
+> ---
 
-Suggested-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/ui/browsers/annotate.c |  4 ++--
- tools/perf/util/annotate.c        |  6 +++---
- tools/perf/util/dso.h             | 10 ++++++++++
- 3 files changed, 15 insertions(+), 5 deletions(-)
+It looks like Greg has picked up this patch already. fwiw:
 
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 2a4db5bdcdb7e9d8..54610621c5f910fe 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -1042,7 +1042,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 		case 'T':
- 			annotate_opts.code_with_type ^= 1;
- 			if (browser->dbg == NULL)
--				browser->dbg = debuginfo__new(dso__long_name(map__dso(ms->map)));
-+				browser->dbg = dso__debuginfo(map__dso(ms->map));
- 			annotate_browser__show(&browser->b, title, help);
- 			annotate_browser__debuginfo_warning(browser);
- 			continue;
-@@ -1128,7 +1128,7 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
- 	ui_helpline__push("Press ESC to exit");
- 
- 	if (annotate_opts.code_with_type)
--		browser.dbg = debuginfo__new(dso__long_name(dso));
-+		browser.dbg = dso__debuginfo(dso);
- 
- 	browser.b.width = notes->src->widths.max_line_len;
- 	browser.b.nr_entries = notes->src->nr_entries;
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 6fc07971631ac8a3..05eb19b110ab7dcf 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1270,7 +1270,7 @@ int hist_entry__annotate_printf(struct hist_entry *he, struct evsel *evsel)
- 	apd.addr_fmt_width = annotated_source__addr_fmt_width(&notes->src->source,
- 							      apd.start);
- 	evsel__get_arch(evsel, &apd.arch);
--	apd.dbg = debuginfo__new(filename);
-+	apd.dbg = dso__debuginfo(dso);
- 
- 	list_for_each_entry(pos, &notes->src->source, node) {
- 		int err;
-@@ -1375,7 +1375,7 @@ static int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp,
- 
- 	if (annotate_opts.code_with_type) {
- 		evsel__get_arch(apd->evsel, &apd->arch);
--		apd->dbg = debuginfo__new(dso__long_name(map__dso(apd->he->ms.map)));
-+		apd->dbg = dso__debuginfo(map__dso(apd->he->ms.map));
- 	}
- 
- 	list_for_each_entry(al, &notes->src->source, node) {
-@@ -2888,7 +2888,7 @@ struct annotated_data_type *hist_entry__get_data_type(struct hist_entry *he)
- 		di_cache.dso = dso__get(map__dso(ms->map));
- 
- 		debuginfo__delete(di_cache.dbg);
--		di_cache.dbg = debuginfo__new(dso__long_name(di_cache.dso));
-+		di_cache.dbg = dso__debuginfo(di_cache.dso);
- 	}
- 
- 	if (di_cache.dbg == NULL) {
-diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
-index 7df1673f08d3ddb4..fd8e95de77f78dfc 100644
---- a/tools/perf/util/dso.h
-+++ b/tools/perf/util/dso.h
-@@ -10,6 +10,7 @@
- #include <stdio.h>
- #include <linux/bitops.h>
- #include "build-id.h"
-+#include "debuginfo.h"
- #include "mutex.h"
- #include <internal/rc_check.h>
- 
-@@ -914,4 +915,13 @@ u64 dso__findnew_global_type(struct dso *dso, u64 addr, u64 offset);
- bool perf_pid_map_tid(const char *dso_name, int *tid);
- bool is_perf_pid_map_name(const char *dso_name);
- 
-+/*
-+ * In the future, we may get debuginfo using build-ID (w/o path).
-+ * Add this helper is for the smooth conversion.
-+ */
-+static inline struct debuginfo *dso__debuginfo(struct dso *dso)
-+{
-+	return debuginfo__new(dso__long_name(dso));
-+}
-+
- #endif /* __PERF_DSO */
--- 
-2.50.1
-
+Acked-by: Carlos Llamas <cmllamas@google.com>
 
