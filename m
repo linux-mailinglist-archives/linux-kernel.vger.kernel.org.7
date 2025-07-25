@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-745683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C107B11D0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:02:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B059EB11D08
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035751CE1295
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FB61C865E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFF02E7181;
-	Fri, 25 Jul 2025 11:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CEE2E6103;
+	Fri, 25 Jul 2025 11:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cGnkGrjd"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W9WvHmSg"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82CF2E54D9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A71023BF96
 	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441299; cv=none; b=odUBgZHkO3CaFRGQ0w3igrPY5IZ8S+IvpOdbpR/ZrCWJwum7SVXiEO38J0kHiBrFDSAn0PMBopItI4aY9M20C7kwHhO/Sf3bVKDPjX18IWxPsbhIaP3ekY0/ZYLZ3GSXuYL5DlVzcurMN1tV2JTL41+5THXFvqHJSPv8OrGPxIs=
+	t=1753441297; cv=none; b=UNY+7VbLpVkit/9FmTafhbGl1QYuO/vDqVP3VA0H6Ei0iV9Sa5MEOXKuO2VcIVQ2Uh1ytTOky+uF/o6h/mku9PM9+LutFf/6KUJe2AZiXMH4quWzfYaOC2Pe4zRIHHwnecHBoQsTtZoWxRYUKYqQyr8OB6Zwzni8jimBjcu7V0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441299; c=relaxed/simple;
-	bh=o30ZSV9FeCx4hujNg/9n5m7YOqfDTDEuc4ltscdB0cA=;
+	s=arc-20240116; t=1753441297; c=relaxed/simple;
+	bh=91c+c3XacArZYhJktraFog1DitCooWolYjBkQgEPN+U=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=upyZVdkbGm/x7UfL8GSiHU1vbdjRGoNO2DKqj5h32dB2vuCUTTGxmt5m7RceUROzut9nHhWQvC17NNrlY8IgehPr59cznHhV1KUWrl7w8x98ZFWY5ggeJRFoTCjQigAxbXfoWz1Smiaus/8b4/dH4X9ewpIsnrQyfE93+oRekvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cGnkGrjd; arc=none smtp.client-ip=209.85.208.179
+	 In-Reply-To:To:Cc; b=df2GrevkWcyA07DkmRi4XXnXkFlpqW7zL7+cACiC2Z6mcD4KnwXRBTUkcJ2XpMXO0EdhQ/SoivIp6vVQExb0bzizTyGp9gLsypODlOCdBGh98m+ngjiiDGYrU+enhroyJnzbSsXekqXglL8LwLzs9sE226BZIV4LUa0dYbO4a6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W9WvHmSg; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32f1763673cso21539721fa.3
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32f3ef6178bso16539621fa.1
         for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:01:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google; t=1753441294; x=1754046094; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yWlgweQLq0iD3tdg0roZR/9BMZAODiAXvKbaTm2lzCs=;
-        b=cGnkGrjdhNA6Eelvn+JIgABXjCkUlI0YRPk9XIqlXfpmQs6+Eh2YC521QnGPeWcido
-         S+VnLkcnJLyaO45MUqb7D/3cOV+qmWyfODvqdOxRusettXkP4xGWSeXZKQs5exTD+HrA
-         H+0MeRcFqeQ7HyEMI4Mp8I4Mr8Y417b5ww6xM=
+        bh=s1Nxza4r7OAZ4l5YzoQCQzc/vgKwVrRaLTJPvigr7KM=;
+        b=W9WvHmSgXIVRK4haB4MedJYb/vdEhrgli7DabpIHFVLnQmq0tRau9E3tCbP07fPVRN
+         9eQE8NPRaPzyHa8NbED+OVExSaD9/krjEPWEsq/qVs15i2Ju1BFbZbU9IgF/HHQFozni
+         HWgN7PAd0FidpL6PYPcimWUZRQ3hZvZHsJjaM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1753441294; x=1754046094;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yWlgweQLq0iD3tdg0roZR/9BMZAODiAXvKbaTm2lzCs=;
-        b=hGVQ1Yfyplyjz8J8VO02nHmB0niXesaKlXil35dWqF+Rtfj2tBUHLHvkycqgZ+MGkH
-         KHeYLF56dZ2fx/eJzTPzuhu+Th7L8JN98+dTkAgSoaPvNAgetoK9fMruWgR/4knArzS8
-         LnQH0V3D5kBmCuom63vajvN7m1kCVE39C4h7QEeglwronIEwieCprziU5FNt+vZJxk6I
-         Uxq2nmrtSCvqkQ4FnqWSyNNBNaAfaz/QAkdD47o34dZHTWGylYYCKmCZDQZzFFsR6qnZ
-         Esaa+a77mAUM66TITqNMadcu+WAW64rnHuYwW5WPmBXmTdzaxnR/E00SnHcAU5vGZpTK
-         xzRw==
-X-Forwarded-Encrypted: i=1; AJvYcCULYk31Tka/Fh/J4o+ntOxOinUfQ0eWl0D1fG7gdUzNDZDA8qdyejP+7jfJ1yDJ7Mm5fLj6EelT9mzLxe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoeyt4uEbTqKOkCZkblej6neCpSY3SoY0ojmeJllYA8Wn4t0DE
-	FXcsUjQVhj1dGHmbiRxhBRg0qQDgsRttF6izpyiVEm87FPokJf8tnKRcNqkU2IlGWg==
-X-Gm-Gg: ASbGncuQlRo9kyvjD4BdVX7oXMxQUNUs0xpwlJVAHffM1FJLJOWF5pTqzgo02faF75V
-	z6r0m+2pluRwsg7NPl7YWBPC/LaC6W0AsNiWjnQgPoT/2DPo08oLOgDsFIs2J/3BZWV96k3AyYx
-	vEnIJoEvLfhSZ2w10c1tHDUegY+eccIPNTjOqZwdQaYTrbwGhILu5jidj+f1BAbWQQKCdQvCwPk
-	y/u9AxNBzI/a9nscc+mkixIFFkjjYFkCmKjZhQn+uFMdg39uC+GC6Jnywp1v5/gIg9kxggq6Y0P
-	zRG2mCQWpYJoYltsK9plgOGHw5Vd+zS8wKn5RTqkgtD0/RACnT2Bwk2ccFgKp7KH4ZF/PhfBjsA
-	UID8rKK2DXd0RAODQiT34vyCsiaCaGDCeoEdv8dBP+XnHTjXpcFrriiHej3O2xvmOSGtSc6ny2M
-	HZUA==
-X-Google-Smtp-Source: AGHT+IEyc7q+P1FhLgEbwnK+1SM40z9gnYguYl1DecXltBQFvoJzhdsiz7Pk0P5SVQQ5RrPJZNgB0A==
-X-Received: by 2002:a2e:be05:0:b0:32a:88ca:ec18 with SMTP id 38308e7fff4ca-331ee6e6d2amr4473321fa.10.1753441293557;
-        Fri, 25 Jul 2025 04:01:33 -0700 (PDT)
+        bh=s1Nxza4r7OAZ4l5YzoQCQzc/vgKwVrRaLTJPvigr7KM=;
+        b=XQCkKuFn7JW5DP64wGILuDQGKkarjLCN91doqUzdqNsqyY+5Ednbsp/HPbOV9UppSo
+         aKNmQD7zJZVWYJy5KjH+50chtPoMPQLjzbH7ipUcNcmP4m2RbR1VjHjfEvPx++21LMQW
+         0kz1CedZkyBkfBmuOEvPs6ZIwItBvXbyfRix8zzfdCb3PsO/3pfKeVIe3LCrjusryc30
+         +RlZRooeZSz3TiadbxekBr8iIE1v9kZT60iZJOLfpdeHJoVvQmf0VMpU50Poxq5oemRz
+         qZ2F0iUrKLMqm9JmX2Y+/lOMiXeFjQaFB8F+XlzaIXAc21NcoYrum2jcPOY88fkMKGBW
+         yS+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWaOCKD+gvaB7fMWeR546DflGLOIo8JBSuZG2bP0NZ+dn9pK0HH1j0Hbsc+tqRxzIanJnciYHLUdX147DQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrx+q/yKXB+RBL5FHO2KnHvPs84jjisF/wV688mHZPpdq87+XU
+	J0K6JVM9seLvub04QGCn9Q8e0nK5/nGSw4BuMnBCvB9KOkB04A3FeE48S6pajUZqdw==
+X-Gm-Gg: ASbGncutnqblXu1kS58eWVd24r7Uofssiy3ZGgFxyjxd20H8AjVtOy92oebXWpq/IW4
+	iR3cM2MKLVSGL9DmlexZamEoQvgRnViAHB9+h7yVznsJYrdVGp0Smt8p4NkwK/ueOHrzWUs4Y7b
+	9VWDw+qS0Xt+rLhFfhwXNLwmiO/5oItpan3n6GjwHBrsUNLC1ahMW/1/dqOe6H+/g8mdoXTPlGI
+	Sqiose3WZm9z0CFE7XEQx+noM9C7itYLv3DpSOEzv9VMt0OHz2bh8FDkKdSWgVrF26AhSN3y7DK
+	yHjcGMeWAybKnNlV59C47kwEJQi3U24YUcSI8PUZgiQH/miMNAakd/J3GYoiyygtCcZJejL12Al
+	fq5ItGDhmIr3JU+SXBIDBT7EbmLiAaw9iOplVBtJzn7T7N5APMUPzFCSYNUyr/PByRXLt3L631I
+	00Aw==
+X-Google-Smtp-Source: AGHT+IGCop+bbnI2GJGX4G+Ze/OhblUQtpcNFHyqhlJ15tmeQfxDEPv5skwMMRx0MrNl/cPvjV1utg==
+X-Received: by 2002:a2e:8e63:0:b0:32b:719f:1260 with SMTP id 38308e7fff4ca-331ee6ee566mr3407751fa.9.1753441294210;
+        Fri, 25 Jul 2025 04:01:34 -0700 (PDT)
 Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-331e8940156sm4187141fa.97.2025.07.25.04.01.32
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-331e8940156sm4187141fa.97.2025.07.25.04.01.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 25 Jul 2025 04:01:33 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 25 Jul 2025 11:01:29 +0000
-Subject: [PATCH 1/2] media: uvcvideo: Use intf instead of udev for printks
+Date: Fri, 25 Jul 2025 11:01:30 +0000
+Subject: [PATCH 2/2] media: uvcvideo: Do not re-reference dev->udev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +81,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250725-uvc-nousbdev-v1-1-28f5a1fdf544@chromium.org>
+Message-Id: <20250725-uvc-nousbdev-v1-2-28f5a1fdf544@chromium.org>
 References: <20250725-uvc-nousbdev-v1-0-28f5a1fdf544@chromium.org>
 In-Reply-To: <20250725-uvc-nousbdev-v1-0-28f5a1fdf544@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -91,255 +91,26 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.14.2
 
-The UVC driver is a usb_interface driver. Use the correct device for
-printks to avoid confusions with other interface drivers associated to
-the same usb device.
-
-With this change:
-uvcvideo 3-6:1.0: Found UVC 1.10 device USB2.0 WebCam (1234:abcd)
-
-Without this change:
-usb 3-6: Found UVC 1.10 device USB2.0 WebCam (1234:abcd)
+dev->udev is already referenced by the variable udev. Let's use it.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_ctrl.c   | 10 +++++-----
- drivers/media/usb/uvc/uvc_driver.c | 20 ++++++++++----------
- drivers/media/usb/uvc/uvc_entity.c |  4 ++--
- drivers/media/usb/uvc/uvc_status.c |  4 ++--
- drivers/media/usb/uvc/uvc_video.c  |  6 +++---
- drivers/media/usb/uvc/uvcvideo.h   |  4 ++--
- 6 files changed, 24 insertions(+), 24 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index efe609d7087752cb2ef516eef0fce12acd13e747..669caec2a3c448b8b2b7e03cd2a03a840aba3e92 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1619,7 +1619,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 		}
- 
- 		if (ret == -EIO) {
--			dev_warn_ratelimited(&chain->dev->udev->dev,
-+			dev_warn_ratelimited(&chain->dev->intf->dev,
- 					     "UVC non compliance: Error %d querying master control %x (%s)\n",
- 					     ret, master_map->id,
- 					     uvc_map_get_name(master_map));
-@@ -1643,7 +1643,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 
- 	ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, v4l2_ctrl);
- 	if (ret && !mapping->disabled) {
--		dev_warn(&chain->dev->udev->dev,
-+		dev_warn(&chain->dev->intf->dev,
- 			 "UVC non compliance: permanently disabling control %x (%s), due to error %d\n",
- 			 mapping->id, uvc_map_get_name(mapping), ret);
- 		mapping->disabled = true;
-@@ -1858,7 +1858,7 @@ static int uvc_ctrl_set_handle(struct uvc_control *ctrl, struct uvc_fh *handle)
- 	lockdep_assert_held(&handle->chain->ctrl_mutex);
- 
- 	if (ctrl->handle) {
--		dev_warn_ratelimited(&handle->stream->dev->udev->dev,
-+		dev_warn_ratelimited(&handle->stream->dev->intf->dev,
- 				     "UVC non compliance: Setting an async control with a pending operation.");
- 
- 		if (ctrl->handle == handle)
-@@ -1956,7 +1956,7 @@ static void uvc_ctrl_status_event_work(struct work_struct *work)
- 	w->urb->interval = dev->int_ep->desc.bInterval;
- 	ret = usb_submit_urb(w->urb, GFP_KERNEL);
- 	if (ret < 0)
--		dev_err(&dev->udev->dev,
-+		dev_err(&dev->intf->dev,
- 			"Failed to resubmit status URB (%d).\n", ret);
- }
- 
-@@ -2895,7 +2895,7 @@ int uvc_ctrl_restore_values(struct uvc_device *dev)
- 			if (!ctrl->initialized || !ctrl->modified ||
- 			    (ctrl->info.flags & UVC_CTRL_FLAG_RESTORE) == 0)
- 				continue;
--			dev_dbg(&dev->udev->dev,
-+			dev_dbg(&dev->intf->dev,
- 				"restoring control %pUl/%u/%u\n",
- 				ctrl->info.entity, ctrl->info.index,
- 				ctrl->info.selector);
 diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 775bede0d93d9b3e5391914aa395326d3de6a3b1..d09d1286da0f61d5953125df23ed92555585e8f2 100644
+index d09d1286da0f61d5953125df23ed92555585e8f2..209cedeff59e8be2e96ce79c3d395a5a85a336c6 100644
 --- a/drivers/media/usb/uvc/uvc_driver.c
 +++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1868,7 +1868,7 @@ static int uvc_scan_device(struct uvc_device *dev)
- 		uvc_scan_fallback(dev);
+@@ -882,7 +882,7 @@ static int uvc_parse_vendor_control(struct uvc_device *dev,
+ 	unsigned int n, p;
+ 	int handled = 0;
  
- 	if (list_empty(&dev->chains)) {
--		dev_info(&dev->udev->dev, "No valid video chain found.\n");
-+		dev_info(&dev->intf->dev, "No valid video chain found.\n");
- 		return -ENODEV;
- 	}
- 
-@@ -2092,7 +2092,7 @@ static int uvc_register_terms(struct uvc_device *dev,
- 
- 		stream = uvc_stream_by_id(dev, term->id);
- 		if (stream == NULL) {
--			dev_info(&dev->udev->dev,
-+			dev_info(&dev->intf->dev,
- 				 "No streaming interface found for terminal %u.",
- 				 term->id);
- 			continue;
-@@ -2128,7 +2128,7 @@ static int uvc_register_chains(struct uvc_device *dev)
- #ifdef CONFIG_MEDIA_CONTROLLER
- 		ret = uvc_mc_register_entities(chain);
- 		if (ret < 0)
--			dev_info(&dev->udev->dev,
-+			dev_info(&dev->intf->dev,
- 				 "Failed to register entities (%d).\n", ret);
- #endif
- 	}
-@@ -2229,23 +2229,23 @@ static int uvc_probe(struct usb_interface *intf,
- 	if (ret < 0)
- 		goto error;
- 
--	dev_info(&dev->udev->dev, "Found UVC %u.%02x device %s (%04x:%04x)\n",
-+	dev_info(&dev->intf->dev, "Found UVC %u.%02x device %s (%04x:%04x)\n",
- 		 dev->uvc_version >> 8, dev->uvc_version & 0xff,
- 		 udev->product ? udev->product : "<unnamed>",
- 		 le16_to_cpu(udev->descriptor.idVendor),
- 		 le16_to_cpu(udev->descriptor.idProduct));
- 
- 	if (dev->quirks != dev->info->quirks) {
--		dev_info(&dev->udev->dev,
-+		dev_info(&dev->intf->dev,
- 			 "Forcing device quirks to 0x%x by module parameter for testing purpose.\n",
- 			 dev->quirks);
--		dev_info(&dev->udev->dev,
-+		dev_info(&dev->intf->dev,
- 			 "Please report required quirks to the linux-media mailing list.\n");
- 	}
- 
- 	if (dev->info->uvc_version) {
- 		dev->uvc_version = dev->info->uvc_version;
--		dev_info(&dev->udev->dev, "Forcing UVC version to %u.%02x\n",
-+		dev_info(&dev->intf->dev, "Forcing UVC version to %u.%02x\n",
- 			 dev->uvc_version >> 8, dev->uvc_version & 0xff);
- 	}
- 
-@@ -2281,21 +2281,21 @@ static int uvc_probe(struct usb_interface *intf,
- 	/* Initialize the interrupt URB. */
- 	ret = uvc_status_init(dev);
- 	if (ret < 0) {
--		dev_info(&dev->udev->dev,
-+		dev_info(&dev->intf->dev,
- 			 "Unable to initialize the status endpoint (%d), status interrupt will not be supported.\n",
- 			 ret);
- 	}
- 
- 	ret = uvc_gpio_init_irq(dev);
- 	if (ret < 0) {
--		dev_err(&dev->udev->dev,
-+		dev_err(&dev->intf->dev,
- 			"Unable to request privacy GPIO IRQ (%d)\n", ret);
- 		goto error;
- 	}
- 
- 	ret = uvc_meta_init(dev);
- 	if (ret < 0) {
--		dev_err(&dev->udev->dev,
-+		dev_err(&dev->intf->dev,
- 			"Error initializing the metadata formats (%d)\n", ret);
- 		goto error;
- 	}
-diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-index cc68dd24eb42dce5b2846ca52a8dfa499c8aed96..3823ac9c8045b3ad8530372fd38983aaafbd775d 100644
---- a/drivers/media/usb/uvc/uvc_entity.c
-+++ b/drivers/media/usb/uvc/uvc_entity.c
-@@ -140,7 +140,7 @@ int uvc_mc_register_entities(struct uvc_video_chain *chain)
- 	list_for_each_entry(entity, &chain->entities, chain) {
- 		ret = uvc_mc_init_entity(chain, entity);
- 		if (ret < 0) {
--			dev_info(&chain->dev->udev->dev,
-+			dev_info(&chain->dev->intf->dev,
- 				 "Failed to initialize entity for entity %u\n",
- 				 entity->id);
- 			return ret;
-@@ -150,7 +150,7 @@ int uvc_mc_register_entities(struct uvc_video_chain *chain)
- 	list_for_each_entry(entity, &chain->entities, chain) {
- 		ret = uvc_mc_create_links(chain, entity);
- 		if (ret < 0) {
--			dev_info(&chain->dev->udev->dev,
-+			dev_info(&chain->dev->intf->dev,
- 				 "Failed to create links for entity %u\n",
- 				 entity->id);
- 			return ret;
-diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-index ee01dce4b7834b05aab95379191c305cf8cec7f7..d3a3c4125c1fb6c8a5f2ee20bf4f0a9227fe2e46 100644
---- a/drivers/media/usb/uvc/uvc_status.c
-+++ b/drivers/media/usb/uvc/uvc_status.c
-@@ -215,7 +215,7 @@ static void uvc_status_complete(struct urb *urb)
- 		return;
- 
- 	default:
--		dev_warn(&dev->udev->dev,
-+		dev_warn(&dev->intf->dev,
- 			 "Non-zero status (%d) in status completion handler.\n",
- 			 urb->status);
- 		return;
-@@ -247,7 +247,7 @@ static void uvc_status_complete(struct urb *urb)
- 	urb->interval = dev->int_ep->desc.bInterval;
- 	ret = usb_submit_urb(urb, GFP_ATOMIC);
- 	if (ret < 0)
--		dev_err(&dev->udev->dev,
-+		dev_err(&dev->intf->dev,
- 			"Failed to resubmit status URB (%d).\n", ret);
- }
- 
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index 2e377e7b9e81599aca19b800a171cc16a09c1e8a..f044666947a8c59e5bc6b444bb4e01f54df33c80 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -95,14 +95,14 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
- 	 */
- 	if (ret > 0 && query != UVC_GET_INFO) {
- 		memset(data + ret, 0, size - ret);
--		dev_warn_once(&dev->udev->dev,
-+		dev_warn_once(&dev->intf->dev,
- 			      "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
- 			      uvc_query_name(query), cs, unit, ret, size);
- 		return 0;
- 	}
- 
- 	if (ret != -EPIPE) {
--		dev_err(&dev->udev->dev,
-+		dev_err(&dev->intf->dev,
- 			"Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
- 			uvc_query_name(query), cs, unit, ret, size);
- 		return ret < 0 ? ret : -EPIPE;
-@@ -119,7 +119,7 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
- 	*(u8 *)data = tmp;
- 
- 	if (ret != 1) {
--		dev_err_ratelimited(&dev->udev->dev,
-+		dev_err_ratelimited(&dev->intf->dev,
- 				    "Failed to query (%s) UVC error code control %u on unit %u: %d (exp. 1).\n",
- 				    uvc_query_name(query), cs, unit, ret);
- 		return ret < 0 ? ret : -EPIPE;
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 757254fc4fe930ae61c9d0425f04d4cd074a617e..8507de9ae633c9374b6427c890401a6a09ccb819 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -667,7 +667,7 @@ extern unsigned int uvc_hw_timestamps_param;
- #define uvc_dbg(_dev, flag, fmt, ...)					\
- do {									\
- 	if (uvc_dbg_param & UVC_DBG_##flag)				\
--		dev_printk(KERN_DEBUG, &(_dev)->udev->dev, fmt,		\
-+		dev_printk(KERN_DEBUG, &(_dev)->intf->dev, fmt,		\
- 			   ##__VA_ARGS__);				\
- } while (0)
- 
-@@ -680,7 +680,7 @@ do {									\
- #define uvc_warn_once(_dev, warn, fmt, ...)				\
- do {									\
- 	if (!test_and_set_bit(warn, &(_dev)->warnings))			\
--		dev_info(&(_dev)->udev->dev, fmt, ##__VA_ARGS__);	\
-+		dev_info(&(_dev)->intf->dev, fmt, ##__VA_ARGS__);	\
- } while (0)
- 
- /* --------------------------------------------------------------------------
+-	switch (le16_to_cpu(dev->udev->descriptor.idVendor)) {
++	switch (le16_to_cpu(udev->descriptor.idVendor)) {
+ 	case 0x046d:		/* Logitech */
+ 		if (buffer[1] != 0x41 || buffer[2] != 0x01)
+ 			break;
 
 -- 
 2.50.1.470.g6ba607880d-goog
