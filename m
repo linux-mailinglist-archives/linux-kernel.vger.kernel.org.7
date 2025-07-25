@@ -1,140 +1,204 @@
-Return-Path: <linux-kernel+bounces-746057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2238B12280
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB001B122AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13563561739
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF975A6D3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6064A2EF9A2;
-	Fri, 25 Jul 2025 17:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9AE2EF677;
+	Fri, 25 Jul 2025 17:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="lMYRbbWd"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="jQHwOxrv"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69C71BBBE5
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753463037; cv=none; b=Sz0LqK8tbzdDQFKtMneROFVEzhTPbornUhzoz//JaCSCQaJMvMm3gosl+cRQ8u2ueiLlmKN/L1Zb+kMiRxMNTXZBdX/+sy5sfsbGc2efBEiNKhpBjnDGoWjUFuX+nNbo4uBO31MxokkXwfmf0g2hBI94HlsdTs2/k+83LJBuXGQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753463037; c=relaxed/simple;
-	bh=XRPXn4b8DSkRHKtIXSlfRWZ/7dKLmVHQ9WRzD4Ora/A=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=SidbsWG4tw7DaodQ2T4hFPyrRWhlnCpBcjoz5OJdFBpByUDDchD9yjELAEk43YIt3FnIcQT7I2HlHgckoJn8jzagETcM4MDbmGc6/zJUBfRKNVFqO9ZkZ4tsYZUVe9AutkZbDk/13l5PA++FcqrYw2+q5QKrLDmX5zb/5ueWQAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=lMYRbbWd; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A842882DC;
+	Fri, 25 Jul 2025 17:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753463116; cv=pass; b=Ub5qFONDkB43go1wlJop9defv95n/sprJ+zUC13dbh5tJYReEYD/+5CeM8MaZqsFR5IBJPqVYbS131n11YguUHB3XXX0rrigm6zXypAlzaHYqCD1A9HUeYIABJYXLuYyjUNIvlA137os+SVFvY1mPXOJkvK3dNtr9JnB0WNQoYA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753463116; c=relaxed/simple;
+	bh=iy3suWymrfJbIOFygpr9fjA+2Qx7IXpaUt08F/2l9cA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=i8eae10999G+BOGBkM489spojgIiKg99znQF53+fSAlWRpOidHbLfmHepg/X2+KdD7ZM9mV/BtIgt2oxuRknCUUvOwgsnmlKxONgnL7bU3mjo9Fjh9TAhF7MD9QD4bcmfsKJ6a1k0sebeSJ2TaeNFTbFctEVwBmuFqJ8AQpEc3I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=jQHwOxrv; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753463101; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Z+Xa3sFvmmG1FOTixUWU0T3FQ9soYrGH+9fzBIRt3e44LY1u5/CKwbosbunAD1E1UVBzwGlTNWKtygQRJDRHUnn2bWK6iYXUmSLdMmeyF15o5PnpvRrhUkGL4RHH/jpHYr1eRFVEkWoOZ89A5tdP1DsS2iqDm0kO35YOcShsXps=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753463101; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zcXRIrGkjYpShXkccGnec8D6aV41fr1yHU/dYkIUT28=; 
+	b=WV5Uxq+IouaIQWGPZXT1IDrUhcyGmYX2vJAnWr15kr5k6HCq+crcZkuWDi2rPy9eH0Mrq0ri2J29WRm7cloEUUywGBvSWyRklezql1cyro+8hAYz24861lbx1MahKFLHay09fGHesBx46Vq+FpRvdmvcfO2V/Ygg+ASKOLjTWx8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753463101;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=zcXRIrGkjYpShXkccGnec8D6aV41fr1yHU/dYkIUT28=;
+	b=jQHwOxrvkSibJKBykPnN7/hzyfC1llTDy5GIaZ6wr1wWJpPCfIvjPlQf9YTMgYya
+	CiIkAzwfgvKAcXOLFCZcS8DY66Kv/dtSkKIUtSDKEb3dh5WZeT/DiF+dPxLBLAaN0/b
+	g8oU812y5TyRBx27SjxP2FADRjcyD/YXJv/CGiKI=
+Received: by mx.zohomail.com with SMTPS id 1753463099523440.891345684548;
+	Fri, 25 Jul 2025 10:04:59 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1753463031;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q6NaXMg9fbROH9LvIGCHCsqgrXQO+KbOb0QRffIyTME=;
-	b=lMYRbbWdVu9phJd7Q2DFv8Z9C2qAH919I0996wblEzzaVBasc+xxHGRU3M3Zp05/pBarYR
-	tB2bdt8xpLkn39yB2WOvU6IJWD0DC5EMcw+JgDP4EsDb8Jdld4Ez0FLfLVTYGjZaplAUO2
-	YWHNsenPJXB2mqKwteYxOdHxKQHmH4J+/BArnDso+N7Os0hUvCMmo6+8qC/FRW0/h7I6bU
-	1P81Lf5C/IEpTYiv5xnCC2RruYkXNWI8Dtqf4J7TzOqI4wNKEh/edzIuFgECkD6YXY0mjG
-	KqBQ6Le2cM+47oAUOI/htPjC8cwqHguDZwGRdYlP2Qp9xbe8kGGBfqEcFFYJ9w==
-Content-Type: multipart/signed;
- boundary=8c1edd4abc64afa689b98190459caaa658628e964ab805c9823f0dd1a1b2;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Fri, 25 Jul 2025 19:03:29 +0200
-Message-Id: <DBLARE9EUGTB.1AIKSIZBIXHIJ@cknow.org>
-Cc: "Chen Wang" <unicorn_wang@outlook.com>, "Drew Fustini" <drew@pdp7.com>,
- <linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH v6 1/8] mmc: sdhci-of-dwcmshc: add common bulk optional
- clocks support
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Adrian Hunter" <adrian.hunter@intel.com>, "Robin Murphy"
- <robin.murphy@arm.com>, "Chen Wang" <unicornxw@gmail.com>,
- <aou@eecs.berkeley.edu>, <conor+dt@kernel.org>, <guoren@kernel.org>,
- <inochiama@outlook.com>, <jszhang@kernel.org>,
- <krzysztof.kozlowski+dt@linaro.org>, <palmer@dabbelt.com>,
- <paul.walmsley@sifive.com>, <robh@kernel.org>, <ulf.hansson@linaro.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-mmc@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- <chao.wei@sophgo.com>, <haijiao.liu@sophgo.com>,
- <xiaoguang.xing@sophgo.com>, <tingzhu.wang@sophgo.com>
-References: <cover.1722847198.git.unicorn_wang@outlook.com>
- <e57e8c51da81f176b49608269a884f840903e78e.1722847198.git.unicorn_wang@outlook.com> <f81b88df-9959-4968-a60a-b7efd3d5ea24@arm.com> <99899915-2730-41c7-b71a-f8d97bb6e59c@intel.com> <DBKCYCNRNTMZ.1XJU81M6EE2D0@cknow.org> <30cb2e71-5e0b-4fa0-b0e0-3263d9aa8712@intel.com>
-In-Reply-To: <30cb2e71-5e0b-4fa0-b0e0-3263d9aa8712@intel.com>
-X-Migadu-Flow: FLOW_OUT
-
---8c1edd4abc64afa689b98190459caaa658628e964ab805c9823f0dd1a1b2
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 08/19] gpu: nova-core: register: fix documentation and
+ indentation
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250718-nova-regs-v2-8-7b6a762aa1cd@nvidia.com>
+Date: Fri, 25 Jul 2025 14:04:45 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Beata Michalska <beata.michalska@arm.com>,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Message-Id: <F812FC0F-E17B-4784-895F-29E7DF087B6F@collabora.com>
+References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
+ <20250718-nova-regs-v2-8-7b6a762aa1cd@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Thu Jul 24, 2025 at 4:57 PM CEST, Adrian Hunter wrote:
-> On 24/07/2025 17:33, Diederik de Haas wrote:
->> On Wed Jul 23, 2025 at 7:33 AM CEST, Adrian Hunter wrote:
->>> On 22/07/2025 21:33, Robin Murphy wrote:
->>>> A bit late for a "review", but Diederik and I have just been
->>>> IRC-debugging a crash on RK3568 which by inspection seems to be caused
->>>> by this patch:
->>>>
->>>> On 2024-08-05 10:17 am, Chen Wang wrote:
->>>>> From: Chen Wang <unicorn_wang@outlook.com>
->>>>>
->>>>> In addition to the required core clock and optional
->>>>> bus clock, the soc will expand its own clocks, so
->>>>> the bulk clock mechanism is abstracted.
->>>>>
->>>>> Note, I call the bulk clocks as "other clocks" due
->>>>> to the bus clock has been called as "optional".
->>>>>
->>>>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
->>>>> Tested-by: Drew Fustini <drew@pdp7.com> # TH1520
->>>>> Tested-by: Inochi Amaoto <inochiama@outlook.com> # Duo and Huashan Pi
->>>>> ---
->>>
->>> Presumably the problem has gone away with:
->>>
->>> 	commit 91a001a1a0749e5d24606d46ac5dfd4433c00956
->>> 	Author: Binbin Zhou <zhoubinbin@loongson.cn>
->>> 	Date:   Sat Jun 7 15:39:01 2025 +0800
->>>
->>> 	    mmc: sdhci-of-dwcmshc: Drop the use of sdhci_pltfm_free()
->>>
->>> which is in next.
->>>
->>> In which case a separate fix is needed for stable.
->>=20
->> Adding that patch to my 6.16-rc7 kernel indeed stopped the OOPSies.
->> Thanks!
->
-> You need the other patches that it depends on, otherwise you are
-> just leaking the memory.  Refer:
->
-> 	https://lore.kernel.org/all/cover.1749127796.git.zhoubinbin@loongson.cn/
 
-Also with the other patches, the OOPSies stopped :-)
 
-Cheers,
-  Diederik
+> On 18 Jul 2025, at 04:26, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> Fix a few documentation inconsistencies, and harmonize indentation =
+where
+> possible.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> drivers/gpu/nova-core/regs/macros.rs | 34 =
++++++++++-------------------------
+> 1 file changed, 9 insertions(+), 25 deletions(-)
+>=20
+> diff --git a/drivers/gpu/nova-core/regs/macros.rs =
+b/drivers/gpu/nova-core/regs/macros.rs
+> index =
+4da897787c065e69657ce65327e3290af403a615..32fbd7e7deb9edeed91972a373a5a6ac=
+7ce9db53 100644
+> --- a/drivers/gpu/nova-core/regs/macros.rs
+> +++ b/drivers/gpu/nova-core/regs/macros.rs
+> @@ -87,44 +87,28 @@
+> /// providing its own `completed` field.
+> macro_rules! register {
+>     // Creates a register at a fixed offset of the MMIO space.
+> -    (
+> -        $name:ident @ $offset:literal $(, $comment:literal)? {
+> -            $($fields:tt)*
+> -        }
+> -    ) =3D> {
+> +    ($name:ident @ $offset:literal $(, $comment:literal)? { =
+$($fields:tt)* } ) =3D> {
+>         register!(@common $name $(, $comment)?);
+>         register!(@field_accessors $name { $($fields)* });
+>         register!(@io $name @ $offset);
+>     };
+>=20
+> -    // Creates a alias register of fixed offset register `alias` with =
+its own fields.
+> -    (
+> -        $name:ident =3D> $alias:ident $(, $comment:literal)? {
+> -            $($fields:tt)*
+> -        }
+> -    ) =3D> {
+> +    // Creates an alias register of fixed offset register `alias` =
+with its own fields.
+> +    ($name:ident =3D> $alias:ident $(, $comment:literal)? { =
+$($fields:tt)* } ) =3D> {
+>         register!(@common $name $(, $comment)?);
+>         register!(@field_accessors $name { $($fields)* });
+>         register!(@io $name @ $alias::OFFSET);
+>     };
+>=20
+>     // Creates a register at a relative offset from a base address.
+> -    (
+> -        $name:ident @ + $offset:literal $(, $comment:literal)? {
+> -            $($fields:tt)*
+> -        }
+> -    ) =3D> {
+> +    ($name:ident @ + $offset:literal $(, $comment:literal)? { =
+$($fields:tt)* } ) =3D> {
+>         register!(@common $name $(, $comment)?);
+>         register!(@field_accessors $name { $($fields)* });
+>         register!(@io $name @ + $offset);
+>     };
+>=20
+> -    // Creates a alias register of relative offset register `alias` =
+with its own fields.
+> -    (
+> -        $name:ident =3D> + $alias:ident $(, $comment:literal)? {
+> -            $($fields:tt)*
+> -        }
+> -    ) =3D> {
+> +    // Creates an alias register of relative offset register `alias` =
+with its own fields.
+> +    ($name:ident =3D> + $alias:ident $(, $comment:literal)? { =
+$($fields:tt)* } ) =3D> {
+>         register!(@common $name $(, $comment)?);
+>         register!(@field_accessors $name { $($fields)* });
+>         register!(@io $name @ + $alias::OFFSET);
+> @@ -259,7 +243,7 @@ impl $name {
+>             { |f| <$into_type>::from(f as $type) } $into_type =3D> =
+$into_type $(, $comment)?;);
+>     };
+>=20
+> -    // Shortcut for fields defined as non-`bool` without the `=3D>` =
+or `?=3D>` syntax.
+> +    // Shortcut for non-boolean fields defined without the `=3D>` or =
+`?=3D>` syntax.
+>     (
+>         @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as =
+$type:tt
+>             $(, $comment:literal)?;
+> @@ -310,7 +294,7 @@ pub(crate) fn [<set_ $field>](mut self, value: =
+$to_type) -> Self {
+>         );
+>     };
+>=20
+> -    // Creates the IO accessors for a fixed offset register.
+> +    // Generates the IO accessors for a fixed offset register.
+>     (@io $name:ident @ $offset:expr) =3D> {
+>         #[allow(dead_code)]
+>         impl $name {
+> @@ -344,7 +328,7 @@ pub(crate) fn alter<const SIZE: usize, T, F>(
+>         }
+>     };
+>=20
+> -    // Create the IO accessors for a relative offset register.
+> +    // Generates the IO accessors for a relative offset register.
+>     (@io $name:ident @ + $offset:literal) =3D> {
+>         #[allow(dead_code)]
+>         impl $name {
+>=20
+> --=20
+> 2.50.1
+>=20
 
---8c1edd4abc64afa689b98190459caaa658628e964ab805c9823f0dd1a1b2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaIO47QAKCRDXblvOeH7b
-bh72AQCh2k0eqJiG8Ya5dmzENE7WFUBjyOZZW10vyWI/TozQJAEAlJekvqK7tuae
-XFsYO2aDmaIN1Y0pZTJ7d2kzkrzxwQk=
-=ZwZn
------END PGP SIGNATURE-----
-
---8c1edd4abc64afa689b98190459caaa658628e964ab805c9823f0dd1a1b2--
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
