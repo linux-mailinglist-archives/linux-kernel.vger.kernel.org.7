@@ -1,105 +1,90 @@
-Return-Path: <linux-kernel+bounces-746468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC277B12709
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8751B1270C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD4C1CC264B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59951CC292A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C11C2586EC;
-	Fri, 25 Jul 2025 23:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8DE25A2C2;
+	Fri, 25 Jul 2025 23:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hrdxQm+P"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPH96wuN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5244922F77F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 23:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF021E9B22;
+	Fri, 25 Jul 2025 23:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753484512; cv=none; b=ABfDmfmV+SyoSC1jAzZl5LEzr2NFU+mdXMjwFBipxae/GO2DXxu3BpgfAdGdNR7byA9Ux2UJM4iQygVKjHvJyX0s4cz4DfeKhuEMtR00gPPMUZkvEhD1yvTDvvHVpt73ju8Q1ayzJVGHHvSpYE9ZmO1srW6OETw9IU9aYBqbCC8=
+	t=1753484624; cv=none; b=eKJW4z8COuUZlN926FUFR7xIOZSCZIJJWOMCJ7vl01tYZfSTsVrlu34HceLp/YUD26MprxUuQUNWuFgj32F8Md//ZNhEZDdRJykjCpeFtEopHkCQddDOtOZkkJuwY3oGZ9sTBl2c473vXtb/SgsRiweDNdeF/FgtTEEMRNKq0jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753484512; c=relaxed/simple;
-	bh=IfPfnA1aYpRW04A7kq/nqC2+YCF1WrRpEHCLH0fUGVc=;
+	s=arc-20240116; t=1753484624; c=relaxed/simple;
+	bh=JCPGAeq5h3alLBTKg3UQyJ1k3L9zSUxf+6cEhbIJi6s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlPXo9Ea1CzAWkmPY1vyOEhzw2tYNxcBl2AIkSAM0zaH1b0edy5wO3fldlvZueBcNB9wLafR2pAZsOTGGVtKKhij1PEhw46S50NQlTYO28LAPXLUw3RnIfQy44k/ywZhGK7uiT7udB8kSkIsFCdGnO8dX5wuH1DvPmckNX1DUcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hrdxQm+P; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=IfPf
-	nA1aYpRW04A7kq/nqC2+YCF1WrRpEHCLH0fUGVc=; b=hrdxQm+Ph36heDn1LojV
-	ep3ZkZQybR/WH1HvhlpkQvbGhnesex5WBdJ04d2fDEKRwOW/YrNMYHVMlJIEePN/
-	JPJ7rEt+xAUTQm1d3vPRa1F5Gt6xW2jbefV2ZyZUFE8hLUFw+UgCwh4Lyn1syiGs
-	h6hGmHnY1Uxm8HMylgMUF3oVP633XPVM3vCTSHaghxtr2hH3N15otdTBAT6kAbu8
-	jXLxS3GGIvpexdeIBtY2fQuonH2/FeiRe9cXP/p/Q20LuLPlgcXLonWaGW8FgClj
-	IIDdwkhLPhCZExRI0LPvzS/0/EaSezwzBAh57G3pkL7NtcXAfAf10Q82vT5BdDBk
-	oQ==
-Received: (qmail 2580095 invoked from network); 26 Jul 2025 01:01:45 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jul 2025 01:01:45 +0200
-X-UD-Smtp-Session: l3s3148p1@vDoO7cg6iosujntZ
-Date: Sat, 26 Jul 2025 01:01:43 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-	linux-i2c <linux-i2c@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host-fixes for v6.16-rc8
-Message-ID: <aIQM19nIx5nIMZg9@shikoro>
-References: <ql4g7pi5fk2zedld3d4oq43iqk75pgqvshpmu7awj4et4tf6pg@q4z22o2icwip>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ADtb7pJ9YrZlu4ZFNd00kCOyPBRktoGVsYiHDwwL8OCkLKzNzuZAvKTBDpM+L1MoeSSeOUDZoVCnHHkhXfUu7/o5ZPYL6EIZ23MnJwo5jjAfJSkyLiT8QEtNBAr/F7DxCddXyzCAqk57n3T8Axq62OP0dOCyZCkxSEjrQBvkeFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPH96wuN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83281C4CEE7;
+	Fri, 25 Jul 2025 23:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753484623;
+	bh=JCPGAeq5h3alLBTKg3UQyJ1k3L9zSUxf+6cEhbIJi6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IPH96wuNxf8STO8NTrMyO6TM9xJIfW7bEcE4GMcrnwbNyfBeUU4ePdJfKUP3yxg39
+	 CUx4xPm5vZ0JLbsfraDzNVwDtonzTNA2nZdJOlqjB7eJz4ph5iX6suezAbOFQzrC2G
+	 sgYnuhCIeiZmljiW9982uSeQeNE13+gVpFC62hICRChGAyY90ASyN1Vmp80W5yNqGk
+	 +uz4SGW2YWye4dwNUAS17iJi8FMiW45/TDAgVMxFcvHg8AuwKNgjLraswk7Y1+93h+
+	 l2dGlopP/nErZ6GQKbmNXZaU2gT0H3CUVPhB6fyO9xab8iI+3aoRIoloF7r4D+9IG1
+	 jDwp7uq+b47ig==
+Date: Fri, 25 Jul 2025 18:03:42 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-input@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: touchscreen: drop any reference to
+ touchscreen.txt
+Message-ID: <20250725230342.GA1993803-robh@kernel.org>
+References: <20250723071442.3456665-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/Puh9uDa0vdMYzJk"
-Content-Disposition: inline
-In-Reply-To: <ql4g7pi5fk2zedld3d4oq43iqk75pgqvshpmu7awj4et4tf6pg@q4z22o2icwip>
-
-
---/Puh9uDa0vdMYzJk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250723071442.3456665-1-dario.binacchi@amarulasolutions.com>
 
-On Fri, Jul 25, 2025 at 06:55:17PM +0200, Andi Shyti wrote:
-> Hi Wolfram,
->=20
-> Here is last week's pull request. No new fixes have been sent
-> over the past few days.
->=20
-> Everything is rebased on top of rc7.
->=20
-> See you later for the merge window pull request.
+On Wed, Jul 23, 2025 at 09:14:20AM +0200, Dario Binacchi wrote:
+> With commit 1d6204e2f51f ("dt-bindings: touchscreen: Add touchscreen
+> schema") touchscreen.txt is no longer needed. Remove the file and
+> replace every reference to it with the corresponding YAML schema.
 
-Thanks, pulled!
+The point of what touchscreen.txt says is to not do this. I'd rather see 
+time spent on conversions. But you've already done it, so:
 
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
---/Puh9uDa0vdMYzJk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiEDNMACgkQFA3kzBSg
-KbaTfhAAlF6AS+zJFVEQeNznjHwCIAXxYnbkixcAujFaw6o0C0xoEnOOGvQqASWv
-MDNwJXVB+0gSAxDax+SQTvDKOprtppx8pQf3dqPRZljlXiUOTZ7BmGnDOoPo7BC2
-4S0hzV1bMLGDj1Ab2Rohl1dz4fTJHKoy8B+deBJHQd8pZWDxWM3UY98e8RplWv0+
-/F65VNSZBTQHI7s8VoYGXHlKEWZesWo91nM/xE+PmtrXFYYCSVfvxY0MzD+LhmnA
-dYqqwHb6lgXJx/bTNwrBT4AuelkbweTIy7eQudGgURuHi4spDmYKG1JNp5fFgtq/
-nPbIsVLLkw7tYMmWMqqPs4zts2wkSs8O4BBcp/Xd87QwQR3dOvSJF+R2vCnb/Vh5
-NsLl/58GCiL4DCLaxXqVasLqIVfaq1UrfAFjIflewdcZi4EzeZcYxgrdrS6ZrN66
-OD66PUo40LdHrPpD+ETTN7ChskZ9+qPMWasqPKv/HS1HnvE+TofRegLN4ENc4h0Y
-oLDkzNksI9BwUVvsgoO64j7my7eKCYXvQj7SgcPgyz5aZVNTRfqYJ5GyJH4nER+B
-1+P2QPgDPYjsS3NVnccq3Gv9+TuyuXEAAsbvSJXa2IzIECCh7OSVRzpgBzB4qUcR
-gx8HQYKaY3gYi+bAfwRyg8wyOWnzO/rZVAVmLTpj3YhNbR7BxvY=
-=/qDP
------END PGP SIGNATURE-----
-
---/Puh9uDa0vdMYzJk--
+> 
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> 
+> ---
+> 
+>  .../devicetree/bindings/input/touchscreen/bu21013.txt  |  2 +-
+>  .../devicetree/bindings/input/touchscreen/eeti.txt     |  2 +-
+>  .../input/touchscreen/raspberrypi,firmware-ts.txt      | 10 +++++-----
+>  .../bindings/input/touchscreen/touchscreen.txt         |  1 -
+>  .../devicetree/bindings/input/touchscreen/zet6223.txt  | 10 +++++-----
+>  5 files changed, 12 insertions(+), 13 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
 
