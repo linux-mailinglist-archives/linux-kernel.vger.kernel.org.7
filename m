@@ -1,161 +1,168 @@
-Return-Path: <linux-kernel+bounces-746000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85898B121BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:17:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45901B121C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4566B1CE6CAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499E53A98F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3622EF64A;
-	Fri, 25 Jul 2025 16:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E432EF9DB;
+	Fri, 25 Jul 2025 16:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VFdm9juM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClZJji21"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFAD2EE606
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E04E2EF9CD;
+	Fri, 25 Jul 2025 16:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753460069; cv=none; b=GbF0ru0gx1gSxkVC1X/Bk0UJOZO2feLUGcnaDqlFWrEZSurtAuBfXUDEmTgc5+EXVAlekCGABxUp5mAb3Cgq8QBVI5WPDFLzO9orJk1ZpPSr4eOBRb8b0RWjGk5O5yrg/VYkvsU/O5swrj1PDowmF5iLYe5bFszizxqXBHpLObQ=
+	t=1753460121; cv=none; b=D1OShj+Wo23ZZR4gHiqC1xDpdoULl4kbnvC/pUkGl92QUQxUllxYAuVCYYcIc45uyHbHlOQ7+EeuMghC2SoUpfptwzykj1gLfvOzBER9BT1dmqnEYf+kXzA8qJHPJ2vgAbjHwefdVNnKDXMvYoUU6AwNoKbwceZCmc1+sd5ZkG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753460069; c=relaxed/simple;
-	bh=zy4+5I7aIssi/rmMSBtYygJxN6pNtn3MaFBiLibPOAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OqcrVfwrHAEbea91GIvuS1lfiLZw5juKiw3TDh1DxFST2axwg2i2Dcri5vZUCwi1567gONTMfq8ujDpmQh8KXf5ZoChLDcF1IHV/OPLeoCi5+sGSM+sfgPkF1ROQ8w7Q1GzMYfCJ80dhkUaxEjGFQdbUEQL0otwmF6qKJ4IA55E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VFdm9juM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P90ALi015704
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:14:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pTRAzXltnnQkXzy/4MfHD1BpN0UeO0JYTlGtIooVxhY=; b=VFdm9juMycnYZSHZ
-	zUXA92nIOBcEnWTYEaYZVS7emlqydaCowoY21CWFScsHSDVVExvYnMTn3+dlby5s
-	4hFLISQiz6TZG5bi9tOohYCb2gCWD9ar+XlLTzhbijgIX5E+1GuC37zcPa/MIpya
-	Oo+QWB/wZTSCWzJFBHyT5vIqi3kLN//g/8yaVMd6jODWQHGtad5rkobIVYMVlpGi
-	QLhQbu1VTEgSBYOY3iL0IqqWARLFc6G4r96pz9jb5jkIpBrByhITf5ekJy3yUGmo
-	cGXUD/bTv2Rbch1TAYQSSp7JiozaHKVfDPiHii4f0OPK+8rFfOAqjLYfe6b2gPOs
-	XMi8ug==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w502nkb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:14:26 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b115fb801bcso2854489a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:14:26 -0700 (PDT)
+	s=arc-20240116; t=1753460121; c=relaxed/simple;
+	bh=fh0CjKHTZvu0FuhvdnqoJwzPfDDNX+QCT7SyJ14PPQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uwmDzzZNt4w/bZy4krBuZ+jK8TWoE59bWkoT3JKiDCgBDlT5p8RhIVxa/vGRnFnlV8A7x5RR6GrjyRdAMwdRibJOjP5IQSs8UNJQ9soqYARS4DUooKDWwPn7JV8rWHy4y3gDPQdwO+r2G4tmxJcREcBcXMhWIpSvzd/AzWaQM8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClZJji21; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-313f68bc519so1811684a91.0;
+        Fri, 25 Jul 2025 09:15:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753460117; x=1754064917; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3cFi0vD7YessLF2r15au7TPe/jon8lIosOISFCfh1VM=;
+        b=ClZJji21xibaWUctuamOxgpSpc2mWYLC7998HFSvr1waknytKwxETK8Js3VFTMQ3st
+         lxN422PYDdPWmCmxYPmGJ0irMB6Gg17Q+DdlenHEHDTfUfhU3Y0cMkLlLFm4UFU5gNUR
+         oETKHBBn5amByFsXcXmSEJZ+veccns0GrT9o90P5no93Iw/RbC/99DCFfMCbVrP6/8+P
+         374xghyt9uYjMrFAHJM08VWmSKmW6Ql5Ohy8qrjzqHKJIQHEqfnD6W+XVsfcfyFIRWB1
+         Ig4X7hyp2culaIF0aVN0Rw38hMdeNk6otrr1ctr22KHSFReZcKVlLPaBFfGfpnn/2Q3Y
+         fH3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753460065; x=1754064865;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pTRAzXltnnQkXzy/4MfHD1BpN0UeO0JYTlGtIooVxhY=;
-        b=SmoM9O50MInHbe0PMPdhqky4ljx9umXelUm4ukTFxXAboixRKEQ7rUr0bSkztV+/TG
-         hlymcfsFZSxnZlvBhmDo7OAtpUsj3MIHcjzsd99sjUV6TTeqxxNIZAeOWBLbxDlQIeAu
-         TovVT0PVIC20NS12SP2AI6e4Vgus3yVBANaM0oHo5aSN5ZOgeVWIowGWM0VqREBLAghu
-         QHkO9Q0s9wyq5mrSCXevovt96CfBBeLKHUEWROhgXTexvdLl6URx+FSnRNLg3EDP17qK
-         dlPliHuJEPts2Bm5bMJPHzTFKL5oXEo3TDtcyv4JNEybgMPa9hZJITLwgiWf9tF+NAcv
-         /Btg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkK+F2bAZpYsJRFZ6irx+Lgig7x0ukceV8RjdVpCu4u60+R2mtXq4XgEMiYhkYwiDtfGPlGXJ13YwynUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlvhcoCuxu319r0KgjnaklhGSH6PSEuquinhIvqez0G5xyrENw
-	tIJnV9ssD/3Qhog+DDDTWrom+cCdJQNLQmd2sTtT+A/iQW4Ln4F9yGYtHUUDIK7fxtQHMWYJX0Z
-	KqfClmOxTQLuMeY6UiF7Uedc7Zx2z2D9AlgVcJ3QDHeNWSypoxClpjA+WcBpuJ6YYzU4=
-X-Gm-Gg: ASbGnctr8FnxQoC0pgykROYopfgxmo9nrUyra7wtJhRPHpfPa0PCF2bJuxgqTpsfFCa
-	xClv8o36qzkwiB0x8RhoS22oO6n+FkfJOc1HNDElb6GKFm/zPjB3O9sYrRiIO1wFSN/K/1qU2Nb
-	8RL3exdP9mlO0ndFNPqGKUJCz0xRu0V99NYT8lS9m23nsN7X1BZeaXba9gGEqWeNTt+p8KBZCqL
-	z9I/DB8H0fPAkI2EA7qn41GLt9ack6ON0yOgsjbfNnuUrJNH15z79I1wDrF9ToZdmJB7lmWraci
-	6YoI1Sa52B8QLXFRMRQSsZ5s3Vwy889UczV16TRdJuT9DKNgXssqvNsCzG4r1pET9LyZqDV/81d
-	iIWyTGMTJEpQpeQ==
-X-Received: by 2002:a05:6a20:7288:b0:239:1c1e:3edf with SMTP id adf61e73a8af0-23d701eaf4cmr4483538637.40.1753460065435;
-        Fri, 25 Jul 2025 09:14:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEH45mowQM24zNVVrDWA1OAKen9/Rncat1udl96ywd3HTaGlMrzSKhS42XbAwTPbo2lmkT86g==
-X-Received: by 2002:a05:6a20:7288:b0:239:1c1e:3edf with SMTP id adf61e73a8af0-23d701eaf4cmr4483464637.40.1753460064981;
-        Fri, 25 Jul 2025 09:14:24 -0700 (PDT)
-Received: from [10.226.59.182] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b8b0c60sm71215b3a.126.2025.07.25.09.14.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 09:14:24 -0700 (PDT)
-Message-ID: <12223a91-82f0-4889-8f07-bfa5833c8ffb@oss.qualcomm.com>
-Date: Fri, 25 Jul 2025 10:14:21 -0600
+        d=1e100.net; s=20230601; t=1753460117; x=1754064917;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3cFi0vD7YessLF2r15au7TPe/jon8lIosOISFCfh1VM=;
+        b=wQ1yysnnMZkcn7A0GnIxjSZwUQeFyGIcRjxf1dJsyGvUMbb4i3W3T14CFD/61VqIMz
+         LYUtFl3To5gdYQNHGA6kx+yDccz6vnwfcoQqAWuq6a+UAAtIbj+Bydd21W3wENsHnsJS
+         1HHBo7x3kvln/nEGdZk27XWkLXz7vMrMd0oplVmhtRHgzXNPfLs20tGXPLQBiWK7MZW0
+         whiX3GyQKFgW+u20uKOyvtFAtwRwnpFHkDfJN4/moK75h9xe1MERnn2IIWZbMHk7B1mD
+         ZtYayb8AVbi6MzkP2EIMA/g4XhTdRx5WTVLNuVnBZdeUvm4l5n9gvZCS43ZnccoyGQs8
+         +WRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUi3m+v8hkx9HctBTWWskhwgEsD2PSCxatVbf9KKzDmOg74mjxFDmQg1whw5ztTe5aYXu7nT7zr@vger.kernel.org, AJvYcCVvAOTc6O/THNH1+pEYMqn/tu/RFCWzEz/5wmwhhPJIGw4/cPzoSTX01461covuPJy4I+v7DuaWInqGlTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdzJhe5aTVF0Zwllkj6hkCoBUEN3urDpr3ElxOcYBGmRuC6186
+	o+MhLa6rkrsosPalcg8Dc7jIGqVkRFlmqR9/jYsjYrJ4LM5lKeQxlxYt89pJu5/6uQg=
+X-Gm-Gg: ASbGnct8SJRoLRAZRny46nkCGJKHDC8qOAmDer8kRKBv9GE7/JxN0xazyxaAffPxOvV
+	DGE9lsJxJbIVx2kzfAbo6ngARIG7NZdRmQIQElW6YASDoO/wj9MsbVbmqHEVap0F8N/9D2zH2xv
+	lryfWQZ8EsVW1LMeA4WfKEUiL4TQPY9mvGG5j30DlRmQ++VzOz1jPP1hqEEURnFS83hhgWfCrCm
+	JBepGoHYE9EYv+AXLrCvjV6oX6gpO2xWdocZwmaQkSMvYTIEr8qMGAQGsDxxvp9i+UiXbuwM/35
+	Ov7RF7WxotcxpQczeq9r+0RITlMg9ossGTp4VWw0/KNi9c1RQpI6m/UBxSbceACvW8ulUqgghed
+	IND1+6Fxy1xLAGF3hmWDlRMehJxn35O1AbYa2FezNjisx7RLR/wwY
+X-Google-Smtp-Source: AGHT+IEmBI+tcBrcxIwV7kA6wcfnWlRhgQZw2jycq881kY+fEq6W73LTONd/xlqvx9aFZrbYHRbH9Q==
+X-Received: by 2002:a17:90b:134e:b0:311:9c9a:58ca with SMTP id 98e67ed59e1d1-31e7788a6aemr3965185a91.8.1753460117304;
+        Fri, 25 Jul 2025 09:15:17 -0700 (PDT)
+Received: from BM5220 (118-232-8-190.dynamic.kbronet.com.tw. [118.232.8.190])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-31e832fb879sm61604a91.6.2025.07.25.09.15.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 09:15:17 -0700 (PDT)
+From: Zenm Chen <zenmchen@gmail.com>
+To: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: pkshih@realtek.com,
+	hildawu@realtek.com,
+	max.chou@realtek.com,
+	rtl8821cerfe2@gmail.com,
+	usbwifi2024@gmail.com,
+	Zenm Chen <zenmchen@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] Bluetooth: btusb: Add USB ID 2001:332a for D-Link AX9U rev. A1
+Date: Sat, 26 Jul 2025 00:14:32 +0800
+Message-ID: <20250725161432.5401-1-zenmchen@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 00/10] New DRM accel driver for Rockchip's RKNN NPU
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-        Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Daniel Stone <daniel@fooishbar.org>, Da Xue <da@libre.computer>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        Robert Foss <rfoss@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250721-6-10-rocket-v9-0-77ebd484941e@tomeuvizoso.net>
-Content-Language: en-US
-From: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-In-Reply-To: <20250721-6-10-rocket-v9-0-77ebd484941e@tomeuvizoso.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: kWre5_s61019c4-dM0TR-CUDdaZFZ1hD
-X-Proofpoint-ORIG-GUID: kWre5_s61019c4-dM0TR-CUDdaZFZ1hD
-X-Authority-Analysis: v=2.4 cv=bKAWIO+Z c=1 sm=1 tr=0 ts=6883ad62 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=e5mUnYsNAAAA:8 a=DISFzqtZAAAA:8
- a=XWXL-kdBtCKZFopiRrIA:9 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
- a=Vxmtnl_E_bksehYqCbjh:22 a=aug85vrO5LANNmmtkfAW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDEzOSBTYWx0ZWRfX/AB/FelnoRL5
- 1Yi5kgNR5hV16cf7Qf6XXCJJqi4oym5qigElHp7F2cZI71U/XGMWJlNxxDmupiSvLiCqx4xxDbM
- 9QohX8ANZYPD5Gf8+2UBIUMbsg9KgVB46JQUm9S+h+lJTE2GvNeUqoKtRw7E0rkKmdRWiZiCeBK
- 060I1OJFpV2bhnHFkg0vldg8lHcQb4wVs2EuwoIoS0e230SgA/9fKpfsRS1ymGpsM64Vc1aQRLp
- Dpcnq+feIimP8GHc4d/43UQA372hRTxKJrDIttzrbgq6PcEv4oKsUMpkepIzx1RAe/REmtBC7PM
- EdFW2kB/1uXu1f0+tTlKqvPJszsCcbMIPLtTcJlVQV9V5xgnrD/g1plLooCpG1qy0e7XH0wxEhi
- vTF0AfZvmJtPezBMjjOQERlFSlj/6RA0s+bQpGBz6h/vhsvyV361oaonCUJsU9S8/mpNvcUz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_04,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 spamscore=0 mlxlogscore=753 clxscore=1015
- phishscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507250139
+Content-Transfer-Encoding: 8bit
 
-On 7/21/2025 3:17 AM, Tomeu Vizoso wrote:
-> This series adds a new driver for the NPU that Rockchip includes in its
-> newer SoCs, developed by them on the NVDLA base.
-> 
-> In its current form, it supports the specific NPU in the RK3588 SoC.
-> 
-> The userspace driver is part of Mesa and an initial draft can be found at:
-> 
-> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/29698
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Add USB ID 2001:332a for D-Link AX9U rev. A1 which is based on a Realtek
+RTL8851BU chip.
 
-Patches 1-6 pushed to drm-misc-next.
+The information in /sys/kernel/debug/usb/devices about the Bluetooth
+device is listed as the below:
 
--Jeff
+T:  Bus=03 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=2001 ProdID=332a Rev= 0.00
+S:  Manufacturer=Realtek
+S:  Product=802.11ax WLAN Adapter
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=500mA
+A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 8 Cls=ff(vend.) Sub=ff Prot=ff Driver=rtw89_8851bu_git
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=0a(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=0b(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=0c(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+
+Cc: stable@vger.kernel.org # 6.12.x
+Signed-off-by: Zenm Chen <zenmchen@gmail.com>
+---
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 8085fabad..3595a8bad 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -522,6 +522,8 @@ static const struct usb_device_id quirks_table[] = {
+ 	/* Realtek 8851BU Bluetooth devices */
+ 	{ USB_DEVICE(0x3625, 0x010b), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x2001, 0x332a), .driver_info = BTUSB_REALTEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 
+ 	/* Realtek 8852AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0bda, 0x2852), .driver_info = BTUSB_REALTEK |
+-- 
+2.50.1
+
 
