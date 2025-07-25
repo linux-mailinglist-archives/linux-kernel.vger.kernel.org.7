@@ -1,196 +1,160 @@
-Return-Path: <linux-kernel+bounces-745234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90850B116FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:20:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F699B11703
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68CE5AC73A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053D0AC76E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5464824337B;
-	Fri, 25 Jul 2025 03:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AA52376F8;
+	Fri, 25 Jul 2025 03:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CH8Se7+s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PnYqFEBB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE3424169D;
-	Fri, 25 Jul 2025 03:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9954E2746A;
+	Fri, 25 Jul 2025 03:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753413570; cv=none; b=tpGATm3KZ4pMGuwBJc+7TzHYUlNXSwzBxZdDDZKWU5/vbC4u5t+Ty3UYZOjeOlJjCmfPUd/m8ngbylUqRoUvglRtf37vSYzGaDGYIwjt+V3RC0iV2RD2ZTPjFDzEC0A8zuXNGIoJ1UEdyRCSBde1+tSfPKxixKwMjMwNJTzq/eY=
+	t=1753413726; cv=none; b=MV8aqpmv6IsREuuOxuUk2dhBPGvTPeyyUlMjms9plwB1wrQTWRwKJ7jUDrWplLTmgSyw/WYumDwAN/Phjwy3JeFcseojXdkU7+nmXK7wV4sZP9Hsy6HmO4pSIGXbC5Al5YkwMxpgTguG09QH5ARxE0ChuBu03rFwlsda+kI4El0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753413570; c=relaxed/simple;
-	bh=K3SBDIp7j42YsE2v+szYFgUG5hcIUyMTSfKVVg3jL1c=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=T1UkjISCUMQCXAV2maAjf/ETUA7ksOjgeNh16xQfE0U0A4FO9o3KNmOMkZ1z5bwAOa8m8Jt+MGw3QkTxIWSS1UOb1sniiTnaWNcoqmvJIqavcRHHIziwiCnnu/eODVWiLooZzGVeV69sSyzwinvWHdX34/c/cb85OglqNpCj0mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CH8Se7+s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094CEC4CEF8;
-	Fri, 25 Jul 2025 03:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753413570;
-	bh=K3SBDIp7j42YsE2v+szYFgUG5hcIUyMTSfKVVg3jL1c=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=CH8Se7+sv/PQu+1DH2NmptHaSxd5gue1dZqlob5Pay3O1cORSyGN4EpsXFKAXBbmu
-	 N2MhwgYekjC/X4pRpzi/FdCxJszRNl19HrsrcsgOfDXaKeTr8bW2xLqe7zANhjU4Mc
-	 UehXml4Jope73zcU3G7MWNc/VBrJCZ/KRm8VJVaJ1v7e0fi7UEuHC1vuY8MS9HtDMX
-	 xh9lCKZ/AzcjJdmTYv7IC0L4CnsmQC2KbA04c/OsCPFXCV3pQeCWcA31vQdiI56IZZ
-	 ddYGLXAGeVcBS1LU21u27WJAKWvHPM52Fy5nB/rKjqbXbuP4TeSzcXkQstWSnqiO9q
-	 2485iCIb0KBNQ==
-Date: Thu, 24 Jul 2025 22:19:29 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1753413726; c=relaxed/simple;
+	bh=UTR/RVHQ4XrIJ+vrlr6LTFTom0zLWQY0XXQsmCXqbh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mdMxPobHagT3EqFCmiCwsvGir2tLgEU9rbzF7WrBtYAfHfMnfV53unN5BCBHF44VkcRC4xc7u/7K0YBy2gtiMRgH7xpdn//lJjz1tBMuAnoRWgLFaKlr7K1bvOTRf616hsq+45Sayv8DlSDbX3cUdk62lmRHvGABRaOuEGnsW1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PnYqFEBB; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753413725; x=1784949725;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UTR/RVHQ4XrIJ+vrlr6LTFTom0zLWQY0XXQsmCXqbh4=;
+  b=PnYqFEBB/d5vBY1m9PjmNdbR72Pko3ylwkCve61eVRh/o/KYTXXHiKIm
+   S52NleAXvgfMczUcCoWsBtsuEzg98FVZjl7beHCF8dAmAU2oC2yk0Rufy
+   9j5GrHyNRJ8C6S0CzzlGw3/kr7/Ec/sd9IyPqK1o4PJ6jHJGhcUqQWHNL
+   5Qc7X4G/JS2eghmopjd3WMced5G02UcliC3+vrfAjFDhapYWgxPtZ7k4z
+   fXX4PD+mRo/mOfTBVYSP0J/nymOJ6a3+0Cwx9FDT+FrkCgzU4hMZWWsI9
+   zNGuWJL+m0WL4apBikkULEfWj6+6QLKU0e/iRhcfzBO5lerCkp9CZaE7f
+   Q==;
+X-CSE-ConnectionGUID: 52dX3p9mTsK/asN9oBqZqg==
+X-CSE-MsgGUID: 35DU9GSwRM+Npm4s36gvTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55708291"
+X-IronPort-AV: E=Sophos;i="6.16,338,1744095600"; 
+   d="scan'208";a="55708291"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 20:22:04 -0700
+X-CSE-ConnectionGUID: ctIEQqfVSsOJed+4VFo1YQ==
+X-CSE-MsgGUID: uREjuxgAScyVMAocS17ldA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,338,1744095600"; 
+   d="scan'208";a="164851137"
+Received: from unknown (HELO [10.238.3.238]) ([10.238.3.238])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 20:21:59 -0700
+Message-ID: <ed0c3a20-d739-456a-8675-3218592857e3@linux.intel.com>
+Date: Fri, 25 Jul 2025 11:21:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>
-In-Reply-To: <20250724-hamoa_initial-v2-0-91b00c882d11@oss.qualcomm.com>
-References: <20250724-hamoa_initial-v2-0-91b00c882d11@oss.qualcomm.com>
-Message-Id: <175341328532.3754847.3393249180802713461.robh@kernel.org>
-Subject: Re: [PATCH v2 0/4] Initial support for Qualcomm Hamoa IOT EVK
- board
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 2/3] x86/tdx: Tidy reset_pamt functions
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, pbonzini@redhat.com,
+ seanjc@google.com, vannapurve@google.com, Tony Luck <tony.luck@intel.com>,
+ Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, x86@kernel.org, H Peter Anvin
+ <hpa@zytor.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, kas@kernel.org, kai.huang@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, isaku.yamahata@intel.com,
+ yan.y.zhao@intel.com, chao.gao@intel.com
+References: <20250724130354.79392-1-adrian.hunter@intel.com>
+ <20250724130354.79392-3-adrian.hunter@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250724130354.79392-3-adrian.hunter@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-On Thu, 24 Jul 2025 16:15:22 +0800, Yijie Yang wrote:
-> Introduce the device tree, DT bindings, and driver modifications required
-> to bring up the HAMOA-IOT-EVK evaluation board—based on the X1E80100 SoC—to
-> a UART shell.
-> This patch set focuses on two key hardware components: the HAMOA-IOT-SOM
-> and the HAMOA-IOT-EVK carrier board.
-> The HAMOA-IOT-SOM is a compact System on Module that integrates the SoC,
-> GPIOs, and PMICs. It is designed to be modular and can be paired with
-> various carrier boards to support different use cases.
-> The HAMOA-IOT-EVK is one such carrier board, designed for IoT scenarios.
-> It provides essential peripherals such as UART, on-board PMICs, and
-> USB-related components.
-> Together, these components form a flexible and scalable platform, and this
-> patch set enables their initial bring-up through proper device tree
-> configuration and driver support.
-> 
-> Qualcomm SoCs often have multiple product variants, each identified by a
-> different SoC ID. For instance, the x1e80100 SoC has closely related
-> variants such as x1e78100 and x1e001de. This diversity in SoC identifiers
-> can lead to confusion and unnecessary maintenance complexity in the device
-> tree and related subsystems.
-> To address this, code names offer a more consistent and project-agnostic
-> way to represent SoC families. They tend to remain stable across
-> development efforts.
-> This patch series introduces "hamoa" as the codename for the x1e80100 SoC.
-> Going forward, all x1e80100-related variants—including x1e81000 and others
-> in the same family—will be represented under the "hamoa" designation in the
-> device tree.
-> This improves readability, streamlines future maintenance, and aligns with
-> common naming practices across Qualcomm-based platforms.
-> 
-> Features added and enabled:
-> - UART
-> - On-board regulators
-> - Regulators on the SOM
-> - PMIC GLINK
-> - USB0 through USB6 and their PHYs
-> - Embedded USB (eUSB) repeaters
-> - USB Type-C mux
-> - PCIe6a and its PHY
-> - PCIe4 and its PHY
-> - Reserved memory regions
-> - Pinctrl
-> - NVMe
-> - ADSP, CDSP
-> - WLAN, Bluetooth (M.2 interface)
-> - USB DisplayPort
-> 
-> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+
+On 7/24/2025 9:03 PM, Adrian Hunter wrote:
+> tdx_quirk_reset_paddr() was renamed to reflect that, in fact, the clearing
+> is necessary only for hardware with a certain quirk.  That is dealt with in
+> a subsequent patch.
+>
+> Rename reset_pamt functions to contain "quirk" to reflect the new
+> functionality, and remove the now misleading comment.
+>
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
 > ---
-> To: Bjorn Andersson <andersson@kernel.org>
-> To: Konrad Dybcio <konradybcio@kernel.org>
-> To: Rob Herring <robh@kernel.org>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> ---
-> Changes in v2:
-> - Merge the compatible rules and remove the compatible string map.
-> - Align the ADSP and CDSP firmware paths with other x1e80100 platforms.
-> - Remove the regulators on the M.2 card, as well as those managed by UEFI on this board.
-> - Merge another patch series that enables USB DisplayPort functionality on this platform: https://lore.kernel.org/all/20250723-x1e-evk-dp-v1-1-be76ce53b9b8@quicinc.com/
-> - Link to v1: https://lore.kernel.org/r/20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com
-> 
-> ---
-> Yijie Yang (4):
->       dt-bindings: arm: qcom: Document HAMOA-IOT-EVK board
->       firmware: qcom: scm: Allow QSEECOM on HAMOA-IOT-EVK
->       arm64: dts: qcom: Add HAMOA-IOT-SOM platform
->       arm64: dts: qcom: Add base HAMOA-IOT-EVK board
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml |   1 +
->  arch/arm64/boot/dts/qcom/Makefile               |   1 +
->  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts      | 915 ++++++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi     | 607 ++++++++++++++++
->  drivers/firmware/qcom/qcom_scm.c                |   1 +
->  5 files changed, 1525 insertions(+)
-> ---
-> base-commit: 4d088c49d1e49e0149aa66908c3e8722af68ed07
-> change-id: 20250604-hamoa_initial-0cd7036d7271
-> 
-> Best regards,
-> --
-> Yijie Yang <yijie.yang@oss.qualcomm.com>
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 4d088c49d1e49e0149aa66908c3e8722af68ed07
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250724-hamoa_initial-v2-0-91b00c882d11@oss.qualcomm.com:
-
-arch/arm64/boot/dts/qcom/hamoa-iot-evk.dtb: pinctrl@f100000 (qcom,x1e80100-tlmm): Unevaluated properties are not allowed ('wcn_usb_sw_n_state' was unexpected)
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/hamoa-iot-evk.dtb: wcn7850-pmu (qcom,wcn7850-pmu): 'vdd-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
-arch/arm64/boot/dts/qcom/hamoa-iot-evk.dtb: wcn7850-pmu (qcom,wcn7850-pmu): 'vddaon-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
-arch/arm64/boot/dts/qcom/hamoa-iot-evk.dtb: wcn7850-pmu (qcom,wcn7850-pmu): 'vdddig-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
-arch/arm64/boot/dts/qcom/hamoa-iot-evk.dtb: wcn7850-pmu (qcom,wcn7850-pmu): 'vddrfa1p2-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
-arch/arm64/boot/dts/qcom/hamoa-iot-evk.dtb: wcn7850-pmu (qcom,wcn7850-pmu): 'vddrfa1p8-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
-
-
-
-
+>
+>
+> Changes in V6:
+>
+> 	None
+>
+> Changes in V5:
+>
+> 	New patch
+>
+>
+>   arch/x86/virt/vmx/tdx/tdx.c | 16 ++++------------
+>   1 file changed, 4 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index fc8d8e444f15..9e4638f68ba0 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -660,17 +660,17 @@ void tdx_quirk_reset_page(struct page *page)
+>   }
+>   EXPORT_SYMBOL_GPL(tdx_quirk_reset_page);
+>   
+> -static void tdmr_reset_pamt(struct tdmr_info *tdmr)
+> +static void tdmr_quirk_reset_pamt(struct tdmr_info *tdmr)
+>   {
+>   	tdmr_do_pamt_func(tdmr, tdx_quirk_reset_paddr);
+>   }
+>   
+> -static void tdmrs_reset_pamt_all(struct tdmr_info_list *tdmr_list)
+> +static void tdmrs_quirk_reset_pamt_all(struct tdmr_info_list *tdmr_list)
+>   {
+>   	int i;
+>   
+>   	for (i = 0; i < tdmr_list->nr_consumed_tdmrs; i++)
+> -		tdmr_reset_pamt(tdmr_entry(tdmr_list, i));
+> +		tdmr_quirk_reset_pamt(tdmr_entry(tdmr_list, i));
+>   }
+>   
+>   static unsigned long tdmrs_count_pamt_kb(struct tdmr_info_list *tdmr_list)
+> @@ -1142,15 +1142,7 @@ static int init_tdx_module(void)
+>   	 * to the kernel.
+>   	 */
+>   	wbinvd_on_all_cpus();
+> -	/*
+> -	 * According to the TDX hardware spec, if the platform
+> -	 * doesn't have the "partial write machine check"
+> -	 * erratum, any kernel read/write will never cause #MC
+> -	 * in kernel space, thus it's OK to not convert PAMTs
+> -	 * back to normal.  But do the conversion anyway here
+> -	 * as suggested by the TDX spec.
+> -	 */
+> -	tdmrs_reset_pamt_all(&tdx_tdmr_list);
+> +	tdmrs_quirk_reset_pamt_all(&tdx_tdmr_list);
+>   err_free_pamts:
+>   	tdmrs_free_pamt_all(&tdx_tdmr_list);
+>   err_free_tdmrs:
 
 
