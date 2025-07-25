@@ -1,166 +1,608 @@
-Return-Path: <linux-kernel+bounces-745848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED63B11F87
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:48:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24EC1B11F88
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890FBAC5E1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F63E16B27F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C431A0BF1;
-	Fri, 25 Jul 2025 13:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF92155A25;
+	Fri, 25 Jul 2025 13:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ideco.ru header.i=@ideco.ru header.b="f9KH/TOg"
-Received: from smtp.ideco.ru (smtp.ideco.ru [51.250.56.165])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mFRAROWq";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="sMdzW5JT"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4172E36EC;
-	Fri, 25 Jul 2025 13:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.250.56.165
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753451291; cv=none; b=QaYvR79i4TXYZhnKdrkDYvTS+n2r1er56GGY+eGeRsJxzZDp8om2LIi8Ra3pchogccmYX4pVS7XLXKfbRvStmYklxmstx+wJI9wMw19i9afdUw/l7NnGK3hv170ulpofaXjNb/GIe1Hwm5Hjr/BlOvaoN3/XzJH4D/7uywXCSq0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753451291; c=relaxed/simple;
-	bh=vvmrtrfPtBmzTKUhKgCJJooQy2tH0DPXS/a5E4jOwLk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OQePzmAiWjoJjwUbrqeUh6Z5NvPFGO+DMiRarGU0qkgDg1Ph3wksK60ukYKOY8TXO5P88pL/YUnWceNg74k1l+Hnmf/BBNLOR9AbXTNXkRKUIBMBuMvG507S30O30UIgsmeZdc+YJztr2ZrBwnIuBJn81+LLKiXqkROgW+fj2EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideco.ru; spf=pass smtp.mailfrom=ideco.ru; dkim=pass (2048-bit key) header.d=ideco.ru header.i=@ideco.ru header.b=f9KH/TOg; arc=none smtp.client-ip=51.250.56.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideco.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideco.ru
-Received: from [169.254.254.254] (localhost [127.0.0.1])
-	by smtp.ideco.ru (Postfix) with ESMTP id D083C102AA25;
-	Fri, 25 Jul 2025 18:48:01 +0500 (+05)
-Received: from fedora (unknown [94.159.101.170])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.ideco.ru (Postfix) with ESMTPSA id 5B846102AA22;
-	Fri, 25 Jul 2025 18:47:58 +0500 (+05)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.ideco.ru 5B846102AA22
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ideco.ru; s=ics;
-	t=1753451280; bh=Ri2roldixm+NLica0ywCM25fyV2yKL675O5a9OlTJJ0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=f9KH/TOgJ9iVKA96XwGaVgpZK0JVYhUgY7XfA3uPCb1Qf4r31VObf3lIMcsQHTAgf
-	 GN14O9Z0ipN1JtAbia/1CIrnx6Hx0+ChAk7h4R6qtRAj9MHmg2mf9Y/N3D0y2bdkwL
-	 Gd2f5H//yQNUHomeZJlyiz0RbAFHFJbFS4Pn22lwd2eChDRE3I/M2wa3FaB+YKFu9m
-	 1SUuGdGnLgheQcs9UcS9DkPWeHO/mkzWGCoXOmqyqmaQGi/x+dvk177IeDqcsWEPCA
-	 zgX5AFakdNC7E+Mkf3/jDfJhrkh52pCWY3nSBbMdFf50l401Ku8YtPqXDEJoStCcEB
-	 ZZcCxB0KcgCnQ==
-From: Petr Vaganov <p.vaganov@ideco.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Petr Vaganov <p.vaganov@ideco.ru>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Tejun Heo <htejun@gmail.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Boris Tonofa <b.tonofa@ideco.ru>
-Subject: [PATCH v2] scsi: fill in DMA padding bytes in scsi_alloc_sgtables
-Date: Fri, 25 Jul 2025 18:47:40 +0500
-Message-ID: <20250725134741.79887-1-p.vaganov@ideco.ru>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250725122202.77199-1-p.vaganov@ideco.ru>
-References: <20250725122202.77199-1-p.vaganov@ideco.ru>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF25A165F1A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753451380; cv=fail; b=Km1DkikjPqIqI6RNZDzMN/clHSqRWHlD0AAe88/zsrfWGLjolwoyL/3FiN1BLZQN+lheunTlUInfLye0Z9OYfRvgwzxiGpTkOWZCQrgRsgib9zZpQebxZ12sG5g0PuMVl9vrNOhrRTBcJneNfVvvXjdVpF7gzit+81jpxpFHI34=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753451380; c=relaxed/simple;
+	bh=Iyq2AFmoSYa2OtuBclp3iatrYBrtosr53Htw/YH9EIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fAE3QuKVN188OtLgpXgLc42fXl/O+aBwwwyR4qRM/sZNtDyN/xRkCh4G+welY9J02YVVjVjKzjXMG56b92OVD8iqdcKKzWNw/lFnOv1aRKWhutbDmqajMF7gzg9gN/LLx+cjXSm96LaW5oUkvvxA276J6vuSK1RxlEFCeAprwcU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mFRAROWq; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=sMdzW5JT; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56PDfrGj017872;
+	Fri, 25 Jul 2025 13:49:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=VfwMWullMTl87fqaUJU10tRt4BjsmbRepcIOscUb9vc=; b=
+	mFRAROWqxODOTiZo0YMl1xcdR9+qdxGw8xW/Mivm61Juj2HYhRod2cpuBzzSUbPS
+	Z/bVZ9uoqcTGiQP6PLYxCewfAY4n/CeqD2OU4xp6YtKN1t4Yo804zPebvGJf0t4K
+	mx2APbuQl2ongS5ZHGOEHL1rUMUiBIIH8fiRjcV9SHUrOD8eWovUlyAyhAVBOASq
+	wUqRNPpPT0FsMAnBLHXXUFAwhwU12mwpic5D3nOT9zu52c0zRQucrBEkBDD0BAJr
+	G1F6GxToEHjrlxuuegxPemdj33cDE+hg0YWPWP3CkPlZ5ForoyrD0cn+12g8JVE4
+	bb0p5e7azoaXExxev9AfMQ==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 483w1jh34m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Jul 2025 13:49:02 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56PDZTCB005774;
+	Fri, 25 Jul 2025 13:49:01 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2070.outbound.protection.outlook.com [40.107.92.70])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4801td38ad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Jul 2025 13:49:01 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ohvWSRgELh3Is1MS0DIPL/b9zWGQlw3SP4jAngnjrtOyx1bK7w+JMSDwW2t7qeAFlV10jx2rI8ZC1aQGoOsNUC0MJ9xdn9ayMibo+NSFfLAOnFtmWZIXuHCqFhdVS7hjj/1IxORhTjmnLix+d/xs1r5rLJsuWlpxLZmU2HPRJ6Lkw0J+aHUFN+S3ae6oQUUOwf50WSR5w9LuiQMOy+ggK1Y86ihekrQ/dO4/9Mt8IVZzBMPxCEMsGmdyuVRnQdycSmyuvc1NAZutNgGVhc6tZglrklNrhrcnrL5UPQQL+AQRRBjPqOwAXEMBkoziCZW0dZs1YcWC1des1WjEQudiWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VfwMWullMTl87fqaUJU10tRt4BjsmbRepcIOscUb9vc=;
+ b=IMASpKYrFkL+ksnVUUVIuE8vPkI4O2CzVFms/4joh1rzbwzhs7LikVo14bCPRhqcPGPwIG896zl4XFdvDf6k/DIpKpGPuZrCdC0pp6w/k9SnpFTWVGQoRS24B0N78UOtT0oYGioj8Nrr2NYJYI+gnwFVVhwoEZvM/m814jhU4JS4AKklVdX4TPKlTomSfu0M0WP3oL7HufAJEvZGtXMRET6kIhImMwTx4Zwta06DcmIdnZHMPbO8Es4imrAt1gG5S5HojQL2V5NiSG+0aNQiwjXXHdBPILcyZjgrUyuRjJ6vYdkcDTathpcBVdMgJhrnR7W4YsbOJwxcDNexSFcDxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VfwMWullMTl87fqaUJU10tRt4BjsmbRepcIOscUb9vc=;
+ b=sMdzW5JTnJo6gyS0Ry0mSIwKvvZkCZyo7ylOQWx6fphYguESEqhtwtN3n605XxgxuKZwK/D74HNinEGcCDC4QBMq2p1gFFSf1ChdLVjBluOyS2JmriWmFtlSof435XKbkd8zZGEn4UpRr6/2fbrcLsnjQvSc89kGfzhl4sD1IHw=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SA6PR10MB8015.namprd10.prod.outlook.com (2603:10b6:806:438::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Fri, 25 Jul
+ 2025 13:48:59 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8964.023; Fri, 25 Jul 2025
+ 13:48:59 +0000
+Date: Fri, 25 Jul 2025 14:48:56 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Jann Horn <jannh@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>, Rik van Riel <riel@surriel.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/rmap: Add anon_vma lifetime debug check
+Message-ID: <50502c3b-903f-4018-b796-4a158f939593@lucifer.local>
+References: <20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com>
+ <c3f04c75-a73b-48bb-b56e-7b18e57c2382@lucifer.local>
+ <CAG48ez31aVnoBiMMjUczbmThWnRGmod4yppgMVqf2Nu5-hjU2g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez31aVnoBiMMjUczbmThWnRGmod4yppgMVqf2Nu5-hjU2g@mail.gmail.com>
+X-ClientProxiedBy: LO4P265CA0313.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:390::15) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SA6PR10MB8015:EE_
+X-MS-Office365-Filtering-Correlation-Id: b5ad8364-158c-43b8-2d59-08ddcb8201b2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UkE0d2xxSXNPRldWM25vSDVnNUU5dkZTQnRyNEZTZTJoMXlWNmJYSlRKclNQ?=
+ =?utf-8?B?dTBwN0Q5dW1xTUJTZjFyRFFCb1ZDNnEyY1VuT3AvTndqN1ROd29BUDJvTlRH?=
+ =?utf-8?B?b3pPUHh3WE02aDlSMGNZRm1zeTlnbWJyb3ZaUGFROTJYWVM3dVgyQWJBYm1p?=
+ =?utf-8?B?d2laNEx6SzY5VW9uQXllS3N5N1ZtV1hHcVNtVlhLWjFSY2ltQ2Rwc08wN1A1?=
+ =?utf-8?B?ZG04Mnk1aldsTEdHMjNtazJQbitQclR3TkJsVDk4T3VOQnFtTWd6NmMrUFB4?=
+ =?utf-8?B?YmpqRVhRdkF5dmZZTGNISTVjdVRnL0gxT25CVEhBZkM2dHZYNzQ1NkdWelIw?=
+ =?utf-8?B?eU4va3NTazczSnBwa25iVWkwcHUwOVY5aDJLNzhadnZ4b3FmemJBWU8zMjl3?=
+ =?utf-8?B?ZUkzNVd4RG81UFA4QW5QNGVoK01JcC9ETDAvT0RzdHIra3dxTy84MXQzOFJX?=
+ =?utf-8?B?aUxLcFB4ck9MWUJpczIwYm9Vbi90c2ZON3RpcUxrcy80cEM2UExKbU1GOEs5?=
+ =?utf-8?B?ZkVkREV4RDh1TFNjeHJTdi94OUsrZFp4MWJQODlLaG1TKzdjTjlKNVRRZkhX?=
+ =?utf-8?B?THRVd1NOTGFyWEJCMXhmRiszVm9TdUtzbitiWHp4bjYwNkdVbHR2WFVXdGVB?=
+ =?utf-8?B?UmtMdkU1RmY2K2FIRit4V0ZteC95end5M29UclhJSU9WUC9GamdJNXYrRHhO?=
+ =?utf-8?B?WTZEOXROdkhOV29BQXZvQUZzQVdrUENFYjd0My9jbER2VjVway9kQUc5aysy?=
+ =?utf-8?B?Vkt1c0FodDBnRmZnaG0rVEFnRmJGZ0dOTW5NQVdkMFZCT0dXR1dUdmFLL3hy?=
+ =?utf-8?B?NEdpT2htcnRoNWpYNUF4SVVUV3ErUzN4djBrRCt4blF1cUI2WE9aZWE5Nzdh?=
+ =?utf-8?B?d1Y4Ti94bFZBSlM3Mk5ya2E4eFpKYmRJRmJNRi8yYytqeDNMWXNyMjRxck9Q?=
+ =?utf-8?B?T0FOTit0WFkrenlaWmpBVjgxWTZuTW5sZVprSExTdlJsUFlhZi9xVWpiNlVU?=
+ =?utf-8?B?dGhlOHdqd3FxRmlpbnJqQ3lBOVErWHFLRnNhYURjY0RwM1UzcmpXU0kvK3hs?=
+ =?utf-8?B?QnNPTHhVNy9uZVFOSGJzOHQ5dTJYNzF4dVZYQXpiTCtncW84VEMyWlZ5WkZv?=
+ =?utf-8?B?NXpRbllwcjlPaFN6U0I1K1N2OXJqU0hESGVpOS9FNnQxUW4xeGU3QzFMcEhD?=
+ =?utf-8?B?U2g3TGtsUnBaa0szNVNCUVUwdTNkNFZBcE54VGQ2V1ZQclVpcGpZVERFcWN3?=
+ =?utf-8?B?MjdsZFJxbGlNVWxjaldBeUdkWkcwQTZxZi82Ym9GbllRYVhaYkYzekwycUd2?=
+ =?utf-8?B?enZsN1RBdHhnQU43SzBCWGovSlBJOWNpWmJQUUJYWHJ1UnZEU2R2UGo1cXYz?=
+ =?utf-8?B?VDlEVmkwcVJrZnM1QUVmNGF6YTlyaHQ2bVlRZGFBSUt0UW14NFVSRE5Bem1n?=
+ =?utf-8?B?WkhoVUZabHhnNWwrNVhqM3VIU3JydzlKMVR0eVhhbWZ3MHFIRlFvenM2M2FQ?=
+ =?utf-8?B?YUpiTGdML2diZm92UzRnQW1RQ2dlb0N6MFJIRE9zV1Vucm42SGlwSXJpS0xG?=
+ =?utf-8?B?TFJTRzFTQjZhWTBKQnRmclRGMVlYTFNFcWYrdnV5VkpWWEFmbjlGV0hiL1Vn?=
+ =?utf-8?B?RzVMek1CbHR2R1NSSE5YZ25kS2JiUEw5SW9ReWJaQUlmSHVWeXFLUlRKckJw?=
+ =?utf-8?B?RVM3eUFjM3pUQkhsVkRNYXprUnppQlR6MzcrV0N2UHgwN1NHNFlaZFI2bm5V?=
+ =?utf-8?B?ZTJCYjRaVGhPOGVwSHNVL2kyMXRkZENHY1R6NWxKRTZrekxjWTdobzFPVHMy?=
+ =?utf-8?B?cHk4Vzd2a1BxMmlwMm1xZnpEa3VOdXRvOTlTNFdHTHRiRDBhNjNPYXdIU2Fh?=
+ =?utf-8?B?WEtCc0dtUzM4cHBSd3N0UHRMN2J1NVZKTTVaR0l5YTc5VkZVWmJlUjh6LzBO?=
+ =?utf-8?Q?WTrJbO5t/rY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TTZHcERRRzU0K2VNRWhXZXRFMDNkWWRRWENFYWtUMU52TzNEMnpSUm52V2FU?=
+ =?utf-8?B?ZEVnV3pqVDZsaDRGYUt5RFR2Z1hDeXZlWXNzSmpNWFB1c1VXOFpYMnlWZmtC?=
+ =?utf-8?B?NXBnWEN4M0U4OWZKUFliQm51cVV4SVVybjduaXEwcUw3K3FrbVY3K0h3c0Fj?=
+ =?utf-8?B?dE52MXhHbGRtSXNjalZ6K3NadjluVklVUXprbzFnZ2V2dFZVUjJHOEZMYlJX?=
+ =?utf-8?B?QzBYYjBHSkpUL3RNblR4aW1Ndk9oekZ1WnpUSU03NDRQSVV0RGJZZyt5dlBv?=
+ =?utf-8?B?cU1xeURvRVc1VWpJUzlnbzRlU0FSSzE0L0VpTHYvSXlGZUJCUkRKVXBuNVI3?=
+ =?utf-8?B?U3F0aXZpOUZmUFlnVmNaaktCb28xc2JwdEpsS1p5VkMwajBUWFRscG5Wbkc5?=
+ =?utf-8?B?TGtZZHdKV01RWFI4RjBXVis5c2V5L2N2SW9lMjFBYjBYbnVkbkJaK3grakg4?=
+ =?utf-8?B?SkIvcVBaQVJyRW9VS3pWMFlUclJndGFkeUNFbGhma2lDWjZ1YStNMVhxdmxZ?=
+ =?utf-8?B?dUx2eE94R0RkM0d5SFlaV2hiVUZZUk9xSXVCNFcwTXhmeWVESmhld2hPV0E3?=
+ =?utf-8?B?VDlaR3pKSWJQQlJsaWVCWTUwNFBadXJ5UjNMbnRTTm51VGJQNUtrWUtMb0lS?=
+ =?utf-8?B?Ulovd1RsM2hHL2VPZDdoODdIN0xRVTVJRkFkcnpEQUZzQXg2RkpSaTlHSmZH?=
+ =?utf-8?B?aEErRXVCZnhBb2Z2MVAyVDZUUElCRTF6TEx3ZVlkK3g3SGQ3bnJYNnd0K3RR?=
+ =?utf-8?B?OXJsYXhOTXg2OXd0dkc0NHNsWUcwQ0k0Zy9kWXNhM0czQk5Ia3VzMVlxRlM1?=
+ =?utf-8?B?ZlY3NC92UVN2bVEvTitONXFYdWhDWjMrcVRsMjZXbkhSYWNzQ3JiK1EvK2VV?=
+ =?utf-8?B?YmtpY2dEQmdTRzUwZEVGbjB1ajVkK2V6K2czYjVHWkM2UDBpRFhMRGVmQ2pX?=
+ =?utf-8?B?WXNKZlN0bGo3OGE0ZnBXS3IrS0JZb3dvL2JaK0d2QktSQ3BRaGh4Mmg5SGdB?=
+ =?utf-8?B?Um9MQ0tvK1FCSmJqaFRRdU5nT1BuY3E0bEhRMWdZcWVqTkkzRWVZeE1oSnQ1?=
+ =?utf-8?B?SktkTmxUSHZteWwwNXFDR3IyaTlENmlZbWZGRkhNRmtPbUFHV3B4RG8vYWRF?=
+ =?utf-8?B?QlZlZ1IrVmRtVXEzQVloK3E0RkVlSXFUb3YwSG81cXlabGtzQ0JPL05TcTlM?=
+ =?utf-8?B?Y1Azd2wzSk1IQk5Od3NzWXpJaE5EOCtqWGhiNStaTXltQ0xVZXl6bG9zMDZk?=
+ =?utf-8?B?YUI3QkQrUE9JUC9UTHdlRmI2RTJtZGZvUkZGa1ZxamoxVEx3UXROQVhJQmlz?=
+ =?utf-8?B?S1djYzdudnh1RkJIaFBJdCtzOVc3dFAyOWFoRTFkeUdqWE9weFpPM1o5Zlc0?=
+ =?utf-8?B?MXZyNHRSVWM2TVhxclIyaUxweTdHOVFpS1hJTXg1dHZvTUxWOE13QUFzMitB?=
+ =?utf-8?B?UnVwTGMwSTd1Z0JVTGE3ajRCRmhqRmk0K3VtQWtncFp1U2ZjaTlVQnZCWjh3?=
+ =?utf-8?B?VE5JeXZydnRwZzlCeFVObmUxaitGWXJ1QnFRQk9lTGhqTkZ1ZE0wV3lCb1JR?=
+ =?utf-8?B?Ry9DYzRMOHRtL0pJUlFXaElpUXc1RWZkdmxEWUhEbUFHN0ZnL0paRFpGRUla?=
+ =?utf-8?B?N2tCaUJIWjVDRkRsYW9WMlYyTHVrSVZVMWs4U2ZWS0NCSXpZZzZLakdyUEhl?=
+ =?utf-8?B?NFQweWR0YWVWRXJtZ1RJU2Q2WExCS0ZNdjdjVzNWeDhQTVJraDZKTEVycjB4?=
+ =?utf-8?B?eVhrb2ZEd2llSjdDZk41VzZQRU9Fa2pydkJDanh6c1RqNzhhUmk2RjY0VDRJ?=
+ =?utf-8?B?RXhvMWxsdW44SWkwejNiTUpycUIzSENYNHA5QzNGZTdOK2VHbjFsYlI1WDZq?=
+ =?utf-8?B?Y1cwRmNQTm9aOU1WNkpnWCtNYXBxVjUvQ0RVbWFxQ1JaNmNwZVNVSmIzU2tH?=
+ =?utf-8?B?RmNmYmJ6ZWtySnJCem44a2VSdHM4ZC83dXF6YWxzcy9QcFRGL1dEZ3djYWRL?=
+ =?utf-8?B?aGx6MSs4ajFJY1p5enFXMlM2Z3NYOFdienNCMmw2bitlWU9yYWxTaVlWSmx5?=
+ =?utf-8?B?azlMRlZLcU1lQUtJYkNsQWsxbzNPaitveFArUXVTcE5jSHRRMGxjTWh4SVQ5?=
+ =?utf-8?B?Vi9mTllXWjRkQ2dJYjRkbFlHb0NhTDJXMUpFTjZvcUUxakoyamxSaHVJbFNw?=
+ =?utf-8?B?Snc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	aMEZIFXLC5Uy4jwRy31PkDQz7uzuzTqyCQb0pGuHQvLvh6ILlndT7lSz+1h2rSvyh/VTMp8MJDtW30QEziIgRIVQO2YkS5Gkq69fCei7VgkDyTDRrsSx8z3hnyZ6cG51jQfmUzRYVJqnXNyZJGEpexxEP/+M273HCj/3uCE0TO4ZX5mTkTGHq3F8AQHqYfLGBWhnje5ZzyCJQTEd1dHi9hAGaxs98NnrkKp/sCgFZsD1mRly0ryAV0i3EQtKb1czDBbrvfFJu48V0ooebEHgBovMi7PxnJ0OCCz/uISDhdYMIuckske41gIn3hdTrvOM0hkm4XkdQ/SGyYoDNLhnbmpHYp/DQpLUF51REzpyUCk+ihMU5WyprEuvD7yJ87ul500m0JsqY+QkS/ENLI2XecnjcQxml21kRPfyxmdSX2YRkae3Oes3AZA1U/NYF958y6y3zH3dNxO1C8unYoBI8ePKBdnM4u9KgGkn1TP/oW/gl/2D40ECvbHFkDZgte4iAt1mqsIIW6x/bWOOV5vtmyM0/3VQgTcK6v4wRMgpV5R+oIW6+nNy031a5SrOLY/bqwYuhoMHQjjpE7/xjCxrgCt8TJhR45gEy+sbIt+cMNk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5ad8364-158c-43b8-2d59-08ddcb8201b2
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 13:48:59.2977
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AdlNV1rSciGLIHM9Nw5tutKI9j+6CD9bLg+K4bGllVbQ64mMsn6Uh8WNNl+iHu8HhhZAVkvUBpR2OjlbWuVxElG0LDvWUt097km55e8tqTg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR10MB8015
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_03,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ bulkscore=0 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2507250118
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDExNyBTYWx0ZWRfX7jtamWqI6tiM
+ QnqoZEk6mfzvPl5b2iO9dKqggVwnOD7JcutBiR7z1SlmQ8rrn9xysDnZFczweQD8Hax1sTt1tX9
+ zp+9Ra+f84HMtP9YUwBa3KVcVeCvgfDEnnidwj6CgJLAwLoC0cSjW6TT8uLbdYq6UTsh4E9oj4j
+ VOSNN61r08/5izoVQ9VajhWbmXJngwSoeT42vEwNtJ5I0zksRGPqPV/q+fwSLBIefK+E1VwUFt9
+ 4fXv7fsALpSOXD5b9pcrIKvfJCdS8SDej3st2nGo2xRjbctUJcQBEeuIL0kgncpdgm9NeLcUXDe
+ MJdjfR0zm4I4Nhfn7WDtgDK9fT9oXrMje2b/xFWp/DP6sQEF0e+/D2Vk35JV6rjuQEB0Gi6Cel/
+ DHEQLpTNYshrSvVrkRA/IF+/BPEglgCHTrfsqlbFP4ycNNvrprfGTMVGFdkZ5oZRsMW0Tf2w
+X-Authority-Analysis: v=2.4 cv=W+s4VQWk c=1 sm=1 tr=0 ts=68838b4e cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
+ a=yPCof4ZbAAAA:8 a=pT2omL0wxwnFCBA8yhgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: 0F3WEUN2oLidSHdIVFrsPEILIlJRCMZE
+X-Proofpoint-GUID: 0F3WEUN2oLidSHdIVFrsPEILIlJRCMZE
 
-During fuzz testing, the following issue was discovered:
+On Fri, Jul 25, 2025 at 02:00:18PM +0200, Jann Horn wrote:
+> On Fri, Jul 25, 2025 at 1:32 PM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> > On Thu, Jul 24, 2025 at 09:13:50PM +0200, Jann Horn wrote:
+> > > If an anon page is mapped into userspace, its anon_vma must be alive,
+> > > otherwise rmap walks can hit UAF.
+> >
+> > This is extremely weird. I guess it's a UAF of vma->anon_vma
+> >
+> > Because we:
+> >
+> > put_anon_vma()
+> > ->__put_anon_vma()
+> > ->anon_vma_free() (also the root anon_vma... interestingly!)
+>
+> FWIW, the thing we're trying to access can't be the root anon_vma,
+> since KASAN says the UAF'd object was allocated from anon_vma_fork.
 
-BUG: KMSAN: uninit-value in __dma_map_sg_attrs+0x217/0x310
- __dma_map_sg_attrs+0x217/0x310
- dma_map_sg_attrs+0x4a/0x70
- ata_qc_issue+0x9f8/0x1420
- __ata_scsi_queuecmd+0x1657/0x1740
- ata_scsi_queuecmd+0x79a/0x920
- scsi_queue_rq+0x4472/0x4f40
- blk_mq_dispatch_rq_list+0x1cca/0x3ee0
- __blk_mq_sched_dispatch_requests+0x458/0x630
- blk_mq_sched_dispatch_requests+0x15b/0x340
- __blk_mq_run_hw_queue+0xe5/0x250
- __blk_mq_delay_run_hw_queue+0x138/0x780
- blk_mq_run_hw_queue+0x4bb/0x7e0
- blk_mq_sched_insert_request+0x2a7/0x4c0
- blk_execute_rq+0x497/0x8a0
- sg_io+0xbe0/0xe20
- scsi_ioctl+0x2b36/0x3c60
- sr_block_ioctl+0x319/0x440
- blkdev_ioctl+0x80f/0xd70
- __se_sys_ioctl+0x219/0x420
- __x64_sys_ioctl+0x93/0xe0
- x64_sys_call+0x1d6c/0x3ad0
- do_syscall_64+0x4c/0xa0
- entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+OK that's interesting, this is data.
 
-Uninit was created at:
- __alloc_pages+0x5c0/0xc80
- alloc_pages+0xe0e/0x1050
- blk_rq_map_user_iov+0x2b77/0x6100
- blk_rq_map_user_io+0x2fa/0x4d0
- sg_io+0xad6/0xe20
- scsi_ioctl+0x2b36/0x3c60
- sr_block_ioctl+0x319/0x440
- blkdev_ioctl+0x80f/0xd70
- __se_sys_ioctl+0x219/0x420
- __x64_sys_ioctl+0x93/0xe0
- x64_sys_call+0x1d6c/0x3ad0
- do_syscall_64+0x4c/0xa0
- entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+I wonder if related to anon_vma reuse somehow...
 
-Bytes 14-15 of 16 are uninitialized
-Memory access of size 16 starts at ffff88800cbdb000
+>
+> > But none of this obviously updates the vma to set vma->anon_vma to NULL.
+> >
+> > So yeah god almighty. To get this, we must be dereffing vma->anon_vma
+> > somewhere unexpected.
+>
+> I don't see how vma->anon_vma is directly relevant. I think the
+> relevant things are:
 
-When processing the last unaligned element of the scatterlist,
-it is supplemented with missing bytes in the amount of pad_len.
-These bytes remain uninitialized, which leads to a problem.
+Yeah sorry, I'm reflexively assuming it's a VMA that's the issue here. I'll
+dig into the syzkallers when I can to get more insights if there are any to
+be had (maybe this patch is the difference on this).
 
-Add zeroing pad_len bytes of padding by pad_offset offset before
-increasing its length. This ensures that the DMA does not receive
-uninitialized data and eliminates the KMSAN warning.
+>
+> An anon_vma is only kept alive as long as at least one associated VMA
+> is still alive.
 
-In this case, the pages are not located in highmem, but in the
-general case they might be, so kmap_local_page() is used for mapping.
+Well, including child VMA's yes.
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> An anon folio may outlive the VMAs it comes from, so it may also
+> outlive its associated anon_vma.
 
-Fixes: 40b01b9bbdf5 ("block: update bio according to DMA alignment padding")
-Cc: stable@vger.kernel.org
-Co-developed-by: Boris Tonofa <b.tonofa@ideco.ru>
-Signed-off-by: Boris Tonofa <b.tonofa@ideco.ru>
-Signed-off-by: Petr Vaganov <p.vaganov@ideco.ru>
----
-v2: Added tag "Cc: stable@vger.kernel.org".
+Yes, I will share some diagrams I did a while ago to outline this. They're
+ASCII and make you want to cry! :)
 
- drivers/scsi/scsi_lib.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Hmm, if non-root, I wonder if we
 
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 144c72f0737a..d287e24b6013 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1153,6 +1153,11 @@ blk_status_t scsi_alloc_sgtables(struct scsi_cmnd *cmd)
- 	if (blk_rq_bytes(rq) & rq->q->limits.dma_pad_mask) {
- 		unsigned int pad_len =
- 			(rq->q->limits.dma_pad_mask & ~blk_rq_bytes(rq)) + 1;
-+		unsigned int pad_offset = last_sg->offset + last_sg->length;
-+		void *vaddr = kmap_local_page(sg_page(last_sg));
-+
-+		memset(vaddr + pad_offset, 0, pad_len);
-+		kunmap_local(vaddr);
- 
- 		last_sg->length += pad_len;
- 		cmd->extra_len += pad_len;
--- 
-2.50.1
+> When an anon_vma goes away, it does not clear the ->mapping of
+> associated folios (this is an intentional design choice).
 
+Well it can't without having to do an expensive page table walk, so
+obviously by design yes.
+
+> When an rmap traversal wants to go from a folio to the associated
+> anon_vma, it (under RCU) checks that the mapcount is non-zero, which
+> implies that there must still be associated VMAs, which implies that
+> the associated anon_vma must still be alive; and then it dereferences
+> the ->mapping.
+
+
+
+>
+> I think the ASAN splat indicates that syzkaller must fairly often get
+> into situations where the ->mapping pointer is dangling despite the
+> mapcount being non-zero, but syzkaller likely only actually hits the
+> UAF when the kernel gets memory pressure by chance and does rmap walks
+> on the reclaim path.
+
+Yup.
+
+>
+> So there are several invariants we're relying on here, and breaking
+> any one of these could allow an rmap traversal to cause UAF; a
+> non-exhaustive list:
+
+This is good, because we can start to really lay out these things. This is
+also vital to my anon_vma work.
+
+>
+> 1. An anon folio is only mapped into VMAs that are associated with the
+> folio's anon_vma.
+
+Correct.
+
+> 2. Removing an anon folio mapping reduces the anon folio's mapcount
+> before the VMA can go away.
+
+the anon folio's mapcount? You mean the VMA's? :P
+
+> 3. VMA splitting/merging/forking properly preserves the anon_vma
+  association.
+
+I had slides for this for version 1 of my LSF presentation, not sure if I
+kept...
+
+But yes it does fundamentally, in a slightly typically overwrought way.
+
+> 4. If the anon-exclusive bit is set, the folio is only mapped in a
+> single place (otherwise swapout+swapin could erroneously set
+> RMAP_EXCLUSIVE, causing the swapped-in folio to be associated with the
+> wrong anon_vma).
+
+I believe (David?) swapin can cause this not to be the case?
+
+> 5. When a VMA is associated with an anon_vma, it is always also
+> associated with the corresponding root anon_vma (necessary because
+> non-RMAP_EXCLUSIVE swapin falls back to associating the folio with the
+> root anon_vma).
+
+OK but we know for sure the UAF is not on a root anon_vma so it's not some
+weirdness with trying to access anon_vma->root
+
+> 6. If two VMAs in the same process have the same ->anon_vma, their
+> anonvma chains must be the same (otherwise VMA merging can break
+> stuff).
+>
+
+What do you mean the same?
+
+If you mean they both must have AVC's which ponit to the individual VMAs
+and each point to the same anon_vma, yes.
+
+Then we see e.g. after split anon_vma->num_active_vmas being incremented.
+
+So in relation to this, as to assignment of vma->anon_vma or not:
+
+1. Where vma->anon_vma == anon_vma A.
+
+2. Where we fork the process and the new vma->anon_vma allocates a new
+   anon_vma to vma->anon_vma B, whose parent, root fields reference
+   anon_vma A.
+
+3. We can end up with anon_vma's where no vma->anon_vma points to them, and
+   folio->mapping (masking lower bits) == anon_vma, but then the refcount
+   should be 1. Also I can't see how you can do that without a
+   folio->mapping pointing at it:
+
+Process 1
+
+     |-------------|
+     | avc         v
+  |-----|   vma |-----|
+  |  A  |<------| avc |
+  |-----|       |-----|        |--------------------------|
+     | anon_vma    ^           |                          |
+     |             |--------------------|                 |
+     v     rb_root |                    |                 |
+  |---------------------|               |                 |
+  | refcount = 3        |               |                 |
+  | num_children = 2    |<--------------x----|            |
+  | num_active_vmas = 1 |               |    |            |
+  |---------------------|               |    |            |
+                           |------------|    |            |
+Process 2                  |                 |            |
+                           |                 |            |
+     |-------------|       |                 |            |
+     | avc         v       v                 |            |
+  |-----|   vma |-----| |-----|              |            |
+  |  B  |<------| avc |.| avc |              |            |
+  |-----|       |-----| |-----|              |            |
+     | anon_vma    ^                         |            |
+     |             |-------------------------x--------|   |
+     v     rb_root |                         |        |   |
+  |---------------------|                    |        |   |
+  | refcount = 1        |<-------------------x----|   |   |
+  | num_children = 1    |--------------------|    |   |   |
+  | num_active_vmas = 1 | parent                  |   |   |
+  |---------------------|                         |   |   |
+                                                  |   |   |
+Process 3                                         |   |   |
+                           |----------------------x---|   |
+     |-------------|       |       |--------------x-------|
+     | avc         v       v       v              |
+  |-----|   vma |-----| |-----| |-----|           |
+  |  C  |<------| avc |.| avc |.| avc |           |
+  |-----|       |-----| |-----| |-----|           |
+     | anon_vma    ^                              |
+     |             |                              |
+     v     rb_root |                              |
+  |---------------------|                         |
+  | refcount = 1        |                         |
+  | num_children = 0    |-------------------------|
+  | num_active_vmas = 1 | parent
+  |---------------------|
+
+UNMAP B
+
+Process 1
+
+     |-------------|
+     | avc         v
+  |-----|   vma |-----|
+  |  A  |<------| avc |
+  |-----|       |-----|        |--------------------------|
+     | anon_vma    ^           |                          |
+     |             |------------                          |
+     v     rb_root |                                      |
+  |---------------------|                                 |
+  | refcount = 3        |                                 |
+  | num_children = 2    |<-------------------|            |
+  | num_active_vmas = 1 |                    |            |
+  |---------------------|                    |            |
+                                             |            |
+Process 2                                    |            |
+                                             |            |
+                   |-------------------------x--------|   |
+           rb_root |                         |        |   |
+  |---------------------|                    |        |   |
+  | refcount = 1        |<-------------------x----|   |   | We keep empty
+  | num_children = 1    |--------------------|    |   |   | anon_vma round.
+  | num_active_vmas = 0 | parent                  |   |   |
+  |---------------------|                         |   |   |
+                                                  |   |   |
+Process 3                                         |   |   |
+                           |----------------------x---|   |
+     |-------------|       |       |--------------x-------|
+     | avc         v       v       v              |
+  |-----|   vma |-----| |-----| |-----|           |
+  |  C  |<------| avc |.| avc |.| avc |           |
+  |-----|       |-----| |-----| |-----|           |
+     | anon_vma    ^                              |
+     |             |                              |
+     v     rb_root |                              |
+  |---------------------|                         |
+  | refcount = 1        |                         |
+  | num_children = 0    |-------------------------|
+  | num_active_vmas = 1 | parent
+  |---------------------|
+
+4. But they can get reused through the anon_vma reuse logic:
+
+FORK
+
+Process 1
+
+     |-------------|
+     | avc         v
+  |-----|   vma |-----|             |-----------------------------|
+  |  A  |<------| avc |             |                             |
+  |-----|       |-----|        |--------------------------|       |
+     | anon_vma    ^           |                          |       |
+     |             |-----------|                          |       |
+     v     rb_root |                                      |       |
+  |---------------------|                                 |       |
+  | refcount = 3        | (self-parent)                   |       |
+  | num_children = 2    |<-------------------|            |       |
+  | num_active_vmas = 1 |                    |            |       |
+  |---------------------|                    |            |       |
+                                             |            |       |
+Process 2               |--------------------x------------x-------x-------|
+                        |                    |            |       |       |
+                   |-------------------------x--------|   |       |       |
+           rb_root |                         |        |   |       |       |
+  |---------------------|<-------------------x--------x---x-------x---|   |
+  | refcount = 1        |<-------------------x----|   |   |       |   |   |
+  | num_children = 1    |--------------------|    |   |   |       |   |   |
+  | num_active_vmas = 1 | parent                  |   |   |       |   |   |
+  |---------------------|                         |   |   |       |   |   |
+                                                  |   |   |       |   |   |
+Process 3                                         |   |   |       |   |   |
+                           |----------------------x---|   |       |   |   |
+     |-------------|       |       |--------------x-------|       |   |   |
+     | avc         v       v       v              |               |   |   |
+  |-----|   vma |-----| |-----| |-----|           |               |   |   |
+  |  C  |<------| avc |.| avc |.| avc |           |               |   |   |
+  |-----|       |-----| |-----| |-----|           |               |   |   |
+     | anon_vma    ^                              |               |   |   |
+     |             |------------------------------x-----------|   |   |   |
+     v     rb_root |                              |           |   |   |   |
+  |---------------------|                         |           |   |   |   |
+  | refcount = 1        |                         |           |   |   |   |
+  | num_children = 0    |-------------------------|           |   |   |   |
+  | num_active_vmas = 1 | parent                              |   |   |   |
+  |---------------------|                                     |   |   |   |
+                                                              |   |   |   |
+Process 4                                                     |   |   |   |
+                           |----------------------------------|   |   |   |
+     |-------------|       |       |------------------------------|   |   |
+     | avc         v       v       v                                  |   |
+  |-----|   vma |-----| |-----| |-----|                               |   |
+  |  D  |<------| avc |.| avc |.| avc |                               |   |
+  |-----|       |-----| |-----| |-----|                               |   |
+     | anon_vma    ^                                                  |   |
+     |             |--------------------------------------------------x---|
+     |                                                                |
+     |----------------------------------------------------------------|
+
+God simple isn't it? ;)
+
+I verified these numbers with drgn, interesting add a new child doesn't
+increment refcount...
+
+> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>
+> Thanks!
+
+No problem, thanks for doing this!
+
+>
+> > > ---
+> > >  include/linux/rmap.h | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > >
+> > > diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+> > > index c4f4903b1088..ba694c436f59 100644
+> > > --- a/include/linux/rmap.h
+> > > +++ b/include/linux/rmap.h
+> > > @@ -449,6 +449,19 @@ static inline void __folio_rmap_sanity_checks(const struct folio *folio,
+> > >       default:
+> > >               VM_WARN_ON_ONCE(true);
+> > >       }
+> > > +
+> > > +     /*
+> > > +      * Anon folios must have an associated live anon_vma as long as they're
+> > > +      * mapped into userspace.
+> > > +      * Part of the purpose of the atomic_read() is to make KASAN check that
+> > > +      * the anon_vma is still alive.
+> > > +      */
+> > > +     if (IS_ENABLED(CONFIG_DEBUG_VM) && PageAnonNotKsm(page)) {
+> > > +             unsigned long mapping = (unsigned long)folio->mapping;
+> > > +             struct anon_vma *anon_vma = (void *)(mapping - PAGE_MAPPING_ANON);
+> > > +
+> > > +             VM_WARN_ON_FOLIO(atomic_read(&anon_vma->refcount) == 0, folio);
+> >
+> > Maybe stupid question, but wouldn't we pick this up with KASAN? Or would we
+> > pick it up far too late I guess?
+>
+> I mean, it depends on the exact nature of the issue. If the issue is
+> that we somehow end up with anon folios mapped into VMAs that are not
+> associated with the anon folio's anon_vma, then I think the only time
+> we'd notice would be if we randomly end up doing rmap walks of the
+> folios, as syzkaller did above.
+
+Yup. This will trigger on __folio_remove_rmap() and __folio_add_rmap():
+
+do_swap_page() / remove_migration_pte() / remove_migration_pmd()
+-> folio_add_anon_rmap_ptes() / folio_add_anon_rmap_pmd()
+-> __folio_add_anon_rmap()
+-> __folio_add_rmap()
+
+
+vmf_insert_folio_pud() / set_pte_range() / insert_page_into_pte_locked() / mfill_atomic_install_pte() / vmf_insert_folio_pmd() / remove_migration_pmd() / remove_migration_pte()
+-> folio_add_file_rmap_ptes() / folio_add_file_rmap_pmd() / folio_add_file_rmap_pud()
+-> __folio_add_file_rmap()
+-> __folio_add_rmap()
+
+I guess we aren't interested in folio_add_new_anon_rmap() as we won't have
+an existing anon_vma there
+
+>
+> > We're sort of relying on this
+> >
+> > a. being a UAF
+> >
+> > b. the thing we're UAF-ing not either corrupting this field or (if that
+> >     memory is actually reused as an anon_vma - I'm not familiar with slab
+> >     caches - so maybe it's quite likely - getting its refcount incremented.
+>
+> KASAN sees the memory read I'm doing with this atomic_read(), so in
+> KASAN builds, if this is a UAF, it should trigger a KASAN splat
+> (modulo KASAN limitations around when UAF can be detected). Basically,
+> in KASAN builds, the actual explicit check I'm doing here is only
+> relevant if the object has not yet been freed. That's why I wrote the
+> comment "Part of the purpose of the atomic_read() is to make KASAN
+> check that the anon_vma is still alive.".
+
+Hm, I'm confused, how can you detect a UAF if the object cannot yet be
+freed? :P
+
+or would that be the case were it not an atomic_read()?
+
+I guess this permits this to be detected in a timely manner.
+
+>
+> > Which is fine - because hey this is the only way we can get a hint that
+> > this is happening, but I think we should describe what we're doing.
+>
+> Sure, I can make the comment more verbose.
+
+Thanks!
 
