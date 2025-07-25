@@ -1,193 +1,234 @@
-Return-Path: <linux-kernel+bounces-745708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C71B11D58
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:15:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B61B11D65
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE7A1C87A83
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9980A1C27081
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8D12E6D05;
-	Fri, 25 Jul 2025 11:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4E62E6137;
+	Fri, 25 Jul 2025 11:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RqFT9LD2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jx1lljtM"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B4424A04A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C938E2114;
+	Fri, 25 Jul 2025 11:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753442136; cv=none; b=gj9vZzl1Qlw9+jNVY4P+zKMYjjmVayN53Hw1Tw5H4Qzm//0F3HHU03FuJDeH8ietI5LSHkTRU/sJOeZch6+RHYNQ6AXqLhAq4tepVugLHejJJPnA26f5gHI+ECf4W00PeZfuYX+rolLFDv/ZbvY+3AO+LFPmYIi7g2rrw9zj4fE=
+	t=1753442540; cv=none; b=W7/bC1wUB1O3vK8WtXziosiqzTkMfetAZeTGLWCrIpjQnqYxk/Nlc2oj4cPgOh3FEMqrK/46bHeWjg3D4hxQFRinGpIIneQJ6HF7dClD+lot4hputBegRW6b7/H5te4hbv/39JjvmhGX0Syi+MYK7KzdbScNQzeZ6dvyXhX1MzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753442136; c=relaxed/simple;
-	bh=OSeqncM2dX7fMfBZmA+0l06FrlB0CNn9hMzKvIZiRvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mv7adjiIv7fHQWqFuuWSEVfca/Us3KDdt28G8UPkq5bH17tpRmAYkpQlf9uzqIeM64P5QnT7ObxytCcjbUzEBNMPmPAWhW1PTyIQIcxbZmnE1lOW2BKHfBn94I/+8xL8OIwzYTBZTWQSvbYTDDGvCwWrcBBnfrRKWSw4mfnPNOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RqFT9LD2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56PAXZeM000775
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:15:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=+d6fz0EHEv9D/K1jXUDJQkWp
-	0TaHWL+EOqiDWQcysec=; b=RqFT9LD2k3CtCw+OeO9+pL23DKl3w0JrfG0UY32L
-	bJ/qJAngW/YP7HFppZHEr2fHRD+egFn8wazcfL20XcrPgS5CBJJd9o3B5+vf4a63
-	Ok0p2w9NVSR4DL9SiZO2T0joiNBB+onBdfwq9grdFIBk/U2v6mtLx31wr99yD6VO
-	50vTPvFrD9HMMURtjhpjXjn2fdI2ioi+ZQit6WBCX88gLRDWfH15jUlXRFlU5tPm
-	d8AnyQnncv9z9LKuTeiy6YW9SR8I/FV1CARdvVMlfwwrtNxqxFoiX283/0MtPPFo
-	Y4/Jc1BbTqylONL3lNN9F2XEvyev1Dp/bKk2gFMy1Dbh7w==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48489703mg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:15:33 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6fb01bb5d9aso31110846d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:15:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753442133; x=1754046933;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1753442540; c=relaxed/simple;
+	bh=fZuK3vdmjJWaBTc7PamARiPpTkZpxcdOqQIZTB73QlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ohoYG5rEjNoeVjOb+fX70c6JwW5p140lnnxArtyQD240o4vOGfwnHBDAxAl2IlAIz7M0BDk5oVpg0vYRLVKLKcRIyy44Vnv4+oykfISMF6xdXRsPxlvYRO2QeqH2QagJ2hFYBvD1z3IsHsJ1HqvsRzh96p7V7mifI+suWgJ7SDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jx1lljtM; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-23dc5bcf49eso26044465ad.2;
+        Fri, 25 Jul 2025 04:22:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753442538; x=1754047338; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+d6fz0EHEv9D/K1jXUDJQkWp0TaHWL+EOqiDWQcysec=;
-        b=UrMCmhwVAknJ9oJqn+JtK2dWBf65ybnPyYeid9jnlNLr56m6U49Vo5jLRZWeFXygMl
-         y29eAmTAnZaGk4eklaZuPnE3BfHOj1huQp8RW/zbIqfZkHS6iYI955KY8Hn8MQq4phZV
-         j7Q/lvjVDi6J3va6rFq/SKP/nLT6wcYQlkVZYOmzNp6K2TFKEit+CND8yBVGkqB0w60Q
-         JT2Spg+RYyW1IEEFl/a7J2+UCsD3NT9X6qCymBh4eReIMk5g63QqRZmZUDpjcebn/TXq
-         41K0sGdJ89+uWvAD5AfT6D7iqJL7fGykN3vVz7fQ7iPRcViNGBetH6RALRigVEAiwtVO
-         y7rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVf97sZWcD8QmmJ4baU0hMgKAlZCZ3/fYNIxpcLw1+WLic6nj1VCSsOCPE88RyaEJfKLtk/b93Zrpe5Q/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7PDC1uVMsUYW+VF3AxK20geUv3kbs1TiDDle7Wbp63ybQF5FP
-	xzS5+5aAMz3UOuZr4Ana7swaBfDfDwXHKs+uzpXANLHQN44dWHkuOr/hxa413ewivWyNLpChTTX
-	gBmZYAuJqBtArmQwuyuqv2q3d432sXb6FH4Du+xL+f6iD9MWBI0rL9+Gyk9/ybjUhUnk=
-X-Gm-Gg: ASbGncsNF1bLOXiSJsYCn8Acq55fOLqn2rckYJTcA7qzLa4s04xy9jW2FDC1A7zUwUH
-	FIGjcK5E0otUMatIS6LCaLL49sUCX9q6hc4bCRqxknE60KzegEMPxLifLHscAjqklRYRzkXjNsS
-	/UMBItTETVKr307LtpcO3ttIq5/QpTXPK4bSysbIY08peppqb3W8/xvH9LKuWzeEfGyOanTJiDo
-	bwQ6s/beoXB5o9NamGP+6PrmCADP4qgzuBKfkNhHXLYFnftx+uwoHwcaDFufpr5HQcFQIIQ760C
-	NZCCqALKukr9gfETGkKNAX3DHJ4g0rCA8doIZYZyZzyXYAH9hQEG50cv1bAl4e5rxY+IUNlEdMA
-	PAiAe0pR5uaxLCMTc/8qr9z19UdokrKSLkWdzGcNB9uQrIohuwjkA
-X-Received: by 2002:a05:6214:224b:b0:6fa:c5f0:bf57 with SMTP id 6a1803df08f44-707205d3de4mr17249306d6.38.1753442132370;
-        Fri, 25 Jul 2025 04:15:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IESU2wE4bOnOUGPBSZO0tkF4LSJGzJmhvaydJbduRXkqSSNO4+Pqqddr17Ym6JSe+xBXleipw==
-X-Received: by 2002:a05:6214:224b:b0:6fa:c5f0:bf57 with SMTP id 6a1803df08f44-707205d3de4mr17248146d6.38.1753442131229;
-        Fri, 25 Jul 2025 04:15:31 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b53ca1973sm882413e87.198.2025.07.25.04.15.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 04:15:30 -0700 (PDT)
-Date: Fri, 25 Jul 2025 14:15:28 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongxing Mou <quic_yongmou@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: hamoa-iot-evk: Enable display support
-Message-ID: <h63j6zveofatmzk6zj2ffvqo325kiqu6vnn2vekb6t4lniyipk@k55zwfhga6uy>
-References: <20250723-x1e-evk-dp-v1-1-be76ce53b9b8@quicinc.com>
- <6wwcxwgcf4wm4ekb3d4ukkyyqsseaawo6l66umzxim4kcilynm@fc6mwj6ymnes>
- <c7041754-7be9-44f5-89a4-03bb21e2d342@quicinc.com>
+        bh=ADeETAaHqfwPNv47VY+2a6NqZqg/PEaiSFoloJQbRjk=;
+        b=Jx1lljtMzuT0m5VpNoGhEp4micnltFkmKTk/VTuLNa/8WgLVgEPBhPL9hVNJnUzzAh
+         HySa4ktHNfJKEAxqX+z7Fk8MxnpcbKh9wi0KDAOtMMxc80e0ZkHXrh6I5dDCwcKxCDIj
+         /Fvp0pvEr9BFAPVJrzamgXfwyYlwPQgsH1RaLsGuJUToLNOrHu6LlDltGbAkEOQItBnA
+         LP4Kxrk9WdPnh2LKNgmZeYdlSu2xYo5o4+0oKSTxVU6Pi36fSjPuLEcAzjL019yceEY2
+         nb5Yio0DqJs7lwGhJ4t6IR0PmJ2FmcRcdaf4EKHd1BIQCGJIJL4yKSZaeSrvYVI8sI2i
+         slNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753442538; x=1754047338;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ADeETAaHqfwPNv47VY+2a6NqZqg/PEaiSFoloJQbRjk=;
+        b=orrKmC1eJOwCMyN2MZVyTBrSFmfLJR9SQc+D1NG/dYGLilHdwgdZhwVcMU7D/Go8YC
+         oxoR+9rmHgOKxPeNe4ge6+mR9erSaSEAPS6Mum3I2CVBRG+B6oqMGSHTuLzvTuXYJRZn
+         8DC6vlVqlZxCOFPWtNnk5mACWMF1msHqcw/RAKIYt/bcl1wJede3s1TNDzuTuZ66C58x
+         epiySbPj92YMazpCeQR7CQ0NWhCRzxxsat0TcBXaXLS5bLvLZXTbLPz3GHns1jb0etLi
+         iyoYvyJgv5oK7kAUgn0/2LxdE9A3Kq9lwB+KqN3Zk3k+irHYGa2JOSkzGCRkTuNa1jMp
+         wh/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUh0LGni5EGKN83Fe2qUJdfC/2VFr12IEzXccdhcgK63hV4gF/NsN/5FvTSMWgf00Fdf+0+Lo4XNhlN@vger.kernel.org, AJvYcCVuScbPNv7XFA2y8FfQYFcafj86GGcK+TNP72ZvdNQp06ziZmed/jPb+OBsOpsQkCwdONOLVSxZnT2a+TbA@vger.kernel.org, AJvYcCVwDJy7nuDXeuk/eX4YaSxBC9afu0uTsefJldMa6tCSwuuLzDlS154SQB+D0EgVFeDoTnRy542HjUyG@vger.kernel.org, AJvYcCWjiaV1L5hczHVpSvdr3GnxBuQBzgHYqof87VEgyX8NKoyusd/xpV6L2M/9iPgqa/iKNI+5AwqtYIPS5rwP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC7tR1mB6vJ349B22C3/hM610lt01pxO3DO9Fn0P2f3sy4zStz
+	QMzEoAyeIpJ4F5suLGuy9kTUSiXvQfkGf2wW2Nuop09I1dSvY+AzEdeeNZJ8nd1qpihqnZ3V26z
+	8+unT8O+m/5M8j3dmz9jWpYHPhHRE2ec=
+X-Gm-Gg: ASbGnctD+TqCDLolje63K70nMPhoBh0qZvMNhRBLffgh9mTNDRraoJIQIAgeejASr9d
+	ISgcXcL0dP0zhMVtr9Vo0GATmx9hB2on0fTvbbAE5MSG3/KNx0Ws0zPxYI/RnVkBJCFkbDhlU1d
+	KoJhzvtWiOap3v+Tl3oKFln5mYUHaOFtcaJggrJc3DW22Yh4ddw+IcR1QufVFvuI238jNaPztwr
+	odw
+X-Google-Smtp-Source: AGHT+IFm+YK+Y2hJQQ1hmtCwNSUBVL0UvD5jayHigUFo6GG8rs5V2CGFs8VME+5GxbAPEVs93coICnPBamAwKQyY/yk=
+X-Received: by 2002:a17:902:ccc4:b0:234:e8db:432d with SMTP id
+ d9443c01a7336-23fb3166c33mr22847705ad.39.1753442538032; Fri, 25 Jul 2025
+ 04:22:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7041754-7be9-44f5-89a4-03bb21e2d342@quicinc.com>
-X-Proofpoint-GUID: UGpFWWCI71duG-h6EL2lhfPdNrTwZ_NL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA5NSBTYWx0ZWRfXzF9TktNohcTe
- XQuRvmml1E/nEXWYfwsZfd6XSewhGUlowwalQ0DmMbaOW5NBKH8BM9oiMO51s2boGYdqFXCdzWw
- mpVxJRBtGt1LGTR7Xlm0E87VLsjfiK+f5Amdcyq7+uj7d8Be+HJ4EahnIqGxfPNGp9+xWaqTnm/
- GiiagfEbz1zQXJmusDudZOK1Z2Rq5S1+HWlOg54wkAd9PJ5uBQ54O/9npD0pdf/fkdLJemjCPOt
- 38pLuzfhfdDnOlq1Fbs3EeGb89Z4RrlLyyjkj6EVyrNR1fQkrfd06T4t07QownGsVCdEv0QfPuj
- uTn2ZbR/psKW08AXMD+2Z4p43c+0YmtYcuvCJWRHvi3E9roPhM5vXlWWKt/NEWgA5pVIXnSAlUs
- aiIBK4bC338LM5zOUOH5mdOUR32i2/1RCzZ3/CFbNqMCY4s7P7U4+TfMpZploR8FB5oTk4s8
-X-Authority-Analysis: v=2.4 cv=VJjdn8PX c=1 sm=1 tr=0 ts=68836755 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
- a=d_ojn6GSUL3iYoyApoIA:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: UGpFWWCI71duG-h6EL2lhfPdNrTwZ_NL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_03,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
- priorityscore=1501 spamscore=0 malwarescore=0 adultscore=0 mlxscore=0
- bulkscore=0 phishscore=0 mlxlogscore=999 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507250095
+References: <20250714221545.5615-1-romank@linux.microsoft.com> <20250714221545.5615-11-romank@linux.microsoft.com>
+In-Reply-To: <20250714221545.5615-11-romank@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Fri, 25 Jul 2025 19:21:42 +0800
+X-Gm-Features: Ac12FXyz3bssr1OLL9BFtYmc0Edy0F9YKk5P-0fTYGoeZUcLahAw8xTcKbOlq4Q
+Message-ID: <CAMvTesADrxV4vwU_mqYygm1bE39PKLZaaL-wLPT8snATRVkwNg@mail.gmail.com>
+Subject: Re: [PATCH hyperv-next v4 10/16] Drivers: hv: Rename the SynIC enable
+ and disable routines
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: alok.a.tiwari@oracle.com, arnd@arndb.de, bp@alien8.de, corbet@lwn.net, 
+	dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com, 
+	hpa@zytor.com, kys@microsoft.com, mhklinux@outlook.com, mingo@redhat.com, 
+	rdunlap@infradead.org, tglx@linutronix.de, Tianyu.Lan@microsoft.com, 
+	wei.liu@kernel.org, linux-arch@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com, 
+	benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 03:40:52PM +0800, Yongxing Mou wrote:
-> 
-> 
-> On 2025/7/23 19:21, Dmitry Baryshkov wrote:
-> > On Wed, Jul 23, 2025 at 02:14:55PM +0800, Yongxing Mou wrote:
-> > > Enable DisplayPort support on all three USB-C ports of the
-> > > hamoa-iot-evk platform.
-> > > 
-> > > Unlike most X1E-based boards, this platform uses FSUSB42 USB
-> > > switches for the USB0 Type-C port, while USB1 and USB2 rely on
-> > > Parade PS8830 retimers for Alt Mode switching.
-> > > 
-> > > Support for the PS8830 retimers was already included in the
-> > > initial DTS, so this change adds support for the FSUSB42 switches.
-> > > 
-> > > Due to limitations in the USB/DP combo PHY driver, DisplayPort
-> > > functionality is limited to 2 lanes instead of the maximum 4,
-> > > consistent with other X1E-based platforms.
-> > > 
-> > > The platform also supports embedded DisplayPort (eDP) by default.
-> > > 
-> > > Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> > > ---
-> > > This change made top of initial DTS:
-> > > https://lore.kernel.org/all/20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com/
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 156 +++++++++++++++++++++++++++++
-> > >   1 file changed, 156 insertions(+)
-> > > +
-> > > +	ports {
-> > > +		port@1 {
-> > > +			reg = <1>;
-> > > +			mdss_dp3_out: endpoint {
-> > 
-> > Add empty endpoint to x1e80100.dtsi, then patch it here like you do for
-> > all other DP endpoints.
-> > 
-> Hi So i need to add mdss_dp3_out: endpoint {} in x1e80100.dtsi and
-> +&mdss_dp3_out {
-> +       data-lanes = <0 1 2 3>;
-> ...
-> in board dts..  is this understanding correct?
-> 
-> i just wondering that here can we just follow other x1e80100-based dts?
-> others 8 x1e80100-based board dts all introduce edp-panel in this way..
+On Tue, Jul 15, 2025 at 6:16=E2=80=AFAM Roman Kisel <romank@linux.microsoft=
+.com> wrote:
+>
+> The confidential VMBus requires support for the both hypervisor
+> facing SynIC and the paravisor one.
+>
+> Rename the functions that enable and disable SynIC with the
+> hypervisor. No functional changes.
+>
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> ---
+>  drivers/hv/channel_mgmt.c |  2 +-
+>  drivers/hv/hv.c           | 11 ++++++-----
+>  drivers/hv/hyperv_vmbus.h |  4 ++--
+>  drivers/hv/vmbus_drv.c    |  6 +++---
+>  4 files changed, 12 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
+> index 6f87220e2ca3..ca2fe10c110a 100644
+> --- a/drivers/hv/channel_mgmt.c
+> +++ b/drivers/hv/channel_mgmt.c
+> @@ -845,7 +845,7 @@ static void vmbus_wait_for_unload(void)
+>                         /*
+>                          * In a CoCo VM the hyp_synic_message_page is not=
+ allocated
+>                          * in hv_synic_alloc(). Instead it is set/cleared=
+ in
+> -                        * hv_synic_enable_regs() and hv_synic_disable_re=
+gs()
+> +                        * hv_hyp_synic_enable_regs() and hv_hyp_synic_di=
+sable_regs()
+>                          * such that it is set only when the CPU is onlin=
+e. If
+>                          * not all present CPUs are online, the message p=
+age
+>                          * might be NULL, so skip such CPUs.
+> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> index a8669843c56e..94a81bb3c8c7 100644
+> --- a/drivers/hv/hv.c
+> +++ b/drivers/hv/hv.c
+> @@ -266,9 +266,10 @@ void hv_synic_free(void)
+>  }
+>
+>  /*
+> - * hv_synic_enable_regs - Initialize the Synthetic Interrupt Controller.
+> + * hv_hyp_synic_enable_regs - Initialize the Synthetic Interrupt Control=
+ler
+> + * with the hypervisor.
+>   */
+> -void hv_synic_enable_regs(unsigned int cpu)
+> +void hv_hyp_synic_enable_regs(unsigned int cpu)
+>  {
+>         struct hv_per_cpu_context *hv_cpu =3D
+>                 per_cpu_ptr(hv_context.cpu_context, cpu);
+> @@ -334,14 +335,14 @@ void hv_synic_enable_regs(unsigned int cpu)
+>
+>  int hv_synic_init(unsigned int cpu)
+>  {
+> -       hv_synic_enable_regs(cpu);
+> +       hv_hyp_synic_enable_regs(cpu);
+>
+>         hv_stimer_legacy_init(cpu, VMBUS_MESSAGE_SINT);
+>
+>         return 0;
+>  }
+>
+> -void hv_synic_disable_regs(unsigned int cpu)
+> +void hv_hyp_synic_disable_regs(unsigned int cpu)
+>  {
+>         struct hv_per_cpu_context *hv_cpu =3D
+>                 per_cpu_ptr(hv_context.cpu_context, cpu);
+> @@ -528,7 +529,7 @@ int hv_synic_cleanup(unsigned int cpu)
+>  always_cleanup:
+>         hv_stimer_legacy_cleanup(cpu);
+>
+> -       hv_synic_disable_regs(cpu);
+> +       hv_hyp_synic_disable_regs(cpu);
+>
+>         return ret;
+>  }
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index 16b5cf1bca19..2873703d08a9 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -189,10 +189,10 @@ extern int hv_synic_alloc(void);
+>
+>  extern void hv_synic_free(void);
+>
+> -extern void hv_synic_enable_regs(unsigned int cpu);
+> +extern void hv_hyp_synic_enable_regs(unsigned int cpu);
+>  extern int hv_synic_init(unsigned int cpu);
+>
+> -extern void hv_synic_disable_regs(unsigned int cpu);
+> +extern void hv_hyp_synic_disable_regs(unsigned int cpu);
+>  extern int hv_synic_cleanup(unsigned int cpu);
+>
+>  /* Interface */
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 72940a64b0b6..13aca5abc7d8 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -2809,7 +2809,7 @@ static void hv_crash_handler(struct pt_regs *regs)
+>          */
+>         cpu =3D smp_processor_id();
+>         hv_stimer_cleanup(cpu);
+> -       hv_synic_disable_regs(cpu);
+> +       hv_hyp_synic_disable_regs(cpu);
+>  };
+>
+>  static int hv_synic_suspend(void)
+> @@ -2834,14 +2834,14 @@ static int hv_synic_suspend(void)
+>          * interrupts-disabled context.
+>          */
+>
+> -       hv_synic_disable_regs(0);
+> +       hv_hyp_synic_disable_regs(0);
+>
+>         return 0;
+>  }
+>
+>  static void hv_synic_resume(void)
+>  {
+> -       hv_synic_enable_regs(0);
+> +       hv_hyp_synic_enable_regs(0);
+>
+>         /*
+>          * Note: we don't need to call hv_stimer_init(0), because the tim=
+er
+> --
+> 2.43.0
+>
+>
 
-I've sent a fix for that. While squashing this patchset, please update
-it accordingly.
-
-> > > +				data-lanes = <0 1 2 3>;
-> > > +				link-frequencies = /bits/ 64 <1620000000 2700000000
-> > > +							      5400000000 8100000000>;
-> > > +
-> > > +				remote-endpoint = <&edp_panel_in>;
-> > > +			};
-> > > +		};
-> > > +	};
-> > > +};
-> > > +
-> > 
-> 
-
--- 
-With best wishes
-Dmitry
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+--=20
+Thanks
+Tianyu Lan
 
