@@ -1,242 +1,389 @@
-Return-Path: <linux-kernel+bounces-746464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EEFB126FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:50:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07644B12700
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0F1B1C267A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:50:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A499FAA54E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132E5256C7E;
-	Fri, 25 Jul 2025 22:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB012258CE8;
+	Fri, 25 Jul 2025 22:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="S81sPDX+";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="KcoCdefG"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U6dggCBP"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEDA2356BA;
-	Fri, 25 Jul 2025 22:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753483796; cv=fail; b=FeIdGhgKkElYACKf6y8H5/7ABQeJNd9GEZnDTZntRVGkuxmysTCJgsH0P7PdBbbOYel6QUAnmCIEdGGrCVw9cON9y0IVJqtk/towpNaKvxNSyLed0itEuGptz4OjSP8qkNydpiobKMJccrFf62ufIEtZlJ3t6jdkYEmv/F2l+RI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753483796; c=relaxed/simple;
-	bh=cx0bAPoshuHx7xIj/amTlCQLtSD8kzPaeSkEdwc4aOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mo/+pA4FUJieDjr9Zb7D2m9rUVbFnRLHRfnMEnRa5KbqIqeukDifjNhzDM5BJYUoQ3Q0rf2VQ9kvFi7HjZwiUHXRt0yWTLSVTR11lV42ds6AcKA6sg3OCp7YNCukZ63YCOL/WthmcffxZwFe+ExGNNiDrFIg7JCrpBkRFo7EEcA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=S81sPDX+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=KcoCdefG; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56PKg4hC002656;
-	Fri, 25 Jul 2025 22:49:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=6m8JJrhxH1WZ8SkKBp
-	WcO71wGFpnpbxjZFOBsg9fdaY=; b=S81sPDX+CjkVYrVR6SDrN6xkFJ7917hX6E
-	DNK744OQXCH8LsMkML/eUWerTvPRbcYWP5VlAYK9o70HPbbXTHvLXJ9eo1AvcncD
-	60URtbditS6IS0aMilTxwf5bm++4i802ivnteRh9wOTjN8GF09pXyGeNz6Fn82tt
-	cwab6h048c0gdRkOqXCnPsBycf683OunGpVSV40kDZF1dxCqkVmN+5q7EVhg3W7M
-	8Jcs5rMcBcROfgIU2wAc/3wzjJ9CdWdL+fY9epn5fslc7VHTWUQTacHapFXouH+l
-	LTyBZQRf2nH3FUWbvDNrEsf8J5j3ff4yz5VQgoJDO5vDzb0fXaSQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 483w1h218a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Jul 2025 22:49:37 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56PM0KlT031445;
-	Fri, 25 Jul 2025 22:49:36 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2053.outbound.protection.outlook.com [40.107.243.53])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tkyedu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Jul 2025 22:49:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pYUFBYzWv/hfJwpR0APhzYCV43b5AF+4TeDNFdVJWZhOdN02s0ajEtYBAIIg4qPsu+MDeFd9si3sDPGih/fK+2gH9v6HdMW/qcTopbM2dY4JumVwFtHifrctu9N67NmVOC9rF7W73Yc1uwR6mkssFuY6kJYMY6C2Ld2ECIhmXyUbigTIFX64YiuLuslqq2pqwcyjUlQh/umajteE7EC3slWeRN2udutc14vnYWq0qgGy4J7zeWzZBaja56Ze+94qW0ZP7PumegHZHDjxhHoEFpTQDZZUMmheHkyjI8xFo5VbF5177Ensv0nCqppK4Ln3Gsq83abPx4cmbomRH8Mz6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6m8JJrhxH1WZ8SkKBpWcO71wGFpnpbxjZFOBsg9fdaY=;
- b=KW2xtqFtfD1Nq2CnC+9roeQQHyC1zecTBn6KyKluCOB1k3Y4Di6XKIhalKxiC6pLi6BW0UdY+wXZhMgS29VGOEXRY0efN4pkWB5mDX7lIFrSjunsCQ20HKMnFcca1vesYdum52qIFwptXgBeuQ+jM5X2JrcqvkLtZGjR7aPiRQBfWzeUkL4yOgoxDJJ9umFsziYG4g83qEpOtsXsQB2nuh+fOzqm8nR3/5BZREM31sb3mepEoFNi9RlwfMuqRu134UjjH+5zgrLThS2ykGOF2VzXhSeJVHL49QZlSdFtKFaW03rkgAAlcrdQCDyTT6g8TCfRKdAEZ9sesqYWcLAJPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F73257AF9
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 22:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753484065; cv=none; b=oYHA68n4xtLjmt9QZ64drlE6s0kAcqe0qgmZ8uZTXwteHYq4UL1XF4VzUtczGBuBmCi5zg4MWSGAP8KUK9VGSiav+SWAWFJQxfUurCceplQ5fCJgO/ZCqmMJqL0MOb7UZfYVW+rslZ/q9kbzPYXyxfIMgTIy8oJSTBEWJ5dbfFU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753484065; c=relaxed/simple;
+	bh=DS26vaBRgwahRFAlqRPBAoUd6fSy9hPCYTaFg82VRkI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ak9sSaaEVbRUZjj12RVfcktdPEYd+Nt/2+ysxNexZcohLwM/L3Mk4Yx2QGo/1Y479rPf8C4uMtH25oKkGepiw+1mcsAWtn+SQq/oNuoK2Fi1PcmQgANsW+Hu0wDg0qUcuQi6nA9VJzSeq69D9elRQXk1Fkm8WgWhUt5cmaRD6ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U6dggCBP; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4562b2d98bcso7885e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:54:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6m8JJrhxH1WZ8SkKBpWcO71wGFpnpbxjZFOBsg9fdaY=;
- b=KcoCdefG8NVCmIncWRtN5THTa1NBg0SgBqLsdKXt9dhwRVD9kaE0qvOY43LvgxhTUAUDTCLfsKK0f4nlHjMWn5kNb9bW95/G/qXE+/D2jBNvyBOgbXvsGBv4odAD1XD6v78gqh5K+aNrIrPK1230T5lVGoxLNt3AifKNyBSWNWU=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by CH0PR10MB5145.namprd10.prod.outlook.com (2603:10b6:610:db::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.24; Fri, 25 Jul
- 2025 22:49:32 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.8964.021; Fri, 25 Jul 2025
- 22:49:32 +0000
-Date: Sat, 26 Jul 2025 07:49:21 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Li Qiong <liqiong@nfschina.com>,
-        Christoph Lameter <cl@gentwo.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] mm: slub: avoid deref of free pointer in sanity
- checks if object is invalid
-Message-ID: <aIQJ8QQQbA2a-x2n@hyeyoo>
-References: <20250725064919.1785537-1-liqiong@nfschina.com>
- <996a7622-219f-4e05-96ce-96bbc70068b0@suse.cz>
- <aIO6m2C8K4SrJ6mp@casper.infradead.org>
- <aIPZXSnkDF5r-PR5@casper.infradead.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIPZXSnkDF5r-PR5@casper.infradead.org>
-X-ClientProxiedBy: SEWP216CA0025.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2b6::7) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+        d=google.com; s=20230601; t=1753484062; x=1754088862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SrH0YNsJJUyH6a6DVSuV6GhoCitszYqU7WFGsnyX9bU=;
+        b=U6dggCBPdulh/HofHVPo+icdB2cKbUxlzRvbv3kO9FH3ydM9l8yZDPbIHTZ0LZzeK+
+         7IR6bGUfaMFa9WqrNJIoP0P0sSdFG8P0XeG004/BA69Ijhku1+Rx/1S0Fl7/Q7tNKFhN
+         wioz2bhTmWV1IyWOYjTJDBv13UcB7rJhgogZ2zhqFXioQNAsPRwgpt1BQeLsmsBa7R/J
+         FIy477or7U5GOhzogvaj3P6yNjvZ6p0Iaww6kUI+wyZq0kE2CAr3HJWc8TwGkiAFF4Zc
+         R+GUfWwRu7Iy5ctM/0aNSRag5KwLwcFSkhl1RtLgiKB+SHzv7UPMgiy0MV6jJIScT6Lh
+         5r/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753484062; x=1754088862;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SrH0YNsJJUyH6a6DVSuV6GhoCitszYqU7WFGsnyX9bU=;
+        b=ZadFXbGrI7PVwKWC+AC7TQlIEjba8Q37s7/yu7X50qXXiGIqi8AHf8xcNdkfsfUjY2
+         Om9kLbjoIwNjzC677/b94f6rocMqiyU96irM2J4F+yxwlBkTlAHxDnv1ddOtm4IFIbwO
+         13JXO5NHlubZPqZGOFSYzgQlsSGsaSGlO0NA7kITavw70/yM7kAdLW8lWggSoW+BTnl3
+         tcoVwkYoeDZYV/0AStI210uG0+743J+G/SRF5XnwOVmvlEFOCqYDr2zHD/SzwDLjzk7k
+         v3eS+ZBCyAFRqRlF6/9bXLOdaa+1UuFR6KAw1BEBkSno5u8jkt8oD9vpCE+efhVA3O9Z
+         Ulvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWDQDy9j6dpgBORZhEPiIDtkcwxrVwDBOYY5zn7XYyVyP4c7cTRrRUEVImjm0w9KWRsYUjqMWT1huJ6Qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsUklhJ6MbdACpCsfXnvojWHiB9aajMUd2iR1kUP1Gmphfbg5k
+	4LQZt7/OJj+arW0+aX7NDG0nkqgkTzLhEj4MK4bZKn7ILrUK9ORu1iTxjLGKszp73MK7Z2jxhhw
+	tm/xeMByGH+LW5qn1DCJVcpf8Y+dbHVjMOKceB65A
+X-Gm-Gg: ASbGncv5MEbVnQY2ppge/OS1TmiNvVJwnJwQwcYTJT9D/q2jthUqhGpLqhwzBZ098/m
+	lmyV9RbBDraJXedIOaWLBqmh8weM4z1FNdUk1DEWNGFNV4Q+NZ9EcHTamNx6IXuJCUrsxAYg529
+	T/Z6plqKUN7Gyscm1jImH7nn4ci7te/TJduwPFKKNeQ4IUk4RvzaK0lXwDhT/dhihgDmspklrXs
+	ziqTt+o+AjJai7RNfLDhZEPoONaJx8sPGMUgw==
+X-Google-Smtp-Source: AGHT+IEXVboywdhHKbB21FrYI19SVE/5eWAE9USxvMw9lAL1b7BTPdyv52TpToqz3CvoLCcmj+yjtDmKNzHRxga+43I=
+X-Received: by 2002:a05:600c:3ba3:b0:450:cb25:ead with SMTP id
+ 5b1f17b1804b1-4587c99bf66mr125825e9.7.1753484061777; Fri, 25 Jul 2025
+ 15:54:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|CH0PR10MB5145:EE_
-X-MS-Office365-Filtering-Correlation-Id: 900d1dd8-2373-4060-43d8-08ddcbcd8544
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dArPCTbx4c/5BRcN0moykkEAFqpb+TweeLOrHHYOQJpECuaKVNDz81ZUt9t8?=
- =?us-ascii?Q?mEk0U8T1M3THZxRgLTdntWnMuTCcOy4owO/mlJtRWrx1X3ek+CRf9OshwYWO?=
- =?us-ascii?Q?JOPD0qDRJpRvVCVuKnOGcb21AXICh/+3mQYGPXERDUzFDvyum+H2Op+Ugk1Z?=
- =?us-ascii?Q?FuMlOmpEMiIkqYevAwklTgXH31C5kEsh2gST/qR3fp/uywMi7GAOzq58Xnp1?=
- =?us-ascii?Q?QNRj311Gm8F9QTO2Qm7ex+OUY6cpCAOLRmTwx0nG52HUiMLDhhkwW8tTenM+?=
- =?us-ascii?Q?Duwf19Se1OqOpG4VyJIDrDtosc3MqUJdkXctOJLC/CpusuwQmiTRFGe0SJU1?=
- =?us-ascii?Q?FBTDI8N5qIm39qPOVGoTudRWb33zBdASHMfpffbD1GBDevksZzp3HbNHXKYl?=
- =?us-ascii?Q?+GJ9rcU/ZcKyliLiMMyIaL4ni8ZyTlBLsQ53o8CDzDzcoyGzhfDt25JdicRa?=
- =?us-ascii?Q?ucRtxYfTBwSS1YwfIqt19zzaNTzt8YGbfuDOXlR6+dFQsCFlR4hF8wrM8INP?=
- =?us-ascii?Q?ySufoRDA4fw3MZ07lh7R0CxdohJ0gGSovlnUsnMqp8bdOI045CQOA/SN1b3h?=
- =?us-ascii?Q?mW+kEtJOz9j1+r24AiRccUX2O6aFEKJY1NcvCa4SpONZ30EyvaDlQWK+zubq?=
- =?us-ascii?Q?J1uzBbASfBGBrHCTBeCaLxezQgcUBNvKXcdfT6V5/UpqEJoRtap4Uqd+48s/?=
- =?us-ascii?Q?NiEzWtZ/UUh7ta2kF9KJ9q/agP7ieSFAXc7SKF9c5uKoIB3L3dZpdb20G5lE?=
- =?us-ascii?Q?Ff/TomAAPhZZX3/jAAaomFov8T6M5O2Rf2koDmKX/Ds++rh86K1tjLjl8Iet?=
- =?us-ascii?Q?hatspZ/vOSEzmTC8qwwPCRfyEDdnc62RX6U9a6JLVeBwBqq2lokiQUPY6V6P?=
- =?us-ascii?Q?PeyhxqF04MxGvKiJMQvwUlKztEceevdJRHy/ho7B2BY4Pg8X/MKYHHtFpVAB?=
- =?us-ascii?Q?H8nlj0NphHvnkkCxtwghmR4ka0s27JfPy87uWUH8QrJVR/8o1CZNn4XnBs16?=
- =?us-ascii?Q?L6O74dbPspcSuhnCsJD/R7BWoM/fDZMjeWU6d3zTMfkRQcLSRi43ZMLiiNlI?=
- =?us-ascii?Q?XjceqIO/uN1zNKi+lX+HW2lnWF3ODm34pPhWFDEluR6pFaO5qbhEkWSyqRI5?=
- =?us-ascii?Q?tgEjglLcq/uGpAJH85cOTYjEwe+J5T2xhiZ6dPsuANTLk6BNeuYtCi3Ye1wt?=
- =?us-ascii?Q?9KczriBDjeW7jViuGfYiu3Ldbn84qadxxm88fSZ6RtEJNY464jfZIPJrD194?=
- =?us-ascii?Q?akuYDq7MlGPvHZeGqZRS/M/lyXhw/dDR2YGQXIQHKWVnYxVLYYVR/KaYNJ11?=
- =?us-ascii?Q?bWGKrp7jEshe7IJZ64dDCECgFqYyZaKVmbK1PlGys4dzafi5/oUn9dXdxf+6?=
- =?us-ascii?Q?FmljOgk645sQ17WaqqI/nzESCnaJ6OnvJK+U12A0v8Kvd1PCsNzbtlJxHAwm?=
- =?us-ascii?Q?pTdh8y4BLmI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eFJwwWXgb7t5nW5zun4gL8nRKQiLNjLxwkrtP2aE4Jp3MxFG13FfpzB1rbDZ?=
- =?us-ascii?Q?LFS+1L7DVVacTUQWKtkVTWN5PXoaOioBERzOTFCAbtbOD0oTc0pjiK+jrhG5?=
- =?us-ascii?Q?sz+82w1GC6m4yXe/uOZmwRtt9XscwV6F3dccAKwQgRityICeCn2YskWjBy4w?=
- =?us-ascii?Q?QofC4e+tMD0Rb6q3055tO1Mm1N/Ufegweysk2tiMSYeMA0Hivxd2+GMfwN0j?=
- =?us-ascii?Q?0HSkudfawB9A1+5lmxR/epyM5RVoKcuPdF3MXEMxjZSrbH/uiXz2/5KsCP/U?=
- =?us-ascii?Q?3isyuK+dUVl9ypdnNlH15VQbXWK6A54NpfpItTkOZrOzqSZnW4pI67tTbQvB?=
- =?us-ascii?Q?dfPV4wyO8es8fxslz8/e2NV8LYy+sfL+H9bsrqePDXmO1iFV8PnubvGvTcM5?=
- =?us-ascii?Q?fyPkAlCue2iloToAl29iT2NORP3V0sUZdnmnvOehUpmYllzpgHLHcbG9RZpz?=
- =?us-ascii?Q?BPCzYJspfy/U8vp0ggfw/VhBlUL7CV1xJiG8LTg/BcXxH9qF5bjAU2FpJlpH?=
- =?us-ascii?Q?E3xKGdvo3uakQw4FQi1R5Jpmrt+p1huBETA3r2YmV50jaSCFbwwVj1dbFLL3?=
- =?us-ascii?Q?xKTZMdgGP84ZHZjlsOtsu5n/mJv7JO9B7fYdMapa/20HrbHydpf+CY7JWAKQ?=
- =?us-ascii?Q?DTOzXaN7dvcC4eXQ6LpRGtXmBROgzkI8u+mafj6/+6pqTq9KE8+P/3rIyT7D?=
- =?us-ascii?Q?DFQ+YXB+cGwJFtrZSOeW/UHgwWIVnE8RoxKwH834IzNAL7aU0eAniiMzDSq8?=
- =?us-ascii?Q?mUO2hzaUxMwlg5CphOkbtZsN91BoQ7wjolx5Vc1drAVLuhr5lh4NbaRA4TnO?=
- =?us-ascii?Q?aSkgaJc6etVCaPBCIZZaEzIHuBfi+FdAL7118u+awAhN986H5ToqNC8aPjtt?=
- =?us-ascii?Q?1DksQIkPum/8+aF0vCVhHOyxzmuvSvF8eDlUdnZdXDocImNlweHIp0fPaOnO?=
- =?us-ascii?Q?0RNI6DoF+mtqhr9zdY1UTXoho7C1eICO60HYn+6lWwF++EwYJBgl6IiqcgXh?=
- =?us-ascii?Q?eEwaci7+G1TtxT87DGE2ht+hQQRLsa8XhxkYX9/e/kH22k9aF9qoo0ZlWxcX?=
- =?us-ascii?Q?BPmznvTBss5EHOmXIC2sIho7HPxKH33wrrVdNj0QLQADJRWOSaFapqRfnaqY?=
- =?us-ascii?Q?OU8Rs+KjbIlm7TQxkGwGokUHylfFpQQSpnjCMR9JfbMWO1ocCuCtoJNDez8v?=
- =?us-ascii?Q?o0DRBa8Ye912YMoR4x6xTMjxa25AvnFN9qQNd/sgE4C9nWN6mpmXmM0PgstQ?=
- =?us-ascii?Q?bziNLD0qmpNVXa04vx9kVSULm70DEKUom/J4ot5QLHZtHpLbmQjo6g0spf3T?=
- =?us-ascii?Q?72+azY1Hm2lcgPkW3UbTXp3WMjijkD4dT3x4oPc7UCv4y3Kv+OsvL9srd0QA?=
- =?us-ascii?Q?yklRvpM7e82VXN5qFYgCKzYJVYEMpAC1fAf49unMZm4upMlVg59UyRcDih9z?=
- =?us-ascii?Q?hDi07RHXxYbOTKZye6BRhHaB/piHqn1cfbCIVl3pyrL0ivfT8XxNFF9RssXl?=
- =?us-ascii?Q?+DlMzLR/L80K2XZYHFiG1236S/+l5Pj9Ww+RbpgfS/fX8sv+5iQU7p6w24pB?=
- =?us-ascii?Q?HaeFggOMVPeu9+uqhixPd4r+PCs9+M11PToBR+yc?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	kFmB6kdl+zkX9peoNkcFh1ZARxWkWGWwKGUq7y7E0x8XmF9Hp+SSVQA9Y1jsSb9YFj/MImfGhuIesdl55PYMNB94jYjn75wnNfih/wIJ1SJUUeKbLCIHOavOQITkXglddgDIaucxWYF5RBMVeRgvnE/eZHz+yl7EuUeDvh95LwaVmGPfTg55myKgUFGjqt0NXqjhKcAonabtjhdgO1RdAoIweUR5LQ+HcOxE7EExe1CAy9jPM1L9MBqTkGNZsa9gLA2vCuPSLcbzJdjNKNel9cikd53wkGeomgZgfSdpVBYaqPrTctRhCIXhVYC7KZZyWRDRoI+Z8QT9Vt4idPMZTOvEp0hacFWD8XgVwyqFNUnEXHnvCxpfruqhzRGMhBt9EY/ICnwe3BMrPTB+1dw5ucGIlvTtsbuONmLiPYAx37vRTGe32GzSenKywFxqaBs2+S/28TJhXBVd/TaV/44k32dcG5BMpdmmVWS+G+BpFC97P2fkn+83Zod7YMKz+m+0r34k1ehGw4gpepmk7qwkbXk7elOCzSJ1scETj/CjBaZZ+xg5H5qV6nFGr3H5isn//yrSO2BnJnEJkB5upJ2ZeDOnmr7VzNXI2C7+DeWNvd0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 900d1dd8-2373-4060-43d8-08ddcbcd8544
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 22:49:32.2578
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WZOtpYuHXyZlN8aLxYJaJDXJIzxdj+quegz+NL1R1zUUo8tcsu9nzPVNPss0Pc7b2SdsVmV0GAGe2jBVeaygPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5145
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_06,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=896 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507250198
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDE5NyBTYWx0ZWRfXzmRPldr29MqH
- klh3oIVpEgFM8yZG2A1kO1CcntAPH4X+4/sM51K3G1wSRxju+irKVuhNEcb2dmA2MbRMC7nSbe8
- BCwmYWT5NooH4h/hGEDj7P43ba1kP8fZ+HFk7D4IZY2QFbwRw7Htc8O91M9rnLa3QZf7zM4zfLA
- ekaBhd2Fi5LtzN0YnnKbczEoA5fa3VWGdVBAJP63LIVQPk6ZlrjEIMdlJSXp++sLJrfIzSqJw0n
- vSuzKZ7ZDBc+Rx+HxV7FBu4KJPucXXW8RqLjuxqq7P+QI3OB0c2UUNy16wRgW3EXypSiCAIN0bU
- idjbjdZRxaLjpdnuxFlxWtBvqHYDQf0/hvGo0FniNn9bRV2BNR2XaKSPGtmw+J0BKPmbv74K+A1
- RJ+K54LxMmUoym2FU/akdJcggbv6vXGUlRdQ23aOUwNKTzAP9NWfRchbNJpLqPLH3EbHsPCK
-X-Proofpoint-GUID: _dibrsCYZ9Gx44NFHlXbr9FHzMhDw-7y
-X-Authority-Analysis: v=2.4 cv=RIGzH5i+ c=1 sm=1 tr=0 ts=68840a01 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
- a=JXmsinbq3K5hJ-isv20A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13600
-X-Proofpoint-ORIG-GUID: _dibrsCYZ9Gx44NFHlXbr9FHzMhDw-7y
+References: <20250604050902.3944054-1-jiaqiyan@google.com> <20250604050902.3944054-2-jiaqiyan@google.com>
+ <aHFohmTb9qR_JG1E@linux.dev> <CACw3F509B=AHhpaTcuH9O851rrDdHh1baC8uRYy7bDa7BSMhgg@mail.gmail.com>
+ <aHK-DPufhLy5Dtuk@linux.dev> <CACw3F53TYZ1KFv0Yc-GCyOxn7TF3iYjTNSE8bd3nte=KaCN0UQ@mail.gmail.com>
+In-Reply-To: <CACw3F53TYZ1KFv0Yc-GCyOxn7TF3iYjTNSE8bd3nte=KaCN0UQ@mail.gmail.com>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Fri, 25 Jul 2025 15:54:10 -0700
+X-Gm-Features: Ac12FXyZ0np7ePqY2RtGzxlS12fDizdwLAcMXNFO9IJOKnf3jD-9veylvlP7J20
+Message-ID: <CACw3F50Q_G75wf2rBm-P-NkyyO72i1NKqR9se99QrgipfD62yg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] KVM: arm64: VM exit to userspace to handle SEA
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, 
+	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, 
+	pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, kvm@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, duenwen@google.com, rananta@google.com, 
+	jthoughton@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 25, 2025 at 08:22:05PM +0100, Matthew Wilcox wrote:
-> On Fri, Jul 25, 2025 at 06:10:51PM +0100, Matthew Wilcox wrote:
-> > On Fri, Jul 25, 2025 at 06:47:01PM +0200, Vlastimil Babka wrote:
-> > > On 7/25/25 08:49, Li Qiong wrote:
-> > > > For debugging, object_err() prints free pointer of the object.
-> > > > However, if check_valid_pointer() returns false for a object,
-> > > > dereferncing `object + s->offset` can lead to a crash. Therefore,
-> > > > print the object's address in such cases.
-> > 
-> > I don't know where this patch came from (was it cc'd to linux-mm? i
-> > don't see it)
+On Sat, Jul 19, 2025 at 2:24=E2=80=AFPM Jiaqi Yan <jiaqiyan@google.com> wro=
+te:
+>
+> On Sat, Jul 12, 2025 at 12:57=E2=80=AFPM Oliver Upton <oliver.upton@linux=
+.dev> wrote:
+> >
+> > On Fri, Jul 11, 2025 at 04:59:11PM -0700, Jiaqi Yan wrote:
+> > > >  - Add some detail about FEAT_RAS where we may still exit to usersp=
+ace
+> > > >    for host-controlled memory, as we cannot differentiate between a
+> > > >    stage-1 or stage-2 TTW SEA when taken on the descriptor PA
+> > >
+> > > Ah, IIUC, you are saying even if the FSC code tells fault is on TTW
+> > > (esr_fsc_is_secc_ttw or esr_fsc_is_sea_ttw), it can either be guest
+> > > stage-1's or stage-2's descriptor PA, and we can tell which from
+> > > which.
+> > >
+> > > However, if ESR_ELx_S1PTW is set, we can tell this is a sub-case of
+> > > stage-2 descriptor PA, their usage is for stage-1 PTW but they are
+> > > stage-2 memory.
+> > >
+> > > Is my current understanding right?
+> >
+> > Yep, that's exactly what I'm getting at. As you note, stage-2 aborts
+> > during a stage-1 walk are sufficiently described, but not much else.
+>
+> Got it, thanks!
+>
+> >
+> > > > +/*
+> > > > + * Returns true if the SEA should be handled locally within KVM if=
+ the abort is
+> > > > + * caused by a kernel memory allocation (e.g. stage-2 table memory=
+).
+> > > > + */
+> > > > +static bool host_owns_sea(struct kvm_vcpu *vcpu, u64 esr)
+> > > > +{
+> > > > +       /*
+> > > > +        * Without FEAT_RAS HCR_EL2.TEA is RES0, meaning any extern=
+al abort
+> > > > +        * taken from a guest EL to EL2 is due to a host-imposed ac=
+cess (e.g.
+> > > > +        * stage-2 PTW).
+> > > > +        */
+> > > > +       if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
+> > > > +               return true;
+> > > > +
+> > > > +       /* KVM owns the VNCR when the vCPU isn't in a nested contex=
+t. */
+> > > > +       if (is_hyp_ctxt(vcpu) && (esr & ESR_ELx_VNCR))
+> > > > +               return true;
+> > > > +
+> > > > +       /*
+> > > > +        * Determining if an external abort during a table walk hap=
+pened at
+> > > > +        * stage-2 is only possible with S1PTW is set. Otherwise, s=
+ince KVM
+> > > > +        * sets HCR_EL2.TEA, SEAs due to a stage-1 walk (i.e. acces=
+sing the PA
+> > > > +        * of the stage-1 descriptor) can reach here and are report=
+ed with a
+> > > > +        * TTW ESR value.
+> > > > +        */
+> > > > +       return esr_fsc_is_sea_ttw(esr) && (esr & ESR_ELx_S1PTW);
+> > >
+> > > Should we include esr_fsc_is_secc_ttw? like
+> > >   (esr_fsc_is_sea_ttw(esr) || esr_fsc_is_secc_ttw(esr)) && (esr & ESR=
+_ELx_S1PTW)
+> >
+> > Parity / ECC errors are not permitted if FEAT_RAS is implemented (which
+> > is tested for up front).
+>
+> Ah, thanks for pointing this out.
+>
+> >
+> > > > +}
+> > > > +
+> > > >  int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
+> > > >  {
+> > > > +       u64 esr =3D kvm_vcpu_get_esr(vcpu);
+> > > > +       struct kvm_run *run =3D vcpu->run;
+> > > > +       struct kvm *kvm =3D vcpu->kvm;
+> > > > +       u64 esr_mask =3D ESR_ELx_EC_MASK  |
+> > > > +                      ESR_ELx_FnV      |
+> > > > +                      ESR_ELx_EA       |
+> > > > +                      ESR_ELx_CM       |
+> > > > +                      ESR_ELx_WNR      |
+> > > > +                      ESR_ELx_FSC;
+> > >
+> > > Do you (and why) exclude ESR_ELx_IL on purpose?
+> >
+> > Unintended :)
+>
+> Will add into my patch.
+>
+> >
+> > > BTW, if my previous statement about TTW SEA is correct, then I also
+> > > understand why we need to explicitly exclude ESR_ELx_S1PTW.
+> >
+> > Right, we shouldn't be exposing genuine stage-2 external aborts to user=
+space.
+> >
+> > > > +       u64 ipa;
+> > > > +
+> > > > +
+> > > >         /*
+> > > >          * Give APEI the opportunity to claim the abort before hand=
+ling it
+> > > >          * within KVM. apei_claim_sea() expects to be called with I=
+RQs
+> > > > @@ -1824,7 +1864,32 @@ int kvm_handle_guest_sea(struct kvm_vcpu *vc=
+pu)
+> > > >         if (apei_claim_sea(NULL) =3D=3D 0)
+> > >
+> > > I assume kvm should still lockdep_assert_irqs_enabled(), right? That
+> > > is, a WARN_ON_ONCE is still useful in case?
+> >
+> > Ah, this is diffed against my VNCR prefix which has this context. Yes, =
+I
+> > want to preserve the lockdep assertion.
+>
+> Thanks for sharing the patch! Should I wait for you to send and queue
+> to kvmarm/next and rebase my v3 to it? Or should I insert it into my
+> v3 patch series with you as the commit author, and Signed-off-by you?
 
-Oops, I missed this email when I was replying to the previous email.
+Friendly ping for this question, my v3 is ready but want to confirm
+the best option here.
 
-> I've spent some more time thinking about this and I now believe that
-> there are several calls to object_err() that can be passed a bad
-> pointer:
-> 
-> freelist_corrupted()
-> check_object()
-> on_freelist()
-> alloc_consistency_checks()
-> free_consistency_checks()
-> 
-> so I think this line of attack is inappropriate. Instead, I think we
-> need to make object_err() resilient against wild pointers.  Specifically,
-> avoid doing risky things in print_trailer() if object is not within slab.
+Recently we found even the newer ARM64 platforms used by our org has
+to rely on KVM to more gracefully handle SEA (lacking support from
+APEI), so we would really want to work with upstream to lock down the
+proposed approach/UAPI asap.
 
-Making object_err() more resilient sounds good to me.
+Thanks!
 
--- 
-Cheers,
-Harry / Hyeonggon
+>
+> BTW, while I am working on v3, I think it is probably better to
+> decouple the current patchset into two. The first one for
+> KVM_EXIT_ARM_SEA, and the second one for injecting (D|I)ABT with
+> user-supplemented esr. This way may help KVM_EXIT_ARM_SEA, the more
+> important feature, get reviewed and accepted sooner. I will send out a
+> separate patchset for enhancing the guest SEA injection.
+>
+> >
+> >
+> > From eb63dbf07b3d1f42b059f5c94abd147d195299c8 Mon Sep 17 00:00:00 2001
+> > From: Oliver Upton <oliver.upton@linux.dev>
+> > Date: Thu, 10 Jul 2025 17:14:51 -0700
+> > Subject: [PATCH] KVM: arm64: nv: Handle SEAs due to VNCR redirection
+> >
+> > Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+> > ---
+> >  arch/arm64/include/asm/kvm_mmu.h |  1 +
+> >  arch/arm64/include/asm/kvm_ras.h | 25 -------------------------
+> >  arch/arm64/kvm/mmu.c             | 30 ++++++++++++++++++------------
+> >  arch/arm64/kvm/nested.c          |  3 +++
+> >  4 files changed, 22 insertions(+), 37 deletions(-)
+> >  delete mode 100644 arch/arm64/include/asm/kvm_ras.h
+> >
+> > diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/=
+kvm_mmu.h
+> > index ae563ebd6aee..e4069f2ce642 100644
+> > --- a/arch/arm64/include/asm/kvm_mmu.h
+> > +++ b/arch/arm64/include/asm/kvm_mmu.h
+> > @@ -180,6 +180,7 @@ void kvm_free_stage2_pgd(struct kvm_s2_mmu *mmu);
+> >  int kvm_phys_addr_ioremap(struct kvm *kvm, phys_addr_t guest_ipa,
+> >                           phys_addr_t pa, unsigned long size, bool writ=
+able);
+> >
+> > +int kvm_handle_guest_sea(struct kvm_vcpu *vcpu);
+> >  int kvm_handle_guest_abort(struct kvm_vcpu *vcpu);
+> >
+> >  phys_addr_t kvm_mmu_get_httbr(void);
+> > diff --git a/arch/arm64/include/asm/kvm_ras.h b/arch/arm64/include/asm/=
+kvm_ras.h
+> > deleted file mode 100644
+> > index 9398ade632aa..000000000000
+> > --- a/arch/arm64/include/asm/kvm_ras.h
+> > +++ /dev/null
+> > @@ -1,25 +0,0 @@
+> > -/* SPDX-License-Identifier: GPL-2.0 */
+> > -/* Copyright (C) 2018 - Arm Ltd */
+> > -
+> > -#ifndef __ARM64_KVM_RAS_H__
+> > -#define __ARM64_KVM_RAS_H__
+> > -
+> > -#include <linux/acpi.h>
+> > -#include <linux/errno.h>
+> > -#include <linux/types.h>
+> > -
+> > -#include <asm/acpi.h>
+> > -
+> > -/*
+> > - * Was this synchronous external abort a RAS notification?
+> > - * Returns '0' for errors handled by some RAS subsystem, or -ENOENT.
+> > - */
+> > -static inline int kvm_handle_guest_sea(void)
+> > -{
+> > -       /* apei_claim_sea(NULL) expects to mask interrupts itself */
+> > -       lockdep_assert_irqs_enabled();
+> > -
+> > -       return apei_claim_sea(NULL);
+> > -}
+> > -
+> > -#endif /* __ARM64_KVM_RAS_H__ */
+> > diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> > index 1c78864767c5..6934f4acdc45 100644
+> > --- a/arch/arm64/kvm/mmu.c
+> > +++ b/arch/arm64/kvm/mmu.c
+> > @@ -4,19 +4,20 @@
+> >   * Author: Christoffer Dall <c.dall@virtualopensystems.com>
+> >   */
+> >
+> > +#include <linux/acpi.h>
+> >  #include <linux/mman.h>
+> >  #include <linux/kvm_host.h>
+> >  #include <linux/io.h>
+> >  #include <linux/hugetlb.h>
+> >  #include <linux/sched/signal.h>
+> >  #include <trace/events/kvm.h>
+> > +#include <asm/acpi.h>
+> >  #include <asm/pgalloc.h>
+> >  #include <asm/cacheflush.h>
+> >  #include <asm/kvm_arm.h>
+> >  #include <asm/kvm_mmu.h>
+> >  #include <asm/kvm_pgtable.h>
+> >  #include <asm/kvm_pkvm.h>
+> > -#include <asm/kvm_ras.h>
+> >  #include <asm/kvm_asm.h>
+> >  #include <asm/kvm_emulate.h>
+> >  #include <asm/virt.h>
+> > @@ -1811,6 +1812,20 @@ static void handle_access_fault(struct kvm_vcpu =
+*vcpu, phys_addr_t fault_ipa)
+> >         read_unlock(&vcpu->kvm->mmu_lock);
+> >  }
+> >
+> > +int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
+> > +{
+> > +       /*
+> > +        * Give APEI the opportunity to claim the abort before handling=
+ it
+> > +        * within KVM. apei_claim_sea() expects to be called with IRQs
+> > +        * enabled.
+> > +        */
+> > +       lockdep_assert_irqs_enabled();
+> > +       if (apei_claim_sea(NULL) =3D=3D 0)
+> > +               return 1;
+> > +
+> > +       return kvm_inject_serror(vcpu);
+> > +}
+> > +
+> >  /**
+> >   * kvm_handle_guest_abort - handles all 2nd stage aborts
+> >   * @vcpu:      the VCPU pointer
+> > @@ -1834,17 +1849,8 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu=
+)
+> >         gfn_t gfn;
+> >         int ret, idx;
+> >
+> > -       /* Synchronous External Abort? */
+> > -       if (kvm_vcpu_abt_issea(vcpu)) {
+> > -               /*
+> > -                * For RAS the host kernel may handle this abort.
+> > -                * There is no need to pass the error into the guest.
+> > -                */
+> > -               if (kvm_handle_guest_sea())
+> > -                       return kvm_inject_serror(vcpu);
+> > -
+> > -               return 1;
+> > -       }
+> > +       if (kvm_vcpu_abt_issea(vcpu))
+> > +               return kvm_handle_guest_sea(vcpu);
+> >
+> >         esr =3D kvm_vcpu_get_esr(vcpu);
+> >
+> > diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
+> > index 096747a61bf6..38b0e3a9a6db 100644
+> > --- a/arch/arm64/kvm/nested.c
+> > +++ b/arch/arm64/kvm/nested.c
+> > @@ -1289,6 +1289,9 @@ int kvm_handle_vncr_abort(struct kvm_vcpu *vcpu)
+> >
+> >         BUG_ON(!(esr & ESR_ELx_VNCR_SHIFT));
+> >
+> > +       if (kvm_vcpu_abt_issea(vcpu))
+> > +               return kvm_handle_guest_sea(vcpu);
+> > +
+> >         if (esr_fsc_is_permission_fault(esr)) {
+> >                 inject_vncr_perm(vcpu);
+> >         } else if (esr_fsc_is_translation_fault(esr)) {
+> > --
+> > 2.39.5
+> >
 
