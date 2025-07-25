@@ -1,331 +1,366 @@
-Return-Path: <linux-kernel+bounces-745182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34343B1163A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:12:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452C8B1163F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0BF53B950F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F581CC2F73
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AF92063F0;
-	Fri, 25 Jul 2025 02:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC12421421E;
+	Fri, 25 Jul 2025 02:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OTUiQn3d"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2047.outbound.protection.outlook.com [40.107.244.47])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="0aomYNVx"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23BD1373;
-	Fri, 25 Jul 2025 02:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753409517; cv=fail; b=MszHEapvYXEMSWhXh1OQKw0T8wMmdRpbrmYRMkarW2/5lriwMYmG6G4du1/JOw1TpmCk8fgm6CDfGlsxOMSnve8k9RH7ljFIR7DVoBOcX9Co2BqcqaLV9aOd0tPNCvrC0k2p1THRXfz0Trwh1FohW6vwDtZbERCR+YOIqG7MmhY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753409517; c=relaxed/simple;
-	bh=tsakTkVoz2OvXOGrRxuw2NYImMIf8vQHNY8CEWM6UiU=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=Dr+rk0Rk42ChV/WLMCGESu+tmJFeBxVXabzRw0ApJpxPftaw26FSmQeRsqxXCWIw6ByTlmYNA3IXZsV77CUl883r6eN/Al2FjYn/+5eHnSyAvJglEWvo5A82EI0gYkwPLxTq9TC42goFiLCjeRM+2KJBR5/90cHJ6vdTKR7DKkk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OTUiQn3d; arc=fail smtp.client-ip=40.107.244.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CuNZ2fLl5ge1xLxhqXcK2KKL+BRbG8HCv988/pLnWWHKy4ma+bYkLa7bDrWVPu/+NQwg3dhOfzUExRJZJAiZB+rSaMLC7ofJUPVLe4z7u8ylOc+SxfkKaz1zvcKJDMHh6jeIDa2KvZAZKyTGAb7lZ4jCQtrLZaokUUK1GxH7SwqVLDuvwgimoJlbysW852fMqiPDHRLMupvvs3UDJhPXbSorkKcgXmqpkjCGvkrfNTSrWolpysKBNPnWmVElHsTOT8ZKTRUN49/k1/uskNS7+1ZAN9QEC34Y2MGIF19rhe4xy1B82PlJtCmJPjgapTqf6EvIkneJ/DuoRxTfRUhrIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Log5RJq09t7V/xOstjVeH6DzCRRcq9DJO7hd5Gusle0=;
- b=QLO7Mnk6uBJ8GwDefYhepf4ooZyZkD1ypvGd3pDXsCIDUJ4AFA6+cedHIcgcQ5wX2IR/hGHaEL065AjGjFvXPQpQQpjR+JvGNFn/8yd0ROgbo58KYarGKYd8GeXmhgD1ddpIIdQjtwCG8qWgjF4HOTJbPiVt9E9+sp1REqSigU8O9/WkehrJmMxcuGMrIlaSYyl2LgVBxdjNE5q+8VraaECnTAlcxNXr0lVXUwUMlOCvmHsXwZYjc70RdsVvBpWkMiHgBfhuIh6kkTUs2CHIz9PnY+ZVEFHezhQPwnRWza+nhF9rKWhpBXa3iTclZ+NW6kmeJB9Wpc18/V+Jp+hoPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Log5RJq09t7V/xOstjVeH6DzCRRcq9DJO7hd5Gusle0=;
- b=OTUiQn3d9G+yHJbQJdWIZA41iIjNlL0qSzURddTIIM8L/yx40RNZgqF40SB0pGiKa82HYveRlTMT1vfNGPBkHMR+eDN5Y6VvLuCBFkDEc8J7LK9i0jiv9i9JR9Xx2F4ujTeBfvOuEFc4Iu+UfwOWT1F+x0aybHW2UT1YgBmPU2fCn/3y3lMnLRZuJKTbbGekjNbNqgfNYHyLO27J5PfYiF8lpCe48s5/y87Tdp4x/JdcvrKEMW3VyMVaEcg25JkabMTqABgnpSnKDRwdTJg1YNMf0/iScrxszZVrVMq+QNLrMWkdozqFPIS250+cNtZuwH2Be0apczgX5pWs0Dj30g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS0PR12MB6391.namprd12.prod.outlook.com (2603:10b6:8:cd::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Fri, 25 Jul
- 2025 02:11:52 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8964.019; Fri, 25 Jul 2025
- 02:11:52 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Fri, 25 Jul 2025 11:11:18 +0900
-Subject: [PATCH] rust: transmute: add `as_bytes` method for `AsBytes` trait
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250725-as_bytes-v1-1-6f06a3744f69@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIAMXngmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDcyNT3cTi+KTKktRiXbPkpGRDwzSjVItkYyWg8oKi1LTMCrBR0bG1tQD
- I509AWgAAAA==
-X-Change-ID: 20250725-as_bytes-6cbc11f2e8c3
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Robin Murphy <robin.murphy@arm.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: "Christian S. Lima" <christiansantoslima21@gmail.com>, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: TYWPR01CA0028.jpnprd01.prod.outlook.com
- (2603:1096:400:aa::15) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987C613B58B;
+	Fri, 25 Jul 2025 02:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753409609; cv=none; b=iqz1CKrMgj7OCequXypMo5u9xu3+moyLgZ5T3jvmDBiOW3bwaDlxcn/nmXLdwRxItu8SQ+OvjmCv5zOXf3AXhEecaAX2z2RgC6IVsEwCdbttYCzaGdE4CfJlPXODDrJ8eKhYPFuZWOmP6hYpw8hqOyqkKpqkwRn15po+KQqNwqI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753409609; c=relaxed/simple;
+	bh=E1s2up6hfgesBwyxr9XiIA3NTVEOck0F1Suyauc0Ju4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGKwR7LsFavqpGnDK+X1uXrxk1xsqLtUoGfu67N9MIyIit3eBhNoDIrDqCcBzWNzrtPurYIQgSb8XaR3tNZeDrZiL+BKZ18IYxC37MPOv7ItUZCcWfYLJZZxspVYTtHalaNIfeplyXKD3FcbsSLPYU+K3SueIMFCnPUNTtjg8bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=0aomYNVx; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bpBHL38Xbz9sSs;
+	Fri, 25 Jul 2025 04:13:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1753409598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PbqJc5y9mQaYNYaiR3kWnI5AcKmau8ioADlnL1uolvs=;
+	b=0aomYNVxPiZhQAnzoqXShauikSav4VMZJnQitL18BBSw505r5tum7Rpi+qkVNlU7/wCiUm
+	ahkdnVnWKYrViVluO/GO4BsPuHlN/W+8Ly9QDWZywJYDLYPF04DJv2ZTECrQQcTObMkDYq
+	kWHmameBCD6SAdJjZYD5Eye7bEeL3ItMNNCctZVkka69xz4mcJUh0fqQjcMCAbVZMqw2Jm
+	aYA3QhH54BofIvsnw7hda+uugRLCqv8dias9aiTGTIEFg0RYm7BP2kw1/RKibMs5T5rpR2
+	gLlIQFsDAdaCUt3lcnXrWmGos7es3BhBGg273XXFeWTBucz9bXCiV2yZ92kL7A==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Fri, 25 Jul 2025 12:13:03 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC v2 2/4] procfs: add "pidns" mount option
+Message-ID: <2025-07-24.1753364886-sleek-serves-calm-fiat-canned-carnivals-jmzVpR@cyphar.com>
+References: <20250723-procfs-pidns-api-v2-0-621e7edd8e40@cyphar.com>
+ <20250723-procfs-pidns-api-v2-2-621e7edd8e40@cyphar.com>
+ <20250724-ammoniak-gepinselt-6dd6255c2368@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS0PR12MB6391:EE_
-X-MS-Office365-Filtering-Correlation-Id: 037fcdde-14fe-47d3-09d4-08ddcb209eae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|10070799003|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cHN0SzViSis2dysrNWJYbkN1SHh3dlh2NWpDelJMTFo3ZVVDOGJLbi91ZFBI?=
- =?utf-8?B?cjBpNzlQbnFBQTJYYlhIMTk5YlVtcjFaK2VhMlNlb0hlNmk1Y3BydkVkZnJs?=
- =?utf-8?B?UUFrWVhLWlFYTGI2SzRWcDFERUZqYlZhUjd4VHhtc21WOTg0YU5kMWR1My9L?=
- =?utf-8?B?bExBZTVmdWM3U0NVUWh6SVN0dkQzcTRwSU43RGtSQUNmc0FrYlBEU0p5RFdU?=
- =?utf-8?B?QjF3ZTUxZWhsdDBRMWRTZ1BwM0hwRnFUNVNlaTRmdWlJOUZOUEVoRjEwN2ti?=
- =?utf-8?B?bXErRlpoYnJtN0ZxWkVkckhXRGV5d3FQTE5WRkUyWWhzWlpwdmJaeXBIR0tG?=
- =?utf-8?B?WjRacE0yRTZoWUxEOGM0amsvUXpud2svZG1mQUJhQmZHK0RXcHBLQVVtQ3Fw?=
- =?utf-8?B?V2VUcXY4ZXpYT201NTU2YVlqMmpvUExXckl6dVFxTHdrZ2pRUUIrYVgrK1Rt?=
- =?utf-8?B?bkNaaTZ0c2JpalJYMk51ajBMZE93Qzl6WmNpMi9mQ2pTbWNMcnBmeXNWbTY4?=
- =?utf-8?B?S2NWV0daVnNyc09iWDBQUVliaVlkV1dMdFh0SHNiS1lDOVJSZHBta3BqcERQ?=
- =?utf-8?B?cDZ0OXlNRG9QSmV4OU9WeVBaM3pQT2dQTWtnM3FDVDVMQ1N1OFc5MFFEWCtx?=
- =?utf-8?B?dUhTbUJSdVJmNTdqTloxcWw4cGQ1TTJjdGZnMmEvTkMyMm5RVnZuL1JaMmFa?=
- =?utf-8?B?MXpoWjNtSE9wcENCdStyajlFTzVER3AwYTNXTWtxVUtxNlYyeFZOcFN0ZWZr?=
- =?utf-8?B?U3J4VFRFV2tjQUxjQXRxc2UvVGVhTUtQMGhZWjRYa0pMMWlxWTUwRCtIM3B0?=
- =?utf-8?B?azVZbnV3NHE1d0Z3azcwZXcvWnBCN2h0MFMzdng3dXFSZFROQW1GY1I2bnAy?=
- =?utf-8?B?cFo5N3dReTVOTnVDY2tsZlVXK0MxQ0ZaSEJkVFdmeko3OTRyMFd4R0ZoaXR3?=
- =?utf-8?B?WlVJMzBWL0swU2hma0lNdVBtaVZYWW9pYkZGcUNaZmhadENBMlFKcUhiZUQ4?=
- =?utf-8?B?cHhpbzVsM1NJS29MVHNuaGxJVFZ5MUZERDRObWUrekE5czJKdmZ1M2hHUS9O?=
- =?utf-8?B?VUtLaDN0UVQ3YjFqekh4TW9tb1BrRytiU0I5WnNLaU82L2ltL2s4YjNWSDY1?=
- =?utf-8?B?NmxiZUErRGdFd3Q3MHk4MkhSYnU0YkFFMkMrWWdSaFQ1SDdBZW5SRmpSWTdF?=
- =?utf-8?B?TTBTUVl5QnJ1Q0lkQmJ5T2tsV1RXM2ExdlYrUTVRUEdEcWpvL2I3NlZWMHdJ?=
- =?utf-8?B?RzJnR2VSc05GSEZKcnBOREZ6RDlWcXFHRWEwaXY4cGF4NDc5N0tZN004YW9x?=
- =?utf-8?B?a09lbVVXeStsdUd6NngzcEgrRDJESEgweUptQXNzNGJlS0V5QVQxaFUvcGVw?=
- =?utf-8?B?OUYybGJaR1E0dDFsVXBhZnhUdE5PUFY1QndhQTdhU29RUGNIV1NLT3o3S0hF?=
- =?utf-8?B?MGJSU3lnTklDRTlic0ZFY0VBQ1NzWXBBQzl4RllBWko3WTlxR0wwSDAxbFNv?=
- =?utf-8?B?WHRIS0Q3MGpQS0hCWmpib2FJVmdQUHNnWTRFZlAvdFZYVHVRcnM4ZElGT0d4?=
- =?utf-8?B?YlNVWDAzQUxuS2VLU1dSYktVUVc3ZlJ3bngwdmc3RmF3cFVCZ2ZYM0k4bDE1?=
- =?utf-8?B?S2oxYk5sZTdLQU4zQSt6NzdIN1JVL2FwcmcyS3ozV2UrU0tFWDZ5TEc0RnNW?=
- =?utf-8?B?UmFMRmwzK1JUazhMV2k0M2N1YlFHSUNxcy8zdHVBS2p6aWJhYThxeElxZHdJ?=
- =?utf-8?B?YlA3QXdXWUYyVGZCM1dvbzFlZTFmdEF1Qm1qV2FSZ0V5UWtYR21FQS81WG03?=
- =?utf-8?B?YVBndk9WUVJGSlpsS05IQkU0MncvT3I1RS95TUVydFl0djdaN1BHcDQycG8y?=
- =?utf-8?B?dlhWQ2NvMEhHOWdxZHk3SnNvVFdtaElVVXNRemhPTUFBSDBLb1hZaGRHN3lo?=
- =?utf-8?B?M09DbmpTOW9zN0Zvb3RoVHZqVTM0ZlJSTTZEQTBQZ3dJUU1KTUw0eSsxcUdD?=
- =?utf-8?B?bjU4WEcrM1ZBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b1orWFlJWWNhNlFKQ1I1ZWh4QmlBbXRwWVRQSU9ORXlmdlhmT0JYTDhqNUpt?=
- =?utf-8?B?Q1d3OW5NVHRXZVQzMWM2SkNxT0tQdWFQU25LcnJwRVBjU3M3ZWVMMytkMWN0?=
- =?utf-8?B?WGgxdDliUzBqbjd4Z2VnK3NMN1czbVpFYUtxMmp4NC9URTlTalE2Y1lzamhJ?=
- =?utf-8?B?alJDYXdIRFE4RlgxdWJQcGU2a2VxTTNNTDZpU0hJVE5ta3poRzE0R0pPYTRq?=
- =?utf-8?B?S2pGdmNMZDc3ei9sTUdMNGp1UlFSdlJ5a25ES3F5UXo1OHFBRmZqQmtkbVZx?=
- =?utf-8?B?QWxsUm9CREtjTjltdVZxSTkvelZaYWVmcWx1TnQzbldkSEpKMmJQWkFMQUFU?=
- =?utf-8?B?SXd0dkRZUC9LT3M5M2lKbXJpUTBCMDl6YTZFQ2tFaGxmQjRmR0tzSkpFalpQ?=
- =?utf-8?B?azhyMDlIL3BFd1NVYUtRWWZMZldhWWR2MmIzT2t3WlhkNzNvRDhoYk81d0xi?=
- =?utf-8?B?NnNOSyt0R3dIOHhSNWMyWjZTNkczOThOaS9pQzE1OUJCelQvNmJhUERhMXov?=
- =?utf-8?B?Zy9jNWxIU2V2bTd6dzBhbENOMU9sTXZoN1U5alVwSVc1Snh5MGdlektpR2Z3?=
- =?utf-8?B?bXBFcytwTmJRRkRXNGVWQVlndzNBRVZWaUdIUDhSbkRGTytkYTd2b2pqcmF5?=
- =?utf-8?B?c2lJNXdsZzFJRXRZNVBVbG5iQXpaVVZGZ01qT3NoT0JaQ3d3Yi92VWJFUk1Z?=
- =?utf-8?B?UTNvMTFaVGJ0cGF4Ky80WVQ3bnMvOFExVVAwQ1hzaitEUzZZQWp1NisvQ2ZP?=
- =?utf-8?B?RVl3L1gvUnBrYW5OWnJhNW9LR2NHSVAwRXVKUHpYUlBuRFhPb3lPMjRWU2VO?=
- =?utf-8?B?VGRhYWR5SmZuejRDenBxOGdHM3B0RTVCWUxzWkhWMVQwUnJNSWhNTHluSnBq?=
- =?utf-8?B?L2JIbFZrMVI2azc1YUpMUDRnY05uUkcxTVJ5VVRKaUdUK2pabldIQlF4cEZ0?=
- =?utf-8?B?Uk83WUkyUDgxdnpJVU5Db1lKWE1yZ1IreWhYRlVnODJvMGxMRzRhQk9qaEZ6?=
- =?utf-8?B?SkUrbC9EWUIrd2NGNkVvWldMT0JSSGNtWVA5MXJRRnhMZFlRNVVsckFDam05?=
- =?utf-8?B?aDlqdGZ1QVpVMXhOSnJmeStzc3lSeC9XZExMTDliL1E3QnUxekRhT2JNYzVG?=
- =?utf-8?B?bDl6bjhUM2NxSlh2VENaaXZlNWxSVGovT0F6eThsYXJDSlVmVWJJNWV1MlVY?=
- =?utf-8?B?eWR2clh3M3NiQlRyc2ZIVFlUTDdndUhJOEN2SERYZGxDbFBvMkhvVW16QmNE?=
- =?utf-8?B?cVJ1UlYyN21WdUNQZXBwRWlDbVhybTMvVlRTT2pVcll3Qk9NaEU4OVZnY0x6?=
- =?utf-8?B?MFZvNU1SeHBtak8xWUgvYkxscFgxeVlBQll3aXhpMi8rMGJNSlNJV1dESmg2?=
- =?utf-8?B?dGYrSXYyYVhUUHZZOU94V2ZxQUxnZXMwQkNCWkZKam5yak5Na2I3ci9RWlky?=
- =?utf-8?B?Q05DK3g2cHQ4djZueTR4a0RjT1BRQW1OMjRKb1JGYk9OYnZZYWJXemRJS2Js?=
- =?utf-8?B?ZUZLNnIxTEJHRXdoWk4zMXV1NitReEtpUDVvYTI5MDM5M3ErT3JIdVpuU0Rt?=
- =?utf-8?B?RFhvV1lGTmpxOVZkazlHVnZBMUIxanliU0VFZHVsVzNHcmlvMEdpeGQ3UU9h?=
- =?utf-8?B?WDhpY3VnODUzcHdCNk56UWZvTkQ2RllyeDhnS3VFdHRxWnVXQytzSGRJZ1g0?=
- =?utf-8?B?TTZ3OWpPdEFaZzRxNmNRenVYQ01zZkNzbmlzL0NmZ05tLzJzaXBWdkd4eXcz?=
- =?utf-8?B?WnlpbFpZRUl5OGI5ZGRwZ3YrV0ZlMUZSUjN2dEE1U1hDTms5VXRYL3owU1lZ?=
- =?utf-8?B?SGNlL01Nci9DblpVbSsrSjRzMUpqLzZaQWsySmtnaUtJT29vTjBYWFhuQ1dW?=
- =?utf-8?B?TnFxVDlNNEdsU1duZ1dMQW9lZ0ZaaVIzbHh4WjlWZUY4aGZ3MWJiVlFsYjZE?=
- =?utf-8?B?REVZY2JJdFZ1anNsQUlDaGE2ZmtaMElUZ1ZyL2JqalVud0tVaDJiTko0S1VG?=
- =?utf-8?B?MjFnQWw1eERNMXBQK09CSWxjZW5vY01ISkJuNkw5TnQ5Yk5vdVE0WnYyNXBY?=
- =?utf-8?B?aE5IMEVQdlJvNnhMYlFJamhOMXZnWjVYR1hLZFEwYXZTUW9JbE5mSUVuTGYv?=
- =?utf-8?B?N1poc1l3NWhpeklRaGhUK0tOOVlWNXc2VDN1bm1SRGt3cmIwVUZQejVNUVJq?=
- =?utf-8?Q?eDAdaxH0NsilnTakoMc3pHtjbjUxFhAvFMDMYaSRUm0e?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 037fcdde-14fe-47d3-09d4-08ddcb209eae
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 02:11:51.9940
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l8pliC9HcEM4ho+9c/Zv6euu1aABg31ZlEqX7lNSOu18aih+Uje36cXc2/pY+SlRzxSJoNHRpJqLEdj8D13uMg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6391
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vpew4s6fgwoaddcn"
+Content-Disposition: inline
+In-Reply-To: <20250724-ammoniak-gepinselt-6dd6255c2368@brauner>
+X-Rspamd-Queue-Id: 4bpBHL38Xbz9sSs
 
-Every time that implements `AsBytes` should be able to provide its byte
-representation. Introduce the `as_bytes` method that returns the
-implementer as a stream of bytes.
 
-Since types implementing `Sized` can trivially be represented as a
-stream of bytes, introduce the `AsBytesSized` proxy trait that can be
-implemented for any `Sized` type and provides an `AsBytes`
-implementation suitable for such types. Types that are not `Sized` need
-to implement `AsBytes` directly and provide a method implementation.
+--vpew4s6fgwoaddcn
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC v2 2/4] procfs: add "pidns" mount option
+MIME-Version: 1.0
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-This is the sister patch of [1], requiring `AsBytes` implementors to
-provide an `as_bytes` method, and adding the convenience trait
-`AsBytesSized` that can be implemented on any sized type in order to
-benefit from a suitable `AsBytes` implementation.
+On 2025-07-24, Christian Brauner <brauner@kernel.org> wrote:
+> On Wed, Jul 23, 2025 at 09:18:52AM +1000, Aleksa Sarai wrote:
+> > Since the introduction of pid namespaces, their interaction with procfs
+> > has been entirely implicit in ways that require a lot of dancing around
+> > by programs that need to construct sandboxes with different PID
+> > namespaces.
+> >=20
+> > Being able to explicitly specify the pid namespace to use when
+> > constructing a procfs super block will allow programs to no longer need
+> > to fork off a process which does then does unshare(2) / setns(2) and
+> > forks again in order to construct a procfs in a pidns.
+> >=20
+> > So, provide a "pidns" mount option which allows such users to just
+> > explicitly state which pid namespace they want that procfs instance to
+> > use. This interface can be used with fsconfig(2) either with a file
+> > descriptor or a path:
+> >=20
+> >   fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+> >   fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid", 0=
+);
+>=20
+> Fwiw, namespace mount options could just be VFS generic mount options.
+> But it's not something that we need to solve right now.
 
-It is going to be used in Nova, but should also be universally useful -
-if anything, it felt a bit strange that `AsBytes` did not require this
-method so far as for unsized types the bytes representation cannot be
-obviously inferred.
+Yeah if we add this to sysfs it probably should be made generic, but
+let's punt this to later. :D
 
-[1] https://lore.kernel.org/rust-for-linux/20250624042802.105623-1-christiansantoslima21@gmail.com/
----
- rust/kernel/dma.rs       |  4 ++--
- rust/kernel/transmute.rs | 48 ++++++++++++++++++++++++++++++++++++++++++------
- samples/rust/rust_dma.rs |  2 +-
- 3 files changed, 45 insertions(+), 9 deletions(-)
+> > or with classic mount(2) / mount(8):
+> >=20
+> >   // mount -t proc -o pidns=3D/proc/self/ns/pid proc /tmp/proc
+> >   mount("proc", "/tmp/proc", "proc", MS_..., "pidns=3D/proc/self/ns/pid=
+");
+> >=20
+> > As this new API is effectively shorthand for setns(2) followed by
+> > mount(2), the permission model for this mirrors pidns_install() to avoid
+> > opening up new attack surfaces by loosening the existing permission
+> > model.
+> >=20
+> > Note that the mount infrastructure also allows userspace to reconfigure
+> > the pidns of an existing procfs mount, which may or may not be useful to
+> > some users.
+> >=20
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+> >  Documentation/filesystems/proc.rst |  6 +++
+> >  fs/proc/root.c                     | 90 ++++++++++++++++++++++++++++++=
++++++---
+> >  2 files changed, 90 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesys=
+tems/proc.rst
+> > index 5236cb52e357..c520b9f8a3fd 100644
+> > --- a/Documentation/filesystems/proc.rst
+> > +++ b/Documentation/filesystems/proc.rst
+> > @@ -2360,6 +2360,7 @@ The following mount options are supported:
+> >  	hidepid=3D	Set /proc/<pid>/ access mode.
+> >  	gid=3D		Set the group authorized to learn processes information.
+> >  	subset=3D		Show only the specified subset of procfs.
+> > +	pidns=3D		Specify a the namespace used by this procfs.
+> >  	=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  hidepid=3Doff or hidepid=3D0 means classic mode - everybody may access=
+ all
+> > @@ -2392,6 +2393,11 @@ information about processes information, just ad=
+d identd to this group.
+> >  subset=3Dpid hides all top level files and directories in the procfs t=
+hat
+> >  are not related to tasks.
+> > =20
+> > +pidns=3D specifies a pid namespace (either as a string path to somethi=
+ng like
+> > +`/proc/$pid/ns/pid`, or a file descriptor when using `FSCONFIG_SET_FD`=
+) that
+> > +will be used by the procfs instance when translating pids. By default,=
+ procfs
+> > +will use the calling process's active pid namespace.
+> > +
+> >  Chapter 5: Filesystem behavior
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> > diff --git a/fs/proc/root.c b/fs/proc/root.c
+> > index ed86ac710384..057c8a125c6e 100644
+> > --- a/fs/proc/root.c
+> > +++ b/fs/proc/root.c
+> > @@ -38,12 +38,18 @@ enum proc_param {
+> >  	Opt_gid,
+> >  	Opt_hidepid,
+> >  	Opt_subset,
+> > +#ifdef CONFIG_PID_NS
+> > +	Opt_pidns,
+> > +#endif
+> >  };
+> > =20
+> >  static const struct fs_parameter_spec proc_fs_parameters[] =3D {
+> > -	fsparam_u32("gid",	Opt_gid),
+> > +	fsparam_u32("gid",		Opt_gid),
+> >  	fsparam_string("hidepid",	Opt_hidepid),
+> >  	fsparam_string("subset",	Opt_subset),
+> > +#ifdef CONFIG_PID_NS
+> > +	fsparam_file_or_string("pidns",	Opt_pidns),
+> > +#endif
+> >  	{}
+> >  };
+> > =20
+> > @@ -109,11 +115,67 @@ static int proc_parse_subset_param(struct fs_cont=
+ext *fc, char *value)
+> >  	return 0;
+> >  }
+> > =20
+> > +#ifdef CONFIG_PID_NS
+> > +static int proc_parse_pidns_param(struct fs_context *fc,
+> > +				  struct fs_parameter *param,
+> > +				  struct fs_parse_result *result)
+> > +{
+> > +	struct proc_fs_context *ctx =3D fc->fs_private;
+> > +	struct pid_namespace *target, *active =3D task_active_pid_ns(current);
+> > +	struct ns_common *ns;
+> > +	struct file *ns_filp __free(fput) =3D NULL;
+> > +
+> > +	switch (param->type) {
+> > +	case fs_value_is_file:
+> > +		/* came throug fsconfig, steal the file reference */
+> > +		ns_filp =3D param->file;
+> > +		param->file =3D NULL;
+>=20
+> This can be shortened to:
+>=20
+> ns_filp =3D no_free_ptr(param->file);
 
-diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-index 25dfa0e6cc3ce50aa85463dae00fbdebcf8975d2..2ada95fdb41186957ee8dd39d43e473286f01d2c 100644
---- a/rust/kernel/dma.rs
-+++ b/rust/kernel/dma.rs
-@@ -439,7 +439,7 @@ unsafe impl<T: AsBytes + FromBytes + Send> Send for CoherentAllocation<T> {}
- /// // SAFETY: All bit patterns are acceptable values for `MyStruct`.
- /// unsafe impl kernel::transmute::FromBytes for MyStruct{};
- /// // SAFETY: Instances of `MyStruct` have no uninitialized portions.
--/// unsafe impl kernel::transmute::AsBytes for MyStruct{};
-+/// unsafe impl kernel::transmute::AsBytesSized for MyStruct{};
- ///
- /// # fn test(alloc: &kernel::dma::CoherentAllocation<MyStruct>) -> Result {
- /// let whole = kernel::dma_read!(alloc[2]);
-@@ -483,7 +483,7 @@ macro_rules! dma_read {
- /// // SAFETY: All bit patterns are acceptable values for `MyStruct`.
- /// unsafe impl kernel::transmute::FromBytes for MyStruct{};
- /// // SAFETY: Instances of `MyStruct` have no uninitialized portions.
--/// unsafe impl kernel::transmute::AsBytes for MyStruct{};
-+/// unsafe impl kernel::transmute::AsBytesSized for MyStruct{};
- ///
- /// # fn test(alloc: &kernel::dma::CoherentAllocation<MyStruct>) -> Result {
- /// kernel::dma_write!(alloc[2].member = 0xf);
-diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
-index 1c7d43771a37b90150de86699f114a2ffb84db91..91d977e035626bfb23910829653f1fc971e0e0f8 100644
---- a/rust/kernel/transmute.rs
-+++ b/rust/kernel/transmute.rs
-@@ -47,25 +47,61 @@ macro_rules! impl_frombytes {
- ///
- /// Values of this type may not contain any uninitialized bytes. This type must not have interior
- /// mutability.
--pub unsafe trait AsBytes {}
-+pub unsafe trait AsBytes {
-+    /// Returns `self` as a slice of bytes.
-+    fn as_bytes(&self) -> &[u8];
-+}
- 
--macro_rules! impl_asbytes {
-+/// Proxy trait for `AsBytes`, providing an implementation valid for all sized types.
-+///
-+/// If your type implements `Sized`, then you want to implement this instead of `AsBytes`.
-+///
-+/// # Safety
-+///
-+/// Values of this type may not contain any uninitialized bytes. This type must not have interior
-+/// mutability.
-+pub unsafe trait AsBytesSized: Sized {}
-+
-+unsafe impl<T: AsBytesSized> AsBytes for T {
-+    fn as_bytes(&self) -> &[u8] {
-+        unsafe {
-+            core::slice::from_raw_parts((self as *const Self).cast::<u8>(), size_of::<Self>())
-+        }
-+    }
-+}
-+
-+macro_rules! impl_asbytessized {
-     ($($({$($generics:tt)*})? $t:ty, )*) => {
-         // SAFETY: Safety comments written in the macro invocation.
--        $(unsafe impl$($($generics)*)? AsBytes for $t {})*
-+        $(unsafe impl$($($generics)*)? AsBytesSized for $t {})*
-     };
- }
- 
--impl_asbytes! {
-+impl_asbytessized! {
-     // SAFETY: Instances of the following types have no uninitialized portions.
-     u8, u16, u32, u64, usize,
-     i8, i16, i32, i64, isize,
-     bool,
-     char,
--    str,
- 
-     // SAFETY: If individual values in an array have no uninitialized portions, then the array
-     // itself does not have any uninitialized portions either.
--    {<T: AsBytes>} [T],
-     {<T: AsBytes, const N: usize>} [T; N],
- }
-+
-+unsafe impl AsBytes for str {
-+    fn as_bytes(&self) -> &[u8] {
-+        self.as_bytes()
-+    }
-+}
-+
-+unsafe impl<T> AsBytes for [T]
-+where
-+    T: AsBytes,
-+{
-+    fn as_bytes(&self) -> &[u8] {
-+        unsafe {
-+            core::slice::from_raw_parts(self.as_ptr().cast::<u8>(), self.len() * size_of::<T>())
-+        }
-+    }
-+}
-diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
-index 9e05d5c0cdaeb3b36fcf204a91b52e382e73fbe6..ab4814c848f928240fc49d57ac6a2efe636fb39f 100644
---- a/samples/rust/rust_dma.rs
-+++ b/samples/rust/rust_dma.rs
-@@ -30,7 +30,7 @@ fn new(h: u32, b: u32) -> Self {
-     }
- }
- // SAFETY: All bit patterns are acceptable values for `MyStruct`.
--unsafe impl kernel::transmute::AsBytes for MyStruct {}
-+unsafe impl kernel::transmute::AsBytesSized for MyStruct {}
- // SAFETY: Instances of `MyStruct` have no uninitialized portions.
- unsafe impl kernel::transmute::FromBytes for MyStruct {}
- 
+I really need to take a closer look at <linux/cleanup.h>, each time I
+look at it I learn about another handy helper.
 
----
-base-commit: 14ae91a81ec8fa0bc23170d4aa16dd2a20d54105
-change-id: 20250725-as_bytes-6cbc11f2e8c3
+> > +		break;
+> > +	case fs_value_is_string:
+> > +		ns_filp =3D filp_open(param->string, O_RDONLY, 0);
+> > +		break;
+> > +	default:
+> > +		WARN_ON_ONCE(true);
+> > +		break;
+> > +	}
+> > +	if (!ns_filp)
+> > +		ns_filp =3D ERR_PTR(-EBADF);
+> > +	if (IS_ERR(ns_filp)) {
+> > +		errorfc(fc, "could not get file from pidns argument");
+> > +		return PTR_ERR(ns_filp);
+> > +	}
+> > +
+> > +	if (!proc_ns_file(ns_filp))
+> > +		return invalfc(fc, "pidns argument is not an nsfs file");
+> > +	ns =3D get_proc_ns(file_inode(ns_filp));
+> > +	if (ns->ops->type !=3D CLONE_NEWPID)
+> > +		return invalfc(fc, "pidns argument is not a pidns file");
+> > +	target =3D container_of(ns, struct pid_namespace, ns);
+> > +
+> > +	/*
+> > +	 * pidns=3D is shorthand for joining the pidns to get a fsopen fd, so=
+ the
+> > +	 * permission model should be the same as pidns_install().
+> > +	 */
+> > +	if (!ns_capable(target->user_ns, CAP_SYS_ADMIN)) {
+> > +		errorfc(fc, "insufficient permissions to set pidns");
+> > +		return -EPERM;
+> > +	}
+> > +	if (!pidns_is_ancestor(target, active))
+> > +		return invalfc(fc, "cannot set pidns to non-descendant pidns");
+>=20
+> This made me think. If one rewrote this as:
+>=20
+> if (!ns_capable(task_active_pidns(current)->user_ns, CAP_SYS_ADMIN))
+>=20
+> if (!pidns_is_ancestor(target, active))
+>=20
+> that would also work, right? IOW, you'd be checking whether you're
+> capable over your current pid namespace owning userns and if the target
+> pidns is an ancestor it's also implied by the first check that you're
+> capable over it.
+>=20
+> The only way this would not be true is if a descendant pidns would be
+> owned by a userns over which you don't hold privileges and I wondered
+> whether that's even possible? I don't think it is but maybe you see a
+> way.
 
-Best regards,
--- 
-Alexandre Courbot <acourbot@nvidia.com>
+Well, if you run a setuid binary, it could create a pidns that is a
+child but is owned by a more privileged userns than you. My main goal
+here was to just mirror pidns_install() exactly, to make sure that the
+permission model was identical.
 
+> > +
+> > +	put_pid_ns(ctx->pid_ns);
+> > +	ctx->pid_ns =3D get_pid_ns(target);
+> > +	put_user_ns(fc->user_ns);
+> > +	fc->user_ns =3D get_user_ns(ctx->pid_ns->user_ns);
+> > +	return 0;
+> > +}
+> > +#endif /* CONFIG_PID_NS */
+> > +
+> >  static int proc_parse_param(struct fs_context *fc, struct fs_parameter=
+ *param)
+> >  {
+> >  	struct proc_fs_context *ctx =3D fc->fs_private;
+> >  	struct fs_parse_result result;
+> > -	int opt;
+> > +	int opt, err;
+> > =20
+> >  	opt =3D fs_parse(fc, proc_fs_parameters, param, &result);
+> >  	if (opt < 0)
+> > @@ -125,14 +187,24 @@ static int proc_parse_param(struct fs_context *fc=
+, struct fs_parameter *param)
+> >  		break;
+> > =20
+> >  	case Opt_hidepid:
+> > -		if (proc_parse_hidepid_param(fc, param))
+> > -			return -EINVAL;
+> > +		err =3D proc_parse_hidepid_param(fc, param);
+> > +		if (err)
+> > +			return err;
+> >  		break;
+> > =20
+> >  	case Opt_subset:
+> > -		if (proc_parse_subset_param(fc, param->string) < 0)
+> > -			return -EINVAL;
+> > +		err =3D proc_parse_subset_param(fc, param->string);
+> > +		if (err)
+> > +			return err;
+> > +		break;
+> > +
+> > +#ifdef CONFIG_PID_NS
+> > +	case Opt_pidns:
+>=20
+> I think it would be easier if we returned EOPNOTSUPP when !CONFIG_PID_NS
+> instead of EINVALing this?
+>=20
+> > +		err =3D proc_parse_pidns_param(fc, param, &result);
+> > +		if (err)
+> > +			return err;
+> >  		break;
+> > +#endif
+> > =20
+> >  	default:
+> >  		return -EINVAL;
+> > @@ -154,6 +226,12 @@ static void proc_apply_options(struct proc_fs_info=
+ *fs_info,
+> >  		fs_info->hide_pid =3D ctx->hidepid;
+> >  	if (ctx->mask & (1 << Opt_subset))
+> >  		fs_info->pidonly =3D ctx->pidonly;
+> > +#ifdef CONFIG_PID_NS
+> > +	if (ctx->mask & (1 << Opt_pidns)) {
+> > +		put_pid_ns(fs_info->pid_ns);
+> > +		fs_info->pid_ns =3D get_pid_ns(ctx->pid_ns);
+> > +	}
+> > +#endif
+> >  }
+> > =20
+> >  static int proc_fill_super(struct super_block *s, struct fs_context *f=
+c)
+> >=20
+> > --=20
+> > 2.50.0
+> >=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--vpew4s6fgwoaddcn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaILoLwAKCRAol/rSt+lE
+b25zAQCDF0JaQRm5jAxxXKIbNdVmzJk6u4mw0soZh7GxLzwK+wEAys/DziwhrFR3
+DqOGSuKWcHB3shQV5Dhi4QXIgqGKtQ0=
+=RgtU
+-----END PGP SIGNATURE-----
+
+--vpew4s6fgwoaddcn--
 
