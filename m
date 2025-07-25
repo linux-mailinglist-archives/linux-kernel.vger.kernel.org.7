@@ -1,181 +1,109 @@
-Return-Path: <linux-kernel+bounces-745390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF548B11945
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:40:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C0CB11951
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51EF67A7F77
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63E1AC39C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C002BD58F;
-	Fri, 25 Jul 2025 07:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07832BDC03;
+	Fri, 25 Jul 2025 07:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvLj/ANp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuhFYXh9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1D31CEADB;
-	Fri, 25 Jul 2025 07:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43548262FED;
+	Fri, 25 Jul 2025 07:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753429213; cv=none; b=S/n+fZetL3Evhd5c8ecOgrKx3hLHNBHaqVIZhBSOADswE2hE7uBMg88N5Lyuu2qr4LB+AmatBX3oKa9qaQ+ieeNJBC6J+ZDNCmvKUtSHyZlWECCVdGsWBtCf5P+EHvk5XWwnR9Ib6FIfL5IpHrktkumKQ7igNjAoeqJeLll5IL4=
+	t=1753429285; cv=none; b=sKOXXduTKbuYQOamX+JUwXXu7MvpWarH6Z2B+aRz+AJbrqOiEDBDSZ/tzkMOwyW/ly00uKR5w/Gf5yg17Dh5JX/OGjIxFTy/bW3tPH6sS8DeCIi183etqHGscADHUHBhBcx4Qg4yBvCXbTuwNBuyirRtnmOqFTXw7cM1TDoOxvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753429213; c=relaxed/simple;
-	bh=7VzQscuh58heLqHgPQucnd5aA5ZutPjS50+G0o0BO0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ijfG4nfymECvlKLjcKJ698+0a0jO7SqWyBQZ4j7Nrpn4TWAvOSRV9jqCkxquDl9ym+HgI5xKS7jpdLnSAo5cis5aPpIgoV0A2/rlpcon728cDlCpWE1IT/Tj+rnJsLYitZ+nVaxhvINU+xLbNqhPVh7elCi/XlY63KIIrIbaa50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvLj/ANp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F5CAC4CEE7;
-	Fri, 25 Jul 2025 07:40:10 +0000 (UTC)
+	s=arc-20240116; t=1753429285; c=relaxed/simple;
+	bh=EJdajs8yNIrucCAJlRxnjIKqvHvgDMG64nsg+BaAj/o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i/nADgfNe89tpMt8rWZjSewFrWZQvQ/ZCXnDhQz6JjVgNhgxPAfq2dXWEyks9OZSpQPCS7Y8r3hOmPkuPKV6cAvIoDmnh7+FPuPG5Wyr3GHG/SpFUTs3Q8GG6lDKW8K3jF/nM90BxuU8m/g+tJo/gYy1i3x9kCwHanjf1Xb71pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuhFYXh9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6ACC4CEE7;
+	Fri, 25 Jul 2025 07:41:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753429213;
-	bh=7VzQscuh58heLqHgPQucnd5aA5ZutPjS50+G0o0BO0Y=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=fvLj/ANpkT2bNwQYRbeyhJMU70oyrqXfxsFj7Mou4iNQBHzz21IOMS24MZA4v65qm
-	 wMw8+QYyzq3avcoG94kfAnX2OHP6TVXc+UneLCbFDyPMVI5fR8AV7vjz59D6zatuJc
-	 7lTgFRvqsfeGAwzue0TY86lPQ4rtXGE6Zyed2I43w/fQvUTNMXAezuXx/HyXlFbKX+
-	 TjhEHkoRzVeSfT0e8RqofNNKSc8KvuQCUyZxSSBO7C2WMCKAtW0ZHkEocRTNSRS6jF
-	 FltryL1O+/oslxIaenw3ZSkLhBuSAvznsXbb2x0eQzaXtv3y41z6MAF4s2CphYvGmb
-	 oAvjrcKKlIeig==
-Message-ID: <384635a3-c6ed-44f8-a54a-2b20e20694cd@kernel.org>
-Date: Fri, 25 Jul 2025 09:40:08 +0200
+	s=k20201202; t=1753429285;
+	bh=EJdajs8yNIrucCAJlRxnjIKqvHvgDMG64nsg+BaAj/o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZuhFYXh9u89PfWUt/FxW+kI6wZEXz8rPquuUlHpcWz9Phdoza4n6mVb5ljTXe9BxZ
+	 mlulrhxPtBrhgbb3hOlA8Pi6QCMODh3cPZZa9/ZX26MWqwOP7QFGPvHXFqhXXBBA/J
+	 SIWtR7/ubH/Zl/sAZ/3BWIxrGGjYTsUUeaPt9VEvkgJ3+S9re8JhIgm1ncj/SCU9OG
+	 +2EfD8mDTo5ngDzmBtQyo3Vsx38afJ7wI7Bfv5EV6fatxDhLknz1QHcay4gJ4HyGC7
+	 3gld08H70iuLUSAJZdZMkW79B2Gv3ksN/33hhMgGb2ycOtBhfY5mUzTXe64rPhnd+8
+	 E19mv4spF2tcA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1ufD3Q-000000002Ig-3bqf;
+	Fri, 25 Jul 2025 09:41:20 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Carlo Caione <ccaione@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] firmware: meson_sm: fix device leak at probe
+Date: Fri, 25 Jul 2025 09:40:19 +0200
+Message-ID: <20250725074019.8765-1-johan@kernel.org>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: interrupt-controller: aspeed: Add
- parent node compatibles and refine documentation
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Thomas Gleixner
- <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Kevin Chen <kevin_chen@aspeedtech.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
-References: <20250722095156.1672873-1-ryan_chen@aspeedtech.com>
- <20250722095156.1672873-2-ryan_chen@aspeedtech.com>
- <001d37c7-f704-4554-a4db-0cc130e07dd6@kernel.org>
- <OS8PR06MB7541F8D3AEE1A618DB31F07BF25FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <OS8PR06MB7541F8D3AEE1A618DB31F07BF25FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/07/2025 10:08, Ryan Chen wrote:
->> Subject: Re: [PATCH v3 1/2] dt-bindings: interrupt-controller: aspeed: Add
->> parent node compatibles and refine documentation
->>
->> On 22/07/2025 11:51, Ryan Chen wrote:
->>> +  INTC0 is used to assert GIC if interrupt in INTC1 asserted.
->>> +  INTC1 is used to assert INTC0 if interrupt of modules asserted.
->>> +  +-----+   +---------+
->>> +  | GIC |---|  INTC0  |
->>> +  +-----+   +---------+
->>> +            +---------+
->>> +            |         |---module0
->>> +            | INTC0_0 |---module1
->>> +            |         |---...
->>> +            +---------+---module31
->>> +            |---....  |
->>> +            +---------+
->>> +            |         |     +---------+
->>> +            | INTC0_11| +---| INTC1   |
->>> +            |         |     +---------+
->>> +            +---------+     +---------+---module0
->>> +                            | INTC1_0 |---module1
->>> +                            |         |---...
->>> +                            +---------+---module31
->>> +                            ...
->>> +                            +---------+---module0
->>> +                            | INTC1_5 |---module1
->>> +                            |         |---...
->>> +                            +---------+---module31
->>
->> You binding also said intc1 is the parent of intc-ic, so where is here intc-ic?
->>
->> This diagram and new binding do not match at all.
-> 
-> The corresponded compatible is following.
-> 
->   +-----+   +---------+
->   | GIC |---|  INTC0  | -> (parent : aspeed,ast2700-intc0)
->   +-----+   +---------+
->             +---------+
->             |        |---module0
->             | INTC0_0 |---module1
-> 			(child : aspeed,ast2700-intc-ic)
->             |        |---...
->             +---------+---module31
->             |---....  |
->             +---------+
->             |         |    					 +---------+
->             | INTC0_11 | +----------------------------	| INTC1   |  -> -> (parent : aspeed,ast2700-intc1)
+Make sure to drop the reference to the secure monitor device taken by
+of_find_device_by_node() when looking up its driver data on behalf of
+other drivers (e.g. during probe).
 
-AGAIN (second time): that's not what your binding said.
+Note that holding a reference to the platform device does not prevent
+its driver data from going away so there is no point in keeping the
+reference after the helper returns.
 
-Your binding is explicit here, which is what we want in general. It says
-that inct1 is one of the parents of intc-ic.
+Fixes: 8cde3c2153e8 ("firmware: meson_sm: Rework driver as a proper platform driver")
+Cc: stable@vger.kernel.org	# 5.5
+Cc: Carlo Caione <ccaione@baylibre.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/firmware/meson/meson_sm.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Let me be clear, because you will be dragging this talk with irrelevant
-arguments forever - changing this binding is close to no. If you come
-with correct arguments, maybe would work. But the main point is that you
-probably do not have to even change the binding to achieve proper
-hardware description. Work on that.
+diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
+index f25a9746249b..3ab67aaa9e5d 100644
+--- a/drivers/firmware/meson/meson_sm.c
++++ b/drivers/firmware/meson/meson_sm.c
+@@ -232,11 +232,16 @@ EXPORT_SYMBOL(meson_sm_call_write);
+ struct meson_sm_firmware *meson_sm_get(struct device_node *sm_node)
+ {
+ 	struct platform_device *pdev = of_find_device_by_node(sm_node);
++	struct meson_sm_firmware *fw;
+ 
+ 	if (!pdev)
+ 		return NULL;
+ 
+-	return platform_get_drvdata(pdev);
++	fw = platform_get_drvdata(pdev);
++
++	put_device(&pdev->dev);
++
++	return fw;
+ }
+ EXPORT_SYMBOL_GPL(meson_sm_get);
+ 
+-- 
+2.49.1
 
-Best regards,
-Krzysztof
 
