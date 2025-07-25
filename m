@@ -1,187 +1,352 @@
-Return-Path: <linux-kernel+bounces-745457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D42B11A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:50:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70DF6B11A31
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CEF67BAE88
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:48:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4B65619E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D8820127B;
-	Fri, 25 Jul 2025 08:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8E623E350;
+	Fri, 25 Jul 2025 08:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=belden.com header.i=@belden.com header.b="JyiTJ1fD"
-Received: from mx0a-00015a02.pphosted.com (mx0a-00015a02.pphosted.com [205.220.166.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OeLHhU5W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6JB0ign";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OeLHhU5W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6JB0ign"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA121FC3
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00997219E0
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753433401; cv=none; b=LTMzZSbdmOJoPYMwvf9q2CGL04RwAPN1EwXmCKb4Y0J31dqZMKMN2Wa3scPHEk6O+JAnBQsmUD6L2dZKgIh6SVZwealM68NfiCydYMRT6fEbFq9Km1G5EBCJfrvC3oDJ2NRG/+Bjl0cIZ+lIRIzueUGghSCib/IGmpq0xTZCl18=
+	t=1753433248; cv=none; b=h2i2SSUjwuza9N9cl4SeyyP3Qy6Hubnyyz5epApzgtCq5fRPbwTZEEmKiojjNgldSCQ2eVUvrB7GD8QKpm8RyyJ4DdsG3G+/1I5+LrOTd+sN76w4KnwMXV3QFDYfSJfk8wNXrK74RTKkGABK87rqZsgj44FZSN67+2cR0KFSKQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753433401; c=relaxed/simple;
-	bh=DgudFAr7p+t76bJMfc4BjnbZuVWo1ZU+/SClggvoUdI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c8ri7pj+iS6Mdi/0vGLD0rxSHLs93MzMAYUFJ79HLZ58W4oD8L1ahwSkoTnO4c42k2ujc1uAI/WPVOj1e2J63e4Mg0d839Nt2ugfszDsWLK3Pufn2cIQOhgepsLQodiDyZswdC2Z/LjaeE2/Mv/AIXk3fePNEIs5oCgRohVvuI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=belden.com; spf=pass smtp.mailfrom=belden.com; dkim=pass (2048-bit key) header.d=belden.com header.i=@belden.com header.b=JyiTJ1fD; arc=none smtp.client-ip=205.220.166.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=belden.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=belden.com
-Received: from pps.filterd (m0382794.ppops.net [127.0.0.1])
-	by mx0a-00015a02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P71V0G004927;
-	Fri, 25 Jul 2025 04:46:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=belden.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=podpps1; bh=4x8Y8o1TqVh46b7zVbS+AEaUUdZ4AZhwmgb08
-	SoOMcs=; b=JyiTJ1fDLP1+wxMGl2K31L9nUZMIoMtkmf2XJYcCMBjyJ/GQqzGy8
-	Lli6OeE6MvqyPntvoegFwtJ1si8cyjtXgC4a/2DPAlrb5iXdv9tW6kcr9GfQcoio
-	ANHcctRb87cQ9sPTqHu1efpWw2IckdARe3u0pgHmXj9SFqQN0PJ8d9yfMB+X3fkl
-	sO2Dca7o7CyQtDmbmgT+vZlYVTAGe6yI/gJdLA3vakMoaVs6NIsr0uNmpEWQGd42
-	Cay4igKnLo0MLYd6R2vu5XRTcieSQRIptVit0NmkrUOofh3ujcur2YB8INzNRwhR
-	ow6MkQao6BqrMwwHdefZz62QjmtLtk5Ag==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-00015a02.pphosted.com (PPS) with ESMTPS id 483w3jgxjp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 25 Jul 2025 04:46:46 -0400 (EDT)
-Received: from m0382794.ppops.net (m0382794.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56P8kk4F030189;
-	Fri, 25 Jul 2025 04:46:46 -0400
-Received: from relay2.belden.com ([12.161.118.81])
-	by mx0a-00015a02.pphosted.com (PPS) with ESMTPS id 483w3jgxjk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 25 Jul 2025 04:46:45 -0400 (EDT)
-Received: from pps.filterd (dcric1ppa02pb.mcp.local [127.0.0.1])
-	by dcric1ppa02pb.mcp.local (8.18.1.2/8.18.1.2) with ESMTP id 56ONTLte017715;
-	Fri, 25 Jul 2025 04:52:07 -0400
-Received: from chbrn1lab0001 ([10.1.2.1])
-	by dcric1ppa02pb.mcp.local (PPS) with ESMTPS id 4806pvqc31-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 04:52:07 -0400
-Received: from chbrn1rnd0001.netmodule.intranet (chbrn1lab0001.netmodule.intranet [10.121.114.100])
-	by chbrn1lab0001 (Postfix) with ESMTP id D15C33A01C7;
-	Fri, 25 Jul 2025 08:46:42 +0000 (UTC)
-From: Aleksandar Gerasimovski <aleksandar.gerasimovski@belden.com>
-To: linux-kernel@vger.kernel.org, afd@ti.com, s-vadapalli@ti.com
-Cc: Aleksandar Gerasimovski <aleksandar.gerasimovski@belden.com>
-Subject: [PATCH] phy: ti: gmii-sel: fix rgmii_id mode config
-Date: Fri, 25 Jul 2025 08:46:40 +0000
-Message-Id: <20250725084640.845760-1-aleksandar.gerasimovski@belden.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753433248; c=relaxed/simple;
+	bh=Fr6pbPNTqNtu/JBIWN8m1RO42+2bWoh5lnnq0DAQ9Bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kYkaZoaMq2TPHnNewgyUR1+p3v23ClJbY2jw/BpbNqqpTflnzZldp2UH16gGIv/+9fBBS9jK66oshAvJ0sirx4p12YwyyFrmt5ivjokODK7385MTIT6+ErtQsodL7i6Wc151chKOx8Jbaw1nNSH7vh8UUSMirfEMRtI35OBM57I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OeLHhU5W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6JB0ign; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OeLHhU5W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6JB0ign; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1E36221A21;
+	Fri, 25 Jul 2025 08:47:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753433243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b5mIeEJNHmWKWW6RsIhmAZfORXEks3eAgT6/5b1hJfA=;
+	b=OeLHhU5W7pddrGKH9n0Kw2zZThDZLvbNWRDl4To7QSqwXfFTxefGi8mlWjV/wVOb40ZxQD
+	Uuy3SSVDdQvYGIYSnjhl8dG6sUP0JitOGOC19IVUWWBGqAQp29dDTDrSMzlmDrdMsclsKZ
+	BDHXD+NcZr/g2luOiLGgRgecEW5dwjs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753433243;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b5mIeEJNHmWKWW6RsIhmAZfORXEks3eAgT6/5b1hJfA=;
+	b=H6JB0igneF3C7jdz8fjy5FGwvQ6PItTy1u2C5m8dgvpwJXQiWhAmCAuS3AAIQJgO+9l4r8
+	f6qn5+qnQVw79JDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753433243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b5mIeEJNHmWKWW6RsIhmAZfORXEks3eAgT6/5b1hJfA=;
+	b=OeLHhU5W7pddrGKH9n0Kw2zZThDZLvbNWRDl4To7QSqwXfFTxefGi8mlWjV/wVOb40ZxQD
+	Uuy3SSVDdQvYGIYSnjhl8dG6sUP0JitOGOC19IVUWWBGqAQp29dDTDrSMzlmDrdMsclsKZ
+	BDHXD+NcZr/g2luOiLGgRgecEW5dwjs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753433243;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b5mIeEJNHmWKWW6RsIhmAZfORXEks3eAgT6/5b1hJfA=;
+	b=H6JB0igneF3C7jdz8fjy5FGwvQ6PItTy1u2C5m8dgvpwJXQiWhAmCAuS3AAIQJgO+9l4r8
+	f6qn5+qnQVw79JDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F37FF134E8;
+	Fri, 25 Jul 2025 08:47:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GFkLO5pEg2hKZAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 25 Jul 2025 08:47:22 +0000
+Message-ID: <dea8645f-9f2c-40f2-bf39-f51c767d07bc@suse.cz>
+Date: Fri, 25 Jul 2025 10:47:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 mlxlogscore=722
- adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507250074
-X-Proofpoint-GUID: 8kN7q0lqcXysx9vW3LLjc4Rd_wIPI3YJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA3MiBTYWx0ZWRfX4A7sAu8s/bRR
- EDUbk/DmCg1ohigLEUN7LcQivZOwWzVBg/sHZhZHYqxDkFR50eDjXzkqX/k5Fu6jdUL1cxjPLGW
- SsNKaIH0YeseNn+lSpHQV5eV2WXEmKseXzpwDk+HzmYX6okzc7h5TrW8WxWncUSQlxaBCtVzmd8
- WHqZgEDaDwiES5cY4b6r4yWlp33ym928LsVGAOvKWysU/OCz5TEzjNRg0ulRyYuAi7v635pz9BH
- a43BlgBl9bkJW+7YHOiQIDMcii1q3dDVa5/5L91IvUKKfTPrB3f8GBAbKa7NWCTppnvtc0m2Tij
- DFkmL+6kwzP88Xy9YGkLP0QVLjZtlVA6KGqKTVE7HwxB5xn4XmAVRICPx3Byi+Nv+375LKErmhx
- tVbhbF0IeYp87DQMXO6vPW1DTjvYmGOGIUBrNxu0DGQTHb0Pfw9C4IL0BsJut6GuXStDzId2
-X-Proofpoint-ORIG-GUID: SVgQy44b3ZPEFpRIwzEreTrJP3Abn5zY
-X-Authority-Analysis: v=2.4 cv=LKVmQIW9 c=1 sm=1 tr=0 ts=68834476 cx=c_pps
- a=cuOCxa8MntS3/AsasmU/aA==:117 a=cuOCxa8MntS3/AsasmU/aA==:17
- a=Wb1JkmetP80A:10 a=WDlp8lUfAAAA:8 a=MSXI9gdaubPL58eQSmAA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 priorityscore=1501 impostorscore=0 adultscore=0 spamscore=0
- mlxlogscore=943 mlxscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507250072
-X-Proofpoint-TriggeredRule: module.spam.rule.outbound_notspam
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 2/4] mm/slub: allow to set node and align in
+ k[v]realloc
+Content-Language: en-US
+To: Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ Uladzislau Rezki <urezki@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org,
+ bpf@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
+References: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
+ <20250715135815.2230224-1-vitaly.wool@konsulko.se>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250715135815.2230224-1-vitaly.wool@konsulko.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,vger.kernel.org,gmail.com,kernel.org,google.com,oracle.com,linux.dev,gondor.apana.org.au,suse.de];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-Without setting this bit the RGMII_ID link does not work reliably,
-we have found this thanks to the U-boot cpsw-nuss driver that is
-setting it. The bit is undocumented in the AM64x reference manual
-(see CTRLMMR_ENET1_CTRL register).
+On 7/15/25 15:58, Vitaly Wool wrote:
+> Reimplement k[v]realloc_node() to be able to set node and
+> alignment should a user need to do so. In order to do that while
+> retaining the maximal backward compatibility, add
+> k[v]realloc_node_align() functions and redefine the rest of API
+> using these new ones.
+> 
+> While doing that, we also keep the number of  _noprof variants to a
+> minimum, which implies some changes to the existing users of older
+> _noprof functions, that basically being bcachefs.
+> 
+> With that change we also provide the ability for the Rust part of
+> the kernel to set node and alignment in its K[v]xxx
+> [re]allocations.
+> 
+> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+>  
+>  /**
+> - * krealloc - reallocate memory. The contents will remain unchanged.
+> + * krealloc_node_align - reallocate memory. The contents will remain unchanged.
+>   * @p: object to reallocate memory for.
+>   * @new_size: how many bytes of memory are required.
+> + * @align: desired alignment.
 
-This problem is not visible if the Kernel is booted by a U-boot
-with enabled networking, in our case we see the problem as the
-U-boot networking is not used, and it is disabled.
+It should be better noted that only alignments up to those guaranteed by
+kmalloc() (with a link to its doc where it's described) are expected and not
+arbitrary ones. So we don't give the wrong impression here.
 
-Signed-off-by: Aleksandar Gerasimovski <aleksandar.gerasimovski@belden.com>
----
- drivers/phy/ti/phy-gmii-sel.c | 41 ++++++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 8 deletions(-)
+>   * @flags: the type of memory to allocate.
+> + * @nid: NUMA node or NUMA_NO_NODE
+>   *
+>   * If @p is %NULL, krealloc() behaves exactly like kmalloc().  If @new_size
+>   * is 0 and @p is not a %NULL pointer, the object pointed to is freed.
+> @@ -4946,7 +4962,8 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+>   *
+>   * Return: pointer to the allocated memory or %NULL in case of error
+>   */
+> -void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
+> +void *krealloc_node_align_noprof(const void *p, size_t new_size, unsigned long align,
+> +				 gfp_t flags, int nid)
+>  {
+>  	void *ret;
+>  
+> @@ -4955,13 +4972,13 @@ void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
+>  		return ZERO_SIZE_PTR;
+>  	}
+>  
+> -	ret = __do_krealloc(p, new_size, flags);
+> +	ret = __do_krealloc(p, new_size, align, flags, nid);
+>  	if (ret && kasan_reset_tag(p) != kasan_reset_tag(ret))
+>  		kfree(p);
+>  
+>  	return ret;
+>  }
+> -EXPORT_SYMBOL(krealloc_noprof);
+> +EXPORT_SYMBOL(krealloc_node_align_noprof);
+>  
+>  static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+>  {
+> @@ -4992,6 +5009,7 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+>   * failure, fall back to non-contiguous (vmalloc) allocation.
+>   * @size: size of the request.
+>   * @b: which set of kmalloc buckets to allocate from.
+> + * @align: desired alignment.
 
-diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.c
-index ff5d5e29629f..60a1312acf33 100644
---- a/drivers/phy/ti/phy-gmii-sel.c
-+++ b/drivers/phy/ti/phy-gmii-sel.c
-@@ -210,19 +210,44 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_soc_dm814 = {
- 
- static const
- struct reg_field phy_gmii_sel_fields_am654[][PHY_GMII_SEL_LAST] = {
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2), },
--	{ [PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2), },
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x0, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0, 4, 4),
-+	},
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x4, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x4, 4, 4),
-+	},
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x8, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x8, 4, 4),
-+	},
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0xC, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0xC, 4, 4),
-+	},
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x10, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x10, 4, 4),
-+	},
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x14, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x14, 4, 4),
-+	},
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x18, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x18, 4, 4),
-+	},
-+	{
-+		[PHY_GMII_SEL_PORT_MODE] = REG_FIELD(0x1C, 0, 2),
-+		[PHY_GMII_SEL_RGMII_ID_MODE] = REG_FIELD(0x1C, 4, 4),
-+	},
- };
- 
- static const
- struct phy_gmii_sel_soc_data phy_gmii_sel_soc_am654 = {
- 	.use_of_data = true,
-+	.features = BIT(PHY_GMII_SEL_RGMII_ID_MODE),
- 	.regfields = phy_gmii_sel_fields_am654,
- };
- 
--- 
-2.34.1
+I guess here we should say something similar to what I suggested to
+krealloc(). The "size >= align" check below doesn't mean the alignment can
+be arbitrary. It would be incompatible with how
+kvrealloc_node_align_noprof() works anyway.
 
+>   * @flags: gfp mask for the allocation - must be compatible (superset) with GFP_KERNEL.
+>   * @node: numa node to allocate from
+>   *
+> @@ -5004,19 +5022,22 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+>   *
+>   * Return: pointer to the allocated memory of %NULL in case of failure
+>   */
+> -void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
+> +void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
+> +			     gfp_t flags, int node)
+>  {
+>  	void *ret;
+>  
+>  	/*
+>  	 * It doesn't really make sense to fallback to vmalloc for sub page
+> -	 * requests
+> +	 * requests and small alignments
+>  	 */
+> -	ret = __do_kmalloc_node(size, PASS_BUCKET_PARAM(b),
+> -				kmalloc_gfp_adjust(flags, size),
+> -				node, _RET_IP_);
+> -	if (ret || size <= PAGE_SIZE)
+> -		return ret;
+> +	if (size >= align) {
 
-**********************************************************************
-DISCLAIMER:
-Privileged and/or Confidential information may be contained in this message. If you are not the addressee of this message, you may not copy, use or deliver this message to anyone. In such event, you should destroy the message and kindly notify the sender by reply e-mail. It is understood that opinions or conclusions that do not relate to the official business of the company are neither given nor endorsed by the company. Thank You.
+I think it's similar to the check in __do_krealloc() in v12 and not
+particularly useful. We don't need to support align > size for rust anyway?
+Does vmalloc even honor that?
+
+It would also be inconsistent that kvmalloc() would give you this
+possibility of size<align, but starting with a small size and size>=align
+and then kvrealloc() to size<align wouldn't actually work.
+
+> +		ret = __do_kmalloc_node(size, PASS_BUCKET_PARAM(b),
+> +					kmalloc_gfp_adjust(flags, size),
+> +					node, _RET_IP_);
+> +		if (ret || size <= PAGE_SIZE)
+> +			return ret;
+> +	}
+>  
+>  	/* non-sleeping allocations are not supported by vmalloc */
+>  	if (!gfpflags_allow_blocking(flags))
+> @@ -5034,7 +5055,7 @@ void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
+>  	 * about the resulting pointer, and cannot play
+>  	 * protection games.
+>  	 */
+> -	return __vmalloc_node_range_noprof(size, 1, VMALLOC_START, VMALLOC_END,
+> +	return __vmalloc_node_range_noprof(size, align, VMALLOC_START, VMALLOC_END,
+>  			flags, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
+>  			node, __builtin_return_address(0));
+>  }
+> @@ -5078,10 +5099,12 @@ void kvfree_sensitive(const void *addr, size_t len)
+>  EXPORT_SYMBOL(kvfree_sensitive);
+>  
+>  /**
+> - * kvrealloc - reallocate memory; contents remain unchanged
+> + * kvrealloc_node_align - reallocate memory; contents remain unchanged
+>   * @p: object to reallocate memory for
+>   * @size: the size to reallocate
+> + * @align: desired alignment
+
+Ditto.
+
+>   * @flags: the flags for the page level allocator
+> + * @nid: NUMA node id
+>   *
+>   * If @p is %NULL, kvrealloc() behaves exactly like kvmalloc(). If @size is 0
+>   * and @p is not a %NULL pointer, the object pointed to is freed.
+> @@ -5099,17 +5122,18 @@ EXPORT_SYMBOL(kvfree_sensitive);
+>   *
+>   * Return: pointer to the allocated memory or %NULL in case of error
+>   */
+> -void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> +void *kvrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
+> +				  gfp_t flags, int nid)
+>  {
+>  	void *n;
+>  
+>  	if (is_vmalloc_addr(p))
+> -		return vrealloc_noprof(p, size, flags);
+> +		return vrealloc_node_align_noprof(p, size, align, flags, nid);
+>  
+> -	n = krealloc_noprof(p, size, kmalloc_gfp_adjust(flags, size));
+> +	n = krealloc_node_align_noprof(p, size, align, kmalloc_gfp_adjust(flags, size), nid);
+>  	if (!n) {
+>  		/* We failed to krealloc(), fall back to kvmalloc(). */
+> -		n = kvmalloc_noprof(size, flags);
+> +		n = kvmalloc_node_align_noprof(size, align, flags, nid);
+>  		if (!n)
+>  			return NULL;
+>  
+> @@ -5125,7 +5149,7 @@ void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+>  
+>  	return n;
+>  }
+> -EXPORT_SYMBOL(kvrealloc_noprof);
+> +EXPORT_SYMBOL(kvrealloc_node_align_noprof);
+>  
+>  struct detached_freelist {
+>  	struct slab *slab;
+
 
