@@ -1,142 +1,138 @@
-Return-Path: <linux-kernel+bounces-745596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C505B11C05
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:16:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA4CB11C0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23EF31CE4B31
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59C601CE4A08
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081182E6D01;
-	Fri, 25 Jul 2025 10:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBB92E88BB;
+	Fri, 25 Jul 2025 10:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKtQTykI"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZHv0AXcP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0502E62B2;
-	Fri, 25 Jul 2025 10:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15512E3B1E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753438331; cv=none; b=cG44P1Uc2xCoxS96qVY3sf7qJuLJvIP2G5lJcftYbCmVpYn1QZu1N2NJlPOVdCzg8GdazsUm91X/H6geJ36RycMBn00qi5G3yl7x7ZKnijGAIex6VzraNlu9fjt7L7ErfTKtwVv51MfeuC5QSSr70Xfp7MhssKwavq22QZOC8Cc=
+	t=1753438405; cv=none; b=Ahb62bPV9fzamq4kvTbIsfVmHEO27Rny9k9RWKvM07WvZ0D4Jd/QZ7GKmemTZghx4Rj4z5+491FM7AEpg3zQSGIQ7WGkTUekS9ftZB2EB1wBYfDFS1N8siLipQVQ9erZkcuWrsJLp7BN9d1kX38w6LEc4t7P82nFnSLYB0h32VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753438331; c=relaxed/simple;
-	bh=XCCZTAuVv6rM5KqAiymcvEOfSpnqAYJ05ZeeCfAeMD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=szK/vHsWKuUiu/KWL1TPoKeRsm0AA4jIfc9Pi7JR/xdFPxbxVRZ7yP2Y+2jqu/U13YDa28R+aICH9WK5Ny9NEdItmH9qasSX5n01myKs9bV2Od3gV+mNBxlfP1WQPHOdG7BN+bn3cNW/nBJb1ydQkmn5sFCrfcty4bLpMC1Iybw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKtQTykI; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-41eaf97416eso1299120b6e.0;
-        Fri, 25 Jul 2025 03:12:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753438329; x=1754043129; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Li8Q1/8bXeawqWYN0f/7F76ImwBBFl72CHl1v4y+PLY=;
-        b=PKtQTykI7MJLn2f39R7k6tcldK+iyPClqQUcFdzt70ZafVvgY5cdAx2K6WeXabLVTQ
-         uWwRpOYFxA4lNZu/Dm65KnWzZlxiamZjpTyJ0oMN+NWFqFiCGO9eWfv3NVViHzdLPIlV
-         SEQfJOXwKQCnSUwLsXB1JwZaoDzc4lxlb7s0mYsvgTgQj0Qsjk5l732J3iDQ/nNnClWU
-         NW2WRyVDeReq5jrGIQz5jv3RPLnjltw9BUSv6dX067o9OpuY61T+hkHgRa9zd3B76QEG
-         WeoJigRWnOK9yedXlOWzNq0+p/Vp2wguFNukgZKtMI93T1Y0R74okmKSb8Nftk9oX34Z
-         8kNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753438329; x=1754043129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Li8Q1/8bXeawqWYN0f/7F76ImwBBFl72CHl1v4y+PLY=;
-        b=ADcVt/apsSSj55yGfjz+90cruWqCVlLPyTl4cHDoaevMU9A16GTGRsl3cpPNXsxTfm
-         x4hcTZCE4VKZT0IuPrcwhf8WfLBkx8pHBVCm9ix+44nYN7tKHULI7UZ7L9mLEhxhR0G1
-         9n3tL0gHeqCEB0jwCUDQv1UF69fsFpWIm+uIaITkIeF7zBAJVhRxWGKkWQ3HwKGTfVZf
-         zu/tIbcK4twO61RXGTsdhCrUkGqGX6rQA5PJYmgc0TU1YOacr70I1H5kdTDlA+LENzsd
-         A9Y0RAFyBsuYrGjjiOEvne6DMQJayUBAV6VXKmCp1G5ziAZ/zD/avlQ7osgAUUTLS9Cw
-         9sIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJk4YCgM/ppveUg3+CKIg8DCVu2fkHnQJnDr06hlGvUKC6xIUVrnC3unJ1kh/dkx9lCCsARDSs2LTXjjk=@vger.kernel.org, AJvYcCXrf6icup83Wpy6Yy9DgHWpbZc1fjQkUBKvWMSQMg0gN4m7K08fO+xihgci0Z5LuB7gQDk5zslPYKX9Sozk@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEZTHcV0WM2vEOyfFc/O87/PteiB424zTJw/fwdaYXyqKbzXn/
-	JWa6/gxO3TYxIY388e/M44p5ZRpp1JqQM4bhSKnYAp77IYPqx8fRjER5nRo7BOgAt3QFgXFnnQe
-	8GkARNMBeU5boZawEcsXepZf40IxQvLU=
-X-Gm-Gg: ASbGncu7ckNdZBynQPPIP3LqdC3hoyZ8MSEjX/Jus8CGkG9WhrOEFeLzsCs6KW7my7n
-	GfTKFX7BaeMXsgaSAOsDr0sJO5Gg6MBQ7Tm6nLPgEfEg+pcGOvJzc3/xQQcDoPMgTOxvGgebP2b
-	7iTr/vxOeLISdNChMvTvcVgW6xD65RxklU8IjMnvq+Dwjn/jTd43TZ591EiM8kOo0SRG6Tv/uTQ
-	NSynfug2vvYdH5b2vY=
-X-Google-Smtp-Source: AGHT+IGHB83pYzy5pyfm99vaRBBCdZk4KX+KT5ViJGvx8qXjZCmgLd679d9uosj/HkweSM/0GXEa6THJnnUWuwPv08o=
-X-Received: by 2002:a05:6808:170c:b0:40b:711:377d with SMTP id
- 5614622812f47-42bba0ed70amr483979b6e.18.1753438328742; Fri, 25 Jul 2025
- 03:12:08 -0700 (PDT)
+	s=arc-20240116; t=1753438405; c=relaxed/simple;
+	bh=zZcTUNp9cNjGBHFz/f/iY7t58Atx50QRcowAI6ussBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CH/ZmPEj4wqVPoaw1WBOKDVvAtiDhIIIQctkXvQLcQS70BDrP7LFv01Y0eQG1RaEMNPX4YUOmb6vLppzIlz4rBJlwMsa5nNWijHW4q4DNWc3szFeGF2i0U7L8wUOkx4Quea6MYU31pJKjLzcPpELQYonFNdoS2tvGawVGb9d4gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZHv0AXcP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753438402;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RiyiJg6Da76VPB3NW5Wirqo8zfUU6YesQDOlG/xh6fU=;
+	b=ZHv0AXcPn4BE8tpsvKx8SbYdHdse925Uwe/YJcDYmUQz9dAatM62F4TTMqNV7z1xaff58G
+	RzPzlfvadEqSTFJesLWY43+lPgEJv9VMPcPFgUIpW9Nn19GZjPGRzEvSIrixjhFJxb8JHZ
+	+IeB0eUUFIZDJ1vNlY1ElsdAuTIlc8k=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-573-UiTHYvl5P9ST1El7iuKf3w-1; Fri,
+ 25 Jul 2025 06:13:17 -0400
+X-MC-Unique: UiTHYvl5P9ST1El7iuKf3w-1
+X-Mimecast-MFC-AGG-ID: UiTHYvl5P9ST1El7iuKf3w_1753438396
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 204CD19560B5;
+	Fri, 25 Jul 2025 10:13:15 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.53])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 66FF51800D80;
+	Fri, 25 Jul 2025 10:13:09 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 25 Jul 2025 12:12:08 +0200 (CEST)
+Date: Fri, 25 Jul 2025 12:12:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: David Laight <david.laight.linux@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Li,Rongqing" <lirongqing@baidu.com>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH] x86/math64: handle #DE in mul_u64_u64_div_u64()
+Message-ID: <20250725101201.GA8700@redhat.com>
+References: <20250722105034.GA2845@redhat.com>
+ <20250722130947.0c97c96a@pumpkin>
+ <20250722132147.GB2845@redhat.com>
+ <20250722230341.5a1cc5e5@pumpkin>
+ <20250723093825.GA12884@redhat.com>
+ <20250723224831.4492ec75@pumpkin>
+ <20250724081125.GA10980@redhat.com>
+ <20250724082547.GB10980@redhat.com>
+ <20250724111426.GA15444@redhat.com>
+ <1225B7DD-BF29-4091-A956-FC312679E9BE@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725055928.37658-1-suchitkarunakaran@gmail.com> <f020e62b-5186-4461-8fe9-de64d35de488@gmail.com>
-In-Reply-To: <f020e62b-5186-4461-8fe9-de64d35de488@gmail.com>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Fri, 25 Jul 2025 15:41:56 +0530
-X-Gm-Features: Ac12FXyGeL9MCePha8mADnZZ3s0Yd1cw-jApyUYA_m3RLyXBbVTSAsTj9dYMESA
-Message-ID: <CAO9wTFi9xEB_G-CwMxDxWbNcNCRHp9ps5sGj2U9w7YZgBzV1rg@mail.gmail.com>
-Subject: Re: [PATCH] kconfig/lxdialog: replace strcpy() with strscpy() in inputbox.c
-To: Franco Martelli <martellif67@gmail.com>
-Cc: masahiroy@kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1225B7DD-BF29-4091-A956-FC312679E9BE@zytor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Fri, 25 Jul 2025 at 15:23, Franco Martelli <martellif67@gmail.com> wrote=
-:
+On 07/24, H. Peter Anvin wrote:
 >
-> On 25/07/25 at 07:59, Suchit Karunakaran wrote:
-> > strcpy() performs no bounds checking and can lead to buffer overflows i=
-f
-> > the input string exceeds the destination buffer size. Replace it with
-> > strscpy(), which ensures the input is always NULL-terminated and
-> > prevents overflows.
-> >
-> > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-> > ---
-> >   scripts/kconfig/lxdialog/inputbox.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdi=
-alog/inputbox.c
-> > index 3c6e24b20f5b..8880ccaffa0b 100644
-> > --- a/scripts/kconfig/lxdialog/inputbox.c
-> > +++ b/scripts/kconfig/lxdialog/inputbox.c
-> > @@ -40,7 +40,7 @@ int dialog_inputbox(const char *title, const char *pr=
-ompt, int height, int width
-> >       if (!init)
-> >               instr[0] =3D '\0';
-> >       else
-> > -             strcpy(instr, init);
-> > +             strscpy(instr, init, MAX_LEN + 1);
-> >
-> >   do_resize:
-> >       if (getmaxy(stdscr) <=3D (height - INPUTBOX_HEIGHT_MIN))
->
-> perhaps it's better to sanitize the whole code in
-> script/kconfig not only in lxdialog/inputbox.c
->
-> $ grep -Rn strcpy scripts/kconfig/*
-> scripts/kconfig/confdata.c:143: strcpy(depfile_path +
-> depfile_prefix_len, name);
-> scripts/kconfig/lxdialog/util.c:348:    strcpy(tempstr, prompt);
-> scripts/kconfig/lxdialog/inputbox.c:43:         strcpy(instr, init);
-> scripts/kconfig/symbol.c:764:   strcpy(val, newval);
-> scripts/kconfig/util.c:55:      strcpy(gs.s, "\0");
->
-> because the script "checkpatch.pl" emits a warning
-> whether strcpy() function is used:
->
-> WARNING: Prefer strscpy over strcpy - see:
-> https://github.com/KSPP/linux/issues/88
->
+> On July 24, 2025 4:14:26 AM PDT, Oleg Nesterov <oleg@redhat.com> wrote:
+> >Finally. If we really want to optimize this function as much as possible,
+> >we can add the CONFIG_CC_HAS_ASM_GOTO_OUTPUT version as Peter suggests.
+> >I guess this should work:
 
-Hi Franco, I wanted to get feedback on this first before proceeding
-further. If the code change looks good to you, I=E2=80=99ll go ahead and
-submit patches for the other places as well. Thanks!
+...
+
+> >> Forgot to mention... Not that I think this is a good idea, but if we don't
+> >> use BUG/WARN, we can probably add EX_FLAG_ and do something like below.
+
+...
+
+> Seems good to me.
+
+Thanks, but which one? "asm goto" or EX_FLAG_XXX_AX hack?
+
+As for the latter. I took another look at asm/extable_fixup_types.h
+and it turns out we don't need a new EX_FLAG_, this version
+
+	static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+	{
+		u64 q;
+
+		asm ("mulq %2; 1: divq %3; 2:\n"
+			_ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_IMM_REG | EX_DATA_IMM(-1))
+			: "=a" (q)
+			: "a" (a), "rm" (mul), "rm" (div)
+			: "rdx");
+
+		return q;
+	}
+
+seems to work and I guess it is the absolute winner performance wise.
+
+But to me the main question is: Peter, David, do we want to add
+BUG and/or WARN into mul_u64_u64_div_u64??? If yes, then this version
+won't work.
+
+Oleg.
+
 
