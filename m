@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-746484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952FBB1273F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB5AB12741
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA541CC7485
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E482E1CC7CA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8038525F97E;
-	Fri, 25 Jul 2025 23:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7C825F7A7;
+	Fri, 25 Jul 2025 23:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsjicyBL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoeHct9o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C761E5B82;
-	Fri, 25 Jul 2025 23:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C583325A630;
+	Fri, 25 Jul 2025 23:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753485651; cv=none; b=sMqyOHgcEujrIzvqgg/9vnB8BkH61x+fRIKV8cjwRyzwrtiLVqhX3nNK4Dho+aXNWedKknf78xU4wFQBP1z0OgBKdbKUPhafRA+y+3a6km7hRgM0y+x4lNlypqZqyPi7VTdTnJ0WAjd1LOJcNqSZS2Xv0HOpUu8PYKkxIx1nbjk=
+	t=1753485667; cv=none; b=FoJAZaYrbciCzL2Vd74oEY74dgPA1ieXGra6JutARv+U6oBVfIt9Bzjv4pN9/gJ0SkjsebO0V7nAbcjwKKYzu0GHkRss07QJA71fIkckU/0N0LSG+yUts9R0xevjrAXM6+XHvKOi63kfAZpYzzEPFMJY2yuofLLAsau/Rh3hoQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753485651; c=relaxed/simple;
-	bh=P0Be5bDqu9md62WLMfdC5YJpwp1OUVSI/ayOTeFv5gI=;
+	s=arc-20240116; t=1753485667; c=relaxed/simple;
+	bh=BBbnP/4MNf1hkVbz0RltTl/5YUhhWEOI5p2ZZ36l+Qc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsRMJioH2OEMrHw4BPUMtuE5yq94BhvZWhf6/GjntwqLJ+UF2p6lhFPhQm1lJnkslSQnvi2QXMDQ78oQD1SrgSLisaj/aI8VqvQRcizrI4auTyvzBjwNmCIFnn99U4dYYCSwzMn6B8NoU5hbVv9i76SkKYgPdq0SKxu7VOaB1rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsjicyBL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E26C4CEE7;
-	Fri, 25 Jul 2025 23:20:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3XWeTjAYWMMZzzL+rSk13UMFpnrM25UtA4S0aYAweT+qELVD/cAIJHitQZl2t1evPd1iJosCCb5pmL984Is/81R61Gxunx3dwigZTtSTPlzcd7fDB26V/WIWfWaiJSeRum2osuYTjWD9+vc3sLBlclATR0xwHXPNHzqbtv8jLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoeHct9o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D5C2C4CEF4;
+	Fri, 25 Jul 2025 23:21:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753485650;
-	bh=P0Be5bDqu9md62WLMfdC5YJpwp1OUVSI/ayOTeFv5gI=;
+	s=k20201202; t=1753485667;
+	bh=BBbnP/4MNf1hkVbz0RltTl/5YUhhWEOI5p2ZZ36l+Qc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UsjicyBL5ra/3EOkCNyIaMBr/fmRzqfnzhPCW0KvkRTKE9FPpKBTbtuE2BEHwtCwV
-	 h3FXmnekkQJSiCSJGFSMVWGXYtsCSNaJcWYJYEGV7vAbIhF2rwQ+RQdBdTqjDxtS73
-	 7f3u22iJvadeL0XZ3dRUg4kgVr9Pcr6q90mUxhRWKpVKlTdKJ6DAdE74uB8jbuDusG
-	 OEvblu4ORa9FB+FUzxRd+w+bWpDLpabqfckFE5wctZ0e/ajpoPLdm/ggCKkM4GkNCN
-	 7cNpKnwgm2ERxFGMvJ/r59r/CqxpPZeX7p96PJNKaygCa9dfY71g3c4WjrRlvR4hFH
-	 3oF7M2yqFqEdg==
-Date: Fri, 25 Jul 2025 18:20:49 -0500
+	b=MoeHct9owQ0TJYqxPbYILn2DIwz1UQ3WNTsQSvyveva+Ja7slR9M9uhszd1ZpvMNc
+	 TbH/TeVGWI0GEPaQryDc+XXxQt+7an2B5Z1WfGxeIIauy0dlZ4WUE7EXHb1lEskUpV
+	 p3xYT+k0jcGpoguLeWee47SgDgSDxBrDf7XbsTKE9D/QtfrktmtaWqiYvjb2Ec8422
+	 Wbot2YsUvrMmzCz+suY00GWz/kwQaDd6LFh+w0qDhdc5VIVjCVKhHeHNn1h0B4Cxww
+	 znk9I0vRM9f1FiW6R4HvSZhbVgOakf2QzEuIcFdzFyBHv7p0TqdpwiqjtbXW9YuLHB
+	 zTD6ewCS/A5yw==
+Date: Fri, 25 Jul 2025 18:21:06 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
+Cc: devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
 	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] dt-bindings: net: Replace bouncing Alexandru
- Tachici emails
-Message-ID: <175348564867.2018896.7868293571864957620.robh@kernel.org>
-References: <20250724113758.61874-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: iio: Replace bouncing Analog emails
+Message-ID: <175348566588.2019384.4908547984111781460.robh@kernel.org>
+References: <20250724113826.61998-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,15 +64,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724113758.61874-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250724113826.61998-2-krzysztof.kozlowski@linaro.org>
 
 
-On Thu, 24 Jul 2025 13:37:59 +0200, Krzysztof Kozlowski wrote:
-> Emails to alexandru.tachici@analog.com bounce permanently:
+On Thu, 24 Jul 2025 13:38:27 +0200, Krzysztof Kozlowski wrote:
+> Emails to stefan.popa@analog.com and alexandru.tachici@analog.com bounce
+> permanently:
 > 
 >   Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipient not found by SMTP address lookup'
 > 
-> so replace him with Marcelo Schmitt from Analog.
+> so replace them with Marcelo Schmitt from Analog where appropriate.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
@@ -84,9 +84,14 @@ On Thu, 24 Jul 2025 13:37:59 +0200, Krzysztof Kozlowski wrote:
 > 
 > Marcelo Schmitt, could you confirm that you are okay (or not) with this?
 > ---
->  Documentation/devicetree/bindings/net/adi,adin.yaml     | 2 +-
->  Documentation/devicetree/bindings/net/adi,adin1110.yaml | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml | 2 +-
+>  Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml   | 2 +-
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml      | 2 +-
+>  Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml    | 1 -
+>  Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml     | 2 +-
+>  Documentation/devicetree/bindings/iio/frequency/adf4371.yaml   | 2 +-
+>  Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml   | 2 +-
+>  7 files changed, 6 insertions(+), 7 deletions(-)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
