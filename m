@@ -1,185 +1,102 @@
-Return-Path: <linux-kernel+bounces-745166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDF8B115F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBCAB115FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC4743B2C13
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:41:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75F41C87C99
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68771FDA89;
-	Fri, 25 Jul 2025 01:42:13 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257471FCF7C;
+	Fri, 25 Jul 2025 01:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="d7mvekEr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0A143ABC;
-	Fri, 25 Jul 2025 01:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD4710FD;
+	Fri, 25 Jul 2025 01:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753407733; cv=none; b=hAlxeOWaBsOO41uUNR8SGPNjgZAu2takdmIHId7Xzypq5JAKV0nOxYVvqpTVy/CErbPExDQpqJukNPbnQvdh9iHhR5XLwTUVzOdVcTtG9/K4nY/hteyQ+XNfmcvTkuEldwuSgBJ/Su+h5Jgn1k/Se8Oxn7RzAhst3U+nY92gIKM=
+	t=1753407768; cv=none; b=PpfWMA3gyhTttGz95Fh8IRITHOqRF9SbK5uko+VBxxQtSFG1PC+Qtg3jC1jwQHE9jM0WDKMwN+oMfF38XVuAZiGZhsxTTXo0wIKyK3B+YU/eVF3OGh713Q/ck+Ngkjsq6gih2A7vVDtxCgW3cbVKt5vZS6q1i3vGvu2G8mofYD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753407733; c=relaxed/simple;
-	bh=dDHviIQONWxc/W6Bgu7MlVwadsOFY/p9+CHQfXL0yyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t+zovY7GscBLBkhVJBInwzLXC5fHeHwX//OJCXCP1WqMjyGDjbXyt5TkkIYxtXOUfhy1AVdNPjjaMm1wDXSozO1ETUCjpNFElceVInyqjNoaQKMMa+i6/OR6pmR2zPeKwdSOVMXcALrWXr69YhGfmvxKDt47yAPX2E3XAD7AEaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bp9bN5HzCzKHMhm;
-	Fri, 25 Jul 2025 09:42:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 7D4BC1A129D;
-	Fri, 25 Jul 2025 09:42:07 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgC3wrTu4IJoUryBBQ--.45808S2;
-	Fri, 25 Jul 2025 09:42:07 +0800 (CST)
-Message-ID: <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com>
-Date: Fri, 25 Jul 2025 09:42:05 +0800
+	s=arc-20240116; t=1753407768; c=relaxed/simple;
+	bh=18NllIxMihXIJ4niSuAA/fxerz8LjaSkgT8XPvDIDZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=B5KGxZusRtvA1P3CKhT4ldF0aX15E/4m7G9Ld7DUo48FneaDnQ+QhaOKRcNLwPh+DtNM0onLFw6aL2O4HdzhgyNIVYkhggx+gyK3aSCQZL6+gOPva9u5284SDlokvBkD3GTCfmu8dLi0TAjQTsG+aKtkGBMcQFao5nGBQzSM4dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=d7mvekEr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753407584;
+	bh=4nENx6PKo5cxbBQMQF0lSVmyaOia3w0uir+1UteemEo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=d7mvekErQc9sIU93mQLsxN4+PR23ZTrp6vHrqX7NQBQjwIbMl/wHvfG22JZrmvU4K
+	 u7UHt2kkerlWccV8ov4d0DzGcBofw1CMqKlA18e+sJmA1bb6qhd69C2n+gTk0ez42V
+	 CqonCw5HAgf9R7wY7N6XUFaLMa/1ODs9iDc+179gmPCk4gglHN+JYQ8It/h6XI1OdR
+	 rQh8FQ9qb890+s9bIRxZWtVZwA+ZXVxcuW1HcXGT0TX78Izvf6e0e/J7thAzakG8z4
+	 FAvoCC581+L+QlKk/mAIawp36oOcHr2yhD0kHFeq6iUk3hXX0ta3Z26V8Mlesbnzs2
+	 k/qvQnjWDC1zA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bp9Xc2lNzz4xcY;
+	Fri, 25 Jul 2025 11:39:43 +1000 (AEST)
+Date: Fri, 25 Jul 2025 11:42:42 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the tty tree
+Message-ID: <20250725114242.6f7a01fe@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
- destruction to avoid hung_tasks
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, lizefan@huawei.com,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com,
- chenridong@huawei.com, gaoyingjie@uniontech.com
-References: <20250722112733.4113237-1-chenridong@huaweicloud.com>
- <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgC3wrTu4IJoUryBBQ--.45808S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFW3uFWkXryUJry3Xw4Dtwb_yoWrGF1fpF
-	s8Cw12ya1rJayYgrWkta4jga4F9an7Zw45tr17Ww4UJr13JasFqa1IyFyUZF15ArsrCa47
-	ZF4Fvwn7Gw15t3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: multipart/signed; boundary="Sig_/H7Pl7UkUKGc6FCfB9CBO_HT";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/H7Pl7UkUKGc6FCfB9CBO_HT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2025/7/24 21:35, Michal Koutný wrote:
-> Hi Ridong.
-> 
-> On Tue, Jul 22, 2025 at 11:27:33AM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
->> CPU0                            CPU1
->> mount perf_event                umount net_prio
->> cgroup1_get_tree                cgroup_kill_sb
->> rebind_subsystems               // root destruction enqueues
->> 				// cgroup_destroy_wq
->> // kill all perf_event css
->>                                 // one perf_event css A is dying
->>                                 // css A offline enqueues cgroup_destroy_wq
->>                                 // root destruction will be executed first
->>                                 css_free_rwork_fn
->>                                 cgroup_destroy_root
->>                                 cgroup_lock_and_drain_offline
->>                                 // some perf descendants are dying
->>                                 // cgroup_destroy_wq max_active = 1
->>                                 // waiting for css A to die
->>
->> Problem scenario:
->> 1. CPU0 mounts perf_event (rebind_subsystems)
->> 2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
->> 3. A dying perf_event CSS gets queued for offline after root destruction
->> 4. Root destruction waits for offline completion, but offline work is
->>    blocked behind root destruction in cgroup_destroy_wq (max_active=1)
-> 
-> What's concerning me is why umount of net_prio hierarhy waits for
-> draining of the default hierachy? (Where you then run into conflict with
-> perf_event that's implicit_on_dfl.)
-> 
+The following commit is also in the mm-nonmm-unstable tree as a different
+commit (but the same patch):
 
-This was also first respond.
+  a8d455db2621 ("serial: 8250_dw: Fix typo "notifer"")
 
-> IOW why not this:
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@ -1346,7 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *root)
-> 
->         trace_cgroup_destroy_root(root);
-> 
-> -       cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
-> +       cgroup_lock_and_drain_offline(cgrp);
-> 
->         BUG_ON(atomic_read(&root->nr_cgrps));
->         BUG_ON(!list_empty(&cgrp->self.children));
-> 
-> Does this correct the LTP scenario?
-> 
-> Thanks,
-> Michal
+This is commit
 
-I've tested this approach and discovered it can lead to another issue that required significant
-investigation. This helped me understand why unmounting the net_prio hierarchy needs to wait for
-draining of the default hierarchy.
+  6e1663784e61 ("serial: 8250_dw: fix typo "notifer"")
 
-Consider this sequence:
+in the mm-nonmm-unstable tree.
 
-mount net_prio			umount perf_event
-cgroup1_get_tree
-// &cgrp_dfl_root.cgrp
-cgroup_lock_and_drain_offline
-// wait for all perf_event csses dead
-prepare_to_wait(&dsct->offline_waitq)
-schedule();
-				cgroup_destroy_root
-				// &root->cgrp, not cgrp_dfl_root
-				cgroup_lock_and_drain_offline
-				rebind_subsystems
-				rcu_assign_pointer(dcgrp->subsys[ssid], css);
-				dst_root->subsys_mask |= 1 << ssid;
-				cgroup_propagate_control
-				// enable cgrp_dfl_root perf_event css
-				cgroup_apply_control_enable
-				css = cgroup_css(dsct, ss);
-				// since we drain root->cgrp not cgrp_dfl_root
-				// css(dying) is not null on the cgrp_dfl_root
-				// we won't create css, but the css is dying
-								
-// got the offline_waitq wake up
-goto restart;
-// some perf_event dying csses are online now
-prepare_to_wait(&dsct->offline_waitq)
-schedule();
-// never get the offline_waitq wake up
+--=20
+Cheers,
+Stephen Rothwell
 
-I encountered two main issues:
-1.Dying csses on cgrp_dfl_root may be brought back online when rebinding the subsystem to cgrp_dfl_root
-2.Potential hangs during cgrp_dfl_root draining in the mounting process
+--Sig_/H7Pl7UkUKGc6FCfB9CBO_HT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-I have tried calling  cgroup_lock_and_drain_offline with the subtree_ss_mask, It seems that can fix
-this issue I encountered. But I am not sure there are scenarios [u]mounting mutil legacy subsystem
-in the same time.
+-----BEGIN PGP SIGNATURE-----
 
-I believe waiting for a wake-up in cgroup_destroy_wq is inherently risky, as it requires that
-offline css work(the cgroup_destroy_root need to drain) cannot be enqueued after cgroup_destroy_root
-begins. How can we guarantee this ordering? Therefore, I propose moving the draining operation
-outside of cgroup_destroy_wq as a more robust solution that would completely eliminate this
-potential race condition. This patch implements that approach.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiC4RIACgkQAVBC80lX
+0GzdCwf/Ubm3kX00utNbrUn+gmkvDAhmq2qkj2dglKw6uCD0Imrn5B3TDs4Dxy2X
+vuJ7oBOp0WYBV/d+BPBlRztdE4g2Err0CCE3dGaFImN4xOk9KUcO4XjTdpD2lifo
+cC4t5WwkMnfN4QMUnsuYkWb3bBLc/HMddy771S/nYjK/YmF8/595WNzpoTz5lov5
+CGbLhf1Ba+bBr6PnLkkmzHjCUKgp2/lxOH8ktRK4jwH/aWv50sap8ScJWKZT8bNf
+xGZ2UrcBOW7PaBNdKouCa3BBdbaIvyrkKJMLOZkuJKiDqsZJ87bel4N89KJOqTgv
+m7yw6Y3KIKSoHbhKCbQyb8c1vZg6Fg==
+=flaZ
+-----END PGP SIGNATURE-----
 
-Best regards,
-Ridong
-
+--Sig_/H7Pl7UkUKGc6FCfB9CBO_HT--
 
