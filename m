@@ -1,117 +1,149 @@
-Return-Path: <linux-kernel+bounces-745275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82B0B117C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:07:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5446B117D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E905B56757E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8C801CE2896
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60EC24167F;
-	Fri, 25 Jul 2025 05:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37A81DD0D4;
+	Fri, 25 Jul 2025 05:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQFelfGo"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Gff68kFJ"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99AE48CFC;
-	Fri, 25 Jul 2025 05:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21E229A2
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753420028; cv=none; b=lGEhpAHZ7MVVrn1MX1QUaexN0L/xNpukdRSssv18wi6s12keDyBhzAXlYKPMaJgRiYge0dTp4uGicnlIorbaUWyQUjAB93PWtrWf8QY/7xdtAhEJWWPtWim7SbvxEn6UFFxLsUOJlRLJ6lLhaDT4xDzYIDrA/5laWm0EE324W00=
+	t=1753420575; cv=none; b=CEADMXp9Vtd+QfoCny8LM3i430OF+NHWhjAvdagbA4OOzaa01ICWPv7TL/xOoCej9UFp00Amh8cFdLT0MGCoiJc5EbqoK4hl457v2+lRaF0PcGQLLDQkiFsaIMrYmf9nEu6SaFD2cxrjLr0pX7jR0lspqXyfkyU2pihfJnqOlTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753420028; c=relaxed/simple;
-	bh=Ib5FE0QoMMNdFpBA0yVOTPTmH+AZrc74xbL0n+1+S+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OxnnRDQR3ITLc/yCAm9DZr+9Ikq/pn02zcC69ayqBr/wh1tDwqB82+D0qEdhibCK5mrx3leBmbB8ztU+A0VomWM+ALRBgn94jT6KC6Ir4H5hbRtE8CZ5XwR+82NroMuMDtTh5hOakgNrLyCNobIq5ChKpnW2p+GEn6iaALKPlyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQFelfGo; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6fae04a3795so13881746d6.3;
-        Thu, 24 Jul 2025 22:07:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753420026; x=1754024826; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dRMBoFJ15p7ZT15ip7Hrv1Ml72IqtNL3iXOUPGAitWM=;
-        b=DQFelfGo7d4PGWbxDIGb+PCJvp6qfjQlQ+eg2ILf+sCRY5R8pf4ywlx22q+inRUkUK
-         RA5BcSyW+av0p/vnzkzq+DJpQt5hXURjnpL+NdPCKeaZgj9PehSAlUbihUwt4nHCVIm4
-         snj3UPN6crP02Sq+7Rr3MuC0Y8sf3bPgHDOlXDwf9lU7AffDOnzgg//yMPRnmRYj2UUW
-         rNXrzIRLE+sy0EXGqeT2v47kWIjgJJu0+UsmsThCI3JLeo0R27gmtKQ0wxgSF2aOmIjG
-         DIt2FVI55pzx4nqbpupJFzmgvXJJeZiAcsjnN2bzytbixW+XgTk13WeaUoseoF+neP2K
-         Olyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753420026; x=1754024826;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dRMBoFJ15p7ZT15ip7Hrv1Ml72IqtNL3iXOUPGAitWM=;
-        b=VZ53ghUJSrnBBL7kSUgOIgrd6OkbW52DAUwX4mXCE/hhfZn5oewwdJ0x+ZpTgGfef6
-         YvB19ZDkWHYOOn27T/fk15DAgMC9dhM8vky2PCxBTb5y4rYNwK4K/Yvnq/1646msCyCa
-         Xt+Mdm1FUSmJ3+0EtoUVuLOfysEgJiKL2BzHzQ76HdVVVSr7XcIrI0Ptl3B5SvNkYQti
-         VQS1YCou4IrpF0Owcz0bIVp64WM3UvFZWK1aX4MQ0tl5mAg8xaapZ/hw0/IgnXdWXzG8
-         29OT6PbuacSaWTARPjv1Jl6gVKfRoBOlb0fDMUcuhuZ4jJRa19nJ5D8EPU1F6rUqygfe
-         K1Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEZzfDKOyRQJX4oOfGhVMBdV4opIHJWFQA0eB4gtzGPHi1BAcL8FxA7Bcqx5LVLBlOKD2Am0zgQJg8FBw=@vger.kernel.org, AJvYcCW+5kChB10pMZGgRWSNGDfvm753VVr7JuNRr68U2XdewgmJmEN6CmXmibtv0px5YE2B3lsTBRekamU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGIQQU5hCoLAK52NQwL5o8FqSgLG3kuJoHpaURdgqYTti8ulXr
-	HvmwXGzKIKgSvwJP7jOEdWqOeBx9uLK7jrSZClAymGHOc6zVKgk9ERgi
-X-Gm-Gg: ASbGncs6XaNyCxM60RcBuC5mYz2jSHdk/orKjmELCysGdTp1DPenvJ5yCIdeDO8RD++
-	/LtDjty3WALGWrWechNKVvRR0EIWpJfeYlObEGvkAIxMm+Q5yL1xNOYwi7oOFQsnlzhocjxI488
-	oeMuT1YoS1ME1DXq0Y511W5TZXIoplg13BObVH9uDPyTUio9y32jjdsRNG7TitFLPjWeMW/W04T
-	RBj8Vi4qMAkfnpuwqa85LnAIAIFL89awlEnXs1DX0TN0nvOh1Npi8Trs8+BVGTTjYszlqaSL2Z3
-	zqvunZggwq/WsghHd18uAacL2YJDJqQ7aECVE3oPQXgN8WqarmShFCc6iho59CCRzba7a0Y7/Iq
-	D+ApiP7UZYgtIjw==
-X-Google-Smtp-Source: AGHT+IHYQh1UqAPsmxjHEZ3LJXPXVDx286B6GQMg6QVOuyzTh8PtFKisKHfxCx9RE21vpz1hU/e8jQ==
-X-Received: by 2002:a05:6214:2522:b0:706:ebc2:9da with SMTP id 6a1803df08f44-707204e946dmr6510276d6.2.1753420025809;
-        Thu, 24 Jul 2025 22:07:05 -0700 (PDT)
-Received: from pc ([196.235.221.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7070fb53f7dsm22362996d6.38.2025.07.24.22.07.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 22:07:04 -0700 (PDT)
-Date: Fri, 25 Jul 2025 06:07:01 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH] thermal: intel: int340x_thermal: Remove acpi_has_method()
- call
-Message-ID: <aIMQ9RFciI8jmmAh@pc>
+	s=arc-20240116; t=1753420575; c=relaxed/simple;
+	bh=u9Po8QJ0SoeHzsv7ehzf9BPDQrZxUb5H+lUg8jT0cwM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mRiu9QrMxDgXBfy5ildhOOPCwAQMpa5d44yWWNzQYZCMrG/pi7zG5elNLVhHFo1f5300lWTttKEY9IAi3fCdW+jh8wzEHY7ifx5eIavvmUHnNS/ss7pc3kyPJ3RR1xH59Iz0eSffRhk4/MQjGVHHFamr2sDxDqYPoafSAxsPZ40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Gff68kFJ; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 772e3086691611f0b33aeb1e7f16c2b6-20250725
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=46G8DD90VVrhpEQm7Mku51SwaoXM/jFS2E0FifwksX4=;
+	b=Gff68kFJapmJYc1HJaAaIb2H6p55MIXAlkoUokMjyuvf2WMs1ies4gkkUfrr86bbec0LBCpNpdlSqzBvJbE+kLxlRm0Uo0vUITNoXU/rbePsr9jPGCS9XN74GSYgxPp7nTc6w1YazN7s6sSy99n4ZWZtkyMMWnpvfbGvcnYmWiM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.2,REQID:d2e55737-b199-420a-b213-72b9c61e06f1,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:9eb4ff7,CLOUDID:e94a3c50-93b9-417a-b51d-915a29f1620f,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102,TC:nil,Content:0|50,EDM
+	:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
+	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 772e3086691611f0b33aeb1e7f16c2b6-20250725
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <akash.tyagi@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1036085591; Fri, 25 Jul 2025 13:16:05 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 25 Jul 2025 13:16:04 +0800
+Received: from mtisdccf01.mediatek.inc (10.18.1.155) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Fri, 25 Jul 2025 13:16:02 +0800
+From: akash.tyagi <akash.tyagi@mediatek.com>
+To: <david@redhat.com>
+CC: <akash.tyagi@mediatek.com>, <akpm@linux-foundation.org>, <vbabka@suse.cz>,
+	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
+	<surenb@google.com>, <mhocko@suse.com>, <jackmanb@google.com>,
+	<hannes@cmpxchg.org>, <ziy@nvidia.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+	<chinwen.chang@mediatek.com>
+Subject: Re: [RFC PATCH] mm/page_alloc: Add PCP list for THP CMA
+Date: Fri, 25 Jul 2025 10:38:10 +0530
+Message-ID: <20250725050810.1164957-1-akash.tyagi@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <67a54f31-e568-427a-8fc8-9791fd34e11b@redhat.com>
+References: <67a54f31-e568-427a-8fc8-9791fd34e11b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
 
-acpi_evaluate_object() returns an error if the needed method does not
-exist. So remove unnecessary acpi_has_method() call.
+Hi David,
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
- drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c | 3 ---
- 1 file changed, 3 deletions(-)
+Thank you for your feedback.
 
-diff --git a/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c b/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c
-index cb149bcdd7d5..ce5d53be108b 100644
---- a/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c
-+++ b/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c
-@@ -220,9 +220,6 @@ static int acpi_parse_psvt(acpi_handle handle, int *psvt_count, struct psvt **ps
- 	int i, result = 0;
- 	struct psvt *psvts;
+We encountered this issue in the Android Common Kernel (version 6.12), which uses PCP lists for CMA pages.
+
+page_owner trace-
+Page allocated via order 9, mask 0x52dc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_ZERO), pid 1, tgid 1 (swapper/0), ts 1065952310 ns
+PFN 0x23d200 type Unmovable Block 4585 type CMA Flags 0x4000000000000040(head|zone=1|kasantag=0x0)
+ post_alloc_hook+0x228/0x230
+ prep_new_page+0x28/0x148
+ get_page_from_freelist+0x19d0/0x1a38
+ __alloc_pages_noprof+0x1b0/0x440
+ ___kmalloc_large_node+0xb4/0x1ec
+ __kmalloc_large_node_noprof+0x2c/0xec
+ __kmalloc_node_noprof+0x39c/0x548
+ __kvmalloc_node_noprof+0xd8/0x18c
+ nf_ct_alloc_hashtable+0x64/0x108
+ nf_nat_init+0x3c/0xf8
+ do_one_initcall+0x150/0x3c0
+ do_initcall_level+0xa4/0x15c
+ do_initcalls+0x70/0xc0
+ do_basic_setup+0x1c/0x28
+ kernel_init_freeable+0xcc/0x130
+ kernel_init+0x20/0x1ac
  
--	if (!acpi_has_method(handle, "PSVT"))
--		return -ENODEV;
--
- 	status = acpi_evaluate_object(handle, "PSVT", NULL, &buffer);
- 	if (ACPI_FAILURE(status))
- 		return -ENODEV;
--- 
-2.43.0
+This UNMOVABLE page was allocated from CMA, but it could not be migrated - so CMA alloc failed
+At first, we fixed this by adding CMA THP pages to the movable THP PCP list.  
+This fixed the issue of CMA pages being put in the wrong list, but now any movable allocation can use these CMA pages.
 
+Later, we saw that a movable allocation used a CMA page and was pinned by __filemap_get_folio(). This page was pinned for too long, and eventually, CMA allocation failed
+
+page_owner trace-
+Page allocated via order 0, mask 0x140c48(GFP_NOFS|__GFP_COMP|__GFP_HARDWALL|__GFP_MOVABLE), pid 1198, tgid 1194 (ccci_mdinit), ts 17918751965 ns
+PFN 0x207233 type Movable Block 4153 type CMA Flags 0x4020000000008224(referenced|lru|workingset|private|zone=1|kasantag=0x0)
+ post_alloc_hook+0x23c/0x254
+ prep_new_page+0x28/0x148
+ get_page_from_freelist+0x19d8/0x1a40
+ __alloc_pages_noprof+0x1a8/0x430
+ __folio_alloc_noprof+0x14/0x5c
+ __filemap_get_folio+0x1bc/0x430
+ bdev_getblk+0xd4/0x294
+ __read_extent_tree_block+0x6c/0x260
+ ext4_find_extent+0x22c/0x3dc
+ ext4_ext_map_blocks+0x88/0x173c
+ ext4_map_query_blocks+0x54/0xe0
+ ext4_map_blocks+0xf8/0x518
+ _ext4_get_block+0x70/0x188
+ ext4_get_block+0x18/0x24
+ ext4_block_write_begin+0x154/0x62c
+ ext4_write_begin+0x20c/0x630
+Page has been migrated, last migrate reason: compaction
+Charged to memcg /
+
+
+Currently, free_unref_page treats CMA pages as movable. So, some MOVABLE allocations may use these CMA pages and pinned them. Later, when CMA needs these pages, these pages failed to migrate.
+free_unref_page()/free_unref_folios
+	migratetype = get_pfnblock_migratetype(page, pfn);
+	if (unlikely(migratetype >= MIGRATE_PCPTYPES)) {
+		migratetype = MIGRATE_MOVABLE;
+	}
+
+
+Best Regards,
+Akash Tyagi
 
