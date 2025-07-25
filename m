@@ -1,159 +1,111 @@
-Return-Path: <linux-kernel+bounces-745423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA0AB119BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:22:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C490B119C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 798EC4E2904
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63F81C20CB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D47B2BEC51;
-	Fri, 25 Jul 2025 08:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5964D2BEC52;
+	Fri, 25 Jul 2025 08:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gcKJRwA6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQqM6M1V"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B2829E0F8
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAA6192D97;
+	Fri, 25 Jul 2025 08:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753431763; cv=none; b=WI6ul4xIyQVm6im2Y7zVsBcvJXdL3xE01w7Im5T56UnN5LRvfLKjNi3OTMxiQ74o5FMTeJ6jvWorV0Q3PES+ifoP0EtIFFVlB1KtoKmkq2G9rbvj8WvW0UCugPfI9XxZQ6r3dueV+iEu9mT6DP8hsJPzuMVWh4Qo6sTBCCjNo0I=
+	t=1753431838; cv=none; b=PmsGwoN7p4gNtlKjDZHCg4JVrKE+kcO+mqN/tVKmDgsYUFB8u07qG6uW+q7Jb882z5w066+tDb8lyDBzdxyhCd+D74ocTMMgf3z/KUA/9gylFBS0mWgY8oEkJ9CF4nQcazvLEOyZypFJVTGgEXi/j39v7oNmBE19Pj/pYea/sGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753431763; c=relaxed/simple;
-	bh=tAq/SqO5yTKsbl8iexike5OsMdJZOe+rhnywnp60BIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0dYwRrf0Q3jHgSVH5W3ClFNeNREpsIXVTsK2zR47dGj3BrTHP/NUoQeyqXITNrowZVc7ADRUw3S0PW4yYBHyG4+3+YEPiKhbcvHom0wFg3b/iFx0xXxK4SXLXGmunF9NEY1YNWg3/wIPA8kyJWcqKNMVQeqwW4CWXPJr4rtH0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gcKJRwA6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OLrWik004813
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:22:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UMDm2fXHNCh3LgW6f0uPopRqEtk82wFNcazajJLD31w=; b=gcKJRwA6ZsYKFwOW
-	4HdqsjTqf9QkX6AWCa5BN5b8/J77zqjRTMo0JdtwwTlw3IFzJe0OkaWBDEiNuqhW
-	WRmHcn6qk508749V/2g2L3WH3FkrDgURWp6/PlGvz3jEWYVWRcKiAZVlqZS7+RVT
-	MA6xPyoAvrZ+DF9sKokE7fs4oleX8HcTR6rmoD6GwChPshBj1MPtNrAn9M2IbTpf
-	G2Cx2zM8nHyOgck0xY8dWshWP5sV9zVHFNfVJ7KScgXxAQv/ggV3J0dm6PX9hdlD
-	f+OpQ0QISTfMF9qm4nPtuUVyF5I932kdllYICwj40p4eCzctHmiDLB8V4txwW1nZ
-	IFp+wQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w539btw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:22:41 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ae762426d8so1196811cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:22:41 -0700 (PDT)
+	s=arc-20240116; t=1753431838; c=relaxed/simple;
+	bh=skfHYZImCEPR8PWUsCYUavnSxBKsiLEfsDiV0RFHlDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mceGFhGEN0+nnI+Hi3lJ3EFLTT3AAKzl40ipP9x3ukkYCwln7+Stp7i8Gwt8yqKent3S1K5/5AL3t9fA/RDNIuILf2atubTvRbjXDKvPZ4VWgmD5IfucOajgxNS77eiGBhMRkq6oqtii9UFA7I5JiXI8alBTfSKOvCaOIQ63NDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQqM6M1V; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b3bad2f99f5so1678477a12.1;
+        Fri, 25 Jul 2025 01:23:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753431837; x=1754036637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=skfHYZImCEPR8PWUsCYUavnSxBKsiLEfsDiV0RFHlDg=;
+        b=DQqM6M1VcaexTSad1urXL4BZ4qTjFpw/Lmz8EfipJg9eStshpHltLDARKUIDPeGnkt
+         3KMRXUGddGO3U9Tm6vWnTlQV/iPaoWc0SO+Gfgo0bM0SsiwYrNff4ya+LBtcf0GNDc7r
+         STr10fyUXZG8qigQmHpWPOA05HcFqqCZbz58cJkrZTBH2tQ4WfSpHM7KNugf0uGNOdT/
+         1ulU9LFcgcciQmd1zLNyg6tz6fsH6yDUBnCQbJqccLKjzXjB+RVTUNg4Fm0hjsj4SOBu
+         /vIlcRfUJOkx1RsJCYgRWKFinqAZFzac6jDtp+rRAyVJlSbb0GmRk67tcerjbzuMUyuw
+         t73w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753431760; x=1754036560;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UMDm2fXHNCh3LgW6f0uPopRqEtk82wFNcazajJLD31w=;
-        b=RyT6+HWLOxr7nRtqCfTF4WQuBiOYP688hJxC6l/zLMe4aIUEEG4w2GaRKU9RIvNNUs
-         PKfRKE/jgcdP4nb2mt5VZZcPiPkimORwCPC7DUPWLq/mrdVnl1OkPSm+VWFvqypyWr0o
-         Q5b4+4dE4psKNBq5GauT97n86sUH8GaBDciILUemupU8Xghsva3QtqK0kWYtrY3bZafx
-         +1EGIF4X5SYovKRBPRbULDJUNFYH7nYa9w78iUvn9tyYQm0bLAnA98PWNpzUD7IyT1ZN
-         fa78v8zkAzHtlw4OX5AMHGX3klOgng82muxKTgT8MNO4Ra+d9nJGo/cJ7HBPtMbuiBHV
-         GmZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVK80MG3Ke386o2NHawL/+QYhusjqq7XUYhc8wlfjyrJgg2AcqTVHpwRe5lsUQUnK3WiWTOADUojsWgNOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLlg+7q2YXxUCQA/N96yC8kdhHNS1f7T3ecP8Jec6ZX8RHY2Ui
-	PF0BwojVjV3z/rkx/F66H/SyeOSNbiiQ5xVo7PLtc3I4/+P+WKNSnYZoZh5ObekPsRf41Yf4+6U
-	h6HQjArHApWyGsNSlSCvgsij4McbrbOAri91VBjfLHhfSJzN2fWHzL5LIsoDc35n0LZeU3S4KL/
-	M=
-X-Gm-Gg: ASbGnctRlGUz4fBoK92aw83vsHK2Ckb7VnsQsfWX4m474sfqin0d2x1fK64Y5j9zHvb
-	7lgqaJdPcV/tsLBgX5/xdW1VUR9UaHqaCemgP9TA+oTVdQ93D+XRvsm5nNoMN/+26vNICCA6wxI
-	avmq+Mk+0WgJ30qvZuKWVfLHoUC7lLkLnr/C68KWs+mZ+/exo7042rGVl/98mizXtJpvMfIGnjU
-	Zk30iScNniR7W/kMBKviaiBQapor5oD6rTCL7RWncFc15O2LXZ46GKtdCI3Jjzoj6CrO+aW3n4x
-	qgjg6PCMMpOnrx5tfitpFRCzfylvOXHEg7WMXiDsKjE6Umr2rf9ZRTXRog0RVHODPPTFu00TMgu
-	EOPUmV22sO+ZvWevvoA==
-X-Received: by 2002:ac8:5dd3:0:b0:4ab:67a3:ec09 with SMTP id d75a77b69052e-4ae8ef34affmr4792921cf.6.1753431760235;
-        Fri, 25 Jul 2025 01:22:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHuWomd2vdk9aPHDlgia6FxW++avBnZSibV7JMRZycFiIZcbVvohrAq8kSwrDLCAE+kEsk00w==
-X-Received: by 2002:ac8:5dd3:0:b0:4ab:67a3:ec09 with SMTP id d75a77b69052e-4ae8ef34affmr4792791cf.6.1753431759808;
-        Fri, 25 Jul 2025 01:22:39 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47cc6bdb6sm229547166b.39.2025.07.25.01.22.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 01:22:38 -0700 (PDT)
-Message-ID: <36c8affa-336a-412d-8002-095fdf23a287@oss.qualcomm.com>
-Date: Fri, 25 Jul 2025 10:22:36 +0200
+        d=1e100.net; s=20230601; t=1753431837; x=1754036637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=skfHYZImCEPR8PWUsCYUavnSxBKsiLEfsDiV0RFHlDg=;
+        b=eP3kVeJMZx+qMBxOXNSPcJfqZQ4h2Xoe+vTEMaj8EwM/Twsjkx9I1L5HrowMWnxBfN
+         0hklDiU+vuClZ3Zu63y26EU/smWSEYDOf52thyxYXdedbiFJU9yEMH1xPHAgPYrJxIOV
+         7orC07MMNOTfCvc7ONNmpw0G+MTgXreo1q30Bvn98Vn+RjStq5eVJC+kygW+Ao72PdkH
+         HbJHaJcXhu4xxUt3OyGJUQcHwz/K65ESW4h5whzUbLQBVlZbg5ucfq072D2jKsQpW0iX
+         1467IEZIiuS81QbV9vOSpiK8PNRYdO3KLPA+/C58U1bs5oRu9mhQz9fBw5PutygZyaJe
+         R5Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7i0zzqpHlRiWjpevoi7uvDyAz1Id1plJ1lSOVcDFBDc/Afx8nr05tCWV2+FNL6XLJY8eAf2a7c30Jo6IY@vger.kernel.org, AJvYcCUNhhmTccaJwNRuCZoszl1henq+xOCUEZjcbhbq/NOCqN2REBVHWdveaSxzQBsC5hYgNo9CFBZeVOZS@vger.kernel.org, AJvYcCVgfnIYh5NlGe09f15M2xnyfeei1I+wrRqwR9BaFyY5Yp4lxaSnYAN1QNawbhd9MFXP1s3uckFKq89H1kiW@vger.kernel.org, AJvYcCXsGiCceqIX5689M+VDHLc2+/hJgUrXQVFAhVk+ANzxnBmLGphLkriKScEEp6hUfOUBp8SP9RIZP4Ky@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQbBqRz02LPYSudm46VNlasj3g+JqPV3Wr49WMihjbKEyOqAyT
+	VWaEwhmdkznMoZw8fRa9mx67kc3QUe5eJ6Lita+HNdhPdu6zoD9NxJvzFbTO9+jgG18FPhyy873
+	o2ttFEdvoN6/BZcLzLWjXe8ITMPfZ5Z46X4cn
+X-Gm-Gg: ASbGncvwom2mImxYRQ1vmRLbv77dyhbGAYKonOeKXFpm5f9G2U/MgF6Dio0CKDgAtPr
+	DpBuajB+XdAbDkA0fSlUP0RN9h4ebX+3ImnQk7V8FS4vk4DKxPds7Fd1uHKbMN9x+Ks42tMBgD8
+	YC/aqoWJhCScw9nQcCm4Hhqs+swb9tmmgBN6WfXh8I1gpGfqMiaOnGods59N3HWVyB5Aje2KF2C
+	gxi
+X-Google-Smtp-Source: AGHT+IF0DLuHKttF43YAHz7O6tHgoNvhE3+8geOKGjB8lYzDiT+qyeGy5nWc+F46EyDWofuUnDxfhsVhLCEV1F6KMlM=
+X-Received: by 2002:a17:90b:2751:b0:31c:39c2:b027 with SMTP id
+ 98e67ed59e1d1-31e765d03efmr1975273a91.7.1753431836653; Fri, 25 Jul 2025
+ 01:23:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: use DT label for DSI outputs
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250725-msm-dsi-outs-v1-1-18401fb9fc53@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250725-msm-dsi-outs-v1-1-18401fb9fc53@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=AfKxH2XG c=1 sm=1 tr=0 ts=68833ed1 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=Yi-8vXkECB-a3imGwT4A:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA3MCBTYWx0ZWRfX0SGmw9Imgr+w
- cNFin+2GBvZ1l7KrpVo5FxPfw2AR/p2BBj/pHlUrWmAAEQtKVfFHtH6ObyoXOF0Nb9a1U8zBFXk
- vQr+VqKeMblvvcT8D0b1elrX49WpYmWh/4C9cosp9XIn89Hlewssw+9rraoRu7UiKSbrp6Ay/1d
- RbMkGpiFakOJWCiPCjD8X7QhtIdU15dTBmSOjB5sCK3ktPu593nUXMHjdv6I5otd+ruKUzu4pvF
- L+tFCvl6fxEj/eDoYDJUSEnjPLMdgpBApG2oxzh+gDPISETB/Nlberx68PHaajQgVGsHQr9CN8p
- un0TLNOnIuxBtoiIR8QUidgo9Q33en6Udx27jMlMJYwGMnb40KDq35d8dTzU8ESFZFy5rWKMGqn
- Q1yv2HtbrUUyOGNQLBEWgq28OTvzOPnUQBCXnNA/8IBHP5JYdXi7AbRe8hk9cK7qz7dpjFUu
-X-Proofpoint-GUID: l0q-aUaV_deVdSsZNQTAb8RhqDgk8Fmy
-X-Proofpoint-ORIG-GUID: l0q-aUaV_deVdSsZNQTAb8RhqDgk8Fmy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 mlxlogscore=712 suspectscore=0 spamscore=0
- impostorscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507250070
+References: <20250714221545.5615-1-romank@linux.microsoft.com> <20250714221545.5615-7-romank@linux.microsoft.com>
+In-Reply-To: <20250714221545.5615-7-romank@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Fri, 25 Jul 2025 16:23:20 +0800
+X-Gm-Features: Ac12FXxL4ULjVNsTL2CjM89TDvywnTWNYgT1ZW-E5i-5hFeFE92-4wgkSmYxtro
+Message-ID: <CAMvTesBMgo_u50C5_FwfdqhGy-1k1GhrMP27BL87DTuZ-ZuV+A@mail.gmail.com>
+Subject: Re: [PATCH hyperv-next v4 06/16] Drivers: hv: Allocate the paravisor
+ SynIC pages when required
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: alok.a.tiwari@oracle.com, arnd@arndb.de, bp@alien8.de, corbet@lwn.net, 
+	dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com, 
+	hpa@zytor.com, kys@microsoft.com, mhklinux@outlook.com, mingo@redhat.com, 
+	rdunlap@infradead.org, tglx@linutronix.de, Tianyu.Lan@microsoft.com, 
+	wei.liu@kernel.org, linux-arch@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com, 
+	benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/25/25 4:59 AM, Dmitry Baryshkov wrote:
-> Instead of keeping a copy of the DT tree going down to the DSI output
-> endpoint use the label to reference it directly, making DTs less
-> error-prone.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/qrb5165-rb5.dts           | 12 ++++------
->  arch/arm64/boot/dts/qcom/sc7180-idp.dts            | 12 ++++------
->  .../dts/qcom/sc7180-trogdor-quackingstick.dtsi     | 12 ++++------
->  .../boot/dts/qcom/sc7180-trogdor-wormdingler.dtsi  | 12 ++++------
->  arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi         | 12 ++++------
->  arch/arm64/boot/dts/qcom/sdm845-db845c.dts         | 24 +++++++-------------
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts            | 26 ++++++++--------------
->  .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      | 12 ++++------
->  arch/arm64/boot/dts/qcom/sm8150-hdk.dts            | 24 +++++++-------------
->  arch/arm64/boot/dts/qcom/sm8350-hdk.dts            | 12 ++++------
->  .../boot/dts/qcom/sm8650-hdk-display-card.dtso     | 15 +++----------
+On Tue, Jul 15, 2025 at 6:16=E2=80=AFAM Roman Kisel <romank@linux.microsoft=
+.com> wrote:
+>
+> Confidential VMBus requires interacting with two SynICs -- one
+> provided by the host hypervisor, and one provided by the paravisor.
+> Each SynIC requires its own message and event pages.
+>
+> Refactor and extend the existing code to add allocating and freeing
+> the message and event pages for the paravisor SynIC when it is
+> present.
+>
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
 
-This file becomes different after the patch, but upon manual inspection,
-it comes down to a phandle index shifting around (i.e. no *real* change)
-
-Nice cleanup
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
 
