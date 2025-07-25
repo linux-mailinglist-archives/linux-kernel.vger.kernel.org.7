@@ -1,103 +1,103 @@
-Return-Path: <linux-kernel+bounces-746031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718A4B12221
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:36:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0CBEB12225
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DDD01CC8007
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:37:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2F658045C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222E62EBBB8;
-	Fri, 25 Jul 2025 16:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5D41A2396;
+	Fri, 25 Jul 2025 16:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFbqS958"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/3owUOe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816A53BBF2;
-	Fri, 25 Jul 2025 16:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9553D3BBF2;
+	Fri, 25 Jul 2025 16:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753461406; cv=none; b=Nre5FNnHiEnriMXljSflooJJHdC3oYRK5KcacsVqmRsgKPF6epavF9U7dyNG4zTOVmWCbIfRMbbFhe6X5KHUDFbTIZZLL9vWLew2qHOnBZPOUU7imU1FuXMjz7/36YlIwSVFSPDvFSRIVAGld2vWmfDyAr2tiHOJSiSxL6j5SC0=
+	t=1753461537; cv=none; b=YjLR4Vvsd93S5FBvZIzXq70INHBb9xxgno438wDYscABca76Zm+RAtg+JyP1AbI0AQuT6yintnfLCTHStERAGDmeRzqEa236Hi+RjMy58zkqWWjkRPhIPf/FFddtb/hQNTqT/abNyB6TczbV7UHqtKrtRnqmM7F7LRokSSzBc3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753461406; c=relaxed/simple;
-	bh=0MJcY0iacLOwQpRsrB4iQLHcAHs0vWSaJn7nayTfEbo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=l9zX3TvYPuJc8wDr/cNRH18Y5j7g8pL+V9x1QkNtNSDw/2DGO2lCTxs1G9TuxXmjeyvhfcpQB82pF4Wc+wt6LOQoWmhgbsYccfYYdsHRZV+g0N0EpHakTD50DTySPp4U+vopLkaLAbkLNMSF/KaxxyzOWHPfvx1O5tpWaK/fYok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFbqS958; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD685C4CEE7;
-	Fri, 25 Jul 2025 16:36:44 +0000 (UTC)
+	s=arc-20240116; t=1753461537; c=relaxed/simple;
+	bh=ph09R88EGj0H43KIRGl9OnKpp1uyR+qA9PEna2s/QNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYYeLy7WZHHTwc1c/M2COHwXAEg/gHBjPqgi/bkFQ0gq5UqSfxWEazr9I1Cn8rbGp6itf+Xvxy6sek6qhbSlC82ydUkcQqCBE52WbimYjBLWGxzx9G6MfRMyziK0KqS4JaWVNpTw8yodaAm1p+qb6RnOVdm1QP1SYoCdyOO4kiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/3owUOe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 292A6C4CEE7;
+	Fri, 25 Jul 2025 16:38:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753461406;
-	bh=0MJcY0iacLOwQpRsrB4iQLHcAHs0vWSaJn7nayTfEbo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=dFbqS958Ogbka7EyFAzYtGDyZQldNj6KLym1PLkGvpmPA2HBMo4Sha8k3pd7X2ifG
-	 qtgqKUlwlk4HHTM5QvezPe+AOwVjlxhSY2UnEEBtrJiA/TzXAfmcxIY9qDETjt+kKE
-	 QysgyDlP+TK+NvYKL39ANs0Rnqole4/fdC/wdEk4NXDe5mxSa2HHfIMdDzIzvqV2p+
-	 hquO2KvsO0NgLup8xFaizmTjmbU7QpCduTTcicF6g+xbiGCcnp1vU14TQ7lfOMrQ6I
-	 +vmSnRejdgV75o1djmYfQekCkhSb+b7sZk/K/fEWhURZh1bFzeRFLsrIKqZmtUx3O7
-	 ERJV4HKe2dqzg==
-From: Mark Brown <broonie@kernel.org>
-To: Jakub Czapiga <czapiga@google.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Konrad Adamczyk <konrada@google.com>, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250725122542.2633334-1-czapiga@google.com>
-References: <20250725122542.2633334-1-czapiga@google.com>
-Subject: Re: [PATCH v3] spi: intel: Allow writeable MTD partition with
- module param
-Message-Id: <175346140458.1149754.12210062974828341845.b4-ty@kernel.org>
-Date: Fri, 25 Jul 2025 17:36:44 +0100
+	s=k20201202; t=1753461537;
+	bh=ph09R88EGj0H43KIRGl9OnKpp1uyR+qA9PEna2s/QNo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r/3owUOetdGfJ7NIolrwZMMOxRlDHBwquuCvs3fYNgdlE2+s8SrMe8N7hMu5JJ0ow
+	 /ZSz+d6zYcTZgVq3fXq12zRN68fSteTIG+YZuZgHFb1Y2NZwlTz0aXkGzTnLzICNZz
+	 agu2z5TUwRfLzLCs2DoHCEbueY0ip/cwCXEUqR1LOUOd7aHYtd7nfm0H1i5Lr1OR2+
+	 fHQ+sfSBfvmQld5NyMrp8iwsHrEFcEOCRDX13kdNHhj8c+tZJFNyGTE0a/Eta35aPU
+	 ioYtyNmXsuDO+cSmQVU54BwWFBJllFSsUzsc1PrAwLU4ia/+Lk8ST893Eqh525HBxB
+	 phA7AsoV+ZP8w==
+Date: Fri, 25 Jul 2025 09:38:51 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Justin Stitt <justinstitt@google.com>, Marc Zyngier <maz@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Tom Rix <trix@redhat.com>,
+	Christopher Covington <cov@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, stable@vger.kernel.org
+Subject: Re: [PATCH 6.1.y] KVM: arm64: silence -Wuninitialized-const-pointer
+ warning
+Message-ID: <20250725163851.GB684490@ax162>
+References: <20250724-b4-clidr-unint-const-ptr-v1-1-67c4d620b6b6@google.com>
+ <2025072553-chevy-starter-565e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a9b2a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025072553-chevy-starter-565e@gregkh>
 
-On Fri, 25 Jul 2025 12:25:42 +0000, Jakub Czapiga wrote:
-> The MTD device is blocked from writing to the SPI-NOR chip if any region
-> of it is write-protected, even if "writeable=1" module parameter is set.
+On Fri, Jul 25, 2025 at 10:58:05AM +0200, Greg KH wrote:
+> On Thu, Jul 24, 2025 at 06:15:28PM -0700, Justin Stitt wrote:
+> > A new warning in Clang 22 [1] complains that @clidr passed to
+> > get_clidr_el1() is an uninitialized const pointer. get_clidr_el1()
+> > doesn't really care since it casts away the const-ness anyways.
 > 
-> Add ability to bypass this behaviour by introducing new module parameter
-> "ignore_protestion_status" which allows to rely on the write protection
-> mechanism of SPI-NOR chip itself, which most modern chips (since
-> the 1990'+) have already implemented.
+> Is clang-22 somehow now a supported kernel for the 6.1.y tree?  Last I
+> looked, Linus's tree doesn't even build properly for it, so why worry
+> about this one just yet?
+
+Our goal is to have tip of tree LLVM / clang be able to build any
+supported branch of the kernel so that whenever it branches and
+releases, the fixes for it are already present in released kernel
+versions so users can just pick them up and go. We are going to have to
+worry about this at some point since it is a stable-only issue so why
+not tackle it now?
+
+> > Silence the warning by initializing the struct.
 > 
-> [...]
+> Why not fix the compiler not to do this instead?  We hate doing foolish
+> work-arounds for broken compilers.
 
-Applied to
+While casting away the const from the pointer in this case is "fine"
+because the object it pointed to was not const, I am fairly certain it
+is undefined behavior to cast away the const from a pointer to a const
+object, see commit 12051b318bc3 ("mips: avoid explicit UB in assignment
+of mips_io_port_base") for an exampile, so I am not sure the warning is
+entirely unreasonable.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: intel: Allow writeable MTD partition with module param
-      commit: 87aa3c8d8c4aa2e2567fe04126d14eb9fde815e5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Cheers,
+Nathan
 
