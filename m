@@ -1,122 +1,116 @@
-Return-Path: <linux-kernel+bounces-745175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA992B11618
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:54:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC21B11619
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1F31CC64E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:55:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53CE544B2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3F21FDE19;
-	Fri, 25 Jul 2025 01:54:41 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38551F0E3E;
+	Fri, 25 Jul 2025 01:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="07Zs9xEU"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852D8DDA9;
-	Fri, 25 Jul 2025 01:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476A510E4
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753408480; cv=none; b=uXAKC2A6EUPSwiVotkM7W58b/wRdB6APRBiVHwDHw+PSdyl8frn3/xa9SOGXzkq1EA7FOmRQC6ySTpkOeXVtWwz+bceOkDtCue83Ox2VDbpZqQUbf1AEc+PR7n2d0Gp+RpDzeCRNTexRbRT98BUuO1J0LFrLFNUD+6AZl9gfxcU=
+	t=1753408562; cv=none; b=QlVh6v+SqN8t4p4lHAXn1pe7jXHRXHKLacDp6n/zD6z74T7WvO5dZLMnF2KHfmUlhrVsJUifuY1D0GRFn6HBc4jsPUGbxrXRvJpf7R7M95/9HU6uR4tJ5hdpcaWS/8W7g+WyCvvlJaEDmeNONV17cKuNT+LGzhFh/y2mn/RScAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753408480; c=relaxed/simple;
-	bh=7QA2XhirCdErGq0E2Mu2eOtTEn5CbyuoLwtcxlC4eQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QW9klAWJZqBDI3ZU3E+XUAoShOX+JNqmTqwBlLyfbVwjoG40EuAq8N71FqkjAIyu4Y1GQ6uoFa2EZv2jNleplTU2H14/yqvkVv4KWWkVLWHEaUyJbjqL4UUEmsFPipApu06FcDi8uZG9fdRPEhK3SAbOzAaoKtd9ao/wd6ey8XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bp9sm6GMNzYQvJG;
-	Fri, 25 Jul 2025 09:54:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 922491A0B69;
-	Fri, 25 Jul 2025 09:54:35 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgDH07Xa44JoabeCBQ--.41840S2;
-	Fri, 25 Jul 2025 09:54:35 +0800 (CST)
-Message-ID: <7746e963-1c2d-402b-9a28-1554a34e096a@huaweicloud.com>
-Date: Fri, 25 Jul 2025 09:54:33 +0800
+	s=arc-20240116; t=1753408562; c=relaxed/simple;
+	bh=tcWSEMLkdnyh9aSLiaRBtq7lBNnDoTyyz9lHUiNPlc0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=lGmzhHyz33aV8qlBhQnHNxOgfqBSWX1CzP5248Mfe2kN4d4jX3t8AoLU2AuDncdFIbEmQy1tbbnyu7f5w16UqWrYis66ch8ma+Ow9EPVJ/0em1bUuuH3rPXFgdJmZq3UlJ3Tbhwq0NtJQZoqVu4sLWUOLVKssojXqfJ+wvY4mwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.corp-partner.google.com; spf=pass smtp.mailfrom=inventec.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=07Zs9xEU; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.corp-partner.google.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae3703c2a8bso328130566b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:55:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753408558; x=1754013358; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jBluRc4AqYa9mwEBFMC/KLTpnRIQOHur+1Rtne5kToE=;
+        b=07Zs9xEU3WQVD9Idga8fI/K3jv/n9+9SVUfAoFigfwy3OrAcOgJZIGe7hOroEUU05s
+         HYThl4MhMdy8nmiUbEUZtmIzHhCO0PnW5A4EQzuS9EGu/UUmmJ6Ngiavnb6cxKYPhgxG
+         f7h2I1NEIlzDyc1ndFhNUa7w65ka5VzQ8n0y0e99v90eOEViGQ9ShQv71ZjncKEkl0yQ
+         7j49XtUYFRG+5E+Ge+VH4k9e9qyI15RhPkSxDYQmMXzYLKsEQQWxIzQQj/Roe++/9R16
+         lCX4vH7eUxUSO+/6W2aU88JGf6Fx01HZb7EyFUIkGqpXadMDhkD7Mxf1EOCzZGy86xha
+         XxnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753408558; x=1754013358;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jBluRc4AqYa9mwEBFMC/KLTpnRIQOHur+1Rtne5kToE=;
+        b=gVnVUSUpj6okmJgynVVZhL8zt0Nx/+cSAO47rtJ5jWDQ8Od6I4XnbmjOBuagKuSbi9
+         ktHtBTXb14X00rAoy4Wqxi/PhmQuKXeHF3kH2VX9XiPCl6UtnAKq5nsZtKJGBoBAWOkR
+         9KXNT57SiszazKJi2sjACNk/uQ4PYxfVYS6dKgyLCvJX4vWHx1Ag0quHetEar23UH/l/
+         HskeAxiwcS6Jt9d5iW8mHND0LjDzXA35COjhvQXwAOvyN4XZxU8v8B7zWlt3Y3Ag4/ty
+         wyYkJfEIpjqY7Ec1/G4HqCotXGKSWgnOUI2Mdqkg7kRswFyZdCEs9k3jS3okMfVX4zAw
+         3ZFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEjDZ4C1aC5hd/XN6Qeq1KdMbueMR/vBOjdmCr8arutdpN/l2Xcs99sxul9mt21KITmQ8LuzpIK1b0zmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhpZFITtF6oyV/J/g6UZKkcEze1duZ7OxptK6uePluCdfb5Nb7
+	0j7ESjDeH3yHjOFvE+u2ezMaUB5K+m8jdo5r7t04+GjKjEeuqRhdG1E/Zt3vcAOLKaZh0eL8F8R
+	pC4eZXNo2AclzuwHlhMLoiD9+RZ2DLIrBLU48z9y8SA==
+X-Gm-Gg: ASbGncv8Ru91iH11OWlmU6yEP04VqsTIuDPtgNSRAt7kI8/dhOj4I63kbCu/8xUwam3
+	1sUtHdLsNzR8oUoZp7X1gH9lnmF6ewHPQNHNTIPvMzGm3ufSS4+Tsr64QvK5ZeBB8+GHBISD3ux
+	Njunwlq3vBUzmjMOvmjzSQI7pkNlREMxxUNfX8wr/NiqbPavuJcycvrYp+4T7mapM6bhdrCZ5jH
+	vDG5ae/
+X-Google-Smtp-Source: AGHT+IHJrq4VBdfI6Nqmu4pqZEfaWm4CrQW+bqbn01Yhkhymbt8Rfxp8TOPk0fUV2NdWzI06k8NeP6tQWLP55DzcysI=
+X-Received: by 2002:a17:907:3d02:b0:ae0:66e8:9ddb with SMTP id
+ a640c23a62f3a-af617705483mr27696066b.19.1753408558508; Thu, 24 Jul 2025
+ 18:55:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: cpu.stat in core or cpu controller (was Re: [RFC PATCH v2]
- cgroup: Track time in cgroup v2 freezer)
-To: Tejun Heo <tj@kernel.org>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Tiffany Yang <ynaffit@google.com>, linux-kernel@vger.kernel.org,
- John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Stephen Boyd <sboyd@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Chen Ridong <chenridong@huawei.com>, kernel-team@android.com,
- Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <5rm53pnhpdeqljxqywh26gffh6vlyb5j5s6pzxhv52odhkl4fm@o6p7daoponsn>
- <aHktSgmh-9dyB7bz@slm.duckdns.org>
- <mknvbcalyaheobnfeeyyldytcoyturmeuq3twcrri5gaxtjojs@bbyqhshtjfab>
- <180b4c3f-9ea2-4124-b014-226ff8a97877@huaweicloud.com>
- <jyvlpm6whamo5ge533xdsvqnsjsxdonpvdjbtt5gqvcw5fjp56@q4ej7gy5frj7>
- <e065b8da-9e7c-4214-9122-83d83700a729@huaweicloud.com>
- <aHvHb0i6c8A_aCIo@slm.duckdns.org>
- <2c723007-710f-4592-9fe2-7534eb47e74f@huaweicloud.com>
- <adrjkqsqqwxcsdr5z4wmxcrvgvutkulzgka6pjjv23v6242txr@vv2ysb46nhpk>
- <0064b782-2bed-4375-aba8-3745aa306a6d@huaweicloud.com>
- <aILZDyD4mPkiMrfd@slm.duckdns.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <aILZDyD4mPkiMrfd@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDH07Xa44JoabeCBQ--.41840S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw18GFy3KF15uF45JrWxtFb_yoWxtrc_ur
-	9F9F17WF18WF48Ar4avFyDCF95Gay0vF90q3yjqw47X3WxAFn2qrnrWrZIvw45KF92krnr
-	GF1vvanIyw17ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIb
-	yZUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+From: Kerry Kang <kang.kerry@inventec.corp-partner.google.com>
+Date: Fri, 25 Jul 2025 09:55:46 +0800
+X-Gm-Features: Ac12FXxDU5D-UiU7IOkHfr3KZQP0idtJyLB1qSw9Lcx_i6IPlXyGrNTUQJpBxUs
+Message-ID: <CALNGHDA5Lb_8d+Hywv2S+Ks0J+n7kZb3Hme5gnkPf=MKYKhfOw@mail.gmail.com>
+Subject: [PATCH RESEND] mtd: spi-nor: Add Winbond w25q512jvdtr
+To: llvm@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Similar to the other ones, different size. The "JV-DTR" suffix is in
+the datasheet, I haven't seen mentions of a different one.
 
+The datasheet indicates DUAL and QUAD are supported.
 
-On 2025/7/25 9:08, Tejun Heo wrote:
-> On Wed, Jul 23, 2025 at 09:28:02AM +0800, Chen Ridong wrote:
->>> But beware that the possibility of having cpu.stat without enabling the
->>> cpu controller on v2 is a user visible behavior and I'm quite sure some
->>> userspace relies on it, so you'd need to preserve that.
->>
->> This is what I worry about. Thank you for your confirmation.
-> 
-> Yeah, this was an intentional decision - sacrificing a bit of code org
-> cleanliness for everyday usefulness. Enabling CPU controller can have
-> substantial overhead and having cpu stats available by default doesn't cost
-> much while improving usefulness.
-> 
-> Thanks.
-> 
+https://www.winbond.com/resource-files/W25Q512JV%20DTR%20RevD%2006292020%20133.pdf
 
-Thank you Tj, This is clear now.
+Signed-off-by: Kang.Kerry <kang.kerry@inventec.corp-partner.google.com>
+---
 
-Best regards,
-Ridong
+This modification is add BIOS W25Q512JV-DTR chip to winbond list
 
+---
+ drivers/mtd/spi-nor/winbond.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
+index 8d0a00d69e12..6ce5f70bc11a 100644
+--- a/drivers/mtd/spi-nor/winbond.c
++++ b/drivers/mtd/spi-nor/winbond.c
+@@ -146,6 +146,11 @@ static const struct flash_info winbond_nor_parts[] = {
+  .name = "w25q512jvq",
+  .size = SZ_64M,
+  .no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
++ }, {
++ .id = SNOR_ID(0xef, 0x70, 0x20),
++ .name = "w25q512jvdtr",
++ .szie = SZ_64M,
++ .no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+  }, {
+  .id = SNOR_ID(0xef, 0x50, 0x12),
+  .name = "w25q20bw",
+--
+2.43.0
 
