@@ -1,117 +1,123 @@
-Return-Path: <linux-kernel+bounces-745401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06865B11968
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:51:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43E9B11969
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FE51CE245B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:51:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790F7AA5503
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84200236431;
-	Fri, 25 Jul 2025 07:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDBC288C03;
+	Fri, 25 Jul 2025 07:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="cEo5gAAh"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U+iSlB/o"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F14241A8F;
-	Fri, 25 Jul 2025 07:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC7D224B1F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753429867; cv=none; b=WqKzIUw6RIwfxljh824MQkiQEd0ostVoab1rbKUak/GYqk2khORcwM/piq5AsjUJZ0Bp0dLvq2lrONN1YdmqbTVvoNgY1xrr0mgm2nhiaVSO9xT8RfbIRDFw8/XBRr+46GyqINPvuffvaM1OS+iRTTKMVH+t2kuuidU8BesTikA=
+	t=1753429979; cv=none; b=Mv4I8IeVAKJfZ64bSIdEeCZl0z9PyATJAgz6qdGSmbgW4Va3NhrwEbw0UhFpjceHmyhdNOe47EHngYyoc3ZudSJU792ULlGZ0+OK414n5pFH2GAliDm5GmPkCxl5QUsZUpoF4uBysuY03xrr3udoKy7W80/S5fuHaLWUQY29SC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753429867; c=relaxed/simple;
-	bh=4/vvHs77kd8pAzYMmzOAcmSimOtvxQbc08tEuGA2bl8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LDg3psr+3FOnIe4Y1jps4HOvebsL4A4ksjzpLj0zRsMKKAzlRqOjnHRvrIBwY0uzLEPoWYDqA2Dz6/ysJQI0p5rA5Q2CJhe8iuDrJ8AIT6Wpx+y/ap2ACBwcWJJrQMNUbY2aWR5g6vB90YkdZ4Se6RVjxiYFzloQ6mfZGdu6UbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=cEo5gAAh; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=sOVFlvbl9upVlLlSJ+gKg+QG/EzUMWB+gqdb/rBhNqg=; t=1753429862; x=1754034662; 
-	b=cEo5gAAhm02lDxNtVpWZ0CftSZDWo2bUI5Q5DNzW+abLNXO2fy2fGQequSy31xZ42ghfhFgd78v
-	3n1YafGd3WyJJ6BC55Ny84eQodDx3gcrzZSa/0Q614y5e8R77iVbCE/2R0B6Ps+nhYN0hH/yIAH5z
-	3tDdnUw141c5fHBfsjpIxGRBpY51eXyTvEIEzTOJkOxKcNfxxjsgMIkYnviJ2VqywJ0l3Zdtwk8Yw
-	1ZgMLAnApVpWFCmJCSyeM3NG25iAtcf2UYEfdt7uGI3UCM/TBiFkgKgjdJrM4lAHHv6FmsxBXorcc
-	5DBoP/HYaxgGPJD3PXXEBWDF8WDi2d1eAwhA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1ufDCd-000000026hp-3NTx; Fri, 25 Jul 2025 09:50:51 +0200
-Received: from dynamic-002-245-058-127.2.245.pool.telefonica.de ([2.245.58.127] helo=[192.168.178.50])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1ufDCd-00000000chc-2Fcp; Fri, 25 Jul 2025 09:50:51 +0200
-Message-ID: <ac3a117c91d27dc7eff8c22ad6bd261dd2557451.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 0/3] drop hugetlb_free_pgd_range()
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Anthony Yznaga <anthony.yznaga@oracle.com>, davem@davemloft.net, 
-	andreas@gaisler.com, arnd@arndb.de, muchun.song@linux.dev,
- osalvador@suse.de, 	akpm@linux-foundation.org, david@redhat.com,
- lorenzo.stoakes@oracle.com, 	Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, 	mhocko@suse.com
-Cc: linux-mm@kvack.org, sparclinux@vger.kernel.org,
- linux-arch@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- alexghiti@rivosinc.com, agordeev@linux.ibm.com, 	anshuman.khandual@arm.com,
- christophe.leroy@csgroup.eu, ryan.roberts@arm.com, 	will@kernel.org
-Date: Fri, 25 Jul 2025 09:50:50 +0200
-In-Reply-To: <20250716012611.10369-1-anthony.yznaga@oracle.com>
-References: <20250716012611.10369-1-anthony.yznaga@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1753429979; c=relaxed/simple;
+	bh=eoH797mqsBs6xuZVyOmv4d8RqF6BV6h4eqvrF5elnEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=esY5qGR/zBQ586LP4KYKWbVc1wfTjhtpV33N5WvW06BESKecJm5L/DltuR8y0sgkCvJvEid2lDevFoX2PziQVh3igsRkzcSf3zshkXzPm0Z0BT4PZKElTMHOTQijA0Q6qDufJ2p2RVUPX7PIPCM4I6K+f4wyFWGXMSrKAq+V+gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U+iSlB/o; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45600581226so18910795e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:52:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753429976; x=1754034776; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y29kz7A/MwWwfz7+3cYa/ddLNXrpkNMO3/l7w3Mnzko=;
+        b=U+iSlB/oUymTwCGp4rcHy9phiPWmvC8u3upkSSrE94AThHMZmS8Fr3UO2WMfzDctBS
+         UZSSNEOfqKst9F4E2qfSaeeP+DzNQYCwLaFiNwjvW+uCeRn5P6/t61N4RAdv+CJh81vx
+         ih7sjqEhWhVhsogc7zpBu6iWTQ74j9chUnK9I9GabjwmqrxEFmESFxJ/quFyuRdG3SWY
+         xrVyTK3IWRmM/NbeHWN6pIN0Wp1KnDJLzLz3aOUVTZ7+5TWqkR3m3skuFGRk3TTaFvFB
+         er/L6pgkbjuhPVdJbB1v2QSLswVsgTbwznWz6eGJVttSTKkjAbor731fjMu1qhMqXAnG
+         1PAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753429976; x=1754034776;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y29kz7A/MwWwfz7+3cYa/ddLNXrpkNMO3/l7w3Mnzko=;
+        b=T2x9uVWI00tmo2k4hm4aSQaqogylVgVYtzqX3NF/mO43n6iWxlUdGmbe5LxLqYBo6h
+         Qnm8TagoUFIwZLpJ3mov79SLZlqkxk3Ij9B02jV59JBbwTxLCTi73mO2hZWZ6v2mYHSM
+         jpj3TQX/2lHN/mXWmrvKPnZTmdOCQhOrSo2/AuuPKHjP3O5EX64QxACfnvTeLS18D33E
+         /SIRoKzwwZWXaRjE4kVZOSSkHRlfyxuoADN7hUOWCeA4w1c1Ix00TpTHIM274pUzlLt0
+         ep5UsJHAyEYtkRZZ/dG/lUMOPG2NCe1/K86dVE+xXjFvPTPcwXXDjWE5iQu5KHvFsQKJ
+         8+vA==
+X-Forwarded-Encrypted: i=1; AJvYcCUodmh+c7LLXghGIQpt4le8Sbx05YdQ4GcrRk61tWP4E8cGpegg1FsbZXs9xzoHPG7xtj0U0TkqSiKrNj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4QLdXmVVTQRQlTSl3LBErt089+A3HhhdpVtsCluKPVV75fp/c
+	ty4uxp2g3YZrrlBO0gkC1Ig5fzFRpIfuUnB/JptjxwtFSluDe9396pC6QwOXgVbxO6dnpGDNVRd
+	NpiRbP6P9yMa88AgvF5YkRhSBFSi6zkW0LV4nIEY8
+X-Gm-Gg: ASbGnctTOgNUwQ3f7+Z2rkHqxJkVz3nZnMpMA9Ew517LUFExlzZpzNd3Ak3/GmOpnzm
+	T2nIkzMvQHnODe0xLS1QhtGpUA5YouqwsLLihwOH3OkFUq0RcVqrVeX3NsXDitgCRGPQIsstn8p
+	7ZARxypdleoqHdziBX7mI3GNAv8LIJgVydJ2HjryO55tHgo+vd4uKZksWTEf1NckPwunNvbQ21w
+	lXbqwHlf3e58bRbMal/DkVYvPsRpyy4kLxRXQ==
+X-Google-Smtp-Source: AGHT+IFHuZC1ODuNXR4+D0YRFC92UGO95cgOvdX0pp5B59jjxgohXWOCJs+nNlprNVTypzFwYYDOrz034joMKfbYF5o=
+X-Received: by 2002:a05:6000:2306:b0:3a5:527b:64c6 with SMTP id
+ ffacd0b85a97d-3b7765e57c8mr883949f8f.1.1753429975962; Fri, 25 Jul 2025
+ 00:52:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20250725-as_bytes-v1-1-6f06a3744f69@nvidia.com>
+In-Reply-To: <20250725-as_bytes-v1-1-6f06a3744f69@nvidia.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 25 Jul 2025 09:52:44 +0200
+X-Gm-Features: Ac12FXwZc0zXjraoA2_kHSwY21ka4KMAD_Cj3XPo4-E82LVGRioQvMFt8WOI1AQ
+Message-ID: <CAH5fLgj-crrKyZbgPBLyWNmzw_oB6ZVc==rqAFt5jr6402nHLA@mail.gmail.com>
+Subject: Re: [PATCH] rust: transmute: add `as_bytes` method for `AsBytes` trait
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	"Christian S. Lima" <christiansantoslima21@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Anthony,
+On Fri, Jul 25, 2025 at 4:11=E2=80=AFAM Alexandre Courbot <acourbot@nvidia.=
+com> wrote:
+>
+> Every time that implements `AsBytes` should be able to provide its byte
+> representation. Introduce the `as_bytes` method that returns the
+> implementer as a stream of bytes.
+>
+> Since types implementing `Sized` can trivially be represented as a
+> stream of bytes, introduce the `AsBytesSized` proxy trait that can be
+> implemented for any `Sized` type and provides an `AsBytes`
+> implementation suitable for such types. Types that are not `Sized` need
+> to implement `AsBytes` directly and provide a method implementation.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-On Tue, 2025-07-15 at 18:26 -0700, Anthony Yznaga wrote:
-> For all architectures that support hugetlb except for sparc,
-> hugetlb_free_pgd_range() just calls free_pgd_range(). It turns out
-> the sparc implementation is essentially identical to free_pgd_range()
-> and can be removed. Remove it and update free_pgtables() to treat
-> hugetlb VMAs the same as others.
->=20
-> Anthony Yznaga (3):
->   sparc64: remove hugetlb_free_pgd_range()
->   mm: remove call to hugetlb_free_pgd_range()
->   mm: drop hugetlb_free_pgd_range()
->=20
->  arch/sparc/include/asm/hugetlb.h |   5 --
->  arch/sparc/mm/hugetlbpage.c      | 119 -------------------------------
->  include/asm-generic/hugetlb.h    |   9 ---
->  include/linux/hugetlb.h          |   7 --
->  mm/memory.c                      |  42 +++++------
->  5 files changed, 18 insertions(+), 164 deletions(-)
+Is the AsBytesSized trait necessary? Can't we just do this?
 
-I have applied this series against v6.16-rc7 and booted the kernel inside a
-SPARC LDOM on Solaris 11.4 without any problems.
+pub unsafe trait AsBytes {
+    /// Returns `self` as a slice of bytes.
+    fn as_bytes(&self) -> &[u8] {
+        let size =3D size_of_val(self);
+        let ptr =3D self as *const Self as *const u8;
+        unsafe { slice::from_raw_parts(ptr, size) }
+    }
+}
 
-Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Alice
 
