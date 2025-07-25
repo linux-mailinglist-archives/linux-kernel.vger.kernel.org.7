@@ -1,269 +1,412 @@
-Return-Path: <linux-kernel+bounces-745828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEE6B11F40
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15653B11F4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59111C882D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:16:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECA951C84DCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179BE2ED868;
-	Fri, 25 Jul 2025 13:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y3820aIg"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5047E2ED844;
+	Fri, 25 Jul 2025 13:21:30 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7452ED17F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 13:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1521246780;
+	Fri, 25 Jul 2025 13:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753449343; cv=none; b=NWYuy3JOC8molL7rl5ZIH5ncuw6/YRnLGhTZU0wgpoY7tqWClYf/asiTc2YVAHfTzfG+a7vGrRW4vVcow8yMSUi8vBxXer4y3zt5DTmoZJd9PIMAlAC5eSshU/cv1RvaOGO4uzI3IpJJE4m35GodbIPJn7ZQ10Fw5EzTPd4Ty00=
+	t=1753449689; cv=none; b=pKsVIsunkaaq52J+hwYjy/neSX9cbiYgVk4GDWkuEzmXgMVs2bYU4isCIyQJOnPmF+1Dqi/v5W3R5nRnuDNtH5lqAtQoYWIhL/IUVWh9A2c3cDmpfzyJHK9D6F3gL4tFbSC6DQJbsATzlKLgiLnAx5MoMbUY+qG2hZhvN+PHKKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753449343; c=relaxed/simple;
-	bh=y4LvTg8Vl0ihFpvurwo/P/l0P11SNHTq4D6tssmg0pw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g76xsN7xh56y30TH3osi8Bl8/CQjeeP4Ut/Jk4cSPLpGtFzUhTvAqFnrbAgXLAnQyIkpXRFYO+tEeVViYYs4bpOVwFWhBZl4Z+3YGsLASYEicfuDhCadmahXd9m6Dgjbq3DIu1SXlITFekV+kd3WqDcWigPvqHPiF84VEhYHrgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y3820aIg; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a54700a46eso1120757f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:15:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753449340; x=1754054140; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qphveX+IcbsowGUL4p1sm6U/t7i7Pc1D4Xjo/RMMv1k=;
-        b=y3820aIgYOZqF970gq7SVTnV1Ha+a3lAni3B/9WoltwDXotfYVwV+Ld/ViX7ce1JNl
-         OJGIkOv5hd2q6n7xYxjVv9Qu6dBpCRH1Lq50Agux9ySoi7qBtPAx/Zk/8KPkeHNXIFZj
-         mbt5ch8s7Ri+60++Db0/3w0XgCt64fL3D6R7DHzqTzzZnlv/H5+yQV2c149+Eixafkc8
-         3BgF8u8p7cg9SZnNU9xpt8dvZAGzPe/ONZ16VTLWYJG4JG0CIFZ9G1yI9WZdya5LSbiO
-         AujdA4w/fEVOxfpgN7aPkZZswa8/O2jDG2vdkgqJqArzEXuZyQTve+BlV0h5U9HPcmo9
-         BuQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753449340; x=1754054140;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qphveX+IcbsowGUL4p1sm6U/t7i7Pc1D4Xjo/RMMv1k=;
-        b=lnDP6C/hz+MLoOPsC8Rl/yN+AEHgkFrQmwAmNCU01gJ4tCQEodsPsGN4wkUdR4CFEj
-         1KZ7iTiLPb4cqTKdlb9vPoZi3KaUqE9Wub/CzdH8ZSVmn1YJ679BFfkYyOHCkwbr8nIg
-         Cvj5sN7cHzEKhUM122/DscRexCl9xRXJwoS28BSjARa7dnZZgu5FQnl6fleESrEqoZpD
-         qj8scFOEIF1Jjfq/v8pdOB6u4dIYAZs3CCKvycVdnS2SW0eXrZ2v+LAzvvEw8iDT1h7U
-         36KwjlY4jvqfhP4CMeyCOjbt7aBF2L7WQuHh4Fn3+sgBciH4U/BD/7P7YiA/hn3829yA
-         aiUQ==
-X-Gm-Message-State: AOJu0Yyf6p0uGlGghRCMLitLaPSeNQpqO84y2h9Dl8nWrahXf7Hq4BWS
-	VqW9ZkNdr6sq2nrAV1xPytkncN7O7FmskuHGm+FGnJE77jx2Fkf8X9hBqfTN1fr5MH4=
-X-Gm-Gg: ASbGncv9gudcismttiGsxVoQcM4Rww24fZSGXpHw2gt7rcYh1erR8etVIePEOkcESqq
-	iHyJJLY7PpjLIvSvDXq72nDt8eWxY816bAz/CSLGT4bGvtVRBSu5NHfcpJ+Z8mML4eAK9sPfjy8
-	wNHP46C9zyl1VqlRdwB17QGbb0hQG9IdZHDeESE0N1sjUVTzZoZX+kGPXll/JLrlBN+31XC7KnK
-	Ht33B789STL4UxDWMI4P8w0kkrh7NyNNa4Rz3it+EJDzgajZ4nXxb8B0kHrh3sHVRbUUjDX3gMi
-	yAcqw7sbDVkWTZVgTYCkjxe9iKEmmS0TigidSVsbdTBaM/GDL6NGsMcolevwHlMOQU31DbIYaIK
-	PIRX7GAw1iKLJfQqP5E8vL3H/Wi7lyl/YgQtvwfFvTQLkSlzJMLcIQsbq5U77Dw==
-X-Google-Smtp-Source: AGHT+IGVp1L9DRHNP0CIZJjhCbFFiMb9Q/eMfhwleA0Cy0iT2RjxXfOV27ER9+Eq/tU6xxkCYqXfpQ==
-X-Received: by 2002:a05:6000:3111:b0:3b7:6828:4205 with SMTP id ffacd0b85a97d-3b77675fbf3mr1441404f8f.32.1753449339443;
-        Fri, 25 Jul 2025 06:15:39 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b76fcb83c5sm5039599f8f.60.2025.07.25.06.15.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 06:15:38 -0700 (PDT)
-Message-ID: <8a0662b7-2801-47a2-9c91-4eb0e7ef307b@linaro.org>
-Date: Fri, 25 Jul 2025 15:15:37 +0200
+	s=arc-20240116; t=1753449689; c=relaxed/simple;
+	bh=1MGKZ+QXqS6uZzSzRApOKmGmRcscRN4yJjylkQk/TRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oXbPK9q1Ojc3Xf4IiXEGzNo52RmjZuO699qp/9LXVrLqH9VnKKBclwaW1UxcNZC7Sk22fFBg8Edl5V6lt1X+JCYMkcN5Yx2HkcU/O3zfAl4xZjeAhhaJb16qe+sFH0l0OdNE5woR6L+VP4DIA9KKDa8mh2HpkUISrESoCAsIeek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 69B8C1A073E;
+	Fri, 25 Jul 2025 13:21:25 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id B7DE418;
+	Fri, 25 Jul 2025 13:21:23 +0000 (UTC)
+Date: Fri, 25 Jul 2025 09:21:28 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/1] tracing: Remove "__attribute__()" from the type
+ field of event format
+Message-ID: <20250725092128.6ebd7422@gandalf.local.home>
+In-Reply-To: <175333239565.2267214.13923288877217326467.stgit@mhiramat.tok.corp.google.com>
+References: <175333238644.2267214.1835493691667067597.stgit@mhiramat.tok.corp.google.com>
+	<175333239565.2267214.13923288877217326467.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: timers/clocksource] clocksource/drivers/exynos_mct: Don't
- register as a sched_clock on arm64
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- linux-tip-commits@vger.kernel.org, Donghoon Yu <hoony.yu@samsung.com>,
- Youngmin Nam <youngmin.nam@samsung.com>, John Stultz <jstultz@google.com>,
- Will McVicker <willmcvicker@google.com>, x86@kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Arnd Bergmann <arnd@kernel.org>
-References: <20250620181719.1399856-3-willmcvicker@google.com>
- <175325504976.1420.2666973232153470630.tip-bot2@tip-bot2>
- <aIHBnFESZwjpXzjr@gmail.com>
- <a5628c87-0dcd-4992-a59a-15550a017766@linaro.org>
- <aINdu_hrz6zJnBGb@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <aINdu_hrz6zJnBGb@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: kbc5npgwmuxgjbo8bn7dj1aahepp9emi
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: B7DE418
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/rYuzcO53HV/k/sFg0ej8lxIWmj+4nzLQ=
+X-HE-Tag: 1753449683-921948
+X-HE-Meta: U2FsdGVkX18ZCgt8bcLHfNQw/alvGodNchbvbuXEAjV3vQRG6XKrJQ20RroP3jeBtuBbKteTe8B39IdRr+w6FblG+TSv6TsfEf/0RJeY4bplpyKZGcYhsh2XrFMuimM5cKl9Sgny0UQ8TD+00lTpxzKm7usPr/fdcN5I8eEj9alWuHLUUxdpymblahaV41DcEyHRhvFiVNDPrFWlnLoz91SSa9xWzbG6ropySmIOfBQnUNg4y0dq1bXARWWwolqGUbNvIbVlA4tDDx1n/WiWWoJ4C+gBuWt/PNjF30ZBR0aHAllJDoPuR76Dy3HJ317ptwePE2XO1CfNg2ltl1a4T6Cm1txPiijq
 
-On 25/07/2025 12:34, Ingo Molnar wrote:
+On Thu, 24 Jul 2025 13:46:35 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> * Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-
-[ ... ]
-
->>> 3)
->>>
->>> There's also a stray Tested-by tag by one of the SOB entries:
->>>
->>>> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
->>>> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
->>>> Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
->>>
->>> When someone passes along a patch, it's implicit that they not only
->>> have reviewed the patch, but have also tested it to a certain extent
->>
->> In this specific case where the original commit is from AOSP, this chain
->> seems to make sense. Souns like:
->>
->> "I was in the original commit delivery path"
->> "I reviewed this patch carried to Linux"
->> "I tested it on Linux"
+> With CONFIG_DEBUG_INFO_BTF=y and PAHOLE_HAS_BTF_TAG=y, `__user` is
+> converted to `__attribute__((btf_type_tag("user")))`. In this case,
+> some syscall events have it for __user data, like below;
 > 
-> Yeah, so then this should be documented by adding a comment to the tag
-> itself:
+> /sys/kernel/tracing # cat events/syscalls/sys_enter_openat/format
+> name: sys_enter_openat
+> ID: 720
+> format:
+>         field:unsigned short common_type;       offset:0;       size:2; signed:0;
+>         field:unsigned char common_flags;       offset:2;       size:1; signed:0;
+>         field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
+>         field:int common_pid;   offset:4;       size:4; signed:1;
 > 
->      Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
->      Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
->      Signed-off-by: Will McVicker <willmcvicker@google.com>
->      Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->      Tested-by: Youngmin Nam <youngmin.nam@samsung.com>   # AOSP -> Linux port
->      Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
+>         field:int __syscall_nr; offset:8;       size:4; signed:1;
+>         field:int dfd;  offset:16;      size:8; signed:0;
+>         field:const char __attribute__((btf_type_tag("user"))) * filename;      offset:24;      size:8; signed:0;
+>         field:int flags;        offset:32;      size:8; signed:0;
+>         field:umode_t mode;     offset:40;      size:8; signed:0;
 > 
-> Otherwise it's just confusing as to why there's duplicate SOB and
-> Reviewed-by entries.
-
-Yes, I agree it is more clear.
-
-> But as long as the porting was basically just a cherry-pick, these
-> extra tags are probably superfluous. If there was a conflict resolved
-> by one of the maintainers along the SOB chain, that should be marked
-> explicitly, which I see was already done in some cases:
 > 
->      [ dlezcano : Fixed conflict with 20250614175556.922159-2-linux@roeck-us.net ]
-
-Ok, noted for the next time.
-
->>> 4)
->>>
->>> Why is the 'Link' tag just in the middle of the SOB chain, instead at the end of it?
->>
->> I don't know. Link must be at the end  It is stated somewhere in the
->> documentation?
->>
->> I use git b4 -s <msg-id> and the tool adds the Link then my sign off.
+> Then the trace event filter fails to set the string acceptable flag
+> (FILTER_PTR_STRING) to the field and rejects setting string filter;
 > 
-> Yeah, so using tools and not looking at the end result will often just
-> create a random tag order that looks messy.
+>  # echo 'filename.ustring ~ "*ftracetest-dir.wbx24v*"' \
+>     >> events/syscalls/sys_enter_openat/filter
+>  sh: write error: Invalid argument
+>  # cat error_log
+>  [  723.743637] event filter parse error: error: Expecting numeric field
+>    Command: filename.ustring ~ "*ftracetest-dir.wbx24v*"
 > 
-> On preferred tag ordering, see:
+> Since this __attribute__ makes format parsing complicated and not
+> needed, remove the __attribute__(.*) from the type string.
 > 
->    Documentation/process/maintainer-tip.rst
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+> Changes in v4:
+>  - Run sanitizer only if btf_type_tag() attribute is defined.
+> Changes in v3:
+>  - Sanitize field in update_event_field() to avoid boottime performance
+>    overhead.
+>  - Change the function names because those are not always require eval
+>    maps.
+>  - Remove unneeded alloc_type flag.
+> Changes in v2:
+>  - Add memory allocation check flag.
+>  - Check the flag in update_event_fields() to avoid memory leak.
+>  - Fix 'static const int ... strlen()' issue.
+>  - Fix to find 2nd __attribute__ correctly. (adjust next after strcpy)
+> ---
+>  kernel/trace/trace.c        |   25 ++++++---
+>  kernel/trace/trace.h        |    4 +
+>  kernel/trace/trace_events.c |  115 +++++++++++++++++++++++++++++++++++++------
+>  3 files changed, 116 insertions(+), 28 deletions(-)
 > 
->    Ordering of commit tags
->    ^^^^^^^^^^^^^^^^^^^^^^^
->    ...
-> 
-> 'Link' is at the end of the list of tags.
-> 
-> There's some logic to the -tip tag ordering (more important tags go
-> before less important tags), but it's mostly just an arbitrary order
-> that we try to stick to within -tip.
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 95ae7c4e5835..b62528c42e26 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -5937,17 +5937,26 @@ static inline void trace_insert_eval_map_file(struct module *mod,
+>  			      struct trace_eval_map **start, int len) { }
+>  #endif /* !CONFIG_TRACE_EVAL_MAP_FILE */
+>  
+> -static void trace_insert_eval_map(struct module *mod,
+> -				  struct trace_eval_map **start, int len)
+> +static void
+> +trace_event_update_with_eval_map(struct module *mod,
+> +				 struct trace_eval_map **start,
+> +				 int len)
+>  {
+>  	struct trace_eval_map **map;
+>  
+> -	if (len <= 0)
+> +	/* Always run sanitizer only if btf_type_tag attr exists. */
+> +	if (!(IS_ENABLED(CONFIG_DEBUG_INFO_BTF) &&
+> +	      IS_ENABLED(CONFIG_PAHOLE_HAS_BTF_TAG) &&
+> +	      __has_attribute(btf_type_tag)) &&
+> +	    len <= 0)
+>  		return;
 
-Thanks for the pointer !
+The above is quite messy and hard to read. Can you change it to:
 
->>> Presumably this is the proper SOB chain:
->>>
->>>> Author:        Donghoon Yu <hoony.yu@samsung.com>
->>>
->>>> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
->>>> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
->>>> Signed-off-by: Will McVicker <willmcvicker@google.com>
->>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>> Acked-by: John Stultz <jstultz@google.com>
->>>> Link: https://lore.kernel.org/r/20250620181719.1399856-3-willmcvicker@google.com
->>>
->>> Correct?
->>
->>
-> 
-> So I got no answer for this question, but I suppose my assumption is
-> correct - so I've rebased the tip:timers/clocksource commits to fix the
-> misattribution and a number of other problems, and also fixed various
-> typos, spelling mistakes and inconsistencies in the changelogs while at
-> it. Let me know if I got something wrong.
+	if (len <= 0) {
+		/* If bpf_type_tag attr is used, still need to sanitize */
+		if (!(IS_ENABLED(CONFIG_DEBUG_INFO_BTF) &&
+		      IS_ENABLED(CONFIG_PAHOLE_HAS_BTF_TAG) &&
+		      __has_attribute(btf_type_tag))
+			return;
+	}
 
-If the rebase is possible, I suggest to take the opportunity to remove 
-the following patches:
-
-commit 5d86e479193b - clocksource/drivers/exynos_mct: Add module support
-commit 7e477e9c4eb4 - clocksource/drivers/exynos_mct: Fix section 
-mismatch from the module conversion
-
-Because of:
-
-[1] 
-https://lore.kernel.org/all/20250725090349.87730-2-krzysztof.kozlowski@linaro.org/
-
-[2] 
-https://lore.kernel.org/all/bccb77b9-7cdc-4965-aa05-05836466f81f@app.fastmail.com/
-
-
-> I've attached a delta-patch of the changelog changes below - note that
-> I skipped the commit IDs to make the diff easier to read.
-
-I have one question regarding the 'handler', when there is a message like:
-
-[ handler: I did some changes ]
-
-...
-
-Signed-off-by: John Doe <handler@kernel.org>
-
-Does the 'handler' have to match the email name ?
-
-For example below, there is:
-
-[ dlezcano : Fixed conflict with 
-20250614175556.922159-2-linux@roeck-us.net ]
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-
-Is this form ok, or should it be:
-
-[ daniel.lezcano: Fixed conflict with 
-20250614175556.922159-2-linux@roeck-us.net ]
-
-?
-
-> ===================>
-> ---	2025-07-25 12:15:26.024284067 +0200
-> +++	2025-07-25 12:15:18.761435799 +0200
-> @@ -10,6 +10,7 @@ Date:   Tue Jul 15 14:18:33 2025 +0200
->       the module loading.
->       
->       Fix this by adding the __init_or_module annotation for the functions:
+Not much better, but a little easier to read.
+		
+>  
+>  	map = start;
+>  
+> -	trace_event_eval_update(map, len);
+> +	trace_event_update_all(map, len);
 > +
+> +	if (len <= 0)
+> +		return;
+>  
+>  	trace_insert_eval_map_file(mod, start, len);
+>  }
+> @@ -10335,7 +10344,7 @@ static void __init eval_map_work_func(struct work_struct *work)
+>  	int len;
+>  
+>  	len = __stop_ftrace_eval_maps - __start_ftrace_eval_maps;
+> -	trace_insert_eval_map(NULL, __start_ftrace_eval_maps, len);
+> +	trace_event_update_with_eval_map(NULL, __start_ftrace_eval_maps, len);
+>  }
+>  
+>  static int __init trace_eval_init(void)
+> @@ -10388,9 +10397,6 @@ bool module_exists(const char *module)
+>  
+>  static void trace_module_add_evals(struct module *mod)
+>  {
+> -	if (!mod->num_trace_evals)
+> -		return;
+> -
+>  	/*
+>  	 * Modules with bad taint do not have events created, do
+>  	 * not bother with enums either.
+> @@ -10398,7 +10404,8 @@ static void trace_module_add_evals(struct module *mod)
+>  	if (trace_module_has_bad_taint(mod))
+>  		return;
+>  
+> -	trace_insert_eval_map(mod, mod->trace_evals, mod->num_trace_evals);
+> +	/* Even if no trace_evals, this need to sanitize field types. */
+> +	trace_event_update_with_eval_map(mod, mod->trace_evals, mod->num_trace_evals);
+>  }
+>  
+>  #ifdef CONFIG_TRACE_EVAL_MAP_FILE
+> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> index bd084953a98b..1dbf1d3cf2f1 100644
+> --- a/kernel/trace/trace.h
+> +++ b/kernel/trace/trace.h
+> @@ -2125,13 +2125,13 @@ static inline const char *get_syscall_name(int syscall)
+>  
+>  #ifdef CONFIG_EVENT_TRACING
+>  void trace_event_init(void);
+> -void trace_event_eval_update(struct trace_eval_map **map, int len);
+> +void trace_event_update_all(struct trace_eval_map **map, int len);
+>  /* Used from boot time tracer */
+>  extern int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
+>  extern int trigger_process_regex(struct trace_event_file *file, char *buff);
+>  #else
+>  static inline void __init trace_event_init(void) { }
+> -static inline void trace_event_eval_update(struct trace_eval_map **map, int len) { }
+> +static inline void trace_event_update_all(struct trace_eval_map **map, int len) { }
+>  #endif
+>  
+>  #ifdef CONFIG_TRACER_SNAPSHOT
+> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+> index 120531268abf..5289e2032678 100644
+> --- a/kernel/trace/trace_events.c
+> +++ b/kernel/trace/trace_events.c
+> @@ -3264,41 +3264,115 @@ static void add_str_to_module(struct module *module, char *str)
+>  	list_add(&modstr->next, &module_strings);
+>  }
+>  
+> +#define ATTRIBUTE_STR "__attribute__"
 
-If my understanding of the documentation is correct, it seems to me the 
-delta is ok. Until now, I was relying on the tool to put the different 
-tags in the correct order, I thought it was in the arrival order.
+If you are going to test for the '(' right after, why not add it to the
+strstr test?
 
-Thanks for fixing this. Is there an existing script checking the tags 
-order is correct regarding the tip criteria ?
+> +#define ATTRIBUTE_STR_LEN (sizeof(ATTRIBUTE_STR) - 1)
+> +
+> +/* Remove all __attribute__() from type */
+> +static void sanitize_field_type(char *type)
+> +{
+> +	char *attr, *tmp, *next;
+> +	int depth;
+> +
+> +	next = type;
+> +	while ((attr = strstr(next, ATTRIBUTE_STR))) {
+> +		next = attr + ATTRIBUTE_STR_LEN;
+> +
+> +		/* Retry if __attribute__ is a part of type name. */
+> +		if ((attr != type && !isspace(attr[-1])) ||
+> +		    *next != '(')
 
-Thanks
-   -- Daniel
+Now you wouldn't need the *next != '(' here.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> +			continue;
+> +
+> +		depth = 0;
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+		/* the ATTRIBUTE_STR already has the first '(' */
+		depth = 1;
+
+> +		while ((tmp = strpbrk(next, "()"))) {
+> +			if (*tmp == '(')
+> +				depth++;
+> +			else
+> +				depth--;
+> +			next = tmp + 1;
+> +			if (depth == 0)
+> +				break;
+> +		}
+> +		next = skip_spaces(next);
+> +		strcpy(attr, next);
+> +		next = attr;
+> +	}
+> +}
+> +
+> +static bool need_sanitize_field_type(const char *type)
+> +{
+> +	return !!strstr(type, ATTRIBUTE_STR);
+> +}
+> +
+> +static char *find_replacable_eval(const char *type, const char *eval_string,
+> +				  int len)
+> +{
+> +	char *ptr;
+> +
+> +	if (!eval_string)
+> +		return NULL;
+> +
+> +	ptr = strchr(type, '[');
+> +	if (!ptr)
+> +		return NULL;
+> +	ptr++;
+> +
+> +	if (!isalpha(*ptr) && *ptr != '_')
+> +		return NULL;
+> +
+> +	if (strncmp(eval_string, ptr, len) != 0)
+> +		return NULL;
+> +
+> +	return ptr;
+> +}
+> +
+>  static void update_event_fields(struct trace_event_call *call,
+>  				struct trace_eval_map *map)
+>  {
+>  	struct ftrace_event_field *field;
+> +	const char *eval_string = NULL;
+>  	struct list_head *head;
+> +	bool need_sanitize;
+> +	int len = 0;
+>  	char *ptr;
+>  	char *str;
+> -	int len = strlen(map->eval_string);
+>  
+>  	/* Dynamic events should never have field maps */
+> -	if (WARN_ON_ONCE(call->flags & TRACE_EVENT_FL_DYNAMIC))
+> +	if (call->flags & TRACE_EVENT_FL_DYNAMIC)
+>  		return;
+>  
+> +	if (map) {
+> +		eval_string = map->eval_string;
+> +		len = strlen(map->eval_string);
+> +	}
+> +
+>  	head = trace_get_fields(call);
+>  	list_for_each_entry(field, head, link) {
+> -		ptr = strchr(field->type, '[');
+> -		if (!ptr)
+> -			continue;
+> -		ptr++;
+>  
+> -		if (!isalpha(*ptr) && *ptr != '_')
+> -			continue;
+> -
+> -		if (strncmp(map->eval_string, ptr, len) != 0)
+> +		/* Check the field has bad string or eval. */
+> +		need_sanitize = need_sanitize_field_type(field->type);
+
+Is there a reason you can't call the sanitize first?
+
+Then you wouldn't need to do the strstr(ATTRIBUTE_STR) twice.
+
+-- Steve
+
+
+> +		ptr = find_replacable_eval(field->type, eval_string, len);
+> +		if (likely(!need_sanitize && !ptr))
+>  			continue;
+>  
+>  		str = kstrdup(field->type, GFP_KERNEL);
+>  		if (WARN_ON_ONCE(!str))
+>  			return;
+> -		ptr = str + (ptr - field->type);
+> -		ptr = eval_replace(ptr, map, len);
+> -		/* enum/sizeof string smaller than value */
+> -		if (WARN_ON_ONCE(!ptr)) {
+> -			kfree(str);
+> -			continue;
+> +
+> +		if (ptr) {
+> +			ptr = str + (ptr - field->type);
+> +
+> +			ptr = eval_replace(ptr, map, len);
+> +			/* enum/sizeof string smaller than value */
+> +			if (WARN_ON_ONCE(!ptr) && !need_sanitize) {
+> +				kfree(str);
+> +				continue;
+> +			}
+> +		}
+> +		if (need_sanitize) {
+> +			sanitize_field_type(str);
+> +			/* Update field type */
+> +			if (field->filter_type == FILTER_OTHER)
+> +				field->filter_type = filter_assign_type(str);
+>  		}
+>  
+>  		/*
+> @@ -3313,11 +3387,13 @@ static void update_event_fields(struct trace_event_call *call,
+>  	}
+>  }
+>  
+> -void trace_event_eval_update(struct trace_eval_map **map, int len)
+> +/* Update all events for replacing eval and sanitizing */
+> +void trace_event_update_all(struct trace_eval_map **map, int len)
+>  {
+>  	struct trace_event_call *call, *p;
+>  	const char *last_system = NULL;
+>  	bool first = false;
+> +	bool updated;
+>  	int last_i;
+>  	int i;
+>  
+> @@ -3330,6 +3406,7 @@ void trace_event_eval_update(struct trace_eval_map **map, int len)
+>  			last_system = call->class->system;
+>  		}
+>  
+> +		updated = false;
+>  		/*
+>  		 * Since calls are grouped by systems, the likelihood that the
+>  		 * next call in the iteration belongs to the same system as the
+> @@ -3349,8 +3426,12 @@ void trace_event_eval_update(struct trace_eval_map **map, int len)
+>  				}
+>  				update_event_printk(call, map[i]);
+>  				update_event_fields(call, map[i]);
+> +				updated = true;
+>  			}
+>  		}
+> +		/* If not updated yet, update field for sanitizing. */
+> +		if (!updated)
+> +			update_event_fields(call, NULL);
+>  		cond_resched();
+>  	}
+>  	up_write(&trace_event_sem);
+
 
