@@ -1,107 +1,158 @@
-Return-Path: <linux-kernel+bounces-746444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CD4B126B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:15:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B56FB126BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1404017D03A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:15:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2C2E16CFA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EE6256C9E;
-	Fri, 25 Jul 2025 22:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465B7256C7E;
+	Fri, 25 Jul 2025 22:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lz9pZVKV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZKOhAYk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B57238C19;
-	Fri, 25 Jul 2025 22:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C19A19D06B;
+	Fri, 25 Jul 2025 22:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753481738; cv=none; b=CFYbO0yx5nV1oNNB8jhZbK9nquAqZbx1E/6EEdzAGVRvsRGob8fy546Xsd8wtr+L0D3gx/c59visXeVtcyW72c1Fpn5GgOGCQHxbkbSOsWaNCScigGh4MS2i1Ze/VlrWi0Po+1atp7UCbBLUJrmDX8BEuQbpy9o2NNsJI1AMJ4g=
+	t=1753481781; cv=none; b=domqD+Eas15LRNsDdpKUeTSkl8F0nYR3RaQRcpgus2+nIXgOUfFvQGlwY/oEAaqSNwXKSaJuxB9Dfh9sPWzEjNslxOokS/Jh4BkkdJey9U+myTZc9kP6Ze0kbp0szT3fTtn3EV7QffBcgIEwDl5HHJeTs/x+wL6+R9IdIIoyGp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753481738; c=relaxed/simple;
-	bh=SShFy+0ge2bOm8xGZbOSlKyiH/NmSdmpZlQRNeevq6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4/HleVq5mgx916jogXkHPe71zQJ3ZyE36wx/Etd1n4G6g7Lt1ZyPDPQI6FoDclGTXKbgSSjOrUs/iSZ3XGKJQWTzdakZ7WyFIizTj120MNni9vXjpaQYy1hleXH/bq2j/hSFGGo6OE9RH1RrfKAHi9+8neMN3AkEJ1ZEhIOdes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lz9pZVKV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F413AC4CEE7;
-	Fri, 25 Jul 2025 22:15:35 +0000 (UTC)
+	s=arc-20240116; t=1753481781; c=relaxed/simple;
+	bh=zcCljp+/O3021EXF1kCLQYobxVhkF/h2q9zxHMYLlrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LV+IVS9t8mA5SBcAwIoxJHCraoFE93DIMcnbxRq3oroX+a4DhiNK23OlSrADLe6oJE2qwBgJMYuaPSv/MZz3Uh77Fyjab3HKz7O4ihXnMOiDnJAHCxAARXHnoWInMLSNat+7GOEjiVOb3EMqCvmXRYwq2GRw+hRsW9IFlNNpHNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZKOhAYk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C206C4CEEF;
+	Fri, 25 Jul 2025 22:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753481736;
-	bh=SShFy+0ge2bOm8xGZbOSlKyiH/NmSdmpZlQRNeevq6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lz9pZVKVU2jyDJLXmnv8VptOgV035u3KHingWBuTMCueZKXIUYHzv9xLvvW2D7ECV
-	 Hwl3JpJj+NpsPQfac1oUu9MzIcYA1A6D5kc+H9S62+VQdBF3Fvv6fzElMV0sjBSDvM
-	 xN7I5TPF2snlBFqxVijHBbr9ZubnmzO63EdkEhjzU4evfVxOlzZuSPGqqUVRP7Hnk4
-	 avQlDoZBNR1BeM750ExzBjAKtUxbxP9k6hpPw8ecTPzLz9Ws7oUljP1x96Pa/Oc2ei
-	 hYB1A+yzqBlDMl1tzIv5vnRW+qyEwa5j/nEi955k7MXRKmo2TXYbZ4e/cVVjA8WjDT
-	 2k4nhfBvVlqxg==
-Date: Fri, 25 Jul 2025 18:15:33 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, josh@joshtriplett.org
-Subject: Re: [RFC 1/2] AI: Add unified AI coding assistant configuration
-Message-ID: <aIQCBQgh0XiDf2dv@lappy>
-References: <20250725175358.1989323-1-sashal@kernel.org>
- <20250725175358.1989323-2-sashal@kernel.org>
- <87wm7w5dnd.fsf@trenco.lwn.net>
+	s=k20201202; t=1753481780;
+	bh=zcCljp+/O3021EXF1kCLQYobxVhkF/h2q9zxHMYLlrk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YZKOhAYkjdfG8UL5HyJCFIY5sTjEDtSgODpdhnxJHWSijrZUGlWcW8bnm9QR/3Bo8
+	 MOu7XWmbuz2fW/3mr6s58b1HlBXH/j3Dr5hwwJe7jRQAKLeIpVdfloTiX1kPjPj6LX
+	 RXfHwUTSK6J1UNfxEMAd7zMN50FiHYgDcMkEZmHuCQbFPIvUcS+hmvAxhDVis2PI6F
+	 IMFQ4cGUHzYx3+9Zwm2s7jH6YxyUqcaj+M9S7iriu1EofrRPo3E4488GIgFXE8D07a
+	 WuoDsvFFqj3rxBASIDmQ3E79npvARYh4fHJ9XG+9hMQzqx2MIGGsHOXsBeIZ88Qw00
+	 meD+hksXofvbw==
+Date: Fri, 25 Jul 2025 15:16:18 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v16 06/12] net: mtip: Add net_device_ops functions to
+ the L2 switch driver
+Message-ID: <20250725151618.0bc84bdb@kernel.org>
+In-Reply-To: <20250724223318.3068984-7-lukma@denx.de>
+References: <20250724223318.3068984-1-lukma@denx.de>
+	<20250724223318.3068984-7-lukma@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <87wm7w5dnd.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 25, 2025 at 12:27:50PM -0600, Jonathan Corbet wrote:
->Sasha Levin <sashal@kernel.org> writes:
->
->> Create a single source of truth for AI instructions in
->> Documentation/AI/main.md with symlinks for all major AI coding
->> assistants:
->> - CLAUDE.md (Claude Code)
->> - .github/copilot-instructions.md (GitHub Copilot)
->> - .cursorrules (Cursor)
->> - .codeium/instructions.md (Codeium)
->> - .continue/context.md (Continue)
->> - .windsurfrules (Windsurf)
->> - Documentation/AIder.conf.yml (Aider)
->>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> ---
->>  .aider.conf.yml                 | 1 +
->>  .codeium/instructions.md        | 1 +
->>  .continue/context.md            | 1 +
->>  .cursorrules                    | 1 +
->>  .github/copilot-instructions.md | 1 +
->>  .windsurfrules                  | 1 +
->>  CLAUDE.md                       | 1 +
->>  Documentation/AI/main.md        | 5 +++++
->
->So I'm gonna ignore (for now) the substantive issues here to ask: do we
->*really* need to introduce Markdown into Documentation/?  Are these
->things really unable to understand RST?  Why not add a file that can be
->part of the docs build so people can see the instructions that are being
->provided?
+On Fri, 25 Jul 2025 00:33:12 +0200 Lukasz Majewski wrote:
+> +static void swap_buffer(void *bufaddr, int len)
+> +{
+> +	int i;
+> +	unsigned int *buf = bufaddr;
+> +
 
- From my understanding, most of the agents out there expect a markdown
-file ("CLAUDE.md", ".github/copilot-instructions.md", etc).
+nit: reverse xmas tree
 
-All the documentation and examples I can find online insist on
-markdown... I suspect that they will also understand RST, but then we'll
-be doing something "unsupported".
+> +	if (status & BD_ENET_TX_READY) {
+> +		/* All transmit buffers are full. Bail out.
+> +		 * This should not happen, since dev->tbusy should be set.
+> +		 */
+> +		netif_stop_queue(dev);
+> +		dev_err_ratelimited(&fep->pdev->dev, "%s: tx queue full!.\n",
+> +				    dev->name);
+> +		spin_unlock(&fep->hw_lock);
 
-Though in this scenario, maybe even just plain text will be enough?
+As we discussed on previous revision you have many to one mapping
+of netdevs to queues. I think the warning should only be printed
+if the drivers is in "single netdev" mode. Otherwise it _will_
+trigger.
 
--- 
-Thanks,
-Sasha
+BTW you should put the print after the unlock, console writes are slow.
+
+> +static void mtip_timeout(struct net_device *dev, unsigned int txqueue)
+> +{
+> +	struct mtip_ndev_priv *priv = netdev_priv(dev);
+> +	struct switch_enet_private *fep = priv->fep;
+> +	struct cbd_t *bdp;
+> +	int i;
+> +
+> +	dev->stats.tx_errors++;
+> +
+> +	if (IS_ENABLED(CONFIG_SWITCH_DEBUG)) {
+
+why are you hiding the debug info under a CONFIG_ ? 
+(which BTW appears not to be defined at all)
+Seems useful to know the state of the HW when the queue hung.
+You can use a DO_ONCE() if you want to avoid spamming logs
+
+> +	/* Set buffer length and buffer pointer */
+> +	bufaddr = skb->data;
+
+You should call skb_cow_data() if you want to write to the skb data.
+
+> +static void mtip_timeout(struct net_device *dev, unsigned int txqueue)
+> +{
+> +	struct mtip_ndev_priv *priv = netdev_priv(dev);
+> +	struct switch_enet_private *fep = priv->fep;
+> +	struct cbd_t *bdp;
+> +	int i;
+> +
+> +	dev->stats.tx_errors++;
+
+timeouts are already counted by the stack, I think the statistic
+is exposed per-queue in sysfs
+
+> +		spin_lock_bh(&fep->hw_lock);
+> +		dev_info(&dev->dev, "%s: transmit timed out.\n", dev->name);
+> +		dev_info(&dev->dev,
+> +			 "Ring data: cur_tx %lx%s, dirty_tx %lx cur_rx: %lx\n",
+> +			 (unsigned long)fep->cur_tx,
+> +			 fep->tx_full ? " (full)" : "",
+> +			 (unsigned long)fep->dirty_tx,
+> +			 (unsigned long)fep->cur_rx);
+> +
+> +		bdp = fep->tx_bd_base;
+> +		dev_info(&dev->dev, " tx: %u buffers\n", TX_RING_SIZE);
+> +		for (i = 0; i < TX_RING_SIZE; i++) {
+> +			dev_info(&dev->dev, "  %08lx: %04x %04x %08x\n",
+> +				 (kernel_ulong_t)bdp, bdp->cbd_sc,
+> +				 bdp->cbd_datlen, (int)bdp->cbd_bufaddr);
+> +			bdp++;
+> +		}
+> +
+> +		bdp = fep->rx_bd_base;
+> +		dev_info(&dev->dev, " rx: %lu buffers\n",
+> +			 (unsigned long)RX_RING_SIZE);
+> +		for (i = 0 ; i < RX_RING_SIZE; i++) {
+> +			dev_info(&dev->dev, "  %08lx: %04x %04x %08x\n",
+> +				 (kernel_ulong_t)bdp,
+> +				 bdp->cbd_sc, bdp->cbd_datlen,
+> +				 (int)bdp->cbd_bufaddr);
+> +			bdp++;
+> +		}
+> +		spin_unlock_bh(&fep->hw_lock);
 
