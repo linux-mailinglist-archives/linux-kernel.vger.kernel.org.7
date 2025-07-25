@@ -1,289 +1,121 @@
-Return-Path: <linux-kernel+bounces-745188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8D4B11652
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:17:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F009BB11656
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 069DB17D160
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1E91C82904
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AC62264A9;
-	Fri, 25 Jul 2025 02:17:50 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EBF22D4DE;
+	Fri, 25 Jul 2025 02:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OzwPj6Wy"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E15F1EE032
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC861A727D;
+	Fri, 25 Jul 2025 02:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753409869; cv=none; b=H2wEjWcgaA/y9lYw2knSf3XQ/2R5IwIl+Tgp263aorwmVFuWyRKQuk5YhUBcDTXBqqgdB/3Db7TNNSMM3MF+flAn6TBZfAr+YNK2wnqT6i4TJuM+brWrLnjpvMiG75HTEoezMBF+tRtbFCbOin8iBCEhVs2OcgCXKLNp38IHGR0=
+	t=1753410012; cv=none; b=Kob8IV/4opEDnZEr8htp+eLZ/Y8TZrh+6tc7DxQ98fmp/k1iOxXNizJJVNNjxSuQnZbxw9G2bQ1S7Bo0FsjiPqHHacCp7dR/meG6SL8q3ZN0HtzD5DzJAi9qnjxVJbocQ0tHYjiOU7ShY8QXQ9cbAKeq7kaQF0pQVfPbtwCFsA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753409869; c=relaxed/simple;
-	bh=AxhAm3YGoErvD4+o4eGWIvBUboB6VYSXtZ5RN6TXrJw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LiwFLRW7G0mN1FgAUK0KWtI+QQ4F058s3SwdCKD1Os7IwUxf79/MQMtYwn26YeBkfHEb3dX4JH0pcEBbtskCKh+mO2eCMIb+rQAmFFAzQXZW7n/iK53x2Rc5+fGi3HT3LOb9XsUWglz/l2bJ6xRrMor3M/syw1sqmZxjNwfbmvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4bpBKJ63cjzYnRvj;
-	Fri, 25 Jul 2025 10:15:00 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Jul
- 2025 10:17:39 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Jul
- 2025 10:17:38 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <linux-f2fs-devel@lists.sourceforge.net>
-CC: <chao@kernel.org>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <wangzijie1@honor.com>
-Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: directly add newly allocated pre-dirty nat entry to dirty set list
-Date: Fri, 25 Jul 2025 10:17:38 +0800
-Message-ID: <20250725021738.1011413-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <524de02e-31a1-4b98-8601-edaa51d40d56@kernel.org>
-References: <524de02e-31a1-4b98-8601-edaa51d40d56@kernel.org>
+	s=arc-20240116; t=1753410012; c=relaxed/simple;
+	bh=Jff5fOK3mT+GJlIyYbYmNpwK+HTTWoxX5E2yQ7JIIGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rPiVZGUacwdaO/OMJD6feloVt8G2Uq6dl/dJnPBLLH3ODjwHBu4KIMiB85Mg+XQIDbrBH9kxUe+h4WIJzY4dnocomKYsE5+aRfOVPSIRSn9jldfg0GNDXELMx1EIYfQMccUpRAINJjr/JvdzZIAfFP7G2v/r9yeEJCg6Ekv6VQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OzwPj6Wy; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-23636167afeso14224425ad.3;
+        Thu, 24 Jul 2025 19:20:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753410011; x=1754014811; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rOtCvezxMdiF7Tvil/XsbTsGaqj7ACT+qoxrtuenXB0=;
+        b=OzwPj6Wy+pz3Sdmgi4tfXlQEw4kajYZyrndGnAxeh4vTUR2C6jO3b+F0VrPrmHL1YB
+         Eyt/8EnCGwkh2fi+RGtaV8PfU/UZmiwfOXlwDWbKSfyuicSm8r0d0iuPTwmduJR8IiW/
+         CcUz00E+nqQjDafxpNiBs5Hjq9PbnFVa/rylfQHIBBb8I2IL8NR0OsgrrDemMgkCUX25
+         rvU+RHUoPgxhM2RwOYYnjWRXb+Jyu4zAnC2960JT1jVWldsrnDX5sqx9lRVs43wgSjOy
+         OpEJd1mp4Yaa/F6iDB+W2oGuZ60C6aEQA6juukIPFBEUHJDss04eYn+pjPmHfWvswng0
+         3kyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753410011; x=1754014811;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rOtCvezxMdiF7Tvil/XsbTsGaqj7ACT+qoxrtuenXB0=;
+        b=dG1QQTgm1EJV8XtXpPSVehBGkhF/vJA8VtKZxlQnG9jU4lcwGjf0PWXVMm+vwkNxiy
+         bRka6OFd2hBj3Yl0mn0wFoEiIgViIcRJBP6mgHqYZbnIqKwJ195eNtdoDcMJ/1iR5PsV
+         yazarGMT/WHAnzbTgQ6dFYlkI8RwZ0vTWUAljqVuDEYZTPel2cfVBUPTkP8NqaIEOjnL
+         QCcCpU1EdGvd3ivpvBT10uEOdqJsQQSoOb6QH9Maesu+Qlazg8/MM0teXOJUbEiZXjpm
+         IeOHgVuS/MckaN+LPCSmpA0isxdXD93XWADILdxm3hkGnfWLIzVKthC/qo2HH1al4XNH
+         loVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvmcezumHfMnPCeMDnErPLuY99V6yqjCP39Obps3WCrcmCs3Wr6jrMOl2a2dgg64B25BlwDRzmc0XPW/FO@vger.kernel.org, AJvYcCVNqXic390eSYKqDEUD8RpdcnYMnGbqBKvLv5aqkFwOJkLvjrsTwTx2ec2zY/nsumO2RxM9JwAjw00=@vger.kernel.org, AJvYcCWVOxAXaNBTpYxKtCY2pFGrpZ9d5iHjUKscvxjjsDOiGVoQ/8ot+iq70Dhh+sY6hdTRIVA3hi6y2QJWh1a3ASYH@vger.kernel.org, AJvYcCXN3LXdtfig9cySqs1O3m/Cmc1dNhX9jAU00sKe0lrnIlT3SHGkRz5PP2BC4G2eynFKZb0WK/yF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0xCsJzC1KjDdjDjBHcjbWFEAVwaKcgeoIy25L9xfCs3qlIUo/
+	V44VsuVm3uldjkB3dbH01tzNdnHDi8vvXPnTEpbwxeuJ/yRilhkenFyO
+X-Gm-Gg: ASbGncs92f1LMT+qsPi/XVjAhoXkQwVpXpbLX18KB8M/OPPgObQmBXW7jxYcCX1/Krr
+	OjhLA4pNyIdotuYPLj62sE85/UCELGtBJHhCxfYxPge2kxo+5vFTEz+rr+/N5D28RfflwFurYW2
+	p/eRpNj6mTRvFUasQcVxhPvkQD5W+xtQBe/srIJk8eF/74aWk/f9iAzN6TT90nNELEjoChdb2P3
+	EEU0CFC/zTfZ73CzCaOQ6nZO955hI5Owb83WmybL5IVv5BOYoWX1klWYbSGcN/gZOZTR8jRzCRL
+	cOAB2uhXp/Hjg2s0dJJtQKMKitUbPbQLT/Z2veG9qaUk633CsM2P6gQ7qQlTYNUPP1X2SU6EJ/I
+	+UUzC9UBklKCGdVX32yJhbBxv4I0=
+X-Google-Smtp-Source: AGHT+IHXr1IwD19y+W8O8fzifdFRib4MUFjdFa9ZTJmniUUOCMhnsjJDD2T/7zdf0+98jZgxKfRQSA==
+X-Received: by 2002:a17:902:ccce:b0:234:c5c1:9b63 with SMTP id d9443c01a7336-23fb30ab826mr2891965ad.18.1753410010597;
+        Thu, 24 Jul 2025 19:20:10 -0700 (PDT)
+Received: from fedora ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48dc1a5sm25306485ad.141.2025.07.24.19.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 19:20:09 -0700 (PDT)
+Date: Fri, 25 Jul 2025 02:20:01 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Petr Machata <petrm@nvidia.com>,
+	Amit Cohen <amcohen@nvidia.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] selftests: bonding: add test for LACP actor
+ port priority
+Message-ID: <aILp0UfIyC5-NYrM@fedora>
+References: <20250724081632.12921-1-liuhangbin@gmail.com>
+ <20250724081632.12921-4-liuhangbin@gmail.com>
+ <aIJDz3AgQtnzSR59@fedora>
+ <20250724073501.1c0357c6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a011.hihonor.com
- (10.68.31.243)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724073501.1c0357c6@kernel.org>
 
-> On 7/22/25 22:36, wangzijie wrote:
-> > When we need to alloc nat entry and set it dirty, we can directly add it to
-> > dirty set list(or initialize its list_head for new_ne) instead of adding it
-> > to clean list and make a move. Introduce init_dirty flag to do it.
-> > 
-> > Signed-off-by: wangzijie <wangzijie1@honor.com>
-> > ---
-> >  fs/f2fs/node.c | 37 ++++++++++++++++++++++++++++++-------
-> >  1 file changed, 30 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index a23db6238..20bcf8559 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -185,7 +185,7 @@ static void __free_nat_entry(struct nat_entry *e)
-> >  
-> >  /* must be locked by nat_tree_lock */
-> >  static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
-> > -	struct nat_entry *ne, struct f2fs_nat_entry *raw_ne, bool no_fail)
-> > +	struct nat_entry *ne, struct f2fs_nat_entry *raw_ne, bool no_fail, bool init_dirty)
-> >  {
-> >  	if (no_fail)
-> >  		f2fs_radix_tree_insert(&nm_i->nat_root, nat_get_nid(ne), ne);
-> > @@ -195,6 +195,11 @@ static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
-> >  	if (raw_ne)
-> >  		node_info_from_raw_nat(&ne->ni, raw_ne);
-> >  
-> > +	if (init_dirty) {
-> > +		nm_i->nat_cnt[TOTAL_NAT]++;
-> > +		return ne;
-> > +	}
-> > +
-> >  	spin_lock(&nm_i->nat_list_lock);
-> >  	list_add_tail(&ne->list, &nm_i->nat_entries);
-> >  	spin_unlock(&nm_i->nat_list_lock);
-> > @@ -256,7 +261,7 @@ static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
-> >  }
-> >  
-> >  static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
-> > -						struct nat_entry *ne)
-> > +					struct nat_entry *ne, bool init_dirty)
-> >  {
-> >  	struct nat_entry_set *head;
-> >  	bool new_ne = nat_get_blkaddr(ne) == NEW_ADDR;
-> > @@ -275,6 +280,18 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
-> >  
-> >  	set_nat_flag(ne, IS_PREALLOC, new_ne);
-> >  
-> > +	if (init_dirty) {
-> > +		nm_i->nat_cnt[DIRTY_NAT]++;
-> > +		set_nat_flag(ne, IS_DIRTY, true);
-> > +		spin_lock(&nm_i->nat_list_lock);
-> > +		if (new_ne)
-> > +			INIT_LIST_HEAD(&ne->list);
-> > +		else
-> > +			list_add_tail(&ne->list, &head->entry_list);
-> > +		spin_unlock(&nm_i->nat_list_lock);
-> > +		return;
-> > +    }
+On Thu, Jul 24, 2025 at 07:35:01AM -0700, Jakub Kicinski wrote:
+> On Thu, 24 Jul 2025 14:31:43 +0000 Hangbin Liu wrote:
+> > Should I drop this selftest as it needs the new iproute2 feature that has
+> > not applied yet?
 > 
-> Nit issue, above blanks should be replaced w/ tab.
+> No need, I'll add the iproute2 patch in the CI.
 
-Ah...my bad :-(
+Cool! Do you run CI for all posted patches?
 
-> Can we clean up like this?
-> 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index de99b42437c6..60fc2c7b8e10 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -280,30 +280,23 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
-> 
->  	set_nat_flag(ne, IS_PREALLOC, new_ne);
-> 
-> -	if (init_dirty) {
-> -		nm_i->nat_cnt[DIRTY_NAT]++;
-> -		set_nat_flag(ne, IS_DIRTY, true);
-> -		spin_lock(&nm_i->nat_list_lock);
-> -		if (new_ne)
-> -			INIT_LIST_HEAD(&ne->list);
-> -		else
-> -			list_add_tail(&ne->list, &head->entry_list);
-> -		spin_unlock(&nm_i->nat_list_lock);
-> -		return;
-> -    }
-> -
->  	if (get_nat_flag(ne, IS_DIRTY))
->  		goto refresh_list;
-> 
->  	nm_i->nat_cnt[DIRTY_NAT]++;
-> -	nm_i->nat_cnt[RECLAIMABLE_NAT]--;
-> +	if (!init_dirty)
-> +		nm_i->nat_cnt[RECLAIMABLE_NAT]--;
->  	set_nat_flag(ne, IS_DIRTY, true);
->  refresh_list:
->  	spin_lock(&nm_i->nat_list_lock);
-> -	if (new_ne)
-> -		list_del_init(&ne->list);
-> -	else
-> +	if (new_ne) {
-> +		if (init_dirty)
-> +			INIT_LIST_HEAD(&ne->list);
-> +		else
-> +			list_del_init(&ne->list);
-> +	} else {
->  		list_move_tail(&ne->list, &head->entry_list);
-> +	}
->  	spin_unlock(&nm_i->nat_list_lock);
->  }
-> 
-> Thanks,
+I just found that I forgot to rebase the code to latest net-next, which will
+have a conflict in include/net/bond_options.h... I see your email that the
+net-next is closed. So I think we can just leave this patchset for reviewing.
+I can post the next version after net-next re-open.
 
-We need to init list_head before using list_move_tail.
-I think we can do more clean up like this, keep refresh_list part code.
-
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 20bcf8559..ebb624fa1 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -196,6 +196,7 @@ static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
- 		node_info_from_raw_nat(&ne->ni, raw_ne);
- 
- 	if (init_dirty) {
-+		INIT_LIST_HEAD(&ne->list);
- 		nm_i->nat_cnt[TOTAL_NAT]++;
- 		return ne;
- 	}
-@@ -280,23 +281,12 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 
- 	set_nat_flag(ne, IS_PREALLOC, new_ne);
- 
--	if (init_dirty) {
--		nm_i->nat_cnt[DIRTY_NAT]++;
--		set_nat_flag(ne, IS_DIRTY, true);
--		spin_lock(&nm_i->nat_list_lock);
--		if (new_ne)
--			INIT_LIST_HEAD(&ne->list);
--		else
--			list_add_tail(&ne->list, &head->entry_list);
--		spin_unlock(&nm_i->nat_list_lock);
--		return;
--    }
--
- 	if (get_nat_flag(ne, IS_DIRTY))
- 		goto refresh_list;
- 
- 	nm_i->nat_cnt[DIRTY_NAT]++;
--	nm_i->nat_cnt[RECLAIMABLE_NAT]--;
-+	if (!init_dirty)
-+		nm_i->nat_cnt[RECLAIMABLE_NAT]--;
- 	set_nat_flag(ne, IS_DIRTY, true);
- refresh_list:
- 	spin_lock(&nm_i->nat_list_lock);
-
-> > +
-> >  	if (get_nat_flag(ne, IS_DIRTY))
-> >  		goto refresh_list;
-> >  
-> > @@ -441,7 +458,7 @@ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
-> >  	f2fs_down_write(&nm_i->nat_tree_lock);
-> >  	e = __lookup_nat_cache(nm_i, nid, false);
-> >  	if (!e)
-> > -		e = __init_nat_entry(nm_i, new, ne, false);
-> > +		e = __init_nat_entry(nm_i, new, ne, false, false);
-> >  	else
-> >  		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
-> >  				nat_get_blkaddr(e) !=
-> > @@ -458,11 +475,13 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
-> >  	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> >  	struct nat_entry *e;
-> >  	struct nat_entry *new = __alloc_nat_entry(sbi, ni->nid, true);
-> > +	bool init_dirty = false;
-> >  
-> >  	f2fs_down_write(&nm_i->nat_tree_lock);
-> >  	e = __lookup_nat_cache(nm_i, ni->nid, true);
-> >  	if (!e) {
-> > -		e = __init_nat_entry(nm_i, new, NULL, true);
-> > +		init_dirty = true;
-> > +		e = __init_nat_entry(nm_i, new, NULL, true, true);
-> >  		copy_node_info(&e->ni, ni);
-> >  		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
-> >  	} else if (new_blkaddr == NEW_ADDR) {
-> > @@ -498,7 +517,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
-> >  	nat_set_blkaddr(e, new_blkaddr);
-> >  	if (!__is_valid_data_blkaddr(new_blkaddr))
-> >  		set_nat_flag(e, IS_CHECKPOINTED, false);
-> > -	__set_nat_cache_dirty(nm_i, e);
-> > +	__set_nat_cache_dirty(nm_i, e, init_dirty);
-> >  
-> >  	/* update fsync_mark if its inode nat entry is still alive */
-> >  	if (ni->nid != ni->ino)
-> > @@ -2924,6 +2943,7 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
-> >  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> >  	struct f2fs_journal *journal = curseg->journal;
-> >  	int i;
-> > +	bool init_dirty;
-> >  
-> >  	down_write(&curseg->journal_rwsem);
-> >  	for (i = 0; i < nats_in_cursum(journal); i++) {
-> > @@ -2934,12 +2954,15 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
-> >  		if (f2fs_check_nid_range(sbi, nid))
-> >  			continue;
-> >  
-> > +		init_dirty = false;
-> > +
-> >  		raw_ne = nat_in_journal(journal, i);
-> >  
-> >  		ne = __lookup_nat_cache(nm_i, nid, true);
-> >  		if (!ne) {
-> > +			init_dirty = true;
-> >  			ne = __alloc_nat_entry(sbi, nid, true);
-> > -			__init_nat_entry(nm_i, ne, &raw_ne, true);
-> > +			__init_nat_entry(nm_i, ne, &raw_ne, true, true);
-> >  		}
-> >  
-> >  		/*
-> > @@ -2954,7 +2977,7 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
-> >  			spin_unlock(&nm_i->nid_list_lock);
-> >  		}
-> >  
-> > -		__set_nat_cache_dirty(nm_i, ne);
-> > +		__set_nat_cache_dirty(nm_i, ne, init_dirty);
-> >  	}
-> >  	update_nats_in_cursum(journal, -i);
-> >  	up_write(&curseg->journal_rwsem);
-
+Thanks
+Hangbin
 
