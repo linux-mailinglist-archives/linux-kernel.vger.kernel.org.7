@@ -1,187 +1,165 @@
-Return-Path: <linux-kernel+bounces-746127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE713B12378
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:03:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36393B1237C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF557166E48
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:03:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47B107B3500
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA4623D2A3;
-	Fri, 25 Jul 2025 18:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6FC2EFDA7;
+	Fri, 25 Jul 2025 18:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A35Jc9w8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPQ2YU1p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87514EEAB
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C1B1FECAB;
+	Fri, 25 Jul 2025 18:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753466598; cv=none; b=avPRZhdfg34G3HaKFBXxuA383641aYhebc4WoSCp+8pPt1YgF7z6nlWfezssrODK5s33sTPjDzjdGXcpwKikEikTj4bs2OKU/iUGC02B9//9sBDiiDF3t1x3FRz4mJQ7FPCb0+yLw3cpIVSqlyP3cRcdrngZL7fH4yHXPnuIuj4=
+	t=1753466649; cv=none; b=aa4yaB72od9Ji+7eBCV8lS0jLXfxnCE8OxRezwwJzSUjnR2qRRh5d8cH0WgZ1O+h7VH+Lsu2l0hMiNQK68d9659m0guIbAuEixry0BQSWnuFQPnO7vyNjWqHNcb/6NRn6JNf5PvRW3HdfX+J9n/udYT9uA4PSTJ/lI9M+6e7png=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753466598; c=relaxed/simple;
-	bh=algYI/Js5KLsUwkz6o17cjJlXXRzud6fmYUSg4kKXwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YLwaXhYjza6kbcHNzV0b90Y+WeanmVAtmM+EkKG4XYsgOFpWQgaPDXuhB1hSa9Q9Sin6eXeDOk2u51MTOmnDrMijbI7qJS4iAIOwKEQLAGsVWGRgDpSQzl8PnBXRdxOTwdPgNGVcvHGuQ8zuSzOcppwlL9gAPoKzyZrcCiVeb/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A35Jc9w8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753466595;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m1A1XdrpKswvqDLqRwvvl2q/mzdhe8nMBmqHzzSNW3Y=;
-	b=A35Jc9w8+5KA/Ct224gpFpYhv6N4PUx0tadfb5PzV25/TpZpHZ0RxqLFxAjMDoFAj+5FxT
-	CXiWq6QKMcUp8rmFMZ797fLvz79GCOhFoqxUTX4BYwKHpO7diQYn/PH8q5NneZWDkb1znW
-	OTvZVW2WfyhtpAKzcsdLUZmG44Hh8Hs=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-127-Fa12eyQXPuCKrwcH2oPwAQ-1; Fri, 25 Jul 2025 14:03:13 -0400
-X-MC-Unique: Fa12eyQXPuCKrwcH2oPwAQ-1
-X-Mimecast-MFC-AGG-ID: Fa12eyQXPuCKrwcH2oPwAQ_1753466592
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso14047785e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:03:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753466592; x=1754071392;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=m1A1XdrpKswvqDLqRwvvl2q/mzdhe8nMBmqHzzSNW3Y=;
-        b=kOOzmUNeghGbbga/TpC1co7ajTcAi7gPdBPVBSVv0C8GxQcps84iqIvC3Adu2fbNy/
-         qDI7ouZEKm9I/MUW4G9NV/R2vlMUF76Bwh+3gMGfKT8T+sPmLFqS5Nnf7kmahGaB9wlZ
-         BTHkwbgnjubAwSR1bSYjvaA9W/ahVPHMO4T4eo0M8bSiI3HuZxtgD/NZA3cz0SaIIuHn
-         GJbyMWggkLWfnr03qXVHRdik7D9KuHwWW3J357oLCpPnaVhCDJUcnrhtZbKYsJpawHY5
-         9hguYLoMMiioWfVhBPlMR9RC+HAgZfI0hUU4IABksG/8mFx19kOhVRJuu+1LLQat52TF
-         W+vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjTXpW9QlrZsZdUtfSL+kS8xpTRJ5QR86BBmOWwDbe+vby2aAH8knkG4Qddq4O44Clj0Q8XPFoO46uOx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZGn8aKu46UYlbPl2FxHsg6ElSG0j1HFgc/rq6i4GS0xeO2g8/
-	ZYH8APCgVqldPflo5BAckvnocULb5t8zDGp7t1TaIP+SUHe0d/wDZsEu9FTAV8fD4FNIctQU80Q
-	dXl3D8jJnJA4Np2TFJWjSDD513Kgvm9Iw+JyNz+CgLqdeUfjxGZeQKYWz/n6DgrmxMA==
-X-Gm-Gg: ASbGnctr+gqul8iwEORkBv0Giv37WfWyQujzweaCGAq7rgYcnzmL6k13NGn0YCV0cf/
-	Z4KoA5Q9eDTJTsXPIytdJtqKDwrLh6O+EMZ1s+WPdLc9c7yNPKtW4U/cfy+N8t6xK05VmlK/fta
-	9SsEhSEO+FTaOIq97UAHeif6ilw4WY3CNg71HMJurkM4bzZ55w2kEaRiaGXDxhQwi4DE3aSFekg
-	h4IbG3p8Eq2R6X2/hZbpSNIbttvcKkEE9KZrA76rF4aQEZIFMEkxwloTsDBZsfEfz0vG2K5zL4q
-	fmB0xO4VOHT1Y6vP1rBHbiRJjRTAYEkIt4E1EjlocaccjUjbWzDD+z7z+KLpUZZIwj/etlM45Tr
-	1kdxwSJcKPKA3rsaTSJnKba7fSC4IzFTeY7ssb3BHzdVyF60EWW3nARghS9b2RX3K
-X-Received: by 2002:a05:600c:12d4:b0:456:23e7:2568 with SMTP id 5b1f17b1804b1-45870580784mr45205955e9.13.1753466592369;
-        Fri, 25 Jul 2025 11:03:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0emwjXKmT752G3twyQEVU2y3mXUVE5sfgxlQvTVcJZVNMgLqr4pAAogO1mHgwG4QpZo+CcA==
-X-Received: by 2002:a05:600c:12d4:b0:456:23e7:2568 with SMTP id 5b1f17b1804b1-45870580784mr45205645e9.13.1753466591936;
-        Fri, 25 Jul 2025 11:03:11 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f36:e800:2f2e:cb5:13f6:f884? (p200300d82f36e8002f2e0cb513f6f884.dip0.t-ipconnect.de. [2003:d8:2f36:e800:2f2e:cb5:13f6:f884])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586f88cfe3sm41356975e9.0.2025.07.25.11.03.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 11:03:11 -0700 (PDT)
-Message-ID: <d546df23-70df-47a2-9211-2bb971f8834b@redhat.com>
-Date: Fri, 25 Jul 2025 20:03:09 +0200
+	s=arc-20240116; t=1753466649; c=relaxed/simple;
+	bh=WqTj9yEK0vxbfqPbpn2nCVfDXVC3xGegM2GRpyvUMMo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XGbqkTD3U+vtY1bRq7bN6rzY5Fil61uZTbagFGrA6wmeasECQ8GLjI40CYbPnlDfnQaYeGPKepdcifHtu9Jk6q306s1SX2G1xPPAmswsy+F79MBvd5SzRI9ThhqitkgMbtddT5k198Lr+HYByuveOMsW7Mx/OVXeDW90vNnLyFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPQ2YU1p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B4AC4CEF7;
+	Fri, 25 Jul 2025 18:04:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753466648;
+	bh=WqTj9yEK0vxbfqPbpn2nCVfDXVC3xGegM2GRpyvUMMo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pPQ2YU1pVTQxPkSJ1kP3ed8qLxNpY8PVvOmT5AShhs7d7yOCgwBsy4aFmMMKXuOIZ
+	 y9Lk4rEEkl33en9AdRLLO5ci+KFvSWMWrWcT3GPPyMBJfnqpJnGgwLLz6V02BvB6qW
+	 cDGql+QDMshC0D3jYGdJfeEJdpq5TudhPQTrHaTbRbfw6bbbY35EukJQcw6gkXeEC2
+	 2kcmLssRBYWOlhZBGFbkma70naL1DVICX+IxySBQ/nXH3u50y1iyTEp3Ob4SK6RO+g
+	 r1yyUSs3Rs6krjZ8uDugKIOFo7ea6ZtWd7JbPZkHXm0Udn3b3tMPxRtRSep73J5R4d
+	 HtxdWm8TJvy2g==
+From: Yu Kuai <yukuai@kernel.org>
+To: jack@suse.cz,
+	dlemoal@kernel.org,
+	axboe@kernel.dk,
+	linux-block@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v2] blk-ioc: don't hold queue_lock for ioc_lookup_icq()
+Date: Sat, 26 Jul 2025 02:03:34 +0800
+Message-ID: <20250725180334.40187-1-yukuai@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Add missing headers to mempory policy &
- migration section
-To: Joshua Hahn <joshua.hahnjy@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
- Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
- Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com
-References: <20250725175616.2397031-1-joshua.hahnjy@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250725175616.2397031-1-joshua.hahnjy@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25.07.25 19:56, Joshua Hahn wrote:
-> These two files currently do not belong to any section.
-> The memory policy & migration section seems to be a good home for them!
-> 
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> ---
->   MAINTAINERS | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a8bebd0886df..dec8db8b5cc7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15838,7 +15838,9 @@ S:	Maintained
->   W:	http://www.linux-mm.org
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->   F:	include/linux/mempolicy.h
-> +F:	include/uapi/linux/mempolicy.h
+From: Yu Kuai <yukuai3@huawei.com>
 
-That one is already on that secion on the mm/mm-new branch
+Currently issue io can grab queue_lock three times from bfq_bio_merge(),
+bfq_limit_depth() and bfq_prepare_request(), the queue_lock is not
+necessary if icq is already created because both queue and ioc can't be
+freed before io issuing is done, hence remove the unnecessary queue_lock
+and use rcu to protect radix tree lookup.
 
->   F:	include/linux/migrate.h
-> +F:	include/linux/migrate_mode.h
+Noted this is also a prep patch to support request batch dispatching[1].
 
-Yeah, that one is missing.
+[1] https://lore.kernel.org/all/20250722072431.610354-1-yukuai1@huaweicloud.com/
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+changes from v1:
+ - modify ioc_lookup_icq() directly to get rid of queue_lock
 
-Can you rebase to mm/mm-new? Thanks!
+ block/bfq-iosched.c | 18 ++----------------
+ block/blk-ioc.c     | 10 +++-------
+ 2 files changed, 5 insertions(+), 23 deletions(-)
 
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 0cb1e9873aab..f71ec0887733 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -454,17 +454,10 @@ static struct bfq_io_cq *icq_to_bic(struct io_cq *icq)
+  */
+ static struct bfq_io_cq *bfq_bic_lookup(struct request_queue *q)
+ {
+-	struct bfq_io_cq *icq;
+-	unsigned long flags;
+-
+ 	if (!current->io_context)
+ 		return NULL;
+ 
+-	spin_lock_irqsave(&q->queue_lock, flags);
+-	icq = icq_to_bic(ioc_lookup_icq(q));
+-	spin_unlock_irqrestore(&q->queue_lock, flags);
+-
+-	return icq;
++	return icq_to_bic(ioc_lookup_icq(q));
+ }
+ 
+ /*
+@@ -2457,15 +2450,8 @@ static bool bfq_bio_merge(struct request_queue *q, struct bio *bio,
+ 		unsigned int nr_segs)
+ {
+ 	struct bfq_data *bfqd = q->elevator->elevator_data;
+-	struct request *free = NULL;
+-	/*
+-	 * bfq_bic_lookup grabs the queue_lock: invoke it now and
+-	 * store its return value for later use, to avoid nesting
+-	 * queue_lock inside the bfqd->lock. We assume that the bic
+-	 * returned by bfq_bic_lookup does not go away before
+-	 * bfqd->lock is taken.
+-	 */
+ 	struct bfq_io_cq *bic = bfq_bic_lookup(q);
++	struct request *free = NULL;
+ 	bool ret;
+ 
+ 	spin_lock_irq(&bfqd->lock);
+diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+index ce82770c72ab..ea9c975aaef7 100644
+--- a/block/blk-ioc.c
++++ b/block/blk-ioc.c
+@@ -308,19 +308,18 @@ int __copy_io(unsigned long clone_flags, struct task_struct *tsk)
+ 
+ #ifdef CONFIG_BLK_ICQ
+ /**
+- * ioc_lookup_icq - lookup io_cq from ioc
++ * ioc_lookup_icq - lookup io_cq from ioc in io issue path
+  * @q: the associated request_queue
+  *
+  * Look up io_cq associated with @ioc - @q pair from @ioc.  Must be called
+- * with @q->queue_lock held.
++ * from io issue path, either return NULL if current issue io to @q for the
++ * first time, or return a valid icq.
+  */
+ struct io_cq *ioc_lookup_icq(struct request_queue *q)
+ {
+ 	struct io_context *ioc = current->io_context;
+ 	struct io_cq *icq;
+ 
+-	lockdep_assert_held(&q->queue_lock);
+-
+ 	/*
+ 	 * icq's are indexed from @ioc using radix tree and hint pointer,
+ 	 * both of which are protected with RCU.  All removals are done
+@@ -419,10 +418,7 @@ struct io_cq *ioc_find_get_icq(struct request_queue *q)
+ 		task_unlock(current);
+ 	} else {
+ 		get_io_context(ioc);
+-
+-		spin_lock_irq(&q->queue_lock);
+ 		icq = ioc_lookup_icq(q);
+-		spin_unlock_irq(&q->queue_lock);
+ 	}
+ 
+ 	if (!icq) {
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
