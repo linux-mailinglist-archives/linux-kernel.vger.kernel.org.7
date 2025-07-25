@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-746348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 642C5B125AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:37:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B672B125A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E6C1587D9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22CDC3B408B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB16269823;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2222690D5;
 	Fri, 25 Jul 2025 20:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xrza58Oq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfYo3tgb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1F225F998
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BE625FA2C
 	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 20:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753475661; cv=none; b=X/2EQ6O0/8vO/XJBd6F3GCth/AtH3s923g0tg9kZu3OXnZT3MvV4Z1NzLRRdEqzyDf/euv8jTUFaRk+TEyRsvNu3YzBuF3dYFMEDehQ8/kdxlip/mngtc1yTj9YTKPbFAXoovgzgnH7NN7v65a4WZgyYQLeYdj276FNmbzlT9Qs=
+	t=1753475661; cv=none; b=oyBpNfuPYf++798BEAQj5rig8SLAHX8uRP/H9vnVPt9hCl07rZrkbG2d6uzV7Kn1SlbIaFc71tW1TyHZzU+OeNAcj+9dQhRLUF3Xma5Gm8S8rVLOFcZF7zSz5U8b39BTwM6eWxUynA3QRnH8wlwKP6BZj3yxTchHjRTopP43O04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753475661; c=relaxed/simple;
-	bh=lDIeUP7gycBcCkJz7HkOKpX24qAEDV/0w3NBoR6udJI=;
+	bh=mnMaRWRSouXLjic4p7/eniTlbsyexL3Z/zySAdm/g5s=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=C7ZfrUhaMeRrf+c09XlP2AjSehnLiMaSOl2l4b1VS34otmUA/+/XBJ/IZedpc/armlpcTOnq4zBT9h3fICU3UWihGhzfzLY+DcLJp464N5Kn4ZStYwAylZN4szuFgAVQqoMD0VZIHcYAw5lvsJV1OzKLpFXB1OfY+xSsTHjKjOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xrza58Oq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D820C4CEF8;
+	 Content-Type; b=sa7e0h7im3fGfrk/eMLJn14b0EFkrtHFfJlx+tE25TXh8QKJDnCGNgjHnLQ8nUQKz4N85xeoENDWJZXt++W6IDI2yAW3r1AlqDmU5Uy+jemySW43mKS2kDQZU3dieCL+GRz1FRJnHpN79tj3DvYK7phEWOXgCao/AQ1HlLJTuio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfYo3tgb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73CB0C4CEF4;
 	Fri, 25 Jul 2025 20:34:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1753475661;
-	bh=lDIeUP7gycBcCkJz7HkOKpX24qAEDV/0w3NBoR6udJI=;
+	bh=mnMaRWRSouXLjic4p7/eniTlbsyexL3Z/zySAdm/g5s=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=Xrza58OqoMApTVUN8863ejqmQw8Q7JtoOnpt/Lgxjj0TRp9lj/pZenDANIq0rOxaR
-	 7ML8scrUfqIo7menIMnYUUauMopGvpWIXhFbHbU4tPnX5hAQDLtjoB0YjppmmdE9tZ
-	 qTiOrZaQmTl5+9KCf+cIhD4xmNd3F00oi1Y8V5nd4C1fSZLZejixw5Arv8UJhk7r9t
-	 f1qzSl406bKG7UNeM3YTYeoIjGhuDORurg6iAsNn5AnykEDLtn9vH22D/WKyYLb6cL
-	 oqYFa5fjmexyrGAC+DMWxts50Kf3pB5jCJ4MnEiRH6D0CBci8XMCh40AGWzhLCCcMI
-	 MS9V675Ww04Og==
+	b=AfYo3tgbxnXkr3TV56fiSPcC/igsfZNKzB0vEc8152d9DtzNXIuV1yf9at7W8HXYF
+	 K+Sh3dbdyjTH6rG40VN9yaSV6ehigcGoJ53glNed2pnIoK3pk3sVT4lf2dKBSeM5mr
+	 N1iXrTt44B1PH359O5t7nV5eq2hPB4F4CYgak3Z7Yfo2i57fmKF/rR5tI3SiAN9hdJ
+	 GSCYW6y9RAV3xl2EdJTxz7EPfSphoSB81p07FnWf8Vyj9F6n/C8/cXg3knxZkEig6n
+	 sMpCisJj9wLJ84ntrDIPa0zG9L/XuI2mtKloG11NV5FBYg0fLqtpjRtNaSX5ik0+RD
+	 Ckey/G+s5bJFw==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1ufP7b-00000001Qlr-1t5C;
+	id 1ufP7b-00000001QmM-2bpB;
 	Fri, 25 Jul 2025 16:34:27 -0400
-Message-ID: <20250725203427.299291833@kernel.org>
+Message-ID: <20250725203427.471623294@kernel.org>
 User-Agent: quilt/0.68
-Date: Fri, 25 Jul 2025 16:34:17 -0400
+Date: Fri, 25 Jul 2025 16:34:18 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Tomas Glozar <tglozar@redhat.com>,
  John Kacur <jkacur@redhat.com>,
  Masami Hiramatsu <mhiramat@kernel.org>,
- Juri Lelli <jlelli@redhat.com>,
- Clark Williams <williams@redhat.com>,
- Nam Cao <namcao@linutronix.de>,
- Gabriele Monaco <gmonaco@redhat.com>
-Subject: [for-next][PATCH 20/25] rv: Return init error when registering monitors
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Gabriele Monaco <gmonaco@redhat.com>,
+ Nam Cao <namcao@linutronix.de>
+Subject: [for-next][PATCH 21/25] rv: Remove unused field in struct rv_monitor_def
 References: <20250725203357.087558746@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,192 +65,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Gabriele Monaco <gmonaco@redhat.com>
+From: Nam Cao <namcao@linutronix.de>
 
-Monitors generated with dot2k have their registration function (the one
-called during monitor initialisation) return always 0, even if the
-registration failed on RV side.
-This can hide potential errors.
-
-Return the value returned by the RV register function.
+rv_monitor_def::task_monitor is not used. Delete it.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Tomas Glozar <tglozar@redhat.com>
-Cc: Juri Lelli <jlelli@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Cc: John Kacur <jkacur@redhat.com>
-Link: https://lore.kernel.org/20250723161240.194860-6-gmonaco@redhat.com
-Reviewed-by: Nam Cao <namcao@linutronix.de>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lore.kernel.org/502d94f2696435690a2b1fdbe80a9e56c96fcabf.1753378331.git.namcao@linutronix.de
+Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/rv/monitors/sched/sched.c                    | 3 +--
- kernel/trace/rv/monitors/sco/sco.c                        | 3 +--
- kernel/trace/rv/monitors/scpd/scpd.c                      | 3 +--
- kernel/trace/rv/monitors/sncid/sncid.c                    | 3 +--
- kernel/trace/rv/monitors/snep/snep.c                      | 3 +--
- kernel/trace/rv/monitors/snroc/snroc.c                    | 3 +--
- kernel/trace/rv/monitors/tss/tss.c                        | 3 +--
- kernel/trace/rv/monitors/wip/wip.c                        | 3 +--
- kernel/trace/rv/monitors/wwnr/wwnr.c                      | 3 +--
- tools/verification/rvgen/rvgen/templates/container/main.c | 3 +--
- tools/verification/rvgen/rvgen/templates/dot2k/main.c     | 3 +--
- 11 files changed, 11 insertions(+), 22 deletions(-)
+ kernel/trace/rv/rv.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/trace/rv/monitors/sched/sched.c b/kernel/trace/rv/monitors/sched/sched.c
-index 905e03c3c934..d04db4b543f9 100644
---- a/kernel/trace/rv/monitors/sched/sched.c
-+++ b/kernel/trace/rv/monitors/sched/sched.c
-@@ -21,8 +21,7 @@ struct rv_monitor rv_sched = {
+diff --git a/kernel/trace/rv/rv.h b/kernel/trace/rv/rv.h
+index 98fca0a1adbc..873364094402 100644
+--- a/kernel/trace/rv/rv.h
++++ b/kernel/trace/rv/rv.h
+@@ -41,7 +41,6 @@ struct rv_monitor_def {
+ 	struct rv_reactor_def	*rdef;
+ 	bool			reacting;
+ #endif
+-	bool			task_monitor;
+ };
  
- static int __init register_sched(void)
- {
--	rv_register_monitor(&rv_sched, NULL);
--	return 0;
-+	return rv_register_monitor(&rv_sched, NULL);
- }
- 
- static void __exit unregister_sched(void)
-diff --git a/kernel/trace/rv/monitors/sco/sco.c b/kernel/trace/rv/monitors/sco/sco.c
-index 4cff59220bfc..66f4639d46ac 100644
---- a/kernel/trace/rv/monitors/sco/sco.c
-+++ b/kernel/trace/rv/monitors/sco/sco.c
-@@ -71,8 +71,7 @@ static struct rv_monitor rv_sco = {
- 
- static int __init register_sco(void)
- {
--	rv_register_monitor(&rv_sco, &rv_sched);
--	return 0;
-+	return rv_register_monitor(&rv_sco, &rv_sched);
- }
- 
- static void __exit unregister_sco(void)
-diff --git a/kernel/trace/rv/monitors/scpd/scpd.c b/kernel/trace/rv/monitors/scpd/scpd.c
-index cbdd6a5f8d7f..299703cd72b0 100644
---- a/kernel/trace/rv/monitors/scpd/scpd.c
-+++ b/kernel/trace/rv/monitors/scpd/scpd.c
-@@ -79,8 +79,7 @@ static struct rv_monitor rv_scpd = {
- 
- static int __init register_scpd(void)
- {
--	rv_register_monitor(&rv_scpd, &rv_sched);
--	return 0;
-+	return rv_register_monitor(&rv_scpd, &rv_sched);
- }
- 
- static void __exit unregister_scpd(void)
-diff --git a/kernel/trace/rv/monitors/sncid/sncid.c b/kernel/trace/rv/monitors/sncid/sncid.c
-index f5037cd6214c..3e1ee715a0fb 100644
---- a/kernel/trace/rv/monitors/sncid/sncid.c
-+++ b/kernel/trace/rv/monitors/sncid/sncid.c
-@@ -79,8 +79,7 @@ static struct rv_monitor rv_sncid = {
- 
- static int __init register_sncid(void)
- {
--	rv_register_monitor(&rv_sncid, &rv_sched);
--	return 0;
-+	return rv_register_monitor(&rv_sncid, &rv_sched);
- }
- 
- static void __exit unregister_sncid(void)
-diff --git a/kernel/trace/rv/monitors/snep/snep.c b/kernel/trace/rv/monitors/snep/snep.c
-index 0076ba6d7ea4..2adc3108d60c 100644
---- a/kernel/trace/rv/monitors/snep/snep.c
-+++ b/kernel/trace/rv/monitors/snep/snep.c
-@@ -79,8 +79,7 @@ static struct rv_monitor rv_snep = {
- 
- static int __init register_snep(void)
- {
--	rv_register_monitor(&rv_snep, &rv_sched);
--	return 0;
-+	return rv_register_monitor(&rv_snep, &rv_sched);
- }
- 
- static void __exit unregister_snep(void)
-diff --git a/kernel/trace/rv/monitors/snroc/snroc.c b/kernel/trace/rv/monitors/snroc/snroc.c
-index bb1f60d55296..540e686e699f 100644
---- a/kernel/trace/rv/monitors/snroc/snroc.c
-+++ b/kernel/trace/rv/monitors/snroc/snroc.c
-@@ -68,8 +68,7 @@ static struct rv_monitor rv_snroc = {
- 
- static int __init register_snroc(void)
- {
--	rv_register_monitor(&rv_snroc, &rv_sched);
--	return 0;
-+	return rv_register_monitor(&rv_snroc, &rv_sched);
- }
- 
- static void __exit unregister_snroc(void)
-diff --git a/kernel/trace/rv/monitors/tss/tss.c b/kernel/trace/rv/monitors/tss/tss.c
-index 542787e6524f..0452fcd9edcf 100644
---- a/kernel/trace/rv/monitors/tss/tss.c
-+++ b/kernel/trace/rv/monitors/tss/tss.c
-@@ -74,8 +74,7 @@ static struct rv_monitor rv_tss = {
- 
- static int __init register_tss(void)
- {
--	rv_register_monitor(&rv_tss, &rv_sched);
--	return 0;
-+	return rv_register_monitor(&rv_tss, &rv_sched);
- }
- 
- static void __exit unregister_tss(void)
-diff --git a/kernel/trace/rv/monitors/wip/wip.c b/kernel/trace/rv/monitors/wip/wip.c
-index ed758fec8608..4b4e99615a11 100644
---- a/kernel/trace/rv/monitors/wip/wip.c
-+++ b/kernel/trace/rv/monitors/wip/wip.c
-@@ -71,8 +71,7 @@ static struct rv_monitor rv_wip = {
- 
- static int __init register_wip(void)
- {
--	rv_register_monitor(&rv_wip, NULL);
--	return 0;
-+	return rv_register_monitor(&rv_wip, NULL);
- }
- 
- static void __exit unregister_wip(void)
-diff --git a/kernel/trace/rv/monitors/wwnr/wwnr.c b/kernel/trace/rv/monitors/wwnr/wwnr.c
-index 172f31c4b0f3..4145bea2729e 100644
---- a/kernel/trace/rv/monitors/wwnr/wwnr.c
-+++ b/kernel/trace/rv/monitors/wwnr/wwnr.c
-@@ -70,8 +70,7 @@ static struct rv_monitor rv_wwnr = {
- 
- static int __init register_wwnr(void)
- {
--	rv_register_monitor(&rv_wwnr, NULL);
--	return 0;
-+	return rv_register_monitor(&rv_wwnr, NULL);
- }
- 
- static void __exit unregister_wwnr(void)
-diff --git a/tools/verification/rvgen/rvgen/templates/container/main.c b/tools/verification/rvgen/rvgen/templates/container/main.c
-index 89fc17cf8958..7d9b2f95c7e9 100644
---- a/tools/verification/rvgen/rvgen/templates/container/main.c
-+++ b/tools/verification/rvgen/rvgen/templates/container/main.c
-@@ -21,8 +21,7 @@ struct rv_monitor rv_%%MODEL_NAME%% = {
- 
- static int __init register_%%MODEL_NAME%%(void)
- {
--	rv_register_monitor(&rv_%%MODEL_NAME%%, NULL);
--	return 0;
-+	return rv_register_monitor(&rv_%%MODEL_NAME%%, NULL);
- }
- 
- static void __exit unregister_%%MODEL_NAME%%(void)
-diff --git a/tools/verification/rvgen/rvgen/templates/dot2k/main.c b/tools/verification/rvgen/rvgen/templates/dot2k/main.c
-index 83044a20c89a..e0fd1134bd85 100644
---- a/tools/verification/rvgen/rvgen/templates/dot2k/main.c
-+++ b/tools/verification/rvgen/rvgen/templates/dot2k/main.c
-@@ -74,8 +74,7 @@ static struct rv_monitor rv_%%MODEL_NAME%% = {
- 
- static int __init register_%%MODEL_NAME%%(void)
- {
--	rv_register_monitor(&rv_%%MODEL_NAME%%, %%PARENT%%);
--	return 0;
-+	return rv_register_monitor(&rv_%%MODEL_NAME%%, %%PARENT%%);
- }
- 
- static void __exit unregister_%%MODEL_NAME%%(void)
+ struct dentry *get_monitors_root(void);
 -- 
 2.47.2
 
