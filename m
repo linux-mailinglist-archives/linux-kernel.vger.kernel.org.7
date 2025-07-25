@@ -1,168 +1,120 @@
-Return-Path: <linux-kernel+bounces-745958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713C9B120F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F468B120F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1722E1CE662F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D08818946D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E35C2EE61F;
-	Fri, 25 Jul 2025 15:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E552EE966;
+	Fri, 25 Jul 2025 15:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bmVD4eIs"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SaymrLCw"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62461D5165
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5810A2EE61D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753457296; cv=none; b=WQ0xbOSfSMGCmj+HXqewm2w3OysdfkDqH8chnUVJBNq4AbjShjqvX5fXviSZnhOIHNROww1/BYyYN8K+0VEWsniu0h1MMmEnPkQsiJnGTfh9FGbPrzSpqqozrwwbyYHmwOy01LtgGcYO4EGAzz+JMrIGOd6xVRQZp6SBJRl5K8U=
+	t=1753457377; cv=none; b=MSv88OSCbAFYUrlNT4zxbYuaGKYJotvmVIJsTER+wYN5XfV76o4YdfS2Wh0DLkIKlo5rSUWU0ST99/6J+4r/KDPMEu14wRQiUh61u+YJJMIgRczTGdW8dm1e4GdcTu5Sp5L5denW2Jh7wdKVlQ37Ym2we3B+5jcuC917th/mCXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753457296; c=relaxed/simple;
-	bh=J7X4J+cLLg7qpiL1tXaxLb6R/X2I4vC2GP49KLLiIMI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Eby27IYkTiJ1qyDkdeDcrwlhNuV9Xe9lBPkazGm+b06qzCQbuXcesLc3VSfk45K3aR+DsNhLAc1a1T7cdy9sb8kzO0gF7lhoI1YkvbMY0HjVbYBzSjwndOj0tTaq872VfTA/5zH9aAtHfVaRzazhq0ued7SFpKTJ+S6Wms9UIzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bmVD4eIs; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 902F8441D6;
-	Fri, 25 Jul 2025 15:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753457292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=W4q+49YQT2l30vtbVxxXxy6RyV8DhHrfMHle8faAKM0=;
-	b=bmVD4eIsVTojpcJ4GSdQTGRHFum/Lfzq8sRACxVLdz3gBXiL1UTwlEeUZ1F3bQJt1jCjfq
-	sDKfrwvkYKHklvrh17oUIkvwmNQRSCUZyCThMC0YRS4lZZjM9EnPb1904ywVO4C2BAlQJD
-	uqXeRzmRo2WiXU2dFrmqxcWVWAtVzqCmfJZ/Mp8vUmpOxewZzgxuDOKgD/wKcZr/wzglA+
-	ZHb1iJ8ycy3J2MCu175uSy0hdggcaYAcUpmV5AVCH+2TvLG0NyBFubS6jkkjmbW1aaUGn0
-	rS2rcqxDNCEosxu0YEqaiA/jDHbce+vTSZXTCcT7+ctsVTKD6frgNEJRySXvxQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 25 Jul 2025 17:28:03 +0200
-Subject: [PATCH] samsung-dsim: move drm_bridge_add() call to probe
+	s=arc-20240116; t=1753457377; c=relaxed/simple;
+	bh=rfV+Zm+Mb8q0Xqs52mwlGZV13ETEQ7K4+Cj/aArnfPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZQh42DB6PTeqo25uzi4580fsq7qB72f3QNR10aiIdyLAQ8lJH7i+hd70SOvrbP9OlCICnBLC7wPasQp4eMNT9oZ4d+m/cb29g/BcwrnpD+e4rSwRjhD34VkoWXUkMYNijzmui7dRPmlK9gYRMmlpogJc+VhwC18WuXAZb5cxF1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SaymrLCw; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a54700a463so1437783f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753457373; x=1754062173; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rfV+Zm+Mb8q0Xqs52mwlGZV13ETEQ7K4+Cj/aArnfPE=;
+        b=SaymrLCwAesPGTz02e78LzuoX1ftbi7DLbN1A+w+XOILc7dkw7+Dz1fh7dTcS861O9
+         80KPu0xfGi3+ztgm7ca0sW/3UULCQfVnKH4y33XAHNmGS6CZyVRoMvypsEWsOFsGo+YK
+         aIDlNq0RDqzPUQcoiZK3J1iuZ6nZG4BR/1AvrGqdsUo3sMZ5MBq1JfbdV8ooSfgE98qr
+         j5Zy+talZ/57kwwXqd4Xj5vbm+fInkQjyhapGTDkZkFDCeaResePMogHKPx7kgO0IP9W
+         M+6azmn/5uO0wgHSvkHASjlizDbtXJyEncy1OCDxGD7iCTYtAzKFZRbzkdmqHAbaHCqp
+         Iwug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753457373; x=1754062173;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rfV+Zm+Mb8q0Xqs52mwlGZV13ETEQ7K4+Cj/aArnfPE=;
+        b=LqViXaO/mh1XIql4FJ1eb2hn4utNqUiZBmDy24u02/95h1nUfWIvPqLFYxBBwaAE33
+         lS99C76pyV8qVSrZJPbSjy7i1UfvBr4jRCutoW4eaCBsx17nQkUiUgWuPK1k2id7W6hX
+         l08fuJGIGSF00PJjKXoaaX9DhDnrFS8jVtA1m7MVA5cQA4st2884ZyQj0FjYDGKdxmIe
+         b68nP/gCTYfHLc5kGLQS+wmVuWc8xkjnsKetjueynuzosmFVwCFM4o758lWPXKm7GbvS
+         ARe7TQ5m3UZUiyJzhqz2yaasU9pZq9p1+Md5/LkINJGmxA6tkNuyTohLvy3aXs2xljN9
+         zHgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXU110Uimg8gfK0pSS8Gou+x3pEWyiYl4F9zD/LvohtHtQZBjYwxcU9Acypsw0rc+/F8nJ5VZgNb7ghly8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMgpPR0evtl7kirxwzIieGrlj0CfQw5UKrbCmI+nOo3HyfPwLp
+	SAsoBmS4f9gNr6sC8f3yNcNoFSkWGyZexSZbQhrGAELB2F6jeKK7Jf1o
+X-Gm-Gg: ASbGncuwnxp0tV45hk3lY2pLjTb83rscSvU+sInrEQY2IWmJXSYse5NnoSlQ9iJIDEC
+	+2WlrEiWPJrJk4vgTFih93M+FA7bvL1hlGi0GqSyCbVlqm9YBgH7IG1AFfQPDTEVMHvSYVxlRPo
+	GRUjuPrs2vFZH8DZjTGQjpJnYWCjR9YXFWChKywNqdMJko1oXhgEVoZbSq9Qc+ZOFSQUDJIhmwl
+	yvcpjKubT9yBBE3nIz1FlOc3g6Jy8iu5Q5/1O50kqgIRGav+4hUHJfT0BUROifHzOaXLx14mLyO
+	ScIYjPiiweUpjNqAY0P9/ep7pdlpyr4QHV5fSg+RrEt5H/Xw8vQ0DJOCOVKUjMyuSYjRScPZBeX
+	utkPXXyfKWm6NLK9CXj143f68UWd9mKCeQmEhDpV2R9tFN360KQ6K5XK75tmWTRk8
+X-Google-Smtp-Source: AGHT+IHsADjr/7n20DNI6HUaaxtRPfkv9NNc665R6PQ8xea75aGVOhMeWslJh/LzdE2cqODvVaKp+A==
+X-Received: by 2002:a05:6000:2912:b0:3b5:e07f:9442 with SMTP id ffacd0b85a97d-3b77135efaamr5340885f8f.19.1753457373359;
+        Fri, 25 Jul 2025 08:29:33 -0700 (PDT)
+Received: from yuri-laptop.sca.unipi.it (opnsense-fib.sca.unipi.it. [131.114.30.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778eba85asm198016f8f.29.2025.07.25.08.29.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 08:29:33 -0700 (PDT)
+From: Yuri Andriaccio <yurand2000@gmail.com>
+To: matteo.martelli@codethink.co.uk
+Cc: bsegall@google.com,
+	dietmar.eggemann@arm.com,
+	juri.lelli@redhat.com,
+	linux-kernel@vger.kernel.org,
+	luca.abeni@santannapisa.it,
+	mgorman@suse.de,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	vincent.guittot@linaro.org,
+	vschneid@redhat.com,
+	yuri.andriaccio@santannapisa.it
+Subject: Re: [PATCH] sched/deadline: Remove fair-servers from real-time task's bandwidth accounting
+Date: Fri, 25 Jul 2025 17:28:04 +0200
+Message-ID: <20250725152804.14224-1-yurand2000@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <86013fcc38e582ab89b9b7e4864cc1bd@codethink.co.uk>
+References: <86013fcc38e582ab89b9b7e4864cc1bd@codethink.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250725-drm-bridge-samsung-dsim-add-in-probe-v1-1-b23d29c23fbd@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAIKig2gC/x2NQQqEMAwAvyI5G+h2reJ+RTxUEzWHVknYRRD/v
- sXjMDBzgbEKG3yqC5R/YrLnAq+6gnmLeWUUKgze+eA6H5A04aRCxVhM9s0rkknCSISS8dB9Yuz
- m0PTv1sWld1BSh/Ii57MZxvv+A8pKoUx2AAAA
-X-Change-ID: 20250725-drm-bridge-samsung-dsim-add-in-probe-7c549360af90
-To: Inki Dae <inki.dae@samsung.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekfeeklecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleeuheehfefgkefhgfekgeefueektdefkeefveetudfgjeegteefkeduvedugeegnecuffhomhgrihhnpehlphgtrdgvvhgvnhhtshdpkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedruddukegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepjfhuihdrrfhusehgvghhvggrlhhthhgtrghrvgdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepjhhonhgrs
- heskhifihgsohhordhsvgdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrghgrghnsegrmhgrrhhulhgrshholhhuthhiohhnshdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-This bridge driver calls drm_bridge_add() in the DSI host .attach callback
-instead of in the probe function. This looks strange, even though
-apparently not a problem for currently supported use cases.
+Hi,
 
-However it is a problem for supporting hotplug of DRM bridges, which is in
-the works [0][1][2]. The problematic case is when this DSI host is always
-present while its DSI device is hot-pluggable. In such case with the
-current code the DRM card will not be populated until after the DSI device
-attaches to the host, and which could happen a very long time after
-booting, or even not happen at all.
+Thank you very much for your testing, I'm very glad to know that the patch works
+as intended.
 
-Supporting hotplug in the latest public draft is based on an ugly
-workaround in the hotplug-bridge driver code. This is visible in the
-hotplug_bridge_dsi_attach implementation and documentation in [3] (but
-keeping in mind that workaround is complicated as it is also circumventing
-another problem: updating the DSI host format when the DSI device gets
-connected).
+At first glance, I think the warnings you are having are related to this bug
+report that I posted a few days ago:
+https://lore.kernel.org/all/20250718113848.193139-1-yurand2000@gmail.com/
 
-As a preliminary step to supporting hotplug in a proper way, and also make
-this driver cleaner, move drm_bridge_add() at probe time, so that the
-bridge is available during boot.
+Juri Lelli checked it out and made a patch that addresses these warns here:
+https://lore.kernel.org/all/20250721-upstream-fix-dlserver-lessaggressive-b4-v1-1-4ebc10c87e40@redhat.com/
 
-However simply moving drm_bridge_add() prevents populating the whole card
-when the hot-pluggable addon is not present at boot, for another
-reason. The reason is:
+Have you already applied Juri's patch together with mine? If not, I think it
+should solve those issues you mentioned.
 
- * now the encoder driver finds this bridge instead of getting
-   -EPROBE_DEFER as before
- * but it cannot attach it because the bridge attach function in turn tries
-   to attach to the following bridge, which has not yet been hot-plugged
-
-This needs to be fixed in the bridge attach function by simply returning
--EPROBE_DEFER ifs the following bridge (i.e. the DSI device) is not yet
-present.
-
-[0] https://lpc.events/event/18/contributions/1750/
-[1] https://lore.kernel.org/lkml/20240924174254.711c7138@booty/
-[2] https://lore.kernel.org/lkml/20250723-drm-bridge-alloc-getput-for_each_bridge-v1-0-be8f4ae006e9@bootlin.com/
-[3] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-4-bc4dfee61be6@bootlin.com/
-
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/bridge/samsung-dsim.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index c4997795db18280903570646b0a5b2c03b666307..173f730edb3707823b0a85460968a11b8206b508 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1633,6 +1633,9 @@ static int samsung_dsim_attach(struct drm_bridge *bridge,
- {
- 	struct samsung_dsim *dsi = bridge_to_dsi(bridge);
- 
-+	if (!dsi->out_bridge)
-+		return -EPROBE_DEFER;
-+
- 	return drm_bridge_attach(encoder, dsi->out_bridge, bridge,
- 				 flags);
- }
-@@ -1749,8 +1752,6 @@ static int samsung_dsim_host_attach(struct mipi_dsi_host *host,
- 		     mipi_dsi_pixel_format_to_bpp(device->format),
- 		     device->mode_flags);
- 
--	drm_bridge_add(&dsi->bridge);
--
- 	/*
- 	 * This is a temporary solution and should be made by more generic way.
- 	 *
-@@ -2011,6 +2012,8 @@ int samsung_dsim_probe(struct platform_device *pdev)
- 			goto err_disable_runtime;
- 	}
- 
-+	drm_bridge_add(&dsi->bridge);
-+
- 	return 0;
- 
- err_disable_runtime:
-
----
-base-commit: e48123c607a0db8b9ad02f83c8c3d39918dbda06
-change-id: 20250725-drm-bridge-samsung-dsim-add-in-probe-7c549360af90
-
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-
+Have a nice day,
+Yuri
 
