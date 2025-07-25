@@ -1,136 +1,159 @@
-Return-Path: <linux-kernel+bounces-745698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FC8B11D30
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:09:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE3AB11D50
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B13173E5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:09:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F69C3A6E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D264F2E4271;
-	Fri, 25 Jul 2025 11:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433192E54DB;
+	Fri, 25 Jul 2025 11:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwNxI0XQ"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="N3M2Egl7"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B812D9EE3;
-	Fri, 25 Jul 2025 11:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08D1239E6B;
+	Fri, 25 Jul 2025 11:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441756; cv=none; b=B8BbC8J6ja9IQTDaojOtqPcozWN3leJKoWRz+nxIGIiJl7AT3dl5InARX2QfCCjQRbk9YU5bU6/atPWfM/SS5DscCwsD3zsnnMgyEAEKEj9tOya3mkfhLAXtfefjFjfU1ws0Nvx4gZxcl55M5vjL7UO8X4ZFazj+5WoduTgX5kE=
+	t=1753441909; cv=none; b=hDBK4f7aARjLhuuSshrAcln+Ct8vuJA4EYt+foRmx0i1ho6LueSAizYStpcv2AQa53bov0ICqXKMFyquVL7gVe3QobPbIEMhDoqg3Yyb4bSWZvqY3WCoKGHRx+W+THKnJnC+o5ZWqTx7Zfgr7DBXqB+0EgL961s5+xMviLiW11Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441756; c=relaxed/simple;
-	bh=r6TFW6LEnDFDgljm7T9nclsKj7smdp/z2thlL3Bp7MQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=km27GBAp9M12+gVvCVV978gQRmORYYjE40Y4FQcI6PWlNQ2EB2sT1sDTu+QE0KsrtOGaCU1p/yvWX24GHK5/rrI4pyJDbfX7zQtcpWRHfm3tgg1BQhb4QMrggGzauknVlkWcXj1rl7Zg1hCiPdx5/B4uiG+XZ6qzbQPW1opNO0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwNxI0XQ; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313910f392dso1500508a91.2;
-        Fri, 25 Jul 2025 04:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753441754; x=1754046554; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G4dcsgHJsiFuB5DH2cQD4a717boBYqK/NeHn/u7KI9k=;
-        b=RwNxI0XQAEQIiS6E1e253nyKMK2uTvj04eFBT3NZkGmF9e0huW1toU+1D3BDPEM4eh
-         Str5whAgWMIo4Y9X6C8Q96JwLoj5Liw01k/G03jgce8r6L/zTMdkwB9e+WSFpapEXpol
-         gO4PKvt3wlFZMORGYj9hZbbiw8FG8mriCizhpDnWB7C8PCKLYBitHsODTeWRbTWWJPVs
-         2H/kw5SI+ChRB6wMx43/ktNmX59i3X25c1U5eaWawE/2gkIiywWuZZ3gJX58To/k09Ic
-         aRwMthLXrg+GIkFuEHwR0mZIsHnaMzGPUm+8Sl57vr/lveQvRZlm4X5Q7PGdLcSMJXUE
-         /pxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753441754; x=1754046554;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G4dcsgHJsiFuB5DH2cQD4a717boBYqK/NeHn/u7KI9k=;
-        b=CWpDKsANCEtzPuoBjLUgLlfkKPvlzIQC3TZzxrzBY4RcxNpBeTvb2gOqeVadAoQH/I
-         +keGYh0eGo7vDBuB6h7qTfcxfWYRLUDU8XH0aFYvE6bD6PFbADoqfKGOJbP9BfOKcJQr
-         51q6VB+g8jWb/9F8UY6ZKXMnC8fncw4+VtvqKnZLEcsChuah5Qa3mTvHcOUbOvuvCbOA
-         VxRN8YgGJ0ORKSFLp8XZIRoDqaQK7PV5uZEf1Hp0T8cDsVOGJc6KC+hfP/8Xi19t7gyN
-         LCbX8jLFhBBYqLu6AJqWljRsfvUTw7ENIypsZXtLbU7F6RN04Cf2hhsrIfq2+0UANbVz
-         ozPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTQFHZRs51VWmmh9bzdo2SKcGaKlyjwXS0khxfprM3u8pRBmSXHp+660zJYi3PeIGxpd5P7uXcyH2ia27Q@vger.kernel.org, AJvYcCWGQ2QK/dmY2L2i2juUJp3HyD9ncAcwbdT4465Ki1S4t/nkYqbFLkdTOLqCPdl+F1gN8vH52d/0SymZ@vger.kernel.org, AJvYcCWmp2yT2H/AifgMtNABFmL5W3/5IsoRhdvxMLQhS6cypXcey5TfIWzxYKSDUH6DggOeZzrRZSeIngHE@vger.kernel.org, AJvYcCXEXAg8TrfgXZknSw1vfzqpr+JtV25WLbbKSPHq60xVU0+76rBdITj/v/1BC6I+2hAxLPUslCwKIesmFxmx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4eSLUM5WppKHPa96aHSrBLO5d4LxjVALvKjWxOQxxVzbueTNp
-	N5NfASY045Pl2zK5uK104DnBO6HyPo//aTt7QWwcMdmPkqxVV1SfgeT73XoWJcvN3rJM6ZAzDIR
-	XUR+PatF10wkysZhd4SCcncCUc5p/iEA=
-X-Gm-Gg: ASbGncvS8sI0oWVcHR2vPuXhOG9rn+YUOE2BIdZV7AD7GUQTb8vXwSHAIFh6Ifntolm
-	EjNXEWPDpJYeHruwo6u7khCW8tJG8ZwVcbCebvuo54/P155a3y7BEMSo2lFr/FlXPKq/IVUEG32
-	z+muO+rqRjJeGlTdosf9xU4UXUtU9VtPfGQJqtI2GyslfT+wmvjC9h+0bTE9ksO4DA/GMio2RKR
-	1Xj
-X-Google-Smtp-Source: AGHT+IHzc69ul6W9dr1PZNQjrkdeeaQAbz/elxAykodnDXCU37bqxvv59Sf0g3PkwZUP1bQTMcpl5i4V0RAyNvW6vGY=
-X-Received: by 2002:a17:90a:d40e:b0:313:1e9d:404b with SMTP id
- 98e67ed59e1d1-31e7783b3c0mr2460183a91.2.1753441754040; Fri, 25 Jul 2025
- 04:09:14 -0700 (PDT)
+	s=arc-20240116; t=1753441909; c=relaxed/simple;
+	bh=XAXScqVMUryK7u8cjxp+a04hujddoVAphlMbwqtTPts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CxhrV15jj59u5cm7rejiA2ETWy3R4pyC5MGm7/RsqLTd+M3v0m3S54KNm4IYc8FrUgo6aV/Mo/WnfqLENRPAjtBwgALH9D+jakRF8c1pDw+mJddXF5Cd18C9xWAicGS8tT/jsv8hlCZ8jBNFVtqZjBcwTjexn2YzILQmR/G8Tsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=N3M2Egl7; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56PA7CB4004324;
+	Fri, 25 Jul 2025 13:11:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	7EIFICZ6PcSv8Dm1Wx1IcEsY2QkDaiXmUkaUpQzq2mw=; b=N3M2Egl7vTiFztE5
+	eWo2u9sUVXirJiniHCzcbmnm41xHXf33B3ctG5RtYCk9GRh++0Sz5JzTNNeOUard
+	sPyHLHT1ipV3o770xZa2wnlHs2zl6ex/6pM3+PIhbuFun/95aqW3xttHRUDWEjQc
+	DaXeKT7wLq6SpwVUaIo+qyhjkUj8aPtzFqqW67TZSFfRyJd7MjaOZGgO+r3uBnOd
+	hJnDkqU+UvTrpxhWQFe4XxEgHYjeHOTcub0B/q+CpnKVWhc5GBlpBK0cakMJg1iY
+	vo427FXrD3VPZtlgCF9U+oQsmx3WXVAC92qSFtQQ11nZn/zqjDW4Lcp7h9saIfPZ
+	Lwyx9Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 483w3ett17-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 13:11:25 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 03F9B4004D;
+	Fri, 25 Jul 2025 13:10:04 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AE05C22306A;
+	Fri, 25 Jul 2025 13:09:00 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Jul
+ 2025 13:08:59 +0200
+Message-ID: <85673db7-d311-47cc-be52-291d94e136e4@foss.st.com>
+Date: Fri, 25 Jul 2025 13:08:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714221545.5615-1-romank@linux.microsoft.com> <20250714221545.5615-9-romank@linux.microsoft.com>
-In-Reply-To: <20250714221545.5615-9-romank@linux.microsoft.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Fri, 25 Jul 2025 19:08:37 +0800
-X-Gm-Features: Ac12FXzPuW-X6w99YdkxRL9JtBmW1hyu8BbtCuoFQLmf7Mp6jVRHMfrBCkYMIAg
-Message-ID: <CAMvTesDEqDKXdFZ6+k6nrvEx-9+HQuC_dOdmoN5SqXmoCEKNXg@mail.gmail.com>
-Subject: Re: [PATCH hyperv-next v4 08/16] Drivers: hv: remove stale comment
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: alok.a.tiwari@oracle.com, arnd@arndb.de, bp@alien8.de, corbet@lwn.net, 
-	dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com, 
-	hpa@zytor.com, kys@microsoft.com, mhklinux@outlook.com, mingo@redhat.com, 
-	rdunlap@infradead.org, tglx@linutronix.de, Tianyu.Lan@microsoft.com, 
-	wei.liu@kernel.org, linux-arch@vger.kernel.org, linux-coco@lists.linux.dev, 
-	linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, apais@microsoft.com, 
-	benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linux-stm32] [PATCH 09/12] arm64: dts: st: add lvds support on
+ stm32mp255
+To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Yannick Fertre
+	<yannick.fertre@foss.st.com>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20250725-drm-misc-next-v1-0-a59848e62cf9@foss.st.com>
+ <20250725-drm-misc-next-v1-9-a59848e62cf9@foss.st.com>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <20250725-drm-misc-next-v1-9-a59848e62cf9@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_03,2025-07-24_01,2025-03-28_01
 
-On Tue, Jul 15, 2025 at 6:16=E2=80=AFAM Roman Kisel <romank@linux.microsoft=
-.com> wrote:
->
-> The comment about the x2v shim is ancient and long since incorrect.
->
-> Remove the incorrect comment.
->
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+Hi Raphael,
+
+On 7/25/25 12:04, Raphael Gallais-Pou wrote:
+> The LVDS is used on STM32MP2 as a display interface.
+> 
+> Add the LVDS node.
+> 
+> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 > ---
->  drivers/hv/hv.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->
-> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> index 816f8a14ff63..820711e954d1 100644
-> --- a/drivers/hv/hv.c
-> +++ b/drivers/hv/hv.c
-> @@ -266,11 +266,7 @@ void hv_synic_free(void)
->  }
->
->  /*
-> - * hv_synic_init - Initialize the Synthetic Interrupt Controller.
-> - *
-> - * If it is already initialized by another entity (ie x2v shim), we need=
- to
-> - * retrieve the initialized message and event pages.  Otherwise, we crea=
-te and
-> - * initialize the message and event pages.
-> + * hv_synic_enable_regs - Initialize the Synthetic Interrupt Controller.
->   */
->  void hv_synic_enable_regs(unsigned int cpu)
->  {
-> --
-> 2.43.0
->
->
+>   arch/arm64/boot/dts/st/stm32mp255.dtsi | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/st/stm32mp255.dtsi b/arch/arm64/boot/dts/st/stm32mp255.dtsi
+> index f689b47c5010033120146cf1954d6624c0270045..a4d965f785fa42c4597494010855aec7e1b9fdd1 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp255.dtsi
+> +++ b/arch/arm64/boot/dts/st/stm32mp255.dtsi
+> @@ -6,6 +6,18 @@
+>   #include "stm32mp253.dtsi"
+>   
+>   &rifsc {
+> +	lvds: lvds@48060000 {
+> +		compatible = "st,stm32mp25-lvds";
 
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
---=20
-Thanks
-Tianyu Lan
+For the compatible you now need one comaptible per SoC.
+It means your compatible should look like : "st,stm32mp251-lvds".
+This way, if on the 253 or 255 there is an issue you are able to easily 
+add match data in the driver with compatible "st,stm32mp253-lvds" or 
+"st,stm32mp255-lvds".
+A prior discussion on this subject has been raised on my V1 of HDP 
+involving Krzysztof and Alexandre :
+https://lore.kernel.org/all/418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org/
+
+> +		#clock-cells = <0>;
+> +		reg = <0x48060000 0x2000>;
+> +		clocks = <&rcc CK_BUS_LVDS>, <&rcc CK_KER_LVDSPHY>;
+> +		clock-names = "pclk", "ref";
+> +		resets = <&rcc LVDS_R>;
+> +		access-controllers = <&rifsc 84>;
+> +		power-domains = <&CLUSTER_PD>;
+> +		status = "disabled";
+> +	};
+> +
+>   	vdec: vdec@480d0000 {
+>   		compatible = "st,stm32mp25-vdec";
+>   		reg = <0x480d0000 0x3c8>;
+> 
+
+Best regards,
+Clément
 
