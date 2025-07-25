@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-745884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F507B12001
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:21:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1CEB12003
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E21A1C26E9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:22:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 290047A87FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AE71FC0E2;
-	Fri, 25 Jul 2025 14:21:43 +0000 (UTC)
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6736623F405;
+	Fri, 25 Jul 2025 14:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kolumbus.fi header.i=@kolumbus.fi header.b="woeGkEMr"
+Received: from fgw20-4.mail.saunalahti.fi (fgw20-4.mail.saunalahti.fi [62.142.5.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EBF1E833D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5A73234
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753453303; cv=none; b=BSYWYdOJGsLcFrV0QjrbXfRZUD1S2NuviRlWvij5Z+FQYyYb4nv5YNdeqXKdIGNBG2NPRitBh6kLEJ890865uZ1k5A/GpoaeV5bJ2TYA8ZIYoR4hcoogYKLtw4/V2+nagGHJNS0GeaRhgZM9xAI1S5ukcsp5XlTH8gRr/Y3VcPI=
+	t=1753453401; cv=none; b=bzUKDS7/Gm3odWQf8IPNq3pImqMhNC+CfAQLtLfUK9Giai3eKUIxBiqr8H1MYNTTrD/oGcmA71PRFCk1NWZ2RfIceSB3LZK7a45WNtUG9jKPkyKAF46FNjcgZVzWRKgQrgo/BtRnN3xNCjCs5Ra5BLtsdbXKvU1iJW3n6GMGbKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753453303; c=relaxed/simple;
-	bh=Dgcb01g50UZw+LnvgphrRYVFZimxYrj3NmVGS8CEt6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpGlRCUZ31p9UzCfiBRrocTQnzDRl3kw9LrPdBiPjaV3NQ4oZjXefN7SpN1WX2BgOvV/7iWtO21tWSjNAPIrzAfM1xvq3Va1CXnxvlfbiB5MNRlB6Ec7Oi3KB1Rj06r9KqGtsXLfSM2CEPo2WgUkA+1rert9d7qrot5MAMHiCHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 412DE44280;
-	Fri, 25 Jul 2025 14:21:31 +0000 (UTC)
-Message-ID: <61532c2c-0509-49ed-bdb5-f229f0be8576@ghiti.fr>
-Date: Fri, 25 Jul 2025 16:21:30 +0200
+	s=arc-20240116; t=1753453401; c=relaxed/simple;
+	bh=ajb2/mWlyP9UNR3Xs3PMINrIeFwOZXII+MmwsFew3IQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=fQP/IOmCiq8y1mp4NKCGEpYS6t2c7k5ASlRl3tgA2nre5W8b/yiEu/qFqz4bli9h+yGgAINm+G32kLBTx2fmQK6HtSNjaW81jH0isXYveaCtEfNkQLkoCkglf+i1iS6B8etopnjmqByjgQWjuAfZml92ebtOWrb3TEP1wPxxFsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kolumbus.fi; spf=pass smtp.mailfrom=kolumbus.fi; dkim=pass (2048-bit key) header.d=kolumbus.fi header.i=@kolumbus.fi header.b=woeGkEMr; arc=none smtp.client-ip=62.142.5.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kolumbus.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kolumbus.fi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=kolumbus.fi; s=elisa1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:feedback-id:from:to:cc:reply-to:subject:date:
+	 in-reply-to:references:list-archive:list-subscribe:list-unsubscribe:
+	 content-type:content-transfer-encoding:message-id;
+	bh=YWQEaTI19svUHOi7Hio8DzdqycarOL3A3oVoeQgeEng=;
+	b=woeGkEMrOxJckpvvAfH4JJavDV2CtmAf5Evtcgu1JOqLkx49ugL6b5oKFHthXQJROKpbCHVXbJ/YW
+	 fyJkl/hJ58QBDtX9cABylWC0PTYNmxPblAIrFqiTEjcJ/N/iUKg6hV+fbnpVao18hW+a+rxtqk13TE
+	 9eCxW+ArtKZik+zDZsr++brj8IyepPJwHhfyJg/vPWhhIomtMuRD+IAONmjYE+3QpJ69fO2wZTq/N9
+	 4yagLzKqabYSv4ENogyDxbOHAOLFlkTDmyJ7lRjNSbZWffV2fxg2TG3F7zHXs/Qh2Bp7xWBVAQeCrm
+	 6qyuSCRCd1FbZaWwt5rVvLkYb8syDaQ==
+Feedback-ID: 5c3835a5:74d1b5:smtpa:elisa
+Received: from smtpclient.apple (85-156-116-90.elisa-laajakaista.fi [85.156.116.90])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTPSA
+	id e2445e5d-6962-11f0-aa56-005056bdfda7;
+	Fri, 25 Jul 2025 17:23:08 +0300 (EEST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] riscv: use lw instead of REG_L when reading int cpu
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>,
- linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Deepak Gupta <debug@rivosinc.com>
-References: <20250722160556.2216925-2-rkrcmar@ventanamicro.com>
- <20250722160556.2216925-4-rkrcmar@ventanamicro.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250722160556.2216925-4-rkrcmar@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekfeejiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhephffhtdefjeetgfdvhfehgefhteekkeevffehheegtedtieduheeltdegheeuleffnecuffhomhgrihhnpegvnhhtrhihrdhssgenucfkphepleehrddugedurddutddvrddukeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepleehrddugedurddutddvrddukeeipdhhvghloheplgdutddruddtrddugeeirddvudejngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheprhhkrhgtmhgrrhesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehpr
- ghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepuggvsghughesrhhivhhoshhinhgtrdgtohhm
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] scsi:st.c replace snprintf() with sysfs_emit()
+From: =?utf-8?B?IkthaSBNw6RraXNhcmEgKEtvbHVtYnVzKSI=?= <kai.makisara@kolumbus.fi>
+In-Reply-To: <CAG+54DbmHbw4MWUSF3x1qQC4bF7Uuu8mDD7aAZyBtbJ1D51MUw@mail.gmail.com>
+Date: Fri, 25 Jul 2025 17:22:57 +0300
+Cc: James.Bottomley@hansenpartnership.com,
+ martin.petersen@oracle.com,
+ linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>,
+ linux-kernel-mentees@lists.linux.dev,
+ bvanassche@acm.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AA11A711-6652-4A0C-A890-38FAC7D518A2@kolumbus.fi>
+References: <CAG+54DbmHbw4MWUSF3x1qQC4bF7Uuu8mDD7aAZyBtbJ1D51MUw@mail.gmail.com>
+To: Rujra Bhatt <braker.noob.kernel@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
 
 
-On 7/22/25 18:05, Radim Krčmář wrote:
-> REG_L is wrong, because thread_info.cpu is 32-bit, not xlen-bit wide.
-> The struct currently has a hole after cpu, so little endian accesses
-> seemed fine.
->
-> Fixes: be97d0db5f44 ("riscv: VMAP_STACK overflow detection thread-safe")
-> Fixes: 503638e0babf ("riscv: Stop emitting preventive sfence.vma for new vmalloc mappings")
-> Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
+> On 24. Jul 2025, at 3.58, Rujra Bhatt <braker.noob.kernel@gmail.com> =
+wrote:
+>=20
+> replace snprintf() with sysfs_emit() or sysfs_emit_at() in st.c file =
+to
+> follow kernel's guidelines from Documentation/filesystems/sysfs.rst
+> This improves safety, consistency and easier to maintain and update it
+> in the future.
+>=20
+Bart already wrote that these changes are required for existing drivers. =
+I am a little hesitant about these kind of changes that don't fix =
+anything  and don't add improvements. Any changes risk breaking =
+something.
+
+But, since I have wondered what these sysfs_emit* functions do, I =
+decided to take a look...
+
+> Signed-off-by: Rujra Bhatt <braker.noob.kernel@gmail.com>
 > ---
->   arch/riscv/include/asm/asm.h | 2 +-
->   arch/riscv/kernel/entry.S    | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
-> index b3022bc224ec..93b1e4ce34d1 100644
-> --- a/arch/riscv/include/asm/asm.h
-> +++ b/arch/riscv/include/asm/asm.h
-> @@ -91,7 +91,7 @@
->   #endif
->   
->   .macro asm_per_cpu dst sym tmp
-> -	REG_L \tmp, TASK_TI_CPU(tp)
-> +	lw    \tmp, TASK_TI_CPU(tp)
->   	slli  \tmp, \tmp, PER_CPU_OFFSET_SHIFT
->   	la    \dst, __per_cpu_offset
->   	add   \dst, \dst, \tmp
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index 75656afa2d6b..4fdf187a62bf 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -46,7 +46,7 @@
->   	 * a0 = &new_vmalloc[BIT_WORD(cpu)]
->   	 * a1 = BIT_MASK(cpu)
->   	 */
-> -	REG_L 	a2, TASK_TI_CPU(tp)
-> +	lw	a2, TASK_TI_CPU(tp)
->   	/*
->   	 * Compute the new_vmalloc element position:
->   	 * (cpu / 64) * 8 = (cpu >> 6) << 3
+> drivers/scsi/st.c | 42 +++++++++++++++++++++---------------------
+> 1 file changed, 21 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
+> index 74a6830b7ed8..38badba472d7 100644
+> --- a/drivers/scsi/st.c
+> +++ b/drivers/scsi/st.c
+> @@ -4564,25 +4564,25 @@ module_exit(exit_st);
+> /* The sysfs driver interface. Read-only at the moment */
+> static ssize_t try_direct_io_show(struct device_driver *ddp, char =
+*buf)
+> {
+> -       return scnprintf(buf, PAGE_SIZE, "%d\n", try_direct_io);
+> +       return sysfs_emit_at(buf, PAGE_SIZE, "%d\n", try_direct_io);
 
+This "maps back" to vscnprintf(buf + PAGE_SIZE, 0, "%d\n", =
+try_direct_io), which does not match the existing code (i.e., would =
+return nothing). (Actually the problem is caught already by the check at =
+the beginning of sysfs_emit_at()).
 
-I went across the same kind of bug a week ago, thanks for catching this one.
+I am not happy to find out that this patch seems not to have been tested =
+before submission. (Well, maybe compile tested.)
 
-You can add:
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Though, to get backported to stable kernels, it will be easier if you 
-split this patch into 2 independent patches as it will fail to apply on 
-older releases. And it should not be dependent on the renaming of 
-TASK_TI_CPU_NUM.
-
-Please also add:
-
-Cc: <stable@vger.kernel.org>
-
-So that they will get backported automatically.
-
-Thanks again for the catch,
-
-Alex
-
+Kai
 
 
