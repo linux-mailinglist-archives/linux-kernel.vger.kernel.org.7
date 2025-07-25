@@ -1,123 +1,115 @@
-Return-Path: <linux-kernel+bounces-745489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF09B11AA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:14:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD4FB11AAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08C4054072E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF06B3AB716
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F65275864;
-	Fri, 25 Jul 2025 09:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KXFWhX/M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1DC2C324D;
+	Fri, 25 Jul 2025 09:16:49 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B73E275AE6
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778FC278E7C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753434845; cv=none; b=L1abpE0g7u1Isj2+VsSN9RUFTrH2HidCodZBbUZsKI9d46ZLe/1M5uVj3ER9OvPzD05JoQWSUwkQtEuBM7ZuTdDMF495g03hAmr0O2ItJrnRpVlcrAwmVpkrpgvroBa8SZumNJ66XKXIMVNyiKbPVA7knQuGBYEj2QkrNxrAH7I=
+	t=1753435009; cv=none; b=rUCP/PbFZmB9q6pU7wXi+Or3YFCY+Ud5yonrfsdxx2oJVrPLMVnctmOmeHWKvQih4zON6p3jaqez+HpC3FXcwMG9tn2jcPN7/hpMAfFxfmXQ7kYgwLoFbiHA36GIXdl0NLXjeSODLcTsag5JQ/lTVtt3F8jTsHlv6AA0pN7OZ6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753434845; c=relaxed/simple;
-	bh=cUyg1SkNBxbS54LqH20gfKt7ycihR9zZ00+Od8G44+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qMue2/ArTQPOL8Nx7xQT8Rg4k/xAx3aQ+6x+Dqf2G6mRKQ3wR1uvSGhUWwwxQaUobOvTKFBN34I1JSvkSNKwuuhyoFxsweuRx1JInkeyLzRuf/u7M1YN3YwXWgIRX6WsUXK1v6EZOohBjk6udXBsKCfmw4kSv4vGhCF3zQ568oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KXFWhX/M; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753434839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JydGIle7+KIUgbdtBYbE6AFRK1qmMolB16FeEOA/Yzg=;
-	b=KXFWhX/MACuZ+SyM+uRf2zvaksaA3wCvAkPxR6yIiBioWjZaXfaEnlaijSvPtQaOmzC2AN
-	uRbug1abByoYBxJUxXgsLWGXS3gEzYOEo5OWAJn50vUTS6750za5Ezwoqhto8hQg5jixrM
-	pIa70KwvUQP//ADxy21jd5AX6zh5vSY=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-454-T21jQ4nHOcSxIBKkS0tpAw-1; Fri, 25 Jul 2025 05:13:56 -0400
-X-MC-Unique: T21jQ4nHOcSxIBKkS0tpAw-1
-X-Mimecast-MFC-AGG-ID: T21jQ4nHOcSxIBKkS0tpAw_1753434835
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ae401eba66aso125312366b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:13:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753434835; x=1754039635;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JydGIle7+KIUgbdtBYbE6AFRK1qmMolB16FeEOA/Yzg=;
-        b=mpflyDEySZUnU6q+69doUJRjJBLpMvbimnh5lwoPStUWBT5pH6N8Sn1YKroJBtjfvJ
-         3DdDvsXEHEV19+u2R0Cv9zjeLmJ6ZOtdVcv0I4ZABnylPXAB8aXLK1yHAFgmaIfjk+zK
-         ocAR3P4n0V9zeTx0XeI/gD4Mtev9/7XDn7rm3Pn+7AszEihmoTYeVAohayxVjP76+8MQ
-         MQDM4+EyECpvFA8ghnM2/GXa/B78enOpm8DMd3B4CjCiO7KoAhNC8bKI5QmSpiaCqjrS
-         eC8xfTzHSuIAlJFmaNzl9rfsUWXlu/xb4xyQmQLXKBpHuK6UCEsjlNrVELPYcTuT+ZhL
-         E39A==
-X-Forwarded-Encrypted: i=1; AJvYcCWkQvpmpdTcM+IRGkfLlMljfQoLLES5y59f0OLNoZSSAx4MhjwBGt419jtNEnz11LJnWB9zEpoaJnTcgH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycNXmwCLV39nnS6Jan05ltJk296D1Fvl/Me8XTT/l8RyBaK7PJ
-	ttAJFqi65GFQ1vB/L6d+hTOd/0/JWrhKFIgx4V1E2p57j+KfrgaZIuOsbRrYAL2Yn4ZkGotHVvP
-	ht0mCCy6ZqKRunB1RkslE8fFlM89s1ITV8OxkEfhkdkklvaobLjn9vZT5i4ZubBCMZUVutunAqs
-	aOhpTbIn+boUNVA3crL77H06g+UBj4QsI3SSamUj2X
-X-Gm-Gg: ASbGncuYoL/p0Ln/Ka4TouzTkuXR7vxc71okWCiRvYX+BH51dZIOaCeELdxsUWYPz17
-	CxP5Baynxw0g1qsjdc29DPvuMXawS638iWF+zudp+BTn3wAJwd1Q+NoD7NDLbXU8eHdjtu5TNyd
-	CtOkk8b/Nz/fxEXJdsc0nCY15+gWOqohHPJ6pVLMGlRd+zmd9T+O0=
-X-Received: by 2002:a17:907:869f:b0:adb:23e0:9297 with SMTP id a640c23a62f3a-af61c6b913fmr140269166b.17.1753434834753;
-        Fri, 25 Jul 2025 02:13:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTpH7eehWGEJJmFeTf+Td/G4IxZvXvweyFMbHchaLdc5IGS9b+k1MYrJRBTxvLHA9m4a++NsLGQ3PTlEI/B3g=
-X-Received: by 2002:a17:907:869f:b0:adb:23e0:9297 with SMTP id
- a640c23a62f3a-af61c6b913fmr140266766b.17.1753434834329; Fri, 25 Jul 2025
- 02:13:54 -0700 (PDT)
+	s=arc-20240116; t=1753435009; c=relaxed/simple;
+	bh=Ui5gSzUByY8htEPUM/weu2brKmH1FKZpZa4uznBtzYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A6vX/0FNB4adM0m0LkBZaXMP4xBB5iObauQPik6EcbqePtzaRr2lDWgl1xBY8/ezb3g3ex6ejS4pdN8vFj/PezW+oyIQJYMAsxDo3ieU8GwSa/upMRtYQ0ft572mg1yi1gZKO3D54+natr/P2+1NJUvH3zld8YWw/0jr51bnPos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bpMfg65STztSnd;
+	Fri, 25 Jul 2025 17:15:39 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7F8A718006C;
+	Fri, 25 Jul 2025 17:16:43 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 25 Jul 2025 17:16:43 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 25 Jul 2025 17:16:42 +0800
+Message-ID: <3cf2c010-4ea2-42c8-9bdd-deaa854d1af3@huawei.com>
+Date: Fri, 25 Jul 2025 17:16:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723015233.173630-1-ipravdin.official@gmail.com> <20250724095627.572c1cff@batman.local.home>
-In-Reply-To: <20250724095627.572c1cff@batman.local.home>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Fri, 25 Jul 2025 11:13:43 +0200
-X-Gm-Features: Ac12FXwqtYT-kICQMGWTXZpELDsse6D6d7kSh7SWGB9TkFKXpKIy-t5EXJV3ZDA
-Message-ID: <CAP4=nvQde7JcbhR56--4EfEsJ+F9oL4WBCRcLaOqfV1MZ-XvjQ@mail.gmail.com>
-Subject: Re: [PATCH] rtla: clarify trace option syntax in documentation and
- usage help
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ivan Pravdin <ipravdin.official@gmail.com>, bristot@kernel.org, corbet@lwn.net, 
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 drm-dp 00/11] Fix hibmc driver bugs
+To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <dmitry.baryshkov@oss.qualcomm.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<fengsheng5@huawei.com>, <libaihan@huawei.com>, <shenjian15@huawei.com>,
+	<shaojijie@huawei.com>, <jani.nikula@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20250718065125.2892404-1-shiyongbang@huawei.com>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <20250718065125.2892404-1-shiyongbang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-=C4=8Dt 24. 7. 2025 v 15:59 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis=
-.org> napsal:
+Gentle ping for review !
+
+
+> From: Baihan Li <libaihan@huawei.com>
 >
-> On Tue, 22 Jul 2025 21:52:33 -0400
-> Ivan Pravdin <ipravdin.official@gmail.com> wrote:
-> > Valid usage:
-> >     - `-t[file]`
-> >     - `-t=3D[file]`
-> >     - `--trace=3D[file]`
-> >
-> > Invalid usage:
-> >     - `-t [file]`
-> >     - `--trace [file]`
+> There are some bugfix for hibmc-drm driver.
+> ---
+> ChangeLog:
+> v2 -> v3:
+>    - fix hibmc_connector_get_modes() and hibmc_vdac_detect() to realize BMC KVM, suggested by Dmitry Baryshkov.
+>    - fix the issue commit ID, suggested by Dmitry Baryshkov.
+>    - split into 2 commits, suggested by Dmitry Baryshkov.
+>    - add more comments in commit log, suggested by Dmitry Baryshkov.
+> ---
 >
-> I wonder if the better fix would be to make the above valid?
+> Baihan Li (11):
+>    drm/hisilicon/hibmc: fix the i2c device resource leak when vdac init
+>      failed
+>    drm/hisilicon/hibmc: fix dp probabilistical detect errors after HPD
+>      irq
+>    drm/hisilicon/hibmc: fix irq_request()'s irq name variable is local
+>    drm/hisilicon/hibmc: fix the hibmc loaded failed bug
+>    drm/hisilicon/hibmc: fix rare monitors cannot display problem
+>    drm/hisilicon/hibmc: add dp mode valid check
+>    drm/hisilicon/hibmc: fix dp and vga cannot show together
+>    drm/hisilicon/hibmc: fix no showing when no connectors connected
+>    drm/hisilicon/hibmc: fix no showing problem with loading hibmc
+>      manually
+>    drm/hisilicon/hibmc: adapting modification for the former commit
+>    drm/hisilicon/hibmc: modification for the former commit
 >
-
-Definitely. There is also another case where only =3D syntax is
-accepted,  C/--cgroup. In my opinion, both are confusing, and both
-should accept =3D as well as space. I even had some trouble with the
-latter as it fails to parse silently and looks like the cgroup setting
-code is not working.
-
-Tomas
-
+>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  4 +-
+>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 51 ++++++++++----
+>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  8 +++
+>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 33 +++++++---
+>   .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    | 12 ----
+>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 64 ++++++++++++++++--
+>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   | 22 ++++---
+>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  5 ++
+>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c   |  5 ++
+>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  | 66 +++++++++++++------
+>   10 files changed, 201 insertions(+), 69 deletions(-)
+>
 
