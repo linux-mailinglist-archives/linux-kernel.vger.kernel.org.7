@@ -1,154 +1,165 @@
-Return-Path: <linux-kernel+bounces-745679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F127B11CFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:59:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB832B11CFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA4F3AF41B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A711C84ADC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062182E542F;
-	Fri, 25 Jul 2025 10:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03332E610E;
+	Fri, 25 Jul 2025 10:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f7nZb2e0"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LouPv15I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB87514A4F9
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF9E2E5B32;
+	Fri, 25 Jul 2025 10:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441192; cv=none; b=TDYwIBCenx/r+W1LWQzga6QOFqeJWVdY/rSuZQU9zrzUA+nX6reQsJit9L+beST9CkIPFYOdoPeZVlnUnwJvuZt88xd74aa0fC9alIzvJJskKc79lGrfpLDLigupUOxOnKtRw+tyFhbSlL2y8yYw4zXVqeFjKvn9SMHdCBp7bic=
+	t=1753441197; cv=none; b=Vj9vaOIrq5odjzBLXfPWCaJfzIAsc6SOTDaeRtEahmVZO+5XE+dRJjW76L/hQsrDmS6ApvLUW2CnYMUuKIUbsuMmvK3ltuM1eC2bWzn73okTfqCppr9HNn92UHdx/mTbA+L0PfBtwb1jOQ3O4Rc72s19UuucSSb0uPFKKPwt0Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441192; c=relaxed/simple;
-	bh=5usJCVzJncSDMi9Z3DDwFoEr4hvgPrhDulBMi04TA14=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RJ+3WUb+8tlcKnAGUDA94mKprjOUYgRvurJQw6LduSi8DMBJecWpMYnMKzDOZEc93MyIog3RYi2GoQ0TageSqga22FP4kN+a518WmDgE2IYc2JCPsCq+Nxm5ncFJMW2ZTSPn7lZkmj62nEcfkmBevfnU7AJyTx7seNiIlowfCNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f7nZb2e0; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso7030a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 03:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753441189; x=1754045989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8zMIKxIMeWA6Y0zyT/VEWNC40kHI/lEjExxPURm2a8w=;
-        b=f7nZb2e0Bfy7qvd+qpUHfsYWalWCtT3VMxDw8YmFmLdXYVGMUmgKn8lJCk/qyjY/fM
-         Pi6+xiBCqwKf675PoVAIplDtU0IX62GfS3AkiayKDOZI+nsjFJ66zwaxwstD1Qssm8G1
-         bEoOd9GegiVxgC11kXs+9078v3IYqxDZx+HeKI+FSVD3c+eVEDi97Js4qhT5mRbYTx9H
-         d9Zac0Vf+CzYVWrElhtCOo64AB2K99z3IB4F63NzboiXgX2talPOZXt60XRDS6s3w6le
-         Vy7ak0n6ulHo6oFM1xKM81/vlRq633V9yPtD+GU5qa5/6tjuDpBijo9akrXAufa1x8Lb
-         2xVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753441189; x=1754045989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8zMIKxIMeWA6Y0zyT/VEWNC40kHI/lEjExxPURm2a8w=;
-        b=xQM5yYboM5scz3mFNTMEQz2s9xNZa1UXPY0NyJd7sGEs630q9zeY+E4ueoMP6ypdWi
-         2fopFqDDA9LsR2yaDoxbbkFFbm0GLwqJUBnMi80mvIhyLWzmxnoCarZm3+6Zj0mQDroC
-         l3ZCsFCPGDtiovkE1rhgTJlqqSxSZIxwR2dkrX//93VdsG2B/Z+fGVaT4RtBCMzD/ySP
-         DyuomQ0p9Cy+eQXlkTMhzTpdjz6nHqC4gtAXI8XDCUz+0OCtg5bGjU1CvD8WPzY+EqEx
-         kxSQgFmtP5rKrDmKUVSYxDYn/OYAhyDnNKUNhZdQ0i2MB699FB2bXAQ8R2EnEpH07VUY
-         9mOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzndxVJTDO8bBxvGZixS7PaYSS4WY3Y5CUjxN7zT4/z3IubfimhQsjkVax8QnTQFq8VYssNJRTuphaeRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYX2fZgfgI/nmfi0D3IvcotM9ke/erxVFOOHA47AW5Wj81mPE/
-	5Rz9KmVqDkUBntK8uD0ob2vtjIpJnLQfbXZb4i8ds9tgFIMTbMwYlT79/bQrvyHs5qD6SZ6awDk
-	YYrsfHmBuWHsAPItZ0Q9agngSF99aUXfZzu58P2Dh
-X-Gm-Gg: ASbGncusNqbgBIVZJDNfcWn6an/FcuicuVqevQpdlAMGzbuSIKGg6zkwvjj2PtF3hM8
-	DBTtzkdJJRIfJ/hGkKb9hlQyouYWEKewYFkGP0U/+dOcvXBND+lgTefkujj/AOFSEASza9ftuKd
-	oFZ6e+TGtYNpwoZt6tRYO5gBSBEgwLHjH1Rf/3Y2dg3aG1VmoOx3oy6DGaMMINtzbSpRkBKkIU7
-	1+kFOW0mWPyzxC1IQbhumkn/iAo3gukjOA=
-X-Google-Smtp-Source: AGHT+IHnqQxYja1POX2W+kA/E0n2jk+M6mImxM6eux/jmZA5LUQePcIkwPQUBgG33sEbBErZ0nUIrhQvUBFLjnx7mxU=
-X-Received: by 2002:a05:6402:42c3:b0:611:ff6c:50de with SMTP id
- 4fb4d7f45d1cf-614e7af1571mr97978a12.4.1753441188512; Fri, 25 Jul 2025
- 03:59:48 -0700 (PDT)
+	s=arc-20240116; t=1753441197; c=relaxed/simple;
+	bh=bUcU0cDobyQLiDEp8CMj60WJQEIv2TENj1HTo6Qkt9A=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IKbBN5kk8dFo/6/sCjc5gDMTc/0rFYxiYroYzLaSea2n4ixFeACMfJ3Ie58IUlbTtqinAGckQS2Y3JBxa19z5d6/2OsIUdZfQiJWScblEPLj69+vWYZh9AKiggOyK3rx6VkERqlAULjWjthfYEeHvSZbU4SfBQVnDdLalbD/iY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LouPv15I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98D28C4CEE7;
+	Fri, 25 Jul 2025 10:59:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753441196;
+	bh=bUcU0cDobyQLiDEp8CMj60WJQEIv2TENj1HTo6Qkt9A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LouPv15IyL7WQztlYQATxazBJpsdsDswdQ1iYdVQB47FExi3Dm+QBnsxhItQ0IiFS
+	 Hsk1jXWPip8IpipAwm4pGCQQK4YTIKep8GzyKNciqYHe5ZyTJDdWhhJh/ZpucUZGm6
+	 HBZPVLkjihDL11jcyUeLTnicx/K4Wqjwc+GGEZG74BnubN1vSE5s+4/a7ueysM9PB1
+	 RZbPaJ4W00Kfuam5WTmxs7iY12nWVUwlXCGk/ucYDYfKDOafO8twOA2QnZ7ABFzHpT
+	 J8E1/KWOzzU4aq1sE0Qpdu4GtGOuzLQf4W6TpoS4/goTfNbrEL+mFtCsIlBB96TJMu
+	 NsRa76FZ+ffbw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ufG9a-001JSg-4Q;
+	Fri, 25 Jul 2025 11:59:54 +0100
+Date: Fri, 25 Jul 2025 11:59:52 +0100
+Message-ID: <86ecu48riv.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Cc: Eric Auger <eauger@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	seanjc@google.com,
+	darren@os.amperecomputing.com
+Subject: Re: [RFC PATCH v2 0/9] KVM: Enable Nested Virt selftests
+In-Reply-To: <ccd8caba-95b9-450e-afb1-deb0c42b781b@os.amperecomputing.com>
+References: <20250512105251.577874-1-gankulkarni@os.amperecomputing.com>
+	<92c7e99c-5574-422c-92f1-62d5cde58fec@redhat.com>
+	<7bf7bd52-7553-42a7-afdb-a5e95f8699b5@os.amperecomputing.com>
+	<86a56veiyy.wl-maz@kernel.org>
+	<3be548bf-aee4-46ab-bcbf-15bf629b24da@os.amperecomputing.com>
+	<86jz58c5ut.wl-maz@kernel.org>
+	<9d5d82f1-b488-4b0a-98c2-27e95d63fc5c@os.amperecomputing.com>
+	<867c12czux.wl-maz@kernel.org>
+	<ccd8caba-95b9-450e-afb1-deb0c42b781b@os.amperecomputing.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com> <20250724145202.7f48386e9bd6fc8e114c3436@linux-foundation.org>
-In-Reply-To: <20250724145202.7f48386e9bd6fc8e114c3436@linux-foundation.org>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 25 Jul 2025 12:59:11 +0200
-X-Gm-Features: Ac12FXwXJZU2HaMIy-bMzONk-qt6j5Vfpoiy2m2ctrYhU5gV6LCZ70luYNXP4Xo
-Message-ID: <CAG48ez1A7ugLHxeBeBxqH6g37fb4iQo4g-O5F519v3rQQGWWYw@mail.gmail.com>
-Subject: Re: [PATCH] mm/rmap: Add anon_vma lifetime debug check
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Rik van Riel <riel@surriel.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, eauger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, seanjc@google.com, darren@os.amperecomputing.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Jul 24, 2025 at 11:52=E2=80=AFPM Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Thu, 24 Jul 2025 21:13:50 +0200 Jann Horn <jannh@google.com> wrote:
->
-> > If an anon page is mapped into userspace, its anon_vma must be alive,
-> > otherwise rmap walks can hit UAF.
-> >
-> > There have been syzkaller reports a few months ago[1][2] of UAF in rmap
-> > walks that seems to indicate that there can be pages with elevated mapc=
-ount
-> > whose anon_vma has already been freed, but I think we never figured out
-> > what the cause is; and syzkaller only hit these UAFs when memory pressu=
-re
-> > randomly caused reclaim to rmap-walk the affected pages, so it of cours=
-e
-> > didn't manage to create a reproducer.
-> >
-> > Add a VM_WARN_ON_FOLIO() when we add/remove mappings of anonymous pages=
- to
-> > hopefully catch such issues more reliably.
-> >
-> > Implementation note: I'm checking IS_ENABLED(CONFIG_DEBUG_VM) because,
-> > unlike the checks above, this one would otherwise be hard to write such
-> > that it completely compiles away in non-debug builds by itself, without
-> > looking extremely ugly.
-> >
-> > --- a/include/linux/rmap.h
-> > +++ b/include/linux/rmap.h
-> > @@ -449,6 +449,19 @@ static inline void __folio_rmap_sanity_checks(cons=
-t struct folio *folio,
-> >       default:
-> >               VM_WARN_ON_ONCE(true);
-> >       }
-> > +
-> > +     /*
-> > +      * Anon folios must have an associated live anon_vma as long as t=
-hey're
-> > +      * mapped into userspace.
-> > +      * Part of the purpose of the atomic_read() is to make KASAN chec=
-k that
-> > +      * the anon_vma is still alive.
-> > +      */
-> > +     if (IS_ENABLED(CONFIG_DEBUG_VM) && PageAnonNotKsm(page)) {
-> > +             unsigned long mapping =3D (unsigned long)folio->mapping;
-> > +             struct anon_vma *anon_vma =3D (void *)(mapping - PAGE_MAP=
-PING_ANON);
-> > +
-> > +             VM_WARN_ON_FOLIO(atomic_read(&anon_vma->refcount) =3D=3D =
-0, folio);
-> > +     }
-> >  }
->
-> PAGE_MAPPING_ANON is now FOLIO_MAPPING_ANON.
+On Fri, 25 Jul 2025 11:01:05 +0100,
+Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
+> 
+> 
+> Hi Marc,
+> 
+> On 6/23/2025 7:41 PM, Marc Zyngier wrote:
+> > On Mon, 23 Jun 2025 11:31:32 +0100,
+> > Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
+> >> 
+> >> On 6/19/2025 5:15 PM, Marc Zyngier wrote:
+> >>>>    >
+> >>>>> Also, running EL2 is the least of our worries, because that's pretty
+> >>>>> easy to deal with. It is running at EL1/0 when EL2 is present that is
+> >>>>> interesting, and I see no coverage on that front.
+> >>>> 
+> >>>> Sorry, I did not get this comment fully.
+> >>>> When we run selftest on Host with -g option, the guest code will run in vEL2 as L1.
+> >>>> This is implemented as per comment in V1.
+> >>>> 
+> >>>> When we run same selftest from L1 shell, then guest_code will be running in EL0/1 like running from L0.
+> >>> 
+> >>> What good does this bring us if we need to boot a full guest OS to run
+> >>> tests? What we need is synthetic tests that implement the whole stack:
+> >>> 
+> >>> - L1 guest hypervisor
+> >>> - L2 guest hypervisor
+> >>> - L2 guest
+> >>> - L3 guest hypervisor
+> >>> - L3 guest
+> >>> - [...]
+> >> 
+> >> IIUC, selftest leverages host OS support and uses various IOCTLs to
+> >> support the guest_code run. Are you saying to implement all this
+> >> again (without OS help) in guest_code to run it as hypervisor and
+> >> launch guest_code2 as NestedVM?.
+> > 
+> > The whole point of having small selftests is to run something that is
+> > simpler several orders of magnitude simpler than the full blown
+> > OS/hypervisor. So indeed, I'm asking for selftests that build chains
+> > of guests up to some level and verify that the nesting, as described
+> > in the architecture, works correctly.
+> > 
+> 
+> Do you see value in the patches as they are, without the changes to
+> support the bare-metal hypervisor in guest or will you only consider
+> them if they are first reworked to support the recursive guests?
 
-Bleh, sorry about that, I keep forgetting to write MM patches against
-the MM tree...
+Running existing tests at EL2 may an interesting goal, but the way
+you've gone about it is really wrong. These tests are not about
+"nested", they are about running at EL2. So getting rid of all the
+"nested" nonsense in patch #1 and focusing on the *two* flavours of
+EL2 would be a good start.
 
-> The subtraction to clear a bitflag works, but my brain would prefer &=3D
-> FOLIO_MAPPING_ANON.  Oh well.
+Also, EL2 tests shouldn't be optional. If EL2 is available, the test
+should run, without any option, and things like
 
-(I'd prefer bitmasking too but the existing code does subtraction, so
-I figured I should mirror that.)
++	if (is_nested)
++		vm = nv_vm_create_with_vcpus_gic(1, &vcpu, &gic_fd, guest_main);
++	else
++		vm = vm_create_with_one_vcpu(&vcpu, guest_main);
+
+are just non-starters. You just need to either get rid of the whole
+vm_create_with_one_vcpu() nonsense, or teach it to take an execution
+context.
+
+But the real NV tests are not optional either. They need to happen,
+and I don't have the confidence that they will if I agree to what you
+are suggesting. Because it's been months since I asked for these
+things, and not much has happened in the interval.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
