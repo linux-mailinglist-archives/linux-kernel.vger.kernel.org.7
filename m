@@ -1,191 +1,291 @@
-Return-Path: <linux-kernel+bounces-746034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700D6B12235
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:42:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1015AB12237
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99BD3581921
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:42:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 946BB7BE33A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C28C2E5B2B;
-	Fri, 25 Jul 2025 16:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB4D2EF2BC;
+	Fri, 25 Jul 2025 16:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XE4OmoYD"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Dy3HU3y5"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61730243378;
-	Fri, 25 Jul 2025 16:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753461742; cv=fail; b=LScgvnY+eH6AuXAcx/GIvajm543RQChfBRVYWz/6IcSZyupWbmz8B4l7k96/NFPw/GtpQlPlKD6k6kzDPSC5ZRVWQV+ee5I8Ks71/e2fgh7J6eGFWGZKOaxabpDsrAGpehvt+Zw9OgxinBk32Mm5S1iCT2pwqsy5F/mi6Gv78Co=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753461742; c=relaxed/simple;
-	bh=UyZMB1dcPYxNJs078xJnBsifJYkKd+IEUP3g+aDoZUo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4UkwtC/LLBvlrFeI8nZswgzrEzBsPKFgX7JJ3unQq/styT6UN9/nA+360ATwUkIKze9keLBsPw5KBtamZoqkMty0SFvo+DUZPDlRZ0IDhYJQ79GXH/Z2unI/TVqLWPfLavIF7xby0g2Nm9rFS+aIgu5h0Yeljb4TPzAyxYvDnY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XE4OmoYD; arc=fail smtp.client-ip=40.107.220.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p0yn7HGNXbMA04KPbT8qho4gwwFAaMwLitCil7Vwlb2fXPJsG59v+Ut+T8dzoN05YVqle2dAoiPH8AtLaQwm3Ue6ySW5wwzvNbUorCdN1shY2AwwLBTQAcLVRqKu1o6rfNujufQ4lVVDUy+jXIfXU08U49Vj9aG+pHB1iQzKTrSOJ6voS+HCZjbhLJdQZ0N8UzHZkEHrIGPf4ENTsPM6h1SO3q6iIDMz4pGYHdGs4rTiXhhIqGFnDjMQOWauB+3eNG5W8jhs0W8awc1yjFsgqikYGEnCiWKOiVzFAkrY+AxDGIiHTLaMUWsWNw4fTg57iOt/cbLmw9zLQI+4r/CNaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0cEw2jGRRXTVNjDx8dNqM7En4f2cjK+RJPnjm/RqJSU=;
- b=CHeC+7JTlBhTSs6oVvyMHSdBIp0C5+CVNB8wbJvx7XzVQ1fU0xYtKacym6yhAQs0gvOJjcqBsVoC/Jgv5sZuD/8Ojd23KqwkzS2+Xpl65yTQ+nposo0DCnzOYbg2skVM3OxsiVMaX5Nhfo9tQC3UtuLLWtTpSLFfbw+Cdp6CH8F3aknsJS3VMUU+NqgofzTAXT1SP0yyerxZbMbvrdrbRfUSRNg3xkNnMYFqVT8dYylLEv0Ly4MM8Yi2XAzZb2UUVaGq1ddbZSfKIZVRGy3r0FUG6icwDP6IZEdCg5jUuMrQRXFc8RITPFebH/Z7MJx/F2I8XGO0T4yLJIsbFQmTJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0cEw2jGRRXTVNjDx8dNqM7En4f2cjK+RJPnjm/RqJSU=;
- b=XE4OmoYDa+Tmw0+MaIkZxIozURyhxTYi8os6kMP/t+WWIa/inmX0Ak2ZwWZzjh9eU/K7pxhk2rZSvPbN0C3bM5+Q5yiLTasafbnwNeU/mHe76x/8lT89kGKitmdsjOwuMhIpIBaW0Or8naQAVp8cTS2eb1PTt9BFybkFeecmUYF9oKG3tx0LVjjpY9bO5N3boy9nlIdaNtpJ/Apc7I5khufn9xkiFF2fKCN2d481UK7LQ47/zc6YmHSIdtU+ueJGxeyzuKM+5JSMgTQre8EdqvKSS3fJ2bRSC+iQIhLupw/28Wc+YudntjEJkSBnv2cf4g4cTrzUCbBmFtxp2XdM5w==
-Received: from SJ0PR13CA0172.namprd13.prod.outlook.com (2603:10b6:a03:2c7::27)
- by PH0PR12MB7488.namprd12.prod.outlook.com (2603:10b6:510:1e9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.23; Fri, 25 Jul
- 2025 16:42:16 +0000
-Received: from CO1PEPF000042AE.namprd03.prod.outlook.com
- (2603:10b6:a03:2c7:cafe::86) by SJ0PR13CA0172.outlook.office365.com
- (2603:10b6:a03:2c7::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.7 via Frontend Transport; Fri,
- 25 Jul 2025 16:42:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CO1PEPF000042AE.mail.protection.outlook.com (10.167.243.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.20 via Frontend Transport; Fri, 25 Jul 2025 16:42:16 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 25 Jul
- 2025 09:42:00 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 25 Jul 2025 09:41:59 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 25 Jul 2025 09:41:58 -0700
-Date: Fri, 25 Jul 2025 09:41:57 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Ethan Zhao <etzhao1900@gmail.com>
-CC: <jgg@nvidia.com>, <joro@8bytes.org>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <rafael@kernel.org>, <lenb@kernel.org>,
-	<bhelgaas@google.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <patches@lists.linux.dev>,
-	<pjaroszynski@nvidia.com>, <vsethi@nvidia.com>, <helgaas@kernel.org>,
-	<baolu.lu@linux.intel.com>
-Subject: Re: [PATCH RFC v2 0/4] Disable ATS via iommu during PCI resets
-Message-ID: <aIOz1bzgfK9q0n4b@Asurada-Nvidia>
-References: <cover.1751096303.git.nicolinc@nvidia.com>
- <4f7e4bfb-1bc7-4c87-a9f1-8c8b6ee9a336@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFA92EF289
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 16:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753461766; cv=none; b=VTDw3FdTruXUCsyFAhnzXKA+oTrnaqP3ijKt7dmOhJzUClSASX25hJcSHhmLZuVv7F9G7mW8RgyTOMKeeLzPar6YJJMQ7SguqEQurw+NU0gD61YldN+BBgkxErqvOa1Aetw+o2sYBbK7tYFicijdKck6KyMsLQwptSPkE4RbGa0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753461766; c=relaxed/simple;
+	bh=NyQAVWuyGsER+ZPMGIz2n6bZ7ZmxlkxyOnWznpQlJck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a98copjDctl7fxrvXBljdOmw5xdiUaBze2n3VI06JG+/DeR7tRmo/PhvHg6sT/maffZzvrScbY0csAR29VLmzgkZbiebd9bSvAkMCKmhfFQJUPZLvXgBKmUEkiaIB819mDpisllV3H+1zn9nX0xT/F1qAbs40lT5IiZsW7siVf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Dy3HU3y5; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2349f096605so27885855ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1753461763; x=1754066563; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8y2TNoIk2wdBhLwSEjjylt9WbC1a8YKSz5ABVX4y0Uk=;
+        b=Dy3HU3y5jLzEh5FRfBSe3li/H5uFR/hx117/R8OQrd2140T9BZNalytvIWNnzcoLKi
+         VRMYhiihO9+NVLoIPgiez4XxM2iAEaKTMvLdXmGkB7zxrDB1SBgKtVDRnUUb1lc65/O9
+         j5J1mTFktXXE/MrATg6yWJYpBT3GhcbXCbaenby0FAmWp3g/My38uTX8yYejKI2buVjs
+         l1/j7w+2sSXkQKyNzd3GfiNUIYHDlLB2CWOWWlpP1jhrp5cJyl8NSQLznl9C42TmvMoS
+         01QcgsLNqtYRimkEOTzezmBPihrpaO1zOu59IiO95ELB4Kp5Qnx7gFLAA8xGhw2B3kyz
+         Q0uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753461763; x=1754066563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8y2TNoIk2wdBhLwSEjjylt9WbC1a8YKSz5ABVX4y0Uk=;
+        b=eJqmdkY0Z7n78/ha19GyCjjR9f9kHoVTeJLocn9VbetJ6hvY4cfWYSjTj5Oda0YFBg
+         +J+XzNoMcKxGNk2bZdxmxL+JB3EUfrJfGfnU5Xyc7YcqPkuxpxG4aSxp8WIRS4yaUK7v
+         NggtjuZRQvbN5WrD6Gs2HR3HMTLGFvhwO8VmwL7UtjQUpBy1EYMBDTvQ+4zIEpH3nLrG
+         C0OwaL6XXubv72AzzX/5BvbgYjBgI2dhPY2JV1XRTHJ9exkcDNrfgCDThV2o0ZteGUO8
+         AaKJAUVpHD+58pthA4zeCP6U5/oFCAh2gcxWLPrsO+flCLp2PURc+fXYth6cCJrluSPt
+         /yZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnE4RpCdCo1d3O40H2mONLzBwNRNJuuvOqHpoGJTQgdcMArJQ3H6fus8C6tssl7yU6N5Ci679ReEu+LqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJnirReW12wuQZxGpgqpsjaMVytipm+pw8yujaFpfH24FuxAiJ
+	zakrW7OSZ2vMJlbc1NYXxd6f5NEDafEPJgUEjncKc+/WoBI/QZ6Zb5CsHyi727SAjDw=
+X-Gm-Gg: ASbGncvjL3RofZ5JDHXOU7Gcp3CdkUB/fq5RwrNJzipDodXpKhTbNvEbnwc9BT7W9nV
+	lA5eTLSUhkbfEfI5aB67Je+nFtzuwSUEaPo40QOXs8Y4o0DM/fTQ1BWSjFPrIJGeATJ1T2cM1RU
+	cLJTtpy3+nJ4YAwMONjcOGE11/FQ/yLfOzI0p/K1UdRBj4Gtf11ssEhivOBz+M14KAOB7jGS5pM
+	IBE/YhiJCmQvEg41cc9Qdqi8fZg58JnabV3HWFV8E2/QrWYq+3YXr5Y3XJJiTRsE9Tdvqix5szg
+	MyRx8OpRXvTysmi3PwzW29UXysi+9lig0Ml1W4sZhzZnz4aKInloJQHXgX5SOeZNOmjN1seSIi6
+	i6/wmSeOGSCuFLLRZHYGAMTOGAopjst4u
+X-Google-Smtp-Source: AGHT+IESsSEPy/ac8F6mWdBj6vdPwp9s3VzEdxE6SjFz3Dg1QtfJX8WaXR44J4QcA36ULd9Dz05/pg==
+X-Received: by 2002:a17:902:e891:b0:236:94ac:cc1a with SMTP id d9443c01a7336-23fb3179530mr40948875ad.27.1753461762804;
+        Fri, 25 Jul 2025 09:42:42 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe30bbc4sm1244165ad.29.2025.07.25.09.42.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 09:42:42 -0700 (PDT)
+Date: Fri, 25 Jul 2025 09:42:39 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Will Deacon <will@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Monk Chiang <monk.chiang@sifive.com>,
+	Kito Cheng <kito.cheng@sifive.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
+	llvm@lists.linux.dev, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, cleger@rivosinc.com, apatel@ventanamicro.com,
+	ajones@ventanamicro.com, conor.dooley@microchip.com,
+	charlie@rivosinc.com, samuel.holland@sifive.com, bjorn@rivosinc.com,
+	fweimer@redhat.com, jeffreyalaw@gmail.com,
+	heinrich.schuchardt@canonical.com, andrew@sifive.com,
+	ved@rivosinc.com
+Subject: Re: [PATCH 10/11] scs: generic scs code updated to leverage hw
+ assisted shadow stack
+Message-ID: <aIOz_wxxCr8tPgXz@debug.ba.rivosinc.com>
+References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
+ <20250724-riscv_kcfi-v1-10-04b8fa44c98c@rivosinc.com>
+ <20250725161327.GC1724026@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <4f7e4bfb-1bc7-4c87-a9f1-8c8b6ee9a336@gmail.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AE:EE_|PH0PR12MB7488:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8b234ab-94ce-4b98-1b85-08ddcb9a3725
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IZyhEi2D+lXWw0sI6YM7NHdhhBU++5S0CobsBzxNEwBmRv/x7+1oYumpXFGk?=
- =?us-ascii?Q?ytohOxdv0mylpjZgfuG63qCWz9kfPgyazKy2ib6m0pZ8OmbIHeGpGMtJ8hr5?=
- =?us-ascii?Q?1V0AtW18oRzaT8zm6ozPqw3hgx7IlCUl0SUPy8QLpCQ+2VZLZoEo68wHZdV6?=
- =?us-ascii?Q?v2yQTQ57eiido+GZCH0JikrdixNhmT/2X4J/IPhM+M4NQfhza9oZKnB2EWjS?=
- =?us-ascii?Q?Un8e7UOb0pD9wU+IGUO+mecVqL3OZEtU8qNPbpn9o0zDs+C7CeF2IC+YgtZP?=
- =?us-ascii?Q?zJUFGdOHwSZuYNb23XjWRB0vPhRozxpFdIAbJJ5EVUcJok4n5xzvPsCI22ZS?=
- =?us-ascii?Q?NHRunguvPnQ+WPmefzVNVcVhtNRbqcEPu3G7zAeHkt0Jr2JnYo5b7XPwQAFD?=
- =?us-ascii?Q?FRksJymMWbMbEWCeUz8MNEV3qjsz1isB16VCcF8RI9V9GnXkR5i2wYnhVd2A?=
- =?us-ascii?Q?eZL/NQQ/mQrlBtPstf8uGLGDD5YEAjS0QvKSouTP5uvNWYlJy917g9/JPfYW?=
- =?us-ascii?Q?G/KiwhJGrO4nDoZHV0Djz6uUWdrTQCSOaQFSXaNPblnTzegCnveW4s/REExR?=
- =?us-ascii?Q?V4F+PGz0CcO5gLqZB7k+WZ6cu1H/FNgyjP96EDpSl9QlsJteqpBwXY8Xz5o/?=
- =?us-ascii?Q?ab229L2uocikIQ+1DKTYv/iHESr7jhdRUG1mlAHGbk68VdgSALX3fbblcQ80?=
- =?us-ascii?Q?M4yz7SRC/2eWZmcwb0kJheLqvSxDFvvOYy/tyvn+IfqFZwBQfQ68KrOYcYpT?=
- =?us-ascii?Q?juVY+YWqm1EUNUa4q2oYAEgJPTsazw1s5sYljocFm6xGjrRWL1p+yD/NMMN1?=
- =?us-ascii?Q?xKTeiijeTAxv/uo2Z4D1hLW/7pjQz7Usk10ik49g6QtkKxcIb724b8RAH/LR?=
- =?us-ascii?Q?+3Lo5O1KymwE86Np75m0GI+havFKGiV4EI+bK462eBBH6isgTBJ7rIXM4PZg?=
- =?us-ascii?Q?J4dCOd2e/MGpiCIujomeoog/wo9lfSxHvHsrrxy4NL3MBO65hJw1aej0kNo9?=
- =?us-ascii?Q?8ddubwOOcixVHH7bej7Y0hlVIEoyIy6d1ikY/tvaxQ0RnEKKj839/xRtnVTS?=
- =?us-ascii?Q?G+u2T/XSwKgQNSAG1D2qm3R77EyAHZ3qce124VhaGvGb2ndgMIVRxD1LlXdo?=
- =?us-ascii?Q?JB0EXhrxNBHYw2aSBTKCqFllJAJt2zlqNOuHR+8XNcnTEpJBAvc9JzIQO1fj?=
- =?us-ascii?Q?AH0Inzce7Kkpk0k4j1kGcvEc0TsMjiJExZQ2lZon5GxYXqx9TDRe13RpbSeD?=
- =?us-ascii?Q?2Ua+rJ8eAmrKG7M48/CLwccwwVnsCT90v6TF+xpv2HDF6LEd8wMQ8nNwhT1R?=
- =?us-ascii?Q?ma/R2I/6cRTS2kGK3rmh8+IiFV7SvREZkPkXlDjH+hAfjbAutypToRYwu8Dz?=
- =?us-ascii?Q?LSO6G5XHA5Fkv95S4CAtsDc2Ovlp3q7zPfHpPgFHGTelDFRRUbVv4LASSj4X?=
- =?us-ascii?Q?vXUxAooyNz4uOGonrYVi7sJ2hRYRsBui503qv4nCERZIJzzW0vCmlWbbHdJH?=
- =?us-ascii?Q?O2HcNSIxQ6dLCWfoRl1im0h7bdLk5l6F/vV7?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 16:42:16.6137
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8b234ab-94ce-4b98-1b85-08ddcb9a3725
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042AE.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7488
+In-Reply-To: <20250725161327.GC1724026@google.com>
 
-On Thu, Jul 24, 2025 at 02:50:53PM +0800, Ethan Zhao wrote:
-> On 6/28/2025 3:42 PM, Nicolin Chen wrote:
-> > PCIe permits a device to ignore ATS invalidation TLPs, while processing a
-> > reset. This creates a problem visible to the OS where an ATS invalidation
-> > command will time out: e.g. an SVA domain will have no coordination with a
-> > reset event and can racily issue ATS invalidations to a resetting device.
-> > 
-> > The OS should do something to mitigate this as we do not want production
-> > systems to be reporting critical ATS failures, especially in a hypervisor
-> > environment. Broadly, OS could arrange to ignore the timeouts, block page
-> > table mutations to prevent invalidations, or disable and block ATS.
-> > 
-> > The PCIe spec in sec 10.3.1 IMPLEMENTATION NOTE recommends to disable and
-> > block ATS before initiating a Function Level Reset. It also mentions that
-> > other reset methods could have the same vulnerability as well.
-> > 
-> > Provide a callback from the PCI subsystem that will enclose the reset and
-> > have the iommu core temporarily change all the attached domain to BLOCKED.
-> > After attaching a BLOCKED domain, IOMMU drivers should fence any incoming
-> > ATS queries, synchronously stop issuing new ATS invalidations, and wait
-> > for all ATS invalidations to complete. This can avoid any ATS invaliation
-> > timeouts.
-> 
-> This approach seems effective for reset operations initiated through
-> software interface functions, but how would we handle those triggered by
-> hardware mechanisms? For example, resets caused by PCIe DPC mechanisms,
-> device firmware, or manual hot-plug operations?
+On Fri, Jul 25, 2025 at 04:13:27PM +0000, Sami Tolvanen wrote:
+>On Thu, Jul 24, 2025 at 04:37:03PM -0700, Deepak Gupta wrote:
+>> If shadow stack have memory protections from underlying cpu, use those
+>> protections. arches can define PAGE_KERNEL_SHADOWSTACK to vmalloc such shadow
+>> stack pages. Hw assisted shadow stack pages grow downwards like regular
+>> stack. Clang based software shadow call stack grows low to high address.
+>
+>Is this the case for all the current hardware shadow stack
+>implementations? If not, we might want a separate config for the
+>shadow stack direction instead.
 
-That's a good point. But I am not sure what SW can do about those.
+Is there something like this for regular stack as well?
+I could copy same mechanism.
 
-IIUIC, DPC resets PCI at the HW level, SW only gets a notification
-after the HW reset finishes. So, during this HW reset, iommu might
-issue ATC invalidations (resulting in invalidation timeout noises)
-since at the SW level the device is still actively attached to an
-IOMMU instance. Right?
-
-Nicolin
+>
+>> Thus this patch addresses some of those needs due to opposite direction
+>> of shadow stack. Furthermore, hw shadow stack can't be memset because memset
+>> uses normal stores. Lastly to store magic word at base of shadow stack, arch
+>> specific shadow stack store has to be performed.
+>>
+>> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> ---
+>>  include/linux/scs.h | 26 +++++++++++++++++++++++++-
+>>  kernel/scs.c        | 38 +++++++++++++++++++++++++++++++++++---
+>>  2 files changed, 60 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/scs.h b/include/linux/scs.h
+>> index 4ab5bdc898cf..6ceee07c2d1a 100644
+>> --- a/include/linux/scs.h
+>> +++ b/include/linux/scs.h
+>> @@ -12,6 +12,7 @@
+>>  #include <linux/poison.h>
+>>  #include <linux/sched.h>
+>>  #include <linux/sizes.h>
+>> +#include <asm/scs.h>
+>>
+>>  #ifdef CONFIG_SHADOW_CALL_STACK
+>>
+>> @@ -37,22 +38,45 @@ static inline void scs_task_reset(struct task_struct *tsk)
+>>  	 * Reset the shadow stack to the base address in case the task
+>>  	 * is reused.
+>>  	 */
+>> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>> +	task_scs_sp(tsk) = task_scs(tsk) + SCS_SIZE;
+>> +#else
+>>  	task_scs_sp(tsk) = task_scs(tsk);
+>> +#endif
+>>  }
+>>
+>>  static inline unsigned long *__scs_magic(void *s)
+>>  {
+>> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>> +	return (unsigned long *)(s);
+>> +#else
+>>  	return (unsigned long *)(s + SCS_SIZE) - 1;
+>> +#endif
+>>  }
+>>
+>>  static inline bool task_scs_end_corrupted(struct task_struct *tsk)
+>>  {
+>>  	unsigned long *magic = __scs_magic(task_scs(tsk));
+>> -	unsigned long sz = task_scs_sp(tsk) - task_scs(tsk);
+>> +	unsigned long sz;
+>> +
+>> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>> +	sz = (task_scs(tsk) + SCS_SIZE) - task_scs_sp(tsk);
+>> +#else
+>> +	sz = task_scs_sp(tsk) - task_scs(tsk);
+>> +#endif
+>>
+>>  	return sz >= SCS_SIZE - 1 || READ_ONCE_NOCHECK(*magic) != SCS_END_MAGIC;
+>>  }
+>>
+>> +static inline void __scs_store_magic(unsigned long *s, unsigned long magic_val)
+>> +{
+>> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>> +	arch_scs_store(s, magic_val);
+>> +#else
+>> +	*__scs_magic(s) = magic_val;
+>> +#endif
+>> +}
+>> +
+>
+>I'm not a huge fan of all the ifdefs. We could clean this up by
+>allowing architectures to simply override some these functions, or at
+>least use if (IS_ENABLED(CONFIG...)) instead. Will, any thoughts about
+>this?
+>
+>>  DECLARE_STATIC_KEY_FALSE(dynamic_scs_enabled);
+>>
+>>  static inline bool scs_is_dynamic(void)
+>> diff --git a/kernel/scs.c b/kernel/scs.c
+>> index d7809affe740..5910c0a8eabd 100644
+>> --- a/kernel/scs.c
+>> +++ b/kernel/scs.c
+>> @@ -11,6 +11,7 @@
+>>  #include <linux/scs.h>
+>>  #include <linux/vmalloc.h>
+>>  #include <linux/vmstat.h>
+>> +#include <asm-generic/set_memory.h>
+>>
+>>  #ifdef CONFIG_DYNAMIC_SCS
+>>  DEFINE_STATIC_KEY_FALSE(dynamic_scs_enabled);
+>> @@ -32,19 +33,31 @@ static void *__scs_alloc(int node)
+>>  {
+>>  	int i;
+>>  	void *s;
+>> +	pgprot_t prot = PAGE_KERNEL;
+>> +
+>> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>> +	prot = PAGE_KERNEL_SHADOWSTACK;
+>> +#endif
+>
+>I would rather define the shadow stack protection flags in the header
+>file and allow them to be overridden in asm/scs.h.
+>
+>>  	for (i = 0; i < NR_CACHED_SCS; i++) {
+>>  		s = this_cpu_xchg(scs_cache[i], NULL);
+>>  		if (s) {
+>>  			s = kasan_unpoison_vmalloc(s, SCS_SIZE,
+>>  						   KASAN_VMALLOC_PROT_NORMAL);
+>> +/*
+>> + * If software shadow stack, its safe to memset. Else memset is not
+>> + * possible on hw protected shadow stack. memset constitutes stores and
+>> + * stores to shadow stack memory are disallowed and will fault.
+>> + */
+>> +#ifndef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>>  			memset(s, 0, SCS_SIZE);
+>> +#endif
+>
+>This could also be moved to a static inline function that
+>architectures can override if they have hardware shadow stacks that
+>cannot be cleared at this point.
+>
+>>  			goto out;
+>>  		}
+>>  	}
+>>
+>>  	s = __vmalloc_node_range(SCS_SIZE, 1, VMALLOC_START, VMALLOC_END,
+>> -				    GFP_SCS, PAGE_KERNEL, 0, node,
+>> +				    GFP_SCS, prot, 0, node,
+>>  				    __builtin_return_address(0));
+>>
+>>  out:
+>> @@ -59,7 +72,7 @@ void *scs_alloc(int node)
+>>  	if (!s)
+>>  		return NULL;
+>>
+>> -	*__scs_magic(s) = SCS_END_MAGIC;
+>> +	__scs_store_magic(__scs_magic(s), SCS_END_MAGIC);
+>>
+>>  	/*
+>>  	 * Poison the allocation to catch unintentional accesses to
+>> @@ -87,6 +100,16 @@ void scs_free(void *s)
+>>  			return;
+>>
+>>  	kasan_unpoison_vmalloc(s, SCS_SIZE, KASAN_VMALLOC_PROT_NORMAL);
+>> +	/*
+>> +	 * Hardware protected shadow stack is not writeable by regular stores
+>> +	 * Thus adding this back to free list will raise faults by vmalloc
+>> +	 * It needs to be writeable again. It's good sanity as well because
+>> +	 * then it can't be inadvertently accesses and if done, it will fault.
+>> +	 */
+>> +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+>> +	set_memory_rw((unsigned long)s, (SCS_SIZE/PAGE_SIZE));
+>> +#endif
+>
+>Another candidate for an arch-specific function to reduce the number
+>of ifdefs in the generic code.
+>
+>Sami
 
