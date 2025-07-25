@@ -1,88 +1,127 @@
-Return-Path: <linux-kernel+bounces-746299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AADEB12515
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE31B12518
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FF6D1CE3C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:05:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEFA71CE3FE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3AE254848;
-	Fri, 25 Jul 2025 20:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tc23Ptee"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDB72528E1;
-	Fri, 25 Jul 2025 20:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A18253F1D;
+	Fri, 25 Jul 2025 20:05:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649E32517A5;
+	Fri, 25 Jul 2025 20:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753473888; cv=none; b=PZGOT5v5t8rPKTmxU3p8LWFmXETlrRAmyDDNOxj2gx5GHDQjkRF1abXhzTMTEjHGKi7TGABxUtY2CU7Lq2Q0mucIIumYetYaNE8VR98bi9/gP5gUYCPvxaikap45qejKa8BbvAev4DsmsMGdZ+fX4fAb9yhiilbP1ZQRN5tWaNs=
+	t=1753473902; cv=none; b=fAnStYIsQotAQDZay/rQUO+LMYfitS8NJBye+ebnGlpHP4fazLxfwMFF6Y9G/DgXhyr8QZKGUvqtP6GS3agi6SVblOuSJ8StpNtjPu2wdneJ1EvFBhJNnuAG/gsAX7GMyI0miRdfuIv9iZ7YspWyDh6ilmyyy4h9Cery0rWfCjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753473888; c=relaxed/simple;
-	bh=XXKRhRbkPdtCnHz5AqzwvY5fPC+7Cnxs+88nTiPHBpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uqRK3cK/VNHAvDRcjHk08QvQE8SWFNMpyHGRcJ1ogNzAAsy+OlqOO49OayMlj6NY6f9K3jc6fw6TWK8IEMFUGG7fPhy1lj6X16Xse2dW57vO+HyiNxLKoa0uOuQfPb7m3KwK0YQpdeW8IsZWd54btP6Z8QEL4SSbNIx7kMwRuhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tc23Ptee; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D533C4CEE7;
-	Fri, 25 Jul 2025 20:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753473887;
-	bh=XXKRhRbkPdtCnHz5AqzwvY5fPC+7Cnxs+88nTiPHBpE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Tc23PteexjiHb5GWF3qs9ivHEy+H5q1OPzvdp+dh44jd8vBm5+0bhm0wPPLVviUXE
-	 h0YSPNOB3hyIqIx/PCzzoOv/mR81NhtPsZLpMBvgtvplYOR6JxNRmua2hgOMzNWGIW
-	 HJq5u0pfTtT/aEUinWJeIBcsw3S1rRKrb8sarmtlkB51WR2vJa4YvJmE9JYC/2fld2
-	 +esltBUXb6HBDed/ccndqjCLbsZmRc8tuAC6Mo7tlwtl3UdGQYyAQBXvcJLBrpf2ZD
-	 GH2ibsBbo78pPXzBPImolt7SgxMAUO8LoRnHNrnnVkGvf2ZMP7hpk50IBI7iE5H+WW
-	 tmW2/vlOh+DXA==
-Date: Fri, 25 Jul 2025 13:04:45 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
- Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH net-next v10 00/15] net: phy: Introduce PHY ports
- representation
-Message-ID: <20250725130445.32e0307f@kernel.org>
-In-Reply-To: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
-References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1753473902; c=relaxed/simple;
+	bh=8+OH0jpnYCxLHJivUXbltpTlvIRJChdCd+Jh3a0RZJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sHOUCpOo9WPF/HbKlJCxU6O58ubw1bo6u/eVbbc68JLiqCX6bBBtyPntLRGzmuJDir8unMFdvboKe34nSW1eCl3jGTKgbf4becPY8rfMY5RVdBPmcXXdm+cHi6MWE+FBri+dnkpybeFCY+gWmMLMzz6L28DUEfANnO+ljmHn6o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E344176C;
+	Fri, 25 Jul 2025 13:04:51 -0700 (PDT)
+Received: from [10.57.4.83] (unknown [10.57.4.83])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 167FB3F6A8;
+	Fri, 25 Jul 2025 13:04:52 -0700 (PDT)
+Message-ID: <02240cf7-c4d4-4296-9b1e-87b4231874a1@arm.com>
+Date: Fri, 25 Jul 2025 21:04:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] dma-mapping: fail early if physical address is mapped
+ through platform callback
+To: Leon Romanovsky <leon@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Leon Romanovsky <leonro@nvidia.com>, Christoph Hellwig <hch@lst.de>,
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Alexander Potapenko <glider@google.com>,
+ Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ iommu@lists.linux.dev, virtualization@lists.linux.dev,
+ kasan-dev@googlegroups.com, linux-trace-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <cover.1750854543.git.leon@kernel.org>
+ <5fc1f0ca52a85834b3e978c5d6a3171d7dd3c194.1750854543.git.leon@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <5fc1f0ca52a85834b3e978c5d6a3171d7dd3c194.1750854543.git.leon@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 22 Jul 2025 14:16:05 +0200 Maxime Chevallier wrote:
-> Here's V10 of the phy_port series. This version doesn't contain any
-> significant change, it fixes the conflict on the qualcom PHY driver, as
-> well as aggregates the reviews from Rob, K=C3=B6ry and Christophe (thanks
-> again).
+On 2025-06-25 2:19 pm, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> All platforms which implement map_page interface don't support physical
+> addresses without real struct page. Add condition to check it.
 
-Looks like we gathered no reviews from PHY maintainers here.
-We'll need to Defer this series to 6.18. Perhaps we should
-have pinged PHY maintainers a bit more for their input, sorry :(
---=20
-pw-bot: cr
+As-is, the condition also needs to cover iommu-dma, because that also 
+still doesn't support non-page-backed addresses. You can't just do a 
+simple s/page/phys/ rename and hope it's OK because you happen to get 
+away with it for coherent, 64-bit, trusted devices.
+
+Thanks,
+Robin.
+
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> ---
+>   kernel/dma/mapping.c | 15 ++++++++++++++-
+>   1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 709405d46b2b..74efb6909103 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+> @@ -158,6 +158,7 @@ dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
+>   {
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   	phys_addr_t phys = page_to_phys(page) + offset;
+> +	bool is_pfn_valid = true;
+>   	dma_addr_t addr;
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> @@ -170,8 +171,20 @@ dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
+>   		addr = dma_direct_map_phys(dev, phys, size, dir, attrs);
+>   	else if (use_dma_iommu(dev))
+>   		addr = iommu_dma_map_phys(dev, phys, size, dir, attrs);
+> -	else
+> +	else {
+> +		if (IS_ENABLED(CONFIG_DMA_API_DEBUG))
+> +			is_pfn_valid = pfn_valid(PHYS_PFN(phys));
+> +
+> +		if (unlikely(!is_pfn_valid))
+> +			return DMA_MAPPING_ERROR;
+> +
+> +		/*
+> +		 * All platforms which implement .map_page() don't support
+> +		 * non-struct page backed addresses.
+> +		 */
+>   		addr = ops->map_page(dev, page, offset, size, dir, attrs);
+> +	}
+> +
+>   	kmsan_handle_dma(phys, size, dir);
+>   	trace_dma_map_phys(dev, phys, addr, size, dir, attrs);
+>   	debug_dma_map_phys(dev, phys, size, dir, addr, attrs);
+
 
