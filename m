@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-745415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB1D0B11992
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:10:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169E7B11995
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF76AC61AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:10:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC6E3B1080
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03117253F12;
-	Fri, 25 Jul 2025 08:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nWuaZICG"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA24F2BEC26;
+	Fri, 25 Jul 2025 08:12:00 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0958928A41E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7408220F2D;
+	Fri, 25 Jul 2025 08:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753431050; cv=none; b=c1VJzDMbFxvFLnTreWrgpsn7IZ61nLcWW6re8tfnerluoasiWYHj+UybYFH272XTYGv8U0PCY6KpRIZCjbiSverAdkKZ/loVspUrmESjHUALZEVleOsqMiBTprnWtBspqooMmAbCBczOSALwaGjgvhZ/teoSs4g3EgIwxX/Y9m4=
+	t=1753431120; cv=none; b=WDBO5YctJJfpSjiXM80J3w6jab908vd8Fg4L2IUwYERz3N0tFhAw3+gsOOS330TZgycj8GxyaXpe+IUON/UgGEciOzX3nOcY/UCpFiRWZW2byNxYMj8rU8VK7w0Ic2xaFIciX4uvIBx4fXoCS9DJClmf1lYxPqHqngGzStaBqbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753431050; c=relaxed/simple;
-	bh=/8Jy2q7BUbMRemNSy/ayI7mRAKf+o02bPXV7CnXtXQ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AAzhPQHitHSgVxG0JPwFrztROkkbrhM3CIX6lLbXrwf82XvdtmwYYAHxu2ySBDUTcfIkVy4di2ptFuyVUg0Z/MSDCmlDrFCXeadMgsXsg/E96JD5SqpQyJdEPbwPjhGauABgynX87PJYb5HbhGoLJL/tQhfzEe4427APCVVvRTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nWuaZICG; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b77673fd78so215484f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753431047; x=1754035847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TjnADGgMIxD9Mwt4aQx2cVoKFVB9u557YmwsL2pYhHc=;
-        b=nWuaZICGp1RprfKTIAnRT8GXAntIodnigFZgHAgo38xzs0lc8jlmJIoYb80sV0wOQj
-         s0snfm1v0otVMYj2rWIYqW5sTnBt6l8nr1XiwC1A6LzVtGVGSvuhbXLODv1cV5yt+MQM
-         tsyByYDkm0h3dzUg8NV2SYNSxxwuo0qz2J3XBVZALc19lxSU3AC9tQn4O7ZZrzD+881R
-         2rgGhih/Bc/6fLDd0iYzSj6a2Vp75ghEfZHSEjOeBa0OT6ZzaGbx2vlpSrlJ8/7ILX6V
-         AHx8jDtEAWshRDJfOVRNaza0lCoOdzddHs5jrik+cIexago/XwSZhn/+xjYM9WM4jpZC
-         ONXQ==
+	s=arc-20240116; t=1753431120; c=relaxed/simple;
+	bh=CM5Oea36uZvfoiK7/r+AcRjxy2phxOcl8b1GZzZwgQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZ67r3VitPwtj+6rNj4TclhPLI14QMF1ShRtPcHPxkLVhnwP60qsmK2TRJMCRiWw6gvyUUKVUtwHFx69CUO1hO0hc8+dj6U/EvdE9KEgqqMKjfL/Hxr3n471Y2A3KI3PsYPtWJFYOd3AJE5001uX1CpYbfMGvWxitUH3OIf59Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af2a2a54a95so289625466b.0;
+        Fri, 25 Jul 2025 01:11:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753431047; x=1754035847;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TjnADGgMIxD9Mwt4aQx2cVoKFVB9u557YmwsL2pYhHc=;
-        b=Gqlvkfd8I85o1nAh1XpgK7tb0LiIqJILPgiKO8HhHgTuEFr7afvke+sXF5s260tHyF
-         yUkfnGWE2z+ksOj8DZz+6HKJ5MGL+NHHSVo3HsrAhFxWMMM3KirKvjJzaF9YeqsR+RhT
-         AIqmKsK0+vT3iG4GMMRiFAcy4lAXc6GUVzLiGRdj+EGpP+nX5k0FrZTaplJSBAYrXXiZ
-         a7n7p3HtrBvXXZEMIpsm6Ve8oyU9OCXT5SKM+gBhSJ5mXO1Pvj30KGDDMGoLkoS73VwR
-         Vkfm5lrIKF0ioUyf5KUfSpagxG7ZtUhqDgdLTirdIhIxh3l4czzF10HyJxkrpTZetZZQ
-         hSeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWN7/HKlusnJRXZeT+XIsRhKU3QV79QO6zFpDvjBMCovXBGHoZZB14hgFPhRxGTCtxgDf7mgK9tpJ1A9GQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt4fqVfY1V4rc1xkFHdWG1j1Y9oZ0zyUi6XPprmE+DxahtGFLd
-	VuOXRi5JwbMYYQ7lxu9tdsjRw6d4n/Z61Y52xFcAtFhBl9wAbU1OL/exoXp7br8hJ70=
-X-Gm-Gg: ASbGnctR639JKyE9XMXXgA9ra6lv+l0m2S4gWmQEyGm0ErKa6cPDKOII0fuefSlzsIP
-	Q0GpMCfyQsiX6hCbE+L8mhV6YG1Yl6AXP55JrtUGW6IyUE4twLybaIV74v99VFjAu4BYvd4Dp3g
-	PzajlSUg00unhiLj1eGNuNKo3Jqom4xkwfIKSsjvMBO/N16viE7H4mTHrWLJi6UHNrSQpHTuNxs
-	3lK7Ov0mC/fZIKnIhKJCPjSY8OK5h8CGJ7tL05d2ULfBhZr6kXfkEnxmnZ1TsVXhRe1cUPv3V02
-	RXWfCOHaIrP2AML3k2zQb0bQUMDo7mnsPGsGGCE3TyFNxg/0KXXJ0RU1PYFRsPKh08KQq5vS6pS
-	DqEcy/5uA4xsIaikx0DuvBZA=
-X-Google-Smtp-Source: AGHT+IFtrN6VUv3AxAAmMB1p8Cksy5ht9aBXYvpOBIp9CQazid75UckioUfrsNhXmPCAYyDnC0fv7Q==
-X-Received: by 2002:a05:6000:2407:b0:3b7:6d94:a032 with SMTP id ffacd0b85a97d-3b7765e6ba2mr811266f8f.3.1753431047252;
-        Fri, 25 Jul 2025 01:10:47 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3c3c:6b37:9b23:6049])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcad22asm4402723f8f.53.2025.07.25.01.10.46
+        d=1e100.net; s=20230601; t=1753431117; x=1754035917;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sAKrd+LD+XDBmFxqxGAliD+PzOnak8xlMGa/MN+UIZM=;
+        b=qP0BpN40xgMvtKwaGWW3V24acoW342K3NtpgFrMpvyCEygs2bogmWzuO8WBCXVpIrt
+         pZuKF8WNncGtf/wDE8Pogy36fVKRAlAh5QbvTB08Q0U9dF/I2BAAK7ViaRpRcCMChgn3
+         DUv6kphG8rPqcVgat6gkuwkFqmzbdKGMD7Z7NMnp43pAgH05y2nAOTAxX0U8yu86fKQm
+         UHFgU0O26WQo3ZsEKwfmPPwm/nNa+GcVpDQI6/1vz/CglCWKuBcaKK1YYApm9LLwF/sM
+         jPrInGfMy6V0zeUCNo+kPrXgLURB6sL2JddYYRLaO20/i7CXT6hGlNNLiIGYKx8NWSJK
+         Buug==
+X-Forwarded-Encrypted: i=1; AJvYcCVhNI51sXzypv/OWU9DjBVqU83U/EiUkucS29UtSelZjFQtdcThAaU2NkvEzxmUbGUVplpZd2h/@vger.kernel.org, AJvYcCXeEylBckb75J26b2O965bgVH9mbFnyXW/0he+YCYS3kKZ+8wWwiPvA3VqsF4pvBTq+Y1PVck+PqFfDPuw=@vger.kernel.org, AJvYcCXfx1Y0c8/EaybwUyHGLTU3bWjHp4d6RHHNPjXl0sYuHE1+witTdWMDi0LtlzK3lu/mdORL0K7bXwt0Jd/Bk/+1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBikQhxJzq6nK+WrMgE1KohvSx/87sWDntBJVTzkmkenyUdIkk
+	tfoLelqCNnoZoTVUQKrD5v4Gw7WB8KDZyQv8N51Hr08bsgSfqZ7ilVcr
+X-Gm-Gg: ASbGncsSKvJ3Rp9+1fI29y29GDvL7KIDCf1PydkxtZeuCSYdxVA2KofoCDhElRzPbBf
+	NQ39fhuZVlUHOqzjD7HfWG8skKalbINSWlLLKHQO315H7LxodqkQJCO5GuNAu1or9ZfQeMfHh0c
+	JomM0h6aePNWUvHchd35/R2nGgKrzjwFz7pS74ZG4HvaNGitUgsIMTMUUIQGsYPg8aTVHaF86kp
+	4M7f5MJ/mkMHb4L/+S2WJ/q4gep+6/0WCmOb0IwY+uyd31m+EyNtimcjaQrFfXOJfat7gujLK8B
+	/KksAZi6y3Kh7wx0tRq+Lq3sjhDOUmGAQBdyKqVoJVdIBAMqbT+adOY6Vh/jERGiC2AZD/xudNW
+	eV0RnC7vhXWu7
+X-Google-Smtp-Source: AGHT+IFPX0c0Ndbx/2iAsFsxKcF7ID2/9I3H+CH1/uhcG0UBdqcuIER/o/Dwg7+S2WsxGNYL9nmpRQ==
+X-Received: by 2002:a17:907:7209:b0:af2:7ccd:3429 with SMTP id a640c23a62f3a-af61c2aaad7mr92257966b.9.1753431116776;
+        Fri, 25 Jul 2025 01:11:56 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f85ea59sm232531566b.101.2025.07.25.01.11.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 01:10:46 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Enrico Weigelt <info@metux.net>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Harald Mommer <harald.mommer@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/1] gpio: virtio: Fix config space reading.
-Date: Fri, 25 Jul 2025 10:10:45 +0200
-Message-ID: <175343097349.17150.917277696050409769.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250724143718.5442-1-harald.mommer@oss.qualcomm.com>
-References: <20250724143718.5442-1-harald.mommer@oss.qualcomm.com>
+        Fri, 25 Jul 2025 01:11:56 -0700 (PDT)
+Date: Fri, 25 Jul 2025 01:11:50 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net-next] selftests: net: Skip test if IPv6 is not
+ configured
+Message-ID: <eutsqoc6f7xcaez2ttuce4uqtfvs3hyit6dradikvfcgxdev75@3senqada4nzn>
+References: <20250723-netcons_test_ipv6-v1-1-41c9092f93f9@debian.org>
+ <20250724182427.5ece92e8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250724182427.5ece92e8@kernel.org>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hello Jakub,
 
-
-On Thu, 24 Jul 2025 16:36:52 +0200, Harald Mommer wrote:
-> Fix for Virtio GPIO Linux driver
+On Thu, Jul 24, 2025 at 06:24:27PM -0700, Jakub Kicinski wrote:
+> On Wed, 23 Jul 2025 10:35:06 -0700 Breno Leitao wrote:
+> > Extend the `check_for_dependencies()` function in `lib_netcons.sh` to check
+> > whether IPv6 is enabled by verifying the existence of
+> > `/proc/net/if_inet6`. Having IPv6 is a now a dependency of netconsole
+> > tests. If the file does not exist, the script will skip the test with an
+> > appropriate message suggesting to verify if `CONFIG_IPV6` is enabled.
+> > 
+> > This prevents the test to misbehave if IPv6 is not configured.
 > 
-> The Virtio GPIO Linux driver reads the configuration space in a way not
-> conformant with the virtio specification. The hypervisor we are using is
-> strict in what it accepts so the current behavior causes a problem.
-> 
-> Builds on top of gpio/for-next, tested on Linux v6.5.7.
-> 
-> [...]
+> IDK. I think this is related to some of the recent patches?
 
-It's already Friday and I won't be able to run it through the autobuilders so
-I won't be sending it for v6.16. I queued it for v6.17 and it will be part of
-my PR early next week.
+Yes, commit 3dc6c76391cbe (“selftests: net: Add IPv6 support to
+netconsole basic tests”) introduced IPv6 support to the netconsole basic
+tests.
 
-Thanks!
+Because the NIPA config enables IPv6, the tests pass in that
+environment. However, if the tests are run somewhere without IPv6
+support such as in a test I was doing regarding another patch, they will
+fail, when it should be skipped.
 
-[1/1] gpio: virtio: Fix config space reading.
-      https://git.kernel.org/brgl/linux/c/4740e1e2f320061c2f0dbadc0dd3dfb58df986d5
+> The context would be helpful in the commit message.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Apologies for not including more context in the commit message.
+
+> Otherwise, as networking people, I think we are obligated 
+> to respond with hostility to "IPv6 may not be enabled"..
+
+As for handling systems without IPv6, if IPv6 isn’t available, the
+intention is for the test to be skipped. That’s exactly what this patch
+addresses.
+
+I did consider making the test adaptable so it would just run with
+whichever protocol (IPv4 or IPv6) is present, but rejected that
+approach. Allowing the test to “pass” in such cases doesn’t really
+demonstrate meaningful coverage, since the test isn’t actually being
+exercised as intended.
+
+In short, it seems more appropriate to skip the test entirely if all
+conditions aren’t met, so, you know that your .config needs adjustment.
+
+Thanks for your review,
+--breno
 
