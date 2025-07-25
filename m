@@ -1,91 +1,153 @@
-Return-Path: <linux-kernel+bounces-746100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CABD7B12321
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:45:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62726B1232C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F24FA1C831F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:46:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3D3F1CE528D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615472EFDA0;
-	Fri, 25 Jul 2025 17:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9472EFDA4;
+	Fri, 25 Jul 2025 17:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Z8Dmf4cu"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clwxhrUj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89621DE3AC;
-	Fri, 25 Jul 2025 17:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A690F2EFD98;
+	Fri, 25 Jul 2025 17:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753465543; cv=none; b=rBVHLkmomI1upgnyV5rTwFqDb2+GLohYzmMOoyiHy1i8YbQqV0JP6NRwb1W/gxTdXK0W5LMh59lEiBnC13UX2prJw97M06Vz6KuWuRsMFjrKHsMrzCXj8Ck36vTst1Bu+kz2V6EW3CmcYWBBWmo66MP/wkxl0kQGOqhPlDGxp+c=
+	t=1753465624; cv=none; b=SEXE+CRBeuesSHVet3BqF6aR/vl0y+NK1CJeum+vLkxTyI0t/N5+tBZFBjdOBT8cg3yLPDZam0XY5cIZVukPeN69JeP1ukK7pTpQQnR7IO6faXr9WbwvbOuTqov5c3iVuZUrsG908iNGStyklUqW8SnnEyNSLdC0I8s9xDQoRvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753465543; c=relaxed/simple;
-	bh=RsPRgmZCOqun/rYWmkkcvg3T55MIka5uyEZQyaWsRkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJL0yWbraX+wJO96sYDIIzsIipY6xzcILBzrwQ+DFqPKx7F9ZZtyAiSVidm3Z8+XBoTAEzGAPGfBCWWPA/2YPDodVD4QxIjRpJGtlosyEKTt9p5GLKi2RfasncxOhRqZrRDiNSP5Ai3O5Z8i7UnWdk+k6JA/c/Slxc+MlgWkWFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Z8Dmf4cu; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aFcxMrKl/6T2lCcVEBxTm5V2wzGAihXJCOqriV8fm94=; b=Z8Dmf4cumnntEeo5nL2SBVupqO
-	uuRfw4qxLnTOyYnHa1kYFr2LA36AL0Fz4+xjJHgISL3o1xGfykd3Thk+bADxSaQ4A0Lm9W16rmzjY
-	11klNXhNQAu1s5Ir/3RXTclatNHM2HBO7nSoc09m3AebUtoY3MWIBuuCBgXWyy4xrCoEFV0SIodCi
-	lwMghsM9ry8itRwqKg8xQUUGMCbiwr2N+/KBuJBvacGzjNHwLZjlhkDT3pgt8N+sEPwqpKn2+04ke
-	+I+ThogCsyXD5jyvX2wnWqc0/JvSr9pAJ8RrI3Orb2KGFqj/lvxcHgxnfRn9V5BkKbmeku0MlqB4S
-	xUrLwYJg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ufMUA-00000000Ebq-0OON;
-	Fri, 25 Jul 2025 17:45:34 +0000
-Date: Fri, 25 Jul 2025 18:45:34 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sasha Levin <sashal@kernel.org>, Kees Cook <kees@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	corbet@lwn.net, workflows@vger.kernel.org, josh@joshtriplett.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
-Message-ID: <20250725174534.GY2580412@ZenIV>
-References: <aIKhvubVqgeXIlrj@gallifrey>
- <202507241418.34AFD28C@keescook>
- <20250724194556.105803db@gandalf.local.home>
- <202507241651.5E9C803C70@keescook>
- <aILYj62tF_1mDjDO@lappy>
- <aILb-zDiDr4b9u9S@gallifrey>
- <aILjTKk_v8NPxlVJ@lappy>
- <aINqjTAwbQ_xnAw6@gallifrey>
- <20250725113702.GD11202@pendragon.ideasonboard.com>
- <aINvLgwaKZsKOibE@gallifrey>
+	s=arc-20240116; t=1753465624; c=relaxed/simple;
+	bh=1W6zleCtArLTe9hdYn50/LtRqMpq5z8txkrpYLZe7y0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iSqh2K0zDEAcn1/URnYoOYIhSzgm/V0SyNjJRimsMHIlyqEK2xhg86PJbjmEW2oiEJkCD4Z81K9Uh2wBAembxInOUhSVZMA2FEHfC1B1G/0Y3ax90OBHiI7l2ZIPzTg1Z4Tpg6czkVmTinnhUUsC2aRYf6j6p2SXztc+S0xl2tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clwxhrUj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B466C4CEE7;
+	Fri, 25 Jul 2025 17:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753465624;
+	bh=1W6zleCtArLTe9hdYn50/LtRqMpq5z8txkrpYLZe7y0=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=clwxhrUjZtI25IKuGbeE9ssglevOZKtXT7CfByUOE64r/9zSxgMcsZxaplGSfRdTc
+	 5qKHVSxvBrUAsW5iHF/VPZOQa6nJ0hCH3B9IVGFhRSZiKBYuGgHdmtICPRUtBmuMpD
+	 nRSMSHGacXrB6Ht1qrPuj+aiP9ufh2rOFHG4uv+nNHLRffbZ+sev7DO4x8nL7v1gmI
+	 bLGYncM07V497YatisD28ooAsuUoodjagm9nylsG+6XIuV5rGYjNi0tkglwnHeof3b
+	 lsGn1e+Kphu+Nsfrtn4DPYGsHoBRynzR4EPCsYa+Dd2TDrq9whoovS9Um4EnHPH2OW
+	 M0QF0odxti9nw==
+Message-ID: <d3265e82-3ddb-4396-b1f7-4c69d4b9b7f6@kernel.org>
+Date: Sat, 26 Jul 2025 01:46:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aINvLgwaKZsKOibE@gallifrey>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Reply-To: yukuai@kernel.org
+Subject: Re: [PATCH 1/3] blk-ioc: add a new helper ioc_lookup_icq_rcu()
+To: Jan Kara <jack@suse.cz>, Damien Le Moal <dlemoal@kernel.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250725070547.3953398-1-yukuai1@huaweicloud.com>
+ <20250725070547.3953398-2-yukuai1@huaweicloud.com>
+ <3653febf-0c36-48ca-9d51-7cf93e5b25f1@kernel.org>
+ <3up6wgkarspq7zo34pe72zd5a5lygdo2sokbstxc63fajrl3gw@tpk3ihmc7k7l>
+Content-Language: en-US
+From: Yu Kuai <yukuai@kernel.org>
+In-Reply-To: <3up6wgkarspq7zo34pe72zd5a5lygdo2sokbstxc63fajrl3gw@tpk3ihmc7k7l>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 25, 2025 at 11:49:02AM +0000, Dr. David Alan Gilbert wrote:
+Hi,
 
-> > Except from a copyright point of view. The situation is quite clear for
-> > deterministic code generation, it's less so for LLMs.
-> 
-> As long as you'd acknowledged the use of the LLM in all cases, it seems to
-> me right to say to what degree you use it (i.e. the 1..3) above.
-> I think even most people worried about copright issues would worry
-> less if an LLM had just told you about a problem (1) and you fixed it.
-> (Although obviously IANAL)
+在 2025/7/25 20:03, Jan Kara 写道:
+> On Fri 25-07-25 19:21:06, Damien Le Moal wrote:
+>> On 7/25/25 16:05, Yu Kuai wrote:
+>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>
+>>> ioc_lookup_icq() is used by bfq to lookup bfqq from IO path, the helper
+>>> have to be protected by queue_lock, which is too heavy. Hence add a new
+>>> helper that is lookless, this is safe because both request_queue and ioc
+>>> can be pinged by IO that is still issuing.
+>>>
+>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>> ---
+>>>   block/blk-ioc.c | 34 ++++++++++++++++++++++++++++++++++
+>>>   block/blk.h     |  1 +
+>>>   2 files changed, 35 insertions(+)
+>>>
+>>> diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+>>> index ce82770c72ab..4945b48dfdb6 100644
+>>> --- a/block/blk-ioc.c
+>>> +++ b/block/blk-ioc.c
+>>> @@ -343,6 +343,40 @@ struct io_cq *ioc_lookup_icq(struct request_queue *q)
+>>>   }
+>>>   EXPORT_SYMBOL(ioc_lookup_icq);
+>>>   
+>>> +/**
+>>> + * ioc_lookup_icq_rcu - lookup io_cq from ioc in io path
+>>> + * @q: the associated request_queue
+>>> + *
+>>> + * Look up io_cq associated with @ioc - @q pair from @ioc. Must be called from
+>>> + * io issue path, either return NULL if current issue io to @q for the first
+>>> + * time, or return a valid icq.
+>>> + */
+>>> +struct io_cq *ioc_lookup_icq_rcu(struct request_queue *q)
+>>> +{
+>>> +	struct io_context *ioc = current->io_context;
+>>> +	struct io_cq *icq;
+>>> +
+>>> +	WARN_ON_ONCE(percpu_ref_is_zero(&q->q_usage_counter));
+>> I do not think this is necessary.
+This is used to indicate this is from IO issue path, I can remove it.
+>>> +
+>>> +	if (!ioc)
+>>> +		return NULL;
+>>> +
+>>> +	icq = rcu_dereference(ioc->icq_hint);
+>>> +	if (icq && icq->q == q)
+>>> +		return icq;
+>>> +
+>>> +	icq = radix_tree_lookup(&ioc->icq_tree, q->id);
+>>> +	if (!icq)
+>>> +		return NULL;
+>>> +
+>>> +	if (WARN_ON_ONCE(icq->q != q))
+>>> +		return NULL;
+>>> +
+>>> +	rcu_assign_pointer(ioc->icq_hint, icq);
+>>> +	return icq;
+>>> +}
+>>> +EXPORT_SYMBOL(ioc_lookup_icq_rcu);
+>> Patch 2 calls this function with the rcu_read_lock() held. Why not move that rcu
+>> read lock here inside this function ? That is how ioc_lookup_icq() was doing
+>> things, with code that is more compact than this.
+>>
+>> And since ioc_lookup_icq() was already using RCU, it seems that the only change
+>> you need is to remove the "lockdep_assert_held(&q->queue_lock);" from that
+>> function to endup with the same above functionality. So why all the churn ?
+> Yes, I agree, just dropping the assert and updating callers should be fine.
+Yes, this is much simpler.
+>> Another question is: is it safe to call radix_tree_lookup() without any lock
+>> held ? What if this races with a radix tree insertion ? (I may be wrong here as
+>> I am not familiar with that code).
+> Yes, radix_tree_lookup() is fine to call with just rcu protection.
 
-s/told you about a problem/told you that <location> has triggered some
-heuristics and might or might not be worth looking into/, really...
+The insertion is protected by queue_lock, and look up is fine with rcu 
+protection.
+
+Thanks,
+Kuai
+
+>
+> 								Honza
+
 
