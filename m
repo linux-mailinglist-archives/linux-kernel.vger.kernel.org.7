@@ -1,238 +1,230 @@
-Return-Path: <linux-kernel+bounces-745864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506A9B11FC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:07:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E957FB11FC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979B21CE4D86
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9E21CE4CF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9C223A9BE;
-	Fri, 25 Jul 2025 14:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0491E8337;
+	Fri, 25 Jul 2025 14:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbpbv5nD"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b="ZoxmfZxa"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11022082.outbound.protection.outlook.com [52.101.66.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24025191F98;
-	Fri, 25 Jul 2025 14:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753452418; cv=none; b=nCp/hN5ST2F1ThIYJve5igHPo4Q37Ut0+d9U29VEdisdevTpOBq3bYNNwTWy0PnAw/IXPMvEJ/p09XA9fJKDdRcEO+vsltxG0Z47p5ZlMHfgb2y2+t04iXMI3FW01HXxuow9LjhRe3zcWa0uSlyS292jOyjPEDaMcz79td4jNbY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753452418; c=relaxed/simple;
-	bh=0sHxsVN7hMLmzA+CO4COWGSOUftchLAHQU5UHoG3HYI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B27/gBwOFnwyRWurK3jcSaEMqdpAGisRqxQsLCf2A2CxAMBoC6kXr/1iVl1HSqYnsnVDgdlv1AwbUKO1mNaG66xZUR5dcH90vF5ENm1mmoLu1e5JEhD/jkLgf3L+NIRwfHPud7MXFVgfVu+QF05hjxw5qVYl0l6e0wNgy6p3NKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbpbv5nD; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-612b67dcb89so3413394a12.1;
-        Fri, 25 Jul 2025 07:06:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B0110FD;
+	Fri, 25 Jul 2025 14:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753452416; cv=fail; b=h+SIeMoak8xb6qvPqKDTKXHnN7OzR7El6YG17VBjYsFGCcV9pngs/WMMomE+5m03K3cSMY/EupgMHZyh1PcJYoVZMv7aMXTdYyjT17a386NH7RDYk9OW0GD5yv6H0ctRnWs3DY7b31SRcrDP3bOH9cy2WSCf9BC2QGtAgKTI4F8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753452416; c=relaxed/simple;
+	bh=moT2HFfBld0Yect6Zeu9nvzOShnr920JwH6m1BtKEhM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BRKdZmR6Zg446wFsNokvJ5uzo9eYo1bvvlrpNl6IU33UKmLkkL8+s2NZbYiTWaV93p+XQKd+jEWWoQK8yomQDtnqSn4+z8qLxCL7n3E55FXQxDSqm38xU8rAMc/Vx+sR1jTyAcx7tNnqXPvMwEdqLT9K3/VQc4K5Atlo2j5/pLI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com; spf=pass smtp.mailfrom=gocontroll.com; dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b=ZoxmfZxa; arc=fail smtp.client-ip=52.101.66.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gocontroll.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hV3w+fvNiAbPcLPVL6DtE0wheQNnwznHC8zRqif8Mic9q8RYsfYQBVTqUjvxB7F+WJj8lmM/smXSA513GUuMHE8/zZ9i3F4htcrEqmoXLMLsulCz09z3dipAmk9u1E9ku9M5JI6bkDIGe4qrOEikHXBpgBA6sYCdk9HHxvLTrJpcvxfU+lCkEipN0yCFOsdXyBS9JlAWhC2QP/cTigQp/ntALrBow6sZCY1bJ/XNmC2/kWYUbJ73HOniYKJYRHeLmpWboNG7dI/jRksnruFVvqYpyt0j2R3GOSp27CXisGrXfZ7AGLmAXRSDI0sMO2t52wmNlYYMiSfoRTJ2UveSQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N6GvOr8rlvCqGEt5E0ZVFivmeWba41UMwLIhyLyaFew=;
+ b=vf086KlzM3srl4Xagflf2lizlPoPojqV+PvOMcAE1kjlZ+RcLFrLKEDsGTBsZsgHdVlFulwJVguKlktJIEU/7ytAdgX/TF4svHlV3FpFlPi2g0ZM3Eu7t2dJYAowrbyv4qJ6m68APafVRYdBKuxQCmd32GB7pM+txJ+bcWEsCY3d+HYGVPfnZO2WNBFGbRfOSZiSrFdxH2F9uw+w0WowHGreWOq9il4zKbxCjlqRxQl0+ldQrONLcemJAiogejOAZKVdduBw91cHRHqjt3F4YHBgt8XhKEgtCUOcVeO7qAMmtM9DpDZADyU2g7hIVju1OSGvvAh79+FgwqKG5iC6pA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=gocontroll.com; dmarc=pass action=none
+ header.from=gocontroll.com; dkim=pass header.d=gocontroll.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753452414; x=1754057214; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iYC2RBfL93R6tkl4NfCFlwnnmZvyntwBirSaOeVipg=;
-        b=bbpbv5nDXqX+MCVDKOlsZcjX9hYF6OuAgkOnp8jX7H4zyzfHf5mo4c5hRny7/FDvJX
-         eckKTfWN6X+4Wx2NFUaIiXozHXLQol1AD5Gp/svURu7iyG5eZrCvYSs7V+rnNQebrGjD
-         ei3HDwwqF442N06e0rH2HtWhcRgsj40D8WZoJv2+rQg0YXYIC6jLnQyKSlRNOVT3hKlJ
-         5L7XG4wqgGCNXDvHCdJwdH6c+4zOO7EHbLetqcrCVgW4GEdJ8/JScmLRQw1chX1YPVKf
-         I06hWzNk06eR6mhXho26g/ESBBd6XwjwmlS3U/rKycbXNQtB6ZNSfYY/JBLTXCzHbo5B
-         /jJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753452414; x=1754057214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8iYC2RBfL93R6tkl4NfCFlwnnmZvyntwBirSaOeVipg=;
-        b=un7W/Qeda31va7Sb31ldGrZRlJTf0N+2KHCX0Pq/+JftlCk88uf9uhFe5+nFPG+A63
-         o0vxkDU4xZuaRwtiHYITpKZShtGOHXX4IGVoPKarUhzFphC5TTzZTTTafb6ehFt8LIU2
-         15bosRwb0ifmnEky6ZVNiLHIgKPeEaL1dr183SMUKuml89v8AoJpKMS8528VNEjHw2Kn
-         wyIKrxAmeS7ssmIN/GG+tQ1hO+g5bI/0EZeZfngZxeOranmEc9Min24lu9UPv/DaphKc
-         f0Zvra0VgKepUiKmkzfG6nFvQoPOFtmMAUNYUqOQQeekOkkjbx3GQ7lmDGxs3jho8oPG
-         RCLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMVYjjEoRuaVRPCxyEaTFtv+tjpSabHMMGEvucXDi1u3mIHkcCuMN0tJE3DDbfOyZIQJLFnaL8mbhGJw==@vger.kernel.org, AJvYcCVfpEwAJOMvTmqR7QpqWk+oUOQ3s+rB4OOFZPpPDA0CeQvuDVUnFRHGV/y/wTFsnJD+F9vLZtMt9E+ZSHhRI4qdUw==@vger.kernel.org, AJvYcCWgOZCpn8brSHjNrgc6MoIWaw1biNfrUE5VMQeyPeaYesFiHy16dhCuzv3SF10dmRMcYic=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8bNzljoBbKPcYeaHoLNiPStOwh9JbOD34Riigo0kYSmtarFH7
-	31uhIPdfSTTgjbdaM1rJuk512OlBK12dOIRPGHeCR8hhh0Jeh23vpvHoQl6lmDPA
-X-Gm-Gg: ASbGncvkYGeADYFGKLzMKiYC/+Zwoclaq1QPMZ07HfY0V9StczStkuIQt4kI7r7KkhF
-	MvWDX/IhZRyUWeRJPwptgIdHBd9uHtOMuD9kbGsTdme79gL5IP4hftgG9to0OQbwpHIkPM/8wcl
-	UHOoidC3NMis3jpu8GzO55JnWAlyAT0r/GeHdzsk5nLnqPVkGHdv/yCeMCV+Y+Q6otNb50/pJAs
-	utl/M0NwuSSBvuTZ+zqepxbzCzfibn1blJY5mNtijeDktzeJlQJBL58FoQZX8ZjWHwZpe0sks2j
-	c8IMZjqFr0IxVFsJRWIlcMzQVSQUR1YiuRHOufjxHaEek0Iy21hjsLAaz8kwZfkhJ0MkAEM9nxN
-	5A1BBGJPgAKUEtkqqSA0=
-X-Google-Smtp-Source: AGHT+IE1E/OuEbrE4EU1xp+/4I+7DDGhzzSK9OIzrZsyqP1Q1iuEgEEpnsqBtZkyIJJKJkVRV7oOlg==
-X-Received: by 2002:a17:907:971f:b0:ad8:8529:4f8f with SMTP id a640c23a62f3a-af61d37c54amr266352366b.45.1753452398566;
-        Fri, 25 Jul 2025 07:06:38 -0700 (PDT)
-Received: from krava ([173.38.220.59])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f861d7bsm269469266b.119.2025.07.25.07.06.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 07:06:38 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 25 Jul 2025 16:06:35 +0200
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, acme@kernel.org,
-	namhyung@kernel.org, bpf@vger.kernel.org, agordeev@linux.ibm.com,
-	gor@linux.ibm.com, sumanthk@linux.ibm.com, hca@linux.ibm.com,
-	japo@linux.ibm.com, Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: Re: [PATCH bpf] libbpf: eBPF fails on events with auxiliary data
-Message-ID: <aIOPa25nzPHEqr0n@krava>
-References: <20250725093405.3629253-1-tmricht@linux.ibm.com>
+ d=gocontrollcom.onmicrosoft.com; s=selector1-gocontrollcom-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N6GvOr8rlvCqGEt5E0ZVFivmeWba41UMwLIhyLyaFew=;
+ b=ZoxmfZxahdwSqO27tmYyBy95q1cPbTZjkVzlwtpO50rN7VvazBP84zoU9Q/J0s8YmrJSNkv7a5MTJoLk75G7LgVaxtaIVc6KPzcaMsla0pR4VzML10fFs0/Ov6kms/mKS76YWqH95btih7wCH2YTPFP60vbJNkRBizZHaQbXau4vC9mEXm66W1b9tOwyU+t5kNhtS/4jpWMCzsH6t+xWN37TNqXLKYdQImohqSpR1EHo8ePXoovqBNCokhtHB4yBDCOqbNCqWfRwa+Nmr2gFKgS0nDglCRf5rHUYoPpM9HjqAxZMtAQvXlKH3AwxQsjahc8qUkkAYQwa1yTEDw62lw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=gocontroll.com;
+Received: from PA4PR04MB7630.eurprd04.prod.outlook.com (2603:10a6:102:ec::16)
+ by DB9PR04MB11512.eurprd04.prod.outlook.com (2603:10a6:10:5e1::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Fri, 25 Jul
+ 2025 14:06:46 +0000
+Received: from PA4PR04MB7630.eurprd04.prod.outlook.com
+ ([fe80::311b:ad3a:4a62:7b5f]) by PA4PR04MB7630.eurprd04.prod.outlook.com
+ ([fe80::311b:ad3a:4a62:7b5f%4]) with mapi id 15.20.8922.037; Fri, 25 Jul 2025
+ 14:06:46 +0000
+Message-ID: <03096180-1e33-4dd0-b027-cc18a5010e46@gocontroll.com>
+Date: Fri, 25 Jul 2025 16:06:45 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: backlight: Add max25014 bindings
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Daniel Thompson <danielt@kernel.org>, Helge Deller <deller@gmx.de>,
+ linux-fbdev@vger.kernel.org, Lee Jones <lee@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+ Pavel Machek <pavel@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>
+References: <20250725-max25014-v1-0-0e8cce92078e@gocontroll.com>
+ <20250725-max25014-v1-1-0e8cce92078e@gocontroll.com>
+ <175345006903.1002291.4212198267952446360.robh@kernel.org>
+Content-Language: en-US
+From: Maud Spierings <maudspierings@gocontroll.com>
+In-Reply-To: <175345006903.1002291.4212198267952446360.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR04CA0082.eurprd04.prod.outlook.com
+ (2603:10a6:208:be::23) To PA4PR04MB7630.eurprd04.prod.outlook.com
+ (2603:10a6:102:ec::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725093405.3629253-1-tmricht@linux.ibm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR04MB7630:EE_|DB9PR04MB11512:EE_
+X-MS-Office365-Filtering-Correlation-Id: 879b086d-e442-4e19-54af-08ddcb847dbf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|10070799003|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?KzJiTXlkK1hWQUxmQWJ6Qm5nT0pxUWpwdlAzK25jWEVXU3lFbGxsRVNNbWRu?=
+ =?utf-8?B?emQ4bWNzS0VJL2tLa0ZjUk53Z1lBa1Q2VDVURUtBeVcyaitxdDg4di9qUmVi?=
+ =?utf-8?B?QUhMV1VWRU1kb2tWRmhJa0p1VGxncjB4amlsejBENXo5ZHRPa2luL29nY01P?=
+ =?utf-8?B?K3J0MTdNQmRpZWI5blcvOG8zbEowM1Z3YnlEelVtZkFXWVNLN0d6U0VmYTF0?=
+ =?utf-8?B?UG9yeVBkMzhZQlJtVlVoT0I5eDJIT2lQb3o5Q2h3T3ZOMTc0bDM0Q2M5U0tN?=
+ =?utf-8?B?WGhDbnJiYkk1TFRVNUVDUlRzaEl2c09FOHFCZENLeDk2SFFDMjlhVGhQdGsz?=
+ =?utf-8?B?VlR1OEt5RWowcVMwSDNBc29Xclp0WXV0Y0p0ME1Ca1ZobzUwcExGZTBXczdm?=
+ =?utf-8?B?TFc3NzNIM3hwd2x2Q3ZyTHZRM3cxbW1aWkxtSDlmNndCTVo0Z1pwcFpzQzBI?=
+ =?utf-8?B?Y01QTWJOSXBpRjBWcEhrcXpiSVYyUzlTODhoTUJheGVHUWZrNDFpMDMydlN3?=
+ =?utf-8?B?aEFNUXRDU2QzUzhoMDlJZEw4RXF6bW1mbTJoMC9CbkhRYnJiRkFSL2dDaDRQ?=
+ =?utf-8?B?cjA5djhJWFI2NEQ1Zys5SGZFcTlsY1lReGp5ZmdweUZFVllqQXEzRFpLOURQ?=
+ =?utf-8?B?UnFCdHZmdVRYUWQzbU1qQ3RzVkl1Zk0yNytPaVVRK1Fja1hwVGJsbUxvRkYz?=
+ =?utf-8?B?N2psZVl5R2ROaUh2S0xsb1lKNExWQXNyRmhrOHlHNEVEeXd0WHdZMmRjM1Nr?=
+ =?utf-8?B?dEZIanRTLytRTEkxTnNPOUFEUERaSmh6RVdWbHhOaHdLeE5RZi9tYjd2dnpF?=
+ =?utf-8?B?OHRUN0FrZHArWi9YUWZ3V05rN21nQ2xMei9EV0dxZlZNK2FYOFZYUitsbkFJ?=
+ =?utf-8?B?MHFuaTR1bWZRUEp6eSsySUpFQXphc2NTTFNJN1U4OFZhZWJKbDFIeUtTbGdU?=
+ =?utf-8?B?NWp5dGRFa200QXBXblBFY2xVU1JGd3IvK3kzcmUvMi9zMUVvWDB4UG9sMlMx?=
+ =?utf-8?B?WW8vRjJ0UlNKSXRlbjdDVUxKMmZObkR3YzZ2MlY4dDdNREUraVNjcFlNbWdX?=
+ =?utf-8?B?TTYvV2NmdHpBL3dZL0JBNnQ5V0t1NEUvNjQwMHRrd3JaTmVtSU02bC8xZmNh?=
+ =?utf-8?B?UnB4ZC9iRkpPQnc4SjRIcUJVcVc4SHlSQ3ZoT3NkS0NMRlc3R2xiOWVPb0ow?=
+ =?utf-8?B?MlRjVklFclJsS1paWGFHNEFlYXpEd3dZQlpVTW1ORFR2cjQyRGlVNVZhZ1Z4?=
+ =?utf-8?B?Slc4Wm15Q1lZMmtBS2hDL1cyZTVyVkJQb0JNZWhwbmkyRVBQR1pxTHg1NHBL?=
+ =?utf-8?B?dVlPc2dIdXRYWjFsUWZJR3dES0RwQTlkWUh3c3h1TEY5a010M2tPY1pLcUZs?=
+ =?utf-8?B?bHpGdUhFZTF2Qzl2S0p2MXg5R0phU3plbUgvTGVuODJsUUI3cm1OOUZCT0ZD?=
+ =?utf-8?B?NlQyTFMrWENINTg1TGxzdDhER2l6Tlh6alVxVUpUcExQeG9nOGU2NzZvNVFv?=
+ =?utf-8?B?M1dCeU5uU0V3S0JxbmVoYXBoeFIxb0NXMnVWam0xUUhNTHVzd1lheGNCdXIz?=
+ =?utf-8?B?dGZ0NlA4SE9yNjY4R0dob0MvZ29ITDdSOGZ6ZzV0TFhvVHcvSjhJZjlWekNQ?=
+ =?utf-8?B?a0JLVnhGZlVlZUt4QmJvQ1FBT3lEWkQ0dGlkWGQ0d0h1VjNEUlA0Y2hHMjMx?=
+ =?utf-8?B?aG5vT1EyUlljeGVMM1hiUnltZG80M0kzdFNrV0pFd050NFdHbUlWUmZxVmVo?=
+ =?utf-8?B?SzNVZ2pMWi9iVzdTRXRxdjgwcG83QnZydVpGL1dpT0dGMTRWRWNBOU9OVVFy?=
+ =?utf-8?Q?+dEd87Q4uWxBQ1CkwWKRoPuvlWr3+e+93HP0c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7630.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cUdhZnY5b044NWJSQUVyVlNjK2RYZTlMb2gyWHRPb3hIZk05dlFUMXNWT01D?=
+ =?utf-8?B?SW00K0R2cmdGeUZLZ3hHUzNiTStBRnBOOS8ybGIreU0veUtxeWQrQW9rYzVY?=
+ =?utf-8?B?QlJzVkkzRzBQbTZiZUNjUWdxeklFbEVuREx4ZCtpQnlneStscjMwcHh3d1hX?=
+ =?utf-8?B?QjZDdURIVVpVT3JBWG40TnR2WURNVXJvaHdnN1pFWXdyVTEyc1VMVGdGd2la?=
+ =?utf-8?B?eE5KTFIrSnQvYXBaQ1IrTWVDYWtrdUkxKy9jWGFQanJYb0JJSVpuNlNMS1lS?=
+ =?utf-8?B?eEFxeDh3S2lPRkQvYnczR3JlVWREeFEvNlp5c0pWYTV1ZFJmb3dkcEtZVUkv?=
+ =?utf-8?B?Tk9KM29JTmRONURyWmhXb1FuTDlBNWs1Q3Z3bjdoMW12c0N0RWJoQm4xckJ5?=
+ =?utf-8?B?MVRaRXBxODkvV0FwalJlZTh5bFFGdjZCdVBpTy9kV1JKMjVrelQvUHlNZmM1?=
+ =?utf-8?B?ekJGbVI1OFB1em5VVmpzVm5KYjZJRXJmbVh3WnZ1bCtIT29PV3dFNFMzUVly?=
+ =?utf-8?B?SFlxREcrZWFBTDdRSGVJZmg3UW15YlRLY2JXMDFrbTlsVUZqMUJzSXhNWXNK?=
+ =?utf-8?B?U0k4dWFRdGtqTHdqSXZudnVTS2JxM0NRYnRjZTBGcnlYVzlnRFlDZWU2d0JC?=
+ =?utf-8?B?dDEyeXgrRUdUL0RTYXMzU3NCeFh0c0g3Q3puM0JwOXN6d0NCOGR4RXZnUndv?=
+ =?utf-8?B?RlUwZm1nV1cyQlJkQXhVMFpBNjBsWEpKd1g1VkVIMUFaRWM2RG1XdTlRYkxP?=
+ =?utf-8?B?SkNHUFU2cmV5Yi9BZXFtM202c2tmRDZNUC91YldVelhJVENyN1lQN3ZNVWM5?=
+ =?utf-8?B?Q3hucjZ3dGNpMmdyaHBtbG1lM0RtNzlzdTNjSkNZc1kxZnJ3Q05pWnFOSEFS?=
+ =?utf-8?B?OTYzU0JPZTA4OVVKUHUrQXNRTFNnb2xGYWVVS2ltUzlKVG94cUVWVEwvQTVm?=
+ =?utf-8?B?WFcwYlA0YnJIMHdTTi9GWThBdlFIZVFXSTNXZWcxQ3pxVC83cGdvR0dDNy91?=
+ =?utf-8?B?Y0J5a2p6aGNxUVIyQ1QzL3QwQ1hsa08vVmdwK2dFUnBSdXYwQWFaT2lyYytY?=
+ =?utf-8?B?bkl6eFprMFEvWUhGc1ZHaWd4Qkc0bVRMeVV0QVd5SVNrSXNXVFJxL3FiZlZG?=
+ =?utf-8?B?TDkydWdCM2thQzg4QXJRZnk4eUVzNW5aUXRqVjk4ZFQwZ3RPTnFOZmZTQ09Y?=
+ =?utf-8?B?OTdXVVQrenM4NFZRR1VPMjlwQUV4SndwQlZzc3FvazVqZEdqZVVIRjRwdnZx?=
+ =?utf-8?B?V0RXVVZEdjNmYVFoZVd6VDFMcktUWXFBaTZ0MVVINWVmcHdXbGdoK2tTWFFr?=
+ =?utf-8?B?NjZTcFNrSmJCK2lTZ2pURHpzTnpMWWo4bS9xVlFObzY2ODY2SmJyMThZWUhX?=
+ =?utf-8?B?Um01WkZlek8rbmJRSmp5TWk2eTlDTEJZVnRhc0I3dGlIZHl0STFFNjFpL3Zo?=
+ =?utf-8?B?L3I4Rm9WQkdyd1JVbFVIeU0yWDRBbGNML0FBM2NvRVZXSENxZStYN2x5VEJL?=
+ =?utf-8?B?Tk1GYlBxSDB1d0JOOTAvWm5OaXR3TGpvVmcyWGc0VStVemlBNTZycndZODB0?=
+ =?utf-8?B?aEZwaHUwb1VKMlZRd3pQcktIMWJNMTluZ3RqTlhmSzg2YmhBbEdDSStCV1NI?=
+ =?utf-8?B?YkZGSEIvZWwrUzcvdHZvU09XWGQvQ29OYzYvdzlUdlgvVVBQRGtURjQ0NTZX?=
+ =?utf-8?B?OUx0T0V6dUFyYUlGYlFHVkNTNFpJTGgvRTlIbFpUODAyczZVYmxFckdhMUl1?=
+ =?utf-8?B?MHVPTjBLVFVKRG9LeUFWUGJNVGVBWWxqVUF4SnRhTjZrNGxqRGNXN01EVDBI?=
+ =?utf-8?B?VHQ0WVZpYW8xRlFERU41RHkxdmo4Z2x6K3BkR0lqS0Z4L2c4c2pSM01Wd09I?=
+ =?utf-8?B?UGZDZC9rYmlQRkh3WDJoM2h4a200dkRnNVVjdmxXU255UkEvdVRWRWhLREVP?=
+ =?utf-8?B?MFNveS83Vk8zN1hENzNwaXhISktVTXE0K0JSWldMUFBJRFcwRmNrNWRFdEw1?=
+ =?utf-8?B?Mm52T0FDMTBmMkIrUTVXWldxRTQ4OE9uVGp4RzZaazJXRlRBSXp0ZlRvOWtk?=
+ =?utf-8?B?YXB6elJIMHZQUjdHWWJHczlqNzdYcE5wVHRBeEpFM0wyd09FUU5lQWM2Q08x?=
+ =?utf-8?B?cUZkOUhtMjVTSWxhSnpnWVRhbktTUm5QZFhxOVdmTDNBck5yS3FWNDdpMnNh?=
+ =?utf-8?B?dDVkMFhuNXpEUUxYR0hBK0J1bUlhVk82d0Q5Y2NkaEM3eDM0cXhRUEhxTmk2?=
+ =?utf-8?B?cUR4WDM4QWVGTzhYRkVlNGFNTlNnPT0=?=
+X-OriginatorOrg: gocontroll.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 879b086d-e442-4e19-54af-08ddcb847dbf
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7630.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 14:06:46.3628
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4c8512ff-bac0-4d26-919a-ee6a4cecfc9d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /p1cbB29eNqAJH4j7u94nnOG01+XcVIIoFEdKQInoPAa7+K3K2WrN++nh9u2h698dcTt5K+Nx61WUFvaPuHjeEof45Nt/CGQJSD0U0ZqJQ4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB11512
 
-On Fri, Jul 25, 2025 at 11:34:05AM +0200, Thomas Richter wrote:
-> On linux-next
-> commit b4c658d4d63d61 ("perf target: Remove uid from target")
-> introduces a regression on s390. In fact the regression exists
-> on all platforms when the event supports auxiliary data gathering.
-> 
-> Command
->    # ./perf record -u 0 -aB --synth=no -- ./perf test -w thloop
->    [ perf record: Woken up 1 times to write data ]
->    [ perf record: Captured and wrote 0.011 MB perf.data ]
->    # ./perf report --stats | grep SAMPLE
->    #
-> 
-> does not generate samples in the perf.data file.
-> On x86 command 
->   # sudo perf record -e intel_pt// -u 0 ls
-> is broken too.
-> 
-> Looking at the sequence of calls in 'perf record' reveals this
-> behavior:
-> 1. The event 'cycles' is created and enabled:
->    record__open()
->    +-> evlist__apply_filters()
->        +-> perf_bpf_filter__prepare()
-> 	   +-> bpf_program.attach_perf_event()
-> 	       +-> bpf_program.attach_perf_event_opts()
-> 	           +-> __GI___ioctl(..., PERF_EVENT_IOC_ENABLE, ...)
->    The event 'cycles' is enabled and active now. However the event's
->    ring-buffer to store the samples generated by hardware is not
->    allocated yet. This happens now after enabling the event:
-> 
-> 2. The event's fd is mmap() to create the ring buffer:
->    record__open()
->    +-> record__mmap()
->        +-> record__mmap_evlist()
-> 	   +-> evlist__mmap_ex()
-> 	       +-> perf_evlist__mmap_ops()
-> 	           +-> mmap_per_cpu()
-> 	               +-> mmap_per_evsel()
-> 	                   +-> mmap__mmap()
-> 	                       +-> perf_mmap__mmap()
-> 	                           +-> mmap()
-> 
->    This allocates the ring-buffer for the event 'cycles'.  With mmap()
->    the kernel creates the ring buffer:
-> 
->    perf_mmap(): kernel function to create the event's ring
->    |            buffer to save the sampled data.
->    |
->    +-> ring_buffer_attach(): Allocates memory for ring buffer.
->        |        The PMU has auxiliary data setup function. The
->        |        has_aux(event) condition is true and the PMU's
->        |        stop() is called to stop sampling. It is not
->        |        restarted:
->        |        if (has_aux(event))
->        |                perf_event_stop(event, 0);
->        |
->        +-> cpumsf_pmu_stop():
-> 
->    Hardware sampling is stopped. No samples are generated and saved
->    anymore.
-> 
-> 3. After the event 'cycles' has been mapped, the event is enabled a
->    second time in:
->    __cmd_record()
->    +-> evlist__enable()
->        +-> __evlist__enable()
-> 	   +-> evsel__enable_cpu()
-> 	       +-> perf_evsel__enable_cpu()
-> 	           +-> perf_evsel__run_ioctl()
-> 	               +-> perf_evsel__ioctl()
-> 	                   +-> __GI___ioctl(., PERF_EVENT_IOC_ENABLE, .)
->    The second
->       ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
->    is just a NOP in this case. The first invocation in (1.) sets the
->    event::state to PERF_EVENT_STATE_ACTIVE. The kernel functions
->    perf_ioctl()
->    +-> _perf_ioctl()
->        +-> _perf_event_enable()
->            +-> __perf_event_enable() returns immediately because
-> 	              event::state is already set to
-> 		      PERF_EVENT_STATE_ACTIVE.
-> 
-> This happens on s390, because the event 'cycles' offers the possibility
-> to save auxilary data. The PMU call backs setup_aux() and
-> free_aux() are defined. Without both call back functions,
-> cpumsf_pmu_stop() is not invoked and sampling continues.
-> 
-> To remedy this, remove the first invocation of
->    ioctl(..., PERF_EVENT_IOC_ENABLE, ...).
-> in step (1.) Create the event in step (1.) and enable it in step (3.)
-> after the ring buffer has been mapped.
-> 
-> Output after:
->  # ./perf record -aB --synth=no -u 0 -- ./perf test -w thloop 2
->  [ perf record: Woken up 3 times to write data ]
->  [ perf record: Captured and wrote 0.876 MB perf.data ]
->  # ./perf  report --stats | grep SAMPLE
->               SAMPLE events:      16200  (99.5%)
->               SAMPLE events:      16200
->  #
-> 
-> The software event succeeded before and after the patch:
->  # ./perf record -e cpu-clock -aB --synth=no -u 0 -- ./perf test -w thloop 2
->  [ perf record: Woken up 7 times to write data ]
->  [ perf record: Captured and wrote 2.870 MB perf.data ]
->  # ./perf  report --stats | grep SAMPLE
->               SAMPLE events:      53506  (99.8%)
->               SAMPLE events:      53506
->  #
-> 
-> Fixes: 63f2f5ee856ba ("libbpf: add ability to attach/detach BPF program to perf event")
-> To: Andrii Nakryiko <andriin@fb.com>
-> To: Ian Rogers <irogers@google.com>
-> To: Ilya Leoshkevich <iii@linux.ibm.com>
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> Tested-by: Ilya Leoshkevich <iii@linux.ibm.com>
-> ---
->  tools/lib/bpf/libbpf.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 162ebd16a59f..5973412a1031 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -10960,12 +10960,6 @@ struct bpf_link *bpf_program__attach_perf_event_opts(const struct bpf_program *p
->  		}
->  		link->link.fd = pfd;
->  	}
-> -	if (ioctl(pfd, PERF_EVENT_IOC_ENABLE, 0) < 0) {
-> -		err = -errno;
-> -		pr_warn("prog '%s': failed to enable perf_event FD %d: %s\n",
-> -			prog->name, pfd, errstr(err));
-> -		goto err_out;
-> -	}
 
-I think this might break existing users depending on this
 
-could we instead add some 'enable' flag to bpf_perf_event_opts and perf
-would use bpf_program__attach_perf_event_opts function instead?
+On 7/25/25 15:27, Rob Herring (Arm) wrote:
+> 
+> On Fri, 25 Jul 2025 13:09:23 +0200, Maud Spierings wrote:
+>> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+>> with intgrated boost controller.
+>>
+>> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+>> ---
+>>   .../bindings/leds/backlight/maxim,max25014.yaml    | 78 ++++++++++++++++++++++
+>>   MAINTAINERS                                        |  5 ++
+>>   2 files changed, 83 insertions(+)
+>>
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
 
-jirka
+Pretty sure I did that, but I've never gotten those tools to work quite 
+right, I'll look at it for v2
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.example.dtb: backlight@6f (maxim,max25014): Unevaluated properties are not allowed ('bl-name' was unexpected)
+> 	from schema $id: http://devicetree.org/schemas/leds/backlight/maxim,max25014.yaml#
+
+Ah oops, leftover from old version, fixed in rv2
+
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250725-max25014-v1-1-0e8cce92078e@gocontroll.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
+Kind Regards,
+Maud
 
