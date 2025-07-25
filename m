@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-745567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF63BB11BBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:09:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB4EB11BBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4373D188DD77
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 506D9AC0B66
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A172E54A1;
-	Fri, 25 Jul 2025 10:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5552E62BB;
+	Fri, 25 Jul 2025 10:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="OSoXrK0i"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="cGEBDXBo"
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A7C2E5414;
-	Fri, 25 Jul 2025 10:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4932E5B3F;
+	Fri, 25 Jul 2025 10:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753438047; cv=none; b=WDFk+dl1BdzU4mjlnVtM3j9+V6b5//KpO7O8GMWTl8yQtRcRV6dB3jaNS0ZFqLaDoZddTeq/ICxn36PRCsosrY5MWGEfZ99FgleoxZHBjZhWdraDt7I6BT+YgSW68Zi8KZpKaTVf5S4O94T7Z0zG4w6XqnmE7Bo2OZlAjveU058=
+	t=1753438052; cv=none; b=IqXv7RdwSgcMkFkhm4q9RlwDgNnNKNco7exa1m6zSHErA6uqRC48fnlVJ1qkQUkJA+ZXDV69vpsiFlBHAZVjhZ5j8fffqBWfreiL3WVXWQ4LB4sWQsKz4bhr67SUME6SNNGRO64uZzZ5jDC8hFgXwiAXeAx2DzLPO15ZQdowNsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753438047; c=relaxed/simple;
-	bh=q/3aULXkGU6hhZbuLWZNXXcuWu9GN4L9i3k2rru9NjA=;
+	s=arc-20240116; t=1753438052; c=relaxed/simple;
+	bh=gMxr6Ge/SNR6QhDQ96+1JrZCqTWI7fRZ6tSHO7GQ8FE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=rbCD+w7HqSREyehtLFPOsVZl+Hwm0DcuR8y8lyQBLK9Sz/VTB2WSRnKYzZoQpKIfMf7FM/wUV9cg8jKPw7bKZG1joIKEPBZsSle+iGZ29u9MIeHh1sV/dHwLvon0vszIg8Fg9Zra4iVmhxoVJ10oFQSZkLaIyiAJ/QxOFmmOZqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=OSoXrK0i; arc=none smtp.client-ip=185.132.182.106
+	 In-Reply-To:To:CC; b=DinshFIlL8nBSD3f9YNFYZiJQvXkpYprP/Kzsl/bLM5jvruJRWG4VT4eUdoVISeSx+Q6pJsZA3H7j8UriDtidjfqsomeW3feqCs/T4pHSJpj2YFjK+nGWVuJwvqhV0sV/oteHd8z0GNvwAvTdpkQOrm9TkLlepwH0+iMHKBI8qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=cGEBDXBo; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P9cSdh007814;
-	Fri, 25 Jul 2025 12:07:08 +0200
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P8Rxmg010432;
+	Fri, 25 Jul 2025 12:07:13 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	a5/bUBAcTHA5SdieGqpRNiqi2E15Aab+zmlB1Dy9Q40=; b=OSoXrK0idm941G5W
-	sOIF943zL9Je+mlt2Rzt6vLREo7pe+cb+voOcLPSn0cyQ2+y69MFAeTlECBZ8AWE
-	s26OraJ3Iqu6QIzSGvepRou/VGNAGYbtT4neEWeizSlStoKFH/QNRxtizKyTIYbX
-	tXL5yieJwK718P03oNsGoWCOFuLQCRA+u9J1T2gJcyTKEkvXSopsvZ2w8j/s8iXV
-	+rTaiGRQenJPUn6hQjkqTS5CqIEjLIT9WsLis06GMWb3ASBt+ais//iKBZfrWy9G
-	ZQQNIXBsTzSvHSgR2ugSatSzUnMBwObS5J9anTw2yPi6zT6TmBuYQf6Aa333N9m4
-	YP3FUA==
+	OeQA3LfMAAXViAVsAHZjFk5rcaqSif2z15EtCoo6Cew=; b=cGEBDXBowdU1fgTW
+	jjnfqPnkqHWA52Gv1UoLm0iyRqmRywA1nXfCpjxmAfAYe/vNgMB15GbTooewVR/F
+	ZzBS1+S/R9+Vd0MwaLnd8x+OUuaP7SQVU9yzFrcC8uvbDcOYIaLBUECONvyFJK+d
+	uf/3uNp2mRAFFSKTQJaA4/rfZLYFcQNhOLAzOgtNYb80CKzc8WFJXdX20qf2uYKk
+	tCsIFH48bS3Tdpnq3n9y8yM5j8HRQC1g1RIQIIzgEROf+SPLtW4aoeuuD9ilqgzV
+	c+kvzuqntR5r0/nTiJhn94lbU8huNMvxryw5g+CoDtPBEtAbkwp7D7TCkgR+YneV
+	I6R/Uw==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 483w3m2hdp-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 483w3m2he0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 12:07:08 +0200 (MEST)
+	Fri, 25 Jul 2025 12:07:13 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4561540058;
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4828040059;
 	Fri, 25 Jul 2025 12:05:37 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D32BA7A19C6;
-	Fri, 25 Jul 2025 12:04:32 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CF8377A19CA;
+	Fri, 25 Jul 2025 12:04:33 +0200 (CEST)
 Received: from localhost (10.252.19.90) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Jul
- 2025 12:04:32 +0200
+ 2025 12:04:33 +0200
 From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-Date: Fri, 25 Jul 2025 12:03:59 +0200
-Subject: [PATCH 07/12] drm/stm: ltdc: handle lvds pixel clock
+Date: Fri, 25 Jul 2025 12:04:00 +0200
+Subject: [PATCH 08/12] arm64: dts: st: add ltdc support on stm32mp251
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250725-drm-misc-next-v1-7-a59848e62cf9@foss.st.com>
+Message-ID: <20250725-drm-misc-next-v1-8-a59848e62cf9@foss.st.com>
 References: <20250725-drm-misc-next-v1-0-a59848e62cf9@foss.st.com>
 In-Reply-To: <20250725-drm-misc-next-v1-0-a59848e62cf9@foss.st.com>
 To: Yannick Fertre <yannick.fertre@foss.st.com>,
@@ -101,90 +101,40 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
 
-From: Yannick Fertre <yannick.fertre@foss.st.com>
+The LCD-TFT Display Controller (LTDC) handles display composition,
+scaling and rotation.  It provides a parallel digital RGB flow to be
+used by display interfaces.
 
-Handle LVDS pixel clock.
+Add the LTDC node.
 
-The LTDC operates with multiple clock domains for register access,
-requiring all clocks to be provided during read/write operations.  This
-imposes a dependency between the LVDS and LTDC to access correctly all
-LTDC registers.  And because both IPs' pixel rates must be synchronized,
-the LTDC has to handle the LVDS clock.
-
-Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
 Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 ---
- drivers/gpu/drm/stm/ltdc.c | 22 +++++++++++++++++++++-
- drivers/gpu/drm/stm/ltdc.h |  1 +
- 2 files changed, 22 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/st/stm32mp251.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-index 2bcdef76af2e8cbe3b6030deccefa097f28adc3a..031c561b8e780a55b77f4a4c8338e74b52bbbb48 100644
---- a/drivers/gpu/drm/stm/ltdc.c
-+++ b/drivers/gpu/drm/stm/ltdc.c
-@@ -837,6 +837,12 @@ ltdc_crtc_mode_valid(struct drm_crtc *crtc,
- 	int target_max = target + CLK_TOLERANCE_HZ;
- 	int result;
+diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+index 8d87865850a7a6e8095c36acdef83c8e3a73ae54..9698170547c13ca17f032dd714dd4d7290a9b0e2 100644
+--- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
++++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+@@ -1052,6 +1052,18 @@ dcmipp: dcmipp@48030000 {
+ 				status = "disabled";
+ 			};
  
-+	if (ldev->lvds_clk) {
-+		result = clk_round_rate(ldev->lvds_clk, target);
-+		drm_dbg_driver(crtc->dev, "lvds pixclk rate target %d, available %d\n",
-+			       target, result);
-+	}
++			ltdc: display-controller@48010000 {
++				compatible = "st,stm32mp25-ltdc";
++				reg = <0x48010000 0x400>;
++				interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
++					<GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&rcc CK_BUS_LTDC>, <&rcc CK_KER_LTDC>;
++				clock-names = "bus", "lcd";
++				resets = <&rcc LTDC_R>;
++				access-controllers = <&rifsc 80>;
++				status = "disabled";
++			};
 +
- 	result = clk_round_rate(ldev->pixel_clk, target);
- 
- 	DRM_DEBUG_DRIVER("clk rate target %d, available %d\n", target, result);
-@@ -1878,6 +1884,8 @@ void ltdc_suspend(struct drm_device *ddev)
- 	clk_disable_unprepare(ldev->pixel_clk);
- 	if (ldev->bus_clk)
- 		clk_disable_unprepare(ldev->bus_clk);
-+	if (ldev->lvds_clk)
-+		clk_disable_unprepare(ldev->lvds_clk);
- }
- 
- int ltdc_resume(struct drm_device *ddev)
-@@ -1895,8 +1903,16 @@ int ltdc_resume(struct drm_device *ddev)
- 
- 	if (ldev->bus_clk) {
- 		ret = clk_prepare_enable(ldev->bus_clk);
--		if (ret)
-+		if (ret) {
- 			drm_err(ddev, "failed to enable bus clock (%d)\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	if (ldev->lvds_clk) {
-+		ret = clk_prepare_enable(ldev->lvds_clk);
-+		if (ret)
-+			drm_err(ddev, "failed to prepare lvds clock\n");
- 	}
- 
- 	return ret;
-@@ -1980,6 +1996,10 @@ int ltdc_load(struct drm_device *ddev)
- 		}
- 	}
- 
-+	ldev->lvds_clk = devm_clk_get(dev, "lvds");
-+	if (IS_ERR(ldev->lvds_clk))
-+		ldev->lvds_clk = NULL;
-+
- 	rstc = devm_reset_control_get_exclusive(dev, NULL);
- 
- 	mutex_init(&ldev->err_lock);
-diff --git a/drivers/gpu/drm/stm/ltdc.h b/drivers/gpu/drm/stm/ltdc.h
-index ddfa8ae61a7ba5dc446fae647562d0ec8e6953e1..17b51a7ce28eee5de6d24ca943ca3b1f48695dfd 100644
---- a/drivers/gpu/drm/stm/ltdc.h
-+++ b/drivers/gpu/drm/stm/ltdc.h
-@@ -48,6 +48,7 @@ struct ltdc_device {
- 	void __iomem *regs;
- 	struct regmap *regmap;
- 	struct clk *pixel_clk;	/* lcd pixel clock */
-+	struct clk *lvds_clk;	/* lvds pixel clock */
- 	struct clk *bus_clk;	/* bus clock */
- 	struct mutex err_lock;	/* protecting error_status */
- 	struct ltdc_caps caps;
+ 			combophy: phy@480c0000 {
+ 				compatible = "st,stm32mp25-combophy";
+ 				reg = <0x480c0000 0x1000>;
 
 -- 
 2.25.1
