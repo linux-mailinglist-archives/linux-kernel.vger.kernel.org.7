@@ -1,47 +1,95 @@
-Return-Path: <linux-kernel+bounces-745425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A15B119C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:25:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D7AB119C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36181189B96F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:25:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81F9E7B7FB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2214A2BEC53;
-	Fri, 25 Jul 2025 08:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E452BEC57;
+	Fri, 25 Jul 2025 08:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1YjeCSf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H1eNZ77N";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b9YHNMFF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H1eNZ77N";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b9YHNMFF"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D0E192D97;
-	Fri, 25 Jul 2025 08:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242A12BEC52
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753431932; cv=none; b=mmH/Gz0kNrf5nVNqTqweaF9E8eQ0neQuSkkBvskQbEzQTTuzwSzb6BL9w6pKWphrLLlt4NzbWmfM7U8YwvPeh5b6V1IVGsyl8715g6SWm1q8tWiuHHSd/0HXT1s4G/j5dETZy541dmZl0OHihV/GPsH0CAg8+G/OSFlKi4nDCi4=
+	t=1753432002; cv=none; b=C86VeXfuqI3JzmNVdLUAOCllvw3BMNqjjYfw7ZmXfvf89R6egRw9bllTZ7jSf5el18x406b78mShg4+xohY24yqu5dKfoAa/mtZ+lWeBxW65eI0RzFZty5B7qbO/BahRwTmonawgZKOO72YTb3N5ZDEC3354RfwuFeJHPWPq8+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753431932; c=relaxed/simple;
-	bh=krpIjOaqUHNMs7CG0BnniYF6YeO3nrPtzg9ZDTYXMzU=;
+	s=arc-20240116; t=1753432002; c=relaxed/simple;
+	bh=Z7aDi37finAbTTLjMQ+aI5jDE8C6XmVWzbSCpuhC1SA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZUgDUYmk8NvY0ZihmrrdZs2klCpg6ul9Lg5KOu9Xd+SkB1jAVN7UiOxYLvNH2mcJcd6guMuSLLjTDrcvFZtvI0R1pnIZ6w2Ir5tR4BYN2JWHgbmoXYQNDlodA0jAbYshwOJ4FL5HwuHiXKZh2IMtYDaYgm7Ld8nb7uKbaPRIloA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1YjeCSf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D35C4CEE7;
-	Fri, 25 Jul 2025 08:25:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753431931;
-	bh=krpIjOaqUHNMs7CG0BnniYF6YeO3nrPtzg9ZDTYXMzU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M1YjeCSf5Ym2wtanJ9iH8FX09JuCQ+sS7neUVAUVBAKAxc9Yd+moeYyVXl5gyL6c9
-	 ZpEMHjwpsZlj+quWaNb0nkq9K1h2vVNKonSoa8PupH8dxaNqG8QvdhdHhfB7imkJ3V
-	 P2qEIqJ3kzLpliYFrqKEzoHQmJQZ/zmSBtM2mLBvtWOrQwvtgL0fxqmwJNqjg+eVmq
-	 Tq+1gPCDGBppQ74oeICL8nLkr39oCK3Kgc+hIbvbfM5Yg9NDX/xX5rNzdc1BFf7Y/Z
-	 BUDPA9c8I5yo+D4Lb/1RaT9R6awJlyFvC+Q+hpQLQRxAX1XFbM0sMe1d6rcV2krgK2
-	 J/Lgo/CJbO5tg==
-Message-ID: <aee74e0f-c957-437d-ab48-3977013c3116@kernel.org>
-Date: Fri, 25 Jul 2025 10:25:27 +0200
+	 In-Reply-To:Content-Type; b=mZxNkzcr/yTL6f/5DLiqhYyJYk/W6zC7KxnDu4EmfbW3OhUQ2zR36uNv8u1SwdZZrE0nob8PyAUtIzL6mTHexKn/+nW/J/xC1UzuuoXxiqFnkNLMi4fjEBhPRPVAfz4p4BpPt/aQH3rRIrhRNf/rOA/MymQ8Xc/u81ONGkqldho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H1eNZ77N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b9YHNMFF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H1eNZ77N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b9YHNMFF; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 048921F387;
+	Fri, 25 Jul 2025 08:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753431999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zXZqF93QlM7fvQgmaIDTxVZ7v4AegbzGaTVx0Ma0Afw=;
+	b=H1eNZ77NmMyDq3tiTznajEsmBs2dpgU/LSlXu7FnWi8+2Zgb1FSa9PlODRPteL6+OVTy0Q
+	xQIfR8CSo9wjzoxndU8nKC8Clp8Ib3uv50xP6B2U9ulzP1bJFl8dfGx29YhbUqa5T/wrT7
+	6+TxsPl5+drGXIjhlSjJbSjVLOIYPiE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753431999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zXZqF93QlM7fvQgmaIDTxVZ7v4AegbzGaTVx0Ma0Afw=;
+	b=b9YHNMFFjfzNuCDmJa0JsbmueKP7D2A4Aq0Blj85pakW7GcJP9FQILumjnX32gBdNYJ1d7
+	jqBE4zJZGsNUmKBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=H1eNZ77N;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=b9YHNMFF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753431999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zXZqF93QlM7fvQgmaIDTxVZ7v4AegbzGaTVx0Ma0Afw=;
+	b=H1eNZ77NmMyDq3tiTznajEsmBs2dpgU/LSlXu7FnWi8+2Zgb1FSa9PlODRPteL6+OVTy0Q
+	xQIfR8CSo9wjzoxndU8nKC8Clp8Ib3uv50xP6B2U9ulzP1bJFl8dfGx29YhbUqa5T/wrT7
+	6+TxsPl5+drGXIjhlSjJbSjVLOIYPiE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753431999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zXZqF93QlM7fvQgmaIDTxVZ7v4AegbzGaTVx0Ma0Afw=;
+	b=b9YHNMFFjfzNuCDmJa0JsbmueKP7D2A4Aq0Blj85pakW7GcJP9FQILumjnX32gBdNYJ1d7
+	jqBE4zJZGsNUmKBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DEB3E1373A;
+	Fri, 25 Jul 2025 08:26:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cQYRNr4/g2g3XQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 25 Jul 2025 08:26:38 +0000
+Message-ID: <379d3d5c-b730-4a5d-9c71-d34d23472621@suse.cz>
+Date: Fri, 25 Jul 2025 10:26:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,132 +97,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: arm: qcom: Document HAMOA-IOT-EVK
- board
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250724-hamoa_initial-v2-0-91b00c882d11@oss.qualcomm.com>
- <20250724-hamoa_initial-v2-1-91b00c882d11@oss.qualcomm.com>
- <d49d2755-2967-4bb9-b789-8be5f138d4cd@kernel.org>
- <3803aed8-3b32-4a7b-860f-8fe049f5ddee@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v13 0/4] support large align and nid in Rust allocators
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <3803aed8-3b32-4a7b-860f-8fe049f5ddee@oss.qualcomm.com>
+To: Alice Ryhl <aliceryhl@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org,
+ bpf@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
+References: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
+ <20250724135449.2cb6457b90926cce1b903481@linux-foundation.org>
+ <CAH5fLgjatYenX_xPvRW11BnRw1wP_G19eY-7AqUctnuZ3rGBYA@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <CAH5fLgjatYenX_xPvRW11BnRw1wP_G19eY-7AqUctnuZ3rGBYA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 048921F387
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_CC(0.00)[konsulko.se,kvack.org,vger.kernel.org,gmail.com,kernel.org,oracle.com,linux.dev,gondor.apana.org.au,google.com,suse.de];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.51
 
-On 25/07/2025 10:03, Yijie Yang wrote:
-> 
-> 
-> On 2025-07-25 14:55, Krzysztof Kozlowski wrote:
->> On 24/07/2025 10:15, Yijie Yang wrote:
->>> Document the device tree binding for a new board named "EVK" based on
->>> the Qualcomm Hamoa-IoT platform.
+On 7/25/25 09:14, Alice Ryhl wrote:
+> On Thu, Jul 24, 2025 at 10:54 PM Andrew Morton
+> <akpm@linux-foundation.org> wrote:
 >>
->> What is hamoa-iot?
+>> On Tue, 15 Jul 2025 15:56:45 +0200 Vitaly Wool <vitaly.wool@konsulko.se> wrote:
 >>
->> Later patches claim this is a SoM, so explain here why you are not
->> expecting it to be used outside of EVK (not following standard SoM rules
->> like every other vendor)?
+>> > The coming patches provide the ability for Rust allocators to set
+>> > NUMA node and large alignment.
+>> >
+>> > ...
+>> >
+>> >  fs/bcachefs/darray.c           |    2 -
+>> >  fs/bcachefs/util.h             |    2 -
+>> >  include/linux/bpfptr.h         |    2 -
+>> >  include/linux/slab.h           |   39 ++++++++++++++++++++++---------------
+>> >  include/linux/vmalloc.h        |   12 ++++++++---
+>> >  lib/rhashtable.c               |    4 +--
+>> >  mm/nommu.c                     |    3 +-
+>> >  mm/slub.c                      |   64 +++++++++++++++++++++++++++++++++++++++++--------------------
+>> >  mm/vmalloc.c                   |   29 ++++++++++++++++++++++-----
+>> >  rust/helpers/slab.c            |   10 +++++----
+>> >  rust/helpers/vmalloc.c         |    5 ++--
+>> >  rust/kernel/alloc.rs           |   54 ++++++++++++++++++++++++++++++++++++++++++++++-----
+>> >  rust/kernel/alloc/allocator.rs |   49 +++++++++++++++++++++-------------------------
+>> >  rust/kernel/alloc/kbox.rs      |    4 +--
+>> >  rust/kernel/alloc/kvec.rs      |   11 ++++++++--
+>> >  15 files changed, 200 insertions(+), 90 deletions(-)
+>>
+>> I assume we're looking for a merge into mm.git?
+>>
+>> We're at -rc7 so let's target 6.17.  Please resend around the end of
+>> the upcoming merge window?
 > 
-> The SoM can be used outside of the EVK. Regarding the standard SoM rules 
-> you mentioned—are you referring to the expectation that a SoM should 
-> have its own compatible string, such as 'qcom,hamoa-iot-som'?
+> I think it would make sense for this to land through mm.git, so yes
+> that sounds like a good plan.
 
-Yes. We already discussed this with qcom last time for other soc/som.
-Just look how all other vendors do it.
+Ack.
 
-> 
->>
->>>
->>> The "hamoa" name refers to a family of SoCs that share the same silicon
->>> die but are offered in multiple speed bins. The specific SoC used in
->>> this board is the x1e80100, which represents one such bin within the
->>> Hamoa family.
->>
->> Isn't this obvious from the schema?
-> 
-> This is the first patch set where the Hamoa code name is introduced, so 
-> I’d like to clarify the relationship between the Hamoa family and the 
-> SoC ID. Additionally, I want to explain why the compatible string 
-> includes both the board’s code name and the SoC name.
+> Alice
 
-There is no SoC name here. The SoC name stays the same and you do not
-change it just because your internal policy changes every X years.
-
-> 
->>
->>>
->>> Although "qcom,hamoa-iot-evk" is introduced as the board-specific
->>> compatible, the fallback compatible remains "qcom,x1e80100" to preserve
->>> compatibility with existing in-kernel drivers and software that already
->>> depend on this identifier.
->>
->> Not relevant. This is x1e80100 SoC. We do not explain that
->> microsoft,romulus15 is using fallback x1e80100, do we?
-> 
-> Same as above.
-> 
->>
->> You explain less relevant topics but you do not explain the main
->> concerns here. It does not matter how you name your board. Can be hamoa,
->> can be lemans - we don't care about board names.
->>
-> 
-> I will add more details to describe the relationship between the board 
-> and the SoM. This is what people are most concerned about, right?
-
-No. Drop all references to Hamoa because it is irrelevant. You do not
-get to change existing bindings or existing meanings just because you
-decided to use some other model names.
-
-Best regards,
-Krzysztof
 
