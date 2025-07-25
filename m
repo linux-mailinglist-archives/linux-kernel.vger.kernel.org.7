@@ -1,747 +1,422 @@
-Return-Path: <linux-kernel+bounces-745300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A192B1181E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:54:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4660DB11821
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BB0D3BEA74
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:54:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28FCA1CE0D21
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F96244697;
-	Fri, 25 Jul 2025 05:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sfdXG8+v"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810943A1DB;
-	Fri, 25 Jul 2025 05:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753422874; cv=none; b=EWU1C0EDwQWkGWbiVH1EQQXvzy6kKdWOmfzLVaIMtFMeapMZuH6QXsu89spL6eVldE6XhHAwW1cKx9fya7rVrdtV7JHntngw5tAmj9DR3jNEAJBxq0A7tH6m0GaDVQ6jNq1PoyygiPcYRPJEXbUszAjLcNqes2sY2N1jmJaEWSw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753422874; c=relaxed/simple;
-	bh=6TIwr/wtNsiuTVt+HLiSo7bWliZphS0D2xEFobD2hmU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uSDhsnIkJXYKz1tykdsYGwiHVr2mLg7me7o0sgVEgTVni+Hk7Do1dtoSTyo2oTbyGvVreZcTR/jnB72CKVhgh1TzxK9YJ+gIJ70pbLARagyX6URYzYznPcSW0LsWSlZHo1PEFblp/sj6hNZo2Ha0oSpK1XpnkH3lYU3aISXYLpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sfdXG8+v; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.130.86] (unknown [4.194.122.162])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0CCCF2014DFF;
-	Thu, 24 Jul 2025 22:54:23 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0CCCF2014DFF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753422872;
-	bh=HWcbsXJkRsia03Kf091pMg8O2CKL2zvnMJOjSHbc+zY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sfdXG8+vggzKC4riSv2Jrjas0/hUm71FO7F9mU7CSeP/Q8gMd7iahvuk4ZCap/0yG
-	 47eSpDx+11KINrVEulRGvAq34lR0jb9frACkCMK+zOulNZq/A924769VxsRt2DC9+C
-	 x/bQeKQhKxkvIBpGCl/R3PqpDH6H6uCKwsYKQKfo=
-Message-ID: <03c90b7d-e9b8-4f8f-9267-c273791077c2@linux.microsoft.com>
-Date: Fri, 25 Jul 2025 11:24:20 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFF0246BA8;
+	Fri, 25 Jul 2025 05:55:36 +0000 (UTC)
+Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazon11021125.outbound.protection.outlook.com [40.107.57.125])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC1C3A1DB;
+	Fri, 25 Jul 2025 05:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.57.125
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753422936; cv=fail; b=gSgS16GTpiJnzxb8XeBN80l4f25ydhRWZT91oQfzsDHIBist4OqzqcyByqX4VMjWrqXrbqHGE6I0gfUTOGXAWx4/gpNKppOCehkjK5iP1PlxLe0J8B3+4U8POjqrW67OL/MgBb0ODY/WrzpyIa7Vh8vUK9VHaC0asY5pw3HUsP4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753422936; c=relaxed/simple;
+	bh=iEjMThMQKU49/yxcthXdO6VPra5L2gYR407bUT0zTW8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZLfKAuMRtDA9TOnRyL5OpdAQuuFXrMP4pL/aiOEyg+SOtAsfM//SRgjDoslhMP88zNDBkDsGCVvaX02Q5CvhJfdkrbaO9tk5bWrExi8qXCklFOcZH569q1shfrm4zTty3ldmr0D4BUhAsq9aeL3FbgsHs4iq+WHUV/UfvcHDWe8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.57.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hGg/6ToQVFB7Vl5raz2kTFcxhq2oZmYFdNr818HBg6zqAjMA1axf9F/VNZbr/o0RWKs4vmTwSoWa6Eehl+kkngELJgL/fCH7FIycNowFkwNIxPhM2JdbJhw/tKfUJvmnMgbUuLZG1gt4bdZxjFo2EhIMVTV0dEdMcVEH1Zy3CZ5DWCeHGoqSHmcpkSypVS3uetcXbtPAMEOu2Gehqn1NRvH9O3Q9dSzcC8SO5UUh6rcRH51l9leF+xUM36Juvr4ii8n8rMLj0e+xyCk/Md1bH3Nd7dMEZBkgwgcm2wWVJF28TiPoVZbXNVXeUwUx7LZ692jh2SaxUMfCnh66J3a07w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n8PnOG/6N4K/TUIElKY2xiSFMKP0VwMvvOjDWKgGe+8=;
+ b=Gdq5+ZOFcaQuXBfIE3pXBCQjJS0PnYuyRQURgK3hS5PV7KQkqNraa+ule0w7l7usNGllS8c2I2UCcw3vbH4nEt47XQDZj9Cr8U2yfp0zOy/IupPVeG2wVTgmKYOLyNCr6cwoulhT5KrAhsLhi3pxnrcuxenMFOvk/oGja6CEjAFlopQiiQiiC20hwmizASCkEBvbzJicAWqIBBdjzouRoe7lBYPRP0jwnx7ynvv0StI8gWUsw1dmOu2Q2kws6oLVqCeZJATiA/a/R1URbYI6xh/8Ic7chZReRrbqxUrplZi0HLeIgAO98hEaFVuHnD0TdaOfhv4JcAttd78Uw+8Jew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:229::21)
+ by PNYP287MB4056.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:287::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.23; Fri, 25 Jul
+ 2025 05:55:24 +0000
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418]) by PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418%6]) with mapi id 15.20.8964.023; Fri, 25 Jul 2025
+ 05:55:24 +0000
+From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Hans Verkuil
+	<hverkuil@xs4all.nl>, Ricardo Ribalda <ribalda@chromium.org>, Bryan
+ O'Donoghue <bryan.odonoghue@linaro.org>, Hans de Goede <hansg@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9_Apitzsch?= <git@apitzsch.eu>, Benjamin Mugnier
+	<benjamin.mugnier@foss.st.com>, Matthias Fend <matthias.fend@emfend.at>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Sylvain Petinot
+	<sylvain.petinot@foss.st.com>, Dongcheng Yan <dongcheng.yan@intel.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+Thread-Topic: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+Thread-Index: AQHb/Ih6djfjLciEYkK3gvcBpDSgELRBx44AgACQNVA=
+Date: Fri, 25 Jul 2025 05:55:23 +0000
+Message-ID:
+ <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io>
+ <aIKi1BkNzNvsf5Tr@smile.fi.intel.com>
+In-Reply-To: <aIKi1BkNzNvsf5Tr@smile.fi.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3P287MB3519:EE_|PNYP287MB4056:EE_
+x-ms-office365-filtering-correlation-id: f8e9d4e8-a42d-4a28-2445-08ddcb3fd8f4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?EgIAiN8mZYPZxZyxdBuHNeOhaBEMhQrrTxqNkYEejZZauzSleZCjrZxQzV?=
+ =?iso-8859-1?Q?cXHhG9iEBECgXA6LA6SuhIb4Hn2FaKKqRjiN9iXgIOdTsvn/cAE9AcEu0n?=
+ =?iso-8859-1?Q?ORTfTyiR/IuOPGn03W1FL9kOPsBaQ5Dw1kzWp7pRunZp3Tn/0OJCOUND8o?=
+ =?iso-8859-1?Q?yMtJcpw4oC0+el6vqLjN/BZ8UG+IAb5LQb3bJfKRCWtf4jbniuZdeUFnhb?=
+ =?iso-8859-1?Q?grJgXtnXCQxl2gyLbleXl4KYs34JA2tXNypsurn8h0q1DDCHNg4TTwlX7t?=
+ =?iso-8859-1?Q?C6quZGxY0A+yScd893SM8OIFK2XZiW7ZwiAgs5S/bRz0FC/8/vkYmQTqY4?=
+ =?iso-8859-1?Q?QM6lziTpZQ7ze6E065L8we82y4lV90Rnveu8WaL8LvRWKOVU4mjhU1p4rw?=
+ =?iso-8859-1?Q?Olgg+m7btczYHCEruNg/H6vbfgSAmjb3ZH11rYoVTEeI66GoQmOoN0SK5N?=
+ =?iso-8859-1?Q?F3A5/IkcUwVgY16NYuYeShD8dUbAlxG+SG6t6y+rSoxFw7+zsvhoxjfKxq?=
+ =?iso-8859-1?Q?55griT4nS08nHyF+Hno8BBbq3JfcKoGV685Ojsor5pwOeLeyKnZ6swf/ID?=
+ =?iso-8859-1?Q?3iCTBD1KtwyugBvF7YJQlGM3Akou30PQK/r2GhFStT9ogopByXVexwUdXu?=
+ =?iso-8859-1?Q?asvhJjE0isRJHBcZjy/5+pAAyK5MUvmfdVPL0iU4XBbjDG1bXvlY0k8Jnd?=
+ =?iso-8859-1?Q?hzq+sH4xDCVN6TYHkPYEz3IlQdkOEAtvXNieJS21ciDMzhGTCTlIOgcbnc?=
+ =?iso-8859-1?Q?xyMiN20wVlMAP6Aohy++5dMFIHgIJnO7YXuSwu3+HsqnB3i811/s/xa+v9?=
+ =?iso-8859-1?Q?qz43paY4NyUhMGm1QDM3195/E1C1GGFia2WymrGpUA3U7sjoq1vLdO/IpV?=
+ =?iso-8859-1?Q?keLwA98b7W9eqq4ZvnkfzSzSEowGH2bKYEKezZRlarnRnvd5AtAjX5VtWF?=
+ =?iso-8859-1?Q?ucwSZtUVQvuw1qHEgzyvp3aFKv0IpgQyujlnpqw6yf8GBFoTqp+ZX6Uc23?=
+ =?iso-8859-1?Q?QE8glLF0W9Cilf/bBU6IF0N1LIf0hCYYseS9N0NEkbx2aU6jAPeqYFfm9S?=
+ =?iso-8859-1?Q?nagsyJLp0ks5xda+WKzuvgBe5Nmqw/TFTgQVGn+63QJPPwOoD0upwybFvx?=
+ =?iso-8859-1?Q?peW7c3sfrXlvfxeiZjqXs1RrKMF9GL91kj2SLqaBq0cHIo9knF4cZ+VEMf?=
+ =?iso-8859-1?Q?slnZb1ie9CQhdqtCpGo0T6ebrKX3huka0O+BtmmhCsVeXZ+OAqEajAs/iA?=
+ =?iso-8859-1?Q?lUGkWhsBqM+Lu9gDGpUkHh3EPhuiV3IU7kTwQrEDjqSM80+GOuvLeRAE+w?=
+ =?iso-8859-1?Q?eUm1EDnjDWK2VlHXOkpD/uF7aZRkZDBjeEt6JvG7qg+MhKsvL0Mu+I7ffw?=
+ =?iso-8859-1?Q?ESPkMrxksZHnak/DlhAYF+zgUW6mkZmgrQFoYfyeCt091ovCSjs1rm3w5r?=
+ =?iso-8859-1?Q?bxi1CBObClErXlhsa0f1BZpVc9sOPkuYt4l90xD6uAQXQMU5dd1TTBgY1x?=
+ =?iso-8859-1?Q?3T46/mamfcBGBQRjrs0TIbhHC3T71Zx75hx3Y9xJQV2A=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB3519.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?7ujiuk33bMrhmUvMb2oerm9LSbYq1MHA4CY3S6rgjwBPxgeECulSS9XkM/?=
+ =?iso-8859-1?Q?9PgfvF2nhaQ/tB6PyPcdVOhCuEnDtJuq6TjgxEOAwu2na76/1yq4foLq2r?=
+ =?iso-8859-1?Q?8W94/r79H0Cts3zkiQQ0DcAMPGHuFDsklBb0Mz9/XURaVxISK+qx7RU0a5?=
+ =?iso-8859-1?Q?GQO5YzsYH0dzoNKwWMhkuFhTC18naqjBIvPRvqYkif8hufYvGMgiP1XlTg?=
+ =?iso-8859-1?Q?7E+l8j+mKwdhR0Eokb2jVkw1ma9Hn3rPwFO2sm+t7VsMPQCDS9K+zKfk4y?=
+ =?iso-8859-1?Q?9eP6emdtiIY37lP+/5RsFstsw0OwScN164f8a30MoHxveIOGKsEA//gbKE?=
+ =?iso-8859-1?Q?SkLCip8oFTaCbQiB4HRCcNGh0j1JufuKzuN/gmO/2FkfBXmj1doYxOR216?=
+ =?iso-8859-1?Q?2oVJvGm/rn4fHF7LDT+znrlg1SCYVBNAbzS/DTBg8F75XqCaEBDby4UPrJ?=
+ =?iso-8859-1?Q?EPRT7Y1hqnSqDBi7gFgnACsoS6a8tJrxK1utOY3VsHnlsCq+XQcCVDUead?=
+ =?iso-8859-1?Q?BoFicvCyUgcQrF9Q4Pq+WXR4Tw7QCPVXtw8EFxQ6L9E9iw13tf0bwAW0eR?=
+ =?iso-8859-1?Q?B97lDaTex88vIkmOTJFwGV9WR8YX6mm4IA5ObTcr5KCn0HyOeoBR0e2XZo?=
+ =?iso-8859-1?Q?Ld8Oih56nFUx8Swwve4iUPNaiHCWACoa+cjKjWtqQhuud2bXhw9rWwk0Ns?=
+ =?iso-8859-1?Q?L4TjeQNF4UUxblu8QsADMgStNd6tzkUwR6SFVTYTYefyxK9IR2mr2IAO5y?=
+ =?iso-8859-1?Q?U91oXHaCcHrBcf+zNKuYBaQZ2h8GeqGDw/jJHI+owSeAhb9mZLKUKuVhpL?=
+ =?iso-8859-1?Q?DFgcKOHHIYKySBvFBYhJxqJhfVbNPIAYKVw1NWCMNcYAdlfAY029pcBIZC?=
+ =?iso-8859-1?Q?NlUj4Tr20bCN/th1jUaEK8gxt2uTg4Eu+4CXtGhRmtgZH68drj5BSiK91G?=
+ =?iso-8859-1?Q?/RWo5H3WHZwVeJeNBfvC+UzjMVcPkkJG1odmsmg31Pf0xPaoGZvgyavdhn?=
+ =?iso-8859-1?Q?TJZt65q6PlluXrN2RVnPBFTyf8l8X5tbEiTL2dyov2GOczLH1D6xKxy+io?=
+ =?iso-8859-1?Q?FXu9MC+/r1iBZbfymlp/fextpzb5x5WOkIYNrfNU5dlJ29wXAb7D3IKVEy?=
+ =?iso-8859-1?Q?E9i1vAGDln5apKcFXeXKC7aPKqO0586zpqBRdX4Xd4Iu/4FtNe3avNnMuy?=
+ =?iso-8859-1?Q?6laMBN9snMkVst9ZOfmimnVDSGjR9KIzqLdkVnMvi2ZSaKfV3IMtrukULv?=
+ =?iso-8859-1?Q?aEj86mT3iOp8fa6mdm4nar5ONuswPF41EW8p3SQyr/ytK0D1/6DrB0GKYF?=
+ =?iso-8859-1?Q?NGR8dOpvIKPsetsZARkzsTHduwCqabiXB2SRWa6qOpk/1ItZqV3Cg/eE7i?=
+ =?iso-8859-1?Q?8b2vRIhMJziuQILhbgKZwGG3I+xcjg3l40Kc/HIWY5dUW2YSJQHhSh6moY?=
+ =?iso-8859-1?Q?SDH6lzR/aIBf/A0p7cqmTZAFE0+Tyu3ziEG/oCMrwZJve4WSoV6oLVaUKf?=
+ =?iso-8859-1?Q?l/CmqEdQskTYaDX3+jqbBdNKV6oVN2gR0dXf1XvvWuxS1OzYGjIUX67QR5?=
+ =?iso-8859-1?Q?kd3MKyUwRMCEEstDMw2zhD4cQfsPdltl3fYtYuRPuMQozo15Ck4/uld3zI?=
+ =?iso-8859-1?Q?oO55TcryEM2Glyish05WHpW0ZL5J4cBehiC8yo1ipCKLec7RR2AQYCww?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] Drivers: hv: Introduce mshv_vtl driver
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-Cc: Roman Kisel <romank@linux.microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- ALOK TIWARI <alok.a.tiwari@oracle.com>,
- Markus Elfring <Markus.Elfring@web.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-References: <20250724082547.195235-1-namjain@linux.microsoft.com>
- <20250724082547.195235-3-namjain@linux.microsoft.com>
- <SN6PR02MB41571331AF61BE197F76B970D459A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB41571331AF61BE197F76B970D459A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8e9d4e8-a42d-4a28-2445-08ddcb3fd8f4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2025 05:55:23.9643
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QvTqoksSgmFauOoIVX4DPmlpW72iHTtpJ0p2AN2+V+IbzkwtHOjl51WD44YMNRh1vfh435ClkSTy5dSRz1PPBuOrv3vvREGASc+IOQtBeK66RgS35pHdG6/zbkgj21kY
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PNYP287MB4056
 
-
-
-On 7/25/2025 8:52 AM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, July 24, 2025 1:26 AM
->>
-> 
-> Overall, this is looking really good. I have just a few comments embedded below.
-> 
->> Provide an interface for Virtual Machine Monitor like OpenVMM and its
->> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
->> Expose devices and support IOCTLs for features like VTL creation,
->> VTL0 memory management, context switch, making hypercalls,
->> mapping VTL0 address space to VTL2 userspace, getting new VMBus
->> messages and channel events in VTL2 etc.
->>
->> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
->> Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
->> Message-ID: <20250512140432.2387503-3-namjain@linux.microsoft.com>
-> 
-> This "Message-ID" line looks misplaced or just spurious.
-
-Removed it, not sure where it got introduced, but I see it is not used 
-commonly.
-
-> 
->> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> ---
->>   drivers/hv/Kconfig          |   22 +
->>   drivers/hv/Makefile         |    7 +-
->>   drivers/hv/mshv_vtl.h       |   52 ++
->>   drivers/hv/mshv_vtl_main.c  | 1508 +++++++++++++++++++++++++++++++++++
->>   include/hyperv/hvgdk_mini.h |  106 +++
->>   include/uapi/linux/mshv.h   |   80 ++
->>   6 files changed, 1774 insertions(+), 1 deletion(-)
-> 
-> Nice! 254 fewer lines inserted than in the previous version!
-
-Yes :) thanks a lot for your review comments.
-
-> 
->>   create mode 100644 drivers/hv/mshv_vtl.h
->>   create mode 100644 drivers/hv/mshv_vtl_main.c
->>
->> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
->> index 57623ca7f350..2e8df09db599 100644
->> --- a/drivers/hv/Kconfig
->> +++ b/drivers/hv/Kconfig
->> @@ -73,4 +73,26 @@ config MSHV_ROOT
->>
-
-<snip>
-
->> +
->> +static struct tasklet_struct msg_dpc;
->> +static wait_queue_head_t fd_wait_queue;
->> +static bool has_message;
->> +static struct eventfd_ctx *flag_eventfds[HV_EVENT_FLAGS_COUNT];
->> +static DEFINE_MUTEX(flag_lock);
->> +static bool __read_mostly mshv_has_reg_page;
->> +
->> +/* hvcall code is of type u16, allocate a bitmap of size (1 << 16) to accommodate it */
->> +#define MAX_BITMAP_SIZE BIT(16)
-> 
-> Or maybe per my comment below, use
-> 
-> #define MAX_BITMAP_BYTES ((U16_MAX + 1)/8)
-
-I think I ignored the u8 part of the bitmap array. Will change it.
-
-> 
->> +
->> +struct mshv_vtl_hvcall_fd {
->> +	u8 allow_bitmap[MAX_BITMAP_SIZE];
-> 
-> This is still too big. :-(  You'll get 64K bytes, which is 512K bits. You only need
-> 64K bits.
-
-True.
-
-> 
->> +	bool allow_map_initialized;
->> +	/*
->> +	 * Used to protect hvcall setup in IOCTLs
->> +	 */
->> +	struct mutex init_mutex;
->> +	struct miscdevice *dev;
->> +};
->> +
->> +struct mshv_vtl_poll_file {
->> +	struct file *file;
->> +	wait_queue_entry_t wait;
->> +	wait_queue_head_t *wqh;
->> +	poll_table pt;
->> +	int cpu;
->> +};
->> +
->> +struct mshv_vtl {
->> +	struct device *module_dev;
->> +	u64 id;
->> +};
->> +
->> +struct mshv_vtl_per_cpu {
->> +	struct mshv_vtl_run *run;
->> +	struct page *reg_page;
->> +};
->> +
->> +/* SYNIC_OVERLAY_PAGE_MSR - internal, identical to hv_synic_simp */
->> +union hv_synic_overlay_page_msr {
->> +	u64 as_uint64;
->> +	struct {
->> +		u64 enabled: 1;
->> +		u64 reserved: 11;
->> +		u64 pfn: 52;
->> +	};
-> 
-> Add __packed to exactly match hv_synic_simp.
-
-Acked.
-
-> 
->> +};
->> +
->> +static struct mutex mshv_vtl_poll_file_lock;
->> +static union hv_register_vsm_page_offsets mshv_vsm_page_offsets;
->> +static union hv_register_vsm_capabilities mshv_vsm_capabilities;
->> +
->> +static DEFINE_PER_CPU(struct mshv_vtl_poll_file, mshv_vtl_poll_file);
->> +static DEFINE_PER_CPU(unsigned long long, num_vtl0_transitions);
->> +static DEFINE_PER_CPU(struct mshv_vtl_per_cpu, mshv_vtl_per_cpu);
->> +
-
-<snip>
-
->> +static int mshv_vtl_ioctl_add_vtl0_mem(struct mshv_vtl *vtl, void __user *arg)
->> +{
->> +	struct mshv_vtl_ram_disposition vtl0_mem;
->> +	struct dev_pagemap *pgmap;
->> +	void *addr;
->> +
->> +	if (copy_from_user(&vtl0_mem, arg, sizeof(vtl0_mem)))
->> +		return -EFAULT;
->> +	/* vlt0_mem.last_pfn is excluded in the pagemap range for VTL0 as per design */
-> 
-> s/vlt0_mem/vtl0_mem/
-
-Acked.
-
-> 
->> +	if (vtl0_mem.last_pfn <= vtl0_mem.start_pfn) {
->> +		dev_err(vtl->module_dev, "range start pfn (%llx) > end pfn (%llx)\n",
->> +			vtl0_mem.start_pfn, vtl0_mem.last_pfn);
->> +		return -EFAULT;
->> +	}
->> +
->> +	pgmap = kzalloc(sizeof(*pgmap), GFP_KERNEL);
->> +	if (!pgmap)
->> +		return -ENOMEM;
->> +
->> +	pgmap->ranges[0].start = PFN_PHYS(vtl0_mem.start_pfn);
->> +	pgmap->ranges[0].end = PFN_PHYS(vtl0_mem.last_pfn) - 1;
->> +	pgmap->nr_range = 1;
->> +	pgmap->type = MEMORY_DEVICE_GENERIC;
->> +
->> +	/*
->> +	 * Determine the highest page order that can be used for the given memory range.
->> +	 * This works best when the range is aligned; i.e. both the start and the length.
->> +	 */
->> +	pgmap->vmemmap_shift = count_trailing_zeros(vtl0_mem.start_pfn | vtl0_mem.last_pfn);
->> +	dev_dbg(vtl->module_dev,
->> +		"Add VTL0 memory: start: 0x%llx, end_pfn: 0x%llx, page order: %lu\n",
->> +		vtl0_mem.start_pfn, vtl0_mem.last_pfn, pgmap->vmemmap_shift);
->> +
->> +	addr = devm_memremap_pages(mem_dev, pgmap);
->> +	if (IS_ERR(addr)) {
->> +		dev_err(vtl->module_dev, "devm_memremap_pages error: %ld\n", PTR_ERR(addr));
->> +		kfree(pgmap);
->> +		return -EFAULT;
->> +	}
->> +
->> +	/* Don't free pgmap, since it has to stick around until the memory
->> +	 * is unmapped, which will never happen as there is no scenario
->> +	 * where VTL0 can be released/shutdown without bringing down VTL2.
->> +	 */
->> +	return 0;
->> +}
->> +
->> +static void mshv_vtl_cancel(int cpu)
->> +{
->> +	int here = get_cpu();
->> +
->> +	if (here != cpu) {
->> +		if (!xchg_relaxed(&mshv_vtl_cpu_run(cpu)->cancel, 1))
->> +			smp_send_reschedule(cpu);
->> +	} else {
->> +		WRITE_ONCE(mshv_vtl_this_run()->cancel, 1);
->> +	}
->> +	put_cpu();
->> +}
->> +
->> +static int mshv_vtl_poll_file_wake(wait_queue_entry_t *wait, unsigned int mode, int sync, void *key)
->> +{
->> +	struct mshv_vtl_poll_file *poll_file = container_of(wait, struct mshv_vtl_poll_file, wait);
->> +
->> +	mshv_vtl_cancel(poll_file->cpu);
->> +
->> +	return 0;
->> +}
->> +
->> +static void mshv_vtl_ptable_queue_proc(struct file *file, wait_queue_head_t *wqh, poll_table *pt)
->> +{
->> +	struct mshv_vtl_poll_file *poll_file = container_of(pt, struct mshv_vtl_poll_file, pt);
->> +
->> +	WARN_ON(poll_file->wqh);
->> +	poll_file->wqh = wqh;
->> +	add_wait_queue(wqh, &poll_file->wait);
->> +}
->> +
->> +static int mshv_vtl_ioctl_set_poll_file(struct mshv_vtl_set_poll_file __user *user_input)
->> +{
->> +	struct file *file, *old_file;
->> +	struct mshv_vtl_poll_file *poll_file;
->> +	struct mshv_vtl_set_poll_file input;
->> +
->> +	if (copy_from_user(&input, user_input, sizeof(input)))
->> +		return -EFAULT;
->> +
->> +	if (input.cpu >= num_possible_cpus() || !cpu_online(input.cpu))
->> +		return -EINVAL;
->> +	/*
->> +	 * Hotplug is not supported in VTL2 in OpenHCL, where this kernel driver exists.
-> 
-> More precisely, you mean "CPU hotplug" as opposed to "memory hotplug", though
-> that should be evident from the context. (Memory hotplug may not be supported
-> either, but that's not relevant here.)
-
-Acked.
-
-> 
->> +	 * CPU is expected to remain online after above cpu_online() check.
->> +	 */
->> +
->> +	file = NULL;
->> +	file = fget(input.fd);
->> +	if (!file)
->> +		return -EBADFD;
->> +
->> +	poll_file = per_cpu_ptr(&mshv_vtl_poll_file, READ_ONCE(input.cpu));
->> +	if (!poll_file)
->> +		return -EINVAL;
->> +
->> +	guard(mutex)(&mshv_vtl_poll_file_lock);
->> +
->> +	if (poll_file->wqh)
->> +		remove_wait_queue(poll_file->wqh, &poll_file->wait);
->> +	poll_file->wqh = NULL;
->> +
->> +	old_file = poll_file->file;
->> +	poll_file->file = file;
->> +	poll_file->cpu = input.cpu;
->> +
->> +	if (file) {
->> +		init_waitqueue_func_entry(&poll_file->wait, mshv_vtl_poll_file_wake);
->> +		init_poll_funcptr(&poll_file->pt, mshv_vtl_ptable_queue_proc);
->> +		vfs_poll(file, &poll_file->pt);
->> +	}
->> +
->> +	if (old_file)
->> +		fput(old_file);
-> 
-> Is it safe to call fput() while holding mshv_vtl_poll_file_lock? I don't know
-> the answer, but the change to using "guard" has made the fput() within
-> the scope of the lock, whereas previously it was not. My inclination would
-> be to *not* hold mshv_vtl_poll_file_lock when calling fput(), but I can't
-> immediately point to a problem that occur if the lock is held.
-> 
-
-I was also confused about it, but I think you are right, I can revert 
-this to the previous implementation.
-
->> +
->> +	return 0;
->> +}
->> +
->> +/* Static table mapping register names to their corresponding actions */
->> +static const struct {
->> +	enum hv_register_name reg_name;
->> +	int debug_reg_num;  /* -1 if not a debug register */
->> +	u32 msr_addr;       /* 0 if not an MSR */
->> +} reg_table[] = {
->> +	/* Debug registers */
->> +	{HV_X64_REGISTER_DR0, 0, 0},
->> +	{HV_X64_REGISTER_DR1, 1, 0},
->> +	{HV_X64_REGISTER_DR2, 2, 0},
->> +	{HV_X64_REGISTER_DR3, 3, 0},
->> +	{HV_X64_REGISTER_DR6, 6, 0},
->> +	/* MTRR MSRs */
->> +	{HV_X64_REGISTER_MSR_MTRR_CAP, -1, MSR_MTRRcap},
->> +	{HV_X64_REGISTER_MSR_MTRR_DEF_TYPE, -1, MSR_MTRRdefType},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE0, -1, MTRRphysBase_MSR(0)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE1, -1, MTRRphysBase_MSR(1)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE2, -1, MTRRphysBase_MSR(2)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE3, -1, MTRRphysBase_MSR(3)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE4, -1, MTRRphysBase_MSR(4)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE5, -1, MTRRphysBase_MSR(5)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE6, -1, MTRRphysBase_MSR(6)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE7, -1, MTRRphysBase_MSR(7)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE8, -1, MTRRphysBase_MSR(8)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE9, -1, MTRRphysBase_MSR(9)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEA, -1, MTRRphysBase_MSR(0xa)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEB, -1, MTRRphysBase_MSR(0xb)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEC, -1, MTRRphysBase_MSR(0xc)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASED, -1, MTRRphysBase_MSR(0xd)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEE, -1, MTRRphysBase_MSR(0xe)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEF, -1, MTRRphysBase_MSR(0xf)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK0, -1, MTRRphysMask_MSR(0)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK1, -1, MTRRphysMask_MSR(1)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK2, -1, MTRRphysMask_MSR(2)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK3, -1, MTRRphysMask_MSR(3)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK4, -1, MTRRphysMask_MSR(4)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK5, -1, MTRRphysMask_MSR(5)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK6, -1, MTRRphysMask_MSR(6)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK7, -1, MTRRphysMask_MSR(7)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK8, -1, MTRRphysMask_MSR(8)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK9, -1, MTRRphysMask_MSR(9)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKA, -1, MTRRphysMask_MSR(0xa)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKB, -1, MTRRphysMask_MSR(0xb)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKC, -1, MTRRphysMask_MSR(0xc)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKD, -1, MTRRphysMask_MSR(0xd)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKE, -1, MTRRphysMask_MSR(0xe)},
->> +	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKF, -1, MTRRphysMask_MSR(0xf)},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX64K00000, -1, MSR_MTRRfix64K_00000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX16K80000, -1, MSR_MTRRfix16K_80000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX16KA0000, -1, MSR_MTRRfix16K_A0000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX4KC0000, -1, MSR_MTRRfix4K_C0000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX4KC8000, -1, MSR_MTRRfix4K_C8000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX4KD0000, -1, MSR_MTRRfix4K_D0000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX4KD8000, -1, MSR_MTRRfix4K_D8000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX4KE0000, -1, MSR_MTRRfix4K_E0000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX4KE8000, -1, MSR_MTRRfix4K_E8000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX4KF0000, -1, MSR_MTRRfix4K_F0000},
->> +	{HV_X64_REGISTER_MSR_MTRR_FIX4KF8000, -1, MSR_MTRRfix4K_F8000},
->> +};
->> +
->> +static int mshv_vtl_set_reg(struct hv_register_assoc *regs)
->> +{
->> +	u64 reg64;
->> +	enum hv_register_name gpr_name;
->> +	int i;
->> +
->> +	gpr_name = regs->name;
->> +	reg64 = regs->value.reg64;
->> +
->> +	/* Search for the register in the table */
->> +	for (i = 0; i < ARRAY_SIZE(reg_table); i++) {
->> +		if (reg_table[i].reg_name == gpr_name) {
->> +			if (reg_table[i].debug_reg_num != -1) {
->> +				/* Handle debug registers */
->> +				if (gpr_name == HV_X64_REGISTER_DR6 &&
->> +				    !mshv_vsm_capabilities.dr6_shared)
->> +					goto hypercall;
->> +				native_set_debugreg(reg_table[i].debug_reg_num, reg64);
->> +			} else {
->> +				/* Handle MSRs */
->> +				wrmsrl(reg_table[i].msr_addr, reg64);
->> +			}
->> +			return 0;
->> +		}
->> +	}
->> +
->> +hypercall:
->> +	return 1;
->> +}
->> +
->> +static int mshv_vtl_get_reg(struct hv_register_assoc *regs)
->> +{
->> +	u64 *reg64;
->> +	enum hv_register_name gpr_name;
->> +	int i;
->> +
->> +	gpr_name = regs->name;
->> +	reg64 = (u64 *)&regs->value.reg64;
->> +
->> +	/* Search for the register in the table */
->> +	for (i = 0; i < ARRAY_SIZE(reg_table); i++) {
->> +		if (reg_table[i].reg_name == gpr_name) {
->> +			if (reg_table[i].debug_reg_num != -1) {
->> +				/* Handle debug registers */
->> +				if (gpr_name == HV_X64_REGISTER_DR6 &&
->> +				    !mshv_vsm_capabilities.dr6_shared)
->> +					goto hypercall;
->> +				*reg64 = native_get_debugreg(reg_table[i].debug_reg_num);
->> +			} else {
->> +				/* Handle MSRs */
->> +				rdmsrl(reg_table[i].msr_addr, *reg64);
->> +			}
->> +			return 0;
->> +		}
->> +	}
->> +
->> +hypercall:
->> +	return 1;
->> +}
-> 
-> Nice! You incorporated the debug registers as well into the static
-> table and lookup functions. I count 224 fewer source code lines.
-
-Yes. Thanks.
-
-> 
->> +
->> +static void mshv_vtl_return(struct mshv_vtl_cpu_context *vtl0)
->> +{
-
-
-<snip>
-
->> +
->> +static long
->> +mshv_vtl_ioctl_get_regs(void __user *user_args)
->> +{
->> +	struct mshv_vp_registers args;
->> +	struct hv_register_assoc *reg;
->> +	long ret;
->> +
->> +	if (copy_from_user(&args, user_args, sizeof(args)))
->> +		return -EFAULT;
->> +
->> +	/*  This IOCTL supports processing only one register at a time. */
->> +	if (args.count != 1)
->> +		return -EINVAL;
->> +
->> +	reg = kmalloc(sizeof(*reg), GFP_KERNEL);
-> 
-> If handling only one register, there's no need to kmalloc. Just
-> declare the struct hv_register_assoc directly on the stack
-> instead of a pointer to such. Then the error paths are
-> simpler because memory doesn't need to be freed.
-
-Acked. Makes sense.
-
-> 
->> +	if (!reg)
->> +		return -ENOMEM;
->> +
->> +	if (copy_from_user(reg, (void __user *)args.regs_ptr,
->> +			   sizeof(*reg))) {
->> +		ret = -EFAULT;
->> +		goto free_return;
->> +	}
->> +
->> +	ret = mshv_vtl_get_reg(reg);
->> +	if (!ret)
->> +		goto copy_args; /* No need of hypercall */
->> +	ret = vtl_get_vp_register(reg);
->> +	if (ret)
->> +		goto free_return;
->> +
->> +copy_args:
->> +	if (copy_to_user((void __user *)args.regs_ptr, reg, sizeof(*reg)))
->> +		ret = -EFAULT;
->> +free_return:
->> +	kfree(reg);
->> +
->> +	return ret;
->> +}
->> +
->> +static long
->> +mshv_vtl_ioctl_set_regs(void __user *user_args)
->> +{
->> +	struct mshv_vp_registers args;
->> +	struct hv_register_assoc *reg;
->> +	long ret;
->> +
->> +	if (copy_from_user(&args, user_args, sizeof(args)))
->> +		return -EFAULT;
->> +
->> +	/*  This IOCTL supports processing only one register at a time. */
->> +	if (args.count != 1)
->> +		return -EINVAL;
->> +
->> +	reg = kmalloc(sizeof(*reg), GFP_KERNEL);
-> 
-> Same here.  Declare struct hv_register_assoc on the stack.
-
-Acked.
-
-> 
->> +	if (!reg)
->> +		return -ENOMEM;
->> +
->> +	if (copy_from_user(reg, (void __user *)args.regs_ptr, sizeof(*reg))) {
->> +		ret = -EFAULT;
->> +		goto free_return;
->> +	}
->> +
->> +	ret = mshv_vtl_set_reg(reg);
->> +	if (!ret)
->> +		goto free_return; /* No need of hypercall */
->> +	ret = vtl_set_vp_register(reg);
->> +
->> +free_return:
->> +	kfree(reg);
->> +
->> +	return ret;
->> +}
->> +
-
-<snip>
-
->> +
->> +static int mshv_vtl_sint_ioctl_signal_event(struct mshv_vtl_signal_event __user *arg)
->> +{
->> +	u64 input, status;
->> +	struct mshv_vtl_signal_event signal_event;
->> +
->> +	if (copy_from_user(&signal_event, arg, sizeof(signal_event)))
->> +		return -EFAULT;
->> +
->> +	input = signal_event.connection_id | ((u64)signal_event.flag << 32);
->> +
->> +	status = hv_do_fast_hypercall8(HVCALL_SIGNAL_EVENT, input) & HV_HYPERCALL_RESULT_MASK;
->> +	if (status)
-> 
-> Don't AND with HV_HYPERCALL_RESULT_MASK and then test the result.
-> You can just do "return hv_result_to_errno(status)". The function will
-> return zero if there's no error. See other uses of hv_result_to_errno() for
-> the various patterns. We want to get away from AND'ing with
-> HV_HYPERCALL_RESULT_MASK and instead always use the helper
-> functions.
-
-Acked.
-
-> 
->> +		return hv_result_to_errno(status);
->> +	return 0;
->> +}
->> +
->> +static int mshv_vtl_sint_ioctl_set_eventfd(struct mshv_vtl_set_eventfd __user *arg)
->> +{
->> +	struct mshv_vtl_set_eventfd set_eventfd;
->> +	struct eventfd_ctx *eventfd, *old_eventfd;
->> +
->> +	if (copy_from_user(&set_eventfd, arg, sizeof(set_eventfd)))
->> +		return -EFAULT;
->> +	if (set_eventfd.flag >= HV_EVENT_FLAGS_COUNT)
->> +		return -EINVAL;
->> +
->> +	eventfd = NULL;
->> +	if (set_eventfd.fd >= 0) {
->> +		eventfd = eventfd_ctx_fdget(set_eventfd.fd);
->> +		if (IS_ERR(eventfd))
->> +			return PTR_ERR(eventfd);
->> +	}
->> +
->> +	guard(mutex)(&flag_lock);
->> +	old_eventfd = READ_ONCE(flag_eventfds[set_eventfd.flag]);
->> +	WRITE_ONCE(flag_eventfds[set_eventfd.flag], eventfd);
->> +
->> +	if (old_eventfd) {
->> +		synchronize_rcu();
->> +		eventfd_ctx_put(old_eventfd);
-> 
-> Again, I wonder if is OK to do eventfd_ctx_put() while holding
-> flag_lock, since the use of guard() changes the scope of the lock
-> compared with the previous version of this patch.
-> 
-
-I didn't find eventfd_ctx_put() to be a blocking operation, so I thought
-of keeping guard() here. Although, synchronize_rcu() is a blocking
-operation. Please advise, I am Ok with removing the guard, as the lock
-is just being used here, and automatic cleanup should not be an issue
-here.
-
-
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int mshv_vtl_sint_ioctl_pause_message_stream(struct mshv_sint_mask __user *arg)
->> +{
->> +	static DEFINE_MUTEX(vtl2_vmbus_sint_mask_mutex);
->> +	struct mshv_sint_mask mask;
->> +
->> +	if (copy_from_user(&mask, arg, sizeof(mask)))
->> +		return -EFAULT;
->> +	guard(mutex)(&vtl2_vmbus_sint_mask_mutex);
->> +	on_each_cpu((smp_call_func_t)mshv_vtl_synic_mask_vmbus_sint, &mask.mask, 1);
->> +	WRITE_ONCE(vtl_synic_mask_vmbus_sint_masked, mask.mask != 0);
->> +	if (mask.mask)
->> +		wake_up_interruptible_poll(&fd_wait_queue, EPOLLIN);
-> 
-> Doing this wakeup is probably safe to do while holding the lock.
-
-Acked.
-
-> 
->> +
->> +	return 0;
->> +}
->> +
-
-<snip>
-
->> +};
->> +
->> +struct mshv_vtl_set_poll_file {
->> +	__u32 cpu;
->> +	__u32 fd;
->> +};
->> +
->> +struct mshv_vtl_hvcall_setup {
->> +	__u64 bitmap_array_size;
->> +	__u64 allow_bitmap_ptr; /* pointer to __u64 */
-> 
-> I don't think the comment is relevant. The unit of
-> memory allocation in user space doesn't affect kernel
-> code. And perhaps add a comment that bitmap_array_size
-> is a *byte* count! :-)
-
-Acked.
-
-> 
->> +};
->> +
->> +struct mshv_vtl_hvcall {
->> +	__u64 control;      /* Hypercall control code */
->> +	__u64 input_size;   /* Size of the input data */
->> +	__u64 input_ptr;    /* Pointer to the input struct */
->> +	__u64 status;       /* Status of the hypercall (output) */
->> +	__u64 output_size;  /* Size of the output data */
->> +	__u64 output_ptr;   /* Pointer to the output struct */
->> +};
->> +
->> +struct mshv_sint_mask {
->> +	__u8 mask;
->> +	__u8 reserved[7];
->> +};
->> +
->> +/* /dev/mshv device IOCTL */
->> +#define MSHV_CHECK_EXTENSION    _IOW(MSHV_IOCTL, 0x00, __u32)
->> +
->> +/* vtl device */
->> +#define MSHV_CREATE_VTL			_IOR(MSHV_IOCTL, 0x1D, char)
->> +#define MSHV_ADD_VTL0_MEMORY	_IOW(MSHV_IOCTL, 0x21, struct mshv_vtl_ram_disposition)
->> +#define MSHV_SET_POLL_FILE		_IOW(MSHV_IOCTL, 0x25, struct mshv_vtl_set_poll_file)
->> +#define MSHV_RETURN_TO_LOWER_VTL	_IO(MSHV_IOCTL, 0x27)
->> +#define MSHV_GET_VP_REGISTERS		_IOWR(MSHV_IOCTL, 0x05, struct mshv_vp_registers)
->> +#define MSHV_SET_VP_REGISTERS		_IOW(MSHV_IOCTL, 0x06, struct mshv_vp_registers)
->> +
->> +/* VMBus device IOCTLs */
->> +#define MSHV_SINT_SIGNAL_EVENT    _IOW(MSHV_IOCTL, 0x22, struct mshv_vtl_signal_event)
->> +#define MSHV_SINT_POST_MESSAGE    _IOW(MSHV_IOCTL, 0x23, struct mshv_vtl_sint_post_msg)
->> +#define MSHV_SINT_SET_EVENTFD     _IOW(MSHV_IOCTL, 0x24, struct mshv_vtl_set_eventfd)
->> +#define MSHV_SINT_PAUSE_MESSAGE_STREAM     _IOW(MSHV_IOCTL, 0x25, struct mshv_sint_mask)
->> +
->> +/* hv_hvcall device */
->> +#define MSHV_HVCALL_SETUP        _IOW(MSHV_IOCTL, 0x1E, struct mshv_vtl_hvcall_setup)
->> +#define MSHV_HVCALL              _IOWR(MSHV_IOCTL, 0x1F, struct mshv_vtl_hvcall)
->>   #endif
->> --
->> 2.34.1
-
-Thanks for the review comments.
-
-Regards,
-Naman
+> On Thu, Jul 24, 2025 at 04:17:05PM +0530, Hardevsinh Palaniya wrote:=0A=
+> > Add a v4l2 subdevice driver for the Omnivision OV2735 sensor.=0A=
+> >=0A=
+> > The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an=0A=
+> > active array size of 1920 x 1080.=0A=
+> >=0A=
+> > The following features are supported:=0A=
+> > - Manual exposure an gain control support=0A=
+> > - vblank/hblank control support=0A=
+> > - Test pattern support control=0A=
+> > - Supported resolution: 1920 x 1080 @ 30fps (SGRBG10)=0A=
+> =0A=
+> ...=0A=
+> =0A=
+> >=A0 MAINTAINERS=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0=A0 =
+9 +=0A=
+> =0A=
+> This should be started as part of patch 1 as in between you will have a=
+=0A=
+> dangling file, which is not recorded in MAINTAINERS.=0A=
+> =0A=
+> ...=0A=
+> =0A=
+> > + * Inspired from ov8858, imx219, imx283 camera drivers=0A=
+> =0A=
+> Missing period at the end.=0A=
+> =0A=
+> ...=0A=
+> =0A=
+> > +#include <linux/array_size.h>=0A=
+> =0A=
+> + bitops.h=0A=
+=0A=
+Why??=0A=
+ =0A=
+> > +#include <linux/clk.h>=0A=
+> > +#include <linux/container_of.h>=0A=
+> > +#include <linux/delay.h>=0A=
+> > +#include <linux/device/devres.h>=0A=
+> > +#include <linux/err.h>=0A=
+> > +#include <linux/gpio/consumer.h>=0A=
+> > +#include <linux/i2c.h>=0A=
+> > +#include <linux/module.h>=0A=
+> > +#include <linux/mutex.h>=0A=
+> > +#include <linux/pm_runtime.h>=0A=
+> > +#include <linux/property.h>=0A=
+> > +#include <linux/regulator/consumer.h>=0A=
+> > +#include <linux/units.h>=0A=
+> > +#include <linux/types.h>=0A=
+> =0A=
+> > +#include <vdso/time64.h>=0A=
+> =0A=
+> We do not include vdso in the (regular) drivers. Use linux/time.h.=0A=
+> =0A=
+> ...=0A=
+> =0A=
+> > +struct ov2735 {=0A=
+> > +=A0=A0=A0=A0 struct device *dev;=0A=
+> =0A=
+> Do you need this? Can't it be derived from regmap cci below?=0A=
+=0A=
+I prefer keeping the dev pointer directly in the struct for simplicity=0A=
+and better readability. Using regmap_get_device(ov2735->cci) adds an =0A=
+unnecessary level of indirection, especially since dev is frequently =0A=
+used for logging, error handling, and regulator/device tree access. =0A=
+I would prefer to retain it. =0A=
+=0A=
+> > +=A0=A0=A0=A0 struct regmap *cci;=0A=
+> > +=A0=A0=A0=A0 struct v4l2_subdev sd;=0A=
+> > +=A0=A0=A0=A0 struct media_pad pad;=0A=
+> =0A=
+> > +=A0=A0=A0=A0 struct i2c_client *client;=0A=
+> =0A=
+> Do you need this?=0A=
+> =0A=
+> > +=A0=A0=A0=A0 struct clk *xclk;=0A=
+> > +=A0=A0=A0=A0 struct gpio_desc *reset_gpio;=0A=
+> > +=A0=A0=A0=A0 struct gpio_desc *enable_gpio;=0A=
+> > +=A0=A0=A0=A0 struct regulator_bulk_data supplies[ARRAY_SIZE(ov2735_sup=
+ply_name)];=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 /* V4L2 Controls */=0A=
+> > +=A0=A0=A0=A0 struct v4l2_ctrl_handler handler;=0A=
+> > +=A0=A0=A0=A0 struct v4l2_ctrl *link_freq;=0A=
+> > +=A0=A0=A0=A0 struct v4l2_ctrl *pixel_rate;=0A=
+> > +=A0=A0=A0=A0 struct v4l2_ctrl *hblank;=0A=
+> > +=A0=A0=A0=A0 struct v4l2_ctrl *vblank;=0A=
+> > +=A0=A0=A0=A0 struct v4l2_ctrl *gain;=0A=
+> > +=A0=A0=A0=A0 struct v4l2_ctrl *exposure;=0A=
+> > +=A0=A0=A0=A0 struct v4l2_ctrl *test_pattern;=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 u32 link_freq_index;=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 u8 current_page;=0A=
+> > +=A0=A0=A0=A0 struct mutex page_lock;=0A=
+> > +};=0A=
+> =0A=
+> ...=0A=
+> =0A=
+> > +static int ov2735_page_access(struct ov2735 *ov2735,=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 u32 reg, void *val, int *err, bool is_read)=0A=
+> > +{=0A=
+> > +=A0=A0=A0=A0 u8 page =3D (reg >> CCI_REG_PRIVATE_SHIFT) & 0xff;=0A=
+> =0A=
+> ' & 0xff' part is redundant.=0A=
+> =0A=
+> > +=A0=A0=A0=A0 u32 addr =3D reg & ~CCI_REG_PRIVATE_MASK;=0A=
+> > +=A0=A0=A0=A0 int ret =3D 0;=0A=
+> =0A=
+> How is this assignment being used?=0A=
+> =0A=
+> > +=A0=A0=A0=A0 if (err && *err)=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return *err;=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 mutex_lock(&ov2735->page_lock);=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 /* Perform page access before read/write */=0A=
+> > +=A0=A0=A0=A0 if (ov2735->current_page !=3D page) {=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ret =3D cci_write(ov2735->cci, OV=
+2735_REG_PAGE_SELECT, page, err);=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (ret)=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 goto err_=
+mutex_unlock;=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ov2735->current_page =3D page;=0A=
+> > +=A0=A0=A0=A0 }=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 if (is_read)=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ret =3D cci_read(ov2735->cci, add=
+r, (u64 *)val, err);=0A=
+> > +=A0=A0=A0=A0 else=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ret =3D cci_write(ov2735->cci, ad=
+dr, *(u64 *)val, err);=0A=
+> =0A=
+> Do you really need this castings?=0A=
+=0A=
+Do you really think this casting is unnecessary?=0A=
+=0A=
+Please check the definitions of cci_read/write=0A=
+=0A=
+without this, we can't even build the driver.=0A=
+=0A=
+> > +=0A=
+> > +err_mutex_unlock:=0A=
+> > +=A0=A0=A0=A0 mutex_unlock(&ov2735->page_lock);=0A=
+> > +=A0=A0=A0=A0 return ret;=0A=
+> =0A=
+> Hmm... Wouldn't be cleanup.h helpful here?=0A=
+>=0A=
+> > +}=0A=
+> =0A=
+> ...=0A=
+> =0A=
+> > +static int ov2735_write(struct ov2735 *ov2735, u32 reg, u64 val, int *=
+err)=0A=
+> > +{=0A=
+> > +=A0=A0=A0=A0 return ov2735_page_access(ov2735, reg, (void *)&val, err,=
+ false);=0A=
+> =0A=
+> Why casting?=0A=
+> =0A=
+> > +}=0A=
+> =0A=
+> ...=0A=
+> =0A=
+> > +static int ov2735_set_pll_ctrl(struct ov2735 *ov2735)=0A=
+> > +{=0A=
+> > +=A0=A0=A0=A0 struct ov2735_pll_parameters *pll_parameters;=0A=
+> > +=A0=A0=A0=A0 u8 pll_ctrl;=0A=
+> > +=A0=A0=A0=A0 u8 pll_outdiv;=0A=
+> > +=A0=A0=A0=A0 int ret =3D 0;=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 pll_parameters =3D &pll_configs[ov2735->link_freq_index];=
+=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 /* BIT[7]: pll_clk_sel, BIT[6:2]: pll_nc, BIT[1:0]: pll_m=
+c */=0A=
+> > +=A0=A0=A0=A0 pll_ctrl =3D ((pll_parameters->pll_nc << 2) |=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 (pll_parameters->pll_=
+mc << 0)) & OV2735_REG_PLL_ENABLE;=0A=
+> =0A=
+> Logically better to wrap like this (yes, I know that it's slightly longer=
+ than 80):=0A=
+> =0A=
+> =A0=A0=A0=A0=A0=A0=A0 pll_ctrl =3D ((pll_parameters->pll_nc << 2) | (pll_=
+parameters->pll_mc << 0)) &=0A=
+> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 OV2735_REG_PLL_ENA=
+BLE;=0A=
+ =0A=
+Will do.=0A=
+=0A=
+Could you please clarify what you mean by "logically better" in this contex=
+t?=0A=
+=0A=
+> > +=A0=A0=A0=A0 pll_outdiv =3D pll_parameters->pll_outdiv;=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 ov2735_write(ov2735, OV2735_REG_PLL_CTRL, pll_ctrl, &ret)=
+;=0A=
+> =0A=
+> > +=A0=A0=A0=A0 ov2735_write(ov2735, OV2735_REG_PLL_OUTDIV, pll_outdiv, &=
+ret);=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0 return ret;=0A=
+> > +}=0A=
+> =0A=
+> ...=0A=
+> =0A=
+> > +=A0=A0=A0=A0 /* Apply format settings. */=0A=
+> =0A=
+> > +=A0=A0=A0=A0 /* Apply customized values from user */=0A=
+> =0A=
+> Define a single style for one-line comments and use it everywhere consist=
+ently.=0A=
+=0A=
+Are you referring to the period at the end of the comment?=0A=
+ =0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 goto error_power_off;=0A=
+> =0A=
+> ...=0A=
+> =0A=
+> > +=A0=A0=A0=A0 devm_pm_runtime_set_active_enabled(ov2735->dev);=0A=
+> > +=A0=A0=A0=A0 devm_pm_runtime_get_noresume(ov2735->dev);=0A=
+> =0A=
+> No error checks? What's the point to use devm and what will happen if the=
+ first=0A=
+> fails, for example?=0A=
+> =0A=
+> --=0A=
+> With Best Regards,=0A=
+> Andy Shevchenko=0A=
+=0A=
+With all due respect,=0A=
+=0A=
+I completely understand and appreciate the need for multiple rounds of revi=
+ew.=0A=
+However, where feasible, it would be helpful to receive style-related and =
+=0A=
+non-blocking comments earlier in the review process. Iterating on minor iss=
+ues=0A=
+in later versions, especially ones that could have been addressed together =
+=0A=
+earlier, can become a bit frustrating at times. I hope you can understand t=
+his =0A=
+perspective.=0A=
+=0A=
+Once again, thank you for your time and effort in helping improve the quali=
+ty=0A=
+of the driver.=0A=
+=0A=
+Best Regards,=0A=
+Hardev    =0A=
 
