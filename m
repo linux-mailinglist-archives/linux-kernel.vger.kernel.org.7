@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-745269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02DDB1177E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:41:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB53BB11783
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23CE1C883B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:41:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E30765658FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F37323C516;
-	Fri, 25 Jul 2025 04:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C6C23F429;
+	Fri, 25 Jul 2025 04:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DKZgQPJL"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0WlskxWt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1903594E;
-	Fri, 25 Jul 2025 04:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C5A3594E;
+	Fri, 25 Jul 2025 04:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753418464; cv=none; b=DsXnhATZVQKioyFA+X4HbiZMwwfH+Gwi//lOb5/VlAD+SRtgYpiCvjKTCSWJ8ToM6FEJydEuCU/41L2kILAmxZbIinAKFf95TcR+WFhn93wENXwZ0V7oNcLeAQHqer4svQTMwbadC9fuWtq6cKN0QLVNknD/dKpM9MtQ3++GqNU=
+	t=1753418641; cv=none; b=VWb55FCUv41rgpFri7lCrvyBU2ZtFFDOYcI0sPHoVgOXrNCEBphsCTgKttnX6WMJ98v1SQJA3ksE5rjgn0mJPNAI/qDDJRABTfPWwH3sXfWlT4+QrUcea73W9B/4BMko+ozb/QWPMQCxzwuNY7WAHO1/uVztg8RokQfdrJ3tCZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753418464; c=relaxed/simple;
-	bh=EZ3GroOzDlPBH3KynjSZB7L8kHxmguA45xMBmcEEBjA=;
+	s=arc-20240116; t=1753418641; c=relaxed/simple;
+	bh=+AylLebw4hX9XXAsTOwIIKEOdKO1HxWGdQXbi5btDA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JiLrPv4fq50PQ6WUWjDAy4Hvu+QyFNKZdF3U6MHCezWtbTaGxR2nryWydl3mGn1YTikQM2UCsAAMYMUihyz4xJoI1dia9Db3cwzSENFSw2RkbgML2+vat2NRknDLU8+Qmq6wlsNg3YAG8DSopmgBB2E9lflxIu22HF/bO7tUeW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DKZgQPJL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CEA1C4CEE7;
-	Fri, 25 Jul 2025 04:41:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRl6QlQCcvPGLlGORbxLhewC+2aQPs0ncFxb9zFoTAPAFl4QnzKQkxjE6PFZ4rWGFukMIWpPVDDH4n9QS0drriJFSstdsBM0Gc1sHSfFrBcGCrTbun5iJbLYBB9VLoBmDAaWj0h0Tb2JdfMsd2/gbWjo8ylnD+7Q3NiUZ6o8NYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0WlskxWt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A52C4CEE7;
+	Fri, 25 Jul 2025 04:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753418463;
-	bh=EZ3GroOzDlPBH3KynjSZB7L8kHxmguA45xMBmcEEBjA=;
+	s=korg; t=1753418640;
+	bh=+AylLebw4hX9XXAsTOwIIKEOdKO1HxWGdQXbi5btDA8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DKZgQPJLq4rHfZr0YQz7u/8TymTZ7W7ybS5aFbhzg/b5j9W2l+8Mb3hnVAgSrHseI
-	 28/9pgHxZt4JdUw8QkXzehTDmLQTyw4QtQNr7SSbSTngX0aWCsP1wa+bY59TwuZAYY
-	 9uzzMSbrx9fRz/nuQvAX1KHggnrtpE4RqahMtn18=
-Date: Fri, 25 Jul 2025 06:40:59 +0200
+	b=0WlskxWt3WfOESd++SMsVHmxiQ0XKNykhvcja/PF6OHyem8wFZripvv9qn5NCvBAl
+	 8S/SwxjPGFv/IISSdpmqpOkXonz9XQ8fy+bSSexzPt/5Dn7utdzbGdqKo6VrgXAqZ8
+	 1Awyn/u8fo4C0WtzKz93FM5i+0nTaSVXMyp3jGJ0=
+Date: Fri, 25 Jul 2025 06:43:51 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Bruce Qin <bqn9090@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2] staging: rtl8723bs: fix if-statement alignment and
- line continuation in rtw_ap.c
-Message-ID: <2025072552-filled-glacier-1e9d@gregkh>
-References: <2025072409-promoter-shame-8105@gregkh>
- <20250724193037.23910-1-bqn9090@gmail.com>
+To: Su Hui <suhui@nfschina.com>
+Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: xhci: print xhci->xhc_state when queue_command
+ failed
+Message-ID: <2025072530-stimulate-gush-6820@gregkh>
+References: <20250725031308.1355371-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,33 +54,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724193037.23910-1-bqn9090@gmail.com>
+In-Reply-To: <20250725031308.1355371-1-suhui@nfschina.com>
 
-On Thu, Jul 24, 2025 at 09:30:37PM +0200, Bruce Qin wrote:
-> This patch fixes several style issues in a multiline if-statement:
+On Fri, Jul 25, 2025 at 11:13:09AM +0800, Su Hui wrote:
+> When encounters some errors like these:
+> xhci_hcd 0000:4a:00.2: xHCI dying or halted, can't queue_command
+> xhci_hcd 0000:4a:00.2: FIXME: allocate a command ring segment
+> usb usb5-port6: couldn't allocate usb_device
 > 
-> - Moved '&&' to the end of the previous line to follow logical continuation style
-> - Fixed indentation to align with the opening parenthesis of the expression
-> - Avoided ending a line with an open parenthesis '('
-> - Moved closing ')' to the end of the last expression line (as suggested by the maintainer)
+> It's hard to know whether xhc_state is dying or halted. So it's better
+> to print xhc_state's value which can help locate the resaon of the bug.
 > 
-> These changes improve readability and conform to Linux kernel coding conventions.
-> No functional changes.
-
-Please wrap your changelog text at 72 columns, like checkpatch asks you
-to.
-
-> 
-> Signed-off-by: Bruce Qin <bqn9090@gmail.com>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 > ---
-> Changes in v2:
-> - Moved closing ')' to the previous line as suggested by Greg Kroah-Hartman.
-> - Thanks for the review and feedback!
+>  drivers/usb/host/xhci-ring.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index 94c9c9271658..a1a628e849c0 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -4372,7 +4372,8 @@ static int queue_command(struct xhci_hcd *xhci, struct xhci_command *cmd,
+>  
+>  	if ((xhci->xhc_state & XHCI_STATE_DYING) ||
+>  		(xhci->xhc_state & XHCI_STATE_HALTED)) {
+> -		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command\n");
+> +		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command. state: %u\n",
+> +			 xhci->xhc_state);
 
-You sent 3 copies of this "v2" patch, how do I know which one is
-correct?
-
-Please fix up and send a v3.
+Don't you want to see this value in hex?
 
 thanks,
 
