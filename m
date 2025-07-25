@@ -1,238 +1,196 @@
-Return-Path: <linux-kernel+bounces-745908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BC2B12055
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:45:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95636B12056
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05AFF3ABAA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721501C8615E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DEE273816;
-	Fri, 25 Jul 2025 14:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5478C1D9A54;
+	Fri, 25 Jul 2025 14:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i1bMarjO"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dtHYh1MZ"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B95F2BDC33
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007458F4A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753454711; cv=none; b=ddtSR0vrLfC2i4DCGnDq+nytoUVEtugvf8AtCGuEV7hhcmHf6iFgcCkNqHq2mdcliqnvWaAXD4Ob8zaIHGJUhJzCodQkpjcHPSDT2X5PGjzZDXRpuVyoAYVmhK0btXLeDhSymz6ixuePa3IWUMIW9BblD2ccbgbO0qm8AHI1CqU=
+	t=1753454929; cv=none; b=MF4ll4DZ4cUC+Kcznd7NlxhFs/3vQ1Hw/jDN+bv41Jt4lCtjky5OL7P1qm3cNXYa4j1myoMTc92siuTk2Vj/2v0/LRhiEe4DOiWkFGG2JhtgjIBD+2DWVAi2cH/RTeMTw31AgPz3xXymsoQpVw+ogoEzknIU+DoVKmlNCXue7PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753454711; c=relaxed/simple;
-	bh=GYKBpq9FRQ18jqHqTPjo8RGL3Z7flutdQDL/XiPX4Xs=;
+	s=arc-20240116; t=1753454929; c=relaxed/simple;
+	bh=I4zM1Gv132DVmDNTiP916g1kjFCLGivg9m+ZyNOMhQk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Te+W+USk+kiPHuA7EwPSBTEQfQQxZJLTPHHkWGFjkBuaC5Q1HjFTYJQLzQ5y8Y/5GRiTylzbdh8neRX4j0Sjkd4QghqEpHQ3tKwlkxtBfCvdze7cW1mBHxpuTZCpoy4Wkfag9/NId1k2rCf92slPMemkU+/77cUJbseb3goqPCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i1bMarjO; arc=none smtp.client-ip=209.85.208.51
+	 To:Cc:Content-Type; b=VkEjkgoQaUPg2BTXQjqxJMGZPmHRnpeeOnbSi82a/bx+wg/g4uro/P9qI+sjnEt8VwnqkBdnwgCaTekK0j7YEJCsR9ZF4QVUmaOqJXQ9IQPXQQ7+PS6UT9yA417k9NN0TKCTU63OvQvnDgXuvS6RQjdyq7l1uYgkjPbwdyTWPG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dtHYh1MZ; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so8789a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:45:08 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso9599a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:48:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753454707; x=1754059507; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753454926; x=1754059726; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qIq14dJIVdG8Em0IZoGynxSIJDeMyZzA0yiBWzPg6Xc=;
-        b=i1bMarjOD2nPzSlQlGmd5UlgjCj5p6rq5vLtU5o3stYuELtCZUBAJF2TWvUzCeSBQz
-         1pUsquFs/Qp7j3+u6ZVKCU5K7udOSTRkFnKaJoI+vcq6X4dDdY3JAOD7JXjefR4uJ7oz
-         +m1YykRENzwyLx4uzt9Bitb6laEjaW5nlYebV1/2LlFDrW1bv4QHA20VUpG/Z4WZGhrA
-         2qlAoGo/E26NZtQoGlYkq+VzrjrCGucgJwgArQrO0YfWHoAEp49rEViB4aU0gZrDplII
-         9e83UCBMvkyAd+x/IwqVnG590tmlQ3XGWQHUiMA7OgGxpIf9FZzzf+0YlWm9y95dwZEs
-         I+pg==
+        bh=6fTiJ/2yQ7EUbjCeVCBz++1COYxUgI84X7sP0FcZaWQ=;
+        b=dtHYh1MZ5qSccLBdHQUOdIw1us6PelSb8xY2gJVKso7tT2KHSS0ZnDI8lXdA+wDtBS
+         QLDyBeXvxKGlXktOVTZjqHTfEUzgecUXU7yNxxTfGZ8VMBxBF6QZpwtWEO9d7ALZHXvF
+         pfZGp8gwbFe58yBFRPCSzBEHAMwUOG6ODXsWZm1wLg3imiSll2LgPdX7CCP3OloLx96/
+         dXm6eIJK11wkDxqrVL/tw/TWkpCdNrSrkIelifnkyEkAiYVtgTqBunjLGPOAkDDTEB32
+         iDFPg2HWoDQi/Yuyfu8vS1m/LUlvnPT3WIt607dOUX0BvR/tRJzk+DxvgjC87PwIlrdV
+         4Tsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753454707; x=1754059507;
+        d=1e100.net; s=20230601; t=1753454926; x=1754059726;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qIq14dJIVdG8Em0IZoGynxSIJDeMyZzA0yiBWzPg6Xc=;
-        b=avxo4vvL+OZaYGvcaBUx5HNxaTL0wAUUKjmWmXtF99kaygUibw9pkXxu2Y494HuJS+
-         +4P/GMM4dtPlgwxr9rH4BL5TcT3OABSEDqaNZh9EvmZwta08Sbug1p6LbgXXBE/qgwpN
-         335ZyIfonVFphUDxVxPYi/nNxub5NF8hnujbDJ33OddvuUcw1qUn5d25fec+5XQblr+j
-         oRy0r3EPKg6NU3UpW1D+VpotuHc9tuAlb8hejhh9DnVLN8M5SCCDnv45/WcBH+cwD4ew
-         OrYtOXCfkJf0Cyo/7E7f/kt60O5hjZnCMHNqZD1TFsqXxqfCs0z3I+J92RwpqN+fQbW5
-         n+iA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPvTXPW53Eq6TJD2dfngnJzFZrTEakxC06EIEuIu8m01/QfTxCLcU0MXoFJRJr2UmM9P6znfGj/dQVQ1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT013Ib6B9ChmttNoglpKdVZkgW8SgyanpsLpfHYTgkmJ62uT/
-	n9TDuj0CU/R4M/L3Ai4F+BcoahIvnfaxCmBxgEARTRcX94We0wS6RCuu1Fs0IzCEW8ZObeQZFzM
-	RD4ywivmzdzPob5XCNG1mK2Lp19thdyzolBPN8N3h
-X-Gm-Gg: ASbGncsw1gUTXhsfp2/y1YJOXB0kg5tb5wywNdM0dvKomfFh2fHMZ21h6nEzjGmOihj
-	ExFp8D0pcVSVd16kAYoonISrQsVA0zAcDT826pmq56u4pVpx5H5s3vRjimXpcrtq0CEQGuj8PPd
-	IlM67keuSVpVyoswkQOqrz6yGUTSGKrliCAJgAlxeYHyn3Huz17Y6CopCG5PHLTm7p5cI7f2Fqc
-	7Dmz9cAHVKHkanTbq4CdSv3lA81F/H7UbI=
-X-Google-Smtp-Source: AGHT+IEYQbZPuNP3paaUxn8jeMegpNMd+Dg193eNXtPsbU/sYQfNMnRC6dvCdmFyXtMH+mXp7L5rpb7LbQrPR5ksMss=
-X-Received: by 2002:a05:6402:1d89:b0:612:ce4f:39c with SMTP id
- 4fb4d7f45d1cf-614e6e4cfd3mr86568a12.0.1753454707041; Fri, 25 Jul 2025
- 07:45:07 -0700 (PDT)
+        bh=6fTiJ/2yQ7EUbjCeVCBz++1COYxUgI84X7sP0FcZaWQ=;
+        b=k0P8cpfQ9aTBKz+zGr8Gzl0n+beVbgJLI08GKzS7RoMh0VJ1TsGSXvo/FzknnY5pWI
+         XAKBUK+Y8kSm3tTG6B6JuqHWd3MR4W+4+rpQqylF2KKgctAV7MtkqMA3pWyXG4AHIlE9
+         iVn1IU5nl1FXsXC/2GXzZO07+iGvDZ8oBVg3n5v5quI6quInZc7xGIZVmECIHf6NQtzV
+         5bGTAWzMqNPiDqdRVQk3rHFMHyDWUuR4wLVN1A3/UVEh+0o1JLl0fwZwW6seyvTlLV70
+         IzQwGK41ThVcUuFg/rohhlHRqM8VuO30xUA66XB/9+2oLAgbR+0cS1KHn3q2Y0m2nYa+
+         Ia6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXXacfQyLR/OeKVRsns7iMG6Vd8nd+onjmxdee+gYAc1v4QmGvZciXOf5tXRcN6NKEavG9Tt7cNXkz6nsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo7kngO6ArIkrmzZKgf3iJJlhexFdmITYwJ/N0nqm6wxePJv4O
+	UWNhMX32rwGa5ReVhUc6HHFoXL8rGfGChs7QZUXjmuCgoNFxyi4qA7XhRbf62CKcD2mdqd4C0mV
+	1uu9POUpFKVxMLpXeJ5UiILDm3FA5GhtNQ9ShRSex
+X-Gm-Gg: ASbGncszF5ITjYtWEjO23G1hVNuwPYMbwPG3NnefNA7kqjfv5PuNVB12GY+Ae3Yqzfi
+	GtBYO7Ns4GZ8SdJ78em/Or87h8I84Ol55N1+FeDsYyyvmTMdWkfQKUpKOMSJ2SaxodDVCKc/iwn
+	Uriy773/jaRLQ7LogDnaWXjmws5qyU/HBP+x7fGkOCr0Oq2vR5h87WWhOZqk5PXqrsEli9g/7Eu
+	DqUYkktd/GmKmR5ZI6LtZfF8C19fjrYALs=
+X-Google-Smtp-Source: AGHT+IFQ5AMiQfPybrXcmBkRC8UMaPAwiYPs8TQcD30T1QIfVF3Vtd6z6dbAtwTEtc6Dd6Sjmp1+B0ZsJ9Yqhgfl2cw=
+X-Received: by 2002:a05:6402:40d1:b0:60e:5391:a9e5 with SMTP id
+ 4fb4d7f45d1cf-614ea755d34mr89389a12.5.1753454925860; Fri, 25 Jul 2025
+ 07:48:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725-anonvma-uaf-debug-v2-1-bc3c7e5ba5b1@google.com> <1d849190-214e-413e-a082-d7f862b653cc@suse.cz>
-In-Reply-To: <1d849190-214e-413e-a082-d7f862b653cc@suse.cz>
+References: <20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com>
+ <c3f04c75-a73b-48bb-b56e-7b18e57c2382@lucifer.local> <CAG48ez31aVnoBiMMjUczbmThWnRGmod4yppgMVqf2Nu5-hjU2g@mail.gmail.com>
+ <50502c3b-903f-4018-b796-4a158f939593@lucifer.local>
+In-Reply-To: <50502c3b-903f-4018-b796-4a158f939593@lucifer.local>
 From: Jann Horn <jannh@google.com>
-Date: Fri, 25 Jul 2025 16:44:31 +0200
-X-Gm-Features: Ac12FXyb-HgzDpS3DcrqFBWx_FgxxiAo_cGOTd9j55tu-ioQwhxjh8xLSbmTJD4
-Message-ID: <CAG48ez23CPO-m6kPaEs8kLUfRVCN+QMbsEn7BocfaJuq=gRwaA@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/rmap: Add anon_vma lifetime debug check
-To: Vlastimil Babka <vbabka@suse.cz>
+Date: Fri, 25 Jul 2025 16:48:09 +0200
+X-Gm-Features: Ac12FXzAIpPjC-gw79jtBUmPpJHNu7DPT7TU7_vGFytRzjofambUs1vGAWWcnjY
+Message-ID: <CAG48ez1TOULrpJGsUYvRSsrdWBepCJf9jh-xPpurRUXbMmAkuA@mail.gmail.com>
+Subject: Re: [PATCH] mm/rmap: Add anon_vma lifetime debug check
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Rik van Riel <riel@surriel.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org, 
+	Rik van Riel <riel@surriel.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 25, 2025 at 4:11=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
-> On 7/25/25 14:16, Jann Horn wrote:
-> > If an anon folio is mapped into userspace, its anon_vma must be alive,
-> > otherwise rmap walks can hit UAF.
-> >
-> > There have been syzkaller reports a few months ago[1][2] of UAF in rmap
-> > walks that seems to indicate that there can be pages with elevated mapc=
-ount
-> > whose anon_vma has already been freed, but I think we never figured out
-> > what the cause is; and syzkaller only hit these UAFs when memory pressu=
-re
-> > randomly caused reclaim to rmap-walk the affected pages, so it of cours=
+On Fri, Jul 25, 2025 at 3:49=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Fri, Jul 25, 2025 at 02:00:18PM +0200, Jann Horn wrote:
+> > An anon folio may outlive the VMAs it comes from, so it may also
+> > outlive its associated anon_vma.
+>
+> Yes, I will share some diagrams I did a while ago to outline this. They'r=
 e
-> > didn't manage to create a reproducer.
+> ASCII and make you want to cry! :)
+>
+> Hmm, if non-root, I wonder if we
+
+(looks like you stopped typing mid-sentence)
+
+> > 2. Removing an anon folio mapping reduces the anon folio's mapcount
+> > before the VMA can go away.
+>
+> the anon folio's mapcount? You mean the VMA's? :P
+
+I mean folio_mapcount(folio), which reads folio->_mapcount and
+folio->_large_mapcount.
+
+> > 4. If the anon-exclusive bit is set, the folio is only mapped in a
+> > single place (otherwise swapout+swapin could erroneously set
+> > RMAP_EXCLUSIVE, causing the swapped-in folio to be associated with the
+> > wrong anon_vma).
+>
+> I believe (David?) swapin can cause this not to be the case?
+>
+> > 5. When a VMA is associated with an anon_vma, it is always also
+> > associated with the corresponding root anon_vma (necessary because
+> > non-RMAP_EXCLUSIVE swapin falls back to associating the folio with the
+> > root anon_vma).
+>
+> OK but we know for sure the UAF is not on a root anon_vma so it's not som=
+e
+> weirdness with trying to access anon_vma->root
+
+Ah, right.
+
+> > 6. If two VMAs in the same process have the same ->anon_vma, their
+> > anonvma chains must be the same (otherwise VMA merging can break
+> > stuff).
 > >
-> > Add a VM_WARN_ON_FOLIO() when we add/remove mappings of anonymous folio=
-s to
-> > hopefully catch such issues more reliably.
+>
+> What do you mean the same?
+>
+> If you mean they both must have AVC's which ponit to the individual VMAs
+> and each point to the same anon_vma, yes.
+
+Yeah, that.
+
+> God simple isn't it? ;)
+
+Yeah, I prefer to think of this at the slightly higher abstraction
+layer of "which VMAs are tied to which anon_vmas via AVC" and "which
+VMAs use which anon_vmas as their primary anon_vma"; to me, AVCs being
+separate objects is a minor implementation detail caused by the kernel
+only using intrusive lists instead of the kinds of data structures
+that you'd use in almost any other environment.
+(Like, you wouldn't need AVC objects if the references between VMAs
+and anon_vmas were formed with things like maple trees or xarrays, but
+I guess they wouldn't give you the interval tree semantics you want.)
+
+> I verified these numbers with drgn, interesting add a new child doesn't
+> increment refcount...
+
+Yeah - AFAIU a single reference is shared by all the VMAs that are
+tied to an anon_vma via AVC nodes, and a child anon_vma can't be
+associated with a VMA without its parent also being associated with
+the VMA...
+
+> > > We're sort of relying on this
+> > >
+> > > a. being a UAF
+> > >
+> > > b. the thing we're UAF-ing not either corrupting this field or (if th=
+at
+> > >     memory is actually reused as an anon_vma - I'm not familiar with =
+slab
+> > >     caches - so maybe it's quite likely - getting its refcount increm=
+ented.
 > >
-> > [1] https://lore.kernel.org/r/67abaeaf.050a0220.110943.0041.GAE@google.=
-com
-> > [2] https://lore.kernel.org/r/67a76f33.050a0220.3d72c.0028.GAE@google.c=
-om
-> >
-> > Acked-by: David Hildenbrand <david@redhat.com>
-> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > ---
-> > Changes in v2:
-> > - applied akpm's fixup (use FOLIO_MAPPING_ANON, ...)
-> > - remove CONFIG_DEBUG_VM check and use folio_test_* helpers (David)
-> > - more verbose comment (Lorenzo)
-> > - replaced "page" mentions with "folio" in commit message
-> > - Link to v1: https://lore.kernel.org/r/20250724-anonvma-uaf-debug-v1-1=
--29989ddc4e2a@google.com
-> > ---
-> >  include/linux/rmap.h | 22 ++++++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> >
-> > diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-> > index 20803fcb49a7..6cd020eea37a 100644
-> > --- a/include/linux/rmap.h
-> > +++ b/include/linux/rmap.h
-> > @@ -449,6 +449,28 @@ static inline void __folio_rmap_sanity_checks(cons=
-t struct folio *folio,
-> >       default:
-> >               VM_WARN_ON_ONCE(true);
-> >       }
-> > +
-> > +     /*
-> > +      * Anon folios must have an associated live anon_vma as long as t=
-hey're
-> > +      * mapped into userspace.
-> > +      * Note that the atomic_read() mainly does two things:
-> > +      *
-> > +      * 1. In KASAN builds with CONFIG_SLUB_RCU_DEBUG, it causes KASAN=
- to
-> > +      *    check that the associated anon_vma has not yet been freed (=
-subject
+> > KASAN sees the memory read I'm doing with this atomic_read(), so in
+> > KASAN builds, if this is a UAF, it should trigger a KASAN splat
+> > (modulo KASAN limitations around when UAF can be detected). Basically,
+> > in KASAN builds, the actual explicit check I'm doing here is only
+> > relevant if the object has not yet been freed. That's why I wrote the
+> > comment "Part of the purpose of the atomic_read() is to make KASAN
+> > check that the anon_vma is still alive.".
 >
-> I think more precisely it checks that the slab folio hosting the anon_vma
-> could not have been yet freed, IIUC? If the anon_vma itself has been free=
-d
-> then this will not trigger.
-
-The point of CONFIG_SLUB_RCU_DEBUG, which I'm talking about here, is
-that it allows KASAN to catch UAF once the anon_vma has been freed and
-an RCU grace period has passed; it is not necessary that the slab
-folio has been freed.
-
-You can see that working in the linked syzkaller reports - KASAN
-tracked the object as freed after slab_free_after_rcu_debug(), which
-is an RCU callback scheduled from kmem_cache_free().
-
-> > +      *    to KASAN's usual limitations). This check will pass if the
-> > +      *    anon_vma's refcount has already dropped to 0 but an RCU gra=
-ce
-> > +      *    period hasn't passed since then.
+> Hm, I'm confused, how can you detect a UAF if the object cannot yet be
+> freed? :P
 >
-> AFAIU this says it more accurately and matches my interpretation above?
+> or would that be the case were it not an atomic_read()?
 >
-> > +      * 2. If the anon_vma has not yet been freed, it checks that the
-> > +      *    anon_vma still has a nonzero refcount (as opposed to being =
-in the
-> > +      *    middle of an RCU delay for getting freed).
->
-> Again the RCU delay would apply to the slab page, unless you talk about t=
-he
-> CONFIG_SLUB_RCU_DEBUG specific path (IIRC).
+> I guess this permits this to be detected in a timely manner.
 
-Yes, right, the "RCU delay" in the second bullet point refers to
-CONFIG_SLUB_RCU_DEBUG.
-
-Here I'm saying "If the anon_vma has not yet been freed" because
-that's the only case in which I can reliably say what will happen, and
-this is the main case that isn't already covered by the first bullet
-point in a CONFIG_SLUB_RCU_DEBUG build.
-
-> That said, I wonder if here in __folio_rmap_sanity_checks() we are even i=
-n a
-> situation where we rely on SLAB_TYPESAFE_BY_RCU in order to not touch
-> something that's not anon_vma anymore? I think we expect it to exist?
-
-Yes, we expect it to exist. That's why I'm not just asserting that the
-anon_vma is still considered live by KASAN, but also that its refcount
-is non-zero.
-
-> Can we
-> thus invent a CONFIG_SLUB_RCU_DEBUG-specific assert that assert the anon_=
-vma
-> itself has not been freed yet (i.e. even if within a grace period?).
-
-That is essentially what I'm doing - checking that the count is
-nonzero verifies that it's not within a grace period, and the implicit
-KASAN check verifies it can't be in a KASAN quarantine after the grace
-period is over.
-
-> I was wondering what actually does rely on SLAB_TYPESAFE_BY_RCU, thanks
-> Lorenzo for pointing me to folio_get_anon_vma(). But that's only used
-> elsewhere than here, no?
-
-Yes; the point of this assertion is that folio_get_anon_vma() and
-folio_lock_anon_vma_read() (which show up in the stack traces of the
-two linked syzkaller reports) rely on the ->mapping not being
-dangling; and they can happen in the background anytime as long as the
-folio mapcount is elevated, but they only actually happen sporadically
-(in particular under memory pressure, which syzkaller apparently
-mostly triggers randomly and non-reproducibly). If we have bugs where
-the ->mapping of a folio goes away while it still has an elevated
-mapcount, then instead of randomly getting KASAN splats under memory
-pressure, it would be nice to detect this reliably. So I figured a
-nice place to check this is when we're decrementing the mapcount -
-that should catch almost all cases, except ones where such a bug
-happens because we somehow leaked both a mapcount and a refcount of a
-folio.
-
-> > +      */
-> > +     if (folio_test_anon(folio) && !folio_test_ksm(folio)) {
->
-> So you verified this compiles out completely without DEBUG_VM?
-
-No, after David's suggestion to remove the explicit CONFIG_DEBUG_VM
-check, I looked at the definitions of these things to check that it's
-all just plain reads and arithmetic, and removed the CONFIG_DEBUG_VM
-check, but haven't actually compile-tested it.
+If the anon_vma hasn't yet been freed, but its refcount is 0, then
+that's still a bug because we rely on the anon_vma to have a nonzero
+refcount as long as there are folios with a nonzero mapcount that are
+tied to it, and it is likely to allow UAF at a later point.
 
