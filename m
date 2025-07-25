@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-745914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A868FB12069
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:55:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7C6B12067
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23AC84E2F69
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997EA1C2745E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F3F2EBDD1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B55C2D23BA;
 	Fri, 25 Jul 2025 14:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="m0jj0ZKW"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="oi9+E1QU"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514C0226863;
-	Fri, 25 Jul 2025 14:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398D51E766F;
+	Fri, 25 Jul 2025 14:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753455314; cv=none; b=EyTQ6KS3Ug7J7/9IO+9YEeyJFLsFHLj14Ke+8WSRubtfBnzVKeviqn3jyKidaPCJWHAjlVj0fsNf+6Sy4C2joyc2OXoa9ZaTIdai+k0Jx/WIDm6GCjU7skUtwP8vZ+QU5mv60j6r6+BMXAcMhPSTx33Mu0Z5wH4ulzB50ngkJpU=
+	t=1753455313; cv=none; b=HNRZuJGI9RCDER1H/S9D4RrTds1IOlXWzz5VEeOyL6al0+85sDmuZnj2jpjGV9Tgbyi3Enl+nAWY7YOWXMNIokS6lCGW05WPJKtBk46/5ARyp2AZHX4UJ4Fv64h/bFnqUlDE7+vwxc6aXd0ohU3KYCJNR7vJj555bKy6U3DBGko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753455314; c=relaxed/simple;
-	bh=EXHaox/1NzXqFsnH0dWanvrMBp8w7U0rZ5dj8B4pNPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=InSoyrUa+8xiXZYeviXV59bQ39qXUGHijD+nBaGttbiBa/b+4vx/63mzWm7Sd2h5/vMQaqgzHIG5cgFvei2bVlvgAcNQu7J6u1KTWoTuc6gEDAxQ8T77mqT9kShqEteFLpVI4/Askh6VMhMzdsuF08OqznBtsVCdxi5rb0DAHsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=m0jj0ZKW; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56PCJhSE009250;
-	Fri, 25 Jul 2025 16:54:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	EXHaox/1NzXqFsnH0dWanvrMBp8w7U0rZ5dj8B4pNPs=; b=m0jj0ZKW2V09n25s
-	7B7U6M9MLZjvJcMWRYlZu2uFMoeeao9xbmKHMjp231wc1Gp9uJ4HcC8UklLPBTGC
-	HTWTXgbC6XqRFU8qn68Fxm/2C7mfOYEEjoH3L0nmPMqHWADv7AcbyNsZ/tX/SrEH
-	rQYs6bVDHl96QbwVaQLnkbATyLJrUKGt9anHUzsXgc2IeJzY+j7wo02hNDcoPKm3
-	DSB5xGyi/yp2TLyA1KfNMc05VQx0e+AlozREVTRbbUAGcAD0asReA0mUXre8LULM
-	XpTEtFaY8nJDqkhkeuyD2rbNFwh+uIwH1OJVtVHmyep5WVEsmMDd18//lFI0E8QJ
-	8Y4cGg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 483w3j3kdk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 16:54:48 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D000040044;
-	Fri, 25 Jul 2025 16:53:23 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EC96979F3AB;
-	Fri, 25 Jul 2025 16:52:16 +0200 (CEST)
-Received: from [10.252.19.90] (10.252.19.90) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Jul
- 2025 16:52:15 +0200
-Message-ID: <51f9e2bd-1129-4a82-b12a-72663e57ebda@foss.st.com>
-Date: Fri, 25 Jul 2025 16:52:13 +0200
+	s=arc-20240116; t=1753455313; c=relaxed/simple;
+	bh=ySsrQyQZsReDOvURUlTKLUyfDDo7OmT+KPfcJMZKqvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gbyhAIkcdKHy7gMOsH+16vh8HJLqE7MVlwEHyQyUi7zLUm8mXRCyeBBlvJrztQLmBevGCGm3/ZdGKl23JVtqDNg1d7A9sDGtzuWuBgDJmeV8MiRVRfZAM/w8/k53Wi2A/ygUT1rdv2s2QFiwIA9NCXDlMySXyXv8u0M3yLapvyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=oi9+E1QU; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bpWBK4zvVzm0yVZ;
+	Fri, 25 Jul 2025 14:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1753455302; x=1756047303; bh=ySsrQyQZsReDOvURUlTKLUyf
+	DDo7OmT+KPfcJMZKqvA=; b=oi9+E1QUrqlM02IzDKeAMW93yVx5BAhLCZCxyAWr
+	kVCKJ/+Gg7jsl3WaWERWTi0fF7nneN6KEAVIXD3T5O7nbX2K0gVS/ZkIER/TTj/Z
+	Sreme/RjmXFL8VPBlh83v7+agKdok12gwiJFK5vOI7T7BvE551NwflZXNO+3mXRa
+	i6FjKdcVYlGjzPML7t9P1Xm8Es1LDVbOGlH1aUkHuV7a80/PxJ0eZJsAjnpcCnNG
+	vRAc+gbG/UnJsmbkDTtz0H7GX52vsKBh/AlwsPqoIErBoq4rRBJEvGkAyjp94Wox
+	0UBb+rh5/Jm+vyycRdS5kB4Mvf4DNWqUZi+Phslm9ndSog==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id a7xvxFBIoncZ; Fri, 25 Jul 2025 14:55:02 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bpW9t60Xszm0ySc;
+	Fri, 25 Jul 2025 14:54:41 +0000 (UTC)
+Message-ID: <1989e794-6539-4875-9e87-518da0715083@acm.org>
+Date: Fri, 25 Jul 2025 07:54:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,123 +64,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Linux-stm32] [PATCH 09/12] arm64: dts: st: add lvds support on
- stm32mp255
-To: Clement LE GOFFIC <clement.legoffic@foss.st.com>,
-        Yannick Fertre
-	<yannick.fertre@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250725-drm-misc-next-v1-0-a59848e62cf9@foss.st.com>
- <20250725-drm-misc-next-v1-9-a59848e62cf9@foss.st.com>
- <85673db7-d311-47cc-be52-291d94e136e4@foss.st.com>
- <a00bb4e2-b0e8-44ef-bf14-5e4f5e60f9d0@foss.st.com>
+Subject: Re: [PATCH v4] scsi: ufs: core: Don't perform UFS clkscale if host
+ asyn scan in progress
+To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
+ "beanhuo@micron.com" <beanhuo@micron.com>,
+ "avri.altman@wdc.com" <avri.altman@wdc.com>,
+ "quic_rampraka@quicinc.com" <quic_rampraka@quicinc.com>,
+ "quic_cang@quicinc.com" <quic_cang@quicinc.com>,
+ "quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
+ "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
+ "quic_ziqichen@quicinc.com" <quic_ziqichen@quicinc.com>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ "luca.weiss@fairphone.com" <luca.weiss@fairphone.com>,
+ "konrad.dybcio@oss.qualcomm.com" <konrad.dybcio@oss.qualcomm.com>,
+ "junwoo80.lee@samsung.com" <junwoo80.lee@samsung.com>,
+ "mani@kernel.org" <mani@kernel.org>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ =?UTF-8?B?VHplLW5hbiBXdSAo5ZCz5r6k5Y2XKQ==?= <Tze-nan.Wu@mediatek.com>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250522081233.2358565-1-quic_ziqichen@quicinc.com>
+ <5f3911ffd2c09b6d86300c3905e9c760698df069.camel@mediatek.com>
 Content-Language: en-US
-From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-In-Reply-To: <a00bb4e2-b0e8-44ef-bf14-5e4f5e60f9d0@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_04,2025-07-24_01,2025-03-28_01
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <5f3911ffd2c09b6d86300c3905e9c760698df069.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
+On 7/25/25 2:13 AM, Peter Wang (=E7=8E=8B=E4=BF=A1=E5=8F=8B) wrote:
+> Could consider luns_avail instead mutex?
 
+That would be wrong. I think it is essential that scan_mutex is used in
+this patch. Additionally, the lock inversion is between devfreq->lock
+and (c->notifiers)->rwsem so it seems unlikely to me that Ziqi's patch
+is the patch that introduced the reported lock inversion.
 
-On 7/25/25 13:13, Clement LE GOFFIC wrote:
-> On 7/25/25 13:08, Clement LE GOFFIC wrote:
->> Hi Raphael,
->>
->> On 7/25/25 12:04, Raphael Gallais-Pou wrote:
->>> The LVDS is used on STM32MP2 as a display interface.
->>>
->>> Add the LVDS node.
->>>
->>> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
->>> ---
->>>   arch/arm64/boot/dts/st/stm32mp255.dtsi | 12 ++++++++++++
->>>   1 file changed, 12 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/st/stm32mp255.dtsi b/arch/arm64/boot/
->>> dts/st/stm32mp255.dtsi
->>> index
->>> f689b47c5010033120146cf1954d6624c0270045..a4d965f785fa42c4597494010855aec7e1b9fdd1
->>> 100644
->>> --- a/arch/arm64/boot/dts/st/stm32mp255.dtsi
->>> +++ b/arch/arm64/boot/dts/st/stm32mp255.dtsi
->>> @@ -6,6 +6,18 @@
->>>   #include "stm32mp253.dtsi"
->>>   &rifsc {
->>> +    lvds: lvds@48060000 {
->>> +        compatible = "st,stm32mp25-lvds";
->>
->> For the compatible you now need one comaptible per SoC.
->> It means your compatible should look like : "st,stm32mp251-lvds".
->> This way, if on the 253 or 255 there is an issue you are able to easily add
->> match data in the driver with compatible "st,stm32mp253-lvds" or
->> "st,stm32mp255-lvds".
->> A prior discussion on this subject has been raised on my V1 of HDP involving
->> Krzysztof and Alexandre :
->> https://lore.kernel.org/all/418a80a9-8c08-4dd1- bf49-1bd7378321aa@kernel.org/
-> Woops, this comment should target the add of the ltdc compatible as I see that
-> lvds one already exists and can't be changed.
-> Though the main idea is here.
-
-Indeed, the compatible is wrong.
-
-After carefully reading the thread you point to, I suggest the following:
-
-* Rename the new LTDC compatible to "st,stm32mp251-ltdc"
-* Add another compatible for the LVDS. So it would have "st,stm32mp255-lvds",
-and falls back to "st,stm32mp25-lvds".
-
-Like so the LVDS driver would not have to be modified.
-
-Alex, Krzysztof, does that seem good to you ?
-
-Best regards,
-Raphaël
->
->>
->>> +        #clock-cells = <0>;
->>> +        reg = <0x48060000 0x2000>;
->>> +        clocks = <&rcc CK_BUS_LVDS>, <&rcc CK_KER_LVDSPHY>;
->>> +        clock-names = "pclk", "ref";
->>> +        resets = <&rcc LVDS_R>;
->>> +        access-controllers = <&rifsc 84>;
->>> +        power-domains = <&CLUSTER_PD>;
->>> +        status = "disabled";
->>> +    };
->>> +
->>>       vdec: vdec@480d0000 {
->>>           compatible = "st,stm32mp25-vdec";
->>>           reg = <0x480d0000 0x3c8>;
->>>
->>
->> Best regards,
->> Clément
->
-
+Bart.
 
