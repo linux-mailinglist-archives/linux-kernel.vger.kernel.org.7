@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-746321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5605DB12576
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:30:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9182AB1256E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E26411C262C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:30:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED825600E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D607625CC6C;
-	Fri, 25 Jul 2025 20:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1D825B69F;
+	Fri, 25 Jul 2025 20:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOaso707"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nmhx7Z8/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3076025A343;
-	Fri, 25 Jul 2025 20:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902BF25A343;
+	Fri, 25 Jul 2025 20:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753475343; cv=none; b=aqxj+X1ktGK+AOiOysbNeDdfYHugIFIa/6JRYlKOEycF8TXGp+AQZjZO11U7zeyP11QX6DiWWeSCP3iScNAlGX98r7mnbIdVmN4wpZu44kmWYcWb4wdUMHj8tw/fsGEjmQH2pSdDQZTIIDVHEKTlFUqrb25EoTUCtS6zMb+YpNw=
+	t=1753475339; cv=none; b=AwQWg6nj9eacfO6rrwb8U8qCpp7LCLwfe3EzVSkILaSzvhJghCOuakn0xDtUGSuvl84YqFmV1pohnBp78fgR0Rax3vGR1M2dF5wV3YLD9h8uH8UJnJkqzikumHC85Es9xZnuOg54+YYEUrL5e+wFTaSExgl9Ppgjp0yD1tzbL2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753475343; c=relaxed/simple;
-	bh=pefVZyjeujN2yBzzyJFiH0o1xvQSZirZhXuH/tz4584=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dTJ7L+nfvd6T22+5mubzxk+/sRXvw2YLIzdXYQkdYaySYWu75cpbSs07/IjwUkxdXpPKZqHWd2emzJvNsW7RsoCFMk670UMBlyEWbP4OuY6GkpPpf+9Y0t2GdMOz+lKk6GqU5ExskM6flJL3W3PEnMGpFKnqWqhv6vD+SLyx6ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOaso707; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FC9AC4CEF4;
+	s=arc-20240116; t=1753475339; c=relaxed/simple;
+	bh=2lR8zBkPfCL0XzsAZKYS6/0c97bv4h+0epH74tNqB9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxVSbyhr+Bv+Htq0NMpFXrzunwgBsxBLGv1TmRnoOw6P1O8z4lSTwcfOANktlk+h33yLHSU3yjjgheVBG3xTsVGzwtLTP8eVArgvujG7AYPWID89oASlABcMOA6PYmnYQQ7vWmMD75kr3pS9FTTQ/05J02DHxZFpmc7GX4gv1eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nmhx7Z8/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE74C4CEE7;
 	Fri, 25 Jul 2025 20:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753475342;
-	bh=pefVZyjeujN2yBzzyJFiH0o1xvQSZirZhXuH/tz4584=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GOaso707QPrhVlAVAJpPSACpN/3Dk4D1BjB4m4XyRq5K8h3VFrLbtfTZa/2MijuCD
-	 iKNKP1dyxlfFx35LAS9fxky/UDJQzsQeBxenhaMk31AuacX20quVZ7uvBwC0sOVe/X
-	 P7TUgbtwgGag1qNyPbnEuaodrQegjo6Ex/+tlWpwMvcNwHGXWSeAhf1c4tSXulLEcp
-	 4ezjfxNkPA4/QqR3zUp/Wy9nuGYrwKu6wzX6gwQnkIAtn2T978l/SXkXjxDHUd/3xf
-	 QhXgi3Gm3hS0VAdy9HaEO8Ghbkga0FxRrqDn+Y80A8q1a7Exg5HL3OaWMBUZ05IhpP
-	 PT/Kwfg+mBYdQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: [PATCH] MAINTAINERS: add "DEVICE I/O & IRQ [RUST]" entry
-Date: Fri, 25 Jul 2025 22:28:40 +0200
-Message-ID: <20250725202840.2251768-1-ojeda@kernel.org>
+	s=k20201202; t=1753475339;
+	bh=2lR8zBkPfCL0XzsAZKYS6/0c97bv4h+0epH74tNqB9s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Nmhx7Z8/FBwNijNFPpZf4SqJoOStQ0XsxTd/CcwodEvheITYeVzDATI0vkqopVZpN
+	 ahWJcPhWgy+F6oKOWucoyS8HKVtTZ65qkKO8rnMdpLbkTDaCq5kdB43VdABXLgIuDr
+	 AM/H9YWG4msnlSmTFWa7aBLB+g4755Mt+4XTP+zmXW/Yj4MklkggEMOnWzWa+wULQ5
+	 WGiC6obE6FEykCeFOOC0Vg2eGT4khYCcJCTXm7Kcot8eL3Y4GZ6LqEPpW7zeM7EEVS
+	 8NizKGJ9SwGA6+f9JSlBLusqpEgsBUK4k1GQ/Wm6GpWdOOeE//dPy40IOSp7ZOPZfq
+	 Lrk5Ir8nxLrrQ==
+Date: Fri, 25 Jul 2025 15:28:58 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, mripard@kernel.org,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	daniel.lezcano@linaro.org, krzk+dt@kernel.org, vkoul@kernel.org,
+	chunfeng.yun@mediatek.com, tinghan.shen@mediatek.com, arnd@arndb.de,
+	herbert@gondor.apana.org.au, shane.chien@mediatek.com,
+	andersson@kernel.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+	linux-phy@lists.infradead.org, airlied@gmail.com,
+	matthias.bgg@gmail.com, linus.walleij@linaro.org,
+	jieyy.yang@mediatek.com, granquet@baylibre.com,
+	maarten.lankhorst@linux.intel.com, mchehab@kernel.org,
+	linux-media@vger.kernel.org, tglx@linutronix.de,
+	conor+dt@kernel.org, jiaxin.yu@mediatek.com,
+	frank-w@public-files.de, davem@davemloft.net, sam.shih@mediatek.com,
+	broonie@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
+	chunkuang.hu@kernel.org, eugen.hristev@linaro.org, simona@ffwll.ch,
+	andy.teng@mediatek.com, linux-remoteproc@vger.kernel.org,
+	tzimmermann@suse.de, mwalle@kernel.org, ck.hu@mediatek.com,
+	houlong.wei@mediatek.com, p.zabel@pengutronix.de,
+	olivia.wen@mediatek.com, jitao.shi@mediatek.com,
+	mathieu.poirier@linaro.org, kishon@kernel.org,
+	jassisinghbrar@gmail.com, sean.wang@kernel.org, atenart@kernel.org,
+	fparent@baylibre.com, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 06/38] dt-bindings: timer: mediatek: Add compatible for
+ MT6795 GP Timer
+Message-ID: <175347533780.1836400.4840892261408767765.robh@kernel.org>
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+ <20250724083914.61351-7-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724083914.61351-7-angelogioacchino.delregno@collabora.com>
 
-This entry will handle device I/O patches and abstractions (such as
-memory-mapped IO and system resources series [1]), as well as IRQ ones
-(such as the `request_irq` series [2]).
 
-Patches will flow through driver-core, at least for the time being.
+On Thu, 24 Jul 2025 10:38:42 +0200, AngeloGioacchino Del Regno wrote:
+> Add a compatible for the General Purpose Timer (GPT) found on the
+> MediaTek Helio X10 MT6795 SoC which is fully compatible with the
+> one found in MT6577.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  Documentation/devicetree/bindings/timer/mediatek,timer.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Danilo, Alice and Daniel will maintain it.
-
-Cc: Danilo Krummrich <dakr@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>
-Link: https://lore.kernel.org/rust-for-linux/20250717-topics-tyr-platform_iomem-v15-0-beca780b77e3@collabora.com/ [1]
-Link: https://lore.kernel.org/rust-for-linux/20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com/ [2]
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- MAINTAINERS | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 10850512c118..ededa04ef97b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6920,6 +6920,21 @@ F:	drivers/devfreq/event/
- F:	include/dt-bindings/pmu/exynos_ppmu.h
- F:	include/linux/devfreq-event.h
- 
-+DEVICE I/O & IRQ [RUST]
-+M:	Danilo Krummrich <dakr@kernel.org>
-+M:	Alice Ryhl <aliceryhl@google.com>
-+M:	Daniel Almeida <daniel.almeida@collabora.com>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Supported
-+W:	https://rust-for-linux.com
-+B:	https://github.com/Rust-for-Linux/linux/issues
-+C:	https://rust-for-linux.zulipchat.com
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
-+F:	rust/kernel/io.rs
-+F:	rust/kernel/io/
-+F:	rust/kernel/irq.rs
-+F:	rust/kernel/irq/
-+
- DEVICE RESOURCE MANAGEMENT HELPERS
- M:	Hans de Goede <hansg@kernel.org>
- R:	Matti Vaittinen <mazziesaccount@gmail.com>
-
-base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
--- 
-2.50.1
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
