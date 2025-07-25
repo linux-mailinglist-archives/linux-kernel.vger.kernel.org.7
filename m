@@ -1,138 +1,126 @@
-Return-Path: <linux-kernel+bounces-746252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4687B12493
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:03:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85672B12495
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 231F017E346
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:03:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D24517D250
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493B5257AC1;
-	Fri, 25 Jul 2025 19:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367EC257453;
+	Fri, 25 Jul 2025 19:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="jg8zYEHL"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="QFoQcRq2"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6C1256C9C;
-	Fri, 25 Jul 2025 19:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753470227; cv=pass; b=nMjwCneDByMlZj8lvPZkdE20Ho+MP4//8GUGcDziOycpJuA2VxEkIX9e2s3RaIs/NY1TP4lKmmVG93/+V2g1Cl12i9Xv6C/v19paOBSUVAzdOseuUrZSArej1/osOUnK2QI6NPj0JiQMoSnjZmVoq2qr7TA33JYHmzUw3YI7kF4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753470227; c=relaxed/simple;
-	bh=aB9liRnEWbRaScDDjLWWeM+YCj0fmMh/RTBXyLpRoik=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pdcyTW3IDX3kgBOcYXI95Z+DCBX48UW/GK0rwUV7Bj/tpBNErexmd29niV99NITo9jfCyJtTeORGbZDApy4z0Flb/GSbDrs8h9VzhZFFyiboTTwF6g9Lootwc04/ufobDKbm5XT8JurntVsNZu0mDTAqi9zAJLheGZ6PkDaxaYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=jg8zYEHL; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753470187; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=O4IFeTTOiaFqK2VNmNfeSU5crlAy2NzPYDdtzx3GX4/oaJN8/8HlEsMfEWE0RlgzU90aViXzbe87FIyXoOOvyydIIUtCf5kTi0qYZI3rHB3yI1T9Ev3jjxiIkaRC17RjUZlSPmvZ1rkk7SMer2M1eG5qe9eFTIs1FS4F20qk9S4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753470187; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0gUl65a8tci3xttZczxCT9K4PQpIDEGmqHk6r8P++JM=; 
-	b=IBGBaD8cMl7XyrKws0AbHtctNmTlNtzNIvXtAtVe4CGcU16iNITKiyddGEn75SUfEKt3fvVLScL7xunpcfQhPewnzCKJS9FUvqkQg25xY3U7bUJQYckKQI7rOMbm0E8sf/9k4eYEqr6bWt9FEj68MjQu4goFgnW9bK9MBxQVSU8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753470187;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=0gUl65a8tci3xttZczxCT9K4PQpIDEGmqHk6r8P++JM=;
-	b=jg8zYEHLGb8ALcZ/DLz/ZMwogEENlaKG9A0/o3fCsXfRWMS+qG0FeziZ7ETa+3aB
-	GVumitXAt70xu7xW+bqFTTYErCNvnskvf3Ev+m4ZYVwiOiaMhOXBmWeayxS7jaTSMuv
-	HMvznPqHPzcK4lAomcyZ9zLvQyzH5nWHvVDwNlSA=
-Received: by mx.zohomail.com with SMTPS id 1753470186171650.5564365863407;
-	Fri, 25 Jul 2025 12:03:06 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>
-Cc: kernel@collabora.com,
-	stable@vger.kernel.org,
-	Bard Liao <bard.liao@intel.com>,
-	sound-open-firmware@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] ASoC: SOF: amd: acp-loader: Use GFP_KERNEL for DMA allocations in resume context
-Date: Sat, 26 Jul 2025 00:02:54 +0500
-Message-Id: <20250725190254.1081184-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAAA242D8B;
+	Fri, 25 Jul 2025 19:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753470351; cv=none; b=qRBnYasamxWG5WfLvWfEMApZTPGTVwcApgp6mToD2iXt6T2WqyXERliAAxCP/zOLkCxLbAFr1C7iArv2XmxdESz52s0v3E0YOyUHaGPYz58+O7fT9TtMrJbDfL5tZyZP+MClma7PREoryBTWSscAtv4JjQ7vcfwSArp0AWTxQCI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753470351; c=relaxed/simple;
+	bh=mELrDtWGMI1QG93gjCIPHgENUspiCmDd8aU++jDSiTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NA00brlG377Ln273LYJB+4ev+Oz3u9ot8+wOApZVfIZi1/2GiSPPKvL1XxFMHcNk9NyUiW6DlSbLQXa+51chC7tnpkDp9YUb8XoMUepLcDHsFSRzT147JGvO8ETLPxvzMQnkVql0CUQnpmAJjYdAbmb234RyOK4t0sOsMG4lwO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=QFoQcRq2; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 3ABAA1C00BE; Fri, 25 Jul 2025 21:05:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1753470339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VZp/qEMObXUYLMGlCigrDo0ItwQbn1PmLGaupHV3qjI=;
+	b=QFoQcRq2Js10wMhwWRp3uNsPd4UFFlI2SejV8t4oIKRVzuO4bRePabMMJ5senQgpk0vM9I
+	/cbJb4xhuXguIPU3QqL/80c/+OzQhrehH2K9j+yXqmVrLc1ouRcbxOly4uRokS8XGn0jjc
+	nG6zfZlsYEqn+wGbSx1xdBRA3yOjQes=
+Date: Fri, 25 Jul 2025 21:05:38 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Waiman Long <llong@redhat.com>,
+	kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, will@kernel.org,
+	miriam.rachel.korenblit@intel.com, linux-wireless@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>, John Ogness <jogness@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: locking problems in iwlwifi? was Re: 6.16-rcX: crashing way too
+ often on thinkpad X220
+Message-ID: <aIPVghzeOTawpTeT@duo.ucw.cz>
+References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz>
+ <aID6XPLXuGo+ViTm@duo.ucw.cz>
+ <aIEC4t2EICdgomZV@duo.ucw.cz>
+ <874iv2stk3.ffs@tglx>
+ <87zfcurexx.ffs@tglx>
+ <aIJqC/0ZPhgaNdkf@duo.ucw.cz>
+ <71548e22-9f3c-469e-a59d-f921da59d927@redhat.com>
+ <dd50a074-0988-4a4d-a78f-7862e87dbab0@redhat.com>
+ <877bzxqo39.ffs@tglx>
+ <87v7ngpa43.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="O5ZViAcPiKIAYIsP"
+Content-Disposition: inline
+In-Reply-To: <87v7ngpa43.ffs@tglx>
 
-Replace GFP_ATOMIC with GFP_KERNEL for dma_alloc_coherent() calls. This
-change improves memory allocation reliability during firmware loading,
-particularly during system resume when memory pressure is high. Because
-of using GFP_KERNEL, reclaim can happen which can reduce the probability
-of failure.
 
-Fixes memory allocation failures observed during system resume with
-fragmented memory conditions.
+--O5ZViAcPiKIAYIsP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	snd_sof_amd_vangogh 0000:04:00.5: error: failed to load DSP firmware after resume -12
+Hi!
 
-Fixes: 145d7e5ae8f4e ("ASoC: SOF: amd: add option to use sram for data bin loading")
-Fixes: 7e51a9e38ab20 ("ASoC: SOF: amd: Add fw loader and renoir dsp ops to load firmware")
-Cc: stable@vger.kernel.org
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- sound/soc/sof/amd/acp-loader.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Enable framebuffer and framebuffer console. Add console=3Dtty0 to the
+> kernel command line.
+>=20
+> Log into FB console and do
+>=20
+> #  echo -e '\033[?17;0;64c'
+>=20
+> which enables the software cursor, which in turn enables the above
+> conditional invocation of fbcon_del_cursor_work(). Then force a printk
+>=20
+> # echo h >/proc/sysrq-trigger
+>=20
+> and watch the show.
 
-diff --git a/sound/soc/sof/amd/acp-loader.c b/sound/soc/sof/amd/acp-loader.c
-index 2d5e58846499..5b5d6db74c10 100644
---- a/sound/soc/sof/amd/acp-loader.c
-+++ b/sound/soc/sof/amd/acp-loader.c
-@@ -65,7 +65,7 @@ int acp_dsp_block_write(struct snd_sof_dev *sdev, enum snd_sof_fw_blk_type blk_t
- 			dma_size = page_count * ACP_PAGE_SIZE;
- 			adata->bin_buf = dma_alloc_coherent(&pci->dev, dma_size,
- 							    &adata->sha_dma_addr,
--							    GFP_ATOMIC);
-+							    GFP_KERNEL);
- 			if (!adata->bin_buf)
- 				return -ENOMEM;
- 		}
-@@ -77,7 +77,7 @@ int acp_dsp_block_write(struct snd_sof_dev *sdev, enum snd_sof_fw_blk_type blk_t
- 			adata->data_buf = dma_alloc_coherent(&pci->dev,
- 							     ACP_DEFAULT_DRAM_LENGTH,
- 							     &adata->dma_addr,
--							     GFP_ATOMIC);
-+							     GFP_KERNEL);
- 			if (!adata->data_buf)
- 				return -ENOMEM;
- 		}
-@@ -90,7 +90,7 @@ int acp_dsp_block_write(struct snd_sof_dev *sdev, enum snd_sof_fw_blk_type blk_t
- 			adata->sram_data_buf = dma_alloc_coherent(&pci->dev,
- 								  ACP_DEFAULT_SRAM_LENGTH,
- 								  &adata->sram_dma_addr,
--								  GFP_ATOMIC);
-+								  GFP_KERNEL);
- 			if (!adata->sram_data_buf)
- 				return -ENOMEM;
- 		}
--- 
-2.39.5
+Heh, fun. Yes, long, long time ago I enabled software cursor. I
+don't normally use the console these days, but I switched to console
+for debugging the wireless problem -- hoping I would catch some kind
+of backtrace on the console.
 
+Best regards,
+								Pavel
+
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
+
+--O5ZViAcPiKIAYIsP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaIPVggAKCRAw5/Bqldv6
+8uTTAJ9Ldr9q7FUaylsnXpqczYVGRjRQHgCgrHnzq+tSSm5J4hfZN2Nkc1plxnQ=
+=geVZ
+-----END PGP SIGNATURE-----
+
+--O5ZViAcPiKIAYIsP--
 
