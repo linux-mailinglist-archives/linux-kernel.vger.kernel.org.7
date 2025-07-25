@@ -1,255 +1,216 @@
-Return-Path: <linux-kernel+bounces-745126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295B5B11551
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:39:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198C3B11559
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 028827B1829
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:37:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F41916B729
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A5814A4CC;
-	Fri, 25 Jul 2025 00:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8722414A09C;
+	Fri, 25 Jul 2025 00:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YegZ8thk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="q/92PzgZ"
+Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DEE11CA9;
-	Fri, 25 Jul 2025 00:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753403944; cv=fail; b=TBDQhATxCjAcrRyeZ/78VcsJeWSl+s3Idn1ySYykQvaQduWdUERb9GFH8A0POOaFfuGAby9ZigbP10xN91XjyhJ6Q48xcEQaQU0OCiIfEDlsUA3hGJnA/DNH9Kc0ujjh6JdJMswHAOvLCMl1MomhxRImmcJYCgPXGx0jySRW8vg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753403944; c=relaxed/simple;
-	bh=Gm8QK9803lAYSYzGrvrK3E/3jNXt6RPxmKeGm/K3nPI=;
-	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
-	 Content-Type:MIME-Version; b=ihADscmOqtw7auiiKLRLivnLwE8syLFycY1e1V63t9bKyBYYuDJ+FArUXC4TZgj+ZSGpNc/yLE+iztFCJL1shq3pjoMdVa0wiznr5n2Am0R8Qc4IbHrIhev/8EHZ1Mj4UYtUM1b0xAzRJisGir1iwrHcaqs8qTUj+fNRw4QL9Ik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YegZ8thk; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753403943; x=1784939943;
-  h=from:date:to:cc:message-id:in-reply-to:references:
-   subject:content-transfer-encoding:mime-version;
-  bh=Gm8QK9803lAYSYzGrvrK3E/3jNXt6RPxmKeGm/K3nPI=;
-  b=YegZ8thkMe+dnwlwnDO3YCmp2E3poIvOkm3tsF8Cgp1taCNtIbOLuwIa
-   pZmDux/pTDRDF9LkILAj8sAW0IvqvlhyvX7FJZkmiUXK6WK4lUjCrB9YP
-   LmlPAEg7livRDoMBPcxbp8ZjNmosgpq2bhTCFOBBMmdGFpieB8WrA9wcC
-   wJIyHxvEBO7kZCvs2Vopdrf0eAGSMIWRHrUaHkDjyP+Qp8zHAbfzhvVBD
-   pJ4+qLHJINPx0zFf50eivijRiLYnI7xQlo4niSRZpJffEgSHX+FVuztG7
-   iSwMF+OtYPFNb7+U0ySrXluCVkK3Z54GOr1n0mUKVbnx2kChh4qEPLuhk
-   Q==;
-X-CSE-ConnectionGUID: i+rikt/rRGSu/oPYK8TWcA==
-X-CSE-MsgGUID: SJF6kRsnRiWQcf7XrQre/w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55436316"
-X-IronPort-AV: E=Sophos;i="6.16,338,1744095600"; 
-   d="scan'208";a="55436316"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 17:39:02 -0700
-X-CSE-ConnectionGUID: 5JVnzAP0RAmGiudjtBPZ/A==
-X-CSE-MsgGUID: +u3UbRkzQnydYKPjqz7Riw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,338,1744095600"; 
-   d="scan'208";a="160574043"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 17:39:01 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 24 Jul 2025 17:39:00 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 24 Jul 2025 17:39:00 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.69) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 24 Jul 2025 17:39:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qlWzfjhE5ajGRg+RvXlJitC0I8z3UdrG3DQ3gTqGIAgW+1DQAhbPJce1lpEzC50YmpgxUWuTUwtV08LQ1q7ZSFejcYH5ssggcijcCoNN4Z7MMdvZ6Icm6c+wAkLka2pWNCIRBG9rH6fvoWx7+Nr+wEGH+gQykxjlKcuNTvUmcQO0w7q7QMmPKewS85qH64SUfvTdpZB2Ivm+IBfiPcLAkg/ZOA+VN0aTAUmlBUlTdcKAceLQwEvDqs2VGxvv5cyFdwt+UdISx1T6mHLRsMQdhJPhmYw/x+0/VYjqEtlHytu3uFzTHI5j/s+68jPpgOhtyee2I7iX8Fb3fDAqgpZCqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LUni+7eGaG6uTfkaImDK5WzknBpmJevkzCuxu3/4X7Q=;
- b=nktnRyyTyPrCEAy1K5IBWwSGoYHOm+riuIRkm8zHYX1SyfrAEgf/6s4f+uLix52zkN/z1FgBt9lZW4DuFx3D1MKhptV7VfL0GwYImU3fgSH4bd32v/eS7Rn9c7nFTuPn+EOlm2K9szGagxD+pXU/eSeHK3Sl08SbUjc5YtVBDi9Uu9NgEx4VJw/VQIR9etZwDPOEyDBoV8hwOkHlRdrlCbBUfC7spbfZinCnWR1N3ok0JTCdwN0T23fadhHXcsKbUKlDCbQie5M1xw/dbmNzMA+dvOyzBmCjRV0+vi/VwEtRoY5m8oJOA/MuxhUN/K6PhJ04u6LgwNDFVjndd0eEAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SJ0PR11MB5771.namprd11.prod.outlook.com (2603:10b6:a03:424::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Fri, 25 Jul
- 2025 00:38:45 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.8964.019; Fri, 25 Jul 2025
- 00:38:45 +0000
-From: <dan.j.williams@intel.com>
-Date: Thu, 24 Jul 2025 17:38:42 -0700
-To: Terry Bowman <terry.bowman@amd.com>, <dave@stgolabs.net>,
-	<jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <shiju.jose@huawei.com>, <ming.li@zohomail.com>,
-	<Smita.KoralahalliChannabasappa@amd.com>, <rrichter@amd.com>,
-	<dan.carpenter@linaro.org>, <PradeepVineshReddy.Kodamati@amd.com>,
-	<lukas@wunner.de>, <Benjamin.Cheatham@amd.com>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <terry.bowman@amd.com>,
-	<linux-cxl@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Message-ID: <6882d212cefff_134cc710099@dwillia2-xfh.jf.intel.com.notmuch>
-In-Reply-To: <20250626224252.1415009-7-terry.bowman@amd.com>
-References: <20250626224252.1415009-1-terry.bowman@amd.com>
- <20250626224252.1415009-7-terry.bowman@amd.com>
-Subject: Re: [PATCH v10 06/17] PCI/AER: Dequeue forwarded CXL error
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR01CA0009.prod.exchangelabs.com (2603:10b6:a02:80::22)
- To PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853851362
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753404203; cv=none; b=QPyYbL2p3J1xOkfXo45M+Fxvfr7GKRU1JyFbpuzxgDyZ4/aBGUa+SJr0S9+VgpU/jq+T7CDXhwAzHpuKm0vz5HZ8nW4TaP3i0QPt8CvdM9X1Dm93QdDLCIstZIuBIF8xwkzj2NrE4AZNx/M9j3ebOQ2CN8HAxuWBpTVWpgaTMQ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753404203; c=relaxed/simple;
+	bh=HYzN1VIVoLoXrZQMIVIM5sTp7jwpc4yT117aTDh4zT0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TEsdx+YyzF4LcTQgAtJgSu3ak8/kFZCgx2EngiD+qPsPFkt2IByyfXfAiP1SBp9/xh3WJD9bjtVOQIdGRA40a7ZqLPM8M55nLJAq0P4VshFUKiwKLT8scC561X8oDgdx52coluXtIRIzZO7BScO9/9rN6lVDXHC3d3fQVXssZ0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=q/92PzgZ; arc=none smtp.client-ip=202.108.3.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753404198;
+	bh=Wev77i34kn1U77MFBOt7+BxW6cYjVnF+6inSGP9zFw8=;
+	h=From:Subject:Date:Message-ID;
+	b=q/92PzgZ7DzSXdrP1sqfB5yYl5s+YL6eoH/FuZYBd56q1JgOweqUumXVwNuVF7qBM
+	 gufPlUMskYb/3Kl9fJvTRtNyWfJwrg0eD+lJ8jOcC6Ojc0ESVVsrjJr4VHaQo8ZjNa
+	 wmYlSyBZ5iPmUnVKNb+Q4UkLlEA3bKArbbsGREaI=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 6882D2F600007477; Fri, 25 Jul 2025 08:42:32 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 231036292127
+X-SMAIL-UIID: 9A24D2519A7048DBA02815E13B5C3391-20250725-084232-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+0fc08dad8f34563208d5@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in rose_new_lci
+Date: Fri, 25 Jul 2025 08:42:19 +0800
+Message-ID: <20250725004220.3189-1-hdanton@sina.com>
+In-Reply-To: <6881ff19.a00a0220.2f88df.001e.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SJ0PR11MB5771:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55d44e0d-a634-4ea6-c5fa-08ddcb139c89
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RVFDTzhCc0VEcEFDdWFCUzBJejFRSUMwS1p0NldyODNjSGFQSFY0cEZKK29M?=
- =?utf-8?B?U1I0NG9aN2tMRnNyVVdiL09UWG52VWl0VHpvTDJBVzk4bjZ1Uk5Od2U4bkJI?=
- =?utf-8?B?SXJacDR6Rjk0VjdJRGNES0lWS3JFaDRxN3VYb3Brb1lERVhBcHFnOWhWdUpu?=
- =?utf-8?B?VVdaQlJGbFpJYkpFVGVvSnlwbFd1cTVKeTZtbHBNVTJYb1JGMFVJSURkQlBM?=
- =?utf-8?B?RTI0SlJzV1MzazVCc3N4cXBqYkJNendlSS81Wis3cGRFMXM0Y0puQXhZcC9m?=
- =?utf-8?B?WDl0b0RNV05RMmxXaEU2Zm51aEtMU2wzVjFMNTkxQlBIT3RMWjljd05UN2hO?=
- =?utf-8?B?REp1dHltSmRFNnQwK2V6a29ETHFka1BkQjAvQ3QwTStxVHZwZGVFc0hUdXpC?=
- =?utf-8?B?WU9WTzVxQzFKNWhxWHF4MVk1WkhsVUlMbGx0bW9LTVV4VmNJSjFuZDVYNEJk?=
- =?utf-8?B?M0xQejlXcWJ5V1JNdW1QV2FKYmNXM2FHMVRoUG81dzRoc0lsQ2VnNEcvd1Vu?=
- =?utf-8?B?NzZ6Wjg4NmY5VjhOUjkzSkVtQWpValZEbDMyTkJGRmdCMnNNTis5K09UR0lJ?=
- =?utf-8?B?cWVBTkFvSUR4RkJHc2dPd2xibzMrQmpGVUhZZHVjZG8vTHQzTTZLek9mYVZG?=
- =?utf-8?B?bS9CN21UQ1hnS2pqcW1paldWVTZ4cDBqc0FqZHZMeXBGcUdFYTZQNFVtMzk1?=
- =?utf-8?B?cytpMG0zRzBsMEd4RlFmc2tsclVQWkw5Sm9FWWtEeFRoQ1NOTHcraGdmNHkz?=
- =?utf-8?B?Y084QjU0NWZkV3hLWTVkL3laQ1l6WGxUWDdkOTljdXQwT0JTSWt5VlhQY211?=
- =?utf-8?B?N3gxZ1ZhQmo2TGFsQVRQOHBiam9rS280YzRpZWo0TlhwTUlieEQ5ZjMxTVRL?=
- =?utf-8?B?d1ZtT1BEWjBLTVBmdmpWOVkrdXlFYWZvSnlkbkh4eXV1YUNOT3o3U0JpMXh4?=
- =?utf-8?B?NmphRmIzS3Z2OG1MUXU4MWM3d3E4emlxUThmcXAxTEYrMjJpYWlZaVphMVZN?=
- =?utf-8?B?bDR6OEU4UVdXdmdVK0RxVXFpVmV4MUM4VlpkS3gvcTIvbXhzeWwzMnYvOGVF?=
- =?utf-8?B?Z1htUFZOejVMeG5nL2lValNSSmNGcGlGdkg0TElmTTgxYjJTUDhnRnBYRHVm?=
- =?utf-8?B?NjVCSWZON1ZLdW1pS2cxbkpwRzAyaGUzSmNrOTMzSHZXOEhJVWkwaTZyK1hU?=
- =?utf-8?B?VFJENk9VQ1RpYSs5ZlNiZkJrN3haeURkZEVxQXNKaE9WS3Y2MlBVR2MyRkMv?=
- =?utf-8?B?YnRYNC9qOFJOeUh1TkVIU1hsS1U3bEZRWXVCZXg5NnJnaHBmTGZKeHo4c2Jk?=
- =?utf-8?B?UjllZzR2MlVaTTduOTBXMjBlSk9IR010M2taT3RCZ0thTkt1aFNIMWJHQytX?=
- =?utf-8?B?UGp5ZjJaTURLMmhLdko5ZmRSdmZEaVVIbGs4STNWeWZiYjFwSmhIOEtrR1lC?=
- =?utf-8?B?b2ZoQ3cwdmdUUDNIRnBvWTYyS0dMejZLSGYrN1krWExxVDYxc2d4LzBodkdw?=
- =?utf-8?B?NEZKV2FTTTh0QUZsMzY0Sk14aHlpbnF5cmlqdjZ3R1NzRitmQllERFo1R2pJ?=
- =?utf-8?B?SWgwdWs0bkVyazltRFJvOEQ1V2RuZlJqd1MvSEwxT0hUZXkreEtiMU8wakFT?=
- =?utf-8?B?NG1Sa3JLL2ptdXJYb1lMd293YVhxVmpDR2FqZ2JiUG9UdVZzcDJaRThMb2R5?=
- =?utf-8?B?MnlEM25aZkpRbExrZ2U1YnZxSUVydTRwSWxUamt1d3dsaldSUHk5REVFVWtk?=
- =?utf-8?B?S0xyemVtYUNPVFNETzYrdDUwTnRGOVF6ZmZvTGRLcEw3VERMb3N4TFdOaSs4?=
- =?utf-8?B?WGRmL3duN3RmbEQyaVhjWVc1QWF4OGsvRzBVME1GcUlONUttVThyVHVWS1ZP?=
- =?utf-8?B?MlVxdE1ZczF1R1lTdjIzWFZtQWt6VUJPSUYwMFFraDFNU2tnMU5HWmRmc1dq?=
- =?utf-8?B?RStjemErbkhSTDVpcjFhZXJRS2paZGptRTlvdmx3NHZCNERsaEp0WDRqUjJY?=
- =?utf-8?B?bzZNVHRxS0JBPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aUkxOUI5NUxoWTEzT2xXTXpQaWdZVUhrVzVXaE04TlBkWlM3YjJIMmQ3QWhE?=
- =?utf-8?B?YVRndWxNMUVXM2dNdlpmYldzdm9JN0pFT0phbXRzU1JyeGZZWXE1cEhsUWp6?=
- =?utf-8?B?VGNvZHZaOFNQaVhoMkkyc250bS9WeDJWWC8wT1hUQUswMnFxTWxuWVpaUFRD?=
- =?utf-8?B?dXA4c1hKWWdyK0E0d1FNYVpGRUN1czRRYmo3emRQUElkdnRJZjhrTjVybWhz?=
- =?utf-8?B?Nmt6TXorTG11bkJ1dzJtYXNsdjhQS24ybTR2SDZIY3pnV3RPb3hqTVdwbHFO?=
- =?utf-8?B?QS9qNm8wNEtvem9ieFVGcGp3TUdWWHpnNlhDVTBMVDVvalJrS2YzNHdXVnJ6?=
- =?utf-8?B?bEdscnM4RnRmeXUzcUJxSmVqbWQxUkcyeTR3S2h5dHgyREU5THkxS2VNV3FK?=
- =?utf-8?B?SzN2Y210OVhVbVdrY1F0eGRWSHVGc1ZBVnVZUmxaaGY2S0xjcko4b213bFBq?=
- =?utf-8?B?cWNOS3lsNms0ME5KeEd3Uk9rUzZla3hWbE5QcCs0YVl5Q25PMWhDOEZ5UCtG?=
- =?utf-8?B?M29CREZuaVFWTTJlVzA2U2dVL1RQUS95SEl2VlQwaXVpWkYyYU5vUGJUc3B4?=
- =?utf-8?B?ekNKdnU5NHFoVG9ZdUdiQlIwSml0bU5XMXladGZicEwrUFI0c2ROZnluWVY1?=
- =?utf-8?B?VEJqcGtVVUhySFZ6SG45M21YSTZtTU0xMnFzRlNuUUduaVRsY1pPMkY4UG1L?=
- =?utf-8?B?dDdJSjdBVytUYlExcGhVeHA1bjZ3Y2FJaDNaN1NCeHlEUnVtem1MQm1sTDFu?=
- =?utf-8?B?bnNRRVBIcHg4YklCMHRZZys3ZGh4dW1LZEVpa0k4T3AwMXRrckNoWXk1Nyt5?=
- =?utf-8?B?RytmN0dEcDNYWXRHZzNEMncydHdwaFhNTE5aOWtSZDZBanBpYituNms4c3pM?=
- =?utf-8?B?dUUyS24rZXd5Tk1WMTNacE5lMW51RUVFVGdWWkxYY1g0anZqeTJNL3lxMjdy?=
- =?utf-8?B?d3lYMkl3Yysrb3FOV2NsUjl3WWl6UnNucithYzZ4Kzc5eDUwbm15aVQwNG9o?=
- =?utf-8?B?Vnp4dFJscnlIeTRJL3NkdHozYzRJYWxQUnBrcVRqOEkwMkEydWhONnp6b3hI?=
- =?utf-8?B?eFZaV01NRVhGcWJNQlNqRTU1OEJFdkVzeWh3V3ZocTVOaHFId2NmdFd5d0Uz?=
- =?utf-8?B?TmJubjJpdnRSN1dZVGdsODdvYUJWcFo3Mmd5SGFjNlQrZEV4TXdtTDZQQmhS?=
- =?utf-8?B?ZnQ3dEUyakhPL2JpMzBlTytNaktzUlFENjlVUUp2V3R2VGRXeWU4UEVGdDlP?=
- =?utf-8?B?TWVQS0ZWSFU2RkNiRVhIL3J0M05hd0JGckE4dDkxS1E0WXc2OHFta3U1T2RG?=
- =?utf-8?B?Q0VtSXhJbzNRSDVNNzVtM3lJZzd5QnN3UXl0MEpPNlFBWVNWSXlXY2NMajJD?=
- =?utf-8?B?L1pidHlybmE4THNPL1JmVFJHVnhxWk9lUTgrWSsyanc0MjIvcDd6SzVYTmtv?=
- =?utf-8?B?aGdpTUZpckU5ZVFRU3NlRWxzSXMwQ0VEaHBvT25QNlNKY2t4UUQrTVpCdU42?=
- =?utf-8?B?d1NNeENuSnNFZHE3b2tWU1VNWVd0cVFZUmNKWmdMV0c3aDRVTGYrcmROZmF0?=
- =?utf-8?B?bitEN1hSQ2ZtKzBYTHQrZ3dYT2U5Z29wZEtqUGoxY1BvMDNSeG5YcXRDdFE2?=
- =?utf-8?B?TWNIWjB6aEovbktXck9kUjQ2NTNJbXdNd2JtT2pYYisxbUREQUd2aGQ3Y2hQ?=
- =?utf-8?B?Um5lNWRoRHB5STRGY0Z6MFZLOUZWenRGb2hxclIvNUF5a3VjV3RIQisraUVu?=
- =?utf-8?B?d0lyZ2dyeUZUR1FicE5sNzdsaEhUSWNWM1dGQzhZNmtROUNyeXh4OVpmc1NG?=
- =?utf-8?B?T2FIR2tEMFF4dFBHbGJGUlFWZ2hLaENGSjEreVVHVHQwUkNrQjNhNlRTem53?=
- =?utf-8?B?em1kUTNkMk9hblZBM08zSU51eno3RVA0c3o2QVRsY2JXTFlCZGliN2J3dUdu?=
- =?utf-8?B?YW41dE1ZN25ZS3QzQXpPSzlhUGlvclhVZ1A0WTZXQWZqdXlNV0FXWTJoa29w?=
- =?utf-8?B?aWJycDIzZkdBRm5hb3ZGNitnb3FKcEsxOVBQWFFETjRjS2YwU05qRFcvZ3NV?=
- =?utf-8?B?eUNwemJ1ajJqdlRKUzlkTythUnNtTHpaSUtSWTkycVlUTFFTZVg4NGQ1M1Fh?=
- =?utf-8?B?ZkQ5K2c0cmZZSlptcFRuVEJ4U1hGMGZ5L0pDYm5qS3FlcG5YQzd6VVNUVm4w?=
- =?utf-8?B?SEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55d44e0d-a634-4ea6-c5fa-08ddcb139c89
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 00:38:45.0639
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U/XxGyn8SEyU50IsWoJRT80ZBZZ7Nafjn50HPSP9IPPHCY9UM4l387wtpQhc+j9F+K5k+o8GDMJzQmq1Vmi008WeQlRrO8Yw1Zniv+CvFEw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5771
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Terry Bowman wrote:
-> The AER driver is now designed to forward CXL protocol errors to the CXL
-> driver. Update the CXL driver with functionality to dequeue the forwarded
-> CXL error from the kfifo. Also, update the CXL driver to begin the protocol
-> error handling processing using the work received from the FIFO.
+> Date: Thu, 24 Jul 2025 02:38:33 -0700	[thread overview]
+> Hello,
 > 
-> Introduce function cxl_proto_err_work_fn() to dequeue work forwarded by the
-> AER service driver. This will begin the CXL protocol error processing with
-> a call to cxl_handle_proto_error().
+> syzbot found the following issue on:
 > 
-> Update cxl/core/native_ras.c by adding cxl_rch_handle_error_iter() that was
-> previously in the AER driver. Add check that Endpoint is bound to a CXL
-> driver.
-[..]
-> +static void cxl_handle_proto_error(struct cxl_proto_error_info *err_info)
-> +{
-> +	struct pci_dev *pdev __free(pci_dev_put) =
-> +		pci_get_domain_bus_and_slot(err_info->segment,
-> +					    err_info->bus,
-> +					    err_info->devfn);
+> HEAD commit:    d086c886ceb9 Add linux-next specific files for 20250718
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1517af22580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=69896dd7b8c4e81e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0fc08dad8f34563208d5
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1317af22580000
 
-So this patch in its current form is about restoring the RCH error
-handling code which we already talked about should probably stay as a
-special case in drivers/pci/pcie/.
+#syz test
 
-For v11, where this code can 100% focus on VH error handling, my
-expectation is to not see any PCI topology walking, i.e. no
-pci_get_domain_bus_and_slot() no pci_walk_bridge() etc. If all we cared
-about were PCI details this code could have remained in the PCI core.
-
-Instead, my expectation is that motive for a kfifo and calling back into
-the cxl_core is cxl_core has a parallel universe of software objects
-('struct cxl_port') that can experience errors independent of the errors
-the PCIe core cares about. It also has a cxl_port driver model that
-knows the lifetime of when RAS registers are mapped that the PCIe AER
-core can not know about.
-
-So, the PCIe core has already done the device lookup before this point.
-Just pass that device to the cxl_core directly, and then use that
-device to lookup a cxl_port and/or cxl_dport directly.
-
-A useful property of passing a 'struct device *' to identify the error
-source device is that it supports cxl_test emulation of CXL port
-protocol error injection.
+--- x/include/net/rose.h
++++ y/include/net/rose.h
+@@ -98,6 +98,7 @@ struct rose_neigh {
+ 	unsigned short		count;
+ 	unsigned short		use;
+ 	unsigned int		number;
++	atomic_t		ref;
+ 	char			restarted;
+ 	char			dce_mode;
+ 	char			loopback;
+@@ -214,6 +215,7 @@ void rose_link_device_down(struct net_de
+ struct net_device *rose_dev_first(void);
+ struct net_device *rose_dev_get(rose_address *);
+ struct rose_route *rose_route_free_lci(unsigned int, struct rose_neigh *);
++void rose_put_neigh(struct rose_neigh *);
+ struct rose_neigh *rose_get_neigh(rose_address *, unsigned char *,
+ 				  unsigned char *, int);
+ int rose_rt_ioctl(unsigned int, void __user *);
+--- x/net/rose/af_rose.c
++++ y/net/rose/af_rose.c
+@@ -171,6 +171,7 @@ void rose_kill_by_neigh(struct rose_neig
+ 		if (rose->neighbour == neigh) {
+ 			rose_disconnect(s, ENETUNREACH, ROSE_OUT_OF_ORDER, 0);
+ 			rose->neighbour->use--;
++			rose_put_neigh(rose->neighbour);
+ 			rose->neighbour = NULL;
+ 		}
+ 	}
+@@ -383,8 +384,10 @@ void rose_destroy_socket(struct sock *sk
+ 		timer_setup(&sk->sk_timer, rose_destroy_timer, 0);
+ 		sk->sk_timer.expires  = jiffies + 10 * HZ;
+ 		add_timer(&sk->sk_timer);
+-	} else
++	} else {
++		rose_put_neigh(rose_sk(sk)->neighbour);
+ 		sock_put(sk);
++	}
+ }
+ 
+ /*
+--- x/net/rose/rose_route.c
++++ y/net/rose/rose_route.c
+@@ -97,6 +97,7 @@ static int __must_check rose_add_node(st
+ 		rose_neigh->dce_mode  = 0;
+ 		rose_neigh->loopback  = 0;
+ 		rose_neigh->number    = rose_neigh_no++;
++		atomic_set(&rose_neigh->ref, 1);
+ 		rose_neigh->restarted = 0;
+ 
+ 		skb_queue_head_init(&rose_neigh->queue);
+@@ -237,7 +238,7 @@ static void rose_remove_neigh(struct ros
+ 		if (rose_neigh->ax25)
+ 			ax25_cb_put(rose_neigh->ax25);
+ 		kfree(rose_neigh->digipeat);
+-		kfree(rose_neigh);
++		rose_put_neigh(rose_neigh);
+ 		return;
+ 	}
+ 
+@@ -247,7 +248,7 @@ static void rose_remove_neigh(struct ros
+ 			if (rose_neigh->ax25)
+ 				ax25_cb_put(rose_neigh->ax25);
+ 			kfree(rose_neigh->digipeat);
+-			kfree(rose_neigh);
++			rose_put_neigh(rose_neigh);
+ 			return;
+ 		}
+ 
+@@ -265,8 +266,10 @@ static void rose_remove_route(struct ros
+ 	if (rose_route->neigh1 != NULL)
+ 		rose_route->neigh1->use--;
+ 
+-	if (rose_route->neigh2 != NULL)
++	if (rose_route->neigh2 != NULL) {
+ 		rose_route->neigh2->use--;
++		rose_put_neigh(rose_route->neigh2);
++	}
+ 
+ 	if ((s = rose_route_list) == rose_route) {
+ 		rose_route_list = rose_route->next;
+@@ -667,6 +670,11 @@ struct rose_route *rose_route_free_lci(u
+ 	return NULL;
+ }
+ 
++void rose_put_neigh(struct rose_neigh *n)
++{
++	if (n && atomic_dec_and_test(&n->ref))
++		kfree(n);
++}
+ /*
+  *	Find a neighbour or a route given a ROSE address.
+  */
+@@ -712,6 +720,8 @@ struct rose_neigh *rose_get_neigh(rose_a
+ 	}
+ 
+ out:
++	if (res)
++		atomic_inc(&res->ref);
+ 	if (!route_frame) spin_unlock_bh(&rose_node_list_lock);
+ 	return res;
+ }
+@@ -1061,6 +1071,7 @@ int rose_route_frame(struct sk_buff *skb
+ 	rose_route->neigh1    = rose_neigh;
+ 	rose_route->lci2      = new_lci;
+ 	rose_route->neigh2    = new_neigh;
++	new_neigh = NULL;
+ 
+ 	rose_route->neigh1->use++;
+ 	rose_route->neigh2->use++;
+@@ -1076,6 +1087,8 @@ int rose_route_frame(struct sk_buff *skb
+ 	res = 1;
+ 
+ out:
++	if (new_neigh)
++		rose_put_neigh(new_neigh);
+ 	spin_unlock_bh(&rose_route_list_lock);
+ 	spin_unlock_bh(&rose_neigh_list_lock);
+ 
+--- x/net/unix/af_unix.c
++++ y/net/unix/af_unix.c
+@@ -1750,12 +1750,6 @@ restart:
+ 		goto out_unlock;
+ 	}
+ 
+-	err = security_unix_stream_connect(sk, other, newsk);
+-	if (err) {
+-		unix_state_unlock(sk);
+-		goto out_unlock;
+-	}
+-
+ 	/* The way is open! Fastly set all the necessary fields... */
+ 
+ 	sock_hold(sk);
+--
 
