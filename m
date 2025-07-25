@@ -1,144 +1,213 @@
-Return-Path: <linux-kernel+bounces-745437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C12B119D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:32:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20133B119D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A183AB0B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B881C841DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699222BE7AC;
-	Fri, 25 Jul 2025 08:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46D92BF3E0;
+	Fri, 25 Jul 2025 08:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVXeFUWm"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N53jtd+A"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CF526CE1E;
-	Fri, 25 Jul 2025 08:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633C62BE7AC
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753432302; cv=none; b=GMpwtWShHVTkg3mPjigZ7G+RAE937TjCMqtA1MnmcLZnHdfe1823dr4ZhbOHFDz85PnQhRZKGvHCccej/gvi8MlAIbzs/Z1eMzmI5Acfi1MtzMv6TXyShJnhuMeLoGuFN8HAUSJavN0vDwnTa9Iejj3ds/NYJZ15s6g8sxprDFM=
+	t=1753432412; cv=none; b=rn96Bo55ZZdaadA9NL8PoGL83O2Iv4tSUk27u/5mKmr7VTVMgJBhiy6oIfdQxT+7zLmogDUXB6Wmcb1lg56aq4hQJJDugaivnk/uEIdk+ublMPIwrHVsRGztuQinlNudvusXlo8ObJblXwaXM47Lf8dk6FIkAlBxoDaLcPR6A04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753432302; c=relaxed/simple;
-	bh=ivhXIbABxUmVWmuSBfZ4S+86S4+6Ku5NPkVeEHZEQjM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lai5pD/SQ+eZ3e1MrxN9PqMDDS2+mk5GpmEld761yt/Xc3woFIQ6VcLzLMN56J5nuss+e1HDV82TML4ME9teVUtIF0X/CIbSWNDXzy1m6QtYJ3iFgUh+K8Pf1JnEfYUSpGgJHvTQBkge9+9NsENB2lsVeE0th21Ub/RAf3OEbBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kVXeFUWm; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455f151fe61so1652895e9.0;
-        Fri, 25 Jul 2025 01:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753432299; x=1754037099; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=26QkGEtwmh9ZUTsBkB+2VC4/FaLAroMl+urGGhMcl5E=;
-        b=kVXeFUWmeoWIOaatD4VAq2J7PxRMo8MFD5XhhiUApuZ4FeD52tVLAKQoL6pYDI+Xy3
-         oi3LjNvuISknNAlqplcn2DJGzPzSomBAhBM/1HSyxoRCoNPn2uL6LZAS/BlD+DcKfIPR
-         nmf6lSybl5Pr4yhD/WA8ibMjLuOnuyI2mlbkHxJXLHuDvnrGXqPeKqaBjbE2ENFS+xOK
-         26q5uPa316wFqB+hXgedM+KXbjYt0VhNOpYMk5QUkv2ctVnzWW5U7asg4By7pBAtrdw4
-         kLMZN/oFbw6kWk9b7dsimdw/8T50f709vyeZZ30UOEJEqtXFhoxMC8tFO70CYkx9yXm0
-         MteA==
+	s=arc-20240116; t=1753432412; c=relaxed/simple;
+	bh=iAj/HA7WjS9k1PkGV+APIrGnyZCllylzuaEm7LCr5JA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tFnNr/JmFIkt8Vys+JgrqpBHeAVrMCdlay84dYjz6d/yHpJ5f69Yt9jf0LKy+1WuS7PcQap6qhI0453ZQKfVfwfyCUvTJpu/ZS8DP/+vYMh+7tLY8Lkqz1oMl8KkCLTsACFdrDdYuRuHHHsfMFTpmLI/N861/0O/kODXnGPTbDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N53jtd+A; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OLmbwf009406
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:33:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6ICDsXa1i4umW3fubthp861yBxgmGCWIxplYWJoaFxA=; b=N53jtd+AjsC96xmd
+	idbHzzLPyFEZlXIl7CjAM3sZylXpbE7E3fU8GkbacRJiu/zkFTvQ2TEVDpII95Pf
+	3Mb/hRPBuhsk89riNvZSXD99qpvvJlVDnnSOPV/HPmzS8Zt17wNModzMuhwr+KZK
+	1D65IUzJu6OLjQcUAQp4pknEpQTny04Ca/JXOZgKUDWwaMtWyK87uRxgSVrApE1o
+	f/lDrzLl1y7Pf/RwWAbjm78wCAO8yyuBx56bH7Txg92FAAcwdDEBAkwOj4Ncfvx2
+	V6+z4YQF0eLTHb1AKM2CygG14Dc8/3MzzIaGtDudT7t0+qvRL0LBLh/7WBoxOu0X
+	hlIb6Q==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2t1cw3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:33:30 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2349fe994a9so15779265ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:33:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753432299; x=1754037099;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=26QkGEtwmh9ZUTsBkB+2VC4/FaLAroMl+urGGhMcl5E=;
-        b=lOqnU4JAyJmKWdDGViooGNHiOuE4R9wrrwnAUXhZgYjCovks3s9n0DH+yKLN6KzFYr
-         RQ6xktXeG7doruQvw8beXGa0o+qyk6m4L/6H1ir712YbAllA305BB7EDtlQEX6VJqH/D
-         N1HxVFv3SUZWCrzq3ahXIdejJVJp7x2LiFvwZ7ovxTnUUfgt8hwp4HSjYZWO7TcZ4KAE
-         7VavzDpQnokgd0iOUFGv1+cybemJG1juX1sspjqdQPz/YEr7wRo56hIsIWDpEfjDXkEi
-         XZZfGa3K/eD05RnCkxLCINYRqnq8GCQ4rV3XLDXhBR4aZiTxEvFnjm+KgmsaVxilMc2u
-         9xZA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8EeFhPy+lI9QQDW4uBmrT3WOIM/sH54wcYQx+nnthGN/HmGoW77IapfvVn4/4LsSiZYquiaa2BUN1qrA=@vger.kernel.org, AJvYcCWDZXHgY/ut2YdYXSUhepHbeCUV9WzSPSMW/zg3geoXUyuiMSnO1dktc/cwP4ce1GWWqe2INzY0xfQmfQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIlNHvJGbeZZPA0Re9cO29eH2+N9dvBL82VU1L50b5uD7mObdo
-	SQcxRpagtbdf0iTQOhc1/qSz3DLVw0Y3TPXCbrUwpIpwKbh0sL1baDdT
-X-Gm-Gg: ASbGncv44K5d+etzgqzLcvYCv4YuLp76BdltHgwdsoD2trDmJckKiGicDL7oC2vxG85
-	GMrVEFMPVXqH7C1MuH3fspKSbwVu9IxA1WhJ3QPQmGf1RyVkAlSGpWOfEYC05sVe/5NywDMp7cy
-	/gWgalVJ+IqwP3qdoSDqRUo5CYFAUJ6eAOcAxJL+yDkViGNBM+G5uohnbkjzfmapkweonsKmZKW
-	5Xc8DDqCSMHg4dCZupiwEwFy5meImPDehL4upn6n/wD0WQWL6lBYQq63JxZsHt1E60UCr2l1mcB
-	LoVTKmtOIBHnZU0AOLtMxb/R54em+oWGQxQP5FCWxwNjxbdfQu5oHxaK7yJNYp+rgmPs7YCTFdn
-	IosaKrxpD2/i/5pMFaolwwAtP6B1K1IFQYtakRn5eU6gPQZ0=
-X-Google-Smtp-Source: AGHT+IHVEWzBjPMff/OaA/+sht/QRx8KNGSMgQ5Yq2suojEuB9vMMALI9ZlRTNr3W7vV3J/BSuZXqQ==
-X-Received: by 2002:a05:6000:1acd:b0:3b5:f908:2374 with SMTP id ffacd0b85a97d-3b77657dd23mr346317f8f.0.1753432299136;
-        Fri, 25 Jul 2025 01:31:39 -0700 (PDT)
-Received: from thomas-precision3591.. ([2a0d:e487:31ff:1e66:d79d:18fa:7b96:a238])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b76fc6e5e1sm4532521f8f.28.2025.07.25.01.31.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 01:31:38 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Hannes Reinecke <hare@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: myrs: Fix dma_alloc_coherent error check
-Date: Fri, 25 Jul 2025 10:31:06 +0200
-Message-ID: <20250725083112.43975-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1753432409; x=1754037209;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6ICDsXa1i4umW3fubthp861yBxgmGCWIxplYWJoaFxA=;
+        b=BofLRhJeUozM8VmDwWe8//VTIgmSqWSG+aWShAlbs0o3ukSbJfUvbf/f+NOzQkG7lU
+         nUsDLfwl5NkKRG+OFaVE1od9dS/TLLXINnzxN6g21znp0ZTAb7nabyhEtl1OhXoaeehh
+         MfzXQfMCxmrwIZi7T1LQdJJMO9RY+zvWqAl7W+38jwHZl0eUE01AQwj9z/ReEwVFaOj/
+         4V5L4Q7NgBWr7ORsBaxTClSOb4PN8by4tUNYFrNsRxl17nARkrPX5rO26HKHFf7+fJJn
+         XkudQPFnQ6HQ9LXJjvIo/p6A2V/x1NPHxcX513SrqRgk3t8QND+EpDKU4riCSpnTeJzP
+         WCZA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0pljgN85wiRFjirOsOMBrkfz2r40Ik71jPcODmY0NcsfVaDiDdOlpZcK+XjVrGziJqqczhSWJc0g5ke0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS/L6bz0LPhFGi+MSCWirvdond4sXWLypj0Q46i7VAfzwo/TRi
+	MvW5ssFm6ph88jucjB4cA832HC8fF6WhrXp7HcpOjUzWaXzxh4MEYusCDxEX6lY5wZGL2Z2zxxj
+	ri0U59DDjRFKUEcllEgrEbtuToTA6oq0prMItlRajr/jiSD2zCJ426qq41yEPM7pd1hM=
+X-Gm-Gg: ASbGncuoQAPe0e5fIApyHes+BGmuLStIKSMcMl6noFGhgWk+FprkYVUdCboJYpkVhPf
+	ZzwH0GZDYjMNyBoS0zKVmUF/ncG1rJegSuTuHOaCZeosOUd4gZXJejKBpZrOp70Pof4mynWgW3n
+	z3XqY2YuBC3WKQ7qscOaGri2efve0b3t2ISuX9K1Wd1sefHRIAEMhLB4wuCBz0+7c9qyqECHoEh
+	22rqgHxWTVCZ5IiWdhDJf4zFj4sV9h+ldFDr5GicUjrc03h8WGhzGGSS7mbgh91fLwNNidF0rYR
+	YKuWOOA+OZeb9/dSuoMB/Qk/X6uG1BTfNi+rO51tCm+nYyWcpUJqrA6xWQbKTB4E8xccLeIDp4/
+	yDAHymDfV86xuIuemTFtCk7LrniA=
+X-Received: by 2002:a17:903:1446:b0:234:d7b2:2ab9 with SMTP id d9443c01a7336-23fb306bcbfmr20011675ad.12.1753432408844;
+        Fri, 25 Jul 2025 01:33:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6QKgVlPsDnhyH4/3bWd30JezGiz7hl/u2XgQDaPgHXQ2Rv+qt9nGM1FqaF52FEEqfpxQ3kA==
+X-Received: by 2002:a17:903:1446:b0:234:d7b2:2ab9 with SMTP id d9443c01a7336-23fb306bcbfmr20011505ad.12.1753432408399;
+        Fri, 25 Jul 2025 01:33:28 -0700 (PDT)
+Received: from [10.133.33.78] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa475f35asm31914825ad.28.2025.07.25.01.33.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 01:33:28 -0700 (PDT)
+Message-ID: <cd7930c3-4cba-4806-8653-8d7eecb278f5@oss.qualcomm.com>
+Date: Fri, 25 Jul 2025 16:33:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] power: supply: core: Add resistance power supply
+ property
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
+        David Collins <david.collins@oss.qualcomm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
+ <20250530-qcom_battmgr_update-v2-1-9e377193a656@oss.qualcomm.com>
+ <b7m55sjc2rtvtelvez6sxnjvdostvxmfjhhsr4uxhyhh4bxrcd@xmioz2bsgis2>
+ <e9160bb8-2b5c-4c30-b60f-520decde851e@oss.qualcomm.com>
+ <fb3ielhucosims237ikv4jfp3oq6fu5ftgt2mvenj6pjmzrpqo@vip3r6qew32p>
+Content-Language: en-US
+From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+In-Reply-To: <fb3ielhucosims237ikv4jfp3oq6fu5ftgt2mvenj6pjmzrpqo@vip3r6qew32p>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=BMKzrEQG c=1 sm=1 tr=0 ts=6883415a cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=cfvObpv82JsDPSYmetEA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-ORIG-GUID: i4Wt8knffdUwcjMr2oFdY8bra6eAR6FF
+X-Proofpoint-GUID: i4Wt8knffdUwcjMr2oFdY8bra6eAR6FF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA3MiBTYWx0ZWRfX7/4/C8fcW6p9
+ jd99d1zcGr4IVY9vp4nGnbNPLJlBA9nhgJqxmNNYG62eOiz1dcffgMarFfl1QSZyEh7oF5YJY8v
+ t1IgPW3mv92Fl64Sz1KdOvi4wJf9W9zMVlzCGGcHqGQPR4NjTtl/8MrhS7W2HlxyZ6wGILGhZSF
+ /Vv+VkmSZx0wZTPpZL/ycudk7StTJrZnUNRe2jBc7duWQkGoVpWgLisH2nVakiDAFWgk6Z6mPXi
+ 77pROtOyBk9QNLaZXtQgBojNWkyM7V+CTWhHpYdz1txL9M6MeWZ4Pc7ArsYCESsWgrYnymu9klF
+ bl9xy3eNA2PmHzqz8KziKT7zDPAJkr4P4zaCpzEKpsDV+gao5GikN/0+LB9HvcQGiRomgHofDzm
+ QjCd4QC+vxFEseV52vSQ67itUChxPKOw+omwx+/OTovqaSQt3tgOG+IoEZokdTsmy7Ue82RY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 mlxscore=0 spamscore=0 impostorscore=0 priorityscore=1501
+ bulkscore=0 malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
+ mlxlogscore=999 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507250072
 
-Check for NULL return value with dma_alloc_coherent, because
-DMA address is not always set by dma_alloc_coherent on failure.
 
-Fixes: 77266186397c ("scsi: myrs: Add Mylex RAID controller (SCSI interface)")
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
----
- drivers/scsi/myrs.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On 7/7/2025 8:15 AM, Sebastian Reichel wrote:
+> Hi,
+>
+> On Mon, Jun 30, 2025 at 04:28:14PM +0800, Fenglin Wu wrote:
+>> On 6/22/2025 9:26 AM, Sebastian Reichel wrote:
+>>> On Fri, May 30, 2025 at 03:35:06PM +0800, Fenglin Wu via B4 Relay wrote:
+>>>> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+>>>>
+>>>> Some battery drivers provide the ability to export resistance as a
+>>>> parameter. Add resistance power supply property for that purpose.
+>>> This is missing some information and the naming is bad.
+>>>
+>>> Which resistance (I suppose battery internal resistance)?
+>>>
+>>> That is heavily dependent on the battery temperature. So this needs
+>>> to document if this is for the current temperature or for some
+>>> specific one.
+>>>
+>>> -- Sebastian
+>> This is battery internal resistance calculated by battery management system,
+>> using the real-time temperature measured by the thermistor inside the
+>> battery pack.
+>>
+>> I can update the name to something like "rt_internal_resistance" and update
+>> the description accordingly.
+> Your message is kind of mixed signal to me.
+>
+> If the BMS needs the thermistor to calculate the internal
+> resistance, it means the data is either not real-time, but
+> just adopting some fixed value to the current temperature,
+> or the internal resistance is adopted from the current
+> temperature to some fixed temperature.
+>
+> My expectation would be, that the BMS instead actually measures the
+> internal resistance via ohm's and law and Kirchhoff's voltage law.
+> So please make sure to understand what data is actually provided by
+> the BMS for a proper ABI description.
+>
+> Depending on the description I think 'internal_resistance' is a good
+> name.
+>
+> Greetings,
+>
+> -- Sebastian
 
-diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
-index 95af3bb03834..a58abd796603 100644
---- a/drivers/scsi/myrs.c
-+++ b/drivers/scsi/myrs.c
-@@ -498,14 +498,14 @@ static bool myrs_enable_mmio_mbox(struct myrs_hba *cs,
- 	/* Temporary dma mapping, used only in the scope of this function */
- 	mbox = dma_alloc_coherent(&pdev->dev, sizeof(union myrs_cmd_mbox),
- 				  &mbox_addr, GFP_KERNEL);
--	if (dma_mapping_error(&pdev->dev, mbox_addr))
-+	if (!mbox)
- 		return false;
- 
- 	/* These are the base addresses for the command memory mailbox array */
- 	cs->cmd_mbox_size = MYRS_MAX_CMD_MBOX * sizeof(union myrs_cmd_mbox);
- 	cmd_mbox = dma_alloc_coherent(&pdev->dev, cs->cmd_mbox_size,
- 				      &cs->cmd_mbox_addr, GFP_KERNEL);
--	if (dma_mapping_error(&pdev->dev, cs->cmd_mbox_addr)) {
-+	if (!cmd_mbox) {
- 		dev_err(&pdev->dev, "Failed to map command mailbox\n");
- 		goto out_free;
- 	}
-@@ -520,7 +520,7 @@ static bool myrs_enable_mmio_mbox(struct myrs_hba *cs,
- 	cs->stat_mbox_size = MYRS_MAX_STAT_MBOX * sizeof(struct myrs_stat_mbox);
- 	stat_mbox = dma_alloc_coherent(&pdev->dev, cs->stat_mbox_size,
- 				       &cs->stat_mbox_addr, GFP_KERNEL);
--	if (dma_mapping_error(&pdev->dev, cs->stat_mbox_addr)) {
-+	if (!stat_mbox) {
- 		dev_err(&pdev->dev, "Failed to map status mailbox\n");
- 		goto out_free;
- 	}
-@@ -533,7 +533,7 @@ static bool myrs_enable_mmio_mbox(struct myrs_hba *cs,
- 	cs->fwstat_buf = dma_alloc_coherent(&pdev->dev,
- 					    sizeof(struct myrs_fwstat),
- 					    &cs->fwstat_addr, GFP_KERNEL);
--	if (dma_mapping_error(&pdev->dev, cs->fwstat_addr)) {
-+	if (!cs->fwstat_buf) {
- 		dev_err(&pdev->dev, "Failed to map firmware health buffer\n");
- 		cs->fwstat_buf = NULL;
- 		goto out_free;
--- 
-2.43.0
+Hi Sebastian,
+
+Sorry for causing the confusion. I will try to clear it by explaining 
+how the battery resistance is calculated in Qcom BMS.
+
+In Qcom BMS, it uses the Equivalent Series Resistance (ESR) parameter to 
+represent the battery’s real-time internal resistance. ESR changes 
+dynamically depending on factors like the battery’s state of charge 
+(SoC), temperature, charging or discharging status. To estimate ESR 
+accurately under different conditions, the BMS uses data obtained from 
+characterizing representative battery samples, mapping ESR values across 
+various temperatures and SoC levels under charging or discharging 
+status. The characterization process with those battery samples on test 
+bench would use ohm's law to calculate the battery resistance I think. 
+These data points serve as a reference for real-time resistance 
+estimation. During operation, the BMS software refers to this data and 
+adjusts ESR values according to real-time inputs, especially 
+temperature, which is typically measured by a thermistor inside the 
+battery pack.
+
+I can use 'internal_resistance' if you think this is good to represent 
+this ESR parameter.
+
+Thanks
+
+Fenglin
 
 
