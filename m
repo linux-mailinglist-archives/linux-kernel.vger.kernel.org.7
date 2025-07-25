@@ -1,283 +1,162 @@
-Return-Path: <linux-kernel+bounces-745190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D13B11657
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:21:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFADDB11659
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 04:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B971548673
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:21:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DFE27BB7F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315A9226863;
-	Fri, 25 Jul 2025 02:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F0122F16C;
+	Fri, 25 Jul 2025 02:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="kn5zivBx"
-Received: from esa7.hc1455-7.c3s2.iphmx.com (esa7.hc1455-7.c3s2.iphmx.com [139.138.61.252])
+	dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b="jP4+ymPe";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Qd2VfQHz"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF7B846F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.61.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DF354673;
+	Fri, 25 Jul 2025 02:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753410059; cv=none; b=MMTGK4tkDgb32bxNOy2UCkDGitVI2ZCi7EilaXr5UcxaHyFkYXTGtTiRbobKljGCqC2M6na5dnsqZ00mZtS50hAjPGe22a8z23FfI76MuZN2wt6ui8nmNX+qFmGPx30bByv2yGeqLxPPVoMI89MTOQ+IsSnMP0WjPhbttWYMUtY=
+	t=1753410212; cv=none; b=B22K9PdHdkxQVxVfvxxmP6uhMkqHbq91RGHRAyW9RC1yaCB9RQasOhy5BG8yKlVk4FfPYwt/1fPJEz+f5al66a7YX3SOCCenpTZyK1UjdjfCG4G3MUDi6jtU3iS7TGyJTxFmuBlanO58tx8xNbLpyy3xH2WgE7OtaPDiWezqBPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753410059; c=relaxed/simple;
-	bh=N8TtpA7lzF4PbRiXLF8Toc0Ps0/E7V/1pJKfeLjZlEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t40PkpztjxFfdI6H5z/yxyvBDNZqkpHAfaUdI1jeDVONeuOk9Xi9QiLsUnoo/6JOEV1ktIvJlZKNLLoJkgazKh0gFM1W7P0VI0U+o4fk/M37wDJLX4FsLTBc6MEzWc7aufS6E05enMMDlWiaQMTynbhIhP1saL4qplWRdRnAF40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=kn5zivBx; arc=none smtp.client-ip=139.138.61.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1753410057; x=1784946057;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=N8TtpA7lzF4PbRiXLF8Toc0Ps0/E7V/1pJKfeLjZlEE=;
-  b=kn5zivBx6lPHiRsmz8WOzI4EqhosYEROcummbXDH8s+Tl/JiQlJflr+f
-   kn9nAk0Bh2nhtgEPbPWQUrUnL8MwUANUjDWurVtfxKUiqTvrIA5y8wyJP
-   P0LZlbo3xzyg9hSSVewUt26ydxd+6sSShj0mIA7Myez2bq4NKIGNuXsbB
-   Pk2swZ5riKyWEitd3sodd0lZLwxshltP6jSqb2ysLv4j0xwqIg9Q6JPV8
-   ZjkyLKcUl3ZbVrEQe1aiOihwISozbL9R7HS3S4Nq2N5TQpywlJJc8kkoc
-   9fUbPm5xNIOHP1IaoPMzJagauLL7Pno8Y2ga56syn4THiZyojsPqxZH8O
-   g==;
-X-CSE-ConnectionGUID: eXrD5ORLQxaze2AJZ7Cd7w==
-X-CSE-MsgGUID: Lb7Nx4SVRXGUyxsB/SNKgg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="186234203"
-X-IronPort-AV: E=Sophos;i="6.16,338,1744038000"; 
-   d="scan'208";a="186234203"
-Received: from unknown (HELO az2nlsmgr3.o.css.fujitsu.com) ([20.61.8.234])
-  by esa7.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2025 11:20:55 +0900
-Received: from az2nlsmgm1.o.css.fujitsu.com (unknown [10.150.26.203])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgr3.o.css.fujitsu.com (Postfix) with ESMTPS id 188DA1000370
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:20:55 +0000 (UTC)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgm1.o.css.fujitsu.com (Postfix) with ESMTPS id 82BD0C0037E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:20:54 +0000 (UTC)
-Received: from [192.168.22.105] (unknown [10.167.135.81])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id B010D1A006C;
-	Fri, 25 Jul 2025 10:20:44 +0800 (CST)
-Message-ID: <982da1b2-0024-4c01-b586-02c0b8a41e95@fujitsu.com>
-Date: Fri, 25 Jul 2025 10:20:44 +0800
+	s=arc-20240116; t=1753410212; c=relaxed/simple;
+	bh=MgoIfixs4nmYkxvgEg68jeOrTXtKgkzDtOT/33t0RCw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ZKt6Qkc7OE7syf3SW2Fi3LoKURZfiDJq+e+WSd86h0/CFULLnc7qupQgcT9wosqg7aC54BFHoyAwxEpnbOsqVFunLBAEslz2h74ykaHF4VTnXGe53T+9EvLeyVXVc3741uFkmsO7ETSYI6SwT/s8dX6gOePmS4fdef6H2sNt+34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com; spf=pass smtp.mailfrom=kylemanna.com; dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b=jP4+ymPe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Qd2VfQHz; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylemanna.com
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id 17270EC054F;
+	Thu, 24 Jul 2025 22:23:29 -0400 (EDT)
+Received: from phl-imap-16 ([10.202.2.88])
+  by phl-compute-08.internal (MEProxy); Thu, 24 Jul 2025 22:23:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kylemanna.com;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm3;
+	 t=1753410209; x=1753496609; bh=6eqGygpm+KL71M9AISS7z8e7DqChtpu4
+	mFIFwIB6Ob0=; b=jP4+ymPeq4JWR7Mekx/ohUo4Xm6KaMQW7J49GE94f56nLMPi
+	NQIcH3/D6OgVLC58bnlonPENk7b4gJvweyQcuGBzBYz5vJvNfm/Xt6xSzY9E4Dcd
+	Y9JH5oKV47WW4sWjsU7DfTwid41M1RA5DmdeIGo4/a6tO7BJMtRQJs8JlqFL6z/M
+	PV65s8xX/uFUaT8A9YDncnxKAxqZ/m2ddF+WOGehGM6KIzRjfIYTu56ka8Qc349k
+	9TR3yuaC7/i+Vj5icp3RSmaz5g3NjtBVWqbRXxiaaq4s2sGLnLmYc1b+F8xtZGQs
+	Xhr903o6hKmNN8yBxKIk6ckUlDyVBmmywjIVCw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753410209; x=
+	1753496609; bh=6eqGygpm+KL71M9AISS7z8e7DqChtpu4mFIFwIB6Ob0=; b=Q
+	d2VfQHzwXq8W3JQLPE0Em706oBam14tNpRRsRGlFfzfKXVoOdw81x+xWyGxglD2W
+	J/ItS875XuVcsb0eSLggxm4bg0nBaxKynZ1UBYwmKe77cWokpa5EcuimaxX8xLCy
+	5rTnWuF1b2xMmm120IX9SKvuu3ZIORw3ltcZW+zth4WS6JjzPDPLisOd5hfeqAS/
+	E4XtomblK8eQTmOg5Hc9xoYkHmZDal3FLqvgJYA69ASoymhIIFajlVGs/78+ukeZ
+	OK05vzTfYl75zIc6znKcaRhv3MqDjsppB/8G9JKLFhff6NO1v5tqvSjggvO6G/L7
+	lIFuz3RXNYiivCFjtcjiA==
+X-ME-Sender: <xms:oOqCaErfogP8RSEV-cZxkm5lu9OIrhtw6g1ZYrpzvv-5JedKiMOhXg>
+    <xme:oOqCaKqqIy0-ewzi-VubjXwVgWdz47Y3695yL5n3akxIsQoED201nhWdkyLIrtrv6
+    V3UplZCiQpNvYHT_g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekvdefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdfmhihlvgcu
+    ofgrnhhnrgdfuceokhihlhgvsehkhihlvghmrghnnhgrrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeehtddvjeehueehffffuedtieejieetleevgfdtffeuheekhfdvtdfggedtffeu
+    hfenucffohhmrghinhepshgvrhhvvghthhgvhhhomhgvrdgtohhmpdhinhhtvghlrdgtoh
+    hmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhih
+    lhgvsehkhihlvghmrghnnhgrrdgtohhmpdhnsggprhgtphhtthhopeduuddpmhhouggvpe
+    hsmhhtphhouhhtpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomhdprhgt
+    phhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehjrghmvghsrdhmohhrsh
+    gvsegrrhhmrdgtohhmpdhrtghpthhtohepjhgrmhgvshifvghsthhonhhjvghrnhhighgr
+    nhesghhmrghilhdrtghomhdprhgtphhtthhopehqihhugihurdiihhhuohesihhnthgvlh
+    drtghomhdprhgtphhtthhopehtohhnhidrlhhutghksehinhhtvghlrdgtohhmpdhrtghp
+    thhtohephihiuddrlhgrihesihhnthgvlhdrtghomhdprhgtphhtthhopehmtghhvghhrg
+    gssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrhhitgeskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:oOqCaGDzBH9ZETa6nrRycQrLasYSs5IkyUYjyXJPwYKSvVROj3GEdw>
+    <xmx:oOqCaPv6DvQYniz4t3rB7X0xLJehmVqw2fQJq_aSZFzLGuFiTvO1ig>
+    <xmx:oOqCaMTJcyaDjI-bQCnXlGvJ0Ae61mIfVGmXjFr-AmS95RwLLSYQiA>
+    <xmx:oOqCaOI5lCdxXD3sBVhyz2BDq7h3NvUnAH4JfnFeiNFPz3AIgVRkDQ>
+    <xmx:oeqCaOoSivi8ALyw_D9tYr7RbYAhWIrLxiNCkTuTVQFIkb55J0pI4un6>
+Feedback-ID: iac74403c:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 18A8B2CC0083; Thu, 24 Jul 2025 22:23:28 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE
- counting
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, lkp@intel.com,
- akpm@linux-foundation.org, y-goto@fujitsu.com, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, mgorman@suse.de,
- vschneid@redhat.com, Li Zhijian <lizhijian@fujitsu.com>,
- Ben Segall <bsegall@google.com>
-References: <20250722141650.1821721-1-ruansy.fnst@fujitsu.com>
- <87cy9r38ny.fsf@DESKTOP-5N7EMDA>
- <85d83be2-02f8-4ef6-91c7-ff920e47d834@fujitsu.com>
- <87wm7y3ur3.fsf@DESKTOP-5N7EMDA>
-From: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <87wm7y3ur3.fsf@DESKTOP-5N7EMDA>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T37e2f165b0bb5a7d
+Date: Thu, 24 Jul 2025 19:23:07 -0700
+From: "Kyle Manna" <kyle@kylemanna.com>
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, "Luck, Tony" <tony.luck@intel.com>,
+ "Borislav Petkov" <bp@alien8.de>, "Jason Baron" <jbaron@akamai.com>
+Cc: "James Jernigan" <jameswestonjernigan@gmail.com>,
+ "James Morse" <james.morse@arm.com>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Robert Richter" <rric@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-Id: <e3bc0591-7ebf-4738-8848-599edd11c10d@app.fastmail.com>
+In-Reply-To: 
+ <CY8PR11MB7134484D663C31DA1544945B895EA@CY8PR11MB7134.namprd11.prod.outlook.com>
+References: <20250724064415.1134574-1-kyle@kylemanna.com>
+ <CY8PR11MB7134484D663C31DA1544945B895EA@CY8PR11MB7134.namprd11.prod.outlook.com>
+Subject: Re: [PATCH 1/1] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs for EDAC
+ support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+Hi Qiuxu,
+
+On Thu, Jul 24, 2025, at 07:31, Zhuo, Qiuxu wrote:
+> Do you have access to these machines to load the ie31200_edac
+> driver with your patch? If yes, would you take dmesg logs?
+
+I have access to a i5-12600K, here are the logs that I observed:
+
+$ dmesg | rg -i -e edac -e ecc -e ie31200 | rg -v systemd | rg edac
+[   14.379905] caller ie31200_init_one+0x1b5/0x480 [ie31200_edac] mapping multiple BARs
+[   14.382709] EDAC MC0: Giving out device to module ie31200_edac controller IE31200: DEV 0000:00:00.0 (INTERRUPT)
+[   14.383042] EDAC MC1: Giving out device to module ie31200_edac controller IE31200_1: DEV 0000:00:00.0 (INTERRUPT)
+
+I posted additional logs from sysfs and "ras-mc-ctl" here[0] after I learned that support was added for related processors as well as discussion with other users trying to get W680 + ECC working.
+
+[0] https://forums.servethehome.com/index.php?threads/intel-w680-ddr5-and-ecc-reporting.42559/#post-470425
 
 
+>> diff --git a/drivers/edac/ie31200_edac.c b/drivers/edac/ie31200_edac.c index
+>> a53612be4b2f..2078c12bbed2 100644
+>> --- a/drivers/edac/ie31200_edac.c
+>> +++ b/drivers/edac/ie31200_edac.c
+>> @@ -94,6 +94,8 @@
+>> 
+>>  /* Alder Lake-S */
+>>  #define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1	0x4660
+>> +#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_2	0x4668
+>> +#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_3	0x4648
+>> 
+>
+> I didn't find the place in your spec above that indicates these
+> two CPUs with these two DIDs have Out-Of-Band ECC capabilities.
+> Could you point it out to me?
 
-在 2025/7/24 15:36, Huang, Ying 写道:
-> Shiyang Ruan <ruansy.fnst@fujitsu.com> writes:
-> 
->> 在 2025/7/23 11:09, Huang, Ying 写道:
->>> Ruan Shiyang <ruansy.fnst@fujitsu.com> writes:
->>>
->>>> From: Li Zhijian <lizhijian@fujitsu.com>
->>>>
->>>> ===
->>>> Changes since v2:
->>>>     1. According to Huang's suggestion, add a new stat to not count these
->>>>     pages into PGPROMOTE_CANDIDATE, to avoid changing the rate limit
->>>>     mechanism.
->>>> ===
->>> This isn't the popular place for changelog, please refer to other
->>> patch
->>> email.
->>
->> OK. I'll move this part down below.>
->>>> Goto-san reported confusing pgpromote statistics where the
->>>> pgpromote_success count significantly exceeded pgpromote_candidate.
->>>>
->>>> On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB):
->>>>    # Enable demotion only
->>>>    echo 1 > /sys/kernel/mm/numa/demotion_enabled
->>>>    numactl -m 0-1 memhog -r200 3500M >/dev/null &
->>>>    pid=$!
->>>>    sleep 2
->>>>    numactl memhog -r100 2500M >/dev/null &
->>>>    sleep 10
->>>>    kill -9 $pid # terminate the 1st memhog
->>>>    # Enable promotion
->>>>    echo 2 > /proc/sys/kernel/numa_balancing
->>>>
->>>> After a few seconds, we observeed `pgpromote_candidate < pgpromote_success`
->>>> $ grep -e pgpromote /proc/vmstat
->>>> pgpromote_success 2579
->>>> pgpromote_candidate 0
->>>>
->>>> In this scenario, after terminating the first memhog, the conditions for
->>>> pgdat_free_space_enough() are quickly met, and triggers promotion.
->>>> However, these migrated pages are only counted for in PGPROMOTE_SUCCESS,
->>>> not in PGPROMOTE_CANDIDATE.
->>>>
->>>> To solve this confusing statistics, introduce this
->>>> PGPROMOTE_CANDIDATE_NOLIMIT to count the missed promotion pages.  And
->>>> also, not counting these pages into PGPROMOTE_CANDIDATE is to avoid
->>>> changing the existing algorithm or performance of the promotion rate
->>>> limit.
->>>>
->>>> Perhaps PGPROMOTE_CANDIDATE_NOLIMIT is not well named, please comment if
->>>> you have a better idea.
->>> Yes.  Naming is hard.  I guess that the name comes from the
->>> promotion
->>> that isn't rate limited.  I have asked Deepseek that what is the good
->>> abbreviation for "not rate limited".  Its answer is "NRL".  I don't know
->>> whether it's good.  However, "NOT_RATE_LIMITED" appears too long.
->>
->> "NRL" Sounds good to me.
->>
->> I'm thinking another one: since it's not rate limited, it could be
->> migrated quickly/fast.  How about PGPROMOTE_CANDIDATE_FAST?
-> 
-> This sounds good to me, Thanks!
+This Intel CPU page[1] lists ECC memory support and the same on the Intel W680 chipset page[2]. The datasheet was used to confirm the DIDs[3] were valid.
 
-Gemini 2.5 gave me a more radical name for it:
+[1] https://www.intel.com/content/www/us/en/products/sku/134589/intel-core-i512600k-processor-20m-cache-up-to-4-90-ghz/specifications.html
+[2] https://www.intel.com/content/www/us/en/products/sku/218834/intel-w680-chipset/specifications.html
+[3] https://edc.intel.com/content/www/us/en/design/ipla/software-development-platforms/client/platforms/alder-lake-desktop/12th-generation-intel-core-processors-datasheet-volume-1-of-2/011/device-ids/
 
-/*
-  * Candidate pages for promotion based on hint fault latency. This counter
-  * is used by the feedback mechanism to control the promotion rate and
-  * adjust the hot threshold.
-  */
-PGPROMOTE_CANDIDATE,
-/*
-  * Pages promoted aggressively to a fast-tier node when it has sufficient
-  * free space. These promotions bypass the regular hotness checks and do
-  * NOT influence the promotion rate-limiter or threshold-adjustment logic.
-  * This is for statistics/monitoring purposes.
-  */
-PGPROMOTED_AGGRESSIVE,
+Given that you added the i9-12900k (0x4660) in 180f091224a00 and I've personally verified the i5-12600k (0x4648) is working (see dmesg logs above), I've added the i7-12700k (0x4668) to assist future users.
 
-I think this one is concise and easy to understand with the comments. What do 
-you think?  If this one is not appropriate, then I will go with "_NRL" as you 
-suggested.
-
-
---
-Thanks,
-Ruan.
-
-> 
-> ---
-> Best Regards,
-> Huang, Ying
-> 
->>
->>>
->>>>
->>>>
->>> The empty line is unnecessary.
->>
->> OK.>
->>>> Cc: Huang Ying <ying.huang@linux.alibaba.com>
->>> Suggested-by: Huang Ying <ying.huang@linux.alibaba.com>
->>
->> OK.
->>
->>
->> --
->> Thanks,
->> Ruan.
->>
->>>
->>>> Cc: Ingo Molnar <mingo@redhat.com>
->>>> Cc: Peter Zijlstra <peterz@infradead.org>
->>>> Cc: Juri Lelli <juri.lelli@redhat.com>
->>>> Cc: Vincent Guittot <vincent.guittot@linaro.org>
->>>> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
->>>> Cc: Steven Rostedt <rostedt@goodmis.org>
->>>> Cc: Ben Segall <bsegall@google.com>
->>>> Cc: Mel Gorman <mgorman@suse.de>
->>>> Cc: Valentin Schneider <vschneid@redhat.com>
->>>> Reported-by: Yasunori Gotou (Fujitsu) <y-goto@fujitsu.com>
->>>> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
->>>> Signed-off-by: Ruan Shiyang <ruansy.fnst@fujitsu.com>
->>>> ---
->>>>    include/linux/mmzone.h | 2 ++
->>>>    kernel/sched/fair.c    | 6 ++++--
->>>>    mm/vmstat.c            | 1 +
->>>>    3 files changed, 7 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
->>>> index 283913d42d7b..6216e2eecf3b 100644
->>>> --- a/include/linux/mmzone.h
->>>> +++ b/include/linux/mmzone.h
->>>> @@ -231,6 +231,8 @@ enum node_stat_item {
->>>>    #ifdef CONFIG_NUMA_BALANCING
->>>>    	PGPROMOTE_SUCCESS,	/* promote successfully */
->>>>    	PGPROMOTE_CANDIDATE,	/* candidate pages to promote */
->>>> +	PGPROMOTE_CANDIDATE_NOLIMIT,	/* candidate pages without considering
->>>> +					 * hot threshold */
->>>>    #endif
->>>>    	/* PGDEMOTE_*: pages demoted */
->>>>    	PGDEMOTE_KSWAPD,
->>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>>> index 7a14da5396fb..12dac3519c49 100644
->>>> --- a/kernel/sched/fair.c
->>>> +++ b/kernel/sched/fair.c
->>>> @@ -1940,11 +1940,14 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
->>>>    		struct pglist_data *pgdat;
->>>>    		unsigned long rate_limit;
->>>>    		unsigned int latency, th, def_th;
->>>> +		long nr = folio_nr_pages(folio);
->>>>      		pgdat = NODE_DATA(dst_nid);
->>>>    		if (pgdat_free_space_enough(pgdat)) {
->>>>    			/* workload changed, reset hot threshold */
->>>>    			pgdat->nbp_threshold = 0;
->>>> +			mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE_NOLIMIT,
->>>> +					    nr);
->>>>    			return true;
->>>>    		}
->>>>    @@ -1958,8 +1961,7 @@ bool should_numa_migrate_memory(struct
->>>> task_struct *p, struct folio *folio,
->>>>    		if (latency >= th)
->>>>    			return false;
->>>>    -		return !numa_promotion_rate_limit(pgdat, rate_limit,
->>>> -						  folio_nr_pages(folio));
->>>> +		return !numa_promotion_rate_limit(pgdat, rate_limit, nr);
->>>>    	}
->>>>      	this_cpupid = cpu_pid_to_cpupid(dst_cpu, current->pid);
->>>> diff --git a/mm/vmstat.c b/mm/vmstat.c
->>>> index a78d70ddeacd..ca44a2dd5497 100644
->>>> --- a/mm/vmstat.c
->>>> +++ b/mm/vmstat.c
->>>> @@ -1272,6 +1272,7 @@ const char * const vmstat_text[] = {
->>>>    #ifdef CONFIG_NUMA_BALANCING
->>>>    	"pgpromote_success",
->>>>    	"pgpromote_candidate",
->>>> +	"pgpromote_candidate_nolimit",
->>>>    #endif
->>>>    	"pgdemote_kswapd",
->>>>    	"pgdemote_direct",
->>> ---
->>> Best Regards,
->>> Huang, Ying
-
+Thanks!
+- Kyle
 
