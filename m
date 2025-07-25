@@ -1,118 +1,161 @@
-Return-Path: <linux-kernel+bounces-745682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B059EB11D08
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:01:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161B4B11D0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FB61C865E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:02:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CD8171CF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CEE2E6103;
-	Fri, 25 Jul 2025 11:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A137F1BD4F7;
+	Fri, 25 Jul 2025 11:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W9WvHmSg"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJiIzFXc"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A71023BF96
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EB9217F33;
+	Fri, 25 Jul 2025 11:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441297; cv=none; b=UNY+7VbLpVkit/9FmTafhbGl1QYuO/vDqVP3VA0H6Ei0iV9Sa5MEOXKuO2VcIVQ2Uh1ytTOky+uF/o6h/mku9PM9+LutFf/6KUJe2AZiXMH4quWzfYaOC2Pe4zRIHHwnecHBoQsTtZoWxRYUKYqQyr8OB6Zwzni8jimBjcu7V0o=
+	t=1753441332; cv=none; b=elMnxAhP3O2JQcKud+1YHEs52mFw4gYBgojeQD1AjtN6Lo2my84zEKl9KPKPvDIt+wpfyNsKXzdDBzkwajRRYUAQ8xCoOJoTRXJoUsNHjky/nxbf05fxWNndygNfvtOEe1nwokF9De9ty/LMZ4vs4b2CiCSgxeVESDV3MyXoB1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441297; c=relaxed/simple;
-	bh=91c+c3XacArZYhJktraFog1DitCooWolYjBkQgEPN+U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=df2GrevkWcyA07DkmRi4XXnXkFlpqW7zL7+cACiC2Z6mcD4KnwXRBTUkcJ2XpMXO0EdhQ/SoivIp6vVQExb0bzizTyGp9gLsypODlOCdBGh98m+ngjiiDGYrU+enhroyJnzbSsXekqXglL8LwLzs9sE226BZIV4LUa0dYbO4a6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W9WvHmSg; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32f3ef6178bso16539621fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:01:35 -0700 (PDT)
+	s=arc-20240116; t=1753441332; c=relaxed/simple;
+	bh=Ngio8xfyWIIDwlnM0W+JAkMk7HyR29dVYpj61dVV4ZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b1uU4NOu1oX/CK4hLs51r+fbDTOaezgVwLtVooiLlQq6Jfrz12wbiEVcGFWIK5V9X0me3INwuSOafvtxGmekeEwfHMrog8lGqy/+TLUXIDoMhlx1BPXXcmQFY3KzkWFV5WYOqUWk7oFZWzjJv7s0DOWyhZAjA6x8lHO7wHTuvi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJiIzFXc; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-53140c33563so1293791e0c.3;
+        Fri, 25 Jul 2025 04:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753441294; x=1754046094; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s1Nxza4r7OAZ4l5YzoQCQzc/vgKwVrRaLTJPvigr7KM=;
-        b=W9WvHmSgXIVRK4haB4MedJYb/vdEhrgli7DabpIHFVLnQmq0tRau9E3tCbP07fPVRN
-         9eQE8NPRaPzyHa8NbED+OVExSaD9/krjEPWEsq/qVs15i2Ju1BFbZbU9IgF/HHQFozni
-         HWgN7PAd0FidpL6PYPcimWUZRQ3hZvZHsJjaM=
+        d=gmail.com; s=20230601; t=1753441329; x=1754046129; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ihcslW5gx76Wnmrg/L2FGmXABDcUFjb21/r/z7IBkg=;
+        b=XJiIzFXcbSUlOdVKOLSBFloURuhSMPMluX2ag01rhZ9qeNuDETt5IcmYxmzhR6xcyS
+         btX6vpdQCORjK2Foe1VU5ZFfrfWcFOfgROtsC/dQxOd5yacyi9e0HXB+tJEDfUNLXoca
+         LvHlTz7EFPfTysDvnFdd13tIAmxm/W/uf26vZEZ43U0Nzn/glSQrg6hzWiRx6x0d3F4O
+         +eWJ4JgvPwu5j2iqwFtvf/gEeUkPLNdW5+fsPxVaJAeDwh1x57Q04BW2ofI3JVOxozyk
+         sSMf1oemodbVrCu8zRKAWUQ18lCOnH/1d7EPUQo/8hemHHE3Cpwlx4N8XuhzOihmBaWa
+         6czQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753441294; x=1754046094;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753441329; x=1754046129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=s1Nxza4r7OAZ4l5YzoQCQzc/vgKwVrRaLTJPvigr7KM=;
-        b=XQCkKuFn7JW5DP64wGILuDQGKkarjLCN91doqUzdqNsqyY+5Ednbsp/HPbOV9UppSo
-         aKNmQD7zJZVWYJy5KjH+50chtPoMPQLjzbH7ipUcNcmP4m2RbR1VjHjfEvPx++21LMQW
-         0kz1CedZkyBkfBmuOEvPs6ZIwItBvXbyfRix8zzfdCb3PsO/3pfKeVIe3LCrjusryc30
-         +RlZRooeZSz3TiadbxekBr8iIE1v9kZT60iZJOLfpdeHJoVvQmf0VMpU50Poxq5oemRz
-         qZ2F0iUrKLMqm9JmX2Y+/lOMiXeFjQaFB8F+XlzaIXAc21NcoYrum2jcPOY88fkMKGBW
-         yS+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWaOCKD+gvaB7fMWeR546DflGLOIo8JBSuZG2bP0NZ+dn9pK0HH1j0Hbsc+tqRxzIanJnciYHLUdX147DQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrx+q/yKXB+RBL5FHO2KnHvPs84jjisF/wV688mHZPpdq87+XU
-	J0K6JVM9seLvub04QGCn9Q8e0nK5/nGSw4BuMnBCvB9KOkB04A3FeE48S6pajUZqdw==
-X-Gm-Gg: ASbGncutnqblXu1kS58eWVd24r7Uofssiy3ZGgFxyjxd20H8AjVtOy92oebXWpq/IW4
-	iR3cM2MKLVSGL9DmlexZamEoQvgRnViAHB9+h7yVznsJYrdVGp0Smt8p4NkwK/ueOHrzWUs4Y7b
-	9VWDw+qS0Xt+rLhFfhwXNLwmiO/5oItpan3n6GjwHBrsUNLC1ahMW/1/dqOe6H+/g8mdoXTPlGI
-	Sqiose3WZm9z0CFE7XEQx+noM9C7itYLv3DpSOEzv9VMt0OHz2bh8FDkKdSWgVrF26AhSN3y7DK
-	yHjcGMeWAybKnNlV59C47kwEJQi3U24YUcSI8PUZgiQH/miMNAakd/J3GYoiyygtCcZJejL12Al
-	fq5ItGDhmIr3JU+SXBIDBT7EbmLiAaw9iOplVBtJzn7T7N5APMUPzFCSYNUyr/PByRXLt3L631I
-	00Aw==
-X-Google-Smtp-Source: AGHT+IGCop+bbnI2GJGX4G+Ze/OhblUQtpcNFHyqhlJ15tmeQfxDEPv5skwMMRx0MrNl/cPvjV1utg==
-X-Received: by 2002:a2e:8e63:0:b0:32b:719f:1260 with SMTP id 38308e7fff4ca-331ee6ee566mr3407751fa.9.1753441294210;
-        Fri, 25 Jul 2025 04:01:34 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-331e8940156sm4187141fa.97.2025.07.25.04.01.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 04:01:33 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 25 Jul 2025 11:01:30 +0000
-Subject: [PATCH 2/2] media: uvcvideo: Do not re-reference dev->udev
+        bh=8ihcslW5gx76Wnmrg/L2FGmXABDcUFjb21/r/z7IBkg=;
+        b=FFYbQ7oq2snfySRrnYaPv000anwZrzXwvKcGNNUb1X2Wkq1MWJZVC21oIkNMiC0kGP
+         +P6GWZDF6toJUEhDl2XHzgOXh2ySKjb5LgKRQIZpi78heIlEvwtUb41cw+hOW5YnlJMV
+         2HUgxTZTZg0LzyTjA7JRbQbRoLZJbjmJkUl9bzkqETXaF2b+AGoWBNbMDqfDoFmThuCC
+         wOAAnGciU2oAKGAQMUtnGpdpgHk/QsrVc/BnHWuLMVzvGG6NExzctR7wYzUs67+fL7DP
+         2OK9M82e9tFFO0bGTDjqQ14HpnXymjxZBOJSFSleP0YnFfuamQNQsuDCsRh0tZNZWqW5
+         QFqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKD2ThX1x2TxOfKbb00QsmkEwjJh3hx1zIiVLDJNMvto+ykPgdd8IVYYS+TDBoUjhbLYMX12m1hCA1Ms4=@vger.kernel.org, AJvYcCXqipGXuvIufMINMw/MY7iRQQt0hq8WCDOUwLg7ao5/qYF8Xm6dWiMfEvZUdjKvd9FMwYtMutRlxNd5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRHauJ7GYxKBDK3jmn/YyWRjIRG9VTluEr2HEO8GLE9/lzqhVO
+	2SyehR5hO74uEL/Y5bOlkrPRwHWs/hsFX1P9SlHuiICo0n0Pn0m3b0Am0buxl7qTnL4Yum7zHVY
+	Qs5pXvpLvfeWDDtObB1NsVFnhfDDci2w=
+X-Gm-Gg: ASbGncss49ywqEHdk2VCi4MTcrOtdvrwS2IZam+SX1Hwx4Mx6YjDXp5VtneTrFmGZbb
+	wv2yO1Xh+TnjG2QSznEybz6yrG5nMWXba0WeSe41ZZWudJndyJgmwpbLU7J1LAg5A3UezSKrg0j
+	sYLc4TtMi02E/GyBeiDSh/mKi011e8JIcDLPvsa7XrFXrzUaHCsymTJZCzLhlHPiu8+rPT4kvpz
+	nm0OvlefVPo24CvVsb31zPRbfPNfPf9IBZJBsU=
+X-Google-Smtp-Source: AGHT+IGQMHgfEY7BuclRsjz6OH/7UgX+5R631hDtSjohy25v3ShupItv1BCYnry5FYvFEIhnzI2+C6EvDM+5V5QrM6A=
+X-Received: by 2002:a05:6122:46a8:b0:531:236f:1283 with SMTP id
+ 71dfb90a1353d-538db602ff1mr319083e0c.10.1753441328963; Fri, 25 Jul 2025
+ 04:02:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250725-uvc-nousbdev-v1-2-28f5a1fdf544@chromium.org>
-References: <20250725-uvc-nousbdev-v1-0-28f5a1fdf544@chromium.org>
-In-Reply-To: <20250725-uvc-nousbdev-v1-0-28f5a1fdf544@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+References: <20250716104334.44020-1-victorshihgli@gmail.com> <d5a0fcf9-4ae0-4d0a-842e-d9475997cdb5@intel.com>
+In-Reply-To: <d5a0fcf9-4ae0-4d0a-842e-d9475997cdb5@intel.com>
+From: Victor Shih <victorshihgli@gmail.com>
+Date: Fri, 25 Jul 2025 19:01:56 +0800
+X-Gm-Features: Ac12FXxlVobuRC8ZRTJ3xs8LnvzOZsLYryZXrXwLx982Oskd-13JLoxCmj_N6RQ
+Message-ID: <CAK00qKCUPOcSrjSuDyHiVsTUw6we029Uq4UjH2Q+JGuZ0KDOww@mail.gmail.com>
+Subject: Re: [PATCH V1] mmc: sdhci-pci-gli: GL9763e: Mask the replay timer
+ timeout of AER
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
+	ben.chuang@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-dev->udev is already referenced by the variable udev. Let's use it.
+On Thu, Jul 24, 2025 at 7:59=E2=80=AFPM Adrian Hunter <adrian.hunter@intel.=
+com> wrote:
+>
+> On 16/07/2025 13:43, Victor Shih wrote:
+> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> >
+> > Due to a flaw in the hardware design, the GL9763e replay timer frequent=
+ly
+> > times out when ASPM is enabled. As a result, the warning messages will
+> > often appear in the system log when the system accesses the GL9763e
+> > PCI config. Therefore, the replay timer timeout must be masked.
+> >
+> > Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+> > ---
+> >  drivers/mmc/host/sdhci-pci-gli.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-=
+pci-gli.c
+> > index 4c2ae71770f7..eb3954729a3c 100644
+> > --- a/drivers/mmc/host/sdhci-pci-gli.c
+> > +++ b/drivers/mmc/host/sdhci-pci-gli.c
+> > @@ -1754,6 +1754,7 @@ static int gl9763e_add_host(struct sdhci_pci_slot=
+ *slot)
+> >  static void gli_set_gl9763e(struct sdhci_pci_slot *slot)
+> >  {
+> >       struct pci_dev *pdev =3D slot->chip->pdev;
+> > +     int aer;
+> >       u32 value;
+> >
+> >       pci_read_config_dword(pdev, PCIE_GLI_9763E_VHS, &value);
+> > @@ -1780,6 +1781,14 @@ static void gli_set_gl9763e(struct sdhci_pci_slo=
+t *slot)
+> >       value |=3D FIELD_PREP(GLI_9763E_HS400_RXDLY, GLI_9763E_HS400_RXDL=
+Y_5);
+> >       pci_write_config_dword(pdev, PCIE_GLI_9763E_CLKRXDLY, value);
+> >
+> > +     /* mask the replay timer timeout of AER */
+> > +     aer =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ERR);
+> > +     if (aer) {
+> > +             pci_read_config_dword(pdev, aer + PCI_ERR_COR_MASK, &valu=
+e);
+> > +             value |=3D PCI_ERR_COR_REP_TIMER;
+> > +             pci_write_config_dword(pdev, aer + PCI_ERR_COR_MASK, valu=
+e);
+> > +     }
+>
+> The same code is in gl9750_hw_setting() and gl9755_hw_setting()
+> so it could be a separate little function.
+>
+> Also should gli_set_gl9763e() be renamed gl9763e_hw_setting() for
+> consistency?
+>
+> Also should this have a fixes tag?
+>
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi, Adrian
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index d09d1286da0f61d5953125df23ed92555585e8f2..209cedeff59e8be2e96ce79c3d395a5a85a336c6 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -882,7 +882,7 @@ static int uvc_parse_vendor_control(struct uvc_device *dev,
- 	unsigned int n, p;
- 	int handled = 0;
- 
--	switch (le16_to_cpu(dev->udev->descriptor.idVendor)) {
-+	switch (le16_to_cpu(udev->descriptor.idVendor)) {
- 	case 0x046d:		/* Logitech */
- 		if (buffer[1] != 0x41 || buffer[2] != 0x01)
- 			break;
+Ok, I will update in the next version.
+I think I should only need the stable tag.
 
--- 
-2.50.1.470.g6ba607880d-goog
+Thanks, Victor Shih
 
+> > +
+> >       pci_read_config_dword(pdev, PCIE_GLI_9763E_VHS, &value);
+> >       value &=3D ~GLI_9763E_VHS_REV;
+> >       value |=3D FIELD_PREP(GLI_9763E_VHS_REV, GLI_9763E_VHS_REV_R);
+>
 
