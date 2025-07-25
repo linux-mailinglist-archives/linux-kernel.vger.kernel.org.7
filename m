@@ -1,157 +1,155 @@
-Return-Path: <linux-kernel+bounces-746115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA41B12351
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:54:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CECB12354
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8712C4E55F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:53:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F61E1894655
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10542F0C43;
-	Fri, 25 Jul 2025 17:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0782EFDB1;
+	Fri, 25 Jul 2025 17:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q40H8KeT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QCrA/RTZ"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319FD2F004C;
-	Fri, 25 Jul 2025 17:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B0C1EDA02
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753466046; cv=none; b=Eys65pJnD8rbbuYR+6pq7NITz9i03caHvbySzsIpt8PQAEq/ApKddZ6tnCpYkVypHmAtpp5ZkypOkHdLTXwcfEDvJvBCJe9EEJYUB40tXj1P54lBkM8h1fkXetwiQiwBXqoArNsyo/Mvvy8tUSpdzUychedTHLyc21HYlp21ffo=
+	t=1753466122; cv=none; b=VaqtlWnKz6PfQeDYzgoBKz5fvvGSEcEWLklBFl8zebQI6YqdU2xg2xay0ratilt6+pDXs14x+qZ79xVN26j2TekXOPXjgwicoD+6Q2J+mnp8HCqWXYVGSAjyZiQjAoX1mmXb6j4pgYZGAs/8KbzeWzd+t5Q6ATDZCX8DG4OkepE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753466046; c=relaxed/simple;
-	bh=liC6C/J/3NYBxHI06Lg4QrAJb0NLB7vWMUEckM80cAw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=b9ASfrxfMWC2I3klrss1444movpwNu8pzKbzvYBjPKqNog65R7iLDxGJ/Dw6aZ/dagdxtwMa13Q1wZC+XszRMohxLDe1LKkc+7wxJ0qBiRgeqHs06LK+V/wYzn9HgMYE01J0InI139bQh45t45IkqJxz2wGXiKZdKCR9Rq+k7+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q40H8KeT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5043CC4CEE7;
-	Fri, 25 Jul 2025 17:54:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753466045;
-	bh=liC6C/J/3NYBxHI06Lg4QrAJb0NLB7vWMUEckM80cAw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q40H8KeTwHKCj+xC8FzyAiGZLKTLlQDogUyLwXYIVZadLOugd9decxLS9EcfE2Mug
-	 xH2v4NyjJwjensz7Y3XYm7YrzQ0sA5GLecy2wZNUtLxda9Dg4vKP/J2goLLD3s+ZaW
-	 xsMTTy5G3fhBU974gU6j6MNEpCzeSSiZU7/r/Yh6XVMVqksb00a5K3NSup8zoUlrDT
-	 hy3OfyFK0IVv3P6JttcN0pOCEdtJHGJtLMW/XuPbKgYQqnKm4oifn0Je5W3u3g74/A
-	 HX2Fv45I7t2kQp8PkaafrYRzuFEp6akLcrN0nzFGtXRAlT/prOyFqg0enebxGXS9iV
-	 T/vkri8WMC34Q==
-From: Sasha Levin <sashal@kernel.org>
-To: workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: rostedt@goodmis.org,
-	kees@kernel.org,
-	konstantin@linuxfoundation.org,
-	corbet@lwn.net,
-	josh@joshtriplett.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [RFC 2/2] AI: Add initial set of rules and docs
-Date: Fri, 25 Jul 2025 13:53:58 -0400
-Message-Id: <20250725175358.1989323-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250725175358.1989323-1-sashal@kernel.org>
-References: <20250725175358.1989323-1-sashal@kernel.org>
+	s=arc-20240116; t=1753466122; c=relaxed/simple;
+	bh=0oGTJnr1mfinE0+43aOwkz/FeRZpczh/Iy4t70HRg7g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=RX1UfqAgW4OlvbQO3y8A0UobSFrs5cpAuw7H0l4oXAUEXg91iIoL2FKQy/kdKbCRZVI+JQhiGqm7pcubacyq9ZPRGJjWHe7RPWE+lEnoL8bYwitex4oegw6hRnlEp2Nd5yKIFBMtKkvzrkIVZFwGbbCoIu3g7vPzYLau2jmM0R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QCrA/RTZ; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f5746ef8-7334-455e-b7c3-ef1563fbc239@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753466118;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JXCPnYjZAc6JgXUknqRlhTVTB7aGKhhOuisrCVxbhBM=;
+	b=QCrA/RTZvaAeRv27DzYMiz1efStkU7YmeHtD2vo+aL0mqYZrojVg4oyQzgFznMyjyE8D3C
+	G1MzwdO26bSCDGV7OwBKwyUsXSUqo2fAaWI0EJNbIJcxhstqjDVza5mp0GlPcD9RscveP0
+	kCuuxAneE1cBG2WDckFAi8evBthmZX4=
+Date: Fri, 25 Jul 2025 10:55:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH bpf-next 1/1] bpf: fix WARNING in __bpf_prog_ret0_warn
+ when jit failed
+Content-Language: en-GB
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+To: Felix Fietkau <nbd@nbd.name>, KaFai Wan <mannkafai@gmail.com>,
+ ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250526133358.2594176-1-mannkafai@gmail.com>
+ <2e267b4b-0540-45d8-9310-e127bf95fc63@nbd.name>
+ <bfae2bbc-b440-4d47-8ce7-1d39a33b108e@linux.dev>
+In-Reply-To: <bfae2bbc-b440-4d47-8ce7-1d39a33b108e@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Add rules based on our existing documentation.
 
-Require AI to identify itself in the commit message.
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- Documentation/AI/main.md | 70 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 68 insertions(+), 2 deletions(-)
+On 7/25/25 10:30 AM, Yonghong Song wrote:
+>
+> On 7/22/25 6:28 AM, Felix Fietkau wrote:
+>> Hi,
+>>
+>> On 26.05.25 15:33, KaFai Wan wrote:
+>>> syzkaller reported an issue:
+>>>
+>>> WARNING: CPU: 3 PID: 217 at kernel/bpf/core.c:2357 
+>>> __bpf_prog_ret0_warn+0xa/0x20 kernel/bpf/core.c:2357
+>>> Modules linked in:
+>>> CPU: 3 UID: 0 PID: 217 Comm: kworker/u32:6 Not tainted 
+>>> 6.15.0-rc4-syzkaller-00040-g8bac8898fe39 #0 PREEMPT(full)
+>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+>>> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+>>> Workqueue: ipv6_addrconf addrconf_dad_work
+>>> RIP: 0010:__bpf_prog_ret0_warn+0xa/0x20 kernel/bpf/core.c:2357
+>>> RSP: 0018:ffffc900031f6c18 EFLAGS: 00010293
+>>> RAX: 0000000000000000 RBX: ffffc9000006e000 RCX: 1ffff9200000dc06
+>>> RDX: ffff8880234ba440 RSI: ffffffff81ca6979 RDI: ffff888031e93040
+>>> RBP: ffffc900031f6cb8 R08: 0000000000000001 R09: 0000000000000000
+>>> R10: 0000000000000000 R11: 0000000000000000 R12: ffff88802b61e010
+>>> R13: ffff888031e93040 R14: 00000000000000a0 R15: ffff88802c3d4800
+>>> FS:  0000000000000000(0000) GS:ffff8880d6ce2000(0000) 
+>>> knlGS:0000000000000000
+>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> CR2: 000055557b6d2ca8 CR3: 000000002473e000 CR4: 0000000000352ef0
+>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>> Call Trace:
+>>>   <TASK>
+>>>   bpf_dispatcher_nop_func include/linux/bpf.h:1316 [inline]
+>>>   __bpf_prog_run include/linux/filter.h:718 [inline]
+>>>   bpf_prog_run include/linux/filter.h:725 [inline]
+>>>   cls_bpf_classify+0x74a/0x1110 net/sched/cls_bpf.c:105
+>>>   ...
+>>>
+>>> When creating bpf program, 'fp->jit_requested' depends on 
+>>> bpf_jit_enable.
+>>> Currently the value of bpf_jit_enable is available from 0 to 2, 0 
+>>> means use
+>>> interpreter and not jit, 1 and 2 means need to jit. When
+>>> CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is permanently set
+>>> to 1, when it's not set or disabled, we can set bpf_jit_enable via 
+>>> proc.
+>>>
+>>> This issue is triggered because of CONFIG_BPF_JIT_ALWAYS_ON is not set
+>>> and bpf_jit_enable is set to 1, causing the arch to attempt JIT the 
+>>> prog,
+>>> but jit failed due to FAULT_INJECTION. As a result, incorrectly
+>>> treats the program as valid, when the program runs it calls
+>>> `__bpf_prog_ret0_warn` and triggers the WARN_ON_ONCE(1).
+>>>
+>>> Reported-by: syzbot+0903f6d7f285e41cdf10@syzkaller.appspotmail.com
+>>> Closes: 
+>>> https://lore.kernel.org/bpf/6816e34e.a70a0220.254cdc.002c.GAE@google.com 
+>>>
+>>> Fixes: fa9dd599b4da ("bpf: get rid of pure_initcall dependency to 
+>>> enable jits")
+>>> Signed-off-by: KaFai Wan <mannkafai@gmail.com>
+>>
+>> I think this patch may have caused a regression in configurations 
+>> with CONFIG_BPF_JIT_DEFAULT_ON=y when programs can't be JITed. 
+>> Attaching the program fails with error -ENOTSUPP.
+>
+> Could you explain why there is an issue here?
+> CONFIG_BPF_JIT_DEFAULT_ON=y but prog cannot be jit'ed. So the end 
+> result is to return -ENOTSUPP.
+> It looks okay to me since the jit is required but jit failed, the only 
+> choice for the kernel
+> is to return an error.
 
-diff --git a/Documentation/AI/main.md b/Documentation/AI/main.md
-index 959ba50568f57..ca59e52f54445 100644
---- a/Documentation/AI/main.md
-+++ b/Documentation/AI/main.md
-@@ -1,5 +1,71 @@
- # Linux Kernel Development AI Instructions
- 
--This is the Linux kernel repository. When working with this codebase, you must follow the following rules:
-+This is the Linux kernel repository. When working with this codebase, you must follow the Linux kernel development processes and coding standards.
- 
--- [ TODO ]
-+## Essential Documentation References
-+
-+### Core Development Process
-+- **Documentation/process/howto.rst** - Start here! The comprehensive guide on how to become a Linux kernel developer
-+- **Documentation/process/development-process.rst** - Detailed information on how the kernel development process works
-+- **Documentation/process/submitting-patches.rst** - Essential guide for getting your code into the kernel
-+- **Documentation/process/submit-checklist.rst** - Checklist to review before submitting code
-+
-+### Coding Standards and Style
-+- **Documentation/process/coding-style.rst** - Linux kernel coding style (MUST READ)
-+  - Use tabs (8 characters) for indentation
-+  - 80-character line limit preferred
-+  - Specific formatting rules for switch statements, functions, etc.
-+- **Documentation/process/programming-language.rst** - Language requirements and standards
-+
-+### What NOT to Do
-+- **Documentation/process/deprecated.rst** - Deprecated interfaces and features to avoid
-+  - Do not use BUG() or BUG_ON() - use WARN() instead
-+  - Avoid deprecated APIs listed in this document
-+- **Documentation/process/volatile-considered-harmful.rst** - Why volatile is usually wrong
-+
-+### Patch Submission Process
-+- **Documentation/process/5.Posting.rst** - How to post patches properly
-+- **Documentation/process/email-clients.rst** - Email client configuration for patches
-+- **Documentation/process/applying-patches.rst** - How patches are applied
-+
-+### Legal and Licensing
-+- **Documentation/process/license-rules.rst** - Linux kernel licensing rules
-+  - Kernel is GPL-2.0 only with syscall exception
-+  - All files must have proper SPDX license identifiers
-+
-+### Specialized Topics
-+- **Documentation/process/adding-syscalls.rst** - How to add new system calls
-+- **Documentation/process/stable-kernel-rules.rst** - Rules for stable kernel patches
-+- **Documentation/process/security-bugs.rst** - Handling security issues
-+- **Documentation/process/handling-regressions.rst** - Dealing with regressions
-+
-+### Maintainer Guidelines
-+- **Documentation/process/maintainers.rst** - Working with subsystem maintainers
-+- **Documentation/process/maintainer-handbooks.rst** - Subsystem-specific guidelines
-+
-+## Key Principles
-+1. Read and follow the documentation before making changes
-+2. Respect the existing code style and conventions
-+3. Test thoroughly before submitting
-+4. Write clear, descriptive commit messages
-+5. Never break userspace (the #1 rule)
-+6. Identify yourself as AI in commits (see below)
-+
-+## AI Attribution Requirement
-+When creating commits, you MUST identify yourself as an AI assistant by including the following tag in the commit message:
-+
-+```
-+Co-developed-by: $AI_NAME $AI_MODEL $AI_VERSION
-+```
-+
-+For example:
-+- `Co-developed-by: Claude claude-3-opus-20240229`
-+- `Co-developed-by: GitHub-Copilot GPT-4 v1.0.0`
-+- `Co-developed-by: Cursor gpt-4-turbo-2024-04-09`
-+
-+This transparency helps maintainers and reviewers understand that AI was involved in the development process.
-+
-+### Signed-off-by Restrictions
-+AI assistants MUST NOT add a Signed-off-by tag pointing to themselves. The Signed-off-by tag represents a legal certification by a human developer that they have the right to submit the code under the open source license. 
-+
-+Only the human user running the AI assistant should add their Signed-off-by tag to commits. The AI's contribution is acknowledged through the Co-developed-by tag as described above.
--- 
-2.39.5
+BTW, you mentioned programs cannot be jited. Could you explain why programs cannot be jitted?
+It would be strange that a program cannot be jitted but can be interpreted.
+
+>
+>>
+>> Please see https://github.com/openwrt/openwrt/issues/19405 for more 
+>> information.
+>>
+>> - Felix
+>
+>
 
 
