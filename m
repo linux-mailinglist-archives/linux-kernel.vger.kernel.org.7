@@ -1,204 +1,108 @@
-Return-Path: <linux-kernel+bounces-745750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF789B11DE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:49:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F36FB11DF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB4617B806A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:47:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C174188CF84
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397F12E6D17;
-	Fri, 25 Jul 2025 11:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148DB2E4266;
+	Fri, 25 Jul 2025 11:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="C1fRJ6sf"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wAc1RrR3"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40684238C3A;
-	Fri, 25 Jul 2025 11:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F882E2F04
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753444154; cv=none; b=V0G5Ag+vFHmD3wGgOoHl4tGNJpST/Y6BRR73NODas91ZrqucKiCUsYH5yCno6QGkuZATSuk6nJ6T2J18HkSHRje1og+jhRfutQzcKZ+Ejgz4tj4B3/n5vERYfyAyLkS9nZxpRelXLH2b05wUhP+xc+n9dPAU/w5lwIaYvVu/SO8=
+	t=1753444352; cv=none; b=I98dHZj7FlcKZtC5bYO1EJYPr3RV8PyKRhOusTh8knRlcMnstQp865BC46Qi6J2sXa1cNsY4ZM+HkHzFGLmU5fmiz+cFXA+5Pw3aE9fp9VxAEn5O29DEgpfGSTqvUWHqJIKPevlpALlMnH+kvQbquMc+iSZPIN7zJ4kXSTwJacg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753444154; c=relaxed/simple;
-	bh=D2ivzNJuaDVX9C5eOi3hZ8Kr8x1lFAqdeFEb9V6jXtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWGojjQ7Q/esCltwXVW3XZbhaxYKJLG6FW5jF3tvi+flXHwxIvyz7OHUApP93XI+w8rANL2pNvt0qeoOYNul+JGcJ2Pb1bgqPzKhOmD25xOaCp8Cg2+7xnU/uk5Kmme/m3quP75QqM71A9BmRBOHNZ6Oj1D9ac1bO7y9RSOFSes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=C1fRJ6sf; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=k0dqcf75EGGfL16WYYDaJ5XQjo4w6DRgcCALzNEwqmA=; b=C1fRJ6sfMTLwadKH
-	G2f1zfqX776s+ng43cehav+bn/Ahf7/TDy+X/6yUI9qDyo+tlfficejHX+Zry9RX4/jgTHuasBdya
-	A1ALDi7d77B9cq6NZs8PcAzHOnNg8CLxcxBZCIwqw6QmK6tFkYZv+mbvHaC0D5mK16+KKcvrkR+Q8
-	MQoHqNRuiuvVfN9WBP6GrN8QhAT8Wlh1qUjsO6wv1F+ItgzisoL6wicSclpKLYfo2JdJlnzx523L8
-	FY7fzfNf+0yNk3dAGrrX827Epb7p7urWEERkQ5s2m+9aEXI1nsmi+uVNDNJxuUx1CXde68xI1VVIc
-	JgpVThDzOStKvArTlA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1ufGv8-000baf-2h;
-	Fri, 25 Jul 2025 11:49:02 +0000
-Date: Fri, 25 Jul 2025 11:49:02 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sasha Levin <sashal@kernel.org>, Kees Cook <kees@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	corbet@lwn.net, workflows@vger.kernel.org, josh@joshtriplett.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
-Message-ID: <aINvLgwaKZsKOibE@gallifrey>
-References: <202507241337.F9595E1D@keescook>
- <aIKhvubVqgeXIlrj@gallifrey>
- <202507241418.34AFD28C@keescook>
- <20250724194556.105803db@gandalf.local.home>
- <202507241651.5E9C803C70@keescook>
- <aILYj62tF_1mDjDO@lappy>
- <aILb-zDiDr4b9u9S@gallifrey>
- <aILjTKk_v8NPxlVJ@lappy>
- <aINqjTAwbQ_xnAw6@gallifrey>
- <20250725113702.GD11202@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1753444352; c=relaxed/simple;
+	bh=QHfUzApUEKGymgCU0ibV0RvNyL8ndz/ADx0x3sfKtKE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A7YbBvMnjLb3uGMCCp4kxwZm1YNxAQ+QLWMIG/YPi5uZ2UL8uRDgEskxrEFJQ54BwPmhAz5oL4seIdeSzwpqdf03Ttml/eYPfAXYnzaUrarU4YK84t74OZD5ZppJ7JIbPjhdjoCmTOVl+gFAzU5+Pw3k9aBYp+fv+Z0iOOixAeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wAc1RrR3; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23c8a5053c2so16961575ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 04:52:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753444350; x=1754049150; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QHfUzApUEKGymgCU0ibV0RvNyL8ndz/ADx0x3sfKtKE=;
+        b=wAc1RrR3V65K7EmNOT7Cidhoa1sYsOdSfR9dXTBTrzD/6iQfKFfi9rTj0gKDJh7UzF
+         ZAguFrSZXIl7j39OZxnVML77w3uCBLbA7v/CCrMtQCr1ijN1Ammvd/Y0FTJvTEVxAGuL
+         qXH4mfDbKBIlTEwTg0FNrOyX2tR1jTmXHQya4wX19fZ+SQCAoiZJR3Lzx0dspemgdh4D
+         gyhq/OzY2Mdonlb/aX7NRziRF6SyfmrOv902hpSA9BGhYNLboQm4Qd7WNde4wWZ7Vqxx
+         BZ2v5fKZFh4FmKceD5T4ZmGwyzNADi5unOUXXDBPQKfpGwLJdCCVC16XuursvRSJf7mU
+         CrIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753444350; x=1754049150;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QHfUzApUEKGymgCU0ibV0RvNyL8ndz/ADx0x3sfKtKE=;
+        b=ikbsOyC82ZwdBhaWStypaC74Z4ts0+JxvzV/gxgOseWoWrELJuNRVWNxe8beE914Ct
+         ISzCDDSoCO9aG2XUhgLk1vTvQPWJUmI/5G+mmqnbjH7VaZCLCqp9F7nMdgxRgQCrrs8P
+         sR9SJoLA7tISpdCAmuv8WZOWbjIOfo/z3TXuxfpamfh9DVPvJWT4ou6zQk/yrFJgHWAw
+         a1EWOQ5RQKuOOMbkbKrOl+c7ph0jnWmiYAUYaJDLiEA2NMhUaHvoMskNER5enKSE9BcV
+         jVy6BNxtURNyd/9Ev4vfb93o/kKqr3EfdHIkCzWAc3vGNb0PXunratUA+fYMT1eAWxQ7
+         RgIw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1OKba+dCtngcytycpXFL4g4CcgSYa3yqaYIhFbyppcKHbrIxesteJ4PDY3GKxAxtF+E0kD2Jy3CvyBvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWXrNk6JFyTpM4INFEdZUiZoDcTPBqN2EoCxzS18B7vW3fT4UL
+	cHDFMJEYbEqbUJA0AxoVRBDPKh8lej837OfmRv5c6JH9f1Bkj5E38OI1oikP1AZjtIVPfU60erl
+	SyYLh70oMELudwwrNKH34dSE6WSCP6rrGAmCCXVjf
+X-Gm-Gg: ASbGnctrIXaerFtFfdowejZ9Li6hieUvbzi/A0KqigtBHzhGmTD1QPBWEFrSHJZcdLO
+	XNVjfwztkX0gMdSBb1kjn09XGAK+7Q6WVMbq3wHZeJue7Z5UiFfk2x0k2EJKkV301Ucj5nRw08j
+	rRVcWMCkGyfG/D0nDFwpuwhfhtdoFuPnVm0rYX2Hg99DB5Zm+rZA7aFm8PYijRFXHue3JluAmFu
+	x9n4ZNw+fogkW6dKr9w7aPF9QIRL9vd0ZfeRoLGBJ/Fl43Xgv8=
+X-Google-Smtp-Source: AGHT+IG5GfmK3MrOBGZHbuRXhEHK6RPABvTMzdf8n43yLckQ5vo4Q8NkC5md2ykU1zeemIwnNM0VGxJVKLMifYpsCx8=
+X-Received: by 2002:a17:902:ea0e:b0:234:c8f6:1b11 with SMTP id
+ d9443c01a7336-23fb3167767mr23036425ad.44.1753444349904; Fri, 25 Jul 2025
+ 04:52:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20250725113702.GD11202@pendragon.ideasonboard.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 11:42:35 up 88 days, 19:56,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <20250711082441.4193295-1-verhaegen@google.com>
+ <aHEEu1eSSGRhITmW@vaman> <CAAntYmKea1p=ao3OOWb=1Q+BXdyo1SCm9qGb_JMC5ry5DQVt-Q@mail.gmail.com>
+ <aHZLvVnNiBcqXdXG@vaman>
+In-Reply-To: <aHZLvVnNiBcqXdXG@vaman>
+From: George Verhaegen <verhaegen@google.com>
+Date: Fri, 25 Jul 2025 12:52:01 +0100
+X-Gm-Features: Ac12FXyZSuRHRd-IFK6__wpasUMXKZCQVkzaxu6X84fGcQfro1hcT6PjZAqbpBc
+Message-ID: <CAAntYmLn28XD=Zc2ZeCnhEiUuoa9iq-W9EiK2QXY5YfYcsi0cw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] ALSA: compress_offload: Add 64-bit safe timestamp API
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Cezary Rojewski <cezary.rojewski@intel.com>, Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+	Bard Liao <yung-chuan.liao@linux.intel.com>, 
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Srinivas Kandagatla <srini@kernel.org>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	kernel-team@android.com, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, 
+	linux-arm-msm@vger.kernel.org, sound-open-firmware@alsa-project.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-* Laurent Pinchart (laurent.pinchart@ideasonboard.com) wrote:
-> On Fri, Jul 25, 2025 at 11:29:17AM +0000, Dr. David Alan Gilbert wrote:
-> > * Sasha Levin (sashal@kernel.org) wrote:
-> > > On Fri, Jul 25, 2025 at 01:20:59AM +0000, Dr. David Alan Gilbert wrote:
-> > > > * Sasha Levin (sashal@kernel.org) wrote:
-> > > > > On Thu, Jul 24, 2025 at 04:54:11PM -0700, Kees Cook wrote:
-> > > > > > On Thu, Jul 24, 2025 at 07:45:56PM -0400, Steven Rostedt wrote:
-> > > > > > > My thought is to treat AI as another developer. If a developer helps you
-> > > > > > > like the AI is helping you, would you give that developer credit for that
-> > > > > > > work? If so, then you should also give credit to the tooling that's helping
-> > > > > > > you.
-> > > > > > >
-> > > > > > > I suggested adding a new tag to note any tool that has done non-trivial
-> > > > > > > work to produce the patch where you give it credit if it has helped you as
-> > > > > > > much as another developer that you would give credit to.
-> > > > > >
-> > > > > > We've got tags to choose from already in that case:
-> > > > > >
-> > > > > > Suggested-by: LLM
-> > > > > >
-> > > > > > or
-> > > > > >
-> > > > > > Co-developed-by: LLM <not@human.with.legal.standing>
-> > > > > > Signed-off-by: LLM <not@human.with.legal.standing>
-> > > > > >
-> > > > > > The latter seems ... not good, as it implies DCO SoB from a thing that
-> > > > > > can't and hasn't acknowledged the DCO.
-> > > > > 
-> > > > > In my mind, "any tool" would also be something like gcc giving you a
-> > > > > "non-trivial" error (think something like a buffer overflow warning that
-> > > > > could have been a security issue).
-> > > > > 
-> > > > > In that case, should we encode the entire toolchain used for developing
-> > > > > a patch?
-> > > > > 
-> > > > > Maybe...
-> > > > > 
-> > > > > Some sort of semi-standardized shorthand notation of the tooling used to
-> > > > > develop a patch could be interesting not just for plain disclosure, but
-> > > > > also to be able to trace back issues with patches ("oh! the author
-> > > > > didn't see a warning because they use gcc 13 while the warning was added
-> > > > > in gcc 14!").
-> > > > > 
-> > > > > Signed-off-by: John Doe <jd@example.com> # gcc:14.1;ccache:1.2;sparse:4.7;claude-code:0.5
-> > > > > 
-> > > > > This way some of it could be automated via git hooks and we can recommend
-> > > > > a relevant string to add with checkpatch.
-> > > > 
-> > > > For me there are two separate things:
-> > > >  a) A tool that found a problem
-> > > >  b) A tool that wrote a piece of code.
-> > > > 
-> > > > I think the cases you're referring to are all (a), where as I'm mostly
-> > > > thinking here about (b).
-> > > > In the case of (a) it's normally _one_ of those tools that found it,
-> > > > e.g. I see some:
-> > > >   Found by gcc -fanalyzer
-> > > 
-> > > I think that the line between (a) and (b) gets very blurry very fast, so
-> > > I'd rather stay out of trying to define it.
-> > > 
-> > > Running "cargo clippy" on some code might generate a warning as follows:
-> > > 
-> > > warning: variables can be used directly in the `format!` string
-> > >   --> dyad/src/kernel/sha_processing.rs:20:13
-> > >    |
-> > > 20 |             debug!("git sha {} could not be validated, attempting a second way...", git_sha);
-> > >    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > >    |
-> > >    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
-> > >    = note: `#[warn(clippy::uninlined_format_args)]` on by default
-> > > help: change this to
-> > >    |
-> > > 20 -             debug!("git sha {} could not be validated, attempting a second way...", git_sha);
-> > > 20 +             debug!("git sha {git_sha} could not be validated, attempting a second way...");
-> > > 
-> > > As you see, it proposes a fix at the bottom. Should I attribute "cargo
-> > > clippy" in my commit message as it wrote some code?
-> > > 
-> > > Would your answer change if I run "cargo clippy --fix" which would
-> > > automatically apply the fix on it's own?
-> > > 
-> > > We'll be hitting these issues all over the place if we try and draw a
-> > > line... For example, with more advances autocompletion: where would you
-> > > draw the line between completing variable names and writing an entire
-> > > function based on a comment I've made?
-> > 
-> > Fuzzy isn't it!
-> > 
-> > There's at least 3 levels as I see it:
-> >   1) Reported-by:
-> >     That's a lot of tools, that generate an error or warning.
-> >   2) Suggested-by:
-> >     That covers your example above (hmm including --fix ????)
-> >   3) Co-authored-by:
-> >     Where a tool wrote code based on your more abstract instructions
-> > 
-> > (1) & (2) are taking some existing code and finding errors or light
-> > improvements;  I don't think it matters whether the tool is a good
-> > old chunk of C or an LLM that's doing it, but how much it's originating.
-> 
-> Except from a copyright point of view. The situation is quite clear for
-> deterministic code generation, it's less so for LLMs.
+On Tue, 15 Jul 2025 at 13:38, Vinod Koul <vkoul@kernel.org> wrote:
+> You need to add support for new ioctl in tinycompress too
 
-As long as you'd acknowledged the use of the LLM in all cases, it seems to
-me right to say to what degree you use it (i.e. the 1..3) above.
-I think even most people worried about copright issues would worry
-less if an LLM had just told you about a problem (1) and you fixed it.
-(Although obviously IANAL)
-
-Dave
-
-> > (Now I'm leaning more towards Kees's style of using existing tags
-> > if we could define a way to do it cleanly).
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Thanks, created pull request at
+https://github.com/alsa-project/tinycompress/pull/29
 
