@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-745664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27AFCB11CC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:46:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6982B11CC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51DAF568560
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DC481C82DE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625BD2E2EF7;
-	Fri, 25 Jul 2025 10:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FD82E11CA;
+	Fri, 25 Jul 2025 10:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X7fKBOwx"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Gszfsmcv"
 Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9EB14A4F9;
-	Fri, 25 Jul 2025 10:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B29D232368;
+	Fri, 25 Jul 2025 10:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753440395; cv=none; b=ML5V8peVHNTZCdRPHJQPITtcXjyZtsHLfdNh4ZfeXrUP2QV3sqFrl00jOQUpAs2/944b1Y1YIdc/s8eVZaebX0YzrJSYzrLHxMJ6ol79ooesYxWtmZMid4f7cQsylYUygXpZonRBIna/M3CG7X46Rlc9UDjM/dP1hHZu+VSS0pY=
+	t=1753440574; cv=none; b=A9MUs+7NEQu+lvoxZer07uR6eGc/DlQlWUcQvderRMv7YhQNhWBjgIOzS9dbV71O5dBFgUBNOReS9Mqpmz0whbAfMZ/dDlj2+3v3/jHRiuqt505Zvd25MsiBy+09RQHUDdKE1ptM/GrLDCmjNuFnLQoV/62wYkL+c/0h6ZpGPw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753440395; c=relaxed/simple;
-	bh=vY4NI0ylYQoFxth8beeKDC8Pbmq/zB9SSUiYtZNglfI=;
+	s=arc-20240116; t=1753440574; c=relaxed/simple;
+	bh=k1eCvJHtqFybyrGjvwFhvZTDeblqmze+kBTFJoffxPQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Snj+oo4aWrqEAIvsqQFjskA59wMmOUKCvKGvOuibqyBCWyi7PfZv+1KJEmHeWXbEXAqjtCpY5EcsMyYVPoopcPm38FLiou3Cdj5VPEYbtvRYBkIEYgjou3cy4FuwQi+di9b58vUcuVYhNkXsqmM1l4nEHqn+2yviY+Eq9Sd5ga0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=X7fKBOwx; arc=none smtp.client-ip=198.47.19.246
+	 In-Reply-To:Content-Type; b=sru6hCuKC2EWcPl6Ty4rPUNZFhIUdNxYtFE1/BV2OVaGNVAq52fzT7qEL7aKuPi/JsDtub4gC2hNqxgmgi5Pxx+r5APKwYBd1yiSkGy9WDC3qWKoBrScIxeo3gWLdF3MRuMajyqN6f7LR8ewKJKEasp0gTMLObeRz8yxYHyniw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Gszfsmcv; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56PAkNbO2163931;
-	Fri, 25 Jul 2025 05:46:23 -0500
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56PAnQGY2164129;
+	Fri, 25 Jul 2025 05:49:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753440383;
-	bh=mrRSD3PbZTPAHVSh/yIWQ6kP6ELKmzfyM3fZUnn2niM=;
+	s=ti-com-17Q1; t=1753440566;
+	bh=Pr/6oSAqPnzYKPrrPRbVgCiKh0qVmQrFdTLVSe8INZs=;
 	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=X7fKBOwxApS4IoduzRVtbBYQu/sYtQFJLtz/Lq3y0UbRkIFschtdBwNGgzoztH4tj
-	 kGUivju/mcixXVJjJNuUCE4uphyZoX8GD3jNlJiglRVhuv1MqE/M3B9AmPvh7eg9R6
-	 OA+8ItOIqJWvFU8+RfY+RFuHrlNOGOJvc+yY7U48=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56PAkNG82237368
+	b=GszfsmcvHy6Xqg10sI/4FGHa6nXKEGw5pili1Qh/XAtrjH9hain81E9XdqUW+GLBf
+	 InMiSh5ZC88O+NIS1bYV87nN7Xx22IOrI5W4AmZv91r/5GJhSZdBKkv+ZY0JDyQWva
+	 N/0YzhPjf1m2t3TzI9qyOALO0ATfdhGMAUbamBpo=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56PAnQvY3172460
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 25 Jul 2025 05:46:23 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 25
- Jul 2025 05:46:23 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE109.ent.ti.com
+	Fri, 25 Jul 2025 05:49:26 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
  (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 25
+ Jul 2025 05:49:25 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 25 Jul 2025 05:46:23 -0500
+ Frontend Transport; Fri, 25 Jul 2025 05:49:25 -0500
 Received: from [172.24.18.25] (lt5cd2489kgj.dhcp.ti.com [172.24.18.25])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56PAkJ6l1924763;
-	Fri, 25 Jul 2025 05:46:19 -0500
-Message-ID: <d15078ef-9a3a-47f6-a1c8-b9eed911e945@ti.com>
-Date: Fri, 25 Jul 2025 16:16:18 +0530
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56PAnL3J1927218;
+	Fri, 25 Jul 2025 05:49:22 -0500
+Message-ID: <6a8545a6-14f0-4da9-a15f-504f0f3791be@ti.com>
+Date: Fri, 25 Jul 2025 16:19:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,119 +64,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] arm64: dts: ti: k3-j721s2-main: Add interrupts
- property
-To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>
+Subject: Re: [PATCH v3 0/7] Add DSI display support for TI's Jacinto platforms
+To: Jayesh Choudhary <j-choudhary@ti.com>, <nm@ti.com>, <vigneshr@ti.com>
 CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <vaishnav.a@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <u-kumar1@ti.com>
-References: <20250714092708.3944641-1-y-abhilashchandra@ti.com>
- <20250714092708.3944641-2-y-abhilashchandra@ti.com>
- <72545187-4605-40bb-9c68-54670c2e5332@ti.com>
- <05a07a03-3f59-489b-ae55-5f454266bafb@ti.com>
- <457e2428-f766-4e8d-bfb0-32084de45b5a@ti.com>
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devarsht@ti.com>, <u-kumar1@ti.com>
+References: <20250716060114.52122-1-j-choudhary@ti.com>
 Content-Language: en-US
 From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <457e2428-f766-4e8d-bfb0-32084de45b5a@ti.com>
+In-Reply-To: <20250716060114.52122-1-j-choudhary@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
-On 7/22/2025 11:20 AM, Yemike Abhilash Chandra wrote:
-> Hi Udit,
+On 7/16/2025 11:31 AM, Jayesh Choudhary wrote:
+> Hello All,
 >
-> Thanks for the review.
+> This series adds the dts support to enable DSI on 3 platforms for TI SoCs:
+> - J784S4-EVM
+> - J721S2-EVM
+> - AM68-SK
 >
-> On 21/07/25 19:40, Kumar, Udit wrote:
->>
->> On 7/21/2025 7:37 PM, Kumar, Udit wrote:
->>>
->>> On 7/14/2025 2:57 PM, Yemike Abhilash Chandra wrote:
->>>> Add interrupts property for CDNS CSI2RX. Interrupt IDs are taken 
->>>> from the
->>>> J721S2 TRM [0].
->>>>
->>>> Interrupt Line      | Source Interrupt
->>>> --------------------|----------------------------
->>>> GIC500SS_SPI_IN_153 | CSI_RX_IF1_CSI_ERR_IRQ_0
->>>> GIC500SS_SPI_IN_152 | CSI_RX_IF1_CSI_IRQ_0
->>>> GIC500SS_SPI_IN_157 | CSI_RX_IF2_CSI_ERR_IRQ_0
->>>> GIC500SS_SPI_IN_156 | CSI_RX_IF2_CSI_IRQ_0
->>>>
->>>> [0]: https://www.ti.com/lit/zip/spruj28
->>>>
->>>> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
->>>> ---
->>>>   arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 6 ++++++
->>>>   1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi 
->>>> b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
->>>> index 62f45377a2c9..6f32a2b0c40c 100644
->>>> --- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
->>>> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
->>>> @@ -1248,6 +1248,9 @@ ti_csi2rx0: ticsi2rx@4500000 {
->>>>           cdns_csi2rx0: csi-bridge@4504000 {
->>>>               compatible = "ti,j721e-csi2rx", "cdns,csi2rx";
->>>>               reg = <0x00 0x04504000 0x00 0x1000>;
->>>> +            interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
->>>> +                     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
->>>
->>> Just cosmetic thing, if you are doing v2 then consider 152 first , 
->>> followed by 153.
->>>
->>> Otherwise
->>>
->>> Reviewed-by: Udit Kumar <u-kumar1@ti.com>
->>
->>
->> Sorry, sent too fast, offset of 32 missing .
->>
+> SN65DSI86 driver fix that was essential for display is now merged.
 >
-> From what I’ve seen, the SPI interrupt IDs on J721S2 start from 0,
-> so I don’t think we need to subtract the 32 offset.
+> There is one more series relevant for driver that makes CDNS-DSI driver
+> work better:
+> https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com/
 >
->
-> Interrupt Input Line   Interrupt ID    Source Interrupt
-> -------------------------------------------------------------
-> GIC500SS_SPI_IN_00     0               ESM0_ESM_INT_CFG_LVL_0
->
-> To confirm this, I’ve latched onto the correct interrupt line, and
-> my IRQ handler is getting triggered as expected. I’m also seeing the
-> desired output [0].
->
-> Let me know if I might be missing anything.
->
+> I have locally tested using kmstest utility on all 3 platforms.
 
-Thanks for update and please retain Reviewed-by
+For series
+
+Reviewed-by: Udit Kumar <u-kumar1@ti.com>
 
 
-> [0]: 
-> https://gist.github.com/Yemike-Abhilash-Chandra/f46587ec1ef72671ee31803dd93434b4
 >
-> Thanks and Regards
-> Yemike Abhilash Chandra
+> Changelog v2->v3:
+> - Cosmetic changes like adding padding and new line before child nodes
+> - Using standard node name for regulator and bridge
+> - Remove "regulator-always-on" for dp-regulator in am68 and j721s2 board
+> - Remove interrupt-parent from dsi nodes
 >
->>
->>>
->>>> +            interrupt-names = "error_irq", "irq";
->>>>               clocks = <&k3_clks 38 3>, <&k3_clks 38 1>, <&k3_clks 
->>>> 38 3>,
->>>>                   <&k3_clks 38 3>, <&k3_clks 38 4>, <&k3_clks 38 4>;
->>>>               clock-names = "sys_clk", "p_clk", "pixel_if0_clk",
->>>> @@ -1301,6 +1304,9 @@ ti_csi2rx1: ticsi2rx@4510000 {
->>>>           cdns_csi2rx1: csi-bridge@4514000 {
->>>>               compatible = "ti,j721e-csi2rx", "cdns,csi2rx";
->>>>               reg = <0x00 0x04514000 0x00 0x1000>;
->>>> +            interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
->>>> +                     <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
->>>> +            interrupt-names = "error_irq", "irq";
->>>>               clocks = <&k3_clks 39 3>, <&k3_clks 39 1>, <&k3_clks 
->>>> 39 3>,
->>>>                   <&k3_clks 39 3>, <&k3_clks 39 4>, <&k3_clks 39 4>;
->>>>               clock-names = "sys_clk", "p_clk", "pixel_if0_clk",
+> v2 patch link:
+> https://lore.kernel.org/all/20250624082619.324851-1-j-choudhary@ti.com/
+>
+> Changelog v1->v2:
+> - [4/7]: Add gpio-line-names
+> - [6/7]: Remove unnecessary clocks from TIDSS
+>
+> v1 patch link:
+> https://lore.kernel.org/all/02f1912f-0a05-4446-923a-7935ed305cb3@ti.com/
+>
+> Jayesh Choudhary (5):
+>    arm64: dts: ti: k3-j784s4-j742s2-main-common: add DSI & DSI PHY
+>    arm64: dts: ti: k3-j784s4-j742s2-evm-common: Enable DisplayPort-1
+>    arm64: dts: ti: k3-j721s2-common-proc-board: Add main_i2c4 instance
+>    arm64: dts: ti: k3-j721s2-common-proc-board: Enable DisplayPort-1
+>    arm64: dts: ti: k3-am68-sk: Enable DSI on DisplayPort-0
+>
+> Rahul T R (2):
+>    arm64: dts: ti: k3-j721s2-main: add DSI & DSI PHY
+>    arm64: dts: ti: k3-j721s2-som-p0: add DSI to eDP
+>
+>   .../boot/dts/ti/k3-am68-sk-base-board.dts     |  97 ++++++++++++++
+>   .../dts/ti/k3-j721s2-common-proc-board.dts    | 117 +++++++++++++++++
+>   arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi    |  39 ++++++
+>   arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi  |  51 ++++++++
+>   .../dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 121 +++++++++++++++++-
+>   .../dts/ti/k3-j784s4-j742s2-main-common.dtsi  |  39 ++++++
+>   6 files changed, 463 insertions(+), 1 deletion(-)
+>
 
