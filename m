@@ -1,148 +1,114 @@
-Return-Path: <linux-kernel+bounces-745362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6BCB118E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:10:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B44B118E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5CBB16C3D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:10:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F281CE0AD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4330B291C3B;
-	Fri, 25 Jul 2025 07:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B114291C05;
+	Fri, 25 Jul 2025 07:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vEY7oeG+"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="pyWN5nQl";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="ie9ng9ns"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE74F1F1311;
-	Fri, 25 Jul 2025 07:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3521C1F1311
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753427401; cv=none; b=ECdUs7knAHm7spQhDcGBcc+sShbhTD+zxPRMiMArW5KHazdQ2w3GxMv8Cm0dQx2KSi/Ddym8S6p4+bHEC8v2zIuZXhtAVrjCeOJuiJr8rVWOPLLIoXOFu2NvaFhUo0vS3lFobTrN+pkKyRAbLvAQGala3uXvj0BkCK6aXRrh334=
+	t=1753427288; cv=none; b=ITKppE5bEblFvGGINsbUXOxAzVUO4ykyFApq1RvcURiJ1Z7e64V4NhZc6x+DxbjEeaPjQixTamOc9B3FNe+hvW9ArhAWS2+c+bTl/tw2eI7FgqUL4b2CbIohahFAHkHsOGz35inoW0NNLVpbLWWYvLn36mrImlR2dxbiykPhfp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753427401; c=relaxed/simple;
-	bh=JL30bk1jn1jV9pISqgo+bWdb/5RDGbJ7aIr53ikjD6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PAkZSrYxsD+3hLDT9Jwz6D0ULPbNJkscx9VakEkk/BQHphQOeGFJm56lDthZ4SCzgGewLz5hc3nDbm6PYPj28yYWOGXpGB0+2LNVjzN7upfz+DZP987mNBhq5Xq8lLUMV6dw53zA8zU1Wm9gCWEvJiEZCRCX43xP7BskAC/isG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vEY7oeG+; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P61XZi009176;
-	Fri, 25 Jul 2025 09:09:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	LzqH02+hJ/0E8n+RTM+yEwFitfKa/gSQdkGVRRTXJhc=; b=vEY7oeG+pNnop6/X
-	Y9urlffHn9wPzkQ2Is/FDs6FmFPNXT3zTb3jyMz3lmY7QPMwpHHlMXBmXHaer/PU
-	0K0P0ulWgakiEqWGw1l11dPWR/0Is+mSEQnefGwkZ3l/7cXUl6SA3HJ2CRdoyG1I
-	FdmL8tUHYqCtB98XPDPWNBGYyLXEwDmWXM7P+PtbfkAkPayNHbYAgdZ3XfNJ2Zbc
-	CmgC/QaDxklOmCvKhJ7nMI4NpBlPKOB2X2y39VEgc7AEaz1kO+m3wWAhQP0OsPLr
-	FY38beWUv0pV94PWCAt8crCejpNCdBfw4cLvaHFaeaNLHLfxgTQP0XVsBJXJZTO6
-	L/feBQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 483w5rsn0e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 09:09:24 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4812F40044;
-	Fri, 25 Jul 2025 09:07:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8B10578175F;
-	Fri, 25 Jul 2025 09:06:35 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Jul
- 2025 09:06:34 +0200
-Message-ID: <ce0cb3ba-2373-479f-a8f3-3a89ffb0a1b1@foss.st.com>
-Date: Fri, 25 Jul 2025 09:06:33 +0200
+	s=arc-20240116; t=1753427288; c=relaxed/simple;
+	bh=EUCEmS/1UYnaUVDKCEGqLoMC2eBtEy5ChTkh/pubwlE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UqrOdg+yY9B24YBMwQz/vf6tAz90YN3tizupbfq9s7EhZT5AvZA1N7pba2g1oXvWwB1F+ihSAUw9IElQyhvdtjhOU652v9LF0yqijY0clKWKwOvqZGMhfAEmC+ZZRqfbJq6Q8GLGBc9kVfXJ0sx3T9Cl7wxep1A0oCVhfQfZwaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=pyWN5nQl; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=ie9ng9ns reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1753427285; x=1784963285;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uh1MZsai+1QlLMsnGqqtZ6xsZZILDM6L6Dcdbc1nr8M=;
+  b=pyWN5nQlh1Uy2gurTjQtUzYqNH0aEIZ/Ji1aQXnLVxmXiF9mPLp0io4+
+   bN6MyHgQGXLw7f6p2wQPEoKaivOCp1HtaIvKZC0T9YaxDGDRCkaK3SS4d
+   pm9WzifBW8PSY4ma++ttXSkF3nG7LmZFIEu0i6EOlJEluiII1lfdI9X8k
+   JWQmVlWEtqBznlnZR7Hp/f29GJu86iLYbeKi150GLuQ7G3BtJHGzEbNqr
+   1FqZ7B37Oy+9dw4/hDdna3IcLt8D/Dg/WVF1RHDdMC/uHQF+mNYvujt6H
+   K0HQ6ltNcGM+hb9piqU0VUBfxCTMEBTP7rI+mT4TD0wG8LdCiqQz+DAhI
+   w==;
+X-CSE-ConnectionGUID: pTxjeaYCTjqymR65UahxpQ==
+X-CSE-MsgGUID: yGEwm0Q0QTu0I1hikHzCSA==
+X-IronPort-AV: E=Sophos;i="6.16,338,1744063200"; 
+   d="scan'208";a="45414666"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 25 Jul 2025 09:08:00 +0200
+X-CheckPoint: {68832D50-7-943DFC15-D71A48EE}
+X-MAIL-CPID: 0E5749B5E1E6CD6317F31CC94F75ADF3_5
+X-Control-Analysis: str=0001.0A002103.68832D70.003C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D106C164BC2;
+	Fri, 25 Jul 2025 09:07:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1753427276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=uh1MZsai+1QlLMsnGqqtZ6xsZZILDM6L6Dcdbc1nr8M=;
+	b=ie9ng9nsm5xHyEGnzo8Ek6IVDFTxaYyS1NHVI2f4YZQEHwwQ7ZEh0NnX6Pye5k/7Zy00Gr
+	iI/W0lyjEgiEt1hXqW11CULqiZYCm/G9+szNBzPwj6kha8dMUshtp7pxrnA0YGXc0uGBy4
+	5DNSRSifq+cl4ixhjX4+SQnoSWzyg+fD/0Owmm5AlAB3azTcW/yes2mj0DBP4VtvRBqe5p
+	8fsG/HvrKdHUrOZL66RRUK0W5TUmmOTtUNV1PQE7QgXl2G65zGcNgbOtiBXczZQaFFVfsy
+	Hm+p5luodaRrLh2womSCWm3n8Q4x9dBZg08JJ/fMYKi+28XMslVcRCvScgb5Ww==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Lee Jones <lee@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] mfd: stmpe: Remove IRQ domain upon removal
+Date: Fri, 25 Jul 2025 09:07:48 +0200
+Message-ID: <20250725070752.338376-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/20] dt-bindings: memory: factorise LPDDR props into
- SDRAM props
-To: Julius Werner <jwerner@chromium.org>
-CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Le
- Goffic <legoffic.clement@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
- <20250723-ddrperfm-upstream-v4-5-1aa53ca319f4@foss.st.com>
- <CAODwPW_kex5Agqxg_i-XC308scEpUJU0me55G7iZ8nB9LC0acg@mail.gmail.com>
- <204401b4-b483-47e2-ae73-0994b39bd30c@foss.st.com>
- <CAODwPW9drKEAMfQvQHV8eMTyf5KCHB4SN400JiUs0pgjoXy=sw@mail.gmail.com>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <CAODwPW9drKEAMfQvQHV8eMTyf5KCHB4SN400JiUs0pgjoXy=sw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Julius,
+The IRQ domain is (optionally) added during stmpe_probe, but never removed.
+Add the call to stmpe_remove.
 
-On 7/25/25 00:33, Julius Werner wrote:
->>> I don't think this will identify a part unambiguously, I would expect
->>> the DDR revision ID to be specific to the part number. (In fact, we're
->>> also not sure whether manufacturer+revision identifies LPDDR parts
->>> unambiguously for every vendor, we just didn't have anything more to
->>> work with there.) I would suggest to use either `ddrX-YYYY,AAA...,ZZ`
->>> or `ddrX-YYYY,ZZ,AAA...` (where AAA... is the part number string from
->>> SPD 329-348 without the trailing spaces). The first version looks a
->>> bit more natural but it might get confusing on the off chance that
->>> someone uses a comma in a part number string.
->>
->> The first one seems better indeed.
->> If the manufacturer put a comma in the part number we should handle it
->> at a software level to me and if it is a devicetree error it is up to
->> the devicetree writer to fix it.
->> What do you think ?
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ drivers/mfd/stmpe.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I meant exactly what you are stating below :-)
+diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+index 819d19dc9b4a9..e1165f63aedae 100644
+--- a/drivers/mfd/stmpe.c
++++ b/drivers/mfd/stmpe.c
+@@ -1485,6 +1485,9 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
+ 
+ void stmpe_remove(struct stmpe *stmpe)
+ {
++	if (stmpe->domain)
++		irq_domain_remove(stmpe->domain);
++
+ 	if (!IS_ERR(stmpe->vio) && regulator_is_enabled(stmpe->vio))
+ 		regulator_disable(stmpe->vio);
+ 	if (!IS_ERR(stmpe->vcc) && regulator_is_enabled(stmpe->vcc))
+-- 
+2.43.0
 
-> 
-> Not sure what you mean by "handle it at a software level"? Using comma
-> characters in the part number is not illegal according to the SPD
-> spec, as far as I can tell.
-> 
-> That said, it is still possible to disambiguate this as long as the
-> revision number is always there, you just have to look for the last
-> comma from the end (so e.g. the string `ddr4-1234,some,part,567,89`
-> could be unambiguously parsed as manufacturer ID 0x1234, part number
-> `some,part,567` and revision ID 0x89, the parsing code just needs to
-> be a bit careful). So maybe this is not actually a problem.
-
-Best regards,
-Clément
 
