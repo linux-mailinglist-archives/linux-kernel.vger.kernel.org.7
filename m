@@ -1,192 +1,172 @@
-Return-Path: <linux-kernel+bounces-745334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC49B11891
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD22B11895
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04AA8586F46
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:34:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1611896329
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD44626A1B8;
-	Fri, 25 Jul 2025 06:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B0C288508;
+	Fri, 25 Jul 2025 06:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="phEwOnb1"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="azZIm4M5"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5C1A41
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48015A41
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753425235; cv=none; b=YDsZBqi/RNokfr8eVau5V/P35wAe5wZ/8vxFq1ORq7XxVDAo0VLHQSBsPb/OuBnJVZXM/HFTd16jbpRM5s0zt962S7YC/WobI8uKOr043gISA+9X3OGJSGdpK3d0sV2IAFimCjsknguZ+Nu+HU/YhxUv4K0MtDFfcP/vzzv3qEY=
+	t=1753425549; cv=none; b=MCSTwZs9tFOeTl4hkYoUsmzxLHqlDUNCSpOm5Wil/Xi6mzw1xG51nle5lCRXCYupiNv41hElqhJ8r1LBev76U0GMSHX+e+nWglEEWbfT2Nl1mqXiii2IH5dNwi6tLALt/cOgCj0lefqzZJYRD1oDlNJitR9sE3R8W6mE/2MjOEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753425235; c=relaxed/simple;
-	bh=O5sZvO2bRfOkG7bX13D5V4uZzof7+lq/HEk97vq2bZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AIfxO/P0qjaUpehtC6+amGX0V/DuA9ABnsNfx+vlNTCIcIReo7pP5X7pYRD9fXbvPlj9tBa4PNbUPHu1nDiiSgN+C0pFvREUmW7qs3fdsZHCaBei3geljzkgCVnSFtb+0cgtkMl3ejCv9wd1NYzqplvP6UCQniRzw76goZBJSkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=phEwOnb1; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A54DC3F730
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:33:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1753425230;
-	bh=AcnKBfE2a+S1VW5IMnseKsBzXFCCOskdFvDUc4TUQMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=phEwOnb1DModCaYwXaWXibJB64jBHa77xqhVFBDHf6x6EbdOA87Q832mcL3YNzFX4
-	 xEwhEMIfO45Bj/nq1pIB89Z080OqkPLtBuog7g3OSMwRhVIMewcGSveJhb7RomZd6+
-	 yKXM4Tz/Rya7ndza+aDDeZmQfQ/sR0nzWndwnfc78zBJXUVlUy/6NKLYeR/yBtz9BA
-	 wtRfn+xcusMIDM4fT9qtrnTWBKx3x/FVryBgNoV/nYKO1CNT17ETCwP+NAcWC2VNq/
-	 FC2R6RJlTfzGP7FopI0bv5cd039PPux5DLleFrdL7Qbn4qFKh4WedGXTy7pY4/SLn1
-	 g1c40HUipmHhQ==
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a503f28b09so958922f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:33:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753425230; x=1754030030;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AcnKBfE2a+S1VW5IMnseKsBzXFCCOskdFvDUc4TUQMs=;
-        b=RD706dJu3ctSHa2gKCjQGazjTDthgCDALZiDYcFdvS25o4GB1OvJPwqsKmJUUMzfDT
-         2kIzq8ewoeYQ5bNewdWj9PJ7jx37jGpgVzoqgdSo7Vvatt7aDJb1/s4F45dgsU63CbS2
-         /bqHb2eeqO7u+pJI3SlnHQrKRz0622/7FNR+Hl2Q7E0ZZwRzrCPljD3q5OBTx+2MumJO
-         szMDknTv8MgJsb2/ATKQE5sHvWJI1TqWs6bAFG9vsqwX7jYUQBS/fNm8TuyVT/KoXFTQ
-         r//VdiXHA3b4OFGBvqCLaLvo/4Z3g7Qf5PRyf7VhEBgapF/PDfScvUxJrz1B8Kb5nLru
-         //gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVf8wIArERBHiXHWNvwlbjfEuXLmGF1afJxKGiXhiRwBSRfAR3cpx3z7is+cIejKixpnjDQb7lkX0W1ITY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx97D7J9z/526PU0IfPRmxUOGkCu+PWk4iOd/Ll06T4Hcy6DZQf
-	i12hZ3FxsN+vb3I8LvWypnPeBObCQvR1Kh0Fq/0mT6by0oqcrd6+HN8iR+rIFAAkiC2GC+YEd5N
-	4RvQ3QlI7Vs8Mf5ovytvjj9Q8IAi7GR9oN/+7/VwIgTxUq/61GFc+ThQwI5qFPp3aVR0r5w7XiH
-	nu2+WoiA==
-X-Gm-Gg: ASbGncub9psjDezEzeNwYVklWyeh+ogcbkoVnQfokc/XDyAAT6Tv++JQfeGk4wqzJnk
-	LD1bcNQ3Rspua8R8VjkrYvqFn+7MlxsV4I98LjgZKcPImpmQAaG4DuaUIYH+cC80puX0iTuPPgz
-	KnoHTotfRfrGURQdwl19dg5kE6BeTCf5NBffG47TIF4ae66Z+pqlcFOVtEm1FsnS6myQJxUvMAu
-	2+iw0sZUnDjKoha874cNzkabChXQODqCqI7zXvVgXvdUYy2qFAwFK9NV34sZhnIzv6ORGkbJhqk
-	1dZO5EjIYD057fCaPcst3uj8sp05kCJkbgNwEdJygboYcKhSu9F9iIKMEP21EYc90uFQ5IZ0+YT
-	+bzpabSkysn9exy0P51RbmXJ3nke66n1qiBKX
-X-Received: by 2002:a05:6000:2c0d:b0:3a5:7895:7f6b with SMTP id ffacd0b85a97d-3b7765ecfd6mr508097f8f.7.1753425230195;
-        Thu, 24 Jul 2025 23:33:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF33NxRWxXDTDDBoqgqdvHkBJufwM8gnuJUTxJTRNJxH7wzbKZ2u1yPOgBX88LofGXQiRQPhA==
-X-Received: by 2002:a05:6000:2c0d:b0:3a5:7895:7f6b with SMTP id ffacd0b85a97d-3b7765ecfd6mr508059f8f.7.1753425229758;
-        Thu, 24 Jul 2025 23:33:49 -0700 (PDT)
-Received: from [192.168.123.154] (ip-005-147-080-091.um06.pools.vodafone-ip.de. [5.147.80.91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcc3429sm4041277f8f.75.2025.07.24.23.33.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 23:33:48 -0700 (PDT)
-Message-ID: <1149732f-bc8d-4339-90c3-e34aeac9f1be@canonical.com>
-Date: Fri, 25 Jul 2025 08:33:46 +0200
+	s=arc-20240116; t=1753425549; c=relaxed/simple;
+	bh=SGFb+mRHVwHmlxEO3z17lABhyFV2Je+wkO/IZuYWNbQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=W7pBkQ705Y1Cejf4BYfp1bqd0iVvY/Pwb9zpSHF1mILQTsU1WuKspkXDRU9iMaR3AwH76nN2asOWdbvfHnSTVT1rIlljnzh0RTYhpLudIlkmMiy88OuETONSmMU9sh6smUS2Mc2g+y/c6Lnq4Utun4/uMjFbUGtGxbtngIUMWFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=azZIm4M5; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753425544; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=wNk6OPC1lu+j4/4Da2MNU71TbjdMfdCtRWdTsm81wLI=;
+	b=azZIm4M5d9SY/RSxRzqBgwR8gT5QZAbvwVUw07yjPdUOsXpuu+MIgBKoiMRpjtEANVBfvpJoNeykV11d/uDOMShlZHMCxMV54tWPBLabYjTcL7eFpV/mLRI68RNEfl/vkV5xWB6cM3MEI4VuQlrZ6X+Ff3otkEaEb4dHEgg219o=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WjwBKdi_1753425542 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 25 Jul 2025 14:39:03 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc: linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  lkp@intel.com,
+  akpm@linux-foundation.org,  y-goto@fujitsu.com,  mingo@redhat.com,
+  peterz@infradead.org,  juri.lelli@redhat.com,
+  vincent.guittot@linaro.org,  dietmar.eggemann@arm.com,
+  rostedt@goodmis.org,  mgorman@suse.de,  vschneid@redhat.com,  Li Zhijian
+ <lizhijian@fujitsu.com>,  Ben Segall <bsegall@google.com>
+Subject: Re: [PATCH RFC v3] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE
+ counting
+In-Reply-To: <982da1b2-0024-4c01-b586-02c0b8a41e95@fujitsu.com> (Shiyang
+	Ruan's message of "Fri, 25 Jul 2025 10:20:44 +0800")
+References: <20250722141650.1821721-1-ruansy.fnst@fujitsu.com>
+	<87cy9r38ny.fsf@DESKTOP-5N7EMDA>
+	<85d83be2-02f8-4ef6-91c7-ff920e47d834@fujitsu.com>
+	<87wm7y3ur3.fsf@DESKTOP-5N7EMDA>
+	<982da1b2-0024-4c01-b586-02c0b8a41e95@fujitsu.com>
+Date: Fri, 25 Jul 2025 14:39:00 +0800
+Message-ID: <87v7ng3hbv.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/11] riscv: enable landing pad enforcement
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
- rick.p.edgecombe@intel.com, broonie@kernel.org, cleger@rivosinc.com,
- samitolvanen@google.com, apatel@ventanamicro.com, ajones@ventanamicro.com,
- conor.dooley@microchip.com, charlie@rivosinc.com, samuel.holland@sifive.com,
- bjorn@rivosinc.com, fweimer@redhat.com, jeffreyalaw@gmail.com,
- andrew@sifive.com, ved@rivosinc.com, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Monk Chiang <monk.chiang@sifive.com>,
- Kito Cheng <kito.cheng@sifive.com>, Justin Stitt <justinstitt@google.com>
-References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
- <20250724-riscv_kcfi-v1-5-04b8fa44c98c@rivosinc.com>
-Content-Language: en-US
-From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-In-Reply-To: <20250724-riscv_kcfi-v1-5-04b8fa44c98c@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 25.07.25 01:36, Deepak Gupta wrote:
-> Enables landing pad enforcement by invoking a SBI FWFT call.
-> 
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->   arch/riscv/kernel/asm-offsets.c |  1 +
->   arch/riscv/kernel/head.S        | 19 +++++++++++++++++++
->   2 files changed, 20 insertions(+)
-> 
-> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
-> index e4d55126dc3e..e6a9fad86fae 100644
-> --- a/arch/riscv/kernel/asm-offsets.c
-> +++ b/arch/riscv/kernel/asm-offsets.c
-> @@ -536,6 +536,7 @@ void asm_offsets(void)
->   	DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
->   	DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
->   	DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
-> +	DEFINE(SBI_FWFT_LANDING_PAD, SBI_FWFT_LANDING_PAD);
->   	DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
->   #endif
->   }
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> index 9c99c5ad6fe8..59af044bf85c 100644
-> --- a/arch/riscv/kernel/head.S
-> +++ b/arch/riscv/kernel/head.S
-> @@ -185,6 +185,16 @@ secondary_start_sbi:
->   1:
->   #endif
->   	scs_load_current
-> +
-> +#if defined(CONFIG_RISCV_SBI) && defined(CONFIG_RISCV_KERNEL_CFI)
-> +	li a7, SBI_EXT_FWFT
-> +	li a6, SBI_EXT_FWFT_SET
-> +	li a0, SBI_FWFT_LANDING_PAD
-> +	li a1, 1 /* enable landing pad for supervisor */
-> +	li a2, SBI_FWFT_SET_FLAG_LOCK
-> +	ecall	/* check for error condition and take appropriate action */
-> +#endif
-> +
->   	call smp_callin
->   #endif /* CONFIG_SMP */
->   
-> @@ -359,6 +369,15 @@ SYM_CODE_START(_start_kernel)
->   #endif
->   	scs_load_current
->   
-> +#if defined(CONFIG_RISCV_SBI) && defined(CONFIG_RISCV_KERNEL_CFI)
-> +	li a7, SBI_EXT_FWFT
-> +	li a6, SBI_EXT_FWFT_SET
-> +	li a0, SBI_FWFT_LANDING_PAD
-> +	li a1, 1 /* enable landing pad for supervisor */
+Shiyang Ruan <ruansy.fnst@fujitsu.com> writes:
 
-The SBI specification calls BIT(0) "LOCK".
-Shouldn't we define a constant for the lock bit instead of using a magic 
-value?
+> =E5=9C=A8 2025/7/24 15:36, Huang, Ying =E5=86=99=E9=81=93:
+>> Shiyang Ruan <ruansy.fnst@fujitsu.com> writes:
+>>=20
+>>> =E5=9C=A8 2025/7/23 11:09, Huang, Ying =E5=86=99=E9=81=93:
+>>>> Ruan Shiyang <ruansy.fnst@fujitsu.com> writes:
+>>>>
+>>>>> From: Li Zhijian <lizhijian@fujitsu.com>
+>>>>>
+>>>>> =3D=3D=3D
+>>>>> Changes since v2:
+>>>>>     1. According to Huang's suggestion, add a new stat to not count t=
+hese
+>>>>>     pages into PGPROMOTE_CANDIDATE, to avoid changing the rate limit
+>>>>>     mechanism.
+>>>>> =3D=3D=3D
+>>>> This isn't the popular place for changelog, please refer to other
+>>>> patch
+>>>> email.
+>>>
+>>> OK. I'll move this part down below.>
+>>>>> Goto-san reported confusing pgpromote statistics where the
+>>>>> pgpromote_success count significantly exceeded pgpromote_candidate.
+>>>>>
+>>>>> On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB=
+):
+>>>>>    # Enable demotion only
+>>>>>    echo 1 > /sys/kernel/mm/numa/demotion_enabled
+>>>>>    numactl -m 0-1 memhog -r200 3500M >/dev/null &
+>>>>>    pid=3D$!
+>>>>>    sleep 2
+>>>>>    numactl memhog -r100 2500M >/dev/null &
+>>>>>    sleep 10
+>>>>>    kill -9 $pid # terminate the 1st memhog
+>>>>>    # Enable promotion
+>>>>>    echo 2 > /proc/sys/kernel/numa_balancing
+>>>>>
+>>>>> After a few seconds, we observeed `pgpromote_candidate < pgpromote_su=
+ccess`
+>>>>> $ grep -e pgpromote /proc/vmstat
+>>>>> pgpromote_success 2579
+>>>>> pgpromote_candidate 0
+>>>>>
+>>>>> In this scenario, after terminating the first memhog, the conditions =
+for
+>>>>> pgdat_free_space_enough() are quickly met, and triggers promotion.
+>>>>> However, these migrated pages are only counted for in PGPROMOTE_SUCCE=
+SS,
+>>>>> not in PGPROMOTE_CANDIDATE.
+>>>>>
+>>>>> To solve this confusing statistics, introduce this
+>>>>> PGPROMOTE_CANDIDATE_NOLIMIT to count the missed promotion pages.  And
+>>>>> also, not counting these pages into PGPROMOTE_CANDIDATE is to avoid
+>>>>> changing the existing algorithm or performance of the promotion rate
+>>>>> limit.
+>>>>>
+>>>>> Perhaps PGPROMOTE_CANDIDATE_NOLIMIT is not well named, please comment=
+ if
+>>>>> you have a better idea.
+>>>> Yes.  Naming is hard.  I guess that the name comes from the
+>>>> promotion
+>>>> that isn't rate limited.  I have asked Deepseek that what is the good
+>>>> abbreviation for "not rate limited".  Its answer is "NRL".  I don't kn=
+ow
+>>>> whether it's good.  However, "NOT_RATE_LIMITED" appears too long.
+>>>
+>>> "NRL" Sounds good to me.
+>>>
+>>> I'm thinking another one: since it's not rate limited, it could be
+>>> migrated quickly/fast.  How about PGPROMOTE_CANDIDATE_FAST?
+>> This sounds good to me, Thanks!
+>
+> Gemini 2.5 gave me a more radical name for it:
+>
+> /*
+>  * Candidate pages for promotion based on hint fault latency. This counter
+>  * is used by the feedback mechanism to control the promotion rate and
+>  * adjust the hot threshold.
+>  */
+> PGPROMOTE_CANDIDATE,
+> /*
+>  * Pages promoted aggressively to a fast-tier node when it has sufficient
+>  * free space. These promotions bypass the regular hotness checks and do
+>  * NOT influence the promotion rate-limiter or threshold-adjustment logic.
+>  * This is for statistics/monitoring purposes.
+>  */
+> PGPROMOTED_AGGRESSIVE,
+>
+> I think this one is concise and easy to understand with the
+> comments. What do you think?  If this one is not appropriate, then I
+> will go with "_NRL" as you suggested.
 
-Best regards
+In fact, we still count candidate pages here.  Although there's enough
+free space in the target node, the promotion may still fail for say
+increased refcount.
 
-Heinrich
+---
+Best Regards,
+Huang, Ying
 
-> +	li a2, SBI_FWFT_SET_FLAG_LOCK
-> +	ecall	/* check for error condition and take appropriate action */
-> +#endif
-> +
->   #ifdef CONFIG_KASAN
->   	call kasan_early_init
->   #endif
-> 
-
+[snip]
 
