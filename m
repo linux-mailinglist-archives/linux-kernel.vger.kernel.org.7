@@ -1,168 +1,167 @@
-Return-Path: <linux-kernel+bounces-745324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE0AB1186F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3959DB11872
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EEE81C85D29
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:23:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6464B587550
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5302882D8;
-	Fri, 25 Jul 2025 06:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E202882C3;
+	Fri, 25 Jul 2025 06:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KnloMO6a"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="aYf/m7Zl"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9B22882A0
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBA12882B7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753424603; cv=none; b=pCi07NHk+LJdRuvPdrG1snZ+2SQLwexnzIEjVh8M3a7FAlx18lnC/md4CpII0fVsNvbsPEXuBBCq6LCDU+ChK021EJ1YIKjqKFoJX7hX0O05e2+0fAkZvbD4shTmRu1/NVmOMQ6CvFGYIT1dRkR9mz5U5rGkesUYRZ8Lv7vQDoc=
+	t=1753424633; cv=none; b=oVIt3k2LpfxRMICuNCJmR8mskUBoe1wuGwZtDhvzdrEJlM4ipSGyOmgajbbOKowXtIXFTGk7/1U2DoLQVYujcDLwCzd0mrrowgEt/8KUNlH8IyWsixcC3pFGKDScIKCay0sFU9i9D73alyaoW3CENjwY+QxcV1Z0vE5BisTNFp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753424603; c=relaxed/simple;
-	bh=E0u5NHKCdPJIEfTxEWeqR+t0Kp29cevS+91DXYNko5k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n+Iv2TpxlGc0XsqDJ6jQAX06mDlx1svgd1CFcySnoNcFhFMj3FBwhAZpYz75ZL8k/nCPLtUDKQ2/cdlD9nafEav/RZiHiS0J9dbHeP6xGQhF38jWNOFtPvTTVQpeltfEbAu1UsAaKT6o+wFsAYjUJOeCuuEFJGujXvbt/d+i6Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KnloMO6a; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OLmrgE010214
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:23:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=h+8rpQA2MVGC7T1ZSRP1J6JwVsqpQ0K/yM3
-	DfkG+seM=; b=KnloMO6aqnQbTXGciSUwIXkDYdRJ84Qgehk0P/9pl7pxBKGCQd8
-	Rvqa80zW4i9o5sg2LaizOz8Y1uGKpnSyanMXdyONWUlKKv8fB4x9XjNyOEUUiOud
-	wjtP41ZiOTIIxk+VfZmdBg5JkUSZ/D4z7ayW1cvpxh7Imdbmw0kvQLIZHbl/iODb
-	WCUpmT/koA4VReoXWjV0hNVMJHRDRunKLaZupx+fnatSFP1CR9r1+A3RMXcn8aM2
-	aR0LcwTpeGg9EL+jK3GXa6n8/U/ghogUdT+60iHs9qsETBEIE7zSiJzk6B9lMrkv
-	IF9bQiUWdIVUMRTjC/Mg4a7jxguz1mk+oTg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2t11ks-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:23:20 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-74ad608d60aso1719016b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:23:20 -0700 (PDT)
+	s=arc-20240116; t=1753424633; c=relaxed/simple;
+	bh=wKx1blxbu5QSpaikoCUeh78SpjOHM3ezwW4MOGKYpB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fG9qO3x3TstJnHAUSMAV2T4lJeTcbIKiTBN3PJGcCcOVJ1jSlcwtS/LHYaBEfbH37G3g4DMw+wzzYSIr3zFxo/dQLkvjV2FlViYivIB8E/Sj2quyCIl7lV+32qAwjFTgwikzHV8xwYJ/41wno+Jxb4eARpkrjnoGjrd8flUjRFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=aYf/m7Zl; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 131694032F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:23:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1753424630;
+	bh=yY/SYQrNWX8OlVsdlpiMi286zoK+AXS6J+gjgGy9bGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=aYf/m7ZlKTECsal4r7Ag3deUgqjBb7A4zrQi3oqCmtIcJtJTl3rrp3RJMKfciJ0Uz
+	 SIoUOT2sIMijGc+IdeFF/oTW7QVxIbuY3k1v7j62KX0zbbo1NEKDEBPplHZ+x6j381
+	 zciEBRVThqlzZB98dc4ZDIvtO+eWPnyZpptSD1YQtHcJfuDidlZ+Ae7ED3zgcAVCgi
+	 sEMHJ9Xtp7g4t+dG8YdGV6uvx25MnB4/zhhpLZx6EzovozyDIU8yQtOIZ+AyqTmdby
+	 dRPijpIwwllTke7ubA61ZJKx82aS7NowFqShyjw8c23mNKIDdBlYWKpLfcGbx9StMt
+	 OadFhnPgLgX4A==
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-455e9daab1cso3359535e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:23:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753424599; x=1754029399;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h+8rpQA2MVGC7T1ZSRP1J6JwVsqpQ0K/yM3DfkG+seM=;
-        b=HfFdkGewDhOROJLn/Kv2yfV70pDiCHplqZ0xFyb3k1GiTbymprFMFV/Fh1hQ9RTa+S
-         PJ0ca5P+/zL0CrWtomia5PtoPPIhYYaZh6IhYhrcUXnd4WHSp2/Ee2dLBRgMq7cUcU+F
-         05m62M5Ocw8u86gCSnyrwysxOIBv3NzW7gGXjgFH9tMEzcT/GgXnTUq+Htzs2BYqdX9F
-         /qDwW2JQZxbcHMgjr3lM7tt8JgaQcMki6ElrdPQ/YvxB3dI3XWQrSOsI1FtwXN9V5dvC
-         Ajs9jvuP7BQKbT7vLMqj1vvQRjBIDv+273e9tgAzUhBjJWYubK4zbyF8t7f2rePv1VzE
-         N0ww==
-X-Forwarded-Encrypted: i=1; AJvYcCW5lVlCU4Oz9xkK5kS8vYz5FA+UaHnzxg/IDnj/E5kTevsSHaq9KTA+HNdktxV/33bJx9LgGQWYjW0LtRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKApd6f8I44rgFA3ioJDO1uSj1xEh7E9p0vixdhUcW1EI/12B8
-	EWyiqiZ9STx4J0DNnJQtRo72Vc0K5yo3SkxYFZfEhTOep0YOiq9mucLlmGtyYkFC+RMezEwR1qQ
-	0qhkqjInpWJci64ai4NaUccuWPiHPwGIfsQR2dHGXxYJ3dI9N8jNgMkiNS9UiHSttSkA=
-X-Gm-Gg: ASbGncu9GPGqivdif8L5arKVeNgwjpLRxG/ezv4hvOHh89k0rSW1Gjf2nEKhF2s87wK
-	OMltv6BDUY2YsiMoIlR8dBWrH7ruybYTkwRflZB44tUuDbeHI8wYvOnJU4sXSxyV8V8zuztj/PJ
-	KLjcZcQF+Q3biWWbdqV77KZrsHG6isttiFzqBTlixEpb/KkT/zIGnyq8TrUJ/KgC27o1jcxQO3n
-	6zi/2R3IMT1EfgLJVYmhWO29Kq3sY6I7i49hd1vOH7v41BUyVvbTjXg93ZAlu6ZXFofvdSYl/pU
-	AZ5PnayljNBf2jtNH7b1OY7PF/PRg5efWuhrv88u0yWE2gShA4XLnR/VqLPrZ/NESGmx
-X-Received: by 2002:a05:6a00:4650:b0:730:9946:5973 with SMTP id d2e1a72fcca58-763358483d2mr1316891b3a.5.1753424599218;
-        Thu, 24 Jul 2025 23:23:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEj1xluN8FbZiHfwHdnlBmvIEgwOG9qpk8l2JTYBBHhyQ2/ry4/bt7vVkKuqaP3LKXKbrJ43A==
-X-Received: by 2002:a05:6a00:4650:b0:730:9946:5973 with SMTP id d2e1a72fcca58-763358483d2mr1316870b3a.5.1753424598818;
-        Thu, 24 Jul 2025 23:23:18 -0700 (PDT)
-Received: from hu-prashk-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761ae158ce7sm3100515b3a.51.2025.07.24.23.23.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 23:23:18 -0700 (PDT)
-From: Prashanth K <prashanth.k@oss.qualcomm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Prashanth K <prashanth.k@oss.qualcomm.com>
-Subject: [PATCH] usb: dwc3: qcom: Add shutdown handler
-Date: Fri, 25 Jul 2025 11:51:58 +0530
-Message-Id: <20250725062158.2418961-1-prashanth.k@oss.qualcomm.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1753424628; x=1754029428;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yY/SYQrNWX8OlVsdlpiMi286zoK+AXS6J+gjgGy9bGo=;
+        b=G7cFQFEudKZFyrD+L+JFOOAA0DAiFvfG824WIsxacBKEDMfOw7ipYsql1x2aE+nI/j
+         bu8qt3soWsJyUXfxI00OmLRmO+hxUtj05NfYORzNO1jOm9b/PwExOVtH51jvXknxt004
+         OvytlM63RGEBTeygCVmjOe1/idPfab19I860RNqDqBfUSw85WOPFaCgVYG/lHDYGN8O4
+         6C4VUwtlF0azXOoWoEVY8OjjuGd80jmhJ3vuLQB63taF+C+Wh4LbrDGslqIJCPwXP995
+         XVITlLddQ/cUFMv2mtxN0ExEsXDNxeM58Zso0CaYit/7XI4Q/V4Y0QemqqNl8JO8sO8i
+         17UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAxqJe1wj+lxPUip9Ef4Y99NVQMANLi0vkn3C2SAvxLbfz3kHghJNEK6646BUoFX1CQyg3vfIVb82aYUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxALMqIBJN4Ghxb4COSO9ih1LZIe7GHQ1KHO8lgEBU1z56ioWRJ
+	iKpgIHDZJuyqS9gccokNW38XdGh37jnPsmlaWq446zy2eodopPmSX8QG3lUalKlAkoQKHYrDThT
+	1ixm7HNfA5TFwsSSzj0af79lMBFR2YCEDvUwdTumGbRZmImoIqHsSai8tClvsBP3YIDGPqiqfts
+	mOPjXM7A==
+X-Gm-Gg: ASbGncv9Sqk0W1hYn/KwroLEYGw5TChg6MFu1pGcWD8jXtsUzCSiffW2an/EWZu6ERN
+	1jgH4b3l9WFFAbuKJOWLS2THq2L5Jte5/tAE/exRBgxJrk49edKpCTOooALEEK5rJnlQXaom9hK
+	uHPk7X4BprO3IzfIDHgc1tsmWE8Mejwtivkl03xruzXuq5H/tHgZj6UkSzyI2TMzE3OD4u/k1wP
+	WL2TqNq9N4tBeFeQlUlNmO2zM4DZsDVzq/BkevKo4yMp/ZTqp5nfire0h4TXKyRqc6rWiHblOag
+	0LgAdNpSWDlXDJ5lytc+BGGvFu/aey31iHdMBcAYtu/f8FdVrWHa8n2jOOarbKKM0j0/hZuEejj
+	kVqGrCOoV1MVH5ilWlQPhVjdCFiSUIIuAe4Dn
+X-Received: by 2002:a05:6000:2306:b0:3a5:527b:64c6 with SMTP id ffacd0b85a97d-3b7765e57c8mr626007f8f.1.1753424627750;
+        Thu, 24 Jul 2025 23:23:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1tfqV/uoCrIpUQ7zCYW6YsO9mWdhr+kRfUXgDIjxIPForORsIR9T6UJpoi3QB0+gQ5qNtNA==
+X-Received: by 2002:a05:6000:2306:b0:3a5:527b:64c6 with SMTP id ffacd0b85a97d-3b7765e57c8mr625975f8f.1.1753424627337;
+        Thu, 24 Jul 2025 23:23:47 -0700 (PDT)
+Received: from [192.168.123.154] (ip-005-147-080-091.um06.pools.vodafone-ip.de. [5.147.80.91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcace8csm4135036f8f.54.2025.07.24.23.23.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 23:23:46 -0700 (PDT)
+Message-ID: <4ad699fc-a89d-4740-bdec-ecb9a2134c90@canonical.com>
+Date: Fri, 25 Jul 2025 08:23:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=BMKzrEQG c=1 sm=1 tr=0 ts=688322d8 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=RJ3Zkx4DJpP4D3F6pL0A:9
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-ORIG-GUID: kF4skpRHg9ghZcNLl8_WGR2lruAACsKs
-X-Proofpoint-GUID: kF4skpRHg9ghZcNLl8_WGR2lruAACsKs
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA1MiBTYWx0ZWRfX8CfCqLPyq/I3
- 6eb7h3mMn17truZW/tyDTXQL1pXqii/vYN5zelXVLzNS9HUqIy04G72NPY21pvHMAdVWSxqfM/U
- agdZHimqGl7XG+hiHoxvj/ae/P16rbfkqZdFETea2xGYLfAHCsqK1oJoU1vDuiAgnI3Uku609oq
- J1id7CSxDwUhKaFaQu9sYdA9m/o/Y4Eexjl/CoK5MEv1/kr4PFPbtBbDxzXfuVmTAZurvrsOZkb
- Th+O+ZlM89BguUmeYZZdf/s51VatipLaW9DpprcoXFp0iIIqJBYu9UK7otqC/19iSMZjqiY+NLu
- d+8MVAlHiTKZG+n44JOz8Qik/DRd2U/r2+KJVHDmuTZtKCWOxkzioFZimWnEqzwgcY0FmInkQMY
- TO8esCgGb4TgAkSKwoUtqViOgwLE7ya5uCUEgUVgoJJyYLVTDT95sZbocDo+GxuRgFNNvtzh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_01,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 impostorscore=0 priorityscore=1501
- bulkscore=0 malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
- mlxlogscore=999 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507250052
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/11] riscv: update asm call site in `call_on_irq_stack`
+ to setup correct label
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
+ rick.p.edgecombe@intel.com, broonie@kernel.org, cleger@rivosinc.com,
+ samitolvanen@google.com, apatel@ventanamicro.com, ajones@ventanamicro.com,
+ conor.dooley@microchip.com, charlie@rivosinc.com, samuel.holland@sifive.com,
+ bjorn@rivosinc.com, fweimer@redhat.com, jeffreyalaw@gmail.com,
+ andrew@sifive.com, ved@rivosinc.com, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Monk Chiang <monk.chiang@sifive.com>,
+ Kito Cheng <kito.cheng@sifive.com>, Justin Stitt <justinstitt@google.com>
+References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
+ <20250724-riscv_kcfi-v1-2-04b8fa44c98c@rivosinc.com>
+Content-Language: en-US
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+In-Reply-To: <20250724-riscv_kcfi-v1-2-04b8fa44c98c@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently during system reboot, SMMU disables its translations
-while devices like USB may still be actively using DMA buffers.
-This can lead to NOC errors and system crashes due to invalid
-memory access.
+On 25.07.25 01:36, Deepak Gupta wrote:
+> Call sites written in asm performing indirect call, they need to setup
+> label register (t2/x7) with correct label.
+> 
+> Currently first kernel was compiled with `-save-temps` option and
+> normalized function signature string is captured and then placed at the
+> asm callsite.
+> 
+> TODO: to write a macro wrapper with toolchain support.
+> 
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>   arch/riscv/kernel/entry.S | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> index 2660faf52232..598e17e800ae 100644
+> --- a/arch/riscv/kernel/entry.S
+> +++ b/arch/riscv/kernel/entry.S
+> @@ -389,6 +389,7 @@ SYM_FUNC_START(call_on_irq_stack)
+>   	load_per_cpu t0, irq_stack_ptr, t1
+>   	li	t1, IRQ_STACK_SIZE
+>   	add	sp, t0, t1
+> +	lui t2, %lpad_hash("FvP7pt_regsE")
 
-Address this by adding a shutdown callback to dwc3-qcom, which
-ensures proper teardown of UDC stack and prevents DWC3 controller
-from accessing memory after SMMU translation is disabled. Reuse
-the existing remove callback for this purpose.
+In patch 1 you use lpad 0 due to missing tool support for signature hashing.
 
-Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
----
- drivers/usb/dwc3/dwc3-qcom.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Wouldn't it be preferable to have a first patch series introducing 
+landing pad support with lpad 0 and once tool support for signature 
+hashing has landed create a second patch series using tags?
 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index ca7e1c02773a..308360a32c93 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -764,11 +764,14 @@ static void dwc3_qcom_remove(struct platform_device *pdev)
- 	struct dwc3 *dwc = platform_get_drvdata(pdev);
- 	struct dwc3_qcom *qcom = to_dwc3_qcom(dwc);
- 
--	dwc3_core_remove(&qcom->dwc);
-+	if (pm_runtime_resume_and_get(qcom->dev) < 0)
-+		return;
- 
-+	dwc3_core_remove(&qcom->dwc);
- 	clk_bulk_disable_unprepare(qcom->num_clocks, qcom->clks);
--
- 	dwc3_qcom_interconnect_exit(qcom);
-+
-+	pm_runtime_put_noidle(qcom->dev);
- }
- 
- static int dwc3_qcom_pm_suspend(struct device *dev)
-@@ -873,6 +876,7 @@ MODULE_DEVICE_TABLE(of, dwc3_qcom_of_match);
- static struct platform_driver dwc3_qcom_driver = {
- 	.probe		= dwc3_qcom_probe,
- 	.remove		= dwc3_qcom_remove,
-+	.shutdown	= dwc3_qcom_remove,
- 	.driver		= {
- 		.name	= "dwc3-qcom",
- 		.pm	= pm_ptr(&dwc3_qcom_dev_pm_ops),
--- 
-2.25.1
+Such a first patch series would not have to be an RFC but might be 
+merged soon.
+
+Best regards
+
+Heinrich
+
+>   	jalr	a1
+>   
+>   	/* Switch back to the thread shadow call stack */
+> 
 
 
