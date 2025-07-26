@@ -1,119 +1,91 @@
-Return-Path: <linux-kernel+bounces-746892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F10EB12C91
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF58B12C95
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75BB172CA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:11:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 018A7163418
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B18A288C38;
-	Sat, 26 Jul 2025 21:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC90228A3EA;
+	Sat, 26 Jul 2025 21:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvZDLUzT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="luNGpmio"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F0521A44C;
-	Sat, 26 Jul 2025 21:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBBE1B042E;
+	Sat, 26 Jul 2025 21:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753564259; cv=none; b=dUhOKm4YEH6R2O7dDZs+3k39YqtAkTgCLRV85MBLrpyxWOru/egAeLIsX87gc3HsHMAy3OY6dlf2jFs5xEf3EbHgmDcPmg25l93L9gUW7toIKZG6uh+EiMUlsert38bunikl4Tji4Mwx3QmUUHmpNVe3mCuqOAACvtgehS0dtT0=
+	t=1753564395; cv=none; b=ax8RXjLfdYrNCemQz7jKeOeMU8Y8pUgIUIjtS/OfJb6q/dBpkdYlKPkjXNP881I+0S4BL+gjMNAmL8hRrwDCdJQPsqanwWj6c+iD9gd2/mDMI0eRrpCcMwugb4igHpKzveKrWqVmihrCtxFY3mvjrc8lj3W4WMzC7125dXo9idw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753564259; c=relaxed/simple;
-	bh=2u3S4e4rv5paFn9+5Na5ep0eYJteuUVXRknfB/8/yto=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bfXVPHyksDNhN/f1wj/1p2v3RTTd+KqpaiMMqLvRV5vGW700uh2PIN9Uh8A97jCy6CSBqCb2xKBCR5jB1sHXDNFZG6BC/dTNU5LlV3+lW5EPiq6PZwCFHawrqDORq4LHVSGyUXJkVeogq1SObnx+5LW75xljQUNk3mQtbOJlMQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvZDLUzT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA48C4CEED;
-	Sat, 26 Jul 2025 21:10:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753564259;
-	bh=2u3S4e4rv5paFn9+5Na5ep0eYJteuUVXRknfB/8/yto=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XvZDLUzTK6neBEqoL89w2V4qlUkmRfkzqs/Axl3PsuqDSlwetzA4RBBh6VY1hFLeo
-	 eidyk2DDW9u80+Bjq2L5kObXlF1S8U9Gb4I8YvySHcGGQmHmZEiqbi4S/byZCBy/Ng
-	 +TxRCLK1ws37vfbvWrMmoQrAEDcndL+zalReyg68txQjiPV9nVvZs48AkeWkSYVylp
-	 YL1svlG/NlYkagOs2gtlR7QKBygE9kZuyDYet929VwDI+TF+iCo1Oyi5ZRMHL3n4TT
-	 8Sk6jmwn1JqjzIdJ8/W/SmT6ZnVSk7f1dkfG0VZmpWlFRxwIvFxJblHT3JATxK6aS9
-	 AJg9IhfCoV2fQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: kernel test robot <lkp@intel.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Koichiro Den <koichiro.den@canonical.com>,
-	Lee Jones <lee@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpiolib: enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB
-Date: Sat, 26 Jul 2025 23:10:43 +0200
-Message-Id: <20250726211053.2226857-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1753564395; c=relaxed/simple;
+	bh=uBK7vKVA+aBU/y8CADD378XUXbQ+wkRLC2mznqc09gA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yqlq428Kg7TB51tMPPyklJheZLK4iBPRuEasV1TnC1AIW/UwIMXYeb3pvmB7HR7bYyanATRF8+jmI3VdjmWJNmJq/oYAdzlMXW8aEEB9QzCv+RfKXHZTPe83WGYV2FU7eSRLeYMVME1YalxlL9zxukGQArNxaBsG1HC/j6Ela0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=luNGpmio; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=oN1NrAW261b86ZUeNpGM6q+x3KcN+7d15I3+AJgrHOY=; b=luNGpmioPBr0uMy4T/tCmgay6L
+	KqG3m7j58qZ9pvRfa1O3kjUxJZxO7UcnM1d+QxW7catY21Iq2A+31U+BolNxmDgSx1eN4fzPrrloR
+	Oyc8kmwomosJV6g8AQd2NmJ6vCAETRmHiHliWhQFjxnG6eRZpZMp2nzpJyg4zAXnpuB4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ufmCU-002y47-Cy; Sat, 26 Jul 2025 23:13:02 +0200
+Date: Sat, 26 Jul 2025 23:13:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v10 09/15] net: phy: marvell: Support SFP
+ through phy_port interface
+Message-ID: <4be84db1-7999-46a2-8157-68b8039a31cd@lunn.ch>
+References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
+ <20250722121623.609732-10-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722121623.609732-10-maxime.chevallier@bootlin.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+> -static int m88e1510_sfp_insert(void *upstream, const struct sfp_eeprom_id *id)
+> +static int mv88e1510_port_configure_serdes(struct phy_port *port, bool enable,
 
-A few drivers that use the legacy GPIOLIB interfaces can be enabled
-even when GPIOLIB is disabled entirely. With my previous patch this
-now causes build failures like:
+The naming convention in this driver is to use m88, not mv88.
 
-   drivers/nfc/s3fwrn5/uart.c: In function 's3fwrn82_uart_parse_dt':
-        drivers/nfc/s3fwrn5/uart.c:100:14: error: implicit declaration of function 'gpio_is_valid'; did you mean 'uuid_is_valid'? [-Werror=implicit-function-declaration]
-
-These did not show up in my randconfig tests because randconfig almost
-always has GPIOLIB selected by some other driver, and I did most
-of the testing with follow-up patches that address the failures
-properly.
-
-Move the symbol outside of the 'if CONFIG_GPIOLIB' block for the moment
-to avoid the build failures. It can be moved back and turned off by
-default once all the driver specific changes are merged.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202507261934.yIHeUuEQ-lkp@intel.com/
-Fixes: 678bae2eaa81 ("gpiolib: make legacy interfaces optional")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpio/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 8bda3c9d47b4..c48f9badb513 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -12,11 +12,11 @@ menuconfig GPIOLIB
- 
- 	  If unsure, say N.
- 
--if GPIOLIB
--
- config GPIOLIB_LEGACY
- 	def_bool y
- 
-+if GPIOLIB
-+
- config GPIOLIB_FASTPATH_LIMIT
- 	int "Maximum number of GPIOs for fast path"
- 	range 32 512
--- 
-2.39.5
-
+	Andrew
 
