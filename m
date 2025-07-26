@@ -1,272 +1,148 @@
-Return-Path: <linux-kernel+bounces-746660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C6AB129BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07643B129C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE3857B5AEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:31:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F9D0AA7504
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810C01E2602;
-	Sat, 26 Jul 2025 08:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A0121B9C3;
+	Sat, 26 Jul 2025 08:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MX/jntr6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0H05aPm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644D3322E
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 08:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4342D41A8F;
+	Sat, 26 Jul 2025 08:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753518787; cv=none; b=XgjTgFcA1OFfKO45LcsKLnUfrTDXed8lXUlo7WQOUqZGQ7EnV0Cl/CKznZoD8mZP5cGJpzRSQKDvn/oOwIpso6hqxo+Dq0qO3+KTNz5Fiq43+praX/9/w3JQwnMEYdWcMpmWx54+HVQIInNiCp3Kn35ohPVccXzDrFhUHfqW8C8=
+	t=1753519759; cv=none; b=NSz05SUS0+xcksGYnoQ2Ft61IaWIzrvN8Vns6TuLrNm0bw2s+LBdCgFnGlIn+QWtntFv5nPRmlO0HR0eNeH15A00tFMclS8x6emN8JWoquhLRR0wDm2HllLE1sV0OTulVJIseOA/PsfvYuImvOD0l71CekUPpnRBkt2jgdL6u9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753518787; c=relaxed/simple;
-	bh=LEWTiS4vR6beHfRptRxrwrTlWCgoYMPfxCzalpZzFVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVhYbxLlT5lzaFJ/GPtT5TlVk766AyIQ4ixkYi8ssJwe39suejTLwX5jUBb6uRLEOkT0ufItD0f74qNVr0Wlh73VwSey5HVWpW3F+wO0Ym6EIUTFueDfYWbCiafh6PkwTQEng7LZC4Auh2lKHLUev9pmE8rG6L7qVZ+FR1DJQj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MX/jntr6; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753518785; x=1785054785;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LEWTiS4vR6beHfRptRxrwrTlWCgoYMPfxCzalpZzFVs=;
-  b=MX/jntr6dhlDKKYokUKmMdHRL4Ad/V+DAg75QujLQslDGucKbA/bRbhD
-   Iegm9Iv77F9mng4Du4Bh6qUPSP7/bKUIQVPIpmOv/RwvMJSx8LYaynyH2
-   yaEKulHdxMP25Hwrmq7iORhii/S/c57EppGndJnjfCoyhawtPOhTV3Tbz
-   ZHd5Bs87qO82N7ldBYfUtw4DM0u0C6771UIUF1RrIERCgeZqED1Vrbyd0
-   1N+H2T+p+pLOrT/UIOItCPv6mtMt68tKu082QU6bS6gTWLDrRVpVM1wld
-   aYv3Biw+QSG5d575rIqHe3nlEqc5eoV99t4N+BVoPjIKHZRLqGq0ud+Xc
-   A==;
-X-CSE-ConnectionGUID: 1IBha/7ARz6ompTy0Sg6YQ==
-X-CSE-MsgGUID: 9l/Au4T5QzS9y5tk2MiZKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="81286731"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="81286731"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 01:33:04 -0700
-X-CSE-ConnectionGUID: Pag6J/LlSIeQTjvagaqpuQ==
-X-CSE-MsgGUID: QKNuBG0FQViIT0Uz/y/6PQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="198586788"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 26 Jul 2025 01:33:00 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ufaKw-000LnP-1r;
-	Sat, 26 Jul 2025 08:32:58 +0000
-Date: Sat, 26 Jul 2025 16:32:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lukas Zapolskas <lukas.zapolskas@arm.com>,
-	dri-devel@lists.freedesktop.org
-Cc: oe-kbuild-all@lists.linux.dev, nd@arm.com,
-	=?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org,
-	Lukas Zapolskas <lukas.zapolskas@arm.com>
-Subject: Re: [PATCH v5 5/7] drm/panthor: Implement the counter sampler and
- sample handling
-Message-ID: <202507261628.odFO5ElZ-lkp@intel.com>
-References: <ae6f93a51033a35e9b8e7d2994c8595975f95264.1753449448.git.lukas.zapolskas@arm.com>
+	s=arc-20240116; t=1753519759; c=relaxed/simple;
+	bh=hKrUWNearcp4ZIDYya1VMgL+4p01kQmkj7tuzh5MZKE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=ojmQObBPZMaDz2OY6kUfA1LccvoTdk2fWAtkfqmyPeIgQooV8HmwHD1uPOTWR0zabNpZKRkXlbvU/Idrntguoy3EOYjbpzbU5aK5bcz4hc9H9m74DQiHMy919FRbi7WyMnQAz4h1PqZ+OcCkcFo1vet4ui4gPwwJN75vDe5hzCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0H05aPm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B890FC4CEED;
+	Sat, 26 Jul 2025 08:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753519757;
+	bh=hKrUWNearcp4ZIDYya1VMgL+4p01kQmkj7tuzh5MZKE=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=G0H05aPmgiV0g//LKUm9nDS3UJ1BUdM6ovhr3DV9Xlakw290JXIbr0WqtAqPFdSNu
+	 ighP4H12T1UT4QmCgVk1ZS5MxYQifn1Ob7UObk7M3sUTL87ho2IzatTUrP5FQm5cqH
+	 ibl00gxX4PLhq+t1c7M4mFReErnkl56F1Ic9QW6O4aWxypLFKUhhNpuG9fFB+B/gcn
+	 Htjn3vy+A+7gIBGIUA7zhU6Z/50dTbRGRUwfTcl2Rzj+biwPK4oQvLOGBgmpz/n4hD
+	 VOu7+V044k8oIpxMnuruiHtsMbzpLzFE0qqDUwjenpdC53odJ0E2nBU96o7K71Yq9i
+	 gYEO7J8ObHfCg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae6f93a51033a35e9b8e7d2994c8595975f95264.1753449448.git.lukas.zapolskas@arm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 26 Jul 2025 10:49:12 +0200
+Message-Id: <DBLUVHKRGVCO.19XQMAX6S1M7W@kernel.org>
+To: "Alexandre Courbot" <acourbot@nvidia.com>, "Abdiel Janulgue"
+ <abdiel.janulgue@gmail.com>, "Danilo Krummrich" <dakr@kernel.org>, "Daniel
+ Almeida" <daniel.almeida@collabora.com>, "Robin Murphy"
+ <robin.murphy@arm.com>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
+Cc: "Christian S. Lima" <christiansantoslima21@gmail.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] rust: transmute: add `as_bytes` method for `AsBytes`
+ trait
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250726-as_bytes-v3-1-eb7514faab28@nvidia.com>
+In-Reply-To: <20250726-as_bytes-v3-1-eb7514faab28@nvidia.com>
 
-Hi Lukas,
+On Sat Jul 26, 2025 at 4:47 AM CEST, Alexandre Courbot wrote:
+> Every type that implements `AsBytes` should be able to provide its byte
+> representation. Introduce the `as_bytes` method that returns the
+> implementer as a stream of bytes, and provide a default implementation
+> that should be suitable for any type that satisfies `AsBytes`'s safety
+> requirements.
+>
+> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-[auto build test ERROR on e48123c607a0db8b9ad02f83c8c3d39918dbda06]
+> ---
+> This is the sister patch of [1], providing an `as_bytes` method for
+> `AsBytes`.
+>
+> It is going to be used in Nova, but should also be universally useful -
+> if anything, it felt a bit strange that `AsBytes` did not provide this
+> method so far.
+>
+> [1] https://lore.kernel.org/rust-for-linux/20250624042802.105623-1-christ=
+iansantoslima21@gmail.com/
+> ---
+> Changes in v3:
+> - Use `ptr::from_ref` instead of `as *const T`.
+> - Link to v2: https://lore.kernel.org/r/20250725-as_bytes-v2-1-c6584c211a=
+6c@nvidia.com
+>
+> Changes in v2:
+> - Use `size_of_val` to provide a default implementation for both `Sized`
+>   and non-`Sized` types, and remove `AsBytesSized`. (thanks Alice!)
+> - Link to v1: https://lore.kernel.org/r/20250725-as_bytes-v1-1-6f06a3744f=
+69@nvidia.com
+> ---
+>  rust/kernel/transmute.rs | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
+> index 1c7d43771a37b90150de86699f114a2ffb84db91..69c46c19a89191d8a2abc5801=
+564cacda232218c 100644
+> --- a/rust/kernel/transmute.rs
+> +++ b/rust/kernel/transmute.rs
+> @@ -47,7 +47,16 @@ macro_rules! impl_frombytes {
+>  ///
+>  /// Values of this type may not contain any uninitialized bytes. This ty=
+pe must not have interior
+>  /// mutability.
+> -pub unsafe trait AsBytes {}
+> +pub unsafe trait AsBytes {
+> +    /// Returns `self` as a slice of bytes.
+> +    fn as_bytes(&self) -> &[u8] {
+> +        let data =3D core::ptr::from_ref(self).cast::<u8>();
+> +        let len =3D size_of_val(self);
+> +
+> +        // SAFETY: `data` is non-null and valid for `len * sizeof::<u8>(=
+)` bytes.
+> +        unsafe { core::slice::from_raw_parts(data, len) }
+> +    }
+> +}
+> =20
+>  macro_rules! impl_asbytes {
+>      ($($({$($generics:tt)*})? $t:ty, )*) =3D> {
+>
+> ---
+> base-commit: 14ae91a81ec8fa0bc23170d4aa16dd2a20d54105
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lukas-Zapolskas/drm-panthor-Add-performance-counter-uAPI/20250725-230250
-base:   e48123c607a0db8b9ad02f83c8c3d39918dbda06
-patch link:    https://lore.kernel.org/r/ae6f93a51033a35e9b8e7d2994c8595975f95264.1753449448.git.lukas.zapolskas%40arm.com
-patch subject: [PATCH v5 5/7] drm/panthor: Implement the counter sampler and sample handling
-config: i386-buildonly-randconfig-006-20250726 (https://download.01.org/0day-ci/archive/20250726/202507261628.odFO5ElZ-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250726/202507261628.odFO5ElZ-lkp@intel.com/reproduce)
+Normally I'd expect this to be `rust-next` or an `-rc` tag... I did find
+this in one of the trees that I fetch, so no worries, but maybe in the
+future use one of those? Thanks!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507261628.odFO5ElZ-lkp@intel.com/
+---
+Cheers,
+Benno
 
-All errors (new ones prefixed by >>):
+> change-id: 20250725-as_bytes-6cbc11f2e8c3
+>
+> Best regards,
 
-   drivers/gpu/drm/panthor/panthor_perf.c: In function 'session_populate_sample':
->> drivers/gpu/drm/panthor/panthor_perf.c:1031:33: error: passing argument 1 of 'bitmap_to_arr64' from incompatible pointer type [-Werror=incompatible-pointer-types]
-    1031 |                 bitmap_to_arr64(&blk->header.enable_mask, blk_em, PANTHOR_PERF_EM_BITS);
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
-         |                                 |
-         |                                 __u64 (*)[2] {aka long long unsigned int (*)[2]}
-   In file included from include/linux/cpumask.h:12,
-                    from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/spinlock.h:63,
-                    from include/linux/swait.h:7,
-                    from include/linux/completion.h:12,
-                    from include/drm/drm_file.h:34,
-                    from drivers/gpu/drm/panthor/panthor_perf.c:5:
-   include/linux/bitmap.h:313:27: note: expected 'u64 *' {aka 'long long unsigned int *'} but argument is of type '__u64 (*)[2]' {aka 'long long unsigned int (*)[2]'}
-     313 | void bitmap_to_arr64(u64 *buf, const unsigned long *bitmap, unsigned int nbits);
-         |                      ~~~~~^~~
-   In file included from <command-line>:
-   In function 'session_read_insert_idx',
-       inlined from 'session_copy_sample' at drivers/gpu/drm/panthor/panthor_perf.c:1039:25,
-       inlined from 'panthor_perf_report_irq' at drivers/gpu/drm/panthor/panthor_perf.c:1141:4:
-   include/linux/compiler_types.h:568:45: error: call to '__compiletime_assert_385' declared with attribute error: Need native word sized stores/loads for atomicity.
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |                                             ^
-   include/linux/compiler_types.h:549:25: note: in definition of macro '__compiletime_assert'
-     549 |                         prefix ## suffix();                             \
-         |                         ^~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:571:9: note: in expansion of macro 'compiletime_assert'
-     571 |         compiletime_assert(__native_word(t),                            \
-         |         ^~~~~~~~~~~~~~~~~~
-   arch/x86/include/asm/barrier.h:69:9: note: in expansion of macro 'compiletime_assert_atomic_type'
-      69 |         compiletime_assert_atomic_type(*p);                             \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/barrier.h:176:29: note: in expansion of macro '__smp_load_acquire'
-     176 | #define smp_load_acquire(p) __smp_load_acquire(p)
-         |                             ^~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/panthor/panthor_perf.c:491:16: note: in expansion of macro 'smp_load_acquire'
-     491 |         return smp_load_acquire(&session->control->insert_idx) % slots;
-         |                ^~~~~~~~~~~~~~~~
-   In function 'session_read_insert_idx',
-       inlined from 'session_emit_sample' at drivers/gpu/drm/panthor/panthor_perf.c:1063:25,
-       inlined from 'panthor_perf_report_irq' at drivers/gpu/drm/panthor/panthor_perf.c:1153:4:
-   include/linux/compiler_types.h:568:45: error: call to '__compiletime_assert_385' declared with attribute error: Need native word sized stores/loads for atomicity.
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |                                             ^
-   include/linux/compiler_types.h:549:25: note: in definition of macro '__compiletime_assert'
-     549 |                         prefix ## suffix();                             \
-         |                         ^~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:571:9: note: in expansion of macro 'compiletime_assert'
-     571 |         compiletime_assert(__native_word(t),                            \
-         |         ^~~~~~~~~~~~~~~~~~
-   arch/x86/include/asm/barrier.h:69:9: note: in expansion of macro 'compiletime_assert_atomic_type'
-      69 |         compiletime_assert_atomic_type(*p);                             \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/barrier.h:176:29: note: in expansion of macro '__smp_load_acquire'
-     176 | #define smp_load_acquire(p) __smp_load_acquire(p)
-         |                             ^~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/panthor/panthor_perf.c:491:16: note: in expansion of macro 'smp_load_acquire'
-     491 |         return smp_load_acquire(&session->control->insert_idx) % slots;
-         |                ^~~~~~~~~~~~~~~~
-   In function 'session_read_extract_idx',
-       inlined from 'session_stop' at drivers/gpu/drm/panthor/panthor_perf.c:1599:26,
-       inlined from 'panthor_perf_session_stop' at drivers/gpu/drm/panthor/panthor_perf.c:1785:8:
-   include/linux/compiler_types.h:568:45: error: call to '__compiletime_assert_381' declared with attribute error: Need native word sized stores/loads for atomicity.
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |                                             ^
-   include/linux/compiler_types.h:549:25: note: in definition of macro '__compiletime_assert'
-     549 |                         prefix ## suffix();                             \
-         |                         ^~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:571:9: note: in expansion of macro 'compiletime_assert'
-     571 |         compiletime_assert(__native_word(t),                            \
-         |         ^~~~~~~~~~~~~~~~~~
-   arch/x86/include/asm/barrier.h:69:9: note: in expansion of macro 'compiletime_assert_atomic_type'
-      69 |         compiletime_assert_atomic_type(*p);                             \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/barrier.h:176:29: note: in expansion of macro '__smp_load_acquire'
-     176 | #define smp_load_acquire(p) __smp_load_acquire(p)
-         |                             ^~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/panthor/panthor_perf.c:473:16: note: in expansion of macro 'smp_load_acquire'
-     473 |         return smp_load_acquire(&session->control->extract_idx) % slots;
-         |                ^~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/bitmap_to_arr64 +1031 drivers/gpu/drm/panthor/panthor_perf.c
-
-   976	
-   977	/**
-   978	 * session_populate_sample - Write out a new sample into a previously populated slot in the user
-   979	 *                           ringbuffer and update both the header of the block and the PRFCNT_EN
-   980	 *                           counter to contain only the selected subset of counters for that block.
-   981	 *
-   982	 * @ptdev: Panthor device
-   983	 * @session: Perf session
-   984	 * @session_sample: Pointer aligned to the start of the data section of the sample in the targeted
-   985	 *                  slot.
-   986	 * @sampler_sample: Pointer aligned to the start of the data section of the intermediate sampler
-   987	 *                  buffer.
-   988	 *
-   989	 * When a new sample slot is targeted, it must be cleared of the data already existing there,
-   990	 * enabling a direct copy from the intermediate buffer and then zeroing out any counters
-   991	 * that are not required for the current session.
-   992	 */
-   993	static void session_populate_sample(struct panthor_device *ptdev,
-   994					    struct panthor_perf_session *session, u8 *session_sample,
-   995					    u8 *sampler_sample)
-   996	{
-   997		const struct drm_panthor_perf_info *const perf_info = &ptdev->perf_info;
-   998	
-   999		const size_t block_size = get_annotated_block_size(perf_info->counters_per_block);
-  1000		const size_t sample_size = session_get_user_sample_size(perf_info);
-  1001		const size_t sample_header_size = perf_info->sample_header_size;
-  1002		const size_t data_size = sample_size - sample_header_size;
-  1003		const u32 counters = perf_info->counters_per_block;
-  1004	
-  1005		session_populate_sample_header(session,
-  1006					       (struct drm_panthor_perf_sample_header *)session_sample,
-  1007					       ptdev->perf->sampler.set_config);
-  1008	
-  1009		session_sample += sample_header_size;
-  1010	
-  1011		memcpy(session_sample, sampler_sample + sample_header_size, data_size);
-  1012	
-  1013		for (size_t i = 0; i < data_size; i += block_size) {
-  1014			DECLARE_BITMAP(em_diff, PANTHOR_PERF_EM_BITS);
-  1015			struct panthor_perf_counter_block *blk = (typeof(blk))(session_sample + i);
-  1016			enum drm_panthor_perf_block_type type = blk->header.block_type;
-  1017			unsigned long *blk_em = session->enabled_counters->mask[type];
-  1018	
-  1019			bitmap_from_arr64(em_diff, blk->header.enable_mask, PANTHOR_PERF_EM_BITS);
-  1020	
-  1021			bitmap_andnot(em_diff, em_diff, blk_em, PANTHOR_PERF_EM_BITS);
-  1022			bitmap_clear(em_diff, 0, PANTHOR_HEADER_COUNTERS);
-  1023	
-  1024			blk->counters[PANTHOR_CTR_PRFCNT_EN] = compress_enable_mask(counters, blk_em);
-  1025	
-  1026			for (size_t ctr_idx = PANTHOR_HEADER_COUNTERS; ctr_idx < counters; ctr_idx++) {
-  1027				if (test_bit(ctr_idx, em_diff))
-  1028					blk->counters[ctr_idx] = 0;
-  1029			}
-  1030	
-> 1031			bitmap_to_arr64(&blk->header.enable_mask, blk_em, PANTHOR_PERF_EM_BITS);
-  1032		}
-  1033	}
-  1034	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
