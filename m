@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-746635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18F3B12938
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:31:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044AFB1293C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3691C20BEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5F83A6BB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710521FBC8C;
-	Sat, 26 Jul 2025 06:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995EC206F23;
+	Sat, 26 Jul 2025 06:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Car/4Y/X"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z4FAtJ2R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF20E7263B;
-	Sat, 26 Jul 2025 06:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE71D128819;
+	Sat, 26 Jul 2025 06:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753511497; cv=none; b=XdOR1MR9ksAi/1ExNzoR4yuwtyt+sXzS9Yy22/BeXScfVtTSaYuCDqwZhtXzYWpoMZD4Kw0+BeLeVsVn2HyXVRuWtl7UiVCwMTQ/xVyeva8s7IDy7B5SfeaSFHyiI/3rVjR+9VOdMLN0gF93R18hvQiNriJO3L6swoGnD0MLxLY=
+	t=1753511801; cv=none; b=kpRrTeZx0yLOqi+LajCYdDLsIDqPkb9uDGB5kJEkXQso5+CcODZXWGQahxGkePv+uWjXgNWf0oC5ulQCaaJH4usQN9NNoJFP6/yWXu2wemBbtO17FGQeYNoonZo6S3gF8x9H7PSe4Z869nRe+0fxABTX75HUJYhcnleyEnYLVIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753511497; c=relaxed/simple;
-	bh=b5+fxTz5qohXuey/CLN6VvyqwtywdFhpDGxjBOjxsFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QzImfYRtMvcehY56q/HsTn6sHitfNO1VPTfh3qkQ0MzWCeOUDJMKKwwky/CIIRshGKZCcZiUVmNGQj6aW2oFkgt4ygYecgqdLUVth/y6ZiYiV20ytwv0j/tPMzed767pLq9+Mrh+pZNVdoC5ra4ocq9xrCF8ikmmDkuKiE7I9h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Car/4Y/X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DA65C4CEEF;
-	Sat, 26 Jul 2025 06:31:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753511497;
-	bh=b5+fxTz5qohXuey/CLN6VvyqwtywdFhpDGxjBOjxsFE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Car/4Y/XedvzMTgNEjWgCbGSWQrtF3lgwQcfuwBxTir9K7eCs1wAM/JJuW5uZCo2P
-	 W/R8SHDOxp0oRZa9jZjxbMyoOV9v+xxsPCb1nNV98rRigcENI6C2L7BaWw3EKVTauU
-	 nBRbLMlQucvEHykfJC3SgsNj7yhw/OD9W1mqnUHFhrTsQ7PFZ+UejiKuHZdI4y8hTo
-	 qnrwgN1wL3VsjZ8gj6hpMc3yeJ9iNgT/VzY6yU5YNVrrpk2oBZBLnwd7YNd73Ywwn1
-	 3kOOSUZ/NRUo3Jris6IFSURjeISQj4+JL8Q/OTHp1QoS2pdlVQR2H88XVJ4FCXqLLK
-	 3pvtguvJtYQuw==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5550dca1241so2493860e87.0;
-        Fri, 25 Jul 2025 23:31:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWpwLVOQKVfXLHtIXDx/be6BE0LFqNDKXSzEWLXRFXL4OJxzcpoOl0H5EEMBaSK0vrnm/dGtstPAGEvq0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCONaebf147PtyDBJgaUubtOvReOia+LHasmuSRcMg32MJvuKS
-	qIGwC2xQP9Zu83Kp7GxvG9tqU4A36ArjtyBCX1Fql39JXNHM1TocOdjlMTd3akR7KfeBiMmt5sz
-	3xo3h/C9aOsGwILq8ELPuylMmkoZcwGI=
-X-Google-Smtp-Source: AGHT+IFTbcZjgr4oeFACAPJbR+enOqtckRmSr31/D0PmOp/JaC3aA/j4/zW1vJOMqAYhJrNeWBS+g0B3fRrLTFCzrpc=
-X-Received: by 2002:ac2:4e11:0:b0:553:d17a:d01d with SMTP id
- 2adb3069b0e04-55b5f4441femr1286768e87.14.1753511496050; Fri, 25 Jul 2025
- 23:31:36 -0700 (PDT)
+	s=arc-20240116; t=1753511801; c=relaxed/simple;
+	bh=5vwqn6VniSu+7gYJT+ma+sD+AePMl3SSq5Xjl7bcOCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmIG4h1fIKzGP3r7GPV35+xjM2alQZybc2I7Fe8GqUaK4vZm6DGDLD+lnDM7r5KwanNdKABkF8AMWk2zqTjYBrt8huLqadWDvE6aeZhkdHitcpRX0aN5CZIuFCP70jSh9yxRAU9VL16VMOrJ2VHVQVFQ+Q3y3eOIjkG+IYUCHGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z4FAtJ2R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B37C4CEEF;
+	Sat, 26 Jul 2025 06:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753511800;
+	bh=5vwqn6VniSu+7gYJT+ma+sD+AePMl3SSq5Xjl7bcOCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z4FAtJ2RhA5fhEX0nzzCnRKaNYzpE2Y6tuFBTbs8p1u0vvJJu1fnggHciIAL8lqoa
+	 qi/5tg2w01WA025v9e+AZfLGyz/VJt58Af/gDj9CjUpI7qyN3xTvRq2VlgUp0bofXR
+	 Q8KtJ1rrtAIePcM0PSUlTZAZWRzv3kGKxkGPKouM=
+Date: Sat, 26 Jul 2025 08:36:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	Michelle Jin <shjy180909@gmail.com>, linux-kernel@vger.kernel.org,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	stable@vger.kernel.org, kasan-dev@googlegroups.com,
+	syzkaller@googlegroups.com, linux-usb@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH] kcov, usb: Fix invalid context sleep in softirq path on
+ PREEMPT_RT
+Message-ID: <2025072615-espresso-grandson-d510@gregkh>
+References: <20250725201400.1078395-2-ysk@kzalloc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722172837.140328-1-shankari.ak0208@gmail.com>
-In-Reply-To: <20250722172837.140328-1-shankari.ak0208@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 26 Jul 2025 15:30:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAReN1-xh-1hcGHbRx401eJrxEoCrzMpe2b0nwoKxcJN8w@mail.gmail.com>
-X-Gm-Features: Ac12FXwMHSs_CyVfiYMNjnqN6Tgu-eOOksfRr-1Zm-v6hJ3TjvtOnMBABsx9A-U
-Message-ID: <CAK7LNAReN1-xh-1hcGHbRx401eJrxEoCrzMpe2b0nwoKxcJN8w@mail.gmail.com>
-Subject: Re: [PATCH v2] kconfig: nconf: Fix uncleared lines on help screens
-To: Shankari Anand <shankari.ak0208@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725201400.1078395-2-ysk@kzalloc.com>
 
-On Wed, Jul 23, 2025 at 2:29=E2=80=AFAM Shankari Anand
-<shankari.ak0208@gmail.com> wrote:
->
-> Commit 1b92b18ec419 ("kconfig: nconf: Ensure null termination where
-> strncpy is used") introduced a regression where
-> help screens (F1, F2, F3) no longer properly clear short lines of text,
-> resulting in duplicated or trailing content when lines are overwritten.
->
-> Revert the null-termination change to match
-> the actual length of the copied string.
->
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Closes: https://lore.kernel.org/lkml/CAK7LNAT54nvwYmTy20Ep8U2kr4thn68yYWX=
-i9R-d3Yx3iXs=3DBg@mail.gmail.com/T/#
-> Fixes: 1b92b18ec419 ("kconfig: nconf: Ensure null termination where strnc=
-py is used")
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+On Fri, Jul 25, 2025 at 08:14:01PM +0000, Yunseong Kim wrote:
+> When fuzzing USB with syzkaller on a PREEMPT_RT enabled kernel, following
+> bug is triggered in the ksoftirqd context.
+> 
+> | BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> | in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 30, name: ksoftirqd/1
+> | preempt_count: 0, expected: 0
+> | RCU nest depth: 2, expected: 2
+> | CPU: 1 UID: 0 PID: 30 Comm: ksoftirqd/1 Tainted: G        W           6.16.0-rc1-rt1 #11 PREEMPT_RT
+> | Tainted: [W]=WARN
+> | Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8 05/13/2025
+> | Call trace:
+> |  show_stack+0x2c/0x3c (C)
+> |  __dump_stack+0x30/0x40
+> |  dump_stack_lvl+0x148/0x1d8
+> |  dump_stack+0x1c/0x3c
+> |  __might_resched+0x2e4/0x52c
+> |  rt_spin_lock+0xa8/0x1bc
+> |  kcov_remote_start+0xb0/0x490
+> |  __usb_hcd_giveback_urb+0x2d0/0x5e8
+> |  usb_giveback_urb_bh+0x234/0x3c4
+> |  process_scheduled_works+0x678/0xd18
+> |  bh_worker+0x2f0/0x59c
+> |  workqueue_softirq_action+0x104/0x14c
+> |  tasklet_action+0x18/0x8c
+> |  handle_softirqs+0x208/0x63c
+> |  run_ksoftirqd+0x64/0x264
+> |  smpboot_thread_fn+0x4ac/0x908
+> |  kthread+0x5e8/0x734
+> |  ret_from_fork+0x10/0x20
 
-Squashed to 1b92b18.
-Thanks.
+Why is this only a USB thing?  What is unique about it to trigger this
+issue?
 
+thanks,
 
-> ---
-> v1 -> v2: Add closes tag to the report.
-> Carry-forwarded acked-by and tested-by from previous version
-> ---
->  scripts/kconfig/nconf.gui.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
-> index 475a403ab8ba..7206437e784a 100644
-> --- a/scripts/kconfig/nconf.gui.c
-> +++ b/scripts/kconfig/nconf.gui.c
-> @@ -177,7 +177,7 @@ void fill_window(WINDOW *win, const char *text)
->                 const char *line =3D get_line(text, i);
->                 int len =3D get_line_length(line);
->                 strncpy(tmp, line, min(len, x));
-> -               tmp[sizeof(tmp) - 1] =3D '\0';
-> +               tmp[len] =3D '\0';
->                 mvwprintw(win, i, 0, "%s", tmp);
->         }
->  }
->
-> base-commit: 05adbee3ad528100ab0285c15c91100e19e10138
-> --
-> 2.34.1
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+greg k-h
 
