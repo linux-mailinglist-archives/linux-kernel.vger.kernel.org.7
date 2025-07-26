@@ -1,145 +1,137 @@
-Return-Path: <linux-kernel+bounces-746818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6DEB12B94
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:12:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245BCB12B98
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101CF1C22697
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EC93B93FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52F42882A5;
-	Sat, 26 Jul 2025 17:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B192882C1;
+	Sat, 26 Jul 2025 17:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOqzOZOS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLSncaKe"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A5C28750C;
-	Sat, 26 Jul 2025 17:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E5024466D;
+	Sat, 26 Jul 2025 17:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753549922; cv=none; b=Gg/DDw1l19ZmfeHLr2BOy0KuX77kNY/0W8z733+BofuMT6Jh8nt6ymMsH4SOnfMGjbkXGNnQvixq6oZvlIY1H+67FJsb7xEfAWG2JDoDEO1zt68aGLYtCfP3OrWW8SqvURk385Dw/tfMsVHO/P0BtN0965nC2u2mYn85CZXMrlw=
+	t=1753549968; cv=none; b=M83oOvdYPSRNfor0WUOYngVRqpeZhpQh1hPu1mgC0/M8NSgpZZfvMgvQLrAxaUU7J7HvLkox89LFeUwY++ahgkN9VZQCOGIplhK4Z8QK8r86jLnYsWIYKDJ8YABZc8nVRVyZx4POR492gmpaDYssPTHWvc2ZjigQXxul5ydtntk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753549922; c=relaxed/simple;
-	bh=rbCHqu5g+PtQzNMLvBDPb0/RV2wi01i4KdX1ANI0vaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IroB+JaczGgPQzE9tR7yj5U3n4igUVxpPZlclTYZdCX/98pPvhomLMWfJNP2deOtqY0ATVCCiMHlBclXvJuHM76Y9tbzNMH3j4lpz6XneG9RUDye1U8HjPIYD42w8smpBACo0ud7yF4pMYHNDfN2jcxJMS/JpuJWoPH1jhiMGAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOqzOZOS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B162FC4CEED;
-	Sat, 26 Jul 2025 17:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753549921;
-	bh=rbCHqu5g+PtQzNMLvBDPb0/RV2wi01i4KdX1ANI0vaY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LOqzOZOSdy4bu3tujbaeZeDeyXdFKmVFMRi7oEDbsn5YWEg7yg4qGttFH/5s6nADo
-	 8QyY3nUKWaGqDH9JPJ2gUZTlcxOa6xrc2mJOj/9kmRr9EP//zWIbvVEasrXpUrXblK
-	 ILS3+raUWsO2aGz/Q2RbXAs9TLgmchrwDu7bpA6/dzCOy9PTnwVCFV0mOJWx3Q6SuB
-	 WeRidwQjxZ49ai8Y2Wlk2JwwCAQYWWqVXqZ6DgbqB+iaNHENwMBTwdLEcGYAxzHbYx
-	 5IZoHxqh8eOV8GiUAUExWOkUKLL3Gj+w5y8sUiH9M5jJ2ND0pQ7B3BcRhvwQDW7LW2
-	 ckApRb6hweqDg==
-Date: Sat, 26 Jul 2025 12:11:58 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Wasim Nazir <wasim.nazir@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, kernel@oss.qualcomm.com
-Subject: Re: [PATCH 1/7] arm64: dts: qcom: Rename sa8775p SoC to "lemans"
-Message-ID: <vc2z57myldazay75qwbxotxr5siooqny2vviu6yznna3fdj3ed@6fpcy7dcg6t3>
-References: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
- <20250722144926.995064-2-wasim.nazir@oss.qualcomm.com>
- <20250723-swinging-chirpy-hornet-eed2f2@kuoka>
- <159eb27b-fca8-4f7e-b604-ba19d6f9ada7@oss.qualcomm.com>
- <e718d0d8-87e7-435f-9174-7b376bf6fa2f@kernel.org>
+	s=arc-20240116; t=1753549968; c=relaxed/simple;
+	bh=vUPvBTBvCOcvFHnkL1DyIZFj/QCKhHpnbFMILB/cZtU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nHbILmrmagRvbOuRC7OTpXsmia5t8SgFQfieIR8ZRLJP3Ouo2l+PUf4hVNn1Rmn10IfHib6vkP/pDZbgy9SHVgvJit67YoZLWHp3je9tRPopDxwdEY902hTfWyXmtTHYGPZMuoPl0yLMyQlOVl9YLUOQdYqQWKAr2sNS553N/Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLSncaKe; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-615da180061so1613336eaf.2;
+        Sat, 26 Jul 2025 10:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753549966; x=1754154766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vUPvBTBvCOcvFHnkL1DyIZFj/QCKhHpnbFMILB/cZtU=;
+        b=aLSncaKeaYH6FW41I5N2f+0DUQs5cYjtvaz8j/mxnVytZfIKBIAsJz5VPX/Al3DyxU
+         Ihj1U/biKsjkgAZTFr/nWEIl2nHmsmFf3iiFgYPCadLROVh+q3GSFxmGWhfgeB4GyPT1
+         PkiMpMycfg34ZWc8vv41yXhw1eInUMGAshyN6rBOf1vQWHEjW7pboBgK6cu7cDG+2Yeu
+         bA5VdynNTaMuT//ND8Xota6qaKGi5qiA0gtJ1Qff9m+KRFsr5ME5UHRlwElWEhChuNwd
+         PvlXqFv9c30t6Ets0ZvVPpzwUI+zuc463di/CpABMgIa3N3dvk8TLeDm1alEytPe1/zD
+         TaEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753549966; x=1754154766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vUPvBTBvCOcvFHnkL1DyIZFj/QCKhHpnbFMILB/cZtU=;
+        b=VYHV7Cmq8WtHdEFaZo/SEjH/FNXsX/rCRH1Snuplanux/O2x7zUDRxZcOTI/Gvhrk9
+         2DSATvkaIgkAkptBzOP5aM3+oiAlCnuE21URvoI6xQW5XRlciEaHtMPeyVuss5oI1qD3
+         4OY69f6G9nKTS9SEVfykgGL32H1Plau5cFAEgpCILHp/B0c7K2tV1I0v3swQxMMQQJQk
+         1T9HECeKpWUu2sRviB+y3MEqs58Ic0ygoWsN7J2oQoXSGHjuKzfGA82CCV0R0vCNP8Mm
+         k60PGydVopmloIJVdbotQeOFZZmWuYPJR9LAtnPqtSAfaBKDOCoFI47r+gl1X6U29fUq
+         o2tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcKlcyYPZhVGyfEjsR36+9wavX3iW/kQFZfqLiU9ODvMeN2LSoS5dqSc/b1lVWQS9kWlC5OZk92gg=@vger.kernel.org, AJvYcCVrzhIKT1c4wJTL0FGSeh4J2LrYw58cgN6GZTqdqQEOnwFGvIxh0BN9lstQwxetQzNvUFkk49VEJT+g9zTgAQ==@vger.kernel.org, AJvYcCWg4mezTkzESgMj9mwkuVZaGFlvXoHUIFpB/UJOh62GxOIaO0U4B2+WKwLqRztdY6azDNg5fv4lkjGbh/IP@vger.kernel.org, AJvYcCXsgir/JcQaKKyWZ2v++rZJeViX2wNVg73/Ok58gsSnbIpNLPvxwy75Sa4iVOBPOb4OsAOY/YdI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBdAOMnvlVNdIOML4QOU4aIM+Vil00JBj96yFW5moM6EdoZ5YP
+	Vfpkmn+KWZQeo+VAotCGutYbb+h7Iy317njXGGy/FzVnKYH58ilWewPF9dh3OopKJ5uvC+B2X8j
+	tk+Yf03/pzgMosHUchJG9j6nMfI7DcTvzX58R
+X-Gm-Gg: ASbGncs02OPJu55j7pSpOhYCUARKf4ZURYc6su/Tl8S7Ort9/Cp+PLcj5BDscSlKFeA
+	7cd1QqnqaA0O6Hk5IdongYdmmdZLZ7Zs56yACzhBojn5uLMf+z546y9/84ZL8NEOuxE/QIl7C9P
+	LeCH/dTiZ7WV0vd5zjWJsIURkI6aV1QoOuVUWCloUfx5tScD80yDW+xXrL9hf/NjGRvdyvQb8pv
+	KFKsdCaCDFiis0OAu0=
+X-Google-Smtp-Source: AGHT+IEHe3I87VoENsAmINVPG4Xg6ymZb3G1FkkvBLGuKgXBu6uqEsfIPFFhzbYIPFMhxNeGdiHQQeTbADKs01jAk4I=
+X-Received: by 2002:a05:6871:bb0f:b0:2d5:ba2d:80e4 with SMTP id
+ 586e51a60fabf-307021d75aemr4090571fac.24.1753549965643; Sat, 26 Jul 2025
+ 10:12:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e718d0d8-87e7-435f-9174-7b376bf6fa2f@kernel.org>
+References: <CANaxB-xXgW1FEj6ydBT2=cudTbP=fX6x8S53zNkWcw1poL=L2A@mail.gmail.com>
+ <20250724230052.GW2580412@ZenIV>
+In-Reply-To: <20250724230052.GW2580412@ZenIV>
+From: Andrei Vagin <avagin@gmail.com>
+Date: Sat, 26 Jul 2025 10:12:34 -0700
+X-Gm-Features: Ac12FXzwEJEUha36n2XPTKyGUflSEYv-O8_CoFpgDNEYuoG7-LzlXSJbmYvVg3s
+Message-ID: <CANaxB-xbsOMkKqfaOJ0Za7-yP2N8axO=E1XS1KufnP78H1YzsA@mail.gmail.com>
+Subject: Re: do_change_type(): refuse to operate on unmounted/not ours mounts
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, criu@lists.linux.dev, 
+	Linux API <linux-api@vger.kernel.org>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 02:51:54PM +0200, Krzysztof Kozlowski wrote:
-> On 24/07/2025 14:47, Konrad Dybcio wrote:
-> > On 7/23/25 10:29 AM, 'Krzysztof Kozlowski' via kernel wrote:
-> >> On Tue, Jul 22, 2025 at 08:19:20PM +0530, Wasim Nazir wrote:
-> >>> SA8775P, QCS9100 and QCS9075 are all variants of the same die,
-> >>> collectively referred to as lemans. Most notably, the last of them
-> >>> has the SAIL (Safety Island) fused off, but remains identical
-> >>> otherwise.
-> >>>
-> >>> In an effort to streamline the codebase, rename the SoC DTSI, moving
-> >>> away from less meaningful numerical model identifiers.
-> >>>
-> >>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> >>> ---
-> >>>  arch/arm64/boot/dts/qcom/{sa8775p.dtsi => lemans.dtsi} | 0
-> >>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi             | 2 +-
-> >>
-> >> No, stop with this rename.
-> >>
-> >> There is no policy of renaming existing files.
-> > 
-> > There's no policy against renaming existing files either.
-> 
-> There is, because you break all the users. All the distros, bootloaders
-> using this DTS, people's scripts.
-> 
+On Thu, Jul 24, 2025 at 4:00=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Thu, Jul 24, 2025 at 01:02:48PM -0700, Andrei Vagin wrote:
+> > Hi Al and Christian,
+> >
+> > The commit 12f147ddd6de ("do_change_type(): refuse to operate on
+> > unmounted/not ours mounts") introduced an ABI backward compatibility
+> > break. CRIU depends on the previous behavior, and users are now
+> > reporting criu restore failures following the kernel update. This chang=
+e
+> > has been propagated to stable kernels. Is this check strictly required?
+>
+> Yes.
+>
+> > Would it be possible to check only if the current process has
+> > CAP_SYS_ADMIN within the mount user namespace?
+>
+> Not enough, both in terms of permissions *and* in terms of "thou
+> shalt not bugger the kernel data structures - nobody's priveleged
+> enough for that".
 
-None of these users are affected by the rename of the .dtsi file.
+Al,
 
-Patch 5 does have user impact, so that one would be "controversial".
-From the answers I've gotten, I'm questioning which of thees files
-actually has users - but that's best done in a standalone patch removing
-or renaming them, with a proper commit message.
+I am still thinking in terms of "Thou shalt not break userspace"...
 
-> > 
-> >> It's ridicilous. Just
-> >> because you introduced a new naming model for NEW SOC, does not mean you
-> >> now going to rename all boards which you already upstreamed.
-> > 
-> > This is a genuine improvement, trying to untangle the mess that you
-> > expressed vast discontent about..
-> > 
-> > There will be new boards based on this family of SoCs submitted either
-> > way, so I really think it makes sense to solve it once and for all,
-> > instead of bikeshedding over it again and again each time you get a new
-> > dt-bindings change in your inbox.
-> > 
-> > I understand you're unhappy about patch 6, but the others are
-> > basically code janitoring.
-> 
-> Renaming already accepted DTS is not improvement and not untangling
-> anything.
+Seriously though, this original behavior has been in the kernel for 20
+years, and it hasn't triggered any corruptions in all that time. I
+understand this change might be necessary in its current form, and
+that some collateral damage could be unavoidable. But if that's the
+case, I'd expect a detailed explanation of why it had to be so and why
+userspace breakage is unavoidable.
 
-No, but the rename of the dtsi file and avoiding introducing yet another
-qcs<random numbers> prefix in the soup is a huge improvement.
+The original change was merged two decades ago. We need to
+consider that some applications might rely on that behavior. I'm not
+questioning the security aspect - that must be addressed. But for
+anything else, we need to minimize the impact on user applications that
+don't violate security.
 
-> These names were discussed (for very long time) and agreed on.
-> What is the point of spending DT maintainers time to discuss the sa8775p
-> earlier when year later you come and start reversing things (like in
-> patch 6).
-> 
+We can consider a cleaner fix for the upstream kernel, but when we are
+talking about stable kernels, the user-space backward compatibility
+aspect should be even more critical.
 
-There was no point, all the information wasn't brought to those
-discussions...
-
-What we know now is that QCS9100 and QCS9075 (and perhaps more?) are the
-Lemans IoT product line and the EVK is the main development board
-there on.
-
-It's unclear if there are any lingering users of sa8775p-ride, but
-the platform we describe in sa8775p.dtsi doesn't exist anymore. To the
-best of my understanding, any users of the ride hardware should be on
-qcs9100-ride...
-
-Regards,
-Bjorn
+Thanks,
+Andrei
 
