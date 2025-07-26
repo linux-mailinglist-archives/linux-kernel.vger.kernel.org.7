@@ -1,234 +1,119 @@
-Return-Path: <linux-kernel+bounces-746891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A02FB12C8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:09:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F10EB12C91
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4C2E7A4294
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:07:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75BB172CA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3896289370;
-	Sat, 26 Jul 2025 21:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B18A288C38;
+	Sat, 26 Jul 2025 21:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="c3NaRGG0"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvZDLUzT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBEB1F8723;
-	Sat, 26 Jul 2025 21:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F0521A44C;
+	Sat, 26 Jul 2025 21:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753564158; cv=none; b=NsBMrLV2wS7hyYdfyElFqREQl4oxWOKnnrPSkOMFLsoEhPOfDZfei5I+9kh0BgjzGdN1FPt/sbEVoKDVxLsolmoboMjuhJZZ0xG0GumGYcl3SCSd9QsPL5YhiYzMlS0blxr1UXbGTYuXwikgf42wFn6CvB4T599nSMrTvc6BwyE=
+	t=1753564259; cv=none; b=dUhOKm4YEH6R2O7dDZs+3k39YqtAkTgCLRV85MBLrpyxWOru/egAeLIsX87gc3HsHMAy3OY6dlf2jFs5xEf3EbHgmDcPmg25l93L9gUW7toIKZG6uh+EiMUlsert38bunikl4Tji4Mwx3QmUUHmpNVe3mCuqOAACvtgehS0dtT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753564158; c=relaxed/simple;
-	bh=sXxHQ9fIaVtZCyKD6Q1O1pKMBD4vdvinWgLBpp6cyGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xs+z5Ppx1neSrZahnztQfiblk3/Yt/gGKAqz50LP3ag1/yj6u/Y0KgX/ruoDmel6/bKuHEM/68iyaqDf1juprn+qKLECvCouTjMdB90cz47qQfRyV/V+/19YgkLKFK3WJgk2+0yp2RFmR/QVfFZqC83/JHMqwyqMDo6T8w3c/Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=c3NaRGG0; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B2D2F10391E80;
-	Sat, 26 Jul 2025 23:09:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1753564152; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=eNISZlrzl0Z3dZdoogVfl+lJdfeLWJhnuVzoA7+Ixkk=;
-	b=c3NaRGG00BtAzqGFmo87hfj9z0wshVOQm8vOwNQFLymfIbbgscrohKzlZ0mF8STj2V0rSk
-	5b7Y3etuydPLum0x2qmSTy6tirEHVQHrIlOuxMFfkzF9sw3c3XkiHkit73qdLQvgaAvGeP
-	ID8cq003K+IVbx5VNFcQtZgJqHYYjeS/Rpsp+KRd+s3TFwtGXA/3cI1EgbR8/eJ/XmGFhM
-	3uugmBQRDBIPQQqgh+SniVBET/izCY4uTLQdnBbsB+VmhfVQTSEft7IGss/ySBolLM43ii
-	f2DGm7I6oLa2SQ7iTyEyEpP5T3W5ntH7nuIvrvq3vw1+sfBLhLVej9JgSJMspg==
-Date: Sat, 26 Jul 2025 23:09:08 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Richard Cochran
- <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
- <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
-Subject: Re: [net-next v16 06/12] net: mtip: Add net_device_ops functions to
- the L2 switch driver
-Message-ID: <20250726230908.3d1e4c87@wsk>
-In-Reply-To: <20250725151618.0bc84bdb@kernel.org>
-References: <20250724223318.3068984-1-lukma@denx.de>
-	<20250724223318.3068984-7-lukma@denx.de>
-	<20250725151618.0bc84bdb@kernel.org>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753564259; c=relaxed/simple;
+	bh=2u3S4e4rv5paFn9+5Na5ep0eYJteuUVXRknfB/8/yto=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bfXVPHyksDNhN/f1wj/1p2v3RTTd+KqpaiMMqLvRV5vGW700uh2PIN9Uh8A97jCy6CSBqCb2xKBCR5jB1sHXDNFZG6BC/dTNU5LlV3+lW5EPiq6PZwCFHawrqDORq4LHVSGyUXJkVeogq1SObnx+5LW75xljQUNk3mQtbOJlMQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvZDLUzT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA48C4CEED;
+	Sat, 26 Jul 2025 21:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753564259;
+	bh=2u3S4e4rv5paFn9+5Na5ep0eYJteuUVXRknfB/8/yto=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XvZDLUzTK6neBEqoL89w2V4qlUkmRfkzqs/Axl3PsuqDSlwetzA4RBBh6VY1hFLeo
+	 eidyk2DDW9u80+Bjq2L5kObXlF1S8U9Gb4I8YvySHcGGQmHmZEiqbi4S/byZCBy/Ng
+	 +TxRCLK1ws37vfbvWrMmoQrAEDcndL+zalReyg68txQjiPV9nVvZs48AkeWkSYVylp
+	 YL1svlG/NlYkagOs2gtlR7QKBygE9kZuyDYet929VwDI+TF+iCo1Oyi5ZRMHL3n4TT
+	 8Sk6jmwn1JqjzIdJ8/W/SmT6ZnVSk7f1dkfG0VZmpWlFRxwIvFxJblHT3JATxK6aS9
+	 AJg9IhfCoV2fQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: kernel test robot <lkp@intel.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Koichiro Den <koichiro.den@canonical.com>,
+	Lee Jones <lee@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] gpiolib: enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB
+Date: Sat, 26 Jul 2025 23:10:43 +0200
+Message-Id: <20250726211053.2226857-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IKCY4fFb7hT6jq/Pg_jxQM6";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
---Sig_/IKCY4fFb7hT6jq/Pg_jxQM6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Arnd Bergmann <arnd@arndb.de>
 
-Hi Jakub,
+A few drivers that use the legacy GPIOLIB interfaces can be enabled
+even when GPIOLIB is disabled entirely. With my previous patch this
+now causes build failures like:
 
-> On Fri, 25 Jul 2025 00:33:12 +0200 Lukasz Majewski wrote:
-> > +static void swap_buffer(void *bufaddr, int len)
-> > +{
-> > +	int i;
-> > +	unsigned int *buf =3D bufaddr;
-> > + =20
->=20
-> nit: reverse xmas tree
+   drivers/nfc/s3fwrn5/uart.c: In function 's3fwrn82_uart_parse_dt':
+        drivers/nfc/s3fwrn5/uart.c:100:14: error: implicit declaration of function 'gpio_is_valid'; did you mean 'uuid_is_valid'? [-Werror=implicit-function-declaration]
 
-Ok.
+These did not show up in my randconfig tests because randconfig almost
+always has GPIOLIB selected by some other driver, and I did most
+of the testing with follow-up patches that address the failures
+properly.
 
->=20
-> > +	if (status & BD_ENET_TX_READY) {
-> > +		/* All transmit buffers are full. Bail out.
-> > +		 * This should not happen, since dev->tbusy should
-> > be set.
-> > +		 */
-> > +		netif_stop_queue(dev);
-> > +		dev_err_ratelimited(&fep->pdev->dev, "%s: tx queue
-> > full!.\n",
-> > +				    dev->name);
-> > +		spin_unlock(&fep->hw_lock); =20
->=20
-> As we discussed on previous revision you have many to one mapping
-> of netdevs to queues. I think the warning should only be printed
-> if the drivers is in "single netdev" mode. Otherwise it _will_
-> trigger.
+Move the symbol outside of the 'if CONFIG_GPIOLIB' block for the moment
+to avoid the build failures. It can be moved back and turned off by
+default once all the driver specific changes are merged.
 
-It will not trigger (as far as I understand the HW) because no matter
-which interface will call this function, there will be next, available
-descriptor provided to perform the transmission to switch port 0.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202507261934.yIHeUuEQ-lkp@intel.com/
+Fixes: 678bae2eaa81 ("gpiolib: make legacy interfaces optional")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpio/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->=20
-> BTW you should put the print after the unlock, console writes are
-> slow.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 8bda3c9d47b4..c48f9badb513 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -12,11 +12,11 @@ menuconfig GPIOLIB
+ 
+ 	  If unsure, say N.
+ 
+-if GPIOLIB
+-
+ config GPIOLIB_LEGACY
+ 	def_bool y
+ 
++if GPIOLIB
++
+ config GPIOLIB_FASTPATH_LIMIT
+ 	int "Maximum number of GPIOs for fast path"
+ 	range 32 512
+-- 
+2.39.5
 
-+1
-
->=20
-> > +static void mtip_timeout(struct net_device *dev, unsigned int
-> > txqueue) +{
-> > +	struct mtip_ndev_priv *priv =3D netdev_priv(dev);
-> > +	struct switch_enet_private *fep =3D priv->fep;
-> > +	struct cbd_t *bdp;
-> > +	int i;
-> > +
-> > +	dev->stats.tx_errors++;
-> > +
-> > +	if (IS_ENABLED(CONFIG_SWITCH_DEBUG)) { =20
->=20
-> why are you hiding the debug info under a CONFIG_ ?=20
-> (which BTW appears not to be defined at all)
-
-The CONFIG_SWITCH_DEBUG is rather a "local" variable.
-
-> Seems useful to know the state of the HW when the queue hung.
-> You can use a DO_ONCE() if you want to avoid spamming logs
-
-Hmmm.... Good point. I will rewrite it.
-
->=20
-> > +	/* Set buffer length and buffer pointer */
-> > +	bufaddr =3D skb->data; =20
->=20
-> You should call skb_cow_data() if you want to write to the skb data.
-
-This is the place where I do send data... (the *xmit_port function).
-
-For reading I do have pool of pages and then I do copy the data to skb.
-
->=20
-> > +static void mtip_timeout(struct net_device *dev, unsigned int
-> > txqueue) +{
-> > +	struct mtip_ndev_priv *priv =3D netdev_priv(dev);
-> > +	struct switch_enet_private *fep =3D priv->fep;
-> > +	struct cbd_t *bdp;
-> > +	int i;
-> > +
-> > +	dev->stats.tx_errors++; =20
->=20
-> timeouts are already counted by the stack, I think the statistic
-> is exposed per-queue in sysfs
-
-Ok. I will remove it.
-
->=20
-> > +		spin_lock_bh(&fep->hw_lock);
-> > +		dev_info(&dev->dev, "%s: transmit timed out.\n",
-> > dev->name);
-> > +		dev_info(&dev->dev,
-> > +			 "Ring data: cur_tx %lx%s, dirty_tx %lx
-> > cur_rx: %lx\n",
-> > +			 (unsigned long)fep->cur_tx,
-> > +			 fep->tx_full ? " (full)" : "",
-> > +			 (unsigned long)fep->dirty_tx,
-> > +			 (unsigned long)fep->cur_rx);
-> > +
-> > +		bdp =3D fep->tx_bd_base;
-> > +		dev_info(&dev->dev, " tx: %u buffers\n",
-> > TX_RING_SIZE);
-> > +		for (i =3D 0; i < TX_RING_SIZE; i++) {
-> > +			dev_info(&dev->dev, "  %08lx: %04x %04x
-> > %08x\n",
-> > +				 (kernel_ulong_t)bdp, bdp->cbd_sc,
-> > +				 bdp->cbd_datlen,
-> > (int)bdp->cbd_bufaddr);
-> > +			bdp++;
-> > +		}
-> > +
-> > +		bdp =3D fep->rx_bd_base;
-> > +		dev_info(&dev->dev, " rx: %lu buffers\n",
-> > +			 (unsigned long)RX_RING_SIZE);
-> > +		for (i =3D 0 ; i < RX_RING_SIZE; i++) {
-> > +			dev_info(&dev->dev, "  %08lx: %04x %04x
-> > %08x\n",
-> > +				 (kernel_ulong_t)bdp,
-> > +				 bdp->cbd_sc, bdp->cbd_datlen,
-> > +				 (int)bdp->cbd_bufaddr);
-> > +			bdp++;
-> > +		}
-> > +		spin_unlock_bh(&fep->hw_lock); =20
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH, Managing Director: Johanna Denk,
-Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
-Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/IKCY4fFb7hT6jq/Pg_jxQM6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmiFQ/QACgkQAR8vZIA0
-zr01lwf9GsVk2YF8UuVzfEfWghkxAMjT42fDPAJABZxKQQiRLoDiTWsctU9lSOq3
-dDKZvdScv+0smZgfukCgwdUUdQV20xV4178yo7weQuSg1jPPLonTQ7sZTbV1Eg0p
-ayOpB7BPG1PBjqlVdvjGFu4sf/m6Mdwp5CQ4IAtQuY4PoTVqlIxfhRJ7Z7Vt/ZS3
-kOosem9z7v6OSTAo0vwfERyfgkXn0Z+S2rPrg1zzm8MsOETmqTnXRDDolN8bRycW
-oaFeF748G7QTVUlmE7Z3qnkFTDGm5DLCgF5AowfSCbbJFISfaOOvAb/IRTOJGYQQ
-jHXaWPJCKfknuPWzQ+hVId/6QyhUQA==
-=qmTS
------END PGP SIGNATURE-----
-
---Sig_/IKCY4fFb7hT6jq/Pg_jxQM6--
 
