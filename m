@@ -1,326 +1,184 @@
-Return-Path: <linux-kernel+bounces-746781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8361B12B09
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D254DB12B0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7C14E5D53
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:38:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666783AFF36
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FE8244669;
-	Sat, 26 Jul 2025 14:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6A82E36E1;
+	Sat, 26 Jul 2025 14:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zzhs0haf"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="fkifObck"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE8221348;
-	Sat, 26 Jul 2025 14:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6513D1DE892;
+	Sat, 26 Jul 2025 14:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753540755; cv=none; b=kjOh1Pqv5RvDmILzBelS7WtOLX/6GPbBLC1WeWux46BTOv3YDzME9k7odaX6Fkk0+t3gXGUDHFay7uSZN76UNKKhhtjJRfkyTN+e4Ado1tglfwHR2N2ylmxVdBLz2rPssbxf4DOkxOnrn7jWPcpCUn/JlsFmdKNlw8x0YlY12oM=
+	t=1753541670; cv=none; b=KHE9dvvs15cdBtBqFdQUjfumsOzwR/FuPXiU5YOBCgo557QsnCjwvdkhMgAwqlgPx/k5G8sb6UqN3kg+7B2JnvAE6JCGC3tNPOS+gU4i6qWy35OenYOpXFwwAIgVGtCyHtNhposKq1I9U3C43wqZ7s+1CedJpap6IxG1jJknUkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753540755; c=relaxed/simple;
-	bh=tDVmoyQPgyFgvJ55XLC+3Kk+eqR/HIeCcQp4QbHgpHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ueJ1re9jWQ5jZTBpzN1ih3JH90V/svVqqmw8nGBU4Nzj2t1MIk+MGSikpS+v6TNxVvbud2RmlsUMsCdeZPMJvjWGpC+qhfrrJv3DnDq8eHfYbGuaiNw3gD2DOgubTEsPd/MOkDyu8un/PqBECGJ6xDSx4VErdSnLqpzqTxrtGLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zzhs0haf; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-236470b2dceso26373895ad.0;
-        Sat, 26 Jul 2025 07:39:13 -0700 (PDT)
+	s=arc-20240116; t=1753541670; c=relaxed/simple;
+	bh=3bHnZA8m1tqBMoYoIdlxpAcQmT7aS6sqXwX7iqsYTxA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jo31tVP3MRIlft7tYx5XqKtqQhBquh9tljUKBQQkn2qnPUBZNYUOeo2/nVhpjHjLwe2yNJevGaxxQG8PPVCUEJLnxBrVniE2sHkwYsz3U8qAkalr3qHCTS1/zmPOx8GBoZdvEWUQI6bhYYAixndjD56US1daJVv56rXKrUVT86E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=fkifObck; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-234c5b57557so26155395ad.3;
+        Sat, 26 Jul 2025 07:54:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753540753; x=1754145553; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uckONOxLpaUfmuLZ5CDh7eJBrThy53oiEqc6yosnbjc=;
-        b=Zzhs0hafD3ITIbn+umhy0DZT8jWLp1fIipKYHToi/qrWWergD6wQEeuNN/Vqa/aGfU
-         +MiKbdahRmBOF6E7TSihMq5rnYvgKSt/zT6tR6cTkEusAMpFlTo2ttUZzHnpZC8tbZ9E
-         w3eckNQhq9MZ4JOEEwJWtQpxluOTkOUQC/wuOUKe4YyOMg+1KxChjsPysJ/8paVkzQ5L
-         ixcD/vkZ5OgI7GkJIVA3g2ofQ6sbCkzjR+oZGciZVu3+EDFnNc2dRughc9RXeVKuMTNH
-         57Dfh9zs9dYnxohjonA4t7wWSkCSD5DFKSlnFCfU0hXGvXv6JW9eiLGyQ2WfjxaXDfpg
-         ljcw==
+        d=googlemail.com; s=20230601; t=1753541669; x=1754146469; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3bHnZA8m1tqBMoYoIdlxpAcQmT7aS6sqXwX7iqsYTxA=;
+        b=fkifObck90YpH/snTIsTJHfNTiTXJB5U4zxxl06Z4zU69jKDOg6OwZrdV51Bqc+33s
+         SWlK3U+2KfkTT8Nr6tP/POXbu2OZlHLmLJlySA2sbAUbZ2KIkhzGOgU+pMkc6c5UqKXq
+         3DTquELHovkswLBPoLadU3OUgzAd5mu+iYs2cXhVql1h8xCpsGUcqJnSnan7oS5NuHIi
+         Su0TatWTkX5xvAFnmv5fsUQ4Lba5DLNYWGiZ8ZkoJW2f562vVXxsLtmkDxCuHc0L+KOs
+         fqvddxcLQxWhArg1RN7Xlobz69Vd230JV41cP3s2VYkFzN9978cZxtagsBGGqqUstwwt
+         ScaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753540753; x=1754145553;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uckONOxLpaUfmuLZ5CDh7eJBrThy53oiEqc6yosnbjc=;
-        b=HNzFqpznZJkpkD/JYKwhxxOPbJPkDLp4iaSeMRDojQE6zv7hLvUFr8CSot23A83T73
-         9ARb2AMTk7/k4SWvUS86kklCpCGWyhh2Eu0jZUtKKfh+cGvV3STnZie8VtEOPFNjLVP+
-         WNudTXDQvSzV3Du0b8EG6Ehq+WTwAYgHruZS1EWwRbM0czp8IPRkDyzoxKgFsFNWnCLW
-         LIy/sfHNa/fLp39/PDHadEC2Hj8xoVraTvBQmQg6TYszqbArCSDVx+FwknRIfGxmt8vt
-         FvVunrUYlENd1x1hVkPPi2KrT8dD7SZa5DEfI5i44Ng2bSXulb79zZB/N+AH3BapEfgB
-         /e2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUiQbZcSHkEtm/Tyzciqc4Bs+vaiB8/o0z9tGjaUwjM1LPGwRVl69URon41l9r4uEIdWmNEOgAgE1VfWeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsbDrGUsOOJoUlFsm18DQuBEZesxTXtB1n+PJPH4Fjci6N3IMr
-	59hq7dUa/XZO2rCh0a55quHHUSkXe1hF52HI4xge9HkoNb9YxcYF4Oec
-X-Gm-Gg: ASbGncvkJpvMKKfWJ4CafHGJAyaw5DzZw8k7RHOKrOSZ0akQoCrh98bOuKIsdVAhdju
-	cpoib8JlZXUFFvmI9HQQZ0LJ90YyAdKPZlrpiXBRMsY2EYdwscwoYbIC1vd5oKTsQTP6vmSYT+8
-	0ifbatdWs0x7KI44J4+NJroT/0F6yf9vOgVsBjnohPP45bi8Oc1eIgs1EzuwjcY+2f0+5zR968h
-	pgKI4kag5cZaPKvRKONCoqBdF1KLkWLsp6yKWfm1vPJmGJVoUzHWlEuW4TdHJ4hAlq0m5sLtsMY
-	3Xc7aadYuulEoqpGitWV4ZFw9X7Hj3JjhkT3TDxPUecjQw8cK4ceY71iuKUj+PsoheIfXxFxne9
-	wQPM1E/DdydXmOjIyyuhy
-X-Google-Smtp-Source: AGHT+IGmhMJaMsUACTCz4podx8Hejaj98cCPGUS6QJZQ5/VavnYAkSMTLHtTxHOXgoxak7+bC4M7YQ==
-X-Received: by 2002:a17:903:1c2:b0:234:ef42:5d69 with SMTP id d9443c01a7336-23fb30995c3mr95854375ad.13.1753540752863;
-        Sat, 26 Jul 2025 07:39:12 -0700 (PDT)
-Received: from hiagonb ([2804:1b3:a7c2:9aee:45f1:9356:31f6:cecb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe515300sm18497365ad.151.2025.07.26.07.39.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 07:39:12 -0700 (PDT)
-Date: Sat, 26 Jul 2025 11:39:08 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Andrew Davis <afd@ti.com>, Beleswar Prasad Padhi <b-padhi@ti.com>
-Cc: linux-remoteproc@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org,
-	Hiago De Franco <hiago.franco@toradex.com>
-Subject: Re: System can not go into suspend when remoteproc is probed on AM62X
-Message-ID: <20250726143908.ayug6dedkmzulldx@hiagonb>
+        d=1e100.net; s=20230601; t=1753541669; x=1754146469;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3bHnZA8m1tqBMoYoIdlxpAcQmT7aS6sqXwX7iqsYTxA=;
+        b=Z4ywQYvm5ij6uXM3+KQ2ylxUungX3gwH9k0BXhK7XH8RPT+5XRFjkPW1wHmA+t/6FO
+         uTQSyavY9hB1jaWgAwyLEufvx4XqK7VG7yxYPN/X23VdXXVhlP+4vY5Q5EAMMKtJJkPD
+         CyMcE/9iIH3H45mOqTQeS7/obaLPOtHUuxKPs9sOyJjMbMJzRvw3vbuBIcb1i8QIMWA0
+         Ni2lBWz2or4bkBdu3HePqBnQujGrpjb73enfKae+wQ+GjL53zTtPIFTv6EB2w/xyyH1x
+         G+iwoxxIqKjFtUfchVy1NJVTPz60/0V9M1gUrQ9xi3g+Y2qHFQMFht5qqHyJNiS76zoB
+         0j7A==
+X-Forwarded-Encrypted: i=1; AJvYcCU5y/VJc864OKh3rtUmhpd/QzJD7MWASNgTnjmUJGFpq3on0ce5HCQ7tA7/PX5sqGu/msQoxi00AJQgKGQ=@vger.kernel.org, AJvYcCWirFiF0NOBR3acWR9cOeljMa+KfnO/KZCXIQ1lDPJADFnNPfFhgun309a0eLh6XKZ8eYLoJOuOx3wy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCfpgg3y7vbVdA/rznqvhCszz/LFbAk6vck2G0tCNuKnWksccR
+	p25JUzVzd4+OroelrOOBAsCJj3Zlmfysshl3GGFEKOhzD5hifWsstcivIP67N4/KEgx1hpyMdk4
+	SlvOlycr/O6ROxiieOmPJByaIvOfPp3M=
+X-Gm-Gg: ASbGncv++2o1uWQrBv2EaGlithS/+3uj2LwiUR7t/RE5CJ7XFBHjpKkc08B9xGnoqBI
+	hsT6c7FvEAMPgVouHKFd5hlFH+bdDpQ3aPQx+WxlXatM9t6IY9n8n0bBvI3BQICIqFtA8HgWbRq
+	CWd/+gJVFFCAFotXRm+4hRXdXhJ5zDbNBjaJ9AQps3ghEGqSZVoYH9s90uVNhTxll/wgsYgNfCo
+	CeT8+1klHJAZaXoYxF33bmbe0dSHPIEzgJijI4t
+X-Google-Smtp-Source: AGHT+IH48189c7fSvo4Rra30U14aRDZDu0fOQbJ0LdUinC1a9SuaFher9z2GM01faWEF1qWm7EppDpjH0gxkV+fO+7k=
+X-Received: by 2002:a17:902:f211:b0:23f:d1f8:72aa with SMTP id
+ d9443c01a7336-23fd1f87e3dmr21200685ad.48.1753541668593; Sat, 26 Jul 2025
+ 07:54:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <06186d01-23e7-4fd6-b5c0-b6c1f8ae7fb7@ti.com>
- <616fbb7a-8d04-48aa-b3cb-9a1a69c7b92c@ti.com>
+References: <20250204135842.3703751-1-clabbe@baylibre.com> <20250204135842.3703751-2-clabbe@baylibre.com>
+ <aCHHfY2FkVW2j0ML@hovoldconsulting.com> <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
+ <aINXS813fmWNJh3A@hovoldconsulting.com>
+In-Reply-To: <aINXS813fmWNJh3A@hovoldconsulting.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 26 Jul 2025 16:54:17 +0200
+X-Gm-Features: Ac12FXzcvotFyw8g_x45Czy5Sou_bnfiuDxwp3FFXKkJTi9lE_FJig1Ihyh4vGQ
+Message-ID: <CAFBinCBMTOM-FMgENS-mrnV17HbKzhtPUd44_dDiwnD=+HVMWQ@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
+To: Johan Hovold <johan@kernel.org>
+Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, david@ixit.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew, Beleswar,
+On Fri, Jul 25, 2025 at 12:07=E2=80=AFPM Johan Hovold <johan@kernel.org> wr=
+ote:
+>
+> On Tue, Jul 15, 2025 at 11:20:33PM +0200, Martin Blumenstingl wrote:
+>
+> > On Mon, May 12, 2025 at 12:03=E2=80=AFPM Johan Hovold <johan@kernel.org=
+> wrote:
+>
+> > > The read urbs should be submitted at first open and stopped at last
+> > > close to avoid wasting resources when no one is using the device.
+> > >
+> > > I know we have a few drivers that do not do this currently, but it
+> > > shouldn't be that hard to get this right from the start.
+>
+> > If you're aware of an easy approach or you can recommend an existing
+> > driver that implements the desired behavior then please let me know.
+> >
+> > The speciality about ch348 is that all ports share the RX/TX URBs.
+> > My current idea is to implement this using a ref count (for the number
+> > of open ports) and mutex for locking.
+>
+> Just use a mutex and integer (not refcount) to count the number of open
+> ports. Submit the urbs on first open and stop them on last close.
+>
+> Not doing so, and instead submitting at attach(), means that the host
+> controller will be wasting power by polling the endpoints continuously
+> as long as the device is plugged in.
+Thanks, my code wasn't miles off of f81534.c but I'm following that
+more closely now.
 
-On Fri, Jul 25, 2025 at 02:29:22PM -0500, Andrew Davis wrote:
-> 
-> So the issue then looks to be this message we send here when we setup
-> the mailbox[0]. This mailbox setup is done during probe() for the K3
-> rproc drivers now (mailbox setup used to be done during
-> rproc_{start,attach}() before [1]). Moving mailbox setup to probe
-> is correct, but we should have factored out the test message sending
-> code out of mailbox setup so it could have been left in
-> rproc_{start,attach}(). That way we only send this message if the
-> core is going to be started, no sense in sending that message if
-> we are not even going to run the core..
-> 
-> Fix might be as simple as [2] (not tested, if this works feel free
-> to send as a fix)
+[...]
+> > I'm trying as you suggest:
+> > - submit the URB synchronously for port N
+> > - submit the URB synchronously for port N + 1
+> > - ...
+> >
+> > This seems to work (using usb_bulk_msg). What doesn't work is
+> > submitting URBs in parallel (this is what the vendor driver prevents
+> > as well).
+>
+> No, the vendor driver tracks THRE per port
+> (ttyport[portnum].write_empty) and allows writing to more than one port
+> in parallel (e.g. releases the device write_lock while waiting for the
+> transfer to complete).
+>
+> I thought the problem was that you could not submit another urb for the
+> *same* port until the device buffer for that port had been emptied?
+>
+> This seems to be what the vendor driver is preventing.
+I managed to get it to work now without any unnecessary waiting.
+When I switched to just waiting for per-port THRE I accidentally
+re-used the same URB (along with its buffer) for all ports. This of
+course "corrupts" data, but it's my fault instead of the chip/firmware
+causing it.
+That's why I was referring to data corruption earlier.
+Thanks for your persistence and for making me look at my code again
+with a fresh mind.
 
-I tested the patch and it works, thanks!
+> > > You should implement dtr_rts() as well.
+>
+> > This will be the first time we need the "package type" information as
+> > CH348Q only supports CTS/RTS on the first four ports, for the last
+> > four the signals aren't routed outside the package.
+> > I need to see if I have other hardware with CTS/RTS pins to test this.
+>
+> Just connect a multimeter to the DTR and RTS pins and verify that they
+> are asserted on open and deasserted on close after issuing those control
+> requests (see ch9344_port_dtr_rts()).
+Do I need to set anything special in termios for this to work?
+The datasheet has a special note about DTR/TNOW (on page 8 for the CFG pin)=
+:
+> Unified configuration: During power-on, if the CFG pin is
+> at a high level or not connected, all DTRx/ TNOWx pins
+> are configured to function as TNOW. CFG pin is low, all
+> DTRx/ TNOWx pins are configured for DTR function.
 
-> 
-> Andrew
-> 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
-> [2]
-> 
-> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-> index a70d4879a8bea..657a200fa9040 100644
-> --- a/drivers/remoteproc/ti_k3_common.c
-> +++ b/drivers/remoteproc/ti_k3_common.c
-> @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
->  }
->  EXPORT_SYMBOL_GPL(k3_rproc_reset);
-> +static int k3_rproc_ping(struct k3_rproc *kproc)
-> +{
-> +       /*
-> +        * Ping the remote processor, this is only for sanity-sake for now;
-> +        * there is no functional effect whatsoever.
-> +        *
-> +        * Note that the reply will _not_ arrive immediately: this message
-> +        * will wait in the mailbox fifo until the remote processor is booted.
-> +        */
-> +       int ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
-> +       if (ret < 0)
-> +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
-> +
-> +       return ret;
-> +}
-> +
->  /* Release the remote processor from reset */
->  int k3_rproc_release(struct k3_rproc *kproc)
->  {
-> @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
->         if (ret)
->                 dev_err(dev, "module-reset deassert failed (%pe)\n", ERR_PTR(ret));
-> +       k3_rproc_ping(kproc);
-> +
->         return ret;
->  }
->  EXPORT_SYMBOL_GPL(k3_rproc_release);
-> @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
->                 return dev_err_probe(dev, PTR_ERR(kproc->mbox),
->                                      "mbox_request_channel failed\n");
-> -       /*
-> -        * Ping the remote processor, this is only for sanity-sake for now;
-> -        * there is no functional effect whatsoever.
-> -        *
-> -        * Note that the reply will _not_ arrive immediately: this message
-> -        * will wait in the mailbox fifo until the remote processor is booted.
-> -        */
-> -       ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
-> -       if (ret < 0) {
-> -               dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
-> -               mbox_free_channel(kproc->mbox);
-> -               return ret;
-> -       }
-> -
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
-> @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
->   * remote core. This callback is invoked only in IPC-only mode and exists
->   * because rproc_validate() checks for its existence.
->   */
-> -int k3_rproc_attach(struct rproc *rproc) { return 0; }
-> +int k3_rproc_attach(struct rproc *rproc)
-> +{
-> +       k3_rproc_ping(rproc->priv);
-> +
-> +       return 0;
-> +}
->  EXPORT_SYMBOL_GPL(k3_rproc_attach);
->  /*
-> 
+On my test board the CFG pin is HIGH. From how I understand you, RTS
+should at least change (even if DTR is in TNOW mode).
+No matter what I do: both pins are always LOW (right after modprobe,
+after opening the console, closing the console again, ...).
+I even set up the vendor driver to test this: it's the same situation there=
+.
 
-On Sat, Jul 26, 2025 at 07:47:34PM +0530, Beleswar Prasad Padhi wrote:
-> > 
-> > So the issue then looks to be this message we send here when we setup
-> > the mailbox[0]. This mailbox setup is done during probe() for the K3
-> > rproc drivers now (mailbox setup used to be done during
-> > rproc_{start,attach}() before [1]). Moving mailbox setup to probe
-> > is correct, but we should have factored out the test message sending
-> > code out of mailbox setup so it could have been left in
-> > rproc_{start,attach}().
-> 
-> 
-> Or, how about we don't send that test mbox message at all. It does not
-> actually check if the remoteproc was able to receive and respond to the
-> message. It only verifies if the write to the mbox queue was successful. And
-> most firmwares anyways don't reply to that mailbox-level echo message.
+If we need to make the DTR and RTS output something then the only way
+I know of right now is to switch them to GPIO mode (I have code for
+this but it's another ~300 lines patch on top of this).
+So I'd like to not implement .dtr_rts and drop all CRTSCTS related code for=
+ now.
 
-I was thinking about the same.
-
-I tested the patch and it indeed works, however when I boot the remote
-core with a hello world firwmare from the TI MCU SDK (with IPC enabled
-with the sysconfig), the ping is sent but M4 never replies to it, which
-at the end causes an unread message to stay there. Later, if I stop the
-remote processor, I can not got into suspend mode again because of this
-message.
-
-So I believe we should never send the message or clear the mailbox when
-the remote processor is stopped, but I was not able to find a way to
-clear the mailbox. So, is it ok if we never send the ping?
 
 Best regards,
-Hiago.
-
-> 
-> Thanks,
-> Beleswar
-> 
-> > That way we only send this message if the
-> > core is going to be started, no sense in sending that message if
-> > we are not even going to run the core..
-> > 
-> > Fix might be as simple as [2] (not tested, if this works feel free
-> > to send as a fix)
-> > 
-> > Andrew
-> > 
-> > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
-> > [2]
-> > 
-> > diff --git a/drivers/remoteproc/ti_k3_common.c
-> > b/drivers/remoteproc/ti_k3_common.c
-> > index a70d4879a8bea..657a200fa9040 100644
-> > --- a/drivers/remoteproc/ti_k3_common.c
-> > +++ b/drivers/remoteproc/ti_k3_common.c
-> > @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
-> >  }
-> >  EXPORT_SYMBOL_GPL(k3_rproc_reset);
-> > 
-> > +static int k3_rproc_ping(struct k3_rproc *kproc)
-> > +{
-> > +       /*
-> > +        * Ping the remote processor, this is only for sanity-sake for
-> > now;
-> > +        * there is no functional effect whatsoever.
-> > +        *
-> > +        * Note that the reply will _not_ arrive immediately: this
-> > message
-> > +        * will wait in the mailbox fifo until the remote processor is
-> > booted.
-> > +        */
-> > +       int ret = mbox_send_message(kproc->mbox, (void
-> > *)RP_MBOX_ECHO_REQUEST);
-> > +       if (ret < 0)
-> > +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n",
-> > ERR_PTR(ret));
-> > +
-> > +       return ret;
-> > +}
-> > +
-> >  /* Release the remote processor from reset */
-> >  int k3_rproc_release(struct k3_rproc *kproc)
-> >  {
-> > @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
-> >         if (ret)
-> >                 dev_err(dev, "module-reset deassert failed (%pe)\n",
-> > ERR_PTR(ret));
-> > 
-> > +       k3_rproc_ping(kproc);
-> > +
-> >         return ret;
-> >  }
-> >  EXPORT_SYMBOL_GPL(k3_rproc_release);
-> > @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
-> >                 return dev_err_probe(dev, PTR_ERR(kproc->mbox),
-> >                                      "mbox_request_channel failed\n");
-> > 
-> > -       /*
-> > -        * Ping the remote processor, this is only for sanity-sake for
-> > now;
-> > -        * there is no functional effect whatsoever.
-> > -        *
-> > -        * Note that the reply will _not_ arrive immediately: this
-> > message
-> > -        * will wait in the mailbox fifo until the remote processor is
-> > booted.
-> > -        */
-> > -       ret = mbox_send_message(kproc->mbox, (void
-> > *)RP_MBOX_ECHO_REQUEST);
-> > -       if (ret < 0) {
-> > -               dev_err(dev, "mbox_send_message failed (%pe)\n",
-> > ERR_PTR(ret));
-> > -               mbox_free_channel(kproc->mbox);
-> > -               return ret;
-> > -       }
-> > -
-> >         return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
-> > @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
-> >   * remote core. This callback is invoked only in IPC-only mode and
-> > exists
-> >   * because rproc_validate() checks for its existence.
-> >   */
-> > -int k3_rproc_attach(struct rproc *rproc) { return 0; }
-> > +int k3_rproc_attach(struct rproc *rproc)
-> > +{
-> > +       k3_rproc_ping(rproc->priv);
-> > +
-> > +       return 0;
-> > +}
-> >  EXPORT_SYMBOL_GPL(k3_rproc_attach);
-> > 
-> >  /*
-> > 
+Martin
 
