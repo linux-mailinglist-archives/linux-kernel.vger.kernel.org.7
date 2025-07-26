@@ -1,120 +1,100 @@
-Return-Path: <linux-kernel+bounces-746858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8D9B12C14
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:43:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5253FB12C1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53AD23BA2CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:42:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C26A1784D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB41028A1FB;
-	Sat, 26 Jul 2025 19:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C43213E7B;
+	Sat, 26 Jul 2025 19:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJKmfSWH"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="anaOAwDt"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8315289364;
-	Sat, 26 Jul 2025 19:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3C31401B;
+	Sat, 26 Jul 2025 19:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753558997; cv=none; b=Ht9KG2GuvPg4sI08tz7T3Vu8vmXJIVsBZfrLJuRjQtDZrDpQIs3+FgSouaPuZYixSrd3JWZBwqy6mOcukEU5TOiPGbJeEmDjWOIFekhySPvaKJ5ehN7MK2PqrESZLdfIu26znmG2vV38tOocdT1m4Ylv9Sk0/VpiXBvWu02WYTk=
+	t=1753559367; cv=none; b=jVikJWe7eSzEaK51Rh+JUItc+XODMKJHXdFJpKbzU8syxxIRnX5gFuhr/XHpZnYY418lusQdUrplSJ9vQ2OPdylghf7o2CzB+KGzR/6GFMJgCkSx5H0yMs5BEaEbqSgibrfSthWqKut/QSrO5ZG5Ky6tlPJ1X6ZKFlNkTdzHcAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753558997; c=relaxed/simple;
-	bh=ewwAGXYQx+W8x+pd7R8Jympoa83WOwHhV70nvSBXx2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=csFjDN5o/ukc+S84AjF+kYgF80lFOBdiYKulryw4Klbxgzd1vyVindgHxUrahGKoqf8JDU6md6mEShvqftjJ3ZIiJdNmysYzxJLRAd/MLA7BgUkUrcftaC5CjZokmNgGTn8V2uQ73PqvxkxdSsiYHBIugw/grUszqn5T7InBYyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJKmfSWH; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b170c99aa49so2370422a12.1;
-        Sat, 26 Jul 2025 12:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753558995; x=1754163795; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=htr25Q3EqoJs/RnKOvRYvkQWeNG52TSDYyn5JmIh6Ug=;
-        b=XJKmfSWHBia3/lWvkUGoComIf/r8wk6Gsp+eS48Hll0Q0s8v9WsKa3Yu1YEU1IBM95
-         1HxxutIfJB7QN3lAy9XteWwxIFeFLRicUMWTOmH55IEJkY3hxF816zXwQyZkGju4L0mc
-         NKu2jQvx+iuNNDMOrpPGcOkAMEljIrZHMpvPYTorpjneigkpF1pMxJVl0uBtSQGzKas7
-         COu53yW6XDXgR9CY1wspfmBo6tLspItXAw5OpgH3qglbnEHuGpRCeofYsnALuYmrItvM
-         0cEHV6aE3N+zRU2WiHVk9rqMRfOrvf/3GCBJVvVZ3Xa04eEAQ4zYbL7PQwJ3XMg1BFIb
-         6s7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753558995; x=1754163795;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=htr25Q3EqoJs/RnKOvRYvkQWeNG52TSDYyn5JmIh6Ug=;
-        b=Bnts7gxYlfwiQvLvsgQiu38WikNXIIhthj7fr/W2ITsyDc9Ip5wUBoDAuK9x0Zxy0N
-         +OxKgLtc4yJ8Z0RDnCMMWkJQwmbAs7fvNo5SIgHCSKsRaO8OKaTsji1BxW/ksonnLjQa
-         WgIAsr54KFjKKAI0txQSeiOmhHU6Rr86/TSLn0K6VffyQb9t8b0uG+cdCFMPSwPiCX8c
-         tWFeTWL2X+7C45f62f/nbkS/P4rO3re6mU0emp4/2mShONSm42DUx8iXjrJHob5Dd75R
-         QnTZL2n/cM7SqUYxFRaUnhYFchsHX84y5s6bXVfB+ysCIHxBCS34fqW2y+udcwKiGr5N
-         mfIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqeIpSnD7lLr4WonfGUImUvNKlv14rQ3lN+BkbYuVKDg4Buo2o+HWXA5mag3Dg773mCqQs9UbcDno4sys=@vger.kernel.org, AJvYcCXpVfbah3lfj2BOAoMDkVkoldHY2eCa0068bCiE+8T+DB6qppAcsmoXRig1vulfkwq1uuvUY+LWBTDjdNEf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjLypNt4J2kw0RuwlojXrFy4DNKuRlyS00sWUfENI2nd6hanMX
-	nKMM2l5PNdJm9bKUZvjKUMHu3lcc5xrh6a8lSNwGutlpwovwxRLOnAsv
-X-Gm-Gg: ASbGnctHIa2eWhD6QacNTM/QfKjXkUyyi8M4HLUF//yl8njVlwrO1OAZLe6jidoXp7Y
-	4CVapUwaWmnfiw+pP2Udv5ouammWIboN8V0uvKkagMQHlnauMdJC8rwpq8Cy3eBafkGwgrfzwqN
-	xjTOWQO49S5BiytYzmx+inkdcxu3jvji0Av77NXBzfpIAdqDJrPjjqXh8sUDwD3oAseYNwo/3Uw
-	mXNs/tQUqNk3cEB0yMoc9iS6W8r5wVYolhd5hPX9foMq6EZej3jzfqQZqTS25zv3r/QbM5zrffD
-	F5c56Hv8kEB+7zBSYdTovyzwQSu7L9vZ1Cbt7p5a6D3jUyVT2OaAeFg3JUGRnYsVV3AfR9Chw+n
-	bDHLfZ+nQaSt/JDwoPM0h2doK9EkdLw==
-X-Google-Smtp-Source: AGHT+IHcNOhaDkQvXHeAcX3tHTWFDDHAIQV3WPJV0TCZr8nlgyFIHZC5qMHEJldAhEnwV4QtTy0Xmw==
-X-Received: by 2002:a17:903:2f46:b0:234:d7b2:2aa9 with SMTP id d9443c01a7336-23fb30be14bmr105687575ad.29.1753558994884;
-        Sat, 26 Jul 2025 12:43:14 -0700 (PDT)
-Received: from archlinux ([205.254.163.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe56c407sm21996955ad.192.2025.07.26.12.43.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 12:43:14 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: masahiroy@kernel.org,
-	nicolas.schier@linux.dev,
-	linux-kbuild@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH] kconfig/lxdialog: replace strcpy with snprintf in print_autowrap
-Date: Sun, 27 Jul 2025 01:13:07 +0530
-Message-ID: <20250726194307.182093-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753559367; c=relaxed/simple;
+	bh=jBF0oqWUqYKS8OhtkRMLwtvyBIhQM+gKrwZVKEhqJHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIVAzCpMbWftwMyMfJeJdouofnmDhVATQc5c+nCXH0H8TnHmcFW/9OZHq/aZ0vXnfmUrrNRX1Vp3dmdxHWQleJs03Ho40Q5vdGPcTD1BhewkJEKkYCngtumTVf2Hya2PTiI2k+1ZLk/PBO4vv0RuyNry6xrzeLYdtNIFMuwdz4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=anaOAwDt; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Aw/7c/a8OLgnYaUzTv8cMEI87YfbQ4Gsk3r35pIOJiM=; b=anaOAwDt1I8LYFAqXfsid+9XKN
+	Mj/q33Ncdq3RzPp6/vCLe2Sfkq8FB34u1PU/gKhrJySj7Gs/jEcsHafcFPUc2oikf4AWQjXRSFFbc
+	KepNVxDcikkuwBx5S47LHPcaBW35fqjZUKytZblg1Tj5pOTsxtuVW1FMuiFC816c+kAU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ufktH-002xhZ-RG; Sat, 26 Jul 2025 21:49:07 +0200
+Date: Sat, 26 Jul 2025 21:49:07 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v10 01/15] dt-bindings: net: Introduce the
+ ethernet-connector description
+Message-ID: <8d0029bc-74b7-44bc-ae0b-606d5fd2d7c3@lunn.ch>
+References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
+ <20250722121623.609732-2-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722121623.609732-2-maxime.chevallier@bootlin.com>
 
-strcpy() does not perform bounds checking and can lead to buffer overflows
-if the source string exceeds the destination buffer size. In 
-print_autowrap(), replace strcpy() with snprintf() to safely copy the 
-prompt string into the fixed-size tempstr buffer.
+>  - The number of lanes, which is a quite generic property that allows
+>    differentating between multiple similar technologies such as BaseT1
+>    and "regular" BaseT (which usually means BaseT4).
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
----
- scripts/kconfig/lxdialog/util.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> +            mdi {
+> +                connector-0 {
+> +                    lanes = <2>;
+> +                    media = "BaseT";
 
-diff --git a/scripts/kconfig/lxdialog/util.c b/scripts/kconfig/lxdialog/util.c
-index 964139c87fcb..b34000beb294 100644
---- a/scripts/kconfig/lxdialog/util.c
-+++ b/scripts/kconfig/lxdialog/util.c
-@@ -345,8 +345,7 @@ void print_autowrap(WINDOW * win, const char *prompt, int width, int y, int x)
- 	int prompt_len, room, wlen;
- 	char tempstr[MAX_LEN + 1], *word, *sp, *sp2, *newline_separator = 0;
- 
--	strcpy(tempstr, prompt);
--
-+	snprintf(tempstr, sizeof(tempstr), "%s", prompt);
- 	prompt_len = strlen(tempstr);
- 
- 	if (prompt_len <= width - x * 2) {	/* If prompt is short */
--- 
-2.50.1
+This is correct when the port is Fast Ethernet. However, as you point
+out, now a days, the more normal case is 1G, with 4 lanes for BaseT.
+To avoid developers just copy/pasting without engaging brain, maybe
+add a comment about it being a Fast Ethernet port?
 
+	Andrew
 
