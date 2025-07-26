@@ -1,132 +1,146 @@
-Return-Path: <linux-kernel+bounces-746649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3006B12972
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:34:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A18B12974
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B69D4E84D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 07:34:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9765F1C87048
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 07:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9BC215F5C;
-	Sat, 26 Jul 2025 07:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC64215767;
+	Sat, 26 Jul 2025 07:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="khI36g8W"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gswPVrHk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8849720E033
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 07:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6B93770B;
+	Sat, 26 Jul 2025 07:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753515288; cv=none; b=pCp2As80r/1zOKzpuQM0b6P/mEb4G08ksW6/Hrit3wEGxZfHOH3i1apTUT2tkLrXhvIgqeTEWgqV6mDSRPri5YeEsLHQH9SRXtrqILl9UWk0TiX2xUpAz9Fv0lFz/ZR95I2Ig1wnGujRxadiLqAYVqkR48VG3NmuqTIsbcAFEnM=
+	t=1753515740; cv=none; b=EZ6f//1lrUZE+RcDD+z6wdJ2ue0iG89kKL1es9dkA9HHdOpDZ02yGWPYCxuG4gBWuBBygeJSVLXCKldWMhC/hg9ks3ODw1fat+5jpmm5njkBf1L40mHsLVlmSk1V7UfJOhbsYCE7WGn98wXxW+HCE+E9kg2sZk1+5mE6FaCWaZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753515288; c=relaxed/simple;
-	bh=FMNmStjOUWVtt7cOwV8Qlv+tumSg3tiV3l++SO5dGx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tNf79nGesxUxuPLEjyC1Vp4D5sWl6kyuwbxDbiOqpEGuFGwaYD7YLd3qR1aKtccbJYJB3BgkI67lkeaHzQa9KcmqrRXhuN+9AOjaGzL/x/HVxS9KlS82hHOpaUrAfGmgvtXlgB+T7t2pvY3cOuXtlV1btc9hcGU+dy1h862Cagw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=khI36g8W; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ab112dea41so1594830f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 00:34:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1753515283; x=1754120083; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FMNmStjOUWVtt7cOwV8Qlv+tumSg3tiV3l++SO5dGx4=;
-        b=khI36g8WBD5L5T58SbErP3gsvmWIvDAjpf/72tHfCOG+ZWf8GUkTHOIxZ/yP1k9mg4
-         1bG9x1mQOcsv6SKbEVWOn2dt71k3a5+Aax43Wts+R73VAviGHQ7SXLF1h6gqwa8VfBvJ
-         V4OpcUUxMQ/o6ZhN3FeZWix7X9LJ7nxL6mrBVZ48OhCWwS1f89ZCV0raWbW53QbwEWUX
-         Bg+wxxlFMdZyczs8JFXFR8Y0gm2I7JVhM/fe3866H4qC7Cst6jGqSQg52I4PIt5P6XOK
-         XnznRJfbtV30s6EjYxnx0v16twlEvT9tGgGrkvAL+rUnBeFrPkopntpaUuGuWlTsj/Sp
-         Ea4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753515283; x=1754120083;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FMNmStjOUWVtt7cOwV8Qlv+tumSg3tiV3l++SO5dGx4=;
-        b=Ef+ntIpwMlfr1tAmTgKs9+dPoQPbCzrTveKnaArMl7c9rB6PKuJtG0s0UdDWCELw0V
-         JeNRm8QqJi50khujK5YwCYf/kD85wiXMKfWy+2TLUOYLCe+jNp/4ZbNfSB0/+O/3icNf
-         AK7iPhOqwVfGIWHNU6dtn9Q//cea9gRhl9VLTlasnfIWJjAbx1Am2sXBCrBdO/8sJwq8
-         ftaiXYSaYC4towB+/889g0KZjx86BbYHGGP0guomY9LC+CIj/xb0eems2nhC0fDullrq
-         P0XYsO7/KvKJyK2A99YyHA2HoF1ob6QehzTHSh1FXIEnukLJxXMBpCVuTy+SsCLUAejy
-         3tBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyT/oorm3T5H2HjSChfkvswNG6YU3ZU8SO0ptN14iWEiFMjKQxaQyVi6tcbjR74riEELXOyg9ZLQRtixg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdR8N2ZnghtkaP8czqI6hh7AznJiEahwkhA+2/BjZIoKSTXulK
-	kQgA4BGAf+WZxif4QdbPQMCAT30CuFiyoySQW+vQgqBpvbOKcATxU3sySTWSiS4ZF3k=
-X-Gm-Gg: ASbGncsIAT9n80GcCtu7rJv3lf0Tu3vnst8T3jgYmQxXEnID+VjbZp7RPl76O4rMtxE
-	k1waqM0hZciP3YsVN2tcPg6ynkhrb7z1WYnJtHN2tYOS8eeXdw5sb61pVic2hJkRxdbMv5hDigd
-	NVt79p2WfOfiJ2jtjxZyiecEJG9U7nqFgviFGqjUQPozsBnxHQcyp8eZFyXp2FrQY3CzX4GHcYe
-	pD1cqyG1WjgAYwXZwD5L8B+fY/5jHxxi9lr7mlPgODvoh/epNfkYKToBplRXAH4yFt8YRvsf6jZ
-	xNrqCU/BNikfmVCw/0lBBO7lMSBmUM4eqgAY80mQMALkRlSnUZufA110vZ88TASagpW8scRJhON
-	+goKvBdL+qXpXrGdcy0Dxjuaz8mEQJRFvXh9HyPQiqBYjM9tqSC2lU0mX8ZnSsQWdMK7v59cPdT
-	aKO5qWPxHHFXaAKKUi+204
-X-Google-Smtp-Source: AGHT+IGS1R1BLd51LhebYLPR71ELpRpxxT4MPtlRkigqh7295cnHvdHNyjtNpQNmAZYcVC1/uPyNUw==
-X-Received: by 2002:a5d:588e:0:b0:3a4:d9fa:f1ed with SMTP id ffacd0b85a97d-3b776728f9dmr3020420f8f.13.1753515283332;
-        Sat, 26 Jul 2025 00:34:43 -0700 (PDT)
-Received: from ?IPV6:2a02:1807:2a00:3400:aad:4a11:7705:31c4? ([2a02:1807:2a00:3400:aad:4a11:7705:31c4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778f1e760sm1991506f8f.69.2025.07.26.00.34.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Jul 2025 00:34:42 -0700 (PDT)
-Message-ID: <bbe1ea08-23bf-43dc-960d-bb8a214b65fa@hammernet.be>
-Date: Sat, 26 Jul 2025 09:34:41 +0200
+	s=arc-20240116; t=1753515740; c=relaxed/simple;
+	bh=JH80ui6HzMZrysAZcLLCGsZmU6VvUIi+CTfUhFaghYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/2Fe+c3/j0fvNxmJl0jm+O+GvK+uW4IYP2ONcWexw3EgcksRDrgNPlft+icrZCGOUleU7us2kNX90w8bmCmBdbPV495DfiAgiMXZSSnkOgSDv/zhhYfWY7M9N57plD6YSktLi2eIVrMMwq5TjGS6Z6H+hmM0zWow8iOK5hwkrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gswPVrHk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE1BAC4CEED;
+	Sat, 26 Jul 2025 07:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753515738;
+	bh=JH80ui6HzMZrysAZcLLCGsZmU6VvUIi+CTfUhFaghYM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gswPVrHk05CTmMSr0rmQsIvvtZGLK84sbkhG7vujS1AtdBJA3iUrxjWoNK98NMpda
+	 ONzMzbP/rH/UKNn5AGjuowNFtCTTKJdWOGXj7+cXUBv4SjmXHMqXaZJ89BtyrLgtao
+	 sSgrF+ZyPF68pEsFAuSeuuJQHuOzMAPxqSA19FKpb4XI3RynqKvZ9IPmNqv5FW9t1t
+	 Itp5hGadOCbL7KVHwUT5/b25VhAxaXhNZif1/oxZZKHKJPwkfA8HoTwEF5HY7nWkCV
+	 GGzrb4UeOALjgC2TLEYJIW4g8y91Wkoc30JITbnWHVGq3pXn4NFuyACkQGvB1r09oS
+	 4LB9QaOFiYRwQ==
+Date: Sat, 26 Jul 2025 10:42:02 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Monk Chiang <monk.chiang@sifive.com>,
+	Kito Cheng <kito.cheng@sifive.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
+	llvm@lists.linux.dev, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, cleger@rivosinc.com, samitolvanen@google.com,
+	apatel@ventanamicro.com, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, charlie@rivosinc.com,
+	samuel.holland@sifive.com, bjorn@rivosinc.com, fweimer@redhat.com,
+	jeffreyalaw@gmail.com, heinrich.schuchardt@canonical.com,
+	andrew@sifive.com, ved@rivosinc.com
+Subject: Re: [PATCH 06/11] mm: Introduce ARCH_HAS_KERNEL_SHADOW_STACK
+Message-ID: <aISGypOAaDGaUZgd@kernel.org>
+References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
+ <20250724-riscv_kcfi-v1-6-04b8fa44c98c@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] checkpatch: validate commit tag ordering
-To: dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, joe@perches.com,
- corbet@lwn.net, apw@canonical.com
-Cc: skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, jeff.johnson@oss.qualcomm.com,
- akiyks@gmail.com, konstantin@linuxfoundation.org, krzk@kernel.org
-References: <20250724072032.118554-1-hendrik.hamerlinck@hammernet.be>
-Content-Language: en-US
-From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-In-Reply-To: <20250724072032.118554-1-hendrik.hamerlinck@hammernet.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724-riscv_kcfi-v1-6-04b8fa44c98c@rivosinc.com>
 
+On Thu, Jul 24, 2025 at 04:36:59PM -0700, Deepak Gupta wrote:
+> commit bcc9d04e74 ("mm: Introduce ARCH_HAS_USER_SHADOW_STACK") introduced
+> `ARCH_HAS_USER_SHADOW_STACK`. Introducing `ARCH_HAS_KERNEL_SHADOW_STACK`
+> so that arches can enable hardware assistance for kernel shadow stack.
+> 
+> If `CONFIG_DYNAMIC_SCS` or `CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK` are
+> selected, skip compiler flag `-fsanitizer=shadow-call-stack`.
+> 
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  Makefile   | 2 +-
+>  mm/Kconfig | 6 ++++++
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index 35e6e5240c61..7e3ecca9353d 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -987,7 +987,7 @@ LDFLAGS_vmlinux += --gc-sections
+>  endif
+>  
+>  ifdef CONFIG_SHADOW_CALL_STACK
+> -ifndef CONFIG_DYNAMIC_SCS
+> +ifeq ($(or $(CONFIG_DYNAMIC_SCS),$(CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK)),false)
+>  CC_FLAGS_SCS	:= -fsanitize=shadow-call-stack
+>  KBUILD_CFLAGS	+= $(CC_FLAGS_SCS)
+>  KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 781be3240e21..f295ea611cdb 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1367,6 +1367,12 @@ config ARCH_HAS_USER_SHADOW_STACK
+>  	  The architecture has hardware support for userspace shadow call
+>            stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
+>  
+> +config ARCH_HAS_KERNEL_SHADOW_STACK
+> +	bool
+> +	help
+> +	  The architecture has hardware support for kernel shadow call
+> +          stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
 
+nit: tab and two space for indentation of the help text
 
-On 7/24/25 09:20, Hendrik Hamerlinck wrote:
-> Modified the checkpatch script to ensure that commit tags (e.g.,
-> Signed-off-by, Reviewed-by, Acked-by, Tested-by, etc.) appear in the
-> correct order according to kernel conventions [1].
-Hello all,
+> +
 
-Thank you for the feedback. I wasn’t aware that the tag ordering
-conventions used in the TIP tree are not universally followed across all
-kernel subsystems.
+I think both ARCH_HAS_USER_SHADOW_STACK and ARCH_HAS_KERNEL_SHADOW_STACK
+belong to arch/Kconfig rather than mm/Kconfig
 
-My motivation for this change came from a recent mistake I made in a patch
-submission, where I incorrectly placed a Fixes: tag after the
-Signed-off-by: line. I realized that checkpatch.pl didn’t flag this, and I
-thought a warning might be helpful, especially for newer contributors like
-myself.
+>  config ARCH_SUPPORTS_PT_RECLAIM
+>  	def_bool n
+>  
+> 
+> -- 
+> 2.43.0
+> 
 
-I now realize that my approach is too strict by trying to enforce an order
-for all tags. However, I still believe that a targeted warning could be
-useful. Another mentee I work with recently made the same mistake, so it
-may be a common pitfall.
-
-Is there a general consensus on placing the first Fixes: tag at the start
-of the tag sequence? If so, a warning might be helpful for newer
-contributors?
-
-I was still using checkpatch as that was how I initially learned it. I'll
-definitely look into using b4 as well.
-
-Kind regards,
-Hendrik
-
+-- 
+Sincerely yours,
+Mike.
 
