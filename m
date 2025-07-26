@@ -1,519 +1,164 @@
-Return-Path: <linux-kernel+bounces-746665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE158B129C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:08:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1363AB129CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7F91C84CA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:09:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 593377A6D6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745E82222C4;
-	Sat, 26 Jul 2025 09:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22952248B4;
+	Sat, 26 Jul 2025 09:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oFGnYF1l"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z+fh0C/P"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6437E21FF53
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32231C5F13;
+	Sat, 26 Jul 2025 09:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753520915; cv=none; b=kocDtMu9GmE0n9RLQKiy91HzPbyR5kvrmAAARhlS5398KwOnG480ZIo+VQb6KQCSmZT9fY2cwRZru//IvzszXDVs65JDjHX7XtYN5whQvz9OgNc69wrtL2Fq95zNgLSzCFxR0nJesbin+OxzIKzU7b3S4wGpY2qXZZD5d0TfnEo=
+	t=1753521034; cv=none; b=hjVp9CU3f7Vd50PbPJsv75WFd7MCWXqBMaGKLWJm1mInp6PFEoeR+P5biMAx5cbHWqqfd86ejtu8QFJi3eYxweKWIjfyiTQaFIt6PazA6IVnBR+0bO1lxLHouqPmmDj3NqbtYb2XqpDybJni82QLCMdibeOBPEO3cUdYoWZ+wUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753520915; c=relaxed/simple;
-	bh=FE3WZyQL2TX3gBjYWnYTm9E15XY1XvRbety1clNKIzo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zl61Qp64X5JNM6NohpuXpFCv8BUB8IT//SIsF/kMeoiXKTwYxeNZTPNe8k+UNkIgFQp5WulXdtumxoDUsuzz28cBLwjJTHukG8hXCu2nsAAEj85kETQiRmWXuo6e9H810OscHjPeW7KxNag0TxtEeTgEvYhhSeH8zs36ylvDpC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oFGnYF1l; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7e2c920058fso399177085a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 02:08:33 -0700 (PDT)
+	s=arc-20240116; t=1753521034; c=relaxed/simple;
+	bh=SfggtfGe7PB58v5DZwweW+m6rEGnnfzyw02zI8O1v5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nAsaQEPW2bbzbd4li4IBaEWU7kBJP8jDOBmJbal2Yd+yqBy5AL+HbiLIYDYH0Y/cMOfgD0P2oWe4ynFCQDFfpBx8PtH2G8Kr/GrGvfnXILRUMCxTRviSIUF2OYydobsImZOTTrtjN2if3kRlnc0n03LyFzVCXWiPILlBy8VZWFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z+fh0C/P; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74b54af901bso1947751b3a.2;
+        Sat, 26 Jul 2025 02:10:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753520912; x=1754125712; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+0GMB3ht26w9bk3pnzlfrF/se62f9iKVczN6iR91aQU=;
-        b=oFGnYF1l1bIDZ80/anakS5j6IzLOEoPONfBDUTId41fvoKgSM2HRLZ6+rVeR1DF/zp
-         30JWXFD0OcepVvxK7v8XuR338gZP1L3Y1yx2AR1eOGTb6tHBwREI7N4i9lHPPS4dnAkC
-         D/493+T9+gEPYhy2KaNchIA8xtnLkcuVvPMIwgNxC2A/0pTYFJfhiUTcSnkDQwO56xyg
-         WAU7D8wk6Vsa1iL+SHhKUB9q4PKT/hI4cSGeqDvZ0BG37Opw0gg4A40ll5aasYe4RNFp
-         4c74B8ZrKikurC+SQhIbIEYOL5QU+h4f97Gn/YweBGpGhXZix07nonYR5uqF3N30CDjj
-         VuXQ==
+        d=gmail.com; s=20230601; t=1753521032; x=1754125832; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WRyjZ/Xf4lOxF8UOomre3BOUYmwqK2BErDCowQX7LUU=;
+        b=Z+fh0C/Px5RUEz2D/4pH9WdRcCWE6EqNvdR2D6vFwYIycgESmoYolRgNCdt8GBv/Cy
+         8p8K+dt2TlfMIt3pCokcFIbxke/Nz1RQRJ8wEDHV7rQJcYF9g7zWSINevxkJHLb/ENHS
+         DZj0qNP4xcO68Fil3JR2ze0IZElEKEoP1HNdeO0b3VgFLn0+JPzUIsgtEqq2loZ8mlW7
+         eQSzsJ2eRSmjSKMDlDG/LaLgZRvwJ/iWKl+2qwU1vu+kYT6VVntx+jSEkAwToIVJsaig
+         7uxVjirGSUO8TmVkcDFXfz50mxITNJ+EQWcRel1GAfNHDz+92f8KDCJMvY+Fd16n0elr
+         ImfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753520912; x=1754125712;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753521032; x=1754125832;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+0GMB3ht26w9bk3pnzlfrF/se62f9iKVczN6iR91aQU=;
-        b=ihhFLfvRd5MkDk1dsY0ew2Q+VY8vdJU+mLF42n+Y/dfVvNHfFSFLnzhc4GzdBP6poG
-         38j3QulL1ulUGgQmlHwmCm8Uoqc6b+ZOU6xje6Ic0wzXKOGOhvmOXSmF9xXiDr2voaW8
-         dVaFWXDChCRbz0rKn6mFN6HfjGE1efA5O106elb5EdsdNRMEnahefGxcFWOHBLAPFrPG
-         cOJ17XftMmcZcpoZHEEmj3u33bAOxzsWa8048X3Ux59SPZYV4aHoQ87beTK6YX9tnp2Q
-         uMXMbAzemYgnfnQr4pszo4uoNyZ7m3cQ8Nfa+9mnnmOBC7Bx7dcdTcCNLUvV0IB+qYbH
-         M9Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQcMblylV3bSa56vnpXeoRVKM8A40yD6mM1TVS1N8CBxdpDQNP3kdnDRddWKya7en+3dV6Hg/zAmf51RY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyyXC4n0FaVlsICwlBgDYreprZuYtKNxiNOPGW3HKBT47e/NZQ
-	DU3JKeO+v59DJQ1hAtKIITYHUrfjY6S8rtYRxbS1uNl8oNKIO3S5e6HIjc4A6UcQI6LkDu0CzvG
-	0jra0DknUuq2X7kNFYIpK+wvhb/BSXNDuxevJRxs/
-X-Gm-Gg: ASbGnctjRZarIb4Jb28D7clLBpgbQOKPgZZc/tGXF8e7NWJEjNGKt15ItrQBX47BFGK
-	R1gs7KlFg1YkbKGif90rbd5aEiLr3DARJLIzQCc6r81GHg/koSas1TnjfR9j8s4CXre2pk/iY0N
-	umGrwegExthWWXFfz0RB2bOmI7dwDADNeANE9HKe6zt8dkfIIYa01nfMRoFOSIL15EX13dwx+3e
-	lwCeoSP
-X-Google-Smtp-Source: AGHT+IHzeoVvOsILHZKC+EZ2N92jCp5skq/8Dc9MELWpvNbcvDOh1q6g9CCEw9YoliQJD9X7A7gI/ENH+nYS+e7ReTQ=
-X-Received: by 2002:a05:6214:e89:b0:6fa:abd2:f2bb with SMTP id
- 6a1803df08f44-7071fe1bb1dmr50656846d6.8.1753520911680; Sat, 26 Jul 2025
- 02:08:31 -0700 (PDT)
+        bh=WRyjZ/Xf4lOxF8UOomre3BOUYmwqK2BErDCowQX7LUU=;
+        b=IgHPlnGfCAASkDUgNC+QStj1Ldghy/oZVUbKGZ+Iq7BaXFbXxd23Qq/Lr2XNCdA+UH
+         lioaBXBkfD3yXTwOiJEShmvdC2kLM98M0homSnjklr4L4i8CqdtTEZGxi2RmL5tjWpSn
+         w8qKoXP2oOe4Ofy2ZWcJUuGKC6P2OnKET+wccGoU/RmWSTwwR6BF3q3QRH25mc5p0Aqe
+         oHoyNezAzmGdtkrM8KBR94UZBN5dSwwTEttk2wY/o5p8cXG6Xvf/1Y/4ca/hJUHXn8d3
+         MfbK30FFuSVbgpj0BqtdlpeHNQRNqJkd/M2Vt71/85uZqn7fXOoKQOFDi64U/qMGwEM1
+         z+Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgVWWE49GvSNaTxCvzcOVRTe5jzY4ipC16007woNSo4GbFY2AMdtTC5fy4oLV76zsoJAtUJNXpOhGu7ubb@vger.kernel.org, AJvYcCXIkHeHFLTD6tMNBaAObyjYkbgPI1tPymel3k75mYve1quEdBiUm0eCo6YED6ziPydKwqqBTkNl+36vQtyw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMVVnVp588TBdlQ6KucP75n/LRQBCsywGh6hWmIge/asvqlQEc
+	ljzpdJCsvAi1SX/SSb2+VDfbbwlLGE4a/pGXnMDCsP5IpuXNm2PxKneJ
+X-Gm-Gg: ASbGnct5J83LlGhx6DntW9wyhzh+ja3M2gLPw1UKRI5c6UU+5zvNKOG6JvUIQfMdjy4
+	QKgS+zX0Njai92wXc4A+aN9nZ4wwgv5z0J+DNl7Vx/R0uwkGibWCroaoQOx2qJtBBLJeNeOFynj
+	yPG8I7PD428Fh7yZ8/ItQEwS+F8yvTeN8hz8rdJpILjf7wCrxaXzUcAiWwwT3gE2Cx+TsujKBUl
+	YP/udM7fWaolUR1pZW9CXlmi6Z3LuE8G5Ke0SgVVuj9U60r9aE3cNvasTtp0hDjssC45uBFvUEN
+	Qj859Forl99ENxAl20BGDeBTdZwT23QeQP6duZQBbZyVO9JmXw/b5A14rSs2ppmMVGv9Rp52oV1
+	jro53SF1ythJUEOZ1X/hAEw2csYfGEI0t9l0=
+X-Google-Smtp-Source: AGHT+IGZS6pTHqZ5rb7hDVsSbzXKvhMO0G9S2a0CiiBuFqmzrdodLqGIhuUumFEtrki7ydwMiFBtZw==
+X-Received: by 2002:a05:6a20:939d:b0:232:4a42:dfd1 with SMTP id adf61e73a8af0-23d701e8b28mr7433231637.36.1753521031959;
+        Sat, 26 Jul 2025 02:10:31 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f4ad5a7sm1056088a12.0.2025.07.26.02.10.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Jul 2025 02:10:31 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: brauner@kernel.org,
+	djwong@kernel.org,
+	dave.hansen@linux.intel.com
+Cc: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH] iomap: move prefaulting out of hot write path
+Date: Sat, 26 Jul 2025 17:09:56 +0800
+Message-ID: <20250726090955.647131-2-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717085156.work.363-kees@kernel.org>
-In-Reply-To: <20250717085156.work.363-kees@kernel.org>
-From: David Gow <davidgow@google.com>
-Date: Sat, 26 Jul 2025 17:08:19 +0800
-X-Gm-Features: Ac12FXwd4cC11bTIu7kCuOCDE-7bp3o4bxMHb62MGMxnOmu8Kw8li7Ytn1ESexg
-Message-ID: <CABVgOSkf+v6vGvUCQ6eo3_RXZvmzRpLgA1PmpQ-Bd90iD4yzZA@mail.gmail.com>
-Subject: Re: [PATCH] seq_buf: Introduce KUnit tests
-To: Kees Cook <kees@kernel.org>
-Cc: Rae Moar <rmoar@google.com>, Tamir Duberstein <tamird@gmail.com>, 
-	Eric Biggers <ebiggers@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Petr Mladek <pmladek@suse.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000001a28ec063ad167cf"
+Content-Transfer-Encoding: 8bit
 
---0000000000001a28ec063ad167cf
-Content-Type: text/plain; charset="UTF-8"
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-On Thu, 17 Jul 2025 at 16:52, Kees Cook <kees@kernel.org> wrote:
->
-> Add KUnit tests for the seq_buf API to ensure its correctness and
-> prevent future regressions.
->
-> The tests cover the following functions:
-> - seq_buf_init()
-> - DECLARE_SEQ_BUF()
-> - seq_buf_clear()
-> - seq_buf_puts()
-> - seq_buf_putc()
-> - seq_buf_printf()
-> - seq_buf_get_buf()
-> - seq_buf_commit()
->
-> $ tools/testing/kunit/kunit.py run seq_buf
-> =================== seq_buf (9 subtests) ===================
-> [PASSED] seq_buf_init_test
-> [PASSED] seq_buf_declare_test
-> [PASSED] seq_buf_clear_test
-> [PASSED] seq_buf_puts_test
-> [PASSED] seq_buf_puts_overflow_test
-> [PASSED] seq_buf_putc_test
-> [PASSED] seq_buf_printf_test
-> [PASSED] seq_buf_printf_overflow_test
-> [PASSED] seq_buf_get_buf_commit_test
-> ===================== [PASSED] seq_buf =====================
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> I used an LLM to produce this; it did pretty well, but I had to help it
-> get the Kconfig and make targets in the right places, and I tweaked some
-> of the edge cases and added a bit more (perhaps redundant) state checking.
->
+Similar to commit 665575cff098 ("filemap: move prefaulting out of hot
+write path"), there's no need to do the faultin unconditionally. It is
+more reasonable to perform faultin operation only when an exception
+occurs.
 
-This patch looks good to me. A couple of very minor notes below, but
-nothing I think is a big issue.
+And copy_folio_from_iter_atomic() short-circuits page fault handle logics
+via pagefault_disable(), which prevents deadlock scenarios when both
+source and destination buffers reside within the same folio. So it's
+safe move prefaulting after copy failed.
 
-I don't have much to say on the LLM use -- it definitely looks better
-than the last time I tried it. If something like Sasha's suggestion
-for how to tag LLM contributions[1] goes through, I do think noting
-what was used could be a useful thing to have.
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+ fs/iomap/buffered-io.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-Reviewed-by: David Gow <davidgow@google.com>
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index fb4519158f3a..7ca3f3b9d57e 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -964,21 +964,6 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 		if (bytes > iomap_length(iter))
+ 			bytes = iomap_length(iter);
+ 
+-		/*
+-		 * Bring in the user page that we'll copy from _first_.
+-		 * Otherwise there's a nasty deadlock on copying from the
+-		 * same page as we're writing to, without it being marked
+-		 * up-to-date.
+-		 *
+-		 * For async buffered writes the assumption is that the user
+-		 * page has already been faulted in. This can be optimized by
+-		 * faulting the user page.
+-		 */
+-		if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
+-			status = -EFAULT;
+-			break;
+-		}
+-
+ 		status = iomap_write_begin(iter, &folio, &offset, &bytes);
+ 		if (unlikely(status)) {
+ 			iomap_write_failed(iter->inode, iter->pos, bytes);
+@@ -992,6 +977,12 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 		if (mapping_writably_mapped(mapping))
+ 			flush_dcache_folio(folio);
+ 
++		/*
++		 * copy_folio_from_iter_atomic() short-circuits page fault handle
++		 * logics via pagefault_disable(), to prevent deadlock scenarios
++		 * when both source and destination buffers reside within the same
++		 * folio (mmap, ...).
++		 */
+ 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
+ 		written = iomap_write_end(iter, bytes, copied, folio) ?
+ 			  copied : 0;
+@@ -1030,6 +1021,10 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 				bytes = copied;
+ 				goto retry;
+ 			}
++			if (fault_in_iov_iter_readable(i, bytes) == bytes) {
++				status = -EFAULT;
++				break;
++			}
+ 		} else {
+ 			total_written += written;
+ 			iomap_iter_advance(iter, &written);
+-- 
+2.49.0
 
--- David
-
-[1] https://lore.kernel.org/all/20250725175358.1989323-1-sashal@kernel.org/
-
-> Cc: David Gow <davidgow@google.com>
-> Cc: Rae Moar <rmoar@google.com>
-> Cc: Tamir Duberstein <tamird@gmail.com>
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Cc: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Petr Mladek <pmladek@suse.com>
-> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> ---
->  lib/Kconfig.debug         |   9 ++
->  lib/tests/Makefile        |   1 +
->  lib/tests/seq_buf_kunit.c | 205 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 215 insertions(+)
->  create mode 100644 lib/tests/seq_buf_kunit.c
->
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index cf05bf1df983..048efc3183d5 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2470,6 +2470,15 @@ config SCANF_KUNIT_TEST
->
->           If unsure, say N.
->
-> +config SEQ_BUF_KUNIT_TEST
-> +       tristate "KUnit test for seq_buf" if !KUNIT_ALL_TESTS
-> +       depends on KUNIT
-> +       default KUNIT_ALL_TESTS
-> +       help
-> +         This builds unit tests for the seq_buf library.
-> +
-> +         If unsure, say N.
-> +
-
-FYI: Checkpatch complains a bit that this is too short a description.
-It doesn't bother me much, though:
-WARNING: please write a help paragraph that fully describes the config
-symbol with at least 4 lines
-
->  config STRING_KUNIT_TEST
->         tristate "KUnit test string functions at runtime" if !KUNIT_ALL_TESTS
->         depends on KUNIT
-> diff --git a/lib/tests/Makefile b/lib/tests/Makefile
-> index 84b15c986b8c..fa6d728a8b5b 100644
-> --- a/lib/tests/Makefile
-> +++ b/lib/tests/Makefile
-> @@ -36,6 +36,7 @@ obj-$(CONFIG_OVERFLOW_KUNIT_TEST) += overflow_kunit.o
->  obj-$(CONFIG_PRINTF_KUNIT_TEST) += printf_kunit.o
->  obj-$(CONFIG_RANDSTRUCT_KUNIT_TEST) += randstruct_kunit.o
->  obj-$(CONFIG_SCANF_KUNIT_TEST) += scanf_kunit.o
-> +obj-$(CONFIG_SEQ_BUF_KUNIT_TEST) += seq_buf_kunit.o
->  obj-$(CONFIG_SIPHASH_KUNIT_TEST) += siphash_kunit.o
->  obj-$(CONFIG_SLUB_KUNIT_TEST) += slub_kunit.o
->  obj-$(CONFIG_TEST_SORT) += test_sort.o
-> diff --git a/lib/tests/seq_buf_kunit.c b/lib/tests/seq_buf_kunit.c
-> new file mode 100644
-> index 000000000000..74648dbda13f
-> --- /dev/null
-> +++ b/lib/tests/seq_buf_kunit.c
-> @@ -0,0 +1,205 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * KUnit tests for the seq_buf API
-> + *
-> + * Copyright (C) 2025, Google LLC.
-> + */
-> +
-> +#include <kunit/test.h>
-> +#include <linux/seq_buf.h>
-> +
-> +static void seq_buf_init_test(struct kunit *test)
-> +{
-> +       char buf[32];
-> +       struct seq_buf s;
-> +
-> +       seq_buf_init(&s, buf, sizeof(buf));
-> +
-> +       KUNIT_EXPECT_EQ(test, s.size, 32);
-> +       KUNIT_EXPECT_EQ(test, s.len, 0);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_EQ(test, seq_buf_buffer_left(&s), 32);
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 0);
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-> +}
-> +
-> +static void seq_buf_declare_test(struct kunit *test)
-> +{
-> +       DECLARE_SEQ_BUF(s, 24);
-> +
-> +       KUNIT_EXPECT_EQ(test, s.size, 24);
-> +       KUNIT_EXPECT_EQ(test, s.len, 0);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_EQ(test, seq_buf_buffer_left(&s), 24);
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 0);
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-> +}
-> +
-> +static void seq_buf_clear_test(struct kunit *test)
-> +{
-> +       DECLARE_SEQ_BUF(s, 128);
-> +
-> +       seq_buf_puts(&s, "hello");
-> +       KUNIT_EXPECT_EQ(test, s.len, 5);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-
-My gut feeling seeing this was that we should test that
-seq_buf_clear() also clears the overflow flag, though the separate
-overflow tests below all do seem to test that, so it's probably
-redundant.
-
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello");
-> +
-> +       seq_buf_clear(&s);
-> +
-> +       KUNIT_EXPECT_EQ(test, s.len, 0);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-> +}
-> +
-> +static void seq_buf_puts_test(struct kunit *test)
-> +{
-> +       DECLARE_SEQ_BUF(s, 16);
-> +
-> +       seq_buf_puts(&s, "hello");
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 5);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello");
-> +
-> +       seq_buf_puts(&s, " world");
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 11);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world");
-> +}
-> +
-> +static void seq_buf_puts_overflow_test(struct kunit *test)
-> +{
-> +       DECLARE_SEQ_BUF(s, 10);
-> +
-> +       seq_buf_puts(&s, "123456789");
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 9);
-> +
-> +       seq_buf_puts(&s, "0");
-> +       KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 10);
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "123456789");
-> +
-> +       seq_buf_clear(&s);
-> +       KUNIT_EXPECT_EQ(test, s.len, 0);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-> +}
-> +
-> +static void seq_buf_putc_test(struct kunit *test)
-> +{
-> +       DECLARE_SEQ_BUF(s, 4);
-> +
-> +       seq_buf_putc(&s, 'a');
-> +       seq_buf_putc(&s, 'b');
-> +       seq_buf_putc(&s, 'c');
-> +
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 3);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "abc");
-> +
-> +       seq_buf_putc(&s, 'd');
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "abc");
-> +
-> +       seq_buf_putc(&s, 'e');
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
-> +       KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "abc");
-> +
-> +       seq_buf_clear(&s);
-> +       KUNIT_EXPECT_EQ(test, s.len, 0);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-> +}
-> +
-> +static void seq_buf_printf_test(struct kunit *test)
-> +{
-> +       DECLARE_SEQ_BUF(s, 32);
-> +
-> +       seq_buf_printf(&s, "hello %s", "world");
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 11);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world");
-> +
-> +       seq_buf_printf(&s, " %d", 123);
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 15);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world 123");
-> +}
-> +
-> +static void seq_buf_printf_overflow_test(struct kunit *test)
-> +{
-> +       DECLARE_SEQ_BUF(s, 16);
-> +
-> +       seq_buf_printf(&s, "%lu", 1234567890UL);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 10);
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "1234567890");
-> +
-> +       seq_buf_printf(&s, "%s", "abcdefghij");
-> +       KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 16);
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "1234567890abcde");
-> +
-> +       seq_buf_clear(&s);
-> +       KUNIT_EXPECT_EQ(test, s.len, 0);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
-> +}
-> +
-> +static void seq_buf_get_buf_commit_test(struct kunit *test)
-> +{
-> +       DECLARE_SEQ_BUF(s, 16);
-> +       char *buf;
-> +       size_t len;
-> +
-> +       len = seq_buf_get_buf(&s, &buf);
-> +       KUNIT_EXPECT_EQ(test, len, 16);
-> +       KUNIT_EXPECT_PTR_NE(test, buf, NULL);
-> +
-> +       memcpy(buf, "hello", 5);
-> +       seq_buf_commit(&s, 5);
-> +
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 5);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello");
-> +
-> +       len = seq_buf_get_buf(&s, &buf);
-> +       KUNIT_EXPECT_EQ(test, len, 11);
-> +       KUNIT_EXPECT_PTR_NE(test, buf, NULL);
-> +
-> +       memcpy(buf, " worlds!", 8);
-> +       seq_buf_commit(&s, 6);
-> +
-> +       KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 11);
-> +       KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-> +       KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hello world");
-> +
-> +       len = seq_buf_get_buf(&s, &buf);
-> +       KUNIT_EXPECT_EQ(test, len, 5);
-> +       KUNIT_EXPECT_PTR_NE(test, buf, NULL);
-> +
-> +       seq_buf_commit(&s, -1);
-> +       KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&s));
-> +}
-> +
-> +static struct kunit_case seq_buf_test_cases[] = {
-> +       KUNIT_CASE(seq_buf_init_test),
-> +       KUNIT_CASE(seq_buf_declare_test),
-> +       KUNIT_CASE(seq_buf_clear_test),
-> +       KUNIT_CASE(seq_buf_puts_test),
-> +       KUNIT_CASE(seq_buf_puts_overflow_test),
-> +       KUNIT_CASE(seq_buf_putc_test),
-> +       KUNIT_CASE(seq_buf_printf_test),
-> +       KUNIT_CASE(seq_buf_printf_overflow_test),
-> +       KUNIT_CASE(seq_buf_get_buf_commit_test),
-> +       {}
-> +};
-> +
-> +static struct kunit_suite seq_buf_test_suite = {
-> +       .name = "seq_buf",
-> +       .test_cases = seq_buf_test_cases,
-> +};
-> +
-> +kunit_test_suite(seq_buf_test_suite);
-> --
-> 2.34.1
->
-
---0000000000001a28ec063ad167cf
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-jmkLAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFBp5bTxrTm/d
-WMmRETO8lNkA4c7fMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBF
-tO3/N2l9hTaij/K0xCpLwIlrqpNo0nMAvvG5LPQQjSeHnTh06tWTgsPCOJ65GX+bqWRDwGTu8WTq
-c5ihCNOikBs25j82yeLkfdbeN/tzRGUb2RD+8n9I3CnyMSG49U2s0ZdncsrIVFh47KW2TpHTF7R8
-N1dri01wPg8hw4u0+XoczR2TiBrBOISKmAlkAi+P9ivT31gSHdbopoL4x0V2Ow9IOp0chrQQUZtP
-KBytLhzUzd9wIsE0QMNDbw6jeG8+a4sd17zpXSbBywIGw7sEvPtnBjMaf5ib3kznlOne6tuDVx4y
-QFExTCSrP3OTMUkNbpIdgzg2CHQ2aB8i8YsTZ8Q8Q8ztPJ+xDNsqBUeYxILLjTjxQQovToqipB3f
-6IMyk+lWCdDS+iCLYZULV1BTHSdwp1NM3t4jZ8TMlV+JzAyRqz4lzSl8ptkFhKBJ7w2tDrZ3BEXB
-8ASUByRxeh+pC1Z5/HhqfiWMVPjaWmlRRJVlRk+ObKIv2CblwxMYlo2Mn8rrbEDyfum1RTMW55Z6
-Vumvw5QTHe29TYxSiusovM6OD5y0I+4zaIaYDx/AtF0mMOFXb1MDyynf1CDxhtkgnrBUseHSOU2e
-MYs7IqzRap5xsgpJS+t7cp/P8fdlCNvsXss9zZa279tKwaxR0U2IzGxRGsWKGxDysn1HT6pqMDGC
-Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAUXA7LnOuRz2DvkWTeMc
-0TANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQgeftruAhbISvrsuaDynqY7WrOHQm7
-dB5JD3GdNx6vHI0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
-NzI2MDkwODMyWjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
-AQEBBQAEggEAIpR7sHuoTzPJLLCzoSTKNQCPcSYxVxKOA1YO9lznoLVN8297Fy02H/+WP8qVjsfx
-mDWvUH6TRSdL9Fok41WiB6HrfDsYkjjxJvewqYusVFjemFIkvHpG1RW4yMkBAH4I1tp52Y2AuC7f
-PEknFHv0BTl2JOR5Of1G1o/7zYCUE+acLQuQrRQT2qAatdHqmVteWu3TKgV+8AcsNkK/S49RZznv
-x6hFfVwOkPolkXIcazyxko6DTLuCJA6qV5vfm7HwH1ERHtq72QTvD6B4ZMChpMNePh56ZbYxB0JM
-J7CDPB1J35jVMNui+5WP2VCie2dfxjpguIcGcMGiCeme1qcJ/w==
---0000000000001a28ec063ad167cf--
 
