@@ -1,318 +1,189 @@
-Return-Path: <linux-kernel+bounces-746755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEBD2B12AD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:10:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059CFB12AE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43BE83B17A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:10:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEFCC188C0D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA38247287;
-	Sat, 26 Jul 2025 14:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FAB1CAA79;
+	Sat, 26 Jul 2025 14:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NyLMuQ29"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2060.outbound.protection.outlook.com [40.107.95.60])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ohBTbFBd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203621FDA;
-	Sat, 26 Jul 2025 14:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753539038; cv=fail; b=lXsyBUp95Al0SvWJXUtwOa5ipVAh8HKBGOQSc/DEw+tmi1LUQligcqgrKPs0KwsGsco9cEF6o60Dst1HLzrAQ56czkKfWZpdlPy1HA+6TkNQc/qFLb5PFwWfAJzAclt48cPC2xKEO38mHuh6sQtxUbdxoI6b3u7qMUHinCdwXfA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753539038; c=relaxed/simple;
-	bh=3sgrVhmArvVLzgtvN4qiHrEQQ6ZAFofqxhxH/HS2aDI=;
-	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
-	 In-Reply-To:MIME-Version; b=TUMjG5coextBVqR/dm+jmD1mP+tviwd7t3wx2aG6KdbugjltF1WGXfrpzbEUuvH9icDrrGVRBHbrylJpoQlv2NBVTDgWUrT6GMULtesIKJuB1lhVPTg5xSAs1lbNqZupimNj+rtJvM4YrnEqhybT6UY+VWnUT7sRoYR4LNWsgO8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NyLMuQ29; arc=fail smtp.client-ip=40.107.95.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FUUAZYuRvMywxYGNtXpHUWPaBq7g9gOGibpprAu82HNKXrtT2WAkbBUFDEVoZbIn38vuQvrg6FWy2eOYuR5EsCEKevdoMmHYOuSXIqU5XjFrt1H897YQgDEz5TNSPfnIgrOeThcKYhHKEZ4JKCJ8YHl2lIk8FnkZdySkBrsbVHievvtHvRQxMhE50aXOGlNL9w+u1Gxjs1qj6YVLf7u4k1/YV+7gd5s+9bPNTVDCavMQ09hyCXO1kePmhIn4kCe724IF6o247L2wJXLIJppjEgANY4FVX3hE4PzVtwnhsfQjZJsPL6jNHa4NLaGj2nFJ9ezSnFBn7QJJoPiesE0Sug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WJBCcnKv5cZnMie8X4T4X+Pp7HqxNyo/ddVLWTWsg2Q=;
- b=y1sQGl/FToi5n0tp1/iim2HVaifjs26Yu0VrrmISzqeZzRUfNMLts52TF5BMgVJJAZBEygV7+EgNkmxBDtZqFCleag9ApFhOcPuPahSEqsyXgWRU2uuZaqrkSAUmJiOK9hRjh8SaFB8vOXuHs/ixgLrBTwp5iWTPRhGqsHJM8WOl1727HJ8y/Mt2vHt1g0vUZGLtKwK2mLRyJbYBFuWp9bJEITkEKLReYzzRcs94K5DHUMTH/QZnJs4in4BxBsBMNC/Wt0rvhrJp5OeOz9ZNRnRP7730FimQ61PT8wd7eSX4h6RKNY/1Ep5k0nQ0iG0DNB5cGMmHtBrJC6HMuButtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WJBCcnKv5cZnMie8X4T4X+Pp7HqxNyo/ddVLWTWsg2Q=;
- b=NyLMuQ29mmUCxb5pYGgJ64uUEX1WhjSstxJq84untBUysQhDQUzTr5JIO0FuEODlIAdv0ESJ5K5zsZFeOpECI2e3LEl0OSWHyJ+KoRur7pcyHryZzEFIZt5H5OxOR3cybrGi7N6t7ZHRCdGIb5xxop5gxenUcnZkXiKaaVCFPa2BXuYX8nD4LnKpbAU7u+zl8usnF4GW9c7P7A+jD6Aj5BMLbxFzn47ooyF6ggGb0XblhObJRCBBvpqxkVKjg32GJ7T5TijGxLowidyl4584dfLxbrFFHDE0ONy/VDXOe1GtOC3+OogOUMOdaWCu7Fn6J9+lF6UjWT4oK3t7Zb4VCQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by PH7PR12MB6860.namprd12.prod.outlook.com (2603:10b6:510:1b6::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Sat, 26 Jul
- 2025 14:10:32 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8964.019; Sat, 26 Jul 2025
- 14:10:32 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 26 Jul 2025 23:10:26 +0900
-Message-Id: <DBM1PG1UD7WP.7BNZGU3B7YMH@nvidia.com>
-To: "Lyude Paul" <lyude@redhat.com>, "Abdiel Janulgue"
- <abdiel.janulgue@gmail.com>, <dakr@kernel.org>, <jgg@ziepe.ca>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Tamir Duberstein" <tamird@gmail.com>,
- "FUJITA Tomonori" <fujita.tomonori@gmail.com>, "open list"
- <linux-kernel@vger.kernel.org>, "Andrew Morton"
- <akpm@linux-foundation.org>, "Randy Dunlap" <rdunlap@infradead.org>,
- "Herbert Xu" <herbert@gondor.apana.org.au>, "Caleb Sander Mateos"
- <csander@purestorage.com>, "Petr Tesarik" <petr@tesarici.cz>, "Sui
- Jingfeng" <sui.jingfeng@linux.dev>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "Robin Murphy" <robin.murphy@arm.com>,
- <airlied@redhat.com>, "open list:DMA MAPPING HELPERS"
- <iommu@lists.linux.dev>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] rust: add initial scatterlist abstraction
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250718103359.1026240-1-abdiel.janulgue@gmail.com>
- <20250718103359.1026240-2-abdiel.janulgue@gmail.com>
- <d0b11f8578d4b39f4eb5c1de8f17afb382429192.camel@redhat.com>
-In-Reply-To: <d0b11f8578d4b39f4eb5c1de8f17afb382429192.camel@redhat.com>
-X-ClientProxiedBy: TYWPR01CA0026.jpnprd01.prod.outlook.com
- (2603:1096:400:aa::13) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DF42F2E;
+	Sat, 26 Jul 2025 14:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753539394; cv=none; b=aih5ndCrNKB8UR8gVPBc9B109MrrpZBDDGC4l6w4m22yUGmVMVISJZghpzfTiKXxOEoD8TrembAo7z+CQAHN79yDnqvu8FhdyZVy5xnYoVDZO/RJSdT3rFggIEO1L8Gq6jkZjZAl5soKWjbBDmNvg+zFVRN8WiPskjbfZcISbFc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753539394; c=relaxed/simple;
+	bh=OYw2EC4Nk6dVoHq79Zccvq1CMs8v3h7XOUD1SHwa/lU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hKcfGiLI4bCmEDHkS97RRxBECJDysD2Q3QC061E2UDpJnUJeOdjiypgjKSL0EHqaAy+Oe//vbtbWa6Hx6+8Ffk5OuDXsDh6tytS+kwcitG7XTPI+kU2Xwz0NCUFZyKoBj+aak1feGuASnWtRcH5KkcElxS7XRklG55BXY1Y1fv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ohBTbFBd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56QEFYHO025639;
+	Sat, 26 Jul 2025 14:16:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=m4WMh1
+	T5qEZ14i2wktI5urCi5smka4mqDvCq8eIjikc=; b=ohBTbFBdgfVA/EBXL19vJy
+	4ql/lkZQZAgqmNoJVkuAg+QdseOvuMbWYhjuS6egpYRSOH8hHGBPbJG597tqpWuK
+	cBZGHGH4vLewpfVSn4lFPhRizhoXroe6pCbPr1W3RFVWy7W4XEVFo3UrkVtCN8xk
+	E6gavcePKa9H0x0Zh42r5+V/F7iyeciMUzFdoULMwxVDl8dO87I0NBjHOdYbXdz+
+	iAO2B7ZCQA1ohUe6n7dsSL+r7mNPAn3fehr+9V+mXO67wLPRHo3b6zz/KqD5n1d5
+	g7hO7b6Msdkm8Y1b63ZXBWLhk0w26Oy3Bg6uDqfJAujRhvqUHseQ9esz7FsM1Jww
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qd1sfw3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Jul 2025 14:16:03 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56QEG2Xu026543;
+	Sat, 26 Jul 2025 14:16:02 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qd1sfvp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Jul 2025 14:16:02 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56QCIs5b005812;
+	Sat, 26 Jul 2025 14:15:51 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 484t2w174a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Jul 2025 14:15:50 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56QEFlRQ34865806
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 26 Jul 2025 14:15:47 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 12AF220043;
+	Sat, 26 Jul 2025 14:15:47 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4AA1620040;
+	Sat, 26 Jul 2025 14:15:44 +0000 (GMT)
+Received: from [9.43.49.31] (unknown [9.43.49.31])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 26 Jul 2025 14:15:44 +0000 (GMT)
+Message-ID: <12112eb1-3ece-4968-a277-4c035c7d0010@linux.ibm.com>
+Date: Sat, 26 Jul 2025 19:45:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH7PR12MB6860:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69384914-c4cb-403c-4a6c-08ddcc4e2d85
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?amVwb3NENUNscHZpSXZxcmtlbU05d0tMV2dOMFZYanpsS0hBb3hJcG9BR0h5?=
- =?utf-8?B?b3dUOE1XWnpWT1p4N0ViOUZLdVZrN0ZVODVPVzluRVRveEVka2k2Q09Uay9R?=
- =?utf-8?B?RlBHeG9wWWRjMDdlSzVYQ05EMGwycXFMbGpuZkc2NTVTSWJBRnRxMWJtSU1D?=
- =?utf-8?B?TTArSVViVzFnOTZ1K1lNRFo4dEN6a1ZlcHpqVjhveExGSVhZZXVkL2VyNk5B?=
- =?utf-8?B?dE9XdjlWMFpidmFoekN1a01idEhUbzdveU0rMmpPd3NCK28xT05Ddmk4ZGJi?=
- =?utf-8?B?TFk0eFJkUHJHVDFKaFNUK2JZYXduK0JDQXNLT3pRYTRFaSsyWHJGa2RqMWtW?=
- =?utf-8?B?dVBRRE1ETVhlQzdVK3NDTEROZ01YMjc3QkM5Yi9QL1JqVTl0dlp6T01YdjFy?=
- =?utf-8?B?SC95NjFIQjRZTkFYVmw2TkQ5aGw1UkdWQVpLdnczVGdnUW0ycnJlV0gwdWhy?=
- =?utf-8?B?eldYbjNhUlRUMzJwQU1Xcm0rMGtjbzNGaXJwNHNzMjFGL01jRTkrQWIvSjdG?=
- =?utf-8?B?bEduNTUrUlk5M3lVSnl5dlBVelVYWTlFVTQ1bXhJQWp5bXpKcTk0TVVVZDNP?=
- =?utf-8?B?alpSSCtHclQ4ejNvelVkKzR6TVBrcEs0ZXR0OElURm5iM1I5WFVxQkVMUzRX?=
- =?utf-8?B?SmRTNmV4alpJd0ZPYTM3Q1JrQW1xbFMzTXAydDVPWTNZWEdsT1RXa1V0UGU3?=
- =?utf-8?B?azRNekE5aFczNmh1cXFQT3BMWVpNNGY2eVlISXZJTnN5MXFPU0FHSHYzblRK?=
- =?utf-8?B?R3dHd2FuTnFueTNNMForK0ZFdmt4K01ZVnNmYzZtSm5UZ2lWL2x1QVo2Nkh5?=
- =?utf-8?B?STlIY2p4bkg3YitSU3poQXB4bE9FaXNJUTVYTm5EU2wyV1pCVVJxbHMvMVhS?=
- =?utf-8?B?eFYveEQ1NDVPNkVQa1ZCWjdaZmVyMHhDdzVuNWdQK3A0cTFEMDZsYUpGTUJN?=
- =?utf-8?B?MC9UdE96eFRyQ2lpMUpDMHBCZVdpUWtWQ0lGUFRsVUhLempNQ1Q3RS9qVmFj?=
- =?utf-8?B?dFZEbk5zVjFDNnVFRjNwcmhIVzZDOFV4aUJId3ZHMjVyWnJvYXRxWmxYZGhh?=
- =?utf-8?B?MUY0WVh3YlpQbFR1NE5OSFJYeUt1R2JlM2JkdDFucnp4ZlE5VThJRUFRcE1V?=
- =?utf-8?B?OUcxcllFTUswNUQyZGdoMFF4QTlUbklSZXJ3ZHlaQ2huUmRlckhvVFFsd2lJ?=
- =?utf-8?B?ZzRiRmxIanhOK1NZa2hXbjQ2akR2TzRPSjQraTkyM1pHQWNVQlduOENQMUpt?=
- =?utf-8?B?aFRzem5WK1B4V1MwWktpbi9hOTJHSktQa2VTTHl1MzJDcXkzekVHRGF5RGU5?=
- =?utf-8?B?RE5Sd2NBbjdlMSt3WEU1WG1RT2ZaV0FZRVRtWjFxVjNCVEIxK04yQnluNUht?=
- =?utf-8?B?RG9OaStEUkJGcWlHZDA0MXpaNWtLdm1vSHBibkRuRGdxc2RoQURUSWJGRGxU?=
- =?utf-8?B?WjNuRlIyc2xNZlZENGhjTkZJcXZxczE3blNERU0xdGd6MGVxRFdJOVhzQXRj?=
- =?utf-8?B?clRhL204TVJNZmMxL2JSdmE2VXdRd21YK1NvV0JNb2R5RE41eEw4VHlLQmhW?=
- =?utf-8?B?cVFQa0lidzlyQnBBbitRU084cEIrUWF0SFdpK1N1c09iMzRWSlNnVUtIenQr?=
- =?utf-8?B?RXJ0dzVTNGFPR0FWbU9rSExvMW9BbDB0czFWbFhUc2JvSEhxL2dhUnhBcHFn?=
- =?utf-8?B?SWpDczFmSGN2U20veUZuMnRqOTJuUnRYUWhRWlVqbGxvUkIrK2FYQk1VN3Zh?=
- =?utf-8?B?cGR2NmJzRG1qRE1QQVNGcDZKc0RkaEVYK0c3bjI0SnlGbGF6WVhseDZ5Sk8z?=
- =?utf-8?B?WXJnUjFCeEpJNThzTWxnNmpJSEdXbjdDZzlMTmk4cGJndWJ5Vmh3UnVlRVZG?=
- =?utf-8?B?dWtFbXZkSHZIQXdTUmkwbnVzSjJ6eWxwaFhZMndnK0lyRFdlbWQwUFA2T3p4?=
- =?utf-8?Q?YOtZ4Nm/L1w=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d0J5d1l5RXE0eGZFallnODNYYmtNYVlNdE9RcEVVVDIzT0gzUjBVT2Jld29J?=
- =?utf-8?B?U0VVNThmck1kZUlqd0dCU3QzZWxnNngxanRtek1YM3ZHTEwzazBaQXl3SnlX?=
- =?utf-8?B?NTk0TmY4TDJGMlRmNXJsM1ZWakk4U0xBMUppQ3hMTkI0d0ZscHRGQndRdlBK?=
- =?utf-8?B?SnFXUmx0bXA3RkNDRWFjR1B5TkROeUpKNjBHNUpVbi9STUhWR3IwcGlrcFkx?=
- =?utf-8?B?QmtSM3BFallQWnNWcllUaHNOdEFnekZTR3lXcU04NDNJd2V6bWZOL0lvN2NY?=
- =?utf-8?B?UzhjbVQxRmtYZjZpVURwOWJXM21Uck1icEFNRUJuWU1yZUU0cE1uT3E1dSth?=
- =?utf-8?B?RkwrWkZySGdqSnhTNkF5YVJydVJIOW01ejl1eVZwVE5DUGJ1aWU4UzdoakQ2?=
- =?utf-8?B?aEMzYUEvMlg5ejRLU1BQclIzcm92RzMxcysrMEx2cjBVL2kwUSt6RmNFN3Bs?=
- =?utf-8?B?V3VhZ3k0L2ZSV3J1cS9kZ1dySDROak82dmo2OUQ4Tkc4T1lreTdXb0I2Vm9S?=
- =?utf-8?B?MW9aV2FuQWJzUnhmN2kvaE9sbFF4cEp2SmpXd2FuQVRQTVFuY3ZhMHFoMVlo?=
- =?utf-8?B?b3dtM1RkcVhwenhRN1hTbkp0MFFHWmRuemhUZmxwc2pTOU85THZQdDVRbURJ?=
- =?utf-8?B?bjdnV21HT3FYTkJLb3lmTVBPYjdkZlRBU21OVjZHOThDMFo3K0I3eDB5U3pr?=
- =?utf-8?B?NjZrTUhsbHpTUXZHTVNpVXVRd2c4QjJvblNYcnhXU1hzRHUrWFNIV1VGam5i?=
- =?utf-8?B?eWNHZ0ZlQmJsSzFKZnIzaDdlSnYrTGhmVTk1VlJpMkhUZzNZWlVzaTk5RVdG?=
- =?utf-8?B?eEExcHpJWUFBRGY4cDJlUll4bnNQNS9JMGR2OU9ReE9GaEJrZlllQVdkMlEv?=
- =?utf-8?B?NVRqdityUnBUdkxOeGx3dlZJYkJ5TFU0azVubkdqMEFDTnJHTi9FbXJkTTN6?=
- =?utf-8?B?ZXhvWHVBTHJUUEdnSkZIY21Tb2EwYVVWL1FqelVIa3FxQzNoQXhuay9ha2JW?=
- =?utf-8?B?TzlpVmNOOFVNMWtwT2tsQy9RWG40QkJtWjZBOFUveGFPM0d6NXhMcmVBNGZB?=
- =?utf-8?B?Mmd2WGpFYTJySHY2cXFLWDJGaGtLM0ZVMjRUQXMyaTZLY3JoMEFNWGZocXRw?=
- =?utf-8?B?cXRwUkZlbGcyUWFFT0pUbjZLOGk5L1dMVm5nc0xWVkRuZGRIcllEckFIUC9D?=
- =?utf-8?B?V1liaG5nN3ExZWhCWklpRG5oYThpWUd4a3dDQzVDRzFjWHhoeHdSVTlkUVpw?=
- =?utf-8?B?OEtXOXJwUVFpdWF1K3pLZDZjQWw2L0FYNWpwTW9VbWdmMGd2d1d0Z1NENGRI?=
- =?utf-8?B?bjI0WUpqang4aG9TWksrUzA4RU9GU3BxVTBFczIrcDJENkVlUmkwV2NVekhq?=
- =?utf-8?B?aFJWMmdQTHZObWF0UVdEZVBUWEpyd0xhS2UrcmE5N2FaeGRaclJUNkVzZ3BL?=
- =?utf-8?B?S0VCNU5kNVJibHVkbUpzYnpGS0sxVGRKKzNrTnRZc3I1LzJPTTcxaDZ6bGZ0?=
- =?utf-8?B?TitjL1o5VWd3QWVvYWtFUW81UVduWGpuM2gvSG9MZlRvVlhQLzJZbW9tVUtm?=
- =?utf-8?B?VFVMb1hzZGQ5UFM3ZTRsa0tyNG85YWxnNFBUSHFSK09lZTR5NUMwS2RSelBP?=
- =?utf-8?B?QUdxUnJldUE3UTh5VnZWdmVvUCtQUHY5OEpWTUEzcVlzaGJsblFXaEp5UWlR?=
- =?utf-8?B?Z2VyRDBLRUgraDhYMHNGVjU1aUVVMzgxVndiK1A4TmdwTm12R1lDQ0prclZJ?=
- =?utf-8?B?N3JQNHM5VWpPR2dWVjEvaXJpRittNEcvRUhTVHdDNkdFWkw1VytyTGRPRERB?=
- =?utf-8?B?TjdUVStBc29sd2kyMkFNMzBCQ2t4TUJRNVlIZUZnT1JvMU0zWmtuVVB4Y3h2?=
- =?utf-8?B?a1RwQ2NvSUNBbEQzMkFZdDE5b1FLRFczRGdRZ1NuL0loRHd2L1BVSmRLZ0lN?=
- =?utf-8?B?bW5kMDJrSTFpcHFPdlp4aEY3QmVrT3NQSytOb2hORGs5Vzk3UWdGUjhoTTZ0?=
- =?utf-8?B?cGlid1hKaXJyaFNObytRajVaRVc1UlkvcGVEOXg0NGVHRmY3NXZrcjRkb2tK?=
- =?utf-8?B?eVI4L1RaSmQxNHRxcno2ZjhubUU1dUNZQ1BNTnpJTGt3ZHQySkUwUENmUHh6?=
- =?utf-8?B?M3RCY2NSd0p1aGxBd1dXcE5LTkJVVmtpMTBtZDhLNTlrNHFSaVp2MUo3eERz?=
- =?utf-8?Q?QxmEqRXNA7+kpX3Ldo7TlVJ0QnKoT8A7gpknNIfMAXig?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69384914-c4cb-403c-4a6c-08ddcc4e2d85
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2025 14:10:32.1793
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wOwsWyml73/HSdXpHwiYFBF4jEyxcWel5qvTTBRht8Yq6DAdgtaxAgfLSfzrNFjPYgMh7/OQBOPqZ1RqeDJSLw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6860
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] powerpc/fprobe: fix updated fprobe for
+ function-graph tracer
+To: Aditya Bodkhe <adityab1@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, rostedt@goodmis.org, mhiramat@kernel.org,
+        mark.rutland@arm.com, venkat88@linux.ibm.com
+References: <20250722085648.1640-1-adityab1@linux.ibm.com>
+ <20250722085648.1640-2-adityab1@linux.ibm.com>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <20250722085648.1640-2-adityab1@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: zHR_0VfeDZSOBo--V9nLxe7u8hifTIlQ
+X-Proofpoint-ORIG-GUID: 23MutpeS0dypybJRuzXv5GGf0hz0rw1e
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI2MDEyNSBTYWx0ZWRfX0z+Cr3N/g3n3
+ 9SLuy9MwMXfz/J54Si9X9iM5yO4UIgX33J6BP41iTvWaEOjqPuvmGMjesAWSAVL0yXAwDhDOAxT
+ mdmOmZsSN7Ax87uHycwysDcm37m82gv1JP6UQvoYFRJT+B27xbIqysHnunil5ly9JV/MvfDElfy
+ 5u2GtXnPCB8a/e/UC4BrrS6wkEoRWuflpDwupERgu3WDSHVxcp2hdePyUwPFw/amMW9JXndJWm4
+ UCzgUU2cKZHVp7gZlP85Xmc+m2r0MhmqiXrl6R6/G0Xz/je9XboHBu2TRR7emWXSh/1ancXqCIE
+ qQzc/HViU7xr//T5q3mP0lEGTyn3xiSYXVEMQwkBa1PdoLQHGoj04oZRxFQLF8/k+cCjp0km56D
+ 9N/87mYb5u7EL2Fvo8LFt8d2+SaJiJp7EcIE/f0ZGlwAuqWQVbVBwkbFztOhYFzeWdSn7bNY
+X-Authority-Analysis: v=2.4 cv=RYWQC0tv c=1 sm=1 tr=0 ts=6884e323 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=hjLnkWndKg4kFgHkvr4A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-26_03,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 impostorscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ spamscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=920 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507260125
 
-Hi Lyude,
 
-On Fri Jul 25, 2025 at 5:19 AM JST, Lyude Paul wrote:
-<snip>
->> +/// Trait implemented by all mapping states.
->> +pub trait MappingState {}
->
-> We should make sure this is Sealed so that crates don't try to add
-> MappingStates that we're not expecting
 
-Agreed.
+On 22/07/25 2:26 pm, Aditya Bodkhe wrote:
+> From: Hari Bathini <hbathini@linux.ibm.com>
+> 
+> Since commit 4346ba160409 ("fprobe: Rewrite fprobe on function-graph
+> tracer"), FPROBE depends on HAVE_FUNCTION_GRAPH_FREGS. With previous
+> patch adding HAVE_FUNCTION_GRAPH_FREGS for powerpc, FPROBE can be
+> enabled on powerpc. But with the commit b5fa903b7f7c ("fprobe: Add
+> fprobe_header encoding feature"), asm/fprobe.h header is needed to
+> define arch dependent encode/decode macros. The fprobe header MSB
+> pattern on powerpc is not 0xf. So, define FPROBE_HEADER_MSB_PATTERN
+> expected on powerpc.
+> 
+> Also, commit 762abbc0d09f ("fprobe: Use ftrace_regs in fprobe exit
+> handler") introduced HAVE_FTRACE_REGS_HAVING_PT_REGS for archs that
+> have pt_regs in ftrace_regs. Advertise that on powerpc to reuse
+> common definitions like ftrace_partial_regs().
+> 
 
-<snip>
->> +
->> +/// A scatter-gather table of DMA address spans.
->> +///
->> +/// This structure represents the Rust abstraction for a C `struct sg_t=
-able`. This implementation
->> +/// abstracts the usage of an already existing C `struct sg_table` with=
-in Rust code that we get
->> +/// passed from the C side.
->> +pub struct SGTable<T: Borrow<bindings::sg_table>, M: MappingState> {
->> +    /// Mapping state of the underlying `struct sg_table`.
->> +    ///
->> +    /// This defines which methods of `SGTable` are available.
->> +    ///
->> +    /// Declared first so it is dropped before `table`, so we remove th=
-e mapping before freeing the
->> +    /// SG table if the latter is owned.
->> +    _mapping: M,
->> +
->> +    /// Something that can borrow the underlying `struct sg_table`.
->> +    table: T,
->> +}
->
-> So - I notice that instead of having `SGTable` just hold the `struct sg_t=
-able`
-> as an Opaque<> we're now relying on wrapping the SGTable around another o=
-bject
-> that defines it's own way of returning an sg_table.
->
-> Are we sure we want this? There's a few issues I see here, the first bein=
-g
-> that we're now providing the ability to acquire an immutable reference to=
- a C
-> struct to all users (including ones outside of kernel crates) of SGTable.
+Aditya, I assume there is no change on this patch from v1. I see
+you missed the Acked-by tag from Masami while sending v2 though:
 
-Note that the Rust `SGTable` itself does not provide access to the
-underlying `sg_table` - only the `T` parameter, for internal use - it
-isn't exposed to clients of this API.
+https://lore.kernel.org/all/20250609164700.d8afe4ac1b4dea195bb7e379@kernel.org/ 
 
-> Maybe this isn't that bad, but IMO I've always tried to avoid ever exposi=
-ng
-> anything from bindings outside of kernel crates - with the exception of t=
-ypes
-> like c_uint and such. My reason has generally keeping things separate, bu=
-t
-> also making sure people don't default to trying to use these structs dire=
-ctly
-> in driver code for functionality that they may just want to add into the =
-rust
-> bindings.
 
-Hopefully that's not the case, but please feel free to elaborate if I
-missed your point. Or maybe the problem is with the fact that
-`bindings::sg_table` bleeds into the public type of `SGTable`?
-
->
-> The second being it just feels a bit backwards to me - I'd intuitively ex=
-pect
-> an object to embed an SGTable if it's adding additional functionality on =
-top
-> of it, rather than the SGTable embedding the object. Especially consideri=
-ng
-> that not all users concerned with SGTables that they get from C code will=
- even
-> want their own wrapper type and may just want to return a plain &SGTable.
-
-Mmm I have to admit I am a bit lost here. But FWIW, you can get close to
-a plain `&SGTable` by creating a `SGTable<&bindings::sg_table>` - since
-`&bindings::sg_table` implements `Borrow<bindings::sg_table>`, this
-works as one would expect.
-
-Layout-wise it should even come down to the same, as then the `SGTable`
-is just made of a reference to the `sg_table`, the `MappingState` being
-a ZST for these cases - so even if you cannot simply cast a pointer to
-this type, at the end of the day the result should be identical.
-
->
-> However - if we're expecting implementors of `Borrow<bindings::sg_table>`=
- to
-> potentially need to grab locks or such whenever they need to access the
-> sg_table, then I suppose Borrow<> makes a lot more sense here and this de=
-sign
-> is probably fine without being inverted.
-
-TBH that's not what I had in mind - I wanted to make sure we can support
-both the owned and borrowed scenarios with the same base type.
-
->
-> Also BTW: I assume this might be clear to you already but in case it isn'=
-t,
-> with the design I suggested above you'd still be able to safely cast from
-> `*mut/*const bindings::sg_table` to `&mut/& SGTable<M: MappingState>` sin=
-ce
-
-Is there a benefit to being able to do a cast vs. the construct I
-described above?
-
-> MappingState is a ZST. As long as you can guarantee the struct is the sam=
-e
-> size as the one on the C side, you should be good. You might want to add =
-a
-> #[repr(transparent)] and a type invariant in the comments mentioning that
-> `SGTable` has an identical data layout to `bindings::sg_table` due to
-> repr(transparent), but that's really the only downside.
-
-MappingState is a ZST only for borrowed mappings, i.e. mappings that
-come from borrowed sg_tables. In case we want to own the SG table, we
-also need to be able to unmap it on drop - and this requires some extra
-data which we store into `ManagedMapping` mapping state (which is not a
-ZST anymore).
-
-Now I think I am lacking a good understanding of the model you have in
-mind - could you share a few data structures of what you are thinking
-about? I do understand the SGTable simply embedding an
-`Opaque<sg_table>`, but that's about it. :)
+> Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
+> Signed-off-by: Aditya Bodkhe <adityab1@linux.ibm.com>
+> ---
+>   arch/powerpc/Kconfig              |  1 +
+>   arch/powerpc/include/asm/fprobe.h | 12 ++++++++++++
+>   2 files changed, 13 insertions(+)
+>   create mode 100644 arch/powerpc/include/asm/fprobe.h
+> 
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 9163521bc4b9..2203e4fb64c1 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -246,6 +246,7 @@ config PPC
+>   	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+>   	select HAVE_GUP_FAST
+>   	select HAVE_FTRACE_GRAPH_FUNC
+> +	select HAVE_FTRACE_REGS_HAVING_PT_REGS
+>   	select HAVE_FTRACE_MCOUNT_RECORD
+>   	select HAVE_FUNCTION_ARG_ACCESS_API
+>   	select HAVE_FUNCTION_DESCRIPTORS	if PPC64_ELF_ABI_V1
+> diff --git a/arch/powerpc/include/asm/fprobe.h b/arch/powerpc/include/asm/fprobe.h
+> new file mode 100644
+> index 000000000000..d64bc28fb3d3
+> --- /dev/null
+> +++ b/arch/powerpc/include/asm/fprobe.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_PPC_FPROBE_H
+> +#define _ASM_PPC_FPROBE_H
+> +
+> +#include <asm-generic/fprobe.h>
+> +
+> +#ifdef CONFIG_64BIT
+> +#undef FPROBE_HEADER_MSB_PATTERN
+> +#define FPROBE_HEADER_MSB_PATTERN	(PAGE_OFFSET & ~FPROBE_HEADER_MSB_MASK)
+> +#endif
+> +
+> +#endif /* _ASM_PPC_FPROBE_H */
 
 
