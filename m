@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-746888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8508B12C87
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:05:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE2EB12C89
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEA0A17B7D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:05:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 030C617B653
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE37289342;
-	Sat, 26 Jul 2025 21:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F9B286D56;
+	Sat, 26 Jul 2025 21:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0640mmRp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="biuDSRaF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BBD207A22;
-	Sat, 26 Jul 2025 21:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3D61B3923;
+	Sat, 26 Jul 2025 21:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753563947; cv=none; b=a8HjW+X+lFPpeaMoD/A3C4PH9PRbN0we4aNRRo/8pQqnkS+fiCJzP2wAXp1U+l1aWGCYKx/6yl+8/RG/JE0fGh2VI83woP+eFrN1kMdXSAwJpd4sRB9dN55h1KNIiI0aKw0PixDAD3g61e9O9qWLXCELlyc+tIDdDAEnf1ibQN4=
+	t=1753564013; cv=none; b=XMNMglZ/l2SWIt8hKNlwYh8THLZ8SlMDe6QmU4dcovK5v9pTVoXJbYGqgCKp5drBQ6qgxOPqVHo9qoEwuL3wY5YKcS09K43xUA/b6Q5qHJoI4EyH8FHLxvoJ3JwxE3XyZaGRVvqwu/k5f/kifW2s8DR+114lkLjvVJTyW3H8T7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753563947; c=relaxed/simple;
-	bh=5KNVxKatnovSaR1Uj5p/zL0wiWVbFvRc7FlMjRs+oIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8JIdmu2Tr87wCfOYJgnOEuj49ZMtaOXlJqz5iPrg73jlb1q3btKe1s7dCfpFzBLh7eHFqqgJVxx4PgXHCTWQEYtod2FUjhh8pMQPkBoKdKZp2FrrAoBL1D+OkAYznTuUXbtpHd4R+P1YDl/FuVeZmjyn+yKf90nkOGKkdntKmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0640mmRp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=nHnQrVjulWV5eTEaeLxZ11VN7DxPLeTCfKGd7yvq2Kg=; b=0640mmRpxuB0M4XtTXtwopiRXN
-	tIEEn2VttlpVBUT0oUfNo/exnyXON3oM/tWTtoaxQt51qAm6V0sMc4R1NPxDiiOFY22F05N1f+vt3
-	1GZ7qPB4x9BgWw8zDChJ6hH5n065tnbriroOIe3IUulFir+3mZBJog8FGCV/ThC4FKmk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ufm5F-002y1h-DG; Sat, 26 Jul 2025 23:05:33 +0200
-Date: Sat, 26 Jul 2025 23:05:33 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH net-next v10 07/15] net: phy: Introduce generic SFP
- handling for PHY drivers
-Message-ID: <762dd1dd-0170-4f7d-b418-1997c48e7f95@lunn.ch>
-References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
- <20250722121623.609732-8-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1753564013; c=relaxed/simple;
+	bh=ixZkf+J0G7OOFDBMZ81LdDOwXqmDE8SEL43e82Qe/uo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aOny24gEyCgCZikIzysh4vdgPNiC92AU1j+CayTsyqZdh0+52BS2rANtzQKj+b54Jxa/Mq4QF0WNER11fkFv4IfkPtp038CVF14nMFt/OjOXk8/9q4jxtMFMhQLHbE16dbkSVgNZjEYXx+1FTDc3bLVNBTmq2jUg4HBRR9aGz40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=biuDSRaF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD2AC4CEED;
+	Sat, 26 Jul 2025 21:06:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753564012;
+	bh=ixZkf+J0G7OOFDBMZ81LdDOwXqmDE8SEL43e82Qe/uo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=biuDSRaFKFRNB3GH4jPlnuSRWWqB1pBmauWx5WCNB5IPk1HTdX09NwkieDFMVz4it
+	 VPTL3wCtYyAWwHrnyMX+tQg0/ysxWdxeJkjQMV5FuggYnh5Ty8vlxKAS0KKH0VORiB
+	 NSvxw9tSxsHPikK4lz8ailMSqO8ncA8Jo0TV0UW4IK4+YBfOmws2ZAvzdZOvCbPZI5
+	 AkdRotRJPIRE+DAffenJarqTtyx6l/9YOOaM9WPCpw5158ciXHSGWVPX2tEErT17HD
+	 uodhv3vEvRoeExlBqAl6AUUd9+DfYFK773kbPd+u9y6cXH9nyais+k+O94Px9g/EAV
+	 uRWjpYQPHgE0A==
+From: Kees Cook <kees@kernel.org>
+To: Youling Tang <tangyouling@kylinos.cn>
+Cc: Kees Cook <kees@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	David Disseldorp <ddiss@suse.de>,
+	Qun-Wei Lin <qun-wei.lin@mediatek.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] sched/task_stack: Add missing const qualifier to end_of_stack()
+Date: Sat, 26 Jul 2025 14:06:46 -0700
+Message-Id: <20250726210641.work.114-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722121623.609732-8-maxime.chevallier@bootlin.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1722; i=kees@kernel.org; h=from:subject:message-id; bh=ixZkf+J0G7OOFDBMZ81LdDOwXqmDE8SEL43e82Qe/uo=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmtzmk5U4VyF8rPitus8PP9naK4vUpXjNgyk2qtL86cU KnlWbmto5SFQYyLQVZMkSXIzj3OxeNte7j7XEWYOaxMIEMYuDgFYCLq6owMDYIxRhGZ00/uecPO 3KSlcmHVDofSvoN/VBzvzWfrWT8tnpFhW9njc8GqwYJPhKZzqaQbPNiYxa/szsMlozDtSOA5tmY GAA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 22, 2025 at 02:16:12PM +0200, Maxime Chevallier wrote:
-> There are currently 4 PHY drivers that can drive downstream SFPs:
-> marvell.c, marvell10g.c, at803x.c and marvell-88x2222.c. Most of the
-> logic is boilerplate, either calling into generic phylib helpers (for
-> SFP PHY attach, bus attach, etc.) or performing the same tasks with a
-> bit of validation :
->  - Getting the module's expected interface mode
->  - Making sure the PHY supports it
->  - Optionnaly perform some configuration to make sure the PHY outputs
+Add missing const qualifier to the non-CONFIG_THREAD_INFO_IN_TASK
+version of end_of_stack() to match the CONFIG_THREAD_INFO_IN_TASK
+version. Fixes a warning with CONFIG_KSTACK_ERASE=y on archs that don't
+select THREAD_INFO_IN_TASK (such as LoongArch):
 
-Too man n's.
+  error: passing 'const struct task_struct *' to parameter of type 'struct task_struct *' discards qualifiers
 
-> +static int phy_sfp_module_insert(void *upstream, const struct sfp_eeprom_id *id)
-> +{
-> +	struct phy_device *phydev = upstream;
-> +	struct phy_port *port = phy_get_sfp_port(phydev);
+The stackleak_task_low_bound() function correctly uses a const task
+parameter, but the legacy end_of_stack() prototype didn't like that.
 
-Strictly speeding, this is not allowed, reverse Christmas tree...
+Build tested on loongarch (with CONFIG_KSTACK_ERASE=y) and m68k
+(with CONFIG_DEBUG_STACK_USAGE=y).
 
-The assignment needs to move into the body of the function.
+Fixes: a45728fd4120 ("LoongArch: Enable HAVE_ARCH_STACKLEAK")
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Closes: https://lore.kernel.org/all/20250726004313.GA3650901@ax162
+Cc: Youling Tang <tangyouling@kylinos.cn>
+Cc: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+ include/linux/sched/task_stack.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	if (linkmode_empty(sfp_support)) {
-> +		dev_err(&phydev->mdio.dev, "incompatible SFP module inserted\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	iface = sfp_select_interface(phydev->sfp_bus, sfp_support);
-> +
-> +	/* Check that this interface is supported */
-> +	if (!test_bit(iface, port->interfaces)) {
-> +		dev_err(&phydev->mdio.dev, "incompatible SFP module inserted\n");
+diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
+index 85c5a6392e02..1fab7e9043a3 100644
+--- a/include/linux/sched/task_stack.h
++++ b/include/linux/sched/task_stack.h
+@@ -53,7 +53,7 @@ static inline void setup_thread_stack(struct task_struct *p, struct task_struct
+  * When the stack grows up, this is the highest address.
+  * Beyond that position, we corrupt data on the next page.
+  */
+-static inline unsigned long *end_of_stack(struct task_struct *p)
++static inline unsigned long *end_of_stack(const struct task_struct *p)
+ {
+ #ifdef CONFIG_STACK_GROWSUP
+ 	return (unsigned long *)((unsigned long)task_thread_info(p) + THREAD_SIZE) - 1;
+-- 
+2.34.1
 
-Maybe make this string different to the previous one, so somebody
-debugging issues knows which happened?
-
-> +/**
-> + * phy_get_sfp_port() - Returns the first valid SFP port of a PHY
-> + * @phydev: pointer to the PHY device to get the SFP port from
-> + *
-> + * Returns: The first active SFP (serdes) port of a PHY device, NULL if none
-> + * exist.
-> + */
-> +struct phy_port *phy_get_sfp_port(struct phy_device *phydev)
-> +{
-> +	struct phy_port *port;
-> +
-> +	list_for_each_entry(port, &phydev->ports, head)
-> +		if (port->active && port->is_mii)
-
-Naming is hard, but this actually returns the first mii port.  Is
-there a clear 1:1 mapping? I don't think i've ever seen it, but such a
-SERDES port could be connected to a Ethernet switch? And when you get
-further, add support for a MUX, could it be connected to a MUX?
-
-	Andrew
 
