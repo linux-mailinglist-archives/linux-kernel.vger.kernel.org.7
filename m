@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-746889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE2EB12C89
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:06:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3522B12C8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 030C617B653
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:07:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EACA2172971
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F9B286D56;
-	Sat, 26 Jul 2025 21:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EDF2877C9;
+	Sat, 26 Jul 2025 21:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="biuDSRaF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ql6dr1qW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3D61B3923;
-	Sat, 26 Jul 2025 21:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE301B3923;
+	Sat, 26 Jul 2025 21:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753564013; cv=none; b=XMNMglZ/l2SWIt8hKNlwYh8THLZ8SlMDe6QmU4dcovK5v9pTVoXJbYGqgCKp5drBQ6qgxOPqVHo9qoEwuL3wY5YKcS09K43xUA/b6Q5qHJoI4EyH8FHLxvoJ3JwxE3XyZaGRVvqwu/k5f/kifW2s8DR+114lkLjvVJTyW3H8T7g=
+	t=1753564114; cv=none; b=uKN9dXTLeG2MZAkFYez7bAilwWkvdTQQBnENp6zbVHfrAvy9skTvIcx5y+ttlNYyzV/lbfL8iBifVhPVTFsbyN/kVYXJlq6GTFzFz5sMDy9BVF593fiSroNMiKFYtjiFwcn+LvHItKaVwk0vMIByTzhFjzBy7G9K8IjrrwQiU2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753564013; c=relaxed/simple;
-	bh=ixZkf+J0G7OOFDBMZ81LdDOwXqmDE8SEL43e82Qe/uo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aOny24gEyCgCZikIzysh4vdgPNiC92AU1j+CayTsyqZdh0+52BS2rANtzQKj+b54Jxa/Mq4QF0WNER11fkFv4IfkPtp038CVF14nMFt/OjOXk8/9q4jxtMFMhQLHbE16dbkSVgNZjEYXx+1FTDc3bLVNBTmq2jUg4HBRR9aGz40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=biuDSRaF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD2AC4CEED;
-	Sat, 26 Jul 2025 21:06:52 +0000 (UTC)
+	s=arc-20240116; t=1753564114; c=relaxed/simple;
+	bh=sXoqk2Ue4pnszhxzk78WMf6TMmcTZIz7ECp3SfqwYlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qoIg9BWBZ9xrxCRvVOQHdKEUu5RP8EQcd2MvR8bifXZRSLbYbjI9XEMXrV/tMuOl4q5uxUnHiZzafguxSaeGy/ezduWbcWJi/AWR24a8FIxQWJ3gGnPklIgaHyTcBogj/D4xg8SQgeHbhzXsYIh9VtwexnmLM5yCD+WvLoQohyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ql6dr1qW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1171FC4CEED;
+	Sat, 26 Jul 2025 21:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753564012;
-	bh=ixZkf+J0G7OOFDBMZ81LdDOwXqmDE8SEL43e82Qe/uo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=biuDSRaFKFRNB3GH4jPlnuSRWWqB1pBmauWx5WCNB5IPk1HTdX09NwkieDFMVz4it
-	 VPTL3wCtYyAWwHrnyMX+tQg0/ysxWdxeJkjQMV5FuggYnh5Ty8vlxKAS0KKH0VORiB
-	 NSvxw9tSxsHPikK4lz8ailMSqO8ncA8Jo0TV0UW4IK4+YBfOmws2ZAvzdZOvCbPZI5
-	 AkdRotRJPIRE+DAffenJarqTtyx6l/9YOOaM9WPCpw5158ciXHSGWVPX2tEErT17HD
-	 uodhv3vEvRoeExlBqAl6AUUd9+DfYFK773kbPd+u9y6cXH9nyais+k+O94Px9g/EAV
-	 uRWjpYQPHgE0A==
-From: Kees Cook <kees@kernel.org>
-To: Youling Tang <tangyouling@kylinos.cn>
-Cc: Kees Cook <kees@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	David Disseldorp <ddiss@suse.de>,
-	Qun-Wei Lin <qun-wei.lin@mediatek.com>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] sched/task_stack: Add missing const qualifier to end_of_stack()
-Date: Sat, 26 Jul 2025 14:06:46 -0700
-Message-Id: <20250726210641.work.114-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=k20201202; t=1753564113;
+	bh=sXoqk2Ue4pnszhxzk78WMf6TMmcTZIz7ECp3SfqwYlA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ql6dr1qWjHTtRA0EOzdhutTX3UzNBL7NPCXr1JuDVb4NEmGxqzcUgIlzJACind6OR
+	 cLFMU/uTZRHBvEMYJsOctYKYlD5PQICdNG7AnfNhpvYGO9wUXtL8wsngZwmHM4/LrC
+	 wjmwcy7Dw4Qi1CqH4j3VGjnP3I+PoeNG+cBbgt1xuji+VFOo5WajLWJpOU4BsU9Q/A
+	 FmEw2Tg+YF8DExrlV2X2dDZSev9Q1AMN6n5QOSsZ1+fVbiiEXq3n3J6mCfty6by2VX
+	 vXOd+bUFFQxniKWMKEYto8EdtVNqIsF1CNcDw/pKs4+bjeBdr15lYFPR+14qrmcSsa
+	 B49y/97TzqAig==
+Date: Sat, 26 Jul 2025 23:08:29 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.16-rc8
+Message-ID: <aIVDzXNdRsJ6xfK0@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1722; i=kees@kernel.org; h=from:subject:message-id; bh=ixZkf+J0G7OOFDBMZ81LdDOwXqmDE8SEL43e82Qe/uo=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmtzmk5U4VyF8rPitus8PP9naK4vUpXjNgyk2qtL86cU KnlWbmto5SFQYyLQVZMkSXIzj3OxeNte7j7XEWYOaxMIEMYuDgFYCLq6owMDYIxRhGZ00/uecPO 3KSlcmHVDofSvoN/VBzvzWfrWT8tnpFhW9njc8GqwYJPhKZzqaQbPNiYxa/szsMlozDtSOA5tmY GAA==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="znyMYrU0vLQWM3R6"
+Content-Disposition: inline
 
-Add missing const qualifier to the non-CONFIG_THREAD_INFO_IN_TASK
-version of end_of_stack() to match the CONFIG_THREAD_INFO_IN_TASK
-version. Fixes a warning with CONFIG_KSTACK_ERASE=y on archs that don't
-select THREAD_INFO_IN_TASK (such as LoongArch):
 
-  error: passing 'const struct task_struct *' to parameter of type 'struct task_struct *' discards qualifiers
+--znyMYrU0vLQWM3R6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The stackleak_task_low_bound() function correctly uses a const task
-parameter, but the legacy end_of_stack() prototype didn't like that.
+The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
 
-Build tested on loongarch (with CONFIG_KSTACK_ERASE=y) and m68k
-(with CONFIG_DEBUG_STACK_USAGE=y).
+  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
 
-Fixes: a45728fd4120 ("LoongArch: Enable HAVE_ARCH_STACKLEAK")
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Closes: https://lore.kernel.org/all/20250726004313.GA3650901@ax162
-Cc: Youling Tang <tangyouling@kylinos.cn>
-Cc: Huacai Chen <chenhuacai@loongson.cn>
-Signed-off-by: Kees Cook <kees@kernel.org>
----
- include/linux/sched/task_stack.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+are available in the Git repository at:
 
-diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
-index 85c5a6392e02..1fab7e9043a3 100644
---- a/include/linux/sched/task_stack.h
-+++ b/include/linux/sched/task_stack.h
-@@ -53,7 +53,7 @@ static inline void setup_thread_stack(struct task_struct *p, struct task_struct
-  * When the stack grows up, this is the highest address.
-  * Beyond that position, we corrupt data on the next page.
-  */
--static inline unsigned long *end_of_stack(struct task_struct *p)
-+static inline unsigned long *end_of_stack(const struct task_struct *p)
- {
- #ifdef CONFIG_STACK_GROWSUP
- 	return (unsigned long *)((unsigned long)task_thread_info(p) + THREAD_SIZE) - 1;
--- 
-2.34.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.16-rc8
 
+for you to fetch changes up to 31f08841dd5d479458ee98bdc91d63910ee19861:
+
+  Merge tag 'i2c-host-fixes-6.16-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-07-26 00:59:39 +0200)
+
+----------------------------------------------------------------
+i2c-for-6.16-rc8
+
+qup: avoid potential hang when waiting for bus idle
+tegra: improve ACPI reset error handling
+virtio: use interruptible wait to prevent hang during transfer
+
+----------------------------------------------------------------
+Akhil R (1):
+      i2c: tegra: Fix reset error handling with ACPI
+
+Viresh Kumar (1):
+      i2c: virtio: Avoid hang by using interruptible completion wait
+
+Wolfram Sang (1):
+      Merge tag 'i2c-host-fixes-6.16-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+
+Yang Xiwen (1):
+      i2c: qup: jump out of the loop in case of timeout
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      (Rev.) i2c: tegra: Fix reset error handling with ACPI
+
+ drivers/i2c/busses/i2c-qup.c    |  4 +++-
+ drivers/i2c/busses/i2c-tegra.c  | 24 +-----------------------
+ drivers/i2c/busses/i2c-virtio.c | 15 ++++++++-------
+ 3 files changed, 12 insertions(+), 31 deletions(-)
+
+--znyMYrU0vLQWM3R6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiFQ80ACgkQFA3kzBSg
+KbZslA//Xj7pYpVEPA5LxuwH0URy/PwLJf9N87zAcRo93V56ahH4IMUC7cjTpdYY
+4AWzYMpInXhcL35bg+De2diMcLlFgHXgIf6cWI9v4OH9PMr5NKWoQlSoEJSRk4eF
+48Hb5TADj5F5BVRtjE2m84/7fEe8CsfZkcHJ6TssfR9znsmrkVHVs2SYvS2enwzb
+s9iGY0bZ4uDAHsMRO5QnYC9gOyo1eQWLuzL4Dif/7ZmrNObytUs0xejKAkLn06Xz
+bHXXWPDYIeczSN9ibnLuVUEyNziXXD553dSOhq7OvQsy4xJUWEDpHTsHzNx2WeiU
+YVvz5Ebn9I3JctO2VNsTTzpXbG1pe8qSZfPeDuChb3+35gS0sJwvbFwxDWjMAcX6
+wtITUyo1sEE1c0YoeactvZfha3k3cqUPx8ghQ8P5yFNtcYHhMjhkivoKXNY90Tfd
+rlfTzaXSjeNRQ0JWvHG9Q6JEgZoG5sqWIlSqF3cbUPqCbJGtnkeTD93cps0huwNw
+2RRJmD1IDVGygRwTxK9JCB8froTum6AYEkjVLgqKcPu0DlujzBYqYyycet11SSVK
+OI32paNzCGQUIA0BrFDqbFfYIxScBrDNDY7odEpLAt8zG4KovNiD5tM/LlLbiNt6
+sAB7TmHLcV3EPF2WFXYKwicOfk+nt0qYFzxJo9OurL4zVo+iCeg=
+=IZUP
+-----END PGP SIGNATURE-----
+
+--znyMYrU0vLQWM3R6--
 
