@@ -1,103 +1,133 @@
-Return-Path: <linux-kernel+bounces-746712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B11A2B12A4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:54:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47D0B12A56
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 169627A3455
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45F01C2601A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9B124113D;
-	Sat, 26 Jul 2025 11:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FB8244681;
+	Sat, 26 Jul 2025 11:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TveVSDjN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cfXFPJlk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qu5Vv5Bx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E9F4685;
-	Sat, 26 Jul 2025 11:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4576200132;
+	Sat, 26 Jul 2025 11:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753530838; cv=none; b=skw6vv9GkaHhdEQUU1aUee4oKBqgl+irgISB5+NXMj2Y/k9R54ge4jQKe5Ght0Liloez0Ld/w7iraRXRcK9dvJ46DouaL7352UjUVn5lfEyW8IFaJzsKPyDGLOzMw4EORiRRg9RHKiU0FwQIsrKX1lYiCU+whwumuEUiZWB/YSg=
+	t=1753531196; cv=none; b=CI/d+PmhB5/J3QgH8KRihhjbfWG88SOAdzzKOkiDDDEo2jpWX8ONKSWprWNCxPqJkPlhCwn08qpVCxtD5BZMguMoVj3RFTQc9I9fGw0ZZyM4voFLXL7/qBzn8/Mtqnbl52H09sF282qUVe8ZdgJ/yUwqaC54eyJcl3HxnPt+h8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753530838; c=relaxed/simple;
-	bh=RPbKDYis5DkvlyPdor/z+HmZWvr23l4AQ2Sr+Rikcg4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqgjX1nFXDWw//+ohhywP0b4Cff6tEOPz99KezOzghsvEVoAla8jWA/5SkKMWzY6Lba08ugEBJiwQZXoRPRH0rBctofk4YntFGffoH9QsNtzvoNxUM6MKDMrQyku35IEtrPdCxJEoeoqYbmV6p0c3i8L2+VQ8P6VEX9T9maRcyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TveVSDjN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85F68C4CEED;
-	Sat, 26 Jul 2025 11:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753530837;
-	bh=RPbKDYis5DkvlyPdor/z+HmZWvr23l4AQ2Sr+Rikcg4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TveVSDjNmVPETGaHZkDyj3OYbKnb5RsjGpCiNJEZFqTLOf0xJizoBQjvswXp98MMa
-	 pVuh+kPcYHeXvjEdSnhIH5RaHgDUva6iqhmfhbGxRRfYP4h/AjBgnQDBFT5HggwyZ7
-	 kA2VLuWB7BMCPifuT3NIJiWOB62vnw5SeIBTh7AC2WyQGo/cnDjLhiCSftjC5Q1Hgc
-	 dobWlQbWaonZPpevfmzUkTO9CrZGvdSlzcF+gfO9HezaUAg+MpxM3nzEsNzfth0g9h
-	 AhvwEXzkATxNkhCiMtBnq6t6cwpkGbEhmWe0jOxLkIcdCBH1SY9OOE4ZKFpK3wAMte
-	 h3t0zvJj0B55Q==
-Date: Sat, 26 Jul 2025 07:53:55 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, corbet@lwn.net,
-	josh@joshtriplett.org
-Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
-Message-ID: <aITB009h39D3-Otn@lappy>
-References: <20250725175358.1989323-1-sashal@kernel.org>
- <77782f57-6131-4968-95dc-088329cc50f7@kernel.org>
+	s=arc-20240116; t=1753531196; c=relaxed/simple;
+	bh=e9ZHZi0F7JWdfqhdsjEBHsC+0Dy6+SkPdlpSOOJLwAA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XHRIkrbeOiuL5KG0tkj1pttiM9eQDi9VsQcPzhaVkd3JnA4ehMmJk+FgPa4VHRLvsZkX9/B+Js1kshR2z5Um416RykbZ7ZhmZ2Ru8NIz7br621EuKuV/NKgMgrFEkGNNAbi85Fxk9XSTsv+Sot5NOrJ11arhc0K3e/qMUHTPm7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cfXFPJlk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qu5Vv5Bx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753531186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6QLD/9vDRaxK7wnQrPT92N/0V2GDCn8DkNHpJH1+2ME=;
+	b=cfXFPJlk7jB/sMHf6ZzDQyfd2LIVeZJ8I39wANs0u8oRGHvKkhXz63gqfP5A9GLa9RYZAa
+	4fYMkwBOiGcsUXbJBP/pgEeDnytTcDNGF8h2suAm3yrWHKn4tdceaXafe63n2Syci7gMEX
+	ffGS7892X7j/53z/zCvrGplQs3bXIMdiSnHSIA1Vp1JK5l7D3ZfZ35t1wE3jpMnq6DJYPv
+	Kwv9Rjfl/39lN5SSh+JcxFIjWrjYURjpFQCZfrU5kEXB/91aWoNIrnvQPz0hzYUfVTSOrz
+	2LAw0ny6JKitQOHUZ0/NMQv+Eq8X2eql0qPc6RspX8DkyIBzDlh+szANN35KwQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753531186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6QLD/9vDRaxK7wnQrPT92N/0V2GDCn8DkNHpJH1+2ME=;
+	b=qu5Vv5Bxsuj0Aow+4si+jm72q35U4cUB5T/nEFzyJ41GvUFYqpf5F11Dqu+CwRuAtgKsyi
+	jWZkC7WdLCz3pCBg==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tetsuo Handa
+ <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Yunseong Kim <ysk@kzalloc.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Byungchul Park
+ <byungchul@sk.com>, max.byungchul.park@gmail.com, Yeoreum Yun
+ <yeoreum.yun@arm.com>, Michelle Jin <shjy180909@gmail.com>,
+ linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, stable@vger.kernel.org,
+ kasan-dev@googlegroups.com, syzkaller@googlegroups.com,
+ linux-usb@vger.kernel.org, linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH] kcov, usb: Fix invalid context sleep in softirq path on
+ PREEMPT_RT
+In-Reply-To: <2025072614-molehill-sequel-3aff@gregkh>
+References: <20250725201400.1078395-2-ysk@kzalloc.com>
+ <2025072615-espresso-grandson-d510@gregkh>
+ <77c582ad-471e-49b1-98f8-0addf2ca2bbb@I-love.SAKURA.ne.jp>
+ <2025072614-molehill-sequel-3aff@gregkh>
+Date: Sat, 26 Jul 2025 13:59:45 +0200
+Message-ID: <87ldobp3gu.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <77782f57-6131-4968-95dc-088329cc50f7@kernel.org>
+Content-Type: text/plain
 
-On Sat, Jul 26, 2025 at 04:07:40AM -0500, Mario Limonciello wrote:
->>Example patch creation with Claude Code:
->>
->>	$ claude -p "Fix the dont -> don't typo in @Documentation/power/opp.rst. Commit the result"
->>	Done! The typo has been fixed and committed.
+On Sat, Jul 26 2025 at 09:59, Greg Kroah-Hartman wrote:
+> On Sat, Jul 26, 2025 at 04:44:42PM +0900, Tetsuo Handa wrote:
+>> static void __usb_hcd_giveback_urb(struct urb *urb)
+>> {
+>>   (...snipped...)
+>>   kcov_remote_start_usb_softirq((u64)urb->dev->bus->busnum) {
+>>     if (in_serving_softirq()) {
+>>       local_irq_save(flags); // calling local_irq_save() is wrong if CONFIG_PREEMPT_RT=y
+>>       kcov_remote_start_usb(id) {
+>>         kcov_remote_start(id) {
+>>           kcov_remote_start(kcov_remote_handle(KCOV_SUBSYSTEM_USB, id)) {
+>>             (...snipped...)
+>>             local_lock_irqsave(&kcov_percpu_data.lock, flags) {
+>>               __local_lock_irqsave(lock, flags) {
+>>                 #ifndef CONFIG_PREEMPT_RT
+>>                   https://elixir.bootlin.com/linux/v6.16-rc7/source/include/linux/local_lock_internal.h#L125
+>>                 #else
+>>                   https://elixir.bootlin.com/linux/v6.16-rc7/source/include/linux/local_lock_internal.h#L235 // not calling local_irq_save(flags)
+>>                 #endif
+
+Right, it does not invoke local_irq_save(flags), but it takes the
+underlying lock, which means it prevents reentrance.
+
+> Ok, but then how does the big comment section for
+> kcov_remote_start_usb_softirq() work, where it explicitly states:
 >
->Is this actually how people use AI agents?  I've never thought of 
->asking an agent to write a whole patch and commit the result.
-
-Yup, there are a bunch of usecases for this, and while this is an
-oversimplified example (that's why I picked a simple spelling fix that
-the agent could get right "the first time").
-
-See Kees' post at https://hachyderm.io/@kees/114907228284590439 , in
-particular the buffer overflow fix where he logged his prompts.
-
->The way that I've seen it is things like Github Copilot within VScode 
->where there are inline suggestions.  It's kinda like clangd except it 
->suggests corrections to your mistakes instead of just underlining them 
->with red squiggles.
+>  * 2. Disables interrupts for the duration of the coverage collection section.
+>  *    This allows avoiding nested remote coverage collection sections in the
+>  *    softirq context (a softirq might occur during the execution of a work in
+>  *    the BH workqueue, which runs with in_serving_softirq() > 0).
+>  *    For example, usb_giveback_urb_bh() runs in the BH workqueue with
+>  *    interrupts enabled, so __usb_hcd_giveback_urb() might be interrupted in
+>  *    the middle of its remote coverage collection section, and the interrupt
+>  *    handler might invoke __usb_hcd_giveback_urb() again.
 >
->Like if you messed up the argument and passed a pointer when it was 
->supposed to be a pointer to a pointer it will give you a little 
->tooltip correction.  But this is long before you would be ready to 
->actually commit a patch, heck it's before even testing it (obviously).
 >
->The actual committing action would be by running 'git commit'.  So I 
->don't see how these tags could end up in there.
+> You are removing half of this function entirely, which feels very wrong
+> to me as any sort of solution, as you have just said that all of that
+> documentation entry is now not needed.
 
-Even vscode has a commit feature which can help write commit
-messages and actually commit them for you:
-https://code.visualstudio.com/docs/sourcecontrol/overview
+I'm not so sure because kcov_percpu_data.lock is only held within
+kcov_remote_start() and kcov_remote_stop(), but the above comment
+suggests that the whole section needs to be serialized.
 
-But yes, if you choose to manually handle the committing aspect then you
-should also be manually attributing the agent :)
+Though I'm not a KCOV wizard and might be completely wrong here.
 
--- 
+If the whole section is required to be serialized, then this need
+another local lock in kcov_percpu_data to work correctly on RT.
+
 Thanks,
-Sasha
+
+        tglx
 
