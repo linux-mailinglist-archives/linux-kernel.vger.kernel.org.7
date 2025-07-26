@@ -1,119 +1,173 @@
-Return-Path: <linux-kernel+bounces-746802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F5C3B12B5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:09:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77B0B12B62
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DD71897B24
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 734B43BE64F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980472868B2;
-	Sat, 26 Jul 2025 16:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA7228642B;
+	Sat, 26 Jul 2025 16:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFeD3pzf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ghxkkvlp"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3DA1F473A;
-	Sat, 26 Jul 2025 16:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B681AA1F4
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753546174; cv=none; b=jTbB5FMoXmK65W5vxDez/DM/IV/knJH+jhYKPTo69Cojdcj5XiKnfrBRyRlkdHjrlv8QfU/NacGIfVSXaXT6JBvV0Z7NY+hLM6EsRj63vsby4U4JHhytM+aXTx6e3XlpN5Ax1C+JlOHxykVfzsLNm2Tbs4WXqufhnbabqgPqFrc=
+	t=1753546430; cv=none; b=QPFKTihI85dpNGCJxmYsNOvNM/DDcqonr/Zig/23J+0LzCKYWguhPd97JEOk559GgztHosHG8OCy/9Z/DHnvJWE16e43jtYz8o7wBtJiDmeO62+cQczoRdQF74e3F3WyCYry6xHGKRcEKwuKx3AJD1ftQrmWNzcBr3K/DHSqreQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753546174; c=relaxed/simple;
-	bh=zGhm9cGrLInk87ZM6CuHQbsPnqmOPsIF+UQoiuaBFWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZUbG2VtJdHFgIELjsrEH/8MGq4OiLfRnclS7iSjk+lHZEbjizsFSnt1UDLAUrzD2L0Fhwmsc6hdKnnumXnIA+UwFh+ZLX1Tf63ot/d2srqSpuuTMM3FBQ8UoWX4b4v4FGY8e90yzyQvZfmPKJOhXkQty2FjlISIJ1aa0IAmDRHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFeD3pzf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABC5FC4CEED;
-	Sat, 26 Jul 2025 16:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753546173;
-	bh=zGhm9cGrLInk87ZM6CuHQbsPnqmOPsIF+UQoiuaBFWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OFeD3pzfrqawsjoygKNa2OYK1mUDi84CYqacznSznpb8EV/75vZsotw2VE1+O2k/T
-	 scsIKENP/t7K4OtgtRXw/3wX29CS27Li2lLuHiAF2TAOaIrA9Yl+TNCvezu9QAPKvN
-	 DNXVNRDOEsT672eZEIClpB0McFE2sgzMpUKTm45F65iUukO4fVJQqzbDdMPRaxMoX4
-	 N2qRum08MdcYEDg0XaW+zqLr8+KXK1qBaqI9YndKjYvpQMEwhE4ZBMwBAsTvmEOGY5
-	 MhfsKNJk04x9LvgLMis4rhQ6YQr0Erh90wI7ZF4q2+fERx9l60gz9RTZ4MGrnswwzo
-	 d94V/iB8FOOPA==
-Date: Sat, 26 Jul 2025 11:09:30 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Wasim Nazir <wasim.nazir@oss.qualcomm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel@oss.qualcomm.com
-Subject: Re: [PATCH 0/7] Refactor sa8775p/qcs9100 to common names
- lemans-auto/lemans
-Message-ID: <pzkceoriu5cgvidt4xekauyc2ovqkbuoi32bbornr2wbxmombh@7visdfuos6ml>
-References: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
- <20250723-angelic-aboriginal-waxbill-cd2e4c@kuoka>
+	s=arc-20240116; t=1753546430; c=relaxed/simple;
+	bh=KOVFTwTb/EuQIM6jQ7hDcils7oA9qFQIBrqpPTPpKw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CXKFW3UIBuetLgAJWVEpCmI8uYJXWc6LQvkz9eHxV33Qgw6HtHyeR3nSjbFMyYrhfekgYxGf8exzMHwsSB5jn2A2vIV+R6uae25wcBTcHOC2WelsCp/sBKHXn83jqLQHCapdhwUNx3u6jyLl2g1b5yeMzJJTLr6Vc2y7HPIrcos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ghxkkvlp; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-451d7b50815so21226935e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753546427; x=1754151227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xSmE2/IG78aP+245fYXp3PxN702DvxPZXYlkAkGpEZk=;
+        b=ghxkkvlp+WMayusNf93yr2OrOxrpaSQx5G23EGm+dH8giUTIBtO5oGOgjOYyZOOu4+
+         sMSBoJQtLbtstYX9/Qj4uU7vml6UEMv8YeXB8jFTTAkGFJAGuG27FOtYSbllmFdrL8ot
+         oTWxtydUooqUcUxXCUnuuxaWyUvpm2iqhIhlUz5n8chLyiTMp7LSG5TGXXHogZ5abCoY
+         2Kog4pVBHkBCMrCPfR6lu+S0w10eDL6S7LnDY2aDXOWn2uQ1Rnae4m1Hw7tuvNrrY0z/
+         apSHoP2TA1DByBfx8yEDvcLB0sKeKPFIoykwuOJ1O3b/n3AYjtz2ABCYNBQRUfZ8h9CZ
+         3ItA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753546427; x=1754151227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xSmE2/IG78aP+245fYXp3PxN702DvxPZXYlkAkGpEZk=;
+        b=jgC8WU2eF3rG+LWceKlS5ArKU0eQ/vpLyK26nGr9nSlchJR1+GarN/kcmUobmmttZP
+         LWd5xL4bfTqIHgOpviD4sfUhb6sSfBkQWhXyYJuKjDXPKXdhaOsfXvnzy8aThHKPsl7w
+         6K1WwmEURC2JT1U88QPBRH2ZHJERopUwirqrgGgWQ2morGHudv4g1S4ehCOUSf3kSYhd
+         vTt4Rh3ksObyfR76NFCXcM2GABeTajsu4ttzKTd76Q9HgdHgACl9HFnk5TD78d/oX+sq
+         kjnC5ZHCsWb8GKG7s4+sxP9GA8l2QEfBO0diqIT+M+NNal4JSWwtRdK10qb4tTGi5s/v
+         vBjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTsWJ4Ny8Hx2THAbu/D/C4ZwDiQNG83VfnRmmJyg/UUFueedsBf80fXr231YoFw7JLoKwk12wYrd8ROB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMLKFBgxZs0vOOpGMua1phQkpOzCc0zFyxBraCyTVB5A0Ro8pz
+	h+vwp/24+Zt2XxNlnAiiCaA5HEovpoB1GPCmWB5xTENjjILjfGsqdVIi9mcXVGjP102X7QqNDj+
+	uv1Z516BHN7ngA4Z0Jy/4Kir3TOKBFLIMoVl7GFzR
+X-Gm-Gg: ASbGncvcxXAX0X/xDYel4NJbcS/vSMWNGfTFy5/FoVrngSllIET4wEzMZcGGiqXWD0h
+	Q+Ak2FSZWsN++DgUwtOyqZyOYE8sH4hHUVz6rKOGEsWVRX84+Get4MYxDXUkgoiniJ2LSYlPTpR
+	t403K6Jef8rPjqiKZ9iiRiyhc7Gv/8BhTeNwhZiIoQ50QCv1Oa5jWgl0AsN5O9U/315xHIxXE5F
+	kPfWQhp
+X-Google-Smtp-Source: AGHT+IGjmxfhiuSOXZOdKrAjq/2iLUvcoITJyFtLrM3SVjwxEvIE+xW4uFMAM5xc3aH0PtQ9ZEiVJc9cs0p0ckcKSlA=
+X-Received: by 2002:a05:600c:4f87:b0:456:133f:a02d with SMTP id
+ 5b1f17b1804b1-4587644278emr60085665e9.17.1753546427335; Sat, 26 Jul 2025
+ 09:13:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723-angelic-aboriginal-waxbill-cd2e4c@kuoka>
+References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
+ <20250726-maple-tree-v1-3-27a3da7cb8e5@google.com> <20250726165446.2768c6ee.gary@garyguo.net>
+In-Reply-To: <20250726165446.2768c6ee.gary@garyguo.net>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Sat, 26 Jul 2025 18:13:34 +0200
+X-Gm-Features: Ac12FXxFtdvvjbSWz68LToYZuz9O8rpVTX_BUoiCo2Gz6b2RLEu8Wxik0sZefPk
+Message-ID: <CAH5fLghiXEvcAfdCRJ==i4JWE0DQh6fFD4ppVM2DytHTjwA8sQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rust: maple_tree: add MapleTreeAlloc
+To: Gary Guo <gary@garyguo.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Andrew Ballance <andrewjballance@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 10:32:43AM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Jul 22, 2025 at 08:19:19PM +0530, Wasim Nazir wrote:
-> > This patch series refactors the sa8775p and qcs9100 platforms and introduces
-> > a unified naming convention for current and future platforms (qcs9075).
-> > 
-> > The motivation behind this change is to group similar platforms under a
-> > consistent naming scheme and to avoid using numeric identifiers.
-> > For example, qcs9100 and qcs9075 differ only in safety features provided by
-> > the Safety-Island (SAIL) subsystem but safety features are currently
-> > unsupported, so both can be categorized as the same chip today.
+On Sat, Jul 26, 2025 at 5:54=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> On Sat, 26 Jul 2025 13:23:24 +0000
+> Alice Ryhl <aliceryhl@google.com> wrote:
+>
+> > To support allocation trees, we introduce a new type MapleTreeAlloc for
+> > the case where the tree is created using MT_FLAGS_ALLOC_RANGE. To ensur=
+e
+> > that you can only call mtree_alloc_range on an allocation tree, we
+> > restrict thta method to the new MapleTreeAlloc type. However, all
+> > methods on MapleTree remain accessible to MapleTreeAlloc as allocation
+> > trees can use the other methods without issues.
 > >
-> 
-> I expressed strong disagreement with this patchset in individual
-> patches. I expect NO NEW versions of it, but by any chance you send it,
-> then please always carry my:
-> 
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/maple_tree.rs | 158 ++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 158 insertions(+)
+> >
+> > diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
+> > index c7ef504a9c78065b3d5752b4f5337fb6277182d1..8c025d2c395b6d57f1fb162=
+14b4e87d4e7942d6f 100644
+> > --- a/rust/kernel/maple_tree.rs
+> > +++ b/rust/kernel/maple_tree.rs
+> >
+> >  /// Error type for failure to insert a new value.
+> >  pub struct InsertError<T> {
+> >      /// The value that could not be inserted.
+> > @@ -378,3 +499,40 @@ fn from(insert_err: InsertError<T>) -> Error {
+> >          Error::from(insert_err.cause)
+> >      }
+> >  }
+> > +
+> > +/// Error type for failure to insert a new value.
+> > +pub struct AllocError<T> {
+> > +    /// The value that could not be inserted.
+> > +    pub value: T,
+> > +    /// The reason for the failure to insert.
+> > +    pub cause: AllocErrorKind,
+> > +}
+> > +
+> > +/// The reason for the failure to insert.
+> > +#[derive(PartialEq, Eq, Copy, Clone)]
+> > +pub enum AllocErrorKind {
+> > +    /// There is not enough space for the requested allocation.
+> > +    Busy,
+> > +    /// Failure to allocate memory.
+> > +    Nomem,
+> > +    /// The insertion request was invalid.
+> > +    InvalidRequest,
+> > +}
+> > +
+> > +impl From<AllocErrorKind> for Error {
+> > +    #[inline]
+> > +    fn from(kind: AllocErrorKind) -> Error {
+> > +        match kind {
+> > +            AllocErrorKind::Busy =3D> EBUSY,
+> > +            AllocErrorKind::Nomem =3D> ENOMEM,
+> > +            AllocErrorKind::InvalidRequest =3D> EINVAL,
+> > +        }
+> > +    }
+> > +}
+> > +
+> > +impl<T> From<AllocError<T>> for Error {
+> > +    #[inline]
+> > +    fn from(insert_err: AllocError<T>) -> Error {
+> > +        Error::from(insert_err.cause)
+> > +    }
+> > +}
+> >
+>
+> This looks identical to `InsertError`?
 
-I requested Wasim to prepare this patch set. Something that would have
-been useful to include in the cover letter and some of the patches...
+They differ on whether the error code is EBUSY or EEXIST.
 
-
-I definitely agree with your position when it comes to renaming working
-platforms and I also think there has been way too much churn in relation
-to this platform.
-
-But the thing we call SA8775P upstream is not SA8775P. The hardware +
-firmware that is described by sa8775p.dtsi doesn't exist.
-
-Reactively and without telling us the whole story, we seem to have
-gotten qcs9100-ride*.dts to represent what folks has been using to
-upstream the platform support.
-
-But the board where I see people actually running upstream (the EVK
-introduced in this series) is based on the QCS9075 variant, which is the
-same die but with some hardware features disabled.
-
-
-
-In other words, this is a mess resulting from lacking communication and
-reactive shortsighted attempts to get things merged. I don't want to
-maintain it in this form.
-
-> Nacked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-
-I'm fine carrying this token of disapproval for how we got here. 
-
-Regards,
-Bjorn
-
-> Best regards,
-> Krzysztof
-> 
+Alice
 
