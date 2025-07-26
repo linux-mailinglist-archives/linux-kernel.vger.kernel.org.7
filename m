@@ -1,102 +1,90 @@
-Return-Path: <linux-kernel+bounces-746752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605EFB12ACB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 15:43:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71AEB12AD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 15:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FA1172A31
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710643B861C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000952877F3;
-	Sat, 26 Jul 2025 13:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943BD286888;
+	Sat, 26 Jul 2025 13:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhDBAQ1t"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwG3HNCM"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60AE286D46;
-	Sat, 26 Jul 2025 13:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0E0376F1;
+	Sat, 26 Jul 2025 13:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753537378; cv=none; b=WXrwrVaB+yCjMDqO3fQY+S6feUalAw83/t5v2cE2oXuaiIrDCYb8ei+Jg64Wi2fHxk8EaS6kJnuIFUCTO1fr2ECfM3EKQSVa1qDbbmrUit7LygwgdXd6DtIu8mOH2Enl9wrkA9x7PjFA2/hLBkfMUqwaSyEpOP9kXQ2EjORDh4s=
+	t=1753537970; cv=none; b=b53AT/r8X6G/Yr90j8LiNpYmZ2wa+d5JRdFTb/MaHY80gecIFfq0F+1kq1juiFMyPTOzMnJibug8BeCoKJSAaPEmLfrde4nmrH1eh7sBz5sFknRl/BtDM9mYAoyTD/A54/1I8DKr6EypoCsqC5Ldg3iEIRyjpp2COVlgKlPQEIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753537378; c=relaxed/simple;
-	bh=ma/BQawGYoy7ITtIcGnWLTuLrZMFRrj4k7am8UwuYVU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SUkO/YFkkWQ73tqliR2wvG0qCQXj/F1/8brAwoLbl6nNJTyHi9GcqBkgHdvhOOVhPiAONe9/L5dZQtTAc9UEwIbRYvzOW/Yv4AbEjI5e+Rfc/S+OG2wqVNnFAUXxz+appcqsdvhdinVVCLYeRs2OzyFHee2KuEjgRdiIZ3e/QmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhDBAQ1t; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1753537970; c=relaxed/simple;
+	bh=lFuPyRoz0shNaVNJDvmrl4WZAKtXA52saGklq7aY55A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MlmtihabaziCfiJ/PuOTsZ8RMIBqcWIlkz67oZZAogFnN+Hjdm/VaYDMK+KVGKlaweKl5nF7W1vcKBjQuyALeGMWQsddSC56tGsnXqF/ZOvRpnSP2kAJ6K1M3LETFLxioekx1DJSq8+fUVffXd9bIPTq0yfeOG3hzKJCRXMDBZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZwG3HNCM; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b2c4331c50eso2755971a12.3;
-        Sat, 26 Jul 2025 06:42:56 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a4e575db1aso155111f8f.2;
+        Sat, 26 Jul 2025 06:52:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753537376; x=1754142176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k7igQM7Vyn71nhVvSbp2kQ44aAuz9LFYWyrsCyPIgIw=;
-        b=RhDBAQ1tY5JPysUvfQlhNFeMEczXXmY3pvzCMemxM34hd8OpXyf+1fy23F8uE5md6m
-         Zf/sCBO9+GeZ1rTDuoOheAnZ5wQk1yLwkiyexmnDjm9UYaSxmVdxJF6uTZgJqT5NTglu
-         8dDmxifx3y0wrm8iSyCfNcXUM111Of+YZ27+5+XDRLq4JU6NvKs0AD+VJ9rTf31zVeQx
-         AEO4tB4GIpYRB6jgb2eGkq2DxJkrG7YVgGOy0/lQ2SjdVw14DjurWt1K6HUNQNBMvpsq
-         M9H4cYT85iFjDNLALKTLKbjg8RKVJQv180aRYDalt8tNHG8C10i56O/Hy7dWOQK+sQmi
-         5Ypw==
+        d=gmail.com; s=20230601; t=1753537967; x=1754142767; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L7gsK5t9my2KIvz/yOtyIav75bvnwncFskC7xHpOTE0=;
+        b=ZwG3HNCM/5i++UHJHKzc8Z92YoxB15nAdj3rPiizG7R2m6BJkPhhofJSWUEWOPMVNF
+         vwfADQe8bMfGIuzpBuXc1PDe4J2SPwoMqpKUEhBvDSuoKeDVIdGTAO6/6egNtEQL0RZ4
+         /JDGqkrSXHTFTHOmKX5Yq4mLdVodZnJqeNSkegvQmPAbS3+Z117YbZnTxgighHyMXHCp
+         8tl847ROEDLLqisQ8M5146cfpoUgy420xDc2/S9yprWPykyz8ntDZl5zG+Ask+VjL7yN
+         QjRzAj+d786GxPsZrCE372d8hhwhbW5L174EDldUgDLcCdrKkkf8S4J6+QN32DDKmjf+
+         W4jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753537376; x=1754142176;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k7igQM7Vyn71nhVvSbp2kQ44aAuz9LFYWyrsCyPIgIw=;
-        b=qrYSvXUzcXYTrmMOD03gD5dmBWg7h6J8pTxk/pdBc7WznGApdHlP0kw5HOuIDgEGIa
-         Kdw1hv4xz9VF1fbXyHsPDQTGjrFugpybWL8rvFnqzfIbgUNppmDo640+wRiRfUTyKuNK
-         lRxHZSeukatTq/bZ8IQ0fQP/tuDlGXUfrRsnzZ2iYxGl+2huNQbiTrBONbOoHPnr9JoS
-         VU2EFqQ2SoovM9omlY/YOCPQfO/4BYlV/KTwKp2Q9T1IexoBghW1JgEkjDN6voYyzRD5
-         ZN39y2752vvaDu1FpxVMuql/XCWVYy9kolV8J5Bo/Uu9dNOuhCrSlsSvUIkD9y8eAFp1
-         ERQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtU/Mwq0+yndUMBk8RsASdcZaH2uhq4XMN/NV4aYikmCGV6k+/xXN6zDkkbhAYEZkL67J5ABXn/V0CT7W+@vger.kernel.org, AJvYcCVvTXFlMNauhoznvKB/BQXvll1D2teSiXsJj/D/hBkC/tMlmknFEL0As/oV+WMJXOimlI5rOriRj5sF@vger.kernel.org, AJvYcCXqjWrpIrMAqRxi0l9UBYH3aNj7lAuq8NPfxDPLLmtcG0J/3nH5hpCVAw4FLrlpj+MbU85v4Uzli/oX3Mi4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCnyA83g8D9NIOHALmxNgX1pz0AUmXsdz2SFiwpa7j9BToYdGW
-	c5THpKg3lG+Vve6QOl4Rc50slMKCqEk8lrles/gSIG5YcJyuenQQ6TBm
-X-Gm-Gg: ASbGncvmeONGqEEvr9odQtJr/GuiJwgN9dToTqBz6vK7+LbMe2iejnUAGNDSJ5UOrHl
-	qDPF2Tot9BD1ufFKehw132am3PfSVFkpBnXlVisNBwC3uR/rprmIPuyXKnlsZnUdREUerlMI5Fl
-	aI77BFeMa/gDHxydERfd+0FUsAKbNJqTWs2rHza1fhveqgjzPB1H77bmS722ayPz/xncJQpl6Eg
-	Tq43HTZrG8PU0Dn34Vc8QHVhI8WVNOvPRZcRihv4UvoFU1v6deVcNXvv7PmcjUxvhr8llk5bhOl
-	7TtkPaIw/rxhbmmkd1kkDXORsT/LqNpUl943fnvilGyeyotnBLUye8YVQoGyrhXmAyeLK8d40s+
-	ps3z+rJmEjZdldsHQjewasoDebYS8bKqgr/oslDIlr6SDB4YiO+xQNWGBL8qtGA==
-X-Google-Smtp-Source: AGHT+IGykL3x0uCuxja/bgPqhGoOyWm/WxysnfAYTbQkxQLZoEShTNhvEthuDBcdTIEqtQJLd7SBjQ==
-X-Received: by 2002:a17:90b:5804:b0:311:f99e:7f4e with SMTP id 98e67ed59e1d1-31e779fa061mr7768141a91.16.1753537376282;
-        Sat, 26 Jul 2025 06:42:56 -0700 (PDT)
-Received: from ubuntu-Virtual-Machine.corp.microsoft.com ([2001:4898:80e8:77:9619:11b0:a73:e5a6])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e83508500sm1869190a91.22.2025.07.26.06.42.55
+        d=1e100.net; s=20230601; t=1753537967; x=1754142767;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L7gsK5t9my2KIvz/yOtyIav75bvnwncFskC7xHpOTE0=;
+        b=J4Comly57MN6HeS1KzhoVNAHweZLB7f3DF46uj299DPZI4fWwGN8PxtPE9LOoLZAH+
+         vviWfxMr2DPGVgHYPohOtKl6quf7POY1O+Jk2nxesBO+iJ41wQ7N0EETlKsV9FaWds36
+         2pf/W1MG8aRIXJzKReEvMFarRbq6ZbNWQtYCmbCYhTVcR4qhob+dttna25AWqg/x5IUi
+         7gugF23IaT11NRApgYKci2rHGlPhGkLvYCfhNibXwPzTtZtthaV/qtdeKHl5alMtfT6Z
+         R0w+R7RYVslWZO4sD1c8D6IJh+tTttWctor6Ip3GtTfoiXjG0zV8AnL+ruR+6/V2YpHl
+         xNAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMbRtBqUQRkwSyeMdOciwnVGa5/I4EFpHOvz1oSQOIDEuhpqfWspE6TIgd2q3/hSFEB3nvKqHhhxz+@vger.kernel.org, AJvYcCWlYWrdLxZpnJ3tjaBOHevfEr/jspz4AOaoillgDnDAMKVuRKVAUSC9PnoRAy8REAb7ChRVWoVMhw1A+QNA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy89fELBCpaEGPJkZPQQew5CE0vbuzX7D9X4yZAq+xG3qR0rwKV
+	DC643QkyWGDSYu2MTOOwy4Du1NNTa19MgVKiFpU4PSSDZ4B0NCbJrEMMVIPZPXdHr94=
+X-Gm-Gg: ASbGncsuxxIGMK+JWYmmwf6oh3Hxla9ds/n7kBCq4LFNb8ZYfhDVbBv/EOWIZu2j0qN
+	OKMFdRA3vxBGFgAgLyiBYFv8Zt+9fbDxN26V+xEz5tlbDX4l2UxiCMIaFyZeJ19N/iK72+wqVqh
+	dmSdPUiYHOnzdZBG6Q2/DCT8Oo0gdMSTUXE/ThZMl9t4C0zOYpbiv1dLc0RoyGOhjrPsVmi/nPe
+	2xG4mz4hXDi8OkHWXjkX14K5QlIv3MZXbRlMUMKIiu0Ys/ZcDYcvHBSUnZudbSQX9HktsLEmeMH
+	GPDul6iDz5FMZqp80MoGror3gelp6mFwRrl0+hcDUAh8VXimPRPc43hNFzbeqo6fy6aTzOPSI6i
+	70OVd6XZEIcDVWmLCwHCGLit6PJdvEpDRkQ==
+X-Google-Smtp-Source: AGHT+IFG+VyHIVOEUPTiiGdkm5FQonRW/tGNZ4tdFY0Z5nZCHqWSoyx0C46nntZCO+uU4P0jgMQ1Qw==
+X-Received: by 2002:a05:6000:178a:b0:3a4:e193:e6e7 with SMTP id ffacd0b85a97d-3b7765ec686mr1949229f8f.5.1753537966540;
+        Sat, 26 Jul 2025 06:52:46 -0700 (PDT)
+Received: from gnulinux.home ([2a00:23c5:a31d:e401:17e9:5a63:c6ff:e542])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b7811b82c6sm1184625f8f.49.2025.07.26.06.52.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 06:42:55 -0700 (PDT)
-From: Tianyu Lan <ltykernel@gmail.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	arnd@arndb.de,
-	Neeraj.Upadhyay@amd.com,
-	kvijayab@amd.com
-Cc: Tianyu Lan <tiala@microsoft.com>,
-	linux-arch@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: [RFC PATCH V4 4/4] x86/hyperv: Allow Hyper-V to inject STIMER0 interrupts
-Date: Sat, 26 Jul 2025 09:42:50 -0400
-Message-Id: <20250726134250.4414-5-ltykernel@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250726134250.4414-1-ltykernel@gmail.com>
-References: <20250726134250.4414-1-ltykernel@gmail.com>
+        Sat, 26 Jul 2025 06:52:46 -0700 (PDT)
+From: Harry Fellowes <harryfellowes1@gmail.com>
+To: linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: antoniu.miclaus@analog.com,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Harry Fellowes <harryfellowes1@gmail.com>
+Subject: [PATCH] dt: hwmon/adi,ltc2991.yaml: fix typo in shunt resistor description
+Date: Sat, 26 Jul 2025 14:52:26 +0100
+Message-ID: <20250726135225.3018-2-harryfellowes1@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,43 +93,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Tianyu Lan <tiala@microsoft.com>
+Corrected the misspelled word "curent" to "current" in the description
+of the shunt-resistor-micro-ohms property. This improves clarity and
+maintains consistency in documentation.
 
-When Secure AVIC is enabled, call Secure AVIC
-function to allow Hyper-V to inject STIMER0 interrupt.
-
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-Signed-off-by: Tianyu Lan <tiala@microsoft.com>
+Signed-off-by: Harry Fellowes <harryfellowes1@gmail.com>
 ---
- arch/x86/hyperv/hv_init.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 3d1d3547095a..591338162420 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -132,6 +132,10 @@ static int hv_cpu_init(unsigned int cpu)
- 		wrmsrq(HV_X64_MSR_VP_ASSIST_PAGE, msr.as_uint64);
- 	}
+diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml b/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml
+index 1ff44cb22ef4..2210764a81bb 100644
+--- a/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml
++++ b/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml
+@@ -49,7 +49,7 @@ patternProperties:
  
-+	/* Allow Hyper-V stimer vector to be injected from Hypervisor. */
-+	if (ms_hyperv.misc_features & HV_STIMER_DIRECT_MODE_AVAILABLE)
-+		apic_update_vector(cpu, HYPERV_STIMER0_VECTOR, true);
-+
- 	return hyperv_init_ghcb();
- }
+       shunt-resistor-micro-ohms:
+         description:
+-          The value of curent sense resistor in micro ohms. Pin configuration is
++          The value of current sense resistor in micro ohms. Pin configuration is
+           set for differential input pair.
  
-@@ -239,6 +243,9 @@ static int hv_cpu_die(unsigned int cpu)
- 		*ghcb_va = NULL;
- 	}
- 
-+	if (ms_hyperv.misc_features & HV_STIMER_DIRECT_MODE_AVAILABLE)
-+		apic_update_vector(cpu, HYPERV_STIMER0_VECTOR, false);
-+
- 	hv_common_cpu_die(cpu);
- 
- 	if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
+       adi,temperature-enable:
 -- 
-2.25.1
+2.50.1
 
 
