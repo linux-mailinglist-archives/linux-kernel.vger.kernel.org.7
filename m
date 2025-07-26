@@ -1,189 +1,121 @@
-Return-Path: <linux-kernel+bounces-746670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7DCB129DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:28:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B6EB129E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DCC316329C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:28:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D1155438D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8BC22576C;
-	Sat, 26 Jul 2025 09:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782642264A6;
+	Sat, 26 Jul 2025 09:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BvnWTv+O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M52CqRVw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996F5224AF1
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B64321A454
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753522097; cv=none; b=QTBJ9PZkagXDHaO/htbxTZvr5m/njSTvRZvKjnZS9svhejan8vSOSwqABXKKaYCoMe7/eHcRXKGGIhsp1I3ZYTw3T+iJ1E5xTSYVmW7SoznFTF2Hm3V80+Pg4O427XO6RcJU2HtVWxOhdJPPkaCAbdfBTjQr5jmvd6hMReVsGlY=
+	t=1753522525; cv=none; b=soDOs8own5DXuEdJQX+IvdIOs/gZIZ0qDhy6Z5RCYFo1UwVO1iaCSLJ3EV0eSG+kbXPaB+dlJWiWodB5aX8yPWDNTKjxF2kMf0maEuLLYYwKH2I3PHcFnO594GwDuVYGHD+A+138jKoUYpzevvH526PATwKUX2pIfDJuo4bqgps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753522097; c=relaxed/simple;
-	bh=W5FwNFov/2fpUW4HpFBYlFEUurpBWp9maYR4vuBnT5o=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=lUdQ98iHHal1KOtojSVGLxkIzUgPtI3531QtWhVtvpxNa4JVpjaLLk6J7Cm79FF5cRAg00sI9leJ1iett7QTHZ9fnip6CgL54D3pplLN8bAm0gRBl7QS83v+TpeYB8N0x1wQc6sVdsyY7uzhw/u6ITZ4TPspuwUfXHzmVLWSZR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BvnWTv+O; arc=none smtp.client-ip=192.198.163.15
+	s=arc-20240116; t=1753522525; c=relaxed/simple;
+	bh=KQ3txyy3YUW77dQq7TyYbTrF1SrO05+NIgynyFTKF+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfKtOIZzYLSoszLaAM+WWcORlYZuR9AlZ7JS30gCSySyK/BUfkRB9XPrDRsBpBXXhfe0b1GoMK7DfMHDskw0kI5wtQ9/GtVsHvYCaAlByXvB7X0XdbSYvCdEnHdCTN0MM8FFnGdHsjiYFnV5DnAJq7k/U0FoFb/0wAd32+AAodY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M52CqRVw; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753522096; x=1785058096;
-  h=date:from:to:cc:subject:message-id;
-  bh=W5FwNFov/2fpUW4HpFBYlFEUurpBWp9maYR4vuBnT5o=;
-  b=BvnWTv+O3Be+yLpZhFglo2+6qzToe2qfbHIAe9fmvyV7f6+orTFjr9LB
-   aRH5McF+hIeb5Y0e59DdOQvjjFnJgjrnypk1sK4+OgbJYcHxYGRXYhHlu
-   4f4cEMSpdT1/Gzd5wALs9zHvb80hg6Ev8RasWE0HJB8t2Dt5UX4Gu/GeJ
-   q7QmmwXM55t+s312r4FWyfRgtjz41ZFTGJLg1BAlPnFf7TkMVow58zChp
-   c6krIxRMACCWpLuHQIDwmUTxis+ntXAMH1Dumn/jb/9YSzXEsx7JkOaKT
-   kVwCb+iFLqeYWrCsavXQwNubVkqs3bCmX3kJVhqThGgyGn+rS188orKJk
-   g==;
-X-CSE-ConnectionGUID: 9fokVipyRF2qZJgY1HYvoA==
-X-CSE-MsgGUID: p64TBIqZQzOXkj3at8aHkg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="55994363"
+  t=1753522524; x=1785058524;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KQ3txyy3YUW77dQq7TyYbTrF1SrO05+NIgynyFTKF+E=;
+  b=M52CqRVw6Pf+zjPqz1ya6C3M2erlg3xNV9K0JxKzwWbfTfD/d025KnNf
+   iE51/Hf3rTWGaC1xf/zT0CtFBaElwJddwCySNSbJvBMejAhgvdhCtzUN6
+   i4IqTSsR3iIpoMcvDjijxpjsNuattcrD4G5wR4hr9xVWompCDQuPmwLNm
+   /Y/5T4Y0VXTLApoWXbXPS0lRm4U0IVlxJYJRlsTASK0w0NDIpQaJMHh2n
+   g2zaB92L3kfxbicyJWcIKM3hTgSz1izlozKmBPe/lZzRW4COJQ0NaXrVT
+   zH5DWT+fK1Y4qjXy0Og1Vn34DyevNvzTYCRrCB0TQgZ2LAV88R5+tMWEy
+   w==;
+X-CSE-ConnectionGUID: Q8aMhRgyQYCaCNdiUD8s/g==
+X-CSE-MsgGUID: BjKQX5AXS2W0AUR7raD0pA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="59644499"
 X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="55994363"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 02:28:15 -0700
-X-CSE-ConnectionGUID: X3GJScybR6+rgwqIrKUaMA==
-X-CSE-MsgGUID: FuOrUCJ4SrW8uL943+oOZQ==
+   d="scan'208";a="59644499"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 02:35:23 -0700
+X-CSE-ConnectionGUID: Pt9d/288Saqm6crfNeloDQ==
+X-CSE-MsgGUID: ViYr2/H5SwSCtIEMBAV7Xg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="161395030"
+   d="scan'208";a="161836535"
 Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 26 Jul 2025 02:28:14 -0700
+  by orviesa008.jf.intel.com with ESMTP; 26 Jul 2025 02:35:20 -0700
 Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1ufbCO-000Lpz-0k;
-	Sat, 26 Jul 2025 09:28:12 +0000
-Date: Sat, 26 Jul 2025 17:27:44 +0800
+	id 1ufbJF-000LqR-2D;
+	Sat, 26 Jul 2025 09:35:17 +0000
+Date: Sat, 26 Jul 2025 17:34:42 +0800
 From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- ee90c3bb525e6ea0845e5b70f0beef0abc8f2373
-Message-ID: <202507261732.ALQIgWs9-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+To: Lukas Zapolskas <lukas.zapolskas@arm.com>,
+	dri-devel@lists.freedesktop.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, nd@arm.com,
+	=?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org,
+	Lukas Zapolskas <lukas.zapolskas@arm.com>
+Subject: Re: [PATCH v5 4/7] drm/panthor: Introduce sampling sessions to
+ handle userspace clients
+Message-ID: <202507261719.EKOvj9uv-lkp@intel.com>
+References: <1a56b67cf8849bc3a6140d2163a0206d03bb9a60.1753449448.git.lukas.zapolskas@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a56b67cf8849bc3a6140d2163a0206d03bb9a60.1753449448.git.lukas.zapolskas@arm.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: ee90c3bb525e6ea0845e5b70f0beef0abc8f2373  Merge branch into tip/master: 'x86/sev'
+Hi Lukas,
 
-elapsed time: 1326m
+kernel test robot noticed the following build warnings:
 
-configs tested: 97
-configs skipped: 3
+[auto build test WARNING on e48123c607a0db8b9ad02f83c8c3d39918dbda06]
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+url:    https://github.com/intel-lab-lkp/linux/commits/Lukas-Zapolskas/drm-panthor-Add-performance-counter-uAPI/20250725-230250
+base:   e48123c607a0db8b9ad02f83c8c3d39918dbda06
+patch link:    https://lore.kernel.org/r/1a56b67cf8849bc3a6140d2163a0206d03bb9a60.1753449448.git.lukas.zapolskas%40arm.com
+patch subject: [PATCH v5 4/7] drm/panthor: Introduce sampling sessions to handle userspace clients
+config: x86_64-buildonly-randconfig-005-20250726 (https://download.01.org/0day-ci/archive/20250726/202507261719.EKOvj9uv-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250726/202507261719.EKOvj9uv-lkp@intel.com/reproduce)
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250725    gcc-13.4.0
-arc                   randconfig-002-20250725    gcc-11.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250725    gcc-15.1.0
-arm                   randconfig-002-20250725    clang-22
-arm                   randconfig-003-20250725    clang-20
-arm                   randconfig-004-20250725    clang-22
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250725    clang-22
-arm64                 randconfig-002-20250725    gcc-12.5.0
-arm64                 randconfig-003-20250725    gcc-14.3.0
-arm64                 randconfig-004-20250725    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250725    gcc-11.5.0
-csky                  randconfig-001-20250726    gcc-15.1.0
-csky                  randconfig-002-20250725    gcc-10.5.0
-csky                  randconfig-002-20250726    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250726    clang-22
-hexagon               randconfig-002-20250726    clang-20
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250725    gcc-12
-i386        buildonly-randconfig-002-20250725    clang-20
-i386        buildonly-randconfig-003-20250725    clang-20
-i386        buildonly-randconfig-004-20250725    clang-20
-i386        buildonly-randconfig-005-20250725    clang-20
-i386        buildonly-randconfig-006-20250725    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20250725    gcc-10.5.0
-riscv                 randconfig-002-20250725    clang-22
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250725    gcc-8.5.0
-s390                  randconfig-002-20250725    clang-17
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                    randconfig-001-20250725    gcc-15.1.0
-sh                    randconfig-002-20250725    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                 randconfig-001-20250725    gcc-8.5.0
-sparc                 randconfig-002-20250725    gcc-11.5.0
-sparc64               randconfig-001-20250725    gcc-8.5.0
-sparc64               randconfig-002-20250725    gcc-8.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250725    clang-22
-um                    randconfig-002-20250725    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250725    clang-20
-x86_64      buildonly-randconfig-002-20250725    clang-20
-x86_64      buildonly-randconfig-003-20250725    clang-20
-x86_64      buildonly-randconfig-004-20250725    clang-20
-x86_64      buildonly-randconfig-005-20250725    gcc-12
-x86_64      buildonly-randconfig-006-20250725    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250725    gcc-13.4.0
-xtensa                randconfig-002-20250725    gcc-8.5.0
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507261719.EKOvj9uv-lkp@intel.com/
 
---
+All warnings (new ones prefixed by >>):
+
+>> Warning: drivers/gpu/drm/panthor/panthor_perf.c:420 function parameter 'file' not described in 'panthor_perf_session_setup'
+>> Warning: drivers/gpu/drm/panthor/panthor_perf.c:420 Excess function parameter 'ptdev' description in 'panthor_perf_session_setup'
+>> Warning: drivers/gpu/drm/panthor/panthor_perf.c:420 Excess function parameter 'pfile' description in 'panthor_perf_session_setup'
+
+-- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
 
