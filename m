@@ -1,185 +1,120 @@
-Return-Path: <linux-kernel+bounces-746725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925C6B12A76
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:26:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D92DB12A79
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ACC91C802C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:26:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A1AAA477A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B5D243367;
-	Sat, 26 Jul 2025 12:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328AB245022;
+	Sat, 26 Jul 2025 12:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="WSBWYHnx"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cRDDVga0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FEB21ADC5
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 12:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7ED1519BC
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 12:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753532793; cv=none; b=d5VNp2JnYhmOT1M6GMtYFj2ssPABge2hlugK8ii6b0XF3FNzjpB/nDw8QMVWOyfkzBSUbEkrxL9MuJnTpX7PoyfstzMeZ+Z7ByiMX6xqs4qCERmiSzyFT+W6KCrn7wjnOI15mN4sAKEq9d9W6q/TcKoiCjboyzR8uUwfsdXwLmY=
+	t=1753532923; cv=none; b=cT80DxYfd6ZbXq2oZYRaqKH8tofoBi+WVVMAbPVD0jDTqyy0UB28cyAATTCJY8yr53a5rjZjjy+zPZMquj0ozlUTvwmTlL3ChXqOsOGTQGE/zXC/OvUYvJgMo19YEedJ8d6QlzQgZMo8rE8ssBM/gGVlY64yTCcvywfCSGnRWog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753532793; c=relaxed/simple;
-	bh=ORT+AyzCNauahigfOOr8rKaf1lI9LpQh+BWhq5gZ6T0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L+AvH04B4RkbDumcpmPGD3s2/YB80EXXoXMZGyWS8rXFk7Fl6Yx+XB1t7b/pp6fdNP8glE8lJK/znXoHgFH2CmxSPetU+Soxi49PA7zXfsMh1xvHweE03sD0wmU9h5EAkTN8oF4qF7ZBKE8e3dKYMO+uHLYJ0yFI5dHzIR39ucE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=WSBWYHnx; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a588da60dfso1670508f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 05:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1753532790; x=1754137590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GXz74LT5V7fJ3YDNhO9MJuXuVY37cDbTp53DDZ/S1x0=;
-        b=WSBWYHnxLKBlJSRKeatVVyE3eRzzYHHVTNm/ew9F8HvKLErsPWj7yjsiH2ssCTghJe
-         K+xghI8AtrxGk7VfBLk40KP8im+4NRHfR+Tt8F0V2P9f/gw/Dkg6sMTW7YvfkvkK/LJb
-         kUR/QlE5cokutXZisZ2/V46HJJzBpsuRjs8fGrngMqF91BphTkcMQq63km1yoqRxe22x
-         ZvZcVi3NCquCtvL7w4Ir2Dk+NQ8n17Yd+sEV1IgfGO/9VsgMEGt/QcoJ3xD1cR33YIIw
-         flKLGQF8GMivjNIFYEAH5HATdnUBtRicBMk8eTl3XGvCpQBuYWlnM+EECEzoFeS7Plpo
-         3jjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753532790; x=1754137590;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GXz74LT5V7fJ3YDNhO9MJuXuVY37cDbTp53DDZ/S1x0=;
-        b=Mdd2JrVtznVUFCgzSwpmcENwDPaBqdW8Sa4kE7xlkOraB+OooTKx+8iVy70AitsHCT
-         WE6HGt5yrOVAlzlpDNhw6JXC9jHq6N2/Z4Jn7JOKhdfMNjOoVIi6HEyMWiov/qdIPTPt
-         D1a8tRRgHigKmNteYD9MOlf8gOw8Pcp8+DZNlioSMhEO7y0uYGYY63M8bYmy6j5V35MN
-         /H2WJymJIdB7f+PII24UZ9VYtSw/mzQAJjEUxOI1eQeo24X9DlSKEp+GEolYe9F/tymV
-         iO/HMqwroCudX1x+CkcK7+YMgH2+q0ayDq+tWFEPlEWvplh7Nz7TIn2IxFD8Z4YviuoS
-         jfXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWx84c2Wr3iiu8SIvbr0rYPhh2tKq2Xd6KThny0e2i/ayFzYB9sLtyPMaUnAQzh4XFtjx3JwcunpnLls4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8lQqZ/2W8O5I3kH/U19f4NKi2jMDmP1ofwpni+HllEpGXT2Dn
-	ESMNwvacF5V8S3SWPMpuBSX5qu6GtvUkdwoOxOfcKUNB0FyYuhzVKUPD/m8XTVbtWCY=
-X-Gm-Gg: ASbGnctJD0NXdL7QInn24Yrk4CQuGq0fmvgRUjVrlpHKKI42s6BFTQpG6rYuhQPBSrW
-	unOiINjxSqHkVGpEEUl7/ucWsyLjhqM7yAiHJ1ba4T7r2EKs+Wxhq6B0RUhjiKv2gH618xb2UXr
-	L1Nfbz9AJMQLox9zRrw7rAcw/a7sU/Fh/9tOBbN/0YKi9CwwqGWvybI0Qj47L6ASjw0b0giyLTb
-	KaIL8BDB5uBhpHTZM64a1gvNq2lYlhJOJr50emNWWxeRPJcXVk8npqYah4MPz65uVhG+AsH8Y3S
-	drmDBbLp6X1AzLYgADaZTd42zMcjRNi6dDgCoKINa3J48ngE3dO592GX1ipZwRSZmH2KOB46Ygz
-	+FGVl4+8D+MVqD7I9p2nn2057WxMpXFU=
-X-Google-Smtp-Source: AGHT+IFbQ7M+MHUoszE4dog/+tPFHS7TlxIikU0HmuOERDkjmR+L1tPTzLfHQsgc+ZBVZL843JY1SA==
-X-Received: by 2002:a05:6000:2407:b0:3b7:6d94:a032 with SMTP id ffacd0b85a97d-3b7765e6ba2mr3918155f8f.3.1753532790477;
-        Sat, 26 Jul 2025 05:26:30 -0700 (PDT)
-Received: from [10.181.147.246] ([82.79.79.83])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778f04546sm2622442f8f.53.2025.07.26.05.26.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Jul 2025 05:26:29 -0700 (PDT)
-Message-ID: <9f16ace1-f1e7-41b0-bc7d-f358cd043271@tuxon.dev>
-Date: Sat, 26 Jul 2025 15:26:28 +0300
+	s=arc-20240116; t=1753532923; c=relaxed/simple;
+	bh=YuehmxuRyrlOSFHFQ1Yaiwvs0V5J3xcKU5wtDYfuFD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCxD3bntuLm8oa8IqO29S71lCcO1p2nK1Y+kDoNxFWXNdXy+IIHtLmc3Tl+AJIR5LRYw6aoTZlfXrngVu0hzsBUlTLx2qke5QCkvWXTiY5d1E6sxU6mBVk18oz2x4Zce2M3xpVfQowCrj3PSTVDNWDgFEjAPKuGJCvdim5N86fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cRDDVga0; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753532922; x=1785068922;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YuehmxuRyrlOSFHFQ1Yaiwvs0V5J3xcKU5wtDYfuFD8=;
+  b=cRDDVga0+ws+iHE8oXbt45lrhdK4kO3xwPYplUgEftc2gGSuLAPocoMe
+   vsXT718dKN8zdV/iQ6IHDGadIjDvdBM/B9deeGLq64r0QFN/fvTgN8Q6d
+   Z65vaQy1QY5fjXUIyByimipAzaSeDpTRR4Zt3WMODNAnOlP/EVnWwCjQe
+   RAFDv1KMbDPDIbSdXEtb0shi82qBDdqQB1OycyySOJDmYtS5RGUBUKEiD
+   z5QGPdwEcfFiAeCTjDZdg4BIVymWPbk4HWWBZ0ZJxPySbzWfZmpn2a5HA
+   LZd3bk/Vc7tXwF+i6ypRXAC5Wj1x2G/kiAx20ptQ66oct5C7GZv9rNPKB
+   Q==;
+X-CSE-ConnectionGUID: 1Oc8E2CdRB2R3oLCtG+67w==
+X-CSE-MsgGUID: AnsUx5aaTMCy9TvMddAPVw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="55728707"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="55728707"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 05:28:42 -0700
+X-CSE-ConnectionGUID: 5Uj/GCTgTZixDUFLlL6+dA==
+X-CSE-MsgGUID: xm1IdLMtToyO/jjJ0uKqVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="185223609"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 26 Jul 2025 05:28:40 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ufe0z-000Lyx-1i;
+	Sat, 26 Jul 2025 12:28:37 +0000
+Date: Sat, 26 Jul 2025 20:27:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jia He <justin.he@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jia He <justin.he@arm.com>
+Subject: Re: [PATCH] mm: percpu: Introduce normalized CPU-to-NUMA node
+ mapping to  reduce max_distance
+Message-ID: <202507262015.sw4niVFQ-lkp@intel.com>
+References: <20250722041418.2024870-1-justin.he@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 4/6] net: macb: Implement TAPRIO DESTROY command
- offload for gate cleanup
-To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
- nicolas.ferre@microchip.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: git@amd.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250722154111.1871292-1-vineeth.karumanchi@amd.com>
- <20250722154111.1871292-5-vineeth.karumanchi@amd.com>
-Content-Language: en-US
-From: "claudiu beznea (tuxon)" <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20250722154111.1871292-5-vineeth.karumanchi@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722041418.2024870-1-justin.he@arm.com>
 
+Hi Jia,
 
+kernel test robot noticed the following build warnings:
 
-On 7/22/25 18:41, Vineeth Karumanchi wrote:
-> Add hardware offload support for "tc qdisc destroy" operations to safely
-> remove IEEE 802.1Qbv time-gated scheduling configuration and restore
-> default queue behavior.
-> 
-> Cleanup sequence:
-> - Reset network device TC configuration state
-> - Disable Enhanced Network Scheduling and Timing for all queues
-> - Clear all ENST timing control registers (START_TIME, ON_TIME, OFF_TIME)
-> - Atomic register programming with proper synchronization
-> 
-> This ensures complete removal of time-aware scheduling state, returning
-> the controller to standard FIFO queue operation without residual timing
-> constraints
-> 
-> Signed-off-by: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
-> ---
->   drivers/net/ethernet/cadence/macb_main.c | 28 ++++++++++++++++++++++++
->   1 file changed, 28 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 4518b59168d5..6b3eff28a842 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -4239,6 +4239,34 @@ static int macb_taprio_setup_replace(struct net_device *ndev,
->   	return err;
->   }
->   
-> +static void macb_taprio_destroy(struct net_device *ndev)
+[auto build test WARNING on akpm-mm/mm-everything]
 
-This function is unused in this patch. Nothing mentions it.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jia-He/mm-percpu-Introduce-normalized-CPU-to-NUMA-node-mapping-to-reduce-max_distance/20250722-121559
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250722041418.2024870-1-justin.he%40arm.com
+patch subject: [PATCH] mm: percpu: Introduce normalized CPU-to-NUMA node mapping to  reduce max_distance
+config: arm64-randconfig-r113-20250725 (https://download.01.org/0day-ci/archive/20250726/202507262015.sw4niVFQ-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 10.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250726/202507262015.sw4niVFQ-lkp@intel.com/reproduce)
 
-> +{
-> +	struct macb *bp = netdev_priv(ndev);
-> +	struct macb_queue *queue;
-> +	unsigned long flags;
-> +	u32 enst_disable_mask;
-> +	u8 i;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507262015.sw4niVFQ-lkp@intel.com/
 
-unsigned int
+sparse warnings: (new ones prefixed by >>)
+>> drivers/base/arch_numa.c:154:12: sparse: sparse: symbol 'early_cpu_to_norm_node' was not declared. Should it be static?
 
-> +
-> +	netdev_reset_tc(ndev);
-> +	enst_disable_mask = GENMASK(bp->num_queues - 1, 0) << GEM_ENST_DISABLE_QUEUE_OFFSET;
+vim +/early_cpu_to_norm_node +154 drivers/base/arch_numa.c
 
-You can use GEM_BF(GENMASK(...), ENST_DISABLE_QUEUE) if you 
-GEM_ENST_DISABLE_QUEUE_SIZE is defined
+   153	
+ > 154	int __init early_cpu_to_norm_node(int cpu)
+   155	{
+   156		return cpu_to_norm_node_map[cpu];
+   157	}
+   158	
 
-> +	netdev_dbg(ndev, "TAPRIO destroy: disabling all gates\n");
-> +
-> +	spin_lock_irqsave(&bp->lock, flags);
-
-guard()
-
-> +
-> +	/* Single disable command for all queues */
-> +	gem_writel(bp, ENST_CONTROL, enst_disable_mask);
-> +
-> +	/* Clear all queue ENST registers in batch */
-> +	for (i = 0; i < bp->num_queues; i++) {
-
-You can follow the pattern across macb_main.c and replace it with:
-
-         for (unsigned int q = 0, queue = &bp->queues[q]; q < bp->num_queues; 
-++q, ++queue)
-
-> +		queue = &bp->queues[i];
-
-And drop this line
-
-Thank you,
-Claudiu
-
-> +		queue_writel(queue, ENST_START_TIME, 0);
-> +		queue_writel(queue, ENST_ON_TIME, 0);
-> +		queue_writel(queue, ENST_OFF_TIME, 0);
-> +	}
-> +
-> +	spin_unlock_irqrestore(&bp->lock, flags);
-> +}
-> +
->   static const struct net_device_ops macb_netdev_ops = {
->   	.ndo_open		= macb_open,
->   	.ndo_stop		= macb_close,
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
