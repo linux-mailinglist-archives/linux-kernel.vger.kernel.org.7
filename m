@@ -1,106 +1,78 @@
-Return-Path: <linux-kernel+bounces-746896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2CA6B12C9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:26:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877CBB12CA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F744E2CFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 275244E3497
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572F421C9E7;
-	Sat, 26 Jul 2025 21:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D51421C9F9;
+	Sat, 26 Jul 2025 21:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iG9z91ie"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKcq20vv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B164D1EA7DD;
-	Sat, 26 Jul 2025 21:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9AA20E005;
+	Sat, 26 Jul 2025 21:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753565181; cv=none; b=MACTXu6vb2E6cZOMThYUdc3pALCNKCRwAHIXDlFTL7EG5dV6cju3b7ytTg3HkNIUtFSAfFnnf4Eau6gRL+T+acXWRW+ED5RHtkLur6evHGFzp5gd5Yz6qaNsX7P80spGzYhjpnTGHSzzSUtU6mg4XTNErE05wzwDWNSgVFfcLNc=
+	t=1753565269; cv=none; b=hksZBayJ39IO9YhDHKjHlSDlmdvJXwDxNQncEbYmR/AHup9e6Ry/j8FTG5y4GNA9eDU9WuuewZyYAj5Ca53IDdpVFOi+NknFGTnwcj+/gD/7PSqGBmE9TVcOYN94Os3ER/WCq6S2R0mPP9ci/Em7dBpDceYOdlXY1g6+CWCdzIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753565181; c=relaxed/simple;
-	bh=HRz6MADk8kXtX6zMCSuX7+PnJXnqXQTbzRUgSFNYQvw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wx5zr7ekG6VMVL5kPLgvJRG+v0QkrKleqHYzRHP6vqO1P6cp6rSxdICm8K5kK0F0YuzWPoVXTvp98Rtj01RRI3KONNjJYnPE5txzUTVxn/ATcVooQdAZvd1Hmwr1325xGZQLfw8KuE3sQQGwWAmz6sujtGh0m46r3FQWsC/JUpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iG9z91ie; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C35FC4CEED;
-	Sat, 26 Jul 2025 21:26:21 +0000 (UTC)
+	s=arc-20240116; t=1753565269; c=relaxed/simple;
+	bh=tfWg6QBgC80UWMJlkYVMB7gZHM1R2jW9m+kGw2QyqkY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mP+AhUruZRVIyBA2ae6l2eLSywjwS3E6M2q5XzysbGqd2EnaeyCI4LkZHJ0RTpS4/m8OA8M/lny6NCQb94Uff9tokgnuEsugAz4Mx5/nvmWga1mFQopgRyNvjSaGVFJGnxoxe4t9mACK9ajrhdms5+6MifRevLLUdxrJ9ust8t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKcq20vv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E586C4CEED;
+	Sat, 26 Jul 2025 21:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753565181;
-	bh=HRz6MADk8kXtX6zMCSuX7+PnJXnqXQTbzRUgSFNYQvw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iG9z91ie9sWabPgWYlrkqgHmJAQSuqsfVUhuHsS24znfhvkKHOm7qG+XXyZn5vDMF
-	 bXAn+YPOQSBraGWhMoe+lguIqQ5aXIVK8pgqHR4YASUkpITN/o2Vg3Z5uPjZUgg+W/
-	 1mjuqKwSyvS6ziu9Hi9yCGZWCh4QCiQc13PYF5WU1J1hE21HWqeX3NMbp4BLjxpgEg
-	 qQqrcTKBqfny+9Mk4I0bb9vJx5bbBNPVKYeYQEQMGT0jB6LKg3y9xnlYfw0LBW0uUc
-	 UwQbtuiuEN29uZE9pT3FSt/pU3ZHnj1aKO09WS9Iv/v4mGL3UEoE28PU7bkNMH57JS
-	 YqhwmT/2I58Eg==
-From: Kees Cook <kees@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Coiby Xu <coxu@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Alexander Graf <graf@amazon.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] kstack_erase: Add -mgeneral-regs-only to silence Clang warnings
-Date: Sat, 26 Jul 2025 14:26:19 -0700
-Message-Id: <20250726212615.work.800-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=k20201202; t=1753565269;
+	bh=tfWg6QBgC80UWMJlkYVMB7gZHM1R2jW9m+kGw2QyqkY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=mKcq20vvdupFnKiQ+UTtEeoIyjLiTJq3aJcEX1L2qiMKG5TstTAM0tN+OK8M/ultr
+	 WPkmDoaC8VkyDG7ieTrO0WTxi2fSNJ3kJTnr30bdkWu5mLdo0aa1IxxTJMbM7Owrck
+	 GdEtABwWaqRWjnnD2HEq04vHzawkrU3g1/FuKy7zazbJiB9bKmQIPhI8jskrub/pwr
+	 f3E1Mt/imfpFMv/Lw+2c9Rjln0Pw9DLoh5xYO2GjBwCMqzxkOcfAir6eqVs7m1GyHD
+	 uqY+p+6/qSci9pXYRZm75egwP0Eb4huodCC7ea39bw2y+1GlhMZj226EKCQElcPcCe
+	 a45VBi6tfEMAg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF00383BF4E;
+	Sat, 26 Jul 2025 21:28:07 +0000 (UTC)
+Subject: Re: [PULL REQUEST] i2c-for-6.16-rc8
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aIVDzXNdRsJ6xfK0@shikoro>
+References: <aIVDzXNdRsJ6xfK0@shikoro>
+X-PR-Tracked-List-Id: <linux-i2c.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aIVDzXNdRsJ6xfK0@shikoro>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.16-rc8
+X-PR-Tracked-Commit-Id: 31f08841dd5d479458ee98bdc91d63910ee19861
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 513fc69f8fc7f85dfbdd35b6f59b6ef2da422e9c
+Message-Id: <175356528655.3697799.5315598364720807171.pr-tracker-bot@kernel.org>
+Date: Sat, 26 Jul 2025 21:28:06 +0000
+To: Wolfram Sang <wsa@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1334; i=kees@kernel.org; h=from:subject:message-id; bh=HRz6MADk8kXtX6zMCSuX7+PnJXnqXQTbzRUgSFNYQvw=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmt7r/jV86NNzhpZHvJVklCdorujTmbP27n4tCpefQmT HuTuShbRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwESENBj+Wf1i3XXoJveJbXeV HFgbov7HHL3qG/Xi2TITPzG3Ip2jzIwMS5oM1t06NiP73WYxo85jn0J5A1hrn8n8NblewZ6l/Ua ZGwA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
 
-Once CONFIG_KSTACK_ERASE is enabled with Clang on i386, the build warns:
+The pull request you sent on Sat, 26 Jul 2025 23:08:29 +0200:
 
-  kernel/kstack_erase.c:168:2: warning: function with attribute 'no_caller_saved_registers' should only call a function with attribute 'no_caller_saved_registers' or be compiled with '-mgeneral-regs-only' [-Wexcessive-regsave]
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.16-rc8
 
-Add -mgeneral-regs-only for the kstack_erase handler, to make Clang feel
-better (it is effectively a no-op flag for the kernel). No binary
-changes encountered.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/513fc69f8fc7f85dfbdd35b6f59b6ef2da422e9c
 
-Build & boot tested with Clang 21 on x86_64, and i386.
-Build tested with GCC 14.2.0 on x86_64, i386, arm64, and arm.
+Thank you!
 
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Closes: https://lore.kernel.org/all/20250726004313.GA3650901@ax162
-Signed-off-by: Kees Cook <kees@kernel.org>
----
- kernel/Makefile | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/Makefile b/kernel/Makefile
-index e4f01f1d4d0c..0ee9afd8b7cf 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -140,6 +140,7 @@ obj-$(CONFIG_RESOURCE_KUNIT_TEST) += resource_kunit.o
- obj-$(CONFIG_SYSCTL_KUNIT_TEST) += sysctl-test.o
- 
- CFLAGS_kstack_erase.o += $(DISABLE_KSTACK_ERASE)
-+CFLAGS_kstack_erase.o += $(call cc-option,-mgeneral-regs-only)
- obj-$(CONFIG_KSTACK_ERASE) += kstack_erase.o
- KASAN_SANITIZE_kstack_erase.o := n
- KCSAN_SANITIZE_kstack_erase.o := n
 -- 
-2.34.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
