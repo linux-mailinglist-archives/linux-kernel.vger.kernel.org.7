@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-746661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07643B129C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:49:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F13B129C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F9D0AA7504
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:48:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 006307B18D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A0121B9C3;
-	Sat, 26 Jul 2025 08:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0H05aPm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A36220F24;
+	Sat, 26 Jul 2025 08:56:43 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4342D41A8F;
-	Sat, 26 Jul 2025 08:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D38621D3EC
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 08:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753519759; cv=none; b=NSz05SUS0+xcksGYnoQ2Ft61IaWIzrvN8Vns6TuLrNm0bw2s+LBdCgFnGlIn+QWtntFv5nPRmlO0HR0eNeH15A00tFMclS8x6emN8JWoquhLRR0wDm2HllLE1sV0OTulVJIseOA/PsfvYuImvOD0l71CekUPpnRBkt2jgdL6u9U=
+	t=1753520203; cv=none; b=jivYGS3QZUzjgGdXc56AmXbe+jk3TOGJoMt9PmsblvzVqnc1g5CmWM1j5394D1G+OEePJSUhB8XDtV3LtKfjAZgEILMLmhwdBg8Za316GSeBIFE5MFsUcHLAi1V0xfCfCCO33RpZAT+qfZsMDmGulzd6cKgTbcRZMH0vqyiH9RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753519759; c=relaxed/simple;
-	bh=hKrUWNearcp4ZIDYya1VMgL+4p01kQmkj7tuzh5MZKE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=ojmQObBPZMaDz2OY6kUfA1LccvoTdk2fWAtkfqmyPeIgQooV8HmwHD1uPOTWR0zabNpZKRkXlbvU/Idrntguoy3EOYjbpzbU5aK5bcz4hc9H9m74DQiHMy919FRbi7WyMnQAz4h1PqZ+OcCkcFo1vet4ui4gPwwJN75vDe5hzCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0H05aPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B890FC4CEED;
-	Sat, 26 Jul 2025 08:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753519757;
-	bh=hKrUWNearcp4ZIDYya1VMgL+4p01kQmkj7tuzh5MZKE=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=G0H05aPmgiV0g//LKUm9nDS3UJ1BUdM6ovhr3DV9Xlakw290JXIbr0WqtAqPFdSNu
-	 ighP4H12T1UT4QmCgVk1ZS5MxYQifn1Ob7UObk7M3sUTL87ho2IzatTUrP5FQm5cqH
-	 ibl00gxX4PLhq+t1c7M4mFReErnkl56F1Ic9QW6O4aWxypLFKUhhNpuG9fFB+B/gcn
-	 Htjn3vy+A+7gIBGIUA7zhU6Z/50dTbRGRUwfTcl2Rzj+biwPK4oQvLOGBgmpz/n4hD
-	 VOu7+V044k8oIpxMnuruiHtsMbzpLzFE0qqDUwjenpdC53odJ0E2nBU96o7K71Yq9i
-	 gYEO7J8ObHfCg==
+	s=arc-20240116; t=1753520203; c=relaxed/simple;
+	bh=WxyAHfqMa0TidQihQRz/fsw4kLrAPPv01ZSpwf1Ruyg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mI0Em/yhLaiEamFQUTynkHAWHakHnc5YJA7A/sQDDCEsYLRUU3a1VFqx+VT75sF/G9VfshOcwe6notnJzV3Gl5O9IJ2EJtwd0bVufkNA3/Pt3Rl+Z0nel6UsC2YtQcW6efgTLzC/hQo6wWxo9NrIfmHr2DOTGZ/u3rdcmNfO2Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-87c752fb0f7so412354639f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 01:56:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753520201; x=1754125001;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2iqLiR1u0VxMcoX4EPcYCbCEhjF4vPdzd8KB0iaemA0=;
+        b=dAAGQi8dwQxHZrKew40YDYJuZJ+VXq+syXmkgW2xOWoykD4lGGk8QozCE6phrlt0WW
+         nm5yJKERYq5A4ZBCaE/mwOW4Mx03RqNq3ZFSdA52K9O5wRcUzjYdH1r7C7QqSxCnJ26Z
+         PXWeIM1RY1WD+WnTbyrfL8vXQJAjERb+YAdr7aYp1fv3SjuTpr509QBOyRM/+vsXjH5a
+         HjRxRyO8ZsgFr409o44Qj0TKBgROtZcDyObi0bJjXsDkC0XCWhBp7zn2K8uKYXtAcUtW
+         NLfA0BOcbv4AtLdXFLzhgjqNjicC5wS19aA3jUo/+Vm1vftHglJoiyl1Zl8XXKlVzU7W
+         wzQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBZDN9tdaqjqhGE/FErTsPGM1PEHs9w778EG20i2WkB41VnraB8FlB9yB4VVkmaFgIazvqnYFbaaWJnD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3AJHKvEPCqsdejwKAc759ZwaqiLQzqiDH4G/8fykk4XDHt/as
+	lIsfxcHyPiya8mGLUmCfLL3AKhKXfElJ4F0CIkpQ+LQ+JrBrlTFDZCwS81y3cBR9IfOUzcSbYLQ
+	VuivUyOW9O2g/IA6+F5pIT1zvOBUPVTfIqYR2CDo5UsnK9uVu52MfMaLrrew=
+X-Google-Smtp-Source: AGHT+IFkl50Hsuu1sfNG5LgyMa6MXBFfKmkAArB9GXnU4YCFUP6oQsqf0KLCjTCFdqUQ90El+HVpOc+LjcTc/fe8VbB533Hw6u9q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 26 Jul 2025 10:49:12 +0200
-Message-Id: <DBLUVHKRGVCO.19XQMAX6S1M7W@kernel.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>, "Abdiel Janulgue"
- <abdiel.janulgue@gmail.com>, "Danilo Krummrich" <dakr@kernel.org>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, "Robin Murphy"
- <robin.murphy@arm.com>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
-Cc: "Christian S. Lima" <christiansantoslima21@gmail.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] rust: transmute: add `as_bytes` method for `AsBytes`
- trait
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250726-as_bytes-v3-1-eb7514faab28@nvidia.com>
-In-Reply-To: <20250726-as_bytes-v3-1-eb7514faab28@nvidia.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:1515:b0:87c:2e82:5a6a with SMTP id
+ ca18e2360f4ac-88022977049mr980524939f.4.1753520201332; Sat, 26 Jul 2025
+ 01:56:41 -0700 (PDT)
+Date: Sat, 26 Jul 2025 01:56:41 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68849849.a00a0220.b12ec.0013.GAE@google.com>
+Subject: [syzbot] Monthly hfs report (Jul 2025)
+From: syzbot <syzbot+list23f95ff4a4eec7a61ad2@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat Jul 26, 2025 at 4:47 AM CEST, Alexandre Courbot wrote:
-> Every type that implements `AsBytes` should be able to provide its byte
-> representation. Introduce the `as_bytes` method that returns the
-> implementer as a stream of bytes, and provide a default implementation
-> that should be suitable for any type that satisfies `AsBytes`'s safety
-> requirements.
->
-> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Hello hfs maintainers/developers,
 
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+This is a 31-day syzbot report for the hfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/hfs
 
-> ---
-> This is the sister patch of [1], providing an `as_bytes` method for
-> `AsBytes`.
->
-> It is going to be used in Nova, but should also be universally useful -
-> if anything, it felt a bit strange that `AsBytes` did not provide this
-> method so far.
->
-> [1] https://lore.kernel.org/rust-for-linux/20250624042802.105623-1-christ=
-iansantoslima21@gmail.com/
-> ---
-> Changes in v3:
-> - Use `ptr::from_ref` instead of `as *const T`.
-> - Link to v2: https://lore.kernel.org/r/20250725-as_bytes-v2-1-c6584c211a=
-6c@nvidia.com
->
-> Changes in v2:
-> - Use `size_of_val` to provide a default implementation for both `Sized`
->   and non-`Sized` types, and remove `AsBytesSized`. (thanks Alice!)
-> - Link to v1: https://lore.kernel.org/r/20250725-as_bytes-v1-1-6f06a3744f=
-69@nvidia.com
-> ---
->  rust/kernel/transmute.rs | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
-> index 1c7d43771a37b90150de86699f114a2ffb84db91..69c46c19a89191d8a2abc5801=
-564cacda232218c 100644
-> --- a/rust/kernel/transmute.rs
-> +++ b/rust/kernel/transmute.rs
-> @@ -47,7 +47,16 @@ macro_rules! impl_frombytes {
->  ///
->  /// Values of this type may not contain any uninitialized bytes. This ty=
-pe must not have interior
->  /// mutability.
-> -pub unsafe trait AsBytes {}
-> +pub unsafe trait AsBytes {
-> +    /// Returns `self` as a slice of bytes.
-> +    fn as_bytes(&self) -> &[u8] {
-> +        let data =3D core::ptr::from_ref(self).cast::<u8>();
-> +        let len =3D size_of_val(self);
-> +
-> +        // SAFETY: `data` is non-null and valid for `len * sizeof::<u8>(=
-)` bytes.
-> +        unsafe { core::slice::from_raw_parts(data, len) }
-> +    }
-> +}
-> =20
->  macro_rules! impl_asbytes {
->      ($($({$($generics:tt)*})? $t:ty, )*) =3D> {
->
-> ---
-> base-commit: 14ae91a81ec8fa0bc23170d4aa16dd2a20d54105
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 44 issues are still open and 23 have already been fixed.
 
-Normally I'd expect this to be `rust-next` or an `-rc` tag... I did find
-this in one of the trees that I fetch, so no worries, but maybe in the
-future use one of those? Thanks!
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  13491   Yes   possible deadlock in hfsplus_get_block
+                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
+<2>  8835    Yes   KMSAN: uninit-value in hfsplus_cat_case_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
+<3>  4533    Yes   possible deadlock in hfs_find_init (2)
+                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
+<4>  4396    Yes   KMSAN: uninit-value in hfsplus_delete_cat
+                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
+<5>  4202    Yes   KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
+<6>  4164    Yes   KMSAN: uninit-value in hfs_find_set_zero_bits
+                   https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
+<7>  3235    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
+                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
+<8>  2961    Yes   KMSAN: uninit-value in hfsplus_lookup
+                   https://syzkaller.appspot.com/bug?extid=91db973302e7b18c7653
+<9>  2325    Yes   KMSAN: uninit-value in __hfsplus_ext_cache_extent
+                   https://syzkaller.appspot.com/bug?extid=55ad87f38795d6787521
+<10> 2283    Yes   WARNING in hfs_bnode_create
+                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
 
 ---
-Cheers,
-Benno
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> change-id: 20250725-as_bytes-6cbc11f2e8c3
->
-> Best regards,
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
