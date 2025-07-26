@@ -1,116 +1,93 @@
-Return-Path: <linux-kernel+bounces-746910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004D4B12CF0
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 00:13:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A85B6B12CEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 00:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181C217DD8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 22:13:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9534177B7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 22:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC92288525;
-	Sat, 26 Jul 2025 22:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HeMyujIy"
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA322253FB;
+	Sat, 26 Jul 2025 22:10:06 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AD6246781;
-	Sat, 26 Jul 2025 22:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ED01DE885;
+	Sat, 26 Jul 2025 22:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753567993; cv=none; b=ZrYO8Sm5HGLE0mZwrRTxUJtS691GBoWIeAHivlzHTH3p3Mc5YMz5TT47bOs3AyUAHns6EAjs4Pbcr9mytpJt2H4G3izFEmWC+RZh5/EcBzETfaXY/67C0V5lczCDuxPo55/CJZdW81V+zpyGYU1NfXbtJ7SBncrX17hIdUnVJ50=
+	t=1753567805; cv=none; b=PbjBUie/fPNcKfWPBilriex+2JALkkvFUdQFD/95W8lkfp6R3aTi5mK+stTMvyEZfP6VNPLOJ4baw/il2pfMEjovtOz5kiNqqqmFab9Ri1kAWr07QdDpxTYr3/61MGVKYYT7P90NJoZ+7UzYtl+8a4fuVoOm4TXlXdCMUhd9fIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753567993; c=relaxed/simple;
-	bh=fHf8RDEc2Z5+hJMnjg/XLLN6eE6tNIoWmvz+X7SYzpM=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=B9kZmhXbFjm333ZYxQrTZlY4ElQpagxi/5uM4Xo34ilbqVMSjNnjZIefnLE2VDXVjfafhluSD5U4N9g80eOK5xbpgT6W73da1Qjmk56ViwpjSC0hrFFNinFT08qIevNmJHVJRcJqdVxSaar7xiFlt/nkVXII0ICk9wO8I0bpDuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HeMyujIy; arc=none smtp.client-ip=80.12.242.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id fmznuEsvCFkrkfmznuZVeq; Sun, 27 Jul 2025 00:04:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1753567440;
-	bh=0/4AUjFZluFTi1IBUmeceD+DKVSmrjOL/Y0uIEFcQBM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=HeMyujIysG/oDbFOpEZeCM1L2J39XXylDL9I1oLvJ38R4Lif/mYGZj5I6B4dmyb83
-	 +kEBJ26KFlbfREhuAozUCBFqHqcdR66Dnad6SrN+D4lvVmEi8Ih+LG3SaUCaJg/Qfk
-	 PKry4NSGn1bHbeFf9JVIYmCH/kmjgJFOKQNQHB30PqIjZTmqeqIle0wArNioaeMxu1
-	 kaI8BW/n/1DOSKS4aSKeFW7D3KYmFSeIm+uQchemAVRSMbE2JcG6ib3QddkTbY4lN6
-	 ryH8/qcZP2nH9kXm+tIjiNYzOH6Iwwl/3kCse+7IR94isLqjNgcunlUDk9ebsypmEh
-	 N52V/aywHpiAA==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 27 Jul 2025 00:04:00 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <cc69ced8-7a20-49a5-a550-64050cf04e7f@wanadoo.fr>
-Date: Sun, 27 Jul 2025 00:03:59 +0200
+	s=arc-20240116; t=1753567805; c=relaxed/simple;
+	bh=tfMdw1gdoi09NgjImSJjFAETuUgIgCg47WnxPv1FxUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aYoW2vuRQdoU/3AD5GyFSykOX6zu0E25+qVItItv0yjk6wucNHD0RqyIYRrRwnwPBIeJeGoX8HlzJ+Ve5rZ1qduHhr61vR5+kaO4zm4e37nXFYYw47wlfrfD6t3J+SrLsrf7vzBgOKntqlfjrmbNge0B7E6GN3kEOE5MmYYojEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:f281:d82b:fca1:5bb3])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id A05644006C;
+	Sat, 26 Jul 2025 22:10:00 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:f281:d82b:fca1:5bb3) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: Rishi Gupta <gupt21@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-i2c@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+52c1a7d3e5b361ccd346@syzkaller.appspotmail.com,
+	Arnaud Lecomte <contact@arnaud-lcm.com>
+Subject: [PATCH] hid: fix I2C read buffer overflow in raw_event() for mcp2221
+Date: Sat, 26 Jul 2025 23:09:31 +0100
+Message-ID: <20250726220931.7126-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] iio: magnetometer: add support for Infineon TLV493D
- 3D Magentic sensor
-References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
- <20250726-tlv493d-sensor-v6_16-rc5-v1-1-deac027e6f32@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: dixitparmar19@gmail.com
-Cc: andy@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- dlechner@baylibre.com, jic23@kernel.org, krzk+dt@kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, nuno.sa@analog.com,
- robh@kernel.org
-In-Reply-To: <20250726-tlv493d-sensor-v6_16-rc5-v1-1-deac027e6f32@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175356780125.29756.14907190966280097588@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Le 26/07/2025 à 11:37, Dixit Parmar a écrit :
-> The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
-> applications includes joysticks, control elements (white goods,
-> multifunction knops), or electric meters (anti tampering) and any
-> other application that requires accurate angular measurements at
-> low power consumptions.
+As reported by syzbot, mcp2221_raw_event lacked
+validation of incoming I2C read data sizes, risking buffer
+overflows in mcp->rxbuf during multi-part transfers.
+As highlighted in the DS20005565B spec, p44, we have:
+"The number of read-back data bytes to follow in this packet:
+from 0 to a maximum of 60 bytes of read-back bytes."
+This patch enforces we don't exceed this limit.
 
-Hi,
+Reported-by: syzbot+52c1a7d3e5b361ccd346@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=52c1a7d3e5b361ccd346
+Tested-by: syzbot+52c1a7d3e5b361ccd346@syzkaller.appspotmail.com
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+---
+ drivers/hid/hid-mcp2221.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> +	ret = read_poll_timeout(regmap_bulk_read, err, err ||
-> +			FIELD_GET(TLV493D_VAL_CHANNEL, buff[TLV493D_RD_REG_TEMP]) == 0,
-> +			mode->sleep_us, (3 * mode->sleep_us), false, data->map, TLV493D_RD_REG_BX,
-> +			buff, ARRAY_SIZE(buff));
-> +	if (ret) {
-> +		dev_err(data->dev, "read poll timeout, error:%d", ret);
+diff --git a/drivers/hid/hid-mcp2221.c b/drivers/hid/hid-mcp2221.c
+index 0f93c22a479f..83941b916cd6 100644
+--- a/drivers/hid/hid-mcp2221.c
++++ b/drivers/hid/hid-mcp2221.c
+@@ -814,6 +814,10 @@ static int mcp2221_raw_event(struct hid_device *hdev,
+ 			}
+ 			if (data[2] == MCP2221_I2C_READ_COMPL ||
+ 			    data[2] == MCP2221_I2C_READ_PARTIAL) {
++				if (!mcp->rxbuf || mcp->rxbuf_idx < 0 || data[3] > 60) {
++					mcp->status = -EINVAL;
++					break;
++				}
+ 				buf = mcp->rxbuf;
+ 				memcpy(&buf[mcp->rxbuf_idx], &data[4], data[3]);
+ 				mcp->rxbuf_idx = mcp->rxbuf_idx + data[3];
+-- 
+2.43.0
 
-Nitpick: missing trailing \n
-
-> +		goto out;
-> +	}
-> +	if (err) {
-> +		dev_err(data->dev, "read data failed, error:%d\n", ret);
-> +		ret = err;
-> +		goto out;
-> +	}
-
-...
-
-> +	ret = tlv493d_init(data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to initialized\n");
-
-Nitpick: to initialize (without a d)
-
-> +
-> +	indio_dev->info = &tlv493d_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-
-...
-
-CJ
 
