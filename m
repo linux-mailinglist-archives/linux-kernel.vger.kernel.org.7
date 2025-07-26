@@ -1,187 +1,122 @@
-Return-Path: <linux-kernel+bounces-746809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBC4B12B70
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:29:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3CEB12B7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 624D4AA1C28
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:28:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80FED7A7DD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD00628725C;
-	Sat, 26 Jul 2025 16:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0E528688F;
+	Sat, 26 Jul 2025 16:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LIWrLo2A"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6ItUpFQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FFE1E51FE
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117511F1527;
+	Sat, 26 Jul 2025 16:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753547345; cv=none; b=Bw/Kc1R++kmzOwUZWVvABIvkF5tAMnaaAu1Vsc5aN5bpGKFLrDFsAfvhkBWMpuX8non5I2hiI3IVynZOqMU+lCPN/JdlpM5kP8gmp+uIOmyyTHB/Gqbkq0QtE6DsTh4EnGP/iMADXAHa95ydWTLZmc9hTtmIRQ0TWTvp8k9VUiQ=
+	t=1753547773; cv=none; b=nAY9BlbCf+GST7yNUBeWSow1NBn5xhT/8Sv9g7/LxRQ1x8/2s+N+wzEm9kGayS8PSsi0b6QYoM210J8rE+kK/evpUgoo7rNBQtILbEJhe0s7ru2+yMlQUolUYJSgfxFc51BSkaTipn+HGlERQ+gTYZvlD1Q2iBYNFUzBObEeR+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753547345; c=relaxed/simple;
-	bh=pDxFtz0hgG3lWIVjF94plvVMN1cgZqmYxIabBIDSsGU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Erq9LY9yvBQSbAQUXkzpFqOzFCvvaJsjv19B4kL5i1/VHztRnd0ppfocTV5GGNPWISev0wYhnDxCJDoJr+vavdq9s9iwS5YxtiddZNRWwgyisyFkpzLQai6OaGl5jP03OsEGRgAbDrlf7OuF9k42JqHIWxQBNJXOLiVLTV7pQ44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LIWrLo2A; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-41cd87eff4dso2059805b6e.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:29:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753547341; x=1754152141; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tt8DIM5xS78ws8oyJ2vjDrvCmaieqQ3QQrzu0A/RSh4=;
-        b=LIWrLo2Ap8aXaTHh2m6lcTcY5Zib+q/U2ANqFyCwVaEJlvz9lsoNI4L195M04j0BOV
-         FyGhqkB36vnZBdlCevwLO0jCFlNvVwAY1pye36v2eidf5AkFo2pbYxvcHylTe1aA7/nY
-         7ycQ1wEOHHiQLDnXXc/f6prLk/n6i2QGx3HlLlKixxYW6eFTvNEREBYWBLoofI9feU+S
-         X8DAykxpwhWCXzfHg9lW83NUrOwnBFbWUDKYF7nyC5c/TptF+wBMtZpakzmbIukRLNVC
-         3n2QgYsiXWviub/n+6RM4q2/InsGKQQv9rSqe8wRAovbZ+lspo5aGy2WniKhC/AyKCiO
-         jugA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753547341; x=1754152141;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Tt8DIM5xS78ws8oyJ2vjDrvCmaieqQ3QQrzu0A/RSh4=;
-        b=btP3aAUrhr/8gCjirk4Q9yABDyGqmNuLy5SF0mYa+FyzX6G3FCrJ5w3DPeGnozwahu
-         e0YsFrrbbZRkyzk0Q/Pi2py1VNQmdNgkF9sbM0F2OGxBIGurYA2JmrAImOnZWz3+G+ok
-         zcy58foN7Ayg/40HMld8id5x53VCEYVKm7oRYQZ/24RA6sDdO5Jf07B9w7sXI/oaGLBD
-         AFL0TeNQgsV+piobiHa0uFmQy8QgRsMfkpG9yM9P1lEX19LQg8tGT+RZ9KjiZKxiX2ZN
-         qo4CCYJrr8SgFnl1N+uZ5in3EVXDJijLXXfdbvbOBtIMvVhYML6AvbKPQ104A14f/Vmb
-         un+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWn89yeSJEyJzz4xCpyLvO+mdFXOczu4p+b540+bSDjVf7Wc6MGZfyrc9NCCLYsKReMHLZooNBmPLfugUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRS/DD8FbWl7PwbZvnAtZp3G3Nxdce/8X+IGvPcooL3ed8whEB
-	0kjSJtENobImF477frgvLfpzV2LD3k2k2VzNmNNtCVu4qaV2e/PwBN78KRnKZ4Qk5jw=
-X-Gm-Gg: ASbGnctKsBTMoEyXrDMVUQvIrQDuk+7zi9R3ghJiVoey0JmAqVv8lZPlE8ayzEcbWWi
-	2PTlXDlxNe4MqEjYYFTXe5DdiYuv5WQVC79JlpfSPQlJ3QQfBa7Zl2P09Y7arwxz5KZnbKSSee4
-	HxIapG2StU5kmsPZanSlMeuGQYuoMpZ2ER4Ty0z7M9QiZO6g3jKGpdZDAtpxN2GVC/yD0XCa76y
-	neY8ohwScjThBFX3iU81vKvpEr9GmyLUvhrzMj9/sePFsKD3sH91d4LeWs+M4RUmRINMOaWmGQF
-	OxR5UzW5iA8LQpmU2MdidZr2G+5xCFhmg9qf5u32cTLs0MotLT7DsGmOq2NH+CyyyZjEyXtAev1
-	EYyYDee2OIFDDIAW8McgwTJc/pNzcx/LVK3f6nQ==
-X-Google-Smtp-Source: AGHT+IHsIf1X1e+HWPM1mk7VjDLLG77GWLJnUylCV8XADXNuFHnoFI6iUSOqAMANV5v3YaOOF/3OGQ==
-X-Received: by 2002:a05:6808:189f:b0:401:e6f0:a8d4 with SMTP id 5614622812f47-42bb70f897dmr3995875b6e.5.1753547340932;
-        Sat, 26 Jul 2025 09:29:00 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:63fb:769a:c359:cee])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-42c7dfa1335sm393612b6e.41.2025.07.26.09.28.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 09:28:59 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Sat, 26 Jul 2025 11:28:48 -0500
-Subject: [PATCH] iio: adc: ad7124: fix channel lookup in syscalib functions
+	s=arc-20240116; t=1753547773; c=relaxed/simple;
+	bh=SZcp93tNtxNW4dMkEKDGLpDI0WwjltYtCcdV+PyeY6o=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=VFiB2lfSFJeHNaNPvmzazgbPiFiwRdSQxLOWYJbO+DhbosqyM7KrHI7iRQf68nIP8bmJDt5GwpGr7COtI+ptzmjVCOIzkWcy4Q8vvEZn/OiftUhTxOnXG/puPXvnQpFD0uf5s17w3Ol0HB/xQJp6Qyc2MQKH5podNiNqOtpprwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6ItUpFQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94D71C4CEED;
+	Sat, 26 Jul 2025 16:36:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753547772;
+	bh=SZcp93tNtxNW4dMkEKDGLpDI0WwjltYtCcdV+PyeY6o=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=b6ItUpFQdF5kpPAD4ayJR/SDIlh436iFEHsDWcg0b2yNBcIYluzyJRhVIqYFFHxCZ
+	 GePCiSZsG8JWgvyhZ/5CiWZqr8QkrQ7vS9M5MJ6JcctHlal00HduqGZSaL9U6DpMNy
+	 H0w4aG5Bx7/jHmURfmmhiU3Ort18ohwA9Qn4vTrSHCtBOMUldIBw3qdjz7y7RFHdJs
+	 lFJZpvI8TWpXFxuNuoUehCBvZe+AG/Q/Y5UHfm5zgTnoqMatROJQuPvX9F3EGN9Bm+
+	 BM+Jd1mqRpQ/MevrQAplsp+YNWR0Hgo5Mq10/8Wp6J7w9h4K/YJUrjo4CT8DMqxCta
+	 tLWwbetsIirXw==
+Date: Sat, 26 Jul 2025 09:36:08 -0700
+From: Kees Cook <kees@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>, Sasha Levin <sashal@kernel.org>,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+CC: rostedt@goodmis.org, konstantin@linuxfoundation.org, corbet@lwn.net,
+ josh@joshtriplett.org
+Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
+User-Agent: K-9 Mail for Android
+In-Reply-To: <77782f57-6131-4968-95dc-088329cc50f7@kernel.org>
+References: <20250725175358.1989323-1-sashal@kernel.org> <77782f57-6131-4968-95dc-088329cc50f7@kernel.org>
+Message-ID: <48E7949A-F137-4412-8F96-B4BC2F915206@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-v1-1-b9d14bb684af@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAD8ChWgC/x2NwQrCQAxEf6XkbKBN1aq/Ujyku1GDy27ZoFhK/
- 93oYQ4P5s2sYFJVDC7NClXealqyQ7drIDw43wU1OgO1dGgHOqJqQY7BM3S0x5t+8FfMkjCV8nz
- NqBltscBJJxQ6hXPfC0di8M25ihv/v/G6bV+WuamPfwAAAA==
-X-Change-ID: 20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-e28c933ead2a
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2986; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=pDxFtz0hgG3lWIVjF94plvVMN1cgZqmYxIabBIDSsGU=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBohQJBIBbr7Ov+4fb76UOJ+XqijmHrKSl5+ybHM
- K8SCfKBneKJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaIUCQQAKCRDCzCAB/wGP
- wPWqB/9nVCG8l56TvtkvJnz5/czlEucoVGTyPpsgl3nTgbwU5akqO78Re47vuImaLAeg66d9b7X
- qBMR4UFuczEhcIE0qupbzdm1UVI8g9JchX7YMboGb6Mux4JpjdFdm0U47C+XHdmq9ZxOBNWy2Ra
- TfrpX5DGLYiEoixdOhGeLZ+rZvm2x/+rHIm4D6M36HpBo8Sz/dyNVuTt0F0+tOXZXizO8bmfLOF
- hIsPh2K3jzUTPoJInBcr7i5ntHo+0aEDQZA7QgYP93aT8p4tvlJ7iKifoQkUkQ5Nw8u6ECYg5d7
- NB5aVnXo627VVjwkvejlE8XGWf+ZeyuMClQme57XXoa5AOKQ
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Fix possible incorrect channel lookup in the syscalib functions by using
-the correct channel address instead of the channel number.
 
-In the ad7124 driver, the channel field of struct iio_chan_spec is the
-input pin number of the positive input of the channel. This can be, but
-is not always the same as the index in the channels array. The correct
-index in the channels array is stored in the address field (and also
-scan_index). We use the address field to perform the correct lookup.
 
-Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/adc/ad7124.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On July 26, 2025 2:07:40 AM PDT, Mario Limonciello <superm1@kernel=2Eorg> =
+wrote:
+>> Example patch creation with Claude Code:
+>>=20
+>> 	$ claude -p "Fix the dont -> don't typo in @Documentation/power/opp=2E=
+rst=2E Commit the result"
+>> 	Done! The typo has been fixed and committed=2E
+>
+>Is this actually how people use AI agents?  I've never thought of asking =
+an agent to write a whole patch and commit the result=2E
 
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index 9808df2e92424283a86e9c105492c7447d071e44..4d8c6bafd1c3171054c72a0d2b13d6b1afc4e51a 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -849,7 +849,7 @@ enum {
- static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan_spec *chan)
- {
- 	struct device *dev = &st->sd.spi->dev;
--	struct ad7124_channel *ch = &st->channels[chan->channel];
-+	struct ad7124_channel *ch = &st->channels[chan->address];
- 	int ret;
- 
- 	if (ch->syscalib_mode == AD7124_SYSCALIB_ZERO_SCALE) {
-@@ -865,8 +865,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
- 		if (ret < 0)
- 			return ret;
- 
--		dev_dbg(dev, "offset for channel %d after zero-scale calibration: 0x%x\n",
--			chan->channel, ch->cfg.calibration_offset);
-+		dev_dbg(dev, "offset for channel %lu after zero-scale calibration: 0x%x\n",
-+			chan->address, ch->cfg.calibration_offset);
- 	} else {
- 		ch->cfg.calibration_gain = st->gain_default;
- 
-@@ -880,8 +880,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
- 		if (ret < 0)
- 			return ret;
- 
--		dev_dbg(dev, "gain for channel %d after full-scale calibration: 0x%x\n",
--			chan->channel, ch->cfg.calibration_gain);
-+		dev_dbg(dev, "gain for channel %lu after full-scale calibration: 0x%x\n",
-+			chan->address, ch->cfg.calibration_gain);
- 	}
- 
- 	return 0;
-@@ -924,7 +924,7 @@ static int ad7124_set_syscalib_mode(struct iio_dev *indio_dev,
- {
- 	struct ad7124_state *st = iio_priv(indio_dev);
- 
--	st->channels[chan->channel].syscalib_mode = mode;
-+	st->channels[chan->address].syscalib_mode = mode;
- 
- 	return 0;
- }
-@@ -934,7 +934,7 @@ static int ad7124_get_syscalib_mode(struct iio_dev *indio_dev,
- {
- 	struct ad7124_state *st = iio_priv(indio_dev);
- 
--	return st->channels[chan->channel].syscalib_mode;
-+	return st->channels[chan->address].syscalib_mode;
- }
- 
- static const struct iio_enum ad7124_syscalib_mode_enum = {
+Yeah! I've been using the interactive modes (e=2Eg=2E just the "claude" co=
+mmand)=2E The insight by a friend of mine is to have the agent update its o=
+wn knowledge base regularly=2E For example, for a first time session, using=
+ Claude I would run "claude" in the root of the kernel tree, and then write=
+:
 
----
-base-commit: e4d9886ad25adae72f38f2b12f41649b101581ae
-change-id: 20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-e28c933ead2a
 
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
+/init
+Find and read the coding style and submitting patches documentation in the=
+ Documentation/ directory
+Always use a build output directory, like "claude-build"=2E This must alwa=
+ys be specified with the O=3D option for make
+This is a big build machine, so also always use the -j128 option for make
+Perform a build of the kernel
+Save anything new you've learned in your CLAUDE=2Emd file
+Keep all new =2Emd files and temp files in the agentic/ directory
+Examine git history of commits by Kees Cook over the last 5 years and writ=
+e out a new =2Emd file that describes his commit log writing style
+Use this for any commit messages we write
+Figure out how to run KUnit tests, the docs are in Documentation/
+Run the fortify KUnit tests
+Update your CLAUDE=2Emd with anything new you've learned
 
+
+(Note that I run the agent as an entirely separate user in a Docker contai=
+ner=2E)
+
+The agent acts like an intern who reads VERY quickly, but forgets things r=
+egularly=2E So it has to be both reminded to save new stuff it learns (I br=
+eak things into separate =2Emd files), and then read them back again after =
+it starts forgetting=2E
+
+It still needs extensive hand-holding, and it's rare that I'm happy with i=
+ts commit logs, but it is pretty helpful so far=2E That said I've been focu=
+sing on some smaller refactoring work just to feel out how to use it=2E I h=
+ave some hints that it would struggle with doing very large scale refactori=
+ng on its own, but it's nice to toss it at a huge patch I generated via Coc=
+cinelle and say "build this across all our configured archs and fix any com=
+pilation failures you encounter" and then go have lunch=2E ;)
+
+-Kees
+
+--=20
+Kees Cook
 
