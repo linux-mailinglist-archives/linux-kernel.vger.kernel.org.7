@@ -1,294 +1,171 @@
-Return-Path: <linux-kernel+bounces-746911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3FD1B12CF4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 00:25:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7DEB12CF5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 00:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1ABA1C21428
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 22:26:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5567217D7F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 22:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F10288537;
-	Sat, 26 Jul 2025 22:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FF8202C45;
+	Sat, 26 Jul 2025 22:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaMXat52"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="P25KKNDW"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B78A93D;
-	Sat, 26 Jul 2025 22:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3D0262BE
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 22:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753568745; cv=none; b=Yn/J2zOYWyrUrSrnvmcorqNUkF0etkaxmo7FndeVLT6/cIQ64QLLDj2fbLfFeDqv30ki4mIttyKs2AiYx4uXkdA3TXg1HJLeYk9ppfbwwjxXvoLP4lEcrexfow99zUuImDU20MAjfaXpGV4ytVKIjvH/Y9OthdeKJdF6D1+FkwE=
+	t=1753569120; cv=none; b=Q5tyXOej+PJOpuYw3PEh9NjbPitM/1i3Rx4IOo36+mD9kKzMwezwke0PbcoBZcJu0cuvRIbZv1i+ssnHzxYdpuiNpF8GkVXpVumFSBRhPJ4fc0BLwxLYAiR1CR9CT4Rjo1ORmPgPaWtx4TkSoXQbezQhde717CzJjdaacB8dVQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753568745; c=relaxed/simple;
-	bh=VRyNpYxtHH4W/8mH0SnrT/bSpXzw1jknw9/jiF+9nhs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e/jSDYcLUJukwBx8T4AEZ1x46Y6eWkpk1GlHJdwE3MmaeufTqTBOuBdoNH2mghiEcNQ2npN7PrN6T5Nh+wUuZlcLgN+vwg95f8C/MfNUSItcY3+SWiSdx4rgaXsnf1hmCWbdnG3ATwF8MHaVNMnhnkJD0cRe8V7VzlFG7+e9HDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaMXat52; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D2BC4CEED;
-	Sat, 26 Jul 2025 22:25:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753568745;
-	bh=VRyNpYxtHH4W/8mH0SnrT/bSpXzw1jknw9/jiF+9nhs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=jaMXat52hSd8p1tddnvxTvogjUfK5nYS6PNV2R7PKAi3oaIOjMNfZmkq0A7QiOGx2
-	 lgRE/7sN4f3klb2xYHaphIISXSbkNq3V8MqM5p7ZiuyYl6Q8FrM6g3fMmr9ddwu3jL
-	 UE+4OCIkGmxFAh2+t2TWvQeSJYc5OiBx8kUjVFFvjptK376AkzjQRhVfAsifjm+PpZ
-	 HqgWuH0UFXWR/dVePK7vcZ4KRP7IQ4CRvCdXENp0gvS0AVgnjldGTufdIwsM6UkiF0
-	 pL9nuEWoh8+eC5ac5IeH2A2ZmfGIrL961Y7SSYQUA9hrU3hmY+MYwoiY94oXa2HsAN
-	 X5ZrIzQ9sri0A==
-Message-ID: <6ea73492a01ecf089edc17d0c650b24daf99b60a.camel@kernel.org>
-Subject: Re: [PATCH v2 3/7] nfsd: use ATTR_CTIME_SET for delegated ctime
- updates
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Alexander Viro	
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	 <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu	
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai
- Ngo <Dai.Ngo@oracle.com>,  Tom Talpey <tom@talpey.com>
-Cc: Trond Myklebust <trondmy@hammerspace.com>, Anna Schumaker
- <anna@kernel.org>, 	linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-trace-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org
-Date: Sat, 26 Jul 2025 18:25:42 -0400
-In-Reply-To: <67d99140-0513-4797-92f8-1375a06f689a@oracle.com>
-References: <20250726-nfsd-testing-v2-0-f45923db2fbb@kernel.org>
-	 <20250726-nfsd-testing-v2-3-f45923db2fbb@kernel.org>
-	 <5f877de4-347c-484c-814f-33c08f1a5189@oracle.com>
-	 <8ec5b19dc1d0ce26f1cd86d7db2ba5a2d260c073.camel@kernel.org>
-	 <67d99140-0513-4797-92f8-1375a06f689a@oracle.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1753569120; c=relaxed/simple;
+	bh=Br0igOSWeBgd+8tcin2EbctaTl2MsLwbeeC9XmXtjgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IOS7ML96DngVI3eeh4d2WnEXHTbEtwVm/glWVugVFA99UJl1ckk23CWJt51RePTlHXpNwf31RQYhqkpX4tmQBA5vzDLrLd0Bn9iSlqDz70gXVZrV4jbFYDsWWiN2iNky69xedchYLuThe7dHrH6recH8k87OCbQ2JbT3568G3pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=P25KKNDW; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-74ad4533ac5so2219893b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 15:31:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kerneltoast.com; s=google; t=1753569118; x=1754173918; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=goQUyZCivbdecbzMlPOrKS5rZk5oqTbMCiPefv4GjFo=;
+        b=P25KKNDWzt+sxvY0e2H41NVa0sYMlMrdrrr1Q3yRo8qGUIV69tMU6rHQ5t0TGscHQR
+         6ucEoXCjq3q47k+hVa10eZhTugEk2DPlLZNVP22mWhgrWAIHwHtRD7VTJ85ugUZOJoUk
+         0L2UR7M/IhOlLI6mjOhBYKuaHZtLN58AcDQTc3p9UyT3IGqqmzgdsapP80LmpuEgxS5a
+         dV0QVhtS4Z3dly2+/XmH4qhXr6T3cqBY+eWtfMJthIKnrmqOeNpkxf9mQ0SCFwfa3u9G
+         1RwcwIkF00+lnHW3BYcvf7YA2cSkXvfWgF/c966J27CuD1tXkvLO/e3b49ZsrBm0i6dH
+         A39g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753569118; x=1754173918;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=goQUyZCivbdecbzMlPOrKS5rZk5oqTbMCiPefv4GjFo=;
+        b=fI7P8XbjPGZwEEWmfJ/4UbXHnNkEmE2CQmddTStWlhr7u2H0XdGK0Wfnrp1GDXdiNI
+         TXOsKOZajGGry1Nzsz41IotKbHioybmlf7pYqmby+FaSoiOHR4EH9PEmaY6bzCNqjEmM
+         WggSSNHonwxpKdRxtBI7MaWQd7ulKDaxT1VIY85O6rfmEtKKbjZoQX/cFczt710ZW3Kc
+         +P0klTiUzTTDwhGri4NTg8ID/NlJ9GQVdTPFpDOqnm6pFMFaCsIiRrb5y5FlES4cHUJk
+         rHyGGBfiZ+rtj2eF0rDsO/YeXiibvcdb7v2nBrSaM9JTlYWN7mP27UhgVIIKrqQysETQ
+         mZ4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVyQDZdJvszTlYAsGbul6q1acyjcXTmE5X8kBHsO0XM/aufzwiaADhJpHjazoRqVRWdfl3Yj5HAouL7MvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq+iYpgXGK62njslpE9Zzlu3Y7I7X3kqYjPB7qDvCDEmjbtI5r
+	j8T87vfntA2ttIwxKoMYkC9aHfZSKpTpyB6cH1FFC8u/HIhR8q57QFb31JADyicYI8KH
+X-Gm-Gg: ASbGnctdYARTFXiwRV6gaHq7/1RjE9UyyNym8pE1P4LzJmX+3pUydGr8qADpIgM3M12
+	YBnpeSlg/Sx363L9J91/u1P8K6zex/QnsT4nnoGU5e4jxBljv6yXvxsqjW/yBoT0q586gO092sl
+	cmIiJRipPKdM0N07z6WNkpwOohO8/JKIwiOSjk06MeJcxrTX+gbqD9LezUJ6M+DoVwbu60riEtY
+	ItlBlx/1ygvx2cDSdV0OX2Qdm/05AIH690lYXOall4NLq3leQ/NL90UgFiy88T6hYTXKOUtaQTx
+	SongPJIEoY7yHEnrmb+kXM+8pH8QTX4UICq+x60XaRB83+KZbnzEcn3/GQ2Xv2BTWWz9NFWeiVP
+	IpsD+lmIuUvVwLIfdivv5qRsv
+X-Google-Smtp-Source: AGHT+IHV8UrL+m4gTW5oOstx5hy347NvkBbkiGVIXjzUOoId55IP6klYPnDv+SEeKUmZ3w4agAipyw==
+X-Received: by 2002:a05:6a20:914c:b0:21f:53e4:1919 with SMTP id adf61e73a8af0-23d6df7ea1dmr10973722637.3.1753569117874;
+        Sat, 26 Jul 2025 15:31:57 -0700 (PDT)
+Received: from sultan-box ([142.147.89.207])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f6dd053sm2120290a12.68.2025.07.26.15.31.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Jul 2025 15:31:57 -0700 (PDT)
+Date: Sat, 26 Jul 2025 15:31:50 -0700
+From: Sultan Alsawaf <sultan@kerneltoast.com>
+To: "Du, Bin" <bin.du@amd.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+	laurent.pinchart+renesas@ideasonboard.com,
+	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
+	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
+	Dominic.Antony@amd.com, Svetoslav.Stoilov@amd.com
+Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
+Message-ID: <aIVXVpg_9XxRXUAH@sultan-box>
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <aIEmJXNpNN0QF233@sultan-box>
+ <12fb4d09-6b94-4f54-86b8-8a3ac0949151@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12fb4d09-6b94-4f54-86b8-8a3ac0949151@amd.com>
 
-On Sat, 2025-07-26 at 15:57 -0400, Chuck Lever wrote:
-> On 7/26/25 3:03 PM, Jeff Layton wrote:
-> > On Sat, 2025-07-26 at 14:48 -0400, Chuck Lever wrote:
-> > > Hi Jeff -
-> > >=20
-> > > Thanks again for your focus on getting this straightened out!
-> > >=20
-> > >=20
-> > > On 7/26/25 10:31 AM, Jeff Layton wrote:
-> > > > Ensure that notify_change() doesn't clobber a delegated ctime updat=
-e
-> > > > with current_time() by setting ATTR_CTIME_SET for those updates.
-> > > >=20
-> > > > Also, set the tv_nsec field the nfsd4_decode_fattr4 to the correct
-> > > > value.
-> > >=20
-> > > I don't yet see the connection of the above tv_nsec fix to the other
-> > > changes in this patch. Wouldn't this be an independent fix?
-> > >=20
-> >=20
-> > I felt like they were related. Yes, the ia_ctime field is currently
-> > being set wrong, but it's also being clobbered by notify_change(), so
-> > it doesn't matter much. I can break this into a separate patch (with a
-> > Fixes: tag) if you prefer though.
->=20
-> Ah, got it, this patch exposes a latent bug. The usual thing to do is to
-> fix the latent bug in a preceding/pre-requisite patch, so that's my
-> preference.
->=20
+On Fri, Jul 25, 2025 at 06:22:03PM +0800, Du, Bin wrote:
+> > I have the Ryzen AI MAX+ 395 SKU of the HP ZBook Ultra G1a 14.
+> > 
+> > I cannot for the life of me get the webcam working under Linux. The webcam works
+> > under Windows so it's not a hardware issue.
+> > 
+> > With this patchset and all of the patches you link here applied to 6.15, I get
+> > the following errors:
+> >    [   11.970038] amd_isp_i2c_designware amd_isp_i2c_designware: Unknown Synopsys component type: 0xffffffff
+> >    [   11.973162] amd_isp_i2c_designware amd_isp_i2c_designware: error -19: i2c_dw_probe failed
+> > 
+> > With the old ispkernel code from February [1] applied on 6.15, the webcam
+> > indicator LED lights up but there's no image. I see these messages at boot:
+> >    [    9.449005] amd_isp_capture amd_isp_capture.1.auto: amdgpu: AMD ISP v4l2 device registered
+> >    [    9.489005] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: The OV05 sensor device is added to the ISP I2C bus
+> >    [    9.529012] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
+> >    [    9.554046] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
+> >    [    9.554174] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
+> >    [    9.580022] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
+> > 
+> > And then the kernel crashes due to the same use-after-free issues I pointed out
+> > in my other email [2].
+> > 
+> > Any idea what's going on?
+> > 
+> > [1] https://github.com/amd/Linux_ISP_Kernel/commit/c6d42584fbd0aa42cc91ecf16dc5c4f3dfea0bb4
+> > [2] https://lore.kernel.org/r/aIEiJL83pOYO8lUJ@sultan-box
+> Hi Sultan,
+> 
+> [1] is for kernel 6.8, believe it can't be applied to 6.15. We didn't verify
+> on 6.15 but we are really glad to help, would you please provide some info,
+> 1. Suppose you are using Ubuntu, right? What's the version?
+> 2. 6.15, do you mean https://github.com/torvalds/linux/tree/v6.15 ?
+> 
+> After your confirmation, we'll see what we can do to enable your camera
+> quickly and easily
+>
+> Regards,
+> Bin
 
-OK. I'll plan to send a v3 set.
+Thank you, Bin!
 
->=20
-> > > > Don't bother setting the timestamps in cb_getattr_update_times() in=
- the
-> > > > non-delegated case. notify_change() will do that itself.
-> > > >=20
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > >=20
-> > > General comments:
-> > >=20
-> > > I don't feel that any of the patches in this series need to be tagged
-> > > for stable, since there is already a Kconfig setting that defaults to
-> > > leaving timestamp delegation disabled. But I would like to see Fixes:
-> > > tags, where that makes sense?
-> > >=20
-> >=20
-> > I don't think any of these need to go to stable since this is still
-> > under a non-default Kconfig option, and the main effect of the bug is
-> > wonky timestamps. I should be able to add some Fixes: tags though.
-> >=20
-> > > Is this set on top of the set you posted a day or two ago with the ne=
-w
-> > > trace point? Or does this set replace that one?
-> > >=20
-> >=20
-> > This set should replace those.
->=20
-> I was confused because the trace point patch is missing, and dropping it
-> wasn't mentioned in the cover letter's Change log. NBD, thanks for
-> clarifying.
->=20
+1. I'm using Arch Linux with the ISP4-patched libcamera [1].
+2. Yes, here is my kernel source [2].
 
-Ahh sorry. The last patch drops the function to which I was adding the
-tracepoint, so I dropped the tracepoint as well.
+I have some more findings:
 
-> Since the bulk of these are NFSD changes, I volunteer to take v3 once
-> we have Acks from the VFS maintainers, as needed.
->=20
+Currently, the first blocking issue is that the I2C adapter fails to initialize.
+This is because the ISP tile isn't powered on.
 
-Many thanks!
+I noticed that in the old version of amd_isp_i2c_designware [3], there were
+calls to isp_power_set(), which is available in the old ISP4 sources [4].
+Without isp_power_set(), the I2C adapter always fails to initialize for me.
 
->=20
-> > > > ---
-> > > >  fs/nfsd/nfs4state.c | 6 +++---
-> > > >  fs/nfsd/nfs4xdr.c   | 5 +++--
-> > > >  2 files changed, 6 insertions(+), 5 deletions(-)
-> > > >=20
-> > > > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> > > > index 88c347957da5b8f352be63f84f207d2225f81cb9..77eea2ad93cc07939f0=
-45fc4b983b1ac00d068b8 100644
-> > > > --- a/fs/nfsd/nfs4state.c
-> > > > +++ b/fs/nfsd/nfs4state.c
-> > > > @@ -9167,7 +9167,6 @@ static bool set_cb_time(struct timespec64 *cb=
-, const struct timespec64 *orig,
-> > > >  static int cb_getattr_update_times(struct dentry *dentry, struct n=
-fs4_delegation *dp)
-> > > >  {
-> > > >  	struct inode *inode =3D d_inode(dentry);
-> > > > -	struct timespec64 now =3D current_time(inode);
-> > > >  	struct nfs4_cb_fattr *ncf =3D &dp->dl_cb_fattr;
-> > > >  	struct iattr attrs =3D { };
-> > > >  	int ret;
-> > > > @@ -9175,6 +9174,7 @@ static int cb_getattr_update_times(struct den=
-try *dentry, struct nfs4_delegation
-> > > >  	if (deleg_attrs_deleg(dp->dl_type)) {
-> > > >  		struct timespec64 atime =3D inode_get_atime(inode);
-> > > >  		struct timespec64 mtime =3D inode_get_mtime(inode);
-> > > > +		struct timespec64 now =3D current_time(inode);
-> > > > =20
-> > > >  		attrs.ia_atime =3D ncf->ncf_cb_atime;
-> > > >  		attrs.ia_mtime =3D ncf->ncf_cb_mtime;
-> > > > @@ -9183,12 +9183,12 @@ static int cb_getattr_update_times(struct d=
-entry *dentry, struct nfs4_delegation
-> > > >  			attrs.ia_valid |=3D ATTR_ATIME | ATTR_ATIME_SET;
-> > > > =20
-> > > >  		if (set_cb_time(&attrs.ia_mtime, &mtime, &now)) {
-> > > > -			attrs.ia_valid |=3D ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET;
-> > > > +			attrs.ia_valid |=3D ATTR_CTIME | ATTR_CTIME_SET |
-> > > > +					  ATTR_MTIME | ATTR_MTIME_SET;
-> > > >  			attrs.ia_ctime =3D attrs.ia_mtime;
-> > > >  		}
-> > > >  	} else {
-> > > >  		attrs.ia_valid |=3D ATTR_MTIME | ATTR_CTIME;
-> > > > -		attrs.ia_mtime =3D attrs.ia_ctime =3D now;
-> > > >  	}
-> > > > =20
-> > > >  	if (!attrs.ia_valid)
-> > > > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> > > > index 8b68f74a8cf08c6aa1305a2a3093467656085e4a..c0a3c6a7c8bb70d6294=
-0115c3101e9f897401456 100644
-> > > > --- a/fs/nfsd/nfs4xdr.c
-> > > > +++ b/fs/nfsd/nfs4xdr.c
-> > > > @@ -538,8 +538,9 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *=
-argp, u32 *bmval, u32 bmlen,
-> > > >  		iattr->ia_mtime.tv_sec =3D modify.seconds;
-> > > >  		iattr->ia_mtime.tv_nsec =3D modify.nseconds;
-> > > >  		iattr->ia_ctime.tv_sec =3D modify.seconds;
-> > > > -		iattr->ia_ctime.tv_nsec =3D modify.seconds;
-> > > > -		iattr->ia_valid |=3D ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET | =
-ATTR_DELEG;
-> > > > +		iattr->ia_ctime.tv_nsec =3D modify.nseconds;
-> > > > +		iattr->ia_valid |=3D ATTR_CTIME | ATTR_CTIME_SET |
-> > > > +				   ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
-> > > >  	}
-> > > > =20
-> > > >  	/* request sanity: did attrlist4 contain the expected number of w=
-ords? */
-> > > >=20
-> > >=20
-> > >=20
-> >=20
->=20
+How is the ISP tile supposed to get powered on in the current ISP4 code?
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Also, I noticed that the driver init ordering matters between all of the drivers
+needed for the ISP4 camera. In particular, amd_isp_i2c_designware and amd_isp4
+must be initialized before amd_capture, otherwise amd_capture will fail to find
+the fwnode properties for the OV05C10 device attached to the I2C bus.
+
+But there is no driver init ordering enforced, which also caused some issues for
+me until I figured it out. Maybe probe deferral (-EPROBE_DEFER) should be used
+to ensure each driver waits for its dependencies to init first?
+
+[1] https://github.com/amd/Linux_ISP_libcamera/tree/3.0
+[2] https://github.com/kerneltoast/kernel_x86_laptop/tree/v6.15-sultan-isp4
+[3] https://lore.kernel.org/all/20250228164519.3453927-1-pratap.nirujogi@amd.com
+[4] https://github.com/amd/Linux_ISP_Kernel/blob/c6d42584fbd0aa42cc91ecf16dc5c4f3dfea0bb4/drivers/media/platform/amd/isp4/isp_hwa.c#L378-L385
+
+Sultan
 
