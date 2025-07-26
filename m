@@ -1,249 +1,225 @@
-Return-Path: <linux-kernel+bounces-746557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84134B1283B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6523AB1283E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EAC6AE2C47
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:43:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE0E3ACA6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35127189513;
-	Sat, 26 Jul 2025 00:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFBA13D53B;
+	Sat, 26 Jul 2025 00:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBaBfcy8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2toMk+kC"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467762B9BA;
-	Sat, 26 Jul 2025 00:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05A32B9BA
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 00:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753490611; cv=none; b=qPi4tXDvCFfEt/BfNZrNP1ELuTpeoZu4ZYEN5iRrVUjIb2Xb6BdXQ3B7v9MNsesJZMQGDyAMGzVaN7PirM3x1B/QC2727rSdZAF+EJaMiQyTuoCpfZBvU5fqavjRJMu0OpCXM1gfmn/PtJRkmexRiNkOMa80ebUCTQTg8wnU4W8=
+	t=1753490688; cv=none; b=MLQvD8zOGmkEou4fCxxWp1skbgMwA6GD7abxeIK+eHhh7IHMcLk9x985szSmRdzhAZAHMiGgsrfzITiKecsD1EZ8DYa95IEeQ7OL+PFLlGDglbhm4sbWCQ1PK71XmF+GjrREMImQ6bRu3IZXVDiYEwEy1/SmYUrAndUH+MhcfaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753490611; c=relaxed/simple;
-	bh=FRa9xY4x5DiJRX0obptGEWaAk44wN8I8KzUTZYrUCjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=teWuTX5tshkXvp0VMN50DKvVldt+QmyROOaSpwIZ/6Q2oqEBk6eqO8I+MW5pGZkwUznaux4V1EYcrWINNjOOIcknbPR6RlBw80t7g70RROl/eGXTJ3ATDmW8A0+YrOaa/tvRA/Kf07IsVCUs8G6m8Ke5btiUbvvTrMdP3pVwbZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBaBfcy8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1170C4CEE7;
-	Sat, 26 Jul 2025 00:43:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753490610;
-	bh=FRa9xY4x5DiJRX0obptGEWaAk44wN8I8KzUTZYrUCjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kBaBfcy8cvOEOsPzmxHVilPiLtCGr+TDf8X/qOm2ye9g94waAiMThV6LQwkD5mGES
-	 PDjLL+F1jsLeU64wJNGH2USu78DXOVIauVdSn5Za3ug6EyGqMkDWY68qx6CO1Gpj84
-	 N2fKc/oxH+okv+yKP2JrlydnIbTVzpb6w9fxjXPvPbNQT1zbh2x+enrj7WanGNqURj
-	 oluIdS5LRKkHy5qC/5rWJa6TJsIQMsqWbSs6k1imrXOBgatcUYq26mfwhTEKJwXKN7
-	 wK8GX+boueI26+UPx4/MDOH6NBVBpUuOSwVrQlpds5FDuUw13v4g1+lMsu+qwH3eh6
-	 5w2Rudv02W7cA==
-Date: Fri, 25 Jul 2025 17:43:13 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Gavin Shan <gshan@redhat.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	James Morse <james.morse@arm.com>,
-	Oza Pawandeep <quic_poza@quicinc.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>, Baoquan He <bhe@redhat.com>,
-	Alexander Graf <graf@amazon.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Jan Beulich <jbeulich@suse.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Bibo Mao <maobibo@loongson.cn>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, kasan-dev@googlegroups.com,
-	linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org,
-	kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v4 0/4] stackleak: Support Clang stack depth tracking
-Message-ID: <20250726004313.GA3650901@ax162>
-References: <20250724054419.it.405-kees@kernel.org>
+	s=arc-20240116; t=1753490688; c=relaxed/simple;
+	bh=9JFB9IXapt2d7PBmF4Tk/F4nAX0jKPDuyt5xJWIWPgo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i80r+P+slXr4RN0P2mmjIQTSBWwhbx+EJfr79xyBriFFV3OxJy4fL3glv3VT30otqhFk0Z2HA6+82xspLQGoCjrirDWMxAoYoOGYvrfn0nilizb0/fWENWkT4CiUB+EZkSrCNI8Uwa3OsoIJ3Vvb9qn/OZokm6tpWhWw59xRFOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2toMk+kC; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3e3ca89a34bso56605ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:44:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753490686; x=1754095486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QPWnUybGUUkWCXTqRdDIxAceE2NePosWnljOPJMqdUk=;
+        b=2toMk+kC7E6iIBtteBsOBsh13T4m2RP9gW/+T+BrHIfy8EqP0Eh5pP2d3XJ3vxV2NQ
+         yy7+CoucCuV+ifM6ZofwrgCh8hn1O2fSV5RpoT5ai94kvvOSnI9x9sRTgwkM5B7PjKSi
+         uFLsk67TkT+wopADtxJ6otVB5wula+cDB864cwLQCbYAru+ZXvTIpfeMxZhEsOjnJdxF
+         bdV4mWHG37I/r2MDfqxn7hnLaBUiPlrPgf23cyZfOXi5OTkQC6q4LchhS3yBOOx0arlv
+         5BnmahyPHy8OAUIM3+j6xw5lbxKixIzKhg6eQh8CghEfeVix2jY/I5pCccMJuutbO1oC
+         erRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753490686; x=1754095486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QPWnUybGUUkWCXTqRdDIxAceE2NePosWnljOPJMqdUk=;
+        b=ONMywgywmqoFg+9ztYsyy8UwNI9omvLKoL3oTNEXwN5QikW/v0p7+MB489yZfpbzk0
+         rOC63hUGIj8LLO+QcxY4sUwLijHSBXyXpZevmvt9bL9tlkRt7mPUCO09bWuH93Fkgnia
+         pemVx7mC0cpg3ov/a9fSu+SQuygmQ1X6ri32ZfnUIXG4kD2TqaEq65LNkaXc2rDddLaj
+         8Qu1KzJK3aLAwEBFoi/srsUmZIJP3CLcEghtnrYYXfLMObaykJgKNzPNz3jyHyZSxBX0
+         TEfeAocmEokhKwGVm7mxLZIuU2lgpJLXymqxA17Q5nA9I0a3ba/laAEoZ7l2Nmjs1/6a
+         n7ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX98ToIAUgrXuh2b6bnm+fGW2oy6pqO6JLWIXVshfJr3PDgnf0ITW3u0IeDvyEuSOixa3tQQbqgsAFShqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCBaG9b9jMBWIZgDith3WSrekynWrURalGijGfyCbtiBZgxw7M
+	YvOD050UfcyXutdrWZqDW4LJyeCQt4QinZkxFupzNyUn4tfHgeVuAR4W/lb6ELJiKKH5/YiIa0F
+	5F2B2BEzCpJowqkBVuSL5PQdasr0iV30dqrgJUxHM
+X-Gm-Gg: ASbGncvh5hoDQ2bJpoW68bDh/Nj/ejsFDEWhccHDueOdkUlAHBasCO9ss6nXya/xE8D
+	qb9+LzUG8KLwNBfUpUuNDUZTuoOYPXOihMmPNamLOUpBZ5QL06JuZscEv8bQypixzWcxDPbYQbV
+	pGhHhpvYdKkBbYkXAuF55llPt9vNCNcuwSJ90KOnLJq2VVB6laP7y0rnAJGlY2LDeC8yZo/yEth
+	5r6Mj+z
+X-Google-Smtp-Source: AGHT+IEHep2QYo3/LUJWt7WhvNXreRM+1G567+rK9hz7zyyMGGvYlVYw4NBVEb6WWUvJpA/Lns63orazNlcJeanqKbU=
+X-Received: by 2002:a05:6e02:1d96:b0:3ce:7852:1e9 with SMTP id
+ e9e14a558f8ab-3e3cce7e6famr904165ab.17.1753490685878; Fri, 25 Jul 2025
+ 17:44:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724054419.it.405-kees@kernel.org>
+References: <20250725193755.12276-1-namhyung@kernel.org> <20250725193755.12276-9-namhyung@kernel.org>
+In-Reply-To: <20250725193755.12276-9-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 25 Jul 2025 17:44:33 -0700
+X-Gm-Features: Ac12FXwKFtkaUOt5oHGOS4d5yrst1_xqdIh5_OnIcCc3aJSP8ffW-lYND28Bamc
+Message-ID: <CAP-5=fWJxCq97Oss3NXbXEKHeNXbif9-yWvktNRQvwtm3H3jbA@mail.gmail.com>
+Subject: Re: [PATCH v4 8/9] perf annotate: Hide data-type for stack operation
+ and canary
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kees,
+On Fri, Jul 25, 2025 at 12:38=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> It's mostly unnecessary to print when it has no actual type information
+> like in the stack operations and canary.  Let's have them if -v option
+> is given.
+>
+> Before:
+>   $ perf annotate --code-with-type
+>   ...
+>          : 0    0xd640 <_dl_relocate_object>:
+>     0.00 :      0:       endbr64
+>     0.00 :      4:       pushq   %rbp           # data-type: (stack opera=
+tion)
+>     0.00 :      5:       movq    %rsp, %rbp
+>     0.00 :      8:       pushq   %r15           # data-type: (stack opera=
+tion)
+>     0.00 :      a:       pushq   %r14           # data-type: (stack opera=
+tion)
+>     0.00 :      c:       pushq   %r13           # data-type: (stack opera=
+tion)
+>     0.00 :      e:       pushq   %r12           # data-type: (stack opera=
+tion)
+>     0.00 :     10:       pushq   %rbx           # data-type: (stack opera=
+tion)
 
-On Wed, Jul 23, 2025 at 10:50:24PM -0700, Kees Cook wrote:
->  v4:
->   - rebase on for-next/hardening tree (took subset of v3 patches)
->   - improve commit logs for x86 and arm64 changes (Mike, Will, Ard)
->  v3: https://lore.kernel.org/lkml/20250717231756.make.423-kees@kernel.org/
->  v2: https://lore.kernel.org/lkml/20250523043251.it.550-kees@kernel.org/
->  v1: https://lore.kernel.org/lkml/20250507180852.work.231-kees@kernel.org/
-> 
-> Hi,
-> 
-> These are the remaining changes needed to support Clang stack depth
-> tracking for kstack_erase (nee stackleak).
+I believe the intent in the dwarf is to say where the caller's callee
+saves are, but the stack slots should just be saved and restored and
+won't be used for anything interesting, perhaps for exception
+handling. An annotation like:
+# caller's RBX at stack frame offset -48
+could perhaps be useful.
 
-A few build issues that I see when building next-20250725, which seem
-related to this series.
+>     0.00 :     11:       subq    $0xf8, %rsp
+>     ...
+>     0.00 :     d4:       testl   %eax, %eax
+>     0.00 :     d6:       jne     0xf424
+>     0.00 :     dc:       movq    0xf0(%r14), %rbx               # data-ty=
+pe: struct link_map +0xf0
+>     0.00 :     e3:       testq   %rbx, %rbx
+>     0.00 :     e6:       jne     0xf2dd
+>     0.00 :     ec:       cmpq    $0, 0xf8(%r14)         # data-type: stru=
+ct link_map +0xf8
+>     ...
+>
+> After:
+>          : 0    0xd640 <_dl_relocate_object>:
+>     0.00 :      0:       endbr64
+>     0.00 :      4:       pushq   %rbp
+>     0.00 :      5:       movq    %rsp, %rbp
+>     0.00 :      8:       pushq   %r15
+>     0.00 :      a:       pushq   %r14
+>     0.00 :      c:       pushq   %r13
+>     0.00 :      e:       pushq   %r12
+>     0.00 :     10:       pushq   %rbx
+>     0.00 :     11:       subq    $0xf8, %rsp
+>     ...
+>     0.00 :     d4:       testl   %eax, %eax
+>     0.00 :     d6:       jne     0xf424
+>     0.00 :     dc:       movq    0xf0(%r14), %rbx               # data-ty=
+pe: struct link_map +0xf0
+>     0.00 :     e3:       testq   %rbx, %rbx
+>     0.00 :     e6:       jne     0xf2dd
+>     0.00 :     ec:       cmpq    $0, 0xf8(%r14)         # data-type: stru=
+ct link_map +0xf8
+>     ...
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/annotate.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 06ddc7a9f58722a4..6fc07971631ac8a3 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -765,6 +765,17 @@ __hist_entry__get_data_type(struct hist_entry *he, s=
+truct arch *arch,
+>                             struct debuginfo *dbg, struct disasm_line *dl=
+,
+>                             int *type_offset);
+>
+> +static bool needs_type_info(struct annotated_data_type *data_type)
+> +{
+> +       if (data_type =3D=3D NULL || data_type =3D=3D NO_TYPE)
+> +               return false;
+> +
+> +       if (verbose)
+> +               return true;
 
-1. I see
+lgtm given the many overloaded meanings of verbose.
 
-  ld.lld: error: undefined symbol: __sanitizer_cov_stack_depth
-  >>> referenced by atags_to_fdt.c
-  >>>               arch/arm/boot/compressed/atags_to_fdt.o:(atags_to_fdt)
-  make[5]: *** [arch/arm/boot/compressed/Makefile:152: arch/arm/boot/compressed/vmlinux] Error 1
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-when building ARCH=arm allmodconfig on next-20250725. The following diff appears to cure that one.
+Thanks,
+Ian
 
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index f9075edfd773..f6142946b162 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -9,7 +9,6 @@ OBJS		=
- 
- HEAD	= head.o
- OBJS	+= misc.o decompress.o
--CFLAGS_decompress.o += $(DISABLE_KSTACK_ERASE)
- ifeq ($(CONFIG_DEBUG_UNCOMPRESS),y)
- OBJS	+= debug.o
- AFLAGS_head.o += -DDEBUG
-@@ -96,7 +95,7 @@ KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
- 
- ccflags-y := -fpic $(call cc-option,-mno-single-pic-base,) -fno-builtin \
- 	     -I$(srctree)/scripts/dtc/libfdt -fno-stack-protector \
--	     -I$(obj)
-+	     -I$(obj) $(DISABLE_KSTACK_ERASE)
- ccflags-remove-$(CONFIG_FUNCTION_TRACER) += -pg
- asflags-y := -DZIMAGE
- 
---
-
-2. I see
-
-  kernel/kstack_erase.c:168:2: warning: function with attribute 'no_caller_saved_registers' should only call a function with attribute 'no_caller_saved_registers' or be compiled with '-mgeneral-regs-only' [-Wexcessive-regsave]
-    168 |         BUILD_BUG_ON(CONFIG_KSTACK_ERASE_TRACK_MIN_SIZE > KSTACK_ERASE_SEARCH_DEPTH);
-        |         ^
-  include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
-     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-        |         ^
-  include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
-     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-        |                                     ^
-  include/linux/compiler_types.h:568:2: note: expanded from macro 'compiletime_assert'
-    568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-        |         ^
-  include/linux/compiler_types.h:556:2: note: expanded from macro '_compiletime_assert'
-    556 |         __compiletime_assert(condition, msg, prefix, suffix)
-        |         ^
-  include/linux/compiler_types.h:549:4: note: expanded from macro '__compiletime_assert'
-    549 |                         prefix ## suffix();                             \
-        |                         ^
-  <scratch space>:97:1: note: expanded from here
-     97 | __compiletime_assert_521
-        | ^
-  kernel/kstack_erase.c:168:2: note: '__compiletime_assert_521' declared here
-  include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
-     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-        |         ^
-  include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
-     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-        |                                     ^
-  include/linux/compiler_types.h:568:2: note: expanded from macro 'compiletime_assert'
-    568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-        |         ^
-  include/linux/compiler_types.h:556:2: note: expanded from macro '_compiletime_assert'
-    556 |         __compiletime_assert(condition, msg, prefix, suffix)
-        |         ^
-  include/linux/compiler_types.h:546:26: note: expanded from macro '__compiletime_assert'
-    546 |                 __noreturn extern void prefix ## suffix(void)           \
-        |                                        ^
-  <scratch space>:96:1: note: expanded from here
-     96 | __compiletime_assert_521
-        | ^
-  kernel/kstack_erase.c:172:11: warning: function with attribute 'no_caller_saved_registers' should only call a function with attribute 'no_caller_saved_registers' or be compiled with '-mgeneral-regs-only' [-Wexcessive-regsave]
-    172 |         if (sp < current->lowest_stack &&
-        |                  ^
-  arch/x86/include/asm/current.h:28:17: note: expanded from macro 'current'
-     28 | #define current get_current()
-        |                 ^
-  arch/x86/include/asm/current.h:20:44: note: 'get_current' declared here
-     20 | static __always_inline struct task_struct *get_current(void)
-        |                                            ^
-  kernel/kstack_erase.c:173:37: warning: function with attribute 'no_caller_saved_registers' should only call a function with attribute 'no_caller_saved_registers' or be compiled with '-mgeneral-regs-only' [-Wexcessive-regsave]
-    173 |             sp >= stackleak_task_low_bound(current)) {
-        |                                            ^
-  arch/x86/include/asm/current.h:28:17: note: expanded from macro 'current'
-     28 | #define current get_current()
-        |                 ^
-  arch/x86/include/asm/current.h:20:44: note: 'get_current' declared here
-     20 | static __always_inline struct task_struct *get_current(void)
-        |                                            ^
-
-when building ARCH=i386 allmodconfig.
-
-3. I see
-
-  In file included from kernel/fork.c:96:
-  include/linux/kstack_erase.h:29:37: error: passing 'const struct task_struct *' to parameter of type 'struct task_struct *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-     29 |         return (unsigned long)end_of_stack(tsk) + sizeof(unsigned long);
-        |                                            ^~~
-  include/linux/sched/task_stack.h:56:63: note: passing argument to parameter 'p' here
-     56 | static inline unsigned long *end_of_stack(struct task_struct *p)
-        |                                                               ^
-
-when building ARCH=loongarch allmodconfig, which does not support
-CONFIG_THREAD_INFO_IN_TASK it seems.
-
-Cheers,
-Nathan
+> +
+> +       return (data_type !=3D &stackop_type) && (data_type !=3D &canary_=
+type);
+> +}
+> +
+>  static int
+>  annotation_line__print(struct annotation_line *al, struct annotation_pri=
+nt_data *apd,
+>                        struct annotation_options *opts, int printed,
+> @@ -844,7 +855,7 @@ annotation_line__print(struct annotation_line *al, st=
+ruct annotation_print_data
+>
+>                         data_type =3D __hist_entry__get_data_type(apd->he=
+, apd->arch,
+>                                                                 apd->dbg,=
+ dl, &offset);
+> -                       if (data_type && data_type !=3D NO_TYPE) {
+> +                       if (needs_type_info(data_type)) {
+>                                 char buf[4096];
+>
+>                                 printf("\t\t# data-type: %s",
+> @@ -2138,7 +2149,7 @@ void annotation_line__write(struct annotation_line =
+*al, struct annotation *notes
+>                                                                 apd->dbg,
+>                                                                 disasm_li=
+ne(al),
+>                                                                 &offset);
+> -                       if (data_type && data_type !=3D NO_TYPE) {
+> +                       if (needs_type_info(data_type)) {
+>                                 char member[256];
+>
+>                                 printed =3D scnprintf(bf, sizeof(bf),
+> --
+> 2.50.1
+>
 
