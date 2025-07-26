@@ -1,110 +1,187 @@
-Return-Path: <linux-kernel+bounces-746816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3E1B12B8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:07:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425EAB12B90
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 935B17AB959
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:05:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEDC77A9EE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883AF23CEF8;
-	Sat, 26 Jul 2025 17:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0512287262;
+	Sat, 26 Jul 2025 17:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uz+RuP0L"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kojCstoE"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B81F1C1F22;
-	Sat, 26 Jul 2025 17:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747552030A;
+	Sat, 26 Jul 2025 17:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753549617; cv=none; b=mzURH1nkOpzYkd6nZAPVS/tdSkpoO28siU2EMhZ3oTB7MMQhDOpQlZB0PIR3uB/wJ/XchUKsMW5vZjunBEmaoRx4TmxrKCWKVSQV2AmEP3GMHhQz5xsBv57kcFDxz9VYR7R/g9CdHLAiMlojae5CPNfYDvQ/DTH5pGI9RBXXC+E=
+	t=1753549867; cv=none; b=rdV+FFB7+XmuxlBM0yBXvh3QUewzMXoGovRRtPj86l4n9MvYZadFba+Zl3zXtah/5tXjC/Tg1nUkFJU7zaZPgfR7P6PYTaxCWahuQs0wPd92eHD7dRXS/GYl1eR2QllV1WztNG2jS8jIP5XqFkiAhGA7J0UeZKWBQp9fCo7TY60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753549617; c=relaxed/simple;
-	bh=plTJOLeAfmEcQriIPZ4jzQOM2HBPLE08mj7d6W16J+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PSP8KP2iQRM6Mm7Cea5P0cG/dgkHGIcYiHHyLD8l2kKjRf3+rlSeAZ8VII5rHC61lPp9m+wZ56iUkrzcc3cnu0JcooTkgfULtPCmM89/ZY/uA+rmH9ObqycdplHqRkvH/8HVLXldPhF6wo0Bdd4V82HEI5P66MW+PzNUxUoec5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uz+RuP0L; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-41cfa50c73dso1566031b6e.0;
-        Sat, 26 Jul 2025 10:06:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753549614; x=1754154414; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=plTJOLeAfmEcQriIPZ4jzQOM2HBPLE08mj7d6W16J+g=;
-        b=Uz+RuP0LJaiEhRCloyAdwMMuJWV2f15TegT79KjnKHckFzDj7xI+53JJu2xuDzLvq2
-         3dwY9ub3VMYMBH6VvhE91O8661fg+e36t4srFKwGAogrBVLulLiQyMpSEW7MGD1JOyLF
-         nCV9snccymK3QSxyr5tXk+SV4muVrsRzNRiIs8JTVYfKz4eQ+prk+aK7U75VonI5tkwS
-         ZUA6gO5GUtNiaYu86zilncXFycj5r96IdGUgx73l0ZkuJmuIDA9GLAzAlxevA+Vo3Wc+
-         I7ksfd6FeTB4vKj+tyFMaSzvirjOHf3cY34PkSRFtVta9LiLW5dnWYSHDR4X/dxmlcoY
-         R21A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753549615; x=1754154415;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=plTJOLeAfmEcQriIPZ4jzQOM2HBPLE08mj7d6W16J+g=;
-        b=hbnHQ2O4aPgpsTBXICXsjS55HfmcsfuukNXoJ6fjo4a07auX/OZdnuR7BC3rcCs8J8
-         P9Q0IkVRpx8k0UK11Kdu+oOc0yTi4ufNpZStXWVkAFr1daVAAlfiZjLxsR+ohLNTKUIm
-         cK6C/UGDaaF7NYxhBq8GihMyg7AiEfhu0scfaLzG/8BXBzaL6owYyzrsRVJ88sSiAkR3
-         nknNgnuh3RB6XjfL2VtO8Q54VHQD1b5YJZ/ZMfF7G5QJtznKdhyTK2nlbRcswD3jJy03
-         Lib3IuvMFoQoSH+ARqwHOr9NKOSHKFjbE9vaqJ4dzxNufzQoINiY0o7vIMaoR8th5l8X
-         zk6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWFfnUTRzlXWgHFrWin8GXE8/My3nf63FyfgKOMbZd0DaESFL0cFl70mZMLX9svRft3rJfoJZcRuZDG85BB@vger.kernel.org, AJvYcCXwHdEHWdjqnvHJy1Ibou8D0Oy4dk8+YXfE9wGPccWd2AknGDGZnYM5kdve4ZeCFxKQj46Lvogjlma99+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+Pa9Uu8wnFI8uIkoLzuv90BK7jX+4u6CDiIg9RvOxolD+OxfA
-	P5wqFTnhxgd/J3S4l2cBRI+U8JA6NOA7YQQIDcnl2W3eXF5f2lO5upjr5mZSFGCjybAzz+3OM3x
-	bx6e+iZh2cNfBbxyELO/A2Saia+b/IjM=
-X-Gm-Gg: ASbGncsWp83RkQt29hZ9NTlYwAjRSi/X81QL2P6zlnlr5sYNm2Yuez1lP/Tb1zo+xzN
-	dbG6AQ1K42I0+yW9O35YgCrRu+00JqyvtuK/mAkSPl5puFGWaiyE7MZguO0RUYAcHpvuGFb0xKb
-	E6miFvYF/vo+mop3Y4moRjfHZfCNMS9SOXoKvu3CfwrBVJ/PgoAycdUssET+HSebDHlRIqc4Ivy
-	SMGqhgT6ROShutyUEI=
-X-Google-Smtp-Source: AGHT+IGAm7coxgOCdblT03RZOPWbrgGBm/znyXOlrO8KFKde6xb4Dy0kiqmdl/tKuIIIU6fb1aBquTrRgP3bYfPuKHg=
-X-Received: by 2002:a05:6808:1383:b0:404:e0b3:12f with SMTP id
- 5614622812f47-42bb7bc35d8mr3163057b6e.11.1753549614575; Sat, 26 Jul 2025
- 10:06:54 -0700 (PDT)
+	s=arc-20240116; t=1753549867; c=relaxed/simple;
+	bh=pFMOrccg41HjE55/iV3fdWMoGK7ESg+Ni1DsurkdBfs=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=lkmw0RhgJq4hxRZbuuodXclGoxDw+PkytE8YiSFyT4u/sctBALIxdqnLY4I8gg3Kgv8U8T5vQVYr3otn3NLutgU8ozGe94fxfEW9BTrSaEvXawGy9mMkFax0U2cIn9TFemn2y9WKKbAJ5HAXDLKp3Qftr/VvsxQMHjNe7fFHSIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kojCstoE reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A489D4A4;
+	Sat, 26 Jul 2025 19:10:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753549813;
+	bh=pFMOrccg41HjE55/iV3fdWMoGK7ESg+Ni1DsurkdBfs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=kojCstoEKXNU6sZt+edT1cIYUmuaGwHKdT32Xo1ZaQltBduoNY2nCVPj/zhSOsL3p
+	 Z/YuXiSwCZQTWiGZtj5n+R22TD7W1tMA88NGMMiqNtOI0ShVyLeiyo1i6kzDDrnJzw
+	 a4N6KokTpI1ObIw5tHioSvdaU8CtlmEVoZvnRBEM=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725055928.37658-1-suchitkarunakaran@gmail.com>
- <20250725-violet-mayfly-from-heaven-bd66d2@l-nschier-aarch64>
- <CAO9wTFiYRb8RDB9cTRsC3yqa6Zja5+QWuew1AZyZs5gPxbdVGw@mail.gmail.com> <aIUJTK4JOxo0lDv0@fjasle.eu>
-In-Reply-To: <aIUJTK4JOxo0lDv0@fjasle.eu>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Sat, 26 Jul 2025 22:36:38 +0530
-X-Gm-Features: Ac12FXyoWhZmXTDFFFeEX_wOwTDPw7EaPsAJ1r4teyE359tjGfermR3z12wcgjM
-Message-ID: <CAO9wTFh1mpo2Tr-imiUrKn9Yfg2JnObjQMN9Vd0-pp1fA1BxeQ@mail.gmail.com>
-Subject: Re: [PATCH] kconfig/lxdialog: replace strcpy() with strscpy() in inputbox.c
-To: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: masahiroy@kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <PN3P287MB3519055FE42890F5F577B51BFF58A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io> <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io> <aIKi1BkNzNvsf5Tr@smile.fi.intel.com> <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM> <175345442477.2567018.13588829522231689027@ping.linuxembedded.co.uk> <PN3P287MB3519055FE42890F5F577B51BFF58A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	sakari.ailus@linux.intel.com <sakari.ailus@linux.intel.com>,
+	laurent.pinchart@ideasonboard.com <laurent.pinchart@ideasonboard.com>,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Hans de Goede <hansg@kernel.org>,
+	=?utf-8?q?Andr=C3=A9?= Apitzsch <git@apitzsch.eu>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-media@vger.kernel.org <linux-media@vger.kernel.org>,
+	devicetree@vger.kernel.org <"d evicetree"@vger.kernel.org>,
+	linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Date: Sat, 26 Jul 2025 18:10:50 +0100
+Message-ID: <175354985094.1609430.13921131213777523371@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
->
-> For the concrete code I'd use strlcpy, for some other uses of strcpy in
-> scripts/kconfig/ I'd probably choose differently.
->
+Quoting Hardevsinh Palaniya (2025-07-26 07:06:05)
+> > Quoting Hardevsinh Palaniya (2025-07-25 06:55:23)
+> > <snip>
+> > > > > +static int ov2735_page_access(struct ov2735 *ov2735,
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD=EF=BF=BD u32 reg, void *val, int *err, bool is_read)
+> > > > > +{
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD u8 page =3D (reg >> CCI_REG=
+_PRIVATE_SHIFT) & 0xff;
+> > > >
+> > > > ' & 0xff' part is redundant.
+> > > >
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD u32 addr =3D reg & ~CCI_REG=
+_PRIVATE_MASK;
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD int ret =3D 0;
+> > > >
+> > > > How is this assignment being used?
+> > > >
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (err && *err)
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD return *err;
+> > > > > +
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD mutex_lock(&ov2735->page_lo=
+ck);
+> > > > > +
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD /* Perform page access befo=
+re read/write */
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (ov2735->current_page !=
+=3D page) {
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_write(ov2735->cci=
+, OV2735_REG_PAGE_SELECT, page, err);
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (ret)
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD goto err_mutex_unlock;
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ov2735->current_page =3D page;
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD }
+> > > > > +
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (is_read)
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_read(ov2735->cci,=
+ addr, (u64 *)val, err);
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD else
+> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_write(ov2735->cci=
+, addr, *(u64 *)val, err);
+> > > >
+> > > > Do you really need this castings?
+> > >
+> > > Do you really think this casting is unnecessary?
+> > >
+> >=20
+> > Yes? Well quite probably - I haven't checked myself yet but ..
+> >=20
+> >=20
+> > > Please check the definitions of cci_read/write
+> > >
+> > > without this, we can't even build the driver.
+> >=20
+> > How about ... changing the function prototype of ov2735_page_access ?
+>=20
+> Of course, changing the function prototype would work.
+>=20
+> My intention is to keep a single ov2735_page_access() function that can
+> handle both read and write operations. The cci_read() function expects=20
+> a u64 *, whereas cci_write() expects a u64 value. To support both cases
+> within one function, I=E2=80=99ve used a void *val and cast it appropriat=
+ely=20
+> depending on the operation.
+>=20
+> If we were to remove the casting, we would need to split this into two
+> separate functions, one for read and one for write, even though the only =
 
-Sure, I'll make the necessary changes.
+> difference between them would be a single line. I=E2=80=99d prefer to avo=
+id that
+> redundancy and keep the code compact.=20
+>=20
+> Let me know if you see a better way to handle this without duplicating
+> the logic.=20
 
-> As Franko already wrote: it would be nice if you could also send patches
-> for the other strcpy calls below scripts/kconfig/.
->
-> But please always compile and test your changes.
->
+ov2735_page_access() {
+	if (ov2735->page !=3D page)
+		cci_write(PAGE, page)
+	ov2735->page =3D page;
+}
 
-Yes, I=E2=80=99ll send patches for the other strcpy usages as well. Apologi=
-es
-for not compiling it earlier, I=E2=80=99m still new to kernel development a=
-nd
-appreciate your patience. Thanks!
+oc2735_read() {
+	ov2735_page_access();
+	cci_read()
+}
+
+ov2735_write() {
+	ov2735_page_access();
+	cci_write()
+}
+
+>=20
+> Best Regards,
+> Hardev
 
