@@ -1,132 +1,346 @@
-Return-Path: <linux-kernel+bounces-746826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B168B12BAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:44:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA86B12BAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AA0A4E4004
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FB2517F82A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19C928851D;
-	Sat, 26 Jul 2025 17:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9013C20B800;
+	Sat, 26 Jul 2025 17:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmzmFcwM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rVkwSFsR"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ED018A6CF;
-	Sat, 26 Jul 2025 17:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE9418DB35;
+	Sat, 26 Jul 2025 17:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753551874; cv=none; b=WKym7qrfahQ/oxmHxvodsmKMiIEG/lpeiAlwKooxcnMEP0ipMoROkskftkEYOmrI/qHwWhPU6g2bcuugZrCUzfTdDQC07ZHOKB9WScxqQvPe1KYnJogqBhcOAXTbnBBpSKuIiEpULte7i+VA+O0pa8GCmO9J7LbHYJtzW0/j1uw=
+	t=1753552114; cv=none; b=pBtEO+oFmuunBeKiIctMgdhYOj7XgVhkfQs5r4rqJLt9jAQO2XoFxJv7qdoMV8XxBle0sqV0/utp/T38r/O+OdmJ5q73HCMV42BqHVTZVSknmr6raBSpO9wFOWwE5NuHRckkmmBgaTX1lSKy/6HrjU3TDphnbf2UciItEywTI94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753551874; c=relaxed/simple;
-	bh=/wk7CuIpOgogH/fiD0D2D+slPWNVuGX0Qcm0+ATe7fo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a0TBwEyZ2/Bbb3hVc3OYKXndLoIpkxglYmefm0Mcx+V+VSiYcufs4oufazCj+m35DpRxeamBU+zPM/miupSNQ0OLE+FHeSOSXb/+tewaYTwyJ21fDqsd9QETJOqpZcRLoOOEHBY7EcQexKx6e2TiQ9cxrFWdFfCPLd5VXvM90cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BmzmFcwM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEF0C4CEED;
-	Sat, 26 Jul 2025 17:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753551873;
-	bh=/wk7CuIpOgogH/fiD0D2D+slPWNVuGX0Qcm0+ATe7fo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BmzmFcwMsSpyiTFfO6ORcBoBuAEzRbuHtHeaXGJke2meZWmdeiuqONhAi9xUlYBK8
-	 t66bS3j1iZ9Q1swxNpQWvSJAiKxgr0VblqYIuC3oUWPePL09iU+ucbIkXBa3vKgDhT
-	 eaiqKji4Itf9MF0XErOKEuQeAAsWYZz+UAAAUroWUEzGYy6rAGk4D0jp2e/+XPL2+x
-	 Sqz2JlzyggiOLWS9zRxT/jXowpx/46qha3WtDyfNjCbptqvYZkDGwPVt9fmN1kxqyw
-	 qV6d/3sruI+rbwDn87+dGPd8MFgq+eShAud2FbYeUqtxg3CR9EioBVDAUayf6ur6sU
-	 9zDhmAReTSyIA==
-Date: Sat, 26 Jul 2025 18:44:28 +0100
-From: Simon Horman <horms@kernel.org>
-To: Hariprasad Kelam <hkelam@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Ratheesh Kannoth <rkannoth@marvell.com>
-Subject: Re: [net] Octeontx2-af: Skip overlap check for SPI field
-Message-ID: <20250726174428.GL1367887@horms.kernel.org>
-References: <20250725064802.2440356-1-hkelam@marvell.com>
+	s=arc-20240116; t=1753552114; c=relaxed/simple;
+	bh=5q8g5rfGZsCGgudft++Uuax93QYGOm16yIoz8xprXC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qrOAz/NVqvCT6Y/Uq4woklhzFEfMzwiN61lQmA4PvuZl59kScALCpEbd2ZKkQh9GTJhNTv2Vxpdc5QsMZOJW06RYDaiD2wUI5opyw1tyHa9G8U1XGgS5Xkl4WltulRWYfFOSp1CzC4JUmUG8nyQUK8YgoVi+zFEy2wJcKGyx9F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rVkwSFsR; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56QHmFbR1970174;
+	Sat, 26 Jul 2025 12:48:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753552095;
+	bh=lBknySK7LW2PewCh2KbhO6eZ7aIWdrJAlsd0CuKuIQY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=rVkwSFsRpmXOJm0mla92SyXDeWLWRZ2D33Pk1ij8/WnoWi5x4tDm5A6COStbYdGCI
+	 CxhloO3dSSNeYl7hT0ygIzDRkPemAp11Iw7MRL2i/Cg/kryaJXnr6B5diDq2f6QwHJ
+	 AHmFXUqVyi8O8bMkP9JqawXhF2MSI9/paeOQzb8w=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56QHmFbV3183689
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Sat, 26 Jul 2025 12:48:15 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 26
+ Jul 2025 12:48:15 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Sat, 26 Jul 2025 12:48:15 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56QHmEIH3428333;
+	Sat, 26 Jul 2025 12:48:14 -0500
+Message-ID: <d6ac080c-9a13-49eb-9cf5-1723df613548@ti.com>
+Date: Sat, 26 Jul 2025 12:48:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725064802.2440356-1-hkelam@marvell.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: System can not go into suspend when remoteproc is probed on AM62X
+To: Hiago De Franco <hiagofranco@gmail.com>,
+        Beleswar Prasad Padhi
+	<b-padhi@ti.com>
+CC: <linux-remoteproc@vger.kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suman
+ Anna <s-anna@ti.com>, <linux-kernel@vger.kernel.org>,
+        Hiago De Franco
+	<hiago.franco@toradex.com>
+References: <20250726143908.ayug6dedkmzulldx@hiagonb>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250726143908.ayug6dedkmzulldx@hiagonb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Jul 25, 2025 at 12:18:02PM +0530, Hariprasad Kelam wrote:
-> Octeontx2/CN10K silicon supports generating a 256-bit key per packet.
-> The specific fields to be extracted from a packet for key generation
-> are configurable via a Key Extraction (MKEX) Profile.
+On 7/26/25 9:39 AM, Hiago De Franco wrote:
+> Hi Andrew, Beleswar,
 > 
-> The AF driver scans the configured extraction profile to ensure that
-> fields from upper layers do not overwrite fields from lower layers in
-> the key.
+> On Fri, Jul 25, 2025 at 02:29:22PM -0500, Andrew Davis wrote:
+>>
+>> So the issue then looks to be this message we send here when we setup
+>> the mailbox[0]. This mailbox setup is done during probe() for the K3
+>> rproc drivers now (mailbox setup used to be done during
+>> rproc_{start,attach}() before [1]). Moving mailbox setup to probe
+>> is correct, but we should have factored out the test message sending
+>> code out of mailbox setup so it could have been left in
+>> rproc_{start,attach}(). That way we only send this message if the
+>> core is going to be started, no sense in sending that message if
+>> we are not even going to run the core..
+>>
+>> Fix might be as simple as [2] (not tested, if this works feel free
+>> to send as a fix)
 > 
-> Example Packet Field Layout:
-> LA: DMAC + SMAC
-> LB: VLAN
-> LC: IPv4/IPv6
-> LD: TCP/UDP
+> I tested the patch and it works, thanks!
 > 
-> Valid MKEX Profile Configuration:
+>>
+>> Andrew
+>>
+>> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
+>> [2]
+>>
+>> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+>> index a70d4879a8bea..657a200fa9040 100644
+>> --- a/drivers/remoteproc/ti_k3_common.c
+>> +++ b/drivers/remoteproc/ti_k3_common.c
+>> @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
+>>   }
+>>   EXPORT_SYMBOL_GPL(k3_rproc_reset);
+>> +static int k3_rproc_ping(struct k3_rproc *kproc)
+>> +{
+>> +       /*
+>> +        * Ping the remote processor, this is only for sanity-sake for now;
+>> +        * there is no functional effect whatsoever.
+>> +        *
+>> +        * Note that the reply will _not_ arrive immediately: this message
+>> +        * will wait in the mailbox fifo until the remote processor is booted.
+>> +        */
+>> +       int ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+>> +       if (ret < 0)
+>> +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+>> +
+>> +       return ret;
+>> +}
+>> +
+>>   /* Release the remote processor from reset */
+>>   int k3_rproc_release(struct k3_rproc *kproc)
+>>   {
+>> @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
+>>          if (ret)
+>>                  dev_err(dev, "module-reset deassert failed (%pe)\n", ERR_PTR(ret));
+>> +       k3_rproc_ping(kproc);
+>> +
+>>          return ret;
+>>   }
+>>   EXPORT_SYMBOL_GPL(k3_rproc_release);
+>> @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>>                  return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+>>                                       "mbox_request_channel failed\n");
+>> -       /*
+>> -        * Ping the remote processor, this is only for sanity-sake for now;
+>> -        * there is no functional effect whatsoever.
+>> -        *
+>> -        * Note that the reply will _not_ arrive immediately: this message
+>> -        * will wait in the mailbox fifo until the remote processor is booted.
+>> -        */
+>> -       ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+>> -       if (ret < 0) {
+>> -               dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+>> -               mbox_free_channel(kproc->mbox);
+>> -               return ret;
+>> -       }
+>> -
+>>          return 0;
+>>   }
+>>   EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+>> @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
+>>    * remote core. This callback is invoked only in IPC-only mode and exists
+>>    * because rproc_validate() checks for its existence.
+>>    */
+>> -int k3_rproc_attach(struct rproc *rproc) { return 0; }
+>> +int k3_rproc_attach(struct rproc *rproc)
+>> +{
+>> +       k3_rproc_ping(rproc->priv);
+>> +
+>> +       return 0;
+>> +}
+>>   EXPORT_SYMBOL_GPL(k3_rproc_attach);
+>>   /*
+>>
 > 
-> LA   -> DMAC   -> key_offset[0-5]
-> LC   -> SIP    -> key_offset[20-23]
-> LD   -> SPORT  -> key_offset[30-31]
+> On Sat, Jul 26, 2025 at 07:47:34PM +0530, Beleswar Prasad Padhi wrote:
+>>>
+>>> So the issue then looks to be this message we send here when we setup
+>>> the mailbox[0]. This mailbox setup is done during probe() for the K3
+>>> rproc drivers now (mailbox setup used to be done during
+>>> rproc_{start,attach}() before [1]). Moving mailbox setup to probe
+>>> is correct, but we should have factored out the test message sending
+>>> code out of mailbox setup so it could have been left in
+>>> rproc_{start,attach}().
+>>
+>>
+>> Or, how about we don't send that test mbox message at all. It does not
+>> actually check if the remoteproc was able to receive and respond to the
+>> message. It only verifies if the write to the mbox queue was successful. And
+>> most firmwares anyways don't reply to that mailbox-level echo message.
 > 
-> Invalid MKEX profile configuration:
+> I was thinking about the same.
 > 
-> LA   -> DMAC   -> key_offset[0-5]
-> LC   -> SIP    -> key_offset[20-23]
-> LD   -> SPORT  -> key_offset[2-3]  // Overlaps with DMAC field
+> I tested the patch and it indeed works, however when I boot the remote
+> core with a hello world firwmare from the TI MCU SDK (with IPC enabled
+> with the sysconfig), the ping is sent but M4 never replies to it, which
+> at the end causes an unread message to stay there. Later, if I stop the
+> remote processor, I can not got into suspend mode again because of this
+> message.
 > 
-> In another scenario, if the MKEX profile is configured to extract
-> the SPI field from both AH and ESP headers at the same key offset,
-> the driver rejecting this configuration. In a regular traffic,
-> ipsec packet will be having either AF(LD) or ESP (LE). This patch
+> So I believe we should never send the message or clear the mailbox when
+> the remote processor is stopped, but I was not able to find a way to
+> clear the mailbox. So, is it ok if we never send the ping?
+> 
 
-Should "AF" be "AH ?
+So right now it is okay to not send that ping, and in the past I've
+thought about removing it (it is a bit of a legacy hold-over from
+the OMAP RProc driver. Back then we would send other messages like
+suspend and shutdown requests, you can see the different messages
+here[0]. Actually using those messages never got upstream, only the
+ping message part did.
 
-> relaxes the check for the same.
-> 
-> Fixes: 12aa0a3b93f3 ("octeontx2-af: Harden rule validation.")
-> Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-> index 1b765045aa63..d8d491a01e5b 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-> @@ -607,7 +607,7 @@ static void npc_set_features(struct rvu *rvu, int blkaddr, u8 intf)
->  			*features &= ~BIT_ULL(NPC_OUTER_VID);
->  
->  	/* Set SPI flag only if AH/ESP and IPSEC_SPI are in the key */
-> -	if (npc_check_field(rvu, blkaddr, NPC_IPSEC_SPI, intf) &&
-> +	if (npc_is_field_present(rvu, NPC_IPSEC_SPI, intf) &&
+For K3 we want to start making use of all these other messages and
+upstream the support for the same. So removing the ping test message
+felt like a step backwards as it is a good placeholder for the more
+important messages we want to send later. But as said, removing it
+is probably fine for now.
 
-As this checks now differs in form from that of other's in this function,
-perhaps expanding the comment above is warranted.
+The second thing on the roadmap is to better deal with messages left
+in the mailbox queue when we try to suspend. Basically on suspend the
+mailbox IP is powered down and all messages waiting will be lost, this
+can cause issues. Instead of blocking suspend, one other option would
+be to attempt to read out these messages and restore them on resume.
+This state saving would match what most other IP drivers. This would
+fix issues like the above were the firmware doesn't consume a message
+for whatever reason. But until we implement that, either we throw out
+messages on suspend, or we block suspend.
 
->  	    (*features & (BIT_ULL(NPC_IPPROTO_ESP) | BIT_ULL(NPC_IPPROTO_AH))))
->  		*features |= BIT_ULL(NPC_IPSEC_SPI);
->  
-> -- 
-> 2.34.1
+Andrew
+
+[0] drivers/remoteproc/omap_remoteproc.h
+
+> Best regards,
+> Hiago.
 > 
+>>
+>> Thanks,
+>> Beleswar
+>>
+>>> That way we only send this message if the
+>>> core is going to be started, no sense in sending that message if
+>>> we are not even going to run the core..
+>>>
+>>> Fix might be as simple as [2] (not tested, if this works feel free
+>>> to send as a fix)
+>>>
+>>> Andrew
+>>>
+>>> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
+>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
+>>> [2]
+>>>
+>>> diff --git a/drivers/remoteproc/ti_k3_common.c
+>>> b/drivers/remoteproc/ti_k3_common.c
+>>> index a70d4879a8bea..657a200fa9040 100644
+>>> --- a/drivers/remoteproc/ti_k3_common.c
+>>> +++ b/drivers/remoteproc/ti_k3_common.c
+>>> @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(k3_rproc_reset);
+>>>
+>>> +static int k3_rproc_ping(struct k3_rproc *kproc)
+>>> +{
+>>> +       /*
+>>> +        * Ping the remote processor, this is only for sanity-sake for
+>>> now;
+>>> +        * there is no functional effect whatsoever.
+>>> +        *
+>>> +        * Note that the reply will _not_ arrive immediately: this
+>>> message
+>>> +        * will wait in the mailbox fifo until the remote processor is
+>>> booted.
+>>> +        */
+>>> +       int ret = mbox_send_message(kproc->mbox, (void
+>>> *)RP_MBOX_ECHO_REQUEST);
+>>> +       if (ret < 0)
+>>> +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n",
+>>> ERR_PTR(ret));
+>>> +
+>>> +       return ret;
+>>> +}
+>>> +
+>>>   /* Release the remote processor from reset */
+>>>   int k3_rproc_release(struct k3_rproc *kproc)
+>>>   {
+>>> @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
+>>>          if (ret)
+>>>                  dev_err(dev, "module-reset deassert failed (%pe)\n",
+>>> ERR_PTR(ret));
+>>>
+>>> +       k3_rproc_ping(kproc);
+>>> +
+>>>          return ret;
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(k3_rproc_release);
+>>> @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>>>                  return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+>>>                                       "mbox_request_channel failed\n");
+>>>
+>>> -       /*
+>>> -        * Ping the remote processor, this is only for sanity-sake for
+>>> now;
+>>> -        * there is no functional effect whatsoever.
+>>> -        *
+>>> -        * Note that the reply will _not_ arrive immediately: this
+>>> message
+>>> -        * will wait in the mailbox fifo until the remote processor is
+>>> booted.
+>>> -        */
+>>> -       ret = mbox_send_message(kproc->mbox, (void
+>>> *)RP_MBOX_ECHO_REQUEST);
+>>> -       if (ret < 0) {
+>>> -               dev_err(dev, "mbox_send_message failed (%pe)\n",
+>>> ERR_PTR(ret));
+>>> -               mbox_free_channel(kproc->mbox);
+>>> -               return ret;
+>>> -       }
+>>> -
+>>>          return 0;
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+>>> @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
+>>>    * remote core. This callback is invoked only in IPC-only mode and
+>>> exists
+>>>    * because rproc_validate() checks for its existence.
+>>>    */
+>>> -int k3_rproc_attach(struct rproc *rproc) { return 0; }
+>>> +int k3_rproc_attach(struct rproc *rproc)
+>>> +{
+>>> +       k3_rproc_ping(rproc->priv);
+>>> +
+>>> +       return 0;
+>>> +}
+>>>   EXPORT_SYMBOL_GPL(k3_rproc_attach);
+>>>
+>>>   /*
+>>>
+
 
