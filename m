@@ -1,125 +1,223 @@
-Return-Path: <linux-kernel+bounces-746579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F104B12889
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:10:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 009F6B1288C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8D841C26C41
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:10:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34C31C87882
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5DE1DB92C;
-	Sat, 26 Jul 2025 02:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E95D17B50A;
+	Sat, 26 Jul 2025 02:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="JAl16UCB"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TidJWbF4"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3FA19D89B
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 02:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92692E36EC
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 02:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753495817; cv=none; b=qPOgGopTBAamFkGbyl5tz+x86hopP87AR0jERVWaKGh4V1b8PPAu6bKqhTGk8epYT0bsCofCE6A8rklqYP1g1QgDm+QCCl/Pc5ZkNh2sxVK8feBqX0KbWTg8g5yfUOgqedxvIHkJTpL7BbMbzMBf4Ym6h9s5JLe+jNn5LX1x3VU=
+	t=1753496229; cv=none; b=U6z3h3RocoicbjmfuaQrEVcwC+D16jbEHi3Dzo2O20hAPz7rkXqjfBcGCqptIuT47SzE/6HJUakytXUfjM2zpzjq3PQ0g3JKl0jbuLlCNaLh5aisy3vuMOFtF+H2f7FRAo6gMFEC1i5UwGvQwiRZg2aBVDMGbmezurmTb5unIGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753495817; c=relaxed/simple;
-	bh=PULKyoQPfoJBUREloodC53J6LvdB2Nf9AZX03v3VUNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=at+jcTGE/rXowtKHfif7qrcRxSohtQl/GJ78igR5iAywxLPeNrz2b5hkmEtMAQGkRoY/zSF2qZRPuevwQj5MLr6soBHlK0uDFr2yEcB03tgrnQnhdHuA9eE7UbhP4DR2BXhlJFswOdNQqQSHOguKq+RUhG6+8faQ+mK34Umukt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=JAl16UCB; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6facf4d8e9eso18289896d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 19:10:15 -0700 (PDT)
+	s=arc-20240116; t=1753496229; c=relaxed/simple;
+	bh=igyobYhgJ3GkWizx5L5OTMo4HXLtvj0jTcJendxMnPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J2GopOTtdtwOkKiRErOPZrHdk/lSb778n9p+NM6DY+0KQgJuM8GKMDGLaFcxtNYTxc/CrRO29XoCNEEyOZOUilutJn1ho9I15UXfsxftN1gn9Mlkg1jSqlDdW9Wr9sxItNbeUD8kzeGQyQtIOQsVeUKmCUDZGmKjGLxQBbfHcNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TidJWbF4; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3e3b483daf3so21403295ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 19:17:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1753495814; x=1754100614; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qQ7SXOragRTIX4LIzQZOTZXKs9RiWGmIsBpnIAlkZMg=;
-        b=JAl16UCBWi8OLPPf4pIRVwZigMoaiuk9N1jlQj49CCriK6Cnjk6LfLCypQq3se6/ES
-         Qw05f7fRlIr0DVEyr28WPtbUF1C7PiWnYEJCLbspVY+v0T4AVg1n6/sGCl4+I2aeLmMJ
-         gm9GYP50kVcq0ss89lNFlsQHGWE8QrXKKWAX5niu2zV0eiyIDGuZPnAyqcYyIRED/Nbx
-         hw7jQVPoL0cXUhISqW9GdzRThYQvXOBCDsc5xVOABSuzegSTdVaCBnZSDFQUmT+RcfF0
-         nn48b/ASYLEQvT6SJfV1awxPPyNTbIgv8nuk3lK1mI1uL5au+xluF6nscthAos6g7oWB
-         4qCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753495814; x=1754100614;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1753496227; x=1754101027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qQ7SXOragRTIX4LIzQZOTZXKs9RiWGmIsBpnIAlkZMg=;
-        b=nhpbr0aL8q92frKsSpmAlo4MV3WARyBhvRXZq3lZbr8zrz+oCdQj4L8VfkSo0OvWR6
-         TotcdiY1IGApcCVimQgYHHayHfMbQnjyyoH9cMd4Dc3iWcEPlk+pX1LoLiQKvmBjlXbi
-         bQ5jt7Bf183xcE/8O0YNeAyFOTyHnWUWtiHF16ry/nROwkDxlj+LaZzb9DIf3HWyLAbm
-         LgubONaeq//FgqmqTlZx+aDmEDm2NICGN20K0razs+Ss2HzymH7P09qhs5ZFhoPbkh1c
-         rrQGQU/Qw2sPc6/zvnfNvJ9GVI+wvOKCLOc8GGwYRG11IIAZN4MRobsQdRicza8XFzyW
-         6TmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzuIvTeCPEL9vgQB3WioL6YFD2sy6H2dwN0KaPre2zx+9sbydA7r0cEQxPy7PKjLQFk1qMZTan2MFGBWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOcIlJmuRSlzIjcSDGnXyfhx/MDj63C5e31tmOHgU8L38YhxnK
-	hHyR2GtOY3wZPNpdQtO4mjdjOO0Hx9bsFaxS9VuiUrVQD4Ks1LWaCPFdT6H5AshdNw==
-X-Gm-Gg: ASbGnctDMRjsbMP/26SJ9AvbjbZhnXT4pfnNqkDFcj1dY2t3C8xqxANgIVVS/TLEeTw
-	TMDCYudm5ir/oFx0CpNkVTCm7c9IQO7QNO4957ZUOQWB6qjEWzAwGpIlqwZdO/UwQppLdigQjBx
-	MjlKGz9b3UbvEG17NF9aWCnbebRvhOHN3hwKcUH07uHq1Hj3tsWNP+1oSDwrUmcAqFoPYwwsY+F
-	H274otO8Y3awc6lH71uMGjLQkFT2pqBsa6oCyCFPZGkSj7mUq6k8deGi3x1wNTFMeH3hSl/bhPS
-	JUM/vSN3fx1s7KKWYB53ImMDEHXW2fVDNQguVbBisc97uEIkokXdvytUDJiyFJlLf0TiwettFKw
-	dt7XPn6RG6n2O8bQW44l6HUU=
-X-Google-Smtp-Source: AGHT+IGzVgC7zSPm77RvN7HmL7AuYbfj2Q2hSHE5FaAmz4RBfNyLkVHyW8mGDSfY2XCDjy3dmKWnzw==
-X-Received: by 2002:a05:6214:1942:b0:707:2b04:b04c with SMTP id 6a1803df08f44-7072b04b19dmr24997336d6.30.1753495814078;
-        Fri, 25 Jul 2025 19:10:14 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::317e])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70729a63136sm6683706d6.24.2025.07.25.19.10.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 19:10:13 -0700 (PDT)
-Date: Fri, 25 Jul 2025 22:10:11 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Olivier Tuchon <tcn@google.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: Add gadgetmon traffic monitor
-Message-ID: <1e4a2aca-cde2-45ea-aebd-408fe9bf9672@rowland.harvard.edu>
-References: <CALU+5Va_zeqS5YK7v3HNvDKkg8srqc87P5ZaQUK5tGFUMyNrkg@mail.gmail.com>
- <42f4753a-f7db-49a3-ba40-8743a78684b4@rowland.harvard.edu>
- <CALU+5VYnZfp2CqXqn7X14J5pGsXyHDOcC5mOCZx4nKA6tjzO2Q@mail.gmail.com>
+        bh=SJgRjn3YLVk27IsToicnqn+k2tZqaAwGO0Yoq2mc760=;
+        b=TidJWbF4N1vrJv3PuZFnxReKGyNKDixq8dgDbsY7E5P+9Q4MrFHb60oYW9FVD1n845
+         zP88tEZ64ampYxS8T2ewrtrfvI3RwOrPhowO4xXqon1v2oYOTnR9PajWQFoLXWXxTvVu
+         6AqHRAMUoRx7oiLzYPSHg4fG1Tp3EHVFslIXazE0NRJF7BkNXbJqmuxmBSXLhLxXOrLk
+         SHHLiy0zGByePdoJHrZm6B0R/PDushWrUhtszlScfvO/GBMyL1IaCHlKbWRgES3/amDH
+         bvU0DQmhJ1xgHlhwEQ2yKY0T6Ig51iJl2ehgXF2H2pnXubBIqDfIJJHAv3Tqh8OPYvTG
+         ncfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753496227; x=1754101027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SJgRjn3YLVk27IsToicnqn+k2tZqaAwGO0Yoq2mc760=;
+        b=jDQCbLvfyGHBra7Oh7LxDEHFr4UZ53uoT9685iEXmioXA++pKTy1JT96wNtIaPl+c7
+         BYskq9+NUOYcIbZ/xducB6bv7YoUAS042aZ3VI1VGMa4pd+Ilslpj41rnnWHFoiEdAMQ
+         5zCx2RxWCkzy68Gp7wNYTd7rfMzb/Ckt8dF10lDSM5aKw7OwyEaeKSCm7sdXyPwZYyIp
+         aBvvPMUSUuZydKmTclQLr0XV2kpaaMcOD6OvkVtKQT6assoNX2g+bj853uqnRzxa3K1p
+         Op5/CWIamyfarx1vc+L126OI1FvTUpz+iQdyM06VcgZ3lTjkwXfQ9hGDXnE6Kz6hQlN8
+         goPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWs6i2HyEeWamkXKeRZshzVAyNrQiHwUc8Dg//Cqu2YAAAr4Sh9Duter1EAOv4iqFXvYpSh1P4gQAvtNNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx00IKbQ3WP/PoWjlGbf4FZMBbUI0ZkeVcdS+sSuVitrUO+7l21
+	1/dv/2qIlZn2crE/QcEIn8FE8dv30HP747K8pBshpUHRKStWQdM613RcaRCCVThQdB8C4zOXflx
+	yis7dm7ClVjuOOu9/5J/xDSUg8mOcy6M=
+X-Gm-Gg: ASbGncsg57G65XM60e9+lJLx7ILNRsXfQOfXYvvNhZC2XS6CQMbThUBp7sF4PaPWUnu
+	2Wx7h62dP+o30NXvsUWIR36poteiA3vM/FM0yj39vCVWoV9n8AUtdWsXE7nFTqE0yYETI+rzgrK
+	a028KHIn2w4x8Cb/MWKwzTayQAegz42S9u82A3kAZMpHIVwCzf263OXpvYqi1O8Sv/JKIIGhWr8
+	0PT+IpfJ7Juh7fuA6/dEcd2TN9u4fBx1t74yF/GEQ==
+X-Google-Smtp-Source: AGHT+IGwmJFA0QO/fTUC2Zyu0RWKQi3oIuYamLY+kFrPVbF9MIQZqt0msGDVa8Ev0WPFgIG5n+LMEFpLDjc+8Cxo9Y4=
+X-Received: by 2002:a05:6e02:2491:b0:3e2:c345:17f2 with SMTP id
+ e9e14a558f8ab-3e3c5226dadmr81617365ab.3.1753496226738; Fri, 25 Jul 2025
+ 19:17:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALU+5VYnZfp2CqXqn7X14J5pGsXyHDOcC5mOCZx4nKA6tjzO2Q@mail.gmail.com>
+References: <20250725070310.1655585-1-yschu@nuvoton.com> <aIOKeClm/vOPp4IU@lizhi-Precision-Tower-5810>
+ <CAPwEoQNfdit9fOiUY-WzQvS377nEqBu=s8S1zqS7tdSZfQeCHQ@mail.gmail.com> <aIOfLYIVE8NkYTxH@lizhi-Precision-Tower-5810>
+In-Reply-To: <aIOfLYIVE8NkYTxH@lizhi-Precision-Tower-5810>
+From: Stanley Chu <stanley.chuys@gmail.com>
+Date: Sat, 26 Jul 2025 10:16:54 +0800
+X-Gm-Features: Ac12FXxQspcgwBj2DhIBGT3V55FvnqyU52l4Wl8p6U_oPpKwgo1g9sLEszoQdt4
+Message-ID: <CAPwEoQOG3qt9APbk5ULOHmJer-tXNPcrK_u09km7ye2qoTZcnA@mail.gmail.com>
+Subject: Re: [PATCH v1] i3c: master: svc: Fix npcm845 FIFO_EMPTY quirk
+To: Frank Li <Frank.li@nxp.com>
+Cc: miquel.raynal@bootlin.com, alexandre.belloni@bootlin.com, 
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	tomer.maimon@nuvoton.com, kwliu@nuvoton.com, yschu@nuvoton.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 25, 2025 at 10:45:29PM +0200, Olivier Tuchon wrote:
-> > There should be a similar optimization for IN givebacks.  The data to
-> > be transferred to the host was already recorded by the submission
-> > hook, so you can save space by not copying it a second time during the
-> > giveback.
-> 
-> After a couple of tests, I found that the payload at the Submit ('S') stage
-> is often meaningless (zero-filled) for both IN and OUT transfers or the
-> payload size is already set to zero.
+On Fri, Jul 25, 2025 at 11:13=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Fri, Jul 25, 2025 at 10:50:34PM +0800, Stanley Chu wrote:
+> > Hi Frank,
+> >
+> > On Fri, Jul 25, 2025 at 9:45=E2=80=AFPM Frank Li <Frank.li@nxp.com> wro=
+te:
+> > >
+> > > On Fri, Jul 25, 2025 at 03:03:10PM +0800, Stanley Chu wrote:
+> > > > From: Stanley Chu <yschu@nuvoton.com>
+> > > >
+> > > > Prefilling in private write transfers is only necessary when the FI=
+FO
+> > > > is empty. Otherwise, if the transfer is NACKed due to IBIWON and re=
+tries
+> > > > continue, data may be prefilled again but could be lost because the=
+ FIFO
+> > > > is not empty.
+> > >
+> > > why "maybe prefilled", please use certain words.
+> > The original code didn't consider the retry case, data lost happen in
+> > the retry case only when total write bytes is larger than FIFO size,
+> > not always happen.
+> > In the example of writing 17 bytes (FIFO size is 16), the last byte is =
+lost.
+> > 1. Emit S+Addr/W
+> > 2. Write 16 bytes to FIFO (FIFO is full)
+> > 3. NACKed due to IBIWON
+> > 4. (retry) Emit Sr+Addr/W
+> > 5. Write last byte to FIFO (data lost)
+>
+> You need descript clearly at commit message about this.
+>
+> >
+> > I just need to prefill FIFO in the beginning to make sure FIFO is not
+> > empty when HW starts transmitting.
+> > So, this patch adds a condition that prefill FIFO only when FIFO is emp=
+ty.
+> >
+> > >
+> > > >
+> > > > Fixes: 4008a74e0f9b ("i3c: master: svc: Fix npcm845 FIFO empty issu=
+e")
+> > > > Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+> > > > ---
+> > > >  drivers/i3c/master/svc-i3c-master.c | 11 ++++++++++-
+> > > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/mast=
+er/svc-i3c-master.c
+> > > > index 7e1a7cb94b43..34b6e125b18a 100644
+> > > > --- a/drivers/i3c/master/svc-i3c-master.c
+> > > > +++ b/drivers/i3c/master/svc-i3c-master.c
+> > > > @@ -104,6 +104,7 @@
+> > > >  #define   SVC_I3C_MDATACTRL_TXTRIG_FIFO_NOT_FULL GENMASK(5, 4)
+> > > >  #define   SVC_I3C_MDATACTRL_RXTRIG_FIFO_NOT_EMPTY 0
+> > > >  #define   SVC_I3C_MDATACTRL_RXCOUNT(x) FIELD_GET(GENMASK(28, 24), =
+(x))
+> > > > +#define   SVC_I3C_MDATACTRL_TXCOUNT(x) FIELD_GET(GENMASK(20, 16), =
+(x))
+> > > >  #define   SVC_I3C_MDATACTRL_TXFULL BIT(30)
+> > > >  #define   SVC_I3C_MDATACTRL_RXEMPTY BIT(31)
+> > > >
+> > > > @@ -280,6 +281,13 @@ static inline bool is_events_enabled(struct sv=
+c_i3c_master *master, u32 mask)
+> > > >       return !!(master->enabled_events & mask);
+> > > >  }
+> > > >
+> > > > +static inline bool svc_i3c_master_tx_empty(struct svc_i3c_master *=
+master)
+> > > > +{
+> > > > +     u32 reg =3D readl(master->regs + SVC_I3C_MDATACTRL);
+> > > > +
+> > > > +     return (SVC_I3C_MDATACTRL_TXCOUNT(reg) =3D=3D 0);
+> > > > +}
+> > > > +
+> > > >  static bool svc_i3c_master_error(struct svc_i3c_master *master)
+> > > >  {
+> > > >       u32 mstatus, merrwarn;
+> > > > @@ -1303,7 +1311,8 @@ static int svc_i3c_master_xfer(struct svc_i3c=
+_master *master,
+> > > >                * The only way to work around this hardware issue is=
+ to let the
+> > > >                * FIFO start filling as soon as possible after EmitS=
+tartAddr.
+> > > >                */
+> > > > -             if (svc_has_quirk(master, SVC_I3C_QUIRK_FIFO_EMPTY) &=
+& !rnw && xfer_len) {
+> > > > +             if (svc_has_quirk(master, SVC_I3C_QUIRK_FIFO_EMPTY) &=
+& !rnw && xfer_len &&
+> > > > +                 svc_i3c_master_tx_empty(master)) {
+> > > >                       u32 end =3D xfer_len > SVC_I3C_FIFO_SIZE ? 0 =
+: SVC_I3C_MWDATAB_END;
+> > > >                       u32 len =3D min_t(u32, xfer_len, SVC_I3C_FIFO=
+_SIZE);
+> > >
+> > > if prefill to FIFO SIZE each time, such as
+> > >
+> > > replace SVC_I3C_FIFO_SIZE with
+> > >
+> > > SVC_I3C_FIFO_SIZE - SVC_I3C_MDATACTRL_TXCOUNT(readl(master->regs + SV=
+C_I3C_MDATACTRL)).
+> > >
+> > The free space is SVC_I3C_FIFO_SIZE when FIFO is empty, no need to
+> > check TX count again.
+>
+> My means is that if use above logic, needn't check helper function
+> svc_i3c_master_tx_empty(master).
+>
+> Does this method work?
+>
+Thanks Frank,
+This method is another option that also can work for this issue.
+I will submit version 2.
 
-That doesn't sound right at all.  Maybe your tests only covered 
-situations where no data was being sent?  Certainly the response to a 
-Get-Device-Descriptor or Get-Config-Descriptor IN request would not have 
-a meaningless, zero-filled, or zero-length payload.
-
-> I simplified the logic to drop the payload for ALL Submit events.
-> Fixed in the next patch.
-
-usbmon takes the opposite approach, omitting the payload for OUT 
-transfers during the giveback event rather than the submit event, and so 
-that's what I'm used to.  But I suppose you could reasonably do it 
-either way.
-
-Also, Greg will no doubt complain about some problems with the v2 patch 
-email.  The most notable one was that formatting was messed up again 
-(tab characters replaced by a single space) -- you should try mailing 
-the patch to yourself first and then verifying that you can apply it as 
-received.  In addition, it wasn't really a v2 patch because it applies 
-on top of the original patch, not as a replacement for the original.
-
-Alan Stern
+> Frank
+>
+> >
+> > --
+> > Stanley
+> >
+> > > Frank
+> > > >
+> > > > --
+> > > > 2.34.1
+> > > >
+> >
+> > --
+> > linux-i3c mailing list
+> > linux-i3c@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-i3c
 
