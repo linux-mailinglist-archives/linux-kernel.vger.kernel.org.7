@@ -1,156 +1,174 @@
-Return-Path: <linux-kernel+bounces-746798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8178EB12B51
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:04:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF8AB12B56
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AACD416B18E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1344AA17FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60131E8331;
-	Sat, 26 Jul 2025 16:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84F285CBD;
+	Sat, 26 Jul 2025 16:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cgHK9p9G"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nswe3jsq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC02621348
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28236229B28;
+	Sat, 26 Jul 2025 16:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753545867; cv=none; b=BqIZB1SMdoP6QoKbOgANtb8GG5rOCxf7ZFk+J+NfF6D2OBIi8MlQvrmzuSDaICw1XdEQ1/QxNexsmKebDd/9En7WGUjTAE5mdIE6PMr5LoNEYv/KTOlT0y/uHrLZh1tRgH3a3WTQcCnbHCXNB0O+udElB6eMcn6WDezhQkcs3dA=
+	t=1753545929; cv=none; b=L0m7x7kDzlVMJ6DYjsKrAQAz+83Ii+cm3LdwmGFd5wbdVjre6crBzoaBXvHGIfGdx5l8EUmjhukbcovU8cwIXkJri20f5cZlWL5RSZpcpHfDJmtRZog/rHCGKP7HycotOJcbSKEMw5oc8ofFHzY/TnNgqpH1YZSAd4uMfPDgtdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753545867; c=relaxed/simple;
-	bh=DdGLPcrbkJZ5fLQTq4/2nuXEKsDIaP+nIoHwxQ4d6S0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5UeDBfMZAAYxqZhdkE/TBdGfAjzfG+OmJL4VS0/zJVfXwpjTJYhIAaASJ9Tq2qC06fGhr6GmdZ7ZR07dDJo561yxaARqk7MVm6M8HZDF2qNRyVZIgosG7Gj+T55s0MDuT39HJU0Sp3g92tC0+4AtJv4LQ2LCApw9zbcGeZtp1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cgHK9p9G; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56QEWN5g002500
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:04:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=yfKbo7ad/8TebfDZw7J0Umhb
-	3as7DBy4t8znbao/DKI=; b=cgHK9p9GDXKbG/9yE9/rwQJWG4fMX2wYRuFQI3/X
-	ekekOReagAr/bivhqou99mSOk/xy5VRX1EDByhvd+9hUugSQ0fp73pDySwzjiR9B
-	Jeb6uF9ZUaKox/gDFsNG4hO29iQQeB4ImOwN4RiYsPzr3ZUdk+9vtf2FTl7jca3e
-	JV6YQc+Ky+PGddCHjT9jwPj5dLnP40VAC0FaLWfBF4zCG5ZSGenLG5vclp8/ewmu
-	6bA+2r/FED840IiNYbj4H3EXAsww4cPZ02wgO35vatkRZuAmD6BGOVxjJ7laS5NG
-	6xsLkSigTdjBALgCh3ECv2SawN5EsoVlP4guLdQKstziwA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484p1a8wgj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:04:24 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e269587d8eso595346385a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:04:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753545864; x=1754150664;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yfKbo7ad/8TebfDZw7J0Umhb3as7DBy4t8znbao/DKI=;
-        b=lys+92UiDoM9oLx8USaYPGmjQGLrlnuSkeF8dcJTHt+oBHuwT9p5xhCDskfRSWtX/F
-         gfTRXd2FETHCipP2FytULcRNM2VgmJat2DllxDJ2lfL1v8E1zGBPbWUkyBBVFtQ0tWFR
-         sfHjpntfShQSqYUvzuip+INrOvssgF/Xs9znK5moYB7/CthTQesFapfeBChQNbzLAxGo
-         ZwZrmEYhjoCWu+wyvFNeGXbMLLj9Cq0cdqfsk3ka0VNyBDl6c75h1G5tGXMj/hBRyRdO
-         y8gytP6bpCa7VwJOmQFnwxhoSPdD6x5AFbeRxB2wYop0rYD4rEJ73D0ob/W1RPMm/UaP
-         L0zg==
-X-Forwarded-Encrypted: i=1; AJvYcCXozHr0BdcgnPIW6n7zfj+K9kBQGI0gKeS2jbpwv1SNm9Myd21bRPijq28gLMNpWsSr2fvdvq4zWhRkw4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj+CdIom89Cftpy6OMtXgYf0DfQfI1GFFrNNV2lt7wLwdOu2nS
-	i8GzEWSulskBOj72zQfSUzPEl0AvTBvF36e7xImUwGZRklRLSbkq4wKH1EZF6ZNNYAe1+uRhKSS
-	CBYRsTfUVIlQLdpzzdsWzKAuddbunJTBF31nkUJHXHXS+L+6bE/vfP21XFxuSAEwJqF4=
-X-Gm-Gg: ASbGncvEj82K+lPZ1Pr+ICNr7oCU6eQE8zQ8xvNdtCIAD9Arb8o9gxEuBdLvK+ItPe+
-	OtmUMKBGBDgfGroFc1BzTw3TqhCMwRCGzGki2Jyt/+63mLHy9C/AqsU8BElyNgO3KUMpCVFJ8eB
-	6FRUHc2Egz//maLzkuAZlP2cPy1SyMcwMNcQ518VGy6L/FfYFR7XAuO8846ycWcrjoFNZgqJKju
-	aosgS+m2S9iME4ioAjuiMKEVYAcumv3qUiZbpNhbjAeab/mTm4XuvZWy94I53r2yKc5wUo6yqUj
-	p/iy5kjeuxbanFpd0n9x4kJgCxGTwxEgj/MRUnyD5PDXLyeoGfQuRFW8gYZINnvi7yv4hI2lG0i
-	+XRrhKroP/P6UMKzJr6GvLau5ZBXFzYmtzVq+fSTNpweRm8i8JOqT
-X-Received: by 2002:a05:620a:3950:b0:7e3:417a:9609 with SMTP id af79cd13be357-7e63bdf8e9emr775034285a.0.1753545863546;
-        Sat, 26 Jul 2025 09:04:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGU5L67rpBaZNuPMlG+POX9P03Zj0lIztOTkguqEQNMXfCPAZFoSgTgA0DEfhrJVVgzeWEt2Q==
-X-Received: by 2002:a05:620a:3950:b0:7e3:417a:9609 with SMTP id af79cd13be357-7e63bdf8e9emr775026085a.0.1753545862900;
-        Sat, 26 Jul 2025 09:04:22 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b6318296csm485676e87.50.2025.07.26.09.04.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 09:04:22 -0700 (PDT)
-Date: Sat, 26 Jul 2025 19:04:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
-        kong.kongxinwei@hisilicon.com, liangjian010@huawei.com,
-        chenjianmin@huawei.com, fengsheng5@huawei.com, libaihan@huawei.com,
-        shenjian15@huawei.com, shaojijie@huawei.com,
-        jani.nikula@linux.intel.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 drm-dp 09/11] drm/hisilicon/hibmc: fix no showing
- problem with loading hibmc manually
-Message-ID: <xfwtvau2z53lqeqyexcm24cmncjmae6wvgvtp4nswthklotyym@qm5swowhkyr2>
-References: <20250718065125.2892404-1-shiyongbang@huawei.com>
- <20250718065125.2892404-10-shiyongbang@huawei.com>
+	s=arc-20240116; t=1753545929; c=relaxed/simple;
+	bh=6MpzxbPX27NadrsGk0zw216Oyyfxgmiy2Y1q0a0nRAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fNc4MSWjcjLZKx14+alle/hEB/fpdsS26S2Ug1NcPdKU28JH0PicelUlAKY3bZS5WYrwX+mceII8JOfqjyOvar77F9Sb6Ju//ow6Zq88nHWkXSTc2+u6xARV/h9yb+xQeGuUPUMdWbKFGnOkK4cT/mKdGCGdAb0YwaFK7WvMfmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nswe3jsq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B30E6C4CEFB;
+	Sat, 26 Jul 2025 16:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753545928;
+	bh=6MpzxbPX27NadrsGk0zw216Oyyfxgmiy2Y1q0a0nRAg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Nswe3jsqp6uE7J1q7VAwlweFK/2EEUj7/yxpjrJQyvWTj4EeJEZBv0JpsuCBwmk9j
+	 KQGbwwXZkDzP3Cv/CmuBqW5czzXH4Amoedtr7f+H5hLT3PHXN7KteirmjuUQiZOAQl
+	 klNA3B27wfo4lQDjcAPDelN6tRNDHFIX5fF86m2sx5GTcFLgwLLiXX/d6P7PkMYoCj
+	 8kmhXu/aREl7k1k6ju8PWjjtBJetXCVS6rBAYEiiFnlB0QmrzDwj6nZ6ZsREF+y7qo
+	 u/Kn73NsPR4Njr7h9iAxCY18/TebJ9DGgoU2vR+YIAqUCF0naKkBNT6CMpQ2EJRehI
+	 jsQfyRqmURChQ==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32f2947ab0cso26092041fa.2;
+        Sat, 26 Jul 2025 09:05:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUm4wZU5Kjo9lk8+VOpDhKzgcRUhbghpshkKkeTR8aUr9pV6U0GTxnihuCgQ80c+qjuAYbN7OxP@vger.kernel.org, AJvYcCW9Pokhay7emdGiqHt7+BJ/vNl5y5V6r+W40XyCeLLDK8bbFakxcS/UJtbTcvs7LNXm5c1SnPIjMf8vhZth@vger.kernel.org, AJvYcCWF91BvpCTpnv5kZOC3Y5dPL5/yb2isbZZvB0iLccT+TCeM0bmCwQi9PagtnGmd66DsrYlfTWv9T2JjD8s=@vger.kernel.org, AJvYcCWbf7DbCWiWXoB8jmrimMnSPXUFJRQDH1whVbEsbSe4mWAtQyzOKvfJUiJvGkD4bklxoH7xLmavrjKUGj2Y4Po=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk8Mj2Kx5qEffcXyyzK8fzSpczPBUvKo+MAv5wzxYPvon4TN1V
+	vSLU75P9yLkFpPa4hUpKtM+JN5bZSVKy3Z5fBpmK1tHGnBYWBq0svO9yfgv/WuwJACrcTCY8jod
+	z9CEp0VI8oodwxBeVzXY6CS5nHbk1Zqs=
+X-Google-Smtp-Source: AGHT+IG3EDvduZsc53+xFnV4ZnOEuNccFoxXRBW2DEcupA+kF+Dd/tDVGJKqs9SWSByGCvtmwfD4iZl2Wi/hY9T3Dvo=
+X-Received: by 2002:a05:651c:154b:b0:32a:8916:55af with SMTP id
+ 38308e7fff4ca-331ee622688mr19317841fa.2.1753545927125; Sat, 26 Jul 2025
+ 09:05:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718065125.2892404-10-shiyongbang@huawei.com>
-X-Proofpoint-ORIG-GUID: gvv8hkrajyGqr2hndch39Et9lCUWch7A
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI2MDE0MSBTYWx0ZWRfX+hVNcNV8WKxI
- egGRzGhsqclUzlLrV61Td8IjwJGIAbLZHCYev/I50rfxik1fLX8cXzkQMbvSOQyy5atIgQ7UDi4
- Fr03X5brBEwyRpU10V6V06XjhD9Uux99iAErV1aEu19XnTkD8QiTRpuGrHBXy80PxFtf28wUVzv
- pfF29RUKe6/J3yCQMl1j0HmGn3exPPA7VucDMuz/bPH3g4ab+Du9o+e56h9lzoX73bdxa2nCc6i
- mb/1QWn2E5KOO11On6ob2DZGV0xmkJvOpw2w8GLo5xETk+JYbHcjf3yD1qojP9tch+3ukAh9b04
- F3ioW6Svj1GFdMRktQeht6SHGz9ml7Le/2R5gPV6gs3H0hhc0dXTIDaIkBIKX3ZFREuzrpw0UuA
- TFw+2cbzi1Zt06Ili5RPOFNZFSq+mEzducKV12KkjRheuUc/TS/73KGcVTzhBHF6VaUvz7uV
-X-Proofpoint-GUID: gvv8hkrajyGqr2hndch39Et9lCUWch7A
-X-Authority-Analysis: v=2.4 cv=KtNN2XWN c=1 sm=1 tr=0 ts=6884fc88 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=i0EeH86SAAAA:8 a=EUspDBNiAAAA:8 a=grDN2ZGVdwoY-3k3008A:9
- a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-26_04,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- adultscore=0 mlxlogscore=976 bulkscore=0 spamscore=0 impostorscore=0
- mlxscore=0 malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507260141
+References: <20250726133435.2460085-1-ojeda@kernel.org>
+In-Reply-To: <20250726133435.2460085-1-ojeda@kernel.org>
+From: Tamir Duberstein <tamird@kernel.org>
+Date: Sat, 26 Jul 2025 12:04:50 -0400
+X-Gmail-Original-Message-ID: <CAJ-ks9kneAWVxMNYcmQzks6NaprRPJZPyFkRBtLmtseemyJgbg@mail.gmail.com>
+X-Gm-Features: Ac12FXxAFNw0PPG_mgb-afX1RFMqeDfPaH7GOci4UnEY3JifxOIfnYstVIjNq5A
+Message-ID: <CAJ-ks9kneAWVxMNYcmQzks6NaprRPJZPyFkRBtLmtseemyJgbg@mail.gmail.com>
+Subject: Re: [PATCH] rust: kbuild: clean output before running `rustdoc`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
+	Daniel Almeida <daniel.almeida@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 18, 2025 at 02:51:23PM +0800, Yongbang Shi wrote:
-> From: Baihan Li <libaihan@huawei.com>
-> 
-> When using command rmmod and insmod, there is no showing in second time
-> insmoding. Because DP controller won't send HPD signals, if connection
-> doesn't change or controller isn't reset. So add reset before unreset
-> in hibmc_dp_hw_init().
-> 
-> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
-> Signed-off-by: Baihan Li <libaihan@huawei.com>
-> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+On Sat, Jul 26, 2025 at 9:35=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> `rustdoc` can get confused when generating documentation into a folder
+> that contains generated files from other `rustdoc` versions.
+>
+> For instance, running something like:
+>
+>     rustup default 1.78.0
+>     make LLVM=3D1 rustdoc
+>     rustup default 1.88.0
+>     make LLVM=3D1 rustdoc
+>
+> may generate errors like:
+>
+>     error: couldn't generate documentation: invalid template: last line e=
+xpected to start with a comment
+>       |
+>       =3D note: failed to create or modify "./Documentation/output/rust/r=
+ustdoc/src-files.js"
+>
+> Thus just always clean the output folder before generating the
+> documentation -- we are anyway regenerating it every time the `rustdoc`
+> target gets called, at least for the time being.
+>
+> Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned i=
+n older LTSs).
+> Reported-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Closes: https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic=
+/x/near/527201113
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+
+I've seen this as well.
+
+Reviewed-by: Tamir Duberstein <tamird@kernel.org>
+
+
 > ---
-> ChangeLog:
-> v2 -> v3:
->   - fix the issue commit ID, suggested by Dmitry Baryshkov.
-> ---
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-
--- 
-With best wishes
-Dmitry
+>  rust/Makefile | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/rust/Makefile b/rust/Makefile
+> index 115b63b7d1e3..771246bc7ae6 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -103,14 +103,14 @@ rustdoc: rustdoc-core rustdoc-macros rustdoc-compil=
+er_builtins \
+>  rustdoc-macros: private rustdoc_host =3D yes
+>  rustdoc-macros: private rustc_target_flags =3D --crate-type proc-macro \
+>      --extern proc_macro
+> -rustdoc-macros: $(src)/macros/lib.rs FORCE
+> +rustdoc-macros: $(src)/macros/lib.rs rustdoc-clean FORCE
+>         +$(call if_changed,rustdoc)
+>
+>  # Starting with Rust 1.82.0, skipping `-Wrustdoc::unescaped_backticks` s=
+hould
+>  # not be needed -- see https://github.com/rust-lang/rust/pull/128307.
+>  rustdoc-core: private skip_flags =3D --edition=3D2021 -Wrustdoc::unescap=
+ed_backticks
+>  rustdoc-core: private rustc_target_flags =3D --edition=3D$(core-edition)=
+ $(core-cfgs)
+> -rustdoc-core: $(RUST_LIB_SRC)/core/src/lib.rs FORCE
+> +rustdoc-core: $(RUST_LIB_SRC)/core/src/lib.rs rustdoc-clean FORCE
+>         +$(call if_changed,rustdoc)
+>
+>  rustdoc-compiler_builtins: $(src)/compiler_builtins.rs rustdoc-core FORC=
+E
+> @@ -122,7 +122,8 @@ rustdoc-ffi: $(src)/ffi.rs rustdoc-core FORCE
+>  rustdoc-pin_init_internal: private rustdoc_host =3D yes
+>  rustdoc-pin_init_internal: private rustc_target_flags =3D --cfg kernel \
+>      --extern proc_macro --crate-type proc-macro
+> -rustdoc-pin_init_internal: $(src)/pin-init/internal/src/lib.rs FORCE
+> +rustdoc-pin_init_internal: $(src)/pin-init/internal/src/lib.rs \
+> +    rustdoc-clean FORCE
+>         +$(call if_changed,rustdoc)
+>
+>  rustdoc-pin_init: private rustdoc_host =3D yes
+> @@ -140,6 +141,9 @@ rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rus=
+tdoc-ffi rustdoc-macros \
+>      $(obj)/bindings.o FORCE
+>         +$(call if_changed,rustdoc)
+>
+> +rustdoc-clean: FORCE
+> +       $(Q)rm -rf $(rustdoc_output)
+> +
+>  quiet_cmd_rustc_test_library =3D $(RUSTC_OR_CLIPPY_QUIET) TL $<
+>        cmd_rustc_test_library =3D \
+>         OBJTREE=3D$(abspath $(objtree)) \
+>
+> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+> --
+> 2.50.1
+>
+>
 
