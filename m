@@ -1,132 +1,294 @@
-Return-Path: <linux-kernel+bounces-746628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22AAB12910
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 07:23:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F299DB12917
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 07:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF301C874F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 05:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499CA564464
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 05:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342EB20110B;
-	Sat, 26 Jul 2025 05:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C602045B7;
+	Sat, 26 Jul 2025 05:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="Sd2GZqii"
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdIf8veI"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A34EED8;
-	Sat, 26 Jul 2025 05:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753507398; cv=pass; b=UbVk49XdwbxohuIPtHyB4hLpVjxGflm039KKhnXlly+51Q2C0UyqAmIt6i37/g6kKiv7pdHzqaKq0CPWv7Yw9xzA/j1ya8csk55k/eVMYHQIGuFNfyHdDBpFC/AV5A9CwWqbo4fAR6qgyuleRb2fQI5Hm7ag7w+6Dik5VAirDOo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753507398; c=relaxed/simple;
-	bh=8L0TsRqECk8oxKkh0p8Lf7rHLY7w0aiGtCeNjsLF7ak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OGUj2KvfplGXjvV5ZQZbyTPMswJwA+v8dLt8MWgBPxJMwz9eNyzQPaEraUWzWPlgV9miokt2srREFhGtd8G1w2Ps7s0cLfwmvdABIIZG+l8BnYNImqR3X+n9MIqvzTgHvbo6+orSttg2luDXp6XBIywZZFBYEscn9o8hnRCM6HM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=Sd2GZqii; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753507380; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=i0agtowXXKYFSAlOsS8xUPqmzYDHud40K5NHwrE6N3YvftVmEA954C5rlJnFEh9SvBg3ReCxTB1RQtFEsXuNV3ZBWqH8YB7zt3NlgBAccpYFxMFxyykWzBJMWYhBbPPxRYm111gebhWyO4teJM3ludtbicZN0y938k9mdMC6oys=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753507380; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=mmNwg6ueXxCadafwT4lips5HbPEdPE1RcKAk/DHerao=; 
-	b=eW6XxyGu8A3WtuK70zypZPduHdACYu8WrZQZLprZzG711jC7CSRxU87efrDZ/kst3xkhQc9mWxHVA7THIE6uRMAVJDmk65zNdPmUiYXmAblAXuF3Y3p8wdUFc4lS5ZvfcQIZ8hiWSMvaazIxNOhRooaZOKNKMK41w22fGxcI1Xg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753507380;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=mmNwg6ueXxCadafwT4lips5HbPEdPE1RcKAk/DHerao=;
-	b=Sd2GZqii9J7K2i+4KyFQrPpU0ReER2s6hMO3c+oxxsUjJZfw0uHu+VUdbXbY7aG7
-	vw0S6Vqe14ImXHpfWMSH1OhwzyIMGj8O1JlyBKKLUNuooQ9adQ0dioQqxT6uP0EYvYl
-	Oe/vfGeF3qKlIe2AxaEVkDIoqB7uJqE1dWgYUI6Y=
-Received: by mx.zohomail.com with SMTPS id 1753507373478583.4224143944394;
-	Fri, 25 Jul 2025 22:22:53 -0700 (PDT)
-Message-ID: <cde19d45-fbd6-4b8c-b04f-e34811d62ae8@zohomail.com>
-Date: Sat, 26 Jul 2025 13:22:46 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97B92A1AA;
+	Sat, 26 Jul 2025 05:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753509230; cv=none; b=HSCnv0pisXgwQKUxoH7dUY3seYhmvB5DrDH+Qrr8copoP1ld6AjdpT7B04Cjh2/Ev2dIgAoubalsuDBeN3t7LfXBWPLaf9yI/4YbSoDOpZB2gHaecfzySA/VXFFezDafzTa/ZHq7gjol8nL5g8zRi1Q4tWIt5hdALlZVg0MKs9A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753509230; c=relaxed/simple;
+	bh=qjAtuM6bjE5YOicSXvKnHeXz95Ueb3CFX9BTvqHz/ec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hDaCAldpJLJmc6nBiLF0dM/gTF2CPLLPACHkC0vmtrt/2YmBjfbWuB6nyKFmhgfkQ9cBEAf2xmnZst1MTie8TQxBSbHai8aeVT2OUUIc2FeFjpczJMY0gFHSLKdgYZKjxSzhTK6b/mrt6i1Pa8OrtEUHJLA76EgW0P1L254VEVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fdIf8veI; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-7183fd8c4c7so30037857b3.3;
+        Fri, 25 Jul 2025 22:53:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753509227; x=1754114027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fWn+ulxpcv7HdNLVJ+yLthV3Vv9Iaz7WMBgkwYUe3vQ=;
+        b=fdIf8veIBifnc1fNbXFYmsB0WHMGyApvRQd6YZV+A7cQPISmKY4w+gZhBeCW3tJHz3
+         tm3dpb63YglWtF3Qm+ZlzHN7E3OcsIZnwmNhJyRFyGuhvCJVgPPP3dWXnG6GlAw2cuuY
+         7xZ/tdN49sCJ2i1j9Kr4zruaS2U1VAywtIFB2YOJX0QT28t37TPbhHioN4uhcQwW0XYP
+         cdBmRkg95ouqiRS+IVtoTfej2LHKCy+sBUEyabneH/8BCGZUC8n0GIvYxft3TFcZeaZM
+         oqUAGOgquf0Ii7WHkvsfkSgiB/+3DMci5Nw1bF53OfLQDgyzd29SdapSXw+5eLhCD7x6
+         j9TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753509227; x=1754114027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fWn+ulxpcv7HdNLVJ+yLthV3Vv9Iaz7WMBgkwYUe3vQ=;
+        b=BvaF4WJWngGkIVA35dvKN3FjmzdS2jXPl0oHnP4/1KwCNaIU+6r9aDkWPVzGwo/gxK
+         TtQrXnggA4RwRvfeBN+W4hb3YKzEnBvXYbupKu6bf6KixMrAa4R6WWXN8Q9pWRTjLxox
+         ZsWJb53QHtQ0QlQD+EfVQGMANYs1cFUUCYfwd3HUT/jJW6jA987qV54DGMOI8f6EQcq6
+         HF1Rn/NrVXD8goNnxYjr9B3kYpAUkTY7UYHvyZakm7yRLRcTxNApOaHX6C75VoeluPwY
+         1DVsHZbn4Qp8qi9kssYvlHitJn37SV9+zQgzSKbgGCiqLZQwZDaQowBUzXmaNQ9cnP01
+         aW6w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0pW6f3O3M6C5Jg8WXMaN6g5YhcOzrVRMMKCmzWdPAUM2aGcVKHvII8lIoDKg6vCnHetK7wB9L@vger.kernel.org, AJvYcCVD9a6Ea2Du/2FmE7UKl/u8HRfR3phFQVXh0GsuyMUbByPyVX1NHn7xYC77hnBVh1EZO7jG@vger.kernel.org, AJvYcCWqSjn+iJP+LQNHKoiNJO4QlXqQ6C6kYSPncgHT6XZu+bTNVlSVUWgIVe8wYhkGBjDlyv0=@vger.kernel.org, AJvYcCWvixmdIhq57KzekA3F3xBegqpZq5HuyQ42dXiZhlljCMbTv9Uwvhi9zo1r4fP0mPzVZF/L/KnSPDaIGtg9@vger.kernel.org, AJvYcCXDsTyQc3a/8bIi1F2zSQbG5GaxU0tcKYvY1uS4asK/xV0ZPjt6UKzBl4J6djJH7BU7eF9GLHO2V8KU1NCB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf8kmhuUGZYR7NNO5ygqcYKbw/oOC7F5v6uK199B/N9WYJUg+N
+	wpjspcXUPCubOg2946YUaaUhmKw4dFMV5o+2x4mtVtTT2oOYbEzMwQ7aDTEHllTzEwT/GY0ohml
+	sjaAlZgH/K876d+NBskoaLOlAnNJZhVA=
+X-Gm-Gg: ASbGncvtuOr56OEsB8RbL0p3rNAOfFdcyMAoCmIszuqVbeObXv9kOcRORsRiSnae6vz
+	0H4RjuG79dqmhA8yptGW/9Ey+Uds/4mPVBLegu6zicv96pcz9oMarFGG5dtk0jgIEMGKkzw0JKB
+	d/NRebPah/BF2X7ZEYK1war0gv90jdAo02Nz9aKJhGYQRE/ZuHxtd4GF5rFaiDkwlaRQ2ECdxtI
+	NAKdeGcEiN1cQDL+Q==
+X-Google-Smtp-Source: AGHT+IE0Lg8OC1qQflbm42pTUDEXQn5wEtvjZAGDRpEYT9WPYGJBWJxfXrPWc1WTljH0ya6XcqQMq2gpMQ7Ymg2lRdk=
+X-Received: by 2002:a05:690c:e0a:b0:6ef:6d61:c254 with SMTP id
+ 00721157ae682-719e348e675mr51700067b3.38.1753509227288; Fri, 25 Jul 2025
+ 22:53:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/3] riscv: canaan: Add support for K230-Canmv clock
-To: Stephen Boyd <sboyd@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com>
- <776638cc-cbd9-4747-82eb-e11bcc6c8bdd@zohomail.com>
- <175339519523.3513.2798631977806639092@lazor>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <175339519523.3513.2798631977806639092@lazor>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112270c568dcf46d7bd9a6ca9bde60000df18909873772a153d341f279040e2ef74d0e9fe6602cd0fae:zu080112272084c8b289bc0c5b040e9e3500009ab072e80699b0abcbefb7032cae82cc441631b6531d467a59:rf0801122c2d91ede877ecf69152271edf0000f5f0466ce28d08f638bbfd1d1d3c2ccd19fe675d2edb74cde1f734449b92:ZohoMail
-X-ZohoMailClient: External
+References: <20240710212555.1617795-1-amery.hung@bytedance.com> <dsamf7k2byoflztkwya3smj7jyczyq7aludvd36lufdrboxdqk@u73iwrcyb5am>
+In-Reply-To: <dsamf7k2byoflztkwya3smj7jyczyq7aludvd36lufdrboxdqk@u73iwrcyb5am>
+From: Amery Hung <ameryhung@gmail.com>
+Date: Fri, 25 Jul 2025 22:53:35 -0700
+X-Gm-Features: Ac12FXyMvpkfh1BVRP1lxRseahm_ttdL_F4ac_DTON4U9vvl5wd6WOkrVb-fPTk
+Message-ID: <CAMB2axNKxW4gnd6qiSNYdm2zPxJkbbLgZz9P-Kh7SS0Sb1Yw=Q@mail.gmail.com>
+Subject: Re: [RFC PATCH net-next v6 00/14] virtio/vsock: support datagrams
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, 
+	wei.liu@kernel.org, decui@microsoft.com, bryantan@vmware.com, 
+	vdasa@vmware.com, pv-drivers@vmware.com, dan.carpenter@linaro.org, 
+	simon.horman@corigine.com, oxffffaa@gmail.com, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
+	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 2025/7/25 06:13, Stephen Boyd wrote:
-> Quoting Xukai Wang (2025-07-13 09:48:44)
->> I'm working on a Linux clock driver and have encountered a question
->> regarding how to properly represent a particular type of clock source.
->>
->> In K230 SoC, there's a mux clock whose parent can optionally be an
->> external pulse signal, which is counted via a pin (the input is not
->> generated internally but comes from an external source). I’m wondering:
->>
->> Should this external pulse signal be modeled as a clock within the
->> Common Clock Framework (CCF)?
-> Likely, yes.
+On Tue, Jul 22, 2025 at 7:35=E2=80=AFAM Stefano Garzarella <sgarzare@redhat=
+.com> wrote:
 >
->> If so, what would be the correct way to register or describe such a
->> clock in the driver?
-> If it is a fixed rate pulse signal I would use a fixed rate clk node at
-> the root of the DT tree:
+> Hi Amery,
 >
-> 	clock-50000 {
-> 		compatible = "fixed-clock";
-> 		#clock-cells = <0>;
-> 		clock-frequency = <50000>;
-> 	}
+> On Wed, Jul 10, 2024 at 09:25:41PM +0000, Amery Hung wrote:
+> >Hey all!
+> >
+> >This series introduces support for datagrams to virtio/vsock.
 >
-> If you need pinctrl settings to make that clk work you can assign them
-> in that node, although I don't know if I've ever seen such a case
-> before. 
-Thanks for your reply and helpful explanation!
+> any update on v7 of this series?
+>
 
-Regarding the timer-pulse-in, the documentation describes it as:
+Hi Stefano,
 
-"can be used to count external input signal with frequency less than
-1MHz and duty cycle from 0~100%"
+Sorry that I don't have personal time to work on v7. Since I don't
+think people involved in this set are still working on it, I am
+posting my v7 WIP here to see if anyone is interested in finishing it.
+Would greatly appreciate any help.
 
-So the input frequency is not fixed in practice.
+Link: https://github.com/ameryhung/linux/tree/vsock-dgram-v7
 
-Given that, modeling it as a fixed-rate clock might not be accurate.
+Here are the things that I haven't address in the WIP:
 
-And I'm considering whether a more feature-rich driver is needed to
-handle the dynamically changing external clock, or if there's a better
-way to describe such a clock in the CCF.
+01/14
+- Arseniy suggested doing skb_put(dg->payload_size) and memcpy(dg->payload_=
+size)
 
-> If the external parent clk needs to be gated you'll need to
-> write a more featured driver, unless it can be controlled with a gpio or
-> something like that.
-and I think it doesn't need to be gated.
+07/14
+- Remove the double transport lookup in the send path by passing
+transport to dgram_enqueue
+- Address Arseniy's comment about updating vsock_virtio_transport_common.h
+
+14/14
+- Split test/vsock into smaller patches
+
+Finally the spec change discussion also needs to happen.
+
+
+
+> Thanks,
+> Stefano
+>
+> >
+> >It is a spin-off (and smaller version) of this series from the summer:
+> >  https://lore.kernel.org/all/cover.1660362668.git.bobby.eshleman@byteda=
+nce.com/
+> >
+> >Please note that this is an RFC and should not be merged until
+> >associated changes are made to the virtio specification, which will
+> >follow after discussion from this series.
+> >
+> >Another aside, the v4 of the series has only been mildly tested with a
+> >run of tools/testing/vsock/vsock_test. Some code likely needs cleaning
+> >up, but I'm hoping to get some of the design choices agreed upon before
+> >spending too much time making it pretty.
+> >
+> >This series first supports datagrams in a basic form for virtio, and
+> >then optimizes the sendpath for all datagram transports.
+> >
+> >The result is a very fast datagram communication protocol that
+> >outperforms even UDP on multi-queue virtio-net w/ vhost on a variety
+> >of multi-threaded workload samples.
+> >
+> >For those that are curious, some summary data comparing UDP and VSOCK
+> >DGRAM (N=3D5):
+> >
+> >       vCPUS: 16
+> >       virtio-net queues: 16
+> >       payload size: 4KB
+> >       Setup: bare metal + vm (non-nested)
+> >
+> >       UDP: 287.59 MB/s
+> >       VSOCK DGRAM: 509.2 MB/s
+> >
+> >Some notes about the implementation...
+> >
+> >This datagram implementation forces datagrams to self-throttle according
+> >to the threshold set by sk_sndbuf. It behaves similar to the credits
+> >used by streams in its effect on throughput and memory consumption, but
+> >it is not influenced by the receiving socket as credits are.
+> >
+> >The device drops packets silently.
+> >
+> >As discussed previously, this series introduces datagrams and defers
+> >fairness to future work. See discussion in v2 for more context around
+> >datagrams, fairness, and this implementation.
+> >
+> >Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
+> >Signed-off-by: Amery Hung <amery.hung@bytedance.com>
+> >---
+> >Changes in v6:
+> >- allow empty transport in datagram vsock
+> >- add empty transport checks in various paths
+> >- transport layer now saves source cid and port to control buffer of skb
+> >  to remove the dependency of transport in recvmsg()
+> >- fix virtio dgram_enqueue() by looking up the transport to be used when
+> >  using sendto(2)
+> >- fix skb memory leaks in two places
+> >- add dgram auto-bind test
+> >- Link to v5: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v5-0-581=
+bd37fdb26@bytedance.com
+> >
+> >Changes in v5:
+> >- teach vhost to drop dgram when a datagram exceeds the receive buffer
+> >  - now uses MSG_ERRQUEUE and depends on Arseniy's zerocopy patch:
+> >       "vsock: read from socket's error queue"
+> >- replace multiple ->dgram_* callbacks with single ->dgram_addr_init()
+> >  callback
+> >- refactor virtio dgram skb allocator to reduce conflicts w/ zerocopy se=
+ries
+> >- add _fallback/_FALLBACK suffix to dgram transport variables/macros
+> >- add WARN_ONCE() for table_size / VSOCK_HASH issue
+> >- add static to vsock_find_bound_socket_common
+> >- dedupe code in vsock_dgram_sendmsg() using module_got var
+> >- drop concurrent sendmsg() for dgram and defer to future series
+> >- Add more tests
+> >  - test EHOSTUNREACH in errqueue
+> >  - test stream + dgram address collision
+> >- improve clarity of dgram msg bounds test code
+> >- Link to v4: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v4-0-0ce=
+bbb2ae899@bytedance.com
+> >
+> >Changes in v4:
+> >- style changes
+> >  - vsock: use sk_vsock(vsk) in vsock_dgram_recvmsg instead of
+> >    &sk->vsk
+> >  - vsock: fix xmas tree declaration
+> >  - vsock: fix spacing issues
+> >  - virtio/vsock: virtio_transport_recv_dgram returns void because err
+> >    unused
+> >- sparse analysis warnings/errors
+> >  - virtio/vsock: fix unitialized skerr on destroy
+> >  - virtio/vsock: fix uninitialized err var on goto out
+> >  - vsock: fix declarations that need static
+> >  - vsock: fix __rcu annotation order
+> >- bugs
+> >  - vsock: fix null ptr in remote_info code
+> >  - vsock/dgram: make transport_dgram a fallback instead of first
+> >    priority
+> >  - vsock: remove redundant rcu read lock acquire in getname()
+> >- tests
+> >  - add more tests (message bounds and more)
+> >  - add vsock_dgram_bind() helper
+> >  - add vsock_dgram_connect() helper
+> >
+> >Changes in v3:
+> >- Support multi-transport dgram, changing logic in connect/bind
+> >  to support VMCI case
+> >- Support per-pkt transport lookup for sendto() case
+> >- Fix dgram_allow() implementation
+> >- Fix dgram feature bit number (now it is 3)
+> >- Fix binding so dgram and connectible (cid,port) spaces are
+> >  non-overlapping
+> >- RCU protect transport ptr so connect() calls never leave
+> >  a lockless read of the transport and remote_addr are always
+> >  in sync
+> >- Link to v2: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v2-0-079=
+cc7cee62e@bytedance.com
+> >
+> >
+> >Bobby Eshleman (14):
+> >  af_vsock: generalize vsock_dgram_recvmsg() to all transports
+> >  af_vsock: refactor transport lookup code
+> >  af_vsock: support multi-transport datagrams
+> >  af_vsock: generalize bind table functions
+> >  af_vsock: use a separate dgram bind table
+> >  virtio/vsock: add VIRTIO_VSOCK_TYPE_DGRAM
+> >  virtio/vsock: add common datagram send path
+> >  af_vsock: add vsock_find_bound_dgram_socket()
+> >  virtio/vsock: add common datagram recv path
+> >  virtio/vsock: add VIRTIO_VSOCK_F_DGRAM feature bit
+> >  vhost/vsock: implement datagram support
+> >  vsock/loopback: implement datagram support
+> >  virtio/vsock: implement datagram support
+> >  test/vsock: add vsock dgram tests
+> >
+> > drivers/vhost/vsock.c                   |   62 +-
+> > include/linux/virtio_vsock.h            |    9 +-
+> > include/net/af_vsock.h                  |   24 +-
+> > include/uapi/linux/virtio_vsock.h       |    2 +
+> > net/vmw_vsock/af_vsock.c                |  343 ++++++--
+> > net/vmw_vsock/hyperv_transport.c        |   13 -
+> > net/vmw_vsock/virtio_transport.c        |   24 +-
+> > net/vmw_vsock/virtio_transport_common.c |  188 ++++-
+> > net/vmw_vsock/vmci_transport.c          |   61 +-
+> > net/vmw_vsock/vsock_loopback.c          |    9 +-
+> > tools/testing/vsock/util.c              |  177 +++-
+> > tools/testing/vsock/util.h              |   10 +
+> > tools/testing/vsock/vsock_test.c        | 1032 ++++++++++++++++++++---
+> > 13 files changed, 1638 insertions(+), 316 deletions(-)
+> >
+> >--
+> >2.20.1
+> >
+>
 
