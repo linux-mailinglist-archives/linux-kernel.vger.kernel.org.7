@@ -1,252 +1,123 @@
-Return-Path: <linux-kernel+bounces-746709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08879B12A44
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:21:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55CEB12A47
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7251C255C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8694917C2D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265E3241C8C;
-	Sat, 26 Jul 2025 11:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8A023F417;
+	Sat, 26 Jul 2025 11:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PPQ0AWgJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jHNETpN5"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBA3239E64;
-	Sat, 26 Jul 2025 11:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265932D052;
+	Sat, 26 Jul 2025 11:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753528902; cv=none; b=uj2WXvxeS+LexWChNxJ0VBwoor32nMMc8nqefSywgrxBPX0xmo5EMjmsjl/s0ddcsWYFAV3Y5xfe1CyYEjwc8Ia6Z/tQFL6ttF3B+3w4LwA4/JfUxW+T44ipZgxJqtWrQw/rRkHPmT1Y3BmfzFS3dvNssFS6CVjEbc/mWFcDeRA=
+	t=1753529692; cv=none; b=idhIymW4zvRUkxUYywPTzWWa7cslI4yyTT6xXgRMZq5fOl2s/Rv8/U/8zLLQPBPvEERgPBUeCPk/8m9cG1MF0msQfLgMN1YimlazO7w+wC/9MUcVdLeGhExhEnzTT48ZE7FcTj4dIXG66MbrqZ+qZV2FGGW5aA+9y7t552Nt0mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753528902; c=relaxed/simple;
-	bh=wbRxOW83h5ag6rAvDa9zsvECbeocst1I6z9JDaiutro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TwUooALytDqdP24HcYOsMuEufgIk4VMcBTlTTe3i2lkLtfy7mCzeKs/4XJ8UxG9WxgXnx2ateisGjdLzm/D2R3rhVMHuko8xVFmlynkpNSc36X541m1JKa6bcaj8ElAhENK7sKGFsdrdDnq3bCoQ9A3rPJWflHUilNG1YBhMBHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PPQ0AWgJ; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753528901; x=1785064901;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wbRxOW83h5ag6rAvDa9zsvECbeocst1I6z9JDaiutro=;
-  b=PPQ0AWgJ77eUfULQ45ttrHSmMGzQsJiEc41pqy1v7EMZINqB9aUpBjZW
-   +ThcHECS/qSP23F91VEXL+MuORoTSRqN/xTGkkuXsvJRq8KKH5lnQ1590
-   ERxuPejosUgb13UjyegduBrP4IwV8oa7VZSzdQp40HQcGtpvZJUdghGRv
-   6ZMjnDQ5vUk7dscRusl8oqkmvZqfBKYYZyQER5tK3ZtXYtzBQ7EmXr4xA
-   S63yZGEdqtUZyDAa7gPUiAvF9pquGyjura4zZmPduX/NvUvni/264POyG
-   ZpzaMRWLvxrnRvg8soqiUf0bQ0yqCQzXDVnxc3C2OLeu//4Q7OG6Rd25+
-   w==;
-X-CSE-ConnectionGUID: Aa/EvAMmT6SXvgDr0Itg3g==
-X-CSE-MsgGUID: JY+xzjfbTWG+fGO8yPDZVw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="55997856"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="55997856"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 04:21:39 -0700
-X-CSE-ConnectionGUID: 8zotRv7YQvKXCdlELy7OUA==
-X-CSE-MsgGUID: 0XG+XZTXR+uiUAgNJ2gZrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="192450002"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 26 Jul 2025 04:21:33 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ufcy2-000Lvd-0T;
-	Sat, 26 Jul 2025 11:21:30 +0000
-Date: Sat, 26 Jul 2025 19:20:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, bhupesh@igalia.com,
-	kernel-dev@igalia.com, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	oliver.sang@intel.com, lkp@intel.com, laoar.shao@gmail.com,
-	pmladek@suse.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
-	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
-	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
-	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
-	mgorman@suse.de
-Subject: Re: [PATCH v6 3/3] include: Set tsk->comm length to 64 bytes
-Message-ID: <202507261841.Z2C9RmTJ-lkp@intel.com>
-References: <20250724123612.206110-4-bhupesh@igalia.com>
+	s=arc-20240116; t=1753529692; c=relaxed/simple;
+	bh=l6TuRz5EzLqeFVgvRZk84SkmxztLVYklXrBbwvkzRAk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rAprVhRBRPVtqjEnke5oMFyeIrBbGoIUo2pePRIQHTVxBLKxR6Uq+rzyK4ucCXaXY8h/GTgXH2Ieku8G++78xLlJawkeQzSW9cD5vt/88OjpxRX9VCxGsNvS+DUBMfgDc+Bp83e2lIz+n5Bl/otqYIkWvP+C8pbtNzE/ajdl6k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jHNETpN5; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56QBYTIp1912008;
+	Sat, 26 Jul 2025 06:34:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753529669;
+	bh=l6TuRz5EzLqeFVgvRZk84SkmxztLVYklXrBbwvkzRAk=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To;
+	b=jHNETpN5yGHM1rH/FSBAtl2HbNLrJDbJLc+EW/8a/sIrqx5V5W3yf1mJzQpRKdEvl
+	 Y23ErP3Q1Ad+zhpaMqyxw/OjGcEztN7GPKzLMG48hUH6GcG1ACKC+q4pCuC9HSGs/h
+	 9b0Khdtc5iSkU3UORwGvgWjCiYevWZ5wRM2LVLEU=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56QBYS6R3880166
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Sat, 26 Jul 2025 06:34:29 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 26
+ Jul 2025 06:34:28 -0500
+Received: from DLEE100.ent.ti.com ([fe80::ad4d:c227:3f85:880d]) by
+ DLEE100.ent.ti.com ([fe80::ad4d:c227:3f85:880d%17]) with mapi id
+ 15.01.2507.055; Sat, 26 Jul 2025 06:34:28 -0500
+From: "Xu, Baojun" <baojun.xu@ti.com>
+To: Takashi Iwai <tiwai@suse.de>
+CC: "broonie@kernel.org" <broonie@kernel.org>,
+        "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "Ding, Shenghao"
+	<shenghao-ding@ti.com>,
+        "13916275206@139.com" <13916275206@139.com>,
+        "P O,
+ Vijeth" <v-po@ti.com>,
+        "linux-sound@vger.kernel.org"
+	<linux-sound@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH v2] ALSA: hda: Add TAS2770 support
+Thread-Topic: [EXTERNAL] Re: [PATCH v2] ALSA: hda: Add TAS2770 support
+Thread-Index: AQHb+92VnCyYVy56v0qMsWwwberg3LRAG64AgAQtmUE=
+Date: Sat, 26 Jul 2025 11:34:28 +0000
+Message-ID: <cc99c78e042b47cca92f4a3050f36a9c@ti.com>
+References: <20250723142423.38768-1-baojun.xu@ti.com>,<87bjpbm0lj.wl-tiwai@suse.de>
+In-Reply-To: <87bjpbm0lj.wl-tiwai@suse.de>
+Accept-Language: en-GB, zh-CN, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-c2processedorg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724123612.206110-4-bhupesh@igalia.com>
 
-Hi Bhupesh,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on trace/for-next]
-[also build test WARNING on tip/sched/core akpm-mm/mm-everything linus/master v6.16-rc7 next-20250725]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bhupesh/exec-Remove-obsolete-comments/20250724-203927
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250724123612.206110-4-bhupesh%40igalia.com
-patch subject: [PATCH v6 3/3] include: Set tsk->comm length to 64 bytes
-config: sparc64-randconfig-001-20250725 (https://download.01.org/0day-ci/archive/20250726/202507261841.Z2C9RmTJ-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250726/202507261841.Z2C9RmTJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507261841.Z2C9RmTJ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/gpu/drm/nouveau/nouveau_chan.c: In function 'nouveau_channel_ctor':
->> drivers/gpu/drm/nouveau/nouveau_chan.c:336:51: warning: '%s' directive output may be truncated writing up to 63 bytes into a region of size 32 [-Wformat-truncation=]
-     snprintf(args->name, __member_size(args->name), "%s[%d]",
-                                                      ^~
-   drivers/gpu/drm/nouveau/nouveau_chan.c:336:2: note: 'snprintf' output between 4 and 77 bytes into a destination of size 32
-     snprintf(args->name, __member_size(args->name), "%s[%d]",
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       current->comm, task_pid_nr(current));
-       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   drivers/gpu/drm/nouveau/nouveau_drm.c: In function 'nouveau_drm_open':
->> drivers/gpu/drm/nouveau/nouveau_drm.c:1202:32: warning: '%s' directive output may be truncated writing up to 63 bytes into a region of size 32 [-Wformat-truncation=]
-     snprintf(name, sizeof(name), "%s[%d]",
-                                   ^~
-   drivers/gpu/drm/nouveau/nouveau_drm.c:1202:2: note: 'snprintf' output between 4 and 77 bytes into a destination of size 32
-     snprintf(name, sizeof(name), "%s[%d]",
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       current->comm, pid_nr(rcu_dereference(fpriv->pid)));
-       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +336 drivers/gpu/drm/nouveau/nouveau_chan.c
-
-ebb945a94bba2c Ben Skeggs          2012-07-20  246  
-5b8a43aeb9cbf6 Marcin Slusarz      2012-08-19  247  static int
-5cca41ac70e587 Ben Skeggs          2024-07-26  248  nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
-06db7fded6dec8 Ben Skeggs          2022-06-01  249  		     struct nouveau_channel **pchan)
-ebb945a94bba2c Ben Skeggs          2012-07-20  250  {
-152be54224de18 Danilo Krummrich    2023-10-02  251  	const struct nvif_mclass hosts[] = {
-284ad706ad2f50 Ben Skeggs          2025-02-04  252  		{ BLACKWELL_CHANNEL_GPFIFO_B, 0 },
-32cb1cc358ffed Ben Skeggs          2024-11-25  253  		{ BLACKWELL_CHANNEL_GPFIFO_A, 0 },
-44f93b209e2afd Ben Skeggs          2024-11-25  254  		{    HOPPER_CHANNEL_GPFIFO_A, 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  255  		{    AMPERE_CHANNEL_GPFIFO_B, 0 },
-7f4f35ea5b080e Ben Skeggs          2022-06-01  256  		{    AMPERE_CHANNEL_GPFIFO_A, 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  257  		{    TURING_CHANNEL_GPFIFO_A, 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  258  		{     VOLTA_CHANNEL_GPFIFO_A, 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  259  		{    PASCAL_CHANNEL_GPFIFO_A, 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  260  		{   MAXWELL_CHANNEL_GPFIFO_A, 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  261  		{    KEPLER_CHANNEL_GPFIFO_B, 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  262  		{    KEPLER_CHANNEL_GPFIFO_A, 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  263  		{     FERMI_CHANNEL_GPFIFO  , 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  264  		{       G82_CHANNEL_GPFIFO  , 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  265  		{      NV50_CHANNEL_GPFIFO  , 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  266  		{      NV40_CHANNEL_DMA     , 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  267  		{      NV17_CHANNEL_DMA     , 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  268  		{      NV10_CHANNEL_DMA     , 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  269  		{      NV03_CHANNEL_DMA     , 0 },
-06db7fded6dec8 Ben Skeggs          2022-06-01  270  		{}
-06db7fded6dec8 Ben Skeggs          2022-06-01  271  	};
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  272  	DEFINE_RAW_FLEX(struct nvif_chan_v0, args, name, TASK_COMM_LEN + 16);
-5cca41ac70e587 Ben Skeggs          2024-07-26  273  	struct nvif_device *device = &cli->device;
-ebb945a94bba2c Ben Skeggs          2012-07-20  274  	struct nouveau_channel *chan;
-06db7fded6dec8 Ben Skeggs          2022-06-01  275  	const u64 plength = 0x10000;
-06db7fded6dec8 Ben Skeggs          2022-06-01  276  	const u64 ioffset = plength;
-06db7fded6dec8 Ben Skeggs          2022-06-01  277  	const u64 ilength = 0x02000;
-06db7fded6dec8 Ben Skeggs          2022-06-01  278  	int cid, ret;
-06db7fded6dec8 Ben Skeggs          2022-06-01  279  	u64 size;
-06db7fded6dec8 Ben Skeggs          2022-06-01  280  
-06db7fded6dec8 Ben Skeggs          2022-06-01  281  	cid = nvif_mclass(&device->object, hosts);
-06db7fded6dec8 Ben Skeggs          2022-06-01  282  	if (cid < 0)
-06db7fded6dec8 Ben Skeggs          2022-06-01  283  		return cid;
-06db7fded6dec8 Ben Skeggs          2022-06-01  284  
-06db7fded6dec8 Ben Skeggs          2022-06-01  285  	if (hosts[cid].oclass < NV50_CHANNEL_GPFIFO)
-06db7fded6dec8 Ben Skeggs          2022-06-01  286  		size = plength;
-06db7fded6dec8 Ben Skeggs          2022-06-01  287  	else
-06db7fded6dec8 Ben Skeggs          2022-06-01  288  		size = ioffset + ilength;
-ebb945a94bba2c Ben Skeggs          2012-07-20  289  
-ebb945a94bba2c Ben Skeggs          2012-07-20  290  	/* allocate dma push buffer */
-5cca41ac70e587 Ben Skeggs          2024-07-26  291  	ret = nouveau_channel_prep(cli, size, &chan);
-ebb945a94bba2c Ben Skeggs          2012-07-20  292  	*pchan = chan;
-ebb945a94bba2c Ben Skeggs          2012-07-20  293  	if (ret)
-ebb945a94bba2c Ben Skeggs          2012-07-20  294  		return ret;
-ebb945a94bba2c Ben Skeggs          2012-07-20  295  
-ebb945a94bba2c Ben Skeggs          2012-07-20  296  	/* create channel object */
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  297  	args->version = 0;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  298  	args->namelen = __member_size(args->name);
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  299  	args->runlist = __ffs64(runm);
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  300  	args->runq = 0;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  301  	args->priv = priv;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  302  	args->devm = BIT(0);
-06db7fded6dec8 Ben Skeggs          2022-06-01  303  	if (hosts[cid].oclass < NV50_CHANNEL_GPFIFO) {
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  304  		args->vmm = 0;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  305  		args->ctxdma = nvif_handle(&chan->push.ctxdma);
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  306  		args->offset = chan->push.addr;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  307  		args->length = 0;
-bbf8906b2cad17 Ben Skeggs          2014-08-10  308  	} else {
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  309  		args->vmm = nvif_handle(&chan->vmm->vmm.object);
-06db7fded6dec8 Ben Skeggs          2022-06-01  310  		if (hosts[cid].oclass < FERMI_CHANNEL_GPFIFO)
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  311  			args->ctxdma = nvif_handle(&chan->push.ctxdma);
-06db7fded6dec8 Ben Skeggs          2022-06-01  312  		else
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  313  			args->ctxdma = 0;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  314  		args->offset = ioffset + chan->push.addr;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  315  		args->length = ilength;
-06db7fded6dec8 Ben Skeggs          2022-06-01  316  	}
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  317  	args->huserd = 0;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  318  	args->ouserd = 0;
-06db7fded6dec8 Ben Skeggs          2022-06-01  319  
-06db7fded6dec8 Ben Skeggs          2022-06-01  320  	/* allocate userd */
-06db7fded6dec8 Ben Skeggs          2022-06-01  321  	if (hosts[cid].oclass >= VOLTA_CHANNEL_GPFIFO_A) {
-06db7fded6dec8 Ben Skeggs          2022-06-01  322  		ret = nvif_mem_ctor(&cli->mmu, "abi16ChanUSERD", NVIF_CLASS_MEM_GF100,
-06db7fded6dec8 Ben Skeggs          2022-06-01  323  				    NVIF_MEM_VRAM | NVIF_MEM_COHERENT | NVIF_MEM_MAPPABLE,
-06db7fded6dec8 Ben Skeggs          2022-06-01  324  				    0, PAGE_SIZE, NULL, 0, &chan->mem_userd);
-06db7fded6dec8 Ben Skeggs          2022-06-01  325  		if (ret)
-ebb945a94bba2c Ben Skeggs          2012-07-20  326  			return ret;
-ebb945a94bba2c Ben Skeggs          2012-07-20  327  
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  328  		args->huserd = nvif_handle(&chan->mem_userd.object);
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  329  		args->ouserd = 0;
-ebb945a94bba2c Ben Skeggs          2012-07-20  330  
-06db7fded6dec8 Ben Skeggs          2022-06-01  331  		chan->userd = &chan->mem_userd.object;
-06db7fded6dec8 Ben Skeggs          2022-06-01  332  	} else {
-06db7fded6dec8 Ben Skeggs          2022-06-01  333  		chan->userd = &chan->user;
-06db7fded6dec8 Ben Skeggs          2022-06-01  334  	}
-ebb945a94bba2c Ben Skeggs          2012-07-20  335  
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16 @336  	snprintf(args->name, __member_size(args->name), "%s[%d]",
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  337  		 current->comm, task_pid_nr(current));
-ebb945a94bba2c Ben Skeggs          2012-07-20  338  
-06db7fded6dec8 Ben Skeggs          2022-06-01  339  	ret = nvif_object_ctor(&device->object, "abi16ChanUser", 0, hosts[cid].oclass,
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  340  			       args, __struct_size(args), &chan->user);
-06db7fded6dec8 Ben Skeggs          2022-06-01  341  	if (ret) {
-06db7fded6dec8 Ben Skeggs          2022-06-01  342  		nouveau_channel_del(pchan);
-ebb945a94bba2c Ben Skeggs          2012-07-20  343  		return ret;
-bbf8906b2cad17 Ben Skeggs          2014-08-10  344  	}
-ebb945a94bba2c Ben Skeggs          2012-07-20  345  
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  346  	chan->runlist = args->runlist;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  347  	chan->chid = args->chid;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  348  	chan->inst = args->inst;
-e270b3665f8321 Gustavo A. R. Silva 2025-04-16  349  	chan->token = args->token;
-06db7fded6dec8 Ben Skeggs          2022-06-01  350  	return 0;
-ebb945a94bba2c Ben Skeggs          2012-07-20  351  }
-ebb945a94bba2c Ben Skeggs          2012-07-20  352  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+PiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPiBGcm9tOiBU
+YWthc2hpIEl3YWkgPHRpd2FpQHN1c2UuZGU+DQo+IFNlbnQ6IDIzIEp1bHkgMjAyNSAyMjo0MA0K
+PiBUbzogWHUsIEJhb2p1bg0KPiBDYzogYnJvb25pZUBrZXJuZWwub3JnOyBhbmRyaXkuc2hldmNo
+ZW5rb0BsaW51eC5pbnRlbC5jb207IGFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsgRGluZywg
+U2hlbmdoYW87IDEzOTE2Mjc1MjA2QDEzOS5jb207IFAgTywgVmlqZXRoOyBsaW51eC1zb3VuZEB2
+Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDog
+W0VYVEVSTkFMXSBSZTogW1BBVENIIHYyXSBBTFNBOiBoZGE6IEFkZCBUQVMyNzcwIHN1cHBvcnQN
+Cj4gDQo+IE9uIFdlZCwgMjMgSnVsIDIwMjUgMTY64oCKMjQ64oCKMjMgKzAyMDAsIEJhb2p1biBY
+dSB3cm90ZTogPiA+IEFkZCBUQVMyNzcwIHN1cHBvcnQgaW4gVEkncyBIREEgZHJpdmVyLiBBbmQg
+YWRkIGhkYV9jaGlwX2lkIGZvciA+IG1vcmUgcHJvZHVjdHMuIERpc3Rpbmd1aXNoIERTUCBhbmQg
+bm9uLURTUCBpbiBmaXJtd2FyZSA+IGxvYWRpbmcgZnVuY3Rpb24uID4gPiBTaWduZWQtb2ZmLWJ5
+OiBCYW9qdW4NCj4gWmpRY21RUllGcGZwdEJhbm5lclN0YXJ0DQo+IFRoaXMgbWVzc2FnZSB3YXMg
+c2VudCBmcm9tIG91dHNpZGUgb2YgVGV4YXMgSW5zdHJ1bWVudHMuDQo+IERvIG5vdCBjbGljayBs
+aW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3UgcmVjb2duaXplIHRoZSBzb3VyY2Ug
+b2YgdGhpcyBlbWFpbCBhbmQga25vdyB0aGUgY29udGVudCBpcyBzYWZlLg0KPiA8aHR0cHM6Ly91
+cy1waGlzaGFsYXJtLWV3dC5wcm9vZnBvaW50LmNvbS9FV1QvdjEvRzN2SyF2eGRySGYzRVBtZFFp
+ZzN2Znh0b1gwZ2EtWlcyZ3JiNHBKLTkweEVhb20tblZzSFQ4eEhZM0Qybks4djVtZFdsRXcwdDNR
+JD4NCj4gUmVwb3J0IFN1c3BpY2lvdXMNCj4gDQo+IFpqUWNtUVJZRnBmcHRCYW5uZXJFbmQNCj4g
+DQo+IE9uIFdlZCwgMjMgSnVsIDIwMjUgMTY6MjQ6MjMgKzAyMDAsDQo+IEJhb2p1biBYdSB3cm90
+ZToNCj4gPg0KPiA+IEFkZCBUQVMyNzcwIHN1cHBvcnQgaW4gVEkncyBIREEgZHJpdmVyLiBBbmQg
+YWRkIGhkYV9jaGlwX2lkIGZvcg0KPiA+IG1vcmUgcHJvZHVjdHMuIERpc3Rpbmd1aXNoIERTUCBh
+bmQgbm9uLURTUCBpbiBmaXJtd2FyZQ0KPiA+IGxvYWRpbmcgZnVuY3Rpb24uDQo+ID4NCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBCYW9qdW4gWHUgPGJhb2p1bi54dUB0aS5jb20+DQo+IA0KPiBBcHBsaWVk
+IG5vdywgdGhhbmtzLg0KPiANCj4gDQo+IEJUVywgaXMgaW5jbHVkZS9zb3VuZC90YXMyNzcwLXRs
+di5oIHVzZWQgYnkgYW55IG90aGVyIGRyaXZlcj8NCj4gKEFsc28gaW5jbHVkZS9zb3VuZC90YXMy
+NzgxLXRsdi5oKS4NCj4gDQo+IElmIHRob3NlIGFyZSB1c2VkIG9ubHkgYnkgdGFzMjc4MS1oZGEt
+aTJzL3NwaSBkcml2ZXJzLCB0aGUgZmlsZXMgY2FuDQo+IGJlIG1vdmVkIHRvIHNvdW5kL2hkYS9j
+b2RlY3Mvc2lkZS1jb2RlY3MgYXMgbG9jYWwgaGVhZGVycy4NCj4gDQo+IEluIGdlbmVyYWwsIGlu
+Y2x1ZGUvc291bmQgaXMgcmF0aGVyIGZvciBwdWJsaWMgaGVhZGVycyB0aGF0IGFyZSByZWFkDQo+
+IGJ5IG11bHRpcGxlIGRyaXZlcnMgaW4gZGlmZmVyZW50IHBsYWNlcy4NCg0KVGhhbmtzIGZvciB0
+aGUgYXBwbHkhDQpZZXMsIGluY2x1ZGUvc291bmQvdGFzeHh4eC10bHYuaCB3aWxsIGFsc28gYmUg
+dXNlZCBieSBvdGhlciBkcml2ZXJzDQooZm9yIGV4YW1wbGUsIHNvdW5kL3NvYy9jb2RlY3MvdGFz
+Mnh4eC1pMmMuYykNCg0KPiANCj4gDQo+IHRoYW5rcywNCj4gDQo+IFRha2FzaGkNCj4gDQoNCkJl
+c3QgUmVnYXJkcw0KSmltDQo=
 
