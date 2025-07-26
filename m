@@ -1,100 +1,135 @@
-Return-Path: <linux-kernel+bounces-746702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D4DB12A35
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:01:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80751B12A37
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D47A17A7A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB654E7FC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B731C225A4F;
-	Sat, 26 Jul 2025 11:01:13 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40C223C4FB;
+	Sat, 26 Jul 2025 11:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJDSLe/N"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D28BE55A;
-	Sat, 26 Jul 2025 11:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFD91E3DDB;
+	Sat, 26 Jul 2025 11:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753527673; cv=none; b=g1o779WI3mKrB9Z9AiYVGcLSy1WbjpRzA/0jaW5eJ/HVCyeVkH8bGBg5eG8a+snrJnNDcr6zSt7zlE5haYZsw7LvEC5ck7cYry1cWpW21nTTYfoQPG+qLWo31fVgfAlh+nL2ast9ashDIKXuXnGfmGgNvP7jLKI2gHoCfziO0Pk=
+	t=1753527768; cv=none; b=OPIp5BK7McZiLWB4PHM9Zh7jku6j32O97XOoW0LgwKNmWv0nsIbJG1qnQZeo9erhN4TR5VcouOk+X4fbbLiURERquaeqdb+XpNjBP66OtxmRGJnVMy0YZvO5pTHq/jvkmphNbzfnguBunkt65SuDxCxM4345gOU4K0GVPUjNikQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753527673; c=relaxed/simple;
-	bh=fl/PV+ZyQsIPcnTVHtSrC4wfylDUmx6XAB53C7LWOqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMhSOG7tbJo0kR3z+XynBl9zD7cJ8POTh4gJGWtPcZCS/vgzbpYaX7mguBeuciLAWy/xf0RyO5u2FZbDnMGDOyaAlOpXtth+QOc8aUVYbN1Ig6FFUvt7U+O1Es5l0rdtEEGbE/7LVJuD3ceHTodVNDO2suZ+lvkkM9UUIz6YTDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bq1xq70PgzYQtrN;
-	Sat, 26 Jul 2025 19:01:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A98531A151A;
-	Sat, 26 Jul 2025 19:01:02 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP4 (Coremail) with SMTP id gCh0CgC3MhNttYRoOzkwBg--.1541S2;
-	Sat, 26 Jul 2025 19:01:02 +0800 (CST)
-Message-ID: <3140a3ba-6db0-45d7-bbd5-707fc8bf1dcc@huaweicloud.com>
-Date: Sat, 26 Jul 2025 19:01:01 +0800
+	s=arc-20240116; t=1753527768; c=relaxed/simple;
+	bh=3HUha1BBOXbxMtlMVmeIcVVQggx5ZsrMvzl+M4e0FMo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RgF/felt2u71nQJDDG2+6CdQNrnOHj+MiTrlKWmNxuaZoqeXdXjgf3JEklfkmnDrRd2l//XqHq9WCJKWXtMPIzevh6XZ9Dwdeyd4lWP4IRggeTOWXwNNmwz2OiPdX0wCPgVVLOcQTKpL0yLqJDPwtC6oT5ILJhvfnLkSHoiVy1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJDSLe/N; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-615913ff67fso1565230eaf.0;
+        Sat, 26 Jul 2025 04:02:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753527766; x=1754132566; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6N8u7i6bavRtncX2NloOXYK5MdGg/xlO/tgSTQhg80U=;
+        b=GJDSLe/NpPjz4KeggOnMDxiXRngj9EG+EvpXIadbsDV+YwigffIWmYozNb4mF+n1a3
+         +nprLQhoG/KC36xJ5r2j463uSYjBpts7gDakWmzxpPRWK6hq5Ly6JaB85SDcGHTT6721
+         082f+jo701N10fM6cskVH+CcAKC8Hp4rps6yhHklNgik2/hntW1ZQM/OmHmJhmdSejcx
+         JgG2WSVvoinztPSxd4ecFI5Se/H+KovL6g0RXUuyMQ0QYcr+ILazS6mzUbs3F78mdKdB
+         1mz+UvtxT4SEu83RHXP4Ct9SfK8U7FOv2aoBkzK6fsghMCVWwljMDiTiy1Nj9yyMSXN+
+         KgQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753527766; x=1754132566;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6N8u7i6bavRtncX2NloOXYK5MdGg/xlO/tgSTQhg80U=;
+        b=Wtm1htDA4p/l04BmpqeXyJu7qMicoNbqQAbJ3PBleGepVS48tnxyf0CK6fg5UAtO0D
+         U6aTNynM1WmmsZoBWRbJ8uF8JHwLAsFpraLnSR3vwS/cl14thOf+7FOE9qQgUaNJffYr
+         hkWccIXiqoenfozaaitHSJ94ErrBDdlQDo9H4MUpuZbhIETJ0yKrwQLsJbB3YkRURUUv
+         wjJln5I5KN8SfclQgHzJmuvNx4Ktow9rJI+8sSoTIkZIdkeSLYUKSgg5R2Cs+GHDE6Ce
+         IFK4JFqMOwNTA3TtrNCL+zxOMENQlFSBLp7mKlYESj1LuI9mJN6vzRu4jex+McArWMoW
+         h75Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWAxR+x8HPslsgaeTsgP87R8bgRZa5xYejSN6vZDtgW76D44/P19zRF7a+rRjEQeMmboDanoO3bLNHNP6o=@vger.kernel.org, AJvYcCXUXRiIaNSFXa+7gKz/4Lu7mJMqmlBa5Gm9FWun34Qd4bEYAIn2/OqCYUFULiVyuuADvcHj7l37@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz9Z1n6GmZtpZNHIBIu8IPJll77TMQcaJ2f6zxfWiQahDRPi0i
+	ymvyloKKCgR3e9VaqQYUTMT2tjwfKPPBmPivqsBAj0TWbhOhtXWruGwLFzE2YJFp6kFYDmIhOQB
+	S2Xn4f26khlCCEwvq1+YoQMlPvEhBXoo=
+X-Gm-Gg: ASbGncuLDrhlqEwtxJwE+Ss2gEyZUk+aEksSBQvSgzz6GXTalSo8Dbl2eJGgOXwWxhg
+	7+ZLnc47K3zgDOlwk5oNXdjJbfL7IoFvArIhzDP6zqtuYdBRovPeFp+MBxGrI1yrX3J7CSS5TnK
+	RPOukU+Ik37rHJpKIvq1fQyElEVVRQVoV0LnegAftcNpjSL5v3rRnk2S1Bi7h4sZ06sTWyuog26
+	1jrD5aqwPwZRJs22Z8=
+X-Google-Smtp-Source: AGHT+IEyf3AoHuWHzF2ZaG4kAT0T62PWcegvLkRfaxx91RgrmAJ6papxbmsO/hpAFgEyYRR1CiVg2Qo6LqpVshWS+nk=
+X-Received: by 2002:a05:6820:2103:b0:611:5a9e:51c4 with SMTP id
+ 006d021491bc7-618fe208078mr5922202eaf.4.1753527765661; Sat, 26 Jul 2025
+ 04:02:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] selftests/ftrace: Prevent potential failure in
- subsystem-enable test case
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Shuah Khan <shuah@kernel.org>, Yuanhe Shu <xiangzao@linux.alibaba.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20250710130134.591066-1-wutengda@huaweicloud.com>
- <20250710153409.3135fb17@batman.local.home>
- <88286bd2-a833-47e3-a0f0-896fbdd3fcbb@huaweicloud.com>
- <20250721132957.5184cd68@batman.local.home>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <20250721132957.5184cd68@batman.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgC3MhNttYRoOzkwBg--.1541S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYU7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7
-	xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxAq
-	zxv26xkF7I0En4kS14v26r126r1DMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUrR6zUU
-	UUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+References: <20250722071508.12497-1-suchitkarunakaran@gmail.com>
+ <CANn89iJgG3yRQv+a04wzUtgqorSOM3DOFvGV2mgFV8QTVFjYxg@mail.gmail.com>
+ <CAO9wTFiGCrAOkZSPr1N6W_8yacyUUcZanvXdQ-FQaphpnWe5DA@mail.gmail.com> <aIPDLjCUHCf+iI1O@pop-os.localdomain>
+In-Reply-To: <aIPDLjCUHCf+iI1O@pop-os.localdomain>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Sat, 26 Jul 2025 16:32:33 +0530
+X-Gm-Features: Ac12FXwepev2M9q8u7MIGx5HDPwylIpmw4JPzsJiwl_P_EHFyYCSf6GkndaygOY
+Message-ID: <CAO9wTFhC=cRvJQro1g2SXiq4Zx-Oiu3Q3c8stbfHSXCA2fi7Bw@mail.gmail.com>
+Subject: Re: [PATCH] net: Revert tx queue length on partial failure in dev_qdisc_change_tx_queue_len()
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, horms@kernel.org, jhs@mojatatu.com, jiri@resnulli.us, 
+	sdf@fomichev.me, kuniyu@google.com, aleksander.lobakin@intel.com, 
+	netdev@vger.kernel.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 25 Jul 2025 at 23:17, Cong Wang <xiyou.wangcong@gmail.com> wrote:
+>
+> Hi Suchit,
+>
+> On Wed, Jul 23, 2025 at 11:47:09PM +0530, Suchit K wrote:
+> > >
+> > > WRITE_ONCE() is missing.
+> > >
+> > > > +               while (i >= 0) {
+> > > > +                       qdisc_change_tx_queue_len(dev, &dev->_tx[i]);
+> > >
+> > > What happens if one of these calls fails ?
+> > >
+> > > I think a fix will be more complicated...
+> >
+> > Hi Eric,
+> > Given that pfifo_fast_change_tx_queue_len is currently the only
+> > implementation of change_tx_queue_len, would it be reasonable to
+> > handle partial failures solely within pfifo_fast_change_tx_queue_len
+> > (which in turn leads to skb_array_resize_multiple_bh)? In other words,
+> > is it sufficient to modify only the underlying low level
+> > implementation of pfifo_fast_change_tx_queue_len for partial failures,
+> > given that it's the sole implementation of change_tx_queue_len?
+>
+> Thanks for your patch.
+>
+> As you noticed it is tricky to handle the failure elegantly here, which
+> was also the reason why I didn't do it. Did you observe any real issue?
+>
+> To answer your question above: I am not sure if we can do it in pfifo
+> fast implementation since struct netdev_queue is not explicitly exposed to
+> the lower Qdisc.
+>
+> On the other hand, although dev_qdisc_change_tx_queue_len() is generic,
+> it is only called for this very specific code path, so changing it won't
+> impact other code paths, IMHO.
+>
+> Regards,
+> Cong Wang
 
-
-On 2025/7/22 1:29, Steven Rostedt wrote:
-> On Mon, 21 Jul 2025 09:54:22 +0800
-> Tengda Wu <wutengda@huaweicloud.com> wrote:
-> 
->> I noticed this patch hasn't been merged yet. Do you plan to merge it soon?
->> If you're too busy, would you like me to help submit it instead?
-> 
-> Nah, I simply forgot about it. Let me go write up a patch and send it
-> out.
-> 
-> -- Steve
-
-Just got the patch application notice, thanks.
--- Tengda
-
+Hi, Thanks for the feedback. I'll try to dig more into it and will
+post a patch if I find a solution. Thanks once again.
 
