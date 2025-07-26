@@ -1,180 +1,270 @@
-Return-Path: <linux-kernel+bounces-746582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16489B12893
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:30:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F57B12895
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA812AA6501
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:30:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5604AC00B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F5D1DC9B5;
-	Sat, 26 Jul 2025 02:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31FE19307F;
+	Sat, 26 Jul 2025 02:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MN6oiadE"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gflMb3HV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7F7111BF
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 02:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F0C10A1F;
+	Sat, 26 Jul 2025 02:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753497051; cv=none; b=qKTNsKlZBAZaDkHCAb3CjQon/037eF2+GkRlGFTgqJTlahmzJFCHHOBCiPwEE3IFAfNM76S2cMRcIG/Y2LtvRWcV0dYru0rZOErN7tL/XTUoEKoKmBb5HikdPPb6drfhgmXmMWDDiKLPn5i7ikSjei8crwyog+mjZT23NRX0CSQ=
+	t=1753497974; cv=none; b=KfBCarzC/OLw0+O1F1EnQK3c8ru7MVhIqE+ERlKlL794PiG0l9jL3zINVwzR3TnVnDRVXoCg21kUX+2JTLDI4SKIA/navj+XQAcmdNAmm+5t8oijuBP0c9mEAGYsco0yCpUd8h3EnZp5WjmHvHYTrlhwFYbWXKUgPov4IL3ExdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753497051; c=relaxed/simple;
-	bh=PrB+/5kXEKvBjOpKUYDtWccK3RIutOjFaivwM+A4O0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iDpOQf/VskHyFvZVfA3IMHOVRLjsMTo9VbyBgrKxotLkN7zTQMiuwk4V9iaMukUeDMdKMWBT0QTuBaPX7TkLLuLhIBJUj/EAHTygSNIj/Fc1wQ0afy7euFUFKSwEGQXs7IpfckJeKTB68JBQjZ4Sv8B2lEHWaW5PfjE8D0ytBeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MN6oiadE; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-234c5b57557so23931965ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 19:30:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1753497049; x=1754101849; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y3+KGsMghJpTUkFMQc31Znzw1BhSHIhxJP3A9H3lNJA=;
-        b=MN6oiadEtROBEKnVkGH2oYiqnQsJWsqwwAj5pNXIgniJI5wiEHkqjTjPMky1UogXr9
-         soMl2e/ZFxbBiw/+SYP0+hTenCNd/PWEBNaefRKhMBO2Z3QAf7idZuN3Jq0LozYEJmcu
-         sC3AEHSV6M00PCjYp6f7Ec6IUEGTh4IGQ6uo4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753497049; x=1754101849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y3+KGsMghJpTUkFMQc31Znzw1BhSHIhxJP3A9H3lNJA=;
-        b=efnN70aZ/Dh4Q4AifSyr927q6hy1LLfE0vKSEkiLbVNFViOFLN75fR4Y9pDaBKE1xS
-         mhlA2o/YmXRPnnKQxK2cXwxC0/kZ5WedChiXHOdlvAUrsAWbLFXOEsCYXiv0iRyr8mfU
-         RzijZ2PKcjZPza97N/bx9LNiVvcIbiXTRds2m8QMRnHb4h85GEptTlSNPMgX/A0Hu0+z
-         ZmIK1R347BQhxlyYtCvPwJH8xISBq0AHx/m4E24BROf+X+RyloI1JHSU5jgRJ7qvCL5w
-         cjiy9sVUxcQcXEku2A3+DL5AcgC3MXLWEJJ7DYdyqb6OUpiz/c5wrlF5qO9OjR7FBMzs
-         ZVNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8h0JLJ+HpFoBirTJ3zQaDoiFx8Ht/4VY0cPcVMXgBhvpqTkP9domsmu6RrsOr9YI5FdqS8VCHnRvy6nE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxpqd8/NoaUhKmhrI37IHodBljnX3AHrUpl44W8/FEae/nd4Ea
-	rUI0mVffasUU5hj+S9fTMMt7l+8wF0wOuv7unC5aQXxcmTy7OV6f8MU98USjOvr6UA==
-X-Gm-Gg: ASbGncuSVr8ua+/7WincpgoTBN3v8M3WA5TY/PUcN54rJ/XQZL2UMatzr3gnQQEMKSj
-	hWX//99Hd/J9kfC58FEcIHmpDOlOZywZ0zhzGH+V1JjNEEbrYPl2Cl8G1pTZXfh8Z77FKigHH7O
-	U5OsoqAG8lyrY8PYUdnlS21FdLqOlWuICm9MbrU5KwTsI30LyxjEDZ5PAC9ez6jOqOaW+oe5mqF
-	Y+TC7tNJlCBQQBHyCUnuTu5r5NbvpnuUoMJSPH+XheiyEW3nKbY8AlPwOoGi8b2SHMImsE0YlXG
-	CfaPasPipIzAJiUbzNJuYzS4Qh+aB8dHhiAk4hkO77tRTE5hJQ3ASBF2yCEgIS6s0cNHxgh3roC
-	YdsEceo+Y6a87fIA/ZhLVgS7fXt/gFkZOO+tvEIiinCijI8DSaywQVJ7OgdE3oeTtIgtnUgAamM
-	2Y
-X-Google-Smtp-Source: AGHT+IEUV7d23IGgMtmQ3cEgGJbMNQ82jTYnOVq/TKDZgn6psUNuW6A5cdFh9rjwTn/TWXARN1DgEw==
-X-Received: by 2002:a17:902:e94d:b0:23e:3164:2bf1 with SMTP id d9443c01a7336-23fb3148736mr63550725ad.53.1753497049156;
-        Fri, 25 Jul 2025 19:30:49 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe4fd676sm7014385ad.87.2025.07.25.19.30.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 19:30:48 -0700 (PDT)
-Message-ID: <e091f10a-cb94-4a71-a4ec-dd6d07d7dc8f@broadcom.com>
-Date: Fri, 25 Jul 2025 19:30:46 -0700
+	s=arc-20240116; t=1753497974; c=relaxed/simple;
+	bh=Nfkk8YoHU5zbCSE3zfMLyNKb+yciYmAnYZ3+Gz9hfvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pMi76iDpHMfHjoaAbfMiCLEl/FIuev6q1u7iArcr8CVn4UZ/fGEyxxSaddd8anCQUSUSGsOmBafcKmBAPuJBqcefoq042k7IRUN4cPnFM/0RlNLrOUkjnLkQh5tzGD/fowEoBCFOr37mbJBZkq+evI500/94xKmRecz2ot/4Hpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gflMb3HV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C20C8C4CEE7;
+	Sat, 26 Jul 2025 02:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753497974;
+	bh=Nfkk8YoHU5zbCSE3zfMLyNKb+yciYmAnYZ3+Gz9hfvg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gflMb3HVzZGj4rQLQFv/z1izpHT25agKqOKslu7OO9IhNLja4O+/D0ooZmdZGfdOi
+	 HM7XeBUeKSHw5W38ryRoijcEgkGRNx2toVJM2KU4qklEjyHNNreWL2S8MXVcAteOm0
+	 fgOCYroPn2Btlhtp+232+erHOJELglM4zsXiiWBDo/chNpuwaeZbZTDwrpK1D4nOEn
+	 fuVlQm9naxR/DTT6hemYT8DpzswbHZlgaBMmBQKYP/bM3tV6D91osQ3g0Gz16Si7ob
+	 pgGyZl2Qg9K/YMtI2Wa/QE+mTo3l1Sh4IrdOMt30dc4CbISdaoh0yFUeuG6P7ifx0a
+	 nlQWgS9BET0zg==
+Date: Sat, 26 Jul 2025 08:16:05 +0530
+From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: paulmck@kernel.org, joelagnelf@nvidia.com, frederic@kernel.org,
+	boqun.feng@gmail.com, urezki@gmail.com, qiang.zhang1211@gmail.com,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rcu@vger.kernel.org, Tze-nan.Wu@mediatek.com,
+	a.sadovnikov@ispras.ru
+Subject: [GIT PULL] RCU changes for v6.17
+Message-ID: <20250726024605.GA17131@neeraj.linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net: phy: realtek: Reset after clock enable
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
- "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Detlev Casanova <detlev.casanova@collabora.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@collabora.com, stable@vger.kernel.org
-References: <20250724-phy-realtek-clock-fix-v2-1-ae53e341afb7@kernel.org>
- <aIJkrh9_4o6flHPE@shell.armlinux.org.uk>
- <y3xhsgbcykfjmz6hjtjzfytb66bm2fomr7cesau45xcuxuin7n@jiryheq3qyvs>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-In-Reply-To: <y3xhsgbcykfjmz6hjtjzfytb66bm2fomr7cesau45xcuxuin7n@jiryheq3qyvs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hello Linus,
 
+When the merge window opens, please pull this RCU update.
 
-On 7/25/2025 7:21 PM, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Thu, Jul 24, 2025 at 05:51:58PM +0100, Russell King (Oracle) wrote:
->> On Thu, Jul 24, 2025 at 04:39:42PM +0200, Sebastian Reichel wrote:
->>> On Radxa ROCK 4D boards we are seeing some issues with PHY detection and
->>> stability (e.g. link loss or not capable of transceiving packages) after
->>> new board revisions switched from a dedicated crystal to providing the
->>> 25 MHz PHY input clock from the SoC instead.
->>>
->>> This board is using a RTL8211F PHY, which is connected to an always-on
->>> regulator. Unfortunately the datasheet does not explicitly mention the
->>> power-up sequence regarding the clock, but it seems to assume that the
->>> clock is always-on (i.e. dedicated crystal).
->>>
->>> By doing an explicit reset after enabling the clock, the issue on the
->>> boards could no longer be observed.
->>>
->>> Note, that the RK3576 SoC used by the ROCK 4D board does not yet
->>> support system level PM, so the resume path has not been tested.
->>>
->>> Cc: stable@vger.kernel.org
->>> Fixes: 7300c9b574cc ("net: phy: realtek: Add optional external PHY clock")
->>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->>> ---
->>> Changes in v2:
->>> - Switch to PHY_RST_AFTER_CLK_EN + phy_reset_after_clk_enable(); the
->>>    API is so far only used by the freescale/NXP MAC driver and does
->>>    not seem to be written for usage from within the PHY driver, but
->>>    I also don't see a good reason not to use it.
->>> - Also reset after re-enabling the clock in rtl821x_resume()
->>> - Link to v1: https://lore.kernel.org/r/20250704-phy-realtek-clock-fix-v1-1-63b33d204537@kernel.org
->>> ---
->>>   drivers/net/phy/realtek/realtek_main.c | 7 +++++--
->>>   1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
->>> index c3dcb62574303374666b46a454cd4e10de455d24..cf128af0ec0c778262d70d6dc4524d06cbfccf1f 100644
->>> --- a/drivers/net/phy/realtek/realtek_main.c
->>> +++ b/drivers/net/phy/realtek/realtek_main.c
->>> @@ -230,6 +230,7 @@ static int rtl821x_probe(struct phy_device *phydev)
->>>   	if (IS_ERR(priv->clk))
->>>   		return dev_err_probe(dev, PTR_ERR(priv->clk),
->>>   				     "failed to get phy clock\n");
->>> +	phy_reset_after_clk_enable(phydev);
->>
->> Should this depend on priv->clk existing?
->>
->>>   
->>>   	ret = phy_read_paged(phydev, RTL8211F_PHYCR_PAGE, RTL8211F_PHYCR1);
->>>   	if (ret < 0)
->>> @@ -627,8 +628,10 @@ static int rtl821x_resume(struct phy_device *phydev)
->>>   	struct rtl821x_priv *priv = phydev->priv;
->>>   	int ret;
->>>   
->>> -	if (!phydev->wol_enabled)
->>> +	if (!phydev->wol_enabled) {
->>>   		clk_prepare_enable(priv->clk);
->>> +		phy_reset_after_clk_enable(phydev);
->>
->> Should this depend on priv->clk existing?
->>
->> I'm thinking about platforms such as Jetson Xavier NX, which I
->> believe uses a crystal, and doesn't appear to suffer from any
->> problems.
-> 
-> Doing the extra reset should not hurt, but I can add it to speed up
-> PHY initialization on systems with an always-on clock source. I will
-> send a PATCHv3.
+The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
 
-Assuming the PHY DT node is tagged with "always-on" then one might 
-reasonably expect it to be used for Wake-on-LAN and that it should be 
-able to register itself as the wake-up source. If we pulse the reset we 
-might lose the details of the wake-up event within the PHY. So yes, 
-being able to deal with that and doing the reset conditionally might be 
-preferable.
--- 
-Florian
+  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
 
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git tags/rcu.release.v6.17
+
+for you to fetch changes up to cc1d1365f0f414f6522378867baa997642a7e6b2:
+
+  Merge branches 'rcu-exp.23.07.2025', 'rcu.22.07.2025', 'torture-scripts.16.07.2025', 'srcu.19.07.2025', 'rcu.nocb.18.07.2025' and 'refscale.07.07.2025' into rcu.merge.23.07.2025 (2025-07-23 21:42:20 +0530)
+
+Please note that below patch, which was initially picked for RCU next
+testing has been removed, as it gave false positives with RCU torture
+test. 
+
+https://lore.kernel.org/rcu/20250429134304.3824863-6-frederic@kernel.org/
+
+----------------------------------------------------------------
+RCU pull request for v6.17
+
+This pull request contains the following branches:
+
+rcu-exp.23.07.2025
+
+  - Protect against early RCU exp quiescent state reporting during exp
+    grace period initialization.
+
+  - Remove superfluous barrier in task unblock path.
+
+  - Remove the CPU online quiescent state report optimization, which is
+    error prone for certain scenarios.
+
+  - Add warning for unexpected pending requested expedited quiescent
+    state on dying CPU.
+
+rcu.22.07.2025
+
+  - Robustify rcu_is_cpu_rrupt_from_idle() by using more accurate
+    indicators of the actual context tracking state of a CPU.
+
+  - Handle ->defer_qs_iw_pending field data race.
+
+  - Enable rcu_normal_wake_from_gp by default on systems with <= 16 CPUs.
+
+  - Fix lockup in rcu_read_unlock() due to recursive irq_exit() calls.
+
+  - Refactor expedited handling condition in rcu_read_unlock_special().
+
+  - Documentation updates for hotplug and GP init scan ordering,
+    separation of rcu_state and rnp's gp_seq states, quiescent state
+    reporting for offline CPUs.
+
+torture-scripts.16.07.2025
+
+  - Cleanup and improve scripts : remove superfluous warnings for disabled
+    tests; better handling of kvm.sh --kconfig arg; suppress some confusing
+    diagnostics; tolerate bad kvm.sh args; add new diagnostic for build
+    output; fail allmodconfig testing on warnings.
+
+  - Include RCU_TORTURE_TEST_CHK_RDR_STATE config for KCSAN kernels.
+
+  - Disable default RCU-tasks and clocksource-wdog testing on arm64.
+
+  - Add EXPERT Kconfig option for arm64 KCSAN runs.
+
+  - Remove SRCU-lite testing.
+
+rcutorture.16.07.2025
+
+  - Start torture writer threads creation after reader threads to handle
+    race in SRCU-P scenario.
+
+  - Add SRCU down_read()/up_read() test.
+
+  - Add diagnostics for delayed SRCU up_read(), unmatched up_read(), print
+    number of up/down readers and the number of such readers which
+    migrated to other CPU.
+
+  - Ignore certain unsupported configurations for trivial RCU test.
+
+  - Fix splats in RT kernels due to inaccurate checks for BH-disabled
+    context.
+
+  - Enable checks and logs to capture intentionally exercised unexpected
+    scenarios (too short readers) for BUSTED test.
+
+  - Remove SRCU-lite testing.
+
+srcu.19.07.2025
+
+  - Expedite SRCU-fast grace periods.
+
+  - Remove SRCU-lite implementation.
+
+  - Add guards for SRCU-fast readers.
+
+rcu.nocb.18.07.2025
+
+  - Dump NOCB group leader state on stall detection.
+
+  - Robustify nocb_cb_kthread pointer accesses.
+
+  - Fix delayed execution of hurry callbacks when LAZY_RCU is enabled.
+
+refscale.07.07.2025
+
+  - Fix multiplication overflow in "loops" and "nreaders" calculations.
+
+----------------------------------------------------------------
+Artem Sadovnikov (1):
+      refscale: Check that nreaders and loops multiplication doesn't overflow
+
+Frederic Weisbecker (6):
+      rcu/exp: Protect against early QS report
+      rcu: Robustify rcu_is_cpu_rrupt_from_idle()
+      rcu/nocb: Dump gp state even if rdp gp itself is not offloaded
+      rcu/exp: Remove confusing needless full barrier on task unblock
+      rcu/exp: Remove needless CPU up quiescent state report
+      rcu/exp: Warn on QS requested on dying CPU
+
+Joel Fernandes (5):
+      rcu: Fix rcu_read_unlock() deadloop due to IRQ work
+      rcu: Refactor expedited handling check in rcu_read_unlock_special()
+      rcu: Document GP init vs hotplug-scan ordering requirements
+      rcu: Document separation of rcu_state and rnp's gp_seq
+      rcu: Document concurrent quiescent state reporting for offline CPUs
+
+Neeraj Upadhyay (AMD) (1):
+      Merge branches 'rcu-exp.23.07.2025', 'rcu.22.07.2025', 'torture-scripts.16.07.2025', 'srcu.19.07.2025', 'rcu.nocb.18.07.2025' and 'refscale.07.07.2025' into rcu.merge.23.07.2025
+
+Paul E. McKenney (32):
+      rcutorture: Print only one rtort_pipe_count splat
+      rcutorture: Start rcu_torture_writer() after rcu_torture_reader()
+      rcutorture: Make rcutorture_one_extend_check() account for hard IRQs
+      rcutorture: Add tests for SRCU up/down reader primitives
+      rcutorture: Pull rcu_torture_updown() loop body into new function
+      rcutorture: Complain if an ->up_read() is delayed more than 10 seconds
+      rcutorture: Check for ->up_read() without matching ->down_read()
+      rcutorture: Check for no up/down readers at task level
+      rcutorture: Print number of RCU up/down readers and migrations
+      rcutorture: Drop redundant "insoftirq" parameters
+      rcutorture: Make Trivial RCU ignore onoff_interval and shuffle_interval
+      rcutorture: Make BUSTED scenario check and log readers
+      torture: Suppress torture.sh "Zero time" messages for disabled tests
+      torture: Permit multiple space characters in kvm.sh --kconfig argument
+      torture: Make torture.sh KCSAN runs set CONFIG_RCU_TORTURE_TEST_CHK_RDR_STATE=y
+      torture: Default --no-rcutasksflavors on arm64
+      torture: Default --no-clocksourcewd on arm64
+      rcu: Protect ->defer_qs_iw_pending from data race
+      torture: Provide EXPERT Kconfig option for arm64 KCSAN torture.sh runs
+      torture: Suppress "find" diagnostics from torture.sh --do-none run
+      torture: Extract testid.txt generation to separate script
+      torture: Add textid.txt file to --do-allmodconfig and --do-rcu-rust runs
+      torture: Make torture.sh tolerate runs having bad kvm.sh arguments
+      torture: Add "ERROR" diagnostic for testing kernel-build output
+      torture: Make torture.sh --allmodconfig testing fail on warnings
+      torture: Remove support for SRCU-lite
+      rcutorture: Remove SRCU-lite scenarios
+      rcutorture: Remove support for SRCU-lite
+      srcu: Expedite SRCU-fast grace periods
+      srcu: Remove SRCU-lite implementation
+      checkpatch: Remove SRCU-lite deprecation
+      srcu: Add guards for SRCU-fast readers
+
+Tze-nan Wu (1):
+      rcu: Fix delayed execution of hurry callbacks
+
+Uladzislau Rezki (Sony) (2):
+      rcu: Enable rcu_normal_wake_from_gp on small systems
+      Documentation/kernel-parameters: Update rcu_normal_wake_from_gp doc
+
+Zqiang (2):
+      rcutorture: Fix rcutorture_one_extend_check() splat in RT kernels
+      rcu/nocb: Fix possible invalid rdp's->nocb_cb_kthread pointer access
+
+ Documentation/RCU/Design/Data-Structures/Data-Structures.rst |  33 ++++++
+ Documentation/RCU/Design/Requirements/Requirements.rst       | 128 +++++++++++++++++++++++
+ Documentation/admin-guide/kernel-parameters.txt              |   3 +-
+ include/linux/srcu.h                                         |  54 ++--------
+ include/linux/srcutiny.h                                     |   3 -
+ include/linux/srcutree.h                                     |  38 -------
+ kernel/rcu/rcutorture.c                                      | 356 +++++++++++++++++++++++++++++++++++++++++++++++++++++-----------
+ kernel/rcu/refscale.c                                        |  42 ++------
+ kernel/rcu/srcutree.c                                        |   2 +
+ kernel/rcu/tree.c                                            |  80 ++++++++++++---
+ kernel/rcu/tree.h                                            |  13 ++-
+ kernel/rcu/tree_exp.h                                        |  59 ++---------
+ kernel/rcu/tree_nocb.h                                       |  10 +-
+ kernel/rcu/tree_plugin.h                                     | 122 ++++++++++++++++++----
+ kernel/rcu/tree_stall.h                                      |   3 +-
+ scripts/checkpatch.pl                                        |   2 -
+ tools/testing/selftests/rcutorture/bin/kvm-build.sh          |   2 +-
+ tools/testing/selftests/rcutorture/bin/kvm.sh                |  15 +--
+ tools/testing/selftests/rcutorture/bin/mktestid.sh           |  29 ++++++
+ tools/testing/selftests/rcutorture/bin/torture.sh            |  78 +++++++++++---
+ tools/testing/selftests/rcutorture/configs/rcu/BUSTED        |   3 +
+ tools/testing/selftests/rcutorture/configs/rcu/CFLIST        |   1 -
+ tools/testing/selftests/rcutorture/configs/rcu/SRCU-L        |  10 --
+ tools/testing/selftests/rcutorture/configs/rcu/SRCU-L.boot   |   3 -
+ 24 files changed, 770 insertions(+), 319 deletions(-)
+ create mode 100755 tools/testing/selftests/rcutorture/bin/mktestid.sh
+ delete mode 100644 tools/testing/selftests/rcutorture/configs/rcu/SRCU-L
+ delete mode 100644 tools/testing/selftests/rcutorture/configs/rcu/SRCU-L.boot
 
