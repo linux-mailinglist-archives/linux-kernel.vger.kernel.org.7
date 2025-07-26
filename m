@@ -1,135 +1,133 @@
-Return-Path: <linux-kernel+bounces-746605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239D2B128E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:03:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16755B128E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A7FAC4055
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:02:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EE7B7A21FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3121EE02F;
-	Sat, 26 Jul 2025 04:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B451EBFFF;
+	Sat, 26 Jul 2025 04:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A+CyyZTE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zcmQ40e9"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED78717DFE7
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 04:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3775F63CF;
+	Sat, 26 Jul 2025 04:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753502588; cv=none; b=kR2U5SLS+o85f3Z9HFEGOAE8h5y3K1p4Y7pdU3rNsmuh3x+wF3ZViMFBUgxnVNUmesKTvUY+EkRXxTfbMdG4QTXmTPZBmDnPRf73w/ApNPVKafb0wBz5jIpLlHgjIXTn0vacFJCEW40ZgibRC0FghvkeNRevcKSXXiFXW5o+zhc=
+	t=1753502528; cv=none; b=XoFxMHtcpp67ta+NcEw2UL/atJZdiqr4HZEa6HnOpFcrem6BJJ/JXKQ60pAi8I9NFbfGimID8oNkuYHTVei2CYVLJdTi0WuQIgvn9iP7Syoi2M7fzd//isgNNBmSYkTj1KdEAMUyTBKPmqDy9KQvizstXc2HtrvJqlU8YFz41mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753502588; c=relaxed/simple;
-	bh=8g9wBziPTXpobyegEW+LeGkkwHu3p3rZSG4ABGAja8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RZ1MOwCtzSytB5+6JYzywwTcAGtegb5LxuhAal1h2JdxDPQh1NuNQKa2DpsGdq4Ih0c2LFj6PG0/yU/bXkaUPEv8/NCurtNJ37NBgN1qZET+DL2HoceFjSa2Wmo6z0KsL1VwzZgG5iNgBXuIrHI8zpIXi1WpeRt+jFZoMXIZ9ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A+CyyZTE; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753502587; x=1785038587;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=8g9wBziPTXpobyegEW+LeGkkwHu3p3rZSG4ABGAja8w=;
-  b=A+CyyZTEosnEUBC3Vn1ouFoU9L6PttYg9L2D0NizVflTBegXYANCECM8
-   nMv3So5rM2fUVaClQ8F6ngGgXmJGq3Ji2IJhLnGh7jnRwvULtkzazX2u5
-   QuQiVTz54+A5zroD0dY3KBg8glcS8xvxShJVK+RmJRWyAyIkZ+1v8Cjms
-   vIOEj71Sy16KhhME3tCGjYqEA2Y+zd7RxMc3injIfZgr613A/ienCWflU
-   NEWHdbDPiB5t8GxhymG1osTebSbqZcoYOGCmlCknetBwVCpKkZXPbd1fB
-   ezlEAoTQ0HwsoS+GarW+TRnfrJIcChIqk8+/AvO1kgVTKCWQ7PyAoEuBa
-   g==;
-X-CSE-ConnectionGUID: VS6OFrQSSbS9IwYIMBgK6g==
-X-CSE-MsgGUID: FiDh0XPbT1GB7BMcVsM6vw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="54918185"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="54918185"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2025 21:03:06 -0700
-X-CSE-ConnectionGUID: o8nxA3hnTdKFvNJ/4V72eg==
-X-CSE-MsgGUID: ZQtdXkKgTPO1oOlQBNUPJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="192281319"
-Received: from igk-lkp-server01.igk.intel.com (HELO b3b7d4258b7c) ([10.91.175.65])
-  by fmviesa001.fm.intel.com with ESMTP; 25 Jul 2025 21:03:05 -0700
-Received: from kbuild by b3b7d4258b7c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ufW7i-0000Dr-1i;
-	Sat, 26 Jul 2025 04:03:02 +0000
-Date: Sat, 26 Jul 2025 06:02:04 +0200
-From: kernel test robot <lkp@intel.com>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: lib/bch.o: warning: objtool: find_poly_roots+0x5ac: sibling call
- from callable instruction with modified stack frame
-Message-ID: <202507260646.q8oawNxL-lkp@intel.com>
+	s=arc-20240116; t=1753502528; c=relaxed/simple;
+	bh=vWdAYFH+9+HudBhqOI4uVPMOFshO0UkS3lTM/Ehr4So=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SpSwrI9jeadTc5t+pfySYQMhZbIGsjHrz6DRj0Llv8+fbQS51o+F/hlpPswP+DYmiaFTFwzDz9FUrNVzTBJVVWHuGRpfL5TQFgKYphwJHHy2EjEqGWe62rafg3vXCTBXZzvbMMKlVLtt6VLGBAA195yv69cXOwmsbn2SOu8y40c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zcmQ40e9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=VhFLFN08/7pTue+UlCH23caiQjbrbJ++9vSN0PiESJE=; b=zcmQ40e9USeqwGaDnF3UZ71DY2
+	/uz+9mvCh42uIlWzxLkUAClD0SAz3lT1oJNZcPRwcfBwwzWwNvwQ8+WrczKq3ztF05OtX8jJozsP1
+	PlyoX/uikXSZRIyB0B+/UZb2qtaAJz3s1+kN+84BNbz7eGBzCZXiWOBzIls8Dt6GgSs3Ib7b5Czl+
+	iegus0/DvEsT4xTmVnJ93ivZyT33+xRTO4uSY4mihkWnMKo7aosPf+8giys0SStyizmf6SlERVMDM
+	uaTTHIf1fyrnn1iHpgYd7L5XKPDv/gq70EqK1AFGzAo2UUDua1eTWXms317sMvcHoV2vLJ5Wnpy/0
+	kwT4DTVw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ufW6n-0000000B6ex-2sdd;
+	Sat, 26 Jul 2025 04:02:05 +0000
+Message-ID: <776b195d-713b-4899-b621-4a69ba2b160a@infradead.org>
+Date: Fri, 25 Jul 2025 21:02:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] Documentation/ABI: Fix typos
+To: Bjorn Helgaas <helgaas@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <20250723203250.2909894-1-helgaas@kernel.org>
+ <20250723203250.2909894-3-helgaas@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250723203250.2909894-3-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   5f33ebd2018ced2600b3fad2f8e2052498eb4072
-commit: e20ab7d454ee8d1e0e8b9ff73a7c87e84c666b2f LoongArch: Enable jump table for objtool
-date:   5 months ago
-config: loongarch-randconfig-2004-20250726 (https://download.01.org/0day-ci/archive/20250726/202507260646.q8oawNxL-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project b4edd827e4f71c2a0fcb13f79de7eae4545f0aea)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250726/202507260646.q8oawNxL-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507260646.q8oawNxL-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+On 7/23/25 1:32 PM, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Fix typos.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  .../ABI/obsolete/sysfs-driver-hid-roccat-isku       |  2 +-
+>  .../ABI/obsolete/sysfs-driver-hid-roccat-koneplus   |  4 ++--
+>  .../ABI/obsolete/sysfs-driver-hid-roccat-savu       |  2 +-
+>  Documentation/ABI/testing/debugfs-driver-dcc        |  2 +-
+>  Documentation/ABI/testing/debugfs-hyperv            |  4 ++--
+>  Documentation/ABI/testing/rtc-cdev                  |  2 +-
+>  Documentation/ABI/testing/sysfs-ata                 |  4 ++--
+>  .../testing/sysfs-bus-event_source-devices-hisi_ptt |  4 ++--
+>  Documentation/ABI/testing/sysfs-bus-iio             |  2 +-
+>  Documentation/ABI/testing/sysfs-bus-iio-dma-buffer  |  8 ++++----
+>  Documentation/ABI/testing/sysfs-bus-rapidio         |  2 +-
+>  Documentation/ABI/testing/sysfs-class-fc            |  2 +-
+>  Documentation/ABI/testing/sysfs-class-power-rt9467  |  2 +-
+>  .../ABI/testing/sysfs-driver-input-exc3000          |  4 ++--
+>  Documentation/ABI/testing/sysfs-driver-ufs          |  2 +-
+>  Documentation/ABI/testing/sysfs-firmware-acpi       |  6 +++---
+>  Documentation/ABI/testing/sysfs-memory-page-offline | 13 ++++++-------
+>  17 files changed, 32 insertions(+), 33 deletions(-)
+> 
 
->> lib/bch.o: warning: objtool: find_poly_roots+0x5ac: sibling call from callable instruction with modified stack frame
---
-   drivers/input/touchscreen/mms114.c:507:15: warning: cast to smaller integer type 'enum mms_type' from 'const void *' [-Wvoid-pointer-to-enum-cast]
-     507 |         data->type = (enum mms_type)match_data;
-         |                      ^~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning generated.
->> drivers/input/touchscreen/mms114.o: warning: objtool: mms114_start+0xb4: sibling call from callable instruction with modified stack frame
---
-   drivers/char/applicom.c:130:25: warning: variable 'byte_reset_it' set but not used [-Wunused-but-set-variable]
-     130 |         volatile unsigned char byte_reset_it;
-         |                                ^
-   drivers/char/applicom.c:542:6: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
-     542 |         int ret = 0;
-         |             ^
-   drivers/char/applicom.c:705:25: warning: variable 'byte_reset_it' set but not used [-Wunused-but-set-variable]
-     705 |         volatile unsigned char byte_reset_it;
-         |                                ^
-   3 warnings generated.
->> drivers/char/applicom.o: warning: objtool: ac_ioctl+0x104: sibling call from callable instruction with modified stack frame
---
-   drivers/video/fbdev/matrox/g450_pll.c:410:18: warning: variable 'mnp' set but not used [-Wunused-but-set-variable]
-     410 |                                 unsigned int mnp;
-         |                                              ^
-   1 warning generated.
->> drivers/video/fbdev/matrox/g450_pll.o: warning: objtool: matroxfb_g450_setpll_cond+0x58: sibling call from callable instruction with modified stack frame
->> drivers/video/fbdev/matrox/g450_pll.o: warning: objtool: matroxfb_g450_setclk+0x98: sibling call from callable instruction with modified stack frame
->> drivers/video/fbdev/matrox/g450_pll.o: warning: objtool: g450_testpll+0x48: sibling call from callable instruction with modified stack frame
---
-   drivers/media/i2c/adv7604.c:432:19: warning: unused function 'cec_write_clr_set' [-Wunused-function]
-     432 | static inline int cec_write_clr_set(struct v4l2_subdev *sd, u8 reg, u8 mask,
-         |                   ^~~~~~~~~~~~~~~~~
-   1 warning generated.
->> drivers/media/i2c/adv7604.o: warning: objtool: read_stdi+0x3e4: sibling call from callable instruction with modified stack frame
->> drivers/media/i2c/adv7604.o: warning: objtool: adv76xx_set_edid+0x260: sibling call from callable instruction with modified stack frame
->> drivers/media/i2c/adv7604.o: warning: objtool: adv76xx_debugfs_if_read+0xc0: sibling call from callable instruction with modified stack frame
->> drivers/media/i2c/adv7604.o: warning: objtool: adv76xx_s_ctrl+0x64: sibling call from callable instruction with modified stack frame
+
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-dma-buffer b/Documentation/ABI/testing/sysfs-bus-iio-dma-buffer
+> index d526e6571001..06313befdfaa 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio-dma-buffer
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-dma-buffer
+> @@ -2,15 +2,15 @@ What:		/sys/bus/iio/devices/iio:deviceX/buffer/length_align_bytes
+>  KernelVersion:	5.4
+>  Contact:	linux-iio@vger.kernel.org
+>  Description:
+> -		DMA buffers tend to have a alignment requirement for the
+> +		DMA buffers tend to have an alignment requirement for the
+>  		buffers. If this alignment requirement is not met samples might
+>  		be dropped from the buffer.
+>  
+> -		This property reports the alignment requirements in bytes.
+> -		This means that the buffer size in bytes needs to be a integer
+> +		This property reports the alignment requirement in bytes.
+> +		This means that the buffer size in bytes needs to be an integer
+>  		multiple of the number reported by this file.
+>  
+> -		The alignment requirements in number of sample sets will depend
+> +		The alignment requirement in number of sample sets will depend
+>  		on the enabled channels and the bytes per channel. This means
+>  		that the alignment requirement in samples sets might change
+
+"samples sets" ?
+
+>  		depending on which and how many channels are enabled. Whereas
+
+
+Otherwise LGTM. Thanks.
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+~Randy
 
