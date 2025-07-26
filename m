@@ -1,242 +1,326 @@
-Return-Path: <linux-kernel+bounces-746780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8299DB12B04
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:34:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8361B12B09
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C12F717F1B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:33:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7C14E5D53
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4991289E03;
-	Sat, 26 Jul 2025 14:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FE8244669;
+	Sat, 26 Jul 2025 14:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHbAY46e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zzhs0haf"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB1C28936F;
-	Sat, 26 Jul 2025 14:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE8221348;
+	Sat, 26 Jul 2025 14:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753540333; cv=none; b=Wyodpvx0trmnTSkgltkO23Gnh7vVbgi9KextIQX+/xxqgzcVhxgqhKdMxWa/Q6kUm6wLssJblqbzTKuFUokJsW6j9AZGS3tQaU4TODfR61AemoZ3DIGs8stVKdmIk/7QR48eavTUmPPIFAbvFy/SdI2oq55iFGMJ4hl4LPYBwtg=
+	t=1753540755; cv=none; b=kjOh1Pqv5RvDmILzBelS7WtOLX/6GPbBLC1WeWux46BTOv3YDzME9k7odaX6Fkk0+t3gXGUDHFay7uSZN76UNKKhhtjJRfkyTN+e4Ado1tglfwHR2N2ylmxVdBLz2rPssbxf4DOkxOnrn7jWPcpCUn/JlsFmdKNlw8x0YlY12oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753540333; c=relaxed/simple;
-	bh=NtCz+vb0FJ2RTT3UYGTBXP803cbE2/PCFHkn1707tww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A6CXd5h0ruZIMEkCI/13r+g9tUbHJlWLoljgTXDHyEK76srnN6ZS4P1aqOUV8AHz+ENX0JTHuao28nLwxJgmgnFoTL96kl6IuoGcS/DDw7BzJOSHIgJtNg1JoD4Yh1JrBQuDIfY0Pv6u9OlBzmb0ulmoPA/bHeQqr6PH2KwfvqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHbAY46e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EB26C4CEED;
-	Sat, 26 Jul 2025 14:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753540332;
-	bh=NtCz+vb0FJ2RTT3UYGTBXP803cbE2/PCFHkn1707tww=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=iHbAY46eB77ibHvlOxhtGzmUE1sb1iFmTO63dvTqcMnmlJQwUzKz0BC/lQ0Z4QQdk
-	 aKIQRRtMn5D7Hf+ol/ujlcfxUbdSkRMJw7bHJUOcBi7JlAlyOy348FrXwj5EQVYmMD
-	 CUt/ErbZle8WvrmsP031QpxojFFrn3JgcUbCNrziVp56TphPY44XM/OYxv1h64rdsC
-	 mTsl9OAKR0quCyG/C8ncrtnCxUeh8c0i71Rki+0toE4gLD24K5peRPXwt4P2hhBlVa
-	 LlcWvU1zlulgGb8gGz3/m97bte57iVgf/xLfnguqo7IlqOhUe6TWmgZ+dH5gI4Xy1b
-	 TLmqX4+/YEbww==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Sat, 26 Jul 2025 10:32:01 -0400
-Subject: [PATCH v2 7/7] vfs: remove inode_set_ctime_deleg()
+	s=arc-20240116; t=1753540755; c=relaxed/simple;
+	bh=tDVmoyQPgyFgvJ55XLC+3Kk+eqR/HIeCcQp4QbHgpHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ueJ1re9jWQ5jZTBpzN1ih3JH90V/svVqqmw8nGBU4Nzj2t1MIk+MGSikpS+v6TNxVvbud2RmlsUMsCdeZPMJvjWGpC+qhfrrJv3DnDq8eHfYbGuaiNw3gD2DOgubTEsPd/MOkDyu8un/PqBECGJ6xDSx4VErdSnLqpzqTxrtGLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zzhs0haf; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-236470b2dceso26373895ad.0;
+        Sat, 26 Jul 2025 07:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753540753; x=1754145553; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uckONOxLpaUfmuLZ5CDh7eJBrThy53oiEqc6yosnbjc=;
+        b=Zzhs0hafD3ITIbn+umhy0DZT8jWLp1fIipKYHToi/qrWWergD6wQEeuNN/Vqa/aGfU
+         +MiKbdahRmBOF6E7TSihMq5rnYvgKSt/zT6tR6cTkEusAMpFlTo2ttUZzHnpZC8tbZ9E
+         w3eckNQhq9MZ4JOEEwJWtQpxluOTkOUQC/wuOUKe4YyOMg+1KxChjsPysJ/8paVkzQ5L
+         ixcD/vkZ5OgI7GkJIVA3g2ofQ6sbCkzjR+oZGciZVu3+EDFnNc2dRughc9RXeVKuMTNH
+         57Dfh9zs9dYnxohjonA4t7wWSkCSD5DFKSlnFCfU0hXGvXv6JW9eiLGyQ2WfjxaXDfpg
+         ljcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753540753; x=1754145553;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uckONOxLpaUfmuLZ5CDh7eJBrThy53oiEqc6yosnbjc=;
+        b=HNzFqpznZJkpkD/JYKwhxxOPbJPkDLp4iaSeMRDojQE6zv7hLvUFr8CSot23A83T73
+         9ARb2AMTk7/k4SWvUS86kklCpCGWyhh2Eu0jZUtKKfh+cGvV3STnZie8VtEOPFNjLVP+
+         WNudTXDQvSzV3Du0b8EG6Ehq+WTwAYgHruZS1EWwRbM0czp8IPRkDyzoxKgFsFNWnCLW
+         LIy/sfHNa/fLp39/PDHadEC2Hj8xoVraTvBQmQg6TYszqbArCSDVx+FwknRIfGxmt8vt
+         FvVunrUYlENd1x1hVkPPi2KrT8dD7SZa5DEfI5i44Ng2bSXulb79zZB/N+AH3BapEfgB
+         /e2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUiQbZcSHkEtm/Tyzciqc4Bs+vaiB8/o0z9tGjaUwjM1LPGwRVl69URon41l9r4uEIdWmNEOgAgE1VfWeE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsbDrGUsOOJoUlFsm18DQuBEZesxTXtB1n+PJPH4Fjci6N3IMr
+	59hq7dUa/XZO2rCh0a55quHHUSkXe1hF52HI4xge9HkoNb9YxcYF4Oec
+X-Gm-Gg: ASbGncvkJpvMKKfWJ4CafHGJAyaw5DzZw8k7RHOKrOSZ0akQoCrh98bOuKIsdVAhdju
+	cpoib8JlZXUFFvmI9HQQZ0LJ90YyAdKPZlrpiXBRMsY2EYdwscwoYbIC1vd5oKTsQTP6vmSYT+8
+	0ifbatdWs0x7KI44J4+NJroT/0F6yf9vOgVsBjnohPP45bi8Oc1eIgs1EzuwjcY+2f0+5zR968h
+	pgKI4kag5cZaPKvRKONCoqBdF1KLkWLsp6yKWfm1vPJmGJVoUzHWlEuW4TdHJ4hAlq0m5sLtsMY
+	3Xc7aadYuulEoqpGitWV4ZFw9X7Hj3JjhkT3TDxPUecjQw8cK4ceY71iuKUj+PsoheIfXxFxne9
+	wQPM1E/DdydXmOjIyyuhy
+X-Google-Smtp-Source: AGHT+IGmhMJaMsUACTCz4podx8Hejaj98cCPGUS6QJZQ5/VavnYAkSMTLHtTxHOXgoxak7+bC4M7YQ==
+X-Received: by 2002:a17:903:1c2:b0:234:ef42:5d69 with SMTP id d9443c01a7336-23fb30995c3mr95854375ad.13.1753540752863;
+        Sat, 26 Jul 2025 07:39:12 -0700 (PDT)
+Received: from hiagonb ([2804:1b3:a7c2:9aee:45f1:9356:31f6:cecb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe515300sm18497365ad.151.2025.07.26.07.39.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Jul 2025 07:39:12 -0700 (PDT)
+Date: Sat, 26 Jul 2025 11:39:08 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Andrew Davis <afd@ti.com>, Beleswar Prasad Padhi <b-padhi@ti.com>
+Cc: linux-remoteproc@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org,
+	Hiago De Franco <hiago.franco@toradex.com>
+Subject: Re: System can not go into suspend when remoteproc is probed on AM62X
+Message-ID: <20250726143908.ayug6dedkmzulldx@hiagonb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250726-nfsd-testing-v2-7-f45923db2fbb@kernel.org>
-References: <20250726-nfsd-testing-v2-0-f45923db2fbb@kernel.org>
-In-Reply-To: <20250726-nfsd-testing-v2-0-f45923db2fbb@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: Trond Myklebust <trondmy@hammerspace.com>, 
- Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5364; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=NtCz+vb0FJ2RTT3UYGTBXP803cbE2/PCFHkn1707tww=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBohObfe2BC+vdrfTiozPM03vDHTOGmPGlfSvgEP
- FnJ33MaV3iJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaITm3wAKCRAADmhBGVaC
- FRlMD/9CXJXXovQtZBYhhN0mZIjmM2OgSM/Qn1wsOwJygUX2FkKQuQKm78o8x71HdKYq0YJgyBX
- vUmxutDHxFHyo/EtVIftLtmSYFSqZWNm5L9NmeSG6Rr4TDIbRCDDgBcaMqwDelSjnaNmRFMkSXp
- OW0oIjbl4MjG2u388ktJtp8Bpw9Xb6LZW8876aNBBfyxu57EAxGjE5qs8TUMj+z3xiejJtTX5uQ
- CJOMR3AzqPHRcv7uoXusmVQ3v+yuWRXgoM7PMCEXLW/xwWGm4QfFvJxB/JEHw1fdKILHNQLjelx
- 5+bEJ7Y8WtNTiqQIHjaNWwIaTY2441Pic0N4Y0KzV360bec3o8fFkZl09gzEvAfwMA4Dt8SQEKo
- ULTIT56TjQnQDJffjwrDnqDy1deFe5VkdIViIGXTegxYUnzkp1G2w1TIXhrLeQl/RxEmzNbxfkc
- RRZdUsOJlFGsEIjZdHMXIjas7zOurEwkhbQx11y4z9PFDOof5P18oglPNTP2Tywp+uE9366S03m
- J70xF0FI9UWi2P6Ah0AZ6NITqr9gH2mb1efquuNHMSj9BSH9r3V9wEMFukBcXDGb8ny2MieSMcj
- wMp8fJPYhOJ6v3NQgkcX56f+j+wl7bHQtmthiUbD1Yd2YP5s0qvW07SeasopAtS3qpNmN29diOS
- cV/EMgqPxed7ulw==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <06186d01-23e7-4fd6-b5c0-b6c1f8ae7fb7@ti.com>
+ <616fbb7a-8d04-48aa-b3cb-9a1a69c7b92c@ti.com>
 
-Now that nfsd is vetting the timestamps internally, there is no need for
-this function. If ATTR_DELEG is set, then skip the multigrain update and
-set what was requested.
+Hi Andrew, Beleswar,
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/attr.c          | 19 +++-----------
- fs/inode.c         | 73 ------------------------------------------------------
- include/linux/fs.h |  2 --
- 3 files changed, 4 insertions(+), 90 deletions(-)
+On Fri, Jul 25, 2025 at 02:29:22PM -0500, Andrew Davis wrote:
+> 
+> So the issue then looks to be this message we send here when we setup
+> the mailbox[0]. This mailbox setup is done during probe() for the K3
+> rproc drivers now (mailbox setup used to be done during
+> rproc_{start,attach}() before [1]). Moving mailbox setup to probe
+> is correct, but we should have factored out the test message sending
+> code out of mailbox setup so it could have been left in
+> rproc_{start,attach}(). That way we only send this message if the
+> core is going to be started, no sense in sending that message if
+> we are not even going to run the core..
+> 
+> Fix might be as simple as [2] (not tested, if this works feel free
+> to send as a fix)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index f0dabd2985989d283a931536a5fc53eda366b373..e75f06b760015640bafd596457cd14c746c7e272 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -287,14 +287,7 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
- 	struct timespec64 now;
- 
- 	if (ia_valid & ATTR_CTIME) {
--		/*
--		 * In the case of an update for a write delegation, we must respect
--		 * the value in ia_ctime and not use the current time.
--		 */
--		if (ia_valid & ATTR_DELEG)
--			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
--		else
--			now = inode_set_ctime_current(inode);
-+		now = inode_set_ctime_current(inode);
- 	} else {
- 		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
- 		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
-@@ -352,19 +345,15 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
- 		inode->i_mode = mode;
- 	}
- 
--	if (is_mgtime(inode))
-+	if (!(ia_valid & ATTR_DELEG) && is_mgtime(inode))
- 		return setattr_copy_mgtime(inode, attr);
- 
- 	if (ia_valid & ATTR_ATIME)
- 		inode_set_atime_to_ts(inode, attr->ia_atime);
- 	if (ia_valid & ATTR_MTIME)
- 		inode_set_mtime_to_ts(inode, attr->ia_mtime);
--	if (ia_valid & ATTR_CTIME) {
--		if (ia_valid & ATTR_DELEG)
--			inode_set_ctime_deleg(inode, attr->ia_ctime);
--		else
--			inode_set_ctime_to_ts(inode, attr->ia_ctime);
--	}
-+	if (ia_valid & ATTR_CTIME)
-+		inode_set_ctime_to_ts(inode, attr->ia_ctime);
- }
- EXPORT_SYMBOL(setattr_copy);
- 
-diff --git a/fs/inode.c b/fs/inode.c
-index 99318b157a9a13b3dd8dad0f5f90951f08ef64de..f45054fe48b8a0339e60fd2aa17daaad5a7957e7 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2783,79 +2783,6 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- }
- EXPORT_SYMBOL(inode_set_ctime_current);
- 
--/**
-- * inode_set_ctime_deleg - try to update the ctime on a delegated inode
-- * @inode: inode to update
-- * @update: timespec64 to set the ctime
-- *
-- * Attempt to atomically update the ctime on behalf of a delegation holder.
-- *
-- * The nfs server can call back the holder of a delegation to get updated
-- * inode attributes, including the mtime. When updating the mtime, update
-- * the ctime to a value at least equal to that.
-- *
-- * This can race with concurrent updates to the inode, in which
-- * case the update is skipped.
-- *
-- * Note that this works even when multigrain timestamps are not enabled,
-- * so it is used in either case.
-- */
--struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 update)
--{
--	struct timespec64 now, cur_ts;
--	u32 cur, old;
--
--	/* pairs with try_cmpxchg below */
--	cur = smp_load_acquire(&inode->i_ctime_nsec);
--	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
--	cur_ts.tv_sec = inode->i_ctime_sec;
--
--	/* If the update is older than the existing value, skip it. */
--	if (timespec64_compare(&update, &cur_ts) <= 0)
--		return cur_ts;
--
--	ktime_get_coarse_real_ts64_mg(&now);
--
--	/* Clamp the update to "now" if it's in the future */
--	if (timespec64_compare(&update, &now) > 0)
--		update = now;
--
--	update = timestamp_truncate(update, inode);
--
--	/* No need to update if the values are already the same */
--	if (timespec64_equal(&update, &cur_ts))
--		return cur_ts;
--
--	/*
--	 * Try to swap the nsec value into place. If it fails, that means
--	 * it raced with an update due to a write or similar activity. That
--	 * stamp takes precedence, so just skip the update.
--	 */
--retry:
--	old = cur;
--	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, update.tv_nsec)) {
--		inode->i_ctime_sec = update.tv_sec;
--		mgtime_counter_inc(mg_ctime_swaps);
--		return update;
--	}
--
--	/*
--	 * Was the change due to another task marking the old ctime QUERIED?
--	 *
--	 * If so, then retry the swap. This can only happen once since
--	 * the only way to clear I_CTIME_QUERIED is to stamp the inode
--	 * with a new ctime.
--	 */
--	if (!(old & I_CTIME_QUERIED) && (cur == (old | I_CTIME_QUERIED)))
--		goto retry;
--
--	/* Otherwise, it was a new timestamp. */
--	cur_ts.tv_sec = inode->i_ctime_sec;
--	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
--	return cur_ts;
--}
--EXPORT_SYMBOL(inode_set_ctime_deleg);
--
- /**
-  * in_group_or_capable - check whether caller is CAP_FSETID privileged
-  * @idmap:	idmap of the mount @inode was found from
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f18f45e88545c39716b917b1378fb7248367b41d..08f2d813dd40b5dd4fe07d9636e94252915d6235 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1657,8 +1657,6 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
- 
- struct timespec64 current_time(struct inode *inode);
- struct timespec64 inode_set_ctime_current(struct inode *inode);
--struct timespec64 inode_set_ctime_deleg(struct inode *inode,
--					struct timespec64 update);
- 
- static inline time64_t inode_get_atime_sec(const struct inode *inode)
- {
+I tested the patch and it works, thanks!
 
--- 
-2.50.1
+> 
+> Andrew
+> 
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
+> [2]
+> 
+> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+> index a70d4879a8bea..657a200fa9040 100644
+> --- a/drivers/remoteproc/ti_k3_common.c
+> +++ b/drivers/remoteproc/ti_k3_common.c
+> @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
+>  }
+>  EXPORT_SYMBOL_GPL(k3_rproc_reset);
+> +static int k3_rproc_ping(struct k3_rproc *kproc)
+> +{
+> +       /*
+> +        * Ping the remote processor, this is only for sanity-sake for now;
+> +        * there is no functional effect whatsoever.
+> +        *
+> +        * Note that the reply will _not_ arrive immediately: this message
+> +        * will wait in the mailbox fifo until the remote processor is booted.
+> +        */
+> +       int ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+> +       if (ret < 0)
+> +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+> +
+> +       return ret;
+> +}
+> +
+>  /* Release the remote processor from reset */
+>  int k3_rproc_release(struct k3_rproc *kproc)
+>  {
+> @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
+>         if (ret)
+>                 dev_err(dev, "module-reset deassert failed (%pe)\n", ERR_PTR(ret));
+> +       k3_rproc_ping(kproc);
+> +
+>         return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(k3_rproc_release);
+> @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>                 return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+>                                      "mbox_request_channel failed\n");
+> -       /*
+> -        * Ping the remote processor, this is only for sanity-sake for now;
+> -        * there is no functional effect whatsoever.
+> -        *
+> -        * Note that the reply will _not_ arrive immediately: this message
+> -        * will wait in the mailbox fifo until the remote processor is booted.
+> -        */
+> -       ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+> -       if (ret < 0) {
+> -               dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+> -               mbox_free_channel(kproc->mbox);
+> -               return ret;
+> -       }
+> -
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+> @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
+>   * remote core. This callback is invoked only in IPC-only mode and exists
+>   * because rproc_validate() checks for its existence.
+>   */
+> -int k3_rproc_attach(struct rproc *rproc) { return 0; }
+> +int k3_rproc_attach(struct rproc *rproc)
+> +{
+> +       k3_rproc_ping(rproc->priv);
+> +
+> +       return 0;
+> +}
+>  EXPORT_SYMBOL_GPL(k3_rproc_attach);
+>  /*
+> 
 
+On Sat, Jul 26, 2025 at 07:47:34PM +0530, Beleswar Prasad Padhi wrote:
+> > 
+> > So the issue then looks to be this message we send here when we setup
+> > the mailbox[0]. This mailbox setup is done during probe() for the K3
+> > rproc drivers now (mailbox setup used to be done during
+> > rproc_{start,attach}() before [1]). Moving mailbox setup to probe
+> > is correct, but we should have factored out the test message sending
+> > code out of mailbox setup so it could have been left in
+> > rproc_{start,attach}().
+> 
+> 
+> Or, how about we don't send that test mbox message at all. It does not
+> actually check if the remoteproc was able to receive and respond to the
+> message. It only verifies if the write to the mbox queue was successful. And
+> most firmwares anyways don't reply to that mailbox-level echo message.
+
+I was thinking about the same.
+
+I tested the patch and it indeed works, however when I boot the remote
+core with a hello world firwmare from the TI MCU SDK (with IPC enabled
+with the sysconfig), the ping is sent but M4 never replies to it, which
+at the end causes an unread message to stay there. Later, if I stop the
+remote processor, I can not got into suspend mode again because of this
+message.
+
+So I believe we should never send the message or clear the mailbox when
+the remote processor is stopped, but I was not able to find a way to
+clear the mailbox. So, is it ok if we never send the ping?
+
+Best regards,
+Hiago.
+
+> 
+> Thanks,
+> Beleswar
+> 
+> > That way we only send this message if the
+> > core is going to be started, no sense in sending that message if
+> > we are not even going to run the core..
+> > 
+> > Fix might be as simple as [2] (not tested, if this works feel free
+> > to send as a fix)
+> > 
+> > Andrew
+> > 
+> > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
+> > [2]
+> > 
+> > diff --git a/drivers/remoteproc/ti_k3_common.c
+> > b/drivers/remoteproc/ti_k3_common.c
+> > index a70d4879a8bea..657a200fa9040 100644
+> > --- a/drivers/remoteproc/ti_k3_common.c
+> > +++ b/drivers/remoteproc/ti_k3_common.c
+> > @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
+> >  }
+> >  EXPORT_SYMBOL_GPL(k3_rproc_reset);
+> > 
+> > +static int k3_rproc_ping(struct k3_rproc *kproc)
+> > +{
+> > +       /*
+> > +        * Ping the remote processor, this is only for sanity-sake for
+> > now;
+> > +        * there is no functional effect whatsoever.
+> > +        *
+> > +        * Note that the reply will _not_ arrive immediately: this
+> > message
+> > +        * will wait in the mailbox fifo until the remote processor is
+> > booted.
+> > +        */
+> > +       int ret = mbox_send_message(kproc->mbox, (void
+> > *)RP_MBOX_ECHO_REQUEST);
+> > +       if (ret < 0)
+> > +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n",
+> > ERR_PTR(ret));
+> > +
+> > +       return ret;
+> > +}
+> > +
+> >  /* Release the remote processor from reset */
+> >  int k3_rproc_release(struct k3_rproc *kproc)
+> >  {
+> > @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
+> >         if (ret)
+> >                 dev_err(dev, "module-reset deassert failed (%pe)\n",
+> > ERR_PTR(ret));
+> > 
+> > +       k3_rproc_ping(kproc);
+> > +
+> >         return ret;
+> >  }
+> >  EXPORT_SYMBOL_GPL(k3_rproc_release);
+> > @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+> >                 return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+> >                                      "mbox_request_channel failed\n");
+> > 
+> > -       /*
+> > -        * Ping the remote processor, this is only for sanity-sake for
+> > now;
+> > -        * there is no functional effect whatsoever.
+> > -        *
+> > -        * Note that the reply will _not_ arrive immediately: this
+> > message
+> > -        * will wait in the mailbox fifo until the remote processor is
+> > booted.
+> > -        */
+> > -       ret = mbox_send_message(kproc->mbox, (void
+> > *)RP_MBOX_ECHO_REQUEST);
+> > -       if (ret < 0) {
+> > -               dev_err(dev, "mbox_send_message failed (%pe)\n",
+> > ERR_PTR(ret));
+> > -               mbox_free_channel(kproc->mbox);
+> > -               return ret;
+> > -       }
+> > -
+> >         return 0;
+> >  }
+> >  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+> > @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
+> >   * remote core. This callback is invoked only in IPC-only mode and
+> > exists
+> >   * because rproc_validate() checks for its existence.
+> >   */
+> > -int k3_rproc_attach(struct rproc *rproc) { return 0; }
+> > +int k3_rproc_attach(struct rproc *rproc)
+> > +{
+> > +       k3_rproc_ping(rproc->priv);
+> > +
+> > +       return 0;
+> > +}
+> >  EXPORT_SYMBOL_GPL(k3_rproc_attach);
+> > 
+> >  /*
+> > 
 
