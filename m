@@ -1,103 +1,229 @@
-Return-Path: <linux-kernel+bounces-746916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4BEB12D06
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 00:49:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B61B12D07
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 01:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEF87189DA9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 22:49:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EAC6178CFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE73202C26;
-	Sat, 26 Jul 2025 22:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400D2227EA8;
+	Sat, 26 Jul 2025 23:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aHVnJ41J"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/mxENg0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E02DA93D
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 22:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC2E17DFE7;
+	Sat, 26 Jul 2025 23:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753570175; cv=none; b=vAGetEHxzTQYCXH7vaMaaMl7PzV53BQd6u1TRDjSTkdBmNbo6SbgC2nr2tYI9XOiKJlzsBee37tf70ykHEIXDFa/qGVcvwBOZdfxp2DtcdpSGlEr0YDmHro4+Qdav0wJiNW1VoJQkGMhycJQdFKT1KkIMuq/3KZLCsz8hwzurDU=
+	t=1753571552; cv=none; b=pSqXd3RWUVJ541w+RNnZUpvFggSU/Lt5ZsrugRuELe3o+302vZcpizWMCaqL+lJTYriUGDhk+vGm6KYYBKx1hMN/9jkIz1oOYZWGDTRkTr0WVAuDbn6aMg65D12GrUNduFO8jTNqxw6+rQjXDR1LLlufOUszzNoBlbRZpmkPoBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753570175; c=relaxed/simple;
-	bh=6yIC4YvsCT35fS4oqSfF3JTHx+mKVqoRptg5b5fa1Vs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O2k6gPu0uo7G2LXUXg2hOdiiyngjZH8HbIUb7UckOfYHA60zMgqS6zYn8qLsz1c4E2IhrZWGUDCURyc3Pa7cFImRJG1Pnw11Oz4e+uIJmne77dLTFjgOC2o8Kkfgu/tE1A/G2Q13aV4CP3B9Jlkl+jpklORnoNdio/LCnH+aBj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aHVnJ41J; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-acb5ec407b1so543922166b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 15:49:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1753570172; x=1754174972; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FejLseDlrgreUB7h9wwVgMEXbB2gwRb7bBKpnRNEAa0=;
-        b=aHVnJ41JT3L976C/aW9oICXJBA0GPouuyKD6r35x6iCfNo6ttIarXRDrdgTN730wDL
-         ZjEZbTqKO2cjelhUMAZgwxY+UQE7BlHFP2cp/7YZtxAS025j7HcGBsT1l0tgodP0oU3t
-         /OuypJxH/vHt5nIzbNjheDNz//vHPBoYJ1CH0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753570172; x=1754174972;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FejLseDlrgreUB7h9wwVgMEXbB2gwRb7bBKpnRNEAa0=;
-        b=n1M+2TGSD0plbT9okRJfseCiZ/Hdu5ozeap4wnQYiQ30fxxoFPePYUkPum2EOjQQUh
-         jLotiLl2S6yKSVsrwdlGzWAIB0o2vFgq9wuZIhZvFZ6GA+PdqL2EnaQxyza/Ndh11M4+
-         muX46tEoXwEZWDhKwe2I+/cscXPRS/emcmSXQeOengP6ppLWWQg1vmju/16jnhFPEefa
-         MsqjZmqJ07d/LGmr6Mm7m9Rdq15i7G2hg/G/5GyDFf/zqXijfhbkjq2fPxppfGSA5EQO
-         bvh/18xiU9fl24HAKKYrq22hImEaducZjCVVFXhUBop3Q+ShCEQw5MBPHAkjJnuT8cSO
-         cb1w==
-X-Gm-Message-State: AOJu0YwGkFSwP/GSqrshVBJOta6/2zKdhoQoM1u/6nZfOvaC4cnSEty7
-	pF+kl4hs/0R9kOm4R4Io9jdBxZ1qKdblMKI71rGNtArF9nCTk4qit4NaIKwIaj8+zOGWaMNQ8Cd
-	obT5QOXA=
-X-Gm-Gg: ASbGncuQUmpnweCA/wdo5Red8w2ES4igcHLJmCndjQqLaaHMbd6bzZaGjc19n8oQqNL
-	1LtpOkV8KvAPicYkfD3FkvWU03sq/kxIYk03ENhGXL689sHQ2Es4NBSqLUj0AEVjDO2CcjMX6op
-	4VUEq/iq1OvddemO8GwJtiPxt4/0iD+jVKWMXBnQrpfuCLF7eFDUuOpTqlPG7PeSoZ0/Oqg3fE8
-	GZbWhmfqpr/hSumYIw3GCriqKr7YGaRCpn7S1WuFfBgDpZWYLmux12ffAp1QO+NXAUBo+dplShk
-	pyw9URKEwY8IDsREtyzK9ymtUyKzw3gOxjzfIf3Tt3c/KsYBRsKyHSwuJjj2ajGZkktk/RpJaoH
-	EDx3sOTqp4WGqBJwmG4SL9KrZ8WdIwoG4a0OLtGpWf3eblwzKu3CpqJFYdIVLGPbkDjxdAEEd
-X-Google-Smtp-Source: AGHT+IGGaHRGM+jtkBNDg2w+GhoDM2/1FP3cj2wJFf3Hwn0dh/KEta3U+MT3lUI8y3sd7RZmb9WD3g==
-X-Received: by 2002:a17:907:3d9f:b0:ae2:9291:9226 with SMTP id a640c23a62f3a-af61dd51de5mr675283266b.59.1753570171571;
-        Sat, 26 Jul 2025 15:49:31 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635a63a5bsm205333966b.93.2025.07.26.15.49.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Jul 2025 15:49:30 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-612a8e6f675so5425873a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 15:49:30 -0700 (PDT)
-X-Received: by 2002:a05:6402:2810:b0:60c:4667:b29e with SMTP id
- 4fb4d7f45d1cf-614f1f1cc72mr5816106a12.31.1753570170393; Sat, 26 Jul 2025
- 15:49:30 -0700 (PDT)
+	s=arc-20240116; t=1753571552; c=relaxed/simple;
+	bh=9Ma0AfkSwYPqifnxcNePHE2rzmoC0sMiObkPnYwR1lE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FbfvsOI0NLFx7MvO3LFWgxXdXdcBndyBCvY6jSiL0szCNLePkpqXUu9tsFVflr4w0WPZCVUhZsreMXS5kvw6yCcpizaNSVVksyl8DGP3QqQeWXPMK8d3jjK69RUh4ibw2PrcpARnbU4v2HshwCtqfBMg2x/Wu9Zw2+bbEiORPuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/mxENg0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D0F9C4CEED;
+	Sat, 26 Jul 2025 23:12:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753571551;
+	bh=9Ma0AfkSwYPqifnxcNePHE2rzmoC0sMiObkPnYwR1lE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S/mxENg0+gtHd08yRH/ewb2RurTPcU6B/1/0ejYjealFueBYgbpydvu9OgqsFFM+m
+	 jOFxHIzApv6FRlFL6FDHslpgzxCHPM5G/2PZVaMAebjIGiOa3/BU/8b8nyCphCo8WS
+	 ZibHFhVFRVwFtbjHvgA3pPe5QbrUJy4kV0sHNHfmSem+STpbxSS6m2jy9v6YvdIz+k
+	 1rXpCqkR+dvIA3jMFB/FjqI/aI1cbD0pP8BHxYFJlRcpWt0ADrAvryJa3gxs3GfoZ+
+	 hTD5v/Xi95M/1B0Ju1BOwnA7EHYjCPMEkpE9/HsoUTA6mUmpV5KkKwsu+l8vX0bMCZ
+	 CEbrDOdyalHnA==
+Date: Sat, 26 Jul 2025 16:12:29 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v9 00/16] New perf ilist app
+Message-ID: <aIVg3X5ByiTPkXRA@google.com>
+References: <20250725185202.68671-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202507261437.F2079B3B7@keescook> <202507261442.5B0F37DA@keescook>
-In-Reply-To: <202507261442.5B0F37DA@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 26 Jul 2025 15:49:14 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whLyN+e_J3xdgTHrWuKMG_7VpqRFdNM3ydqPf_YfJk18Q@mail.gmail.com>
-X-Gm-Features: Ac12FXyRClPDO8l-OI1q-3VUADayTqr4t4FxNKoVRjaxXOnhIONKkr9RUTkoX2c
-Message-ID: <CAHk-=whLyN+e_J3xdgTHrWuKMG_7VpqRFdNM3ydqPf_YfJk18Q@mail.gmail.com>
-Subject: Re: [GIT PULL] execve updates for v6.17
-To: Kees Cook <kees@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250725185202.68671-1-irogers@google.com>
 
-On Sat, 26 Jul 2025 at 14:44, Kees Cook <kees@kernel.org> wrote:
->
-> This should obviously be for v6.17-rc1 ... Let me know if you'd like a
-> resend with a more accurate tag name.
+Hi Ian,
 
-I'll figure it out ;)
+On Fri, Jul 25, 2025 at 11:51:46AM -0700, Ian Rogers wrote:
+> This patch series builds up to the addition of a new ilist app written
+> in python using textual [1] for the UI. The app presents perf PMUs and
+> events, displays the event information as in `perf list` while at the
+> bottom of the console showing recent activity of the event in total
+> and across all CPUs. It also displays metrics, placed in a tree
+> through their metric group, again with counts being displayed in the
+> bottom panel.
+> 
+> The first ground work patches of fixes, cleanup and refactoring were
+> separated into their own series here:
+> https://lore.kernel.org/lkml/20250709214029.1769089-1-irogers@google.com/
+> 
+> The second part of the patches adds event json for the software PMU
+> and makes the tracepoint PMU support iteration of events and the
+> like. Without these improvements the tracepoint and software PMUs will
+> appear to have no events in the ilist app. As the software PMU moves
+> parsing to json, the legacy hard coded parsing is removed. This has
+> proven controversial for hardware events and so that cleanup isn't
+> done here.
 
-             Linus
+Even software PMU can be controversial. :)  But I think we can try this
+first.  Basically this will change the output `perf list` and the event
+parsing behavior.
+
+For example, `perf list sw` will look like:
+
+software:
+  alignment-faults
+       [Number of kernel handled memory alignment faults. Unit: software]
+  bpf-output
+       [An event used by BPF programs to write to the perf ring buffer. Unit: software]
+  cgroup-switches
+       [Number of context switches to a task in a different cgroup. Unit: software]
+  context-switches
+       [Number of context switches [This event is an alias of cs]. Unit: software]
+  cpu-clock
+       [Per-CPU high-resolution timer based event. Unit: software]
+  cpu-migrations
+       [Number of times a process has migrated to a new CPU [This event is an alias of migrations]. Unit: software]
+  cs
+       [Number of context switches [This event is an alias of context-switches]. Unit: software]
+  dummy
+       [A placeholder event that doesn't count anything. Unit: software]
+  ...
+
+Let's add this change and see if people complain..
+
+Btw, I think the alias can be one-way.  IOW 'context-switches' is a
+software event and 'cs' is an alias to it, not vice versa.  I'll make
+the change.
+
+> 
+> The final patches expand the perf python APIs and add the ilist
+> command. To run it you need the updated perf.cpython.so in your
+> PYTHONPATH and then execute the script. Expanding PMUs and then
+> selecting events will cause event informatin to be displayed in the
+> top-right and the counters values to be displayed as sparklines and
+> counts in the bottom half of the screen.
+
+This part can go to the next cycle.
+
+Thanks,
+Namhyung
+
+> 
+> [1] https://textual.textualize.io/
+> 
+> v9: sys metric support and pep8 clean up suggested by Xu Yang
+>     <xu.yang_2@nxp.com>.
+> 
+> v8: nit fixing of issues caught by Arnaldo and Namhyung. Add Arnaldo's
+>     tested-by. Fail to repro issue reported by Thomas Falcon but
+>     encounter textual rendering and DOM query race, add an exception
+>     handling path to avoid the race being fatal. The change is minor
+>     in patch 16, so Arnaldo's tested-by is kept.
+> 
+> v7: Better handle errors in the python code and ignore errors when
+>     scanning PMU/events in ilist.py, improving the behavior when not
+>     root. Add a tp_pmu/python clean up. Minor kernel coding style
+>     clean up. Fix behavior of ilist if a search result isn't found but
+>     then next is chosen.
+> 
+> v6: For metrics on hybrid systems don't purely match by name, also
+>     match the CPU and thread so that if the same metric exists for
+>     different PMUs the appropriate one is selected and counters may be
+>     read. Likewise use evsel maps and not the evlists.
+> 
+> v5: Split the series in two. Add metric support. Various clean ups and
+>     tweaks to the app in particular around the handling of searches.
+> 
+> v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
+>     displays as expected.
+> 
+> v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
+>     keys. No changes in the ground work first 14 patches.
+> 
+> v2: In the jevents event description duplication, some minor changes
+>     accidentally missed from v1 meaning that in v1 the descriptions
+>     were still duplicated. Expand the cover letter with some thoughts
+>     on the series.
+> 
+> Ian Rogers (16):
+>   perf python: Add more exceptions on error paths
+>   perf jevents: Add common software event json
+>   perf parse-events: Remove non-json software events
+>   perf tp_pmu: Factor existing tracepoint logic to new file
+>   perf tp_pmu: Add event APIs
+>   perf list: Remove tracepoint printing code
+>   perf list: Skip ABI PMUs when printing pmu values
+>   perf python: Improve the tracepoint function if no libtraceevent
+>   perf python: Add basic PMU abstraction and pmus sequence
+>   perf python: Add function returning dictionary of all events on a PMU
+>   perf ilist: Add new python ilist command
+>   perf python: Add parse_metrics function
+>   perf python: Add evlist metrics function
+>   perf python: Add evlist compute_metric
+>   perf python: Add metrics function
+>   perf ilist: Add support for metrics
+> 
+>  tools/perf/builtin-list.c                     |  65 ++-
+>  .../arch/common/common/software.json          |  92 +++
+>  tools/perf/pmu-events/empty-pmu-events.c      | 266 +++++----
+>  tools/perf/pmu-events/jevents.py              |  15 +-
+>  tools/perf/python/ilist.py                    | 495 +++++++++++++++++
+>  tools/perf/util/Build                         |   1 +
+>  tools/perf/util/evsel.c                       |  21 +-
+>  tools/perf/util/parse-events.c                | 198 ++-----
+>  tools/perf/util/parse-events.h                |   1 -
+>  tools/perf/util/parse-events.l                |  38 +-
+>  tools/perf/util/parse-events.y                |  29 +-
+>  tools/perf/util/pfm.c                         |   2 +
+>  tools/perf/util/pmu.c                         |   7 +
+>  tools/perf/util/pmus.c                        |   2 +
+>  tools/perf/util/print-events.c                | 100 +---
+>  tools/perf/util/print-events.h                |   4 +-
+>  tools/perf/util/python.c                      | 522 +++++++++++++++++-
+>  tools/perf/util/tp_pmu.c                      | 210 +++++++
+>  tools/perf/util/tp_pmu.h                      |  19 +
+>  19 files changed, 1646 insertions(+), 441 deletions(-)
+>  create mode 100644 tools/perf/pmu-events/arch/common/common/software.json
+>  create mode 100755 tools/perf/python/ilist.py
+>  create mode 100644 tools/perf/util/tp_pmu.c
+>  create mode 100644 tools/perf/util/tp_pmu.h
+> 
+> -- 
+> 2.50.1.552.g942d659e1b-goog
+> 
 
