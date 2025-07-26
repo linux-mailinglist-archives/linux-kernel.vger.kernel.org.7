@@ -1,67 +1,97 @@
-Return-Path: <linux-kernel+bounces-746747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A83EB12ABA
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 15:35:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CAFB12ABF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 15:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57AEE54619E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:35:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B17F23BC56D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C369328641C;
-	Sat, 26 Jul 2025 13:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCF028641F;
+	Sat, 26 Jul 2025 13:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gq6sgy5D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/AVEycz"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C20242D68;
-	Sat, 26 Jul 2025 13:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF0F481DD;
+	Sat, 26 Jul 2025 13:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753536892; cv=none; b=Iy1EWiPe3Q8M4nkuLBzh6hdiOoOxut6NlLDumj/zyWLhoUqhESVYgg4s7qqb27RxTjCiDi3cjNCZKRRxuLWZ4OEg7LM9sLoRip+weU5/SBIDoxAvK/kzdplZCss89FFIrSW8JG7k3liScGjDCFYOfHfL9qrZB5gCw+vLFS44j+o=
+	t=1753537375; cv=none; b=DhyByLCXU2zaUluieJAdKCxPCe+7BUapZUWH1EIe7QCBxFp4WWY6nhctFbA3DQYhg1UCThpzxVQGe8NLFd0TIMC+uVHoK8XrUhxrgtoRjEnS0vuohciYlDFKnkA6/nPvIqtQpQqc6Smzaj7G+iF8aCtvks90fNnor0gpNs5/IPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753536892; c=relaxed/simple;
-	bh=+XbzViTfrt1TfYbQ9nIGtTF251tWEMyhnVpl9OCmyHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CjM0Aqt30XJy8oNYSSBhUZDv61o98bsrdZl5L0lozQODH3NfaYtr4et4UJAf+GnMrrp0TE9FPxMx+dz5AB/FQX7ngLEzM+sPdoc6dTOtCJlWEzMoXiUy7bFkmY2MnSKszvrCDI4Lc0kpxa4zpbv1s6xz/pU7Qcg9f5iuc/z1GEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gq6sgy5D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F25BC4CEED;
-	Sat, 26 Jul 2025 13:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753536891;
-	bh=+XbzViTfrt1TfYbQ9nIGtTF251tWEMyhnVpl9OCmyHI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Gq6sgy5DYh2FVWjdUx+aTU477fJ4QZuCrcqepppTBOcvVUzJGXTicrEheTNeGiZgx
-	 K1O5NNqTZqgCAGhD7qIkLmAC+kITA8xilBwz00jbmV2tKWqrvRLTmn1o/JD+VOEMMK
-	 Z7aGI1a2wEU1c67jje1Z/TtsJIFzXhVQuW/43mDKHUIu0g63pOV7mllI1gJGc3Qxn0
-	 xoFvUlx9oYgglbsJ9s4cavJ3hyihHxn4vqpaG3NgZuEfmpS2uSaiMVxNnN0FLX+sf7
-	 TSYq4uf23p9BAI3910uCuBpKnXJ/2bYnU/U1lGB+JZtMo0oawiLRFd3+4Rw8NZLVGJ
-	 RPiS+AA2KNQPA==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	stable@vger.kernel.org,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: [PATCH] rust: kbuild: clean output before running `rustdoc`
-Date: Sat, 26 Jul 2025 15:34:35 +0200
-Message-ID: <20250726133435.2460085-1-ojeda@kernel.org>
+	s=arc-20240116; t=1753537375; c=relaxed/simple;
+	bh=1hUmX5hI3J/W4Ut02JLPRXx77DgARnMFeF3OQCb0Juk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gm4dmKQj/mUvG7n5nvGHJWhQRmIhJEkJmU8kF/8IoqC9DrRrHgrhlicWyW7ij1nmQyMRgxeRBxWZacQ8sa/5D8cg51f32jG0ep6TJ9FMmf1fOAHylA6odl95otzuqYjGpBq5ieVYSn8krCSIbTAeeRQcpzEMQ7YzirCBoaLs5Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/AVEycz; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23c8a505177so24988605ad.2;
+        Sat, 26 Jul 2025 06:42:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753537373; x=1754142173; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OPclnn9w29nvfQf0KYDGXYWPWgDFpSvkfdWvl0o/Yqc=;
+        b=N/AVEyczP8HpjY3oWtc4v2A4qSuDMLuBhOiO9odxG/16o/fhn0ciZJj6jTe286/wXR
+         TXYCjbPt2P7Bd+oxRpRZrJceVqgImnRSfLh99dIcYp7k159amw1LVo8iW7GDOutb3tqb
+         j1bYjW5mvY4VYC5p3dfJaQXEVQUTkjmQ1CD6Ya0VhiCwGrpFOivZB9ndgrSMMK5VcjKU
+         EvtyVekdLasmSZHpzHlYfdDmpwmljH1r/oIfrqozF5XFDmNVmZBIg2mUOLWKdVwxcrgU
+         PIeNWBOguKSnnWISLWaJlxfAXEligm0tf9ylQ4pji9slANLcUMGDl3ktGuEGt4Xd9m2A
+         Briw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753537373; x=1754142173;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OPclnn9w29nvfQf0KYDGXYWPWgDFpSvkfdWvl0o/Yqc=;
+        b=ZiQ15VtUip4o+slep/64s/tiWE/Ptru1pSfXgBu/hsw50ncbFTHXte7ynBnNWADi/H
+         E5SBbesOYUmasLTSvOiSX+QiVb0GXn1Hjsc4tuQVkEu5D13qolDRqqPXvlvizPtZytqb
+         I9k/btqBPFF4eOb+dUvL8pgOnuM9ICFPTB0i7REnsReoxa5zDpVs2+2Z2Jk31x/9rI2D
+         BcAjndcQIbNBAMVL/yvU7ulyogJ8/VmuoGMTH4NbjcgFRXyG5pBOEwSc0PNjsD4RbOq9
+         lnGxZ2at5N+23fF8QTb/MTmiocz+/83V/lNruRwh10clqH0rS/2HwOTkjPNWl3Ire6DP
+         aUpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUp/6RgJ/csrtdUM6R+QwGcV4GjVu2bWo6cNjeXu86A/OwxbCo78bh+h9x4tcjpKXaPBBNItSjVdJiNdAgN@vger.kernel.org, AJvYcCX5ia9wxw8hBjQAf2Wkj+T+8MYUEROv7sYgepANisKPrl/6sFHb/oZiZ+wlw2Bzi5E19WSSurmKb4vjPs0F@vger.kernel.org, AJvYcCXYEcAosTxnRzuLKR4kBqiM+LExZ0VeZ9hd8K+fsDMXzcMB1KFynGDcHyPWxUxTsf1bKK9PA2JUQBWj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDdNhfKyxfP+1urNiiQfubbRriWiynwNUtvoVIBX2W/Mg9AZ0j
+	z+hLv6pI2M2gpb86anw8JM4x6Uy4V+1CTW5fNPhrVWoTDDWL43oBrnYH
+X-Gm-Gg: ASbGnctmItEbqq8Xg2r1392aYi8Mmf99LtuhEtCQIC5C05M984IXFnCQ80ptAOktgqH
+	sODguNTxuS6FCQ1Qv7EkQB7JPJmKylessu2RkQaX2OAOHt9oBhv2HcjoFpEt/jvC8HoYXugB/oa
+	49kR4n6UkkvzMNb+iHoWienIx47QU7SQ+hR6QB7+txyWwGPSbgAHClU4Da57ahfO4YPLAn9Cehr
+	qnHnrAGeN+gWqsFnoNooTiMlpzQmyMMg7u/oWmCB3oUm1RmV6zYoD0ROxj+gvKiKnAiWr2WOCMa
+	F4CMD+FT6nfQYqymY7wm/5eKs8pfPVi7qnMnJkvt7FN48VDN4aICXz4JkLM0LY6Y90TFEEDxHx+
+	BQlVKDxAwwKokgqfWg6/NJgNLjWOBKh/KjlqNWMBfhj5mXGBtH+4suy/kWGblJQ==
+X-Google-Smtp-Source: AGHT+IFl4YktStVqSJzIgw4nrH9zK2DTy2v4RE7W0FzzvKqWNmbztzhlW1/vpTeYPzZHAjMZ16gRRw==
+X-Received: by 2002:a17:903:1aef:b0:23e:3c33:6be8 with SMTP id d9443c01a7336-23fb2fe127emr72410635ad.8.1753537372804;
+        Sat, 26 Jul 2025 06:42:52 -0700 (PDT)
+Received: from ubuntu-Virtual-Machine.corp.microsoft.com ([2001:4898:80e8:77:9619:11b0:a73:e5a6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e83508500sm1869190a91.22.2025.07.26.06.42.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Jul 2025 06:42:52 -0700 (PDT)
+From: Tianyu Lan <ltykernel@gmail.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	arnd@arndb.de,
+	Neeraj.Upadhyay@amd.com,
+	kvijayab@amd.com
+Cc: Tianyu Lan <tiala@microsoft.com>,
+	linux-arch@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH V4 0/4] x86/Hyper-V: Add AMD Secure AVIC for Hyper-V platform
+Date: Sat, 26 Jul 2025 09:42:46 -0400
+Message-Id: <20250726134250.4414-1-ltykernel@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,78 +100,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-`rustdoc` can get confused when generating documentation into a folder
-that contains generated files from other `rustdoc` versions.
+From: Tianyu Lan <tiala@microsoft.com>
 
-For instance, running something like:
+Secure AVIC is a new hardware feature in the AMD64
+architecture to allow SEV-SNP guests to prevent the
+hypervisor from generating unexpected interrupts to
+a vCPU or otherwise violate architectural assumptions
+around APIC behavior.
 
-    rustup default 1.78.0
-    make LLVM=1 rustdoc
-    rustup default 1.88.0
-    make LLVM=1 rustdoc
+Each vCPU has a guest-allocated APIC backing page of
+size 4K, which maintains APIC state for that vCPU.
+APIC backing page's ALLOWED_IRR field indicates the
+interrupt vectors which the guest allows the hypervisor
+to send.
 
-may generate errors like:
+This patchset is to enable the feature for Hyper-V
+platform. Patch "Drivers: hv: Allow vmbus message
+synic interrupt injected from Hyper-V" is to expose
+new fucntion hv_enable_coco_interrupt() and device
+driver and arch code may update AVIC backing page
+ALLOWED_IRR field to allow Hyper-V inject associated
+vector.
 
-    error: couldn't generate documentation: invalid template: last line expected to start with a comment
-      |
-      = note: failed to create or modify "./Documentation/output/rust/rustdoc/src-files.js"
+This patchset is based on the AMD patchset "AMD: Add
+Secure AVIC Guest Support"
+https://lkml.org/lkml/2025/6/10/1579
 
-Thus just always clean the output folder before generating the
-documentation -- we are anyway regenerating it every time the `rustdoc`
-target gets called, at least for the time being.
+Chnage since v3:
+	- Disable VMBus Message interrupt via hv_enable_
+       	  coco_interrupt() in the hv_synic_disable_regs().
+	- Fix coding style issue and update change log.
 
-Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
-Reported-by: Daniel Almeida <daniel.almeida@collabora.com>
-Closes: https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic/x/near/527201113
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- rust/Makefile | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Change since v2:
+       - Add hv_enable_coco_interrupt() as wrapper
+        of apic_update_vector()
+       - Re-work change logs
 
-diff --git a/rust/Makefile b/rust/Makefile
-index 115b63b7d1e3..771246bc7ae6 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -103,14 +103,14 @@ rustdoc: rustdoc-core rustdoc-macros rustdoc-compiler_builtins \
- rustdoc-macros: private rustdoc_host = yes
- rustdoc-macros: private rustc_target_flags = --crate-type proc-macro \
-     --extern proc_macro
--rustdoc-macros: $(src)/macros/lib.rs FORCE
-+rustdoc-macros: $(src)/macros/lib.rs rustdoc-clean FORCE
- 	+$(call if_changed,rustdoc)
- 
- # Starting with Rust 1.82.0, skipping `-Wrustdoc::unescaped_backticks` should
- # not be needed -- see https://github.com/rust-lang/rust/pull/128307.
- rustdoc-core: private skip_flags = --edition=2021 -Wrustdoc::unescaped_backticks
- rustdoc-core: private rustc_target_flags = --edition=$(core-edition) $(core-cfgs)
--rustdoc-core: $(RUST_LIB_SRC)/core/src/lib.rs FORCE
-+rustdoc-core: $(RUST_LIB_SRC)/core/src/lib.rs rustdoc-clean FORCE
- 	+$(call if_changed,rustdoc)
- 
- rustdoc-compiler_builtins: $(src)/compiler_builtins.rs rustdoc-core FORCE
-@@ -122,7 +122,8 @@ rustdoc-ffi: $(src)/ffi.rs rustdoc-core FORCE
- rustdoc-pin_init_internal: private rustdoc_host = yes
- rustdoc-pin_init_internal: private rustc_target_flags = --cfg kernel \
-     --extern proc_macro --crate-type proc-macro
--rustdoc-pin_init_internal: $(src)/pin-init/internal/src/lib.rs FORCE
-+rustdoc-pin_init_internal: $(src)/pin-init/internal/src/lib.rs \
-+    rustdoc-clean FORCE
- 	+$(call if_changed,rustdoc)
- 
- rustdoc-pin_init: private rustdoc_host = yes
-@@ -140,6 +141,9 @@ rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rustdoc-ffi rustdoc-macros \
-     $(obj)/bindings.o FORCE
- 	+$(call if_changed,rustdoc)
- 
-+rustdoc-clean: FORCE
-+	$(Q)rm -rf $(rustdoc_output)
-+
- quiet_cmd_rustc_test_library = $(RUSTC_OR_CLIPPY_QUIET) TL $<
-       cmd_rustc_test_library = \
- 	OBJTREE=$(abspath $(objtree)) \
+Change since v1:
+       - Remove the check of Secure AVIC when set APIC backing page
+       - Use apic_update_vector() instead of exposing new interface
+       from Secure AVIC driver to update APIC backing page and allow
+       associated interrupt to be injected by hypervisor.
 
-base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+Tianyu Lan (4):
+  x86/hyperv: Don't use hv apic driver when Secure AVIC is available
+  drivers/hv: Allow vmbus message synic interrupt injected from Hyper-V
+  x86/hyperv: Don't use auto-eoi when Secure AVIC is available
+  x86/hyperv: Allow Hyper-V to inject STIMER0 interrupts
+
+ arch/x86/hyperv/hv_apic.c      | 8 ++++++++
+ arch/x86/hyperv/hv_init.c      | 7 +++++++
+ arch/x86/kernel/cpu/mshyperv.c | 2 ++
+ drivers/hv/hv.c                | 2 ++
+ drivers/hv/hv_common.c         | 5 +++++
+ include/asm-generic/mshyperv.h | 1 +
+ 6 files changed, 25 insertions(+)
+
 -- 
-2.50.1
+2.25.1
 
 
