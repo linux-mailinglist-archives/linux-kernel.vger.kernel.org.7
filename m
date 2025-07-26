@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-746844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4314AB12BE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 20:41:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609CDB12BEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 20:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBFD51C22A8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE57B189F78C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4427228A3FC;
-	Sat, 26 Jul 2025 18:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB3028B419;
+	Sat, 26 Jul 2025 18:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMleCNAy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3e0DEyI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0FA28A3ED;
-	Sat, 26 Jul 2025 18:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2053528AB10;
+	Sat, 26 Jul 2025 18:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753555212; cv=none; b=rH/yVQiEL07mzQnPtKsMAAFxjWaAw77HeLso6vaPzwhyJfxUu/7LOX8oW6EoysR915s2vJVagf+/lxNzdRoqV/+JruaF6hEdaEle5/o2fcYmd65QZ0WwCbPgCdrERJBrJU53UzCY7MrkVP+WaoCxaM37861ktQ212A0Y2XGdCmQ=
+	t=1753555214; cv=none; b=pcm3yGFIJGX5o+hnNQK0TG7deJT72dPC6dm8Y5xIyoDfIzoy59L1zM0zhGR0UMxf7UeBm70AP5VgzBp555tE2RLJApB0gZP9gsxHBXIh3pJuh0GxFZKKAtPZHOtYYpdK9rhJyU+xi1Qy17GrQdB+esuxRIHc1e1CjQvrzLHXcsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753555212; c=relaxed/simple;
-	bh=nU3KVELx+Tcspgphah/8lvgUnIBNVFV8yJdibtdixCA=;
+	s=arc-20240116; t=1753555214; c=relaxed/simple;
+	bh=PTwOYw/TnQVS+TDJZ29TMUnrkDrgTTGYnJZvwHIiays=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=u7bJUywsdZSfu8GWOKurEI+iUSevzV+6Gy4/ZawpnDMLHabyQQuTEdNFPUtc5yu25kXpkvppuUsTg7byMIPluZCqumscvy5WW4aXuIvD069Z/VG5AZzr5hV4V4MtzBOSwjYhJ0J3NFiiwFLNmt0ehKgk2rnU9uNs1zwQImmt/3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MMleCNAy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A62FC4CEF1;
-	Sat, 26 Jul 2025 18:40:12 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ResyekjIlTxhWrf4D7zv7FWnpMjGHHJeLBPNgzgwDzIFu/I4M8lsfa9usO9Qw/JEaVAwwbSS7URFyt7wwxpCcbs2WSYf5fILc15GizorHzlTtpmLkJFPbZu4/cjUgapD2t0su2g2wpQyY7Qc+ZJkFSQ4Jk/Nex0QA/bhWvIPSdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3e0DEyI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00018C4CEED;
+	Sat, 26 Jul 2025 18:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753555212;
-	bh=nU3KVELx+Tcspgphah/8lvgUnIBNVFV8yJdibtdixCA=;
+	s=k20201202; t=1753555214;
+	bh=PTwOYw/TnQVS+TDJZ29TMUnrkDrgTTGYnJZvwHIiays=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=MMleCNAycjha3Sn0oTUDm/Bk1NXa6j7ZxoBE34HYriPTz0vuTtJTTgdOeSCauJ23k
-	 dlIaWlhfGUsxyz9q8tTq2rd9j6n1BKehjPrgIDF1H1BhqT6CZtu/wPnQbV+Y3QgoTu
-	 n2IOCHKWRl3BYsHVwsDza/r9+COhJAzn9Xeg7FyrkysxqeEaGmrXKtztoKSQ55qN+V
-	 Vr79UMOUJ1yuKOFFf9USdy2qp4131R0uSb+zZyKVA9MtPBdKTl+i/8xMIXyZ/a0oor
-	 QooIMbkuRT8MsIoeIxMOKyfugNRCOiy2tGs6NR9cCs6+3EiiHeel2PFqxErAXjs9tj
-	 vM5ziZSaymmkQ==
+	b=J3e0DEyIGGi4yKuOtkLuJYvyUh3DTEwSyKO9o16PSDnM+GkbRKnZIx8gQxfR9i+l7
+	 VwUNQYXwquxj6PyVHpk6LOcsU0tpsiDp5JCX4WwVR1zBcFRBsH5/1M1IEAWHpaCb5g
+	 NICMWcAYQnRASNPC+x2Prb+eyQbqBZPivkIAtL1q4ZIPMYXhSUTsIpcy51a1ciWfFD
+	 M/0S0GXX/trS9j2nXucWbLGjJjd5eWQErW5CmLroj7vHm7y6tHbZ9GjnuEY+N/s2a4
+	 N7+ifdH+lXIcIQ9UaSMmz10Cy2bd63I6Xve9pjNyn2hYsCrfzHOavXruFhivf6LzNh
+	 8a8QQiYE9I+Ow==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF0E383BF4E;
-	Sat, 26 Jul 2025 18:40:30 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CEB383BF4E;
+	Sat, 26 Jul 2025 18:40:32 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,36 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] vsock: remove unnecessary null check in
- vsock_getname()
+Subject: Re: [PATCH net v2] selftests: rtnetlink.sh: remove esp4_offload after
+ test
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175355522949.3664802.5083915882799890205.git-patchwork-notify@kernel.org>
-Date: Sat, 26 Jul 2025 18:40:29 +0000
-References: <20250725013808.337924-1-wangliang74@huawei.com>
-In-Reply-To: <20250725013808.337924-1-wangliang74@huawei.com>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: sgarzare@redhat.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, yuehaibing@huawei.com,
- zhangchangzhong@huawei.com, virtualization@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ <175355523100.3664802.5808444086302389218.git-patchwork-notify@kernel.org>
+Date: Sat, 26 Jul 2025 18:40:31 +0000
+References: 
+ <6d3a1d777c4de4eb0ca94ced9e77be8d48c5b12f.1753415428.git.xmu@redhat.com>
+In-Reply-To: 
+ <6d3a1d777c4de4eb0ca94ced9e77be8d48c5b12f.1753415428.git.xmu@redhat.com>
+To: Xiumei Mu <xmu@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, shuah@kernel.org, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lxin@redhat.com, sd@queasysnail.net,
+ sln@onemain.com, liuhangbin@gmail.com
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri, 25 Jul 2025 09:38:08 +0800 you wrote:
-> The local variable 'vm_addr' is always not NULL, no need to check it.
+On Fri, 25 Jul 2025 11:50:28 +0800 you wrote:
+> The esp4_offload module, loaded during IPsec offload tests, should
+> be reset to its default settings after testing.
+> Otherwise, leaving it enabled could unintentionally affect subsequence
+> test cases by keeping offload active.
 > 
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> ---
->  net/vmw_vsock/af_vsock.c | 5 -----
->  1 file changed, 5 deletions(-)
+> Without this fix:
+> $ lsmod | grep offload; ./rtnetlink.sh -t kci_test_ipsec_offload ; lsmod | grep offload;
+> PASS: ipsec_offload
+> esp4_offload           12288  0
+> esp4                   32768  1 esp4_offload
+> 
+> [...]
 
 Here is the summary with links:
-  - [net-next] vsock: remove unnecessary null check in vsock_getname()
-    https://git.kernel.org/netdev/net-next/c/002f79a5f015
+  - [net,v2] selftests: rtnetlink.sh: remove esp4_offload after test
+    https://git.kernel.org/netdev/net-next/c/5b32321fdaf3
 
 You are awesome, thank you!
 -- 
