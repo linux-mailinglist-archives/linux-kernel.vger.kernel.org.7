@@ -1,829 +1,301 @@
-Return-Path: <linux-kernel+bounces-746687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3B1B12A13
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:31:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BCFB12A14
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44E51C24786
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:31:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 467BC7B5A75
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E780C23C8A0;
-	Sat, 26 Jul 2025 10:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C308721A94F;
+	Sat, 26 Jul 2025 10:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FsIN4qFV"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HuIWqo6o";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TA+UnVW/"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1971519BC;
-	Sat, 26 Jul 2025 10:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2917D1519BC
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 10:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753525869; cv=none; b=gTOjAI/OZVc+p1o7z57en/4hT7sZBv0+AhieffAhqX/rN3JXRBQS7ZDtRp1EaGWlNvP6G+ilXYPYBVGfQj1gmre20BpVulS5YmQQooEYT8zMXo6tMEmel2RjIHkjOY3DVn1Vrdnvd3aUFj64+jPAoTfJGLv3TUnqchao6+1kHJQ=
+	t=1753525922; cv=none; b=f7BN+q9C5BW+V2BflW4aQxpgv91xLypCh6+Gfhxp9HvsbHQpWSKGvp8jhFJwss7AkTHX9r2ySZP+DSG5a6FYISEJvpD6dkTZKLab4BfvT/oV2K5SFgMhjPom60hAQIIuQJihnD9PWJu2FBapgpjebl07eTrpfoE2EuoWcwhx120=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753525869; c=relaxed/simple;
-	bh=jqycolH/KnMRp3lUIIrtD6elGOIggokYtlaCPRYdZFU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qma6nnI3ugJQPDMgHfYF2ue67CqIr2re9cxzOg14BUN+drVJl2Pw7eQ2zQAdGgE9KFpb1CR6cb4E+K+xru5CGa725sH9m4EmhCuR2Y1nm10X1N6p1rxYf1y4dliBRpP70mXQ0VoSJj3cj93sY11+KyB8ndYgt/9U2KoKyA2RHYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FsIN4qFV; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae0b2ead33cso522571866b.0;
-        Sat, 26 Jul 2025 03:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753525865; x=1754130665; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=myE/TUbfo1OYoXD3r7qqZu8aszBggShCtLu4aCsi/xg=;
-        b=FsIN4qFV6mOgaG64imx/jb8SHH6+SGb7BFo8xnQBh5aSDed5/WbRLdsak0yk/YdYj0
-         0LN0YYJptytxxcK3TViLQHR1FtcGmIYBYjzVkklt0u+c9J6Jyxf4o07YN9Bsyxn3ZORm
-         MtftzAoXtXaqr4acFKPeWno1vo8uTl7m8+RCsY7loq0/Vhc3tl4DTRq7QLX7LaY/L0c/
-         Uyl4vbRNCFwb6BkvcvpJywO0YvgHsMFqbxmvrCSrHw41RpQySFVnGtkWjalZH4DrGe5j
-         rs/ID3AlAeLx3NcRXoa1yLlfacU6o1fO21b3XdVU1YiyyWmfKMms49R66BmZWeLJPC2A
-         fjbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753525865; x=1754130665;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=myE/TUbfo1OYoXD3r7qqZu8aszBggShCtLu4aCsi/xg=;
-        b=WqUIejeJn9xo5gv+dQ3LGZYQdCfu+hjTmfvdaZbUN7vqY3FNOPx5FAIZoVDBm8h5/a
-         2hVkOol0nP+MZgmkxuuQBTUBM659VwWYsAUVR8OmcE/jOtk88ZegJaZaidpyLTL/CQxM
-         ++7iX6ODbdKzO2DHKjMe8Vu1sq5RJdQNCpMX+8mzXL1CxJHbBpK2U952CbGaY8D0rvex
-         nhQ7t6SFBWjocj1ft3PXnxMlEzCffD9egp9AfzPB85qkguHg+6TNX7UK2UfdYaQ1DAa0
-         qQFU2O7vjG68jdWuuRVGX2VZmWj3eayS29sAovZXiMkq6KHSOs7HMx9lsLBOs8vC9tXi
-         I8uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVVEVqF+YoqwnM9qvtV5PJXH6paL3ZyOBaGKBuDkenrAoo8K6h4tEV+UDlg++kwsKilP2tTVRjKVoj@vger.kernel.org, AJvYcCW+Lbss1iBatbmyJW9+qwON6Tps1VbkUk8J+sCazT9zW0oNjBGxP66D4hj3VUSN0rZt6eajGeDvNBVLmegh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkXBWe2tuIiFXsUMeCTohGDLaHUxKomGaqYF2yLtAiT+5cc639
-	urLji71onTwVzonr6nOLKJxAZ8c4J3jDwJX3T6ZRi2j+szUR9CrTaCn1STYN20a9
-X-Gm-Gg: ASbGncs77OmpjuVhI7QFxCnbjhPeq/pyXHicU9k7I+q8WatvdvuSJI4/jW4EKAQsIYq
-	K5+alxMzWrhmkS1E5zozwgICIthyo3PQCiI8KnGX4J+qccf9Ck5AshN/mR6qqZfkFVXzTtAS1MR
-	PLRDTqILVrO9GfsmRYzhpCJiDGhy52fPQ7Vtv/BbFDYIGa37R/xAPQX7z4HDJnu7fekiGvj45S0
-	VRcX2LkxvgPr3fL50nduprLOlMMeyH3ZgH33Z7pSYWrzfG27bWt/XDpP2nQ/IVwbAYrIb6/AIEu
-	/WjVqhBedsvHMeupoulCFyGs+4JsQUQJHhsHDQNjyKH4pqxxRxzQixdSNOCZ6jswBznd7Kc1VkA
-	hjp3RofWqL8/dj+QsHZ3fFRtb7rReD6QEf9Ia/ty8cgNlWDZuc3lp4KcDBGovgHZl+YsQ2rOX2l
-	bedQ==
-X-Google-Smtp-Source: AGHT+IEPFe6VrJ23Yf0CvTmEtPAE6ph4NR7TBvjD83koHr/gJXIVZkdsZsWG1WBi8fHpMLtGaBAdSw==
-X-Received: by 2002:a17:907:868a:b0:ae0:bf99:6c5d with SMTP id a640c23a62f3a-af4c48081efmr996748966b.26.1753525865125;
-        Sat, 26 Jul 2025 03:31:05 -0700 (PDT)
-Received: from masalkhi.. (dynamic-176-003-010-139.176.3.pool.telefonica.de. [176.3.10.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635b427aesm121908666b.145.2025.07.26.03.31.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 03:31:04 -0700 (PDT)
-From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-To: abd.masalkhi@gmail.com
-Cc: arnd@arndb.de,
-	christophe.jaillet@wanadoo.fr,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	luoyifan@cmss.chinamobile.com,
-	robh@kernel.org
-Subject: Re: [PATCH v7 2/3] eeprom: add driver for ST M24LR series RFID/NFC EEPROM chips
-Date: Sat, 26 Jul 2025 10:31:01 +0000
-Message-ID: <20250726103101.1218-1-abd.masalkhi@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250717063934.5083-3-abd.masalkhi@gmail.com>
-References: <20250717063934.5083-3-abd.masalkhi@gmail.com>
+	s=arc-20240116; t=1753525922; c=relaxed/simple;
+	bh=7QdmV+MxNGZbFg4lTOCkl1xwDpnWx5/47P8cBvhZmMQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=IG9957XZXjvpD2AhgsjW9GYSyYukjUOclcSi5rkyR10w605OLWxFQ4YJHVeXR5E5bnkZAAIiecmAND0I+191YI95xoFWsSTIx/qnneo+UiOcBjApf/CWKGkouef1FjHrYRXMpfOhgrw4bahwYeP/1wVPZb1C+RbG/ak7PoVAiEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HuIWqo6o; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TA+UnVW/; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6932BEC01AD;
+	Sat, 26 Jul 2025 06:32:00 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Sat, 26 Jul 2025 06:32:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1753525920;
+	 x=1753612320; bh=5xE3kZFDNIi0jK+NzkWMjAQM6saxkvjdf1chQt0IQhg=; b=
+	HuIWqo6o3daGdPZO4LAuPo19CaGjvym7RLnyuBrFPHm8sB9WOdtQsc6kqpk5EaEw
+	eQVzjba5o3hCr0KgP8w/uwdSax94cjED7KmDSlF4UtOcsHe9PKGNOwt1wAjsgAg8
+	Q2tUVyzu97MPa49pV7kTQLa+pNvoMphTT72h1AbRhJjvYtQe06Oj42PNGdKeR/RV
+	CAhVQ8SSf51UiQrDsL/vJikMIiCb3Su6tjGH92gL4iV9GvTrPVysHALwg3uIIrIx
+	p5OZ0ri/ElSqJijPMEfU6nMW8M0tdWih1cHqUVXUjdS5Po1ZQempWfke9uvBNf3p
+	ehQ2J4mKIGd87Bz6Xn1FPg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1753525920; x=
+	1753612320; bh=5xE3kZFDNIi0jK+NzkWMjAQM6saxkvjdf1chQt0IQhg=; b=T
+	A+UnVW/tHK6qaYQmMPMqXfmX4djzgUrh2E3gHxTQbJqVUXmSn+hBUkWoZ67BeEB8
+	EekLrXbhjYT3uqajaJOmrhbS7vhfwhfE6MPf0h19PmoBOioNnmE1OetWoTJDcaWx
+	/2cToS4zeZlwLOJaWQ1AC/0n9388eJW+A/XmpHEwLIqBWdhHQMlJB1ImWHurjySi
+	nn7JFbKkfh97ye52UxNTigPucjtieK80X83KPRt2OggX4GAW0BlnFHoXLkNxrQrk
+	+uVKXBMP2xVmXypcSKtUdqOY1vCe3aZEBGAr4hms7PuQRMM2ph0uo/CKSU4Yu+fT
+	/JJJfM9ISPPWVj3Pq2jQA==
+X-ME-Sender: <xms:oK6EaA7UJ1odwnLrRLn30hdRv-SvENXtVFQ143_buXbYuaqEUrfgUg>
+    <xme:oK6EaB76VxSmIQu1U6tn2T9m1eOM0MTP5qPeekjfvh1tzhP4hn47c0ypCIzuVRjmr
+    OHCEHA2jvPANTSCMYo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekiedukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpeefueegkeffveeugeehieehiedukeegfefhffeutdettdffteeluefhheetkeekvden
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgu
+    sgdruggvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrg
+    gurdhorhhgpdhrtghpthhtohepshhotgeslhhishhtshdrlhhinhhugidruggvvhdprhgt
+    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:oK6EaE4NjnP8RP89XXr5z0etVGs_ZC5G9jNkqn0PXQlLIRBKQY00KQ>
+    <xmx:oK6EaBZRal4rIaJAhZY6GMcz78k9fYYXnehJC_sRjogzJe4tq_RBGw>
+    <xmx:oK6EaJ50BxJ36p96Vfm6gGpoxp9cQTt8rpMZKi9oC70bPEYbgsnWCA>
+    <xmx:oK6EaEBYsBojBd1kcN_E9SyEMxUX7T6J7r1OybeSm5JEm3pNY37dig>
+    <xmx:oK6EaMqaqNgRVyWiBR1jepHPTd6laIlQEinJ0GLBMZ_DJqnZxRLcqlMd>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1F80B700065; Sat, 26 Jul 2025 06:32:00 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: Td03a27401e83a0cb
+Date: Sat, 26 Jul 2025 12:31:12 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, soc@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Message-Id: <66ad07fe-3aa5-496c-8c5b-1b7ed18eb056@app.fastmail.com>
+In-Reply-To: <564b7ace-bb5f-430e-a7f1-9f6a41305e10@app.fastmail.com>
+References: <564b7ace-bb5f-430e-a7f1-9f6a41305e10@app.fastmail.com>
+Subject: [GIT PULL 0/5] soc: new SoC support for 6.17
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+The following changes since commit 86731a2a651e58953fc949573895f2fa6d456=
+841:
 
-Gentle ping.
+  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
 
-On Thu, Jul 17, 2025 at 06:39 +0000, Abd-Alrhman Masalkhi wrote:
-> adds support for STMicroelectronics M24LRxx devices, which expose
-> two separate I2C addresses: one for system control and one for EEPROM
-> access. The driver implements both a sysfs-based interface for control
-> registers (e.g. UID, password authentication) and an nvmem provider
-> for EEPROM access.
->
-> Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-> ---
-> Changes in v7:
->  - Drop unused function: m24lr_parse_le_value()
->  - Link to v6: https://lore.kernel.org/all/20250706105311.395162-3-abd.masalkhi@gmail.com/
->
-> Changes in v6:
->  - Added cleanup on UID read failure (removes bin file before returning)
->  - Used size_add() to prevent overflow in sysfs read/write bounds check
->  - Corrected type of return variables (using ssize_t consistently)
->  - Replaced dev_err() with dev_err_probe()
->  - Small style and formatting cleanups
->  - Link to v5: https://lore.kernel.org/all/20250704123914.11216-3-abd.masalkhi@gmail.com/
->
-> Changes in v5:
->  - Fixed function signatures in m24lr_ctl_sss_read and m24lr_ctl_sss_write
->    to use const struct bin_attribute *attr
->  - Link to v4: https://lore.kernel.org/lkml/20250608182714.3359441-3-abd.masalkhi@gmail.com/
->
-> Changes in v4:
->  - Moved the source file to the eeprom/ directory
->  - Removed use of unlikely() macro
->  - Removed use of EIO as a fallback error
->  - Stopped dynamically creating sysfs attributes
->  - Replaced per-sector SSS attributes with a single bin_attribute
->    for all SSS
->  - Introduced total_sectors sysfs attribute to report the number
->    of valid sectors
->  - Avoided sharing a single show/store callback across multiple
->    attribute types
->  - Link to v3: https://lore.kernel.org/lkml/20250606120631.3140054-3-abd.masalkhi@gmail.com/
->
-> Changes in v3:
->  - Fully support the M24LR chips, including EEPROM access, no need for
->    the standard at24 driver to handle EEPROM separately.
->  - Rename the driver file from m24lr_ctl.c to m24lr.c.
->  - Rename all identifiers from the m24lr_ctl prefix to m24lr.
->  - Retain the m24lr_ctl prefix for control-related routines to distinguish
->    them from EEPROM-related logic.
->  - Drop usage of the I2C mux API.
->  - Use the NVMEM subsystem to handle EEPROM access.
->  - Add REGMAP support for EEPROM register access.
->  - Update Kconfig entry to reflect that the driver now supports both
->    control and EEPROM functionality.
->  - Link to v2: https://lore.kernel.org/lkml/20250601153022.2027919-3-abd.masalkhi@gmail.com/
->
-> Changes in v2:
->  - Fix compiling Errors and Warnings
->  - Replace scnprintf with sysfs_emit
->  - Drop success log message from probe.
->  - Link to v1: https://lore.kernel.org/lkml/20250531081159.2007319-3-abd.masalkhi@gmail.com/
->
-> Comment:
->  - Running checkpatch emit a warning for non-const regmap_config.
->    The variable must remain auto and mutable due to runtime manipulation.
-> ---
->  drivers/misc/eeprom/Kconfig  |  18 ++
->  drivers/misc/eeprom/Makefile |   1 +
->  drivers/misc/eeprom/m24lr.c  | 606 +++++++++++++++++++++++++++++++++++
->  3 files changed, 625 insertions(+)
->  create mode 100644 drivers/misc/eeprom/m24lr.c
->
-> diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
-> index cb1c4b8e7fd3..cb0ce243babd 100644
-> --- a/drivers/misc/eeprom/Kconfig
-> +++ b/drivers/misc/eeprom/Kconfig
-> @@ -119,4 +119,22 @@ config EEPROM_EE1004
->  	  This driver can also be built as a module.  If so, the module
->  	  will be called ee1004.
->  
-> +config EEPROM_M24LR
-> +	tristate "STMicroelectronics M24LR RFID/NFC EEPROM support"
-> +	depends on I2C && SYSFS
-> +	select REGMAP_I2C
-> +	select NVMEM
-> +	select NVMEM_SYSFS
-> +	help
-> +	  This enables support for STMicroelectronics M24LR RFID/NFC EEPROM
-> +	  chips. These dual-interface devices expose two I2C addresses:
-> +	  one for EEPROM memory access and another for control and system
-> +	  configuration (e.g. UID, password handling).
-> +
-> +	  This driver provides a sysfs interface for control functions and
-> +	  integrates with the nvmem subsystem for EEPROM access.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called m24lr.
-> +
->  endmenu
-> diff --git a/drivers/misc/eeprom/Makefile b/drivers/misc/eeprom/Makefile
-> index 65794e526d5d..8f311fd6a4ce 100644
-> --- a/drivers/misc/eeprom/Makefile
-> +++ b/drivers/misc/eeprom/Makefile
-> @@ -7,3 +7,4 @@ obj-$(CONFIG_EEPROM_93XX46)	+= eeprom_93xx46.o
->  obj-$(CONFIG_EEPROM_DIGSY_MTC_CFG) += digsy_mtc_eeprom.o
->  obj-$(CONFIG_EEPROM_IDT_89HPESX) += idt_89hpesx.o
->  obj-$(CONFIG_EEPROM_EE1004)	+= ee1004.o
-> +obj-$(CONFIG_EEPROM_M24LR) += m24lr.o
-> diff --git a/drivers/misc/eeprom/m24lr.c b/drivers/misc/eeprom/m24lr.c
-> new file mode 100644
-> index 000000000000..0e37f74881ce
-> --- /dev/null
-> +++ b/drivers/misc/eeprom/m24lr.c
-> @@ -0,0 +1,606 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * m24lr.c - Sysfs control interface for ST M24LR series RFID/NFC chips
-> + *
-> + * Copyright (c) 2025 Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-> + *
-> + * This driver implements both the sysfs-based control interface and EEPROM
-> + * access for STMicroelectronics M24LR series chips (e.g., M24LR04E-R).
-> + * It provides access to control registers for features such as password
-> + * authentication, memory protection, and device configuration. In addition,
-> + * it manages read and write operations to the EEPROM region of the chip.
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/nvmem-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#define M24LR_WRITE_TIMEOUT	  25u
-> +#define M24LR_READ_TIMEOUT	  (M24LR_WRITE_TIMEOUT)
-> +
-> +/**
-> + * struct m24lr_chip - describes chip-specific sysfs layout
-> + * @sss_len:       the length of the sss region
-> + * @page_size:	   chip-specific limit on the maximum number of bytes allowed
-> + *		   in a single write operation.
-> + * @eeprom_size:   size of the EEPROM in byte
-> + *
-> + * Supports multiple M24LR chip variants (e.g., M24LRxx) by allowing each
-> + * to define its own set of sysfs attributes, depending on its available
-> + * registers and features.
-> + */
-> +struct m24lr_chip {
-> +	unsigned int sss_len;
-> +	unsigned int page_size;
-> +	unsigned int eeprom_size;
-> +};
-> +
-> +/**
-> + * struct m24lr - core driver data for M24LR chip control
-> + * @uid:           64 bits unique identifier stored in the device
-> + * @sss_len:       the length of the sss region
-> + * @page_size:	   chip-specific limit on the maximum number of bytes allowed
-> + *		   in a single write operation.
-> + * @eeprom_size:   size of the EEPROM in byte
-> + * @ctl_regmap:	   regmap interface for accessing the system parameter sector
-> + * @eeprom_regmap: regmap interface for accessing the EEPROM
-> + * @lock:	   mutex to synchronize operations to the device
-> + *
-> + * Central data structure holding the state and resources used by the
-> + * M24LR device driver.
-> + */
-> +struct m24lr {
-> +	u64 uid;
-> +	unsigned int sss_len;
-> +	unsigned int page_size;
-> +	unsigned int eeprom_size;
-> +	struct regmap *ctl_regmap;
-> +	struct regmap *eeprom_regmap;
-> +	struct mutex lock;	 /* synchronize operations to the device */
-> +};
-> +
-> +static const struct regmap_range m24lr_ctl_vo_ranges[] = {
-> +	regmap_reg_range(0, 63),
-> +};
-> +
-> +static const struct regmap_access_table m24lr_ctl_vo_table = {
-> +	.yes_ranges = m24lr_ctl_vo_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(m24lr_ctl_vo_ranges),
-> +};
-> +
-> +static const struct regmap_config m24lr_ctl_regmap_conf = {
-> +	.name = "m24lr_ctl",
-> +	.reg_stride = 1,
-> +	.reg_bits = 16,
-> +	.val_bits = 8,
-> +	.disable_locking = false,
-> +	.cache_type = REGCACHE_RBTREE,/* Flat can't be used, there's huge gap */
-> +	.volatile_table = &m24lr_ctl_vo_table,
-> +};
-> +
-> +/* Chip descriptor for M24LR04E-R variant */
-> +static const struct m24lr_chip m24lr04e_r_chip = {
-> +	.page_size = 4,
-> +	.eeprom_size = 512,
-> +	.sss_len = 4,
-> +};
-> +
-> +/* Chip descriptor for M24LR16E-R variant */
-> +static const struct m24lr_chip m24lr16e_r_chip = {
-> +	.page_size = 4,
-> +	.eeprom_size = 2048,
-> +	.sss_len = 16,
-> +};
-> +
-> +/* Chip descriptor for M24LR64E-R variant */
-> +static const struct m24lr_chip m24lr64e_r_chip = {
-> +	.page_size = 4,
-> +	.eeprom_size = 8192,
-> +	.sss_len = 64,
-> +};
-> +
-> +static const struct i2c_device_id m24lr_ids[] = {
-> +	{ "m24lr04e-r", (kernel_ulong_t)&m24lr04e_r_chip},
-> +	{ "m24lr16e-r", (kernel_ulong_t)&m24lr16e_r_chip},
-> +	{ "m24lr64e-r", (kernel_ulong_t)&m24lr64e_r_chip},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, m24lr_ids);
-> +
-> +static const struct of_device_id m24lr_of_match[] = {
-> +	{ .compatible = "st,m24lr04e-r", .data = &m24lr04e_r_chip},
-> +	{ .compatible = "st,m24lr16e-r", .data = &m24lr16e_r_chip},
-> +	{ .compatible = "st,m24lr64e-r", .data = &m24lr64e_r_chip},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, m24lr_of_match);
-> +
-> +/**
-> + * m24lr_regmap_read - read data using regmap with retry on failure
-> + * @regmap:  regmap instance for the device
-> + * @buf:     buffer to store the read data
-> + * @size:    number of bytes to read
-> + * @offset:  starting register address
-> + *
-> + * Attempts to read a block of data from the device with retries and timeout.
-> + * Some M24LR chips may transiently NACK reads (e.g., during internal write
-> + * cycles), so this function retries with a short sleep until the timeout
-> + * expires.
-> + *
-> + * Returns:
-> + *	 Number of bytes read on success,
-> + *	 -ETIMEDOUT if the read fails within the timeout window.
-> + */
-> +static ssize_t m24lr_regmap_read(struct regmap *regmap, u8 *buf,
-> +				 size_t size, unsigned int offset)
-> +{
-> +	int err;
-> +	unsigned long timeout, read_time;
-> +	ssize_t ret = -ETIMEDOUT;
-> +
-> +	timeout = jiffies + msecs_to_jiffies(M24LR_READ_TIMEOUT);
-> +	do {
-> +		read_time = jiffies;
-> +
-> +		err = regmap_bulk_read(regmap, offset, buf, size);
-> +		if (!err) {
-> +			ret = size;
-> +			break;
-> +		}
-> +
-> +		usleep_range(1000, 2000);
-> +	} while (time_before(read_time, timeout));
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * m24lr_regmap_write - write data using regmap with retry on failure
-> + * @regmap: regmap instance for the device
-> + * @buf:    buffer containing the data to write
-> + * @size:   number of bytes to write
-> + * @offset: starting register address
-> + *
-> + * Attempts to write a block of data to the device with retries and a timeout.
-> + * Some M24LR devices may NACK I2C writes while an internal write operation
-> + * is in progress. This function retries the write operation with a short delay
-> + * until it succeeds or the timeout is reached.
-> + *
-> + * Returns:
-> + *	 Number of bytes written on success,
-> + *	 -ETIMEDOUT if the write fails within the timeout window.
-> + */
-> +static ssize_t m24lr_regmap_write(struct regmap *regmap, const u8 *buf,
-> +				  size_t size, unsigned int offset)
-> +{
-> +	int err;
-> +	unsigned long timeout, write_time;
-> +	ssize_t ret = -ETIMEDOUT;
-> +
-> +	timeout = jiffies + msecs_to_jiffies(M24LR_WRITE_TIMEOUT);
-> +
-> +	do {
-> +		write_time = jiffies;
-> +
-> +		err = regmap_bulk_write(regmap, offset, buf, size);
-> +		if (!err) {
-> +			ret = size;
-> +			break;
-> +		}
-> +
-> +		usleep_range(1000, 2000);
-> +	} while (time_before(write_time, timeout));
-> +
-> +	return ret;
-> +}
-> +
-> +static ssize_t m24lr_read(struct m24lr *m24lr, u8 *buf, size_t size,
-> +			  unsigned int offset, bool is_eeprom)
-> +{
-> +	struct regmap *regmap;
-> +	ssize_t ret;
-> +
-> +	if (is_eeprom)
-> +		regmap = m24lr->eeprom_regmap;
-> +	else
-> +		regmap = m24lr->ctl_regmap;
-> +
-> +	mutex_lock(&m24lr->lock);
-> +	ret = m24lr_regmap_read(regmap, buf, size, offset);
-> +	mutex_unlock(&m24lr->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * m24lr_write - write buffer to M24LR device with page alignment handling
-> + * @m24lr:     pointer to driver context
-> + * @buf:       data buffer to write
-> + * @size:      number of bytes to write
-> + * @offset:    target register address in the device
-> + * @is_eeprom: true if the write should target the EEPROM,
-> + *             false if it should target the system parameters sector.
-> + *
-> + * Writes data to the M24LR device using regmap, split into chunks no larger
-> + * than page_size to respect device-specific write limitations (e.g., page
-> + * size or I2C hold-time concerns). Each chunk is aligned to the page boundary
-> + * defined by page_size.
-> + *
-> + * Returns:
-> + *	 Total number of bytes written on success,
-> + *	 A negative error code if any write fails.
-> + */
-> +static ssize_t m24lr_write(struct m24lr *m24lr, const u8 *buf, size_t size,
-> +			   unsigned int offset, bool is_eeprom)
-> +{
-> +	unsigned int n, next_sector;
-> +	struct regmap *regmap;
-> +	ssize_t ret = 0;
-> +	ssize_t err;
-> +
-> +	if (is_eeprom)
-> +		regmap = m24lr->eeprom_regmap;
-> +	else
-> +		regmap = m24lr->ctl_regmap;
-> +
-> +	n = min_t(unsigned int, size, m24lr->page_size);
-> +	next_sector = roundup(offset + 1, m24lr->page_size);
-> +	if (offset + n > next_sector)
-> +		n = next_sector - offset;
-> +
-> +	mutex_lock(&m24lr->lock);
-> +	while (n) {
-> +		err = m24lr_regmap_write(regmap, buf + offset, n, offset);
-> +		if (IS_ERR_VALUE(err)) {
-> +			if (!ret)
-> +				ret = err;
-> +
-> +			break;
-> +		}
-> +
-> +		offset += n;
-> +		size -= n;
-> +		ret += n;
-> +		n = min_t(unsigned int, size, m24lr->page_size);
-> +	}
-> +	mutex_unlock(&m24lr->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * m24lr_write_pass - Write password to M24LR043-R using secure format
-> + * @m24lr: Pointer to device control structure
-> + * @buf:   Input buffer containing hex-encoded password
-> + * @count: Number of bytes in @buf
-> + * @code:  Operation code to embed between password copies
-> + *
-> + * This function parses a 4-byte password, encodes it in  big-endian format,
-> + * and constructs a 9-byte sequence of the form:
-> + *
-> + *	  [BE(password), code, BE(password)]
-> + *
-> + * The result is written to register 0x0900 (2304), which is the password
-> + * register in M24LR04E-R chip.
-> + *
-> + * Return: Number of bytes written on success, or negative error code on failure
-> + */
-> +static ssize_t m24lr_write_pass(struct m24lr *m24lr, const char *buf,
-> +				size_t count, u8 code)
-> +{
-> +	__be32 be_pass;
-> +	u8 output[9];
-> +	ssize_t ret;
-> +	u32 pass;
-> +	int err;
-> +
-> +	if (!count)
-> +		return -EINVAL;
-> +
-> +	if (count > 8)
-> +		return -EINVAL;
-> +
-> +	err = kstrtou32(buf, 16, &pass);
-> +	if (err)
-> +		return err;
-> +
-> +	be_pass = cpu_to_be32(pass);
-> +
-> +	memcpy(output, &be_pass, sizeof(be_pass));
-> +	output[4] = code;
-> +	memcpy(output + 5, &be_pass, sizeof(be_pass));
-> +
-> +	mutex_lock(&m24lr->lock);
-> +	ret = m24lr_regmap_write(m24lr->ctl_regmap, output, 9, 2304);
-> +	mutex_unlock(&m24lr->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static ssize_t m24lr_read_reg_le(struct m24lr *m24lr, u64 *val,
-> +				 unsigned int reg_addr,
-> +				 unsigned int reg_size)
-> +{
-> +	ssize_t ret;
-> +	__le64 input = 0;
-> +
-> +	ret = m24lr_read(m24lr, (u8 *)&input, reg_size, reg_addr, false);
-> +	if (IS_ERR_VALUE(ret))
-> +		return ret;
-> +
-> +	if (ret != reg_size)
-> +		return -EINVAL;
-> +
-> +	switch (reg_size) {
-> +	case 1:
-> +		*val = *(u8 *)&input;
-> +		break;
-> +	case 2:
-> +		*val = le16_to_cpu((__le16)input);
-> +		break;
-> +	case 4:
-> +		*val = le32_to_cpu((__le32)input);
-> +		break;
-> +	case 8:
-> +		*val = le64_to_cpu((__le64)input);
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	};
-> +
-> +	return 0;
-> +}
-> +
-> +static int m24lr_nvmem_read(void *priv, unsigned int offset, void *val,
-> +			    size_t bytes)
-> +{
-> +	ssize_t err;
-> +	struct m24lr *m24lr = priv;
-> +
-> +	if (!bytes)
-> +		return bytes;
-> +
-> +	if (offset + bytes > m24lr->eeprom_size)
-> +		return -EINVAL;
-> +
-> +	err = m24lr_read(m24lr, val, bytes, offset, true);
-> +	if (IS_ERR_VALUE(err))
-> +		return err;
-> +
-> +	return 0;
-> +}
-> +
-> +static int m24lr_nvmem_write(void *priv, unsigned int offset, void *val,
-> +			     size_t bytes)
-> +{
-> +	ssize_t err;
-> +	struct m24lr *m24lr = priv;
-> +
-> +	if (!bytes)
-> +		return -EINVAL;
-> +
-> +	if (offset + bytes > m24lr->eeprom_size)
-> +		return -EINVAL;
-> +
-> +	err = m24lr_write(m24lr, val, bytes, offset, true);
-> +	if (IS_ERR_VALUE(err))
-> +		return err;
-> +
-> +	return 0;
-> +}
-> +
-> +static ssize_t m24lr_ctl_sss_read(struct file *filep, struct kobject *kobj,
-> +				  const struct bin_attribute *attr, char *buf,
-> +				  loff_t offset, size_t count)
-> +{
-> +	struct m24lr *m24lr = attr->private;
-> +
-> +	if (!count)
-> +		return count;
-> +
-> +	if (size_add(offset, count) > m24lr->sss_len)
-> +		return -EINVAL;
-> +
-> +	return m24lr_read(m24lr, buf, count, offset, false);
-> +}
-> +
-> +static ssize_t m24lr_ctl_sss_write(struct file *filep, struct kobject *kobj,
-> +				   const struct bin_attribute *attr, char *buf,
-> +				   loff_t offset, size_t count)
-> +{
-> +	struct m24lr *m24lr = attr->private;
-> +
-> +	if (!count)
-> +		return -EINVAL;
-> +
-> +	if (size_add(offset, count) > m24lr->sss_len)
-> +		return -EINVAL;
-> +
-> +	return m24lr_write(m24lr, buf, count, offset, false);
-> +}
-> +static BIN_ATTR(sss, 0600, m24lr_ctl_sss_read, m24lr_ctl_sss_write, 0);
-> +
-> +static ssize_t new_pass_store(struct device *dev, struct device_attribute *attr,
-> +			      const char *buf, size_t count)
-> +{
-> +	struct m24lr *m24lr = i2c_get_clientdata(to_i2c_client(dev));
-> +
-> +	return m24lr_write_pass(m24lr, buf, count, 7);
-> +}
-> +static DEVICE_ATTR_WO(new_pass);
-> +
-> +static ssize_t unlock_store(struct device *dev, struct device_attribute *attr,
-> +			    const char *buf, size_t count)
-> +{
-> +	struct m24lr *m24lr = i2c_get_clientdata(to_i2c_client(dev));
-> +
-> +	return m24lr_write_pass(m24lr, buf, count, 9);
-> +}
-> +static DEVICE_ATTR_WO(unlock);
-> +
-> +static ssize_t uid_show(struct device *dev, struct device_attribute *attr,
-> +			char *buf)
-> +{
-> +	struct m24lr *m24lr = i2c_get_clientdata(to_i2c_client(dev));
-> +
-> +	return sysfs_emit(buf, "%llx\n", m24lr->uid);
-> +}
-> +static DEVICE_ATTR_RO(uid);
-> +
-> +static ssize_t total_sectors_show(struct device *dev,
-> +				  struct device_attribute *attr, char *buf)
-> +{
-> +	struct m24lr *m24lr = i2c_get_clientdata(to_i2c_client(dev));
-> +
-> +	return sysfs_emit(buf, "%x\n", m24lr->sss_len);
-> +}
-> +static DEVICE_ATTR_RO(total_sectors);
-> +
-> +static struct attribute *m24lr_ctl_dev_attrs[] = {
-> +	&dev_attr_unlock.attr,
-> +	&dev_attr_new_pass.attr,
-> +	&dev_attr_uid.attr,
-> +	&dev_attr_total_sectors.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct m24lr_chip *m24lr_get_chip(struct device *dev)
-> +{
-> +	const struct m24lr_chip *ret;
-> +	const struct i2c_device_id *id;
-> +
-> +	id = i2c_match_id(m24lr_ids, to_i2c_client(dev));
-> +
-> +	if (dev->of_node && of_match_device(m24lr_of_match, dev))
-> +		ret = of_device_get_match_data(dev);
-> +	else if (id)
-> +		ret = (void *)id->driver_data;
-> +	else
-> +		ret = acpi_device_get_match_data(dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int m24lr_probe(struct i2c_client *client)
-> +{
-> +	struct regmap_config eeprom_regmap_conf = {0};
-> +	struct nvmem_config nvmem_conf = {0};
-> +	struct device *dev = &client->dev;
-> +	struct i2c_client *eeprom_client;
-> +	const struct m24lr_chip *chip;
-> +	struct regmap *eeprom_regmap;
-> +	struct nvmem_device *nvmem;
-> +	struct regmap *ctl_regmap;
-> +	struct m24lr *m24lr;
-> +	u32 regs[2];
-> +	long err;
-> +
-> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
-> +		return -EOPNOTSUPP;
-> +
-> +	chip = m24lr_get_chip(dev);
-> +	if (!chip)
-> +		return -ENODEV;
-> +
-> +	m24lr = devm_kzalloc(dev, sizeof(struct m24lr), GFP_KERNEL);
-> +	if (!m24lr)
-> +		return -ENOMEM;
-> +
-> +	err = device_property_read_u32_array(dev, "reg", regs, ARRAY_SIZE(regs));
-> +	if (err)
-> +		return dev_err_probe(dev, err, "Failed to read 'reg' property\n");
-> +
-> +	/* Create a second I2C client for the eeprom interface */
-> +	eeprom_client = devm_i2c_new_dummy_device(dev, client->adapter, regs[1]);
-> +	if (IS_ERR(eeprom_client))
-> +		return dev_err_probe(dev, PTR_ERR(eeprom_client),
-> +				     "Failed to create dummy I2C client for the EEPROM\n");
-> +
-> +	ctl_regmap = devm_regmap_init_i2c(client, &m24lr_ctl_regmap_conf);
-> +	if (IS_ERR(ctl_regmap))
-> +		return dev_err_probe(dev, PTR_ERR(ctl_regmap),
-> +				      "Failed to init regmap\n");
-> +
-> +	eeprom_regmap_conf.name = "m24lr_eeprom";
-> +	eeprom_regmap_conf.reg_bits = 16;
-> +	eeprom_regmap_conf.val_bits = 8;
-> +	eeprom_regmap_conf.disable_locking = true;
-> +	eeprom_regmap_conf.max_register = chip->eeprom_size - 1;
-> +
-> +	eeprom_regmap = devm_regmap_init_i2c(eeprom_client,
-> +					     &eeprom_regmap_conf);
-> +	if (IS_ERR(eeprom_regmap))
-> +		return dev_err_probe(dev, PTR_ERR(eeprom_regmap),
-> +				     "Failed to init regmap\n");
-> +
-> +	mutex_init(&m24lr->lock);
-> +	m24lr->sss_len = chip->sss_len;
-> +	m24lr->page_size = chip->page_size;
-> +	m24lr->eeprom_size = chip->eeprom_size;
-> +	m24lr->eeprom_regmap = eeprom_regmap;
-> +	m24lr->ctl_regmap = ctl_regmap;
-> +
-> +	nvmem_conf.dev = &eeprom_client->dev;
-> +	nvmem_conf.owner = THIS_MODULE;
-> +	nvmem_conf.type = NVMEM_TYPE_EEPROM;
-> +	nvmem_conf.reg_read = m24lr_nvmem_read;
-> +	nvmem_conf.reg_write = m24lr_nvmem_write;
-> +	nvmem_conf.size = chip->eeprom_size;
-> +	nvmem_conf.word_size = 1;
-> +	nvmem_conf.stride = 1;
-> +	nvmem_conf.priv = m24lr;
-> +
-> +	nvmem = devm_nvmem_register(dev, &nvmem_conf);
-> +	if (IS_ERR(nvmem))
-> +		return dev_err_probe(dev, PTR_ERR(nvmem),
-> +				     "Failed to register nvmem\n");
-> +
-> +	i2c_set_clientdata(client, m24lr);
-> +	i2c_set_clientdata(eeprom_client, m24lr);
-> +
-> +	bin_attr_sss.size = chip->sss_len;
-> +	bin_attr_sss.private = m24lr;
-> +	err = sysfs_create_bin_file(&dev->kobj, &bin_attr_sss);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "Failed to create sss bin file\n");
-> +
-> +	/* test by reading the uid, if success store it */
-> +	err = m24lr_read_reg_le(m24lr, &m24lr->uid, 2324, sizeof(m24lr->uid));
-> +	if (IS_ERR_VALUE(err))
-> +		goto remove_bin_file;
-> +
-> +	return 0;
-> +
-> +remove_bin_file:
-> +	sysfs_remove_bin_file(&dev->kobj, &bin_attr_sss);
-> +
-> +	return err;
-> +}
-> +
-> +static void m24lr_remove(struct i2c_client *client)
-> +{
-> +	sysfs_remove_bin_file(&client->dev.kobj, &bin_attr_sss);
-> +}
-> +
-> +ATTRIBUTE_GROUPS(m24lr_ctl_dev);
-> +
-> +static struct i2c_driver m24lr_driver = {
-> +	.driver = {
-> +		.name = "m24lr",
-> +		.of_match_table = m24lr_of_match,
-> +		.dev_groups = m24lr_ctl_dev_groups,
-> +	},
-> +	.probe	  = m24lr_probe,
-> +	.remove = m24lr_remove,
-> +	.id_table = m24lr_ids,
-> +};
-> +module_i2c_driver(m24lr_driver);
-> +
-> +MODULE_AUTHOR("Abd-Alrhman Masalkhi");
-> +MODULE_DESCRIPTION("st m24lr control driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.43.0
->
+are available in the Git repository at:
 
--- 
-Best Regards,
-Abd-Alrhman
+  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-n=
+ewsoc-6.17
+
+for you to fetch changes up to 05a623030b3cc2250755e4d4d6b1440a03aed674:
+
+  Merge tag 'arm-sophgo-dt-for-v6.17' of https://github.com/sophgo/linux=
+ into soc/newsoc (2025-07-23 22:19:15 +0200)
+
+----------------------------------------------------------------
+soc: new SoC support for 6.17
+
+These five newly supported chips come with both devicetree descriptions
+and the changes to wire them up to the build system for easier bisection.
+
+The chips in question are:
+
+ - Marvell PXA1908 was the first 64-bit mobile phone chip from Marvell
+   in the product line that started with the Digital StrongARM SA1100
+   based PDAs and continued with the Intel PXA2xx that dominated early
+   smartphones. This one only made it only into a few products before the
+   entire product line was cut in 2015.
+
+ - The QiLai SoC is made by RISC-V core designer Andes Technologies
+   and is in the 'Voyager' reference board in MicroATX form factor.
+   It uses four in-order AX45MP cores, which is the midrange product
+   from Andes.
+
+ - CIX P1 is one of the few Arm chips designed for small workstations,
+   and this one uses 12 Cortex-A720/A520 cores, making it also one
+   of the only ARMv9.2 machines that one can but at the moment.
+
+ - Axiado AX3000 is an embedded chip with relative small Cortex-A53
+   CPU cores described as a "Trusted Control/Compute Unit" that can
+   be used as a BMC in servers. In addition to the usual I/O, this one
+   comes with 10GBit ethernet and and a 4TOPS NPU.
+
+ - Sophgo SG2000 is an embedded chip that comes with both RISC-V
+   and Arm cores that can run Linux. This was already supported for
+   RISC-V but now it also works on Arm
+
+One more chip, the Black Sesame C1200 did not make it in tirm for the
+merge window.
+
+----------------------------------------------------------------
+Alexander Sverdlin (5):
+      arm64: dts: sophgo: Add initial SG2000 SoC device tree
+      arm64: dts: sophgo: Add Duo Module 01
+      arm64: dts: sophgo: Add Duo Module 01 Evaluation Board
+      arm64: Add SOPHGO SOC family Kconfig support
+      arm64: defconfig: Enable rudimentary Sophgo SG2000 support
+
+Arnd Bergmann (5):
+      Merge branch 'newsoc/pxa1908' into soc/newsoc
+      Merge branch 'newsoc/andes' into soc/newsoc
+      Merge branch 'newsoc/cix-p1' into soc/newsoc
+      Merge branch 'newsoc/axiado' into soc/newsoc
+      Merge tag 'arm-sophgo-dt-for-v6.17' of https://github.com/sophgo/l=
+inux into soc/newsoc
+
+Ben Zong-You Xie (9):
+      riscv: add Andes SoC family Kconfig support
+      dt-bindings: riscv: add Andes QiLai SoC and the Voyager board bind=
+ings
+      dt-bindings: interrupt-controller: add Andes QiLai PLIC
+      dt-bindings: interrupt-controller: add Andes machine-level softwar=
+e interrupt controller
+      dt-bindings: timer: add Andes machine timer
+      riscv: dts: andes: add QiLai SoC device tree
+      riscv: dts: andes: add Voyager board device tree
+      riscv: defconfig: enable Andes SoC
+      MAINTAINERS: Add entry for Andes SoC
+
+Duje Mihanovi=C4=87 (5):
+      dt-bindings: mmc: sdhci-pxa: restrict pinctrl to pxav1
+      dt-bindings: marvell: Document PXA1908 SoC and samsung,coreprimeve=
+lte
+      arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+      arm64: dts: Add DTS for Marvell PXA1908 and samsung,coreprimevelte
+      MAINTAINERS: add myself as Marvell PXA1908 maintainer
+
+Fugang Duan (1):
+      arm64: Kconfig: add ARCH_CIX for cix silicons
+
+Gary Yang (1):
+      dt-bindings: clock: cix: Add CIX sky1 scmi clock id
+
+Guomin Chen (2):
+      dt-bindings: mailbox: add cix,sky1-mbox
+      mailbox: add CIX mailbox driver
+
+Harshit Shah (10):
+      dt-bindings: vendor-prefixes: Add Axiado Corporation
+      dt-bindings: arm: axiado: add AX3000 EVK compatible strings
+      dt-bindings: gpio: cdns: convert to YAML
+      dt-bindings: gpio: cdns: add Axiado AX3000 GPIO variant
+      dt-bindings: serial: cdns: add Axiado AX3000 UART controller
+      dt-bindings: i3c: cdns: add Axiado AX3000 I3C controller
+      arm64: add Axiado SoC family
+      arm64: dts: axiado: Add initial support for AX3000 SoC and eval bo=
+ard
+      arm64: defconfig: enable the Axiado family
+      MAINTAINERS: Add entry for Axiado
+
+Peter Chen (5):
+      dt-bindings: vendor-prefixes: Add CIX Technology Group Co., Ltd.
+      dt-bindings: arm: add CIX P1 (SKY1) SoC
+      arm64: defconfig: Enable CIX SoC
+      arm64: dts: cix: Add sky1 base dts initial support
+      MAINTAINERS: Add CIX SoC maintainer entry
+
+ Documentation/devicetree/bindings/arm/axiado.yaml  |  23 +
+ Documentation/devicetree/bindings/arm/cix.yaml     |  26 +
+ .../devicetree/bindings/arm/mrvl/mrvl.yaml         |   5 +
+ .../devicetree/bindings/gpio/cdns,gpio.txt         |  43 --
+ .../devicetree/bindings/gpio/cdns,gpio.yaml        |  84 +++
+ .../devicetree/bindings/i3c/cdns,i3c-master.yaml   |   7 +-
+ .../interrupt-controller/andestech,plicsw.yaml     |  54 ++
+ .../interrupt-controller/sifive,plic-1.0.0.yaml    |   1 +
+ .../devicetree/bindings/mailbox/cix,sky1-mbox.yaml |  77 +++
+ .../devicetree/bindings/mmc/sdhci-pxa.yaml         |  36 +-
+ Documentation/devicetree/bindings/riscv/andes.yaml |  25 +
+ .../devicetree/bindings/serial/cdns,uart.yaml      |   7 +-
+ .../devicetree/bindings/timer/andestech,plmt0.yaml |  53 ++
+ .../devicetree/bindings/vendor-prefixes.yaml       |   4 +
+ MAINTAINERS                                        |  38 ++
+ arch/arm64/Kconfig.platforms                       |  26 +
+ arch/arm64/boot/dts/Makefile                       |   3 +
+ arch/arm64/boot/dts/axiado/Makefile                |   2 +
+ arch/arm64/boot/dts/axiado/ax3000-evk.dts          |  79 +++
+ arch/arm64/boot/dts/axiado/ax3000.dtsi             | 520 ++++++++++++++=
++++
+ arch/arm64/boot/dts/cix/Makefile                   |   2 +
+ arch/arm64/boot/dts/cix/sky1-orion-o6.dts          |  39 ++
+ arch/arm64/boot/dts/cix/sky1.dtsi                  | 330 +++++++++++
+ arch/arm64/boot/dts/marvell/Makefile               |   2 +
+ arch/arm64/boot/dts/marvell/mmp/Makefile           |   2 +
+ .../marvell/mmp/pxa1908-samsung-coreprimevelte.dts | 331 +++++++++++
+ arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi       | 300 ++++++++++
+ arch/arm64/boot/dts/sophgo/Makefile                |   2 +
+ .../dts/sophgo/sg2000-milkv-duo-module-01-evb.dts  |  76 +++
+ .../dts/sophgo/sg2000-milkv-duo-module-01.dtsi     |  40 ++
+ arch/arm64/boot/dts/sophgo/sg2000.dtsi             |  86 +++
+ arch/arm64/configs/defconfig                       |   7 +
+ arch/riscv/Kconfig.socs                            |   7 +
+ arch/riscv/boot/dts/Makefile                       |   1 +
+ arch/riscv/boot/dts/andes/Makefile                 |   2 +
+ arch/riscv/boot/dts/andes/qilai-voyager.dts        |  28 +
+ arch/riscv/boot/dts/andes/qilai.dtsi               | 186 ++++++
+ arch/riscv/configs/defconfig                       |   1 +
+ drivers/mailbox/Kconfig                            |  10 +
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/cix-mailbox.c                      | 645 ++++++++++++++=
++++++++
+ include/dt-bindings/clock/cix,sky1.h               | 279 +++++++++
+ 42 files changed, 3428 insertions(+), 63 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/axiado.yaml
+ create mode 100644 Documentation/devicetree/bindings/arm/cix.yaml
+ delete mode 100644 Documentation/devicetree/bindings/gpio/cdns,gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/cdns,gpio.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controll=
+er/andestech,plicsw.yaml
+ create mode 100644 Documentation/devicetree/bindings/mailbox/cix,sky1-m=
+box.yaml
+ create mode 100644 Documentation/devicetree/bindings/riscv/andes.yaml
+ create mode 100644 Documentation/devicetree/bindings/timer/andestech,pl=
+mt0.yaml
+ create mode 100644 arch/arm64/boot/dts/axiado/Makefile
+ create mode 100644 arch/arm64/boot/dts/axiado/ax3000-evk.dts
+ create mode 100644 arch/arm64/boot/dts/axiado/ax3000.dtsi
+ create mode 100644 arch/arm64/boot/dts/cix/Makefile
+ create mode 100644 arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+ create mode 100644 arch/arm64/boot/dts/cix/sky1.dtsi
+ create mode 100644 arch/arm64/boot/dts/marvell/mmp/Makefile
+ create mode 100644 arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-core=
+primevelte.dts
+ create mode 100644 arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi
+ create mode 100644 arch/arm64/boot/dts/sophgo/Makefile
+ create mode 100644 arch/arm64/boot/dts/sophgo/sg2000-milkv-duo-module-0=
+1-evb.dts
+ create mode 100644 arch/arm64/boot/dts/sophgo/sg2000-milkv-duo-module-0=
+1.dtsi
+ create mode 100644 arch/arm64/boot/dts/sophgo/sg2000.dtsi
+ create mode 100644 arch/riscv/boot/dts/andes/Makefile
+ create mode 100644 arch/riscv/boot/dts/andes/qilai-voyager.dts
+ create mode 100644 arch/riscv/boot/dts/andes/qilai.dtsi
+ create mode 100644 drivers/mailbox/cix-mailbox.c
+ create mode 100644 include/dt-bindings/clock/cix,sky1.h
 
