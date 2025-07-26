@@ -1,61 +1,76 @@
-Return-Path: <linux-kernel+bounces-746864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FF8B12C34
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 22:34:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD3DB12C3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 22:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4994E652E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 20:33:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58F087A2CCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 20:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6007C288CB3;
-	Sat, 26 Jul 2025 20:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148B5288519;
+	Sat, 26 Jul 2025 20:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjzuBg2E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dBTimyJT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31247DA9C;
-	Sat, 26 Jul 2025 20:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E01E5701;
+	Sat, 26 Jul 2025 20:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753562036; cv=none; b=r86GEHA7b3XYkNR85JavVb9dc/eaVi9H5+jDCSVH19ZkDsN9M0xgXZQTHz+FeUf7Dv3xrsuZtKh1VvZdwYmBDnpSOAjko1h6/sxuFQt8j2c5Prj/zbASu68pV5O1q2zd+pVD+ZEix9mj2+mEFzJLyQs32EsQcNGBv4GiS9WU9r8=
+	t=1753562366; cv=none; b=OWNx/WcgkQEDSy4fOjX7Sr5ed81QeG2DQRgZUlEncixFrIrJHMie4QPPcm7nEkYSooKDkz9jVAqT965okZKCSs1AbEKQ9JzoMQVmEei+4bHD+5/1XobZzDO4qY1h0wd5g0dNET3vYL5D6n0r9pa+CEGTibrXdwF8GUY3sjaiTpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753562036; c=relaxed/simple;
-	bh=x6bDSChl3CH9hrcSrTX/awDg0AMaJqU9jJXWKacrETo=;
+	s=arc-20240116; t=1753562366; c=relaxed/simple;
+	bh=ACa4Q4L93Qc5PpnKOItLTHQAxADoXnbi55ttk8gIe8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BHQM8rzRTKvIpgvbjYCyLaG1l9N+NLyOuUxHH47eyUc+Pf00sEX9rKXGvAjLWQsxAmTEYW3AG7WMHy/1SYLrFiAU5Z4rMzI/ZL+iwsoD/yve6VgdcGEBuZNNhi2X+Y0/Tgc3iON7YBSTEpQf+qgoVE7jin7BU6ZybsetgjJXClY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tjzuBg2E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCA57C4CEED;
-	Sat, 26 Jul 2025 20:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753562036;
-	bh=x6bDSChl3CH9hrcSrTX/awDg0AMaJqU9jJXWKacrETo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tjzuBg2ExuJ8y8G0XxFBW9EpA34a7+hWV6Zs6qZSd0nWrDZvCITodzmB14jF9WZuz
-	 4zusLA06zbFGIAFi5xbTlosTRYoYb1/gbaoDAYaC1gnyUDbHL+vPrJaAS95pWe3VAL
-	 UAv57NP1o3DKPmkVNe0Bw71JqWXu33aQTuBpncb1Me1hAnz3uyiemoVn6ClTt+j09g
-	 IV6Micr5rai8b1IPnVR78pbxlnYPLs30vdObVdcjo9zrrZFcoiuSp5/jOLpF7nb04j
-	 vpdyqTSUNG8YBIWaDpIa9Ng8fDMcaw8FppsjzmI8jxRX+7UwCJbsPVDIXCFrmzyc4D
-	 b+2SYEl/4/M1A==
-Date: Sat, 26 Jul 2025 21:33:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: netdev@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-Subject: Re: [PATCH net-next 3/5] dpll: zl3073x: Add firmware loading
- functionality
-Message-ID: <20250726203351.GP1367887@horms.kernel.org>
-References: <20250725154136.1008132-1-ivecera@redhat.com>
- <20250725154136.1008132-4-ivecera@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JDWGqZC3Yu3PAqupjAhoXzV6n1W6VnEyy1yms+4Hz8w7zUXFWgpg9i0zDKRpEBNr9m/WLfPDRvKbVc2JfdyVYDGsqjzIzNZt0KVrkcbeogUWapTKmN+v/FjH1WLhZEXYRWB0v1xyyWyAnfFBy3CWS6O3ypexA+6JrwnV/C9hviY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dBTimyJT; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753562364; x=1785098364;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ACa4Q4L93Qc5PpnKOItLTHQAxADoXnbi55ttk8gIe8Y=;
+  b=dBTimyJToOyOgQ5uNN75keI+aZsA+2oTUtvZVa3XR6u+1cG+1OM7Vp0M
+   0zAfX27AIFD5UFJNx2Egm5Khph6o2p67IBwqd45bqwHltaWGaNKiKlKGG
+   ztzVBdcrGhC/JwPkjeVqJsJ4ObdOfIyFzKNhR+tHe9B8LD361F+qTfOIS
+   LglN4pdPRN+i5wQeIHsEuYrF96WZMtOygOW51j16wRcWjD4COhwbmImMZ
+   jevJ5U8hpAlTfHiti8VRAXW2kW2YC/KMQzOM8Qu4i0Z72Jn2F90u3ObqR
+   h1mCWFYBwMGdGZAKfXJUGL7pqZvTxA2YVg3PihSHBpyYM76SVHC5WD7JY
+   Q==;
+X-CSE-ConnectionGUID: 1sn03VsFRaKRgRZnT3BVRA==
+X-CSE-MsgGUID: raRSXYnNQLOoXjENF5pN5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="56013148"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="56013148"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 13:39:24 -0700
+X-CSE-ConnectionGUID: f9sQQltCSz+dYs/H/yTXaw==
+X-CSE-MsgGUID: TmrF0ZqsTzm2R1eWpDK5sw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="165869149"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 26 Jul 2025 13:39:23 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uflfr-000MGR-2h;
+	Sat, 26 Jul 2025 20:39:19 +0000
+Date: Sun, 27 Jul 2025 04:38:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>, masahiroy@kernel.org,
+	nicolas.schier@linux.dev, linux-kbuild@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: Re: [PATCH] kconfig: replace strcpy() with strlcpy() in symbol.c
+Message-ID: <202507270411.j9vfofzH-lkp@intel.com>
+References: <20250726191515.171012-1-suchitkarunakaran@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,63 +79,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250725154136.1008132-4-ivecera@redhat.com>
+In-Reply-To: <20250726191515.171012-1-suchitkarunakaran@gmail.com>
 
-On Fri, Jul 25, 2025 at 05:41:34PM +0200, Ivan Vecera wrote:
-> Add functionality for loading firmware files provided by the vendor
-> to be flashed into the device's internal flash memory. The firmware
-> consists of several components, such as the firmware executable itself,
-> chip-specific customizations, and configuration files.
-> 
-> The firmware file contains at least a flash utility, which is executed
-> on the device side, and one or more flashable components. Each component
-> has its own specific properties, such as the address where it should be
-> loaded during flashing, one or more destination flash pages, and
-> the flashing method that should be used.
-> 
-> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+Hi Suchit,
 
-Hi Ivan,
+kernel test robot noticed the following build errors:
 
-Some minor feedback from my side.
+[auto build test ERROR on masahiroy-kbuild/kbuild]
+[also build test ERROR on linus/master v6.16-rc7 next-20250725]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-...
+url:    https://github.com/intel-lab-lkp/linux/commits/Suchit-Karunakaran/kconfig-replace-strcpy-with-strlcpy-in-symbol-c/20250727-031729
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git kbuild
+patch link:    https://lore.kernel.org/r/20250726191515.171012-1-suchitkarunakaran%40gmail.com
+patch subject: [PATCH] kconfig: replace strcpy() with strlcpy() in symbol.c
+config: arc-randconfig-002-20250727 (attached as .config)
+compiler: arc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250727/202507270411.j9vfofzH-lkp@intel.com/reproduce)
 
-> diff --git a/drivers/dpll/zl3073x/fw.c b/drivers/dpll/zl3073x/fw.c
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507270411.j9vfofzH-lkp@intel.com/
 
-...
+All error/warnings (new ones prefixed by >>):
 
-> +/* Santity check */
+   /usr/bin/ld: scripts/kconfig/symbol.o: in function `sym_set_string_value':
+>> symbol.c:(.text+0x14cb): undefined reference to `strlcpy'
+   collect2: error: ld returned 1 exit status
+   make[3]: *** [scripts/Makefile.host:123: scripts/kconfig/conf] Error 1 shuffle=618416945
+   make[3]: Target 'oldconfig' not remade because of errors.
+   make[2]: *** [Makefile:735: oldconfig] Error 2 shuffle=618416945
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=618416945
+   make[1]: Target 'oldconfig' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=618416945
+   make: Target 'oldconfig' not remade because of errors.
+--
+   scripts/kconfig/symbol.c: In function 'sym_set_string_value':
+>> scripts/kconfig/symbol.c:780:9: warning: implicit declaration of function 'strlcpy'; did you mean 'strncpy'? [-Wimplicit-function-declaration]
+     780 |         strlcpy(val, newval, size);
+         |         ^~~~~~~
+         |         strncpy
+   /usr/bin/ld: scripts/kconfig/symbol.o: in function `sym_set_string_value':
+>> symbol.c:(.text+0x14cb): undefined reference to `strlcpy'
+   collect2: error: ld returned 1 exit status
+   make[3]: *** [scripts/Makefile.host:123: scripts/kconfig/conf] Error 1 shuffle=618416945
+   make[3]: Target 'olddefconfig' not remade because of errors.
+   make[2]: *** [Makefile:735: olddefconfig] Error 2 shuffle=618416945
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=618416945
+   make[1]: Target 'olddefconfig' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=618416945
+   make: Target 'olddefconfig' not remade because of errors.
 
-Sanity
-
-> +static_assert(ARRAY_SIZE(component_info) == ZL_FW_NUM_COMPONENTS);
-
-...
-
-> +int zl3073x_fw_flash(struct zl3073x_dev *zldev, struct zl3073x_fw *zlfw,
-> +		     struct netlink_ext_ack *extack)
-> +{
-> +	int i, rc;
-> +
-> +	for (i = 0; i < ZL_FW_NUM_COMPONENTS; i++) {
-> +		if (!zlfw->component[i])
-> +			continue; /* Component is not present */
-> +
-> +		rc = zl3073x_fw_component_flash(zldev, zlfw->component[i],
-> +						extack);
-> +		if (rc)
-> +			break;
-> +	}
-
-Perhaps it cannot happen in practice.
-But Smatch warns that rc may be used uninitialised below.
-And that does seem theoretically possible if all
-iterations of the loop above hit the "continue" path.
-
-> +
-> +	return rc;
-> +}
-
-...
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
