@@ -1,45 +1,44 @@
-Return-Path: <linux-kernel+bounces-746561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D737DB12843
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:50:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B12B12846
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6984F3B08A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:50:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB07A1C26D02
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE307DA73;
-	Sat, 26 Jul 2025 00:50:24 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F986190676;
+	Sat, 26 Jul 2025 00:52:58 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32662CA5A;
-	Sat, 26 Jul 2025 00:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F02188713;
+	Sat, 26 Jul 2025 00:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753491024; cv=none; b=e5+IhLHuUxmYIIRDpnvJi42bEsOxrqvrggybx35IzcmUh+TP/irOSv/CaDB0b5SSQujpvU4Y5F5bZZF6JtMa7UvBaHW4yUUfe6DkCZ7Pxyd518mNAEyJoA5XqNOH8RtXHK5OhQQK5yVrHvZK9CEDf1nxrME69ule4CPMCC1H20Y=
+	t=1753491177; cv=none; b=Vv9dDKpvoWwV12iyI0SvmzvAr7BK0EH8F84gaqr5idZbKmUEB/AOx1G0FAGEJCaQUTSYile6ykplIKQscP0Tsqhs7/PTkDRkWvt2NySzeoK+CSU3Aw7eJxNeBTiAIJUHrAZaHKUythMlg+jSW2oZtgM3jbb6dylBqj/ke5D1LVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753491024; c=relaxed/simple;
-	bh=/3c2aKYG7udY7zbDAsNEvbHD1nJ+QqSgSs3hTuZRXbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YTdZNsPyUXqhwmqDqd0bnbBKtTdAWBHu9T7DyCkXaWCt2eI1W4lZvMjyyGMnWXqK3CGXvj0pe0/tFiX1IsWyUWlH+MtWfgoIl6O4dXk8hBO0HzeiMn20+dQL0aiX4Wo2PqJKswdwZhJnnulzLray33Vo6Q3RbJWlMBlfwnIP8ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bpmJ855GTzGpwD;
-	Sat, 26 Jul 2025 08:46:00 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4D000180468;
-	Sat, 26 Jul 2025 08:50:12 +0800 (CST)
-Received: from [10.174.177.71] (10.174.177.71) by
- dggpemf500013.china.huawei.com (7.185.36.188) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 26 Jul 2025 08:50:11 +0800
-Message-ID: <2d59bf3d-212c-418f-97ac-2157ab1c2628@huawei.com>
-Date: Sat, 26 Jul 2025 08:50:10 +0800
+	s=arc-20240116; t=1753491177; c=relaxed/simple;
+	bh=It3v84FvEyIgsN41q1wzPslZzCABIVQHro6nB6+wysg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E8eiunU64r9DT9zpdsJDOOB74SE3wqdJH4Zw8LG88GkOVekda/qbG1eq2c5b3dtbdNZ9bRUO34nwdxRCsOiTzQlezfyX79NrYUosdoAIFni+xuJkdvzTx+DOaMQPbm2uUF4dpLgqR+iytRhUqDcmr5wME26kdvcnnWbHbEr/XMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bpmRz5MLVzKHMZB;
+	Sat, 26 Jul 2025 08:52:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 8696E1A0E8D;
+	Sat, 26 Jul 2025 08:52:46 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgDnpbHdJoRo46HlBQ--.48129S2;
+	Sat, 26 Jul 2025 08:52:46 +0800 (CST)
+Message-ID: <179f706c-b04d-4fd5-b896-0abfc546528f@huaweicloud.com>
+Date: Sat, 26 Jul 2025 08:52:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,112 +46,178 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 15/17] ext4: convert free groups order lists to xarrays
-Content-Language: en-GB
-To: Zhang Yi <yi.zhang@huaweicloud.com>, Theodore Ts'o <tytso@mit.edu>
-CC: Guenter Roeck <linux@roeck-us.net>, <linux-ext4@vger.kernel.org>,
-	<adilger.kernel@dilger.ca>, <jack@suse.cz>, <linux-kernel@vger.kernel.org>,
-	<ojaswin@linux.ibm.com>, <julia.lawall@inria.fr>, <yangerkun@huawei.com>,
-	<libaokun@huaweicloud.com>
-References: <20250714130327.1830534-1-libaokun1@huawei.com>
- <20250714130327.1830534-16-libaokun1@huawei.com>
- <b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net>
- <20250724045456.GA80823@mit.edu>
- <ef789a81-f326-4af6-8e9b-a13b5b20412b@huawei.com>
- <20250724145437.GD80823@mit.edu>
- <4b8b6482-f2f5-4fa5-949a-6d999c335319@huaweicloud.com>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <4b8b6482-f2f5-4fa5-949a-6d999c335319@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
+ destruction to avoid hung_tasks
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, lizefan@huawei.com,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com,
+ chenridong@huawei.com, gaoyingjie@uniontech.com
+References: <20250722112733.4113237-1-chenridong@huaweicloud.com>
+ <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
+ <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com>
+ <htzudoa4cgius7ncus67axelhv3qh6fgjgnvju27fuyw7gimla@uzrta5sfbh2w>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <htzudoa4cgius7ncus67axelhv3qh6fgjgnvju27fuyw7gimla@uzrta5sfbh2w>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDnpbHdJoRo46HlBQ--.48129S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Wr4kWF1rKF43Kry3WF48WFg_yoW7WF4rpF
+	s8A3WayF4rtrWYkw1kta4jga4F9a1Ivw4UXw13Ww4IyrnxWas2qF4Iyry5ZFW5Ars7C3WI
+	yF4Fvwn7u34YyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 7/25/2025 10:28 AM, Zhang Yi wrote:
-> On 2025/7/24 22:54, Theodore Ts'o wrote:
->> On Thu, Jul 24, 2025 at 07:14:58PM +0800, Zhang Yi wrote:
->>> I'm sorry for this regression, we didn't run these tests.
->> No worries, I didn't run them either.
->>
->>> Could you please try the following diff? I have tested it on my
->>> machine, and the issue does not recur. If every thing looks fine, I
->>> will send out the official patch.
->> This patch fixes the test bug which was causing the failure of
->> test_new_blocks_simple.
->>
-> The official patch to fix test_new_blocks_simple for the next
-> branch:
->
-> https://lore.kernel.org/linux-ext4/20250725021550.3177573-1-yi.zhang@huaweicloud.com/
->
->> However, there is still test failure of test_mb_mark_used in the patch
->> series starting with bbe11dd13a3f ("ext4: fix largest free orders
->> lists corruption on mb_optimize_scan switch").  The test failure is
->> fixed by 458bfb991155 ("ext4: convert free groups order lists to
->> xarrays").  The reason why this is especialy problematic is that
->> commit which introduced the problem is marked as "cc: stable", which
->> means it will get back ported to LTS kernels, thus introducing a
->> potential bug.
->>
-> Indeed!
->
->> One of the advantages of unit tests is that they are light weight
->> enough that it is tractable to run them against every commit in the
->> patch series.  So we should strive to add more unit tests, since it
->> makes easier to detect regressions.
->>
->> Anyway, here's the stack trace staring with "ext4: fix largest free
->> orders lists corruption on mb_optimize_scan switch".  Could you
->> investigate this failure?  Many thanks!!
->>
-> Sure! I've sent out the fix that applies to the kernel that has only
-> merged bbe11dd13a3f ("ext4: fix largest free orders lists corruption
-> on mb_optimize_scan switch"), but not merged 458bfb991155 ("ext4:
-> convert free groups order lists to xarrays"). Please give it a try.
->
-> https://lore.kernel.org/linux-ext4/20250725021654.3188798-1-yi.zhang@huaweicloud.com/
->
-Sorry for the late reply, I haven't had time to look into this this week.
-I really appreciate Yi for taking the time to help address these issues.
-I'm also very sorry for introducing a regression in the ext4 kunit tests.
 
+
+On 2025/7/26 1:17, Michal Koutný wrote:
+> On Fri, Jul 25, 2025 at 09:42:05AM +0800, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>>> On Tue, Jul 22, 2025 at 11:27:33AM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>>>> CPU0                            CPU1
+>>>> mount perf_event                umount net_prio
+>>>> cgroup1_get_tree                cgroup_kill_sb
+>>>> rebind_subsystems               // root destruction enqueues
+>>>> 				// cgroup_destroy_wq
+>>>> // kill all perf_event css
+>>>>                                 // one perf_event css A is dying
+>>>>                                 // css A offline enqueues cgroup_destroy_wq
+>>>>                                 // root destruction will be executed first
+>>>>                                 css_free_rwork_fn
+>>>>                                 cgroup_destroy_root
+>>>>                                 cgroup_lock_and_drain_offline
+>>>>                                 // some perf descendants are dying
+>>>>                                 // cgroup_destroy_wq max_active = 1
+>>>>                                 // waiting for css A to die
+>>>>
+>>>> Problem scenario:
+>>>> 1. CPU0 mounts perf_event (rebind_subsystems)
+>>>> 2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
+>>>> 3. A dying perf_event CSS gets queued for offline after root destruction
+>>>> 4. Root destruction waits for offline completion, but offline work is
+>>>>    blocked behind root destruction in cgroup_destroy_wq (max_active=1)
+>>>
+>>> What's concerning me is why umount of net_prio hierarhy waits for
+>>> draining of the default hierachy? (Where you then run into conflict with
+>>> perf_event that's implicit_on_dfl.)
+>>>
+>>
+>> This was also first respond.
+>>
+>>> IOW why not this:
+>>> --- a/kernel/cgroup/cgroup.c
+>>> +++ b/kernel/cgroup/cgroup.c
+>>> @@ -1346,7 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *root)
+>>>
+>>>         trace_cgroup_destroy_root(root);
+>>>
+>>> -       cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
+>>> +       cgroup_lock_and_drain_offline(cgrp);
+>>>
+>>>         BUG_ON(atomic_read(&root->nr_cgrps));
+>>>         BUG_ON(!list_empty(&cgrp->self.children));
+>>>
+>>> Does this correct the LTP scenario?
+>>>
+>>> Thanks,
+>>> Michal
+>>
+>> I've tested this approach and discovered it can lead to another issue that required significant
+>> investigation. This helped me understand why unmounting the net_prio hierarchy needs to wait for
+>> draining of the default hierarchy.
+>>
+>> Consider this sequence:
+>>
+>> mount net_prio			umount perf_event
+>> cgroup1_get_tree
+>> // &cgrp_dfl_root.cgrp
+>> cgroup_lock_and_drain_offline
+>> // wait for all perf_event csses dead
+>> prepare_to_wait(&dsct->offline_waitq)
+>> schedule();
+>> 				cgroup_destroy_root
+>> 				// &root->cgrp, not cgrp_dfl_root
+>> 				cgroup_lock_and_drain_offline
+> 								perf_event's css (offline but dying)
+> 
+>> 				rebind_subsystems
+>> 				rcu_assign_pointer(dcgrp->subsys[ssid], css);
+>> 				dst_root->subsys_mask |= 1 << ssid;
+>> 				cgroup_propagate_control
+>> 				// enable cgrp_dfl_root perf_event css
+>> 				cgroup_apply_control_enable
+>> 				css = cgroup_css(dsct, ss);
+>> 				// since we drain root->cgrp not cgrp_dfl_root
+>> 				// css(dying) is not null on the cgrp_dfl_root
+>> 				// we won't create css, but the css is dying
+> 
+> 				What would prevent seeing a dying css when
+> 				cgrp_dfl_root is drained?
+> 				(Or nothing drained as in the patch?)
+
+> 				I assume you've seen this warning from
+> 				cgroup_apply_control_enable
+> 				WARN_ON_ONCE(percpu_ref_is_dying(&css->refcnt)); ?
+>
+> 
+				WARN_ON_ONCE(percpu_ref_is_dying(&css->refcnt)); ?
+				-- Yes
+				Draining the cgrp_dfl_root can prevent seeing the dying css.
+				Q:When the task can be woken up if it is waiting on offline_waitq?
+				A:The offline_css is invoked, and:
+				RCU_INIT_POINTER(css->cgroup->subsys[ss->id], NULL);
+
+				If we drain the cgrp_dfl_root, it traverses all the csses
+				That means cgroup_lock_and_drain_offline can only return when all
+				the dying have disappeared, thus preventing seeing a dying css.
+>> 								
+>> // got the offline_waitq wake up
+>> goto restart;
+>> // some perf_event dying csses are online now
+>> prepare_to_wait(&dsct->offline_waitq)
+>> schedule();
+>> // never get the offline_waitq wake up
+>>
+>> I encountered two main issues:
+>> 1.Dying csses on cgrp_dfl_root may be brought back online when rebinding the subsystem to cgrp_dfl_root
+> 
+> Is this really resolved by the patch? (The questions above.)
+> 
+>> 2.Potential hangs during cgrp_dfl_root draining in the mounting process
+> 
+> Fortunately, the typical use case (mounting at boot) wouldn't suffer
+> from this.
+> 
+>> I believe waiting for a wake-up in cgroup_destroy_wq is inherently risky, as it requires that
+>> offline css work(the cgroup_destroy_root need to drain) cannot be enqueued after cgroup_destroy_root
+>> begins.
+> 
+> This is a valid point.
+> 
+>> How can we guarantee this ordering? Therefore, I propose moving the draining operation
+>> outside of cgroup_destroy_wq as a more robust solution that would completely eliminate this
+>> potential race condition. This patch implements that approach.
+> 
+> I acknowledge the issue (although rare in real world). Some entity will
+> always have to wait of the offlining. It may be OK in cgroup_kill_sb
+> (ideally, if this was bound to process context of umount caller, not
+> sure if that's how kill_sb works).
+> I slightly dislike the form of an empty lock/unlock -- which makes me
+> wonder if this is the best solution.
+
+Thank you, I’d appreciate it if you could suggest a better solution.
 
 Thanks,
-Baokun
-
->
->> [09:35:46] ==================== test_mb_mark_used  ====================
->> [09:35:46] [ERROR] Test: test_mb_mark_used: missing subtest result line!
->> [09:35:46]
->> [09:35:46] Pid: 35, comm: kunit_try_catch Tainted: G        W        N  6.16.0-rc4-00031-gbbe11dd13a3f-dirty
->> [09:35:46] RIP: 0033:mb_set_largest_free_order+0x5c/0xc0
->> [09:35:46] RSP: 00000000a0883d98  EFLAGS: 00010206
->> [09:35:46] RAX: 0000000060aeaa28 RBX: 0000000060a2d400 RCX: 0000000000000008
->> [09:35:46] RDX: 0000000060aea9c0 RSI: 0000000000000000 RDI: 0000000060864000
->> [09:35:46] RBP: 0000000060aea9c0 R08: 0000000000000000 R09: 0000000060a2d400
->> [09:35:46] R10: 0000000000000400 R11: 0000000060a9cc00 R12: 0000000000000006
->> [09:35:46] R13: 0000000000000400 R14: 0000000000000305 R15: 0000000000000000
->> [09:35:46] Kernel panic - not syncing: Segfault with no mm
->> [09:35:46] CPU: 0 UID: 0 PID: 35 Comm: kunit_try_catch Tainted: G        W        N  6.16.0-rc4-00031-gbbe11dd13a3f-dirty #36 NONE
->> [09:35:46] Tainted: [W]=WARN, [N]=TEST
->> [09:35:46] Stack:
->> [09:35:46]  60210c60 00000200 60a9e400 00000400
->> [09:35:46]  40060300280 60864000 60a9cc00 60a2d400
->> [09:35:46]  00000400 60aea9c0 60a9cc00 60aea9c0
->> [09:35:46] Call Trace:
->> [09:35:46]  [<60210c60>] ? ext4_mb_generate_buddy+0x1f0/0x230
->> [09:35:46]  [<60215c3b>] ? test_mb_mark_used+0x28b/0x4e0
->> [09:35:46]  [<601df5bc>] ? ext4_get_group_desc+0xbc/0x150
->> [09:35:46]  [<600bf1c0>] ? ktime_get_ts64+0x0/0x190
->> [09:35:46]  [<60086370>] ? to_kthread+0x0/0x40
->> [09:35:46]  [<602b559b>] ? kunit_try_run_case+0x7b/0x100
->> [09:35:46]  [<60086370>] ? to_kthread+0x0/0x40
->> [09:35:46]  [<602b7850>] ? kunit_generic_run_threadfn_adapter+0x0/0x30
->> [09:35:46]  [<602b7862>] ? kunit_generic_run_threadfn_adapter+0x12/0x30
->> [09:35:46]  [<60086a51>] ? kthread+0xf1/0x250
->> [09:35:46]  [<6004a541>] ? new_thread_handler+0x41/0x60
->> [09:35:46] [ERROR] Test: test_mb_mark_used: 0 tests run!
->> [09:35:46] ============= [NO TESTS RUN] test_mb_mark_used =============
->>
+Ridong
 
 
