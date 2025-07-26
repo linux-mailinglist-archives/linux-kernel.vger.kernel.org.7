@@ -1,177 +1,156 @@
-Return-Path: <linux-kernel+bounces-746576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DE2B12881
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 03:43:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80586B1287D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 03:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED42216ACD3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:43:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A248AC3F81
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9AC381BA;
-	Sat, 26 Jul 2025 01:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UR+y3767"
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A671C8606;
+	Sat, 26 Jul 2025 01:42:48 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68971C6FFA
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 01:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E36D381BA;
+	Sat, 26 Jul 2025 01:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753494196; cv=none; b=U2R7ew93bC4m6S4PX2n/p0/mJlLyC+miHgNZ493O45KxkeAbTrGA3cxj/HENNw7IP6OnlndVhAOAR5GYdXYn/h1pX1kZpiQoo7gnyRfg95tLR5M7pbXvtyx8NCw0+Og9r3w8bKRLe1dyM1XYipA8zqcwKu2+TjWD+zDZhofcThU=
+	t=1753494168; cv=none; b=lEfrnGX6ev6a2AFQ0OncOiTZSEJx+S5X5SixRciISR8X95ISAx+ogVVrrkdGbEybB5Cv0EbiIe+6frC++DQALQtI7a56nnzOOI4EHVRkirS8F4eoetTg8E6Bj+pfO8b2sfpT4EXAexE1EwAtfu94tFiUmQEOKQ3pdwSNcszr3oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753494196; c=relaxed/simple;
-	bh=P8UHQiF/sMI6IYFSL2zrIFEiyoHpB0+BHRK5T8a71Nk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=AOnN7T4SfoJFWCp0RgUzciJIXGIaHcyGb5NyC0vQHF+qSVO8aiEtuNf1cK052sakU7y50MnLvUte20GDSDMbkDbg99doGxikkHg7zuN8K2IAUSUp9btHmZFINVJJtk3EoSnHwkIBwEv2b4zJHqiCUPOIveAgY7Ga/4GqR7eao1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UR+y3767; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1753494187; bh=JPNZq8b84nKHJmlNbduzmtFfHXdstB336+PErbJ0hTg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=UR+y3767RbfJ1Re6Mlu1a19WAzLdypRXytcpb9eLNbdio2FoV7395ScvPvHfAjF1c
-	 V/GX2PJLn7redLzNo8/Wns2b/CUVGXXwbjFney7aGCh5ZsuH2h/6y0uCp5bHi5Ti9/
-	 zUz4L7si0FlAdNq26p8LHqITLwPvdWfg9zihsbdo=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.231.14])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id 93BA941E; Sat, 26 Jul 2025 09:36:59 +0800
-X-QQ-mid: xmsmtpt1753493819t81rhy2lc
-Message-ID: <tencent_C725DBBA89BB4B333C9E4B1BFA4B341B0708@qq.com>
-X-QQ-XMAILINFO: NbgegmlEc3JuWySbOblR2ZG2ILg33o2HN7pnekvjzwElCRasW3NbvC0FsVr6Rt
-	 E0LsfqDMBdVAAcr3cL7x3ZFxly6It4Q3boeDXmV5ZgZkDjxZQiJdvk35OR1hVqT9Tqe67G30VoUG
-	 x7rGt5634wp3AfTpwpJNzBpsuURSr8RHytKX37CDbjvIMHFCT0MAReME2VolU/ZpxioJf/nExGhL
-	 X1ZoRaRqbzWxhcqIz9Dkf6YfLFiWDKfec1dfK2FVHkJzl2mKt0YVM+N8eJe+Av51l9YT+2epLnmA
-	 wC2pM6+IrcoboofISdo+4649wlpfs/yxocdxcWHgoBgbKzGnNoi4uKdFuq+9V7+iTM+VQDBuWVvK
-	 ZQ1GEAPc0+p5QRbRtx4jVt9OGDCS2lIUMl4VKjXHMeY10GnHgxoBbGVNI1GPYUMWfgHhJ9dOgqkH
-	 phvGuCbet2xchNhtxmQYHTPnvcP3gXZcmKA/dMAnDcKFkIuiZelqcWp/OiwPJ0YgsIxXCuZ8TzXo
-	 rDMLlHd0N9j1MWAxE0SYEcR0DhHGTDKAqX2xclAv3aJTeLbGiu8PxYG1KfwpBNH1QYS76TCUMY+r
-	 T+CUBuDb0u8j3MeU+7RSwadIO1GfWwTPW0MfjlWz8HgH7COTIq1okqNdeZh9sV+Q1E1eJuXy+ILk
-	 Kqq9nqAeE6sfPE+1k8zYVRDRSuum/5wNQyXEwho3bGegubbIR14frAkojssB+d/UwydBpUYCkIjw
-	 6L6QaGBGykTm6SHo/iFWp2kpEL10jr/TsTvoEkLHn2kEZczJ4kMQ+mKur1VOx7djSA5SwWwcb6fX
-	 HBScAbIyO8XShuGxvjCOruU2qPirkLrSXAbqHHC5g/7KQPAXod8WsCBracSDAMGp0lkJtfBXtaiM
-	 Q/ujlWl4HJar2012BZc6IrhyXfJVFEetXSHzsi9VidPCVx8OpEZFEVH5Jhe7u+JYkkfXKYoAl1lK
-	 V42nYRr411XZwMd3CkP5/C5m8V0YcBkcmv7SE0pLo=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+a6ffe86390c8a6afc818@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ucma_create_uevent
-Date: Sat, 26 Jul 2025 09:36:54 +0800
-X-OQ-MSGID: <20250726013653.833938-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <686db3ea.050a0220.1ffab7.0028.GAE@google.com>
-References: <686db3ea.050a0220.1ffab7.0028.GAE@google.com>
+	s=arc-20240116; t=1753494168; c=relaxed/simple;
+	bh=ABFfoAOBAwyUcqf0zDKRUV3PwNapelhvIFjQcwXU3nU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YRBUGTs0g8iYNKPJJl1Gs/JH5ih2jtqA2dhPx6yqnx4Tfusw9csSmZSJMtfCfcGHzx2F3jBYFOaoEDp/pepOdfVWhJybsPy7Hfg6I7Y64PgBw3MymGj1Z1m/bmmp1GK7OCyI6f3FB5HPKTe9PL+BQZbjmUNcZcZq9laylITfo+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bpnYb4H5szKHMZv;
+	Sat, 26 Jul 2025 09:42:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5FA491A06D7;
+	Sat, 26 Jul 2025 09:42:42 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAXkxONMoRoIEsFBg--.41753S3;
+	Sat, 26 Jul 2025 09:42:39 +0800 (CST)
+Message-ID: <2f53f9a8-380a-4fe4-8407-03d5b4e78140@huaweicloud.com>
+Date: Sat, 26 Jul 2025 09:42:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: fix crash on test_mb_mark_used kunit tests
+To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca,
+ ojaswin@linux.ibm.com, linux@roeck-us.net, yi.zhang@huawei.com,
+ libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
+ <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
+ <20250725131541.GA184259@mit.edu>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250725131541.GA184259@mit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAXkxONMoRoIEsFBg--.41753S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw1xAr15KrWDKrW5KF4Durg_yoW5tFW3pa
+	y7W3WYkFWkKF4xuaykuw48uFyaya95Ar1UCr9xW34UA3yvgry0gF1Sya1YvFn0grZYgF1j
+	vF42yrWrG3WDAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-#syz test
+On 2025/7/25 21:15, Theodore Ts'o wrote:
+> On Fri, Jul 25, 2025 at 01:06:18PM +0200, Jan Kara wrote:
+>>> This patch applies to the kernel that has only merged bbe11dd13a3f
+>>> ("ext4: fix largest free orders lists corruption on mb_optimize_scan
+>>> switch"), but not merged 458bfb991155 ("ext4: convert free groups order
+>>> lists to xarrays").
+>>
+>> Hum, I think it would be best to just squash this into bbe11dd13a3f and
+>> then just rebase & squash the other unittest fixup to the final commit when
+>> we have to rebase anyway. Because otherwise backports to stable kernel will
+>> quickly become rather messy.
+> 
+> What I ended up doing was to add a squashed combination of these two
+> commits and dropped it in before the block allocation scalabiltity
+> with the following commit description:
+> 
+>     ext4: initialize superblock fields in the kballoc-test.c kunit tests
+>     
+>     Various changes in the "ext4: better scalability for ext4 block
+>     allocation" patch series have resulted in kunit test failures, most
+>     notably in the test_new_blocks_simple and the test_mb_mark_used tests.
+>     The root cause of these failures is that various in-memory ext4 data
+>     structures were not getting initialized, and while previous versions
+>     of the functions exercised by the unit tests didn't use these
+>     structure members, this was arguably a test bug.
+>     
+>     Since one of the patches in the block allocation scalability patches
+>     is a fix which is has a cc:stable tag, this commit also has a
+>     cc:stable tag.
+>     
+>     CC: stable@vger.kernel.org
+>     Link: https://lore.kernel.org/r/20250714130327.1830534-1-libaokun1@huawei.com
+>     Link: https://patch.msgid.link/20250725021550.3177573-1-yi.zhang@huaweicloud.com
+>     Link: https://patch.msgid.link/20250725021654.3188798-1-yi.zhang@huaweicloud.com
+>     Reported-by: Guenter Roeck <linux@roeck-us.net>
+>     Closes: https://lore.kernel.org/linux-ext4/b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net/
+>     Tested-by: Guenter Roeck <linux@roeck-us.net>
+>     Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>     Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> 
+> Then in the commit "ext4: convert free groups order lists to xarrays"
+> which removed list_head, I modified it to remove the linked list
+> initialization from mballoc-test.c, since that's the commit which
+> removed those structures.
+> 
 
-diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
-index 6e700b974033..7fa02963a309 100644
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -109,6 +109,7 @@ struct ucma_multicast {
- 	u8			join_state;
- 	struct list_head	list;
- 	struct sockaddr_storage	addr;
-+	atomic_t		ref;
- };
- 
- struct ucma_event {
-@@ -257,6 +258,17 @@ static void ucma_copy_ud_event(struct ib_device *device,
- 	dst->qkey = src->qkey;
- }
- 
-+static bool ucma_get_mc(struct ucma_multicast *mc)
-+{
-+	return mc && atomic_inc_not_zero(&mc->ref);
-+}
-+
-+static void ucma_put_mc(struct ucma_multicast *mc)
-+{
-+	if (mc && atomic_dec_and_test(&mc->ref))
-+		kfree(mc);
-+}
-+
- static struct ucma_event *ucma_create_uevent(struct ucma_context *ctx,
- 					     struct rdma_cm_event *event)
- {
-@@ -272,9 +284,12 @@ static struct ucma_event *ucma_create_uevent(struct ucma_context *ctx,
- 	case RDMA_CM_EVENT_MULTICAST_ERROR:
- 		uevent->mc = (struct ucma_multicast *)
- 			     event->param.ud.private_data;
--		uevent->resp.uid = uevent->mc->uid;
--		uevent->resp.id = uevent->mc->id;
--		break;
-+		if (ucma_get_mc(uevent->mc)) {
-+			uevent->resp.uid = uevent->mc->uid;
-+			uevent->resp.id = uevent->mc->id;
-+			ucma_put_mc(uevent->mc);
-+			break;
-+		}
- 	default:
- 		uevent->resp.uid = ctx->uid;
- 		uevent->resp.id = ctx->id;
-@@ -498,7 +513,7 @@ static void ucma_cleanup_multicast(struct ucma_context *ctx)
- 		 * lock on the reader and this is enough serialization
- 		 */
- 		__xa_erase(&multicast_table, mc->id);
--		kfree(mc);
-+		ucma_put_mc(mc);
- 	}
- 	xa_unlock(&multicast_table);
- }
-@@ -1471,6 +1486,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
- 	mc->ctx = ctx;
- 	mc->join_state = join_state;
- 	mc->uid = cmd->uid;
-+	atomic_set(&mc->ref, 1);
- 	memcpy(&mc->addr, addr, cmd->addr_size);
- 
- 	xa_lock(&multicast_table);
-@@ -1490,6 +1506,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
- 	if (ret)
- 		goto err_xa_erase;
- 
-+	ucma_get_mc(mc);
- 	resp.id = mc->id;
- 	if (copy_to_user(u64_to_user_ptr(cmd->response),
- 			 &resp, sizeof(resp))) {
-@@ -1506,6 +1523,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
- 	mutex_lock(&ctx->mutex);
- 	rdma_leave_multicast(ctx->cm_id, (struct sockaddr *) &mc->addr);
- 	mutex_unlock(&ctx->mutex);
-+	ucma_put_mc(mc);
- 	ucma_cleanup_mc_events(mc);
- err_xa_erase:
- 	xa_lock(&multicast_table);
-@@ -1513,7 +1531,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
- 	__xa_erase(&multicast_table, mc->id);
- err_free_mc:
- 	xa_unlock(&multicast_table);
--	kfree(mc);
-+	ucma_put_mc(mc);
- err_put_ctx:
- 	ucma_put_ctx(ctx);
- 	return ret;
-@@ -1599,7 +1617,7 @@ static ssize_t ucma_leave_multicast(struct ucma_file *file,
- 
- 	ucma_put_ctx(mc->ctx);
- 	resp.events_reported = mc->events_reported;
--	kfree(mc);
-+	ucma_put_mc(mc);
- 
- 	if (copy_to_user(u64_to_user_ptr(cmd.response),
- 			 &resp, sizeof(resp)))
+Thank you for revising this series. This way, it will be less likely
+to miss this fix when merging into the LTS branch.
+
+> In the future, we should try to make sure that when we modify data
+> structures to add or remove struct elements, that we also make sure
+> that kunit test should also be updated.
+
+Yes, currently in the Kunit tests, the initialization and maintenance
+of data structures are too fragmented and fragile, making it easy to
+overlook during modifications. In the future, I think we should provide
+some general interfaces to handle the initialization and
+deinitialization of those data structures.
+
+> To that end, I've updated the
+> kbuild script[1] in xfstests-bld repo so that "kbuild --test" will run
+> the Kunit tests.  Hopefully reducing the friction for running tests
+> will encourage more kunit tests to be created and so they will kept
+> under regular maintenance.
+> 
+> [1] https://github.com/tytso/xfstests-bld/blob/master/kernel-build/kbuild
+> 
+
+That would be great! Then we won't miss Kunit tests again, and it
+will also make those tests more useful. :-)
+
+Best Regards,
+Yi.
 
 
