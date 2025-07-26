@@ -1,119 +1,78 @@
-Return-Path: <linux-kernel+bounces-746899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B753B12CA5
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:29:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF685B12CA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0B34E3298
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0FB4E5A03
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B988421CC4B;
-	Sat, 26 Jul 2025 21:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B761C21E094;
+	Sat, 26 Jul 2025 21:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uj2Xxygg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5X/MBRF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24686207A0B;
-	Sat, 26 Jul 2025 21:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F06E1401B;
+	Sat, 26 Jul 2025 21:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753565389; cv=none; b=bakC8/Bidwx7p7W34So7ZEJ4RUSowXVIc8PxXM6c6MSaq+vFnXLC5Ismfsxalqds4QNGI+A2MjSdZirVZic6LaNoBdTY/sPYFLNCZkUGa5frfTc8WE/8ifCEZb6Gp76pJKCkwz97w8vELwNV6Jx4Gs656PyoDKMn3+Ib0wudUoY=
+	t=1753565887; cv=none; b=Zgzi7aI0q0CxiOyDCElnR18SaSi2EL4UeP8cuCqShzQq1qq1e/fUBftRSQ6ZEmH79iJgQKaoe1hOS+3a1H0QuVX2xQcc0jiEi/rrexR6khQYnB9xhIHbanx9mNKm/CBcjDDE9A2/7FV/RLU0nmMZAtzKQYLYeCcw0yyvb/heypA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753565389; c=relaxed/simple;
-	bh=HSq9GVJebOQfQB9sT81R3PDtAZ/ze381+caKN1MH1OM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SIwQQguxAIpnPhUyuOS886B7eM+XTDyfmtM20Oup4VpePEsBgm5bCbyxJ/BoPfAk77EvNKi5CFj4E9xc9s83799ioKxaWfMHhj2uizoi3e9zpmRLnyIlhBH2h9WihUIV59SUWqUCdAzY26FMeW5ajFmRE/Pgd0VrCaLGPz0+dIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uj2Xxygg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C6C7C4CEED;
-	Sat, 26 Jul 2025 21:29:48 +0000 (UTC)
+	s=arc-20240116; t=1753565887; c=relaxed/simple;
+	bh=98GHAVEf2WRxlSwrC3lF+z3VnyUMJjTHblcbiixYtUQ=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=eYdwp0J+qk0fzEDZVVZhl5gNkv+NGiUJ4T+uh+Z8HrfuWkjJPROFHvvvp+NfSpZjMAMQmLgWBgvraHgUlS3JiAG/xTyC/sOMPQGHaRyWc99vlnuKE19envdDpHM2RzfVKpF+a3kY8Fa102pZma+6NIHK0cEZfY4esVqPzKqqGtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5X/MBRF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BC25C4CEED;
+	Sat, 26 Jul 2025 21:38:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753565388;
-	bh=HSq9GVJebOQfQB9sT81R3PDtAZ/ze381+caKN1MH1OM=;
+	s=k20201202; t=1753565887;
+	bh=98GHAVEf2WRxlSwrC3lF+z3VnyUMJjTHblcbiixYtUQ=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Uj2Xxygg6ssYQsxZ5CxC4TyGoFDgIJEJFPw5gPQIiKSgwcvSqDG9L2HF78J7DeG73
-	 2tDtC6VaTvX9N+K9ZFhrcUdUSSnbivKWxJYLlpPDhw1t11czrS3oDB/XBfAtG2R+VV
-	 TuspiNNBbE0AIN9OCJNKo6DbR2a0a3ZSV+30Hk7/x2LIdmKOzz3WKTZlDop6XuMVO4
-	 q8QWSW8wl/lTW/jrTqGPzsn3V+OMKmYzBbePZVQxov4CpZa3aSsVVxKZ0d65A9TH/5
-	 sFmm1ADshAGOYue6kWXL8ssA5wlvOARnrV7vydTx2az71RSEXtsXp3trJhAW+c8BmB
-	 vtXYdO1gpjT4Q==
-From: Kees Cook <kees@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] kstack_erase: Disable kstack_erase for all of arm compressed boot code
-Date: Sat, 26 Jul 2025 14:29:45 -0700
-Message-Id: <20250726212945.work.975-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	b=l5X/MBRFRMAj2xTMBS1DVdiFFFkEekJ4RrEeWojWPuonABuwaK1Ei5MMZyHZEEO3i
+	 HqG3Ju80QLxE2jqK6SOCP/6Zzs525TSuFB6iHTi6OsJNqHeEubP0gChVcCJj2IFrO8
+	 r7c70komj+7oNsUrkvf6MWmHd/gNhsRMozxf6+eTwBXkp+TTEgDEGTAAEdfx48dHA+
+	 qQWYUq/d2dbFx+C6NLjVC+VpqS/B3YULd2xy5riLiIDmHgkPVOtS2mGFXiu63awRC8
+	 YWW4fQxMXjYK6uTL+cbMTGeLR2d/qZmElhr7NcmPJzQuYO6sgF5ogJewiZumuFlJzE
+	 Qjkub+JOKfy8g==
+Message-ID: <7ab95b9a2a3ad939ab24c1c8c4175096.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI fixes for v6.16-rc7
+Date: Sat, 26 Jul 2025 22:37:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2143; i=kees@kernel.org; h=from:subject:message-id; bh=HSq9GVJebOQfQB9sT81R3PDtAZ/ze381+caKN1MH1OM=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmtHiffaX4tSiqs9K65/7rYQtbQ4mFj+8e4R+pVZmtf3 is/ayjdUcrCIMbFICumyBJk5x7n4vG2Pdx9riLMHFYmkCEMXJwCMJE1nxgZ5t1q1Dl54euh+Ojd xYevtGn/PjVj3pYgc6aPyxJmbZZW0WD4X5zKMVlatP39hnx3p9nLkzautbP3mf7DiWHBQu1ze8o ncQMA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
 
-When building with CONFIG_KSTACK_ERASE=y and CONFIG_ARM_ATAG_DTB_COMPAT=y,
-the compressed boot environment encounters an undefined symbol error:
+The following changes since commit 710505212e3272396394f8cf78e3ddfd05df3f22:
 
-    ld.lld: error: undefined symbol: __sanitizer_cov_stack_depth
-    >>> referenced by atags_to_fdt.c:135
+  spi: Add check for 8-bit transfer with 8 IO mode support (2025-07-14 14:44:00 +0100)
 
-This occurs because the compiler instruments the atags_to_fdt() function
-with sanitizer coverage calls, but the minimal compressed boot environment
-lacks access to sanitizer runtime support.
+are available in the Git repository at:
 
-The compressed boot environment already disables stack protector with
--fno-stack-protector. Similarly disable sanitizer coverage by adding
-$(DISABLE_KSTACK_ERASE) to the general compiler flags (and remove it
-from the one place it was noticed before), which contains the appropriate
-flags to prevent sanitizer instrumentation.
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.16-rc7
 
-This follows the same pattern used in other early boot contexts where
-sanitizer runtime support is unavailable.
+for you to fetch changes up to f820034864dd463cdcd2bebe7940f2eca0eb4223:
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Closes: https://lore.kernel.org/all/CA+G9fYtBk8qnpWvoaFwymCx5s5i-5KXtPGpmf=_+UKJddCOnLA@mail.gmail.com
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Closes: https://lore.kernel.org/all/20250726004313.GA3650901@ax162
-Suggested-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Kees Cook <kees@kernel.org>
----
- arch/arm/boot/compressed/Makefile | 2 +-
+  spi: spi-qpic-snand: don't hardcode ECC steps (2025-07-23 13:04:03 +0100)
+
+----------------------------------------------------------------
+spi: Fix for v6.16
+
+One last fix for v6.16, removing some hard coding to avoid data
+corruption on some NAND devices in the QPIC driver.
+
+----------------------------------------------------------------
+Gabor Juhos (1):
+      spi: spi-qpic-snand: don't hardcode ECC steps
+
+ drivers/spi/spi-qpic-snand.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index f9075edfd773..a159120d1e42 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -9,7 +9,6 @@ OBJS		=
- 
- HEAD	= head.o
- OBJS	+= misc.o decompress.o
--CFLAGS_decompress.o += $(DISABLE_KSTACK_ERASE)
- ifeq ($(CONFIG_DEBUG_UNCOMPRESS),y)
- OBJS	+= debug.o
- AFLAGS_head.o += -DDEBUG
-@@ -96,6 +95,7 @@ KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
- 
- ccflags-y := -fpic $(call cc-option,-mno-single-pic-base,) -fno-builtin \
- 	     -I$(srctree)/scripts/dtc/libfdt -fno-stack-protector \
-+	     $(DISABLE_KSTACK_ERASE) \
- 	     -I$(obj)
- ccflags-remove-$(CONFIG_FUNCTION_TRACER) += -pg
- asflags-y := -DZIMAGE
--- 
-2.34.1
-
 
