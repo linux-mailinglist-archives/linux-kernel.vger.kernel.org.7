@@ -1,118 +1,159 @@
-Return-Path: <linux-kernel+bounces-746772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD90CB12AEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:18:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F1B6B12AF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E585171729
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:18:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BE43B3251
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E4F28641F;
-	Sat, 26 Jul 2025 14:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2DD2857F6;
+	Sat, 26 Jul 2025 14:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W3phLuaq"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0w7ON/I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB800285CBB
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 14:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042D9610D;
+	Sat, 26 Jul 2025 14:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753539479; cv=none; b=R/w+ZESnCQXqnwBN1a009WMAWTvwa+U7xzBMIkK9S1cCGsf4dD6J3gBte4bpFYNJbvxAiDaDbv4Xw/ekPsNKVF1xgijh60A2b9KE0ttxJz1hRmdt4UqVPfPYLCDWNUjpcSSHCF4hAFjvCNUat45cRxRnVivbOzdksV8nmD9+tj0=
+	t=1753540322; cv=none; b=Xs3FzgucKg2hURtsZ9UqApXtaFuyZ5jCeQAB5KVW08wQfOt0vpyMrloKFyyb8m2mJDgF7ZmQJtd7tPjjHTkLSANDDFlnHvddgLiRiqWYFEPuhTZqNHuy6Fs3AKHaJXgVAJoYM2O/sUhKmQWtyJd6LiX10MzVp6e+8fUIviRrp68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753539479; c=relaxed/simple;
-	bh=QsKCYgFN3Pl/637rAO4WBZp3QLVhOoRKIclRbpT1pQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pf/qqdUiv7PcyFm441h13bQdUqvwqj2aDnEtMOqRDO4cvFJ+etPsOz5Eh2iMlJw9U9Jzd/YxRJmb9QTqbXmBI7Zoego9L6AxqPcgwnBj2zKRyWmuVH9Wey3zsAlDct6hfbNGkcnzniKSaUPp7pLZkBpTNN4KRycHcPB1dT1D2YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W3phLuaq; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-553b3316160so3138294e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 07:17:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753539476; x=1754144276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QsKCYgFN3Pl/637rAO4WBZp3QLVhOoRKIclRbpT1pQQ=;
-        b=W3phLuaq0RVVMNzRc9exL8O8cvPdzFYZxDXxvj/AeDazvwwlRvRGpWLdy13kQbTgc4
-         S61a8Sn8e4coANibRq5wFNwXxBLNIUzFXG6dAhpbX3cW+RNKQpMhs3lu/woLzZ2r3UjZ
-         QD56BsLYto7BaJF3JtSYuSJKsXS5ES9vXWdm4x4fePIAUiwLnJ8ByugA0oE5N0KV8fY1
-         e0+/zL1aMxMNW//hUUzRXDkpMXQ+prQyK2g+OWEZH867zHPr3w3LdbsL30ExWb4iJXQo
-         6AhTVmvWyqAjrepZklB7EefS6qNioFncIkTl21BZ5QDQ+pnTMl3v0JyRuVwiH1ffBazU
-         1N+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753539476; x=1754144276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QsKCYgFN3Pl/637rAO4WBZp3QLVhOoRKIclRbpT1pQQ=;
-        b=Zp0ybwcjTeV0Fy/NjQuRHaFOTDBGMNeF9WCvJXhIckm9uC3e6yp39ZCczbB53NndC4
-         kkdytndUGZ4bovwmodMxHMPuJRbFlII3ffQGFEhT3he5NSn5xbPV0o076WC+9XqUG+fP
-         ZDDWtuE9TUUyjRH55HJYEj1Ofo8X+d4SNEljyRL9F5LTzf+zzHyUT7qhsEyamcB90Kxt
-         6rQJdkFROLwOU0aV/ZKRbNPNHJvubO6zM1j1KIT3FLp8fPkTtEUK9YgOO0WCZtG65bA2
-         BlqVCbsbKXD/Cd8o/8pdsEgijKRdjRhKU9W9BGQAkAXiSuvTAr5CWTHvn2gvhZcJHbU5
-         /Hhw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9/mJU1HLJNCvt63UycbeRw5sA/P1W0mLMF2Zlrfn+dUgybdQbYa9QFhOhfMpITajz8YQAX+ni60Nr3w4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpj01nYldV29G70R9N5NcW2+JWdG1QOYvVppVT77u9L3pBe5Di
-	Kzbk9r0Cpv9F1WUwKZfELq3f19ITCRyfA6FBSpqufcYFvqkblb/nbvr7VZ9wMBJW4Aly66WZZlO
-	vs7pLb8Ij4Kz7Pqt8NnZVowKeO8LZceXPa1OORwYvFWlyV3+5Z3uZ
-X-Gm-Gg: ASbGncsazdyQobiEp5Q32CaXb8lXrpXjeGZlaT5Wq7QPZnVZWmifVsKTg3R5ISU/N29
-	rUjzlPtGWxSBUrYdYlc+K2iW1w7gnUa6S7Ejs4oceEf+kCfcgyw3+44w4GnQTxNcRWBL1pQcLV5
-	DE1NVIkOCrApGY/DAEnSg/T6B3u+wnj7w4pfql+UI/Q3TX0A51K7EGJsBBJ57z7hvFzhP4UQEgd
-	wbWA/jnBj1X
-X-Google-Smtp-Source: AGHT+IH7DWpvL4/EaSvQrUXZxoed9pZpjosN4KFejpqR4sw55oFM2Lj6aw3IRkV89heBwtbytSWltY9kUm8IpC204jQ=
-X-Received: by 2002:a05:6512:3da7:b0:55a:4462:f9b5 with SMTP id
- 2adb3069b0e04-55b5f4c6d4bmr1362236e87.53.1753539475990; Sat, 26 Jul 2025
- 07:17:55 -0700 (PDT)
+	s=arc-20240116; t=1753540322; c=relaxed/simple;
+	bh=S3UhcMyky6rKeP7+SYXs7IoFku4acxPQ61133EdSJ18=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JWteTbO7IZDqv01aNb5SLkykO1StmxT+a97CUw+gXOMEMw1Fzz4F0YnzqzKbKTLBf/6Erk9PLxPEjc+sigFgID9nMMNAWTQI/PzVvxZ7Qz/BQG+4PoX4a6+gEXZcn4XGimzskNMfexv92g454qsRA1AZLHlZmqIEE5/CTvB9UJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0w7ON/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A72AC4CEED;
+	Sat, 26 Jul 2025 14:32:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753540321;
+	bh=S3UhcMyky6rKeP7+SYXs7IoFku4acxPQ61133EdSJ18=;
+	h=From:Subject:Date:To:Cc:From;
+	b=I0w7ON/I4DmSrcZ+plVTQCVhQ8czPcuD4yp8Atpb1ja9382IeeZBHP98luC3714VL
+	 36iHT/dNf/FvDkl1E1PrqOvIziqR9Ol2O08gnfmruTeRIZU2lf/Z9t88tXZ5lR+6rd
+	 jVIlavAHOl1KcFBh8SkFKeyhTWJAJ1nIMnLBKxMMiBSE4hL0GtUlaaEWpeW4AHdi+g
+	 UR53jIMq+w5w7PXlZHfLABvFrMzY2vA3d2DdLj3pQxrR3SCEK60Ji0SMmqhgeIPCls
+	 z48O8hk/O1xSDqnsLq9n7ACV7AV094pLswWeWY7AJcn8bC6yXn/QqQI/TErcKwbqyJ
+	 CiyrwD9lwov5g==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 0/7] nfsd/vfs: fix handling of delegated timestamp
+ updates
+Date: Sat, 26 Jul 2025 10:31:54 -0400
+Message-Id: <20250726-nfsd-testing-v2-0-f45923db2fbb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611-aaeon-up-board-pinctrl-support-v8-0-3693115599fe@bootlin.com>
- <CAMRc=MfS5Em65n0fwbu8JtJsc3rTgQO5cv+PymSonJtf6_zRKQ@mail.gmail.com>
- <824ec6d1-4272-44c7-b3bb-93d716ed3d43@bootlin.com> <CAMRc=McnU6TO5p7Jwy-DOg_8-=AS7rFRfaPD0yH1SERWXM8L+A@mail.gmail.com>
- <CAMRc=MeZ4HHJGkVBysLyusW5G-rM0iSQV1qqmFJUe1rsZrN2AA@mail.gmail.com>
-In-Reply-To: <CAMRc=MeZ4HHJGkVBysLyusW5G-rM0iSQV1qqmFJUe1rsZrN2AA@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 26 Jul 2025 16:17:45 +0200
-X-Gm-Features: Ac12FXwQ27n_JGOOvHJ-jWxO2gK5gh1Sp4QaipYWDU0befizJdpmrsUresvZ2wg
-Message-ID: <CACRpkdbjQSns7a9EMx_5kdJ4Y2wsnocTLNsO2es7MQ=rKCBkQw@mail.gmail.com>
-Subject: Re: [PATCH v8 00/10] Add pinctrl support for the AAEON UP board FPGA
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thomas Richard <thomas.richard@bootlin.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANrmhGgC/3XMQQ7CIBCF4as0sxYDQyrqynuYLggd6ERDDRCia
+ bi72L3L/yXv2yBTYspwHTZIVDnzGnvgYQC32BhI8NwbUOIoDaKIPs+iUC4cgxjpfFJWO6+thH5
+ 5JfL83rn71HvhXNb02fWqfusfqCohhVYalTPeXYy/PShFeh7XFGBqrX0BeQG3iKkAAAA=
+X-Change-ID: 20250722-nfsd-testing-5e861a3cf3a0
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: Trond Myklebust <trondmy@hammerspace.com>, 
+ Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3102; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=S3UhcMyky6rKeP7+SYXs7IoFku4acxPQ61133EdSJ18=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBohObeAyOo84RRJBeynJ7d4lu9yfiAxkv694zog
+ gYQQAz0rLeJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaITm3gAKCRAADmhBGVaC
+ FWUAD/9fecWlsbhoipjkJZ05akI6773V9Ccxza7Jik/UhKAABsQzhkylfyForekAIhoO4QYfl8i
+ zw5aXt/0ocKR4lF/ZFn9KJEga7Mbenbckoexg/Jl53xhZnEjsVJ4tntBpQ7/mGI+5X3qTZSdZ3f
+ tA28nz40Llmi7PS1Owp8IZcXH0gjbCmgbi6T1c5zTjc9/tdHoZ/2p2UvYzCabRuVzKK/Ehvt3Hl
+ P70+47NOJ0vn/6ceH47bW1qDv9Wby83L7E4hbn4XQDFpgrTheLdGH5HDJ8B74YKHu3Felulri+N
+ 1enlYaSmbT2pffm7v0Cnm0cmJWuJJQ3PBQo/TGTVbR5L/MmHsF+xnJXiMlMQq10d5JwXceykNjJ
+ bBnQWJM5n3xsoffKEsZreUjxVL6P/6b+S/s/AYVZUKPLDRNaLFiZMCCvPla+Kz1vTjGFBrCseaf
+ MimBTEUniFXwDVRNutEDfzOyF22nIf9nYa1C0P+3ndWfGZqEFQcJDu2CeSgOUwYJJmL3OMP7WCA
+ 9XhQ8c/2YSq6Yzb8HzPMF1NNqoGedUboQSBwdILdxdg3NEJTv1ofqKCocs+sj/ehI1Qyup2SKki
+ usulax95VfOndJ4GDTH6ts7fe63+zjWCTEQBsTy7adqHug9yo1YMGpBH69Hul3lpbrzeBR0bZUd
+ AjaeUH0EoQLaE/w==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Wed, Jul 23, 2025 at 10:43=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
-> On Tue, Jul 15, 2025 at 3:17=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
+After my last posting, Trond pointed out that my interpretation of RFC
+9754 was wrong. The "original time" as mentioned in the spec is the time
+of the grant of the delegation, and not the current timestamp in the
+inode before the update.
 
-> > Well, nobody responded to my last email. This is a cross-tree series
-> > so at least Linus must confirm he's ok.
-> >
-> > Bart
->
-> Linus, I'm willing to queue at least the GPIO part for v6.17, does the
-> pinctrl part look good to you?
+Given that, there is no longer a need to do any sort of complicated
+handling of delegated timestamps at the VFS layer, so this set removes
+inode_set_ctime_deleg(). We do however need a way to set a ctime that
+isn't current_time() via notify_change(). This patchset adds an
+ATTR_CTIME_SET flag, which mirrors ATTR_ATIME_SET and ATTR_MTIME_SET
+semantics. The rest of the patchset reworks nfsd to properly vet
+timestamp updates on its own and just call down into the OS to do a
+normal notify_change().
 
-Yes go ahead, sorry for late reply!
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+With this patchset in place I haven't seen any git regression suite
+failures yet (4 passes so far under kdevops in the "stress"
+configuration).
 
-I was mainly waiting for Andy's review on this, so if Andy
-is OK, I'm OK with it.
+I should point out that there is at least one potential problem with
+this implementation:
 
-Yours,
-Linus Walleij
+The kernel does not block getattr operations when there is a delegation
+outstanding. When the client issues read and write ops to the server,
+while holding the delegation, the timestamps on the file get updated to
+the server's time as usual. Later, the client will send a SETATTR (or a
+CB_GETTTR reply) that may have times that are earlier than the
+timestamps currently on the inode.
+
+This means that userland applications running on the NFS server can
+observe timestamps going backward. This applies even for the ctime. NFS
+clients should be fine, as the server will do a CB_GETATTR to satisfy
+them. Server-side applications can't do much else with the inode without
+recalling the delegation, so my thinking is that the effect should be
+"mostly harmless".
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v2:
+- add ATTR_CTIME_SET and remove inode_set_ctime_deleg()
+- track original timestamps in struct nfs4_delegation
+- fix delegated timestamp updates to respect saved timestamps
+- Link to v1: https://lore.kernel.org/r/20250722-nfsd-testing-v1-0-31321c7fc97f@kernel.org
+
+---
+Jeff Layton (7):
+      vfs: add ATTR_CTIME_SET flag
+      nfsd: ignore ATTR_DELEG when checking ia_valid before notify_change()
+      nfsd: use ATTR_CTIME_SET for delegated ctime updates
+      nfsd: track original timestamps in nfs4_delegation
+      nfsd: fix SETATTR updates for delegated timestamps
+      nfsd: fix timestamp updates in CB_GETATTR
+      vfs: remove inode_set_ctime_deleg()
+
+ fs/attr.c           | 34 ++++++++++---------------
+ fs/inode.c          | 73 -----------------------------------------------------
+ fs/nfsd/nfs4proc.c  | 31 ++++++++++++++++++++++-
+ fs/nfsd/nfs4state.c | 44 +++++++++++++++++---------------
+ fs/nfsd/nfs4xdr.c   |  5 ++--
+ fs/nfsd/state.h     |  8 ++++++
+ fs/nfsd/vfs.c       |  2 +-
+ include/linux/fs.h  |  3 +--
+ 8 files changed, 79 insertions(+), 121 deletions(-)
+---
+base-commit: b05f077b59098b4760e3f675b00a4e6a1ad4b0ad
+change-id: 20250722-nfsd-testing-5e861a3cf3a0
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
