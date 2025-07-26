@@ -1,174 +1,175 @@
-Return-Path: <linux-kernel+bounces-746799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF8AB12B56
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:05:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE065B12B57
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1344AA17FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:05:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1E291C2530A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84F285CBD;
-	Sat, 26 Jul 2025 16:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574C82868B2;
+	Sat, 26 Jul 2025 16:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nswe3jsq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JjhTd7U4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28236229B28;
-	Sat, 26 Jul 2025 16:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320D221348
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753545929; cv=none; b=L0m7x7kDzlVMJ6DYjsKrAQAz+83Ii+cm3LdwmGFd5wbdVjre6crBzoaBXvHGIfGdx5l8EUmjhukbcovU8cwIXkJri20f5cZlWL5RSZpcpHfDJmtRZog/rHCGKP7HycotOJcbSKEMw5oc8ofFHzY/TnNgqpH1YZSAd4uMfPDgtdk=
+	t=1753545929; cv=none; b=R9t4pz6/gmJ3DE6DVkN0a3nW2WZJEo54VfygetGZ48GZVOKEVHQyskjxoOk8sKXbaovUSGagCtaja8BsmffimbFYck2uLbV0gzG4NsAR6hZZaqCfj9Xpf3UeMCZuWoEP75g26bPn9nBvH11SofZG8qmjnPa4ebEBKJtocDa/sMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753545929; c=relaxed/simple;
-	bh=6MpzxbPX27NadrsGk0zw216Oyyfxgmiy2Y1q0a0nRAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fNc4MSWjcjLZKx14+alle/hEB/fpdsS26S2Ug1NcPdKU28JH0PicelUlAKY3bZS5WYrwX+mceII8JOfqjyOvar77F9Sb6Ju//ow6Zq88nHWkXSTc2+u6xARV/h9yb+xQeGuUPUMdWbKFGnOkK4cT/mKdGCGdAb0YwaFK7WvMfmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nswe3jsq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B30E6C4CEFB;
-	Sat, 26 Jul 2025 16:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753545928;
-	bh=6MpzxbPX27NadrsGk0zw216Oyyfxgmiy2Y1q0a0nRAg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Nswe3jsqp6uE7J1q7VAwlweFK/2EEUj7/yxpjrJQyvWTj4EeJEZBv0JpsuCBwmk9j
-	 KQGbwwXZkDzP3Cv/CmuBqW5czzXH4Amoedtr7f+H5hLT3PHXN7KteirmjuUQiZOAQl
-	 klNA3B27wfo4lQDjcAPDelN6tRNDHFIX5fF86m2sx5GTcFLgwLLiXX/d6P7PkMYoCj
-	 8kmhXu/aREl7k1k6ju8PWjjtBJetXCVS6rBAYEiiFnlB0QmrzDwj6nZ6ZsREF+y7qo
-	 u/Kn73NsPR4Njr7h9iAxCY18/TebJ9DGgoU2vR+YIAqUCF0naKkBNT6CMpQ2EJRehI
-	 jsQfyRqmURChQ==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32f2947ab0cso26092041fa.2;
-        Sat, 26 Jul 2025 09:05:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUm4wZU5Kjo9lk8+VOpDhKzgcRUhbghpshkKkeTR8aUr9pV6U0GTxnihuCgQ80c+qjuAYbN7OxP@vger.kernel.org, AJvYcCW9Pokhay7emdGiqHt7+BJ/vNl5y5V6r+W40XyCeLLDK8bbFakxcS/UJtbTcvs7LNXm5c1SnPIjMf8vhZth@vger.kernel.org, AJvYcCWF91BvpCTpnv5kZOC3Y5dPL5/yb2isbZZvB0iLccT+TCeM0bmCwQi9PagtnGmd66DsrYlfTWv9T2JjD8s=@vger.kernel.org, AJvYcCWbf7DbCWiWXoB8jmrimMnSPXUFJRQDH1whVbEsbSe4mWAtQyzOKvfJUiJvGkD4bklxoH7xLmavrjKUGj2Y4Po=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk8Mj2Kx5qEffcXyyzK8fzSpczPBUvKo+MAv5wzxYPvon4TN1V
-	vSLU75P9yLkFpPa4hUpKtM+JN5bZSVKy3Z5fBpmK1tHGnBYWBq0svO9yfgv/WuwJACrcTCY8jod
-	z9CEp0VI8oodwxBeVzXY6CS5nHbk1Zqs=
-X-Google-Smtp-Source: AGHT+IG3EDvduZsc53+xFnV4ZnOEuNccFoxXRBW2DEcupA+kF+Dd/tDVGJKqs9SWSByGCvtmwfD4iZl2Wi/hY9T3Dvo=
-X-Received: by 2002:a05:651c:154b:b0:32a:8916:55af with SMTP id
- 38308e7fff4ca-331ee622688mr19317841fa.2.1753545927125; Sat, 26 Jul 2025
- 09:05:27 -0700 (PDT)
+	bh=PUrkSozFkkeMnMfnlwvJVtzIMpS4at63Dd8X5r8YIHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=goMXDhtiQeul4ujBw+GNexAhDu/+yotrGlb8XT4JScNPnrMREuoY1uH1ujogB4mQAKJERCaQihb5Fr7Ketxo9Ac6/HthPg+LNgxqGVPN0cIPdWmQemQ0RvD3O1iHfTUVFOcK/Fsu8UmVTRUgfWOJkPsdj+Kif/CD0EPAAYk8QlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JjhTd7U4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56QFqbRp028900
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:05:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=OXCJSxoReTk8aiWjW4riny+3
+	jOKSrw2PoehE9U+YV9g=; b=JjhTd7U4iMj86s7iNMFA2H2Wh5rj2XM+odGNkPu7
+	E5MQ83XolqzPGDoctc9mKOdxZKwglV0KoVv55grDJnEJUksHTKbX+hB6weEzdBhU
+	AkyZWWHxPKDtD148HbsJfhkmJCXwZiWwCQXRxzIYpbMwMiP8MSubaljJ+ChDMVVc
+	/+iiG7BQ3O9qNrRqVPFP0bnTS+YKUmVnISjtOYzn4zVjkFlcxf8Syfj6Idi6L0Kf
+	G3caJ2o4d4Om8EnlGT6UKzen2WuxKio50K/q4dpumjiPecM/6C4SLA1L7/RcXiaP
+	t/6ZaJaBAkGpLK1bhgMfIlD7736GezM3cWLTwtZP/6XTPw==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484r6qgr81-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:05:27 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70707168c59so26027696d6.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:05:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753545926; x=1754150726;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OXCJSxoReTk8aiWjW4riny+3jOKSrw2PoehE9U+YV9g=;
+        b=nobeMuIniG0YefQP3+NJ91ab55MwdpOKJmuztBZ5lTeo58th0DH8owVV+suVkBhu6r
+         2Y2Wd+h4CBizQFHyOoRCvNKuW5BcjpprXKBpRLaSnL/O19hVv4Xan4Kmvc8MkQKNGm1m
+         GGnX2aD5FajA2gGPG7qAvf66a70duqYDWHvVW7Ljy9ZD2nQB1WypPjGwtVI/GtmqVHrB
+         RuCWbVq7WzX/Gjx8MJT3WYISwZzKCCseua33f8DIrTuw//CcfcSytaxnsaPdDDNOv2rg
+         xpYsSpJl07oTRx+uH2FBDWgQxjJnigXq13BCFgdWhUfvu1NRE42HRMeRIgXu79veoFEM
+         fekw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgTpLgl3N91Vxu+I4gaM8/AfXrKUnRAmPPqpRd5zsup2MpFLcNhotzEuV/M227QSxa5Mc8jdOuYz0cuqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNOAmturxkzvBfRonjmfu9wREgHqXqdDdWSAJ5CXsejDKfc2LX
+	f2EwckT3ve92ED7GvdEL6CLxqwSbDm5CMtS8bGUZU/mQIclX5fMRA6mO41ZPLqetg99ry+zPsC/
+	OuQe3X4jKuid2sHs4As2Cop3WqnNgY/kYWTwgyLMBro4Tyftbv4xIFH/xAsRLTJKbsY0=
+X-Gm-Gg: ASbGncsW7u4It0swyPEkM1VP2Bx2nb4L5x051DZNgZHBgCxv+hR1yVQzybCImDVuHuf
+	Rw5yVYmOEiVJwvTPaB2MZ2iSUOERarfxCWduWYDBQiCSQzbqvmsSJBRAzmr4DXicm16G5bQ+wAD
+	4nv7s51J2UQNqKjzlDW4QCJbN050Lf3SwvUbCbfnNKqDopCDcsGDEkoH0yZJBSGIvv/F9GYqK2e
+	lNIBD7LGNGqm2WjzqZk/vZh648W/Jgpjok0DPQNcNZDpT2tPof0PGFBywujtEerVS8qfALj4AQP
+	bm5RGLAxYBGui4gR4i3LPvyP6Ks4gLmK8G4CYmMawHFv8X2HjsIbT9F6i9YiWgVY813BdYmTD1O
+	hsB3IJ7r6MTMrF2RK/K9L6ZPnUJiegr5YmCQ/CCcBSoKftPIcLfXA
+X-Received: by 2002:a0c:f00c:0:b0:707:2390:2968 with SMTP id 6a1803df08f44-70723902d7dmr68085586d6.16.1753545925852;
+        Sat, 26 Jul 2025 09:05:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtnleMjXXn50zHpTopz+EP+s9ry6QJ/sF5nQS8I6PAzpXZgZQCwe8doY8ASsjM8BU2ru14mQ==
+X-Received: by 2002:a0c:f00c:0:b0:707:2390:2968 with SMTP id 6a1803df08f44-70723902d7dmr68085106d6.16.1753545925175;
+        Sat, 26 Jul 2025 09:05:25 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-331f407aab0sm4870891fa.19.2025.07.26.09.05.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Jul 2025 09:05:24 -0700 (PDT)
+Date: Sat, 26 Jul 2025 19:05:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+        kong.kongxinwei@hisilicon.com, liangjian010@huawei.com,
+        chenjianmin@huawei.com, fengsheng5@huawei.com, libaihan@huawei.com,
+        shenjian15@huawei.com, shaojijie@huawei.com,
+        jani.nikula@linux.intel.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 drm-dp 10/11] drm/hisilicon/hibmc: adapting
+ modification for the former commit
+Message-ID: <oxwapypy7ttxf7geysnatnowlhidioxbhfyvt5ljrhw4tjmbsr@zycqgbwmwqbc>
+References: <20250718065125.2892404-1-shiyongbang@huawei.com>
+ <20250718065125.2892404-11-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250726133435.2460085-1-ojeda@kernel.org>
-In-Reply-To: <20250726133435.2460085-1-ojeda@kernel.org>
-From: Tamir Duberstein <tamird@kernel.org>
-Date: Sat, 26 Jul 2025 12:04:50 -0400
-X-Gmail-Original-Message-ID: <CAJ-ks9kneAWVxMNYcmQzks6NaprRPJZPyFkRBtLmtseemyJgbg@mail.gmail.com>
-X-Gm-Features: Ac12FXxAFNw0PPG_mgb-afX1RFMqeDfPaH7GOci4UnEY3JifxOIfnYstVIjNq5A
-Message-ID: <CAJ-ks9kneAWVxMNYcmQzks6NaprRPJZPyFkRBtLmtseemyJgbg@mail.gmail.com>
-Subject: Re: [PATCH] rust: kbuild: clean output before running `rustdoc`
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
-	Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718065125.2892404-11-shiyongbang@huawei.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI2MDE0MCBTYWx0ZWRfX2DKxiM3a5Z8E
+ JR26mfxRJnCDf9MQ+tEQ0LwUaRjwOoSzXtOlyJrp5QINLvyII276UXCMb47q6bpZqe1bAZw1X1v
+ x+Sjrq9UTU9VDgchQdP9DYiCY4Pxm5fYTe8St2YQz4OKTSRNoshI7bCyoltR234iAGjpZyQ9R5s
+ ngR1AeLxGqxRr5QwxWJ271r5OLFHPjf8wABLB+iJJ5N8mBjUjGMAeFEawlo8Bm59YkNPRQWbULn
+ R4XjAZsEdiNhQ3QudOQZ+qCfndqJOiqmWnOPFdvTR3BbmtPzVCdQ0PhuqzosIWs4qN3JXSmwk7C
+ XRjtPHRAS/0UFh+RDsCfaGU2UDpjiNLoYRJ3EOvvwhpbLJzWeJJomflxvmW/CkLm8VGmtDWAPEJ
+ 0xUPCKxiQpdp9W9TeGXU7accICGiKkqc25+Fk5I2yTYBb+CCmIw+v+mYluQhSdTUOq3GOmjY
+X-Proofpoint-ORIG-GUID: 0y1TyZyKNOUdKZc8HzyCie8vTF2RWJPl
+X-Authority-Analysis: v=2.4 cv=ea89f6EH c=1 sm=1 tr=0 ts=6884fcc7 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=i0EeH86SAAAA:8 a=fbmvg8OnJgpNs0uOg7cA:9 a=CjuIK1q_8ugA:10
+ a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-GUID: 0y1TyZyKNOUdKZc8HzyCie8vTF2RWJPl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-26_04,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 clxscore=1015
+ spamscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507260140
 
-On Sat, Jul 26, 2025 at 9:35=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> `rustdoc` can get confused when generating documentation into a folder
-> that contains generated files from other `rustdoc` versions.
->
-> For instance, running something like:
->
->     rustup default 1.78.0
->     make LLVM=3D1 rustdoc
->     rustup default 1.88.0
->     make LLVM=3D1 rustdoc
->
-> may generate errors like:
->
->     error: couldn't generate documentation: invalid template: last line e=
-xpected to start with a comment
->       |
->       =3D note: failed to create or modify "./Documentation/output/rust/r=
-ustdoc/src-files.js"
->
-> Thus just always clean the output folder before generating the
-> documentation -- we are anyway regenerating it every time the `rustdoc`
-> target gets called, at least for the time being.
->
-> Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned i=
-n older LTSs).
-> Reported-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Closes: https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic=
-/x/near/527201113
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On Fri, Jul 18, 2025 at 02:51:24PM +0800, Yongbang Shi wrote:
+> From: Baihan Li <libaihan@huawei.com>
+> 
+> Add colorbar disable operation before reset chontroller, to make sure
+> colorbar status is clear in the DP init, so if rmmod the driver and the
+> previous colorbar configuration will not affect the next time insmod the
+> driver.
 
-I've seen this as well.
+In this one and in the next one please fix commit subjects. Can't parse
+them.
 
-Reviewed-by: Tamir Duberstein <tamird@kernel.org>
-
-
+> 
+> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
+> Signed-off-by: Baihan Li <libaihan@huawei.com>
+> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
 > ---
->  rust/Makefile | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->
-> diff --git a/rust/Makefile b/rust/Makefile
-> index 115b63b7d1e3..771246bc7ae6 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@ -103,14 +103,14 @@ rustdoc: rustdoc-core rustdoc-macros rustdoc-compil=
-er_builtins \
->  rustdoc-macros: private rustdoc_host =3D yes
->  rustdoc-macros: private rustc_target_flags =3D --crate-type proc-macro \
->      --extern proc_macro
-> -rustdoc-macros: $(src)/macros/lib.rs FORCE
-> +rustdoc-macros: $(src)/macros/lib.rs rustdoc-clean FORCE
->         +$(call if_changed,rustdoc)
->
->  # Starting with Rust 1.82.0, skipping `-Wrustdoc::unescaped_backticks` s=
-hould
->  # not be needed -- see https://github.com/rust-lang/rust/pull/128307.
->  rustdoc-core: private skip_flags =3D --edition=3D2021 -Wrustdoc::unescap=
-ed_backticks
->  rustdoc-core: private rustc_target_flags =3D --edition=3D$(core-edition)=
- $(core-cfgs)
-> -rustdoc-core: $(RUST_LIB_SRC)/core/src/lib.rs FORCE
-> +rustdoc-core: $(RUST_LIB_SRC)/core/src/lib.rs rustdoc-clean FORCE
->         +$(call if_changed,rustdoc)
->
->  rustdoc-compiler_builtins: $(src)/compiler_builtins.rs rustdoc-core FORC=
-E
-> @@ -122,7 +122,8 @@ rustdoc-ffi: $(src)/ffi.rs rustdoc-core FORCE
->  rustdoc-pin_init_internal: private rustdoc_host =3D yes
->  rustdoc-pin_init_internal: private rustc_target_flags =3D --cfg kernel \
->      --extern proc_macro --crate-type proc-macro
-> -rustdoc-pin_init_internal: $(src)/pin-init/internal/src/lib.rs FORCE
-> +rustdoc-pin_init_internal: $(src)/pin-init/internal/src/lib.rs \
-> +    rustdoc-clean FORCE
->         +$(call if_changed,rustdoc)
->
->  rustdoc-pin_init: private rustdoc_host =3D yes
-> @@ -140,6 +141,9 @@ rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rus=
-tdoc-ffi rustdoc-macros \
->      $(obj)/bindings.o FORCE
->         +$(call if_changed,rustdoc)
->
-> +rustdoc-clean: FORCE
-> +       $(Q)rm -rf $(rustdoc_output)
-> +
->  quiet_cmd_rustc_test_library =3D $(RUSTC_OR_CLIPPY_QUIET) TL $<
->        cmd_rustc_test_library =3D \
->         OBJTREE=3D$(abspath $(objtree)) \
->
-> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-> --
-> 2.50.1
->
->
+> ChangeLog:
+> v2 -> v3:
+>   - fix the issue commit ID, suggested by Dmitry Baryshkov.
+>   - split into 2 commits, suggested by Dmitry Baryshkov.
+>   - add more comments in commit log, suggested by Dmitry Baryshkov.
+> ---
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+> index 36daf7542d40..85499f1ace8b 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+> @@ -180,6 +180,8 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
+>  	/* int init */
+>  	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
+>  	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
+> +	/* clr colorbar */
+> +	writel(0, dp_dev->base + HIBMC_DP_COLOR_BAR_CTRL);
+>  	/* rst */
+>  	writel(0, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
+>  	usleep_range(30, 50);
+> -- 
+> 2.33.0
+> 
+
+-- 
+With best wishes
+Dmitry
 
