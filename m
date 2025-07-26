@@ -1,124 +1,86 @@
-Return-Path: <linux-kernel+bounces-746786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6342EB12B15
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:11:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFD3B12B19
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761231C20FCC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 15:11:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE74E17DDD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 15:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CFE24728C;
-	Sat, 26 Jul 2025 15:10:58 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43DF28688E;
+	Sat, 26 Jul 2025 15:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jobxrcTD"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA6A1DBB2E;
-	Sat, 26 Jul 2025 15:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECD91172A;
+	Sat, 26 Jul 2025 15:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753542658; cv=none; b=D0ov1uO/nyn7Ee1fzF95WDztXvH7vUKGo+Xr+lEJnfY0xylQQCxxO/XC85fnpYy9hAPUg2QE1MPLuz6lTs2ffUpBHho1eQtn1W+HIlRMixb7/7GkzRKZyW/tyuHki6VVwVWUIev3jz3W0jTC86zSdnCl1qnIs3BezO4Qo/huhIs=
+	t=1753542869; cv=none; b=UycLx2F0wEYtH7L11i7ePM7/4FZFZrTycIExF9Qd2+Fem21AYaFg/SM2F08fRAXdpg/uhxnN3X9amxM6W+8A8zpC2ryAJ5ap5guiZe/I33ITlfriyqLf2qhJ6VdBjIlvLtBsGeDVl4yPIJxs9L0DeumtaFZoljXAW0BLFDDIjys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753542658; c=relaxed/simple;
-	bh=VuF3iwFNCJc1dhUDx5eheQI14CKmMz0Sb7ok2diS9xM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W9hdG4jCVUupEMHe6lZf/1chZ7uh6qsIEv/+CgHIJlNeUfoJM1nXyuWSgwl+kLYG1Gkzwye213pIWeVBPol0SltzLzCI/EJUlGHAKVKe2ahv5YMmO+y8w0URVvOSHvFAc37jH3SadwE3XCpN0b6l2i2GsY/9HPxRQIkn+1hujos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from pomiot (c144-156.icpnet.pl [85.221.144.156])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mgorny)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 032A5340CEA;
-	Sat, 26 Jul 2025 15:10:54 +0000 (UTC)
-From: =?UTF-8?q?Micha=C5=82=20G=C3=B3rny?= <mgorny@gentoo.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Sam James <sam@gentoo.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Micha=C5=82=20G=C3=B3rny?= <mgorny@gentoo.org>
-Subject: [PATCH v3 kbuild-rebased] kheaders: make it possible to override TAR
-Date: Sat, 26 Jul 2025 17:10:30 +0200
-Message-ID: <20250726151030.142548-1-mgorny@gentoo.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753542869; c=relaxed/simple;
+	bh=7KnVq0bpX4BK5qfmfAMjT2aCIkDDD4mrF0Ibni/E7Oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t9APrncLFg6GL8h8+9NXL7y0+XsMW9vWnsHhiqiOc1pf+nOFFqQCDvZT+UUoY/LE2rrRLeLulIiScI8j9qLhZOUqOHQUpOldkdmMVkUtp/qQ81/qyGSRwaKGhrdg1weVkKQfY54xnsIYZ3BDueXFqUA86C0oatnCisl3HX/kXgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=jobxrcTD; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=w8iwmIA2XesTNWiyP/rI4G6f6kJKZhgchzLduz9POwc=; b=jobxrcTDtg1zw81Vr6earsEGTk
+	NZ6uyHDKtntzhmO/SVlnESqxWc5z0QWm4sOZWzNbZRPM9VPQ7LM5xEPTrOBWMZNcbb35pcR7hazUL
+	qjzBSre6ZCnVbWPEDAY2lF93WxFgnVmSMSRIUJEDBVc8j5sxgDopgwsmB/3wjb8bsgPE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ufgbM-002wwk-JM; Sat, 26 Jul 2025 17:14:20 +0200
+Date: Sat, 26 Jul 2025 17:14:20 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: chalianis1@gmail.com
+Cc: hkallweit1@gmail.com, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linux@armlinux.org.uk, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH net] phy: dp83869: fix interrupts issue when using with
+ an optical fiber sfp. to correctly clear the interrupts both status
+ registers must be read.
+Message-ID: <33f056e7-6bf4-47be-aa8b-95640bf2151c@lunn.ch>
+References: <20250726001034.28885-1-chalianis1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250726001034.28885-1-chalianis1@gmail.com>
 
-Commit 86cdd2fdc4e39c388d39c7ba2396d1a9dfd66226 ("kheaders: make headers
-archive reproducible") introduced a number of options specific to GNU
-tar to the `tar` invocation in `gen_kheaders.sh` script.  This causes
-the script to fail to work on systems where `tar` is not GNU tar.  This
-can occur e.g. on recent Gentoo Linux installations that support using
-bsdtar from libarchive instead.
+On Fri, Jul 25, 2025 at 08:10:34PM -0400, chalianis1@gmail.com wrote:
+> From: Anis Chali <chalianis1@gmail.com>
+> 
+> from datasheet of dp83869hm
+> 7.3.6 Interrupt
+> The DP83869HM can be configured to generate an interrupt when changes of internal status occur. The interrupt
+> allows a MAC to act upon the status in the PHY without polling the PHY registers. The interrupt source can be
+> selected through the interrupt registers, MICR (12h) and FIBER_INT_EN (C18h). The interrupt status can be
+> read from ISR (13h) and FIBER_INT_STTS (C19h) registers.
 
-Add a `TAR` make variable to make it possible to override the tar
-executable used, e.g. by specifying:
+Reading this description, it sounds like the fibre interrupt it not
+cascaded into the micr? There are two completely different sets of
+registers.
 
-  make TAR=gtar
+So i seems like you should be reading this register in
+dp83869_handle_interrupt() same as the MICR.
 
-Link: https://bugs.gentoo.org/884061
-Reported-by: Sam James <sam@gentoo.org>
-Tested-by: Sam James <sam@gentoo.org>
-Co-developed-by: Masahiro Yamada <masahiroy@kernel.org>
-Signed-off-by: Michał Górny <mgorny@gentoo.org>
-Signed-off-by: Sam James <sam@gentoo.org>
+    Andrew
+
 ---
- Makefile               | 3 ++-
- kernel/gen_kheaders.sh | 4 ++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index ba0827a1fccd..081d494d037a 100644
---- a/Makefile
-+++ b/Makefile
-@@ -543,6 +543,7 @@ LZMA		= lzma
- LZ4		= lz4
- XZ		= xz
- ZSTD		= zstd
-+TAR		= tar
- 
- CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
- 		  -Wbitwise -Wno-return-void -Wno-unknown-attribute $(CF)
-@@ -622,7 +623,7 @@ export RUSTC RUSTDOC RUSTFMT RUSTC_OR_CLIPPY_QUIET RUSTC_OR_CLIPPY BINDGEN
- export HOSTRUSTC KBUILD_HOSTRUSTFLAGS
- export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX YACC AWK INSTALLKERNEL
- export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
--export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD
-+export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD TAR
- export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS KBUILD_PROCMACROLDFLAGS LDFLAGS_MODULE
- export KBUILD_USERCFLAGS KBUILD_USERLDFLAGS
- 
-diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
-index c64e5a00a3d9..59ec52f62c52 100755
---- a/kernel/gen_kheaders.sh
-+++ b/kernel/gen_kheaders.sh
-@@ -31,7 +31,7 @@ mkdir "${tmpdir}"
- 
- # shellcheck disable=SC2154 # srctree is passed as an env variable
- sed "s:^${srctree}/::" "${srclist}" | tar -c -f - -C "${srctree}" -T - | tar -xf - -C "${tmpdir}"
--tar -c -f - -T "${objlist}" | tar -xf - -C "${tmpdir}"
-+${TAR:-tar} -c -f - -T "${objlist}" | tar -xf - -C "${tmpdir}"
- 
- # Remove comments except SDPX lines
- # Use a temporary file to store directory contents to prevent find/xargs from
-@@ -43,7 +43,7 @@ xargs -0 -P8 -n1 \
- rm -f "${tmpdir}.contents.txt"
- 
- # Create archive and try to normalize metadata for reproducibility.
--tar "${timestamp:+--mtime=$timestamp}" \
-+${TAR:-tar} "${timestamp:+--mtime=$timestamp}" \
-     --owner=0 --group=0 --sort=name --numeric-owner --mode=u=rw,go=r,a+X \
-     -I "${XZ}" -cf "${tarfile}" -C "${tmpdir}/" . > /dev/null
- 
+pw-bot: cr
 
