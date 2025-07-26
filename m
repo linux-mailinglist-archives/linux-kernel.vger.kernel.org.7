@@ -1,209 +1,158 @@
-Return-Path: <linux-kernel+bounces-746560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D9BB12841
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:47:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D737DB12843
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506C6179D5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:47:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6984F3B08A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6A7134AC;
-	Sat, 26 Jul 2025 00:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R95rrCGf"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE307DA73;
+	Sat, 26 Jul 2025 00:50:24 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935A41853
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 00:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32662CA5A;
+	Sat, 26 Jul 2025 00:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753490823; cv=none; b=Qhep3jrvd5Rfrwccp++7uYcuh4Fm4zL6wmcsGc32PNn5A0LVE2SjV0tec8dosI02l6jxgLMTN9JY664+m4I5Sgj5MSLuELMEIUbK0/UP0mWwGQ6yCC6sWYlK5tLLo0LyuQL4ixS46cBQQmQVyQ0554fgj6xIwi3T0jvJFe3QvHQ=
+	t=1753491024; cv=none; b=e5+IhLHuUxmYIIRDpnvJi42bEsOxrqvrggybx35IzcmUh+TP/irOSv/CaDB0b5SSQujpvU4Y5F5bZZF6JtMa7UvBaHW4yUUfe6DkCZ7Pxyd518mNAEyJoA5XqNOH8RtXHK5OhQQK5yVrHvZK9CEDf1nxrME69ule4CPMCC1H20Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753490823; c=relaxed/simple;
-	bh=5mNDSlpZBrH6wuBK2WXPGdLMkCQwP5HePfHyJ1mL9K4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iyxmIgIkUgFWExlFgXH0SQYRmXNmW/3jpXOuVqM3oDpZ3x5OBz4MzjylyBznSr3m2+LviTDYqy104Ck5599VMDHnLkbBIe2YU3Iz8sRDxGTUJm079z9ZNo4ITFD8BK4RlBXILQV7UYAhQ1InopKmAbsQbCXUbwYqKhnZhaKkWqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R95rrCGf; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-235e389599fso79565ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753490821; x=1754095621; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tMbKGVVgqKFUYRBdwQ4iJ5mKeO9LhYjMm+hCWr+WlyM=;
-        b=R95rrCGfnlujgQ5ON072fSHQwD1VKi8rOjE2bZLj6zJ4/WkEWlLuCtpxHMdxQn48ZB
-         F6KxzGHTZziB5Bzq/NXEbKGz3OAMQh37ty61vW1sS25smlWv+C6wMz56TzQjM7ivn8Lw
-         BhJ4TG9JK4v1z/O5f1eWKCy8VwUyzizrha1Z6N4yYgoRrJPJKBIq4OPrK/OK/u3ea8id
-         cyu0oArEyNwgkbv6ulg7IEBKgm54eY3OBHAxEp2PFg30zhLvGpr8lBNdFrQbQ3bPS2y4
-         qV+h6SNsst+wvO0KM/Ria+tUfOW1nhAxikCPlqWZ6rYZtwA3ZgZGauM1dQpA0jDCBKaS
-         u9iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753490821; x=1754095621;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tMbKGVVgqKFUYRBdwQ4iJ5mKeO9LhYjMm+hCWr+WlyM=;
-        b=v26tAT/+MY/Xw8xghO/vCO6fvq1rBjKuUU5lMxCLzm8FobFfb1wWU9Swkx3lVF5SEY
-         PfjKV1LzGg+dTAY2hvX3ROk4/zm3f0RzdnD3vnnZ2gL0ayIMtm5Hnn8FRG1LLK4X0ibG
-         No3hVZbIHxx+L/mLghz3GZ1vJU6XNsAVbhftl657zbhML4eowxVHo7sjtla/3Ov8DPFv
-         ZgSCe1LrFEmrRjZLTc5PPDvm4c31rvRuEiQIHn3Q/5Fx0iVGN7SobpNmrQThHX2lO4Eo
-         JGpyhOs77Tn35iKrt5YfkV1ZEeyyxh1J0bIGE9bRoOI8V5KGOvyZb8uLkb9+fzaGo1Q9
-         gpdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIB+Jn82sYEoh5F0MI4EfiKjwLmz56c07KLqugb430XszxvVm+U/LP+qHxM1ykidI3aoeYKbSv4wRcSYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTYTW3M3tDsKxeYPmYBcGa23e93vJBX/TJtlZhOXYG5OrhRvE5
-	I5f6z1GV+swwo+p7ve4egfG6o6IXXY9ON6Rs629384d+7PXN7EybnLq4mRLNbcPadTVnY5FqtU7
-	85kPniVCI/HCE5Kt0DgS602DyLLizVbjZReu5Spm7
-X-Gm-Gg: ASbGnctgV3OimjxacLMrxO/LUoHhmZSvbei0Jr5zS6hIbYNu/gzfyit7ou9WQ2vkBFM
-	dGWVgujomgkeWjE1VTmx0K4iZzEoY7R8dck6v2o9m4sfWcsZ8ByuMYxvTjVeqHKR+8nkPOFb7YE
-	rr8u73QssCFDDJpSRMXD1qY64JXQa94TSsAm+W4ICRiIW6mc/Y1j8USNtfRvdBJyA/rJ8MHLnS+
-	zIRriCY
-X-Google-Smtp-Source: AGHT+IGT1Cf+m4uJZZPf6K3czYf+Au3+f4mS9kDC/fQ4UVNBP+2ZENdqZYI6i2oUiHTkPmFZvIs+MVgjmnHCh25DLoY=
-X-Received: by 2002:a17:903:4b07:b0:234:a734:4ab9 with SMTP id
- d9443c01a7336-23fbfd0f5f7mr1213245ad.20.1753490820493; Fri, 25 Jul 2025
- 17:47:00 -0700 (PDT)
+	s=arc-20240116; t=1753491024; c=relaxed/simple;
+	bh=/3c2aKYG7udY7zbDAsNEvbHD1nJ+QqSgSs3hTuZRXbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YTdZNsPyUXqhwmqDqd0bnbBKtTdAWBHu9T7DyCkXaWCt2eI1W4lZvMjyyGMnWXqK3CGXvj0pe0/tFiX1IsWyUWlH+MtWfgoIl6O4dXk8hBO0HzeiMn20+dQL0aiX4Wo2PqJKswdwZhJnnulzLray33Vo6Q3RbJWlMBlfwnIP8ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bpmJ855GTzGpwD;
+	Sat, 26 Jul 2025 08:46:00 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4D000180468;
+	Sat, 26 Jul 2025 08:50:12 +0800 (CST)
+Received: from [10.174.177.71] (10.174.177.71) by
+ dggpemf500013.china.huawei.com (7.185.36.188) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 26 Jul 2025 08:50:11 +0800
+Message-ID: <2d59bf3d-212c-418f-97ac-2157ab1c2628@huawei.com>
+Date: Sat, 26 Jul 2025 08:50:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725193755.12276-1-namhyung@kernel.org> <20250725193755.12276-10-namhyung@kernel.org>
-In-Reply-To: <20250725193755.12276-10-namhyung@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 25 Jul 2025 17:46:48 -0700
-X-Gm-Features: Ac12FXyJ91YeAJqGSfv9w09U-zsgEwNQ_21htrTyXG8HvXsaGupYMbJFpQ-1bGc
-Message-ID: <CAP-5=fXj5pcuut9dTVqZfmipTb-sRkZXUwjhJ41rTDNOKDJPQQ@mail.gmail.com>
-Subject: Re: [PATCH v4 9/9] perf annotate: Add dso__debuginfo() helper
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 15/17] ext4: convert free groups order lists to xarrays
+Content-Language: en-GB
+To: Zhang Yi <yi.zhang@huaweicloud.com>, Theodore Ts'o <tytso@mit.edu>
+CC: Guenter Roeck <linux@roeck-us.net>, <linux-ext4@vger.kernel.org>,
+	<adilger.kernel@dilger.ca>, <jack@suse.cz>, <linux-kernel@vger.kernel.org>,
+	<ojaswin@linux.ibm.com>, <julia.lawall@inria.fr>, <yangerkun@huawei.com>,
+	<libaokun@huaweicloud.com>
+References: <20250714130327.1830534-1-libaokun1@huawei.com>
+ <20250714130327.1830534-16-libaokun1@huawei.com>
+ <b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net>
+ <20250724045456.GA80823@mit.edu>
+ <ef789a81-f326-4af6-8e9b-a13b5b20412b@huawei.com>
+ <20250724145437.GD80823@mit.edu>
+ <4b8b6482-f2f5-4fa5-949a-6d999c335319@huaweicloud.com>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <4b8b6482-f2f5-4fa5-949a-6d999c335319@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Fri, Jul 25, 2025 at 12:38=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
+On 7/25/2025 10:28 AM, Zhang Yi wrote:
+> On 2025/7/24 22:54, Theodore Ts'o wrote:
+>> On Thu, Jul 24, 2025 at 07:14:58PM +0800, Zhang Yi wrote:
+>>> I'm sorry for this regression, we didn't run these tests.
+>> No worries, I didn't run them either.
+>>
+>>> Could you please try the following diff? I have tested it on my
+>>> machine, and the issue does not recur. If every thing looks fine, I
+>>> will send out the official patch.
+>> This patch fixes the test bug which was causing the failure of
+>> test_new_blocks_simple.
+>>
+> The official patch to fix test_new_blocks_simple for the next
+> branch:
 >
-> It'd be great if it can get the correct debug information using DSO
-> build-Id not just the path name.  Instead of adding new callsites of
-> debuginfo__new(), let's add dso__debuginfo() which can hide the access
-> using the pathname and help the future conversion.
+> https://lore.kernel.org/linux-ext4/20250725021550.3177573-1-yi.zhang@huaweicloud.com/
 >
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+>> However, there is still test failure of test_mb_mark_used in the patch
+>> series starting with bbe11dd13a3f ("ext4: fix largest free orders
+>> lists corruption on mb_optimize_scan switch").  The test failure is
+>> fixed by 458bfb991155 ("ext4: convert free groups order lists to
+>> xarrays").  The reason why this is especialy problematic is that
+>> commit which introduced the problem is marked as "cc: stable", which
+>> means it will get back ported to LTS kernels, thus introducing a
+>> potential bug.
+>>
+> Indeed!
+>
+>> One of the advantages of unit tests is that they are light weight
+>> enough that it is tractable to run them against every commit in the
+>> patch series.  So we should strive to add more unit tests, since it
+>> makes easier to detect regressions.
+>>
+>> Anyway, here's the stack trace staring with "ext4: fix largest free
+>> orders lists corruption on mb_optimize_scan switch".  Could you
+>> investigate this failure?  Many thanks!!
+>>
+> Sure! I've sent out the fix that applies to the kernel that has only
+> merged bbe11dd13a3f ("ext4: fix largest free orders lists corruption
+> on mb_optimize_scan switch"), but not merged 458bfb991155 ("ext4:
+> convert free groups order lists to xarrays"). Please give it a try.
+>
+> https://lore.kernel.org/linux-ext4/20250725021654.3188798-1-yi.zhang@huaweicloud.com/
+>
+Sorry for the late reply, I haven't had time to look into this this week.
+I really appreciate Yi for taking the time to help address these issues.
+I'm also very sorry for introducing a regression in the ext4 kunit tests.
 
-:-) and my prior review comments now make less sense. I think putting
-the ui__warning into dso__debugingo makes sense, wdyt?
 
 Thanks,
-Ian
+Baokun
 
-> ---
->  tools/perf/ui/browsers/annotate.c |  4 ++--
->  tools/perf/util/annotate.c        |  6 +++---
->  tools/perf/util/dso.h             | 10 ++++++++++
->  3 files changed, 15 insertions(+), 5 deletions(-)
 >
-> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/a=
-nnotate.c
-> index 2a4db5bdcdb7e9d8..54610621c5f910fe 100644
-> --- a/tools/perf/ui/browsers/annotate.c
-> +++ b/tools/perf/ui/browsers/annotate.c
-> @@ -1042,7 +1042,7 @@ static int annotate_browser__run(struct annotate_br=
-owser *browser,
->                 case 'T':
->                         annotate_opts.code_with_type ^=3D 1;
->                         if (browser->dbg =3D=3D NULL)
-> -                               browser->dbg =3D debuginfo__new(dso__long=
-_name(map__dso(ms->map)));
-> +                               browser->dbg =3D dso__debuginfo(map__dso(=
-ms->map));
->                         annotate_browser__show(&browser->b, title, help);
->                         annotate_browser__debuginfo_warning(browser);
->                         continue;
-> @@ -1128,7 +1128,7 @@ int __hist_entry__tui_annotate(struct hist_entry *h=
-e, struct map_symbol *ms,
->         ui_helpline__push("Press ESC to exit");
->
->         if (annotate_opts.code_with_type)
-> -               browser.dbg =3D debuginfo__new(dso__long_name(dso));
-> +               browser.dbg =3D dso__debuginfo(dso);
->
->         browser.b.width =3D notes->src->widths.max_line_len;
->         browser.b.nr_entries =3D notes->src->nr_entries;
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index 6fc07971631ac8a3..05eb19b110ab7dcf 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -1270,7 +1270,7 @@ int hist_entry__annotate_printf(struct hist_entry *=
-he, struct evsel *evsel)
->         apd.addr_fmt_width =3D annotated_source__addr_fmt_width(&notes->s=
-rc->source,
->                                                               apd.start);
->         evsel__get_arch(evsel, &apd.arch);
-> -       apd.dbg =3D debuginfo__new(filename);
-> +       apd.dbg =3D dso__debuginfo(dso);
->
->         list_for_each_entry(pos, &notes->src->source, node) {
->                 int err;
-> @@ -1375,7 +1375,7 @@ static int symbol__annotate_fprintf2(struct symbol =
-*sym, FILE *fp,
->
->         if (annotate_opts.code_with_type) {
->                 evsel__get_arch(apd->evsel, &apd->arch);
-> -               apd->dbg =3D debuginfo__new(dso__long_name(map__dso(apd->=
-he->ms.map)));
-> +               apd->dbg =3D dso__debuginfo(map__dso(apd->he->ms.map));
->         }
->
->         list_for_each_entry(al, &notes->src->source, node) {
-> @@ -2888,7 +2888,7 @@ struct annotated_data_type *hist_entry__get_data_ty=
-pe(struct hist_entry *he)
->                 di_cache.dso =3D dso__get(map__dso(ms->map));
->
->                 debuginfo__delete(di_cache.dbg);
-> -               di_cache.dbg =3D debuginfo__new(dso__long_name(di_cache.d=
-so));
-> +               di_cache.dbg =3D dso__debuginfo(di_cache.dso);
->         }
->
->         if (di_cache.dbg =3D=3D NULL) {
-> diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
-> index 7df1673f08d3ddb4..fd8e95de77f78dfc 100644
-> --- a/tools/perf/util/dso.h
-> +++ b/tools/perf/util/dso.h
-> @@ -10,6 +10,7 @@
->  #include <stdio.h>
->  #include <linux/bitops.h>
->  #include "build-id.h"
-> +#include "debuginfo.h"
->  #include "mutex.h"
->  #include <internal/rc_check.h>
->
-> @@ -914,4 +915,13 @@ u64 dso__findnew_global_type(struct dso *dso, u64 ad=
-dr, u64 offset);
->  bool perf_pid_map_tid(const char *dso_name, int *tid);
->  bool is_perf_pid_map_name(const char *dso_name);
->
-> +/*
-> + * In the future, we may get debuginfo using build-ID (w/o path).
-> + * Add this helper is for the smooth conversion.
-> + */
-> +static inline struct debuginfo *dso__debuginfo(struct dso *dso)
-> +{
-> +       return debuginfo__new(dso__long_name(dso));
-> +}
-> +
->  #endif /* __PERF_DSO */
-> --
-> 2.50.1
->
+>> [09:35:46] ==================== test_mb_mark_used  ====================
+>> [09:35:46] [ERROR] Test: test_mb_mark_used: missing subtest result line!
+>> [09:35:46]
+>> [09:35:46] Pid: 35, comm: kunit_try_catch Tainted: G        W        N  6.16.0-rc4-00031-gbbe11dd13a3f-dirty
+>> [09:35:46] RIP: 0033:mb_set_largest_free_order+0x5c/0xc0
+>> [09:35:46] RSP: 00000000a0883d98  EFLAGS: 00010206
+>> [09:35:46] RAX: 0000000060aeaa28 RBX: 0000000060a2d400 RCX: 0000000000000008
+>> [09:35:46] RDX: 0000000060aea9c0 RSI: 0000000000000000 RDI: 0000000060864000
+>> [09:35:46] RBP: 0000000060aea9c0 R08: 0000000000000000 R09: 0000000060a2d400
+>> [09:35:46] R10: 0000000000000400 R11: 0000000060a9cc00 R12: 0000000000000006
+>> [09:35:46] R13: 0000000000000400 R14: 0000000000000305 R15: 0000000000000000
+>> [09:35:46] Kernel panic - not syncing: Segfault with no mm
+>> [09:35:46] CPU: 0 UID: 0 PID: 35 Comm: kunit_try_catch Tainted: G        W        N  6.16.0-rc4-00031-gbbe11dd13a3f-dirty #36 NONE
+>> [09:35:46] Tainted: [W]=WARN, [N]=TEST
+>> [09:35:46] Stack:
+>> [09:35:46]  60210c60 00000200 60a9e400 00000400
+>> [09:35:46]  40060300280 60864000 60a9cc00 60a2d400
+>> [09:35:46]  00000400 60aea9c0 60a9cc00 60aea9c0
+>> [09:35:46] Call Trace:
+>> [09:35:46]  [<60210c60>] ? ext4_mb_generate_buddy+0x1f0/0x230
+>> [09:35:46]  [<60215c3b>] ? test_mb_mark_used+0x28b/0x4e0
+>> [09:35:46]  [<601df5bc>] ? ext4_get_group_desc+0xbc/0x150
+>> [09:35:46]  [<600bf1c0>] ? ktime_get_ts64+0x0/0x190
+>> [09:35:46]  [<60086370>] ? to_kthread+0x0/0x40
+>> [09:35:46]  [<602b559b>] ? kunit_try_run_case+0x7b/0x100
+>> [09:35:46]  [<60086370>] ? to_kthread+0x0/0x40
+>> [09:35:46]  [<602b7850>] ? kunit_generic_run_threadfn_adapter+0x0/0x30
+>> [09:35:46]  [<602b7862>] ? kunit_generic_run_threadfn_adapter+0x12/0x30
+>> [09:35:46]  [<60086a51>] ? kthread+0xf1/0x250
+>> [09:35:46]  [<6004a541>] ? new_thread_handler+0x41/0x60
+>> [09:35:46] [ERROR] Test: test_mb_mark_used: 0 tests run!
+>> [09:35:46] ============= [NO TESTS RUN] test_mb_mark_used =============
+>>
+
 
