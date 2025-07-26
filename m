@@ -1,52 +1,114 @@
-Return-Path: <linux-kernel+bounces-746903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D907DB12CB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:44:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7258B12CBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827C23A6311
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:44:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA9CA7A4993
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8366B2222C0;
-	Sat, 26 Jul 2025 21:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C90223DE8;
+	Sat, 26 Jul 2025 21:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fm9Q3ge8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLV+aIK/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A0021C160
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 21:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4F24A11;
+	Sat, 26 Jul 2025 21:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753566277; cv=none; b=XNmSstEA0ogLTgpn2SPpwPjYq1y88zSGwNCYbgrct6qBXVjlY826FCZ6lUqEuQZgyG5N4JvlKwRCek1ZbgsndRdgvS5Wd80sItHqom2pMtSCcGNtWCUeRPy1sxDS+eEkFl0QW4OdcEaInrwpLVjgin7gWRF++D5WB0SgfHetE1U=
+	t=1753566480; cv=none; b=axwMFKDiA8JzQuB3ODmPAVaNSzfU2YiZBrNt1Pm+LodcXw8rCAATeeYxs5NSVYiyBBaFHFpx/TC5gFOPsivk6wvJ41I+7Mb/LLvYqOiZjMVARVxlOnCm2AfYNkqkIxX5jL4cJqGk5QX5B3Dkgd5GvuC/zZqeOeWg0I4kkP/T7DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753566277; c=relaxed/simple;
-	bh=8pKeCYuhTe0V/1hfLNncO9jrLuVtfIE60M0+Vurxh5g=;
+	s=arc-20240116; t=1753566480; c=relaxed/simple;
+	bh=/eYVX8SoAB6x3E1/nt7tNV75VsKCSwlna2pvOjAdRkY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnmE3E0nNeZWsObaLxxHO64KR53BflPCq1uyyifb0Tixx901YNDSb1yQYgyZDId6od+6F81sjxWh8c0tn/R1FoqYcxAzcDcrTy27NfuTKtEnIrtA9dmMpdHA8el7mwwAxj/7pOIiZoT7f7Js6qzAuMpB6Uqn7uiy2ngY1egbCCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fm9Q3ge8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD8AFC4CEED;
-	Sat, 26 Jul 2025 21:44:36 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDFcYlHgG0bHE0u+Bbu8i8KkCwBz81yZtZNmgTYafCMqO79+QCwmasg6TRgTkrbfq9bGNGQgUIWPmHdDMJgvyjXHBDSK5coPJMuW1zkKHhKpm5p8lnTWR8tWiTz7bPWK+0fUzAINB/eB43D2PbDPHtUIBpbo1EC0duLveibShIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLV+aIK/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF06C4CEF4;
+	Sat, 26 Jul 2025 21:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753566276;
-	bh=8pKeCYuhTe0V/1hfLNncO9jrLuVtfIE60M0+Vurxh5g=;
+	s=k20201202; t=1753566479;
+	bh=/eYVX8SoAB6x3E1/nt7tNV75VsKCSwlna2pvOjAdRkY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fm9Q3ge879pdN87lCkojCYW4D9SVOMMihGsifCblzqt31pQpeHG7h5gpNdTcV897q
-	 SjAW7BnPBBNMxKwSUiDQO4rVE/Eft4sF5vOBEpw0sgAqStbk4asPtpVoYcEWhZJYrj
-	 nhuTezu5CDlhWQS6Xns3TVhJBax7NzYXZgc0WvEJ0l8l7O6TNKLuIODdHWfcRC6ibb
-	 LyfyfthaBbpHlFNg6kPR/xUpFx8NynocnpR9TAPGs/rt2uWCpy7SMrXEtwhkLASvdg
-	 3YDWXVfEdCjmSXspGdnbON7JECvcuHNYv2MzYViRVnvecte0cftDsRuswHCQibDsDu
-	 RVdL4HdkrQv7A==
-Date: Sat, 26 Jul 2025 14:44:36 -0700
+	b=fLV+aIK/Vze5Yi37yRjGGquqtluZaj6oEyf8QVw+wrbGGLvpPqO/3VWgN6Q1uJ3EQ
+	 QH0nRrCHz1m2MVaid0DwO/ZAreS3vZit+HvBLazabv8sPBvyPMeFsxbcwMrKLtctLL
+	 j3NuYhUDBuP296I9Gm2LbU3o4w0jf03jgW1XCsrOoQO/rnS2XvncxSS5g/BxbXsPUY
+	 cZFoUBccYezObyf23E1vFbZZhbN05/QUjpb9Nu6YNxWPCEvwX+Xct1jvhL6BlIkWyO
+	 EQM6085jWFo3sxIkJ4QMkSe5eI9/li5cIvDNYY225Ouro0eBfYuV1C42m7ggGqabpt
+	 /L2PyqAmEpzaQ==
+Date: Sat, 26 Jul 2025 14:47:59 -0700
 From: Kees Cook <kees@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] execve updates for v6.17
-Message-ID: <202507261442.5B0F37DA@keescook>
-References: <202507261437.F2079B3B7@keescook>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Gavin Shan <gshan@redhat.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	James Morse <james.morse@arm.com>,
+	Oza Pawandeep <quic_poza@quicinc.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Michal Wilczynski <michal.wilczynski@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	Roger Pau Monne <roger.pau@citrix.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Usama Arif <usama.arif@bytedance.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Hou Wenlong <houwenlong.hwl@antgroup.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Alexander Graf <graf@amazon.com>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jan Beulich <jbeulich@suse.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Bibo Mao <maobibo@loongson.cn>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-mm@kvack.org, kasan-dev@googlegroups.com,
+	linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org,
+	kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v4 0/4] stackleak: Support Clang stack depth tracking
+Message-ID: <202507261446.8BDE8B8@keescook>
+References: <20250724054419.it.405-kees@kernel.org>
+ <20250726004313.GA3650901@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,15 +117,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202507261437.F2079B3B7@keescook>
+In-Reply-To: <20250726004313.GA3650901@ax162>
 
-On Sat, Jul 26, 2025 at 02:39:20PM -0700, Kees Cook wrote:
-> Please pull these execve updates for v6.17.
+On Fri, Jul 25, 2025 at 05:43:13PM -0700, Nathan Chancellor wrote:
+>   ld.lld: error: undefined symbol: __sanitizer_cov_stack_depth
+>   >>> referenced by atags_to_fdt.c
 
-/me bangs hood of scripting machinery
+Proposed fix:
+https://lore.kernel.org/lkml/20250726212945.work.975-kees@kernel.org/
 
-This should obviously be for v6.17-rc1 ... Let me know if you'd like a
-resend with a more accurate tag name.
+>   kernel/kstack_erase.c:168:2: warning: function with attribute 'no_caller_saved_registers' should only call a function with attribute 'no_caller_saved_registers' or be compiled with '-mgeneral-regs-only' [-Wexcessive-regsave]
+
+Proposed fix:
+https://lore.kernel.org/lkml/20250726212615.work.800-kees@kernel.org/
+
+>   In file included from kernel/fork.c:96:
+>   include/linux/kstack_erase.h:29:37: error: passing 'const struct task_struct *' to parameter of type 'struct task_struct *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+>      29 |         return (unsigned long)end_of_stack(tsk) + sizeof(unsigned long);
+>         |                                            ^~~
+>   include/linux/sched/task_stack.h:56:63: note: passing argument to parameter 'p' here
+>      56 | static inline unsigned long *end_of_stack(struct task_struct *p)
+>         |                                                               ^
+
+Proposed fix:
+https://lore.kernel.org/lkml/20250726210641.work.114-kees@kernel.org/
+
+Thanks for the reports! :)
+
+-Kees
 
 -- 
 Kees Cook
