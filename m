@@ -1,279 +1,270 @@
-Return-Path: <linux-kernel+bounces-746795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A758AB12B4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:56:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FF2B12B4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1519541745
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 15:56:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73563A6B5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1E42857CD;
-	Sat, 26 Jul 2025 15:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1520F25485F;
+	Sat, 26 Jul 2025 16:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PTZRpZ+I"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0pTCjCi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73805191499
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 15:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753545403; cv=none; b=PLTdQZ4MBRNvEnK943NotRmb9ys72hSL/1apeGbpDubwXeP7SJJIq3Pl72yhZoBLph6Iwksr36t3SaNQvjHmDMQg0NegfdfHiIlq25GmPCMKd54cyF44k+gzaEMHeQTT+JY0E1+Zz+bEzI+e7TiVDNKD2qNEu7wN/XKUIEj9JWE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753545403; c=relaxed/simple;
-	bh=NN9VVT8eKGGUfYVLNCVVrHRfeyBum1eonJiuvh9tR/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gSdMlI046JwcJwpksoXqpqlixJESyPVzNxCqt/slxkGt2XJig0QV0AmoZF6unnrUTnhg88DGHWCWRmuPsYsfdeBnWK32tVpi1hseWy3utZ2Fdmabl5v6S0ZXxI7KNDG1nMnB5O1Hvj4dp465bdZBxGJYrrqhDEtP+jy2wlC5Ajs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PTZRpZ+I; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56QDkuTm024569
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 15:56:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=tIrPQ8madd5jGCW14pSsiU+Q
-	ivNVLu9kNYSOeVPgHuo=; b=PTZRpZ+Ir/Z0zGB4WJXGQP4XPc5xAt/EF92YCcV2
-	CMoRLLSwsYrCVuMly4OUFWKX4Nnp7bRZHdR77HfNl0Myjro1/OR4qM3qj1+9hb8u
-	LOHSouk6ohGTjL8iHcsPNByNw3/WRtkHHK450sr+EmhJu5fYiBRyGnP2tCeokIwD
-	w31w5mUjzFUEaedLU0ZCDJWnf9ml8mzBSpJLLRBw6Jf9gnJQv3wzhQ1709MOsRA1
-	cNBXlSVE2acz+ATp4JAIRlWpK4E3At3xVdcdkKDO+XLOcYUAkQnKNJlEeIH86gKb
-	MKgGvhpXqxlcA6LKwxkXZoH/p4LAF5/fOLNAstWDDxpsqQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484q3xgtss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 15:56:39 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-7048088a6fdso51689006d6.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 08:56:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753545399; x=1754150199;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tIrPQ8madd5jGCW14pSsiU+QivNVLu9kNYSOeVPgHuo=;
-        b=QDFibCG0AZMhupu7BJBamQG56rX97UHZiLg+C/5fBKz58wLvRu7UI/4AobEYPZhtFD
-         Q1jTwtfMdRUDDmnsoHu1XwvItNxjXSUjV9RZDYqrQpHfvtWhXAWzJtGwLLgWP2rEcI9E
-         hMisOrk+GLmmns1FpYzpmQmi0N+/25R6SsvfWrmQiBqPX8hvhSWWi0caHgt0bid5gPCl
-         Bis22ap+MuCRNNTYPlcfA8mIfaHTdV+kJPwKJ5JpoT3oaqeFvpIVvXbI4u1vFBh8sKKl
-         v0/6/RJjGRrXiI538TiTWENWzg6aTeInUSTaqMpoq7tchCjOY6rQTsnDZUQG1Bzf7vbb
-         QPrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBMmq4vcnCHrSM8ajdWjMTbw7D656foFWhE7eDVISxKAENmicZwYrfX+juIwWBA+hqtcCQOhcPOLePXCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaMiO8TdXiRamND1i7TDMdgxqas3+6tR8St2dzKujcuQ6TM8DL
-	cf5lJzyqctXXBCjaWWks+OwCBdOmSOLfG74jaJuxm6LxMhtX5GJmtJka1Wjt0ru1ZpxjuE/Xpy7
-	E2PRxC+S6kvNDSZIJPioW8qVJrmC+Tt+4DA+0Kpd3iZixbVTG9uugM7qfj0Ug5alHoiY=
-X-Gm-Gg: ASbGnctE/3uxvBwqPas3BHX3bu1AchldI1wmxfK6h66NqZJtMN/b+WKb99cD6jnghCf
-	LoHA3b5vq8cP8eL4V0hIZbqx1nrQdGgVsRDJ1pIinmiCia97kbTiIBsGwacw9LVK5l5MTyP+TBU
-	TgCfPHc9lKmmSDASUOu+sxuNe806dwJbvFdwHb3/VNfDkZbJO6s/MCLJxoC2l37tyL05Mf+qCpR
-	P5z2bRCrJss1qpso28tvpthhsRT1a9HlZbg1gqykbxXh96VzHmGAR20fJZK/Vcu9BsGgASk6ErA
-	cIx3BjuQE1db1Vs7lIWG5AeOBskqukXI1Jw57dNfnNamZSdWqHq59XbPJfFcbzrYsp4ECzvrbQ1
-	Z+4HHgDyTbshWdj1188yTn5Lh5ipf32ZR/9JrXCe3RKac7YplDxuD
-X-Received: by 2002:ad4:5ba7:0:b0:707:ba4:a21e with SMTP id 6a1803df08f44-707204b1297mr70903196d6.1.1753545398977;
-        Sat, 26 Jul 2025 08:56:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFu6/6Qrd0NVqUPcz9xf3nCGfxuIvGW3vtlwlKgmZwdgV3eV2NmRcB5QbvqysWqMLUcGNih9w==
-X-Received: by 2002:ad4:5ba7:0:b0:707:ba4:a21e with SMTP id 6a1803df08f44-707204b1297mr70902886d6.1.1753545398413;
-        Sat, 26 Jul 2025 08:56:38 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-331f426e396sm4837531fa.70.2025.07.26.08.56.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 08:56:37 -0700 (PDT)
-Date: Sat, 26 Jul 2025 18:56:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
-        kong.kongxinwei@hisilicon.com, liangjian010@huawei.com,
-        chenjianmin@huawei.com, fengsheng5@huawei.com, libaihan@huawei.com,
-        shenjian15@huawei.com, shaojijie@huawei.com,
-        jani.nikula@linux.intel.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 drm-dp 06/11] drm/hisilicon/hibmc: add dp mode valid
- check
-Message-ID: <btqoqwyxfykei6vyhmeczllewxyzf6xvr7r2hhowoentp3tdvi@vxrukpznwujk>
-References: <20250718065125.2892404-1-shiyongbang@huawei.com>
- <20250718065125.2892404-7-shiyongbang@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530DB1FC3;
+	Sat, 26 Jul 2025 16:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753545633; cv=fail; b=ODEKboJ8oP+MHAPRnxULo6p/A3QEt37Xwx31fZUZ6ZgzVEb+HdRKwQrfA0PLQvIkykhEnPmgMliNDakvjR5FAa/E5UsCsAjVJyettHhtc1Fa4dwXF2HuvY21iZEfJxWEES/15V2K09GvGXetSJaMue4fjLvUmLTblqX+BzMabr8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753545633; c=relaxed/simple;
+	bh=4vwOulgQfCVOwZWHHCaeMz4SV2e3NL5v94jcLaJYDto=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=aKVCbnzVY9fC4VRnotLGwoTTLZpvK0SEICZvFMTT9e67TfqocBPly7xXsulyFI1efjSiYNC4XMok5+EGZPSmSW9COHeAf2bcgjoPLMkA2quEOAnRgwmXTPax9li8UU2Po1bSEqdk0yLfMtGep9HDOUt8DtnAi9G+WLcsZmXnFAo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0pTCjCi; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753545632; x=1785081632;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=4vwOulgQfCVOwZWHHCaeMz4SV2e3NL5v94jcLaJYDto=;
+  b=B0pTCjCiFmBLwUGDtaxKZ/BUlQqrJZQ1AUuLhpAIjHx+8zk/wH0XooC7
+   zMFdtj6iEUDs8DR7urzluTFwSJEBrPFf5Fnm+No/bT/KFzCMT58gWOFQg
+   GWGZMK6zDC/Z008PLXv1jeK7fJCms0ce8P9xM43A9tzN1lE6NBSDiKUh1
+   c0HbwPFvyDyNlvfmtIrSrvNCbOJtHHYuda96TG0gT+bt3mvcwbRRrTLyD
+   8hNvtPUYExC+gt1ngLEaLL3kGWHr57gXVxu1M38rHvmsj4VZvMJSBmcRS
+   w0gJbOkD9pr1AloZJ+j7RrwVQeWklz+WSgR6BmsuUQeiipVz8kU7NA7Dd
+   g==;
+X-CSE-ConnectionGUID: oXvOHpvbScaSPeJ3FcELZw==
+X-CSE-MsgGUID: zs4cXkyeRwyyVpxKYEk8Lw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="67207575"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="67207575"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 09:00:31 -0700
+X-CSE-ConnectionGUID: nzZtONsFSxGwxX+/Ll8gBA==
+X-CSE-MsgGUID: hYIcIj44QnSLtAFFul3x9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="161336185"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 09:00:31 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Sat, 26 Jul 2025 09:00:30 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Sat, 26 Jul 2025 09:00:30 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.58) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Sat, 26 Jul 2025 09:00:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bt1yOvCHdj+d34bRtS5WgKZ7ffEBzK2lQ2AOFQSiWQZzkv/3e3AQY6OWr1SPq4RT6zEHo8rFL7l4UOWq4bhbfMaE+dBu7n2Hs8XztrCzZcFAKPcGaAM8BqVYuFn9yh/7GD1SJZ0Mb4yNqm+WGYcSNWKPDBFZ77XHv5lSKCCk87sI9ePGseQuFgDOooQSRA417KTl01vE0VuGJEYC11sW72CPJ+qRpUsqIiFprBk4QPtfVE9zIRYASzKIPCGo+LhTd+gLM5aliyHBFdjaE1IXpXkgCm7Bs9a0fEJjePIqUTBGQjjNjcTz5vwtYkg0Q9M+rJ+KWOxMmuBDLIeP2004ZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PVJ948EE0YSmTayYZb9+Y//Wx9tHBBOp7cVrNM9zzMk=;
+ b=yxHtDTXW6XlUlRkbjRTe2JnVxNpJjvqw+Im51C2K1rXjAap6/ne/beNUJ3ZO67mjUpvUM8FqkvLcPz0TotgvkmjjUEFMncOcGVDZHcN/Dq5zsTcaB3SePYk5qxC1+IXp1ruBljzBMRqbkbEYY4kSSF5bH0YHqXbTdyHU1EzA17mXoTxaZLXSO8+Lqrmyq3KD1pwW6jUHGNerSh3L6rqeTx3nIBlGOr/zyNriJjFyPDGgWWgBePc6COqwJ3tp240ohwP6iWCAwdns3qnVLrkl6+eeBVawrYFbcUGjY7aAvfgkJX/MW7W5xsCthIiDKDqg1+AcZE2OZ+Z4iMQzB8x8iA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from PH0PR11MB7585.namprd11.prod.outlook.com (2603:10b6:510:28f::10)
+ by PH7PR11MB8060.namprd11.prod.outlook.com (2603:10b6:510:24f::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Sat, 26 Jul
+ 2025 16:00:27 +0000
+Received: from PH0PR11MB7585.namprd11.prod.outlook.com
+ ([fe80::9ba4:34:81ac:5010]) by PH0PR11MB7585.namprd11.prod.outlook.com
+ ([fe80::9ba4:34:81ac:5010%2]) with mapi id 15.20.8964.019; Sat, 26 Jul 2025
+ 16:00:21 +0000
+From: "K, Kiran" <kiran.k@intel.com>
+To: Arnd Bergmann <arnd@kernel.org>, Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, "Devegowda, Chandrashekar"
+	<chandrashekar.devegowda@intel.com>
+CC: Arnd Bergmann <arnd@arndb.de>, Vijay Satija <vijay.satija@intel.com>,
+	Aluvala Sai Teja <aluvala.sai.teja@intel.com>,
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] Bluetooth: btintel_pcie: avoid unguarded 64-bit division
+Thread-Topic: [PATCH] Bluetooth: btintel_pcie: avoid unguarded 64-bit division
+Thread-Index: AQHb/UODoLhUFpFBLEiy47KT1UqiZLREkUug
+Date: Sat, 26 Jul 2025 16:00:21 +0000
+Message-ID: <PH0PR11MB758570724403EB405BED32CAF558A@PH0PR11MB7585.namprd11.prod.outlook.com>
+References: <20250725090651.2495984-1-arnd@kernel.org>
+In-Reply-To: <20250725090651.2495984-1-arnd@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR11MB7585:EE_|PH7PR11MB8060:EE_
+x-ms-office365-filtering-correlation-id: 343ab0ab-4955-48f7-583d-08ddcc5d8633
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?rcHhT0dTXAgfx+J6sO8x4Jyri27z3jckkuP0HTDbfrki4OaM5ENwO4lq38YH?=
+ =?us-ascii?Q?BDO6ZEV0SzIeuEMqnRrYUv+CSlA/AVLmrqrP6axrgXZxakA9Uc6So1PVU23S?=
+ =?us-ascii?Q?QFAHQ3sTLx6sAB9ofSub83NtIrHpwU9sMi3Co0KlwFOLxm/VBCLUVrprmWst?=
+ =?us-ascii?Q?3X1b0m2IOxPkQLoMmvoh6tbwAgj64HXG7fcXbuDu23+ir4bg50iKCR7HqdwG?=
+ =?us-ascii?Q?3ZPpLOq+/BUopGKf4TJW9pGlvcRJ/fuAdPhnfWfJx8DZh58MIqt/ILFdkbYQ?=
+ =?us-ascii?Q?w73+3b8L9EPn8jOVDaSw2lwRJvlBgYbPmrVhZEIifxWF/UnGB0hXy6PNcYlf?=
+ =?us-ascii?Q?0lLnpkTpuqERNv6GLxmwUbMIpS8XoGBoDV3D7pG9UZRG6HqS05LBVsPW/yCQ?=
+ =?us-ascii?Q?42vgMLufVXFT5Jac6gy795sVaAV5slnRxXWbmNrFfc404qUtyjbDEkVhXKLh?=
+ =?us-ascii?Q?hKy53iJvBAlBm3nwYn7GeruFizJagbh1o/b7Ts/GOv66UGgbM3ooNTp/L5V6?=
+ =?us-ascii?Q?918ebr4WO3InyDscfT3ocvUcox0uxqxHfdIU1tnE4CzkRYZG2WvHAorhcNpH?=
+ =?us-ascii?Q?XtkzPfhMcWIrka7AcHSj6iqHwGg1vy5ds9QsPnOjpVDQs4pkJYdZ+LtBFWDN?=
+ =?us-ascii?Q?JyxKFYjoo0qlEaYNjaVSC6BNgO7n0EVIrLKzK1MVVRhKOQTfmpC6CP3wKjKf?=
+ =?us-ascii?Q?toWPRMMbsW5UeMUtt01La4WNgbn0Dg6VSNCm2T0/ggxscz9ORhpNwP0Vw9O9?=
+ =?us-ascii?Q?7kh8LtMqZ9IcTESQs2lWwSUzVeDTdrHgucF7y2AxZTiLTUbNFs7bq2AwxGBg?=
+ =?us-ascii?Q?cuDWExVY4AVQaQE5nVIX2Ux4vJrRRPb2fO+j50e192s15e1QVi/1na0kLNCW?=
+ =?us-ascii?Q?sN7e409Cq3IKS+TcEyoMUeb3bxmsqiASplIxGC/8T7KPwNicvpKH4rqFyTCY?=
+ =?us-ascii?Q?vs9y4MDVR37HV6A34hMUphSG3UBVOZu8uj+ZfuAh7ajesmdDQSbQ7Wi42xrG?=
+ =?us-ascii?Q?bxHFoJ1fSV3BnUiBIQ2c8zQ31NFkgoF2MuwH8+jr5ZWPSIRKc77R6v4g9kzW?=
+ =?us-ascii?Q?H6SclLT/MXeuMgLhPujsG/6P729a5ps0tZcbCia2dXBK5qTsLxvdTM4ee+JZ?=
+ =?us-ascii?Q?FUM1GUztP2M7wc8OaXZIbG6DkKg95Xq8gKpYaScaNjIcwNamujTStuU8jkHE?=
+ =?us-ascii?Q?bgkFRXMTlMu+ZQGAYbwPrBM6L4EUzwr4cJzMOPNIlopiqFRq+0Fmcyt2Uyr8?=
+ =?us-ascii?Q?rxmDV+x956tjOtdDAJVgUD4mL5AWhyISyZpbvgb+m3bw/TCu1Ddfp9QVtmyP?=
+ =?us-ascii?Q?Z04iARKMPeRDcXbfvfesP0jpH6YdAdjTFawl62ax+6IGQL/fenX0EMbw1A5P?=
+ =?us-ascii?Q?QcKtsaLmH9B4nkgMBLFtVU7Eu2hVUOoYRDrlbD8JpTbk3l9JlJTyhA+VJeu4?=
+ =?us-ascii?Q?cZoax8wEWv0sub1dlwebgnvzdETwRGHaTBML+84vLg4fCav5dnDwp/fAx1ib?=
+ =?us-ascii?Q?taZ3udIArQASWis=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB7585.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?GEoeEqHRQVOAn70p1sYDRtrBBx7B60aKB6wPz5r/Whdvrp+Jwtws/hBdIDQ9?=
+ =?us-ascii?Q?IJqlyWp8AVk50mOz9vUkA5Dx1UQoHaci5hmZQrvZ4JC9c3+koqYdZq0WVz/o?=
+ =?us-ascii?Q?Uja7kXZh68WCJPDs9c+5WeGW9ErrM/E2vcS1UnZxnLRwgpacX7rypa3mfEWG?=
+ =?us-ascii?Q?cvW6bxxKV4K4FS0y9ZZgetowMlq6cB31HuJSHZoWWOmbovVvJ+R0mtQuyirF?=
+ =?us-ascii?Q?0dZEWMSPHr5F7U/7+qjPTuobp1kH4SbKGGU/VU8ZZ3p4GFTlnQUVzEoeh8zb?=
+ =?us-ascii?Q?yay8pBJpqi6Pzzc5nTZAeWdiBgrhOi4MA9GqgHyD0/HxEvrm1SEUzX7n3kTF?=
+ =?us-ascii?Q?Clax5I/Zw5naOK0C4YTYz1D8sYvZp4Rn16gme6f9rWEcsK42+B5LXE9i4VAh?=
+ =?us-ascii?Q?y31UNiYQpbymTkGTyIgIxpnhEAhY7x7fRd642u4Kz1NyQ39P/ktTXok5zWXL?=
+ =?us-ascii?Q?ZyVLGp3uTE4zoXIqhzcLx8RwNqM+we2mATcUoBJwAuJR6eHG/IsrCfHjLaRp?=
+ =?us-ascii?Q?sMab2yscdj+dcs5D8koFuePsU24B31mhedfEBViqmx5gXgJQY7wjT6jenlP2?=
+ =?us-ascii?Q?htRqSCSPIRedzQhN1h1uFXIsOnQ/4ZxRsSuMJViYIYVDxlBo9jYWx3vkOc4u?=
+ =?us-ascii?Q?aZmE3zqAcfAwOOpCKBgQE1OTOY4RQSMvAUtJtK7wU6u/ezL4j+36U3b4XRbW?=
+ =?us-ascii?Q?xSWl68RTAjoB/BlqxYQE1+aFHjYUu/+ljsPc5yOCI0yoVw2J0ZQvJc98Gdhv?=
+ =?us-ascii?Q?QjurmqqplQBe+gAMUKeL4iqcSfPxdzd5lRIfECJOYUHpJvR0Egn4AoAQoAaP?=
+ =?us-ascii?Q?2/W29nMAqCeLvEZGywbOp/2Zu1FsuaHhToEy3NPjRVIWdEuMGd77ir3uxzVe?=
+ =?us-ascii?Q?u2uWhyDkLG79lEAzwyZQe8C7MGGl+AMOZ5BpUkXg9/O106EXN9sV87BpTU3z?=
+ =?us-ascii?Q?9fodbK3SRlnzTv6HaP3XbPlfG7y6kxQNixzHipH7lGJqNbNAebf/+h3/Fa/F?=
+ =?us-ascii?Q?nuUrSUvv/Mugqh8QYxeE35+8Bx35U/H5IkhtGY49G6B2qIto5K1tPMX0s0YQ?=
+ =?us-ascii?Q?b8N3hLLdo5zKFt962pc1T3YCm144dEDB3fse0srNfMcyFjK+bG88whi5WAq/?=
+ =?us-ascii?Q?5YnYkfIyOWwfN79/5zZ3lRufBRJ0CRwPUYfIsK0Dj9K6lxakVkQWy8ufC0eT?=
+ =?us-ascii?Q?SIwzhusMjL4YyhhT9FH4YsV/fFO1qrcalESijUe7Nrh4i/SXqYdJdsWUETTc?=
+ =?us-ascii?Q?Tu/s2OOGW/wMH05Jjw4rPPEo9pgs26ygdje5dncTTfOdiHZw1s768ca3T7zL?=
+ =?us-ascii?Q?dB3MW4PzqaxcCvJqDcKpMxkdkGYCuguM5HdzM35GQl65l49XkpWD0uJHFDkO?=
+ =?us-ascii?Q?sXQ00J8i9NI6zyk/9ZravAAnvRk+4SfcD/mMQjvPxXRLjqDirhaaP7rIsNrs?=
+ =?us-ascii?Q?1i/b5dtA7vvbHUOw80BOdRHOX4DqC6tPynstx1eNaz1HPr7vD8K2ROxU8U+H?=
+ =?us-ascii?Q?7w6E++jZh1YITX/F8c3AVwCu/a4n0kWhgAqazd8hJ2sVfWj2UdId6SM4kHpv?=
+ =?us-ascii?Q?eeE8skw3cgPNJ9qAkx0=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718065125.2892404-7-shiyongbang@huawei.com>
-X-Authority-Analysis: v=2.4 cv=JovxrN4C c=1 sm=1 tr=0 ts=6884fab7 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=i0EeH86SAAAA:8 a=XbdV3e9dyi12BMDtw4MA:9 a=CjuIK1q_8ugA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-ORIG-GUID: mIy_rmniS9sgO5rVHiuoN2EWYT7jmGA-
-X-Proofpoint-GUID: mIy_rmniS9sgO5rVHiuoN2EWYT7jmGA-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI2MDEzOCBTYWx0ZWRfX7rHqpH7wPJgu
- ACAKcDVadu6fV2+pEYGedMFtv54zBqNyHM67f4dSxzMgVqv2L3y1wehO6rDZXw40T9OV1miHhMS
- YL4WgQB4vCHVxkucsbQucOXt727eH9r6uvCBjzxEbfYxvTm2tyaL6VnbEuWDV36vJSgY1PoaFav
- 4Xg5Ju+oo421B4L57szWRzwvF9EDkLblq7dheNeFQH8hC+qrabyjzYUENuUGG8couV0n3KKMedl
- wKvNBHJ6yxz8HcX6PhIRR2JtLvEvbGfd00Rtj7AamEvZsFwKHk0a4AVMlDjUVyWJySKqULYMhYZ
- uHhQGE6lKRx8JkiKW2vsXBJ4a/nQ5HEwVkLE5JRsgBmwDUZ1NpFSor4LPgZB+mxGKGbRe8XmyoT
- hOrn0Pb30yX1vzrnyVhm7VzOhv7gdm72qbDIldIY+bLpCD4pmUSbBrZB0ZZFBT9tL/dTciKz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-26_04,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 priorityscore=1501 bulkscore=0 impostorscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507260138
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB7585.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 343ab0ab-4955-48f7-583d-08ddcc5d8633
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2025 16:00:21.1506
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: os+31N5v9aQl8XxreF3PZ4jlz0mdT5kwEQ+5B9T9R4kE78nWzc+XvXaOz05F14pHH35vbpCy4GqORmQ8ZAVWfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8060
+X-OriginatorOrg: intel.com
 
-On Fri, Jul 18, 2025 at 02:51:20PM +0800, Yongbang Shi wrote:
-> From: Baihan Li <libaihan@huawei.com>
-> 
-> If DP is connected, add mode check and BW check in mode_valid_ctx() to
-> ensure DP's cfg is usable.
-> 
-> For example: Some DP's mode(1920x1080 60HZ 138.5 MHz) gives to drm,
-> however, the GPU is configured for 148MHz in display_ctrl_adjust() by
-> looking up the table of struct hibmc_pll_table{}. This difference will
-> cause the DP to not display because the clock the DP gets via drm frame
-> is 138MHz.
-> 
-> Fixes: f9698f802e50 ("drm/hisilicon/hibmc: Restructuring the header dp_reg.h")
-> Signed-off-by: Baihan Li <libaihan@huawei.com>
-> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-> ---
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 10 ++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  6 +++
->  .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 51 +++++++++++++++++++
->  3 files changed, 67 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-> index b4d612047f36..7fbd51ffd778 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-> @@ -276,6 +276,16 @@ void hibmc_dp_reset_link(struct hibmc_dp *dp)
->  	dp->dp_dev->link.status.channel_equalized = false;
->  }
->  
-> +u8 hibmc_dp_get_link_rate(struct hibmc_dp *dp)
-> +{
-> +	return dp->dp_dev->link.cap.link_rate;
-> +}
-> +
-> +u8 hibmc_dp_get_lanes(struct hibmc_dp *dp)
-> +{
-> +	return dp->dp_dev->link.cap.lanes;
-> +}
-> +
->  static const struct hibmc_dp_color_raw g_rgb_raw[] = {
->  	{CBAR_COLOR_BAR, 0x000, 0x000, 0x000},
->  	{CBAR_WHITE,     0xfff, 0xfff, 0xfff},
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-> index 9b45e88e47e4..0059a2648a38 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-> @@ -12,6 +12,10 @@
->  #include <drm/drm_print.h>
->  #include <drm/display/drm_dp_helper.h>
->  
-> +/* 27 * 10000000 * 80% = 216000000 */
-> +#define DP_MODE_VALI_CAL	216000000
-> +#define BPP_24				24
-> +
->  struct hibmc_dp_dev;
->  
->  enum hibmc_dp_cbar_pattern {
-> @@ -62,5 +66,7 @@ void hibmc_dp_reset_link(struct hibmc_dp *dp);
->  void hibmc_dp_hpd_cfg(struct hibmc_dp *dp);
->  void hibmc_dp_enable_int(struct hibmc_dp *dp);
->  void hibmc_dp_disable_int(struct hibmc_dp *dp);
-> +u8 hibmc_dp_get_link_rate(struct hibmc_dp *dp);
-> +u8 hibmc_dp_get_lanes(struct hibmc_dp *dp);
->  
->  #endif
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-> index 354e18bb2998..99b30a6c7e06 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-> @@ -15,6 +15,28 @@
->  
->  #define DP_MASKED_SINK_HPD_PLUG_INT	BIT(2)
->  
-> +struct hibmc_dp_disp_clk {
-> +	u16 hdisplay;
-> +	u16 vdisplay;
-> +	u32 clock;
-> +};
-> +
-> +static const struct hibmc_dp_disp_clk hibmc_dp_clk_table[] = {
-> +	{640, 480, 25175}, /* 25175 khz */
-> +	{800, 600, 40000}, /* 40000 khz */
-> +	{1024, 768, 65000}, /* 65000 khz */
-> +	{1152, 864, 80000}, /* 80000 khz */
-> +	{1280, 768, 79500}, /* 79500 khz */
-> +	{1280, 720, 74250}, /* 74250 khz */
-> +	{1280, 960, 108000}, /* 108000 khz */
-> +	{1280, 1024, 108000}, /* 108000 khz */
-> +	{1440, 900, 106500}, /* 106500 khz */
-> +	{1600, 900, 108000}, /* 108000 khz */
-> +	{1600, 1200, 162000}, /* 162000 khz */
-> +	{1920, 1080, 148500}, /* 148500 khz */
-> +	{1920, 1200, 193250}, /* 193250 khz */
-> +};
+Hi Arnd,
 
-I generally think that these kind of tables are too limiting. Please try
-to achieve the same by checking the clock with the PLL code instead of
-checking the modes against the table.
+Thanks for the patch. I would like to amend this patch with - https://patch=
+work.kernel.org/project/bluetooth/patch/20250725090133.1358775-1-kiran.k@in=
+tel.com/
 
-> +
->  static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
->  {
->  	const struct drm_edid *drm_edid;
-> @@ -42,9 +64,38 @@ static int hibmc_dp_detect(struct drm_connector *connector,
->  	return connector_status_disconnected;
->  }
->  
-> +static int hibmc_dp_mode_valid(struct drm_connector *connector,
-> +			       const struct drm_display_mode *mode,
-> +			       struct drm_modeset_acquire_ctx *ctx,
-> +			       enum drm_mode_status *status)
-> +{
-> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
-> +	u64 cur_val, max_val;
-> +
-> +	/* check DP link BW */
-> +	cur_val = (u64)mode->htotal * mode->vtotal * drm_mode_vrefresh(mode) * BPP_24;
-> +	max_val = (u64)hibmc_dp_get_link_rate(dp) * DP_MODE_VALI_CAL * hibmc_dp_get_lanes(dp);
-> +
-> +	*status = cur_val > max_val ? MODE_CLOCK_HIGH : MODE_OK;
-> +
-> +	/* check the clock */
-> +	for (size_t i = 0; i < ARRAY_SIZE(hibmc_dp_clk_table); i++) {
-> +		if (hibmc_dp_clk_table[i].hdisplay == mode->hdisplay &&
-> +		    hibmc_dp_clk_table[i].vdisplay == mode->vdisplay) {
-> +			if (hibmc_dp_clk_table[i].clock != mode->clock) {
-> +				*status = MODE_CLOCK_RANGE;
-> +				return 0;
-> +			}
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
->  	.get_modes = hibmc_dp_connector_get_modes,
->  	.detect_ctx = hibmc_dp_detect,
-> +	.mode_valid_ctx = hibmc_dp_mode_valid,
->  };
->  
->  static int hibmc_dp_late_register(struct drm_connector *connector)
-> -- 
-> 2.33.0
-> 
+I will include your name as part of Signed-off-by tag.=20
 
--- 
-With best wishes
-Dmitry
+>-----Original Message-----
+>From: Arnd Bergmann <arnd@kernel.org>
+>Sent: Friday, July 25, 2025 2:37 PM
+>To: Marcel Holtmann <marcel@holtmann.org>; Luiz Augusto von Dentz
+><luiz.dentz@gmail.com>; Devegowda, Chandrashekar
+><chandrashekar.devegowda@intel.com>; K, Kiran <kiran.k@intel.com>
+>Cc: Arnd Bergmann <arnd@arndb.de>; Vijay Satija <vijay.satija@intel.com>;
+>Aluvala Sai Teja <aluvala.sai.teja@intel.com>; linux-
+>bluetooth@vger.kernel.org; linux-kernel@vger.kernel.org
+>Subject: [PATCH] Bluetooth: btintel_pcie: avoid unguarded 64-bit division
+>
+>From: Arnd Bergmann <arnd@arndb.de>
+>
+>Directly dividing a 64-bit value is not allowed on 32-bit architectures in=
+ the
+>kernel.
+>
+>arm-linux-gnueabi/bin/arm-linux-gnueabi-ld: drivers/bluetooth/btintel_pcie=
+.o:
+>in function `btintel_pcie_suspend_late':
+>btintel_pcie.c:(.text+0x224): undefined reference to `__aeabi_ldivmod'
+>
+>Since this is a ktime_t value and dividing by 1000 gives a microsecond num=
+ber,
+>just convert it into microseconds using the appropriate helper.
+>
+>Fixes: 33bb9b1ce6f6 ("Bluetooth: btintel_pcie: Add support for _suspend() =
+/
+>_resume()")
+>Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>---
+> drivers/bluetooth/btintel_pcie.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+>diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_=
+pcie.c
+>index 9792a49886ff..4dfd5365bb4e 100644
+>--- a/drivers/bluetooth/btintel_pcie.c
+>+++ b/drivers/bluetooth/btintel_pcie.c
+>@@ -2607,7 +2607,7 @@ static int btintel_pcie_suspend_late(struct device
+>*dev, pm_message_t mesg)
+> 	btintel_pcie_wr_sleep_cntrl(data, dxstate);
+> 	err =3D wait_event_timeout(data->gp0_wait_q, data->gp0_received,
+>
+>msecs_to_jiffies(BTINTEL_DEFAULT_INTR_TIMEOUT_MS));
+>-	delta =3D ktime_to_ns(ktime_get() - start) / 1000;
+>+	delta =3D ktime_to_us(ktime_get() - start);
+>
+> 	if (err =3D=3D 0) {
+> 		bt_dev_err(data->hdev, "Timeout (%u ms) on alive interrupt
+>for D3 entry", @@ -2651,7 +2651,7 @@ static int btintel_pcie_resume(struct
+>device *dev)
+> 	btintel_pcie_wr_sleep_cntrl(data, BTINTEL_PCIE_STATE_D0);
+> 	err =3D wait_event_timeout(data->gp0_wait_q, data->gp0_received,
+>
+>msecs_to_jiffies(BTINTEL_DEFAULT_INTR_TIMEOUT_MS));
+>-	delta =3D ktime_to_ns(ktime_get() - start) / 1000;
+>+	delta =3D ktime_to_us(ktime_get() - start);
+>
+> 	if (err =3D=3D 0) {
+> 		bt_dev_err(data->hdev, "Timeout (%u ms) on alive interrupt
+>for D0 entry",
+>--
+>2.39.5
+
+Thanks,
+Kiran
+
+
 
