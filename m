@@ -1,270 +1,294 @@
-Return-Path: <linux-kernel+bounces-746796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FF2B12B4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:00:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B23C5B12B4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73563A6B5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DB3F1691D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1520F25485F;
-	Sat, 26 Jul 2025 16:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A30246768;
+	Sat, 26 Jul 2025 16:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0pTCjCi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F+LExV5j"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530DB1FC3;
-	Sat, 26 Jul 2025 16:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753545633; cv=fail; b=ODEKboJ8oP+MHAPRnxULo6p/A3QEt37Xwx31fZUZ6ZgzVEb+HdRKwQrfA0PLQvIkykhEnPmgMliNDakvjR5FAa/E5UsCsAjVJyettHhtc1Fa4dwXF2HuvY21iZEfJxWEES/15V2K09GvGXetSJaMue4fjLvUmLTblqX+BzMabr8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753545633; c=relaxed/simple;
-	bh=4vwOulgQfCVOwZWHHCaeMz4SV2e3NL5v94jcLaJYDto=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aKVCbnzVY9fC4VRnotLGwoTTLZpvK0SEICZvFMTT9e67TfqocBPly7xXsulyFI1efjSiYNC4XMok5+EGZPSmSW9COHeAf2bcgjoPLMkA2quEOAnRgwmXTPax9li8UU2Po1bSEqdk0yLfMtGep9HDOUt8DtnAi9G+WLcsZmXnFAo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0pTCjCi; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753545632; x=1785081632;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=4vwOulgQfCVOwZWHHCaeMz4SV2e3NL5v94jcLaJYDto=;
-  b=B0pTCjCiFmBLwUGDtaxKZ/BUlQqrJZQ1AUuLhpAIjHx+8zk/wH0XooC7
-   zMFdtj6iEUDs8DR7urzluTFwSJEBrPFf5Fnm+No/bT/KFzCMT58gWOFQg
-   GWGZMK6zDC/Z008PLXv1jeK7fJCms0ce8P9xM43A9tzN1lE6NBSDiKUh1
-   c0HbwPFvyDyNlvfmtIrSrvNCbOJtHHYuda96TG0gT+bt3mvcwbRRrTLyD
-   8hNvtPUYExC+gt1ngLEaLL3kGWHr57gXVxu1M38rHvmsj4VZvMJSBmcRS
-   w0gJbOkD9pr1AloZJ+j7RrwVQeWklz+WSgR6BmsuUQeiipVz8kU7NA7Dd
-   g==;
-X-CSE-ConnectionGUID: oXvOHpvbScaSPeJ3FcELZw==
-X-CSE-MsgGUID: zs4cXkyeRwyyVpxKYEk8Lw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="67207575"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="67207575"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 09:00:31 -0700
-X-CSE-ConnectionGUID: nzZtONsFSxGwxX+/Ll8gBA==
-X-CSE-MsgGUID: hYIcIj44QnSLtAFFul3x9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="161336185"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 09:00:31 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sat, 26 Jul 2025 09:00:30 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Sat, 26 Jul 2025 09:00:30 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.58) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sat, 26 Jul 2025 09:00:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Bt1yOvCHdj+d34bRtS5WgKZ7ffEBzK2lQ2AOFQSiWQZzkv/3e3AQY6OWr1SPq4RT6zEHo8rFL7l4UOWq4bhbfMaE+dBu7n2Hs8XztrCzZcFAKPcGaAM8BqVYuFn9yh/7GD1SJZ0Mb4yNqm+WGYcSNWKPDBFZ77XHv5lSKCCk87sI9ePGseQuFgDOooQSRA417KTl01vE0VuGJEYC11sW72CPJ+qRpUsqIiFprBk4QPtfVE9zIRYASzKIPCGo+LhTd+gLM5aliyHBFdjaE1IXpXkgCm7Bs9a0fEJjePIqUTBGQjjNjcTz5vwtYkg0Q9M+rJ+KWOxMmuBDLIeP2004ZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PVJ948EE0YSmTayYZb9+Y//Wx9tHBBOp7cVrNM9zzMk=;
- b=yxHtDTXW6XlUlRkbjRTe2JnVxNpJjvqw+Im51C2K1rXjAap6/ne/beNUJ3ZO67mjUpvUM8FqkvLcPz0TotgvkmjjUEFMncOcGVDZHcN/Dq5zsTcaB3SePYk5qxC1+IXp1ruBljzBMRqbkbEYY4kSSF5bH0YHqXbTdyHU1EzA17mXoTxaZLXSO8+Lqrmyq3KD1pwW6jUHGNerSh3L6rqeTx3nIBlGOr/zyNriJjFyPDGgWWgBePc6COqwJ3tp240ohwP6iWCAwdns3qnVLrkl6+eeBVawrYFbcUGjY7aAvfgkJX/MW7W5xsCthIiDKDqg1+AcZE2OZ+Z4iMQzB8x8iA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from PH0PR11MB7585.namprd11.prod.outlook.com (2603:10b6:510:28f::10)
- by PH7PR11MB8060.namprd11.prod.outlook.com (2603:10b6:510:24f::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Sat, 26 Jul
- 2025 16:00:27 +0000
-Received: from PH0PR11MB7585.namprd11.prod.outlook.com
- ([fe80::9ba4:34:81ac:5010]) by PH0PR11MB7585.namprd11.prod.outlook.com
- ([fe80::9ba4:34:81ac:5010%2]) with mapi id 15.20.8964.019; Sat, 26 Jul 2025
- 16:00:21 +0000
-From: "K, Kiran" <kiran.k@intel.com>
-To: Arnd Bergmann <arnd@kernel.org>, Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, "Devegowda, Chandrashekar"
-	<chandrashekar.devegowda@intel.com>
-CC: Arnd Bergmann <arnd@arndb.de>, Vijay Satija <vijay.satija@intel.com>,
-	Aluvala Sai Teja <aluvala.sai.teja@intel.com>,
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] Bluetooth: btintel_pcie: avoid unguarded 64-bit division
-Thread-Topic: [PATCH] Bluetooth: btintel_pcie: avoid unguarded 64-bit division
-Thread-Index: AQHb/UODoLhUFpFBLEiy47KT1UqiZLREkUug
-Date: Sat, 26 Jul 2025 16:00:21 +0000
-Message-ID: <PH0PR11MB758570724403EB405BED32CAF558A@PH0PR11MB7585.namprd11.prod.outlook.com>
-References: <20250725090651.2495984-1-arnd@kernel.org>
-In-Reply-To: <20250725090651.2495984-1-arnd@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR11MB7585:EE_|PH7PR11MB8060:EE_
-x-ms-office365-filtering-correlation-id: 343ab0ab-4955-48f7-583d-08ddcc5d8633
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?rcHhT0dTXAgfx+J6sO8x4Jyri27z3jckkuP0HTDbfrki4OaM5ENwO4lq38YH?=
- =?us-ascii?Q?BDO6ZEV0SzIeuEMqnRrYUv+CSlA/AVLmrqrP6axrgXZxakA9Uc6So1PVU23S?=
- =?us-ascii?Q?QFAHQ3sTLx6sAB9ofSub83NtIrHpwU9sMi3Co0KlwFOLxm/VBCLUVrprmWst?=
- =?us-ascii?Q?3X1b0m2IOxPkQLoMmvoh6tbwAgj64HXG7fcXbuDu23+ir4bg50iKCR7HqdwG?=
- =?us-ascii?Q?3ZPpLOq+/BUopGKf4TJW9pGlvcRJ/fuAdPhnfWfJx8DZh58MIqt/ILFdkbYQ?=
- =?us-ascii?Q?w73+3b8L9EPn8jOVDaSw2lwRJvlBgYbPmrVhZEIifxWF/UnGB0hXy6PNcYlf?=
- =?us-ascii?Q?0lLnpkTpuqERNv6GLxmwUbMIpS8XoGBoDV3D7pG9UZRG6HqS05LBVsPW/yCQ?=
- =?us-ascii?Q?42vgMLufVXFT5Jac6gy795sVaAV5slnRxXWbmNrFfc404qUtyjbDEkVhXKLh?=
- =?us-ascii?Q?hKy53iJvBAlBm3nwYn7GeruFizJagbh1o/b7Ts/GOv66UGgbM3ooNTp/L5V6?=
- =?us-ascii?Q?918ebr4WO3InyDscfT3ocvUcox0uxqxHfdIU1tnE4CzkRYZG2WvHAorhcNpH?=
- =?us-ascii?Q?XtkzPfhMcWIrka7AcHSj6iqHwGg1vy5ds9QsPnOjpVDQs4pkJYdZ+LtBFWDN?=
- =?us-ascii?Q?JyxKFYjoo0qlEaYNjaVSC6BNgO7n0EVIrLKzK1MVVRhKOQTfmpC6CP3wKjKf?=
- =?us-ascii?Q?toWPRMMbsW5UeMUtt01La4WNgbn0Dg6VSNCm2T0/ggxscz9ORhpNwP0Vw9O9?=
- =?us-ascii?Q?7kh8LtMqZ9IcTESQs2lWwSUzVeDTdrHgucF7y2AxZTiLTUbNFs7bq2AwxGBg?=
- =?us-ascii?Q?cuDWExVY4AVQaQE5nVIX2Ux4vJrRRPb2fO+j50e192s15e1QVi/1na0kLNCW?=
- =?us-ascii?Q?sN7e409Cq3IKS+TcEyoMUeb3bxmsqiASplIxGC/8T7KPwNicvpKH4rqFyTCY?=
- =?us-ascii?Q?vs9y4MDVR37HV6A34hMUphSG3UBVOZu8uj+ZfuAh7ajesmdDQSbQ7Wi42xrG?=
- =?us-ascii?Q?bxHFoJ1fSV3BnUiBIQ2c8zQ31NFkgoF2MuwH8+jr5ZWPSIRKc77R6v4g9kzW?=
- =?us-ascii?Q?H6SclLT/MXeuMgLhPujsG/6P729a5ps0tZcbCia2dXBK5qTsLxvdTM4ee+JZ?=
- =?us-ascii?Q?FUM1GUztP2M7wc8OaXZIbG6DkKg95Xq8gKpYaScaNjIcwNamujTStuU8jkHE?=
- =?us-ascii?Q?bgkFRXMTlMu+ZQGAYbwPrBM6L4EUzwr4cJzMOPNIlopiqFRq+0Fmcyt2Uyr8?=
- =?us-ascii?Q?rxmDV+x956tjOtdDAJVgUD4mL5AWhyISyZpbvgb+m3bw/TCu1Ddfp9QVtmyP?=
- =?us-ascii?Q?Z04iARKMPeRDcXbfvfesP0jpH6YdAdjTFawl62ax+6IGQL/fenX0EMbw1A5P?=
- =?us-ascii?Q?QcKtsaLmH9B4nkgMBLFtVU7Eu2hVUOoYRDrlbD8JpTbk3l9JlJTyhA+VJeu4?=
- =?us-ascii?Q?cZoax8wEWv0sub1dlwebgnvzdETwRGHaTBML+84vLg4fCav5dnDwp/fAx1ib?=
- =?us-ascii?Q?taZ3udIArQASWis=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB7585.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?GEoeEqHRQVOAn70p1sYDRtrBBx7B60aKB6wPz5r/Whdvrp+Jwtws/hBdIDQ9?=
- =?us-ascii?Q?IJqlyWp8AVk50mOz9vUkA5Dx1UQoHaci5hmZQrvZ4JC9c3+koqYdZq0WVz/o?=
- =?us-ascii?Q?Uja7kXZh68WCJPDs9c+5WeGW9ErrM/E2vcS1UnZxnLRwgpacX7rypa3mfEWG?=
- =?us-ascii?Q?cvW6bxxKV4K4FS0y9ZZgetowMlq6cB31HuJSHZoWWOmbovVvJ+R0mtQuyirF?=
- =?us-ascii?Q?0dZEWMSPHr5F7U/7+qjPTuobp1kH4SbKGGU/VU8ZZ3p4GFTlnQUVzEoeh8zb?=
- =?us-ascii?Q?yay8pBJpqi6Pzzc5nTZAeWdiBgrhOi4MA9GqgHyD0/HxEvrm1SEUzX7n3kTF?=
- =?us-ascii?Q?Clax5I/Zw5naOK0C4YTYz1D8sYvZp4Rn16gme6f9rWEcsK42+B5LXE9i4VAh?=
- =?us-ascii?Q?y31UNiYQpbymTkGTyIgIxpnhEAhY7x7fRd642u4Kz1NyQ39P/ktTXok5zWXL?=
- =?us-ascii?Q?ZyVLGp3uTE4zoXIqhzcLx8RwNqM+we2mATcUoBJwAuJR6eHG/IsrCfHjLaRp?=
- =?us-ascii?Q?sMab2yscdj+dcs5D8koFuePsU24B31mhedfEBViqmx5gXgJQY7wjT6jenlP2?=
- =?us-ascii?Q?htRqSCSPIRedzQhN1h1uFXIsOnQ/4ZxRsSuMJViYIYVDxlBo9jYWx3vkOc4u?=
- =?us-ascii?Q?aZmE3zqAcfAwOOpCKBgQE1OTOY4RQSMvAUtJtK7wU6u/ezL4j+36U3b4XRbW?=
- =?us-ascii?Q?xSWl68RTAjoB/BlqxYQE1+aFHjYUu/+ljsPc5yOCI0yoVw2J0ZQvJc98Gdhv?=
- =?us-ascii?Q?QjurmqqplQBe+gAMUKeL4iqcSfPxdzd5lRIfECJOYUHpJvR0Egn4AoAQoAaP?=
- =?us-ascii?Q?2/W29nMAqCeLvEZGywbOp/2Zu1FsuaHhToEy3NPjRVIWdEuMGd77ir3uxzVe?=
- =?us-ascii?Q?u2uWhyDkLG79lEAzwyZQe8C7MGGl+AMOZ5BpUkXg9/O106EXN9sV87BpTU3z?=
- =?us-ascii?Q?9fodbK3SRlnzTv6HaP3XbPlfG7y6kxQNixzHipH7lGJqNbNAebf/+h3/Fa/F?=
- =?us-ascii?Q?nuUrSUvv/Mugqh8QYxeE35+8Bx35U/H5IkhtGY49G6B2qIto5K1tPMX0s0YQ?=
- =?us-ascii?Q?b8N3hLLdo5zKFt962pc1T3YCm144dEDB3fse0srNfMcyFjK+bG88whi5WAq/?=
- =?us-ascii?Q?5YnYkfIyOWwfN79/5zZ3lRufBRJ0CRwPUYfIsK0Dj9K6lxakVkQWy8ufC0eT?=
- =?us-ascii?Q?SIwzhusMjL4YyhhT9FH4YsV/fFO1qrcalESijUe7Nrh4i/SXqYdJdsWUETTc?=
- =?us-ascii?Q?Tu/s2OOGW/wMH05Jjw4rPPEo9pgs26ygdje5dncTTfOdiHZw1s768ca3T7zL?=
- =?us-ascii?Q?dB3MW4PzqaxcCvJqDcKpMxkdkGYCuguM5HdzM35GQl65l49XkpWD0uJHFDkO?=
- =?us-ascii?Q?sXQ00J8i9NI6zyk/9ZravAAnvRk+4SfcD/mMQjvPxXRLjqDirhaaP7rIsNrs?=
- =?us-ascii?Q?1i/b5dtA7vvbHUOw80BOdRHOX4DqC6tPynstx1eNaz1HPr7vD8K2ROxU8U+H?=
- =?us-ascii?Q?7w6E++jZh1YITX/F8c3AVwCu/a4n0kWhgAqazd8hJ2sVfWj2UdId6SM4kHpv?=
- =?us-ascii?Q?eeE8skw3cgPNJ9qAkx0=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AE91DF75B
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753545812; cv=none; b=WLFOVEaF12ApwEYUEq3IqIf8/qYZW5hnUvaCbL8J97/irxsM6x43ugnYLv9hVGRCAGzK+6eCa2n1JYDs2h8JaJhFquD70FJD/PZhdHsD9R4RdAe9JXps8QBXu066o7z9D0WDyjUhho3pwxZTTwETcUPFsC4pk7PevUzTeuq3Q3A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753545812; c=relaxed/simple;
+	bh=K7PI0VLob2TMw3JitF7cOuVwXqjL4avFTvGrPSc5m3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RbER9JhMUy41B0NWAVb+zp2URXb5AIqHAasWxYSGW88FlpwyEc1D0Sz5Q7WpOzrAagkv/6nzjIeiJ4MeJE2N8VEElOBpGRCMthf4l6dl5wAEMUmvuZs1R9Sp64bJ/sCzPY6J4dwVrjFlXFD5juylrGotcX0lyUUNFwXWcEajZ9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F+LExV5j; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56QCblIj014749
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:03:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=F8YYMH9gFarS0Tc24iZ48d4j
+	M4eJuDvGBE7Mq7h0k3E=; b=F+LExV5jic8uYinXfX7flw4Vd6D7ptJFKponMqZ0
+	Ctya1PsH2QyVo/e7+IcYo5w9YLrz1FPv2HW74nURJhm3xHT05dSnsyqA2fENzSYt
+	IirH+EQReM90OfNBtAGoUqNJSKtfam1I0jQlOOkVwIYO3dzQLvInw/Y4MopCN354
+	GBVH5zAUN9JjWVSDuXKdS3ggN8EuXtHtdr6vPvtd48E/Oh3eYdBXIB+oVQcjjCLT
+	CG0d6o5AlBz2C/RM2Ely0OAYMXY1nwqSqrUW3psYgmQKIiunnhk8L9r1t4Tx96ww
+	MBcvAbhhQGuOa9qTU3lCmI2zWUStXXJ08bb1soO/vA8SwA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mqk124v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:03:29 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7073cc86450so911906d6.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:03:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753545808; x=1754150608;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F8YYMH9gFarS0Tc24iZ48d4jM4eJuDvGBE7Mq7h0k3E=;
+        b=Xu3Z+Y1GxfcE49570vukUJHn9MmIdGH6/C0uuT3r2aS+tpntbG+1WkdHWbPoqT886h
+         pHmei+d0oCde8eLL6Hd+e3pcXojQdRFrXYW3sY0U4b/WVt3+wv6JJ7X7C60maiLDdl7K
+         Bzi/BzUPPMK37SQvNrQJKWZYrX0L1ewTohrUjZ1IKrg6sgVjhnen7FZoLy/WvsZkeFoZ
+         ir2Chm/VAtS3Nb14HsRcVbIwkId4s93McMb6PgFjLBFyh+duHysSO5sgI0CQkO/Mo3mt
+         R2Wxd6iycIlMAAmOnoyqA9HacNoWTx/6/sfCs4OGJT4OvgBmHJ5v+U/QpymAJ/MaE28A
+         vK2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWepBxcHllEu8QQjM07AWYyccA1QL/0iXSLBn2rFTlvClAhoG+2zzTTD869SAcO+cwVKpMgT0FhNKczSLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVB7FjmGzNWcUG3D8fGvEjw2lp9sScjIUxyON3yU3fk4+Ab6gp
+	OnyVbeLIg16Bztbe+5zl4vFBMl0i5k6/O7SSfqyes80qJ5RWE+tK4Q/FCFV7ToVufEJ9QJLwYeA
+	H54/rLF7ttgmIIAGwqkZQGBVwBupFJ8GBwQk9fgNkpzqbtNACYkrBledDSrji8Ox1xac=
+X-Gm-Gg: ASbGncsqgMavmSlYqZFmlJpbqrm3CAR5jWHlhU5QpuLZkT+88GN3Z+oWGZjfmlIHR44
+	JyxTLQ3CbF66CH/bilnl+S8bfSLIR4Q88eONc91XyhxtqLcRW0pAjV8lS74oYNE2xaplAyNixAM
+	4TndU2VWhBVseXITw/Q6r1Xrj843Yj+XydwbSMxkOZuk3+EQbCJgFriMTWuPHEpxvzTPEivCCvu
+	8Oe8ak9/cnFn2H4XMSLzwrtNi0c+hrR6fC84jWkH6m3I3g4YIcCY9mRWW5CH7Tdju/42ZFvWPSB
+	TmSeTQaSKW5/SmuPA6ZNNFLqlXjfeUF4bXUVR4OhVwLNFa9BqRS/837vjfpOYkX2c9Q26SFIrxr
+	Gfpv0Ua4b1U7DWFw4HfEF0EOVzqkKY+aWEq/XUXWm+Dchqtl8Jy50
+X-Received: by 2002:ad4:5dec:0:b0:707:151d:3234 with SMTP id 6a1803df08f44-707205a9d4cmr62478086d6.30.1753545808042;
+        Sat, 26 Jul 2025 09:03:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhdNdjiKsH+hA/24bP2oys9SXNS9W2drat5pIegemSx766wz2FYOAMVdk+G01+gfGwX7scUA==
+X-Received: by 2002:ad4:5dec:0:b0:707:151d:3234 with SMTP id 6a1803df08f44-707205a9d4cmr62477386d6.30.1753545807317;
+        Sat, 26 Jul 2025 09:03:27 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b6316d936sm502145e87.37.2025.07.26.09.03.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Jul 2025 09:03:25 -0700 (PDT)
+Date: Sat, 26 Jul 2025 19:03:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+        kong.kongxinwei@hisilicon.com, liangjian010@huawei.com,
+        chenjianmin@huawei.com, fengsheng5@huawei.com, libaihan@huawei.com,
+        shenjian15@huawei.com, shaojijie@huawei.com,
+        jani.nikula@linux.intel.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 drm-dp 08/11] drm/hisilicon/hibmc: fix no showing when
+ no connectors connected
+Message-ID: <tqbbkhod5et6yxyfhzmgelborrhwjaazk6ylkw3srlqmmkp6ou@jefvdyktsuds>
+References: <20250718065125.2892404-1-shiyongbang@huawei.com>
+ <20250718065125.2892404-9-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB7585.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 343ab0ab-4955-48f7-583d-08ddcc5d8633
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2025 16:00:21.1506
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: os+31N5v9aQl8XxreF3PZ4jlz0mdT5kwEQ+5B9T9R4kE78nWzc+XvXaOz05F14pHH35vbpCy4GqORmQ8ZAVWfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8060
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718065125.2892404-9-shiyongbang@huawei.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI2MDE0MCBTYWx0ZWRfX+BDaqWOvCAHI
+ VcvT8+24ih/o4B1DgC31Nbp4VCX/wy61B3NURDrr/qLXx6QEGKQxWv2Bqsl1r2oAWslLEpGOBQK
+ oOG8LySj0tBa2GXkcyCWd1nhC1zY1TZUe3jJDqjaJSSf/v91O7pD7KgjSBRbZavjB5zpq+6XQUz
+ /nobfmeY4JBjEPiiDozomXCbBCG/UWQeeh+bltPSVs7fcku3sye5pSfFeUAsSiWse/WKz0W+dCX
+ jc2SSI8qM0b1cwcZuOmFS073d0yNt/WE29AD0+8Z70UFFX6BFi5mWRBdqQgHUh/yy4CuHOQCqei
+ CEsajnYAKrPcsFfp+HMto4e9QQDSiIq8zDPSCZ5A764HPV9AXwtgxD2Xv59/XIbwWma2upcfYwi
+ K6sOASJ6B8nK3v4nzURmoNoy69taBW323qokgpOOKw6q1n00VpEK8KcboXgPIp3bj3uxjq8E
+X-Authority-Analysis: v=2.4 cv=fqPcZE4f c=1 sm=1 tr=0 ts=6884fc51 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=i0EeH86SAAAA:8 a=nBfjFdyouy9m0_FljzMA:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-GUID: xl8_BRf2digoXBVzLfJF5JbyC9M8rndI
+X-Proofpoint-ORIG-GUID: xl8_BRf2digoXBVzLfJF5JbyC9M8rndI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-26_04,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 clxscore=1015 lowpriorityscore=0 impostorscore=0
+ adultscore=0 mlxscore=0 spamscore=0 mlxlogscore=999 phishscore=0 bulkscore=0
+ malwarescore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507260140
 
-Hi Arnd,
+On Fri, Jul 18, 2025 at 02:51:22PM +0800, Yongbang Shi wrote:
+> From: Baihan Li <libaihan@huawei.com>
+> 
+> Our chip support KVM over IP feature, so hibmc diiver need to support
 
-Thanks for the patch. I would like to amend this patch with - https://patch=
-work.kernel.org/project/bluetooth/patch/20250725090133.1358775-1-kiran.k@in=
-tel.com/
+I assume that KVM-over-IP doesnt provide EDID reads. This needs to be
+stated in the commit message.
 
-I will include your name as part of Signed-off-by tag.=20
+> displaying without any connectors plugged in. If no connectors connected,
+> set the vdac connector status to 'connected' to handle BMC KVM. Use
+> is_connected to check all physical outputs.
+> For get_modes: using BMC modes for connector if no display is attached to
+> phys VGA cable, otherwise use EDID modes by drm_connector_helper_get_modes.
+> 
+> Fixes: 4c962bc929f1 ("drm/hisilicon/hibmc: Add vga connector detect functions")
+> Signed-off-by: Baihan Li <libaihan@huawei.com>
+> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+> ---
+> ChangeLog:
+> v2 -> v3:
+>   - fix hibmc_connector_get_modes() and hibmc_vdac_detect() to realize BMC KVM, suggested by Dmitry Baryshkov.
+> ---
+>  .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    |  5 +-
+>  .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  4 ++
+>  .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  | 55 +++++++++++++------
+>  3 files changed, 45 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+> index 99b30a6c7e06..262ebe6138f0 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+> @@ -58,9 +58,12 @@ static int hibmc_dp_detect(struct drm_connector *connector,
+>  {
+>  	struct hibmc_drm_private *priv = to_hibmc_drm_private(connector->dev);
+>  
+> -	if (!hibmc_dp_detect_link(&priv->dp))
+> +	if (!hibmc_dp_detect_link(&priv->dp)) {
+> +		priv->is_connected |= BIT(0);
 
->-----Original Message-----
->From: Arnd Bergmann <arnd@kernel.org>
->Sent: Friday, July 25, 2025 2:37 PM
->To: Marcel Holtmann <marcel@holtmann.org>; Luiz Augusto von Dentz
-><luiz.dentz@gmail.com>; Devegowda, Chandrashekar
-><chandrashekar.devegowda@intel.com>; K, Kiran <kiran.k@intel.com>
->Cc: Arnd Bergmann <arnd@arndb.de>; Vijay Satija <vijay.satija@intel.com>;
->Aluvala Sai Teja <aluvala.sai.teja@intel.com>; linux-
->bluetooth@vger.kernel.org; linux-kernel@vger.kernel.org
->Subject: [PATCH] Bluetooth: btintel_pcie: avoid unguarded 64-bit division
->
->From: Arnd Bergmann <arnd@arndb.de>
->
->Directly dividing a 64-bit value is not allowed on 32-bit architectures in=
- the
->kernel.
->
->arm-linux-gnueabi/bin/arm-linux-gnueabi-ld: drivers/bluetooth/btintel_pcie=
-.o:
->in function `btintel_pcie_suspend_late':
->btintel_pcie.c:(.text+0x224): undefined reference to `__aeabi_ldivmod'
->
->Since this is a ktime_t value and dividing by 1000 gives a microsecond num=
-ber,
->just convert it into microseconds using the appropriate helper.
->
->Fixes: 33bb9b1ce6f6 ("Bluetooth: btintel_pcie: Add support for _suspend() =
-/
->_resume()")
->Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->---
-> drivers/bluetooth/btintel_pcie.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_=
-pcie.c
->index 9792a49886ff..4dfd5365bb4e 100644
->--- a/drivers/bluetooth/btintel_pcie.c
->+++ b/drivers/bluetooth/btintel_pcie.c
->@@ -2607,7 +2607,7 @@ static int btintel_pcie_suspend_late(struct device
->*dev, pm_message_t mesg)
-> 	btintel_pcie_wr_sleep_cntrl(data, dxstate);
-> 	err =3D wait_event_timeout(data->gp0_wait_q, data->gp0_received,
->
->msecs_to_jiffies(BTINTEL_DEFAULT_INTR_TIMEOUT_MS));
->-	delta =3D ktime_to_ns(ktime_get() - start) / 1000;
->+	delta =3D ktime_to_us(ktime_get() - start);
->
-> 	if (err =3D=3D 0) {
-> 		bt_dev_err(data->hdev, "Timeout (%u ms) on alive interrupt
->for D3 entry", @@ -2651,7 +2651,7 @@ static int btintel_pcie_resume(struct
->device *dev)
-> 	btintel_pcie_wr_sleep_cntrl(data, BTINTEL_PCIE_STATE_D0);
-> 	err =3D wait_event_timeout(data->gp0_wait_q, data->gp0_received,
->
->msecs_to_jiffies(BTINTEL_DEFAULT_INTR_TIMEOUT_MS));
->-	delta =3D ktime_to_ns(ktime_get() - start) / 1000;
->+	delta =3D ktime_to_us(ktime_get() - start);
->
-> 	if (err =3D=3D 0) {
-> 		bt_dev_err(data->hdev, "Timeout (%u ms) on alive interrupt
->for D0 entry",
->--
->2.39.5
+Magic value BIT(0)
 
-Thanks,
-Kiran
+>  		return connector_status_connected;
+> +	}
+>  
+> +	priv->is_connected &= ~BIT(0);
+>  	return connector_status_disconnected;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+> index ca8502e2760c..d68588ecec9b 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+> @@ -31,6 +31,7 @@ struct hibmc_vdac {
+>  	struct drm_connector connector;
+>  	struct i2c_adapter adapter;
+>  	struct i2c_algo_bit_data bit_data;
+> +	int phys_status;
+>  };
+>  
+>  struct hibmc_drm_private {
+> @@ -43,6 +44,9 @@ struct hibmc_drm_private {
+>  	struct drm_crtc crtc;
+>  	struct hibmc_vdac vdac;
+>  	struct hibmc_dp dp;
+> +
+> +	/* VGA and DP phys connect status, BIT(0) is DP, BIT(1) is VGA */
 
+#define those.
 
+> +	int is_connected;
+
+And you need a lock around this one, otherwise you might get a race
+between DP's and VGA's code setting and clearing bits here.
+
+>  };
+>  
+>  static inline struct hibmc_vdac *to_hibmc_vdac(struct drm_connector *connector)
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
+> index 841e81f47b68..3cdf640d1785 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
+> @@ -25,27 +25,18 @@
+>  static int hibmc_connector_get_modes(struct drm_connector *connector)
+>  {
+>  	struct hibmc_vdac *vdac = to_hibmc_vdac(connector);
+> -	const struct drm_edid *drm_edid;
+>  	int count;
+>  
+> -	drm_edid = drm_edid_read_ddc(connector, &vdac->adapter);
+> -
+> -	drm_edid_connector_update(connector, drm_edid);
+> -
+> -	if (drm_edid) {
+> -		count = drm_edid_connector_add_modes(connector);
+> -		if (count)
+> -			goto out;
+> +	if (vdac->phys_status == connector_status_connected) {
+> +		count = drm_connector_helper_get_modes(connector);
+> +	} else {
+> +		drm_edid_connector_update(connector, NULL);
+> +		count = drm_add_modes_noedid(connector,
+> +					     connector->dev->mode_config.max_width,
+> +					     connector->dev->mode_config.max_height);
+> +		drm_set_preferred_mode(connector, 1024, 768); // 1024x768
+>  	}
+>  
+> -	count = drm_add_modes_noedid(connector,
+> -				     connector->dev->mode_config.max_width,
+> -				     connector->dev->mode_config.max_height);
+> -	drm_set_preferred_mode(connector, 1024, 768);
+> -
+> -out:
+> -	drm_edid_free(drm_edid);
+> -
+>  	return count;
+>  }
+>  
+> @@ -57,10 +48,38 @@ static void hibmc_connector_destroy(struct drm_connector *connector)
+>  	drm_connector_cleanup(connector);
+>  }
+>  
+> +static int hibmc_vdac_detect(struct drm_connector *connector,
+> +			     struct drm_modeset_acquire_ctx *ctx,
+> +			     bool force)
+> +{
+> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(connector->dev);
+> +	struct hibmc_vdac *vdac = to_hibmc_vdac(connector);
+> +	enum drm_connector_status status;
+> +
+> +	status = drm_connector_helper_detect_from_ddc(connector, ctx, force);
+> +
+> +	vdac->phys_status = status;
+> +
+> +	if (status == connector_status_connected) {
+> +		priv->is_connected |= BIT(1);
+> +		return connector_status_connected;
+> +	}
+> +
+> +	priv->is_connected &= ~BIT(1);
+> +
+> +	/* if all connectors are disconnected,
+> +	 * return connected to support BMC KVM display.
+> +	 */
+> +	if (!priv->is_connected)
+> +		return connector_status_connected;
+> +
+> +	return connector_status_disconnected;
+> +}
+> +
+>  static const struct drm_connector_helper_funcs
+>  	hibmc_connector_helper_funcs = {
+>  	.get_modes = hibmc_connector_get_modes,
+> -	.detect_ctx = drm_connector_helper_detect_from_ddc,
+> +	.detect_ctx = hibmc_vdac_detect,
+>  };
+>  
+>  static const struct drm_connector_funcs hibmc_connector_funcs = {
+> -- 
+> 2.33.0
+> 
+
+-- 
+With best wishes
+Dmitry
 
