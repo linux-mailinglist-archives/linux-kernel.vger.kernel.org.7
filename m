@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-746529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2078B127B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:56:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B42B127C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD9E3B04A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 23:55:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78085580AFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6941C261596;
-	Fri, 25 Jul 2025 23:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB5A262FE4;
+	Fri, 25 Jul 2025 23:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZhpVy2g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jesXExFD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CCA23D2B6;
-	Fri, 25 Jul 2025 23:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C743E2620E4;
+	Fri, 25 Jul 2025 23:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753487782; cv=none; b=HinMj4N7bKG8DP5EhdSAnb6+2NbO0QSKYSzQddUoC8jFFv2wDbqGNSHB5V3Qu1S8cRJu800jlWxKQkE4b0Fz5gk7sAqr/LMRFKYAPmnwY/SblHYMHSmuwcdMVy8mMjA/uLtY5YgKq7Lx/ajvrGbZcDW+VIzXZBK+e3UuuwuyQ2M=
+	t=1753487997; cv=none; b=RMo2Bcxmc8ZXqirtcPRBHjbcP0IfahjsyV5VoP2CWA900yXfUyt1vtHJhJFcCFAcSWFrH+ZBqgb8G056e7CrZo582IxXZbqM7JUk8YPgLes1jbQqm2XoJGNnIx36XWbtKx7yUgu1UiOfHQ7o4EnAb7xnrV/orPaiMSMA1p08k40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753487782; c=relaxed/simple;
-	bh=DP9W+L+Fgqoe4KHb1QecD3NMuIFB678cOaB0/7nD/6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=G8a1ISmuHnDM+QuaBfmuvebFMPzUzG8vwLYU6zq0I7cVVRs5g+roRkzOf50dn6ADliWuQ0XB1ejnsR5UCSXLLRv2iIQy7gqSDyr0nMNcn5cXtX1zjRbPY/BepF1f4hDGGNgXNvSyd5S1kpw5g0pezTK0rOVu7yfdmKc3wzFuflU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZhpVy2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E734C4CEE7;
-	Fri, 25 Jul 2025 23:56:22 +0000 (UTC)
+	s=arc-20240116; t=1753487997; c=relaxed/simple;
+	bh=aWagL43nzO3VnFNpASht2nxBuHJFMqurTi8Xfa3eL1Y=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=sZTYBk0pW6mZfpqMSIUrtOeYOS/7Ee7y+QNR++yaFPZJhE304TRgDbiYgmuPzDwqiw8NhX5lL0CqRjbLmE2Wp3nIjJl+AySXII1TAwwq3zLvl93NM9V/csTUu3i5EyQbjTiTZkV9FvF6WaML+5ZglG3tniv6o2vxALPC1ezfSJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jesXExFD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D3EC4CEE7;
+	Fri, 25 Jul 2025 23:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753487782;
-	bh=DP9W+L+Fgqoe4KHb1QecD3NMuIFB678cOaB0/7nD/6s=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=EZhpVy2gqHufCKRR67LgoGSvf5whKmtsGv/WPFp6Io6iZ6kIxz7/X91YNMfW6TR7d
-	 yj6O455nNPBpok63mgtY9MmZdyjATO8Cugs6oVEO7n60d5FsSqpZBxBsvNbCZbnTz1
-	 o0g74KQcx5i68PC0hIYeYglCfg+dqtE6RDbpvXpF5p/nQCnG0/7r1xLChEyZD6ZFuz
-	 Hc3B1r5Io8PelhdsFr37i+GghlnfXb8UACeTjDurRD7Rs4cdGrB7lCM0l6p62p/c5M
-	 P/U2rUQR3RNXlq7QnGizZqhBIvb6ejMeJpu3AEvxXLvjJQ8NCLCpu1XZXfnzmSSSDj
-	 yfakei+cR17vA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 40DEBCE0E5A; Fri, 25 Jul 2025 16:56:22 -0700 (PDT)
-Date: Fri, 25 Jul 2025 16:56:22 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
-	kernel-team@meta.com, haakon.bugge@oracle.com
-Subject: [GIT PULL] LKMM changes for v6.17
-Message-ID: <788e1aaa-73f5-4e04-a7f4-bab4f1075c46@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=k20201202; t=1753487997;
+	bh=aWagL43nzO3VnFNpASht2nxBuHJFMqurTi8Xfa3eL1Y=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jesXExFDdeul9WCN5G39/ib4nkocPTDnI/yeEIpfsW8Lz+DJykYp2TOdeGmRjGptT
+	 x92BA46355IUA7dRi7Y8UMlSR36Pf2O0t1buP5Z9ZSRIea6lJu0LxYw0y8Tf4UDLEW
+	 FGMqBmM0WEu4R5RARdWHsW/B0kg9E1MxNu90rJ5XI4jFgmQWfCh3A+DSuwAizPP3zx
+	 tERKyuOmyQT6oOGb3dUneQaDjnjTWs7//Dmak4RGSTX3OGcV3PlqVreruRpxinVTrb
+	 okRPYR1MXiNUH18pMY5ZuKYOak2sSkk0apz9PeRdBXCCph5YfZlOE1Qy01gsYFRcUx
+	 +EhKf9EJ/C2jw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAC74383BF4E;
+	Sat, 26 Jul 2025 00:00:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 0/4] arm64: dts: socfpga: enable ethernet support for
+ Agilex5
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175348801475.3451765.4389353168084644772.git-patchwork-notify@kernel.org>
+Date: Sat, 26 Jul 2025 00:00:14 +0000
+References: <20250724154052.205706-1-matthew.gerlach@altera.com>
+In-Reply-To: <20250724154052.205706-1-matthew.gerlach@altera.com>
+To: Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ dinguyen@kernel.org, maxime.chevallier@bootlin.com, richardcochran@gmail.com,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello, Linus,
+Hello:
 
-When the v6.16 merge window opens, please pull this LKMM update from:
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/lkmm.2025.07.23a
-  # HEAD: 88172700423c27c0123fdb05b8c4a62444cfcba2: docs/memory-barriers.txt: Add wait_event_cmd() and wait_event_exclusive_cmd() (2025-07-09 10:08:14 -0700)
+On Thu, 24 Jul 2025 08:40:47 -0700 you wrote:
+> This patch set enables ethernet support for the Agilex5 family of SOCFPGAs,
+> and specifically enables gmac2 on the Agilex5 SOCFPGA Premium Development
+> Kit.
+> 
+> Patch 1 defines Agilex5 compatibility string in the device tree bindings.
+> 
+> Patch 2 defines the base gmac nodes it the Agilex5 DTSI.
+> 
+> [...]
 
-----------------------------------------------------------------
-lkmm: Update documentation
+Here is the summary with links:
+  - [v2,1/4] dt-bindings: net: altr,socfpga-stmmac: Add compatible string for Agilex5
+    https://git.kernel.org/netdev/net-next/c/92068a32f978
+  - [v2,2/4] arm64: dts: Agilex5 Add gmac nodes to DTSI for Agilex5
+    (no matching commit)
+  - [v2,3/4] arm64: dts: socfpga: agilex5: enable gmac2 on the Agilex5 dev kit
+    (no matching commit)
+  - [v2,4/4] net: stmmac: dwmac-socfpga: Add xgmac support for Agilex5
+    https://git.kernel.org/netdev/net-next/c/a5e290aab8fc
 
-Changes
--------
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-* Add wait_event_cmd() and wait_event_exclusive_cmd() to the list of
-  wait primitives that provide the needed memory barriers (Håkon Bugge).
 
-----------------------------------------------------------------
-Håkon Bugge (1):
-      docs/memory-barriers.txt: Add wait_event_cmd() and wait_event_exclusive_cmd()
-
- Documentation/memory-barriers.txt | 2 ++
- 1 file changed, 2 insertions(+)
 
