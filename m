@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel+bounces-746530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B42B127C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:00:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0E8B127CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78085580AFB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29BC13AEE6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB5A262FE4;
-	Fri, 25 Jul 2025 23:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C509BE5E;
+	Sat, 26 Jul 2025 00:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jesXExFD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOZg23/V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C743E2620E4;
-	Fri, 25 Jul 2025 23:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0758800
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 00:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753487997; cv=none; b=RMo2Bcxmc8ZXqirtcPRBHjbcP0IfahjsyV5VoP2CWA900yXfUyt1vtHJhJFcCFAcSWFrH+ZBqgb8G056e7CrZo582IxXZbqM7JUk8YPgLes1jbQqm2XoJGNnIx36XWbtKx7yUgu1UiOfHQ7o4EnAb7xnrV/orPaiMSMA1p08k40=
+	t=1753488094; cv=none; b=IvJ7nnQkr/wawdZOrAR6GSrmigaRXuOl7Xx5li7GuiZdRUfY5Evd0pga5wTqYtKt1ipQ1q/Jg0pO8C3MS8isgS+25/ThweZ9rr4zTRGCjqfhsDgQlClMQ7H+QvrmwwNhzIZDUJY4od7vjbRfju1LV1ROb7Pjae6ofrnbpQPtnvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753487997; c=relaxed/simple;
-	bh=aWagL43nzO3VnFNpASht2nxBuHJFMqurTi8Xfa3eL1Y=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sZTYBk0pW6mZfpqMSIUrtOeYOS/7Ee7y+QNR++yaFPZJhE304TRgDbiYgmuPzDwqiw8NhX5lL0CqRjbLmE2Wp3nIjJl+AySXII1TAwwq3zLvl93NM9V/csTUu3i5EyQbjTiTZkV9FvF6WaML+5ZglG3tniv6o2vxALPC1ezfSJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jesXExFD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D3EC4CEE7;
-	Fri, 25 Jul 2025 23:59:57 +0000 (UTC)
+	s=arc-20240116; t=1753488094; c=relaxed/simple;
+	bh=N1/yfwHwDYJpay+cT09hf+QA8XqVXzmqMFOFJCwANqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=F5+qeGmmgjuHI6G3iWJnCmR7SO00TQ4bW7jhyl7N/qi72YdVnO534DfRKuWbKkZCMC7FJ6atJyJ+S2YuG6oKmZUMxx3aam/TJA4Dz/RTuJ/EBMpIU5MXEqblM0TluXa7x+JavKWRD+Ni+yIJK37dgZUcSc2DMjq0tvrSd/y7cTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOZg23/V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B061C4CEE7;
+	Sat, 26 Jul 2025 00:01:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753487997;
-	bh=aWagL43nzO3VnFNpASht2nxBuHJFMqurTi8Xfa3eL1Y=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jesXExFDdeul9WCN5G39/ib4nkocPTDnI/yeEIpfsW8Lz+DJykYp2TOdeGmRjGptT
-	 x92BA46355IUA7dRi7Y8UMlSR36Pf2O0t1buP5Z9ZSRIea6lJu0LxYw0y8Tf4UDLEW
-	 FGMqBmM0WEu4R5RARdWHsW/B0kg9E1MxNu90rJ5XI4jFgmQWfCh3A+DSuwAizPP3zx
-	 tERKyuOmyQT6oOGb3dUneQaDjnjTWs7//Dmak4RGSTX3OGcV3PlqVreruRpxinVTrb
-	 okRPYR1MXiNUH18pMY5ZuKYOak2sSkk0apz9PeRdBXCCph5YfZlOE1Qy01gsYFRcUx
-	 +EhKf9EJ/C2jw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAC74383BF4E;
-	Sat, 26 Jul 2025 00:00:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1753488092;
+	bh=N1/yfwHwDYJpay+cT09hf+QA8XqVXzmqMFOFJCwANqg=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=ZOZg23/VFb5PfKSaTBW6HdCtaIa3EeQ4DZevUnWY2MsZY2G522/PVWVKxeg067OJ+
+	 dBqzzqHoWH1kDiw4XcCyr7N2I6dyweVj4F8HH/PYd5TBy2cTTWu1gF6GApUtzruspK
+	 Vuhcw88SPSw83dTHZafRfcRNshu2JxpIA9g073P/Jv0eKb2KhYdUClKcAOy+8ExDxO
+	 U7324OwJZpWf/fi/e09hv8Fl81aCuhdlO5jldWAMg1rU4SzVrc9Tou23W1LcGc+ccb
+	 gNByPiExCfuCLDKuP8PQmQ6qyip4mCa97LgKVZfzURWsbmsM6Woe22X+A8ifeKYW5k
+	 vL5AsDL6MhqKQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id F3A58CE0E5A; Fri, 25 Jul 2025 17:01:31 -0700 (PDT)
+Date: Fri, 25 Jul 2025 17:01:31 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	haakon.bugge@oracle.com, pmladek@suse.com,
+	akpm@linux-foundation.org, john.ogness@linutronix.de
+Subject: [GIT PULL] Rate-limit changes for v6.17
+Message-ID: <6a4a7b55-6fa2-4f28-99f7-c65135c69aa1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/4] arm64: dts: socfpga: enable ethernet support for
- Agilex5
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175348801475.3451765.4389353168084644772.git-patchwork-notify@kernel.org>
-Date: Sat, 26 Jul 2025 00:00:14 +0000
-References: <20250724154052.205706-1-matthew.gerlach@altera.com>
-In-Reply-To: <20250724154052.205706-1-matthew.gerlach@altera.com>
-To: Matthew Gerlach <matthew.gerlach@altera.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- dinguyen@kernel.org, maxime.chevallier@bootlin.com, richardcochran@gmail.com,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello:
+Hello, Linus,
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+When the v6.17 merge window opens, please pull this rate-limit update from:
 
-On Thu, 24 Jul 2025 08:40:47 -0700 you wrote:
-> This patch set enables ethernet support for the Agilex5 family of SOCFPGAs,
-> and specifically enables gmac2 on the Agilex5 SOCFPGA Premium Development
-> Kit.
-> 
-> Patch 1 defines Agilex5 compatibility string in the device tree bindings.
-> 
-> Patch 2 defines the base gmac nodes it the Agilex5 DTSI.
-> 
-> [...]
+  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/ratelimit.2025.07.23a
+  # HEAD: 5c23ce0cb897b491a12667e3c15288eb03f8928d: lib: Add stress test for ratelimit (2025-06-24 05:47:35 -0700)
 
-Here is the summary with links:
-  - [v2,1/4] dt-bindings: net: altr,socfpga-stmmac: Add compatible string for Agilex5
-    https://git.kernel.org/netdev/net-next/c/92068a32f978
-  - [v2,2/4] arm64: dts: Agilex5 Add gmac nodes to DTSI for Agilex5
-    (no matching commit)
-  - [v2,3/4] arm64: dts: socfpga: agilex5: enable gmac2 on the Agilex5 dev kit
-    (no matching commit)
-  - [v2,4/4] net: stmmac: dwmac-socfpga: Add xgmac support for Agilex5
-    https://git.kernel.org/netdev/net-next/c/a5e290aab8fc
+----------------------------------------------------------------
+lib/ratelimit: Add functional and stress tests
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Changes
+-------
 
+* Add trivial kunit test for ratelimit
+* Make the ratelimit test more reliable (Petr Mladek)
+* Add stress test for ratelimit
 
+----------------------------------------------------------------
+Paul E. McKenney (2):
+      lib: Add trivial kunit test for ratelimit
+      lib: Add stress test for ratelimit
+
+Petr Mladek (1):
+      lib: Make the ratelimit test more reliable
+
+ lib/Kconfig.debug          |  11 ++++
+ lib/tests/Makefile         |   1 +
+ lib/tests/test_ratelimit.c | 144 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 156 insertions(+)
+ create mode 100644 lib/tests/test_ratelimit.c
 
