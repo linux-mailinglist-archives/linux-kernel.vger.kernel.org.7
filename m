@@ -1,78 +1,123 @@
-Return-Path: <linux-kernel+bounces-746832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1930B12BBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:54:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9C2B12BBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F62F4E5F54
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:54:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8B3F1C24229
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7FF28851E;
-	Sat, 26 Jul 2025 17:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E74288537;
+	Sat, 26 Jul 2025 17:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeVwA3de"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIupiKjn"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DBB78F4C;
-	Sat, 26 Jul 2025 17:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2F81D5151;
+	Sat, 26 Jul 2025 17:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753552477; cv=none; b=TXxTVWirIQ+9T1OlMP0GgfyfX2Zetck2VDOBoO2lWKI/6yKp5HIC+PYqFZsiTwJq1FcrfAKz00BC8PNEvcc2VPqbj3cruU90rWTjMlbOTTFjq83jF3N/6MHeQdMFsPzB2V5WrHaLlt8KlvN3qQcmmgqgvaDe2+nssLzLYJX5CAE=
+	t=1753552534; cv=none; b=CLbM4MNQyFdWRRyAs9l/kjhSOLu5mSq3PsOWl6GLI7uTf+uZ8KlUw06nCBTiRFdqKC1erd/BIKl0mkBqp71NnDqiw6FkFK1/giz3GCLLxpXE+4wUIBeVD07rM8seChwyt20+anvhILdkqO3+CSs/xGHQ09b+6QV2ZSI1oKL80SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753552477; c=relaxed/simple;
-	bh=O8XDFXfBTuXvwGLH4OtMQytQ38kkabiKqv6gfOmh8Ho=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=QfsY7mhARFwPPX2V4Q1MZqKIdFJjQds74l7v9soLkCTVag7hsO0s+xfg1Kv5mqxQD2QkcmQAQbOo+7W/MLyDy8VotbJip6BtwtnyF8qvjbpTEoSTtE1Xo4lid32NagtRd+CdDPJgbC2wqbJHNss2kFbPzYPGZnUcwumPxH3jiVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeVwA3de; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2661C4CEED;
-	Sat, 26 Jul 2025 17:54:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753552476;
-	bh=O8XDFXfBTuXvwGLH4OtMQytQ38kkabiKqv6gfOmh8Ho=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=AeVwA3der4qU1luIdSmKdWNi8DBP6jldHwxGX0f0t8Xn5q4lR8BYhCsjkSQLdudAM
-	 QQFfIqDuHnPX3V7kXRYO1Jw/YTuLJr6VzRpW6jbHCeYytGlh38rj/DXPGhrrtE7Fjq
-	 W83+ySkg8BAXz0Jo6pMhoa3BzIYlehPY7+/LrQKcH+Hdc3kI5C9v2TMX5N3crcgvyo
-	 irqupxkIrUNz29ygon7VRaaNmouhCO4Jj49Icox5iOdVph3bdMjCoC9g90x5YBOKos
-	 oWcoB8Au0/M+JHXPufqUN7JRCMCLf75LjJ1bG9s2ebyrYk87ZaQ0tkg+h74O5SfqbK
-	 XCPYh6o2zHnvw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E3A383BF4E;
-	Sat, 26 Jul 2025 17:54:55 +0000 (UTC)
-Subject: Re: [GIT PULL] soc: fixes for 6.16, part 3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <94f09700-cebd-4270-840f-219ef14bf2ee@app.fastmail.com>
-References: <94f09700-cebd-4270-840f-219ef14bf2ee@app.fastmail.com>
-X-PR-Tracked-List-Id: <soc.lists.linux.dev>
-X-PR-Tracked-Message-Id: <94f09700-cebd-4270-840f-219ef14bf2ee@app.fastmail.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.16-3
-X-PR-Tracked-Commit-Id: 912b1f2a796ec73530a709b11821cb0c249fb23e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6121f69c36337076fb0ffaa23acee3cf8cc5c931
-Message-Id: <175355249373.3655743.9316066633007495504.pr-tracker-bot@kernel.org>
-Date: Sat, 26 Jul 2025 17:54:53 +0000
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, soc@lists.linux.dev, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+	s=arc-20240116; t=1753552534; c=relaxed/simple;
+	bh=J7tOKQm6KsbYvCR3Hdcgq3HJjA2YL0PvUJvCbeT5bRc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DQ4lXQep4fsPXj1Gdn5wiAYlrJMFHZWQwL3RZ9wTyZKCgHaYB8HpSDHV7OXHHYd3GGtOYtrI3UOl+X1cHUUCTzfWQg+MssLBZstIDygyszqhGO1V8G5tjyAkSMzPNT/w4L/sU4dd4ws4UAdvf1eu0qCMGV+zMQGv+zh05D4IHVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIupiKjn; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-73c17c770a7so3447990b3a.2;
+        Sat, 26 Jul 2025 10:55:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753552532; x=1754157332; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5W++au39rEBJxX2Q4rDpMomnaH1q1xWRqIVRKBNu/qM=;
+        b=CIupiKjnPAk3h9tq1uXS3oygqp42p4jKzOzCrvTnpy/2sQq/ujWwRSw8IXqayx/dbu
+         QM8CU30AuKWxrUEhtu/B/e7EcJqmMCup8q3eRJW2zQ9k8K0JlWL8qzxSbL8oAoF5vYc2
+         MyKpgqL2qhnOAHJtQQtVqMiPqrSx6OKa2s1yJHfQdfapKBPqOhKGa64Ubby6PuCE/5tA
+         VdK2uT5xSzgP5dRrHd8tG73CKCnGMNMUH18haoPGQZp9qcVWk8Ksv1ZRFUbKf3kHf28D
+         QO0S6W+S9knPdxCDv/QRTWO1SfG310eYponxJ9CBeKJnoT+0rDILr6qrSboi7j6gJGKF
+         ewDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753552532; x=1754157332;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5W++au39rEBJxX2Q4rDpMomnaH1q1xWRqIVRKBNu/qM=;
+        b=a6ICndBxu9V+K5H83W2Mq8PFtr5xGVH87XtWS93tAP71puC2701jmgbOcj1xJ5hSaA
+         cTC9gbtWyD/j/ET9YR14pAK1PJzs4F540i3bk+c+0FiliqoHx103rmRTERPA6IRPx6Iw
+         VHUFmGpAY8DbUbFH9j/j5bK8DlO75oeuEd+b+582ndzQH04cE/ynaI8R/WIjy5swxBHF
+         HQ4D3KnKdvszIPUHxFx5wupTiIfido6MJOpf3nVa1Q3moEIbnJyfbBWsMuat3AdaODwK
+         TFQAWhvbDsAoekwZKoEWgeGUwolyZESfaZmgPqP9Oa4vf7hx4tWN/jo5MP8+DsIeTu6g
+         qqVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNk9l9WN3OFJZZxuU7QeI5ut+wOBjyZ0RERld5hd4CNtIFvGKgSZFN2/GlGXIZ/yys5MR8+w/a4PvdWA8=@vger.kernel.org, AJvYcCVaJJfwZ47S0hQ9FCW3Qni+h2wRChnaweT9eZI3qs4LS1u3ZVpn/QhkbizaxLyZyrkUkJDrfLR4Q/rNu/uR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhOplbmJjgGcJwOy8/ikt6fsYPyyAANe5bOyA9cV7H2EqyTUid
+	AIw7/zPIF+8Q9i50liCC2GoG0sI/5YLh8KcAeVDPTtPEG6VgHql1vf9m
+X-Gm-Gg: ASbGncuhYo3L2VccNKw1AAfVAYXfCd1Vt606UTcRqzETq1PcvbSG94nAJ68chmLuXtE
+	0j7/Wkcxc53azeVRHtur2KaeE7pKxuzlxVQSDmT67gSuz5sBLeAmAOzLriVDfwbJzGxnxDsXO5w
+	2+IGH/H/NuG6FwYlCeTd93J0yaUEu/zKqAgoa3g0K7qjLp42Ln5/IH//dtKBOQLAWeKPmzoTCs3
+	XrtoZl+gR/CJPZQ4QZsdNorx42AZeGNNsoca7iLb65W46OhB6cCF73MT7nbbzv+UZ6XkHFrQSz1
+	BzrBGe9KaIdPxxZToBblwy4+jteuc/IuVIGxSsQr8styPo0LPP/RJ6c43IqUJqtikmX7F6ZiL+P
+	P1cuNEceL+vhxtE5covy2evfuYCTlig==
+X-Google-Smtp-Source: AGHT+IGxlNYFc38S9eyRpImqOcQtnsmU476IB/ko2ETz+ypFrU/cqJ7CZ1/p3sY9pKlfg1fkHfAKrw==
+X-Received: by 2002:a05:6a00:3e01:b0:754:7376:548f with SMTP id d2e1a72fcca58-76337de94ebmr9720110b3a.23.1753552532040;
+        Sat, 26 Jul 2025 10:55:32 -0700 (PDT)
+Received: from archlinux ([205.254.163.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-766cf6c19dcsm167180b3a.68.2025.07.26.10.55.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Jul 2025 10:55:31 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: masahiroy@kernel.org,
+	nicolas.schier@linux.dev,
+	linux-kbuild@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH v2] kconfig/lxdialog: replace strcpy() with strlcpy() in inputbox.c
+Date: Sat, 26 Jul 2025 23:25:24 +0530
+Message-ID: <20250726175524.146459-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Sat, 26 Jul 2025 12:36:06 +0200:
+strcpy() performs no bounds checking and can lead to buffer overflows if
+the input string exceeds the destination buffer size. This patch replaces
+it with strlcpy(), which ensures the input is always NULL-terminated,
+prevents overflows, following kernel coding guidelines.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.16-3
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6121f69c36337076fb0ffaa23acee3cf8cc5c931
+Changes since v1:
+- Replace strscpy with strlcpy
 
-Thank you!
+---
+ scripts/kconfig/lxdialog/inputbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdialog/inputbox.c
+index 3c6e24b20f5b..ca778e270346 100644
+--- a/scripts/kconfig/lxdialog/inputbox.c
++++ b/scripts/kconfig/lxdialog/inputbox.c
+@@ -40,7 +40,7 @@ int dialog_inputbox(const char *title, const char *prompt, int height, int width
+ 	if (!init)
+ 		instr[0] = '\0';
+ 	else
+-		strcpy(instr, init);
++		strlcpy(instr, init, MAX_LEN + 1);
+ 
+ do_resize:
+ 	if (getmaxy(stdscr) <= (height - INPUTBOX_HEIGHT_MIN))
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.50.1
+
 
