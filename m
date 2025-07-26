@@ -1,192 +1,187 @@
-Return-Path: <linux-kernel+bounces-746808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDE1B12B71
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:29:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBC4B12B70
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A970C7A2D54
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:27:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 624D4AA1C28
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE025287262;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD00628725C;
 	Sat, 26 Jul 2025 16:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X29jtUK7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LIWrLo2A"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DA6242D68;
-	Sat, 26 Jul 2025 16:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FFE1E51FE
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753547345; cv=none; b=RIHe6+kr+CYegu4ApPf4yKSlJ78aYwGasbBGrAfCNJ6l0HshEGRpi8rql7kH/MUVzONDdxXFXXBIABrJvRXp3N2wlq5WQw0EWEXIqHxLOyW5EPHE8I7GEEmMWesN3eVcHqjxD12HGwHX0eddncg/URSOWcBKjjyX8dhI5gv8p/Q=
+	t=1753547345; cv=none; b=Bw/Kc1R++kmzOwUZWVvABIvkF5tAMnaaAu1Vsc5aN5bpGKFLrDFsAfvhkBWMpuX8non5I2hiI3IVynZOqMU+lCPN/JdlpM5kP8gmp+uIOmyyTHB/Gqbkq0QtE6DsTh4EnGP/iMADXAHa95ydWTLZmc9hTtmIRQ0TWTvp8k9VUiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753547345; c=relaxed/simple;
-	bh=G/K8pyDeP9S9JTCEMrl6oTquQe3ReUsv74LpUNzL4K8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJSzGS2Bvxn5wYRp7KVmrIaxMFT/wYmQV5wwancsMgJZ3pLqgz9Z91//kv2CDnKRP3T6dWmlvUackMqlgEd8OdHIfuvu7Zj1/T7Rr/Tx1AoGKU4npgBYsrFtfCXnXaG1a8iM8ZAsGa7IxuITK7fgiealwUgBitHRhqIji8iuOQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X29jtUK7; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753547343; x=1785083343;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=G/K8pyDeP9S9JTCEMrl6oTquQe3ReUsv74LpUNzL4K8=;
-  b=X29jtUK7iHAWeyHaxTN83X/ogR3QFwM7NYr34+7qnw0/OJP1LmZfZq6X
-   Aj6sI05b48tYa0ofaJO0GsBRgBQsMS1WJxGKDtkp6X6h5NE6c9wxzIA2f
-   EKncTOcjbwMhJCWd4Uu+wWWld2aUdrIaYEqUhBvcOanaIE2afi3IbQ17w
-   Ygt05E44atzyERk6b7E570w9/0ikT4ns+CAa1vY3YYfCnIW2uFYrkCx61
-   yhGfiTJj/tMNdnQD2itLRQHiqpEPhkGhzP4IQ6CTHjGcTSECsuGuXtGpY
-   5QdHjjbKCVzEErz1gqbOw0Ph4WACgE+sN40dGxQobKlXsmm3j5VTImBRn
-   Q==;
-X-CSE-ConnectionGUID: mMNeMfRSQSCjITwq53loSw==
-X-CSE-MsgGUID: sKdgHIIeR26C1JA7Nsu2ig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="56007404"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="56007404"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 09:29:02 -0700
-X-CSE-ConnectionGUID: 4sWF6xspS2OA3rgPzX1tuA==
-X-CSE-MsgGUID: yxtOoSrbTXyHdcniL0C43A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="161531066"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 26 Jul 2025 09:28:59 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ufhlY-000M6L-2O;
-	Sat, 26 Jul 2025 16:28:56 +0000
-Date: Sun, 27 Jul 2025 00:28:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Baryshkov <lumag@kernel.org>, Amit Kucheria <amitk@kernel.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Jackie Liu <liuyun01@kylinos.cn>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] thermal: qcom: make LMH select QCOM_SCM
-Message-ID: <202507270042.KdK0KKht-lkp@intel.com>
-References: <20250725-lmh-scm-v1-1-84246981f435@oss.qualcomm.com>
+	bh=pDxFtz0hgG3lWIVjF94plvVMN1cgZqmYxIabBIDSsGU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Erq9LY9yvBQSbAQUXkzpFqOzFCvvaJsjv19B4kL5i1/VHztRnd0ppfocTV5GGNPWISev0wYhnDxCJDoJr+vavdq9s9iwS5YxtiddZNRWwgyisyFkpzLQai6OaGl5jP03OsEGRgAbDrlf7OuF9k42JqHIWxQBNJXOLiVLTV7pQ44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LIWrLo2A; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-41cd87eff4dso2059805b6e.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753547341; x=1754152141; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tt8DIM5xS78ws8oyJ2vjDrvCmaieqQ3QQrzu0A/RSh4=;
+        b=LIWrLo2Ap8aXaTHh2m6lcTcY5Zib+q/U2ANqFyCwVaEJlvz9lsoNI4L195M04j0BOV
+         FyGhqkB36vnZBdlCevwLO0jCFlNvVwAY1pye36v2eidf5AkFo2pbYxvcHylTe1aA7/nY
+         7ycQ1wEOHHiQLDnXXc/f6prLk/n6i2QGx3HlLlKixxYW6eFTvNEREBYWBLoofI9feU+S
+         X8DAykxpwhWCXzfHg9lW83NUrOwnBFbWUDKYF7nyC5c/TptF+wBMtZpakzmbIukRLNVC
+         3n2QgYsiXWviub/n+6RM4q2/InsGKQQv9rSqe8wRAovbZ+lspo5aGy2WniKhC/AyKCiO
+         jugA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753547341; x=1754152141;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tt8DIM5xS78ws8oyJ2vjDrvCmaieqQ3QQrzu0A/RSh4=;
+        b=btP3aAUrhr/8gCjirk4Q9yABDyGqmNuLy5SF0mYa+FyzX6G3FCrJ5w3DPeGnozwahu
+         e0YsFrrbbZRkyzk0Q/Pi2py1VNQmdNgkF9sbM0F2OGxBIGurYA2JmrAImOnZWz3+G+ok
+         zcy58foN7Ayg/40HMld8id5x53VCEYVKm7oRYQZ/24RA6sDdO5Jf07B9w7sXI/oaGLBD
+         AFL0TeNQgsV+piobiHa0uFmQy8QgRsMfkpG9yM9P1lEX19LQg8tGT+RZ9KjiZKxiX2ZN
+         qo4CCYJrr8SgFnl1N+uZ5in3EVXDJijLXXfdbvbOBtIMvVhYML6AvbKPQ104A14f/Vmb
+         un+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWn89yeSJEyJzz4xCpyLvO+mdFXOczu4p+b540+bSDjVf7Wc6MGZfyrc9NCCLYsKReMHLZooNBmPLfugUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRS/DD8FbWl7PwbZvnAtZp3G3Nxdce/8X+IGvPcooL3ed8whEB
+	0kjSJtENobImF477frgvLfpzV2LD3k2k2VzNmNNtCVu4qaV2e/PwBN78KRnKZ4Qk5jw=
+X-Gm-Gg: ASbGnctKsBTMoEyXrDMVUQvIrQDuk+7zi9R3ghJiVoey0JmAqVv8lZPlE8ayzEcbWWi
+	2PTlXDlxNe4MqEjYYFTXe5DdiYuv5WQVC79JlpfSPQlJ3QQfBa7Zl2P09Y7arwxz5KZnbKSSee4
+	HxIapG2StU5kmsPZanSlMeuGQYuoMpZ2ER4Ty0z7M9QiZO6g3jKGpdZDAtpxN2GVC/yD0XCa76y
+	neY8ohwScjThBFX3iU81vKvpEr9GmyLUvhrzMj9/sePFsKD3sH91d4LeWs+M4RUmRINMOaWmGQF
+	OxR5UzW5iA8LQpmU2MdidZr2G+5xCFhmg9qf5u32cTLs0MotLT7DsGmOq2NH+CyyyZjEyXtAev1
+	EYyYDee2OIFDDIAW8McgwTJc/pNzcx/LVK3f6nQ==
+X-Google-Smtp-Source: AGHT+IHsIf1X1e+HWPM1mk7VjDLLG77GWLJnUylCV8XADXNuFHnoFI6iUSOqAMANV5v3YaOOF/3OGQ==
+X-Received: by 2002:a05:6808:189f:b0:401:e6f0:a8d4 with SMTP id 5614622812f47-42bb70f897dmr3995875b6e.5.1753547340932;
+        Sat, 26 Jul 2025 09:29:00 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:63fb:769a:c359:cee])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-42c7dfa1335sm393612b6e.41.2025.07.26.09.28.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Jul 2025 09:28:59 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Sat, 26 Jul 2025 11:28:48 -0500
+Subject: [PATCH] iio: adc: ad7124: fix channel lookup in syscalib functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725-lmh-scm-v1-1-84246981f435@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-v1-1-b9d14bb684af@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAD8ChWgC/x2NwQrCQAxEf6XkbKBN1aq/Ujyku1GDy27ZoFhK/
+ 93oYQ4P5s2sYFJVDC7NClXealqyQ7drIDw43wU1OgO1dGgHOqJqQY7BM3S0x5t+8FfMkjCV8nz
+ NqBltscBJJxQ6hXPfC0di8M25ihv/v/G6bV+WuamPfwAAAA==
+X-Change-ID: 20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-e28c933ead2a
+To: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2986; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=pDxFtz0hgG3lWIVjF94plvVMN1cgZqmYxIabBIDSsGU=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBohQJBIBbr7Ov+4fb76UOJ+XqijmHrKSl5+ybHM
+ K8SCfKBneKJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaIUCQQAKCRDCzCAB/wGP
+ wPWqB/9nVCG8l56TvtkvJnz5/czlEucoVGTyPpsgl3nTgbwU5akqO78Re47vuImaLAeg66d9b7X
+ qBMR4UFuczEhcIE0qupbzdm1UVI8g9JchX7YMboGb6Mux4JpjdFdm0U47C+XHdmq9ZxOBNWy2Ra
+ TfrpX5DGLYiEoixdOhGeLZ+rZvm2x/+rHIm4D6M36HpBo8Sz/dyNVuTt0F0+tOXZXizO8bmfLOF
+ hIsPh2K3jzUTPoJInBcr7i5ntHo+0aEDQZA7QgYP93aT8p4tvlJ7iKifoQkUkQ5Nw8u6ECYg5d7
+ NB5aVnXo627VVjwkvejlE8XGWf+ZeyuMClQme57XXoa5AOKQ
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Hi Dmitry,
+Fix possible incorrect channel lookup in the syscalib functions by using
+the correct channel address instead of the channel number.
 
-kernel test robot noticed the following build warnings:
+In the ad7124 driver, the channel field of struct iio_chan_spec is the
+input pin number of the positive input of the channel. This can be, but
+is not always the same as the index in the channels array. The correct
+index in the channels array is stored in the address field (and also
+scan_index). We use the address field to perform the correct lookup.
 
-[auto build test WARNING on a933d3dc1968fcfb0ab72879ec304b1971ed1b9a]
+Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/iio/adc/ad7124.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/thermal-qcom-make-LMH-select-QCOM_SCM/20250725-215843
-base:   a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
-patch link:    https://lore.kernel.org/r/20250725-lmh-scm-v1-1-84246981f435%40oss.qualcomm.com
-patch subject: [PATCH] thermal: qcom: make LMH select QCOM_SCM
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20250727/202507270042.KdK0KKht-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250727/202507270042.KdK0KKht-lkp@intel.com/reproduce)
+diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+index 9808df2e92424283a86e9c105492c7447d071e44..4d8c6bafd1c3171054c72a0d2b13d6b1afc4e51a 100644
+--- a/drivers/iio/adc/ad7124.c
++++ b/drivers/iio/adc/ad7124.c
+@@ -849,7 +849,7 @@ enum {
+ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan_spec *chan)
+ {
+ 	struct device *dev = &st->sd.spi->dev;
+-	struct ad7124_channel *ch = &st->channels[chan->channel];
++	struct ad7124_channel *ch = &st->channels[chan->address];
+ 	int ret;
+ 
+ 	if (ch->syscalib_mode == AD7124_SYSCALIB_ZERO_SCALE) {
+@@ -865,8 +865,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		dev_dbg(dev, "offset for channel %d after zero-scale calibration: 0x%x\n",
+-			chan->channel, ch->cfg.calibration_offset);
++		dev_dbg(dev, "offset for channel %lu after zero-scale calibration: 0x%x\n",
++			chan->address, ch->cfg.calibration_offset);
+ 	} else {
+ 		ch->cfg.calibration_gain = st->gain_default;
+ 
+@@ -880,8 +880,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		dev_dbg(dev, "gain for channel %d after full-scale calibration: 0x%x\n",
+-			chan->channel, ch->cfg.calibration_gain);
++		dev_dbg(dev, "gain for channel %lu after full-scale calibration: 0x%x\n",
++			chan->address, ch->cfg.calibration_gain);
+ 	}
+ 
+ 	return 0;
+@@ -924,7 +924,7 @@ static int ad7124_set_syscalib_mode(struct iio_dev *indio_dev,
+ {
+ 	struct ad7124_state *st = iio_priv(indio_dev);
+ 
+-	st->channels[chan->channel].syscalib_mode = mode;
++	st->channels[chan->address].syscalib_mode = mode;
+ 
+ 	return 0;
+ }
+@@ -934,7 +934,7 @@ static int ad7124_get_syscalib_mode(struct iio_dev *indio_dev,
+ {
+ 	struct ad7124_state *st = iio_priv(indio_dev);
+ 
+-	return st->channels[chan->channel].syscalib_mode;
++	return st->channels[chan->address].syscalib_mode;
+ }
+ 
+ static const struct iio_enum ad7124_syscalib_mode_enum = {
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507270042.KdK0KKht-lkp@intel.com/
+---
+base-commit: e4d9886ad25adae72f38f2b12f41649b101581ae
+change-id: 20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-e28c933ead2a
 
-All warnings (new ones prefixed by >>):
-
-   drivers/thermal/qcom/lmh.c: In function 'lmh_handle_irq':
-   drivers/thermal/qcom/lmh.c:46:17: error: implicit declaration of function 'generic_handle_irq' [-Wimplicit-function-declaration]
-      46 |                 generic_handle_irq(irq);
-         |                 ^~~~~~~~~~~~~~~~~~
-   drivers/thermal/qcom/lmh.c: In function 'lmh_enable_interrupt':
-   drivers/thermal/qcom/lmh.c:53:40: error: implicit declaration of function 'irq_data_get_irq_chip_data'; did you mean 'irq_domain_get_irq_data'? [-Wimplicit-function-declaration]
-      53 |         struct lmh_hw_data *lmh_data = irq_data_get_irq_chip_data(d);
-         |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                        irq_domain_get_irq_data
-   drivers/thermal/qcom/lmh.c:53:40: error: initialization of 'struct lmh_hw_data *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-   drivers/thermal/qcom/lmh.c:56:9: error: implicit declaration of function 'writel' [-Wimplicit-function-declaration]
-      56 |         writel(0xff, lmh_data->base + LMH_REG_DCVS_INTR_CLR);
-         |         ^~~~~~
-   drivers/thermal/qcom/lmh.c: In function 'lmh_disable_interrupt':
-   drivers/thermal/qcom/lmh.c:62:40: error: initialization of 'struct lmh_hw_data *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-      62 |         struct lmh_hw_data *lmh_data = irq_data_get_irq_chip_data(d);
-         |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/thermal/qcom/lmh.c: At top level:
-   drivers/thermal/qcom/lmh.c:67:15: error: variable 'lmh_irq_chip' has initializer but incomplete type
-      67 | static struct irq_chip lmh_irq_chip = {
-         |               ^~~~~~~~
-   drivers/thermal/qcom/lmh.c:68:10: error: 'struct irq_chip' has no member named 'name'
-      68 |         .name           = "lmh",
-         |          ^~~~
->> drivers/thermal/qcom/lmh.c:68:27: warning: excess elements in struct initializer
-      68 |         .name           = "lmh",
-         |                           ^~~~~
-   drivers/thermal/qcom/lmh.c:68:27: note: (near initialization for 'lmh_irq_chip')
-   drivers/thermal/qcom/lmh.c:69:10: error: 'struct irq_chip' has no member named 'irq_enable'
-      69 |         .irq_enable     = lmh_enable_interrupt,
-         |          ^~~~~~~~~~
-   drivers/thermal/qcom/lmh.c:69:27: warning: excess elements in struct initializer
-      69 |         .irq_enable     = lmh_enable_interrupt,
-         |                           ^~~~~~~~~~~~~~~~~~~~
-   drivers/thermal/qcom/lmh.c:69:27: note: (near initialization for 'lmh_irq_chip')
-   drivers/thermal/qcom/lmh.c:70:10: error: 'struct irq_chip' has no member named 'irq_disable'
-      70 |         .irq_disable    = lmh_disable_interrupt
-         |          ^~~~~~~~~~~
-   drivers/thermal/qcom/lmh.c:70:27: warning: excess elements in struct initializer
-      70 |         .irq_disable    = lmh_disable_interrupt
-         |                           ^~~~~~~~~~~~~~~~~~~~~
-   drivers/thermal/qcom/lmh.c:70:27: note: (near initialization for 'lmh_irq_chip')
-   drivers/thermal/qcom/lmh.c: In function 'lmh_irq_map':
-   drivers/thermal/qcom/lmh.c:83:9: error: implicit declaration of function 'irq_set_lockdep_class' [-Wimplicit-function-declaration]
-      83 |         irq_set_lockdep_class(irq, &lmh_lock_key, &lmh_request_key);
-         |         ^~~~~~~~~~~~~~~~~~~~~
-   drivers/thermal/qcom/lmh.c:84:9: error: implicit declaration of function 'irq_set_chip_and_handler' [-Wimplicit-function-declaration]
-      84 |         irq_set_chip_and_handler(irq, &lmh_irq_chip, handle_simple_irq);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/thermal/qcom/lmh.c:84:54: error: 'handle_simple_irq' undeclared (first use in this function)
-      84 |         irq_set_chip_and_handler(irq, &lmh_irq_chip, handle_simple_irq);
-         |                                                      ^~~~~~~~~~~~~~~~~
-   drivers/thermal/qcom/lmh.c:84:54: note: each undeclared identifier is reported only once for each function it appears in
-   drivers/thermal/qcom/lmh.c:85:9: error: implicit declaration of function 'irq_set_chip_data'; did you mean 'irq_set_irqchip_state'? [-Wimplicit-function-declaration]
-      85 |         irq_set_chip_data(irq, lmh_data);
-         |         ^~~~~~~~~~~~~~~~~
-         |         irq_set_irqchip_state
-   drivers/thermal/qcom/lmh.c: In function 'lmh_probe':
-   drivers/thermal/qcom/lmh.c:219:9: error: implicit declaration of function 'irq_set_status_flags' [-Wimplicit-function-declaration]
-     219 |         irq_set_status_flags(lmh_data->irq, IRQ_NOAUTOEN);
-         |         ^~~~~~~~~~~~~~~~~~~~
-   drivers/thermal/qcom/lmh.c:219:45: error: 'IRQ_NOAUTOEN' undeclared (first use in this function); did you mean 'IRQF_NO_AUTOEN'?
-     219 |         irq_set_status_flags(lmh_data->irq, IRQ_NOAUTOEN);
-         |                                             ^~~~~~~~~~~~
-         |                                             IRQF_NO_AUTOEN
-   drivers/thermal/qcom/lmh.c: At top level:
-   drivers/thermal/qcom/lmh.c:67:24: error: storage size of 'lmh_irq_chip' isn't known
-      67 | static struct irq_chip lmh_irq_chip = {
-         |                        ^~~~~~~~~~~~
-
-
-vim +68 drivers/thermal/qcom/lmh.c
-
-53bca371cdf7ad Thara Gopinath 2021-08-09  66  
-53bca371cdf7ad Thara Gopinath 2021-08-09 @67  static struct irq_chip lmh_irq_chip = {
-53bca371cdf7ad Thara Gopinath 2021-08-09 @68  	.name           = "lmh",
-53bca371cdf7ad Thara Gopinath 2021-08-09  69  	.irq_enable	= lmh_enable_interrupt,
-53bca371cdf7ad Thara Gopinath 2021-08-09  70  	.irq_disable	= lmh_disable_interrupt
-53bca371cdf7ad Thara Gopinath 2021-08-09  71  };
-53bca371cdf7ad Thara Gopinath 2021-08-09  72  
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+David Lechner <dlechner@baylibre.com>
+
 
