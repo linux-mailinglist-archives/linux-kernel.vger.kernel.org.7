@@ -1,153 +1,296 @@
-Return-Path: <linux-kernel+bounces-746922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D366BB12D1B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 01:38:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C69B12D20
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 01:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 618103BFE4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:37:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CEE540373
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC24D22E004;
-	Sat, 26 Jul 2025 23:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906C922D4FF;
+	Sat, 26 Jul 2025 23:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eTLtIXgT"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="i4QEtnlE"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazolkn19013073.outbound.protection.outlook.com [52.103.20.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F6322A1C5
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 23:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753573075; cv=none; b=rlxVCW6A66lt2DI3V/LK5S6hz7nGEqcdSmRwR91RrnO8DtTWWLRFfJkku0U4eAYasJUfVXLLBmaVVhuvdMYb/2dDIu3EqzZO2cAmDukn1bqCKzNJvsyVAfbqpeZZH9E9SOtXAMVdYT3b8lBW75mGXx2ox+oaSTlL/dy5asL1fYQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753573075; c=relaxed/simple;
-	bh=7B24QJDsbG9O9xyrIOj7H/k5Wjt7NkdzQ2ZYcADPiko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ATpGkCAiHPY+H1uzri6Y+CGqRshenh69R677PMusV0ClvVMCTDD5CE0L5CyqZLc//4dSSlLnb3Y+yioxzdcfnYrBNZOKgDt5w0bSoJ/No0+4Ne7NG0nUDKU7KblTpSOMrUJEkGVu77Xz8fUn1eeSA8PRZcDJzXGbwLGIz7Kw+X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eTLtIXgT; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60780d74c85so5555792a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:37:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1753573071; x=1754177871; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1tHg+Y1g27jBmEKsSCwCSS49UstWUnsuEvPhc+oks0Q=;
-        b=eTLtIXgT0zbAfXDRgiRTBv4ioN1hvrP4L3ImXMowXnQYMmK1QSZmAjXbhCEFTdXOl/
-         /GJmCRliQD056zT9kndf+Rp2cdmHgFIk32h6uXtxTqC/K9PediVqd7r8GY/V6vitgVWM
-         7Vin2WRj12D5Zz7ws8u9Cb9vHk6ehzko0+1HI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753573071; x=1754177871;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1tHg+Y1g27jBmEKsSCwCSS49UstWUnsuEvPhc+oks0Q=;
-        b=vpNnoYaLostDGn8pTQ+n+5VemrVeLVfTAPJwXUqQ4x7LHlEpU0Qk6s6bvEhuasdCAZ
-         Af8UqWpXCGHBBR5HYVQiR3DOcyQJNH/xe/Bdlg6Wv5fbut6HEIwjc2FSjK0TdAggJJjH
-         4/y4DWtZ71Wgy83M465aUeRjDA0U9/HRgcC189MMQUqXPMIt+AXeUmjBTxyTMei7PEYv
-         V/KINK5ox6xOCncaD5lGCpcsGulPaHZLTFip3WNDPwYZ4bb2WFrdQahSiF+m1IaQZrtC
-         4g630f9dkVD9WdDhlrGIASqcSiUMlkEhZ5gwJun3qyRyVH/TAsr9wlQ3SKEwS0QCrUnP
-         i6nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBU5bXY6uTCSS0MIZ4a2Dntt5q/VxRXJha+v55UDFOoKysVkXLyUkOIM6kNNhlbmsWf38axtcrhXSWB/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7Ugy+mFXgm9n+qTnoGCf7AB2/ozJHuT5uGbwDUI11TeHihnxK
-	0NvRjjaJkTLl2T046cQogx+mNtARBxGFHQi7SPS0e9iBh25g5P42J1DnfMqlfuSfT5GxkPLr6D+
-	CfnJ4PxfO0A==
-X-Gm-Gg: ASbGnctJjIzZ10vD5RQEE2LLmUMq2i9ajEMEqfm/xjaSQoliJdEcYRWW2E/kirUuz91
-	r5ujesxHxIt3YIbf+JJny9IbohgPIlSUqg0StwOCHNHuoYFsfSheyWW6B+QpvB1hcED+RYuvIiy
-	G1aXUT+F4D05DE4Uvj/w6xOSYkm75ROEn5Yfhk5idSIbUso/CqgvMyKi/CSQvyibJ0iZj2thg7O
-	SL5QKvJYUFPwqTGas5AHyK8ZL7O7fhsaHJsZINJrHninhjWQ5qpTQwO9ljtAc/kIccJBo6h/tcQ
-	kbTvfXSQqgkyB3UZ9stMChdBEIcnkG9BaxDmYyiOLqGmWx0L5soIOx7kiU9DvkCBQxXYjV+aMXs
-	Ua9wFCEOjeAYsNRXVB3+pMr46x2eACzjIYfkvCCo1fRDYzzDO/e3LDRmE4kdy6FtfsTSSfVu1
-X-Google-Smtp-Source: AGHT+IFQ6lMNf+rhe9gb9HfRkgpYHimtf7fy6CvVaNRiI8XeHwU6q5ntMp0cC5zp1pO1pV4pELtZXg==
-X-Received: by 2002:a17:906:d550:b0:ae6:eff6:165b with SMTP id a640c23a62f3a-af61ed064aamr663802466b.60.1753573071332;
-        Sat, 26 Jul 2025 16:37:51 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635aa42cfsm208233966b.103.2025.07.26.16.37.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Jul 2025 16:37:50 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60c60f7eeaaso5286891a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 16:37:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXx1VU9YROApDJO9k/RPnI7d1stGhMVkqSdfo8D2Ez4UvIWnvzBgdaylgMmw4I8Tx8LjJgIhBYcoP8m5fg=@vger.kernel.org
-X-Received: by 2002:a05:6402:483:b0:611:f4b2:379c with SMTP id
- 4fb4d7f45d1cf-614f1dced8amr5514831a12.20.1753573070075; Sat, 26 Jul 2025
- 16:37:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D810421B8E7;
+	Sat, 26 Jul 2025 23:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.20.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753573844; cv=fail; b=edlLGbEfwNlmIWXUrCgkRzhAucohX3cU9SbtDLpkptCn6uiTU3xnrdv2t44fUAnoJvrKcVYzMOv8gAq/WDUe7Bp+1UaJ9wKTn7aCHWdMJYqIk3xX+Bc0uDgwDCBoWEG18InPMnBo8K4tywDjAfwUcWQh41aWpB9HNng1pCDz47Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753573844; c=relaxed/simple;
+	bh=OpQkpolKU0NKKsM3S3uvLJJ0KDTiPzIMlo7RZDriMAk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZCy5wXcJepbKH1LA2LwxEhTSwp3VZKdlo+0CJjvDFLT6DyTzQwvwVqIjr2PFO4r4FLxGA0GXeJyKvRXPUs/9TxtqjbGPJw/N+gHk0Gf+EpWMMwssh3KALjbDtyXvCk7yCC4kPvczWtepUiFmr82veU/UscaGr548tjmEnrss73A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=i4QEtnlE; arc=fail smtp.client-ip=52.103.20.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gX/HrdIVdrzs0aBCpuQ4kduw7VXKVTyGbY52/3AQ0jk7JTpMFV3JQsg7hY+JTKa/NxZOE1kswq5hewZ1pTrRy0Uwe3HpUg08/++ZQELPX7Mz3p8nNOpCFQkrUqAV1OggALDwMYk0GZJcTsV51KjzxrueG5za9MCXhpag3c7+R4tSNmgGJSEFjiS9uUNL6tl2I4av5jlYBDAheUamM/KiHOUp1CpiQ8K2m7UWHl7Wn1+u2xUZHm4PkPBX4AZlPBuSSjVDfMBMz4ixzjxefYb/eIyyF3ZByUfbdB7OrfnKPRS5nPnhKehHux+EzwbJSQPUMEGJWD2bbM+D4kfXg5VAzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RvsGjZ55AatX/zvt2uz3z83S8fDx2dtEjd4nM5NhBYo=;
+ b=Xkj2hTZqzMSMngQhyWrt3SVL0Y8KKY9vakSqhsm6cALa/guXSjZXucrTq4M2KGpGrrdM4VfZKGd8eFFn0fZpREdhIpitrJl/SOJP0ugTNB5btiscHv9ASX0cpK0w1DDRAkWD62jx5wjh5UuKkz7tDUlgrV7QLtFK5TnNm3GMdIFmh8mZWNf2RjEbvLMWvO7TptI3+DlWjGcovNGqb8okuZhlFPR4ic9CZD9UqzP+muyrSHIk4CNGFNklEJfUxt57hGaIuSg975rqnQMk/Xo9jq5nqZhv4g2R08DrvuKeKMbB5sc3Y+n2YRFpSSKI2BQ/pB3kwn9176zvXBaPDzYzlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RvsGjZ55AatX/zvt2uz3z83S8fDx2dtEjd4nM5NhBYo=;
+ b=i4QEtnlEyv56qiXl6wHWWhCqHpVX/gaYJUuyjgOpPBAeVpzGGOxdmNhG0b6uJqfnx6IKqeVRz4eMsI3UMCL8LInj15tQogrim95AqTcZoZUK5d+o8U7yjF1DMjLt5BI8wiMZVkgtOTjuhFMFL0pOe6FszrYfYGcczvellP9kdHu0aqQJfhhvRCgTyjfsgaZfXZw+1vQkCzTFlwhq7AOFqJhha8u1f5E+/bdOaCv/EuXEejT+JuvwfSSB3vR84KNB4BXkk301e46Lfk9XLa9HGuXTKuj0c+sXqyRqdSrdaE3ughLOQuZBjoG1CqLAeYly+nWVidQe5d56HS2eZl3KQA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SA3PR02MB10163.namprd02.prod.outlook.com (2603:10b6:806:398::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.25; Sat, 26 Jul
+ 2025 23:50:40 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8964.023; Sat, 26 Jul 2025
+ 23:50:40 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan"
+	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
+CC: Roman Kisel <romank@linux.microsoft.com>, Anirudh Rayabharam
+	<anrayabh@linux.microsoft.com>, Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>, Nuno Das Neves
+	<nunodasneves@linux.microsoft.com>, ALOK TIWARI <alok.a.tiwari@oracle.com>,
+	Markus Elfring <Markus.Elfring@web.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>
+Subject: RE: [PATCH v6 2/2] Drivers: hv: Introduce mshv_vtl driver
+Thread-Topic: [PATCH v6 2/2] Drivers: hv: Introduce mshv_vtl driver
+Thread-Index: AQHb/HScy3plG5a+z0miuAOMHd2V/bRFEyOQ
+Date: Sat, 26 Jul 2025 23:50:40 +0000
+Message-ID:
+ <SN6PR02MB4157495A60189FB3D9A7C5CAD458A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250724082547.195235-1-namjain@linux.microsoft.com>
+ <20250724082547.195235-3-namjain@linux.microsoft.com>
+In-Reply-To: <20250724082547.195235-3-namjain@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA3PR02MB10163:EE_
+x-ms-office365-filtering-correlation-id: cff83ebb-6b21-4a33-0497-08ddcc9f3a27
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799012|461199028|19110799012|8060799015|8062599012|41001999006|102099032|40105399003|440099028|3412199025;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?bSnhui8fM2HX0enfsn76bQKIz9UQhTjMYl5UooJ8JiDDJ4V5YermsBaPDM2O?=
+ =?us-ascii?Q?8yMTZgvRpNBxO5/HJfeywCuA/59jG1Vs1ISCnkmai7x9Ez+xa5CLKP8Fcg0n?=
+ =?us-ascii?Q?sKuxqOS3KX+Gnsr/z8dgk507wTs7M+jLKN9SNv06whQZ4dp8hF2l2RC2Z2qE?=
+ =?us-ascii?Q?n7OVq4fqAgy8R1LgdcmGrqeAGsZ2MeLfHfhg5bDct9UHiNjs5QHDtynKl4BI?=
+ =?us-ascii?Q?+eSf4lZPPibjBTBbM7iJatfE+Cqs0HKgnDFXNTjhR9CUb4pwTf4L7++qL4QL?=
+ =?us-ascii?Q?09LfweAgOz89BXPI7oKmmQYlsEh53nR/eKkuM33xXRtYOZhNYcS7X71Eynwe?=
+ =?us-ascii?Q?K95++DLpEN93Ovn3TwQmJzeDYNAn9U4w2G24nEmzOWVJBUgvrP1DImSLvykD?=
+ =?us-ascii?Q?dLXPALPZ0jlzhc6wSJg1fwxtHAElZAwGdHU6w1yFiQv3hl6/hm7XfrJfdd9y?=
+ =?us-ascii?Q?jw6mjJ83rb7DzqMQLozhQNcj2EXw3XcCwerrZrZkTp7+MexoBA9yr0kodfvo?=
+ =?us-ascii?Q?IL3QpaIIaJVAi9SlVkwAvun0AdUrdTZ9r08qiVdhMhlIhbtJ4/6XpAyHYN9V?=
+ =?us-ascii?Q?/xSkMc7tUPiRYWSS3uit1eNR3N2OQ9eA804cSVfTdvEbw14+0x4mS8gNztek?=
+ =?us-ascii?Q?K+dSZ345HQyd/AP5XfyyDweNCLxV8DnnCyOtVAFnCOjbKYTuMmB/UYanAJLc?=
+ =?us-ascii?Q?03ZR1gzwTEKqIXRI553AZWCkdXdNcHFwOTJOOcD+DdEQioA3rSnQE53Ws83a?=
+ =?us-ascii?Q?TjlfN6IJlEGWsWH4Tv0oLGHeNn2dMJrvCd7SFJ7oAl5UuD95uCiR+CIcHwbz?=
+ =?us-ascii?Q?eFtbA6ktaU17UhEVKOJHjlQs9re3QGes66jmvyDVpxwMw60ibDJdMkrQLoAR?=
+ =?us-ascii?Q?YBynv+s7j+zDGObH8kWhszhmDgMKEPuhdnGTbcFoggcvB9xsHPT7K3wav++3?=
+ =?us-ascii?Q?elX5Dfu0RA9v/c1CvEsRuxbz7QkLTGYgFAsBOXwPEANfKrU2HnCQs56nmwGs?=
+ =?us-ascii?Q?6DU7p4iOC2YTpvOHWGAe8G3ZCmfiaZ+/EawA02UwR+B7579b3Pe/04AuslC8?=
+ =?us-ascii?Q?EUxw/ZHwnOmGLqkXWHI/aWFdf+26552lJ3NIJ8alwoZ1fMDY6PFvKBxPX0rY?=
+ =?us-ascii?Q?02OHY6O0bicPnOMlRC79qWdBApqEKyIAzg=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3cT9aDfZxDa00tMTErjBWmLD/0kfcbfIfhFG0EaguezGGeJh/I+5NGgb0DKv?=
+ =?us-ascii?Q?IcTugdcglxkKys2LIGkJVGN613bK+suQEjsRhlwXw/1WgABPPaPW0jPcn+5K?=
+ =?us-ascii?Q?AdUVy4cZUsCV2B871kr3Ct1KheY4bH5WeIZZlb8RUe//Up5XKhLcmRdUWXF5?=
+ =?us-ascii?Q?IMhTWpb36u18IhQbvpDWXvNvQdD9PXihieFfmK1uvKU7ODLaANpkuRqCezeL?=
+ =?us-ascii?Q?0t66BuhS0FCGh4qfBguQTrod28mX49QAHmPxS17srOlpR18CVABxlqWTDVFm?=
+ =?us-ascii?Q?/XcbhfgG/HyIIpumvqvs1hnhem2MCKkDhtgtz4xjp4qv0pTlz5MHu+i1/kDx?=
+ =?us-ascii?Q?m/q096NjmIezHVEbrCKgCeAbmbgUiyzzrYvGUEa4MAtWa2aeL92VVsF69ci7?=
+ =?us-ascii?Q?pWE5PHZB9Ph/BrxN65EP+c2dg9ROOopR5iHM7smWjkEjWzaJ8z3+jZL9VT/K?=
+ =?us-ascii?Q?Y2KtPI/Ef19BkSPvIH5w/5h7JmcL4KXI4xCSIJH0dTAD94sM+YXC5o83/r7Y?=
+ =?us-ascii?Q?Re3JQIVkyxN8ziNYfXAUFTSObxZB1wch8RBnbBcQOm73l/xsuiD2OxnpE9NH?=
+ =?us-ascii?Q?cfHTFCayV+Hw3xIOgerXvF3dcoFZApzoxxcfhBKy++Ccm1OUr+RoBGravrdu?=
+ =?us-ascii?Q?XdlYRjTutigz/beVM1jH5hQ/eHSfTpToj0gnmjN3r0fUq6NXUtUa11mgIRBA?=
+ =?us-ascii?Q?bh9GjTHy5U97qGkOkUrDY5EXnlyBpwuP2D/jOeRhbKzUkdvLcR/t0dk6bkyP?=
+ =?us-ascii?Q?e4CWP9ub3mfJtQatghlRsTcbzXmB8pAsm419yVG4888LTwQZqEnHhNkYOm74?=
+ =?us-ascii?Q?l7LMz3DgXL/pFrxw7Rf39kVp+MbkxMrE0tgX+E6BRgYHpYtfW6vP/JIAoq2z?=
+ =?us-ascii?Q?NlOQBM9qdVfzeWcu3yp6zwOKyo/TAeGlq5ibIuX2P29PXm0JSVPF3sEWEBx4?=
+ =?us-ascii?Q?tjnS9nXGiV8jwq23tOPNqndqsvXJ2QfSykJGfwLgVr40xbOhOoSGyYYGS8tI?=
+ =?us-ascii?Q?rPbAvyP4VfoYqrVXEDMTXBZgJUp5WdV8UBOclHF/03mzChYI4F3ErT04qp4Q?=
+ =?us-ascii?Q?wLtMyY2EI4sKBESXF5fj89ojj89KeqjCfMdX9Y+wPVrGe+GN+FiGQuXESygK?=
+ =?us-ascii?Q?hlJLHLLNnWTtPWRBrciLShQ+jmlDKWWtiauu0mWBWgmPSq/zQjEVZvUy+ZvC?=
+ =?us-ascii?Q?AwEbcQbgpG3t0J1QAlwT+umDgtueAB+NOz/d3JNJ2w258gDwuCjz8pJjEkM?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724123612.206110-1-bhupesh@igalia.com> <20250724123612.206110-3-bhupesh@igalia.com>
- <202507241640.572BF86C70@keescook> <CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com>
- <B9C50D0B-DCD9-41A2-895D-4899728AF605@kernel.org>
-In-Reply-To: <B9C50D0B-DCD9-41A2-895D-4899728AF605@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 26 Jul 2025 16:37:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wixR7ZR+aebFsWX4qWZ84tMTmyNWLUPmTy3YvaNJGqd-Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwLhT2VoOEv9kNeOdgouvN4zZ9YLvHzVMPIsLMuRmQFnkSkLFn13r5tjO0
-Message-ID: <CAHk-=wixR7ZR+aebFsWX4qWZ84tMTmyNWLUPmTy3YvaNJGqd-Q@mail.gmail.com>
-Subject: Re: [PATCH v6 2/3] treewide: Switch memcpy() users of 'task->comm' to
- a more safer implementation
-To: Kees Cook <kees@kernel.org>
-Cc: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org, kernel-dev@igalia.com, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com, 
-	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org, 
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com, 
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com, 
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org, 
-	david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com, 
-	brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: cff83ebb-6b21-4a33-0497-08ddcc9f3a27
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2025 23:50:40.3949
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR02MB10163
 
-On Sat, 26 Jul 2025 at 16:19, Kees Cook <kees@kernel.org> wrote:
+From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, July 24, 202=
+5 1:26 AM
+>=20
+> Provide an interface for Virtual Machine Monitor like OpenVMM and its
+> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
+> Expose devices and support IOCTLs for features like VTL creation,
+> VTL0 memory management, context switch, making hypercalls,
+> mapping VTL0 address space to VTL2 userspace, getting new VMBus
+> messages and channel events in VTL2 etc.
+>=20
+> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+> Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> Message-ID: <20250512140432.2387503-3-namjain@linux.microsoft.com>
+> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> ---
+>  drivers/hv/Kconfig          |   22 +
+>  drivers/hv/Makefile         |    7 +-
+>  drivers/hv/mshv_vtl.h       |   52 ++
+>  drivers/hv/mshv_vtl_main.c  | 1508 +++++++++++++++++++++++++++++++++++
+>  include/hyperv/hvgdk_mini.h |  106 +++
+>  include/uapi/linux/mshv.h   |   80 ++
+>  6 files changed, 1774 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/hv/mshv_vtl.h
+>  create mode 100644 drivers/hv/mshv_vtl_main.c
 >
-> That works for me! I just get twitchy around seeing memcpy used for strings. :) if we're gonna NUL after the memcpy, just use strscpy_pad().
 
-I do worry a tiny bit about performance.
+[snip]
 
-Because 'memcpy+set last byte to NUL' really is just a couple of
-instructions when we're talking small constant-sized arrays.
+> +
+> +static int mshv_vtl_set_reg(struct hv_register_assoc *regs)
+> +{
+> +	u64 reg64;
+> +	enum hv_register_name gpr_name;
+> +	int i;
+> +
+> +	gpr_name =3D regs->name;
+> +	reg64 =3D regs->value.reg64;
+> +
+> +	/* Search for the register in the table */
+> +	for (i =3D 0; i < ARRAY_SIZE(reg_table); i++) {
+> +		if (reg_table[i].reg_name =3D=3D gpr_name) {
+> +			if (reg_table[i].debug_reg_num !=3D -1) {
+> +				/* Handle debug registers */
+> +				if (gpr_name =3D=3D HV_X64_REGISTER_DR6 &&
+> +				    !mshv_vsm_capabilities.dr6_shared)
+> +					goto hypercall;
+> +				native_set_debugreg(reg_table[i].debug_reg_num, reg64);
+> +			} else {
+> +				/* Handle MSRs */
+> +				wrmsrl(reg_table[i].msr_addr, reg64);
+> +			}
+> +			return 0;
+> +		}
+> +	}
+> +
+> +hypercall:
+> +	return 1;
+> +}
+> +
+> +static int mshv_vtl_get_reg(struct hv_register_assoc *regs)
+> +{
+> +	u64 *reg64;
+> +	enum hv_register_name gpr_name;
+> +	int i;
+> +
+> +	gpr_name =3D regs->name;
+> +	reg64 =3D (u64 *)&regs->value.reg64;
+> +
+> +	/* Search for the register in the table */
+> +	for (i =3D 0; i < ARRAY_SIZE(reg_table); i++) {
+> +		if (reg_table[i].reg_name =3D=3D gpr_name) {
+> +			if (reg_table[i].debug_reg_num !=3D -1) {
+> +				/* Handle debug registers */
+> +				if (gpr_name =3D=3D HV_X64_REGISTER_DR6 &&
+> +				    !mshv_vsm_capabilities.dr6_shared)
+> +					goto hypercall;
+> +				*reg64 =3D native_get_debugreg(reg_table[i].debug_reg_num);
+> +			} else {
+> +				/* Handle MSRs */
+> +				rdmsrl(reg_table[i].msr_addr, *reg64);
+> +			}
+> +			return 0;
+> +		}
+> +	}
+> +
+> +hypercall:
+> +	return 1;
+> +}
+> +
 
-strscpy_pad() isn't horrible, but it's still at another level. And
-most of the cost is that "return the length" which people often don't
-care about.
+One more comment on this patch. What do you think about
+combining mshv_vtl_set_reg() and mshv_vtl_get_reg() into a single
+function? The two functions have a lot code duplication that could be
+avoided. Here's my untested version (not even compile tested):
 
-Dang, I wish we had some compiler trick to say "if the value isn't
-used, do X, if it _is_ used do Y".
++static int mshv_vtl_get_set_reg(struct hv_register_assoc *regs, bool set)
++{
++	u64 *reg64;
++	enum hv_register_name gpr_name;
++	int i;
++
++	gpr_name =3D regs->name;
++	reg64 =3D &regs->value.reg64;
++
++	/* Search for the register in the table */
++	for (i =3D 0; i < ARRAY_SIZE(reg_table); i++) {
++		if (reg_table[i].reg_name !=3D gpr_name)
++			continue;
++		if (reg_table[i].debug_reg_num !=3D -1) {
++			/* Handle debug registers */
++			if (gpr_name =3D=3D HV_X64_REGISTER_DR6 &&
++			    !mshv_vsm_capabilities.dr6_shared)
++				goto hypercall;
++			if (set)
++				native_set_debugreg(reg_table[i].debug_reg_num, *reg64);
++			else
++				*reg64 =3D native_get_debugreg(reg_table[i].debug_reg_num);
++		} else {
++			/* Handle MSRs */
++			if (set)
++				wrmsrl(reg_table[i].msr_addr, *reg64);
++			else
++				rdmsrl(reg_table[i].msr_addr, *reg64);
++		}
++		return 0;
++	}
++
++hypercall:
++	return 1;
++}
++
 
-It's such a trivial thing in the compiler itself, and the information
-is there, but I don't think it is exposed in any useful way.
+Two call sites would need to be updated to pass "true" and "false",
+respectively, for the "set" parameter.
 
-In fact, it *is* exposed in one way I can think of:
+I changed the gpr_name matching to do "continue" on a mismatch
+just to avoid a level of indentation. It's functionally the same as your
+code.
 
-   __attribute__((__warn_unused_result__))
-
-but not in a useful form for actually generating different code.
-
-Some kind of "__builtin_if_used(x,y)" where it picks 'x' if the value
-is used, and 'y' if it isn't would be lovely for this.
-
-Then you could do things like
-
-    #define my_helper(x) \
-        __builtin_if_used( \
-                full_semantics(x), \
-                simpler_version(x))
-
-when having a return value means extra work and most people don't care.
-
-Maybe it exists in some form that I haven't thought of?
-
-Any compiler people around?
-
-                 Linus
+Michael
 
