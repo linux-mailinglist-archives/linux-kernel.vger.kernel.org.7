@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-746614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 782C8B128F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:34:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF71B128F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74ABB1763FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:34:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A04317534B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263C3214818;
-	Sat, 26 Jul 2025 04:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F86202990;
+	Sat, 26 Jul 2025 04:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UaupvIy2"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cDi/asBl"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB09243159
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 04:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6905621507F
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 04:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753504426; cv=none; b=NOXBdBWIzlgeKTEWs3slxuHnX424EQPKmCK+MAEnIUS7WJ/ROyDyXy7PFcimguVT1o+4BT80qGrMKWojdeFBbAP72JjsIa21kMFzDBg+obgmpjcfECqKbn6tr4Ee+vGFAuQ1g8OGvCgQXpCf9ixwHCp4Uy8LsnKf6rkfnPpAI88=
+	t=1753504429; cv=none; b=YF3nylU6OVFyqKQI4LZPD2W192gF2feIQmAXpgUyksGP+nNGERBiHy0i3Tkkl6Qt9KkEaqVPFq8rFEDkRTKqpNNm2F51MdrsIaZeC4c0CC8ZKTeLjZf4XCvLAz1HlKkDyUNnXxhH1y3TCPFNLoCp3CHh3S/CaaAblg/NAhvkTR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753504426; c=relaxed/simple;
-	bh=P8blFKCskYmLJJ7VIQpCA1udM8xXbyCUuJ3KFZmm5I8=;
+	s=arc-20240116; t=1753504429; c=relaxed/simple;
+	bh=HbTYJpvbsizmO6AePks88UoqbxnEofkE+uZjPBDPOoo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HYZSE2HbXOPZUmvQXIGsCaDb7WYp7UhMGILsLbDr/G7e8msKt+pAlR1yfCDqe8/AzBTCReww6SiKElNxtLWzRLxL2hzU+FERk39k8zmHmYW1hKuHQ5HCJvfLSBkOP4bT5cJnK0sDYHpEVgRaNREWWaKZ1p/NxPQTea69WeKZmcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UaupvIy2; arc=none smtp.client-ip=209.85.222.169
+	 MIME-Version; b=k4Af4Q/ChGOFsucYYV6yOag0pJXvbo8mUfdTQfuUGnE5zKQ07z5Qqk3YDcC9qAZ1y9Ml69AdPxCXIlWwplQxya5OOj39mekj738kmw0zRmpppQN4E37tFpHIBIwuups5LVO02I1EYe849+tRWEtwASaSY97RZYdPMl9dhLMnP8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cDi/asBl; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e6399d0656so142652585a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:33:44 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7d45f5fde50so223632685a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:33:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753504424; x=1754109224; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753504426; x=1754109226; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DiqQs9UeyD9dBqrMAhpgHRDznjYgytkYfxAEJHc3WqM=;
-        b=UaupvIy24dK03VqjEN+70OHN++62zjOYkti1Ay+FlIdtDHPJIc9iIQZssBmT1aCQ3p
-         hobAmAAtvThZVg4YOQ3qhyO2lPs7zVph4QfyIuWCGHTozyp0Qq35nRyfIm9pTxR7uZVB
-         T/NmG0JMFL3tG4B6seZfA8H6NTt5mX+AJk6xs5J0v2hYBfvifrPmfRkSZZkfCEK4F1mq
-         nbJYy3vqszy9FnyXzJCic/LbUtKbgrfRimAAkDCdgPNRiu1tSyryrtk3gHH6S9oO7LBE
-         aeaREDseVLQ8dHUY5N8MYuYWed2SesfM+TgpHV7I7b5Kv5Ke3mP7zTpJlk0G/xo+OLY1
-         DC7g==
+        bh=YINGwzP+WQ2B2pLZ+3JU3T3wxECudwibr/z31+tOBEA=;
+        b=cDi/asBlTyOs5XN3gnUhlN/ouYrhYR1wGsfOTljZ9G08OEzzhIp35jx38Ov+HykNXA
+         S7YBi8okE/z/1D7FlQh8nqpvNmA931PT/fzym1ava9jBBOd9VALoxJnAt/nwAxhkxRT/
+         zgoyoRGqYR8asgA7Eu54lLYDOyplf9CQ4GHGga65PC32b1Y4DejE5WMDs6imP9sbwmzY
+         EHsMO6isE2lJtsYFrrO/MbFx4Eh4S6Y7ILmWCrwandFlIEPFIunD+Nu6ruMFz6kg5G/v
+         TqLPKf5yMwznkmEjh+d4O8z5pNnE8yt5F2mv3GG6dXWreVN9Bh9eKpExdpbHl2h/GLty
+         pQwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753504424; x=1754109224;
+        d=1e100.net; s=20230601; t=1753504426; x=1754109226;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DiqQs9UeyD9dBqrMAhpgHRDznjYgytkYfxAEJHc3WqM=;
-        b=gER4I0qZkDSMIYGVUWW/B8zIcBixx/6h04c59lmL9IpjbOKkmeQNmaKi2mj8nlBIwU
-         bkdBp/cnqhW1QZnZ3Bc6jfhVgBHyENC1z9pD9pGTWKCUrKvp+pVZdCzepDn3QHHORdCA
-         +3wwKQVPMWT4XU4mlZEZST0I04p1VDqVQQHZhe8U3ulCL1hXy1MIuej8sL1nHXPiJqN1
-         7tlVNSvqubgh31LkgPg01BzsG89rvf9ujewQJlsFznKpjL7/HveuJocu7rfdM6nDJQcI
-         ZfqJHtJYS9KhaQ5MZbq0aVe/F+cld/UjJD2l52DGbFevx7a3kOSF8dZSK9x0GQoBoD4E
-         uMvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUE9aJSURgXLWWs18I/ciym9jbcDoK+qk8jaGiHXBizC8jMqh6UqG9d2QqUKSlQWv0CZgsWuoJbQ3apBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMZmj6zaVwVVSMEB/Zn+SvtowL0kXEbyYLjzv6c/jAZIpCpu1s
-	OvW8mfOXrGyNgVPv6WLLHdZRSErZHU7ZsKHP9nug4wqBjlPvGIataJ27
-X-Gm-Gg: ASbGnctc9ne9CQ9ZxqvLyP8XZ/viZ3uz7VorXdx+ttNJ9CUB6LCNuCGMbA0O6PQCJ0W
-	/aES6yXGq8yOkxeXRr+UvNGw4GDirLppzWGlH6doJQ6QVVzR9oYaKZDD1udLSQ+c3x6dziMslrY
-	4y5xhEx1CCJ/mJtlvKU1Vb0p2SyLf46/g685Mws4iQ87kyrSYTL5HnW3aTblfY7Yura3PF/MLxa
-	yVgEzgek7qQuP7sqlGila8hF1++jjYpM6sk8zHb9wbwEfnRvEwvobkTmWekKzNoFrnDom9o7qqS
-	6UfssWiYdaRA0baa9wjvemiSRhDrnKSUCH78Xb6JtWGbC0iIfxibCoBjkrogqrgNGKbXOgjMzIB
-	C1dB5SeUgaU/GBgzCMBYSoNDcDhqtEMQhLkatqEaWvdcu+aXUSyk=
-X-Google-Smtp-Source: AGHT+IFX9Vsx4swIGeE82fmmkBcCcRt9S8KkzP2tx9DgvyavfwY6YXizCOrgrpkDEs9yllbkh9T/OA==
-X-Received: by 2002:a05:620a:6d85:b0:7d3:f3a5:71d7 with SMTP id af79cd13be357-7e63c1beb27mr348119785a.40.1753504423833;
-        Fri, 25 Jul 2025 21:33:43 -0700 (PDT)
+        bh=YINGwzP+WQ2B2pLZ+3JU3T3wxECudwibr/z31+tOBEA=;
+        b=MMsXWBkLjW6yQNdjDcTgU0VT9ZzoSFEx7CUlzuLxdkmKhflS7Li3gdHkFRex3wYIGA
+         BVy2KiYtycAuZ2hS9EZqKQwQV3Z9qay4N9nVRS2RjCRBo/QVYoOewVhLtKHZkATJVmv9
+         BWQJRf7sYCO54n1tFMzgOtr7+f/CEJ9tiGMobEre0D/AtexN2TVDsIgd4Y75+eAij/Ep
+         FvoiT0o+dvKmBBW87aguRYlo6s2jmeO08/CXOGg6DFnhMEAqUGgYQ1pieuzeD2zZ1IyY
+         y4XAfvJHJQ5Zk2jaosq7FrgDWFWPd938iLRc2doHOuXL/7ztIr3HIWZ1tRzA2WAJTFn6
+         +yNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbd82n9DnB32CRRhyfTBYYnbC9LIzJX07DvMoSypd7uxbr2xunQuTvDuMrHFXszZJTpkRFlIO1hoo6qc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+lUy492mrp+V5zfM3aKLwpyY53g4Zm6GkL/K8W4HNpVjdh1Oa
+	xcv4n+gEcdmG5AQmZ5tfje46Nzz0lr/YQ1vjZr5WME/tBSRQ7vE2+5KCIJUHcg==
+X-Gm-Gg: ASbGncve23HWyaUzywSS0IdtQDqREIiMjfePAgAT18rUP6Ke3npnatOymoGz2yjAWWk
+	dHhauD7AajtE0XWvLjbSKrHh+/iWsrMv7dqNFej0QOjdLNQdghPEfD0dVVzWFZWgrwu1sIwdLm7
+	t5EUdW7SK/UAWJXX1HSZMdi5hAZao00Nm5UwxhROuH1atUvyIHLjujhK9BFcyLi7Pcxs0XphZKK
+	3pCDHhh8Ghfm4yLLIlEx3w++8fTW7UzoGbsK0ru88ROepH473kWA/GB/+illTcwvPhqfI2YnZ5M
+	hVgj4vIDgns1K6b14p4A03NmGBVFlYojDd7y1tt3XkFsRH5u0tKTJA5ZrAM5L0zaFPuW14lHvPV
+	LFiGOsEjxbR5PFANp19MDoLZSKGdf1x4q0d6pMicJDwb89AVAqjQ=
+X-Google-Smtp-Source: AGHT+IGrlpeDG+M1XFYNQBMVlA5m1LG8vzAaNYW0s67UXCoEigoyFT+rBXnmZPZoEYP8bDGeD73U6g==
+X-Received: by 2002:a05:620a:5bd8:b0:7e3:3276:99f with SMTP id af79cd13be357-7e63bfae1d2mr537840285a.53.1753504426331;
+        Fri, 25 Jul 2025 21:33:46 -0700 (PDT)
 Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6432a885asm70322185a.36.2025.07.25.21.33.43
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6432a885asm70322185a.36.2025.07.25.21.33.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 21:33:43 -0700 (PDT)
+        Fri, 25 Jul 2025 21:33:46 -0700 (PDT)
 From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	vivek.balachandhar@gmail.com
-Subject: [PATCH 08/20] staging: rtl8723bs: fix logical continuation style by moving to previous line
-Date: Sat, 26 Jul 2025 04:32:06 +0000
-Message-Id: <20250726043218.386738-9-vivek.balachandhar@gmail.com>
+Subject: [PATCH 09/20] staging: rtl8723bs: fix indentation to align with open parenthesis
+Date: Sat, 26 Jul 2025 04:32:07 +0000
+Message-Id: <20250726043218.386738-10-vivek.balachandhar@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250726043218.386738-1-vivek.balachandhar@gmail.com>
 References: <20250726043218.386738-1-vivek.balachandhar@gmail.com>
@@ -91,99 +91,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Reformatted a logical continuation to sit on the same line as the previous
-statement, as per kernel coding style guidelines. This improves code
-readability and avoids unnecessary line breaks.
+Adjusted indentation of function arguments to align with the
+opening parenthesis, following kernel coding style guidelines.
+This enhances readability and maintains consistent formatting.
 
 No functional changes.
 
 Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 29 ++++++++++++-----------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 0c985593ff0c..692d2526965f 100644
+index 692d2526965f..e709a0bd24f3 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -323,8 +323,8 @@ int rtw_is_same_ibss(struct adapter *adapter, struct wlan_network *pnetwork)
- 
- inline int is_same_ess(struct wlan_bssid_ex *a, struct wlan_bssid_ex *b)
- {
--	return (a->ssid.ssid_length == b->ssid.ssid_length)
--		&&  !memcmp(a->ssid.ssid, b->ssid.ssid, a->ssid.ssid_length);
-+	return (a->ssid.ssid_length == b->ssid.ssid_length) &&
-+		!memcmp(a->ssid.ssid, b->ssid.ssid, a->ssid.ssid_length);
- }
- 
- int is_same_network(struct wlan_bssid_ex *src, struct wlan_bssid_ex *dst, u8 feature)
-@@ -765,8 +765,8 @@ void rtw_surveydone_event_callback(struct adapter	*adapter, u8 *pbuf)
- 		}
- 	} else {
- 		if (rtw_chk_roam_flags(adapter, RTW_ROAM_ACTIVE)) {
--			if (check_fwstate(pmlmepriv, WIFI_STATION_STATE)
--				&& check_fwstate(pmlmepriv, _FW_LINKED)) {
-+			if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) &&
-+			    check_fwstate(pmlmepriv, _FW_LINKED)) {
- 				if (rtw_select_roaming_candidate(pmlmepriv) == _SUCCESS) {
- 					receive_disconnect(adapter,
- 							   pmlmepriv->cur_network.network.mac_address,
-@@ -908,8 +908,8 @@ void rtw_indicate_disconnect(struct adapter *padapter)
- 	if (rtw_to_roam(padapter) > 0)
- 		_clr_fwstate_(pmlmepriv, _FW_LINKED);
- 
--	if (check_fwstate(&padapter->mlmepriv, _FW_LINKED)
--		|| (rtw_to_roam(padapter) <= 0)
-+	if (check_fwstate(&padapter->mlmepriv, _FW_LINKED) ||
-+	    (rtw_to_roam(padapter) <= 0)
- 	) {
- 		rtw_os_indicate_disconnect(padapter);
- 
-@@ -944,8 +944,8 @@ void rtw_scan_abort(struct adapter *adapter)
- 
- 	start = jiffies;
- 	pmlmeext->scan_abort = true;
--	while (check_fwstate(pmlmepriv, _FW_UNDER_SURVEY)
--		&& jiffies_to_msecs(start) <= 200) {
-+	while (check_fwstate(pmlmepriv, _FW_UNDER_SURVEY) &&
-+	       jiffies_to_msecs(start) <= 200) {
- 		if (adapter->bDriverStopped || adapter->bSurpriseRemoved)
- 			break;
- 
-@@ -1618,8 +1618,8 @@ void rtw_dynamic_check_timer_handler(struct adapter *adapter)
- 	if (adapter->net_closed)
+@@ -154,7 +154,7 @@ void _rtw_free_network(struct	mlme_priv *pmlmepriv, struct wlan_network *pnetwor
  		return;
  
--	if ((adapter_to_pwrctl(adapter)->fw_current_in_ps_mode)
--		&& !(hal_btcoex_IsBtControlLps(adapter))
-+	if ((adapter_to_pwrctl(adapter)->fw_current_in_ps_mode) &&
-+	    !(hal_btcoex_IsBtControlLps(adapter))
- 		) {
- 		u8 bEnterPS;
+ 	if ((check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) == true) ||
+-		(check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true))
++	    (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true))
+ 		lifetime = 1;
  
-@@ -1766,8 +1766,8 @@ static int rtw_check_join_candidate(struct mlme_priv *mlme
+ 	if (!isfreeall) {
+@@ -241,7 +241,7 @@ signed int rtw_if_up(struct adapter *padapter)
+ 	signed int res;
  
- 	/* check ssid, if needed */
+ 	if (padapter->bDriverStopped || padapter->bSurpriseRemoved ||
+-		(check_fwstate(&padapter->mlmepriv, _FW_LINKED) == false))
++	    (check_fwstate(&padapter->mlmepriv, _FW_LINKED) == false))
+ 		res = false;
+ 	else
+ 		res =  true;
+@@ -310,7 +310,7 @@ int rtw_is_same_ibss(struct adapter *adapter, struct wlan_network *pnetwork)
+ 	struct security_priv *psecuritypriv = &adapter->securitypriv;
+ 
+ 	if ((psecuritypriv->dot11PrivacyAlgrthm != _NO_PRIVACY_) &&
+-		    (pnetwork->network.privacy == 0))
++	    (pnetwork->network.privacy == 0))
+ 		ret = false;
+ 	else if ((psecuritypriv->dot11PrivacyAlgrthm == _NO_PRIVACY_) &&
+ 		 (pnetwork->network.privacy == 1))
+@@ -391,7 +391,7 @@ struct	wlan_network	*rtw_get_oldest_wlan_network(struct __queue *scanned_queue)
+ }
+ 
+ void update_network(struct wlan_bssid_ex *dst, struct wlan_bssid_ex *src,
+-	struct adapter *padapter, bool update_ie)
++		    struct adapter *padapter, bool update_ie)
+ {
+ 	long rssi_ori = dst->rssi;
+ 
+@@ -447,9 +447,9 @@ static void update_current_network(struct adapter *adapter, struct wlan_bssid_ex
+ 	struct	mlme_priv *pmlmepriv = &adapter->mlmepriv;
+ 
+ 	rtw_bug_check(&pmlmepriv->cur_network.network,
+-		&pmlmepriv->cur_network.network,
+-		&pmlmepriv->cur_network.network,
+-		&pmlmepriv->cur_network.network);
++		      &pmlmepriv->cur_network.network,
++		      &pmlmepriv->cur_network.network,
++		      &pmlmepriv->cur_network.network);
+ 
+ 	if ((check_fwstate(pmlmepriv, _FW_LINKED) == true) &&
+ 	    (is_same_network(&pmlmepriv->cur_network.network, pnetwork, 0))) {
+@@ -1343,7 +1343,7 @@ void rtw_stassoc_event_callback(struct adapter *adapter, u8 *pbuf)
+ 	spin_lock_bh(&pmlmepriv->lock);
+ 
+ 	if ((check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) == true) ||
+-		(check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
++	    (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
+ 		if (adapter->stapriv.asoc_sta_count == 2) {
+ 			spin_lock_bh(&pmlmepriv->scanned_queue.lock);
+ 			ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue,
+@@ -1442,7 +1442,7 @@ void rtw_stadel_event_callback(struct adapter *adapter, u8 *pbuf)
+ 	}
+ 
+ 	if (check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) ||
+-	      check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)) {
++	    check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)) {
+ 		rtw_free_stainfo(adapter,  psta);
+ 
+ 		if (adapter->stapriv.asoc_sta_count == 1) {
+@@ -1768,7 +1768,7 @@ static int rtw_check_join_candidate(struct mlme_priv *mlme
  	if (mlme->assoc_ssid.ssid[0] && mlme->assoc_ssid.ssid_length) {
--		if (competitor->network.ssid.ssid_length != mlme->assoc_ssid.ssid_length
--			|| memcmp(competitor->network.ssid.ssid, mlme->assoc_ssid.ssid,
-+		if (competitor->network.ssid.ssid_length != mlme->assoc_ssid.ssid_length ||
-+		    memcmp(competitor->network.ssid.ssid, mlme->assoc_ssid.ssid,
- 				  mlme->assoc_ssid.ssid_length)
- 		)
- 			goto exit;
-@@ -1777,8 +1777,9 @@ static int rtw_check_join_candidate(struct mlme_priv *mlme
- 		goto exit;
- 
- 	if (rtw_to_roam(adapter) > 0) {
--		if (jiffies_to_msecs(jiffies - competitor->last_scanned) >= mlme->roam_scanr_exp_ms
--			|| is_same_ess(&competitor->network, &mlme->cur_network.network) == false
-+		if (jiffies_to_msecs(jiffies - competitor->last_scanned) >=
-+		    mlme->roam_scanr_exp_ms ||
-+		    is_same_ess(&competitor->network, &mlme->cur_network.network) == false
+ 		if (competitor->network.ssid.ssid_length != mlme->assoc_ssid.ssid_length ||
+ 		    memcmp(competitor->network.ssid.ssid, mlme->assoc_ssid.ssid,
+-				  mlme->assoc_ssid.ssid_length)
++			   mlme->assoc_ssid.ssid_length)
  		)
  			goto exit;
  	}
+@@ -2010,7 +2010,7 @@ static int SecIsInPMKIDList(struct adapter *Adapter, u8 *bssid)
+ 
+ 	for (i = 0; i < NUM_PMKID_CACHE; i++)
+ 		if ((p->PMKIDList[i].bUsed) &&
+-				(!memcmp(p->PMKIDList[i].Bssid, bssid, ETH_ALEN)))
++		    (!memcmp(p->PMKIDList[i].Bssid, bssid, ETH_ALEN)))
+ 			return i;
+ 	return -1;
+ }
 -- 
 2.39.5
 
