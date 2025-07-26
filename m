@@ -1,169 +1,137 @@
-Return-Path: <linux-kernel+bounces-746692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DA8B12A1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B518B12A1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1171167E3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:35:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F5916CA33
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9285723F40E;
-	Sat, 26 Jul 2025 10:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDC123C4F2;
+	Sat, 26 Jul 2025 10:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Or2hqRl9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="RbVY++RX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lG10jkql"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E4341A8F;
-	Sat, 26 Jul 2025 10:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D107141A8F
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 10:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753526099; cv=none; b=dMVdc+Wv67Z8GbXoou4NzBXzOWhQiwQbygkRw7k/ZepYTFce1c04J/VJWvG9SaB7MCXLNOnEGGUFtU6tyZCjSu8YyMlham40YVUGs99YmJAOb48WvYhKtMwgCbZohcaKCo8Evv1D/KcfauArLIM3Erm31IvttY6UgIzOhPKjyXM=
+	t=1753526239; cv=none; b=pUnlsU5UpbLP3aRL8xbE0E+OoFYjIQg6mD7BJrpCl2MKtQiAUH0BW0LaCgNLFPf+j9P9ISIMAyiospxQy6YohIzAmgqDMb+YKdz3jd+q1+nu2+tXPG2RvY+MUQPhT7w28UR5pM4oXwHFJFUSPESWPKVT6T/sIgLZl3f2GdIgca0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753526099; c=relaxed/simple;
-	bh=xNGjY7zU23UbtC8TnC551ilI9jqtO3VI+NHk902JKk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ls2MOforLvESRY9CfhKN+TuFzFPZIQY6t9Ym5Zq1NpnYq4cpinLvihfZ3cK0v0rAZT7ixQ9oJwxQsx87Y5Wb2dw17dCZhE1VvuI4eQQUkIvuXLDaVZLOuaODlVbEWOD8ss6iDkRyZLsgSaCw/bhsbv1/gxsXhO2/WDAHFYIZ/dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Or2hqRl9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 747C5C4CEED;
-	Sat, 26 Jul 2025 10:34:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753526098;
-	bh=xNGjY7zU23UbtC8TnC551ilI9jqtO3VI+NHk902JKk8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Or2hqRl9yZcKsa1GSuKwG7BerSt7Rd4Zf8Tp/qLlf+KGedU8GL2+ntNaIp+RMsSCA
-	 FQ50f6SJZKSdjgfhWMBDHSedu1JTXEdopqu5L16Tmv/KBQ+QROsvQkaHDpCl/RxbaJ
-	 naGAlzDzZxcEMKMjZDr5+41aVASnG2bV868r9efecPaLyAePSmmAaejMqmfDe/Aquo
-	 q2RQWQJ7QE5gpPBwKTifxDf/rm78SfTojgRdh1ZqGzYGBWCBrFCTXTH6ExnCS1Lvtr
-	 OFth5edf4xvZhtoW+aBDTgC8uep2a8mIgi0/tJtqMFsWZjV8cgTpPLb9YlBwSTtT5h
-	 EPKVTLCKceAlQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553dceb342fso2329165e87.0;
-        Sat, 26 Jul 2025 03:34:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQNKydWskCoB0oDOkh1sqCqBf9PNUfR1pi6mYr//3NS+qKY1EzuE7xcTU7AiKoPZ3OalfXDDi8RXLqfKE=@vger.kernel.org, AJvYcCViR6SIRY9XUZseOrbS5pEvYsFd7s9CB5sHn6jtXI0srevO8LYSVmA2hl1eXvF7HO4z2d+cKoYi@vger.kernel.org, AJvYcCXDx0pgZyi6o611Ebqppc5l2P446zV1DG1mor2bRGnu8ZqDxNQ3idXV5kxcjOHhcegJZfaDrUdbP2coMQzg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4qUTEF+XAka3niO4MDKBFYL/6m5OdSg6F3wRiSWir6FdrD8M4
-	mp07lA8lDl0TQXQ/Q53rDn1S6eFm93zwsDBhs5Cs818FVN7RjOc0B3ldlRz10zn5ez8+xjgC0ro
-	AIDmJhJ9MdDTPXeLiZwCjweIl5VREy5Y=
-X-Google-Smtp-Source: AGHT+IF1qeYoFT4OjYGATbmZIjWNXodWICSJVv+du8pwTXC6Gp5H8S9vF4KVq2EeZo0NuT5CuJeu/dQr1g5dUXrLrOw=
-X-Received: by 2002:a05:6512:3d15:b0:553:ad9b:cfb1 with SMTP id
- 2adb3069b0e04-55b5f3d1378mr1321534e87.9.1753526097121; Sat, 26 Jul 2025
- 03:34:57 -0700 (PDT)
+	s=arc-20240116; t=1753526239; c=relaxed/simple;
+	bh=8MCddCGTksS5iRZsvioLx3Znb1q02NvkE3cJ686F5ZQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=YxaqlEfWo6k/LLPub87KXxRdENf9wQT8n6c/8brQzLZKIc5MjmGU/kil0YyaMM78yGgQ+YHgw00lhw+GWES9VFXTSgA5Tcb86jIU4W/ix//NPw+ezaYBt9lgzSTkh34gbQTXgk1zgM7qqYBlyyBXbG+KwF6Izk+msyXeTfFKqnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=RbVY++RX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lG10jkql; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 15AEC14001E4;
+	Sat, 26 Jul 2025 06:37:17 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Sat, 26 Jul 2025 06:37:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1753526237; x=1753612637; bh=8M
+	eKRW79IYnH4GmCMwZac8sROuaBWd8QIywAI0eiGP8=; b=RbVY++RXdJx77DF9rh
+	WKMtopbEOcKoL8FuypvlkMHSla0WgzWU6ayHwavRcwdDa+ffLpD21UbmE9MXZLpc
+	FjIktSrw6VNsPpP2gcNH6NcoVE7r1y8FRlZmvXcSzNIL+94atLyTQwV2swWwsaqc
+	Xxqq734HVYX2HWqIGKgFCbBr9gbyvTtrOrc/HH7icWH15Evkn/u1eAnU0F2E3I0j
+	rO1Yu5/qL9RAWNx+CGgSMYkOW63hkivyjx/x4iUt5gLukYptcqhDy+8xendcti66
+	bBWgduBereID+MGUz0w+OTIq5gdRZ3MpzhUdCgdIlCMcb7goiAss1mt7cCdyOucC
+	GqlQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1753526237; x=1753612637; bh=8MeKRW79IYnH4GmCMwZac8sROuaB
+	Wd8QIywAI0eiGP8=; b=lG10jkql0H5b1l6254Rop4sICnkc8NFfxb1LDu0zZ/O3
+	FOc/UI2sfoLgrZ9yQFKcqligkAMbUuRD/YGMlZTWvB1t5PtbsMpgx0jv2+9eH8b2
+	ont6Z2Qv8+hxC36s8UtSoKn2duMMMpBqRihehLBkPc4iDDG0AeSKsafw900nYyEi
+	6UA4mn1GUJjRSUr8oQz5ePOiUJkQqjONJtx4JEeAn+gOmk6Do1xlvEQZqkg1Zapz
+	XuVcezxYm6cmzZP5rCI30C0zcCzN42v0nmicouCqTr7x6FP350foIT+9FoV4MCgH
+	JmJ+humfXRUUYT787rE16nHJjtWRaVb9tggT4aZxiQ==
+X-ME-Sender: <xms:3K-EaFdM1zXVqqDzXJOPCh0AG-fFWJpUcE9FVRDNEXwSDc9BsJAfHg>
+    <xme:3K-EaDPHa3UqeBl2XRtInF25ijwH4EO0b6V2ZHIg_2TwXVSllpytfo2MeCdyov478
+    1fhR-SdJk0mFV0IAW4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekiedulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcuuegv
+    rhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrhhnpe
+    duleeigeekveeugeettdejtddtleeghefhvdfhueehtefhudelffduvdeuleevteenucff
+    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthht
+    ohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhorhhvrghlughssehlih
+    hnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhm
+    qdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhope
+    hsohgtsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgv
+    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:3K-EaBde9NHgLkQ2rhd3bfJHSoeis6eHrxjxD6BlN1BXD3hiRCyEeg>
+    <xmx:3K-EaKtM20ONWgtDGVzYe4_pjOg0R9voKPogl4ocjoU9q8AwXbRaMg>
+    <xmx:3K-EaA9xhmhhWv1PNLnj44eLUu2SMLISk6ZvwZqN2EDJTdJfLdG6Ew>
+    <xmx:3K-EaF1au7tPFyorF1yb3uTe37M_bhynb6s_UiCkrcIc0I81t41zrA>
+    <xmx:3a-EaO-KZVuyqnSLm9bQMREgIicVfYPlEc1mYgq96eE9XXwbC02B08Vo>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C9398700065; Sat, 26 Jul 2025 06:37:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724-userprogs-clang-gnu-ld-v1-1-3d3d071e53a7@linutronix.de>
- <20250724231025.GA3620641@ax162> <20250725122604-44874f95-859c-4c0a-b3b0-14b30e00b796@linutronix.de>
-In-Reply-To: <20250725122604-44874f95-859c-4c0a-b3b0-14b30e00b796@linutronix.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 26 Jul 2025 19:34:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARp77d+rti7j=1ABbreTxYbVsEOHqQCurkt0t+JzKUKvg@mail.gmail.com>
-X-Gm-Features: Ac12FXyIJ1uldhwd9j611VlxM1KojWYI0LWyidbubjvuMvwAijjyoU2rtNbzTEA
-Message-ID: <CAK7LNARp77d+rti7j=1ABbreTxYbVsEOHqQCurkt0t+JzKUKvg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: userprogs: use correct linker when mixing clang
- and GNU ld
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Sat, 26 Jul 2025 12:36:06 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: soc@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Message-Id: <94f09700-cebd-4270-840f-219ef14bf2ee@app.fastmail.com>
+Subject: [GIT PULL] soc: fixes for 6.16, part 3
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 25, 2025 at 7:36=E2=80=AFPM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> On Thu, Jul 24, 2025 at 04:10:25PM -0700, Nathan Chancellor wrote:
-> > On Thu, Jul 24, 2025 at 10:32:45AM +0200, Thomas Wei=C3=9Fschuh wrote:
-> > > The userprogs infrastructure does not expect clang being used with GN=
-U ld
-> > > and in that case uses /usr/bin/ld for linking, not the configured $(L=
-D).
-> > > This fallback is problematic as it will break when cross-compiling.
-> > > Mixing clang and GNU ld is used for example when building for SPARC64=
-,
-> > > as ld.lld is not sufficient; see Documentation/kbuild/llvm.rst.
-> > >
-> > > Relax the check around --ld-path so it gets used for all linkers.
-> > >
-> > > Fixes: dfc1b168a8c4 ("kbuild: userprogs: use correct lld when linking=
- through clang")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de=
->
-> > > ---
-> > > Nathan, you originally proposed the check for $(CONFIG_LD_IS_LLD) [0]=
-,
-> > > could you take a look at this?
-> >
-> > I would expect this to be okay but I have not explicitly tested it. I
-> > had not considered the case of GNU ld being used since aside from
-> > sparc64, there is not another architecture that supports clang but not
-> > ld.lld.
->
-> FWIW some architectures use GNU ld implicitly with clang because they als=
-o link
-> through $(CC) but do not use --ld-path. One example is UML, where the vDS=
-O and
-> vmlinux are linked this way. But linking vmlinux of UML with ld.lld will
-> require changes to at least the linker script. Something for the ClangBui=
-ltLinux
-> TODO? There were more examples, but I don't remember them right now.
->
-> Longterm --ld-path should probably be added to the global KBUILD_CFLAGS, =
-too.
->
-> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
->
-> Thanks!
->
-> > > ---
-> > >  Makefile | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/Makefile b/Makefile
-> > > index c09766beb7eff4780574682b8ea44475fc0a5188..e300c6546c845c300edb5=
-f0033719963c7da8f9b 100644
-> > > --- a/Makefile
-> > > +++ b/Makefile
-> > > @@ -1134,7 +1134,7 @@ KBUILD_USERCFLAGS  +=3D $(filter -m32 -m64 --ta=
-rget=3D%, $(KBUILD_CPPFLAGS) $(KBUILD
-> > >  KBUILD_USERLDFLAGS +=3D $(filter -m32 -m64 --target=3D%, $(KBUILD_CP=
-PFLAGS) $(KBUILD_CFLAGS))
-> >
-> > Does KBUILD_USERCFLAGS respect LLVM_IAS? sparc64 does not use the
-> > integrated assembler yet (as far as I am aware) so I think we probably
-> > need to filter '--prefix=3D' and '-fno-integrated-as' to avoid further
-> > issues with assembling?
->
-> No, it isn't respected. On the other hand I didn't yet run into any issue=
-s.
-> Do we want to fix it proactively?
->
-> > >  # userspace programs are linked via the compiler, use the correct li=
-nker
-> > > -ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_LD_IS_LLD),yy)
-> > > +ifneq ($(CONFIG_CC_IS_CLANG),)
-> >
-> > At this point, I think this can just become
-> >
-> >   ifdef CONFIG_CC_IS_CLANG
->
-> Absolutetly. The existing conditional above this hunk uses the ifneq
-> pattern, so I tried to keep it consistent.
-> But the one above uses plain ifdef again...
-> Personally I don't care one way or another.
+The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf1911:
 
+  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
 
-Could you use "ifdef CONFIG_CC_IS_CLANG" please?
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.16-3
 
+for you to fetch changes up to 912b1f2a796ec73530a709b11821cb0c249fb23e:
 
---=20
-Best Regards
-Masahiro Yamada
+  arm64: dts: rockchip: Drop netdev led-triggers on NanoPi R5S (2025-07-22 22:33:36 +0200)
+
+----------------------------------------------------------------
+soc: fixes for 6.16, part 3
+
+These are two fixes that came in late, one addresses a regression
+on a rockchips based board, the other is for ensuring a consistent
+dt binding for a device added in 6.16 before the incorrect one
+makes it into a release.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      Merge tag 'sunxi-fixes-for-6.16' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into arm/fixes
+
+Chen-Yu Tsai (1):
+      arm64: dts: allwinner: a523: Rename emac0 to gmac0
+
+Diederik de Haas (1):
+      arm64: dts: rockchip: Drop netdev led-triggers on NanoPi R5S
+
+ arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi          | 6 +++---
+ arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts | 4 ++--
+ arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts | 4 ++--
+ arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dts      | 3 ---
+ 4 files changed, 7 insertions(+), 10 deletions(-)
 
