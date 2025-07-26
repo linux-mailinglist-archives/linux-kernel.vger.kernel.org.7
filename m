@@ -1,249 +1,295 @@
-Return-Path: <linux-kernel+bounces-746585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB627B12897
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:47:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BA6B1289A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8CF1CC1BA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:48:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68231CC1977
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC151DE4E5;
-	Sat, 26 Jul 2025 02:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02B51DE3C3;
+	Sat, 26 Jul 2025 02:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QQrZjQSY"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2080.outbound.protection.outlook.com [40.107.102.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GapqB/2z"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780FC10A1F;
-	Sat, 26 Jul 2025 02:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753498056; cv=fail; b=b6L3DPi+uelCnDOauw5VHiUZKpapg0Yi7PbZoERYakyXDGPm+5rQt5vmvvZkjNwDAcZAOEsJk9zdZ24Iocp+n03d4HKeKAjOWRx4k6Cutkeh0ASqDlbC6J967DkadOWrsa1cUp2dOfaJQrg87VJSh5euwPccMhqOeA1FJcUmT8o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753498056; c=relaxed/simple;
-	bh=YC6ct5WFyVJO4R05RIU5QY8Gte/GwNKMHfiF1HF1dls=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=Rz+9OrZrNzj79Z5Pxb09Xa2HtSYDZ0QrrMr7srPSalK/IslL+HCq5DJLicHzQin13uBfJjSCI/kdUXdiePzzAsC/40+LmJS4uEx2Qzp/W325K0ifXZoGUUDeA0NE4EHA4+Qm4Fv+8cTVmNXbbsyVU9g7a6u3/vRi+dAWU9qMY6Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QQrZjQSY; arc=fail smtp.client-ip=40.107.102.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X+5NiFRj94zxP9DvU8MdL5NuZXET4ymTeN5NQUrKglJQsFrxHKB2FWg3zJbayoAV1rw4vM6+rvp8cjLC/7LnIGaKNuBbIaFbAa2BCOwwNYk+tIrv7HEfyB6hruLIWaxqx02xgVQ50/d90B3sdzTVedEHVAQQmCX8REwl0lXSCvZ6fDlotWsMyu+6D0TZ7PWzJ3eupWkPdXjFNzVgQddmHmc4DwvpU/MFOm4D5lJK+9cWl2NsVpzt2hmAwogDYku7u0WpozPhQdugfrYRkv66Bg1bi/bl/bGDwx9eeAcV0e8DCAB8SUTWUvz2mUHe87R0md1I6jyqbaFAvob44He32w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QwRveN0a+scjd4ch++Rnianv5Djc17OoDHFwpHuYxi0=;
- b=v2WTn8fcGfp8vQWZBE6qDuK7R69ki3YAWcCe4rALKwiYoc9objq83tlzvKbPNNOBYarcHDJ+omrTSodAR9OcdCS1BJxC07oGh7LI+E5ulu7Jyfv5Vo1N0Q1t6m7771r5GB6a+RCESBXkmMJANvVAoP2zeKEe4FusvD2fnrnOS4slO3iw4jWrQ1uNsv/j4eLKJRD9N3nXB2PrMHk0Xf1Nj/VmOfnJOxBp2iGW4TrSYaDb/115WDBLZ65588isI1Wdtao7+pSraygIkam1BkU7pU0Lu80e/tcPEpY6xGF8oflRSWk2aC+lFzYN8Cwpl8EWamqDBMx6GgT7M7VlQuNLrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QwRveN0a+scjd4ch++Rnianv5Djc17OoDHFwpHuYxi0=;
- b=QQrZjQSY3iPD3SQmrBKRUUX2/OaZDw8LE1trSl09ZjGLB6+PeD56oYX/5uNQhb4ZbRsfgvBvoxmb29FIzxWYz6qSVWS/527Q1y01Vzum0m+iqtMLjEUc7uoeBx3nJZNpuHVQM31pgrMGySjgK0qc+J8yUk2YRkGlYUShLfKpObjwqE4ol4KeoNW0Zg2KhksHNnijzJROgZjMfYPIggCVIB+oF+UI6nKir5zuMUG48E4CAG7wC3rhj4Q+CgBel4l9iOgFxr4YFomUZqDLK/iK3gW85Gw8FPs8nOsH+B2qQYjOotA1IQNCeO6nvG6xlM05qhm3/hhhYO3afUzDb4P07w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by MW4PR12MB6852.namprd12.prod.outlook.com (2603:10b6:303:207::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Sat, 26 Jul
- 2025 02:47:30 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8964.019; Sat, 26 Jul 2025
- 02:47:29 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Sat, 26 Jul 2025 11:47:25 +0900
-Subject: [PATCH v3] rust: transmute: add `as_bytes` method for `AsBytes`
- trait
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250726-as_bytes-v3-1-eb7514faab28@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIALxBhGgC/3WMQQ6CMBBFr0JmbQ1ToKAr72GMKcNUZiGYljQSw
- t0t7Ex0+X7+ewsE9sIBztkCnqMEGYcExSED6u3wYCVdYtC5rvJaV8qGeztPHJShlhCd5oYKSPe
- XZyfvPXW9Je4lTKOf93LEbf0RiahQGZcbW9Rl6czpMkTpxB5pfMJWifqfqZNJpmpK0ojW0Je5r
- usHjLOOr9sAAAA=
-X-Change-ID: 20250725-as_bytes-6cbc11f2e8c3
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Robin Murphy <robin.murphy@arm.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: "Christian S. Lima" <christiansantoslima21@gmail.com>, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: TYCP301CA0029.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:381::15) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAC210A1F;
+	Sat, 26 Jul 2025 02:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753498113; cv=none; b=bPHdAh3GgyLntJSMByuN50H/NLcEHc06YJK3Izs979eY9/177RGYqiZYMn6b1mXhETjKeYhs4L71qlBE6bvR9U44QvYB5a5HTnY83dkhcPbAcaWyoAUv5+MHGOW2t7LNGHKFG4eARTRD8vN1QYGi6Wa0al6/R4yJBHnRrMpO7Jc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753498113; c=relaxed/simple;
+	bh=FRCx8usyXnfpsH3r27JOibXD9xX0wpc6zQsXM4S3LXo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Xn1jlSUnXaIecQpvMb/a7bQaVixhN9r0cdx/ILVKIXhMesYyPSVVC2qN1VK0quEj/zrGMVFR1qw3FTzXs3iFmXCK16bdA7obFCSsLP/ypMwL7HJUN/wr/FCpdaXSAgleDtlqaMV3L4jtq2XdP/grxTILqq25imwwMuwDZVXd82Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GapqB/2z; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23f8d27eeeaso26392465ad.2;
+        Fri, 25 Jul 2025 19:48:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753498111; x=1754102911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vJjDihjh3OpN8+N/ddOfQmIpm6+LH61cedBfeF7gcIk=;
+        b=GapqB/2ziZpAK7BDFeg25PHZBAM0WUP/oWnoSXcbD2BA+vwEj+2rDmMkAheGXV/G0A
+         spz9z+rNsmmpeV3yBYSJXbJlb2XPJzmzW9KvJLludqzqBgmc+jZvkkYTy8y5+Jk4Na/d
+         NGFoR57HkT5J2JMwZnrzXN5Ys4CMvD94U8SjtVBZ8QuTSea8bLhgAOKa9D3zMiqWJbHr
+         9yv/hW9+CELHS4M8/GndVr98Fcrp6FYy6n0Hg0IwlMqm0vwG3UdxetIBaPz/lajkKK94
+         A79g2QzeVtc+yuU8S2vWQqFtaqX229iVe7dZ2TO3JYC1HXU0gxEwAM5KhHz4m4s67xer
+         5OJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753498111; x=1754102911;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vJjDihjh3OpN8+N/ddOfQmIpm6+LH61cedBfeF7gcIk=;
+        b=WV55wBWUcDZv0RlyIxMj+gBTIvcSz0I43wvrAwVHWxbOaAUB7IRm1YKBA15xrIRuDd
+         mgWncmHNZlXDZhrXEy8t9eG28Q592DH5p//uvFAa16JEKserpqDQXwfqzzTNVRH/b6zk
+         3yw5cSVSnPS26VOEnU0vemw1lX1w2/4mgdyJ/PoQolTsLwKXVDImyYnSfrSwNvfRJe5y
+         3wX1UlPdAdpRKWy6TkfWxdYBgaWhl8qNOucgYlfg1sjqtcdnRaZKKcBWEKqOecj2pkVU
+         MTxJsIMt7o4usytrqOZpgGTeu3cBLoYCn9SEIrbx4rD3YGlDzrt9YyMMnUaVdBnhvHpT
+         WMLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUKBcseJ9dl+RVLSozMNVAD8oEl+BqVXo7OpCyBmAPty4bj9QQEZ/E1aIG8XRy4SI8sgyCF63YUISkYg==@vger.kernel.org, AJvYcCWUx6z9xrLFciYXUkYYBPmMl1mKylXjLf3ev5Sfoe4GWjCnRsxGxTZv0ognSP8skIVZIV37hS+6g6nTNrsx1+OVJ7168Q==@vger.kernel.org, AJvYcCXdL8aQ1ouatfMg1tPZpMLTCesfOmrXmAWgCV95Y/COC4ZvR8I9BX1g3AgRzHirAgG8hXcoPTAQQudfn5BV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOXsltv97OD68dABfBBJQevsn7igpq+3ZOJOcjgwUWD/8/PX+P
+	9NsMLFXHSAZmLHPpo2EMOY0gFZ+Ys7z4290Fy5LRPns1oIAmMriU3NVV
+X-Gm-Gg: ASbGncsplSr9SThP6V97L7AErs12qWguGCSGK+9SyQVcLkfotPwMZJw3RiSkmMYso/Y
+	jwgy8oOv9dMRBoSuPpzsav+0WnWjecyDdCYpmWm16cJVdkEUhvJHkkF6KvO2Y0CYlaLRbRKORqS
+	/+s98EGG8lGjaoZDVgFwILI7o3PnAeZSyaRJxe8qwPkrEvfJZtZpa4Sz+dEh1n8FBsS7bsrOoXH
+	oNpw7lFTU7mH7ypAVkrKtymPwqrKUVunCe9qKckq02znRns+HTRIzi2Wsd3NqoJJKx+MsAaoDN/
+	C4HDeRTfQKY38+lhXFoaoFFtSfykYVAGqOhzcn5yL4IfukDAooiO/sIjQeBQm/f1PPHGSoua77a
+	CYMCnpyuJFMDDgpNajwQYWCQf/Qprp46bMO1WgNZ1HgA5VjTrsF0hqlHfYbovJ9DNVD2C7yW563
+	5T1NxGxCADfRspb//7hA==
+X-Google-Smtp-Source: AGHT+IGsAJRpsEyHwhImi+0OQ/cAj+eWZWKtB4WmpEc1hj5qrFpeRdBvufiQqIk7T0rhjiFuaEUunQ==
+X-Received: by 2002:a17:902:fc46:b0:23d:f499:79fd with SMTP id d9443c01a7336-23fb31c1b0bmr53945175ad.40.1753498110607;
+        Fri, 25 Jul 2025 19:48:30 -0700 (PDT)
+Received: from ehlo.thunderbird.net (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe585538sm7101965ad.211.2025.07.25.19.48.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 19:48:29 -0700 (PDT)
+Date: Fri, 25 Jul 2025 19:48:28 -0700
+From: "Derek J. Clark" <derekjohn.clark@gmail.com>
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>,
+ =?ISO-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Hans de Goede <hansg@kernel.org>
+CC: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH 1/4] platform/x86: (ayn-ec) Add PWM Fan HWMON Interface
+User-Agent: Thunderbird for Android
+In-Reply-To: <e3ab1337-2409-4828-aea7-4c71f8e9197d@oracle.com>
+References: <20250725004533.63537-1-derekjohn.clark@gmail.com> <e3ab1337-2409-4828-aea7-4c71f8e9197d@oracle.com>
+Message-ID: <C7073C0E-3D58-41C3-99B7-A0A5EE448700@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MW4PR12MB6852:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ef827ab-9e69-4ba6-ab49-08ddcbeec2e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|10070799003|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V0NYdXlvdnRqUUFRRjV5cGVsODM5cGRWY1RkWTdXSGFEcWc2K3pJNG13SHUy?=
- =?utf-8?B?TlRIWm5DbTl5cjgwOXJIUzdSUEFKMnNVZDZoSlhEZUJ3ZEwzWEg0cFlJdTlM?=
- =?utf-8?B?TzVUM09OYTNoQjNsYWI1NDdRR3hybUxVUkkzdHIyY1lLT2FkSGtEejh0ZlBW?=
- =?utf-8?B?bkhKcVRmOSt0dkRhQ1RDZ1h1OTNxWWZOWWwyVHNObE01bUJNTWw1UnVRYkdG?=
- =?utf-8?B?ZTNZbXpWQ2J2T2I3RjhoeERjZkZWUnBUeHR6MnNMOVpHQ1M0blZRWUFvMG9S?=
- =?utf-8?B?S2h6ZHY5Y3lyWm4yNkpCTEd5NFdwY014NmMzbCtjUWV1akx2YjA4bDV6NGZY?=
- =?utf-8?B?TVhKYTRNU2EvN2R4ZzFyZCt1NnY2d3lOWXg4Q1QzSnRKelNjWVRvVXg1U3dO?=
- =?utf-8?B?UThTL0Zuem5zSnRsM3VmNllSL2F2by9QajRLYXlUV0dZT3dyakEzMm4wL3Ri?=
- =?utf-8?B?eUJYdHJUcmpsbCs0Y05NWjR5MDFaTStBT25TclNJcXFkUnRsZDhVTHRsbEs2?=
- =?utf-8?B?WmRxVmdFcEN0Nm1ZeElHQXVtMnpwQzdOQnZ2eEdWc1RTMFN6azFnK1hBMU5E?=
- =?utf-8?B?bUhUVUMvWm5BUGt2YVNGRm00MnRLZGlWMDFWd0NjYzdXNHBqWjRBZW4vSXdS?=
- =?utf-8?B?dVNYSjJtZnY2R0g4L1RrNHp5M1pwakZLYjFBeUdyQmp4UGFYd1hwNE5xWkJV?=
- =?utf-8?B?clFxdjJLZGlySDJaMFdpR01hYnQ5aitNemFTNVFORmNkWkdjd1B5NER6dzBS?=
- =?utf-8?B?ajEveEFSL1Mrb0hJUkJvcUoxQ3BuQlVwRDlJanZQMzVHYXBMS0d6OFluOElE?=
- =?utf-8?B?ZWR0NFQ4OHc4SEFvS0xLc0gzbXRhYWNOT2JVOVc5TWo4SVM0cDNCcCtlSHJK?=
- =?utf-8?B?UmU1WEZHT0JxS0lodkhXS252TmRIM3Rpcnh3U3diYXZxeWVzZVNCZlVlcFZn?=
- =?utf-8?B?Um56c3p2cXFPQXB4eWpHZE1HUTdlT1pUYVNQM3JzRzFsYzhPcjZPRkV1amJi?=
- =?utf-8?B?UnRwTFFTbTRDQlA1M2Z6ZmJrNHhIZGxKQ2psSTAwajN1OFdFL051ckRxUjYw?=
- =?utf-8?B?OGg3NjJoWFozbDRzUTh5S2VtT2Z1cDBaYWVPdlp0UHNpUkcyMGNDaDFvZlM4?=
- =?utf-8?B?UTRQRE5aT3QrMzlEeTU4MTJZbklUQU1RVS9wQUJLZG1RNTFFNzZhdjNvMDgw?=
- =?utf-8?B?Ri8yUDY1czROUmxibDFoSXVsTXNJNGNmajBLVXA4d2xRZFZrQjh3WEdEYlhZ?=
- =?utf-8?B?YUM3d0xKOGMxOERrOFVRZVFSWUhORmxhdVRMMjFRRlMwT2ZJU1U3NXVmZUdF?=
- =?utf-8?B?bVJoRjZpdkdPbis4RVl0Q2FRSjFKc1Y3U3IzZEt3bXZrczZTTXppdmM5L3lE?=
- =?utf-8?B?Y3QxSWFVNkxrOXJGMUVodGFsTEdOYUlsM3NyTi92R1dFZDFZdUhpMld0djBH?=
- =?utf-8?B?b0Y0SFZqQlRWSHdDNSt4WjFxNUhFd0VxRjkzUGlFNlJET0xZdnhLclcrV0F5?=
- =?utf-8?B?QnVlUkhwUXFxQ0FseHJqbmpBYjRZNUlNN0NHZ0wxOEFQMVpTbjQvcDJjbXZm?=
- =?utf-8?B?ZFRxZ0dURVkrbVJHcUFFWm1PYjFodXZFSWZ1ZVRpdlN4Tjg0SVlEd09yaFVt?=
- =?utf-8?B?OFV4OEQxYUk5ZzBySGJlUzg5bGs5MTJhZmwrS3IwYmdtc0ZUN3N5Y1kyRVVE?=
- =?utf-8?B?QlczRGRiMXU0M2ttSEJ1bFpSMFg5cG5Bd01TamdVZlJFOUgxUG4zOEF2S2oy?=
- =?utf-8?B?YnNoWjFPOE5zdjRwWDhSVklxM1oyU1dWQ3lEdjJXdTF5V0N5N2VMVjhkaFFS?=
- =?utf-8?B?czE1QjN2V1lTMk5MdWlVc2JoVElpNWNxNGdPZEpxV1hFK0pEbkFRRkFBRzRG?=
- =?utf-8?B?OG5IWS9jN3h6SGhMRkhnWnZlamo0RzZJdFFxZ2haSzRObXIyd21Xck9HdXB0?=
- =?utf-8?B?ay9hdXZUaFNXaGNXT1IzcHF0aVFPbDlWOTZVZFpaRS9yMnBISzBwVGNBR1Vh?=
- =?utf-8?Q?xRC7Y4BRUiP4+i5jriXQyY7PCEnAp8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(10070799003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZTNyYjF3TWpIRnVLbkNLSXVMT3F3T3FTVFY2UVVSZFlVR1ArTDh0Nm9MSmQy?=
- =?utf-8?B?QU1TcXhUbG5PYWpsQ3YrSVhtYkppMlNYV3ozQ1hsaDNYa3F1bVovTm5kOUxB?=
- =?utf-8?B?aldsc3BrR1c1Wjk0M1ROY2M3RG1xYUk0bXFDTEcxTWVKZGRSNFBraTdrR1NC?=
- =?utf-8?B?MFpNUG9VYmpCazFrWmxVYXJjcnVWckZ0blc4M0M1aUhGOEdjTjA1ZjFjOGVG?=
- =?utf-8?B?bkhIZUNuNlhwZjEvcjZKdVJEanNIOExvVnpkc3hUWjFFRXZIaG5lSmNuL2Y5?=
- =?utf-8?B?OFE3Rmk5ZGVpaThZTWZGcGpOd0F4S05xcTloUFZDKzFkZVBRU0l1elladmhE?=
- =?utf-8?B?OStJT0lBMjBBTGw3MENZWVRTb3BYbXRYcmlKK21zRVZwWDVGVEFPdlBkM0pm?=
- =?utf-8?B?MkRJYTM3TDIxVTFQRmY1UFFXV09iQWRYZWlBNThCZzFwR0NxTDVjRVZWQ1FD?=
- =?utf-8?B?RFgrZ1Fsa2xHN3pXS0tWSWVYNWlTdjV5eTNDVGNQK3FrdkJhOW1QamZ4MXJV?=
- =?utf-8?B?amZyaEF4ZjdTYXUxTWR3ejNDKzh0STBpZzdVdVNUdTlGNnNPWE9pSk9hQ0Zl?=
- =?utf-8?B?VzFER3daallGaUEvbFVHd2U3LytnOXE0R1BZT2F1THRSVG5VbWxoM09rdklO?=
- =?utf-8?B?M1VCRmpzTElhUHVxUEJlQzJBRjd2S1UwcnZ2eDJmN0J5TVlyUng2UFJKKzQ1?=
- =?utf-8?B?K2svQlZYb3l6a1Arb0oycHlrQkJlbWh1Z2RJZWxVZXJyVmNXSngzT01zVnRQ?=
- =?utf-8?B?WDFkZVErQkNJVXF6eG16TGpQQm9DdWQ1T2lTV2REeGpRME9tYW51aGs0TGJS?=
- =?utf-8?B?TkFtdzRZeWtzM2JOTm1nb243RUFPWXRCM0tGRCtBb2RsQnRHVFVBQlY0NXdL?=
- =?utf-8?B?Wm1rbVZ4RUV2OHYxcWtYMksva1NOemFGM0J0YXlUUDVnbk9BbzFnZjNJbW5V?=
- =?utf-8?B?SCtzWi9TNndjRGlJTjhVd05SWkVDWkVDalNhWGNpZmVUMDRBWGw3S3h2VVB3?=
- =?utf-8?B?MzFyeTRTYVZuYnBLdXVXN1V3VjhFQTBsaFVUUUd0QXNZak43aDcwd2NNZm9K?=
- =?utf-8?B?MExrZUtCY3B1dDRtQVlROEhXS0FSL2lsVW5RejZlM1d6cFBGTjJEZWgyd3cz?=
- =?utf-8?B?V0djbCt5Um5naHdlSkVQbmdSbGlRNjFaeXRlYTNSc0pwcEE3a0J0ckZQK1g5?=
- =?utf-8?B?SXR3Mjh3Y3NOdEwvRjZVdW83bm9oVk8wdTZpVzY3ZjMvN3p5cHBoZkwrM0Zz?=
- =?utf-8?B?Zk0yWXpDS0k4VHo3ZCtHRGRrS2VOQ2NzYlE1bnIxMmVFaStub1lOSTk2QUNF?=
- =?utf-8?B?MDdlSm5VczJYcTlXSlpwNHV4VGRSenBscko3b2VEbmZidWtrQ3RXRDQyVG5V?=
- =?utf-8?B?d3RhMjlKcTBNSVlBY2NMQXhNVndjbmMrMTJ2dGlGUWFIbTNaNnZuSERSamhh?=
- =?utf-8?B?eXN6Y2dhc0JhS2FvZk9rQU11STlpMldBT0ZFYmZQeEptN3NpWENPR09jYWND?=
- =?utf-8?B?ZnMzNjZyazNFUVJXeHVXRnJ1TWhZWmoySVVvbU9RK3VRUENmNUQ5a2lCaEVM?=
- =?utf-8?B?T3ZmVlViYmg5VU9Zeno5VHhseHpVd3NBK0V1WE9iWVFQQXE5Vjc0c0d5Q3Qy?=
- =?utf-8?B?VTNqOUFjMStlYnp1WkJRcHQvd3VMeEZlRGZha1NtUkRBaXEzTW5BQ3lndjhm?=
- =?utf-8?B?STdPUXU1cDluVGlDVlJPYVN6cGY0dUJodHFFcEFCR3cyZHpFN1NMNCs1TUJr?=
- =?utf-8?B?bXR2UzgybW8rMWx3bkdHNHFMdzF0ekVtNlFidjBaMDhXbDUvL1RNQUlmVEJL?=
- =?utf-8?B?UGFLYnRvQXAxbjBERzVyNFJXUnAxRkxFWmdjd2xnbHN5d0tULzk0U0prK3Zw?=
- =?utf-8?B?NHI1Q2FTYXZUQTBlQXl0bldvNi9VSFBIZHZZVFE2TGlFNWgyOTVoNDJvMTRk?=
- =?utf-8?B?ZDNORzVOaXI0Z2NkajQzOWtqL2Ntd2Z0UUZjcU5mT2VESmZDSW8wcXpjVUpR?=
- =?utf-8?B?YWxtRWJFWnFHRkh0djg2ekRUSUNjb1pDMjQ0RC8rTTFKSFQ1a2RIbzZGZXBy?=
- =?utf-8?B?QTlGdU5FNkdRRXI5MjZQcXBPU21UcEwzSXoxYUdjVWNHMzlLR1ZvM0R3ZThE?=
- =?utf-8?B?dHNhRTdRQ0VQTkVSYTkrb3EvaFhoZjVDUXhadmRrRWFMQ2NZMHQzVmk4MDNr?=
- =?utf-8?Q?G1XMqWRMRPrMneknQ7xZeeUrnyuIlCiYgDl8mRse/RwV?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ef827ab-9e69-4ba6-ab49-08ddcbeec2e9
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2025 02:47:29.8939
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7ldtPqtjCTMFNh1iiZ+bD7wCPOCX6CSMH5hm+LJgq/jvduQxNcSNuoE65Aja2MGS1sCuJL64KDezXoX+/QQ08w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6852
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Every type that implements `AsBytes` should be able to provide its byte
-representation. Introduce the `as_bytes` method that returns the
-implementer as a stream of bytes, and provide a default implementation
-that should be suitable for any type that satisfies `AsBytes`'s safety
-requirements.
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-This is the sister patch of [1], providing an `as_bytes` method for
-`AsBytes`.
 
-It is going to be used in Nova, but should also be universally useful -
-if anything, it felt a bit strange that `AsBytes` did not provide this
-method so far.
+On July 25, 2025 8:08:42 AM PDT, ALOK TIWARI <alok=2Ea=2Etiwari@oracle=2Ec=
+om> wrote:
+>
+>> +/*
+>> + * Platform driver for Ayn x86 Handhelds=2E
+>> + *
+>> + * Implements multiple attributes provided by the EC=2E Fan reading an=
+d control,
+>> + * as well as temperature sensor readings are exposed via hwmon sysfs=
+=2E EC RGB
+>> + * control is exposed via an led-class-multicolor interface=2E
+>> + *
+>> + * Fan control is provided via a pwm interface in the range [0-255]=2E=
+ Ayn use
+>> + * [0-128] as the range in the EC, the written value is scaled to acco=
+mmodate=2E
+>> + * The EC also provides a configurable fan curve with five set points =
+that
+>> + * associate a temperature in Celcius [0-100] with a fan speed [0-128]=
+=2E The
+>> + * auto_point fan speeds are also scaled from the range [0-255]=2E Tem=
+perature
+>> + * readings are scaled from degrees to millidegrees when read=2E
+>> + *
+>> + * RGB control is provided using 4 registers=2E One each for the color=
+s red,
+>> + * green, and blue are [0-255]=2E There is also a effect register that=
+ takes
+>> + * switches between an EC controlled breathing that cycles through all=
+ colors
+>> + * and fades in/out, and manual, which enables setting a user defined =
+color=2E
+>> + *
+>> + * Copyright (C) 2025 Derek J=2E Clark <derekjohn=2Eclark@gmail=2Ecom>
+>> + */
+>> +
+>[clip]
+>> +		if (val < 0 || val > 255)
+>> +			return -EINVAL;
+>> +		val =3D val >> 1; /* Max EC value is 128, scale from 255 */
+>> +		break;
+>> +	case 5:
+>> +	case 6:
+>> +	case 7:
+>> +	case 8:
+>> +	case 9:
+>> +		if (val < 0 || val > 100)
+>> +			return -EINVAL;
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	ret =3D write_to_ec(reg, val);
+>> +	if (ret)
+>> +		return ret;
+>> +	return count;
+>> +}
+>> +
+>> +/**
+>> + * pwm_curve_show() - Read a fan curve speed or temperature value=2E
+>> + *
+>> + * @dev: The attribute's parent device=2E
+>> + * @attr: The attribute to read=2E
+>> + * @buf: Buffer to read to=2E
+>
+>"to read to" is awkward
+>Output buffer=2E
+>
+>> + *
+>> + * Return: Number of bytes read, or an error=2E
+>> + */
+>> +static ssize_t pwm_curve_show(struct device *dev, struct device_attrib=
+ute *attr,
+>> +			      char *buf)
+>> +{
+>> +	int i, ret;
+>> +	long val;
+>> +	u8 reg;
+>> +
+>> +	i =3D to_sensor_dev_attr(attr)->index;
+>> +	switch (i) {
+>> +	case 0:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_SPEED_1_REG;
+>> +		break;
+>> +	case 1:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_SPEED_2_REG;
+>> +		break;
+>> +	case 2:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_SPEED_3_REG;
+>> +		break;
+>> +	case 3:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_SPEED_4_REG;
+>> +		break;
+>> +	case 4:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_SPEED_5_REG;
+>> +		break;
+>> +	case 5:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_TEMP_1_REG;
+>> +		break;
+>> +	case 6:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_TEMP_2_REG;
+>> +		break;
+>> +	case 7:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_TEMP_3_REG;
+>> +		break;
+>> +	case 8:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_TEMP_4_REG;
+>> +		break;
+>> +	case 9:
+>> +		reg =3D AYN_SENSOR_PWM_FAN_TEMP_5_REG;
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	ret =3D read_from_ec(reg, 1, &val);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	switch (i) {
+>> +	case 0:
+>> +	case 1:
+>> +	case 2:
+>> +	case 3:
+>> +	case 4:
+>> +		val =3D val << 1; /* Max EC value is 128, scale to 255 */
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	return sysfs_emit(buf, "%ld\n", val);
+>> +}
+>> +
+>> +/* Fan curve attributes */
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point1_pwm, pwm_curve, 0);
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point2_pwm, pwm_curve, 1);
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_pwm, pwm_curve, 2);
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_pwm, pwm_curve, 3);
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_pwm, pwm_curve, 4);
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point1_temp, pwm_curve, 5);
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point2_temp, pwm_curve, 6);
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_temp, pwm_curve, 7);
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_temp, pwm_curve, 8);
+>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_temp, pwm_curve, 9);
+>> +
+>> +static struct attribute *ayn_sensors_attrs[] =3D {
+>> +	&sensor_dev_attr_pwm1_auto_point1_pwm=2Edev_attr=2Eattr,
+>> +	&sensor_dev_attr_pwm1_auto_point1_temp=2Edev_attr=2Eattr,
+>> +	&sensor_dev_attr_pwm1_auto_point2_pwm=2Edev_attr=2Eattr,
+>> +	&sensor_dev_attr_pwm1_auto_point2_temp=2Edev_attr=2Eattr,
+>> +	&sensor_dev_attr_pwm1_auto_point3_pwm=2Edev_attr=2Eattr,
+>> +	&sensor_dev_attr_pwm1_auto_point3_temp=2Edev_attr=2Eattr,
+>> +	&sensor_dev_attr_pwm1_auto_point4_pwm=2Edev_attr=2Eattr,
+>> +	&sensor_dev_attr_pwm1_auto_point4_temp=2Edev_attr=2Eattr,
+>> +	&sensor_dev_attr_pwm1_auto_point5_pwm=2Edev_attr=2Eattr,
+>> +	&sensor_dev_attr_pwm1_auto_point5_temp=2Edev_attr=2Eattr,
+>> +	NULL,
+>> +};
+>> +
+>> +ATTRIBUTE_GROUPS(ayn_sensors);
+>> +
+>> +static int ayn_ec_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev =3D &pdev->dev;
+>> +	struct device *hwdev;
+>> +	int ret;
+>
+>ret is unused=2E
+>
+Woops, that should have been part of patch 3=2E
 
-[1] https://lore.kernel.org/rust-for-linux/20250624042802.105623-1-christiansantoslima21@gmail.com/
----
-Changes in v3:
-- Use `ptr::from_ref` instead of `as *const T`.
-- Link to v2: https://lore.kernel.org/r/20250725-as_bytes-v2-1-c6584c211a6c@nvidia.com
+Ack all for 1/4 and 2/4 reviews=2E Thanks=2E
 
-Changes in v2:
-- Use `size_of_val` to provide a default implementation for both `Sized`
-  and non-`Sized` types, and remove `AsBytesSized`. (thanks Alice!)
-- Link to v1: https://lore.kernel.org/r/20250725-as_bytes-v1-1-6f06a3744f69@nvidia.com
----
- rust/kernel/transmute.rs | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Derek
+>> +
+>> +	hwdev =3D devm_hwmon_device_register_with_info(dev, "aynec", NULL,
+>> +						     &ayn_ec_chip_info,
+>> +						     ayn_sensors_groups);
+>> +	return PTR_ERR_OR_ZERO(hwdev);
+>> +}
+>> +
+>> +static struct platform_driver ayn_ec_driver =3D {
+>> +	=2Edriver =3D {
+>> +		=2Ename =3D "ayn-ec",
+>> +	},
+>> +	=2Eprobe =3D ayn_ec_probe,
+>> +};
+>
+>Thanks,
+>Alok
 
-diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
-index 1c7d43771a37b90150de86699f114a2ffb84db91..69c46c19a89191d8a2abc5801564cacda232218c 100644
---- a/rust/kernel/transmute.rs
-+++ b/rust/kernel/transmute.rs
-@@ -47,7 +47,16 @@ macro_rules! impl_frombytes {
- ///
- /// Values of this type may not contain any uninitialized bytes. This type must not have interior
- /// mutability.
--pub unsafe trait AsBytes {}
-+pub unsafe trait AsBytes {
-+    /// Returns `self` as a slice of bytes.
-+    fn as_bytes(&self) -> &[u8] {
-+        let data = core::ptr::from_ref(self).cast::<u8>();
-+        let len = size_of_val(self);
-+
-+        // SAFETY: `data` is non-null and valid for `len * sizeof::<u8>()` bytes.
-+        unsafe { core::slice::from_raw_parts(data, len) }
-+    }
-+}
- 
- macro_rules! impl_asbytes {
-     ($($({$($generics:tt)*})? $t:ty, )*) => {
-
----
-base-commit: 14ae91a81ec8fa0bc23170d4aa16dd2a20d54105
-change-id: 20250725-as_bytes-6cbc11f2e8c3
-
-Best regards,
--- 
-Alexandre Courbot <acourbot@nvidia.com>
-
+- Derek
 
