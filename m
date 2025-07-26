@@ -1,95 +1,78 @@
-Return-Path: <linux-kernel+bounces-746684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356A7B12A0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93306B12A09
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F337C3BBEB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21E0189F0A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA3F23ED6A;
-	Sat, 26 Jul 2025 10:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B89242D67;
+	Sat, 26 Jul 2025 10:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I1PXscW8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UssYt3xG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D17B242D9B;
-	Sat, 26 Jul 2025 10:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC04A23ED6A;
+	Sat, 26 Jul 2025 10:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753525594; cv=none; b=Ef5FkKbHxVrnRfQx3Sz0UfB9QBp5666GTDhWUYpPI8KscCc0Sd5pg0kzWnfPMoGfMTkQNHQN2MNa4PvEK9h9sXcVlgvsAOysT1tlTOEdw+Q2LdQcxlolk0xxeeDLec8Ld6CKVFARBCjnopOERXPTm+wBtnqb2jvdmjrLDlNuA1s=
+	t=1753525591; cv=none; b=obQpH0UGIUvynWXYycaVDTTC4Optjsis6gM69tkbt2MdeyvvNoHVuZpWYSUAjohSQGpbeI+8aiUXBCd19QVg9eoDls9eK49XtRkAt5zmFZUwyrNC826XNuCLzyrwJ9AZ+M27vhVlNFPSUPURYpIemH/ADbIBzSaDEwPE6/0CQmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753525594; c=relaxed/simple;
-	bh=0t2t5gOaH4FT/nkKwfR5kcbQmx/FGJLG1SNJAyN3m2w=;
+	s=arc-20240116; t=1753525591; c=relaxed/simple;
+	bh=rdLbrjse36XtzLBFRtpD0P4XKQsz7lIV+X4u+ba+Dm8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MQn3zEsHj7aZl1SieqzJLY2OBNCNBIiVubsEluL3Q05mKkd6443LGxF83PH5eALSqZpmAzDEDBmq3YKolcHMMYR4Ga4gQsEOx2Cb62UyH0KmagZv8KvdAHps1rcekfYvEpnbio7qz4XsB/0XNXOY0/Ia+lGq5wc4paBJVXa3xBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I1PXscW8; arc=none smtp.client-ip=192.198.163.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=cLoZOjGb/TGGfQRz8bsL7ATs2ot/3ioIQ7PeATqgUITuRm3Fvyw48TqTFa5pa+qFkQx799A0s4Ok+rfrXiXhpUZWeu9y7APxPWpwvhZKpI5b+xDgZbC1gm44aaSjkJorFn2IkkuA4ADyEmVEgEMg3pM7TPVi9nQsPHrYTWJMng4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UssYt3xG; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753525593; x=1785061593;
+  t=1753525590; x=1785061590;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=0t2t5gOaH4FT/nkKwfR5kcbQmx/FGJLG1SNJAyN3m2w=;
-  b=I1PXscW8EZoyrpdCJIBWBkl8wlTBdw57/1HRk19P6sPNemQnHyO5pbLm
-   WTY4dylMI02cilmuZBvyVOChX75ZXiKRFOAGqvzSPYum240pAQlcLrT3n
-   TXNFxZEsdIkEZhWqA8zpfsv5ppzKWKJUu/dV862scl8wcMGcRtU0IbGFB
-   2QCUScaWjAAoA2/7wPtIGQOAxGZKuQtuIjj3mh1MIyVmEJ+3nAc/sG326
-   IB/WQ8LqMkEtByqTJULNMe552Vbe3RqadoIRRH2952ZcGel1TnGURyKn8
-   1xhlgEsONiRXhqlzMxVpIibhMyIA4Qsiq2DVd3nBwwX/wPAdioK/KXWXQ
-   w==;
-X-CSE-ConnectionGUID: yQPDvoUeRNmKB4Kgrm8sJQ==
-X-CSE-MsgGUID: 6yxD9Vy7QIap+AlkZdikCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="55996073"
+  bh=rdLbrjse36XtzLBFRtpD0P4XKQsz7lIV+X4u+ba+Dm8=;
+  b=UssYt3xGXiTV0WGlfxWikD0ZjnLfa/lklrIaklazaAdFQjImSbAPfqtJ
+   CL7j9UL/V07wf8Pqui4dNKR44pqFJ13pPJm+V6KKLVT0ooZxxcj64Ajl5
+   sbUgr3Hn2MRQ8x54O5QxZkzhh5gH7/NxXImSjmBBxRsfT8MKoNzgSjfJE
+   Mjs8AVjDbxrepF1DdThkYwzKpxzHP2QnF1SxxXR9ePLWWOVsmBY+vPd73
+   2Amx159uM0po7rWWFc+eJMebFmHTh7qLbtD/07tG1VdQ1WQFkgFoo4nfl
+   W4348nmsKigyycqvLjY78Ut/hbfcQ6j3XY7RS9s2Fhc+/6QjlCtry/3eU
+   A==;
+X-CSE-ConnectionGUID: 5sQAUelwQCafEds76BbvSA==
+X-CSE-MsgGUID: ffsd8rUsQR2qKQkMcSPYEg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="59497447"
 X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="55996073"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 03:26:32 -0700
-X-CSE-ConnectionGUID: MSiKk5w8SaOgVodEbqULPQ==
-X-CSE-MsgGUID: 1oGAlqsQQqezTwykz+547w==
+   d="scan'208";a="59497447"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 03:26:29 -0700
+X-CSE-ConnectionGUID: /9KvRXspRjO1plGsRBv9Tw==
+X-CSE-MsgGUID: lo/mTwlERoGabMdfexlmsA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="192406726"
+   d="scan'208";a="185142011"
 Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 26 Jul 2025 03:26:27 -0700
+  by fmviesa002.fm.intel.com with ESMTP; 26 Jul 2025 03:26:26 -0700
 Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1ufc6h-000LsF-32;
+	id 1ufc6h-000Ls7-2K;
 	Sat, 26 Jul 2025 10:26:23 +0000
-Date: Sat, 26 Jul 2025 18:26:11 +0800
+Date: Sat, 26 Jul 2025 18:26:12 +0800
 From: kernel test robot <lkp@intel.com>
-To: Joris Verhaegen <verhaegen@google.com>, Vinod Koul <vkoul@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Joris Verhaegen <verhaegen@google.com>,
-	kernel-team@android.com, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-	linux-arm-msm@vger.kernel.org, sound-open-firmware@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	Miller Liang <millerliang@google.com>
-Subject: Re: [PATCH v3 1/3] ALSA: compress_offload: Add 64-bit safe timestamp
- infrastructure
-Message-ID: <202507261801.Ma45NLlT-lkp@intel.com>
-References: <20250725114249.2086974-2-verhaegen@google.com>
+To: Victor Shih <victorshihgli@gmail.com>, ulf.hansson@linaro.org,
+	adrian.hunter@intel.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com,
+	ben.chuang@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw,
+	Victor Shih <victorshihgli@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] mmc: sdhci-pci-gli: Add a new function to
+ simplify the code
+Message-ID: <202507261828.pgCE5fRD-lkp@intel.com>
+References: <20250725105257.59145-2-victorshihgli@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,62 +81,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250725114249.2086974-2-verhaegen@google.com>
+In-Reply-To: <20250725105257.59145-2-victorshihgli@gmail.com>
 
-Hi Joris,
+Hi Victor,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on tiwai-sound/for-next]
-[also build test ERROR on tiwai-sound/for-linus linus/master v6.16-rc7 next-20250725]
-[cannot apply to broonie-sound/for-next]
+[auto build test ERROR on linus/master]
+[also build test ERROR on ulf-hansson-mmc-mirror/next v6.16-rc7 next-20250725]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joris-Verhaegen/ALSA-compress_offload-Add-64-bit-safe-timestamp-infrastructure/20250725-194613
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-patch link:    https://lore.kernel.org/r/20250725114249.2086974-2-verhaegen%40google.com
-patch subject: [PATCH v3 1/3] ALSA: compress_offload: Add 64-bit safe timestamp infrastructure
-config: loongarch-randconfig-001-20250726 (https://download.01.org/0day-ci/archive/20250726/202507261801.Ma45NLlT-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250726/202507261801.Ma45NLlT-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Victor-Shih/mmc-sdhci-pci-gli-Add-a-new-function-to-simplify-the-code/20250725-185611
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250725105257.59145-2-victorshihgli%40gmail.com
+patch subject: [PATCH V2 1/2] mmc: sdhci-pci-gli: Add a new function to simplify the code
+config: i386-buildonly-randconfig-001-20250726 (https://download.01.org/0day-ci/archive/20250726/202507261828.pgCE5fRD-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250726/202507261828.pgCE5fRD-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507261801.Ma45NLlT-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507261828.pgCE5fRD-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
->> sound/soc/sof/sof-client-probes.c:156:20: error: initialization of 'int (*)(struct snd_compr_stream *, struct snd_compr_tstamp64 *, struct snd_soc_dai *)' from incompatible pointer type 'int (*)(struct snd_compr_stream *, struct snd_compr_tstamp *, struct snd_soc_dai *)' [-Wincompatible-pointer-types]
-     156 |         .pointer = sof_probes_compr_pointer,
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~~
-   sound/soc/sof/sof-client-probes.c:156:20: note: (near initialization for 'sof_probes_compr_ops.pointer')
-   sound/soc/sof/sof-client-probes.c:139:12: note: 'sof_probes_compr_pointer' declared here
-     139 | static int sof_probes_compr_pointer(struct snd_compr_stream *cstream,
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~
---
->> sound/soc/intel/avs/probes.c:260:20: error: initialization of 'int (*)(struct snd_compr_stream *, struct snd_compr_tstamp64 *, struct snd_soc_dai *)' from incompatible pointer type 'int (*)(struct snd_compr_stream *, struct snd_compr_tstamp *, struct snd_soc_dai *)' [-Wincompatible-pointer-types]
-     260 |         .pointer = avs_probe_compr_pointer,
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~
-   sound/soc/intel/avs/probes.c:260:20: note: (near initialization for 'avs_probe_cdai_ops.pointer')
-   sound/soc/intel/avs/probes.c:215:12: note: 'avs_probe_compr_pointer' declared here
-     215 | static int avs_probe_compr_pointer(struct snd_compr_stream *cstream,
-         |            ^~~~~~~~~~~~~~~~~~~~~~~
+   drivers/mmc/host/sdhci-pci-gli.c: In function 'sdhci_gli_mask_replay_timer_timeout':
+>> drivers/mmc/host/sdhci-pci-gli.c:296:39: error: 'pdev' undeclared (first use in this function); did you mean 'dev'?
+     296 |         aer = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ERR);
+         |                                       ^~~~
+         |                                       dev
+   drivers/mmc/host/sdhci-pci-gli.c:296:39: note: each undeclared identifier is reported only once for each function it appears in
 
 
-vim +156 sound/soc/sof/sof-client-probes.c
+vim +296 drivers/mmc/host/sdhci-pci-gli.c
 
-3dc0d709177828 Peter Ujfalusi 2022-02-10  150  
-3dc0d709177828 Peter Ujfalusi 2022-02-10  151  static const struct snd_soc_cdai_ops sof_probes_compr_ops = {
-3dc0d709177828 Peter Ujfalusi 2022-02-10  152  	.startup = sof_probes_compr_startup,
-3dc0d709177828 Peter Ujfalusi 2022-02-10  153  	.shutdown = sof_probes_compr_shutdown,
-3dc0d709177828 Peter Ujfalusi 2022-02-10  154  	.set_params = sof_probes_compr_set_params,
-3dc0d709177828 Peter Ujfalusi 2022-02-10  155  	.trigger = sof_probes_compr_trigger,
-3dc0d709177828 Peter Ujfalusi 2022-02-10 @156  	.pointer = sof_probes_compr_pointer,
-3dc0d709177828 Peter Ujfalusi 2022-02-10  157  };
-3dc0d709177828 Peter Ujfalusi 2022-02-10  158  
+   288	
+   289	/* Genesys Logic chipset */
+   290	static void sdhci_gli_mask_replay_timer_timeout(struct pci_dev *dev)
+   291	{
+   292		int aer;
+   293		u32 value;
+   294	
+   295		/* mask the replay timer timeout of AER */
+ > 296		aer = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ERR);
+   297		if (aer) {
+   298			pci_read_config_dword(pdev, aer + PCI_ERR_COR_MASK, &value);
+   299			value |= PCI_ERR_COR_REP_TIMER;
+   300			pci_write_config_dword(pdev, aer + PCI_ERR_COR_MASK, value);
+   301		}
+   302	}
+   303	
 
 -- 
 0-DAY CI Kernel Test Service
