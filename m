@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-746842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770B2B12BE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 20:40:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5FCB12BE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 20:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6E2189FE1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:40:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFC2B7A78E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69171289824;
-	Sat, 26 Jul 2025 18:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1633A289353;
+	Sat, 26 Jul 2025 18:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKmuLd9N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTQaIJPs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB75288CAF;
-	Sat, 26 Jul 2025 18:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D3928A1D2;
+	Sat, 26 Jul 2025 18:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753555208; cv=none; b=lHiLqw0suD5tEKTAYcUtAH3mrtDi0hLebVil6O3lhWHx4LmDYDst2tIH9mgBalVVM8aLO4Na9Jt8hb4AWDGqEdL2eET5hhDyIzNA21ty5T7bgRoAouV4NBaoWTh25nBkPkQ4gur/F7hhuBef0TzLVReyWXwN4uayoXUdoNWDdj4=
+	t=1753555211; cv=none; b=YuRpnAWlaRqPS7RtYvgb2p5yjspC1g0GZqYvGjj26qglI9WzxuUDYdvhuPrMF/HEE6h116d4Nu4W3t5w5HS1CdYkjQmJBbv+IktxyaVqpyvoeRKb7wCKHx4hrShJDFA8kI4QJKM6X12dspuXodgRhx6hS4SnC+2E5eYcTyoYHck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753555208; c=relaxed/simple;
-	bh=slhXj9ZnZblb/hPj1KmavhFL4eNp8rvn2VLkAoSF4Yw=;
+	s=arc-20240116; t=1753555211; c=relaxed/simple;
+	bh=jvrPGKTUvVArH86W4xWz6q6UsG6SrpfAbNFhpLXMRh8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GQoP1Dj8eLwtusytMDNXA0UZSJdWcz1GjJOwtyyERuym2x5C7BDtYesNmep/8o0j7OQ9wvIaB+OFmUxUqxL2+oUyTPYmEiaXejX5dyfeH6bGlIPhfKu5Xt3z1kUMRkb47nCxDzGrabFUO1QMokpBX9cPRFcpY2vGdzDeeLz8UhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKmuLd9N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491FAC4CEED;
-	Sat, 26 Jul 2025 18:40:08 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=FcSG2/xufbU5WtLFd1QRKahC8ziKwVwl/Hq0eeTLX/L3Vy0hHwpaSJKTUT2Ve2MrijfZdvhL8L4OtTV81QGjfCamobtEzL/8WJkwlPlo0ciPthT97LOzIL9+8zuPzMmhp4gBMicSGjh8oG7VcqnCPOILnEnvqf99+c4XcR7JKQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTQaIJPs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE597C4CEF1;
+	Sat, 26 Jul 2025 18:40:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753555208;
-	bh=slhXj9ZnZblb/hPj1KmavhFL4eNp8rvn2VLkAoSF4Yw=;
+	s=k20201202; t=1753555211;
+	bh=jvrPGKTUvVArH86W4xWz6q6UsG6SrpfAbNFhpLXMRh8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=aKmuLd9NUEDBWiehiKidDGOLyTaHP+FVIo66IPc6HzY8W6vN7nbDxcVTV6UjD6QR+
-	 8Y3gjMgOc079huDHpqCy9EQaWDHBxDaFalRh9a/vZIc0ZLT0Ul1bdpF9AE8ifcp8iu
-	 usD+328flA76vLtlzQjpvwlDHl8vJE9OfNeJfPdsZ3fCi7u278oeclaW9Vt7kR8EAi
-	 44Kokim/gcAYzLPIO4JT5AV8cwfKUZrXkzqoH3nb3BMbxBWb1P/TQV2ZdGMbRgHdSg
-	 EFEtpibLvQb+4bEttayxLmSgyy4aaV2lCaXQFLMxXWO5Ca9Ig455CnKD8EtMd33Ll3
-	 bq6JQ6Y4r3WUA==
+	b=dTQaIJPs2JDAsnYExKnzPuYISsk8TGEhp2RmehaZA8ajZK5gVdkCPpHe6VKFMC/NA
+	 8690unpEvrmj2jBgoHxwg2UF9VCIUa6ZgmA0qpzDOV9BbeWw1auj3ZpHnyIxmSMtv3
+	 nzoTla48J5TmHDsIEb1KZ1NOFaTdWGbKsa8hlLQtbt9768kuWbGR/tIARl8O9OFn28
+	 d4a6O9rDe/vUGsKH/rymAm0LXm8cdrKMBUwP5+1n2LcPRdrsgL+F3NXmfB6DohnobX
+	 nP5NXGl2O6gdaAl4py5DRZb1pNCSLLNTNiHdPsiZrrUvRk+atVd+qZpe6dKsWyKIn7
+	 DagiwiDzGTgpA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE20D383BF4E;
-	Sat, 26 Jul 2025 18:40:26 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E8B383BF4E;
+	Sat, 26 Jul 2025 18:40:29 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,44 +51,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [RESEND v3 1/1] dt-bindings: ieee802154: Convert at86rf230.txt
- yaml
- format
+Subject: Re: [PATCH 1/1] net: fsl_pq_mdio: use dev_err_probe
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175355522524.3664802.13412387588392922957.git-patchwork-notify@kernel.org>
-Date: Sat, 26 Jul 2025 18:40:25 +0000
-References: <20250724230129.1480174-1-Frank.Li@nxp.com>
-In-Reply-To: <20250724230129.1480174-1-Frank.Li@nxp.com>
-To: Frank Li <Frank.Li@nxp.com>
+ <175355522800.3664802.5999368346638667870.git-patchwork-notify@kernel.org>
+Date: Sat, 26 Jul 2025 18:40:28 +0000
+References: <20250725055615.259945-1-alexander.stein@ew.tq-group.com>
+In-Reply-To: <20250725055615.259945-1-alexander.stein@ew.tq-group.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
 Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- imx@lists.linux.dev
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 24 Jul 2025 19:01:24 -0400 you wrote:
-> Convert at86rf230.txt yaml format.
+On Fri, 25 Jul 2025 07:56:13 +0200 you wrote:
+> Silence deferred probes using dev_err_probe(). This can happen when
+> the ethernet PHY uses an IRQ line attached to a i2c GPIO expander. If the
+> i2c bus is not yet ready, a probe deferral can occur.
 > 
-> Additional changes:
-> - Add ref to spi-peripheral-props.yaml.
-> - Add parent spi node in examples.
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> 
-> [...]
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>  drivers/net/ethernet/freescale/fsl_pq_mdio.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Here is the summary with links:
-  - [RESEND,v3,1/1] dt-bindings: ieee802154: Convert at86rf230.txt yaml format
-    https://git.kernel.org/netdev/net-next/c/d7e0d327805b
+  - [1/1] net: fsl_pq_mdio: use dev_err_probe
+    https://git.kernel.org/netdev/net-next/c/5737383faea3
 
 You are awesome, thank you!
 -- 
