@@ -1,93 +1,205 @@
-Return-Path: <linux-kernel+bounces-746591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60EAB128AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 05:10:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C886B128AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 05:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFA437A9DB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 03:09:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F9627A42AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 03:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EEA1E5B88;
-	Sat, 26 Jul 2025 03:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="fEBgv/hf"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CED81E503D;
+	Sat, 26 Jul 2025 03:14:32 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F4B1E51E0
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 03:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130AA1E412A
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 03:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753499421; cv=none; b=rlc5SmOoQAgz+COxbKuXJ97TfbVzpNW63l3e24x1jNqSldCvshsiEwC3dFCl5RDrfLjLemKWBNtmByiYZHSWS2/vFrFofpBzSSvQhVRnN6t52Q2Zedg9YfSXz0H2frkxqQpk+MWo2LznklQfYNB7cwr1mM/xW/cNO+iOhwbJhMw=
+	t=1753499671; cv=none; b=Mwfu8HaXoes6prnK32uKp3LXd27yBpnNaoGTJCMQL8gVeU/j/mj8lxh1g6UsPVciOlV8+gKYt+aDAuxBzl+td8MurqcmYWfidYRFn4xyxaXWMIzM+00IwzETk8YIhmXSGY5Wf70JhI9tYcXdFEpmCt9lTBMm4nPH2Qgd4U2/xy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753499421; c=relaxed/simple;
-	bh=mAH8Yj6gzn9GcwjVv/hNDs89nxL93fomisgORjn0VKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcID2+58tz80nIqJmhVlr+rUmQvID3ULIv5vdTkLTVDI1T78qT7J3XNhTFXROC//rC5v1VoetbvRiAc5wAtsy83P8hewn8fpcNI1fE9KXlqfgyiAbU7AYulVZNuwP2oN+Gh3H/bC+Z8JtSiMOlTj1kelpRJTsVlYdnh9MQjsAPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=fEBgv/hf; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-116-187.bstnma.fios.verizon.net [173.48.116.187])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56Q39KIo000331
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 23:09:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1753499364; bh=YSr4qw00KAYudz4+C02hI1TeYU9XzzWkEqDLG4aNg/o=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=fEBgv/hfDiz9k0zx4fEMSQqZ6sJld0+33wK3VMjWUjz7n1wYxFXnduydaF2EplDdo
-	 0i9vug5O6crwlFPSYYuW+xPPTp/LTkKSFfvR2Fw2V7aGN0hBoJV2C3VdV7SuuPrCsf
-	 Vj07oRl2gHsFqo9b/RpWayhRr4qkOLZnXMd3qru53LxOpp5mQy0WDUjZDHpPIoxlTn
-	 hwGsgoFSDQa7skJ00/owq0lNe1741TY86TnV1BxCPgl8lRYxMbAupJLG4Sal91793L
-	 6lsHOB/V0O7VGUA6+o/eGMXVV4HOfCgVzOG0XepwGk/g8tHwUfHLJt+dQKdckFE7ZZ
-	 G6gB81760QUNA==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id E441F2E00D6; Fri, 25 Jul 2025 23:09:19 -0400 (EDT)
-Date: Fri, 25 Jul 2025 23:09:19 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, linux@roeck-us.net,
-        yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
-        yangerkun@huawei.com
-Subject: Re: [PATCH] ext4: fix crash on test_mb_mark_used kunit tests
-Message-ID: <20250726030919.GA273706@mit.edu>
-References: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
- <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
- <20250725131541.GA184259@mit.edu>
- <2f53f9a8-380a-4fe4-8407-03d5b4e78140@huaweicloud.com>
+	s=arc-20240116; t=1753499671; c=relaxed/simple;
+	bh=PXOmPmOIuPV6jG6NLMOF//C5D3ADCH0pr64KuDzWutw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ghXoQUanhliDY9WuwtJmgssB5NMsXPz0RmdgZsUscM3zWkYu5I3weeOVzpXMe5DA1F75zNAiYPtkFFPycXhiXfQ1A8hCsKGTeZhYftkpq8ZwnFX8A0tA2gaCp+f4Szy2qP9Wvs7KTOruEvdbwQhelDzJ6S1UIC8DxWNSkO/T59o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bpqZ52ypfztSkl;
+	Sat, 26 Jul 2025 11:13:17 +0800 (CST)
+Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
+	by mail.maildlp.com (Postfix) with ESMTPS id E666B18047C;
+	Sat, 26 Jul 2025 11:14:20 +0800 (CST)
+Received: from [10.174.176.250] (10.174.176.250) by
+ dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 26 Jul 2025 11:14:20 +0800
+Message-ID: <527714dd-0e33-43ab-bbbd-d89670ba79e7@huawei.com>
+Date: Sat, 26 Jul 2025 11:14:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f53f9a8-380a-4fe4-8407-03d5b4e78140@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/damon: add full LPAE support for memory monitoring
+ above 4GB
+To: SeongJae Park <sj@kernel.org>, zuoze <zuoze1@huawei.com>
+CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<wangkefeng.wang@huawei.com>
+References: <20250725202230.49995-1-sj@kernel.org>
+From: Quanmin Yan <yanquanmin1@huawei.com>
+In-Reply-To: <20250725202230.49995-1-sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf200018.china.huawei.com (7.185.36.31)
 
-On Sat, Jul 26, 2025 at 09:42:37AM +0800, Zhang Yi wrote:
-> > In the future, we should try to make sure that when we modify data
-> > structures to add or remove struct elements, that we also make sure
-> > that kunit test should also be updated.
-> 
-> Yes, currently in the Kunit tests, the initialization and maintenance
-> of data structures are too fragmented and fragile, making it easy to
-> overlook during modifications. In the future, I think we should provide
-> some general interfaces to handle the initialization and
-> deinitialization of those data structures.
 
-Yes. I was thinking similar thoughts; perhap some of the structure
-initialization should be refactored and put in mballoc.c instead of
-mballoc-test.c.  Even if we have to have some #ifdef
-CONFIG_EXT4_KUNIT_TESTS so that some of the test mocks are in same
-place that the structure manipulation functions in a single file.
+在 2025/7/26 4:22, SeongJae Park 写道:
+> On Fri, 25 Jul 2025 11:15:22 +0800 zuoze <zuoze1@huawei.com> wrote:
+>
+>>
+>> 在 2025/4/23 1:43, SeongJae Park 写道:
+>>> On Tue, 22 Apr 2025 19:50:11 +0800 zuoze <zuoze1@huawei.com> wrote:
+>>>
+>>> [...]
+>>>> Thanks for the patches - I’ve noted the RFC series and user-space
+>>>> updates. Apologies for the delay; I’ll prioritize reviewing these soon
+>>>> to verify they meet the intended tracking goals. Appreciate your
+>>>> patience.
+>>> No worry.  Please take your time and let me know if there is anything I can
+>>> help.
+>>>
+>>> I think we can improve the user-space tool support better for usability.  For
+>>> example, it could find LPAE case, set addr_unit parameter, and convert
+>>> user-input and output address ranges on its own.  But hopefully the current
+>>> support allows simple tests of the kernel side change, and we could do such
+>>> improvement after the kernel side change is made.
+>>>
+>>>
+>> Hi SJ,
+>>
+>> Apologies for the delayed response. We've verified your patch in our
+>> environment and confirmed it supports LPAE address monitoring.
+> No worry, thank you for testing that :)
+>
+>> However,
+>> we observed some anomalies in the reclaim functionality. During code
+>> review, we identified a few issues:
+>>
+>> The semantic meaning of damon_region changed after addr_unit was
+>> introduced. The units in damon_addr_range may no longer represent bytes
+>> directly.
+> You're right, and this is an intended change.
+>
+>> The size returned by damon_sz_region() now requires multiplication by
+>> addr_unit to get the actual byte count.
+> Again, this is an intended change.  damon_sz_region() callers should aware this
+> semantic and updated accordingly, if it could make a real problem otherwise.
+> If you found such changes required cases that this patch series is missing,
+> could you please list up?
+>
+>> Heavy usage of damon_sz_region() and DAMON_MIN_REGION likely requires
+>> addr_unit-aware adjustments throughout the codebase. While this approach
+>> works, it would involve considerable changes.
+> It has been a while since I wrote this patch series, but at least while writing
+> it, I didn't find such required changes.  Of course I should missed something,
+> though.  As I mentioned above, could you please list such changes required
+> parts that makes problem?  That would be helpful at finding the path forward.
+>
+>> What's your perspective on
+>> how we should proceed?
+> Let's see the list of required additional changes with why those are required
+> (what problems can happen if such chadnges are not made), and discuss.
 
-      	       		 	      		- Ted
-						
+Hi SJ,
+
+Thank you for your email reply. Let's discuss the impacts introduced after
+incorporating addr_unit. First of all, it's essential to clarify that the
+definition of damon_addr_range (in damon_region) has changed, we will now use
+damon_addr_range * addr_unit to calculate physical addresses.
+
+I've noticed some issues, in mm/damon/core.c:
+
+  damos_apply_scheme()
+      ...
+      unsigned long sz = damon_sz_region(r);  // the unit of 'sz' is no longer bytes.
+      ...
+      if (c->ops.apply_scheme)
+          if (quota->esz && quota->charged_sz + sz > quota->esz)
+              sz = ALIGN_DOWN(quota->esz - quota->charged_sz,
+                      DAMON_MIN_REGION);  // the core issue lies here.
+          ...
+          quota->charged_sz += sz;    // note the units.
+      ...
+      update_stat:
+          // 'sz' should be multiplied by addr_unit:
+          damos_update_stat(s, sz, sz_applied, sz_ops_filter_passed);
+
+Currently, DAMON_MIN_REGION is defined as PAGE_SIZE, therefore aligning
+sz downward to DAMON_MIN_REGION is likely unreasonable. Meanwhile, the unit
+of sz in damos_quota is also not bytes, which necessitates updates to comments
+and user documentation. Additionally, the calculation involving DAMON_MIN_REGION
+requires reconsideration. Here are a few examples:
+
+  damos_skip_charged_region()
+      ...
+      sz_to_skip = ALIGN_DOWN(quota->charge_addr_from -
+                      r->ar.start, DAMON_MIN_REGION);
+      ...
+      if (damon_sz_region(r) <= DAMON_MIN_REGION)
+                      return true;
+      sz_to_skip = DAMON_MIN_REGION;
+
+  damon_region_sz_limit()
+        ...
+      if (sz < DAMON_MIN_REGION)
+          sz = DAMON_MIN_REGION;
+
+Now I can think of two approaches, one is to keep sz in bytes, this requires
+modifications to many other call sites that use these two functions (at least
+passing the corresponding ctx->addr_unit. By the way, should we restrict the
+input of addr_unit?):
+
+  damos_apply_scheme()
+      ...
+  -    unsigned long sz = damon_sz_region(r);
+  +    unsigned long sz = damon_sz_region(r) * c->addr_unit;
+      ...
+  -    damon_split_region_at(t, r, sz);
+  +    damon_split_region_at(t, r, sz / c->addr_unit);
+
+The second approach is to divide by addr_unit when applying DAMON_MIN_REGION,
+and revert to byte units for statistics, this approach seems to involve
+significant changes as well:
+
+  damos_apply_scheme()
+      ...
+      sz = ALIGN_DOWN(quota->esz - quota->charged_sz,
+  -                    DAMON_MIN_REGION);
+  +                    DAMON_MIN_REGION / c->addr_unit);
+      ...
+  update_stat:
+  -    damos_update_stat(s, sz, sz_applied, sz_ops_filter_passed);
+  +    damos_update_stat(s, sz, sz_applied * c->addr_unit, sz_ops_filter_passed);
+
+These are my observations. What's your perspective on how we should proceed? Looking
+forward to your reply.
+
+Thanks,
+Quanmin Yan
+
+>
+>
+> Thanks,
+> SJ
+>
+> [...]
 
