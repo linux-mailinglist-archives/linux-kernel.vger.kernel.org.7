@@ -1,114 +1,148 @@
-Return-Path: <linux-kernel+bounces-746555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33959B12832
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:40:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75A2B12834
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CBF51C22523
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FABF3AD65A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E2515746E;
-	Sat, 26 Jul 2025 00:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6073D1547CC;
+	Sat, 26 Jul 2025 00:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DMy1RK62"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EvfJPXFb"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B34129E6E
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 00:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CEB129E6E
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 00:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753490429; cv=none; b=sV2lB5ZVcXbb79cottil5aEoMLZSKJqDaMx56ZvxglDx0d6yaS1m2BL+75w3vK+jJrEwVS68DCJx6M5uSexdghC/aXuy7SaCly7aGmUt1uzZVJApFw0Qe6WWPMpfyto3Ay/L97UvIPLx054qKCnI4xPXS7g8Bx05ImXBa7bTqwQ=
+	t=1753490533; cv=none; b=ubmFw4mAF81o815vSr1dbf/Dg8X+b3TvrVW7WuzKsYrXsdTxLsuWplC0nYigstBQ7SkeJyNHlgwI3Fk6mBJlFPFx2yFcpWO0LnHICRBA/FMAxfXF4g4TykMGYK2vKPkcjF7uyNK9kdfsfbIn5Ub0Uoxg7Dv/2fSwJEAbBy4X+6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753490429; c=relaxed/simple;
-	bh=n8D/edGFZL/hgNbZYwUtmezqHxp9oRlZEQVwjzRgobQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tjVPjLlKJ6p4yvtJE63uxK3A/SFUGkEZA12WAqr1/VTohDP4XRAjqtxN7AQO2ImJcMbDDnmDJATO/LolhF1OZiXthOUvzS58S3iBgoYkiSnO73ApvqW0dF4KnD+r7FBK7M4+dPQyiSEwy8Ly0dTSsHCSGgY77BM78o1S/OT2920=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DMy1RK62; arc=none smtp.client-ip=209.85.210.202
+	s=arc-20240116; t=1753490533; c=relaxed/simple;
+	bh=i2KMGB5jXlYrZOEVyEEtlYkBMWkUvJBvYvMLMWjqryY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MVcDYr9P4zcjpl+MoPYsBBOwqi7I3lRqso1r+V9FCYsOPhGHnHPoIuMYpncmBmwAukuIxKo5Vzt2AXY19A1VJDz8siVmaR8v8DmvVHasOSEz4CSi/B2TdIXoBai/2TSTSQg8PoXWJg07jpmAsy58yR9oI1SxerkvicQvIb4y0BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EvfJPXFb; arc=none smtp.client-ip=209.85.222.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748f13ef248so2541860b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:40:27 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-87f161d449dso1724536241.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:42:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753490427; x=1754095227; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9Zqr8X01SGutVjV/XNi7iN/97nh5Gk7Veb9QakNbtvc=;
-        b=DMy1RK62tQPnRAgekk7WhgdtAX1l/XVigu2kmRxQCUGSpm6RU2e7WRRjsruS/swRy7
-         l++hEVQ1NhI2AuMJBoeahRo/tQsLXHcjjSbs3tahT6myVe5gkxfabWdYLIMiY2QyZIbx
-         HHlmA2oYBRafDPaOH6i6B6S+oKTJPnt9obQxrJOGOP/roqOZManW5E5mZyuzYa08TN96
-         0QDJl5raj8JbglyqAWlb3RxzB4IIRBOCH+X6/CTUmwMRUWT8+mOQUOclFXDkpF4jHomU
-         m7+z34z/SsEwFciZ/Czo4Wu1KVteVaNk/5Q6JDIzk9tPpKOZn3TzAkUDLXM1Vu271/ur
-         QTEA==
+        d=google.com; s=20230601; t=1753490531; x=1754095331; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i2KMGB5jXlYrZOEVyEEtlYkBMWkUvJBvYvMLMWjqryY=;
+        b=EvfJPXFb+WTFp+kudxv6YHLf0TPkAJgThkffhKdWGbmjz30u3nn9Zduz8zDqdlAlOM
+         j84jklBeCiSyQDNfKpHoY5KNobAq6ly+8cqJzhXgfvrDLMLhOd5Q5uKfRcYjfGDNgRZz
+         ogAL316jEF7qhlCIN0GxRdmjwnvYEup+IgHiRL5ctFSsMTZL6akOHKtSdMMO4JJiCdIV
+         TvRPGEx/yWQS5hFrEuaWpx/B5s5KwO9XHoz3ODbAkAPDR5f8SRt3NE8Jincs43nR3SAU
+         WYSMBjATDMryH65U06Fb6gbmMPWUSEXJolRVXv+99OhwGwr47TCESyJEYVYy555ouxuH
+         U7ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753490427; x=1754095227;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Zqr8X01SGutVjV/XNi7iN/97nh5Gk7Veb9QakNbtvc=;
-        b=nMJHKxekMsP7pvSdwTBhRM8HRzydhrbrLGXk6YOLZ3Nu0OlgwOnVLhZ6i+C69T3I3H
-         zjJVXY5d7nNgaLTJEMJ5QVXxI9ZbGob9i0uC7YLS45Buf4RjKWE1QEkIjFuHayrVgCJU
-         DrIJfm5ByVkhilnyPmtNac/apXU8E+hL0rQQABs6Rj65dH4k5kCp1iu2N+0IeoZKexw7
-         o3GmHVJWaWa8svY5s0rY0N6FJel1VZJLqA3YCbmjzhXAkBbUMDeblk4NgAhxqVNYkn05
-         8iN9p9mdvlCl0qHtz6CNQocKQ7RZwena8+3vfW2rtBTwGy0EeLpBWG4ozsZsA58Y6dcM
-         opRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVJXXKgvBA1VoRPuSkDI9F5EI+pit6g3qIkxLwjv49KI9Fv8Ac2dFIwBTr1Va+7pgF5y26r1gQToItUek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdSk2joCQxGx+rrtELEYb3xxxk+KBSeQgkXw9eHqT5aV6UXCif
-	R4p+IdtahMrnd7aXvqYsIsk3M6LqvYbBi7EPE4rcO+hd+RRB3CYb9roFCaQE1Sa67QzpHk6ig7x
-	kj8Wc473JQW1cdqQel/nF3Q==
-X-Google-Smtp-Source: AGHT+IGSoo8WdGl+OGvbRnbs0+/8TM4wBhGm55waZ4GSl0VDmPb7RoWgx3X4IQSiC2YjsJugCZwIw0DRLCTKodF2
-X-Received: from pfau2.prod.google.com ([2002:a05:6a00:aa82:b0:748:34d:6d4f])
- (user=blakejones job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:1953:b0:748:2cbb:be45 with SMTP id d2e1a72fcca58-7633583028dmr5161224b3a.15.1753490427032;
- Fri, 25 Jul 2025 17:40:27 -0700 (PDT)
-Date: Fri, 25 Jul 2025 17:40:23 -0700
+        d=1e100.net; s=20230601; t=1753490531; x=1754095331;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i2KMGB5jXlYrZOEVyEEtlYkBMWkUvJBvYvMLMWjqryY=;
+        b=lFvxfs+tv2O4K3JOp1j6pRu9Oe5YApR9cjrtLQfO963xQaDp150OOre6tsVQOHgPY0
+         6ae5UL87fSPt7377KVkmXZN7xSJIyGy9btZfgK0n6BoJvkGi1Z9IZ68XgzCrAASPby6O
+         6CIkgQ2h6lFELqsHkEWcAxVzkV4N9y4Ec7nfipSKr0rFBrhCTGAMniITZ8ljHWPF0HoN
+         X/l2gC3Muv5d10YU/pQX3McOOwmi2u9kezDyrtYsVvNTAVM1loHWmZJ3qo9telBPvJ9p
+         vqWMyQYyVXdLUdkO+60RoewIrQdrawB9dB+266QBvkkKdPmRnnMzIObiINLAtborVNrG
+         APdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwZ9OM/nNQUIzmrVDG6I4IRrxCz+XEjGxytKgEHDqms55Sr78qfNyjQoE1feYUi2fxchOckET7oKfthsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhBuH9RJpGduh0AIE6whSmF/QgCAHvRQnvhdIeqBkwILW5cN3W
+	Uqv7yHbyxOQA0wl0+Or5WWE/XxpRDOCgv/nm8QD4K2ZbdbfdSpPbR5ib3Uq1fqxPkqSVLwSOTGp
+	5yZ09zLtVYqGEv95/JTOk3DZekbsuuNOcX01orYs9
+X-Gm-Gg: ASbGncvzY1ti4kpQ280avikhqYFUiaE22aQWR6SAahK78YXijLUosRix22zt+SqP4fQ
+	d0t+DpXQVS0sbzVw9eGn2Pga6MNOJIuTrSuvlxA34GuGaJ1kjWJtnTqU+qUl5Znkew9zBUwRKMS
+	jIofFKIzF1ntUvAYDd1MjqF+8SCq/Uk2GRSqKthCQOq3MBJpbxxVXIwzeRbENHECtt0vOIFeebl
+	TrnXj0=
+X-Google-Smtp-Source: AGHT+IHrA3GZZD0wwju8aMv9Qz7fcPczk9FABOxxb3E5ADsq04AqPwLpKjr7JRvL4/0iuqFoC974FPIiSp+z8XfswSE=
+X-Received: by 2002:a05:6102:8087:b0:4e9:c652:6a1e with SMTP id
+ ada2fe7eead31-4fa3fa67872mr2000007137.3.1753490530877; Fri, 25 Jul 2025
+ 17:42:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
-Message-ID: <20250726004023.3466563-1-blakejones@google.com>
-Subject: [PATCH] Fix comment ordering.
+MIME-Version: 1.0
+References: <20250605233934.1881839-1-blakejones@google.com>
+ <20250605233934.1881839-5-blakejones@google.com> <CAP-5=fVX_Qohsf=f=-fR8mYsTq4zitURit2=4BYyD5HPJHOT7Q@mail.gmail.com>
+ <CAP_z_Cjuh9HJvcnsARaX-QUwDMbRPMDr9AtxbBxYUR_BTSzwCg@mail.gmail.com> <CAP-5=fWuU8Xhzvjx8FgQpOJCJXewOw9S3Vdm+aXYgw64bsq0UA@mail.gmail.com>
+In-Reply-To: <CAP-5=fWuU8Xhzvjx8FgQpOJCJXewOw9S3Vdm+aXYgw64bsq0UA@mail.gmail.com>
 From: Blake Jones <blakejones@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Blake Jones <blakejones@google.com>, 
-	Collin Funk <collin.funk1@gmail.com>, James Clark <james.clark@linaro.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
+Date: Fri, 25 Jul 2025 17:41:59 -0700
+X-Gm-Features: Ac12FXz0LtMLKb3jLJLRjLCQ4NRMLoH85zHPh6h6oQV6X5PeOP12nXzMnjePzzA
+Message-ID: <CAP_z_CjEzaPo=V+rzyDWFgnnHfNGAe_jHm7g=++V72GPs1A-fw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] perf: add test for PERF_RECORD_BPF_METADATA collection
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>, 
+	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
+	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Chun-Tse Shao <ctshao@google.com>, 
+	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Zhongqiu Han <quic_zhonhan@quicinc.com>, Andi Kleen <ak@linux.intel.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Yujie Liu <yujie.liu@intel.com>, 
+	Graham Woodward <graham.woodward@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Ben Gainey <ben.gainey@arm.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit edf2cadf01e8f2620af25b337d15ebc584911b46 ("perf test: add test for
-BPF metadata collection") overlooked a behavior of "perf test list",
-causing it to print "SPDX-License-Identifier: GPL-2.0" as a description for
-that test. This reorders the comments to fix that issue.
+I just sent https://lore.kernel.org/linux-perf-users/20250726004023.3466563=
+-1-blakejones@google.com/T/#u
+to address this issue. Sorry for the delay.
 
-Signed-off-by: Blake Jones <blakejones@google.com>
----
- tools/perf/tests/shell/test_bpf_metadata.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/tests/shell/test_bpf_metadata.sh b/tools/perf/tests/shell/test_bpf_metadata.sh
-index bc9aef161664..69e3c2055134 100755
---- a/tools/perf/tests/shell/test_bpf_metadata.sh
-+++ b/tools/perf/tests/shell/test_bpf_metadata.sh
-@@ -1,7 +1,7 @@
- #!/bin/bash
--# SPDX-License-Identifier: GPL-2.0
-+# BPF metadata collection test
- #
--# BPF metadata collection test.
-+# SPDX-License-Identifier: GPL-2.0
- 
- set -e
- 
--- 
-2.50.1.470.g6ba607880d-goog
-
+On Wed, Jul 9, 2025 at 2:45=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
+e:
+>
+> On Wed, Jul 9, 2025 at 2:08=E2=80=AFPM Blake Jones <blakejones@google.com=
+> wrote:
+> >
+> > On Wed, Jul 9, 2025 at 2:02=E2=80=AFPM Ian Rogers <irogers@google.com> =
+wrote:
+> > > > +++ b/tools/perf/tests/shell/test_bpf_metadata.sh
+> > > > @@ -0,0 +1,76 @@
+> > > > +#!/bin/sh
+> > > > +# SPDX-License-Identifier: GPL-2.0
+> > >
+> > > The 2nd line in a shell test script is taken to be the name of the te=
+st, so
+> > > ```
+> > > $ perf test list 108
+> > > 108: SPDX-License-Identifier: GPL-2.0
+> > > ```
+> > >
+> > > > +#
+> > > > +# BPF metadata collection test.
+> > >
+> > > This should be on line 2 instead.
+> >
+> > Oof, that sure wasn't on my radar. Should I do a followup patch, or is
+> > it not worth bothering?
+>
+> The patch has been in perf-tools-next for a few weeks:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.=
+git/commit/?h=3Dperf-tools-next&id=3Dedf2cadf01e8f2620af25b337d15ebc584911b=
+46
+> so modifying it is probably not a good idea (it'd need a forced push
+> and break people downstream). If you could send a follow up, that'd be
+> great just so that we have >1 person in the
+> author/reviewer/signed-off-by tag!
+>
+> Thanks,
+> Ian
 
