@@ -1,158 +1,140 @@
-Return-Path: <linux-kernel+bounces-746675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3B5B129F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:43:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63761B129F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C0A74E7FC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:43:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90D2C547EE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B138D227EA8;
-	Sat, 26 Jul 2025 09:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HRj0IhwH"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40C3213E7A;
+	Sat, 26 Jul 2025 09:50:18 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFB4155326;
-	Sat, 26 Jul 2025 09:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0267259C
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 09:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753523006; cv=none; b=ebHcG++12SGp26ZA9H9kT06P0zQaNNgc4olZgpLs8+V0RkL8yFEiSVSPkQFAn0In8FrUohaigKdyAosIkxnZE0WSermLbExLlpYTmntEW73AZIQdUgCZ5Zuj3Q6Q6Ewocxb/MZzQFMuEqC/T+y4G7aTkT0MrIUjuO+aqhvVHCoc=
+	t=1753523418; cv=none; b=VhldQ9m7J2u1g3gUA7ZZ53J9hJZvm5bZ9CmzsQfvi3yixiiygBbWJFLP5tPTj/JNk6Ihe/t8pnxdHEH9OVAG+91CiRo3LK9YjV20uRZx5beeA2DdmAlnuI2NA+9iCcCbmQ2RUq7Aa5ieyka3uqF4cdkhhKD81qkJVgYK+nz/TNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753523006; c=relaxed/simple;
-	bh=gmoae3pQ6n1/2XP8mGxeGj2e+0uTKpbeI5N90BkBXcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g/+xa0WWEwidCK9rXGQ+v0htHifrIm7jdia8sr6ro7CZwhPFCds+Guvzton+ISEMv4p0zJJ7QQrJAmBkOxW760S99cng61nF4EiHNKz6aMZZ2nlddW7g5tbXnpPXLerHXIzttNXV3ByE3rZPzphjRL2fvqyum86M5kUkr3evZcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HRj0IhwH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 821204C9;
-	Sat, 26 Jul 2025 11:42:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753522959;
-	bh=gmoae3pQ6n1/2XP8mGxeGj2e+0uTKpbeI5N90BkBXcI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HRj0IhwHMiVRjp+TVns7bQy+6Y3+uM9Gs9XOT8xxoMLoN0XSlTd8qUY3uKWpyIGR3
-	 yLU+/jsolGOdd5EWZuPcBGF1Azh85YRUd95hQo4NDCTeLxzGF64rrdCVF4FeQPiwho
-	 OnEWNvohZyl7Iusw20RVJj6q9uLZt3f2km8NstsQ=
-Date: Sat, 26 Jul 2025 12:43:13 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Hans de Goede <hansg@kernel.org>,
-	=?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
-Message-ID: <20250726094313.GD27425@pendragon.ideasonboard.com>
-References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io>
- <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io>
- <aIKi1BkNzNvsf5Tr@smile.fi.intel.com>
- <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
- <175345442477.2567018.13588829522231689027@ping.linuxembedded.co.uk>
- <PN3P287MB3519055FE42890F5F577B51BFF58A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1753523418; c=relaxed/simple;
+	bh=AEAqFsXIzEOB+z9nSI27F28ea9NszvZQ0qucHN9VDZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cCde9+4cueQaaj1QrbbBolk+gYiBD3jGL3zed1/FfNlYaWLeurKdTMoGjvaAQzrz2s3TLiwIlHwrJjdXv7jCGZcKtwaNdPgAuQSgvWFaeHC9ZIcOhsQw62egmyDOrChHyyZNpK2YP/V6NvVXnsUSC0xs9ynQKRrDb89GC4vsNh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bq0KS0yKqz2RVYc;
+	Sat, 26 Jul 2025 17:47:56 +0800 (CST)
+Received: from dggpemf100018.china.huawei.com (unknown [7.185.36.183])
+	by mail.maildlp.com (Postfix) with ESMTPS id 50B9018001B;
+	Sat, 26 Jul 2025 17:50:13 +0800 (CST)
+Received: from [10.67.111.115] (10.67.111.115) by
+ dggpemf100018.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 26 Jul 2025 17:50:12 +0800
+Message-ID: <b31a5b91-bc94-46ce-8191-c6576c04f05b@huawei.com>
+Date: Sat, 26 Jul 2025 17:50:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG REPORT] x86/apic: CPU Hang in x86 VM During Kdump
+Content-Language: en-US
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<peterz@infradead.org>, <sohil.mehta@intel.com>, <rui.zhang@intel.com>,
+	<arnd@arndb.de>, <yuntao.wang@linux.dev>, <linux-kernel@vger.kernel.org>
+References: <20250604083319.144500-1-zouyipeng@huawei.com>
+From: Yipeng Zou <zouyipeng@huawei.com>
+In-Reply-To: <20250604083319.144500-1-zouyipeng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3P287MB3519055FE42890F5F577B51BFF58A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf100018.china.huawei.com (7.185.36.183)
 
-On Sat, Jul 26, 2025 at 06:06:05AM +0000, Hardevsinh Palaniya wrote:
-> > Quoting Hardevsinh Palaniya (2025-07-25 06:55:23)
-> > <snip>
-> > > > > +static int ov2735_page_access(struct ov2735 *ov2735,
-> > > > > +�������������������������� u32 reg, void *val, int *err, bool is_read)
-> > > > > +{
-> > > > > +���� u8 page = (reg >> CCI_REG_PRIVATE_SHIFT) & 0xff;
-> > > >
-> > > > ' & 0xff' part is redundant.
-> > > >
-> > > > > +���� u32 addr = reg & ~CCI_REG_PRIVATE_MASK;
-> > > > > +���� int ret = 0;
-> > > >
-> > > > How is this assignment being used?
-> > > >
-> > > > > +���� if (err && *err)
-> > > > > +������������ return *err;
-> > > > > +
-> > > > > +���� mutex_lock(&ov2735->page_lock);
-> > > > > +
-> > > > > +���� /* Perform page access before read/write */
-> > > > > +���� if (ov2735->current_page != page) {
-> > > > > +������������ ret = cci_write(ov2735->cci, OV2735_REG_PAGE_SELECT, page, err);
-> > > > > +������������ if (ret)
-> > > > > +�������������������� goto err_mutex_unlock;
-> > > > > +������������ ov2735->current_page = page;
-> > > > > +���� }
-> > > > > +
-> > > > > +���� if (is_read)
-> > > > > +������������ ret = cci_read(ov2735->cci, addr, (u64 *)val, err);
-> > > > > +���� else
-> > > > > +������������ ret = cci_write(ov2735->cci, addr, *(u64 *)val, err);
-> > > >
-> > > > Do you really need this castings?
-> > >
-> > > Do you really think this casting is unnecessary?
-> > >
-> > 
-> > Yes? Well quite probably - I haven't checked myself yet but ..
-> > 
-> > 
-> > > Please check the definitions of cci_read/write
-> > >
-> > > without this, we can't even build the driver.
-> > 
-> > How about ... changing the function prototype of ov2735_page_access ?
-> 
-> Of course, changing the function prototype would work.
-> 
-> My intention is to keep a single ov2735_page_access() function that can
-> handle both read and write operations. The cci_read() function expects 
-> a u64 *, whereas cci_write() expects a u64 value. To support both cases
-> within one function, I’ve used a void *val and cast it appropriately 
-> depending on the operation.
-> 
-> If we were to remove the casting, we would need to split this into two
-> separate functions, one for read and one for write, even though the only 
-> difference between them would be a single line. I’d prefer to avoid that
-> redundancy and keep the code compact. 
-> 
-> Let me know if you see a better way to handle this without duplicating
-> the logic. 
+Hi Thomas：
 
-Move the cci_read() and cci_write() calls from the bottom of
-ov2735_page_access() to ov2735_read() and ov2735_write() respectively.
+     I skipped sending the NMI in native_stop_other_cpus(), and the test 
+passed.
+
+     However, this change reverts the fix introduced by commit [1], 
+which was intended to handle cases where the reboot IPI is not properly 
+handled by all CPUs.
+
+     Given this, is there an alternative way to resolve the issue, or 
+can we simply mask the IPI directly at that point?
+
+     [1] 747d5a1bf293 ("x86/reboot: Always use NMI fallback when 
+shutdown via reboot vector IPI fails")
+
+在 2025/6/4 16:33, Yipeng Zou 写道:
+> Recently, A issue has been reported that CPU hang in x86 VM.
+>
+> The CPU halted during Kdump likely due to IPI issues when one CPU was
+> rebooting and another was in Kdump:
+>
+> CPU0			  CPU2
+> ========================  ======================
+> reboot			  Panic
+> machine shutdown	  Kdump
+> 			  machine shutdown
+> stop other cpus
+> 			  stop other cpus
+> ...			  ...
+> local_irq_disable	  local_irq_disable
+> send_IPIs(REBOOT)	  [critical regions]
+> [critical regions]	  1) send_IPIs(REBOOT)
+> 			  wait timeout
+> 			  2) send_IPIs(NMI);
+> Halt,NMI context
+> 			  3) lapic_shutdown [IPI is pending]
+> 			  ...
+> 			  second kernel start
+> 			  4) init_bsp_APIC [IPI is pending]
+> 			  ...
+> 			  local irq enable
+> 			  Halt, IPI context
+>
+> In simple terms, when the Kdump jump to the second kernel, the IPI that
+> was pending in the first kernel remains and is responded to by the
+> second kernel.
+>
+> I was thinking maybe we need mask IPI in clear_local_APIC() to solve this
+> problem. In that way, it will clear the pending IPI in both 3) and 4).
+>
+> I can't seem to find a solution in the SDM manual. I want to ask if this
+> approach is feasible, or if there are other ways to fix the issue.
+>
+> Signed-off-by: Yipeng Zou <zouyipeng@huawei.com>
+> ---
+>   arch/x86/kernel/apic/apic.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+> index d73ba5a7b623..68c41d579303 100644
+> --- a/arch/x86/kernel/apic/apic.c
+> +++ b/arch/x86/kernel/apic/apic.c
+> @@ -1117,6 +1117,8 @@ void clear_local_APIC(void)
+>   	}
+>   #endif
+>   
+> +	// Mask IPI here
+> +
+>   	/*
+>   	 * Clean APIC state for other OSs:
+>   	 */
 
 -- 
 Regards,
+Yipeng Zou
 
-Laurent Pinchart
 
