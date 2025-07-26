@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-746851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C0DB12BFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:10:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A8AB12C02
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0521189A35B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 259344E54F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7091F289362;
-	Sat, 26 Jul 2025 19:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E9F28A1C7;
+	Sat, 26 Jul 2025 19:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MG2Wqa4Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QggkLvJD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C192263CF;
-	Sat, 26 Jul 2025 19:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A140F289E2C;
+	Sat, 26 Jul 2025 19:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753556991; cv=none; b=ngsBqtftwYNnL+MnsjVC9DonS+t3/Wy0kQWD3eEcE+cDSkw7gMyz4UF6Auc95h+0AcO2hoOPVMb/wNaCqrVsQfohD4OpDpg1rGx5J7+nXWNbSptBWpyHVkhchBUQYrE0hPaJXbEKzNXSHQ6T1EroWbCp1U6MjBqBvWo1A2wGBgI=
+	t=1753556998; cv=none; b=ntBtm2HB8CMB1baljO9prypLVVtld4Xf5KOcQOXYFiCMZWkACazZb0/IsmA1r3uA60Iw+EwTiVmsdJdpv8VYXU3YHf05ep2YfPajhZ7ORCpgx02YqpYUFRhfonut2TDd95faxvLU22puO5aAmVsZPQMSeL3vL/IQc+2/5t266Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753556991; c=relaxed/simple;
-	bh=em1H+20/3NrGcJeuw0quGahnh/fyWgetY87ezgSJ6fA=;
+	s=arc-20240116; t=1753556998; c=relaxed/simple;
+	bh=Z0esAkJVznS9mu9HvUJRGlrFEH4aPDr4qzvHcwf65CA=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Lrm5+NEX55o6XofgEhn4J8MIWFnvf4z5oIzVH6nx6jsyZkXiFxeSqciwZR5SnGazFig3mudfsrwGFZKgLIxFOkgZ9rTrsbANsP6XEi2M9wYUvSUgH3NKOZTYRtPu5EKX731sQnQ+20VAfznkCA0Vnf5DJZyQ2RMiasTYJkggRN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MG2Wqa4Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 496C9C4CEED;
-	Sat, 26 Jul 2025 19:09:51 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=XFUMst2mQKLMNm0wvmkq1Y6NVfhVUl3y5c/hQzBWuo23KEDVrmNBYQ16HutgF9LSOFYVD7g1NsNrA0Ga1fZ79ChFfwfHcz8x3hOUrrxB7Q2XLSxtKI02egbPZYf9TeGcLw98dn8mSv3tJNWzVpGohisgAFUxpCeP85FfTiFOG14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QggkLvJD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD34C4CEED;
+	Sat, 26 Jul 2025 19:09:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753556991;
-	bh=em1H+20/3NrGcJeuw0quGahnh/fyWgetY87ezgSJ6fA=;
+	s=k20201202; t=1753556998;
+	bh=Z0esAkJVznS9mu9HvUJRGlrFEH4aPDr4qzvHcwf65CA=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=MG2Wqa4QTZemGTLnkK/mpXvprVu0w0Tg/M4kHIZU3IZjUcvGPXbCa2uPq8pDT9bwA
-	 0Maz4d+V9ug65iUfQSuUc6rDIxOaKuRHNXdba1fLQdvfTYIOMDgLO7Wj1P2SUmY+Lc
-	 RIjj4+gL8iSdkQb/FBg8E3sO44UB1sm2B/cIwlCVDMsGKnQA/EfQIPUvTCveAfQfwT
-	 1RwKvdF/5mQ7d3dV2HWLXpHOnqANmRya5VYS/+93FlPMffWSbTKgI7JAbhzAzwJne1
-	 G8l/Hh75y05xnm01r+cUnpI7UD+KhuI9sm10ULVdlbOdIY2RVymnhWSoSFS/V4t2oL
-	 u5ggY0oJH/Rpg==
+	b=QggkLvJDWoy60Kj7Gs5yIbjZ3agSdXk2QFMP/FWRqOnpDG8Pfv8GB/jpzUlp6yPgM
+	 auVRyEjKqmc3LtTYoDg/nVA8HOjt4XJbtQ9Df+eVqbJ5rH/ayeQAZtTFxWmnA2xLUu
+	 jFDUZOwSlWu0GV/InEqrcj6xbOOrAx2T7R4iSHhfOEzq7+OcTzmKRkjBljdk3R0eAm
+	 iYxXEAiLMh2TrKdS1QCItY37inahP7KzS02lkNaPdr2g6M6GOTY3+UD6BGMfYBBXz+
+	 zZNTdIgUXJLG0RNdPCmcdrIJYMnzf0cTJ1t9q7BHg4WKmU4lXcrZzNj1ANMbB5hXnv
+	 bc2NvZq1QTshQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF91383BF4E;
-	Sat, 26 Jul 2025 19:10:09 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE79383BF4E;
+	Sat, 26 Jul 2025 19:10:16 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next 0/2] umd: Remove usermode driver framework
+Subject: Re: [PATCH net-next] dpll: zl3073x: Fix build failure
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175355700852.3670812.12053972332203864390.git-patchwork-notify@kernel.org>
-Date: Sat, 26 Jul 2025 19:10:08 +0000
-References: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
-In-Reply-To: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
-To: =?utf-8?q?Thomas_Wei=C3=9Fschuh_=3Cthomas=2Eweissschuh=40linutronix=2Ede=3E?=@codeaurora.org
-Cc: viro@zeniv.linux.org.uk, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, ebiederm@xmission.com,
- hch@lst.de, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <175355701525.3670812.15763912931192252437.git-patchwork-notify@kernel.org>
+Date: Sat, 26 Jul 2025 19:10:15 +0000
+References: <20250726184145.25769-1-ivecera@redhat.com>
+In-Reply-To: <20250726184145.25769-1-ivecera@redhat.com>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: kuba@kernel.org, Prathosh.Satish@microchip.com, jiri@resnulli.us,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 21 Jul 2025 11:04:40 +0200 you wrote:
-> The code is unused, remove it.
+On Sat, 26 Jul 2025 20:41:45 +0200 you wrote:
+> If CONFIG_ZL3073X is enabled but both CONFIG_ZL3073X_I2C and
+> CONFIG_ZL3073X_SPI are disabled, the compilation may fail because
+> CONFIG_REGMAP is not enabled.
 > 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> ---
-> Thomas Weißschuh (2):
->       bpf/preload: Don't select USERMODE_DRIVER
->       umd: Remove usermode driver framework
+> Fix the issue by selecting CONFIG_REGMAP when CONFIG_ZL3073X is enabled.
+> 
+> Fixes: 2df8e64e01c10 ("dpll: Add basic Microchip ZL3073x support")
+> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [bpf-next,1/2] bpf/preload: Don't select USERMODE_DRIVER
-    https://git.kernel.org/bpf/bpf-next/c/2b03164eee20
-  - [bpf-next,2/2] umd: Remove usermode driver framework
-    https://git.kernel.org/bpf/bpf-next/c/b7b3500bd4ee
+  - [net-next] dpll: zl3073x: Fix build failure
+    https://git.kernel.org/netdev/net-next/c/fa582ca7e187
 
 You are awesome, thank you!
 -- 
