@@ -1,165 +1,152 @@
-Return-Path: <linux-kernel+bounces-746698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6091BB12A29
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 12:58:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49EA6B12A2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 13:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E3481C263A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 10:59:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2F31C2676C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A1A242D84;
-	Sat, 26 Jul 2025 10:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76B6242D68;
+	Sat, 26 Jul 2025 10:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ai9n+pjj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGMm9Ag5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B81B233727;
-	Sat, 26 Jul 2025 10:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F52747F;
+	Sat, 26 Jul 2025 10:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753527515; cv=none; b=utfJq0Kwjygylv0GNM0WWZzCeCAWfe2TzMcwoJygN/LRcvCeMPIpKFmsAyFIL4TMBf4T5wauamqwkOk0Rih6VYBzSZpwX+KI2FnsZ4I66JQQ4Ent+OoWSPmUHVwoLbhJ05OR4FeHlEkA44aYlmeINPuhqHrc0pj+1flexyjtL1Q=
+	t=1753527594; cv=none; b=lneEMiTuNoXJlQ6PnIjr2EG3awLMEG3z0UNDfub0PZ9wZtho4WGjfVLmr8Hhh3xA4R4UWjwNpD1imNdl0pUBDRDa+An0TnH1vVTieigZCSP1uq92hSLfmIZrrOjvSRCWQ2EUjq6sQdRUW4s+Es3utmJK08WUKkZI2PcPscvEjQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753527515; c=relaxed/simple;
-	bh=mQnanwLnUU1C5o0pp34uix8UsV6dHEuqF0sPsUHmxQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=goL6JpufR37Dfc7hOZwTg1efb4qHpeF4PDSQcmhWohFvQbaBMdxcMeq1aZxfSMqXaaYlhB0HpO5o2AqgRcdNl4A2ShkftQxkdxo2jMd3gD6R+w25W7RN2rtad/lka792HmIoLGC/Q99TWF9OihYCtuuHjoTN4YOBizPEy+llTZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ai9n+pjj; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753527513; x=1785063513;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mQnanwLnUU1C5o0pp34uix8UsV6dHEuqF0sPsUHmxQk=;
-  b=ai9n+pjj6TwKZOeYpSLWCTRwYRn+r+it9JU5Q+igKxtCXKhFnC0S/N1w
-   wyU8M28Gi7Xc8yXEiJzwwHoDt3R9xH6wUGP8hdmVvX/PZPEaod6IYYLvZ
-   GQQf/uoSxc+qXmq7WB7vo8MqZOS6FDCOvzYX+s88U65ZGofrX3sfFppOg
-   n3z6T/Co/zhv2l/AxWMK1/TuSxXLIjzDpBzcVFcWvbA5cLNVs4rkFiglQ
-   xWyuy/FIl5qbxJyJJ7i6hGmHpKxV9AMYFcIS1KRP4N9S4Hf7h848vtqdG
-   3yQlGG7BCyyTLbnzoe4VVnmEyh6irj+sloW6hfAvRwLa8CQ/UggiHHCHC
-   A==;
-X-CSE-ConnectionGUID: nDtuilW7Q4+PuDzQr5hDEg==
-X-CSE-MsgGUID: CmBseQmES5uxQkI6o8s4eg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="73430354"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="73430354"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 03:58:32 -0700
-X-CSE-ConnectionGUID: RvfV8D4aSly1vDzwLyaJWA==
-X-CSE-MsgGUID: iP1N6lDETkS8ifYjEEkhOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="192440431"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 26 Jul 2025 03:58:29 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ufcbi-000Lu5-2i;
-	Sat, 26 Jul 2025 10:58:26 +0000
-Date: Sat, 26 Jul 2025 18:57:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jiri Pirko <jiri@resnulli.us>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-Subject: Re: [PATCH net-next 4/5] dpll: zl3073x: Refactor DPLL initialization
-Message-ID: <202507261812.7458edBX-lkp@intel.com>
-References: <20250725154136.1008132-5-ivecera@redhat.com>
+	s=arc-20240116; t=1753527594; c=relaxed/simple;
+	bh=g+gsOrD6DrMOM9hwmAbfMGxWrCneIpbSg9t1G3B3KiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c+iJkBoUC4Fd4IH15iPPxzzvo4ZdTXIP7xTI6q2tt9FPatBZ5YLehCCvZJG5V1wdlaFrlvdkOMX5ZPt03N89+qXk5UwGgs+ngrg5i1i1bQhGYd+Q2bzFza+QGX6sA+YaZtGAHlWeQ5JtUnEDdqFeTUxbfiQECDH9HickXrlny1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGMm9Ag5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3FDEC4CEF4;
+	Sat, 26 Jul 2025 10:59:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753527593;
+	bh=g+gsOrD6DrMOM9hwmAbfMGxWrCneIpbSg9t1G3B3KiM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rGMm9Ag5q8RrsMNUHK7IY+2VTiUCBUsrJW59hvvViujoTtrzJWHMtrNj8lFmfFEHQ
+	 iFDrTKCxuHKAE1SabyhdL1Dtcz0TdiaODagaiVEdXJE1Qzevr2ktj6WzuU4haV+WrG
+	 oL/Ca84oO93/StZ5pe9/qk4cXIVEjFNBBTidDZ5znmZ9sTkKUHSzVbz8zljm6sIyQd
+	 wQBSSRAqKNDFGuX0xRh4t/n573hkzbkEmrtz8Ob8eKJb1z1DOZEd5dRqI1pX3m/lVB
+	 CwP+c9JzY5OOa+30ZmcA33vRUrb4Ueck/+OLGTLYfnR1V1MU4TsQRGcdZ9j1CAid9v
+	 tCZPGhE9U68cg==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-553be4d2fbfso2942590e87.0;
+        Sat, 26 Jul 2025 03:59:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWGUuuszqo7e0eQ34hlLt7QB2GSZO5iQc1LggUj2VmJr+h8V/WKnzSz20NfXEDuLWvu6ES/dPv1Wx5EmQ==@vger.kernel.org, AJvYcCWbDOzCJDwRl7E9VeH0V337iWUFLnQl4bLUcniAs3EIrF2KvqTqD3BubkZAEiYXickSiE6TdP0vpHHqJwl9ZA==@vger.kernel.org, AJvYcCWxbNaoa2zLo5lNMBKUUxM889a/pzfZ4H1eZadtJ9IbaIt/F0i2ZJ9jh3R6F2O5NbQ/Rim6rk7Igx9tNfd8@vger.kernel.org, AJvYcCXK7hk+vkJklEcSsrQ8P3Pxewry+Qw8fEGDmsfX0Pdv2BwL9sDiC+sCj3r8UIB6xDF/j6zwCBf1IHMoRmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8pjKml7+9LwSC1GtJf/vqOYzOb8l5Yc8HncEzpj4P5hm25QoG
+	D+gXOg071aWAj4gduUTMvGPiFXKz+Ktl9n9t5FykYhMbT8aZdqZ5s6o0EkcZB8zl5CPHKnsN9R6
+	8/006ic0PGqOYQFNt6w50CM3BObTcYJ0=
+X-Google-Smtp-Source: AGHT+IHlNlEPyc5mSQJkStepGru4y0Q4yNkOgUcGZgXwg5ckZuEGwpg/qbcmo19sVrfTSq/RGHzvYtX0TkI5gkcfF7c=
+X-Received: by 2002:a05:6512:3996:b0:550:d4f3:8491 with SMTP id
+ 2adb3069b0e04-55b5f496125mr1541036e87.41.1753527592436; Sat, 26 Jul 2025
+ 03:59:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725154136.1008132-5-ivecera@redhat.com>
+References: <cover.1753354215.git.legion@kernel.org> <2860d5a5e7c6279b3836537e20b0fa0c40d2ba0f.1753354215.git.legion@kernel.org>
+In-Reply-To: <2860d5a5e7c6279b3836537e20b0fa0c40d2ba0f.1753354215.git.legion@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 26 Jul 2025 19:59:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARV+8vZPUtX8iG_hEAt8tCchRPFobK85tv9dbJwVqYgsw@mail.gmail.com>
+X-Gm-Features: Ac12FXwWZK-s9uK4FNdURazz50HqFOZm92a27Khcsg-e7lt7_nQEyv1C0fLpN1I
+Message-ID: <CAK7LNARV+8vZPUtX8iG_hEAt8tCchRPFobK85tv9dbJwVqYgsw@mail.gmail.com>
+Subject: Re: [PATCH v5 10/10] s390: vmlinux.lds.S: Reorder sections
+To: Alexey Gladkov <legion@kernel.org>
+Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ivan,
+On Thu, Jul 24, 2025 at 10:50=E2=80=AFPM Alexey Gladkov <legion@kernel.org>=
+ wrote:
+>
+> Reorder the sections to be placed in the default segment. The
+> .vmlinux.info use :NONE to override the default segment and tell the
+> linker to not put the section in any segment at all.
+>
+> >> s390x-linux-ld: .tmp_vmlinux1: warning: allocated section `.modinfo' n=
+ot in segment
+> >> s390x-linux-ld: .tmp_vmlinux2: warning: allocated section `.modinfo' n=
+ot in segment
+> >> s390x-linux-ld: vmlinux.unstripped: warning: allocated section `.modin=
+fo' not in segment
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ivan-Vecera/dpll-zl3073x-Add-functions-to-access-hardware-registers/20250725-234600
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250725154136.1008132-5-ivecera%40redhat.com
-patch subject: [PATCH net-next 4/5] dpll: zl3073x: Refactor DPLL initialization
-config: i386-randconfig-001-20250726 (https://download.01.org/0day-ci/archive/20250726/202507261812.7458edBX-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250726/202507261812.7458edBX-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507261812.7458edBX-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/dpll/zl3073x/core.c:994:3: warning: variable 'mask' is uninitialized when used here [-Wuninitialized]
-     994 |                 mask |= BIT(zldpll->id);
-         |                 ^~~~
-   drivers/dpll/zl3073x/core.c:972:25: note: initialize the variable 'mask' to silence this warning
-     972 |         u8 dpll_meas_ctrl, mask;
-         |                                ^
-         |                                 = '\0'
-   1 warning generated.
+Thank you for root-causing!
 
 
-vim +/mask +994 drivers/dpll/zl3073x/core.c
 
-   958	
-   959	/**
-   960	 * zl3073x_dev_phase_meas_setup - setup phase offset measurement
-   961	 * @zldev: pointer to zl3073x_dev structure
-   962	 *
-   963	 * Enable phase offset measurement block, set measurement averaging factor
-   964	 * and enable DPLL-to-its-ref phase measurement for all DPLLs.
-   965	 *
-   966	 * Returns: 0 on success, <0 on error
-   967	 */
-   968	static int
-   969	zl3073x_dev_phase_meas_setup(struct zl3073x_dev *zldev)
-   970	{
-   971		struct zl3073x_dpll *zldpll;
-   972		u8 dpll_meas_ctrl, mask;
-   973		int rc;
-   974	
-   975		/* Read DPLL phase measurement control register */
-   976		rc = zl3073x_read_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, &dpll_meas_ctrl);
-   977		if (rc)
-   978			return rc;
-   979	
-   980		/* Setup phase measurement averaging factor */
-   981		dpll_meas_ctrl &= ~ZL_DPLL_MEAS_CTRL_AVG_FACTOR;
-   982		dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR, 3);
-   983	
-   984		/* Enable DPLL measurement block */
-   985		dpll_meas_ctrl |= ZL_DPLL_MEAS_CTRL_EN;
-   986	
-   987		/* Update phase measurement control register */
-   988		rc = zl3073x_write_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, dpll_meas_ctrl);
-   989		if (rc)
-   990			return rc;
-   991	
-   992		/* Enable DPLL-to-connected-ref measurement for each channel */
-   993		list_for_each_entry(zldpll, &zldev->dplls, list)
- > 994			mask |= BIT(zldpll->id);
-   995	
-   996		return zl3073x_write_u8(zldev, ZL_REG_DPLL_PHASE_ERR_READ_MASK, mask);
-   997	}
-   998	
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: linux-s390@vger.kernel.org
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+Hi s390 maintainers,
+I need this patch for kbuild tree.
+Ack is appreciated.
+
+
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202506062053.zbkFBEnJ-lkp@i=
+ntel.com/
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> ---
+>  arch/s390/kernel/vmlinux.lds.S | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/s390/kernel/vmlinux.lds.S b/arch/s390/kernel/vmlinux.ld=
+s.S
+> index ff1ddba96352..3f2f90e38808 100644
+> --- a/arch/s390/kernel/vmlinux.lds.S
+> +++ b/arch/s390/kernel/vmlinux.lds.S
+> @@ -202,6 +202,11 @@ SECTIONS
+>         . =3D ALIGN(PAGE_SIZE);
+>         _end =3D . ;
+>
+> +       /* Debugging sections.  */
+> +       STABS_DEBUG
+> +       DWARF_DEBUG
+> +       ELF_DETAILS
+> +
+>         /*
+>          * uncompressed image info used by the decompressor
+>          * it should match struct vmlinux_info
+> @@ -232,11 +237,6 @@ SECTIONS
+>  #endif
+>         } :NONE
+>
+> -       /* Debugging sections.  */
+> -       STABS_DEBUG
+> -       DWARF_DEBUG
+> -       ELF_DETAILS
+> -
+>         /*
+>          * Make sure that the .got.plt is either completely empty or it
+>          * contains only the three reserved double words.
+> --
+> 2.50.1
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
