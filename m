@@ -1,308 +1,118 @@
-Return-Path: <linux-kernel+bounces-746771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3426B12AEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:18:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD90CB12AEE
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0A2A7B65A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E585171729
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DE51D7984;
-	Sat, 26 Jul 2025 14:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E4F28641F;
+	Sat, 26 Jul 2025 14:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lhYipf1p"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W3phLuaq"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080EC2F2E;
-	Sat, 26 Jul 2025 14:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB800285CBB
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 14:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753539473; cv=none; b=oJJVpPIDexx1agwm5G130NYI8skx/8m2TD8CNZoaQGWhhnu/8S/Avn7ViyTQQ5AjKvHz+oFqjSPbSMZc+7D4h/JWw1ecwpaXevgHMgKE2Hqns3HVvPPJRpyhEAXC5CjNoZRurkSPebXGkb4XpkcgU8hm1mWSoLlUEcBcIJqLDLU=
+	t=1753539479; cv=none; b=R/w+ZESnCQXqnwBN1a009WMAWTvwa+U7xzBMIkK9S1cCGsf4dD6J3gBte4bpFYNJbvxAiDaDbv4Xw/ekPsNKVF1xgijh60A2b9KE0ttxJz1hRmdt4UqVPfPYLCDWNUjpcSSHCF4hAFjvCNUat45cRxRnVivbOzdksV8nmD9+tj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753539473; c=relaxed/simple;
-	bh=8KkwvnzCcJiTpghpODfnFM+UrNAZ3p5be/ERBqjaXp8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SnrCqkOVT7guyRTw+spUyKuHkTnFayo1v6OHRaE1JbC26lPGsbaNUKIPkMLRKTfdzRzWYnMiPu5CHursvgqFiri+yczqC/15GQU4Kg9sD6V209WrkENjuUihAmCIAsuoYTWk5p5hbRBf+T56ZrRXPafOGChSH5smhJz21ADMyFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lhYipf1p; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56QEHcaQ1930544;
-	Sat, 26 Jul 2025 09:17:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753539458;
-	bh=G+skn5SGSxb7DB2M3P+SqQuYaKBSOOtBDu6nXFnMp2k=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=lhYipf1pdDlhh9O6kMG/IyGsPtVeoqzXOYdrH/wveNUOZSVN7R3KNNsUyFF63xm5q
-	 Wks8fPor36GK4O5WF+/ho48yQqJ+EpKjGxt3tcXuGouzpPvdWs6Zv3cq29qzB83PYN
-	 7QXLE1n6K2br7h0M54NOEwK3KRf5Wh4DqfoLYi0E=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56QEHcOj759410
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Sat, 26 Jul 2025 09:17:38 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 26
- Jul 2025 09:17:38 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Sat, 26 Jul 2025 09:17:38 -0500
-Received: from [10.249.139.51] ([10.249.139.51])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56QEHZXj3248421;
-	Sat, 26 Jul 2025 09:17:35 -0500
-Message-ID: <616fbb7a-8d04-48aa-b3cb-9a1a69c7b92c@ti.com>
-Date: Sat, 26 Jul 2025 19:47:34 +0530
+	s=arc-20240116; t=1753539479; c=relaxed/simple;
+	bh=QsKCYgFN3Pl/637rAO4WBZp3QLVhOoRKIclRbpT1pQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pf/qqdUiv7PcyFm441h13bQdUqvwqj2aDnEtMOqRDO4cvFJ+etPsOz5Eh2iMlJw9U9Jzd/YxRJmb9QTqbXmBI7Zoego9L6AxqPcgwnBj2zKRyWmuVH9Wey3zsAlDct6hfbNGkcnzniKSaUPp7pLZkBpTNN4KRycHcPB1dT1D2YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W3phLuaq; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-553b3316160so3138294e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 07:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753539476; x=1754144276; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QsKCYgFN3Pl/637rAO4WBZp3QLVhOoRKIclRbpT1pQQ=;
+        b=W3phLuaq0RVVMNzRc9exL8O8cvPdzFYZxDXxvj/AeDazvwwlRvRGpWLdy13kQbTgc4
+         S61a8Sn8e4coANibRq5wFNwXxBLNIUzFXG6dAhpbX3cW+RNKQpMhs3lu/woLzZ2r3UjZ
+         QD56BsLYto7BaJF3JtSYuSJKsXS5ES9vXWdm4x4fePIAUiwLnJ8ByugA0oE5N0KV8fY1
+         e0+/zL1aMxMNW//hUUzRXDkpMXQ+prQyK2g+OWEZH867zHPr3w3LdbsL30ExWb4iJXQo
+         6AhTVmvWyqAjrepZklB7EefS6qNioFncIkTl21BZ5QDQ+pnTMl3v0JyRuVwiH1ffBazU
+         1N+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753539476; x=1754144276;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QsKCYgFN3Pl/637rAO4WBZp3QLVhOoRKIclRbpT1pQQ=;
+        b=Zp0ybwcjTeV0Fy/NjQuRHaFOTDBGMNeF9WCvJXhIckm9uC3e6yp39ZCczbB53NndC4
+         kkdytndUGZ4bovwmodMxHMPuJRbFlII3ffQGFEhT3he5NSn5xbPV0o076WC+9XqUG+fP
+         ZDDWtuE9TUUyjRH55HJYEj1Ofo8X+d4SNEljyRL9F5LTzf+zzHyUT7qhsEyamcB90Kxt
+         6rQJdkFROLwOU0aV/ZKRbNPNHJvubO6zM1j1KIT3FLp8fPkTtEUK9YgOO0WCZtG65bA2
+         BlqVCbsbKXD/Cd8o/8pdsEgijKRdjRhKU9W9BGQAkAXiSuvTAr5CWTHvn2gvhZcJHbU5
+         /Hhw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9/mJU1HLJNCvt63UycbeRw5sA/P1W0mLMF2Zlrfn+dUgybdQbYa9QFhOhfMpITajz8YQAX+ni60Nr3w4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpj01nYldV29G70R9N5NcW2+JWdG1QOYvVppVT77u9L3pBe5Di
+	Kzbk9r0Cpv9F1WUwKZfELq3f19ITCRyfA6FBSpqufcYFvqkblb/nbvr7VZ9wMBJW4Aly66WZZlO
+	vs7pLb8Ij4Kz7Pqt8NnZVowKeO8LZceXPa1OORwYvFWlyV3+5Z3uZ
+X-Gm-Gg: ASbGncsazdyQobiEp5Q32CaXb8lXrpXjeGZlaT5Wq7QPZnVZWmifVsKTg3R5ISU/N29
+	rUjzlPtGWxSBUrYdYlc+K2iW1w7gnUa6S7Ejs4oceEf+kCfcgyw3+44w4GnQTxNcRWBL1pQcLV5
+	DE1NVIkOCrApGY/DAEnSg/T6B3u+wnj7w4pfql+UI/Q3TX0A51K7EGJsBBJ57z7hvFzhP4UQEgd
+	wbWA/jnBj1X
+X-Google-Smtp-Source: AGHT+IH7DWpvL4/EaSvQrUXZxoed9pZpjosN4KFejpqR4sw55oFM2Lj6aw3IRkV89heBwtbytSWltY9kUm8IpC204jQ=
+X-Received: by 2002:a05:6512:3da7:b0:55a:4462:f9b5 with SMTP id
+ 2adb3069b0e04-55b5f4c6d4bmr1362236e87.53.1753539475990; Sat, 26 Jul 2025
+ 07:17:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: System can not go into suspend when remoteproc is probed on AM62X
-To: Andrew Davis <afd@ti.com>, Hiago De Franco <hiagofranco@gmail.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Suman Anna <s-anna@ti.com>, <linux-kernel@vger.kernel.org>,
-        Hiago De Franco <hiago.franco@toradex.com>
-References: <20250725150713.barg5lhqr4reoxv3@hiagonb>
- <06186d01-23e7-4fd6-b5c0-b6c1f8ae7fb7@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <06186d01-23e7-4fd6-b5c0-b6c1f8ae7fb7@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250611-aaeon-up-board-pinctrl-support-v8-0-3693115599fe@bootlin.com>
+ <CAMRc=MfS5Em65n0fwbu8JtJsc3rTgQO5cv+PymSonJtf6_zRKQ@mail.gmail.com>
+ <824ec6d1-4272-44c7-b3bb-93d716ed3d43@bootlin.com> <CAMRc=McnU6TO5p7Jwy-DOg_8-=AS7rFRfaPD0yH1SERWXM8L+A@mail.gmail.com>
+ <CAMRc=MeZ4HHJGkVBysLyusW5G-rM0iSQV1qqmFJUe1rsZrN2AA@mail.gmail.com>
+In-Reply-To: <CAMRc=MeZ4HHJGkVBysLyusW5G-rM0iSQV1qqmFJUe1rsZrN2AA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 26 Jul 2025 16:17:45 +0200
+X-Gm-Features: Ac12FXwQ27n_JGOOvHJ-jWxO2gK5gh1Sp4QaipYWDU0befizJdpmrsUresvZ2wg
+Message-ID: <CACRpkdbjQSns7a9EMx_5kdJ4Y2wsnocTLNsO2es7MQ=rKCBkQw@mail.gmail.com>
+Subject: Re: [PATCH v8 00/10] Add pinctrl support for the AAEON UP board FPGA
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thomas Richard <thomas.richard@bootlin.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 23, 2025 at 10:43=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+> On Tue, Jul 15, 2025 at 3:17=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
 
-On 7/26/2025 12:59 AM, Andrew Davis wrote:
-> On 7/25/25 10:07 AM, Hiago De Franco wrote:
->> Hello everyone,
->>
->> I noticed something that I am trying to debug, maybe you have any idea
->> or tips to help me debugging this issue.
->>
->> On AM62 and AM62P SoCs that I tested, when the remote proc driver is
->> probed, suspend to RAM mode does not work anymore. Without the
->> remote proc driver enabled, everything works just fine.
->>
->> See the driver being probed with AM62 and Cortex M4:
->>
->> root@verdin-am62-15479173:~# dmesg | grep -i -E 
->> "remoteproc|rproc|omap-mailbox"
->> [   10.321304] omap-mailbox 29000000.mailbox: omap mailbox rev 
->> 0x66fc9100
->> [   10.518369] k3-m4-rproc 5000000.m4fss: assigned reserved memory 
->> node m4f-dma-memory@9cb00000
->> [   10.560055] k3-m4-rproc 5000000.m4fss: configured M4F for 
->> remoteproc mode
->> [   10.600283] remoteproc remoteproc0: 5000000.m4fss is available
->> [   10.615269] remoteproc remoteproc0: Direct firmware load for 
->> am62-mcu-m4f0_0-fw failed with error -2
->> [   10.650058] remoteproc remoteproc0: powering up 5000000.m4fss
->> [   10.677073] remoteproc remoteproc0: Direct firmware load for 
->> am62-mcu-m4f0_0-fw failed with error -2
->> [   10.696173] remoteproc remoteproc0: request_firmware failed: -2
->> [   11.953278] remoteproc remoteproc1: 30074000.pru is available
->> [   11.985475] remoteproc remoteproc2: 30078000.pru is available
->>
->> And then when trying to to go into suspend:
->>
->> root@verdin-am62-15479173:~# echo mem > /sys/power/state
->> [   41.727649] PM: suspend entry (deep)
->> [   41.738557] Filesystems sync: 0.006 seconds
->> [   41.751535] Freezing user space processes
->> [   41.758692] Freezing user space processes completed (elapsed 0.002 
->> seconds)
->> [   41.765763] OOM killer disabled.
->> [   41.768999] Freezing remaining freezable tasks
->> [   41.774858] Freezing remaining freezable tasks completed (elapsed 
->> 0.001 seconds)
->> [   41.782333] printk: Suspending console(s) (use no_console_suspend 
->> to debug)
->> [   41.830945] omap-mailbox 29000000.mailbox: fifo 1 has unexpected 
->> unread messages
->> [   41.830980] omap-mailbox 29000000.mailbox: PM: dpm_run_callback(): 
->> platform_pm_suspend returns -16
->> [   41.831013] omap-mailbox 29000000.mailbox: PM: failed to suspend: 
->> error -16
->> [   41.831040] PM: Some devices failed to suspend, or early wake 
->> event detected
->> [   41.851206] am65-cpsw-nuss 8000000.ethernet: set new flow-id-base 19
->> [   41.861919] am65-cpsw-nuss 8000000.ethernet end0: PHY 
->> [8000f00.mdio:00] driver [TI DP83867] (irq=354)
->> [   41.862921] am65-cpsw-nuss 8000000.ethernet end0: configuring for 
->> phy/rgmii-rxid link mode
->> [   41.868493] usb-conn-gpio connector: repeated role: device
->> [   42.012894] OOM killer enabled.
->> [   42.016050] Restarting tasks: Starting
->> [   42.024121] Restarting tasks: Done
->> [   42.033660] random: crng reseeded on system resumption
->> [   42.040482] PM: suspend exit
->>
->> I believe the issue happens at this line:
->>
->> [   41.830945] omap-mailbox 29000000.mailbox: fifo 1 has unexpected 
->> unread messages
->>
->> When the remoteproc driver is probed, the omap-mailbox drivers sends a
->> message to Cortex-M4 which is not consumed. Please notice in this case
->> there is no firmware running on M4, the driver is only set to "okay"
->> into the DTB.
->>
->> See the debug message with the message being sent ("hfranco"):
->>
->> root@verdin-am62-15479173:~# dmesg | grep -i -E 
->> "remoteproc|rproc|omap-mailbox|hfranco"
->> [   10.321304] omap-mailbox 29000000.mailbox: omap mailbox rev 
->> 0x66fc9100
->> [   10.518369] k3-m4-rproc 5000000.m4fss: assigned reserved memory 
->> node m4f-dma-memory@9cb00000
->> [   10.560055] k3-m4-rproc 5000000.m4fss: configured M4F for 
->> remoteproc mode
->> [   10.577664] hfranco: sending msg 0xffffff03, name mbox-m4-0
->> [   10.600283] remoteproc remoteproc0: 5000000.m4fss is available
->> [   10.615269] remoteproc remoteproc0: Direct firmware load for 
->> am62-mcu-m4f0_0-fw failed with error -2
->> [   10.650058] remoteproc remoteproc0: powering up 5000000.m4fss
->> [   10.677073] remoteproc remoteproc0: Direct firmware load for 
->> am62-mcu-m4f0_0-fw failed with error -2
->> [   10.696173] remoteproc remoteproc0: request_firmware failed: -2
->> [   11.953278] remoteproc remoteproc1: 30074000.pru is available
->> [   11.985475] remoteproc remoteproc2: 30078000.pru is available
->>
->> AFAIK, the message in sent when 'send_data' callback is called inside
->> mailbox.c, which triggers omap_mbox_chan_send_data() from
->> omap-mailbox.c. If I skip this message, suspend to RAM works again, as
->> the mailbox will be empty.
->>
->> Do you know why this message needs to be sent? Is there a way we can
->> overcome this issue? Commit 9f0cee984a25 ("mailbox/omap: check for any
->> unread messages during suspend") introduced this check.
->>
+> > Well, nobody responded to my last email. This is a cross-tree series
+> > so at least Linus must confirm he's ok.
+> >
+> > Bart
 >
-> So the issue then looks to be this message we send here when we setup
-> the mailbox[0]. This mailbox setup is done during probe() for the K3
-> rproc drivers now (mailbox setup used to be done during
-> rproc_{start,attach}() before [1]). Moving mailbox setup to probe
-> is correct, but we should have factored out the test message sending
-> code out of mailbox setup so it could have been left in
-> rproc_{start,attach}(). 
+> Linus, I'm willing to queue at least the GPIO part for v6.17, does the
+> pinctrl part look good to you?
 
+Yes go ahead, sorry for late reply!
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Or, how about we don't send that test mbox message at all. It does not 
-actually check if the remoteproc was able to receive and respond to the 
-message. It only verifies if the write to the mbox queue was successful. 
-And most firmwares anyways don't reply to that mailbox-level echo message.
+I was mainly waiting for Andy's review on this, so if Andy
+is OK, I'm OK with it.
 
-Thanks,
-Beleswar
-
-> That way we only send this message if the
-> core is going to be started, no sense in sending that message if
-> we are not even going to run the core..
->
-> Fix might be as simple as [2] (not tested, if this works feel free
-> to send as a fix)
->
-> Andrew
->
-> [0] 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
-> [1] 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
-> [2]
->
-> diff --git a/drivers/remoteproc/ti_k3_common.c 
-> b/drivers/remoteproc/ti_k3_common.c
-> index a70d4879a8bea..657a200fa9040 100644
-> --- a/drivers/remoteproc/ti_k3_common.c
-> +++ b/drivers/remoteproc/ti_k3_common.c
-> @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
->  }
->  EXPORT_SYMBOL_GPL(k3_rproc_reset);
->
-> +static int k3_rproc_ping(struct k3_rproc *kproc)
-> +{
-> +       /*
-> +        * Ping the remote processor, this is only for sanity-sake for 
-> now;
-> +        * there is no functional effect whatsoever.
-> +        *
-> +        * Note that the reply will _not_ arrive immediately: this 
-> message
-> +        * will wait in the mailbox fifo until the remote processor is 
-> booted.
-> +        */
-> +       int ret = mbox_send_message(kproc->mbox, (void 
-> *)RP_MBOX_ECHO_REQUEST);
-> +       if (ret < 0)
-> +               dev_err(kproc->dev, "mbox_send_message failed 
-> (%pe)\n", ERR_PTR(ret));
-> +
-> +       return ret;
-> +}
-> +
->  /* Release the remote processor from reset */
->  int k3_rproc_release(struct k3_rproc *kproc)
->  {
-> @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
->         if (ret)
->                 dev_err(dev, "module-reset deassert failed (%pe)\n", 
-> ERR_PTR(ret));
->
-> +       k3_rproc_ping(kproc);
-> +
->         return ret;
->  }
->  EXPORT_SYMBOL_GPL(k3_rproc_release);
-> @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
->                 return dev_err_probe(dev, PTR_ERR(kproc->mbox),
->                                      "mbox_request_channel failed\n");
->
-> -       /*
-> -        * Ping the remote processor, this is only for sanity-sake for 
-> now;
-> -        * there is no functional effect whatsoever.
-> -        *
-> -        * Note that the reply will _not_ arrive immediately: this 
-> message
-> -        * will wait in the mailbox fifo until the remote processor is 
-> booted.
-> -        */
-> -       ret = mbox_send_message(kproc->mbox, (void 
-> *)RP_MBOX_ECHO_REQUEST);
-> -       if (ret < 0) {
-> -               dev_err(dev, "mbox_send_message failed (%pe)\n", 
-> ERR_PTR(ret));
-> -               mbox_free_channel(kproc->mbox);
-> -               return ret;
-> -       }
-> -
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
-> @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
->   * remote core. This callback is invoked only in IPC-only mode and 
-> exists
->   * because rproc_validate() checks for its existence.
->   */
-> -int k3_rproc_attach(struct rproc *rproc) { return 0; }
-> +int k3_rproc_attach(struct rproc *rproc)
-> +{
-> +       k3_rproc_ping(rproc->priv);
-> +
-> +       return 0;
-> +}
->  EXPORT_SYMBOL_GPL(k3_rproc_attach);
->
->  /*
->
+Yours,
+Linus Walleij
 
