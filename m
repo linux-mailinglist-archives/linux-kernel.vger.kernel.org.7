@@ -1,59 +1,51 @@
-Return-Path: <linux-kernel+bounces-746643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0680B12949
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:47:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CDEB1294F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C753C1C85B39
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:47:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61B334E454D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF8B1E1DE9;
-	Sat, 26 Jul 2025 06:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE4D207A0B;
+	Sat, 26 Jul 2025 06:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dvIeHZgh"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="U0Hg9kEu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9233017A317;
-	Sat, 26 Jul 2025 06:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCD3EAF9
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 06:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753512428; cv=none; b=dNpxbVkdTL7FOkACh8JdISQ3L9S3mV2xLRicKjNLarkp+braiZ2nXQV3BBp1BtYRex7iFuMPQaJTrCDAPMriF0gb27LQj7Q7VRiPuAD3YlFgdhd0qbxkn66yDQzWSb0g8A8N9AQ88Q0BAR2yrrY+LDR/mMVosAgNcztOLXsjJ2w=
+	t=1753512834; cv=none; b=pSzLehmITBouZGwUdRqTPygm0xMZ6DLf+On5RvCNTxud627yQUjIi2LpXMiGbAbP7pTbznlKwOQnDONGUxxhZoIh364S4DxmVcdhRYKiM8IuBSIgIM7C4ERLhlVjXhY6sAgmxyfHG8+Qqyw/NfAS04TBjuDVMwgF4vFZH02JCWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753512428; c=relaxed/simple;
-	bh=1aSJGaabBb0DAn6eDpk1lw68m8J48ib5wrwSM06FVgI=;
+	s=arc-20240116; t=1753512834; c=relaxed/simple;
+	bh=XHCcXNnNu8XELZ5k+oMXtL3W9sjOIpJZTeCJ/OeQyG4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nbt1a7K6lB9GOM5bksynNDkNrQttybCug9gop8hMYp8HgRRjEGnnT/Mmx0rf3OxUmmLxV+y0QLobWnxYr1B/UIUxp1AALQ4sJ1Nq1fZ3bJo/GADjjWoL9cx/bLIowenafD2ySqa+pO2A6Fmx9hGMVW0nA1EBoqFQKPTfx6lNvXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dvIeHZgh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93B7BC4CEED;
-	Sat, 26 Jul 2025 06:47:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dve+YvsqadMLtH3Cd4Vmzwe1RUkVYNEHm0/ul3t2XRfNOk+rCQVUQGBGREp2Q1ch86cEJU6/q5WFZwdsNoF+ZeK3znV9W61noOwD1PiNsSX3klgZjQWnGnIbtSYS0XsoOUfv5X7SUZ97SM/0U1mOo7tBzAQlb6SKvIbnbCFEWnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=U0Hg9kEu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 247F4C4CEED;
+	Sat, 26 Jul 2025 06:53:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753512428;
-	bh=1aSJGaabBb0DAn6eDpk1lw68m8J48ib5wrwSM06FVgI=;
+	s=korg; t=1753512833;
+	bh=XHCcXNnNu8XELZ5k+oMXtL3W9sjOIpJZTeCJ/OeQyG4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dvIeHZgh0VhuQFoxG9H8MmXVo/xZLD8piMOcx64ieTjq23h2hcOhVyzw/H2REN+HG
-	 DrQH2KUWJWbl3PG2hcHomFN1tJKtph/blWBRJm+wHJYPVIcz9uB56adj8F5VIAgV2r
-	 Rr3soFbLMFBbXDqlHCG7jZp+219GPcna00BR0QsU=
-Date: Sat, 26 Jul 2025 08:47:05 +0200
+	b=U0Hg9kEuYOI3Bm+e1eRD1kmbYBzkPfevyCt3gTVggoynid4FgHIk2etIdI6PjVgCC
+	 Ch1/7eaHxy1tMQW3330tqanXiFic13YmAwNRZkG9fbpWoQF8Hj/OOuEZR+NRfApy9V
+	 X5yzSS7IkjZq38/WBexwaXy3UW2ACIiyc9XzZD10=
+Date: Sat, 26 Jul 2025 08:53:50 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: Re: [PATCH] MAINTAINERS: add "DEVICE I/O & IRQ [RUST]" entry
-Message-ID: <2025072654-amicably-denim-e6da@gregkh>
-References: <20250725202840.2251768-1-ojeda@kernel.org>
+To: Chanwoo Choi <chanwoo@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [GIT PULL] extcon next for 6.17
+Message-ID: <2025072609-knapsack-drinking-c979@gregkh>
+References: <15ca3763-45a5-40af-93a8-449a9f1f33a9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,23 +54,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250725202840.2251768-1-ojeda@kernel.org>
+In-Reply-To: <15ca3763-45a5-40af-93a8-449a9f1f33a9@kernel.org>
 
-On Fri, Jul 25, 2025 at 10:28:40PM +0200, Miguel Ojeda wrote:
-> This entry will handle device I/O patches and abstractions (such as
-> memory-mapped IO and system resources series [1]), as well as IRQ ones
-> (such as the `request_irq` series [2]).
+On Sat, Jul 26, 2025 at 09:34:47AM +0900, Chanwoo Choi wrote:
+> Dear Greg,
 > 
-> Patches will flow through driver-core, at least for the time being.
+> This is extcon-next pull request. I add detailed description of
+> this pull request on below. Please pull extcon with following updates.
 > 
-> Danilo, Alice and Daniel will maintain it.
+> Best Regards,
+> Chanwoo Choi
 > 
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: Daniel Almeida <daniel.almeida@collabora.com>
-> Link: https://lore.kernel.org/rust-for-linux/20250717-topics-tyr-platform_iomem-v15-0-beca780b77e3@collabora.com/ [1]
-> Link: https://lore.kernel.org/rust-for-linux/20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com/ [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> 
+> The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
+> 
+>   Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-6.17
+> 
+> for you to fetch changes up to 5f09caafc652bcee7a5247e40dd34d1de1ad7d7f:
+> 
+>   extcon: fsa9480: Avoid buffer overflow in fsa9480_handle_change() (2025-07-19 12:39:13 +0900)
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+My tree is closed now, sorry.  Can you break this up into different pull
+requests after -rc1 is out, one for bugfixes, and one for new features
+for 6.18-rc1?
+
+thanks,
+
+greg k-h
 
