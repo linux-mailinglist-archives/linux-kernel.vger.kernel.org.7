@@ -1,223 +1,148 @@
-Return-Path: <linux-kernel+bounces-746562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B12B12846
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:53:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C12B1284A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB07A1C26D02
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:53:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D88567166
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F986190676;
-	Sat, 26 Jul 2025 00:52:58 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7C219992C;
+	Sat, 26 Jul 2025 00:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzEmDJK6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F02188713;
-	Sat, 26 Jul 2025 00:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F354594A;
+	Sat, 26 Jul 2025 00:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753491177; cv=none; b=Vv9dDKpvoWwV12iyI0SvmzvAr7BK0EH8F84gaqr5idZbKmUEB/AOx1G0FAGEJCaQUTSYile6ykplIKQscP0Tsqhs7/PTkDRkWvt2NySzeoK+CSU3Aw7eJxNeBTiAIJUHrAZaHKUythMlg+jSW2oZtgM3jbb6dylBqj/ke5D1LVQ=
+	t=1753491261; cv=none; b=LJLo7P9vZvTwOuE23yBHKvq0qUrwe5S523F6tavGGc06kkUcZXh30ZYMACAoTKQckcDBH8muowsfrHwGenyRvxCZym0cASjYkHGGWGqO08PjaFJjB3Y/Te5CTHzbWgrtLsDitRO6KWONfgcI59xboakeytPws1/iN3dGutI/B+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753491177; c=relaxed/simple;
-	bh=It3v84FvEyIgsN41q1wzPslZzCABIVQHro6nB6+wysg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E8eiunU64r9DT9zpdsJDOOB74SE3wqdJH4Zw8LG88GkOVekda/qbG1eq2c5b3dtbdNZ9bRUO34nwdxRCsOiTzQlezfyX79NrYUosdoAIFni+xuJkdvzTx+DOaMQPbm2uUF4dpLgqR+iytRhUqDcmr5wME26kdvcnnWbHbEr/XMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bpmRz5MLVzKHMZB;
-	Sat, 26 Jul 2025 08:52:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 8696E1A0E8D;
-	Sat, 26 Jul 2025 08:52:46 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP1 (Coremail) with SMTP id cCh0CgDnpbHdJoRo46HlBQ--.48129S2;
-	Sat, 26 Jul 2025 08:52:46 +0800 (CST)
-Message-ID: <179f706c-b04d-4fd5-b896-0abfc546528f@huaweicloud.com>
-Date: Sat, 26 Jul 2025 08:52:44 +0800
+	s=arc-20240116; t=1753491261; c=relaxed/simple;
+	bh=k0MssS8OjXl9ucL/HTEj+OpepdtZIe0Zy0Afm8de7wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f6CHWHZpcr6eHWuh8REU9298l+cEthVbEynDDD52QJrpAnVbTCfVOcJEp7JFtc1WNF1PG8K7qdaWPfGvgPmJ5m6SwdSMsgg4IDxGgwKKvcLiN8USWIOc2iO/qiSRq/bsHYhydUvjGD6cU++MAfkS2beBDEqmd4PWaGjKX7HyU64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzEmDJK6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C546C4CEE7;
+	Sat, 26 Jul 2025 00:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753491260;
+	bh=k0MssS8OjXl9ucL/HTEj+OpepdtZIe0Zy0Afm8de7wk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GzEmDJK6ofskipgzHfVF/dPaOi0eQYeX0uIkUHOt8kti/bZVb+00PvPe70ltX5MPT
+	 XuuwQQugPwBGnsaeB36XTc1AzSwSHUsKoN8pZmrudlul8Unuayrig13F+2HPcY90eX
+	 ZRX7b506o71XzT96SI6kosUjTRi6qXrUU3x02jXHs6c8Zxbc3esonvccUfbYslNa8U
+	 mpopQoBZ7Q/6FpQ0ifw0IKYo13FOr81N+X7/WNKKecmzlx/1gzo1rD16sQYyRWMYZj
+	 jDuA5xR61U7MdVFfwceR+BSfd+pU907c+fiJ+2czQIsydBL9RcOGdnAxiaBmQs+/DB
+	 r1PpfOgPDV5yw==
+Date: Fri, 25 Jul 2025 17:54:18 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+Cc: horms@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ longli@microsoft.com, kotaranov@microsoft.com, ast@kernel.org,
+ daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
+ sdf@fomichev.me, lorenzo@kernel.org, michal.kubiak@intel.com,
+ ernis@linux.microsoft.com, shradhagupta@linux.microsoft.com,
+ shirazsaleem@microsoft.com, rosenp@gmail.com, netdev@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ssengar@linux.microsoft.com, dipayanroy@microsoft.com
+Subject: Re: [PATCH v2] net: mana: Use page pool fragments for RX buffers
+ instead of full pages to improve memory efficiency.
+Message-ID: <20250725175418.553b5b6e@kernel.org>
+In-Reply-To: <20250723190706.GA5291@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20250723190706.GA5291@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
- destruction to avoid hung_tasks
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, lizefan@huawei.com,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com,
- chenridong@huawei.com, gaoyingjie@uniontech.com
-References: <20250722112733.4113237-1-chenridong@huaweicloud.com>
- <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
- <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com>
- <htzudoa4cgius7ncus67axelhv3qh6fgjgnvju27fuyw7gimla@uzrta5sfbh2w>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <htzudoa4cgius7ncus67axelhv3qh6fgjgnvju27fuyw7gimla@uzrta5sfbh2w>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDnpbHdJoRo46HlBQ--.48129S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr4kWF1rKF43Kry3WF48WFg_yoW7WF4rpF
-	s8A3WayF4rtrWYkw1kta4jga4F9a1Ivw4UXw13Ww4IyrnxWas2qF4Iyry5ZFW5Ars7C3WI
-	yF4Fvwn7u34YyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 23 Jul 2025 12:07:06 -0700 Dipayaan Roy wrote:
+> This patch enhances RX buffer handling in the mana driver by allocating
+> pages from a page pool and slicing them into MTU-sized fragments, rather
+> than dedicating a full page per packet. This approach is especially
+> beneficial on systems with large page sizes like 64KB.
+> 
+> Key improvements:
+> 
+> - Proper integration of page pool for RX buffer allocations.
+> - MTU-sized buffer slicing to improve memory utilization.
+> - Reduce overall per Rx queue memory footprint.
+> - Automatic fallback to full-page buffers when:
+>    * Jumbo frames are enabled (MTU > PAGE_SIZE / 2).
+>    * The XDP path is active, to avoid complexities with fragment reuse.
+> - Removal of redundant pre-allocated RX buffers used in scenarios like MTU
+>   changes, ensuring consistency in RX buffer allocation.
+> 
+> Testing on VMs with 64KB pages shows around 200% throughput improvement.
+> Memory efficiency is significantly improved due to reduced wastage in page
+> allocations. Example: We are now able to fit 35 rx buffers in a single 64kb
+> page for MTU size of 1500, instead of 1 rx buffer per page previously.
 
+The diff is pretty large and messy, please try to extract some
+refactoring patches that make the final transition easier to review.
 
-On 2025/7/26 1:17, Michal Koutný wrote:
-> On Fri, Jul 25, 2025 at 09:42:05AM +0800, Chen Ridong <chenridong@huaweicloud.com> wrote:
->>> On Tue, Jul 22, 2025 at 11:27:33AM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
->>>> CPU0                            CPU1
->>>> mount perf_event                umount net_prio
->>>> cgroup1_get_tree                cgroup_kill_sb
->>>> rebind_subsystems               // root destruction enqueues
->>>> 				// cgroup_destroy_wq
->>>> // kill all perf_event css
->>>>                                 // one perf_event css A is dying
->>>>                                 // css A offline enqueues cgroup_destroy_wq
->>>>                                 // root destruction will be executed first
->>>>                                 css_free_rwork_fn
->>>>                                 cgroup_destroy_root
->>>>                                 cgroup_lock_and_drain_offline
->>>>                                 // some perf descendants are dying
->>>>                                 // cgroup_destroy_wq max_active = 1
->>>>                                 // waiting for css A to die
->>>>
->>>> Problem scenario:
->>>> 1. CPU0 mounts perf_event (rebind_subsystems)
->>>> 2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
->>>> 3. A dying perf_event CSS gets queued for offline after root destruction
->>>> 4. Root destruction waits for offline completion, but offline work is
->>>>    blocked behind root destruction in cgroup_destroy_wq (max_active=1)
->>>
->>> What's concerning me is why umount of net_prio hierarhy waits for
->>> draining of the default hierachy? (Where you then run into conflict with
->>> perf_event that's implicit_on_dfl.)
->>>
->>
->> This was also first respond.
->>
->>> IOW why not this:
->>> --- a/kernel/cgroup/cgroup.c
->>> +++ b/kernel/cgroup/cgroup.c
->>> @@ -1346,7 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *root)
->>>
->>>         trace_cgroup_destroy_root(root);
->>>
->>> -       cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
->>> +       cgroup_lock_and_drain_offline(cgrp);
->>>
->>>         BUG_ON(atomic_read(&root->nr_cgrps));
->>>         BUG_ON(!list_empty(&cgrp->self.children));
->>>
->>> Does this correct the LTP scenario?
->>>
->>> Thanks,
->>> Michal
->>
->> I've tested this approach and discovered it can lead to another issue that required significant
->> investigation. This helped me understand why unmounting the net_prio hierarchy needs to wait for
->> draining of the default hierarchy.
->>
->> Consider this sequence:
->>
->> mount net_prio			umount perf_event
->> cgroup1_get_tree
->> // &cgrp_dfl_root.cgrp
->> cgroup_lock_and_drain_offline
->> // wait for all perf_event csses dead
->> prepare_to_wait(&dsct->offline_waitq)
->> schedule();
->> 				cgroup_destroy_root
->> 				// &root->cgrp, not cgrp_dfl_root
->> 				cgroup_lock_and_drain_offline
-> 								perf_event's css (offline but dying)
-> 
->> 				rebind_subsystems
->> 				rcu_assign_pointer(dcgrp->subsys[ssid], css);
->> 				dst_root->subsys_mask |= 1 << ssid;
->> 				cgroup_propagate_control
->> 				// enable cgrp_dfl_root perf_event css
->> 				cgroup_apply_control_enable
->> 				css = cgroup_css(dsct, ss);
->> 				// since we drain root->cgrp not cgrp_dfl_root
->> 				// css(dying) is not null on the cgrp_dfl_root
->> 				// we won't create css, but the css is dying
-> 
-> 				What would prevent seeing a dying css when
-> 				cgrp_dfl_root is drained?
-> 				(Or nothing drained as in the patch?)
+> - iperf3, iperf2, and nttcp benchmarks.
+> - Jumbo frames with MTU 9000.
+> - Native XDP programs (XDP_PASS, XDP_DROP, XDP_TX, XDP_REDIRECT) for
+>   testing the XDP path in driver.
+> - Page leak detection (kmemleak).
 
-> 				I assume you've seen this warning from
-> 				cgroup_apply_control_enable
-> 				WARN_ON_ONCE(percpu_ref_is_dying(&css->refcnt)); ?
->
-> 
-				WARN_ON_ONCE(percpu_ref_is_dying(&css->refcnt)); ?
-				-- Yes
-				Draining the cgrp_dfl_root can prevent seeing the dying css.
-				Q:When the task can be woken up if it is waiting on offline_waitq?
-				A:The offline_css is invoked, and:
-				RCU_INIT_POINTER(css->cgroup->subsys[ss->id], NULL);
+kmemleak doesn't detect page leaks AFAIU, just slab objects
 
-				If we drain the cgrp_dfl_root, it traverses all the csses
-				That means cgroup_lock_and_drain_offline can only return when all
-				the dying have disappeared, thus preventing seeing a dying css.
->> 								
->> // got the offline_waitq wake up
->> goto restart;
->> // some perf_event dying csses are online now
->> prepare_to_wait(&dsct->offline_waitq)
->> schedule();
->> // never get the offline_waitq wake up
->>
->> I encountered two main issues:
->> 1.Dying csses on cgrp_dfl_root may be brought back online when rebinding the subsystem to cgrp_dfl_root
+> - Driver load/unload, reboot, and stress scenarios.
 > 
-> Is this really resolved by the patch? (The questions above.)
+> Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
 > 
->> 2.Potential hangs during cgrp_dfl_root draining in the mounting process
-> 
-> Fortunately, the typical use case (mounting at boot) wouldn't suffer
-> from this.
-> 
->> I believe waiting for a wake-up in cgroup_destroy_wq is inherently risky, as it requires that
->> offline css work(the cgroup_destroy_root need to drain) cannot be enqueued after cgroup_destroy_root
->> begins.
-> 
-> This is a valid point.
-> 
->> How can we guarantee this ordering? Therefore, I propose moving the draining operation
->> outside of cgroup_destroy_wq as a more robust solution that would completely eliminate this
->> potential race condition. This patch implements that approach.
-> 
-> I acknowledge the issue (although rare in real world). Some entity will
-> always have to wait of the offlining. It may be OK in cgroup_kill_sb
-> (ideally, if this was bound to process context of umount caller, not
-> sure if that's how kill_sb works).
-> I slightly dislike the form of an empty lock/unlock -- which makes me
-> wonder if this is the best solution.
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
-Thank you, I’d appreciate it if you could suggest a better solution.
+> -	if (apc->port_is_up)
+> +	if (apc->port_is_up) {
+> +		/* Re-create rxq's after xdp prog was loaded or unloaded.
+> +		 * Ex: re create rxq's to switch from full pages to smaller
+> +		 * size page fragments when xdp prog is unloaded and vice-versa.
+> +		 */
+> +
+> +		err = mana_detach(ndev, false);
+> +		if (err) {
+> +			netdev_err(ndev, "mana_detach failed at xdp set: %d\n", err);
+> +			goto out;
+> +		}
+> +
+> +		err = mana_attach(ndev);
+> +		if (err) {
+> +			netdev_err(ndev, "mana_attach failed at xdp set: %d\n", err);
+> +			goto out;
+> +		}
 
-Thanks,
-Ridong
+If the system is low on memory you will make it unreachable.
+It's a very poor design.
 
+> -/* Release pre-allocated RX buffers */
+> -void mana_pre_dealloc_rxbufs(struct mana_port_context *mpc)
+> -{
+> -	struct device *dev;
+> -	int i;
+> -
+
+Looks like you're deleting the infrastructure the driver had for
+pre-allocating memory. Not even mentioning it in the commit message.
+This ability needs to be maintain. Please test with memory allocation
+injections and make sure the driver survives failed reconfig requests.
+The reconfiguration should be cleanly rejected if mem alloc fails,
+and the driver should continue to work with old settings in place.
+-- 
+pw-bot: cr
 
