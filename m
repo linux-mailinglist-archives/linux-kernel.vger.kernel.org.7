@@ -1,236 +1,235 @@
-Return-Path: <linux-kernel+bounces-746792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E4FB12B40
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:50:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376D8B12B48
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A429AA21F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 15:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 339C01C2330A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 15:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E075327781D;
-	Sat, 26 Jul 2025 15:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98502286416;
+	Sat, 26 Jul 2025 15:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L75oBqSb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="dIJvb94s"
+Received: from LO0P265CU003.outbound.protection.outlook.com (mail-uksouthazon11022095.outbound.protection.outlook.com [52.101.96.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2962527455;
-	Sat, 26 Jul 2025 15:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753545030; cv=none; b=XBr0PTvAaJxGcmJbTp9WGizXtlxA2hxEwy9UVLk083usYfiarXuTMVs457Zd7HWuM9pwgUaAD9ZYA1jrMMRZoZ6WZSDXPXKDvtEoN+huLd8kU+ScGI/smkQU+1dV2wA0VnwMjM8RYowDMarMW+uGqBOm8QIxMEJK4ZeUsRZeIP0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753545030; c=relaxed/simple;
-	bh=GC92yXfDBul7rG84MOYohuLtA+dRJ3XyMttBO4mFzuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mplSyzx5IelYJLfVwJyUYwpAlbTXKwnEfMPqc6D1IvVbQnZBqu4AcBA0PN8bSfVNxV7QfDORJ8/WncleBf/CtdiGTMmmOBkX71iWhh75Mwlbp/phVea4Fr1XzSQHzclkQEDYbLuJau+k7uT4nYdIvI98xibojv3pMs3dnaJ2T5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L75oBqSb; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753545029; x=1785081029;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=GC92yXfDBul7rG84MOYohuLtA+dRJ3XyMttBO4mFzuo=;
-  b=L75oBqSbj0aQ6Ck+Trn8hYP3/YBgUGA+jlSzWPOc46NP1iLO6q1VhREt
-   Q3X6ZZn9Hgxk+iVzcjMlERHJ4wO0qouVsfSG4yntBJz4jDo3nmT/fiOvI
-   CY/niQdpCY89NIPXHoAYscvbzqXJ1/io4lWc+FbkumeGJ//IFfqUJ0dHi
-   za2ouScpmv6WgmUMgopbq3By5BNVB4AJioQlAgZQecgSqcwx8den8hBn1
-   LU1jkhZUmrvsxqkx0gkIHPblNFcTyE8PdLVdbc2hFKaWuwJ9QTL2M5+n0
-   WBIQ0EmnxagU+HsTQfv5ZVUODBXlE/6ZkzB3CBfl9W+5lFQjg5K8t1hSC
-   A==;
-X-CSE-ConnectionGUID: bp1disBLRpa3BGnx45VPuA==
-X-CSE-MsgGUID: bGserau0RjG0e1XvziAgpg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="73308938"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="73308938"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 08:50:28 -0700
-X-CSE-ConnectionGUID: 6HG7iPA2TMWgYYFs9ugLhA==
-X-CSE-MsgGUID: BxXPtvo0RS2UDYHQNPqqxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="192502537"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO localhost) ([10.124.220.149])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 08:50:25 -0700
-Date: Sat, 26 Jul 2025 08:50:24 -0700
-From: David Box <david.e.box@linux.intel.com>
-To: "Derek J. Clark" <derekjohn.clark@gmail.com>
-Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Hans de Goede <hansg@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, platform-driver-x86@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH 2/4] platform/x86: (ayn-ec) Add Temperature Sensors
-Message-ID: <6f7lr653uffhzenm5fgl5cghrsscvqpcpoxyu6qmq6xzlia3h4@fa4ucvpnqwdg>
-References: <20250725004533.63537-1-derekjohn.clark@gmail.com>
- <20250725004533.63537-2-derekjohn.clark@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5DE191499;
+	Sat, 26 Jul 2025 15:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.96.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753545291; cv=fail; b=mjI2NOFHJrXnKVvvCLQPq3fIHti98G0AHCJ8cDBRlmOEFXbCQj/zSyoVdSDKl475tblR2aI967UcxnFFNOYYMRcBnFlaQ0ePAprL2BM4/zc6VvTiaavN8aEXXKnlD47y+R9NlpIEVHRKt3TocCa5dcyTDRmZG2dLSR7CNQAJhMk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753545291; c=relaxed/simple;
+	bh=PeXfhEGl3+9mcSgdch+wYW7DoxSKoqJdFl3A4IblVD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ULic2QAH2u+6ThEf+x9M4fKV2CHcsXcQZJNehvqlOQDUMjojlUbFnt3W3tVUAldY7MDD0kebgnZrfyQkgkDzxUlMEp0C4gW4+YbwvcpL0roOQZEc9hG/ADsisJbzjTfdnmxIq+R5wdQ6M6WgVR8uNf0ukjGNhtEUM5w5iCf68eg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=dIJvb94s; arc=fail smtp.client-ip=52.101.96.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zBmYqN3Iv8idVl+LR1cAiPZ5nvhd5KcfXqmLagZFCmGtqz2p6UNV6N7fzhIXLr3gflaJFwqaLZUqpvKUoyW3DS2vT64MDT/keyiA81e3MVt8ONb8dxkvvFgfbRKuiEZuip23DvEuMQ7T3SeImHACpfjO7lqLi7zhpQg5yR5dcg70to8QodAIqAp4J8y3QN6nVzUWtkE9zJxM/bTdnRF+TYFkkhNCEslqMBvV1kRinEdXHqF9WAD+DAnM2glQ8VdlxvkKIfAtpvTeqnkL1lLWlMOemqn68U2fdYoE7w4H0n19NGEVmsDstzAtWjSXfBtY/L/Yh9AHU7kvFIgrPHxtTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+sYHDLvx1QSV6y5K5KojyMmbMFrCjOYCbYkNwflqb0I=;
+ b=UDLrH+0JKBks4+8vgLJJ0yWB0FxElRQIGy3Bu9tVJvYkE+47uwaoIHRFC2hRYA1Upn95xUfbjrLCVJMIvIPx2WZnN2EYDAZalwRICXyZCgPeaQrMeZDN/A28lZ6R9aX/fpmdL7uVAcD0CVbkwFdr2KHPwZ0HbXE91sdfIGlNCXXC1TcnxnGe4Z4ENYOvb4z4jzosZNCdK1FKsXvtLIUusEomGIAVV1UESIpimAKAE+FLXdqP0zgJnxQFOhfwNQOzYi3XAss1ex7VpyCSF49uU+Bp8D80I4G6O4mf052ftHcuu8W64p3Nju/8kWkFVhDWRQcCHDTWcNqsZJprHuUEKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+sYHDLvx1QSV6y5K5KojyMmbMFrCjOYCbYkNwflqb0I=;
+ b=dIJvb94sfwFP2o/GzJPLTV35a1tnEMcBx3mLvi9lrmtEY+62V8KzHYPAFk6NuxJI55zw9kTXF8mmNBG+RgiKgqebKhpIotxGshrtltt1qKop0TV6WbCIGW/3dy0tiZ+j63Zc60xkhXmk3HaHTsA4YJ3pyqXjTiBLCUk1iT4vTA0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO9P265MB7475.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:3a0::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.25; Sat, 26 Jul
+ 2025 15:54:48 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.8964.024; Sat, 26 Jul 2025
+ 15:54:48 +0000
+Date: Sat, 26 Jul 2025 16:54:46 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Andrew Ballance
+ <andrewjballance@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, "
+ =?UTF-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin
+ <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross
+ <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+ rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 3/3] rust: maple_tree: add MapleTreeAlloc
+Message-ID: <20250726165446.2768c6ee.gary@garyguo.net>
+In-Reply-To: <20250726-maple-tree-v1-3-27a3da7cb8e5@google.com>
+References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
+	<20250726-maple-tree-v1-3-27a3da7cb8e5@google.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0640.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:296::21) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250725004533.63537-2-derekjohn.clark@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO9P265MB7475:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb6d9469-f7da-4879-6180-08ddcc5cbf82
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|7416014|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?un5tfqtLTG12glJztkcHYO//XwoJiBsj7zw8QRtgUbbN9pQbSRYTr6FoMfuo?=
+ =?us-ascii?Q?80y4Prf812d9Mqs1TMdc+G3ztVN+Vvnhdin+f3Y8zV3Xaqf8yM98MYea9fSr?=
+ =?us-ascii?Q?fkvs8N9C0/lrZZ4x3l/0MxNFlTSY2M2+jcN+rF+Px9eaKPBAtJySci5ZDmLn?=
+ =?us-ascii?Q?6lUKKQtw1yEpzI7ULjllTwCvTsObYEVp5DihounKHmP0upVTQNKkUM/WLeMG?=
+ =?us-ascii?Q?k7vRsnHMnPxAYksj7+gKg0c0yf+fo3E5COpdURyy4p8tsLhN3NDpZ0ovHBeB?=
+ =?us-ascii?Q?Ml/gTI3FecniAEwgmX+vAus/rTbDD5f3fM6QUN6+ysv2uPWR1jZ7fx2SLPLp?=
+ =?us-ascii?Q?GCs/eC5G7UAW1jy67WEvyro9PTffyU9Gw+uKw5rTjrCKObnMgoyjniC/hzrz?=
+ =?us-ascii?Q?nMYVDEXINQKBoPgem65PtQiwqFT7L0cRcsJM0BCA3IvOM8dkODmkXpsg9sUQ?=
+ =?us-ascii?Q?l2JNKOrzhjV+5J1WiomnQLNTgNQhHk5RsyrA8vXmhN47XYkZVlpjbZzhY86j?=
+ =?us-ascii?Q?UAuDo0tpw5DXziZYb/uw0iebOwqPQS1NVDyCTDfCLOgLU+rCE+3TQ6ue/rnf?=
+ =?us-ascii?Q?HRjSFEDllFqc7X3kNMncJeFjiet0L1o2zUoSUU5lcny77EYDv31K6WyrKoka?=
+ =?us-ascii?Q?fLoh75UCvoEzqYdVbuE3piKe70v7aIY/LUyFxgopoBZN+tQyBolH7uYpN2+b?=
+ =?us-ascii?Q?A4Ei8np8ivZbXzvyDZq5bnuewtQP50PDwlTMA50dXp5T7GZ4iPfe0mgoIBNA?=
+ =?us-ascii?Q?ZXjpxERL2AipGPRe9pZ3nqqE8C0jIlx/u25w1QOgHLp6NSnEjDgzecoDlVNk?=
+ =?us-ascii?Q?rsevapbO+iuPNH6sfvaGlxKM7oHWqrOQQWf8JKZnEMfyyvr5lfc+jWg12Deb?=
+ =?us-ascii?Q?ev2DAQGOMoNoutcuiLe6lwRfVxUEFFKqF3rLU8YR95AJZprUbBeLqSbmnS+E?=
+ =?us-ascii?Q?kZutPRmBuM5p/P6efRjVStETBx1xScejmEiRUAP4+GzCwVL4ZUFDE3RgNkcC?=
+ =?us-ascii?Q?FCVyC/yizJHpVzSCclmrQ9z49ZSb16SszJxSMhSDpW3boIeOlIS8pPD3xQol?=
+ =?us-ascii?Q?wPm8KnsOOqHi6Gp0LikIFBWJHg06RJCgQcwCEiWRU3ZOw5nxKZspU54QeNjm?=
+ =?us-ascii?Q?7zB+TVIGVT7qJGGbM9fuLGN0YghxTMeCowR3JMo7sN7GHT08Flwv7eTUvWdZ?=
+ =?us-ascii?Q?r4HfEm9XAKSOK/3GsbyfTFR49TsgsokgldBnn4dA19lpIOHksq0czrRSd6+4?=
+ =?us-ascii?Q?AmIA77JKV7+LEq2PNDHwVaYFDtA9bFd3U9GpebOW/qX0hBG0uskvi7i9Ihvy?=
+ =?us-ascii?Q?rHNTjzeclZN13Og7Zegn6YLJLs0iS4qJ7GOA7Olfti6v0sgwu5zZ+7YzAx1x?=
+ =?us-ascii?Q?b/PbzJhPDRT+RdTssoEV+lesTBtd8BtWTaQmdeX5bLEBHVtr9Q591xBvJ+x6?=
+ =?us-ascii?Q?MiwP343gorM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YDbRxPRdWH/AIskhD4rrugv2Pvo81LHJ1Hz7cLeXOw8hSldWNhw/k52o3SPL?=
+ =?us-ascii?Q?RDGmDQskiiAGYOmcPZwKbdvEBp/2EYXzmX0T5fYY9NU/msON/usRt6QisBwj?=
+ =?us-ascii?Q?lyXK9IF3PIpJmSwLhizCWFmnRFvphJqy3JkLxd1/rPecXpwv62GqEPDuoOha?=
+ =?us-ascii?Q?lUtWQKz7agZy2DZ1aH54U/a9/06rde1rkBdHxEvV9V1SxZN5vRoqjD9i/GSZ?=
+ =?us-ascii?Q?M3mo5hedWt7R1Ea0B3q+xqpKBje7PnBfaNxaENOiBUdVfFsWzAbZWZKJNXhk?=
+ =?us-ascii?Q?91jhzU6w5aO7CayB2VSODm7V25HeVJoH21lBV7y/iKfVDk0XhhyXXVN55wPs?=
+ =?us-ascii?Q?He+33JJ2VBFd7ZWFB66KwfGibB1vd5BiWK1qYsC0RQMZc9QuQQYQMs1qYo8p?=
+ =?us-ascii?Q?fVu/jw0ify8cmTuF0mqC1shCfhyRoqrLvdQLIEqNM7gcryCtyttsUnijBhwc?=
+ =?us-ascii?Q?AHIyP2M1+FgdIZFpNe4aUQf4G7ddFpVOb2CN2U7PdcrfDNnVp3gm0n4dGcuV?=
+ =?us-ascii?Q?O8XTKDVdVPaqrtKSU51UmESO3f3IMS87ulkSdhhdg7gNVjEgKBRQAo7KfSzm?=
+ =?us-ascii?Q?cHY8/yDGoDAVMOKofdth6wBWupl2lf0QWcsNMqeZvbavVHocn33rtdI9IC4z?=
+ =?us-ascii?Q?oLWaigBFQfO5FJJrRJ4+zFeSSka1u0+aC1n0EQBSGnL1wpPVcWmzD1v1m+PR?=
+ =?us-ascii?Q?/8uFXKNRmRt4kxkggi0yvAmNMdbqz7eZR8yoaX9gP9V/YUmwMJHYc/4CbyTg?=
+ =?us-ascii?Q?va4tfMoPvVAsCyg8HoKwoPxAekJJMpslS6Dzqx5DiFd6Wc3ctblquCyWE0Ht?=
+ =?us-ascii?Q?mZWuD1HddDYCnPW5zjtQfmPZyqtfQoPRdgi5cSPkfEPbAVf6x7BD1u1NEynn?=
+ =?us-ascii?Q?P1JyWoXvGwUU64La1Epod3upHXhBvXwfitfNOdF4Q0OWcvJFCe+u2dOJ3haf?=
+ =?us-ascii?Q?a2FKSnmKSBWWxoplHFrkEqDfugo2M64jRxJjxXQAq2P/1Sfp7DlzZmz45MrH?=
+ =?us-ascii?Q?ViKVizsv6RzpX0KkNagAdI03Ushvco88vfm3D5qYET6uyz9LutbG/ZphejLL?=
+ =?us-ascii?Q?95sOKUkYQMwTgGlg054IphUx+zyIBdJ43XYX+BZxyowbdraZYGmQ2jFXmRPj?=
+ =?us-ascii?Q?FHHaZ56E01sOsv+O0yRnhZpRuwVnQDN6Ka87cy0SV1IShBiRxsflcXaDCRwR?=
+ =?us-ascii?Q?0ukaCeHiiP30vKOWTVD0uzMQS9k3PKbsPUTUwe8Gtde337VCj5iIkWn14xDw?=
+ =?us-ascii?Q?CGYcRoPISIA6Bc3Fou4CqMeeZjk5gn/KjL6f6ocnEYg037gBkPVi2N4M1ov4?=
+ =?us-ascii?Q?l46xplvto/OAznk1vmu2263Lyq8KwCD/P5ulqwiiP0HnxYyN3TlEQEORBnET?=
+ =?us-ascii?Q?TYD0mPoown595AbhKZE7ml5lqg9cvz7c40ByCb/aBb0inH/RZ9YECYfiSFbN?=
+ =?us-ascii?Q?FOslDAiHM1imt6x9GSxMG7YnDwlHq1TytDeLIFrKwGJ/ZHe/ATCBJlJpaXUE?=
+ =?us-ascii?Q?etjxNsL9rvd/mAM7A0MCmoKYq7OyqhVi0S1w6ZD+igCuosnyfHqtZM+Qv/6k?=
+ =?us-ascii?Q?Z+2N2Z2yJ1TrpsMonzMYcdphEI57xjD7+eUeJ+u4SxUaWZ/4NjDexs+ySkGM?=
+ =?us-ascii?Q?Ew=3D=3D?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb6d9469-f7da-4879-6180-08ddcc5cbf82
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2025 15:54:47.9715
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /j4TeX7JMI6uABuUNCQcXsnxll4AMj0bhrURxjQkrGLt2AAWzRhMQJpMJ5jaAxHrCI57cKJftLvwPq/k0pX6Sw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO9P265MB7475
 
-On Thu, Jul 24, 2025 at 05:45:31PM -0700, Derek J. Clark wrote:
-> Adds temperature sensors to the ayn-ec hwmon interface. These read-only
-> values include Battery, Motherboard, Charger IC, vCore, and CPU Core, as
-> well as labels for each entry. The temperature values provided by the EC
-> are whole numbers in degrees Celsius. As hwmon expects millidegrees, we
-> scale the raw value up.
+On Sat, 26 Jul 2025 13:23:24 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
+
+> To support allocation trees, we introduce a new type MapleTreeAlloc for
+> the case where the tree is created using MT_FLAGS_ALLOC_RANGE. To ensure
+> that you can only call mtree_alloc_range on an allocation tree, we
+> restrict thta method to the new MapleTreeAlloc type. However, all
+> methods on MapleTree remain accessible to MapleTreeAlloc as allocation
+> trees can use the other methods without issues.
 > 
-> `sensors` output after this patch is applied:
-> aynec-isa-0000
-> Adapter: ISA adapter
-> fan1:        1876 RPM
-> Battery:      +29.0°C
-> Motherboard:  +30.0°C
-> Charger IC:   +30.0°C
-> vCore:        +36.0°C
-> CPU Core:     +48.0°C
-> 
-> Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
->  drivers/platform/x86/ayn-ec.c | 89 +++++++++++++++++++++++++++++++++++
->  1 file changed, 89 insertions(+)
+>  rust/kernel/maple_tree.rs | 158 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 158 insertions(+)
 > 
-> diff --git a/drivers/platform/x86/ayn-ec.c b/drivers/platform/x86/ayn-ec.c
-> index 06f232bd10fa..b2054dc2358a 100644
-> --- a/drivers/platform/x86/ayn-ec.c
-> +++ b/drivers/platform/x86/ayn-ec.c
-> @@ -50,8 +50,16 @@
->  #define AYN_SENSOR_PWM_FAN_TEMP_4_REG	0x19
->  #define AYN_SENSOR_PWM_FAN_TEMP_5_REG	0x1B
->  
-> +/* EC Teperature Sensors */
-> +#define AYN_SENSOR_BAT_TEMP_REG		0x04 /* Battery */
-> +#define AYN_SENSOR_CHARGE_TEMP_REG	0x07 /* Charger IC */
-> +#define AYN_SENSOR_MB_TEMP_REG		0x05 /* Motherboard */
-> +#define AYN_SENSOR_PROC_TEMP_REG	0x09 /* CPU Core */
-> +#define AYN_SENSOR_VCORE_TEMP_REG	0x08 /* vCore */
+> diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
+> index c7ef504a9c78065b3d5752b4f5337fb6277182d1..8c025d2c395b6d57f1fb16214b4e87d4e7942d6f 100644
+> --- a/rust/kernel/maple_tree.rs
+> +++ b/rust/kernel/maple_tree.rs
+>
+>  /// Error type for failure to insert a new value.
+>  pub struct InsertError<T> {
+>      /// The value that could not be inserted.
+> @@ -378,3 +499,40 @@ fn from(insert_err: InsertError<T>) -> Error {
+>          Error::from(insert_err.cause)
+>      }
+>  }
 > +
->  /* Handle ACPI lock mechanism */
->  #define ACPI_LOCK_DELAY_MS 500
-> +
->  enum ayn_model {
->  	ayn_loki_max = 1,
->  	ayn_loki_minipro,
-> @@ -63,6 +71,20 @@ struct ayn_device {
->  	u32 ayn_lock; /* ACPI EC Lock */
->  } drvdata;
->  
-> +struct thermal_sensor {
-> +	char *name;
-> +	int reg;
-> +};
-> +
-> +static struct thermal_sensor thermal_sensors[] = {
-> +	{ "Battery", AYN_SENSOR_BAT_TEMP_REG },
-> +	{ "Motherboard", AYN_SENSOR_MB_TEMP_REG },
-> +	{ "Charger IC", AYN_SENSOR_CHARGE_TEMP_REG },
-> +	{ "vCore", AYN_SENSOR_VCORE_TEMP_REG },
-> +	{ "CPU Core", AYN_SENSOR_PROC_TEMP_REG },
-> +	{}
-> +};
-
-Use tabs to align the constants for better readability.
-
-David
-
-> +
->  /* Handle ACPI lock mechanism */
->  #define ACPI_LOCK_DELAY_MS 500
->  
-> @@ -503,6 +525,63 @@ static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_temp, pwm_curve, 7);
->  static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_temp, pwm_curve, 8);
->  static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_temp, pwm_curve, 9);
->  
-> +/**
-> + * thermal_sensor_show() - Read a thermal sensor attribute value.
-> + *
-> + * @dev: The attribute's parent device.
-> + * @attr: The attribute to read.
-> + * @buf: Buffer to read to.
-> + *
-> + * Return: Number of bytes read, or an error.
-> + */
-> +static ssize_t thermal_sensor_show(struct device *dev,
-> +				   struct device_attribute *attr, char *buf)
-> +{
-> +	long ret, val;
-> +	int i;
-> +
-> +	i = to_sensor_dev_attr(attr)->index;
-> +
-> +	ret = read_from_ec(thermal_sensors[i].reg, 1, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	val = val * 1000L;
-> +
-> +	return sysfs_emit(buf, "%ld\n", val);
+> +/// Error type for failure to insert a new value.
+> +pub struct AllocError<T> {
+> +    /// The value that could not be inserted.
+> +    pub value: T,
+> +    /// The reason for the failure to insert.
+> +    pub cause: AllocErrorKind,
 > +}
 > +
-> +/**
-> + * thermal_sensor_label_show() - Read a thermal sensor attribute label.
-> + *
-> + * @dev: The attribute's parent device.
-> + * @attr: The attribute to read.
-> + * @buf: Buffer to read to.
-> + *
-> + * Return: Number of bytes read, or an error.
-> + */
-> +static ssize_t thermal_sensor_label_show(struct device *dev,
-> +					 struct device_attribute *attr,
-> +					 char *buf)
-> +{
-> +	int i;
-> +
-> +	i = to_sensor_dev_attr(attr)->index;
-> +
-> +	return sysfs_emit(buf, "%s\n", thermal_sensors[i].name);
+> +/// The reason for the failure to insert.
+> +#[derive(PartialEq, Eq, Copy, Clone)]
+> +pub enum AllocErrorKind {
+> +    /// There is not enough space for the requested allocation.
+> +    Busy,
+> +    /// Failure to allocate memory.
+> +    Nomem,
+> +    /// The insertion request was invalid.
+> +    InvalidRequest,
 > +}
 > +
-> +static SENSOR_DEVICE_ATTR_RO(temp1_input, thermal_sensor, 0);
-> +static SENSOR_DEVICE_ATTR_RO(temp2_input, thermal_sensor, 1);
-> +static SENSOR_DEVICE_ATTR_RO(temp3_input, thermal_sensor, 2);
-> +static SENSOR_DEVICE_ATTR_RO(temp4_input, thermal_sensor, 3);
-> +static SENSOR_DEVICE_ATTR_RO(temp5_input, thermal_sensor, 4);
-> +static SENSOR_DEVICE_ATTR_RO(temp1_label, thermal_sensor_label, 0);
-> +static SENSOR_DEVICE_ATTR_RO(temp2_label, thermal_sensor_label, 1);
-> +static SENSOR_DEVICE_ATTR_RO(temp3_label, thermal_sensor_label, 2);
-> +static SENSOR_DEVICE_ATTR_RO(temp4_label, thermal_sensor_label, 3);
-> +static SENSOR_DEVICE_ATTR_RO(temp5_label, thermal_sensor_label, 4);
+> +impl From<AllocErrorKind> for Error {
+> +    #[inline]
+> +    fn from(kind: AllocErrorKind) -> Error {
+> +        match kind {
+> +            AllocErrorKind::Busy => EBUSY,
+> +            AllocErrorKind::Nomem => ENOMEM,
+> +            AllocErrorKind::InvalidRequest => EINVAL,
+> +        }
+> +    }
+> +}
 > +
->  static struct attribute *ayn_sensors_attrs[] = {
->  	&sensor_dev_attr_pwm1_auto_point1_pwm.dev_attr.attr,
->  	&sensor_dev_attr_pwm1_auto_point1_temp.dev_attr.attr,
-> @@ -514,6 +593,16 @@ static struct attribute *ayn_sensors_attrs[] = {
->  	&sensor_dev_attr_pwm1_auto_point4_temp.dev_attr.attr,
->  	&sensor_dev_attr_pwm1_auto_point5_pwm.dev_attr.attr,
->  	&sensor_dev_attr_pwm1_auto_point5_temp.dev_attr.attr,
-> +	&sensor_dev_attr_temp1_input.dev_attr.attr,
-> +	&sensor_dev_attr_temp1_label.dev_attr.attr,
-> +	&sensor_dev_attr_temp2_input.dev_attr.attr,
-> +	&sensor_dev_attr_temp2_label.dev_attr.attr,
-> +	&sensor_dev_attr_temp3_input.dev_attr.attr,
-> +	&sensor_dev_attr_temp3_label.dev_attr.attr,
-> +	&sensor_dev_attr_temp4_input.dev_attr.attr,
-> +	&sensor_dev_attr_temp4_label.dev_attr.attr,
-> +	&sensor_dev_attr_temp5_input.dev_attr.attr,
-> +	&sensor_dev_attr_temp5_label.dev_attr.attr,
->  	NULL,
->  };
->  
-> -- 
-> 2.50.0
+> +impl<T> From<AllocError<T>> for Error {
+> +    #[inline]
+> +    fn from(insert_err: AllocError<T>) -> Error {
+> +        Error::from(insert_err.cause)
+> +    }
+> +}
 > 
-> 
+
+This looks identical to `InsertError`?
+
+Best,
+Gary
 
