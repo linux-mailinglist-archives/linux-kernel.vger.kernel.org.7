@@ -1,95 +1,88 @@
-Return-Path: <linux-kernel+bounces-746905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA4EB12CC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:50:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A899FB12CC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2566D4E254D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8401C20517
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 21:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387AB222586;
-	Sat, 26 Jul 2025 21:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8279B223716;
+	Sat, 26 Jul 2025 21:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="FjYv7uJH"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kRu/PbZN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B21317555
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 21:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B93B21D3E4;
+	Sat, 26 Jul 2025 21:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753566613; cv=none; b=Nqzs7nJ+AiF/lyuFOeMpwWozlESZDWeHlftS4MRByis0or2Ufg0MsLqk1/oebHF7ivOzCgglHsNfyfWgnHU+1LLUZH5mDEZqDlnSR+P8D/AyXQ0E4slNfxANFjCJ0DneFVLo+1n2Pb4NBhzg3NVD9kGf0rN91QcrJ9wByZ6oeEM=
+	t=1753566635; cv=none; b=s1qjNOmGyKHLXjW0JxcMnrkYKpowodJR0i/wvVEiTSR+3/hI5uCw9Tvw3gM6SG+uadLGnFjEcgy2G2U7Nve/g4tsRvpZophnqtxO/KHcP/KHmutiSjDeZP8xh7QZxSWkgUWQYFXK1NbnJryweDIxpqk5dKtBUe/BB60inyP5f2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753566613; c=relaxed/simple;
-	bh=kSk6pZi5JERX35vTFewHBzc9w+TCNbhDLEr20oEZUH8=;
+	s=arc-20240116; t=1753566635; c=relaxed/simple;
+	bh=hSbqujNyJtfgoVzH7Vax+KT9pmAhM1E22Hv7yYf+bQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcYGNWm2MJ4QJELcD4B5ixejkFZAgLaX4x7guvsTvc8iyW5hW46knoWYYU2+UhSFqP+h6Qn+4fCnCEFekNYb2bg3UEXdSSAcattElF6xuCo1SSqO3jrxT2Keqp05zBHCOW0t0mWBXwMyhfLFjXv6SAiuNTLpJDpEOtk/jx6KW3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=FjYv7uJH; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-236470b2dceso27973345ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 14:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kerneltoast.com; s=google; t=1753566611; x=1754171411; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OfyX0fUAfObswyvdjCTspDSkpBigkD/S5xxQ8c6KV3Y=;
-        b=FjYv7uJHRGCMal4GaUhg99baBOP2kMvBuHwNBYke92hwbshg745PM8jv93O1pmDHa2
-         6FWCjYQlYgNth9gK4eqCp3jsNK3E35d/utH1/aftvRQgLrEQPe3/eQBp85bsmxyxFIle
-         VI+1Tw8sb+B59c7sk3NSuE9pBnbCO8wIGGfkAfPwfou/WHjDyDpPxLbpHQaheh/guQRy
-         jJcWQfqAU7HpOuB4PIVsuKtmTfoUGSMpAQWQkHkt6IMHwfaYxtJoawI2eYtanGjUBJfn
-         l+mX0Ht5UGjdOuYnZiOJ0QqIWw+534q5KukeUIp471iDlAkCxsg1knqaq/GMzN7eBrdo
-         EL3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753566611; x=1754171411;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OfyX0fUAfObswyvdjCTspDSkpBigkD/S5xxQ8c6KV3Y=;
-        b=SBgonbmDmHj4LxWBdsDwZcAB+9QCGEb+onQSD8nq9NG+8pqyA7juftRYmbLeTuwF0A
-         lO6FWaA78Eiw8Gc4hnsDMwefrbm46xVVdLoB6hSSxU1eDhwGbE63HALuBamV3DU7f34G
-         OjavJFJg9coB++Wt6siEiKp6cBNDG4pvoXLQFFDWuzMy9YHmpSNSEWHCftUz2PHp1Q1t
-         SI4cX4svJPjrBQxupz9n5W6QgbSKWfRmBjq3yI76sfdhuNdR/t1mqj6yS/bQ8IJKFOZv
-         KvDtKACjKmeHY99Yc+JcRk2Gx20utVFvl8eLfVciUWaTbJgbK0ZU8kuXs2sTuDUrGRZL
-         Hx+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXzhbV2ALW55oPux+LU9OpUCjnp9/rPqooMJcDTOqxi2rqZXKNiEPFG9aGWNzAESns0y7wPcI7p+BBc1sM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt63ofsEk1mnwtZUQMHB7M1jcnFrZUssBbj+iFoe19CsCvghBG
-	ZUgr55QjLE/aLq4SJIJIVkzitMn1ddJtqbtt+LH5BE7dMPhvvsJY6eTo532lx9yUlmge
-X-Gm-Gg: ASbGnct/zkiE1IViZI2RkfIAC/oDB8cxRqt8BCxSNTY9binC5bN4ahNBlHx73MXfvJQ
-	6edXn0jDYpoTNpFNZF3fBILIFEaLMYw2MFsKZjKZ21Ty57rFem/YZ5Es76H6TA1+VuQ+ZdAHAkq
-	byC/imeTEnj56Jm3oFj6myVne/65RglYO32+pqV2qif8KYBr2vZnnQGbmc9ACzemRX6CII9dhHw
-	HLOnS0QpD3hYsY/AncLkpN7ayYFSHXuva83Nh+Ky4dJo504n7A4N/ervfqZ3ElWL3s7yuSyFht6
-	8ZQU8hOh84P1YildbSI4o48uksKdgvQuqlii4VQLA+cKnImq56eD00nSm8F4dLIoACYlndC/qMp
-	wByCap13MrRNm3zdhfguJhB65cXUvgsxKt/0=
-X-Google-Smtp-Source: AGHT+IEkYrj6kv0r98d6vdlLZ7nm1KHBvgDzCH8zTJu/LUIUWNAlJSeF/oMmjr7mZf/D/M56RHi9Iw==
-X-Received: by 2002:a17:902:e74f:b0:23f:ac71:ef0 with SMTP id d9443c01a7336-23fb3197539mr109807735ad.43.1753566611371;
-        Sat, 26 Jul 2025 14:50:11 -0700 (PDT)
-Received: from sultan-box ([142.147.89.207])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe30cef7sm23128315ad.26.2025.07.26.14.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 14:50:10 -0700 (PDT)
-Date: Sat, 26 Jul 2025 14:50:07 -0700
-From: Sultan Alsawaf <sultan@kerneltoast.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com,
-	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com
-Subject: Re: [PATCH v2 6/8] media: platform: amd: isp4 video node and buffers
- handling added
-Message-ID: <aIVNj1DLab18eArC@sultan-box>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-7-Bin.Du@amd.com>
- <aIEiJL83pOYO8lUJ@sultan-box>
- <ff2f17c6-c5e4-4b7b-b897-8abb4cb79c35@amd.com>
- <aIVLlZvTQFoBL70r@sultan-box>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OB3z7H0kKX0IardTUCFOqZZkMeyoWdYmbUaOUvacnikxaiPvy6hg5DoZgofsTmgG/78mUMTx6zjylmG6ZFjZNu/7cQun7GXUms40qZwt5mJZ26Maps0LZqR80MLqrNOn5zlqPklcLIaQDqxaXOQMjSlk0B4k2wyjRDtSz0XqdFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kRu/PbZN; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753566635; x=1785102635;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hSbqujNyJtfgoVzH7Vax+KT9pmAhM1E22Hv7yYf+bQ0=;
+  b=kRu/PbZN9ATlJCM6RgFcm1KZXVu8/K1qDjSdStQA+7hQFj2vX853tDwQ
+   b1Inm0JXVsImfUPmiYHU3wxJsYAC0JOst1ZcD0CVvTWPX9d6LLXoZVgET
+   GShMDfaz9J75+4gtWoWs9qckDXsO0Sq152BE8NcklaOfy3M0kc21wTOYe
+   O+iuDAlX+585YuLoL39yo65ynCI8q16Mz3st1sar76A/R0rd4WtbWBQLq
+   ML2udDvaUKmbt8p15XHzBuyCpWYdjtWRfOnM4J1J94k+kXFUDkDo40Em0
+   j/BZ7D9dhVm5r2+sfCjnU4SRiOHmvtX2HnU3kB5hZe3fZtAI7igWvzBh3
+   w==;
+X-CSE-ConnectionGUID: RtzCWjH3SIGC2rKc8eN8Yw==
+X-CSE-MsgGUID: qfffm11BQV2jbdSO2HJ8ZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="55721665"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="55721665"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 14:50:34 -0700
+X-CSE-ConnectionGUID: YUbCUJRlSDSYtBKh9alZxQ==
+X-CSE-MsgGUID: msO8MjvYQuO0CppyXIzicw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="192644434"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 26 Jul 2025 14:50:29 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ufmmg-000MJH-2B;
+	Sat, 26 Jul 2025 21:50:26 +0000
+Date: Sun, 27 Jul 2025 05:50:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>,
+	Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Maud Spierings <maudspierings@gocontroll.com>,
+	MaudSpieringsmaudspierings@gocontroll.com
+Subject: Re: [PATCH 2/4] backlight: add max25014atg backlight
+Message-ID: <202507270543.G0TT6f25-lkp@intel.com>
+References: <20250725-max25014-v1-2-0e8cce92078e@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,50 +91,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aIVLlZvTQFoBL70r@sultan-box>
+In-Reply-To: <20250725-max25014-v1-2-0e8cce92078e@gocontroll.com>
 
-On Sat, Jul 26, 2025 at 02:41:41PM -0700, Sultan Alsawaf wrote:
-> On Fri, Jul 25, 2025 at 05:22:41PM +0800, Du, Bin wrote:
-> > > > +		dev_warn(buf->dev, "ignore buffer free, refcount %u > 0",
-> > > > +			 refcount_read(&buf->refcount));
-> > > 
-> > > This refcount_read() is a possible use-after-free because `buf` is accessed
-> > > after isp4vid_vb2_put() puts its reference to `buf`. So something else could put
-> > > the last reference to `buf` and free it after this refcount dec but before the
-> > > refcount_read(). Maybe just remove this dev_warn() entirely?
-> > > 
-> > The warning is important to debug mem related issue, plan to keep it but
-> > without accessing buf or buf->refcount here. Do you think it acceptible?
-> 
-> Yes, that sounds good. So something like this:
-> `dev_warn(buf->dev, "ignore buffer free, refcount > 0");`
+Hi Maud,
 
-Sorry, to fix the dev_warn() we need to make a copy of buf->dev first:
+kernel test robot noticed the following build warnings:
 
---- a/drivers/media/platform/amd/isp4/isp4_video.c
-+++ b/drivers/media/platform/amd/isp4/isp4_video.c
-@@ -584,8 +584,9 @@ static void isp4vid_vb2_put(void *buf_priv)
- {
- 	struct isp4vid_vb2_buf *buf = (struct isp4vid_vb2_buf *)buf_priv;
- 	struct amdgpu_bo *bo = (struct amdgpu_bo *)buf->bo;
-+	struct device *dev = buf->dev;
- 
--	dev_dbg(buf->dev,
-+	dev_dbg(dev,
- 		"release isp user bo 0x%llx size %ld refcount %d is_expbuf %d",
- 		buf->gpu_addr, buf->size,
- 		buf->refcount.refs.counter, buf->is_expbuf);
-@@ -601,8 +602,7 @@ static void isp4vid_vb2_put(void *buf_priv)
- 		kfree(buf);
- 		buf = NULL;
- 	} else {
--		dev_warn(buf->dev, "ignore buffer free, refcount %u > 0",
--			 refcount_read(&buf->refcount));
-+		dev_warn(dev, "ignore buffer free, refcount > 0\n");
- 	}
- }
- 
---
+[auto build test WARNING on d7af19298454ed155f5cf67201a70f5cf836c842]
 
-Sultan
+url:    https://github.com/intel-lab-lkp/linux/commits/Maud-Spierings-via-B4-Relay/dt-bindings-backlight-Add-max25014-bindings/20250725-191221
+base:   d7af19298454ed155f5cf67201a70f5cf836c842
+patch link:    https://lore.kernel.org/r/20250725-max25014-v1-2-0e8cce92078e%40gocontroll.com
+patch subject: [PATCH 2/4] backlight: add max25014atg backlight
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250727/202507270543.G0TT6f25-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250727/202507270543.G0TT6f25-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507270543.G0TT6f25-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/video/backlight/max25014.c:86:4: warning: variable 'res' is uninitialized when used here [-Wuninitialized]
+      86 |                         res |= 1 << i;
+         |                         ^~~
+   drivers/video/backlight/max25014.c:82:13: note: initialize the variable 'res' to silence this warning
+      82 |         uint8_t res, i;
+         |                    ^
+         |                     = '\0'
+   1 warning generated.
+
+
+vim +/res +86 drivers/video/backlight/max25014.c
+
+    73	
+    74	/**
+    75	 * @brief get the bit mask for the DISABLE register.
+    76	 *
+    77	 * @param strings the led string configuration array.
+    78	 * @return uint8_t bits to set in the register.
+    79	 */
+    80	static uint8_t strings_mask(struct max25014 *maxim)
+    81	{
+    82		uint8_t res, i;
+    83	
+    84		for (i = 0; i < 4; i++) {
+    85			if (maxim->pdata->strings[i] == 0)
+  > 86				res |= 1 << i;
+    87		}
+    88		return res;
+    89	}
+    90	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
