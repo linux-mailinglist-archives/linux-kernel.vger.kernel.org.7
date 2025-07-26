@@ -1,57 +1,81 @@
-Return-Path: <linux-kernel+bounces-746821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CA8B12B9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:17:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E299BB12BA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73CD43AA608
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:17:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3978189934D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31907288C03;
-	Sat, 26 Jul 2025 17:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16451288534;
+	Sat, 26 Jul 2025 17:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pl3Tr4qO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m4I15Lb2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BD080B;
-	Sat, 26 Jul 2025 17:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC08F8635D;
+	Sat, 26 Jul 2025 17:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753550237; cv=none; b=KFF2QPzh+299v4Jnso3Len1UXa1gdnUKjaJCanUsYXC5UvxtclS5F3ULnnBqPGeSJBtxaFFA/Mwms08Ze/QswawsgzLhGr2uosdbvhnxD9Zfz8kJW0/2Dg29h0tgxJpkSMCUuYllc76CgcGGVzx438w1xgbtkMw6h+wlXi9okrs=
+	t=1753550471; cv=none; b=RG+YtLgcbojwjfs/1C8Y+km/aTG6Rx/C1qQ+32ixo2hmmLG8bMnHvaNjvxM2Uj0hhQhnejxhpdYf15sqfiUz5bOnTLdJHYusP3j4RXK2JKU/xm81jesPO35tLh2SBFN9kswX2kFOTFIO5AE1MIxoY4PVJMtsBhHNG6/9XksI+40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753550237; c=relaxed/simple;
-	bh=SbjFA9eOXVdNDH4J9M2fST9PDYOjLoIMnK2pzME1LKY=;
+	s=arc-20240116; t=1753550471; c=relaxed/simple;
+	bh=FYGrziCeFzNuZvhSRlcgFhj9eG/pzlrsTbVj34x+dbA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUp3mT60mSOL6haC1JKdkITytoU0Laog+skUhdHUE65QxETVxV0El36+iYgkNpQlVPhjXGqYOzPS7vJrJ3mtezzNy7LwveoRpTDRc6UBTZlk3Iqo7uzc06AgNORHDcIo9ZnpTmfPyK3ceVcop4OSSjuOjv8Vj7rO4tIBDlN7Z8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pl3Tr4qO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 294D2C4CEED;
-	Sat, 26 Jul 2025 17:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753550236;
-	bh=SbjFA9eOXVdNDH4J9M2fST9PDYOjLoIMnK2pzME1LKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pl3Tr4qOoOcp4SKxbAYlVlhJDpVUu1yT2BE8t31cCQzHoz2U3IzWkcTKX7k1HlcFW
-	 Fmhsjxf+nlqWhgZR0fPI0M7YIPfav6CXu6IisZcn3rVPPv0zMofBb1+Rq1oTqroVNa
-	 vIgl6MaenbLo9KhknKsc2sqbopZSzU7EmM4kLL4JQPyH7xwapmGQLFNGnhUqXvp/nx
-	 vPMnPrAFJuHAPYqME8cShqCp2JzbQGe9kHDFxtmNB9JZGxFES6xLwP2dRXjEPI86wi
-	 myNXPfxDuQAea0bmuasSmEVsITJn4Y/4M9hUvciRKoXNrMa83fYEcn2VyYuazJsww5
-	 hkPEKP+KIOTsA==
-Date: Sat, 26 Jul 2025 12:17:14 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel@oss.qualcomm.com
-Subject: Re: [PATCH 5/7] arm64: dts: qcom: lemans: Rename boards and clean up
- unsupported platforms
-Message-ID: <ztnnerdg4xp6liqj7jjfyos5vsjuvppfrhyvhoczlki6riotaj@m6n7bk3phayl>
-References: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
- <20250722144926.995064-6-wasim.nazir@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NpzVHH2ROLkk133O1HMPmmHtfnLCFRE1KyFA14YtIasVZy8oZ4rsX5xA49N/N9P9+3m/P2GsK+lHyIbFZ+CZEFj6oquUn8+1Ueu1nx+gxc3Au1o05YZcn0AxKEcrPKMTIK8GI2pOuW51wgQii72q8BeSZn0ZI7fktepCO+DB508=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m4I15Lb2; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753550469; x=1785086469;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FYGrziCeFzNuZvhSRlcgFhj9eG/pzlrsTbVj34x+dbA=;
+  b=m4I15Lb2PzOkGq7Fh6j54jdnv8u2OmYQF7OExDDZHth06Zoz6pXfmr3f
+   cuRE3N0gKXoKohnG0HbA0IqWdYwzV7vCcnnCA6unE6elItupnufIwwXn1
+   YRiMIID2H5MYWAuebuhXdbH3L//y2cO+EeoWzmk76REAEgeGwq08EVXbK
+   q6sxUWysvp0UCfvfnuW6leKzAu9tHYq6cEc52b3divuGtapzOkV/GtwhO
+   T/gn7lASCQZlNhkOrxTvhFXOARsLNGlo12WfmTU/M6KwjKEzxPjPbGvUt
+   S4YHoU1tcJI+NtlV4dGrV7oV92KLhtHQiHtKd81S9ZG4iYENWRTdVykAB
+   Q==;
+X-CSE-ConnectionGUID: Y+9QoYeRR52o7jVQA0Su5A==
+X-CSE-MsgGUID: eHaUnqpqREetq5HP4qQ1bA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="55822562"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="55822562"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 10:21:08 -0700
+X-CSE-ConnectionGUID: aORf0ttfRyS2t+7wKEuHIQ==
+X-CSE-MsgGUID: y+Pk7nMORK2wa7WBA7tGig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="167114307"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 26 Jul 2025 10:21:05 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ufiZz-000M9r-1f;
+	Sat, 26 Jul 2025 17:21:03 +0000
+Date: Sun, 27 Jul 2025 01:21:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Derek J. Clark" <derekjohn.clark@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH 1/4] platform/x86: (ayn-ec) Add PWM Fan HWMON Interface
+Message-ID: <202507270148.ZrFnYWlb-lkp@intel.com>
+References: <20250725004533.63537-1-derekjohn.clark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,168 +84,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250722144926.995064-6-wasim.nazir@oss.qualcomm.com>
+In-Reply-To: <20250725004533.63537-1-derekjohn.clark@gmail.com>
 
-On Tue, Jul 22, 2025 at 08:19:24PM +0530, Wasim Nazir wrote:
-> Rename qcs9100 based ride-r3 board to lemans ride-r3 and use it for all
-> the IoT ride-r3 boards.
-> Rename sa8775p based ride/ride-r3 boards to lemans-auto ride/ride-r3,
-> to allow users to run with old automotive memory-map.
-> 
-> Remove support for qcs9100-ride, as no platform currently uses it.
+Hi Derek,
 
-As pointed out by Krzysztof, this has user impact, so we have to weight
-the benefit of this against the impact on those users.
+kernel test robot noticed the following build warnings:
 
-As such, this needs a proper problem description
-(https://docs.kernel.org/process/submitting-patches.html#describe-your-changes)
-and are there are three (probably different) set of developers/users
-impacted it would make sense to split it in three patches.
+[auto build test WARNING on groeck-staging/hwmon-next]
+[also build test WARNING on linus/master v6.16-rc7 next-20250725]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Regards,
-Bjorn
+url:    https://github.com/intel-lab-lkp/linux/commits/Derek-J-Clark/platform-x86-ayn-ec-Add-Temperature-Sensors/20250725-084850
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20250725004533.63537-1-derekjohn.clark%40gmail.com
+patch subject: [PATCH 1/4] platform/x86: (ayn-ec) Add PWM Fan HWMON Interface
+config: i386-kismet-CONFIG_LEDS_TRIGGERS-CONFIG_IWLEGACY-0-0 (https://download.01.org/0day-ci/archive/20250727/202507270148.ZrFnYWlb-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250727/202507270148.ZrFnYWlb-lkp@intel.com/reproduce)
 
-> 
-> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile                    |  7 +++----
->  .../{sa8775p-ride-r3.dts => lemans-auto-ride-r3.dts} |  6 +++---
->  .../qcom/{sa8775p-ride.dts => lemans-auto-ride.dts}  |  6 +++---
->  .../qcom/{sa8775p-pmics.dtsi => lemans-pmics.dtsi}   |  0
->  .../qcom/{qcs9100-ride-r3.dts => lemans-ride-r3.dts} | 12 +++++++++---
->  arch/arm64/boot/dts/qcom/qcs9100-ride.dts            | 11 -----------
->  6 files changed, 18 insertions(+), 24 deletions(-)
->  rename arch/arm64/boot/dts/qcom/{sa8775p-ride-r3.dts => lemans-auto-ride-r3.dts} (59%)
->  rename arch/arm64/boot/dts/qcom/{sa8775p-ride.dts => lemans-auto-ride.dts} (60%)
->  rename arch/arm64/boot/dts/qcom/{sa8775p-pmics.dtsi => lemans-pmics.dtsi} (100%)
->  rename arch/arm64/boot/dts/qcom/{qcs9100-ride-r3.dts => lemans-ride-r3.dts} (36%)
->  delete mode 100644 arch/arm64/boot/dts/qcom/qcs9100-ride.dts
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 4bfa926b6a08..2a1941c29537 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -29,6 +29,9 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp433.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp449.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp453.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp454.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= lemans-auto-ride.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= lemans-auto-ride-r3.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= lemans-ride-r3.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
-> @@ -126,8 +129,6 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2-industrial-mezzanine.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2-vision-mezzanine.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8300-ride.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
-> -dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
-> -dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qrb4210-rb2.dtb
-> @@ -140,8 +141,6 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qru1000-idp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sa8155p-adp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sa8295p-adp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sa8540p-ride.dtb
-> -dtb-$(CONFIG_ARCH_QCOM)	+= sa8775p-ride.dtb
-> -dtb-$(CONFIG_ARCH_QCOM)	+= sa8775p-ride-r3.dtb
->  sc7180-acer-aspire1-el2-dtbs	:= sc7180-acer-aspire1.dtb sc7180-el2.dtbo
->  dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-acer-aspire1.dtb sc7180-acer-aspire1-el2.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-idp.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts b/arch/arm64/boot/dts/qcom/lemans-auto-ride-r3.dts
-> similarity index 59%
-> rename from arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
-> rename to arch/arm64/boot/dts/qcom/lemans-auto-ride-r3.dts
-> index 3e19ff5e061f..0e19ec46be3c 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
-> +++ b/arch/arm64/boot/dts/qcom/lemans-auto-ride-r3.dts
-> @@ -7,11 +7,11 @@
-> 
->  #include "lemans-auto.dtsi"
-> 
-> -#include "sa8775p-pmics.dtsi"
-> +#include "lemans-pmics.dtsi"
->  #include "lemans-ride-common.dtsi"
->  #include "lemans-ride-ethernet-aqr115c.dtsi"
-> 
->  / {
-> -	model = "Qualcomm SA8775P Ride Rev3";
-> -	compatible = "qcom,sa8775p-ride-r3", "qcom,sa8775p";
-> +	model = "Qualcomm Technologies, Inc. Lemans-auto Ride Rev3";
-> +	compatible = "qcom,lemans-auto-ride-r3", "qcom,sa8775p";
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dts b/arch/arm64/boot/dts/qcom/lemans-auto-ride.dts
-> similarity index 60%
-> rename from arch/arm64/boot/dts/qcom/sa8775p-ride.dts
-> rename to arch/arm64/boot/dts/qcom/lemans-auto-ride.dts
-> index 68a99582b538..6af707263ad7 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/lemans-auto-ride.dts
-> @@ -7,11 +7,11 @@
-> 
->  #include "lemans-auto.dtsi"
-> 
-> -#include "sa8775p-pmics.dtsi"
-> +#include "lemans-pmics.dtsi"
->  #include "lemans-ride-common.dtsi"
->  #include "lemans-ride-ethernet-88ea1512.dtsi"
-> 
->  / {
-> -	model = "Qualcomm SA8775P Ride";
-> -	compatible = "qcom,sa8775p-ride", "qcom,sa8775p";
-> +	model = "Qualcomm Technologies, Inc. Lemans-auto Ride";
-> +	compatible = "qcom,lemans-auto-ride", "qcom,sa8775p";
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi b/arch/arm64/boot/dts/qcom/lemans-pmics.dtsi
-> similarity index 100%
-> rename from arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
-> rename to arch/arm64/boot/dts/qcom/lemans-pmics.dtsi
-> diff --git a/arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dts b/arch/arm64/boot/dts/qcom/lemans-ride-r3.dts
-> similarity index 36%
-> rename from arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dts
-> rename to arch/arm64/boot/dts/qcom/lemans-ride-r3.dts
-> index 759d1ec694b2..310c93f4a275 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dts
-> +++ b/arch/arm64/boot/dts/qcom/lemans-ride-r3.dts
-> @@ -2,10 +2,16 @@
->  /*
->   * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->   */
-> +
->  /dts-v1/;
-> 
-> -#include "sa8775p-ride-r3.dts"
-> +#include "lemans.dtsi"
-> +#include "lemans-pmics.dtsi"
-> +
-> +#include "lemans-ride-common.dtsi"
-> +#include "lemans-ride-ethernet-aqr115c.dtsi"
-> +
->  / {
-> -	model = "Qualcomm QCS9100 Ride Rev3";
-> -	compatible = "qcom,qcs9100-ride-r3", "qcom,qcs9100", "qcom,sa8775p";
-> +	model = "Qualcomm Technologies, Inc. Lemans Ride Rev3";
-> +	compatible = "qcom,lemans-ride-r3", "qcom,sa8775p";
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/qcs9100-ride.dts b/arch/arm64/boot/dts/qcom/qcs9100-ride.dts
-> deleted file mode 100644
-> index 979462dfec30..000000000000
-> --- a/arch/arm64/boot/dts/qcom/qcs9100-ride.dts
-> +++ /dev/null
-> @@ -1,11 +0,0 @@
-> -// SPDX-License-Identifier: BSD-3-Clause
-> -/*
-> - * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> - */
-> -/dts-v1/;
-> -
-> -#include "sa8775p-ride.dts"
-> -/ {
-> -	model = "Qualcomm QCS9100 Ride";
-> -	compatible = "qcom,qcs9100-ride", "qcom,qcs9100", "qcom,sa8775p";
-> -};
-> --
-> 2.49.0
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507270148.ZrFnYWlb-lkp@intel.com/
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for LEDS_TRIGGERS when selected by IWLEGACY
+   WARNING: unmet direct dependencies detected for LEDS_CLASS
+     Depends on [n]: NEW_LEDS [=n]
+     Selected by [y]:
+     - AYN_EC [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y] && HWMON [=y]
+   
+   WARNING: unmet direct dependencies detected for LEDS_CLASS_MULTICOLOR
+     Depends on [n]: NEW_LEDS [=n] && LEDS_CLASS [=y]
+     Selected by [y]:
+     - AYN_EC [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y] && HWMON [=y]
+   
+   WARNING: unmet direct dependencies detected for LEDS_TRIGGERS
+     Depends on [n]: NEW_LEDS [=n] && LEDS_CLASS [=y]
+     Selected by [y]:
+     - MAC80211_LEDS [=y] && NET [=y] && WIRELESS [=y] && MAC80211 [=y] && (LEDS_CLASS [=y]=y [=y] || LEDS_CLASS [=y]=MAC80211 [=y])
+     - IWLEGACY [=y] && NETDEVICES [=y] && WLAN [=y] && WLAN_VENDOR_INTEL [=y]
+     - IWLWIFI_LEDS [=y] && NETDEVICES [=y] && WLAN [=y] && WLAN_VENDOR_INTEL [=y] && IWLWIFI [=y] && (LEDS_CLASS [=y]=y [=y] || LEDS_CLASS [=y]=MAC80211 [=y]) && (IWLMVM [=n] || IWLDVM [=y])
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
