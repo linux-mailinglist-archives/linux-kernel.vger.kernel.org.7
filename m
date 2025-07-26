@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-746617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDCAB128F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:35:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EA2B128FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26D9E7A8595
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E51016BCE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716C3218E99;
-	Sat, 26 Jul 2025 04:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D685521A424;
+	Sat, 26 Jul 2025 04:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXYNI/3c"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vme20EAt"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A352185AC
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 04:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DF821885D
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 04:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753504433; cv=none; b=F9PaiMmpu6xEkztJj8SBKAFf5Juo2Gu9NzTc38Rrt1sVkQlAacSKdS1Kf7WB3OyMOtBuabDmnknVtUa/UepI7B+VCRnYMfKAktKYNOYktIaPGHqXCwHf7uPsldTsf8+WH7b8iWreHiWF6J2Fq6E8YrG/0ojDoCx6tQ6QU4GjefQ=
+	t=1753504437; cv=none; b=F7ZsTUTWhxG32PJIzfhqOVmKJv2gKbs3AYDnViuW3rIXYXwIpwD2bjp8rZjjQpCdiKnypIn+32sbd+tOJe5S+AehfZ9Zo16SDJIGyxqC0qDEQ2gBScBaxJK8g3tG9TJiod/9ISeq0uzvFdEYU+uBRaLoAQ488nlCSdfgJX33Au4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753504433; c=relaxed/simple;
-	bh=spShQhbzwsDpuuBCF0J00kLiKd8sC/VG38gYV30hMzo=;
+	s=arc-20240116; t=1753504437; c=relaxed/simple;
+	bh=WvWtSSG1WQ0XnFbhnhRWLKw4dnXHRNMYRUC6Kw9zqM4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=humAcnfdmJ6YL3OW0ISVD4juFv02heZcjfUvaCNbmxDVrCu485bnzxTgZb89ceAHQaFrRpKbhrnxvEyQoJ6E9xUY4IUxe7dgywrq5z0CgLnIxKFxsV0ZqKCt7W+mNPH6qcIugxxcS7c/9HGVl99iRkqKGKzmAAePOtEEcrKcIz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXYNI/3c; arc=none smtp.client-ip=209.85.222.173
+	 MIME-Version; b=kZJYszzZGdsJJSHvj99JONWh90vU8Jwv/buUJscqedQtaSc157GKzw/sq1CJmr9MetJMQRrGQYEruuPX0zFLg1Q3Rb1WeXLVj1EbQul02eGiDi4Y3e5q8o4t3KOu2NZGp5Zk6bt6t4x9WLxtNO8VYylPlx0V2vUue9rdHe3nMFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vme20EAt; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e32c95775aso306167385a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:33:52 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7e2c920058fso386257685a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:33:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753504431; x=1754109231; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753504434; x=1754109234; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+EZ13gOR4MCpjhKGk8VIh6hqTqWWLNSk/iwMXtaMPUY=;
-        b=YXYNI/3c1hSq1z/0QrQe+/MVvm291qDdXSLW2Zb7RoUusLGFsPd8qv8NjQ/NMCshTO
-         IjAER7j+wtSdsnnBY0DgtWSvnVnBX7g7g41wTY7M4r6EkMIw/8P9wR2W/ivVXRhaEdI/
-         O2liNoP9W/txXN9BZDCkT9uloe7QVNBKWu0p1dkHKj7IuBbVpZGaTEVybg7l3u9YJyfK
-         JJpWXF4N10Y5Y1iyxsn7qVpCZhPPftJIIahgdQybrHDk/Lf/Ul5MWU+URL0tfe1xphwL
-         U27m0KSfupogDklr75ySn4PNC9OhmB3b5P1WaRBtDo+F+5tC15CopqIXsAeT8H3Myd1f
-         YNfg==
+        bh=gC45lvNfo/ER/85bNnioTazhn/jQr+yHb1t5QvafK14=;
+        b=Vme20EAtllB0fD8Iq8SsxE8rV+J0C4zQrTRxZ1bjokeFURXC//SCg6DFVUHOWCKmeO
+         z1Se3QSPIbP0AP85hSzQdqAJNeomoYSyWSSWVJ7SBEraz5RWsyRWXIrDHZ8RvUAiIOW9
+         PJzCiUVl7c4l5zyVStwb/6RCm0GlT0ZsqP+sppkMIIiJPjEuy+Y8mGd86WLGyXfReuYf
+         oeuZaMJYX7L9VcLwwIBFYS2hTRvwUiy9N0n6sDs8upuq8ZqOUwPbFwJHPknx98XoiGHc
+         E6XNciBnuRexRINupYrckhEObu/yDEepWjfJPfH10EmJoIn1O08FDUOKFAwVKhxgKxRc
+         ZJ+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753504431; x=1754109231;
+        d=1e100.net; s=20230601; t=1753504434; x=1754109234;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+EZ13gOR4MCpjhKGk8VIh6hqTqWWLNSk/iwMXtaMPUY=;
-        b=BEemzgW+5RFckUJYtu4wZdNExGe/KfqnoNFcsEGf395jzTdO3z0eIGLYYyQDq2+I0p
-         gD5zTBIrVIjMXuhcR/q+341v1l0WdcQJrkMMzTpvc5YcbG8DIRSzj0+okugfIaTERA1t
-         sZv5QwuBcV5q4hUqekZp9G8xNZzCtlpJjBGdW2vKM0tyqmMPFPpSKAhDlI9RWPpPVRjw
-         rFcR/8TXfTlV/PuqTuoLxTdFOXblM79NXcsQBwAN7W/rIEYroyHFSyEO/p0Xw6aNaZx0
-         6PAbc/FeVMAGi/PCQWOcAnnwcHyVy57ahi3u0IB1wlkcRBkfGgRlu9ijHBvJhlsYSU8t
-         yAwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVngSdtRLSSGwdIMc1ezXqWF9Af3EqciJQxegPv98jKOkDk0qTudHetiryAzlZB+++aoENfQmGSd8HKKss=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+GB/z11EQhF+16i7UTFle9u4UphFx5hk71tLlwIZmo6LNluzb
-	vda4tEIwBjdSjBHDloJoHdbssZ1bj8u8U+FwYtLiCg4FLvraVDg8PbIn
-X-Gm-Gg: ASbGncvqde1yxgKK/MzNIm20KHsD76bkB2jpVrmlq9a7jwqMEU2KFMlbiuEMbiLkGBH
-	yHHEKr6R7N8qVIwQ8SZ1p3SYW6G6N4e6Lv++K469NDPVYVMJbjvKIKDid3FKCO8s9u6UBecxX1w
-	e+jSa19q+EuPyx8ZQ5i/wgBHyu9zLz+d6GX4gulzpSHg6BVNsMZ515qDlkYRy5uCCG6dIB65111
-	ptPbzEghsobj4WYV7JdtyVXzEu72n8RoxC3pA9oefo2WMCgXd1P95r5gV1bY8oawhBv5n5uSkZa
-	0ZgUwcukv9zbuho3VTagMDHY88RC+SJCjzsBKCx4AnhH26CcQDKVaj7h1qwI/vMzzjggg6mpHoU
-	Da42p4L4hU6uwbMHV72MILzGY7WElOiShbkDNzhGL4iEXC4JQz9k=
-X-Google-Smtp-Source: AGHT+IHSWMa30iDJm+pBR8Q765qRcpjOUuLJpjvifMALXHOQqjnCpC7lXlrGDs+Vnb96ZoSfDY4SPg==
-X-Received: by 2002:a05:620a:2193:b0:7e3:4417:2b14 with SMTP id af79cd13be357-7e63bfad12dmr592154585a.61.1753504431314;
-        Fri, 25 Jul 2025 21:33:51 -0700 (PDT)
+        bh=gC45lvNfo/ER/85bNnioTazhn/jQr+yHb1t5QvafK14=;
+        b=hQq3gu0/SqoFNSGGNCAWcpDoC819qkfPuNYAACtHRYv7VYIFBbvx1BEZY1hpYiMet5
+         8W+/ZnMmXMkc94xEtu8rCtPtagosT28mfAvzk29ItjCfWiE/LWVrqgBQiK4HYcQ1zfVP
+         CnbwGhin0VcfXstQzKhgBdK4DMcasuIS8HzAAzPspgpy76j9Qy9BT0pam4vvRt0wf7+n
+         1xypS1jUEg3nYKXSSz9FvKEE3FpUVsOvUpYcLw2xtnoIzQba4UKe9RWFugCmPq7mCnMR
+         S3MRQjTwXpiE47E4FGTlhQjNP7wdeloZ/9mAlWcyr7fVkoYb+7DhCNec5+/qrqGNxpwf
+         X1/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWsMoHGUONgzwTnRn5w9rgT1s2NoC1278O8dxyKE46e6Pzhubi1367+XciTgZGif1N0ht5VAMpuCxYz8jU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhPg/lg8oskc0ThsmexcPG0HY6qTQJ9JjMbJvX70x1NHhka2yh
+	38I1zTVctS/Kq86kYlDlVLXlEEjr8LTs6NzjXzBYYFOf/WoEJUpNOXowDc/wYQ==
+X-Gm-Gg: ASbGnctDhNh4U406ZaF8czXzp2RZ4/4RWTm6PS4pE3dkjAkrEzSVvllHatxvMSsT9Aq
+	2fhy2sqfwFl3yJAuHBMul6Aav1AE+RS9WaJZuJrhjBlOGGcUEB5lP74XkAA1MXRcRCGNxvtJIdr
+	kbQrl+V2naFmMbbbbHnrSDrymi4fn1QFF2g1y1Fu2rdq0cjiQqKbAdDTtZfzToR0bNQESQgVmpy
+	P51SRQafCxUtB1/Zmm76txQTg7U1Rfr2UO5otgSgXFyVG9UJMTXEZOsvQVUv5TGH0glxZRYx5Om
+	FeJVdWpOchzQMSElIrDJ7RwoXmP8vQUMJgTn4XMdiDVWoM+d03zXo0LKa9mbILLl3nDJ3m+xy3D
+	sFrvScmxiUvEULT6FDgQlCz7TIQG7O59+P3uiIt8SBSC2QXnK+x0=
+X-Google-Smtp-Source: AGHT+IHeiQLQMrg9lJ4rQcscOTGZVVaWggM4N+/ThoNuwNXhuqUMPhFd9JyXB0i08pGlDPbIypg4pw==
+X-Received: by 2002:a05:620a:470d:b0:7d2:189a:5949 with SMTP id af79cd13be357-7e63badac12mr611023285a.28.1753504434208;
+        Fri, 25 Jul 2025 21:33:54 -0700 (PDT)
 Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6432a885asm70322185a.36.2025.07.25.21.33.50
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6432a885asm70322185a.36.2025.07.25.21.33.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 21:33:51 -0700 (PDT)
+        Fri, 25 Jul 2025 21:33:53 -0700 (PDT)
 From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	vivek.balachandhar@gmail.com
-Subject: [PATCH 11/20] staging: rtl8723bs: remove space before semicolon
-Date: Sat, 26 Jul 2025 04:32:09 +0000
-Message-Id: <20250726043218.386738-12-vivek.balachandhar@gmail.com>
+Subject: [PATCH 12/20] staging: rtl8723bs: fix excessive indentation in nested if statement
+Date: Sat, 26 Jul 2025 04:32:10 +0000
+Message-Id: <20250726043218.386738-13-vivek.balachandhar@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250726043218.386738-1-vivek.balachandhar@gmail.com>
 References: <20250726043218.386738-1-vivek.balachandhar@gmail.com>
@@ -91,26 +91,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Removed an unnecessary space before a semicolon to comply with kernel
-coding style. This change affects a single line.
+Reduced indentation in a nested if-statement to match kernel coding
+style and improve readability. No functional changes introduced.
 
 Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 161f149bf244..547734f5492e 100644
+index 547734f5492e..0679253355fb 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -2105,7 +2105,7 @@ void rtw_update_registrypriv_dev_network(struct adapter *adapter)
- 	struct	wlan_network	*cur_network = &adapter->mlmepriv.cur_network;
+@@ -1160,8 +1160,8 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
  
- 	/*  adhoc no 802.1x */
--	pdev_network->privacy = (psecuritypriv->dot11PrivacyAlgrthm > 0 ? 1 : 0) ;
-+	pdev_network->privacy = (psecuritypriv->dot11PrivacyAlgrthm > 0 ? 1 : 0);
- 
- 	pdev_network->rssi = 0;
+ 					ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, pnetwork->network.mac_address);
+ 					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
+-						if (ptarget_wlan)
+-							ptarget_wlan->fixed = true;
++					    if (ptarget_wlan)
++						ptarget_wlan->fixed = true;
+ 					}
+ 				}
  
 -- 
 2.39.5
