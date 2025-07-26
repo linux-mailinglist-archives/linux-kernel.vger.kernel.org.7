@@ -1,94 +1,138 @@
-Return-Path: <linux-kernel+bounces-746575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857D9B12880
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 03:43:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508E2B12884
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 03:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FAA57B97B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E6A168946
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D527D1C8630;
-	Sat, 26 Jul 2025 01:43:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932171D5CC7;
+	Sat, 26 Jul 2025 01:47:30 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AD71C5D77
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 01:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FD51172A;
+	Sat, 26 Jul 2025 01:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753494185; cv=none; b=jHHwGosEzzfCfh1NG5AqBk94Mxh+oNzXx1hviKhAQIslWvatIE3lE2/b4yh1Moj4HULB+jzEbeYWTydFrL4gPt2UTmfE530h8LS1Ss1nmovoR9JaQLcQfh2XGFYW5YY1zRVP+LGUIv127yWN0ZD4/CRyJWQQUBZ+5+e21JQrVsk=
+	t=1753494450; cv=none; b=IVn5Rxxg9SY8iONjh2PVOvWuqGCtBfQ2/wucRo99amu7Rra/zCVqIvVL8oTgE/d6dowzVI92oZ/N8J4vCNYQeQ1to4DdVx8RaEAAw/+PW1DykIyHHjcwZhJZt8UjTDQoq5BwUvgBppDh8cu1r0YJernE9tLiAQSJnz+CuJN45wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753494185; c=relaxed/simple;
-	bh=EiRZkke/EwWZK+jioE2Brp8brltihridvzQx2QVTP5Y=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DQDISzBEaleihqoSf6sQuHVCx6bAgqjbKi4tOEGyQqFfAPsEcasmLhuxeQyQFmjTojctUJRLal/JTbGu8/tp9v/Yb3hO2rEz4XvFj4Kme+BNa7WJP55PE8eDZaJ+fzrvwo+ey/Zajuxe1Lt2aKFhVvw20mjPYVFBBX7jtzWpwdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e28a67755fso14881485ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:43:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753494183; x=1754098983;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uCUniYILMqleAH3xbE9+O1uxqI2C8yao5yj/kH/o7DI=;
-        b=MZtRUkmbSyuOgZEGQVSSuCgJGl9jrHbFnURxrrFvKLtXDSO2/V+uw6D/XU64NPRs+E
-         a8IQPBdQDcFZZOG1xnsTZt8aMeDgVXzO51L7dThD5fRFFPsKsUMx+yicJSwgoRJ8b6Mq
-         V9gfTXAHktxMzALY2+6ua18xiCWibi7LrIH46a6Ia07VbQknDmvB+HgmufE8aQP/731s
-         QwxKbB165ZCytTCZAkdUHhr0+4l9dzG6d6Z2NJjJ4IMYolxSlv6BPonStpbox+ok+5bt
-         xWZmc7eVytd/qHUIhD7KQqFQWyg52KjcOzkCHLS8EBV/XAxN7GK0elHvHpM8ge2V+/cR
-         7qzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVcdpuJZt+9wYDER7ZOAJ5N1knppTPZR+XvS6bUN3ZSQaeBHeP8fL+mtJoaCGvgtj8V2x+eY7Yfeeal2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsevxrmNrnIfIRiPuAy8HdF6svKIkfhYJPRIFYF9oqHgfR+T5w
-	MyWcCxqddmNX6KGLTnSAiwg0+fr2dQjYGTOfKNI/4Xskznje9Hd8v9SBv7hdkpb3azvWO6hmM26
-	YchIf7oCmnTJROBOo08PXQrv26rH0LXLU+ZSxk7guyXzZg9fP+IqfPQQ2SwM=
-X-Google-Smtp-Source: AGHT+IEThwMXKzDRO0MQ+2RmdbFxFmPNC/OTQrGwiLB1flNLtz2bsAnrcviKrT98ZcLhEMaHQvexFRHwRefEGLWJWAajKGc5UjSj
+	s=arc-20240116; t=1753494450; c=relaxed/simple;
+	bh=D4mv0bnJMpA06AEn9vrzc/D4M+IAH+zY69YwG874vbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JAdFtpknWF60wgQTj8eh8yyobFnhSkzvWPizYm+DKMBnZCANcLPvCm1ROYkY/uEZFb/VTWOjbN0EB6Ngd7lld6gZIsJ3jDltFIf05uGbZb10vaaEtISQS8CVEvHpkBCiDItp7zunTfTitW/D0zS9qGxjXhN2Al1P3oB3zwNJAoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bpncD6rQtz2RVtT;
+	Sat, 26 Jul 2025 09:45:00 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id B5FE9140296;
+	Sat, 26 Jul 2025 09:47:17 +0800 (CST)
+Received: from [10.174.177.71] (10.174.177.71) by
+ dggpemf500013.china.huawei.com (7.185.36.188) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 26 Jul 2025 09:47:16 +0800
+Message-ID: <0213b23c-e746-4e05-b151-8b0f5bd3d7d2@huawei.com>
+Date: Sat, 26 Jul 2025 09:47:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3b86:b0:3e2:9a13:74fd with SMTP id
- e9e14a558f8ab-3e3c526fbd1mr56688995ab.6.1753494183251; Fri, 25 Jul 2025
- 18:43:03 -0700 (PDT)
-Date: Fri, 25 Jul 2025 18:43:03 -0700
-In-Reply-To: <68837ca6.a00a0220.2f88df.0053.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688432a7.050a0220.1a379b.0001.GAE@google.com>
-Subject: Re: [syzbot] [netfilter?] WARNING in nft_socket_init (2)
-From: syzbot <syzbot+a225fea35d7baf8dbdc3@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	fw@strlen.de, horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: fix crash on test_mb_mark_used kunit tests
+Content-Language: en-GB
+To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Zhang Yi
+	<yi.zhang@huaweicloud.com>
+CC: <linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <adilger.kernel@dilger.ca>,
+	<ojaswin@linux.ibm.com>, <linux@roeck-us.net>, <yi.zhang@huawei.com>,
+	<yukuai3@huawei.com>, <yangerkun@huawei.com>
+References: <20250725021654.3188798-1-yi.zhang@huaweicloud.com>
+ <av5necgeitkiormvqsh75kvgq3arjwxxqxpqievulgz2rvi3dg@75hdi2ubarmr>
+ <20250725131541.GA184259@mit.edu>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20250725131541.GA184259@mit.edu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-syzbot has bisected this issue to:
+On 7/25/2025 9:15 PM, Theodore Ts'o wrote:
+> On Fri, Jul 25, 2025 at 01:06:18PM +0200, Jan Kara wrote:
+>>> This patch applies to the kernel that has only merged bbe11dd13a3f
+>>> ("ext4: fix largest free orders lists corruption on mb_optimize_scan
+>>> switch"), but not merged 458bfb991155 ("ext4: convert free groups order
+>>> lists to xarrays").
+>> Hum, I think it would be best to just squash this into bbe11dd13a3f and
+>> then just rebase & squash the other unittest fixup to the final commit when
+>> we have to rebase anyway. Because otherwise backports to stable kernel will
+>> quickly become rather messy.
+> What I ended up doing was to add a squashed combination of these two
+> commits and dropped it in before the block allocation scalabiltity
+> with the following commit description:
+>
+>      ext4: initialize superblock fields in the kballoc-test.c kunit tests
+>      
+>      Various changes in the "ext4: better scalability for ext4 block
+>      allocation" patch series have resulted in kunit test failures, most
+>      notably in the test_new_blocks_simple and the test_mb_mark_used tests.
+>      The root cause of these failures is that various in-memory ext4 data
+>      structures were not getting initialized, and while previous versions
+>      of the functions exercised by the unit tests didn't use these
+>      structure members, this was arguably a test bug.
+>      
+>      Since one of the patches in the block allocation scalability patches
+>      is a fix which is has a cc:stable tag, this commit also has a
+>      cc:stable tag.
+>      
+>      CC: stable@vger.kernel.org
+>      Link: https://lore.kernel.org/r/20250714130327.1830534-1-libaokun1@huawei.com
+>      Link: https://patch.msgid.link/20250725021550.3177573-1-yi.zhang@huaweicloud.com
+>      Link: https://patch.msgid.link/20250725021654.3188798-1-yi.zhang@huaweicloud.com
+>      Reported-by: Guenter Roeck <linux@roeck-us.net>
+>      Closes: https://lore.kernel.org/linux-ext4/b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net/
+>      Tested-by: Guenter Roeck <linux@roeck-us.net>
+>      Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>      Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+>
+> Then in the commit "ext4: convert free groups order lists to xarrays"
+> which removed list_head, I modified it to remove the linked list
+> initialization from mballoc-test.c, since that's the commit which
+> removed those structures.
 
-commit 7f3287db654395f9c5ddd246325ff7889f550286
-Author: Florian Westphal <fw@strlen.de>
-Date:   Sat Sep 7 14:07:49 2024 +0000
+This looks good to me. Thank you for helping to adapt this patch!
 
-    netfilter: nft_socket: make cgroupsv2 matching work with namespaces
+>
+> In the future, we should try to make sure that when we modify data
+> structures to add or remove struct elements, that we also make sure
+> that kunit test should also be updated.  To that end, I've updated the
+> kbuild script[1] in xfstests-bld repo so that "kbuild --test" will run
+> the Kunit tests.  Hopefully reducing the friction for running tests
+> will encourage more kunit tests to be created and so they will kept
+> under regular maintenance.
+>
+> [1] https://github.com/tytso/xfstests-bld/blob/master/kernel-build/kbuild
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ff50a2580000
-start commit:   94619ea2d933 Merge tag 'ipsec-next-2025-07-23' of git://gi..
-git tree:       net-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1400d0a2580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1000d0a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ceda48240b85ec34
-dashboard link: https://syzkaller.appspot.com/bug?extid=a225fea35d7baf8dbdc3
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bf10a2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d27fd4580000
+Yeah, unit tests are a much more efficient way to catch problems compared
+to full system tests. Running them regularly would be a great way to
+quickly surface issues.
 
-Reported-by: syzbot+a225fea35d7baf8dbdc3@syzkaller.appspotmail.com
-Fixes: 7f3287db6543 ("netfilter: nft_socket: make cgroupsv2 matching work with namespaces")
+On top of that, I think it's worth revisiting our current code and cleaning
+up some of the logic. Specifically, refactoring initialization functions to
+align with the single-responsibility principle would enable reuse between
+production and testing flows, and minimize strange edge cases we’ve been
+seeing.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+Cheers,
+Baokun
+
 
