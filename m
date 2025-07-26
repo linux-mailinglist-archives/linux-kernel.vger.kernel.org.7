@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-746658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3C4B129AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:55:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AA4B129B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416911895E00
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 07:56:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9B3A189D89F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AA4219A8B;
-	Sat, 26 Jul 2025 07:55:35 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8022421A94F;
+	Sat, 26 Jul 2025 07:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fVrDNwtE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354BB258A;
-	Sat, 26 Jul 2025 07:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29E120297B;
+	Sat, 26 Jul 2025 07:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753516535; cv=none; b=deVx8K7RZ8R8yQV353dCII6oEphyfegS5vg4DedD/HxLe9hP1MzP20fSATD/t+xEN0ssHXIWRqI+Pz3gP57xjpXPa3x5GNlBpuOawbfA5EXoVpie46+gtXdcOhpD6eNS1EIwE8PuK+i5nwcEWXyHdyaXug2k1xTFOTc9gNWOiBw=
+	t=1753516778; cv=none; b=VtcjY+cK0wWyIAN9dTyzrbXylX9bG5U+6a+QHeXYpjEOVuzgKPe3DMjQW8PLvqF6lLA31WqHvM4lN0PqREF61r5VnpwqyzjpNC/h+7qyFcCKV3iOiI/Zynqj71m4282ACrOYGkfHNo5SAuMucTervnKoSKHukyySppjKkRExNSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753516535; c=relaxed/simple;
-	bh=KsSC6tscOO6pxZLOiKZD54JjV+mZXJxDUbIzS32S1cE=;
+	s=arc-20240116; t=1753516778; c=relaxed/simple;
+	bh=+7OwWL8HsXou9HcpeVyEaPMNSqLGr7byrMdBXyWRVmI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m4LVjlO3QW+gcyWy/waiTaQ/DTBCLcrzAXhi5DxYF+nkoOhkIZxrDIQqi/IL5vQpqsekfbOejtm9cqZCzUXLdwR9qlxbT346tyaPQs9M+OqIdmVMwvuvlDCFiJJ7NKrPtf++BJatNZQsi/rO6Klcz/lsQOxWPdrFmrJs05+2Kws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id CC3C82C0710F;
-	Sat, 26 Jul 2025 09:55:24 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 924F02ED3D9; Sat, 26 Jul 2025 09:55:24 +0200 (CEST)
-Date: Sat, 26 Jul 2025 09:55:24 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Matthew W Carlis <mattc@purestorage.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	anil.s.keshavamurthy@intel.com, bhelgaas@google.com, bp@alien8.de,
-	davem@davemloft.net, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
-	naveen@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	rostedt@goodmis.org, tianruidong@linux.alibaba.com,
-	tony.luck@intel.com
-Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for
- hotplug event
-Message-ID: <aISJ7MG3zbMRuc_Q@wunner.de>
-References: <20250718163532.GA2700834@bhelgaas>
- <fc0ded97-8643-4faa-a606-732bcd4ce4a1@linux.alibaba.com>
- <aHtFG3QsdohG466k@wunner.de>
- <25285fbd-ffab-49e5-a8be-e3a1c8e70d3c@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g5S+CFg9cHLo6ORZhP5sN4ZCtnSj1NZiOcZOI7gaK3pmUD0lmt6MEeC2yjdzA1zkz9uhxEfTBeuI+IEH1B8eJhhbWLlzO/MxKocQNO0Y/X/dVrdhZA4tC2bSxp1WVB7vsQSMh+RNn2TTlNAVcyMl6edKukxJPjwf/JUUOEinq8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fVrDNwtE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 950F5C4CEED;
+	Sat, 26 Jul 2025 07:59:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753516778;
+	bh=+7OwWL8HsXou9HcpeVyEaPMNSqLGr7byrMdBXyWRVmI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fVrDNwtEpWOUgHeNDV+Xg2hA5El/kRUrHYLdGGzc7I5nJofIA7pzN76Ck9iwADQCH
+	 l/4GGwF2wahiVWxevK+E87qJLNRhdSBbmAOBOpat2+QDHD/+aD5ibm8mvyRONVDNTB
+	 5U3v+XRi4fpKsuCDkY/IbHsF7RT41HkxjgzG/JOg=
+Date: Sat, 26 Jul 2025 09:59:35 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Yunseong Kim <ysk@kzalloc.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	Michelle Jin <shjy180909@gmail.com>, linux-kernel@vger.kernel.org,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	stable@vger.kernel.org, kasan-dev@googlegroups.com,
+	syzkaller@googlegroups.com, linux-usb@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH] kcov, usb: Fix invalid context sleep in softirq path on
+ PREEMPT_RT
+Message-ID: <2025072614-molehill-sequel-3aff@gregkh>
+References: <20250725201400.1078395-2-ysk@kzalloc.com>
+ <2025072615-espresso-grandson-d510@gregkh>
+ <77c582ad-471e-49b1-98f8-0addf2ca2bbb@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,24 +65,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <25285fbd-ffab-49e5-a8be-e3a1c8e70d3c@linux.alibaba.com>
+In-Reply-To: <77c582ad-471e-49b1-98f8-0addf2ca2bbb@I-love.SAKURA.ne.jp>
 
-On Mon, Jul 21, 2025 at 09:17:55PM +0800, Shuai Xue wrote:
-> 2025/7/19 15:11, Lukas Wunner :
-> > PCI links can be tunneled over Thunderbolt, in this case the
-> > link speed is fixed to 2.5 GT/s (USB4 v1.0 sec 11.2.1), but
-> > in reality is governed by the speed of the Thunderbolt fabric
-> > (which can even be asymmetric).  Do we want to report the
-> > virtual 2.5 GT/s in this case or the actual Thunderbolt speed?
-> > Or do we want a separate trace event for Thunderbolt?
+On Sat, Jul 26, 2025 at 04:44:42PM +0900, Tetsuo Handa wrote:
+> On 2025/07/26 15:36, Greg Kroah-Hartman wrote:
+> > Why is this only a USB thing?  What is unique about it to trigger this
+> > issue?
 > 
-> I'm not a user of Thunderbolt, which way do you prefer?
+> I couldn't catch your question. But the answer could be that
+> 
+>   __usb_hcd_giveback_urb() is a function which is a USB thing
+> 
+> and
+> 
+>   kcov_remote_start_usb_softirq() is calling local_irq_save() despite CONFIG_PREEMPT_RT=y
+> 
+> as shown below.
+> 
+> 
+> 
+> static void __usb_hcd_giveback_urb(struct urb *urb)
+> {
+>   (...snipped...)
+>   kcov_remote_start_usb_softirq((u64)urb->dev->bus->busnum) {
+>     if (in_serving_softirq()) {
+>       local_irq_save(flags); // calling local_irq_save() is wrong if CONFIG_PREEMPT_RT=y
+>       kcov_remote_start_usb(id) {
+>         kcov_remote_start(id) {
+>           kcov_remote_start(kcov_remote_handle(KCOV_SUBSYSTEM_USB, id)) {
+>             (...snipped...)
+>             local_lock_irqsave(&kcov_percpu_data.lock, flags) {
+>               __local_lock_irqsave(lock, flags) {
+>                 #ifndef CONFIG_PREEMPT_RT
+>                   https://elixir.bootlin.com/linux/v6.16-rc7/source/include/linux/local_lock_internal.h#L125
+>                 #else
+>                   https://elixir.bootlin.com/linux/v6.16-rc7/source/include/linux/local_lock_internal.h#L235 // not calling local_irq_save(flags)
+>                 #endif
+>               }
+>             }
+>             (...snipped...)
+>             spin_lock(&kcov_remote_lock) {
+>               #ifndef CONFIG_PREEMPT_RT
+>                 https://elixir.bootlin.com/linux/v6.16-rc7/source/include/linux/spinlock.h#L351
+>               #else
+>                 https://elixir.bootlin.com/linux/v6.16-rc7/source/include/linux/spinlock_rt.h#L42 // mapped to rt_mutex which might sleep
+>               #endif
+>             }
+>             (...snipped...)
+>           }
+>         }
+>       }
+>     }
+>   }
+>   (...snipped...)
+> }
+> 
 
-Keep reporting the virtual 2.5 GT/s in the PCI tracepoint and
-maybe add a separate tracepoint later in the thunderbolt driver
-to report the Thunderbolt speed.
+Ok, but then how does the big comment section for
+kcov_remote_start_usb_softirq() work, where it explicitly states:
 
-Thanks,
+ * 2. Disables interrupts for the duration of the coverage collection section.
+ *    This allows avoiding nested remote coverage collection sections in the
+ *    softirq context (a softirq might occur during the execution of a work in
+ *    the BH workqueue, which runs with in_serving_softirq() > 0).
+ *    For example, usb_giveback_urb_bh() runs in the BH workqueue with
+ *    interrupts enabled, so __usb_hcd_giveback_urb() might be interrupted in
+ *    the middle of its remote coverage collection section, and the interrupt
+ *    handler might invoke __usb_hcd_giveback_urb() again.
 
-Lukas
+
+You are removing half of this function entirely, which feels very wrong
+to me as any sort of solution, as you have just said that all of that
+documentation entry is now not needed.
+
+Are you sure this is ok?
+
+thanks,
+
+greg k-h
 
