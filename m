@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-746624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5617EB12901
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:36:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FAB5B128FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D2B4177829
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:36:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 121727B92C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9BC221578;
-	Sat, 26 Jul 2025 04:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF4C20E715;
+	Sat, 26 Jul 2025 04:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6vcNaU3"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="atOiWBta"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7561220F2F
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 04:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156F720C469
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 04:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753504453; cv=none; b=mCTLRfbYMau45bgEhnEwxoWSSVFM3mCaArgKksKQhBlrE4LzJtevi1jOZZcNaOYURfaaNJLkeOKzp9VccslF1o++M745BqgTVS6d33g10qfGKpjuuJgSdumZR9dj50HVLsYHvKErtsl2tV30hQNdZYiHcB6kLsegFqxgKK/llH4=
+	t=1753504456; cv=none; b=nc8lKMwXN7guBAHpMCoEcDxZ+mDAFm+Lr+aKSWiY8oLlcniZWm0o++C3AskhFR0QK9LC9+6wPhnTab1aXOr1KSJboxjL8fwNxPuO2GNXnv7BAj29+tJKgPdzIdwwNiXCuIn0Hy6JZ6+R0uDs8ifMLY1gPm8KA+4n8sqHcIz4S3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753504453; c=relaxed/simple;
-	bh=A2/8GWYF+QSMZie/dthNKmgZayVxmihhCGf1guv1yBE=;
+	s=arc-20240116; t=1753504456; c=relaxed/simple;
+	bh=A9D78ix7GLbEAqRACr7Ln9fr5ydJNxAa+ETZFuRoLY8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OelKn7eZuy7bZldw0BO/8h2vUATmvsNLlsq0LUzvYUZT0sOHxJ1rqMW+v2lbGaizqUkt+tPR6z8Av1ixUTkkBBdetRBQobxna3VMhNNF4AMQ4y8V8Ty1gJcaBGHuKfuz2APbl7/bYl/4n3YauLbrCRxeIhoAaALB9QB6t5Z8qYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6vcNaU3; arc=none smtp.client-ip=209.85.222.171
+	 MIME-Version; b=QTogfMZpJNi4gcSdQqGwRxh+xEx+gmWiRI1EbIyJpwkK+4moJnjjr62mqMeVby5AAP9v7NSMnaInnrxZ/457mniZdXl+I3X0GeEKlXmL4+tK0eUqgvCGpu7XqZ3L5WCfEd1Xb0q974l8UHgMyfmxhiwGZETbXEd/LXg/1qDMRQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=atOiWBta; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7e32cf22fdfso258981885a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:34:11 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e344e0212eso242165985a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 21:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753504451; x=1754109251; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753504454; x=1754109254; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=godtxK4YgpknghXRHE2/UoeuQcLZlCjOGnevqfxGStw=;
-        b=Q6vcNaU3Kuu8jSYZhQVp1QtXsCq9+Xs0Y/gZT3yTaC/a1qgvZP1nhaOB7bCY4jXmUl
-         CsZDPGFwmP0qZBQli+b0kWKCFOs9B6VEz84f93TANFRahHx5Usc7diqxQ8r6/EgtfBeL
-         c0uNKKNnV/Vk1ur+Cmuvuy6iyNZMB/8e9U5sv40D9vHegq08rnoodCGGxPl9ofcPZBe4
-         kWZQK7KFMP9/f6RSUahc/PYXnTvFrx8MorvlzeeGpMTS3fwI+5pt3N194HcH4Pyc0scS
-         li3wEaBJHzA0Q1MUV9aLEd0xB9SwZvs5AjtbN7tH1TSuHC44mF2mZ7rOgV7RInKjcteF
-         ePDw==
+        bh=E73v83Bn/ceqqEKIqnNpd+kYBPLgkp0XI+V5cR5WrdY=;
+        b=atOiWBtaI1VAESD/nB02wS8rG1K2Ry0Bi7TwZdAtXw2hfYvVx+ZmkULhDatwwD9YFH
+         4lKSVxm790CHAs6bVBHsdsEclcwD13TPk+wlY0525VY3BSS8amC26nEiPnU0fl/VsQZJ
+         QX8T5kzsdnGHop6nZd0x6ZQKnUM4P6iCSd0svgF7NJnBBXBleCvdfPq2ACnLDylUaut4
+         bg6IJ1ESUj/JgGzQ5sFabd97swt0njGZsqi/slnbRuaPf37AREA9USuGEim1ir+UvH2P
+         cfyjSGHUxx8nnS10VfGcpXK5ZQf523+GlodayzNoMPoma+DASyB5/tfG+ugENFEGrnWr
+         XXgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753504451; x=1754109251;
+        d=1e100.net; s=20230601; t=1753504454; x=1754109254;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=godtxK4YgpknghXRHE2/UoeuQcLZlCjOGnevqfxGStw=;
-        b=Q7zYd8huDvu88kH3CT0CYBCbAEa4Yw05fHzNw66rrbEJdPPtHYAqWTI8xs7vexpKuT
-         maJTBtjdFiJ9JrilnmWEfkTR7IcW2VSqpBmR34K7FjGW0PeHMGSahRyodcepgkMh1SXI
-         WAHm+Idw0SSWxVptnhhYGiNn3+ZF05vSeGf6Obtpo98Ei0OQb3OCN1J7KgDwRm7paoNM
-         A8Ymgxel5mfgT8+QgWc6ttEIah4+3SXZt7j/mlGpg6iSXUkcOkgzMloblykIfzljO2wo
-         mCgIZSa70VBqLrMbjjKhj/OHrm7hbgC4YcYeIAvnQ/u7+6r/9OGZ2oKOZ8bTE+gDJMHG
-         CCOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8fefg6CbP2ENqiDy2NV/M5PKFsEblmOCOHVBAZRUENZi//q3LnaO8B/tFK8Cl2wT+rJD0Wtfk5sHj4LY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXkn/jG2xcPpmTU16QX0v4DXsPQAVS40+k5jpokpNfK+VV+umn
-	OsA5jqXdCkTEKomgTe6vOe+TWkNeehA2s96cYaQYKO4htmhOQtCXHIXe
-X-Gm-Gg: ASbGncvR5ozG7UeYip+hG8JX9es/BqZUicuEHbziLudg6q/i5gvUIGUnb+Qr1Qt4t8I
-	N3hjp3vIQNZMr8W/TP+x3emdI7JNq2VxO6g+gOMV6OeGEHT9NmLdNk+EJV/PJfEJ+97ZbNh6Jot
-	gUSP1xOR7P10K0juk3dd+F08jqO1kgXToeXkTvWvTZFHXsgZ2HzfSVTaWc+Hv9wuh5UGylNiExN
-	WI1z1vAnqUuol7h3a5OqTzYhQ/o1VJ889LwSqEEkMwzYlRhFO4JEGvvEpubKLKuN1peWwaX3lp+
-	F3PLEg1mOLwmaxDK36b6QvA5Cu6OCo0C21nmY1UvGGZg3FxP2YE3gmTNBT7kRTREmbpaIL1Mttx
-	+CNAtVs0mCYhpIR3ch1B2Csa3/fycnnlsxx1sL3QhlIAEoQ3B4To=
-X-Google-Smtp-Source: AGHT+IFlRrWov5o//lGeMP1IXBjemW48lt8HRdPARmz3fKpiukwPkFA3HSPqzwF9A2FesESVi2k0QA==
-X-Received: by 2002:a05:620a:710a:b0:7e6:28a9:daf5 with SMTP id af79cd13be357-7e63be3b659mr536419585a.3.1753504450787;
-        Fri, 25 Jul 2025 21:34:10 -0700 (PDT)
+        bh=E73v83Bn/ceqqEKIqnNpd+kYBPLgkp0XI+V5cR5WrdY=;
+        b=bA4DwQbWKzZhrbymNd7UtsbStPpIcm63osJe8GDJ9/h6p0UOGIEYAtQvwg7ScxIivd
+         itUAwbgEWAnGW9cCzZ2q2Nfz+5GX7n+uKWbcN5S7p09o0B8Ha+mWoY11OMF7xBJfxUFK
+         gL5P4ogzxMulmukrXjOWDlvAzAvSK4yZOY7LeHPB8IyNFRI43ZJGxy/ubBZjtMCnE7U5
+         9GFE6RFd2M3QAf227raVi5ZXW2a40yExUtNT3PpWGf8OY4eDCUdN53vVnEaDJClyFbpC
+         wkSdaNBx26UdLTTTEFJp+5Homkp5REY3ozWLL1UQ5QvNR5xzrh9ipH25X0IrB510By3l
+         tiHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMSFDiurp51hUHtsBP4JDWgmyhKxcuSxf6pKj+OdkBXHGETKdN53yGVlFBPb9ZzJ7xOTnkUNoVuYH7z98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKPedrvuAptKfQ6ctOHxQyolmubaAmniVA57MQp367bwYpipVI
+	SirDPfut/SCXjXky78y673TpsU6ng0Gz3g79EBAiU+QZMh1icvNFK4bH6kYg+g==
+X-Gm-Gg: ASbGnctVjVhh4Ep/Zn0nmbTuYDNVyB/CV4yK5ZXK8F8Gd/VZ3Y1TMAp9ItIH6Xb3gC7
+	m5rNMZJ6Gbng24ukaVqvK1AkSMcoqJ14WXp5TV7QbxjVhOLhGQCKyUMQ/AWH87v3QoRfUGhgTMh
+	SfZexS6KbtGzbP6hJY2mQk2W0yFtsdJrxyw415jSyq6Ize9foQhiAH76sBt1TgA5NOHHaorji1O
+	fI9OS5tMBvkXg3VMMV3YP6TXyNecCGRz5AaH3nYAwNLN5Ls0aIFDpucQydRMrbwpzBecBnpZxsX
+	TwmS3EINb2+hnnVtc5bZ5O2kXgaBjJMosML2C/7OgY43IC5NqfZEylemtxn8y9Z1rAUBkcIQ8JA
+	nrB7rkmNginMw7chbNpaWnsmOSvrZwFkUzW89va566rNbVmj0+ifCXveoRsMmIg==
+X-Google-Smtp-Source: AGHT+IHHjE/vicHbTmy5H0DfyQviy6c6NHPxVnv7m9s0aAmGt/gwdfRLBiwM4RPsHvsWk2OBieK+aw==
+X-Received: by 2002:a05:620a:1905:b0:7e0:e2d7:e03 with SMTP id af79cd13be357-7e63ba6f332mr530200085a.7.1753504453916;
+        Fri, 25 Jul 2025 21:34:13 -0700 (PDT)
 Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6432a885asm70322185a.36.2025.07.25.21.34.10
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6432a885asm70322185a.36.2025.07.25.21.34.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 21:34:10 -0700 (PDT)
+        Fri, 25 Jul 2025 21:34:13 -0700 (PDT)
 From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	vivek.balachandhar@gmail.com
-Subject: [PATCH 18/20] staging: rtl8723bs: fix line ending with '('
-Date: Sat, 26 Jul 2025 04:32:16 +0000
-Message-Id: <20250726043218.386738-19-vivek.balachandhar@gmail.com>
+Subject: [PATCH 19/20] staging: rtl8723bs: place constant on right side of comparison
+Date: Sat, 26 Jul 2025 04:32:17 +0000
+Message-Id: <20250726043218.386738-20-vivek.balachandhar@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250726043218.386738-1-vivek.balachandhar@gmail.com>
 References: <20250726043218.386738-1-vivek.balachandhar@gmail.com>
@@ -91,28 +91,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fixed a line ending with an opening parenthesis '(' by adjusting
-formatting to comply with kernel coding style. No functional changes.
+Placed constant on right side of comparison in one instance to conform
+to kernel coding style. No functional changes.
 
 Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index acacc2806dc9..ecb7b3823010 100644
+index ecb7b3823010..dbaaa2357ee5 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -1071,8 +1071,7 @@ static void rtw_joinbss_update_network(struct adapter *padapter,
- 	 * we use ptarget_wlan->network.phy_info.signal_strength instead (has scaled)
- 	 */
- 	padapter->recvpriv.rssi =
--	translate_percentage_to_dbm(
--		ptarget_wlan->network.phy_info.signal_strength);
-+	translate_percentage_to_dbm(ptarget_wlan->network.phy_info.signal_strength);
- 
- 	rtw_set_signal_stat_timer(&padapter->recvpriv);
- 
+@@ -746,11 +746,10 @@ void rtw_surveydone_event_callback(struct adapter	*adapter, u8 *pbuf)
+ 			} else {
+ 				if (rtw_to_roam(adapter) != 0) {
+ 					if (rtw_dec_to_roam(adapter) == 0 ||
+-					    _SUCCESS != rtw_sitesurvey_cmd(adapter,
+-									   &pmlmepriv->assoc_ssid,
+-									   1,
+-									   NULL, 0)
+-					) {
++					    rtw_sitesurvey_cmd(adapter,
++							       &pmlmepriv->assoc_ssid,
++							       1,
++							       NULL, 0) != _SUCCESS) {
+ 						rtw_set_to_roam(adapter, 0);
+ 						rtw_free_assoc_resources(adapter, 1);
+ 						rtw_indicate_disconnect(adapter);
 -- 
 2.39.5
 
