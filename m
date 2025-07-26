@@ -1,191 +1,158 @@
-Return-Path: <linux-kernel+bounces-746674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B585B129F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:38:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3B5B129F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 11:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5657A544292
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:38:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C0A74E7FC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 09:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F10A22B8CB;
-	Sat, 26 Jul 2025 09:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B138D227EA8;
+	Sat, 26 Jul 2025 09:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QqzSq6l4"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HRj0IhwH"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760DD22B8A6;
-	Sat, 26 Jul 2025 09:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFB4155326;
+	Sat, 26 Jul 2025 09:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753522659; cv=none; b=ZrwLLA4sJ7M4D+ZMQcor1uhvPoYx/equPcfC4q6AVjOx1BtPCV8dmX361RtQrT+fZAc2dpK4ZsvmpyMs3uxUYDFqsqGfUKpN7AtTdB3UuZC1oqZgqKkeGOIGZFv6GhKPji5viXZscxFPvdwSy11cJhiEWrqnwdP2PktHZvvYsLo=
+	t=1753523006; cv=none; b=ebHcG++12SGp26ZA9H9kT06P0zQaNNgc4olZgpLs8+V0RkL8yFEiSVSPkQFAn0In8FrUohaigKdyAosIkxnZE0WSermLbExLlpYTmntEW73AZIQdUgCZ5Zuj3Q6Q6Ewocxb/MZzQFMuEqC/T+y4G7aTkT0MrIUjuO+aqhvVHCoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753522659; c=relaxed/simple;
-	bh=YikUiqRA8xpKT5soIZ9OGXpDgD93HOToMkMKiaqpL0s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q6vm4UHcdLa8mBfwQjvkVbz7McW+TB8TVcYLOTAkJ165Q4k/Yd4tOePFVsvty4fNx7UpOUTcsbqUjTBZAfCK2vl8T/h3zsluSK5TDOr04Vp/y3TLPo4tFJ1Oj8vqgqFQQd0PtqNlHWOOOkwMCNQu5J3rVYQqRTN04uUwySBLvc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QqzSq6l4; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-234b9dfb842so25958015ad.1;
-        Sat, 26 Jul 2025 02:37:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753522655; x=1754127455; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y8FJXyZKQ6+wLHT3l8uRuQR29jGu7fgr0VsD5wmepaE=;
-        b=QqzSq6l4/QvGxG3jKPs6e289p9ffvKbHjK/DqdgoBRTM42Ow7cEuvWtKp59CVW2GtB
-         3O7gpi1Y65jjzBxMxp8HhoI6zRoDohD5IowwY/ddbADY+SdCXwVGKvlmdLNHk//yH8ni
-         OaeyaZdyxqcla9i/q6OD49YfglPOnNGxJ1tjhuO2XLMCERvHfCitBb20ntqQEHgRLtvF
-         UA5NMasYujD/PH4w5OfhxZxy7XVPiaYxWymlfQ17s/GkH9mE6psw4DIOg2dNVehNevvY
-         5PqoliRZr7iOLAywpEpbUNSN4PPkP5mVFcrdN4AjRAwrZIdLFn1MKoiB6+xNHDgbpc+E
-         Y1fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753522655; x=1754127455;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y8FJXyZKQ6+wLHT3l8uRuQR29jGu7fgr0VsD5wmepaE=;
-        b=ZAX8Xzs2gF91BKMSZp4Sxm37fsD5K8OiAq36Ida4pc61j8qC+dn4DP9/gPZN4NfVac
-         hRYFdJTCWH2N0DhvmVhzdSiBo519DUKBTT8R4b2+EFY0ZORa6zxSMyN5BtzkGpTMl0DZ
-         WAVR+Ipw2casP9wVr+vd0DHQhpx+/ka90dUVpq/UUc6Ujdj9rk8P88Z3EWBFgXOmD+ZA
-         QFe6JqIR6PS0kueQt8Svn2lwb7sIlZVLUXXqgW71aCh2VHh9lpWg/lXl+Y3IIDasm9Q0
-         n/P51SbY/ag2jEWfgAJaOtI+Rz5w/0UPcXdOjZ+GphqHO6T2BONogkHBnaR8GwQ+S4QL
-         k8pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZijSq2XVZP7bAp32I9OXS/rbkbIapCRNpRuwiE6xhKz9G3RT6hFaZz6KQSSiMIUnt+WZUzZ4qJSUw@vger.kernel.org, AJvYcCXg4EyJk2VRUidrhFNHn61Q50A7J5Fd1kG+kq1+5TniaqNnNQWCqdaxrGCVCobyvUWpHxFp8/p+4Lw8@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxb6pP3Zyy/LGh18ln2Zqj/6fWDNX7nF0fMO/aAtU6+U+X61uY
-	6R6smSLeLHmXumAvTH/rdkyaMuwTjbkxmYFGkW9dce5GM04gW2csKXv+irxqD47D
-X-Gm-Gg: ASbGncsvKkMdadUDM9rEiw4LU1fpQRf40MGahQh8Ja2tVWDI4XS31/yl1J0/Yqabs0A
-	px9ZiP4rofYkGlyjc+r6Hc+Bnmrs6uHdekAJ4b7FrWCBxYnzQLDqQYKY3S9M3ZzNPpKy4e7Z0Z6
-	3Zc0UtYKyTFOh/yyuqEfIiwkk5+KKLsydmcKcBBUWzBglvitk9h939UPE4ww7jz3Y2W4pZgQtq8
-	lgwSP1fTgZTemcsoH+dCxVSNJEXQapA3za+EztCinXXwLWuRae1pwzLmdDMg2VbmozOFRCQm7C4
-	oTEL8PtpSF0N1vwf43Gq74zf762Lk5TmlszjaKtloR3ihiN6qSOFaEukbs8w5FBpFmRa30UE7XO
-	yHm7vjExrA+vMOYnFeN7MVRmXB3pEFws=
-X-Google-Smtp-Source: AGHT+IGE5xASJDt5h3p0OipW4BKu/vecS45qnGYwVFx4ajTK+ocIv65jrhErr+MuEYCGzszU7z46NQ==
-X-Received: by 2002:a17:903:1b6f:b0:234:bca7:2920 with SMTP id d9443c01a7336-23fb31570d1mr96622025ad.24.1753522655433;
-        Sat, 26 Jul 2025 02:37:35 -0700 (PDT)
-Received: from [127.0.1.1] ([2401:4900:1c7e:9097:1e31:2e60:cd61:c2c2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe30ff62sm14038745ad.38.2025.07.26.02.37.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 02:37:35 -0700 (PDT)
-From: Dixit Parmar <dixitparmar19@gmail.com>
-Date: Sat, 26 Jul 2025 15:07:02 +0530
-Subject: [PATCH 2/2] dt-bindings: iio: magnetometer: document Infineon
- TLV493D 3D Magnetic sensor
+	s=arc-20240116; t=1753523006; c=relaxed/simple;
+	bh=gmoae3pQ6n1/2XP8mGxeGj2e+0uTKpbeI5N90BkBXcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g/+xa0WWEwidCK9rXGQ+v0htHifrIm7jdia8sr6ro7CZwhPFCds+Guvzton+ISEMv4p0zJJ7QQrJAmBkOxW760S99cng61nF4EiHNKz6aMZZ2nlddW7g5tbXnpPXLerHXIzttNXV3ByE3rZPzphjRL2fvqyum86M5kUkr3evZcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HRj0IhwH; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 821204C9;
+	Sat, 26 Jul 2025 11:42:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753522959;
+	bh=gmoae3pQ6n1/2XP8mGxeGj2e+0uTKpbeI5N90BkBXcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HRj0IhwHMiVRjp+TVns7bQy+6Y3+uM9Gs9XOT8xxoMLoN0XSlTd8qUY3uKWpyIGR3
+	 yLU+/jsolGOdd5EWZuPcBGF1Azh85YRUd95hQo4NDCTeLxzGF64rrdCVF4FeQPiwho
+	 OnEWNvohZyl7Iusw20RVJj6q9uLZt3f2km8NstsQ=
+Date: Sat, 26 Jul 2025 12:43:13 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Hans de Goede <hansg@kernel.org>,
+	=?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+Message-ID: <20250726094313.GD27425@pendragon.ideasonboard.com>
+References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io>
+ <aIKi1BkNzNvsf5Tr@smile.fi.intel.com>
+ <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+ <175345442477.2567018.13588829522231689027@ping.linuxembedded.co.uk>
+ <PN3P287MB3519055FE42890F5F577B51BFF58A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250726-tlv493d-sensor-v6_16-rc5-v1-2-deac027e6f32@gmail.com>
-References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
-In-Reply-To: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, Dixit Parmar <dixitparmar19@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753522640; l=2536;
- i=dixitparmar19@gmail.com; s=20250726; h=from:subject:message-id;
- bh=YikUiqRA8xpKT5soIZ9OGXpDgD93HOToMkMKiaqpL0s=;
- b=k5sp40Qv72w7LhnPbkTsqoHMxdZDa8/UQCXJIb7Ll+WiyEu/4yxkPALxH1eExOGwpwK30/Arh
- SUUs1md90/hBH3G/K2yZJMZoH/MYRztNJtamiIvL+siaHQ+cXVWpyWM
-X-Developer-Key: i=dixitparmar19@gmail.com; a=ed25519;
- pk=TI6k8pjTuLFcYiHazsate3W8rZGU2lbOrSJ4IWNoQhI=
+In-Reply-To: <PN3P287MB3519055FE42890F5F577B51BFF58A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
 
-Document the bindings for Infineon TLV493D Low-Power 3D Magnetic Sensor
-controlled by I2C interface. Main applications includes joysticks, control
-elements (white goods, multifunction knops), or electric meters (anti
-tampering).
+On Sat, Jul 26, 2025 at 06:06:05AM +0000, Hardevsinh Palaniya wrote:
+> > Quoting Hardevsinh Palaniya (2025-07-25 06:55:23)
+> > <snip>
+> > > > > +static int ov2735_page_access(struct ov2735 *ov2735,
+> > > > > +�������������������������� u32 reg, void *val, int *err, bool is_read)
+> > > > > +{
+> > > > > +���� u8 page = (reg >> CCI_REG_PRIVATE_SHIFT) & 0xff;
+> > > >
+> > > > ' & 0xff' part is redundant.
+> > > >
+> > > > > +���� u32 addr = reg & ~CCI_REG_PRIVATE_MASK;
+> > > > > +���� int ret = 0;
+> > > >
+> > > > How is this assignment being used?
+> > > >
+> > > > > +���� if (err && *err)
+> > > > > +������������ return *err;
+> > > > > +
+> > > > > +���� mutex_lock(&ov2735->page_lock);
+> > > > > +
+> > > > > +���� /* Perform page access before read/write */
+> > > > > +���� if (ov2735->current_page != page) {
+> > > > > +������������ ret = cci_write(ov2735->cci, OV2735_REG_PAGE_SELECT, page, err);
+> > > > > +������������ if (ret)
+> > > > > +�������������������� goto err_mutex_unlock;
+> > > > > +������������ ov2735->current_page = page;
+> > > > > +���� }
+> > > > > +
+> > > > > +���� if (is_read)
+> > > > > +������������ ret = cci_read(ov2735->cci, addr, (u64 *)val, err);
+> > > > > +���� else
+> > > > > +������������ ret = cci_write(ov2735->cci, addr, *(u64 *)val, err);
+> > > >
+> > > > Do you really need this castings?
+> > >
+> > > Do you really think this casting is unnecessary?
+> > >
+> > 
+> > Yes? Well quite probably - I haven't checked myself yet but ..
+> > 
+> > 
+> > > Please check the definitions of cci_read/write
+> > >
+> > > without this, we can't even build the driver.
+> > 
+> > How about ... changing the function prototype of ov2735_page_access ?
+> 
+> Of course, changing the function prototype would work.
+> 
+> My intention is to keep a single ov2735_page_access() function that can
+> handle both read and write operations. The cci_read() function expects 
+> a u64 *, whereas cci_write() expects a u64 value. To support both cases
+> within one function, I’ve used a void *val and cast it appropriately 
+> depending on the operation.
+> 
+> If we were to remove the casting, we would need to split this into two
+> separate functions, one for read and one for write, even though the only 
+> difference between them would be a single line. I’d prefer to avoid that
+> redundancy and keep the code compact. 
+> 
+> Let me know if you see a better way to handle this without duplicating
+> the logic. 
 
-The device can be configured in to different operating modes by optional
-device-tree "mode" property. Also, the temperature sensing part requires
-raw offset captured at 25°C and that can be specified by "temp-offset"
-optional device-tree property.
-
-Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
-
-Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
----
- .../iio/magnetometer/infineon,tlv493d.yaml         | 57 ++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
-new file mode 100644
-index 000000000000..0442cf41503b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
-@@ -0,0 +1,57 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/magnetometer/infineon,tlv493d.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Infineon Technologies TLV493D Low-Power 3D Magnetic Sensor
-+
-+maintainers:
-+  - Dixit Parmar <dixitparmar19@gmail.com>
-+
-+properties:
-+  $nodename:
-+    pattern: '^magnetometer@[0-9a-f]+$'
-+
-+  compatible:
-+    const: infineon,tlv493d-a1b6
-+
-+  reg:
-+    maxItems: 1
-+
-+  vdd-supply:
-+    description: 2.8V to 3.5V supply
-+
-+  mode:
-+    description: Sensor operating mode. Must be one of the defined enum values.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      - 0 # Power Down Mode. No measurement.
-+      - 1 # Fast Mode
-+      - 2 # Low-Power Mode
-+      - 3 # Ultra Low-Power Mode
-+      - 4 # Master Controlled Mode
-+    default: 4
-+
-+  temp-offset:
-+    description: Raw temperature offset at 25°C to apply before applying scale and correction.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    default: 340
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+example:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      magnetometer@5e {
-+        compatible = "infineon,tlv493d-a1b6";
-+        reg = <0x5e>;
-+        vdd = <&hall_vcc>;
-+      };
-+    };
+Move the cci_read() and cci_write() calls from the bottom of
+ov2735_page_access() to ov2735_read() and ov2735_write() respectively.
 
 -- 
-2.43.0
+Regards,
 
+Laurent Pinchart
 
