@@ -1,294 +1,236 @@
-Return-Path: <linux-kernel+bounces-746629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F299DB12917
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 07:54:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13107B1291D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 08:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499CA564464
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 05:54:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9B6560FED
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 06:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C602045B7;
-	Sat, 26 Jul 2025 05:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdIf8veI"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53307202998;
+	Sat, 26 Jul 2025 06:06:13 +0000 (UTC)
+Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazon11020076.outbound.protection.outlook.com [52.101.227.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97B92A1AA;
-	Sat, 26 Jul 2025 05:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753509230; cv=none; b=HSCnv0pisXgwQKUxoH7dUY3seYhmvB5DrDH+Qrr8copoP1ld6AjdpT7B04Cjh2/Ev2dIgAoubalsuDBeN3t7LfXBWPLaf9yI/4YbSoDOpZB2gHaecfzySA/VXFFezDafzTa/ZHq7gjol8nL5g8zRi1Q4tWIt5hdALlZVg0MKs9A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753509230; c=relaxed/simple;
-	bh=qjAtuM6bjE5YOicSXvKnHeXz95Ueb3CFX9BTvqHz/ec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hDaCAldpJLJmc6nBiLF0dM/gTF2CPLLPACHkC0vmtrt/2YmBjfbWuB6nyKFmhgfkQ9cBEAf2xmnZst1MTie8TQxBSbHai8aeVT2OUUIc2FeFjpczJMY0gFHSLKdgYZKjxSzhTK6b/mrt6i1Pa8OrtEUHJLA76EgW0P1L254VEVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fdIf8veI; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-7183fd8c4c7so30037857b3.3;
-        Fri, 25 Jul 2025 22:53:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753509227; x=1754114027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fWn+ulxpcv7HdNLVJ+yLthV3Vv9Iaz7WMBgkwYUe3vQ=;
-        b=fdIf8veIBifnc1fNbXFYmsB0WHMGyApvRQd6YZV+A7cQPISmKY4w+gZhBeCW3tJHz3
-         tm3dpb63YglWtF3Qm+ZlzHN7E3OcsIZnwmNhJyRFyGuhvCJVgPPP3dWXnG6GlAw2cuuY
-         7xZ/tdN49sCJ2i1j9Kr4zruaS2U1VAywtIFB2YOJX0QT28t37TPbhHioN4uhcQwW0XYP
-         cdBmRkg95ouqiRS+IVtoTfej2LHKCy+sBUEyabneH/8BCGZUC8n0GIvYxft3TFcZeaZM
-         oqUAGOgquf0Ii7WHkvsfkSgiB/+3DMci5Nw1bF53OfLQDgyzd29SdapSXw+5eLhCD7x6
-         j9TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753509227; x=1754114027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fWn+ulxpcv7HdNLVJ+yLthV3Vv9Iaz7WMBgkwYUe3vQ=;
-        b=BvaF4WJWngGkIVA35dvKN3FjmzdS2jXPl0oHnP4/1KwCNaIU+6r9aDkWPVzGwo/gxK
-         TtQrXnggA4RwRvfeBN+W4hb3YKzEnBvXYbupKu6bf6KixMrAa4R6WWXN8Q9pWRTjLxox
-         ZsWJb53QHtQ0QlQD+EfVQGMANYs1cFUUCYfwd3HUT/jJW6jA987qV54DGMOI8f6EQcq6
-         HF1Rn/NrVXD8goNnxYjr9B3kYpAUkTY7UYHvyZakm7yRLRcTxNApOaHX6C75VoeluPwY
-         1DVsHZbn4Qp8qi9kssYvlHitJn37SV9+zQgzSKbgGCiqLZQwZDaQowBUzXmaNQ9cnP01
-         aW6w==
-X-Forwarded-Encrypted: i=1; AJvYcCV0pW6f3O3M6C5Jg8WXMaN6g5YhcOzrVRMMKCmzWdPAUM2aGcVKHvII8lIoDKg6vCnHetK7wB9L@vger.kernel.org, AJvYcCVD9a6Ea2Du/2FmE7UKl/u8HRfR3phFQVXh0GsuyMUbByPyVX1NHn7xYC77hnBVh1EZO7jG@vger.kernel.org, AJvYcCWqSjn+iJP+LQNHKoiNJO4QlXqQ6C6kYSPncgHT6XZu+bTNVlSVUWgIVe8wYhkGBjDlyv0=@vger.kernel.org, AJvYcCWvixmdIhq57KzekA3F3xBegqpZq5HuyQ42dXiZhlljCMbTv9Uwvhi9zo1r4fP0mPzVZF/L/KnSPDaIGtg9@vger.kernel.org, AJvYcCXDsTyQc3a/8bIi1F2zSQbG5GaxU0tcKYvY1uS4asK/xV0ZPjt6UKzBl4J6djJH7BU7eF9GLHO2V8KU1NCB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf8kmhuUGZYR7NNO5ygqcYKbw/oOC7F5v6uK199B/N9WYJUg+N
-	wpjspcXUPCubOg2946YUaaUhmKw4dFMV5o+2x4mtVtTT2oOYbEzMwQ7aDTEHllTzEwT/GY0ohml
-	sjaAlZgH/K876d+NBskoaLOlAnNJZhVA=
-X-Gm-Gg: ASbGncvtuOr56OEsB8RbL0p3rNAOfFdcyMAoCmIszuqVbeObXv9kOcRORsRiSnae6vz
-	0H4RjuG79dqmhA8yptGW/9Ey+Uds/4mPVBLegu6zicv96pcz9oMarFGG5dtk0jgIEMGKkzw0JKB
-	d/NRebPah/BF2X7ZEYK1war0gv90jdAo02Nz9aKJhGYQRE/ZuHxtd4GF5rFaiDkwlaRQ2ECdxtI
-	NAKdeGcEiN1cQDL+Q==
-X-Google-Smtp-Source: AGHT+IE0Lg8OC1qQflbm42pTUDEXQn5wEtvjZAGDRpEYT9WPYGJBWJxfXrPWc1WTljH0ya6XcqQMq2gpMQ7Ymg2lRdk=
-X-Received: by 2002:a05:690c:e0a:b0:6ef:6d61:c254 with SMTP id
- 00721157ae682-719e348e675mr51700067b3.38.1753509227288; Fri, 25 Jul 2025
- 22:53:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0449F7E9;
+	Sat, 26 Jul 2025 06:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.227.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753509972; cv=fail; b=gZTBVmGG41MHAfeIkGdMQIYtSYPdIcE9WtkqbSIW6CVnu+yi3Adypv5MTiZEF79a5Z9mUlzS1Ec69BiXugOYA68m3xEbc94DzqsvYI9cGWtsNn+GDTC3nXa8Tm5WYGuNJEv40ke49IDoVIn/bz0876pmmL3gn/A4aiVI+nbQz/U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753509972; c=relaxed/simple;
+	bh=76+cM+VwSL2oNS9xI6Tg+/RrsoTB4Au07o58or5yo0o=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hIvg3C8ElT8pauD+AyLjUv0iQluO6FESwDEQhd/lobabjJjmJFlkBs8GKcnnF9+uXLGzHSZOZ+rhMJlSjKfTNO7FLoA48Hetg+DwYU0Z462+6avG3UzYpHhH4eUsI49kTMziy+t0Dw5/1nMnL7rMdPUG+UDigkDAecafmpGtkXg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.227.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J0woj/czksm9XVm90RxsJvV+3HrvPNr4xRv38aZdSvOGSJfNAj5F0Au5aunewSHIU6V7knKjKPRyT9BbgR2Q4dfcDyZIYxKCvLiTrzoXlX424rVoIVpXFfX0VRmUnh+jN6C4XwVgEBU7VO5/aPSg/6h3t64xwA5/R5dsYCMSLKM2BoJoAh27ChdJYQoc1wI6BqP5BzzSQvl/qrLei1h+PzEab6rls3XxQZd/fuEq99sJNMR8C3WI/T4VgcJtvDrrLeuvkWAJeG777hSvjaovBideToc4rJvckYD3vcn3OVG8VVlv8QtCZk1/jXwuIDaDbFuPZv6ocHKZW1NnWaWz4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=76+cM+VwSL2oNS9xI6Tg+/RrsoTB4Au07o58or5yo0o=;
+ b=dgnQ3P5g7E4QdfhjGLwlt+FIRgVjq1jDV6FTql6i2hdiX1evw+qFlLZut0N5hQGOoLh+zAKt2jyUUSePs8RHVp/stEM3EH6JiIDhNzRjBnYBasZba5FHNl4EWrkhgJarp/CxG4uHi4iNgkDXIwwhYPQ5VxGsyNU9vtWMmx1WXuHf0UIHfT4eWgwDeuFrm1hDUKs3xNeolLZLo9UMyugRMZX2gCf8u8YbjB9guiQ/cJfF/7KcQ1fTcIenk6Gb2tVOMmd2FM7is0JIZuV0pX3KCKYYF9xksi7aU59LzJ6l1wR6so0qLnTMUR6Z0HBqHSbsLE46/erGxwJIrNyukB9hLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:229::21)
+ by PN5P287MB4369.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:2c0::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.24; Sat, 26 Jul
+ 2025 06:06:05 +0000
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418]) by PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418%6]) with mapi id 15.20.8964.023; Sat, 26 Jul 2025
+ 06:06:05 +0000
+From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Hans Verkuil
+	<hverkuil@xs4all.nl>, Ricardo Ribalda <ribalda@chromium.org>, Bryan
+ O'Donoghue <bryan.odonoghue@linaro.org>, Hans de Goede <hansg@kernel.org>,
+	=?utf-8?B?QW5kcsOpIEFwaXR6c2No?= <git@apitzsch.eu>, Benjamin Mugnier
+	<benjamin.mugnier@foss.st.com>, Matthias Fend <matthias.fend@emfend.at>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Sylvain Petinot
+	<sylvain.petinot@foss.st.com>, Dongcheng Yan <dongcheng.yan@intel.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+Thread-Topic: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+Thread-Index: AQHb/Ih6djfjLciEYkK3gvcBpDSgELRBx44AgACQNVCAAJNHAIABAbcv
+Date: Sat, 26 Jul 2025 06:06:05 +0000
+Message-ID:
+ <PN3P287MB3519055FE42890F5F577B51BFF58A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io>
+ <aIKi1BkNzNvsf5Tr@smile.fi.intel.com>
+ <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+ <175345442477.2567018.13588829522231689027@ping.linuxembedded.co.uk>
+In-Reply-To:
+ <175345442477.2567018.13588829522231689027@ping.linuxembedded.co.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3P287MB3519:EE_|PN5P287MB4369:EE_
+x-ms-office365-filtering-correlation-id: cd30418c-2826-4a21-2f43-08ddcc0a81d3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?UlhTamQ1bmQwelR1aktJOFpwL3VyVWxQVVdmVlNvUDlwejlTc2R4YW5adEcz?=
+ =?utf-8?B?Q0V1S2ozRS9Nc3dYTmV3UStRSGRncUlXZ3hNeUQyaDdqbVViWjNPY1NyTTh4?=
+ =?utf-8?B?YkFzc1R3ODdaKytGcTV0akFiSUl3OFdYcGlzTmRtemRMUEFkUTJmcFgvRC9p?=
+ =?utf-8?B?K01TaGFmVG1SM3lJbEJsQWg0L0FwM1FQSFNSbi9zSkxlNE5KT3hPVUtDRC93?=
+ =?utf-8?B?b28xcWJNdVN5R2FIaEl0YmU2djIvZ2dXV09BUkhScU9XMnRHVjJ4WVJxbjUz?=
+ =?utf-8?B?NURxaTJyczJwdi80ekNEWVZ6eXRhMlkxOWhjcXZuUzZ1V1NsQU9NcEd0cHYr?=
+ =?utf-8?B?WFZtaWVNTkcwMGdMNENwQW9SSTBxREszRUYrYjlsTEhJYjN6RS9kbW9rc0Ix?=
+ =?utf-8?B?ZjlLYjV5VEFFdTU5aUl4OHlaR2N1Ym5JQlZVNmtqWkNSRlhVTGRjN1IyY3Zy?=
+ =?utf-8?B?eTVJQVlkVG1sNDMrUjN5SXcyZC9PbkdvM1QzOElzVFQ1aW9FTFZSR081bXBo?=
+ =?utf-8?B?SStDVkRuenZ0RjcvcnFjUk5LNm9kRWc1UUhMUWQ4RmxTN3lvaTFaWVFlV0dj?=
+ =?utf-8?B?ZFp0SXZ3R2NiUTA2M3gyaThqWGxnWXJ5aUZRMXpJMG0vVkpIZDQ3YzhuZGw1?=
+ =?utf-8?B?cWw4UGprMWNaY3JJQmdyWC81N2JjNWdJTUhDT3Y0WFhaTndrZzNLUFJmVlR5?=
+ =?utf-8?B?SnpCS3NnbEZndXBwNTk1OTRiQ29QVk5VQVlnUkliUWtlT0NvRytJQWhqMW9M?=
+ =?utf-8?B?ZGtiR1JzWmNzei90U2xLNDROaW1DMTh2OGE2YklZb0EwRTdXT2VVT0tBK3VS?=
+ =?utf-8?B?MVAwa2Z6Sm1veTR1aTdKUzdSb0JKT0xsclFPam9IYXNGbVEzSDYvazZleUkv?=
+ =?utf-8?B?a2puY0V1K0MyeFJIMDRQbWJxYTl2bjcwTkpPdFNzdC9sSjZrN2FtYS9pbTUr?=
+ =?utf-8?B?UWZ2K2pZcEVmejhiUExiR05nVS9uWlE1OS8va3lRNUVmZXpSVGt6UWVoY3lJ?=
+ =?utf-8?B?ZWszSW1jWHl6QUE5RXhQa1pMQnYybml2Sjdob3BlMVRCbXRSdFMxdmxhaUxt?=
+ =?utf-8?B?OUhTWi9jb3dzWVZLbFBZRGpqVTFPMHJiK2lqYVJQSWk1MkI5UzIzak1aTGVu?=
+ =?utf-8?B?TmZOK1dXSUwvcDdXVEZXWldrQWVHV2plQkcvT0hSODNsenUydDQxZEcvWXkz?=
+ =?utf-8?B?enZ2TEl5WGRzUnFJQWtTYWVNN2lNMkE0bGs1ai9ZWHlvSTdYSFlZdFRFYmdN?=
+ =?utf-8?B?OUVzK0NiZDBTTzk0RVhITjNnTVkxSmZoaUU5NE1hNDNoQi81S2VzNHdydk5X?=
+ =?utf-8?B?NHpGN2FUUjNlU3c3QURhL2E5TXVTYllkYTJORG9CZGF3VTZnRjQwSFExVHFq?=
+ =?utf-8?B?bGhOdmlHNU9YSGlFYVl0RnpWbHduTVE2VjZIVVcyODB1K2JOTWZydlVMcnNH?=
+ =?utf-8?B?aXlCNGcrVWFYV0ZOUWVPUWcxRDRBMUpmM2piNThSai9aQ2hSRWxTVFZjRHFn?=
+ =?utf-8?B?OGg1N2pSUThaZjVHWTN1YW5yMXpHQzF0R0U5NnpaQ1BHU3d2S0Nyejg4ZnlP?=
+ =?utf-8?B?Y1crdXFzaE4yK2ROeWZ0VlAzQ1JrUGtJREZuek5PWG90OGFTTFpjcmZKbU1N?=
+ =?utf-8?B?NE1ZUlRPNWd4R20wWWJiQnVpenJIaTRJWC81SDZTQzhJdzhSNnhQTjkxNTBy?=
+ =?utf-8?B?MDA3bThxNDNvVFdsZVBYODRGUHhJQmdBcEcrdUZ5MGM4cVAvbEcxc3RvVEpO?=
+ =?utf-8?B?amxqQlduZkF1RFdabk8xUWJLcDFTQkZHbWtRMEh6NG9zaHlVd2oxY3k0OEpS?=
+ =?utf-8?B?OTZCS0xXWFRwcUFQbVhBMjYvanVaeFE0dkxWYTF2OFJXVUVQZTZkb3ZkVWI0?=
+ =?utf-8?B?VXJ6SG80T3ZwVTZlM0ZhYXlna004ZjNmUzBMSGl1ekxFMXpzcnFlSE9uTHBQ?=
+ =?utf-8?B?a3liM3B5M25pdXUrNE5ZTUJmMUpPOUpPdDJmSUxMZSt1VEZXUWhhdUpiNU0x?=
+ =?utf-8?B?eW11a2xMQ0ZRPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB3519.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?L09haW4zNGZpeGhiUTVBL3IyZnVQZTRUUkZNUU1pSkgvR0N6Z3o0NG15dW9E?=
+ =?utf-8?B?VTZnbDZHK3AxVXpJUzIyRUFydm1OWHU0TnRiejY0YXVpU1MrMk8yeFF4cmhs?=
+ =?utf-8?B?NG1zRkd4MTFzQTY4akN5cUxQMXlIdkxQT3dMQVVuQWVwMDlnWkpzR1lNM01s?=
+ =?utf-8?B?ako2RDJuQ05wYVF5U1JvY1hrWndaRDFxclh6VGcrQkRmWURFanRFTXNMbW9m?=
+ =?utf-8?B?bkNYajd2cHovek15ZnFuNE9sbmRiNkdrZ2g4MkVtOHpQVHFmWUduc3FTVjI2?=
+ =?utf-8?B?U01icWRtbERiTnlmNDEvcUVIbXZDS2NtODhRbXorRndiSFdid0JOaHorVDNF?=
+ =?utf-8?B?MFhRSmx6L3hINW5lK0pvYjVaWnk3WDlQWEdRNHoxRzJjV09aekZFV1NtMmtp?=
+ =?utf-8?B?QkVDUzFFNTB6WlphcC9mL0xWbmdPVHhyK1BBVXN3cllNWFl1QU5oaVU4aHVZ?=
+ =?utf-8?B?bWxUa2h0VnlCZnNBS0NZbTVZZnNJeVloYUc0OGtmZ09wRGRqeDVXY1pzYTR3?=
+ =?utf-8?B?T05OTlBBT2FmWlA1aDlhUEhvbytlQXZ6ZElkQ1IzZERuRjZpS0U4MlBObnRU?=
+ =?utf-8?B?U0J0dDZLMGFmN3pWWTFWUmZBeHhsTnNacjgvRWZZNWIrUUd5WFJtemgrS0tR?=
+ =?utf-8?B?TUtWM092MTdXL1VLcVh4TzlXQmsyRTM0bFk1UGVKRjAxaWZvdkd6SUlIN3Fo?=
+ =?utf-8?B?OUdvTUxmc3NjNXhsQ0swTzYrTWc3UjJsZkw4blM3bExUNGNDcVppL3pyZkd1?=
+ =?utf-8?B?SmJ3bFRwWnc0K3dzdEd4MzRSalJ3Z1NPcUpjMW5mUGVkYlVsUWEvT2lxSU1E?=
+ =?utf-8?B?djZJelJaYU0vbks4SDNVVVFrd0pCWkxaMGpnaWxLbjJVR3VlQzM4WnRoZFNl?=
+ =?utf-8?B?akNvQ3JyNkpQVnVER0dFbzlYOHpSMElobHVWTFpyU3Rmb0IvYVlJSC9DMFF5?=
+ =?utf-8?B?bWxESEt1QkwvQ2wzYTVheFdxRXNvRGdPTzh5Vng0OEN0ei8yaEo0dE9WalRN?=
+ =?utf-8?B?M2VWTXZDS0x6ak43NGtpUzVZRWhIQW5JOVlZcnptaCtWTTByZVZzT3RRb0ZR?=
+ =?utf-8?B?dWdkTHpacVFJQWlTT2NvZDk3VmhFUHI2MGVweC9IbTdZOWNqS0RXN2dQR0xm?=
+ =?utf-8?B?RUVkK1dnU1lSNDJXM2dWak5LKzRvaHJoSXZGWmN6UDZtMjdqMm4xZHZyMjNS?=
+ =?utf-8?B?VzRyNWI4SDJ1NW96dFFOMVUzcEF0NFUxaU1GWFhqMnJTOS9wOW44eGpadVZt?=
+ =?utf-8?B?bEZWMThlbUxCdVpwTXZqeEFGNHpVa2dYOVNONTNxajZqcGpFMWpkdFFMU3ZS?=
+ =?utf-8?B?SWFkSXVnQUhjRk1yWVNGZms4TTRlM05uczMyTUVaSncxR1E2b1lhQUtuM2do?=
+ =?utf-8?B?aWpBdVAwajFuMzNhd3dnTmtVRURpMTFIczBVQ2lSaFlhZjFUSkZtME16ZlBw?=
+ =?utf-8?B?WHFhNjNpZW9JMVEyTjJrdGdON1FLWVVCb1grS1N2SGhDUXlhU2hOMWpuaWJ6?=
+ =?utf-8?B?OVI3N2JOaGxyamEwNVkxNE4wVklSU1ZHcHplVzg2R2ZQS0lLNUVOWTZJaDVl?=
+ =?utf-8?B?SkFQTEJ0ZHFZWHpVOUJmWUJBcEtkMVBaQ05WQVdBeW5STjhGTHhoQ1VRSzcr?=
+ =?utf-8?B?RTk5Z29mQWhOV1lzdDVDMUpVQVI4aGNXeGpjR1M3eTFuVC9QVXAzNnhmamFB?=
+ =?utf-8?B?VEhRVEYxdHN0eHFOS2E5R2pHdmZMaFFTMDFkQjJad01RYVdkMWxxNTZOaGdi?=
+ =?utf-8?B?R3NVMGNVcnQyUGdPcWdxajNXMWRqZG5kTEdRaStkYkt5LzVTVGIxL3o0bHR1?=
+ =?utf-8?B?WS9YWjEyNitFajhMWTNRT0FHenA2czduTzRYQWJUWWNvRXVhalVYdHNHbHpt?=
+ =?utf-8?B?eDVUV0xjM3BtUVQ4anRzclQ0SjYvcGlHbVFYUFk5ajgwcHgrRnh0bkxjbTV5?=
+ =?utf-8?B?ckhhOWY5Zk9lejQyNzM3aFNzVWFmZ1MzSTJ3Z1MyeEJ1aEVSL01IZkk3eHFU?=
+ =?utf-8?B?c2hJUWxuTXUxUVAxcm9Nb25nUmlVaVJYSEZWSjkySld5MWtHSldPcnNrc3RD?=
+ =?utf-8?B?U0V0Y1JjZzN4M1puOEVsT3pzRlFUS3BMSTNnSEl4bC9ybGthUUVWTzkrQ1ZE?=
+ =?utf-8?B?M2hXaEVPTDdYZG1aNFdyQ0pUZGM4MFFnNHpoQnBlWFowRXFhSGlZOGt6OVE4?=
+ =?utf-8?B?SlE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710212555.1617795-1-amery.hung@bytedance.com> <dsamf7k2byoflztkwya3smj7jyczyq7aludvd36lufdrboxdqk@u73iwrcyb5am>
-In-Reply-To: <dsamf7k2byoflztkwya3smj7jyczyq7aludvd36lufdrboxdqk@u73iwrcyb5am>
-From: Amery Hung <ameryhung@gmail.com>
-Date: Fri, 25 Jul 2025 22:53:35 -0700
-X-Gm-Features: Ac12FXyMvpkfh1BVRP1lxRseahm_ttdL_F4ac_DTON4U9vvl5wd6WOkrVb-fPTk
-Message-ID: <CAMB2axNKxW4gnd6qiSNYdm2zPxJkbbLgZz9P-Kh7SS0Sb1Yw=Q@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next v6 00/14] virtio/vsock: support datagrams
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
-	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, 
-	wei.liu@kernel.org, decui@microsoft.com, bryantan@vmware.com, 
-	vdasa@vmware.com, pv-drivers@vmware.com, dan.carpenter@linaro.org, 
-	simon.horman@corigine.com, oxffffaa@gmail.com, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
-	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd30418c-2826-4a21-2f43-08ddcc0a81d3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2025 06:06:05.5754
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yMDe5pDes/uyAwC5GJe9hsZCse1RyZ0zgT5GfAei2AvMWS8QCeBMnlILrboyStaVngnWnwoW/6Cau20J1wenBaXAFcEaTH93LP/ng2IRIC05cxNwuhC7A8hi/FJu8UbN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN5P287MB4369
 
-On Tue, Jul 22, 2025 at 7:35=E2=80=AFAM Stefano Garzarella <sgarzare@redhat=
-.com> wrote:
->
-> Hi Amery,
->
-> On Wed, Jul 10, 2024 at 09:25:41PM +0000, Amery Hung wrote:
-> >Hey all!
-> >
-> >This series introduces support for datagrams to virtio/vsock.
->
-> any update on v7 of this series?
->
-
-Hi Stefano,
-
-Sorry that I don't have personal time to work on v7. Since I don't
-think people involved in this set are still working on it, I am
-posting my v7 WIP here to see if anyone is interested in finishing it.
-Would greatly appreciate any help.
-
-Link: https://github.com/ameryhung/linux/tree/vsock-dgram-v7
-
-Here are the things that I haven't address in the WIP:
-
-01/14
-- Arseniy suggested doing skb_put(dg->payload_size) and memcpy(dg->payload_=
-size)
-
-07/14
-- Remove the double transport lookup in the send path by passing
-transport to dgram_enqueue
-- Address Arseniy's comment about updating vsock_virtio_transport_common.h
-
-14/14
-- Split test/vsock into smaller patches
-
-Finally the spec change discussion also needs to happen.
-
-
-
-> Thanks,
-> Stefano
->
-> >
-> >It is a spin-off (and smaller version) of this series from the summer:
-> >  https://lore.kernel.org/all/cover.1660362668.git.bobby.eshleman@byteda=
-nce.com/
-> >
-> >Please note that this is an RFC and should not be merged until
-> >associated changes are made to the virtio specification, which will
-> >follow after discussion from this series.
-> >
-> >Another aside, the v4 of the series has only been mildly tested with a
-> >run of tools/testing/vsock/vsock_test. Some code likely needs cleaning
-> >up, but I'm hoping to get some of the design choices agreed upon before
-> >spending too much time making it pretty.
-> >
-> >This series first supports datagrams in a basic form for virtio, and
-> >then optimizes the sendpath for all datagram transports.
-> >
-> >The result is a very fast datagram communication protocol that
-> >outperforms even UDP on multi-queue virtio-net w/ vhost on a variety
-> >of multi-threaded workload samples.
-> >
-> >For those that are curious, some summary data comparing UDP and VSOCK
-> >DGRAM (N=3D5):
-> >
-> >       vCPUS: 16
-> >       virtio-net queues: 16
-> >       payload size: 4KB
-> >       Setup: bare metal + vm (non-nested)
-> >
-> >       UDP: 287.59 MB/s
-> >       VSOCK DGRAM: 509.2 MB/s
-> >
-> >Some notes about the implementation...
-> >
-> >This datagram implementation forces datagrams to self-throttle according
-> >to the threshold set by sk_sndbuf. It behaves similar to the credits
-> >used by streams in its effect on throughput and memory consumption, but
-> >it is not influenced by the receiving socket as credits are.
-> >
-> >The device drops packets silently.
-> >
-> >As discussed previously, this series introduces datagrams and defers
-> >fairness to future work. See discussion in v2 for more context around
-> >datagrams, fairness, and this implementation.
-> >
-> >Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
-> >Signed-off-by: Amery Hung <amery.hung@bytedance.com>
-> >---
-> >Changes in v6:
-> >- allow empty transport in datagram vsock
-> >- add empty transport checks in various paths
-> >- transport layer now saves source cid and port to control buffer of skb
-> >  to remove the dependency of transport in recvmsg()
-> >- fix virtio dgram_enqueue() by looking up the transport to be used when
-> >  using sendto(2)
-> >- fix skb memory leaks in two places
-> >- add dgram auto-bind test
-> >- Link to v5: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v5-0-581=
-bd37fdb26@bytedance.com
-> >
-> >Changes in v5:
-> >- teach vhost to drop dgram when a datagram exceeds the receive buffer
-> >  - now uses MSG_ERRQUEUE and depends on Arseniy's zerocopy patch:
-> >       "vsock: read from socket's error queue"
-> >- replace multiple ->dgram_* callbacks with single ->dgram_addr_init()
-> >  callback
-> >- refactor virtio dgram skb allocator to reduce conflicts w/ zerocopy se=
-ries
-> >- add _fallback/_FALLBACK suffix to dgram transport variables/macros
-> >- add WARN_ONCE() for table_size / VSOCK_HASH issue
-> >- add static to vsock_find_bound_socket_common
-> >- dedupe code in vsock_dgram_sendmsg() using module_got var
-> >- drop concurrent sendmsg() for dgram and defer to future series
-> >- Add more tests
-> >  - test EHOSTUNREACH in errqueue
-> >  - test stream + dgram address collision
-> >- improve clarity of dgram msg bounds test code
-> >- Link to v4: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v4-0-0ce=
-bbb2ae899@bytedance.com
-> >
-> >Changes in v4:
-> >- style changes
-> >  - vsock: use sk_vsock(vsk) in vsock_dgram_recvmsg instead of
-> >    &sk->vsk
-> >  - vsock: fix xmas tree declaration
-> >  - vsock: fix spacing issues
-> >  - virtio/vsock: virtio_transport_recv_dgram returns void because err
-> >    unused
-> >- sparse analysis warnings/errors
-> >  - virtio/vsock: fix unitialized skerr on destroy
-> >  - virtio/vsock: fix uninitialized err var on goto out
-> >  - vsock: fix declarations that need static
-> >  - vsock: fix __rcu annotation order
-> >- bugs
-> >  - vsock: fix null ptr in remote_info code
-> >  - vsock/dgram: make transport_dgram a fallback instead of first
-> >    priority
-> >  - vsock: remove redundant rcu read lock acquire in getname()
-> >- tests
-> >  - add more tests (message bounds and more)
-> >  - add vsock_dgram_bind() helper
-> >  - add vsock_dgram_connect() helper
-> >
-> >Changes in v3:
-> >- Support multi-transport dgram, changing logic in connect/bind
-> >  to support VMCI case
-> >- Support per-pkt transport lookup for sendto() case
-> >- Fix dgram_allow() implementation
-> >- Fix dgram feature bit number (now it is 3)
-> >- Fix binding so dgram and connectible (cid,port) spaces are
-> >  non-overlapping
-> >- RCU protect transport ptr so connect() calls never leave
-> >  a lockless read of the transport and remote_addr are always
-> >  in sync
-> >- Link to v2: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v2-0-079=
-cc7cee62e@bytedance.com
-> >
-> >
-> >Bobby Eshleman (14):
-> >  af_vsock: generalize vsock_dgram_recvmsg() to all transports
-> >  af_vsock: refactor transport lookup code
-> >  af_vsock: support multi-transport datagrams
-> >  af_vsock: generalize bind table functions
-> >  af_vsock: use a separate dgram bind table
-> >  virtio/vsock: add VIRTIO_VSOCK_TYPE_DGRAM
-> >  virtio/vsock: add common datagram send path
-> >  af_vsock: add vsock_find_bound_dgram_socket()
-> >  virtio/vsock: add common datagram recv path
-> >  virtio/vsock: add VIRTIO_VSOCK_F_DGRAM feature bit
-> >  vhost/vsock: implement datagram support
-> >  vsock/loopback: implement datagram support
-> >  virtio/vsock: implement datagram support
-> >  test/vsock: add vsock dgram tests
-> >
-> > drivers/vhost/vsock.c                   |   62 +-
-> > include/linux/virtio_vsock.h            |    9 +-
-> > include/net/af_vsock.h                  |   24 +-
-> > include/uapi/linux/virtio_vsock.h       |    2 +
-> > net/vmw_vsock/af_vsock.c                |  343 ++++++--
-> > net/vmw_vsock/hyperv_transport.c        |   13 -
-> > net/vmw_vsock/virtio_transport.c        |   24 +-
-> > net/vmw_vsock/virtio_transport_common.c |  188 ++++-
-> > net/vmw_vsock/vmci_transport.c          |   61 +-
-> > net/vmw_vsock/vsock_loopback.c          |    9 +-
-> > tools/testing/vsock/util.c              |  177 +++-
-> > tools/testing/vsock/util.h              |   10 +
-> > tools/testing/vsock/vsock_test.c        | 1032 ++++++++++++++++++++---
-> > 13 files changed, 1638 insertions(+), 316 deletions(-)
-> >
-> >--
-> >2.20.1
-> >
->
+PiBRdW90aW5nIEhhcmRldnNpbmggUGFsYW5peWEgKDIwMjUtMDctMjUgMDY6NTU6MjMpCj4gPHNu
+aXA+Cj4gPiA+ID4gK3N0YXRpYyBpbnQgb3YyNzM1X3BhZ2VfYWNjZXNzKHN0cnVjdCBvdjI3MzUg
+Km92MjczNSwKPiA+ID4gPiAr77+977+977+977+977+977+977+977+977+977+977+977+977+9
+77+977+977+977+977+977+977+977+977+977+977+977+977+9IHUzMiByZWcsIHZvaWQgKnZh
+bCwgaW50ICplcnIsIGJvb2wgaXNfcmVhZCkKPiA+ID4gPiArewo+ID4gPiA+ICvvv73vv73vv73v
+v70gdTggcGFnZSA9IChyZWcgPj4gQ0NJX1JFR19QUklWQVRFX1NISUZUKSAmIDB4ZmY7Cj4gPiA+
+Cj4gPiA+ICcgJiAweGZmJyBwYXJ0IGlzIHJlZHVuZGFudC4KPiA+ID4KPiA+ID4gPiAr77+977+9
+77+977+9IHUzMiBhZGRyID0gcmVnICYgfkNDSV9SRUdfUFJJVkFURV9NQVNLOwo+ID4gPiA+ICvv
+v73vv73vv73vv70gaW50IHJldCA9IDA7Cj4gPiA+Cj4gPiA+IEhvdyBpcyB0aGlzIGFzc2lnbm1l
+bnQgYmVpbmcgdXNlZD8KPiA+ID4KPiA+ID4gPiAr77+977+977+977+9IGlmIChlcnIgJiYgKmVy
+cikKPiA+ID4gPiAr77+977+977+977+977+977+977+977+977+977+977+977+9IHJldHVybiAq
+ZXJyOwo+ID4gPiA+ICsKPiA+ID4gPiAr77+977+977+977+9IG11dGV4X2xvY2soJm92MjczNS0+
+cGFnZV9sb2NrKTsKPiA+ID4gPiArCj4gPiA+ID4gK++/ve+/ve+/ve+/vSAvKiBQZXJmb3JtIHBh
+Z2UgYWNjZXNzIGJlZm9yZSByZWFkL3dyaXRlICovCj4gPiA+ID4gK++/ve+/ve+/ve+/vSBpZiAo
+b3YyNzM1LT5jdXJyZW50X3BhZ2UgIT0gcGFnZSkgewo+ID4gPiA+ICvvv73vv73vv73vv73vv73v
+v73vv73vv73vv73vv73vv73vv70gcmV0ID0gY2NpX3dyaXRlKG92MjczNS0+Y2NpLCBPVjI3MzVf
+UkVHX1BBR0VfU0VMRUNULCBwYWdlLCBlcnIpOwo+ID4gPiA+ICvvv73vv73vv73vv73vv73vv73v
+v73vv73vv73vv73vv73vv70gaWYgKHJldCkKPiA+ID4gPiAr77+977+977+977+977+977+977+9
+77+977+977+977+977+977+977+977+977+977+977+977+977+9IGdvdG8gZXJyX211dGV4X3Vu
+bG9jazsKPiA+ID4gPiAr77+977+977+977+977+977+977+977+977+977+977+977+9IG92Mjcz
+NS0+Y3VycmVudF9wYWdlID0gcGFnZTsKPiA+ID4gPiAr77+977+977+977+9IH0KPiA+ID4gPiAr
+Cj4gPiA+ID4gK++/ve+/ve+/ve+/vSBpZiAoaXNfcmVhZCkKPiA+ID4gPiAr77+977+977+977+9
+77+977+977+977+977+977+977+977+9IHJldCA9IGNjaV9yZWFkKG92MjczNS0+Y2NpLCBhZGRy
+LCAodTY0ICopdmFsLCBlcnIpOwo+ID4gPiA+ICvvv73vv73vv73vv70gZWxzZQo+ID4gPiA+ICvv
+v73vv73vv73vv73vv73vv73vv73vv73vv73vv73vv73vv70gcmV0ID0gY2NpX3dyaXRlKG92Mjcz
+NS0+Y2NpLCBhZGRyLCAqKHU2NCAqKXZhbCwgZXJyKTsKPiA+ID4KPiA+ID4gRG8geW91IHJlYWxs
+eSBuZWVkIHRoaXMgY2FzdGluZ3M/Cj4gPgo+ID4gRG8geW91IHJlYWxseSB0aGluayB0aGlzIGNh
+c3RpbmcgaXMgdW5uZWNlc3Nhcnk/Cj4gPgo+IAo+IFllcz8gV2VsbCBxdWl0ZSBwcm9iYWJseSAt
+IEkgaGF2ZW4ndCBjaGVja2VkIG15c2VsZiB5ZXQgYnV0IC4uCj4gCj4gCj4gPiBQbGVhc2UgY2hl
+Y2sgdGhlIGRlZmluaXRpb25zIG9mIGNjaV9yZWFkL3dyaXRlCj4gPgo+ID4gd2l0aG91dCB0aGlz
+LCB3ZSBjYW4ndCBldmVuIGJ1aWxkIHRoZSBkcml2ZXIuCj4gCj4gSG93IGFib3V0IC4uLiBjaGFu
+Z2luZyB0aGUgZnVuY3Rpb24gcHJvdG90eXBlIG9mIG92MjczNV9wYWdlX2FjY2VzcyA/CgpPZiBj
+b3Vyc2UsIGNoYW5naW5nIHRoZSBmdW5jdGlvbiBwcm90b3R5cGUgd291bGQgd29yay4KCk15IGlu
+dGVudGlvbiBpcyB0byBrZWVwIGEgc2luZ2xlIG92MjczNV9wYWdlX2FjY2VzcygpIGZ1bmN0aW9u
+IHRoYXQgY2FuCmhhbmRsZSBib3RoIHJlYWQgYW5kIHdyaXRlIG9wZXJhdGlvbnMuIFRoZSBjY2lf
+cmVhZCgpIGZ1bmN0aW9uIGV4cGVjdHMgCmEgdTY0ICosIHdoZXJlYXMgY2NpX3dyaXRlKCkgZXhw
+ZWN0cyBhIHU2NCB2YWx1ZS4gVG8gc3VwcG9ydCBib3RoIGNhc2VzCndpdGhpbiBvbmUgZnVuY3Rp
+b24sIEnigJl2ZSB1c2VkIGEgdm9pZCAqdmFsIGFuZCBjYXN0IGl0IGFwcHJvcHJpYXRlbHkgCmRl
+cGVuZGluZyBvbiB0aGUgb3BlcmF0aW9uLgoKSWYgd2Ugd2VyZSB0byByZW1vdmUgdGhlIGNhc3Rp
+bmcsIHdlIHdvdWxkIG5lZWQgdG8gc3BsaXQgdGhpcyBpbnRvIHR3bwpzZXBhcmF0ZSBmdW5jdGlv
+bnMsIG9uZSBmb3IgcmVhZCBhbmQgb25lIGZvciB3cml0ZSwgZXZlbiB0aG91Z2ggdGhlIG9ubHkg
+CmRpZmZlcmVuY2UgYmV0d2VlbiB0aGVtIHdvdWxkIGJlIGEgc2luZ2xlIGxpbmUuIEnigJlkIHBy
+ZWZlciB0byBhdm9pZCB0aGF0CnJlZHVuZGFuY3kgYW5kIGtlZXAgdGhlIGNvZGUgY29tcGFjdC4g
+CgpMZXQgbWUga25vdyBpZiB5b3Ugc2VlIGEgYmV0dGVyIHdheSB0byBoYW5kbGUgdGhpcyB3aXRo
+b3V0IGR1cGxpY2F0aW5nCnRoZSBsb2dpYy4gCgpCZXN0IFJlZ2FyZHMsCkhhcmRldg==
 
