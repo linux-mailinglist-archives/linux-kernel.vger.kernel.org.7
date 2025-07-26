@@ -1,187 +1,145 @@
-Return-Path: <linux-kernel+bounces-746817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425EAB12B90
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6DEB12B94
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 19:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEDC77A9EE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:09:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101CF1C22697
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 17:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0512287262;
-	Sat, 26 Jul 2025 17:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52F42882A5;
+	Sat, 26 Jul 2025 17:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kojCstoE"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOqzOZOS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747552030A;
-	Sat, 26 Jul 2025 17:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A5C28750C;
+	Sat, 26 Jul 2025 17:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753549867; cv=none; b=rdV+FFB7+XmuxlBM0yBXvh3QUewzMXoGovRRtPj86l4n9MvYZadFba+Zl3zXtah/5tXjC/Tg1nUkFJU7zaZPgfR7P6PYTaxCWahuQs0wPd92eHD7dRXS/GYl1eR2QllV1WztNG2jS8jIP5XqFkiAhGA7J0UeZKWBQp9fCo7TY60=
+	t=1753549922; cv=none; b=Gg/DDw1l19ZmfeHLr2BOy0KuX77kNY/0W8z733+BofuMT6Jh8nt6ymMsH4SOnfMGjbkXGNnQvixq6oZvlIY1H+67FJsb7xEfAWG2JDoDEO1zt68aGLYtCfP3OrWW8SqvURk385Dw/tfMsVHO/P0BtN0965nC2u2mYn85CZXMrlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753549867; c=relaxed/simple;
-	bh=pFMOrccg41HjE55/iV3fdWMoGK7ESg+Ni1DsurkdBfs=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=lkmw0RhgJq4hxRZbuuodXclGoxDw+PkytE8YiSFyT4u/sctBALIxdqnLY4I8gg3Kgv8U8T5vQVYr3otn3NLutgU8ozGe94fxfEW9BTrSaEvXawGy9mMkFax0U2cIn9TFemn2y9WKKbAJ5HAXDLKp3Qftr/VvsxQMHjNe7fFHSIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kojCstoE reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A489D4A4;
-	Sat, 26 Jul 2025 19:10:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753549813;
-	bh=pFMOrccg41HjE55/iV3fdWMoGK7ESg+Ni1DsurkdBfs=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=kojCstoEKXNU6sZt+edT1cIYUmuaGwHKdT32Xo1ZaQltBduoNY2nCVPj/zhSOsL3p
-	 Z/YuXiSwCZQTWiGZtj5n+R22TD7W1tMA88NGMMiqNtOI0ShVyLeiyo1i6kzDDrnJzw
-	 a4N6KokTpI1ObIw5tHioSvdaU8CtlmEVoZvnRBEM=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753549922; c=relaxed/simple;
+	bh=rbCHqu5g+PtQzNMLvBDPb0/RV2wi01i4KdX1ANI0vaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IroB+JaczGgPQzE9tR7yj5U3n4igUVxpPZlclTYZdCX/98pPvhomLMWfJNP2deOtqY0ATVCCiMHlBclXvJuHM76Y9tbzNMH3j4lpz6XneG9RUDye1U8HjPIYD42w8smpBACo0ud7yF4pMYHNDfN2jcxJMS/JpuJWoPH1jhiMGAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOqzOZOS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B162FC4CEED;
+	Sat, 26 Jul 2025 17:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753549921;
+	bh=rbCHqu5g+PtQzNMLvBDPb0/RV2wi01i4KdX1ANI0vaY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LOqzOZOSdy4bu3tujbaeZeDeyXdFKmVFMRi7oEDbsn5YWEg7yg4qGttFH/5s6nADo
+	 8QyY3nUKWaGqDH9JPJ2gUZTlcxOa6xrc2mJOj/9kmRr9EP//zWIbvVEasrXpUrXblK
+	 ILS3+raUWsO2aGz/Q2RbXAs9TLgmchrwDu7bpA6/dzCOy9PTnwVCFV0mOJWx3Q6SuB
+	 WeRidwQjxZ49ai8Y2Wlk2JwwCAQYWWqVXqZ6DgbqB+iaNHENwMBTwdLEcGYAxzHbYx
+	 5IZoHxqh8eOV8GiUAUExWOkUKLL3Gj+w5y8sUiH9M5jJ2ND0pQ7B3BcRhvwQDW7LW2
+	 ckApRb6hweqDg==
+Date: Sat, 26 Jul 2025 12:11:58 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Wasim Nazir <wasim.nazir@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kernel@oss.qualcomm.com
+Subject: Re: [PATCH 1/7] arm64: dts: qcom: Rename sa8775p SoC to "lemans"
+Message-ID: <vc2z57myldazay75qwbxotxr5siooqny2vviu6yznna3fdj3ed@6fpcy7dcg6t3>
+References: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
+ <20250722144926.995064-2-wasim.nazir@oss.qualcomm.com>
+ <20250723-swinging-chirpy-hornet-eed2f2@kuoka>
+ <159eb27b-fca8-4f7e-b604-ba19d6f9ada7@oss.qualcomm.com>
+ <e718d0d8-87e7-435f-9174-7b376bf6fa2f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <PN3P287MB3519055FE42890F5F577B51BFF58A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io> <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io> <aIKi1BkNzNvsf5Tr@smile.fi.intel.com> <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM> <175345442477.2567018.13588829522231689027@ping.linuxembedded.co.uk> <PN3P287MB3519055FE42890F5F577B51BFF58A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	sakari.ailus@linux.intel.com <sakari.ailus@linux.intel.com>,
-	laurent.pinchart@ideasonboard.com <laurent.pinchart@ideasonboard.com>,
-	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Hans de Goede <hansg@kernel.org>,
-	=?utf-8?q?Andr=C3=A9?= Apitzsch <git@apitzsch.eu>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-media@vger.kernel.org <linux-media@vger.kernel.org>,
-	devicetree@vger.kernel.org <"d evicetree"@vger.kernel.org>,
-	linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Date: Sat, 26 Jul 2025 18:10:50 +0100
-Message-ID: <175354985094.1609430.13921131213777523371@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e718d0d8-87e7-435f-9174-7b376bf6fa2f@kernel.org>
 
-Quoting Hardevsinh Palaniya (2025-07-26 07:06:05)
-> > Quoting Hardevsinh Palaniya (2025-07-25 06:55:23)
-> > <snip>
-> > > > > +static int ov2735_page_access(struct ov2735 *ov2735,
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
-=BD=EF=BF=BD=EF=BF=BD u32 reg, void *val, int *err, bool is_read)
-> > > > > +{
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD u8 page =3D (reg >> CCI_REG=
-_PRIVATE_SHIFT) & 0xff;
-> > > >
-> > > > ' & 0xff' part is redundant.
-> > > >
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD u32 addr =3D reg & ~CCI_REG=
-_PRIVATE_MASK;
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD int ret =3D 0;
-> > > >
-> > > > How is this assignment being used?
-> > > >
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (err && *err)
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD return *err;
-> > > > > +
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD mutex_lock(&ov2735->page_lo=
-ck);
-> > > > > +
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD /* Perform page access befo=
-re read/write */
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (ov2735->current_page !=
-=3D page) {
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_write(ov2735->cci=
-, OV2735_REG_PAGE_SELECT, page, err);
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (ret)
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD goto err_mutex_unlock;
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ov2735->current_page =3D page;
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD }
-> > > > > +
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD if (is_read)
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_read(ov2735->cci,=
- addr, (u64 *)val, err);
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD else
-> > > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD ret =3D cci_write(ov2735->cci=
-, addr, *(u64 *)val, err);
-> > > >
-> > > > Do you really need this castings?
-> > >
-> > > Do you really think this casting is unnecessary?
-> > >
-> >=20
-> > Yes? Well quite probably - I haven't checked myself yet but ..
-> >=20
-> >=20
-> > > Please check the definitions of cci_read/write
-> > >
-> > > without this, we can't even build the driver.
-> >=20
-> > How about ... changing the function prototype of ov2735_page_access ?
->=20
-> Of course, changing the function prototype would work.
->=20
-> My intention is to keep a single ov2735_page_access() function that can
-> handle both read and write operations. The cci_read() function expects=20
-> a u64 *, whereas cci_write() expects a u64 value. To support both cases
-> within one function, I=E2=80=99ve used a void *val and cast it appropriat=
-ely=20
-> depending on the operation.
->=20
-> If we were to remove the casting, we would need to split this into two
-> separate functions, one for read and one for write, even though the only =
+On Thu, Jul 24, 2025 at 02:51:54PM +0200, Krzysztof Kozlowski wrote:
+> On 24/07/2025 14:47, Konrad Dybcio wrote:
+> > On 7/23/25 10:29 AM, 'Krzysztof Kozlowski' via kernel wrote:
+> >> On Tue, Jul 22, 2025 at 08:19:20PM +0530, Wasim Nazir wrote:
+> >>> SA8775P, QCS9100 and QCS9075 are all variants of the same die,
+> >>> collectively referred to as lemans. Most notably, the last of them
+> >>> has the SAIL (Safety Island) fused off, but remains identical
+> >>> otherwise.
+> >>>
+> >>> In an effort to streamline the codebase, rename the SoC DTSI, moving
+> >>> away from less meaningful numerical model identifiers.
+> >>>
+> >>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> >>> ---
+> >>>  arch/arm64/boot/dts/qcom/{sa8775p.dtsi => lemans.dtsi} | 0
+> >>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi             | 2 +-
+> >>
+> >> No, stop with this rename.
+> >>
+> >> There is no policy of renaming existing files.
+> > 
+> > There's no policy against renaming existing files either.
+> 
+> There is, because you break all the users. All the distros, bootloaders
+> using this DTS, people's scripts.
+> 
 
-> difference between them would be a single line. I=E2=80=99d prefer to avo=
-id that
-> redundancy and keep the code compact.=20
->=20
-> Let me know if you see a better way to handle this without duplicating
-> the logic.=20
+None of these users are affected by the rename of the .dtsi file.
 
-ov2735_page_access() {
-	if (ov2735->page !=3D page)
-		cci_write(PAGE, page)
-	ov2735->page =3D page;
-}
+Patch 5 does have user impact, so that one would be "controversial".
+From the answers I've gotten, I'm questioning which of thees files
+actually has users - but that's best done in a standalone patch removing
+or renaming them, with a proper commit message.
 
-oc2735_read() {
-	ov2735_page_access();
-	cci_read()
-}
+> > 
+> >> It's ridicilous. Just
+> >> because you introduced a new naming model for NEW SOC, does not mean you
+> >> now going to rename all boards which you already upstreamed.
+> > 
+> > This is a genuine improvement, trying to untangle the mess that you
+> > expressed vast discontent about..
+> > 
+> > There will be new boards based on this family of SoCs submitted either
+> > way, so I really think it makes sense to solve it once and for all,
+> > instead of bikeshedding over it again and again each time you get a new
+> > dt-bindings change in your inbox.
+> > 
+> > I understand you're unhappy about patch 6, but the others are
+> > basically code janitoring.
+> 
+> Renaming already accepted DTS is not improvement and not untangling
+> anything.
 
-ov2735_write() {
-	ov2735_page_access();
-	cci_write()
-}
+No, but the rename of the dtsi file and avoiding introducing yet another
+qcs<random numbers> prefix in the soup is a huge improvement.
 
->=20
-> Best Regards,
-> Hardev
+> These names were discussed (for very long time) and agreed on.
+> What is the point of spending DT maintainers time to discuss the sa8775p
+> earlier when year later you come and start reversing things (like in
+> patch 6).
+> 
+
+There was no point, all the information wasn't brought to those
+discussions...
+
+What we know now is that QCS9100 and QCS9075 (and perhaps more?) are the
+Lemans IoT product line and the EVK is the main development board
+there on.
+
+It's unclear if there are any lingering users of sa8775p-ride, but
+the platform we describe in sa8775p.dtsi doesn't exist anymore. To the
+best of my understanding, any users of the ride hardware should be on
+qcs9100-ride...
+
+Regards,
+Bjorn
 
