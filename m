@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-746763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653DCB12AE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:13:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4060B12AE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 16:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0729E4E5852
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:12:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A237D1C234CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 14:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3750288537;
-	Sat, 26 Jul 2025 14:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CABF288C23;
+	Sat, 26 Jul 2025 14:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ErfuAomT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gBserE0q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC171FDA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20CF28688C
 	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 14:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753539137; cv=none; b=gH3m7M92SwXU+u2YHnzkGR1v40zidwCuEPLDtZwoel+l6PMxWWOIiu+v+8ZmaqxXDO5HpiZq3C8KRHHL7e6b6Xke/0RJbvS5FK/d9VQDsiFaZvmfXoqpm48wdCKqApBqF/6dladg2bEyJergDOPwKwIOHeqZawASUw0UZ8HUxcA=
+	t=1753539138; cv=none; b=huHK3hiLJ2T2Wj5WknR9bnc6PQzbYhC8sNkEG0OhDjEE6IopWFKeumCDjIj7OL1bycSMmjOZ+kyw3GltnQRQ5NWNSPOezr/cfTBNOZNdJkPI/Jx5UJFEUrp4ztebYJG3VJajGma3kpH61MycdY3laBFtGsHJgDd6qVboc4t98Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753539137; c=relaxed/simple;
-	bh=j87oZMixFh27VAzvjm5wL6cqEO6q6gYzANZEcaCLQTY=;
+	s=arc-20240116; t=1753539138; c=relaxed/simple;
+	bh=TZpjkXBbQZ0/7HMBCrfXxzxFf0zNLQMS0dsRZI7G/40=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=tkZf0YsKPvOOVgiihm6hAFf7gjMSf5edB4AU6f4VFeGN2H8UEZp98hHdiLLMtU/WjbGQzOI10ahYZH03jvufa/Gjo31vGKN0TUGoQ7tQ+46nQI4+UGtIkHcv64eEGlgSmCgBCrtWABkKgN5jcEBlBRlMl2el5Fy88I5qYV1AIY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ErfuAomT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9DD1C4CEED;
+	 Content-Type; b=K+tUnka6tsftzBunM/9oRkWnCUuhcTLLFxDTIKYx3nR/J3CLD/kLgggU6jGzYK+G1wZ0iUjT1j+b3Q5jN5b/X7R/XehZBB52PuY18UrL9Cs6v6DQPoqAcHQWPwTNKRvBM4p6ATC/rSOxUPG9hKsfzOwiRFF+57vhwrWmgfg0PPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gBserE0q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D05EBC4CEF6;
 	Sat, 26 Jul 2025 14:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1753539137;
-	bh=j87oZMixFh27VAzvjm5wL6cqEO6q6gYzANZEcaCLQTY=;
+	bh=TZpjkXBbQZ0/7HMBCrfXxzxFf0zNLQMS0dsRZI7G/40=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=ErfuAomTc6J1pOOH5vZA4TOcOD7Jn3Jto516/GVGWxRd4tO3MoZj4RuUBi/2CF2G5
-	 z3LJsoYkFDHqY1S/K2ZsyrmzYHZxMcIG9gU41Vj2UAwZMpBypVNkWeYbQDlkaNEQk9
-	 EYgE8rUX8NXunY+rxESKAvkJUDYbbfLTfsxHAh8kpeLAboWLU9fWwCeeqWBAsmGOWG
-	 L+nt3b99dB9lGenLcQXVgBlD5etZ8/gXSznj2gVhxDA5VtFlx18Ji6PCnylYUhgBcX
-	 al8wWqShmhJ/2yEg3du++oPjZbuTQGZZpaVF2ERMzglBzMNgb5CProCQFr+PXMBV53
-	 Wj5SdjVRK5IAQ==
+	b=gBserE0qjIuMoap6TaoVC2lXIpgtZ2ZrcLuFmDykwMli4XaIf7hy28sNROcwwdHOe
+	 wirPb02es16diVd43tzmP4x5wrdMc8MqF0Q9EfrGm+ytGx7KLgeJlQjL5TuK1lS8OP
+	 Dh9tYD+z5bbyZQJx/hsxKZggvUsegUhZ64xOAT6bNwRrt2H4QD7/NddeEBc/kVELdA
+	 SAdC2CENCuoh26N00CMbgoKjDkJnHz140/3pfLH2B/V7aXbtDnUar6SPMYw1wrA7fp
+	 cnE4BvdWX57FBIpyYIU0nD8wd0/YII6SRia15XDLs96mIl1Gjq480+Tq776svForKe
+	 2erLEWL7LG1FA==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1uffdR-00000001sfc-1sWq;
+	id 1uffdR-00000001sg7-2bUM;
 	Sat, 26 Jul 2025 10:12:25 -0400
-Message-ID: <20250726141225.297220502@kernel.org>
+Message-ID: <20250726141225.470646928@kernel.org>
 User-Agent: quilt/0.68
-Date: Sat, 26 Jul 2025 10:07:13 -0400
+Date: Sat, 26 Jul 2025 10:07:14 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
@@ -57,7 +57,6 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Linus Torvalds <torvalds@linux-foundation.org>,
  Ingo Molnar <mingo@kernel.org>,
  Josh Poimboeuf <jpoimboe@kernel.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
  Jiri Olsa <jolsa@kernel.org>,
  Arnaldo Carvalho de Melo <acme@kernel.org>,
  Namhyung Kim <namhyung@kernel.org>,
@@ -70,7 +69,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Jens Axboe <axboe@kernel.dk>,
  Florian Weimer <fweimer@redhat.com>,
  Sam James <sam@gentoo.org>
-Subject: [for-next][PATCH 09/10] unwind deferred: Use SRCU unwind_deferred_task_work()
+Subject: [for-next][PATCH 10/10] unwind: Finish up unwind when a task exits
 References: <20250726140704.560579628@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,21 +81,17 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-Instead of using the callback_mutex to protect the link list of callbacks
-in unwind_deferred_task_work(), use SRCU instead. This gets called every
-time a task exits that has to record a stack trace that was requested.
-This can happen for many tasks on several CPUs at the same time. A mutex
-is a bottleneck and can cause a bit of contention and slow down performance.
+On do_exit() when a task is exiting, if a unwind is requested and the
+deferred user stacktrace is deferred via the task_work, the task_work
+callback is called after exit_mm() is called in do_exit(). This means that
+the user stack trace will not be retrieved and an empty stack is created.
 
-As the callbacks themselves are allowed to sleep, regular RCU cannot be
-used to protect the list. Instead use SRCU, as that still allows the
-callbacks to sleep and the list can be read without needing to hold the
-callback_mutex.
+Instead, add a function unwind_deferred_task_exit() and call it just
+before exit_mm() so that the unwinder can call the requested callbacks
+with the user space stack.
 
-Link: https://lore.kernel.org/all/ca9bd83a-6c80-4ee0-a83c-224b9d60b755@efficios.com/
-
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Josh Poimboeuf <jpoimboe@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ingo Molnar <mingo@kernel.org>
@@ -114,96 +109,104 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jens Axboe <axboe@kernel.dk>
 Cc: Florian Weimer <fweimer@redhat.com>
 Cc: Sam James <sam@gentoo.org>
-Link: https://lore.kernel.org/20250725185740.581435592@kernel.org
-Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lore.kernel.org/20250725185740.748555530@kernel.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/unwind/deferred.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ include/linux/unwind_deferred.h |  3 +++
+ kernel/exit.c                   |  2 ++
+ kernel/unwind/deferred.c        | 23 ++++++++++++++++++++---
+ 3 files changed, 25 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
-index 2311b725d691..a5ef1c1f915e 100644
---- a/kernel/unwind/deferred.c
-+++ b/kernel/unwind/deferred.c
-@@ -41,7 +41,7 @@ static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
- #define UNWIND_MAX_ENTRIES					\
- 	((SZ_4K - sizeof(struct unwind_cache)) / sizeof(long))
+diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
+index 2efbda01e959..26122d00708a 100644
+--- a/include/linux/unwind_deferred.h
++++ b/include/linux/unwind_deferred.h
+@@ -39,6 +39,8 @@ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func);
+ int unwind_deferred_request(struct unwind_work *work, u64 *cookie);
+ void unwind_deferred_cancel(struct unwind_work *work);
  
--/* Guards adding to and reading the list of callbacks */
-+/* Guards adding to or removing from the list of callbacks */
- static DEFINE_MUTEX(callback_mutex);
- static LIST_HEAD(callbacks);
- 
-@@ -49,6 +49,7 @@ static LIST_HEAD(callbacks);
- 
- /* Zero'd bits are available for assigning callback users */
- static unsigned long unwind_mask = RESERVED_BITS;
-+DEFINE_STATIC_SRCU(unwind_srcu);
- 
- static inline bool unwind_pending(struct unwind_task_info *info)
- {
-@@ -174,8 +175,9 @@ static void unwind_deferred_task_work(struct callback_head *head)
- 
- 	cookie = info->id.id;
- 
--	guard(mutex)(&callback_mutex);
--	list_for_each_entry(work, &callbacks, list) {
-+	guard(srcu)(&unwind_srcu);
-+	list_for_each_entry_srcu(work, &callbacks, list,
-+				 srcu_read_lock_held(&unwind_srcu)) {
- 		if (test_bit(work->bit, &bits)) {
- 			work->func(work, &trace, cookie);
- 			if (info->cache)
-@@ -213,7 +215,7 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
++void unwind_deferred_task_exit(struct task_struct *task);
++
+ static __always_inline void unwind_reset_info(void)
  {
  	struct unwind_task_info *info = &current->unwind_info;
- 	unsigned long old, bits;
--	unsigned long bit = BIT(work->bit);
-+	unsigned long bit;
- 	int ret;
+@@ -71,6 +73,7 @@ static inline int unwind_deferred_init(struct unwind_work *work, unwind_callback
+ static inline int unwind_deferred_request(struct unwind_work *work, u64 *timestamp) { return -ENOSYS; }
+ static inline void unwind_deferred_cancel(struct unwind_work *work) {}
  
- 	*cookie = 0;
-@@ -230,6 +232,14 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
- 	if (WARN_ON_ONCE(!CAN_USE_IN_NMI && in_nmi()))
++static inline void unwind_deferred_task_exit(struct task_struct *task) {}
+ static inline void unwind_reset_info(void) {}
+ 
+ #endif /* !CONFIG_UNWIND_USER */
+diff --git a/kernel/exit.c b/kernel/exit.c
+index bb184a67ac73..1d8c8ac33c4f 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -68,6 +68,7 @@
+ #include <linux/rethook.h>
+ #include <linux/sysfs.h>
+ #include <linux/user_events.h>
++#include <linux/unwind_deferred.h>
+ #include <linux/uaccess.h>
+ #include <linux/pidfs.h>
+ 
+@@ -938,6 +939,7 @@ void __noreturn do_exit(long code)
+ 
+ 	tsk->exit_code = code;
+ 	taskstats_exit(tsk, group_dead);
++	unwind_deferred_task_exit(tsk);
+ 	trace_sched_process_exit(tsk, group_dead);
+ 
+ 	/*
+diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
+index a5ef1c1f915e..dc6040aae3ee 100644
+--- a/kernel/unwind/deferred.c
++++ b/kernel/unwind/deferred.c
+@@ -114,7 +114,7 @@ int unwind_user_faultable(struct unwind_stacktrace *trace)
+ 	/* Should always be called from faultable context */
+ 	might_fault();
+ 
+-	if (current->flags & PF_EXITING)
++	if (!current->mm)
  		return -EINVAL;
  
-+	/* Do not allow cancelled works to request again */
-+	bit = READ_ONCE(work->bit);
-+	if (WARN_ON_ONCE(bit < 0))
-+		return -EINVAL;
-+
-+	/* Only need the mask now */
-+	bit = BIT(bit);
-+
- 	guard(irqsave)();
- 
- 	*cookie = get_cookie(info);
-@@ -281,10 +291,15 @@ void unwind_deferred_cancel(struct unwind_work *work)
- 		return;
- 
- 	guard(mutex)(&callback_mutex);
--	list_del(&work->list);
-+	list_del_rcu(&work->list);
-+
-+	/* Do not allow any more requests and prevent callbacks */
-+	work->bit = -1;
- 
- 	__clear_bit(bit, &unwind_mask);
- 
-+	synchronize_srcu(&unwind_srcu);
-+
- 	guard(rcu)();
- 	/* Clear this bit from all threads */
- 	for_each_process_thread(g, t) {
-@@ -307,7 +322,7 @@ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func)
- 	work->bit = ffz(unwind_mask);
- 	__set_bit(work->bit, &unwind_mask);
- 
--	list_add(&work->list, &callbacks);
-+	list_add_rcu(&work->list, &callbacks);
- 	work->func = func;
+ 	if (!info->cache) {
+@@ -147,9 +147,9 @@ int unwind_user_faultable(struct unwind_stacktrace *trace)
  	return 0;
  }
+ 
+-static void unwind_deferred_task_work(struct callback_head *head)
++static void process_unwind_deferred(struct task_struct *task)
+ {
+-	struct unwind_task_info *info = container_of(head, struct unwind_task_info, work);
++	struct unwind_task_info *info = &task->unwind_info;
+ 	struct unwind_stacktrace trace;
+ 	struct unwind_work *work;
+ 	unsigned long bits;
+@@ -186,6 +186,23 @@ static void unwind_deferred_task_work(struct callback_head *head)
+ 	}
+ }
+ 
++static void unwind_deferred_task_work(struct callback_head *head)
++{
++	process_unwind_deferred(current);
++}
++
++void unwind_deferred_task_exit(struct task_struct *task)
++{
++	struct unwind_task_info *info = &current->unwind_info;
++
++	if (!unwind_pending(info))
++		return;
++
++	process_unwind_deferred(task);
++
++	task_work_cancel(task, &info->work);
++}
++
+ /**
+  * unwind_deferred_request - Request a user stacktrace on task kernel exit
+  * @work: Unwind descriptor requesting the trace
 -- 
 2.47.2
 
