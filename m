@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-746920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7500B12D14
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 01:33:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A79B12D19
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 01:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D22717B4F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:33:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51BA416A41A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 23:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2236B22AE75;
-	Sat, 26 Jul 2025 23:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB6F22D4C5;
+	Sat, 26 Jul 2025 23:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="FjwTHybT"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="V+XrhjWO"
 Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578989460;
-	Sat, 26 Jul 2025 23:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B224C1F4CBC;
+	Sat, 26 Jul 2025 23:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753572794; cv=none; b=DAcierk4zfIRXQeW7gNWDW5luT5CDGuC5n7ZDsgK4SC0FVflthNcYIeTnMHlSwW/9aD/ZgCIV6LSKjD/0tJmynVA6BLGZdPlCDVWV7ddYjlmwLVG8Dmo0amlBfpsrTVoH1krpxykDbzO3zpwq9iUw6qfmGgHxn+/Zgnhdz2kG10=
+	t=1753573052; cv=none; b=LJPlHqp8+ONkl35Hh/8WWsAln1ln+XHGzVX5VW1Yj/ugsp8VDoPkJXDTPzNp2Xdb3MXTt175pqhvKI3LLepENAcopBF7PbJiEGMmFRr/ERBD5nBHiUZ7nEELud81ALDJv/kB1u1XkOnzNLWCs0PbCsKngesxA0tRxrAVkBeIFpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753572794; c=relaxed/simple;
-	bh=oh//U3G7volzqHi70VCDaOMpSnWAJY/m5DSQFvF/uI8=;
+	s=arc-20240116; t=1753573052; c=relaxed/simple;
+	bh=kDkCxnYlzEBQe73s8nMdeEZJyf96oxJYMhTs2mtqKwk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rlMnYDIIQDn0Xqno2WYtSvu+Vq/ZwJ5Vna5bnJL8rPBBXyfHcaGusqdyCXf109bxeHjU9ZlXo99BxLTyhyCi3SVKCz7EhhHmpzF4TCrwuYfR1oJIvhPg5bjPyiwokRkKUXUi+KRhKq9sH/1l9YZHk8sTIda4oyeNOnuj6Rd5HNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=FjwTHybT; arc=none smtp.client-ip=212.227.17.20
+	 In-Reply-To:Content-Type; b=H9BwWgTjCt1npHFiHv1bIKpAajdykXKlnYC3QGziHeJwarcLepHWY70ngh+MddMWrc+IyYmbaldvEPqDyEMRLjP1voJETJ2KO6DOR4YEPJ2rn0LlG86qi4aoHELGBRCyt1SvpZqm1x8eXejzS+/O2oIhuB14mJXYBeHyxJEg088=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=V+XrhjWO; arc=none smtp.client-ip=212.227.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1753572760; x=1754177560; i=w_armin@gmx.de;
-	bh=za782JTfn+1dblU27u61QQNKAqMSR5S/EfLxV7dv7wE=;
+	s=s31663417; t=1753573040; x=1754177840; i=w_armin@gmx.de;
+	bh=4ZNW+z2bYMklOzQo27/67y7D62ES/gR89SGeK4HUTpQ=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=FjwTHybTD2J7nFF4u8cQzLL7fgiSMEzjzPzuj7blJSnTw5TlpMD7rd5jePK7QGzW
-	 acDEeB1uSR8+QudqW/udXdQJJrqaudKfQxfY+7Vdz7quVGEak+sBw2ervJIPHysNc
-	 kiXOyP0iZltc5MbqMS6lLuNG3yMzN8EKk+PSPdKybeJpFh/pRTzy70KoB97QAj1Ue
-	 sUy48OPrQ8h7MVCKYoTJBpE4p2C62IC0uytmjsnLdxYpXpj3Lq/WWAecUq1AAxS21
-	 76SV7BDjxS9Zrz+gFIX9KAFiKDaX4rZXLnx/XCQfHrGWpzgB7L61apKhtT1vAZe/T
-	 6W+FflOzpF5G+Ytmyw==
+	b=V+XrhjWOSltjm1VKq7hmR02jZW8JKGGZ+oJO8hJbekGYoQLnXJmDe7uQpfinUah9
+	 rOT+aN6643X4ang485/s+0sFaUewqy2Obp2RNmUep7wvortBICGMN6seC25b1JaCI
+	 tzKpuEK7m88vLwuUGMWKy2tSCa5l9oRwaYAyusKGfyENXbhVz2dWjTtqNq/iBd77Y
+	 OxgFkzW3cv474Ksbf/pmHZ/dBuvfWNrLnKulr6KbrgIhWAI0uC1t1NmTmrZmHxKhg
+	 NNV/lY/2LSSbBKDWF5cvGRmTwLR5TFu//jR/5Pcc0PL4+hy8FtjYYF9jvClO48TQl
+	 QaByFNmAwkY4xId9LQ==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N2E1G-1uYhdB2ecg-014rJW; Sun, 27
- Jul 2025 01:32:39 +0200
-Message-ID: <5b061220-e04a-48b5-ba2c-92ccf240798e@gmx.de>
-Date: Sun, 27 Jul 2025 01:32:36 +0200
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MeCtj-1u5vCa2Vfj-00fJYp; Sun, 27
+ Jul 2025 01:37:19 +0200
+Message-ID: <edc7d119-ee64-489b-ab1d-9577f007e918@gmx.de>
+Date: Sun, 27 Jul 2025 01:37:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,7 +57,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] platform/x86: (ayn-ec) Add PWM Fan HWMON Interface
+Subject: Re: [PATCH v3 2/4] platform/x86: (ayn-ec) Add Temperature Sensors
 To: "Derek J. Clark" <derekjohn.clark@gmail.com>,
  =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
  Hans de Goede <hansg@kernel.org>
@@ -67,761 +67,226 @@ Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
  platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
 References: <20250726204041.516440-1-derekjohn.clark@gmail.com>
- <20250726204041.516440-2-derekjohn.clark@gmail.com>
+ <20250726204041.516440-3-derekjohn.clark@gmail.com>
 Content-Language: en-US
 From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250726204041.516440-2-derekjohn.clark@gmail.com>
+In-Reply-To: <20250726204041.516440-3-derekjohn.clark@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DVIi7s15tJKDApKdqhMBWqDsUoF7k2SM0TPEuFQSm6UGf/FfEYS
- zZ+xiTc/ejpbEzS0imiTCDIZop+zz9UT+uKu0pzq3ASnWg2AlWnroVvxelYXCJbt9UKwliL
- P+wEMabmIfg+RksZnTWPFhIOyY0EeS1rRQEf9xuB1knX6JtlUG4TinSn1yvuKHJISHuQjVQ
- wBb6fRdWQyONJrOWTyg4w==
+X-Provags-ID: V03:K1:HJ13utok7jiaTq3hqWAFiYpWDHbmndIJOqv+F7nQaWUJYm9wJWB
+ 8pjIOZybSPqoyLhs7MZLd2XOSKBvSDl3Xz83RJVTPm3yYEvoV+XHXsfnZtW7ZYae8q1Swz4
+ P/4oi21hmEbQCom/PBnsHSkl9z6WCS2GnGwgH6HBaxHRJ+ofnGA+eBlOnNSyV76QcxVl6DF
+ RwdW6AYjHdkvON9LahNYw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZcpF44kiKuY=;oUSrmiBIadY4mc6jfayMd5m6r0w
- 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
+UI-OutboundReport: notjunk:1;M01:P0:/OPZFQTsGCI=;kjO21Yq79xF+dxJR2nFkeVmRmzc
+ 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
+ vV/Hfxu2C2M+JtDBcTCdbGrmTTwHPnpg=
 
 Am 26.07.25 um 22:40 schrieb Derek J. Clark:
 
-> Adds platform driver for AYN Loki and Tectoy Zeenix lines of handheld
-> devices. This patch implements a hwmon interface for EC provided manual
-> PWM fan control and user defined fan curves. A global ACPI lock is used
-> when reading or writing from the EC.
+> Adds temperature sensors to the ayn-ec hwmon interface. These read-only
+> values include Battery, Motherboard, Charger IC, vCore, and CPU Core, as
+> well as labels for each entry. The temperature values provided by the EC
+> are whole numbers in degrees Celsius. As hwmon expects millidegrees, we
+> scale the raw value up.
 >
-> There are 4 fan modes implemented in this patch. Modes 0-3 act in
-> accordance with the standard hwmon logic where 0 is 100% fan speed, 1 is
-> manual control, and 2 is automatic control. As the EC only provides 3
-> modes by default, mode 0 is implemented by setting the device to manual
-> and then setting fan speed to 100% directly. In mode 1 the PWM duty cycl=
-e
-> is set in sysfs with values [0-255], which are then scaled to the EC max
-> of 128. Mode 4 is an automatic mode where the fan curve is user defined.
-> There are 5 total set points and each set point takes a temperature in
-> Celsius [0-100] and a PWM duty cycle [0-255]. When the CPU temperature
-> reaches a given set point, the corresponding duty cycle is automatically
-> set by the EC.
+> `sensors` output after this patch is applied:
+> aynec-isa-0000
+> Adapter: ISA adapter
+> fan1:        1876 RPM
+> Battery:      +29.0=C2=B0C
+> Motherboard:  +30.0=C2=B0C
+> Charger IC:   +30.0=C2=B0C
+> vCore:        +36.0=C2=B0C
+> CPU Core:     +48.0=C2=B0C
 >
 > Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
->
-> space
-
-Interesting, do you have access to such a device? If yes then i would be v=
-ery interested
-in looking at the ACPI tables shipped with said device.
-
 > ---
->   MAINTAINERS                   |   6 +
->   drivers/platform/x86/Kconfig  |  12 +
->   drivers/platform/x86/Makefile |   3 +
->   drivers/platform/x86/ayn-ec.c | 520 ++++++++++++++++++++++++++++++++++
->   4 files changed, 541 insertions(+)
->   create mode 100644 drivers/platform/x86/ayn-ec.c
+>   drivers/platform/x86/ayn-ec.c | 88 ++++++++++++++++++++++++++++++++++-
+>   1 file changed, 86 insertions(+), 2 deletions(-)
 >
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d61b004005fd..5b816883fe7d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4035,6 +4035,12 @@ W:	https://ez.analog.com/linux-software-drivers
->   F:	Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml
->   F:	drivers/pwm/pwm-axi-pwmgen.c
->  =20
-> +AYN PLATFORM EC DRIVER
-> +M:	Derek J. Clark <derekjohn.clark@gmail.com>
-> +L:	platform-driver-x86@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/platform/x86/ayn-ec.c
-> +
->   AZ6007 DVB DRIVER
->   M:	Mauro Carvalho Chehab <mchehab@kernel.org>
->   L:	linux-media@vger.kernel.org
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 6d238e120dce..4819bfcffb6b 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -304,6 +304,18 @@ config ASUS_TF103C_DOCK
->   	  If you have an Asus TF103C tablet say Y or M here, for a generic x8=
-6
->   	  distro config say M here.
->  =20
-> +config AYN_EC
-> +	tristate "AYN x86 devices EC platform control"
-> +	depends on ACPI
-> +	depends on HWMON
-> +	help
-> +	  This is a driver for AYN and Tectoy x86 handheld devices. It provide=
-s
-> +	  temperature monitoring, manual fan speed control, fan curve control,
-> +	  and chassis RGB settings.
-> +
-> +	  If you have an x86 AYN or Tectoy handheld device say M here. The mod=
-ule
-> +	  will be called ayn-platform.
-> +
->   config MERAKI_MX100
->   	tristate "Cisco Meraki MX100 Platform Driver"
->   	depends on GPIOLIB
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefi=
-le
-> index a0c5848513e3..d32504b89365 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -38,6 +38,9 @@ obj-$(CONFIG_ASUS_TF103C_DOCK)	+=3D asus-tf103c-dock.o
->   obj-$(CONFIG_EEEPC_LAPTOP)	+=3D eeepc-laptop.o
->   obj-$(CONFIG_EEEPC_WMI)		+=3D eeepc-wmi.o
->  =20
-> +# Ayn
-> +obj-$(CONFIG_AYN_EC)	+=3D ayn-ec.o
-> +
->   # Cisco/Meraki
->   obj-$(CONFIG_MERAKI_MX100)	+=3D meraki-mx100.o
->  =20
 > diff --git a/drivers/platform/x86/ayn-ec.c b/drivers/platform/x86/ayn-ec=
 .c
-> new file mode 100644
-> index 000000000000..8bd3ed1c69eb
-> --- /dev/null
+> index 8bd3ed1c69eb..466cc33adcb0 100644
+> --- a/drivers/platform/x86/ayn-ec.c
 > +++ b/drivers/platform/x86/ayn-ec.c
-> @@ -0,0 +1,520 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Platform driver for AYN x86 Handhelds.
-> + *
-> + * Implements multiple attributes provided by the EC. Fan reading and c=
-ontrol,
-> + * as well as temperature sensor readings are exposed via hwmon sysfs. =
-EC RGB
-> + * control is exposed via an led-class-multicolor interface.
-> + *
-> + * Fan control is provided via a pwm interface in the range [0-255]. AY=
-N use
-> + * [0-128] as the range in the EC, the written value is scaled to accom=
-modate.
-> + * The EC also provides a configurable fan curve with five set points t=
-hat
-> + * associate a temperature in Celcius [0-100] with a fan speed [0-128].=
- The
-> + * auto_point fan speeds are also scaled from the range [0-255]. Temper=
-ature
-> + * readings are scaled from degrees to millidegrees when read.
-> + *
-> + * RGB control is provided using 4 registers. One each for the colors r=
-ed,
-> + * green, and blue are [0-255]. There is also a effect register that ta=
-kes
-> + * switches between an EC controlled breathing that cycles through all =
-colors
-> + * and fades in/out, and manual, which enables setting a user defined c=
-olor.
-> + *
-> + * Copyright (C) 2025 Derek J. Clark <derekjohn.clark@gmail.com>
-> + */
+> @@ -61,6 +61,14 @@
+>   #define HWMON_PWM_FAN_MODE_AUTO	0x02
+>   #define HWMON_PWM_FAN_MODE_EC_CURVE	0x03
+>  =20
+> +/* EC Temperature Sensors */
+> +#define AYN_SENSOR_BAT_TEMP_REG		0x04 /* Battery */
+> +#define AYN_SENSOR_CHARGE_TEMP_REG	0x07 /* Charger IC */
+> +#define AYN_SENSOR_MB_TEMP_REG		0x05 /* Motherboard */
+> +#define AYN_SENSOR_PROC_TEMP_REG	0x09 /* CPU Core */
+> +#define AYN_SENSOR_VCORE_TEMP_REG	0x08 /* vCore */
 > +
-> +#include <linux/acpi.h>
-> +#include <linux/device.h>
-> +#include <linux/dmi.h>
-> +#include <linux/hwmon-sysfs.h>
-> +#include <linux/hwmon.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/sysfs.h>
-> +#include <linux/types.h>
 > +
-> +/* Fan speed and PWM registers */
-> +#define AYN_SENSOR_PWM_FAN_ENABLE_REG	0x10 /* PWM operating mode */
-> +#define AYN_SENSOR_PWM_FAN_SET_REG	0x11 /* PWM duty cycle */
-> +#define AYN_SENSOR_PWM_FAN_SPEED_REG	0x20 /* Fan speed */
-> +
-> +/* EC controlled fan curve registers */
-> +#define AYN_SENSOR_PWM_FAN_SPEED_1_REG	0x12
-> +#define AYN_SENSOR_PWM_FAN_SPEED_2_REG	0x14
-> +#define AYN_SENSOR_PWM_FAN_SPEED_3_REG	0x16
-> +#define AYN_SENSOR_PWM_FAN_SPEED_4_REG	0x18
-> +#define AYN_SENSOR_PWM_FAN_SPEED_5_REG	0x1A
-> +#define AYN_SENSOR_PWM_FAN_TEMP_1_REG	0x13
-> +#define AYN_SENSOR_PWM_FAN_TEMP_2_REG	0x15
-> +#define AYN_SENSOR_PWM_FAN_TEMP_3_REG	0x17
-> +#define AYN_SENSOR_PWM_FAN_TEMP_4_REG	0x19
-> +#define AYN_SENSOR_PWM_FAN_TEMP_5_REG	0x1B
-> +
-> +/* AYN EC PWM Fan modes */
-> +#define AYN_PWM_FAN_MODE_MANUAL	0x00
-> +#define AYN_PWM_FAN_MODE_AUTO		0x01
-> +#define AYN_PWM_FAN_MODE_EC_CURVE	0x02
-> +
-> +/* hwmon fan modes */
-> +#define HWMON_PWM_FAN_MODE_FULL	0x00
-> +#define HWMON_PWM_FAN_MODE_MANUAL	0x01
-> +#define HWMON_PWM_FAN_MODE_AUTO	0x02
-> +#define HWMON_PWM_FAN_MODE_EC_CURVE	0x03
-> +
-> +/* Handle ACPI lock mechanism */
-> +#define ACPI_LOCK_DELAY_MS 500
-> +
-> +int ayn_pwm_curve_registers[10] =3D {
 
-Please declare this array as static const.
+Please avoid multiple blank lines.
 
-> +	AYN_SENSOR_PWM_FAN_SPEED_1_REG,
-> +	AYN_SENSOR_PWM_FAN_SPEED_2_REG,
-> +	AYN_SENSOR_PWM_FAN_SPEED_3_REG,
-> +	AYN_SENSOR_PWM_FAN_SPEED_4_REG,
-> +	AYN_SENSOR_PWM_FAN_SPEED_5_REG,
-> +	AYN_SENSOR_PWM_FAN_TEMP_1_REG,
-> +	AYN_SENSOR_PWM_FAN_TEMP_2_REG,
-> +	AYN_SENSOR_PWM_FAN_TEMP_3_REG,
-> +	AYN_SENSOR_PWM_FAN_TEMP_4_REG,
-> +	AYN_SENSOR_PWM_FAN_TEMP_5_REG,
+>   /* Handle ACPI lock mechanism */
+>   #define ACPI_LOCK_DELAY_MS 500
+>  =20
+> @@ -81,8 +89,19 @@ struct ayn_device {
+>   	u32 ayn_lock; /* ACPI EC Lock */
+>   } drvdata;
+>  =20
+> -/* Handle ACPI lock mechanism */
+> -#define ACPI_LOCK_DELAY_MS 500
+> +struct thermal_sensor {
+> +	char *name;
+> +	int reg;
 > +};
 > +
-> +struct ayn_device {
-> +	u32 ayn_lock; /* ACPI EC Lock */
-> +} drvdata;
-
-Please declare drvdata as static.
-
-> +
-> +/* Handle ACPI lock mechanism */
-> +#define ACPI_LOCK_DELAY_MS 500
-> +
-> +static bool lock_global_acpi_lock(void)
-> +{
-> +	return ACPI_SUCCESS(acpi_acquire_global_lock(ACPI_LOCK_DELAY_MS,
-> +						     &drvdata.ayn_lock));
-> +}
-> +
-> +static bool unlock_global_acpi_lock(void)
-> +{
-> +	return ACPI_SUCCESS(acpi_release_global_lock(drvdata.ayn_lock));
-> +}
-> +
-> +/**
-> + * read_from_ec() - Reads a value from the embedded controller.
-> + *
-> + * @reg: The register to start the read from.
-> + * @size: The number of sequential registers the data is contained in.
-> + * @val: Pointer to return the data with.
-> + *
-> + * Return: 0, or an error.
-> + */
-> +static int read_from_ec(u8 reg, int size, long *val)
-> +{
-> +	int ret, i;
-> +	u8 buf;
-> +
-> +	if (!lock_global_acpi_lock())
-> +		return -EBUSY;
-> +
-> +	*val =3D 0;
-> +	for (i =3D 0; i < size; i++) {
-> +		ret =3D ec_read(reg + i, &buf);
-> +		if (ret)
-> +			return ret;
-> +		*val <<=3D i * 8;
-> +		*val +=3D buf;
-
-Could it be that "i * 8" should have been just "8"?-
-
-> +	}
-> +
-> +	if (!unlock_global_acpi_lock())
-> +		return -EBUSY;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * write_to_ec() - Writes a value to the embedded controller.
-> + *
-> + * @reg: The register to write to.
-> + * @val: Value to write
-> + *
-> + * Return: 0, or an error.
-> + */
-> +static int write_to_ec(u8 reg, u8 val)
-> +{
-> +	int ret;
-> +
-> +	if (!lock_global_acpi_lock())
-> +		return -EBUSY;
-> +
-> +	pr_info("Writing EC value %d to register %u\n", val, reg);
-> +	ret =3D ec_write(reg, val);
-> +
-> +	if (!unlock_global_acpi_lock())
-> +		return -EBUSY;
-> +
-> +	return ret;
-> +}
-
-Why not using regmap for that?
-
-> +
-> +/**
-> + * ayn_pwm_manual() - Enable manual control of the fan.
-> + */
-> +static int ayn_pwm_manual(void)
-> +{
-> +	return write_to_ec(AYN_SENSOR_PWM_FAN_ENABLE_REG, 0x00);
-> +}
-> +
-> +/**
-> + * ayn_pwm_full() - Set fan to 100% speed.
-> + */
-> +static int ayn_pwm_full(void)
-> +{
-> +	int ret;
-> +
-> +	ret =3D write_to_ec(AYN_SENSOR_PWM_FAN_ENABLE_REG, 0x00);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return write_to_ec(AYN_SENSOR_PWM_FAN_SET_REG, 128);
-> +}
-> +
-> +/**
-> + * ayn_pwm_auto() - Enable automatic EC control of the fan.
-> + */
-> +static int ayn_pwm_auto(void)
-> +{
-> +	return write_to_ec(AYN_SENSOR_PWM_FAN_ENABLE_REG, 0x01);
-> +}
-> +
-> +/**
-> + * ayn_pwm_ec_curve() - Enable manually setting the fan curve for autom=
-atic
-> + * EC control of the fan.
-> + */
-> +static int ayn_pwm_ec_curve(void)
-> +{
-> +	return write_to_ec(AYN_SENSOR_PWM_FAN_ENABLE_REG, 0x02);
-> +}
-> +
-> +/**
-> + * ayn_ec_hwmon_is_visible() - Determines RO or RW for hwmon attribute =
-sysfs.
-> + *
-> + * @drvdata: Unused void pointer to context data.
-> + * @type: The hwmon_sensor_types type.
-> + * @attr: The attribute to set RO/RW on.
-> + * @channel: HWMON subsystem usage flags for the attribute.
-> + *
-> + * Return: Permission level.
-> + */
-> +static umode_t ayn_ec_hwmon_is_visible(const void *drvdata,
-> +				       enum hwmon_sensor_types type, u32 attr,
-> +				       int channel)
-> +{
-> +	switch (type) {
-> +	case hwmon_fan:
-> +		return 0444;
-> +	case hwmon_pwm:
-> +		return 0644;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +/**
-> + * ayn_pwm_fan_read() - Read from a hwmon pwm or fan attribute.
-> + *
-> + * @dev: parent device of the given attribute.
-> + * @type: The hwmon_sensor_types type.
-> + * @attr: The attribute to read from.
-> + * @channel: HWMON subsystem usage flags for the attribute.
-> + * @val: Pointer to return the read value from.
-> + *
-> + * Return: 0, or an error.
-> + */
-> +static int ayn_pwm_fan_read(struct device *dev, enum hwmon_sensor_types=
- type,
-> +			    u32 attr, int channel, long *val)
-> +{
-> +	int ret;
-> +
-> +	switch (type) {
-> +	case hwmon_fan:
-> +		switch (attr) {
-> +		case hwmon_fan_input:
-> +			return read_from_ec(AYN_SENSOR_PWM_FAN_SPEED_REG, 2,
-> +					    val);
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	case hwmon_pwm:
-> +		switch (attr) {
-> +		case hwmon_pwm_enable:
-> +			ret =3D read_from_ec(AYN_SENSOR_PWM_FAN_ENABLE_REG, 1,
-> +					   val);
-> +			if (ret)
-> +				return ret;
-> +
-> +			/* EC uses 0 for manual, 1 for automatic, 2 for user
-> +			 * fan curve. Reflect hwmon usage instead.
-> +			 */
-> +			if (*val =3D=3D 1) {
-> +				*val =3D 2;
-> +				return 0;
-> +			}
-> +
-> +			if (*val =3D=3D 2) {
-> +				*val =3D 3;
-> +				return 0;
-> +			}
-> +
-> +			/* Return 0 when fan at max, otherwise 1 for manual. */
-> +			ret =3D read_from_ec(AYN_SENSOR_PWM_FAN_SET_REG, 1, val);
-> +			if (ret)
-> +				return ret;
-
-This might confuse userspace fan control software that might not expect th=
-e value of pwm1_enable
-to suddenly change when setting pwm1 to 255. Maybe it would be better to n=
-ot support pwm mode 0 as the
-underlying EC seems to not provide a separate fan mode for setting the fan=
- to full speed.
-
-> +
-> +			if (*val =3D=3D 128)
-> +				*val =3D 0;
-> +			else
-> +				*val =3D 1;
-> +
-> +			return ret;
-> +		case hwmon_pwm_input:
-> +			ret =3D read_from_ec(AYN_SENSOR_PWM_FAN_SET_REG, 1, val);
-> +			if (ret)
-> +				return ret;
-> +
-> +			*val =3D *val << 1; /* Max value is 128, scale to 255 */
-> +
-> +			return 0;
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +/**
-> + * ayn_pwm_fan_write() - Write to a hwmon pwm attribute.
-> + *
-> + * @dev: parent device of the given attribute.
-> + * @type: The hwmon_sensor_types type.
-> + * @attr: The attribute to write to.
-> + * @channel: HWMON subsystem usage flags for the attribute.
-> + * @val: Value to write.
-> + *
-> + * Return: 0, or an error.
-> + */
-> +static int ayn_pwm_fan_write(struct device *dev, enum hwmon_sensor_type=
-s type,
-> +			     u32 attr, int channel, long val)
-> +{
-> +	if (type !=3D hwmon_pwm)
-> +		return -EOPNOTSUPP;
-> +	switch (attr) {
-> +	case hwmon_pwm_enable:
-> +		switch (val) {
-> +		case HWMON_PWM_FAN_MODE_FULL:
-> +			return ayn_pwm_full();
-> +		case HWMON_PWM_FAN_MODE_MANUAL:
-> +			return ayn_pwm_manual();
-> +		case HWMON_PWM_FAN_MODE_AUTO:
-> +			return ayn_pwm_auto();
-> +		case HWMON_PWM_FAN_MODE_EC_CURVE:
-> +			return ayn_pwm_ec_curve();
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	case hwmon_pwm_input:
-> +		if (val < 0 || val > 255)
-> +			return -EINVAL;
-> +
-> +		val =3D val >> 1; /* Max value is 128, scale from 255 */
-> +
-> +		return write_to_ec(AYN_SENSOR_PWM_FAN_SET_REG, val);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static const struct hwmon_channel_info *ayn_ec_sensors[] =3D {
-> +	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
-> +	HWMON_CHANNEL_INFO(pwm, HWMON_PWM_INPUT | HWMON_PWM_ENABLE),
-> +	NULL,
+> +static struct thermal_sensor thermal_sensors[] =3D {
+> +	{ "Battery",		AYN_SENSOR_BAT_TEMP_REG },
+> +	{ "Motherboard",	AYN_SENSOR_MB_TEMP_REG },
+> +	{ "Charger IC",		AYN_SENSOR_CHARGE_TEMP_REG },
+> +	{ "vCore",		AYN_SENSOR_VCORE_TEMP_REG },
+> +	{ "CPU Core",		AYN_SENSOR_PROC_TEMP_REG },
+> +	{}
 > +};
-> +
-> +static const struct hwmon_ops ayn_ec_hwmon_ops =3D {
-> +	.is_visible =3D ayn_ec_hwmon_is_visible,
-> +	.read =3D ayn_pwm_fan_read,
-> +	.write =3D ayn_pwm_fan_write,
-> +};
-> +
-> +static const struct hwmon_chip_info ayn_ec_chip_info =3D {
-> +	.ops =3D &ayn_ec_hwmon_ops,
-> +	.info =3D ayn_ec_sensors,
-> +};
-> +
+
+Please declare this array as const.
+
+>  =20
+>   static bool lock_global_acpi_lock(void)
+>   {
+> @@ -428,6 +447,61 @@ static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_temp,=
+ pwm_curve, 7);
+>   static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_temp, pwm_curve, 8);
+>   static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_temp, pwm_curve, 9);
+>  =20
 > +/**
-> + * pwm_curve_store() - Write a fan curve speed or temperature value.
+> + * thermal_sensor_show() - Read a thermal sensor attribute value.
 > + *
 > + * @dev: The attribute's parent device.
 > + * @attr: The attribute to read.
-> + * @buf: Input value string from sysfs write.
+> + * @buf: Buffer to write the result into.
 > + *
 > + * Return: Number of bytes read, or an error.
 > + */
-> +static ssize_t pwm_curve_store(struct device *dev,
-> +			       struct device_attribute *attr, const char *buf,
-> +			       size_t count)
+> +static ssize_t thermal_sensor_show(struct device *dev,
+> +				   struct device_attribute *attr, char *buf)
 > +{
-> +	int i =3D to_sensor_dev_attr(attr)->index;
-> +	int ret, val;
-> +	u8 reg;
+> +	long ret, val;
+> +	int i;
 > +
-> +	ret =3D kstrtoint(buf, 0, &val);
-
-Please use "10" for the second argument of kstrtoint() instead of "0".
-
+> +	i =3D to_sensor_dev_attr(attr)->index;
+> +
+> +	ret =3D read_from_ec(thermal_sensors[i].reg, 1, &val);
 > +	if (ret)
 > +		return ret;
 > +
-> +	if (i < 5) {
-> +		if (val < 0 || val > 255)
-> +			return -EINVAL;
-> +		val =3D val >> 1; /* Max EC value is 128, scale from 255 */
-> +	} else
-> +		if (val < 0 || val > 100)
-> +			return -EINVAL;
+> +	val =3D val * 1000L;
 
-Please keep in mind that temperature values are submitted in milidegrees c=
-elsius, so you need
-to perform some scaling here.
-
-> +
-> +	reg =3D ayn_pwm_curve_registers[i];
-> +
-> +	ret =3D write_to_ec(reg, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
-> +/**
-> + * pwm_curve_show() - Read a fan curve speed or temperature value.
-> + *
-> + * @dev: The attribute's parent device.
-> + * @attr: The attribute to read.
-> + * @buf: Output buffer.
-> + *
-> + * Return: Number of bytes read, or an error.
-> + */
-> +static ssize_t pwm_curve_show(struct device *dev, struct device_attribu=
-te *attr,
-> +			      char *buf)
-> +{
-> +	int i =3D to_sensor_dev_attr(attr)->index;
-> +	long val;
-> +	int ret;
-> +	u8 reg;
-> +
-> +	reg =3D ayn_pwm_curve_registers[i];
-> +
-> +	ret =3D read_from_ec(reg, 1, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (i < 5)
-> +		val =3D val << 1; /* Max EC value is 128, scale to 255 */
-
-Please convert the temperature values to milidegrees celsius here.
+Please use MILLIDEGREE_PER_DEGREE from linux/units.h here.
 
 > +
 > +	return sysfs_emit(buf, "%ld\n", val);
 > +}
 > +
-> +/* Fan curve attributes */
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point1_pwm, pwm_curve, 0);
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point2_pwm, pwm_curve, 1);
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_pwm, pwm_curve, 2);
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_pwm, pwm_curve, 3);
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_pwm, pwm_curve, 4);
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point1_temp, pwm_curve, 5);
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point2_temp, pwm_curve, 6);
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_temp, pwm_curve, 7);
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_temp, pwm_curve, 8);
-> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_temp, pwm_curve, 9);
-> +
-> +static struct attribute *ayn_sensors_attrs[] =3D {
-> +	&sensor_dev_attr_pwm1_auto_point1_pwm.dev_attr.attr,
-> +	&sensor_dev_attr_pwm1_auto_point1_temp.dev_attr.attr,
-> +	&sensor_dev_attr_pwm1_auto_point2_pwm.dev_attr.attr,
-> +	&sensor_dev_attr_pwm1_auto_point2_temp.dev_attr.attr,
-> +	&sensor_dev_attr_pwm1_auto_point3_pwm.dev_attr.attr,
-> +	&sensor_dev_attr_pwm1_auto_point3_temp.dev_attr.attr,
-> +	&sensor_dev_attr_pwm1_auto_point4_pwm.dev_attr.attr,
-> +	&sensor_dev_attr_pwm1_auto_point4_temp.dev_attr.attr,
-> +	&sensor_dev_attr_pwm1_auto_point5_pwm.dev_attr.attr,
-> +	&sensor_dev_attr_pwm1_auto_point5_temp.dev_attr.attr,
-> +	NULL,
-> +};
-> +
-> +ATTRIBUTE_GROUPS(ayn_sensors);
-> +
-> +static int ayn_ec_probe(struct platform_device *pdev)
+> +/**
+> + * thermal_sensor_label_show() - Read a thermal sensor attribute label.
+> + *
+> + * @dev: The attribute's parent device.
+> + * @attr: The attribute to read.
+> + * @buf: Buffer to read to.
+> + *
+> + * Return: Number of bytes read, or an error.
+> + */
+> +static ssize_t thermal_sensor_label_show(struct device *dev,
+> +					 struct device_attribute *attr,
+> +					 char *buf)
 > +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct device *hwdev;
+> +	int i =3D to_sensor_dev_attr(attr)->index;
 > +
-> +	hwdev =3D devm_hwmon_device_register_with_info(dev, "aynec", NULL,
-> +						     &ayn_ec_chip_info,
-> +						     ayn_sensors_groups);
-> +	return PTR_ERR_OR_ZERO(hwdev);
+> +	return sysfs_emit(buf, "%s\n", thermal_sensors[i].name);
 > +}
 > +
-> +static struct platform_driver ayn_ec_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "ayn-ec",
-> +	},
-> +	.probe =3D ayn_ec_probe,
-> +};
-
-How do you restore the fan curve settings when resuming from suspend? I su=
-ggest that you
-convert this driver to use the regmap mechanism as doing so would also giv=
-e you:
-
-- caching of register values
-- restoring cached register values during resume
-
-You can the a look at the sch5627 driver on how to implement suspend using=
- regmap. You can also
-take some inspirations from drivers/hwmon/sch56xx-common.c on how to imple=
-ment your own regmap
-backend.
-
+> +static SENSOR_DEVICE_ATTR_RO(temp1_input, thermal_sensor, 0);
+> +static SENSOR_DEVICE_ATTR_RO(temp2_input, thermal_sensor, 1);
+> +static SENSOR_DEVICE_ATTR_RO(temp3_input, thermal_sensor, 2);
+> +static SENSOR_DEVICE_ATTR_RO(temp4_input, thermal_sensor, 3);
+> +static SENSOR_DEVICE_ATTR_RO(temp5_input, thermal_sensor, 4);
+> +static SENSOR_DEVICE_ATTR_RO(temp1_label, thermal_sensor_label, 0);
+> +static SENSOR_DEVICE_ATTR_RO(temp2_label, thermal_sensor_label, 1);
+> +static SENSOR_DEVICE_ATTR_RO(temp3_label, thermal_sensor_label, 2);
+> +static SENSOR_DEVICE_ATTR_RO(temp4_label, thermal_sensor_label, 3);
+> +static SENSOR_DEVICE_ATTR_RO(temp5_label, thermal_sensor_label, 4);
 > +
-> +static struct platform_device *ayn_ec_device;
-> +
-> +static int __init ayn_ec_init(void)
-> +{
-> +	ayn_ec_device =3D platform_create_bundle(&ayn_ec_driver, ayn_ec_probe,
-> +					       NULL, 0, NULL, 0);
-> +
-> +	return PTR_ERR_OR_ZERO(ayn_ec_device);
-> +}
-> +
-> +static void __exit ayn_ec_exit(void)
-> +{
-> +	platform_device_unregister(ayn_ec_device);
-> +	platform_driver_unregister(&ayn_ec_driver);
-> +}
-> +
-> +static const struct dmi_system_id ayn_dmi_table[] =3D {
-> +	{
-> +		.ident =3D "AYN Loki Max",
-> +		.matches =3D {
-> +			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "ayn"),
-> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Loki Max"),
-> +		},
-> +	},
-> +	{
-> +		.ident =3D "AYN Loki MiniPro",
-> +		.matches =3D {
-> +			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "ayn"),
-> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Loki MiniPro"),
-> +		},
-> +	},
-> +	{
-> +		.ident =3D "AYN Loki Zero",
-> +		.matches =3D {
-> +			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "ayn"),
-> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Loki Zero"),
-> +		},
-> +	},
-> +	{
-> +		.ident =3D "Tectoy Zeenix Lite",
-> +		.matches =3D {
-> +			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "Tectoy"),
-> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Zeenix Lite"),
-> +		},
-> +	},
-> +	{},
-> +};
+>   static struct attribute *ayn_sensors_attrs[] =3D {
+>   	&sensor_dev_attr_pwm1_auto_point1_pwm.dev_attr.attr,
+>   	&sensor_dev_attr_pwm1_auto_point1_temp.dev_attr.attr,
+> @@ -439,6 +513,16 @@ static struct attribute *ayn_sensors_attrs[] =3D {
+>   	&sensor_dev_attr_pwm1_auto_point4_temp.dev_attr.attr,
+>   	&sensor_dev_attr_pwm1_auto_point5_pwm.dev_attr.attr,
+>   	&sensor_dev_attr_pwm1_auto_point5_temp.dev_attr.attr,
+> +	&sensor_dev_attr_temp1_input.dev_attr.attr,
+> +	&sensor_dev_attr_temp1_label.dev_attr.attr,
+> +	&sensor_dev_attr_temp2_input.dev_attr.attr,
+> +	&sensor_dev_attr_temp2_label.dev_attr.attr,
+> +	&sensor_dev_attr_temp3_input.dev_attr.attr,
+> +	&sensor_dev_attr_temp3_label.dev_attr.attr,
+> +	&sensor_dev_attr_temp4_input.dev_attr.attr,
+> +	&sensor_dev_attr_temp4_label.dev_attr.attr,
+> +	&sensor_dev_attr_temp5_input.dev_attr.attr,
+> +	&sensor_dev_attr_temp5_label.dev_attr.attr,
 
-Please declare the DMI table as being __initconst, as doing so will free s=
-ome memory after the driver
-has been loaded. Additionally please check this DMI table inside ayn_ec_in=
-it() using dmi_first_match()
-just in case someone configures this module as builtin.
+Please use the standard hwmon API for exposing those temperature sensors.
 
 Thanks,
 Armin Wolf
 
-> +
-> +MODULE_DEVICE_TABLE(dmi, ayn_dmi_table);
-> +
-> +module_init(ayn_ec_init);
-> +module_exit(ayn_ec_exit);
-> +
-> +MODULE_AUTHOR("Derek J. Clark <derekjohn.clark@gmail.com>");
-> +MODULE_DESCRIPTION("Platform driver that handles EC sensors of AYN x86 =
-devices");
-> +MODULE_LICENSE("GPL");
+>   	NULL,
+>   };
+>  =20
 
