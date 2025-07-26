@@ -1,107 +1,123 @@
-Return-Path: <linux-kernel+bounces-746837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0F2B12BC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 20:04:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6002AB12BCD
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 20:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3265A54503F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5CAA189EC6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 18:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5D9288C03;
-	Sat, 26 Jul 2025 18:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8343D288CA1;
+	Sat, 26 Jul 2025 18:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="FG5xsgQS"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mk60yALw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64D61F473A;
-	Sat, 26 Jul 2025 18:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F7D1DE2D8;
+	Sat, 26 Jul 2025 18:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753553091; cv=none; b=QfxTCYkAoAX3TdCER9v2JqcqTnF1szURuqYbo13eXWJrckUobWwq1ZOZQXkehHLQYfqoajNF05YohQPlulDr9SyNtpL5/UW5L++0rWMjDpfY/Vj0pXndUPoi2xojcAGvjmk5mr5BaRmpWC5y9V7GBFRcYUCSDuuwNCtTdDaqF14=
+	t=1753553097; cv=none; b=J6+y9NP5wymz3Zbgpb+UtVA82W09ByvwaUJnVCKHdfud2cg+zuTXrvrXfRujvEv15m7FYbQM/+HCoukmReUZKmS5jceO4qA5VD1vb+eC5BANRNTJDO7jNV3AoMuE48zPb3S7p8pJIUOYl4qbQw++PyMCwcHDwz1RlmDdm3n6+bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753553091; c=relaxed/simple;
-	bh=KOsTbzXFUuVHscLuFwUnb+ac/sH1DI7P1rAb5H4ELlY=;
+	s=arc-20240116; t=1753553097; c=relaxed/simple;
+	bh=dA3RQXEC+Ya4PmUpYs4RFw4idADWpDG4vWeL2fSZ6M4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QVemDKsOeiGd4UpyAUUwAOgAS2kOao6RyYV+GfOCps+mf3ZcumzITt4mIKw85lGcw8zRTlyCxyMZTEecAkZQm6ehwcYrkDT8pQ8smYad4HdmkvG0LJumo6fQOw+aDFjkapAM6JW8UfO8qK9PR/VOwGPHzSG/msy3ukpl30+KXeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=FG5xsgQS; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EDA1810391E80;
-	Sat, 26 Jul 2025 20:04:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1753553086; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=Gogg7dq4nTKRYj5+cWYCaLkdkeYYwxLcmAFRklXafrc=;
-	b=FG5xsgQSLOd/+ZM3KlPNuTGpHAsiysFWSe8U1VfDIVruSHzng2RW7h7zNUWgy/NFXjm+0L
-	6t5cpgx1o8xNNxomqcavnR6LS9Xzk+3qoyPBEBD3YpBd/7njPLKSb8JMSUMqJ6HNp1KQyi
-	FLk9Bsnh1Q3BNekXRIATrLpLcK2X7NwaKLA6+LUr4v8PrPv7bbVdSj+PG+FtX4tzQpcZWB
-	w4SOSde9vzhuRgurw9lTfP5MWDZive8zBRzO2T6n/qASVNUCY9XF+YF4WnZKF5DlH3KiXo
-	03wOalgspFfjhZpUf0/R8Rq1c9pZPdJon3QvCVCPyjnSF9Y64i4HIGrHlOeLrw==
-Date: Sat, 26 Jul 2025 20:04:39 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.15 000/187] 6.15.8-rc1 review
-Message-ID: <aIUYt5Seh4ZVIAmy@duo.ucw.cz>
-References: <20250722134345.761035548@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBKkF79+irqk9ufR7oerDhbbqJSux8US7y9p9aTdFHiEV63gbw7KTVCW14yA1oWVifzf3I31B4RJeZCosi3hVaMGET9DVQLRj3GTlcQwy0ohupWi6zKtQyF9OOCpA33zdFB1raU9f59Ulq4fjKLE6aK4Se7VkCbRvoCYO5vINws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mk60yALw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92186C4CEED;
+	Sat, 26 Jul 2025 18:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753553096;
+	bh=dA3RQXEC+Ya4PmUpYs4RFw4idADWpDG4vWeL2fSZ6M4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mk60yALwghPokJKFHR7S9PFM88kTEYZYtfojXaZI+uiimFAPD9KIEv+wteV4f6jMs
+	 yd/HoAXf4N318Zl0XUPbbgv+DC5DmO+5aMbqR3rOykGrbHcx6W7Wv0hj3+KUVPaaHW
+	 VIcSuKVEuy3n7mDDX6SzQZM46jrOBu+JWpBlHPSRrPx3ksFMg5NnrtHCjLbLDEF27P
+	 pzbHJL5eWw952Uhpz3awLM5TmaJvuaanqxZ6wR89SG5si+cVb6cx61/k2znh4io9qP
+	 kzilZTDlNe2yAYnESP2zFJS4wi91yhuKrESL+HZYgt3Wucq8GxTs/hkpghqAADxiYs
+	 nRLgxFtzaraAA==
+Date: Sat, 26 Jul 2025 19:04:51 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rob Clark <rob.clark@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	kernel@oss.qualcomm.com
+Subject: Re: [PATCH 1/7] arm64: dts: qcom: Rename sa8775p SoC to "lemans"
+Message-ID: <20250726180451.GM1367887@horms.kernel.org>
+References: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
+ <20250722144926.995064-2-wasim.nazir@oss.qualcomm.com>
+ <20250723-swinging-chirpy-hornet-eed2f2@kuoka>
+ <159eb27b-fca8-4f7e-b604-ba19d6f9ada7@oss.qualcomm.com>
+ <e718d0d8-87e7-435f-9174-7b376bf6fa2f@kernel.org>
+ <CACSVV00jef8so-jqjCaqJehj-XN2OZ562_R+Dod64+C4-dmDhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9J12CxRnMw6XO898"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250722134345.761035548@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACSVV00jef8so-jqjCaqJehj-XN2OZ562_R+Dod64+C4-dmDhQ@mail.gmail.com>
 
+On Thu, Jul 24, 2025 at 08:59:38AM -0700, Rob Clark wrote:
+> On Thu, Jul 24, 2025 at 5:52 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On 24/07/2025 14:47, Konrad Dybcio wrote:
+> > > On 7/23/25 10:29 AM, 'Krzysztof Kozlowski' via kernel wrote:
+> > >> On Tue, Jul 22, 2025 at 08:19:20PM +0530, Wasim Nazir wrote:
+> > >>> SA8775P, QCS9100 and QCS9075 are all variants of the same die,
+> > >>> collectively referred to as lemans. Most notably, the last of them
+> > >>> has the SAIL (Safety Island) fused off, but remains identical
+> > >>> otherwise.
+> > >>>
+> > >>> In an effort to streamline the codebase, rename the SoC DTSI, moving
+> > >>> away from less meaningful numerical model identifiers.
+> > >>>
+> > >>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> > >>> ---
+> > >>>  arch/arm64/boot/dts/qcom/{sa8775p.dtsi => lemans.dtsi} | 0
+> > >>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi             | 2 +-
+> > >>
+> > >> No, stop with this rename.
+> > >>
+> > >> There is no policy of renaming existing files.
+> > >
+> > > There's no policy against renaming existing files either.
+> >
+> > There is, because you break all the users. All the distros, bootloaders
+> > using this DTS, people's scripts.
+> 
+> I think that is a valid argument against renaming the toplevel .dts
+> (and therefore .dtb), but renaming .dtsi should be a harmless internal
+> detail to the kernel.  And less confusing, IMHO, than
+> qsc9100-myboard.dts #including sa8775p.dtsi.
+> 
+> So wouldn't the sensible way forward be to rename .dtsi but not .dts?
 
---9J12CxRnMw6XO898
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+FWIIW, and with the dual caveats that: I do not have the full context of
+this series; and SoCs are not somewhere where I am active these days:
 
-Hi!
+I am also under the impression that, in general, renames to
+match product or other organisational changes are a non-starter.
 
-> This is the start of the stable review cycle for the 6.15.8 release.
-> There are 187 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+But reading over this patchset, I also felt that renaming the .dsti files
+would improve things. And seems to have little scope to break things for
+users.
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.15.y
-
-6.6 passes our testing, too.
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---9J12CxRnMw6XO898
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaIUYtwAKCRAw5/Bqldv6
-8q4xAJ4o6FbKlHYWBnCEK0OsFitUag0V9QCeJWcr4xXSsQzwmJ7Nwo6hDOX6B8g=
-=jVsu
------END PGP SIGNATURE-----
-
---9J12CxRnMw6XO898--
+</2c>
 
