@@ -1,227 +1,125 @@
-Return-Path: <linux-kernel+bounces-746578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7ABB12887
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 03:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F104B12889
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 04:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480CB1CC738A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 01:50:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8D841C26C41
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A341D5145;
-	Sat, 26 Jul 2025 01:50:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5DE1DB92C;
+	Sat, 26 Jul 2025 02:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="JAl16UCB"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5299D13790B
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 01:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3FA19D89B
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 02:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753494606; cv=none; b=lzYQFlK1p+R8CTDBr40B/UbEI78DV9WPy8ZgfF6pJHtrvR9UPodRIgW5KrsCplV15sbPhuLPc+aM6khkp0XlvhLF+tNbJQb5+YXFbyYZP00UQxh000U1IJgOiic5gzXFsCxh8oJG3i960Tp242OlvqurOzG+cA7Mo5+CQOnLCnI=
+	t=1753495817; cv=none; b=qPOgGopTBAamFkGbyl5tz+x86hopP87AR0jERVWaKGh4V1b8PPAu6bKqhTGk8epYT0bsCofCE6A8rklqYP1g1QgDm+QCCl/Pc5ZkNh2sxVK8feBqX0KbWTg8g5yfUOgqedxvIHkJTpL7BbMbzMBf4Ym6h9s5JLe+jNn5LX1x3VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753494606; c=relaxed/simple;
-	bh=3mYHZnC4KnZL1WSzCJVcL2zQrJVgnaRGcbPJEf4Pfbs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Y10MXIMdAzbFFPWMgobK1w0jVZEBbe0+rrnzmYrw/rESFYtelCwlQNfVowGmyBNI83j6I10yk77HblidZTAtbAa/fPnUpv/AiXpWF+IqtB7/CIBo26pL2tgRjTVZRXiWqgIbYR6AaIQZfq3dzvTDvnAqP0NqWyHGnxME1vODDn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87c1d1356f3so293705739f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:50:04 -0700 (PDT)
+	s=arc-20240116; t=1753495817; c=relaxed/simple;
+	bh=PULKyoQPfoJBUREloodC53J6LvdB2Nf9AZX03v3VUNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=at+jcTGE/rXowtKHfif7qrcRxSohtQl/GJ78igR5iAywxLPeNrz2b5hkmEtMAQGkRoY/zSF2qZRPuevwQj5MLr6soBHlK0uDFr2yEcB03tgrnQnhdHuA9eE7UbhP4DR2BXhlJFswOdNQqQSHOguKq+RUhG6+8faQ+mK34Umukt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=JAl16UCB; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6facf4d8e9eso18289896d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 19:10:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1753495814; x=1754100614; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQ7SXOragRTIX4LIzQZOTZXKs9RiWGmIsBpnIAlkZMg=;
+        b=JAl16UCBWi8OLPPf4pIRVwZigMoaiuk9N1jlQj49CCriK6Cnjk6LfLCypQq3se6/ES
+         Qw05f7fRlIr0DVEyr28WPtbUF1C7PiWnYEJCLbspVY+v0T4AVg1n6/sGCl4+I2aeLmMJ
+         gm9GYP50kVcq0ss89lNFlsQHGWE8QrXKKWAX5niu2zV0eiyIDGuZPnAyqcYyIRED/Nbx
+         hw7jQVPoL0cXUhISqW9GdzRThYQvXOBCDsc5xVOABSuzegSTdVaCBnZSDFQUmT+RcfF0
+         nn48b/ASYLEQvT6SJfV1awxPPyNTbIgv8nuk3lK1mI1uL5au+xluF6nscthAos6g7oWB
+         4qCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753494603; x=1754099403;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bg/Id+vv9itUKIrE+rObWVbvYaBpGP9EL11b1CWtznY=;
-        b=a5Gjcwi380jpBVlkccQq7a0wSccdTaiJdf4/yFBXcj55ZV8ULNHGbVT0UWJgO5K10y
-         WMsB6G+7VoWWxqwVLCEWBfT//neQIN4YvOLjLlefRWBAAEZkdIhveDVWqOhh3JEVgm0M
-         I8F1QMdIx3dgQQNEgv1T7YyTDn1sCXwsmENUs6HHKZegdqXb863bGsAIvFn2DusOPszV
-         pTFvc5NwyMhOeCxB0oDGthCBEMJhAJSCUCdRFft86Ru5yKpzhsuS46pDsDyaf5TIpf2G
-         wZ4DeDy7JneWhJjtMR9VUrB7yi28krRS+Y31so/8kF1eFvPXCId6umcJRnwXb/C4aav6
-         lwpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzKT6Eh8xdsuxu97nwcCig31yXN/trr9QIJFGuor/lmoB2sLn6JF7MjmX6ycu7ybKZAjBa5QetUEsFfcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjojx/kxkT/bkh1V5t8zlDYY0p6nnQKMzAkRl4W/pDz9NL5XT8
-	74DaG6xaECw6H+mBCGZTG7+6jdoSSQEiZMAw63PuK1xEDPpeLYX93YGpWq8zfXHjL4S/W4K1Oyo
-	dvtbUloyzIm8PwpBzqnRs3mSYDd77XBtjCgENmxMRlRZtCz9Lw1WqHOliHEM=
-X-Google-Smtp-Source: AGHT+IEkSxp490wKAlx8onaCegAFzfLWBA3J/LXj+mLYRybMcsOhbKl1EfSK1yS3xMhbhKz6AAoh4ygA7iPRwx93vN3/fbfuwG/y
+        d=1e100.net; s=20230601; t=1753495814; x=1754100614;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qQ7SXOragRTIX4LIzQZOTZXKs9RiWGmIsBpnIAlkZMg=;
+        b=nhpbr0aL8q92frKsSpmAlo4MV3WARyBhvRXZq3lZbr8zrz+oCdQj4L8VfkSo0OvWR6
+         TotcdiY1IGApcCVimQgYHHayHfMbQnjyyoH9cMd4Dc3iWcEPlk+pX1LoLiQKvmBjlXbi
+         bQ5jt7Bf183xcE/8O0YNeAyFOTyHnWUWtiHF16ry/nROwkDxlj+LaZzb9DIf3HWyLAbm
+         LgubONaeq//FgqmqTlZx+aDmEDm2NICGN20K0razs+Ss2HzymH7P09qhs5ZFhoPbkh1c
+         rrQGQU/Qw2sPc6/zvnfNvJ9GVI+wvOKCLOc8GGwYRG11IIAZN4MRobsQdRicza8XFzyW
+         6TmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzuIvTeCPEL9vgQB3WioL6YFD2sy6H2dwN0KaPre2zx+9sbydA7r0cEQxPy7PKjLQFk1qMZTan2MFGBWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOcIlJmuRSlzIjcSDGnXyfhx/MDj63C5e31tmOHgU8L38YhxnK
+	hHyR2GtOY3wZPNpdQtO4mjdjOO0Hx9bsFaxS9VuiUrVQD4Ks1LWaCPFdT6H5AshdNw==
+X-Gm-Gg: ASbGnctDMRjsbMP/26SJ9AvbjbZhnXT4pfnNqkDFcj1dY2t3C8xqxANgIVVS/TLEeTw
+	TMDCYudm5ir/oFx0CpNkVTCm7c9IQO7QNO4957ZUOQWB6qjEWzAwGpIlqwZdO/UwQppLdigQjBx
+	MjlKGz9b3UbvEG17NF9aWCnbebRvhOHN3hwKcUH07uHq1Hj3tsWNP+1oSDwrUmcAqFoPYwwsY+F
+	H274otO8Y3awc6lH71uMGjLQkFT2pqBsa6oCyCFPZGkSj7mUq6k8deGi3x1wNTFMeH3hSl/bhPS
+	JUM/vSN3fx1s7KKWYB53ImMDEHXW2fVDNQguVbBisc97uEIkokXdvytUDJiyFJlLf0TiwettFKw
+	dt7XPn6RG6n2O8bQW44l6HUU=
+X-Google-Smtp-Source: AGHT+IGzVgC7zSPm77RvN7HmL7AuYbfj2Q2hSHE5FaAmz4RBfNyLkVHyW8mGDSfY2XCDjy3dmKWnzw==
+X-Received: by 2002:a05:6214:1942:b0:707:2b04:b04c with SMTP id 6a1803df08f44-7072b04b19dmr24997336d6.30.1753495814078;
+        Fri, 25 Jul 2025 19:10:14 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::317e])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70729a63136sm6683706d6.24.2025.07.25.19.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 19:10:13 -0700 (PDT)
+Date: Fri, 25 Jul 2025 22:10:11 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Olivier Tuchon <tcn@google.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: Add gadgetmon traffic monitor
+Message-ID: <1e4a2aca-cde2-45ea-aebd-408fe9bf9672@rowland.harvard.edu>
+References: <CALU+5Va_zeqS5YK7v3HNvDKkg8srqc87P5ZaQUK5tGFUMyNrkg@mail.gmail.com>
+ <42f4753a-f7db-49a3-ba40-8743a78684b4@rowland.harvard.edu>
+ <CALU+5VYnZfp2CqXqn7X14J5pGsXyHDOcC5mOCZx4nKA6tjzO2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1654:b0:873:de29:612f with SMTP id
- ca18e2360f4ac-8800f0e59d8mr727829439f.3.1753494601954; Fri, 25 Jul 2025
- 18:50:01 -0700 (PDT)
-Date: Fri, 25 Jul 2025 18:50:01 -0700
-In-Reply-To: <tencent_C725DBBA89BB4B333C9E4B1BFA4B341B0708@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68843449.a00a0220.b12ec.0000.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ucma_create_uevent
-From: syzbot <syzbot+a6ffe86390c8a6afc818@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALU+5VYnZfp2CqXqn7X14J5pGsXyHDOcC5mOCZx4nKA6tjzO2Q@mail.gmail.com>
 
-Hello,
+On Fri, Jul 25, 2025 at 10:45:29PM +0200, Olivier Tuchon wrote:
+> > There should be a similar optimization for IN givebacks.  The data to
+> > be transferred to the host was already recorded by the submission
+> > hook, so you can save space by not copying it a second time during the
+> > giveback.
+> 
+> After a couple of tests, I found that the payload at the Submit ('S') stage
+> is often meaningless (zero-filled) for both IN and OUT transfers or the
+> payload size is already set to zero.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Write in ucma_create_uevent
+That doesn't sound right at all.  Maybe your tests only covered 
+situations where no data was being sent?  Certainly the response to a 
+Get-Device-Descriptor or Get-Config-Descriptor IN request would not have 
+a meaningless, zero-filled, or zero-length payload.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: slab-use-after-free in atomic_inc_not_zero include/linux/atomic/atomic-instrumented.h:1536 [inline]
-BUG: KASAN: slab-use-after-free in ucma_get_mc drivers/infiniband/core/ucma.c:263 [inline]
-BUG: KASAN: slab-use-after-free in ucma_create_uevent+0x8d1/0xd70 drivers/infiniband/core/ucma.c:287
-Write of size 4 at addr ffff88802a9566b0 by task kworker/u32:5/1140
+> I simplified the logic to drop the payload for ALL Submit events.
+> Fixed in the next patch.
 
-CPU: 2 UID: 0 PID: 1140 Comm: kworker/u32:5 Not tainted 6.16.0-rc7-syzkaller-g5f33ebd2018c-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: rdma_cm cma_iboe_join_work_handler
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x100/0x1b0 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_inc_not_zero include/linux/atomic/atomic-instrumented.h:1536 [inline]
- ucma_get_mc drivers/infiniband/core/ucma.c:263 [inline]
- ucma_create_uevent+0x8d1/0xd70 drivers/infiniband/core/ucma.c:287
- ucma_event_handler+0x102/0x940 drivers/infiniband/core/ucma.c:366
- cma_cm_event_handler+0x97/0x300 drivers/infiniband/core/cma.c:2173
- cma_iboe_join_work_handler+0xca/0x170 drivers/infiniband/core/cma.c:3008
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3321 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+usbmon takes the opposite approach, omitting the payload for OUT 
+transfers during the giveback event rather than the submit event, and so 
+that's what I'm used to.  But I suppose you could reasonably do it 
+either way.
 
-Allocated by task 6548:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- ucma_process_join+0x233/0xb90 drivers/infiniband/core/ucma.c:1480
- ucma_join_multicast+0xe8/0x160 drivers/infiniband/core/ucma.c:1575
- ucma_write+0x1fb/0x330 drivers/infiniband/core/ucma.c:1756
- vfs_write+0x29d/0x1150 fs/read_write.c:684
- ksys_write+0x1f8/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Also, Greg will no doubt complain about some problems with the v2 patch 
+email.  The most notable one was that formatting was messed up again 
+(tab characters replaced by a single space) -- you should try mailing 
+the patch to yourself first and then verifying that you can apply it as 
+received.  In addition, it wasn't really a v2 patch because it applies 
+on top of the original patch, not as a replacement for the original.
 
-Freed by task 6548:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2381 [inline]
- slab_free mm/slub.c:4643 [inline]
- kfree+0x2b4/0x4d0 mm/slub.c:4842
- ucma_put_mc drivers/infiniband/core/ucma.c:269 [inline]
- ucma_put_mc drivers/infiniband/core/ucma.c:266 [inline]
- ucma_process_join+0x763/0xb90 drivers/infiniband/core/ucma.c:1534
- ucma_join_multicast+0xe8/0x160 drivers/infiniband/core/ucma.c:1575
- ucma_write+0x1fb/0x330 drivers/infiniband/core/ucma.c:1756
- vfs_write+0x29d/0x1150 fs/read_write.c:684
- ksys_write+0x1f8/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88802a956600
- which belongs to the cache kmalloc-192 of size 192
-The buggy address is located 176 bytes inside of
- freed 192-byte region [ffff88802a956600, ffff88802a9566c0)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2a956
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801b8423c0 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x252800(GFP_NOWAIT|__GFP_NORETRY|__GFP_COMP|__GFP_THISNODE), pid 6445, tgid 6445 (syz-executor), ts 92358145050, free_ts 92277395639
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1704
- prep_new_page mm/page_alloc.c:1712 [inline]
- get_page_from_freelist+0x1321/0x3890 mm/page_alloc.c:3669
- __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:4959
- alloc_slab_page mm/slub.c:2453 [inline]
- allocate_slab mm/slub.c:2619 [inline]
- new_slab+0x94/0x330 mm/slub.c:2673
- ___slab_alloc+0xd9c/0x1940 mm/slub.c:3859
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3949
- __slab_alloc_node mm/slub.c:4024 [inline]
- slab_alloc_node mm/slub.c:4185 [inline]
- __do_kmalloc_node mm/slub.c:4327 [inline]
- __kmalloc_node_noprof+0x2ed/0x500 mm/slub.c:4334
- kmalloc_array_node_noprof include/linux/slab.h:1020 [inline]
- alloc_slab_obj_exts+0x41/0xa0 mm/slub.c:1992
- account_slab mm/slub.c:2578 [inline]
- allocate_slab mm/slub.c:2638 [inline]
- new_slab+0x283/0x330 mm/slub.c:2673
- ___slab_alloc+0xd9c/0x1940 mm/slub.c:3859
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3949
- __slab_alloc_node mm/slub.c:4024 [inline]
- slab_alloc_node mm/slub.c:4185 [inline]
- kmem_cache_alloc_lru_noprof+0xf4/0x3b0 mm/slub.c:4216
- sock_alloc_inode+0x25/0x1c0 net/socket.c:309
- alloc_inode+0x61/0x240 fs/inode.c:346
- new_inode_pseudo include/linux/fs.h:3364 [inline]
- sock_alloc+0x40/0x280 net/socket.c:622
- __sock_create+0xc1/0x8d0 net/socket.c:1505
-page last free pid 23 tgid 23 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1248 [inline]
- __free_frozen_pages+0x7fe/0x1180 mm/page_alloc.c:2706
- pagetable_free include/linux/mm.h:2884 [inline]
- pagetable_dtor_free include/linux/mm.h:2982 [inline]
- __tlb_remove_table include/asm-generic/tlb.h:220 [inline]
- __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
- tlb_remove_table_rcu+0x116/0x1a0 mm/mmu_gather.c:290
- rcu_do_batch kernel/rcu/tree.c:2576 [inline]
- rcu_core+0x79c/0x14e0 kernel/rcu/tree.c:2832
- handle_softirqs+0x219/0x8e0 kernel/softirq.c:579
- run_ksoftirqd kernel/softirq.c:968 [inline]
- run_ksoftirqd+0x3a/0x60 kernel/softirq.c:960
- smpboot_thread_fn+0x3f4/0xae0 kernel/smpboot.c:164
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Memory state around the buggy address:
- ffff88802a956580: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
- ffff88802a956600: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88802a956680: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-                                     ^
- ffff88802a956700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88802a956780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
-Tested on:
-
-commit:         5f33ebd2 Merge tag 'drm-fixes-2025-07-26' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ea88a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c445d2891161cc81
-dashboard link: https://syzkaller.appspot.com/bug?extid=a6ffe86390c8a6afc818
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12100782580000
-
+Alan Stern
 
