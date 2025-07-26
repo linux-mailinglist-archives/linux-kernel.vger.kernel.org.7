@@ -1,131 +1,173 @@
-Return-Path: <linux-kernel+bounces-746551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D5BB1280E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:35:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B47B1280F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 02:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 799B3AE1536
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4891CC7992
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2120B136672;
-	Sat, 26 Jul 2025 00:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892A213790B;
+	Sat, 26 Jul 2025 00:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iv7fkjqj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3Lie0Dgo"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833A986348
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 00:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69084126C1E
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 00:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753490091; cv=none; b=KLuoF8WOBC9LB88hMDtCf9q3lUCOWtRe+VNoTixCq8zOxaNxYCYpyEIzMxhRJLJKilUPMwY8lmgvJu2Rku2ULqDwIN+cATsliT91Rveh5P3UdMAzfM6gNSVocchBy36jicNLcJabacT7zAJjbHnWURK8PTUo5T5L3quc0UtWOmE=
+	t=1753490101; cv=none; b=iTItAN80e8prnNfFPf3M3EBV7gH6sW3twWIV4lRGT4PvMwIRy40q2fbapIdYBn17vF/+FwtwTmv6YNpkiBA3YoLKHRKGYpmYV9ec5vPXXtZArOgKRweYjHrmzjwDzrFjsIa0JUTWArVTfpGzuBhhnn2DkvwQNBP0uZp3WpBXARc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753490091; c=relaxed/simple;
-	bh=PEL1x7I2m7IqQBWT9RiBxeL7BEdWbafbTnwXBiu3okA=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=icuCw/JBmwXle8QahcH5MpDpDaY9v09bj4LMjf3YOTEeJ+BVJGmBOHgjwk/TOSwC75T0QEcFmm2f5TTwskQJWFMdHRXzO1CZvrw5dRMfjxguOOSP8fvIT3mQRjsZskARBnYu8HOGcq4Y9aSxkmROaLKcRqQCyk34aGnzSUYtN2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iv7fkjqj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8A39C4CEE7;
-	Sat, 26 Jul 2025 00:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753490091;
-	bh=PEL1x7I2m7IqQBWT9RiBxeL7BEdWbafbTnwXBiu3okA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Iv7fkjqjbqsJ108sOrKDAMpbV5LWwI9DfOX9aPiPdHHMpTKQMm/iTbm2xrjH66KNO
-	 1sHXL+aqFaszKVcGU2UhMm2LAP1UQ/Z4UgJaj1ZtCuoMHEQLi3EvAsWCDW+aIz5C6o
-	 qCKam6+NPPcySTR0DUINOkzge8CJYKT3l74JcDLpVpq2waKPW0gP+X62XQFDfp+dtC
-	 8YF2qeaF5j8Qo61zSqHf+N0WqECxUw+HOZUuHZBQKAmfG3uMBJzPyGtxM67KgKO/Ul
-	 VoXYLHwBv8U3/f81h6XRPW2fJuh/qh4GgX60E0PejsFGyy7j5sRC2GvcVx4dac8X/n
-	 Uw0Spqmbd0Krg==
-Message-ID: <15ca3763-45a5-40af-93a8-449a9f1f33a9@kernel.org>
-Date: Sat, 26 Jul 2025 09:34:47 +0900
+	s=arc-20240116; t=1753490101; c=relaxed/simple;
+	bh=CEMeBZezoOjzuH4XZ0JSOAau1ciA8YndvA6qZcE0mw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SEfc0Io1dWjfnaHEro+ufCFwV3yFP5ZLpr8XdY41XBa5lGEgQkKnVT/cVA2VWIZOJz8FjfMJq1+CwlcQRtHSyN9BSirU+1P530ufMchB0xw6ZWqlPOwEBm+vFhZim1bJ/QsV5lSmopuTJZNNb7b/INbNRW/ZNmSIeZHuJe7Ftfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3Lie0Dgo; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3e283b2d065so44145ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:35:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753490099; x=1754094899; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qZPCpsnOFMzo8Dy5wKM/rmboR8jCseogtU4sWxCBrbc=;
+        b=3Lie0DgondpI9jSHwdx8kgY11y5kBQFqU9xLhd6wEdwXL1cx3DDIsh4fCaH6EOlAgx
+         +cowVhB+ahHmv/oUQZ4P/+geexZH83C5YyKafDjD06g7nK1AT6nZXcIyRcn+doS46XFI
+         DEkT/51Xh22+1tkau+OjnD8VsP4vxui56weJjS4lW7yVdrsEcD2I6DVRj3V4rqg87kKl
+         5EHNyHjv9BUuU+QKJ+9pnhrJs1Qvww714shTTMJb3WhiXkXevJeVp8TFgHOxSFJqac4T
+         dt/rdJOTnEFqgpBuBgfplbnnhdFAzN+Q92tZLLjN6ei34m+RvXoyBQt1dpx2h0Mw3XgF
+         2egQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753490099; x=1754094899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qZPCpsnOFMzo8Dy5wKM/rmboR8jCseogtU4sWxCBrbc=;
+        b=oltpObjrNK9jNkY+/SQ2pJjFFrlOoZi/lRxVTBWS2M37CJwpLm1WqdKbvvvnxtVWlv
+         H7By25+sK3A0iRIBhNHc6GW9yLOPDnRmog/wX7yoQH3Px727nMBzY7rLjAFbXB0M9CSS
+         Gdg0AaV47JY19EXaKndzTMesHgVlyGZAmEaKJsCbCLm03vbuvaSRW7uWjgfQtMDGSPzz
+         p/WQ/wP8aIWpEEeo25xfJjqSiiVwb5vPs2p6dZ/dymWNSOxlPzOnI06q6XvCeG3fcjqS
+         D7goZUu/5UdnIY0TSrw//k2drKlamn2jIlG/tfJNY+vAM9Zvm8BmIULGmCU8nf0eTWyT
+         vllw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHQEApqSyva01Z6rtPUUVwEU3r4D3D5biZusU2c6RD9yWbJZ2MtuCBBd9M9NKfCQ8QL4LN5CuK0Q/fbDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4svQUVnMGZfchx+MwEvkXjkkUYR9mGPWIhPmrYSnRL56JrR60
+	t8pOJWeLbacMFDo3TEMpiZVJRA+ZcEa9CSsOAw6FCa1Xgl7LSHs4a9brU4CegIsYj7lCSKN9y8i
+	l5lKD2LoO3HtfLmS1mV3Hst5VS+QCf54aO/EKW0gd
+X-Gm-Gg: ASbGncuIOLnOO9gT738ms3tcYUKsIp7f0fovgEq/Ls2hgkbJlLhmC8swQ6rrR0mtJ6B
+	s9MQRYkMPcz3gR6zs50Fx+S2PrnsgU6PCPsEBz7sty+SE4zstXwd7hr0GOO3WGVb6pZ6YyYtD5q
+	o8gTcFj0rhs2h61qVD/BkeKkkk+NxZQyiy4DumzhwyqNIdLRX32Lv4LhwEZsOcXuGcvMPy2JzOc
+	jPtILKr
+X-Google-Smtp-Source: AGHT+IFP/+PLw/W7PC5xdHYXpvVc7MsNmqcrVmuoK0wFuNmDMht3hAFpkSertLVeZn69lRiXAthCkoCVShx5VL3fM74=
+X-Received: by 2002:a92:c24e:0:b0:3e2:86d2:fed6 with SMTP id
+ e9e14a558f8ab-3e3cce953b7mr803435ab.21.1753490099216; Fri, 25 Jul 2025
+ 17:34:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Chanwoo Choi <chanwoo@kernel.org>
-Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, Chanwoo Choi <chanwoo@kernel.org>,
- MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [GIT PULL] extcon next for 6.17
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250725193755.12276-1-namhyung@kernel.org> <20250725193755.12276-7-namhyung@kernel.org>
+In-Reply-To: <20250725193755.12276-7-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 25 Jul 2025 17:34:47 -0700
+X-Gm-Features: Ac12FXxWrsAPv-GxYhX7HwrLIGTvf8k6Uj4evVlKPj9FmmNbbIUDtXzDMsCfWU0
+Message-ID: <CAP-5=fUZk4Fvo+E88C+o4TCyBsZCAGNwbpi5XMWX0ttbgAA00A@mail.gmail.com>
+Subject: Re: [PATCH v4 6/9] perf annotate: Add 'T' hot key to toggle data type display
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Greg,
+On Fri, Jul 25, 2025 at 12:38=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Support data type display with a key press so that users can toggle the
+> output dynamically on TUI.  Also display "[Type]" in the title line if
+> it's enabled.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/ui/browsers/annotate.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+>
+> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/a=
+nnotate.c
+> index cdee1969f3131a7c..4b059e0bafd33fcf 100644
+> --- a/tools/perf/ui/browsers/annotate.c
+> +++ b/tools/perf/ui/browsers/annotate.c
+> @@ -525,9 +525,10 @@ static void ui_browser__init_asm_mode(struct ui_brow=
+ser *browser)
+>  static int sym_title(struct symbol *sym, struct map *map, char *title,
+>                      size_t sz, int percent_type)
+>  {
+> -       return snprintf(title, sz, "%s  %s [Percent: %s]", sym->name,
+> +       return snprintf(title, sz, "%s  %s [Percent: %s] %s", sym->name,
+>                         dso__long_name(map__dso(map)),
+> -                       percent_type_str(percent_type));
+> +                       percent_type_str(percent_type),
+> +                       annotate_opts.code_with_type ? "[Type]" : "");
+>  }
+>
+>  /*
+> @@ -901,7 +902,8 @@ static int annotate_browser__run(struct annotate_brow=
+ser *browser,
+>                 "b             Toggle percent base [period/hits]\n"
+>                 "B             Branch counter abbr list (Optional)\n"
+>                 "?             Search string backwards\n"
+> -               "f             Toggle showing offsets to full address\n")=
+;
+> +               "f             Toggle showing offsets to full address\n"
+> +               "T             Toggle data type display\n");
+>                         continue;
+>                 case 'r':
+>                         script_browse(NULL, NULL);
+> @@ -1021,6 +1023,12 @@ static int annotate_browser__run(struct annotate_b=
+rowser *browser,
+>                 case 'f':
+>                         annotation__toggle_full_addr(notes, ms);
+>                         continue;
+> +               case 'T':
+> +                       annotate_opts.code_with_type ^=3D 1;
+> +                       if (browser->dbg =3D=3D NULL)
+> +                               browser->dbg =3D debuginfo__new(dso__long=
+_name(map__dso(ms->map)));
 
-This is extcon-next pull request. I add detailed description of
-this pull request on below. Please pull extcon with following updates.
+browser->dbg =3D dso__debuginfo(map__dso(ms->map));
 
-Best Regards,
-Chanwoo Choi
+There was a conversation about dso not necessarily having to have
+long_name in the future, etc.
 
+Thanks,
+Ian
 
-The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
-
-  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-6.17
-
-for you to fetch changes up to 5f09caafc652bcee7a5247e40dd34d1de1ad7d7f:
-
-  extcon: fsa9480: Avoid buffer overflow in fsa9480_handle_change() (2025-07-19 12:39:13 +0900)
-
-----------------------------------------------------------------
-Update extcon next for v6.17
-
-Detailed description for this pull request:
-- Fix wakeup source leaks on device unbind for extcon drivers
-
-- Add new Maxim MAX14526 MUIC extcon driver and dt-binding document
- : The MAX14526 is designed to simplify interface requirements on portable
-   devices by multiplexing common inputs (USB, UART, Microphone, Stereo Audio
-   and Composite Video) on a single micro/mini USB connector. The USB input
-   supports Hi-Speed USB and the audio/video inputs feature
- : This provides the following supported external connector detection
-   - EXTCON_USB
-   - EXTCON_USB_HOST
-   - EXTCON_CHG_USB_FAST
-   - EXTCON_DISP_MHL
-
-- Fix buffer overflow detected by linuxtesting.org SVACE on extcon-fsa9480.c
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (5):
-      extcon: adc-jack: Fix wakeup source leaks on device unbind
-      extcon: axp288: Fix wakeup source leaks on device unbind
-      extcon: fsa9480: Fix wakeup source leaks on device unbind
-      extcon: qcom-spmi-misc: Fix wakeup source leaks on device unbind
-      extcon: adc-jack: Cleanup wakeup source only if it was enabled
-
-Randy Dunlap (2):
-      extcon: max14526: avoid defined but not used warning
-      extcon: max14526: depends on I2C to prevent build warning/errors
-
-Svyatoslav Ryhel (2):
-      dt-bindings: extcon: Document Maxim MAX14526 MUIC
-      extcon: Add basic support for Maxim MAX14526 MUIC
-
-Vladimir Moskovkin (1):
-      extcon: fsa9480: Avoid buffer overflow in fsa9480_handle_change()
-
- .../devicetree/bindings/extcon/maxim,max14526.yaml |  80 ++++++
- drivers/extcon/Kconfig                             |  13 +
- drivers/extcon/Makefile                            |   1 +
- drivers/extcon/extcon-adc-jack.c                   |   2 +
- drivers/extcon/extcon-axp288.c                     |   2 +-
- drivers/extcon/extcon-fsa9480.c                    |   6 +-
- drivers/extcon/extcon-max14526.c                   | 302 +++++++++++++++++++++
- drivers/extcon/extcon-qcom-spmi-misc.c             |   2 +-
- 8 files changed, 404 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
- create mode 100644 drivers/extcon/extcon-max14526.c
+> +                       annotate_browser__show(&browser->b, title, help);
+> +                       continue;
+>                 case K_LEFT:
+>                 case '<':
+>                 case '>':
+> @@ -1115,8 +1123,7 @@ int __hist_entry__tui_annotate(struct hist_entry *h=
+e, struct map_symbol *ms,
+>
+>         ret =3D annotate_browser__run(&browser, evsel, hbt);
+>
+> -       if (annotate_opts.code_with_type)
+> -               debuginfo__delete(browser.dbg);
+> +       debuginfo__delete(browser.dbg);
+>         if (not_annotated && !notes->src->tried_source)
+>                 annotated_source__purge(notes->src);
+>
+> --
+> 2.50.1
+>
 
