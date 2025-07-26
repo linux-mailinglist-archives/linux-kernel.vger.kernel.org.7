@@ -1,103 +1,138 @@
-Return-Path: <linux-kernel+bounces-746597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B6CB128BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 05:36:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FBD5B128C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 05:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD651662F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 03:36:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EBB3AA5B30
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 03:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8972F1EF389;
-	Sat, 26 Jul 2025 03:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277781EFF92;
+	Sat, 26 Jul 2025 03:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iXZnHIkt"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fA3lbjSp"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA309FBF6;
-	Sat, 26 Jul 2025 03:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B734FBF6;
+	Sat, 26 Jul 2025 03:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753500981; cv=none; b=l2MoXV7230Q3S+VEm3P0We1HT7ygZ3JW3d5cPq9L3SyZOHGiYO1K/GTfK9jgb0s/byTB5ppxrqBUoOtUUIacM1ElqRZNiN6BmpCCS9O3I3i3pSjbSR/cQRq6qnQ9MVfyHcHAwpb4qQR7xRdPERD/wEIjRVF+zow77suPB6SkiC4=
+	t=1753501127; cv=none; b=FCIaSivBMlwTlfodnh3d4gy0G8uSUbvZg0GV23wtRPdbXee6MAjpSx1cH121YFexarBbsy07/CMyrxzyYrSnAEdAnRn6XdBJYMWXmxniX9nLs5Y8E+5tPEa/t5WYUKfXQ/C/JNTtVvtlwV3YVpMl9nLbeFZa/NW1SjUSE+hSyag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753500981; c=relaxed/simple;
-	bh=bv9AkDmHbGphZChItpP+S9WgbzA7cKwwpRDSVLcNUvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fa9e1qopltyt4Qk7gRWLKmjiJrFJ6JaVY03J1QcPsX3kvMjGF0zBepDwyQa+nx3Y5oVTRP66hihc+DYuf7OBwuJCvyWp4xeTiU1JGaj28Hz0rU9IaIgcV1Ul7i4hcJ9U88tiogXpQKyrl0wYZuUntwBdUjElIR8FhOpCiYSFH94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iXZnHIkt; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=0SqKK1itEFeyqao+wJaeXuZjHvB4xmHKjQAwZpz8zt0=; b=iXZnHIkt5XNkk41IakbLXc3TT/
-	VlOBtt4hbBrKqRz9anPJNXv8D4IwuY6U36ttsi1mNzLyklsogRm5k8NebdKtPbrV477Us9lmRy493
-	AG1leB9CMMSkhivLuTx2ibMe81Qi3VEJswvfeVLL1DmvB4EMgAtTKAFNjR5/LBJYtDSSRcaGMYQ0y
-	wdyIbvS7ldyFKYgyNg9Dzi1EeX/GEtzL2Vlug9858seMBXcan3f4wWyXqO+tyDlpKH7ZV2aaolZSj
-	9eTQxAVa1z/GT35Le6gy29VoN7MqpySiX69AmzKlOyr1Y+OmDhC9TQh6SfbmKoc4eF9bY5hcTpMtd
-	4xy+Dt4A==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ufVhr-0000000B5Pk-0JWR;
-	Sat, 26 Jul 2025 03:36:19 +0000
-Message-ID: <0fa9e4e7-1247-4c82-8c0b-fa65b7fbb56d@infradead.org>
-Date: Fri, 25 Jul 2025 20:36:18 -0700
+	s=arc-20240116; t=1753501127; c=relaxed/simple;
+	bh=qRvtZwNhP4p+SR4y5WxEk/ywS7gGmoQP8IK//Q2npro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IYrsIlH0E74WZ5TnkYY3bP3kfndPSJso4H5l2PCvlWO9VkJgRB1brIILg59avP8h90BBmuYQhlhXhLid0qMkQv65zTcIp31aYC94ktZx7iWw2KO043VbdSZ1zS6DrJn6rkvHfC4B4yLjZJy5JFBpD6trdOPftcxZCXMHVIVXuQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fA3lbjSp; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31c38e75dafso2227055a91.2;
+        Fri, 25 Jul 2025 20:38:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753501125; x=1754105925; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Il5e9mDlMCv0IQUFSJTULOpS+fbb3WCVY2Xz/KLOLC8=;
+        b=fA3lbjSpGAkFGZjAnwvDzhPydV/EX1DZHJUwVCIh5alnPHQI1Tv1M323cUe7SydJ2Q
+         cqXV4LZdmW5OaDpNRzLAIYAEnEL3EPcAmLZGA9F4L0vIcvfWb5N3e/wG5mJGrWd2yE0R
+         rZqgs525lS9Ip1BUJg/f5L7JHQgTDXV2IViAdteaHg9k6O+/fy/g8BPQBsY09+zcWejX
+         zxDV4sR6VYtXpTYLWddsdu3H4LIhOLj88g0RyvvXNEt7VyiB5eYFb2La133RlUwho003
+         SCORtQMoJ9qcj+mUXCBPQ000epZfXiqRE1MyhlFKMuQU7xTVAs0v2B7phvwp8CSndAhR
+         Rqmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753501125; x=1754105925;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Il5e9mDlMCv0IQUFSJTULOpS+fbb3WCVY2Xz/KLOLC8=;
+        b=smXhWFatqE/upUtbhAIa/PBftE7ugM+z+BMA2cO6DAHfs/Dr7wdNAKnxPv0XAjcrHd
+         WJ1vUy245f0aHIQ4Fyjav1oKMDDU6rROFsIB8fQe4o8kxsJ2vfo9mM2Q0gwwaLc0SYtI
+         2oeROdTB5J5NNfYryI3AuQf2HXjqksdEXOPUoOk4G7yXHu2KAnKZklPcWq7j0qE+6BGe
+         A6a3PuU6eqhioLlLSSeLPrLLZaP/+7hSfxT1RUws8U/4axxnEY8Ll2pyo4IlLUXNEch7
+         YOYK5haAq5rRh9cFZ8+/bPhGhPAinuMPhnU/sZm/GmLkDxu+DAdw0sJ/rMgWZekz5df/
+         jbKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOhGVhUIyd4e5kmDC4N9oKAUFFEPpfbd8eyYdgVPcEcGNnqpT/pjr2TZuQr9JSF73fwRzMb0i3tn4=@vger.kernel.org, AJvYcCVRQJm43Gf4C4yvSNmp+FCC4ao+ko8HqEWnPzmcU82oOYXnDYip3OOKvPG/fGWXCM9MK/AsmaFSzS0qX8Kq@vger.kernel.org, AJvYcCVhIvenXvrSjp/UmSRIK73bf6AN+bJWueCi7SLzr2eHfuiifOihG7TB8cAvoSSNNyV/kUoJHP9g9YlVP7I=@vger.kernel.org, AJvYcCWp2OSVmfcBuHtXBCS4i2VPkkCJKwTWFOXtHtkN+0FqckVIvMEVa+kSQWNUnPLN2xjJLgbeM+WXQHnhJ9LUI5SdkwbtfQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAAmsW9GuvdXUv8pL2AUmqrj8xbITUzW77hPZpm14Swn/VX1FQ
+	Zy7VJwIZnmYrj3iJX5/u4viCnroEkKOr1Oh85mlrJKwMWk9S6HBAWS8A
+X-Gm-Gg: ASbGnctKV1B57Z9JjHbQ2z1ZaND92Nfg29adVOfUxlYmwb2ytEPo2BQU7CbSNq539zq
+	Cw+RnaUZR17RD+Okry48i2y12x+zn+94B2PHzyYGu7EI+rWOyDIzi2UCiEli6M/OzSbVh3OQ9lh
+	VmUpTyUq0w3/cQiKIXBMSaJPytDrgZMLaTUvB+qVUy86MjR5M5KwR6VO5EA0p5XlLwhngFFDoDT
+	xcVBkxH9EyzIzSerFhYLnelQnAnt/uk5S6aS9sjt9/SnwV6OrdRMFj6XeU375m2urvvv1Vc7xy0
+	aUUVabYRJzZRt4usLHYmvAlfWKAPFCd640uHGyf7/q3N4heyLCG5rv/JryZe9NVQdAPW0vF1xWD
+	IfB/pdsy9XwJnETdffIwvWSJL57ZDSRgNaqvJ4jhvW5D33PSwMicFuAqIEYDzXF0uyjPEtl85vx
+	DE+0k0VSQIs3s4
+X-Google-Smtp-Source: AGHT+IEQlCYkQpDnNocDdpQGVddZquxM201R9JZA11JoqSKgBNHCuD4uHLDtOlIZBPV5hvgdU00b4A==
+X-Received: by 2002:a17:90b:5848:b0:311:9c9a:58d7 with SMTP id 98e67ed59e1d1-31e778f1a6fmr6816376a91.19.1753501125298;
+        Fri, 25 Jul 2025 20:38:45 -0700 (PDT)
+Received: from bliptop (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e832f8942sm779204a91.4.2025.07.25.20.38.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 20:38:44 -0700 (PDT)
+From: "Derek J. Clark" <derekjohn.clark@gmail.com>
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Alok Tiwari <alok.a.tiwari@oracle.com>,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v2 0/4] Add Ayn EC Platform Driver
+Date: Fri, 25 Jul 2025 20:38:37 -0700
+Message-ID: <20250726033841.7474-1-derekjohn.clark@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v2 01/29] kmemdump: introduce kmemdump
-To: Eugen Hristev <eugen.hristev@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-mm@kvack.org, tglx@linutronix.de, andersson@kernel.org,
- pmladek@suse.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
- jonechou@google.com, tudor.ambarus@linaro.org
-References: <20250724135512.518487-1-eugen.hristev@linaro.org>
- <20250724135512.518487-2-eugen.hristev@linaro.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250724135512.518487-2-eugen.hristev@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Adds platform driver for Ayn Loki and Tactoy Zeenix handheld devices.
+Tactoy devices are rebranded Ayn devices with minor modifications to the
+DMI. The device EC has multiple features implemented by this driver,
+including a PWN fan with manual and EC controlled automatic modes as
+well as a user deviced fan curve mode, temperature sensors, and chassis
+RGB control.
 
-On 7/24/25 6:54 AM, Eugen Hristev wrote:
-> diff --git a/drivers/debug/Kconfig b/drivers/debug/Kconfig
-> new file mode 100644
-> index 000000000000..b86585c5d621
-> --- /dev/null
-> +++ b/drivers/debug/Kconfig
-> @@ -0,0 +1,16 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +menu "Generic Debug Options"
-> +
-> +config KMEMDUMP
-> +	bool "Allow the kernel to register memory regions for dumping purpose"
-> +	help
-> +	  Kmemdump mechanism allows any driver to register a specific memory
-> +	  area for later dumping purpose, depending on the functionality
-> +	  of the attached backend. The backend would interface any hardware
-> +	  mechanism that will allow dumping to happen regardless of the
-> +	  state of the kernel (running, frozen, crashed, or any particular
-> +	  state).
-> +
-> +	  Note that modules using this feature must be rebuilt if option
-> +	  changes.
+This driver implements PWN fan and temperature control via a hwmon
+interface, and an RGB chassis interface via a multicolor LED class
+device. I attempted to break the driver up into four logical patches.
+Patch 1 adds PWM fan control via a hwmon interface. Patch 2 expands the
+hwmon interface by adding the temperature sensors. Patch 3 adds the
+chassis RGB interface through the leds subsystem. Patch 4 adds ABI
+documentation for the sysfs entries that aren't provided by the standard
+interfaces, but are needed to fully control the device.
 
-It seems to me that this (all of the KMEMDUMP Kconfig options) could live in
-mm/Kconfig.debug instead of creating a new subdir for it.
+Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
+---
+v2:
+- Fix nits from Alok Tiwari.
+v1:
+https://lore.kernel.org/platform-driver-x86/C7073C0E-3D58-41C3-99B7-A0A5EE448700@gmail.com/T/#mb795b8f5e5ff3c5b88fdd62bd6c97eab404fbc4e
+Derek J. Clark (4):
+  platform/x86: (ayn-ec) Add PWM Fan HWMON Interface
+  platform/x86: (ayn-ec) Add Temperature Sensors
+  platform/x86: (ayn-ec) Add RGB Interface
+  platform/x86: (ayn-ec) Add Ayn EC Platform Documentation
+
+ .../ABI/testing/sysfs-platform-ayn-ec         |  59 ++
+ MAINTAINERS                                   |   7 +
+ drivers/platform/x86/Kconfig                  |  14 +
+ drivers/platform/x86/Makefile                 |   3 +
+ drivers/platform/x86/ayn-ec.c                 | 965 ++++++++++++++++++
+ 5 files changed, 1048 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-ayn-ec
+ create mode 100644 drivers/platform/x86/ayn-ec.c
 
 -- 
-~Randy
+2.50.1
 
 
