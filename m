@@ -1,264 +1,143 @@
-Return-Path: <linux-kernel+bounces-747195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95288B130E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:16:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C78B130E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A771897CAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B79E33B907F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D0A21E082;
-	Sun, 27 Jul 2025 17:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1263421E082;
+	Sun, 27 Jul 2025 17:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4fz2h+C"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Weriryb1"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7BE81724;
-	Sun, 27 Jul 2025 17:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753636563; cv=none; b=phrG/EuqAIBL3a8kkEhcNkAkpvVgnYSg5zOoqsPvdPedJcDITZBxnlHBicjTZW0aH0cVfJgT7rJv+kxtybUH300hkz2UI+apcgLmYBkpflvwxVYFDZKCtScP5OCKEQQ2IBKT72e7h/F3dTbjb1xk9JKjsj32wqQxcmk48WBMovo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753636563; c=relaxed/simple;
-	bh=5zwEztKCBSp4Obb3w98NdqATS2CMdS17Bv4hfZpxqlM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=phrXvI1UkX2pvaXcw5efEL36I1NbTxF0DeGsLLTHcrht9DnbuQVGpU53sWpXiPBlscLcdA/+CjYRsgH+CLoWiCKz6smUxo6nD74bLSyYZ1DjnE9KMhMhiPqdGLjRKfM1ZGn/gV2S/yZ/e4H0biTitzrA1caluwGB0ycYt+95G7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4fz2h+C; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e8e0aa2e3f9so523812276.1;
-        Sun, 27 Jul 2025 10:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753636560; x=1754241360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kGOUWrUt6/KLdfWNCgo1PdzYDTwfxMfj9+QwMlA2V4s=;
-        b=C4fz2h+C5cJivA3s2ZoL1xKQ40nQw1YPvz2CIDaP+Z8Hr6yrkY0bmfwToeFkHugeC1
-         j4dmluAlzQxxVDMXSx3Z9kiyZobOSz4FG9emgsWSCTTh1XLahlbsv/9zXIKOsalkmFlo
-         morCvFeqGDirt8N8uBLd9xZ6gBXT+e+l5EPYTUdVkvLluHOdRRI4Id+Q33SewZVSeM7p
-         NzDd2j67vFP6uD76RZHNbm43MvwdP1YeENk11DI4bFoYNIClHo88hF4AcbOKJ4Xa26p1
-         46W50GM2G/oB5XOprrPgNnb9xn6aMLdwxQFL1FOjkD+tqFJdscRMbXXqBuGTcNtA5ao/
-         S7iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753636560; x=1754241360;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kGOUWrUt6/KLdfWNCgo1PdzYDTwfxMfj9+QwMlA2V4s=;
-        b=ex5fA/TqNn+GXhL3nQ/I5pfKq+57w0sBzQQWhOLK/0kRrOHMP38bj9mr97S7rQGmZX
-         Uu7P1zBnKnFKI12HC7z9EidwoyztP/Pw5IY4m4fM6psyR3tsvA+U0jGGye5wuEUxuDf3
-         18tmSw+lrZowfgpxvtieWNfMb4BmR8Tg/3is+w58nBMCXvwD2ZtHrS+6j4gtrU70e/zP
-         p8qPjma9A9xH2ZeDhPypmiZbiM/uT296+ecTv9vKk+0hCKd6cdpRstCipvfVQJvUvuu6
-         lSLfTRlCOwFUt5b6oSqj55Zio5Z+0HefVUevlvliEM+3mAhVsx6j8T0votObrzx4KG+q
-         JZHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUn+J3ZToNAzEBNpU6/trl0YYz8MWNFZ8JKMN587abBaZIT833C3UXs27ZKoKyAhiCUMoBAN1adTuLjBKE=@vger.kernel.org, AJvYcCV/CbDAHouAYKtSYgtH4zN2my4nvhT8VbOybbRfy6um990qmRVLFZwwN6gcIRMcV9AKSyOy+6Nd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL3lB3AcfK8HjqEn9RL5dC9suKzgSaqJgkZkDNCXWlhYHFZfUV
-	cE84EdDjE4CTq+TRmbYaGIDxhwsXP88So1rnqgWGPeV+hvicBklgX9nhUre8KA==
-X-Gm-Gg: ASbGnctCJFVpyfYRtzM2WEr7dhqC/wTNuNPv9412mQUl5R18AlIoI0/5VOGa3rRNSjm
-	2gZS/2Fkzq6XdSzAQVALOnvYLmDRPnR88pRFvzMYBdXBQoB3ADKp8Yb5m3Oc+m0Xoqf8nnaKYcb
-	872pE3VpbbAUgz4OHSoBs7l42r2p6WrkaFSgvzxVBd/aRlneU6g2kuybiM5FzVhwykHLdexsBSF
-	e9H69l+ErwoW8wtGubyRLBY/R5dj/7tlZ6o65QLjtRqG/RPxog2htR4RV6NCwDTmLD9HCdAX5t6
-	4nyt1+t6mUWAr1mZN1ctcNkGkSgYcb5F55ARV9gcd0S0uUtprp/fV7Sd6be2oQrsV1cfPnh1RCD
-	U3IBD3dTJ3tlXC3YUbaOcvjQUlbsp2TSX+9pH8gH31HoWP7706bCtUxsakyMsW4kovKaQtLdhb2
-	jjfsn6
-X-Google-Smtp-Source: AGHT+IGRgpb969BkgC8x+v/hneqLAXkS6hiR4nYVLPk3riGZTJwJFQzLzbOyOO7L6LzJGp8caBw9fQ==
-X-Received: by 2002:a05:6902:f84:b0:e8d:ed8a:af5e with SMTP id 3f1490d57ef6-e8df10d2b6fmr10951855276.10.1753636560041;
-        Sun, 27 Jul 2025 10:16:00 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with UTF8SMTPSA id 3f1490d57ef6-e8dff798feesm1136342276.4.2025.07.27.10.15.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 10:15:59 -0700 (PDT)
-Date: Sun, 27 Jul 2025 13:15:58 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Wang Liang <wangliang74@huawei.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- mst@redhat.com, 
- jasowang@redhat.com, 
- xuanzhuo@linux.alibaba.com, 
- eperezma@redhat.com, 
- pabeni@redhat.com, 
- davem@davemloft.net, 
- willemb@google.com, 
- atenart@kernel.org
-Cc: yuehaibing@huawei.com, 
- zhangchangzhong@huawei.com, 
- netdev@vger.kernel.org, 
- virtualization@lists.linux.dev, 
- linux-kernel@vger.kernel.org, 
- steffen.klassert@secunet.com, 
- tobias@strongswan.org
-Message-ID: <68865ecee5cc4_b1f6a29442@willemb.c.googlers.com.notmuch>
-In-Reply-To: <68865594e28d8_9f93f29443@willemb.c.googlers.com.notmuch>
-References: <20250724083005.3918375-1-wangliang74@huawei.com>
- <688235273230f_39271d29430@willemb.c.googlers.com.notmuch>
- <bef878c0-4d7f-4e9a-a05d-30f6fde31e3c@huawei.com>
- <68865594e28d8_9f93f29443@willemb.c.googlers.com.notmuch>
-Subject: Re: [PATCH net] net: check the minimum value of gso size in
- virtio_net_hdr_to_skb()
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02EE81724;
+	Sun, 27 Jul 2025 17:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753636670; cv=pass; b=YNOF4pgkK20SS62tD+OwDKHEBwnPonjfQ3+ftxRtLBepKiB+eLh2T38oRwRsD52xkYVGJBf6m6XovROSUMJf+3KRYqOs/elI/jl8R5jWJUApeoGnebj+2BwhelVB1p64aynQb+CCCRAd3b1183aGa7KIZZ+/vf6VkffnXoRaJSQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753636670; c=relaxed/simple;
+	bh=vaZVi9JGzmaEuqLuOHnGEW875OUE5MDTLAfJ99AXyC8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=NNkl0C4MQUjVh7SHDv9cCpfiY2yPhEcCGJ9k7+rGvO2rSX0zQbpyLVoHrFJi8MJxcMgkiHIOD0rIb+OPeuCevkd2SOG4PQei9hFomZm/3dOI1vLVBteF62x3vgofxsmVHumF6ssFksM+x4NlTUYFOKDpVFntV06f95ZCkmuUwXU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Weriryb1; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753636655; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=B577dRGqexhbKFmKh+c69nTrdBqUCCXicwKcYtjllSgUPia1A+RpsvEa5dNFH7ub56m5wOK65Wz1xVqWkG3DLUN6QwOwQydpU9weSmRda4GotE4ccPtSziT8vuUXvUHmhEMxvTxnJFqrd8zItRZuIiZU2rGW/BCNxpLehAgLeMw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753636655; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=okMS3/1S2iNACQoSQsLmd+UrausqQyZ3VLxCRlug4Ms=; 
+	b=NE1vKRizRodnTf1W7Oq3r07FzpGNG9cUdtd1U1S5E7eQVnxzLFbeZ8OF6/GBdqUMX8PRKXxrJuUIg7sBmZolObyKCtyBspNuUI+2BSt/XtGC6PDq/tub/pDTYH45/aQD8A5t6jvMsz6+oMqHrWAbocYJbEODCvjAGJsjtoNVbbA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753636655;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=okMS3/1S2iNACQoSQsLmd+UrausqQyZ3VLxCRlug4Ms=;
+	b=Weriryb14hInS3N7Krl4CI3aHdf5FK6q9ZytzElz+vDWBe7pDHn4dHgHFg/HGagm
+	Eu9ID4K+8gwbV4KbwjvPDU/5mh0V7W+Tcanica7FkNs+0fWj1doJeSOsvY3g5BxFVuY
+	9uE9WsZ0XfE27kbF+V4TG3LdZrYEy1w3waXIWuts=
+Received: by mx.zohomail.com with SMTPS id 1753636652954912.0321119634177;
+	Sun, 27 Jul 2025 10:17:32 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [RFC PATCH v2 0/4] rust: miscdevice: abstraction for uring-cmd
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250727150329.27433-1-sidong.yang@furiosa.ai>
+Date: Sun, 27 Jul 2025 14:17:05 -0300
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Jens Axboe <axboe@kernel.dk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <CACB1415-0535-4A05-B904-5F388A1F7C08@collabora.com>
+References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
+To: Sidong Yang <sidong.yang@furiosa.ai>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Willem de Bruijn wrote:
-> Wang Liang wrote:
-> > =
+Hi Sidong,
 
-> > =E5=9C=A8 2025/7/24 21:29, Willem de Bruijn =E5=86=99=E9=81=93:
-> > > Wang Liang wrote:
-> > >> When sending a packet with virtio_net_hdr to tun device, if the gs=
-o_type
-> > >> in virtio_net_hdr is SKB_GSO_UDP and the gso_size is less than udp=
-hdr
-> > >> size, below crash may happen.
-> > >>
-> > > gso_size is the size of the segment payload, excluding the transpor=
-t
-> > > header.
-> > >
-> > > This is probably not the right approach.
-> > >
-> > > Not sure how a GSO skb can be built that is shorter than even the
-> > > transport header. Maybe an skb_dump of the GSO skb can be elucidati=
-ng.
-> > >>   			return -EINVAL;
-> > >>   =
+> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wrote:
+>=20
+> This patch series implemens an abstraction for io-uring sqe and cmd =
+and
+> adds uring_cmd callback for miscdevice. Also there is an example that =
+use
+> uring_cmd in rust-miscdevice sample.
+>=20
+> I received a email from kernel bot that `io_tw_state` is not FFI-safe.
+> It seems that the struct has no field how can I fix this?
 
-> > >>   		/* Too small packets are not really GSO ones. */
-> > >> -- =
+It=E2=80=99s not something that you introduced. Empty structs are =
+problematic when
+used in FFI, because  ZSTs are not defined in the C standard AFAIK, =
+although
+they are supported in some compilers. For example, this is not illegal =
+nor UB
+in GCC [0]. The docs say:
 
-> > >> 2.34.1
-> > >>
-> > =
+> The structure has size zero.
 
-> > Thanks for your review!
-> =
+This aligns with Rust's treatment of ZSTs, which are also zero-sized, so =
+I
+don't think this will be a problem, but lets wait for others to chime =
+in.
 
-> Thanks for the dump and repro.
-> =
+I'll review this tomorrow.
 
-> I can indeed reproduce, only with the UDP_ENCAP_ESPINUDP setsockopt.
-> =
+>=20
+> Changelog:
+> v2:
+> * use pinned &mut for IoUringCmd
+> * add missing safety comments
+> * use write_volatile for read uring_cmd in sample
+>=20
+> Sidong Yang (4):
+>  rust: bindings: add io_uring headers in bindings_helper.h
+>  rust: io_uring: introduce rust abstraction for io-uring cmd
+>  rust: miscdevice: add uring_cmd() for MiscDevice trait
+>  samples: rust: rust_misc_device: add uring_cmd example
+>=20
+> rust/bindings/bindings_helper.h  |   2 +
+> rust/kernel/io_uring.rs          | 183 +++++++++++++++++++++++++++++++
+> rust/kernel/lib.rs               |   1 +
+> rust/kernel/miscdevice.rs        |  41 +++++++
+> samples/rust/rust_misc_device.rs |  34 ++++++
+> 5 files changed, 261 insertions(+)
+> create mode 100644 rust/kernel/io_uring.rs
+>=20
+> --=20
+> 2.43.0
+>=20
+>=20
 
-> > Here is the skb_dump result:
-> > =
 
-> >  =C2=A0=C2=A0=C2=A0 skb len=3D4 headroom=3D98 headlen=3D4 tailroom=3D=
-282
-> >  =C2=A0=C2=A0=C2=A0 mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D=
-98
-> >  =C2=A0=C2=A0=C2=A0 shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D0 type=
-=3D0 segs=3D0))
-> >  =C2=A0=C2=A0=C2=A0 csum(0x8c start=3D140 offset=3D0 ip_summed=3D1 co=
-mplete_sw=3D0 valid=3D1 level=3D0)
-> =
+=E2=80=94 Daniel
 
-> So this is as expected not the original GSO skb, but a segment,
-> after udp_rcv_segment from udp_queue_rcv_skb.
-> =
+[0]: https://gcc.gnu.org/onlinedocs/gcc/Empty-Structures.html
 
-> It is a packet with skb->data pointing to the transport header, and
-> only 4B length. So this is an illegal UDP packet with length shorter
-> than sizeof(struct udphdr).
-> =
-
-> The packet does not enter xfrm4_gro_udp_encap_rcv, so we can exclude
-> that.
-> =
-
-> It does enter __xfrm4_udp_encap_rcv, which will return 1 because the
-> pskb_may_pull will fail. There is a negative integer overflow just
-> before that:
-> =
-
->         len =3D skb->len - sizeof(struct udphdr);
->         if (!pskb_may_pull(skb, sizeof(struct udphdr) + min(len, 8)))
->                 return 1;
-> =
-
-> This is true for all the segments btw, not just the last one. On
-> return of 1 here, the packet does not enter encap_rcv but gets
-> passed to the socket as a normal UDP packet:
-> =
-
-> 	/* If it's a keepalive packet, then just eat it.
-> 	 * If it's an encapsulated packet, then pass it to the
-> 	 * IPsec xfrm input.
-> 	 * Returns 0 if skb passed to xfrm or was dropped.
-> 	 * Returns >0 if skb should be passed to UDP.
-> 	 * Returns <0 if skb should be resubmitted (-ret is protocol)
-> 	 */
-> 	int xfrm4_udp_encap_rcv(struct sock *sk, struct sk_buff *skb)
-> =
-
-> But so the real bug, an skb with 4B in the UDP layer happens before
-> that.
-> =
-
-> An skb_dump in udp_queue_rcv_skb of the GSO skb shows
-> =
-
-> [  174.151409] skb len=3D190 headroom=3D64 headlen=3D190 tailroom=3D66
-> [  174.151409] mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98
-> [  174.151409] shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D4 type=3D6553=
-8 segs=3D0))
-> [  174.151409] csum(0x8c start=3D140 offset=3D0 ip_summed=3D3 complete_=
-sw=3D0 valid=3D1 level=3D0)
-> [  174.151409] hash(0x0 sw=3D0 l4=3D0) proto=3D0x0800 pkttype=3D2 iif=3D=
-8
-> [  174.151409] priority=3D0x0 mark=3D0x0 alloc_cpu=3D1 vlan_all=3D0x0
-> [  174.151409] encapsulation=3D0 inner(proto=3D0x0000, mac=3D0, net=3D0=
-, trans=3D0)
-> [  174.152101] dev name=3Dtun0 feat=3D0x00002000000048c1
-> =
-
-> And of segs[0] after segmentation
-> =
-
-> [  103.081442] skb len=3D38 headroom=3D64 headlen=3D38 tailroom=3D218
-> [  103.081442] mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98
-> [  103.081442] shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D0 type=3D0 se=
-gs=3D0))
-> [  103.081442] csum(0x8c start=3D140 offset=3D0 ip_summed=3D1 complete_=
-sw=3D0 valid=3D1 level=3D0)
-> [  103.081442] hash(0x0 sw=3D0 l4=3D0) proto=3D0x0800 pkttype=3D2 iif=3D=
-8
-> [  103.081442] priority=3D0x0 mark=3D0x0 alloc_cpu=3D0 vlan_all=3D0x0
-> [  103.081442] encapsulation=3D0 inner(proto=3D0x0000, mac=3D0, net=3D0=
-, trans=3D0)
-> =
-
-> So here translen is already 38 - (98-64) =3D=3D 38 - 34 =3D=3D 4.
-> =
-
-> So the bug happens in segmentation.
-> =
-
-> [ongoing ..]
-
-Oh of course, this is udp fragmentation offload (UFO):
-VIRTIO_NET_HDR_GSO_UDP.
-
-So only the first packet has an UDP header, and that explains why the
-other packets are only 4B.
-
-They are not UDP packets, but they have already entered the UDP stack
-due to this being GSO applied in udp_queue_rcv_skb.
-
-That was never intended to be used for UFO. Only for GRO, which does
-not build such packets.
-
-Maybe we should just drop UFO (SKB_GSO_UDP) packets in this code path?
 
 
