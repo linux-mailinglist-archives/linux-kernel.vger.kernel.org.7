@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-747261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B4EB131A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:59:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA51B131A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 22:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866B01897890
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:59:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BE787AAB64
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F387922A7E0;
-	Sun, 27 Jul 2025 19:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D531DF994;
+	Sun, 27 Jul 2025 20:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6IaTgi+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CTa8ehkx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LsxiZE5C"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C71221737;
-	Sun, 27 Jul 2025 19:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA7328FD
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 20:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753646305; cv=none; b=XT/h3SEs7ovNBBAE60ZA25+OLjLbj6qd6Yww675kdZMIm0w/dl3OCNNVRioH/e8YRBUHbZg0xXoO+py+rn8wm9Hby2kInUfZlAcmL+LiSbcWPrvC8g5W/xaNPtbk0CHQ2mlMq7pSHDqYopDbUklMZt1LKBtm6SK84r72JN4AknY=
+	t=1753646467; cv=none; b=UVzW77cJsHvywGArLqjTJEiCjuN9LtOfnEYqFyrMooHG01GLnNBAmgK2Wd14Dyxx/Tt3rBDTMtTAX50YGblj/+eU9kqEEX4u3WkDfpCl8XQFTnTxb4KAD3QO1z8KBwwPRTS1MFCjKXJrXLRsIiUasUAq7CFD7pL/TvcSD8QnM/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753646305; c=relaxed/simple;
-	bh=bjWayEAh716FQw0T22n60tZUcfpnlVvoEVEBTenLoFk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BcGwECp2FhshqlvX6UvOm9KtsVpVqCIOxwcWD0Iss7ql6j73kVOSorGmgUbvi53IMBpRFiZ9K625wLSMC4QNfQloGlUs2ecKw/0rBr4fbGxEd2MCUQlJC8CdRgiHW1pC14/W4E+ROodYXRhyg0MGv7BT+ev2EEaCvFdFxH1y6OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6IaTgi+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59DEBC4CEEB;
-	Sun, 27 Jul 2025 19:58:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753646304;
-	bh=bjWayEAh716FQw0T22n60tZUcfpnlVvoEVEBTenLoFk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k6IaTgi++JzLAgZk6lhLqW2G2KKCOKmToowTLMUW4B/tD5JVhvgYU534FyMBgz4aQ
-	 nDMsT5+z0ydR5IAvXUSOC0WqYqFBggfpgzMKguw0JtJ3XEgifnbJnOMWtYRiEAcrCP
-	 vUarHCzm12kqx64+QrrKFIDGVfn46Rl+xVY2UOXTBeeIjrgsfm91ika52A40Rv38YU
-	 iiMmFGC5cSou/aHcy71M8M1AY77gYowYzz3qovPwItgZMstTTMziyiQTA2SoBoJ+xO
-	 sjmYWLMBUj2KCtsqdLxMd9i72vyflamLlMtdz6VG61a+pJgFdg59CHTCy65Ug/sI+8
-	 CcSOUleEaJqtw==
-From: Sasha Levin <sashal@kernel.org>
-To: corbet@lwn.net,
-	linux-doc@vger.kernel.org,
-	workflows@vger.kernel.org
-Cc: sashal@kernel.org,
-	josh@joshtriplett.org,
-	kees@kernel.org,
-	konstantin@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org
-Subject: [PATCH 4/4] agents: add legal requirements and agent attribution guidelines
-Date: Sun, 27 Jul 2025 15:58:02 -0400
-Message-Id: <20250727195802.2222764-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250727195802.2222764-1-sashal@kernel.org>
-References: <20250727195802.2222764-1-sashal@kernel.org>
+	s=arc-20240116; t=1753646467; c=relaxed/simple;
+	bh=Qnxxzg3TFev7oYQSrRtV59WVhivLzMLJXc0XjXCxNlE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oDpsJ9YIsXELuZzSKw8dV9RhsFuv+fVPv+Vwi19iJtfMJFqoS6gmRLRdMz5vpCCnQG0X4SYZe/2J4jW1XDssHU4Jv6hb+bls7i5jg0qlqanzDC8vKIAEvjG/rQiVrtGXlRo5WVNYZyok9XDU+cmH6lqY72UjMY8Hx7H3+iJY0F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CTa8ehkx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LsxiZE5C; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753646462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rIrgu5wKRNf7iAsgIe656cIacVYchBogqE8UafUxd/A=;
+	b=CTa8ehkxKgM+yTJs7GjVyKPeOEXpx6C1/OOqNuCksdKaX7Vv3QRZe+Ak83/jRkf5l5l+RH
+	JCj5JmPkgEEuV9JCrz1A4ypjtMmXZdcegbuFyufiQwC8atiPSx2BtYONuB/ya284NCCSma
+	z/r9edocDsipCM0TK9Lf2bFr44EdjujG44d6BIDSj/LMMotLQpvLxbh8laKz9Z2G3qtarA
+	BQTln5Ez5x7XDfijpcDZLjuor5f7HEB/OLKyTJzJdhG2ouybh6xqQ0xu2v0i6YvnWZgFB2
+	6RHwh3sXIFyGL3/JkaadHawWyOJzXuut4usgpwume8wuMaXC/X9z+avtDnOvmQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753646462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rIrgu5wKRNf7iAsgIe656cIacVYchBogqE8UafUxd/A=;
+	b=LsxiZE5CNpMdehpLw0JpbClpZLrE5JSDTOchlD3v9gAVflrKKdoL3dTuym8gE1w/r41iiT
+	ICJ5dnQzSNgF5eAg==
+To: Yipeng Zou <zouyipeng@huawei.com>, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ peterz@infradead.org, sohil.mehta@intel.com, rui.zhang@intel.com,
+ arnd@arndb.de, yuntao.wang@linux.dev, linux-kernel@vger.kernel.org
+Cc: zouyipeng@huawei.com
+Subject: Re: [BUG REPORT] x86/apic: CPU Hang in x86 VM During Kdump
+In-Reply-To: <20250604083319.144500-1-zouyipeng@huawei.com>
+References: <20250604083319.144500-1-zouyipeng@huawei.com>
+Date: Sun, 27 Jul 2025 22:01:00 +0200
+Message-ID: <87ecu1pfnn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-And below is the first test of this scheme:
+On Wed, Jun 04 2025 at 08:33, Yipeng Zou wrote:
+> Recently, A issue has been reported that CPU hang in x86 VM.
+>
+> The CPU halted during Kdump likely due to IPI issues when one CPU was
+> rebooting and another was in Kdump:
+>
+> CPU0			  CPU2
+> ========================  ======================
+> reboot			  Panic
+> machine shutdown	  Kdump
+> 			  machine shutdown
+> stop other cpus
+> 			  stop other cpus
+> ...			  ...
+> local_irq_disable	  local_irq_disable
+> send_IPIs(REBOOT)	  [critical regions]
+> [critical regions]	  1) send_IPIs(REBOOT)
 
-Co-developed-by: Claude claude-opus-4-20250514
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- Documentation/agents/index.rst |  3 ++-
- Documentation/agents/legal.rst | 42 ++++++++++++++++++++++++++++++++++
- Documentation/agents/main.rst  |  5 ++++
- 3 files changed, 49 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/agents/legal.rst
+After staring more at it, this makes absolutely no sense at all.
 
-diff --git a/Documentation/agents/index.rst b/Documentation/agents/index.rst
-index 354af3f025e5..982602db3349 100644
---- a/Documentation/agents/index.rst
-+++ b/Documentation/agents/index.rst
-@@ -9,4 +9,5 @@ Agents
- 
-    main
-    core
--   coding-style
-\ No newline at end of file
-+   coding-style
-+   legal
-\ No newline at end of file
-diff --git a/Documentation/agents/legal.rst b/Documentation/agents/legal.rst
-new file mode 100644
-index 000000000000..67e6b2cdff9d
---- /dev/null
-+++ b/Documentation/agents/legal.rst
-@@ -0,0 +1,42 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============================
-+Legal Requirements for Agents
-+===============================
-+
-+This document outlines critical legal requirements that coding agents must follow when working with the Linux kernel codebase.
-+
-+Licensing Requirements
-+----------------------
-+
-+**GPL-2.0 License**
-+  The Linux kernel is licensed under GPL-2.0 only with a syscall exception. Coding agents MUST follow this licensing rule with no exceptions. Any code contributed must be compatible with this license.
-+
-+**SPDX License Identifiers**
-+  All files must have proper SPDX license identifiers. For most kernel source files, this should be the first line of the file in the appropriate comment format:
-+
-+  - For C source/header files: ``// SPDX-License-Identifier: GPL-2.0``
-+  - For scripts: ``# SPDX-License-Identifier: GPL-2.0``
-+  - For documentation: ``.. SPDX-License-Identifier: GPL-2.0``
-+
-+Signed-off-by Restriction
-+-------------------------
-+
-+Coding assistants **MUST NOT** add a ``Signed-off-by`` tag pointing to themselves. The ``Signed-off-by`` tag represents a legal certification by a human developer that they have the right to submit the code under the open source license.
-+
-+Only the human user running the coding assistant should add their ``Signed-off-by`` tag to commits. The agent's contribution is acknowledged through the ``Co-developed-by`` tag as described below.
-+
-+Agent Attribution Requirement
-+-----------------------------
-+
-+When creating commits, coding agents **MUST** identify themselves by including the following tag in the commit message::
-+
-+    Co-developed-by: $AGENT_NAME $AGENT_MODEL $AGENT_VERSION
-+
-+Examples:
-+
-+- ``Co-developed-by: Claude claude-3-opus-20240229``
-+- ``Co-developed-by: GitHub-Copilot GPT-4 v1.0.0``
-+- ``Co-developed-by: Cursor gpt-4-turbo-2024-04-09``
-+
-+This transparency helps maintainers and reviewers understand that a coding agent was involved in the development process.
-diff --git a/Documentation/agents/main.rst b/Documentation/agents/main.rst
-index 8e0463794b76..9ef75978a2e6 100644
---- a/Documentation/agents/main.rst
-+++ b/Documentation/agents/main.rst
-@@ -15,3 +15,8 @@ Coding Style
- ------------
- 
- For coding style guidelines and rules, see :doc:`coding-style`
-+
-+Legal Requirements
-+------------------
-+
-+For licensing, attribution, and legal requirements, see :doc:`legal`
--- 
-2.39.5
+stop_other_cpus() does:
+
+	/* Only proceed if this is the first CPU to reach this code */
+	old_cpu = -1;
+	this_cpu = smp_processor_id();
+	if (!atomic_try_cmpxchg(&stopping_cpu, &old_cpu, this_cpu))
+		return;
+
+So CPU2 _cannot_ reach the code, which issues the reboot IPIs, because
+at that point @stopping_cpu == 0 ergo the cmpxchg() fails.
+
+So what actually happens in this case is:
+
+CPU0			  CPU2
+========================  ======================
+reboot			  Panic
+machine shutdown	  Kdump
+			  machine_crash_shutdown()
+stop other cpus           local_irq_disable()
+try_cmpxchg() succeeds	  stop other cpus
+...		          try_cmpxchg() fails	  
+send_IPIs(REBOOT)	  --> REBOOT vector becomes pending in IRR
+wait timeout
+
+And from there on everything becomes a lottery as CPU0 continues to
+execute and CPU2 proceeds and jumps into the crash kernel...
+
+This whole logic is broken...
+
+Nevertheless the patch I sent earlier is definitely making things more
+robust, but it won't solve your particular problem.
+
+Thanks,
+
+        tglx
+
+
+
 
 
