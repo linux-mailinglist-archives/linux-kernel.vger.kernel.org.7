@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-746957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDB8B12D9B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 04:31:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B3EB12D9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 04:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 345337AEF91
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 02:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BABF4A2737
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 02:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94217376F1;
-	Sun, 27 Jul 2025 02:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAA417A305;
+	Sun, 27 Jul 2025 02:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVU7MVZ0"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXUa9Wwk"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71F1405F7
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 02:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35DC18E20
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 02:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753583482; cv=none; b=c5tPBD0+YEZmugJNNhw+eHN8Ic84H8HbVk4yw4eDLuLyAZhRmL1MC9ULN0madGum8ncgVZDA9gi3xekq1RMEhC7ho+JMsODkNkULvLQUJ7HL8C65Y6b8AVIVL0squnTD3y61SmR66RVkJiMUsOb3WH1S+7Kv3CpBiP05aglD7SM=
+	t=1753583490; cv=none; b=fENMM2wn7eDHbkJbq2v6+VyYEDApwYkFQGRX8AkmdSY3EotrNNXILesOdbwtcz4C16fE5/BbllyqDrFrIvDDi5JPPh08PLCUiugvxnrAWUMeSroVHD2n5mYgy9hI0GP2o4S4uGUlYmk5P2TXzOtsaZeLe3mMOGSn6dEhpNkGfyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753583482; c=relaxed/simple;
-	bh=tnn2nroos66y+pt+fAcKyyAnw3FSgfgMBVP4or840QM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UgPupZKqC7PvCUZQsZGpMaVyKezbN3CoAX+sNLPI0cuPm0zZL8Vd5PsNBFn1qdxef5I4fz8mBVXB+vh11YgMM9gefHLbDW9ZhsrXdXvmX8/LBbBdCP3JLXSfyKJJ+N1W3LZtmKtN3Zmu9ArKKw9Athxv8kk6CWIJzHI8XBoqu1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVU7MVZ0; arc=none smtp.client-ip=209.85.215.181
+	s=arc-20240116; t=1753583490; c=relaxed/simple;
+	bh=Jsy709GoxU3wlTCw7VSAwO3/E0HBYE7ri8vIrPRkABQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F77J2lOwiXFfprFFdo+Euz+blG/9nKlP3KiZD+G5LOA71PX9VGgZyL5RG5SJdPUE6b4WhgXfz0yuZ+X7HjDyuIgOavfAw+fVePoLXQs/p0SLRhevdhC5bGqIgD/EiPb2uYzze9eH2LjfkGLwo20IN8TEMgHPSUASgELc+pi56UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gXUa9Wwk; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b31f0ef5f7aso1862851a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 19:31:19 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-315f6b20cf9so3709150a91.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 19:31:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753583479; x=1754188279; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753583488; x=1754188288; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4SWYJ4qjUquB32s9qM+uQa3+k3zdSDbpNk7y3W1uMFw=;
-        b=GVU7MVZ0N747Iwf9m40kFv2z3q4aEfk7tdp7PMq71kIGMgm7wmEIPHluYuyTd3Oxxk
-         fsE4E+cQKN3MN58/+0gSogcEJSbDr/sYt5CkNhlnCXfxroWMFLw+fyxD3tqXWavNcRYb
-         ZHlaBvXR2vMK8HSn1swdGVmZ63cfWxP+ilsAqSdvRkQR4BnF5820TvqbfaR74dp8XajT
-         kr7JVt/tFobB8fASq7z9rnBpIvdZNPGWSXFKCjzjAzs/hZ00tSyZBbdEWJkRGk/nNuc/
-         flHRBysqAHSW0iTeT7alMsr8nUpkDTQbB5eOelIQ4fwucL66Y5wY2YX0YxKmLEsVsLYV
-         uXew==
+        bh=WVzXbCr6ZYLPMUjF1Nvt5pZ4AASbWAEjTVHPcC7iE4E=;
+        b=gXUa9WwkjI6KF9JSiZgyhpwMGl3R+sKMhcrDEO/pi1zppMYcyqlLRlBObxKVPKtigG
+         9HszJEoDiNGIbbu4G/uDKShKbMyuwKft2Ooy/e1VDNh4mByHr1C++yTB7xGdd8yKOOxW
+         j+OCgFMsNh/Nd9nrCsMc+gpG+KC9OOAYyZj2JIP7QaDLkOgi2bkIGYqT7ptcOQEv41Cl
+         OTm5Wwl/D+RFP1U57l9ntooeOMsfdLfaTgxvrzjuLK/Ohls6QvhKNNcUhy23Cd7rhJRF
+         FYJByQxY0g4re1Ve+g8PAEHAEIttLOAYTut38mt/LnqlS/ipm98r4HWH4pUv6JaDxp/5
+         HmMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753583479; x=1754188279;
+        d=1e100.net; s=20230601; t=1753583488; x=1754188288;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4SWYJ4qjUquB32s9qM+uQa3+k3zdSDbpNk7y3W1uMFw=;
-        b=dPSpktZ9LZB8knt8KkKoQlcEutP8iR1SSOaoxqKKwqKbuetcCZxZvkV0JANHJZ9WdV
-         UkZkLq+z/nxEDT8XLGX6SiGFw38qyqW8bFMx33VNKxX7xzUY44FHd1DCIuYosIWUXK7U
-         b7r5Deccc3+Uwj8grAbwgvSsU+3WVwfZTRKZqWqz7N0M/X7tWqBn6Ng1LAGwn2W8W8WH
-         AKgu+RJuhSVLn/llGQay+zE3ggjne18L9Pk73knhm6qgCx9wtOv7zAGsmkycelvh7Tzu
-         7ys1T7qkqtZaH3jVd/flHFPH80XLCvifYcq1RC7LRGzAep2nZs1Lg6z3SXz89c1Vnqwx
-         uN2A==
-X-Gm-Message-State: AOJu0YxCe6ty80q6F0n1RbEiqXWL2NcDXnqEWX3kIZcsSyVa5o2xiUAd
-	DdwX7WngKGN88Ir3FrCyoKpkiTmX0a28qKERmWOZR+4PtfG39JpNCbBjL53RTMSf
-X-Gm-Gg: ASbGncvxGDREoKZHfYrkP95Exuld9BDV/d2PA/v1U9VQ6Fa2XZmSpzn9Iv5KGXK2hQB
-	4EkfHlODYtPMTXXwDlyZR92DP5P4VZifbdqBIc3JDnt0QHqJcqVt79NI0F/OUPv6m/hkUlHRWhy
-	KHVwOmm7nJaMGYd5btEhX35p3gQTWJPkDT4mMULbzgkAVR9Mx9qO7kXh6EL8FanTm3HJAJJ0JTE
-	sl5jc460T0/0r4ROHKpkNE6IbdBXEm2jUO3fiqdqmyAlsV1oiX44+Kfgjf0Jk3JVGb45ZWUFvIH
-	J31GXXEI8Fm8jvv8tz068xJ+iuOX3c1h4+WxK2uKpp+N2suqbpo1MBlx8CDuKO8Igk61PVeAGzo
-	252aKANoJMc08vh71r8/bQkaaG5dkh9/OTu8J4rxqRnMqo9f6x07nnIDBWkM57Z9l3JY=
-X-Google-Smtp-Source: AGHT+IFlUumYMvSPwSX2IAlslEEquRDvOx/uF7kHRlvkKzslpqWOICEannUPd4JrNBFcyDne4NwHZg==
-X-Received: by 2002:a17:90b:380d:b0:311:cc4e:516f with SMTP id 98e67ed59e1d1-31e77b1ad3cmr10107118a91.31.1753583478704;
-        Sat, 26 Jul 2025 19:31:18 -0700 (PDT)
+        bh=WVzXbCr6ZYLPMUjF1Nvt5pZ4AASbWAEjTVHPcC7iE4E=;
+        b=GU0zTzVtEZyNmDoD98HFoxPTBS9tefVutSeA2wqdzRei5HWWkibZcC03dHPofunNzj
+         XPo4CzLxakhB2tLwd2Q3mqK0d3a7duKvtN62OcBUtvxBNdd9DRokWJx1q1UbbItoHDQY
+         hdT0tE4T7uiaZXIG/YEkCRVYcQbUUQRWrTXfGyhDUZ6yYdCkaYmWlKQ0KLqdY872Dy+M
+         On/BxCsnvVgmMK7QWmpJPIcuFCN9Rai9sKPa3WH2RKhzPGq9sPulRSGPw4InRorRjWAp
+         8FvgPN/Pfzd0Fta9c2Wr3E8kYEeFSiLVFUv28m+Kgg2pLd6nKUbrPtXO2wqzRsOZ5Jc6
+         Jsig==
+X-Gm-Message-State: AOJu0YwklgO7xVbP71FUj7T36RuJzI0NZH07pcuMY7Jbu3feH6SXMj1A
+	IV0Bm8vgL7rdsZOBCUaE4b0oi69GNZgnPLmdZFzM7yyXhoqZLRBFbFqYwh76Vqhz
+X-Gm-Gg: ASbGnct89frA/WQdUZMB3SK1OBZEIELLNMNL3gnrrYoGY9A/Wa7r1oRp0dcRYO0X5zx
+	2eophAsUTEWn8TA92oO617QNkUtHv2fFyfYFkan3i+aM8oS3bPMEAbVb46/qClZ7bihfLR0Fmpm
+	17Ano4OUiIU7ArYsV3PYIqPUxboHPKVHcLoICjPs0gGgCXi/CfyAKqFc1PuRX9G4u+HQ3G2MKzQ
+	RUWGzkF9TwUllQ3jfPTGPTHnuhtnANl8ujTFHDBrgAZ7O6d/CtA6QI89C9nm3Xlz/p443NxabzG
+	nTHpJbQthcr1pd1duVmmimuQWaURl7h7ZjI3OjjbVSFyk11O9SrwUFZalIof9+62ajZxXHnvJfs
+	Hq7J+Nu32lx2Xn0a5TjM1IZ23aBlrkt9m8bjo7q3aUC23cwhOUCG3NwUiS2Pm11/BXRA=
+X-Google-Smtp-Source: AGHT+IHs3PQ10I/jiQsS/9CBy61Wn3/wgxWpnqI0/+yb4WkZMCVEVrveE0JcdZvYL2kzukJjf33XrQ==
+X-Received: by 2002:a17:90b:3c49:b0:31c:9dc1:c700 with SMTP id 98e67ed59e1d1-31e77afeb92mr10278311a91.26.1753583487867;
+        Sat, 26 Jul 2025 19:31:27 -0700 (PDT)
 Received: from fedora (181-162-135-125.baf.movistar.cl. [181.162.135.125])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e6635f10esm6400806a91.21.2025.07.26.19.31.17
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31ebb37634bsm752225a91.29.2025.07.26.19.31.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 19:31:18 -0700 (PDT)
+        Sat, 26 Jul 2025 19:31:27 -0700 (PDT)
 From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Ignacio Pena <ignacio.pena87@gmail.com>
-Subject: [PATCH] drivers/greybus/greybus_trace.h: Fix typo 'registerd' -> 'registered'
-Date: Sat, 26 Jul 2025 22:31:23 -0400
-Message-ID: <20250727023123.82496-1-ignacio.pena87@gmail.com>
+Subject: [PATCH] drivers/i2c/busses: Fix typo 'peform' -> 'perform'
+Date: Sat, 26 Jul 2025 22:31:31 -0400
+Message-ID: <20250727023131.82533-1-ignacio.pena87@gmail.com>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,28 +90,22 @@ No functional change.
 
 Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
 ---
- drivers/greybus/greybus_trace.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-fsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/greybus/greybus_trace.h b/drivers/greybus/greybus_trace.h
-index 616a3bd61..d5263cbd7 100644
---- a/drivers/greybus/greybus_trace.h
-+++ b/drivers/greybus/greybus_trace.h
-@@ -339,12 +339,12 @@ DEFINE_INTERFACE_EVENT(gb_interface_create);
- DEFINE_INTERFACE_EVENT(gb_interface_release);
+diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
+index ae016a943..1ee38113b 100644
+--- a/drivers/i2c/busses/i2c-fsi.c
++++ b/drivers/i2c/busses/i2c-fsi.c
+@@ -489,7 +489,7 @@ static int fsi_i2c_abort(struct fsi_i2c_port *port, u32 status)
+ 	if (rc)
+ 		return rc;
  
- /*
-- * Occurs after an interface been registerd.
-+ * Occurs after an interface been registered.
-  */
- DEFINE_INTERFACE_EVENT(gb_interface_add);
- 
- /*
-- * Occurs when a registered interface gets deregisterd.
-+ * Occurs when a registered interface gets deregistered.
-  */
- DEFINE_INTERFACE_EVENT(gb_interface_del);
- 
+-	/* if sda is low, peform full bus reset */
++	/* if sda is low, perform full bus reset */
+ 	if (!(stat & I2C_STAT_SDA_IN)) {
+ 		rc = fsi_i2c_reset_bus(i2c, port);
+ 		if (rc)
 -- 
 2.50.1
 
