@@ -1,119 +1,216 @@
-Return-Path: <linux-kernel+bounces-747166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F99FB1309B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:28:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5690B130A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF7813BBA91
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8311C16A3B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E065122D79F;
-	Sun, 27 Jul 2025 16:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2919B218851;
+	Sun, 27 Jul 2025 16:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="uwpH1cn3"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbpHtpPW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DECC221DB9
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 16:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775BE286A9;
+	Sun, 27 Jul 2025 16:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753633578; cv=none; b=fqm33X4z3Jw2Q5L32nyMHf/DcKxOQSwCre+jTek9PJvHBK+3InGfQHSUDLbSEctO6mOHPEWfcHBwEp/ILysWFouJkjXpzqlMkuvMtqYqZwuJIgRbtDoPWkhN5LGScgG9J5nKRV7XIJVXTh5v/XgJfrCtjsx/8mJRdm58sizDHOk=
+	t=1753633894; cv=none; b=A1cg5GFRzU1P/E3iDR05x5ZCK60VkDxTPc62obz6eMPlsEr8pCis+pKIk9UrDUIa0QlLTaEKeIsH0F4vv9rJ5CgZ1+DJI7bMA7aoAu5hBmtO8puGu3rrLcVCgWWEqRDQh0mEAzk2woeFkI0RyZ7l+O099o5DVcysInSFP6tue+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753633578; c=relaxed/simple;
-	bh=tSpa480BxryxHVl7QXWh/TInPIAUuAoO4TN4RAD5RKE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NMRL1OA1rdGcmRhX/5lt6HAGhB0qFayWiZjeWj55WnUCDi8+h1+5OqXMkTZevb6U3q8ennGVlXiK3VX0KtciBfA0dTZqluABpE/apQkgTAkKuuIaDEvpiZUsFYQzEDovTTifHAOlvwQTyJB90DUWxAgq1DjFdRu5iWTSHwQEH6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=uwpH1cn3; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1753633574;
- bh=+IwD9MK//CM9Rt8Um/g7d3JPVvOSWALhDcyNnxAUdjk=;
- b=uwpH1cn3LSf71a3e8njYCqNdxU+eInCNzyaQ5NOux2ZJD5cjvvenkifJjxMXtZ3DyyN4YCDxt
- R+KVK2vl1IjzBdxCaeIlXqVNqrzCsv9gnX1SMjcWDMKliUA82I/qy9OZaraWY2y0vcVDKHku+rj
- a5OzFOXLyFSEwICxYEAoDeDrCwAQ0Q4FANuRaadZCRbfNBIdxAKZ45Spgh8+r38Jgv/yxK64vFU
- Crfb7cvdLLFmLCB4i/dAIQ0obDUTeKWaKgchdVhLp41enRFQT1dNRaLrpmyXSXnNU+fmuP85WcA
- BoNpgojgke3Lgud6xiWSPIWwNHKsRvgaQfRpHQqMu+8A==
-X-Forward-Email-ID: 68865320c752737c6c09a5f9
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.1.7
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <91ea1a4e-3b83-4857-a410-38425e4e5de0@kwiboo.se>
-Date: Sun, 27 Jul 2025 18:26:03 +0200
+	s=arc-20240116; t=1753633894; c=relaxed/simple;
+	bh=s6OwdlifNz9JuEFPYBMqHXhyqDHMIVdb1DTGoTpI/VI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HB1uqQAkAmCGa3DZJJjQS+Q84JP1IfESYmk38yLddCILv1iBhrh8JHyjTmHy4LvMrOWsCo1SF/dN42DeflYnWvyVwMb0BSM4tc/uGRvao3ujylJxpzP9Z6nEiAYV/E2xyrExTLONqaf00nvrDksZ4N9uIJeeejNlEFLc4cVODS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbpHtpPW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D3B8C4CEEB;
+	Sun, 27 Jul 2025 16:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753633894;
+	bh=s6OwdlifNz9JuEFPYBMqHXhyqDHMIVdb1DTGoTpI/VI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZbpHtpPWGnwId0GMOpX5Zy4vYZGYSEcIR4vO7CgaRSP/ghX6NimU7h8DvxN33l9BI
+	 YLf3SABKxLZIPyZgFNLjgOGntMATRJjwhr2zOGxSaiaD4qsKWqqjEyN3LpxGUIUVDv
+	 T8Glc7XcxT49UjU+5Atg5Yv1cDU0WKJ7TatbypzOqT/d669ZFRErOOhVceaCuATlwn
+	 JtbnN+r9HIjPxs6jgkrm/qeydJM4Y32WUkbVRbrDgwnNUjpE1rP0EsSXkszfdrF0DK
+	 azcg6m6bj0kzRAWq+dJPrZSnx9Ti67ADyst341/IB/UKMEx82k+imtSOtxKeCGXw3V
+	 IV/lfXaHrOC4g==
+Date: Sun, 27 Jul 2025 17:31:25 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org, Andy Shevchenko
+ <andy@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 5/7] hwmon: iio: Add helper function for creating
+ attributes
+Message-ID: <20250727173125.407f92fa@jic23-huawei>
+In-Reply-To: <20250715012023.2050178-6-sean.anderson@linux.dev>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+	<20250715012023.2050178-6-sean.anderson@linux.dev>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add Radxa E24C
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
- Chukun Pan <amadeus@jmu.edu.cn>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250727144409.327740-1-jonas@kwiboo.se>
- <20250727144409.327740-4-jonas@kwiboo.se>
- <72d979e8-005a-4d4d-b5d2-3f59e78574de@lunn.ch>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <72d979e8-005a-4d4d-b5d2-3f59e78574de@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
+On Mon, 14 Jul 2025 21:20:21 -0400
+Sean Anderson <sean.anderson@linux.dev> wrote:
 
-On 7/27/2025 6:15 PM, Andrew Lunn wrote:
->> +&gmac1 {
->> +	clock_in_out = "output";
->> +	phy-mode = "rgmii-id";
->> +	phy-supply = <&avdd_rtl8367rb>;
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&rgmii_miim>, <&rgmii_tx_bus2>, <&rgmii_rx_bus2>,
->> +		    <&rgmii_rgmii_clk>, <&rgmii_rgmii_bus>, <&gmac1_rstn_l>;
->> +	status = "okay";
->> +
->> +	fixed-link {
->> +		speed = <1000>;
->> +		full-duplex;
->> +	};
+> Add a helper function to create attributes and initialize their fields.
+> This reduces repetition when creating several attributes per channel.
 > 
-> A fixed-link without an obvious reason gets me asking questions...
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> ---
 > 
-> The schematic indicates there is a realtek 6387 switch on the other
-> end. rtl8365mb.c seems to support this. Is there a reason you did not
-> include this now?
-
-Sorry, this was mentioned in the cover letter, and patches to enable use
-of the switch is incoming in a separate series very shortly.
-
-"""
-This also leaves out describing the RTL8367RB-VB switch as support for
-the switch requires dt-binding and/or driver changes to make it work,
-something that will be handled in a separate follow-up series.
-"""
-
-Basically the dt-bindings prevents describing a mdio child node, yet the
-driver requires it. I have prepared a patch that relaxes the driver to
-make it all work and it should be on the list shortly.
-
-Regards,
-Jonas
-
+>  drivers/hwmon/iio_hwmon.c | 78 +++++++++++++++++++++------------------
+>  1 file changed, 42 insertions(+), 36 deletions(-)
 > 
-> 	Andrew
+> diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
+> index bba8919377eb..7dc156d2aea4 100644
+> --- a/drivers/hwmon/iio_hwmon.c
+> +++ b/drivers/hwmon/iio_hwmon.c
+> @@ -24,13 +24,15 @@
+>   * @attr_group:		the group of attributes
+>   * @groups:		null terminated array of attribute groups
+>   * @attrs:		null terminated array of attribute pointers.
+> + * @num_attrs:          length of @attrs
+>   */
+>  struct iio_hwmon_state {
+>  	struct iio_channel *channels;
+> -	int num_channels;
+>  	struct attribute_group attr_group;
+>  	const struct attribute_group *groups[2];
+>  	struct attribute **attrs;
+> +	size_t num_attrs;
+
+It's a little unfortunate that we need to keep the state around when it
+is only relevant in probe.
+
+> +	int num_channels;
+>  };
+>  
+>  static ssize_t iio_hwmon_read_label(struct device *dev,
+> @@ -93,12 +95,39 @@ static ssize_t iio_hwmon_read_val(struct device *dev,
+>  	return sprintf(buf, "%d\n", result);
+>  }
+>  
+> +static int add_device_attr(struct device *dev, struct iio_hwmon_state *st,
+
+That's a very generic name. I'd prefix it to avoid potential namespace
+issues in future.
+
+> +			   ssize_t (*show)(struct device *dev,
+> +					   struct device_attribute *attr,
+> +					   char *buf),
+> +			   int i, const char *fmt, ...)
+> +{
+> +	struct sensor_device_attribute *a;
+> +	va_list ap;
+> +
+> +	a = devm_kzalloc(dev, sizeof(*a), GFP_KERNEL);
+> +	if (!a)
+> +		return -ENOMEM;
+> +
+> +	sysfs_attr_init(&a->dev_attr.attr);
+> +	va_start(ap, fmt);
+> +	a->dev_attr.attr.name = devm_kvasprintf(dev, GFP_KERNEL, fmt, ap);
+> +	va_end(ap);
+> +	if (!a->dev_attr.attr.name)
+> +		return -ENOMEM;
+> +
+> +	a->dev_attr.show = show;
+> +	a->dev_attr.attr.mode = 0444;
+> +	a->index = i;
+> +
+> +	st->attrs[st->num_attrs++] = &a->dev_attr.attr
+
+I wonder if we should break this up into
+	static attribute *iio_hwmon_alloc_attr();
+
+and setting st->attrs in the caller as then we can make num_attrs a local
+variable.
+
+> +	return 0;
+> +}
+> +
+>  static int iio_hwmon_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct iio_hwmon_state *st;
+> -	struct sensor_device_attribute *a;
+> -	int ret, i, attr = 0;
+> +	int ret, i;
+>  	int in_i = 1, temp_i = 1, curr_i = 1, humidity_i = 1, power_i = 1;
+>  	enum iio_chan_type type;
+>  	struct iio_channel *channels;
+> @@ -136,11 +165,6 @@ static int iio_hwmon_probe(struct platform_device *pdev)
+>  		const char *prefix;
+>  		int n;
+>  
+> -		a = devm_kzalloc(dev, sizeof(*a), GFP_KERNEL);
+> -		if (a == NULL)
+> -			return -ENOMEM;
+> -
+> -		sysfs_attr_init(&a->dev_attr.attr);
+>  		ret = iio_get_channel_type(&st->channels[i], &type);
+>  		if (ret < 0)
+>  			return ret;
+> @@ -170,36 +194,18 @@ static int iio_hwmon_probe(struct platform_device *pdev)
+>  			return -EINVAL;
+>  		}
+>  
+> -		a->dev_attr.attr.name = devm_kasprintf(dev, GFP_KERNEL,
+> -						       "%s%d_input",
+> -						       prefix, n);
+> -		if (a->dev_attr.attr.name == NULL)
+> -			return -ENOMEM;
+> -
+> -		a->dev_attr.show = iio_hwmon_read_val;
+> -		a->dev_attr.attr.mode = 0444;
+> -		a->index = i;
+> -		st->attrs[attr++] = &a->dev_attr.attr;
+> +		ret = add_device_attr(dev, st, iio_hwmon_read_val, i,
+> +				      "%s%d_input", prefix, n);
+> +		if (ret)
+> +			return ret;
+>  
+>  		/* Let's see if we have a label... */
+> -		if (iio_read_channel_label(&st->channels[i], buf) < 0)
+> -			continue;
+> -
+> -		a = devm_kzalloc(dev, sizeof(*a), GFP_KERNEL);
+> -		if (a == NULL)
+> -			return -ENOMEM;
+> -
+> -		sysfs_attr_init(&a->dev_attr.attr);
+> -		a->dev_attr.attr.name = devm_kasprintf(dev, GFP_KERNEL,
+> -						       "%s%d_label",
+> -						       prefix, n);
+> -		if (!a->dev_attr.attr.name)
+> -			return -ENOMEM;
+> -
+> -		a->dev_attr.show = iio_hwmon_read_label;
+> -		a->dev_attr.attr.mode = 0444;
+> -		a->index = i;
+> -		st->attrs[attr++] = &a->dev_attr.attr;
+> +		if (iio_read_channel_label(&st->channels[i], buf) >= 0) {
+> +			ret = add_device_attr(dev, st, iio_hwmon_read_label,
+> +					      i, "%s%d_label", prefix, n);
+> +			if (ret)
+> +				return ret;
+> +		}
+>  	}
+>  
+>  	devm_free_pages(dev, (unsigned long)buf);
 
 
