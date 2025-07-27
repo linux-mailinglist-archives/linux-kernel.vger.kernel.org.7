@@ -1,140 +1,153 @@
-Return-Path: <linux-kernel+bounces-747002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9A1B12E18
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 09:34:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157B8B12E26
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 09:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863473B79F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 07:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 335C317AD8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 07:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F6F1DE891;
-	Sun, 27 Jul 2025 07:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AAE1DF97D;
+	Sun, 27 Jul 2025 07:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5hWyPrC"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b="CnHoGnSS"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EA94315E
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 07:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FDF433A4;
+	Sun, 27 Jul 2025 07:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753601677; cv=none; b=X/X4v1YNCTgEQsvQtDnaIhmk53mbnO/CL+Q7g7pAPGlMlG0n9RnCKEFd6gpVAGyENyGIFBgYL8zApmWaImcj4bqwqHmP9N0PZUwtm5Kz88SSzGFgi4X9t56XdqYkZgGQkUyDJhqOZGug7G95AUa8XyPIN/zsYHduIL6M20MLbdg=
+	t=1753603069; cv=none; b=gsueje4cb932DsjfFz+Bvst7jKr+XJnPdSzV0QsQClkT+oVFc42qfwVCn2IhNrvOtc/NhcYglXbbOWcJGqPFzTfgpDIOhhko2lbOw0VnM8W07IUOVpjANb5Tbagwdx2RBENfvBcmkiSYMnNJQXlo3e+uM6ifGXnM/DcfVNEMWIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753601677; c=relaxed/simple;
-	bh=8+bnU58LaspktJem6W/nlUrpzrNHGPqCKrRuXE0xU68=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=l7LNmsOl3mcVa23NwSg9VtcY9pirlfQYL9DJfSguj6+DOYaC/Hvsdv12reQP6ffUO7yBWP6yPL1LALI3zR8DaFksWMKC7fqqN0VW7tLACPGCPRl5AE4mnFded7lVJ69nYLOsraUuwG93NOAzDOWpKtuddjGWGkwp1bcMznRFLfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V5hWyPrC; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b783265641so428985f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 00:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753601674; x=1754206474; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=68/AY/ySukW1KvXzDtVzgA9hvMtx8WltT8ZbSyTDtt8=;
-        b=V5hWyPrCTHecPmSIwVW0kedUcbH8wJPJ7blMjqnYHd7Ft9XQOYy4qKUuhnG+wnWCvj
-         hvVdzSnLciGjmNWNo8AST+M/0kAn9Hk08vc0ueNpGRs7vsGrjbr65vKQPZhZwFX1NnF8
-         +nWZNVtz1GDFEwfG9Yh/YnkEFNdgSVGevn212dOMoGDPJYxkGZz4j3JzkwU/DbyiFnv6
-         5mZql1WwkeWy2VNkEM1DPe5YBJSiX1+3ITfYopM7IGiSdP8gY2OPcUFabODdXjOaQcb4
-         PhqhvzRXBvhxgGJuvzN45xsigmGCqW25TOVuKai8GKLE5KtiaWcqIR7LDO9kN6cXCuoc
-         daqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753601674; x=1754206474;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=68/AY/ySukW1KvXzDtVzgA9hvMtx8WltT8ZbSyTDtt8=;
-        b=COceoc3401HlRYdi9LHfjnxvk7I0PVokrzx7w6dVlLHpY4wLBIWb+05MCZ1nHE9tPf
-         EEqy7+yRkacapx3LT69JJrH+OS0ghWzJZRthzkrW7cn9sLrUNwFNEEOZ+YVR2aEz+D8r
-         a1QWPCoBjlAmt8YC8ZAeXeXGRqrOWbFPSmdIkQ8aZbQnfp2N0nt5KDPHnhs9z2QrJCch
-         QGnQobDJ3XUuUQuF1sV6woxqZhxQS585AM0CaRUgV5MXPes0yRd/COtieLTR8o2wvpfo
-         KpysEekTqpIPjErmVr+oxZ42fY0GR1gh/gS69S01/+SqvXWVDCODUSgHtiGolQCHzTtv
-         QI/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW8SsLPx13Qcsu6F5la8qR80EixvxLaeKJ8oYAMRe+XjX5OvgU+cdc1Y+uumAsVTt8cOYnZcIFqX34ngho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8T1KRvV9nvRbBOLVfVh8IqPHS0sQd5itybfxZL7ywWqhAJEOQ
-	S0iE8P9+TUqiKsL34E/VIyZ6FA+hTRlLzXF+GfEF6cprxk/kRgIOWkXDzRqWRHnoayjmQuO31nh
-	7wqOkUpX7KKiodfITXg==
-X-Google-Smtp-Source: AGHT+IHoTwJpLl6IfPSiJvLh0y07TsSZ8n5EfvV9N25CW1WA4KKDIWG6gN/cQjkXU4JcZHm5rVLArTDuOg174jw=
-X-Received: from wmqb14.prod.google.com ([2002:a05:600c:4e0e:b0:456:1a41:f922])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:290a:b0:3b7:6804:9362 with SMTP id ffacd0b85a97d-3b7765fda75mr5447346f8f.26.1753601674392;
- Sun, 27 Jul 2025 00:34:34 -0700 (PDT)
-Date: Sun, 27 Jul 2025 07:34:33 +0000
-In-Reply-To: <20250725202840.2251768-1-ojeda@kernel.org>
+	s=arc-20240116; t=1753603069; c=relaxed/simple;
+	bh=SdELJwIbA+c51zLR+hAFh0+Z2/Xc+ZfDCiE78vHesQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kkPHhCtAyVckpJpQOJsBmQkR/ytuBV1QO/H8JFHhi77tLGbbuZxSBLznsUNAf5oc/dyUy1+GN824HN6u8bYPKXEd/GbyZqiDmSsWNSx22rw/xfxt7r+QrEY/rz6QqIg/r4FkF7VWvjvvnOAAm6cVyM6UYYqegQ0RXDMAlLohIMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us; spf=pass smtp.mailfrom=gmx.us; dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b=CnHoGnSS; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.us
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.us;
+	s=s31663417; t=1753603055; x=1754207855; i=len.bao@gmx.us;
+	bh=hYUGBfp2u4s0lenU7GMdlp9Z1BD2mSHG7Ed7amzTntk=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=CnHoGnSSPQLcbeO4L4ixvYGJyxuX5iBVf0uH8ZYRjaUYb2FF8igm+yuSx1jQJISj
+	 fiSru6I0ECWgV75lpAxZ0a4ItX+N6tEvps06brXfbV+0XdDToU5arf9IOWyVzR96Q
+	 9GVzAYLOa77KBWMG6BCWdrE/qXUbfJ51KwhUKwad8MFOgGZaSVad1VqLKsr01bnMw
+	 8yKpxzuEzqmE/edh1ESM1YG5itpJx0yncht9WtPnapOFvBz3op6qMcJ7jADTEFIbS
+	 mZANt5K97RG/PkJXRnCvz8ttZay7F247MDGIO2ilH+CHgwvVaebFd8SILKYDwYDBP
+	 4YgdmXUuhvvmFW3/Uw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from ubuntu ([79.159.189.119]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1My36N-1uTsn311ah-00ulTu; Sun, 27
+ Jul 2025 09:57:34 +0200
+From: Len Bao <len.bao@gmx.us>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	Len Bao <len.bao@gmx.us>
+Subject: [PATCH] leds: max77705: Function return instead of variable assignment
+Date: Sun, 27 Jul 2025 07:56:45 +0000
+Message-ID: <20250727075649.34496-1-len.bao@gmx.us>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250725202840.2251768-1-ojeda@kernel.org>
-Message-ID: <aIXWiYB5LiFYTN6p@google.com>
-Subject: Re: [PATCH] MAINTAINERS: add "DEVICE I/O & IRQ [RUST]" entry
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BkG4EHYQA14N2zQ/aei/3d4PHFHOyfY4SuJgaqdJO7cpiRIl37r
+ OE1Y8gnCXKrQZrlPUPHmlnoKWKakN0uOcuddSi7kVPq63PMezUo1opuK70i8hVCJhVS6zwC
+ l0ti3OHGaiefBlycfvP16tY6ibbeFVd6ScjLF/HW16HhEiaENQY6dMzTNYx9yRULRa4GRVJ
+ xCl5iVxclOBUKfKPkBvrg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wCdwL6+QkQs=;fTEd4qvNF+sJqk+Bbb37a1rhKXP
+ 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
+ WqxpoNZjMIw==
 
-On Fri, Jul 25, 2025 at 10:28:40PM +0200, Miguel Ojeda wrote:
-> This entry will handle device I/O patches and abstractions (such as
-> memory-mapped IO and system resources series [1]), as well as IRQ ones
-> (such as the `request_irq` series [2]).
-> 
-> Patches will flow through driver-core, at least for the time being.
-> 
-> Danilo, Alice and Daniel will maintain it.
-> 
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: Daniel Almeida <daniel.almeida@collabora.com>
-> Link: https://lore.kernel.org/rust-for-linux/20250717-topics-tyr-platform_iomem-v15-0-beca780b77e3@collabora.com/ [1]
-> Link: https://lore.kernel.org/rust-for-linux/20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com/ [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Coverity noticed that assigning value -EINVAL to 'ret' in the if
+statement is useless because 'ret' is overwritten a few lines later.
+However, afer inspect the code, this warning reveals that we need to
+return -EIVANL instead of the variable assignment. So, fix it.
 
-Acked-by: Alice Ryhl <aliceryhl@google.com>
+Coverity-id: 1646104
+Fixes: aebb5fc9a0d8 ("leds: max77705: Add LEDs support")
+Signed-off-by: Len Bao <len.bao@gmx.us>
+=2D--
+ drivers/leds/leds-max77705.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  MAINTAINERS | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 10850512c118..ededa04ef97b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6920,6 +6920,21 @@ F:	drivers/devfreq/event/
->  F:	include/dt-bindings/pmu/exynos_ppmu.h
->  F:	include/linux/devfreq-event.h
->  
-> +DEVICE I/O & IRQ [RUST]
-> +M:	Danilo Krummrich <dakr@kernel.org>
-> +M:	Alice Ryhl <aliceryhl@google.com>
-> +M:	Daniel Almeida <daniel.almeida@collabora.com>
-> +L:	rust-for-linux@vger.kernel.org
-> +S:	Supported
-> +W:	https://rust-for-linux.com
-> +B:	https://github.com/Rust-for-Linux/linux/issues
-> +C:	https://rust-for-linux.zulipchat.com
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
-> +F:	rust/kernel/io.rs
-> +F:	rust/kernel/io/
-> +F:	rust/kernel/irq.rs
-> +F:	rust/kernel/irq/
-> +
->  DEVICE RESOURCE MANAGEMENT HELPERS
->  M:	Hans de Goede <hansg@kernel.org>
->  R:	Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-> -- 
-> 2.50.1
-> 
+diff --git a/drivers/leds/leds-max77705.c b/drivers/leds/leds-max77705.c
+index 933cb4f19..b7403b3fc 100644
+=2D-- a/drivers/leds/leds-max77705.c
++++ b/drivers/leds/leds-max77705.c
+@@ -180,7 +180,7 @@ static int max77705_add_led(struct device *dev, struct=
+ regmap *regmap, struct fw
+=20
+ 		ret =3D fwnode_property_read_u32(np, "reg", &reg);
+ 		if (ret || reg >=3D MAX77705_LED_NUM_LEDS)
+-			ret =3D -EINVAL;
++			return -EINVAL;
+=20
+ 		info =3D devm_kcalloc(dev, num_channels, sizeof(*info), GFP_KERNEL);
+ 		if (!info)
+=2D-=20
+2.43.0
+
 
