@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-746955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FF6B12D99
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 04:31:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08896B12D9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 04:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA96189E4C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 02:31:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 400A017E6CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 02:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E8817C21C;
-	Sun, 27 Jul 2025 02:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DCD17A2E1;
+	Sun, 27 Jul 2025 02:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmYcT9+l"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH30Xly8"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D246D2745C
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 02:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8AC7262E
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 02:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753583463; cv=none; b=ldug1lSGeerH5oUNpxQvZu8nHlOmsUOva/F/4aq56aHwP35Fdi+BlJLgcYQDsMWG/a4WQk3yNzgJnkZQfJDzPZIoW0JO6wSWfuLIGWiOhMFSarFYm3MEKkOcepXQi/Ym2cWSPdQws+VdK8OG9gWJuZQIhQyqBW+2mW7eq+64leY=
+	t=1753583472; cv=none; b=pYiJ7BSYILpDqxsrYsd3FMp65T/AEW3Pj8HKbFSDJpXOSa8b+cmPrw+sgoJp1bIk47MATTfVuF4y8+2BzYiVqDZPZ0vLYPyX4HoipCpXxOXbm8caP/Pd6MFHFJEFODMgzuBSkF7qNlt+2b9a81f0fzwTEBCyyTovwkclZZom/rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753583463; c=relaxed/simple;
-	bh=fqs60mNymrnRSUVGHkXrnH4Z3yjihDz9M8sUk+MLMEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZgX7NEjuz+repONLmz4Q5GcNKLZU2cY9g35pIirknj70/pqfNlRqCPA7MitKdxHidMLG9ZqxnNHts4KnEzZ0gu87sYEl1pvUW856lwQU9zC4GsdIRKz2ALWDvEMkweecDwrAaVFF5itevxrXlJiWvBB97j9omln0CGEf7nd+v3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmYcT9+l; arc=none smtp.client-ip=209.85.215.173
+	s=arc-20240116; t=1753583472; c=relaxed/simple;
+	bh=xfo+bWUvpL0RQv4Uz0mN3TajrOvcQWcymyzlLRGe7VI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eO3FTo1aYd2141Ydee246Se3ymSbAZFcbIGSC5ZO6QN955Dbjmj3OgcO4NR2r6+vGkiGPzuaF9+xoliTqDINcSb4/O8XKLKyPexDJ5UFk8OE3VsplyI/SrkUlzBAqcI5xY88ajL3SnhWzAhgAXPlAGEoQDWCNASG6VOKJ+duHOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lH30Xly8; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b170c99aa49so2466718a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 19:31:01 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23aeac7d77aso31114585ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 19:31:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753583461; x=1754188261; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753583470; x=1754188270; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Hj+APWp+57RtT613nJGuVXjTE+L9D8ELpPO8/QoU/I=;
-        b=hmYcT9+lMHP6/rGqHlHwYZKC21bgdZugnc2rEWnqVHlzF5qaUC//zwBOIEKHkafVH0
-         xilFszi5Zw3YArzXgkX0PtvUzMLZkL1k13gii7iaRz1m4ilyDavb/Zvq7PjKgjbieBny
-         k0Y4gr6WfwJog0H2vdMqKMJv+toSXfu3oJoEv9kTZIAQCSvRRLHRT3rA7IfZJ8Lua7ID
-         oUT78+gez5duRv7m8oXvOrJXdmYH51/q4joXHESfTTZNxTvcSG5Zy4ngPSEHpcqhYtpa
-         Vm1XTmHpGqeUp+OHAQ0BLSuIZSb8j2tilJBjSOHWv5aekw3WFVtJt2fJ4CLRsX4cmtB2
-         ltSA==
+        bh=zSXpmUAcH8gKuzVRHGmOArDUK3DY07YV2csb8d7rjaU=;
+        b=lH30Xly89B5OqvU7Z4vJaLUlTbl8a1s7wyjLfbaBuvOXpkm1mondIu5PO0a2bwI60o
+         vtGtf1S8RK4gFFahEQB0LV/gF/FehurXYBONBUXQXJdvXSt/kj9cR9Cr4ZqcopcfYBtB
+         1vU6ufd/aVT09ihd0dR7FcqHW05gnQTM8DntUySYHpkKi4lq9kl+WlEwtJ5gI8l+w4I2
+         nfPb1AzSjFOCDG976uUk1nIWXqzkaEM8aPW0b2Is+XkZiXBiqxntC30GbTVZM5rxVIzA
+         yeX/Qvi4+rQYMK88awbCWYcV+tZ1vMyHhuyZZGLlVcMPeJBNJf5Mj/cisTaV78CFph8t
+         FarA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753583461; x=1754188261;
+        d=1e100.net; s=20230601; t=1753583470; x=1754188270;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9Hj+APWp+57RtT613nJGuVXjTE+L9D8ELpPO8/QoU/I=;
-        b=V5yQD5lbQu7nqFHaikhQnNFajyEUtWL6qDj+IFDfrYdDUFy06UC2Y4QKXwMSOz9ct+
-         pEoL0muFdCMoNwrwvlkd4EQEOsII8OUm+nRfW3JgMqSXpO5yWQ4PiIeCjYgUnjWCg/KV
-         B5yXOiWQXk2OQIV4++l1DPi9X3zcCjLgDWeGIMWdCM6L9ZnOkzorlRvRibzS1utai7OH
-         pWpbM0ThDqWojsJjL6+EM6WC+nqEWvooUfLmKQnLmnzulhZLJibOvmedDbrlwzSvNI1c
-         Kz6uQBt8TdZ/B2Yn07B8cjEi8EHdExVSg6Cq8XORd5ouAltCTUrkuy9ef1OHGFthxe0b
-         UvMQ==
-X-Gm-Message-State: AOJu0YzMT6f+9DS9mrhKB//4ogaKUmfO1aVWreQit6rzXe5c2ubp9SJd
-	0lZOXKEkT2OSKXW1JFP6781QRyJBevrPyWLDqbPgWbZgS2uCO34dNqlULTVu0uY4
-X-Gm-Gg: ASbGncuhxHGQL/igGCgklv/R76VqAlS1vLLT53dMSqdNaj56KtwqsK2VSxrrdpLjyh4
-	tu0ZNe0dzB9dD4Vz2d/CTwQXh3+4mytVEixS6E7s0KrBraweJnQEzy4pNkv9zPXrsIJ8DPt0B75
-	bFrwIXni6KmTBiT7h8Qyjx+NUa92Rzkbe5wsdLCr3RhrN++ijN9LiMBFOsDusSUa5coCosNvtFX
-	yzke0BSj/S3jgB9MGXmRMI6ywLh6kQQ4H8c4JLo12NCVVGKAsyzQ1ILH3SJnhu9QdqdxL0CRuEK
-	k922Z12yW90jMdmc1VQqNwjSP1YlHb9kg5MdIQGYWuZzsx9vhrmq7Gh1FqXfMcInup3Ow884tsX
-	JxRdozs7ZXpBTRIWX5bzTPXUoZBRSAshYdzudkTGfRm08Cfx7BXDreSVA
-X-Google-Smtp-Source: AGHT+IFGN72qQiIgJbBwPYjLkxR1mCSgTPqXwml2o+mCoR35bEJBNktyKAttWewSRaQz3x1DsmANUA==
-X-Received: by 2002:a05:6a20:9150:b0:23d:491b:76a6 with SMTP id adf61e73a8af0-23d700e83a9mr10961885637.20.1753583460708;
-        Sat, 26 Jul 2025 19:31:00 -0700 (PDT)
+        bh=zSXpmUAcH8gKuzVRHGmOArDUK3DY07YV2csb8d7rjaU=;
+        b=c1u+d7kfgyMYMhr4ZNv2+5qUXNcWvFwJ3lecnmjdOjFcK3a+bOgVswCWXufgOH5NGT
+         PEHw0hMAIY+Jrg5hkdbWz9Qnbe01FkoFKiGF+1itx3eq/eRwJ2UGGkdTNfI1dEU8KaXP
+         WaoJD3C/dqEMg3aoNM9O/8yrp51LKWB0EDuopSJuZryVw8/PzFxQuiuRSueNqhOFKynM
+         2NM4ZFl9W2JMbGd2cO0x29YHRj5Buwj3SjeG44N8iRfBotFK0edD6kY5cB/1sdsRtWqt
+         1FWBPIsIJzo9uhjCC/QIQYD79KCylBsc7BNdMqUPPRjrSdnDJdkUxtMS1HRCBDOabAtW
+         x8yw==
+X-Gm-Message-State: AOJu0Yyx1NUW5XpkmhVPcnYoKq9P4F66QGyv2AgTtUIVM0HIS0XOg8og
+	OeN3wM5FRESstuv+Iv/eoy9/B3/hXALRnytgGlZM2ayTxiiMyTBgT0EiZeY0nYU/
+X-Gm-Gg: ASbGncu1zV6O+u1hPjzDlp7vCkHruAb0dO7ysZIU3Y1NppAndQv3LikkJgWSCPU1ePm
+	MaD5MCqJMOkoiwZk03mOUTuBgLaTMGKMWGE8iCKS4u5E38khKKe2qDdrpxDkxBMGel30xJpVm6J
+	nwluogIg2rtnH2RKtNKZI2VXioJSUjpm7E60g0DhKCHT4Ik9oJp1XaoD/ejPEa4Fk9C28UlAbSc
+	mNwLJaQMK3z97NpBOIQ1ELSYY52oGqgE3I/TccpZESUdjY76/R/pXC6rLZyHnDfma2GPNQKsXd8
+	tpWiSq4Sech5R5LfhcPhMybMZROaCAfFLYyoeLe27jwnCvhkHOLrYNDZ52zQNo9U3UnXK+lnYMr
+	3xqCvHXVzVVtWb4ctp0qecHk7TU71meKhys9GXE9ixZl9Jin71hammRHR
+X-Google-Smtp-Source: AGHT+IGAvn7Ed62DAr/MyZFpxuIOquQC0pRaTwqVeopbq8hW4Eyw3iYIBtHpM/mDsM1MauTqqulWRQ==
+X-Received: by 2002:a17:903:903:b0:237:e696:3d56 with SMTP id d9443c01a7336-23fb3126909mr121197825ad.32.1753583470067;
+        Sat, 26 Jul 2025 19:31:10 -0700 (PDT)
 Received: from fedora (181-162-135-125.baf.movistar.cl. [181.162.135.125])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f568ac1sm2391442a12.5.2025.07.26.19.30.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23ff1edf4cbsm10082775ad.184.2025.07.26.19.31.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 19:31:00 -0700 (PDT)
+        Sat, 26 Jul 2025 19:31:09 -0700 (PDT)
 From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Ignacio Pena <ignacio.pena87@gmail.com>
-Subject: [PATCH] drivers/gpu/drm: Fix typo 'minimun' -> 'minimum'
-Date: Sat, 26 Jul 2025 22:31:04 -0400
-Message-ID: <20250727023104.82427-1-ignacio.pena87@gmail.com>
+Subject: [PATCH] drivers/gpu/drm: Fix typo 'paramter' -> 'parameter'
+Date: Sat, 26 Jul 2025 22:31:14 -0400
+Message-ID: <20250727023114.82461-1-ignacio.pena87@gmail.com>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,22 +90,22 @@ No functional change.
 
 Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
 ---
- drivers/gpu/drm/radeon/radeon.h | 2 +-
+ drivers/gpu/drm/amd/include/atombios.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon.h b/drivers/gpu/drm/radeon/radeon.h
-index 63c47585a..6af55b3bd 100644
---- a/drivers/gpu/drm/radeon/radeon.h
-+++ b/drivers/gpu/drm/radeon/radeon.h
-@@ -1156,7 +1156,7 @@ struct radeon_wb {
-  * @needed_bandwidth:   current bandwidth needs
-  *
-  * It keeps track of various data needed to take powermanagement decision.
-- * Bandwidth need is used to determine minimun clock of the GPU and memory.
-+ * Bandwidth need is used to determine minimum clock of the GPU and memory.
-  * Equation between gpu/memory clock and available bandwidth is hw dependent
-  * (type of memory, bus size, efficiency, ...)
-  */
+diff --git a/drivers/gpu/drm/amd/include/atombios.h b/drivers/gpu/drm/amd/include/atombios.h
+index b344acefc..2a709f93d 100644
+--- a/drivers/gpu/drm/amd/include/atombios.h
++++ b/drivers/gpu/drm/amd/include/atombios.h
+@@ -2200,7 +2200,7 @@ typedef struct _GET_ENGINE_CLOCK_PARAMETERS
+ // Following Structures and constant may be obsolete
+ /****************************************************************************/
+ //Maxium 8 bytes,the data read in will be placed in the parameter space.
+-//Read operaion successeful when the paramter space is non-zero, otherwise read operation failed
++//Read operaion successeful when the parameter space is non-zero, otherwise read operation failed
+ typedef struct _READ_EDID_FROM_HW_I2C_DATA_PARAMETERS
+ {
+   USHORT    usPrescale;         //Ratio between Engine clock and I2C clock
 -- 
 2.50.1
 
