@@ -1,216 +1,158 @@
-Return-Path: <linux-kernel+bounces-747169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5690B130A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:31:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5978B130A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8311C16A3B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0261897576
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2919B218851;
-	Sun, 27 Jul 2025 16:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196E921C9F6;
+	Sun, 27 Jul 2025 16:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbpHtpPW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmpgdVt3"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775BE286A9;
-	Sun, 27 Jul 2025 16:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9367321B9CE;
+	Sun, 27 Jul 2025 16:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753633894; cv=none; b=A1cg5GFRzU1P/E3iDR05x5ZCK60VkDxTPc62obz6eMPlsEr8pCis+pKIk9UrDUIa0QlLTaEKeIsH0F4vv9rJ5CgZ1+DJI7bMA7aoAu5hBmtO8puGu3rrLcVCgWWEqRDQh0mEAzk2woeFkI0RyZ7l+O099o5DVcysInSFP6tue+w=
+	t=1753634119; cv=none; b=dKm/mtocKvMPkuuOp73iFVUxWyX/l2qAJHzH5y/135E5NjdzclouQSrtB3tfc8iEyUmvU5Q+wFjowdHX2fW3+b8cvprL2X75E4T9uyYNggPlx1uySp4TbGD0Ky4/M7oO5Qt8ANLiVl8O5suZLAoiAdjofC8rgp7KQBPn9Ll89lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753633894; c=relaxed/simple;
-	bh=s6OwdlifNz9JuEFPYBMqHXhyqDHMIVdb1DTGoTpI/VI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HB1uqQAkAmCGa3DZJJjQS+Q84JP1IfESYmk38yLddCILv1iBhrh8JHyjTmHy4LvMrOWsCo1SF/dN42DeflYnWvyVwMb0BSM4tc/uGRvao3ujylJxpzP9Z6nEiAYV/E2xyrExTLONqaf00nvrDksZ4N9uIJeeejNlEFLc4cVODS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbpHtpPW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D3B8C4CEEB;
-	Sun, 27 Jul 2025 16:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753633894;
-	bh=s6OwdlifNz9JuEFPYBMqHXhyqDHMIVdb1DTGoTpI/VI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZbpHtpPWGnwId0GMOpX5Zy4vYZGYSEcIR4vO7CgaRSP/ghX6NimU7h8DvxN33l9BI
-	 YLf3SABKxLZIPyZgFNLjgOGntMATRJjwhr2zOGxSaiaD4qsKWqqjEyN3LpxGUIUVDv
-	 T8Glc7XcxT49UjU+5Atg5Yv1cDU0WKJ7TatbypzOqT/d669ZFRErOOhVceaCuATlwn
-	 JtbnN+r9HIjPxs6jgkrm/qeydJM4Y32WUkbVRbrDgwnNUjpE1rP0EsSXkszfdrF0DK
-	 azcg6m6bj0kzRAWq+dJPrZSnx9Ti67ADyst341/IB/UKMEx82k+imtSOtxKeCGXw3V
-	 IV/lfXaHrOC4g==
-Date: Sun, 27 Jul 2025 17:31:25 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org, Andy Shevchenko
- <andy@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 5/7] hwmon: iio: Add helper function for creating
- attributes
-Message-ID: <20250727173125.407f92fa@jic23-huawei>
-In-Reply-To: <20250715012023.2050178-6-sean.anderson@linux.dev>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
-	<20250715012023.2050178-6-sean.anderson@linux.dev>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753634119; c=relaxed/simple;
+	bh=VBLmlWDOyMYFgPc94fMQRoz1ikpH8y2if/N2Yj1yvMI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bWFErnn9WWVXZiL0nNOFUWaw7JjYNnpvcRH1pPrSms/Rq+rcPLMyvS+1tDukAFUtaNhjkCC8JU0uJF7T9YsxKBkzwy5W23UNUGRHOFl0HSltTEJi50uddl2SrXqXvgQHtf/gBQryQCiSj69kT5ZWA+9FIBaSewlWoIijbS9bBZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmpgdVt3; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b31c84b8052so4206362a12.1;
+        Sun, 27 Jul 2025 09:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753634117; x=1754238917; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xi/pacCOnG+zF7RB9PA3nOBBI8Rbz28pr1Put8fWaN0=;
+        b=RmpgdVt3AuKVYtkewT7Q1Z6bfkTyF3Rvsf0COnaZyLpP8aATxAhuaU+gYCatnvXYYi
+         +pt/SvAnuQpRactbhFQS31hzACebx+/I5cov6pMZSqehngH42mldHDT5KJcyK8W7TkmC
+         C6C261mwbzU+p/1Al89zZd7Chg6CKxY86lJuZiFKmJx3S4q7qdQLPBeqi/baKNhqrHQY
+         r7orxaYTPA7n7TFBr6qf0IoarrjjPyWotY10auokQtwL7RsKdoWXNLCwGAt6yZMFVrBm
+         6f9QWdgRkuX5ytgWxzZnOdmcA/AKxBGaJrExVYajJHcBs3xKp5WfF+8nqoHAQuz4I0Ld
+         HXGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753634117; x=1754238917;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xi/pacCOnG+zF7RB9PA3nOBBI8Rbz28pr1Put8fWaN0=;
+        b=U5IrvExu0uo98JpoSiDvv6wXv59Frem9V5F29FTzRCz9h+7G0nqOPx32lS2TWNU7W+
+         GDHZrUFoqHBc6yqBZ745qEzXYM4wFIHWU5K5bwk8zJINIGw6cCh2Z4I6GTxHRl0n9b7F
+         ILjaJ80hl3bZK566Mr8efo9X6OfP0SfXbWykB84oYCCS5zpQI0wwlXtLmzXVmS1HWNXz
+         AtPyVMq9KY9VFobnVGimAghNKdaATmWFZcqGvY1EVDNHmfOgoAnV/aAWDWV8m59IxCU9
+         Q9bZ2xSLUhyw1t9mDknQlRVhF58wkbvSJ/+pvEV/Vz5Ci/JHv4db+wdZ07XBPfif5PgY
+         4+5g==
+X-Forwarded-Encrypted: i=1; AJvYcCU4YOPbEbq6X726s9t012aGby0AsHDk8jjlAGxDFP1zCRMQ4hlyj5vx+lONS3gSGItpyffEd8BtDt4r+A==@vger.kernel.org, AJvYcCUG03h3B/4wF0qQjg2WMyTmTnax3HU7sNK/HebRyyHNRJ6RqCTt7f6NfwNvZdu7vkLpoQiHP9XoAIzXKqSz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1Ch/saUtk/fUpED4YxId4zqj2bOzzu9hk8cAR39TdDnEms1xO
+	4UR1SX9GekhK9W7tUTum+yYZlIZP/l6gKojsKJsEIKljBJRN4cSgaeeWRXBny8OoAbnWkAa0Tjc
+	b874H+cKSVHp0B1BV6GWUEGqA2FArnXk=
+X-Gm-Gg: ASbGncvsJjZPLimygAFzCGUOp3RIRff3okONVDAuzP+D/fHNbu5jg7AMNyulrXJXIzW
+	+I01Q3wFqiTItY+HEN6gb2qFpOsJTO4CA52Khyl04Zw6WzPQjRpkSpDRHz7pPfzcRsMoC18MOjr
+	lOYbeD895iEkC8VO7J+XjEP7aRxckEPJ23zeOQp8kzLwE/x7mP7za4vgy6Bl+XGgqWdMxbQG5eT
+	4qkINU=
+X-Google-Smtp-Source: AGHT+IEnBZIjNpzsu2OtGSerulQExSPADHVmoRas1xbF5oNLsN4hlZqbEhZsg0APSZxFCRdj2L5xmSeNWdeq4VeR8Ds=
+X-Received: by 2002:a17:90b:3e8b:b0:31e:ec02:229b with SMTP id
+ 98e67ed59e1d1-31eec022a8bmr1272504a91.20.1753634116772; Sun, 27 Jul 2025
+ 09:35:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250724083001.362882-1-yizhou.tang@shopee.com>
+ <20250724083001.362882-4-yizhou.tang@shopee.com> <nk2qqgxickxelo6a7ywxwan2fshjkfygzdb6sooe3v4cl5f3ob@kvejyp5t2cmf>
+In-Reply-To: <nk2qqgxickxelo6a7ywxwan2fshjkfygzdb6sooe3v4cl5f3ob@kvejyp5t2cmf>
+From: Yizhou Tang <tangyeechou@gmail.com>
+Date: Mon, 28 Jul 2025 00:35:05 +0800
+X-Gm-Features: Ac12FXzYe6t-D5QYvYLUTqZOzDNiM4OUKs8O3VbIQFvPki00ivhsu3tqpqRUIJs
+Message-ID: <CAOB9oObOcbTU8s-rnqSeVKjCjM4Z6ySZzkkLamQ5nvVTrTH_6A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] blk-wbt: doc: Update the doc of the wbt_lat_usec interface
+To: Jan Kara <jack@suse.cz>
+Cc: Tang Yizhou <yizhou.tang@shopee.com>, axboe@kernel.dk, hch@lst.de, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 14 Jul 2025 21:20:21 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+On Fri, Jul 25, 2025 at 11:49=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 24-07-25 16:30:01, Tang Yizhou wrote:
+> > From: Tang Yizhou <yizhou.tang@shopee.com>
+> >
+> > The symbol wb_window_usec cannot be found. Update the doc to reflect th=
+e
+> > latest implementation, in other words, the cur_win_nsec member of struc=
+t
+> > rq_wb.
+> >
+> > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+>
+> I think the name should be actually 'curr_win_nsec' because that's the na=
+me
+> of this value shown in debugfs.
+>
+>                                                                 Honza
 
-> Add a helper function to create attributes and initialize their fields.
-> This reduces repetition when creating several attributes per channel.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
->  drivers/hwmon/iio_hwmon.c | 78 +++++++++++++++++++++------------------
->  1 file changed, 42 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
-> index bba8919377eb..7dc156d2aea4 100644
-> --- a/drivers/hwmon/iio_hwmon.c
-> +++ b/drivers/hwmon/iio_hwmon.c
-> @@ -24,13 +24,15 @@
->   * @attr_group:		the group of attributes
->   * @groups:		null terminated array of attribute groups
->   * @attrs:		null terminated array of attribute pointers.
-> + * @num_attrs:          length of @attrs
->   */
->  struct iio_hwmon_state {
->  	struct iio_channel *channels;
-> -	int num_channels;
->  	struct attribute_group attr_group;
->  	const struct attribute_group *groups[2];
->  	struct attribute **attrs;
-> +	size_t num_attrs;
+Agreed, I will make the change in the next patch.
 
-It's a little unfortunate that we need to keep the state around when it
-is only relevant in probe.
+Thanks,
+Yi
 
-> +	int num_channels;
->  };
->  
->  static ssize_t iio_hwmon_read_label(struct device *dev,
-> @@ -93,12 +95,39 @@ static ssize_t iio_hwmon_read_val(struct device *dev,
->  	return sprintf(buf, "%d\n", result);
->  }
->  
-> +static int add_device_attr(struct device *dev, struct iio_hwmon_state *st,
-
-That's a very generic name. I'd prefix it to avoid potential namespace
-issues in future.
-
-> +			   ssize_t (*show)(struct device *dev,
-> +					   struct device_attribute *attr,
-> +					   char *buf),
-> +			   int i, const char *fmt, ...)
-> +{
-> +	struct sensor_device_attribute *a;
-> +	va_list ap;
-> +
-> +	a = devm_kzalloc(dev, sizeof(*a), GFP_KERNEL);
-> +	if (!a)
-> +		return -ENOMEM;
-> +
-> +	sysfs_attr_init(&a->dev_attr.attr);
-> +	va_start(ap, fmt);
-> +	a->dev_attr.attr.name = devm_kvasprintf(dev, GFP_KERNEL, fmt, ap);
-> +	va_end(ap);
-> +	if (!a->dev_attr.attr.name)
-> +		return -ENOMEM;
-> +
-> +	a->dev_attr.show = show;
-> +	a->dev_attr.attr.mode = 0444;
-> +	a->index = i;
-> +
-> +	st->attrs[st->num_attrs++] = &a->dev_attr.attr
-
-I wonder if we should break this up into
-	static attribute *iio_hwmon_alloc_attr();
-
-and setting st->attrs in the caller as then we can make num_attrs a local
-variable.
-
-> +	return 0;
-> +}
-> +
->  static int iio_hwmon_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct iio_hwmon_state *st;
-> -	struct sensor_device_attribute *a;
-> -	int ret, i, attr = 0;
-> +	int ret, i;
->  	int in_i = 1, temp_i = 1, curr_i = 1, humidity_i = 1, power_i = 1;
->  	enum iio_chan_type type;
->  	struct iio_channel *channels;
-> @@ -136,11 +165,6 @@ static int iio_hwmon_probe(struct platform_device *pdev)
->  		const char *prefix;
->  		int n;
->  
-> -		a = devm_kzalloc(dev, sizeof(*a), GFP_KERNEL);
-> -		if (a == NULL)
-> -			return -ENOMEM;
-> -
-> -		sysfs_attr_init(&a->dev_attr.attr);
->  		ret = iio_get_channel_type(&st->channels[i], &type);
->  		if (ret < 0)
->  			return ret;
-> @@ -170,36 +194,18 @@ static int iio_hwmon_probe(struct platform_device *pdev)
->  			return -EINVAL;
->  		}
->  
-> -		a->dev_attr.attr.name = devm_kasprintf(dev, GFP_KERNEL,
-> -						       "%s%d_input",
-> -						       prefix, n);
-> -		if (a->dev_attr.attr.name == NULL)
-> -			return -ENOMEM;
-> -
-> -		a->dev_attr.show = iio_hwmon_read_val;
-> -		a->dev_attr.attr.mode = 0444;
-> -		a->index = i;
-> -		st->attrs[attr++] = &a->dev_attr.attr;
-> +		ret = add_device_attr(dev, st, iio_hwmon_read_val, i,
-> +				      "%s%d_input", prefix, n);
-> +		if (ret)
-> +			return ret;
->  
->  		/* Let's see if we have a label... */
-> -		if (iio_read_channel_label(&st->channels[i], buf) < 0)
-> -			continue;
-> -
-> -		a = devm_kzalloc(dev, sizeof(*a), GFP_KERNEL);
-> -		if (a == NULL)
-> -			return -ENOMEM;
-> -
-> -		sysfs_attr_init(&a->dev_attr.attr);
-> -		a->dev_attr.attr.name = devm_kasprintf(dev, GFP_KERNEL,
-> -						       "%s%d_label",
-> -						       prefix, n);
-> -		if (!a->dev_attr.attr.name)
-> -			return -ENOMEM;
-> -
-> -		a->dev_attr.show = iio_hwmon_read_label;
-> -		a->dev_attr.attr.mode = 0444;
-> -		a->index = i;
-> -		st->attrs[attr++] = &a->dev_attr.attr;
-> +		if (iio_read_channel_label(&st->channels[i], buf) >= 0) {
-> +			ret = add_device_attr(dev, st, iio_hwmon_read_label,
-> +					      i, "%s%d_label", prefix, n);
-> +			if (ret)
-> +				return ret;
-> +		}
->  	}
->  
->  	devm_free_pages(dev, (unsigned long)buf);
-
+>
+> > ---
+> >  Documentation/ABI/stable/sysfs-block | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/s=
+table/sysfs-block
+> > index 4ba771b56b3b..7bb4dce73eca 100644
+> > --- a/Documentation/ABI/stable/sysfs-block
+> > +++ b/Documentation/ABI/stable/sysfs-block
+> > @@ -731,11 +731,11 @@ Contact:        linux-block@vger.kernel.org
+> >  Description:
+> >               [RW] If the device is registered for writeback throttling=
+, then
+> >               this file shows the target minimum read latency. If this =
+latency
+> > -             is exceeded in a given window of time (see wb_window_usec=
+), then
+> > -             the writeback throttling will start scaling back writes. =
+Writing
+> > -             a value of '0' to this file disables the feature. Writing=
+ a
+> > -             value of '-1' to this file resets the value to the defaul=
+t
+> > -             setting.
+> > +             is exceeded in a given window of time (see the cur_win_ns=
+ec
+> > +             member of struct rq_wb), then the writeback throttling wi=
+ll
+> > +             start scaling back writes. Writing a value of '0' to this=
+ file
+> > +             disables the feature. Writing a value of '-1' to this fil=
+e
+> > +             resets the value to the default setting.
+> >
+> >
+> >  What:                /sys/block/<disk>/queue/write_cache
+> > --
+> > 2.25.1
+> >
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
