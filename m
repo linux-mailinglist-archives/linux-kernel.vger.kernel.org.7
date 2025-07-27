@@ -1,140 +1,167 @@
-Return-Path: <linux-kernel+bounces-747255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB15BB13192
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:46:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCD9B131A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 22:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E681C1892813
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:46:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454E0164579
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9471622173A;
-	Sun, 27 Jul 2025 19:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC7D1DF994;
+	Sun, 27 Jul 2025 20:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Vx7bWqLk"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="OwdhLGdY"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D1772614
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 19:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049A7376F1
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 20:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753645571; cv=none; b=MAx9Ybk9vw0bnt1tME3GMP+LYsjZiiv47FZo0eRcWWdYJ6HcBn4+9az61ewKfBvqzW6NZJn3tLjpXHe0i7aC/Ty8ToKxM8MVQmxE4sTncxrwNCDyHLyP+ZnV1xSBF3rWshZmqG6mU4hMUbyxtzzfmrdPd8baTfQMlKqUMT3Rsmo=
+	t=1753646426; cv=none; b=U/T5NkKyrGve4b4L0IPPh74OzfT7srKMMuVanRka4x9wm1tkKgbgBQEevEcZne9A/1dqkvT3Ks5dQayAG1rvQfeSAU7UtpeOvr6r9Q9UBWZB3bQaOufCKAEtzuf5z54HlJ4EWq9ePPa4w9WdOaP3qHHzsNUSG1WDO2M2Wv/EMTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753645571; c=relaxed/simple;
-	bh=NMxs303x29xRbu7yKtcMITkOj1J1tBVhemnrnPzYTUc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=cEvmGEujQrd6dfRRDD5v7mrEuduqb3lTJxn2O3ZSjY579yELgrr1BwIjgz+Iy5GyCaE8S6uyqirHR5inRVHUoB+fDoqes6WP91ynJDhvFSAGP7MC4OKLyEhXuyT96SrNeRI6SJFs37uMCRSGnssm/1ed+VSlHbTbPYhJIybmdJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Vx7bWqLk; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1753645564; x=1754250364; i=markus.elfring@web.de;
-	bh=w7wV4bQw6I+f2MyxezAE54mSoFDxSCTYKVYPfxLRr80=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Vx7bWqLkRODyKqLZfJndRVx+NdUXcSNaKe9cUIunhzwVY8awf+YizU2oLQR1RJZC
-	 2oKpXJgtX60fqluDfdHentWrAPPvJndT0MXKmtB8ndt/QG6U614nYM2Vzp0K91Vgn
-	 vJ+MrV7sQSE70GXhhiU2Ikv/9cz7wS0aPwCzJMM/vWutrh5ZL76zBqB8W7jmbRf6I
-	 N+aZ6tsFHApWMHVo0HRocnjaRgGkUp61FgdrivPt7XvQd+wY1H53e5G8WfkH7PefG
-	 haN2XkPYeBmIlOXqa4gfPpbfNSPjhcahyy/gPWjTQm7d3oyumh3PZm03ptqOP36V9
-	 TtK6lJeCCPXIccTVyg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.1]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3Euv-1uhVIH2JFl-00H3nV; Sun, 27
- Jul 2025 21:46:04 +0200
-Message-ID: <3f9121a0-30ae-4dde-8c22-be195dfc4fe4@web.de>
-Date: Sun, 27 Jul 2025 21:46:01 +0200
+	s=arc-20240116; t=1753646426; c=relaxed/simple;
+	bh=InICUzB5IYuMy5dVYKkleg4CpHJ+Ue6GlSrlIPevuUQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=d5xKYDzWb++hQG455Ds1nuDATVkB6BJgxryYg73HU7+9z5X8gj8yXVpf6oK3wNQQGBcdCc3kl/1WN8QPUBYpMybOr4hEUTXeEE76XKOED8pgSCBW3KsY4qS4jL9coyeLboA8Pcmf+tasvb2QKaEV03+4t4zxE5ZSBLVPK1qnh2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=OwdhLGdY; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id CC824240101
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 21:53:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
+	s=1984.ea087b; t=1753646020;
+	bh=EBkCPCwivLcm++pduicUmpOXoIvgyMyHaCdpOJVGgW4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=OwdhLGdYSXYqeWTygaN4dQpS3sFM9tsRsa1FOPSGrtDUI3mFX/53bpcE+ROc8x1/0
+	 69FuQnACu4jrUYk6cNAoX/4eXDssC/Z8AAF5W0PxwrpO8xO1zH40ypkdoznFQvDlRP
+	 vC+UHKBzXLwJGlsBkbDDLqVY7uZ6ktpp5zRCGKZ5Bgd0QWD+MN+NEK7tp2YcYFt/Fe
+	 zjjDMpjNCUE7WcR3Ax6QgQo/P8VubEmga8Mw4Hln9OtppIFaP0UblHOFhwNY3eYU1A
+	 slG8FOjO8THcQT8EXhpitN8pHRYvQY8L54g+cdRHxKR6BkFeVHhrxYb8GdpPDaa7Cx
+	 fEBIWv3JzY/1YSwT2vv2zInOnZkeJzKvS99wuNW2RgBCnqmy0AE6SGT2mGgk/m9hPC
+	 W3DtEMMxB/eyK7aaYdHtJm+V/gC3Vqs/paCrT4tR1XkXWxEzMdUiYxuvqOaQ4/vVfu
+	 oJe+1gNO0Pg1tiaxclzKbcwYuQPHD4qPjscMai07c23i+PQpZHA
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4bqsjs644wz9rxN;
+	Sun, 27 Jul 2025 21:53:37 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: syzbot <syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net,  dsahern@kernel.org,  edumazet@google.com,
+  herbert@gondor.apana.org.au,  horms@kernel.org,  kuba@kernel.org,
+  linux-kernel@vger.kernel.org,  netdev@vger.kernel.org,
+  pabeni@redhat.com,  steffen.klassert@secunet.com,
+  syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING in ah6_output
+In-Reply-To: <683265d3.a70a0220.253bc2.0079.GAE@google.com>
+References: <683265d3.a70a0220.253bc2.0079.GAE@google.com>
+Date: Sun, 27 Jul 2025 19:53:40 +0000
+Message-ID: <878qk9csvy.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Salah Triki <salah.triki@gmail.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <aCdkIkNOQgnA5Pou@pc>
-Subject: Re: [PATCH] drm/amdgpu: check return value of xa_store()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <aCdkIkNOQgnA5Pou@pc>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/UEPh5id4lqeb+TOA1F8EsVORfB81cvRTm/3ntn9RE3QjgTxHvO
- QmkaeUpukQGSzRTZLbW9OxqV5MYL7NiLNttLqBOJbuZ8ZEYpRLFeXwQZTb9YameuFdaiaja
- eUpa2NtQfkgDY0SthmK/DfbyXmxaZh/5q1UShwxio4vPZyV4zS712gytH2K3tRv894B4brs
- 2sr5WiAZBqfW+lIpyJ7zQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2aP1Vn8Tx0Q=;rRgnaTAUe1/4xR35uI1KMVsHDsu
- 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
+Content-Type: text/plain
 
-> xa_store() may fail so check its return value and if error occurred free
-> numa_info and return NULL.
+syzbot <syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com> writes:
 
-* I find such a change description improvable another bit.
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    9e89db3d847f Merge tag 'linux-can-fixes-for-6.15-20250520'..
+> git tree:       net
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1476d1f4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c3f0e807ec5d1268
+> dashboard link: https://syzkaller.appspot.com/bug?extid=01b0667934cdceb4451c
+> compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/8b09322b598e/disk-9e89db3d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/23ed08e707b5/vmlinux-9e89db3d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/be78b62450e7/bzImage-9e89db3d.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> memcpy: detected field-spanning write (size 40) of single field "&top_iph->saddr" at net/ipv6/ah6.c:439 (size 16)
+> WARNING: CPU: 0 PID: 8838 at net/ipv6/ah6.c:439 ah6_output+0xe7e/0x14e0 net/ipv6/ah6.c:439
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 8838 Comm: syz.1.814 Not tainted 6.15.0-rc6-syzkaller-00173-g9e89db3d847f #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> RIP: 0010:ah6_output+0xe7e/0x14e0 net/ipv6/ah6.c:439
+> Code: ff e8 36 80 9f f7 c6 05 bb 97 48 05 01 90 b9 10 00 00 00 48 c7 c7 a0 56 7e 8c 4c 89 fe 48 c7 c2 00 59 7e 8c e8 a3 dc 63 f7 90 <0f> 0b 90 90 e9 b5 fe ff ff e8 74 e4 35 01 48 8b 4c 24 10 80 e1 07
+> RSP: 0018:ffffc900049f70e0 EFLAGS: 00010246
+> RAX: 3fffcb5d3bcc7c00 RBX: 0000000000000028 RCX: 0000000000080000
+> RDX: ffffc9000ece1000 RSI: 00000000000052e8 RDI: 00000000000052e9
+> RBP: ffffc900049f7250 R08: 0000000000000003 R09: 0000000000000004
+> R10: dffffc0000000000 R11: fffffbfff1bba944 R12: dffffc0000000000
+> R13: 1ffff9200093ee38 R14: ffff8881452e8800 R15: 0000000000000028
+> FS:  00007fc3a1d2c6c0(0000) GS:ffff8881260c7000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000555569628808 CR3: 000000005cf4e000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  xfrm_output_one net/xfrm/xfrm_output.c:555 [inline]
+>  xfrm_output_resume+0x2c55/0x6170 net/xfrm/xfrm_output.c:590
+>  __xfrm6_output+0x2eb/0x1070 net/ipv6/xfrm6_output.c:103
+>  NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+>  xfrm6_output+0x1c6/0x4f0 net/ipv6/xfrm6_output.c:108
+>  ip6_send_skb+0x1d5/0x390 net/ipv6/ip6_output.c:1981
+>  l2tp_ip6_sendmsg+0x1378/0x1870 net/l2tp/l2tp_ip6.c:661
+>  sock_sendmsg_nosec net/socket.c:712 [inline]
+>  __sock_sendmsg+0x19c/0x270 net/socket.c:727
+>  ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+>  __sys_sendmsg net/socket.c:2652 [inline]
+>  __do_sys_sendmsg net/socket.c:2657 [inline]
+>  __se_sys_sendmsg net/socket.c:2655 [inline]
+>  __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fc3a0f8e969
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fc3a1d2c038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007fc3a11b6080 RCX: 00007fc3a0f8e969
+> RDX: 0000000000000800 RSI: 0000200000000540 RDI: 0000000000000004
+> RBP: 00007fc3a1010ab1 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007fc3a11b6080 R15: 00007ffc18a80a58
+>  </TASK>
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-* How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and=
- =E2=80=9CCc=E2=80=9D) accordingly?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.16-rc7#n145
-
-
-Regards,
-Markus
+#syz test: https://github.com/charmitro/linux.git d4017cef5514575221234e65a2ff9b0713718274
 
