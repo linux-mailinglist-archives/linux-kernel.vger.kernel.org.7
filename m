@@ -1,150 +1,183 @@
-Return-Path: <linux-kernel+bounces-747107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210F5B12FBA
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:29:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0DDB12FBE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 235721898545
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 13:30:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A37D3B9AF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 13:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EDA2116E7;
-	Sun, 27 Jul 2025 13:29:53 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FB8157A55;
+	Sun, 27 Jul 2025 13:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5bp4PnG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEC426ADD
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 13:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91EA7E9;
+	Sun, 27 Jul 2025 13:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753622993; cv=none; b=mdNAMXGQeOHSdA7p0JF7HfINHxNC13M9vsk9ACRZbkT3j3bLn8JlaDBvYGhutVc9nBa/ISfzR+8UZ9LkBS6tzDrqz6iO+0Jk+2cMy6OHVWbM3avb0I0lk76q+wSvXxHKjkY+SRaU+PuKRB+KnCkq+jiTW8/iCc6Z9zUqqluAW+M=
+	t=1753623488; cv=none; b=jlaVNrIrECq5KsM6bCT9STPkFV0a4Dhq/ZrAov87AnLMDo5bSYq+C11AV5KoKpY43hM8bYYRyUBakKK4EwNfdxT3AwvM6v15vlZWjSBrH1gMiMHyGiaFyu80XG27lAulUOO293WqeKE2C0vQJU/Mtrgy/6D9PicFjVutpIsbPiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753622993; c=relaxed/simple;
-	bh=mA3FrVL5kqLlXP1MOOsWxnpgNBBlmtbrTt27IrS2OKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oz4jBOLI5Rq9oFvIzyM491oFdwiNjLvFbzLtHl+1ZR1QnilVW/qrjUOf8c38eZtTfabdVsonkJn2OHgEmDCC7ZbSuMq9Kig9cz/KMWP532mCdInGqtXJuf7eUFm4xAdh3igu2TpOxlDNjfDSn+0FTOgso5pSGvESi7ZR1IdMsU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8995E43A03;
-	Sun, 27 Jul 2025 13:29:38 +0000 (UTC)
-Message-ID: <271c2d08-4ebd-45db-a019-f8f04725904d@ghiti.fr>
-Date: Sun, 27 Jul 2025 15:29:36 +0200
+	s=arc-20240116; t=1753623488; c=relaxed/simple;
+	bh=W63d++1mImp7daZ8G/o8sLT3DO5aSXl9dxZqiv2V1hU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tu+c624okTosFiBJcqzoxD6avWeXnztFUg1Thdx9f8Mp3ZVHzCXrXd1qzoLA74srg6ZhKMb/mC6+WzRp2PRKTwp7av26xukCbrd0rohFooDWB5VixZwxbWMhKdk2xJevZ8YX4D4WZBpAPFCnDz6UZ5tpBBfJo0uctZHzI3AGutY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5bp4PnG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B3C4C4CEEB;
+	Sun, 27 Jul 2025 13:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753623488;
+	bh=W63d++1mImp7daZ8G/o8sLT3DO5aSXl9dxZqiv2V1hU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=N5bp4PnGDSzh0LVn2a7Jx2LDYcAzRxKKa6hMexxnIvEg3GQkdRwGAAtbLUUw6upO2
+	 ngwp7V0pj8XacZVSeLxUG2czj7ktnI/OAwdGbR/joT2PsAb7+5rXwB8vwWco6X9jl4
+	 i15iMYMZg1PpjuSriVX5fnq60+3p95oVacRcuhImHUp/y4PSMiwsOzZNTjsb5eKN1S
+	 PsG6B5Mm2tAh8JKmRRQshNzdlysCJUaawtkGwcvIArtFHvpVnieOgRcbkcEHtvu1dB
+	 vnMVWK9i2T2DYAHYJRN6qc1DEXKYt0Zt2o8MgnbH+8fYuVoZEYRydbtWk7H+NAKSc2
+	 Mwzv5znCKYLwg==
+Date: Sun, 27 Jul 2025 14:38:01 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 5/5] Documentation: ABI: iio: adc: add ade9000 ABI
+Message-ID: <20250727143801.69cb377d@jic23-huawei>
+In-Reply-To: <20250721112455.23948-5-antoniu.miclaus@analog.com>
+References: <20250721112455.23948-1-antoniu.miclaus@analog.com>
+	<20250721112455.23948-5-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] riscv: Replace __ASSEMBLY__ with __ASSEMBLER__ in
- header files
-To: Thomas Huth <thuth@redhat.com>, linux-riscv@lists.infradead.org,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Atish Patra <atish.patra@linux.dev>, Anup Patel <anup@brainfault.org>,
- linux-kernel@vger.kernel.org
-References: <20250606070952.498274-1-thuth@redhat.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250606070952.498274-1-thuth@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekleegudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepvedvieehuedtvdevgeetlefghffhtdeihfevvdfgtdeivdevfefhuefhleelueejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpshhtrggtkhhovhgvrhhflhhofidrtghomhdprhgrshhpsggvrhhrhihpihdrtghomhdpghhithhhuhgsrdgtohhmnecukfhppedvrgdtgeemtggvtgdtmegttddvkeemrggvfedvmeefsgekvdemtggtsgdumeeffhdtleemiegugeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtdegmegtvggttdemtgdtvdekmegrvgefvdemfegskedvmegttggsudemfehftdelmeeiugegkedphhgvlhhopeglkffrggeimedvrgdtgeemtggvtgdtmegttddvkeemrggvfedvmeefsgekvdemtggtsgdumeeffhdtleemiegugeekngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepthhhuhhthhesrhgvughhrghtr
- dgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheprghtihhshhdrphgrthhrrgeslhhinhhugidruggvvhdprhgtphhtthhopegrnhhuphessghrrghinhhfrghulhhtrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alex@ghiti.fr
 
-Hi Thomas,
+On Mon, 21 Jul 2025 14:24:45 +0300
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-On 6/6/25 09:09, Thomas Huth wrote:
-> The kernel Makefiles define the __ASSEMBLY__ macro to provide
-> a way to use headers in both, assembly and C source code.
-> However, all the supported versions of the GCC and Clang compilers
-> also define the macro __ASSEMBLER__ automatically already when compiling
-> assembly code, so some kernel headers are using __ASSEMBLER__ instead.
-> With regards to userspace code, this seems also to be constant source
-> of confusion, see for example these links here:
->
->   https://lore.kernel.org/kvm/20250222014526.2302653-1-seanjc@google.com/
->   https://stackoverflow.com/questions/28924355/gcc-assembler-preprocessor-not-compatible-with-standard-headers
->   https://forums.raspberrypi.com/viewtopic.php?p=1652944#p1653834
->   https://github.com/riscv-software-src/opensbi/issues/199
->
-> To avoid confusion in the future, it would make sense to standardize
-> on the macro that gets defined by the compiler, so this patch series
-> changes all occurances of __ASSEMBLY__ into __ASSEMBLER__.
->
-> I split the patches per architecture to ease the review, and I also
-> split the uapi headers from the normal ones in case we decide that
-> uapi needs to be treated differently from the normal headers here.
->
-> The x86 and parisc patches already got merged via their specific
-> architecture tree:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=24a295e4ef1ca8
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8a141be3233af7
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=cccaea1d66e94b
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e2b6a188625a2b
->
-> So I assume the riscv patches should also go via the riscv tree.
->
-> v2:
-> - Split the riscv patches from the global series
->    (see https://lore.kernel.org/all/20250314071013.1575167-1-thuth@redhat.com/)
-> - Rebased the patches on linux-next and fixed the conflicts
->    and new occurances of __ASSEMBLY__
->
-> Thomas Huth (2):
->    riscv: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
->    riscv: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi headers
->
->   arch/riscv/include/asm/alternative-macros.h   | 12 ++++++------
->   arch/riscv/include/asm/alternative.h          |  2 +-
->   arch/riscv/include/asm/asm-extable.h          |  6 +++---
->   arch/riscv/include/asm/asm.h                  | 10 +++++-----
->   arch/riscv/include/asm/assembler.h            |  2 +-
->   arch/riscv/include/asm/barrier.h              |  4 ++--
->   arch/riscv/include/asm/cache.h                |  4 ++--
->   arch/riscv/include/asm/cpu_ops_sbi.h          |  2 +-
->   arch/riscv/include/asm/csr.h                  |  4 ++--
->   arch/riscv/include/asm/current.h              |  4 ++--
->   arch/riscv/include/asm/errata_list.h          |  6 +++---
->   arch/riscv/include/asm/ftrace.h               |  6 +++---
->   arch/riscv/include/asm/gpr-num.h              |  6 +++---
->   arch/riscv/include/asm/image.h                |  4 ++--
->   arch/riscv/include/asm/insn-def.h             |  8 ++++----
->   arch/riscv/include/asm/jump_label.h           |  4 ++--
->   arch/riscv/include/asm/kasan.h                |  2 +-
->   arch/riscv/include/asm/kgdb.h                 |  4 ++--
->   arch/riscv/include/asm/mmu.h                  |  4 ++--
->   arch/riscv/include/asm/page.h                 |  4 ++--
->   arch/riscv/include/asm/pgtable.h              |  4 ++--
->   arch/riscv/include/asm/processor.h            |  4 ++--
->   arch/riscv/include/asm/ptrace.h               |  4 ++--
->   arch/riscv/include/asm/scs.h                  |  4 ++--
->   arch/riscv/include/asm/set_memory.h           |  4 ++--
->   arch/riscv/include/asm/thread_info.h          |  4 ++--
->   arch/riscv/include/asm/vdso.h                 |  4 ++--
->   arch/riscv/include/asm/vdso/getrandom.h       |  4 ++--
->   arch/riscv/include/asm/vdso/gettimeofday.h    |  4 ++--
->   arch/riscv/include/asm/vdso/processor.h       |  4 ++--
->   arch/riscv/include/asm/vdso/vsyscall.h        |  4 ++--
->   arch/riscv/include/uapi/asm/kvm.h             |  2 +-
->   arch/riscv/include/uapi/asm/ptrace.h          |  4 ++--
->   arch/riscv/include/uapi/asm/sigcontext.h      |  4 ++--
->   tools/arch/riscv/include/asm/csr.h            |  6 +++---
->   tools/arch/riscv/include/asm/vdso/processor.h |  4 ++--
->   36 files changed, 81 insertions(+), 81 deletions(-)
+> Add sysfs ABI documentation for the ADE9000 ADC driver,
+> documenting the device-specific attributes and interfaces.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+>  new in v2.
+>  .../ABI/testing/sysfs-bus-iio-adc-ade9000     | 64 +++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ade9000
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ade9000 b/Documentation/ABI/testing/sysfs-bus-iio-adc-ade9000
+> new file mode 100644
+> index 000000000000..fa92fd67483f
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ade9000
+> @@ -0,0 +1,64 @@
+> +What:		/sys/bus/iio/devices/iio:deviceX/wf_cap_en
+> +KernelVersion:	6.13
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Enable fixed data rate for waveform buffer instead of resampled data.
+> +		When enabled (1), the waveform buffer uses a fixed data rate.
+> +		When disabled (0), the waveform buffer uses resampled data.
+
+I had to go read the datasheet section on this to find out what this means.
+It is changing the sampling frequency to the wave form frequency / 128.
+We need to figure out how to map this to something related to sampling frequency.
+Given the fixes sample rates are 8k or larger, maybe we just use anything below 8K to mean
+use this mode?  Bit hacky but mostly that's the right thing to do as line frequencies
+tend to be lower than that anyway.
+
+> +
+> +		This attribute is shared by all channels and represents a device-wide
+> +		setting that affects the entire waveform buffer configuration.
+> +		Changes immediately update the hardware configuration.
+> +
+> +		Reading: Returns current setting (0 or 1)
+> +		Writing: Accepts 0, 1
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/wf_mode
+> +KernelVersion:	6.13
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Waveform buffer filling and trigger mode configuration.
+> +
+> +		Valid values:
+> +		0 - Stop when waveform buffer is full
+> +		1 - Continuous fill, stop only on enabled trigger events
+> +		2 - Continuous filling, center capture around enabled trigger events
+> +		3 - Streaming mode
+> +
+> +		This attribute is shared by all channels and represents a device-wide
+> +		setting that affects the entire waveform buffer configuration.
+> +		Changes immediately update the hardware configuration.
+> +
+> +		Reading: Returns current mode (0-3)
+> +		Writing: Accepts values 0, 1, 2, or 3
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/wf_in_en
+> +KernelVersion:	6.13
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Enable IN waveform samples readout from waveform buffer.
+> +		When enabled (1), IN waveform samples are included in buffer readout.
+
+What does buffer readout mean here? Is this the IIO buffer?  In which case why isn't it
+just a channel?
+
+> +		When disabled (0), IN waveform samples are excluded from buffer readout.
+
+Hmm. This waveform buffer stuff needs some more thought.  We should really be mapping this
+to a buffer with control over the triggering.   Smells a bit like the old impact sensors
+but we never actually got those out of staging ;(
 
 
-Applied for 6.17,
+I'd be tempted to drop this support from the initial driver so that we can revisit
+it and consider it carefully after the main part of the driver is upstream.
 
-Thanks,
+Gut feeling is this needs to be using a separate buffer from main channels with
+separate trigger controls etc.  The multibuffer stuff is not yet much used so
+there may be some core features missing.
 
-Alex
+> +
+> +		This attribute is shared by all channels and represents a device-wide
+> +		setting that affects the entire waveform buffer configuration.
+> +		Changes immediately update the hardware configuration.
+> +
+> +		Reading: Returns current setting (0 or 1)
+> +		Writing: Accepts 0, 1
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/egy_time
+If we keep this, the name definitely needs some work. Probably needs to be standard
+ABI as well.
+
+> +KernelVersion:	6.13
+That was a while back!
+
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Energy accumulation time setting for energy registers.
+> +		This value configures the time period over which energy
+> +		measurements are accumulated in the ADE9000 device.
+
+So this is interesting.  Feels a bit like it corresponds to a low pass filter
+on a power measurement? Or kind of scaling on the power measurement but in terms
+of timing.  I'd like inputs from others on how to handle this but I don't think
+a custom ABI is the way to go
+
+> +
+> +		This attribute is shared by all channels and represents a device-wide
+> +		setting that affects energy accumulation across all phases.
+> +		Changes immediately update the hardware configuration.
+> +
+> +		Reading: Returns current energy accumulation time value
+> +		Writing: Accepts any valid 32-bit unsigned integer value
+> +
 
 
