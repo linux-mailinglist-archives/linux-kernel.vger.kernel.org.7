@@ -1,263 +1,217 @@
-Return-Path: <linux-kernel+bounces-747333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441FDB132A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:31:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D094DB12DDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 08:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378071892668
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:32:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A62FD173DF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 06:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FAA7404E;
-	Mon, 28 Jul 2025 00:31:43 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694341AA1D9;
+	Sun, 27 Jul 2025 06:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0n3rAFd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6BD1548C
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 00:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F7018FC92;
+	Sun, 27 Jul 2025 06:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753662703; cv=none; b=R+/g1VMC9loXN9EV6K6MTT0UAyTOxCCPDN5wO1NBpjs5ZfQkldf0ZNQUDZflDzJuIQeMT5zppzYgNad/8hclCArn48kZW+H7VBAcxRxJFpgAaZ0G+ApOvTcgRWkW3sLL0q5rGZtG2UN8J18NstfB+Q/fCCyWWwNpd9H6VBXqn/A=
+	t=1753596980; cv=none; b=cdGfRa0yPqPuZGVKSxy9O9MFw0DBDjEP6Hk3ktaB3HNKfrXVbJGkGMNEaCjucjbNzqrUldkhgIdqdnG3wY9ofvKSQk49dupme8y2b70BsqFY2trt6pzpnsxfC3CLeSRPCzA9jqvJ4v0SxCdMgKTpwHnckvrt5R/5HfPOTHV14Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753662703; c=relaxed/simple;
-	bh=UvdjE5KBkNhzXE8qFDpqG0DxbwcDhvY/7FeD0ZxvPT4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TSGSxgOTMEzKTpRJWG3FaoxO5wQexjMwjqG9+rtcR9Pcnd4TUozAW6gkWoNDumtmSrLTiv/7JnxIRct8ihw53kBtEbqIbeIGFOnrYj3rIfVb96fDtqdkYiuFzHLNXPesytVrj2iGU2+MKmC8vfDBU6b9/4mq4Ke9HnezXFBxSsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1753662687-086e23295742b60001-xx1T2L
-Received: from ZXBJMBX02.zhaoxin.com (ZXBJMBX02.zhaoxin.com [10.29.252.6]) by mx1.zhaoxin.com with ESMTP id cb5qBJhZtgGw4G5t (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Mon, 28 Jul 2025 08:31:27 +0800 (CST)
-X-Barracuda-Envelope-From: WeitaoWang-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.6
-Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXBJMBX02.zhaoxin.com
- (10.29.252.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Mon, 28 Jul
- 2025 08:31:26 +0800
-Received: from ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f]) by
- ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f%7]) with mapi id
- 15.01.2507.044; Mon, 28 Jul 2025 08:31:26 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.6
-Received: from L440.Zhaoxin.com (10.29.8.21) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Fri, 25 Jul
- 2025 18:51:02 +0800
-From: Weitao Wang <WeitaoWang-oc@zhaoxin.com>
-To: <gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>,
-	<linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <WeitaoWang@zhaoxin.com>, <wwt8723@163.com>, <CobeChen@zhaoxin.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v2] usb:xhci:Fix slot_id resource race conflict
-Date: Sat, 26 Jul 2025 02:51:01 +0800
-X-ASG-Orig-Subj: [PATCH v2] usb:xhci:Fix slot_id resource race conflict
-Message-ID: <20250725185101.8375-1-WeitaoWang-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.32.0
+	s=arc-20240116; t=1753596980; c=relaxed/simple;
+	bh=uyb+7FyuIzMo0UI+mEQEGNm9qjuMtb30fpmryEwM5AA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CySBTQeapy8xIHnbZqcz1F9WrxtajUOlXww5rKOAjp21jZBgrutTvpLLZJSPu0/G/Z5H3kzeI2xTjsE5AAitdlRdBw9MgzwjzuUHD8RT7ALv4aiesK1VO/C45C2z4/w8zCTLGaAx4DckUNYzTYdy1W7uTouF88zLwKBuAfL7cMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0n3rAFd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EC05C4CEEB;
+	Sun, 27 Jul 2025 06:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753596980;
+	bh=uyb+7FyuIzMo0UI+mEQEGNm9qjuMtb30fpmryEwM5AA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p0n3rAFdvPX8SSmrmPGbM3OFcMaPV5tlPd6lSBHW0nfQvfLr5t05u9i0xY+PlQRlr
+	 RYRm6L/3T+8Yzum1IOO6FuEwCg9bbaROc1fI3BeUrhEcwJTtjTLXnFoEogHoVbqEWr
+	 n+53AqEFJ1sK6ggO0K644GUqZ8bAkBv9+wjSNvXCqhTOcgOBy3alEhY5GPckrM5VkG
+	 mwgn4GAdZbM+j8wVP7nsOAB3eS+56hTYprqNgJDscfKHaMRs02RwpMr8LhZDxLDbH9
+	 mWVU9OyNjSvCkRiurpDskSoZ4dWfvIoXZCW2ZJFAR+xqCkxl3ItEHmgpvoKuBPLlou
+	 Yij/pATng8pAw==
+Date: Sun, 27 Jul 2025 09:16:15 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Jens Axboe <axboe@kernel.dk>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 10/10] vfio/pci: Add dma-buf export support for MMIO
+ regions
+Message-ID: <20250727061615.GW402218@unreal>
+References: <cover.1753274085.git.leonro@nvidia.com>
+ <aea452cc27ca9e5169f7279d7b524190c39e7260.1753274085.git.leonro@nvidia.com>
+ <IA0PR11MB7185E487736B8B4CD70600DEF85EA@IA0PR11MB7185.namprd11.prod.outlook.com>
+ <20250724054443.GP402218@unreal>
+ <IA0PR11MB71855A080F43E4D657A70311F859A@IA0PR11MB7185.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx1.zhaoxin.com (10.29.252.163)
-X-Moderation-Data: 7/28/2025 8:31:25 AM
-X-Barracuda-Connect: ZXBJMBX02.zhaoxin.com[10.29.252.6]
-X-Barracuda-Start-Time: 1753662687
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 5890
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: 1.09
-X-Barracuda-Spam-Status: No, SCORE=1.09 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=DATE_IN_FUTURE_06_12, DATE_IN_FUTURE_06_12_2
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.144919
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
-	0.01 DATE_IN_FUTURE_06_12   Date: is 6 to 12 hours after Received: date
-	3.10 DATE_IN_FUTURE_06_12_2 DATE_IN_FUTURE_06_12_2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA0PR11MB71855A080F43E4D657A70311F859A@IA0PR11MB7185.namprd11.prod.outlook.com>
 
-In such a scenario, device-A with slot_id equal to 1 is disconnecting
-while device-B is enumerating, device-B will fail to enumerate in the
-follow sequence.
+On Fri, Jul 25, 2025 at 05:34:40AM +0000, Kasireddy, Vivek wrote:
+> Hi Leon,
+> 
+> > Subject: Re: [PATCH 10/10] vfio/pci: Add dma-buf export support for MMIO
+> > regions
+> > 
+> > > >
+> > > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > >
+> > > > Add support for exporting PCI device MMIO regions through dma-buf,
+> > > > enabling safe sharing of non-struct page memory with controlled
+> > > > lifetime management. This allows RDMA and other subsystems to
+> > import
+> > > > dma-buf FDs and build them into memory regions for PCI P2P
+> > operations.
+> > > >
+> > > > The implementation provides a revocable attachment mechanism using
+> > > > dma-buf move operations. MMIO regions are normally pinned as BARs
+> > > > don't change physical addresses, but access is revoked when the VFIO
+> > > > device is closed or a PCI reset is issued. This ensures kernel
+> > > > self-defense against potentially hostile userspace.
+> > > >
+> > > > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> > > > Signed-off-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+> > > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > > > ---
+> > > >  drivers/vfio/pci/Kconfig           |  20 ++
+> > > >  drivers/vfio/pci/Makefile          |   2 +
+> > > >  drivers/vfio/pci/vfio_pci_config.c |  22 +-
+> > > >  drivers/vfio/pci/vfio_pci_core.c   |  25 ++-
+> > > >  drivers/vfio/pci/vfio_pci_dmabuf.c | 321
+> > +++++++++++++++++++++++++++++
+> > > >  drivers/vfio/pci/vfio_pci_priv.h   |  23 +++
+> > > >  include/linux/dma-buf.h            |   1 +
+> > > >  include/linux/vfio_pci_core.h      |   3 +
+> > > >  include/uapi/linux/vfio.h          |  19 ++
+> > > >  9 files changed, 431 insertions(+), 5 deletions(-)
+> > > >  create mode 100644 drivers/vfio/pci/vfio_pci_dmabuf.c
+> > 
+> > <...>
+> > 
+> > > > +static int validate_dmabuf_input(struct vfio_pci_core_device *vdev,
+> > > > +				 struct vfio_device_feature_dma_buf
+> > *dma_buf)
+> > > > +{
+> > > > +	struct pci_dev *pdev = vdev->pdev;
+> > > > +	u32 bar = dma_buf->region_index;
+> > > > +	u64 offset = dma_buf->offset;
+> > > > +	u64 len = dma_buf->length;
+> > > > +	resource_size_t bar_size;
+> > > > +	u64 sum;
+> > > > +
+> > > > +	/*
+> > > > +	 * For PCI the region_index is the BAR number like  everything else.
+> > > > +	 */
+> > > > +	if (bar >= VFIO_PCI_ROM_REGION_INDEX)
+> > > > +		return -ENODEV;
+> > 
+> > <...>
+> > 
+> > > > +/**
+> > > > + * Upon VFIO_DEVICE_FEATURE_GET create a dma_buf fd for the
+> > > > + * regions selected.
+> > > > + *
+> > > > + * open_flags are the typical flags passed to open(2), eg O_RDWR,
+> > > > O_CLOEXEC,
+> > > > + * etc. offset/length specify a slice of the region to create the dmabuf
+> > from.
+> > > > + * nr_ranges is the total number of (P2P DMA) ranges that comprise the
+> > > > dmabuf.
+> > > Any particular reason why you dropped the option (nr_ranges) of creating
+> > a
+> > > single dmabuf from multiple ranges of an MMIO region?
+> > 
+> > I did it for two reasons. First, I wanted to simplify the code in order
+> > to speed-up discussion over the patchset itself. Second, I failed to
+> > find justification for need of multiple ranges, as the number of BARs
+> > are limited by VFIO_PCI_ROM_REGION_INDEX (6) and same functionality
+> > can be achieved by multiple calls to DMABUF import.
+> I don't think the same functionality can be achieved by multiple calls to
+> dmabuf import. AFAIU, a dmabuf (as of today) is backed by a SGL that can
+> have multiple entries because it represents a scattered buffer (multiple
+> non-contiguous entries in System RAM or an MMIO region). 
 
-1.[device-A] send disable slot command
-2.[device-B] send enable slot command
-3.[device-A] disable slot command completed and wakeup waiting thread
-4.[device-B] enable slot command completed with slot_id equal to 1 and
-wakeup waiting thread
-5.[device-B] driver check this slot_id was used by someone(device-A) in
-xhci_alloc_virt_device, this device fails to enumerate as this conflict
-6.[device-A] xhci->devs[slot_id] set to NULL in xhci_free_virt_device
+I don't know all the reasons why SG was chosen, but one of the main
+reasons is that DMA SG API was the only one possible way to handle p2p
+transfers (peer2peer flag).
 
-To fix driver's slot_id resources conflict, let the xhci_free_virt_device
-functionm call in the interrupt handler when disable slot command success.
 
-Cc: stable@vger.kernel.org
-Fixes: 7faac1953ed1 ("xhci: avoid race between disable slot command and hos=
-t runtime suspend")
-Signed-off-by: Weitao Wang <WeitaoWang-oc@zhaoxin.com>
----
-v1->v2
- - Adjust the lock position in the function xhci_free_dev.
+> But in this patch you are constraining it such that only one entry associated with a
+> buffer would be included, which effectively means that we cannot create
+> a dmabuf to represent scattered buffers (located in a single MMIO region
+> such as VRAM or other device memory) anymore. 
 
- drivers/usb/host/xhci-hub.c  |  5 +++--
- drivers/usb/host/xhci-ring.c |  7 +++++--
- drivers/usb/host/xhci.c      | 35 +++++++++++++++++++++++++----------
- 3 files changed, 33 insertions(+), 14 deletions(-)
+Yes
 
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 92bb84f8132a..fd8a64aa5779 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -705,10 +705,11 @@ static int xhci_enter_test_mode(struct xhci_hcd *xhci=
-,
- 			continue;
-=20
- 		retval =3D xhci_disable_slot(xhci, i);
--		xhci_free_virt_device(xhci, i);
--		if (retval)
-+		if (retval) {
- 			xhci_err(xhci, "Failed to disable slot %d, %d. Enter test mode anyway\n=
-",
- 				 i, retval);
-+			xhci_free_virt_device(xhci, i);
-+		}
- 	}
- 	spin_lock_irqsave(&xhci->lock, *flags);
- 	/* Put all ports to the Disable state by clear PP */
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 94c9c9271658..93dc28399c3c 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1589,7 +1589,8 @@ static void xhci_handle_cmd_enable_slot(int slot_id, =
-struct xhci_command *comman
- 		command->slot_id =3D 0;
- }
-=20
--static void xhci_handle_cmd_disable_slot(struct xhci_hcd *xhci, int slot_i=
-d)
-+static void xhci_handle_cmd_disable_slot(struct xhci_hcd *xhci, int slot_i=
-d,
-+					u32 cmd_comp_code)
- {
- 	struct xhci_virt_device *virt_dev;
- 	struct xhci_slot_ctx *slot_ctx;
-@@ -1604,6 +1605,8 @@ static void xhci_handle_cmd_disable_slot(struct xhci_=
-hcd *xhci, int slot_id)
- 	if (xhci->quirks & XHCI_EP_LIMIT_QUIRK)
- 		/* Delete default control endpoint resources */
- 		xhci_free_device_endpoint_resources(xhci, virt_dev, true);
-+	if (cmd_comp_code =3D=3D COMP_SUCCESS)
-+		xhci_free_virt_device(xhci, slot_id);
- }
-=20
- static void xhci_handle_cmd_config_ep(struct xhci_hcd *xhci, int slot_id)
-@@ -1853,7 +1856,7 @@ static void handle_cmd_completion(struct xhci_hcd *xh=
-ci,
- 		xhci_handle_cmd_enable_slot(slot_id, cmd, cmd_comp_code);
- 		break;
- 	case TRB_DISABLE_SLOT:
--		xhci_handle_cmd_disable_slot(xhci, slot_id);
-+		xhci_handle_cmd_disable_slot(xhci, slot_id, cmd_comp_code);
- 		break;
- 	case TRB_CONFIG_EP:
- 		if (!cmd->completion)
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 8a819e853288..6c6f6ebb8953 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -3931,13 +3931,14 @@ static int xhci_discover_or_reset_device(struct usb=
-_hcd *hcd,
- 		 * the USB device has been reset.
- 		 */
- 		ret =3D xhci_disable_slot(xhci, udev->slot_id);
--		xhci_free_virt_device(xhci, udev->slot_id);
- 		if (!ret) {
- 			ret =3D xhci_alloc_dev(hcd, udev);
- 			if (ret =3D=3D 1)
- 				ret =3D 0;
- 			else
- 				ret =3D -EINVAL;
-+		} else {
-+			xhci_free_virt_device(xhci, udev->slot_id);
- 		}
- 		return ret;
- 	}
-@@ -4085,11 +4086,12 @@ static void xhci_free_dev(struct usb_hcd *hcd, stru=
-ct usb_device *udev)
- 	for (i =3D 0; i < 31; i++)
- 		virt_dev->eps[i].ep_state &=3D ~EP_STOP_CMD_PENDING;
- 	virt_dev->udev =3D NULL;
--	xhci_disable_slot(xhci, udev->slot_id);
--
--	spin_lock_irqsave(&xhci->lock, flags);
--	xhci_free_virt_device(xhci, udev->slot_id);
--	spin_unlock_irqrestore(&xhci->lock, flags);
-+	ret =3D xhci_disable_slot(xhci, udev->slot_id);
-+	if (ret) {
-+		spin_lock_irqsave(&xhci->lock, flags);
-+		xhci_free_virt_device(xhci, udev->slot_id);
-+		spin_unlock_irqrestore(&xhci->lock, flags);
-+	}
-=20
- }
-=20
-@@ -4128,9 +4130,20 @@ int xhci_disable_slot(struct xhci_hcd *xhci, u32 slo=
-t_id)
-=20
- 	wait_for_completion(command->completion);
-=20
--	if (command->status !=3D COMP_SUCCESS)
-+	if (command->status !=3D COMP_SUCCESS) {
- 		xhci_warn(xhci, "Unsuccessful disable slot %u command, status %d\n",
- 			  slot_id, command->status);
-+		switch (command->status) {
-+		case COMP_COMMAND_ABORTED:
-+		case COMP_COMMAND_RING_STOPPED:
-+			xhci_warn(xhci, "Timeout while waiting for disable slot command\n");
-+			ret =3D -ETIME;
-+			break;
-+		default:
-+			ret =3D -EINVAL;
-+			break;
-+		}
-+	}
-=20
- 	xhci_free_command(xhci, command);
-=20
-@@ -4243,8 +4256,9 @@ int xhci_alloc_dev(struct usb_hcd *hcd, struct usb_de=
-vice *udev)
- 	return 1;
-=20
- disable_slot:
--	xhci_disable_slot(xhci, udev->slot_id);
--	xhci_free_virt_device(xhci, udev->slot_id);
-+	ret =3D xhci_disable_slot(xhci, udev->slot_id);
-+	if (ret)
-+		xhci_free_virt_device(xhci, udev->slot_id);
-=20
- 	return 0;
- }
-@@ -4381,10 +4395,11 @@ static int xhci_setup_device(struct usb_hcd *hcd, s=
-truct usb_device *udev,
-=20
- 		mutex_unlock(&xhci->mutex);
- 		ret =3D xhci_disable_slot(xhci, udev->slot_id);
--		xhci_free_virt_device(xhci, udev->slot_id);
- 		if (!ret) {
- 			if (xhci_alloc_dev(hcd, udev) =3D=3D 1)
- 				xhci_setup_addressable_virt_dev(xhci, udev);
-+		} else {
-+			xhci_free_virt_device(xhci, udev->slot_id);
- 		}
- 		kfree(command->completion);
- 		kfree(command);
---=20
-2.32.0
+> 
+> > 
+> > >
+> > > Restricting the dmabuf to a single range (or having to create multiple
+> > dmabufs
+> > > to represent multiple regions/ranges associated with a single scattered
+> > buffer)
+> > > would be very limiting and may not work in all cases. For instance, in my
+> > use-case,
+> > > I am trying to share a large (4k mode) framebuffer (FB) located in GPU's
+> > VRAM
+> > > between two (p2p compatible) GPU devices. And, this would probably not
+> > work
+> > > given that allocating a large contiguous FB (nr_ranges = 1) in VRAM may
+> > not be
+> > > feasible when there is memory pressure.
+> > 
+> > Can you please help me and point to the place in the code where this can
+> > fail?
+> > I'm probably missing something basic as there are no large allocations
+> > in the current patchset.
+> Sorry, I was not very clear. What I meant is that it is not prudent to assume that
+> there will only be one range associated with an MMIO region which we need to
+> consider while creating a dmabuf. And, I was pointing out my use-case as an
+> example where vfio-pci needs to create a dmabuf for a large buffer (FB) that
+> would likely be scattered (and not contiguous) in an MMIO region (such as VRAM).
+> 
+> Let me further explain with my use-case. Here is a link to my Qemu-based test:
+> https://gitlab.freedesktop.org/Vivek/qemu/-/commit/b2bdb16d9cfaf55384c95b1f060f175ad1c89e95#81dc845f0babf39649c4e086e173375614111b4a_29_46
 
+Ohh, thanks. I'll add nr_ranges in next version. I see that you are
+using same region_index for all ranges and this is how I would like to
+keep it: "multiple nr_ranges, same region_index".
+
+Thanks
 
