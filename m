@@ -1,580 +1,140 @@
-Return-Path: <linux-kernel+bounces-747254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E088B13190
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:37:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB15BB13192
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5715F18976FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:37:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E681C1892813
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBC622616C;
-	Sun, 27 Jul 2025 19:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9471622173A;
+	Sun, 27 Jul 2025 19:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s6LrkgeC"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Vx7bWqLk"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B7B1A314E
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 19:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D1772614
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 19:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753645024; cv=none; b=cp30Bra+NjDP4y8nGpi52LZc9vHjMCi0xuLA9J3BCIaPgql70hujnlq4pGBmH4XvY4npErahnSI19GdHtu8zos7bk+mp5rVMbVKyoo6RDkYVZZmoy+6xgzL/m5C6d3RP7O1KnSauXMK6vyXUGBAIM9pXQp0fF2DxVXeUocjaaFM=
+	t=1753645571; cv=none; b=MAx9Ybk9vw0bnt1tME3GMP+LYsjZiiv47FZo0eRcWWdYJ6HcBn4+9az61ewKfBvqzW6NZJn3tLjpXHe0i7aC/Ty8ToKxM8MVQmxE4sTncxrwNCDyHLyP+ZnV1xSBF3rWshZmqG6mU4hMUbyxtzzfmrdPd8baTfQMlKqUMT3Rsmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753645024; c=relaxed/simple;
-	bh=pCQCdRmlqteGXO1dI3JhZJOwDdd/l/sBFMVSJ+tKS4c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OzLLcHzXnL3MHtK82ZWt2ic2NkE0aDlkkW9VudD1FD8lneDK3YSFswDynwNLSx8g9gAx+7rl7FGpZhshskKMRm/uDzS5b9/wihRwLAIauZ18ZkV3hBoLDosWSGLJxWinAL6BsFvNBGRN8XM0/x6eFGFiQ00ObUHekvwkCIdPYL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s6LrkgeC; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae0bf1616b9so44306466b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 12:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753645020; x=1754249820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7y0vcHUdKY5HubRv6sWiVBOd/tgjmHnqruM1wM9dbQk=;
-        b=s6LrkgeC+hWkWa+ir8J+CtTAN+p4+uthXLN8vYGrG3a9reDJG3Ptzp+3pBtO22ky2B
-         Sgf4asUc5b1OkP7jk/+hPkGom30TBTou4ob1VoDj0TOt4weIAP1Edf8NCInGXaE2RVKi
-         PlAd0eMeC3YY8RVdT3DjGQPucJ7RNtVAyg+a5np9bcNZITOXE6PZmKzgMB16Ku4JIe+6
-         Y721bSWXIPMlnVehXY2tpud05in7hJ43C27iUX/pfjhfwaYvIq5D+TUuh0wgVX9eaeLv
-         EkMGoFCPVJRqu2VOGs0kryO6SQTk+qWKgjtjAeLW2wX1C4q1FfkBFUFwnTzJ+TAvOkOP
-         w3xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753645020; x=1754249820;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7y0vcHUdKY5HubRv6sWiVBOd/tgjmHnqruM1wM9dbQk=;
-        b=t+AA/8CcMZ+0uifNOLPpqQquvxTpy3n8Vt3MVxTUdALlKadAR9nptAcgN3uxblp0dk
-         JkorwFmYiKyx95K0RGKRsjADmeegkkC5IlKfCHe4+jIchWeIpUGrNC+Z2MT5aEA18+rE
-         GEP7gbTyoGTAeTCWF/nDi50Lx66cn3yxi/psWejqfqQWthESIDC5Mxy9YsI8VIv60HUT
-         t04Uu7OT0QB856Bu4uOSmVepyK8LcY5cHEXcodinBren/WOs0Qv9aVIhbqPMmL7z7+so
-         2r3BBdIU/v1mMUuUUHjS2AEDhPfb2/4KKPVXJ+fKBJ4WQH3l9PBlF5nAFDaG9ppqHudG
-         F5zw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5rBLPfuVdRqR0HNNmO9rY4fvKDOuG5C951w5yLg+4+V8CA/sW9Orjkn52U6x9c4HzMwBAWdZQiHjwoHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC7ubqCMGrfEZZoBJNpFeYAx9F9JXdgTRnVULmQ9aCjN5I18qj
-	bzw9wClqaqGsMEcI/uEXha2+NbAlR1pSXPknjXj1gI4mu6TuX3kJN7PDjMp53rOjup8=
-X-Gm-Gg: ASbGncuw2Y+5V3oA3L20oFgnU8PIbZd9bxh9I/xKiKh9YFf1pn0GCHGQlDiou2rRk81
-	Gnt6U6FmIxlL86ZOVOPx42asL9FlMblr2JF8vlAvtjTkynvgAvwoFa/ih6Ic7OSIFa35Ri64AG4
-	gcAWLKu73lCCrzoVsf09fsHVyc5DmWX0v6iDYKltKyNcydAlouXCBFW+d7NHD8micYOo6sGSq9x
-	Yfrd1qnI746N48om9S5jL/RDYcwA/LL/ghK6JuBKNJ0QfYSQ2Fe/+PfvGEzubmAuK3aQraPIt6j
-	3Lj1v6JI+TBXXlT97zejpE+7z0qFXCdr1vkBjkgDl8KWIhS4ypq4knc6LpbIwSQnkKmwj1Fra2d
-	JaTZrE+3kA13YwA+2Odr6XxSIterqkLak
-X-Google-Smtp-Source: AGHT+IGnsqbLYepeBQlMegx0Lp4dkyiztC6rJSiVSH/e1bfIWi3D25Q5CqLCNjtZas5rY3E0iHNbaQ==
-X-Received: by 2002:a17:907:9628:b0:ae3:cd73:efb9 with SMTP id a640c23a62f3a-af61d779f94mr388208866b.12.1753645020391;
-        Sun, 27 Jul 2025 12:37:00 -0700 (PDT)
-Received: from kuoka.. ([178.197.203.90])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af6358a1c23sm318267066b.51.2025.07.27.12.36.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 12:36:59 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] arm64: dts: qcom: sm8650: Sort nodes by unit address
-Date: Sun, 27 Jul 2025 21:36:53 +0200
-Message-ID: <20250727193652.4029-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1753645571; c=relaxed/simple;
+	bh=NMxs303x29xRbu7yKtcMITkOj1J1tBVhemnrnPzYTUc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=cEvmGEujQrd6dfRRDD5v7mrEuduqb3lTJxn2O3ZSjY579yELgrr1BwIjgz+Iy5GyCaE8S6uyqirHR5inRVHUoB+fDoqes6WP91ynJDhvFSAGP7MC4OKLyEhXuyT96SrNeRI6SJFs37uMCRSGnssm/1ed+VSlHbTbPYhJIybmdJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Vx7bWqLk; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753645564; x=1754250364; i=markus.elfring@web.de;
+	bh=w7wV4bQw6I+f2MyxezAE54mSoFDxSCTYKVYPfxLRr80=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Vx7bWqLkRODyKqLZfJndRVx+NdUXcSNaKe9cUIunhzwVY8awf+YizU2oLQR1RJZC
+	 2oKpXJgtX60fqluDfdHentWrAPPvJndT0MXKmtB8ndt/QG6U614nYM2Vzp0K91Vgn
+	 vJ+MrV7sQSE70GXhhiU2Ikv/9cz7wS0aPwCzJMM/vWutrh5ZL76zBqB8W7jmbRf6I
+	 N+aZ6tsFHApWMHVo0HRocnjaRgGkUp61FgdrivPt7XvQd+wY1H53e5G8WfkH7PefG
+	 haN2XkPYeBmIlOXqa4gfPpbfNSPjhcahyy/gPWjTQm7d3oyumh3PZm03ptqOP36V9
+	 TtK6lJeCCPXIccTVyg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.1]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3Euv-1uhVIH2JFl-00H3nV; Sun, 27
+ Jul 2025 21:46:04 +0200
+Message-ID: <3f9121a0-30ae-4dde-8c22-be195dfc4fe4@web.de>
+Date: Sun, 27 Jul 2025 21:46:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11920; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=pCQCdRmlqteGXO1dI3JhZJOwDdd/l/sBFMVSJ+tKS4c=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBohn/U3EEL9lsA4gGgyw4soEmQ+T9mPFjc51imq
- SGyybgk7lOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaIZ/1AAKCRDBN2bmhouD
- 178DD/4lZF18/08Yzvzw4qiqtSF/pGbR/jJj2qVZaM/GpMpRi+GufSA4BeTgMrFK7oxYRr0pc0S
- 7TevAv373OoKlhYRsE8PNguNRvDwcfLrqPU5XbVcXS/nh0DLMpJMpMbrQRjl0OpcxBh+NpMXmsF
- csL2DC9rs3f30DTHY4/S2+z+khXMyapTVf9I8pum+3uB6JFg/pYnxsYjKwSYFw2IMQm8YtxQNWH
- vk7Bkq8q0PX9cpWz99MqNo2EL6jwa5DHh+W2rYcynAJVCEWunj3lKLzEi8x60DXykI6nXOZhCw3
- kn4bv2LnE1LrNn29y6sTTAI9v+ZmcnhJuq+Rc3wl4DwkpoEIQsm6TNBk0DoWNU3AhShfA2QROHn
- y11Vtzcv5x60DQYmYVZfK7ZkPseCuMR6YJvRDLjFui4z3hGkiK+qJYnd2of43LehvtjA498J0Mn
- zO6K0ywoDSupG3yndZP5a0UasP11oeFm5XBoWVDFPi++ZDdXvQA8e0D+u0o1O9HwmhHXdMac29v
- 2O72/lzLDFnhum7PL7np7WG/ftYI+i5JCLSYuqSoI1pMN5AMfzuGBTk7veCm1CZrRlyrN5HZBZR
- 2MfSrK6AE1jY4NBgPtiOb3xkYHDaoLdM4TX9oDzSEwkQWHYrnicjEKeB87LNSzVJ7eeG71bg35F ZgD3tpNChMWjR4Q==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Salah Triki <salah.triki@gmail.com>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <aCdkIkNOQgnA5Pou@pc>
+Subject: Re: [PATCH] drm/amdgpu: check return value of xa_store()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <aCdkIkNOQgnA5Pou@pc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/UEPh5id4lqeb+TOA1F8EsVORfB81cvRTm/3ntn9RE3QjgTxHvO
+ QmkaeUpukQGSzRTZLbW9OxqV5MYL7NiLNttLqBOJbuZ8ZEYpRLFeXwQZTb9YameuFdaiaja
+ eUpa2NtQfkgDY0SthmK/DfbyXmxaZh/5q1UShwxio4vPZyV4zS712gytH2K3tRv894B4brs
+ 2sr5WiAZBqfW+lIpyJ7zQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2aP1Vn8Tx0Q=;rRgnaTAUe1/4xR35uI1KMVsHDsu
+ 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
 
-Qualcomm DTS uses sorting of MMIO nodes by the unit address, so move
-few nodes in SM8650 DTSI to fix that.
+> xa_store() may fail so check its return value and if error occurred free
+> numa_info and return NULL.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 414 +++++++++++++--------------
- 1 file changed, 207 insertions(+), 207 deletions(-)
+* I find such a change description improvable another bit.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index e14d3d778b71..2360d560dc86 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -3490,6 +3490,11 @@ &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ACTIVE_ONLY>,
- 			};
- 		};
- 
-+		rng: rng@10c3000 {
-+			compatible = "qcom,sm8650-trng", "qcom,trng";
-+			reg = <0 0x010c3000 0 0x1000>;
-+		};
-+
- 		cnoc_main: interconnect@1500000 {
- 			compatible = "qcom,sm8650-cnoc-main";
- 			reg = <0 0x01500000 0 0x14080>;
-@@ -3561,11 +3566,6 @@ mmss_noc: interconnect@1780000 {
- 			#interconnect-cells = <2>;
- 		};
- 
--		rng: rng@10c3000 {
--			compatible = "qcom,sm8650-trng", "qcom,trng";
--			reg = <0 0x010c3000 0 0x1000>;
--		};
--
- 		pcie0: pcie@1c00000 {
- 			device_type = "pci";
- 			compatible = "qcom,pcie-sm8650", "qcom,pcie-sm8550";
-@@ -3926,38 +3926,6 @@ pcie1_phy: phy@1c0e000 {
- 			status = "disabled";
- 		};
- 
--		cryptobam: dma-controller@1dc4000 {
--			compatible = "qcom,bam-v1.7.0";
--			reg = <0 0x01dc4000 0 0x28000>;
--
--			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH 0>;
--
--			#dma-cells = <1>;
--
--			iommus = <&apps_smmu 0x480 0>,
--				 <&apps_smmu 0x481 0>;
--
--			qcom,ee = <0>;
--			qcom,num-ees = <4>;
--			num-channels = <20>;
--			qcom,controlled-remotely;
--		};
--
--		crypto: crypto@1dfa000 {
--			compatible = "qcom,sm8650-qce", "qcom,sm8150-qce", "qcom,qce";
--			reg = <0 0x01dfa000 0 0x6000>;
--
--			interconnects = <&aggre2_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
--					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
--			interconnect-names = "memory";
--
--			dmas = <&cryptobam 4>, <&cryptobam 5>;
--			dma-names = "rx", "tx";
--
--			iommus = <&apps_smmu 0x480 0>,
--				 <&apps_smmu 0x481 0>;
--		};
--
- 		ufs_mem_phy: phy@1d80000 {
- 			compatible = "qcom,sm8650-qmp-ufs-phy";
- 			reg = <0 0x01d80000 0 0x2000>;
-@@ -4079,6 +4047,38 @@ ice: crypto@1d88000 {
- 			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
- 		};
- 
-+		cryptobam: dma-controller@1dc4000 {
-+			compatible = "qcom,bam-v1.7.0";
-+			reg = <0 0x01dc4000 0 0x28000>;
-+
-+			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH 0>;
-+
-+			#dma-cells = <1>;
-+
-+			iommus = <&apps_smmu 0x480 0>,
-+				 <&apps_smmu 0x481 0>;
-+
-+			qcom,ee = <0>;
-+			qcom,num-ees = <4>;
-+			num-channels = <20>;
-+			qcom,controlled-remotely;
-+		};
-+
-+		crypto: crypto@1dfa000 {
-+			compatible = "qcom,sm8650-qce", "qcom,sm8150-qce", "qcom,qce";
-+			reg = <0 0x01dfa000 0 0x6000>;
-+
-+			interconnects = <&aggre2_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "memory";
-+
-+			dmas = <&cryptobam 4>, <&cryptobam 5>;
-+			dma-names = "rx", "tx";
-+
-+			iommus = <&apps_smmu 0x480 0>,
-+				 <&apps_smmu 0x481 0>;
-+		};
-+
- 		tcsr_mutex: hwlock@1f40000 {
- 			compatible = "qcom,tcsr-mutex";
- 			reg = <0 0x01f40000 0 0x20000>;
-@@ -4962,6 +4962,176 @@ opp-202000000 {
- 			};
- 		};
- 
-+		usb_1_hsphy: phy@88e3000 {
-+			compatible = "qcom,sm8650-snps-eusb2-phy",
-+				     "qcom,sm8550-snps-eusb2-phy";
-+			reg = <0 0x088e3000 0 0x154>;
-+
-+			clocks = <&tcsr TCSR_USB2_CLKREF_EN>;
-+			clock-names = "ref";
-+
-+			resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
-+
-+			#phy-cells = <0>;
-+
-+			status = "disabled";
-+		};
-+
-+		usb_dp_qmpphy: phy@88e8000 {
-+			compatible = "qcom,sm8650-qmp-usb3-dp-phy";
-+			reg = <0 0x088e8000 0 0x3000>;
-+
-+			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
-+				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
-+			clock-names = "aux",
-+				      "ref",
-+				      "com_aux",
-+				      "usb3_pipe";
-+
-+			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
-+				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
-+			reset-names = "phy",
-+				      "common";
-+
-+			power-domains = <&gcc USB3_PHY_GDSC>;
-+
-+			#clock-cells = <1>;
-+			#phy-cells = <1>;
-+
-+			orientation-switch;
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					usb_dp_qmpphy_out: endpoint {
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					usb_dp_qmpphy_usb_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_dwc3_ss>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					usb_dp_qmpphy_dp_in: endpoint {
-+						remote-endpoint = <&mdss_dp0_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		usb_1: usb@a6f8800 {
-+			compatible = "qcom,sm8650-dwc3", "qcom,dwc3";
-+			reg = <0 0x0a6f8800 0 0x400>;
-+
-+			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH 0>,
-+					      <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH 0>,
-+					      <&pdc 14 IRQ_TYPE_EDGE_RISING>,
-+					      <&pdc 15 IRQ_TYPE_EDGE_RISING>,
-+					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "pwr_event",
-+					  "hs_phy_irq",
-+					  "dp_hs_phy_irq",
-+					  "dm_hs_phy_irq",
-+					  "ss_phy_irq";
-+
-+			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
-+				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
-+				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
-+				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
-+				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-+				 <&tcsr TCSR_USB3_CLKREF_EN>;
-+			clock-names = "cfg_noc",
-+				      "core",
-+				      "iface",
-+				      "sleep",
-+				      "mock_utmi",
-+				      "xo";
-+
-+			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-+					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
-+			assigned-clock-rates = <19200000>, <200000000>;
-+
-+			resets = <&gcc GCC_USB30_PRIM_BCR>;
-+
-+			interconnects = <&aggre1_noc MASTER_USB3_0 QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &config_noc SLAVE_USB3_0 QCOM_ICC_TAG_ACTIVE_ONLY>;
-+			interconnect-names = "usb-ddr",
-+					     "apps-usb";
-+
-+			power-domains = <&gcc USB30_PRIM_GDSC>;
-+			required-opps = <&rpmhpd_opp_nom>;
-+
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			status = "disabled";
-+
-+			usb_1_dwc3: usb@a600000 {
-+				compatible = "snps,dwc3";
-+				reg = <0 0x0a600000 0 0xcd00>;
-+
-+				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH 0>;
-+
-+				iommus = <&apps_smmu 0x40 0>;
-+
-+				phys = <&usb_1_hsphy>,
-+				       <&usb_dp_qmpphy QMP_USB43DP_USB3_PHY>;
-+				phy-names = "usb2-phy",
-+					    "usb3-phy";
-+
-+				snps,hird-threshold = /bits/ 8 <0x0>;
-+				snps,usb2-gadget-lpm-disable;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_enblslpm_quirk;
-+				snps,dis-u1-entry-quirk;
-+				snps,dis-u2-entry-quirk;
-+				snps,is-utmi-l1-suspend;
-+				snps,usb3_lpm_capable;
-+				snps,usb2-lpm-disable;
-+				snps,has-lpm-erratum;
-+				tx-fifo-resize;
-+
-+				dma-coherent;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						usb_1_dwc3_hs: endpoint {
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						usb_1_dwc3_ss: endpoint {
-+							remote-endpoint = <&usb_dp_qmpphy_usb_ss_in>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+
- 		iris: video-codec@aa00000 {
- 			compatible = "qcom,sm8650-iris";
- 			reg = <0 0x0aa00000 0 0xf0000>;
-@@ -5580,176 +5750,6 @@ dispcc: clock-controller@af00000 {
- 			#power-domain-cells = <1>;
- 		};
- 
--		usb_1_hsphy: phy@88e3000 {
--			compatible = "qcom,sm8650-snps-eusb2-phy",
--				     "qcom,sm8550-snps-eusb2-phy";
--			reg = <0 0x088e3000 0 0x154>;
--
--			clocks = <&tcsr TCSR_USB2_CLKREF_EN>;
--			clock-names = "ref";
--
--			resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
--
--			#phy-cells = <0>;
--
--			status = "disabled";
--		};
--
--		usb_dp_qmpphy: phy@88e8000 {
--			compatible = "qcom,sm8650-qmp-usb3-dp-phy";
--			reg = <0 0x088e8000 0 0x3000>;
--
--			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
--				 <&rpmhcc RPMH_CXO_CLK>,
--				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
--				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
--			clock-names = "aux",
--				      "ref",
--				      "com_aux",
--				      "usb3_pipe";
--
--			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
--				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
--			reset-names = "phy",
--				      "common";
--
--			power-domains = <&gcc USB3_PHY_GDSC>;
--
--			#clock-cells = <1>;
--			#phy-cells = <1>;
--
--			orientation-switch;
--
--			status = "disabled";
--
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--
--				port@0 {
--					reg = <0>;
--
--					usb_dp_qmpphy_out: endpoint {
--					};
--				};
--
--				port@1 {
--					reg = <1>;
--
--					usb_dp_qmpphy_usb_ss_in: endpoint {
--						remote-endpoint = <&usb_1_dwc3_ss>;
--					};
--				};
--
--				port@2 {
--					reg = <2>;
--
--					usb_dp_qmpphy_dp_in: endpoint {
--						remote-endpoint = <&mdss_dp0_out>;
--					};
--				};
--			};
--		};
--
--		usb_1: usb@a6f8800 {
--			compatible = "qcom,sm8650-dwc3", "qcom,dwc3";
--			reg = <0 0x0a6f8800 0 0x400>;
--
--			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH 0>,
--					      <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH 0>,
--					      <&pdc 14 IRQ_TYPE_EDGE_RISING>,
--					      <&pdc 15 IRQ_TYPE_EDGE_RISING>,
--					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "pwr_event",
--					  "hs_phy_irq",
--					  "dp_hs_phy_irq",
--					  "dm_hs_phy_irq",
--					  "ss_phy_irq";
--
--			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
--				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
--				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
--				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
--				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
--				 <&tcsr TCSR_USB3_CLKREF_EN>;
--			clock-names = "cfg_noc",
--				      "core",
--				      "iface",
--				      "sleep",
--				      "mock_utmi",
--				      "xo";
--
--			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
--					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
--			assigned-clock-rates = <19200000>, <200000000>;
--
--			resets = <&gcc GCC_USB30_PRIM_BCR>;
--
--			interconnects = <&aggre1_noc MASTER_USB3_0 QCOM_ICC_TAG_ALWAYS
--					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
--					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
--					 &config_noc SLAVE_USB3_0 QCOM_ICC_TAG_ACTIVE_ONLY>;
--			interconnect-names = "usb-ddr",
--					     "apps-usb";
--
--			power-domains = <&gcc USB30_PRIM_GDSC>;
--			required-opps = <&rpmhpd_opp_nom>;
--
--			#address-cells = <2>;
--			#size-cells = <2>;
--			ranges;
--
--			status = "disabled";
--
--			usb_1_dwc3: usb@a600000 {
--				compatible = "snps,dwc3";
--				reg = <0 0x0a600000 0 0xcd00>;
--
--				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH 0>;
--
--				iommus = <&apps_smmu 0x40 0>;
--
--				phys = <&usb_1_hsphy>,
--				       <&usb_dp_qmpphy QMP_USB43DP_USB3_PHY>;
--				phy-names = "usb2-phy",
--					    "usb3-phy";
--
--				snps,hird-threshold = /bits/ 8 <0x0>;
--				snps,usb2-gadget-lpm-disable;
--				snps,dis_u2_susphy_quirk;
--				snps,dis_enblslpm_quirk;
--				snps,dis-u1-entry-quirk;
--				snps,dis-u2-entry-quirk;
--				snps,is-utmi-l1-suspend;
--				snps,usb3_lpm_capable;
--				snps,usb2-lpm-disable;
--				snps,has-lpm-erratum;
--				tx-fifo-resize;
--
--				dma-coherent;
--
--				ports {
--					#address-cells = <1>;
--					#size-cells = <0>;
--
--					port@0 {
--						reg = <0>;
--
--						usb_1_dwc3_hs: endpoint {
--						};
--					};
--
--					port@1 {
--						reg = <1>;
--
--						usb_1_dwc3_ss: endpoint {
--							remote-endpoint = <&usb_dp_qmpphy_usb_ss_in>;
--						};
--					};
--				};
--			};
--		};
--
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,sm8650-pdc", "qcom,pdc";
- 			reg = <0 0x0b220000 0 0x30000>, <0 0x174000f0 0 0x64>;
--- 
-2.48.1
+* How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and=
+ =E2=80=9CCc=E2=80=9D) accordingly?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.16-rc7#n145
 
+
+Regards,
+Markus
 
