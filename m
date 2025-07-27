@@ -1,163 +1,226 @@
-Return-Path: <linux-kernel+bounces-747172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC812B130A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:36:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C31B130AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA2D3B985F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:35:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CFC817833C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DA221CC61;
-	Sun, 27 Jul 2025 16:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA8521CA16;
+	Sun, 27 Jul 2025 16:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuieWyOs"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q1G3GKKx"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D644F217654;
-	Sun, 27 Jul 2025 16:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845C63987D;
+	Sun, 27 Jul 2025 16:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753634157; cv=none; b=qMT3FHWPPHGmHHK37avDRB29TZtT76k+IRyvyzjHVxdsWNvCd3yOL+SLOVWEav6Wv1VFDjNjkNVqoVdclECbGgTibPeQBUMz37nnwIquKCWTTrl3ZF0QkO+esrd4FbdNmmaxaJDsBX0HkbZSGHVmBUHdYwPB+p9/UsNdjaUsrro=
+	t=1753634201; cv=none; b=phGguczVHLjhvFVMTlD67oYDRrWQjWK/nwcAOkShwPTHVngjQvzjE/qsCUNHuygp/LvWfQt7R1JgRw7yHDaNi1Jb8trIWQGlHIfiViMW54EJWPVNMjSM73GZvQGrs8fQwEdFn65hTbneMF4hu9qA/gCylZ2HKF7BS3f/71o2Zfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753634157; c=relaxed/simple;
-	bh=uKAxF14EawlDKwMCpckq4oqxadnrWfUDGGgAvT5ojvE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P1JGVZP1O0RldQzJZjl5/VmIiIiFJgdwsAtc758WPwoCzLzK+LdwUqeV1/50G3WwLM8rLwtq34nclXQAsH2RrMkMOt1OGO4A62XAaaE0WE2x8OYvQvt/myR0qBEpzEr1IMctTKRW3w0nfzQbw7VBq6SjPMaxlvAQVULP9/9fPaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XuieWyOs; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1753634201; c=relaxed/simple;
+	bh=YfAzeldAjz07knn7/Q10GjzdRMcNPA5deTH4dsmrlf4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=ss1+ODsrafXeR0VMqI6ss7gRmbgTugzKsuHILaqYUPWH31SecIqoMS6SKPoHX3H+P6XZpqH5kNSOK4dNp4+unXpBMEg6fKR9PZc8lcyGW3fbl+nXJt46cAIUb+LzuetAT829N4j8sHrZsCpQNnFfKbGSe0rN04HoGZ8EdyHAfZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q1G3GKKx; arc=none smtp.client-ip=209.85.219.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23ffdea3575so3517695ad.2;
-        Sun, 27 Jul 2025 09:35:55 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e8b3cc12dceso2579729276.1;
+        Sun, 27 Jul 2025 09:36:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753634155; x=1754238955; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1753634198; x=1754238998; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GBerHzAFY1KVLbcOiy0TseZy7OHCBoqOvgqvhp3eINE=;
-        b=XuieWyOsoFFPu2Gkd4HciVDFE5rjpSJiz0cz1ZZm4xOJwFvlYUaXIsaJSjOJi3Kt7+
-         v7BIsyaU6yCcuWzDJFrklwB6HLUZnedewkv1nTSYuh2dFpq+dfVkSjL93bJSKT1+VYN9
-         ZYuYd53q7kqSqxoUYgTTDP3C6xcEY2DAh82o42MCH3llYjjvCb3zujafKQe0EZ/34zxN
-         TKFLsC5p42qYnoeUUnzlud8Nlnm7gJRoDzbXSmiCW2C3pDmqCDeqy/WBy8xdeu9DNJDr
-         pA0Q/1xj36bnPAOa8pTXqpyFo9tFANU5sMeB52BKhWiSWkZu283/LS5g8Nt/4i7tyf2D
-         wkpw==
+        bh=eF5033q7gDVxM47w7GcaBWsntXTdySNW1g3Q5fv/mck=;
+        b=Q1G3GKKxyvZ+7hLP8JqcelAmlufKkNfxZ3+vOiIn9Xjb9qJAUXVev2vjfVfZSnumlf
+         5mFEgGQzkj6va85vXRFSmJP/IGVCIzTXRsRF4PPQ9eQe96tWRVZ+Gr0HNRlkzIN+tZTh
+         IlwdC1fKwpRkyqjw31bgr4/+fiNN9Qb9C01AHHu/sAPgTQCOuuNVUIBvUltN47aKi8HO
+         POfqr4EXuIEylxvRReOasFxegH3PwNx0r49aKesShyDMuRLUmlOU27UR88HJOwwnHP56
+         S2Os8rnwE0Dn6BvZmahhcDqY1EFp2hujQ2BK/D5t0ifQQ71MfRKQLcQ9AeQCxbu35off
+         CBBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753634155; x=1754238955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GBerHzAFY1KVLbcOiy0TseZy7OHCBoqOvgqvhp3eINE=;
-        b=kmCPI0ZwQP6oDtlq0sX/1fx3aTWM0fRF82waM0Bce6JFjv9AucuYApUxSeyt2Ks7/E
-         N7fxRco3CYegrJ3oTBQM+O7c2q+lb0sNvaXgWtHgEKxTLGpa44Jx0UvWCXSrsvBfF1wh
-         +CyH7L6YYJ3J5cH25N7ZNZhjU8Y5y7Sb+Wa28M2eA8RA1+WgImrNEZv/mhlc2drW2dWp
-         hThp+iqvWgVKkRvuBbnuFPhN0cF8DNPvHNrNDex0TUMFzAqY95zAx5qBJhMA4VPwCkIv
-         hDdgdXdAntMKvZpa6bQEC0oatkh4/cHsZcd2/hgk+cUGxU8iKwM1R+9HCpJna+f25PaG
-         GjNg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1iUsexe4G/tu0nAxzb1v1uNyf4+7yWOA/vP6M9zQkgJEzoO6Q94eKu24LQw36qKd5Sa+zzHen4b7SWHn9@vger.kernel.org, AJvYcCXIKTEAmWq+TV9BFOJJKXjQwnMpNuIQRiPpifzkIwmqrp0NzZmzM8o6YiWabgq17OZHUuN/Dst81rZXCA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbIUDGrO9n4PrrlG9SJ0BHwc55vWDoHTqySleEI5fIXfxBiKL0
-	bUZV4p0py+55//C9gSAHC2oy/xUs7mqAfs7byVwpvL3IhCeXqEr5ViWDziIfH9P6NyxcSgnSe0+
-	BUE3FQt085f+Z+XdusLopENTK3KSzoeTY16Z6xpk=
-X-Gm-Gg: ASbGncu+WnSL70RlGXT/zEywJgA+4c41cM0Jq2LMe/Us2S9O2YgSRxV2N58fNiZ2t4a
-	LM/0wxr/wsJj0V3Cy4n2fI6XNCsD58U+M5HXXFpZLZQAkpLJnsVh/W7PJrxa6rxIG9oM1B8y31b
-	68jJxZooRjrW7byhCRQmcva2aR7tM9b+GTTVFJ9mKBliDwMmM9ALhz+kLYrt+22HE3wWIxqJWEI
-	vQhlzo=
-X-Google-Smtp-Source: AGHT+IFb2CamYAmHpTQF5PJ4hW5lG7L+82CD/1+hue7sGYCvbB37FShudBsvAm4DlXTU1r/59NYfLCgY2F7jY/5J3Uo=
-X-Received: by 2002:a17:902:d4d2:b0:240:11cd:8502 with SMTP id
- d9443c01a7336-24011cd8924mr22131995ad.13.1753634155043; Sun, 27 Jul 2025
- 09:35:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753634198; x=1754238998;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eF5033q7gDVxM47w7GcaBWsntXTdySNW1g3Q5fv/mck=;
+        b=YzQEbbu4CN07srUFoOEm/A4Vs21O/OEBxMXlqdtaUULkGVM1GnzkgpZlTDHOaYGypT
+         GcuQWKw7hwEXxpBPmBueYIRBRJj22TT58akME+8/oP7PfNzLy1zHEAlXTUlnFO1sf9pM
+         ALWP5XAtC1KlHJPGZJFV9IWr61vbEIj/eXBFyo5/Rq2R962z9BP/6pgJRMWuQK8QXUrK
+         dmaLZxDn4chM6A7dU4Khtyipp7MZiPXPklOwDfCgFUTPe7+yPmx0bvapCqv7H0E999Vu
+         Osm2+Ed0d/DoVNXGRaAOfXX3hggImqQdghqT7+yaNdmD700W1c/0L1iXKZcI7Ljn6gn4
+         lvhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWu0cDIXQFu4Kf4/Vi68ZzC6xg+ozdX3D4/bWMgU6rZjrLDbNhe3+I21J4eShLectVqeBGXORRO@vger.kernel.org, AJvYcCXcrhGGZkQ3L3LxyX14MxMtAnhF+qS78bs8cN4DnNO4aKtvmJ0ttK93+fBXx9T+uB0ZGj79D/y3jq4SsJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2V/hojTcTyBT3rd4SXlB9buc305xWPJ4NDPFribZZq7IdI7Xt
+	2Skk4dJnTVN1jRcbmip06TnCrFj/MtVZx37LdB89bFc9XSU1uzugBnF4
+X-Gm-Gg: ASbGncv5UjJZ9OzDKwuHm9psF9AxcABgv9YgkJ338Ffa7dpb/LLjyVozTXravWfBrOT
+	HaS/VIBQlmlcCXctmDgZAZzzziLvfeJD3u4AqwUTlxC/XltUBKkQ+xO96Dc3oG2Qvhh9zZfYzEG
+	2/p/9aVZfYwRmxTANzuTDJDn6lrguMr2e9WIKrkE8H3KYfxKpxJZPFTqp7US4Fq3C8L7MlnX0PT
+	ypp9V3ghzvVvmEXTS9nKPzaz6nuXVJoZt9baMPvIOlciRF9BhDwpAFVnzCoYXgaa758mUA1lu1+
+	9m5ocSNmgTBju0pwqZHg3fDVnq0ysNkr2rKaBvAWFydUjWBezte+TAqmE8q7bJ+doG0OAV4m5Tp
+	rW5MqDNCh53OKu3o0FSMywSD1O29C8FNivOPfGKxD6yYn/9c/mKjk2CHQAxdff85Pi6ofYQ==
+X-Google-Smtp-Source: AGHT+IExGqsABb2nfDpqx62l2Grr9WMf6NksN8dn+3UY+xDAkjD9saLK8WZUGJSLhVfjWXlqDyk/og==
+X-Received: by 2002:a05:6902:20ca:b0:e8d:76ec:7faa with SMTP id 3f1490d57ef6-e8df1388e0bmr9352343276.25.1753634198366;
+        Sun, 27 Jul 2025 09:36:38 -0700 (PDT)
+Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
+        by smtp.gmail.com with UTF8SMTPSA id 3f1490d57ef6-e8df86ea200sm1422800276.35.2025.07.27.09.36.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 09:36:37 -0700 (PDT)
+Date: Sun, 27 Jul 2025 12:36:36 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Wang Liang <wangliang74@huawei.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ mst@redhat.com, 
+ jasowang@redhat.com, 
+ xuanzhuo@linux.alibaba.com, 
+ eperezma@redhat.com, 
+ pabeni@redhat.com, 
+ davem@davemloft.net, 
+ willemb@google.com, 
+ atenart@kernel.org
+Cc: yuehaibing@huawei.com, 
+ zhangchangzhong@huawei.com, 
+ netdev@vger.kernel.org, 
+ virtualization@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, 
+ steffen.klassert@secunet.com, 
+ tobias@strongswan.org
+Message-ID: <68865594e28d8_9f93f29443@willemb.c.googlers.com.notmuch>
+In-Reply-To: <bef878c0-4d7f-4e9a-a05d-30f6fde31e3c@huawei.com>
+References: <20250724083005.3918375-1-wangliang74@huawei.com>
+ <688235273230f_39271d29430@willemb.c.googlers.com.notmuch>
+ <bef878c0-4d7f-4e9a-a05d-30f6fde31e3c@huawei.com>
+Subject: Re: [PATCH net] net: check the minimum value of gso size in
+ virtio_net_hdr_to_skb()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250724083001.362882-1-yizhou.tang@shopee.com>
- <20250724083001.362882-4-yizhou.tang@shopee.com> <nk2qqgxickxelo6a7ywxwan2fshjkfygzdb6sooe3v4cl5f3ob@kvejyp5t2cmf>
- <b4e52ec1-a385-429e-8768-5e0eae1dc170@kernel.org>
-In-Reply-To: <b4e52ec1-a385-429e-8768-5e0eae1dc170@kernel.org>
-From: Yizhou Tang <tangyeechou@gmail.com>
-Date: Mon, 28 Jul 2025 00:35:43 +0800
-X-Gm-Features: Ac12FXwBcddSSHpVIcCGbmpI6Yft_rffNEpgjx6YMLfY6-btEA0VGvLSqzsgxx4
-Message-ID: <CAOB9oOaX50BSuftdBWe9LMNCTDdF4RtQCs1kQrX+3mMt95z7cQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] blk-wbt: doc: Update the doc of the wbt_lat_usec interface
-To: yukuai@kernel.org
-Cc: Jan Kara <jack@suse.cz>, Tang Yizhou <yizhou.tang@shopee.com>, axboe@kernel.dk, hch@lst.de, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 26, 2025 at 2:16=E2=80=AFAM Yu Kuai <yukuai@kernel.org> wrote:
->
-> Hi,
->
-> =E5=9C=A8 2025/7/25 23:49, Jan Kara =E5=86=99=E9=81=93:
-> > On Thu 24-07-25 16:30:01, Tang Yizhou wrote:
-> >> From: Tang Yizhou <yizhou.tang@shopee.com>
+Wang Liang wrote:
+> =
+
+> =E5=9C=A8 2025/7/24 21:29, Willem de Bruijn =E5=86=99=E9=81=93:
+> > Wang Liang wrote:
+> >> When sending a packet with virtio_net_hdr to tun device, if the gso_=
+type
+> >> in virtio_net_hdr is SKB_GSO_UDP and the gso_size is less than udphd=
+r
+> >> size, below crash may happen.
 > >>
-> >> The symbol wb_window_usec cannot be found. Update the doc to reflect t=
-he
-> >> latest implementation, in other words, the cur_win_nsec member of stru=
-ct
-> >> rq_wb.
-> >>
-> >> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
-> > I think the name should be actually 'curr_win_nsec' because that's the =
-name
-> > of this value shown in debugfs.
-> Agreed, or you can mention both the field in rq_wb and debugfs name.
->
-
-I will change it to cur_win_nsec in the next patch.
-
-Thanks,
-Yi
-
-> Thanks,
-> Kuai
+> > gso_size is the size of the segment payload, excluding the transport
+> > header.
 > >
-> >                                                               Honza
+> > This is probably not the right approach.
 > >
-> >> ---
-> >>   Documentation/ABI/stable/sysfs-block | 10 +++++-----
-> >>   1 file changed, 5 insertions(+), 5 deletions(-)
+> > Not sure how a GSO skb can be built that is shorter than even the
+> > transport header. Maybe an skb_dump of the GSO skb can be elucidating=
+.
+> >>   			return -EINVAL;
+> >>   =
+
+> >>   		/* Too small packets are not really GSO ones. */
+> >> -- =
+
+> >> 2.34.1
 > >>
-> >> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/=
-stable/sysfs-block
-> >> index 4ba771b56b3b..7bb4dce73eca 100644
-> >> --- a/Documentation/ABI/stable/sysfs-block
-> >> +++ b/Documentation/ABI/stable/sysfs-block
-> >> @@ -731,11 +731,11 @@ Contact:       linux-block@vger.kernel.org
-> >>   Description:
-> >>              [RW] If the device is registered for writeback throttling=
-, then
-> >>              this file shows the target minimum read latency. If this =
-latency
-> >> -            is exceeded in a given window of time (see wb_window_usec=
-), then
-> >> -            the writeback throttling will start scaling back writes. =
-Writing
-> >> -            a value of '0' to this file disables the feature. Writing=
- a
-> >> -            value of '-1' to this file resets the value to the defaul=
-t
-> >> -            setting.
-> >> +            is exceeded in a given window of time (see the cur_win_ns=
-ec
-> >> +            member of struct rq_wb), then the writeback throttling wi=
-ll
-> >> +            start scaling back writes. Writing a value of '0' to this=
- file
-> >> +            disables the feature. Writing a value of '-1' to this fil=
-e
-> >> +            resets the value to the default setting.
-> >>
-> >>
-> >>   What:              /sys/block/<disk>/queue/write_cache
-> >> --
-> >> 2.25.1
-> >>
->
+> =
+
+> Thanks for your review!
+
+Thanks for the dump and repro.
+
+I can indeed reproduce, only with the UDP_ENCAP_ESPINUDP setsockopt.
+
+> Here is the skb_dump result:
+> =
+
+>  =C2=A0=C2=A0=C2=A0 skb len=3D4 headroom=3D98 headlen=3D4 tailroom=3D28=
+2
+>  =C2=A0=C2=A0=C2=A0 mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98=
+
+>  =C2=A0=C2=A0=C2=A0 shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D0 type=3D=
+0 segs=3D0))
+>  =C2=A0=C2=A0=C2=A0 csum(0x8c start=3D140 offset=3D0 ip_summed=3D1 comp=
+lete_sw=3D0 valid=3D1 level=3D0)
+
+So this is as expected not the original GSO skb, but a segment,
+after udp_rcv_segment from udp_queue_rcv_skb.
+
+It is a packet with skb->data pointing to the transport header, and
+only 4B length. So this is an illegal UDP packet with length shorter
+than sizeof(struct udphdr).
+
+The packet does not enter xfrm4_gro_udp_encap_rcv, so we can exclude
+that.
+
+It does enter __xfrm4_udp_encap_rcv, which will return 1 because the
+pskb_may_pull will fail. There is a negative integer overflow just
+before that:
+
+        len =3D skb->len - sizeof(struct udphdr);
+        if (!pskb_may_pull(skb, sizeof(struct udphdr) + min(len, 8)))
+                return 1;
+
+This is true for all the segments btw, not just the last one. On
+return of 1 here, the packet does not enter encap_rcv but gets
+passed to the socket as a normal UDP packet:
+
+	/* If it's a keepalive packet, then just eat it.
+	 * If it's an encapsulated packet, then pass it to the
+	 * IPsec xfrm input.
+	 * Returns 0 if skb passed to xfrm or was dropped.
+	 * Returns >0 if skb should be passed to UDP.
+	 * Returns <0 if skb should be resubmitted (-ret is protocol)
+	 */
+	int xfrm4_udp_encap_rcv(struct sock *sk, struct sk_buff *skb)
+
+But so the real bug, an skb with 4B in the UDP layer happens before
+that.
+
+An skb_dump in udp_queue_rcv_skb of the GSO skb shows
+
+[  174.151409] skb len=3D190 headroom=3D64 headlen=3D190 tailroom=3D66
+[  174.151409] mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98
+[  174.151409] shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D4 type=3D65538 =
+segs=3D0))
+[  174.151409] csum(0x8c start=3D140 offset=3D0 ip_summed=3D3 complete_sw=
+=3D0 valid=3D1 level=3D0)
+[  174.151409] hash(0x0 sw=3D0 l4=3D0) proto=3D0x0800 pkttype=3D2 iif=3D8=
+
+[  174.151409] priority=3D0x0 mark=3D0x0 alloc_cpu=3D1 vlan_all=3D0x0
+[  174.151409] encapsulation=3D0 inner(proto=3D0x0000, mac=3D0, net=3D0, =
+trans=3D0)
+[  174.152101] dev name=3Dtun0 feat=3D0x00002000000048c1
+
+And of segs[0] after segmentation
+
+[  103.081442] skb len=3D38 headroom=3D64 headlen=3D38 tailroom=3D218
+[  103.081442] mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98
+[  103.081442] shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D0 type=3D0 segs=
+=3D0))
+[  103.081442] csum(0x8c start=3D140 offset=3D0 ip_summed=3D1 complete_sw=
+=3D0 valid=3D1 level=3D0)
+[  103.081442] hash(0x0 sw=3D0 l4=3D0) proto=3D0x0800 pkttype=3D2 iif=3D8=
+
+[  103.081442] priority=3D0x0 mark=3D0x0 alloc_cpu=3D0 vlan_all=3D0x0
+[  103.081442] encapsulation=3D0 inner(proto=3D0x0000, mac=3D0, net=3D0, =
+trans=3D0)
+
+So here translen is already 38 - (98-64) =3D=3D 38 - 34 =3D=3D 4.
+
+So the bug happens in segmentation.
+
+[ongoing ..]=
 
