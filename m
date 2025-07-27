@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-746949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF94B12D93
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 04:24:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3BFB12D94
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 04:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB72A189CB8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 02:24:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5C117DDB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 02:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE0915A85A;
-	Sun, 27 Jul 2025 02:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAADF155326;
+	Sun, 27 Jul 2025 02:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIxzi64s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRB4AipB"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78DA1799F;
-	Sun, 27 Jul 2025 02:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D9D747F
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 02:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753583052; cv=none; b=ByKo+tS+W4w4IVMm3KnKzupBMm5kY3fx4j5RjlXCpIz07xjvI4HPlC/RHi6Gx4mvNnQJC1rB8I6OQytOr3lCnMn3qJSr42FsgaEDFbi9oNjb1ruzE9q7EP/GmTYrpTnBPL6u/npmgNPcLXJGdGhMGzQTMHuQF/F7GZoz0h9ThNw=
+	t=1753583419; cv=none; b=fW7OKhdYR3eH7u5H9/53Hqxuf67vvlKYiUfOW7szt4W7ZlI3ElpLZuxJo9vVUNT0sC4fFyycTp8REWNqERCe2gCzXy6lfT6OnScjXCP6aA7yOFmg6b1bbPTzkNUmC1pq0x99I7ewJHZyfpGLff7Put8jkna+CgFheeK/akM/PaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753583052; c=relaxed/simple;
-	bh=EhG7SyaJKYTJTFEhZaaKH54gJ/aHq6MkbV9qkVdt+es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y4JyC8RF2xK3BAopVxivuX2Fa10mvQe5ySHg9JEoYFPRqxTBVz1I01wviU2kYts7MfXb+szNApqG5hZfUTcARTV4u06vP3mTw+52/nEEFeXtxkfsNGy1fHAP2E+U05WqOohH4huMmnBkuE2aGcFS2Yv2MEW5dVVQ30EZsY6RjTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIxzi64s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B46E0C4CEED;
-	Sun, 27 Jul 2025 02:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753583052;
-	bh=EhG7SyaJKYTJTFEhZaaKH54gJ/aHq6MkbV9qkVdt+es=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZIxzi64saD/+/jDjElCB6XFTOcjW2WzDsWm6zIVcPhepfFksYVZEMiHVYaPzjBE3H
-	 UhQeSC2HR67P1Xx/LXJbU2KrfSWHaMqrj1X3K/wl97zAkggym7vy2O5Eruedyzj4lz
-	 2MgHPdKVGc6zPH+AcWF+y/V4U+SouW6hD+/4pa5bta6k4wHGQqWWzqL1rV3FLYzKHW
-	 RTf4D7TwyvUtN4lqcph6INEMecqiGP+Hig2gx6z+Fc28l9bwgvMwrcS7RCJC1MOHGD
-	 zTJw4hhSscSWQqUkuKI3PN51Nkp53rbt9mflg766Y+FKbywKzDjcaE37J2VQhZuADq
-	 gnc+iZNy2Ihcw==
-Date: Sat, 26 Jul 2025 22:24:08 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, josh@joshtriplett.org
-Subject: Re: [RFC 1/2] AI: Add unified AI coding assistant configuration
-Message-ID: <aIWNyPMYHXSmJ5qT@lappy>
-References: <20250725175358.1989323-1-sashal@kernel.org>
- <20250725175358.1989323-2-sashal@kernel.org>
- <87wm7w5dnd.fsf@trenco.lwn.net>
- <aIQCBQgh0XiDf2dv@lappy>
+	s=arc-20240116; t=1753583419; c=relaxed/simple;
+	bh=BbtLETgMS5qyUODBrsadCnpoXePLzxf1knvhykUQD8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O3xGjFQEk5uC8kWx1sA0iO2yzYpO06kjTj6a+LejrLHco207ASzOHPKrS2jAWHQNV/stGCnrSHVw6/L9GvkW7vHUArTpzD77wTHxjEGDCKIQhJi6EqBse0O5PyBvmxqZtd+t1WKgYXgLJ4OXyDVPd8+zmXmvTVta7iqGZ3n/120=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRB4AipB; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23c8f179e1bso38787365ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 19:30:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753583416; x=1754188216; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i7Z/CeL/3tzEd7gHOKjeEpVKVjkDPKtAcg1iayXirF4=;
+        b=cRB4AipBVDMn/ay3XukMlNOzYkcKaJd+9dkOuoBbuOR3a0bRuEwXPkJf9+bmTj3i6W
+         fspG73V5bL+NdIRO5poWrEipU7k2COAiPncjw6stWFG7tKmOQaMG/jOjupJjC6OvqY5l
+         lXjBxHiFbalhQcbYO6RKh1wsiGQEfxYfaIkDwabZSLJNni7MddhAjSqQDVyQ8DAGxm8T
+         t/7qP5e5errGnjOb4FagERoZcYgFHjz2k1c0HRL/JUs6ji4ESFsQl16MBZmXgWGS74tz
+         AvHVkjfdVpUhSyeYjCIEBSdREMLo9isa6zuPjTcP1DuEe8o1yR5cjpIpYiyuPQAcYpND
+         M23Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753583416; x=1754188216;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i7Z/CeL/3tzEd7gHOKjeEpVKVjkDPKtAcg1iayXirF4=;
+        b=RyXRcegch4ctBbVmUpV8Ferm9vuhtoTpS3tQf5t44OEKdGHFr3NK9MFGoo2ZiXg/fT
+         A3yto8C3FtVpD2E7+tKF+966FcgO15z+CDgMkNQutEPwTdg/svBgM0ROC4LdbyH1MFcP
+         +5dReXFNp2Fk/l/g4gM8zvYysrq+AAYUTc1FvB0Cudt/Ku9Kw1yF2i/t33d2npTFDLK5
+         DsmptDEvwdHmA5Zq59L0Nnb/6+/Tik1fQgtqdp/DryVnjyhokczoaA/O4r3RpdpeXqwm
+         +orDiT2iWjJk7l+oY78F8gvSDCbEyJNbYbGDTCGB0RA1Lr4SXBUW1C9hywiTv76iRGh5
+         kLoA==
+X-Gm-Message-State: AOJu0YzbTqmrkK2zIF35pFI1ekF2NQLDMv3lpFzMuDOieNPOhDskpmZE
+	BRvpDnmNwTp4xSTH+SgkstJGqVWZ+Co5DAv7NXuHim74ElhEVpYi7uiasJz05ncZ
+X-Gm-Gg: ASbGncvKhMXu29L5ed3P7Hb8B0+5EoEdx6EWRia9Y3YRhLWqJBZhESCghZvkqRtWK48
+	jfYJoRhkXPxNgdqxaPDA7tVPAeJsvXHig699S/qV5q/jaSX2JQbKAiPrRcDXTIAsRkp05fbMo8x
+	TEURIByKxo3G8MZ/kSKIejhXUfZxNepci1dCP+vQE17xQ++S7Xt+mrZuXryhfMCGkuESp7ZHe1V
+	mrl22RGUabfaD+ROh2DfMu4/RqQ6t+ypwJuUZatDH7L6hJNNzEwLELTeoh+s2AmSCTQMVzu6apI
+	+XQTGO5fxb0SA+Qg1Z6ibGHLRTZiU7swo3s/eVcv17uFuHkFKKG7Pja3l4qkbzHTrWz8sQwkQXx
+	BNA5nwaz27IIx3V7zap+aTBcZ2zhyMy04/2EJPsJ0ngh55Xd8u40DhPC5
+X-Google-Smtp-Source: AGHT+IEeu1Qvz7XLkOmlYAhzz4xrraIH1DXGFBSvM0gmwyKzM6G5ACLyQQC+T3A4i2jUh9Ub7cRBDQ==
+X-Received: by 2002:a17:902:f693:b0:234:c549:da10 with SMTP id d9443c01a7336-23fb31e312emr99690405ad.47.1753583415882;
+        Sat, 26 Jul 2025 19:30:15 -0700 (PDT)
+Received: from fedora (181-162-135-125.baf.movistar.cl. [181.162.135.125])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe30bcfbsm25836275ad.16.2025.07.26.19.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Jul 2025 19:30:15 -0700 (PDT)
+From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ignacio Pena <ignacio.pena87@gmail.com>
+Subject: [PATCH] drivers/cpufreq/qcom-cpufreq-nvmem.c: Fix typo 'defered' -> 'deferred'
+Date: Sat, 26 Jul 2025 22:30:19 -0400
+Message-ID: <20250727023019.82233-1-ignacio.pena87@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <aIQCBQgh0XiDf2dv@lappy>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 25, 2025 at 06:15:33PM -0400, Sasha Levin wrote:
->On Fri, Jul 25, 2025 at 12:27:50PM -0600, Jonathan Corbet wrote:
->>Sasha Levin <sashal@kernel.org> writes:
->>
->>>Create a single source of truth for AI instructions in
->>>Documentation/AI/main.md with symlinks for all major AI coding
->>>assistants:
->>>- CLAUDE.md (Claude Code)
->>>- .github/copilot-instructions.md (GitHub Copilot)
->>>- .cursorrules (Cursor)
->>>- .codeium/instructions.md (Codeium)
->>>- .continue/context.md (Continue)
->>>- .windsurfrules (Windsurf)
->>>- Documentation/AIder.conf.yml (Aider)
->>>
->>>Signed-off-by: Sasha Levin <sashal@kernel.org>
->>>---
->>> .aider.conf.yml                 | 1 +
->>> .codeium/instructions.md        | 1 +
->>> .continue/context.md            | 1 +
->>> .cursorrules                    | 1 +
->>> .github/copilot-instructions.md | 1 +
->>> .windsurfrules                  | 1 +
->>> CLAUDE.md                       | 1 +
->>> Documentation/AI/main.md        | 5 +++++
->>
->>So I'm gonna ignore (for now) the substantive issues here to ask: do we
->>*really* need to introduce Markdown into Documentation/?  Are these
->>things really unable to understand RST?  Why not add a file that can be
->>part of the docs build so people can see the instructions that are being
->>provided?
->
->From my understanding, most of the agents out there expect a markdown
->file ("CLAUDE.md", ".github/copilot-instructions.md", etc).
->
->All the documentation and examples I can find online insist on
->markdown... I suspect that they will also understand RST, but then we'll
->be doing something "unsupported".
->
->Though in this scenario, maybe even just plain text will be enough?
+Fix spelling mistake.
 
-I've tested providing a RST file instead of markdown to Claude, Copilot,
-and Cursor. All 3 seemed to be okay with it and followed the
-instructions in it.
+No functional change.
 
-I'll switch to RST.
+Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
+---
+ drivers/cpufreq/qcom-cpufreq-nvmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+index 54f811710..5a711de3e 100644
+--- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
++++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+@@ -605,7 +605,7 @@ MODULE_DEVICE_TABLE(of, qcom_cpufreq_match_list);
+ /*
+  * Since the driver depends on smem and nvmem drivers, which may
+  * return EPROBE_DEFER, all the real activity is done in the probe,
+- * which may be defered as well. The init here is only registering
++ * which may be deferred as well. The init here is only registering
+  * the driver and the platform device.
+  */
+ static int __init qcom_cpufreq_init(void)
 -- 
-Thanks,
-Sasha
+2.50.1
+
 
