@@ -1,111 +1,90 @@
-Return-Path: <linux-kernel+bounces-747281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C655FB131CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 22:28:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874D4B131CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 22:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B5E189845D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:28:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF006169913
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95F323D2B6;
-	Sun, 27 Jul 2025 20:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jq5JtLZE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5002367B5;
+	Sun, 27 Jul 2025 20:32:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300E323BCED;
-	Sun, 27 Jul 2025 20:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6AE1C84D0
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 20:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753648065; cv=none; b=QEKoxd7MD5yEzEk7dFNXBJcSCGw+MsVgR97Io+t+1omg5DhEcZaxAQqVp1mumCpXkzmNPwVW3atpE2XBe2qhmRd3M81g/My+VhDsXFvO/boYIGk28SPZ1aUxczNDLS80Gt6/niOgNpOe6b+oTmLvtjKVlWXToiNWUjgmqE4hOok=
+	t=1753648325; cv=none; b=A58Yy/zIE78TcbQ/7/MNkCFT1oExuoZyX8ecdiZyDsIMiVypyeEKfpbsRHDrHERxJngrKPQIv9yePbsYJIq/akA6F9XVl3sacSlQduhYzFJR0GUTcKAvUygipB0gYZF6uhkp0g7GWVGet4xqX9tQnLMcAKUfEw/KDDSJlqqGpTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753648065; c=relaxed/simple;
-	bh=dRmKTiw1fab4d1US1qUGI0FYfA7qFL9ZBkYLrxz0Ggc=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=UCDVN0dP79ChBEGMm4aF0ClPqdknht3x2V5VoS+DBPMnsfbgDxpAUVjUM69dyqQ6M+kXHrRfVEvKYGM2cwyb8eLhVuo9Ne3P487t9yb1gfmPgdvK+Du+iNbxsibzH3LB1yEVb+9L9FjAyKnNdXF3xMIv7x+g+6qjMPCeKjiDUUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jq5JtLZE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFCCEC4CEEF;
-	Sun, 27 Jul 2025 20:27:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753648065;
-	bh=dRmKTiw1fab4d1US1qUGI0FYfA7qFL9ZBkYLrxz0Ggc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=jq5JtLZEZpLoCNWFTg+zyA6D89n/H1dyZw3w1qZbULqPLAxOSoJemrH0NHFYWcYR8
-	 m2PbU+k6BVHaas8uwmq2yiUr1lLcSH67hMd2QB2PFFn8YgjzrDmXAGZBxo/0YCGUOj
-	 nS8IC4yAr/u3V6dujSb4H4od8rJgzO280UBhct+GDvjLbSdqxjV0zNDkKYCJyhx3m+
-	 19IknIcUtPOw0HhHcmRMArA3z/062HBkg43Py2FvAX83n1O9flKfEs2MSD7i0J2NKH
-	 UoUrlfO/20L7950bYyElqd5459B7duUsjhjAODcWxHFWMSvSvjQMio/UsFRKL8LHy4
-	 Bvnv50yD5h4LQ==
-Date: Sun, 27 Jul 2025 15:27:44 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1753648325; c=relaxed/simple;
+	bh=qKAXajC08QtdZO+u88RUEpQFoL2vBrwjC67UWh4RuxU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bRRfOCu7naggodLQoDudGYUKAMoguaasEJOIkKvzL+vwPDu/6tKy6iYcBy0kRHbS+xZgEJpk61h2xpUNFNVWfQNaBphtlnUBaQAE7SexYem8F01UzSlM50cy59QxTYpeQZ4u1T3E10265CZ+DckzhgFljv81VcVYbFOv3szcwaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddba1b53e8so43263555ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 13:32:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753648323; x=1754253123;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tVZNm5iHyf+ldpfRzaDP+2CJP6KflRVaMuSTT3zfTzI=;
+        b=Lh/p2dXLjQVv7JCmPHhiz6AP7yrN6NZqfDpNXr/KHRSg2fU57HlSEXJkwE9rFoWvvr
+         KxvDgDTY9XQZUM/5MKaAybv8rgwlJvBWt1GNh/T0lExjPu55nYK3aqBSMesy2sVz+LC0
+         WX1KB0wPyQLGuvKu7BnMjCGIKfWOVnlkcGrAYI0E/Z2SYr6WozA3dkGfDJpybfg4+q3V
+         zRCwwuB+uJ0G0XmevgLGJ2+aTQ4sTqSXg9bZelNdi2ojHjkcBMvyUGELDdESBYdcinqN
+         NUxT8TqNnOy1dQvt4SB7i+4KV7g5OvlXwXFj/bGHGPutp9tZWnlH4rzaSLTAMTRtzTXR
+         1k2g==
+X-Forwarded-Encrypted: i=1; AJvYcCX0D84hjLpPJWtqw43oBbo5TSeYG1DSu426mO3rtmUceZuBM4ZH4/qVRno7i1GNn6QBt8WYzrFxbzbdGEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb8eqTONFxf3JCPUc22jjQshtXJ6yzusBRn8xHOXXyycAzzrN9
+	mn39amTNya+fSchA01pobh+Z7+f20UV2MRbUIttk48LxGv7ij+11tAaMyOZXTgP8IcwhIjbE5Bk
+	7H7/pUzL93LaJhIIjcZKTeMMO9+uTbjmViyvywoq+/fZYqE45VX4VG3dv8sc=
+X-Google-Smtp-Source: AGHT+IGqs2mNZZdeseuYEnh5d+XiBsrOzuoLvpQSrtSyw5bf4JZh36TKNJKETVMUGSS7WfXHh4onGbnoawTR6SHO+Wlv0ECsHv+B
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, CK Hu <ck.hu@mediatek.com>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, dri-devel@lists.freedesktop.org, 
- David Airlie <airlied@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
- Simona Vetter <simona@ffwll.ch>, Yongqiang Niu <yongqiang.niu@mediatek.com>, 
- Hsin-Yi Wang <hsinyi@chromium.org>, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org
-To: Jay Liu <jay.liu@mediatek.com>
-In-Reply-To: <20250727071609.26037-8-jay.liu@mediatek.com>
-References: <20250727071609.26037-1-jay.liu@mediatek.com>
- <20250727071609.26037-8-jay.liu@mediatek.com>
-Message-Id: <175364805939.3229.16063506192573561035.robh@kernel.org>
-Subject: Re: [PATCH v2 7/7] dt-bindings: display: mediatek: gamma: Add
- support for MT8196
+X-Received: by 2002:a05:6e02:3385:b0:3dd:d995:30ec with SMTP id
+ e9e14a558f8ab-3e3c52bc2e2mr191014375ab.12.1753648322859; Sun, 27 Jul 2025
+ 13:32:02 -0700 (PDT)
+Date: Sun, 27 Jul 2025 13:32:02 -0700
+In-Reply-To: <878qk9csvy.fsf@posteo.net>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68868cc2.a00a0220.b12ec.006a.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in ah6_output
+From: syzbot <syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com>
+To: charmitro@posteo.net, davem@davemloft.net, dsahern@kernel.org, 
+	edumazet@google.com, herbert@gondor.apana.org.au, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, steffen.klassert@secunet.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
-On Sun, 27 Jul 2025 15:15:57 +0800, Jay Liu wrote:
-> Add a compatible string for the GAMMA IP found in the MT8196 SoC.
-> Each GAMMA IP of this SoC is fully compatible with the ones found
-> in MT8195.
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Jay Liu <jay.liu@mediatek.com>
-> Signed-off-by: 20220315152503 created <jay.liu@mediatek.com>
-> ---
->  .../devicetree/bindings/display/mediatek/mediatek,gamma.yaml     | 1 +
->  1 file changed, 1 insertion(+)
-> 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Reported-by: syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com
+Tested-by: syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com
 
-yamllint warnings/errors:
+Tested on:
 
-dtschema/dtc warnings/errors:
+commit:         d4017cef net: ipv6: fix buffer overflow in AH output
+git tree:       https://github.com/charmitro/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1560a782580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d80adbc1e1d0bde4
+dashboard link: https://syzkaller.appspot.com/bug?extid=01b0667934cdceb4451c
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250727071609.26037-8-jay.liu@mediatek.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
