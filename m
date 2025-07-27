@@ -1,102 +1,194 @@
-Return-Path: <linux-kernel+bounces-747192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D27B130DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:09:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30AC8B130DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCF6C3B6A01
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61857175A01
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662E821CFE0;
-	Sun, 27 Jul 2025 17:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3DPVC2p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93EE1FC7E7;
-	Sun, 27 Jul 2025 17:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6296921C9F6;
+	Sun, 27 Jul 2025 17:10:29 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6867E4A00;
+	Sun, 27 Jul 2025 17:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753636155; cv=none; b=eH4ucXL0HEU2EKqYJuur3pgvMW8GwG7xklB/NmqqzUkAnz43vxlt9l5/7xBeqMh/ff819L8Q9CW7o+doUL/obdFvYQ3rSLEOTEGHrAXr+kyeN2X845EohILH7ymwy7gv/yO9sIGDyy5Hap10qFQeni1OLlGiF6rBqCZc6eV9u+s=
+	t=1753636229; cv=none; b=MtAenf+ijv45rykkX7HLgDjegv9XJxSdu+xT1uCJHxE8Y0/T/8+G6P1D5vS3/V117jGnxMHtaXmz8PEdLT8i9fB+SGsBL1OeKTBpg9NatSkjpn1x1yj/ds7BJji3JyPDDfAfPoFDoXdbUp21Lc3hc7t6cAkXGUOXSotdDwFrNJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753636155; c=relaxed/simple;
-	bh=SD6OqvapmGZ7UiIOFK1RyTjMRZLyejj7GlhBdpW6+oA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szVP/fj59j3mpSsrby2CmDhXTr/TPTpnDt61aBVokF/SkNFATDPz8O/m+YR8dG3rEe827M4BBOCI6nLvm7S+0RnhDbydRUzt1GSxnDc0HRPl3K/8JyfbepiV8FUMTjpqTvNrZPsj0/s4+KjFJ67rYQbBLIL4rx7DTfeQcBek55I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3DPVC2p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2B1DC4CEEB;
-	Sun, 27 Jul 2025 17:09:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753636154;
-	bh=SD6OqvapmGZ7UiIOFK1RyTjMRZLyejj7GlhBdpW6+oA=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z3DPVC2pRiShL7LhL0GftQfIepUEuhgMLl33nu7P/BF/7FF+U19m4Gqss/sHa7E/7
-	 K40P8MMo5EBU/r93sRIkNaZDHrRd8BL0XjZXsbrK/QygGtQFQHtYvkjwKYy4GabnYf
-	 bvvo78Y6c3YQrUkgVqEP59VoNIDklbwTBycv1kQrHI2WkurY5Bj1jKCzv3w4plMc+l
-	 f0ncokFn6QGDXESwOvyWNCbb5RlXqgrkM7r7T/HnzdJzdbO8im0OqSkTuWGsmw2btl
-	 iPYSxy1IFnYyfm8gMp3Qevr2U6EaLbrgXEdNOmmQzVLsvCEcbkuVRtYyDWgdDYH2rZ
-	 9v8hkXtSFvjrA==
-Message-ID: <939f45b2-4481-422a-a747-012808953d7f@kernel.org>
-Date: Mon, 28 Jul 2025 01:09:07 +0800
+	s=arc-20240116; t=1753636229; c=relaxed/simple;
+	bh=/NgwpO3cse/PaI1LwtLxV1CE5rATpK2IMleIMwqMhGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JtF7+mQwAX8/QU7vAM4iLhyZDvvdnHR4NhBWNZ2Y5cL1grtThyMCuXgDP0olue5NL7kS0Ucz+DjHTOG20nq8QDxMJTrdzvE49o0YsbEcREhfwZwQjrzro3y/EMOcFCPEn3ESNld6HQJxdjsUMVAYCluL00rozQz6OJz480kC0Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 56RH9lBm018749;
+	Sun, 27 Jul 2025 19:09:47 +0200
+Date: Sun, 27 Jul 2025 19:09:47 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: alchark@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+        heiko@sntech.de, jonas@kwiboo.se, krzk+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, ziyao@disroot.org
+Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency
+ scaling support
+Message-ID: <20250727170947.GA19379@1wt.eu>
+References: <CABjd4YzLaAgd-5Cg9fMSAgCS6Wt6=uC8K3WRhcAtnjjg1je87Q@mail.gmail.com>
+ <20250720140010.218235-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: yukuai@kernel.org
-Subject: Re: [PATCH v2 3/3] blk-wbt: doc: Update the doc of the wbt_lat_usec
- interface
-To: Tang Yizhou <yizhou.tang@shopee.com>, axboe@kernel.dk, hch@lst.de,
- jack@suse.cz
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- tangyeechou@gmail.com
-References: <20250727164709.96477-1-yizhou.tang@shopee.com>
- <20250727164709.96477-4-yizhou.tang@shopee.com>
-Content-Language: en-US
-From: Yu Kuai <yukuai@kernel.org>
-In-Reply-To: <20250727164709.96477-4-yizhou.tang@shopee.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250720140010.218235-1-amadeus@jmu.edu.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi,
+Hello,
 
-在 2025/7/28 0:47, Tang Yizhou 写道:
-> From: Tang Yizhou <yizhou.tang@shopee.com>
->
-> The symbol wb_window_usec cannot be found. Update the doc to reflect the
-> latest implementation, in other words, the cur_win_nsec member of struct
-> rq_wb.
->
-> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
-> ---
->   Documentation/ABI/stable/sysfs-block | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
-> index 4ba771b56b3b..277d89815edd 100644
-> --- a/Documentation/ABI/stable/sysfs-block
-> +++ b/Documentation/ABI/stable/sysfs-block
-> @@ -731,7 +731,7 @@ Contact:	linux-block@vger.kernel.org
->   Description:
->   		[RW] If the device is registered for writeback throttling, then
->   		this file shows the target minimum read latency. If this latency
-> -		is exceeded in a given window of time (see wb_window_usec), then
-> +		is exceeded in a given window of time (see cur_win_nsec), then
-Is this a typo? Jan suggested curr_win_nsec from v1.
+On Sun, Jul 20, 2025 at 10:00:10PM +0800, Chukun Pan wrote:
+> Hi,
+> 
+> > > Because the actual frequency generated by 850mV is closer to 1008MHz.
+> >
+> > Which likely means that you have an -L5 chip. It will be different on
+> > other chips - it's a lottery of silicon quality.
+> 
+> The rk3528 board I have has -L3 and -L5 levels.
+> -L3 level tested at 850mV (mainline kernel) actual frequency is 1055MHz.
+> 
+> Frankly speaking, I have always doubted whether the voltage value of BSP
+> is correct. The voltage of BSP kernel at 1800MHz and 2016MHz is too low,
+> and no board can reach the corresponding actual frequency.
+> For example, if we set the CPU frequency to 2016MHz when running the BSP
+> kernel, the actual frequency can only reach 1800MHz.
 
-BTW, I don't mind rename rwb->cur_win_nsec to curr_win_nsec as well.
+I've tried the patch on my E20C and am seeing a frequency drop compared
+to cpufreq disabled (2016 MHz stock frequency). By default, without the
+OPP, my CPU cores are showing the following frequencies:
 
-Thanks,
-Kuai
+  # ncpu=$(nproc);for ((i=0; i<ncpu;i ++)); do echo -n "$(taskset -c $i ./mhz -c -i) " ;done;echo
+  2008 2011 2012 2010 
 
->   		the writeback throttling will start scaling back writes. Writing
->   		a value of '0' to this file disables the feature. Writing a
->   		value of '-1' to this file resets the value to the default
+There's always the same distribution with core 0 being slightly lower,
+then core 3, then 1 and 2, very likely due to leakage and PVTM adjustments.
 
+In idle it's consuming 906 mW. After enabling the OPP, I've tried again
+and this time I'm seeing this:
+
+  # ncpu=$(nproc);for ((i=0; i<ncpu;i ++)); do echo -n "$(taskset -c $i ./mhz -c -i) " ;done;echo
+  1891 1895 1894 1893 
+
+It's missing ~120 MHz as if we were not using the correct multiples. The
+power draw is also lower, at 864 mW.
+
+I've tested each of the OPP in turn and measured the idle power consumption
+and the effective frequency (measured on core 1):
+
+    OPP     MHz    mW
+   408000   394   795
+   600000   593   797
+   816000   908   800
+  1008000  1100   801
+  1200000  1306   808
+  1416000  1372   812
+  1608000  1576   818
+  1800000  1744   836
+  2016000  1896   856
+
+It's interesting to note that 816, 1008 and 1200 MHz result in a higher
+frequency than configured, but upper ones result in slightly smaller
+frequencies (~2%, might just be a measurement error), particularly for
+the last one which is 6% lower.
+
+I noticed a missing entry for 2 GHz in clk-rk3528.c so I've added it,
+expecting that it would solve the problem:
+
+--- a/drivers/clk/rockchip/clk-rk3528.c
++++ b/drivers/clk/rockchip/clk-rk3528.c
+@@ -25,6 +25,7 @@ enum rk3528_plls {
+ };
+ 
+ static struct rockchip_pll_rate_table rk3528_pll_rates[] = {
++       RK3036_PLL_RATE(2016000000, 1, 84, 1, 1, 1, 0),
+        RK3036_PLL_RATE(1896000000, 1, 79, 1, 1, 1, 0),
+        RK3036_PLL_RATE(1800000000, 1, 75, 1, 1, 1, 0),
+        RK3036_PLL_RATE(1704000000, 1, 71, 1, 1, 1, 0),
+
+But it had no effect at all, the frequency remains limited to 1896 MHz.
+
+One thing I'm noticing is that with the OPP patches applied, my CPU
+voltage measures 1.094V. Without it, it's 100mV above, at 1.194V. So
+I tried to change the opp-microvolts in the DTS, setting them to 1.2V,
+and I reverted the change above since it had no effect.
+
+And indeed, this unlocked the upper OPP, but now the CPU is running at
+2.1 GHz, and at 900mW idle:
+
+  $ ncpu=$(nproc);for ((i=0; i<ncpu;i ++)); do echo -n "$(taskset -c $i ./mhz -c -i) " ;done;echo
+  2091 2094 2094 2092 
+
+So it's clear that something in the hardware is having fun with our
+settings, and adjusting the frequency also based on the delivered
+voltage.
+
+I tried other voltages without changing the frequency and here's what 
+I'm measuring (configured mhz, measured mhz, configured voltage,
+measured voltage):
+
+  Opp-MHz  MHz  Opp-mV  mV
+   stock  2012  stock  1194
+    2016  1896   1100  1094
+    2016  1944   1125  1117
+    2016  1998   1150  1144
+    2016  2040   1175  1167
+    2016  2094   1200  1194
+
+At least the configured voltage is always respected. So I'm wondering
+what's done in the stock settings. Maybe it's set to a higher voltage
+to ensure stability even on low-quality bins, and configures a lower
+frequency ? Applying a ratio above would indicate that the stock OPP at
+1194 mV above is in fact 2012*2016/2094=1944 MHz. It indeed corresponds
+to a multiple of 24 MHz.
+
+And bingo, trying to set it in opp-hz gives me the stock frequency and
+voltage on this device:
+
+  2009 2012 2013 2011
+
+So what should we conclude from this ? Is the 1.1V configured in the OPP
+the official maximum ? If so, given that the E20C runs at 1.2V stock, how
+can we be sure it will not fail on devices that work fine at 1.2V at stock
+frequency and are not necessarily well tested at 1.1 ? Shouldn't we raise
+the max voltage a little bit to match what vendors do ? Similarly, if we'd
+set 1.2V with the 2016MHz OPP, it would result in a higher frequency on
+some devices like mine, possibly resulting in instabilities on some
+devices. On the other hand, the trouble caused by that PVTM stuff is also
+the one that adjusts our frequency based on the voltage and requested one,
+presumably in order to work reliably at that voltage.
+
+Or maybe we could simply raise the voltage a little bit. The table above
+shows that at 1.15V we're close to the configured OPP and still below the
+stock voltage. This is not critical, but I find it a bit annoying that
+enabling cpufreq results in lower performance than without!
+
+Another observation is that I thought it was the boot loader that was
+presetting the voltage and frequency, and that's not even the case: under
+u-boot, I'm measuring 944mV. So it's just linux that sets it when booting.
+Maybe it instead indicates that one voltage regulator driver's default
+setting is a bit high for this chip and should not set the CPU voltage
+to 1.2V, hence not make the device run at this frequency to start with ?
+
+I can run more tests next weekend if needed.
+
+Cheers,
+Willy
 
