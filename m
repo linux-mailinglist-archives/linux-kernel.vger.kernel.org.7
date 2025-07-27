@@ -1,167 +1,189 @@
-Return-Path: <linux-kernel+bounces-747212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6832EB130FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:45:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74ECB1303A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B250A18963AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A953AFB2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA1F221571;
-	Sun, 27 Jul 2025 17:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8400E18FDBE;
+	Sun, 27 Jul 2025 16:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Egp0+X7U"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="WiVpeKdd"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7B7BA3F;
-	Sun, 27 Jul 2025 17:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEBE2F37;
+	Sun, 27 Jul 2025 16:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753638296; cv=none; b=TdhK6ao25BwPEGrdjOpRzY6rjFj/KA38kQBHXMGM1xsELjmXDn+b3Bkdw8E0PFUF17Rg4PudabZPMrXyMpyM9xuOFgkbXQDvz43sRK7xSkNnOjpY9stKV6PcOVt2KOSgvBHPSXC7st6hbNRm6wG5o2PDBCJ9L45ZJ2Q+9wuCTrI=
+	t=1753632124; cv=none; b=t9s7uTevUiVR6uSGAVUbGpCrlq38qAzXQg5zF7/P0vorOlC6bAs9sbXx7hwgfTmXVZtuctCj6C6m8+dIkOwFnKsi0Q+WzbNjqzFSdVkRX7jWKqRMk4N+Xo3rT4K6Y/0NpnB336hB3xTfeIrd2ehZzTrVEFbCRULf3SIlcul3id4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753638296; c=relaxed/simple;
-	bh=luZy4eZKmQcKzAmjb0W2hbu7XLSsCm4YttVeB4b4JKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ufpx0jaAdLiRdA9fzj4m07jOSYgUqX4zcD0PH8LzR2yYDQm9QdjVwnrq/mr+XJJ7oVD7ODKqbSiZiYa3fI36F+0+kFf7Y8ogcGArhGgCBmKYuGFL2rjwrpUwmQTAO/HiuRuzR7XnQLsGKP9Yibr4/Pj8GD1n/EMuZ2GjtuWjHgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Egp0+X7U; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-40a4de175a3so2160160b6e.0;
-        Sun, 27 Jul 2025 10:44:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753638294; x=1754243094; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGroCA+Q9oleFuUP1DUfRwkk4GCwj8qwuq1UKkEblcc=;
-        b=Egp0+X7U5CeMzsps2ImYbUs3rX/gYwoAvGJZjTIOR0qP1BvNpEWSqaDzPEhyQnCiyY
-         5fYP1KyWPrHnzM0Y18UuEk8i5WdRizi2r3f2B79h0gA9jAc//xdQ1RKyujZTNG/ZJCDD
-         oSlDSD0quuit5Mar9uI0GdfVsL9MNJ5b3v9+GoC12qjxe8nW4Jg3VrgId8MGlbP9VaTN
-         MMsL+TNiUv447BbQSjKP0Zd6oqSHk83dyk54+nyFeAFCl4okaoOplDZRtTqK4GuF49Jj
-         PmsgGlO2LpcZwcFeLDiWcpm3vmYL7rsN2IRapc7GDxfRdJteY3/Dg/p9cCNrpKYSKzz7
-         nBKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753638294; x=1754243094;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XGroCA+Q9oleFuUP1DUfRwkk4GCwj8qwuq1UKkEblcc=;
-        b=cZk7Mo0AovjmBaOxeda5FHSionhUATefFR9C5KxaL6pt/2CRMl58tV6vaMxw12rML6
-         Pbugn/A7U07e+53BGQiHOif2jGGmnzSVRUggtwn2uhsqBxXiMgX/JB0GxoOi/wWIRcQr
-         pVWGfXcNkQ6P6E9ezYJemE3/Dyap3I9GTdyTP0MuUzOsDmSTJXKYHU2sRntkUz7czRiD
-         QO8jdMBvTg8nZ2Kdxch50eqo6TjlwSG9uPF0qixcdsQm35m7NA6G5IcnOXc97Nq6E5iS
-         YAlWA9ivJCKYdDqRrt8OUFUNZUThfb4yOY7fJZyrNh8VFJ4me7pcYDSN0skx7fiyeAUr
-         PSGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdg+MyHhiRF47puOsTg34nVhJbRheTOIlcPTNLhEUNlXP/gfmNHPCbETj1+uYb8upltmA1w+VqXVMH2ZhQvBY=@vger.kernel.org, AJvYcCX38/i44g/CaiU5CzYjjvVpBL2+aSgznYbTuCXlK4Llg93y54dEFlI4IcVRA4pF0Evtw6msAeeP0Wz+P6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLLeUndi2/QcB7YBfFMINJCQZTpdw8BBHUOJU1poC/Z6ID+++3
-	c8jSynZB8HYUsCis1hnlUpyC1Y8/DFXBfQEOeR3ndDYqxzHJm3IXhdGuLIOY7dzXVTkc+um6Z/v
-	wK/cQmxMm9mGW/rE951RdkOe9WkwR9dA=
-X-Gm-Gg: ASbGncu9XcPbWEyHL1YSBVIwIWIiMejTIsOd4xQ/o5MKSlWkwgBoHNmiMJbF0I8wCgL
-	dQMth1X55qq2v5XN+F9nHm+taBUsIFtBc8SygvJe9dOquDRWtQ/iV0ljlN1P/oNwrOIx+arPqXr
-	1DC+Xb7WRJqhEXEes1w+VDF5hmfYfpQmToyBHRx+NHPOenBp08Fg1EX6EbGpX7jmi+xCv0KBbn3
-	eSMxvqs/Q==
-X-Google-Smtp-Source: AGHT+IEcnnq+XHAJsDe6I+R84usIoc8E3O69l2x91KvquQ7Ibo03OEsTStfabGqIVtL64hiD9yrZDixEvAlp2fSKaZ4=
-X-Received: by 2002:a05:6808:4fe8:b0:406:6e4b:bd91 with SMTP id
- 5614622812f47-42bb71f6138mr5453348b6e.7.1753638294032; Sun, 27 Jul 2025
- 10:44:54 -0700 (PDT)
+	s=arc-20240116; t=1753632124; c=relaxed/simple;
+	bh=bkHuhs1ZhzSGAItkH1JrwnppKViactg4dwQBqklhEos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cN7OJn4dfUZxFv4sPiXQPwtZNmjvgyxQd2W4EqOuiIaQZOiG7jUCdTzXxpmNP302iqIp6xB4C8/+H9DOgYn6GqUisrqh2YIuZudsvPJkGi+V9QBcmvQi70YjUsaotshkAoxPdAxvayGBbMzP4NdGtllcQqn8QgRZsvWutEJ6E20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=WiVpeKdd; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1753632120; x=1754236920; i=deller@gmx.de;
+	bh=crl2NY3z8ht7kT2f4GAg9DUloR/Qxz14Lpt5cIkZZcc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WiVpeKddOKCGXyux5T8LVNhSkDHG397OUtcWti6F4adLO9QwkB3UBdBrlwXk/43P
+	 5yg6VOYBOZHxYw/8NvbS4DmB3LQ7NbOlDifhfBPUQlEAlTRTEGV43pmQEsJgpmDoR
+	 UH5msDYOyolf93bQdsgahB0u8VqCmwYztfo9Wlpf597U4i5RQN4jNX7prISQ/purM
+	 bUBhLsKaAmdAv1J5IQRDrtJaWdPbl1aGchK5OWvhwId4+8CRLIfmJC5i5tsGUJhSV
+	 HdvBvMLtVdaFOMf7HID8fsLCe3fCj59U27KzJ1bQ+GXP6HggCrbtEV05YkquYwNpf
+	 /PplV4jPKl1WdGcUPQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.173] ([109.250.63.22]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MBUqF-1uphvM40x5-00HDcA; Sun, 27
+ Jul 2025 18:02:00 +0200
+Message-ID: <cd0f78c1-354b-452a-880e-cbdb12f76292@gmx.de>
+Date: Sun, 27 Jul 2025 19:53:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727170217.206794-1-suchitkarunakaran@gmail.com> <DBN0JG0QP7TU.PZSZ8NZL5LD6@kernel.org>
-In-Reply-To: <DBN0JG0QP7TU.PZSZ8NZL5LD6@kernel.org>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Sun, 27 Jul 2025 23:14:43 +0530
-X-Gm-Features: Ac12FXwSad14yHXxRo13EgdT4JwnjtEG8O1CWDHmMGLelFE845ODAhv-6zpFidM
-Message-ID: <CAO9wTFisWa5qY2qQE+BEdD40vacGwtzw=2xxPnV0V_w=Gt4jwg@mail.gmail.com>
-Subject: Re: [PATCH] rust/pin-init: remove workaround for type inference cycle
-To: Benno Lossin <lossin@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, me@kloenk.dev, 
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: simplefb: Use of_reserved_mem_region_to_resource()
+ for "memory-region"
+To: "Rob Herring (Arm)" <robh@kernel.org>, Hans de Goede <hdegoede@redhat.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250703183514.2074928-1-robh@kernel.org>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20250703183514.2074928-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rKmM2tfwVz/4DQST8SYcBqplU7G3sPUm7Rseicrovt3Vx4s8Q9w
+ u+/uwsdPIULdRyGRw3h/lGvWdLtKA2sOWvOmlLWtP+Kt0zZop2La3ZTQ1/dN50npcp5ftmE
+ 4RSKKNA2uBxK/4j/ZERPAh6sz2TCYxnqQjfD6QBieQRzaWLYn8+gUUsUoYPEX1MF+yykMAE
+ WjBHIC80u/t1cVem2N6+g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zHFtaK5eRIU=;vuYsHAVWmKCHd4NRj/ri+ijZMm7
+ 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
 
-On Sun, 27 Jul 2025 at 22:58, Benno Lossin <lossin@kernel.org> wrote:
->
-> On Sun Jul 27, 2025 at 7:02 PM CEST, Suchit Karunakaran wrote:
-> > The `cast_pin_init` and `cast_init` functions previously used an
-> > intermediate `let` binding before returning the result expression to work
-> > around a Rust compiler issue causing type inference cycles. With the
-> > minimum Rust compiler version for the kernel now at 1.78.0, where this
-> > issue is fixed, the workaround is no longer needed. This patch removes the
-> > unnecessary `let` variables and returns the expressions directly.
-> >
-> > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
->
-> I still encounter the cycle when compiling with 1.78.0, which version
-> did you test this with?
->
+On 7/3/25 20:35, Rob Herring (Arm) wrote:
+> Use the newly added of_reserved_mem_region_to_resource() function to
+> handle "memory-region" properties.
+>=20
+> The error handling is a bit different. "memory-region" is optional, so
+> failed lookup is not an error. But then an error in
+> of_address_to_resource() is treated as an error. However, that
+> distinction is not really important. Either the region is available
+> and usable or it is not. So now, it is just
+> of_reserved_mem_region_to_resource() which is checked for an error.
+>=20
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>   drivers/video/fbdev/simplefb.c | 17 ++++-------------
+>   1 file changed, 4 insertions(+), 13 deletions(-
 
-Oops, I just realised that I compiled it locally and forgot that I had
-installed version 1.78.0 on my VM and not on my local system. I
-actually compiled it with version 1.88.0. Sorry for the inconvenience.
+applied.
 
-> One of The errors I see after applying the patch on top of
-> `pin-init-next`:
->
->     error[E0391]: cycle detected when computing type of opaque `cast_pin_init::{opaque#0}`
->         --> rust/pin-init/src/lib.rs:1278:73
->          |
->     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
->          |                                                                         ^^^^^^^^^^^^^^^^^^
->          |
->     note: ...which requires borrow-checking `cast_pin_init`...
->         --> rust/pin-init/src/lib.rs:1278:1
->          |
->     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
->          | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->     note: ...which requires promoting constants in MIR for `cast_pin_init`...
->         --> rust/pin-init/src/lib.rs:1278:1
->          |
->     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
->          | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->     note: ...which requires const checking `cast_pin_init`...
->         --> rust/pin-init/src/lib.rs:1278:1
->          |
->     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
->          | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->          = note: ...which requires computing whether `cast_pin_init::{opaque#0}` is freeze...
->          = note: ...which requires evaluating trait selection obligation `cast_pin_init::{opaque#0}: core::marker::Freeze`...
->          = note: ...which again requires computing type of opaque `cast_pin_init::{opaque#0}`, completing the cycle
->     note: cycle used when computing type of `cast_pin_init::{opaque#0}`
->         --> rust/pin-init/src/lib.rs:1278:73
->          |
->     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
->          |                                                                         ^^^^^^^^^^^^^^^^^^
->          = note: see https://rustc-dev-guide.rust-lang.org/overview.html#queries and https://rustc-dev-guide.rust-lang.org/query.html for more information
->
-> > ---
-> >  rust/pin-init/src/lib.rs | 10 ++--------
-> >  1 file changed, 2 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
-> > index 62e013a5cc20..cc244eeb19cd 100644
-> > --- a/rust/pin-init/src/lib.rs
-> > +++ b/rust/pin-init/src/lib.rs
-> > @@ -1278,10 +1278,7 @@ unsafe fn __pinned_init(self, slot: *mut T) -> Result<(), E> {
-> >  pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
-> >      // SAFETY: initialization delegated to a valid initializer. Cast is valid by function safety
-> >      // requirements.
-> > -    let res = unsafe { pin_init_from_closure(|ptr: *mut U| init.__pinned_init(ptr.cast::<T>())) };
-> > -    // FIXME: remove the let statement once the nightly-MSRV allows it (1.78 otherwise encounters a
->
-> Do note the comment mentioning that it is needed for version 1.78 here,
-> so I think this patch still needs to wait until we bump the minimum.
->
-
-Yup got it. I'll send the patch after the minimum version is
-increased. Thanks for reviewing.
+Thanks!
+Helge
 
