@@ -1,67 +1,90 @@
-Return-Path: <linux-kernel+bounces-747051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C72EB12F24
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:07:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9395B12F22
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35B0B3B6B70
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 10:05:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5053BF312
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 10:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9295213E89;
-	Sun, 27 Jul 2025 10:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56001FBE80;
+	Sun, 27 Jul 2025 10:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lg1guOok"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Atdtr0iS"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8291F7575;
-	Sun, 27 Jul 2025 10:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDA81F03C7;
+	Sun, 27 Jul 2025 10:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753610631; cv=none; b=H3oafoxgUxeTuQOj316u5il1APW5CVXaE+GYyB22kXMhLGu7aCWdnxAueEameEgx1wlnPn6k4sE3ntMgUlq/Htj0Sgzh5agIJH29zyDbadFNNONiZDo43bEPRadYgImq2uZFjzTG8JHIPkVXPE5Wf8K4D8bLGAMM5fAaA85H0Tk=
+	t=1753610587; cv=none; b=Vqw7sMmrvv7bXuqc5zOx9M4jxifLZ9/NaZ9rcz9zo6z7AicbOUkFE/jyAFSYP5/orxl2Ml3nHp/uNzGg+/Rn4ecTC4pVqrBpgRLFqk87GQQvOkXigHa5Ty1DHJbsZwi6nZfJ0RS+OCvod40wSbOpPIlnH9mRbeP3dAXv3Gk5GGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753610631; c=relaxed/simple;
-	bh=nIyiASwoNikBaVQJ7F4QDZY0tQenudpt7x9V2nTwvh0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sErPqlzoNZPImrtEz6F5okgzPPQTGu3ThuoR9Jmz5lckAxvMR9uZwLNx8L9cTDayKNpPeaQHvLTGvGj8PTrb9U5c1MZCpXCouJm9sD3GKiUsqc+Y3tnriaqfujU4ED48tX3eGwG6G4Ac+gfhtSopkuzhBfivRyvBYsvNeDO0b64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lg1guOok; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id fyD9uBnh5hOKjfyD9uuogC; Sun, 27 Jul 2025 12:02:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1753610552;
-	bh=ycw+FwEwMNFwepsTT4M/3aAYYVR3er1gB6c9vBitnyw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=lg1guOokmw5lhfHrRRpWCP0dJeZtL6mXaidGHd/V/nZamffVp842m+eWMZoh95c3w
-	 hs14scpjDjfaXy1sw5B1j61aojWkm0NpkQ1JpxWvYdZXBD+TklBedyxlXxHU8Y98Ll
-	 uunPw5SyFo+uBKaLmgJZIlwPvZ2jwUC/MvENklEdw0kYleHw5PL7N3ZhJ2lsSMT+CG
-	 EdYp5dJLOiBktvX1WextfW02JqoRp7vc4KHHJOS0H1jALq3gh5gmF+OZ7zzTIWfSIt
-	 NY7Y6FRdpYU9y34t4VDOkfrQ253gM42AZvCLAGHO0mcpZy3BuwGEESx/OgHqgmOmLi
-	 CbrpjNfY63IgA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 27 Jul 2025 12:02:32 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Detlev Casanova <detlev.casanova@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] media: rkvdec: Fix an error handling path in rkvdec_probe()
-Date: Sun, 27 Jul 2025 12:02:21 +0200
-Message-ID: <b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753610587; c=relaxed/simple;
+	bh=KIhwRJtcIMjpNyI98zHF+fZcmItsdoqfxZ006fYqAQc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bnKTseVIGou+BFKGc98dNQ6mJ8HhozJK99kyNjAB8L4ycV3Pk6ab4V4wFru9GkAVe/SZncHsMjieS9H5I90jt/Oa1DwonVdT+3qpdF4cSYdDMmgWCu0yP9Q5rPGKB7kCsIAakgffJtDCrQpkszEVWoAhBHJ1MmVXMsSPOHnTC40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Atdtr0iS; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-748e81d37a7so2316398b3a.1;
+        Sun, 27 Jul 2025 03:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753610584; x=1754215384; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vHlsqDRY86QvllziLUeghJaEVPJqcRXSBPZP7GSLZ84=;
+        b=Atdtr0iSuXLn4uhKjRcPDeUGZ4yuTQO4ZJ53m20Sf+1qhw6zsvXLf6rkNFw1+hBQEr
+         iTVb4uz5t1rQCGWu362LcUlTMn1cQUa/vXWZHar7DjQhpP+2SjZNwgRvgjMnOgxtEZba
+         PmLc0qiur6voF0SZwg2QSAsfIHvJ+O3ZSYa3BiuiZCcvfUjYEMevQACgJ7YQIG8vDL49
+         JLCdR0CP9tesru+MbnLYdATuVyPgxp7dLrfn0GRg9yKZkxaio88yxdhWiTyvU3JyvhZ3
+         0GUiUDnduG2PhWemimEgOyzj4IWRga4qxtluRxsEgnTHKOoxlMIxBssWsGea3JF3g8sV
+         sg1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753610584; x=1754215384;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vHlsqDRY86QvllziLUeghJaEVPJqcRXSBPZP7GSLZ84=;
+        b=D0tEv+vNh8vFAsdoIHdUPfsjcKn752Iie5H2NXNKqqhgypOcRz1QbV/bbLM/SJ34qm
+         rzRR1DQVajH30gpkDeK17cC9YXP+TTikKV5gGqz4UkrPsPTZK4G8kJiD7HBqo00Pwf1B
+         6WboJD8Ahr26nBZZEQe70vEM2mMDgevb1IAtvDn/9zmmpfv7Df9joxkAu8UrPjjrvksq
+         ISZ2gLvnqBq1ZmtZvAB8/n5c8DvMPk2fTR9jcSfWhQhfTGgwZEqZLMe6cxe/Bm73qLCP
+         MW3yP5TTjfMYxLYYCWbCfKgkeJG6Iq/j2hMntjy8opbtqMclfTqBMrgqS+ACpFsCdAKU
+         37NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnbd9pqndDbS4esi3Zqv3QegolnLT3S9Z9u6V9ladh9ci89pQbzKFmB4d9zlhetBAjsW7sE6Ff103x4rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuO6r6s0MEQb5y911u317BPtvfr/M5/iCd1kDXpsHnQmj+5Sen
+	rDRe9sFDhysOUByEhUOZiljr6IxRIcdWEN/W4WLlTJwhsn8gl4WT3W+iFmYZHIE0
+X-Gm-Gg: ASbGncthkzizsSzoKbD1ksfHZmEhTCeptiw3K5d1A4WGdUTQUcySQLTeitH4llk+qXY
+	iBAe2ENK1l7Ac0C9LzTmkGEP8NzFu8o/sHx0Khw+/e/Y5aDq69iSRFKPNTK+CNIEHwN32R+vQBl
+	2Bw/+4g24yHf5OsetfcP86KWOOaqR03+POjt+mux51bXcwgg1X75wru75em4g57sDgL1L9UIzW1
+	RNzxWFNZ8W9OJoAU1491Xa7k8BbFkJTZ/+tR2oc94eHf+OAI4IQzIUnlaoPa5FVt3c538GJ6Ifu
+	xtLa0MRdszVzA0qevA1AuWz/l6+CLWBcpmiq6oyExjykB2V7+XUkXbQKnVRDZGOK005IM64jD7B
+	8V9Ii2bqukteKkT6J9aq1Fg==
+X-Google-Smtp-Source: AGHT+IF53y2cXE+wr8YjMe1pr3KIJpJxPgZRhOla94yShofJwGtYmcImhuG/JqUZaXfeS3Cv0QF+og==
+X-Received: by 2002:a05:6a20:9150:b0:231:e3a4:956a with SMTP id adf61e73a8af0-23d70189c20mr12420484637.33.1753610584381;
+        Sun, 27 Jul 2025 03:03:04 -0700 (PDT)
+Received: from pop-os.. ([49.207.200.229])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640baa2a28sm2956087b3a.139.2025.07.27.03.03.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 03:03:04 -0700 (PDT)
+From: Aditya Dutt <duttaditya18@gmail.com>
+To: stable@vger.kernel.org
+Cc: Dmitry Antipov <dmantipov@yandex.ru>,
+	Dave Kleikamp <dave.kleikamp@oracle.com>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	skhan@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	jfs-discussion@lists.sourceforge.net,
+	syzbot+ac2116e48989e84a2893@syzkaller.appspotmail.com,
+	Aditya Dutt <duttaditya18@gmail.com>
+Subject: [PATCH 6.1.y] jfs: reject on-disk inodes of an unsupported type
+Date: Sun, 27 Jul 2025 15:32:55 +0530
+Message-Id: <20250727100255.532093-1-duttaditya18@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,54 +93,123 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after a successful iommu_paging_domain_alloc() call, it
-should be undone by a corresponding iommu_domain_free() call, as already
-done in the remove function.
+From: Dmitry Antipov <dmantipov@yandex.ru>
 
-Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+[ Upstream commit 8c3f9a70d2d4dd6c640afe294b05c6a0a45434d9 ]
 
-diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-index d707088ec0dc..eb0d41f85d89 100644
---- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-+++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-@@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_device *pdev)
- 	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0)
--		return -ENXIO;
-+	if (irq <= 0) {
-+		ret = -ENXIO;
-+		goto err_free_domain;
+Syzbot has reported the following BUG:
+
+kernel BUG at fs/inode.c:668!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 3 UID: 0 PID: 139 Comm: jfsCommit Not tainted 6.12.0-rc4-syzkaller-00085-g4e46774408d9 #0
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+RIP: 0010:clear_inode+0x168/0x190
+Code: 4c 89 f7 e8 ba fe e5 ff e9 61 ff ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 7c c1 4c 89 f7 e8 90 ff e5 ff eb b7
+ 0b e8 01 5d 7f ff 90 0f 0b e8 f9 5c 7f ff 90 0f 0b e8 f1 5c 7f
+RSP: 0018:ffffc900027dfae8 EFLAGS: 00010093
+RAX: ffffffff82157a87 RBX: 0000000000000001 RCX: ffff888104d4b980
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc900027dfc90 R08: ffffffff82157977 R09: fffff520004fbf38
+R10: dffffc0000000000 R11: fffff520004fbf38 R12: dffffc0000000000
+R13: ffff88811315bc00 R14: ffff88811315bda8 R15: ffff88811315bb80
+FS:  0000000000000000(0000) GS:ffff888135f00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005565222e0578 CR3: 0000000026ef0000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ ? __die_body+0x5f/0xb0
+ ? die+0x9e/0xc0
+ ? do_trap+0x15a/0x3a0
+ ? clear_inode+0x168/0x190
+ ? do_error_trap+0x1dc/0x2c0
+ ? clear_inode+0x168/0x190
+ ? __pfx_do_error_trap+0x10/0x10
+ ? report_bug+0x3cd/0x500
+ ? handle_invalid_op+0x34/0x40
+ ? clear_inode+0x168/0x190
+ ? exc_invalid_op+0x38/0x50
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? clear_inode+0x57/0x190
+ ? clear_inode+0x167/0x190
+ ? clear_inode+0x168/0x190
+ ? clear_inode+0x167/0x190
+ jfs_evict_inode+0xb5/0x440
+ ? __pfx_jfs_evict_inode+0x10/0x10
+ evict+0x4ea/0x9b0
+ ? __pfx_evict+0x10/0x10
+ ? iput+0x713/0xa50
+ txUpdateMap+0x931/0xb10
+ ? __pfx_txUpdateMap+0x10/0x10
+ jfs_lazycommit+0x49a/0xb80
+ ? _raw_spin_unlock_irqrestore+0x8f/0x140
+ ? lockdep_hardirqs_on+0x99/0x150
+ ? __pfx_jfs_lazycommit+0x10/0x10
+ ? __pfx_default_wake_function+0x10/0x10
+ ? __kthread_parkme+0x169/0x1d0
+ ? __pfx_jfs_lazycommit+0x10/0x10
+ kthread+0x2f2/0x390
+ ? __pfx_jfs_lazycommit+0x10/0x10
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x4d/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+
+This happens when 'clear_inode()' makes an attempt to finalize an underlying
+JFS inode of unknown type. According to JFS layout description from
+https://jfs.sourceforge.net/project/pub/jfslayout.pdf, inode types from 5 to
+15 are reserved for future extensions and should not be encountered on a valid
+filesystem. So add an extra check for valid inode type in 'copy_from_dinode()'.
+
+Reported-by: syzbot+ac2116e48989e84a2893@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ac2116e48989e84a2893
+Fixes: 79ac5a46c5c1 ("jfs_lookup(): don't bother with . or ..")
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Signed-off-by: Aditya Dutt <duttaditya18@gmail.com>
+---
+
+As per: https://lore.kernel.org/all/CAODzB9roW_ObEa8K8kowbfQ4bL3w4R78v2b_yBU4BQL4bpXrWw@mail.gmail.com/
+this commit is not backported to any of the stable kernels (other than 6.15.y)
+I have already sent an email for:
+  6.12.y: https://lore.kernel.org/stable/20250727095111.527745-1-duttaditya18@gmail.com/
+  6.6.y: https://lore.kernel.org/stable/20250727095645.530309-1-duttaditya18@gmail.com/
+I will be sending separate email for 5.15.y
+
+ fs/jfs/jfs_imap.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+index 9adb29e7862c..1f2e452a7676 100644
+--- a/fs/jfs/jfs_imap.c
++++ b/fs/jfs/jfs_imap.c
+@@ -3029,14 +3029,23 @@ static void duplicateIXtree(struct super_block *sb, s64 blkno,
+  *
+  * RETURN VALUES:
+  *	0	- success
+- *	-ENOMEM	- insufficient memory
++ *	-EINVAL	- unexpected inode type
+  */
+ static int copy_from_dinode(struct dinode * dip, struct inode *ip)
+ {
+ 	struct jfs_inode_info *jfs_ip = JFS_IP(ip);
+ 	struct jfs_sb_info *sbi = JFS_SBI(ip->i_sb);
++	int fileset = le32_to_cpu(dip->di_fileset);
++
++	switch (fileset) {
++	case AGGR_RESERVED_I: case AGGREGATE_I: case BMAP_I:
++	case LOG_I: case BADBLOCK_I: case FILESYSTEM_I:
++		break;
++	default:
++		return -EINVAL;
 +	}
  
- 	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
- 					rkvdec_irq_handler, IRQF_ONESHOT,
- 					dev_name(&pdev->dev), rkvdec);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
--		return ret;
-+		goto err_free_domain;
- 	}
- 
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
-@@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device *pdev)
- err_disable_runtime_pm:
- 	pm_runtime_dont_use_autosuspend(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
-+err_free_domain:
-+	if (rkvdec->empty_domain)
-+		iommu_domain_free(rkvdec->empty_domain);
- 	return ret;
- }
+-	jfs_ip->fileset = le32_to_cpu(dip->di_fileset);
++	jfs_ip->fileset = fileset;
+ 	jfs_ip->mode2 = le32_to_cpu(dip->di_mode);
+ 	jfs_set_inode_flags(ip);
  
 -- 
-2.50.1
+2.34.1
 
 
