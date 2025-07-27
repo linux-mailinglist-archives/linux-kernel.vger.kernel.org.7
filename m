@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-746950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3BFB12D94
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 04:30:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6AEB12D95
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 04:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5C117DDB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 02:30:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DD717DF1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 02:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAADF155326;
-	Sun, 27 Jul 2025 02:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C91B15E5C2;
+	Sun, 27 Jul 2025 02:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRB4AipB"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hZkUrOTj"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D9D747F
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 02:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D04718E20
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 02:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753583419; cv=none; b=fW7OKhdYR3eH7u5H9/53Hqxuf67vvlKYiUfOW7szt4W7ZlI3ElpLZuxJo9vVUNT0sC4fFyycTp8REWNqERCe2gCzXy6lfT6OnScjXCP6aA7yOFmg6b1bbPTzkNUmC1pq0x99I7ewJHZyfpGLff7Put8jkna+CgFheeK/akM/PaY=
+	t=1753583427; cv=none; b=QbJrmLGUcWQvq80cQvVH+1CTsGJi7qpj0JozkzYAouIaAkM+sYZTWQnJTf+Kg8F/b0LnJYMRr4uTm5ItGy39DQkOPC/Oos9Uga85E6AJvRM0mGsNDOIpexj6ubRI8RHhHzXPetL58Xj7wlm2HkyjnckI7Rw3hkeKvxRb+0zA12o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753583419; c=relaxed/simple;
-	bh=BbtLETgMS5qyUODBrsadCnpoXePLzxf1knvhykUQD8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O3xGjFQEk5uC8kWx1sA0iO2yzYpO06kjTj6a+LejrLHco207ASzOHPKrS2jAWHQNV/stGCnrSHVw6/L9GvkW7vHUArTpzD77wTHxjEGDCKIQhJi6EqBse0O5PyBvmxqZtd+t1WKgYXgLJ4OXyDVPd8+zmXmvTVta7iqGZ3n/120=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRB4AipB; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1753583427; c=relaxed/simple;
+	bh=xyYHJnPYZi7qQmwbNjurNT53s0whjnW2/o/OHGbkq1M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DGm9Yt7B4AweL7Ax/G0e9KxkjR8H7vv7o3f0J9EvZBoVDB122pRsNHUDcp5KknLPyPEpsUstPMpAYFLA3d8OwGAZGvZTHA8t5lgC0BJUjTB6xh6ARR19CoF+jAUmydFXIQrn/Nh+bVW6YIaEBgcl/1U4LEhhI/moZZ8B9YmNl74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hZkUrOTj; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23c8f179e1bso38787365ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 19:30:16 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2350b1b9129so23127735ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 19:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753583416; x=1754188216; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753583424; x=1754188224; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=i7Z/CeL/3tzEd7gHOKjeEpVKVjkDPKtAcg1iayXirF4=;
-        b=cRB4AipBVDMn/ay3XukMlNOzYkcKaJd+9dkOuoBbuOR3a0bRuEwXPkJf9+bmTj3i6W
-         fspG73V5bL+NdIRO5poWrEipU7k2COAiPncjw6stWFG7tKmOQaMG/jOjupJjC6OvqY5l
-         lXjBxHiFbalhQcbYO6RKh1wsiGQEfxYfaIkDwabZSLJNni7MddhAjSqQDVyQ8DAGxm8T
-         t/7qP5e5errGnjOb4FagERoZcYgFHjz2k1c0HRL/JUs6ji4ESFsQl16MBZmXgWGS74tz
-         AvHVkjfdVpUhSyeYjCIEBSdREMLo9isa6zuPjTcP1DuEe8o1yR5cjpIpYiyuPQAcYpND
-         M23Q==
+        bh=JQ+hpH9hPQGwkZYBpJGlkdnOAxD2Uu785fX/CLQgkPM=;
+        b=hZkUrOTjt+1SJesxOe82RDeJ3nw9C4aUtbkeAbC3Sn3irCE8JA/IQ55Fg06vbVEOlx
+         +ZNWASMNxaCuyMSmu2repx+0Hrfpj2G5ol4moFH7NwDw/STrZT4CVwtJdk+S6zVGy8Qf
+         Eh0EPX3dLJCLXuMK4WPyykBbQleKlvISJMiQJWLcLttRls9VgnhzHy+Ym5GONHASM/o3
+         rCx7z654TbXbeTWQBfvVa5T2bIJ7EdbO9YsKUa4aIeaKAdNk3/erGUcN/+wv7TtQfJmM
+         GonWSM2AkmnDcEUu7r+FuGs2E2/td4Z6EPORmDAsyyx8WZxD5JtyP4kMadK6C3CLkQkK
+         zJ4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753583416; x=1754188216;
+        d=1e100.net; s=20230601; t=1753583424; x=1754188224;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=i7Z/CeL/3tzEd7gHOKjeEpVKVjkDPKtAcg1iayXirF4=;
-        b=RyXRcegch4ctBbVmUpV8Ferm9vuhtoTpS3tQf5t44OEKdGHFr3NK9MFGoo2ZiXg/fT
-         A3yto8C3FtVpD2E7+tKF+966FcgO15z+CDgMkNQutEPwTdg/svBgM0ROC4LdbyH1MFcP
-         +5dReXFNp2Fk/l/g4gM8zvYysrq+AAYUTc1FvB0Cudt/Ku9Kw1yF2i/t33d2npTFDLK5
-         DsmptDEvwdHmA5Zq59L0Nnb/6+/Tik1fQgtqdp/DryVnjyhokczoaA/O4r3RpdpeXqwm
-         +orDiT2iWjJk7l+oY78F8gvSDCbEyJNbYbGDTCGB0RA1Lr4SXBUW1C9hywiTv76iRGh5
-         kLoA==
-X-Gm-Message-State: AOJu0YzbTqmrkK2zIF35pFI1ekF2NQLDMv3lpFzMuDOieNPOhDskpmZE
-	BRvpDnmNwTp4xSTH+SgkstJGqVWZ+Co5DAv7NXuHim74ElhEVpYi7uiasJz05ncZ
-X-Gm-Gg: ASbGncvKhMXu29L5ed3P7Hb8B0+5EoEdx6EWRia9Y3YRhLWqJBZhESCghZvkqRtWK48
-	jfYJoRhkXPxNgdqxaPDA7tVPAeJsvXHig699S/qV5q/jaSX2JQbKAiPrRcDXTIAsRkp05fbMo8x
-	TEURIByKxo3G8MZ/kSKIejhXUfZxNepci1dCP+vQE17xQ++S7Xt+mrZuXryhfMCGkuESp7ZHe1V
-	mrl22RGUabfaD+ROh2DfMu4/RqQ6t+ypwJuUZatDH7L6hJNNzEwLELTeoh+s2AmSCTQMVzu6apI
-	+XQTGO5fxb0SA+Qg1Z6ibGHLRTZiU7swo3s/eVcv17uFuHkFKKG7Pja3l4qkbzHTrWz8sQwkQXx
-	BNA5nwaz27IIx3V7zap+aTBcZ2zhyMy04/2EJPsJ0ngh55Xd8u40DhPC5
-X-Google-Smtp-Source: AGHT+IEeu1Qvz7XLkOmlYAhzz4xrraIH1DXGFBSvM0gmwyKzM6G5ACLyQQC+T3A4i2jUh9Ub7cRBDQ==
-X-Received: by 2002:a17:902:f693:b0:234:c549:da10 with SMTP id d9443c01a7336-23fb31e312emr99690405ad.47.1753583415882;
-        Sat, 26 Jul 2025 19:30:15 -0700 (PDT)
+        bh=JQ+hpH9hPQGwkZYBpJGlkdnOAxD2Uu785fX/CLQgkPM=;
+        b=Ob6c466ZC21HnW+9WcAVDpxaW8B39MCvFYQX/Z8sstbkOSGpoR2Cu/vw70c6gz30Jn
+         g4JBv9BXH7JtWaprduIQgqyS3NGEitxE928f7Nc/DqGQV5Brq78mez4KRNlH6S8RgJUq
+         TKeBx0lQg5r4IhoVrPhAlvi8bl3RHTr1f73CH+pKTMSKxoqb+7YZ5PA1V9XCzsmWYUTl
+         v5aIJ6e8qgh2dFakckefDOsHJKDK8NYbJ+ZpHmAw+SYaJPtO2T+MPpeW3UR3GD2yQQ9m
+         oeQLdk4E19Ag3bUAsFbsFq9APN3c0AstDIl9zwbItueVZaNlqXlSsS0aU+lh+B+aHId6
+         Ox7g==
+X-Gm-Message-State: AOJu0YyusTEy0Xvpy9zbatwCjMT19Ds5Cd+p89ts0+hslQWtLkgBgcoe
+	MeNyrUylVh75z6OeiHu65DNd4fL5N9UgWcwLIB3/eUiUC4iZddw9C6SGC0Y4QWKt
+X-Gm-Gg: ASbGncu4GfQc455lyZIZ+G3hQCduUzHpMUM4ZOotz1cOQ+d2nNAjBsGHwgR9Dve73W5
+	lpvmGUBREiAZyoyNO5Z3DqhhCUobOn9pGSC0UZxqUH8zwAVV+kESQiG1RvRGEpxSu0S+nBi/2ym
+	1yIBmsjRD9Za3TTpJ+EMfFVLOw4k0LJH5BSSLWUqUmjY4esnONoBLY9+cVaSY80LFVOjN5R5Oiq
+	1wqjb3nbQDElZL9uNtjOm6PKyn9jM+o+to4mD6pUL5Pxq1XFUGJCZKeZ5GRkGbPgs+8bEnriFnv
+	bKo6m0z6jSvIrg/Qfhayzh19ANArfGorKFCfcF2DMWOJL/lcGoRnOJrxhjM3fN6tWVxYRRuL6Nh
+	UFVOInlnhL1Ow6PHjvSp1mm2YTd6NG96FSj5VxdDC7w7x22eerXqnA7qS
+X-Google-Smtp-Source: AGHT+IFuO7ZGqU1Foc4DDrHhCEqNJFDc5V0opwkKxHeWT2iWx461jV6r1Ns4pBPJj83O2Yqwmx/mZQ==
+X-Received: by 2002:a17:903:1b10:b0:235:2ac3:51f2 with SMTP id d9443c01a7336-23fb3100edcmr131330855ad.45.1753583424555;
+        Sat, 26 Jul 2025 19:30:24 -0700 (PDT)
 Received: from fedora (181-162-135-125.baf.movistar.cl. [181.162.135.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe30bcfbsm25836275ad.16.2025.07.26.19.30.14
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-240087fc42bsm3163555ad.153.2025.07.26.19.30.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 19:30:15 -0700 (PDT)
+        Sat, 26 Jul 2025 19:30:24 -0700 (PDT)
 From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Ignacio Pena <ignacio.pena87@gmail.com>
-Subject: [PATCH] drivers/cpufreq/qcom-cpufreq-nvmem.c: Fix typo 'defered' -> 'deferred'
-Date: Sat, 26 Jul 2025 22:30:19 -0400
-Message-ID: <20250727023019.82233-1-ignacio.pena87@gmail.com>
+Subject: [PATCH] drivers/crypto/cavium: Fix typo 'interupt' -> 'interrupt'
+Date: Sat, 26 Jul 2025 22:30:29 -0400
+Message-ID: <20250727023029.82282-1-ignacio.pena87@gmail.com>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,22 +90,45 @@ No functional change.
 
 Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
 ---
- drivers/cpufreq/qcom-cpufreq-nvmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/cavium/cpt/cptpf_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-index 54f811710..5a711de3e 100644
---- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-+++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-@@ -605,7 +605,7 @@ MODULE_DEVICE_TABLE(of, qcom_cpufreq_match_list);
- /*
-  * Since the driver depends on smem and nvmem drivers, which may
-  * return EPROBE_DEFER, all the real activity is done in the probe,
-- * which may be defered as well. The init here is only registering
-+ * which may be deferred as well. The init here is only registering
-  * the driver and the platform device.
-  */
- static int __init qcom_cpufreq_init(void)
+diff --git a/drivers/crypto/cavium/cpt/cptpf_main.c b/drivers/crypto/cavium/cpt/cptpf_main.c
+index 54de869e5..4ebdb4488 100644
+--- a/drivers/crypto/cavium/cpt/cptpf_main.c
++++ b/drivers/crypto/cavium/cpt/cptpf_main.c
+@@ -90,19 +90,19 @@ static void cpt_configure_group(struct cpt_device *cpt, u8 grp,
+ 
+ static void cpt_disable_mbox_interrupts(struct cpt_device *cpt)
+ {
+-	/* Clear mbox(0) interupts for all vfs */
++	/* Clear mbox(0) interrupts for all vfs */
+ 	cpt_write_csr64(cpt->reg_base, CPTX_PF_MBOX_ENA_W1CX(0, 0), ~0ull);
+ }
+ 
+ static void cpt_disable_ecc_interrupts(struct cpt_device *cpt)
+ {
+-	/* Clear ecc(0) interupts for all vfs */
++	/* Clear ecc(0) interrupts for all vfs */
+ 	cpt_write_csr64(cpt->reg_base, CPTX_PF_ECC0_ENA_W1C(0), ~0ull);
+ }
+ 
+ static void cpt_disable_exec_interrupts(struct cpt_device *cpt)
+ {
+-	/* Clear exec interupts for all vfs */
++	/* Clear exec interrupts for all vfs */
+ 	cpt_write_csr64(cpt->reg_base, CPTX_PF_EXEC_ENA_W1C(0), ~0ull);
+ }
+ 
+@@ -115,7 +115,7 @@ static void cpt_disable_all_interrupts(struct cpt_device *cpt)
+ 
+ static void cpt_enable_mbox_interrupts(struct cpt_device *cpt)
+ {
+-	/* Set mbox(0) interupts for all vfs */
++	/* Set mbox(0) interrupts for all vfs */
+ 	cpt_write_csr64(cpt->reg_base, CPTX_PF_MBOX_ENA_W1SX(0, 0), ~0ull);
+ }
+ 
 -- 
 2.50.1
 
