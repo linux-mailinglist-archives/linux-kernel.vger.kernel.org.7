@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-747069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0256CB12F54
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 13:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FF9B12F59
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 13:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2D1516D668
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B9C3BAB79
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BDE21018A;
-	Sun, 27 Jul 2025 11:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345DC21171D;
+	Sun, 27 Jul 2025 11:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q89WmYfw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtQzsQCY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6868C1E260A
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 11:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876D52B9BA;
+	Sun, 27 Jul 2025 11:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753615519; cv=none; b=nTXdFxx3IRshzC7fLBC6kQXdK+GlcqkJhaVxnqZXaZosrL2wNOX1zKXb33DHcAIu8pBFy3II99L0vY7CW3eqaWjD5dNDR6VYJvMYG7e1gDs29zrlt9+dQ7nfbnRQVtnJb/DTjjlQwgYZRTAvP8bYck+axcO6D3ePDnW0HfJzvZU=
+	t=1753616348; cv=none; b=CFPMSISbrs1hUSzQMryDXNq1UuO9kisOK9oh1dAKlf/KxoWOL/I8tdv9i3M531YfPCYGlNdcznj990GWxWXN8sf5FptGXCcD9ZpIdGLBT/hKdAYEXfiNCLYDWmRzzumHRk66o8FG3gqGKKX/Y9nq3fT6IbaAX9AELPyePufU31Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753615519; c=relaxed/simple;
-	bh=mpicCbPyy9dZQR13RfrXUc9e1M5HBHhRY/bkK7x1vjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BLLSaUA+yt+xW+4ExhR6mr36hnorY967JVBo9QqM+mKBQgJWUmghrXlOcLzpMaIcFrBVvnsc6Cey4+NwnyS2JAOmE335bkldyw3NrvtI9eCcSrQA+FKIduWCHerl5PllzwZ3uJvd2blmhIEmuIJmV/ArAQlxyI25se9IyFnKaII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q89WmYfw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56R7VtkC027753
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 11:25:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DfJKZhMSNWDE28vPZNyTvcOOnTgpUT1dF1tLEjH+ZFc=; b=Q89WmYfw4DOBQLol
-	HXZhb830aRzwUa747kEC9YifTj/wkA3q2bIZcgwtVvfdoZZHKXDmxP6bkDv7Z3ZP
-	Rm9/MDUmfHojmgAC0IQ2WT04PVnhLq9TKKm5r249awK4A6PLE2y7Is+Fjdj5hG9h
-	OYsPMsrDRtGAxJ9zi4wvX+rjhgsxfLZj/DteH6LL4+8KFj0GpDmhIOCJkMg++5vv
-	IwxEHkLYGUEB2MkFpXKrrkMaoG5sbsPMaFVZTkE1QfETKUaOe8KydM9/H1hS5l1N
-	E6WU4E/G6wtdzc8uj6i+ZWk41m9hxkGAio3xb4kQHEbLMYHMZFi6kV7iDfFapILK
-	JVaAXA==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mcr28yn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 11:25:16 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7073f12d826so16591136d6.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 04:25:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753615515; x=1754220315;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DfJKZhMSNWDE28vPZNyTvcOOnTgpUT1dF1tLEjH+ZFc=;
-        b=ioNUHE/yaXDYvcIEw4ngeiMh5nFMFHK+K7CtNGaD58LzAzsg9mKxFQAciTg8S9LCuw
-         tlhAZBUYjaYlbjnQEg5F/l0FFDZ1yexb21YK3VB+DuQ1+w9FzwByNGoZjaOEuB00DaCD
-         MIhpNg74p2sYv4DxO9VEOXD/Y0qQaclST5SbzfDp+iqS0jJ4GCH9m7rARetumtGWkEtV
-         J/NkiZO23IK8Yeej6uq20HQJY7D8a+EcRfYGlecjF1BSZeYFJyp9yzPO1K7e3Xudi5Y4
-         kRFT5dflDPf3zjoo991taGmH1peiWD+a9Tv9QBv5Hh7TcknuTC1H6gDIFGhMjaCaO61I
-         zvDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfa/+INOAGidc4WrXKvYAwaK8WI/PeUwexCqaoXMEDcnmdVBlUUyXQAP19bJMUvbKj6mbuJf+u1mLZ+2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtsTJn3HMXIsEmxlDo0nSYYR7kcysxncDOZN856ThP+odKUfY/
-	n4Onhzhz2IfUkOSavAZeCf4gaSWfhqrXWbO0JxfytGP+rWLdckQXJLoy0uOn9fVJ75uK0TwdJlg
-	M4fvUCGVgLCucPB1sZQARzYQetPttD+4GU3q8zR159IlzzRiLgSwDc5taV1PKURCICbw=
-X-Gm-Gg: ASbGncv/CFG1GBYm9TaEF6MNvhygAW78CAYIvlQgGyvFVNeTOAjkceTKco+TXVQSGBw
-	oazXyOaFXUkF1/DnkzPe9tlsK6Xm4dKv+7PEI+6nUrrFbEMY976tGEgKdCGvZ+GYjS4Hycvtuxl
-	MzFW62iOgol+V217/JUsJunMnDsce25HUH7ANWxipoOmLhrv3o04pCYquo+/Zy82TRodMI3hNRf
-	iTLhv1RSoAUozZ/xX4n3ivQvYIJD+hhN3s67/BsPYrSfU3EqZPWxxmdpUEfQ/oUiEd4Qmv+I04q
-	ojjvVNzOIgrGEG8ZrF/YCpb7lMBgWxlHGIiTV+OB7BQd4EFUnn3DJxpXiwFRL6bkxgI=
-X-Received: by 2002:a05:6214:300f:b0:702:bd34:75c8 with SMTP id 6a1803df08f44-7072049f3famr99229046d6.5.1753615515308;
-        Sun, 27 Jul 2025 04:25:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkCofJ/1O0p8bOeiGbSGwSMF+ue6NzNwSlWHo2EXq+Z7g+oFlTe7pN+OBZy9EjswapZE4S/Q==
-X-Received: by 2002:a05:6214:300f:b0:702:bd34:75c8 with SMTP id 6a1803df08f44-7072049f3famr99228736d6.5.1753615514814;
-        Sun, 27 Jul 2025 04:25:14 -0700 (PDT)
-Received: from [192.168.68.118] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-458705c4cacsm114650875e9.24.2025.07.27.04.25.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Jul 2025 04:25:14 -0700 (PDT)
-Message-ID: <8b3abd1a-4246-485c-9f2b-63ee37ef808c@oss.qualcomm.com>
-Date: Sun, 27 Jul 2025 12:25:12 +0100
+	s=arc-20240116; t=1753616348; c=relaxed/simple;
+	bh=dCQ/5ACZXuFvlMS3yxQyTas5SeryViH4PPdHqfvtjHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gnUN1RtShTT+8b3AokLsgoBdYM/FLkJjMWppEN6/yiaPfyf+rLrD35M4kGajfLTwOXzKpsGI7fRrqaVGEZPkac4M7mxND6z1AB9mhccn0z9XXMmXtzlVf5pGCpM10L/Hlv/54t0DCaZIMoz8MUUHziRhecN+NJ0xd7wdu5Qf1hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtQzsQCY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70085C4CEEB;
+	Sun, 27 Jul 2025 11:39:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753616348;
+	bh=dCQ/5ACZXuFvlMS3yxQyTas5SeryViH4PPdHqfvtjHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KtQzsQCYYWW9nVqtBWrQZmQ8Uqd4RYBRQxDHRsuFD9brGCKYT/sVOgFe2LF3n3zB2
+	 Jn8C9LCp7oAeyck6W2HGzrjPsHmLlAwrOQx1aHwWItIJ5g7M3YPSzIjOP2nL5cldzt
+	 jePuMPrIqXb/nB3wpvCokAyoNxAaWzo7q2v+XLof7KEZMmecSvckApUgaACsIn+JyX
+	 uNPAR08kmEe2zPnBTnn/LqEHwCmwubT+9hc6rDfZ/EgsPa0SInWiX8VLomd2Y8jO19
+	 HVcA5xZYVaZRxEMYB6eCKuQF7WhV7FZ0w+F+8Qanbuls94Rq3T0CqxIQfly1UgUmR7
+	 Hm0oaltBPfrAA==
+Date: Sun, 27 Jul 2025 14:39:03 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-kernel@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH net v2 1/4] auxiliary: Support hexadecimal ids
+Message-ID: <20250727113903.GA402218@unreal>
+References: <03e04d98-e5eb-41c0-8407-23cccd578dbe@linux.dev>
+ <2025071726-ramp-friend-a3e5@gregkh>
+ <5ee4bac4-957b-481a-8608-15886da458c2@linux.dev>
+ <20250720081705.GE402218@unreal>
+ <e4b5e4fa-45c4-4b67-b8f1-7d9ff9f8654f@linux.dev>
+ <20250723081356.GM402218@unreal>
+ <991cbb9a-a1b5-4ab8-9deb-9ecea203ce0f@linux.dev>
+ <2025072543-senate-hush-573d@gregkh>
+ <20250727080705.GY402218@unreal>
+ <2025072751-living-sheath-e601@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slimbus: qcom: remove unused qcom controller driver
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: srini@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
- <276b7977-45d9-4b37-a4f5-1c65802ac267@oss.qualcomm.com>
- <mwhxikivaxtz5px5e7jkqtuuk2iz457fy5drsnaj32j4o5qqk6@hwkcjso4jpsp>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <mwhxikivaxtz5px5e7jkqtuuk2iz457fy5drsnaj32j4o5qqk6@hwkcjso4jpsp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI3MDEwMSBTYWx0ZWRfX4coLwLPqC3xG
- IoasZdmBgwxYJ3CWRkln1ubbnedUuTKPz+ahmCeyzROK1KoMYmSYNse7B/uKxtnEns1C6IUOjJi
- uY/MIKHstnGVgcEoPy4NAZCFKL0fdzHKuPBdpox/aqbYB5tqCGQHjhBVY4rGC0E1qsaQhk3L7Np
- /DsfGK8cCs0oK+PP7d0CXQFT77ys7A85j+rOrF9OcJcbtIcLWw4xFV8IU0wwIqRqm1vnVov6GMp
- KkrTvVCnaJ+elmtd8vocx3g1uCFNLXJh3d+jJZ4eQpGS2Toyc1JU9TlkAOzxEno1WZuqBX4bQ4E
- m7jeBw0tZzEG/vuLLlFRUC18/kqv6xKH4z09JaDDLDT9S1wkpKSNk1EJU/V4wDfbtLgWwU+fDH9
- HM5nUWVbp0GKTGLqYEBVZmGl09HuqQEsECbaEc2+FlcYk1ohoC7Z1hEOnbesWp0+AvZ2LuXU
-X-Authority-Analysis: v=2.4 cv=Hth2G1TS c=1 sm=1 tr=0 ts=68860c9c cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=XE7kxn0J_hhxY9Cja4kA:9
- a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-GUID: q7n8gaIKFQcbYGCUmX3Qbt_w7xZ-S_On
-X-Proofpoint-ORIG-GUID: q7n8gaIKFQcbYGCUmX3Qbt_w7xZ-S_On
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-27_04,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=700 clxscore=1015
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507270101
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025072751-living-sheath-e601@gregkh>
 
-On 7/24/25 3:24 PM, Dmitry Baryshkov wrote:
-> On Thu, Jul 24, 2025 at 03:31:50PM +0200, Konrad Dybcio wrote:
->> On 7/24/25 3:28 PM, srinivas.kandagatla@oss.qualcomm.com wrote:
->>> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->>>
->>> Qcom Slimbus controller driver is totally unused and dead code, there is
->>> no point in keeping this driver in the kernel without users.
->>>
->>> This patch removes the driver along with device tree bindings.
->>>
->>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->>> ---
->>
->> I *thiiink* this is apq806x code, with 8974 adopting the new hw.
->>
->> +Dmitry, does you computer history museum require this driver?
+On Sun, Jul 27, 2025 at 10:57:09AM +0200, Greg Kroah-Hartman wrote:
+> On Sun, Jul 27, 2025 at 11:07:05AM +0300, Leon Romanovsky wrote:
+> > On Fri, Jul 25, 2025 at 07:02:24AM +0200, Greg Kroah-Hartman wrote:
+> > > On Thu, Jul 24, 2025 at 09:55:59AM -0400, Sean Anderson wrote:
+> > > > On 7/23/25 04:13, Leon Romanovsky wrote:
+> > > > > On Mon, Jul 21, 2025 at 10:29:32AM -0400, Sean Anderson wrote:
+> > > > >> On 7/20/25 04:17, Leon Romanovsky wrote:
+> > > > >> > On Thu, Jul 17, 2025 at 01:12:08PM -0400, Sean Anderson wrote:
+> > > > >> >> On 7/17/25 12:33, Greg Kroah-Hartman wrote:
+> > > > >> > 
+> > > > >> > <...>
+> > > > >> > 
+> > > > >> >> Anyway, if you really think ids should be random or whatever, why not
+> > > > >> >> just ida_alloc one in axiliary_device_init and ignore whatever's
+> > > > >> >> provided? I'd say around half the auxiliary drivers just use 0 (or some
+> > > > >> >> other constant), which is just as deterministic as using the device
+> > > > >> >> address.
+> > > > >> > 
+> > > > >> > I would say that auxiliary bus is not right fit for such devices. This
+> > > > >> > bus was introduced for more complex devices, like the one who has their
+> > > > >> > own ida_alloc logic.
+> > > > >> 
+> > > > >> I'd say that around 2/3 of the auxiliary drivers that have non-constant
+> > > > >> ids use ida_alloc solely for the auxiliary bus and for no other purpose.
+> > > > >> I don't think that's the kind of complexity you're referring to.
+> > > > >> 
+> > > > >> >> Another third use ida_alloc (or xa_alloc) so all that could be
+> > > > >> >> removed.
+> > > > >> > 
+> > > > >> > These ID numbers need to be per-device.
+> > > > >> 
+> > > > >> Why? They are arbitrary with no semantic meaning, right?
+> > > > > 
+> > > > > Yes, officially there is no meaning, and this is how we would like to
+> > > > > keep it.
+> > > > > 
+> > > > > Right now, they are very correlated with with their respective PCI function number.
+> > > > > Is it important? No, however it doesn't mean that we should proactively harm user
+> > > > > experience just because we can do it.
+> > > > > 
+> > > > > [leonro@c ~]$ l /sys/bus/auxiliary/devices/
+> > > > > ,,,
+> > > > > rwxrwxrwx 1 root root 0 Jul 21 15:25 mlx5_core.rdma.0 -> ../../../devices/pci0000:00/0000:00:02.7/0000:0
+> > > > > 8:00.0/mlx5_core.rdma.0
+> > > > > lrwxrwxrwx 1 root root 0 Jul 21 15:25 mlx5_core.rdma.1 -> ../../../devices/pci0000:00/0000:00:02.7/0000:0
+> > > > > 8:00.1/mlx5_core.rdma
+> > > > 
+> > > > Well, I would certainly like to have semantic meaning for ids. But apparently
+> > > > that is only allowed if you can sneak it past the review process.
+> > > 
+> > > Do I need to dust off my "make all ids random" patch again and actually
+> > > merge it just to prevent this from happening?
+> > 
+> > After weekend thoughts on it. IDs need to be removed from the driver
+> > access. Let's make them global at least.
 > 
-> I never had time to try enabling audio on IFC6410 nor Nexus 7. But if
-> the driver would be actually useable there, I'd prefer to keep it.
-TBH, I have never verified this in full audio use case in any of the
-qcom platforms. This driver has been unused since it was originally
-added in 2017. AFAIU, no one is using this lets remove this now, Am
-happy to take it back if someone has managed to test this.
+> Great, no objection from me, want to send a patch we can queue up for
+> 6.18-rc1?
 
---srini
-> 
+Sean proposed the initial idea to move IDs to aux core. Let's wait for him
+to see if he wants to do such patch. If not, I'll send.
+
+Thanks
 
 
