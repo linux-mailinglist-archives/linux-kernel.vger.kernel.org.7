@@ -1,187 +1,114 @@
-Return-Path: <linux-kernel+bounces-747086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CDAEB12F80
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E03B12F81
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7C5189A15C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2556188989C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331D1213E85;
-	Sun, 27 Jul 2025 12:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F09212B2F;
+	Sun, 27 Jul 2025 12:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLlAODLZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rv5+0JLf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871D311185;
-	Sun, 27 Jul 2025 12:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBF11C8604;
+	Sun, 27 Jul 2025 12:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753619941; cv=none; b=o4KBinVbEwB1LEEC9rbdpmYYgMQluvi2oMjASJGGFUCKEKywY9DOUGIU1ZxUFJvXzd9vNBsmQbsuwieIl9zQhy4SvpTbIkXnnuPABDgpIH9TiYDsvrtIUETJaTXLAhdKltxU1JcaqQ7+pmunEB2nItnib1cspm7rJ2ipXzRQLUY=
+	t=1753619984; cv=none; b=nqJmtakez7rphHp2DZLhqWG8BBNfaqinFF33G+xypd3m3qlvtFQrPf+sa261hM7t7i1f5FYohiGvX8/Kt+bKya5KsEWx0PfBQpATv41thlZ+SMN/HvFMOpCH8YnvHeDYyHdZ+5a39BNm+EwKujAzWYjvEDnI3nazeq67QQgreyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753619941; c=relaxed/simple;
-	bh=MPSvtbN2ilbvB5I0EgZ3fLGSEXKs2+UCHriQ9BvyDws=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nWqerGpEYJQ5x4kvVJnQ2xZi6ZwxPw0kch4162bKQPwuYYaRXXF/mH7pNWj0P2mOBOLFHWXP2jAQgH72SYnJ1XMv3WDb+K39YZ1af0rpayCfX9sDyybWByyalgfiL/coQvtEVrGZBRBTc9CLQu9hBRb+enu/NhcpCGr/0OAgXLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLlAODLZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B78AAC4CEEB;
-	Sun, 27 Jul 2025 12:38:56 +0000 (UTC)
+	s=arc-20240116; t=1753619984; c=relaxed/simple;
+	bh=fIXQgL9YEiRqNQxiYSID7ZjBcy7GeSQhzu+5YaUrg7k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=oprDB4CGhlZqVcAdWLOfYc10ea6M/SOHI6nTn18AnMu5s6ubL5e4zNVCt5ycRhAfhmX2nW+TLpUdQLzIi+ye/ZBj+rl1JRZ/NZuS7y0YEckyH2HbsmV9HLO/kfv1OexdT5YpbY7OfSXTzKZEnDOXhWKEHlk3barYOxbYPExxTxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rv5+0JLf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F47AC4CEEB;
+	Sun, 27 Jul 2025 12:39:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753619940;
-	bh=MPSvtbN2ilbvB5I0EgZ3fLGSEXKs2+UCHriQ9BvyDws=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uLlAODLZ8pZ5JsUpEq6gFUcTlOAwDtwesnCcXkUFon/IKNHIASAwKuPY9uigzBNX1
-	 Gh057OXyraP0PAOMrtTGDUh940Az+rSCovz+4SQ+DN13kXDgnhNFK3kjZcHzItD3g4
-	 aynjbgFhVpSTEc0EvnhD07m+IWH6NZTyVnQQ1mYMMbCR4zvPecq6khkAVkfRtWlYvz
-	 U9TFo/Bid/vewm0Z3w0OeVLBqPA8IXZLcSoNsjVa5Mc/i8+DPa/s89I+qUkl+IYDaZ
-	 rXvQeTAre115ToPzFZ6bUcGf8Smkhl1a+xf9eayKQe4OMtsA6CyOl4YkVg3KHTvGEW
-	 laUQmT9RnWPQg==
-Date: Sun, 27 Jul 2025 13:38:52 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Dixit Parmar <dixitparmar19@gmail.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: magnetometer: add support for Infineon TLV493D
- 3D Magentic sensor
-Message-ID: <20250727133852.371111bc@jic23-huawei>
-In-Reply-To: <141967ee-22f4-4b15-a8da-e8cef25828b4@baylibre.com>
-References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
-	<20250726-tlv493d-sensor-v6_16-rc5-v1-1-deac027e6f32@gmail.com>
-	<141967ee-22f4-4b15-a8da-e8cef25828b4@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1753619984;
+	bh=fIXQgL9YEiRqNQxiYSID7ZjBcy7GeSQhzu+5YaUrg7k=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=rv5+0JLf03BsZyyLJ4SqD+8fQmTbff6WjrWDLgui+5tTMtEUh1+ZAO4E6B5O5QEl7
+	 InAR8jpKa/1vowj+PtEBGZTTYRBnhNiUubAAlbmlsBqQrOvXxwlNHVLVMxZqsfpeg3
+	 /pZKe3ssPKCGJH9cZNnHtbmkSxIFrD79/vtK99lUAL/J/qYfXl9RlgR4i1sTNaLhfN
+	 u1wV97EdaiAYKgoE/11lgpl+xH9OvwWW2PcNfIGLtlrePtA4QqjUpFfijIhjCm68fp
+	 1eyNY2v7HcDAE608nli7ceE3hUkTObOGpeK8LFhWorPZk83xtUT2l7rk90JgC71tGf
+	 DamYTvpVaB9hg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 27 Jul 2025 14:39:39 +0200
+Message-Id: <DBMUEH5MYR2L.CXM12OIUH7TZ@kernel.org>
+Subject: Re: [PATCH v3] rust: transmute: add `as_bytes` method for `AsBytes`
+ trait
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+Cc: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>, "Danilo Krummrich"
+ <dakr@kernel.org>, "Daniel Almeida" <daniel.almeida@collabora.com>, "Robin
+ Murphy" <robin.murphy@arm.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Trevor Gross"
+ <tmgross@umich.edu>, "Christian S. Lima" <christiansantoslima21@gmail.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250726-as_bytes-v3-1-eb7514faab28@nvidia.com>
+ <CAH5fLghNDDo0HKupPXe8G6z2TP4TJE881Bd76k0LDjSm75KcEQ@mail.gmail.com>
+ <aIX-JDehurnGYppE@google.com>
+In-Reply-To: <aIX-JDehurnGYppE@google.com>
 
-On Sat, 26 Jul 2025 15:44:03 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Sun Jul 27, 2025 at 12:23 PM CEST, Alice Ryhl wrote:
+> On Sun, Jul 27, 2025 at 08:52:00AM +0200, Alice Ryhl wrote:
+>> On Sat, Jul 26, 2025 at 4:47=E2=80=AFAM Alexandre Courbot <acourbot@nvid=
+ia.com> wrote:
+>> > diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
+>> > index 1c7d43771a37b90150de86699f114a2ffb84db91..69c46c19a89191d8a2abc5=
+801564cacda232218c 100644
+>> > --- a/rust/kernel/transmute.rs
+>> > +++ b/rust/kernel/transmute.rs
+>> > @@ -47,7 +47,16 @@ macro_rules! impl_frombytes {
+>> >  ///
+>> >  /// Values of this type may not contain any uninitialized bytes. This=
+ type must not have interior
+>> >  /// mutability.
+>> > -pub unsafe trait AsBytes {}
+>> > +pub unsafe trait AsBytes {
+>> > +    /// Returns `self` as a slice of bytes.
+>> > +    fn as_bytes(&self) -> &[u8] {
+>> > +        let data =3D core::ptr::from_ref(self).cast::<u8>();
+>> > +        let len =3D size_of_val(self);
+>> > +
+>> > +        // SAFETY: `data` is non-null and valid for `len * sizeof::<u=
+8>()` bytes.
+>> > +        unsafe { core::slice::from_raw_parts(data, len) }
+>> > +    }
+>> > +}
+>>=20
+>> Let's also have an as_bytes_mut() method. I would require the type to
+>> also implement FromBytes as it lets you replace the value with another
+>> set of bytes.
+>
+> s/I would/It would/
+>
+> FromBytes is needed only for as_bytes_mut(), not for the existing
+> method.
 
-> On 7/26/25 4:37 AM, Dixit Parmar wrote:
-> > The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
-> > applications includes joysticks, control elements (white goods,
-> > multifunction knops), or electric meters (anti tampering) and any
-> > other application that requires accurate angular measurements at
-> > low power consumptions.
-> >=20
-> > The Sensor is configured over I2C, and as part of Sensor measurement
-> > data it provides 3-Axis magnetic fields and temperature core measuremen=
-t.
-> >=20
-> > The driver supports raw value read and buffered input via external trig=
-ger
-> > to allow streaming values with the same sensing timestamp.
-> >=20
-> > The device can be configured in to different operating modes by optional
-> > device-tree "mode" property. Also, the temperature sensing part requires
-> > raw offset captured at 25=C2=B0C and that can be specified by "temp-off=
-set"
-> > optional device-tree property.
-> >=20
-> > While sensor has interrupt pin multiplexed with I2C SCL pin. But for bus
-> > configurations interrupt(INT) is not recommended, unless timing constra=
-ints
-> > between I2C data transfers and interrupt pulses are monitored and align=
-ed.
-> >=20
-> > The Sensor's I2C register map and mode information is described in prod=
-uct
-> > User Manual[1].
-> >=20
-> > Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/i=
-nfineon-tlv493d-a1b6-datasheet-en.pdf
-> > [1] https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-Use=
-rManual-v01_03-EN.pdf
-> >=20
-> > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+I agree with your suggestion, but it can be an independent patch and
+doesn't need to go in via this one, right?
 
-> > +static const struct regmap_config tlv493d_regmap_config =3D {
-> > +	.reg_bits =3D 8,
-> > +	.val_bits =3D 8,
-> > +	.max_register =3D TLV493D_RD_REG_RES3,
-> > +	.volatile_table =3D &tlv493d_volatile_regs,
-> > +};
-> > +
-> > +static int tlv493d_probe(struct i2c_client *client)
-> > +{
-> > +	struct device *dev =3D &client->dev;
-> > +	struct iio_dev *indio_dev;
-> > +	struct tlv493d_data *data;
-> > +	int ret;
-> > +
-> > +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*data));
-> > +	if (!indio_dev)
-> > +		return -ENOMEM;
-> > +
-> > +	data =3D iio_priv(indio_dev);
-> > +	data->dev =3D dev;
-> > +	data->client =3D client;
-> > +	i2c_set_clientdata(client, indio_dev); =20
->=20
-> There is not i2c_get_clientdata(), so I don't think we need this.
-There's a dev_get_drvdata() that pairs with this in suspend and resume.
-
-I kind of wish the bus specific accessor would go away but there
-is too much history behind them :(
-
-> > +static int tlv493d_runtime_suspend(struct device *dev)
-> > +{
-> > +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> > +	struct tlv493d_data *data =3D iio_priv(indio_dev);
-> > +
-> > +	return tlv493d_set_operating_mode(data, TLV493D_OP_MODE_POWERDOWN);
-> > +}
-> > +
-> > +static int tlv493d_runtime_resume(struct device *dev)
-> > +{
-> > +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> > +	struct tlv493d_data *data =3D iio_priv(indio_dev);
-> > +
-> > +	return tlv493d_set_operating_mode(data, data->mode);
-> > +}
-> > +
-> > +static DEFINE_RUNTIME_DEV_PM_OPS(tlv493d_pm_ops,
-> > +		tlv493d_runtime_suspend, tlv493d_runtime_resume, NULL);
-> > +
-> > +static const struct i2c_device_id tlv493d_id[] =3D {
-> > +	{ "tlv493d" },
-> > +	{ }
-> > +};
-> > +MODULE_DEVICE_TABLE(i2c, tlv493d_id);
-> > +
-> > +static const struct of_device_id tlv493d_of_match[] =3D {
-> > +	{ .compatible =3D "infineon,tlv493d-a1b6", },
-> > +	{ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, tlv493d_of_match);
-> > +
-> > +static struct i2c_driver tlv493d_driver =3D {
-> > +	.driver =3D {
-> > +		.name =3D "tlv493d",
-> > +		.of_match_table =3D tlv493d_of_match,
-> > +		.pm =3D pm_ptr(&tlv493d_pm_ops),
-> > +	},
-> > +	.probe =3D tlv493d_probe,
-> > +	.id_table =3D tlv493d_id,
-> > +};
-> > +
-> > +module_i2c_driver(tlv493d_driver);
-> > +
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_DESCRIPTION("Infineon TLV493D Low-Power 3D Magnetic Sensor");
-> > +MODULE_AUTHOR("Dixit Parmar <dixitparmar19@gmail.com>");
-> >  =20
->=20
-
+---
+Cheers,
+Benno
 
