@@ -1,289 +1,180 @@
-Return-Path: <linux-kernel+bounces-747053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0B0B12F27
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:11:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3267FB12F28
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57CC13B7344
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 10:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A027F3B8C45
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 10:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530E020110B;
-	Sun, 27 Jul 2025 10:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F33220110B;
+	Sun, 27 Jul 2025 10:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b="pfd32wS8"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Uw+RTg8Z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CD819D09C
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 10:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEC1EEC0
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 10:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753611083; cv=none; b=KHwtIAj1GHgJGWrMEkYJBOyhtYj12e+msLK48kiZBskMP7DRtaLTYqoV5otBjUbrZPKia9KmB4Lq1uXzbep7ukm8OlDBPq5CHjumKjOKyZGBmz5iL2//zINRZvUPHFjMv3iTsZdOfNvlfkq6trsdz2mwSQMfkLjADjqLHg+jtu4=
+	t=1753611267; cv=none; b=J3EAXetosnaLiozblXnM939MOhnKTN5S6O1cRh+pp54jS1q4j3jh5mvDS4Hc1h9pqzeTbbgamZtclMUlt2KcNiXqmByNZZUcGae/AA89PGiLuu9oGAwIWeefyT/oXwGBRCMkgboOSga6SMg9I81beHW2cgVnLBEzkLj1CnyHSp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753611083; c=relaxed/simple;
-	bh=vDoZh9aovUBA3yV07jWNh7cQHnw5T5pbReZnHv7y1BU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G7sGf5BbDq3xgtfymNem8ZsA6qtiJ2fingHQKxYshrkYFBPpndmJSdCL/ufCEk8RTJdStRS+kVXQceo0bFQdHL6GA9R+LifVWj+iPolR2/gVpDjZ3r6bGFFTwW119p1G/Z04cVdRrVe15KknV5sT54+kRQ7xcbdZmvRiuIznJsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us; spf=pass smtp.mailfrom=gmx.us; dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b=pfd32wS8; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.us
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.us;
-	s=s31663417; t=1753611078; x=1754215878; i=len.bao@gmx.us;
-	bh=B0lNLS7zepxoxJcxEo9OOZzCjav4Zs2gfiYailXBRpw=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pfd32wS8RmTTN/plbsrb4W+Zvr2RDVEcvs7cEY5oNEUsyH83sdGdx/qoxXBRDflr
-	 +86waqWVbAKouZrmLzpp/lfB0jM/N8/L9IG/hcGlCkAa9OOEGhP//EwrSMW6Dj9Wn
-	 YZRC76RVead/Us5NAU1ka1exTD+MP4jG5k+IAdSHXht7uuBM4NN6w3TatxFZrqn8t
-	 533sOsPZNBAcXfdEwQD9OXuDVJjIxdh0E0zT6VkftWQD/+Z7JpGYwmIPGZnz+QZUV
-	 j9EJpones/mYMPOYl9HMDAE8jGDHdh0/Qeg7EL3LTDPmChxKYTI5CDSEtDoV6+98i
-	 o+Pr7i8sy8g/3VwnoA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from ubuntu ([79.159.189.119]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MWRVb-1vD74Y3Dch-00TMiP; Sun, 27
- Jul 2025 12:11:17 +0200
-From: Len Bao <len.bao@gmx.us>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Len Bao <len.bao@gmx.us>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: octeon: Use 'u64' instead of 'uint64_t' in union cvmx_pip_wqe_word2
-Date: Sun, 27 Jul 2025 10:10:47 +0000
-Message-ID: <20250727101052.41181-1-len.bao@gmx.us>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753611267; c=relaxed/simple;
+	bh=8qsXtxH+kgZ5916SUbXCu8QlLNqivyV04aJIMMPtIWs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hejWEl2bGjZ43IwaEp6he46MuMQIxuB/xOqhjNTHcYdsY/T6zLPw+YKOAp2hwEcrN2xR1R2t+qnhbgRbJeApDVNuqLviCev1uNm4FztIqHWg3zYcyi9xpwSKljlBPAiW6WkaTF0AynWeWH5UiB0m2GDe665JtdcGqZ9a/c9Syv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Uw+RTg8Z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56R3MtKL004838
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 10:14:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lwjb0BHg6EfDOouDDm1cybRLuxEXfs9odZ3SmDOgc1U=; b=Uw+RTg8ZDBuO/gTY
+	SBrRo3cR6k2ilnI+qWly3feuj+Ore1psvzEOgWm4phJSQAbG9imZKcLgF3Muso93
+	0YaRq00TRzpYu1w3xDGCJCkay5SOi+sW6YRgf1NE19k1Mhq4ge1vB3zuO6te/ghw
+	weJeCIQTeVI/uhk/EBNsnyERKW8NwUWG00FCrUZnMsje2bfPkcdi5vVg64nVzLzt
+	AkiwDXT7CfNx8ZMjI6HsHc4nes2M+81p+Xy575y2WmoAxefINxudt20ktgmhF6Ly
+	FCZOJCT03tGU00oF6zxtqx2frQECNkrl0cOb2jmakXktConyIDH/KULlJY8jydJU
+	zGmJ/w==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484rachw9e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 10:14:25 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-754f57d3259so5467702b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 03:14:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753611264; x=1754216064;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lwjb0BHg6EfDOouDDm1cybRLuxEXfs9odZ3SmDOgc1U=;
+        b=fIPI9XJlNIKGcwJpgOCEH87cSDV+18eFxwqGpeVvqpfs+yNdwqBnAtYnVM56rm40sJ
+         QlEQrae38T3xFhZt58EsA+rl2C1w9/56SnzTTj0ybYkIpx0Q2hT+bu/5T/91idq7xrN1
+         Q2ppxvpzr9STLD/WbfAVdakc5okU1o5h4izj50eoQs+k8XUs53UDj+t73tmMhs2LgNql
+         SRFKM1ZJT0kWw9l1BrVxwpTeCbxPol7zNP5clEuFb02/oS8uV1Kml1sAUGYebClA7uXC
+         ETg+VdqqorO40h48++y4uFQKc0LQ9JW4c0JpVjt0mMs4WtC3/dWmMLHSguLfDOJXmvCH
+         vyvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUu7WayS2N8tjh6h5o1Kj5khkLgavKTnrpdEyO3ErUTeq7eeCBrxOLQUn8vpR7TkRcHIxwMF47pRcGoSxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylF/eYLMNXPz9l2E2gfuOKnixZxBXLYRHr5yCtspEEWxu+BVaI
+	PMoYoPZJPSTWAEkfEWhB6DJkjzifxd8c3JzH4sZsznJDOwWU7mGl4g02p33a0ZKHmj3AlrkvbEL
+	Cspj+DNEYyHoD6NMp2I+DAONxJi8un3FqoPNwE3ibck6tBoJ8PDN90/4i1a7hiLabktk=
+X-Gm-Gg: ASbGncv4BQuoE3WsykudIhkgwizZ+kmUg6kqU7aVEWs/BB3wz+ekKFeI5WvfkshLcSz
+	+ybPxQsk6CyKzShtqQ4JABxy/Aokc+mxazdRRGltglS7W3+XjDlcGhZjV6V5HaFl9TF2Cb9xDBW
+	C9IYd6l/Fo1QjRwLPWX6rq+qvq5YiRK5kaaM7+54CZ0CS4phNAN8BLR94ooyP7hJBjZTcneLUpd
+	U/yaR8rRehtNTsPe0MGZAibZy412VEMS6ZDeJVBwBYOA1HGoZgJhM8AJ+L5v06O4NVCp3cpdZSX
+	39Y6TrlubsD70Z2KvG6+/LtGoY4oGvu7ASuF8bi0eq5SMNT49ZhEzClC5NEjSJiN+uBJDb9pzQJ
+	MITHcnV+Y7evofp1eFw==
+X-Received: by 2002:a05:6a20:4309:b0:21f:5598:4c2c with SMTP id adf61e73a8af0-23d7005288amr13839134637.13.1753611264448;
+        Sun, 27 Jul 2025 03:14:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8LNyK4aRWVrXyDFBP0wxYJ0pw+PA18v3/Xqj1UNu4XPeuS2DNvEXb+2BJjw1zfbwOcwCGEg==
+X-Received: by 2002:a05:6a20:4309:b0:21f:5598:4c2c with SMTP id adf61e73a8af0-23d7005288amr13839095637.13.1753611263986;
+        Sun, 27 Jul 2025 03:14:23 -0700 (PDT)
+Received: from [10.110.115.111] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f6b54e8sm2802688a12.57.2025.07.27.03.14.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Jul 2025 03:14:23 -0700 (PDT)
+Message-ID: <0cbecd24-fb1c-441a-8921-ff1651503577@oss.qualcomm.com>
+Date: Sun, 27 Jul 2025 18:14:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:O7Vk1PgHqgQu/irvoYno1BgA0o7Tp1YKt/OBmxE8ezxey5iJno2
- jQhKlxxbxJ82IjAiqoRFSxdlaeCT77/8CVvGGZ/VEnYz+3wcPrRu7b6Dya1WzjQN/0PvlSt
- zYYqGJ5eHtrbotfKrTqPhruFXchjQ0mk2Lta6+b3u5+6MTSCB1N4Xri2rACpNnnOUGpFJWh
- PwWq1Wpr2e19fWEW5gTtg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RQVmAK8kSv0=;jELbfd89062WtnvV8kyCYrqCL/4
- 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
- lkovnlkNZ8Q==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: qcs615-ride: Enable WiFi/BT
+ nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250726-615-v6-0-42b8150bcdd6@oss.qualcomm.com>
+ <20250726-615-v6-2-42b8150bcdd6@oss.qualcomm.com>
+ <ad5d7zx3ztuouvqediihpj6ukmy7dvl4eampuirp5r6ftr4lh2@6fkebmfj25yj>
+Content-Language: en-US
+From: "Yu Zhang(Yuriy)" <yu.zhang@oss.qualcomm.com>
+In-Reply-To: <ad5d7zx3ztuouvqediihpj6ukmy7dvl4eampuirp5r6ftr4lh2@6fkebmfj25yj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=WqsrMcfv c=1 sm=1 tr=0 ts=6885fc01 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=rhgo8q8DuPZwM0GwmL0A:9
+ a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-GUID: 97CoSp2FpJhEMZG9PZsJ5PRwgHUanfxi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI3MDA5MCBTYWx0ZWRfX5ZRRRJeIi7HZ
+ AJjuiXVfFp25Byu9B+68BiUoa+Tggx7tIIDN0hBy6DB7GWKizswTCZ7t4i5Ov7tW2mX+poK9QSz
+ BKZTMdsKOEPqL77upyXg+FMccPzHqPHd6tD4nsOU8gq8pIHCyMHKWgfA0UnP3qO0OCssFqXYell
+ VWHSj2Bo2FzFIvYVu59QNsPIpV2V9X4PkIaueTtvkp/LP+tYPzMNGHjf11OfotIxL/o9aqbawNb
+ A3l1NhgqOYjSyy9Ab3qnqGGJj3PD2L73SlKxgp7lOPVMxntHhBY7pbulWlKYz76BxFr9DVzqe5k
+ J1h6tv6r2rYv2pVwrhtFbfaMsC3qJwHFiJ1bIw/oPwU/yzxDSk4V9hgL2qAUYS3wj/+HQa0bDzC
+ X4ovxT1YR/Dm+1+AstQuayTz/J6c4qVEG08skAyZQKPJ3WCFBzIz5ewFyuUON1rAiUSAqeVN
+X-Proofpoint-ORIG-GUID: 97CoSp2FpJhEMZG9PZsJ5PRwgHUanfxi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-27_03,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 suspectscore=0 lowpriorityscore=0
+ clxscore=1015 mlxlogscore=999 impostorscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507270090
 
-In the kernel type 'u64' is preferred over type 'uint64_t'. So, refactor
-the 'union cvmx_pip_wqe_word2' to use the former. At the same time, take
-advantage of this to align the bits quantity to improve readability.
-Also, separate the structs with blank lines to gain readability.
 
-Signed-off-by: Len Bao <len.bao@gmx.us>
-=2D--
- drivers/staging/octeon/octeon-stubs.h | 134 +++++++++++++-------------
- 1 file changed, 68 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeo=
-n/octeon-stubs.h
-index 44cced319..35b5078ba 100644
-=2D-- a/drivers/staging/octeon/octeon-stubs.h
-+++ b/drivers/staging/octeon/octeon-stubs.h
-@@ -43,81 +43,83 @@
- #define CVMX_POW_WQ_INT_PC		0
-=20
- union cvmx_pip_wqe_word2 {
--	uint64_t u64;
-+	u64 u64;
-+
- 	struct {
--		uint64_t bufs:8;
--		uint64_t ip_offset:8;
--		uint64_t vlan_valid:1;
--		uint64_t vlan_stacked:1;
--		uint64_t unassigned:1;
--		uint64_t vlan_cfi:1;
--		uint64_t vlan_id:12;
--		uint64_t pr:4;
--		uint64_t unassigned2:8;
--		uint64_t dec_ipcomp:1;
--		uint64_t tcp_or_udp:1;
--		uint64_t dec_ipsec:1;
--		uint64_t is_v6:1;
--		uint64_t software:1;
--		uint64_t L4_error:1;
--		uint64_t is_frag:1;
--		uint64_t IP_exc:1;
--		uint64_t is_bcast:1;
--		uint64_t is_mcast:1;
--		uint64_t not_IP:1;
--		uint64_t rcv_error:1;
--		uint64_t err_code:8;
-+		u64 bufs         : 8;
-+		u64 ip_offset    : 8;
-+		u64 vlan_valid   : 1;
-+		u64 vlan_stacked : 1;
-+		u64 unassigned   : 1;
-+		u64 vlan_cfi     : 1;
-+		u64 vlan_id      : 12;
-+		u64 pr           : 4;
-+		u64 unassigned2  : 8;
-+		u64 dec_ipcomp   : 1;
-+		u64 tcp_or_udp   : 1;
-+		u64 dec_ipsec    : 1;
-+		u64 is_v6        : 1;
-+		u64 software     : 1;
-+		u64 L4_error     : 1;
-+		u64 is_frag      : 1;
-+		u64 IP_exc       : 1;
-+		u64 is_bcast     : 1;
-+		u64 is_mcast     : 1;
-+		u64 not_IP       : 1;
-+		u64 rcv_error    : 1;
-+		u64 err_code     : 8;
- 	} s;
-+
- 	struct {
--		uint64_t bufs:8;
--		uint64_t ip_offset:8;
--		uint64_t vlan_valid:1;
--		uint64_t vlan_stacked:1;
--		uint64_t unassigned:1;
--		uint64_t vlan_cfi:1;
--		uint64_t vlan_id:12;
--		uint64_t port:12;
--		uint64_t dec_ipcomp:1;
--		uint64_t tcp_or_udp:1;
--		uint64_t dec_ipsec:1;
--		uint64_t is_v6:1;
--		uint64_t software:1;
--		uint64_t L4_error:1;
--		uint64_t is_frag:1;
--		uint64_t IP_exc:1;
--		uint64_t is_bcast:1;
--		uint64_t is_mcast:1;
--		uint64_t not_IP:1;
--		uint64_t rcv_error:1;
--		uint64_t err_code:8;
-+		u64 bufs         : 8;
-+		u64 ip_offset    : 8;
-+		u64 vlan_valid   : 1;
-+		u64 vlan_stacked : 1;
-+		u64 unassigned   : 1;
-+		u64 vlan_cfi     : 1;
-+		u64 vlan_id      : 12;
-+		u64 port         : 12;
-+		u64 dec_ipcomp   : 1;
-+		u64 tcp_or_udp   : 1;
-+		u64 dec_ipsec    : 1;
-+		u64 is_v6        : 1;
-+		u64 software     : 1;
-+		u64 L4_error     : 1;
-+		u64 is_frag      : 1;
-+		u64 IP_exc       : 1;
-+		u64 is_bcast     : 1;
-+		u64 is_mcast     : 1;
-+		u64 not_IP       : 1;
-+		u64 rcv_error    : 1;
-+		u64 err_code     : 8;
- 	} s_cn68xx;
-=20
- 	struct {
--		uint64_t unused1:16;
--		uint64_t vlan:16;
--		uint64_t unused2:32;
-+		u64 unused1 : 16;
-+		u64 vlan    : 16;
-+		u64 unused2 : 32;
- 	} svlan;
-+
- 	struct {
--		uint64_t bufs:8;
--		uint64_t unused:8;
--		uint64_t vlan_valid:1;
--		uint64_t vlan_stacked:1;
--		uint64_t unassigned:1;
--		uint64_t vlan_cfi:1;
--		uint64_t vlan_id:12;
--		uint64_t pr:4;
--		uint64_t unassigned2:12;
--		uint64_t software:1;
--		uint64_t unassigned3:1;
--		uint64_t is_rarp:1;
--		uint64_t is_arp:1;
--		uint64_t is_bcast:1;
--		uint64_t is_mcast:1;
--		uint64_t not_IP:1;
--		uint64_t rcv_error:1;
--		uint64_t err_code:8;
-+		u64 bufs         : 8;
-+		u64 unused       : 8;
-+		u64 vlan_valid   : 1;
-+		u64 vlan_stacked : 1;
-+		u64 unassigned   : 1;
-+		u64 vlan_cfi     : 1;
-+		u64 vlan_id      : 12;
-+		u64 pr           : 4;
-+		u64 unassigned2  : 12;
-+		u64 software     : 1;
-+		u64 unassigned3  : 1;
-+		u64 is_rarp      : 1;
-+		u64 is_arp       : 1;
-+		u64 is_bcast     : 1;
-+		u64 is_mcast     : 1;
-+		u64 not_IP       : 1;
-+		u64 rcv_error    : 1;
-+		u64 err_code     : 8;
- 	} snoip;
--
- };
-=20
- union cvmx_pip_wqe_word0 {
-=2D-=20
-2.43.0
+On 7/26/2025 9:19 PM, Dmitry Baryshkov wrote:
+> On Sat, Jul 26, 2025 at 11:31:31AM +0800, Yu Zhang(Yuriy) wrote:
+>> Enable WiFi/BT on qcs615-ride by adding a node for the PMU module of the
+>> WCN6855 and assigning its LDO power outputs to the existing WiFi/BT
+>> module.
+>>
+>> Signed-off-by: Yu Zhang(Yuriy) <yu.zhang@oss.qualcomm.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 135 +++++++++++++++++++++++++++++++
+>>   1 file changed, 135 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> index 011f8ae077c256f079ce1b07720374a9bf721488..f6df6a88adc8cdc416a57d38b8eaabd53fbe3fcd 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> @@ -18,6 +18,7 @@ aliases {
+>>   		mmc0 = &sdhc_1;
+>>   		mmc1 = &sdhc_2;
+>>   		serial0 = &uart0;
+>> +		serial1 = &uart7;
+>>   	};
+>>   
+>>   	chosen {
+>> @@ -47,6 +48,85 @@ regulator-usb2-vbus {
+>>   		enable-active-high;
+>>   		regulator-always-on;
+>>   	};
+>> +
+>> +	vreg_conn_1p8: regulator-conn-1p8 {
+> 
+> regulator-conn-1p8 < regulator-usb2-vbus
+> 
+> Please keep DT sorted
+> 
+I'll fix the formatting issue accordingly. I really appreciate your 
+continued patience and guidance.
+
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vreg_conn_1p8";
+>> +		startup-delay-us = <4000>;
+>> +		enable-active-high;
+>> +		gpio = <&pm8150_gpios 1 GPIO_ACTIVE_HIGH>;
+>> +	};
+>> +
+> 
 
 
