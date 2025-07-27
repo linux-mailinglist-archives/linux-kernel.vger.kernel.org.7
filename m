@@ -1,194 +1,160 @@
-Return-Path: <linux-kernel+bounces-747193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30AC8B130DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:10:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A3AB130DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61857175A01
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:10:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D84C3B6B11
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6296921C9F6;
-	Sun, 27 Jul 2025 17:10:29 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6867E4A00;
-	Sun, 27 Jul 2025 17:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322D821ADB9;
+	Sun, 27 Jul 2025 17:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FSPJ5b1h"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32724A00;
+	Sun, 27 Jul 2025 17:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753636229; cv=none; b=MtAenf+ijv45rykkX7HLgDjegv9XJxSdu+xT1uCJHxE8Y0/T/8+G6P1D5vS3/V117jGnxMHtaXmz8PEdLT8i9fB+SGsBL1OeKTBpg9NatSkjpn1x1yj/ds7BJji3JyPDDfAfPoFDoXdbUp21Lc3hc7t6cAkXGUOXSotdDwFrNJI=
+	t=1753636242; cv=none; b=ErVYQ04ogJOYKxC4bgY70bQ0KgiPBr01bcBUE9yGaRC4UKy6VyYrFgfYRr4TBWCvKcmP1taHNB+vIPT6/jkAbSBfODKr3ovtF0y3iDK6K1ON4GGZtDrfDVQHR00/pND93ab3qJwuE5gsOg9nvmmiR5q1CUxh3zAOaQyRIWBhQVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753636229; c=relaxed/simple;
-	bh=/NgwpO3cse/PaI1LwtLxV1CE5rATpK2IMleIMwqMhGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtF7+mQwAX8/QU7vAM4iLhyZDvvdnHR4NhBWNZ2Y5cL1grtThyMCuXgDP0olue5NL7kS0Ucz+DjHTOG20nq8QDxMJTrdzvE49o0YsbEcREhfwZwQjrzro3y/EMOcFCPEn3ESNld6HQJxdjsUMVAYCluL00rozQz6OJz480kC0Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 56RH9lBm018749;
-	Sun, 27 Jul 2025 19:09:47 +0200
-Date: Sun, 27 Jul 2025 19:09:47 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: alchark@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
-        heiko@sntech.de, jonas@kwiboo.se, krzk+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, ziyao@disroot.org
-Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency
- scaling support
-Message-ID: <20250727170947.GA19379@1wt.eu>
-References: <CABjd4YzLaAgd-5Cg9fMSAgCS6Wt6=uC8K3WRhcAtnjjg1je87Q@mail.gmail.com>
- <20250720140010.218235-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1753636242; c=relaxed/simple;
+	bh=Zp23tZRvf8tS3BksPAvWD2DHYvAIYmrtNMJZW0Wr2hI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=SDSsGZ+1z3BIsIWCD4ilJh9vZZPjm0WyIYmryvzMeGxEJGbEbB3+BCMmEG9Qtfqbfl+RPkX502v9nuWJyljNH7N1PTXeIdlgg2J7CPHt8CRhoPCXEXNRzO3XITTXTnP+mC0Lnueue81AOWOxqgMArSKS8N6q60FE8/mjmUBusUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FSPJ5b1h; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753636211; x=1754241011; i=markus.elfring@web.de;
+	bh=tqsHsRfEurZWuxIUS0g2KGvPTie3Mdfsuf9vf3ZBUM0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FSPJ5b1hDwT+f9gqyghFWVO8tNBfkqPdXh/JjD/xcr9aQqoyA1Pt7aRpR26kMzlb
+	 SBl5pV5LT2Z4sCPHP3BQUDjBwSsyJN+9JXxdiP6pMgtezstY5HfrGq9iVvDZEVrL9
+	 Wq96Janjxbhnn1Cru8pWBeZqnitLbaB5AvHOJq4IS/+e3qzXcavOwSFasGJSKz9Vf
+	 FibKHzD1WZJYGiWPTm7Z/RyRa9yqS4Kf34w05rxOsr/Mxmuiz0Q52apjtgVo/T94Y
+	 upykMUTLPEyxuPnHPykj38VrAeERCCXPCJpBXe1FqfdetMlF6wsuj8Tnbe6dBoVk5
+	 WpvanvQwXpWhEVeEIQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.1]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjPQ6-1uHUld1fru-00de0X; Sun, 27
+ Jul 2025 19:10:11 +0200
+Message-ID: <d84ebaec-5c80-489e-a3be-79b0c3563e9b@web.de>
+Date: Sun, 27 Jul 2025 19:10:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250720140010.218235-1-amadeus@jmu.edu.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+To: Salah Triki <salah.triki@gmail.com>, linux-edac@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
+ Dinh Nguyen <dinguyen@kernel.org>, James Morse <james.morse@arm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter
+ <rric@kernel.org>, Tony Luck <tony.luck@intel.com>
+References: <aIFqOz2bKFXIumM0@pc>
+Subject: Re: [PATCH] EDAC: altera: Delete dma_free_coherent()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <aIFqOz2bKFXIumM0@pc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9xEkGMDR6ywAyWd+Q7iN5mrYRTSThWm+z8vfo12lOemG2kw2A6U
+ L4LnMfhG7XQVL9s9OOPtncTyrzYTmqPu04/fkY0NqiGjzqlS9JEgWyadm+//aMCC9+0wMJH
+ TP/0RxdweBnWZOnBbibIzk6D/42lkmQjJQ1eR9jHZFi9b1V/5yv/M++gW0GEl7uGSlxK3++
+ /y5ZD3zt2S7Ui1nBbk6xA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Fx3AVbD9uNc=;Yk99jXefmeavspxncjQgIwnOTgn
+ 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
+ RSVhJ7uCD
 
-Hello,
+> dma_free_coherent() need to be called only when dma_alloc_coherent()
+> succeed.
 
-On Sun, Jul 20, 2025 at 10:00:10PM +0800, Chukun Pan wrote:
-> Hi,
-> 
-> > > Because the actual frequency generated by 850mV is closer to 1008MHz.
-> >
-> > Which likely means that you have an -L5 chip. It will be different on
-> > other chips - it's a lottery of silicon quality.
-> 
-> The rk3528 board I have has -L3 and -L5 levels.
-> -L3 level tested at 850mV (mainline kernel) actual frequency is 1055MHz.
-> 
-> Frankly speaking, I have always doubted whether the voltage value of BSP
-> is correct. The voltage of BSP kernel at 1800MHz and 2016MHz is too low,
-> and no board can reach the corresponding actual frequency.
-> For example, if we set the CPU frequency to 2016MHz when running the BSP
-> kernel, the actual frequency can only reach 1800MHz.
+  succeeded?
 
-I've tried the patch on my E20C and am seeing a frequency drop compared
-to cpufreq disabled (2016 MHz stock frequency). By default, without the
-OPP, my CPU cores are showing the following frequencies:
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16-rc7#n145
 
-  # ncpu=$(nproc);for ((i=0; i<ncpu;i ++)); do echo -n "$(taskset -c $i ./mhz -c -i) " ;done;echo
-  2008 2011 2012 2010 
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16-rc7#n94
 
-There's always the same distribution with core 0 being slightly lower,
-then core 3, then 1 and 2, very likely due to leakage and PVTM adjustments.
 
-In idle it's consuming 906 mW. After enabling the OPP, I've tried again
-and this time I'm seeing this:
+Would the summary phrase =E2=80=9CDelete an inappropriate dma_free_coheren=
+t() call
+in altr_sdr_mc_err_inject_write()=E2=80=9D be more appropriate?
 
-  # ncpu=$(nproc);for ((i=0; i<ncpu;i ++)); do echo -n "$(taskset -c $i ./mhz -c -i) " ;done;echo
-  1891 1895 1894 1893 
-
-It's missing ~120 MHz as if we were not using the correct multiples. The
-power draw is also lower, at 864 mW.
-
-I've tested each of the OPP in turn and measured the idle power consumption
-and the effective frequency (measured on core 1):
-
-    OPP     MHz    mW
-   408000   394   795
-   600000   593   797
-   816000   908   800
-  1008000  1100   801
-  1200000  1306   808
-  1416000  1372   812
-  1608000  1576   818
-  1800000  1744   836
-  2016000  1896   856
-
-It's interesting to note that 816, 1008 and 1200 MHz result in a higher
-frequency than configured, but upper ones result in slightly smaller
-frequencies (~2%, might just be a measurement error), particularly for
-the last one which is 6% lower.
-
-I noticed a missing entry for 2 GHz in clk-rk3528.c so I've added it,
-expecting that it would solve the problem:
-
---- a/drivers/clk/rockchip/clk-rk3528.c
-+++ b/drivers/clk/rockchip/clk-rk3528.c
-@@ -25,6 +25,7 @@ enum rk3528_plls {
- };
- 
- static struct rockchip_pll_rate_table rk3528_pll_rates[] = {
-+       RK3036_PLL_RATE(2016000000, 1, 84, 1, 1, 1, 0),
-        RK3036_PLL_RATE(1896000000, 1, 79, 1, 1, 1, 0),
-        RK3036_PLL_RATE(1800000000, 1, 75, 1, 1, 1, 0),
-        RK3036_PLL_RATE(1704000000, 1, 71, 1, 1, 1, 0),
-
-But it had no effect at all, the frequency remains limited to 1896 MHz.
-
-One thing I'm noticing is that with the OPP patches applied, my CPU
-voltage measures 1.094V. Without it, it's 100mV above, at 1.194V. So
-I tried to change the opp-microvolts in the DTS, setting them to 1.2V,
-and I reverted the change above since it had no effect.
-
-And indeed, this unlocked the upper OPP, but now the CPU is running at
-2.1 GHz, and at 900mW idle:
-
-  $ ncpu=$(nproc);for ((i=0; i<ncpu;i ++)); do echo -n "$(taskset -c $i ./mhz -c -i) " ;done;echo
-  2091 2094 2094 2092 
-
-So it's clear that something in the hardware is having fun with our
-settings, and adjusting the frequency also based on the delivered
-voltage.
-
-I tried other voltages without changing the frequency and here's what 
-I'm measuring (configured mhz, measured mhz, configured voltage,
-measured voltage):
-
-  Opp-MHz  MHz  Opp-mV  mV
-   stock  2012  stock  1194
-    2016  1896   1100  1094
-    2016  1944   1125  1117
-    2016  1998   1150  1144
-    2016  2040   1175  1167
-    2016  2094   1200  1194
-
-At least the configured voltage is always respected. So I'm wondering
-what's done in the stock settings. Maybe it's set to a higher voltage
-to ensure stability even on low-quality bins, and configures a lower
-frequency ? Applying a ratio above would indicate that the stock OPP at
-1194 mV above is in fact 2012*2016/2094=1944 MHz. It indeed corresponds
-to a multiple of 24 MHz.
-
-And bingo, trying to set it in opp-hz gives me the stock frequency and
-voltage on this device:
-
-  2009 2012 2013 2011
-
-So what should we conclude from this ? Is the 1.1V configured in the OPP
-the official maximum ? If so, given that the E20C runs at 1.2V stock, how
-can we be sure it will not fail on devices that work fine at 1.2V at stock
-frequency and are not necessarily well tested at 1.1 ? Shouldn't we raise
-the max voltage a little bit to match what vendors do ? Similarly, if we'd
-set 1.2V with the 2016MHz OPP, it would result in a higher frequency on
-some devices like mine, possibly resulting in instabilities on some
-devices. On the other hand, the trouble caused by that PVTM stuff is also
-the one that adjusts our frequency based on the voltage and requested one,
-presumably in order to work reliably at that voltage.
-
-Or maybe we could simply raise the voltage a little bit. The table above
-shows that at 1.15V we're close to the configured OPP and still below the
-stock voltage. This is not critical, but I find it a bit annoying that
-enabling cpufreq results in lower performance than without!
-
-Another observation is that I thought it was the boot loader that was
-presetting the voltage and frequency, and that's not even the case: under
-u-boot, I'm measuring 944mV. So it's just linux that sets it when booting.
-Maybe it instead indicates that one voltage regulator driver's default
-setting is a bit high for this chip and should not set the CPU voltage
-to 1.2V, hence not make the device run at this frequency to start with ?
-
-I can run more tests next weekend if needed.
-
-Cheers,
-Willy
+Regards,
+Markus
 
