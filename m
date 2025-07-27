@@ -1,111 +1,213 @@
-Return-Path: <linux-kernel+bounces-747031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43521B12EE2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA08B12EE5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BFF218982B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 09:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02DE518983EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 09:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BF0204F99;
-	Sun, 27 Jul 2025 09:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192D720469E;
+	Sun, 27 Jul 2025 09:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KM1NHfHU"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hbBrsIae"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8289C1FBC8C;
-	Sun, 27 Jul 2025 09:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6459202F70;
+	Sun, 27 Jul 2025 09:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753609877; cv=none; b=o/oTn63mabdfSF7JlfsWnG9amLuhxzpgt9U1PjhYPsDP+kxLcgN1Dyr+4YSxKqSj0G8vj13/FSBwc7C7XnKIbDSTt6sY3CuWsN2zXNbGKJ9XtZCyiljqtLjquf0rsl32cesZh0Q5O2WzNnLiueanpSK9H9qdv0ezaWzW8j/8GFM=
+	t=1753609907; cv=none; b=XvEiuQfjIaddkfs2EW4RftyfO8jPm5bwziOiIKsxXUx5KT3FYgg37q8yPNgYBpm5lhpQ7/eUWTZk0Sutr5h4Qzsutcj6ar/fnF+rqvauZXrj8JcaF0TH3OVoqmIg6Qvj2ZAeK5iDKdp4HXYWTRvYTGNZFBWuFMVJ+Iy4U/46qgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753609877; c=relaxed/simple;
-	bh=hw3lK2Gtil8LoYjc67bdQYFl55Gch/gUtLQ2ogjs37I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NMVcVPamdLL6sGZIzerG/fewzbCv1b+oaH/zE9byjZt4ysPORDmR8DkCzR9HW7wiK60EmkzEm/A0HCr03TzsxXeA8EYFfeUoO38nA/WItzongGcTh+YBRXp2m+2kyBz+LgkU78KPBPJAAmNtLxbrVxPk+aS8xiJSY6zN/g12eGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KM1NHfHU; arc=none smtp.client-ip=209.85.161.42
+	s=arc-20240116; t=1753609907; c=relaxed/simple;
+	bh=D5ppVq3QqCe7Zf1Zc+MyTGFktyD9Tu0/kwUllmqLIxs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TV61aVnFcIff6lbUv4suBdCOdjOi4N8xykIZh5l2h3YwHWz1mzQHReo9t0EJisnUMDSrDlba8cwvyN6ndXXIx/rNHKd13yMiOD85Ej8kRUpbq8Vvz6UUXrHcw9RVnlavH/PvFtiYzPlos72t5+s48wpNnl0I5sH/MhKSY6oKIlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hbBrsIae; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-615df2e8c27so2031132eaf.2;
-        Sun, 27 Jul 2025 02:51:15 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24009eeb2a7so1543415ad.0;
+        Sun, 27 Jul 2025 02:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753609874; x=1754214674; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nFeZkLi3dXMjYKmhsyulgqSrNnECKk/svpVxCMAGOH4=;
-        b=KM1NHfHUrUEuAdVvCMLaDesPHoqLCJGjCuyMcl17rpGEUxWadj1Le5GbRf93Yxa+Sh
-         U4EI9PZXBhHgepIQhwl7i8550lgEC2joqgaqDCeeC2bSk7qR6/2Dwe6A6kbogfSf6Wwp
-         G7jZfuRKkLi7TnkdtejqJeNfxUasY+z3t4lifSIctDFa22SozDr5me6H2Un4QI6dOiaW
-         4Dp2fWXKLR/3US4FxjhOSmpUsRtCnv5U+HqLEA41o91QB+XC+0hTCKD6/m1ZkENtm2As
-         mZcpsh+6xeN/fd/zPu9vPJ2FzVJR8miflzzpgt+Qj/zfb6ejs4WrwjIdP+5OFAhbbk3s
-         +FXw==
+        d=gmail.com; s=20230601; t=1753609904; x=1754214704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dskf1rATUBFmCQprzjusof8q2SMFT1316UEra5Cd0Z8=;
+        b=hbBrsIaeaPoyEdN3IeAM1kUSD2qfzXwQgTl1YxbfmCuERlKja802VA0EiqFhXuPr+h
+         kN+OSsDAgfEsiC2fKqP87RdoshViX8LZ9QOAKtUEL7qOwl4MYHBwDSQsEuRhO2FzWZIo
+         y3gU4rYQM3F6Mcbv1eu9B/scbaS7M9gZ1bfWLs2blIy3ZbSxh+oC1SvjN14zGXqZF3/A
+         y5RTMWFeK54L7nebTovm6RNCrJBJzhWbiA7zD8dRVZcS2/q/FujArzoLz3Fx/bmqRokW
+         arfwMxtYBXIo1eEsRhSmAZgrxphslKl/to6mnATh/KmyvAjTZlKF1wOeYPjuvN63yqSw
+         QcJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753609874; x=1754214674;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nFeZkLi3dXMjYKmhsyulgqSrNnECKk/svpVxCMAGOH4=;
-        b=rbs1zSBk1Io7nGuQlfmS++OHwJ8hjbhxY3ITTbWcZBwJ702t+bjqcHoMsrrjpaVm2G
-         hu77Mm4XnhbTqMzSfcm5mY3kGTTAqZYZ+Hkn7x71lL2NGJiSi8n1sADCLwlIi7k3C2ha
-         FFWUoCxMNdLtwifTPq/hL5jnzkjG81wB9y3HBucJ1h0F6lM//E7qSnQxXU7Iz1HiqDHn
-         XfFr9KaNKZoT4Cr3oCx5vV1DPSySaw22Pf6AkcMEwskirO8enBOymCoVhjAej0/Ldzyd
-         sf/gp21EE2ajhXQ25a1hiTUN4UByh1R4XUkeSWP+Tzhb6PevNWsmz/41nrZ49o9A2FcZ
-         uwcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWZ/ReRj52olguVCvtFVfTVie7fmqUZX335GPJhsv36u8pY7omL6ouIqxHLEXkZlrpWCgnEBNxbsg3rsQ=@vger.kernel.org, AJvYcCV8dLgjS+5QWGDEL5I7/DZk0je6W9ktyRpvqcCwzscQEcq0jZgIxo1ObIvSQDSy5db4rhPU+RBqcOtQd9WPDIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBAogJcYOdfvgAvMTOMiXG5btiuHOMlIIJmfzqw3QScVXe72b2
-	LZhZVCFLdA84nZmi7kMDN1DK3/Iu0RSGNc2aJw6HhlIo+XPu/wBwd2IaFwS0FRIbtPMFEhhp4pC
-	Y79VqiGo6Zg8A1MTqsMK300+/veJccqA=
-X-Gm-Gg: ASbGncv8d6SBQmQTDM+tdN+cSf0csjEfWKYvB3LblyVpVR9K3B2Hf0UmNIvQ1I3kovQ
-	G7MoaT/wVxAAaHEWdfkOuKJxFFL0h8XwNyLpnRkX2WwPrnXd/D1MQj59Ck8ZPJ+jInqIcvMO/tE
-	QWPRwEPV0czfxXTh37bjKOZ9McdmaVZApTsza/fCamCsMuVeglSOHjgQziiKBrF/yg1ZDXZbmbx
-	cx6t/wYuPbXkvUFJP0M+3N47cvI4jVAMysi6K1W
-X-Google-Smtp-Source: AGHT+IFrYgebhq8gmtJdDuLT1R1NJegqag8vHwHBlQ7UiW0xS1gBt/xj3wz+uraz0qf/jzt5q2P6fPA8Y+A+zhmLNyg=
-X-Received: by 2002:a4a:ee0f:0:b0:609:dd17:795 with SMTP id
- 006d021491bc7-6190c9b2767mr4863242eaf.6.1753609874595; Sun, 27 Jul 2025
- 02:51:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753609904; x=1754214704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dskf1rATUBFmCQprzjusof8q2SMFT1316UEra5Cd0Z8=;
+        b=YjwL/Bp22t7EcPxXTauWpCjUZTB8PQFZp0p+hga8DojjlnvXNpjO1G4mti9g7yLMx8
+         Vfaixk87bA/4NtZzMsfq8trKX/+Tbj9raywE8Dt8AAAeXVf7XyyeoSMoqEan/8LtKSTF
+         vZFymJ+djWFe8TAFNDlrNOriEeud+bREEcyrJIQsbYBcUfYQ+Yja3laR2hYlNUBccPcv
+         4MldnU0p/g6B/aXUehppOx5R+g9uErQn4Od6515UTSAdXEixl+2K2K9ybi/pSHa53aAh
+         dhK0XBRkyxFxvmSRfOWTiyUtib23XeIX1kWHP3G/RZSekYKdzxBvMkHnMY5TVHl7qsRQ
+         18Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUSQ7WPtj/bfj+oW1Yt23fFxoM6WaOmuKY/Asfr8hSp2du090rlmCAoDiO4r0juECYHOHhXDxMPmsi9aU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzreqtWimA1G6cvpkdg5K8WkisZ7ugSE7spyxTrwxL93swByBV4
+	Nd4yUIfd++SHZBEwgj14UQOZqObkcxOZYwMladcSZrVvIKb8wi3eyL7LmFmHH/V7
+X-Gm-Gg: ASbGncvweZJl46VIv8kF3YMDleAeRtB4LrvlGjyh0cb8YbFD79jG/rLz/fmGitSduqN
+	7ykF6WfmHgEMDSs5tNGB344y9TCPamqRviS7a97Ci+Grbx8lPWG8Amihg43+MHz/U8bda0Mr1BO
+	csj6Avvz+fmBG7SF+aW5Jc2ULXqgYkt6bfsXebey22ljfZHYA143peGvmMXIQcWoWIZ5Ivp7XBw
+	7fFXoeAKigamCiYox5Ok3xcY6WweAyvKGazmh51C/8ALVXBk1PrRnYIvK8tfBXdIzNaSi71JbYL
+	w2fXxblTb4bxlWTKDS6t+0eW9BbSYxnl5yBt/ovM8SNLvtNZKifJl6d3UbeSVYl3J3tarydmlV5
+	O1oLfvQvEzVj/WFkUtdYA5A==
+X-Google-Smtp-Source: AGHT+IGpALJ699LdfAv3Y17ZVtcuGR1LM7zGC1tgkOCExgcr3JVyKpBWA7LQwWxspNNgwhzprbznWA==
+X-Received: by 2002:a17:902:cf03:b0:236:6f5f:caaf with SMTP id d9443c01a7336-23fb3031402mr119651315ad.15.1753609903645;
+        Sun, 27 Jul 2025 02:51:43 -0700 (PDT)
+Received: from pop-os.. ([49.207.200.229])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fc5a9d25bsm27910545ad.83.2025.07.27.02.51.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 02:51:43 -0700 (PDT)
+From: Aditya Dutt <duttaditya18@gmail.com>
+To: stable@vger.kernel.org
+Cc: Dmitry Antipov <dmantipov@yandex.ru>,
+	Dave Kleikamp <dave.kleikamp@oracle.com>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	skhan@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	jfs-discussion@lists.sourceforge.net,
+	syzbot+ac2116e48989e84a2893@syzkaller.appspotmail.com,
+	Aditya Dutt <duttaditya18@gmail.com>
+Subject: [PATCH 6.12.y] jfs: reject on-disk inodes of an unsupported type
+Date: Sun, 27 Jul 2025 15:21:11 +0530
+Message-Id: <20250727095111.527745-1-duttaditya18@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718073633.194032-1-krakow20@gmail.com> <DBL6BUAHZ250.3UCFP2OB3UEIY@nvidia.com>
- <ab63103c-3b21-451e-b450-a1755b452d77@kernel.org>
-In-Reply-To: <ab63103c-3b21-451e-b450-a1755b452d77@kernel.org>
-From: Rhys Lloyd <krakow20@gmail.com>
-Date: Sun, 27 Jul 2025 02:51:03 -0700
-X-Gm-Features: Ac12FXz6IRrbu5D8lGdf-x7j5aaSoITICjmtxz8OWjJATTXn2XMK8AX82FcIyc8
-Message-ID: <CAH7AjUzfc3+SFNKWDerOY62M3OU8=wX8Qs=Bj_S-uKo6w0nuYQ@mail.gmail.com>
-Subject: Re: [PATCH] gpu: nova-core: vbios: use offset_of in PmuLookupTableHeader::new
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, rust-for-linux@vger.kernel.org, airlied@gmail.com, 
-	simona@ffwll.ch, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 25, 2025 at 7:04=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On 7/25/25 3:35 PM, Alexandre Courbot wrote:
-> > This chunk does not apply - on nova-next PmuLookupTableHeader does not
-> > seem to exist. I think I remember you split PmuLookupTableHeader in
-> > another patch, so can you send all the relevant patches as a series tha=
-t
-> > applies cleanly on top of nova-next?
->
-> If otherwise the series is ready, please wait for -rc1 to be out, and reb=
-ase on
-> -rc1.
->
-> Thanks,
-> Danilo
+From: Dmitry Antipov <dmantipov@yandex.ru>
 
-Strange that it does not apply.  I'll figure out how to send a patch
-series and resend it without any changes.
+[ Upstream commit 8c3f9a70d2d4dd6c640afe294b05c6a0a45434d9 ]
+
+Syzbot has reported the following BUG:
+
+kernel BUG at fs/inode.c:668!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 3 UID: 0 PID: 139 Comm: jfsCommit Not tainted 6.12.0-rc4-syzkaller-00085-g4e46774408d9 #0
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+RIP: 0010:clear_inode+0x168/0x190
+Code: 4c 89 f7 e8 ba fe e5 ff e9 61 ff ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 7c c1 4c 89 f7 e8 90 ff e5 ff eb b7
+ 0b e8 01 5d 7f ff 90 0f 0b e8 f9 5c 7f ff 90 0f 0b e8 f1 5c 7f
+RSP: 0018:ffffc900027dfae8 EFLAGS: 00010093
+RAX: ffffffff82157a87 RBX: 0000000000000001 RCX: ffff888104d4b980
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc900027dfc90 R08: ffffffff82157977 R09: fffff520004fbf38
+R10: dffffc0000000000 R11: fffff520004fbf38 R12: dffffc0000000000
+R13: ffff88811315bc00 R14: ffff88811315bda8 R15: ffff88811315bb80
+FS:  0000000000000000(0000) GS:ffff888135f00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005565222e0578 CR3: 0000000026ef0000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ ? __die_body+0x5f/0xb0
+ ? die+0x9e/0xc0
+ ? do_trap+0x15a/0x3a0
+ ? clear_inode+0x168/0x190
+ ? do_error_trap+0x1dc/0x2c0
+ ? clear_inode+0x168/0x190
+ ? __pfx_do_error_trap+0x10/0x10
+ ? report_bug+0x3cd/0x500
+ ? handle_invalid_op+0x34/0x40
+ ? clear_inode+0x168/0x190
+ ? exc_invalid_op+0x38/0x50
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? clear_inode+0x57/0x190
+ ? clear_inode+0x167/0x190
+ ? clear_inode+0x168/0x190
+ ? clear_inode+0x167/0x190
+ jfs_evict_inode+0xb5/0x440
+ ? __pfx_jfs_evict_inode+0x10/0x10
+ evict+0x4ea/0x9b0
+ ? __pfx_evict+0x10/0x10
+ ? iput+0x713/0xa50
+ txUpdateMap+0x931/0xb10
+ ? __pfx_txUpdateMap+0x10/0x10
+ jfs_lazycommit+0x49a/0xb80
+ ? _raw_spin_unlock_irqrestore+0x8f/0x140
+ ? lockdep_hardirqs_on+0x99/0x150
+ ? __pfx_jfs_lazycommit+0x10/0x10
+ ? __pfx_default_wake_function+0x10/0x10
+ ? __kthread_parkme+0x169/0x1d0
+ ? __pfx_jfs_lazycommit+0x10/0x10
+ kthread+0x2f2/0x390
+ ? __pfx_jfs_lazycommit+0x10/0x10
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x4d/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+
+This happens when 'clear_inode()' makes an attempt to finalize an underlying
+JFS inode of unknown type. According to JFS layout description from
+https://jfs.sourceforge.net/project/pub/jfslayout.pdf, inode types from 5 to
+15 are reserved for future extensions and should not be encountered on a valid
+filesystem. So add an extra check for valid inode type in 'copy_from_dinode()'.
+
+Reported-by: syzbot+ac2116e48989e84a2893@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ac2116e48989e84a2893
+Fixes: 79ac5a46c5c1 ("jfs_lookup(): don't bother with . or ..")
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Signed-off-by: Aditya Dutt <duttaditya18@gmail.com>
+---
+
+As per: https://lore.kernel.org/all/CAODzB9roW_ObEa8K8kowbfQ4bL3w4R78v2b_yBU4BQL4bpXrWw@mail.gmail.com/
+this commit is not backported to any of the stable kernels (other than
+6.15.y)
+I will be sending separate emails for 6.6.y, 6.1.y and 5.15.y
+
+ fs/jfs/jfs_imap.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+index 8ddc14c56501..ecb8e05b8b84 100644
+--- a/fs/jfs/jfs_imap.c
++++ b/fs/jfs/jfs_imap.c
+@@ -3029,14 +3029,23 @@ static void duplicateIXtree(struct super_block *sb, s64 blkno,
+  *
+  * RETURN VALUES:
+  *	0	- success
+- *	-ENOMEM	- insufficient memory
++ *	-EINVAL	- unexpected inode type
+  */
+ static int copy_from_dinode(struct dinode * dip, struct inode *ip)
+ {
+ 	struct jfs_inode_info *jfs_ip = JFS_IP(ip);
+ 	struct jfs_sb_info *sbi = JFS_SBI(ip->i_sb);
++	int fileset = le32_to_cpu(dip->di_fileset);
++
++	switch (fileset) {
++	case AGGR_RESERVED_I: case AGGREGATE_I: case BMAP_I:
++	case LOG_I: case BADBLOCK_I: case FILESYSTEM_I:
++		break;
++	default:
++		return -EINVAL;
++	}
+ 
+-	jfs_ip->fileset = le32_to_cpu(dip->di_fileset);
++	jfs_ip->fileset = fileset;
+ 	jfs_ip->mode2 = le32_to_cpu(dip->di_mode);
+ 	jfs_set_inode_flags(ip);
+ 
+-- 
+2.34.1
+
 
