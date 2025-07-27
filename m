@@ -1,142 +1,135 @@
-Return-Path: <linux-kernel+bounces-747112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41DAB12FD9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:26:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDE2B12FDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6FF81890B90
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F7A173FFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655182192E5;
-	Sun, 27 Jul 2025 14:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A5B219A81;
+	Sun, 27 Jul 2025 14:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bo0YOAnm"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTPA1rtZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AF0126BF1;
-	Sun, 27 Jul 2025 14:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0DDD528;
+	Sun, 27 Jul 2025 14:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753626401; cv=none; b=YZWPRVHhlsAFqa+AcQh4c3rIQ9CO1iMbTJAhL+zXzk422pcNc2ahJEhi1Ph9PVs7uGJG7VcwgIpvAbfle93Dyg+nrGaZudY9iCqDxYkZlM8cf3UIM3dvnzu8iJyFWK51ZzWuH3lWTESmFkV794YQNHG8FUxP27i0Nn2qAVUs8K8=
+	t=1753627220; cv=none; b=JQoN8/UaFyGxDnBbCgdHdztr8JIGqrp8BElYO5SvvxO5VtA+kWc/Gtd/b7YtcKe8llr+8ZfdG7dSr6M7tm363a7ylvUPWnB+u0DcPI4RjY8tM301vy7S0VtzxFGtllaGUGsvvnhBtyeflhQlonTHB/9YiI2G0gyYTK9gsVXclIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753626401; c=relaxed/simple;
-	bh=mZp1PU9fmN+OYBLE87U2j834maP1HDJ1iVSdhmTIa+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b6jo/T+87UkQDZ/zMoD2H4jESnX2OvJMjVEQqt5e5966LeCEqfADsJc023ubsJELCEWfo0twWdHR5XsxvcoIqs2Ou3gXMiYHpSBHE427+LxbwSkrwNuj+Rc+1cYNbtqWayxva45swJCtEnbYM/pORWxM2LsEEDOw5hSp1dbGPeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bo0YOAnm; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-748e60725fcso342282b3a.3;
-        Sun, 27 Jul 2025 07:26:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753626399; x=1754231199; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mZp1PU9fmN+OYBLE87U2j834maP1HDJ1iVSdhmTIa+Y=;
-        b=Bo0YOAnmENnekSNFS/rhpcnqNbi2T3FUpdDZJ/MZDalX0l6/NJWppIGI0eVbnh4Lzv
-         sQuGtrCNRtFLhBRMWBqcc0dzrzJvzMyhiQ+jhCSaFMWSO588Y6K8dn1IynTRxtdBpHFm
-         51NrWwgxwZK+5qNvU2Xqq2gqzW05E3zuqOlA5pQxZTtTvPm+aYiuS4Tfd8UmODW9Bz6X
-         jlDJufTqedNYehzT9IDKvKq/nTLAqvKPa+JR2xslqKJq4LxgoH7Wn3IClyc95uinrGqn
-         n/Uux+a+eRg9gHCOk/vo2SAMGcGix2Kqt4mgVCCx4vIpX/nY4MJ6tjoRCHI/M7rfZeRC
-         /+Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753626399; x=1754231199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mZp1PU9fmN+OYBLE87U2j834maP1HDJ1iVSdhmTIa+Y=;
-        b=wSBv6HpIoBFz8N5oIIQ35xOjycS8hovJBCGHQw5kGkldx6RV/lwafHBz/v2nUf+ZHs
-         3RehY6zkngVN06QMyPYfMjj1zFYjjKUsjKkHs9IkdULUuv/QmAEQrPTv7zrz4+SrC3N9
-         xZi9kgy3yw+My5JtfIjyXbkfzqSYjbOx47bSCwhN/CeKDfgsPGYuWJSiRjRSDvdbSl+V
-         2ScEnHpKt+fKrPS3fY8o2tTuOfMbxRzfh/g23RVbQz5x/30zZjvASGOoXV41jI+Cn59j
-         JAE45R7ECGiSn9iLbnFIbGOgn8idXy0HUy5gIQypc0EG9JKWO+cyEtQDa2a+cTQyKbCM
-         +/8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWrgKhHs3z5m+4bR+XoYFFDiBIK5C+F70WEBhOOALrjqUuHLaBAdbMO+9j52oAqaqTkhRenLzJEpPdY6rc6+HU=@vger.kernel.org, AJvYcCWzEFaEVNzvvujlMPDrJJ0qAtqC7KbKayaMjKHKZfZuYUY9id/dewTChI5H9nufViE3aswDsFdW158ywNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUgKD4T2JxCUtfi1kGHg1rM6QygejKGXd4niSCmIJH13gWaMEn
-	V+4U2+z1erTyRvJNGhD0yXNmRTajmhZoq7oDYBHfPZlVQ1ctkBcj1SX3Ddrcw60TH1FZM/u0Bso
-	8gZscO9Jika/91gOGCvQY2eMXpQK+IJs=
-X-Gm-Gg: ASbGncv8YYYhGhP3ilINgR8TvZ2Sp9HaaJrva4aIS4GcQGZc8N91s7sgZAYqNl6lA1q
-	cj7QMzMOiBDHkfsAFkWYIiemjyDz7oQ1mm4YDsR+7tM1/y16RTEUx4UecjR57efsKax54whOmHr
-	7HwTmLo8i/5FvV4YYsXCl6XIFYZYkjf14M4ZeD9SLGkQCw1/jYegCiKjYEen1UQIwVPbkdsPSQA
-	/k/XukW
-X-Google-Smtp-Source: AGHT+IEPqK9/b/GzYd7MTTPdSgKjVVUt/7rPLfRW6QkOmmzvFF+PDtVQ/0dflAuvIiwxbtK1iF9Ffbiym06PMjDEw1M=
-X-Received: by 2002:a17:90b:4a47:b0:31e:f50d:89ac with SMTP id
- 98e67ed59e1d1-31ef50d8dbcmr86820a91.7.1753626399225; Sun, 27 Jul 2025
- 07:26:39 -0700 (PDT)
+	s=arc-20240116; t=1753627220; c=relaxed/simple;
+	bh=4gB7c6Bo1KbwKmtbUQQkIuQOJFnxtuhSBSlSch5v4qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GVxsvnJLGfYM4CXvTpVqhgQyIjcdiUlZuSLMTzb+LHs3J75zLfMF6pp1TmMToeGDMxCro1WSV7SkynPFD6PCpkuAyMdVOrqT4pPeWDlH2Yr1nT4NKqg549yvm3GpKlWMvTxGk9685xBH+GZiTtL0fdhxN6O+mpJLzgUja7Nxa0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTPA1rtZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43EDC4CEEB;
+	Sun, 27 Jul 2025 14:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753627219;
+	bh=4gB7c6Bo1KbwKmtbUQQkIuQOJFnxtuhSBSlSch5v4qs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BTPA1rtZpfQ5rekZ4+lyWemlT/e5wYSz/muLOk+vfAYCIXjXskn/mH2fI6VNAbvIw
+	 agyFn0Ye8yx3sR0/xp82r7k7u436F3+9FaLidb84pUNSBfqd5s9ZQf6h7zzXiS6GqQ
+	 7ultCh4ppCtXyk5qCSZUpgyioehM5e4aJY0PxWyIA1EnaayqF111q9KNg6qwhjmdbE
+	 ybISIFTs2+H4JNlYPvdcgszvkAPJzSi0q12cEIqLzZHKuhHqTcpyU+yDbz1Pt3Zaqw
+	 d25hBoAC2pEia8nvoRULg9KF5KLzfNN/esJoHg1L2xz1m5MuvhZjWBm59pmi72jhPT
+	 /6wOqDVn0k+/w==
+Date: Sun, 27 Jul 2025 15:40:14 +0100
+From: Simon Horman <horms@kernel.org>
+To: Mihai Moldovan <ionic@ionic.de>
+Cc: linux-arm-msm@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
+	Denis Kenzior <denkenz@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v3 04/11] net: qrtr: support identical node ids
+Message-ID: <20250727144014.GX1367887@horms.kernel.org>
+References: <cover.1753312999.git.ionic@ionic.de>
+ <8fc53fad3065a9860e3f44cf8853494dd6eb6b47.1753312999.git.ionic@ionic.de>
+ <20250724130836.GL1150792@horms.kernel.org>
+ <a42d70aa-76b8-4034-9695-2e639e6471a2@ionic.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717073450.15090-1-shankari.ak0208@gmail.com>
- <CAPRMd3nhDKApttF_wBU01es76NG=qAyZMAer_gjbbtTSH_FmSA@mail.gmail.com>
- <CANiq72=uDrg9HBVM97dgJGaC946Or964-2aF6OJVV0ih_vWuRA@mail.gmail.com>
- <CAPRMd3kXUJC6rC_X4i41dWNpS2tx4aEXFmBuEwncXmdJewinDA@mail.gmail.com>
- <CANiq72kw-OiU6YO8TKMVMdtJF+j7r9nBDsAa9Q2tdBzM=DyxDg@mail.gmail.com> <DBMUCVDVWM77.2M60X06IBGVA5@kernel.org>
-In-Reply-To: <DBMUCVDVWM77.2M60X06IBGVA5@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 27 Jul 2025 16:26:26 +0200
-X-Gm-Features: Ac12FXw5utZrKsaYiKjsWjvVQHV_Iv6UNoJWGch6_SHp3Q8oUQsUiOuZ6s50zvw
-Message-ID: <CANiq72nBHtbZqt8R0dMSK6iWY7Z3vKLbeP_2dN2NaLOxRfOvCA@mail.gmail.com>
-Subject: Re: [PATCH 7/7] rust: kernel: update ARef and AlwaysRefCounted
- imports from sync::aref
-To: Benno Lossin <lossin@kernel.org>
-Cc: Shankari Anand <shankari.ak0208@gmail.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a42d70aa-76b8-4034-9695-2e639e6471a2@ionic.de>
 
-On Sun, Jul 27, 2025 at 2:37=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
-ote:
->
-> That's good advice. I want to add that in this case, I think a series is
-> better sending 7 independent patches. Using a series allows people to
-> see if it is complete (ie there might be places that are missed). It
-> also allows someone to send a single mail reviewing all patches & giving
-> general comments about all patches in the series.
++ Dan Carpenter
 
-It is fine if places are missed, since in this case they are not meant
-to be applied at once -- maintainers may think they are supposed to
-give Acked-bys instead of applying them, and here the idea was to try
-to see if we could get a migration like this via different trees
-slowly, rather than the way we did the others.
+On Sun, Jul 27, 2025 at 03:09:38PM +0200, Mihai Moldovan wrote:
+> * On 7/24/25 15:08, Simon Horman wrote:
+> > [...]
+> 
+> Thank you for the reviews, to both you and Jakub.
+> 
+> 
+> > This will leak holding qrtr_nodes_lock.
+> 
+> It certainly does, will be fixed in v4.
+> 
+> 
+> > Flagged by Smatch.
+> 
+> I haven't used smatch before, and probably should do so going forward.
+> 
+> Curiously, a simple kchecker net/qrtr/ run did not warn about the locking
+> issue (albeit it being obvious in the patch), while it did warn about the
+> second issue with ret. Am I missing something?
 
-For the "final series" that removes the re-export, it should
-definitely be a series, because in such a case the idea is to apply
-them all and remove the re-export at the end of it.
+TL;DR: No, I seem to have been able to reproduce what you see.
 
-I guess it depends a bit on what maintainers want to do and the case
-(e.g. if it is a tricky change, it may be best to have a series).
-Sometimes same people may do it differently, e.g. [1][2].
+I ran Smatch, compiled from a recent Git commit, like this:
 
-But I agree that many independent patches are painful too, including
-in Lore; and that it is always nice to have an "index" of all the
-patches for those that want to see it as you say -- perhaps providing
-a link to a Lore search, or having them all in the same thread can
-help (though that can be confusing on its own), or having a first RFC
-version as a series that can be linked later before splitting.
+kchecker net/qrtr/af_qrtr.o
 
-Cheers,
-Miguel
+The warnings I saw (new to this patch) are:
 
-[1] https://lore.kernel.org/all/20241127091036.444330-2-u.kleine-koenig@bay=
-libre.com/
-[2] https://lore.kernel.org/lkml/20221118224540.619276-1-uwe@kleine-koenig.=
-org/
+net/qrtr/af_qrtr.c:498 qrtr_node_assign() warn: inconsistent returns 'global &qrtr_nodes_lock'.
+  Locked on  : 484
+  Unlocked on: 498
+net/qrtr/af_qrtr.c:613 qrtr_endpoint_post() warn: missing error code 'ret'
+
+That was with Smatch compiled from Git [1]
+commit e1d933013098 ("return_efault: don't rely on the cross function DB")
+
+I tried again with the latest head,
+commit 2fb2b9093c5d ("sleep_info: The synchronize_srcu() sleeps").
+And in that case I no longer see the 1st warning, about locking.
+I think this is what you saw too.
+
+This seems to a regression in Smatch wrt this particular case for this
+code. I bisected Smatch and it looks like it was introduced in commit
+d0367cd8a993 ("ranges: use absolute instead implied for possibly_true/false")
+
+I CCed Dan in case he wants to dig into this.
+
+[1] https://repo.or.cz/smatch.git
+
+> 
+> 
+> > But ret is now 0, whereas before this patch it was -EINVAL.
+> > This seems both to be an unintentional side effect of this patch,
+> > and incorrect.
+> 
+> True. Will also fixed in v4.
+> 
+> 
+> Mihai
+
+
+
 
