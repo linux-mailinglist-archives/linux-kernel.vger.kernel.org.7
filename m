@@ -1,114 +1,118 @@
-Return-Path: <linux-kernel+bounces-747026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EEA7B12ED5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:31:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF5CB12ED8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA11F189ABC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 09:32:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 995827A4DC1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 09:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D20F1FF5E3;
-	Sun, 27 Jul 2025 09:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9001FBEA8;
+	Sun, 27 Jul 2025 09:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIEeyAZM"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMx+jRK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C2B9460;
-	Sun, 27 Jul 2025 09:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A2D1E1C36;
+	Sun, 27 Jul 2025 09:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753608708; cv=none; b=MrjZUk6+EvWgEfV594h2T47w8p7om0n9COn4LjgdUtcY59D2XgFdxMEBkZyreagOS13Gvrgt1FOHiFPC/+9pjo5UfaR23RUKPZaM2mi/Kop1/7CJbo0RpYZDFPIOcduG17JTTx/I3ddctvT8WYuib4UG/k+fmPLili3j8j3497Y=
+	t=1753608771; cv=none; b=e0wEayOf8X8bZ3WYag48eNsciJxvRsdHTg9mRB8HP6lg/H06vB0uMdpa8xMUfKDD+s0j3w9NblBQNCum++TIs6ue6l+IcA7yC2epg8IuZ83ntECx1CfhuDKaZ4UiJQ46qdr44sWxxaoRu2DHNHhKHIbaeShvvZvifXvMrfp/QZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753608708; c=relaxed/simple;
-	bh=gDbSYc8pmLjUYSA7KcBarXcm5lMdG+b1p6ndEBx0i3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DvLAxFWKcZn6RS9TQX5iR6f/Q/bOJuWeHKxrHWoiurG8Ky5UED2qA6WUsv5gS1rywTGLv3XJsEVdfrvBD662A9Qe815TBly0mRjL4TA6zqr3gt0434yT1r+UDGs0oyOvnig7qnTLtA8BZAj3tCrwW/HZUEfr9VP8X3lo51iAXec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hIEeyAZM; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-312a806f002so421750a91.3;
-        Sun, 27 Jul 2025 02:31:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753608705; x=1754213505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gDbSYc8pmLjUYSA7KcBarXcm5lMdG+b1p6ndEBx0i3w=;
-        b=hIEeyAZM7QmDwMRCPiKrz0m1kzV1h0tW+6T6blLr6pAksAKtpo9cfUUGmbeyuUZe3C
-         PTMB8LsnKC1eJ321lF7n2xkon2zC3MdXHbPrIOAM8512+C+o+mBeXEfbPOX6ylO2HciI
-         rhyds3kYt6S2I+2nZPQxUoUEfOeoPEzKVLPojf3jnMURLrQoHMrJLsJsMKWPvZ8NjbJA
-         cP74eGDuT4mwhcOl5cIq/j+zP63N7Fhw3m2XYijizVXfvPd71/n4DfaoIJpSNS9DHK9Q
-         IB8M+n8QgG0LKWDJfxo5l8Uli5q3WQaD9rtGYfvcwYrjnIyRBRiFAOW9yO6G0p8dzkRl
-         8B0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753608705; x=1754213505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gDbSYc8pmLjUYSA7KcBarXcm5lMdG+b1p6ndEBx0i3w=;
-        b=IfZZExyRGtDnlLTVcIjYr8TjGoOXwuRGIExtUp6d9mDHc20ppnADkoXZBvGBjxhfKZ
-         Qo8y+owS2MV++EfEqCd51W26bNQjyIdG6UpEF5wqHZXxktTVDk4BJZoUN4ZQtm+TO+sm
-         p9jKfmzjiz8UK98I7zpREV85a9UvXP1iTDMWdDrVCk6uJkiKdj2ZzHbBd7KwMQl71xV6
-         FqjgU4TlPhqNfNWM8E1A0sAFtedDLzadvh7fIu6GagtErlBpFG4I6p2YP7iAED0L6hvV
-         LecWpHoIzwP214P+zuNrwRmjUiC/wgysVE2irnxhCM13TfXtmz51qnYk17JwR2gGTfT3
-         fqCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYqpyx7rTvAG8+n3WcUdtIAvb01GTDkcDN6+tU5f1YiaNGDCVm8mJ7VD3RO6MkbQZ/dP8uk2cHgs5oSUQZ@vger.kernel.org, AJvYcCXahPtc0HuSOyEwt23t2awyuIzAArx3ToyYOH/P+eYjXFZlrN7SETnOI1mKhAoM2OsMAzFG5YuFo55sAUM=@vger.kernel.org, AJvYcCXrEd7yLVOps3qvsIKERv2gkeHuU3aPsdVy947sMyu7J6KKK3umjqThKkMs64u39j5bVc2/u4yBAZUDN9sAEnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRxb+dKO/+180jW1VNaMWsHvPrZa7VLbFtiegcft8YnRuHvE66
-	mX98jhnQZnpY87aSR+4oaJt1IEzyhJ4BosD7u5fcWofChGEIih9BQBymdFZKlquiprYg66EiGDv
-	sUbdvzOzqmlZEa7h2MXgCaoWQeuvD/PI=
-X-Gm-Gg: ASbGncty/1WsE8iOL87QlDeMB0E/Neb6rSEEd3wnJ7/zAWvafOfBM6X76GpRQAkrpoQ
-	Hqdpv3Ah1splFEzVY7Nk88/YseX0fFbNu5vgYiJ095K4gq3KBlUmI8+MZd3m3Kj4fWPr3Xs5Nd0
-	hXwfCgTLGow1RlB5qgErKyCVvtR3z9FBepEXVnc57mnpDkDo6bBffVydU8qU+YvpeM06PDXXf8Y
-	PDV3nfp
-X-Google-Smtp-Source: AGHT+IHwyqPcMJ6XaVtzcngEGA52+QC98OcB+ztkimhreGhuBj2aWm4Lacehn7M3roIqN3sGDv+fQ22VOSX40WhoM/g=
-X-Received: by 2002:a17:90b:4a81:b0:31e:cdc1:999e with SMTP id
- 98e67ed59e1d1-31ecdc19b15mr687988a91.1.1753608704960; Sun, 27 Jul 2025
- 02:31:44 -0700 (PDT)
+	s=arc-20240116; t=1753608771; c=relaxed/simple;
+	bh=J6yMR1a/ZOiag4onA7QD1/NBgaJweMIAhXBRnbxDtKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vF8cvA/DIXGVef6q3j84oAFU/J51hVVo5L+1DeQjTzW1C61kGwcSGVJsJdXMt+TgFPXaCzT9rrWT4FCz2kAY3y85QaCfRShvSoSae66UZprvopoL6zIVdBBGF/OXvHYIcha09ZL9V7MtmoeWdOeegcPMnZNQEc8NxC1HgXHygdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMx+jRK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BAAC4CEEB;
+	Sun, 27 Jul 2025 09:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753608771;
+	bh=J6yMR1a/ZOiag4onA7QD1/NBgaJweMIAhXBRnbxDtKk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cMx+jRK14wC/5i8uP15C4L+34asvzIIf0uY58D0+tTIOVEI7nH4192z7KOWzolRUF
+	 crgNUGHGFUkcWfpbkyCUHfKZqi3i3xc90YvYp2uAsN+qvJ7+gKNOIBBzm86OlPz7w3
+	 MoipWCCUmTqWbIkD4oDKBm1mfG/lrmSIrbfMBqLcEjhCeBkaUIXv1o5IBH2WuBL8ei
+	 TzEz+EtDM73JNEPGemv9TGzDA8rqME3X9T5tpAIEyJx1z1HW3jdrWjBHOyRLWotCQr
+	 S7N7ONY78MoQYR3IXANFEcWmXxXze5WXI4lJNaSvNWggV0Mwphrfx7rfse83k5Nu+I
+	 nftf36279/rUA==
+Message-ID: <5ea6a860-8984-4263-942d-d05d7c24b495@kernel.org>
+Date: Sun, 27 Jul 2025 11:32:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727092317.2930617-1-ojeda@kernel.org>
-In-Reply-To: <20250727092317.2930617-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 27 Jul 2025 11:31:32 +0200
-X-Gm-Features: Ac12FXzSNfd8ysAf4soSdl5HrXnwH9bMPWruUS5fZU1uCrkYeE6TPwm812nNyZg
-Message-ID: <CANiq72=Y3i-WeygLix6j-sPZwE2QTOkaZDQOrED1aCiMoH3Cqw@mail.gmail.com>
-Subject: Re: [PATCH] rust: workaround `rustdoc` target modifiers bug
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt: hwmon/adi,ltc2991.yaml: fix typo in shunt resistor
+ description
+To: Harry Fellowes <harryfellowes1@gmail.com>, linux-hwmon@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: antoniu.miclaus@analog.com, jdelvare@suse.com, linux@roeck-us.net,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+References: <20250726135225.3018-2-harryfellowes1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250726135225.3018-2-harryfellowes1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 27, 2025 at 11:23=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wr=
-ote:
->
-> Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Closes: https://lore.kernel.org/rust-for-linux/36cdc798-524f-4910-8b77-d7=
-b9fac08d77@oss.qualcomm.com/
-> Link: https://github.com/rust-lang/rust/issues/144521 [1]
-> Link: https://github.com/rust-lang/rust/pull/144523 [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On 26/07/2025 15:52, Harry Fellowes wrote:
+> Corrected the misspelled word "curent" to "current" in the description
+> of the shunt-resistor-micro-ohms property. This improves clarity and
+> maintains consistency in documentation.
 
-And most likely:
+Please fix multiple typos at once, not one per patch. Are you sure there
+are no other typos in hwmon?
 
-Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is
-pinned in older LTSs).
-
-Cheers,
-Miguel
+Best regards,
+Krzysztof
 
