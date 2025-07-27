@@ -1,112 +1,110 @@
-Return-Path: <linux-kernel+bounces-747062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BE1B12F3C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:41:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05DDB12F41
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E161899C76
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 10:42:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19AAF17262B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 10:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124F120E71D;
-	Sun, 27 Jul 2025 10:41:33 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F8C20B7FE;
+	Sun, 27 Jul 2025 10:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5E38ZSM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418E120110B
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 10:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C990BBA36
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 10:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753612892; cv=none; b=ORmgtBCQWjY94gtzlC4qQiTVu/UsXzMUKR6zvM5fDORsEFlC2bciEbdKgg3qMCVLXn7b5Tpwz/WQvUYnzS9BRyWW4uuI1TY/kouAUJ3gX31srfj/XGIsnWAJjhUFTKOM91U5xxVMKSdxufT7ZLBRKZXXP+ew93WAajvbFekcx/g=
+	t=1753613993; cv=none; b=g8kz714KU8ZSpzaiGlbKSCTEDE5xy7SKg9HHyAuDINbe+aoZU2MmnPXtJJd5dC0iyFdZvk2bscEpcmJzkNiom0RaoAoWtL347JHi7VEs3ucUvbwvrQyOAihh8A2nMqDkWFwghuLr/SR9tInjgwWEaIDHicB7u9IvGNTFW7+V3DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753612892; c=relaxed/simple;
-	bh=1z+sY1r1bSt4nt1yX8yYd2JVtkgNGqXWy+V7F6uQyKU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OLOcT3FKPWOY9QiMSmBeNnHMvq7oNljYjVJkibiHpR0OgVKDJyz10pfsAc21WYHERVmdvqLQjMuRIH3W9yGamXyOQ7/mhzfa6OPHJ9nrM89NjMkkoAhjhnx9TiuyT6RIlp7h+3eEK5z3wfA2wN7fMO72g7iMO4j2NYzf1WPx3to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-87c1d1356f3so373682339f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 03:41:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753612890; x=1754217690;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HLVby4S1Yu+vhV3PiAuJdUuMMrGFCuoKaOzd1A0hB/4=;
-        b=rJLLWog8SgRDzEPlXPbsfGV7GusdPztFPislvQxYoDxJHkORDTjLFySpaFXsrOJ2fD
-         GrKlstKJniBNhqwnRLYDR4eZXkJoAEG5izFMmXcofE689Mjn5oGA3EreWSjfklP9qJHE
-         oaolWx8bNs/N3ErrW1BPjRHD/kMu42P20Lv/E6dkheBvUaSx30ELBTiL3v3EzouqPR+L
-         lvr00YAgQPKrPCrj3u+CYuBSM7J9isKSMSgbolBaZL1eNVWB+xJoZ/R+acHYAWUVu9W2
-         JaAYHjsaj72RhgmE6NskM3o+J9tysMFbJ0lZH1XBG5GAcEGjfPrqC0m8RmIrOFMM1TT7
-         gyaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNPap+bGdn4wrDrpGnclzCu+YGiPPm2rtQJ/CcpJSzaoITCHwjLyzotm3EzxKiuvIoh9+l9bOJBQAATMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdlJZw8vA3D+UakvMal0obnfZncklY9/UqHeSE5Lpurn1M2VO7
-	lleCTSeKhi7fRTlEloc8VesbzxVPhCpqPVGxy9s0Z5E5egTLjp8vmyDtd/L9Dhh6+c5DHzhCdrQ
-	GMr+JCDJIVUfJsf92Wx6lb8CupJLUipWp1pxmJ646fNb5hNnzOMLW0l678EQ=
-X-Google-Smtp-Source: AGHT+IHa5mexOEUXQyXKRMMdscS6zJUVkwHr/EVOLI0DTP9KCYuQK4A4ovInfTYL9hrAWMzIpMf5X/p0g8nMvmwIkexmfcQYPO5Q
+	s=arc-20240116; t=1753613993; c=relaxed/simple;
+	bh=58VEwhCHrFJ1R45SJv+ufoUUAGi0PqZriv1MDWB2qig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q+HB7Xkec6T7Kxw+Vxvl9TatJ66vCFbGl72/SbdQPfzK7NkFJAwkjsOE7Um87IyxH7ZkUkwvy+egdRgGOH522K43JcZziVQ/Xs2I3UQnKXeZ7MJtf0Q5wx3pmeLoCMloYSRVtWKDF2SSOblaq9Y+iROBV94bMSQR9NyRfjbOUg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i5E38ZSM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67233C4CEEB;
+	Sun, 27 Jul 2025 10:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753613993;
+	bh=58VEwhCHrFJ1R45SJv+ufoUUAGi0PqZriv1MDWB2qig=;
+	h=From:To:Cc:Subject:Date:From;
+	b=i5E38ZSMQQw9olQF3vXX3wo3A9j65/Rw233xxLSXmuncUmz2QsTgprC197AqbX3gJ
+	 AXA+x2tBU5+Vg5xj8RpupL4zXJ1SFNczYIRoW67wggJNDcsWFGcyJ4U5jROIms93+d
+	 tfEBds2gxTp70qN3iCGJtmB6041aZUU2KLB13dHtUbadsqHtGhgne14EDjAS1Mj/Uj
+	 PezAcUhZ4uDxoxPFCDnrM9YN/mc+A9GUBRIu0LSiEjCF1nAuMitQ6XqErxXw7wC5K8
+	 zlE13ftoLpCJkRvUlc+o0bAxfgql8YHAjR2A81RyscNUPQHdXR3maaBAIHvg5bKQAB
+	 DHV+ZKigbgZBA==
+From: Danilo Krummrich <dakr@kernel.org>
+To: akpm@linux-foundation.org,
+	hannes@cmpxchg.org,
+	david@redhat.com,
+	mhocko@kernel.org,
+	zhengqi.arch@bytedance.com,
+	shakeel.butt@linux.dev,
+	lorenzo.stoakes@oracle.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] mm/vmscan: fix inverted polarity in lru_gen_seq_show()
+Date: Sun, 27 Jul 2025 12:59:06 +0200
+Message-ID: <20250727105937.7480-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2490:b0:3df:154d:aa60 with SMTP id
- e9e14a558f8ab-3e3c5322bdemr164937335ab.22.1753612890411; Sun, 27 Jul 2025
- 03:41:30 -0700 (PDT)
-Date: Sun, 27 Jul 2025 03:41:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6886025a.a00a0220.b12ec.0050.GAE@google.com>
-Subject: [syzbot] Monthly ext4 report (Jul 2025)
-From: syzbot <syzbot+listafafd041af3fe421a01a@syzkaller.appspotmail.com>
-To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello ext4 maintainers/developers,
+Commit a7694ff11aa9 ("vmscan: don't bother with debugfs_real_fops()")
+started using debugfs_get_aux_num() to distinguish between the RW
+"lru_gen" and the RO "lru_gen_full" file [1].
 
-This is a 31-day syzbot report for the ext4 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ext4
+Willy reported the inverted polarity [2] and Al fixed it up in [3].
 
-During the period, 5 new issues were detected and 0 were fixed.
-In total, 52 issues are still open and 156 have already been fixed.
+However, the patch in [1] was applied. Hence, fix this up accordingly.
 
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  73190   Yes   possible deadlock in dqget
-                   https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
-<2>  2590    Yes   KASAN: out-of-bounds Read in ext4_xattr_set_entry
-                   https://syzkaller.appspot.com/bug?extid=f792df426ff0f5ceb8d1
-<3>  2524    Yes   kernel BUG in ext4_do_writepages
-                   https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
-<4>  2514    Yes   INFO: task hung in sync_inodes_sb (5)
-                   https://syzkaller.appspot.com/bug?extid=30476ec1b6dc84471133
-<5>  2132    Yes   INFO: task hung in jbd2_journal_commit_transaction (5)
-                   https://syzkaller.appspot.com/bug?extid=3071bdd0a9953bc0d177
-<6>  440     Yes   INFO: task hung in do_get_write_access (3)
-                   https://syzkaller.appspot.com/bug?extid=e7c786ece54bad9d1e43
-<7>  413     No    KCSAN: data-race in generic_buffers_fsync_noflush / writeback_single_inode (3)
-                   https://syzkaller.appspot.com/bug?extid=35257a2200785ea628f5
-<8>  386     Yes   WARNING in ext4_xattr_inode_lookup_create
-                   https://syzkaller.appspot.com/bug?extid=fe42a669c87e4a980051
-<9>  242     Yes   INFO: task hung in do_renameat2 (2)
-                   https://syzkaller.appspot.com/bug?extid=39a12f7473ed8066d2ca
-<10> 211     Yes   possible deadlock in ext4_xattr_inode_lookup_create
-                   https://syzkaller.appspot.com/bug?extid=d91a6e2efb07bd3354e9
-
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lore.kernel.org/all/20250704040720.GP1880847@ZenIV/ [1]
+Link: https://lore.kernel.org/all/aGZu3Z730FQtqxsE@casper.infradead.org/ [2]
+Link: https://lore.kernel.org/all/20250704040720.GP1880847@ZenIV/ [3]
+Fixes: a7694ff11aa9 ("vmscan: don't bother with debugfs_real_fops()")
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ mm/vmscan.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 0e661672cbb9..27c70848c0a0 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -5756,9 +5756,9 @@ static int __init init_lru_gen(void)
+ 	if (sysfs_create_group(mm_kobj, &lru_gen_attr_group))
+ 		pr_err("lru_gen: failed to create sysfs group\n");
+ 
+-	debugfs_create_file_aux_num("lru_gen", 0644, NULL, NULL, 1,
++	debugfs_create_file_aux_num("lru_gen", 0644, NULL, NULL, false,
+ 				    &lru_gen_rw_fops);
+-	debugfs_create_file_aux_num("lru_gen_full", 0444, NULL, NULL, 0,
++	debugfs_create_file_aux_num("lru_gen_full", 0444, NULL, NULL, true,
+ 				    &lru_gen_ro_fops);
+ 
+ 	return 0;
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+base-commit: 51a486feac0ca002bee6429f03da0a6c206d0dc5
+-- 
+2.50.0
 
-You may send multiple commands in a single email message.
 
