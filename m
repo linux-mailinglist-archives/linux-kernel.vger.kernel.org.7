@@ -1,393 +1,106 @@
-Return-Path: <linux-kernel+bounces-747252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAA4B13188
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:20:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11951B1318A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9570B1897CFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474701740A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CC5224892;
-	Sun, 27 Jul 2025 19:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281122253E1;
+	Sun, 27 Jul 2025 19:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FRviUR+8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHzIN8ob"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE6D21E0A8;
-	Sun, 27 Jul 2025 19:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCB5194A65;
+	Sun, 27 Jul 2025 19:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753643999; cv=none; b=OEzSPKAVVNB6a7oLtuSJsrdghi/tlJD9HRi1oGsXL91tFwW+5dlcVVojf+HNwFIvgHcZhki8sljt6XNU4h1KmVdJ3IVN0qBlT/8Y/S8XA8idfnFIz6qnbl+LEMZsRkz6naYiq+HYlJcCyg240K+IaomlboXZS7NN78zVfF8Zj/o=
+	t=1753644795; cv=none; b=kHWkax1jTItFQCS3ZpKxN1jdHzh9ELcXkYGLo8D+Hu367Z9vRqtGRkucVXsrygeKiiNSjio5gv0aSVi7nlLLgLey5F/qDG57ZHArXdSJqRBmd8mWj+UXY5QaR/zWBnWAy0sf6/H4z+04pdp4bHXCvdq1shjsuwQZogY7JkqTcAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753643999; c=relaxed/simple;
-	bh=ODQad/kLebqtWcgou3DFGpBib/gjsX4M3+AiroUgXOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ljwZo6Djn36OFF/DmOpu6+sceWB14mKGZyKk06kY0ejHdBKLtTzKKlPQ5ADMX1FjMlDU6BgjLlhloae0edfhTWBkWorlZ3JQgSpto8tHLVHfH2tzU2q/so9eKoa16XcNM2L46hOqC7+2yJsfYdh+lLHumX4gyS/V2kZMJJAdvLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FRviUR+8; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753643998; x=1785179998;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ODQad/kLebqtWcgou3DFGpBib/gjsX4M3+AiroUgXOs=;
-  b=FRviUR+8bGTISj1QxV+JqdMHItlTPdKDfFcPs5G3ilGiXupsgVDUEAjY
-   vAOHPkSM/sTRJ2dedP2BQdnUWLd0WpzDXyoTwlR3SI1KT5mgZzwGgI6Sl
-   aEUtEqmVvNo1RWSvm9r0otA4wi9nHVyQcMY5iPtvepufvvcRYmwS+C3JK
-   IjguS845BrrUoZffosv/pZX6AAJusSJ7H/Vu8IqDSr9kU1/sq7taxWBq+
-   VqKHYPdyhQ/agzqE6wP5cAn8RHY0gFMp14acuYOhRrIOfT/WRaaFJzmVf
-   mG2vOzuPpKXZfS6VHO8k7FastxE6zSXP9G/ms8erY+gOTSiTf59Q6sNsP
-   w==;
-X-CSE-ConnectionGUID: /GPk1INoRFWR2vew0C/c5w==
-X-CSE-MsgGUID: wzrn8mrsS4elBsrxTIabhA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="58518747"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="58518747"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 12:19:57 -0700
-X-CSE-ConnectionGUID: Wlqgd4GMRi2rWUo+AG9GTw==
-X-CSE-MsgGUID: ftSqS2g5RKOKTsUxssggWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="193215578"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.124])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 12:19:53 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 821F111FAF5;
-	Sun, 27 Jul 2025 22:19:49 +0300 (EEST)
-Date: Sun, 27 Jul 2025 19:19:49 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Julien Massot <julien.massot@collabora.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v7 14/24] dt-bindings: media: i2c: add MAX9296A,
- MAX96716A, MAX96792A
-Message-ID: <aIZ71TZM9wUGlGoU@kekkonen.localdomain>
-References: <20250718152500.2656391-1-demonsingur@gmail.com>
- <20250718152500.2656391-15-demonsingur@gmail.com>
+	s=arc-20240116; t=1753644795; c=relaxed/simple;
+	bh=6KdbDjlU7MNLdd6vRI7BRsrwL6xqrrZa1ld4+GRsLhQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oKsgxaUmWFh7ybrQ3EtjwV9N14DVYvIOFSDl4XiflAxR6O34tsfa145pAHUEfBJZsowctU99H1GCl4Nu26GM8f5S27rQUif5FLUgQoQQgw5Idh9sTLzKE62Xqzb5+r5I9+Vv8YOFTWaoUqBj4bxQzs21F41/nwZb/aau0fgNn0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHzIN8ob; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-707453b0306so5087756d6.2;
+        Sun, 27 Jul 2025 12:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753644793; x=1754249593; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6KdbDjlU7MNLdd6vRI7BRsrwL6xqrrZa1ld4+GRsLhQ=;
+        b=RHzIN8obtTUuIhCNR/l/ymg5JtN7RJBFXPHi0Bgm/NbQkXbH9nkpUvKLlnorcu2/jO
+         96tG1UMh7lR67CLERCTRYAA6GYNa99YVa42AequCnHoFRbixn381mQ8vPP4YmLbaEqlW
+         2Q1BKKYq1A0LXXSd9/tBi/IJ5XavsHcpjrFpobAAeXH9cyUU8jNgjPF6AODyF+43Ojak
+         HEpWjXdfF7/3/fHqWvtAl4vJjO3j/3LcYD9++1l8ruxcpI6MU+zsEwSbELNDRvXnB/OP
+         +QQvSwDceEI4zKuRZo6df9KVxgPDFuYbXcEKx3Om8Rmsz1SNOtndkw8O8esXIRBFBDry
+         pZmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753644793; x=1754249593;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6KdbDjlU7MNLdd6vRI7BRsrwL6xqrrZa1ld4+GRsLhQ=;
+        b=OHIxFs00MgSEa+NE2JIpnPUI44Xtlm6ARbOSgSmxX6FhrJkZrWemFVzeuqAyFPpBSx
+         5itjsTQAu1mPP5A7j3Vq3G3o38H+n3VhHej1zUq6bRVQqbRpuXilu/0DB4doj0ordkZs
+         TjjlGCqHACefRWudvXaQRqL3laFAbF2ZO/4foMN4q67pL5TRbn0Gp3n2V0CTvcbsjmud
+         UR3ftS9BtIKU2OgDX1ZL/0PhyMqKpOQ0ij4wxrLBdhLrSh1zSkE3peArM6Piymw9dVzc
+         EjDyAFkWboAb+n3iszSxr/DgvyuyDbU/pwbGfXW9Uv9Ka4NybfbZdETgp96guDHWNJBk
+         iuDw==
+X-Gm-Message-State: AOJu0YxtWqRScioOPm/EPMicpJeaNGZKNoacs6nkRfA4VFgzXJvp+7qq
+	C0sNwBYOxBvMliX66OXPv5jkaVlrDxXWxIo+clTVVnIIeMfcSMr8DdzUsXbIe36NzY6esUlqkRA
+	aUkALmzpx7FAZjB/3iWE+L64wGF1AlEnM+xqm
+X-Gm-Gg: ASbGncvcEFo/uZTlHwnrY4BBNAYHUc3EFx8v5pa6Psl4NMgKIx1+UoAKyQkg+9bS0fQ
+	3s4ms0fCMtoph3BEI5x2zmRKf+vsmcczHOgW4t5Vq2bNJ5CWNGSoeRf8YasJfBJoiyEmoo0UYJO
+	6DSZ9h5Hm8QOmIZ9283QIq/A/UlI1JjZqa7XKubM/f1KPApOoDLAqHsayW6PdKVOv/GR8WH4TpF
+	3wlzngiBtCyp56EMmOe+AaFHNv0iL56nf7CGi4JbA==
+X-Google-Smtp-Source: AGHT+IFK5tEPWCumGhnFE2IwR7NP1qZVxV1XN/ZXaGRFoKiTvVk2rPmY7RiFxZZzTyRWv4Nt7/oPzNJWU9gek7lFK00=
+X-Received: by 2002:ad4:5d62:0:b0:706:f3f9:8a52 with SMTP id
+ 6a1803df08f44-707205aa5e8mr115361966d6.29.1753644793056; Sun, 27 Jul 2025
+ 12:33:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718152500.2656391-15-demonsingur@gmail.com>
+From: Vedang Kandalkar <vedangkandalkar@gmail.com>
+Date: Mon, 28 Jul 2025 01:03:02 +0530
+X-Gm-Features: Ac12FXzVbkZ1vZQB9x-4PwDODBFKwAXJV5vLsf35dCKl6ekhvsw7-l2URHvb3xg
+Message-ID: <CAJSSbgCRT-EcQTdTKof_gG5eBD1eYZKEFC_9pdQsaCiXx9yQHA@mail.gmail.com>
+Subject: [PATCH] docs: remove broken overline from sysctl/vm.rst
+To: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Cosmin,
+From 098513ca1d41c0c69f3956a6d22f34aee452afdd Mon Sep 17 00:00:00 2001
+From: Vedang Kandalkar <vedangkandalkar@gmail.com>
+Date: Sun, 27 Jul 2025 23:38:12 +0530
+Subject: [PATCH] docs: remove broken overline from sysctl/vm.rst
 
-On Fri, Jul 18, 2025 at 06:24:50PM +0300, Cosmin Tanislav wrote:
-> The MAX9296A deserializer converts single or dual serial inputs to MIPI
-> CSI-2 outputs. The GMSL2 links operate at a fixed rate of 3Gbps or 6Gbps
-> in the forward direction and 187.5Mbps in the reverse direction.
-> In GMSL1 mode, each serial link can be paired with 3.12Gbps or 1.5Gbps
-> GMSL1 serializers or operate up to 4.5Gbps with GMSL2 serializers with
-> GMSL1 backward compatibility. The MAX9296A supports mixed GMSL2 and
-> GMSL1 links. The serial inputs operate independently, allowing videos
-> with different timings and resolutions to be received on each input.
+The overline above the /proc/sys/vm/ section was broken and not
+following standard reStructuredText conventions. Removed to improve
+readability.
 
-C-PHY or D-PHY? I'd assume the latter?
+Signed-off-by: Vedang Kandalkar <vedangkandalkar@gmail.com>
 
-> 
-> MAX96716A supports both tunnel and pixel mode.
-> MAX96792A supports both tunnel and pixel mode, and has two GMSL3 links.
-> 
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/media/i2c/maxim,max9296a.yaml    | 242 ++++++++++++++++++
->  MAINTAINERS                                   |   6 +
->  2 files changed, 248 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9296a.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9296a.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max9296a.yaml
-> new file mode 100644
-> index 0000000000000..4f2b3b5b69cf4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9296a.yaml
-> @@ -0,0 +1,242 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2024 Collabora Ltd.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/i2c/maxim,max9296a.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim MAX9296A GMSL2 to CSI-2 Deserializer
-> +
-> +maintainers:
-> +  - Cosmin Tanislav <cosmin.tanislav@analog.com>
-> +
-> +description: >
-> +  The MAX9296A deserializer converts single or dual serial inputs to
-> +  MIPI CSI-2 outputs. The GMSL2 links operate at a fixed rate of 3Gbps
-> +  or 6Gbps in the forward direction and 187.5Mbps in the reverse
-> +  direction. In GMSL1 mode, each serial link can be paired with 3.12Gbps
-> +  or 1.5Gbps GMSL1 serializers or operate up to 4.5Gbps with GMSL2
-> +  serializers with GMSL1 backward compatibility. The MAX9296A supports
-> +  mixed GMSL2 and GMSL1 links. The serial inputs operate independently,
-> +  allowing videos with different timings and resolutions to be received
-> +  on each input.
-> +
-> +  MAX96716A supports both tunnel and pixel mode.
-> +
-> +  MAX96792A supports both tunnel and pixel mode, and has two GMSL3 links.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - maxim,max9296a
-> +      - maxim,max96716a
-> +      - maxim,max96792a
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  powerdown-gpios:
-> +    maxItems: 1
-> +    description: Specifier for the GPIO connected to the PWDNB pin.
-> +
-> +  port0-poc-supply:
-> +    description: Regulator providing Power over Coax for GMSL port 0
-> +
-> +  port1-poc-supply:
-> +    description: Regulator providing Power over Coax for GMSL port 1
-> +
-> +  i2c-alias-pool:
-> +    maxItems: 2
-> +
-> +  i2c-atr:
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      '#address-cells':
-> +        const: 1
-> +
-> +      '#size-cells':
-> +        const: 0
-> +
-> +    patternProperties:
-> +      '^i2c@[0-1]$':
-> +        $ref: /schemas/i2c/i2c-controller.yaml#
-> +        unevaluatedProperties: false
-> +        properties:
-> +          reg:
-> +            items:
-> +              minimum: 0
-> +              maximum: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    patternProperties:
-> +      '^port@[0-1]$':
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: GMSL Input ports 0-1
-> +
-> +      '^port@[2-3]$':
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description: CSI-2 Output ports 0-1
-> +        properties:
-> +          endpoint:
-> +            $ref: /schemas/media/video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +              lane-polarities:
-> +                minItems: 1
+---
+ Documentation/admin-guide/sysctl/vm.rst | 1 -
+ 1 file changed, 1 deletion(-)
 
-With D-PHY, 2 is the minimum.
-
-> +                maxItems: 5
-> +
-> +              link-frequencies:
-> +                maxItems: 1
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +    anyOf:
-> +      - required:
-> +          - port@2
-> +      - required:
-> +          - port@3
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +allOf:
-> +  - $ref: /schemas/i2c/i2c-atr.yaml#
-> +
-> +dependentRequired:
-> +  i2c-atr: [i2c-alias-pool]
-> +  i2c-alias-pool: [i2c-atr]
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interfaces.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        deserializer@28 {
-> +            compatible = "maxim,max9296a";
-> +            reg = <0x28>;
-> +            powerdown-gpios = <&main_gpio0 37 GPIO_ACTIVE_LOW>;
-> +
-> +            i2c-alias-pool = <0x40 0x41>;
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    des_gmsl_in_0: endpoint {
-> +                        remote-endpoint = <&ser_0_gmsl_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    des_gmsl_in_1: endpoint {
-> +                        remote-endpoint = <&ser_1_gmsl_out>;
-> +                    };
-> +                };
-> +
-> +                port@2 {
-> +                    reg = <2>;
-> +                    des_csi_out: endpoint {
-> +                        data-lanes = <1 2 3 4>;
-> +                        link-frequencies = /bits/ 64 <400000000>;
-> +                        remote-endpoint = <&csi_in>;
-> +                    };
-> +                };
-> +            };
-> +
-> +            i2c-atr {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                i2c@0 {
-> +                    #address-cells = <1>;
-> +                    #size-cells = <0>;
-> +                    reg = <0>;
-> +
-> +                    serializer@40 {
-> +                        compatible = "maxim,max96717", "maxim,max96717f";
-> +                        reg = <0x40>;
-> +                        gpio-controller;
-> +                        #gpio-cells = <2>;
-> +                        #clock-cells = <0>;
-> +
-> +                        ports {
-> +                            #address-cells = <1>;
-> +                            #size-cells = <0>;
-> +
-> +                            port@0 {
-> +                                reg = <0>;
-> +                                ser_0_csi_in: endpoint {
-> +                                    data-lanes = <1 2>;
-> +                                    remote-endpoint = <&sensor_0_out>;
-> +                                };
-> +                            };
-> +
-> +                            port@1 {
-> +                                reg = <1>;
-> +                                ser_0_gmsl_out: endpoint {
-> +                                    remote-endpoint = <&des_gmsl_in_0>;
-> +                                };
-> +                            };
-> +                        };
-> +                    };
-> +                };
-> +
-> +                i2c@1 {
-> +                    #address-cells = <1>;
-> +                    #size-cells = <0>;
-> +                    reg = <1>;
-> +
-> +                    serializer@40 {
-> +                        compatible = "maxim,max96717", "maxim,max96717f";
-> +                        reg = <0x40>;
-> +                        gpio-controller;
-> +                        #gpio-cells = <2>;
-> +                        #clock-cells = <0>;
-> +
-> +                        ports {
-> +                            #address-cells = <1>;
-> +                            #size-cells = <0>;
-> +
-> +                            port@0 {
-> +                                reg = <0>;
-> +                                ser_1_csi_in: endpoint {
-> +                                    data-lanes = <1 2>;
-> +                                    remote-endpoint = <&sensor_1_out>;
-> +                                };
-> +                            };
-> +
-> +                            port@1 {
-> +                                reg = <1>;
-> +                                ser_1_gmsl_out: endpoint {
-> +                                    remote-endpoint = <&des_gmsl_in_1>;
-> +                                };
-> +                            };
-> +                        };
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 93e22dfd61c17..0eb1729ae1647 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14783,6 +14783,12 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.yaml
->  F:	drivers/iio/proximity/mb1232.c
->  
-> +MAXIM GMSL2/3 SERIALIZERS AND DESERIALIZERS
-> +M:	Cosmin Tanislav <cosmin.tanislav@analog.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/media/i2c/maxim,max9296a.yaml
-> +
->  MAXIM MAX11205 DRIVER
->  M:	Ramona Bolboaca <ramona.bolboaca@analog.com>
->  L:	linux-iio@vger.kernel.org
-
--- 
-Kind regards,
-
-Sakari Ailus
+diff --git a/Documentation/admin-guide/sysctl/vm.rst
+b/Documentation/admin-guide/sysctl/vm.rst
+index 9bef46151d53cd..8f3875d68ac8ea 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -1,4 +1,3 @@
+-===============================
+ Documentation for /proc/sys/vm/
+ ===============================
 
