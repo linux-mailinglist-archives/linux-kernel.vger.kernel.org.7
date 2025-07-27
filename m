@@ -1,122 +1,155 @@
-Return-Path: <linux-kernel+bounces-747324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2510FB1328F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 01:59:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66834B13292
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C603B2A5F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 23:59:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F2C71760D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9E7253957;
-	Sun, 27 Jul 2025 23:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E3642A99;
+	Mon, 28 Jul 2025 00:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TKyVpY3e";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="lAXQlp/w"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lzU85r33"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3011A254E;
-	Sun, 27 Jul 2025 23:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BECB4A35;
+	Mon, 28 Jul 2025 00:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753660766; cv=none; b=CCcjU97NYU1wgEfNHmapPd0XRqjhiTRQGhXWA2eR700nqVvwssES6h/aSscYshIS8emkL918Zph1CROL761L72DpCvXameNLAPH+yyffj0qV6BGyWpJisYlWGBwihIKfMyqep/irz614RjRQdg5bS+aIeOHxKLKQ8c2LSztMBhg=
+	t=1753660818; cv=none; b=cTWdkwfmrLSc0+1mgOqsywduYJGwyuqfcZFY5ypv/H+3n4E7hcKFzxMaJEGcbuoj5PRJA1knicQlEm1vZC+nNH2P5VA4Qrd/YAxQ1P8rIngmFfcXlLA7JroLdt6TfLjvYY4o1A+3j633VCHMWSAYPGa4iMhh+XhoO49ErOFUkwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753660766; c=relaxed/simple;
-	bh=IDPYYq6+Y7hVelxWz1YJTxIp2lHzHE4a58b7PCwGess=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qgsTEw0+TOcBS9oHyw/h4JIpFwz9E7ueaJ7SzuYbF3A1VxpD0vywaCJNiwBA+gNKqoISpUduN1NlUwBDstTXxW4yMKOJGpzs9V+kC5pnQzykiUZvW2Yj6j2c9SLW/LO3hdajOBAwRAIiAzVpHdM5erza0Yv6JcL/108waPuvhfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TKyVpY3e; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=lAXQlp/w; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	s=arc-20240116; t=1753660818; c=relaxed/simple;
+	bh=7FOlBTRmd8dEpKVhrzJny7SLB1U+9S1mQl0p3vHcy/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qb4GblF1qWUUsM5X0x/fMX7/7t6gEfGu13ZhhljKmwoqckEoN9FQwWMSaq3/dbCNq/Yfe29EqwMinqazpXyisDDZ/EdNANuLyBDS7Bq1FZaqEh3PKMXZH0CC+lEzTdzVo7wDnqQsxFKe3wcVp5/0eMub74gKfpEvX17rIHEB/VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lzU85r33; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753660605;
+	bh=Od/wQZLkvSFzPvwQn//E457WOuGEkjFsp/yYgUZauwg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lzU85r33v3LoNqXUQWVpqqa4G4IOSwNeapQzem8tGogQ+9agLAC52npiXBS4uZHTm
+	 d7e9LAmHW0lJUTlaAgWxM+5mMuNMu1giYZ1tPqu92H8rFvUhoIwjvUxwQHDzl+qr3n
+	 P9q5qIAlW/w04Qm/1STz9lLdKRTih8rPrs3O072THX6sc0q+/JbySaKYfg/MPjm7Hs
+	 QFt4o6kkl5IUtOTxTD24Byt9qqs9T41fHm08lAN704pcLYcJaBHJ3hTxFHcwcKGnUf
+	 BZrX2o7l9T8QS/8RCCeTYmj5jGlYUnTuz8BJ14AurSTQqdnei2em00IRT2p62DaGUG
+	 UcbgUD//4TdGg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bqz9Q4SzKz9ts4;
-	Mon, 28 Jul 2025 01:59:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1753660762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bwZHfv7bs22p4Cd8SYFjyk554kcj5vyp15h3G865eEE=;
-	b=TKyVpY3e0Ezo05THuHsVjXU/1Au1XHtzYyy/wpZ0vjU5HHtZMPHsgcnRvTMGYUCvwMU9Vy
-	3Lodl3zuCTP7gZUlRX8hLhWBPpnIm1KRAhYKMjLJ01r0rJ1W/K8iyk3wZDPfnyLpuOoD0V
-	ruVZVwmEdKwoAmuPQ7wPuaayJciWv9SAgEtrAX4dLxpjLGqM/tmq3HGwwKEXSVO+2d5vQ2
-	fv/3cgxo/TJR+o36U0Kq/XqO+2Endcs6KECE8aVq+GIs/5gtu61qRb/mpF26+ChpnPtYtG
-	Kf5p0DoZTmmtyvCUUyyvH1RL1gtxQlSS8GsUp986ZrJKXY8LhaF1RHoxtlXXCA==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1753660760;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bwZHfv7bs22p4Cd8SYFjyk554kcj5vyp15h3G865eEE=;
-	b=lAXQlp/wAco/VJfFAoj+xA+R2PIFhVSiVLS6QLzNGqTZ0k6bHhJJ4ckiBPB9EFuBnsHz4Z
-	VScNwsGsxNNspa1qFNve6jK1HJ+FzMXtWUq8d7GvSS+8d3WBzmerqo+8nixKATqVWuhe/Z
-	X6gdlU4JmHh3BivobECsCg2XS23EaIMfve8mBJqO3aU+X/mTaRVcUGHdt5xCIIoUxLJ+Xf
-	HFvHpZTcicSwLOj+yxT8jx4Dj+JKx3q2OHN0V+ebnDq0xHtP6/c0f8Oszg99L76jy6kSU3
-	hf3hasTzLOLKz/vChpcAZx6cTnjpnt8oXMczU+7TSZ0dKwO0xAz8aAGsltks8Q==
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] arm64: dts: renesas: r8a779g3: Invert microSD voltage selector on Retronix R-Car V4H Sparrow Hawk EVTB1
-Date: Mon, 28 Jul 2025 01:58:11 +0200
-Message-ID: <20250727235905.290427-1-marek.vasut+renesas@mailbox.org>
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bqz6N4sCNz4wxJ;
+	Mon, 28 Jul 2025 09:56:44 +1000 (AEST)
+Date: Mon, 28 Jul 2025 09:59:37 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the ftrace tree with the tip tree
+Message-ID: <20250728095937.13043cd0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: c9c00573611d0c9b9cd
-X-MBO-RS-META: ks969f3mpqpgnwzwryfpo3os8kbkwktd
+Content-Type: multipart/signed; boundary="Sig_/sxzXOrs+CYdBtw4VPNTESWS";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Invert the polarity of microSD voltage selector on Retronix R-Car V4H
-Sparrow Hawk board. The voltage selector was not populated on prototype
-EVTA1 boards, and is implemented slightly different on EVTB1 boards. As
-the EVTA1 boards are from a limited run and generally not available,
-update the DT to make it compatible with EVTB1 microSD voltage selector.
+--Sig_/sxzXOrs+CYdBtw4VPNTESWS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: a719915e76f2 ("arm64: dts: renesas: r8a779g3: Add Retronix R-Car V4H Sparrow Hawk board support")
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Hi all,
+
+Today's linux-next merge of the ftrace tree got a conflict in:
+
+  include/linux/entry-common.h
+
+between commit:
+
+  a70e9f647f50 ("entry: Split generic entry into generic exception and sysc=
+all entry")
+
+from the tip tree and commit:
+
+  bfab6646e9d9 ("unwind_user/deferred: Add unwind cache")
+
+from the ftrace tree.
+
+I fixed it up (I used the former version of this file and applied the
+following merge fix patch) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 28 Jul 2025 09:53:01 +1000
+Subject: [PATCH] fix up for "unwind_user/deferred: Add unwind cache"
+
+interacting with "entry: Split generic entry into generic exception and
+syscall entry" from the tip tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/irq-entry-common.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
-index dfbf2ce7e23a..9d702b74c288 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
-@@ -194,7 +194,7 @@ vcc_sdhi: regulator-vcc-sdhi {
- 		regulator-max-microvolt = <3300000>;
- 		gpios = <&gpio8 13 GPIO_ACTIVE_HIGH>;
- 		gpios-states = <1>;
--		states = <3300000 0>, <1800000 1>;
-+		states = <1800000 0>, <3300000 1>;
- 	};
- };
- 
--- 
-2.47.2
+diff --git a/include/linux/irq-entry-common.h b/include/linux/irq-entry-com=
+mon.h
+index 8af374331900..0cd828b4a444 100644
+--- a/include/linux/irq-entry-common.h
++++ b/include/linux/irq-entry-common.h
+@@ -7,6 +7,7 @@
+ #include <linux/context_tracking.h>
+ #include <linux/tick.h>
+ #include <linux/kmsan.h>
++#include <linux/unwind_deferred.h>
+=20
+ #include <asm/entry-common.h>
+=20
+@@ -240,6 +241,7 @@ static __always_inline void exit_to_user_mode(void)
+ 	lockdep_hardirqs_on_prepare();
+ 	instrumentation_end();
+=20
++	unwind_reset_info();
+ 	user_enter_irqoff();
+ 	arch_exit_to_user_mode();
+ 	lockdep_hardirqs_on(CALLER_ADDR0);
+--=20
+2.50.1
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/sxzXOrs+CYdBtw4VPNTESWS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiGvWoACgkQAVBC80lX
+0Gyz1Af6A8FhiDEvJexDRmRdyLSoim0L1JbHu30uQt6T4cIdHevhFq0vuKig49sU
+m4maZgpoQVen4iD8ocVLgCDx4Qzr+RuRMY66JFNCwgsaulZVFJM0YM+es8Y1SDBB
+fOkMFJEnZmet9b4Y7Y/1VQDeqqPQvFg+aOkNgnd3PW8FxZpvRQSZZUzCIQnkqkyo
+25GsUtgClBNQySzRoLpVPjCE2qZvbHoGT7MoVlifaUNmh8dadBfMY8BXPACYgj4q
+sGwK7Ton6YlJ+hce3v8vr96DKKRZTKNCzyPu+aK4xNqMiWzXjfxt96yZrTNTZZis
+B4jZOn1zuQd4tkI/rdGtFtdxVYgkSw==
+=pqw0
+-----END PGP SIGNATURE-----
+
+--Sig_/sxzXOrs+CYdBtw4VPNTESWS--
 
