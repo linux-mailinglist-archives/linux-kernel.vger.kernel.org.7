@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-747138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE700B1302F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:51:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A070EB13036
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1905A3A89E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:51:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CE0174A11
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA28217F53;
-	Sun, 27 Jul 2025 15:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4F821C16B;
+	Sun, 27 Jul 2025 15:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEv2fiBJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsQKsuZa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9527221A426;
-	Sun, 27 Jul 2025 15:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C4A7E9;
+	Sun, 27 Jul 2025 15:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753631494; cv=none; b=Xrd46ikV/qOytNzBnf2jI1FPX9GEyskNKz/Ceuzk2ERZMGUvg7wvZmxe1piqmvFjoGWIMYceWMUhotSAWh2r6imRlnVxaAvS6cn5tdUY+2WVhB0JE8XZc5kOyPgDICREm2CH9E+yJ4GQIR8k05L6KOfLMQvv2H+QT381faJUtHQ=
+	t=1753631741; cv=none; b=O6lCqIngjzpxcRqXtb9gDvlxadoaFND4SfenyL5P9jcdEMQwQPyoJNQZg7WyMcfBiLg1KBlvvyh9rSHFSQ5yE1bcIRCVRnZye9sayONDNT82xGv2Zgzd05hPDYqXVEIxt0PleyCX10d2ixLW3njDicqcz3UWd1XcIayh/0HfKDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753631494; c=relaxed/simple;
-	bh=urSz8rDjHicplSAJE4AaaacmFFB9vhHitFdGRexF+Ws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eA8e3tYDTVQjiiytjIl1c0Sa9ca1Hwhag/7UMMET8U2APGf09z8sN84qogBqcZoJcmYpg4k9cL57h0pJMETokD3una1b6/Y4tRh+pJ0bCh8TzZdm2Hjj2aep1zIFsba8NVQIySD9MeO/2n8BBmg9A9CsRiNWCFMvc1ifcaL5Ofs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEv2fiBJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9048AC4CEEB;
-	Sun, 27 Jul 2025 15:51:32 +0000 (UTC)
+	s=arc-20240116; t=1753631741; c=relaxed/simple;
+	bh=4E/KRtZYGRkw/On1zyg435iCeUBt3QLAeXe84TnbRzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zzq1eeNGbjaRVixl1GLA8mp1N4w6gKw+SKj3erVGEp1Tgs69spQICbMuEC/3JXLoNredv0wYUkUv7fnttPal+zM8ANulyeoISI+JUKuiSIJOd4HU1mf4U5419u9B3uk0/TWrcaCIkNgyGrFuscBgn3pyMoTFnTlPNXKNZiQFJaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsQKsuZa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B730C4CEEB;
+	Sun, 27 Jul 2025 15:55:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753631494;
-	bh=urSz8rDjHicplSAJE4AaaacmFFB9vhHitFdGRexF+Ws=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WEv2fiBJkYIyzGlsYaAusnzNXOeYUW5CIbDSHmdtJeMD1Dvn0gKzzDRepbR9UDKYy
-	 LS64k2JAePhCkvobAkNBCymLoVlFhj2TOO+8XobA9L7Au1AVeh5rgIPn0DbbBTdAOB
-	 A/27xUSr3bYrwTTke3Em3yOluDzyOBmhFsb6qg3H1ikNvLnvuyZBEdBzOTikk8Gah+
-	 R9nI8xZuwAErYAhU7Eu+ysMHXtsIsd3RRnwQFCrdQQdE2PLufiqN2nJ9BC0/iJ+k3n
-	 dYE+6QBS36I02VhVy/zzZ5qFOAuLQC/lZ6iZTDsIZbRWdVh9eqj5RSfS8y3RwtdMYE
-	 8E4VgmpNe2J6A==
-Date: Sun, 27 Jul 2025 08:51:29 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Linux Kernel Functional Testing <lkft@linaro.org>,
-	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] kstack_erase: Disable kstack_erase for all of arm
- compressed boot code
-Message-ID: <20250727155129.GC1183915@ax162>
-References: <20250726212945.work.975-kees@kernel.org>
+	s=k20201202; t=1753631741;
+	bh=4E/KRtZYGRkw/On1zyg435iCeUBt3QLAeXe84TnbRzM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UsQKsuZaJ3Fid87NzhJinDZGxvZaYIp30vjkpopcFkJXlDO5sqLui6Z5ih5hFEKkO
+	 FRvef05NdoLKNnk1VaLqbvFh/AEv63RLmttMvorGRtJfplsnSkR26oQ5GqKw0+T3FO
+	 r/busCDMVzVmTCO0yZQu7byR0fCxt/zbM9MhQ5PaJ41ZvArGC+K/cRNbLZYafdrJC3
+	 eHNkyssceRIcYlMUnHQ9AdAztspVjDGGlq4R76cmWEu3T0toahadNtwkVsGAey6o0i
+	 4zOLYRbpKDN6/9fiZgS4TPDegYIXSQhs/J2hro/zWCCK/Jp6xH+nCJk65GNlymZ3Ma
+	 g8lkJmfdoRL5g==
+Date: Sun, 27 Jul 2025 16:55:34 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org, Andy Shevchenko
+ <andy@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 2/7] iio: inkern: Add API for reading/writing events
+Message-ID: <20250727165534.6756b052@jic23-huawei>
+In-Reply-To: <f180b5ac-131f-474a-be5e-70787972a772@linux.dev>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+	<20250715012023.2050178-3-sean.anderson@linux.dev>
+	<aHYOuzdQ_jSKA898@smile.fi.intel.com>
+	<8bb7d291-f94a-4e96-b3ec-93fbe06c8407@linux.dev>
+	<aHdwzFk-688ASRx2@smile.fi.intel.com>
+	<f180b5ac-131f-474a-be5e-70787972a772@linux.dev>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250726212945.work.975-kees@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 26, 2025 at 02:29:45PM -0700, Kees Cook wrote:
-> When building with CONFIG_KSTACK_ERASE=y and CONFIG_ARM_ATAG_DTB_COMPAT=y,
-> the compressed boot environment encounters an undefined symbol error:
-> 
->     ld.lld: error: undefined symbol: __sanitizer_cov_stack_depth
->     >>> referenced by atags_to_fdt.c:135
-> 
-> This occurs because the compiler instruments the atags_to_fdt() function
-> with sanitizer coverage calls, but the minimal compressed boot environment
-> lacks access to sanitizer runtime support.
-> 
-> The compressed boot environment already disables stack protector with
-> -fno-stack-protector. Similarly disable sanitizer coverage by adding
-> $(DISABLE_KSTACK_ERASE) to the general compiler flags (and remove it
-> from the one place it was noticed before), which contains the appropriate
-> flags to prevent sanitizer instrumentation.
-> 
-> This follows the same pattern used in other early boot contexts where
-> sanitizer runtime support is unavailable.
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/all/CA+G9fYtBk8qnpWvoaFwymCx5s5i-5KXtPGpmf=_+UKJddCOnLA@mail.gmail.com
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Closes: https://lore.kernel.org/all/20250726004313.GA3650901@ax162
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Kees Cook <kees@kernel.org>
+On Thu, 17 Jul 2025 12:42:13 -0400
+Sean Anderson <sean.anderson@linux.dev> wrote:
 
-Tested-by: Nathan Chancellor <nathan@kernel.org>
+> On 7/16/25 05:28, Andy Shevchenko wrote:
+> > On Tue, Jul 15, 2025 at 11:42:05AM -0400, Sean Anderson wrote:  
+> >> On 7/15/25 04:18, Andy Shevchenko wrote:  
+> >> > On Mon, Jul 14, 2025 at 09:20:18PM -0400, Sean Anderson wrote:  
+> > 
+> > ...
+> >   
+> >> >> +EXPORT_SYMBOL_GPL(iio_event_mode);  
+> >> > 
+> >> > Can we move this to namespace? Otherwise it will be never ending story...
+> >> > Ditto for other new APIs.  
+> >> 
+> >> Never ending story of what?  
+> > 
+> > Of converting IIO core to use exported namespaces.  
+> 
+> What's the purpose?
 
-> ---
->  arch/arm/boot/compressed/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Aim here is in general to reduce the massive exposed ABI by applying some
+namespaces so that only drivers that opt in to specific functionality
+can use particular symbols.
+
+We've used it extensively for groups of related drivers and to some
+libraries and the DMA buffers, but so far not pushed it into the IIO core.
+
+I'd be fine with these new functions all being under IIO_CONSUMER or similar.
+
+Quite a bit of feedback on this set will be of the lines of don't do it
+the way we did it before as now we know better!
+
+ 
 > 
-> diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-> index f9075edfd773..a159120d1e42 100644
-> --- a/arch/arm/boot/compressed/Makefile
-> +++ b/arch/arm/boot/compressed/Makefile
-> @@ -9,7 +9,6 @@ OBJS		=
->  
->  HEAD	= head.o
->  OBJS	+= misc.o decompress.o
-> -CFLAGS_decompress.o += $(DISABLE_KSTACK_ERASE)
->  ifeq ($(CONFIG_DEBUG_UNCOMPRESS),y)
->  OBJS	+= debug.o
->  AFLAGS_head.o += -DDEBUG
-> @@ -96,6 +95,7 @@ KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
->  
->  ccflags-y := -fpic $(call cc-option,-mno-single-pic-base,) -fno-builtin \
->  	     -I$(srctree)/scripts/dtc/libfdt -fno-stack-protector \
-> +	     $(DISABLE_KSTACK_ERASE) \
->  	     -I$(obj)
->  ccflags-remove-$(CONFIG_FUNCTION_TRACER) += -pg
->  asflags-y := -DZIMAGE
-> -- 
-> 2.34.1
+> >> >> +			if (scale64 <= INT_MAX && scale64 >= INT_MIN)
+> >> >> +				raw64 = processed / (int)scale64;  
+> >> > 
+> >> > Do you need the casting? (I mean if the compiler is dumb enough to not see this)  
+> >> 
+> >> AIUI 64-bit division is not available on 32-bit platforms. The cast
+> >> ensures we get 32-bit division.  
+> > 
+> > I put specifically a remark in the parentheses. So, the Q is if the compiler
+> > doesn't recognize that. Can you confirm that 32-bit compilation without cast
+> > is broken?  
 > 
+> inkern.c:(.text.iio_write_event_processed_scale+0x14c): undefined reference to `__aeabi_ldivmod'
+> 
+> >> >> +	*raw = clamp(raw64, (s64)INT_MIN, (s64)INT_MAX);  
+> >> > 
+> >> > You already have similar approach here...  
+> >> 
+> >> Well, I can spell it 0x7fffffffLL if you'd like...  
+> > 
+> > Nope, I like to have named constants instead of magics, but actually are those
+> > castings needed for the clamp()?  
+> 
+> Apparently not. The checks in __clamp_once are only for matching signedness. And
+> the ints are promoted to s64s when the comparison is made.
+> 
+> --Sean
+
 
