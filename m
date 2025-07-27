@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-747273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8E4B131B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 22:21:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2E4B131B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 22:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 059DF7AAFC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:19:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E4553B32D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C84722D780;
-	Sun, 27 Jul 2025 20:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC4F22FE06;
+	Sun, 27 Jul 2025 20:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i/FPxmWm"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffIxfZMB"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818789463;
-	Sun, 27 Jul 2025 20:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C30CA5A;
+	Sun, 27 Jul 2025 20:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753647654; cv=none; b=rGdcahKgEjyXIKjoDMHX/ng7VzW0obmLfWHEkKoJ0vRIv9UAAgSmCm6wLb2lEk/z2rIJRTtmYxUSl5ndHpSvFOX3+efwc3Dtpxk2s1IuEQN0B4qgPexUBlepvHCxh7/kIOzMg1WFJLY1LljKkMCXDdizVSB22oraJ+5zw471a2k=
+	t=1753647801; cv=none; b=J5Qer9wFQ3jnkpXKIBIi/XZojQY2Pze3SoVDBijFtvL96IMQXZPVccO371SpQsDXXajyOVwUgMSxcQ/ZLFWEHbIWz64cbdTEaZ358EmIal+29jlyQqMWPov+GRpw+0X4rjJf/iqy7GrljU8ANDe2au74K3IJEMkkweY+JwZYNmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753647654; c=relaxed/simple;
-	bh=eNZKbzS0c/J7IuDwfdRf57KFwamQJ5ukxeyZwRhspXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R/Zv1J7F0HmvRRz3ZRtSaRob9/gbSYd9Gb/xjCAq19Zm0/TTYCRoPRW07tYgDis7yEHorZoP3Nv8DW/JnPnVTtyOAnABFBnYzGjeZ86krenSC8yMkIMErRRyRY8L1LTAfc0tv6yNkyFvTViHlEAbCPsLIU9yOIgoCqz50VNo3vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i/FPxmWm; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=ux2Y7r0903v5alApOSxRvTGNLT3OOv1EML/ncMGUUmw=; b=i/FPxmWmYSnbdgJ6/p6CQLvhkI
-	ZkzwgE/7UqMwchtTqoSrgdytJI1eslzju1nv2njS5bE52PfFcO6/qIs6H9aY6WepORhrCtZriY92T
-	7y1J8YZchMeNFjfWgKh9JTfXit1v/8vQLtoZQYJayHvx0fxuLGOcoI7xxtxtOrli+FgQN1GoHhOBq
-	soqSmp6NkM7vp8ES3Fustc/OGuZL+yntj07Nvc9xK97cXV6rSqid5bWNacUM4Bv+P6ou79CQZlnE9
-	uzNk0681fqz5tEagcyZGZX2psMFxqAJU+UfJX6DjGsYgfz8tPv8Mbp6xGzI0W9FGaj4zsvoSnwF1d
-	BnQtocJA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ug7rX-0000000DC3C-45Sd;
-	Sun, 27 Jul 2025 20:20:52 +0000
-Message-ID: <54aca5de-2f42-4bbf-ac58-2ee6ddf3f8ca@infradead.org>
-Date: Sun, 27 Jul 2025 13:20:51 -0700
+	s=arc-20240116; t=1753647801; c=relaxed/simple;
+	bh=zTI+m2gbv755Jnce3o0F9JrJ/qQ5pDwGgCbSbClzslU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X5YBfSOCFd1wrLBuJN4lfuaJfaN7gQNmc/giTdooJjtY1i1269mbKh33vRH1lJCtWD9P0cA8DaZByT/JNPRviOCePKh369jWVK9SJTBGYMx24I9TdnXobFwNDIlaufVRHQLiYGPe9jkqlNXeQJ5LU7aOqlD4j73Faz6YHzOM6Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffIxfZMB; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32f2947ab0cso32044791fa.2;
+        Sun, 27 Jul 2025 13:23:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753647797; x=1754252597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mITD8Au8r7SVTIND0jj8e9ZKk75KzPqbbBviF5ibXqM=;
+        b=ffIxfZMBQ2+6qom6de/6ori8G3gfVNdOLpYwX75WPO64cY61vuHvDks9k7Uqesrvsg
+         qeoLwOf6bqMXyaugHAcdWLqVagcHpQ2SleKu4Pc/VN69Jn66vIwFcsboBLg3M4XLEdMj
+         j2Y1uIgFmiyCIcafWYJan4UCtgDlUAf9jKEOxm+ky2OKUr3OE3EsJSfh9SFCoijH3wiL
+         hnewcmeeCFuRHmGIjhAQo8UNYY0TKT6sYP0qU+Wb05t8TLPRra4S+ZHtwaTs2hyASrpB
+         VT72OCZMifGnLfiRLT/BIyUQBqerO6T5MsljIgBOC76wYsKnunSHrnjA/h547d1ZtVF6
+         RGUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753647797; x=1754252597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mITD8Au8r7SVTIND0jj8e9ZKk75KzPqbbBviF5ibXqM=;
+        b=ERY0fVXSp32RqOkD8u9578u3su3nYasc7a9zSHErKX5yRDAXMhy0wrdpc8vm5gfF2h
+         LpEMuz2e3ojhInGYC4ZidNrifNkGiN+XsLffBuoHvMo2APCBBEeN1m5GCxJpcabzFgZV
+         S/LXrBFCe79QteMpsy8MMMGVdJ1NELGKicVJGCZg/TPCwsiykH1LaTajaYE18KuQ8sXK
+         FNJgjgdUDbp2C0i2Zll6Us27PFsw88szW3FERHE/L1hVqws+tvChQbpPF3EOYPdAacT1
+         U0a6FCL8ihhyMPfGut9dc3H7+WUDPkWzkL83NcTr7q+DQyAYUCgdzJmhDuevFU5rJ5cj
+         5LIw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3uEackjjsPfxLpwKxfrYuwE+8sCoOtvQsPvLgNXLXhEEJIzj1jTu5t9zp9FqtQ+XCRTWHosvnM+GdLGhk@vger.kernel.org, AJvYcCX4+7mM3/EPumS8esFH1IelCt92P47YB74od2CXhdFhXZLbgEsrourKMiN1NlNkpxwRTw7DYyAnJwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxLA3hsCk4GL0LmWvUzbm4vM5leE2KScgAx79coM0XrcIj5s3S
+	3+UHmrQlihYi+AzpGw3d9ay2D5h/R311UgE+N7wZ19JraTLWEYxr2MOUAknghBkPesI3dyCtomY
+	8tPbXXLGFn3bUuAD5ZdAwS2Q4QXpulT+WI6+S
+X-Gm-Gg: ASbGnctAbNmnkj947rpOf1uwNkn+7TXwZIwQbk6ZnLrL0/0Y+WCjQUTcjLT9MluABiE
+	W7zQAo60bc3IJ4uH2lzmj0hUri4hJnRu0bCCEIBytGowTIcz/WMG2noWIkDBqdyS69iWjJUhq14
+	pekhHcky0vg5z91I1CSfwhc1eP6nEzl6zkxKhjn6qKrNSqjkn/bCr9yai8re2feXzYNFDz/bS4o
+	JlEE0UlEamIIImT9rt4wZIFwE5peZL5cqL6sBw=
+X-Google-Smtp-Source: AGHT+IHZb9FWBQnMJSHlpnKvwX3pJwhBiE/qbr8+HAA9ggtjn2kXkB1qt1aHpT628aPzLr7Qc+nbWSr3HawKqxtVp8w=
+X-Received: by 2002:a2e:bcc3:0:b0:32c:e5b4:a225 with SMTP id
+ 38308e7fff4ca-331ee752479mr34285171fa.28.1753647797249; Sun, 27 Jul 2025
+ 13:23:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: remove broken overline from sysctl/vm.rst
-To: Vedang Kandalkar <vedangkandalkar@gmail.com>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <CAJSSbgCRT-EcQTdTKof_gG5eBD1eYZKEFC_9pdQsaCiXx9yQHA@mail.gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <CAJSSbgCRT-EcQTdTKof_gG5eBD1eYZKEFC_9pdQsaCiXx9yQHA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250724143945.636380-1-akshayaj.lkd@gmail.com> <82bd5d44-a23d-4d49-a79a-b6792e62bd62@linuxfoundation.org>
+In-Reply-To: <82bd5d44-a23d-4d49-a79a-b6792e62bd62@linuxfoundation.org>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Mon, 28 Jul 2025 01:53:05 +0530
+X-Gm-Features: Ac12FXxVxCX1_3bqOR9MqVjkuhVAzWP7hJIllxIz03ch0-trFMmYS88E9jwBF-8
+Message-ID: <CAE3SzaQSHEQ7b2AaJyEiq+vVzMLAS-KZw7Liwkn7odPDW50F8w@mail.gmail.com>
+Subject: Re: [PATCH v3] iio: light: ltr390: Add debugfs register access support
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Jul 25, 2025 at 3:29=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.o=
+rg> wrote:
+>
+> On 7/24/25 08:39, Akshay Jindal wrote:
+> > Testing details (done for v2):
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> > -> Tested on Raspberrypi 4B. Follow for more details.
+>
+> This is way too much testing information. Summarize what you tested
+> instead. It makes it easier to see the results as a summary.
+>
+Thanks Shuah for pointing this out. Will make sure summarized testing
+information in the upcoming version/patches.
 
-On 7/27/25 12:33 PM, Vedang Kandalkar wrote:
-> From 098513ca1d41c0c69f3956a6d22f34aee452afdd Mon Sep 17 00:00:00 2001
-> From: Vedang Kandalkar <vedangkandalkar@gmail.com>
-> Date: Sun, 27 Jul 2025 23:38:12 +0530
-> Subject: [PATCH] docs: remove broken overline from sysctl/vm.rst
-> 
-> The overline above the /proc/sys/vm/ section was broken and not
-> following standard reStructuredText conventions. Removed to improve
-> readability.
-> 
-> Signed-off-by: Vedang Kandalkar <vedangkandalkar@gmail.com>
-> 
-
-All of the .rst files in that sub-directory are like this.
-Should they all be patched?
-
-OTOH, there are many files in Documentation/admin-guide/ that use this
-pattern. Are they all incorrect?
-
-Exactly how is it "broken?"
-Did you read Documentation/doc-guide/sphinx.rst, where it says:
-
-* Please stick to this order of heading adornments:
-
-  1. ``=`` with overline for document title::
-
-       ==============
-       Document title
-       ==============
-
-  2. ``=`` for chapters::
-
-       Chapters
-       ========
-
+On 7/24/25 08:39, Akshay Jindal wrote:
+>
+> Add support for debugfs_reg_access through the driver's iio_info structur=
+e
+> to enable low-level register read/write access for debugging.
+>
+> Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
 > ---
->  Documentation/admin-guide/sysctl/vm.rst | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/sysctl/vm.rst
-> b/Documentation/admin-guide/sysctl/vm.rst
-> index 9bef46151d53cd..8f3875d68ac8ea 100644
-> --- a/Documentation/admin-guide/sysctl/vm.rst
-> +++ b/Documentation/admin-guide/sysctl/vm.rst
-> @@ -1,4 +1,3 @@
-> -===============================
->  Documentation for /proc/sys/vm/
->  ===============================
-> 
+>
+> Changes since v2:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> - merged the regmap_range of LTR390_UP_THRESH with LTR390_LOW_THRESH.
+>
+> Changes since v1:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> - Replaced _[0|1|2] macros with a respective common parameterized macro.
+> - Retained base macros to avoid churn.
+> - Swapped regmap_write with regmap_read to avoid negate operator.
+> - Simplified debugfs function by directly returning return value of
+>    regmap_[read|write].
+> - Replaced [readable|writeable]_reg with regmap ranges by using
+>    [rd|wr]_table property of regmap_config.
+> - Updated the testing details with v2 changes.
 
-thanks.
--- 
-~Randy
+Dear Maintainers,
+Is there any feedback on the v3 patch?
 
+Thanks,
+Akshay
 
