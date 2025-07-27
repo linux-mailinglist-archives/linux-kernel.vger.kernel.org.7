@@ -1,161 +1,124 @@
-Return-Path: <linux-kernel+bounces-747081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B80B12F76
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CFFB12F78
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E48176F3C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 382803A42AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913432144C9;
-	Sun, 27 Jul 2025 12:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0078212B2B;
+	Sun, 27 Jul 2025 12:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/arjZke"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REWzYAIw"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9A486329;
-	Sun, 27 Jul 2025 12:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91FC11185
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 12:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753619367; cv=none; b=Bm9DRtuFEw5LQZs0jbbjqjFrOt10t3fVMfVqe/dPzkrFsnxyM9Dt+iI7+jCHL/LX0ZCvPoWvEmf8L6ubrL+iAXpiDCr2ocbfpmSRI9zYpTjTITQuo19yMlh5sV6NaWuR/LbWsTPxxy1836A6PK8Ha3yMFqz8in+ckTRggnb0sD0=
+	t=1753619502; cv=none; b=HTavrVGAsewiOS1vMia+y95u0qPFEuveAVE+lbtrgatv1+80TZgHOieut4TRZpt+PZ27xhp3qmJH3DKhKXNLx/7Us+trgyQYugMaELE0wRTInKuVSi9UTERSLYFmyJGHspLC2LcGX9QDQCXU+lD4YZkNqtrck1FZixHT2i44/k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753619367; c=relaxed/simple;
-	bh=tMd4CZJTltaQuHDXkARYYaauBeKUx1e3VzDgy/Lq9/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dSjAbP5z7sn9z7w31QzeUxTRjQllWy4eKcQ38kyYEnDFJR97QeHsR0fKLa56Sbuf8k2Us9z78YvYiRuyStClGzFTvmu47rqFPqbwAukDybtjYxWdRrn4B9eX5Go6NlA7Gz8dD0f9mtN1MG4CG7ZdIkuTE9HR5xpq18qwnbwD+bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/arjZke; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92950C4CEEB;
-	Sun, 27 Jul 2025 12:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753619366;
-	bh=tMd4CZJTltaQuHDXkARYYaauBeKUx1e3VzDgy/Lq9/k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=T/arjZkeni9bFV5ALp2u7z92w2BmtA9vvb9Vz1FbTjEtHy+SSKeEM7Irh4dvnVgHQ
-	 q7nOqPmld+opBjk+fI5WjF1wNsPGvQ5lYEWnXmelxBb0wxgh0fxoK0G+1WZzSJdqil
-	 7GD0Vc2IuvkKymaJ02xnwwTLhg67yHXzxAWhxuLtSmP5AE6aypdkLtcif8KsEQ/BYv
-	 OMqGRIPy8K8TFQdtL4ZGjQf4cWs9oTb9XKgyzYlVhci2XFnhitLMi/jm0x6haOowxk
-	 +5sFGfdwX/7pBCEmP3Au8gTw0utB1H0hSv6EiVRnZrZc4Ih3tUvj7xW9FXyTjJMPPC
-	 L3n1FKE6mNMlA==
-Date: Sun, 27 Jul 2025 13:29:16 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] iio: adc: ad7124: add clock output support
-Message-ID: <20250727132916.609755f4@jic23-huawei>
-In-Reply-To: <20250724-iio-adc-ad7124-proper-clock-support-v1-4-88f35db2fcaf@baylibre.com>
-References: <20250724-iio-adc-ad7124-proper-clock-support-v1-0-88f35db2fcaf@baylibre.com>
-	<20250724-iio-adc-ad7124-proper-clock-support-v1-4-88f35db2fcaf@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753619502; c=relaxed/simple;
+	bh=BwX+f6OvmUXCYCS6hwLlQqnr4JjkZ82M3Ns/Tm34nMA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eYpe7mvjjuj/vN5oDvbPYn52f3nC11uuJaLng7+sPfPtmVTQWvt+cPsXLceAbn81v9YZjfiEQg9t0b1Rx8reX2eMEpsMjaPtAzRyvhNUHCFjdH0xnaRcNJZcsK9vmlMieh9Z3j0VqAoSimfS7DON7RnKa815toSDW8MFlBIJ11w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REWzYAIw; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2ffa81b41d7so1497983fac.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 05:31:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753619500; x=1754224300; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nr1FlrqtvRl/pW2s+Bj333vaZiPeY5tHgHRPgBeIBrE=;
+        b=REWzYAIw6YPRv4t8gKSRz7TX46Cl8QA1gUy0DCcpsFHHzVaH7zWgTqQXm9782VeNvy
+         F+rC7r6Us7yCjWzjrHvqt3nsGeEsATdko2cbhif7cunwT8UbvU/7BQfunhgHGMkEyEO8
+         Ocpxrymx6JPQUCBV2Li4mOXb5pHm0881gM+TOD9OpZn00pp7Cs+PWiFghBNU/IEmWaVA
+         /9fbAEuNiBYz2XCr3khPLkWC4n0qIl5ih9LZqVYKNnxjMvTov7jQBQ/Zt4zhaQfGlCiQ
+         DgCz41eu/g2WxiOLmwWU5QfAr3G+uLcA+CEIETK2qD0LxJI8NbTop6ifwTxP4kWL/p58
+         Nzsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753619500; x=1754224300;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nr1FlrqtvRl/pW2s+Bj333vaZiPeY5tHgHRPgBeIBrE=;
+        b=qrVucy8KgVHI84TFsYP5+kS5AYwiEi3i3S5AbGBk0epLckMyjLJKXFawVU/EffU+l2
+         0S05DPZjXTZpl3ZD5y8BMk9oGl+ZvbaKUHh9UhhGsvc17M7EdPd7FkRhXzFhMrT56lDK
+         LCYXAG/LmE3qZRvm0iEKs6FfW2hOp2nnBYg80HEnSTNmqoafbuQ2NWW6Yd6imBx8qce0
+         u+kWP39qQ2qVdVibkVv6GzSqG0lEBwtsh4B3h9/Q+oKtoBu1nitNtEctzIIRX2l04HVo
+         SzSIYdPGflUE0a5Nbt5sAX10B5MLsoIYgh/ynEA2OI4Oi0xtvuOv8ripJ9M4QCb7tHy/
+         XF5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ6MKg1X9m8k1wo+Pi5A7jAPJwAxTg1jamPaVdxhKG9dU4++Dk1BL6D/WiUQOjbPLIkOFpf6AGNgFE3Uc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEO4MGc8OrQf0DDtFXucim+jwN6jJL0Io+7UnTQfMKwaXmSwBv
+	N7SlBAA6tDv7akZcCSpro8z+CZ8DGCxTwTGA46BvlYLoW4hsKWiIzn+/N6PfAjYqkRAnrH7hRYg
+	DONR41RZ5XvMlspD0WWb3bGxN5FyZC3H03S7wpNYPKA==
+X-Gm-Gg: ASbGncs3QCM2Tlr2AN58Ny9gXs7EhLDe98ybV2xpQijkl2tWmRUMv9l/4aFpSluPzKo
+	fjhQ49yPqPDLCZ3Zuof25Un0NCYiio8phZOkpIosChZpvocItihOqNPlba2reR86gA/dIZklUN5
+	1OM/O0Bv5DTRGwjBx96fCZ/hBU10iHh78otyo6uHW88nm8Mmdl6KtzLnWRDiopFFm+P8s6mWuTz
+	RT3Rvmvcg==
+X-Google-Smtp-Source: AGHT+IFpuHK+r+RUZcTODiv1qZJM76ZiRuILDLgWk5mvrZ2hddpDeKAVit/CpJeJZ3oGkqKMAfiyzmpvtMO1w9FrH+I=
+X-Received: by 2002:a4a:ee97:0:b0:615:d3d9:5d1c with SMTP id
+ 006d021491bc7-6190caa7013mr4571605eaf.8.1753619499808; Sun, 27 Jul 2025
+ 05:31:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250726185432.162632-1-suchitkarunakaran@gmail.com> <acacadd2c1112e31cccbe8db504ce30bd8587852.camel@perches.com>
+In-Reply-To: <acacadd2c1112e31cccbe8db504ce30bd8587852.camel@perches.com>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Sun, 27 Jul 2025 18:01:27 +0530
+X-Gm-Features: Ac12FXzcfqjbmuR7tctu7RJvCSwo18x0U4iVbHzoRGSt3SfrOFID559ChNL-Mws
+Message-ID: <CAO9wTFjbD2qcVVCMYfLi3yKjT1cLtHto_Qzr=eAepg=8evbSFQ@mail.gmail.com>
+Subject: Re: [PATCH] checkpatch: suppress strscpy warnings for userspace tools
+To: Joe Perches <joe@perches.com>
+Cc: apw@canonical.com, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 24 Jul 2025 18:25:25 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Sun, 27 Jul 2025 at 17:25, Joe Perches <joe@perches.com> wrote:
+>
+> On Sun, 2025-07-27 at 00:24 +0530, Suchit Karunakaran wrote:
+> > The checkpatch.pl script currently warns against the use of strcpy,
+> > strlcpy, and strncpy, recommending strscpy as a safer alternative.
+> > However, these warnings are also triggered for code under tools/ and
+> > scripts/, which are userspace code where strscpy is not available.
+> > This patch suppresses these warnings for files in tools/ and scripts/.
+> []
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> []
+> > @@ -7020,19 +7020,19 @@ sub process {
+> >  #            }
+> >
+> >  # strcpy uses that should likely be strscpy
+> > -             if ($line =~ /\bstrcpy\s*\(/) {
+> > +             if ($line =~ /\bstrcpy\s*\(/ && $realfile !~ m@\btools/@ && $realfile !~ m@\bscripts/@) {
+>
+> Maybe instead create a is_kernel or is_userspace function
+> and use that instead of the test
 
-> Add support for the AD7124's internal clock output. If the #clock-cells
-> property is present, turn on the internal clock output during probe.
-> 
-> If both the clocks and #clock-names properties are present (not allowed
-> by devicetree bindings), assume that an external clock is being used so
-> that we don't accidentally have two outputs fighting each other.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> 
-> We could make this fancier and only turn on the output on demand of a
-> clock consumer, but then we have to deal with locking of the SPI bus
-> to be able to write to the register. So I opted for the simpler
-> solution of always turning it on during probe. This would only be used
-> for synchronizing with other similar ADCs, so implementing the functions
-> for a more general-purpose clock seems a bit overkill.
-Seems reasonable.  One comment inline.
-> ---
->  drivers/iio/adc/ad7124.c | 35 ++++++++++++++++++++++++++++++++---
->  1 file changed, 32 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index b0b03f838eed730347a3afcd759be7c1a8ab201e..b18229ff037596c6e98e12dc22b1552bf13fdc4e 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -7,6 +7,7 @@
->  #include <linux/bitfield.h>
->  #include <linux/bitops.h>
->  #include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->  #include <linux/delay.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
-> @@ -125,10 +126,12 @@ static const unsigned int ad7124_reg_size[] = {
->  	3, 3, 3, 3, 3
->  };
->  
-> +#define AD7124_INT_CLK_HZ 614400
-> +
->  static const int ad7124_master_clk_freq_hz[3] = {
-> -	[AD7124_LOW_POWER] = 76800,
-> -	[AD7124_MID_POWER] = 153600,
-> -	[AD7124_FULL_POWER] = 614400,
-> +	[AD7124_LOW_POWER] = AD7124_INT_CLK_HZ / 8,
-> +	[AD7124_MID_POWER] = AD7124_INT_CLK_HZ / 4,
-> +	[AD7124_FULL_POWER] = AD7124_INT_CLK_HZ,
->  };
->  
->  static const char * const ad7124_ref_names[] = {
-> @@ -1163,6 +1166,32 @@ static int ad7124_setup(struct ad7124_state *st)
->  		}
->  
->  		clk_sel = AD7124_ADC_CONTROL_CLK_SEL_INT;
-> +	} else if (!device_property_present(dev, "clocks") &&
-> +		   device_property_present(dev, "clock-names")) {
-> +		struct clk_hw *clk_hw;
-> +		char *name;
-> +
-> +		name = devm_kasprintf(dev, GFP_KERNEL, "%s-clk",
-> +				      fwnode_get_name(dev_fwnode(dev)));
+Sure, I will do it.
 
-I think for anything that isn't const the clock core will copy the name
-during registration.  Ultimately __clk_register()
-https://elixir.bootlin.com/linux/v6.15.8/source/drivers/clk/clk.c#L4342
+>
+>         if (!is_userspace($realfile) &&
+>             $line =~ etc...
+>
+> and
+>
+> are all <any_subdirectory>tools/ always userspace ?
+>
 
-As such tying this to devm lifespans is excessive.  Should be fine
-using a __free(kfree) to clean it up at the end of this scope.
-
-> +		if (!name)
-> +			return -ENOMEM;
-> +
-> +		clk_hw = devm_clk_hw_register_fixed_rate(dev, name, NULL, 0,
-> +							 AD7124_INT_CLK_HZ);
-> +		if (IS_ERR(clk_hw))
-> +			return dev_err_probe(dev, PTR_ERR(clk_hw), "Failed to register clock provider\n");
-> +
-> +		ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-> +						  clk_hw);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "Failed to add clock provider\n");
-> +
-> +		/*
-> +		 * Treat the clock as always on. This way we don't have to deal
-> +		 * with someone trying to enable/disable the clock while we are
-> +		 * reading samples.
-> +		 */
-> +		clk_sel = AD7124_ADC_CONTROL_CLK_SEL_INT_OUT;
->  	} else {
->  		struct clk *clk;
->  
-> 
-
+Yes, as far as I know, almost all of the code in the tools directory
+is userspace. Atleast, strscpy isn't available for the code inside
+tools and scripts.
 
