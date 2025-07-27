@@ -1,174 +1,139 @@
-Return-Path: <linux-kernel+bounces-747099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4F5B12FA6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2CCB12FA8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A913BB74D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 13:09:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14F9D189911F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 13:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC1C2185AA;
-	Sun, 27 Jul 2025 13:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74848217701;
+	Sun, 27 Jul 2025 13:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ionic.de header.i=@ionic.de header.b="Ok/jC0Oi"
-Received: from mail.ionic.de (ionic.de [145.239.234.145])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVJWTRgO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2200011185;
-	Sun, 27 Jul 2025 13:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.234.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C792E11185;
+	Sun, 27 Jul 2025 13:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753621791; cv=none; b=LU06qBnqo1IE2Ds2NrmF5O0iNPDa5vwAOA8+0hgHiopSQkaKQnb/EOgrjtFj77pH9zBfRFI9MNZK9mXJDAnd1rRkF8UGixFlMJugyGqqPO9SCFby5FnV0D0j39Og4qjJLENpXNp3Zp0jfApPcrpWp86ezk4kG1LNxGXiDL8SUXs=
+	t=1753621805; cv=none; b=tTOR0QX7wWSBn62a7oyXc4xWH02FUliEhAZ5C/5Nucl8/y7/rQPb7L9Ji5c7oqwOPIjEsDQK2sB9Ecw7cD2t0NX7jmrPGyedks1Bux/Z7k/pquiDTjIVrsI7mhXypa/AesNO4IKHnXVH1nJlbYl1OgkUtTYoduvY2wYijd+TbWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753621791; c=relaxed/simple;
-	bh=I5Z2QClN5RPATht/z9FcUBBM0IejBZrF2BYOLP5CdJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z5o1841QuPxEVLN4Su+E6fyuSQ06cbsdt9aPbISGpxLhRmrtceExwyw5cL2LlPmFHrA9cR01o4Q5bb+YJk7k1GO9oLxz8zL4vck154DUpY528h+ri/3A8aI1G+AsrKgYLcLief8g+/29izmuoWXydvGFwuQFCkS5mm1CkhwUwBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ionic.de; spf=pass smtp.mailfrom=ionic.de; dkim=pass (1024-bit key) header.d=ionic.de header.i=@ionic.de header.b=Ok/jC0Oi; arc=none smtp.client-ip=145.239.234.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ionic.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionic.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ionic.de; s=default;
-	t=1753621779; bh=I5Z2QClN5RPATht/z9FcUBBM0IejBZrF2BYOLP5CdJI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ok/jC0OiuOwtiAL8rS/kAZ9DZOTltL1bzJQZAzfZnTTXiICCSj7aGkQZJ24kkNHgS
-	 F9K98fjIDBkEHgIYsYur5f478Z1E7Seg2OWW5QtfWNq3DOWfkbGVoYcEmn7uYxWxI3
-	 16+KMYj0/C+uFRSXBgoxlzY1FRN5ylLRv0DXB09g=
-Received: from [172.24.215.49] (unknown [185.102.219.57])
-	by mail.ionic.de (Postfix) with ESMTPSA id 7D97A1480AF7;
-	Sun, 27 Jul 2025 15:09:39 +0200 (CEST)
-Message-ID: <a42d70aa-76b8-4034-9695-2e639e6471a2@ionic.de>
-Date: Sun, 27 Jul 2025 15:09:38 +0200
+	s=arc-20240116; t=1753621805; c=relaxed/simple;
+	bh=Y+6QxsoXEpzrUXDeHyzUwKuI33IwVMqc71T8uhrKvco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qv4Y1nW7jEQWwadz7cfM3TSaT8RsUV0a3dpMAmWOp3L8C5SyxIVIGCmEEkFFRVQgascVp4DkQqJId61L04B7S8EkGs/JvwtRh0FTz7GpawIqGBhbM5xjhS+Sco1tQQi5HhUk34QT88pznx66ZfJj7UEo7GMa0+om0Guf30su5MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVJWTRgO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AEBCC4CEEB;
+	Sun, 27 Jul 2025 13:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753621805;
+	bh=Y+6QxsoXEpzrUXDeHyzUwKuI33IwVMqc71T8uhrKvco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SVJWTRgO2CigYLAzc5cLRoeUHeRmEvu7Q9i1R/5fJ07opp309kq3ZT/iakcPg0vXw
+	 uqIOba+TMKwe+Y3HJvG1NEqMwPTM8gaIeQiRSW9w4uY7wUTQcltGTtAHLrpJGTmWgu
+	 my5XJtyhJ8JZVd04JDIMMt1UNGxsCvduvOp7zJ7TIQLZBpLvkKmyKA5UO0u6OvimkV
+	 RM3mYWERZ2wCFb2xZ8xFT63IULJocIkR4tehF6NtBjpFgWMvMtW5O2SSWJq6ZomGBP
+	 b+h9CeMRVbfBJZHhsHW1Tq9cTZ6c9D+QZAh+yWjvTPxbuv3yJmaFX1rIhjo1uOimem
+	 ZSI9G2/8wPTLw==
+Date: Sun, 27 Jul 2025 09:10:02 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 14/14 for v6.17] vfs iomap
+Message-ID: <aIYlKgQZNF7-LgIp@lappy>
+References: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
+ <20250725-vfs-iomap-e5f67758f577@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/11] net: qrtr: support identical node ids
-To: Simon Horman <horms@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
- Denis Kenzior <denkenz@gmail.com>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S . Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <cover.1753312999.git.ionic@ionic.de>
- <8fc53fad3065a9860e3f44cf8853494dd6eb6b47.1753312999.git.ionic@ionic.de>
- <20250724130836.GL1150792@horms.kernel.org>
-Content-Language: en-US
-From: Mihai Moldovan <ionic@ionic.de>
-Autocrypt: addr=ionic@ionic.de; keydata=
- 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
- S0VlnF9z
-In-Reply-To: <20250724130836.GL1150792@horms.kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------qeYid7Fq0OznbNli2EiBuPfg"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250725-vfs-iomap-e5f67758f577@brauner>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------qeYid7Fq0OznbNli2EiBuPfg
-Content-Type: multipart/mixed; boundary="------------B23yLLFmxhUkN2FjZt09BvXo";
- protected-headers="v1"
-From: Mihai Moldovan <ionic@ionic.de>
-To: Simon Horman <horms@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
- Denis Kenzior <denkenz@gmail.com>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S . Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Message-ID: <a42d70aa-76b8-4034-9695-2e639e6471a2@ionic.de>
-Subject: Re: [PATCH v3 04/11] net: qrtr: support identical node ids
-References: <cover.1753312999.git.ionic@ionic.de>
- <8fc53fad3065a9860e3f44cf8853494dd6eb6b47.1753312999.git.ionic@ionic.de>
- <20250724130836.GL1150792@horms.kernel.org>
-In-Reply-To: <20250724130836.GL1150792@horms.kernel.org>
+Hey Christian,
 
---------------B23yLLFmxhUkN2FjZt09BvXo
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+On Fri, Jul 25, 2025 at 01:27:20PM +0200, Christian Brauner wrote:
+>Hey Linus,
+>
+>/* Summary */
+>This contains the iomap updates for this cycle:
+>
+>- Refactor the iomap writeback code and split the generic and ioend/bio
+>  based writeback code. There are two methods that define the split
+>  between the generic writeback code, and the implemementation of it,
+>  and all knowledge of ioends and bios now sits below that layer.
+>
+>- This series adds fuse iomap support for buffered writes and dirty
+>  folio writeback. This is needed so that granular uptodate and dirty
+>  tracking can be used in fuse when large folios are enabled. This has
+>  two big advantages. For writes, instead of the entire folio needing to
+>  be read into the page cache, only the relevant portions need to be.
+>  For writeback, only the dirty portions need to be written back instead
+>  of the entire folio.
 
-KiBPbiA3LzI0LzI1IDE1OjA4LCBTaW1vbiBIb3JtYW4gd3JvdGU6DQo+IFsuLi5dDQoNClRo
-YW5rIHlvdSBmb3IgdGhlIHJldmlld3MsIHRvIGJvdGggeW91IGFuZCBKYWt1Yi4NCg0KDQo+
-IFRoaXMgd2lsbCBsZWFrIGhvbGRpbmcgcXJ0cl9ub2Rlc19sb2NrLg0KDQpJdCBjZXJ0YWlu
-bHkgZG9lcywgd2lsbCBiZSBmaXhlZCBpbiB2NC4NCg0KDQo+IEZsYWdnZWQgYnkgU21hdGNo
-Lg0KDQpJIGhhdmVuJ3QgdXNlZCBzbWF0Y2ggYmVmb3JlLCBhbmQgcHJvYmFibHkgc2hvdWxk
-IGRvIHNvIGdvaW5nIGZvcndhcmQuDQoNCkN1cmlvdXNseSwgYSBzaW1wbGUga2NoZWNrZXIg
-bmV0L3FydHIvIHJ1biBkaWQgbm90IHdhcm4gYWJvdXQgdGhlIGxvY2tpbmcgaXNzdWUgDQoo
-YWxiZWl0IGl0IGJlaW5nIG9idmlvdXMgaW4gdGhlIHBhdGNoKSwgd2hpbGUgaXQgZGlkIHdh
-cm4gYWJvdXQgdGhlIHNlY29uZCBpc3N1ZSANCndpdGggcmV0LiBBbSBJIG1pc3Npbmcgc29t
-ZXRoaW5nPw0KDQoNCj4gQnV0IHJldCBpcyBub3cgMCwgd2hlcmVhcyBiZWZvcmUgdGhpcyBw
-YXRjaCBpdCB3YXMgLUVJTlZBTC4NCj4gVGhpcyBzZWVtcyBib3RoIHRvIGJlIGFuIHVuaW50
-ZW50aW9uYWwgc2lkZSBlZmZlY3Qgb2YgdGhpcyBwYXRjaCwNCj4gYW5kIGluY29ycmVjdC4N
-Cg0KVHJ1ZS4gV2lsbCBhbHNvIGZpeGVkIGluIHY0Lg0KDQoNCk1paGFpDQo=
+While testing with the linus-next tree, it appears that LKFT can trigger
+the following warning, but only on arm64 tests (both on real HW as well
+as qemu):
 
---------------B23yLLFmxhUkN2FjZt09BvXo--
+[ 333.129662] WARNING: CPU: 1 PID: 2580 at fs/fuse/file.c:2158 fuse_iomap_writeback_range+0x478/0x558 fuse
+[  333.132010] Modules linked in: btrfs blake2b_generic xor xor_neon raid6_pq zstd_compress sm3_ce sha3_ce sha512_ce fuse drm backlight ip_tables x_tables
+[  333.133982] CPU: 1 UID: 0 PID: 2580 Comm: msync04 Tainted: G        W           6.16.0-rc7 #1 PREEMPT
+[  333.134997] Tainted: [W]=WARN
+[  333.135497] Hardware name: linux,dummy-virt (DT)
+[  333.136114] pstate: 03402009 (nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+WARNING! No debugging info in module fuse, rebuild with DEBUG_KERNEL and DEBUG_INFO
+[ 333.137090] pc : fuse_iomap_writeback_range+0x478/0x558 fuse
+[ 333.138009] lr : iomap_writeback_folio (fs/iomap/buffered-io.c:1586 fs/iomap/buffered-io.c:1710)
+[  333.138510] sp : ffff80008be8f8c0
+[  333.138653] x29: ffff80008be8f8c0 x28: fff00000c5198c00 x27: 0000000000000000
+[  333.138975] x26: fff00000d32b8c00 x25: 0000000000000000 x24: 0000000000000000
+[  333.139309] x23: 0000000000000000 x22: fffffc1fc039ba40 x21: 0000000000001000
+[  333.139600] x20: ffff80008be8f9f0 x19: 0000000000000000 x18: 0000000000000000
+[  333.139917] x17: 0000000000000000 x16: ffffbb40f61c3a48 x15: 0000000000000000
+[  333.142199] x14: ffffbb40f6924788 x13: 0000ffff8e8effff x12: 0000000000000000
+[  333.142739] x11: 1ffe0000199a9241 x10: fff00000ccd4920c x9 : ffffbb40f50bba18
+[  333.143466] x8 : ffff80008be8f778 x7 : ffffbb40ee180b68 x6 : ffffbb40f76c9000
+[  333.143718] x5 : 0000000000000000 x4 : 000000000000000a x3 : 0000000000001000
+[  333.143957] x2 : fff00000c0b6e600 x1 : 000000000000ffff x0 : 0bfffe000000400b
+[  333.144993] Call trace:
+WARNING! No debugging info in module fuse, rebuild with DEBUG_KERNEL and DEBUG_INFO
+[ 333.145466] fuse_iomap_writeback_range+0x478/0x558 fuse (P)
+[ 333.146136] iomap_writeback_folio (fs/iomap/buffered-io.c:1586 fs/iomap/buffered-io.c:1710)
+[ 333.146444] iomap_writepages (fs/iomap/buffered-io.c:1762)
+WARNING! No debugging info in module fuse, rebuild with DEBUG_KERNEL and DEBUG_INFO
+[ 333.146590] fuse_writepages+0xa0/0xe8 fuse
+[ 333.146774] do_writepages (mm/page-writeback.c:2636)
+[ 333.146915] filemap_fdatawrite_wbc (mm/filemap.c:386 mm/filemap.c:376)
+[ 333.147788] __filemap_fdatawrite_range (mm/filemap.c:420)
+[ 333.148440] file_write_and_wait_range (mm/filemap.c:794)
+WARNING! No debugging info in module fuse, rebuild with DEBUG_KERNEL and DEBUG_INFO
+[ 333.149054] fuse_fsync+0x6c/0x138 fuse
+[ 333.149578] vfs_fsync_range (fs/sync.c:188)
+[ 333.149892] __arm64_sys_msync (mm/msync.c:96 mm/msync.c:32 mm/msync.c:32)
+[ 333.150095] invoke_syscall.constprop.0 (arch/arm64/include/asm/syscall.h:61 arch/arm64/kernel/syscall.c:54)
+[ 333.150330] do_el0_svc (include/linux/thread_info.h:135 (discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2) arch/arm64/kernel/syscall.c:151 (discriminator 2))
+[ 333.150461] el0_svc (arch/arm64/include/asm/irqflags.h:82 (discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator 1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1) arch/arm64/kernel/entry-common.c:165 (discriminator 1) arch/arm64/kernel/entry-common.c:178 (discriminator 1) arch/arm64/kernel/entry-common.c:768 (discriminator 1))
+[ 333.150583] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:787)
+[ 333.150729] el0t_64_sync (arch/arm64/kernel/entry.S:600)
+[  333.150862] ---[ end trace 0000000000000000 ]---
 
---------------qeYid7Fq0OznbNli2EiBuPfg
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+I think that this is because the arm64 tests run on
+CONFIG_PAGE_SIZE_64KB=y build, but I'm not sure why we don't see it with
+4KB pages at all.
 
------BEGIN PGP SIGNATURE-----
+An example link to a failing test that has the full log and more
+information: https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.13-rc7-44385-g8a03a07bad83/testrun/29269158/suite/log-parser-test/test/exception-warning-cpu-pid-at-fsfusefile-fuse_iomap_writeback_range/details/
 
-wsF5BAABCAAjFiEEbhHQj3UzgcdE8cg8H9Yu2W4lOocFAmiGJRIFAwAAAAAACgkQH9Yu2W4lOofN
-lhAAi7qihoRFCY43N2VoNHrUrrZmiMi+2akoYpqMtFskVfu+hp6r12ELJAWJHBYvU8NvJLLpjbci
-QnP1MH3XuAy0BXqFEtU5e2/T8fzljMc5duivcMISQFWg3d7Qo82u5CsjX7SSKVS7fFQ8q6Qbm49G
-/Qe3HAA1JPnRCameIj3v9RwF59vkFhaneBn4kCukVm7Yy/iIh3c+oV852y2mow7bi0YeHKDmXeDV
-GA/x3IH8IGpbRvloIze9R+r/Mgp4eijF96OM8L3ltb5OuBuBGgkOvpQ9afZ8vlBpJZtfPLcBCS0r
-Fn9RKAWrPw3Jikn4epkscSdpWB9+7X5WqnMZRu5IwvviAn/mH7yeO1yEUFKFmA7f9Lrl+AMtxjvC
-sNRp7f7ydHaGj1iN+GbbfCzGhyNE5DGKFwtanALymxzhTzmMqncXS5quMpf5V7muLvLjbmoTxMJb
-Puv4nt6gItFpWirdpp7jXo93gCFn9OVYK/yk5GoMUI/cRrSbmbpJGFQwNZjoFx19LRPeJI5ZxiST
-bgsRN7JKxFX1zouGGF+qPEZU485grHxxQqhocrP5KWMrePXlBL4ng8QGMZcJ/v5QJ0Tz2L5R/WPo
-rO8ToqrwVh9t+As72/+98GE1NrHikpcdCrJ3OehLoetfRSS05gAyiAuOPI7YwNtSjnWbG3cFk+gP
-O4Q=
-=PkUt
------END PGP SIGNATURE-----
-
---------------qeYid7Fq0OznbNli2EiBuPfg--
+-- 
+Thanks,
+Sasha
 
