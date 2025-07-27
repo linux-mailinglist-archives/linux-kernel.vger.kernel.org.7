@@ -1,215 +1,171 @@
-Return-Path: <linux-kernel+bounces-746938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AB3B12D46
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 02:59:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE4BB12D48
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 03:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517AF17682F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 00:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A084A16FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 01:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243D952F88;
-	Sun, 27 Jul 2025 00:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642FE7DA6C;
+	Sun, 27 Jul 2025 01:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZXfkx7Gp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ae1MjPUZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D7414A8B;
-	Sun, 27 Jul 2025 00:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B327413AF2;
+	Sun, 27 Jul 2025 01:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753577931; cv=none; b=rc67FJ7i2g3qN/XTodOh760ymgPFVSUopWzt9ywoYoXesBH6fPM+gw4EBuImytKqaaFNgAv4qztBaghFCT8uCdM6tBGLziZBwof4Uc4ZkMk3ZuqdZMpxMmfB59sD5gmRZFb4c8WXKOpGaztXKgCLOBSZpIeG+8lt7Xm2inMW84Q=
+	t=1753578051; cv=none; b=P15xlYB/VF6XHMzoPWxKITAtUzkIi3GioNtN+k6eujbl4DxF8tyTe6lsp+KklPj1eXaGPDC0LRL8pOLrMEOUoRdJA0aO95ElvJcHI+h36VslLf9eVt/ubg8+DmELMEd7OB9C9gM630UNwH15tUghu50W8lx7jUJ8eujR60XwCpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753577931; c=relaxed/simple;
-	bh=h89CzlG5Uwr7KSli3FIIw5sVKNhuYoUuSvarvHfA5V0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=caxWl4XpmPuk14JlIl/hRj0BtvjA5tOLsL2ZhGc0mrGJUoe137Wo1/cZLEXzw+HrxJJ1bx8jZErzNl6pOc26VqU1xYZ1hWAM+wBn24QdMoZOX023mM1nfCcp37v8wCpW4XwIWmf0hiaVBZTvhBSJW+vGb4RjVrjJtfQT0xElf2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZXfkx7Gp; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753577929; x=1785113929;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=h89CzlG5Uwr7KSli3FIIw5sVKNhuYoUuSvarvHfA5V0=;
-  b=ZXfkx7GpM6MKDqbV8+AifsCyze89rzHEarshTUufFjATT+2K/iIMu7I6
-   NJlu2uu6FeGYF5VconZVoN4qQdUD+NnYDUpC88QWbSy9KQyJUYb8Szn6z
-   KzNgdfNgiHP/ntG/Rb3HYDb7x0bsX/Bhdd6M7GLJ07BHi1B+oimPUJu4m
-   y2OYd+AqZ1c6Go+0A6o0g87zZVmMsmA0sZAy9MKUhffi3nEMo+LutJNUw
-   BTCjzY6ZGkfSMyDTila7BNMJOTUyELuRl3RGhDzeU8ZvX7EyuLUuhc0E2
-   HsTkB6j9qkM9dEDWZ3nFlB6RyrSr6I43Px44vft4RMxliWF6GNQtpWQNX
-   Q==;
-X-CSE-ConnectionGUID: PAcVTFf6RxGCEbiCnz5biA==
-X-CSE-MsgGUID: AbgjX4PSSPSBLzmZLFVkjA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="55951485"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="55951485"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2025 17:58:48 -0700
-X-CSE-ConnectionGUID: wPhHR4UjTYaxYkDs9BJ6Xg==
-X-CSE-MsgGUID: kT8KfUMHR7mDyL7f/wMHGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="162637035"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 26 Jul 2025 17:58:43 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ufpiq-000MNX-2c;
-	Sun, 27 Jul 2025 00:58:40 +0000
-Date: Sun, 27 Jul 2025 08:57:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: huaqian.li@siemens.com, christophe.jaillet@wanadoo.fr
-Cc: oe-kbuild-all@lists.linux.dev, baocheng.su@siemens.com,
-	bhelgaas@google.com, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, diogo.ivo@siemens.com,
-	helgaas@kernel.org, huaqian.li@siemens.com, jan.kiszka@siemens.com,
-	kristo@kernel.org, krzk+dt@kernel.org, kw@linux.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, lpieralisi@kernel.org, nm@ti.com,
-	robh@kernel.org, s-vadapalli@ti.com, ssantosh@kernel.org,
-	vigneshr@ti.com
-Subject: Re: [PATCH v11 3/7] soc: ti: Add IOMMU-like PVU driver
-Message-ID: <202507270850.rFyJ9cu3-lkp@intel.com>
-References: <20250723034521.138695-4-huaqian.li@siemens.com>
+	s=arc-20240116; t=1753578051; c=relaxed/simple;
+	bh=i04joahZ7AlXGF/TYePnuX2oiqMpq4D4TwWOHYF//Ac=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lsWCdQ7jv+S5fblPPBkki2pnVUA7JmxgRr8kVLDSMXKJ0f6Y8LtvyfXnhnIgHagQ5+ekWeuFLWIIDkWJ0tJLszzyPBHnFDo0egtAjhTBlrjtDRwV2zBdo2SkDSUXbvNN6PwiftpLNEc4h4W02zGhplPAOKzOckYCO4TVzwtej8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ae1MjPUZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F68C4CEED;
+	Sun, 27 Jul 2025 01:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753578051;
+	bh=i04joahZ7AlXGF/TYePnuX2oiqMpq4D4TwWOHYF//Ac=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Ae1MjPUZLc9E5viz7ZJ3lHJaqmHt0f1OmsK5o5DOi5OmHQtWlvck2OCHuKHBWUSer
+	 CdygWA4v0OCmd3ToI16uJ6XdDjZZH53QW/RfB82f1vX96OXes34slei/LQqvM4+KcV
+	 q5/CEBXRoAubZMzCJThSFSzW6wZmmh5PRxXNqg0CLqc7vaiSE5wOjzo5p+ehwev477
+	 H0P5K05TbW0QEOw9nQGqrbYrLmIqJJMh++NqYYdTUX+r0YDp2pVwHspY/af6lbYc6N
+	 zi6ghsvSlEG9ULL9E41qOk/Qsa8k++o+nbC9Cbim2sTHMLgB2c1AfNHKGB1QVgMIgG
+	 2t1jP/GqbckWQ==
+Message-ID: <c4bf63161e13ce1b51a288b1fd0f3fb0b1170f22.camel@kernel.org>
+Subject: Re: [PATCH v4 0/5] Support trampoline for LoongArch
+From: Geliang Tang <geliang@kernel.org>
+To: Chenghao Duan <duanchenghao@kylinos.cn>, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, yangtiezhu@loongson.cn, 
+	hengqi.chen@gmail.com, chenhuacai@kernel.org
+Cc: martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ bpf@vger.kernel.org, 	guodongtai@kylinos.cn, youling.tang@linux.dev,
+ jianghaoran@kylinos.cn, 	vincent.mc.li@gmail.com
+Date: Sun, 27 Jul 2025 09:00:43 +0800
+In-Reply-To: <20250724141929.691853-1-duanchenghao@kylinos.cn>
+References: <20250724141929.691853-1-duanchenghao@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723034521.138695-4-huaqian.li@siemens.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hi Chenghao, Huacai, Tuezhu,
 
-kernel test robot noticed the following build warnings:
+I first discovered this Loongarch BPF trampoline issue when debugging
+MPTCP BPF selftests on a Loongarch machine last June (see my commit
+eef0532e900c "selftests/bpf: Null checks for links in bpf_tcp_ca"), and
+reported it to Huachui. Tiezhu and I started implementing BPF
+trampoline last June. I also called on more Chinese kernel engineers to
+participate in the development of the Loongarch BPF trampoline at the
+openEuler Developer Day 2024 and CLSF 2024 conferences. Although this
+work was finally handed over to Chenghao, it is also necessary to
+mention me as the reporter and our early developers in the commit log.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on pci/next pci/for-linus linus/master v6.16-rc7 next-20250725]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks,
+-Geliang
 
-url:    https://github.com/intel-lab-lkp/linux/commits/huaqian-li-siemens-com/dt-bindings-soc-ti-Add-AM65-peripheral-virtualization-unit/20250723-114915
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250723034521.138695-4-huaqian.li%40siemens.com
-patch subject: [PATCH v11 3/7] soc: ti: Add IOMMU-like PVU driver
-config: arm64-randconfig-r131-20250727 (https://download.01.org/0day-ci/archive/20250727/202507270850.rFyJ9cu3-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 853c343b45b3e83cc5eeef5a52fc8cc9d8a09252)
-reproduce: (https://download.01.org/0day-ci/archive/20250727/202507270850.rFyJ9cu3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507270850.rFyJ9cu3-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/soc/ti/ti-pvu.c:422:44: sparse: sparse: Using plain integer as NULL pointer
-   drivers/soc/ti/ti-pvu.c:422:47: sparse: sparse: Using plain integer as NULL pointer
-
-vim +422 drivers/soc/ti/ti-pvu.c
-
-   384	
-   385	static int ti_pvu_probe(struct platform_device *pdev)
-   386	{
-   387		struct device *dev = &pdev->dev;
-   388		struct device_node *its_node;
-   389		void __iomem *base;
-   390		struct ti_pvu *pvu;
-   391		u32 val;
-   392		int ret;
-   393	
-   394		pvu = devm_kzalloc(dev, sizeof(*pvu), GFP_KERNEL);
-   395		if (!pvu)
-   396			return -ENOMEM;
-   397	
-   398		pvu->pdev = pdev;
-   399	
-   400		base = devm_platform_ioremap_resource_byname(pdev, "cfg");
-   401		if (IS_ERR(base))
-   402			return PTR_ERR(base);
-   403	
-   404		pvu->cfg = devm_regmap_init_mmio(dev, base, &pvu_cfg_regmap_cfg);
-   405		if (IS_ERR(pvu->cfg))
-   406			return dev_err_probe(dev, PTR_ERR(pvu->cfg), "failed to init cfg regmap");
-   407	
-   408		ret = devm_regmap_field_bulk_alloc(dev, pvu->cfg, pvu->cfg_fields,
-   409						   pvu_cfg_reg_fields, PVU_MAX_CFG_FIELDS);
-   410		if (ret)
-   411			return dev_err_probe(dev, ret, "failed to alloc cfg regmap fields");
-   412	
-   413		pvu->num_tlbs = pvu_field_read(pvu, PVU_TLBS);
-   414		pvu->num_entries = pvu_field_read(pvu, PVU_TLB_ENTRIES);
-   415		dev_info(dev, "TLBs: %d, entries per TLB: %d\n", pvu->num_tlbs,
-   416			 pvu->num_entries);
-   417	
-   418		pvu->tlbif_base = devm_platform_ioremap_resource_byname(pdev, "tlbif");
-   419		if (IS_ERR(pvu->tlbif_base))
-   420			return PTR_ERR(pvu->tlbif_base);
-   421	
- > 422		its_node = of_find_compatible_node(0, 0, "arm,gic-v3-its");
-   423		if (its_node) {
-   424			u32 pre_its_window[2];
-   425	
-   426			ret = of_property_read_u32_array(its_node,
-   427							 "socionext,synquacer-pre-its",
-   428							 pre_its_window,
-   429							 ARRAY_SIZE(pre_its_window));
-   430			if (ret) {
-   431				dev_err(dev, "failed to read pre-its property\n");
-   432				return ret;
-   433			}
-   434	
-   435			ret = pvu_create_region(pvu, pre_its_window[0],
-   436						pre_its_window[1]);
-   437			if (ret)
-   438				return ret;
-   439		}
-   440	
-   441		/* Enable the first two TLBs, chaining from 0 to 1 */
-   442		val = readl(pvu->tlbif_base + PVU_CHAIN);
-   443		val |= PVU_CHAIN_EN | 1;
-   444		writel(val, pvu->tlbif_base + PVU_CHAIN);
-   445	
-   446		val = readl(pvu->tlbif_base + PVU_CHAIN + 0x1000);
-   447		val |= PVU_CHAIN_EN;
-   448		writel(val, pvu->tlbif_base + PVU_CHAIN + 0x1000);
-   449	
-   450		pvu_field_write(pvu, PVU_DMA_CNT, 0);
-   451		pvu_field_write(pvu, PVU_DMA_CL0, 0);
-   452		pvu_field_write(pvu, PVU_DMA_CL1, 0);
-   453		pvu_field_write(pvu, PVU_DMA_CL2, 0);
-   454		pvu_field_write(pvu, PVU_DMA_CL3, 0);
-   455		pvu_field_write(pvu, PVU_MAX_VIRTID, NUM_VIRTIDS);
-   456	
-   457		ret = platform_get_irq(pdev, 0);
-   458		if (ret < 0)
-   459			return dev_err_probe(dev, ret, "failed to get irq\n");
-   460	
-   461		ret = devm_request_irq(dev, ret, pvu_fault_isr, 0, dev_name(dev), pvu);
-   462		if (ret)
-   463			return dev_err_probe(dev, ret, "failed to request irq\n");
-   464	
-   465		pvu_field_write(pvu, PVU_EXC_ENABLE, 1);
-   466		pvu_field_write(pvu, PVU_ENABLED, 1);
-   467	
-   468		dev_set_drvdata(dev, pvu);
-   469	
-   470		mutex_lock(&ti_pvu_lock);
-   471		list_add(&pvu->entry, &ti_pvu_list);
-   472		mutex_unlock(&ti_pvu_lock);
-   473	
-   474		return 0;
-   475	}
-   476	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Thu, 2025-07-24 at 22:19 +0800, Chenghao Duan wrote:
+> v4:
+> 1. Delete the #3 patch of version V3.
+> 
+> 2. Add 5 NOP instructions in build_prologue().
+>    Reserve space for the move_imm + jirl instruction.
+> 
+> 3. Differentiate between direct jumps and ftrace jumps of trampoline:
+>    direct jumps skip 5 instructions.
+>    ftrace jumps skip 2 instructions.
+> 
+> 4. Remove the generation of BL jump instructions in
+> emit_jump_and_link().
+>    After the trampoline ends, it will jump to the specified register.
+>    The BL instruction writes PC+4 to r1 instead of allowing the
+>    specification of rd.
+> 
+> ---------------------------------------------------------------------
+> --
+> Historical Version:
+> v3:
+> 1. Patch 0003 adds EXECMEM_BPF memory type to the execmem subsystem.
+> 
+> 2. Align the size calculated by arch_bpf_trampoline_size to page
+> boundaries.
+> 
+> 3. Add the flush icache operation to larch_insn_text_copy.
+> 
+> 4. Unify the implementation of bpf_arch_xxx into the patch
+> "0004-LoongArch-BPF-Add-bpf_arch_xxxxx-support-for-Loong.patch".
+> 
+> 5. Change the patch order. Move the patch
+> "0002-LoongArch-BPF-Update-the-code-to-rename-validate_.patch" before
+> "0005-LoongArch-BPF-Add-bpf-trampoline-support-for-Loon.patch".
+> 
+> URL for version v3:
+> https://lore.kernel.org/all/20250709055029.723243-1-duanchenghao@kylinos.cn/
+> ---------
+> v2:
+> 1. Change the fixmap in the instruction copy function to
+> set_memory_xxx.
+> 
+> 2. Change the implementation method of the following code.
+> 	- arch_alloc_bpf_trampoline
+> 	- arch_free_bpf_trampoline
+> 	Use the BPF core's allocation and free functions.
+> 
+> 	- bpf_arch_text_invalidate
+> 	Operate with the function larch_insn_text_copy that carries
+> 	memory attribute modifications.
+> 
+> 3. Correct the incorrect code formatting.
+> 
+> URL for version v2:
+> https://lore.kernel.org/all/20250618105048.1510560-1-duanchenghao@kylinos.cn/
+> ---------
+> v1:
+> Support trampoline for LoongArch. The following feature tests have
+> been
+> completed:
+> 	1. fentry
+> 	2. fexit
+> 	3. fmod_ret
+> 
+> TODO: The support for the struct_ops feature will be provided in
+> subsequent patches.
+> 
+> URL for version v1:
+> https://lore.kernel.org/all/20250611035952.111182-1-duanchenghao@kylinos.cn/
+> ---------------------------------------------------------------------
+> --
+> 
+> Chenghao Duan (4):
+>   LoongArch: Add larch_insn_gen_{beq,bne} helpers
+>   LoongArch: BPF: Update the code to rename validate_code to
+>     validate_ctx
+>   LoongArch: BPF: Add bpf_arch_xxxxx support for Loongarch
+>   LoongArch: BPF: Add bpf trampoline support for Loongarch
+> 
+> Tiezhu Yang (1):
+>   LoongArch: BPF: Add struct ops support for trampoline
+> 
+>  arch/loongarch/include/asm/inst.h |   3 +
+>  arch/loongarch/kernel/inst.c      |  60 ++++
+>  arch/loongarch/net/bpf_jit.c      | 521
+> +++++++++++++++++++++++++++++-
+>  arch/loongarch/net/bpf_jit.h      |   6 +
+>  4 files changed, 589 insertions(+), 1 deletion(-)
 
