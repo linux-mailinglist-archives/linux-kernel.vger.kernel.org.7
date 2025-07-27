@@ -1,114 +1,111 @@
-Return-Path: <linux-kernel+bounces-747131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25984B1301C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:41:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB73DB13020
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D7963B93E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:41:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B3C17A055E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2344213E6A;
-	Sun, 27 Jul 2025 15:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16B421ADB5;
+	Sun, 27 Jul 2025 15:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yWSXGF17"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNSDAQOK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF8D1E0DE3;
-	Sun, 27 Jul 2025 15:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2E470825;
+	Sun, 27 Jul 2025 15:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753630897; cv=none; b=eS8vRk2uHvvJ/EW9PfUQquum9vhw9vbaZCIrndUmS9V6WgJwzjGmkU+U6Mivm6/XlhBf/Dao1xKAxwGoWdmKuBJU4a0g8bgtMCnkXr3WpiIUMBvjh2a0v02anxs+N4FcOZgl+hW9Hjp6CyBRza5ljq3eQqfRYvZw9gJMVD1c2Cw=
+	t=1753631026; cv=none; b=s1LVSJDmBOdwvlVw/6dSmfz2IncWuQSqrClJULT4JADJiv6fKU+l5NzQ5zSuW9Un0iIGvER23F1a6mNTssTn8C6F/3ampvhHL9RmY0ze3wKpHGFnrMyJ2cfTLf1uvsLdZrdi0BJjIaSys+NjH/XV+YnvWEL7Km0iw7xtWZ6P+9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753630897; c=relaxed/simple;
-	bh=fdWsRr76VPxCb1sl1z2gOTjS+byCJ1yMoFJqtEpWYgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e1NdTeiroWIn4F2xseu7UnEsmIzOvcrU/FtmJ9K7/m8Ad/er882eUAjjRtj0npGDgr9jQz5ngiMnLJ3287ig9wnnXeaEZEqoTWMSqUfmT+CQT2XkNA7VJOpAcy2mPlo3EwaJFz8q6RjSVuXyaJB/I08/mSorUaSU4S78D7uXY+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWSXGF17; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=d5ryRhpyND7wEhukHccAa9IlpSds5iUzN84/Vv2SGcQ=; b=yWSXGF17nfhsTwPzfkXMnKng+G
-	Ca7TNYvp8is2UUWbCdHkcOpGPCEYAJalh+xSrYC2DFYAYxC6l+r//97CaobWk+/G4zd3ss1z1qx7m
-	X/O5q8q/R7qiH3xZFDA3+SlcG+DAvP9ben3LkEr7vZg7We60/DVI2IJds2Gm6TQwlIzKvYKh4fiLg
-	QPw5+pt5Flj1os1isgRv+OBsehHfJOYiIM2cCLsPNaI4EUfpOzOT3QIAC2QVdzRJkqY4IUe4MluQx
-	TiRmnzXeR7UNoZBHTf78499PVy6DX5p7QM3Dv+5TD41WSKr4DJ6DtJkkVESeOG6q9xlNFNlGfCxDT
-	kHNqC0Rg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ug3V7-0000000Cs3W-1fxZ;
-	Sun, 27 Jul 2025 15:41:25 +0000
-Message-ID: <5ac25ceb-023d-409d-8e7e-014d010c5028@infradead.org>
-Date: Sun, 27 Jul 2025 08:41:24 -0700
+	s=arc-20240116; t=1753631026; c=relaxed/simple;
+	bh=zoz469+SQa2Dc1zsiysjdo7V3MLdODW25CN/F08aRPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sUQhqu6mEb9V1J1i33RU6K62NOo/Sz0ocLF7KTrDtmcoamEXssEw0YFqV/v5RX4e87/Q6XsWnpvGyBAe8HYIw4YQJfpoQ4dCfhycQ6G2ef8hctFFbepv0oYNm5f0A98eQXqRHSUT4pcn7N//t46VDonsqrseofJfIYDfr2A9U0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNSDAQOK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB12C4CEEB;
+	Sun, 27 Jul 2025 15:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753631025;
+	bh=zoz469+SQa2Dc1zsiysjdo7V3MLdODW25CN/F08aRPk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NNSDAQOKCwm/+WN0tGh0gq4l2b+lBKfp1MpmkK7LUJJ9K5gLUXVLUfex6A4F3bg0A
+	 BfaFyUWY75W7CMPyR8rSS0Ye5N2fOuDVJjFhmWiUQJVpCCgUsl7AMm8b5mjidc1qUK
+	 +qPF02BQFdjJ4wRK79Uk/xpkGzUKUovuu5k6JXc8bJW4Ydx+cbT/EScImRPcKoc2Qi
+	 V4HuZFeCTxJlMKjbrBXy2VRifrTGU4HfTe+aH+d5lrtc+eZ3znb28IFJugYNG5Our2
+	 Fa8gGY4QhltOQTYgSmudIC/r+JYKP/wW6KiiiAEfljSZkwQU3mYwJrYwvXLoUdUkpJ
+	 /bwdAykUXa1Hw==
+Date: Sun, 27 Jul 2025 16:43:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Michal Simek <michal.simek@amd.com>
+Cc: Sean Anderson <sean.anderson@linux.dev>, Salih Erim
+ <salih.erim@amd.com>, "O'Griofa, Conall" <conall.ogriofa@amd.com>, Anand
+ Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, linux-iio@vger.kernel.org,
+ David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, linux-arm-kernel@lists.infradead.org, Andy Shevchenko
+ <andy@kernel.org>, Manish Narani <manish.narani@xilinx.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: xilinx-ams: Unmask interrupts after updating
+ alarms
+Message-ID: <20250727164336.385dda93@jic23-huawei>
+In-Reply-To: <3a77d5db-eeb4-43df-9de0-e6bafea4d9ea@amd.com>
+References: <20250715002847.2035228-1-sean.anderson@linux.dev>
+	<20250724163219.0098ced6@jic23-huawei>
+	<3a77d5db-eeb4-43df-9de0-e6bafea4d9ea@amd.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: powerpc: add htm.rst to toctree
-To: Vishal Parmar <vishistriker@gmail.com>, maddy@linux.ibm.com
-Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
- corbet@lwn.net, linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>
-References: <20250727110145.839906-1-vishistriker@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250727110145.839906-1-vishistriker@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On Fri, 25 Jul 2025 06:47:16 +0200
+Michal Simek <michal.simek@amd.com> wrote:
 
-On 7/27/25 4:01 AM, Vishal Parmar wrote:
-> The file Documentation/arch/powerpc/htm.rst is not included in the
-> index.rst toctree. This results in a warning when building the docs:
+> On 7/24/25 17:32, Jonathan Cameron wrote:
+> > On Mon, 14 Jul 2025 20:28:47 -0400
+> > Sean Anderson <sean.anderson@linux.dev> wrote:
+> >   
+> >> To convert level-triggered alarms into edge-triggered IIO events, alarms
+> >> are masked when they are triggered. To ensure we catch subsequent
+> >> alarms, we then periodically poll to see if the alarm is still active.
+> >> If it isn't, we unmask it. Active but masked alarms are stored in
+> >> current_masked_alarm.
+> >>
+> >> If an active alarm is disabled, it will remain set in
+> >> current_masked_alarm until ams_unmask_worker clears it. If the alarm is
+> >> re-enabled before ams_unmask_worker runs, then it will never be cleared
+> >> from current_masked_alarm. This will prevent the alarm event from being
+> >> pushed even if the alarm is still active.
+> >>
+> >> Fix this by recalculating current_masked_alarm immediately when enabling
+> >> or disabling alarms.
+> >>
+> >> Fixes: d5c70627a794 ("iio: adc: Add Xilinx AMS driver")
+> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> >> ---  
+> > Anand?
+> > 
+> > This seems fine to me, but I'm not that familiar with the hardware or driver.  
 > 
->   WARNING: document isn't included in any toctree: htm.rst
+> Anand left some time ago. Salih or Conall should be able to provide some input.
 > 
-> Add it to the index.rst file so that it is properly included in the
-> PowerPC documentation TOC.
+> Thanks,
+> Michal
 > 
-> Signed-off-by: Vishal Parmar <vishistriker@gmail.com>
 
-There is a fix is available and scheduled to be merged (when?).
+Hi Michal,
 
-See
-https://lore.kernel.org/all/98a8a5ef-45fd-4b1e-a775-d1e1306ad682@linux.ibm.com/
-
-
-| Yes. I am planning to send it as a fix patch in earliest rc for 6.16.
-
-@Maddy, does that mean during the merge window after 6.16 or as a
-merge into 6.16-rcX (which is now)?
-
-Thanks.
-
-> ---
->  Documentation/arch/powerpc/index.rst | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
-> index 0560cbae5fa1..173a787b6cc3 100644
-> --- a/Documentation/arch/powerpc/index.rst
-> +++ b/Documentation/arch/powerpc/index.rst
-> @@ -36,6 +36,7 @@ powerpc
->      vas-api
->      vcpudispatch_stats
->      vmemmap_dedup
-> +    htm
->  
->      features
->  
-
--- 
-~Randy
+Thanks for letting me know.  Would be good to have a MAINTAINERS update patch
+to remove Anand + ideally add someone else.  If not to mark it orphaned
+(will still be covered by the top level IIO entry).
 
 
