@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-747090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFA0B12F88
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:45:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56986B12F8C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365963B94D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:45:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1863B95F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D372F217701;
-	Sun, 27 Jul 2025 12:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C0D215798;
+	Sun, 27 Jul 2025 12:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="auSmkDmj"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="jA6byJEV"
 Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21C826ADD;
-	Sun, 27 Jul 2025 12:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175FD26ADD;
+	Sun, 27 Jul 2025 12:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753620326; cv=none; b=OXpY5NBA3CGdi3pk+SQunjudwVpR901TJy5mbgy2cC6E9/AiCx5FIlDhcWBI3Y1zKzilcmb8zSdtx644yXZg7TAQmxP0Sc4KhObnA/z74EVSXQ/dBWOiKyZtvKb7qlEgCOBMIEpoaTVDlYGnQn+adnM2wICw1YATolB3fGacVkM=
+	t=1753620376; cv=none; b=mcuYytXO2G6+XPNGNgmshNGxo1ktJVh2kCIl4qnd3u8fCniUQ3L8fHSc3pE9OnSOt36Z4BSfEOb2E/aCIGlPgHBN/jbm+y2Tv4GWNLdtjLupVIo3E77FXmN0WPN1X+lZLO3Ca/TQNDMKLX3nbS+T/u/EwP90BIkW5+RvbQhN6eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753620326; c=relaxed/simple;
-	bh=YJQ9n08UXrt/MB8gxQHjbOjHgVm8H6qWDmJ+9NBxXdQ=;
+	s=arc-20240116; t=1753620376; c=relaxed/simple;
+	bh=lqxKySr4HGNDC5cPYk13QRS+Yt3nxpb7ewY6dbZBvA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XhPwJ9igQWCPCwovopAnJ5QvIodgu0Eh4KXd+fgwMTMauPsC+PaoB5UForZlsE4zw039bIKjxx6MFmN/ralXsY932GqQ9cgN0PS5Zas/GIPVIbwPb2hoCJqwJhnPjP/GS+H9s+zS3wgmNpfJHs+AZvtB4yvco9B05gVAo+23/98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=auSmkDmj; arc=none smtp.client-ip=180.181.231.80
+	 Content-Type:Content-Disposition:In-Reply-To; b=s4wswUVy7DFvFSe3EhfHOUNx59K+FqtfmJz//KN7D5IzgbPZPOX5U76Cj1tMGlVxKt7RGsnZYA9G/atcsJoKnLv0tjvoyVkXO0DNozfDaxyw45Dx6h1c5ip7Iz4iST1m5NOnf4BcZvZuekoiol46kisF/CEAzV6vRBxL4OfSLuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=jA6byJEV; arc=none smtp.client-ip=180.181.231.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
@@ -36,30 +36,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=i8n2gLyEyUOh6UKSpBhhS1CfYOGr3T7f2FfB477MpxY=; b=auSmkDmj7a3k4oUBaC+FyEF4NT
-	oKwg2uFSI2z+sXBuoT9if/Vtxe4YXPISfqvJq1S0PiXadjs7flE2x55/xqoxaJc9M2os7Fa97oix6
-	Tzon5j2f3F6CtX4jVUWrY/qjy7HDllEim+Ckl4DpLrQLtR8Bx6S3JfvZt56srKJSPGiCcBQ1gsQRA
-	H7ljG8lmqEvl2h36nRcuAK8Xuq8vStJBjipzMVCRoQciKx7any29fq5FQ1L+bEybW/qU9YbKkUu9r
-	aB6QWWEdzbqHmtgbD2VxnW1YZuUU5eYelQkCyUEqrXxHzl6MeUuOs9uh2y40cmfUoPh/pun3h0Fbx
-	qDfW/Wqg==;
+	bh=kaU3qNPjzkaGKu4iy5fPglG1ICwxZWvNTmm2yQMC2Pw=; b=jA6byJEVq2BGVo2nK3+Zg5Qz3f
+	n66FUjo7PyxNvLykJ4sB2zrJ4K0nLNNQco2/sOOPRKV53wttEnAs9pFzCLIrCCNWUgk9HRpHb2yUf
+	gbWCrp2HTOlpyqP0aww0BmMvsVTaVP8r8seLX0w+UxRQEJ2o25kFIhlXb1Z2VPbexnImZsIPa+w/N
+	AjzGN/PeS6crn7ikCUPUfndcCQ6T5iRVAkTwRZVP55ESb8ZdnAQz38icp5mMm2RmiMeo4do3qYt1X
+	4SouPlJPn4hzWTC/zai7MIlBUMBqJdrAiOrvSQiYKzNmOrrBK+5+aUHX5qDthMFCW/Q3dLC/INapa
+	ZOcRw7oA==;
 Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
 	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1ug0V9-00A4tl-0x;
-	Sun, 27 Jul 2025 20:45:12 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 27 Jul 2025 20:45:11 +0800
-Date: Sun, 27 Jul 2025 20:45:11 +0800
+	id 1ug0W5-00A4un-2X;
+	Sun, 27 Jul 2025 20:46:11 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 27 Jul 2025 20:46:10 +0800
+Date: Sun, 27 Jul 2025 20:46:10 +0800
 From: Herbert Xu <herbert@gondor.apana.org.au>
-To: liulongfang <liulongfang@huawei.com>
-Cc: alex.williamson@redhat.com, jgg@nvidia.com,
-	shameerali.kolothum.thodi@huawei.com, jonathan.cameron@huawei.com,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxarm@openeuler.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [PATCH v5 2/3] migration: qm updates BAR configuration
-Message-ID: <aIYfVyBp6trHWnwj@gondor.apana.org.au>
-References: <20250630085402.7491-1-liulongfang@huawei.com>
- <20250630085402.7491-3-liulongfang@huawei.com>
- <7694ee87-2852-3759-1360-6349f46e7d70@huawei.com>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, liulongfang@huawei.com,
+	qianweili@huawei.com, linwenkai6@hisilicon.com,
+	wangzhou1@hisilicon.com, songzhiqi1@huawei.com
+Subject: Re: [PATCH] crypto: hisilicon/hpre - fix dma unmap sequence
+Message-ID: <aIYfkv1RqP6MR9-j@gondor.apana.org.au>
+References: <20250718100501.3281345-1-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,30 +65,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7694ee87-2852-3759-1360-6349f46e7d70@huawei.com>
+In-Reply-To: <20250718100501.3281345-1-huangchenghai2@huawei.com>
 
-On Tue, Jul 15, 2025 at 03:23:09PM +0800, liulongfang wrote:
-> On 2025/6/30 16:54, Longfang Liu wrote:
-> > On new platforms greater than QM_HW_V3, the configuration region for the
-> > live migration function of the accelerator device is no longer
-> > placed in the VF, but is instead placed in the PF.
-> > 
-> > Therefore, the configuration region of the live migration function
-> > needs to be opened when the QM driver is loaded. When the QM driver
-> > is uninstalled, the driver needs to clear this configuration.
-> > 
-> > Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> > ---
-> >  drivers/crypto/hisilicon/qm.c | 29 +++++++++++++++++++++++++++++
-> >  1 file changed, 29 insertions(+)
-> >
+On Fri, Jul 18, 2025 at 06:05:01PM +0800, Chenghai Huang wrote:
+> From: Zhiqi Song <songzhiqi1@huawei.com>
 > 
-> Hello, Herbert. There is a patch in this patchset that modifies the crypto subsystem.
-> Could you help review it?
+> Perform DMA unmapping operations before processing data.
+> Otherwise, there may be unsynchronized data accessed by
+> the CPU when the SWIOTLB is enabled.
+> 
+> Signed-off-by: Zhiqi Song <songzhiqi1@huawei.com>
+> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
+> ---
+>  drivers/crypto/hisilicon/hpre/hpre_crypto.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-Cheers,
+Patch applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
