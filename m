@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-747260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B17B131A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B4EB131A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E02B1898477
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:59:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866B01897890
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1742E2367DA;
-	Sun, 27 Jul 2025 19:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F387922A7E0;
+	Sun, 27 Jul 2025 19:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5rKyL8a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6IaTgi+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9D02356C0;
-	Sun, 27 Jul 2025 19:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C71221737;
+	Sun, 27 Jul 2025 19:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753646303; cv=none; b=Re4MZriEgerbvbhwpgcs1Ma27RXeiRoW8Qn+UJqG8SGOT0vBA/LFx3jAFUGdVB58MotBpF/Xjj0iYyAghmSLyJ5597eI5hHxmvklPM+YGIuXeoTXlxVFAlPgbfSMcHZH1J6EH4Qsx2NC3u5mrSJ/Nk5PLv0Bq71jbmWyHOmGBWE=
+	t=1753646305; cv=none; b=XT/h3SEs7ovNBBAE60ZA25+OLjLbj6qd6Yww675kdZMIm0w/dl3OCNNVRioH/e8YRBUHbZg0xXoO+py+rn8wm9Hby2kInUfZlAcmL+LiSbcWPrvC8g5W/xaNPtbk0CHQ2mlMq7pSHDqYopDbUklMZt1LKBtm6SK84r72JN4AknY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753646303; c=relaxed/simple;
-	bh=ixTKyJfBR0xmMaTaFtvOU7QBpVjahgLuJtscAk6EDmE=;
+	s=arc-20240116; t=1753646305; c=relaxed/simple;
+	bh=bjWayEAh716FQw0T22n60tZUcfpnlVvoEVEBTenLoFk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=b8hvMCcgzoH9H4/J/mCOOFeQh9duHVbHLntm3hZNrIs6rf/GEL/LcW7A92a45G+DWqtxvc67K8ngO47D7n5v7n7Pn/88qPOcAQWDRTBoqzdJimfxOw7aHbfPQnLM7K2EmiWcVggamld8K9ntK0S7414wBcK/hcmjDuPQ6JiRSfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5rKyL8a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72823C4CEF8;
-	Sun, 27 Jul 2025 19:58:21 +0000 (UTC)
+	 MIME-Version; b=BcGwECp2FhshqlvX6UvOm9KtsVpVqCIOxwcWD0Iss7ql6j73kVOSorGmgUbvi53IMBpRFiZ9K625wLSMC4QNfQloGlUs2ecKw/0rBr4fbGxEd2MCUQlJC8CdRgiHW1pC14/W4E+ROodYXRhyg0MGv7BT+ev2EEaCvFdFxH1y6OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6IaTgi+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59DEBC4CEEB;
+	Sun, 27 Jul 2025 19:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753646303;
-	bh=ixTKyJfBR0xmMaTaFtvOU7QBpVjahgLuJtscAk6EDmE=;
+	s=k20201202; t=1753646304;
+	bh=bjWayEAh716FQw0T22n60tZUcfpnlVvoEVEBTenLoFk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e5rKyL8aI/ol53BFcr+KPmkFF0QiTSJdmjHQTGbHtUJGgNeOePc53sIm00++RCwaG
-	 StwretWahDqyOUoWREspYETQeZ4ASTxtvT/sIyTXGULyjH/E8Eu4mTCT88JXEIi7CT
-	 ODFtplD/mkBHC8+H3hrErga0unE2vYkvN7bNyYSmroqv9uuIzdwuKYEBZOqarOz5Ds
-	 c8GomqPcYLNQVARz3u9iY6N6hnDt7zdrCbjuhjHTasguc0pjyM79MavmQnmsl24g2N
-	 QQn0DjDTvgaQhBY5CAb/gwZOQTVm7DVdWBmMj3lpfDQhvDL8Gm/q6NcKgpDXynTLkH
-	 3/mRmw770Ns7A==
+	b=k6IaTgi++JzLAgZk6lhLqW2G2KKCOKmToowTLMUW4B/tD5JVhvgYU534FyMBgz4aQ
+	 nDMsT5+z0ydR5IAvXUSOC0WqYqFBggfpgzMKguw0JtJ3XEgifnbJnOMWtYRiEAcrCP
+	 vUarHCzm12kqx64+QrrKFIDGVfn46Rl+xVY2UOXTBeeIjrgsfm91ika52A40Rv38YU
+	 iiMmFGC5cSou/aHcy71M8M1AY77gYowYzz3qovPwItgZMstTTMziyiQTA2SoBoJ+xO
+	 sjmYWLMBUj2KCtsqdLxMd9i72vyflamLlMtdz6VG61a+pJgFdg59CHTCy65Ug/sI+8
+	 CcSOUleEaJqtw==
 From: Sasha Levin <sashal@kernel.org>
 To: corbet@lwn.net,
 	linux-doc@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: sashal@kernel.org,
 	konstantin@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	rostedt@goodmis.org
-Subject: [PATCH 3/4] agents: add coding style documentation and rules
-Date: Sun, 27 Jul 2025 15:58:01 -0400
-Message-Id: <20250727195802.2222764-4-sashal@kernel.org>
+Subject: [PATCH 4/4] agents: add legal requirements and agent attribution guidelines
+Date: Sun, 27 Jul 2025 15:58:02 -0400
+Message-Id: <20250727195802.2222764-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250727195802.2222764-1-sashal@kernel.org>
 References: <20250727195802.2222764-1-sashal@kernel.org>
@@ -64,82 +64,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+And below is the first test of this scheme:
+
+Co-developed-by: Claude claude-opus-4-20250514
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/agents/coding-style.rst | 35 +++++++++++++++++++++++++++
- Documentation/agents/index.rst        |  3 ++-
- Documentation/agents/main.rst         |  5 ++++
- 3 files changed, 42 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/agents/coding-style.rst
+ Documentation/agents/index.rst |  3 ++-
+ Documentation/agents/legal.rst | 42 ++++++++++++++++++++++++++++++++++
+ Documentation/agents/main.rst  |  5 ++++
+ 3 files changed, 49 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/agents/legal.rst
 
-diff --git a/Documentation/agents/coding-style.rst b/Documentation/agents/coding-style.rst
-new file mode 100644
-index 000000000000..b0332ee91e6c
---- /dev/null
-+++ b/Documentation/agents/coding-style.rst
-@@ -0,0 +1,35 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+==========================
-+Linux Kernel Coding Style
-+==========================
-+
-+Essential coding style documentation and rules for Linux kernel development.
-+
-+Coding Style Documentation
-+--------------------------
-+
-+The comprehensive guide to Linux kernel coding style, covering indentation, naming conventions, functions, and more.
-+
-+See :ref:`Documentation/process/coding-style.rst <codingstyle>`
-+
-+Programming Language
-+--------------------
-+
-+Information about the C programming language dialect used in the kernel, compiler options, and attributes.
-+
-+See :ref:`Documentation/process/programming-language.rst <programming_language>`
-+
-+Explicit Coding Rules
-+---------------------
-+
-+The following rules must be followed when writing kernel code:
-+
-+**No trailing whitespaces**
-+  Never leave whitespace at the end of lines. Git will warn about patches that introduce trailing whitespace.
-+
-+**80 character line limit**
-+  The preferred limit on the length of a single line is 80 columns. Statements longer than 80 columns should be broken into sensible chunks, unless exceeding 80 columns significantly increases readability and does not hide information.
-+
-+**8 character tabs for indents**
-+  Tabs are 8 characters, and thus indentations are also 8 characters. The kernel uses tabs for indentation, never spaces. This makes code structure clear and warns when nesting becomes too deep.
-\ No newline at end of file
 diff --git a/Documentation/agents/index.rst b/Documentation/agents/index.rst
-index 2737ab62efa0..354af3f025e5 100644
+index 354af3f025e5..982602db3349 100644
 --- a/Documentation/agents/index.rst
 +++ b/Documentation/agents/index.rst
-@@ -8,4 +8,5 @@ Agents
-    :maxdepth: 1
+@@ -9,4 +9,5 @@ Agents
  
     main
--   core
+    core
+-   coding-style
 \ No newline at end of file
-+   core
 +   coding-style
++   legal
 \ No newline at end of file
+diff --git a/Documentation/agents/legal.rst b/Documentation/agents/legal.rst
+new file mode 100644
+index 000000000000..67e6b2cdff9d
+--- /dev/null
++++ b/Documentation/agents/legal.rst
+@@ -0,0 +1,42 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++===============================
++Legal Requirements for Agents
++===============================
++
++This document outlines critical legal requirements that coding agents must follow when working with the Linux kernel codebase.
++
++Licensing Requirements
++----------------------
++
++**GPL-2.0 License**
++  The Linux kernel is licensed under GPL-2.0 only with a syscall exception. Coding agents MUST follow this licensing rule with no exceptions. Any code contributed must be compatible with this license.
++
++**SPDX License Identifiers**
++  All files must have proper SPDX license identifiers. For most kernel source files, this should be the first line of the file in the appropriate comment format:
++
++  - For C source/header files: ``// SPDX-License-Identifier: GPL-2.0``
++  - For scripts: ``# SPDX-License-Identifier: GPL-2.0``
++  - For documentation: ``.. SPDX-License-Identifier: GPL-2.0``
++
++Signed-off-by Restriction
++-------------------------
++
++Coding assistants **MUST NOT** add a ``Signed-off-by`` tag pointing to themselves. The ``Signed-off-by`` tag represents a legal certification by a human developer that they have the right to submit the code under the open source license.
++
++Only the human user running the coding assistant should add their ``Signed-off-by`` tag to commits. The agent's contribution is acknowledged through the ``Co-developed-by`` tag as described below.
++
++Agent Attribution Requirement
++-----------------------------
++
++When creating commits, coding agents **MUST** identify themselves by including the following tag in the commit message::
++
++    Co-developed-by: $AGENT_NAME $AGENT_MODEL $AGENT_VERSION
++
++Examples:
++
++- ``Co-developed-by: Claude claude-3-opus-20240229``
++- ``Co-developed-by: GitHub-Copilot GPT-4 v1.0.0``
++- ``Co-developed-by: Cursor gpt-4-turbo-2024-04-09``
++
++This transparency helps maintainers and reviewers understand that a coding agent was involved in the development process.
 diff --git a/Documentation/agents/main.rst b/Documentation/agents/main.rst
-index 34f13d0b975a..8e0463794b76 100644
+index 8e0463794b76..9ef75978a2e6 100644
 --- a/Documentation/agents/main.rst
 +++ b/Documentation/agents/main.rst
-@@ -10,3 +10,8 @@ Core Development Process
- ------------------------
+@@ -15,3 +15,8 @@ Coding Style
+ ------------
  
- For essential kernel development documentation, see :doc:`core`
+ For coding style guidelines and rules, see :doc:`coding-style`
 +
-+Coding Style
-+------------
++Legal Requirements
++------------------
 +
-+For coding style guidelines and rules, see :doc:`coding-style`
++For licensing, attribution, and legal requirements, see :doc:`legal`
 -- 
 2.39.5
 
