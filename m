@@ -1,123 +1,86 @@
-Return-Path: <linux-kernel+bounces-747066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D69B12F4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 13:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDB8B12F4D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 13:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9E13AFA75
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D546B3A61F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F90320B803;
-	Sun, 27 Jul 2025 11:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432F71FAC37;
+	Sun, 27 Jul 2025 11:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCyVfwMD"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="198YEp3A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C7986329;
-	Sun, 27 Jul 2025 11:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785C69463
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 11:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753614118; cv=none; b=hgtra5HwQHpHVwBwocTqbh4WmmvYW6IL2X5qtNoL8UbIgAuhXIycUtGoxoO90jDtZ7valGKJ3dxgCYvaLprRBSc+HHlZ1mmRO87fvV8bJHwL5R2xPMFqlNYT72migsBCF961cDnkUipLgrrV4VeVokJLgg6WCjVsBaqoHNSYuV4=
+	t=1753614257; cv=none; b=THMNc1xOoydlyl96txGDrwkVpTELFXC4dLb5WBIB+5cvZxxh5wo9eJ61pxFBsVehQ5QH++RXbQhMXj/hmobrYFI7LVLqnCib99RIOJn3pejXc5L2OjUE/qMSieDJz1Ak5AMZ++JwbjWZUiD4BAdYVxFmd9NsGf5KfJbiy27qC0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753614118; c=relaxed/simple;
-	bh=RJW/RMtbYUl9AS02zh6tamJDq2VgGTm+F+qOAYR3U3U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mr1K7NlDHDesyEzfN9etvvDBKbYzyzkAz6hBwptdSwjbG1BlokCCptdbcAxEKhQai9DRFB06RtN8nZLsJJ0gZk2T/Rl63DJx1AQh5+aTa2qkKZJjDLZNx54uhy7akSZo5AA3VqU3GGIRHnrIJl/CEpUPEYh0BAEGdjmiXeSP9hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCyVfwMD; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-75b5be236deso2874792b3a.0;
-        Sun, 27 Jul 2025 04:01:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753614116; x=1754218916; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=btSB13u4wPFzn9262B7O9imh/oQKy98Sasbk1uFPExU=;
-        b=NCyVfwMD+6aToZuVFAxWvteR0gD8orOGykn3eqgWh2ef5TXzBebJl4qfzuI09jESv/
-         4qFkysxdy39KZ2Ly+UlkWbX27gKFVLIoL6PoxGEVPvvfBFWAd4oMVNUkHEJxtj3s3wdK
-         ouv07gcljRH31PZFXlxa3IPS2sS6KHaPBHwuQgwM9mta89AUIRn+amXm+WV3Iz9KYpGF
-         SCDlbt0z8SPU7kTdh7USDQ6HvZCxtGRSVYVINLGQdAoZ+BSIIE0yR0KjO1jJC2oiorNf
-         L2/FNW0XvMNQtPuJiAWpp4JojNLj5+qQFhrhdroz7qNzKnCU4wLALHUJuGiBIWDFBNBo
-         0Ljw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753614116; x=1754218916;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=btSB13u4wPFzn9262B7O9imh/oQKy98Sasbk1uFPExU=;
-        b=fI7vwHwUPkMpbYjwqyR0PGUglYL2ZBq9Sc5944Z+IycZsJbEyjC6zCT6kzPknvNlMn
-         y+UFdwy1Uh6IQLS/qkO4gcWbjf1aAbBKTM3+5qb6oJhy+pTKgnKlBOnrw/QCrN+A5rx1
-         ikg+eIbVU/j6yQgrLrk8PdnrWB9O61PFagEJ3MET6BjWmq4p4mZcfrriXRqQcswu4MvD
-         TObeSklst1o7/c34qs4vTsklqEcPGTpuG8Jiu5vCEcONQsSSJcqb3QqDiJiWdxQDo2ah
-         sn44vIiLDMTD7+ZtHb7e6E8iRZYLnUPcEWSbyupMPl66QQ7cesgz6khHQ/CGLGBmoT56
-         /92w==
-X-Forwarded-Encrypted: i=1; AJvYcCWizE/gqC90h3+B9GkBduMI274Ak3ucsQoEkv+fpgGpICTqSaMZF77AFAFIPwkwuC4Rw+6xtsZEN0RxnlG7@vger.kernel.org, AJvYcCXFU95TWd5jd+LldXkS6TPjwbH8b1nUCothO1peL5UueIAz6UnnwphJbfeGNeeHNEmmoYx/vgEpNm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSGF2cUL3i8qVC1osirya/bf0pmBiAa7uDSbZBgSPNwBpA0h6a
-	vvbG4CfFzRahyaKaNsKNfBpvLmBRxhUEKxwpqfd80B5EbBFcT8K8RUlD
-X-Gm-Gg: ASbGnctTkzGCE/Kh0751+qNcpMnaCbK7sZzR9sajwL7K4j24ODQOaUMzanJNwaLsrtv
-	T8bnCrntXHsn19Wjvp8JDtB/k9SapiajAH08br055H63o8AdjXSq0r+YWBK0fZmilqMo8smnBQz
-	xXuc6IcY1NYsWg9LYCHQlca3KURcgs7HnoOXA+dDRmPWycK1tzFg4xamDa7165fTCLcsSiQa9Q+
-	/L6wCo4ocXGu2Em6KPwdWPIg13BC8/YsxlhRKQRSKfOY+hgRDl2DrFkdqR3E0eH+PYyP2bMHgig
-	j9kxQcHrsoRiOp0dQtUBhbtvuYc4Oemks1HSvXam2Clhs7pVodqsokSG1XgRE9aMgLu+f8F1y+B
-	l+8hLIVGRPt/YjzoC2MjrrnEanQGd3uEpXRWgmFsAGw==
-X-Google-Smtp-Source: AGHT+IFU0mjBLKNkwAd49L2vpVk4hPTFU1XGvLShkT0HMcIwpxIrGr2cxSoSVuh4Q32firy2PXxxtw==
-X-Received: by 2002:a05:6a00:896:b0:748:eedb:902a with SMTP id d2e1a72fcca58-763349b7a21mr10855469b3a.17.1753614116305;
-        Sun, 27 Jul 2025 04:01:56 -0700 (PDT)
-Received: from localhost.localdomain ([2405:201:d021:481c:67c7:4b27:6088:74d5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640adfe772sm3291944b3a.72.2025.07.27.04.01.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 04:01:55 -0700 (PDT)
-From: Vishal Parmar <vishistriker@gmail.com>
-To: maddy@linux.ibm.com
-Cc: mpe@ellerman.id.au,
-	npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	corbet@lwn.net,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vishal Parmar <vishistriker@gmail.com>
-Subject: [PATCH] docs: powerpc: add htm.rst to toctree
-Date: Sun, 27 Jul 2025 16:31:45 +0530
-Message-Id: <20250727110145.839906-1-vishistriker@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1753614257; c=relaxed/simple;
+	bh=hOWw/pQy6Gz+KVeHJutSYWukt54uM2KDMCpnL4Q6wYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=txsfZGpLzO4MtSJZvqNi7nU+MnR/5iNeqUOVcmZPQ1ttmgTrqFWwDgEKDLsTxxfWAHSnS/Ec/lAIVmWm0PIaAZC6CpVWAYfpMOar93PvX6FrrVUopWVu1mpGoRUsKcnQM5pLIRhutyQF2Zda3mKnu0OQGlGg2AZhuPhtPmWe9SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=198YEp3A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB47C4CEEB;
+	Sun, 27 Jul 2025 11:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753614255;
+	bh=hOWw/pQy6Gz+KVeHJutSYWukt54uM2KDMCpnL4Q6wYU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=198YEp3ALIjYytbTi02mn4kw6encHSj1jC2SYJuAv4835uk8JXxqQasyOHKJ/bjRC
+	 6eDRHfRRe88iH0zhthwJtrzkQuKCc4MzRozWibL7k2NyYOz3qJ3zBSu7zgZ+y4eodr
+	 5iuKcIPnSIYRvvZQ4p5Iu/okgBZcfNffekW9832c=
+Date: Sun, 27 Jul 2025 13:04:12 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com,
+	mhocko@kernel.org, zhengqi.arch@bytedance.com,
+	shakeel.butt@linux.dev, lorenzo.stoakes@oracle.com,
+	rafael@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] mm/vmscan: fix inverted polarity in lru_gen_seq_show()
+Message-ID: <2025072700-jailbreak-canister-2aea@gregkh>
+References: <20250727105937.7480-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250727105937.7480-1-dakr@kernel.org>
 
-The file Documentation/arch/powerpc/htm.rst is not included in the
-index.rst toctree. This results in a warning when building the docs:
+On Sun, Jul 27, 2025 at 12:59:06PM +0200, Danilo Krummrich wrote:
+> Commit a7694ff11aa9 ("vmscan: don't bother with debugfs_real_fops()")
+> started using debugfs_get_aux_num() to distinguish between the RW
+> "lru_gen" and the RO "lru_gen_full" file [1].
+> 
+> Willy reported the inverted polarity [2] and Al fixed it up in [3].
+> 
+> However, the patch in [1] was applied. Hence, fix this up accordingly.
+> 
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Link: https://lore.kernel.org/all/20250704040720.GP1880847@ZenIV/ [1]
+> Link: https://lore.kernel.org/all/aGZu3Z730FQtqxsE@casper.infradead.org/ [2]
+> Link: https://lore.kernel.org/all/20250704040720.GP1880847@ZenIV/ [3]
+> Fixes: a7694ff11aa9 ("vmscan: don't bother with debugfs_real_fops()")
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  mm/vmscan.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-  WARNING: document isn't included in any toctree: htm.rst
+Nice, thanks for fixing this up:
 
-Add it to the index.rst file so that it is properly included in the
-PowerPC documentation TOC.
-
-Signed-off-by: Vishal Parmar <vishistriker@gmail.com>
----
- Documentation/arch/powerpc/index.rst | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
-index 0560cbae5fa1..173a787b6cc3 100644
---- a/Documentation/arch/powerpc/index.rst
-+++ b/Documentation/arch/powerpc/index.rst
-@@ -36,6 +36,7 @@ powerpc
-     vas-api
-     vcpudispatch_stats
-     vmemmap_dedup
-+    htm
- 
-     features
- 
--- 
-2.39.5
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
