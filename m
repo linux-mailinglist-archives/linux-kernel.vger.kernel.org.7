@@ -1,144 +1,141 @@
-Return-Path: <linux-kernel+bounces-747094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673F0B12F94
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:51:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A3EB12F9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FA3B174C68
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:51:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A55797A70CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0838215798;
-	Sun, 27 Jul 2025 12:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E5B1F7580;
+	Sun, 27 Jul 2025 12:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqhl9wX1"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="c0uvMYtE"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA544212B2F
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 12:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C951F03FB
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 12:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753620658; cv=none; b=ZjHKM1C84CGsRcnByZeKSvQbnFaBR2T+kX2OveZ7ArOyMpS7CP4Vclm3gFPssDTS3Kbm6cRDDdjQ9dWmLfPqmIHHjN57mj48aSAmCAJvG0hDH0tW+QZ3UMpcQx8jdtQ1sUP9OfVBMnM20XqWcRF22BO1jfA61YkOnNWwL4fPEUc=
+	t=1753620934; cv=none; b=E+S9AkDxnwj35hvHj214CR+s3Ej+0vzQh/LjTUhf1tsFtDTgfRCkEABUgiMDFsUsd7yqu0GAc4wknfmTH5P3rookBm7Hu8a+KZ+BgZyMhtO1UwSAEiX+JWXItfFhxcEoqOkYDEyQc4BOaV+M8+bF9FRni+9CDh+NP4R/7wVh3ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753620658; c=relaxed/simple;
-	bh=qphoEMJcvtchYG0cd1lDMN9S2qws/1jokATGeV0IvRg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lhE/tJug4FRj5rify9a3xPp4JkHSllnz1f3RqXnMpm65XlOlKpmFbba7ZTIU8aJZoGW1UrYfZfJMwlgINz6iEZOq1sv03SfTPD4OmKCxL3Qp85RZHSEtmxj7W8G0W3Q9TAin1Wa555FRYzKAUdOgVJ0SaYrk6VDl3jvIreXw+7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqhl9wX1; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74b54af901bso2292537b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 05:50:56 -0700 (PDT)
+	s=arc-20240116; t=1753620934; c=relaxed/simple;
+	bh=BQ/JpxXpuSy7PbBgcydNfVF2w4td5TfhH0Fzlc5REsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KfU/DKc3e2ouGBxt0hqBypvWFMQSiL9OBHUKTgjFVNjEMGAwTWHkN65TwtUGHQ5N6KR4GygoaqG+FOpSqQ2JNoFnXByYi3srVwYQs8FQDjd/BuEiWLLtvL8NlqxKP/3bD0HXwgFYRrdVwYzHzztmTCZoytA3z928ER5tFkNq2HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=c0uvMYtE; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0dad3a179so578651066b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 05:55:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753620656; x=1754225456; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OniimkhjVvSRmOjn7OfXVTo4mIJlM2vbjYTCYN8vti4=;
-        b=mqhl9wX1WB5fg46dmkZM4JMA98KRQvT9iYOBqtuBVxNoy9nrVIAFJJ65iTwt2JeFU9
-         hhxtNE1LHWTrA/LzG5niHCmyogqjcpye/vcME55SsqtHvNAbrW7He9G3I9mLL44P0wjW
-         FYpQ3/tTbSNhupK3GT2n6Q27n0ycyCcneT8sSeEwkUyGjy7Vcr4IYaRS3vjM/erEgKzG
-         1RSWA2m9FGQeNsQa5ijm9lqL4OaMUzdWOvGdZWLxe6SekM+35wjKsPf17ZpwAFUWG43c
-         vPHrjLGBNZIqGXmm9AtRslCFK+IbsXedBInthbCCd/oJcYj0724mBGosOeEezJFDe5Ya
-         rpNQ==
+        d=sartura.hr; s=sartura; t=1753620931; x=1754225731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jMxifAIqWO9udZ2NZ9E8Ene5GRXydyVi9Idk6pBIlxA=;
+        b=c0uvMYtEJFdVp+74ymehaYZDUS3V+nzKzazfRjmJE/+EjM/hG0j+ExWD5KtIVAt4q8
+         WpIU1wLnfTY9d6P1VCdHTl72WRScOnUW06Oa9K2VQ2YkVRWOsHkHu/l2ayLPgvHOp1jE
+         Z43U+D9AzbHIwn58Yw1mJfIgYZjM8O7z7pQENFkXfsyVgJoaiBp4+cgM0LX9S36ykbjx
+         D7vQwOPooQhha+KSrhae+b76IU8DJME/6pehdSOtQacsxeYuvK66Pc6gs9V2C8A3yPY8
+         MmDhdskiPqiQ2ao0Gw1vJq4x8kRY13jiIYoVu5ihckQrjba6bM7Lq3ND51FZgPP5Btbj
+         lvRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753620656; x=1754225456;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OniimkhjVvSRmOjn7OfXVTo4mIJlM2vbjYTCYN8vti4=;
-        b=LRfdlAf2MDDUiL0/8CKb5IOc7G5nHZg3YDaIqwFU5oxwfq5fdAvZLGAPJc0NA/ilZm
-         vc6xygR/kHa8+hrzlkgvsyH1aWz6LG+El+lM+pelYeuw/18cpRZ5RDqO9NeO4s5GrdQu
-         JQmH8UXD68CGEJtaq7qkB4RKl8EaXVi2UM1IllUjvPcgMZBUMA/VNrCu5vUpQc4xO7+/
-         iMlxzpsU0auj+QlPIgg5HuqO9cu/5z1z/eHykJJzdaTFxBz62gqVxP/B1AbjMnGC73eh
-         wAw+IOF6y3m+T53Xn9qhRT9oxDf5qZLlH7s1sJ8hUVto0KRhYXHt9EZYtLo//TXhre++
-         z0Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWg1FtjO1WSKA/DLVu75TfDQQN0+xXOQgrXy4T+dc8v0xYx1IZW6IE0uF6dErrQT50Ccy0Ga6mqCdkdrVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaizC1cScmdG3N3Ec5qL7IF3eBuoj5GBXMMKNNbvTxVNd8TpKv
-	OVeMb0p/7X1R3y/1dEEnhMdVFN9cn3fvVq0rXTehy+ML32feLh5J6swg
-X-Gm-Gg: ASbGncuvN8J86IrGcGgRq9Xk5ztNSDUCKIav/rZlBEfs16xDNdBKJqvin70DYAKtkJv
-	+VNQ+ekXxxdy+psDzxIqAtIbpWt0Pqe/ZH5PTyZxhpsxIp2S27rNIsKm3AOnPcsGNR7WGTRDAdK
-	T1kdRMr4rlBag1TU411Xnl5w03nqcBr7JKEaX2JUNz/AQea1/TeVGGb5GGsLPG6qwQYcL2okxtL
-	UtKHfkyG2ysvVUoNFQj6KpcNbK2XjoWkrxACiYXJp+YuGzozL97dsy7fDbiiNRGzzu8xYQIex8s
-	W068CfXdAq3nr4soh+d+plMkTEu4fTuxBQVKb2gkNFA5p+v8CokeUShfdEVPyen/NiQvThVMtlP
-	dvYMuiSw7Poa5xanITvo8e/1Kb/FxDNI=
-X-Google-Smtp-Source: AGHT+IH1flJT/T4l3mHSvsO0oBzDl0gqh5Ie6QQ/+2/IZOeyCeYqWnPuNL8IEyNBDHU0KD+WMklzow==
-X-Received: by 2002:a05:6a00:1890:b0:748:fe1a:3432 with SMTP id d2e1a72fcca58-76336a3b834mr9228192b3a.9.1753620655613;
-        Sun, 27 Jul 2025 05:50:55 -0700 (PDT)
-Received: from archlinux ([205.254.163.108])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76408c02640sm3471873b3a.37.2025.07.27.05.50.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 05:50:55 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: apw@canonical.com,
-	joe@perches.com,
-	dwaipayanray1@gmail.com,
-	lukas.bulwahn@gmail.com
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH v2] checkpatch: suppress strscpy warnings for userspace tools
-Date: Sun, 27 Jul 2025 18:20:44 +0530
-Message-ID: <20250727125044.101779-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20230601; t=1753620931; x=1754225731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jMxifAIqWO9udZ2NZ9E8Ene5GRXydyVi9Idk6pBIlxA=;
+        b=c9UOXdYxhoaEpYFrKsMhs+7HnzpWLtiLZr34TmUKU1eJPVmxFPkj7sTZ0yi7bBOmoK
+         cBtLgVZujIwE1uzRs0aKVRtP4eRGSS+HvCgzU2tyTOH1MJtKwePrl8Yn/VBfKgbQVgy/
+         8zWVLjO34P2wPK2aAIvdC23jQAziY4K3t6GQ4Dn5xc+Qd2eOr5vCYrXOsMBY4tvoJoZa
+         qVAXhNTxKy5ZUe5RfsV0yIW+lxwF3+1wfSmPnwBsanENZ267+D4jcVD0pC1vYAChPA3G
+         SFwT44t9MjIiwY+Bn4kKfmxSk0fUJeLzxRMZHBYROD04bsKajQd9tFhAm6xbt2Us3P6N
+         WweQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjGSAbSwzSDzmIamG6STN/4WCAvimsyrX/VVRprzW6orAi2wwc1UsRYgUyKrmCTw39MLhePO5REE6oULk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfQd0Q5Gh2vpbbFOf09rrjZ8JGK3IKUAtcTGLmSTbAqUT1BMtP
+	q7ubxFoAd33+vrEQOzzsGUp2ptiYb+P5c6ZkuHWENG1Lu4OohdUueGYdYdZmMgqYjMy2wiRjVjZ
+	6JImCiVcsAybPi/ZIUiURFGTuxZZjQ0IlQWK1rwS5bQ==
+X-Gm-Gg: ASbGnct66vNN5e+RaXdvthVTC20Mq+XvM68V9uot7dT/2r6OLHOP4DDH1/T513sP2o1
+	U/93sfuouRJxXxakpzYVfCk5WSvRQUQiXyXwVRvRdb1DMJ5Vjv5aN674Nddijg+SJtDt4cnbJHC
+	AfyXHsV3/9pUhAZVwpYZG8vTZ2yrCnggV+wu0VGDJnQDzA+k+q4SAdP7Pdw1XGjLLj2GBQDKAkA
+	MVP4g==
+X-Google-Smtp-Source: AGHT+IFVYv/O72cHjaH5k5VUlfobYK4W+S80N+a/c4/0HwzwQr74guF3QvQjE4eDoMLi3m7pid4RHeYV0xM1EOGkTOc=
+X-Received: by 2002:a17:907:3d12:b0:ae6:eff6:165c with SMTP id
+ a640c23a62f3a-af619601218mr939373066b.48.1753620930791; Sun, 27 Jul 2025
+ 05:55:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250702183856.1727275-5-robert.marko@sartura.hr>
+ <175325995961.1695705.8338983998485530536.b4-ty@kernel.org> <20250724100442.GX11056@google.com>
+In-Reply-To: <20250724100442.GX11056@google.com>
+From: Robert Marko <robert.marko@sartura.hr>
+Date: Sun, 27 Jul 2025 14:55:19 +0200
+X-Gm-Features: Ac12FXzmHtBtU7jmLL2NxVGb2Ntptau88LQnJUIPvAdvZ644oi9yAP7lpOAawqY
+Message-ID: <CA+HBbNGscSseYHT36FqazfH_BXZi9zKdbPkroJGby7Vd+=ZJSA@mail.gmail.com>
+Subject: Re: (subset) [PATCH v8 04/10] mfd: at91-usart: Make it selectable for ARCH_MICROCHIP
+To: Lee Jones <lee@kernel.org>
+Cc: linux@armlinux.org.uk, nicolas.ferre@microchip.com, 
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
+	catalin.marinas@arm.com, will@kernel.org, olivia@selenic.com, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org, 
+	andi.shyti@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, arnd@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org, 
+	o.rempel@pengutronix.de, daniel.machon@microchip.com, luka.perkov@sartura.hr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The checkpatch.pl script currently warns against the use of strcpy, 
-strlcpy, and strncpy, recommending strscpy as a safer alternative. 
-However, these warnings are also triggered for code under tools/ and 
-scripts/, which are userspace utilities where strscpy is not available.
-This patch suppresses these warnings for files in tools/ and scripts/.
+On Thu, Jul 24, 2025 at 12:04=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
+>
+> On Wed, 23 Jul 2025, Lee Jones wrote:
+>
+> > On Wed, 02 Jul 2025 20:36:02 +0200, Robert Marko wrote:
+> > > LAN969x uses the Atmel USART, so make it selectable for ARCH_MICROCHI=
+P to
+> > > avoid needing to update depends in future if other Microchip SoC-s us=
+e it
+> > > as well.
+> > >
+> > >
+> >
+> > Applied, thanks!
+> >
+> > [04/10] mfd: at91-usart: Make it selectable for ARCH_MICROCHIP
+> >         commit: ef37a1e2485724f5287db1584d8aba48e8ba3f41
+>
+> Reverted as it caused issues in -next.
+>
+> https://lore.kernel.org/all/20250724115409.030d0d08@canb.auug.org.au/
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Hi Lee,
+This patch depends on the first 3 patches in the series, which have
+not yet been merged.
 
-Changes since v1:
-- Create is_userspace function to check if the file is in userspace
-  directories
----
- scripts/checkpatch.pl | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Regards,
+Robert
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index e722dd6fa8ef..472cd8aac9c3 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -7019,20 +7019,24 @@ sub process {
- #			}
- #		}
- 
-+        sub is_userspace {
-+            my ($file) = @_;
-+            return ($file =~ m@\btools/@ || $file =~ m@\bscripts/@);
-+        }
- # strcpy uses that should likely be strscpy
--		if ($line =~ /\bstrcpy\s*\(/) {
-+		if ($line =~ /\bstrcpy\s*\(/ && !is_userspace($realfile)) {
- 			WARN("STRCPY",
- 			     "Prefer strscpy over strcpy - see: https://github.com/KSPP/linux/issues/88\n" . $herecurr);
- 		}
- 
- # strlcpy uses that should likely be strscpy
--		if ($line =~ /\bstrlcpy\s*\(/) {
-+		if ($line =~ /\bstrlcpy\s*\(/ && !is_userspace($realfile)) {
- 			WARN("STRLCPY",
- 			     "Prefer strscpy over strlcpy - see: https://github.com/KSPP/linux/issues/89\n" . $herecurr);
- 		}
- 
- # strncpy uses that should likely be strscpy or strscpy_pad
--		if ($line =~ /\bstrncpy\s*\(/) {
-+		if ($line =~ /\bstrncpy\s*\(/ && !is_userspace($realfile)) {
- 			WARN("STRNCPY",
- 			     "Prefer strscpy, strscpy_pad, or __nonstring over strncpy - see: https://github.com/KSPP/linux/issues/90\n" . $herecurr);
- 		}
--- 
-2.50.1
 
+
+--=20
+Robert Marko
+Staff Embedded Linux Engineer
+Sartura d.d.
+Lendavska ulica 16a
+10000 Zagreb, Croatia
+Email: robert.marko@sartura.hr
+Web: www.sartura.hr
 
