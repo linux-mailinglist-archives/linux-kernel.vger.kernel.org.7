@@ -1,286 +1,202 @@
-Return-Path: <linux-kernel+bounces-747021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA35B12EC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:16:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97377B12ECC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 11:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26DC1896DD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 09:17:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC3B4177C60
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 09:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211031F542A;
-	Sun, 27 Jul 2025 09:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC401FCF41;
+	Sun, 27 Jul 2025 09:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bov5qNIx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HfyBNpuD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9331FFBF0;
-	Sun, 27 Jul 2025 09:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753607807; cv=fail; b=bD7IWuSK103MlcuVNKk6vk/jeNGEKrJ1A6cNxD1Fo4EtaJFJSMJp0byNNF2tgi7i7UB71KxrL4exBgQ/Z74Q1VAtvfFkbDpbsGkXIGdRwjU6wYCEIvj4PqXJI4iyM7nmrBj1a1oqSLCbVzrTYBK7tCksVoQJilDWINM23fhDZ3U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753607807; c=relaxed/simple;
-	bh=PIDGkMwoq/tVS1HpJKekRCngrf4sc1pNVRd9gv6KKkE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ae7zG9dia4+BoAeXCTukkYoR0yBj0zwqG8lMtzVj20Xz04vr9VyYG39TnKwCVnKLqn9V984XHhYol9Q9Ed7jhrbDWL9b/T56bBCjb039xzYPixz3z8wtIwjlikP8mEc5DclpSGovmlrYG5DAlRTMAUJBGLPYaBMGWTO8CsH6mrI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bov5qNIx; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753607806; x=1785143806;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=PIDGkMwoq/tVS1HpJKekRCngrf4sc1pNVRd9gv6KKkE=;
-  b=Bov5qNIx5fw20zTAcPXZ199tjF5WZDKD4l2ie1KUhdwbXkMjIJyrUlzF
-   59ACg4qVcYRr6x/atpHQYWxsTn6eV/svtuk+jO461XAg4iNtPocvG0ahf
-   o66dK/tb+uE8de4Ad0LY5icmnXY4t4kyawlgvvDNLVzzfESJ1C96RUjTz
-   lV6EEleH06I7lFlKDGx+ThFuzg9gMYrLDUD4BpCH10Tr2kU9Hs4Yj2O/W
-   DbGWuZG+cRKaiqIfpbWEfliMKLv9u4aHX6aejisAHBByWxey0EM+Z6bP9
-   19tE8BB/WRxHswKGjYmjv3yFVxYTYIGO7wCLLUAMbVH9gkt/4BHcAtgAY
-   w==;
-X-CSE-ConnectionGUID: zM5NjXEwSSu5MtihqdoRkw==
-X-CSE-MsgGUID: 2965GFkTS9iFoCgvBTK3+w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="56033223"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="56033223"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 02:16:45 -0700
-X-CSE-ConnectionGUID: G0nigunvSxSn58lC/EKiTQ==
-X-CSE-MsgGUID: 2GJZCwINQzugdbitRD8RcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="166195530"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 02:16:45 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sun, 27 Jul 2025 02:16:44 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Sun, 27 Jul 2025 02:16:44 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.50)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sun, 27 Jul 2025 02:16:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jJMw68UMiXkC97Cw2LHeHliiU6p2hvl5x+FG5qJVPTIls5Xp+47CSf5305UvATha807KBoUpyBfl8+TlYBMJ36gLgpHglfMNh6kH45Wo0A1c3oMCxp5a0VuKKhyGV9Yjb3dguFy+3VZnGYhDd9D7C4vZiIdioON8m8dlT1ONnlo6Imb/SMUK9DJH9XeeZIt5kgvHyGSZznPZxQlRmFVw8Zv/h7zKnawW4puCXWexbFCbBUx9AExq+r1uDeThBn4dKMa1Vcgl7mz1RF92MFsIv59PY4XmJ4PzA0oBQXGdC2nJLtghUW9og/m0YGRNA2ozX+u5BnNwWP/Z63fZIGGqhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hlhSE7rzkH36A/h+yPrDxS4gmNrFFQSkLXj+G8pT/Hk=;
- b=ELSiwH4QRAwRUm8FjdJ4NaVi3zpZ2cQwt6aKY5ZnhqUGPF5k5K403HCwFaZpMqV286Yd4W+wmXaQ7yJOgXXN09gml0mRa9pNoPe6wa2lwjDeeLcOqpXRktPX4yKoDsfkhDfRqQMYWLYSFihtAIzAK5y2zFH67WmA5tC+enX7FT/TT8BeOhftB98l6cWz9esCBHOlMOe06KJEhJKOfrKuHjrNMx4+BQLY1qBbbjeAQ2ZT1sWqkP7sh5pBEKwfuVUJVBBw3pzBIncSs0iwORmCpxHt09MtJwrIVD0q9H+ZqJ+RpkmYGdZH+HptImTqSIwmTX9BjtT4OsBThi8WKQhZgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6363.namprd11.prod.outlook.com (2603:10b6:208:3b6::5)
- by CY5PR11MB6535.namprd11.prod.outlook.com (2603:10b6:930:41::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.24; Sun, 27 Jul
- 2025 09:16:27 +0000
-Received: from BL3PR11MB6363.namprd11.prod.outlook.com
- ([fe80::6206:bcb:fd57:6467]) by BL3PR11MB6363.namprd11.prod.outlook.com
- ([fe80::6206:bcb:fd57:6467%6]) with mapi id 15.20.8964.024; Sun, 27 Jul 2025
- 09:16:27 +0000
-Date: Sun, 27 Jul 2025 17:16:17 +0800
-From: Yi Sun <yi.sun@intel.com>
-To: Fenghua Yu <fenghuay@nvidia.com>
-CC: <vinicius.gomes@intel.com>, <dmaengine@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dave.jiang@intel.com>,
-	<gordon.jin@intel.com>
-Subject: Re: [PATCH v3 2/2] dmaengine: idxd: Fix refcount underflow on module
- unload
-Message-ID: <aIXuYVtGSV0OHHps@ysun46-mobl.ccr.corp.intel.com>
-References: <20250617102712.727333-1-yi.sun@intel.com>
- <20250617102712.727333-3-yi.sun@intel.com>
- <39398407-009e-4afe-acb6-e3de931627d7@nvidia.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <39398407-009e-4afe-acb6-e3de931627d7@nvidia.com>
-X-ClientProxiedBy: SI1PR02CA0049.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::18) To BL3PR11MB6363.namprd11.prod.outlook.com
- (2603:10b6:208:3b6::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553735BAF0;
+	Sun, 27 Jul 2025 09:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753608189; cv=none; b=cJczTqvATGUOVJN3RKmcZcIQUqnr+Sti3LbGWX5RLiYEZTLnCMzn6Y5FJdLfHwIIHyYkCc/d1NAmDCZTTRvNhTtIisOa7eZKvGcyJ3mL1SwyQ1GwTFFGyrLjagTz9S/n83wPGkK5fKK3g3/2sjwpZ+V8Q615anBin+d4xP5wzAs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753608189; c=relaxed/simple;
+	bh=X4o1N/+LblHHfZ1eiMxUyvwUFnSbGO9ozqi3n8jmUAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DEjvSG6ZX/UqHAZ8ANOarbbVgXxyhyWyUmEVD4EzVV7sFqx6nEol2v3JGN9ScLi/ABpyoc1k3fLKyX2klKb9zeiGb4+qVjDpIxciP4g8GSxjWBYbe257DGWtfHs0SwGanViB64glaAqCKJwO3aHVyWilvK09Cojuvl4FKhFg8AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HfyBNpuD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4280CC4CEEB;
+	Sun, 27 Jul 2025 09:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753608188;
+	bh=X4o1N/+LblHHfZ1eiMxUyvwUFnSbGO9ozqi3n8jmUAk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HfyBNpuDhwZIxNdEyFnLoqg57mtC7xcd8kVhnc5HalJuD3V3MvjHs0AUCSEmsfxxM
+	 nG6amwP+DsO6FzQ6SAttnXu2+JhsscBIl83LD7GacQIHPoBRat7N3cCqixE1YuWj9v
+	 W7x7CyIseBru+W6SN3sZhSWxYovWRKFe/Th0PM/4FBYid1MAu0ktGUCM8gaKyJR5UJ
+	 otrsw++Ty6Kp7SSS0HP3Uj7rV+7BPA0Li0/VsCUaVe9GqtpRWtsB8n9trwqTEx0fpu
+	 HMxytNEV2mvKJPpQF1iPTE6qE7RjiR6cYl+hZ24+/pQ4i5Uv53U9dDlSIaGKZtHFvw
+	 Fh5XlxsEJbN3g==
+Message-ID: <acdc8d41-94b3-47a5-b67e-58def060a378@kernel.org>
+Date: Sun, 27 Jul 2025 11:23:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6363:EE_|CY5PR11MB6535:EE_
-X-MS-Office365-Filtering-Correlation-Id: 52823d1b-3513-4497-d991-08ddccee4414
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VGxFN2hwTEZtc1Y1QjcrRXNWckZkQy92Y0JKREpPc3ZDN3QzTjAwU0M4Sksz?=
- =?utf-8?B?eXFpbnlVakNpRElkQkxrcXhUQzF3c1pNYmd1K3czMVc4ckF6KzhiaVUvUnY0?=
- =?utf-8?B?RjJXU2tTT0JOTEZzT25ZUlQ3VVNnSm1KaEJpUkFRanJVS1czSHRGUnpDUlVr?=
- =?utf-8?B?MzhTVkxGZVBFQUo4RjBXbStydWh2M3JGS2xGeTRWUWxjc0xTT2wrY0VzK1VB?=
- =?utf-8?B?aGxLbXRGMGREM2lnSzJzdXh4aU5YVUFLL0EraGREVDBUMm91MDlOdTZlUzVq?=
- =?utf-8?B?Rkt2RGRtZ0Qzdi9qdkk2VjhaZlZyWkt5NFBQOVFsMGk4TTFVaGd0WWxEam50?=
- =?utf-8?B?RnIwNU4xZlFYdFZZMXQ1dGRmMGxqQTdpQUtkeU0xbWRXalRYUWoveFN4bVFy?=
- =?utf-8?B?SFJkZXNyS1NLQWJuTnIzZHpZTllFMGtzTFlUMkExeW5YRHQ3bUVxU0lmVk5Q?=
- =?utf-8?B?VGlPZjFta0s1YzdmUFgwVUczbHBnVlRoTWc5Nklwa29uVVRUSk9UUDBQNFNF?=
- =?utf-8?B?TGJNQXFncjI0N1htNE5tRXREc1VYalJPb1JBaTdKV05la3lVNVJZK2VMT3V5?=
- =?utf-8?B?TXJNSDFDdVhla3RkTzlJVWxKUnVlS2F3RUgwbnRrcXN3a2lJUmY1VGMwU0lB?=
- =?utf-8?B?TWJKL21MOElLRGRobUVta2dObytlcXk1eG5lVHJLaWpRZFlHVmpPc2gzVnVK?=
- =?utf-8?B?OWRrKzl6SnBkNUJVYng3ZGEzNEJucWt4NHRaYTNwdVU5SnY1aVFMMmJnQi9R?=
- =?utf-8?B?UlRaR213MjJpZHBDZTN4WEEyeUlLOUdpRVZlT21XbFlOS1hLYzN1NHVZUmhG?=
- =?utf-8?B?NlN5ekRBY3RiL1Q3em1XdXlsdVF6RnRCUHJybUoxNFJnbzlwMnZRM3JvamVM?=
- =?utf-8?B?OU9RdUppSVBNWjN6U3FhdUhYbE15YnFrMGhZK3BKUElwWjB1U2VKaDRabktu?=
- =?utf-8?B?SnVWWHlOKzV3TldsNUZVTjQrdGxwWkJHTzFyMVVPMG5ia0JrdENJbTFrbFJK?=
- =?utf-8?B?eURyRzMyWkpYWHRmOGRtV2QwT3pmcDNGaGpORWNiMk5IRmtUSlA2Nm1ESlBD?=
- =?utf-8?B?NWdMdFYwQ2dzeHRYNHJUY1N2RmIvdTFLdU5ua2RHbVlxa1laUDZUcE5NY09x?=
- =?utf-8?B?WjRLdFl2L1VDK3ljY1ViblZ3elJKV2ZYRWdsdU1kOStacitibmxzZFpMK0tk?=
- =?utf-8?B?OTJuQ094M2ZvdDl4dSt2Q3ZiNk5BeDBXeXhpYUh2ZTFvQ1paZDFLczdvZTZx?=
- =?utf-8?B?WDZrazZDaTZqaVhnZm4ybXFwZ3l2MEJ6cmpQdDlxOTlLaTl6eFZvQnJwck1v?=
- =?utf-8?B?RGZTQXl6WnVPYXVBOGw2VDF0K1krOER6MDBEaFlEaXIxTkFiWFNqUmV5U3Br?=
- =?utf-8?B?T3Fhc0RIUGEvb0NnZis2THN3OEdRZjRMWmtSZFhHSnJmUkZnay9rNnFSWkd1?=
- =?utf-8?B?MzM0L3pwcG5PblZVMG5EV0xrZlYrSlIydzlmc0ovMUU1QkNWTXZXNGlXNDNQ?=
- =?utf-8?B?dmx3aURZa3FwMDZaK0w5UDVTZEdZbWZsYUU3UmY2dXAwTUh0Sjl5Z25GRktO?=
- =?utf-8?B?RlZITXd3eGZDbXVXOVNBRjdoczFSa3RQTG5WZWRJMGMyTHdrYzBuVEh2K3dX?=
- =?utf-8?B?ZW1pNmVWdFE4Ymd4NzVXQXFPbFZRRUxVRlVlYVBnemhZYkdpZzJpcFZsdHk3?=
- =?utf-8?B?N004MmZRWGJNUXB0Uk01U0dSU1FWNE54QXNlb281MWNZanRHSkdaalp0THgr?=
- =?utf-8?B?ZVF6eGRlTWYxR3U0ODc1d2VENTFnQ2xUN2tjSVA1Wk81OVF6L2RCdDBNa2pl?=
- =?utf-8?B?VEp3dkJ6WUZSMFA3Skt5NGpmRmJYWmQzMzZVVVpyVVZCRmVJUGsvYkFJOVl1?=
- =?utf-8?B?enhmem1NYVBvcmtlbDdMV2dMa3lFeHlmbWFxYXJOTHU5OTZQTXN3S3dyM3dK?=
- =?utf-8?Q?TSoeXZcnahM=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6363.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Yk5Vb2d2OGlIeDZidW4wNEJXMU1kdE1zRG1EU29HcFQySFovSGk5U0RXSlNx?=
- =?utf-8?B?WWQ4eVl3R1IrU0tQNDBjV21GL2JZTDVyL0o4UUorYXRlclNJTDJSMHJ3bWxy?=
- =?utf-8?B?VVhBNFhEQk1DVithS0NlRUJjUFlFZzdpRWxnS2hHRk9vZDg5ZzlmRnlWN1NN?=
- =?utf-8?B?ZDBMSVlPRk8zZG5ENWx5UXRNVjBXQ0pMemJMU3NoSDBsRURPNFdoNGdoNXZH?=
- =?utf-8?B?VGVWeWJKTFhGTlhDYW1Jb1NPOFpHTlJQUjVNVmZMOWNEVDh0ZEhWVUo5N1NF?=
- =?utf-8?B?bGdaQ3YveUIyNmxxSG1RcFdEME4rVVpuZDVPelNYYis0c3FNRXRCaXFRUGdZ?=
- =?utf-8?B?TWc1U0N3N0VJUHdTeURRTGJXRUtGYVN5L3BNU2pLRGpQZG10WUJqVVArVjZM?=
- =?utf-8?B?aElpY0ZkUGE5T0JaV1BoT2dFNmJzUE9XRVFzTHNvV2dTWFlCN1lSYnVhNjFi?=
- =?utf-8?B?YjVrZXlyam1NY3lpR2xySUVZc2ttK0dLajhDV2hsZVNLWHlmMDRVWDhXdUw5?=
- =?utf-8?B?NDNSRElTOHpBUVZPUUs3ZnlaaTlNdUxmR2dVVzdCOElYREJNa0NQamtxVkp3?=
- =?utf-8?B?WEwxamJaTUErWXVyb2xkck0zRk1xR25QdUZTa0FVcEVnU2dZSno2akdMTDFG?=
- =?utf-8?B?cFQxUzFmS09zNmtGQzNTRFZocGxNbkphaUt1VmRENUhGM09ITmwxQ3c4M0Z2?=
- =?utf-8?B?dmRzQUhGa2prUWRGRTBOcUNWWEkvYnFqMVNWOUpiTCtNaDkxVHlZYUhHK3VB?=
- =?utf-8?B?YWg3ZU13MkJFYkJVOGI4d3NobmZSdTE4dzJCbXNsRUcvTFlnUEorbHFicnBR?=
- =?utf-8?B?cC9LdXZhQVNjVnY0Mk80WHVrVEVBSmJCMEpvMkVxWHUzOE5xUWlpRWN2UWEr?=
- =?utf-8?B?aTVvc25Ha1BsRm5jN2lnMDFkVHU4UlBpUkNhaXpiaExNL2I5bHkrQkxaTEhW?=
- =?utf-8?B?aG42M2N3ZHUyR0xOTHZqQXhXT1EwMG5JcXhvamQ5TXJ2bWp5Rk9qWi91ZXhU?=
- =?utf-8?B?TzNWeHRyN0JiOW5zQzg1UU1qM0tkZnhIN0lSaWNNY2h4d05ibnU1Sk9oTUUw?=
- =?utf-8?B?L3k3UHlBM010YmZseGJNMjFwbnlEVkRpR1IzVDN2U1pYd2pSd0RNc1N6WU1q?=
- =?utf-8?B?K0FxUDVIWkVuSnhEN013NHJUcXNjRHBVZmdRMEczY2toaU9qQkhMSVBzeU1v?=
- =?utf-8?B?cFYxTXpoRjNSMGR0alNxdStKKzlkZjZsRk9XUTNNT09sUUIyMXBJdWdFRkZV?=
- =?utf-8?B?S2tvWTBEVjVZZ29Ocmx3QWVnUU1LNEhqNE1adjk4WHRVK2Zva0RUaTVUN0F1?=
- =?utf-8?B?VmRxNzJFZUQxVHJyVlh5Rmh5N3NIbldhcW85eFRxajA0Z1pta2hRbVZMOHBW?=
- =?utf-8?B?aHIyQXFSZHVuOXFpWDFjZitUUk1aR2Q0dDNiSmNkaDJmVk9UeTdBUHN2MU1s?=
- =?utf-8?B?OHZDK3RYK3YwdGQwQkdTalVnYzMxcnIrNGJIWFRGbHhOeHEyM3F1V3ROTm5I?=
- =?utf-8?B?QUJReHV5b0ZkUUIxS1ROcDJoUmIvRlZ2Zm9UQzlFUitIdXY1dFhwSVFhV2p1?=
- =?utf-8?B?aUZUMkpmbmtpUGI0SFpRNGcwUG5Ka2JtL1Z5L01LRTB2cU5qckVKcUliOFJF?=
- =?utf-8?B?MktRTnZ0WVBoTUo1UG1MNG05ZW96eGlIS1paT2I5aW5TdU5PMFhSK29wV1hC?=
- =?utf-8?B?S2Jhbk45bGtnT1N1YUJOMlZrWHlqMkhhWUk0Zm9DektnRnB3dk9iSU1CZ3lS?=
- =?utf-8?B?eGxPVDQ2dnk3Nm9MTXloNC9nM1diOVdXR2xhSzh5b3lpZG1hUmNkeGlQUmEr?=
- =?utf-8?B?c1FhSTJVVnF4VE1SelJsVjE4TGVEcjRuRXBPNzJsc2lNTlRNMkRUUlVlL2Nv?=
- =?utf-8?B?cDJrUWtlT0xPYWFXNFB5dXg2QStjRE1yMFhiSjdBckpJeUl3ZzNRNzZNKzNv?=
- =?utf-8?B?Q3lxTjVxcFdjeUJzY3NRK280R3YxUDBqQmtSdkxJcXhoSWI0SE40V1ZrcUxF?=
- =?utf-8?B?RTJaNjdwZnB6YmcxcmhwM1QrWC9sNE5LRm5IbzExQmlrQU9ZemVSczMxUEhM?=
- =?utf-8?B?akNxdmlDV1EvQk1xMzArR0ZXaVN2Z0lnOHVTNlcxb1B6cHVjSU9ueENheGFN?=
- =?utf-8?Q?XIe0flbYxZ7PiSnNJ5Ihpuzdj?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52823d1b-3513-4497-d991-08ddccee4414
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6363.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2025 09:16:27.7068
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M4yNNM4oWH2SWFeWSbx1hNMN4s6CdRZ8mQHp8IAvmB7+yD2Z0FrdhJWuD0RinzyxuQob8OsMvzIlfLP2eULf0Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6535
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: iio: magnetometer: document Infineon
+ TLV493D 3D Magnetic sensor
+To: Dixit Parmar <dixitparmar19@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
+ <20250726-tlv493d-sensor-v6_16-rc5-v1-2-deac027e6f32@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250726-tlv493d-sensor-v6_16-rc5-v1-2-deac027e6f32@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 17.06.2025 14:58, Fenghua Yu wrote:
->Hi, Yi,
->
->On 6/17/25 03:27, Yi Sun wrote:
->>A recent refactor introduced a misplaced put_device() call, leading to a
->>reference count underflow during module unload.
->>
->>There is no need to add additional put_device() calls for idxd groups,
->>engines, or workqueues. Although commit a409e919ca3 claims:"Note, this
->>also fixes the missing put_device() for idxd groups, engines, and wqs."
->>It appears no such omission existed. The required cleanup is already
->>handled by the call chain:
->>
->>
->>Extend idxd_cleanup() to perform the necessary cleanup, and remove
->>idxd_cleanup_internals() which was not originally part of the driver
->>unload path and introduced unintended reference count underflow.
->>
->>Fixes: a409e919ca32 ("dmaengine: idxd: Refactor remove call with idxd_cleanup() helper")
->>Signed-off-by: Yi Sun <yi.sun@intel.com>
->>
->>diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
->>index 40cc9c070081..40f4bf446763 100644
->>--- a/drivers/dma/idxd/init.c
->>+++ b/drivers/dma/idxd/init.c
->>@@ -1292,7 +1292,10 @@ static void idxd_remove(struct pci_dev *pdev)
->>  	device_unregister(idxd_confdev(idxd));
->>  	idxd_shutdown(pdev);
->>  	idxd_device_remove_debugfs(idxd);
->>-	idxd_cleanup(idxd);
->>+	perfmon_pmu_remove(idxd);
->>+	idxd_cleanup_interrupts(idxd);
->>+	if (device_pasid_enabled(idxd))
->>+		idxd_disable_system_pasid(idxd);
->>
->This will hit memory leak issue.
->
->idxd_remove_internals() does not only put_device() but also free 
->allocated memory for wqs, engines, groups. Without calling 
->idxd_remove_internals(), the allocated memory is leaked.
->
->I think a right fix is to remove the put_device() in 
->idxd_cleanup_wqs/engines/groups() because:
->
->1. idxd_setup_wqs/engines/groups() does not call get_device(). Their 
->counterpart idxd_cleanup_wqs/engines/groups() shouldn't call 
->put_device().
->
->2. Fix the issue mentioned in this patch while there is no memory leak 
->issue.
->
->>  	pci_iounmap(pdev, idxd->reg_base);
->>  	put_device(idxd_confdev(idxd));
->>  	pci_disable_device(pdev);
->
->Thanks.
->
->-Fenghua
->
+On 26/07/2025 11:37, Dixit Parmar wrote:
+> Document the bindings for Infineon TLV493D Low-Power 3D Magnetic Sensor
+> controlled by I2C interface. Main applications includes joysticks, control
+> elements (white goods, multifunction knops), or electric meters (anti
+> tampering).
 
-Hi Fenghua,
+You are duplicating existing binding, need to remove it as well.
 
-As with the comments on the previous patch, the function
-idxd_conf_device_release already covers part of what is done in
-idxd_remove_internals, including:
-	kfree(idxd->groups);
-	kfree(idxd->wqs);
-	kfree(idxd->engines);
-	kfree(idxd);
+> 
+> The device can be configured in to different operating modes by optional
+> device-tree "mode" property. Also, the temperature sensing part requires
+> raw offset captured at 25°C and that can be specified by "temp-offset"
+> optional device-tree property.
+> 
+> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
+> 
+> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+> ---
+>  .../iio/magnetometer/infineon,tlv493d.yaml         | 57 ++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
+> new file mode 100644
+> index 000000000000..0442cf41503b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/magnetometer/infineon,tlv493d.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Infineon Technologies TLV493D Low-Power 3D Magnetic Sensor
+> +
+> +maintainers:
+> +  - Dixit Parmar <dixitparmar19@gmail.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: '^magnetometer@[0-9a-f]+$'
+> +
+> +  compatible:
+> +    const: infineon,tlv493d-a1b6
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: 2.8V to 3.5V supply
+> +
+> +  mode:
+> +    description: Sensor operating mode. Must be one of the defined enum values.
 
-We need to redesign idxd_remove_internals to clearly identify what
-truely result in memory leaks and should be handled there.
-Then, we'll need another patch to fix the idxd_remove_internals and call
-it here.
+Why is this board level property? I imagine you want to change it runtime.
 
-Let's prioritize addressing the two critical issues we've encountered here,
-and then revisit the memory leak discussion afterward.
 
-Thanks
-   --Sun, Yi
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum:
+> +      - 0 # Power Down Mode. No measurement.
+> +      - 1 # Fast Mode
+> +      - 2 # Low-Power Mode
+> +      - 3 # Ultra Low-Power Mode
+> +      - 4 # Master Controlled Mode
+> +    default: 4
+> +
+> +  temp-offset:
+> +    description: Raw temperature offset at 25°C to apply before applying scale and correction.
+
+Does not look wrapped according to Linux coding style.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 340
+
+Missing vendor prefix, missing unit suffix. I am also not sure what is
+the board design choice to offset it.
+
+
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+
+Missing supplies.
+
+
+
+Best regards,
+Krzysztof
 
