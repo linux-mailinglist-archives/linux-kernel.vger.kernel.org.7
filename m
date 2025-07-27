@@ -1,125 +1,126 @@
-Return-Path: <linux-kernel+bounces-746972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9B9B12DAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 05:52:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8A2B12DAE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 06:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A98A189DD4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 03:52:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E137D189BC8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 04:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402EA19066D;
-	Sun, 27 Jul 2025 03:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE39194A65;
+	Sun, 27 Jul 2025 03:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1dI68xMm"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="tiWQGLbM"
+Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EBD191F9C
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 03:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDBACA4B
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 03:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753588340; cv=none; b=dgyx3TmM3eOmkKmobzUbNDqYdNFrVOP02z3WmELvGSUqJvzrsb2Ok94BiLGsTXocU+6mmSeG1gSAvstlM8lUK7AFxDg4NlMgCdrxr5gWt6kbgcsaX82Gsd43CDUzMq4z7ZqDKZmp7q05+27aSk6T7G3UNpRUBEj6r0ZCMO2buvY=
+	t=1753588794; cv=none; b=stF9L/Z58CS0xriMRTNvQYHj9cBNQiFrFAFZqEr5AGNb/xRgna6HoJGqkqSFH/0iBjtwucbrKWtx2vMxr8AjWANQXBCVRjJN0ftojpQ4YeKwVZhNQcxBH2KSjz1Qgbim19WVF/3vHXEsr9aGpgdWaksBPQrrFVwmalf3TfTN/9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753588340; c=relaxed/simple;
-	bh=1JHG4GOOANGTbrg/Pq9CKtBksECyC3XcsJy5JGI7O0o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VI/sRMdjr5Yn11LfSq5d53Hh+rDq2K3dXocC25QbpYq6TsccdZje4XWFNyBgOKolx8FPCAs8gWqfzqg3Bceb4XFA2mC0DUu1HpvjX4Ent+PHlgtlMCcRVhMH6ZxZ0qWQiD5vr2We8bIARs4LRXovYVjwQDpO25v/970ZksSCpYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1dI68xMm; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-880f2623a6dso137957239f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jul 2025 20:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753588337; x=1754193137; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fYUVLD27MADHs9xSeNaf2bb1XM00G8LMlc/lpAZChFU=;
-        b=1dI68xMmhlVclDYGGhk8oNz7VzyVFfvImQCmMyF0oL7Mb6NfAD9ukx+wrAcrIb1ymK
-         u7m4AaiAJBfqusiFrjac7dRERcZ6TXjn/Z50q5RA569TvXrSNZ8Uc+Yp9wGRBRaGNTa0
-         HJpY+/EH+KFvdyWJE1YZf4Gks/jVA5XRsg29M72JjjU+X5niiGTlecOwhsf60hnW7A2y
-         axqbzNOHv8pUmpfqjAyROqbf0rV/7fA2sOi6cRhRCsL6t2eYkqe9CeOiJrBMC1PMD+mr
-         GASBvnOIEOCTsX2K84aC8COn644aTfpYxC+Cp9DjQjPsAH2RSY/hRspv+SoAhhaXHHnM
-         IEew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753588337; x=1754193137;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fYUVLD27MADHs9xSeNaf2bb1XM00G8LMlc/lpAZChFU=;
-        b=LoDHrDeSPPgFaFTcN/DSX34zUHl2+R6zAFhd1Jgfxp0VT6YyypPF6Im1VzIAHgqYcC
-         G32oSOTU3RavHVpfi00lOoINYZdd9uzaYEDsR5gZdbxGCOkBnyQtmFDtVwiPi/OZ5AdG
-         m8xh/HB7cDPjQMS1WQ8X8jhPwTlsAP9KxYDXrAvVTvR7J+YiXBwbSerTRQKc62aVbhbR
-         XnlTWuV6iAKU+bBlOD04zlG/6i/THrg1NYfK7DyFng6GIqNk9cxIVweIESWcGUwfNKxF
-         5wSsCa4Z9jbHvuShrIqtL2gSRAaikUCPXDFWQOHIWQt1dKpa5EidyMT366s7xp3QlrW3
-         Q9Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCkJ72aL+wRl4LfLy9hLkd/wJ0RQnvr6iEp4f9Gcoae+XFkirmQZXRfmAqcnE1F++weNmsSMJnSB7osXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCbDvencdj+7hKVFGxrVbjcNCZISaYdeu0AuIPtPMMhMI5mk9S
-	O8EqSsRZSDLYgnCcNsDaHbtFZbYLMxQ4lGCwVXA0KMnSDQTlIcqPcJkzku1KSgwnkOk=
-X-Gm-Gg: ASbGncuGliwyF57eQgjZMD6wzDI8/wcfeO7UZNtPRYtFv81VlyGb3FKYlbveTINDmYE
-	C3DpKLQDvA5QpUgax7ti9sFzLTkHqOg9aO516XCfVN1NqpohHxWaEoeRAWfE2iC7ZlL5LFS9Lsx
-	mXhOIaxhqrM3ZUp4d4fy3pT6FcsMfqHfrsj71aDjGvg9TN5gqO+nTBj5AdJVrJfBCJ1ut0+4TB+
-	CuiqFl0DdebgMQXrw89kSWLXA4NEe5Ba1wKHVxM4TJ4nsyUvel+iE5KOwM9LZu2UFTgVmsc6vlz
-	rjvVdxrZPxEdG1hn/HgsReXizNTmLfuyDH8/lpdfJ9st7qiERZbx6p077GpsYlsww6ksvxSO2dR
-	M7ltpHB3hNIrSYA==
-X-Google-Smtp-Source: AGHT+IGBTIimkD6oYqXlUVYZ8OGFVC7vrUK6Agaoi5qCK9Vo03oNYqWrSefhbqFAp017uzB4xyx3aw==
-X-Received: by 2002:a05:6e02:4515:20b0:3e3:ca87:3671 with SMTP id e9e14a558f8ab-3e3ca873761mr64187895ab.14.1753588337147;
-        Sat, 26 Jul 2025 20:52:17 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e3cacc8a4csm12895055ab.45.2025.07.26.20.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jul 2025 20:52:16 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>, 
- GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>, 
- Christian Mazakas <christian.mazakas@gmail.com>, 
- io-uring Mailing List <io-uring@vger.kernel.org>, 
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250727010251.3363627-1-ammarfaizi2@gnuweeb.org>
-References: <20250727010251.3363627-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing v2 0/3] Manpage updates for iowait toggle
- feature and one extra FFI fix
-Message-Id: <175358833617.901373.6744356763469083521.b4-ty@kernel.dk>
-Date: Sat, 26 Jul 2025 21:52:16 -0600
+	s=arc-20240116; t=1753588794; c=relaxed/simple;
+	bh=Ry8pXu+F+zu8VSxH0DP7v1yB6FdqN8GfOO2O+zffyNg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JGwn014pMak/KpLgq1IKsPvbWOlrIsN3TcBtmyg7Z59b4rFCoZL7iopZjSYn/TDehtgwSz6hyvWym/tyLROlIYqZ7BwSBTWDvIc26u28OKNOa7xoLfUgTj65Du9rutefMHKiyR4rZbXRCOk3LAuokU7ViiUnm++hOqJvV37YPVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=tiWQGLbM; arc=none smtp.client-ip=202.108.3.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753588789;
+	bh=eHEeeInrPQpBr0c8Kw0bOxR08yEk9ct5jx2k/yFV8f4=;
+	h=From:Subject:Date:Message-ID;
+	b=tiWQGLbMwQXXPyvQU0mgzd3iifRwlqbQQjDaF5ZgHD9F6Gbn7CKaO4sIc8lFQLEpx
+	 VLMgt2Yvf+Re9Bv35SIvTzQOwaqgkhU6No7uN3s5rDqD1I6C8yhZV3HWiXDA1VGqlA
+	 RYPPWq+/OyMHCBdwdHxgE1gLYa85YsZQeesFtScM=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 6885A42A0000294F; Sun, 27 Jul 2025 11:59:39 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7534546291942
+X-SMAIL-UIID: A331C2A585C04072B46AD69F32627E72-20250727-115939-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+ed7c6209f62eba1565aa@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [input?] possible deadlock in input_ff_flush
+Date: Sun, 27 Jul 2025 11:59:27 +0800
+Message-ID: <20250727035928.3238-1-hdanton@sina.com>
+In-Reply-To: <68852286.a00a0220.b12ec.0028.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+Content-Transfer-Encoding: 8bit
 
-
-On Sun, 27 Jul 2025 08:02:48 +0700, Ammar Faizi wrote:
-> [
->   v2: Keep using IOURINGINLINE on __io_uring_buf_ring_cq_advance
->       because it is in the FFI map file.
+> Date: Sat, 26 Jul 2025 11:46:30 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
 > 
->   Now, only remove `IOURINGINLINE` from these two private helpers:
->     - __io_uring_set_target_fixed_file
->     - __io_uring_peek_cqe
-> 
-> [...]
+> HEAD commit:    5f33ebd2018c Merge tag 'drm-fixes-2025-07-26' of https://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=130d4034580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9f175a9275d2cdd7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ed7c6209f62eba1565aa
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108d4034580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148d4034580000
 
-Applied, thanks!
+#syz test
 
-[1/3] man: Add `io_uring_set_iowait(3)`
-      commit: 56116db9c371c6d2574709476ba697c0eee59284
-[2/3] man: Add `IORING_ENTER_NO_IOWAIT` flag
-      commit: 6ce9ab3f928a0959b6959b939c4a7ade652abee9
-[3/3] liburing: Don't use `IOURINGINLINE` on private helpers
-      commit: f2b6fb85b79baf17f2c0ea24a357c652caa2d7ba
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+--- x/drivers/input/misc/uinput.c
++++ y/drivers/input/misc/uinput.c
+@@ -35,7 +35,7 @@
+ #define UINPUT_NUM_REQUESTS	16
+ #define UINPUT_TIMESTAMP_ALLOWED_OFFSET_SECS 10
+ 
+-enum uinput_state { UIST_NEW_DEVICE, UIST_SETUP_COMPLETE, UIST_CREATED };
++enum uinput_state { UIST_NEW_DEVICE, UIST_SETUP_COMPLETE, UIST_REGISTERING, UIST_CREATED };
+ 
+ struct uinput_request {
+ 	unsigned int		id;
+@@ -289,6 +289,8 @@ static void uinput_destroy_device(struct
+ 	struct input_dev *dev = udev->dev;
+ 	enum uinput_state old_state = udev->state;
+ 
++	if (udev->state == UIST_REGISTERING)
++		return;
+ 	udev->state = UIST_NEW_DEVICE;
+ 
+ 	if (dev) {
+@@ -309,8 +311,10 @@ static void uinput_destroy_device(struct
+ static int uinput_create_device(struct uinput_device *udev)
+ {
+ 	struct input_dev *dev = udev->dev;
++	enum uinput_state old_state = udev->state;
+ 	int error, nslot;
+ 
++	lockdep_assert_held(&udev->mutex);
+ 	if (udev->state != UIST_SETUP_COMPLETE) {
+ 		printk(KERN_DEBUG "%s: write device info first\n", UINPUT_NAME);
+ 		return -EINVAL;
+@@ -362,7 +366,11 @@ static int uinput_create_device(struct u
+ 
+ 	input_set_drvdata(udev->dev, udev);
+ 
++	udev->state = UIST_REGISTERING;
++	mutex_unlock(&udev->mutex);
+ 	error = input_register_device(udev->dev);
++	mutex_lock(&udev->mutex);
++	udev->state = old_state;
+ 	if (error)
+ 		goto fail2;
+ 
+--
 
