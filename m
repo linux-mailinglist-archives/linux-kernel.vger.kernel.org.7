@@ -1,133 +1,122 @@
-Return-Path: <linux-kernel+bounces-747139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A070EB13036
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:55:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61AAEB13043
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CE0174A11
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53503BABF1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4F821C16B;
-	Sun, 27 Jul 2025 15:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D8D21C18A;
+	Sun, 27 Jul 2025 16:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsQKsuZa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SqMCfcLX"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C4A7E9;
-	Sun, 27 Jul 2025 15:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EBF2A1D1;
+	Sun, 27 Jul 2025 16:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753631741; cv=none; b=O6lCqIngjzpxcRqXtb9gDvlxadoaFND4SfenyL5P9jcdEMQwQPyoJNQZg7WyMcfBiLg1KBlvvyh9rSHFSQ5yE1bcIRCVRnZye9sayONDNT82xGv2Zgzd05hPDYqXVEIxt0PleyCX10d2ixLW3njDicqcz3UWd1XcIayh/0HfKDo=
+	t=1753632458; cv=none; b=Dnd7HGHX/xp+h04pNDMYAS1RejlnHFxf45Yi1jV3uoZp2/UqeXrOBbdpDdQqdvZe/6xWwNQTb+fKqaCzjEkVmECBDGYKR6XlTSeEhc+DEB5Y6DVMKc0yvIArxwqPzOD90wUvqcXzljkkkJMGVgjzFJ2qWZomEwpMx4/W0ict3+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753631741; c=relaxed/simple;
-	bh=4E/KRtZYGRkw/On1zyg435iCeUBt3QLAeXe84TnbRzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zzq1eeNGbjaRVixl1GLA8mp1N4w6gKw+SKj3erVGEp1Tgs69spQICbMuEC/3JXLoNredv0wYUkUv7fnttPal+zM8ANulyeoISI+JUKuiSIJOd4HU1mf4U5419u9B3uk0/TWrcaCIkNgyGrFuscBgn3pyMoTFnTlPNXKNZiQFJaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsQKsuZa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B730C4CEEB;
-	Sun, 27 Jul 2025 15:55:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753631741;
-	bh=4E/KRtZYGRkw/On1zyg435iCeUBt3QLAeXe84TnbRzM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UsQKsuZaJ3Fid87NzhJinDZGxvZaYIp30vjkpopcFkJXlDO5sqLui6Z5ih5hFEKkO
-	 FRvef05NdoLKNnk1VaLqbvFh/AEv63RLmttMvorGRtJfplsnSkR26oQ5GqKw0+T3FO
-	 r/busCDMVzVmTCO0yZQu7byR0fCxt/zbM9MhQ5PaJ41ZvArGC+K/cRNbLZYafdrJC3
-	 eHNkyssceRIcYlMUnHQ9AdAztspVjDGGlq4R76cmWEu3T0toahadNtwkVsGAey6o0i
-	 4zOLYRbpKDN6/9fiZgS4TPDegYIXSQhs/J2hro/zWCCK/Jp6xH+nCJk65GNlymZ3Ma
-	 g8lkJmfdoRL5g==
-Date: Sun, 27 Jul 2025 16:55:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org, Andy Shevchenko
- <andy@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 2/7] iio: inkern: Add API for reading/writing events
-Message-ID: <20250727165534.6756b052@jic23-huawei>
-In-Reply-To: <f180b5ac-131f-474a-be5e-70787972a772@linux.dev>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
-	<20250715012023.2050178-3-sean.anderson@linux.dev>
-	<aHYOuzdQ_jSKA898@smile.fi.intel.com>
-	<8bb7d291-f94a-4e96-b3ec-93fbe06c8407@linux.dev>
-	<aHdwzFk-688ASRx2@smile.fi.intel.com>
-	<f180b5ac-131f-474a-be5e-70787972a772@linux.dev>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753632458; c=relaxed/simple;
+	bh=0x8fxR3jQKVTLjQJKMi31zvpcHKUNNZuh+xBEzgyPWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFoY9biI9buIhwQxOlJRLc7bdkHP0vT8JtNCa+SJqlGTOh7475klGlHTWEvEIFDhRtYxFqvp5Cvpj0IW6wfc1Aena2u69HwwCY1D7F1yUXz+a+dVLAWHy+IHyI42/mbBDu4yXury4Gfi4ogq4Nc2xZkhbTjA+EYjWqlD/6r9JTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SqMCfcLX; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso27059695e9.2;
+        Sun, 27 Jul 2025 09:07:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753632454; x=1754237254; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HDpAJaREeJqJesXLLGpj/suPTX+4uyqsUs2XBvBthEU=;
+        b=SqMCfcLXrFUPSiK1McDDYDzb0j0c708cVp2YOAw48rMOVE3X49IIX61H3Ac1zoA09i
+         OsW01GDGPJTYt0NyaOJ4ObrHGDOX0bGDsrQ/rg3P1D71n909u2bc+Zv+ton3yvjfE29F
+         Hg0jjK9AbbqRM8l8IoZnb80ztDlc0HxSo2NsDc+hfTlZ9q6jbsNddsG1pcui4M1naZJ0
+         N1P1CKGQIz/SbfVSWiVu5KEgw6MV2FJfo5oInf/fDmn23RTwHOSzuIUXbfKD3LhD1P3Q
+         fp0wOBZbxK1Jv+jXSF2TZRTl1+3uoClhLsicABStcqPHDL/61uDkfGEUYGk2qLmh174Z
+         sS0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753632454; x=1754237254;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HDpAJaREeJqJesXLLGpj/suPTX+4uyqsUs2XBvBthEU=;
+        b=noSMYBSytPDDJLVmip/TTFx29zVpEzxxOfGi+8lGwfOp7S5KYl3eIXDP2zwN0fN6iN
+         WXsJH+PQtWt+MlAq9RuTkUl8hVJlmyCJ5Zia1i2FCef9fRx5zBk5oUdrDfsrZ09Ss4+d
+         hHuVhdrxycNrDp9gGSR4lpdnZ3XNYASSf8gUhpnh/By/0Qc2BzzYixjnj8nng+zCmjuX
+         gh4/aDr27qDlZwYgokGFvTsmLBgHuI7OiEtssZO7aE15h+L/TH2oRjJQ5/AtXM8AfH4k
+         SbRtEutfJ+1ZaolZeaVQDVoaerWI+8az/IBMrBS8JkBHvEyXZ6eZgARGxiDEICw3tOKc
+         +KyA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/DtjQqJIWKBl25lFzTeYAk9rFYDG5Zfjh6pNdZSJGCCgPT2tJ5lH928RklLieXD9kCFohd2UbvxHPM1s=@vger.kernel.org, AJvYcCWFcNqfVlxQsp+vHfGfAdOD9uZmy1cTr6kHNEfCHOYPtNdZXwn9yQaaLhhM+kxNjwqISNor4kapy403nDSsWZkDIyI=@vger.kernel.org, AJvYcCXiiikf15+GNJXzGuODWoZtTSqvcHh0LtCaFkCjFjgOb03PCsAVF9zTCzxCIPQrTt0bYZttlGs/pcax@vger.kernel.org
+X-Gm-Message-State: AOJu0YygAospn1jy+tgLEWtEcguWul6PLfhrZh2VbYK8C6lyKqnGlrq1
+	98EiQR5xP02USNBZbpbsm+wi8eGcWWB8UJzNNLDnGib2IqBIh62XuFBB
+X-Gm-Gg: ASbGncsFSWFMCTz3FXtQ+9GeObKeUuIq3rhqAnaIWFyNPnR1VU65kfoNeQGZFMJlk2b
+	/ZC4pApD7ABDXnMK/y6/7ALCrQ6LYcdzKzkSkvTqCRLhw1T6zmJe2ySMuggm8tD24x1/y1A3rdp
+	TT+HrvkGaVJ8URS0cPuTZVQFcnCIJ1I+ew3UQEEBp1eRE/yNAwkgD/xO5rHUvzh+5+gSx6lCcmU
+	fu0MEGna0JMq94EeBkV6UX25y632soeJtvmJP+0aZ/I1iYqlQPptOwxzW8A27hf/R8quf2lHh4q
+	q/X8R8xpcK73+pRcSag8bdseV5WP3NF/0hxv+fce32D66MlvobzpDrdP+0XamaKaSCG6B/i3ubg
+	XZlLV1UIPoScbTk0q21O8xiUNkHQmwEr/TnM68DqVCb2R316VFAsHPA2nzXg1ulzJXaSHgJdtag
+	==
+X-Google-Smtp-Source: AGHT+IFSt3sdIgAXXN8wsBGZM1SKL5Jm9g4xwSo4s2eNu8YGQW01DDYElfzRUGerOlKPd+JrfLq5gg==
+X-Received: by 2002:a05:600c:529a:b0:456:475b:7af6 with SMTP id 5b1f17b1804b1-45876306dd1mr68044425e9.7.1753632453560;
+        Sun, 27 Jul 2025 09:07:33 -0700 (PDT)
+Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586ec63d29sm107788615e9.1.2025.07.27.09.07.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 09:07:33 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 0/2] Enable 64-bit polling mode for R-Car Gen3 and RZ/G2+ family
+Date: Sun, 27 Jul 2025 17:07:25 +0100
+Message-ID: <20250727160731.106312-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 17 Jul 2025 12:42:13 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-> On 7/16/25 05:28, Andy Shevchenko wrote:
-> > On Tue, Jul 15, 2025 at 11:42:05AM -0400, Sean Anderson wrote:  
-> >> On 7/15/25 04:18, Andy Shevchenko wrote:  
-> >> > On Mon, Jul 14, 2025 at 09:20:18PM -0400, Sean Anderson wrote:  
-> > 
-> > ...
-> >   
-> >> >> +EXPORT_SYMBOL_GPL(iio_event_mode);  
-> >> > 
-> >> > Can we move this to namespace? Otherwise it will be never ending story...
-> >> > Ditto for other new APIs.  
-> >> 
-> >> Never ending story of what?  
-> > 
-> > Of converting IIO core to use exported namespaces.  
-> 
-> What's the purpose?
+As per the RZ/{G2L,G3E} HW manual SD_BUF0 can be accessed by 16/32/64
+bits. Most of the data transfer in SD/SDIO/eMMC mode is more than 8 bytes.
+During testing it is found that, if the DMA buffer is not aligned to 128
+bit it fallback to PIO mode. In such cases, 64-bit access is much more
+efficient than the current 16-bit.
 
-Aim here is in general to reduce the massive exposed ABI by applying some
-namespaces so that only drivers that opt in to specific functionality
-can use particular symbols.
+RFT->v2:
+ * Collected tags
+ * Fixed the build error reported by the bot.
 
-We've used it extensively for groups of related drivers and to some
-libraries and the DMA buffers, but so far not pushed it into the IIO core.
+Biju Das (2):
+  mmc: tmio: Add 64-bit read/write support for SD_BUF0 in polling mode
+  mmc: renesas_sdhi: Enable 64-bit polling mode
 
-I'd be fine with these new functions all being under IIO_CONSUMER or similar.
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  3 +-
+ drivers/mmc/host/tmio_mmc.h                   | 14 ++++++++
+ drivers/mmc/host/tmio_mmc_core.c              | 33 +++++++++++++++++++
+ include/linux/platform_data/tmio.h            |  3 ++
+ 4 files changed, 52 insertions(+), 1 deletion(-)
 
-Quite a bit of feedback on this set will be of the lines of don't do it
-the way we did it before as now we know better!
-
- 
-> 
-> >> >> +			if (scale64 <= INT_MAX && scale64 >= INT_MIN)
-> >> >> +				raw64 = processed / (int)scale64;  
-> >> > 
-> >> > Do you need the casting? (I mean if the compiler is dumb enough to not see this)  
-> >> 
-> >> AIUI 64-bit division is not available on 32-bit platforms. The cast
-> >> ensures we get 32-bit division.  
-> > 
-> > I put specifically a remark in the parentheses. So, the Q is if the compiler
-> > doesn't recognize that. Can you confirm that 32-bit compilation without cast
-> > is broken?  
-> 
-> inkern.c:(.text.iio_write_event_processed_scale+0x14c): undefined reference to `__aeabi_ldivmod'
-> 
-> >> >> +	*raw = clamp(raw64, (s64)INT_MIN, (s64)INT_MAX);  
-> >> > 
-> >> > You already have similar approach here...  
-> >> 
-> >> Well, I can spell it 0x7fffffffLL if you'd like...  
-> > 
-> > Nope, I like to have named constants instead of magics, but actually are those
-> > castings needed for the clamp()?  
-> 
-> Apparently not. The checks in __clamp_once are only for matching signedness. And
-> the ints are promoted to s64s when the comparison is made.
-> 
-> --Sean
+-- 
+2.43.0
 
 
