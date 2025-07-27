@@ -1,107 +1,122 @@
-Return-Path: <linux-kernel+bounces-747272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB84FB131B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 22:19:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8E4B131B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 22:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC6391701D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:19:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 059DF7AAFC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED6F242D6E;
-	Sun, 27 Jul 2025 20:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C84722D780;
+	Sun, 27 Jul 2025 20:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SnVyd1ia"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i/FPxmWm"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE8F23F429;
-	Sun, 27 Jul 2025 20:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818789463;
+	Sun, 27 Jul 2025 20:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753647506; cv=none; b=A8ODzyXzaetIjarsmS6oN/Zvj0uWQKEr/6UbU1kC2WwPig9YAFZlQ8FyRoV3A0JDQ82pqmPnWM0vaA/L0cQNKgduAgQYcCArnrIet7tBngKq2BT77TE5Jwq/LEzSFNI7YoJjutIBxaCTT0+kQPL63PJiZFGbxZQEPu4QatoXZX4=
+	t=1753647654; cv=none; b=rGdcahKgEjyXIKjoDMHX/ng7VzW0obmLfWHEkKoJ0vRIv9UAAgSmCm6wLb2lEk/z2rIJRTtmYxUSl5ndHpSvFOX3+efwc3Dtpxk2s1IuEQN0B4qgPexUBlepvHCxh7/kIOzMg1WFJLY1LljKkMCXDdizVSB22oraJ+5zw471a2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753647506; c=relaxed/simple;
-	bh=lIN23oNIZq4gvn+3V74kVsfgrx2Y6wNkq7FOywUP7e8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CR4fsuT5lsNHpR86EJXFC089f8RQmV9VXevcVfVmp7zNam+KcVPRr1QHE/yOm580kEVEaMLUD11K7EU71/HHmEdyV+fuXaxKwNuHSiilk8MHFwKqPoQfc/R68MywIRBCs8rJVy+DNn9l8/nyuR35mvui1D7CeK2PCU3cIWE3Zes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SnVyd1ia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A97EFC4CEFA;
-	Sun, 27 Jul 2025 20:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753647505;
-	bh=lIN23oNIZq4gvn+3V74kVsfgrx2Y6wNkq7FOywUP7e8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SnVyd1iaZ6FIKe2TiI2z0l2MSfELTCCZol2515DoHHFYOTm0vguEMRVfekcMdFrp4
-	 MNz8vg9AOMJ7/Xqirrg14z4v2WJN2K65r4ZAFP5hbx9xAGDq2ATFA0cAnMX6IfPOVw
-	 mlc0Qs1JzsL/QIC79ERmWTZXEV1h3DwFk0Ey2tXFExsnhZfRxdz7IbWqD3x0kH9JD1
-	 9BdqkLbs2YX56yNk/wnj4ajUI5nDWfujZUyUnbmu4a8p+HDkMFS2rCxHuU3I+ZSuWO
-	 UHg/beRd0Lky+HxbcqIqt1JAVD2VyTiZpFGVweSJzFmIYKmLCz8NZywx+vcQIjThj3
-	 U3avO1s/Otxag==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC v2 7/7] mm/damon/sysfs: support paddr_fault
-Date: Sun, 27 Jul 2025 13:18:13 -0700
-Message-Id: <20250727201813.53858-8-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250727201813.53858-1-sj@kernel.org>
-References: <20250727201813.53858-1-sj@kernel.org>
+	s=arc-20240116; t=1753647654; c=relaxed/simple;
+	bh=eNZKbzS0c/J7IuDwfdRf57KFwamQJ5ukxeyZwRhspXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R/Zv1J7F0HmvRRz3ZRtSaRob9/gbSYd9Gb/xjCAq19Zm0/TTYCRoPRW07tYgDis7yEHorZoP3Nv8DW/JnPnVTtyOAnABFBnYzGjeZ86krenSC8yMkIMErRRyRY8L1LTAfc0tv6yNkyFvTViHlEAbCPsLIU9yOIgoCqz50VNo3vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i/FPxmWm; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=ux2Y7r0903v5alApOSxRvTGNLT3OOv1EML/ncMGUUmw=; b=i/FPxmWmYSnbdgJ6/p6CQLvhkI
+	ZkzwgE/7UqMwchtTqoSrgdytJI1eslzju1nv2njS5bE52PfFcO6/qIs6H9aY6WepORhrCtZriY92T
+	7y1J8YZchMeNFjfWgKh9JTfXit1v/8vQLtoZQYJayHvx0fxuLGOcoI7xxtxtOrli+FgQN1GoHhOBq
+	soqSmp6NkM7vp8ES3Fustc/OGuZL+yntj07Nvc9xK97cXV6rSqid5bWNacUM4Bv+P6ou79CQZlnE9
+	uzNk0681fqz5tEagcyZGZX2psMFxqAJU+UfJX6DjGsYgfz8tPv8Mbp6xGzI0W9FGaj4zsvoSnwF1d
+	BnQtocJA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ug7rX-0000000DC3C-45Sd;
+	Sun, 27 Jul 2025 20:20:52 +0000
+Message-ID: <54aca5de-2f42-4bbf-ac58-2ee6ddf3f8ca@infradead.org>
+Date: Sun, 27 Jul 2025 13:20:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: remove broken overline from sysctl/vm.rst
+To: Vedang Kandalkar <vedangkandalkar@gmail.com>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <CAJSSbgCRT-EcQTdTKof_gG5eBD1eYZKEFC_9pdQsaCiXx9yQHA@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CAJSSbgCRT-EcQTdTKof_gG5eBD1eYZKEFC_9pdQsaCiXx9yQHA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Extend DAMON sysfs interface to support the page faults based physical
-address space access monitoring.  Users can use it by writing
-paddr_fault to the ops file.  For simple testing, the DAMON user-space
-tool can be used as below, after applying below hack.
+Hi,
 
-    $ git diff
-    --- a/src/_damon_sysfs.py
-    +++ b/src/_damon_sysfs.py
-    @@ -548,7 +548,7 @@ def write_monitoring_attrs_dir(dir_path, context):
+On 7/27/25 12:33 PM, Vedang Kandalkar wrote:
+> From 098513ca1d41c0c69f3956a6d22f34aee452afdd Mon Sep 17 00:00:00 2001
+> From: Vedang Kandalkar <vedangkandalkar@gmail.com>
+> Date: Sun, 27 Jul 2025 23:38:12 +0530
+> Subject: [PATCH] docs: remove broken overline from sysctl/vm.rst
+> 
+> The overline above the /proc/sys/vm/ section was broken and not
+> following standard reStructuredText conventions. Removed to improve
+> readability.
+> 
+> Signed-off-by: Vedang Kandalkar <vedangkandalkar@gmail.com>
+> 
 
-     def write_context_dir(dir_path, context):
-         err = _damo_fs.write_file(os.path.join(dir_path, 'operations'),
-    -                              context.ops)
-    +                              'paddr_fault')
-         if err is not None:
-             return err
+All of the .rst files in that sub-directory are like this.
+Should they all be patched?
 
-    $ sudo ./damo start
-    $ sudo ./damo report access
+OTOH, there are many files in Documentation/admin-guide/ that use this
+pattern. Are they all incorrect?
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/sysfs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Exactly how is it "broken?"
+Did you read Documentation/doc-guide/sphinx.rst, where it says:
 
-diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
-index 6d2b0dab50cb..b1bf43972491 100644
---- a/mm/damon/sysfs.c
-+++ b/mm/damon/sysfs.c
-@@ -829,6 +829,10 @@ static const struct damon_sysfs_ops_name damon_sysfs_ops_names[] = {
- 		.ops_id = DAMON_OPS_PADDR,
- 		.name = "paddr",
- 	},
-+	{
-+		.ops_id = DAMON_OPS_PADDR_FAULT,
-+		.name = "paddr_fault",
-+	},
- };
- 
- struct damon_sysfs_context {
+* Please stick to this order of heading adornments:
+
+  1. ``=`` with overline for document title::
+
+       ==============
+       Document title
+       ==============
+
+  2. ``=`` for chapters::
+
+       Chapters
+       ========
+
+> ---
+>  Documentation/admin-guide/sysctl/vm.rst | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/sysctl/vm.rst
+> b/Documentation/admin-guide/sysctl/vm.rst
+> index 9bef46151d53cd..8f3875d68ac8ea 100644
+> --- a/Documentation/admin-guide/sysctl/vm.rst
+> +++ b/Documentation/admin-guide/sysctl/vm.rst
+> @@ -1,4 +1,3 @@
+> -===============================
+>  Documentation for /proc/sys/vm/
+>  ===============================
+> 
+
+thanks.
 -- 
-2.39.5
+~Randy
+
 
