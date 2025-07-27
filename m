@@ -1,301 +1,88 @@
-Return-Path: <linux-kernel+bounces-747146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C82FEB13050
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E601B13054
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF803AFD44
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:13:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E8A3B1DE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B22F21C192;
-	Sun, 27 Jul 2025 16:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF1C21A928;
+	Sun, 27 Jul 2025 16:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNJ0R9oj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IfLEU1z+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7079686337;
-	Sun, 27 Jul 2025 16:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF7410FD;
+	Sun, 27 Jul 2025 16:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753632834; cv=none; b=bU9EZuIVoE3u1P7wrWkqCC1e4slAzaEOjrWXTkOn6hjHq7DWmdsiAzdxUtPahLFBt0lQhtNZs5SRg/e+fzJQqgTgSOiv+6W5+PGU9vn9ouNHRt8rC1lEwgfsrhDqmtaltN9I+1q/RpaezPHfQBY4xFcw+38VgF4duOZrkE9VExI=
+	t=1753632954; cv=none; b=JS7+xrL4pcILbZOv3o0pBF514d2wU3HefSocQm7xLnD5CJeMdKSj1iStjMc9TTRI0TLqR2ESk8B7P7Lc+pPTjyAjYzUcCi5HEoO6IaWSXBH9fEZjwVF5YvLk1YuWY42RpGfkwtarFX9pb8pWGM1g1jCF4PZTpJM5WJYF3nwCVQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753632834; c=relaxed/simple;
-	bh=UHmAc462e38aBUPTK4SctjnMx407u356UEsrj9uxrk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IBbMQ3QsEB6yiZ5yWEWjc2VbAfspjr3EU/3Eh6+UaX8/ZblFmPZ1VsMuEK4DNmfjbl3CxRqSyY+pFT9AW++zx04jIdpYprOOKySzU1yAy+eZ7H1zkxMX5ugtlwMqLCe9qTx2xLDDV6Nvrptyw6Vu22+qjF1yU9jbeQkR2BDpf0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNJ0R9oj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84377C4CEEB;
-	Sun, 27 Jul 2025 16:13:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753632833;
-	bh=UHmAc462e38aBUPTK4SctjnMx407u356UEsrj9uxrk8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pNJ0R9ojqZZjfNn8kwYWTSsSMPzhd5+jyOR/1CQfTjb3LlQC44u7rk/u9W7d0XpJ9
-	 IySnSvDo/+aLodQaae8MK8voljeCkJoCGw8bQBHsqZKGVowVVyO5xqklDmb/O+LY0u
-	 qQJp5HyT0513kJD2P/GVIjuYALlTQYz1/qe8KXRxf//kS1ZJ+/iNTXYKzRPB9fKxlY
-	 joTHfHeNsrzBfAJQGrcg/7z5UQrouJ/8bjMWaI6f5PSKrn3AWK2osTP7ihyT9D9GRi
-	 wWwsAV+RvDp8FfuRfymAaDu640OBDBy6U9N35L1rGpPxz3GdlWqz7DF7umPEE/bSsv
-	 vMCNrfuQ0z8ag==
-Date: Sun, 27 Jul 2025 17:13:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org, Andy Shevchenko
- <andy@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 2/7] iio: inkern: Add API for reading/writing events
-Message-ID: <20250727171347.61a97f83@jic23-huawei>
-In-Reply-To: <20250715012023.2050178-3-sean.anderson@linux.dev>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
-	<20250715012023.2050178-3-sean.anderson@linux.dev>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753632954; c=relaxed/simple;
+	bh=tIc7sWAFiBmshEeA1ugd4kIW4FsQbHOZEMZXdR/QfY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fahW/wZIO1VJFB5CUgORHOhENR8tVtecIYNWbYvcAL1/K0GOHl59KTm+7QPOT2GVTtz8PO13UXhKDO0xfM/yyAw0+Laa4kL1UsLKAmC4rE/sBUX3y687DKqcDYdxlAJp6r/ZFffRdYp6/bgP3V/vSewgy5khJ6F4+8sjER3z6kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IfLEU1z+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=kW+ZOJQ+5A57SHI4wkNLifBLUPO0LzEY2L+nW9nNAMw=; b=IfLEU1z+PcoCX4MpyXlmxy8V8z
+	5ZEHb7qQ1EDl5XZYu3Q8twiHPyYuZOg7dmawgozupzVJiZA4UYWK+ygeSs01hCOJeUvdE5N1aQK3v
+	Qsb2nEFqHpAGmgMql3Pxdg92tcc8mX83ZKbaa7hNkLDFK2LsrkBjBRQfFRcGDV7IvNC8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ug42A-0030pL-Vc; Sun, 27 Jul 2025 18:15:34 +0200
+Date: Sun, 27 Jul 2025 18:15:34 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add Radxa E24C
+Message-ID: <72d979e8-005a-4d4d-b5d2-3f59e78574de@lunn.ch>
+References: <20250727144409.327740-1-jonas@kwiboo.se>
+ <20250727144409.327740-4-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250727144409.327740-4-jonas@kwiboo.se>
 
-On Mon, 14 Jul 2025 21:20:18 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+> +&gmac1 {
+> +	clock_in_out = "output";
+> +	phy-mode = "rgmii-id";
+> +	phy-supply = <&avdd_rtl8367rb>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&rgmii_miim>, <&rgmii_tx_bus2>, <&rgmii_rx_bus2>,
+> +		    <&rgmii_rgmii_clk>, <&rgmii_rgmii_bus>, <&gmac1_rstn_l>;
+> +	status = "okay";
+> +
+> +	fixed-link {
+> +		speed = <1000>;
+> +		full-duplex;
+> +	};
 
-> Add an in-kernel API for reading/writing event properties. Like the
-> raw-to-processed conversion, with processed-to-raw we only convert the
-> integer part, introducing some round-off error.
-> 
-> A common case is for other drivers to re-expose IIO events as sysfs
-> properties with a different API. To help out with this, iio_event_mode
-> returns the appropriate mode. It can also be used to test for existence
-> if the consumer doesn't care about read/write capability.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-Hi Sean,
+A fixed-link without an obvious reason gets me asking questions...
 
-A few minor comments inline.
+The schematic indicates there is a realtek 6387 switch on the other
+end. rtl8365mb.c seems to support this. Is there a reason you did not
+include this now?
 
-> ---
-> 
->  drivers/iio/inkern.c         | 198 +++++++++++++++++++++++++++++++++++
->  include/linux/iio/consumer.h |  56 ++++++++++
->  2 files changed, 254 insertions(+)
-> 
-> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> index c174ebb7d5e6..d3bbd2444fb5 100644
-> --- a/drivers/iio/inkern.c
-> +++ b/drivers/iio/inkern.c
-> @@ -1028,3 +1028,201 @@ ssize_t iio_read_channel_label(struct iio_channel *chan, char *buf)
->  	return do_iio_read_channel_label(chan->indio_dev, chan->channel, buf);
->  }
->  EXPORT_SYMBOL_GPL(iio_read_channel_label);
-
-> +umode_t iio_event_mode(struct iio_channel *chan, enum iio_event_type type,
-> +		       enum iio_event_direction dir, enum iio_event_info info)
-> +{
-> +	struct iio_dev *indio_dev = chan->indio_dev;
-> +	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(indio_dev);
-> +	umode_t mode = 0;
-> +
-> +	guard(mutex)(&iio_dev_opaque->info_exist_lock);
-> +	if (!iio_event_exists(chan, type, dir, info))
-> +		return 0;
-> +
-> +	if (info == IIO_EV_INFO_ENABLE) {
-> +		if (indio_dev->info->read_event_config)
-> +			mode |= 0444;
-> +
-> +		if (indio_dev->info->write_event_config)
-> +			mode |= 0200;
-> +	} else {
-> +		if (indio_dev->info->read_event_value)
-> +			mode |= 0444;
-> +
-> +		if (indio_dev->info->write_event_value)
-> +			mode |= 0200;
-> +	}
-> +
-> +	return mode;
-> +}
-> +EXPORT_SYMBOL_GPL(iio_event_mode);
-> +
-> +int iio_read_event_processed_scale(struct iio_channel *chan,
-> +				   enum iio_event_type type,
-> +				   enum iio_event_direction dir,
-> +				   enum iio_event_info info, int *val,
-
-Maybe rename info to ev_info or similar to avoid confusion with
-indio_dev->info
-
-> +				   unsigned int scale)
-> +{
-> +	struct iio_dev *indio_dev = chan->indio_dev;
-> +	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(indio_dev);
-> +	int ret, raw;
-> +
-> +	guard(mutex)(&iio_dev_opaque->info_exist_lock);
-> +	if (!iio_event_exists(chan, type, dir, info))
-> +		return -ENODEV;
-> +
-Perhaps a local variable 
-	struct iio_info info;
-
-	info = indio_dev->info;
-
-> +	if (info == IIO_EV_INFO_ENABLE) {
-> +		if (!indio_dev->info->read_event_config)
-> +			return -EINVAL;
-> +
-> +		raw = indio_dev->info->read_event_config(indio_dev,
-		raw = info->read_event_config(indio_dev, chan->channel,
-					      type, dir);
-
-> +							 chan->channel, type,
-> +							 dir);
-> +		if (raw < 0)
-> +			return raw;
-> +
-> +		*val = raw;
-> +		return 0;
-> +	}
-> +
-> +	if (!indio_dev->info->read_event_value)
-> +		return -EINVAL;
-> +
-> +	ret = indio_dev->info->read_event_value(indio_dev, chan->channel, type,
-> +						dir, info, &raw, NULL);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return iio_convert_raw_to_processed_unlocked(chan, raw, val, scale);
-> +}
-> +EXPORT_SYMBOL_GPL(iio_read_event_processed_scale);
-
-> +
-> +int iio_write_event_processed_scale(struct iio_channel *chan,
-> +				    enum iio_event_type type,
-> +				    enum iio_event_direction dir,
-> +				    enum iio_event_info info, int processed,
-> +				    unsigned int scale)
-> +{
-> +	struct iio_dev *indio_dev = chan->indio_dev;
-> +	struct iio_dev_opaque *iio_dev_opaque = to_iio_dev_opaque(chan->indio_dev);
-> +	int ret, raw;
-> +
-> +	guard(mutex)(&iio_dev_opaque->info_exist_lock);
-> +	if (!iio_event_exists(chan, type, dir, info))
-> +		return -ENODEV;
-> +
-> +	if (info == IIO_EV_INFO_ENABLE) {
-> +		if (!indio_dev->info->write_event_config)
-> +			return -EINVAL;
-> +
-> +		return indio_dev->info->write_event_config(indio_dev,
-
-Similar to above, feels like a local variable to shorten these would be good,
-
-> +							   chan->channel, type,
-> +							   dir, processed);
-> +	}
-> +
-> +	if (!indio_dev->info->write_event_value)
-> +		return -EINVAL;
-> +
-> +	ret = iio_convert_processed_to_raw_unlocked(chan, processed, &raw,
-> +						    scale);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return indio_dev->info->write_event_value(indio_dev, chan->channel,
-> +						  type, dir, info, raw, 0);
-> +}
-> +EXPORT_SYMBOL_GPL(iio_write_event_processed_scale);
-> diff --git a/include/linux/iio/consumer.h b/include/linux/iio/consumer.h
-> index 6a4479616479..16e7682474f3 100644
-> --- a/include/linux/iio/consumer.h
-> +++ b/include/linux/iio/consumer.h
-> @@ -451,4 +451,60 @@ ssize_t iio_write_channel_ext_info(struct iio_channel *chan, const char *attr,
->   */
->  ssize_t iio_read_channel_label(struct iio_channel *chan, char *buf);
->  
-> +/**
-> + * iio_event_mode() - get file mode for an event property
-
-Can we name this something more specific.  Sounds like it might be
-the mode of the events, not the mode of the file.
-
-> + * @chan: Channel being queried
-> + * @type: Event type (theshold, rate-of-change, etc.)
-> + * @dir: Event direction (rising, falling, etc.)
-> + * @info: Event property (enable, value, etc.)
-> + *
-> + * Determine an appropriate mode for sysfs files derived from this event.
-
-This isn't precise unfortunately as if we have a mix of read only and rw
-for different events (maybe some thresholds fixed and others not).
-We should maybe say that it may indicate more control than actually possible.
-In most cases it'll be right though.
-
-> + *
-> + * Return:
-> + *   - `0000` if the event is unsupported or otherwise unavailable
-> + *   - `0444` if the event is read-only
-> + *   - `0200` if the event is write-only
-> + *   - `0644` if the event is read-write
-> + */
-
-So here is one of those bits of "don't do it the way we currently do it".
-Move the docs next to the implementation in the c file rather than the header.
-We are horribly inconsistent in IIO mostly because of younger me making a mess
-of it.  General thinking today is that we are much less likely to forget
-to update docs if they are next to the code.
-
-
-> +umode_t iio_event_mode(struct iio_channel *chan, enum iio_event_type type,
-> +		       enum iio_event_direction dir, enum iio_event_info info);
-> +
-> +/**
-> + * iio_read_event_processed_scale() - Read an event property
-> + * @chan: Channel being queried
-> + * @type: Event type (theshold, rate-of-change, etc.)
-> + * @dir: Event direction (rising, falling, etc.)
-> + * @info: Event property (enable, value, etc.)
-> + * @val: Processed property value
-> + * @scale: Factor to scale @val by
-> + *
-> + * Read a processed (scaled and offset) event property of a given channel.
-> + *
-> + * Return: 0 on success, or negative error on failure
-> + */
-> +int iio_read_event_processed_scale(struct iio_channel *chan,
-> +				   enum iio_event_type type,
-> +				   enum iio_event_direction dir,
-> +				   enum iio_event_info info, int *val,
-> +				   unsigned int scale);
-> +
-> +/**
-> + * iio_write_event_processed_scale() - Read an event property
-> + * @chan: Channel being queried
-> + * @type: Event type (theshold, rate-of-change, etc.)
-> + * @dir: Event direction (rising, falling, etc.)
-> + * @info: Event property (enable, value, etc.)
-> + * @processed: Processed property value
-> + * @scale: Factor to scale @processed by
-> + *
-> + * Write a processed (scaled and offset) event property of a given channel.
-> + *
-> + * Return: 0 on success, or negative error on failure
-> + */
-> +int iio_write_event_processed_scale(struct iio_channel *chan,
-> +				    enum iio_event_type type,
-> +				    enum iio_event_direction dir,
-> +				    enum iio_event_info info, int processed,
-> +				    unsigned int scale);
-> +
->  #endif
-
+	Andrew
 
