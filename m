@@ -1,85 +1,134 @@
-Return-Path: <linux-kernel+bounces-747134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E298B13029
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:46:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA304B1302B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7351E7A8981
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:45:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2AE71735EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC23121ADB9;
-	Sun, 27 Jul 2025 15:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8991B21ADB9;
+	Sun, 27 Jul 2025 15:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QBVi0/B3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JffGy/vu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002C94A33;
-	Sun, 27 Jul 2025 15:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBFB188000;
+	Sun, 27 Jul 2025 15:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753631184; cv=none; b=RYw/mHH7TaMaKEJ4Svy6xG7x9hqRXfMnvFyaVUH8ChfJ7JRRithEewVyLcBdpgtG5M6/liJfMDN3O/5irDGaWHezEA6ppCtjI1Af/mCcZb3O6YUJ5FhT1NSvZB+7oOyONxD4J2aVvJG3NX0lF3TUWld865m6bvEJzsOVEr/UHHE=
+	t=1753631360; cv=none; b=XQPjiJqbbjHsGlcBXiBY1aIfRFMVTh1PTbIE8tCXWF6YqOOS4E0PNW12TjNo0dqefk4ggZ4OUtGBCeFySor3AYPZrUivgQxhuSxfNONqGNk5cHulHlh1hf1i444GVPOmoiWQ9ha3j04nGYZBQXkMgAWaxyC/7zIhWY5omj2IWXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753631184; c=relaxed/simple;
-	bh=jDM2Pyaudn8WIb51k/CHphHn2RTsXtiFU/WVhU2roOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MLVDZd9AlKhrQJI8vBZmJM5stwXkFkcAYsLE8eKmuqHmE69WYwkEhk08bQ7xZ/08alVwaLISibVgJrD5TZRAQkWbDeGxohVZdLXvHWpq9xo0ZS8KdINbmcZFDLLnsjRdin1DlSj/GkbxBn3k9FM2NGlTXewlJ5+DCGAhRnGDa9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QBVi0/B3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ea/LVnrickzrKsQYDVPNFYq4HqocG3+kI8GD60vgLes=; b=QBVi0/B33ltuEPuvItV2c342JE
-	VhGgUB8pE0M8DhPFgtpP/R0NyKeM5ckeok09OTTsnJ7nKRsFaN2LxdVWS4bu1Ir1Ma8YWCLfb7W68
-	XwcuvozrF4T6aKh7FDl7mf5oXsKSz7RSs/QC+PGWcqvrdgFZpND3OkPMsKx9aJURUxpY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ug3ZP-0030lE-Nq; Sun, 27 Jul 2025 17:45:51 +0200
-Date: Sun, 27 Jul 2025 17:45:51 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tao Ren <rentao.bupt@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Tao Ren <taoren@meta.com>
-Subject: Re: [PATCH v3 10/13] ARM: dts: aspeed: Add Facebook Fuji-data64
- (AST2600) Board
-Message-ID: <9897e0a4-7c70-4e27-8591-09e9d6ef2263@lunn.ch>
-References: <20250723233013.142337-1-rentao.bupt@gmail.com>
- <20250723233013.142337-11-rentao.bupt@gmail.com>
- <d09667e5-992e-4ced-ae30-7a4116a72c62@lunn.ch>
- <aIGGdbIX9HaV4dB/@localhost.localdomain>
- <769d6817-ee97-4a23-b013-29bc875a00cb@lunn.ch>
- <aIMTvUyHGd/ikKY9@localhost.localdomain>
- <aIW/xEfJX/UD1kje@localhost.localdomain>
+	s=arc-20240116; t=1753631360; c=relaxed/simple;
+	bh=ucj4qPcgvz282NusIKgE8khiyMabwuonkaXUh2ZglTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R4kR97KhR9gKjr8kz+r+tHwBn6tKC//EYP1I+oBoqY7oCHP2L57RNuq0Kn3ET2yYgj9gbF3X4uxCJIpG0+RvFZhJ4eLf1fT+OoI+nxHdAUe0hfj8qU3HC7xhzKooNYislaBoBGHAOdIYVcNDWXnlnFAZg5g45bUyhliHglMtfEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JffGy/vu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D816C4CEEB;
+	Sun, 27 Jul 2025 15:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753631358;
+	bh=ucj4qPcgvz282NusIKgE8khiyMabwuonkaXUh2ZglTM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JffGy/vuE+BvXG+YgI0M4Xw27rC+KVnMaj9Cz23tHrOzulQUSzzC7hHi2HEk6LzSB
+	 5a4yXrKMi6Biuqk/84FAqXvbLOwhyjh3zAhSXgMcubKCFQ8PwasExZiheB4+vVvv3q
+	 RGlPxH/lfzZHJhHLKB3QpGxAhZs7+EeHORebo4n9hNIiR1AiqpztACZVPrfVuhuu3A
+	 NX/2na/VMeHTizVfMB+ykQeEkh7P3n1UZXBalHnE6x6lYT31HiqwDrQSPxSV9roSXN
+	 7iZngLRSvyISnAWc2VViJ5ghvtHACMQcIX1Cgc5pqcLdmYJNCuTFidP2wuvew1nAF9
+	 9KLyLFHSdBRhg==
+Date: Sun, 27 Jul 2025 16:49:09 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Gustavo Silva <gustavograzs@gmail.com>, Alex Lanzano
+ <lanzano.alex@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lothar Rubusch
+ <l.rubusch@gmail.com>
+Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
+Message-ID: <20250727164909.1833c4bc@jic23-huawei>
+In-Reply-To: <aIKlC-HlP3nX-ERA@smile.fi.intel.com>
+References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
+	<20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
+	<aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
+	<aHYIBReTFqJMtiXW@smile.fi.intel.com>
+	<vlpqd3jeszhgpcob7qyzp5vljdowwu26my7xuwuvfftf54zg35@czxhsjejgdkm>
+	<aHd2s987EMCdgdrJ@smile.fi.intel.com>
+	<20250724162227.065d20a0@jic23-huawei>
+	<aIKlC-HlP3nX-ERA@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIW/xEfJX/UD1kje@localhost.localdomain>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> As I'm not 100% sure where the RX clock delay is introduced, I will drop
-> mac3 entry in v4.
+On Fri, 25 Jul 2025 00:26:35 +0300
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-Many of the hyperscalers, or the supplies to the hyperscalers keep
-hitting this. The standard policy at the moment seems to be to drop
-Ethernet support. How useful is a BMC without Ethernet?
+> On Thu, Jul 24, 2025 at 04:22:27PM +0100, Jonathan Cameron wrote:
+> > On Wed, 16 Jul 2025 12:53:55 +0300
+> > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:  
+> > > On Tue, Jul 15, 2025 at 08:55:35PM -0300, Gustavo Silva wrote:  
+> > > > On Tue, Jul 15, 2025 at 10:49:25AM +0300, Andy Shevchenko wrote:    
+> > > > > On Tue, Jul 15, 2025 at 10:37:22AM +0300, Andy Shevchenko wrote:    
+> > > > > > On Fri, Jul 11, 2025 at 08:36:03PM -0300, Gustavo Silva wrote:    
+> 
+> ...
+> 
+> > > > > > > +/* 9.81 * 1000000 m/s^2 */
+> > > > > > > +#define BMI270_G_MEGA_M_S_2				9810000    
+> > > > > > 
+> > > > > > I thought this is MICRO...    
+> > > > > 
+> > > > > Btw, what if we use the device on poles and on equator (or even on orbital
+> > > > > station)? I'm wondering if this constant should be defined in units.h or
+> > > > > even in uAPI that user space may add a correction if needed.
+> > > > >     
+> > > > I certainly hadn't thought about these scenarios.
+> > > > FWIW, the accelerometer scale values also assume g = 9.81 m/s^2.
+> > > > For example, 0.000598 = 2 * 9.81 / 32768    
+> > > 
+> > > Right, but this should be supplied to user space somehow. OTOH the measure error
+> > > may be high enough (what is the precision of the measurements by the way?) that
+> > > it will neglect the differences in the 'g' constant.
+> > > 
+> > > All the details are given in [1].
+> > > 
+> > > [1]: https://en.wikipedia.org/wiki/Gravity_of_Earth#:~:text=The%20precise%20strength%20of%20Earth's,/s2)%20by%20definition.  
+> > 
+> > These sensors don't measure relative to g.  
+> 
+> What do they measure? Any links for me to study?
+m/s^2 (well actually not, but they derive that from change in properties of a capacitor like structure as it bends under
+the force generated by the acceleration.  Which in the vertical direction is g if the device isn't moving.
 
-If you all got together and talked to aspeed, apply a bit of pressure,
-it should be possible to get this mess fixed pretty quickly. And then
-you could all have working Ethernet....
+https://www.analog.com/en/resources/technical-articles/accelerometer-and-gyroscopes-sensors-operation-sensing-and-applications.html
+looks good as an intro from a very quick glance.
 
-	Andrew
+> 
+> > That's annoying marketing which is why I held firm for m/s^2 for IIO :)
+> > So what they measure for a given acceleration does not change depending
+> > on where we are on earth. You should use a 'fixed' standard value for
+> > conversion from marketing values in g to m/s^2..  
+> 
+> Hmm... But shouldn't that marketing value be exposed to user space?
+
+yes, but its 9.81 where ever you are. Or whatever the datasheet says they use.
+These things are rarely that well calibrated, so the exact value gets lost in the
+errors!
+
+Jonathan
+
+
+
+> 
+> 
+
 
