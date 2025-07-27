@@ -1,106 +1,580 @@
-Return-Path: <linux-kernel+bounces-747253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11951B1318A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:33:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E088B13190
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474701740A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5715F18976FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281122253E1;
-	Sun, 27 Jul 2025 19:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBC622616C;
+	Sun, 27 Jul 2025 19:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHzIN8ob"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s6LrkgeC"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCB5194A65;
-	Sun, 27 Jul 2025 19:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B7B1A314E
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 19:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753644795; cv=none; b=kHWkax1jTItFQCS3ZpKxN1jdHzh9ELcXkYGLo8D+Hu367Z9vRqtGRkucVXsrygeKiiNSjio5gv0aSVi7nlLLgLey5F/qDG57ZHArXdSJqRBmd8mWj+UXY5QaR/zWBnWAy0sf6/H4z+04pdp4bHXCvdq1shjsuwQZogY7JkqTcAY=
+	t=1753645024; cv=none; b=cp30Bra+NjDP4y8nGpi52LZc9vHjMCi0xuLA9J3BCIaPgql70hujnlq4pGBmH4XvY4npErahnSI19GdHtu8zos7bk+mp5rVMbVKyoo6RDkYVZZmoy+6xgzL/m5C6d3RP7O1KnSauXMK6vyXUGBAIM9pXQp0fF2DxVXeUocjaaFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753644795; c=relaxed/simple;
-	bh=6KdbDjlU7MNLdd6vRI7BRsrwL6xqrrZa1ld4+GRsLhQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oKsgxaUmWFh7ybrQ3EtjwV9N14DVYvIOFSDl4XiflAxR6O34tsfa145pAHUEfBJZsowctU99H1GCl4Nu26GM8f5S27rQUif5FLUgQoQQgw5Idh9sTLzKE62Xqzb5+r5I9+Vv8YOFTWaoUqBj4bxQzs21F41/nwZb/aau0fgNn0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHzIN8ob; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-707453b0306so5087756d6.2;
-        Sun, 27 Jul 2025 12:33:13 -0700 (PDT)
+	s=arc-20240116; t=1753645024; c=relaxed/simple;
+	bh=pCQCdRmlqteGXO1dI3JhZJOwDdd/l/sBFMVSJ+tKS4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OzLLcHzXnL3MHtK82ZWt2ic2NkE0aDlkkW9VudD1FD8lneDK3YSFswDynwNLSx8g9gAx+7rl7FGpZhshskKMRm/uDzS5b9/wihRwLAIauZ18ZkV3hBoLDosWSGLJxWinAL6BsFvNBGRN8XM0/x6eFGFiQ00ObUHekvwkCIdPYL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s6LrkgeC; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae0bf1616b9so44306466b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 12:37:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753644793; x=1754249593; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6KdbDjlU7MNLdd6vRI7BRsrwL6xqrrZa1ld4+GRsLhQ=;
-        b=RHzIN8obtTUuIhCNR/l/ymg5JtN7RJBFXPHi0Bgm/NbQkXbH9nkpUvKLlnorcu2/jO
-         96tG1UMh7lR67CLERCTRYAA6GYNa99YVa42AequCnHoFRbixn381mQ8vPP4YmLbaEqlW
-         2Q1BKKYq1A0LXXSd9/tBi/IJ5XavsHcpjrFpobAAeXH9cyUU8jNgjPF6AODyF+43Ojak
-         HEpWjXdfF7/3/fHqWvtAl4vJjO3j/3LcYD9++1l8ruxcpI6MU+zsEwSbELNDRvXnB/OP
-         +QQvSwDceEI4zKuRZo6df9KVxgPDFuYbXcEKx3Om8Rmsz1SNOtndkw8O8esXIRBFBDry
-         pZmg==
+        d=linaro.org; s=google; t=1753645020; x=1754249820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7y0vcHUdKY5HubRv6sWiVBOd/tgjmHnqruM1wM9dbQk=;
+        b=s6LrkgeC+hWkWa+ir8J+CtTAN+p4+uthXLN8vYGrG3a9reDJG3Ptzp+3pBtO22ky2B
+         Sgf4asUc5b1OkP7jk/+hPkGom30TBTou4ob1VoDj0TOt4weIAP1Edf8NCInGXaE2RVKi
+         PlAd0eMeC3YY8RVdT3DjGQPucJ7RNtVAyg+a5np9bcNZITOXE6PZmKzgMB16Ku4JIe+6
+         Y721bSWXIPMlnVehXY2tpud05in7hJ43C27iUX/pfjhfwaYvIq5D+TUuh0wgVX9eaeLv
+         EkMGoFCPVJRqu2VOGs0kryO6SQTk+qWKgjtjAeLW2wX1C4q1FfkBFUFwnTzJ+TAvOkOP
+         w3xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753644793; x=1754249593;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6KdbDjlU7MNLdd6vRI7BRsrwL6xqrrZa1ld4+GRsLhQ=;
-        b=OHIxFs00MgSEa+NE2JIpnPUI44Xtlm6ARbOSgSmxX6FhrJkZrWemFVzeuqAyFPpBSx
-         5itjsTQAu1mPP5A7j3Vq3G3o38H+n3VhHej1zUq6bRVQqbRpuXilu/0DB4doj0ordkZs
-         TjjlGCqHACefRWudvXaQRqL3laFAbF2ZO/4foMN4q67pL5TRbn0Gp3n2V0CTvcbsjmud
-         UR3ftS9BtIKU2OgDX1ZL/0PhyMqKpOQ0ij4wxrLBdhLrSh1zSkE3peArM6Piymw9dVzc
-         EjDyAFkWboAb+n3iszSxr/DgvyuyDbU/pwbGfXW9Uv9Ka4NybfbZdETgp96guDHWNJBk
-         iuDw==
-X-Gm-Message-State: AOJu0YxtWqRScioOPm/EPMicpJeaNGZKNoacs6nkRfA4VFgzXJvp+7qq
-	C0sNwBYOxBvMliX66OXPv5jkaVlrDxXWxIo+clTVVnIIeMfcSMr8DdzUsXbIe36NzY6esUlqkRA
-	aUkALmzpx7FAZjB/3iWE+L64wGF1AlEnM+xqm
-X-Gm-Gg: ASbGncvcEFo/uZTlHwnrY4BBNAYHUc3EFx8v5pa6Psl4NMgKIx1+UoAKyQkg+9bS0fQ
-	3s4ms0fCMtoph3BEI5x2zmRKf+vsmcczHOgW4t5Vq2bNJ5CWNGSoeRf8YasJfBJoiyEmoo0UYJO
-	6DSZ9h5Hm8QOmIZ9283QIq/A/UlI1JjZqa7XKubM/f1KPApOoDLAqHsayW6PdKVOv/GR8WH4TpF
-	3wlzngiBtCyp56EMmOe+AaFHNv0iL56nf7CGi4JbA==
-X-Google-Smtp-Source: AGHT+IFK5tEPWCumGhnFE2IwR7NP1qZVxV1XN/ZXaGRFoKiTvVk2rPmY7RiFxZZzTyRWv4Nt7/oPzNJWU9gek7lFK00=
-X-Received: by 2002:ad4:5d62:0:b0:706:f3f9:8a52 with SMTP id
- 6a1803df08f44-707205aa5e8mr115361966d6.29.1753644793056; Sun, 27 Jul 2025
- 12:33:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753645020; x=1754249820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7y0vcHUdKY5HubRv6sWiVBOd/tgjmHnqruM1wM9dbQk=;
+        b=t+AA/8CcMZ+0uifNOLPpqQquvxTpy3n8Vt3MVxTUdALlKadAR9nptAcgN3uxblp0dk
+         JkorwFmYiKyx95K0RGKRsjADmeegkkC5IlKfCHe4+jIchWeIpUGrNC+Z2MT5aEA18+rE
+         GEP7gbTyoGTAeTCWF/nDi50Lx66cn3yxi/psWejqfqQWthESIDC5Mxy9YsI8VIv60HUT
+         t04Uu7OT0QB856Bu4uOSmVepyK8LcY5cHEXcodinBren/WOs0Qv9aVIhbqPMmL7z7+so
+         2r3BBdIU/v1mMUuUUHjS2AEDhPfb2/4KKPVXJ+fKBJ4WQH3l9PBlF5nAFDaG9ppqHudG
+         F5zw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5rBLPfuVdRqR0HNNmO9rY4fvKDOuG5C951w5yLg+4+V8CA/sW9Orjkn52U6x9c4HzMwBAWdZQiHjwoHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC7ubqCMGrfEZZoBJNpFeYAx9F9JXdgTRnVULmQ9aCjN5I18qj
+	bzw9wClqaqGsMEcI/uEXha2+NbAlR1pSXPknjXj1gI4mu6TuX3kJN7PDjMp53rOjup8=
+X-Gm-Gg: ASbGncuw2Y+5V3oA3L20oFgnU8PIbZd9bxh9I/xKiKh9YFf1pn0GCHGQlDiou2rRk81
+	Gnt6U6FmIxlL86ZOVOPx42asL9FlMblr2JF8vlAvtjTkynvgAvwoFa/ih6Ic7OSIFa35Ri64AG4
+	gcAWLKu73lCCrzoVsf09fsHVyc5DmWX0v6iDYKltKyNcydAlouXCBFW+d7NHD8micYOo6sGSq9x
+	Yfrd1qnI746N48om9S5jL/RDYcwA/LL/ghK6JuBKNJ0QfYSQ2Fe/+PfvGEzubmAuK3aQraPIt6j
+	3Lj1v6JI+TBXXlT97zejpE+7z0qFXCdr1vkBjkgDl8KWIhS4ypq4knc6LpbIwSQnkKmwj1Fra2d
+	JaTZrE+3kA13YwA+2Odr6XxSIterqkLak
+X-Google-Smtp-Source: AGHT+IGnsqbLYepeBQlMegx0Lp4dkyiztC6rJSiVSH/e1bfIWi3D25Q5CqLCNjtZas5rY3E0iHNbaQ==
+X-Received: by 2002:a17:907:9628:b0:ae3:cd73:efb9 with SMTP id a640c23a62f3a-af61d779f94mr388208866b.12.1753645020391;
+        Sun, 27 Jul 2025 12:37:00 -0700 (PDT)
+Received: from kuoka.. ([178.197.203.90])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af6358a1c23sm318267066b.51.2025.07.27.12.36.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 12:36:59 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] arm64: dts: qcom: sm8650: Sort nodes by unit address
+Date: Sun, 27 Jul 2025 21:36:53 +0200
+Message-ID: <20250727193652.4029-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Vedang Kandalkar <vedangkandalkar@gmail.com>
-Date: Mon, 28 Jul 2025 01:03:02 +0530
-X-Gm-Features: Ac12FXzVbkZ1vZQB9x-4PwDODBFKwAXJV5vLsf35dCKl6ekhvsw7-l2URHvb3xg
-Message-ID: <CAJSSbgCRT-EcQTdTKof_gG5eBD1eYZKEFC_9pdQsaCiXx9yQHA@mail.gmail.com>
-Subject: [PATCH] docs: remove broken overline from sysctl/vm.rst
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11920; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=pCQCdRmlqteGXO1dI3JhZJOwDdd/l/sBFMVSJ+tKS4c=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBohn/U3EEL9lsA4gGgyw4soEmQ+T9mPFjc51imq
+ SGyybgk7lOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaIZ/1AAKCRDBN2bmhouD
+ 178DD/4lZF18/08Yzvzw4qiqtSF/pGbR/jJj2qVZaM/GpMpRi+GufSA4BeTgMrFK7oxYRr0pc0S
+ 7TevAv373OoKlhYRsE8PNguNRvDwcfLrqPU5XbVcXS/nh0DLMpJMpMbrQRjl0OpcxBh+NpMXmsF
+ csL2DC9rs3f30DTHY4/S2+z+khXMyapTVf9I8pum+3uB6JFg/pYnxsYjKwSYFw2IMQm8YtxQNWH
+ vk7Bkq8q0PX9cpWz99MqNo2EL6jwa5DHh+W2rYcynAJVCEWunj3lKLzEi8x60DXykI6nXOZhCw3
+ kn4bv2LnE1LrNn29y6sTTAI9v+ZmcnhJuq+Rc3wl4DwkpoEIQsm6TNBk0DoWNU3AhShfA2QROHn
+ y11Vtzcv5x60DQYmYVZfK7ZkPseCuMR6YJvRDLjFui4z3hGkiK+qJYnd2of43LehvtjA498J0Mn
+ zO6K0ywoDSupG3yndZP5a0UasP11oeFm5XBoWVDFPi++ZDdXvQA8e0D+u0o1O9HwmhHXdMac29v
+ 2O72/lzLDFnhum7PL7np7WG/ftYI+i5JCLSYuqSoI1pMN5AMfzuGBTk7veCm1CZrRlyrN5HZBZR
+ 2MfSrK6AE1jY4NBgPtiOb3xkYHDaoLdM4TX9oDzSEwkQWHYrnicjEKeB87LNSzVJ7eeG71bg35F ZgD3tpNChMWjR4Q==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-From 098513ca1d41c0c69f3956a6d22f34aee452afdd Mon Sep 17 00:00:00 2001
-From: Vedang Kandalkar <vedangkandalkar@gmail.com>
-Date: Sun, 27 Jul 2025 23:38:12 +0530
-Subject: [PATCH] docs: remove broken overline from sysctl/vm.rst
+Qualcomm DTS uses sorting of MMIO nodes by the unit address, so move
+few nodes in SM8650 DTSI to fix that.
 
-The overline above the /proc/sys/vm/ section was broken and not
-following standard reStructuredText conventions. Removed to improve
-readability.
-
-Signed-off-by: Vedang Kandalkar <vedangkandalkar@gmail.com>
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/admin-guide/sysctl/vm.rst | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm64/boot/dts/qcom/sm8650.dtsi | 414 +++++++++++++--------------
+ 1 file changed, 207 insertions(+), 207 deletions(-)
 
-diff --git a/Documentation/admin-guide/sysctl/vm.rst
-b/Documentation/admin-guide/sysctl/vm.rst
-index 9bef46151d53cd..8f3875d68ac8ea 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -1,4 +1,3 @@
--===============================
- Documentation for /proc/sys/vm/
- ===============================
+diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+index e14d3d778b71..2360d560dc86 100644
+--- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+@@ -3490,6 +3490,11 @@ &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ACTIVE_ONLY>,
+ 			};
+ 		};
+ 
++		rng: rng@10c3000 {
++			compatible = "qcom,sm8650-trng", "qcom,trng";
++			reg = <0 0x010c3000 0 0x1000>;
++		};
++
+ 		cnoc_main: interconnect@1500000 {
+ 			compatible = "qcom,sm8650-cnoc-main";
+ 			reg = <0 0x01500000 0 0x14080>;
+@@ -3561,11 +3566,6 @@ mmss_noc: interconnect@1780000 {
+ 			#interconnect-cells = <2>;
+ 		};
+ 
+-		rng: rng@10c3000 {
+-			compatible = "qcom,sm8650-trng", "qcom,trng";
+-			reg = <0 0x010c3000 0 0x1000>;
+-		};
+-
+ 		pcie0: pcie@1c00000 {
+ 			device_type = "pci";
+ 			compatible = "qcom,pcie-sm8650", "qcom,pcie-sm8550";
+@@ -3926,38 +3926,6 @@ pcie1_phy: phy@1c0e000 {
+ 			status = "disabled";
+ 		};
+ 
+-		cryptobam: dma-controller@1dc4000 {
+-			compatible = "qcom,bam-v1.7.0";
+-			reg = <0 0x01dc4000 0 0x28000>;
+-
+-			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH 0>;
+-
+-			#dma-cells = <1>;
+-
+-			iommus = <&apps_smmu 0x480 0>,
+-				 <&apps_smmu 0x481 0>;
+-
+-			qcom,ee = <0>;
+-			qcom,num-ees = <4>;
+-			num-channels = <20>;
+-			qcom,controlled-remotely;
+-		};
+-
+-		crypto: crypto@1dfa000 {
+-			compatible = "qcom,sm8650-qce", "qcom,sm8150-qce", "qcom,qce";
+-			reg = <0 0x01dfa000 0 0x6000>;
+-
+-			interconnects = <&aggre2_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
+-					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
+-			interconnect-names = "memory";
+-
+-			dmas = <&cryptobam 4>, <&cryptobam 5>;
+-			dma-names = "rx", "tx";
+-
+-			iommus = <&apps_smmu 0x480 0>,
+-				 <&apps_smmu 0x481 0>;
+-		};
+-
+ 		ufs_mem_phy: phy@1d80000 {
+ 			compatible = "qcom,sm8650-qmp-ufs-phy";
+ 			reg = <0 0x01d80000 0 0x2000>;
+@@ -4079,6 +4047,38 @@ ice: crypto@1d88000 {
+ 			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
+ 		};
+ 
++		cryptobam: dma-controller@1dc4000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0 0x01dc4000 0 0x28000>;
++
++			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH 0>;
++
++			#dma-cells = <1>;
++
++			iommus = <&apps_smmu 0x480 0>,
++				 <&apps_smmu 0x481 0>;
++
++			qcom,ee = <0>;
++			qcom,num-ees = <4>;
++			num-channels = <20>;
++			qcom,controlled-remotely;
++		};
++
++		crypto: crypto@1dfa000 {
++			compatible = "qcom,sm8650-qce", "qcom,sm8150-qce", "qcom,qce";
++			reg = <0 0x01dfa000 0 0x6000>;
++
++			interconnects = <&aggre2_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
++			interconnect-names = "memory";
++
++			dmas = <&cryptobam 4>, <&cryptobam 5>;
++			dma-names = "rx", "tx";
++
++			iommus = <&apps_smmu 0x480 0>,
++				 <&apps_smmu 0x481 0>;
++		};
++
+ 		tcsr_mutex: hwlock@1f40000 {
+ 			compatible = "qcom,tcsr-mutex";
+ 			reg = <0 0x01f40000 0 0x20000>;
+@@ -4962,6 +4962,176 @@ opp-202000000 {
+ 			};
+ 		};
+ 
++		usb_1_hsphy: phy@88e3000 {
++			compatible = "qcom,sm8650-snps-eusb2-phy",
++				     "qcom,sm8550-snps-eusb2-phy";
++			reg = <0 0x088e3000 0 0x154>;
++
++			clocks = <&tcsr TCSR_USB2_CLKREF_EN>;
++			clock-names = "ref";
++
++			resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
++
++			#phy-cells = <0>;
++
++			status = "disabled";
++		};
++
++		usb_dp_qmpphy: phy@88e8000 {
++			compatible = "qcom,sm8650-qmp-usb3-dp-phy";
++			reg = <0 0x088e8000 0 0x3000>;
++
++			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK>,
++				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
++				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
++			clock-names = "aux",
++				      "ref",
++				      "com_aux",
++				      "usb3_pipe";
++
++			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
++				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
++			reset-names = "phy",
++				      "common";
++
++			power-domains = <&gcc USB3_PHY_GDSC>;
++
++			#clock-cells = <1>;
++			#phy-cells = <1>;
++
++			orientation-switch;
++
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++
++					usb_dp_qmpphy_out: endpoint {
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++
++					usb_dp_qmpphy_usb_ss_in: endpoint {
++						remote-endpoint = <&usb_1_dwc3_ss>;
++					};
++				};
++
++				port@2 {
++					reg = <2>;
++
++					usb_dp_qmpphy_dp_in: endpoint {
++						remote-endpoint = <&mdss_dp0_out>;
++					};
++				};
++			};
++		};
++
++		usb_1: usb@a6f8800 {
++			compatible = "qcom,sm8650-dwc3", "qcom,dwc3";
++			reg = <0 0x0a6f8800 0 0x400>;
++
++			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH 0>,
++					      <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH 0>,
++					      <&pdc 14 IRQ_TYPE_EDGE_RISING>,
++					      <&pdc 15 IRQ_TYPE_EDGE_RISING>,
++					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "pwr_event",
++					  "hs_phy_irq",
++					  "dp_hs_phy_irq",
++					  "dm_hs_phy_irq",
++					  "ss_phy_irq";
++
++			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
++				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
++				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
++				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
++				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
++				 <&tcsr TCSR_USB3_CLKREF_EN>;
++			clock-names = "cfg_noc",
++				      "core",
++				      "iface",
++				      "sleep",
++				      "mock_utmi",
++				      "xo";
++
++			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
++					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
++			assigned-clock-rates = <19200000>, <200000000>;
++
++			resets = <&gcc GCC_USB30_PRIM_BCR>;
++
++			interconnects = <&aggre1_noc MASTER_USB3_0 QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
++					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
++					 &config_noc SLAVE_USB3_0 QCOM_ICC_TAG_ACTIVE_ONLY>;
++			interconnect-names = "usb-ddr",
++					     "apps-usb";
++
++			power-domains = <&gcc USB30_PRIM_GDSC>;
++			required-opps = <&rpmhpd_opp_nom>;
++
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++
++			status = "disabled";
++
++			usb_1_dwc3: usb@a600000 {
++				compatible = "snps,dwc3";
++				reg = <0 0x0a600000 0 0xcd00>;
++
++				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH 0>;
++
++				iommus = <&apps_smmu 0x40 0>;
++
++				phys = <&usb_1_hsphy>,
++				       <&usb_dp_qmpphy QMP_USB43DP_USB3_PHY>;
++				phy-names = "usb2-phy",
++					    "usb3-phy";
++
++				snps,hird-threshold = /bits/ 8 <0x0>;
++				snps,usb2-gadget-lpm-disable;
++				snps,dis_u2_susphy_quirk;
++				snps,dis_enblslpm_quirk;
++				snps,dis-u1-entry-quirk;
++				snps,dis-u2-entry-quirk;
++				snps,is-utmi-l1-suspend;
++				snps,usb3_lpm_capable;
++				snps,usb2-lpm-disable;
++				snps,has-lpm-erratum;
++				tx-fifo-resize;
++
++				dma-coherent;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++
++						usb_1_dwc3_hs: endpoint {
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++
++						usb_1_dwc3_ss: endpoint {
++							remote-endpoint = <&usb_dp_qmpphy_usb_ss_in>;
++						};
++					};
++				};
++			};
++		};
++
+ 		iris: video-codec@aa00000 {
+ 			compatible = "qcom,sm8650-iris";
+ 			reg = <0 0x0aa00000 0 0xf0000>;
+@@ -5580,176 +5750,6 @@ dispcc: clock-controller@af00000 {
+ 			#power-domain-cells = <1>;
+ 		};
+ 
+-		usb_1_hsphy: phy@88e3000 {
+-			compatible = "qcom,sm8650-snps-eusb2-phy",
+-				     "qcom,sm8550-snps-eusb2-phy";
+-			reg = <0 0x088e3000 0 0x154>;
+-
+-			clocks = <&tcsr TCSR_USB2_CLKREF_EN>;
+-			clock-names = "ref";
+-
+-			resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
+-
+-			#phy-cells = <0>;
+-
+-			status = "disabled";
+-		};
+-
+-		usb_dp_qmpphy: phy@88e8000 {
+-			compatible = "qcom,sm8650-qmp-usb3-dp-phy";
+-			reg = <0 0x088e8000 0 0x3000>;
+-
+-			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
+-				 <&rpmhcc RPMH_CXO_CLK>,
+-				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
+-				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
+-			clock-names = "aux",
+-				      "ref",
+-				      "com_aux",
+-				      "usb3_pipe";
+-
+-			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
+-				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
+-			reset-names = "phy",
+-				      "common";
+-
+-			power-domains = <&gcc USB3_PHY_GDSC>;
+-
+-			#clock-cells = <1>;
+-			#phy-cells = <1>;
+-
+-			orientation-switch;
+-
+-			status = "disabled";
+-
+-			ports {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-
+-				port@0 {
+-					reg = <0>;
+-
+-					usb_dp_qmpphy_out: endpoint {
+-					};
+-				};
+-
+-				port@1 {
+-					reg = <1>;
+-
+-					usb_dp_qmpphy_usb_ss_in: endpoint {
+-						remote-endpoint = <&usb_1_dwc3_ss>;
+-					};
+-				};
+-
+-				port@2 {
+-					reg = <2>;
+-
+-					usb_dp_qmpphy_dp_in: endpoint {
+-						remote-endpoint = <&mdss_dp0_out>;
+-					};
+-				};
+-			};
+-		};
+-
+-		usb_1: usb@a6f8800 {
+-			compatible = "qcom,sm8650-dwc3", "qcom,dwc3";
+-			reg = <0 0x0a6f8800 0 0x400>;
+-
+-			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH 0>,
+-					      <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH 0>,
+-					      <&pdc 14 IRQ_TYPE_EDGE_RISING>,
+-					      <&pdc 15 IRQ_TYPE_EDGE_RISING>,
+-					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "pwr_event",
+-					  "hs_phy_irq",
+-					  "dp_hs_phy_irq",
+-					  "dm_hs_phy_irq",
+-					  "ss_phy_irq";
+-
+-			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
+-				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
+-				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
+-				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
+-				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
+-				 <&tcsr TCSR_USB3_CLKREF_EN>;
+-			clock-names = "cfg_noc",
+-				      "core",
+-				      "iface",
+-				      "sleep",
+-				      "mock_utmi",
+-				      "xo";
+-
+-			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
+-					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
+-			assigned-clock-rates = <19200000>, <200000000>;
+-
+-			resets = <&gcc GCC_USB30_PRIM_BCR>;
+-
+-			interconnects = <&aggre1_noc MASTER_USB3_0 QCOM_ICC_TAG_ALWAYS
+-					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+-					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
+-					 &config_noc SLAVE_USB3_0 QCOM_ICC_TAG_ACTIVE_ONLY>;
+-			interconnect-names = "usb-ddr",
+-					     "apps-usb";
+-
+-			power-domains = <&gcc USB30_PRIM_GDSC>;
+-			required-opps = <&rpmhpd_opp_nom>;
+-
+-			#address-cells = <2>;
+-			#size-cells = <2>;
+-			ranges;
+-
+-			status = "disabled";
+-
+-			usb_1_dwc3: usb@a600000 {
+-				compatible = "snps,dwc3";
+-				reg = <0 0x0a600000 0 0xcd00>;
+-
+-				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH 0>;
+-
+-				iommus = <&apps_smmu 0x40 0>;
+-
+-				phys = <&usb_1_hsphy>,
+-				       <&usb_dp_qmpphy QMP_USB43DP_USB3_PHY>;
+-				phy-names = "usb2-phy",
+-					    "usb3-phy";
+-
+-				snps,hird-threshold = /bits/ 8 <0x0>;
+-				snps,usb2-gadget-lpm-disable;
+-				snps,dis_u2_susphy_quirk;
+-				snps,dis_enblslpm_quirk;
+-				snps,dis-u1-entry-quirk;
+-				snps,dis-u2-entry-quirk;
+-				snps,is-utmi-l1-suspend;
+-				snps,usb3_lpm_capable;
+-				snps,usb2-lpm-disable;
+-				snps,has-lpm-erratum;
+-				tx-fifo-resize;
+-
+-				dma-coherent;
+-
+-				ports {
+-					#address-cells = <1>;
+-					#size-cells = <0>;
+-
+-					port@0 {
+-						reg = <0>;
+-
+-						usb_1_dwc3_hs: endpoint {
+-						};
+-					};
+-
+-					port@1 {
+-						reg = <1>;
+-
+-						usb_1_dwc3_ss: endpoint {
+-							remote-endpoint = <&usb_dp_qmpphy_usb_ss_in>;
+-						};
+-					};
+-				};
+-			};
+-		};
+-
+ 		pdc: interrupt-controller@b220000 {
+ 			compatible = "qcom,sm8650-pdc", "qcom,pdc";
+ 			reg = <0 0x0b220000 0 0x30000>, <0 0x174000f0 0 0x64>;
+-- 
+2.48.1
+
 
