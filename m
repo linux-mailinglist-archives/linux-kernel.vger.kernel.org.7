@@ -1,111 +1,118 @@
-Return-Path: <linux-kernel+bounces-747132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB73DB13020
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:43:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD31B13026
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B3C17A055E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:42:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93CBA16CF37
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16B421ADB5;
-	Sun, 27 Jul 2025 15:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679C421B9F0;
+	Sun, 27 Jul 2025 15:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNSDAQOK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="qcIWYj2X"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2E470825;
-	Sun, 27 Jul 2025 15:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987844A33;
+	Sun, 27 Jul 2025 15:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753631026; cv=none; b=s1LVSJDmBOdwvlVw/6dSmfz2IncWuQSqrClJULT4JADJiv6fKU+l5NzQ5zSuW9Un0iIGvER23F1a6mNTssTn8C6F/3ampvhHL9RmY0ze3wKpHGFnrMyJ2cfTLf1uvsLdZrdi0BJjIaSys+NjH/XV+YnvWEL7Km0iw7xtWZ6P+9E=
+	t=1753631153; cv=none; b=tJradgoOqc7c5H9TURbDAyoTBbBtbQ3ZSwvUW3IaDuCfVVVUqsiEFwuSff0ldtKKpRga/o5BduVtb4bU/K1ZNbEYExeOi0xGifUBpXdzCb0jPXsT01fxE6SwY6fmIdfDOTfBadX0UPUR3a5aRhc06F3Ily0DFAMi+bJIqBcz0NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753631026; c=relaxed/simple;
-	bh=zoz469+SQa2Dc1zsiysjdo7V3MLdODW25CN/F08aRPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sUQhqu6mEb9V1J1i33RU6K62NOo/Sz0ocLF7KTrDtmcoamEXssEw0YFqV/v5RX4e87/Q6XsWnpvGyBAe8HYIw4YQJfpoQ4dCfhycQ6G2ef8hctFFbepv0oYNm5f0A98eQXqRHSUT4pcn7N//t46VDonsqrseofJfIYDfr2A9U0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNSDAQOK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB12C4CEEB;
-	Sun, 27 Jul 2025 15:43:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753631025;
-	bh=zoz469+SQa2Dc1zsiysjdo7V3MLdODW25CN/F08aRPk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NNSDAQOKCwm/+WN0tGh0gq4l2b+lBKfp1MpmkK7LUJJ9K5gLUXVLUfex6A4F3bg0A
-	 BfaFyUWY75W7CMPyR8rSS0Ye5N2fOuDVJjFhmWiUQJVpCCgUsl7AMm8b5mjidc1qUK
-	 +qPF02BQFdjJ4wRK79Uk/xpkGzUKUovuu5k6JXc8bJW4Ydx+cbT/EScImRPcKoc2Qi
-	 V4HuZFeCTxJlMKjbrBXy2VRifrTGU4HfTe+aH+d5lrtc+eZ3znb28IFJugYNG5Our2
-	 Fa8gGY4QhltOQTYgSmudIC/r+JYKP/wW6KiiiAEfljSZkwQU3mYwJrYwvXLoUdUkpJ
-	 /bwdAykUXa1Hw==
-Date: Sun, 27 Jul 2025 16:43:36 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Michal Simek <michal.simek@amd.com>
-Cc: Sean Anderson <sean.anderson@linux.dev>, Salih Erim
- <salih.erim@amd.com>, "O'Griofa, Conall" <conall.ogriofa@amd.com>, Anand
- Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, linux-iio@vger.kernel.org,
- David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, linux-arm-kernel@lists.infradead.org, Andy Shevchenko
- <andy@kernel.org>, Manish Narani <manish.narani@xilinx.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: xilinx-ams: Unmask interrupts after updating
- alarms
-Message-ID: <20250727164336.385dda93@jic23-huawei>
-In-Reply-To: <3a77d5db-eeb4-43df-9de0-e6bafea4d9ea@amd.com>
-References: <20250715002847.2035228-1-sean.anderson@linux.dev>
-	<20250724163219.0098ced6@jic23-huawei>
-	<3a77d5db-eeb4-43df-9de0-e6bafea4d9ea@amd.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753631153; c=relaxed/simple;
+	bh=Nx21Y2DmhvfADZ/RHwGwoASysh8U+aJewA5Rlqxh83A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jJh/dvbjn/xfGD8Mo4GkQi+kdXwLHV5qhDLgziEfh3TAxxubnUIJ1L7y2Xil/ZKmRSI7K8xn42tZ0yagQiAeNvUJdDuyX3Es84paNbt0l8S23d/5R1EZ8IP0kJ1YUlk38PW0UgRnTQD6jdVBzvlUK2PXxKCj7926RErjVpuaGho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=qcIWYj2X; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=3fxOLzWgOAR/+T3F8n9Mjej5S8eRwkPAUZo9dLFoDEw=; b=qcIWYj2XBgTEAk9R
+	L1UsQGa+/Mc5XBkgRtzArY7VkXGj25i/aTPimjDCAZ3zIamSBdR1G2KohDBcol3nNuJ31Yq3xwCqQ
+	CUYk3R+FApZvOOor8In1KXxoiyMZu+MMFQMB1PuWHf2Az6BMcqjf3XAyeqTPtJiFdFJOKBo7JJF2/
+	L1+p16uZ2WVBbdwQRLV5U+D6kVeQtAgsoBzLmzKJveUFFGzzzGx0h1ZHP9C5oJnIhIdXvbdQKNTuB
+	no3iyZz/T4Tr9jo6yaiVScw+aYtEijcDGlcBxRs5fhr6MhZCYBvj4tsNvYWu9W64al+sTkECP+SuI
+	f85Ij9MoRSL4NzRAQw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1ug3ZG-000pTt-0C;
+	Sun, 27 Jul 2025 15:45:42 +0000
+Date: Sun, 27 Jul 2025 15:45:42 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+	Sasha Levin <sashal@kernel.org>, workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	rostedt@goodmis.org, konstantin@linuxfoundation.org, corbet@lwn.net,
+	josh@joshtriplett.org
+Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
+Message-ID: <aIZJppabYBCDBhYJ@gallifrey>
+References: <CACzwLxg=vQeQKA1mPiYV9biu=swo7QDmjB3i=UhYmv+fGRBA4Q@mail.gmail.com>
+ <053939E0-5BAB-483A-9FE4-92BF35201A4C@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <053939E0-5BAB-483A-9FE4-92BF35201A4C@kernel.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 15:37:30 up 90 days, 23:51,  1 user,  load average: 0.00, 0.00, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Fri, 25 Jul 2025 06:47:16 +0200
-Michal Simek <michal.simek@amd.com> wrote:
-
-> On 7/24/25 17:32, Jonathan Cameron wrote:
-> > On Mon, 14 Jul 2025 20:28:47 -0400
-> > Sean Anderson <sean.anderson@linux.dev> wrote:
-> >   
-> >> To convert level-triggered alarms into edge-triggered IIO events, alarms
-> >> are masked when they are triggered. To ensure we catch subsequent
-> >> alarms, we then periodically poll to see if the alarm is still active.
-> >> If it isn't, we unmask it. Active but masked alarms are stored in
-> >> current_masked_alarm.
-> >>
-> >> If an active alarm is disabled, it will remain set in
-> >> current_masked_alarm until ams_unmask_worker clears it. If the alarm is
-> >> re-enabled before ams_unmask_worker runs, then it will never be cleared
-> >> from current_masked_alarm. This will prevent the alarm event from being
-> >> pushed even if the alarm is still active.
-> >>
-> >> Fix this by recalculating current_masked_alarm immediately when enabling
-> >> or disabling alarms.
-> >>
-> >> Fixes: d5c70627a794 ("iio: adc: Add Xilinx AMS driver")
-> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> >> ---  
-> > Anand?
-> > 
-> > This seems fine to me, but I'm not that familiar with the hardware or driver.  
+* Kees Cook (kees@kernel.org) wrote:
 > 
-> Anand left some time ago. Salih or Conall should be able to provide some input.
 > 
-> Thanks,
-> Michal
+...
+
+> I'm hoping to add runtime testing, but the hurdles for getting it to sanely interact with a qemu instance is tricky.
+
+When doing qemu dev, I frequently run it in a tmux, and start it with
+'-nographic' which gets you a single stream with both serial and monitor in it;
+alternatively you can get one pane with the serial output and one with the
+monitor, that takes a little more setup;
+
+anyway, then I can do :
+
+tmux -L $SESS send-keys -t srcqemu "cd /mnt" enter
+
+and have a wait function that waits until a string is displayed:
+# pane string command
+function waitstr {
+  PANE=$1
+  STR=$2
+  CMD="$3"
+  until [ -n "$(tmux -L $SESS capture-pane -p -t $PANE | grep "$STR" )" ]; do
+    $CMD
+    sleep 1
+  done;
+}
+
+so do:
+waitstr srcqemu "root@localhost" "sleep 1"
+
+it feels like it should be fairly easy to wrap some of those for tests.
+(Beware the 'send-keys' command is a bit touchy about what strings it takes,
+but it has some flags to help).
+
+Dave
+
+
+> -- 
+> Kees Cook
 > 
-
-Hi Michal,
-
-Thanks for letting me know.  Would be good to have a MAINTAINERS update patch
-to remove Anand + ideally add someone else.  If not to mark it orphaned
-(will still be covered by the top level IIO entry).
-
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
