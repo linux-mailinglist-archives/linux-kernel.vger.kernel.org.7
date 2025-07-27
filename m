@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-747109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99544B12FC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:04:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9A3B12FCE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA6B87A4A24
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E454C18979A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7E32185AC;
-	Sun, 27 Jul 2025 14:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B03A2185B8;
+	Sun, 27 Jul 2025 14:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YtM7sJBF"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCUHiezs"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD25A1114;
-	Sun, 27 Jul 2025 14:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EBB1DAC95;
+	Sun, 27 Jul 2025 14:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753625086; cv=none; b=Z4LdK3pb9SOfPb8864OOg6eiD/xX4Tbw8+L/7LgYGbNwtivlY6Yb8oHy+z0YxFIdC//TsFZWPGVpB3xqtSwOJk5RONv4fGf7GkfgJr9/exPX6OQaBwA1CpZFzfw3SL9djv2smWvhYKmxKxSFuYGhwconMXPTD/6RKhfgE66yBpM=
+	t=1753625241; cv=none; b=A4UfQ1QwaYuhBKprvlJBED75OQot7YOsmc3FGUOWkKQvjJTPT+spUB7/CV4I1a+Vo+QU/Ko3OYz854iHO+i4MVD0i/2ULOp0o3v7Q0GCqVcsU68+6p8z8kTgsszBPhUsT2KQnj85IPErBAhULLe7kNf0FwO+Z9gZ6EI8ep3ruso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753625086; c=relaxed/simple;
-	bh=SdbboYZMX+ZiTNfBT6xz9dAEist8+F/lZz/mYO2uahM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GNTYPy8PMwo29uN+U1ccAU5ziq8gQb6DrRgk3+V1FqU8RMaL8w80omu+6qWvE822GFyL2CNJQUCsZDAw/m5Oal6jt3F6H0oTjYFtn4hVf6EFjdES4VQPWu193Y0SwTpe1IOCRHf5OcZYuv7DAoUvvXpwfxPEcCX/eR/c6HEZ3mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=YtM7sJBF; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56RBiNvZ015426;
-	Sun, 27 Jul 2025 14:04:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=JITwHwwC4cc+VUUtN+UwSJstV1cb4
-	SvU5OlXX2YyGAQ=; b=YtM7sJBF2LGyPgk8WB5zKkRS44nkf+0TuOHEmaH0pOpiP
-	X+EKn6+aVOxJCeKibfV/r+m1cX6GCprlzyFLEbnJlwrQEdE92A3cMTNGtDzxk+gv
-	ZoTGync9MhZ6q9zSwrCBfPIoqWNhHnSVfhc6AIwTLskCnfJo3N73jZ8asBC0bsF3
-	Q/PvHd/YbXc6nCabQBl0a3FNmctutuUTcd1Opsq03Luf804Yw3fRm/3rN9id+GRJ
-	A7TyACuHRz3E2Y3jS9MpA78XQqNNfZDCUD/eTxF2pQCMaW2lhGokFma8j05VHUP3
-	Mmusw5D7Cy4UJqXtk/zjNWM65YFuK0Tnu50a/W/cg==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 484q2dss7w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 27 Jul 2025 14:04:21 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56RCIZlH038511;
-	Sun, 27 Jul 2025 14:04:20 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 484nf7cycm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 27 Jul 2025 14:04:20 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56RE4KTQ035509;
-	Sun, 27 Jul 2025 14:04:20 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 484nf7cyc4-1;
-	Sun, 27 Jul 2025 14:04:20 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Shayne Chen <shayne.chen@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,
-        Allan Wang <allan.wang@mediatek.com>,
-        Michael Lo <michael.lo@mediatek.com>,
-        Charles Han <hanchunchao@inspur.com>, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] wifi: mt76: mt7925: fix locking in mt7925_change_vif_links()
-Date: Sun, 27 Jul 2025 07:04:13 -0700
-Message-ID: <20250727140416.1153406-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1753625241; c=relaxed/simple;
+	bh=0NRnrtvx5Nd0mZa/d0TTBJ+mm3Pv6a451mcqUAxzMRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMmhDdIH+GY1qK80SicfH5Vwq33H9pHMltLx1TG/us+p13lY+SB64Jd2FXbk3IZ2mJRHU2t7XkaxZ0FzXsfmk6eptgWkijyrS6UT6MAIwtTfmyVJRiT2gs0Hbrb+5du44uHoM2jdSHrKEOIYPDUJjLVwKbtw+yCRXeBOLQGlWwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCUHiezs; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b34a78bb6e7so2947943a12.3;
+        Sun, 27 Jul 2025 07:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753625239; x=1754230039; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ijMatxPTKApiZUPbghgjR/zDx2AP3DuF//yAnK8PVuk=;
+        b=fCUHiezsJo1pfQXXV3CiWQZPJtAFVS2LAzIjjPCAbuv/wXf29hNPm6KWFCHbnDTNGY
+         Y8+Rm2LZp2vZleqX3PUttGb9rdu71Ox7rouV3SxlAK5/Rd0uKhKVmT19bi2xhQjjY6+l
+         ytWAx8x9nF3LM05HGT3z6kWODR3kOqw6XuQFgXKoGfYKUxbv6sKqRREh3I+tTzuIt8pb
+         /nr8u8rw/lCytEERmgwXkSgMcuHdL6rNC9glkux3qolQ9jk/X87zQIoi/SrM1JfR9tj6
+         bACEP22nVzF0Pjd3Sau/HXcocNG2kYsa0BD1gT6+5aRqkSbq/WGz/PXIWwox+5xCm/wk
+         xu/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753625239; x=1754230039;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ijMatxPTKApiZUPbghgjR/zDx2AP3DuF//yAnK8PVuk=;
+        b=wmRpC8WQorttbY8FngFXSyOQnnUidetJM4xvWOaonUMd28sd1siYnNnwjUhWlKh2Qp
+         0XVfY7IDsUjWd11rT5JBpz1NwI5VTo3X5Qrlq/5dlRnhscMKjCZ3Ii8K3xx4JZgjewOa
+         MjjeWG+NltZH4pcT7H9qo9BNzel3PFCEWPixs+B+t8xD6R35Hgr+jqMpyT0PqAPj52mZ
+         i8EK+HbH4616vD82GDwEXJjiEPDfrclWgLCYg8AFzIx1eQbB8+5+Z2PtDKC2h2tiiK/4
+         ohx7QU8/N0MuHcWM9LzN1/O6d7QWZ3VoM44bBNCug+x8Uet/z/5NyaV2B2IwIuq/Uu4d
+         WAEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0dCVoKhn1I4Vze/YlDMFtZNjuKtskeaWJlCTBAaM0VOPO8SS17SqQaxbT9DmOw0HU9UfWtsZYyrIh@vger.kernel.org, AJvYcCUk9wFYSmrdv5GLHsknpVYIVwxumTDnRx3PUg8m3ZYEPca4rvpoihmb32DKDkuxtiaIX6zU6OC5IAgbUOo=@vger.kernel.org, AJvYcCVm965mZpFp36mWqg154xjDyxSUlKIKvfbu4mmBP+oQpdwWAcac1th7GIAGbmr+RA+Gytak2qe5/QYQJqI2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHeueZ5syiGuWjveyGm9g8S2e6maTISQRnzfZdlxkzENKTIt6K
+	grROrSkSoh+H+wvOPOq5wrdZ3F6FwV0bR3eOldNGaIQfakLngV9wyijY47EBgQ==
+X-Gm-Gg: ASbGnctVa4omae8VlJBoIeRKJGZithT5U6Nqf6KXEmrRINhvZsi+kFxwHiMCAC4NQUy
+	rwXY49iQ1n0jSBHILwQF7rtE/EmtLuJj/XEG4tvrLXUWMeOeM1VnhKY3U8IAnO4jIvNyo+KZplk
+	hkoSO1z2vm0Pq2Z7XELbS+F2+1nt6TIp5XWAyQoQXwkM/GV1ZYAKyoLHRs53S3/2eASsDP8E/iy
+	cjeU9u5QTkNi5ova3cfHo0ZTImwleuy2phcjsrt6DXZ/nCt0mG7ZqBux1kt9hSyMXaIfSMppSy+
+	kjFO6d9+zUX9xgaBAil91z3zqiNWoIh731O/2hIFeD4fwMdRO3C/+d4h28LusuZrFvOepAI/f3o
+	2/bl1Zwe//LI5JFeQzCqxta2s26S+qopb2lI=
+X-Google-Smtp-Source: AGHT+IEQHs087lj02YqE9M+XbKDd29RwR3fK0vwhvrdjnhXjWGjxDg4OPYYE122c2ldL1inh9RBClg==
+X-Received: by 2002:a17:90b:35cb:b0:313:283e:e881 with SMTP id 98e67ed59e1d1-31e7785efe2mr13853465a91.11.1753625238202;
+        Sun, 27 Jul 2025 07:07:18 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31ef172abe3sm191490a91.39.2025.07.27.07.07.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 07:07:17 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sun, 27 Jul 2025 07:07:15 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: hwmon: Replace bouncing Alexandru Tachici
+ emails
+Message-ID: <b0ff5a5d-f397-42a5-83c9-1b0ba8b40dd7@roeck-us.net>
+References: <20250724113735.59148-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-27_04,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- spamscore=0 mlxlogscore=999 phishscore=0 bulkscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507270126
-X-Proofpoint-GUID: AorprVRinTR-c26oWrX1RvFYmdxKkJx4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI3MDEyNCBTYWx0ZWRfX8uP/g+uxgkqx
- BewC63GcNLD+7uhitQraW6hBfIEuw+JiN+1tWOWBdJnYqytoHhqws91j+JHdSMjZPYMh9DI5urs
- +BESRN+OIstW3t9Fy6aSMA0wK/ThrtPg0u+6fzwkb1Z5UdUFj8RNe+c7Yb5qtZYFuOPFmXX25Qn
- BuL6kah1YXV90q0Uxjsovoo4KQw+eBp5ZKEMv1Ts2KIe64ep4lHB839Z82cNrEVNtFQFMhJgGao
- zIHroE9KVLJF0ZnYGAJHjcoxVHzz6JmcjtsydBgX9E3yw/TdwN1EgTBkUdcwyjYo6W44ftQ5F3v
- Xu7yo2bKz8y0zlY5r8oLm73DY9m7eueV8zmp8ieLwvQ1CqNiYT2sbJ5d8l9//OlRoify3GMjsJy
- rnyQxfqIKMWEIg2lxQJM8vedQdBkzhu4u/1fKYDn/aVs+OaAeWCh6dr/Yk/HB4Toucrq7TSX
-X-Proofpoint-ORIG-GUID: AorprVRinTR-c26oWrX1RvFYmdxKkJx4
-X-Authority-Analysis: v=2.4 cv=A+5sP7WG c=1 sm=1 tr=0 ts=688631e5 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=KKAkSRfTAAAA:8
- a=yPCof4ZbAAAA:8 a=oq3m51LP4hL1v8Vnt5UA:9 a=cvBusfyB2V15izCimMoJ:22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724113735.59148-2-krzysztof.kozlowski@linaro.org>
 
-&dev->mt76.mutex lock is taken using mt792x_mutex_acquire(dev) but not
-released in one of the error paths, add the unlock to fix it.
+On Thu, Jul 24, 2025 at 01:37:36PM +0200, Krzysztof Kozlowski wrote:
+> Emails to alexandru.tachici@analog.com bounce permanently:
+> 
+>   Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipient not found by SMTP address lookup'
+> 
+> so replace him with Cedric Encarnacion from Analog.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> 
+> I don't know who from Analog should maintain these devices, so I chosen
+> author from Analog of one of last commits.
+> 
+> Cedric Encarnacion, could you confirm that you are okay (or not) with this?
+> ---
 
-Fixes: 5cd0bd815c8a ("wifi: mt76: mt7925: fix NULL deref check in mt7925_change_vif_links")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202503031055.3ZRqxhAl-lkp@intel.com/
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis, only compile tested.
----
- drivers/net/wireless/mediatek/mt76/mt7925/main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Applied. If there is a better maintainer, lets update it again later.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/main.c b/drivers/net/wireless/mediatek/mt76/mt7925/main.c
-index a8d25b7d47d0..103909307518 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7925/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7925/main.c
-@@ -2069,8 +2069,10 @@ mt7925_change_vif_links(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
- 					     GFP_KERNEL);
- 			mlink = devm_kzalloc(dev->mt76.dev, sizeof(*mlink),
- 					     GFP_KERNEL);
--			if (!mconf || !mlink)
-+			if (!mconf || !mlink) {
-+				mt792x_mutex_release(dev);
- 				return -ENOMEM;
-+			}
- 		}
- 
- 		mconfs[link_id] = mconf;
--- 
-2.39.3
-
+Thanks,
+Guenter
 
