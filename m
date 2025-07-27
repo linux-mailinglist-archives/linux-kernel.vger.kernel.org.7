@@ -1,192 +1,125 @@
-Return-Path: <linux-kernel+bounces-747218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AFBB13112
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:04:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D80C6B13115
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5BB188772B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5988F3B4829
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237E122B8A6;
-	Sun, 27 Jul 2025 18:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6467F2222C7;
+	Sun, 27 Jul 2025 18:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Tmq1r5Vc"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAXxqUtW"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118F92236EB
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 18:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8815E610D;
+	Sun, 27 Jul 2025 18:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753639417; cv=none; b=W1vZadlPEyMaHy3CZGh1f3X/uWEWr2CXfmy01dJPk87XeMxY1dYiUqOvMEmZ+KDVLWVXPWKUQPS6OIs2Yh/F1JvLuw3A4EuTsrNFnJTW3ui4J45NH2jL1nsOr3BtoTP7otRwY9HEYtWjJVty+nhL5tQ2TRdge/voyvaShsMrfAE=
+	t=1753639571; cv=none; b=NhXe3J1zojilii1wRZDbd4+EDR7o2n3H/ffr7u3EaB/V7Po3PesIPDCMs+afYAymceaWVdMFJUBTOjF/V0yFxLpr+z+CTnHS0uuNl8sctN021Rr6pgq4xVr2BCQoUeWbl0GErEwIYUIEsq+ruzP4XZXtEqgtDIutQcL6YjPjnx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753639417; c=relaxed/simple;
-	bh=WIxZnDfBjy3+MWbIUs96xiEYfrzW7OIdSfiwwszp1mM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NORpYhmSVQiUh10F17mQ3w0xpPy6CCHxhAXLf9HMM5h49RGUY56BRSjQFVHOqKsOAzqTB3qsV9FSxfjmU0rscdf0dxVMrsjSptkPHrkmW+WW7dNo0nVCuGJenmkJ6fqLvJk1JHQZ6zFITJ56OhgHTGpc4iNMXW0Hx9saS/N6qUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Tmq1r5Vc; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1753639415; bh=EeTBhSz8vgF+IOB9tNLiutH2dTp1nA31ocl9xEGhTRc=;
- b=Tmq1r5VcyfGuayV2LqXYS7PWy3TglYmwgPOQbPV7Yru/G7xdA4xTmOG5G/84OQcHataUdAjtW
- hVWznTXD3rlBVkii17Gqt2Urhsoh9hnKL0vaoiaC0vciiqAVc9yl0IjDlcbTPZeBodBD/62y1N5
- xQI0Tws7hgKoLS+SeLRc611y6mGQuOicL6Mg7Y/tlIa4K4ACMZ+fZLWUnF4mPBDyak+C8cHlb8/
- 7j5Fxy3iU3Z9GYImoYAO/4j+BZINQRCXNz6iBFP5J5aT3M90R5XGf1ByY6ksdBI4C2Xb12aqgxr
- JzWvCsarlIFEWLAgYxPInhNVxcjXNQ86oEgPz3nNesRg==
-X-Forward-Email-ID: 688669eec509b9ee169cf33b
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.1.7
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	=?UTF-8?q?Alvin=20=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Yao Zi <ziyao@disroot.org>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	netdev@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: rockchip: Add RTL8367RB-VB switch to Radxa E24C
-Date: Sun, 27 Jul 2025 18:03:00 +0000
-Message-ID: <20250727180305.381483-4-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250727180305.381483-1-jonas@kwiboo.se>
-References: <20250727180305.381483-1-jonas@kwiboo.se>
+	s=arc-20240116; t=1753639571; c=relaxed/simple;
+	bh=bZ/JXJc19nkrcW+WON5HjOh7f+Qm4DzRNAzejFL1y2k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qit1TXq3idqVdU8XRRVS4FrKa4/NKxBA/6XJTcQrp/hHMbWU6CvL9li5mwpe2AMeiu5l+fZm2/+MLzsSlum0ln4c+cXbCLI/h1AxGqJJvJ+fMDVMksrojxWZxVfc67e0cVwymXcnTeAO0M5hASOXL+c70cWSAPrSSWAj2mBDE0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAXxqUtW; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31ef3e9f0adso39340a91.1;
+        Sun, 27 Jul 2025 11:06:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753639570; x=1754244370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bZ/JXJc19nkrcW+WON5HjOh7f+Qm4DzRNAzejFL1y2k=;
+        b=IAXxqUtWh+IkO7rWe2A9ueqmoKXk8MuRh3sWjHmpNIrmJTDiCtl+qYYe/SoTGVq3Cz
+         MiNhfeBNTGOaRGu5pH35q63gzzvY3pR4U4+u6ZLC0SmMCoOND0AIck1gaGwIxlbKozRj
+         XPlE9C9XfZi1AENu9W4eL3r7YRm84dslCz49WyzsY5+q5Fvm8k8TXywdF+o5aRaXRbwa
+         Sfw3xKUBLKJSYAa69aEsG0XHFI3dZesgtzpTzzf2MTVdYN+LPaCcSIIeK1HluPr8/EVr
+         qmeo/Z1Qez7qSg4+p5K2LhWp07sVAxXDVBF9/Sbve1w0f+3w4mV98eVoIXvyOd6fVMmT
+         qJug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753639570; x=1754244370;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bZ/JXJc19nkrcW+WON5HjOh7f+Qm4DzRNAzejFL1y2k=;
+        b=EmXolphLO9yxj8b7RC2qU4GUkRHl/nsuFemh5tqnsB2KUmEib6Av0nerTOiraWZ52u
+         ZKSYoQB/qRwUjlqllEn8UepDxg/i+x+f+eCNaZ4MMrulvOKKo0ItzQhcAN4pdKf9hyX+
+         svBjwAiMjyaD2DpLJBop3V0OAPOgbRAEzPnIKgT6aaparZ6ANrzZmL7uvP1B7HESwVa5
+         UY1xI3tBeF2/KQusVzUstkdoBR7G4BCEm1LCDDO66cuYvy7Mi8PTlB42yR2cUkMqFAPE
+         KR9EogXOevXAII9jO1XvJFTdUFhqgF9RS6bN7QNYNJNNMVlZ579hesCoUSweuDmW0syK
+         yKfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOBJhulIPXAXMPprvVRXWEyVdurjyFaEsdq2DwOOhlyj68MI5he593B/oKNuwQXMIl/Az3y+fdJV52Bp4=@vger.kernel.org, AJvYcCWa3GQUt1H0C8VqlGbLzGKj6UtiGg89GWj4tenANBhfhoEOiqMQd0sdabAlYyFwwGP7XTU4BuTGBtJ1jWzHj9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZFCHfHRS5Mu4yWUAGThDuHtifFcCtXJxUG304vbY/jyXzF38K
+	8b359BoodgQaege6eos0beFce1iozL4O5w0OtbNpycRHcvhgOYtJHHMRVRibUQUjlh+t68Klp/G
+	VEAWIWWcHiHodsflK6Fcj7IJ07HLpcFc=
+X-Gm-Gg: ASbGncvrmN7XFr38iBH+5bY8XZpbG01oSu4VE0poNLXo86+9WkAQlxu2O84YIx1LMvu
+	vsk6+8pDQ5nlBWyx8iMvbVNqH5bG+Hjed3QEkZRo0qWsmfgTC2mkSAi83SBTWI4iJ1qRfPRT8SV
+	yk+I5YxVnHk17HefeBBz4am4EKMp/cQs4Dvp1k6l5Z94wyb0uUALkoeFGElSzpo25m4CEU4kd/V
+	pai6kG0
+X-Google-Smtp-Source: AGHT+IFc1oDi3ttzKyiq8xCPzeqbI2VYL6bu7FlM3gZWatkcZqVsTgMusJlK5RfvMADLXbz5b1obFkorHk7kDIOn744=
+X-Received: by 2002:a05:6a20:431a:b0:21f:5430:8fb7 with SMTP id
+ adf61e73a8af0-23d704bb173mr6115388637.10.1753639569850; Sun, 27 Jul 2025
+ 11:06:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250717073450.15090-1-shankari.ak0208@gmail.com>
+ <CAPRMd3nhDKApttF_wBU01es76NG=qAyZMAer_gjbbtTSH_FmSA@mail.gmail.com>
+ <CANiq72=uDrg9HBVM97dgJGaC946Or964-2aF6OJVV0ih_vWuRA@mail.gmail.com>
+ <CAPRMd3kXUJC6rC_X4i41dWNpS2tx4aEXFmBuEwncXmdJewinDA@mail.gmail.com>
+ <CANiq72kw-OiU6YO8TKMVMdtJF+j7r9nBDsAa9Q2tdBzM=DyxDg@mail.gmail.com>
+ <DBMUCVDVWM77.2M60X06IBGVA5@kernel.org> <CANiq72nBHtbZqt8R0dMSK6iWY7Z3vKLbeP_2dN2NaLOxRfOvCA@mail.gmail.com>
+ <DBN0D5J10BH9.3I1FHJC1KZ79A@kernel.org>
+In-Reply-To: <DBN0D5J10BH9.3I1FHJC1KZ79A@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 27 Jul 2025 20:05:57 +0200
+X-Gm-Features: Ac12FXyKqx2O59Ph-48CSD2k8mkM4uvBPoNaAGIqepjHuYbNY2Y06KFqgdFsr2s
+Message-ID: <CANiq72=qbAwqcH0+ogH=STMC2UF4pV5St=gPrg6VmymvZkh6tg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] rust: kernel: update ARef and AlwaysRefCounted
+ imports from sync::aref
+To: Benno Lossin <lossin@kernel.org>
+Cc: Shankari Anand <shankari.ak0208@gmail.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Radxa E24C has a Realtek RTL8367RB-VB switch with four usable ports
-and is connected using a fixed-link to GMAC1 on the RK3528 SoC.
+On Sun, Jul 27, 2025 at 7:20=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
+>
+> AFAIK maintainers can pick different parts of a series', right?
 
-Add an ethernet-switch node to describe the RTL8367RB-VB switch.
+It depends -- some may not be able to be picked independently by
+different trees because it would break the build.
 
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
----
-Initial testing with iperf3 showed ~930-940 Mbits/sec in one direction
-and only around ~1-2 Mbits/sec in the other direction.
+Even for those series where there are subsets that can be picked
+separately, typically in a normal series if I get Cc'd in a single
+patch, then I would assume I am supposed to give my Acked-by so that
+it gets picked elsewhere. So unless the cover letter says otherwise, I
+would expect a series to be applied as a series.
 
-The RK3528 hardware design guide recommends that timing between TXCLK
-and data is controlled by MAC, and timing between RXCLK and data is
-controlled by PHY.
+At the end of the day, it is about coordinating and case-by-case.
 
-Any mix of MAC (rx/tx delay) and switch (rx/tx internal delay) did not
-seem to resolve this speed issue, however dropping snps,tso seems to fix
-that issue.
-
-Unsure what is best here, should MAC or switch add the delays? Here I
-just followed DT from vendor downstream tree and added rx/tx internal
-delay to switch.
-
-Vendor downstream DT also adds 'pause' to the fixed-link nodes, and this
-may be something that should be added here. However, during testing flow
-control always ended up being disabled so I skipped 'pause' here.
-
-Schematics: https://dl.radxa.com/e/e24c/docs/radxa_e24c_v1200_schematic.pdf
----
- .../boot/dts/rockchip/rk3528-radxa-e24c.dts   | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e24c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e24c.dts
-index 225f2b0c5339..26754ff7f4ef 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e24c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e24c.dts
-@@ -196,6 +196,7 @@ &cpu3 {
- };
- 
- &gmac1 {
-+	/delete-property/ snps,tso;
- 	clock_in_out = "output";
- 	phy-mode = "rgmii-id";
- 	phy-supply = <&avdd_rtl8367rb>;
-@@ -368,6 +369,60 @@ &mdio1 {
- 	reset-delay-us = <25000>;
- 	reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
- 	reset-post-delay-us = <100000>;
-+
-+	ethernet-switch@1d {
-+		compatible = "realtek,rtl8365mb";
-+		reg = <0x1d>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rtl8367rb_eint>;
-+
-+		ethernet-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			ethernet-port@0 {
-+				reg = <0>;
-+				label = "wan";
-+			};
-+
-+			ethernet-port@1 {
-+				reg = <1>;
-+				label = "lan1";
-+			};
-+
-+			ethernet-port@2 {
-+				reg = <2>;
-+				label = "lan2";
-+			};
-+
-+			ethernet-port@3 {
-+				reg = <3>;
-+				label = "lan3";
-+			};
-+
-+			ethernet-port@6 {
-+				reg = <6>;
-+				ethernet = <&gmac1>;
-+				label = "cpu";
-+				phy-mode = "rgmii-id";
-+				rx-internal-delay-ps = <2000>;
-+				tx-internal-delay-ps = <2000>;
-+
-+				fixed-link {
-+					speed = <1000>;
-+					full-duplex;
-+				};
-+			};
-+		};
-+
-+		interrupt-controller {
-+			interrupt-parent = <&gpio1>;
-+			interrupts = <RK_PC2 IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-controller;
-+			#address-cells = <0>;
-+			#interrupt-cells = <1>;
-+		};
-+	};
- };
- 
- &pinctrl {
--- 
-2.50.1
-
+Cheers,
+Miguel
 
