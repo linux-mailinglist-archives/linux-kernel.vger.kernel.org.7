@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-747130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78EEBB13018
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:40:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25984B1301C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA311893E80
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D7963B93E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 15:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA5F2185B8;
-	Sun, 27 Jul 2025 15:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2344213E6A;
+	Sun, 27 Jul 2025 15:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+uGytLq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yWSXGF17"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5237D7E9;
-	Sun, 27 Jul 2025 15:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF8D1E0DE3;
+	Sun, 27 Jul 2025 15:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753630805; cv=none; b=LNBCeU3otXl/TeXsspyIG+NS4l7wJxYMnryH7xYncgkobzP3X/hf/y07Pay07qTffKA9n7KO8B4GlUOutYeg0AnbIeH0klbGJXzvYuSxJjwt+4R2zVnYnTO0Il1v6qT4pCnj5dhvBZshsVl8ihPUYzfACr0T51tD5mddIBwIes4=
+	t=1753630897; cv=none; b=eS8vRk2uHvvJ/EW9PfUQquum9vhw9vbaZCIrndUmS9V6WgJwzjGmkU+U6Mivm6/XlhBf/Dao1xKAxwGoWdmKuBJU4a0g8bgtMCnkXr3WpiIUMBvjh2a0v02anxs+N4FcOZgl+hW9Hjp6CyBRza5ljq3eQqfRYvZw9gJMVD1c2Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753630805; c=relaxed/simple;
-	bh=EWVQpn8H5eFiOGbMApRsYkUIQj0EHLhsSn2WfoYfiYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MMOvO/3UGDMpouNk/qmxe9DCXHVo0yCGpfyeMfvTJa/z5dyG6KPrHClW5Tpxu++fnl/UulnzkRsd91UXNp/bwvudZMDuTCs2Gd07xngFD2SfuQpqKEzHT1Jtfj4lkan9B3UaqVD+rD7mMEXFjfGY/j3v4Rob+IVxO/BGJCn7M84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+uGytLq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30A04C4CEEB;
-	Sun, 27 Jul 2025 15:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753630804;
-	bh=EWVQpn8H5eFiOGbMApRsYkUIQj0EHLhsSn2WfoYfiYk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=o+uGytLqQoCpqSMM/uZsdZUJeac8b4OJefzR6DXvk9SfMlypTimvdPv2aMJh+BJoZ
-	 JnbdZPnS9Iu6dgb2y1Pvb0sVPQpnuG4PAhLG3PLbeE5wnCuA6+p8g2nNMiU6iQEf0Y
-	 4v2lG+7n2UdBDDitzmG1rgtItOe2U7vlWir1NNp5Mze7V4CkvSnmBj1PnURRYI2gu6
-	 Ym+H7GwUUlsxgQt6EXuqicssXEZHQdakIGm42C1Q6vlGa8B3rS1PzFQOfzoBilGt+m
-	 mGOkCBinqHm7+4FaWLz2pZpNASSUTcxEb32AjO6cC+yNvKoiyt9LgHAsfbEQcG/cdu
-	 u2nAQHV3sHELQ==
-Date: Sun, 27 Jul 2025 16:39:58 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] iio: adc: ad7137: add filter support
-Message-ID: <20250727163958.1ed6e764@jic23-huawei>
-In-Reply-To: <fe3f5832-469b-4d8b-9d02-ea716c07c5d9@baylibre.com>
-References: <20250710-iio-adc-ad7137-add-filter-support-v1-0-acffe401c4d2@baylibre.com>
-	<29786806-6495-4423-9172-e924c60b93d6@baylibre.com>
-	<20250724142001.72181c21@jic23-huawei>
-	<fe3f5832-469b-4d8b-9d02-ea716c07c5d9@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753630897; c=relaxed/simple;
+	bh=fdWsRr76VPxCb1sl1z2gOTjS+byCJ1yMoFJqtEpWYgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e1NdTeiroWIn4F2xseu7UnEsmIzOvcrU/FtmJ9K7/m8Ad/er882eUAjjRtj0npGDgr9jQz5ngiMnLJ3287ig9wnnXeaEZEqoTWMSqUfmT+CQT2XkNA7VJOpAcy2mPlo3EwaJFz8q6RjSVuXyaJB/I08/mSorUaSU4S78D7uXY+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yWSXGF17; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=d5ryRhpyND7wEhukHccAa9IlpSds5iUzN84/Vv2SGcQ=; b=yWSXGF17nfhsTwPzfkXMnKng+G
+	Ca7TNYvp8is2UUWbCdHkcOpGPCEYAJalh+xSrYC2DFYAYxC6l+r//97CaobWk+/G4zd3ss1z1qx7m
+	X/O5q8q/R7qiH3xZFDA3+SlcG+DAvP9ben3LkEr7vZg7We60/DVI2IJds2Gm6TQwlIzKvYKh4fiLg
+	QPw5+pt5Flj1os1isgRv+OBsehHfJOYiIM2cCLsPNaI4EUfpOzOT3QIAC2QVdzRJkqY4IUe4MluQx
+	TiRmnzXeR7UNoZBHTf78499PVy6DX5p7QM3Dv+5TD41WSKr4DJ6DtJkkVESeOG6q9xlNFNlGfCxDT
+	kHNqC0Rg==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ug3V7-0000000Cs3W-1fxZ;
+	Sun, 27 Jul 2025 15:41:25 +0000
+Message-ID: <5ac25ceb-023d-409d-8e7e-014d010c5028@infradead.org>
+Date: Sun, 27 Jul 2025 08:41:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: powerpc: add htm.rst to toctree
+To: Vishal Parmar <vishistriker@gmail.com>, maddy@linux.ibm.com
+Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+ corbet@lwn.net, linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>
+References: <20250727110145.839906-1-vishistriker@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250727110145.839906-1-vishistriker@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, 24 Jul 2025 13:50:01 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+Hi,
 
-> On 7/24/25 8:20 AM, Jonathan Cameron wrote:
-> > On Thu, 10 Jul 2025 17:47:14 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> >   
-> >> On 7/10/25 5:39 PM, David Lechner wrote:  
-> >>> Adding yet another feature to the ad7173 driver, this time,
-> >>> filter support.
-> >>>
-> >>> There are a couple of leading patches to rename some stuff to minimize
-> >>> the diff in the main patch where filter support is actually added. And
-> >>> there is a bonus patch to clean up the ABI docs for filter_type first
-> >>> before adding the new filter types introduced in this series.
-> >>>
-> >>> This was tested on the EVAL-AD7173-8ARDZ evaluation board.
-> >>>
-> >>> This series depends on a bunch of fixes, so we'll have to wait for
-> >>> those to make it back into iio/testing before we can merge this
-> >>> series. There is also an outstanding patch to add SPI offload support
-> >>> to this driver, but that doesn't actually have any merge conflicts
-> >>> with this series, so they can be applied in any order.
-> >>>
-> >>> ---
-> >>> David Lechner (5):
-> >>>       iio: adc: ad7173: rename ad7173_chan_spec_ext_info
-> >>>       iio: adc: ad7173: rename odr field
-> >>>       iio: adc: ad7173: support changing filter type
-> >>>       iio: ABI: alphabetize filter types
-> >>>       iio: ABI: add filter types for ad7173
-> >>>     
-> >> I don't know why, but I really struggle to write this part number
-> >> correctly. The subject of this cover letter is wrong, but at least
-> >> I got it right in all of the patch subject lines.
-> >>  
-> > 
-> > Series look good to me. Give me a poke if it looks like I've forgotten
-> > to pick this up after the precursor fix is in my tree.
-> > 
-> > Jonathan  
+On 7/27/25 4:01 AM, Vishal Parmar wrote:
+> The file Documentation/arch/powerpc/htm.rst is not included in the
+> index.rst toctree. This results in a warning when building the docs:
 > 
-> Sure, no problem. Can we pick up PATCH 4/5 ("iio: ABI: alphabetize
-> filter types") sooner though? I know there is at least one other
-> series under review that is adding more filter types and I am
-> getting ready to start on another one that will likely introduce
-> some more variants.
+>   WARNING: document isn't included in any toctree: htm.rst
 > 
-Sure.  Patch 4 applied to the testing branch of iio.git.
+> Add it to the index.rst file so that it is properly included in the
+> PowerPC documentation TOC.
+> 
+> Signed-off-by: Vishal Parmar <vishistriker@gmail.com>
 
-Thanks,
+There is a fix is available and scheduled to be merged (when?).
 
-Jonathan
+See
+https://lore.kernel.org/all/98a8a5ef-45fd-4b1e-a775-d1e1306ad682@linux.ibm.com/
 
+
+| Yes. I am planning to send it as a fix patch in earliest rc for 6.16.
+
+@Maddy, does that mean during the merge window after 6.16 or as a
+merge into 6.16-rcX (which is now)?
+
+Thanks.
+
+> ---
+>  Documentation/arch/powerpc/index.rst | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
+> index 0560cbae5fa1..173a787b6cc3 100644
+> --- a/Documentation/arch/powerpc/index.rst
+> +++ b/Documentation/arch/powerpc/index.rst
+> @@ -36,6 +36,7 @@ powerpc
+>      vas-api
+>      vcpudispatch_stats
+>      vmemmap_dedup
+> +    htm
+>  
+>      features
+>  
+
+-- 
+~Randy
 
 
