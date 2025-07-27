@@ -1,151 +1,136 @@
-Return-Path: <linux-kernel+bounces-747083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED044B12F7A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:31:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841DEB12F7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08981176F13
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF3C17871D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748172163B2;
-	Sun, 27 Jul 2025 12:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870AA204F93;
+	Sun, 27 Jul 2025 12:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tgaz9JqR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HDX61K+/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBD12144C9;
-	Sun, 27 Jul 2025 12:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45D4610D
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 12:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753619503; cv=none; b=TGmkEehFR0uwbx/g+VhPyFS8GlFZwUw+KbN76B5fsY0dhzbDnx2qe/eLXRLTNV1JOX4OiAxNskAIB7Sgy1Ttj64wCXTDsf8qtKBi8ni1SxW+id1JjOtoXQx44GhrVOP+OPKxiTA/Bf9RjxNCuMxgUm2nxgGGTm9tHdao5I1Eg4c=
+	t=1753619783; cv=none; b=tCK/ZzdIeIBU0ZfjBmxSb9KtPGX4wH6Zt4d7McMXGoq5XrxR6BwNdlZC38fU3MQDiJNVOLvp9rWwU7roaAYCbxmxmr1wdbHpuqgU5q/4YyGt3pnmPouQF0u3S5FqXPpdlAnk1uQX+3nEgaOcRaRijV1Fbz6GJv9uboAAwXDlgbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753619503; c=relaxed/simple;
-	bh=k6k+z35tBwqWT3AAx1Q+8WeGzFHSJLB6sZrDkPR5PqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=st5UAJ3hDbKeTqmBVbkNHohnczwFeDBOgK8yOULzgjFTtDITLLH+szVgTBAxJ1kGJTypsm2RoDvEhWGXHRC1+VVSyCCHbM9C+vOwCzMs5msdWsldzDkGSp6qZ3Uxg4ceyVwaFKtxk7jZWYkJASnBt8cM/tjhmeo8F099YW1DEqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tgaz9JqR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B43AC4CEEB;
-	Sun, 27 Jul 2025 12:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753619503;
-	bh=k6k+z35tBwqWT3AAx1Q+8WeGzFHSJLB6sZrDkPR5PqY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Tgaz9JqRvEOBV3CMvTK/z5O94U1Ls+CAmW+QUugLW7GcdIH20IqsLft7gKwqmdWOR
-	 LSgKyRP0vZ3LogK2wUj2HKsYGmXhqMwnBlQA0R4If8w8XknCCbFKspxk4pj/p/yXya
-	 CGx/28KKJYtMTROtyOKrMKiDinnS0Muo494UAZzBesQMaUNM8UIg0aD79SWbz6Ka1F
-	 +4gyDQCVtLQCtZP34U+JBVcKgKE8uKFQ5H3Z2mwckozLAJ1fFao+zRX/43A80NSxtE
-	 EQxinwsHmB++GZAlxS1j5mu1xbvRQ0qTwdn3g+YehnlbA2ieHNkqH2/aI4zkNiKtXJ
-	 VqdhWx102OHPw==
-Date: Sun, 27 Jul 2025 13:31:35 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Jonathan
- Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad7124: fix channel lookup in syscalib
- functions
-Message-ID: <20250727133135.385fa7c5@jic23-huawei>
-In-Reply-To: <20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-v1-1-b9d14bb684af@baylibre.com>
-References: <20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-v1-1-b9d14bb684af@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753619783; c=relaxed/simple;
+	bh=mreXsClTLOlzk8X2O1NqLJ9eH+di+fBAa32gcpMf/Yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VxliUGZqWvJqRcsK+rVVmVd9DAut412wMGMSYgiebYYXpwK61OpKB5aWYgySaGNACU3PBbpa1CbC6jPdJfJkh2SzHbsm8in6L4qJh+CiyRiHIjCz7G0O/U96ETov8wvfSDjRmPGUHXvGk7Bk45R2GEhrbvA73+HCtxLizMNejE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HDX61K+/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753619779;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NsbSEibnFvJRbf7IZMUW1BQlaokDEij77vVGU8eDxnI=;
+	b=HDX61K+/Vqr0tl80l/SYt760baCjyrdZS2RgWdO9auEmpiBGVq5EjOCjg+tJHe22qR1XCC
+	Yu1yAYUFf41HXcQqcTX0A5f5MBRnLo5vY/URr2Ito3j+fZAvF0Sc08h6peAYOwIYddblJR
+	v0+YVTj0rxwn2BG7jzylbHxs/wnEDdA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-134-5dcf-AiFNrCBOCi0YjSxsQ-1; Sun,
+ 27 Jul 2025 08:36:15 -0400
+X-MC-Unique: 5dcf-AiFNrCBOCi0YjSxsQ-1
+X-Mimecast-MFC-AGG-ID: 5dcf-AiFNrCBOCi0YjSxsQ_1753619773
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 41034180045B;
+	Sun, 27 Jul 2025 12:36:12 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.39])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9B9EC18003FC;
+	Sun, 27 Jul 2025 12:36:07 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 27 Jul 2025 14:35:03 +0200 (CEST)
+Date: Sun, 27 Jul 2025 14:34:58 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Laight <david.laight.linux@gmail.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Li,Rongqing" <lirongqing@baidu.com>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v2] x86/math64: handle #DE in mul_u64_u64_div_u64()
+Message-ID: <20250727123458.GA16775@redhat.com>
+References: <20250721130422.GA31640@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721130422.GA31640@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sat, 26 Jul 2025 11:28:48 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+Change mul_u64_u64_div_u64() to return ULONG_MAX if the result doesn't
+fit into u64 or div == 0. The former matches the generic implementation
+in lib/math/div64.c, the latter doesn't. Perhaps we will add a WARN()
+into the fixup_exception() paths later.
 
-> Fix possible incorrect channel lookup in the syscalib functions by using
-> the correct channel address instead of the channel number.
-> 
-> In the ad7124 driver, the channel field of struct iio_chan_spec is the
-> input pin number of the positive input of the channel. This can be, but
-> is not always the same as the index in the channels array. The correct
-> index in the channels array is stored in the address field (and also
-> scan_index). We use the address field to perform the correct lookup.
-> 
-> Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-Seems fine to me and i'll queue it up, but I would welcome another set of
-eyes on this one.
+No need to use _ASM_EXTABLE_TYPE_REG(), we know that the target register
+is pt_regs->ax with offset == 0, so a simple EX_DATA_REG(0) should work
+just fine.
 
-Thanks,
+Reported-by: Li RongQing <lirongqing@baidu.com>
+Link: https://lore.kernel.org/all/78a0d7bb20504c0884d474868eccd858@baidu.com/
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ arch/x86/include/asm/div64.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Jonathan
+diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
+index 9931e4c7d73f..0bf2c6afe66e 100644
+--- a/arch/x86/include/asm/div64.h
++++ b/arch/x86/include/asm/div64.h
+@@ -79,18 +79,21 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
+ 
+ #else
+ # include <asm-generic/div64.h>
++# include <asm/asm.h>
+ 
+ /*
+- * Will generate an #DE when the result doesn't fit u64, could fix with an
+- * __ex_table[] entry when it becomes an issue.
++ * Returns ULONG_MAX if the result doesn't fit u64 or div == 0.
+  */
+ static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+ {
+ 	u64 q;
+ 
+-	asm ("mulq %2; divq %3" : "=a" (q)
+-				: "a" (a), "rm" (mul), "rm" (div)
+-				: "rdx");
++	asm ("mulq %2; 1: divq %3; 2:\n"
++		_ASM_EXTABLE_TYPE(1b, 2b,
++			EX_TYPE_IMM_REG | EX_DATA_REG(0) | EX_DATA_IMM(-1))
++		: "=a" (q)
++		: "a" (a), "rm" (mul), "rm" (div)
++		: "rdx");
+ 
+ 	return q;
+ }
+-- 
+2.25.1.362.g51ebf55
 
-> ---
->  drivers/iio/adc/ad7124.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index 9808df2e92424283a86e9c105492c7447d071e44..4d8c6bafd1c3171054c72a0d2b13d6b1afc4e51a 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -849,7 +849,7 @@ enum {
->  static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan_spec *chan)
->  {
->  	struct device *dev = &st->sd.spi->dev;
-> -	struct ad7124_channel *ch = &st->channels[chan->channel];
-> +	struct ad7124_channel *ch = &st->channels[chan->address];
->  	int ret;
->  
->  	if (ch->syscalib_mode == AD7124_SYSCALIB_ZERO_SCALE) {
-> @@ -865,8 +865,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
->  		if (ret < 0)
->  			return ret;
->  
-> -		dev_dbg(dev, "offset for channel %d after zero-scale calibration: 0x%x\n",
-> -			chan->channel, ch->cfg.calibration_offset);
-> +		dev_dbg(dev, "offset for channel %lu after zero-scale calibration: 0x%x\n",
-> +			chan->address, ch->cfg.calibration_offset);
->  	} else {
->  		ch->cfg.calibration_gain = st->gain_default;
->  
-> @@ -880,8 +880,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
->  		if (ret < 0)
->  			return ret;
->  
-> -		dev_dbg(dev, "gain for channel %d after full-scale calibration: 0x%x\n",
-> -			chan->channel, ch->cfg.calibration_gain);
-> +		dev_dbg(dev, "gain for channel %lu after full-scale calibration: 0x%x\n",
-> +			chan->address, ch->cfg.calibration_gain);
->  	}
->  
->  	return 0;
-> @@ -924,7 +924,7 @@ static int ad7124_set_syscalib_mode(struct iio_dev *indio_dev,
->  {
->  	struct ad7124_state *st = iio_priv(indio_dev);
->  
-> -	st->channels[chan->channel].syscalib_mode = mode;
-> +	st->channels[chan->address].syscalib_mode = mode;
->  
->  	return 0;
->  }
-> @@ -934,7 +934,7 @@ static int ad7124_get_syscalib_mode(struct iio_dev *indio_dev,
->  {
->  	struct ad7124_state *st = iio_priv(indio_dev);
->  
-> -	return st->channels[chan->channel].syscalib_mode;
-> +	return st->channels[chan->address].syscalib_mode;
->  }
->  
->  static const struct iio_enum ad7124_syscalib_mode_enum = {
-> 
-> ---
-> base-commit: e4d9886ad25adae72f38f2b12f41649b101581ae
-> change-id: 20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-e28c933ead2a
-> 
-> Best regards,
 
 
