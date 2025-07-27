@@ -1,125 +1,167 @@
-Return-Path: <linux-kernel+bounces-747211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46220B130FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:40:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6832EB130FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321CE1897D1B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:41:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B250A18963AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62C7224AF0;
-	Sun, 27 Jul 2025 17:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA1F221571;
+	Sun, 27 Jul 2025 17:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="HXQSE/Bj"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Egp0+X7U"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0EE221299
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 17:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7B7BA3F;
+	Sun, 27 Jul 2025 17:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753638017; cv=none; b=rdan1njclbgiHFi/HxIQeSsyYacUAkLLdILnKx7jnUOnAkyAbyrnYYOHfnQEFcNPhnWmiJjjNsWX8OkU6VYzO+O4yRYKEAYXfmITGw8xaikC6vVShA2kt/z8tM2kIWAJx6CUxYZVbyXnzv88OXD9HmrXq6nRCqbaKjyNBXFrJjw=
+	t=1753638296; cv=none; b=TdhK6ao25BwPEGrdjOpRzY6rjFj/KA38kQBHXMGM1xsELjmXDn+b3Bkdw8E0PFUF17Rg4PudabZPMrXyMpyM9xuOFgkbXQDvz43sRK7xSkNnOjpY9stKV6PcOVt2KOSgvBHPSXC7st6hbNRm6wG5o2PDBCJ9L45ZJ2Q+9wuCTrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753638017; c=relaxed/simple;
-	bh=eUp8rkkrj67E940zx0z9wttZ3qw6F6iVPZKFsp8IVnk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Xepm+DdeNbXLxJcuaqhlcXM4tjFnNvfm/WyjzBHkHweiuHh9H4Enkk9QJq6mc3tMDiyfE98sJn4YugIW2g6RSu3zKYNLXM8D/MzH9vd8rnyY4s8rNb6otJAfKY9EVhhRIAi9lsRyD0srvtrJkCp0y8zUjZPzXnps791YaUkTNlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=HXQSE/Bj; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b3508961d43so3403570a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 10:40:15 -0700 (PDT)
+	s=arc-20240116; t=1753638296; c=relaxed/simple;
+	bh=luZy4eZKmQcKzAmjb0W2hbu7XLSsCm4YttVeB4b4JKI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ufpx0jaAdLiRdA9fzj4m07jOSYgUqX4zcD0PH8LzR2yYDQm9QdjVwnrq/mr+XJJ7oVD7ODKqbSiZiYa3fI36F+0+kFf7Y8ogcGArhGgCBmKYuGFL2rjwrpUwmQTAO/HiuRuzR7XnQLsGKP9Yibr4/Pj8GD1n/EMuZ2GjtuWjHgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Egp0+X7U; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-40a4de175a3so2160160b6e.0;
+        Sun, 27 Jul 2025 10:44:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1753638015; x=1754242815; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/4v8mNNgB8Flu0S6Coiw5A84RBTfZ1/sa2qSDgqs8HE=;
-        b=HXQSE/BjHlG0DC4jffKIu/Lz9lO9Lx3rOORBBDfOa431XEVd4M0zoByuYIh1+Ie4pU
-         0q9GBmJtPUgLDFOFDIAmS4B9UKZdsbw/lbDc28lQwv77Fkl333BBySDL95kIRcx6dDUJ
-         9sQIEMsfWMvVjQ7MEnXtwUlz5O9+vuEerLLzwe9JO+eQhRfechGXqhOwG8qYmrBVfTMl
-         zC9infnGZrsDwhnrbh1DV5oaYmSc4nbj7apxbTLguB4uIEwgIRWr/tcp/ijg0lTwYVwC
-         e0Blr2NlACSwRm5/GYfH1+PHtYwA1IMCl3acZUV/8T6hQcILWq+O5c/JBeyou/POO1dv
-         2BTQ==
+        d=gmail.com; s=20230601; t=1753638294; x=1754243094; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGroCA+Q9oleFuUP1DUfRwkk4GCwj8qwuq1UKkEblcc=;
+        b=Egp0+X7U5CeMzsps2ImYbUs3rX/gYwoAvGJZjTIOR0qP1BvNpEWSqaDzPEhyQnCiyY
+         5fYP1KyWPrHnzM0Y18UuEk8i5WdRizi2r3f2B79h0gA9jAc//xdQ1RKyujZTNG/ZJCDD
+         oSlDSD0quuit5Mar9uI0GdfVsL9MNJ5b3v9+GoC12qjxe8nW4Jg3VrgId8MGlbP9VaTN
+         MMsL+TNiUv447BbQSjKP0Zd6oqSHk83dyk54+nyFeAFCl4okaoOplDZRtTqK4GuF49Jj
+         PmsgGlO2LpcZwcFeLDiWcpm3vmYL7rsN2IRapc7GDxfRdJteY3/Dg/p9cCNrpKYSKzz7
+         nBKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753638015; x=1754242815;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/4v8mNNgB8Flu0S6Coiw5A84RBTfZ1/sa2qSDgqs8HE=;
-        b=jL59DBTS+E/2QpVSDrz8hvHKTsjZB1qcslFMATPsaXD22iVTeTdE1SwasHr6/PzdKh
-         pqnYwLSLH+24+85eB5IZwrxpuyry511uUVO+AnIHiHi71SA3RrxTQ7OUSq2OCZP3YeCZ
-         CmLuI1jDyM0dpwzjtLKMDjmYHHTQdXtHdfUSExoCoAjDjOZs/DHgyh+Z2OzGihY3KyEf
-         pKA4Ntz429DjQCID2TEps4YkE0RBOvj0tXphQrVwd7CymzwJVeH3nYiCPEVF66BRdmZs
-         PBK7maXDfMdhYYjiG3AHysCb8hMXm/rlsHc5U1LjXLSsCxWOOYmkysSGWMYkmM2mv4Ol
-         iboQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCjV9gI/dbX4o75IpHCdsW14ASd6cJSnAkxOczg0ZBDUU4AUyCf0SKMf0A1q3KIGtvhUCV8m7nf/7BWps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUjerjnTYq2ZQ36vOsOrqaIpQCn6UlgIpT4g7JExZOVhaYFbD4
-	ojusqIZVwYOBACmRzwjtGRBlx3e49Hm3VUg4YP8+IiwLso3RyGjFMJJGvtRzMzHEKxk=
-X-Gm-Gg: ASbGncuRG7yb1JPORwDzt1hK+oLJR8ah7KJA0Ytbv9whwa/bjiZlfIUHqf/qugrUIce
-	7Gr41isRjOBHXGwXKMgJmktTwicTFWRAoXXerKZkujCKaFgPlyCWkX/9tmsiS9v1j2fYapm+hN/
-	TK9SAaYigvBqBBLRV/y5Guz4LXhupfEEvq+qahW9fBO0ZvmYIm5Z2LX83iZVN6dAEKcX0krFutt
-	Tevh8VxHVehew0zMzhSMjrvXjOzDuRYK/K64WkzkglJVHOqbAsemllWbIN3y3lO+6UDd2CMd1qp
-	F+I70AupwOTQjfvAFiSqyWCzha/wY5Mf8JH3g04NaoDuNMwy6WIq6nMPX1hkNhvLDGuAHJLxcFd
-	BJGS8ahc=
-X-Google-Smtp-Source: AGHT+IGv29CtskpdwrG7FN+exNQheeZ5lwmlkvuf79A3488Y9t5W8AEZTp9o7Z0NNsaBrqCcG69rhQ==
-X-Received: by 2002:a17:90a:d40e:b0:313:31ca:a74 with SMTP id 98e67ed59e1d1-31e778f7826mr13735566a91.16.1753638015093;
-        Sun, 27 Jul 2025 10:40:15 -0700 (PDT)
-Received: from localhost.localdomain ([143.92.64.18])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e8350b724sm3924224a91.23.2025.07.27.10.40.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 10:40:13 -0700 (PDT)
-From: Tang Yizhou <yizhou.tang@shopee.com>
-X-Google-Original-From: Tang Yizhou
-To: axboe@kernel.dk,
-	hch@lst.de,
-	jack@suse.cz
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tangyeechou@gmail.com,
-	Tang Yizhou <yizhou.tang@shopee.com>
-Subject: [PATCH v3 3/3] blk-wbt: doc: Update the doc of the wbt_lat_usec interface
-Date: Mon, 28 Jul 2025 01:39:59 +0800
-Message-Id: <20250727173959.160835-4-yizhou.tang@shopee.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250727173959.160835-1-yizhou.tang@shopee.com>
-References: <20250727173959.160835-1-yizhou.tang@shopee.com>
+        d=1e100.net; s=20230601; t=1753638294; x=1754243094;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XGroCA+Q9oleFuUP1DUfRwkk4GCwj8qwuq1UKkEblcc=;
+        b=cZk7Mo0AovjmBaOxeda5FHSionhUATefFR9C5KxaL6pt/2CRMl58tV6vaMxw12rML6
+         Pbugn/A7U07e+53BGQiHOif2jGGmnzSVRUggtwn2uhsqBxXiMgX/JB0GxoOi/wWIRcQr
+         pVWGfXcNkQ6P6E9ezYJemE3/Dyap3I9GTdyTP0MuUzOsDmSTJXKYHU2sRntkUz7czRiD
+         QO8jdMBvTg8nZ2Kdxch50eqo6TjlwSG9uPF0qixcdsQm35m7NA6G5IcnOXc97Nq6E5iS
+         YAlWA9ivJCKYdDqRrt8OUFUNZUThfb4yOY7fJZyrNh8VFJ4me7pcYDSN0skx7fiyeAUr
+         PSGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdg+MyHhiRF47puOsTg34nVhJbRheTOIlcPTNLhEUNlXP/gfmNHPCbETj1+uYb8upltmA1w+VqXVMH2ZhQvBY=@vger.kernel.org, AJvYcCX38/i44g/CaiU5CzYjjvVpBL2+aSgznYbTuCXlK4Llg93y54dEFlI4IcVRA4pF0Evtw6msAeeP0Wz+P6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLLeUndi2/QcB7YBfFMINJCQZTpdw8BBHUOJU1poC/Z6ID+++3
+	c8jSynZB8HYUsCis1hnlUpyC1Y8/DFXBfQEOeR3ndDYqxzHJm3IXhdGuLIOY7dzXVTkc+um6Z/v
+	wK/cQmxMm9mGW/rE951RdkOe9WkwR9dA=
+X-Gm-Gg: ASbGncu9XcPbWEyHL1YSBVIwIWIiMejTIsOd4xQ/o5MKSlWkwgBoHNmiMJbF0I8wCgL
+	dQMth1X55qq2v5XN+F9nHm+taBUsIFtBc8SygvJe9dOquDRWtQ/iV0ljlN1P/oNwrOIx+arPqXr
+	1DC+Xb7WRJqhEXEes1w+VDF5hmfYfpQmToyBHRx+NHPOenBp08Fg1EX6EbGpX7jmi+xCv0KBbn3
+	eSMxvqs/Q==
+X-Google-Smtp-Source: AGHT+IEcnnq+XHAJsDe6I+R84usIoc8E3O69l2x91KvquQ7Ibo03OEsTStfabGqIVtL64hiD9yrZDixEvAlp2fSKaZ4=
+X-Received: by 2002:a05:6808:4fe8:b0:406:6e4b:bd91 with SMTP id
+ 5614622812f47-42bb71f6138mr5453348b6e.7.1753638294032; Sun, 27 Jul 2025
+ 10:44:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250727170217.206794-1-suchitkarunakaran@gmail.com> <DBN0JG0QP7TU.PZSZ8NZL5LD6@kernel.org>
+In-Reply-To: <DBN0JG0QP7TU.PZSZ8NZL5LD6@kernel.org>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Sun, 27 Jul 2025 23:14:43 +0530
+X-Gm-Features: Ac12FXwSad14yHXxRo13EgdT4JwnjtEG8O1CWDHmMGLelFE845ODAhv-6zpFidM
+Message-ID: <CAO9wTFisWa5qY2qQE+BEdD40vacGwtzw=2xxPnV0V_w=Gt4jwg@mail.gmail.com>
+Subject: Re: [PATCH] rust/pin-init: remove workaround for type inference cycle
+To: Benno Lossin <lossin@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, me@kloenk.dev, 
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Tang Yizhou <yizhou.tang@shopee.com>
+On Sun, 27 Jul 2025 at 22:58, Benno Lossin <lossin@kernel.org> wrote:
+>
+> On Sun Jul 27, 2025 at 7:02 PM CEST, Suchit Karunakaran wrote:
+> > The `cast_pin_init` and `cast_init` functions previously used an
+> > intermediate `let` binding before returning the result expression to work
+> > around a Rust compiler issue causing type inference cycles. With the
+> > minimum Rust compiler version for the kernel now at 1.78.0, where this
+> > issue is fixed, the workaround is no longer needed. This patch removes the
+> > unnecessary `let` variables and returns the expressions directly.
+> >
+> > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+>
+> I still encounter the cycle when compiling with 1.78.0, which version
+> did you test this with?
+>
 
-The symbol wb_window_usec cannot be found. Update the doc to reflect the
-latest implementation, in other words, the debugfs interface
-'curr_win_nsec'.
+Oops, I just realised that I compiled it locally and forgot that I had
+installed version 1.78.0 on my VM and not on my local system. I
+actually compiled it with version 1.88.0. Sorry for the inconvenience.
 
-Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
----
- Documentation/ABI/stable/sysfs-block | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> One of The errors I see after applying the patch on top of
+> `pin-init-next`:
+>
+>     error[E0391]: cycle detected when computing type of opaque `cast_pin_init::{opaque#0}`
+>         --> rust/pin-init/src/lib.rs:1278:73
+>          |
+>     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
+>          |                                                                         ^^^^^^^^^^^^^^^^^^
+>          |
+>     note: ...which requires borrow-checking `cast_pin_init`...
+>         --> rust/pin-init/src/lib.rs:1278:1
+>          |
+>     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
+>          | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     note: ...which requires promoting constants in MIR for `cast_pin_init`...
+>         --> rust/pin-init/src/lib.rs:1278:1
+>          |
+>     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
+>          | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>     note: ...which requires const checking `cast_pin_init`...
+>         --> rust/pin-init/src/lib.rs:1278:1
+>          |
+>     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
+>          | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>          = note: ...which requires computing whether `cast_pin_init::{opaque#0}` is freeze...
+>          = note: ...which requires evaluating trait selection obligation `cast_pin_init::{opaque#0}: core::marker::Freeze`...
+>          = note: ...which again requires computing type of opaque `cast_pin_init::{opaque#0}`, completing the cycle
+>     note: cycle used when computing type of `cast_pin_init::{opaque#0}`
+>         --> rust/pin-init/src/lib.rs:1278:73
+>          |
+>     1278 | pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
+>          |                                                                         ^^^^^^^^^^^^^^^^^^
+>          = note: see https://rustc-dev-guide.rust-lang.org/overview.html#queries and https://rustc-dev-guide.rust-lang.org/query.html for more information
+>
+> > ---
+> >  rust/pin-init/src/lib.rs | 10 ++--------
+> >  1 file changed, 2 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
+> > index 62e013a5cc20..cc244eeb19cd 100644
+> > --- a/rust/pin-init/src/lib.rs
+> > +++ b/rust/pin-init/src/lib.rs
+> > @@ -1278,10 +1278,7 @@ unsafe fn __pinned_init(self, slot: *mut T) -> Result<(), E> {
+> >  pub const unsafe fn cast_pin_init<T, U, E>(init: impl PinInit<T, E>) -> impl PinInit<U, E> {
+> >      // SAFETY: initialization delegated to a valid initializer. Cast is valid by function safety
+> >      // requirements.
+> > -    let res = unsafe { pin_init_from_closure(|ptr: *mut U| init.__pinned_init(ptr.cast::<T>())) };
+> > -    // FIXME: remove the let statement once the nightly-MSRV allows it (1.78 otherwise encounters a
+>
+> Do note the comment mentioning that it is needed for version 1.78 here,
+> so I think this patch still needs to wait until we bump the minimum.
+>
 
-diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
-index 4ba771b56b3b..a3cf841ebdff 100644
---- a/Documentation/ABI/stable/sysfs-block
-+++ b/Documentation/ABI/stable/sysfs-block
-@@ -731,7 +731,7 @@ Contact:	linux-block@vger.kernel.org
- Description:
- 		[RW] If the device is registered for writeback throttling, then
- 		this file shows the target minimum read latency. If this latency
--		is exceeded in a given window of time (see wb_window_usec), then
-+		is exceeded in a given window of time (see curr_win_nsec), then
- 		the writeback throttling will start scaling back writes. Writing
- 		a value of '0' to this file disables the feature. Writing a
- 		value of '-1' to this file resets the value to the default
--- 
-2.25.1
-
+Yup got it. I'll send the patch after the minimum version is
+increased. Thanks for reviewing.
 
