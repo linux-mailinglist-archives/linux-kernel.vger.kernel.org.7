@@ -1,260 +1,202 @@
-Return-Path: <linux-kernel+bounces-747077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD92B12F6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 398F3B12F6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 14:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6033BC4CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5515A3A56FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 12:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53B1213E6A;
-	Sun, 27 Jul 2025 12:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E238213254;
+	Sun, 27 Jul 2025 12:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="ij/TU2oi"
-Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazon11021095.outbound.protection.outlook.com [52.101.100.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9+upJQd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F213172633;
-	Sun, 27 Jul 2025 12:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.100.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753617788; cv=fail; b=mcYnNpCNAXV0OQwASb8/6NEXeQWUKKHgObMsvJhZpNX0DsChF89rsITcCbYL/JA3YyBajGwaugrc28xXxQWGWmikSf8G4eRBVHqN+R23EVvbxATAqe+bbah1eJLHFnSIE5r4gG3GhrRc1Opykyb6Yf/zG9WSndW+aUKGPPCUINQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753617788; c=relaxed/simple;
-	bh=47CpYw7y7zwhUlGkn3X8VNuH8G4iOVJ61iGYGgxrcQI=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF8563CF;
+	Sun, 27 Jul 2025 12:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753618912; cv=none; b=abfvrWeIAV2pi7DYEIY81481zhl6qCuXqn/6NkEGAzwHubCboeph1dIelAD3Kj6ppaJB2vGcRftGkL4nOtHYfgSDU5dQoQmJRWswwnAIXIsxfdKq3c5hmaRFVHUjGMV+wMspc6/kI4xWlt9cw3G953BoIy6RUParfIEoUb2nSvM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753618912; c=relaxed/simple;
+	bh=xFOPvEY9uVWfcWY5moknpMDeQYNDdwyXwi2cmpvAHHY=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lhbKnFvbdnYQcveA9BpUNFHG3x0xSCc7hMiSKcXM1+31v7MMx0yvTHguu2XmRPzjD4lKEyzNL8PN2QO/BRmL1e5RQ49U/xzp0hxZ5Y9AMKOUBAe5CRX2iAtRWb2Ltxm3F2be7G8OENJtTI0T0pwPXR+8S2Sa3geCZ9z8FDxfAvo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=ij/TU2oi; arc=fail smtp.client-ip=52.101.100.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PSG2LBKmPNuCf0FKRKCVpi1t3bReipKGWrnqPiEIzEj+COqwjPd1zcqD4xD0mhmQBOmix+MhNgaGDkkbz5OPdGLP53X87XFQiI7st2xpnuCSDiatohE0gZh1RM2hX97NydhfB1mHfpl6YjIZHaO8VdUZITNUxii8xfXDGhogRRzAOhmK/QtKxfvmIPCWjpkgqv5HDIphQU4RjAATvAhiFkAtd6+tX1UctSiorpw5mca4eGCj4A8HlQLsG6PzJ9xP8Iv6HqyZMLi5hEXt6EFaW6tEFDpzTYH4cmoPmIice5tUQt2ma0nMA/reeErgi+2UJs6HKtzDUf5p/3z+tXKOhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zCTd8Us6jbI+bsiDZASIu3uQiGBB6WczkzdcvaglY94=;
- b=UIH3iP5FrGh3aV7DeT/t+YNgwj0caPqIMjrXpo50oVyIvSZn1tIHWe0vDo+Y1lBysiFVjsVPBoGqboQbjM2h4jdsPTuyLr0Fdo4WxPHy0ohg7jwh2qoTNb609BbWiCwlqsJv9B9Z3BCG9lSPCgIvymlaw0zpEJNeN01KTsyNjFh2dawTCCVV4bf0Ihhz4e2CKVIlI4vpyoZIYOoBBRcOt8fAh3/vmWxwqaAwAbvBjZU0a+o3zRm/hqbnOayEAKClvT9gLHGae/JTIQlLMSeu92DaKTQgFZ21BLMwLam/leCFSiKTsx5umbn01ctlCoC/ZfwWIZ9lHKS9Z+Sf2k9bGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zCTd8Us6jbI+bsiDZASIu3uQiGBB6WczkzdcvaglY94=;
- b=ij/TU2oiNvX6ecmRZ47C+5NRgq8yth9eJ24JwYQ5ktudCWhPIjJPC33EhJjoKlfjyNBPVsY9JnvGHoba7XZGrrneDPZq4gNBPT3gWYxHu+FPrfbkiEpUDviwOl6mvj+V6jyGRbvyiagmUC+n/UMOoWKlCXi31JbdCpLEnERpFbo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by CWLP265MB3073.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:ca::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Sun, 27 Jul
- 2025 12:03:01 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.8964.025; Sun, 27 Jul 2025
- 12:03:01 +0000
-Date: Sun, 27 Jul 2025 13:02:57 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Miguel Ojeda <ojeda@kernel.org>, Andrew Ballance
- <andrewjballance@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross
- <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
- rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 2/3] rust: maple_tree: add MapleTree::lock() and load()
-Message-ID: <20250727130257.3549ea3c.gary@garyguo.net>
-In-Reply-To: <CAH5fLgjB7-xJ2OjVa6nxnUPk-1+wyxPMWQ15-Vc3mUp36+_Rhg@mail.gmail.com>
-References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
-	<20250726-maple-tree-v1-2-27a3da7cb8e5@google.com>
-	<20250726165020.46880c31.gary@garyguo.net>
-	<CAH5fLgi-3oT8+5Krzrg5JeagJMm6-8FNVr5G-UAszuhi0qZ1xA@mail.gmail.com>
-	<CAH5fLgjB7-xJ2OjVa6nxnUPk-1+wyxPMWQ15-Vc3mUp36+_Rhg@mail.gmail.com>
+	 MIME-Version:Content-Type; b=WIDxzzfdhinK6ArD7WUdAObSseDorIacGf1ITfooPV4At0kveybObvPbfoymFKqmBNyI09aOWavb9t9tSqS7L6ENm2bDcemMmPHVGnapI3Rxtr3N+ZBckY2pYnmbhOGT9iqMNUw5CKmsljcLrGF1cL2Oy7uqr9wD+RFmRdOdGIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9+upJQd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 366CFC4CEEB;
+	Sun, 27 Jul 2025 12:21:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753618912;
+	bh=xFOPvEY9uVWfcWY5moknpMDeQYNDdwyXwi2cmpvAHHY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=T9+upJQd+tJizle1xoE4tWPC9arP2bh0FlcAntruETtfaOBbZDGTNIQv+VZazeyEl
+	 pCsh73Os7TqsKOqGuTXSoYnPTugJiX+12WS6mwULjQmxSddPLxS6LjakvNFBiqXA76
+	 URB9keKDcytcO0MyqyaxpWIxEoZVMLQRznrdPL4LraHmOdiiQIJdcLEZbq/VE1Xtsd
+	 Vqw11Iz+6zyauoUKDNyXQJ4YGs8utgQm0QDZbq7HZQFNzM+0wiABa2uY2YKJRauJdB
+	 gPkITEeolp/d5iJrZPCkEJO3+VweqZfSKJXv+hGVLV8gKYqfyU8NBAny4Xwl36DLE7
+	 9kz+/VWbCYHDA==
+Date: Sun, 27 Jul 2025 13:21:43 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] iio: adc: ad7124: do not require mclk
+Message-ID: <20250727132143.35a44547@jic23-huawei>
+In-Reply-To: <20250724-iio-adc-ad7124-proper-clock-support-v1-2-88f35db2fcaf@baylibre.com>
+References: <20250724-iio-adc-ad7124-proper-clock-support-v1-0-88f35db2fcaf@baylibre.com>
+	<20250724-iio-adc-ad7124-proper-clock-support-v1-2-88f35db2fcaf@baylibre.com>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: PA7P264CA0241.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:371::7) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB3073:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab591c3b-422a-4fb9-6152-08ddcd058912
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VzdrTVZhd3plV09HK3lHd2ZrVFFvcDhUclY3V0FxVDdLaE8zZ1lveWV1enRG?=
- =?utf-8?B?bElIS3hQTDBnbjFrMUV6dDZxSXE0NEY3ZUN2Q1haeXIwWXlCNlYvNk9yKzR5?=
- =?utf-8?B?QkNzRFRxQnlreU1VSFB5bitURXh4cmhxOHNCcC90OWZ3eEVDaHVMWm1vcjhi?=
- =?utf-8?B?aDh0YzZzWFV0NHcyWk5RTE1EQnA4cnZ0STgzb0tFQzJRY0RncXJqUVlZbWlk?=
- =?utf-8?B?dU9TZExkOU1seTBPbFk1OUovQlpmZWtVV25uNzJ4OUMzdmc5ak1SdmtCQktQ?=
- =?utf-8?B?bWE4dXdpTWNqc3NKZFk2RjRRbHh4Wll1K2QwbHdia3VmN3JmV1p4QUI2WCtr?=
- =?utf-8?B?QkRTekZtcTUyb0p4WkMzWVNPdFRVTkZTUCtBMHc0R0lWYWpteG1RdlBwYjBh?=
- =?utf-8?B?Zk1wa3lmd1dmR3cyWmpYdFBsS1Ewd2hEcWFlOFBmWFA4ZWpQd0wwajJKQjlE?=
- =?utf-8?B?c3FWeDhDTjJLRXNVdmNqSW1wbXN0UVU4VGNTY1RSSTdhUUczbHF3ZXBzTG4x?=
- =?utf-8?B?TldkY09jVzBESlJjUTVaM0pSWHdFRFA4Z2hEbWdWOFV1OGZHNExGUHo5N2dD?=
- =?utf-8?B?VlBUNHRldjJMcGhaWGs0QVB0THU2OG9OS3FWZG9mVzlUWHhiR0wrV3p5ZE93?=
- =?utf-8?B?WDdYa0E3eDQxcnNvQXF5emtPcDh1cUIxTkxWRUtiYkcvN0ZaNXJBOGlFem50?=
- =?utf-8?B?ZmpxU0NFcVl1bFlrQzJIcjRMdkh1VFR2UUV6VzZwbUFHc2U2UCtKOTZ3eHVn?=
- =?utf-8?B?VHZtUis3aGE1eWJIekRFbEhMdHRmNDNBa25ITVpEUzV0d1VyaDVlaS9iK05X?=
- =?utf-8?B?VmhWM0lQV2phSThIS3ZGeFRCTTFXYjZmQnllRTU0c21OTUFrc2daOVAvZlkr?=
- =?utf-8?B?SlNEQVd1R0RqZll0b0cyMWFxYmdIRkpFMTVMQk5wTGh1ZUQ5Qlk4a3NySEV3?=
- =?utf-8?B?Y3NCRGt3ZSs3dENTYmVERkx3OFdnamVRRjhTcUtDVnI5aWZWSWswSmphQjBC?=
- =?utf-8?B?T0hmaVJ6VFdneUFyVHJnMnp2amhvcVBSTlZyTFpnZGQ5Z2NZZE1UWC80aTVD?=
- =?utf-8?B?eWlZOVlRYTNaUVV6T2N2VjQ2U2RWdmZNMlNPdE54OHE4Qyt3YjYrOWVBL2E5?=
- =?utf-8?B?L3ZtR0lZNk9Ra0ZuQ2x1eUF1SENjSEExVXhPY0dLNU8ySVE5ZUlENkZnZ2dF?=
- =?utf-8?B?SWdtQzh1UnlQaDlIRnZYNWdIa0t2NzUyNWo3RVVlaHZYOFhkbWVsT0pHNUJB?=
- =?utf-8?B?SmU3L1hPc0VMZjdhN0ErNEE0NlFXaDd2RHNjMGdVb3FnMFdidk80NXN4N3pH?=
- =?utf-8?B?UDJ0dWhFdERiL09oaUJBdnBGTm1GUVhTYUp2ZGc4T2RrdjY1VFJBaGlaRVhr?=
- =?utf-8?B?c2o5UXdTMkhLM3pxRWtzME1ZekErVEVyZ3ZJYzdJYkkrdm5idXZTZThiK2J2?=
- =?utf-8?B?NFlHRUZpS3VoMlFxTDVIRUk3RmJrMW1MWERFOVVBMmFsRloreVRDck5TRzVw?=
- =?utf-8?B?QktnMDJOMHJzaytLRXFFT2VGRG1RRWZMRzBUTm9XUmJMNFloQkx5UXRxOEV3?=
- =?utf-8?B?ZVZsZFRuc051dlJlZXNJaU85UWVwNTZOR0RqQTdJTnF4M3FSWGxTUmUvSUVB?=
- =?utf-8?B?YVJzVVRyN0tKMWtLWmVzUUh5cUpPN1UxVzRmSDNJMy9CMWJnVTIvbEI2NFI1?=
- =?utf-8?B?a0JFN29GK1ZteHcrdnJxaDU5YzhFcmtwaXhhQmNoV2dQVjI2dk5hM0Nab1ow?=
- =?utf-8?B?Q2xFWHczV0xPanlyVklIbE12Nk1jaE5MdnhBVUx5TnF1ZTQyWjZ2TkZTZnZV?=
- =?utf-8?B?TTdVKzlZOHJqNGFDS1BoTHlLRjRHeGZ1dERVUi9Rd2JrcENFN2RVNS9jTzlh?=
- =?utf-8?B?RUhNVVJqbWRKVm8vTUp1S2pkS0diMHdGaUE4VmJNaDRxYUVhUmsxb09yTU1w?=
- =?utf-8?Q?NbE2pGYSqhE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(10070799003)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OEU1Uy9iaXkxU21vOWlOSzFKZWRsZHZGcTNjdFFmeEEreksxYm9tcEZEaHhI?=
- =?utf-8?B?enFpS0NlZXZRQjZnMkVzOEprYjJsUFN6Y1YvSjVreHhzQ3I4ZWxvNkh4Q2pu?=
- =?utf-8?B?SWQ0OG1UL2RqWkI3eE1RTFJGUWh5ZnVFM1A0TGdWZmFsTmU3QTVQMGdUUGk0?=
- =?utf-8?B?Mi95cnNJQjRIb25QNmR5d3Bjekc3S0xkbHBQUFAxVXlaWGU2b2VRMGc3SVph?=
- =?utf-8?B?azQ5UDR4UXZ6NlN5N2pURld2SzBEaDdwaGQ1WUxldmFsS3hza2JNalBQaUdR?=
- =?utf-8?B?V1cyMUpwbnAwNTZHZWFURk5FQnlTYXFHYTRXSGdLVEViWE42eUJHQW1xcjRV?=
- =?utf-8?B?Y0g2Sk9sbzNrVmhnSU1IOUg2TVV3ckdSV2tZcDkzbVpLdmp2N05tWmRSRWJM?=
- =?utf-8?B?ZlNKNWJwVGtScVdkK2pKc1lQcFBCa29OMldIL1ZiQTVSUG9qVzA3K1JRSGk1?=
- =?utf-8?B?S1NsckRxaWtwTW9VZFdoZlB4c2NzT0tVQnltaTRRVVBNZVRRRDFpYjlJQ0s3?=
- =?utf-8?B?OGFtYTQ0OU5jZ3BFV2RHNllaVUx1bTA5dzdSZkVTYlVIMXZ5WHBXKzR2dkdV?=
- =?utf-8?B?MjRlaW1SWXFiNDFOOG5nMnhLcXhXbmZNWHc2Nkt4R2ZnK09RZEVGL3pHSUxN?=
- =?utf-8?B?Qk4zZ1FPSVNacVRHQ09MZU16N0p6TnZvbmtSTzI2NnpKNFFnaHhwV0hWTGtF?=
- =?utf-8?B?Y0plNUlNRExMREJlR1hmcmRWaE5VWmJhVmd1RDZ4bytqS2JEaHVENDlnRVNa?=
- =?utf-8?B?cEF3dmxWQmxmc3owczdVYXkvbTRYZUFhajI0emw5VjA0dEpnVDZLWmlLcWZG?=
- =?utf-8?B?Z2FsRzArS2pTcDJZekR4STYzOG1XcHZZa0NlNDBaNi93QUdJaGZ1Mnd4NFBI?=
- =?utf-8?B?ZVBySDF1cmpQSjdjejhlbTZqZ1VtOVpOOHlxT2NYVlBDREhmZ3dTaE0zQ2lD?=
- =?utf-8?B?TUlSSTJURWhFUDdLS24vUFVMaXdEeTBvL0czZVZZMWtOSTJUcVZ3U01vUHUy?=
- =?utf-8?B?dmdYZlpjaFF5YzBCN2MzNDNFRXl4UEo5LzJGcU5mU2V5Wnd5OG9aRURnUnFl?=
- =?utf-8?B?dVU2Q2RWd0lwNWY1MGk3MEZwd01CRzNITm9RMGxSRDRjdW1mL2dtdFdGRFY4?=
- =?utf-8?B?R0hSU0p6VkhVV29lK1M0TlZGNDRoYThBN2hyNjU4VWhXVzBiWHd6VndvUzhw?=
- =?utf-8?B?S3R1Um0wcHovV3Iyb2NWb0lkZDVEbWNrbWtKbCtScGVGa2ZRa0R4Sk5FMHI2?=
- =?utf-8?B?UUpMeXBQRkN1THlSZGtFbGhGOEtadXI1NGZ4d1ZBWFhlUlRXc2VRY1NJQ1da?=
- =?utf-8?B?djlBaHg4VDJuaWIvVkV1SnM2VXdXSktNQU80RjAzNzV1VlpLUlcxMEdGd3Ru?=
- =?utf-8?B?cUVEQ1g4dGZSQTh0WG5qK2ZURVQySHB0eWtMOHpNazYyaHN1enZUTU1Mb0k3?=
- =?utf-8?B?MzRrcTlOUmwyNFdTNGFNVzVLc3o5dlMxR2kwQzNSaDhpRmkvQUh1M05lWFhm?=
- =?utf-8?B?bEoySVMvN2JLS1hXN1Uva3FLbHFwSzFORmU2VHdZVmcvV0tDUTRyT2Jza1dC?=
- =?utf-8?B?a0dVMGV5UkRIdmtDMnMva1g1T1QvSUgxOGU1ZjV2NmdDc2VQVFNDeHJpREp5?=
- =?utf-8?B?WllDS0QxWnhPeEQrQytXcXhVZTFoWjJ3RXdQLzVRaDF3ZmZuNVBaNG01aTdX?=
- =?utf-8?B?UHJEREFMVW5CRXQ5VlFPNVlhd2xvOTdJaHVhcFlBenJPemVXTkdraWJYQ3lv?=
- =?utf-8?B?UTdQY2p5MGRKQlhmM1dNU1hWQkFSZlRtZ2tYWG16NHowTkE4WVNJZ3hhdFhv?=
- =?utf-8?B?UmNVR2pXNDlIVHdjTGoyVVF2RHEybjFNYzFzVE9HN1dsWXF0ZEdYZU9ZZDdk?=
- =?utf-8?B?dzJZeVlpWGJOZG9qVmNQV1BVUlQwaWJab2hlcGtKUi9waUgvK1BMMzQrRVM1?=
- =?utf-8?B?MzU5YVBDRlJTK2hmdC8rSjZvcXhVcDJvdWVubGZRQm1JVEZmanVIU1R0Q05Y?=
- =?utf-8?B?UG1xczJEWmpoVFN2NWZ6QWtSMmtnOG02ejI1ZCtsTE56Wi9JWVlKcnlIRkgv?=
- =?utf-8?B?Z0pEOXpMenVMcWhKb2ZwYkswVDBqZERCa3pUbVJjNkV2bFNxV3BPa3B1cmFT?=
- =?utf-8?Q?yfjl7lXNPDgmDQHO3cg+Wd1YX?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab591c3b-422a-4fb9-6152-08ddcd058912
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2025 12:03:01.6731
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ea6QPhoUKlgEgR7ZpFXhaZe5ez1Z/g7qJ3MVK5gFf+o+FzsZ8PN7THiKadcruNSPXl6G0yg8Y+CFQ0R2qCYhZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB3073
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, 26 Jul 2025 18:18:02 +0200
-Alice Ryhl <aliceryhl@google.com> wrote:
+On Thu, 24 Jul 2025 18:25:23 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-> On Sat, Jul 26, 2025 at 6:15=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
- wrote:
-> >
-> > On Sat, Jul 26, 2025 at 5:50=E2=80=AFPM Gary Guo <gary@garyguo.net> wro=
-te: =20
-> > >
-> > > On Sat, 26 Jul 2025 13:23:23 +0000
-> > > Alice Ryhl <aliceryhl@google.com> wrote:
-> > > =20
-> > > > To load a value, one must be careful to hold the lock while accessi=
-ng
-> > > > it. To enable this, we add a lock() method so that you can perform
-> > > > operations on the value before the spinlock is released.
-> > > >
-> > > > Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
-> > > > Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
-> > > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > > > ---
-> > > >  rust/kernel/maple_tree.rs | 94 +++++++++++++++++++++++++++++++++++=
-++++++++++++
-> > > >  1 file changed, 94 insertions(+)
-> > > >
-> > > > diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
-> > > > index 0f26c173eedc7c79bb8e2b56fe85e8a266b3ae0c..c7ef504a9c78065b3d5=
-752b4f5337fb6277182d1 100644
-> > > > --- a/rust/kernel/maple_tree.rs
-> > > > +++ b/rust/kernel/maple_tree.rs
-> > > > @@ -206,6 +206,23 @@ pub fn erase(&self, index: usize) -> Option<T>=
- {
-> > > >          unsafe { T::try_from_foreign(ret) }
-> > > >      }
-> > > >
-> > > > +    /// Lock the internal spinlock.
-> > > > +    #[inline]
-> > > > +    pub fn lock(&self) -> MapleLock<'_, T> {
-> > > > +        // SAFETY: It's safe to lock the spinlock in a maple tree.
-> > > > +        unsafe { bindings::spin_lock(self.ma_lock()) };
-> > > > +
-> > > > +        // INVARIANT: We just took the spinlock.
-> > > > +        MapleLock(self)
-> > > > +    }
-> > > > +
-> > > > +    #[inline]
-> > > > +    fn ma_lock(&self) -> *mut bindings::spinlock_t {
-> > > > +        // SAFETY: This pointer offset operation stays in-bounds.
-> > > > +        let lock =3D unsafe { &raw mut (*self.tree.get()).__bindge=
-n_anon_1.ma_lock };
-> > > > +        lock.cast()
-> > > > +    } =20
-> > >
-> > > Could this return `&SpinLock<()>` using `Lock::from_raw`?
-> > >
-> > > I guess it has the drawback of having `MapleLock` needing to store
-> > > `ma_lock` pointer but the guard is usually just all on stack and
-> > > inlined so it probably won't make a difference?
-> > >
-> > > This way you remove `unsafe` from `lock` and gets a free `drop`. =20
-> >
-> > I ended up going this way to avoid the extra field in MapleLock, like
-> > you mention. =20
->=20
-> Oh, and it also avoids assuming anything about the layout of SpinLock<()>
->=20
-> Alice
+> Make the "mclk" clock optional in the ad7124 driver. The MCLK is an
+> internal counter on the ADC, so it is not something that should be
+> coming from the devicetree. However, existing users may be using this
+> to essentially select the power mode of the ADC from the devicetree.
+> In order to not break those users, we have to keep the existing "mclk"
+> handling, but now it is optional.
+> 
+> Now, when the "mclk" clock is omitted from the devicetree, the driver
+> will default to the full power mode. Support for an external clock
+> and dynamic power mode switching can be added later if needed.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7124.c | 61 ++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 43 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> index 9808df2e92424283a86e9c105492c7447d071e44..f587574e8a24040540a470e13fed412ec9c81971 100644
+> --- a/drivers/iio/adc/ad7124.c
+> +++ b/drivers/iio/adc/ad7124.c
+> @@ -174,7 +174,6 @@ struct ad7124_state {
+>  	struct ad_sigma_delta sd;
+>  	struct ad7124_channel *channels;
+>  	struct regulator *vref[4];
+> -	struct clk *mclk;
+>  	unsigned int adc_control;
+>  	unsigned int num_channels;
+>  	struct mutex cfgs_lock; /* lock for configs access */
+> @@ -254,7 +253,9 @@ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel
+>  {
+>  	unsigned int fclk, odr_sel_bits;
+>  
+> -	fclk = clk_get_rate(st->mclk);
+> +	fclk = ad7124_master_clk_freq_hz[FIELD_GET(
+> +		AD7124_ADC_CONTROL_POWER_MODE, st->adc_control)];
+> +
 
-Well, `Lock::from_raw` is designed to interact with a C-side lock:
+I'm not keen on that wrap point.
 
-> Construct a Lock from a raw pointer
->
-> This can be useful for interacting with a lock which was initialised outs=
-ide of Rust.
+	fclk = ad7124_master_clk_freq_hz[FIELD_GET(AD7124_ADC_CONTROL_POWER_MODE,
+						   st->adc_control)];
 
-- Gary
+maybe?
+>  	/*
+>  	 * FS[10:0] = fCLK / (fADC x 32) where:
+>  	 * fADC is the output data rate
+> @@ -1111,21 +1112,49 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
+>  static int ad7124_setup(struct ad7124_state *st)
+>  {
+>  	struct device *dev = &st->sd.spi->dev;
+> -	unsigned int fclk, power_mode;
+> +	unsigned int power_mode;
+> +	struct clk *mclk;
+>  	int i, ret;
+>  
+> -	fclk = clk_get_rate(st->mclk);
+> -	if (!fclk)
+> -		return dev_err_probe(dev, -EINVAL, "Failed to get mclk rate\n");
+> +	/*
+> +	 * Always use full power mode for max performance. If needed, the driver
+> +	 * could be adapted to use a dynamic power mode based on the requested
+> +	 * output data rate.
+> +	 */
+> +	power_mode = AD7124_ADC_CONTROL_POWER_MODE_FULL;
+>  
+> -	/* The power mode changes the master clock frequency */
+> -	power_mode = ad7124_find_closest_match(ad7124_master_clk_freq_hz,
+> -					ARRAY_SIZE(ad7124_master_clk_freq_hz),
+> -					fclk);
+> -	if (fclk != ad7124_master_clk_freq_hz[power_mode]) {
+> -		ret = clk_set_rate(st->mclk, fclk);
+> -		if (ret)
+> -			return dev_err_probe(dev, ret, "Failed to set mclk rate\n");
+> +	/*
+> +	 * HACK: This "mclk" business is needed for backwards compatibility with
+
+I'd drop the HACK bit of this. Whilst I understand the spirit of the comment
+that term tends to make people try to 'fix' things ;)
+
+> +	 * old devicetrees that specified a fake clock named "mclk" to select
+> +	 * the power mode.
+> +	 */
+> +	mclk = devm_clk_get_optional_enabled(dev, "mclk");
+> +	if (IS_ERR(mclk))
+> +		return dev_err_probe(dev, PTR_ERR(mclk), "Failed to get mclk\n");
+> +
+> +	if (mclk) {
+> +		unsigned long mclk_hz;
+> +
+> +		mclk_hz = clk_get_rate(mclk);
+> +		if (!mclk_hz)
+> +			return dev_err_probe(dev, -EINVAL, "Failed to get mclk rate\n");
+> +
+> +		/*
+> +		 * This logic is a bit backwards, which is why it is considered
+> +		 * a hack and is only here for backwards compatibility. The
+> +		 * driver should be able to set the power mode as it sees fit
+> +		 * and the f_clk/mclk rate should be dynamic accordingly. But
+> +		 * here, we are selecting a fixed power mode based on the given
+> +		 * "mclk" rate.
+
+My assumption is that someone had a board with a fixed rate clock on this pin.
+So it might not be possible to have the driver do that adjustment.
+If anyone ever adds that support, we'll have to be careful about handling fixed
+clocks.
+
+This looks fine though.
+
+> +		 */
+> +		power_mode = ad7124_find_closest_match(ad7124_master_clk_freq_hz,
+> +			ARRAY_SIZE(ad7124_master_clk_freq_hz), mclk_hz);
+> +
+> +		if (mclk_hz != ad7124_master_clk_freq_hz[power_mode]) {
+> +			ret = clk_set_rate(mclk, mclk_hz);
+> +			if (ret)
+> +				return dev_err_probe(dev, ret, "Failed to set mclk rate\n");
+> +		}
+>  	}
+>  
+>  	/* Set the power mode */
+> @@ -1303,10 +1332,6 @@ static int ad7124_probe(struct spi_device *spi)
+>  			return dev_err_probe(dev, ret, "Failed to register disable handler for regulator #%d\n", i);
+>  	}
+>  
+> -	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
+> -	if (IS_ERR(st->mclk))
+> -		return dev_err_probe(dev, PTR_ERR(st->mclk), "Failed to get mclk\n");
+> -
+>  	ret = ad7124_soft_reset(st);
+>  	if (ret < 0)
+>  		return ret;
+> 
+
 
