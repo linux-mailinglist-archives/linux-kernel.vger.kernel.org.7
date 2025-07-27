@@ -1,244 +1,239 @@
-Return-Path: <linux-kernel+bounces-747168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA73B13099
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:28:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D19B13122
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D56189823C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:29:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9393F3B117C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE5E21CC55;
-	Sun, 27 Jul 2025 16:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE56D2A1D1;
+	Sun, 27 Jul 2025 18:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="ZVGF4J2g"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sV/1Vr4i"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9951C84BC;
-	Sun, 27 Jul 2025 16:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6BB1A5B8C
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 18:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753633718; cv=none; b=G8RU8ndCudNMcsE0LTavJldZPqulbFhL+S+rLonQDvNHvHpu71/LCu8qlyI5z6GcxlRlz2nNWWFCY0Au6Jyz7q1FQRgXG84qBBHWR5+V4CGhiXVxBlpJiDzmz7xkZrLGSI6slcBsw6a3MaxgiZiPC7wy8Gbfo5o3cyIqldhft00=
+	t=1753640289; cv=none; b=cuLep37laII7M4DSNtHUktCc6urbgfU4t9zwHuYLLt8rhzaMO6NDvo1RZJDczr9oB6oFLrQa7Y4LIxMJ+guRUD1GYB8QSMl957/QPa2hAsNMlfBxCR3GYnF4hNRizvb+SJWeZS9LTSM+JNa/ONlMyzlHFGQFe86ZAkqJvesQT8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753633718; c=relaxed/simple;
-	bh=ZomwM7MouMwcy/OMbnFMk7CRtazTaSNNgdUyQSIq+fM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D2gl2jg7lMnhlqSQ2Zo5lh07wD3QDFUc9rUF10basCrfnIN6v6CXmEo2bo8BddnVP7ZDvN2e5kWCn3zU60C84QDrBuAnjkezVRQXEOtu1tXF3wXKYaiFVR2Of+fUAaCJwU78vE3YzdHxExnsWMW72HGOQvShQT090j62e5it/w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=ZVGF4J2g; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1753633712; x=1754238512; i=deller@gmx.de;
-	bh=pkLDT0HEsunX2btfz401SE7y2JBuE7M2u3LhGnMVqDw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZVGF4J2g6XFJoNwVshZ5gG5PZ8fiyT/NonOCvP74vVQD7oPpO0CYQ39CARmdmiEo
-	 e6TQpBvj0Sj/XLMa4lQ13ZXEcrA5KxR8KL0yQ4MZLC6J2Yoq3SjPaawX18ItM7BOu
-	 fwA/eIZgCin1XzzsWKk0s2HgfVVEQB271OrbDXPrh74VyuQHwVrWyXMeWoTaRD+rP
-	 JEk8Ixq4sc27Uos1HbmaOd4/Z7mGwQjlX3+l5sSn/AWzUQzI97Or0uRmjmbdKfeJ4
-	 1AH+FvUfhWtbvD276qIi8p1T1qKSMmozGP4a2SxrlsJt7oBgpknzsHIhX2PU8f/9b
-	 QXTC5b5ffZBI7TeHzQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.173] ([109.250.63.22]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MUowb-1v6hn726M5-00V1Kw; Sun, 27
- Jul 2025 18:28:32 +0200
-Message-ID: <00dfd97d-892f-405e-b395-caf7e8e8f1e9@gmx.de>
-Date: Sun, 27 Jul 2025 20:17:44 +0200
+	s=arc-20240116; t=1753640289; c=relaxed/simple;
+	bh=Oh3MgeqnOYp4K9k+9BDHHKlnsg0BQzGc4dHtDzS2t7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQNWFKn1ARnE8oaYxCW9+Jt4VXKvaBry8oGgxBojgXsEA/xZ3EmdZRkieEvr9FJ4O73mAgarAOkls668h8e6Ma4doLbWRidGuH39ZDsLL7uqOMtZ98R8l6pGVCdLV1NZElvD1MbO6nxMMN80Mq+NjzcmaUE5Wx/s+XXnsExgt1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sV/1Vr4i; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23dd9ae5aacso155595ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 11:18:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753640286; x=1754245086; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SrCK6S0JfTZW8/CSdvpX6rnp+yviEEZjXuCZqY3YBDU=;
+        b=sV/1Vr4iJplUzZMvP2yLPXc1rMOvJt72RobXQwj8qSYflVTUJU5fTyVT/4ri0PlcrJ
+         LRP/pyxBiowTLebJjW85wu1+T9RnLHPNIFyaFGIXHgbB3llrvJltINiaoqIIdCXS4BLR
+         Yj3HIOAQ18/XEVqwZS9+n1xWZyqaG3Y3EbokJfWnnmZf98Zk0b1g2srTGkmSCkc2ScHb
+         kC5QrYsuRV72KkIEIUXQ8GZcYSWnCGELHgGIP9lawwi5EfaqTbJfpRlQ/UgBZvXz6QN+
+         UtJBEy857nKezVfIPMktI/8kZraBAACVsR//kYz7zSGJQ0DXPnzTcqox7JTxf+vBKSyg
+         ODHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753640286; x=1754245086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SrCK6S0JfTZW8/CSdvpX6rnp+yviEEZjXuCZqY3YBDU=;
+        b=vXo6LkarFyplw5jHoEww6hieHVOqwo4aP+ra9vpNOYuASEvxU6/ZLUUbe+oXc/UEIf
+         DTMjwHxOYgi/HSx99stSHOY+C2UsiiYRU4RdRqjwPEgGS4d1goLpE1BZ2oetkZJXXeq3
+         gCHVAIhENOh5zCB3bGkfvB4O0gxInpaWFs1btMigD3ORRKj8sDg9YHKiPpzdC/aCrDZ8
+         ocBbHiQMtoUNjILTdnMgeh0C4ALkqA5FDd11UifbPZi4nILo/0ftBQ2fTGplf+B0F3I4
+         WevmpUQyJLJbvOFrcyHEI9u0KY2V/RGL1bfJIcgTAEVHaN+IcqQAikaEmXim7PsiL7Jh
+         yg9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ8Qd6AlOt1DdUuZxUtsAu9X5W+5okhMTmUYiL+LINpp4NGeyF/AGcWYBzza+SqBZUVPidZhWPm4AgpO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYNr3UdYjo0nAye7aJohltdgERw8fkbfXNDUCmHbwf3qBqIbb2
+	79dtEY2pveV0qdpSuF61aPj77Tlh9KqWI8Dvb1WpvpXVbhL0PqdsavCOfFE9mNhe7A==
+X-Gm-Gg: ASbGncvlRD7RT/WuUhMnLHJHMTW0kU+nqd2ODvk70e3itH74eUN3OkIXp3tfq3sgAW+
+	LH8oal/FdbhevE3JqFLYvO6IFlUDhKy90baP4bfP1u0JVX3RbPkDAFiAjq9a+SD93WGSHLwIJUl
+	9HQHw5NKGoFUe2UwZp/VtdMtNg4CT5e6QpxwDZDdWiDS+AuUA+gAd4bkuI3OIGebuD9RPLtYKPd
+	w30CAHeZf48/TBJ0t5KQMoVamamMJvBSUNK375HHSHUfIWW0v1Nz2wTByxMFhvuH2LMtIM2CdSh
+	Wmwnpo/qplQZnax/3I3G4fZZG96K3OpQ4EF/4Z5kXHE1A7E8S9psKz38eke66uKLz5ULfbISh91
+	rX+qyWcvJnlK5AzOg/nQSHUPrg4Yj/i8xSR8FahBW/s0mI/Ql/oNOl5g65yAdkVY=
+X-Google-Smtp-Source: AGHT+IFuHg9slp36BYzs++FA75XcSgyone2OHe/zLOFgSAqf2O6bVxYmK0j6OseG6HWIpZ8I/hYfBA==
+X-Received: by 2002:a17:902:fc87:b0:234:8eeb:d81a with SMTP id d9443c01a7336-23fbfd1952amr2788425ad.16.1753640285487;
+        Sun, 27 Jul 2025 11:18:05 -0700 (PDT)
+Received: from google.com (135.228.125.34.bc.googleusercontent.com. [34.125.228.135])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76408c02640sm3851608b3a.37.2025.07.27.11.18.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 11:18:04 -0700 (PDT)
+Date: Sun, 27 Jul 2025 18:18:00 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>, Li Li <dualli@google.com>
+Cc: Tiffany Yang <ynaffit@google.com>, John Stultz <jstultz@google.com>,
+	Shai Barack <shayba@google.com>,
+	=?iso-8859-1?Q?Thi=E9baud?= Weksteen <tweek@google.com>,
+	kernel-team@android.com, linux-kernel@vger.kernel.org,
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
+Subject: Re: [PATCH v19 3/5] binder: introduce transaction reports via netlink
+Message-ID: <aIZtWGPFCsHdNvq1@google.com>
+References: <20250725183811.409580-1-cmllamas@google.com>
+ <20250725183811.409580-4-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: pm3fb: Fix potential divide by zero
-To: Alex Guo <alexguo1023@gmail.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CAMuHMdW5wU1ForGOGD-+HDUu7wcnBx3jx911nLEqbJ71t4MBsg@mail.gmail.com>
- <20250611161207.4031677-1-alexguo1023@gmail.com>
- <CAMuHMdW=GyUHsfqtSD8iYaV_nRszEunaDMCoL6zWf5_bPS0T4Q@mail.gmail.com>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <CAMuHMdW=GyUHsfqtSD8iYaV_nRszEunaDMCoL6zWf5_bPS0T4Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:e05JDAVMkyZ+FQ8bw/sOH11d+LSn4k+EZk0JAbBUOxdLsFr6grc
- bL5L72uooH7pgjg2RJwsF+ib3Slj+1hjNlq3ceyjA/AQECPn4m1EKJ+di8cpiCEZgP6DF3K
- MvzQ44c/oyvkOCEYvAYaqlIDxc+GLJi3hMSZvRjXr4qZrHEMIjU4LCmpAyGAXJkR9S/Wd4D
- w4gzxtnqK6rzY57oYxCQw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nMzw6wrqWvo=;h1NOHVh/mmKRv5p/xOcKR4jgXAJ
- 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
- C3qFFYoa7tQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725183811.409580-4-cmllamas@google.com>
 
-Hi Alex,
+On Fri, Jul 25, 2025 at 06:37:46PM +0000, Carlos Llamas wrote:
+> From: Li Li <dualli@google.com>
+> 
+> Introduce a generic netlink multicast event to report binder transaction
+> failures to userspace. This allows subscribers to monitor these events
+> and take appropriate actions, such as stopping a misbehaving application
+> that is spamming a service with huge amount of transactions.
+> 
+> The multicast event contains full details of the failed transactions,
+> including the sender/target PIDs, payload size and specific error code.
+> This interface is defined using a YAML spec, from which the UAPI and
+> kernel headers and source are auto-generated.
+> 
+> Signed-off-by: Li Li <dualli@google.com>
+> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> ---
+>  Documentation/netlink/specs/binder.yaml     | 96 +++++++++++++++++++++
+>  MAINTAINERS                                 |  1 +
+>  drivers/android/Kconfig                     |  1 +
+>  drivers/android/Makefile                    |  2 +-
+>  drivers/android/binder.c                    | 85 +++++++++++++++++-
+>  drivers/android/binder_netlink.c            | 32 +++++++
+>  drivers/android/binder_netlink.h            | 21 +++++
+>  include/uapi/linux/android/binder_netlink.h | 37 ++++++++
+>  8 files changed, 270 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/netlink/specs/binder.yaml
+>  create mode 100644 drivers/android/binder_netlink.c
+>  create mode 100644 drivers/android/binder_netlink.h
+>  create mode 100644 include/uapi/linux/android/binder_netlink.h
+> 
+> diff --git a/Documentation/netlink/specs/binder.yaml b/Documentation/netlink/specs/binder.yaml
+> new file mode 100644
+> index 000000000000..a2e54aa42448
+> --- /dev/null
+> +++ b/Documentation/netlink/specs/binder.yaml
+> @@ -0,0 +1,96 @@
+> +# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
+> +#
+> +# Copyright 2025 Google LLC
+> +#
+> +---
+> +name: binder
+> +protocol: genetlink
+> +uapi-header: linux/android/binder_netlink.h
+> +doc: Binder interface over generic netlink
+> +
+> +attribute-sets:
+> +  -
+> +    name: report
+> +    doc: |
+> +      Attributes included within a transaction failure report. The elements
+> +      correspond directly with the specific transaction that failed, along
+> +      with the error returned to the sender e.g. BR_DEAD_REPLY.
+> +
+> +    attributes:
+> +      -
+> +        name: error
+> +        type: u32
+> +        doc: The enum binder_driver_return_protocol returned to the sender.
+> +      -
+> +        name: context
+> +        type: string
+> +        doc: The binder context where the transaction occurred.
+> +      -
+> +        name: from_pid
+> +        type: u32
+> +        doc: The PID of the sender process.
+> +      -
+> +        name: from_tid
+> +        type: u32
+> +        doc: The TID of the sender thread.
+> +      -
+> +        name: to_pid
+> +        type: u32
+> +        doc: |
+> +          The PID of the recipient process. This attribute may not be present
+> +          if the target could not be determined.
+> +      -
+> +        name: to_tid
+> +        type: u32
+> +        doc: |
+> +          The TID of the recipient thread. This attribute may not be present
+> +          if the target could not be determined.
+> +      -
+> +        name: is_reply
+> +        type: flag
+> +        doc: When present, indicates the failed transaction is a reply.
+> +      -
+> +        name: flags
+> +        type: u32
+> +        doc: The bitmask of enum transaction_flags from the transaction.
+> +      -
+> +        name: code
+> +        type: u32
+> +        doc: The application-defined code from the transaction.
+> +      -
+> +        name: data_size
+> +        type: u32
+> +        doc: The transaction payload size in bytes.
+> +
+> +operations:
+> +  list:
+> +    -
+> +      name: report
+> +      doc: |
+> +        A multicast event sent to userspace subscribers to notify them about
+> +        binder transaction failures. The generated report provides the full
+> +        details of the specific transaction that failed. The intention is for
+> +        programs to monitor these events and react to the failures as needed.
+> +
+> +      attribute-set: report
+> +      mcgrp: report
+> +      event:
+> +        attributes:
+> +          - error
+> +          - context
+> +          - from_pid
+> +          - from_tid
+> +          - to_pid
+> +          - to_tid
+> +          - is_reply
+> +          - flags
+> +          - code
+> +          - data_size
+> +
+> +kernel-family:
+> +  headers: ["binder_internal.h"]
 
-On 6/12/25 11:29, Geert Uytterhoeven wrote:
-> On Wed, 11 Jun 2025 at 18:12, Alex Guo <alexguo1023@gmail.com> wrote:
->>> On Sat, 7 Jun 2025 at 22:14, Alex Guo <alexguo1023@gmail.com> wrote:
->>>> variable var->pixclock can be set by user. In case it equals to
->>>>   zero, divide by zero would occur in pm3fb_check_var. Similar
->>>> crashes have happened in other fbdev drivers. There is no check
->>>> and modification on var->pixclock along the call chain to
->>>> pm3fb_check_var. So we fix this by checking whether 'pixclock'
->>>> is zero.
->>>>
->>>> Similar commit: commit 16844e58704 ("video: fbdev: tridentfb:
->>>> Error out if 'pixclock' equals zero")
->>>>
->>>> Signed-off-by: Alex Guo <alexguo1023@gmail.com>
->>>
->>> Thanks for your patch, which is now commit 59d1fc7b3e1ae9d4
->>> ("fbdev: pm3fb: fix potential divide by zero") in fbdev/for-next.
->>>
->>>> --- a/drivers/video/fbdev/pm3fb.c
->>>> +++ b/drivers/video/fbdev/pm3fb.c
->>>> @@ -998,6 +998,9 @@ static int pm3fb_check_var(struct fb_var_screenin=
-fo *var, struct fb_info *info)
->>>>                  return -EINVAL;
->>>>          }
->>>>
->>>> +       if (!var->pixclock)
->>>> +               return -EINVAL;
->>>
->>> While this fixes the crash, this is correct behavior for an fbdev driv=
-er.
->>> When a value is invalid, it should be rounded up to a valid value inst=
-ead,
->>> if possible.
->>
->> Thanks for your confirmation and suggestions.
->>
->> I added this patch based on existing checks on var->pixclock in other d=
-rivers, such as savagefb_check_var, nvidiafb_check_var, etc.
->> Are you suggesting that it is better to replace an invalid value (var->=
-pixclock =3D=3D 0) with a default valid value, instead of returning -EINVA=
-L?
->=20
-> Indeed.
->=20
->> If so, could you advise what a suitable default value would be for this=
- case?
->=20
-> The answer is hidden in the existing check below:
->=20
->>>> +
->>>>          if (PICOS2KHZ(var->pixclock) > PM3_MAX_PIXCLOCK) {
->>>>                  DPRINTK("pixclock too high (%ldKHz)\n",
->>>>                          PICOS2KHZ(var->pixclock));
->>>>                  return -EINVAL;
->>>>          }
->=20
-> It can be replaced by:
->=20
->      if (var->pixclock <=3D KHZ2PICOS(PM3_MAX_PIXCLOCK))
->              var->pixclock =3D KHZ2PICOS(PM3_MAX_PIXCLOCK) + 1;
->=20
-> The "+ 1" is needed because of rounding.
+Hmm, it seems this header inclusion was left in from patchset v13, where
+the 'struct binder_context' needed to be exposed. Not anymore though, so
+I'll send out a new version that drops this part.
 
-You sent a whole bunch of patches [1] which check pixclock against
-zero, but you don't set the default value as Geert pointed out
-above. Can you maybe revise your patches accordingly?
-
-Helge
-
-[1] https://patchwork.kernel.org/project/linux-fbdev/list/
 
