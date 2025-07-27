@@ -1,102 +1,175 @@
-Return-Path: <linux-kernel+bounces-747224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BBAAB1312B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:28:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D3FB1312D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC372171FAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F2C3B6CC8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A79224AE8;
-	Sun, 27 Jul 2025 18:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB9F21FF37;
+	Sun, 27 Jul 2025 18:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4tZMX+BO"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e4TmBtBL"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA41621E0AF;
-	Sun, 27 Jul 2025 18:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EF4145B3F
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 18:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753640928; cv=none; b=A51EFM4dpXFeuOLT41cdAakAtaGT0PFJdLav2Vy5dhIHDsM9qZMCAHeZUn7hBhsFD8aHbTPO62aA8PBd2km36BjTVTQqw2O3SNUOqIsMfEjcHnsuS6qaKFE1ZZ3NJGUXzgweNoN6mZOuG9QxshtdawzNUjwn2BepkJuF9GFPWs0=
+	t=1753641055; cv=none; b=cNzooPKkL/SS5j2YXBPgFUnU3gxRjiqTJbh4XfGzP69IT6IjSz2UKzSMOU2p4+eBsfVGuEg7g+7DSr7nn3u9W8FzxMY77oFXFDJTrgMEy+eGO3oOmXtHVoLxCwLAHvYHOCTbdgM/Oz1TFofM+6P2R7qEAEXpVmom3CsuvQQAY4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753640928; c=relaxed/simple;
-	bh=RTDT4qrqNVbwO8XdQUIlL2J6PS2o5OmWVYpqXftiQxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kOBlgmkKw+NCat2fQC26zn7tgL+USUMev8bqS4TUDkM3po4xTwFCrWjhriuwRrb4gnrcVFhhrDPs7hbahCk+FdxIl/6hOfMClkrtyHkfR459Xwzu3M6I+TSwJeWsCRh7P8Mg/TbhHmfGoeWYtrmhRuFJL3Dl6vNyaAjbzMjR8OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4tZMX+BO; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=gfbTvT4o4sNA4mwDn2pT9ma0vg6bB2j8rF5lbj+8V6g=; b=4tZMX+BOPFA+3gVPghYwSmx5fZ
-	ypS9hp1mAga8funfTBxeen0aX7Q7v9Q0OSvMtOVKZtfHjJ7k+oFrstiaXjpaj8gnUmeo2UtaR/Lz8
-	qj7DRD+tfCx3O2U/g6lOe09ObRvn+D12yBVUEI/wqJ9le8Ujp2CvuF9mD6F/Ij3p88dA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ug66v-0031GQ-GQ; Sun, 27 Jul 2025 20:28:37 +0200
-Date: Sun, 27 Jul 2025 20:28:37 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ujwal Kundur <ujwal.kundur@gmail.com>
-Cc: syzbot+8182574047912f805d59@syzkaller.appspotmail.com,
-	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
-	kuba@kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com,
-	syzkaller-bugs@googlegroups.com, jiri@resnulli.us,
-	andrew+netdev@lunn.ch
-Subject: Re: [RFC PATCH] net: team: switch to spinlock in team_change_rx_flags
-Message-ID: <e89ca1c2-abb6-4030-9c52-f64c1ca15bf6@lunn.ch>
-References: <68712acf.a00a0220.26a83e.0051.GAE@google.com>
- <20250727180921.360-1-ujwal.kundur@gmail.com>
+	s=arc-20240116; t=1753641055; c=relaxed/simple;
+	bh=Jch93u4dddBCM+4zh4u4VF9kachuFUccOMvqa2wvpMM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lbN0z8ixinnI7nJouhlaE+ApJ0zHFYUdaGj7m4CAdqYTjat7z00lReoxDQgovSBlG6fMo06Z/bwR6yLN9nOtzcVm4UDPj+6rJH/yLJPgxds9lD5LBpLKuHGUMSEPva5YC9C0nESUq0FnxnhVDolcdpLEfjrNFVRh5X11dak5lgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e4TmBtBL; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3141a9a6888so2843813a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 11:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753641053; x=1754245853; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v8Qf5T04i28bf1zSyDnzy7KEP6ifkrCxLLS5my/D4aI=;
+        b=e4TmBtBLYuP1uqS/zYF4rdIA+G5Xf7lF/228zIviS47xQNhXVGEI6lAnsAhzx4JYaq
+         pgOI8wSWIOyN8oHtB1qRNM3MkCivgNs8Wvb1ljZEDhlSNZUu48+t/eEsyOJF95xLz+xw
+         Fv7t9dAFeLHctyAXrhe6iQ5lcniWVC2DFKtYNFS2juee+CwfjWyHiab/nqyOF6ehZfvK
+         PKQjfWlTJ3h98ieyhbob5a4ptbOShkTbjxtkIFi3DBqebw0g7+Y7CRNB0BRHYSBITtjp
+         +fzK+WSRjZEbDM0a/KfgBX/65MhpaO7H2W5goD9MBNTyPrlLJl3cokGMDogEP7oghuK5
+         +uDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753641053; x=1754245853;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v8Qf5T04i28bf1zSyDnzy7KEP6ifkrCxLLS5my/D4aI=;
+        b=iOBWevEp75CAN0911FFOxIdUzHij2/9QzA3isN34zV18TegaQCbLLjwS7cp3rNmjio
+         /xhs6+MBYnLpi9sMzdl/AKFfM0Jf/1BwXfPxQB5gp5v7B7eHITAb6EripYQ/81je20uK
+         FfVdudA+lP2266pjc6xt0ONwiIdmCc97wMzYyqzM5znaMVy4KwO3m2JKoMB1PAz03rK5
+         7CrYy0JVg2aqOclUK7KGoGl4x+mptvW5tt6Sw7UpsudIZ5b0cb7bC/vn7ExKyB/LoFms
+         rzWpHhWOLzg2ppXcOw+O7ifd8VwEKxLTk/0WUNL88WGCOJyaCQUy4DMl9oNwh6dUAujy
+         dkMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXyIPZ/UMCmEaPz4wzTx+wX3vM2+ZjjBEnhpOjp4YFDqHJfgbAGAPsvUmUZ43HIzjXRH2YfPFVMx9smb/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsZd7q9XEvNnX79dxP2MpEbQ9A8s0+RkqtDqt/LrdK96iEKGmX
+	tZk9SWabOqonMHCeb4k0GGnES2dzx/8w6Kr1WuSbr2YX4/MyoozAKSPfqfZzqpVOtbdoZUqVYib
+	/Ww3J8LgfmQuihg==
+X-Google-Smtp-Source: AGHT+IEyrLSbmShxWrH2L++sVNhCrAjNYzJ8ukqPEcNuFwzTp/1ibLYMxPTm0SUPZ24Ne8FtsWAfYKW/T0ow3g==
+X-Received: from pjbnw7.prod.google.com ([2002:a17:90b:2547:b0:314:626:7b97])
+ (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:2e51:b0:31e:cc6b:321f with SMTP id 98e67ed59e1d1-31ecc6b330bmr3603538a91.29.1753641053313;
+ Sun, 27 Jul 2025 11:30:53 -0700 (PDT)
+Date: Sun, 27 Jul 2025 18:29:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250727180921.360-1-ujwal.kundur@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
+Message-ID: <20250727182932.2499194-1-cmllamas@google.com>
+Subject: [PATCH v20 0/5] binder: introduce transaction reports via netlink
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tiffany Yang <ynaffit@google.com>, John Stultz <jstultz@google.com>, 
+	Shai Barack <shayba@google.com>, "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
+	Todd Kjos <tkjos@android.com>, Carlos Llamas <cmllamas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
->  drivers/net/team/team_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
-> index 8bc56186b2a3..4568075fea6e 100644
-> --- a/drivers/net/team/team_core.c
-> +++ b/drivers/net/team/team_core.c
-> @@ -1778,7 +1778,7 @@ static void team_change_rx_flags(struct net_device *dev, int change)
->  	struct team_port *port;
->  	int inc;
->  
-> -	mutex_lock(&team->lock);
-> +	spin_lock(&team->lock);
->  	list_for_each_entry(port, &team->port_list, list) {
->  		if (change & IFF_PROMISC) {
->  			inc = dev->flags & IFF_PROMISC ? 1 : -1;
-> @@ -1789,7 +1789,7 @@ static void team_change_rx_flags(struct net_device *dev, int change)
->  			dev_set_allmulti(port->dev, inc);
->  		}
->  	}
-> -	mutex_unlock(&team->lock);
-> +	spin_unlock(&team->lock);
->  }
+This series is based on the v17 patchset from Li to add the transaction
+reporting feature. There were several changes introduced in since that
+version (detailed below). However, the motivation for this work remains
+the same:
 
-void __sched mutex_unlock(struct mutex *lock)
-static __always_inline void spin_unlock(spinlock_t *lock)
+> It's a known issue that neither the frozen processes nor the system
+> administration process of the OS can correctly deal with failed binder
+> transactions. The reason is that there's no reliable way for the user
+> space administration process to fetch the binder errors from the kernel
+> binder driver.
+>
+> Android is such an OS suffering from this issue. Since cgroup freezer
+> was used to freeze user applications to save battery, innocent frozen
+> apps have to be killed when they receive sync binder transactions or
+> when their async binder buffer is running out.
+>
+> This patch introduces the Linux generic netlink messages into the binder
+> driver so that the Linux/Android system administration process can
+> listen to important events and take corresponding actions, like stopping
+> a broken app from attacking the OS by sending huge amount of spamming
+> binder transactiions.
 
-They take different parameters. So you need to also change the struct
-team to change lock from mutex to a spinlock. And what about all the
-other users of team->lock?
+=== Changes in v20 ===
+- Dropped unnecessary header file inclusion from YAML spec.
 
-Did not compile this change? I doubt you did, or you would of get
-warnings, maybe errors.
+=== Changes in v19 ===
+- Fix yamllint issues in Documentation/netlink/specs/binder.yaml
+- Rebased on top of current char-misc-next branch.
 
-	Andrew
+=== Changes in v18 ===
+
+The most significant change is that I removed the "setup_report" command
+from the netlink API. So there is no longer a "configuration" step to
+filter out transactions from being reported. Thus, there is also no need
+to add a new selinux policy.
+
+It just doesn't make sense to keep a single global filter that impacts
+all the clients that subscribed to these events. Instead, any filtering
+should now be done at the client side (if at all needed), potentially
+through a BPF program or similar.
+
+Note this makes the implementation way simpler, which is great!
+
+I broke down some of the changes like the tracepoint addition into a
+separate patch and added a couple of preparatory patches to make things
+more convenient.
+
+The previous documentation was also obsolete and placed under the
+admin-guide/ book, which is incorrect. Instead, I decided to move all
+the documentation bits into the YAML spec itself.
+
+Some of the attributes in the report are now optionally included. The
+"to_pid" and "to_tid" are only included if they are known. Similarly,
+the "is_reply" attribute was switch to a "type: flag" and is only
+appended to the report if the transaction is a reply. All this is
+documented in the YAML spec.
+
+---
+v19: https://lore.kernel.org/all/20250725183811.409580-1-cmllamas@google.com/
+v18: https://lore.kernel.org/all/20250724185922.486207-1-cmllamas@google.com/
+v17: https://lore.kernel.org/all/20250417002005.2306284-1-dualli@chromium.org/
+
+Carlos Llamas (3):
+  binder: pre-allocate binder_transaction
+  binder: add t->is_async and t->is_reply
+  binder: add tracepoint for netlink reports
+
+Li Li (2):
+  binder: introduce transaction reports via netlink
+  binder: add transaction_report feature entry
+
+ Documentation/netlink/specs/binder.yaml       |  93 +++++++++++
+ MAINTAINERS                                   |   1 +
+ drivers/android/Kconfig                       |   1 +
+ drivers/android/Makefile                      |   2 +-
+ drivers/android/binder.c                      | 158 +++++++++++++-----
+ drivers/android/binder_internal.h             |   4 +-
+ drivers/android/binder_netlink.c              |  31 ++++
+ drivers/android/binder_netlink.h              |  20 +++
+ drivers/android/binder_trace.h                |  37 ++++
+ drivers/android/binderfs.c                    |   8 +
+ include/uapi/linux/android/binder_netlink.h   |  37 ++++
+ .../filesystems/binderfs/binderfs_test.c      |   1 +
+ 12 files changed, 349 insertions(+), 44 deletions(-)
+ create mode 100644 Documentation/netlink/specs/binder.yaml
+ create mode 100644 drivers/android/binder_netlink.c
+ create mode 100644 drivers/android/binder_netlink.h
+ create mode 100644 include/uapi/linux/android/binder_netlink.h
+
+-- 
+2.50.1.470.g6ba607880d-goog
+
 
