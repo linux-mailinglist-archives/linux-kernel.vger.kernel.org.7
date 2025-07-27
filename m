@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-747188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F357B130D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:59:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599A8B130D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 966D3188EA71
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:59:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A9837A2614
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 16:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3396B2206B2;
-	Sun, 27 Jul 2025 16:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3E0221D96;
+	Sun, 27 Jul 2025 16:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aoot60j0"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPeX5OmP"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B2821D583;
-	Sun, 27 Jul 2025 16:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD1A21FF24;
+	Sun, 27 Jul 2025 16:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753635536; cv=none; b=FPiJomiylxzuTjgYtGA/5IwYEpKreu6CNPIwMCt37C1eVJLdUD49dJtb0BzXRXLvMcQBDBLBltFJarhNkJWZLL6c0mcGzu3DQ/ajmUH4WEzLgak9tBqUxBVodytsKU5QLHylHoIHEazKOOvP+mTSzZWctuN9K3GIeXAAqpik68E=
+	t=1753635537; cv=none; b=tFIANy/mPiL52ntXizxDrXA7ept1+mcwXrT/g5JzfDV4hvSRVh/ZyW3+k4iXWjyYLWUvQjiygtXVT+9WYHyy7bB6TOYWso4llGnv9CWpGxZE/7jK99mjSMCDU3U40c6VrQGyKaQJSf56MnfIW4PJ/eIg+TJwjQ1usmJbaY1k+Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753635536; c=relaxed/simple;
-	bh=VqG/nOq52UyhnrMAh2zpnY+2oHeecplEWapXivHfE7g=;
+	s=arc-20240116; t=1753635537; c=relaxed/simple;
+	bh=xaIfMyoNbRF5NRFYE39P0X2AyUjoGgarwnnpBy9mcYQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jpu/EcsAXWYN8gxu1YvuuFGixtcF07ywZPpgic4YDVDloavsTRYyXGTbwyDiCg7dzr2im9NATZgVQZuiIkC38ZL2e2JTRpNezPkY101uka/Lbu0J1ykfQxBkpp24aQYIxFEF2xKZUxZbm7aCZr+k1wLfYu66BJ/IHY31cXwx0+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aoot60j0; arc=none smtp.client-ip=209.85.221.50
+	 MIME-Version; b=SLXs/IBqCRMmUSq3svRwTo8iIHf5yX5eIMSWAQgy6sr6N1KkVTIKh9VzzuY3NXVE6eQ+GVgcdUFoCyx9DMKNmb2tAg4E3x3Ts3xkJ+GYMgcKhCrZG46gz4TKavO+BBpFiDpx5X5BipEswuRgg0e0Ufulpc58mF5KKQOcfWypPQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPeX5OmP; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a57c8e247cso3444171f8f.1;
-        Sun, 27 Jul 2025 09:58:54 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4563a57f947so18843275e9.1;
+        Sun, 27 Jul 2025 09:58:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753635533; x=1754240333; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753635534; x=1754240334; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g/kiDzvyftKmlvmgmzp66NSmD4VUsIwsnBr5sA9+BR0=;
-        b=aoot60j0wVJ2vJwQW7YdzDa4uPAf+4mpQBYB9JUV2gAjmme3ktwhtY/5ES3upWrwu8
-         LXXjUhkuHnB/hKdJu2nv700I11g3ROAbzaW70fx6Ez6B3Al5vFXkQC4amopkters2evT
-         HwvmCljIUZDUYeUaAuJ7KRHkYDoLgZpqeNzoeAGOWrAnRu2lWFZgCl3DRElZiMFNNl4n
-         7BMc2D+U91iOEWCMlTp1g6deKbLRuPzzs+a0UbrzkSY1wCeRjFaKIPPM6+5RbP5+mPRU
-         j9Klk2QCFvZz2VeikT6wIZYFqdh24APvwQTfK9v1NIj4oulRpRqajzgRYnj5aWcjt0lX
-         Zc0g==
+        bh=EF78n2GJo9Ljh6+9I+QrDrhKqgr6XnFmnArJPBP8sdQ=;
+        b=bPeX5OmPOvOePf9rLuWcH7mwHw1gBRlVOmGTMBiq/9zuKT57U/LjgDHnynAVlE15Ss
+         jt33l4v5ZXxaje1R4Ql8xvgGjuJnppZOidRra+loXn4RJIVvfTBaWlt5zAkm6W1YXV5w
+         aUVVYRaoAzJPTc96ghAePlOox3FeUeDvKwDQ13WwCd6UyQXD/70gRITgnDJRwjIoNPJi
+         ik28bLr2J85mY1G+tblBq2PkDxgTth+MjGziHrLbMmPWE0cQtjgb3Q2FqsLeQmGY40oR
+         +pgHfZj7PGEE0pRlbvUOQQA82ejhvoe60XgfcAIlvaUlw4Vf1aAV0T02RM9iHjuRyDDC
+         XuMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753635533; x=1754240333;
+        d=1e100.net; s=20230601; t=1753635534; x=1754240334;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g/kiDzvyftKmlvmgmzp66NSmD4VUsIwsnBr5sA9+BR0=;
-        b=nhEC6PllpknmsxzmHGhG0DzWD019oNUfqCY7IUGaGj9H34UpVJuko6WQCrDOioEeqa
-         iMbAYu8e2rw0R8qJTsgJiUItOV5jk5hACrqBoE8sGVZuEN9yAW74kL2ZX+GdvUfaBjOq
-         6RR2BKQ/lN4OC6yobXbJ+mcRHjiMeeOFREA8qlMVGodxDHGT8SE3BHXrVlz8/sKfmIe8
-         ++68iZWRA0K1T3l1xGkYTu/Z4Nwvxc1bKLIeZYILPRevuubvFKMBclov8IhJW3eNCb0L
-         K1/M/THNKp/8G6YyLwznyJz95pG0zT74JdadVMVCiodWI0oxHD2+El0BISpElUb1KKjf
-         ozUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVARXZhwUs4ktBrDPd28Ji3IJuwTO29dbAEiTOAeeASaqfT5OtG8QEEyMPghTntvs9tlzTH92DzOBO7OPCZ@vger.kernel.org, AJvYcCXsOrJXK7z/f348mzl+XvB9qqIV/7CHCJ0KXT2FW0poUMyzkFL365j299LUiGtGY1lkOMsqRnYgvXMa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw42XBHm51vNr79lRWvYmqDS/13sIbp0Won4hReY+EpIQWXHwvU
-	BKCf1LsvB0AjX916PWt9JOr0MT+PxjbvLl/t2H9+1bj4NSSKqeuPaYw=
-X-Gm-Gg: ASbGncv4CxLt8S0VL+AotPuzj2PHu4NBNoedrh74lg7RrJnIHBlyN/XTD0bcdm8umZ8
-	zQT3eC96SZW99otjYpdZ34nrEoYJQ6gqbeX2A4MY1OsfadzzbFaTHzDOc550/qEWZ3SwqeGR2yO
-	nFBv066DtBvZGQJvnGNo2jF7pbBI1rE1+8tglFF0Kfr7V0AGXSdxLQ6QIe1wpYcI/93cu2Jhnff
-	4eWcHRnO6QqWWEztsFRZDEtbPf+0T75BA1DOEe7+Ug4gGpM9GSxisvB+11podeMNx3E+JhEqGxF
-	B4832Cm6PzxykJdRsAMzaisqozDy/cMxgnk3MwjGjlBr1cprcq9vuy+EiG7RPXM9FRSnYlTrYT0
-	ybtt08DylnRQN1L52CD3E7jV1/32e5NI1ocPtqYFiahyasSrE1As=
-X-Google-Smtp-Source: AGHT+IFiFy0HoTKPsyrRmMVqfpprnRKLceLvittEYYUCTh9qJMlSsXMVnmfCRpsXilM43NrYJk4XXg==
-X-Received: by 2002:a5d:6609:0:b0:3b7:82d3:ff90 with SMTP id ffacd0b85a97d-3b782d400ccmr1869031f8f.15.1753635533074;
-        Sun, 27 Jul 2025 09:58:53 -0700 (PDT)
+        bh=EF78n2GJo9Ljh6+9I+QrDrhKqgr6XnFmnArJPBP8sdQ=;
+        b=doVHcqPqrghb7+PqSbb9SIfJr2HGMkb9kfERNKeNrdCSzXlCpIsHDY7NjkN5Skz37J
+         pjmzidIbGYwlFG2mW1WryhQ7CW7T5AuHYU1gXMN/l6idtaaPmw/vaWveTKYcTNN3zpkG
+         lOKzjmCiCee8xJjWD7TLc8OC/EEHhsicOR+6jyyWQjIWAydFvsRnckPQaIWZnkDjjtf1
+         hK5y6uvNVdDw08CiPoRFbDhM+osV/FgT3oyBG3ETxMyrR4uGmJvMNl1CJ5x1K9ftiYU4
+         ZTitGm8YSQ5Am6V8/KqRUW9zWS/CVnUd25ArBebNh/XXyS6pWPmVANvKNYfbt348lQ8k
+         CCDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU43QxuGTpsYfrgJ9aTkKRVRcgq2BABuXZqPKGjEZ475EI7LM9dVFeyYOMb+W85AOPAUOAYXKpleSpC@vger.kernel.org, AJvYcCUPQHEkPAPJJE+g+zXEll0Ntv8OsEtquU4pN8NCj2R5tIAyLVcOlJf+RE7BzMUlQcCOpIu8v5t0MZXZsR39@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTnS6iEf0lOL7roLImc1pzphdAd6vQ8QHSldV2SyQdlX36Yxot
+	a6kdxAxRTxYYmATOm2+q0OuBy32ZETK4OiDiitJR2OqA0QKZNhW0KXE=
+X-Gm-Gg: ASbGncuN7LlNjDr1PPFWJKB3AcML/EQBZ1VDFH7lOIfZ7RYzbat1nLRFhU37ejpG6zC
+	V7vB8QKluj3KT14gjmSScgEJn2cv7VSYPjIBjEKfQ38aAGaA7MLAxRJNiYgdyHg2iU9she3hg4l
+	nxmImYT5If1TWZv/cV9RDl2u/xXKmp0uUAJGJthiLHflhJIOg4n2S/M+04lUQQBzilZQggNAI4O
+	+fdQ+/36AxU4hr5tUyN7TuQOn3qDQ9sXF8jvxYsInX6rWrifDQsqbl2OdR1lJkXPnSDXnQ+QcPm
+	hO5XL6BBZ5zNriTPvRSCcDyDjZWGDgHXceDkDXG1IuqmJvCzff+yd9/3OaM8yTVFJ+5qURieJC0
+	yTCtnG47FFG+q5M0UEsqpIqsAf6DkX4UI58uN/f7EQR8gDrFAgfE=
+X-Google-Smtp-Source: AGHT+IGsriUGTQtFk3WMLf3zlohLZapyUEGO2OTMkwMcic2kFu7BspA2oGNvKvQ6RBaXAmNsq62AXg==
+X-Received: by 2002:a05:600c:a405:b0:455:efd7:17dc with SMTP id 5b1f17b1804b1-4587c8283c1mr36053445e9.11.1753635534149;
+        Sun, 27 Jul 2025 09:58:54 -0700 (PDT)
 Received: from alex-x1e.localdomain ([84.226.118.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458704aaf20sm128545745e9.0.2025.07.27.09.58.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458704aaf20sm128545745e9.0.2025.07.27.09.58.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 09:58:52 -0700 (PDT)
+        Sun, 27 Jul 2025 09:58:53 -0700 (PDT)
 From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
 To: Douglas Anderson <dianders@chromium.org>,
 	dri-devel@lists.freedesktop.org,
@@ -88,9 +88,9 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Subject: [PATCH v1 2/3] dt-bindings: display: panel: samsung,atna40ct06: document ATNA40CT06
-Date: Sun, 27 Jul 2025 18:50:25 +0200
-Message-ID: <20250727165846.38186-3-alex.vinarskis@gmail.com>
+Subject: [PATCH v1 3/3] drm/panel-edp: Add BOE NV140WUM-N64
+Date: Sun, 27 Jul 2025 18:50:26 +0200
+Message-ID: <20250727165846.38186-4-alex.vinarskis@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250727165846.38186-1-alex.vinarskis@gmail.com>
 References: <20250727165846.38186-1-alex.vinarskis@gmail.com>
@@ -100,52 +100,47 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The Samsung ATNA40CT06 panel is a 14" AMOLED eDP panel. It is
-similar to the ATNA33XC20 except that it is larger and has a
-different resolution. It is found in some arm64 laptops, eg.
-Asus Zenbook A14 UX3407QA.
+Timings taken from NV140WUM-N41. It is found in some arm64 laptops,
+eg. Asus Zenbook A14 UX3407QA.
 
-Raw panel edid:
+The raw edid of the panel is:
+00 ff ff ff ff ff ff 00 09 e5 f6 0c 00 00 00 00
+10 22 01 04 a5 1e 13 78 07 8e 95 a6 52 4c 9d 26
+0f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 5d 30 80 a0 70 b0 28 40 30 20
+36 00 2e bc 10 00 00 1a 00 00 00 fd 00 28 3c 4a
+4a 0f 01 0a 20 20 20 20 20 20 00 00 00 fe 00 3d
+4c 33 30 20 20 20 20 20 20 20 20 ff 00 00 00 fc
+00 4e 56 31 34 30 57 55 4d 2d 4e 36 34 0a 01 f8
 
-00 ff ff ff ff ff ff 00 4c 83 0d 42 00 00 00 00
-00 22 01 04 b5 1e 13 78 02 0c f1 ae 52 3c b9 23
-0c 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
-01 01 01 01 01 01 42 3c 80 a0 70 b0 24 40 30 20
-88 00 2e bd 10 00 00 1b 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
-00 41 54 4e 41 34 30 43 54 30 36 2d 30 20 01 7d
-
-70 20 79 02 00 20 00 0c 4c 83 00 0d 42 00 00 00
-00 00 22 00 21 00 1d ca 0b 5e 07 80 07 b0 04 00
-e1 fa 51 cb 13 b9 3d d2 0c 01 45 54 40 5e d0 60
-18 10 23 78 26 00 09 07 06 03 00 00 00 50 00 00
-22 00 14 8d 5a 02 85 7f 07 9f 00 2f 00 1f 00 af
-04 23 00 07 00 07 00 81 00 0b e3 05 80 00 e6 06
-05 01 74 60 02 2e 00 06 00 45 40 5e d0 60 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 b0 90
+70 20 79 02 00 21 00 1d c8 0b 5d 07 80 07 b0 04
+88 66 ea 51 cc 74 9d 66 52 0f 02 35 54 40 5e 40
+5e 00 44 12 78 22 00 14 7f 5c 02 85 7f 07 9f 00
+2f 00 1f 00 af 04 27 00 02 00 05 00 2b 00 0c 27
+00 28 3b 00 00 27 00 28 2f 00 00 2e 00 06 00 44
+40 5e 40 5e 81 00 1e 72 1a 00 00 03 71 28 3c 00
+00 60 ff 60 ff 3c 00 00 00 00 e3 05 04 00 e6 06
+01 01 60 60 ff 00 00 00 00 00 00 00 00 00 de 90
 
 Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
 ---
- .../devicetree/bindings/display/panel/samsung,atna33xc20.yaml   | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/panel/panel-edp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
-index 5e2ce200025f..ccb574caed28 100644
---- a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
-@@ -21,6 +21,8 @@ properties:
-           - enum:
-               # Samsung 13" 3K (2880×1920 pixels) eDP AMOLED panel
-               - samsung,atna30dw01
-+              # Samsung 14" FHD+ (1920x1200 pixels) eDP AMOLED panel
-+              - samsung,atna40ct06
-               # Samsung 14" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
-               - samsung,atna40cu11
-               # Samsung 14" WQXGA+ (2880×1800 pixels) eDP AMOLED panel
+diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+index 9a56e208cbdd..b334926e96ed 100644
+--- a/drivers/gpu/drm/panel/panel-edp.c
++++ b/drivers/gpu/drm/panel/panel-edp.c
+@@ -1947,6 +1947,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c20, &delay_200_500_e80, "NT140FHM-N47"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c93, &delay_200_500_e200, "Unknown"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "NT116WHM-N44"),
++	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cf6, &delay_200_500_e50_p2e80, "NV140WUM-N64"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV116WHM-A4D"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0d73, &delay_200_500_e80, "NE140WUM-N6S"),
+ 
 -- 
 2.48.1
 
