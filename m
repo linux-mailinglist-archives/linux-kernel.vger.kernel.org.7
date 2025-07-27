@@ -1,234 +1,179 @@
-Return-Path: <linux-kernel+bounces-747220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AF3B13118
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:07:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DEDAB1311B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9C51884100
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7397172C62
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD6E222576;
-	Sun, 27 Jul 2025 18:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35645222597;
+	Sun, 27 Jul 2025 18:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffgMjDhw"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CyiNhTRZ"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337E2610D;
-	Sun, 27 Jul 2025 18:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD617080D;
+	Sun, 27 Jul 2025 18:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753639626; cv=none; b=mMD6DSF/q8u/EjhFy75eZ8KLD4BMlOdTUKwocxJbrC5It0LaW5mSZLcbn1R/JlmUs4FZN7t4Wdt/9N8s7hFYALpAwKpEm7Owq8AcU84dAjBkWPLdb1vS2wPQqOD0cHSjmzwnydECzpkD23pggKqI+pQh7jyEIy9gQhEmFCj8Bgw=
+	t=1753639777; cv=none; b=QlIByU/ildih3YgV9aznZaVVK1m6A6NTYadeMIl9/dxixFgR1sY/nKIRNRSggK5elu9y1c9f2ZUJfEKbb+W3bZFvuHdikVDGE/4yJsGZS2CSe/t1zFVtKVYjd58dYmXU2WwLQy6M3EaqJIE+KjeapB7iA6L0drp66sNWffjZFCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753639626; c=relaxed/simple;
-	bh=rxy5AtOA9YI2ntRYRRHv0o/jTlcOwky9zSWQX1Wu7yA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hqr2khzyfBAEimu7BZTMfVIkRehPNpn5FnEVRsezbdsVKZyb88bblpEPYEqIOq22ZWwVZ1VkkcB8Rb2R6mAlrbf5QNIGmnjYFPZ4PxhgZtfwSoJ0BbbG19hwyBivaoKh9nmQG9bKjZ5Lu2bN6J8bfMzgEVfUzk29cvJSPX49vqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffgMjDhw; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1753639777; c=relaxed/simple;
+	bh=O+BpqwEczXWMhEXZm6ykkpN4lufTBE8sZIGAn34h9rU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TvlHwiMbyU33H3XIjwekG866Z6bKyubng97VGucsiM0G9x5pLOmCGTNhouAcuuwLBnKHj06+TD8S06gTHgf5IYD2feo3qSmrwsUO66MS/QWDwiznpnSNtZS5dClYZvo4QD1ilvLU5g7dDHN8aX6dGXH6fJAsE5LFQvXMECjOzsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CyiNhTRZ; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23ffdea3575so3781005ad.2;
-        Sun, 27 Jul 2025 11:07:04 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74264d1832eso4131976b3a.0;
+        Sun, 27 Jul 2025 11:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753639624; x=1754244424; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1753639775; x=1754244575; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n4oiLiNhkaxO8LsaSDMqBsw/x7dqCcdqZ5zoC67WtB4=;
-        b=ffgMjDhw7LLRScXUuq6PQbUutfhUw21cjtriMhwd7i+iOyz877d9JpHj+PAaJmYNXr
-         Af8/ROnRfs9Y/yVr6vXXCppO/Zz8k6Cs5FtG/nvecqf4Rd1p1WZ8qhy1McQJd1tBDFeZ
-         rjPOFNFMoSdP8XAo7QMVF+U4ErBqzjYJHXBtmWYf/k9yEByvEJxzdYRQod6I0f6UmRhf
-         pw0JpnkLAtuLD3Sei1QArNKP/uWWkUhVadOyGvKDwjEkROQNzugEUBl6Vwz5/8g8ZMtW
-         oTw0sSVRX4wdsP0ypt+oEIK0l6AQosDM/4NO/aSlUlRg1I+M+M/4VZ9hTGvL1NIcRQkZ
-         oS5g==
+        bh=Ciu+q/Bj1WiuHIrfWpXzED10TyzycVbw98Jx3XFVwsA=;
+        b=CyiNhTRZ3I4EmtJrVEQOIG8Bkf4W46N3Dgk5ivs+mQFp3/ccopN6KXUYDhalGU3YUg
+         6wcbI9k/W1DmviO1ajLkn7JRDOXBfPYJWgIUbSJNoQb2enQDPkQbbPj2KimzgooeR6ZW
+         rGstUfwCkhTX2uo6CS/Yy4IEUW1t3qAbHgRxnBGJcJOqrat6mUYNcb5FPOdl1VLmnew7
+         dVRGHoAMw8k6v7xd4U39kBtSEdjU73Ac5crj3NqNalnBCl8fGF9VGATZpVfJvrtHCFyK
+         lZdj3x9IySnqNUg5xTfRiU00xEokgR1mVTLiXeED4vx8ijGFk841W9Be5jsqbIHdY8I5
+         xdBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753639624; x=1754244424;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753639775; x=1754244575;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n4oiLiNhkaxO8LsaSDMqBsw/x7dqCcdqZ5zoC67WtB4=;
-        b=raMWH6WgzYpnK3E9BY+UAKEZw/7r1YjAPnAHWoiv7F69JEDv/woH3LNJPjqd2SJs89
-         UewtAgES6bmrQfBT1/+4goQBRjQi4y2+QFmgT5H6wnOxEfBUyFy9xkcqw2wbR6Rp5H9n
-         t9wTreZsXmDF8Lz/30xsjsxSKmYdoYeSTHEeQk5XrCvhyQMG5iUdWVCMc7JJgDr0wWT5
-         xP+htla0VFNi4GFXqCGo9yMbprI6YVvOHfwO5NQHGK4nelhySS9OUAkTgzYMWarz5Shc
-         r3ksjcQhsxpRreYToQlBkatwyp3fwh/6TxLlxVeSffT7K8Wdt09yT30CspBpfvmw/Mta
-         0heg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfycLh+gsnSIDmvSzKzeDdB5CWGXhIbuZc47hGhgi5H9yjdsQH9qE2otBHk0j+BNRXL7iNrSI5ItZNTw==@vger.kernel.org, AJvYcCXPn7YNU67L7Kfr89Boz18dJ5EjoDXeRfQuMCdkZNRGN/hbhxvDsXrXKI+c0VLIUXR758z6viFRn3Wkllos@vger.kernel.org
-X-Gm-Message-State: AOJu0YyndLLeIUP17lH+6A/OROT+DNPBbo6cWghmN0XdcuozSV3UkQa9
-	eBBVgGxjkteWrT894opmQMUI9z4UpKpRIAK4kBygAHPeL4TnOu77co8g9c8RZhpLPIlgBNBHUE1
-	NQ4rmclz9xHLf4kfxGzbw8H7xdr/dy7I=
-X-Gm-Gg: ASbGncv+SDLBzoBp6SkaNHs8t1R94u+CMdrGv3B6tPxc/he6FMpu/MFHLoPRhzkO9xF
-	Xr5Ao6DqXY7gJ6/2SXem4dqnndNS4MSVHwpCN4cpMBtXayn2DboXK0OeRndmlTltTgddA1GewyY
-	fu5M5cM0stm8FGyTSha0dg7WcOd+EMZw1+RvsEYZzCH0DTBuuKAmSRz10RE6x6kJmCui8RycPnp
-	Rgl/YA=
-X-Google-Smtp-Source: AGHT+IHDw4e18MwM3meieNDv6CyNEIjw6RRBDQryjWtH7pCQyrFXbTQq3bN9ZLXfqefKAQAlrwduhDR/5zPd4XrD1jE=
-X-Received: by 2002:a17:902:e74f:b0:234:8c64:7885 with SMTP id
- d9443c01a7336-23fb3197732mr126319445ad.53.1753639624238; Sun, 27 Jul 2025
- 11:07:04 -0700 (PDT)
+        bh=Ciu+q/Bj1WiuHIrfWpXzED10TyzycVbw98Jx3XFVwsA=;
+        b=XcvIyBmlREfv2Lvl0/mobytXn/jbqhhU6jsanGQOY27SxVJq9oLpc2gswlXdcu8W3L
+         bpYje7cQoXp86TgsmLlE/CDN5ZBu3H5Flp/f3bc6bW0uAjDC0pCA7fcbx5dIEZgkXOmi
+         sLDBJD1ZBb2k3fy7SEQfcrzRTQ04N2vMH28dxaTxb3+1vrQedM8kksDoeP/o9rQdpJXF
+         YCQrCqOCttGWb9wWCwhDBMDZVvQK4BX0hmCj7otRVVMdeSsVfvwQLN5RCOzilrl+FIE0
+         yjjL0yWp0TAo1f0085TfRakKL0+ccJmumymez1jqb6A2K08tgTCjy1b9QQzm8pwFY4py
+         A5YA==
+X-Forwarded-Encrypted: i=1; AJvYcCU52ERlKt+D6FDd1MIdsijj6XQWgCQsgnIWKo1HdaLmpgwVuZJdapxN3nwZuUgaUuRaywA5d9ka@vger.kernel.org, AJvYcCWl2Vt3KjYw8o4np7psQUHQA1N20YMWJFEr0Ugo5ENlPhSXxTMT+9VDdB5UiAGuqtuchjSgZTGeSCEd5/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1X9/bJZKf2mtTTW/THl976f3SMSYogCas37E97vqNroQWEBZs
+	9SLAcrbpn2T0Y5UaewxuGDKVI6zloBmXzPqjECHW4enM4vDaayX76AA=
+X-Gm-Gg: ASbGncvkHwznNvajbfVwo/P/phS1GItbCeV2bcoDiIZHz/6NF7ROiUf8r5NWkFoXyup
+	0CoKjfEcjOCnjQQo1QkArIU742TmAxfhttHcPUzWltanAi9/OSozsITqwiKhd21AksX18tSjY5m
+	dguK2sZEuGettYSwlCHkSMxSUd3JMQAFOSzvXgGQZC45iVTG6AWQbCHdqF92IUB7r4miE/Y3A1H
+	GuadlieaHonlVEcK8REW3Ns0ggSGjS0PLGPqRw/3OaRuFJTneAdYOaCN3OW1eePr7kHLtxPji/G
+	X9T+OaOHOdrp8rr+1RmmebQjuZZHFzysmOPg4ggXvtMhKviddKj36joGesIuTyYLfnQI3wbULip
+	OMr3MoWa+k8gBGt4jyQ/aPKPL0vSojNpOfQ==
+X-Google-Smtp-Source: AGHT+IEK0ZGdojIczy+SlE4GBAY1zuVft6Agkj3s2A6CtvVOIIbJuZ9Bqi/gYumUp1Ie+iguuYJPzQ==
+X-Received: by 2002:a05:6a00:10cb:b0:748:f750:14c6 with SMTP id d2e1a72fcca58-76336f1bcb7mr13734718b3a.14.1753639775116;
+        Sun, 27 Jul 2025 11:09:35 -0700 (PDT)
+Received: from debian.ujwal.com ([223.185.134.247])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b2de4dbsm3823868b3a.114.2025.07.27.11.09.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 11:09:34 -0700 (PDT)
+From: Ujwal Kundur <ujwal.kundur@gmail.com>
+To: syzbot+8182574047912f805d59@syzkaller.appspotmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com,
+	jiri@resnulli.us,
+	andrew+netdev@lunn.ch,
+	Ujwal Kundur <ujwal.kundur@gmail.com>
+Subject: [RFC PATCH] net: team: switch to spinlock in team_change_rx_flags
+Date: Sun, 27 Jul 2025 23:39:21 +0530
+Message-Id: <20250727180921.360-1-ujwal.kundur@gmail.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <68712acf.a00a0220.26a83e.0051.GAE@google.com>
+References: <68712acf.a00a0220.26a83e.0051.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727112142.604373-1-sau525@gmail.com>
-In-Reply-To: <20250727112142.604373-1-sau525@gmail.com>
-From: Yizhou Tang <tangyeechou@gmail.com>
-Date: Mon, 28 Jul 2025 02:06:52 +0800
-X-Gm-Features: Ac12FXzK89vxpSMC_5d__53ArdIcigzyoFYha3x__B2dA6SneSrQeWzSSRbUr1s
-Message-ID: <CAOB9oOZtKOSLw8YDyLB8Vepcpv3z9oJw+CQX16XKA_JJ4o7uew@mail.gmail.com>
-Subject: Re: [PATCH] blk-wbt: use fast inverse square root to optimize window
- size calculation
-To: Meng Shao Liu <sau525@gmail.com>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 27, 2025 at 7:22=E2=80=AFPM Meng Shao Liu <sau525@gmail.com> wr=
-ote:
->
-> Optimize the computation of cur_win_nsec =3D win_nsec / sqrt(scale_step +=
- 1)
-> in blk-wbt by introducing a fast inverse square root algorithm.
-> This approach replaces the original use of int_sqrt and division with a
-> more efficient and accurate approximation method.
->
-> Signed-off-by: Meng Shao Liu <sau525@gmail.com>
-> ---
-> Since this fast inverse square root algorithm now appears in three locati=
-ons
-> (blk-wbt, sch_cake, codel), it might be worth considering refactoring
-> the implementation into a shared helper to reduce duplication and ensure =
-consistency.
-> However, this patch focuses solely on introducing the optimization in blk=
--wbt.
->
->  block/blk-wbt.c | 60 +++++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 51 insertions(+), 9 deletions(-)
->
-> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
-> index a50d4cd55..1fd5af3ba 100644
-> --- a/block/blk-wbt.c
-> +++ b/block/blk-wbt.c
-> @@ -80,6 +80,8 @@ struct rq_wb {
->         u64 win_nsec;                           /* default window size */
->         u64 cur_win_nsec;                       /* current window size */
->
-> +       u32 rec_inv_sqrt;   /* reciprocal value of sqrt(scaling step + 1)=
- */
->         struct blk_stat_callback *cb;
->
->         u64 sync_issue;
-> @@ -130,6 +132,11 @@ enum {
->          */
->         RWB_WINDOW_NSEC         =3D 100 * 1000 * 1000ULL,
->
-> +       /*
-> +        * Initial reciprocal value of sqrt(scaling step + 1)
-> +        */
-> +       RWB_REC_INV_SQRT    =3D 0,
+Syzkaller reports the following issue:
+BUG: sleeping function called from invalid context in
+team_change_rx_flags
 
-Hi Meng,
+3 locks held by syz.1.1814/12326:
+ #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
+ #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
+ #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
+Preemption disabled at:
+[<ffffffff895a7d26>] local_bh_disable include/linux/bottom_half.h:20 [inline]
+^^^^
+[<ffffffff895a7d26>] netif_addr_lock_bh include/linux/netdevice.h:4804 [inline]
+[<ffffffff895a7d26>] dev_uc_add+0x56/0x120 net/core/dev_addr_lists.c:689
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4833 [inline]
+ check_wait_context kernel/locking/lockdep.c:4905 [inline]
+ __lock_acquire+0xbcb/0xd20 kernel/locking/lockdep.c:5190
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+ __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+ __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
+ team_change_rx_flags+0x38/0x220 drivers/net/team/team_core.c:1781
+ dev_change_rx_flags net/core/dev.c:9241 [inline]
+ __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+ netif_set_promiscuity+0x50/0xe0 net/core/dev.c:9305
+ dev_set_promiscuity+0x126/0x260 net/core/dev_api.c:287
+ dev_change_rx_flags net/core/dev.c:9241 [inline]
+ __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+ __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
+ dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
+ macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
+ __dev_open+0x470/0x880 net/core/dev.c:1683
+ __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
+ rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
+ rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
 
-As the initial value of scale_step is 0, then sqrt(0 + 1) =3D 1, which is n=
-ot 0.
+mutex_lock/mutex_unlock are called from team_change_rx_flags with
+BH disabled (caused by netif_addr_lock_bh). Switch to spinlock instead
+to avoid sleeping with BH disabled.
 
-> +
->         /*
->          * Disregard stats, if we don't meet this minimum
->          */
-> @@ -395,20 +402,55 @@ static void scale_down(struct rq_wb *rwb, bool hard=
-_throttle)
->         rwb_trace_step(rwb, tracepoint_string("scale down"));
->  }
->
-> +#define REC_INV_SQRT_CACHE (16)
-> +static const u32 inv_sqrt_cache[REC_INV_SQRT_CACHE] =3D {
-> +               ~0,         ~0, 3037000500, 2479700525,
-> +       2147483647, 1920767767, 1753413056, 1623345051,
-> +       1518500250, 1431655765, 1358187914, 1294981364,
-> +       1239850263, 1191209601, 1147878294, 1108955788
-> +};
-> +
-> +/* http://en.wikipedia.org/wiki/Methods_of_computing_square_roots
-> + * new_invsqrt =3D (invsqrt / 2) * (3 - count * invsqrt^2)
-> + *
-> + * Here, invsqrt is a fixed point number (< 1.0), 32bit mantissa, aka Q0=
-.32
-> + */
-> +
-> +static void rwb_newton_step(struct rq_wb *rwb)
-> +{
-> +       struct rq_depth *rqd =3D &rwb->rq_depth;
-> +       u32 invsqrt, invsqrt2;
-> +       u64 val;
-> +
-> +       invsqrt =3D rwb->rec_inv_sqrt;
-> +       invsqrt2 =3D ((u64)invsqrt * invsqrt) >> 32;
-> +       val =3D (3LL << 32) - ((u64)(rqd->scale_step + 1) * invsqrt2);
-> +
-> +       val >>=3D 2; /* avoid overflow in following multiply */
-> +       val =3D (val * invsqrt) >> (32 - 2 + 1);
-> +
-> +       rwb->rec_inv_sqrt =3D val;
-> +}
-> +
-> +static void rwb_invsqrt(struct rq_wb *rwb)
-> +{
-> +       struct rq_depth *rqd =3D &rwb->rq_depth;
-> +
-> +       if (rqd->scale_step + 1 < REC_INV_SQRT_CACHE)
-> +               rwb->rec_inv_sqrt =3D inv_sqrt_cache[rqd->scale_step + 1]=
-;
-> +       else
-> +               rwb_newton_step(rwb);
-> +}
-> +
->  static void rwb_arm_timer(struct rq_wb *rwb)
->  {
->         struct rq_depth *rqd =3D &rwb->rq_depth;
->
->         if (rqd->scale_step > 0) {
-> -               /*
-> -                * We should speed this up, using some variant of a fast
-> -                * integer inverse square root calculation. Since we only=
- do
-> -                * this for every window expiration, it's not a huge deal=
-,
-> -                * though.
-> -                */
-> -               rwb->cur_win_nsec =3D div_u64(rwb->win_nsec << 4,
-> -                                       int_sqrt((rqd->scale_step + 1) <<=
- 8));
-> -       } else {
-> +               rwb_invsqrt(rwb);
-> +               rwb->cur_win_nsec =3D reciprocal_scale(rwb->win_nsec,
-> +                                            rwb->rec_inv_sqrt);
+Reported-by: syzbot+8182574047912f805d59@syzkaller.appspotmail.com
+Signed-off-by: Ujwal Kundur <ujwal.kundur@gmail.com>
+---
+ drivers/net/team/team_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I think placing the two lines of code involving mathematical formulas
-directly in a core wbt code path is not a good idea. I suggest you
-encapsulate them in a separate function and document its purpose.
+diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
+index 8bc56186b2a3..4568075fea6e 100644
+--- a/drivers/net/team/team_core.c
++++ b/drivers/net/team/team_core.c
+@@ -1778,7 +1778,7 @@ static void team_change_rx_flags(struct net_device *dev, int change)
+ 	struct team_port *port;
+ 	int inc;
+ 
+-	mutex_lock(&team->lock);
++	spin_lock(&team->lock);
+ 	list_for_each_entry(port, &team->port_list, list) {
+ 		if (change & IFF_PROMISC) {
+ 			inc = dev->flags & IFF_PROMISC ? 1 : -1;
+@@ -1789,7 +1789,7 @@ static void team_change_rx_flags(struct net_device *dev, int change)
+ 			dev_set_allmulti(port->dev, inc);
+ 		}
+ 	}
+-	mutex_unlock(&team->lock);
++	spin_unlock(&team->lock);
+ }
+ 
+ static void team_set_rx_mode(struct net_device *dev)
+-- 
+2.30.2
 
-Thanks,
-Yi
-
-> +       } else {
->                 /*
->                  * For step < 0, we don't want to increase/decrease the
->                  * window size.
-> @@ -911,6 +953,7 @@ int wbt_init(struct gendisk *disk)
->
->         rwb->last_comp =3D rwb->last_issue =3D jiffies;
->         rwb->win_nsec =3D RWB_WINDOW_NSEC;
-> +       rwb->rec_inv_sqrt =3D RWB_REC_INV_SQRT;
->         rwb->enable_state =3D WBT_STATE_ON_DEFAULT;
->         rwb->rq_depth.default_depth =3D RWB_DEF_DEPTH;
->         rwb->min_lat_nsec =3D wbt_default_latency_nsec(q);
-> --
-> 2.50.1
->
->
 
