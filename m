@@ -1,160 +1,264 @@
-Return-Path: <linux-kernel+bounces-747194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A3AB130DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:10:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95288B130E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D84C3B6B11
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:10:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A771897CAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322D821ADB9;
-	Sun, 27 Jul 2025 17:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D0A21E082;
+	Sun, 27 Jul 2025 17:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FSPJ5b1h"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4fz2h+C"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32724A00;
-	Sun, 27 Jul 2025 17:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7BE81724;
+	Sun, 27 Jul 2025 17:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753636242; cv=none; b=ErVYQ04ogJOYKxC4bgY70bQ0KgiPBr01bcBUE9yGaRC4UKy6VyYrFgfYRr4TBWCvKcmP1taHNB+vIPT6/jkAbSBfODKr3ovtF0y3iDK6K1ON4GGZtDrfDVQHR00/pND93ab3qJwuE5gsOg9nvmmiR5q1CUxh3zAOaQyRIWBhQVs=
+	t=1753636563; cv=none; b=phrG/EuqAIBL3a8kkEhcNkAkpvVgnYSg5zOoqsPvdPedJcDITZBxnlHBicjTZW0aH0cVfJgT7rJv+kxtybUH300hkz2UI+apcgLmYBkpflvwxVYFDZKCtScP5OCKEQQ2IBKT72e7h/F3dTbjb1xk9JKjsj32wqQxcmk48WBMovo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753636242; c=relaxed/simple;
-	bh=Zp23tZRvf8tS3BksPAvWD2DHYvAIYmrtNMJZW0Wr2hI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SDSsGZ+1z3BIsIWCD4ilJh9vZZPjm0WyIYmryvzMeGxEJGbEbB3+BCMmEG9Qtfqbfl+RPkX502v9nuWJyljNH7N1PTXeIdlgg2J7CPHt8CRhoPCXEXNRzO3XITTXTnP+mC0Lnueue81AOWOxqgMArSKS8N6q60FE8/mjmUBusUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FSPJ5b1h; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1753636211; x=1754241011; i=markus.elfring@web.de;
-	bh=tqsHsRfEurZWuxIUS0g2KGvPTie3Mdfsuf9vf3ZBUM0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=FSPJ5b1hDwT+f9gqyghFWVO8tNBfkqPdXh/JjD/xcr9aQqoyA1Pt7aRpR26kMzlb
-	 SBl5pV5LT2Z4sCPHP3BQUDjBwSsyJN+9JXxdiP6pMgtezstY5HfrGq9iVvDZEVrL9
-	 Wq96Janjxbhnn1Cru8pWBeZqnitLbaB5AvHOJq4IS/+e3qzXcavOwSFasGJSKz9Vf
-	 FibKHzD1WZJYGiWPTm7Z/RyRa9yqS4Kf34w05rxOsr/Mxmuiz0Q52apjtgVo/T94Y
-	 upykMUTLPEyxuPnHPykj38VrAeERCCXPCJpBXe1FqfdetMlF6wsuj8Tnbe6dBoVk5
-	 WpvanvQwXpWhEVeEIQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.1]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjPQ6-1uHUld1fru-00de0X; Sun, 27
- Jul 2025 19:10:11 +0200
-Message-ID: <d84ebaec-5c80-489e-a3be-79b0c3563e9b@web.de>
-Date: Sun, 27 Jul 2025 19:10:09 +0200
+	s=arc-20240116; t=1753636563; c=relaxed/simple;
+	bh=5zwEztKCBSp4Obb3w98NdqATS2CMdS17Bv4hfZpxqlM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=phrXvI1UkX2pvaXcw5efEL36I1NbTxF0DeGsLLTHcrht9DnbuQVGpU53sWpXiPBlscLcdA/+CjYRsgH+CLoWiCKz6smUxo6nD74bLSyYZ1DjnE9KMhMhiPqdGLjRKfM1ZGn/gV2S/yZ/e4H0biTitzrA1caluwGB0ycYt+95G7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4fz2h+C; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e8e0aa2e3f9so523812276.1;
+        Sun, 27 Jul 2025 10:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753636560; x=1754241360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kGOUWrUt6/KLdfWNCgo1PdzYDTwfxMfj9+QwMlA2V4s=;
+        b=C4fz2h+C5cJivA3s2ZoL1xKQ40nQw1YPvz2CIDaP+Z8Hr6yrkY0bmfwToeFkHugeC1
+         j4dmluAlzQxxVDMXSx3Z9kiyZobOSz4FG9emgsWSCTTh1XLahlbsv/9zXIKOsalkmFlo
+         morCvFeqGDirt8N8uBLd9xZ6gBXT+e+l5EPYTUdVkvLluHOdRRI4Id+Q33SewZVSeM7p
+         NzDd2j67vFP6uD76RZHNbm43MvwdP1YeENk11DI4bFoYNIClHo88hF4AcbOKJ4Xa26p1
+         46W50GM2G/oB5XOprrPgNnb9xn6aMLdwxQFL1FOjkD+tqFJdscRMbXXqBuGTcNtA5ao/
+         S7iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753636560; x=1754241360;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kGOUWrUt6/KLdfWNCgo1PdzYDTwfxMfj9+QwMlA2V4s=;
+        b=ex5fA/TqNn+GXhL3nQ/I5pfKq+57w0sBzQQWhOLK/0kRrOHMP38bj9mr97S7rQGmZX
+         Uu7P1zBnKnFKI12HC7z9EidwoyztP/Pw5IY4m4fM6psyR3tsvA+U0jGGye5wuEUxuDf3
+         18tmSw+lrZowfgpxvtieWNfMb4BmR8Tg/3is+w58nBMCXvwD2ZtHrS+6j4gtrU70e/zP
+         p8qPjma9A9xH2ZeDhPypmiZbiM/uT296+ecTv9vKk+0hCKd6cdpRstCipvfVQJvUvuu6
+         lSLfTRlCOwFUt5b6oSqj55Zio5Z+0HefVUevlvliEM+3mAhVsx6j8T0votObrzx4KG+q
+         JZHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUn+J3ZToNAzEBNpU6/trl0YYz8MWNFZ8JKMN587abBaZIT833C3UXs27ZKoKyAhiCUMoBAN1adTuLjBKE=@vger.kernel.org, AJvYcCV/CbDAHouAYKtSYgtH4zN2my4nvhT8VbOybbRfy6um990qmRVLFZwwN6gcIRMcV9AKSyOy+6Nd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL3lB3AcfK8HjqEn9RL5dC9suKzgSaqJgkZkDNCXWlhYHFZfUV
+	cE84EdDjE4CTq+TRmbYaGIDxhwsXP88So1rnqgWGPeV+hvicBklgX9nhUre8KA==
+X-Gm-Gg: ASbGnctCJFVpyfYRtzM2WEr7dhqC/wTNuNPv9412mQUl5R18AlIoI0/5VOGa3rRNSjm
+	2gZS/2Fkzq6XdSzAQVALOnvYLmDRPnR88pRFvzMYBdXBQoB3ADKp8Yb5m3Oc+m0Xoqf8nnaKYcb
+	872pE3VpbbAUgz4OHSoBs7l42r2p6WrkaFSgvzxVBd/aRlneU6g2kuybiM5FzVhwykHLdexsBSF
+	e9H69l+ErwoW8wtGubyRLBY/R5dj/7tlZ6o65QLjtRqG/RPxog2htR4RV6NCwDTmLD9HCdAX5t6
+	4nyt1+t6mUWAr1mZN1ctcNkGkSgYcb5F55ARV9gcd0S0uUtprp/fV7Sd6be2oQrsV1cfPnh1RCD
+	U3IBD3dTJ3tlXC3YUbaOcvjQUlbsp2TSX+9pH8gH31HoWP7706bCtUxsakyMsW4kovKaQtLdhb2
+	jjfsn6
+X-Google-Smtp-Source: AGHT+IGRgpb969BkgC8x+v/hneqLAXkS6hiR4nYVLPk3riGZTJwJFQzLzbOyOO7L6LzJGp8caBw9fQ==
+X-Received: by 2002:a05:6902:f84:b0:e8d:ed8a:af5e with SMTP id 3f1490d57ef6-e8df10d2b6fmr10951855276.10.1753636560041;
+        Sun, 27 Jul 2025 10:16:00 -0700 (PDT)
+Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
+        by smtp.gmail.com with UTF8SMTPSA id 3f1490d57ef6-e8dff798feesm1136342276.4.2025.07.27.10.15.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 10:15:59 -0700 (PDT)
+Date: Sun, 27 Jul 2025 13:15:58 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Wang Liang <wangliang74@huawei.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ mst@redhat.com, 
+ jasowang@redhat.com, 
+ xuanzhuo@linux.alibaba.com, 
+ eperezma@redhat.com, 
+ pabeni@redhat.com, 
+ davem@davemloft.net, 
+ willemb@google.com, 
+ atenart@kernel.org
+Cc: yuehaibing@huawei.com, 
+ zhangchangzhong@huawei.com, 
+ netdev@vger.kernel.org, 
+ virtualization@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, 
+ steffen.klassert@secunet.com, 
+ tobias@strongswan.org
+Message-ID: <68865ecee5cc4_b1f6a29442@willemb.c.googlers.com.notmuch>
+In-Reply-To: <68865594e28d8_9f93f29443@willemb.c.googlers.com.notmuch>
+References: <20250724083005.3918375-1-wangliang74@huawei.com>
+ <688235273230f_39271d29430@willemb.c.googlers.com.notmuch>
+ <bef878c0-4d7f-4e9a-a05d-30f6fde31e3c@huawei.com>
+ <68865594e28d8_9f93f29443@willemb.c.googlers.com.notmuch>
+Subject: Re: [PATCH net] net: check the minimum value of gso size in
+ virtio_net_hdr_to_skb()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Salah Triki <salah.triki@gmail.com>, linux-edac@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
- Dinh Nguyen <dinguyen@kernel.org>, James Morse <james.morse@arm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter
- <rric@kernel.org>, Tony Luck <tony.luck@intel.com>
-References: <aIFqOz2bKFXIumM0@pc>
-Subject: Re: [PATCH] EDAC: altera: Delete dma_free_coherent()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <aIFqOz2bKFXIumM0@pc>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9xEkGMDR6ywAyWd+Q7iN5mrYRTSThWm+z8vfo12lOemG2kw2A6U
- L4LnMfhG7XQVL9s9OOPtncTyrzYTmqPu04/fkY0NqiGjzqlS9JEgWyadm+//aMCC9+0wMJH
- TP/0RxdweBnWZOnBbibIzk6D/42lkmQjJQ1eR9jHZFi9b1V/5yv/M++gW0GEl7uGSlxK3++
- /y5ZD3zt2S7Ui1nBbk6xA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Fx3AVbD9uNc=;Yk99jXefmeavspxncjQgIwnOTgn
- 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
- RSVhJ7uCD
 
-> dma_free_coherent() need to be called only when dma_alloc_coherent()
-> succeed.
+Willem de Bruijn wrote:
+> Wang Liang wrote:
+> > =
 
-  succeeded?
+> > =E5=9C=A8 2025/7/24 21:29, Willem de Bruijn =E5=86=99=E9=81=93:
+> > > Wang Liang wrote:
+> > >> When sending a packet with virtio_net_hdr to tun device, if the gs=
+o_type
+> > >> in virtio_net_hdr is SKB_GSO_UDP and the gso_size is less than udp=
+hdr
+> > >> size, below crash may happen.
+> > >>
+> > > gso_size is the size of the segment payload, excluding the transpor=
+t
+> > > header.
+> > >
+> > > This is probably not the right approach.
+> > >
+> > > Not sure how a GSO skb can be built that is shorter than even the
+> > > transport header. Maybe an skb_dump of the GSO skb can be elucidati=
+ng.
+> > >>   			return -EINVAL;
+> > >>   =
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16-rc7#n145
+> > >>   		/* Too small packets are not really GSO ones. */
+> > >> -- =
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16-rc7#n94
+> > >> 2.34.1
+> > >>
+> > =
 
+> > Thanks for your review!
+> =
 
-Would the summary phrase =E2=80=9CDelete an inappropriate dma_free_coheren=
-t() call
-in altr_sdr_mc_err_inject_write()=E2=80=9D be more appropriate?
+> Thanks for the dump and repro.
+> =
 
-Regards,
-Markus
+> I can indeed reproduce, only with the UDP_ENCAP_ESPINUDP setsockopt.
+> =
+
+> > Here is the skb_dump result:
+> > =
+
+> >  =C2=A0=C2=A0=C2=A0 skb len=3D4 headroom=3D98 headlen=3D4 tailroom=3D=
+282
+> >  =C2=A0=C2=A0=C2=A0 mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D=
+98
+> >  =C2=A0=C2=A0=C2=A0 shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D0 type=
+=3D0 segs=3D0))
+> >  =C2=A0=C2=A0=C2=A0 csum(0x8c start=3D140 offset=3D0 ip_summed=3D1 co=
+mplete_sw=3D0 valid=3D1 level=3D0)
+> =
+
+> So this is as expected not the original GSO skb, but a segment,
+> after udp_rcv_segment from udp_queue_rcv_skb.
+> =
+
+> It is a packet with skb->data pointing to the transport header, and
+> only 4B length. So this is an illegal UDP packet with length shorter
+> than sizeof(struct udphdr).
+> =
+
+> The packet does not enter xfrm4_gro_udp_encap_rcv, so we can exclude
+> that.
+> =
+
+> It does enter __xfrm4_udp_encap_rcv, which will return 1 because the
+> pskb_may_pull will fail. There is a negative integer overflow just
+> before that:
+> =
+
+>         len =3D skb->len - sizeof(struct udphdr);
+>         if (!pskb_may_pull(skb, sizeof(struct udphdr) + min(len, 8)))
+>                 return 1;
+> =
+
+> This is true for all the segments btw, not just the last one. On
+> return of 1 here, the packet does not enter encap_rcv but gets
+> passed to the socket as a normal UDP packet:
+> =
+
+> 	/* If it's a keepalive packet, then just eat it.
+> 	 * If it's an encapsulated packet, then pass it to the
+> 	 * IPsec xfrm input.
+> 	 * Returns 0 if skb passed to xfrm or was dropped.
+> 	 * Returns >0 if skb should be passed to UDP.
+> 	 * Returns <0 if skb should be resubmitted (-ret is protocol)
+> 	 */
+> 	int xfrm4_udp_encap_rcv(struct sock *sk, struct sk_buff *skb)
+> =
+
+> But so the real bug, an skb with 4B in the UDP layer happens before
+> that.
+> =
+
+> An skb_dump in udp_queue_rcv_skb of the GSO skb shows
+> =
+
+> [  174.151409] skb len=3D190 headroom=3D64 headlen=3D190 tailroom=3D66
+> [  174.151409] mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98
+> [  174.151409] shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D4 type=3D6553=
+8 segs=3D0))
+> [  174.151409] csum(0x8c start=3D140 offset=3D0 ip_summed=3D3 complete_=
+sw=3D0 valid=3D1 level=3D0)
+> [  174.151409] hash(0x0 sw=3D0 l4=3D0) proto=3D0x0800 pkttype=3D2 iif=3D=
+8
+> [  174.151409] priority=3D0x0 mark=3D0x0 alloc_cpu=3D1 vlan_all=3D0x0
+> [  174.151409] encapsulation=3D0 inner(proto=3D0x0000, mac=3D0, net=3D0=
+, trans=3D0)
+> [  174.152101] dev name=3Dtun0 feat=3D0x00002000000048c1
+> =
+
+> And of segs[0] after segmentation
+> =
+
+> [  103.081442] skb len=3D38 headroom=3D64 headlen=3D38 tailroom=3D218
+> [  103.081442] mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98
+> [  103.081442] shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D0 type=3D0 se=
+gs=3D0))
+> [  103.081442] csum(0x8c start=3D140 offset=3D0 ip_summed=3D1 complete_=
+sw=3D0 valid=3D1 level=3D0)
+> [  103.081442] hash(0x0 sw=3D0 l4=3D0) proto=3D0x0800 pkttype=3D2 iif=3D=
+8
+> [  103.081442] priority=3D0x0 mark=3D0x0 alloc_cpu=3D0 vlan_all=3D0x0
+> [  103.081442] encapsulation=3D0 inner(proto=3D0x0000, mac=3D0, net=3D0=
+, trans=3D0)
+> =
+
+> So here translen is already 38 - (98-64) =3D=3D 38 - 34 =3D=3D 4.
+> =
+
+> So the bug happens in segmentation.
+> =
+
+> [ongoing ..]
+
+Oh of course, this is udp fragmentation offload (UFO):
+VIRTIO_NET_HDR_GSO_UDP.
+
+So only the first packet has an UDP header, and that explains why the
+other packets are only 4B.
+
+They are not UDP packets, but they have already entered the UDP stack
+due to this being GSO applied in udp_queue_rcv_skb.
+
+That was never intended to be used for UFO. Only for GRO, which does
+not build such packets.
+
+Maybe we should just drop UFO (SKB_GSO_UDP) packets in this code path?
+
 
