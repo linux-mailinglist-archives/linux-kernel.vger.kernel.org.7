@@ -1,242 +1,157 @@
-Return-Path: <linux-kernel+bounces-747239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20BBB13155
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:38:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB92B13156
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B35847A8559
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:37:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9300C3AE3B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188B822541B;
-	Sun, 27 Jul 2025 18:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABA7223DE8;
+	Sun, 27 Jul 2025 18:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJxI2cuI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o9F7tZAW"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FAD2459FF;
-	Sun, 27 Jul 2025 18:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B6521C160;
+	Sun, 27 Jul 2025 18:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753641398; cv=none; b=svau0CNObDTosT2iuTXUhtbjFt/hMkQGIRr3NtD3trE/F+YrPgv5qeCg7D6o2Bj+RTTanmZe29XJAe7p7BabqfPCEUZJiqxi6+wVitvuetONDCppZA3k9BKIzcy+9irS+8QwgcOQytMBqRl2+if8Hd067/IMp1XD9jzkqPLQoT4=
+	t=1753641512; cv=none; b=NUTZU4Kb1Dxja8E439WSxIr4EB+L3mTuI/EK5efXUF5ETXlSkIW0/OgMToWYvu4zPsklfRG2l3YTdzt8G6yX7ztr2cK2YqG+6Y2mBsx/hbtqsFhnsu5fTwPQfcwQ9VkpNQrgMKGkt+Z8A1EkiFicNjF0fjciIFD/vX5nfb5gEjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753641398; c=relaxed/simple;
-	bh=NtCz+vb0FJ2RTT3UYGTBXP803cbE2/PCFHkn1707tww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JwR22secm1d8n4NcHeRAoIKWBpk8g9BNZ8RjUF51wnSSNmZLchV44lLPEn/axRbCbS895heupjzo/WPrc2btSC8cieszRN6NrYoB1JFehK/+UH4hRds9rE8C5tLxldoKTySHuKD146bzWVkT4MbeQF4l97obFmEKZj2/Cbuy3zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJxI2cuI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 868EFC4CEF7;
-	Sun, 27 Jul 2025 18:36:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753641396;
-	bh=NtCz+vb0FJ2RTT3UYGTBXP803cbE2/PCFHkn1707tww=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hJxI2cuI3DH1/GIEw48+EX0DquTB2rcTDTVYd2LzNqLQvaSW5csGhfD5SJLpYDR2X
-	 qqNQt+hr1nBKBz+m44WjEaf1VTrUZ8MbHj+KxfLu7YlXmG0KN/AgOk3MEX+bJRsJJX
-	 o2FpekAQvWSOMtQlm2CPoMDCunj4nwaBwDcBlek2WDwtNHPlpoUyBbBx+laysnAVPO
-	 BcSD7qDV2zAfOgnf0ySFr7tAcektGQ+GDKsefiiF4iseB1O2QfpU38V0/8hMaB6iis
-	 9tIPm3u28M8DzhHlFvVPiFVAZWfoEAEoqeuVfjY9xMIS/H6iCcSlLcGZjNQPk6LZGc
-	 J7Uxrbd/w6OEg==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Sun, 27 Jul 2025 14:36:18 -0400
-Subject: [PATCH v3 8/8] vfs: remove inode_set_ctime_deleg()
+	s=arc-20240116; t=1753641512; c=relaxed/simple;
+	bh=N5QnCTn2k5dYtc9Y14qjnd5qNXWc4OS/ORJ3KXvybik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eYaK+WBpSJ1kLtSCtrOnU3UHUihqM073aL6/zHbFgwJfipvqBr/sPyEMjX8TR189WVQnFs9dJAb0BwrofLL1c9MchDwZFRxY1XnZgGW6+bpJGSbpHzBOW9N61pvlbHp+W+7WCzLu/g2bzrQxkOOQVmK9GFAybqnOPIyzb8htAbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o9F7tZAW; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=XJTh58MDF29mDV2ZQ00XGzBYEBWVciegKPxWDpLZSPw=; b=o9F7tZAWOCQzLenxbif8UETa7V
+	TQFki1SOVjoeNYQbxL+FyZgDb/JpJVU6DvazQQLKtyeXNFjg1ljKf+3m2iC3KdTZAUD7Y/ViX83w2
+	xVl1Vow3PXsKh7CqBUOjb906yWTMWRnk3tvn0a4vxabcb2w6n6xM6pXn4I9/fg/+KqSqWCDIFHFVn
+	Env3+cjNZ7mbzaG7ckOuwMAXi+88VGwOknv097wJswgBRoBlpFP20J3+pbDQWcd793RJuRkSSkqqW
+	t+9dc7hkkvjO2iBx+FBPxD2nYU5SKc/LwTkTnmswwrWjRkuJyB95++XrTQiCxsaK+eB6nRAkVTFaH
+	3deAn8Zg==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ug6GS-0000000D5RC-16mt;
+	Sun, 27 Jul 2025 18:38:28 +0000
+Message-ID: <249abbe2-0f2a-4e58-b7f2-bb286c0a4f8f@infradead.org>
+Date: Sun, 27 Jul 2025 11:38:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250727-nfsd-testing-v3-8-8dc2aafb166d@kernel.org>
-References: <20250727-nfsd-testing-v3-0-8dc2aafb166d@kernel.org>
-In-Reply-To: <20250727-nfsd-testing-v3-0-8dc2aafb166d@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: Trond Myklebust <trondmy@hammerspace.com>, 
- Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5364; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=NtCz+vb0FJ2RTT3UYGTBXP803cbE2/PCFHkn1707tww=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBohnGmVnNPJR2xq+uhg+XDinapempnHwq02CRdG
- G7IljsE3aSJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaIZxpgAKCRAADmhBGVaC
- FcRFD/9zexmP3yDw4Z14LO6Gzhk/HVFHrShGljNob9av+LPXX4l29eWRPkIE502/U1T3PgE30Fy
- DQap8/lMB7waZf7pZRym1xDH28IWwu2yVBpEnUJr3euwjvaodNxoMOXfwFeexHC8S1dFrrkSUN6
- CpuO3q5dwnDnX2JLg08xNazziE5NClFL8ok13b2d0IOD8UNu+ptYwIjl//TdJau9mFmOaqjXHG2
- RcxQwUwkmvZjLWJ2THHEYi03qz21cbGxiVQ5yf+OgiYmWX8szJVJhwsRYeNc/YanxGvm/jY1sIT
- Qz0i9/gQZXkOHdp2jT9FNu9QOLHv3aX6SPPb6Oc7u8TzkcmwpCvWAV5QBTceYCO9dUTE1fOxaOR
- RPOviTRbW4jFGlTp+yGTlG6+KLRxIdeOdmxleyygswAig2ZnNyiiMhMrxiZjuE1u632mUztcuZZ
- Oyb589tos4GZu6vKnpeXr6ldd9kdJX4ZwMnWRtW05azDfM2xOCpWE/lbqc3fa6IuZ0pJ7csA0gz
- O9s33vH/haXv6ernDjQRyMPYTiCQ8jrIBOgpD4cQ3d0lDpGUuasCqpP1ivApbY33SJR9GJykVyx
- sbeSM/p5DIHapuoUUjXBr5dc8U2RIYyxXayIoklapVPn/fCbvLnvtLB6AYeWarSU7/wjICKybvX
- wS+j3T7WEEGRx0g==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] scripts: add kconfig lookup script
+To: Masahiro Yamada <masahiroy@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+References: <20230801174922.333700-1-bmasney@redhat.com>
+ <20230801174922.333700-3-bmasney@redhat.com>
+ <CAK7LNAQ-nhy1_xFYiwuvOKvfUVSjvnEb4ZnJ8EMWo7uJun89Zg@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CAK7LNAQ-nhy1_xFYiwuvOKvfUVSjvnEb4ZnJ8EMWo7uJun89Zg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Now that nfsd is vetting the timestamps internally, there is no need for
-this function. If ATTR_DELEG is set, then skip the multigrain update and
-set what was requested.
+Hi,
+Sorry about the very late feedback.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/attr.c          | 19 +++-----------
- fs/inode.c         | 73 ------------------------------------------------------
- include/linux/fs.h |  2 --
- 3 files changed, 4 insertions(+), 90 deletions(-)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index f0dabd2985989d283a931536a5fc53eda366b373..e75f06b760015640bafd596457cd14c746c7e272 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -287,14 +287,7 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
- 	struct timespec64 now;
- 
- 	if (ia_valid & ATTR_CTIME) {
--		/*
--		 * In the case of an update for a write delegation, we must respect
--		 * the value in ia_ctime and not use the current time.
--		 */
--		if (ia_valid & ATTR_DELEG)
--			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
--		else
--			now = inode_set_ctime_current(inode);
-+		now = inode_set_ctime_current(inode);
- 	} else {
- 		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
- 		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
-@@ -352,19 +345,15 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
- 		inode->i_mode = mode;
- 	}
- 
--	if (is_mgtime(inode))
-+	if (!(ia_valid & ATTR_DELEG) && is_mgtime(inode))
- 		return setattr_copy_mgtime(inode, attr);
- 
- 	if (ia_valid & ATTR_ATIME)
- 		inode_set_atime_to_ts(inode, attr->ia_atime);
- 	if (ia_valid & ATTR_MTIME)
- 		inode_set_mtime_to_ts(inode, attr->ia_mtime);
--	if (ia_valid & ATTR_CTIME) {
--		if (ia_valid & ATTR_DELEG)
--			inode_set_ctime_deleg(inode, attr->ia_ctime);
--		else
--			inode_set_ctime_to_ts(inode, attr->ia_ctime);
--	}
-+	if (ia_valid & ATTR_CTIME)
-+		inode_set_ctime_to_ts(inode, attr->ia_ctime);
- }
- EXPORT_SYMBOL(setattr_copy);
- 
-diff --git a/fs/inode.c b/fs/inode.c
-index 99318b157a9a13b3dd8dad0f5f90951f08ef64de..f45054fe48b8a0339e60fd2aa17daaad5a7957e7 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2783,79 +2783,6 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- }
- EXPORT_SYMBOL(inode_set_ctime_current);
- 
--/**
-- * inode_set_ctime_deleg - try to update the ctime on a delegated inode
-- * @inode: inode to update
-- * @update: timespec64 to set the ctime
-- *
-- * Attempt to atomically update the ctime on behalf of a delegation holder.
-- *
-- * The nfs server can call back the holder of a delegation to get updated
-- * inode attributes, including the mtime. When updating the mtime, update
-- * the ctime to a value at least equal to that.
-- *
-- * This can race with concurrent updates to the inode, in which
-- * case the update is skipped.
-- *
-- * Note that this works even when multigrain timestamps are not enabled,
-- * so it is used in either case.
-- */
--struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 update)
--{
--	struct timespec64 now, cur_ts;
--	u32 cur, old;
--
--	/* pairs with try_cmpxchg below */
--	cur = smp_load_acquire(&inode->i_ctime_nsec);
--	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
--	cur_ts.tv_sec = inode->i_ctime_sec;
--
--	/* If the update is older than the existing value, skip it. */
--	if (timespec64_compare(&update, &cur_ts) <= 0)
--		return cur_ts;
--
--	ktime_get_coarse_real_ts64_mg(&now);
--
--	/* Clamp the update to "now" if it's in the future */
--	if (timespec64_compare(&update, &now) > 0)
--		update = now;
--
--	update = timestamp_truncate(update, inode);
--
--	/* No need to update if the values are already the same */
--	if (timespec64_equal(&update, &cur_ts))
--		return cur_ts;
--
--	/*
--	 * Try to swap the nsec value into place. If it fails, that means
--	 * it raced with an update due to a write or similar activity. That
--	 * stamp takes precedence, so just skip the update.
--	 */
--retry:
--	old = cur;
--	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, update.tv_nsec)) {
--		inode->i_ctime_sec = update.tv_sec;
--		mgtime_counter_inc(mg_ctime_swaps);
--		return update;
--	}
--
--	/*
--	 * Was the change due to another task marking the old ctime QUERIED?
--	 *
--	 * If so, then retry the swap. This can only happen once since
--	 * the only way to clear I_CTIME_QUERIED is to stamp the inode
--	 * with a new ctime.
--	 */
--	if (!(old & I_CTIME_QUERIED) && (cur == (old | I_CTIME_QUERIED)))
--		goto retry;
--
--	/* Otherwise, it was a new timestamp. */
--	cur_ts.tv_sec = inode->i_ctime_sec;
--	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
--	return cur_ts;
--}
--EXPORT_SYMBOL(inode_set_ctime_deleg);
--
- /**
-  * in_group_or_capable - check whether caller is CAP_FSETID privileged
-  * @idmap:	idmap of the mount @inode was found from
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f18f45e88545c39716b917b1378fb7248367b41d..08f2d813dd40b5dd4fe07d9636e94252915d6235 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1657,8 +1657,6 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
- 
- struct timespec64 current_time(struct inode *inode);
- struct timespec64 inode_set_ctime_current(struct inode *inode);
--struct timespec64 inode_set_ctime_deleg(struct inode *inode,
--					struct timespec64 update);
- 
- static inline time64_t inode_get_atime_sec(const struct inode *inode)
- {
+On 8/2/23 11:23 PM, Masahiro Yamada wrote:
+> On Wed, Aug 2, 2023 at 2:49 AM Brian Masney <bmasney@redhat.com> wrote:
+>>
+>> Add a script that allows looking up the full Kconfig entry based on
+>> the symbol name. Documentation and example usage is found at the top
+>> of the script itself.
+>>
+>> Signed-off-by: Brian Masney <bmasney@redhat.com>
+>> ---
+>>  scripts/kconfig/lookup.sh | 77 +++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 77 insertions(+)
+>>  create mode 100755 scripts/kconfig/lookup.sh
+> 
+> 
+> 
+> Everyone tends to have their own utility scripts
+> on their machines.
+> 
+> I think this patch set falls into that category
+> as "create a wrapper script of grep" is what everyone
+> does to reduce typing.
+> 
+> 
+> 
+> 
+> FWIW, I have the following scripts in my ~/bin directory.
+> 
+> 
+> 
+> $ cat ~/bin/kgrep
+> #!/bin/sh
+> 
+> exec find . -name .repo -prune -o -name .git -prune -o -type f \
+> \( -name 'Kconfig*' -o -name 'Config.in' \) \
+> -print0 | xargs -0 grep --color -n "$@"
+> 
+
+Sometimes I just want to see a symbol's definition. So using
+$ kgrep -A8 config.TSL2772
+finds only the config|menuconfig definition for the symbol
+without printing other mentions of it (in selects or depends on
+or help text or comments etc.).
+
+> 
+> $ cat ~/bin/mgrep
+> #!/bin/sh
+> 
+> exec find . -name .repo -prune -o -name .git -prune -o -type f \
+> \( -name 'Makefile*' -o -name 'Kbuild*' -o -name "*.mk" \) \
+> -print0 | xargs -0 grep --color -n "$@"
+> 
+> 
+
+Using
+$ mgrep floppy.o
+shows me nothing. It never completes, just hangs (OK, I killed it
+after 30 seconds). Any ideas?
+
+Thanks for the tooling.
+
+> 
+> 
+> masahiro@zoe:~/ref/linux(master)$ kgrep -A5 TSL2772
+> ./drivers/iio/light/Kconfig:564:config TSL2772
+> ./drivers/iio/light/Kconfig-565- tristate "TAOS TSL/TMD2x71 and
+> TSL/TMD2x72 Family of light and proximity sensors"
+> ./drivers/iio/light/Kconfig-566- depends on I2C
+> ./drivers/iio/light/Kconfig-567- help
+> ./drivers/iio/light/Kconfig-568-   Support for: tsl2571, tsl2671,
+> tmd2671, tsl2771, tmd2771, tsl2572, tsl2672,
+> ./drivers/iio/light/Kconfig-569-   tmd2672, tsl2772, tmd2772 devices.
+> 
+> masahiro@zoe:~/ref/linux(master)$ mgrep efivarfs.o
+> ./fs/efivarfs/Makefile:6:obj-$(CONFIG_EFIVAR_FS) += efivarfs.o
+> ./fs/efivarfs/Makefile:8:efivarfs-objs := inode.o file.o super.o vars.o
+> 
+> 
+> 
+> That's my local way to satisfy my demand.
+> I do not intend to force my way or merge it in the upstream.
+
 
 -- 
-2.50.1
+~Randy
 
 
