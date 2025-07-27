@@ -1,143 +1,130 @@
-Return-Path: <linux-kernel+bounces-747206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C677B130F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:34:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C17B130E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CFFC3A4C61
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E801895E37
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FDF21B1BC;
-	Sun, 27 Jul 2025 17:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2DF21D3E4;
+	Sun, 27 Jul 2025 17:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="dOdmwBWy"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVNgKwgV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFD621A426;
-	Sun, 27 Jul 2025 17:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753637669; cv=pass; b=l3tMD2QtY2HY+fCzKD8BMoPZMLBUKpED8TRD/IsRz4j43ATCWceEC1aLEXki93K3GtMWh85KffozWob7kUVW7XV/lDcd8kPY3/xKUN++0ZBgPm695eGmoh4nWQH4wSwXRHySiRYQCXjUARFF5vHE75YK3pngAIvEcCZ7yN4gy8M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753637669; c=relaxed/simple;
-	bh=vaZVi9JGzmaEuqLuOHnGEW875OUE5MDTLAfJ99AXyC8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=HxklangePi8/IjtvETcaun1RPng5ts/LAw1uWiWp/n4umAIt9SewRS+G8CUJd5LWalFWexGZ9BHQWdX/JirWkOLEaxBORZbNa0JaYbsbI9I9i4mb/L5N8FY/ommjgazK6QNsW+WbPcuavp+hbhAWOSm6c0fKZ3jewweaI3wZP9g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=dOdmwBWy; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753637654; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=g+sGYw1DzCBgjA1EC8u7OGhTYqumjeLiWu3Wa87RsfLehNwrItNPZHLkVgMGXN4n/Z1UruhNcn35IQUChierT1oj+n0sMq4ONVmXYOXmPOyVbjbzjTXJqa3jZWsqmlwQzxlF0vYxZPo41fF1uKhiIZVH9X8B2z8UGOS5KjZ0/A4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753637654; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=okMS3/1S2iNACQoSQsLmd+UrausqQyZ3VLxCRlug4Ms=; 
-	b=HOlIvx7X341VP/3GtxvgWDSUAMasnQdTJoSB1DzTP7I9C8NQBWgP6eRGw72FeaLDWhRxI6YjkEAi7VenKaz5ZiwKJtRECnQ0iZ35vqiC/BqYq6/cpEyEQk3cyYgbzxZyAlpwhjYx0GXIb8E/EVPVxbKVmwlIl/Nla1b7AvbmoLo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753637654;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=okMS3/1S2iNACQoSQsLmd+UrausqQyZ3VLxCRlug4Ms=;
-	b=dOdmwBWyQrhrUCXh4MC2c2TLeMP+NRjLcDnwjIgfnJ+z/2COvqlaGap86cftU3lI
-	9nQlCVaVhkSvFYccIN2Or9/RhuU6NZn821HMkKHfKG52xIX1LszLiv+EGbhxB46TXdO
-	M5HHcACcplAQntvu8aGeU6QRpsuvJdHzrKwg1L6U=
-Received: by mx.zohomail.com with SMTPS id 1753637651196383.2365766479402;
-	Sun, 27 Jul 2025 10:34:11 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63C08633F;
+	Sun, 27 Jul 2025 17:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753636809; cv=none; b=Gjxgsja0ZWdJQQolud2ZTnYW4NsNcbQ5PHry9Rt2unYSiGp0RfIy6iP3TLlbIwT7NJDxUXJ/Jg7Cj4SWId6GPWjFiK76ADjiE/YkrVoafkwaaXqG3FZ52rySrhX9Gqb+M5wfFy/EykbFtHCB4yoDf8IpP+LVui0wZgsRaxEmT7Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753636809; c=relaxed/simple;
+	bh=8meqovJT8X8IsHJZ0ka65U80kD2cfJ3BG1KmS6GR52Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=DM/hFSQZLm09wLyd/OtvKcyby+F/pots+gvN6ocYv0GEzASQU3qufOOs2SlIIjqQuriNCutfFy8YcvI40Azo5QkB82CINzVW1Lkp+dY43XayS6CbQz730kejHesexBPJXQvqEE69qPl+vJnTH43ir3btPiJzyXGGtsuJ3b3WD/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVNgKwgV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69022C4CEEB;
+	Sun, 27 Jul 2025 17:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753636809;
+	bh=8meqovJT8X8IsHJZ0ka65U80kD2cfJ3BG1KmS6GR52Q=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=QVNgKwgVRUvkUD9CIxsUe03vVCjwI/p8yyiMkKTPZHtcbGwyjUlrKwI820y0w33s8
+	 3Dt7pziFRvGM1WHwyUZEJTvKr6MHNil9ukzYFhcCWwKuI7jBNwNHoWicX5O4Gj+wbp
+	 GpWDg32KEx7leMhF3hIqdrjwTkqwD/DZEVGAzv0gj565r2J3yJdpfzHGrlbJ0VWz3Y
+	 ZPMw1cahkJjQavEswjLBBx1vLFr7v9P4wqNoSDG+f8yH52S1GeGPpo7XDpRp50LV6u
+	 O6sOMzKwUhWbalBXsnPYklcKHewz8g445bgLdw/xxwGRA70nX2xzRsnTI+0oeNNzxH
+	 k3R8jrh8a052A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [RFC PATCH v2 0/4] rust: miscdevice: abstraction for uring-cmd
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250727150329.27433-1-sidong.yang@furiosa.ai>
-Date: Sun, 27 Jul 2025 14:17:05 -0300
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
- Benno Lossin <lossin@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Jens Axboe <axboe@kernel.dk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <CACB1415-0535-4A05-B904-5F388A1F7C08@collabora.com>
-References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
-To: Sidong Yang <sidong.yang@furiosa.ai>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 27 Jul 2025 19:20:02 +0200
+Message-Id: <DBN0D5J10BH9.3I1FHJC1KZ79A@kernel.org>
+Cc: "Shankari Anand" <shankari.ak0208@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dave Ertman"
+ <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
+ Romanovsky" <leon@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, "Abdiel Janulgue" <abdiel.janulgue@gmail.com>, "Daniel
+ Almeida" <daniel.almeida@collabora.com>, "Robin Murphy"
+ <robin.murphy@arm.com>, "Viresh Kumar" <vireshk@kernel.org>, "Nishanth
+ Menon" <nm@ti.com>, "Stephen Boyd" <sboyd@kernel.org>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>
+Subject: Re: [PATCH 7/7] rust: kernel: update ARef and AlwaysRefCounted
+ imports from sync::aref
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250717073450.15090-1-shankari.ak0208@gmail.com>
+ <CAPRMd3nhDKApttF_wBU01es76NG=qAyZMAer_gjbbtTSH_FmSA@mail.gmail.com>
+ <CANiq72=uDrg9HBVM97dgJGaC946Or964-2aF6OJVV0ih_vWuRA@mail.gmail.com>
+ <CAPRMd3kXUJC6rC_X4i41dWNpS2tx4aEXFmBuEwncXmdJewinDA@mail.gmail.com>
+ <CANiq72kw-OiU6YO8TKMVMdtJF+j7r9nBDsAa9Q2tdBzM=DyxDg@mail.gmail.com>
+ <DBMUCVDVWM77.2M60X06IBGVA5@kernel.org>
+ <CANiq72nBHtbZqt8R0dMSK6iWY7Z3vKLbeP_2dN2NaLOxRfOvCA@mail.gmail.com>
+In-Reply-To: <CANiq72nBHtbZqt8R0dMSK6iWY7Z3vKLbeP_2dN2NaLOxRfOvCA@mail.gmail.com>
 
-Hi Sidong,
+On Sun Jul 27, 2025 at 4:26 PM CEST, Miguel Ojeda wrote:
+> On Sun, Jul 27, 2025 at 2:37=E2=80=AFPM Benno Lossin <lossin@kernel.org> =
+wrote:
+>>
+>> That's good advice. I want to add that in this case, I think a series is
+>> better sending 7 independent patches. Using a series allows people to
+>> see if it is complete (ie there might be places that are missed). It
+>> also allows someone to send a single mail reviewing all patches & giving
+>> general comments about all patches in the series.
+>
+> It is fine if places are missed, since in this case they are not meant
+> to be applied at once -- maintainers may think they are supposed to
+> give Acked-bys instead of applying them, and here the idea was to try
+> to see if we could get a migration like this via different trees
+> slowly, rather than the way we did the others.
 
-> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wrote:
->=20
-> This patch series implemens an abstraction for io-uring sqe and cmd =
-and
-> adds uring_cmd callback for miscdevice. Also there is an example that =
-use
-> uring_cmd in rust-miscdevice sample.
->=20
-> I received a email from kernel bot that `io_tw_state` is not FFI-safe.
-> It seems that the struct has no field how can I fix this?
+AFAIK maintainers can pick different parts of a series', right?
 
-It=E2=80=99s not something that you introduced. Empty structs are =
-problematic when
-used in FFI, because  ZSTs are not defined in the C standard AFAIK, =
-although
-they are supported in some compilers. For example, this is not illegal =
-nor UB
-in GCC [0]. The docs say:
+> For the "final series" that removes the re-export, it should
+> definitely be a series, because in such a case the idea is to apply
+> them all and remove the re-export at the end of it.
+>
+> I guess it depends a bit on what maintainers want to do and the case
+> (e.g. if it is a tricky change, it may be best to have a series).
+> Sometimes same people may do it differently, e.g. [1][2].
+>
+> But I agree that many independent patches are painful too, including
+> in Lore; and that it is always nice to have an "index" of all the
+> patches for those that want to see it as you say -- perhaps providing
+> a link to a Lore search, or having them all in the same thread can
+> help (though that can be confusing on its own), or having a first RFC
+> version as a series that can be linked later before splitting.
 
-> The structure has size zero.
+This is the main benefit in this case I'd say.
 
-This aligns with Rust's treatment of ZSTs, which are also zero-sized, so =
-I
-don't think this will be a problem, but lets wait for others to chime =
-in.
+---
+Cheers,
+Benno
 
-I'll review this tomorrow.
-
->=20
-> Changelog:
-> v2:
-> * use pinned &mut for IoUringCmd
-> * add missing safety comments
-> * use write_volatile for read uring_cmd in sample
->=20
-> Sidong Yang (4):
->  rust: bindings: add io_uring headers in bindings_helper.h
->  rust: io_uring: introduce rust abstraction for io-uring cmd
->  rust: miscdevice: add uring_cmd() for MiscDevice trait
->  samples: rust: rust_misc_device: add uring_cmd example
->=20
-> rust/bindings/bindings_helper.h  |   2 +
-> rust/kernel/io_uring.rs          | 183 +++++++++++++++++++++++++++++++
-> rust/kernel/lib.rs               |   1 +
-> rust/kernel/miscdevice.rs        |  41 +++++++
-> samples/rust/rust_misc_device.rs |  34 ++++++
-> 5 files changed, 261 insertions(+)
-> create mode 100644 rust/kernel/io_uring.rs
->=20
-> --=20
-> 2.43.0
->=20
->=20
-
-
-=E2=80=94 Daniel
-
-[0]: https://gcc.gnu.org/onlinedocs/gcc/Empty-Structures.html
-
-
+>
+> Cheers,
+> Miguel
+>
+> [1] https://lore.kernel.org/all/20241127091036.444330-2-u.kleine-koenig@b=
+aylibre.com/
+> [2] https://lore.kernel.org/lkml/20221118224540.619276-1-uwe@kleine-koeni=
+g.org/
 
