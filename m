@@ -1,135 +1,159 @@
-Return-Path: <linux-kernel+bounces-747296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE1BB131FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 23:23:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63636B13201
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 23:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BDAE3BA028
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:22:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 434937A7D7D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 21:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1931E23D2B6;
-	Sun, 27 Jul 2025 21:23:19 +0000 (UTC)
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B0D2405E7;
+	Sun, 27 Jul 2025 21:25:38 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DE728FD;
-	Sun, 27 Jul 2025 21:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA59528FD
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 21:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753651398; cv=none; b=L6mz1zJ4f4jzl8pX9L/AdwMlfOCkVfrLCV2hoAWYR/KRgYH+E2sCr2DbV46KFMJsGVeA9jOXsUL4sZt05vjlOV1B4mlrMflezNxmWRtMlpnYtMqRYL6iQSndKGh4k3wozuQI1kYSiQkiwBNh9JrtI+DU0DlrNU46aaJfHNSMKkI=
+	t=1753651538; cv=none; b=tK+oTQ1iVesPlhPKfceI/I4TUQjSTIJ4Wv4vEImVchioRdGlHLkYvttrOPpsgijk5Ksy7OvRCFIlIWoeNNLmBt04K0WPVTPHLxJCP6AoXjm6TKuhbzUEyKIxJ60gmGLTAutqAEUbCb41ccDe+06fcTsUz2YrMDOUrIlejS7uSus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753651398; c=relaxed/simple;
-	bh=xt0AZUVHMpD8vl17PbgkUvXZb6kbkI35v/akkyB+Dqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KSc7SuP9RT7FkBqk3DuYGDe5KCQNz5vjRoLElPJl04tvFhmvxpRgIW3bDIXPqLfxKYsw0qhev72seveZ+KuLwnsWTulsG654znpH2j6rFQRkH7OE3lAoX8WzfOR8kZvlhZlOJ1f0Bk4Px+khLdv74pAVWLIbWbieNrdwDIgc0Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bqvjD3YSKz9tkV;
-	Sun, 27 Jul 2025 23:23:12 +0200 (CEST)
-Message-ID: <a028730a-a51c-4595-992e-e1e082329850@timmermann.space>
-Date: Sun, 27 Jul 2025 23:23:10 +0200
+	s=arc-20240116; t=1753651538; c=relaxed/simple;
+	bh=vCn40UUDOGw/cGn46/9TLk9ExbLqzknDAf9psSCEoro=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pn6gcORsRikuVdd8vo8j3rSy9KhLodbP48XLwMU1nu17LSMzDMw0ZtWto8BZAau/AIWox5fIk3fJHGWqmdlJYfbT6lDyJ5LuCP7V2Ikwyo1C0yGN9KywS3fLFeCLh6e4uvnkm7Q11/FdlMzIQfmWelM8JP49uLTTCNw+X0iX234=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-8649be94fa1so820818639f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 14:25:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753651536; x=1754256336;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kDz96/NZdwrM4WZ2hwJOdssYjQnPlecps7fWxJhLeoE=;
+        b=LmtriIDSUiWK98s+P/K0iVRquSFOFhh/sqGtQ8InGuFVast78L9AKgaHdgGDIqP0kc
+         L74UFg2qkUdfuBYyWNcK6ezi3DyKJS0cpsFiZubWi8Jgh13q5sPMKLyck873FpzwDw8Z
+         BQI6VxhoJgmNaV3jji3k2cI/TB/vgZ71p0p+jw1mF9ZImDuGBpkyPCASqv9V6nlv6rV6
+         WDXpFTHGIKV44v5atW3IE9BVqf8G1KACM3WitCxJgP1m2Wc4uxVP8SXiZbooB9KNMIWj
+         P+mPtv7wLbh17WJTAzWpUv+aw4LnRjd1Tp4qUkFCBIvqe3ZiJ5qrVbZD0qmYLMoS61DT
+         phvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJEkbecI19/o9LraIfGWpYVMZFyiQK70LFqCad+SMcYxtvlk71CjvKGVHC/NpaYuEqpm0GBEuimAZUzO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbF3+ftwnC35D29qi8CtyzuReo6ro3DF4o0r0KhykZ2F2DaShY
+	xJN3LNxSfFdhKz+Yicd+gTFPcpNvw+6yI3r/S5Xf4THap+mkiH/wz94MQgQ4XdEjaojIj/fbNzT
+	3y3oDXhiYS1xUm4iqWWUQo31D86/lOeEC0jn7nRLTSvrnM6ShkmVSsfO/t3U=
+X-Google-Smtp-Source: AGHT+IGV/vmcOJppMjmvKEjjQJU8CcsxIXujF1febzAXDp9rprnfabmGVT7kwNAJwOtVnimBVNYTCCYWMSzYzwLc01EiFXk2wQZz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v7 2/2] leds: as3668: Driver for the ams Osram 4-channel
- i2c LED driver
-To: Lee Jones <lee@kernel.org>
-Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250708141114.134950-1-linux@timmermann.space>
- <20250708141114.134950-3-linux@timmermann.space>
- <20250723093108.GQ11056@google.com>
-Content-Language: en-US, de-DE
-From: Lukas Timmermann <linux@timmermann.space>
-In-Reply-To: <20250723093108.GQ11056@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:341b:b0:87c:4496:329d with SMTP id
+ ca18e2360f4ac-8800f104e04mr1771256539f.5.1753651536014; Sun, 27 Jul 2025
+ 14:25:36 -0700 (PDT)
+Date: Sun, 27 Jul 2025 14:25:36 -0700
+In-Reply-To: <67f0b437.050a0220.0a13.022c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68869950.a00a0220.b12ec.006c.GAE@google.com>
+Subject: Re: [syzbot] [sctp?] KMSAN: uninit-value in sctp_assoc_bh_rcv
+From: syzbot <syzbot+773e51afe420baaf0e2b@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	lucien.xin@gmail.com, marcelo.leitner@gmail.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Formatting was malformed in the last message, sorry. Next try:
+syzbot has found a reproducer for the following issue on:
 
->> +#define AS3668_CHIP_REV1 0x01
-> 
-> How many REVs can one chip have?
-> 
-Would be 4-bit/16. I thought I do a little check about the revision and 
-print a warning message to inform about the probably untested revision. 
-Or is that not necessary?
-Removing the REV constant results in an if-statement similar to
-if(rev == 1). Is this considered a magic number?
->> +static int as3668_read_value(struct i2c_client *client, u8 reg)
->> +{
->> +	return i2c_smbus_read_byte_data(client, reg);
->> +}
->> +
->> +static int as3668_write_value(struct i2c_client *client, u8 reg, u8 value)
->> +{
->> +	int err = i2c_smbus_write_byte_data(client, reg, value);
->> +
->> +	if (err)
->> +		dev_err(&client->dev, "error writing to reg 0x%02x, returned %d\n", reg, err);
->> +
->> +	return err;
->> +}
-> 
-> These look like abstractions for the sake of abstractions.
-> 
-> Just use the i2c_smbus_*() calls directly.
-> 
-Should I omit the write function as well? I do some error handling 
-there. Is it okay to err |= write() the returned error codes in init or 
-should I handle every possible write error by itself?
+HEAD commit:    ec2df4364666 Merge tag 'spi-fix-v6.16-rc7' of git://git.ke..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=126d74f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7753c32e11ff6a95
+dashboard link: https://syzkaller.appspot.com/bug?extid=773e51afe420baaf0e2b
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e838a2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1084a782580000
 
->> +	/* Read identifier from chip */
->> +	chip_id1 = as3668_read_value(client, AS3668_CHIP_ID1);
->> +
->> +	if (chip_id1 != AS3668_CHIP_IDENT)
->> +		return dev_err_probe(&client->dev, -ENODEV,
->> +				"chip reported wrong id: 0x%02x\n", chip_id1);
-> 
-> Unlikely.  This too is unexpected, as above.
-> 
-Error message not descriptive, understood. Changing that to "unexpected 
-..." as above. Or am I misunderstanding and the check should be omitted 
-entirely?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3f86f1075111/disk-ec2df436.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c90594c19d7f/vmlinux-ec2df436.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8eac8db13156/bzImage-ec2df436.xz
 
->> +	/* Check the revision */
->> +	chip_id2 = as3668_read_value(client, AS3668_CHIP_ID2);
-> 
-> Is child_id2 not for another chip?
-> 
-> This is ambiguous, please improve the variable nomenclature.
-> 
-chip_id2 is directly related to the defined register CHIP_ID2 which name 
-is taken from the datasheet of the AS3668. (Not sure if I'm allowed to 
-link it)
-Should we diverge from the datasheet in case of naming?
-Or is only chip_id2 to be renamed, even tho it holds the values of 
-CHIP_ID2? I would consider chip_ident for chip_id1 and chip_subident for 
-chip_id2. chip_subident would break down into chip_rev and chip_serial.
-Of course reading chip_id2 would be unnecessary if I omit checking the 
-revision in the first place (see above).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+773e51afe420baaf0e2b@syzkaller.appspotmail.com
 
->> +	err = as3668_dt_init(as3668);
->> +	if (err)
->> +		return dev_err_probe(&client->dev, err, "failed to initialize device\n");
-> 
-> No need for 2 error messages.
-> 
-Doing if(error) return error; then...?
+=====================================================
+BUG: KMSAN: uninit-value in sctp_assoc_bh_rcv+0x34e/0xbc0 net/sctp/associola.c:987
+ sctp_assoc_bh_rcv+0x34e/0xbc0 net/sctp/associola.c:987
+ sctp_inq_push+0x2a3/0x350 net/sctp/inqueue.c:88
+ sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
+ sk_backlog_rcv+0x142/0x420 include/net/sock.h:1148
+ __release_sock+0x1d3/0x330 net/core/sock.c:3213
+ release_sock+0x6b/0x270 net/core/sock.c:3767
+ sctp_wait_for_connect+0x458/0x820 net/sctp/socket.c:9367
+ sctp_sendmsg_to_asoc+0x223a/0x2260 net/sctp/socket.c:1886
+ sctp_sendmsg+0x3910/0x49f0 net/sctp/socket.c:2032
+ inet_sendmsg+0x269/0x2a0 net/ipv4/af_inet.c:851
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x278/0x3d0 net/socket.c:727
+ __sys_sendto+0x593/0x720 net/socket.c:2180
+ __do_sys_sendto net/socket.c:2187 [inline]
+ __se_sys_sendto net/socket.c:2183 [inline]
+ __x64_sys_sendto+0x130/0x200 net/socket.c:2183
+ x64_sys_call+0x3c0b/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Thanks for the input. I'm willing to learn. 🙂
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4154 [inline]
+ slab_alloc_node mm/slub.c:4197 [inline]
+ __do_kmalloc_node mm/slub.c:4327 [inline]
+ __kmalloc_node_track_caller_noprof+0x96d/0x12f0 mm/slub.c:4347
+ kmalloc_reserve+0x22f/0x4b0 net/core/skbuff.c:601
+ __alloc_skb+0x347/0x7d0 net/core/skbuff.c:670
+ alloc_skb include/linux/skbuff.h:1336 [inline]
+ sctp_packet_pack net/sctp/output.c:472 [inline]
+ sctp_packet_transmit+0x18a1/0x46d0 net/sctp/output.c:621
+ sctp_outq_flush_transports net/sctp/outqueue.c:1173 [inline]
+ sctp_outq_flush+0x1c7d/0x67c0 net/sctp/outqueue.c:1221
+ sctp_outq_uncork+0x9e/0xc0 net/sctp/outqueue.c:764
+ sctp_cmd_interpreter net/sctp/sm_sideeffect.c:-1 [inline]
+ sctp_side_effects net/sctp/sm_sideeffect.c:1204 [inline]
+ sctp_do_sm+0x8c8e/0x9720 net/sctp/sm_sideeffect.c:1175
+ sctp_assoc_bh_rcv+0x88b/0xbc0 net/sctp/associola.c:1034
+ sctp_inq_push+0x2a3/0x350 net/sctp/inqueue.c:88
+ sctp_backlog_rcv+0x3c7/0xda0 net/sctp/input.c:331
+ sk_backlog_rcv+0x142/0x420 include/net/sock.h:1148
+ __release_sock+0x1d3/0x330 net/core/sock.c:3213
+ release_sock+0x6b/0x270 net/core/sock.c:3767
+ sctp_wait_for_connect+0x458/0x820 net/sctp/socket.c:9367
+ sctp_sendmsg_to_asoc+0x223a/0x2260 net/sctp/socket.c:1886
+ sctp_sendmsg+0x3910/0x49f0 net/sctp/socket.c:2032
+ inet_sendmsg+0x269/0x2a0 net/ipv4/af_inet.c:851
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x278/0x3d0 net/socket.c:727
+ __sys_sendto+0x593/0x720 net/socket.c:2180
+ __do_sys_sendto net/socket.c:2187 [inline]
+ __se_sys_sendto net/socket.c:2183 [inline]
+ __x64_sys_sendto+0x130/0x200 net/socket.c:2183
+ x64_sys_call+0x3c0b/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Lukas Timmermann
+CPU: 0 UID: 0 PID: 5812 Comm: syz-executor343 Not tainted 6.16.0-rc7-syzkaller-00140-gec2df4364666 #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+=====================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
