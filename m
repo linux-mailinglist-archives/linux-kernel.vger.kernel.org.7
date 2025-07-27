@@ -1,130 +1,154 @@
-Return-Path: <linux-kernel+bounces-747197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C17B130E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:20:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F30B130E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 19:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E801895E37
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:20:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B0123B6ED0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 17:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2DF21D3E4;
-	Sun, 27 Jul 2025 17:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429B721E098;
+	Sun, 27 Jul 2025 17:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVNgKwgV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zy0kQNKF"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63C08633F;
-	Sun, 27 Jul 2025 17:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5245421765B;
+	Sun, 27 Jul 2025 17:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753636809; cv=none; b=Gjxgsja0ZWdJQQolud2ZTnYW4NsNcbQ5PHry9Rt2unYSiGp0RfIy6iP3TLlbIwT7NJDxUXJ/Jg7Cj4SWId6GPWjFiK76ADjiE/YkrVoafkwaaXqG3FZ52rySrhX9Gqb+M5wfFy/EykbFtHCB4yoDf8IpP+LVui0wZgsRaxEmT7Y=
+	t=1753637249; cv=none; b=XEUxjrYc8DlWHWq9NZJsliWfHeYBOufrC5LBT+swBx2RMTs+u7MVpEh1sxZDrLJ9S1uziAOBd5RJJAKbxIQA52Sqn3xP3CVIT87R2hhd2mTJXMzw3Yv+dwyB3hJHdPrAXEbRWCIVJqFCnlKE8n3PGq0M6883kqnH2hnhe++VKoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753636809; c=relaxed/simple;
-	bh=8meqovJT8X8IsHJZ0ka65U80kD2cfJ3BG1KmS6GR52Q=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=DM/hFSQZLm09wLyd/OtvKcyby+F/pots+gvN6ocYv0GEzASQU3qufOOs2SlIIjqQuriNCutfFy8YcvI40Azo5QkB82CINzVW1Lkp+dY43XayS6CbQz730kejHesexBPJXQvqEE69qPl+vJnTH43ir3btPiJzyXGGtsuJ3b3WD/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVNgKwgV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69022C4CEEB;
-	Sun, 27 Jul 2025 17:20:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753636809;
-	bh=8meqovJT8X8IsHJZ0ka65U80kD2cfJ3BG1KmS6GR52Q=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=QVNgKwgVRUvkUD9CIxsUe03vVCjwI/p8yyiMkKTPZHtcbGwyjUlrKwI820y0w33s8
-	 3Dt7pziFRvGM1WHwyUZEJTvKr6MHNil9ukzYFhcCWwKuI7jBNwNHoWicX5O4Gj+wbp
-	 GpWDg32KEx7leMhF3hIqdrjwTkqwD/DZEVGAzv0gj565r2J3yJdpfzHGrlbJ0VWz3Y
-	 ZPMw1cahkJjQavEswjLBBx1vLFr7v9P4wqNoSDG+f8yH52S1GeGPpo7XDpRp50LV6u
-	 O6sOMzKwUhWbalBXsnPYklcKHewz8g445bgLdw/xxwGRA70nX2xzRsnTI+0oeNNzxH
-	 k3R8jrh8a052A==
+	s=arc-20240116; t=1753637249; c=relaxed/simple;
+	bh=xIrMAVwTSCMerkRkKb6Xym4RKxHEt9FrryzVcp5g0dg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DPCbDs33CLusrzTBI1/a2jR/UVi4ET7ve0YuoUagQYghpk7lBiENYNKGvwKi1qn5PejLB3DLoYmJmzXepCbcB5a93ZREy2IG5yEfmkgJG8KmZeV5dDRBU6q8E9Gb5J277KIjqlJ3aKvzutJtNWx4tmqJ7cQ7VQPj+lKPDPy84P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zy0kQNKF; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b3182c6d03bso4127180a12.0;
+        Sun, 27 Jul 2025 10:27:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753637247; x=1754242047; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E85YpZEInHKsW2hee+1m3UbS/1k0y+Q8zbJaiHqizWw=;
+        b=Zy0kQNKFn0yDniIMY5HQ0XpEnNXjSdHP5ntpbGyKL9K2U1Vh4LMlJ8PFyvQg7HTO3k
+         CBZfJoNrUpr3H/OJXLloovk8LXuxSi57CCqyc0g18RCuu9ieVEYWuY/0xL+ahtRXLz7B
+         ljoAWzpx8jbwmiJueO68LZ/4KqzWygBxnxk2KN8y6lO2MtTyIHXAqs2/2hpwcWnAEx5x
+         SVgooOJAiN+7MSjfSmuvxFA1p7igvRBTDQJE7Cq8SxSIBXMEqvMjoPUsCH8AVKV8j8PH
+         Pcegvj5/OaMUhMZLWyM9h3e5QKMhO5F7sRmdBxPi7y+cGqcigzl2k+wN0Cwc0ylgLId/
+         5LoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753637247; x=1754242047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E85YpZEInHKsW2hee+1m3UbS/1k0y+Q8zbJaiHqizWw=;
+        b=IxbhEC7SHXJ0e5mWSQauYwkjgJpYCvo7+KCxbasZilmsMbavnUr+HpkCIySO2d9d7X
+         NvBJjSnNZouZ09yRB3ov6xFpT0jUvkjYKRdifJAQp32E9BJmO84HL8aR4Gq0yGL/Jclt
+         mNyrTAJF4e2ftrg+iXdOTlxVVw6NrsbRu3DDF8j0U8dTf6IOM1g6uiyJnVdsln03X5LI
+         2rEnshF9GcyShYhzpk5pSVNgnOUdpv6CV81gorOYYvs1TTRzLAFQ8ljt8g4rhYwnaWjR
+         CRztTJSdEmUxuHHEUBaDNsQGGiTd2KPCpKDLLohBugQBHvSDA30b/or3FWFzhaGLGv+t
+         ISEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkgPPRS5Vp+d/NJIsQZLBHQx/PNvKQ3o2Rn8TeG3FoAgARM+xd0XZgK+PB+TjQTriYbC4Nihr9tMiv4Q==@vger.kernel.org, AJvYcCXR0CdilXWkYCg1+JSZYE88LHs8MEQcis6CnuRAWnmP7wgmzsdl6Sid86zeGb5eZktOZxACDsWyOUATysmJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXSXNYdKcUaXyKfLMQ3zLNEsb+m7HVgmzgB4SbntnihqrB8KU1
+	A/yHEd+BbTOyTjIKeFcmbeYVeT1Jxr5zBY8Gt4YIfRiTni6gMLRHwykPMz4Y0E9rax20FK9GLCP
+	58D92qgSmlzR4VKCfQov21CQJjPG0wcA=
+X-Gm-Gg: ASbGncuAfenjAFk6aJgyrxgIuizLkTnejYQGTMdOUmuS3OC0hRXiLcGgi2U7spO2gy+
+	OpwaXTXpP/+KrD9Kvup4gboX9IeGzV2DWEzJAhs3LGNXABvdaVVINrpzvm28qaWFuzbUYmPxUmX
+	IIzH5rdQOFSXpcRtlHOYRJaATRVVdEpTsvTjcdPhj9CrXkHUH1YP8hefFQ/vyuvL1g81Yx6fVb3
+	Olm6r4=
+X-Google-Smtp-Source: AGHT+IHhKkqRBC9lCg12hZX4/slYo8kHO6Mzc10to2c8sIkhkcA9qONRQuNvzjJ5FTZulOqlROw/b4VrvF2PYHGAXgw=
+X-Received: by 2002:a17:90b:580f:b0:311:e8cc:4253 with SMTP id
+ 98e67ed59e1d1-31e777311ecmr14130508a91.2.1753637247383; Sun, 27 Jul 2025
+ 10:27:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250727164709.96477-1-yizhou.tang@shopee.com>
+ <20250727164709.96477-4-yizhou.tang@shopee.com> <939f45b2-4481-422a-a747-012808953d7f@kernel.org>
+In-Reply-To: <939f45b2-4481-422a-a747-012808953d7f@kernel.org>
+From: Yizhou Tang <tangyeechou@gmail.com>
+Date: Mon, 28 Jul 2025 01:27:16 +0800
+X-Gm-Features: Ac12FXyPDw4QDrYV-LfhqE_8IUgVyjjA2GnvT_TRuSoe3Sih2StcMbw4fSf3GXk
+Message-ID: <CAOB9oOaKLvfoKA1jrhx3VzejuZ+6RS9P1qga+HYoLe+h4UFqhg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] blk-wbt: doc: Update the doc of the wbt_lat_usec interface
+To: yukuai@kernel.org
+Cc: Tang Yizhou <yizhou.tang@shopee.com>, axboe@kernel.dk, hch@lst.de, jack@suse.cz, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 27 Jul 2025 19:20:02 +0200
-Message-Id: <DBN0D5J10BH9.3I1FHJC1KZ79A@kernel.org>
-Cc: "Shankari Anand" <shankari.ak0208@gmail.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dave Ertman"
- <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
- Romanovsky" <leon@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
- Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>, "Abdiel Janulgue" <abdiel.janulgue@gmail.com>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, "Robin Murphy"
- <robin.murphy@arm.com>, "Viresh Kumar" <vireshk@kernel.org>, "Nishanth
- Menon" <nm@ti.com>, "Stephen Boyd" <sboyd@kernel.org>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>
-Subject: Re: [PATCH 7/7] rust: kernel: update ARef and AlwaysRefCounted
- imports from sync::aref
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250717073450.15090-1-shankari.ak0208@gmail.com>
- <CAPRMd3nhDKApttF_wBU01es76NG=qAyZMAer_gjbbtTSH_FmSA@mail.gmail.com>
- <CANiq72=uDrg9HBVM97dgJGaC946Or964-2aF6OJVV0ih_vWuRA@mail.gmail.com>
- <CAPRMd3kXUJC6rC_X4i41dWNpS2tx4aEXFmBuEwncXmdJewinDA@mail.gmail.com>
- <CANiq72kw-OiU6YO8TKMVMdtJF+j7r9nBDsAa9Q2tdBzM=DyxDg@mail.gmail.com>
- <DBMUCVDVWM77.2M60X06IBGVA5@kernel.org>
- <CANiq72nBHtbZqt8R0dMSK6iWY7Z3vKLbeP_2dN2NaLOxRfOvCA@mail.gmail.com>
-In-Reply-To: <CANiq72nBHtbZqt8R0dMSK6iWY7Z3vKLbeP_2dN2NaLOxRfOvCA@mail.gmail.com>
 
-On Sun Jul 27, 2025 at 4:26 PM CEST, Miguel Ojeda wrote:
-> On Sun, Jul 27, 2025 at 2:37=E2=80=AFPM Benno Lossin <lossin@kernel.org> =
-wrote:
->>
->> That's good advice. I want to add that in this case, I think a series is
->> better sending 7 independent patches. Using a series allows people to
->> see if it is complete (ie there might be places that are missed). It
->> also allows someone to send a single mail reviewing all patches & giving
->> general comments about all patches in the series.
+On Mon, Jul 28, 2025 at 1:09=E2=80=AFAM Yu Kuai <yukuai@kernel.org> wrote:
 >
-> It is fine if places are missed, since in this case they are not meant
-> to be applied at once -- maintainers may think they are supposed to
-> give Acked-bys instead of applying them, and here the idea was to try
-> to see if we could get a migration like this via different trees
-> slowly, rather than the way we did the others.
-
-AFAIK maintainers can pick different parts of a series', right?
-
-> For the "final series" that removes the re-export, it should
-> definitely be a series, because in such a case the idea is to apply
-> them all and remove the re-export at the end of it.
+> Hi,
 >
-> I guess it depends a bit on what maintainers want to do and the case
-> (e.g. if it is a tricky change, it may be best to have a series).
-> Sometimes same people may do it differently, e.g. [1][2].
+> =E5=9C=A8 2025/7/28 0:47, Tang Yizhou =E5=86=99=E9=81=93:
+> > From: Tang Yizhou <yizhou.tang@shopee.com>
+> >
+> > The symbol wb_window_usec cannot be found. Update the doc to reflect th=
+e
+> > latest implementation, in other words, the cur_win_nsec member of struc=
+t
+> > rq_wb.
+> >
+> > Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+> > ---
+> >   Documentation/ABI/stable/sysfs-block | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/s=
+table/sysfs-block
+> > index 4ba771b56b3b..277d89815edd 100644
+> > --- a/Documentation/ABI/stable/sysfs-block
+> > +++ b/Documentation/ABI/stable/sysfs-block
+> > @@ -731,7 +731,7 @@ Contact:  linux-block@vger.kernel.org
+> >   Description:
+> >               [RW] If the device is registered for writeback throttling=
+, then
+> >               this file shows the target minimum read latency. If this =
+latency
+> > -             is exceeded in a given window of time (see wb_window_usec=
+), then
+> > +             is exceeded in a given window of time (see cur_win_nsec),=
+ then
+> Is this a typo? Jan suggested curr_win_nsec from v1.
 >
-> But I agree that many independent patches are painful too, including
-> in Lore; and that it is always nice to have an "index" of all the
-> patches for those that want to see it as you say -- perhaps providing
-> a link to a Lore search, or having them all in the same thread can
-> help (though that can be confusing on its own), or having a first RFC
-> version as a series that can be linked later before splitting.
+> BTW, I don't mind rename rwb->cur_win_nsec to curr_win_nsec as well.
 
-This is the main benefit in this case I'd say.
+Sorry, that was indeed a typo.
 
----
-Cheers,
-Benno
+I checked the code, and now both cur_win_nsec and curr_win_nsec are
+used. The latter was introduced by Ming in commit d19afebca476
+("blk-wbt: export internal state via debugfs"). In the Linux kernel,
+both 'cur' and 'curr' are commonly used as abbreviations for
+'current'. If we were to unify the naming, I suspect it could spark
+some debate. For now, I won=E2=80=99t pursue unified naming =E2=80=94 in th=
+e next
+version of the patch, I=E2=80=99ll change it to curr_win_nsec.
+
+Thanks,
+Yi
+
 
 >
-> Cheers,
-> Miguel
+> Thanks,
+> Kuai
 >
-> [1] https://lore.kernel.org/all/20241127091036.444330-2-u.kleine-koenig@b=
-aylibre.com/
-> [2] https://lore.kernel.org/lkml/20221118224540.619276-1-uwe@kleine-koeni=
-g.org/
+> >               the writeback throttling will start scaling back writes. =
+Writing
+> >               a value of '0' to this file disables the feature. Writing=
+ a
+> >               value of '-1' to this file resets the value to the defaul=
+t
+>
 
