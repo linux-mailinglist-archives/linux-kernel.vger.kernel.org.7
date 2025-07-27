@@ -1,125 +1,234 @@
-Return-Path: <linux-kernel+bounces-747219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80C6B13115
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:06:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AF3B13118
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 20:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5988F3B4829
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:05:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9C51884100
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Jul 2025 18:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6467F2222C7;
-	Sun, 27 Jul 2025 18:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD6E222576;
+	Sun, 27 Jul 2025 18:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAXxqUtW"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffgMjDhw"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8815E610D;
-	Sun, 27 Jul 2025 18:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337E2610D;
+	Sun, 27 Jul 2025 18:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753639571; cv=none; b=NhXe3J1zojilii1wRZDbd4+EDR7o2n3H/ffr7u3EaB/V7Po3PesIPDCMs+afYAymceaWVdMFJUBTOjF/V0yFxLpr+z+CTnHS0uuNl8sctN021Rr6pgq4xVr2BCQoUeWbl0GErEwIYUIEsq+ruzP4XZXtEqgtDIutQcL6YjPjnx0=
+	t=1753639626; cv=none; b=mMD6DSF/q8u/EjhFy75eZ8KLD4BMlOdTUKwocxJbrC5It0LaW5mSZLcbn1R/JlmUs4FZN7t4Wdt/9N8s7hFYALpAwKpEm7Owq8AcU84dAjBkWPLdb1vS2wPQqOD0cHSjmzwnydECzpkD23pggKqI+pQh7jyEIy9gQhEmFCj8Bgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753639571; c=relaxed/simple;
-	bh=bZ/JXJc19nkrcW+WON5HjOh7f+Qm4DzRNAzejFL1y2k=;
+	s=arc-20240116; t=1753639626; c=relaxed/simple;
+	bh=rxy5AtOA9YI2ntRYRRHv0o/jTlcOwky9zSWQX1Wu7yA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qit1TXq3idqVdU8XRRVS4FrKa4/NKxBA/6XJTcQrp/hHMbWU6CvL9li5mwpe2AMeiu5l+fZm2/+MLzsSlum0ln4c+cXbCLI/h1AxGqJJvJ+fMDVMksrojxWZxVfc67e0cVwymXcnTeAO0M5hASOXL+c70cWSAPrSSWAj2mBDE0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAXxqUtW; arc=none smtp.client-ip=209.85.216.42
+	 To:Cc:Content-Type; b=hqr2khzyfBAEimu7BZTMfVIkRehPNpn5FnEVRsezbdsVKZyb88bblpEPYEqIOq22ZWwVZ1VkkcB8Rb2R6mAlrbf5QNIGmnjYFPZ4PxhgZtfwSoJ0BbbG19hwyBivaoKh9nmQG9bKjZ5Lu2bN6J8bfMzgEVfUzk29cvJSPX49vqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffgMjDhw; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31ef3e9f0adso39340a91.1;
-        Sun, 27 Jul 2025 11:06:10 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23ffdea3575so3781005ad.2;
+        Sun, 27 Jul 2025 11:07:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753639570; x=1754244370; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753639624; x=1754244424; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bZ/JXJc19nkrcW+WON5HjOh7f+Qm4DzRNAzejFL1y2k=;
-        b=IAXxqUtWh+IkO7rWe2A9ueqmoKXk8MuRh3sWjHmpNIrmJTDiCtl+qYYe/SoTGVq3Cz
-         MiNhfeBNTGOaRGu5pH35q63gzzvY3pR4U4+u6ZLC0SmMCoOND0AIck1gaGwIxlbKozRj
-         XPlE9C9XfZi1AENu9W4eL3r7YRm84dslCz49WyzsY5+q5Fvm8k8TXywdF+o5aRaXRbwa
-         Sfw3xKUBLKJSYAa69aEsG0XHFI3dZesgtzpTzzf2MTVdYN+LPaCcSIIeK1HluPr8/EVr
-         qmeo/Z1Qez7qSg4+p5K2LhWp07sVAxXDVBF9/Sbve1w0f+3w4mV98eVoIXvyOd6fVMmT
-         qJug==
+        bh=n4oiLiNhkaxO8LsaSDMqBsw/x7dqCcdqZ5zoC67WtB4=;
+        b=ffgMjDhw7LLRScXUuq6PQbUutfhUw21cjtriMhwd7i+iOyz877d9JpHj+PAaJmYNXr
+         Af8/ROnRfs9Y/yVr6vXXCppO/Zz8k6Cs5FtG/nvecqf4Rd1p1WZ8qhy1McQJd1tBDFeZ
+         rjPOFNFMoSdP8XAo7QMVF+U4ErBqzjYJHXBtmWYf/k9yEByvEJxzdYRQod6I0f6UmRhf
+         pw0JpnkLAtuLD3Sei1QArNKP/uWWkUhVadOyGvKDwjEkROQNzugEUBl6Vwz5/8g8ZMtW
+         oTw0sSVRX4wdsP0ypt+oEIK0l6AQosDM/4NO/aSlUlRg1I+M+M/4VZ9hTGvL1NIcRQkZ
+         oS5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753639570; x=1754244370;
+        d=1e100.net; s=20230601; t=1753639624; x=1754244424;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bZ/JXJc19nkrcW+WON5HjOh7f+Qm4DzRNAzejFL1y2k=;
-        b=EmXolphLO9yxj8b7RC2qU4GUkRHl/nsuFemh5tqnsB2KUmEib6Av0nerTOiraWZ52u
-         ZKSYoQB/qRwUjlqllEn8UepDxg/i+x+f+eCNaZ4MMrulvOKKo0ItzQhcAN4pdKf9hyX+
-         svBjwAiMjyaD2DpLJBop3V0OAPOgbRAEzPnIKgT6aaparZ6ANrzZmL7uvP1B7HESwVa5
-         UY1xI3tBeF2/KQusVzUstkdoBR7G4BCEm1LCDDO66cuYvy7Mi8PTlB42yR2cUkMqFAPE
-         KR9EogXOevXAII9jO1XvJFTdUFhqgF9RS6bN7QNYNJNNMVlZ579hesCoUSweuDmW0syK
-         yKfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOBJhulIPXAXMPprvVRXWEyVdurjyFaEsdq2DwOOhlyj68MI5he593B/oKNuwQXMIl/Az3y+fdJV52Bp4=@vger.kernel.org, AJvYcCWa3GQUt1H0C8VqlGbLzGKj6UtiGg89GWj4tenANBhfhoEOiqMQd0sdabAlYyFwwGP7XTU4BuTGBtJ1jWzHj9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZFCHfHRS5Mu4yWUAGThDuHtifFcCtXJxUG304vbY/jyXzF38K
-	8b359BoodgQaege6eos0beFce1iozL4O5w0OtbNpycRHcvhgOYtJHHMRVRibUQUjlh+t68Klp/G
-	VEAWIWWcHiHodsflK6Fcj7IJ07HLpcFc=
-X-Gm-Gg: ASbGncvrmN7XFr38iBH+5bY8XZpbG01oSu4VE0poNLXo86+9WkAQlxu2O84YIx1LMvu
-	vsk6+8pDQ5nlBWyx8iMvbVNqH5bG+Hjed3QEkZRo0qWsmfgTC2mkSAi83SBTWI4iJ1qRfPRT8SV
-	yk+I5YxVnHk17HefeBBz4am4EKMp/cQs4Dvp1k6l5Z94wyb0uUALkoeFGElSzpo25m4CEU4kd/V
-	pai6kG0
-X-Google-Smtp-Source: AGHT+IFc1oDi3ttzKyiq8xCPzeqbI2VYL6bu7FlM3gZWatkcZqVsTgMusJlK5RfvMADLXbz5b1obFkorHk7kDIOn744=
-X-Received: by 2002:a05:6a20:431a:b0:21f:5430:8fb7 with SMTP id
- adf61e73a8af0-23d704bb173mr6115388637.10.1753639569850; Sun, 27 Jul 2025
- 11:06:09 -0700 (PDT)
+        bh=n4oiLiNhkaxO8LsaSDMqBsw/x7dqCcdqZ5zoC67WtB4=;
+        b=raMWH6WgzYpnK3E9BY+UAKEZw/7r1YjAPnAHWoiv7F69JEDv/woH3LNJPjqd2SJs89
+         UewtAgES6bmrQfBT1/+4goQBRjQi4y2+QFmgT5H6wnOxEfBUyFy9xkcqw2wbR6Rp5H9n
+         t9wTreZsXmDF8Lz/30xsjsxSKmYdoYeSTHEeQk5XrCvhyQMG5iUdWVCMc7JJgDr0wWT5
+         xP+htla0VFNi4GFXqCGo9yMbprI6YVvOHfwO5NQHGK4nelhySS9OUAkTgzYMWarz5Shc
+         r3ksjcQhsxpRreYToQlBkatwyp3fwh/6TxLlxVeSffT7K8Wdt09yT30CspBpfvmw/Mta
+         0heg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfycLh+gsnSIDmvSzKzeDdB5CWGXhIbuZc47hGhgi5H9yjdsQH9qE2otBHk0j+BNRXL7iNrSI5ItZNTw==@vger.kernel.org, AJvYcCXPn7YNU67L7Kfr89Boz18dJ5EjoDXeRfQuMCdkZNRGN/hbhxvDsXrXKI+c0VLIUXR758z6viFRn3Wkllos@vger.kernel.org
+X-Gm-Message-State: AOJu0YyndLLeIUP17lH+6A/OROT+DNPBbo6cWghmN0XdcuozSV3UkQa9
+	eBBVgGxjkteWrT894opmQMUI9z4UpKpRIAK4kBygAHPeL4TnOu77co8g9c8RZhpLPIlgBNBHUE1
+	NQ4rmclz9xHLf4kfxGzbw8H7xdr/dy7I=
+X-Gm-Gg: ASbGncv+SDLBzoBp6SkaNHs8t1R94u+CMdrGv3B6tPxc/he6FMpu/MFHLoPRhzkO9xF
+	Xr5Ao6DqXY7gJ6/2SXem4dqnndNS4MSVHwpCN4cpMBtXayn2DboXK0OeRndmlTltTgddA1GewyY
+	fu5M5cM0stm8FGyTSha0dg7WcOd+EMZw1+RvsEYZzCH0DTBuuKAmSRz10RE6x6kJmCui8RycPnp
+	Rgl/YA=
+X-Google-Smtp-Source: AGHT+IHDw4e18MwM3meieNDv6CyNEIjw6RRBDQryjWtH7pCQyrFXbTQq3bN9ZLXfqefKAQAlrwduhDR/5zPd4XrD1jE=
+X-Received: by 2002:a17:902:e74f:b0:234:8c64:7885 with SMTP id
+ d9443c01a7336-23fb3197732mr126319445ad.53.1753639624238; Sun, 27 Jul 2025
+ 11:07:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717073450.15090-1-shankari.ak0208@gmail.com>
- <CAPRMd3nhDKApttF_wBU01es76NG=qAyZMAer_gjbbtTSH_FmSA@mail.gmail.com>
- <CANiq72=uDrg9HBVM97dgJGaC946Or964-2aF6OJVV0ih_vWuRA@mail.gmail.com>
- <CAPRMd3kXUJC6rC_X4i41dWNpS2tx4aEXFmBuEwncXmdJewinDA@mail.gmail.com>
- <CANiq72kw-OiU6YO8TKMVMdtJF+j7r9nBDsAa9Q2tdBzM=DyxDg@mail.gmail.com>
- <DBMUCVDVWM77.2M60X06IBGVA5@kernel.org> <CANiq72nBHtbZqt8R0dMSK6iWY7Z3vKLbeP_2dN2NaLOxRfOvCA@mail.gmail.com>
- <DBN0D5J10BH9.3I1FHJC1KZ79A@kernel.org>
-In-Reply-To: <DBN0D5J10BH9.3I1FHJC1KZ79A@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 27 Jul 2025 20:05:57 +0200
-X-Gm-Features: Ac12FXyKqx2O59Ph-48CSD2k8mkM4uvBPoNaAGIqepjHuYbNY2Y06KFqgdFsr2s
-Message-ID: <CANiq72=qbAwqcH0+ogH=STMC2UF4pV5St=gPrg6VmymvZkh6tg@mail.gmail.com>
-Subject: Re: [PATCH 7/7] rust: kernel: update ARef and AlwaysRefCounted
- imports from sync::aref
-To: Benno Lossin <lossin@kernel.org>
-Cc: Shankari Anand <shankari.ak0208@gmail.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+References: <20250727112142.604373-1-sau525@gmail.com>
+In-Reply-To: <20250727112142.604373-1-sau525@gmail.com>
+From: Yizhou Tang <tangyeechou@gmail.com>
+Date: Mon, 28 Jul 2025 02:06:52 +0800
+X-Gm-Features: Ac12FXzK89vxpSMC_5d__53ArdIcigzyoFYha3x__B2dA6SneSrQeWzSSRbUr1s
+Message-ID: <CAOB9oOZtKOSLw8YDyLB8Vepcpv3z9oJw+CQX16XKA_JJ4o7uew@mail.gmail.com>
+Subject: Re: [PATCH] blk-wbt: use fast inverse square root to optimize window
+ size calculation
+To: Meng Shao Liu <sau525@gmail.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 27, 2025 at 7:20=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+On Sun, Jul 27, 2025 at 7:22=E2=80=AFPM Meng Shao Liu <sau525@gmail.com> wr=
 ote:
 >
-> AFAIK maintainers can pick different parts of a series', right?
+> Optimize the computation of cur_win_nsec =3D win_nsec / sqrt(scale_step +=
+ 1)
+> in blk-wbt by introducing a fast inverse square root algorithm.
+> This approach replaces the original use of int_sqrt and division with a
+> more efficient and accurate approximation method.
+>
+> Signed-off-by: Meng Shao Liu <sau525@gmail.com>
+> ---
+> Since this fast inverse square root algorithm now appears in three locati=
+ons
+> (blk-wbt, sch_cake, codel), it might be worth considering refactoring
+> the implementation into a shared helper to reduce duplication and ensure =
+consistency.
+> However, this patch focuses solely on introducing the optimization in blk=
+-wbt.
+>
+>  block/blk-wbt.c | 60 +++++++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 51 insertions(+), 9 deletions(-)
+>
+> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+> index a50d4cd55..1fd5af3ba 100644
+> --- a/block/blk-wbt.c
+> +++ b/block/blk-wbt.c
+> @@ -80,6 +80,8 @@ struct rq_wb {
+>         u64 win_nsec;                           /* default window size */
+>         u64 cur_win_nsec;                       /* current window size */
+>
+> +       u32 rec_inv_sqrt;   /* reciprocal value of sqrt(scaling step + 1)=
+ */
+>         struct blk_stat_callback *cb;
+>
+>         u64 sync_issue;
+> @@ -130,6 +132,11 @@ enum {
+>          */
+>         RWB_WINDOW_NSEC         =3D 100 * 1000 * 1000ULL,
+>
+> +       /*
+> +        * Initial reciprocal value of sqrt(scaling step + 1)
+> +        */
+> +       RWB_REC_INV_SQRT    =3D 0,
 
-It depends -- some may not be able to be picked independently by
-different trees because it would break the build.
+Hi Meng,
 
-Even for those series where there are subsets that can be picked
-separately, typically in a normal series if I get Cc'd in a single
-patch, then I would assume I am supposed to give my Acked-by so that
-it gets picked elsewhere. So unless the cover letter says otherwise, I
-would expect a series to be applied as a series.
+As the initial value of scale_step is 0, then sqrt(0 + 1) =3D 1, which is n=
+ot 0.
 
-At the end of the day, it is about coordinating and case-by-case.
+> +
+>         /*
+>          * Disregard stats, if we don't meet this minimum
+>          */
+> @@ -395,20 +402,55 @@ static void scale_down(struct rq_wb *rwb, bool hard=
+_throttle)
+>         rwb_trace_step(rwb, tracepoint_string("scale down"));
+>  }
+>
+> +#define REC_INV_SQRT_CACHE (16)
+> +static const u32 inv_sqrt_cache[REC_INV_SQRT_CACHE] =3D {
+> +               ~0,         ~0, 3037000500, 2479700525,
+> +       2147483647, 1920767767, 1753413056, 1623345051,
+> +       1518500250, 1431655765, 1358187914, 1294981364,
+> +       1239850263, 1191209601, 1147878294, 1108955788
+> +};
+> +
+> +/* http://en.wikipedia.org/wiki/Methods_of_computing_square_roots
+> + * new_invsqrt =3D (invsqrt / 2) * (3 - count * invsqrt^2)
+> + *
+> + * Here, invsqrt is a fixed point number (< 1.0), 32bit mantissa, aka Q0=
+.32
+> + */
+> +
+> +static void rwb_newton_step(struct rq_wb *rwb)
+> +{
+> +       struct rq_depth *rqd =3D &rwb->rq_depth;
+> +       u32 invsqrt, invsqrt2;
+> +       u64 val;
+> +
+> +       invsqrt =3D rwb->rec_inv_sqrt;
+> +       invsqrt2 =3D ((u64)invsqrt * invsqrt) >> 32;
+> +       val =3D (3LL << 32) - ((u64)(rqd->scale_step + 1) * invsqrt2);
+> +
+> +       val >>=3D 2; /* avoid overflow in following multiply */
+> +       val =3D (val * invsqrt) >> (32 - 2 + 1);
+> +
+> +       rwb->rec_inv_sqrt =3D val;
+> +}
+> +
+> +static void rwb_invsqrt(struct rq_wb *rwb)
+> +{
+> +       struct rq_depth *rqd =3D &rwb->rq_depth;
+> +
+> +       if (rqd->scale_step + 1 < REC_INV_SQRT_CACHE)
+> +               rwb->rec_inv_sqrt =3D inv_sqrt_cache[rqd->scale_step + 1]=
+;
+> +       else
+> +               rwb_newton_step(rwb);
+> +}
+> +
+>  static void rwb_arm_timer(struct rq_wb *rwb)
+>  {
+>         struct rq_depth *rqd =3D &rwb->rq_depth;
+>
+>         if (rqd->scale_step > 0) {
+> -               /*
+> -                * We should speed this up, using some variant of a fast
+> -                * integer inverse square root calculation. Since we only=
+ do
+> -                * this for every window expiration, it's not a huge deal=
+,
+> -                * though.
+> -                */
+> -               rwb->cur_win_nsec =3D div_u64(rwb->win_nsec << 4,
+> -                                       int_sqrt((rqd->scale_step + 1) <<=
+ 8));
+> -       } else {
+> +               rwb_invsqrt(rwb);
+> +               rwb->cur_win_nsec =3D reciprocal_scale(rwb->win_nsec,
+> +                                            rwb->rec_inv_sqrt);
 
-Cheers,
-Miguel
+I think placing the two lines of code involving mathematical formulas
+directly in a core wbt code path is not a good idea. I suggest you
+encapsulate them in a separate function and document its purpose.
+
+Thanks,
+Yi
+
+> +       } else {
+>                 /*
+>                  * For step < 0, we don't want to increase/decrease the
+>                  * window size.
+> @@ -911,6 +953,7 @@ int wbt_init(struct gendisk *disk)
+>
+>         rwb->last_comp =3D rwb->last_issue =3D jiffies;
+>         rwb->win_nsec =3D RWB_WINDOW_NSEC;
+> +       rwb->rec_inv_sqrt =3D RWB_REC_INV_SQRT;
+>         rwb->enable_state =3D WBT_STATE_ON_DEFAULT;
+>         rwb->rq_depth.default_depth =3D RWB_DEF_DEPTH;
+>         rwb->min_lat_nsec =3D wbt_default_latency_nsec(q);
+> --
+> 2.50.1
+>
+>
 
