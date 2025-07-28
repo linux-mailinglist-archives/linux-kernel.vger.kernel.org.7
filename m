@@ -1,147 +1,117 @@
-Return-Path: <linux-kernel+bounces-748488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9EBB141C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:12:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA24B141C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 481261628DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:12:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5942E17F87E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3991E263C8F;
-	Mon, 28 Jul 2025 18:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDZY1xT5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B310B272807;
+	Mon, 28 Jul 2025 18:14:15 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A1F1E8328;
-	Mon, 28 Jul 2025 18:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE16224FA
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753726342; cv=none; b=erfJgxYDM4KdnVrVvntd8+dHFMbp5fQtRDBGSenaDzm9HXR8gfGyqbMh7TmsNwZxmYP0QqPV+7W+xJXiUfEatv0m22D8OebndvV5ZGEXKbBRCHfbGQjBfqdK+61yu9TPS1XSn3Iy+fdmF5VpXobwtGo9l66MSGUmjw/1aw5AVbE=
+	t=1753726455; cv=none; b=lGTwbcgnzFHDbtbFX+DyWILZrxjB9pBrRyElkhv3XNDBiyWqElJkymzHz503ByZ6YySkG7HrJzQdiDpwYc12O8xLjvC8WU+l2hUSEiYl+4MDqkJzH7pcFs4STOFYQL7CcsJfCrXBglNQ2O/wKvGQofrnuQMY110LXgMMPr7TwFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753726342; c=relaxed/simple;
-	bh=GPXtLxgLQqeIpYw5RDwKxkiReN3KSzF3obIxX1uhxQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EK3MM940DYG+qnS5fK69CYUUfFwAW6SEyMYtZPYgXMwg6h6PnbBjL4PUaZm5zNbrBidUwMeGHeyf5xRHJMKbreYeeCr5MPqi3X2YRb+rHiE5TRhYTTatB6ZmPtemtJ6x/mcYTqtzOnTObSCnfmLgyEw2G4aOdgaORjoFW6MoZmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDZY1xT5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D3CC4CEE7;
-	Mon, 28 Jul 2025 18:12:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753726342;
-	bh=GPXtLxgLQqeIpYw5RDwKxkiReN3KSzF3obIxX1uhxQc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iDZY1xT5O0+AUOeaJs9m1W1k/Hmokisrp8wMgM2TdvuE6S6KWgcYGLK06Rc54DIaf
-	 ZE549Ut19JH/HWn1GC9kPOcixmcUxaYtqsN1Ts5yQJ8ZkSYG+e0Xl7FMO2MnxcRJkT
-	 oR+CbSXKcVaw8Y3MS9etJ/RV/oe3hzARoEkR3x++mTcArWo6myDPKSsUTVaCNAmFge
-	 Xy4mNhtCW6yVZjKFLoz4+BlNjh8xLwclIMiL/slzZgcg8siULYMao2tCeVZihGH9Js
-	 qnjgrzZHvATGhqnWL9WP4pIZaXcLSb1BeNb0ED5brsQvUBMoGgeCPVqwOG4aPWF43z
-	 P7BlRbRb3eUnA==
-Date: Mon, 28 Jul 2025 11:12:19 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Falcon, Thomas" <thomas.falcon@intel.com>
-Cc: "linux-actions@lists.infradead.org" <linux-actions@lists.infradead.org>,
-	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-	"Biggers, Caleb" <caleb.biggers@intel.com>,
-	"Hunter, Adrian" <adrian.hunter@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"irogers@google.com" <irogers@google.com>,
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"Wang, Weilin" <weilin.wang@intel.com>,
-	"mani@kernel.org" <mani@kernel.org>,
-	"acme@kernel.org" <acme@kernel.org>,
-	"afaerber@suse.de" <afaerber@suse.de>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v1 00/19] Intel TMA 5.1 metrics and event updates
-Message-ID: <aIe9g7lb92XO_1_m@google.com>
-References: <20250719034515.2000467-1-irogers@google.com>
- <e09bab119c9fb6b0c2b5bcd39c6f2b508445ca37.camel@intel.com>
- <aIA1YubpL7wpiC0X@google.com>
- <aIVX4RH7llNKQ4Xn@google.com>
+	s=arc-20240116; t=1753726455; c=relaxed/simple;
+	bh=uJvZ0PF9JyZngXohD938zBOjYZaN5FF959aU0fVJVUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LawE+736zPdlzbmXcIhp3b4i5LqHGME2Wq02NY3Ii0s1nylSk3JtQNIq6CsfOstnmj8W7ow2DBjiT7EEF3mxi6Ndb+Z6wCPeMhgEsxJT7HSRvg1uOGU5n4Wt83zbNLOJRi++ANiI8+RVgqx2Zym5YlT28jzTj6opFXtp27Kg+4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [IPV6:2a02:8084:255b:aa00:b1cb:3dd6:fb96:876a] (unknown [IPv6:2a02:8084:255b:aa00:b1cb:3dd6:fb96:876a])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id C26FB404B5;
+	Mon, 28 Jul 2025 18:14:04 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a02:8084:255b:aa00:b1cb:3dd6:fb96:876a) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:b1cb:3dd6:fb96:876a]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <35094576-897f-4ab4-8835-e47940a1f0a3@arnaud-lcm.com>
+Date: Mon, 28 Jul 2025 19:14:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aIVX4RH7llNKQ4Xn@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Jfs-discussion] [PATCH] jfs: upper bound check of tree index in
+ dbAllocAG
+To: Dave Kleikamp <dave.kleikamp@oracle.com>,
+ Dave Kleikamp <shaggy@kernel.org>
+Cc: jfs-discussion@lists.sourceforge.net,
+ syzbot+cffd18309153948f3c3e@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+References: <20250424-ubsan-jfs-v1-1-2eab57c1ac50@arnaud-lcm.com>
+ <e7b79c66-22b4-4d01-be5f-adfc5ba7e50b@oracle.com>
+Content-Language: en-US
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+In-Reply-To: <e7b79c66-22b4-4d01-be5f-adfc5ba7e50b@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175372644531.17396.11877905302170947884@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-On Sat, Jul 26, 2025 at 04:34:00PM -0700, Ian Rogers wrote:
-> On Sat, Jul 26, 2025 at 03:34:09PM -0700, Namhyung Kim wrote:
-> > On Tue, Jul 22, 2025 at 06:05:38PM -0700, Namhyung Kim wrote:
-> > > On Tue, Jul 22, 2025 at 06:14:30PM +0000, Falcon, Thomas wrote:
-> > > > On Fri, 2025-07-18 at 20:44 -0700, Ian Rogers wrote:
-> > > > > Update events from:
-> > > > > v1.31 -> v1.33 for alderlake
-> > > > > v1.09 -> v1.12 for arrowlake
-> > > > > v1.14 -> v1.16 for emeraldrapids
-> > > > > v1.10 -> v1.12 for graniterpaids
-> > > > > v1.14 -> v1.17 for lunarlake
-> > > > > v1.14 -> v1.16 for meteorlake
-> > > > > v1.28 -> v1.30 for sapphirerapids
-> > > > > 
-> > > > > Update TMA 5.0 to 5.1 removing the slots event workaround as the patch series:
-> > > > > https://lore.kernel.org/lkml/20250719030517.1990983-1-irogers@google.com/
-> > > > > is assumed.
-> > > 
-> > > So I'll merge this series after the above patchset.
-> > 
-> > Now I'm seeing this on my AMD machine.
-> > 
-> >   Found metric 'tma_info_system_cpu_utilization'                                  
-> >   metric expr cpu_atom@CPU_CLK_UNHALTED.REF_TSC@ / msr@tsc\,cpu\=cpu_atom@ for tma_info_system_cpu_utilization
-> >   metric expr tma_info_system_cpus_utilized / #num_cpus_online for tma_info_system_cpu_utilization
-> >   metric expr cpu_core@CPU_CLK_UNHALTED.REF_TSC@ / msr@tsc\,cpu\=cpu_core@ for tma_info_system_cpus_utilized
-> >   found event msr@tsc,cpu=cpu_core@                                               
-> >   found event cpu_core@CPU_CLK_UNHALTED.REF_TSC@                                  
-> >   Parsing metric events '{msr/tsc,cpu=cpu_core,metric-id=msr!3tsc!0cpu!2cpu_core!3/,cpu_core/CPU_CLK_UNHALTED.REF_TSC,metric-id=cpu_core!3CPU_CLK_UNHALTED.REF_TSC!3/}:W'
-> >   event syntax error: '{msr/tsc,cpu=cpu_core,metric-id=msr!3tsc!0cpu!2cpu_core!..'
-> >                         \___ Bad event or PMU                                     
-> >                                                                                   
-> >   Unable to find PMU or event on a PMU of 'msr'                                   
-> >                                                                                   
-> >   event syntax error: '{msr/tsc,cpu=cpu_core,metric-id=msr!3tsc!0cpu!2cpu_core!..'
-> >                                     \___ not a valid PMU or CPU number            
-> >                                                                                   
-> >   event syntax error: '{msr/tsc,cpu=cpu_core,metric-id=msr!3tsc!0cpu!2cpu_core!..'
-> >                                     \___ not a valid PMU or CPU number            
-> >                                                                                   
-> >   event syntax error: '{msr/tsc,cpu=cpu_core,metric-id=msr!3tsc!0cpu!2cpu_core!..'
-> >                                     \___ not a valid PMU or CPU number            
-> >                                                                                   
-> >   event syntax error: '{msr/tsc,cpu=cpu_core,metric-id=msr!3tsc!0cpu!2cpu_core!..'
-> >                                     \___ not a valid PMU or CPU number            
-> >   Broken metric tma_info_system_cpu_utilization                                   
-> >   ---- end(-1) ----                                                               
-> >     9.3: Parsing of PMU event table metrics                            : FAILED! 
-> >   
-> >   parsing 'tma_info_mem_mix_memload_ratio': '1e3 * cpu_atom@MEM_UOPS_RETIRED.ALL_LOADS@ / cpu_atom@UOPS_RETIRED.ALL@'
-> >   parsing 'tma_info_serialization_%_tpause_cycles': '100 * cpu_atom@SERIALIZATION.C01_MS_SCB@ / (5 * cpu_atom@CPU_CLK_UNHALTED.CORE@)'
-> >   parsing 'tma_info_system_cpu_utilization': 'cpu_atom@CPU_CLK_UNHALTED.REF_TSC@ / msr@tsc\,cpu\=cpu_atom@'
-> >   check_parse_fake failed                                                         
-> >   ---- end(-1) ----                                                               
-> >     9.4: Parsing of PMU event table metrics with fake PMUs             : FAILED!
+Lovely, thanks !
+Arnaud
 
-> Sorry for this. The parse state says whether fake pmus are used.
-> Parse events needs updating for things like get_config_cpu so that
-> failing to find a pmu is ignored with fake pmus enabled. Sorry for
-> this, it is exposed in the updated metrics but the issue was caused
-> by the prior series adding the support in the term.
-
-No problem.  I've removed this series from the tree and we can fix the
-issue once you're back.  Then add the metrics later.
-
-Thanks,
-Namhyung
-
+On 11/07/2025 20:23, Dave Kleikamp wrote:
+> I'm finally trying to catch up.
+>
+> On 4/23/25 5:13PM, Arnaud Lecomte via Jfs-discussion wrote:
+>> When computing the tree index in dbAllocAG, we never check we are not
+>> out of bounds from the size of the stree.
+>> This could happen in a scenario where the filesystem metadata are
+>> corrupted.
+>
+> Looks good. I'll apply and test this.
+>
+>>
+>> Reported-by: syzbot+cffd18309153948f3c3e@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=cffd18309153948f3c3e
+>> Tested-by: syzbot+cffd18309153948f3c3e@syzkaller.appspotmail.com
+>> Fixes: 263e55949d89 ("x86/cpu/amd: Fix workaround for erratum 1054")
+>
+> Removing the Fixes: line. This doesn't make sense.
+>
+>> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+>> ---
+>>   fs/jfs/jfs_dmap.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+>> index 26e89d0c69b6..7acebb9a21b0 100644
+>> --- a/fs/jfs/jfs_dmap.c
+>> +++ b/fs/jfs/jfs_dmap.c
+>> @@ -1385,6 +1385,12 @@ dbAllocAG(struct bmap * bmp, int agno, s64 
+>> nblocks, int l2nb, s64 * results)
+>>           (1 << (L2LPERCTL - (bmp->db_agheight << 1))) / 
+>> bmp->db_agwidth;
+>>       ti = bmp->db_agstart + bmp->db_agwidth * (agno & (agperlev - 1));
+>>   +    if (ti < 0 || ti >= le32_to_cpu(dcp->nleafs)) {
+>> +        jfs_error(bmp->db_ipbmap->i_sb, "Corrupt dmapctl page: ti 
+>> out of bounds\n");
+>> +        release_metapage(mp);
+>> +        return -EIO;
+>> +    }
+>> +
+>>       /* dmap control page trees fan-out by 4 and a single allocation
+>>        * group may be described by 1 or 2 subtrees within the ag level
+>>        * dmap control page, depending upon the ag size. examine the ag's
+>>
+>> ---
+>> base-commit: 8560697b23dc2f405cb463af2b17256a9888129d
+>> change-id: 20250423-ubsan-jfs-3a58acae5e57
+>>
+>> Best regards,
+>
+>
 
