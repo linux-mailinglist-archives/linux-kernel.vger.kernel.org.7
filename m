@@ -1,147 +1,330 @@
-Return-Path: <linux-kernel+bounces-748510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558AEB14216
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0557DB1421A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7726A3B9C18
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:39:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC8B3A8711
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C504A27603C;
-	Mon, 28 Jul 2025 18:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7E74438B;
+	Mon, 28 Jul 2025 18:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YMZXU9wA"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KaZovOcV"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A22274B53
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA4A275AF7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753728009; cv=none; b=e7ZrlYBwHNCgHk6eK2uUHslXUhMzpQAe9vt4CSnlfEgh7I7lQdSko2jx/Apimd1N6vszumX4tF84nQyHZ+zZR6K6gDMh79w42ZTKhyk7FxOZLY9p+XajTkBUTWiMOXXXr8i9OXMTjOb+uDNhgWQAbwEdkIDqXzlmFXro10IYRRE=
+	t=1753728078; cv=none; b=dQ2lraJGsww69vnnBcVGxH6b9twe/9rGMjIq85h0DAJaA+O8ZLZnasuPKIgwvLvU/VBmKrc2nisrmgAnalcutCE1xbgL08MDyob+gzqzmZoh36ilHKcIz9Q2HQiGpy+SI0k7DNOpzdVBbrHvoz2205VxgX7BYqjsaRvcqWQ4qdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753728009; c=relaxed/simple;
-	bh=1kduXqhDQx0EAmkUNAhxPUmcHTqcewsbG3fh7mj6lrA=;
+	s=arc-20240116; t=1753728078; c=relaxed/simple;
+	bh=gD9JDAIZeCDO/Gr+tJDqG8UczV39zHLV27VUPKCVkg4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tDYw0k34qY5d1b6537j7jqx4IiLWAQ+p/GcTyf7gZ/45BwQp6Xt9x8nDYdZi9egVPriAh497S1Fyieip2onx7Zi2s4RYeDEy7N+rllj9XGE1xVpA7h7U1UkzVIzzKegAtBmnXGtjefahJhBsiAvzyEs8Oe2CtAbnwiXd6usqW8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YMZXU9wA; arc=none smtp.client-ip=209.85.214.171
+	 To:Cc:Content-Type; b=hznfxnVBnWXJvSCwcaZLpT6TTgqsf9m6Ey/iSjMcBq4OLLl3rL9c4p9wGEOEqkdVSmeHzfVdHO0OWDuBnFoE/VLYs7kqcwkdqIJW/AH4gLRDe/Grqjxqtxa5CG76zVrSbbnuwhYNVk8goTxzP+l8N+XwMvrSpO//DFw3OKg2NUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KaZovOcV; arc=none smtp.client-ip=209.85.219.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-235e389599fso31005ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:40:06 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e8e11af0f54so1017939276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:41:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753728006; x=1754332806; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753728075; x=1754332875; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kElooT4IAHvVgVX9pYB8yevgu/UwFxeJsat70xy7zh8=;
-        b=YMZXU9wAN6Aysq4xnuQlAsDlrQLRbChbeYQIQKx6FdaFycJe+XINXD0KrjfLlGGFWA
-         JtlB3xc4kMRmjuXIEseJC/MQRoIkbmc0saFgV+N1ONkgnVA0DN0beOZYWdWpEbJyD+x2
-         rmahNsGA0GZGvuM4lGw460bnPxpCq6eW8c6i5Yh1CC4MC4GreWhY2EM/sUjnUFTIXzS8
-         as5dZ1BAVQkHI6E/kooZkIHz4RDhpcvOeXOdx6tl8ZcTzE8YumLbNOWfzP+Xt/9W59xX
-         UOIGr7lHZiNwXXrNi4RnB6QQ1r+NifBAHYiXMrQ8xhS7dIFEHP4oIiOKsrV8M2r9pe0y
-         XPzQ==
+        bh=IcW9YT4umCsQsq4GXt/Df/GuqdFRmh89E1PylPZViJg=;
+        b=KaZovOcVekEl0VRhyIAzLpFbjECyfXO3Vt96bRmTUUmzNSMT5zUZbTnTj0sk/LEjqM
+         /buwh5aJc7hLLafTx4IZHgRsjR/LBpgz3htrkXaSGplKv/DBMnGOv0lF7BK7UgUSy3wq
+         IpilToEayc+c0An5PYTgMOFlGZSq72ywmeEHNL7I34i85CEGoC7x0jxk+n0nFTMEj3ro
+         /+cQNDB0cs1+8sCZURe2hUuXuhWaZd4nBsbg3UdB9E2zniwhcB27zTYj5g8Siw5Hwx88
+         FP2MwYmHuk4xUGmuQOMH7tSSI9fOXIGav+2h5EtVTCzulp7d5FX+qRgphG1aQyMZXEYc
+         9/Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753728006; x=1754332806;
+        d=1e100.net; s=20230601; t=1753728076; x=1754332876;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kElooT4IAHvVgVX9pYB8yevgu/UwFxeJsat70xy7zh8=;
-        b=qiXiyuCKsDCYUtEBqqqoXRYo97+nBuh3Ybkpi68hehgjUlMw6DdzrDmeFKDLE/B+6c
-         cSIJrFMMCH/AA3DUvyfzxE6dTPYUoIzbCCk6aYbReAh657NQcdSWpFG8Jccm3Tldxg8k
-         XcISg0nHa2d4fKFdq95ODmA2rXhiYGzL5DAw3dJoYB8ET0YuwU2OorDCM1utsCgLuzZ6
-         5hl6KsPjIKHqhUXUPMSuzzWXiL3+tvdb6YD40c1tdOKcN1oQ7F7rDXQ+f1zUl5gWF7Ex
-         JKlL+dmEdUisNS+v0nuhob6P7v+b+Aft5bkNvU0IKg0yV3uesIAHl0sRTLYiBRgNMdW6
-         K13A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3YLRGr6EB9wLkfnNp7H5igrkjbJkOR8PcEtk99wreXLmAB0x0QnKqPX7xV6w+9UktKoFilhRX5FvPMTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVPPnoDHQS9yOC/3U6MNQonzp7Fgl4XdmDmXBOrS+qtbuaHjcQ
-	ATAx/6tAg1man2dlPDaDo+2i7jpRcfR/AH+cU3pEpI4pHoSohf+luF0yDcmDLXJqnMnHsBUXM7O
-	m5F58U2rsjS4LBjzQjtZ+Ws3XhS5H2I1LntrQyl/v
-X-Gm-Gg: ASbGncvybEC/jzJqvLdDaPKdR+4RAToIjjG7MgfQIjHVfWyHRItK5cKOCJp7H3SWr26
-	Ft2URpcFptGIifOppYYYZVxgZnyOI0Ph6tOS7+NG9A/OvK4r17Utm3W5UYJbkMrCqIJaZtMGQzi
-	QHTR8gCccFMvmqB3ljoswU8LfjdMTi0dVcPVC4P91Hv9tV57dXXU9BvKboYm4w++Oeq/qKiXKEt
-	WCvIwYpqK937TCQRwklwsNz8hR67DuhDYUGIaVlhpXUIlDpIi/kuwGx4Ns=
-X-Google-Smtp-Source: AGHT+IFiTjDeBpEApQbF4hYs7HgiAPbvdpocoITXlbamYX87A4mT1jZoFeAsOSv90fvuk8ivllMPYW7JIqK28FHHq+4=
-X-Received: by 2002:a17:902:c949:b0:240:2bd5:7c98 with SMTP id
- d9443c01a7336-24068ef8cdfmr240575ad.11.1753728005408; Mon, 28 Jul 2025
- 11:40:05 -0700 (PDT)
+        bh=IcW9YT4umCsQsq4GXt/Df/GuqdFRmh89E1PylPZViJg=;
+        b=vOkSYPLtIXT8k+KhZXlz/fpfmeOvL9DzDURRSzt5rIuFPqarklrf8qDjmD8yksnAzL
+         tmA2pIhqn/d5iA3Ms5eYXRZCxkGlGQg14cf2/gCHq9n6k4KcYKPAdROcoDYGCzgpVIPE
+         WJv1LzHOMwCrn8lf4EIPdeeDeCsUlPDTfLdTNFcm0ZTxZatVFxUDWI+Lekv9S0tbTuWZ
+         CMepR0FstBHSCA8OI1qocm4XS+GUmonRS3bNjYFQClifk7gDJ7d9YG+7hkiy27GCzt6t
+         8QuLzzyY/qQeAftvU4SyZeVftORbatGxUu66dDBY11oREtKMlmt3m1OZISOXuWgZ9G0n
+         wG2g==
+X-Forwarded-Encrypted: i=1; AJvYcCULd6nfmXpyI2jt7/648x1T5i36AZRN2qTqogGVmILwuB9aLebe+NlLnt9qCH0QFquSdCPQ/ZOgJhMuNSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+MRtb0eDWExhVMScWbJC2YVMNTNHKIreW+xKKFeLw0+/8rZex
+	+KR+2b0X3QKKMrDFlUYI0VwHnTBzFLiLgXKdlREvXlfX/l0SoaY3gTuRCIzLmQzVGtYLQlYknOv
+	l4D6UTBvRNx8HjggTowdg3HO+cqHD2z9Thrv6UWGN
+X-Gm-Gg: ASbGnctuiLLIgI5igpLiowDrWE7SQ+UjrLynJmsz87diSsLgVbdUdGq3OrTZrBV9LrO
+	SnqZOHmjPwMIoz8g6p/sqloAScg14/fmeytpIVB1fnL1sLt/sOJVZsqfYUTvfxgDgH5uKclxu5U
+	szhgPyBTeFOUmofxg4aMGkxGnOSsR/8GX874VTDV3un5dCyKgiG8lXhWho6l+kOnNhWO+VaS+mJ
+	DLENLsLRP1tFWBNi8j+lvYXIMTbPhd9GgYO
+X-Google-Smtp-Source: AGHT+IHJXVEqdrBcAnXuWTXHuvnxMMbIDKrglSs4ZONJ/fmemCGL+0skuCrs971o7keTd04AvO3sGQGtgRZWwCamA6Q=
+X-Received: by 2002:a25:2003:0:b0:e8d:7121:c1d4 with SMTP id
+ 3f1490d57ef6-e8df1257d62mr10719565276.49.1753728075348; Mon, 28 Jul 2025
+ 11:41:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728052742.81294-1-byungchul@sk.com> <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
-In-Reply-To: <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 28 Jul 2025 11:39:52 -0700
-X-Gm-Features: Ac12FXzdEF9xaTcLfGhZyp6hzC9OOZQrKTg5nGgx21xEL8_A7PY-4QwgLa-JD48
-Message-ID: <CAHS8izO6t0euQcNyhxXKPbrV7BZ1MfuMjrQiqKr-Y68t5XCGaA@mail.gmail.com>
-Subject: Re: [PATCH v2] mm, page_pool: introduce a new page type for page pool
- in page type
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel_team@skhynix.com, harry.yoo@oracle.com, 
-	ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, 
-	hawk@kernel.org, john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com, 
-	leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com, andrew+netdev@lunn.ch, 
-	edumazet@google.com, pabeni@redhat.com, akpm@linux-foundation.org, 
-	david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
-	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, 
-	ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org, 
-	kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com, 
-	baolin.wang@linux.alibaba.com, toke@redhat.com, bpf@vger.kernel.org, 
-	linux-rdma@vger.kernel.org
+References: <20250707224720.4016504-1-jthoughton@google.com>
+ <20250707224720.4016504-8-jthoughton@google.com> <aIFOV4ydqsyDH72G@google.com>
+In-Reply-To: <aIFOV4ydqsyDH72G@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Mon, 28 Jul 2025 11:40:38 -0700
+X-Gm-Features: Ac12FXzNRSGTZQCvwPF4p1LQM7f4KRHOP7ZrLSwhiH3TkaYDZA11PdSrSTxTMtA
+Message-ID: <CADrL8HVJrHrb3AJV5wYtL9x0XHx+-bNFreO4-OyztFOrupE5eg@mail.gmail.com>
+Subject: Re: [PATCH v5 7/7] KVM: selftests: Add an NX huge pages jitter test
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vipin Sharma <vipinsh@google.com>, 
+	David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 28, 2025 at 11:35=E2=80=AFAM Pavel Begunkov <asml.silence@gmail=
-.com> wrote:
+On Wed, Jul 23, 2025 at 2:04=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
 >
-> On 7/28/25 06:27, Byungchul Park wrote:
-> > Changes from v1:
-> >       1. Rebase on linux-next.
+> On Mon, Jul 07, 2025, James Houghton wrote:
+> > +             /*
+> > +              * To time the jitter on all faults on pages that are not
+> > +              * undergoing nx huge page recovery, only execute on ever=
+y
+> > +              * other 1G region, and only time the non-executing pass.
+> > +              */
+> > +             if (page & (1UL << 18)) {
 >
-> net-next is closed, looks like until August 11.
->
-> >       2. Initialize net_iov->pp =3D NULL when allocating net_iov in
-> >          net_devmem_bind_dmabuf() and io_zcrx_create_area().
-> >       3. Use ->pp for net_iov to identify if it's pp rather than
-> >          always consider net_iov as pp.
-> >       4. Add Suggested-by: David Hildenbrand <david@redhat.com>.
->
-> Oops, looks you killed my suggested-by tag now. Since it's still
-> pretty much my diff spliced with David's suggestions, maybe
-> Co-developed-by sounds more appropriate. Even more so goes for
-> the second patch getting rid of __netmem_clear_lsb().
->
-> Looks fine, just one comment below.
->
-> ...> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> > index 100b75ab1e64..34634552cf74 100644
-> > --- a/io_uring/zcrx.c
-> > +++ b/io_uring/zcrx.c
-> > @@ -444,6 +444,7 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *=
-ifq,
-> >               area->freelist[i] =3D i;
-> >               atomic_set(&area->user_refs[i], 0);
-> >               niov->type =3D NET_IOV_IOURING;
-> > +             niov->pp =3D NULL;
->
-> It's zero initialised, you don't need it.
->
+> This needs a #define or helper, I have no idea what 1 << 18 is doing.
 
-This may be my bad since I said we should check if it's 0 initialized.
+I'll use (SZ_1G >> PAGE_SHIFT), thanks. It's just checking if `page`
+lies within an odd-numbered 1G region.
 
-It looks like on the devmem side as well we kvmalloc_array the niovs,
-and if I'm checking through the helpers right, kvmalloc_array does
-0-initialize indeed.
+>
+> > +                     uint64_t tsc1, tsc2;
+> > +
+> > +                     tsc1 =3D rdtsc();
+> > +                     *gva =3D 0;
+> > +                     tsc2 =3D rdtsc();
+> > +
+> > +                     if (tsc2 - tsc1 > max_cycles)
+> > +                             max_cycles =3D tsc2 - tsc1;
+> > +             } else {
+> > +                     *gva =3D RETURN_OPCODE;
+> > +                     ((void (*)(void)) gva)();
+> > +             }
+> > +     }
+> > +
+> > +     GUEST_SYNC1(max_cycles);
+> > +}
+> > +
+> > +struct kvm_vm *create_vm(uint64_t memory_bytes,
+> > +                      enum vm_mem_backing_src_type backing_src)
+> > +{
+> > +     uint64_t backing_src_pagesz =3D get_backing_src_pagesz(backing_sr=
+c);
+> > +     struct guest_args *args =3D &guest_args;
+> > +     uint64_t guest_num_pages;
+> > +     uint64_t region_end_gfn;
+> > +     uint64_t gpa, size;
+> > +     struct kvm_vm *vm;
+> > +
+> > +     args->guest_page_size =3D getpagesize();
+> > +
+> > +     guest_num_pages =3D vm_adjust_num_guest_pages(VM_MODE_DEFAULT,
+> > +                             memory_bytes / args->guest_page_size);
+> > +
+> > +     TEST_ASSERT(memory_bytes % getpagesize() =3D=3D 0,
+> > +                 "Guest memory size is not host page size aligned.");
+> > +
+> > +     vm =3D __vm_create_with_one_vcpu(&vcpu, guest_num_pages, guest_co=
+de);
+> > +
+> > +     /* Put the test region at the top guest physical memory. */
+> > +     region_end_gfn =3D vm->max_gfn + 1;
+> > +
+> > +     /*
+> > +      * If there should be more memory in the guest test region than t=
+here
+> > +      * can be pages in the guest, it will definitely cause problems.
+> > +      */
+> > +     TEST_ASSERT(guest_num_pages < region_end_gfn,
+> > +                 "Requested more guest memory than address space allow=
+s.\n"
+> > +                 "    guest pages: %" PRIx64 " max gfn: %" PRIx64
+> > +                 " wss: %" PRIx64 "]",
+>
+> Don't wrap this last one.
+>
+> > +                 guest_num_pages, region_end_gfn - 1, memory_bytes);
+> > +
+> > +     gpa =3D (region_end_gfn - guest_num_pages - 1) * args->guest_page=
+_size;
+> > +     gpa =3D align_down(gpa, backing_src_pagesz);
+> > +
+> > +     size =3D guest_num_pages * args->guest_page_size;
+> > +     pr_info("guest physical test memory: [0x%lx, 0x%lx)\n",
+> > +             gpa, gpa + size);
+>
+> And don't wrap here either (82 chars is totally fine).
 
---=20
-Thanks,
-Mina
+Right.
+
+>
+> > +
+> > +     /*
+> > +      * Pass in MAP_POPULATE, because we are trying to test how long
+> > +      * we have to wait for a pending NX huge page recovery to take.
+> > +      * We do not want to also wait for GUP itself.
+> > +      */
+>
+> Right, but we also don't want to wait for the initial fault-in either, no=
+?  I.e.
+> plumbing in MAP_POPULATE only fixes the worst of the delay, and maybe onl=
+y with
+> the TDP MMU enabled.
+>
+> In other words, it seems like we need a helper (option?) to excplitly "pr=
+efault",
+> all memory from within the guest, not the ability to specify MAP_POPULATE=
+.
+
+I don't want the EPT to be populated.
+
+In the event of a hugepage being executed, consider another memory
+access. The access can either (1) be in the executed-from hugepage or
+(2) be somewhere else.
+
+For (1), the optimization in this series doesn't help; we will often
+be stuck behind the hugepage either being destroyed or reconstructed.
+
+For (2), the optimization in this series is an improvement, and that's
+what this test is trying to demonstrate. But this is only true if the
+EPT does not have a valid mapping for the GPA we tried to use. If it
+does, the access will just proceed like normal.
+
+This test only times these "case 2" accesses. Now if we didn't have
+MAP_POPULATE, then (non-fast) GUP time appears in these results, which
+(IIRC) adds so much noise that the improvement is difficult to
+ascertain. But with MAP_POPULATE, the difference is very clear.
+
+This test is 100% contrived to consistently reproduce the memory
+access timing anomalies that Vipin demonstrated with his initial
+posting of this series[1].
+
+[1]: https://lore.kernel.org/kvm/20240906204515.3276696-3-vipinsh@google.co=
+m/
+
+>
+> > +     vm_mem_add(vm, backing_src, gpa, 1,
+> > +                guest_num_pages, 0, -1, 0, MAP_POPULATE);
+> > +
+> > +     virt_map(vm, guest_test_virt_mem, gpa, guest_num_pages);
+> > +
+> > +     args->pages =3D guest_num_pages;
+> > +
+> > +     /* Export the shared variables to the guest. */
+> > +     sync_global_to_guest(vm, guest_args);
+> > +
+> > +     return vm;
+> > +}
+> > +
+> > +static void run_vcpu(struct kvm_vcpu *vcpu)
+> > +{
+> > +     struct timespec ts_elapsed;
+> > +     struct timespec ts_start;
+> > +     struct ucall uc =3D {};
+> > +     int ret;
+> > +
+> > +     clock_gettime(CLOCK_MONOTONIC, &ts_start);
+> > +
+> > +     ret =3D _vcpu_run(vcpu);
+> > +
+> > +     ts_elapsed =3D timespec_elapsed(ts_start);
+> > +
+> > +     TEST_ASSERT(ret =3D=3D 0, "vcpu_run failed: %d", ret);
+> > +
+> > +     TEST_ASSERT(get_ucall(vcpu, &uc) =3D=3D UCALL_SYNC,
+> > +                 "Invalid guest sync status: %" PRIu64, uc.cmd);
+> > +
+> > +     pr_info("Duration: %ld.%09lds\n",
+> > +             ts_elapsed.tv_sec, ts_elapsed.tv_nsec);
+> > +     pr_info("Max fault latency: %" PRIu64 " cycles\n", uc.args[0]);
+> > +}
+> > +
+> > +static void run_test(struct test_params *params)
+> > +{
+> > +     /*
+> > +      * The fault + execute pattern in the guest relies on having more=
+ than
+> > +      * 1GiB to use.
+> > +      */
+> > +     TEST_ASSERT(params->memory_bytes > PAGE_SIZE << 18,
+>
+> Oooh, the 1 << 18 is 1GiB on PFNs.  Ugh.  Just use SZ_1G here.  And asser=
+t immediate
+> after setting params.memory_bytes, don't wait until the test runs.
+
+Will do, thanks.
+
+>
+> > +                 "Must use more than 1GiB of memory.");
+> > +
+> > +     create_vm(params->memory_bytes, params->backing_src);
+> > +
+> > +     pr_info("\n");
+> > +
+> > +     run_vcpu(vcpu);
+> > +}
+> > +
+> > +static void help(char *name)
+> > +{
+> > +     puts("");
+> > +     printf("usage: %s [-h] [-b bytes] [-s mem_type]\n",
+> > +            name);
+> > +     puts("");
+> > +     printf(" -h: Display this help message.");
+> > +     printf(" -b: specify the size of the memory region which should b=
+e\n"
+> > +            "     dirtied by the guest. e.g. 2048M or 3G.\n"
+> > +            "     (default: 2G, must be greater than 1G)\n");
+> > +     backing_src_help("-s");
+> > +     puts("");
+> > +     exit(0);
+> > +}
+> > +
+> > +int main(int argc, char *argv[])
+> > +{
+> > +     struct test_params params =3D {
+> > +             .backing_src =3D DEFAULT_VM_MEM_SRC,
+> > +             .memory_bytes =3D DEFAULT_TEST_MEM_SIZE,
+> > +     };
+> > +     int opt;
+> > +
+> > +     while ((opt =3D getopt(argc, argv, "hb:s:")) !=3D -1) {
+> > +             switch (opt) {
+> > +             case 'b':
+> > +                     params.memory_bytes =3D parse_size(optarg);
+> > +                     break;
+> > +             case 's':
+> > +                     params.backing_src =3D parse_backing_src_type(opt=
+arg);
+> > +                     break;
+> > +             case 'h':
+> > +             default:
+> > +                     help(argv[0]);
+> > +                     break;
+> > +             }
+> > +     }
+> > +
+> > +     run_test(&params);
+> > +}
+> > --
+> > 2.50.0.727.gbf7dc18ff4-goog
+> >
 
