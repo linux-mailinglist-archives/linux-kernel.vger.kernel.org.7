@@ -1,126 +1,172 @@
-Return-Path: <linux-kernel+bounces-748131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364C5B13CD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:18:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C5EB13CD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83E28188BD9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:13:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD854E2F6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A64226D4D9;
-	Mon, 28 Jul 2025 14:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778F126CE28;
+	Mon, 28 Jul 2025 14:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NUGVxiKU"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bB02Xjuf"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164CE26B76E
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1565026AAB2
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753711968; cv=none; b=ccDObWfX2MgiJiR4F/RZoaI5IVcjw8huLZw1QlNj2XpRZd3Kq0LYQq6Qq3qpG0ZEF5j4eDdrY/iYOHiKq1R4Ah7NY1q00cVuNkt+8usf1+yPf9A8DpxxMBcrBzlOtoDAOvvPDOTj+ueiWJLApzB+g75Kr52dvy1Gj9a7iLJDBPs=
+	t=1753711966; cv=none; b=oGrxC+poSP9M7+AWK5cpp0CB1DuawAJVd8wUcHnNgdbcBprVTrP4tPV3+1NCrR2FKv8+NdR+BM8MMgjaOmwtjPrfM8ZytRxEIcDxgpUajc2JShhClPqWhVcW7fZpsnYLy0QzbWtAv0UCpr+aq6xNm9bNs+qhMa0GtGjRCXkSdJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753711968; c=relaxed/simple;
-	bh=eyO1Zh3JLq89LG2uKG9/+47hoHtzpYlBtMnkZyT0qW4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h2NAX4/yxeFI8wHSAyIJXfmLPzbmSiYY+hc04DuRQrQWD6QvwGqG2wjEvT0myCUsOFGXs/+af1XqDXVyBSQ4GqQP+O2lRmbXxSRx39cbc7b5Qb4jr8CsOPaVzhv8i9SDgMOAv0tUKIpIaYi+3wxq+Mg3a7UZOoQrK2D3mtUhMtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NUGVxiKU; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso16260a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:12:46 -0700 (PDT)
+	s=arc-20240116; t=1753711966; c=relaxed/simple;
+	bh=O7XVb7+2KL6hxl5QjIDAgpMPkeKC+T641Z452dT9/kI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S8DTs36TQQC7gfVlXgomsDQj0SdzaelRRF9TK76yMyay8Ipcx+5hrpqsT1uJaqkqJYWe4XKmsCI67jMn22zTa46mRdgiOIa7vv7sLH+JivSEUQu7IrZ1DHQL1t56taDrDMC5t5534LugBBd2EKuqQcrJLs24Qkk2SYQDp3AwSwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bB02Xjuf; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae3cd8fdd77so935339166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:12:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753711965; x=1754316765; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eyO1Zh3JLq89LG2uKG9/+47hoHtzpYlBtMnkZyT0qW4=;
-        b=NUGVxiKUEabmjxLx2dhVJxUFKYpbYh3OW7tyvd8R+I785/jtDxqEHlar1yaM4CAIXO
-         HXQ/JiPTgmtBezQbPyik8xCOe+Ej8ZKfFVAH5r6c4umGWerS2S4RIj+/DPSdj3rlSeec
-         4hg0u0vNRGFHCZSlUuYpzooE/tP3aYADFPtbcq/wHjrG3zi1JRMCbRp6gCvfRSO9WmS6
-         MTnTmwewXjwTmq4NnxUhpk95Eb/Aap3GCQqljY1fOfj+jzY3MJmqriLlcr8Z93Se6BM3
-         bsUxjMUe59+4nf/fvzjuRBIpakmoAnM1jIPSD0y35uKx25Jk9VJiSsQSj1d4VoSc5Nfk
-         RyUQ==
+        d=linaro.org; s=google; t=1753711963; x=1754316763; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jk6mSRTMsB/OIBvGlw4Rzm6kh4ycxWxzbNU2i/NsHgM=;
+        b=bB02XjufDpj12Gzq6JmMN/Y9BwCXmUh1UUfOjCG/LhR2syMWCVBBHfdYN9WPcMdyhy
+         OQOfvw2OU6mlCTVgUfFPsv9/MtAiqML8LR8pMjk1UwqqAJD0fr2BQRvG0kqPkCzsiVum
+         dMCSw/xuIAyWBoJmO2xbCRyxMqGLw2OhW79jBvFpz9CBg5pLqTmav/sXMuh4vrHIYmZy
+         rd728CDEmfBUwZkS9rNBsug9OLQZksmccsgedZ5ZhYF9UEt7dtmcthcHDNBtKOewvXIH
+         hYOk7H7HqtOkigjEW/jt1/yahl3o44RsgcEuOXg/uU5R4XztCdDv/FUcnyceqDv1wN9Y
+         t8Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753711965; x=1754316765;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eyO1Zh3JLq89LG2uKG9/+47hoHtzpYlBtMnkZyT0qW4=;
-        b=bS16PAXu+3+2jM8FPu8HwwY0OH8NS90e9EBTuww5iHr+WAFhaZ+HAtL3YesuS9p1oF
-         JxL8zwBo0k/tSntU/f+VtdPUO7Bb0vWiq3KAVyyRXzeoM+9ISRDGPNEySDNhKgLfBOUk
-         VR1nTa3cqdnM4hSb/19xqqEm2O7ze/lYjmfPVk7fGTa/IJ22m2k2DVzrRYjmNIPohzjo
-         H8PvPIbt6e/Pu20UPV/XpBMYzo+X1C6jJK3l5MSyfDigHLFtxmyVdphT/8ib+DHA9na4
-         riZAwPymJvmVzU56+8FZn2vueJ2PJt+b+nTeLyjvdTjBlshnxDMHlHUnvDoMZsCs1QrC
-         iWmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWh2jBebvQs4BxjbtMMDw9ipCA3/AdzfHiQOTSlGsd0gXu6nR+DVP+pw9XYofirnnT1WrISif1KNlQ1vDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIlPVr9/8hwSN7mJwtqCZ83Xh/pDDawOkvMYllLuo93RIilj0Z
-	1NE0m1oixoWG1S1LrlIdL1mKwPBHJMB/96+kOK8xc1A8Affjhpuwo4sdq0vnIw7bFGbP8VTHDTs
-	v59HDrZrTuvdGt5wWwK2X7bcysRoVMExpW0BJkJGAduryGd8jEhwd/Yw9
-X-Gm-Gg: ASbGncvIS3blNMDh4igeNdApfFzRdhuyz47aF+b90v6Y5xLg0rJ55RPmIEEhy5kNkBF
-	73H0zreyt0c0nlypYoysSz39Y5u1KaBt0HShk91DyDfX01V67GRKNeOssfe3N7HKCozzdvzedZB
-	OFcgXx6IFHDagxlLGw4oxeai1f2INwMlANqg8CLZphM/BNCr7NtbtJ+1czFN4efdyPU86vO8qN/
-	xmJK8s7vBHd7j3gYy2fL6za9mtsjxgKeA==
-X-Google-Smtp-Source: AGHT+IGqSyVPEeBd1/C92xR8Yk5cwA35fb1bP695SMItcVpEcxcrhb8x+oSwZU4glMUFyz5GmbVv9lfOnFDdUmso97U=
-X-Received: by 2002:aa7:d793:0:b0:615:28c0:fac8 with SMTP id
- 4fb4d7f45d1cf-61528c0fd99mr103964a12.4.1753711965037; Mon, 28 Jul 2025
- 07:12:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753711963; x=1754316763;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jk6mSRTMsB/OIBvGlw4Rzm6kh4ycxWxzbNU2i/NsHgM=;
+        b=Nq7lFTAWg5KWjkZK6yzqM9Uj7H/ocYfPCIFgbFXXYFjDJAkBNaPnO9k+3Y+yKG9gJY
+         viIGa9gcRSO+yPkWEMYoFTFLbrtmzNSE8+/0Ezo3w380cK9reWplwfuTNpqAq7otWKz8
+         pA+w6bhBg6nVMD1TujLpxFMSyxXRUypc/ltnMEqk9MbPxzjYXuxawPEwqy7muiSMMWXi
+         7Mx5VZy+6fTbjB3VZo5BeYgKV0EOa61poD5Xw3dwFrBPXRnzH44HKTMk63XKbCutuzun
+         cnORzp7cuHoiLv9skF5FSogykKy5Jix07uvpcqFQPg0vlwFm822Evf/wVQArTfVADnQf
+         MVDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWE/c5O/qW8ZudA1rJP7O6NP5XV0mYK12/2ejbYtk9fb13BtxWdRiTjDTcg2NTP4u+lQ5FHsghIRFOu7Y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfuez3yzjtP3+EGed48dVd/w8hEm1ibJWRVAUm3nKR3OlanHXF
+	1VKVmBnvs6cDNz+1TpG2ih07GZNT8qTFp8SQB0qoNRiqimhIAar6insx+nv7+YLVQA0=
+X-Gm-Gg: ASbGncsXHLrZL4anX2FncUl2+p7yEHBbA3R0uuXNV38ocxYNh/0ncd9C/F2ZdWdXIWC
+	hgaqZ1Jd5TzVzNO/aVYxEVGutdwdmr9brXcWobVQmAmOJz20n6HiydlqUjZFOG3brU1DkQQCaH6
+	S6DnfU0QF3hunpkWlB9QMsEGR84cfTHCpX+vfebVvwQEuOo7bEGZQt8daxt+56kPV4nQ4sPwV2T
+	fioqnxDunKWeiOuNLDTOV31ox8lsd70f6FGgbhaQcI/nP89uALpVxGWuSrkSKo6cIR8lVnB4x3r
+	m+Xcd+Qdl4WclUaF7e+AAu75lnGrCftLLoUnoJI8QdmJLac9gVfpi3Zm/8ztDoWIajyJC6DSC7/
+	HsJrwIVfvhWuBCXvXcFtCnDNXTP48l0iWIkZ/2TjZ+qpRLn0Q6XVcwErRgNylbNA=
+X-Google-Smtp-Source: AGHT+IFqxJRE1QKHYBFZxQpyOgr6z9UdMOEOO88xTViMCt0rV+PU4AVbmvZ0211adT45N0kyk5+wKg==
+X-Received: by 2002:a17:907:96a0:b0:ae3:7058:7b48 with SMTP id a640c23a62f3a-af61ce932camr1392836266b.25.1753711961420;
+        Mon, 28 Jul 2025 07:12:41 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af6358a1858sm431613166b.45.2025.07.28.07.12.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 07:12:40 -0700 (PDT)
+Message-ID: <dca47ca3-d5f7-4b2e-9611-dd195ee149fc@linaro.org>
+Date: Mon, 28 Jul 2025 15:12:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725-anonvma-uaf-debug-v2-1-bc3c7e5ba5b1@google.com> <aIb3In3G7XygrXNT@harry>
-In-Reply-To: <aIb3In3G7XygrXNT@harry>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 28 Jul 2025 16:12:08 +0200
-X-Gm-Features: Ac12FXyCLEXjkKoQicke_OUqRIIitb9JxcenfQlHNDrm0vc-8LFcwy48OZbcVYg
-Message-ID: <CAG48ez0sfeF73sBK0V2TiYMc=grhM5fA-673xXNeCqQMYo2dug@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/rmap: Add anon_vma lifetime debug check
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Rik van Riel <riel@surriel.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] media: qcom: camss: Add qcs8300 compatible
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711131134.215382-1-quic_vikramsa@quicinc.com>
+ <20250711131134.215382-4-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250711131134.215382-4-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 28, 2025 at 6:06=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
-ote:
-> On Fri, Jul 25, 2025 at 02:16:24PM +0200, Jann Horn wrote:
-> > If an anon folio is mapped into userspace, its anon_vma must be alive,
-> > otherwise rmap walks can hit UAF.
-> >
-> > There have been syzkaller reports a few months ago[1][2] of UAF in rmap
-> > walks that seems to indicate that there can be pages with elevated mapc=
-ount
-> > whose anon_vma has already been freed, but I think we never figured out
-> > what the cause is; and syzkaller only hit these UAFs when memory pressu=
-re
-> > randomly caused reclaim to rmap-walk the affected pages, so it of cours=
-e
-> > didn't manage to create a reproducer.
-> >
-> > Add a VM_WARN_ON_FOLIO() when we add/remove mappings of anonymous folio=
-s to
-> > hopefully catch such issues more reliably.
-[...]
-> Oops, I'm late to the party.
->
-> A question; does it make sense to disable reuse of anon_vmas during
-> anon_vma_clone() to increase chances of detecting this? (of course,
-> for debugging-purpose only)
-
-As Lorenzo said, I think making such a change would risk making it
-impossible to hit some bugs in debug builds even though they can
-happen in normal builds, which would be bad.
-
-> Regardless of that:
-> Acked-by: Harry Yoo <harry.yoo@oracle.com>
-
-Thanks!
+On 11/07/2025 14:11, Vikram Sharma wrote:
+> Add CAMSS_8300 enum, QCS8300 compatible and qcs8300 camss driver
+> private data, the private data just include some basic information
+> for now, later changes will enumerate with csiphy, tpg, csid and
+> vfe resources.
+> 
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/camss/camss.c | 21 +++++++++++++++++++++
+>   drivers/media/platform/qcom/camss/camss.h |  1 +
+>   2 files changed, 22 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 6f5b70bcf488..5211367b535d 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -2898,6 +2898,19 @@ static const struct camss_subdev_resources vfe_res_8775p[] = {
+>   	},
+>   };
+>   
+> +static const struct resources_icc icc_res_qcs8300[] = {
+> +	{
+> +		.name = "ahb",
+> +		.icc_bw_tbl.avg = 38400,
+> +		.icc_bw_tbl.peak = 76800,
+> +	},
+> +	{
+> +		.name = "hf_0",
+> +		.icc_bw_tbl.avg = 2097152,
+> +		.icc_bw_tbl.peak = 2097152,
+> +	},
+> +};
+> +
+>   static const struct resources_icc icc_res_sa8775p[] = {
+>   	{
+>   		.name = "ahb",
+> @@ -4180,6 +4193,13 @@ static const struct camss_resources msm8996_resources = {
+>   	.link_entities = camss_link_entities
+>   };
+>   
+> +static const struct camss_resources qcs8300_resources = {
+> +	.version = CAMSS_8300,
+> +	.pd_name = "top",
+> +	.icc_res = icc_res_qcs8300,
+> +	.icc_path_num = ARRAY_SIZE(icc_res_qcs8300),
+> +	.link_entities = camss_link_entities
+> +};
+>   
+>   static const struct camss_resources sa8775p_resources = {
+>   	.version = CAMSS_8775P,
+> @@ -4308,6 +4328,7 @@ static const struct of_device_id camss_dt_match[] = {
+>   	{ .compatible = "qcom,msm8916-camss", .data = &msm8916_resources },
+>   	{ .compatible = "qcom,msm8953-camss", .data = &msm8953_resources },
+>   	{ .compatible = "qcom,msm8996-camss", .data = &msm8996_resources },
+> +	{ .compatible = "qcom,qcs8300-camss", .data = &qcs8300_resources },
+>   	{ .compatible = "qcom,sa8775p-camss", .data = &sa8775p_resources },
+>   	{ .compatible = "qcom,sc7280-camss", .data = &sc7280_resources },
+>   	{ .compatible = "qcom,sc8280xp-camss", .data = &sc8280xp_resources },
+> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
+> index 345479f6feba..b5600a8b2c4b 100644
+> --- a/drivers/media/platform/qcom/camss/camss.h
+> +++ b/drivers/media/platform/qcom/camss/camss.h
+> @@ -84,6 +84,7 @@ enum camss_version {
+>   	CAMSS_8x96,
+>   	CAMSS_8250,
+>   	CAMSS_8280XP,
+> +	CAMSS_8300,
+>   	CAMSS_845,
+>   	CAMSS_8550,
+>   	CAMSS_8775P,
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
