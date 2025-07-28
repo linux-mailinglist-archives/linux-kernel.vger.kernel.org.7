@@ -1,235 +1,166 @@
-Return-Path: <linux-kernel+bounces-748224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A04AB13E1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D413B13E18
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A475404CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:20:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D73540271
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D3E273808;
-	Mon, 28 Jul 2025 15:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDBF270EDF;
+	Mon, 28 Jul 2025 15:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FXlezz4/"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrjdpAJF"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C7B72621;
-	Mon, 28 Jul 2025 15:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A0172621;
+	Mon, 28 Jul 2025 15:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753715976; cv=none; b=OwShnHzHXiUR1h6PH/bcpftRBN4yQCYT58JR7Hlkpt8wLnvgI72rsqyGNJeal8293w72gQDFpQm0+OtqVBIsjIWa7x26wASzDuVz+cDRAgb0vs8CQ5tXmVJMOwFg4Hbn43NPG81ZMtugqjHc4j8pyA8OIs5cO0w/7wwxg2Ghpzs=
+	t=1753715971; cv=none; b=XO5MtmJdDX26CBKAJqrlmtA50iuyRB4RePPKnphOapyV/3DWlHkJA3e/U85v+2sMffJfFEwhA8LdVHC6Y3KDfcEWgVOwfxAZ/ej33kNZ4gE2Ww4etxExA6FbXWujyIWlthzR87C7bj0nkw+ySXjAFNMomzcbzhAeoRnDOzwYe/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753715976; c=relaxed/simple;
-	bh=wIxcjcNEkyPDjmdkRrJ3cR3fiA648H006TZTC+uVUHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=trqR3C/Lht5RHb0Ww4KCFNP8WByahgVYuSvzRDDu3Nx5fBlHpqB49i457LIiBsPh92ppDHzdg+YOJISRa24PZqiL10dNMWVF0XVUftq2ooDfOoG1HIHRwUNZFhFYC5eEJLSYamvwOa+nqSddSbmxAmBLSsE8DnbEuYGIYJNYtNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FXlezz4/; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4brMb44BjHzm0yVN;
-	Mon, 28 Jul 2025 15:19:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1753715965; x=1756307966; bh=wyvxwcIBKz4/1qVBx/Glm6HG
-	EcWTzuLIGUB0WKeP3wA=; b=FXlezz4/MQUqElceeHYKDWHaX6UdUZFANqL4A8rM
-	d6nTLdhAci116llAi7+noO5nZp2pNaIuRS4uXjQ0bVcAJqJ8yigmkixAmcjTmd2T
-	2MqZRJYkoIBmvM4BlvB2VXpq/tCixZBnIK2jIIJQjLFgA5w2K9JybDHLkl7ZsZT4
-	xMqxWIrh04vLwcBiW3wW99UhAEozoAyQhZI8Nksa3UHdK+6NlHS7t2A9bY0fYWDW
-	xADjqEJ4pDFay50VBT5F4+BU412a3A19QwSMtl2BUURtFmopxBeg300i14kIql8a
-	RYPUaZujSxdpHZIVfriBS3LOOHRU4AcUtWp7hYv2hRX7Lg==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id zCbeK2nZy5RL; Mon, 28 Jul 2025 15:19:25 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4brMZp20Ktzm0ySj;
-	Mon, 28 Jul 2025 15:19:12 +0000 (UTC)
-Message-ID: <c385f1c4-f27b-4dc7-b4a2-d35a9fc77a91@acm.org>
-Date: Mon, 28 Jul 2025 08:19:11 -0700
+	s=arc-20240116; t=1753715971; c=relaxed/simple;
+	bh=JrkaAoJ7Tiknbca8UqI58Je2aCyKbjCi2E75WVbKTd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A9S8uf0wS7ppL1OBwCLVuDO+0BFUzxx3K5JBHJdoKAXa5VxkdGV3vrQNPTf4YQJN538+cBtxQPiggKmfQvizupNv63X1avf6jdEhQoOZRYVlZrdgRC8h2UZkMgGrJ4eo9wA/jyvaJqEfe0AKPdE6SjKJryQwBNbK/00W4/fHlt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SrjdpAJF; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6fadd3ad18eso39016496d6.2;
+        Mon, 28 Jul 2025 08:19:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753715968; x=1754320768; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RLT/rylW6yNv3R9erMx+Eq7H8Q6DuqgDZ8LW1Wt7U98=;
+        b=SrjdpAJFaowmM+2HUMdMNrdN3ixuLbAC4n1DAQG25BAwmk1F2ZAl3MICUVk2eGYOgL
+         7+P+1OC8v0rdZfdNczXv7fwdxcfWza1j9xD3ZedM/8sfjCxx8cwDGaN3KTtBOQUpAxn5
+         zkGAHgK48kyS6eNNXVtF+vKW4UDOBahzfAbxl60Yz3dIgeHbv5mJm8atZRRd82E0iu8V
+         qbswknnIXRBcGr4czW7SVVqRT+Y77uNLDf+CUIHtW9oOiIcDXMEVadC2ulYRVwNqUKdx
+         vy4Gh9quLVD9kpFpqjP4Yuj5UvZUO9VT/rDZ6O7uE6GNKBWd0pcblPFmu66MHB3oD2kD
+         PM6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753715968; x=1754320768;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RLT/rylW6yNv3R9erMx+Eq7H8Q6DuqgDZ8LW1Wt7U98=;
+        b=js06bcAiOi92xpWJh54p+OoGn+wBMHQe61MSO29C8RafkIkdk1/qppZPMuO0LnuYHu
+         cI3N48NZpvA9/Hb/ZmkPyPb3kGZigDnqJwxgk7321fpWKA82Yrn6j+G5hXSLx2JNlW5i
+         esmv1ybFCDRAZ13CO41sVHpY8TdxRBfT90FswgBhnhbYOVUr/Yc0m2JJbvFf6RF03MJj
+         b/DmWwneS2Io47io2Lb1EbZcH6ohZQb3q29VXc7+7KpD7A0zmeQ3w/CM3Yvf2kVFk5rt
+         RTPG7o2bHaAAfhxjas4ucNHQOfqAyj1ggFCF9g6AuvuNjLua7wUWD6fgcWy1wt5HiPZm
+         Ylkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaMAZwoHNmP0FW1DOBpIaKdd3zyKEH0akpdLEPdj+IIv8SBc6j7x4p7Kqzl8YSEJe7hOgl+CHOazXPOAQ=@vger.kernel.org, AJvYcCXh9KXlmxjnypPakaw/7CTFau0PcbLREMciHaa/Gxm9MvHVylPRqYo3QvNx00HLkFZMLOxsveu1vFHAAYQrIeg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc618z5821kS5ciQkPNZhxC0Qom8yKLIaiRHkU3s61NSN2cbpH
+	KLpiJzA+if9ZSuUyh3YXZ7ZjC0AtaqXCalO73BKk5fE6/yyEfTCqqIC8
+X-Gm-Gg: ASbGncuwenfv62E7w8ungeNdIfx2vaEJWlhAtbifNrkWu7klZDLmrMsUKMA8cUsiZ+y
+	cmwmwwduOrw75he7CBEhdVcVyl27NZgT23Xdrr5RJRQ9d+J3CcPGFgPq1TydJnzxyGN6DDbtqI1
+	ib6ISYCVg53Ykh3KVJ+ES/yBh6ReF9Uur6HhJyVaRchYH/RpI1zT+3oL1E17vANEtehu10E/Qrj
+	2bw7tZurT/jradoDRmoHpjYYxPSDujCWZ6WZOfAes9UnEm8uoni77cIgPkZXHbMCxQ4IcpGtA61
+	IUlgUXQQ4BOgunw4vItdKBS8q3u+mxsBstyNXFE6p0iuO+R3HhR9qYzszByYAQyCoHF4MpqOnR+
+	AIu2ZDcZp1z+1lW4UFBXKmniSgM4BrbZqXRin78F9LpBfz4mnBFzgF281+gnvMOBfw3zHsXtCRs
+	sBuDwJSaI4HH/HuD4zzZVT75o=
+X-Google-Smtp-Source: AGHT+IGlEJGZ736lYuT3B+uy3e0pPQZ8PHcz1E+GfL3FCPBW2RqUS72ySe2W7OLoiC9aSxN8YKFZKg==
+X-Received: by 2002:a05:6214:27c7:b0:704:f4bf:10a7 with SMTP id 6a1803df08f44-70720603914mr182929196d6.45.1753715968021;
+        Mon, 28 Jul 2025 08:19:28 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6438a480asm301681785a.86.2025.07.28.08.19.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 08:19:27 -0700 (PDT)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 0E887F40066;
+	Mon, 28 Jul 2025 11:19:27 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Mon, 28 Jul 2025 11:19:27 -0400
+X-ME-Sender: <xms:_pSHaIbdbrYl57tQvKWYOj0saP_1jp8hOg5MIVwDdeaJBi6NO-Q20Q>
+    <xme:_pSHaOG7b5JC8MgVxjUC39REkmRzyQK1X19Mv_8DACg9OvDZSW4dd2rXoxWfGnrGq
+    EH3sTlnzXvziasTkQ>
+X-ME-Received: <xmr:_pSHaLruTLuLJa7mISvctoGZKXpGFnFPSX7MkDC38L81e0p6DIH_3xOnlEM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelvdehudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprghkph
+    hmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihgrmhdr
+    hhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhorhgvnhiiohdrsh
+    htohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheprghnughrvgifjhgsrghllhgrnhgtvgesghhmrghilh
+    drtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthho
+    pegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehloh
+    hsshhinheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:_pSHaJxjqves7SvCOVB5W0svb2kBRDx4hpkRHAlGKUsSt8VOg0dLcQ>
+    <xmx:_pSHaFNQH-49n3B8FAYoApumrgOka9W_QZQ5YEBsDTWCq4WEBzGukw>
+    <xmx:_pSHaJdh5U712kScNCplLzjihOk5lpkQ-qSBepqxGXdggUDw_rcWPw>
+    <xmx:_pSHaB4QMrmZImaBIdmJmE_aTpAzegTkSAuuWkaLtfG4oaQckOfRMw>
+    <xmx:_5SHaJKDM8G_V5eGDKe16kbM0YYLdIbGCkGvymkagbV2FTuSXTddRCzi>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 28 Jul 2025 11:19:26 -0400 (EDT)
+Date: Mon, 28 Jul 2025 08:19:25 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Andrew Ballance <andrewjballance@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 2/3] rust: maple_tree: add MapleTree::lock() and load()
+Message-ID: <aIeU_RSpDYr8eYLz@tardis-2.local>
+References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
+ <20250726-maple-tree-v1-2-27a3da7cb8e5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] scsi: ufs: core: move some irq handling back to
- hardirq (with time limit)
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>,
- Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com,
- linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
- <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
- <a008c613-58d6-4368-ae2f-55db4ac82a02@linaro.org>
- <76af97e49cb7f36c8dc6edc62c84e72d6bb4669c.camel@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <76af97e49cb7f36c8dc6edc62c84e72d6bb4669c.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250726-maple-tree-v1-2-27a3da7cb8e5@google.com>
 
-On 7/28/25 7:49 AM, Andr=C3=A9 Draszik wrote:
-> Btw, my complete command was (should probably have added that
-> to the commit message in the first place):
->=20
-> for rw in read write ; do
->      echo "rw: ${rw}"
->      for jobs in 1 8 ; do
->          echo "jobs: ${jobs}"
->          for it in $(seq 1 5) ; do
->              fio --name=3Drand${rw} --rw=3Drand${rw} \
->                  --ioengine=3Dlibaio --direct=3D1 \
->                  --bs=3D4k --numjobs=3D${jobs} --size=3D32m \
->                  --runtime=3D30 --time_based --end_fsync=3D1 \
->                  --group_reporting --filename=3D/foo \
->              | grep -E '(iops|sys=3D|READ:|WRITE:)'
->              sleep 5
->          done
->      done
-> done
+On Sat, Jul 26, 2025 at 01:23:23PM +0000, Alice Ryhl wrote:
+[...]
+> +/// A reference to a [`MapleTree`] that owns the inner lock.
+> +///
+> +/// # Invariants
+> +///
+> +/// This guard owns the inner spinlock.
+> +pub struct MapleLock<'tree, T: ForeignOwnable>(&'tree MapleTree<T>);
 
-Please run performance tests in recovery mode against a block
-device (/dev/block/sd...) instead of running performance tests on
-top of a filesystem. One possible approach for retrieving the block
-device name is as follows:
+So it's a guard, how about we name it `MapleGuard`, or `MapleLockGuard`,
+or just `Guard`?
 
-adb shell readlink /dev/block/by-name/userdata
+Regards,
+Boqun
 
-There may be other approaches for retrieving the name of the block
-device associated with /data. Additionally, tuning for maximum
-performance is useful because it eliminates impact from the process
-scheduler on block device performance measurement. An extract from a
-scrip that I use myself to measure block device performance on Pixel
-devices is available below.
-
-Best regards,
-
-Bart.
-
-
-optimize() {
-     local clkgate_enable c d devfreq disable_cpuidle governor nomerges=20
-iostats
-     local target_freq ufs_irq_path
-
-     if [ "$1" =3D performance ]; then
-	clkgate_enable=3D0
-	devfreq=3Dmax
-	disable_cpuidle=3D1
-	governor=3Dperformance
-	# Enable I/O statistics because the performance impact is low and
-	# because fio reports the I/O statistics.
-	iostats=3D1
-	# Disable merging to make tests follow the fio arguments.
-	nomerges=3D2
-	target_freq=3Dcpuinfo_max_freq
-	persist_logs=3Dfalse
-     else
-	clkgate_enable=3D1
-	devfreq=3Dmin
-	disable_cpuidle=3D0
-	governor=3Dsched_pixel
-	iostats=3D1
-	nomerges=3D0
-	target_freq=3Dcpuinfo_min_freq
-	persist_logs=3Dtrue
-     fi
-
-     for c in $(adb shell "echo /sys/devices/system/cpu/cpu[0-9]*"); do
-	for d in $(adb shell "echo $c/cpuidle/state[1-9]*"); do
-	    adb shell "if [ -e $d ]; then echo $disable_cpuidle > $d/disable; fi=
-"
-	done
-	adb shell "cat $c/cpufreq/cpuinfo_max_freq > $c/cpufreq/scaling_max_freq=
-;
-                    cat $c/cpufreq/${target_freq} >=20
-$c/cpufreq/scaling_min_freq;
-                    echo ${governor} > $c/cpufreq/scaling_governor; true"=
- \
-             2>/dev/null
-     done
-
-     if [ "$(adb shell grep -c ufshcd /proc/interrupts)" =3D 1 ]; then
-	# No MCQ or MCQ disabled. Make the fastest CPU core process UFS
-	# interrupts.
-	# shellcheck disable=3DSC2016
-	ufs_irq_path=3D$(adb shell 'a=3D$(echo /proc/irq/*/ufshcd); echo ${a%/uf=
-shcd}')
-	adb shell "echo ${fastest_cpucore} > ${ufs_irq_path}/smp_affinity_list;=20
-true"
-     else
-	# MCQ is enabled. Distribute the completion interrupts over the
-	# available CPU cores.
-	local i=3D0
-	local irqs
-	irqs=3D$(adb shell "sed -n 's/:.*GIC.*ufshcd.*//p' /proc/interrupts")
-	for irq in $irqs; do
-	    adb shell "echo $i > /proc/irq/$irq/smp_affinity_list; true"
-	    i=3D$((i+1))
-	done
-     fi
-
-     for d in $(adb shell echo /sys/class/devfreq/*); do
-	case "$d" in
-	    *gpu0)
-		continue
-		;;
-	esac
-	local min_freq
-	min_freq=3D$(adb shell "cat $d/available_frequencies |
-		tr ' ' '\n' |
-		sort -n |
-		case $devfreq in
-			min) head -n1;;
-			max) tail -n1;;
-		esac")
-	adb shell "echo $min_freq > $d/min_freq"
-	# shellcheck disable=3DSC2086
-	if [ "$devfreq" =3D "max" ]; then
-	    echo "$(basename $d)/min_freq: $(adb shell cat $d/min_freq) <>=20
-$min_freq"
-	fi
-     done
-
-     for d in $(adb shell echo /sys/devices/platform/*.ufs); do
-	adb shell "echo $clkgate_enable > $d/clkgate_enable"
-     done
-
-     adb shell setprop logd.logpersistd.enable ${persist_logs}
-
-     adb shell "for b in /sys/class/block/{sd[a-z],dm*}; do
-		    if [ -e \$b ]; then
-			[ -e \$b/queue/iostats     ] && echo ${iostats}   >\$b/queue/iostats;
-			[ -e \$b/queue/nomerges    ] && echo ${nomerges}  >\$b/queue/nomerges;
-			[ -e \$b/queue/rq_affinity ] && echo 2            >\$b/queue/rq_affini=
-ty;
-			[ -e \$b/queue/scheduler   ] && echo ${iosched}   >\$b/queue/scheduler=
-;
-		    fi
-		done; true"
-
-     adb shell "grep -q '^[^[:blank:]]* /sys/kernel/debug' /proc/mounts=20
-|| mount -t debugfs none /sys/kernel/debug"
-}
-
+> +
+> +impl<'tree, T: ForeignOwnable> Drop for MapleLock<'tree, T> {
+> +    #[inline]
+> +    fn drop(&mut self) {
+> +        // SAFETY: By the type invariants, we hold this spinlock.
+> +        unsafe { bindings::spin_unlock(self.0.ma_lock()) };
+> +    }
+> +}
+> +
+[...]
 
