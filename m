@@ -1,245 +1,185 @@
-Return-Path: <linux-kernel+bounces-747829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D10B138D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:21:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9389B138DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1FBE1883FED
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:21:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2E4166196
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BFC254AE7;
-	Mon, 28 Jul 2025 10:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Pk4jipK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="y2EgD9b9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xq8iTNCs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5YSIxWB9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECDA220F3E
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB34220F3E;
+	Mon, 28 Jul 2025 10:23:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C519478
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753698084; cv=none; b=sah5cWte27WyiAdZSZnkVxQYf9llizfQxfogsNKW2HwqYSbY/xDsWcAy7ZZ6V4vsheH54feNlpZ4LUNRvfxBw/M7IyoVT2ZcVbepX9vPw7rAVYC9eYGqcB8jLZOUwET0EJlyeEM8NUYfhOZBZ0tZh9C7FmERUqlZhZk9DkwUAIg=
+	t=1753698180; cv=none; b=M7UCNFGNUhwjsIsRHs/QWNnU8uH7gAePmL/FBzAxtmuVf7FE29da1lb4L3O4sYpvfpJlFrJuvvSupBAYmtuwhbiqookaTfJugWbd1FYwvckVWion856TCcwr8D8N6zQqZbgckMkCrGMlJR2niw7TM/cjgUSVj/VuG1MGGnk6s4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753698084; c=relaxed/simple;
-	bh=2iXxc2X4H+XnyE8Li+VMuh38AZe2PWpUJ34y2E51YQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CLypzr0QmLbcEVmmprhSyYSY1/A9O4guJen/W48hwXcioi5USJABSb21qfth7VryU2yqUD+TOlA7sGuNRNgYvNEsy7tm9wkesli9uA8AJIGxVfnEGNvrNL+gWDOcvt/bTNdWg4o3Q/EG3iZNLcmotIz9T3y8q1tmU/770jePyAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Pk4jipK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=y2EgD9b9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xq8iTNCs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5YSIxWB9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E2E681F444;
-	Mon, 28 Jul 2025 10:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753698081; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bhsArjASlgaDmS6hfZQyB3yR9SRWmH4b6qgJSEDURv4=;
-	b=0Pk4jipKkXKgnsuJKi2owCO1LPalrzZ/BdXP7B9udLaHuQEFF3zqos0j/MvNS+lLSz1xr8
-	b2OvSP4am9K1tD+WGoMyp+2M82lWtLQmqdcRxyQnojlZiw+7Q9sqCLKmDryLquDxfj7wNF
-	AEIE+IrRApCKZpcSH5Vd1RPu5RThIYY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753698081;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bhsArjASlgaDmS6hfZQyB3yR9SRWmH4b6qgJSEDURv4=;
-	b=y2EgD9b92LovJM+d93z4tIzHPXe/nVMQG+PdsgkdEOFxppN0oJ1KPEnAmgUUAK3kCQuWVQ
-	LwNUv/EE/0s11vCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Xq8iTNCs;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=5YSIxWB9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753698080; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bhsArjASlgaDmS6hfZQyB3yR9SRWmH4b6qgJSEDURv4=;
-	b=Xq8iTNCs45tlp0C3Y6/kbzBLIbBczh6QVU+Ke9dky1mymCSaye9MaYtb264Rhdl4rsZ4Fu
-	ADsiSgLFlUu/BRGAWuwvuI5DAg9+gGFNLCK7APDAfK3IYk8ES3lEuv41/UUP1TCJjUMAX9
-	xxvAyBcqG9zIXdccMHaFwJJ9CZ0iFok=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753698080;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bhsArjASlgaDmS6hfZQyB3yR9SRWmH4b6qgJSEDURv4=;
-	b=5YSIxWB9+ixzFg4bsWkEXImqiQ8h0RXQ7mmSVHQdepGGCOyPmeul8wGTgJTI2LUlvfCdqw
-	qlrzzUsPCj4hrHCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7645138A5;
-	Mon, 28 Jul 2025 10:21:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RvSPNCBPh2igPwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 28 Jul 2025 10:21:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9286AA09BE; Mon, 28 Jul 2025 12:21:16 +0200 (CEST)
-Date: Mon, 28 Jul 2025 12:21:16 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jiufei Xue <jiufei.xue@samsung.com>
-Cc: tj@kernel.org, jack@suse.cz, cgroups@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: writeback: fix use-after-free in __mark_inode_dirty()
-Message-ID: <d6v3y66k2vqy7sqfgn3fzyrbwnfbfrlhxb2udll4du35drimhs@rsjk27kixujb>
-References: <CGME20250728100434epcas5p3995d3444fcec14715c60f73e7a60b1c0@epcas5p3.samsung.com>
- <20250728100715.3863241-1-jiufei.xue@samsung.com>
+	s=arc-20240116; t=1753698180; c=relaxed/simple;
+	bh=fRV2Qep9cGV9q7FgNe1T6WVdWfGosUva0wSAd4Ek4qI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D5ouuDoZWLy4atW2iGz9V0kcn8vMf7dBTgXumqomPu2WOenreDcOY1+j+sKgiyCFKPkM3nQX0m6Q+fG6y8eg/V7/2yg+gIauwqUMLFD+RPz+p6sUYLYs3eFex2wKRjtQR1bDo+4Rz7AWE18n6xB22OYXBLlh92gAbWZ02d+Tzx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93294152B;
+	Mon, 28 Jul 2025 03:22:49 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 419383F673;
+	Mon, 28 Jul 2025 03:22:54 -0700 (PDT)
+Message-ID: <fcbe5517-0256-48ce-aa50-8017928737d7@arm.com>
+Date: Mon, 28 Jul 2025 11:22:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728100715.3863241-1-jiufei.xue@samsung.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E2E681F444
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email,samsung.com:email];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 24/36] arm_mpam: Extend reset logic to allow devices
+ to be reset any time
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
+ <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+ Carl Worth <carl@os.amperecomputing.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+ <20250711183648.30766-25-james.morse@arm.com>
+Content-Language: en-US
+From: Ben Horgan <ben.horgan@arm.com>
+In-Reply-To: <20250711183648.30766-25-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 28-07-25 18:07:15, Jiufei Xue wrote:
-> An use-after-free issue occurred when __mark_inode_dirty() get the
-> bdi_writeback that was in the progress of switching.
-> 
-> CPU: 1 PID: 562 Comm: systemd-random- Not tainted 6.6.56-gb4403bd46a8e #1
-> ......
-> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : __mark_inode_dirty+0x124/0x418
-> lr : __mark_inode_dirty+0x118/0x418
-> sp : ffffffc08c9dbbc0
-> ........
-> Call trace:
->  __mark_inode_dirty+0x124/0x418
->  generic_update_time+0x4c/0x60
->  file_modified+0xcc/0xd0
->  ext4_buffered_write_iter+0x58/0x124
->  ext4_file_write_iter+0x54/0x704
->  vfs_write+0x1c0/0x308
->  ksys_write+0x74/0x10c
->  __arm64_sys_write+0x1c/0x28
->  invoke_syscall+0x48/0x114
->  el0_svc_common.constprop.0+0xc0/0xe0
->  do_el0_svc+0x1c/0x28
->  el0_svc+0x40/0xe4
->  el0t_64_sync_handler+0x120/0x12c
->  el0t_64_sync+0x194/0x198
-> 
-> Root cause is:
-> 
-> systemd-random-seed                         kworker
-> ----------------------------------------------------------------------
-> ___mark_inode_dirty                     inode_switch_wbs_work_fn
-> 
->   spin_lock(&inode->i_lock);
->   inode_attach_wb
->   locked_inode_to_wb_and_lock_list
->      get inode->i_wb
->      spin_unlock(&inode->i_lock);
->      spin_lock(&wb->list_lock)
->   spin_lock(&inode->i_lock)
->   inode_io_list_move_locked
->   spin_unlock(&wb->list_lock)
->   spin_unlock(&inode->i_lock)
->                                     spin_lock(&old_wb->list_lock)
->                                       inode_do_switch_wbs
->                                         spin_lock(&inode->i_lock)
->                                         inode->i_wb = new_wb
->                                         spin_unlock(&inode->i_lock)
->                                     spin_unlock(&old_wb->list_lock)
->                                     wb_put_many(old_wb, nr_switched)
->                                       cgwb_release
->                                       old wb released
->   wb_wakeup_delayed() accesses wb,
->   then trigger the use-after-free
->   issue
-> 
-> Fix this race condition by holding inode spinlock until
-> wb_wakeup_delayed() finished.
-> 
-> Signed-off-by: Jiufei Xue <jiufei.xue@samsung.com>
+Hi James,
 
-Looks good! Thanks for the fix. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On 7/11/25 19:36, James Morse wrote:
+> cpuhp callbacks aren't the only time the MSC configuration may need to
+> be reset. Resctrl has an API call to reset a class.
+> If an MPAM error interrupt arrives it indicates the driver has
+> misprogrammed an MSC. The safest thing to do is reset all the MSCs
+> and disable MPAM.
+> 
+> Add a helper to reset RIS via their class. Call this from mpam_disable(),
+> which can be scheduled from the error interrupt handler.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
 > ---
->  fs/fs-writeback.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
+>   drivers/platform/arm64/mpam/mpam_devices.c  | 62 ++++++++++++++++++++-
+>   drivers/platform/arm64/mpam/mpam_internal.h |  1 +
+>   2 files changed, 61 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index cc57367fb..a07b8cf73 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -2608,10 +2608,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  			wakeup_bdi = inode_io_list_move_locked(inode, wb,
->  							       dirty_list);
->  
-> -			spin_unlock(&wb->list_lock);
-> -			spin_unlock(&inode->i_lock);
-> -			trace_writeback_dirty_inode_enqueue(inode);
+> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
+> index 2e32e54cc081..145535cd4732 100644
+> --- a/drivers/platform/arm64/mpam/mpam_devices.c
+> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
+> @@ -916,8 +916,6 @@ static int mpam_reset_ris(void *arg)
+>   	u16 partid, partid_max;
+>   	struct mpam_msc_ris *ris = arg;
+>   
+> -	mpam_assert_srcu_read_lock_held();
 > -
->  			/*
->  			 * If this is the first dirty inode for this bdi,
->  			 * we have to wake-up the corresponding bdi thread
-> @@ -2621,6 +2617,11 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  			if (wakeup_bdi &&
->  			    (wb->bdi->capabilities & BDI_CAP_WRITEBACK))
->  				wb_wakeup_delayed(wb);
+>   	if (ris->in_reset_state)
+>   		return 0;
+>   
+> @@ -1575,6 +1573,66 @@ static void mpam_enable_once(void)
+>   		READ_ONCE(mpam_partid_max) + 1, mpam_pmg_max + 1);
+>   }
+>   
+> +static void mpam_reset_component_locked(struct mpam_component *comp)
+> +{
+> +	int idx;
+> +	struct mpam_msc *msc;
+> +	struct mpam_vmsc *vmsc;
+> +	struct mpam_msc_ris *ris;
 > +
-> +			spin_unlock(&wb->list_lock);
-> +			spin_unlock(&inode->i_lock);
-> +			trace_writeback_dirty_inode_enqueue(inode);
+> +	might_sleep();
+> +	lockdep_assert_cpus_held();
 > +
->  			return;
->  		}
->  	}
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +	idx = srcu_read_lock(&mpam_srcu);
+> +	list_for_each_entry_rcu(vmsc, &comp->vmsc, comp_list) {
+> +		msc = vmsc->msc;
+> +
+> +		list_for_each_entry_rcu(ris, &vmsc->ris, vmsc_list) {
+> +			if (!ris->in_reset_state)
+> +				mpam_touch_msc(msc, mpam_reset_ris, ris);
+> +			ris->in_reset_state = true;
+> +		}
+> +	}
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +}
+> +
+> +static void mpam_reset_class_locked(struct mpam_class *class)
+> +{
+> +	int idx;
+> +	struct mpam_component *comp;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	idx = srcu_read_lock(&mpam_srcu);
+> +	list_for_each_entry_rcu(comp, &class->components, class_list)
+> +		mpam_reset_component_locked(comp);
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +}
+> +
+> +static void mpam_reset_class(struct mpam_class *class)
+> +{
+> +	cpus_read_lock();
+> +	mpam_reset_class_locked(class);
+> +	cpus_read_unlock();
+> +}
+> +
+> +/*
+> + * Called in response to an error IRQ.
+> + * All of MPAMs errors indicate a software bug, restore any modified
+> + * controls to their reset values.
+> + */
+> +void mpam_disable(void)
+> +{
+> +	int idx;
+> +	struct mpam_class *class;
+> +
+> +	idx = srcu_read_lock(&mpam_srcu);
+> +	list_for_each_entry_srcu(class, &mpam_classes, classes_list,
+> +				 srcu_read_lock_held(&mpam_srcu))
+> +		mpam_reset_class(class);
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +}
+Consider moving to the next patch where you introduce interrupt support.
+> +
+>   /*
+>    * Enable mpam once all devices have been probed.
+>    * Scheduled by mpam_discovery_cpu_online() once all devices have been created.
+> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
+> index f3cc88136524..de05eece0a31 100644
+> --- a/drivers/platform/arm64/mpam/mpam_internal.h
+> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
+> @@ -280,6 +280,7 @@ extern u8 mpam_pmg_max;
+>   
+>   /* Scheduled work callback to enable mpam once all MSC have been probed */
+>   void mpam_enable(struct work_struct *work);
+> +void mpam_disable(void);
+>   
+>   int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
+>   				   cpumask_t *affinity);
+
+
+Thanks,
+
+Ben
+
 
