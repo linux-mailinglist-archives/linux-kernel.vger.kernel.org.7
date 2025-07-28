@@ -1,328 +1,466 @@
-Return-Path: <linux-kernel+bounces-748215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96403B13DF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:12:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9BFB13DFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADBBA189DF78
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:12:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 269E47A4703
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0384270ED2;
-	Mon, 28 Jul 2025 15:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4660626FA76;
+	Mon, 28 Jul 2025 15:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XiPCpMtS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IXQDuXwZ"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4525425D53B
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8A2635
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753715531; cv=none; b=SaWF+hcYkhD5MVhUeHZQiDmShOhDSNEFBD+YGDNqke0Yz468kFbPnMJoco0NA6IRM0RxwCBKJrgEn5lrBzvQN6CHczANEDq/lVcF1vluC+AXin4HJrtaNuzcFHdCSY5nWHSUk6lB68ZNvv+xmH0LWUKEwMMC/Yfc/E70N2BwD9o=
+	t=1753715692; cv=none; b=XXFB4B5DSsXG2ENhCz1AJ+rAhOlpMx//wT99oLvThHTb1fz8wYNoFpO36eSs7Zitx+tvcWbNC5j2pHAYh/b5w88hFCHlbnoheCgLsSsTOokySYzN8TUDzj2r27VFV8mEfv8t6Cyh/1c5r4O7LXUHa08dNozTX9O2LS2AqMO4oUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753715531; c=relaxed/simple;
-	bh=z0XLas3n+pldVU474qS43s5jjeilAY7FSN9alhIyzFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NDE0iYyGl7srKziNmLm9pu9fw/uW/cAVM0eAwLndGw4jrmNcmGQJmpaq10WG+MwIyBYq6FVRLT12Bw9sUb1Rg7GSulVLdXHGTqlmdwRNAJk5wyAfbNmuPq5sjrLD19giP5zxdDQFCAqfO1cHgO3UwURtXRiBtpeZ76ov0ubotnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XiPCpMtS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753715528;
+	s=arc-20240116; t=1753715692; c=relaxed/simple;
+	bh=3uOVGmNwgK5gxVbeDgyOLkESUku60HgwCyvFC1QrHCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ClghFvCSh4XY5m8IZjdY+NRWxHG2IxjuuA0uMoBaG/gAN70ZkAse1q2nAl+a4pgtW4/kcJRIAjtPYBHIolFzW6pDFOeymM2hszNwj4vhkdWnQymdvHUFhUZ2BhG8plV5v/VwXeeSWAsnfgBrmhGyNVA0XAnHA3ZcHl/wJpN7Hec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IXQDuXwZ; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 28 Jul 2025 11:14:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753715677;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lHMpvShnhWh1yEjlzCXHahFQrWzaENPKZ4asjpoh/RM=;
-	b=XiPCpMtSWUWj5Zdz5+8W9IOpRn3lCPdckzKeGKUwY+dEMNijrd/sQMH6gu4lAv7zRle2ob
-	exTD8RcYKXhWZtegJ44iRuwSGoPoCO4Zh1TlFE6oqIICMU985wqQIX407Vn5VuwczN7gBH
-	mO7gbUVVg5CqZOeh2MeR0obvQgXwAn0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-34-lq7i8TNLOGCfqs1wBcR9tA-1; Mon, 28 Jul 2025 11:12:06 -0400
-X-MC-Unique: lq7i8TNLOGCfqs1wBcR9tA-1
-X-Mimecast-MFC-AGG-ID: lq7i8TNLOGCfqs1wBcR9tA_1753715525
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b20f50da27so4429f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:12:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753715524; x=1754320324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lHMpvShnhWh1yEjlzCXHahFQrWzaENPKZ4asjpoh/RM=;
-        b=pZaLoCMDoRL95rBuabVJdgjy5gRS0vxJzKUMlXkeM4bE5dQ4Oggtq8Otw1siL9U5+N
-         BRB5GGr5UhtrVFV/yVl7G+092DV8yx4x/THCln8nA+3p4NOuHxDRY1jkcJin6nEUcSaf
-         fruzLIBLs1TZ9zKQi4XhSyK2X84VXOVWkcLrC+o+dFPcFf4aEYAY8pvPVwx4F/mqAeJt
-         DFo/ZM77IJ9tIavHEUkXFotf/a/zQi8Gx3QZywAV04yZslvDKg+Q9ewvY+rIc8Bl8vlt
-         cB1IGdPPknrwy0k+Ve+SN6rMKueVcUGlU6ieV4xJnfozbOioanyo9II6YhUmDQ3yEYCG
-         /Llg==
-X-Forwarded-Encrypted: i=1; AJvYcCXevUwIGNnLyV55NIwlf1vamn+G0q24mTmMleg1oCQvBQrlERgyK/0mvm0eUuMUw0aslPmUT6ZU629Dy7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Y7S7N1pCd1qrhV2Pa8TX2kM3K18INgiET41nnQLxsRM5jZfz
-	pG+AHQLaNuhWLgRyWMrj/8EOXiDIlCqek28R+qbOpfJcMI08vcDbbOazCiI3eUKlJGeNXsgACFw
-	ag1BfOGkzHUBISf7b32LM5J4+XsY4SmU9ukjRs7uV9q6ccjqwIl/bX18pFcbWWLi91+VCk0pjkS
-	cd0cKhrSywo2zTeNGahA+Uus06oV9n6XurncuyjIqQRrwNwR8j
-X-Gm-Gg: ASbGncvhVleJvVqsyPGi0hQs43KOxaw99Xl9fqgQn5dCKsIY49jd945eBsZbwaFKoHM
-	he2IccyVAm0NMCJXwGa5+6BoXmU7O+DuzvImXjLnjxAxNC7MKVsVzb22gGwb+IMMA7NQp/uyrn/
-	wiggUXgzkBClGLN1b6wk1ERA==
-X-Received: by 2002:a05:6000:888:b0:3a4:f7dd:6fad with SMTP id ffacd0b85a97d-3b776639335mr7830691f8f.14.1753715523551;
-        Mon, 28 Jul 2025 08:12:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVu4mVwJXobjLaxAPwIZZffuenqn6t93Fir1eLCwdOHk3I6Uaz0CGFy2KYWDFtxHA1uWxdOmWU7JE4vtaXmYU=
-X-Received: by 2002:a05:6000:888:b0:3a4:f7dd:6fad with SMTP id
- ffacd0b85a97d-3b776639335mr7830663f8f.14.1753715523069; Mon, 28 Jul 2025
- 08:12:03 -0700 (PDT)
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=Vjd+rO5hKnZBaLM1KBwy76vbP9gNplEkFV26xBGir74=;
+	b=IXQDuXwZWbKBcT7spXwSGyfzFd3sQ7WoU0PHQ7DjfbdoMQlNMT+/HtCqX1qoDP0gX9RNEV
+	8OFN+uH5ungPjk12FO9NgFFk7Ff/SUfw9n66bTAg9UDlobz1tLQYdp9R6mkvi13VTEJEnj
+	U7YuK+yHs1oxQZfSA+wkRWcsX8T4vOc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs changes for 6.17
+Message-ID: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725220713.264711-1-seanjc@google.com> <20250725220713.264711-6-seanjc@google.com>
-In-Reply-To: <20250725220713.264711-6-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 28 Jul 2025 17:11:51 +0200
-X-Gm-Features: Ac12FXxjS6zgP1Mwg9KBibeR9J_8x9y3euusxeo48NSg8v2Vlp1nuBhRHg8HLCU
-Message-ID: <CABgObfZjCc=0n=SO0jf7wUzJuFxvR8bZiHQaN3YgaNnYvcx7WQ@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM: x86: Misc changes for 6.17
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Jul 26, 2025 at 12:07=E2=80=AFAM Sean Christopherson <seanjc@google=
-.com> wrote:
->
-> The highlights are the DEBUGCTL.FREEZE_IN_SMM fix from Maxim, Jim's APERF=
-/MPERF
-> support that has probably made him question the meaning of life, and a bi=
-g
-> cleanup of the MSR interception code to ease the pain of adding support f=
-or
-> CET, FRED, and the mediated PMU (and any other features that deal with MS=
-Rs).
->
-> But the one change that I really want your eyeballs on is that last commi=
-t,
-> "Reject KVM_SET_TSC_KHZ VM ioctl when vCPUs have been created"; it's an A=
-BI
-> change that could break userspace.  AFAICT, it won't affect any (known)
-> userspace, and restricting the ioctl for all VM types is much simpler tha=
-n
-> special casing "secure" TSC guests.  Holler if you want a new tag/pull re=
-quest
-> without that change; I deliberately kept it dead last specifically so it =
-could
-> be omitted without any fuss.
+Schedule notes for users:
 
-No problem there. It makes no sense to use the VM ioctl if you can't
-issue it before vCPU creation, the whole point is to have a homogenous
-frequency.
+I've been digging through the bug tracker and polling users to see what
+bugs are still outstanding, and - it's not much.
 
-Paolo
+So, the experimental label is coming off in 6.18. 
 
-> The following changes since commit 28224ef02b56fceee2c161fe2a49a0bb197e44=
-f5:
->
->   KVM: TDX: Report supported optional TDVMCALLs in TDX capabilities (2025=
--06-20 14:20:20 -0400)
->
-> are available in the Git repository at:
->
->   https://github.com/kvm-x86/linux.git tags/kvm-x86-misc-6.17
->
-> for you to fetch changes up to dcbe5a466c123a475bb66492749549f09b5cab00:
->
->   KVM: x86: Reject KVM_SET_TSC_KHZ VM ioctl when vCPUs have been created =
-(2025-07-14 15:29:33 -0700)
->
-> ----------------------------------------------------------------
-> KVM x86 misc changes for 6.17
->
->  - Prevert the host's DEBUGCTL.FREEZE_IN_SMM (Intel only) when running th=
-e
->    guest.  Failure to honor FREEZE_IN_SMM can bleed host state into the g=
-uest.
->
->  - Explicitly check vmcs12.GUEST_DEBUGCTL on nested VM-Enter (Intel only)=
- to
->    prevent L1 from running L2 with features that KVM doesn't support, e.g=
-. BTF.
->
->  - Intercept SPEC_CTRL on AMD if the MSR shouldn't exist according to the
->    vCPU's CPUID model.
->
->  - Rework the MSR interception code so that the SVM and VMX APIs are more=
- or
->    less identical.
->
->  - Recalculate all MSR intercepts from the "source" on MSR filter changes=
-, and
->    drop the dedicated "shadow" bitmaps (and their awful "max" size define=
-s).
->
->  - WARN and reject loading kvm-amd.ko instead of panicking the kernel if =
-the
->    nested SVM MSRPM offsets tracker can't handle an MSR.
->
->  - Advertise support for LKGS (Load Kernel GS base), a new instruction th=
-at's
->    loosely related to FRED, but is supported and enumerated independently=
-.
->
->  - Fix a user-triggerable WARN that syzkaller found by stuffing INIT_RECE=
-IVED,
->    a.k.a. WFS, and then putting the vCPU into VMX Root Mode (post-VMXON).=
-  Use
->    the same approach KVM uses for dealing with "impossible" emulation whe=
-n
->    running a !URG guest, and simply wait until KVM_RUN to detect that the=
- vCPU
->    has architecturally impossible state.
->
->  - Add KVM_X86_DISABLE_EXITS_APERFMPERF to allow disabling interception o=
-f
->    APERF/MPERF reads, so that a "properly" configured VM can "virtualize"
->    APERF/MPERF (with many caveats).
->
->  - Reject KVM_SET_TSC_KHZ if vCPUs have been created, as changing the "de=
-fault"
->    frequency is unsupported for VMs with a "secure" TSC, and there's no k=
-nown
->    use case for changing the default frequency for other VM types.
->
-> ----------------------------------------------------------------
-> Chao Gao (2):
->       KVM: x86: Deduplicate MSR interception enabling and disabling
->       KVM: SVM: Simplify MSR interception logic for IA32_XSS MSR
->
-> Jim Mattson (3):
->       KVM: x86: Replace growing set of *_in_guest bools with a u64
->       KVM: x86: Provide a capability to disable APERF/MPERF read intercep=
-ts
->       KVM: selftests: Test behavior of KVM_X86_DISABLE_EXITS_APERFMPERF
->
-> Kai Huang (1):
->       KVM: x86: Reject KVM_SET_TSC_KHZ VM ioctl when vCPUs have been crea=
-ted
->
-> Maxim Levitsky (3):
->       KVM: nVMX: Check vmcs12->guest_ia32_debugctl on nested VM-Enter
->       KVM: VMX: Wrap all accesses to IA32_DEBUGCTL with getter/setter API=
-s
->       KVM: VMX: Preserve host's DEBUGCTLMSR_FREEZE_IN_SMM while running t=
-he guest
->
-> Sean Christopherson (44):
->       KVM: TDX: Use kvm_arch_vcpu.host_debugctl to restore the host's DEB=
-UGCTL
->       KVM: x86: Convert vcpu_run()'s immediate exit param into a generic =
-bitmap
->       KVM: x86: Drop kvm_x86_ops.set_dr6() in favor of a new KVM_RUN flag
->       KVM: VMX: Allow guest to set DEBUGCTL.RTM_DEBUG if RTM is supported
->       KVM: VMX: Extract checking of guest's DEBUGCTL into helper
->       KVM: SVM: Disable interception of SPEC_CTRL iff the MSR exists for =
-the guest
->       KVM: SVM: Allocate IOPM pages after initial setup in svm_hardware_s=
-etup()
->       KVM: SVM: Don't BUG if setting up the MSR intercept bitmaps fails
->       KVM: SVM: Tag MSR bitmap initialization helpers with __init
->       KVM: SVM: Use ARRAY_SIZE() to iterate over direct_access_msrs
->       KVM: SVM: Kill the VM instead of the host if MSR interception is bu=
-ggy
->       KVM: x86: Use non-atomic bit ops to manipulate "shadow" MSR interce=
-pts
->       KVM: SVM: Massage name and param of helper that merges vmcb01 and v=
-mcb12 MSRPMs
->       KVM: SVM: Clean up macros related to architectural MSRPM definition=
-s
->       KVM: nSVM: Use dedicated array of MSRPM offsets to merge L0 and L1 =
-bitmaps
->       KVM: nSVM: Omit SEV-ES specific passthrough MSRs from L0+L1 bitmap =
-merge
->       KVM: nSVM: Don't initialize vmcb02 MSRPM with vmcb01's "always pass=
-through"
->       KVM: SVM: Add helpers for accessing MSR bitmap that don't rely on o=
-ffsets
->       KVM: SVM: Implement and adopt VMX style MSR intercepts APIs
->       KVM: SVM: Pass through GHCB MSR if and only if VM is an SEV-ES gues=
-t
->       KVM: SVM: Drop "always" flag from list of possible passthrough MSRs
->       KVM: x86: Move definition of X2APIC_MSR() to lapic.h
->       KVM: VMX: Manually recalc all MSR intercepts on userspace MSR filte=
-r change
->       KVM: SVM: Manually recalc all MSR intercepts on userspace MSR filte=
-r change
->       KVM: x86: Rename msr_filter_changed() =3D> recalc_msr_intercepts()
->       KVM: SVM: Rename init_vmcb_after_set_cpuid() to make it intercepts =
-specific
->       KVM: SVM: Fold svm_vcpu_init_msrpm() into its sole caller
->       KVM: SVM: Merge "after set CPUID" intercept recalc helpers
->       KVM: SVM: Drop explicit check on MSRPM offset when emulating SEV-ES=
- accesses
->       KVM: SVM: Move svm_msrpm_offset() to nested.c
->       KVM: SVM: Store MSRPM pointer as "void *" instead of "u32 *"
->       KVM: nSVM: Access MSRPM in 4-byte chunks only for merging L0 and L1=
- bitmaps
->       KVM: SVM: Return -EINVAL instead of MSR_INVALID to signal out-of-ra=
-nge MSR
->       KVM: nSVM: Merge MSRPM in 64-bit chunks on 64-bit kernels
->       KVM: SVM: Add a helper to allocate and initialize permissions bitma=
-ps
->       KVM: x86: Simplify userspace filter logic when disabling MSR interc=
-eption
->       KVM: selftests: Verify KVM disable interception (for userspace) on =
-filter change
->       KVM: x86: Drop pending_smi vs. INIT_RECEIVED check when setting MP_=
-STATE
->       KVM: x86: WARN and reject KVM_RUN if vCPU's MP_STATE is SIPI_RECEIV=
-ED
->       KVM: x86: Move INIT_RECEIVED vs. INIT/SIPI blocked check to KVM_RUN
->       KVM: x86: Refactor handling of SIPI_RECEIVED when setting MP_STATE
->       KVM: VMX: Add a macro to track which DEBUGCTL bits are host-owned
->       KVM: selftests: Expand set of APIs for pinning tasks to a single CP=
-U
->       KVM: selftests: Convert arch_timer tests to common helpers to pin t=
-ask
->
-> Xin Li (1):
->       KVM: x86: Advertise support for LKGS
->
->  Documentation/virt/kvm/api.rst                     |  25 +-
->  arch/x86/include/asm/kvm-x86-ops.h                 |   3 +-
->  arch/x86/include/asm/kvm_host.h                    |  22 +-
->  arch/x86/include/asm/msr-index.h                   |   1 +
->  arch/x86/kvm/cpuid.c                               |   1 +
->  arch/x86/kvm/lapic.h                               |   2 +
->  arch/x86/kvm/svm/nested.c                          | 128 ++++--
->  arch/x86/kvm/svm/sev.c                             |  33 +-
->  arch/x86/kvm/svm/svm.c                             | 500 +++++++--------=
-------
->  arch/x86/kvm/svm/svm.h                             | 104 ++++-
->  arch/x86/kvm/vmx/common.h                          |   2 -
->  arch/x86/kvm/vmx/main.c                            |  23 +-
->  arch/x86/kvm/vmx/nested.c                          |  27 +-
->  arch/x86/kvm/vmx/pmu_intel.c                       |   8 +-
->  arch/x86/kvm/vmx/tdx.c                             |  24 +-
->  arch/x86/kvm/vmx/vmx.c                             | 284 ++++--------
->  arch/x86/kvm/vmx/vmx.h                             |  61 ++-
->  arch/x86/kvm/vmx/x86_ops.h                         |   6 +-
->  arch/x86/kvm/x86.c                                 | 106 +++--
->  arch/x86/kvm/x86.h                                 |  18 +-
->  include/uapi/linux/kvm.h                           |   1 +
->  tools/include/uapi/linux/kvm.h                     |   1 +
->  tools/testing/selftests/kvm/Makefile.kvm           |   1 +
->  tools/testing/selftests/kvm/arch_timer.c           |   7 +-
->  .../selftests/kvm/arm64/arch_timer_edge_cases.c    |  23 +-
->  tools/testing/selftests/kvm/include/kvm_util.h     |  31 +-
->  tools/testing/selftests/kvm/lib/kvm_util.c         |  15 +-
->  tools/testing/selftests/kvm/lib/memstress.c        |   2 +-
->  tools/testing/selftests/kvm/x86/aperfmperf_test.c  | 213 +++++++++
->  .../selftests/kvm/x86/userspace_msr_exit_test.c    |   8 +
->  30 files changed, 930 insertions(+), 750 deletions(-)
->  create mode 100644 tools/testing/selftests/kvm/x86/aperfmperf_test.c
->
+As always, if you do hit a bug, please report it.
 
+-------------------------------
+
+The following changes since commit c37495fe3531647db4ae5787a80699ae1438d7cf:
+
+  bcachefs: Add missing snapshots_seen_add_inorder() (2025-07-24 22:56:37 -0400)
+
+are available in the Git repository at:
+
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-07-28
+
+for you to fetch changes up to c0d938c16b674bfe9e710579344653b703b92a49:
+
+  bcachefs: Add missing error_throw to bch2_set_version_incompat() (2025-07-25 12:03:48 -0400)
+
+----------------------------------------------------------------
+bcachefs changes for 6.17-rc1
+
+No noteworthy feature work: we're in hard freeze.
+
+Lots of bugfixes. Assorted user visible changes and fixes:
+
+- Fix a major performance bug when deleting many files: this was caused
+  by the key cache caching keys that had been deleted, causing certain
+  lookups in the inode triggers to scan excessively.
+
+- The "io_read_nopromote" counter has been broken out into sub-counters;
+  these can be seen with 'bcachefs fs top' on a recent bcachefs-tools.
+  This helps when diagnosing why reads aren't coming from the cache.
+
+- Congestion tracking is now a bit less aggressive (this controls when
+  we decide to do a promote); this area still needs more work.
+
+- Metadata writes are no longer throttled by writeback throttling
+
+- Nocow writes can now be rebalanced (e.g. background_target,
+  background_compression options)
+
+- (Almost) all recovery passes now have progress indicators.
+
+- Repair improvements: we'll now reconstruct missing inodes if we find
+  contents for that inode (more than one or two keys), not just if the
+  inodes btree was damaged: similarly for 'dirent to missing inode'.
+
+- Btree node tracepoint improvements: they've been converted to more
+  modern printbuf tracepoints, and include significantly more info.
+
+- Fix in-memory accounting going out of sync with the accounting btree
+  when doing accounting updates before going RW.
+
+- BCH_MIN_NR_BUCKETS (minimum number of buckets per device) has been
+  increased from 64 to 512. In the unlikely event that anyone anyone
+  actually was using bcachefs on sub 128M filesystems and doesn't want
+  to lose access (modern tools will format these small filesystems with
+  a more appropriate bucket size), please file a report or contact me.
+
+  (This was just a syzbot issue, so far as I know).
+
+- CLASS()/guard() conversion: a great deal of code has been converted to
+  the new __cleanup based resource handling, and away from 'goto err'
+  cleanup.
+
+----------------------------------------------------------------
+Alan Huang (5):
+      bcachefs: Don't memcpy more than needed
+      bcachefs: Refactor trans->mem allocation
+      bcachefs: Shut up clang warning
+      bcachefs: Don't lock exec_update_lock
+      bcachefs: Use user_backed_iter instead of iter_is_iovec
+
+Anindya Sundar Gayen (1):
+      bcachefs: remove extraneous ; after statements
+
+George Hu (1):
+      bcachefs: use union for bch_compression_opt to make encode & decode easier
+
+Kent Overstreet (193):
+      bcachefs: Fix UAF by journal write path
+      bcachefs: async_objs: update iter pos after obj printed
+      bcachefs: fsck: dir_loop, subvol_loop now autofix
+      bcachefs: kill darray_u32_has()
+      bcachefs: Reduce __bch2_btree_node_alloc() stack usage
+      bcachefs: Allow CONFIG_UNICODE=m
+      bcachefs: use scoped_guard() in fast_list.c
+      bcachefs: DEFINE_CLASS()es for dev refcounts
+      bcachefs: More errcode conversions
+      bcachefs: add an unlikely() to trans_begin()
+      bcachefs: Plumb trans_kmalloc ip to trans_log_msg
+      bcachefs: Don't log error twice in allocator async repair
+      bcachefs: bch2_trans_has_updates()
+      bcachefs: Improve inode deletion
+      bcachefs: Don't peek key cache unless we have a real key
+      bcachefs: Evict/bypass key cache when deleting
+      bcachefs: -o fix_errors may now be used without -o fsck
+      bcachefs: Improved btree node tracepoints
+      bcachefs: Finish error_throw tracepoints
+      bcachefs: Improve inode_create behaviour on old filesystems
+      bcachefs: Before removing dangling dirents, check for contents
+      bcachefs: check_key_has_inode() reconstructs more aggressively
+      bcachefs: bch_fs.devs_removed
+      bcachefs: ptr_to_removed_device
+      bcachefs: bch2_journal_entry_missing_range()
+      bcachefs: Faster checking for missing journal entries
+      bcachefs: Add missing bch2_log_msg_start()
+      bcachefs: Print errcode when bch2_read_extent() sees error
+      bcachefs: Fix error message in buffered read path
+      bcachefs: Debug param for injecting btree node corruption on read
+      bcachefs: device add now properly sets c->online_devs
+      bcachefs: silence userspace build warning
+      bcachefs: Update path flags cleanups
+      bcachefs: add missing log message newline
+      bcachefs: add missing includes
+      bcachefs: silence userspace build warning
+      bcachefs: trace_data_update_done_no_rw_devs
+      bcachefs: use kvzalloc() for journal bios
+      bcachefs: Improve nopromote visibility
+      bcachefs: unsigned -> enum bch_trans_commit_flags
+      bcachefs: __bch2_btree_node_alloc() now respects target
+      bcachefs: bch2_btree_write_buffer_insert_checks()
+      bcachefs: don't call get_update_rebalance_opts() on btree ptrs
+      bcachefs: kill bch2_err_str() BUG_ON()
+      bcachefs: bch2_read_bio_to_text(): tabstops
+      bcachefs: kill __bch2_print_str()
+      bcachefs: bch_log()
+      bcachefs: c->loglevel
+      bcachefs: Zero list_idx when deleting from async obj lists
+      bcachefs: fix device add before fs started
+      bcachefs: fast_list: warn if non-empty on exit
+      bcachefs: bch2_journal_key_insert_take() accumulates accounting updates
+      bcachefs: bch2_fs_initialize() now runs journal replay
+      bcachefs: do_bch2_trans_commit_to_journal_replay handles accounting
+      bcachefs: bch2_set_nr_journal_buckets_iter() always marks
+      bcachefs: bch2_fs_initialize() initializes before going RW
+      bcachefs: Improve bch2_read_bio_to_text()
+      bcachefs: Fix replicas max options
+      bcachefs: Better congestion visibilty in sysfs
+      bcachefs: nopromote sub counters
+      bcachefs: make congestion tracking less aggressive
+      bcachefs: __bset_aux_tree_verify_ro()
+      bcachefs: Add missing bch2_bkey_set_needs_rebalance to nocow write path
+      bcachefs: delete useless null ptr check
+      bcachefs: Also create snapshots with CAP_FOWNER
+      bcachefs: Fix missing compat code in check_subvol()
+      bcachefs: Fix UAF in check_dirent()
+      bcachefs: Fix journal assertion
+      bcachefs: Fix __bch2_fs_read_write() error path
+      bcachefs: Give debugfs cached btree nodes better indentation
+      bcachefs: Silence clang warning about enum types
+      bcachefs: kill bkey_journal_seq()
+      bcachefs: don't pass bch_ioctl_data by value
+      bcachefs: better device too small error message
+      bcachefs: check_i_sectors now prints paths
+      bcachefs: simplify bch2_trans_do()
+      bcachefs: DEFINE_GUARD(printbuf_atomic)
+      bcachefs: convert super-io.c to CLASS/guards
+      bcachefs: convert super.c to CLASS/guards
+      bcachefs: convert acl.c to CLASS/guards
+      bcachefs: convert xattr.c to CLASS/guards
+      bcachefs: convert thread_with_file.c to CLASS/guards
+      bcachefs: convert unit tests to CLASS/guards
+      bcachefs: convert util.[ch] to CLASS/guards
+      bcachefs: convert six.c to guards
+      bcachefs: convert progress.c to guards
+      bcachefs: convert enumerated_ref.c to guards
+      bcachefs: convert opts.c to CLASS/guards
+      bcachefs: convert sysfs.c to CLASS/guards
+      bcachefs: convert buckets_waiting_for_journal.c to CLASS/guards
+      bcachefs: convert quota.c to CLASS/guards
+      bcachefs: convert sb-clean.c to CLASS/guards
+      bcachefs: convert sb-downgrade.c to CLASS/guards
+      bcachefs: convert sb-errors.c to CLASS/guards
+      bcachefs: convert sb-members.c to CLASS/guards
+      bcachefs: convert clock.c to CLASS/guards
+      bcachefs: convert debug.c to CLASS/guards
+      bcachefs: convert nocow_locking.c to CLASS/guards
+      bcachefs: convert replicas.c to CLASS/guards
+      bcachefs: convert bset.c to CLASS
+      bcachefs: convert bkey.c to CLASS
+      bcachefs: convert chardev.c to CLASS
+      bcachefs: convert fs-ioctl.c to CLASS/guards
+      bcachefs: convert disk_groups.c to guards
+      bcachefs: convert checksum.c to CLASS/guards
+      bcachefs: convert compress.c to guards
+      bcachefs: convert rebalance.c to CLASS/guards
+      bcachefs: convert migrate.c to CLASS/guards
+      bcachefs: convert move.c to CLASS/guards
+      bcachefs: convert movinggc.c to CLASS
+      bcachefs: convert data_update.c to CLASS/guards
+      bcachefs: convert reflink.c to CLASS/guards
+      bcachefs: convert snapshot.c to CLASS/guards
+      bcachefs: convert subvolume.c to CLASS/guards
+      bcachefs: convert str_hash.c to CLASS
+      bcachefs: convert recovery_passes.c to CLASS/guards
+      bcachefs: convert recovery.c to CLASS/guards
+      bcachefs: convert lru.c to CLASS
+      bcachefs: convert extents.c to guards
+      bcachefs: convert logged_ops.c to CLASS
+      bcachefs: convert inode.c to CLASS
+      bcachefs: convert dirent.c to CLASS
+      bcachefs: convert namei.c to CLASS
+      bcachefs: convert io_read.c to CLASS/guards
+      bcachefs: convert io_write.c to CLASS/guards
+      bcachefs: convert io_misc.c to CLASS/guards
+      bcachefs: convert fsck.c to CLASS/guards
+      bcachefs: convert disk_accounting.c to CLASS/guards
+      bcachefs: convert buckets.c to CLASS/guards
+      bcachefs: convert ec.c to CLASS/guards
+      bcachefs: convert backpointers.c to CLASS/guards
+      bcachefs: convert alloc_background.c to CLASS/guards
+      bcachefs: convert alloc_foreground.c to CLASS/guards
+      bcachefs: convert fs.c to CLASS/guards
+      bcachefs: convert fs-io.c to CLASS/guards
+      bcachefs: convert fs-io-pagecache.c to CLASS/guards
+      bcachefs: convert fs-io-buffered.c to CLASS/guards
+      bcachefs: convert fs-io-direct.c to CLASS/guards
+      bcachefs: convert btree_node_scan.c to CLASS/guards
+      bcachefs: convert journal.c to CLASS/guards
+      bcachefs: convert journal_io.c to CLASS/guards
+      bcachefs: convert journal_reclaim.c to CLASS/guards
+      bcachefs: convert journal_seq_blacklist.c to CLASS/guards
+      bcachefs: convert btree_cache.c to CLASS/guards
+      bcachefs: convert btree_gc.c to CLASS/guards
+      bcachefs: convert btree_write_buffer.c to CLASS/guards
+      bcachefs: convert btree_update.c to CLASS/guards
+      bcachefs: convert btree_update_interior.c to CLASS/guards
+      bcachefs: convert btree_trans_commit.c to CLASS/guards
+      bcachefs: convert btree_key_cache.c to CLASS/guards
+      bcachefs: convert btree_io.c to CLASS/guards
+      bcachefs: convert btree_iter.c to CLASS/guards
+      bcachefs: convert btree_locking.c to CLASS/guards
+      bcachefs: convert btree_journal_iter.c to CLASS/guards
+      bcachefs: bch2_run_recovery_pass() now prints errors
+      bcachefs: convert error.c to CLASS/guards
+      bcachefs: Fix padding zeroout when creating casefolded dirents
+      bcachefs: Don't call bch2_recovery_pass_want_ratelimit without sb_lock
+      bcachefs: Tell wbt throttling not to throttle metadata writes
+      bcachefs: Kill redundant write_super() when running recovery passes
+      bcachefs: Add comment to journal_flush_done()
+      bcachefs: Don't emit empty journal entry for accounting
+      bcachefs: sysfs trigger_btree_write_buffer_flush
+      closures: Improve warnings on bad put
+      bcachefs: Fix unhandled key type in fiemap_fill_extent
+      bcachefs: Ensure we don't return with closure on waitlist
+      bcachefs: bch2_move_data() now walks btree nodes
+      bcachefs: rereplicate flushes interior updates
+      bcachefs: can_use_btree_node()
+      bcachefs: Fix error handling in btree_iter_peek_slot
+      bcachefs: fix assert in bch2_btree_path_traverse_cached()
+      bcachefs: Fix allocate_dropping_locks() usage
+      bcachefs: log devices we're scanning in btree node scan
+      bcachefs: Fix refs to undefined fields in __bch2_alloc_v4_to_text()
+      bcachefs: fix check_extent_overbig() call
+      bcachefs: Convert topology repair errs to standard error codes
+      bcachefs: Fix __bch2_alloc_to_v4 copy
+      bcachefs: Flush btree_interior_update_work before freeing fs
+      bcachefs: Only track read latency for congestion tracking
+      bcachefs: Clean up btree_node_read_work() error handling
+      bcachefs: Ensure pick_read_device() returns error for btree pointers
+      bcachefs: btree_lost_data: mark a few more errors for silent fixing
+      bcachefs: Don't allow mounting with crazy numbers of dirty journal entries
+      bcachefs: Add pass_done to recovery_pass_status_to_text()
+      bcachefs: Increase BCH_MIN_NR_NBUCKETS
+      bcachefs: Hook up progress indicators for most recovery passes
+      bcachefs: recovery_pass_will_run()
+      bcachefs: journal_entry_btree_keys_to_text() is more careful
+      bcachefs: dirent_to_text() now uses prt_bytes()
+      bcachefs: Add missing ei_last_dirtied update
+      bcachefs: snapshots: pass snapshot_table where appropriate
+      bcachefs: live_child() no longer uses recursion
+      bcachefs: Add missing error_throw to bch2_set_version_incompat()
+
+Nikita Ofitserov (1):
+      bcachefs: Suppress unnecessary inode_i_sectors_wrong fsck error
+
+Youling Tang (2):
+      bcachefs: Simplify bch2_bio_map()
+      bcachefs: Use bio_add_folio_nofail() for unfailable operations
+
+ fs/bcachefs/acl.c                         |  19 +-
+ fs/bcachefs/alloc_background.c            | 300 +++++++---------
+ fs/bcachefs/alloc_background.h            |   9 +-
+ fs/bcachefs/alloc_foreground.c            | 209 +++++------
+ fs/bcachefs/alloc_foreground.h            |   9 +-
+ fs/bcachefs/async_objs.c                  |  29 +-
+ fs/bcachefs/async_objs.h                  |   7 +-
+ fs/bcachefs/async_objs_types.h            |   2 +-
+ fs/bcachefs/backpointers.c                |  63 ++--
+ fs/bcachefs/bcachefs.h                    |  72 ++--
+ fs/bcachefs/bkey.c                        |   4 +-
+ fs/bcachefs/bset.c                        |  74 ++--
+ fs/bcachefs/btree_cache.c                 |  38 +-
+ fs/bcachefs/btree_cache.h                 |  11 +
+ fs/bcachefs/btree_gc.c                    | 122 +++----
+ fs/bcachefs/btree_io.c                    | 119 ++++---
+ fs/bcachefs/btree_iter.c                  | 129 ++++---
+ fs/bcachefs/btree_iter.h                  |  22 +-
+ fs/bcachefs/btree_journal_iter.c          |  20 +-
+ fs/bcachefs/btree_key_cache.c             |  16 +-
+ fs/bcachefs/btree_locking.c               |  17 +-
+ fs/bcachefs/btree_node_scan.c             |  32 +-
+ fs/bcachefs/btree_trans_commit.c          | 121 ++++---
+ fs/bcachefs/btree_types.h                 |  22 +-
+ fs/bcachefs/btree_update.c                | 171 +++++----
+ fs/bcachefs/btree_update.h                |  79 +++--
+ fs/bcachefs/btree_update_interior.c       | 335 +++++++++---------
+ fs/bcachefs/btree_update_interior.h       |  12 +-
+ fs/bcachefs/btree_write_buffer.c          |  45 ++-
+ fs/bcachefs/btree_write_buffer.h          |   6 +-
+ fs/bcachefs/buckets.c                     | 212 +++++------
+ fs/bcachefs/buckets_waiting_for_journal.c |  30 +-
+ fs/bcachefs/chardev.c                     | 120 ++-----
+ fs/bcachefs/checksum.c                    |  54 ++-
+ fs/bcachefs/clock.c                       |  17 +-
+ fs/bcachefs/compress.c                    |  29 +-
+ fs/bcachefs/compress.h                    |  36 +-
+ fs/bcachefs/data_update.c                 |  33 +-
+ fs/bcachefs/debug.c                       |  92 +++--
+ fs/bcachefs/dirent.c                      |  42 +--
+ fs/bcachefs/dirent.h                      |   4 +-
+ fs/bcachefs/disk_accounting.c             | 266 +++++++-------
+ fs/bcachefs/disk_accounting.h             |   9 +-
+ fs/bcachefs/disk_groups.c                 |  27 +-
+ fs/bcachefs/ec.c                          | 239 +++++--------
+ fs/bcachefs/ec.h                          |   2 +-
+ fs/bcachefs/enumerated_ref.c              |   4 +-
+ fs/bcachefs/errcode.c                     |   3 +-
+ fs/bcachefs/errcode.h                     |  13 +
+ fs/bcachefs/error.c                       |  65 ++--
+ fs/bcachefs/extents.c                     |  38 +-
+ fs/bcachefs/extents.h                     |   3 +
+ fs/bcachefs/fast_list.c                   |  32 +-
+ fs/bcachefs/fast_list.h                   |   2 +-
+ fs/bcachefs/fs-io-buffered.c              |  79 ++---
+ fs/bcachefs/fs-io-direct.c                |  11 +-
+ fs/bcachefs/fs-io-pagecache.c             |  55 ++-
+ fs/bcachefs/fs-io.c                       | 127 ++++---
+ fs/bcachefs/fs-io.h                       |  19 +-
+ fs/bcachefs/fs-ioctl.c                    |  33 +-
+ fs/bcachefs/fs.c                          | 192 +++++-----
+ fs/bcachefs/fsck.c                        | 427 ++++++++++++----------
+ fs/bcachefs/inode.c                       | 101 +++---
+ fs/bcachefs/io_misc.c                     |  36 +-
+ fs/bcachefs/io_read.c                     | 157 +++++---
+ fs/bcachefs/io_read.h                     |  20 +-
+ fs/bcachefs/io_write.c                    |  46 +--
+ fs/bcachefs/journal.c                     | 253 ++++++-------
+ fs/bcachefs/journal.h                     |   3 +-
+ fs/bcachefs/journal_io.c                  | 248 ++++++-------
+ fs/bcachefs/journal_io.h                  |   7 +
+ fs/bcachefs/journal_reclaim.c             | 220 ++++++------
+ fs/bcachefs/journal_seq_blacklist.c       |  56 ++-
+ fs/bcachefs/journal_seq_blacklist.h       |   3 +
+ fs/bcachefs/logged_ops.c                  |  14 +-
+ fs/bcachefs/lru.c                         |  24 +-
+ fs/bcachefs/migrate.c                     |  21 +-
+ fs/bcachefs/move.c                        | 218 +++++-------
+ fs/bcachefs/move.h                        |  14 +-
+ fs/bcachefs/movinggc.c                    |   6 +-
+ fs/bcachefs/namei.c                       |  26 +-
+ fs/bcachefs/nocow_locking.c               |  10 +-
+ fs/bcachefs/opts.c                        |  33 +-
+ fs/bcachefs/opts.h                        |   8 +-
+ fs/bcachefs/printbuf.h                    |   4 +
+ fs/bcachefs/progress.c                    |   6 +-
+ fs/bcachefs/progress.h                    |   3 +
+ fs/bcachefs/quota.c                       |  96 ++---
+ fs/bcachefs/rebalance.c                   |  57 ++-
+ fs/bcachefs/recovery.c                    | 213 +++++------
+ fs/bcachefs/recovery_passes.c             |  68 ++--
+ fs/bcachefs/recovery_passes.h             |   9 +-
+ fs/bcachefs/reflink.c                     |  63 ++--
+ fs/bcachefs/replicas.c                    | 147 ++++----
+ fs/bcachefs/sb-clean.c                    |  36 +-
+ fs/bcachefs/sb-counters_format.h          |   6 +
+ fs/bcachefs/sb-downgrade.c                |  19 +-
+ fs/bcachefs/sb-errors.c                   |  45 +--
+ fs/bcachefs/sb-errors_format.h            |   9 +-
+ fs/bcachefs/sb-members.c                  |  48 ++-
+ fs/bcachefs/sb-members.h                  |  19 +-
+ fs/bcachefs/sb-members_format.h           |   2 +-
+ fs/bcachefs/six.c                         |  21 +-
+ fs/bcachefs/snapshot.c                    | 179 ++++------
+ fs/bcachefs/snapshot.h                    |  32 +-
+ fs/bcachefs/snapshot_types.h              |   2 +-
+ fs/bcachefs/str_hash.c                    |  23 +-
+ fs/bcachefs/str_hash.h                    |   4 +-
+ fs/bcachefs/subvolume.c                   | 106 +++---
+ fs/bcachefs/super-io.c                    |  81 ++---
+ fs/bcachefs/super.c                       | 570 ++++++++++++++----------------
+ fs/bcachefs/sysfs.c                       |  28 +-
+ fs/bcachefs/tests.c                       | 198 +++++------
+ fs/bcachefs/thread_with_file.c            |  52 +--
+ fs/bcachefs/time_stats.c                  |   7 +-
+ fs/bcachefs/trace.h                       | 152 ++------
+ fs/bcachefs/util.c                        |  28 +-
+ fs/bcachefs/util.h                        |  10 +-
+ fs/bcachefs/xattr.c                       |  52 ++-
+ lib/closure.c                             |  12 +-
+ 120 files changed, 3972 insertions(+), 4388 deletions(-)
 
