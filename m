@@ -1,148 +1,108 @@
-Return-Path: <linux-kernel+bounces-747331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30221B132A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:15:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47228B132A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1987418963BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CCFB1896734
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5ED1E4AE;
-	Mon, 28 Jul 2025 00:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323473597C;
+	Mon, 28 Jul 2025 00:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Jw7MJ5Vz"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="RPbTfdr5"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268CB4C6C;
-	Mon, 28 Jul 2025 00:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753661720; cv=pass; b=Sl0DzTOJ84rwMkbjVMjzAj6V5ieOc2zrsi67MwvoN+JhrhMAiL1tNaHB9GrivAB4wQaiEDnuKZ/PPhCdlX+SHxsJoZRCkspr5EPkEY348H3e0O9/yK28NnSLnY6LFJVplJxdWQZKvSLuqcdPTEfPweTU0Cmpok153ZppTN6oDX4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753661720; c=relaxed/simple;
-	bh=JwxVvArkyP39QEnSFJqXUfjKXP+S/mEocXKgc9Sx78k=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=DsZ1SNGuaz3HMX7QUYSY+bPnxrbGB5vN2eQvnQNoYupu8JJEOZs5oJhWzgpy6sKSbZvyUL0hCoBCq304VAoMtRSXS6ynHC6oosPHOX4fPuBS2Golj+9BTh+AXmpwVhvHNJfl6os4wemJ47pwHTQpO/Mw6ucrwFg/B+1X663C7Uc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Jw7MJ5Vz; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753661699; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=j5IZcRVgKvnY4f2D6066rzIM2QCESkxjpVYir9daMx0kirIDSFQeph6Qm9kBwlzPDN2yEqXaatvHBy4c9DepZhNw1rfaoQ4o7QS0KcnYmM1P2YL7UNjU2pIfqjHMH4ybbdMSN+yTprSpAPCPrHW4Q81G5KNw7Zwq665IBQM4NdE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753661699; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=JwxVvArkyP39QEnSFJqXUfjKXP+S/mEocXKgc9Sx78k=; 
-	b=EaN6LbEptaKX6k5er7Yp+9SaywxI0QMMVF2SdibHcAyTPCrUn5ewj7XrF5zgOnkO7+EEXzDjzv8DA4N7AsXs4Q9fhxgSsawZJt5Boo1Il+0skj2vTAVFPcffFKX0tE80Wxhc47W+3lEPkr55j7/i0OI0wkm1jOqCydWUqvvZQVI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753661699;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=JwxVvArkyP39QEnSFJqXUfjKXP+S/mEocXKgc9Sx78k=;
-	b=Jw7MJ5Vzmh9tcBaHOwIaIE/ETnL+j2iOI9uloxDfZyIHL1MnYM6st6SX5EI4T/JD
-	qLCLHS/uHO9EvS9I/Rr9R4OmsC57HhLINe6hPQfTKxHw/dIvgf/BYus3RmrN5ax57qH
-	Upk+3siKOMXq40ro7WOuIHtY3pkmI6ZJZU657u6k=
-Received: by mx.zohomail.com with SMTPS id 1753661696217176.06162511726257;
-	Sun, 27 Jul 2025 17:14:56 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C24E79CF
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 00:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753661743; cv=none; b=cCKzRNcwmSLxytlRjQJ9ZFf1xekzmGrAnU3UPpgGiJ14m2ShoOcp4z+buQnQ4vbXSKH3Vzkzk97YdrXUWKSxWNV2keGWAtR8klMt7gYd0/3IIGy+3Rdtehe0yHGfbhPRLnMMLKw6uLqXQThAIzpmb/A5DXu9ITUhWRFHR8KtElM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753661743; c=relaxed/simple;
+	bh=5k8JYmHT2cWOWtGfELADGc92fbkTdz1tEljYzoDyHO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jXYJbYsaFHbDxJLYspiJhFHm8e4e8HtmxvIs+R85qvJPXihY+7ANBOJB070g24/wYC6ELWMZZiFIwv9O3ggUUz4feQTRAwzI0g+ALomSkcOuAb90ndMFMs0qyD0m4ImCh/FcBsTqQaCxHty/VryLuj9A9HGgeYOuJ7sev4jiVWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=RPbTfdr5; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 5EE52104C1CB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 05:45:28 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 5EE52104C1CB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1753661728; bh=5k8JYmHT2cWOWtGfELADGc92fbkTdz1tEljYzoDyHO0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RPbTfdr5ubQ/Ie0C5V9yg/krhtrN1zu2JngvovCUqM54zyAyv3uxoXkeQAfDD6hsX
+	 09w6G31zxeqAlxBucisd1MD8NCzSJyyC1b7PYQu0CgeO74OvG/AiTgiwa5sz0BVfPR
+	 fNfwKQ8TweWe07lsfBrtC0uOjEttlJoM17jhtWTU=
+Received: (qmail 23478 invoked by uid 510); 28 Jul 2025 05:45:28 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.875186 secs; 28 Jul 2025 05:45:28 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 28 Jul 2025 05:45:24 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id D4A563414DD;
+	Mon, 28 Jul 2025 05:45:23 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id AA8EA1E8128E;
+	Mon, 28 Jul 2025 05:45:23 +0530 (IST)
+Date: Mon, 28 Jul 2025 05:45:17 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: thierry.reding@gmail.com, mperttunen@nvidia.com, airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH] gpu: host1x: use dev_err_probe() in probe path
+Message-ID: <aIbBFQqgZalOMc6r@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] MAINTAINERS: add "DEVICE I/O & IRQ [RUST]" entry
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250725202840.2251768-1-ojeda@kernel.org>
-Date: Sun, 27 Jul 2025 21:14:35 -0300
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9894D97E-0048-4A12-980B-1BA16AF8B587@collabora.com>
-References: <20250725202840.2251768-1-ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Use dev_err_probe() helper as recommended by core driver model in
+drivers/base/core.c to handle deferred probe error. Improve code
+consistency and debuggability using standard helper.
 
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+---
+ drivers/gpu/host1x/dev.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-> On 25 Jul 2025, at 17:28, Miguel Ojeda <ojeda@kernel.org> wrote:
->=20
-> This entry will handle device I/O patches and abstractions (such as
-> memory-mapped IO and system resources series [1]), as well as IRQ ones
-> (such as the `request_irq` series [2]).
->=20
-> Patches will flow through driver-core, at least for the time being.
->=20
-> Danilo, Alice and Daniel will maintain it.
->=20
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: Daniel Almeida <daniel.almeida@collabora.com>
-> Link: =
-https://lore.kernel.org/rust-for-linux/20250717-topics-tyr-platform_iomem-=
-v15-0-beca780b77e3@collabora.com/ [1]
-> Link: =
-https://lore.kernel.org/rust-for-linux/20250715-topics-tyr-request_irq2-v7=
--0-d469c0f37c07@collabora.com/ [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
-> MAINTAINERS | 15 +++++++++++++++
-> 1 file changed, 15 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 10850512c118..ededa04ef97b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6920,6 +6920,21 @@ F: drivers/devfreq/event/
-> F: include/dt-bindings/pmu/exynos_ppmu.h
-> F: include/linux/devfreq-event.h
->=20
-> +DEVICE I/O & IRQ [RUST]
-> +M: Danilo Krummrich <dakr@kernel.org>
-> +M: Alice Ryhl <aliceryhl@google.com>
-> +M: Daniel Almeida <daniel.almeida@collabora.com>
-> +L: rust-for-linux@vger.kernel.org
-> +S: Supported
-> +W: https://rust-for-linux.com
-> +B: https://github.com/Rust-for-Linux/linux/issues
-> +C: https://rust-for-linux.zulipchat.com
-> +T: git =
-git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
-> +F: rust/kernel/io.rs
-> +F: rust/kernel/io/
-> +F: rust/kernel/irq.rs
-> +F: rust/kernel/irq/
-> +
-> DEVICE RESOURCE MANAGEMENT HELPERS
-> M: Hans de Goede <hansg@kernel.org>
-> R: Matti Vaittinen <mazziesaccount@gmail.com>
->=20
-> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-> --=20
-> 2.50.1
->=20
->=20
-
-Acked-by: Daniel Almeida <daniel.almeida@collabora.com>
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 1f93e5e276c0..e6f3cbeb9ae5 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -587,11 +587,7 @@ static int host1x_probe(struct platform_device *pdev)
+ 	host->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(host->clk)) {
+ 		err = PTR_ERR(host->clk);
+-
+-		if (err != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "failed to get clock: %d\n", err);
+-
+-		return err;
++		return dev_err_probe(&pdev->dev, err, "failed to get clock: %d\n", err);
+ 	}
+ 
+ 	err = host1x_get_resets(host);
+-- 
+2.34.1
 
 
