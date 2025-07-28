@@ -1,85 +1,150 @@
-Return-Path: <linux-kernel+bounces-748384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE28B1407E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE7BB14084
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B1D1888116
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 614A8189364B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C192749E7;
-	Mon, 28 Jul 2025 16:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAEB2750E5;
+	Mon, 28 Jul 2025 16:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hd8iXgTx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+keFTh/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4E22727F6;
-	Mon, 28 Jul 2025 16:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AED218ABD;
+	Mon, 28 Jul 2025 16:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753720867; cv=none; b=PRf5nGufNqd3Z/cl0g80YoIFoY0nfAcJiwQXDBxignFQhFjekU+DMUp/T/KD8B/LjY6UcqONffkaCgNAgRuKDH5tUXn7sEVl3exDcYoizLsN35GMqDPflyG8w6BpbeJ2NABvg0NmxvwB6MkAyb6R3GXbSWZP8uBA0xIkiL0Drnc=
+	t=1753720903; cv=none; b=IrOANAseTZ078tKj5fGWHYFH5lauqmIoNSsQKk0vLbcRCgSZBEyYr+WYN/tyGSxdgB9dFfcElDMZqqVhMLEQlseMD3aodittTyPFrLvmg34fzmDz9JSoeg3WuALLsO1T7YxqhucjErftKZjsAUU0+k9qW/TZ0knWicKnFpnwNLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753720867; c=relaxed/simple;
-	bh=S9qutYy6Xor9FZMzMNct/VB9FINEX9V03Uyt07X+gG8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=NAYP6cE9+STWSNd6Do4gFIFdsGQi3wE4lEESk3epyF4f68awzBknozcmxdod5Q7qjP/EW0f4BflDBmsMZSO3B7NgB+lnf0HHiYVJkPK2pSnMAYZmHJQ+dcF2h8Yn/pAEgOdgyYyFaDJ3iy2cTMErHbim9GggQ97lvBmTl2ycaQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hd8iXgTx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 921A3C4CEE7;
-	Mon, 28 Jul 2025 16:41:06 +0000 (UTC)
+	s=arc-20240116; t=1753720903; c=relaxed/simple;
+	bh=7x0ZgIgFMhmGblvNn1rp9l0J3jLs/NKo357QqFEU40c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBOknKt0Tlyw0y72pRRvVlIzOqUJ9DSEwXjKByOC0FHLakpzUXRv+G2hj36n3Anep9plgnL5wufoFfMHOBQzqITVoB4Xiy5jGob0pPwnPbkS+Ml2K5p+S2S66AhnPiwpcUAVsi+IZmqhlhjMby7g+2k2oGD303Cu+BMA46qivKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+keFTh/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51E4FC4CEE7;
+	Mon, 28 Jul 2025 16:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753720867;
-	bh=S9qutYy6Xor9FZMzMNct/VB9FINEX9V03Uyt07X+gG8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=hd8iXgTxxeL9E0lIsfb7ZLbHJ8LYPLIY9cEnbRAQ9FBfPksMVbOxSLc/WwaJm7BU1
-	 plOyB18OtXDJq35z0d1eFoqSjrltb+RJISXf2dmYAYyCLDI26+iQ7e+CRa58hVP+c9
-	 IEiXrt2ul3WrJR6ksbj8J9gsSsWzwbHV4gK9/KElPLcwcCDVtJSmmpEujs8Ehk5lH+
-	 mB8KTPNfw0SDmmK9wE+QDGLdDqSc7wKqbKQs/0vWRM5z6uwQgDb5QNU/e6XScbNp1C
-	 hYvkTxb57ZS83ZkRbg0PFPYQrd2OczN81Dex7CD9MMWq3Hi7wPntOczDHOY7o1n09C
-	 5gI34o/TnVsMw==
-Date: Mon, 28 Jul 2025 09:41:05 -0700
-From: Kees Cook <kees@kernel.org>
-To: dan.j.williams@intel.com, Steven Rostedt <rostedt@goodmis.org>
-CC: Jakub Kicinski <kuba@kernel.org>, Sasha Levin <sashal@kernel.org>,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, konstantin@linuxfoundation.org, corbet@lwn.net,
- josh@joshtriplett.org
-Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
-User-Agent: K-9 Mail for Android
-In-Reply-To: <68879de1aaf4_e74a1008c@dwillia2-mobl4.notmuch>
-References: <20250725175358.1989323-1-sashal@kernel.org> <20250725114114.3b13e7b1@kernel.org> <20250725150046.3adb556c@gandalf.local.home> <202507251356.4396F1F@keescook> <68879de1aaf4_e74a1008c@dwillia2-mobl4.notmuch>
-Message-ID: <58B23F1B-9E09-4B30-A1AD-BF900103E971@kernel.org>
+	s=k20201202; t=1753720902;
+	bh=7x0ZgIgFMhmGblvNn1rp9l0J3jLs/NKo357QqFEU40c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B+keFTh/H3uyJm+2CRXywKicPx1XFBBkxeKmrZZbdSdo7TbhwSKWM+9PVaAkV/Ggd
+	 rdbs8jBkHbT/8OTgeGMPL4gfUOW2ABlcD8WUcg8AnFQUJTXwNmVXpc6MVeqX+1gX/B
+	 Hl4YyyFNqJKjrMehvwoAGQununhgEiDlRgPJ4pHhRsT2e9nnS0dUD7g029zGYqMvz0
+	 +n1X/yXScSmTwLjOGstVCV5NVXNowOdBanEpgP5gJZIZzUwp2PqhdbrI1ndD1ANzQ6
+	 U3SK+z5/iiu7H8t8oy3Nyrh+r+SHqvFdQXzv1CHbtq87l4SZmHe8/P8OoUYzv0vSLF
+	 T/9RjFtCR33XQ==
+Date: Mon, 28 Jul 2025 19:41:36 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Christoph Hellwig <hch@lst.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 05/10] PCI/P2PDMA: Export pci_p2pdma_map_type() function
+Message-ID: <20250728164136.GD402218@unreal>
+References: <cover.1753274085.git.leonro@nvidia.com>
+ <82e62eb59afcd39b68ae143573d5ed113a92344e.1753274085.git.leonro@nvidia.com>
+ <20250724080313.GA31887@lst.de>
+ <20250724081321.GT402218@unreal>
+ <b32ae619-6c4a-46fc-a368-6ad4e245d581@deltatee.com>
+ <20250727190514.GG7551@nvidia.com>
+ <d69e0d74-285e-4cde-a2e4-a803accfa9e1@deltatee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d69e0d74-285e-4cde-a2e4-a803accfa9e1@deltatee.com>
 
+On Mon, Jul 28, 2025 at 10:12:31AM -0600, Logan Gunthorpe wrote:
+> 
+> 
+> On 2025-07-27 13:05, Jason Gunthorpe wrote:
+> > On Fri, Jul 25, 2025 at 10:30:46AM -0600, Logan Gunthorpe wrote:
+> >>
+> >>
+> >> On 2025-07-24 02:13, Leon Romanovsky wrote:
+> >>> On Thu, Jul 24, 2025 at 10:03:13AM +0200, Christoph Hellwig wrote:
+> >>>> On Wed, Jul 23, 2025 at 04:00:06PM +0300, Leon Romanovsky wrote:
+> >>>>> From: Leon Romanovsky <leonro@nvidia.com>
+> >>>>>
+> >>>>> Export the pci_p2pdma_map_type() function to allow external modules
+> >>>>> and subsystems to determine the appropriate mapping type for P2PDMA
+> >>>>> transfers between a provider and target device.
+> >>>>
+> >>>> External modules have no business doing this.
+> >>>
+> >>> VFIO PCI code is built as module. There is no way to access PCI p2p code
+> >>> without exporting functions in it.
+> >>
+> >> The solution that would make more sense to me would be for either
+> >> dma_iova_try_alloc() or another helper in dma-iommu.c to handle the
+> >> P2PDMA case.
+> > 
+> > This has nothing to do with dma-iommu.c, the decisions here still need
+> > to be made even if dma-iommu.c is not compiled in.
+> 
+> Doesn't it though? Every single call in patch 10 to the newly exported
+> PCI functions calls into the the dma-iommu functions. If there were
+> non-iommu paths then I would expect the code would use the regular DMA
+> api directly which would then call in to dma-iommu.
 
+If p2p type is PCI_P2PDMA_MAP_BUS_ADDR, there will no dma-iommu and DMA
+at all.
 
-On July 28, 2025 8:57:21 AM PDT, dan=2Ej=2Ewilliams@intel=2Ecom wrote:
->Kees Cook wrote:
->> Having had to do "find all commits from [set of authors]" research for
->> security audits, I would be very unhappy if I had to do this again in
->> the future for a specific Agent (used any author), and had to loop lore
->> into the process=2E Yes, it's *doable*, but it'd be very annoying=2E
-> [=2E=2E=2E]
->So "doable, but very annoying" strikes me as a problem space where an AI
->agent could help=2E It is not clear to me that a concise commit trailer
->captures everything needed to help both the review and after the fact
->forensics problem, especially when model fine tuning and prompting are
->in play=2E
-
-Heh, good point=2E :) We can make all problems *with* agents and problem *=
-for* agents=2E :P
-
---=20
-Kees Cook
++static int vfio_pci_dma_buf_attach(struct dma_buf *dmabuf,
++				   struct dma_buf_attachment *attachment)
++{
++	struct vfio_pci_dma_buf *priv = dmabuf->priv;
++
++	if (!attachment->peer2peer)
++		return -EOPNOTSUPP;
++
++	if (priv->revoked)
++		return -ENODEV;
++
++	switch (pci_p2pdma_map_type(priv->vdev->provider, attachment->dev)) {
++	case PCI_P2PDMA_MAP_THRU_HOST_BRIDGE:
++		break;
++	case PCI_P2PDMA_MAP_BUS_ADDR:
++		/*
++		 * There is no need in IOVA at all for this flow.
++		 * We rely on attachment->priv == NULL as a marker
++		 * for this mode.
++		 */
++		return 0;
++	default:
++		return -EINVAL;
++	}
++
++	attachment->priv = kzalloc(sizeof(struct dma_iova_state), GFP_KERNEL);
++	if (!attachment->priv)
++		return -ENOMEM;
++
++	dma_iova_try_alloc(attachment->dev, attachment->priv, 0, priv->phys_vec.len);
++	return 0;
++}
 
