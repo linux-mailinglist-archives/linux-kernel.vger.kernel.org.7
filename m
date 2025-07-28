@@ -1,131 +1,102 @@
-Return-Path: <linux-kernel+bounces-747718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012FAB1373F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:08:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D98AB13742
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648903B77A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:08:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B851891C96
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48887223311;
-	Mon, 28 Jul 2025 09:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVPcWcbT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6417FBF0;
-	Mon, 28 Jul 2025 09:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578F222A7E0;
+	Mon, 28 Jul 2025 09:09:15 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 057272153D2;
+	Mon, 28 Jul 2025 09:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753693727; cv=none; b=s5qrLcl7hxF40ElfOtPOnVgLjPkaFLmMavGm/XZ8o9VHqyu9jCZ9nk9UdpBgVjEfl27oEtecGyhgWW4w1CP0QUomp3SEPySWH5kPounDfee4jk7lDJ+GWYcEHgfewacf1I2HRqCEa2sK1Jdwzm3qWPkNX8dlsj6FNXSlIWehtr4=
+	t=1753693755; cv=none; b=Y42l4Uo/UYvxgWhx+dQrNGDA6gUPy0gf++PUtqcNdqnbBUqE+jBqO1LEfzEWLcQh0k6akn8l/gECObfWCBb5uO2ItO2IB5G3Qyde5LHdgh9WhsE/0K1vppAhwpJ6OCRNoPB1kzAjKEb6ojQAOoS8L6HwWsEPe8jJDTWBP+W5Js8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753693727; c=relaxed/simple;
-	bh=OfRUM38b3EvY9TW41XVgHbkrwnuWmdvU9NPcj+KLAvs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T+pmoGE3TQVdal/S5Kep6+Gzsrkfnz8hEPM/x6xvEQzGn7uzEuIEmoeuq3m8JVAKJmgwkGVRfFE4lliu4ceFQs01+pix8zj7F13hmJyVQTWVMWS0rVDn8eg9WK1dq5VaBY0F0voFBajxFLUhKZu68WPBIaE+3gSQJdgmPIenxmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVPcWcbT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 33BF8C4CEE7;
-	Mon, 28 Jul 2025 09:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753693727;
-	bh=OfRUM38b3EvY9TW41XVgHbkrwnuWmdvU9NPcj+KLAvs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=UVPcWcbTjfQXJUIRVAFajDAJ3HLVCEgM17Kx0vXkxsPC7ZpMqX75yAZ31XswwQpXH
-	 7dxwpDeY3KKoiAOL47z74844C80U/jdBbmc73pzV3FjGCMA4Xvs2Um5hXzvrjtUVHZ
-	 utyCw9aiNxwJbDVlG4bpQN1epBysZd0bjwlpdYDb3bweNsh583sriZCVDWPAsm3rGR
-	 vFVDVXTLnaVM1xrxYfFNa89tOgDw2vuFnHbPQ20kDV7DyepLAY97iJqMYD5oexk4ng
-	 MzMj4gHyW66KWxT+rJMzMCBuRggc/1t0gn2g6Yvturl6ZvP3ZPlyym2bY3ZybXIEOv
-	 59/X1kYt/ldNw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1809BC83F17;
-	Mon, 28 Jul 2025 09:08:47 +0000 (UTC)
-From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
-Date: Mon, 28 Jul 2025 17:08:44 +0800
-Subject: [PATCH] Bluetooth: hci_sync: Avoid adding default advertising on
- startup
+	s=arc-20240116; t=1753693755; c=relaxed/simple;
+	bh=zTwpBlCjv12NPLXvm+OhPgR26zsqq/JSgr70P60hQGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=XCC7SPIvun9yDtwTZkWB8KazNvYgB5msuuSs2WS3H2/t/3gPDzmyaNCGU9w1hu8qHjvYa9fmW0aqABAifC/llWoLzlD3wr0rudmK+wMLzLeHBWUWWUwfYq6bfma1RGvuiXkTJ6tlcvjkpmM4yD7BCs7w/NgFJgB84AHglUMlNXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.100] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id E6535602A11DF;
+	Mon, 28 Jul 2025 17:08:57 +0800 (CST)
+Message-ID: <ab080493-10cd-4f3b-8dd3-c67b4955a737@nfschina.com>
+Date: Mon, 28 Jul 2025 17:08:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-default_adv-v1-1-a1164ff502a7@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIABs+h2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDcyML3ZTUtMTSnJL4xJQy3WRTUxPzxBTjpOQUIyWgjoKi1LTMCrBp0bG
- 1tQDCYAdmXQAAAA==
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Li <yang.li@amlogic.com>
-X-Mailer: b4 0.13-dev-f0463
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753693725; l=1557;
- i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
- bh=+a7zu6df7P6AdI4x7RiSKdHUqD0wbm828ppOC8TJSaI=;
- b=3UX/dEiKfIm3KVtx2p0CoOiWQL25So1OuJjvoy/lEZDif1Ww60eWJtqHWw9ayCrEuH8iV8jRV
- /X/OX2px1S7ChY3zt/VYeNXg5TY9mrMNLvEJI2rntOkkG8hhZ8qIfBh
-X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
- pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
-X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
- auth_id=180
-X-Original-From: Yang Li <yang.li@amlogic.com>
-Reply-To: yang.li@amlogic.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: slub: avoid deref of free pointer in sanity checks
+ if object is invalid
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>, Matthew Wilcox <willy@infradead.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@gentwo.org>,
+ David Rientjes <rientjes@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-MD-Sfrom: liqiong@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: liqiong <liqiong@nfschina.com>
+In-Reply-To: <aIcJdhoSTQlsdR5r@harry>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Yang Li <yang.li@amlogic.com>
 
-list_empty(&hdev->adv_instances) is always true during startup,
-so an advertising instance is added by default.
 
-Call trace:
-  dump_backtrace+0x94/0xec
-  show_stack+0x18/0x24
-  dump_stack_lvl+0x48/0x60
-  dump_stack+0x18/0x24
-  hci_setup_ext_adv_instance_sync+0x17c/0x328
-  hci_powered_update_adv_sync+0xb4/0x12c
-  hci_powered_update_sync+0x54/0x70
-  hci_power_on_sync+0xe4/0x278
-  hci_set_powered_sync+0x28/0x34
-  set_powered_sync+0x40/0x58
-  hci_cmd_sync_work+0x94/0x100
-  process_one_work+0x168/0x444
-  worker_thread+0x378/0x3f4
-  kthread+0x108/0x10c
-  ret_from_fork+0x10/0x20
+在 2025/7/28 13:24, Harry Yoo 写道:
+> On Mon, Jul 28, 2025 at 04:29:22AM +0100, Matthew Wilcox wrote:
+>> On Mon, Jul 28, 2025 at 10:06:42AM +0800, liqiong wrote:
+>>>>> In this case it's an object pointer, not a freelist pointer.
+>>>>> Or am I misunderstanding something?
+>>>> Actually, in alloc_debug_processing() the pointer came from slab->freelist,
+>>>> so I think saying either "invalid freelist pointer" or
+>>>> "invalid object pointer" make sense...
+>>> free_consistency_checks()  has 
+>>>  'slab_err(s, slab, "Invalid object pointer 0x%p", object);'
+>>> Maybe  it is better, alloc_consisency_checks() has the same  message.
+>> No.  Think about it.
+> Haha, since I suggested that change, I feel like I have to rethink it
+> and respond... Maybe I'm wrong again, but I love to be proven wrong :)
+>
+> On second thought,
+>
+> Unlike free_consistency_checks() where an arbitrary address can be
+> passed, alloc_consistency_check() is not passed arbitrary addresses
+> but only addresses from the freelist. So if a pointer is invalid
+> there, it means the freelist pointer is invalid. And in all other
+> parts of slub.c, such cases are described as "Free(list) pointer",
+> or "Freechain" being invalid or corrupted.
+>
+> So to stay consistent "Invalid freelist pointer" would be the right choice :)
+> Sorry for the confusion.
+>
+> Anyway, Li, to make progress on this I think it make sense to start by making
+> object_err() resiliant against invalid pointers (as suggested by Matthew)?
+> If you go down that path, this patch might no longer be required to fix
+> the bug anyway...
+>
+> And the change would be quite small. Most part of print_trailer() is printing
+> metadata and raw content of the object, which is risky when the pointer is
+> invalid. In that case we'd only want to print the address of the invalid
+> pointer and the information about slab (print_slab_info()) and nothing more.
+>
 
-Fixes: https://github.com/bluez/bluez/issues/1442
+Got it, I will a v3 patch, changing the message, and keep it simple, dropping the comments of object_err(),
+just fix the issue.
 
-Signed-off-by: Yang Li <yang.li@amlogic.com>
----
- net/bluetooth/hci_sync.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index 2b4f21fbf9c1..7397b6b50ccb 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -3344,7 +3344,7 @@ static int hci_powered_update_adv_sync(struct hci_dev *hdev)
- 	 * advertising data. This also applies to the case
- 	 * where BR/EDR was toggled during the AUTO_OFF phase.
- 	 */
--	if (hci_dev_test_flag(hdev, HCI_ADVERTISING) ||
-+	if (hci_dev_test_flag(hdev, HCI_ADVERTISING) &&
- 	    list_empty(&hdev->adv_instances)) {
- 		if (ext_adv_capable(hdev)) {
- 			err = hci_setup_ext_adv_instance_sync(hdev, 0x00);
-
----
-base-commit: d1b3de23042b0aac0145fdf071d6ac81ec3727b4
-change-id: 20250728-default_adv-c5547ad3bcd2
-
-Best regards,
--- 
-Yang Li <yang.li@amlogic.com>
 
 
 
