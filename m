@@ -1,128 +1,112 @@
-Return-Path: <linux-kernel+bounces-747452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24ECB13402
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E35B13404
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84DE1895EEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:10:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA29F1896A68
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1C7219A89;
-	Mon, 28 Jul 2025 05:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A6C21A95D;
+	Mon, 28 Jul 2025 05:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nv6Z2STG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MG6J5+7H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024E5290F;
-	Mon, 28 Jul 2025 05:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01AB217739;
+	Mon, 28 Jul 2025 05:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753679403; cv=none; b=mRRyD2FeEUohJ6oZnZ9neYKfrUJWOdCYtx2AqYnuARlx62WdqmmX005vJVRe93GizOLD8yhfU7KBwwgVSkHCA+TIUy1sOyhZ4gHZpATq/Yg3vhCf8imKHFqnwqhfgEp7SknsBxrp7hM2i43OtuRYdYZ1+CF16sTgSTJ32Qkm+vo=
+	t=1753679428; cv=none; b=FAMPqFq4CQg8VRS/U2xvtHEk5vE2VswY7jAmCfDmxoWr3G88oRAQEMIwTzQEy8TlZ9GmDyO+GheCnWRt4S8pmDXXYlzxjB2D/l0H1UiN2xYr+bDcSM4tHybKYUcnP5bhiNxoC88ltZ0aMgeNjjg+yNI2Ym8dRufI4OW/pk67ie8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753679403; c=relaxed/simple;
-	bh=2qEe6DqAuEUqbVXL+xo0D0mEXM1k79M9L758DOFS5aw=;
+	s=arc-20240116; t=1753679428; c=relaxed/simple;
+	bh=I/lgky1vlEmkeZnYPRgBTs0w71g5CtPXfUUhevI4LPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YSXvXtczsMBrxTjccI0cQZGgeV59oOexdaK/O9tqBTL9To1wHbV4iRIC0Y0gKd66wuYhSBg5qzBLuRYMvJDeZZOKiduHR+kDBNSBW6Lv2Orydtptm12lGu7qYdXXh4zLp0WhBug3EhyaPS0wRrA8FKTVv7E8+l3Kz+YsHiLbn7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nv6Z2STG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C74D2C4CEE7;
-	Mon, 28 Jul 2025 05:10:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDc9smjmhuW6COL0+r4muR7RcDc+Cu5qlqtsBmjNVtiRL9SodkI/g3DNosZtJUhcUl+NFHfgJmceiYt/G4hLxSeh2DXfB5nKQmvyo+YoG8SrPSNP9fwG2o+H3KLf1LWB/93kiBXj2BZDq240Tww7ryo7jycrpRvWrYXaP+ssSyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MG6J5+7H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3525AC4CEE7;
+	Mon, 28 Jul 2025 05:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753679402;
-	bh=2qEe6DqAuEUqbVXL+xo0D0mEXM1k79M9L758DOFS5aw=;
+	s=k20201202; t=1753679427;
+	bh=I/lgky1vlEmkeZnYPRgBTs0w71g5CtPXfUUhevI4LPg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nv6Z2STGtW51o60x6gB7Ql5l7l59w88DNxhywbVhtsG3/+4zdOTJV9U6l2Blgn/oS
-	 o5Nxi2Yy+ucZLF20ZyYXHlZ8xbOlnrDcnaPK6SNIJPfjJGcL9KIJfkJ23loHVi5JcI
-	 /0jKLMW/aHvju+djmNq29WCMTJC0BURAl/Uxi6OSwqFp3xaFokaOmmxeT7mAr3QcNc
-	 8j8kTiiVKrOs38oSVF85isktsZuWqXFhukCHW+lGipvT4nkIquaaJZG5jk7iKIwIyF
-	 8FcnY5cXcGK1zgcOypvpKlb6itqjJuX7MBDXwaEE3HUkyFSsL370f+08jw6D/qBJah
-	 a3Cu7DjVO3HsA==
-Date: Sun, 27 Jul 2025 22:10:02 -0700
-From: Kees Cook <kees@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
+	b=MG6J5+7He9A/gunZctHzh0TGLaadwGoomLAg5AUDrmRA6SnZQu/HQI0zpQz9P8g94
+	 gZhBzb3UOV5M4hrZiNYQqzJ5yBQ76ipQg/ztPC8wNLE5SljYznmzlXTvzNDtWSlfaD
+	 4nYyZnWWQ1mtL97+ed8VSNBkvHnvvvcYlxS2HGvEsWdN9sJQqvKONv4qLSNLN2Svnw
+	 gWRNB+0x7Jmq3XGOKEMQ6gLWS/TGqJsuL251BHkcEQuuv9rbQ7YpS2xnJK7xgDt1/r
+	 1o1xyK+VJeJGEHHC5ibbpS8CUG+ntPxNqWzfRd8JoCdubBQmO+XZkUKoqYZkEFUJCw
+	 VA9VQbvTmGAow==
+Date: Mon, 28 Jul 2025 01:10:25 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Kees Cook <kees@kernel.org>
 Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
 	josh@joshtriplett.org, konstantin@linuxfoundation.org,
 	linux-kernel@vger.kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH 2/4] agents: add core development references
-Message-ID: <202507272203.BECE244@keescook>
+Subject: Re: [PATCH 3/4] agents: add coding style documentation and rules
+Message-ID: <aIcGQR8tjmjr8dlb@lappy>
 References: <20250727195802.2222764-1-sashal@kernel.org>
- <20250727195802.2222764-3-sashal@kernel.org>
- <202507271937.EC44B39@keescook>
- <aIcD9f_52tlLgE-e@lappy>
+ <20250727195802.2222764-4-sashal@kernel.org>
+ <202507271939.D78EC559@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <aIcD9f_52tlLgE-e@lappy>
+In-Reply-To: <202507271939.D78EC559@keescook>
 
-On Mon, Jul 28, 2025 at 01:00:37AM -0400, Sasha Levin wrote:
-> > If an Agent needs the above list, then so does a human. Everything above
-> > should already be discoverable by the Agent. If it's not, then we need a
-> > better summary document _for humans_ that reads like the above.
-> 
-> Why would an agent read those docs unless we tell it to?
+On Sun, Jul 27, 2025 at 07:40:36PM -0700, Kees Cook wrote:
+>On Sun, Jul 27, 2025 at 03:58:01PM -0400, Sasha Levin wrote:
+>> +++ b/Documentation/agents/coding-style.rst
+>
+>All of this is redundant.
+>
+>> +**No trailing whitespaces**
+>> +  Never leave whitespace at the end of lines. Git will warn about patches that introduce trailing whitespace.
+>
+>If this isn't covered elsewhere in Documentation/, it should be. :)
+>Also, "all files end with a newline"
 
-When I typed "/init" in claude, it found the references in the Makefile
-and other files to stuff in Documentation/ and read it. Hence my
-suggestion to add this in a place that is human (and agent)
-discoverable, like Makefile, which any sane agent is going to read to
-look for a "help" target, etc. Any agent that doesn't understand how to
-figure out what _kind_ of codebase it's working on isn't an agent that
-is going to deal well with the Linux tree.
+This is a funny one. Yes, it's in the docs, but from my experiments the
+tools kept "ignoring" this instruction.
 
-> Similarily, why would a human read those docs unless we tell it to? :)
+I've asked around and the explanation that I got is that to manipulate
+files agents call out to external tools, and often these interactions
+are not perfect (if you use Claude you might have seen errors such as
+"Error: Found 2 matches of the string to replace, but replace_all is
+false.").
 
-We do, though. But this is my point: if we _lack_ a good entry point for
-humans, then we need to solve _that_ problem.
+The end result is that those mis-interactions end up doing something
+that the agent itself didn't intend on doing, such as adding trailing
+whitespaces or having super long lines.
 
-> Just like with humans, the better context and background you give them
-> the better of a result you'll get out of it.
+If we call these common issues out explicitly then the agent would also
+look back at the code it generated to make sure that it doesn't actually
+have any of these issues after code was edited.
 
-Both the top of Makefile and the bottom of "make help" refer to reading
-the README file. I think *that* is where all these kinds of changes
-should go, and it should be suitable for human consumption. Honestly,
-README is extremely vague right now:
+>> +**80 character line limit**
+>> +  The preferred limit on the length of a single line is 80 columns. Statements longer than 80 columns should be broken into sensible chunks, unless exceeding 80 columns significantly increases readability and does not hide information.
+>
+>And this is why redundancy is bad: our line limit is 100, not 80.
 
-$ cat README
-Linux kernel
-============
+Hrm, it is?
 
-There are several guides for kernel developers and users. These guides can
-be rendered in a number of formats, like HTML and PDF. Please read
-Documentation/admin-guide/README.rst first.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst#n104
+claims:
 
-In order to build the documentation, use ``make htmldocs`` or
-``make pdfdocs``.  The formatted documentation can also be read online at:
+	The preferred limit on the length of a single line is 80 columns.
 
-    https://www.kernel.org/doc/html/latest/
-
-There are various text files in the Documentation/ subdirectory,
-several of them using the reStructuredText markup notation.
-
-Please read the Documentation/process/changes.rst file, as it contains the
-requirements for building and running the kernel, and information about
-the problems which may result by upgrading your kernel.
-
-
-
-
-"There are several guides..." and "There are various text files in
-..." is hardly the right language for a human either. And why is doc
-building in the README? That's, frankly, esoteric for anyone who needs
-to read the README.
-
-Let's fix up the README into something nice for everyone, and any decent
-agent should already be reading it anyway.
-
--Kees
+	Statements longer than 80 columns should be broken into sensible chunks,
+	unless exceeding 80 columns significantly increases readability and does
+	not hide information.
 
 -- 
-Kees Cook
+Thanks,
+Sasha
 
