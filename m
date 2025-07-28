@@ -1,127 +1,138 @@
-Return-Path: <linux-kernel+bounces-748577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87850B142FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:28:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCBCB14301
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9F0D18C2B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:28:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43A3A7A2968
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2C228313D;
-	Mon, 28 Jul 2025 20:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2496927A445;
+	Mon, 28 Jul 2025 20:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xlvGpxRG"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MkR8mSwi"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F8F27FB31
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B148D248F70;
+	Mon, 28 Jul 2025 20:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753734431; cv=none; b=fUiGzXCmcAh1ZR+WyWG62psgosItKjGnLiqpnLhbqE0W5JwUeB976eqrsZDJsxRfzwo3ciCkERDRACIu0W2tk04/IAn6fu27YOnRXB+hGA+rw6s6EArdIOOwqAHAAUDWo/Ytbzq1acZo7ywPlc4WukbmXBHqYAr/CHYJoZKbUlU=
+	t=1753734490; cv=none; b=Ecm+UHxS2ZnTFoEN7NYYvjHDKzg2HfPP5eoLEEubuKe+LXttXa8h5IFmGP1R4lUuHl7cjDlpTX5Am1lB3xgg+VaOuTKnsANXo38W4MHZL/czYpG2Fp1kctRSKZCUSRsfukeOjGMbbj14bH0U9XTZGlFGDDPtdvmJ6G8EF3DYtNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753734431; c=relaxed/simple;
-	bh=JesGM1gRUcTv/3MB/xSLNTKz18V9F2s0zvsG7n5gUtc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dz315g0dHeiVX0FKLbDjUcN5sDe09Tcl+cjg4ldeLdIJ4/YVVEMnkZ6hzv8kIukiRKwmQ7uTa6qnx3LWyml04pVtAeEfPAl19Ko1Nj2tAqD63rPtS23/maa67c3ejkeWvfAbKW0BaSdjHhnZTZISLdRd73Bz67+xqYL3IElPdok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xlvGpxRG; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74ea83a6c1bso2119864b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:27:09 -0700 (PDT)
+	s=arc-20240116; t=1753734490; c=relaxed/simple;
+	bh=3p7uNtOcYKX9AeLZxdOrba2Sw841/DoiWzWyyL7dQNI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NUoQhnI55TUeuqhsWDVByi7JqZp1I/IB7k4uqHeUla8hBo0s8Y1tDRCYPc+oP9nsGbdKp89ADOaJHovy5M857+/tOCvYdRzdRS9Mpo9aPi3ESS1yNlUAOBIy6hzSC5WASFyH1v2NRN3TxuSRHnDuSq9EecMbJRAYuPClQ7xZIA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MkR8mSwi; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b7892609a5so753759f8f.1;
+        Mon, 28 Jul 2025 13:28:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753734429; x=1754339229; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/P9OuxEuPdkEj87aBrhfagWzYFVg9xFywuYE1sk8uo0=;
-        b=xlvGpxRGZXS+jlxXUttWmPp+dgQEKl/cBFKPJwPbRlK14P+vt1oG8hMglCaJ/J3Ps9
-         KLY4/cXv6X5NcehYquUFliN3QM4vTJiq2ZMDR7GVr47TJREZ5P06mCbhhIBN2MaBDAnY
-         MDj7pwSoMCblPVW5bBd8UvVfRK58Vb1n+xHoV62zwp3zkHTIg6Cn7H2AKMF0OPhglhkF
-         vlgyAWxdJYzurKe+Gnam34k8b8wRv9wKeUBRTPAUKepK4NxSnXuArLpVhAqlyavSjKO2
-         t8sH89XWPzehlagdkO4VB0hsfKnpoJ2PXWdc0eFfpaIbWxBq7ekQxshiYAFPoyVO3ady
-         Q8uA==
+        d=gmail.com; s=20230601; t=1753734487; x=1754339287; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3p7uNtOcYKX9AeLZxdOrba2Sw841/DoiWzWyyL7dQNI=;
+        b=MkR8mSwic7uFuolVwEdh9l5Z3Ke+RWCX7955C/6qvGY5Mc/Gy0jetIBFxuhU62O3Is
+         ArVljuBkbyP7QNfRgCZZq913DqSowaT63U9ZgVmf+0IRux86VWfuZOY6GY3egjUNpSzU
+         eDS22/dwFcelKch4FyS5vqKU9YLsXq8JFcvuPSyrwsx650ZmlKf4YImUbXzgqq40I3WC
+         4byEFAFy9CcBmJo3AuDWvS9rO0GBWKpGUpklMMhRmd7syEbwbAg1UJmInqvvchSG99Z+
+         hUvqCTizAj7l+l0o95g17mEWGFF8nIWQjRIReLefNKG8894Qz84r4kcf3YHHAKtvBJwu
+         qDbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753734429; x=1754339229;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/P9OuxEuPdkEj87aBrhfagWzYFVg9xFywuYE1sk8uo0=;
-        b=d+xnj3429/xZ0XPiNfzqhQRotuZWpBdd0iyqYnyyeftjFHTaumOqcjpAQJZIWnsp4N
-         UQvwnFeacq38zUPqo5cvrlPxCQ08e+AfCY+JH8zDIaAP6bQk1MG1Y7ZhNCzLLHsYQjnC
-         IrSClCbXT/tFrp5Q6g0qa/JMAnGMuPh1WAMK126DvRHepdFTUFAHU7Pj829YqBNeTZNe
-         tBWTizwKulXCLvAZvtppnA/PQNGvJ65YJDYTHnY9r+vKwl8Jm/Jc7T4lNfcjgrYJ51QM
-         NmpGRlzwSYW0n/WlU0oBVf6OtXTpa/+eHuITXLrfJqm3HSbm4v3un6tCS+W1lfTrWs7z
-         nnSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ4o3PLPrshpQiACdZSYa8YhokIzOpRD1rI0LpCzoTMAobck1W35EMNWCBtVjz53TtVYHPHABdRH9U4rM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYbMqjq9H4v/JZDYYLTN7EcZZO7fXm0whv5IpA0F2wi8Y86j9h
-	RLnHR4Zod26Y9ffGadUPCjUbtibjU1vhKClKl8ihnso8kBxu3ab9w30it2/d1Hf9xIl1qKPZTWR
-	lFGp8dqqoFp+wBbla1wN9wsOtivP2/A==
-X-Google-Smtp-Source: AGHT+IEbju/KTqJoDu3swOvm0juyltSfbB5oQy9E98NyEsXpooGy1GcURFGIPbMqA42kwzScDk2+igqG1YSrUrHOrFg=
-X-Received: from pfgg3.prod.google.com ([2002:a05:6a00:bd83:b0:748:dfd8:3949])
- (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
- 2002:aa7:8885:0:b0:749:93d:b098 with SMTP id d2e1a72fcca58-76339370d7dmr18845795b3a.22.1753734429174;
- Mon, 28 Jul 2025 13:27:09 -0700 (PDT)
-Date: Mon, 28 Jul 2025 20:27:01 +0000
-In-Reply-To: <20250728202656.559071-6-samitolvanen@google.com>
+        d=1e100.net; s=20230601; t=1753734487; x=1754339287;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3p7uNtOcYKX9AeLZxdOrba2Sw841/DoiWzWyyL7dQNI=;
+        b=uwc8kHUlpwSqvlr2dxxGr0TVfnA5IkvZpSuEnDa+OY1GGua3p/nHcadeyJkiTy0u9E
+         YMOtHpencEyex3sDLspMfXQklfAjeo+Uzx2zHrtwpU0weV4xybTNTUFJ8dG6zzfT5x+D
+         mHMgYXlAB5kvKLLZLglOJ1ITyAgFfozkwNwHPhm9/a9jjeR5YXxsSqLBxm5taOCYtQJa
+         aq7m3laL8xeCK94spEKRyQoiuWGXIRurEupRI1V7TbIVXe6c/+yAWZz6ENxUhC4yxDHK
+         XGz24lLNMSw0B4CbdNHcKvT1V3twMhgw+oJ51I4H9KFPzRpG20cX6XioGTbJYM0zHtF8
+         lG+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZLrRDKoT5NPLmPpMB56LzXFebfKedY2/adVZfNMFHdSf7ppfKYg5hayqqEVu1ARvaPzTjMlzSmZmujVqLgWPrl7U=@vger.kernel.org, AJvYcCWYVESHsbh0U1KA0B4RNQoJ0If2hqskQn5L7mfB+tkX+KoW98PNGa6YXoYqrdIDQ47cwsua/5z6C8AY@vger.kernel.org, AJvYcCX5L9FiEXNm+7+Nf105pqChdaK7mEj2/5Yw3fTzZxnCFw/t2niSCk6mK/Bcn5Fik0NaNsKHQEbAgyBDE7od@vger.kernel.org, AJvYcCXyzMLdeQM0gs6ZFYw71dLhiuhbbsY455iSk5Pvav9IUIyHIYiC4njWHtC/nn/Z7hq+CIdQfEWz0lh1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFG9Wgx4pbUB8/J28f3f1ZJaRMxGD/RQyuh//XCGcd8n+7mqkD
+	eHkcYnw2GLIPBwAntXM7jnBOX7kGbgCsVTteWTkFB81S/zkpoewMrBpn/qlInEEFWjiTiQJMNTq
+	zgLZ+l5Q0NDQTEPcyx/83hUUIW+a7uXU=
+X-Gm-Gg: ASbGncubfpli44DelKc55wahuGrhq2or8Z9UJIthcQeW3HdC5cOrXdu4YEK48/exrKJ
+	HOU0o+fNf3/QxCZ2lwt64AbToinHtq7fewHg3zqQXwiHaMXXLvQMWT5I9V3sYqjDwOhAHPrxPTH
+	tIDMC7gXDGEhTuS/ab/hSdbkQA3yqCueir3IJZ78IZ9Ikt+LmfF0xrFAGNNs9fSYMzaRhL0bAMn
+	d3+0g9V
+X-Google-Smtp-Source: AGHT+IG+tkX084ob9BPVH1wtp96BCaHvXOaWH/vJW6Hx67Y885Vfn0RXp7T9tAucn/9SDqLbh3dP5wGLiKEFiQ7iBaQ=
+X-Received: by 2002:a5d:588e:0:b0:3a4:d9fa:f1ed with SMTP id
+ ffacd0b85a97d-3b776728f9dmr8247114f8f.13.1753734486875; Mon, 28 Jul 2025
+ 13:28:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250728202656.559071-6-samitolvanen@google.com>
-X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
-X-Developer-Signature: v=1; a=openpgp-sha256; l=904; i=samitolvanen@google.com;
- h=from:subject; bh=JesGM1gRUcTv/3MB/xSLNTKz18V9F2s0zvsG7n5gUtc=;
- b=owGbwMvMwCUWxa662nLh8irG02pJDBntd4Xfb/rYr/f2dvXr4ne7aqdJhf232vjVXkH5pO3mQ
- +/1biQ3dpSyMIhxMciKKbK0fF29dfd3p9RXn4skYOawMoEMYeDiFICJqKoz/JX9kPjg79mjVdy9
- W5/nf5x+51DlpzPm3jGcVrsS7Jw+XCxgZDi0aOKRLxFTE+b2vGc+MalM+Nym9yy7pzguuu5V+7k 3/QQzAA==
-X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250728202656.559071-10-samitolvanen@google.com>
-Subject: [PATCH bpf-next v3 4/4] bpf, btf: Enforce destructor kfunc type with CFI
-From: Sami Tolvanen <samitolvanen@google.com>
-To: bpf@vger.kernel.org
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
+MIME-Version: 1.0
+References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 28 Jul 2025 21:27:39 +0100
+X-Gm-Features: Ac12FXzC9Bz7YbuCg4MGPdK7g0FCBbcgsYDYVglx3jjRJspjbkFCpGAuDcBuHBM
+Message-ID: <CA+V-a8ujMaFFOv8Jd-5=fKHUEfVji1Xt5y_h4uwtR96TBz4VNA@mail.gmail.com>
+Subject: Re: [PATCH v7 4/6] dt-bindings: display: bridge: renesas,dsi:
+ Document RZ/V2H(P) and RZ/V2N
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ensure that registered destructor kfuncs have the same type
-as btf_dtor_kfunc_t to avoid a kernel panic on systems with
-CONFIG_CFI_CLANG enabled.
+Hi All,
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
----
- kernel/bpf/btf.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Mon, Jul 28, 2025 at 9:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+>
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add the compatible string "renesas,r9a09g057-mipi-dsi" for the Renesas
+> RZ/V2H(P) (R9A09G057) SoC. While the MIPI DSI LINK registers are shared
+> with the RZ/G2L SoC, the D-PHY register layout differs. Additionally, the
+> RZ/V2H(P) uses only two resets compared to three on RZ/G2L, and requires
+> five clocks instead of six.
+>
+> To reflect these hardware differences, update the binding schema to
+> support the reduced clock and reset requirements for RZ/V2H(P).
+>
+> Since the RZ/V2N (R9A09G056) SoC integrates an identical DSI IP to
+> RZ/V2H(P), the same "renesas,r9a09g057-mipi-dsi" compatible string is
+> reused for RZ/V2N.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v6->v7:
+> - Renamed pllclk to pllrefclk
+> - Preserved the reviewed by tag from Geert and Krzysztof
+>
+- Included support for RZ/V2N in the same patch
+- Updated commit description.
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 0aff814cb53a..2b0ebd46db4a 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -8856,6 +8856,13 @@ static int btf_check_dtor_kfuncs(struct btf *btf, const struct btf_id_dtor_kfunc
- 		 */
- 		if (!t || !btf_type_is_ptr(t))
- 			return -EINVAL;
-+
-+		if (IS_ENABLED(CONFIG_CFI_CLANG)) {
-+			/* Ensure the destructor kfunc type matches btf_dtor_kfunc_t */
-+			t = btf_type_by_id(btf, t->type);
-+			if (!btf_type_is_void(t))
-+				return -EINVAL;
-+		}
- 	}
- 	return 0;
- }
--- 
-2.50.1.552.g942d659e1b-goog
+I missed mentioning the above.
 
+Cheers,
+Prabhakar
 
