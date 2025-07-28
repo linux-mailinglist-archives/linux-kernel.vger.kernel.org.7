@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-747800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70244B13879
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:01:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47317B13884
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F30DD3AB02B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:01:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E23188CC0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A638234984;
-	Mon, 28 Jul 2025 10:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1924424678A;
+	Mon, 28 Jul 2025 10:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/1wItD5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LHAOC+qK"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E965B7483;
-	Mon, 28 Jul 2025 10:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E0B218ABD;
+	Mon, 28 Jul 2025 10:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753696895; cv=none; b=PXlXGaz1fQGLQjmi+ZMzkk7/rWbi9tcbTg1xpR9g83WeWfqXtbJowQEd2OUjwh4X3upQOS3MEpvEz+H+iueNGPc3q2wTWMh8GV76jE2T65RVRLuss3pFYGZDPpKDEWKcDXC59+s0VYw25+QxGAhhSbacpGQKRS39HCxsbCc0bOk=
+	t=1753697028; cv=none; b=ZmxNegxVDohUedfYoM3oGM+Mq0Jdv64FdFvykoHC3QE2fy3KAfY/1Ovxx6o5YCXf9TQkITXp/JLe6d/Hl0005xGnkbU3OyjbJZhvbnu1uGt8lyffcSkfOVR6ipXu3+tTRm7nQmy3MbN+o3EGphBGPdZoWcrj/KezRBKAr87sTcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753696895; c=relaxed/simple;
-	bh=kTuUkUsd13QnoVQ3yYmQ6WdExLMJS9IjNiFB3TnS/ps=;
+	s=arc-20240116; t=1753697028; c=relaxed/simple;
+	bh=OJvZOtZWtP5T0PzzfgXr4dA4B4uqn6dYb9pB37Og+Qo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rnXul+8lR7hCgKDRDbH2EUwG6/LJnAaAyfJHS+PdNvgSIueEWcOvQCyV0w0kP1Efrs0klMloKLaR9javZ24MDrU69ynmwlBM2fhU5jXPlgyFHaCAzg/5FhIP2ZBYE7UWwoBhS6qMLdYYTJzmVqtYYP58/mvSenetnoKmN28jxQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/1wItD5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C69CC4CEE7;
-	Mon, 28 Jul 2025 10:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753696894;
-	bh=kTuUkUsd13QnoVQ3yYmQ6WdExLMJS9IjNiFB3TnS/ps=;
+	 In-Reply-To:Content-Type; b=NWZ8Tk3FlzN5KHAFckwDyKZhiizz6wG6aO+u+w5iH48XKvJvavvViog9O26H1BnqjifrS9H7nNWT2KrVvP4ujNojjjXdmVd3dFEuVtRt1iqOx75h97Jo16swKNkjjwzQTiMiG8XDlvwN3gTbGA57PcN3actnuYI8zpoF28rfnYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LHAOC+qK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753697024;
+	bh=OJvZOtZWtP5T0PzzfgXr4dA4B4uqn6dYb9pB37Og+Qo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E/1wItD5UfYnN1EeJpWHnZ9oR8Kj71XeQWzlztjb5ngxcGj/qcnwJWZRZ/CFgLlnl
-	 nOP8q8gf1o9IcZVD+t93VWuA4+i7/t9cfDaaE897Ld029eGYnar3/nFH4dS5/GfrPH
-	 elGeECdUymPmEzB18YPEYPQefsGPVW1ReKH9C65FMLqxiW8c8Hs+t3fGKg6HSK6SjB
-	 VPXoVNrCm8MK3jl6ZMU3PCvSPgrdK2QAmNHjiWMC9u9h7JtZnL29i54c2amumauiJ5
-	 a/QzZG5h00z815K1A+mrxf/B/FFt9qea9gLrlGQU/StGxiiMhQZCMY4QKzJUUu8U+F
-	 JF0p3FB1aNx+Q==
-Message-ID: <10506c57-1629-4ca2-9c3f-3e97e68caa7a@kernel.org>
-Date: Mon, 28 Jul 2025 12:01:29 +0200
+	b=LHAOC+qK+AWMxcwoV72yYP6zs6wX8/phcBzKqr6naiqpjjGTPAyxxRTE/tI5OTeC3
+	 QIZWZLvIhjZED6w9aexgk5syMZAh5fbAiUmcJV+oXknfY1l03rSDeQXwC0f3X4O64Q
+	 ZMK96/KhYxU4SUmTCKQL/S+pX0GDFrfnHYfuIrx3R5njbP7qvo2WuunUzfr4MoThzV
+	 cGgpJ2x1/rfTL3wdJWezoTPE+HxUiUvppVqQ+ItE+YgErt8rTW4O+yMnwgb8Z9Gtg3
+	 Uffl4aAgx0NVZP9n7qFmg7mtV+zIRBIxjrd5gKr9tCIpYruEvKgAZXG9uIyGmk7c4N
+	 lVa6F7R6sPHBw==
+Received: from [192.168.1.90] (unknown [82.79.138.60])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EC6F317E0F3F;
+	Mon, 28 Jul 2025 12:03:43 +0200 (CEST)
+Message-ID: <c7c76b11-f7db-4cfd-81ac-c43d8c540472@collabora.com>
+Date: Mon, 28 Jul 2025 13:03:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,70 +56,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] rust: transmute: add `as_bytes` method for `AsBytes`
- trait
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Abdiel Janulgue <abdiel.janulgue@gmail.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Robin Murphy <robin.murphy@arm.com>, Andreas Hindborg
- <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
- "Christian S. Lima" <christiansantoslima21@gmail.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250726-as_bytes-v3-1-eb7514faab28@nvidia.com>
- <CAH5fLghNDDo0HKupPXe8G6z2TP4TJE881Bd76k0LDjSm75KcEQ@mail.gmail.com>
- <aIX-JDehurnGYppE@google.com> <DBMUEH5MYR2L.CXM12OIUH7TZ@kernel.org>
- <DBNDJGIUQC1L.3EYGJ1ROIGMBY@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v2 01/18] usb: vhci-hcd: Prevent suspending virtually
+ attached devices
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Valentina Manea <valentina.manea.m@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
+ "Brian G. Merrell" <bgmerrell@novell.com>, kernel@collabora.com,
+ Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250726-vhci-hcd-suspend-fix-v2-0-189266dfdfaa@collabora.com>
+ <20250726-vhci-hcd-suspend-fix-v2-1-189266dfdfaa@collabora.com>
+ <2025072637-google-referable-dc99@gregkh>
 Content-Language: en-US
-In-Reply-To: <DBNDJGIUQC1L.3EYGJ1ROIGMBY@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <2025072637-google-referable-dc99@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 7/28/25 5:39 AM, Alexandre Courbot wrote:
-> On Sun Jul 27, 2025 at 9:39 PM JST, Benno Lossin wrote:
->> On Sun Jul 27, 2025 at 12:23 PM CEST, Alice Ryhl wrote:
->>> On Sun, Jul 27, 2025 at 08:52:00AM +0200, Alice Ryhl wrote:
->>>> On Sat, Jul 26, 2025 at 4:47 AM Alexandre Courbot <acourbot@nvidia.com> wrote:
->>>>> diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
->>>>> index 1c7d43771a37b90150de86699f114a2ffb84db91..69c46c19a89191d8a2abc5801564cacda232218c 100644
->>>>> --- a/rust/kernel/transmute.rs
->>>>> +++ b/rust/kernel/transmute.rs
->>>>> @@ -47,7 +47,16 @@ macro_rules! impl_frombytes {
->>>>>   ///
->>>>>   /// Values of this type may not contain any uninitialized bytes. This type must not have interior
->>>>>   /// mutability.
->>>>> -pub unsafe trait AsBytes {}
->>>>> +pub unsafe trait AsBytes {
->>>>> +    /// Returns `self` as a slice of bytes.
->>>>> +    fn as_bytes(&self) -> &[u8] {
->>>>> +        let data = core::ptr::from_ref(self).cast::<u8>();
->>>>> +        let len = size_of_val(self);
->>>>> +
->>>>> +        // SAFETY: `data` is non-null and valid for `len * sizeof::<u8>()` bytes.
->>>>> +        unsafe { core::slice::from_raw_parts(data, len) }
->>>>> +    }
->>>>> +}
->>>>
->>>> Let's also have an as_bytes_mut() method. I would require the type to
->>>> also implement FromBytes as it lets you replace the value with another
->>>> set of bytes.
->>>
->>> s/I would/It would/
->>>
->>> FromBytes is needed only for as_bytes_mut(), not for the existing
->>> method.
+On 7/26/25 10:06 AM, Greg Kroah-Hartman wrote:
+> On Sat, Jul 26, 2025 at 01:08:03AM +0300, Cristian Ciocaltea wrote:
+>> The VHCI platform driver aims to forbid entering system suspend when at
+>> least one of the virtual USB ports are bound to an active USB/IP
+>> connection.
 >>
->> I agree with your suggestion, but it can be an independent patch and
->> doesn't need to go in via this one, right?
+>> However, in some cases, the detection logic doesn't work reliably, i.e.
+>> when all devices attached to the virtual root hub have been already
+>> suspended, leading to a broken suspend state, with unrecoverable resume.
+>>
+>> Ensure the virtually attached devices do not enter suspend by setting
+>> the syscore PM flag.  Note this is currently limited to the client side
+>> only, since the server side doesn't implement system suspend prevention.
+>>
+>> Fixes: 04679b3489e0 ("Staging: USB/IP: add client driver")
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  drivers/usb/usbip/vhci_hcd.c | 22 ++++++++++++++++++++++
+>>  1 file changed, 22 insertions(+)
+>>
+>> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+>> index e70fba9f55d6a0edf3c5fde56a614dd3799406a1..b4b0ed5d64966214636b157968478600e2e4178a 100644
+>> --- a/drivers/usb/usbip/vhci_hcd.c
+>> +++ b/drivers/usb/usbip/vhci_hcd.c
+>> @@ -765,6 +765,17 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
+>>  				 ctrlreq->wValue, vdev->rhport);
+>>  
+>>  			vdev->udev = usb_get_dev(urb->dev);
+>> +			/*
+>> +			 * FIXME: A similar operation has been done via
+>> +			 * USB_REQ_GET_DESCRIPTOR handler below, which is
+>> +			 * supposed to always precede USB_REQ_SET_ADDRESS.
 > 
-> Given where we are in the merge cycle, it seems like we have a couple of
-> months until that code gets merged anyway, so I don't see any reason to
-> not send a v4 with Alice's suggestion? The only drawback I see is that I
-> would have to reset the Reviewed-by tags.
+> When is this FIXME going to be addressed and by whom?
 
-I'd make it a series and add as_bytes_mut() as a separate patch.
+Actually I should have probably used a NOTE or something similar as this is
+only about the possibility to drop some redundant code, rather then fixing
+something broken.
+
+>> +			 *
+>> +			 * It's not entirely clear if operating on a different
+>> +			 * usb_device instance here is a real possibility,
+>> +			 * otherwise this call and vdev->udev assignment above
+>> +			 * should be dropped.
+> 
+> What is going to need to happen to figure this out?
+
+I could only do some limited testing on my side, which is definitely not
+enough to confirm it's safe to move on with the code removal, hence I'd very
+much like to get some other opinions on the matter.  Regardless, I think
+it's useful to keep this documented.
+
+Thanks,
+Cristian
+
 
