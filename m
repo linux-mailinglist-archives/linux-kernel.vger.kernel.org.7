@@ -1,133 +1,81 @@
-Return-Path: <linux-kernel+bounces-747855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1648AB13928
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:44:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB52B13929
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 760623B6A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:43:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCBE37A227C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCC1248F4B;
-	Mon, 28 Jul 2025 10:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3247924A054;
+	Mon, 28 Jul 2025 10:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hjq5Hzm3"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="r7JnFoBq"
+Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B590247DE1
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52674248861
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753699437; cv=none; b=dOkGd54C1WBXWiU1UMiMiCeTs6v8/zq1WnIiT4tYvqsrYpBUbzKs1EuPqWaaGSnlO+GaokFxlMrNVwI2V8EaaA8qwS5u3pBVHirl1/XA19thuSVf9M+47P0Co4CuimRPUIeGbA4KCwDV1LsoJ0nNME6yedX1ZNJ7Dl9DqBmBmXs=
+	t=1753699452; cv=none; b=iyJ2YMRFUDSyj7ZeD6BwxmpaDimN/FXiucQ+PHwea2kARps2xkLuw8bKoNZb/1brhR6zyDssSwLxjNBE9THLQTNNmRuS9dsRsKXQQUUnJGjuR2i478Bf9sQEIVHTGxuXpqo8smSNRvaxtR5twambzFF8pMAWCKHLAxrjKVB7Fb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753699437; c=relaxed/simple;
-	bh=8rEvjgTcQCg9hFxS4+vi94+8/VxEg9odYX30L8yYhjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SbiaQnDyAi/I9reZFypqa5kXYGsShRD1hqg1uGOsmlwmE54tmIGciqth1H+jTPxoavud1S9s2/s1waOtJfiV9mDJShIutJFN+MO5gGSJ9E+XIGR1v5CZW87I14Q13NUsnqsDuZ2W9Gxsgy5nT8Y8xYCmsMbgm01GmNlpdpuOncA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hjq5Hzm3; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2403df11a2aso4124055ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 03:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753699435; x=1754304235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iewguF/RLCE9KJBwA51y3Hv7HH9nRTZkotwtc/bcctg=;
-        b=Hjq5Hzm3+qE0g3YbE6HdhnUAYTNLdWUcDrH+tyw2h5jcXcuvSJVjT8aUaNx2/6lyrL
-         s2qTMBML/9K1qmOK03CO/mYxAQJ1T2StyldMqm0jnx6nSjlrXQFC6vItOmiLaVTc9BO2
-         b1Y2d0ebJaACV/P5rOBX+TTGsbK20v8tlAhXlsQ4ZRD+7N80tx2ofoZbP3alTleGWmal
-         b4+8O5+p7iidYytxhd1hx8s7eJJ0fPAv8MX7ok9WzKou5EYD6kBDYKOFTAKo+qTyjCQN
-         /WCj72wMctY557wRfZLcXBEwOPrObKTaUnrVJdEJrWYSabiVmlO8w6AatpiGXMKvxEwP
-         5KnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753699435; x=1754304235;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iewguF/RLCE9KJBwA51y3Hv7HH9nRTZkotwtc/bcctg=;
-        b=v5UfQ2Ee4C8C77ynDGwxyTTEUVpQmOYX2suPbf9UDNFi2U0BVi8RI7rIN9f/WdnZkn
-         c12ZHhICh+0KzcuYnsJJo57n7tpknRi4iFGB2QpISaPitnDCR3a6FXAhNxZNIPt57ky1
-         GJvbrSXVgr8xobdzVm2+05wwneyD29MtzPF4hvdXf6B2iZIA9hfSBMpqOI2CvlxmkNQ3
-         Pf0vjQe+CTSzvaFk17bLtaGdi6sRBdNwthlSlJJTT0m8Q0RrBJhid4+PRk2Fw4Pp6f3z
-         xtZ/9LiAV6yHB72NjU8LfLOj6sZt3nnAczcwxyP9s7VNkgR1ulahdVBAGzLDYSS6djuA
-         Lebw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvcrDp2jQH+x+6CLPYWLiE3Tom9LaAfvmLzmb2AApDJTzM+wY9m8uvQ79sVhEUn4FV38x9BcSE92zXcfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+VI5i4QxpqSiJ564v9xFhBuDmgbSjLn27lPOPifu3tu+CfU6f
-	IB7L2ifCpq8cfUknTAIZSBFRgeZ+yQM7IJyhylFP8C7nq35BHDNW1bvYw4g8QNpaWKs=
-X-Gm-Gg: ASbGncsJGJcysMjv4lcCF9n56skE1qAb+dlTS/qHtHsAyJv0v2woxvzHPpxO4vIs5tO
-	43rZvpBvIouz34amStjj/2zPLadJHKJd6iouch0MN28OiOO41ITT3OMPbVfG5FUEfnCWbvs1gOp
-	0AObUDLisfHuPK3EffNC36JGH22ZN7+lnRbS6GYJu+lGt2QfUO1G5YyZnVqkUp93W3FTcyRv5oF
-	7JLDUYsOYx4kPiWXwk4/zmgrXOJuD2x7T9v0ux1YDuv6kJ2QHLIiQyzd9U/nalLxbmUKMkLx6F/
-	zMtHZbNF3CqipOj3ILXLgfv8g1DADNG38OBZ1nFco4qX9QyTkKTc9VcHVZDOcuZaijLD5JHePdo
-	SRU0gZAa6aq53+iL4LvHSCaB6nf3/rzBlDzTeMQc=
-X-Google-Smtp-Source: AGHT+IFO4Nhc1HiveTtGdp7dYCPm4Tar99uDZx+7GONVxZft3W3ylz46JyvrHmfSZxXa67vifvwQ9g==
-X-Received: by 2002:a17:903:2f8a:b0:23f:8d03:c4ac with SMTP id d9443c01a7336-23fb2ff96ecmr167941025ad.2.1753699434632;
-        Mon, 28 Jul 2025 03:43:54 -0700 (PDT)
-Received: from localhost.localdomain ([49.36.70.111])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2403e6085e6sm10981475ad.129.2025.07.28.03.43.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 03:43:54 -0700 (PDT)
-From: Dishank Jogi <jogidishank503@gmail.com>
-To: elver@google.com
-Cc: dvyukov@google.com,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	rathod.darshan.0896@gmail.com,
-	Dishank Jogi <jogidishank503@gmail.com>
-Subject: [PATCH] kcsan: clean up redundant empty macro arguments in atomic ops.
-Date: Mon, 28 Jul 2025 10:43:27 +0000
-Message-ID: <20250728104327.48469-1-jogidishank503@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753699452; c=relaxed/simple;
+	bh=zttwuoi5H+FctdTtaIPO7H1f9mySAGgB/s93zBTvpWk=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=T6udWLhJ1b9sWwiTTX73hbqjzG4qJylPt32p1/BX0TxGuVLbUQkIPN/MzsqKbSuGV7dUE/jmGoRKhcrfTYTYfr3qreDr/AVP7LKGfMohgbZImKG4YkAJALDxjiTzmQhNv5EgbSFOzB6q+0WLdm5XWfDxwBJ3DrQK0IOVev4hDSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=r7JnFoBq; arc=none smtp.client-ip=185.70.43.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1753699443; x=1753958643;
+	bh=zttwuoi5H+FctdTtaIPO7H1f9mySAGgB/s93zBTvpWk=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=r7JnFoBqQr2voIA4Duseks7yY9+sSwpI3OZv4I3PKJxfPwnp2+QXeFRefyZ9PlyxT
+	 t9RSAtoRlw4dQ1LQLciaaNNR2z/a+nL9cROekYvzy0SWQCuVw3ea25XKpBhCcAIIck
+	 u6IaPdg+uOToADf6SVNikByNmoINl6wRdSkdoPVVI1f35KJkv0SoOQx5lzb9r/qUdY
+	 BbE4xkfEFXSfaR8n9v3wso9Omwp1PrYmCTsK52IlbAARv/UL/lwEGGWKp0WgOUlJp5
+	 SMcw5SfDmRuKU3Ak/Frr11Cej0ZvmzgNAEg0iTvz6RVxT1i+nGRLZyfCAffTu3rAMN
+	 hKxs7CutiBvWA==
+Date: Mon, 28 Jul 2025 10:43:58 +0000
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Turritopsis Dohrnii Teo En Ming <teo.en.ming@protonmail.com>
+Cc: "ceo@teo-en-ming-corp.com" <ceo@teo-en-ming-corp.com>
+Subject: CISA Warns of Active Exploitation of Linux Kernel Privilege Escalation Vulnerability
+Message-ID: <-odY_U0GMKGhMdDC8f8VIriSRDcKJeGe1VdoDoDVY21kH1qeapJdRBIhzfQZmQuuNlu2b-xx-VgmLmZ-X89hAYTPqqJAKpDtLJPa3VJgU7I=@protonmail.com>
+Feedback-ID: 39510961:user:proton
+X-Pm-Message-ID: 9b7cc9cfaf0538b461dac6434b929d87e3e2c389
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
----------------------------------------------------------
+Subject: CISA Warns of Active Exploitation of Linux Kernel Privilege Escala=
+tion Vulnerability
 
-- Removed unnecessary trailing commas from DEFINE_TSAN_ATOMIC_RMW() macro
-  calls within DEFINE_TSAN_ATOMIC_OPS() in kernel/kcsan/core.c
+Good day from Singapore,
 
-- It passes checkpatch.pl with no errors or warnings and
-  introduces no functional changes.
+Article: CISA Warns of Active Exploitation of Linux Kernel Privilege Escala=
+tion Vulnerability
+Link: https://thehackernews.com/2025/06/cisa-warns-of-active-exploitation-o=
+f.html
+Date of article: 18 June 2025
 
----------------------------------------------------------
+Regards,
 
-Signed-off-by: Dishank Jogi <jogidishank503@gmail.com>
----
- kernel/kcsan/core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Mr. Turritopsis Dohrnii Teo En Ming
+Targeted Individuals Singapore
+GIMP =3D Government-Induced Medical Problems
+28 July 2025 Monday
 
-diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-index 8a7baf4e332e..f2ec7fa4a44d 100644
---- a/kernel/kcsan/core.c
-+++ b/kernel/kcsan/core.c
-@@ -1257,12 +1257,12 @@ static __always_inline void kcsan_atomic_builtin_memorder(int memorder)
- #define DEFINE_TSAN_ATOMIC_OPS(bits)                                                               \
- 	DEFINE_TSAN_ATOMIC_LOAD_STORE(bits);                                                       \
- 	DEFINE_TSAN_ATOMIC_RMW(exchange, bits, _n);                                                \
--	DEFINE_TSAN_ATOMIC_RMW(fetch_add, bits, );                                                 \
--	DEFINE_TSAN_ATOMIC_RMW(fetch_sub, bits, );                                                 \
--	DEFINE_TSAN_ATOMIC_RMW(fetch_and, bits, );                                                 \
--	DEFINE_TSAN_ATOMIC_RMW(fetch_or, bits, );                                                  \
--	DEFINE_TSAN_ATOMIC_RMW(fetch_xor, bits, );                                                 \
--	DEFINE_TSAN_ATOMIC_RMW(fetch_nand, bits, );                                                \
-+	DEFINE_TSAN_ATOMIC_RMW(fetch_add, bits);                                                 \
-+	DEFINE_TSAN_ATOMIC_RMW(fetch_sub, bits);                                                 \
-+	DEFINE_TSAN_ATOMIC_RMW(fetch_and, bits);                                                 \
-+	DEFINE_TSAN_ATOMIC_RMW(fetch_or, bits);                                                  \
-+	DEFINE_TSAN_ATOMIC_RMW(fetch_xor, bits);                                                 \
-+	DEFINE_TSAN_ATOMIC_RMW(fetch_nand, bits);                                                \
- 	DEFINE_TSAN_ATOMIC_CMPXCHG(bits, strong, 0);                                               \
- 	DEFINE_TSAN_ATOMIC_CMPXCHG(bits, weak, 1);                                                 \
- 	DEFINE_TSAN_ATOMIC_CMPXCHG_VAL(bits)
--- 
-2.43.0
+
+
 
 
