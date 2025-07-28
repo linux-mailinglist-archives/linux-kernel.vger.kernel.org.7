@@ -1,136 +1,142 @@
-Return-Path: <linux-kernel+bounces-748011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9E5B13B5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:19:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B143BB13B61
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D6977A1FE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:18:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A311644ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5EE264623;
-	Mon, 28 Jul 2025 13:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhdyKEvC"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123122638AF;
+	Mon, 28 Jul 2025 13:21:24 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F6B24678A;
-	Mon, 28 Jul 2025 13:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B1E76025;
+	Mon, 28 Jul 2025 13:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753708786; cv=none; b=EvujIYrRYpCB/ekHlJ9cN5sJHjSxf6WSNxkOaaSXGHAUVJ6Bd4ZZ4ZJSQ0rBwuho1/iCiiJgNsx5XwkkjA7AwLcoJPe02p0aBKx0IO8HJmKctLTAEK5phBM1JnA6Wff55LecBTPb9tNdd7R7NIiQHJI0/aSnHxvil98kLKTQuM8=
+	t=1753708883; cv=none; b=lWBn3eDLeJrQBSTvVhXMVMpDC4hVx0IRpBUxJpC/O78MyxrFctLKW29PMuPHyfqxAQqQeSxTGcSxpxqN+vrgthjyCVZsKNS/Pvq2gzliLz0INQS3INDPijmSPlPuIsWmQ2Gp/p7O3Sw04prtmgAvh23qArBaLy0ECRZ/fIqH1iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753708786; c=relaxed/simple;
-	bh=J1lkMDI/BRDa7tWiFtEJ9itXbbeI08A0BYzHRlb95Rs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iqQ7Bb2lZ31CuifVw16n5/uDHZtmnMnNFh0eGHMKcw8AF5BYYjrQkNDzNVRbflZ8s1DP507DYGwXzNsl9F1IveqNXUhNgmF83dfI9G1waT+L4+6imagFqXzvIsyos0bf2Kp9ZZOCpZ/cFI3chdLakWqaBCNCsed4SmL0sYoALnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhdyKEvC; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b78bca0890so303466f8f.3;
-        Mon, 28 Jul 2025 06:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753708783; x=1754313583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fh8ivYdxvZqAr4NAtGDvGF5i11OMSJKfBEXYWVw7xKc=;
-        b=KhdyKEvC/jJZQPvu2MTkvbM/xNWFlqupDNGyq/P4mfpwM6tQnDCHJ9TP2F05X9ZmDt
-         8d7cqGqm0K15X+X0z28QIAGcaZkbSXSf98dUZA6Mw8X4qwXsPLRYdRZ7dg62RpjfU4Rj
-         TuRZSS3DGlCS3LtwhYX52kCdqNJkHQnMxADiOWvJAovczGKfHV+0vHLEBaAo4S2wfF2k
-         TJbQrch4NKB5BW2XoAVOXTEgyBEOX7v8rGXgn173I4GGMIXSyYwiO5knlGtuKuyaUCnI
-         lS9Jub2QfHfsinDp1+lm8rupiIKv5yrZrw2CDLvfw/vyUOvNVGocrMzlqWsBHLemr16Z
-         LFqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753708783; x=1754313583;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fh8ivYdxvZqAr4NAtGDvGF5i11OMSJKfBEXYWVw7xKc=;
-        b=ixOTOr7qY9fI1HJrAc7xH377qtiP/fqtaq0nzvIo+h45sAwMwkNYH80GDXTP+MT+h3
-         nGIkY4SUvBiD5HpOde7dMersX1wtDzTshc36suJ8TZooUOisGK8aA8MTl1Oh6Vvo18Ve
-         IWlohCHLEc837NSLvRpDFTwrpe9zk7KXGNY8APye+NngnQQGaNywx0x1HtmqR1+S5VZ5
-         AMYE+vvzjvdNRxOzXcrIgDhbVRE2g6UXNdcfKwKY5F2TT7U+i+zeD5FI6hMJsR6Nt31y
-         DZlNXjqiESh4LI+NW64Ol6Gtg+EAI0pD36QD2AVLW9BRRtGFje9LdeUWseZMPhYRgFYM
-         TO6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXTgF8EExghtX3fQlNEZUo+knzzXZDMjf4r8h9Tffo/+GjrlAce1sHkWeRYYdrHAGDKoDpuGESOF+6OE3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv6iMNL1vl7XhtZfj1kn423WTJlBMkbxzPAS36YM/iq/5Vkh8g
-	nnYMLCcekeG5zFkDN3qRarF9vlPU257/rV4oCk52A7OBtaAHTUNIFRUCWGcLdA==
-X-Gm-Gg: ASbGnct/g9ZcfazWGCKfp9sB2SkLSseqcYZYmgtjxR0kDuUQghVMetIIgb0z9/sSIAr
-	7Cz1H3054IJLZ8kVmYB1IMwonYl+3u+ELlpmXiRFeJdCgtjXMWe863HQn3u2jpy5SweZ33/RFyG
-	F2zF9GrTsnwfF/WhotekDVpzf7PdIIynGwKLtkn8syfFni17V4gLHnLRhnEulywAxLWPbhqLLHv
-	vBnBsbVrwGiN9s1M+BMFoFPV/LEI4kLlcVuRhl9tnoO/ZjaStadoV8Fx6e/yKV3F2V6ER0sMRlx
-	srjGysATp262dZZjZ8YvXw1i1bPudvuCmzC+yQR3i4ZuA95RHQtjarSWaBj/LxIRP28Cj2Irovy
-	eD649EcdWwSyxRAUzrBmmijTaW8jfj0koQvKnJ9ZBax1LGlrLf+5no1HRGKte1n/PUok5eTs6O9
-	eq64acHCYolA==
-X-Google-Smtp-Source: AGHT+IHdYC2ElDuPYayKBgjf57H/wSso+U6gI155XMCYMadu8KVC/igHxS0oKul7GVyBUiaceuDviw==
-X-Received: by 2002:a05:6000:290c:b0:3b7:8525:e9cc with SMTP id ffacd0b85a97d-3b78525edb8mr3914527f8f.18.1753708782629;
-        Mon, 28 Jul 2025 06:19:42 -0700 (PDT)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587abe7d47sm99942535e9.10.2025.07.28.06.19.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 06:19:42 -0700 (PDT)
-Message-ID: <08deec62-e20a-4a54-a655-38a0335a74cd@gmail.com>
-Date: Mon, 28 Jul 2025 14:19:41 +0100
+	s=arc-20240116; t=1753708883; c=relaxed/simple;
+	bh=FU0TWOhMcQPcrjEidhtHqffEtq+nMO4IiO8P1ZFaiu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=auE8e9lNjua0sibm8c7g0rRueF68sbz79lt0aE4r+h1vFqE2nS0pxgzmKmvTeuOmU1G8oOqgYIKBG9kXtTa2MT5BieqPfYPhxBBP+7I6ohpLwizh7Rj5s0OnxRNZrq7vIgmQzvzE1R5bcdbzRMVdEoKhfyO78Zl6TOo57M6BTAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id F0A8F608; Mon, 28 Jul 2025 08:21:17 -0500 (CDT)
+Date: Mon, 28 Jul 2025 08:21:17 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
+	dan.j.williams@intel.com
+Subject: Re: [PATCH v2 1/3] lockdown: Switch implementation to using bitmap
+Message-ID: <aId5TYh6ckjelddG@mail.hallyn.com>
+References: <20250728111517.134116-1-nik.borisov@suse.com>
+ <20250728111517.134116-2-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: Fix typos
-To: Bjorn Helgaas <helgaas@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>
-References: <20250723201528.2908218-1-helgaas@kernel.org>
-Content-Language: en-GB
-From: Edward Cree <ecree.xilinx@gmail.com>
-In-Reply-To: <20250723201528.2908218-1-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728111517.134116-2-nik.borisov@suse.com>
 
-On 23/07/2025 21:15, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
+On Mon, Jul 28, 2025 at 02:15:15PM +0300, Nikolay Borisov wrote:
+> Tracking the lockdown at the depth granularity rather than at the
+> individual is somewhat inflexible as it provides an "all or nothing"
+> approach. Instead there are use cases where it  will be useful to be
+> able to lockdown individual features - TDX for example wants to disable
+> access to just /dev/mem.
 > 
-> Fix typos in comments and error messages.
+> To accommodate this use case switch the internal implementation to using
+> a bitmap so that individual lockdown features can be turned on. At the
+> same time retain the existing semantic where
+> INTEGRITY_MAX/CONFIDENTIALITY_MAX are treated as wildcards meaning "lock
+> everything below me".
 > 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
 
-Sorry I wasn't able to get to this in time (had email issues last week).
+Would still like to see the comment, but, with or without it,
+looks good, thank you.
 
-> diff --git a/drivers/net/ethernet/sfc/mcdi_pcol.h b/drivers/net/ethernet/sfc/mcdi_pcol.h
-> index 9cb339c461fb..b9866e389e6d 100644
-> --- a/drivers/net/ethernet/sfc/mcdi_pcol.h
-> +++ b/drivers/net/ethernet/sfc/mcdi_pcol.h
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-mcdi_pcol.h is automatically generated from an external source (it comes
- from the firmware development team), these fixes will likely be
- overwritten next time we pull in updates.  I will try to get them fed
- back into the upstream sources.
-
-> diff --git a/drivers/net/ethernet/sfc/tc_encap_actions.c b/drivers/net/ethernet/sfc/tc_encap_actions.c
-> index 87443f9dfd22..2258f854e5be 100644
-> --- a/drivers/net/ethernet/sfc/tc_encap_actions.c
-> +++ b/drivers/net/ethernet/sfc/tc_encap_actions.c
-> @@ -442,7 +442,7 @@ static void efx_tc_update_encap(struct efx_nic *efx,
->  			rule = container_of(acts, struct efx_tc_flow_rule, acts);
->  			if (rule->fallback)
->  				fallback = rule->fallback;
-> -			else /* fallback fallback: deliver to PF */
-> +			else /* fallback: deliver to PF */
->  				fallback = &efx->tc->facts.pf;
->  			rc = efx_mae_update_rule(efx, fallback->fw_id,
->  						 rule->fw_id);
-
-This wording was intentional, not a type: delivery to the PF is the
- second-layer fallback when there is no fallback action, which makes it
- the fallback to the fallback.
-I will post a partial revert to change this line back.
+> ---
+>  security/lockdown/lockdown.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index cf83afa1d879..5014d18c423f 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -10,12 +10,13 @@
+>   * 2 of the Licence, or (at your option) any later version.
+>   */
+>  
+> +#include <linux/bitmap.h>
+>  #include <linux/security.h>
+>  #include <linux/export.h>
+>  #include <linux/lsm_hooks.h>
+>  #include <uapi/linux/lsm.h>
+>  
+> -static enum lockdown_reason kernel_locked_down;
+> +static DECLARE_BITMAP(kernel_locked_down, LOCKDOWN_CONFIDENTIALITY_MAX);
+>  
+>  static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+>  						 LOCKDOWN_INTEGRITY_MAX,
+> @@ -26,10 +27,15 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+>   */
+>  static int lock_kernel_down(const char *where, enum lockdown_reason level)
+>  {
+> -	if (kernel_locked_down >= level)
+> -		return -EPERM;
+>  
+> -	kernel_locked_down = level;
+> +	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
+> +		return -EINVAL;
+> +
+> +	if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
+> +		bitmap_set(kernel_locked_down, 1, level);
+> +	else
+> +		bitmap_set(kernel_locked_down, level, 1);
+> +
+>  	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
+>  		  where);
+>  	return 0;
+> @@ -62,13 +68,12 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
+>  		 "Invalid lockdown reason"))
+>  		return -EPERM;
+>  
+> -	if (kernel_locked_down >= what) {
+> +	if (test_bit(what, kernel_locked_down)) {
+>  		if (lockdown_reasons[what])
+>  			pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
+>  				  current->comm, lockdown_reasons[what]);
+>  		return -EPERM;
+>  	}
+> -
+>  	return 0;
+>  }
+>  
+> @@ -105,7 +110,7 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
+>  		if (lockdown_reasons[level]) {
+>  			const char *label = lockdown_reasons[level];
+>  
+> -			if (kernel_locked_down == level)
+> +			if (test_bit(level, kernel_locked_down))
+>  				offset += sprintf(temp+offset, "[%s] ", label);
+>  			else
+>  				offset += sprintf(temp+offset, "%s ", label);
+> -- 
+> 2.34.1
+> 
 
