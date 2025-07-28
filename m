@@ -1,103 +1,219 @@
-Return-Path: <linux-kernel+bounces-748170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E29EB13D69
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:41:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA6C3B13D6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C6267A1133
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:40:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1F4189AC47
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CFF2686A0;
-	Mon, 28 Jul 2025 14:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01CF26E6E2;
+	Mon, 28 Jul 2025 14:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FkJT12Nt"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Skp28Z42"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4AF16DEB1;
-	Mon, 28 Jul 2025 14:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF6A26463A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753713691; cv=none; b=QQBKyA2A3O0Cdq07H+XmafaoDap1JFwXlubvbebIAEHi5q9KQXhxqwwvYduPyTsYjifp/Fp8fZguNiRDQKHeXGSNFA2eKg0Fpy4YLpMjIDTVssslw498dT//EjLtlrsBlEF9qHVAJ5qcAuqSofeyY9fB6jp0ezel5j8ZLt+WDl4=
+	t=1753713706; cv=none; b=fZCAaqt++6XQ4l3BVZdY8EMpQquqm6SJQuYebPN+gr3TdN0WndCiR7vZIXItZnd58oBQ2NC/R1XlB+NTKCil/qMBEy3kYH6kgA5lpknqo2Y9Nk+XsbqQJqq66B/pegcWmnFah3OBy3TSOTCv+jOmLucgVL6TJPKQ97QTaswTTys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753713691; c=relaxed/simple;
-	bh=ddg4IC4/1r1N45bMbhL7R41OSeyNZjrSS4ddL67Tmic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQpbIfi0jLjDggDe4OpWNh6hrkcKN0U9FLo5RgjYrkDS0PL2tbg9bD/uiSyHGpIH3qpTUKsToqX4+XdBygotlYR//0S5zNYOhoQbc8F7HzOhPg3hCIKESch4SKsMrabNHGzyXPGdDnhg78onpuF22qaZ6yDtXm9CnHqMxLq1eBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FkJT12Nt; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=yciS6WThtOFQjebRhU9cNTCa8lTgZg8esDAWYVn97c8=; b=FkJT12NtevMagAkHUGHx9c/4ys
-	WxCaQf0eB3zbVS3r0GSwJ22i3hf5NO/yuKgSA5KulKlnAbHrOPB4+u+F1SJRQ+ohya2cBr2Q9fIhF
-	Q7hdCjrWUPaOwhR5Dv4g5l7PJyJMJW0iJpRmbzF9iZAUbEuh184jdLcvcbCyPIfOl/Sw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ugP2Q-003691-T3; Mon, 28 Jul 2025 16:41:14 +0200
-Date: Mon, 28 Jul 2025 16:41:14 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Roger Quadros <rogerq@kernel.org>, Simon Horman <horms@kernel.org>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] Revert "net: ethernet: ti: am65-cpsw: fixup PHY
- mode for fixed RGMII TX delay"
-Message-ID: <57823bd1-265c-4d01-92d9-9019a2635301@lunn.ch>
-References: <20250728064938.275304-1-mwalle@kernel.org>
+	s=arc-20240116; t=1753713706; c=relaxed/simple;
+	bh=M/H6lCBVXPuWeNVFqGZWZn59+5BhoW70J9OBsYG5CbY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qkt0+3QMUo7fFVip/N7JB2Qowme1oZS78aEdJmFXX2oQhmqBAgsLfnXC60SylrHmWT2hp4+UfEvuuU5OUoGHC4Cd8RRgLVGG+LhXtXFY9DQQogNi6MXn6iNvtKDSQe78lvp43oMj93yGpiJZhuC7+CGBj3frchuuo+7oYWw2G2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Skp28Z42; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b78310b296so989942f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753713703; x=1754318503; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1qO9rislSQFIwluOt7E5h1r2iem3vuZ96lsMt6UMcTQ=;
+        b=Skp28Z42XLZ1avuGymdBKWBZx8SoMRdir1sZsKgSKEJicMjt0LRCA781J7OQmD2f+H
+         u5vZMlFsy57dfHhxcGPQaNjxWjoweS0Li42QZx6Uca7/x8wSUKY3uBLM6R35n+AfceEV
+         PEgob01UdcSKjbuy2PUBO3jnQlwCyEzVka1NSWdpWUVKw9RwISgT2IZo5A1sa7hc6LZ7
+         Reapw9qfOkUzIO4U/bwgkuaG2Epbrx4fZ9N93kxo9bTNqplwJlOl5f5U2y7iIfnj41p/
+         lZ1wIJkJJvQiFRXrn4CaEmTjo1eCC9Mldany5qzhRoiyp7lzceCubAFP9k9Xfom7PxkC
+         oHiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753713703; x=1754318503;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1qO9rislSQFIwluOt7E5h1r2iem3vuZ96lsMt6UMcTQ=;
+        b=ghXTSFLjAAVM5fWpmXqfcsQVQdN2tH3DbN9CycBv5XcRbci7PEuZDsLbfGtuEeXmrI
+         GeSAaK5keqK/2BahvrOJV5da6hrzqTaFg7AcT3kXWj7laGjywZMMGJNhT9JBtJ2V/lCJ
+         r7foRK+rL67RB6qVnxMRcdEJmPRHEcD35q37DZkPL139MmzTl5zi+1ebhu750Uya4CiD
+         YBnlpH4wKNr/IKayIFpXBqpdgnmMaOTH6yp81pG5lBC2ACTeVfc7x8I5QGuQGT8pSH1E
+         +Ebz3iC75KdTNxH7KT68O+62Y6tAwcUO5so6yOu4bHVF4uzk3KfGZsgA55+ntQR79rKc
+         VDjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBGld+kNxBUs6CU/5wNhAZCxz9es5lvjFHESPMP6ERt6BaWZhh/7skX86+ZNpDKrEiaxQnbM196wturfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrJ3HH7i/yTU/dtTFmiUnmo44vfpyiPSGxKz06snVNPg2BS1tx
+	KACdfr2QrE30cAG48fkziMh6oqDFs59Bu27/dS3X2fetSkRLdaal8TqAGnEewTbSF4c=
+X-Gm-Gg: ASbGncstYWvvoZpfIGa6xhR2xck2dzD1hziPHOtyg35nUMbBtw7ZFzXzt5AS1Gv/hKM
+	pRFlgFs2Wj5cAQtsqsP8Nc+ELWJajlHernpT+HFFdgwpMEw2j56Of0GnIsV9slgdVxtn5cpC8+J
+	siginWHybgVAIBGQ6CkOl7PjyX2DC4v9i4xqm8hkAxDrn5hovqlav3MMWutLjnM4UiT9zEiftvw
+	IE+uU4edcHB1pF+zvbssw3Zok6XKqgTBQ+mAjzHSmUcJtXK8BWvAW4oS8hkzQ8E4BJR9W/OoY6g
+	5+FOxl+V3Nc0K4ODzgiQz63QjYa91tL8jG8YeeAv73DpKaSwePGeZsBmYH1y7KOxBQTFqjV2ieE
+	DvRd1soJsE1WoXAdPR+R/4jigLPiI82QTU8fIyjS1CReQLxypYfv+8K3/FcHV/K7Kig8c5xWJVk
+	8=
+X-Google-Smtp-Source: AGHT+IFng4T0hStZzkamH3DtOc0H1/Sv2je6rSBEmc8c5iAV8VKtuyLNfkdChCIgYH081RXPy8BAgg==
+X-Received: by 2002:a05:6000:1889:b0:3b3:9c75:acc6 with SMTP id ffacd0b85a97d-3b77678cc87mr8263507f8f.59.1753713703036;
+        Mon, 28 Jul 2025 07:41:43 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:9019:46ec:c6f1:c165? ([2a01:e0a:3d9:2080:9019:46ec:c6f1:c165])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b78b26a43asm1720426f8f.34.2025.07.28.07.41.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 07:41:42 -0700 (PDT)
+Message-ID: <754d5c83-ba83-40d2-9309-8eafcb885b9f@linaro.org>
+Date: Mon, 28 Jul 2025 16:41:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728064938.275304-1-mwalle@kernel.org>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] scsi: ufs: core: move some irq handling back to hardirq
+ (with time limit)
+To: Manivannan Sadhasivam <mani@kernel.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ quic_nitirawa@quicinc.com
+References: <20250724-ufshcd-hardirq-v1-1-6398a52f8f02@linaro.org>
+ <f2b85e49152b80a63b20aa5ad67dfbee1190e356.camel@linaro.org>
+ <53bfd619-4066-4dcb-b3f0-d04177e05355@linaro.org>
+ <766fa03c4a9a2667c8c279be932945affb798af0.camel@linaro.org>
+ <4enen7mopxtx4ijl5qyrd2gnxvv3kygtlnhxpr64egckpvkja4@hjli25ndhxwc>
+ <cvh6t2hy2tvoz4tnokterj6mkdgk5pug7evplux3kuigs4j5mo@s46f32cusvsx>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <cvh6t2hy2tvoz4tnokterj6mkdgk5pug7evplux3kuigs4j5mo@s46f32cusvsx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 28, 2025 at 08:49:38AM +0200, Michael Walle wrote:
-> This reverts commit ca13b249f291f4920466638d1adbfb3f9c8db6e9.
+On 28/07/2025 16:39, Manivannan Sadhasivam wrote:
+> On Mon, Jul 28, 2025 at 08:06:21PM GMT, Manivannan Sadhasivam wrote:
+>> + Nitin
+>>
 > 
-> This patch breaks the transmit path on an AM67A/J722S. This SoC has an
-> (undocumented) configurable delay (CTRL_MMR0_CFG0_ENET1_CTRL, bit 4).
+> Really added Nitin now.
 
-Is this undocumented register only on the AM67A/J722S?
+BTW what about MCQ on SM8650 ? it's probably the real fix here...
 
-The patch being reverted says:
+Neil
 
-   All am65-cpsw controllers have a fixed TX delay
+> 
+>> On Thu, Jul 24, 2025 at 02:38:30PM GMT, André Draszik wrote:
+>>> On Thu, 2025-07-24 at 13:54 +0200, Neil Armstrong wrote:
+>>>> On 24/07/2025 13:44, André Draszik wrote:
+>>>>> On Thu, 2025-07-24 at 10:54 +0100, André Draszik wrote:
+>>>>>> fio results on Pixel 6:
+>>>>>>     read / 1 job     original    after    this commit
+>>>>>>       min IOPS        4,653.60   2,704.40    3,902.80
+>>>>>>       max IOPS        6,151.80   4,847.60    6,103.40
+>>>>>>       avg IOPS        5,488.82   4,226.61    5,314.89
+>>>>>>       cpu % usr           1.85       1.72        1.97
+>>>>>>       cpu % sys          32.46      28.88       33.29
+>>>>>>       bw MB/s            21.46      16.50       20.76
+>>>>>>
+>>>>>>     read / 8 jobs    original    after    this commit
+>>>>>>       min IOPS       18,207.80  11,323.00   17,911.80
+>>>>>>       max IOPS       25,535.80  14,477.40   24,373.60
+>>>>>>       avg IOPS       22,529.93  13,325.59   21,868.85
+>>>>>>       cpu % usr           1.70       1.41        1.67
+>>>>>>       cpu % sys          27.89      21.85       27.23
+>>>>>>       bw MB/s            88.10      52.10       84.48
+>>>>>>
+>>>>>>     write / 1 job    original    after    this commit
+>>>>>>       min IOPS        6,524.20   3,136.00    5,988.40
+>>>>>>       max IOPS        7,303.60   5,144.40    7,232.40
+>>>>>>       avg IOPS        7,169.80   4,608.29    7,014.66
+>>>>>>       cpu % usr           2.29       2.34        2.23
+>>>>>>       cpu % sys          41.91      39.34       42.48
+>>>>>>       bw MB/s            28.02      18.00       27.42
+>>>>>>
+>>>>>>     write / 8 jobs   original    after    this commit
+>>>>>>       min IOPS       12,685.40  13,783.00   12,622.40
+>>>>>>       max IOPS       30,814.20  22,122.00   29,636.00
+>>>>>>       avg IOPS       21,539.04  18,552.63   21,134.65
+>>>>>>       cpu % usr           2.08       1.61        2.07
+>>>>>>       cpu % sys          30.86      23.88       30.64
+>>>>>>       bw MB/s            84.18      72.54       82.62
+>>>>>
+>>>>> Given the severe performance drop introduced by the culprit
+>>>>> commit, it might make sense to instead just revert it for
+>>>>> 6.16 now, while this patch here can mature and be properly
+>>>>> reviewed. At least then 6.16 will not have any performance
+>>>>> regression of such a scale.
+>>>>
+>>>> The original change was designed to stop the interrupt handler
+>>>> to starve the system and create display artifact and cause
+>>>> timeouts on system controller submission. While imperfect,
+>>>> it would require some fine tuning for smaller controllers
+>>>> like on the Pixel 6 that when less queues.
+>>>
+>>> Well, the patch has solved one problem by creating another problem.
+>>> I don't think that's how things are normally done. A 40% bandwidth
+>>> and IOPS drop is not negligible.
+>>>
+>>> And while I am referencing Pixel 6 above as it's the only device
+>>> I have available to test, I suspect all < v4 controllers / devices
+>>> are affected in a similar way, given the nature of the change.
+>>>
+>>
+>> IMO we should just revert the offending commit for 6.16 and see how to properly
+>> implement it in the next release. Even with this series, we are not on par with
+>> the original IOPS, which is bad for everyone.
+>>
+>> - Mani
+>>
+>> -- 
+>> மணிவண்ணன் சதாசிவம்
+> 
 
-So we have some degree of contradiction here.
-
-> The u-boot driver (net/ti/am65-cpsw-nuss.c) will configure the delay in
-> am65_cpsw_gmii_sel_k3(). If the u-boot device tree uses rgmii-id this
-> patch will break the transmit path because it will disable the PHY delay
-> on the transmit path, but the bootloader has already disabled the MAC
-> delay, hence there will be no delay at all.
-
-We have maybe 8 weeks to fix this, before it makes it into a released
-kernel. So rather than revert, i would prefer to extend the patch to
-make it work with all variants of the SoC.
-
-Is CTRL_MMR0_CFG0_ENET1_CTRL in the Ethernet address space? Would it
-be possible for the MAC driver to read it, and know if the delay has
-been disabled? The switch statement can then be made conditional?
-
-If this register actually exists on all SoC variants, can we just
-globally disable it, and remove the switch statement?
-
-	 Andrew
-	
 
