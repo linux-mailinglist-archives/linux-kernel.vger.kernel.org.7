@@ -1,135 +1,164 @@
-Return-Path: <linux-kernel+bounces-747905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFF3B13A0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09757B13A13
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2387A174CCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D72174DED
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95070251793;
-	Mon, 28 Jul 2025 11:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BDF26159D;
+	Mon, 28 Jul 2025 11:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/MfShGk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRbksmGa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA5A77111;
-	Mon, 28 Jul 2025 11:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B96221FBD;
+	Mon, 28 Jul 2025 11:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753703533; cv=none; b=ryfzuMff2h/GlG7wuWHdZThgS6MMQ8ZDikrdSvTrppMakqIXleJkRjTVZYD9eACMT3/Anu3SYR71SIZ1w4Pr4KasJmXwwG6XqYH1r+kXS6ZdmfFJhG6LXv1QDH3GlfrYnWEomkuz7elEp5gC333XzAwWytYPdjiQ0VWPVNy3/vw=
+	t=1753703551; cv=none; b=u9dLAm6sj8HDKv68zmRo/k6V+YuVXTK0gCfS2yh6wTa1+t+WZYhbQwqZWBMIMIxSD4H1FXFBsEopDytwnu0Km/RsSo9R+2NywZ4uVfIv8VO122Z2cvgTgD0wcMxMZsZg2GzeEJkVgFra6OS+EUgkS3AT+sAnunUJQq+MJHW7LUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753703533; c=relaxed/simple;
-	bh=y5EA5t0+m7pAfOk/7curMHBYuu3le3VLD2NQ96Z2RYs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=fbjgokEs+LtTcswxlRNDEkGfvbytrRJvQ4JzMGPjo9F14isPRJSoZb3ETFLysaknwhSGrQAXuS/DmN7pFjACXcmj7e/iAdzbInnj1By0stPXSPtQDHieOlLxN98AG9pzi+Ut3Ay4pHua0GqQBlbkynEm5pS5AukkgG80CNWm+0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/MfShGk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5882DC4CEE7;
-	Mon, 28 Jul 2025 11:52:10 +0000 (UTC)
+	s=arc-20240116; t=1753703551; c=relaxed/simple;
+	bh=n0J5JDKTqeiSZ0GT4nTGggSWytKhfzg7qr5qEFkmUNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OKKuFYK07TiisyOcD0bUc8v4oyuO0egUykj0JQcPtnlJBeTfqlDM4cq/CD8PM6+zZCVkWPbfKz/WqCfm6Fvd+A/HG26f91pWoiollTqf01QlpRra0YDB7hU5TLDGCKEW1+Cni/DiNnit2uEq1We4D3UV6WRs7Br5UPwk8NCaL5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRbksmGa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A6C3C4CEE7;
+	Mon, 28 Jul 2025 11:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753703533;
-	bh=y5EA5t0+m7pAfOk/7curMHBYuu3le3VLD2NQ96Z2RYs=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=P/MfShGka+mtLOvxdyWbJu1ISKnFOjol18r7iE1Gt4gb6CFkoqL+c3IzJGKAMLBci
-	 2e9JfkW42YRiEpGWG7s0YcrDz8Cwe3+Vvhas0xQzek7bx5FFF/obr8xSR4Z8o/IW0z
-	 OX738bXooQHzT8vrVutBX4N2ayv6iiSqWCDXc7+qf+N1eKumj2O3ebrKQi1OOOPRNc
-	 CNDT8WRqtPc+pehKL5zzCgrg1F1zgbt2S+PD1M5EzP60HTJs2RZoR0wpVqKNwziRby
-	 B5odFtZrG0Zl+olijbxTxDsMit4xYMrAXn5FkKwrbO3tbfRFlISZWWvvcxNqLJiMbC
-	 fClkRXN45RkKA==
+	s=k20201202; t=1753703550;
+	bh=n0J5JDKTqeiSZ0GT4nTGggSWytKhfzg7qr5qEFkmUNU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oRbksmGapq9OYmr5bQZfbTnyAEOopzoaYZZzPo1tB1TP9ZpJZr+WnOqmdDUHOk5uh
+	 dOUb48Vfpe2P0N8Z0v1WaTEjVYl/YuwZXxZV4ZnZRvJvUxkdEx4oW61QXxqMLWyrKZ
+	 p2jM6GbxuMkfDU6sAuM03YhB2FwcBz9szLJtx2DCEFB++0YJh3gS0GJFvJTy18kuc8
+	 n2c/wYxTRZUNhrtHb7DooKhp5tCbUaOVVfsK+w0OOAVFdNg4601pOBifTghfyjli7L
+	 dL6Lb75oBuNuDDgPO+JxEnUhc+y3DXIF1V2tN+g1L4ekaVGKqW7CMROGdkWQxAVyXN
+	 ShtXfvTTP+uLQ==
+Message-ID: <bcef34c3-98b4-454c-8138-c73729e17081@kernel.org>
+Date: Mon, 28 Jul 2025 13:52:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 07/10] firmware: psci: Implement vendor-specific
+ resets as reboot-mode
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Stephen Boyd <swboyd@chromium.org>, Andre Draszik
+ <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Srinivas Kandagatla <srini@kernel.org>
+References: <20250727-arm-psci-system_reset2-vendor-reboots-v13-0-6b8d23315898@oss.qualcomm.com>
+ <20250727-arm-psci-system_reset2-vendor-reboots-v13-7-6b8d23315898@oss.qualcomm.com>
+ <b81aa592-a66b-457b-9f42-df4505b28508@kernel.org>
+ <3gtlf5txxtioa5bvo6o467jupyoam4hjhm2mdiw5izv5vbl3tz@drndgp3tcrgo>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <3gtlf5txxtioa5bvo6o467jupyoam4hjhm2mdiw5izv5vbl3tz@drndgp3tcrgo>
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 28 Jul 2025 13:52:08 +0200
-Message-Id: <DBNO0N1TDAGI.2OEWH6Y60JNYZ@kernel.org>
-Cc: "Andrew Morton" <akpm@linux-foundation.org>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Andrew Ballance"
- <andrewjballance@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- <linux-kernel@vger.kernel.org>, <maple-tree@lists.infradead.org>,
- <rust-for-linux@vger.kernel.org>, <linux-mm@kvack.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 2/3] rust: maple_tree: add MapleTree::lock() and load()
-References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
- <20250726-maple-tree-v1-2-27a3da7cb8e5@google.com>
-In-Reply-To: <20250726-maple-tree-v1-2-27a3da7cb8e5@google.com>
+Content-Transfer-Encoding: 7bit
 
-On Sat Jul 26, 2025 at 3:23 PM CEST, Alice Ryhl wrote:
-> diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
-> index 0f26c173eedc7c79bb8e2b56fe85e8a266b3ae0c..c7ef504a9c78065b3d5752b4f=
-5337fb6277182d1 100644
-> --- a/rust/kernel/maple_tree.rs
-> +++ b/rust/kernel/maple_tree.rs
-> @@ -206,6 +206,23 @@ pub fn erase(&self, index: usize) -> Option<T> {
->          unsafe { T::try_from_foreign(ret) }
->      }
-> =20
-> +    /// Lock the internal spinlock.
-> +    #[inline]
-> +    pub fn lock(&self) -> MapleLock<'_, T> {
-> +        // SAFETY: It's safe to lock the spinlock in a maple tree.
-> +        unsafe { bindings::spin_lock(self.ma_lock()) };
-> +
-> +        // INVARIANT: We just took the spinlock.
-> +        MapleLock(self)
-> +    }
-> +
-> +    #[inline]
-> +    fn ma_lock(&self) -> *mut bindings::spinlock_t {
-> +        // SAFETY: This pointer offset operation stays in-bounds.
-> +        let lock =3D unsafe { &raw mut (*self.tree.get()).__bindgen_anon=
-_1.ma_lock };
-> +        lock.cast()
-> +    }
-> +
->      /// Free all `T` instances in this tree.
->      ///
->      /// # Safety
-> @@ -248,6 +265,83 @@ fn drop(mut self: Pin<&mut Self>) {
->      }
->  }
-> =20
-> +/// A reference to a [`MapleTree`] that owns the inner lock.
-> +///
-> +/// # Invariants
-> +///
-> +/// This guard owns the inner spinlock.
-> +pub struct MapleLock<'tree, T: ForeignOwnable>(&'tree MapleTree<T>);
-> +
-> +impl<'tree, T: ForeignOwnable> Drop for MapleLock<'tree, T> {
-> +    #[inline]
-> +    fn drop(&mut self) {
-> +        // SAFETY: By the type invariants, we hold this spinlock.
-> +        unsafe { bindings::spin_unlock(self.0.ma_lock()) };
-> +    }
-> +}
+On 28/07/2025 11:44, Dmitry Baryshkov wrote:
+> On Mon, Jul 28, 2025 at 06:53:14AM +0200, Krzysztof Kozlowski wrote:
+>> On 27/07/2025 18:24, Shivendra Pratap wrote:
+>>> +
+>>> +static int __init psci_init_vendor_reset(void)
+>>> +{
+>>> +	struct reboot_mode_driver *reboot;
+>>> +	struct device_node *np;
+>>> +	int ret;
+>>> +
+>>> +	np = of_find_node_by_path("/psci/reboot-mode");
+>>
+>>
+>> Why are you looking by full path, not by compatible? Is the ABI - above
+>> path - expressed anywhere?
+> 
+> PSCI node is required to have a node name of psci, it doesn't have MMIO,
 
-I think in the future we also want to give users access to the mas_*() func=
-tion
-familiy.
+This is true
 
-I assume, MaState would represent a struct ma_state, but also carry a Maple=
-Lock
-guard. And then the mas_*() functions would be methods of MaState?
+> so it resides in the root node
 
-In case we want to allow to release and re-acquire the lock for the same
-MaState, we could probably use type states.
+This might be or not might be true. It is not defined by ABI. Anyway,
+you answered where the ABI would be documented, even though as I said it
+is not (/psci is not), but does not answer to first part: why you are
+not using compatibles which is always the preferred method?
 
-I wonder if this (at least partially) makes sense to have from the get-go, =
-since
-it could already be used to implement things like MapleTree::free_all_entri=
-es()
-based on it.
+
+> and the reboot-mode is defined in the
+> previous patch. So, I'd assume, the path is defined.
+
+As I said, path is not. only psci/reboot-mode is.
+
+> 
+Best regards,
+Krzysztof
 
