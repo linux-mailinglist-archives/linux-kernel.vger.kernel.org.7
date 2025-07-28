@@ -1,139 +1,181 @@
-Return-Path: <linux-kernel+bounces-748164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D231FB13D58
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:37:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97238B13D5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AC183A208D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087DE3AAEE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74BB26FDA9;
-	Mon, 28 Jul 2025 14:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADE326563F;
+	Mon, 28 Jul 2025 14:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbldzTMY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxiGvI90"
+Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C20237163;
-	Mon, 28 Jul 2025 14:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D401DDC23;
+	Mon, 28 Jul 2025 14:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753713393; cv=none; b=QaJxh0ojk0YAHSpkWgAYtuhWfh0o7KJ00sl2FsM9OYxR4wpPNLyXdlStm3kFWCm2FyZLI7WSCEa4OdMiwh8pMhTH6REeGwdUXyuQqkjeMNCjUSt3M4WfRwEBHcthgWyqOaqSt+W+Ka8+yVwcLDS9IDt14sHk/0/DIhu7q0CgwTk=
+	t=1753713415; cv=none; b=ufC+4yMWXP2cPRtH3iscXOxBQGu4j5oV15Dl+hOgLGEh++xiYcJo8b4Fy2T6FmOYjy6mM8TnH+gZkfoJCJ2//m1o/4LNB0FA5CTzliLgJa/2aQ0ND0RmIswozD8R06BMxyAbLlLR5SRi5Oj1NeUO15stG2nyIN7Ep5MhjHIN3QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753713393; c=relaxed/simple;
-	bh=5SOa2sytuiNA5zEjq9txDoBaaYLCQrTDGAlN11fjudM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESMhNs9TZIJ8Lz2fP9monpQnlSLr2Vsy7qxfcqjld+rBePdd8+eR3ZQXRqGwiRdzEYTufOpH1Dbqhn8EQCQ5LnioGYqYGcDSi7R4aJA3BuvgcQB9rhowEuAxFsjTCaVY41W9IuJlyIBy6GcE263XkkGXNhxffZsJE2dnyC/9FaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbldzTMY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A65BC4CEF7;
-	Mon, 28 Jul 2025 14:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753713392;
-	bh=5SOa2sytuiNA5zEjq9txDoBaaYLCQrTDGAlN11fjudM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GbldzTMYi/o1EH193dDZkQkHHCC6GfxHx2wCSo9dtLqHVKNk3LbfaDlclpFeEbdBd
-	 xMlRThWm/Xohzuc8zSgTyc8PDoaJrnlFzcASmNCBeZ3FjsUUijfpBnxBIKe+Qg1ihB
-	 hZqeSvJECQAhOBAx2MwAVlWb0dAn9hfO+d+oVal/2Fi+vaCxwHM5z6PCnA/pj66iu0
-	 0MxxzdaP3VTpl7O64U09jmt4oBekbASViVHwQsWM2gmjGVfE6NAOl9fsrqrJIqoKwz
-	 o87yI4sNgfCrpPPeMOaNsmsPf6QUxvtoCe1rdrXY536NXNLRWI9g4lptWqrPUJI7Dd
-	 VVg8GNPNlL6Cw==
-Date: Mon, 28 Jul 2025 20:06:21 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
-	Bart Van Assche <bvanassche@acm.org>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: core: move some irq handling back to hardirq
- (with time limit)
-Message-ID: <4enen7mopxtx4ijl5qyrd2gnxvv3kygtlnhxpr64egckpvkja4@hjli25ndhxwc>
-References: <20250724-ufshcd-hardirq-v1-1-6398a52f8f02@linaro.org>
- <f2b85e49152b80a63b20aa5ad67dfbee1190e356.camel@linaro.org>
- <53bfd619-4066-4dcb-b3f0-d04177e05355@linaro.org>
- <766fa03c4a9a2667c8c279be932945affb798af0.camel@linaro.org>
+	s=arc-20240116; t=1753713415; c=relaxed/simple;
+	bh=QnrsrJuP1GBoHq8sg/d50wmv19fU3Un35JYEo0d8vCA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D8FyhQGeIgvfQPX27mGVZ+3uA7jtZO+1gVn78b+5xixDRTJqd4GODmycx2qAkKrIx+vRzB9H4yRhg/9g3tUtoDQrFKN0ShSf7BdDuYZsCu5sSaUd2JhiUSNGB7gKpCTaOUi7xyXOD0oeFeEGEM51ZKUKnABpcuuYTPQRcdbK36s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxiGvI90; arc=none smtp.client-ip=209.85.219.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e8e0fb4a2d2so923682276.1;
+        Mon, 28 Jul 2025 07:36:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753713413; x=1754318213; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YQF8OLdFRkuLmNOLZ0xTeHW70hzSwwUMXvMZUwqZwwE=;
+        b=DxiGvI90xBiLsC3Asxp/uLORTMISoWHCPwRW/rWzPUD1Kb4aBIbOOdODSu3WVS54Hw
+         3HvvwtyO2JIQRJgytYsI6AKbtYS7ufOCRgV/LE98wV5Wpfbxch9uIlCsaYpVw+fyg1hU
+         nFPLvqMzPxWcUAXQ+JL7+uZa7lvuNqE/mmESwRWVxAXqdtXb6P1CEfGozBuPQN2i2WY/
+         gAUZ2IN6wUUS+6XvLTYQdG4khhGcoAdbR76VCQz9FJf8por8SaJzLjt9ZbimzJKNfPQw
+         6//y52OYrfxuxIKu/q12F/eKmG2xnlFzEBxNU7U5ZMZVXIu2ZHB9y4LPcAR329ajto0m
+         jBGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753713413; x=1754318213;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YQF8OLdFRkuLmNOLZ0xTeHW70hzSwwUMXvMZUwqZwwE=;
+        b=HPDwix3zdcaYlbE1+jCvJ9NaZRCnz3AIuEMiKv9xhFDKBJ+elfxNWoOXjMtWWNhQJw
+         eC+UAL32Ybv6g4uatZZ55hN4LzTUsyD6/7Uc1O67bCMgzseTOlzGCmfRSY+fOoWJOQL9
+         SVqkyy6rsjQtG09l5JTX2dNF9knATz2IZkBWx2y+QNDVy7rqSsdjHm4Yr7Nt6ggc6Ixh
+         aE0g8Dohh3ORdbtdM5xk7xzcEeKUpYDH/qVmMOXMQ7QRPBWRYF1Ba8rOR2tlQo2cLO9/
+         AVvv1kN04oXsqI3ovEWCjcfU8CPj79UZiF84hwchR0XOlM6tSu6JyixjrvrcyAhhvFtm
+         b3qA==
+X-Forwarded-Encrypted: i=1; AJvYcCUojwFTP7jq+BbO0YQUQazUFgGP3htOSfXyEAG8Ut0zT1K9x2e4K2O0piCswuDf32rZXK8=@vger.kernel.org, AJvYcCUxAr7oqXK1J7QdFa+tXwTDga7izf3a6vwFZTdo1eotYXWGkpotGmpW1tMFE++S30SzEaWzCCQSuaN+GsUk@vger.kernel.org, AJvYcCXlx2KNFq+TjjvuwMRo2ugq5TkW4SmLz2F7r61eDdTkSSSzUQ5y8E7pm26WvaOd5gWMeI/OXTBYsMJyVM3bKjzkmYWj@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT/qQqQmAUjQoHI0fWjaD4bxYusADXOCdasf9reBnajaAa90/b
+	jd6O27NjqyxfDBxvwG+hgxA2H4FF0ovgwTFpbzeYaKAtvlnBzs4Adw4rn7qzySBp6r3F+Q12ZQ9
+	yYBBWh3x+RiGebS5ogssL2XbCb44ESwE=
+X-Gm-Gg: ASbGncsmNB3zKrhingH9ypsmrfmKnH6HcdgdYH0wKTcxs7WqlWNAHz/4wcQeH1PaEps
+	axA23YEB4WTWx3NyZi/LDvX1/fYRFH386dqvpZyN3ghOZEqMKPzy/8Op93vjkF3Ca9PRlnS0UY8
+	PSeLne6Xw3wKBi+nfARvNUGI58j/RGIP8S2nNVReka5mnrIFqGlkLKNy9Qj2sN9gXrmoDIXoMO0
+	ZXKdkU=
+X-Google-Smtp-Source: AGHT+IHTfterZh5K4FP62ikSM7yGnUdWojT8JqO/9s3TbF8LqdAE99foIreTsqNrhp3xLTH4bUnKCYSh3cETfn2htCs=
+X-Received: by 2002:a05:6902:2587:b0:e8e:c03:75ac with SMTP id
+ 3f1490d57ef6-e8e0c037aa5mr6564522276.7.1753713412859; Mon, 28 Jul 2025
+ 07:36:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <766fa03c4a9a2667c8c279be932945affb798af0.camel@linaro.org>
+References: <20250728041252.441040-1-dongml2@chinatelecom.cn> <aId3tjPnh_NyRLSv@krava>
+In-Reply-To: <aId3tjPnh_NyRLSv@krava>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Mon, 28 Jul 2025 22:36:42 +0800
+X-Gm-Features: Ac12FXxyq9CpApNUdOi_nWDdjQ0ZtYIEVhqRonl51lRO2MPXFG0Olnk9FumpTvM
+Message-ID: <CADxym3brzU=npXwSNUA7x1bCwyyyqgR49LwUzgxeka6ss6Jzrw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] fprobe: use rhashtable for fprobe_ip_table
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: alexei.starovoitov@gmail.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	mathieu.desnoyers@efficios.com, hca@linux.ibm.com, revest@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-+ Nitin
+On Mon, Jul 28, 2025 at 9:14=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
+>
+> On Mon, Jul 28, 2025 at 12:12:47PM +0800, Menglong Dong wrote:
+> > For now, the budget of the hash table that is used for fprobe_ip_table =
+is
+> > fixed, which is 256, and can cause huge overhead when the hooked functi=
+ons
+> > is a huge quantity.
+> >
+> > In this series, we use rhashtable for fprobe_ip_table to reduce the
+> > overhead.
+> >
+> > Meanwhile, we also add the benchmark testcase "kprobe-multi-all", which
+> > will hook all the kernel functions during the testing. Before this seri=
+es,
+> > the performance is:
+> >   usermode-count :  875.380 =C2=B1 0.366M/s
+> >   kernel-count   :  435.924 =C2=B1 0.461M/s
+> >   syscall-count  :   31.004 =C2=B1 0.017M/s
+> >   fentry         :  134.076 =C2=B1 1.752M/s
+> >   fexit          :   68.319 =C2=B1 0.055M/s
+> >   fmodret        :   71.530 =C2=B1 0.032M/s
+> >   rawtp          :  202.751 =C2=B1 0.138M/s
+> >   tp             :   79.562 =C2=B1 0.084M/s
+> >   kprobe         :   55.587 =C2=B1 0.028M/s
+> >   kprobe-multi   :   56.481 =C2=B1 0.043M/s
+> >   kprobe-multi-all:    6.283 =C2=B1 0.005M/s << look this
+> >   kretprobe      :   22.378 =C2=B1 0.028M/s
+> >   kretprobe-multi:   28.205 =C2=B1 0.025M/s
+> >
+> > With this series, the performance is:
+> >   usermode-count :  897.083 =C2=B1 5.347M/s
+> >   kernel-count   :  431.638 =C2=B1 1.781M/s
+> >   syscall-count  :   30.807 =C2=B1 0.057M/s
+> >   fentry         :  134.803 =C2=B1 1.045M/s
+> >   fexit          :   68.763 =C2=B1 0.018M/s
+> >   fmodret        :   71.444 =C2=B1 0.052M/s
+> >   rawtp          :  202.344 =C2=B1 0.149M/s
+> >   tp             :   79.644 =C2=B1 0.376M/s
+> >   kprobe         :   55.480 =C2=B1 0.108M/s
+> >   kprobe-multi   :   57.302 =C2=B1 0.119M/s
+> >   kprobe-multi-all:   57.855 =C2=B1 0.144M/s << look this
+>
+> nice, so the we still trigger one function, but having all possible
+> functions attached, right?
 
-On Thu, Jul 24, 2025 at 02:38:30PM GMT, André Draszik wrote:
-> On Thu, 2025-07-24 at 13:54 +0200, Neil Armstrong wrote:
-> > On 24/07/2025 13:44, André Draszik wrote:
-> > > On Thu, 2025-07-24 at 10:54 +0100, André Draszik wrote:
-> > > > fio results on Pixel 6:
-> > > >    read / 1 job     original    after    this commit
-> > > >      min IOPS        4,653.60   2,704.40    3,902.80
-> > > >      max IOPS        6,151.80   4,847.60    6,103.40
-> > > >      avg IOPS        5,488.82   4,226.61    5,314.89
-> > > >      cpu % usr           1.85       1.72        1.97
-> > > >      cpu % sys          32.46      28.88       33.29
-> > > >      bw MB/s            21.46      16.50       20.76
-> > > > 
-> > > >    read / 8 jobs    original    after    this commit
-> > > >      min IOPS       18,207.80  11,323.00   17,911.80
-> > > >      max IOPS       25,535.80  14,477.40   24,373.60
-> > > >      avg IOPS       22,529.93  13,325.59   21,868.85
-> > > >      cpu % usr           1.70       1.41        1.67
-> > > >      cpu % sys          27.89      21.85       27.23
-> > > >      bw MB/s            88.10      52.10       84.48
-> > > > 
-> > > >    write / 1 job    original    after    this commit
-> > > >      min IOPS        6,524.20   3,136.00    5,988.40
-> > > >      max IOPS        7,303.60   5,144.40    7,232.40
-> > > >      avg IOPS        7,169.80   4,608.29    7,014.66
-> > > >      cpu % usr           2.29       2.34        2.23
-> > > >      cpu % sys          41.91      39.34       42.48
-> > > >      bw MB/s            28.02      18.00       27.42
-> > > > 
-> > > >    write / 8 jobs   original    after    this commit
-> > > >      min IOPS       12,685.40  13,783.00   12,622.40
-> > > >      max IOPS       30,814.20  22,122.00   29,636.00
-> > > >      avg IOPS       21,539.04  18,552.63   21,134.65
-> > > >      cpu % usr           2.08       1.61        2.07
-> > > >      cpu % sys          30.86      23.88       30.64
-> > > >      bw MB/s            84.18      72.54       82.62
-> > > 
-> > > Given the severe performance drop introduced by the culprit
-> > > commit, it might make sense to instead just revert it for
-> > > 6.16 now, while this patch here can mature and be properly
-> > > reviewed. At least then 6.16 will not have any performance
-> > > regression of such a scale.
-> > 
-> > The original change was designed to stop the interrupt handler
-> > to starve the system and create display artifact and cause
-> > timeouts on system controller submission. While imperfect,
-> > it would require some fine tuning for smaller controllers
-> > like on the Pixel 6 that when less queues.
-> 
-> Well, the patch has solved one problem by creating another problem.
-> I don't think that's how things are normally done. A 40% bandwidth
-> and IOPS drop is not negligible.
-> 
-> And while I am referencing Pixel 6 above as it's the only device
-> I have available to test, I suspect all < v4 controllers / devices
-> are affected in a similar way, given the nature of the change.
-> 
+Yes. The test case can be improved further. For now,
+I attach the prog bench_trigger_kprobe_multi to all the kernel
+functions and triggers the benchmark. There can be some noise,
+as all the kernel function calling can increase the benchmark
+results. However, it will not make much difference.
 
-IMO we should just revert the offending commit for 6.16 and see how to properly
-implement it in the next release. Even with this series, we are not on par with
-the original IOPS, which is bad for everyone.
+A better choice will be: attach an empty kprobe_multi prog to
+all the kernel functions except bpf_get_numa_node_id, and
+attach bench_trigger_kprobe_multi to bpf_get_numa_node_id,
+which can make the results more accurate.
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+>
+> thanks,
+> jirka
+>
+>
+> >   kretprobe      :   22.265 =C2=B1 0.023M/s
+> >   kretprobe-multi:   27.740 =C2=B1 0.023M/s
+> >
+> > The benchmark of "kprobe-multi-all" increase from 6.283M/s to 57.855M/s=
+.
+> >
+> > Menglong Dong (4):
+> >   fprobe: use rhashtable
+> >   selftests/bpf: move get_ksyms and get_addrs to trace_helpers.c
+> >   selftests/bpf: add benchmark testing for kprobe-multi-all
+> >   selftests/bpf: skip recursive functions for kprobe_multi
+> >
+> >  include/linux/fprobe.h                        |   2 +-
+> >  kernel/trace/fprobe.c                         | 144 ++++++-----
+> >  tools/testing/selftests/bpf/bench.c           |   2 +
+> >  .../selftests/bpf/benchs/bench_trigger.c      |  30 +++
+> >  .../selftests/bpf/benchs/run_bench_trigger.sh |   2 +-
+> >  .../bpf/prog_tests/kprobe_multi_test.c        | 220 +----------------
+> >  tools/testing/selftests/bpf/trace_helpers.c   | 230 ++++++++++++++++++
+> >  tools/testing/selftests/bpf/trace_helpers.h   |   3 +
+> >  8 files changed, 351 insertions(+), 282 deletions(-)
+> >
+> > --
+> > 2.50.1
+> >
+> >
 
