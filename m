@@ -1,416 +1,186 @@
-Return-Path: <linux-kernel+bounces-748440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D1CB1415A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:45:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A40B14159
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723D3189E464
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:45:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07EE5189AC2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFCF275B09;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423CA275AF7;
 	Mon, 28 Jul 2025 17:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IdfU6ZAf"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JKhAQMC/"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565152741CB
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236B8275861
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753724686; cv=none; b=sx20dGxseyqL3IpucFtSXQvavEiVC1nuZpebCRrC/ips9pdr4B4UGIhNr36tEFxjyISOGbE7d+d2PGR8TgRIZy/w5s4f6k3kGEm1n9K+TE6IKZ3LvMdm27eSl5cTuA7EE+QvOFHSOzdDZ4a2ENKsgiyBepHHROoUcJ1iEfBdt/0=
+	t=1753724686; cv=none; b=auDrhCg7Xkp2fA5suISHQNnmXTHxNgjYFZec5J4A83CJDc0UrBE8RZx9rUWBivUEkZph6PdgvMYIKURWXbFVwwtgq2tCumatXGUnL9czRF82EDHqGbe/RpfLuvdyxNYVlj8/g6ZHxulb3m0xoLwXJX4R8A+EZ3gqwUH3C/R3oCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753724686; c=relaxed/simple;
-	bh=luGdhc5EgtUzh+z4uozJQwFyWHL8xQqouXz9RiZhHUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pso9XqpCjKKHFQSBMq4gDebAkMNpmUuPEwgEuMuIdjHAJ79DRlspqCUQzvkpaXXRBgR9UKloFu6UL+k9aYObUQlJ6y2ld+b+QhtNgcbvRWbszXivQoSnG7cTD6Uruj3LRKjz7iNutmD9p52Ws0DEZfTArw2VVr6gIlJiL+jd9lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IdfU6ZAf; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B2E44430D1;
-	Mon, 28 Jul 2025 17:44:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753724674;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WofW9M6HdnQTRJah1TC+0LjDvwdUiZOFZ6xWlfFRkcQ=;
-	b=IdfU6ZAfvmA1YBvKoWPIV1aAq8sYZnCs4iahjokEH/Uu1kNKMEh2B2gWINpZm8zeV+D9Nk
-	hilJODy77duzSw17mAXup58rLSBDKioY4WYXtJxZUEOaIebqyTJqN3anfK6sp2L9AhnEcM
-	F9cZJDwS4iTX5lO0uGCQVEHZwAoCHEdxsUl/z3+qBGsqznbOEdNui0EX3L+BIOxoeRc55c
-	7Qj4VLQi0ix1p9RJtVzuGFgJd74cXAHjk7WqSJrjcVc3nG/yJUYKSid4KXTlOT9tk7oT7Q
-	NXXnYaH7I0JeyDlOqIE2GyMQlg7GedxwHCPSIofYGqj2eMeDp6VJCpYxS+DDrA==
-Date: Mon, 28 Jul 2025 19:44:30 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Inki Dae <inki.dae@samsung.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] samsung-dsim: move drm_bridge_add() call to probe
-Message-ID: <20250728194430.082f9952@booty>
-In-Reply-To: <20250728-diligent-brainy-hyena-109dde@houat>
-References: <20250725-drm-bridge-samsung-dsim-add-in-probe-v1-1-b23d29c23fbd@bootlin.com>
-	<20250728-diligent-brainy-hyena-109dde@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	bh=lgJkLpHOVKpZ9Pydo1mzO9Jlebs/wqxqJq9AZQ1sKeM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kxjsEJ0rRfAdiUfxPT0Lg0BgHQvqup/84ClCkogabD/JGAEqwE1ZvFLSB1hDRSuDmb3evSx81ulwbEBSQRJdYucI5JbQk02xlJbIImWIDf7ykRm2NNhb2Eazjf3kC2+gge5a605UyXK8nU1+1rkPyXvfFr6ujr14QBx3LsJ6gBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JKhAQMC/; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-235e389599fso20125ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:44:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753724684; x=1754329484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UGqmfkIq6uvPHxaBaaqkZ1GQ74G0Q21vJf064guZvV4=;
+        b=JKhAQMC/hm5X7E30OrLSNyzr0HsHjWqBtTo72iXnG/1DKVDEBKjUnn++6Lo4vShRFw
+         9JA7mOBLRZ9z+kTBDQmSyRhASR2eqsdJIJ1XAL0Jm0ZM6gP65DWU2WZlm9RvxRdQEGzF
+         zhtoFvNCvy9tIjeNW47sGK9yR18t1CLYp6zDv4NnHp1QLh1lNQlFngTHkJ/ZX9zICSnD
+         76Zifw4PljuZ5earul6UfTfFwDZ0dsYqnidW7JALAjTvGRy8y/4g3yzwmxh+JzHIvsrI
+         LHblXFiETI3E087O+tKayYMwWRJFJx8I43vuR2uiWhSDYS7hhVIQRDTRa0XzMUjXBfTv
+         pm/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753724684; x=1754329484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UGqmfkIq6uvPHxaBaaqkZ1GQ74G0Q21vJf064guZvV4=;
+        b=YwBpAErSZy9pqXIDWv5P06uqZrWUmqDRkdFcPlJpq7PzB/eYFqXMUjgaiZVLydrAur
+         APXioid7lSUPW7wUY5OqoFFrDWsZIcbdBe03ss3NqIUeJZ90c7CYgX2KF+Qx1rgW0skX
+         8ZEPmBvIzo49zTeOJY4m+743+RcuLF6MIQ+jCYUzE6c6ydGXO0gByNkxPPcLedzRuKYn
+         qJGMngIr1BHmzi66hV2h/5Zlv+EljGqKnBRZ2TvzRzdk4qucmAERI6Qjp/aCxjekOq5Z
+         /Eo92/iuRkyN6ea59DRbKTxqUYjHEvCKyTREzvqLum0VEa9ilVJ2a2d1tAHGBJA84SoK
+         Wyjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXl6IZ61f5JLKJ0SJyLFFLNcYXERyWFw93dBclBRrY1fOKembEMfV6pzGr2q5qCCAar9jocoK6EiBmCfcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUg57NGcPG+loBSd56djGo4AKKYCcFeUrXemxgThqCw4908ORK
+	jJ4Pi1+zbYhFGW7ZBVXrs/vRkBoO+9mHXrkS7aBjeEiFsSfhk2dY+ZRsGPTlwg7zZOHtL+S1ZLM
+	N3OP6TcEwzqvdw0d3coxvFrjhgLSB6XOUvDVW5WEsykUglxTccXuTWDIS
+X-Gm-Gg: ASbGncv2a8hqEUvgiWO0FsmHRO6DJYRb6hO0bxg0GJo3CCH+dquNKtejjBfO+x1W1Qn
+	bn+2J/gMkRpucvlkU8jvDYNNUzkRwgqUAuNXd+cNu28hae6QPCc5CZsYCPu7tWV2zDdbVb5N8rW
+	j5YeeU7avs5wKW0fZ+60fOhNiNmTz9LTMQpNrgfK+/YZw39mahmET4xpqk8do3FLwDy82nAt78M
+	g8jPxEFNky6FHF/qDKg01qqpcqXmbau/1YzTsC/ITsuZro7
+X-Google-Smtp-Source: AGHT+IHI9LmkTOIIFW8FKIRxm5XFUJpxJk0MyASmM1W0pT9RDFwYfVLLLeibUswP16iAv5ku1T6mS4obtn5kggIDwuI=
+X-Received: by 2002:a17:902:f60e:b0:240:4464:d486 with SMTP id
+ d9443c01a7336-2404464d6f5mr2457415ad.13.1753724683985; Mon, 28 Jul 2025
+ 10:44:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelvdektdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekleeujefffeeiheevtddtffejieeivdefkeeugfegffdttdeffeevffduvdetvdenucffohhmrghinheplhhptgdrvghvvghnthhspdhkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehinhhkihdruggrvgesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehjr
- ghgrghnsegrmhgrrhhulhgrshholhhuthhiohhnshdrtghomhdprhgtphhtthhopehmrdhsiiihphhrohifshhkihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhm
-X-GND-Sasl: luca.ceresoli@bootlin.com
+References: <20250728042050.24228-1-byungchul@sk.com>
+In-Reply-To: <20250728042050.24228-1-byungchul@sk.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 28 Jul 2025 10:44:31 -0700
+X-Gm-Features: Ac12FXzboKcBSuT20U31AGaSJEuEkHnqSwc_Qz-jgAsGI0JbwDYBk_4dfCKZqCQ
+Message-ID: <CAHS8izPv8zmPaxzCSPAnybiCc0KrqjEZA+x5wpFOE8u=_nM1WA@mail.gmail.com>
+Subject: Re: [RFC net-next] netmem: replace __netmem_clear_lsb() with netmem_to_nmdesc()
+To: Byungchul Park <byungchul@sk.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	hawk@kernel.org, toke@redhat.com, asml.silence@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Maxime,
+On Sun, Jul 27, 2025 at 9:21=E2=80=AFPM Byungchul Park <byungchul@sk.com> w=
+rote:
+>
+> Now that we have struct netmem_desc, it'd better access the pp fields
+> via struct netmem_desc rather than struct net_iov.
+>
+> Introduce netmem_to_nmdesc() for safely converting netmem_ref to
+> netmem_desc regardless of the type underneath e.i. netmem_desc, net_iov.
+>
+> While at it, remove __netmem_clear_lsb() and make netmem_to_nmdesc()
+> used instead.
+>
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
 
-thanks for the quick feedback.
+Thank you for working on paying this tech debt!
 
-On Mon, 28 Jul 2025 10:10:38 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+> ---
+>  include/net/netmem.h   | 33 ++++++++++++++++-----------------
+>  net/core/netmem_priv.h | 16 ++++++++--------
+>  2 files changed, 24 insertions(+), 25 deletions(-)
+>
+> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> index f7dacc9e75fd..33ae444a9745 100644
+> --- a/include/net/netmem.h
+> +++ b/include/net/netmem.h
+> @@ -265,24 +265,23 @@ static inline struct netmem_desc *__netmem_to_nmdes=
+c(netmem_ref netmem)
+>         return (__force struct netmem_desc *)netmem;
+>  }
+>
+> -/* __netmem_clear_lsb - convert netmem_ref to struct net_iov * for acces=
+s to
+> - * common fields.
+> - * @netmem: netmem reference to extract as net_iov.
+> +/* netmem_to_nmdesc - convert netmem_ref to struct netmem_desc * for
+> + * access to common fields.
+> + * @netmem: netmem reference to get netmem_desc.
+>   *
+> - * All the sub types of netmem_ref (page, net_iov) have the same pp, pp_=
+magic,
+> - * dma_addr, and pp_ref_count fields at the same offsets. Thus, we can a=
+ccess
+> - * these fields without a type check to make sure that the underlying me=
+m is
+> - * net_iov or page.
+> + * All the sub types of netmem_ref (netmem_desc, net_iov) have the same
+> + * pp, pp_magic, dma_addr, and pp_ref_count fields via netmem_desc.
+>   *
+> - * The resulting value of this function can only be used to access the f=
+ields
+> - * that are NET_IOV_ASSERT_OFFSET'd. Accessing any other fields will res=
+ult in
+> - * undefined behavior.
+> - *
 
-> Hi,
-> 
-> On Fri, Jul 25, 2025 at 05:28:03PM +0200, Luca Ceresoli wrote:
-> > This bridge driver calls drm_bridge_add() in the DSI host .attach callback
-> > instead of in the probe function. This looks strange, even though
-> > apparently not a problem for currently supported use cases.
-> > 
-> > However it is a problem for supporting hotplug of DRM bridges, which is in
-> > the works [0][1][2]. The problematic case is when this DSI host is always
-> > present while its DSI device is hot-pluggable. In such case with the
-> > current code the DRM card will not be populated until after the DSI device
-> > attaches to the host, and which could happen a very long time after
-> > booting, or even not happen at all.
-> > 
-> > Supporting hotplug in the latest public draft is based on an ugly
-> > workaround in the hotplug-bridge driver code. This is visible in the
-> > hotplug_bridge_dsi_attach implementation and documentation in [3] (but
-> > keeping in mind that workaround is complicated as it is also circumventing
-> > another problem: updating the DSI host format when the DSI device gets
-> > connected).
-> > 
-> > As a preliminary step to supporting hotplug in a proper way, and also make
-> > this driver cleaner, move drm_bridge_add() at probe time, so that the
-> > bridge is available during boot.
-> > 
-> > However simply moving drm_bridge_add() prevents populating the whole card
-> > when the hot-pluggable addon is not present at boot, for another
-> > reason. The reason is:
-> > 
-> >  * now the encoder driver finds this bridge instead of getting
-> >    -EPROBE_DEFER as before
-> >  * but it cannot attach it because the bridge attach function in turn tries
-> >    to attach to the following bridge, which has not yet been hot-plugged
-> > 
-> > This needs to be fixed in the bridge attach function by simply returning
-> > -EPROBE_DEFER ifs the following bridge (i.e. the DSI device) is not yet
-> > present.
-> > 
-> > [0] https://lpc.events/event/18/contributions/1750/
-> > [1] https://lore.kernel.org/lkml/20240924174254.711c7138@booty/
-> > [2] https://lore.kernel.org/lkml/20250723-drm-bridge-alloc-getput-for_each_bridge-v1-0-be8f4ae006e9@bootlin.com/
-> > [3] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-4-bc4dfee61be6@bootlin.com/
-> > 
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
-> 
-> There's many things lacking from that commit log to evaluate whether
-> it's a good solution or not:
+I think instead of removing this warning, we want to add an
+NET_IOV_ASSERT_OFFSET that asserts that net_iov->netmem_desc and
+page->netmem_desc are in the same offset, and then add a note here
+that this works because we assert that the netmem_desc offset in both
+net_iov and page are the same.
 
-Before answering your questions: I realized my patch is incomplete, it
-should also move drm_bridge_remove() to samsung_dsim_remove() for
-symmetry. This is a trivial change and it's done and tested locally:
+> - * Return: the netmem_ref cast to net_iov* regardless of its underlying =
+type.
+> + * Return: the pointer to struct netmem_desc * regardless of its
+> + * underlying type.
+>   */
+> -static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+> +static inline struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
+>  {
+> -       return (struct net_iov *)((__force unsigned long)netmem & ~NET_IO=
+V);
+> +       if (netmem_is_net_iov(netmem))
+> +               return &((struct net_iov *)((__force unsigned long)netmem=
+ &
+> +                                           ~NET_IOV))->desc;
+> +
+> +       return __netmem_to_nmdesc(netmem);
 
-@@ -1825,8 +1825,6 @@ static int samsung_dsim_host_detach(struct mipi_dsi_host *host,
- 
- 	samsung_dsim_unregister_te_irq(dsi);
- 
--	drm_bridge_remove(&dsi->bridge);
--
- 	return 0;
- }
- 
-@@ -2069,6 +2067,8 @@ void samsung_dsim_remove(struct platform_device *pdev)
- {
- 	struct samsung_dsim *dsi = platform_get_drvdata(pdev);
- 
-+	drm_bridge_remove(&dsi->bridge);
-+
- 	pm_runtime_disable(&pdev->dev);
- 
- 	if (dsi->plat_data->host_ops && dsi->plat_data->host_ops->unregister_host)
+The if statement generates overhead. I'd rather avoid it. We can
+implement netmem_to_nmdesc like this, no?
+
+netmem_to_nmdesc(netmem_ref netmem)
+{
+  return (struct netmem_desc)((__force unsigned long)netmem & ~NET_IOV);
+}
+
+Because netmem_desc is the first element in both net_iov and page for
+the moment. (yes I know that will change eventually, but we don't have
+to incur overhead of an extra if statement until netmem_desc is
+removed from page, right?)
 
 
-Let me reorder your questions so the replies follow a step-by-step
-path.
-
-> - What is the next bridge in your case? Did you try with a device
->   controlled through DCS, or with a bridge connected through I2C/SPI
->   that would typically have a lifetime disconnected from the DSI host.
-
-The pipeline is the following:
-
-|--------------------- fixed components --------------------|     |-------- hot-pluggable addon --------| 
-|--------------- i.MX8MP ------------|                       
-
-+----------------+    +------------+     +------------------+     +-------------------+      +----------+
-|                |    |samsung-dsim|     |hotplug DSI bridge|     |   TI SN65DSI84    |      |LVDS panel|
-|fsl,imx8mp-lcdif| A  |            |  B  |                  |  C  |                   |  D   |          |
-|                +--->|    DSI host+---->|device        host+---->|DSI host   LVDS out+----->|LVDS in   |
-+----------------+    +------------+ DSI +------------------+ DSI +-------------------+ LVDS +----------+
-                                                                           ^
-                                                                      I2C -'
-
-This is a device tree based system (i.MX8MP, ARM64).
-
-This is the only hot-pluggable hardware I have access to and there is no
-DCS.
-
-In the hardware the next bridge after the samsung-dsim is the sn65dsi84
-(ti-sn65dsi83.c driver), and there the hotplug connector is between
-them.
-
-In the software implementation the next bridge is currently the
-hotplug-bridge, which "represents" the hotplug connector (!= DRM
-connector). As discussed in the past, the hotplug-bridge may be removed
-in future implementations but at the current stage of my work on DRM it
-is still needed.
-
-The hotplug-bridge is not (yet?) in mainline, and so aren't some other
-bits. However they haven't changed much since my old v4 series [0].
-
-Also, I expect this patch to be mostly valid regardless of whether the
-hotplug-bridge will or not be in the final design.
-
-> - What is the typical sequence of probe / attach on your board?
-
-The probe/attach sequence before this patch is the following. This is
-in the case the hotpluggable addon is not connected during boot, which
-is the most problematic one.
-
- 1) The lcdif starts probing, but probe is deferred until (6.)
-    because the samsung-dsim has not probed yet.
-    Code path: lcdif_probe() -> lcdif_load() -> lcdif_attach_bridge() ->
-               devm_drm_of_get_bridge() -> -EPROBE_DEFER
- 2) samsung-dsim probes, but does not drm_bridge_add() itself, so the
-    lcdif driver cannot find it
- 3) lcdif tries to probe again
-    A) it does not find the next bridge and returns -EPROBE_DEFER
- 4) hotplug-bridge probes, including:
-    A) drm_bridge_add()
-    B) mipi_dsi_attach() to register as a "fake" DSI device to
-       the samsung-dsim DSI host
-       - this registration is fake, meaning it has a fake format;
-         it's needed or the samsung-dsim driver would not
-         drm_bridge_add() itself and the lcdif would not populate the
-         DRM card
-    C) look for the next bridge but in the typical case the TI bridge
-       has not probed yet; this is not fatal by design of the
-       hotplug-bridge (that's its goal indeed)
- 5) reacting to 4.B, in the samsung_dsim_host_attach() func does, among
-    other things, drm_bridge_add() itself
- 6) lcdif tries to probe again
-    A) this triggers a chain of drm_bridge_attach:
-       * lcdif calls drm_bridge_attach() on the samsung-dsim
-       * samsung-dsim calls drm_bridge_attach() on the hotplug-bridge
-    B) the DRM card is populated and accessible to userspace
-
-When the addon is connected (can be hours later or even never):
-
- 7) the TI SN65DSI84 driver probes, including:
-    * drm_bridge_add()
-       - thanks to notifiers ([0] patch 2) the hotplug bridge is
-         informed and takes note of its next_bridge
-    * does mipi_dsi_attach() on its host (hotplug bridge)
- 8) the hotplug-bridge DSI host side reacts to the mipi_dsi_attach() from
-    the TI DSI device by calling:
-    * mipi_dsi_detach() on the samsung-dsim to remove the
-      fake registration
-    * mipi_dsi_attach() with the correct format from the sn65dsi84
-
-Note: after 5) the global bridge_list has a samsung-dsim bridge, while
-after an addon insertion/removal there is no samsung-dsim in there
-anymore. This is due to the fake registration, which happens only the
-first time: at every addon removal samsung_dsim_host_detach() will
-drm_bridge_remove() itself.
-
-With the patch applied the sequence would become:
-
- 1) The lcdif starts probing multiple times, but probe is deferred
-    until (5.) because the samsung-dsim has not probed yet.
-    (so far no changes)
- 2) samsung-dsim probes, _and_ does drm_bridge_add() itself
- 3) lcdif tries to probe again
-    A) this triggers a lcdif probe and a chain of drm_bridge_attach:
-       * lcdif calls drm_bridge_attach() on the samsung-dsim
-       * samsung-dsim returns -EPROBE_DEFER because there is no next
-         bridge yet (with another error the lcdif would fail without
-         further deferral)
- 4) the hotplug-bridge probes
- 5) lcdif tries to probe again
-    A) this triggers a lcdif probe and a chain of drm_bridge_attach:
-       * lcdif calls drm_bridge_attach() on the samsung-dsim
-       * samsung-dsim calls drm_bridge_attach() on the hotplug-bridge
-    B) the DRM card is populated and accessible to userspace
-
-When the addon is connected (can be hours later or even never):
-
- 6) the TI SN65DSI84 driver probes, including:
-    A) drm_bridge_add()
-       - thanks to notifiers ([0] patch 2) the hotplug bridge is
-         informed and takes note of its next_bridge
-    B) does mipi_dsi_attach() on its host (hotplug bridge)
-    (so far no changes)
- 7) the hotplug-bridge DSI host side reacts to the mipi_dsi_attach() from
-    the TI DSI device without detaching/attaching from/to the
-    samsung-dsim, but only by notifying to samsung-dsim the new format;
-    for this my current draft adds a .format_changed op to struct
-    mipi_dsi_host_ops, so the hotplug bridge can inform about the new
-    format, but in the end we might as well get rid of the hotplug
-    bridge entirely
-
-> - Why moving the call to drm_bridge_attach helps?
-
-You mean _from_ drm_bridge_attach, I guess.
-
-Some drawbacks of current code are because at every DSI attach/detach,
-the samsung-dsim does drm_bridge_add/remove() itself:
-
- * To me this looks like a bad design, the samsung-dsim is always
-   present and not hotpluggable, so why should it add/remove itself?
-
- * I have a debugfs patch to show in $BUDUGFS/dri/bridges_removed all
-   the removes bridges: bridges after drm_bridge_remove() but not yet
-   freed because refcount still > 0. But it causes crashes due to the
-   samsung-dsim going backwards from "removed" to "added", and further
-   hacks are needed to avoid this crash.
-
- * At LPC 2024 we had discussed the idea of a ".gone" flag in struct
-   drm_bridge, and drm_bridge_enter/exit() macros similar to
-   drm_dev_enter/exit() to avoid races between bridge removal and bridge
-   usage. I drafted something, but the samsung-dsim would be "ungone"
-   when it does a drm_bridge_remove/add() sequence, so more flags and
-   hacks would be needed for the .gone flag to work correctly.
-
-Additionally this patch removes the need for a fake registration to get
-a DRM card up. The fake registration has many drawbacks:
-
- * It's a horrible hack to start with, as guaranteed by its author O:-)
-   (see the code in [0] patch 4 -> hotplug_bridge_dsi_attach).
-
- * This hack is better not done by all bridge drivers, to it must stay
-   in the hotplug-bridge, preventing the idea of its removal.
-
- * The samsung-dsim appears present in the global bridge_list after
-   initial probe, but absent after a hotplug+hotunplug sequence (as
-   described in the Note above)
-
-> - If you think it's a pattern that is generic enough, we must document
->   it. If you don't, we must find something else.
-
-Intuitively it looks to me that a bridge driver should drm_bridge_add()
-itself wen probing: I probe, ergo I exist, ergo I add myself to the
-global bridge_list.
-
-But that's not too relevant, code is not necessarily intuitive, I know. :)
-
-However if we want to support a DSI device that is pluggable while the
-DSI host is always present, we need to support multiple
-mipi_dsi_host_attach/detach cycles for the same DSI host instance. So
-we have two options:
-
- 1. the DSI host bridge does drm_bridge_add/remove() in probe as this
-    patch proposes, so it is "stable" regardless of how many
-    dsi_attach/detach cycles it gets:
-
-    xyz_probe
-    drm_bridge_add
-    N x {
-       dsi_attach
-       dsi_remove
-    }
-    drm_bridge_remove
-    xyz_remove
-
- 2. we support devices that can be drm_device_add/remove() themselves
-    multiple times during the lifetime of a single instance:
-
-    xyz_probe
-    N x {
-       drm_bridge_add
-       dsi_attach
-       dsi_remove
-       drm_bridge_remove
-    } x N
-    xyz_remove
-
-As mentioned above, supporting case 2 would introduce problems in many
-areas, including the ".gone" flag which seems fundamental. I'm
-obviously biased in favor of option 1, at the moment, but open to
-discussion.
-
-So it boils down to what is the meaning of "add" and "remove". I'm
-giving up on my intuitive interpretation and waiting for your point of
-view here. :)
-
-> - Why returning EPROBE_DEFER from the attach callback helps? Also, this
->   is an undocumented behaviour, so if it does, we must document that
->   it's acceptable.
-
-(Note: this question is surely relevant but I think it is a side topic,
-not affecting the reasoning about whether drm_bridge_add() should be
-called in probe or in dsi_host.attach)
-
-After your question I'm not sure returning -EPROBE_DEFER is the correct
-approach indeed.
-
-It currently works well because it means for the samsung-dsim driver:
-"there is no hotplug-bridge yet, so I'll ask the lcdif to try again
-later". Later the hotplug-bridge will be present and it will take care
-of "pretending" the bridge chain is complete (its .attach knows the next
-bridge might be absent) and can be fully attached.
-
-However this might not be the most generic solution in the case we want
-to support hotplug without the hotplug-bridge (which I think is
-something you'd prefer). In such case we need to allow an encoder to
-continue probing the card when the encoder chain is not yet complete.
-So a bridge that fails attaching the next bridge must not make the
-previous bridge fail. This looks like a relevant change to the current
-design, where the hotplug-bridge makes things simpler as it lets other
-components continue working as they always did.
-
-I'm not sure about the best way to do this. Thinking out loud, we may
-introduce a return value from .attach funcs that means "I, the invoked
-bridge, did successfully perform attach operations correctly on myself,
-but the following bridge is not found so I cannot attach to it as of
-now". In such case the previous element (bridge or encoder) knows it
-can continue successfully. A bridge may come later on to complete the
-encoder chain.
-
-[0] https://lore.kernel.org/all/20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com/
-
-Best regards,
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--=20
+Thanks,
+Mina
 
