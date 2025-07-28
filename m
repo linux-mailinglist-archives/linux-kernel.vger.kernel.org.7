@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-747549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30960B1350E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:47:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA73B13511
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE201895B66
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:48:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE993B86C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A72D2222C2;
-	Mon, 28 Jul 2025 06:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD7B22126D;
+	Mon, 28 Jul 2025 06:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="alEEZ1ZH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8u6lykz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2981319DF4F;
-	Mon, 28 Jul 2025 06:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F948BE8;
+	Mon, 28 Jul 2025 06:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753685269; cv=none; b=sZALhzEffk9eBRUJgXHkbu4W0gFQZtcLIuKK4vSm6HBNfQyCVhv8KWpkTUMOeVhJKBex4dwPHI4/8UgYtwBz/5Rf7klXvpVWKHSTsfH3WO2N7LuA1OPubXEX4Thna6S0K0NAxqvHOHZvrWdP1igLAW/qlSrmO1dT36QcqmaxA/k=
+	t=1753685285; cv=none; b=unpBGO2+eA2GZJJaBGx6RgNBClYMsEI5lYNntzWF+0u91Ma9pepCZTwkRYNFmikOlxWWyuh1qvAh4wv+hlo25hSF1kQW1EfMxvnXX0292NGB2uWL+G7mcHardhat8WJQOHaaTxr56fEtOunABV+0GpnG0LOwUUfENS87jnv8L5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753685269; c=relaxed/simple;
-	bh=NtnAIodCAbS4lQs1QJHpfh7DPZrQSeYeJgR/jK4M5IE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SsGnzhJlPKm4IvRolNHwY30xHD+5fmPWcUfM40xZ7RcVyUpFNSGqkoeRymPGjTB3DLgTwnook5lj1qkiqL29CZ5ljdUkuuFIPxRnMaOJXBuW0B+sC8rmZ7TfVb1W7wvh7UwOutpg5tmI7tcgvA3FzRauJmHc0LoIIdkjgzs8Ndg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=alEEZ1ZH; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753685269; x=1785221269;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NtnAIodCAbS4lQs1QJHpfh7DPZrQSeYeJgR/jK4M5IE=;
-  b=alEEZ1ZHJbgRPwkgHN1hFzbV/pkvEjbt5xug9JqKOqgVWDgVpHasG1TK
-   pAz4Et/HqmCvbCZ3e4vTV1lFTDfK9eEwIH3AupayNJ4KiaPh2gzFeQc2j
-   Btdl+xp1LTYkex/RU0CJOAYOGFYX8v9nOZuyITaMtyODUZwFBFg06PqG5
-   1Q3AH8KCU4xSSfbq4Rtq+ujfeEtBTPgDGXDqGF6iZUs9TswWEWAp64ctN
-   FSS/epN8131Y6NUrcWoVDK8o6FYE3klB2/wMo71oNNHfxOBVL2TFKnnzP
-   5NXCC3WXsDzfRdcNaZD5Y/Q+cuoDG44bE0QsqSDgXgOUNp7etO/iOK7ys
-   g==;
-X-CSE-ConnectionGUID: JMrDWLqaTx6ydUuRnt1A7g==
-X-CSE-MsgGUID: Z3Rwr3+CS2CUvXJ/2iJQXg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="55807649"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="55807649"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 23:47:48 -0700
-X-CSE-ConnectionGUID: BgUcHTbOR3OvHrRhDJMOzw==
-X-CSE-MsgGUID: 3aYCwf63S4urbzrr+hMDDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="161620194"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 27 Jul 2025 23:47:45 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 8308F15B; Mon, 28 Jul 2025 09:47:43 +0300 (EEST)
-Date: Mon, 28 Jul 2025 09:47:43 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Raju Rangoju <Raju.Rangoju@amd.com>
-Cc: linux-usb@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, andreas.noever@gmail.com,
-	michael.jamet@intel.com, westeri@kernel.org, YehezkelShB@gmail.com,
-	bhelgaas@google.com, Sanath.S@amd.com
-Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
- dynamically
-Message-ID: <20250728064743.GS2824380@black.fi.intel.com>
-References: <20250722175026.1994846-1-Raju.Rangoju@amd.com>
+	s=arc-20240116; t=1753685285; c=relaxed/simple;
+	bh=U87FNw2cjUC/aGeen0DnN0R08YPbs6mZ4gYru6nwT2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R3WzlqjHG4tiYu2RgdG0jzWafr8cdc4/3QvKC3kFgmmzls1+jCwhricXbhL/2XaOBys1NDfeSx9+6dl1wSd5SoucKGaVGuktwZmDNIAaU+Bm/D2T6iTepzTA289m+4MDFeVN9h8cvD5wzbIjzfqmexbVIRAbhd4bhWhsIXZqC4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8u6lykz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10BF0C4CEE7;
+	Mon, 28 Jul 2025 06:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753685284;
+	bh=U87FNw2cjUC/aGeen0DnN0R08YPbs6mZ4gYru6nwT2k=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l8u6lykzFgVHvYLbLAc78I0X8mQdEwQbexFeKIRI1mGSdhHlGB8EGYHGr+Oh46s+m
+	 rPQe7hYFyOKt48FoX0E41N46OcSAb3Skm930EmyPe5Sb3TajxPthS4y2Xd1u9yPfb/
+	 GGZ3CLv2OtVFmAq9JPsx1gbHRlf2TPO8YmRYddvjqtaYdj/AoQdzQ/Z/JIJz5FIwgm
+	 A+eSidu1qtT1qrs4MSN07Q/RkXF+a+uvHM6o3MANbA+TOv79AAL7KU4TIxU66FtowF
+	 jBvChc6fKsMkfsv8xnWZKAkZWhFsB4ri8ip4F7iPzmd7+KNeDFZMd7IxQXRdBsSqiq
+	 xyvQ59No5CVZw==
+Message-ID: <e9caf91d-3a4b-4140-a3bc-0c2b53c0a220@kernel.org>
+Date: Mon, 28 Jul 2025 08:48:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250722175026.1994846-1-Raju.Rangoju@amd.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH 4/5] tracing: Replace MAX_PARAM_PREFIX_LEN with
+ MODULE_NAME_LEN
+To: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250630143535.267745-1-petr.pavlu@suse.com>
+ <20250630143535.267745-5-petr.pavlu@suse.com>
+Content-Language: en-US
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20250630143535.267745-5-petr.pavlu@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On Tue, Jul 22, 2025 at 11:20:23PM +0530, Raju Rangoju wrote:
-> This patch series aims to update vendor properties for XDomain
-> dynamically for vendors like AMD, Intel and ASMedia.
-
-The XDomain properties pretty much describe "software" not the underlying
-hardware so I don't understand why this is needed? We could have some USB
-IF registered Linux specific ID there but I don't see why this matters at
-all.
-
-> Raju Rangoju (3):
->   thunderbolt: Dynamically populate vendor properties for XDomain
->   PCI: Add PCI vendor ID for ASMedia USB4 devices
->   thunderbolt: Add vendor ASMedia in update_property_block for XDomain
+On 30/06/2025 16.32, Petr Pavlu wrote:
+> Use the MODULE_NAME_LEN definition in module_exists() to obtain the maximum
+> size of a module name, instead of using MAX_PARAM_PREFIX_LEN. The values
+> are the same but MODULE_NAME_LEN is more appropriate in this context.
+> MAX_PARAM_PREFIX_LEN was added in commit 730b69d22525 ("module: check
+> kernel param length at compile time, not runtime") only to break a circular
+> dependency between module.h and moduleparam.h, and should mostly be limited
+> to use in moduleparam.h.
 > 
->  drivers/thunderbolt/nvm.c     |  2 +-
->  drivers/thunderbolt/xdomain.c | 32 +++++++++++++++++++++-----------
->  include/linux/pci_ids.h       |  1 +
->  3 files changed, 23 insertions(+), 12 deletions(-)
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+
+Steven, Masami,
+
+I'm planning to merge these series into modules-next. I think and Ack/Review
+would be great from you. Otherwise, let me know if you'd rather take this patch
+through tracing instead (in case it looks good from your side).
+
+> ---
 > 
-> -- 
-> 2.34.1
+> As a side note, I suspect the function module_exists() would be better
+> replaced with !!find_module() + RCU locking, but that is a separate issue.
+> 
+>  kernel/trace/trace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 95ae7c4e5835..b9da0c4661a0 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -10373,7 +10373,7 @@ bool module_exists(const char *module)
+>  {
+>  	/* All modules have the symbol __this_module */
+>  	static const char this_mod[] = "__this_module";
+> -	char modname[MAX_PARAM_PREFIX_LEN + sizeof(this_mod) + 2];
+> +	char modname[MODULE_NAME_LEN + sizeof(this_mod) + 2];
+>  	unsigned long val;
+>  	int n;
+>  
+
+LGTM,
+
+Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
 
