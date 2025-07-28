@@ -1,139 +1,142 @@
-Return-Path: <linux-kernel+bounces-747467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE2EB1342A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2EFBB1342D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA8F1894049
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1354D1894240
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B3E21D3D6;
-	Mon, 28 Jul 2025 05:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C09A21D3D2;
+	Mon, 28 Jul 2025 05:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smpGdxwC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="OVjajOh5"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358E41D5147;
-	Mon, 28 Jul 2025 05:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D1D1D5147
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 05:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753680621; cv=none; b=p2ytUqIls77joznseiYfHn7/+NZhOE7jxmStaTQhkBN/fpmz3xqmQE/+TXGCIzJT/G1sfe/hC7ZsgLUfi6DlT96jXH5VCOakLuskL17rcJa8+zRWq/33LPT79Qh6TIZNfsu9sO6KGoQXbQD0RXDM+k0PnYX+t0UT9fgqI3B54XM=
+	t=1753680715; cv=none; b=puBt7T8RMCUdmd8TmXxyaS1fTM5r3a7l9p/9nN/4buEIaJ/8ED3odfUii4xpNn5IEGDDZm3wFXzb0k4gUuAt3EXN1PCv9mgnNMLrEfT96uajS3lzqXwZ+3i5D2kAkZL7fTM0JaZDp1jxDr/nMadYHZlLXw2Y5ZjqegMR1GhDwqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753680621; c=relaxed/simple;
-	bh=b/U3JUjsusDkwOlZKb0G+o0tHAeOafDa9ee/Pe87F3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VkxzTme7cSx2D1qH65/3v7fhbM8qYPkpVR4rcKemxEwgaGs3AMmJAQRHaF2iTZmLGQc4eZINmegXrbJZS9GpLzp5LJ3wNu/Ww+3CmL6LhaO/Qb5gFG2XfyfaXiheWr+SpMDC4dXm223zkg2VjxrgWwrVWHv3hK0YnanuoStuRnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smpGdxwC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6130C4CEE7;
-	Mon, 28 Jul 2025 05:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753680620;
-	bh=b/U3JUjsusDkwOlZKb0G+o0tHAeOafDa9ee/Pe87F3Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=smpGdxwCu+V8wtEc5NHzLVBr6W1F4WE+Oo+n9/Y3eosDxkwiHO8epXjtZSgCf/yWe
-	 F5XVxtVYR87P2SOApDHmZaHIlHf1POA/KifoANVQvtaRwp3/BSUXXEwmsRqu0pZJA7
-	 DGId9yN2hdAtIT/cfrfBeY0sdHzfOYSaP0rzp8SxV1qEoabyhKfmauA8pbuGPg3PCv
-	 dSJyfhEbTd4finz9DHGk66tMbd9TUKmv2F+hgb1DUHqiV72ki8TEzFrAQIONZo66c5
-	 71zJavnM2/zjNNxzyS7oPhq0RTHV/7HClQl/hJKROtfm4JL+BoRfjZHIKmTtnoe2PL
-	 zmxZr28eYfwAw==
-Message-ID: <b925480c-231b-44e5-bf1c-1f18f8abe42d@kernel.org>
-Date: Mon, 28 Jul 2025 07:30:15 +0200
+	s=arc-20240116; t=1753680715; c=relaxed/simple;
+	bh=xsovHFmFZz4ZVIsR/kFcDv+maxVHaOLgUGsuwMwZh8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fnn0OOfVMmw119Bc0d1l5D8tMeAt1HVJrVm//CLIYPcgsnv2Lknbo+Lleeex7esewYcN02oKqm5g3TVXg9jDY/5LEuzPTYdnLC9LTgf/3nVCu2p+CJg36vFaCP1ZZfzv/Di2HlfwCWN5V0qK47toG6+SuWusjQALUzAYflFp+wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=OVjajOh5; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id B1D4D104CBAB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:01:44 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in B1D4D104CBAB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1753680704; bh=xsovHFmFZz4ZVIsR/kFcDv+maxVHaOLgUGsuwMwZh8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OVjajOh5q4lbdIPsNIo2Y0PKT4z8D1TFvijaXayeuSr8ufMJXM4AsBsh8y5mMaYhY
+	 X+OfK0kNl5m5+tQogUFb3H0fpX3JcU3eZNCGNtq/ccd3sksUZWN1tsZbv94NjWl8SG
+	 xqXN+rCtgjgg49vMFEtOhAvB8czTfXnzcr3i2Agk=
+Received: (qmail 7314 invoked by uid 510); 28 Jul 2025 11:01:44 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 5.178536 secs; 28 Jul 2025 11:01:44 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 28 Jul 2025 11:01:39 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id CBC4E3414E2;
+	Mon, 28 Jul 2025 11:01:38 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 91D1B1E8127E;
+	Mon, 28 Jul 2025 11:01:38 +0530 (IST)
+Date: Mon, 28 Jul 2025 11:01:33 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: jirislaby@kernel.org, andriy.shevchenko@linux.intel.com,
+	john.ogness@linutronix.de, pmladek@suse.com, johan@kernel.org,
+	namcao@linutronix.de, timur@kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] tty: serial: ucc_uart: use WARN_ON() instead of BUG()
+Message-ID: <aIcLNXkXG3UFbSrv@bhairav-test.ee.iitb.ac.in>
+References: <aIbV+WbhFMDamaiW@bhairav-test.ee.iitb.ac.in>
+ <2025072814-splicing-sassy-f33a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: surfacepro3_button: replace deprecated
- strcpy() with strscpy()
-To: =?UTF-8?Q?Miguel_Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>,
- platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yu.c.chen@intel.com, hansg@kernel.org,
- ilpo.jarvinen@linux.intel.com, luzmaximilian@gmail.com,
- skhan@linuxfoundation.org
-References: <20250724074539.37650-1-miguelgarciaroman8@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250724074539.37650-1-miguelgarciaroman8@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025072814-splicing-sassy-f33a@gregkh>
 
-On 24/07/2025 09:45, Miguel García wrote:
-> strcpy() is deprecated for NUL-terminated strings. Replace it with
-> strscpy() to guarantee NUL-termination. 'name' is a fixed-size local
-> buffer.
+On Mon, Jul 28, 2025 at 06:07:22AM +0200, Greg KH wrote:
+> On Mon, Jul 28, 2025 at 07:14:25AM +0530, Akhilesh Patil wrote:
+> > Replace BUG() with WARN_ON() as recommended in
+> > Documentation/process/deprecated.rst
+> > Fix system entering into unstable/break/undebuggable state due to use
+> > of BUG(). Follow strict suggestions as per [1] [2].
+> > 
+> > Link: https://lore.kernel.org/lkml/CA+55aFy6jNLsywVYdGp83AMrXBo_P-pkjkphPGrO=82SPKCpLQ@mail.gmail.com/ [1]
+> > Link: https://lore.kernel.org/lkml/CAHk-=whDHsbK3HTOpTF=ue_o04onRwTEaK_ZoJp_fjbqq4+=Jw@mail.gmail.com/ [2]
+> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> > ---
+> >  drivers/tty/serial/ucc_uart.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
+> > index 0613f8c11ab1..6214ab1b67cb 100644
+> > --- a/drivers/tty/serial/ucc_uart.c
+> > +++ b/drivers/tty/serial/ucc_uart.c
+> > @@ -223,7 +223,7 @@ static inline dma_addr_t cpu2qe_addr(void *addr, struct uart_qe_port *qe_port)
+> >  
+> >  	/* something nasty happened */
+> >  	printk(KERN_ERR "%s: addr=%p\n", __func__, addr);
+> > -	BUG();
+> > +	WARN_ON(1);
+> >  	return 0;
+> >  }
+> >  
+> > @@ -242,7 +242,7 @@ static inline void *qe2cpu_addr(dma_addr_t addr, struct uart_qe_port *qe_port)
+> >  
+> >  	/* something nasty happened */
+> >  	printk(KERN_ERR "%s: addr=%llx\n", __func__, (u64)addr);
+> > -	BUG();
+> > +	WARN_ON(1);
+> >  	return NULL;
+> >  }
 > 
-> Signed-off-by: Miguel García <miguelgarciaroman8@gmail.com>
-> ---
->  drivers/platform/surface/surfacepro3_button.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> You can't just do a search/replace for these types of things, otherwise
+> we would have done so a long time ago.
 > 
-> diff --git a/drivers/platform/surface/surfacepro3_button.c b/drivers/platform/surface/surfacepro3_button.c
-> index 2755601f979c..9616548283a1 100644
-> --- a/drivers/platform/surface/surfacepro3_button.c
-> +++ b/drivers/platform/surface/surfacepro3_button.c
-> @@ -211,7 +211,7 @@ static int surface_button_add(struct acpi_device *device)
->  	}
->  
->  	name = acpi_device_name(device);
-> -	strcpy(name, SURFACE_BUTTON_DEVICE_NAME);
-> +	strscpy(name, SURFACE_BUTTON_DEVICE_NAME, sizeof(name));
 
+Hi greg, Agree. Let me dive deep to understand this BUG() -> WARN()
+recommendation and come back after detailed analysis for this change.
+> How did you test this patch?  The BUG() here assumes that if this ever
 
-Why are you copying four/eight characters if the string is around 16?
+I have done only build check with NXP p1025rdb configuration as I do not
+have this particular hardware handy.
+> fires, the system is really broken, how have you recovered from that
+> broken state?
+> 
+> thanks,
+> 
+> greg k-h
 
-How did you test it (and I doubt you did since you change multiple
-different files from different architectures)?
+Thanks for the review :) 
 
+Regards,
+Akhilesh
 
-Best regards,
-Krzysztof
 
