@@ -1,246 +1,648 @@
-Return-Path: <linux-kernel+bounces-747352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDC7B132DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:03:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DCCB132E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FB211755F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 095F43B59B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C317C199931;
-	Mon, 28 Jul 2025 02:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE2D1C5D7D;
+	Mon, 28 Jul 2025 02:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukCT9c4m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyB2Yx1F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D462E62C
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E772E62C;
+	Mon, 28 Jul 2025 02:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753668177; cv=none; b=rpVpaoYKU/P9ApMvt8tUwIv14rk3dNy31qIqb7vmCw4V5avM3vlM9ovBI4PAFURU54kkzCfKEjEv6P6lgBUSdS0CaDM2N0aRTRlmOAkrBi7p21BY+x1DHvhcTnq8MELv3u0RTzfbXbJ/sC+dUZKSEpDxruniv+yW1saRO+ygQSg=
+	t=1753668230; cv=none; b=UsOYHru24lnZphS+L0EE4V7eEYMKyzScrFx1FDkj94RDf4QPm7p9/jIv3ZICmuWaAoucGnf3J6zzffwAuOhRMJauidB2rWUMmyYwS5kZ60++ErRsEzXLT73yAVCS1bt9ypTzHG0++5suWhLoFScVQDOdPe7rIkQiPgcbaQxBHQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753668177; c=relaxed/simple;
-	bh=eUFaymsaMCqWC8SITEP0Zp2oqMjJbMviU+6OgCblgic=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CDdvT8omRtxYPJTCv78cmqtEE/rQdNFlulpWjzqUjhYlRDxwi8rO+FoQTXvKyl4ZJEdKZdWf3aMf8M29l+cGqm//VNecnvXIm0vpa6VjjqPURLRqn6fJUgV3pcyaeshHzTXKOUM2XxQe4Q3Ay5RxIl328ZZTbiQkkQ+7awpK1x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukCT9c4m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A78C4CEEB;
-	Mon, 28 Jul 2025 02:02:55 +0000 (UTC)
+	s=arc-20240116; t=1753668230; c=relaxed/simple;
+	bh=f/UiyTOo/+sPM3Q/eXt+8QNBLqn0w9QUf2v7tNtm1XA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZelDQq8LaHW7Ex7bAdSKlMV6n8wmmAZxhul+zNnH9tcNCIsSYi1mgZkgnWIvPnJG39kfH8z3g2INGsoFcxMgmohW5UzcmFHrO1PxLotAXhf9KjGkUKdOSLNdr6hAqD65bHKEmTdVls9/cQxh692vIB2PS+BNSft6c5ywUtSO/8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyB2Yx1F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7CA8C4CEEB;
+	Mon, 28 Jul 2025 02:03:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753668176;
-	bh=eUFaymsaMCqWC8SITEP0Zp2oqMjJbMviU+6OgCblgic=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=ukCT9c4mz/NIVKBEFZqHonl2Y+HRxSsmhbQ2vVXNbM9NPr/fR9lA7Lse3/mE1DOvA
-	 HK31oBt2A6MtAbXVvmDjvO9lIyZxGW+045lRGHoWjBtJALxJjlkRhEmcCXSASQTe4l
-	 dJg+k+mLCL/+rwQVRSNQl7gDY4Z3bS+Cygreog9vNCV3urKBg24esDZRyp9QfTYq7N
-	 vU2gGkwYDz7or+ikcmrqcdLvlQLEtKjJsNpQA04A8X1rmyD/+EL3FWnYIZxkJpx1iq
-	 L7UwCefLzlV+W+/SjkgOtUFbW7uzqzAzkv5FnPnVPltcxPJPBBX222CXBUea6Y406H
-	 R1rg8Sicuuisg==
-Message-ID: <a69c3687-fa00-41b6-861c-557ad1d83588@kernel.org>
-Date: Mon, 28 Jul 2025 10:02:53 +0800
+	s=k20201202; t=1753668230;
+	bh=f/UiyTOo/+sPM3Q/eXt+8QNBLqn0w9QUf2v7tNtm1XA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=NyB2Yx1F1qElfRRW1qIHstilr2Ysfdb7XI+hzitHvee6ZlND/cCLvVqmNE65p9YcY
+	 dBwfV2XCgVBSiXMW76DsezrAVeuR9Qo+N5hRi4VzKzIAFynEAPBlzTq6HI7vGrzO50
+	 yyFjBUIaAJ2iDyLeQ5kZ5eZ/xku9oAAbnDURkgfNUjKGJcNTnZ2XFGEvu3IL4o7ucq
+	 dblD8HWzhz+Oor6zrO6OUY54NzLnul/r6bs4zXq1lItMEQceK+kSEYDu71WI0WWTx1
+	 CQ25QUwx60GWqyAHsIX0SbNo5s1aY5WBtYCSDmqRGkFCnMSuOZgfBsd4UrUf3pWog6
+	 5eMFmT1pUH7xg==
+Message-ID: <828dd09de3b86f81c8f25130ae209d0d12b0fd9f.camel@kernel.org>
+Subject: Re: [PATCH v4 4/5] LoongArch: BPF: Add bpf trampoline support for
+ Loongarch
+From: Geliang Tang <geliang@kernel.org>
+To: Chenghao Duan <duanchenghao@kylinos.cn>, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, yangtiezhu@loongson.cn, 
+	hengqi.chen@gmail.com, chenhuacai@kernel.org
+Cc: martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ bpf@vger.kernel.org, 	guodongtai@kylinos.cn, youling.tang@linux.dev,
+ jianghaoran@kylinos.cn, 	vincent.mc.li@gmail.com, kernel test robot
+ <lkp@intel.com>
+Date: Mon, 28 Jul 2025 10:03:38 +0800
+In-Reply-To: <20250724141929.691853-5-duanchenghao@kylinos.cn>
+References: <20250724141929.691853-1-duanchenghao@kylinos.cn>
+	 <20250724141929.691853-5-duanchenghao@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH v3] mkfs.f2fs: support -C [no]hashonly to
- control linear lookup fallback
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-References: <20250725054922.3972265-1-chao@kernel.org>
- <CAHJ8P3LBH7oxV8nOiwU3yfQSr+LmK58EvFtyF8YLPQ=usZpqFA@mail.gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAHJ8P3LBH7oxV8nOiwU3yfQSr+LmK58EvFtyF8YLPQ=usZpqFA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 7/28/25 09:05, Zhiguo Niu wrote:
-> Hi Chao
+Hi Chenghao, Huacai,
+
+On Thu, 2025-07-24 at 22:19 +0800, Chenghao Duan wrote:
+> BPF trampoline is the critical infrastructure of the BPF subsystem,
+> acting
+> as a mediator between kernel functions and BPF programs. Numerous
+> important
+> features, such as using BPF program for zero overhead kernel
+> introspection,
+> rely on this key component.
 > 
-> Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-> 于2025年7月25日周五 13:51写道：
->>
->> It provides a way to disable linear lookup fallback during mkfs.
->>
->> Behavior summary:
->>                         Android         Distro
->> By default              disabled        enabled
->>
->> Android case:
->>
->> 1.1) Disable linear lookup:
->> - mkfs.f2fs -f -g android -O casefold -C utf8:hashonly /dev/vdb
->> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
->> s_encoding_flags                        [0x       2 : 2]
->>
->> 1.2) Enable linear lookup:
->> - mkfs.f2fs -f -g android -O casefold -C utf8:nohashonly /dev/vdb
->> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
->> s_encoding_flags                        [0x       0 : 0]
->>
->> 1.3) By default:
->> - mkfs.f2fs -f -g android -O casefold -C utf8 /dev/vdb
->> Info: set default linear_lookup option: disable
->> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
->> s_encoding_flags                        [0x       2 : 2]
->>
->> Distro case:
->>
->> 2.1) Disable linear lookup:
->> - mkfs.f2fs -f -O casefold -C utf8:hashonly /dev/vdb
->> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
->> s_encoding_flags                        [0x       2 : 2]
->>
->> 2.2) Enable linear lookup:
->> - mkfs.f2fs -f -O casefold -C utf8:nohashonly /dev/vdb
->> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
->> s_encoding_flags                        [0x       0 : 0]
->>
->> 2.3) By default:
->> - mkfs.f2fs -f -O casefold -C utf8 /dev/vdb
->> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
->> s_encoding_flags                        [0x       0 : 0]
->>
-> It is very clear and easy to understand.
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->> v3:
->> - honor [no]hashonly flag for Android case
->> - update testcase and output
->>  include/f2fs_fs.h       |  3 ++-
->>  lib/libf2fs.c           |  6 ++++++
->>  man/mkfs.f2fs.8         |  9 ++++++++-
->>  mkfs/f2fs_format.c      | 11 +++++++++++
->>  mkfs/f2fs_format_main.c |  3 ++-
->>  5 files changed, 29 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
->> index f7268d1..a8da8fa 100644
->> --- a/include/f2fs_fs.h
->> +++ b/include/f2fs_fs.h
->> @@ -1478,7 +1478,8 @@ enum {
->>
->>  /* feature list in Android */
->>  enum {
->> -       F2FS_FEATURE_NAT_BITS = 0x0001,
->> +       F2FS_FEATURE_NAT_BITS           = 0x0001,
->> +       F2FS_FEATURE_LINEAR_LOOKUP      = 0x0002,
->>  };
->>
->>  /* nolinear lookup tune */
->> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
->> index 2f012c8..1a496b7 100644
->> --- a/lib/libf2fs.c
->> +++ b/lib/libf2fs.c
->> @@ -1424,6 +1424,7 @@ static const struct enc_flags {
->>         char *param;
->>  } encoding_flags[] = {
->>         { F2FS_ENC_STRICT_MODE_FL, "strict" },
->> +       { F2FS_ENC_NO_COMPAT_FALLBACK_FL, "hashonly"}
->>  };
->>
->>  /* Return a positive number < 0xff indicating the encoding magic number
->> @@ -1485,6 +1486,11 @@ int f2fs_str2encoding_flags(char **param, __u16 *flags)
->>                                         *flags |= fl->flag;
->>                                 }
->>
->> +                               if (fl->flag == F2FS_ENC_NO_COMPAT_FALLBACK_FL)
->> +                                       c.nolinear_lookup = neg ?
->> +                                               LINEAR_LOOKUP_ENABLE :
->> +                                               LINEAR_LOOKUP_DISABLE;
->> +
->>                                 goto next_flag;
->>                         }
->>                 }
->> diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
->> index 8b3b0cc..fcb227c 100644
->> --- a/man/mkfs.f2fs.8
->> +++ b/man/mkfs.f2fs.8
->> @@ -232,10 +232,17 @@ Use UTF-8 for casefolding.
->>  .I flags:
->>  .RS 1.2i
->>  .TP 1.2i
->> -.B strict
->> +.B [no]strict
->>  This flag specifies that invalid strings should be rejected by the filesystem.
->>  Default is disabled.
->>  .RE
->> +.RS 1.2i
->> +.TP 1.2i
->> +.B [no]hashonly
->> +This flag specifies that linear lookup fallback is off during lookup, to turn
->> +off linear lookup fallback, use nohashonly flag.
-> here should "to turn off linear lookup fallback, use hashonly flag"?
-> or "to turn on linear lookup fallback, use nohashonly flag"
+> The related tests have passed, Including the following technical
+> points:
+> 1. fentry
+> 2. fmod_ret
+> 3. fexit
+> 
+> The following related testcases passed on LoongArch:
+> sudo ./test_progs -a fentry_test/fentry
+> sudo ./test_progs -a fexit_test/fexit
+> sudo ./test_progs -a fentry_fexit
+> sudo ./test_progs -a modify_return
+> sudo ./test_progs -a fexit_sleep
+> sudo ./test_progs -a test_overhead
+> sudo ./test_progs -a trampoline_count
 
-Zhiguo,
+Please add the following paragraph to the commit log:
 
-Yes, it's typo, let me fix it, thanks for the review.
+'''
+This issue was first reported by Geliang Tang in June 2024 while
+debugging MPTCP BPF selftests on a LoongArch machine (see commit
+eef0532e900c "selftests/bpf: Null checks for links in bpf_tcp_ca").
+Geliang, Huachui, and Tiezhu then worked together to drive the
+implementation of this feature, encouraging broader collaboration among
+Chinese kernel engineers.
+
+Reported-by: Geliang Tang <geliang@kernel.org>
+'''
 
 Thanks,
+-Geliang
 
-> 1.1) Disable linear lookup:
-> - mkfs.f2fs -f -g android -O casefold -C utf8:hashonly /dev/vdb
 > 
->> +For android case, it will disable linear lookup by default.
->> +.RE
->>  .RE
->>  .TP
->>  .BI \-q
->> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
->> index 2680bd3..04dfc20 100644
->> --- a/mkfs/f2fs_format.c
->> +++ b/mkfs/f2fs_format.c
->> @@ -671,6 +671,17 @@ static int f2fs_prepare_super_block(void)
->>         memcpy(sb->init_version, c.version, VERSION_LEN);
->>
->>         if (c.feature & F2FS_FEATURE_CASEFOLD) {
->> +               /*
->> +                * if [no]hashonly option is not assigned, let's disable
->> +                * linear lookup fallback by default for Android case.
->> +                */
->> +               if ((c.nolinear_lookup == LINEAR_LOOKUP_DEFAULT) &&
->> +                       (c.disabled_feature & F2FS_FEATURE_LINEAR_LOOKUP)) {
->> +                       c.s_encoding_flags |= F2FS_ENC_NO_COMPAT_FALLBACK_FL;
->> +                       MSG(0, "Info: set default linear_lookup option: %s\n",
->> +                               c.s_encoding_flags & F2FS_ENC_NO_COMPAT_FALLBACK_FL ?
->> +                               "disable" : "enable");
->> +               }
->>                 set_sb(s_encoding, c.s_encoding);
->>                 set_sb(s_encoding_flags, c.s_encoding_flags);
->>         }
->> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
->> index f0bec4f..8f8e975 100644
->> --- a/mkfs/f2fs_format_main.c
->> +++ b/mkfs/f2fs_format_main.c
->> @@ -143,7 +143,8 @@ static void add_default_options(void)
->>                 force_overwrite = 1;
->>                 c.wanted_sector_size = F2FS_BLKSIZE;
->>                 c.root_uid = c.root_gid = 0;
->> -               c.disabled_feature |= F2FS_FEATURE_NAT_BITS;
->> +               c.disabled_feature |= F2FS_FEATURE_NAT_BITS |
->> +                                       F2FS_FEATURE_LINEAR_LOOKUP;
->>
->>                 /* RO doesn't need any other features */
->>                 if (c.feature & F2FS_FEATURE_RO)
-> others look OK to me,so
-> Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->> --
->> 2.49.0
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes:
+> https://lore.kernel.org/oe-kbuild-all/202507100034.wXofj6VX-lkp@intel.com/
+> Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> Tested-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> Tested-by: Vincent Li <vincent.mc.li@gmail.com>
+> Reviewed-by: Hengqi Chen <hengqi.chen@gmail.com>
+> Reviewed-by: Huacai Chen <chenhuacai@kernel.org>
+> ---
+>  arch/loongarch/net/bpf_jit.c | 391
+> +++++++++++++++++++++++++++++++++++
+>  arch/loongarch/net/bpf_jit.h |   6 +
+>  2 files changed, 397 insertions(+)
+> 
+> diff --git a/arch/loongarch/net/bpf_jit.c
+> b/arch/loongarch/net/bpf_jit.c
+> index 86504e710..ac5ce3a28 100644
+> --- a/arch/loongarch/net/bpf_jit.c
+> +++ b/arch/loongarch/net/bpf_jit.c
+> @@ -7,9 +7,15 @@
+>  #include <linux/memory.h>
+>  #include "bpf_jit.h"
+>  
+> +#define LOONGARCH_MAX_REG_ARGS 8
+> +
+>  #define LOONGARCH_LONG_JUMP_NINSNS 5
+>  #define LOONGARCH_LONG_JUMP_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
+>  
+> +#define LOONGARCH_FENTRY_NINSNS 2
+> +#define LOONGARCH_FENTRY_NBYTES (LOONGARCH_FENTRY_NINSNS * 4)
+> +#define LOONGARCH_BPF_FENTRY_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
+> +
+>  #define REG_TCC		LOONGARCH_GPR_A6
+>  #define TCC_SAVED	LOONGARCH_GPR_S5
+>  
+> @@ -1407,6 +1413,11 @@ static int gen_jump_or_nops(void *target, void
+> *ip, u32 *insns, bool is_call)
+>  				  (unsigned long)target);
+>  }
+>  
+> +static int emit_call(struct jit_ctx *ctx, u64 addr)
+> +{
+> +	return emit_jump_and_link(ctx, LOONGARCH_GPR_RA, addr);
+> +}
+> +
+>  int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
+>  		       void *old_addr, void *new_addr)
+>  {
+> @@ -1464,3 +1475,383 @@ void *bpf_arch_text_copy(void *dst, void
+> *src, size_t len)
+>  
+>  	return dst;
+>  }
+> +
+> +static void store_args(struct jit_ctx *ctx, int nargs, int args_off)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < nargs; i++) {
+> +		emit_insn(ctx, std, LOONGARCH_GPR_A0 + i,
+> LOONGARCH_GPR_FP, -args_off);
+> +		args_off -= 8;
+> +	}
+> +}
+> +
+> +static void restore_args(struct jit_ctx *ctx, int nargs, int
+> args_off)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < nargs; i++) {
+> +		emit_insn(ctx, ldd, LOONGARCH_GPR_A0 + i,
+> LOONGARCH_GPR_FP, -args_off);
+> +		args_off -= 8;
+> +	}
+> +}
+> +
+> +static int invoke_bpf_prog(struct jit_ctx *ctx, struct
+> bpf_tramp_link *l,
+> +			   int args_off, int retval_off,
+> +			   int run_ctx_off, bool save_ret)
+> +{
+> +	int ret;
+> +	u32 *branch;
+> +	struct bpf_prog *p = l->link.prog;
+> +	int cookie_off = offsetof(struct bpf_tramp_run_ctx,
+> bpf_cookie);
+> +
+> +	if (l->cookie) {
+> +		move_imm(ctx, LOONGARCH_GPR_T1, l->cookie, false);
+> +		emit_insn(ctx, std, LOONGARCH_GPR_T1,
+> LOONGARCH_GPR_FP, -run_ctx_off + cookie_off);
+> +	} else {
+> +		emit_insn(ctx, std, LOONGARCH_GPR_ZERO,
+> LOONGARCH_GPR_FP,
+> +			  -run_ctx_off + cookie_off);
+> +	}
+> +
+> +	/* arg1: prog */
+> +	move_imm(ctx, LOONGARCH_GPR_A0, (const s64)p, false);
+> +	/* arg2: &run_ctx */
+> +	emit_insn(ctx, addid, LOONGARCH_GPR_A1, LOONGARCH_GPR_FP, -
+> run_ctx_off);
+> +	ret = emit_call(ctx, (const u64)bpf_trampoline_enter(p));
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* store prog start time */
+> +	move_reg(ctx, LOONGARCH_GPR_S1, LOONGARCH_GPR_A0);
+> +
+> +	/* if (__bpf_prog_enter(prog) == 0)
+> +	 *      goto skip_exec_of_prog;
+> +	 *
+> +	 */
+> +	branch = (u32 *)ctx->image + ctx->idx;
+> +	/* nop reserved for conditional jump */
+> +	emit_insn(ctx, nop);
+> +
+> +	/* arg1: &args_off */
+> +	emit_insn(ctx, addid, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -
+> args_off);
+> +	if (!p->jited)
+> +		move_imm(ctx, LOONGARCH_GPR_A1, (const s64)p-
+> >insnsi, false);
+> +	ret = emit_call(ctx, (const u64)p->bpf_func);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (save_ret) {
+> +		emit_insn(ctx, std, LOONGARCH_GPR_A0,
+> LOONGARCH_GPR_FP, -retval_off);
+> +		emit_insn(ctx, std, regmap[BPF_REG_0],
+> LOONGARCH_GPR_FP, -(retval_off - 8));
+> +	}
+> +
+> +	/* update branch with beqz */
+> +	if (ctx->image) {
+> +		int offset = (void *)(&ctx->image[ctx->idx]) - (void
+> *)branch;
+> +		*branch = larch_insn_gen_beq(LOONGARCH_GPR_A0,
+> LOONGARCH_GPR_ZERO, offset);
+> +	}
+> +
+> +	/* arg1: prog */
+> +	move_imm(ctx, LOONGARCH_GPR_A0, (const s64)p, false);
+> +	/* arg2: prog start time */
+> +	move_reg(ctx, LOONGARCH_GPR_A1, LOONGARCH_GPR_S1);
+> +	/* arg3: &run_ctx */
+> +	emit_insn(ctx, addid, LOONGARCH_GPR_A2, LOONGARCH_GPR_FP, -
+> run_ctx_off);
+> +	ret = emit_call(ctx, (const u64)bpf_trampoline_exit(p));
+> +
+> +	return ret;
+> +}
+> +
+> +static void invoke_bpf_mod_ret(struct jit_ctx *ctx, struct
+> bpf_tramp_links *tl,
+> +			       int args_off, int retval_off, int
+> run_ctx_off, u32 **branches)
+> +{
+> +	int i;
+> +
+> +	emit_insn(ctx, std, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_FP, -
+> retval_off);
+> +	for (i = 0; i < tl->nr_links; i++) {
+> +		invoke_bpf_prog(ctx, tl->links[i], args_off,
+> retval_off,
+> +				run_ctx_off, true);
+> +		emit_insn(ctx, ldd, LOONGARCH_GPR_T1,
+> LOONGARCH_GPR_FP, -retval_off);
+> +		branches[i] = (u32 *)ctx->image + ctx->idx;
+> +		emit_insn(ctx, nop);
+> +	}
+> +}
+> +
+> +u64 bpf_jit_alloc_exec_limit(void)
+> +{
+> +	return VMALLOC_END - VMALLOC_START;
+> +}
+> +
+> +void *arch_alloc_bpf_trampoline(unsigned int size)
+> +{
+> +	return bpf_prog_pack_alloc(size, jit_fill_hole);
+> +}
+> +
+> +void arch_free_bpf_trampoline(void *image, unsigned int size)
+> +{
+> +	bpf_prog_pack_free(image, size);
+> +}
+> +
+> +static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct
+> bpf_tramp_image *im,
+> +					 const struct btf_func_model
+> *m,
+> +					 struct bpf_tramp_links
+> *tlinks,
+> +					 void *func_addr, u32 flags)
+> +{
+> +	int i;
+> +	int stack_size = 0, nargs = 0;
+> +	int retval_off, args_off, nargs_off, ip_off, run_ctx_off,
+> sreg_off;
+> +	struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
+> +	struct bpf_tramp_links *fexit = &tlinks[BPF_TRAMP_FEXIT];
+> +	struct bpf_tramp_links *fmod_ret =
+> &tlinks[BPF_TRAMP_MODIFY_RETURN];
+> +	int ret, save_ret;
+> +	void *orig_call = func_addr;
+> +	u32 **branches = NULL;
+> +
+> +	if (flags & (BPF_TRAMP_F_ORIG_STACK |
+> BPF_TRAMP_F_SHARE_IPMODIFY))
+> +		return -ENOTSUPP;
+> +
+> +	/*
+> +	 * FP + 8       [ RA to parent func ] return address to
+> parent
+> +	 *                    function
+> +	 * FP + 0       [ FP of parent func ] frame pointer of
+> parent
+> +	 *                    function
+> +	 * FP - 8       [ T0 to traced func ] return address of
+> traced
+> +	 *                    function
+> +	 * FP - 16      [ FP of traced func ] frame pointer of
+> traced
+> +	 *                    function
+> +	 *
+> +	 * FP - retval_off  [ return value      ]
+> BPF_TRAMP_F_CALL_ORIG or
+> +	 *                    BPF_TRAMP_F_RET_FENTRY_RET
+> +	 *                  [ argN              ]
+> +	 *                  [ ...               ]
+> +	 * FP - args_off    [ arg1              ]
+> +	 *
+> +	 * FP - nargs_off   [ regs count        ]
+> +	 *
+> +	 * FP - ip_off      [ traced func   ] BPF_TRAMP_F_IP_ARG
+> +	 *
+> +	 * FP - run_ctx_off [ bpf_tramp_run_ctx ]
+> +	 *
+> +	 * FP - sreg_off    [ callee saved reg  ]
+> +	 *
+> +	 */
+> +
+> +	if (m->nr_args > LOONGARCH_MAX_REG_ARGS)
+> +		return -ENOTSUPP;
+> +
+> +	if (flags & (BPF_TRAMP_F_ORIG_STACK |
+> BPF_TRAMP_F_SHARE_IPMODIFY))
+> +		return -ENOTSUPP;
+> +
+> +	stack_size = 0;
+> +
+> +	/* room of trampoline frame to store return address and
+> frame pointer */
+> +	stack_size += 16;
+> +
+> +	save_ret = flags & (BPF_TRAMP_F_CALL_ORIG |
+> BPF_TRAMP_F_RET_FENTRY_RET);
+> +	if (save_ret) {
+> +		/* Save BPF R0 and A0 */
+> +		stack_size += 16;
+> +		retval_off = stack_size;
+> +	}
+> +
+> +	/* room of trampoline frame to store args */
+> +	nargs = m->nr_args;
+> +	stack_size += nargs * 8;
+> +	args_off = stack_size;
+> +
+> +	/* room of trampoline frame to store args number */
+> +	stack_size += 8;
+> +	nargs_off = stack_size;
+> +
+> +	/* room of trampoline frame to store ip address */
+> +	if (flags & BPF_TRAMP_F_IP_ARG) {
+> +		stack_size += 8;
+> +		ip_off = stack_size;
+> +	}
+> +
+> +	/* room of trampoline frame to store struct
+> bpf_tramp_run_ctx */
+> +	stack_size += round_up(sizeof(struct bpf_tramp_run_ctx), 8);
+> +	run_ctx_off = stack_size;
+> +
+> +	stack_size += 8;
+> +	sreg_off = stack_size;
+> +
+> +	stack_size = round_up(stack_size, 16);
+> +
+> +	/* For the trampoline called from function entry */
+> +	/* RA and FP for parent function*/
+> +	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -
+> 16);
+> +	emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
+> +	emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
+> +	emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP,
+> 16);
+> +
+> +	/* RA and FP for traced function*/
+> +	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -
+> stack_size);
+> +	emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP,
+> stack_size - 8);
+> +	emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP,
+> stack_size - 16);
+> +	emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP,
+> stack_size);
+> +
+> +	/* callee saved register S1 to pass start time */
+> +	emit_insn(ctx, std, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -
+> sreg_off);
+> +
+> +	/* store ip address of the traced function */
+> +	if (flags & BPF_TRAMP_F_IP_ARG) {
+> +		move_imm(ctx, LOONGARCH_GPR_T1, (const
+> s64)func_addr, false);
+> +		emit_insn(ctx, std, LOONGARCH_GPR_T1,
+> LOONGARCH_GPR_FP, -ip_off);
+> +	}
+> +
+> +	/* store nargs number*/
+> +	move_imm(ctx, LOONGARCH_GPR_T1, nargs, false);
+> +	emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -
+> nargs_off);
+> +
+> +	store_args(ctx, nargs, args_off);
+> +
+> +	/* To traced function */
+> +	/* Ftrace jump skips 2 NOP instructions */
+> +	if (is_kernel_text((unsigned long)orig_call))
+> +		orig_call += LOONGARCH_FENTRY_NBYTES;
+> +	/* Direct jump skips 5 NOP instructions */
+> +	else if (is_bpf_text_address((unsigned long)orig_call))
+> +		orig_call += LOONGARCH_BPF_FENTRY_NBYTES;
+> +
+> +	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> +		move_imm(ctx, LOONGARCH_GPR_A0, (const s64)im,
+> false);
+> +		ret = emit_call(ctx, (const u64)__bpf_tramp_enter);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	for (i = 0; i < fentry->nr_links; i++) {
+> +		ret = invoke_bpf_prog(ctx, fentry->links[i],
+> args_off, retval_off,
+> +				      run_ctx_off, flags &
+> BPF_TRAMP_F_RET_FENTRY_RET);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	if (fmod_ret->nr_links) {
+> +		branches  = kcalloc(fmod_ret->nr_links, sizeof(u32
+> *), GFP_KERNEL);
+> +		if (!branches)
+> +			return -ENOMEM;
+> +
+> +		invoke_bpf_mod_ret(ctx, fmod_ret, args_off,
+> retval_off,
+> +				   run_ctx_off, branches);
+> +	}
+> +
+> +	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> +		restore_args(ctx, m->nr_args, args_off);
+> +		ret = emit_call(ctx, (const u64)orig_call);
+> +		if (ret)
+> +			goto out;
+> +		emit_insn(ctx, std, LOONGARCH_GPR_A0,
+> LOONGARCH_GPR_FP, -retval_off);
+> +		emit_insn(ctx, std, regmap[BPF_REG_0],
+> LOONGARCH_GPR_FP, -(retval_off - 8));
+> +		im->ip_after_call = ctx->ro_image + ctx->idx;
+> +		/* Reserve space for the move_imm + jirl instruction
+> */
+> +		for (i = 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
+> +			emit_insn(ctx, nop);
+> +	}
+> +
+> +	for (i = 0; ctx->image && i < fmod_ret->nr_links; i++) {
+> +		int offset = (void *)(&ctx->image[ctx->idx]) - (void
+> *)branches[i];
+> +		*branches[i] = larch_insn_gen_bne(LOONGARCH_GPR_T1,
+> LOONGARCH_GPR_ZERO, offset);
+> +	}
+> +
+> +	for (i = 0; i < fexit->nr_links; i++) {
+> +		ret = invoke_bpf_prog(ctx, fexit->links[i],
+> args_off, retval_off,
+> +				      run_ctx_off, false);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> +		im->ip_epilogue = ctx->ro_image + ctx->idx;
+> +		move_imm(ctx, LOONGARCH_GPR_A0, (const s64)im,
+> false);
+> +		ret = emit_call(ctx, (const u64)__bpf_tramp_exit);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	if (flags & BPF_TRAMP_F_RESTORE_REGS)
+> +		restore_args(ctx, m->nr_args, args_off);
+> +
+> +	if (save_ret) {
+> +		emit_insn(ctx, ldd, LOONGARCH_GPR_A0,
+> LOONGARCH_GPR_FP, -retval_off);
+> +		emit_insn(ctx, ldd, regmap[BPF_REG_0],
+> LOONGARCH_GPR_FP, -(retval_off - 8));
+> +	}
+> +
+> +	emit_insn(ctx, ldd, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -
+> sreg_off);
+> +
+> +	/* trampoline called from function entry */
+> +	emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP,
+> stack_size - 8);
+> +	emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP,
+> stack_size - 16);
+> +	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP,
+> stack_size);
+> +
+> +	emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
+> +	emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
+> +	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP,
+> 16);
+> +
+> +	if (flags & BPF_TRAMP_F_SKIP_FRAME)
+> +		/* return to parent function */
+> +		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO,
+> LOONGARCH_GPR_RA, 0);
+> +	else
+> +		/* return to traced function */
+> +		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO,
+> LOONGARCH_GPR_T0, 0);
+> +
+> +	ret = ctx->idx;
+> +out:
+> +	kfree(branches);
+> +
+> +	return ret;
+> +}
+> +
+> +int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void
+> *ro_image,
+> +				void *ro_image_end, const struct
+> btf_func_model *m,
+> +				u32 flags, struct bpf_tramp_links
+> *tlinks,
+> +				void *func_addr)
+> +{
+> +	int ret;
+> +	void *image, *tmp;
+> +	u32 size = ro_image_end - ro_image;
+> +
+> +	image = kvmalloc(size, GFP_KERNEL);
+> +	if (!image)
+> +		return -ENOMEM;
+> +
+> +	struct jit_ctx ctx = {
+> +		.image = (union loongarch_instruction *)image,
+> +		.ro_image = (union loongarch_instruction *)ro_image,
+> +		.idx = 0,
+> +	};
+> +
+> +	jit_fill_hole(image, (unsigned int)(ro_image_end -
+> ro_image));
+> +	ret = __arch_prepare_bpf_trampoline(&ctx, im, m, tlinks,
+> func_addr, flags);
+> +	if (ret > 0 && validate_code(&ctx) < 0) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	tmp = bpf_arch_text_copy(ro_image, image, size);
+> +	if (IS_ERR(tmp)) {
+> +		ret = PTR_ERR(tmp);
+> +		goto out;
+> +	}
+> +
+> +	bpf_flush_icache(ro_image, ro_image_end);
+> +out:
+> +	kvfree(image);
+> +	return ret < 0 ? ret : size;
+> +}
+> +
+> +int arch_bpf_trampoline_size(const struct btf_func_model *m, u32
+> flags,
+> +			     struct bpf_tramp_links *tlinks, void
+> *func_addr)
+> +{
+> +	struct bpf_tramp_image im;
+> +	struct jit_ctx ctx;
+> +	int ret;
+> +
+> +	ctx.image = NULL;
+> +	ctx.idx = 0;
+> +
+> +	ret = __arch_prepare_bpf_trampoline(&ctx, &im, m, tlinks,
+> func_addr, flags);
+> +
+> +	/* Page align */
+> +	return ret < 0 ? ret : round_up(ret * LOONGARCH_INSN_SIZE,
+> PAGE_SIZE);
+> +}
+> diff --git a/arch/loongarch/net/bpf_jit.h
+> b/arch/loongarch/net/bpf_jit.h
+> index f9c569f53..5697158fd 100644
+> --- a/arch/loongarch/net/bpf_jit.h
+> +++ b/arch/loongarch/net/bpf_jit.h
+> @@ -18,6 +18,7 @@ struct jit_ctx {
+>  	u32 *offset;
+>  	int num_exentries;
+>  	union loongarch_instruction *image;
+> +	union loongarch_instruction *ro_image;
+>  	u32 stack_size;
+>  };
+>  
+> @@ -308,3 +309,8 @@ static inline int emit_tailcall_jmp(struct
+> jit_ctx *ctx, u8 cond, enum loongarch
+>  
+>  	return -EINVAL;
+>  }
+> +
+> +static inline void bpf_flush_icache(void *start, void *end)
+> +{
+> +	flush_icache_range((unsigned long)start, (unsigned
+> long)end);
+> +}
 
