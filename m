@@ -1,181 +1,159 @@
-Return-Path: <linux-kernel+bounces-747506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB505B1349C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:05:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED4CB1349F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0661897D3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:05:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6502A3B8791
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E890722068F;
-	Mon, 28 Jul 2025 06:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14A822068F;
+	Mon, 28 Jul 2025 06:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DSWzq1Cl"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="UDjtvuWl";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="oh9g3DYI"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A912619F40A;
-	Mon, 28 Jul 2025 06:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF11319F40A;
+	Mon, 28 Jul 2025 06:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753682726; cv=none; b=aow5OSYgC1i9FtrdHwtK0lHQDKAQSKnxdKb7YErxQqsDDAr4a8r61ha4mE3+G1jTMdaQpbFSIeS9KWtS0w9cdBE262OpG4BaCTdytbLlFjSLnVFhucl6ApOdaAP8m96f72xApnec7bgLtyHSvoTqj0jesN5sFR5f/QpZ6tYUZk4=
+	t=1753682769; cv=none; b=NyM9tG7JifTwwlav6COG97oLUgKmlACrUQx/aX74MQUAZe2dCfP4Pyf/3S7cZnMzPZfAtkccZnDcmk6qKh+gDLpmw0vR31w9INcUPkJXPxMi/ZW0aOa3xoPuQepnGPypOoltpImuwP0YgtJH/Yzw9aK6GrLcDAJQLlErmZeKiDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753682726; c=relaxed/simple;
-	bh=6Bl6t0D6Smny3lA5QBgsKsojEFjKp+6fv2oc5TrWVks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pYaqHBlakJ537kCFGP0XLxjC3vhp4pby/8As5gqBt5MrSqoxiTNVratBNzq18g3RUa/XdiFWMbejno7QLsmqZIhyT4YXnNie2Esyd7apyPZOTKJuoENLOin0Za4dQD7IRgHUT6Ix2C1+BCu4D8XGoiS3lUMoq46VxA15PxG8nH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DSWzq1Cl; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-455b002833bso14808365e9.0;
-        Sun, 27 Jul 2025 23:05:24 -0700 (PDT)
+	s=arc-20240116; t=1753682769; c=relaxed/simple;
+	bh=6vTjO/cynC+dj+pDFDq/WIqqZaida7ljLfk9SDTISGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TmRA7VxXU0KdgRW9UaIv4szZ+tP3R/bYp3PqHGWq159MdeCxP9W1oUxQx4C94LSSTH1j5S/OvX/7pvDIdcVkyR2pkOMMs9OCmSwbA7q9eFtz4oHq/aurP9fubHwUY9LqBL4XuVYD6nqjapOYkdkseJEANxV2+7JOdrqGeG3Xg60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=UDjtvuWl; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=oh9g3DYI reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753682723; x=1754287523; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tQXF3uhUpKed79enyV2WSAsZRiLGa5m0jySlxIYlh2M=;
-        b=DSWzq1CleEFv7S9StERg8eDGdowO1+E/XBHrdbfDRiRlSrVYCgPEjI+xl9Hd+0JQpo
-         pIwjBB6oQ4JdIIGRqydArTlbrVAgqA6fho/Lfw8gY5NV3/VbNmKHZj1dQADBKU6bFInb
-         nZXtTl51k0zeyZOsV7VL3hxxDB5OMPHztlAqsrFDM4nAocYmPAOn5ws34haGzUsI3wsc
-         47iZryxQOCdVB+iv3xj3US0Y/PesEWgfxLPKMTjcXwYcEnImfa+uNmEdS9q2M9l31rSL
-         jeraQyHovJJf5uKCBaCtNyeTyWAPEfskl71IufT6qqo/ktg8JxccNmn37lbhZNO4Bp5S
-         UflA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753682723; x=1754287523;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tQXF3uhUpKed79enyV2WSAsZRiLGa5m0jySlxIYlh2M=;
-        b=huxX6k/gZoy80TOLDuCX7sJtqgs6hBDWuk8P7XkJt+6kX2mZBYiESexCdEvWFH/v0x
-         3+lBClNzg7P+IvqvtGxWQ+qBPIy2ltqoukoSNmNeNWD/u0LmmnksE7jRZ70XyeUL9bqY
-         yQvQDY7cuz0ywGVxfO0aPM7+GtL8EQiocOG0It0PeZLrL8DdqOdabuTjvEA4bHNDZgNP
-         k6NCb/rQoVORPALVecS1fb28QZoKHRmsPh9lqQhNJ0Z3a8XMOgX+cdSvQ63L16kH9wVc
-         uMLHP14c3DR7yUFP7WYbnGOR86M5UV/ov1qJAZQqDdAwXlWQhOcqDbNnp8a83Yf34LfV
-         nrlw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8rxWVLFOXtBQ1eRihbTILyUSkSoViXn6jFx5PiDGoxo1WIAuxQNueAU68Cnuz6Eb5j7mpg3moHUFF@vger.kernel.org, AJvYcCWuoqCb21eHl33Ez+07xKoiVXOQ7bouW5gmXdAakGRAKO8wnipyatd8LzZHn6kE6DDT7D582fXyWK0SGQYl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1ZbMsbbDw7vOqBHi1HYB7LC4bnu5mobrvfdDD7KuCfe+mrvWM
-	byB7NyoDuT/o+7tKPjJzK8Qq5lHKtJDODUx+hJUZMQf0BKm7/UZw1CrKABX4iu9yJV7njYdwpZF
-	9n3ZLQcgu74x8oPotaiqNtYwEqDZH3ZE=
-X-Gm-Gg: ASbGncvb6EsKzAFku7QAbONA8pi7maft5e+FzDDofGChiPpD4TbyjsT/UH9GiqSmwTY
-	HfisRMM8KaU8MVKWDAoKpNfvcldukomztWr/wun7BbcUVacGlDV+oKW62RpR3D+1G/IL8ZKOHpV
-	xTfPquALnqR5E2QyEgX5tR5zJTzw5eTusenDPUZS8yRAJwnz29BPAWIycDsi72KzE8y9cxBcdUN
-	8d9fCBr
-X-Google-Smtp-Source: AGHT+IGbQly/khf35EnzlRO7ObYBo3BJlziBpv1lPzLbWO+xhKZeTjbakTyAb7qcQM/u3YZ/g+3x0BcnqrQrhaC7WKs=
-X-Received: by 2002:a05:600c:6748:b0:456:eab:633e with SMTP id
- 5b1f17b1804b1-4587dd0db72mr59731935e9.17.1753682722442; Sun, 27 Jul 2025
- 23:05:22 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1753682764; x=1785218764;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JjSYGmuLm2Hp4MqcZuZg1hPjsmb4clQ4mOoZCeNonbs=;
+  b=UDjtvuWlFRK6C66qs1CbVKVnyxuy3GFEFQRRySKQKFAfQT5PlIFuSOlL
+   Q3RVUdRJqX6Uz5fGp1OMruVlNezuIZLgHB6yAzHGjoGrRrPGM/9kxqF/B
+   uqRRPCoP7eXGuLfggkgKhERinI9bIgrkgrLRlygYN1zQZXanNJZzYV4fd
+   cnvv2jEpb/Cb6M2R96AzyvQULhH/wX0vHL0oWIQ1bRKVvZpfEAiPDnLQR
+   NpJK4AqGnS9QLbPy56GST5l1/89ihkDLdhXZFObb8mfMTkPyrp3uXcY3a
+   FiNoFmciF5A+LgzjmxLECrhDLsX8J7eXu2tBQTjWd0DhGUk3rfffDvUDJ
+   w==;
+X-CSE-ConnectionGUID: LuVdxQooQWywzzukvPuoDg==
+X-CSE-MsgGUID: tSUhUxs7SjGmYTS1cQrlpA==
+X-IronPort-AV: E=Sophos;i="6.16,339,1744063200"; 
+   d="scan'208";a="45440332"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 28 Jul 2025 08:05:51 +0200
+X-CheckPoint: {68871340-A-BB1FFBB0-EB2CC75E}
+X-MAIL-CPID: 154A4088696352CA20E2E8C7001DE7E1_2
+X-Control-Analysis: str=0001.0A002106.6887134A.008B,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A938E16568B;
+	Mon, 28 Jul 2025 08:05:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1753682747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JjSYGmuLm2Hp4MqcZuZg1hPjsmb4clQ4mOoZCeNonbs=;
+	b=oh9g3DYI0g2Ihh111neIBiKYeOBcsinYlR9XMSILJwIObcOmA5eB3dYyvC8wwLQxrDbq5q
+	TDue0UOUfjc6qvBGVcpfGQgRoOaUUuApM6qp8u3XV0kbAO2WWKa/Ojo1jsb5kvPSaGyTZ3
+	FqEyJ8MZSkrwvEnl8RTD+2BwN/dKWwhzXWOKWJ5TNOi/onxB89OGjv/hZg0yeZtHolvYXD
+	Rm3GkSeNmxHLodTJx4tZ9b9IJvZ2tLmKuSV7Y+bUeJMOUTYdByPimye8d5m/OL0u9VR9sc
+	7jW5b8QXdC8A2WhFUr0LOs9IlmSmltBoUsvoUGHO6adfBJxN35gDfR9m6C3v0g==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/1] gpio: stmpe: Allow to compile as a module
+Date: Mon, 28 Jul 2025 08:05:43 +0200
+Message-ID: <20250728060544.18169-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623081504.58622-1-clamor95@gmail.com> <CAPVz0n38N32HobYshtS9cLBJqWGPA1MZjMr0HH3C4UqGcFaFVA@mail.gmail.com>
-In-Reply-To: <CAPVz0n38N32HobYshtS9cLBJqWGPA1MZjMr0HH3C4UqGcFaFVA@mail.gmail.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 28 Jul 2025 09:05:11 +0300
-X-Gm-Features: Ac12FXx4CN1mT0Dh6FdAxwgNHcr1BsYAY3RYhstMmFIeWt6bQ2yxBdsgzEZ5FqU
-Message-ID: <CAPVz0n0nwnVyVP2V4Oswhhrz=gwMpv_-f2xJfBO2N44GRNjaKQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] drm: bridge: add ssd2825 RGB/DSI bridge support
-To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-=D0=BF=D0=BD, 21 =D0=BB=D0=B8=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 19:38 Svya=
-toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> =D0=BF=D0=BD, 23 =D1=87=D0=B5=D1=80=D0=B2. 2025=E2=80=AF=D1=80. =D0=BE 11=
-:15 Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > Solomon SSD2825 is a RGB to MIPI DSI bridge used in LG Optimus 4D P880
-> > and LG Optimus Vu P895
-> >
-> > ---
-> > Changes on switching from v6 to v7:
-> > - removed enabled checks
-> > - configuration complete quirk moved from host_transfer to
-> >   atomic_enable
-> > - switched to devm_drm_bridge_alloc
-> > - removed redundant dev_set_drvdata use
-> >
-> > Changes on switching from v5 to v6:
-> > - set correct module name in Kconfig help
-> > - return error if spi sync failed for reading
-> >
-> > Changes on switching from v4 to v5:
-> > - rebased on top of drm-misc-next with adjustments to fit
-> >
-> > Changes on switching from v3 to v4:
-> > - no changes, resend
-> >
-> > Changes on switching from v2 to v3:
-> > - added mutex guard
-> > - configuration register flags parametrized using panel flags
-> > - removed unneded debug messages
-> > - removed unimplemented modes checks
-> > - added check for maximum pixel row length
-> > - use types header
-> > - remove ssd2825_to_ns
-> > - shift bridge setup into atomic pre-enable
-> > - cleaned default values of hzd and hpd
-> >
-> > Changes on switching from v1 to v2:
-> > - added description for clock
-> > - removed clock-names
-> > - added boundries for hs-zero-delay-ns and hs-prep-delay-ns
-> > - added mutex lock for host transfers
-> > - converted to atomic ops
-> > - get drm_display_mode mode with atomic helpers
-> > - parameterized INTERFACE_CTRL_REG_6 configuration
-> > - added video mode validation and fixup
-> > - removed clock name
-> > - switched to devm_regulator_bulk_get_const
-> > - added default timings
-> > ---
-> >
-> > Svyatoslav Ryhel (2):
-> >   dt-bindings: display: bridge: Document Solomon SSD2825
-> >   drm: bridge: Add support for Solomon SSD2825 RGB/DSI bridge
-> >
-> >  .../display/bridge/solomon,ssd2825.yaml       | 141 ++++
-> >  drivers/gpu/drm/bridge/Kconfig                |  13 +
-> >  drivers/gpu/drm/bridge/Makefile               |   1 +
-> >  drivers/gpu/drm/bridge/ssd2825.c              | 775 ++++++++++++++++++
-> >  4 files changed, 930 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/so=
-lomon,ssd2825.yaml
-> >  create mode 100644 drivers/gpu/drm/bridge/ssd2825.c
-> >
-> > --
-> > 2.48.1
-> >
->
-> Greetings!
->
-> These patches had no activity/feedback from maintainers for almost a
-> month, so, in case they got lost in the depths of email box, this is a
-> friendly reminder that they are still relevant and I would like them
-> to move on.
->
-> Best regards,
-> Svyatoslav R.
+Add the necessary boilerplate to also make this driver modular.
+Keep the subsys_initcall to not change registration order for built-in.
+Also add OF match table for module autoloading.
 
-Hello there!
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Changes in v2:
+* Do not touch subsys_initcall
+* Add module_exit instead
+* Adjust commit message
 
-This is a friendly reminder that they are still relevant and I would
-like them to move on. Should I resent them?
+ drivers/gpio/Kconfig      |  2 +-
+ drivers/gpio/gpio-stmpe.c | 20 ++++++++++++++++++--
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
-Best regards,
-Svyatoslav R.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 500d839f65ee8..0621832d045fa 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1559,7 +1559,7 @@ config GPIO_SL28CPLD
+ 	  called gpio-sl28cpld.
+ 
+ config GPIO_STMPE
+-	bool "STMPE GPIOs"
++	tristate "STMPE GPIOs"
+ 	depends on MFD_STMPE
+ 	depends on OF_GPIO
+ 	select GPIOLIB_IRQCHIP
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index 0a270156e0bea..97d6c4f98eaf7 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -534,10 +534,16 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ 	return devm_gpiochip_add_data(dev, &stmpe_gpio->chip, stmpe_gpio);
+ }
+ 
++static const struct of_device_id stmpe_gpio_of_matches[] = {
++	{ .compatible = "st,stmpe-gpio", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, stmpe_gpio_of_matches);
++
+ static struct platform_driver stmpe_gpio_driver = {
+ 	.driver = {
+-		.suppress_bind_attrs	= true,
+-		.name			= "stmpe-gpio",
++		.name = "stmpe-gpio",
++		.of_match_table = stmpe_gpio_of_matches,
+ 	},
+ 	.probe		= stmpe_gpio_probe,
+ };
+@@ -547,3 +553,13 @@ static int __init stmpe_gpio_init(void)
+ 	return platform_driver_register(&stmpe_gpio_driver);
+ }
+ subsys_initcall(stmpe_gpio_init);
++
++static void __exit stmpe_gpio_exit(void)
++{
++	platform_driver_unregister(&stmpe_gpio_driver);
++}
++module_exit(stmpe_gpio_exit);
++
++MODULE_DESCRIPTION("STMPE expander GPIO");
++MODULE_AUTHOR("Rabin Vincent <rabin.vincent@stericsson.com>");
++MODULE_LICENSE("GPL");
+-- 
+2.43.0
+
 
