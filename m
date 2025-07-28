@@ -1,153 +1,185 @@
-Return-Path: <linux-kernel+bounces-748570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189ADB142DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:16:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C81B142E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4098A542C0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391FE542BAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B38222576;
-	Mon, 28 Jul 2025 20:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285522749C7;
+	Mon, 28 Jul 2025 20:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cHZ6wa8Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xk+exa4K"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B132165EC
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B56E217F23;
+	Mon, 28 Jul 2025 20:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753733771; cv=none; b=iSF0Gf8vJPH3UQx6tYY+AWAQBFNFDF8VPnFE7kk+chc1VEoDcmzQDZs8FVA1fsI2G8V+Nv/PGkyz8yY6KfWkPqdDOECA5bwkt+3d8Jv4ScUfCKrDXr65ph3wWvYwlSySYBd3uoSfsB8Wppay7uqEbJVZJFwl7REUCT7m5zXlSLQ=
+	t=1753734160; cv=none; b=HIJ5u45wrGl90O55EklR+wprEzaBQT+SOdctE9kQfE8YCuFpflLb+kFX6SBnXoenfwgu4/KWq+E65PeKDwa+Ta3WmA83lz22mIbolcR7ngxpQ+xBpP42kQdyDiKU9AgqOjm38cJ30igYKAR0k7/gWBnIAkV06V4A/yuOtnIAbdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753733771; c=relaxed/simple;
-	bh=tSdmsZlF3Cyf3QsBATATBxVcKfKaXFUpA/aj0sdIYuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qeBTLzkwD6/LVnJ4xxpiBJZKddCzQPX0MFcPqzcTVNjYFThIxfPDUVM6MASGk92F6daDfXf96OJCzcwuarLsKPGa6jc2T+8sxv+PMNOVtCQw3qCnedYkchNHeIhU6UIlPF5wyieKq6gB4n+KBiRD6aU4l5piO8aX+390UB4wuwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cHZ6wa8Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753733768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ix+6Z4M7VAksEijsBIInwwoxZTs34otlPm1AzOGrkBI=;
-	b=cHZ6wa8YtdTBvDl1FHYWHr0+t2eOZwittxzyuAxxQ4kZZ+j1dMQEnuzLdaQceI5nRTfl9Y
-	CYp/wW/jgFfE5O2/Qj4YFylJocZ50CZeKBE602WlGlbu7wATu4OoV+4RXQVYjGUQLucVdi
-	jlYd6XBHyS/3kLem6XpGUmhxsF1Jhnw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-655-hJNtQbreP-e8sh6DCiD4hw-1; Mon,
- 28 Jul 2025 16:16:02 -0400
-X-MC-Unique: hJNtQbreP-e8sh6DCiD4hw-1
-X-Mimecast-MFC-AGG-ID: hJNtQbreP-e8sh6DCiD4hw_1753733760
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	s=arc-20240116; t=1753734160; c=relaxed/simple;
+	bh=kHf9urtE6dhy3OGMYKIpupIQffnnwOTxLGJgRdWr7OU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Pk4rFxOlX9Mbvy2l4BjU/Thwcvh8jlvHIsCSgHP2W5IueGL1EWC261KRhgA+LA16S/3maQ8cirubyB6pI1rJoHvdSNK/qoNCsQq++P8FjdeHZTzKdHuCjhS5J2N1HksL4DB8pGaBPq9I/rEeCtog00ew8JGxeCXCoLLR2Fn0x5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xk+exa4K; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753734156;
+	bh=kHf9urtE6dhy3OGMYKIpupIQffnnwOTxLGJgRdWr7OU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Xk+exa4KMs7J1kipivohRSl/HGbJ2fsmhK/R+5H3q0OE7nxir3RDNDP0z4adNx5l2
+	 dcqvXXQv6GARnoKnpZpSpIhdy2J2NT8ujdBxvh+iSWYtfi59GbVOs23a0k5odlkFbX
+	 EvLgws3tlGfTpM0cqWM9r8124VqsFl0iPeFu9tZdQKhYwT/gH6WTIoMCGbHXBXiZmc
+	 k+8r0M4KIppVWWUz0nGeeoIxpbGrQWTMyxnn/M6Y62R7RhJOC+UoB+lp/HKvQ9VDwt
+	 Ol1D9+RYptCF75n2qAwgv+nWKfR9sOxDemIipoZri+9V02fsggOQY1xreRQEXjy+Jm
+	 HKTqG9WWpXH2w==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5090319560AD;
-	Mon, 28 Jul 2025 20:15:59 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.39])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9A85430001B1;
-	Mon, 28 Jul 2025 20:15:50 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 28 Jul 2025 22:14:50 +0200 (CEST)
-Date: Mon, 28 Jul 2025 22:14:41 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>, lclaudio00@gmail.com
-Subject: Re: [PATCH v6] sched: do not call __put_task_struct() on rt if
- pi_blocked_on is set
-Message-ID: <20250728201441.GA4690@redhat.com>
-References: <aGvTz5VaPFyj0pBV@uudg.org>
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E513817E11FE;
+	Mon, 28 Jul 2025 22:22:34 +0200 (CEST)
+Message-ID: <75207b49155acaa83e2ed0182fd1a78a9242aab7.camel@collabora.com>
+Subject: Re: [PATCH 00/12] media: rkvdec: Add support for VDPU381 and VDPU383
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+Cc: detlev.casanova@collabora.com, heiko@sntech.de, kernel@collabora.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	mchehab@kernel.org, nicolas.frattaroli@collabora.com, jonas@kwiboo.se, 
+	benjamin.gaignard@collabora.com
+Date: Mon, 28 Jul 2025 16:22:32 -0400
+In-Reply-To: <20250718093746.631072-1-liujianfeng1994@gmail.com>
+References: <20250714144610.258372-1-liujianfeng1994@gmail.com>
+	 <20250718093746.631072-1-liujianfeng1994@gmail.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPU=
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-JxB+zX8IA3mywv/uYbEy"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGvTz5VaPFyj0pBV@uudg.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 07/07, Luis Claudio R. Goncalves wrote:
->
-> Instead of adding more complex conditions to decide when to directly
-> call __put_task_struct() and when to defer the call, unconditionally
-> resort to the deferred call on PREEMPT_RT to simplify the code.
-                              ^^^^^^^^^^^^^
-Confused... with this patch put_task_struct() always uses the deferred
-call, regardless of PREEMPT_RT?
 
-Oleg.
+--=-JxB+zX8IA3mywv/uYbEy
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> --- a/include/linux/sched/task.h
-> +++ b/include/linux/sched/task.h
-> @@ -135,24 +135,17 @@ static inline void put_task_struct(struct task_struct *t)
->  		return;
->  
->  	/*
-> -	 * In !RT, it is always safe to call __put_task_struct().
-> -	 * Under RT, we can only call it in preemptible context.
-> -	 */
-> -	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || preemptible()) {
-> -		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
+Le vendredi 18 juillet 2025 =C3=A0 17:37 +0800, Jianfeng Liu a =C3=A9crit=
+=C2=A0:
+> Hi,
+>=20
+> On Mon, 14 Jul 2025 22:46:10 +0800, Jianfeng Liu wrote:
+> > You are right, the code of chromium should be fixed for frame size type
+> > V4L2_FRMSIZE_TYPE_CONTINUOUS.
+>=20
+> I have just sent a cr at chromium[1] to fix this.
+>=20
+> > I have checked that this issue is not introduced by your series. After
+> > reverting this commit[2] which adds Support High 10 and 4:2:2 profiles,
+> > chromium can play video well on rk3399. I will investigate further.
+>=20
+> I found that this issue is caused by this code block[2]. Before adding
+> .get_image_fmt, rkvdec_s_ctrl will just return 0. But now when detecting
+> image format change(usually from RKVDEC_IMG_FMT_ANY to real video format
+> like RKVDEC_IMG_FMT_420_8BIT), it will return -EBUSY, then I get green
+> frame at chromium.
+>=20
+> After taking a look at hantro's code, I find that it is not necessary to
+> let .s_ctrl return -EBUSY when format changes, here is a commit[3]
+> disabling this check in hantro_set_fmt_cap. I have written a patch that
+> can fix my issue with chromium, you can see it at the bottom of my mail.
+>=20
+> [1] https://chromium-review.googlesource.com/c/chromium/src/+/6767118
+> [2]
+> https://github.com/torvalds/linux/blob/v6.16-rc6/drivers/staging/media/rk=
+vdec/rkvdec.c#L143-L146
+> [3]
+> https://github.com/torvalds/linux/commit/bbd267daf4fc831f58bf4a2530a8b648=
+81779e6a
+>=20
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> index 5d86fb7cdd6..7800d159fad 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> @@ -185,7 +185,6 @@ static int rkvdec_s_ctrl(struct v4l2_ctrl *ctrl)
+> =C2=A0	struct rkvdec_ctx *ctx =3D container_of(ctrl->handler, struct
+> rkvdec_ctx, ctrl_hdl);
+> =C2=A0	const struct rkvdec_coded_fmt_desc *desc =3D ctx->coded_fmt_desc;
+> =C2=A0	enum rkvdec_image_fmt image_fmt;
+> -	struct vb2_queue *vq;
+> =C2=A0
+> =C2=A0	/* Check if this change requires a capture format reset */
+> =C2=A0	if (!desc->ops->get_image_fmt)
+> @@ -193,11 +192,6 @@ static int rkvdec_s_ctrl(struct v4l2_ctrl *ctrl)
+> =C2=A0
+> =C2=A0	image_fmt =3D desc->ops->get_image_fmt(ctx, ctrl);
+> =C2=A0	if (rkvdec_image_fmt_changed(ctx, image_fmt)) {
+> -		vq =3D v4l2_m2m_get_vq(ctx->fh.m2m_ctx,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
+> -		if (vb2_is_busy(vq))
+> -			return -EBUSY;
 > -
-> -		lock_map_acquire_try(&put_task_map);
-> -		__put_task_struct(t);
-> -		lock_map_release(&put_task_map);
-> -		return;
-> -	}
-> -
-> -	/*
-> -	 * under PREEMPT_RT, we can't call put_task_struct
-> +	 * Under PREEMPT_RT, we can't call __put_task_struct
->  	 * in atomic context because it will indirectly
-> -	 * acquire sleeping locks.
-> +	 * acquire sleeping locks. The same is true if the
-> +	 * current process has a mutex enqueued (blocked on
-> +	 * a PI chain).
-> +	 *
-> +	 * In !RT, it is always safe to call __put_task_struct().
-> +	 * Though, in order to simplify the code, resort to the
-> +	 * deferred call too.
->  	 *
-> -	 * call_rcu() will schedule delayed_put_task_struct_rcu()
-> +	 * call_rcu() will schedule __put_task_struct_rcu_cb()
->  	 * to be called in process context.
->  	 *
->  	 * __put_task_struct() is called when
-> @@ -165,7 +158,7 @@ static inline void put_task_struct(struct task_struct *t)
->  	 *
->  	 * delayed_free_task() also uses ->rcu, but it is only called
->  	 * when it fails to fork a process. Therefore, there is no
-> -	 * way it can conflict with put_task_struct().
-> +	 * way it can conflict with __put_task_struct().
->  	 */
->  	call_rcu(&t->rcu, __put_task_struct_rcu_cb);
->  }
-> -- 
-> 2.50.0
-> 
 
+Hantro driver have extra code to protect against the fact that the queue fo=
+rmat
+may not match the currently allocated buffer size. This change alone seems
+unsafe and may allow tricking the driver into buffer overflow. It believe s=
+ome
+further thought and care need to be put into this.
+
+Nicolas
+
+> =C2=A0		ctx->image_fmt =3D image_fmt;
+> =C2=A0		rkvdec_reset_decoded_fmt(ctx);
+> =C2=A0	}
+
+--=-JxB+zX8IA3mywv/uYbEy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaIfcCAAKCRBxUwItrAao
+HKJ9AJ9lIeksQ/frtYIbyb7342kuZLSytQCeIu9nWl2kX0opPHtm8enN8Fx5jFo=
+=1i09
+-----END PGP SIGNATURE-----
+
+--=-JxB+zX8IA3mywv/uYbEy--
 
