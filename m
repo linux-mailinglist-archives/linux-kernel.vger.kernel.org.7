@@ -1,310 +1,190 @@
-Return-Path: <linux-kernel+bounces-748178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BEAB13D8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F837B13D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDFD4189A3D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5A618815BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2930626FDA4;
-	Mon, 28 Jul 2025 14:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F108C26CE29;
+	Mon, 28 Jul 2025 14:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XA0dmG5x"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="pSOQweSI"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azolkn19011095.outbound.protection.outlook.com [52.103.23.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC1B26FA5A;
-	Mon, 28 Jul 2025 14:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753713850; cv=none; b=LiEzpdZPBIOJ7ef1TO/siAVPcSpAjD1MRidmejzCh1RKLwLrrzaBCJpPVDakUoF7mfWW5MMbQNbLE/9He4p3VpoPuSi53d/PtbJoa075pTo02DfDotKbL6WY0y3C26P1z8/NRLVJHbn6uBGPHcbCAQdK2KsSbyUkA764+Ou7TzM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753713850; c=relaxed/simple;
-	bh=l3mo07yATwpl5hsmvqlg9UkPIbuhr0w+45TBtv70anI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eaPTPygWs2B/s6rPSq5dsZMi2LafAX2CIV2igVCTs4kWjPLuQ2SPFt42rI/1LvmCpeRzh4/Wj1KM+aEaR6GUulm+bpvodKpcg5cholf9G5qhNmG4PMxql/WSuipzYkmG99rznipQh+iU4v1eoYVMUxM0MCcTF/dPnWfG6FguXXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XA0dmG5x; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SBF8uC010780;
-	Mon, 28 Jul 2025 14:44:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=BUhHzdcqriY+FtkuT5oQ5Mq3h1O6i5PoljT4b3Jz7
-	Vo=; b=XA0dmG5xVcfTWhmhwWqR3gCGE7q6RNMr+ifsB4v5whfW1KCGmjDpDYW2Q
-	6KgiL0HuPt1UxEHgeGY0IAMxnGj03Q6KDdUEK7GqxlIVzJBJz/v+3SEL0L8yohK1
-	3R71yelB3g4+cjrPgG6dPUrK+EPstCPzePEwGjEU1EJXdZWnrDqktGU7Fudzew/K
-	VLQCled+QkTWZw3sOqG65AIMHV6TN7uf/JlStecJTSGauoy0g8qcm+yFadusaixr
-	G1Nf86NPW37VJoXHzar/G9PsWIvefUmqBGHfsHyMtpdQciBMx3+aDRifkkytR1dy
-	tyrJ2QSqOPy5hpEaypTRgTbFCO1OA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcfsmfx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 14:44:01 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56SEL7tw002643;
-	Mon, 28 Jul 2025 14:44:00 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcfsmfq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 14:44:00 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56SDPOFn017977;
-	Mon, 28 Jul 2025 14:43:59 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4859btec6g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 14:43:59 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56SEhuXV59507146
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 14:43:56 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 08B632004B;
-	Mon, 28 Jul 2025 14:43:56 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C6B9620043;
-	Mon, 28 Jul 2025 14:43:55 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 28 Jul 2025 14:43:55 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
-        andriin@fb.com, irogers@google.com, iii@linux.ibm.com,
-        bpf@vger.kernel.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, japo@linux.ibm.com,
-        Thomas Richter <tmricht@linux.ibm.com>, Jiri Olsa <jolsa@redhat.com>
-Subject: [PATCH v2] perf/s390: Regression: Move uid filtering to BPF filters
-Date: Mon, 28 Jul 2025 16:43:40 +0200
-Message-ID: <20250728144340.711196-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E94841C69;
+	Mon, 28 Jul 2025 14:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.23.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753713844; cv=fail; b=U+wU9V6u4nKbp3lEUpM4WltEH8Zq4sE1HyKVwJNxq0w6zF/rdcoK7TM9kDMsKe4tVYS97Hzf4NfGE6kVtLe2rG0mFcJ/LKMkYQlxfufYdCvruWrmRrzYNOGR4ydyhstC80J41nQUYFveXdO8MU3YlNrQVpeya3+sE38AzouiyQw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753713844; c=relaxed/simple;
+	bh=J300bdOxYQVgf02LenM0Y+cfV3EONCzRIbn6gZiv03s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tfazj82KTs22AGDa0NCwxFsHyM27ha+t9j5loS8SASGgYcp7Y/mVsIYKUNNNiSLOeY+yq/cYLcfUJwYLcFvVwhjinsUfjfzrrdNvRG1SUxYBE60qBAw/uAPwF2txTtLp7fGwpySJg66fmqv4Cv2cMIJo1SJIytI3RuToVhmgEzU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=pSOQweSI; arc=fail smtp.client-ip=52.103.23.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XbAf5DS0CB/IUpig/C3pHUKtzRFUYhfqFHrYjldD9UJkUHGQsmaAP78ibK7z10rrg14avZg7vwiC4c+Z2fyzs6XanKFMikdpMYFGM8D3ZVGXYppRAzLIrU7DR+5lYXqdSv1U95dMDNEZ5DUqm8b6/LfXn4vYwWfGfIY5fGk387n8IGkcejrk9shKnBKITFziRiIeD+2Df52GcKgrvzUiU8Q/dO93cTdFI+vzDlqqCJGETZ1zWa1+1PpzzAe4IpIfW4EZBNXsZH4SAshT7O5bkj2WRl7Lsaei+vWWsx8ZmOd3dRgJLEPXGglD0CBH+gFeUlpcrmWdxrkzjDFCjZ/KHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y29crNM7ZP+Yj3KrWAUt6YpaZWy9tte13WcDAwe5lyE=;
+ b=aWJDeLCqICtxvUXqDifXMV4HMgec8piKGB96+O6tOYYXd2PX8GKp8osdOwl/toOppe/c20cWbopLa/EuCdBBjW8BF0SJxSTCu+H3u6hWvrZooJKTHeTcxMp/8sNpHw8YL/pb97rRid5yHnHF2QjJsZykaLyjF+3xJ04AhkEP6ePT4/NW4Pi8yJqrQzlrAtUxL1SWTU/CLsgoz0rzrciNKulU9zPQExScmchFKthzsuORBRCIRsg4HqtpvCQb3sGMR0ChVHEqZ+wvrdJHmrmcMeL5EaT2yiJtgoVipB+nmWpOL17nsP+KMhjnhyg39+5M1REyjK8xnCL2Im7cfIK/1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y29crNM7ZP+Yj3KrWAUt6YpaZWy9tte13WcDAwe5lyE=;
+ b=pSOQweSIcIEggZsY6r8hmPmA4klaUeGcjpGeY9signMKMPufjlrnbdWEV0dEmAL6UQ3fU+JThckkIvJeGss1FUb+mqsBTlIHKfpzpYxnQTrHQ3TY3Q5iPPWlhHDTtwg6dz+ZLkCngDZZHVcVmt35SKH4NliPqdWXJNnRYYsHszzyhfDzBCyNVtjA5K/AICtFBCutZOIC6IVUhROqkOK9sctxQnhEVHS3U/ctom6zmR5qksmvCrpeKljMtgLhkNllMKpTB/UlmrzlXUp5uGwlxAXxEjt3+UDcnIgX0+WvO/z3Pmgv0YG8rk6xNLhNQUC9/HCRWN3iqMIOMn+sP7/1wA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by PH0PR02MB7783.namprd02.prod.outlook.com (2603:10b6:510:59::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Mon, 28 Jul
+ 2025 14:43:54 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8964.023; Mon, 28 Jul 2025
+ 14:43:54 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Tianyu Lan <ltykernel@gmail.com>, "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
+	<wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
+	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de"
+	<arnd@arndb.de>, "Neeraj.Upadhyay@amd.com" <Neeraj.Upadhyay@amd.com>,
+	"kvijayab@amd.com" <kvijayab@amd.com>
+CC: Tianyu Lan <tiala@microsoft.com>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH V4 1/4] x86/hyperv: Don't use hv apic driver when
+ Secure AVIC is available
+Thread-Topic: [RFC PATCH V4 1/4] x86/hyperv: Don't use hv apic driver when
+ Secure AVIC is available
+Thread-Index: AQHb/jNI52muzV4f+EC67zPjNfYTPLRHmTXQ
+Date: Mon, 28 Jul 2025 14:43:54 +0000
+Message-ID:
+ <SN6PR02MB41576BB2286F0B05F7912868D45AA@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250726134250.4414-1-ltykernel@gmail.com>
+ <20250726134250.4414-2-ltykernel@gmail.com>
+In-Reply-To: <20250726134250.4414-2-ltykernel@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB7783:EE_
+x-ms-office365-filtering-correlation-id: d2cd3da9-f771-422d-5422-08ddcde52d4c
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|41001999006|15080799012|8062599012|19110799012|8060799015|461199028|440099028|40105399003|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?qpRZ8bokf0GhndQZptutO29P36k3ZAx6xsLxEzqOLdvEWy8+q9CKi42knrHX?=
+ =?us-ascii?Q?reTmNMEoJO+7y+6MVnQOGTQC41A3LAaBDDZj+28DBkaAAUt16Q2L+p6NtCvq?=
+ =?us-ascii?Q?3kkQaLz++o+tnG1koWXHMJKjNBnpF/4qa0WpAGSn1FACahc1SDUnURGok5xe?=
+ =?us-ascii?Q?tvQQwbajsLt0ngIeiL3mBnHq+FSvmCzVZaSvO3QsQhE5MG1HFpKaNkpza/W1?=
+ =?us-ascii?Q?IeVHJRDBnwMihifVZLKoKTvlvUz/CMs8cm3RpZjFTET+XBUCUkqbn4nYA/Bu?=
+ =?us-ascii?Q?DYWDj6BPyU5husRqBuO8/5hjJZmfjqZLCpqhDvRPNMktK5z1REeGood7xhnv?=
+ =?us-ascii?Q?mMcLu2pQ7nxPxzkybgn8cujIOFQk+XNtZJZZA4zqlirLmt/pMjgCHXuxJHtC?=
+ =?us-ascii?Q?pUTLQOo+3YPlzAW9zaSqTfK+Hu/WdVaomA+O22JP/7m2r+K/ivezO/3LBquh?=
+ =?us-ascii?Q?kyWpm5YBYVNP+09TF5pqfuwz2jVzNuecqOi92PEVCoGmG62NEvukxqhtRGks?=
+ =?us-ascii?Q?bIvgXE/FdsewDQ76b3bTaSWp8G+g9EstGQ6O9i/lbTQpL871DRFXfJpcFtZ3?=
+ =?us-ascii?Q?To+FNjuQMlkJQYYVpmQ3s2tM5+aApm2FcZjlog1xTI8KuOkKs5EZm3BJFt14?=
+ =?us-ascii?Q?0kMjgYOYWahf6VasE5FnoLZbIP6ZsnUjwQP3vrluAGBw/DIhrzdYpB3flsm/?=
+ =?us-ascii?Q?ZPy12FGnAcj0l9K2mfx8OIjJlQImP/p4WDuvQQEHpnEinxc6Q53DE/nKGFVt?=
+ =?us-ascii?Q?jJBzVBr46Xx/+BDGPMD+cINYVw+d2ZLpciRfTJsn8WwaYOMxaXltf/Xi5nMV?=
+ =?us-ascii?Q?IyHgcEOH/hXU0OBUgzyMH6/1eNaDXuwal+6RlSbI1ZQFBgxx2iKdkM699pYG?=
+ =?us-ascii?Q?N15R0i+q4NUskmBo59ZTJb7FK19UXF7s8d7YsOetWnwLjFYYyzKlvI3tyNvT?=
+ =?us-ascii?Q?ypHvbShE4hEwFXCiU2VB0zsxMVTt6cAcXjq0+mMJKpNsy9Ohof1DJCPe1XSc?=
+ =?us-ascii?Q?WL1RFZFyDdpGMbBzw1HcOMJr9aTqG6VfRaNHUeJSYczSNglUiemR3tJ6QBpw?=
+ =?us-ascii?Q?LGK1nSe1AUhfc4+zkT9yFAn7XVULaEnriFvO4QRVNDOcOr9jTxZWqIUQTwu3?=
+ =?us-ascii?Q?dO5VcKq3VPHA7q16etGBanstvmXQFcyqrA=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?uW2gwbCNRrWrRrvxt7jXwrmWiSmuHXSv9tgQ8k/MtJoOcidtWOSPtu23A6Ys?=
+ =?us-ascii?Q?Jfc/9Xe4RVKDOkNCGDymypQTkGify5EYuXK9k6wqfXbtlivm0ZMdBQYIV1jh?=
+ =?us-ascii?Q?udFMUUzfHB66aG94G9080Fkj3LHpcHVd3p+iCoyGvbNZ9ZHPnhXM4L0Y1Cj6?=
+ =?us-ascii?Q?S73m/uyQmtpxsFhaCwNxxw06bDHPWxiHkSVRZsGh0pH9FUcwOeoSI/EWalD6?=
+ =?us-ascii?Q?ZEYN0ecfXnFow78/U2UCwOz3QbZ3Y1dVMRjCX6MjZIVtVdM/cldOqf5qC5ZN?=
+ =?us-ascii?Q?ZfasPB9LUw/+f2O3VNem03is+55ad6HAgeTaEWLKubPjAC4KGZnc5syyI+vp?=
+ =?us-ascii?Q?tiIO6WMfgeEVG0PelA9/ObB/0eIgVFHgieHZyJHjd4z9hIMq6yTuNylFbXtS?=
+ =?us-ascii?Q?Vxs0rqcSfJBUbwm84YnVidh0L+rG+ws/Doyn7ddtyJNT0S+GL0KuLyoOZxF2?=
+ =?us-ascii?Q?kb10nvvzVor3xix+4rK6WlFzG0Xm50GA6rFHRjXySQkFFGFEwGB5VCLAb90S?=
+ =?us-ascii?Q?n7r3PhkDO9JUcVx8u4MlljO9l0BnhoC472keocWAtFW3z49l7syoA9cW+kFN?=
+ =?us-ascii?Q?yO/h2Iu2EJZK8IEX6/WHCGbYEUly8Ad04uHkyyajxsG41hzzM0iL0DWU3zb1?=
+ =?us-ascii?Q?iwDgPD0G4wjfcigoHuUT6CP0mEvJ1doP+GEJeh/gbvFVYHZQcMBtMpMDUx39?=
+ =?us-ascii?Q?QHwJuO8tAeaQk+X6MpGjjfYBmNXCJ1Qu32sYncvUsXKuY/naNcKWS0wu7PA/?=
+ =?us-ascii?Q?nlN/5Zb2Wn9EJ9isFHHJFo1IQmL54VmuNOS+M06eEW4z8ltoZ/4xLPpLTjGS?=
+ =?us-ascii?Q?gc6sATfkDiuL8iCSKoZUdIH0L6ckzzE4NMNVoidYnVbY5Ia67G09Yry8cePA?=
+ =?us-ascii?Q?FmHS3anz1RFGsCeRqJSQh26G9pGZyIYhl1xQK41ShqNy7x+EqkLlEtGnJC6N?=
+ =?us-ascii?Q?N5+KlKFYjAcpZeikgo2uX42MPTgjPlaTkl6HQqqndgntqz63ka7jShpxdXSa?=
+ =?us-ascii?Q?7PpfFbu5HvKKg2MAS3IsWdPivBRlly72oOX5nqe7EFaooLS26Knsckzref0f?=
+ =?us-ascii?Q?E0oMtDBy5R5FfT0Kq4F9PqqDAQPT8yAfNq+vSJtOr/wCHYxrq5J4pPJdeKp6?=
+ =?us-ascii?Q?V3PEXIlOmseczFuuadOg+IYokP2wsQZTQIYumNHXEuAy8quoqkpiWZR6r4I3?=
+ =?us-ascii?Q?iFriLgIKkbxanikp+ctnjWRm/LS/t7q+3Dte2+0fegZM0wot6SqkRWKJ5Qs?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDEwNSBTYWx0ZWRfX7fCDPFUKl7iL
- Qh2AbbCcnpjsrZpniR2jQGWYhEzMvCeiaE07OI7ZKj1yBJH7SQ10mroSxwuFE8xnvH75W+wBtnK
- xlICpUx+vJWJQ3CQiZvkdmT7nx3l1Y0CBzvZ4BAWSEYv6Aef6ZAeZT5D8461mrcbPLLSDvZf1j/
- FxfDoYhe3/WsdS7miL4rOPXxNQdLYO2N3KfLJeDHu6AmmeNFHb2R5MGhRvSkeQ1oyKefkX56Z2o
- Z1+2E+O8ZA++si885NdD2trUV5/P+BxIZcbLiR3aFcG6zI3kwnEcNYtE/2w2iavX6p+E/HQLEJd
- L0pOlFJsnIn56SVTp6giwcILPcEO4T0DyK08NI88gIQ5Z9CmpGt6I72CgMbAboJ/2JUgI+f8+Dj
- 6q3UqlqNZdMq6bx5XIN0bhWpVckiljFpoQ0wE/yAF9ASRRoC3j4tb9F4Qr6NaCOwMgcROJrJ
-X-Proofpoint-ORIG-GUID: pC6c3oE-G9k2PvqSURPRi3Suqehan00g
-X-Authority-Analysis: v=2.4 cv=Lp2Symdc c=1 sm=1 tr=0 ts=68878cb1 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=Wb1JkmetP80A:10 a=FOH2dFAWAAAA:8 a=1XWaLZrsAAAA:8 a=VnNF1IyMAAAA:8
- a=20KFwNOVAAAA:8 a=48xRky6O4oe52YPEhOMA:9
-X-Proofpoint-GUID: 7-y4vGAAcM9tvlDMK6GEyxhhmY3-pwzl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
- adultscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507280105
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2cd3da9-f771-422d-5422-08ddcde52d4c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2025 14:43:54.7049
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB7783
 
-V1 --> V2: Added Jiri Olsa's suggestion and introduced
-           member bpf_perf_event_opts::no_ioctl_enable.
+From: Tianyu Lan <ltykernel@gmail.com> Sent: Saturday, July 26, 2025 6:43 A=
+M
+>=20
+> When Secure AVIC is available, the AMD x2apic Secure
+> AVIC driver will be selected. In that case, have hv_apic_init()
+> return immediately without doing anything.
+>=20
+> Signed-off-by: Tianyu Lan <tiala@microsoft.com>
+> ---
+> Change since RFC V3:
+>        - Update Change log and fix coding style issue.
+> ---
+>  arch/x86/hyperv/hv_apic.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+> index bfde0a3498b9..e669053b637d 100644
+> --- a/arch/x86/hyperv/hv_apic.c
+> +++ b/arch/x86/hyperv/hv_apic.c
+> @@ -293,6 +293,9 @@ static void hv_send_ipi_self(int vector)
+>=20
+>  void __init hv_apic_init(void)
+>  {
+> +	if (cc_platform_has(CC_ATTR_SNP_SECURE_AVIC))
+> +		return;
+> +
+>  	if (ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) {
+>  		pr_info("Hyper-V: Using IPI hypercalls\n");
+>  		/*
+> --
+> 2.25.1
+>=20
 
-On linux-next
-commit b4c658d4d63d61 ("perf target: Remove uid from target")
-introduces a regression on s390. In fact the regression exists
-on all platforms when the event supports auxiliary data gathering.
-
-Command
-   # ./perf record -u 0 -aB --synth=no -- ./perf test -w thloop
-   [ perf record: Woken up 1 times to write data ]
-   [ perf record: Captured and wrote 0.011 MB perf.data ]
-   # ./perf report --stats | grep SAMPLE
-   #
-
-does not generate samples in the perf.data file.
-On x86 command
-  # sudo perf record -e intel_pt// -u 0 ls
-is broken too.
-
-Looking at the sequence of calls in 'perf record' reveals this
-behavior:
-1. The event 'cycles' is created and enabled:
-   record__open()
-   +-> evlist__apply_filters()
-       +-> perf_bpf_filter__prepare()
-	   +-> bpf_program.attach_perf_event()
-	       +-> bpf_program.attach_perf_event_opts()
-	           +-> __GI___ioctl(..., PERF_EVENT_IOC_ENABLE, ...)
-   The event 'cycles' is enabled and active now. However the event's
-   ring-buffer to store the samples generated by hardware is not
-   allocated yet. This happens now after enabling the event:
-
-2. The event's fd is mmap() to create the ring buffer:
-   record__open()
-   +-> record__mmap()
-       +-> record__mmap_evlist()
-	   +-> evlist__mmap_ex()
-	       +-> perf_evlist__mmap_ops()
-	           +-> mmap_per_cpu()
-	               +-> mmap_per_evsel()
-	                   +-> mmap__mmap()
-	                       +-> perf_mmap__mmap()
-	                           +-> mmap()
-
-   This allocates the ring-buffer for the event 'cycles'.  With mmap()
-   the kernel creates the ring buffer:
-
-   perf_mmap(): kernel function to create the event's ring
-   |            buffer to save the sampled data.
-   |
-   +-> ring_buffer_attach(): Allocates memory for ring buffer.
-       |        The PMU has auxiliary data setup function. The
-       |        has_aux(event) condition is true and the PMU's
-       |        stop() is called to stop sampling. It is not
-       |        restarted:
-       |        if (has_aux(event))
-       |                perf_event_stop(event, 0);
-       |
-       +-> cpumsf_pmu_stop():
-
-   Hardware sampling is stopped. No samples are generated and saved
-   anymore.
-
-3. After the event 'cycles' has been mapped, the event is enabled a
-   second time in:
-   __cmd_record()
-   +-> evlist__enable()
-       +-> __evlist__enable()
-	   +-> evsel__enable_cpu()
-	       +-> perf_evsel__enable_cpu()
-	           +-> perf_evsel__run_ioctl()
-	               +-> perf_evsel__ioctl()
-	                   +-> __GI___ioctl(., PERF_EVENT_IOC_ENABLE, .)
-   The second
-      ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
-   is just a NOP in this case. The first invocation in (1.) sets the
-   event::state to PERF_EVENT_STATE_ACTIVE. The kernel functions
-   perf_ioctl()
-   +-> _perf_ioctl()
-       +-> _perf_event_enable()
-           +-> __perf_event_enable() returns immediately because
-	              event::state is already set to
-		      PERF_EVENT_STATE_ACTIVE.
-
-This happens on s390, because the event 'cycles' offers the possibility
-to save auxilary data. The PMU call backs setup_aux() and
-free_aux() are defined. Without both call back functions,
-cpumsf_pmu_stop() is not invoked and sampling continues.
-
-To remedy this, remove the first invocation of
-   ioctl(..., PERF_EVENT_IOC_ENABLE, ...).
-in step (1.) Create the event in step (1.) and enable it in step (3.)
-after the ring buffer has been mapped.
-Make the change backward compatible and introduce a new structure
-member bpf_perf_event_opts::no_ioctl_enable. It defaults to false and only
-bpf_program__attach_perf_event() sets it to true. This way only
-perf tool invocation do not enable the sampling event.
-
-Output after:
- # ./perf record -aB --synth=no -u 0 -- ./perf test -w thloop 2
- [ perf record: Woken up 3 times to write data ]
- [ perf record: Captured and wrote 0.876 MB perf.data ]
- # ./perf  report --stats | grep SAMPLE
-              SAMPLE events:      16200  (99.5%)
-              SAMPLE events:      16200
- #
-
-The software event succeeded before and after the patch:
- # ./perf record -e cpu-clock -aB --synth=no -u 0 -- \
-					  ./perf test -w thloop 2
- [ perf record: Woken up 7 times to write data ]
- [ perf record: Captured and wrote 2.870 MB perf.data ]
- # ./perf  report --stats | grep SAMPLE
-              SAMPLE events:      53506  (99.8%)
-              SAMPLE events:      53506
- #
-
-Fixes: 63f2f5ee856ba ("libbpf: add ability to attach/detach BPF program to perf event")
-To: Andrii Nakryiko <andriin@fb.com>
-To: Ian Rogers <irogers@google.com>
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Jiri Olsa <jolsa@redhat.com>
----
- tools/lib/bpf/libbpf.c | 19 +++++++++++++------
- tools/lib/bpf/libbpf.h |  3 ++-
- 2 files changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index e067cb5776bd..8e0fb4391b54 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -10911,6 +10911,7 @@ struct bpf_link *bpf_program__attach_perf_event_opts(const struct bpf_program *p
- 	struct bpf_link_perf *link;
- 	int prog_fd, link_fd = -1, err;
- 	bool force_ioctl_attach;
-+	bool no_ioctl_enable;
- 
- 	if (!OPTS_VALID(opts, bpf_perf_event_opts))
- 		return libbpf_err_ptr(-EINVAL);
-@@ -10965,11 +10966,14 @@ struct bpf_link *bpf_program__attach_perf_event_opts(const struct bpf_program *p
- 		}
- 		link->link.fd = pfd;
- 	}
--	if (ioctl(pfd, PERF_EVENT_IOC_ENABLE, 0) < 0) {
--		err = -errno;
--		pr_warn("prog '%s': failed to enable perf_event FD %d: %s\n",
--			prog->name, pfd, errstr(err));
--		goto err_out;
-+	no_ioctl_enable = OPTS_GET(opts, no_ioctl_enable, false);
-+	if (!no_ioctl_enable) {
-+		if (ioctl(pfd, PERF_EVENT_IOC_ENABLE, 0) < 0) {
-+			err = -errno;
-+			pr_warn("prog '%s': failed to enable perf_event FD %d: %s\n",
-+				prog->name, pfd, errstr(err));
-+			goto err_out;
-+		}
- 	}
- 
- 	return &link->link;
-@@ -10982,7 +10986,10 @@ struct bpf_link *bpf_program__attach_perf_event_opts(const struct bpf_program *p
- 
- struct bpf_link *bpf_program__attach_perf_event(const struct bpf_program *prog, int pfd)
- {
--	return bpf_program__attach_perf_event_opts(prog, pfd, NULL);
-+	DECLARE_LIBBPF_OPTS(bpf_perf_event_opts, pe_opts);
-+
-+	pe_opts.no_ioctl_enable = true;
-+	return bpf_program__attach_perf_event_opts(prog, pfd, &pe_opts);
- }
- 
- /*
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index d1cf813a057b..4be2b7664031 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -499,9 +499,10 @@ struct bpf_perf_event_opts {
- 	__u64 bpf_cookie;
- 	/* don't use BPF link when attach BPF program */
- 	bool force_ioctl_attach;
-+	bool no_ioctl_enable;
- 	size_t :0;
- };
--#define bpf_perf_event_opts__last_field force_ioctl_attach
-+#define bpf_perf_event_opts__last_field no_ioctl_enable
- 
- LIBBPF_API struct bpf_link *
- bpf_program__attach_perf_event(const struct bpf_program *prog, int pfd);
--- 
-2.50.1
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
 
