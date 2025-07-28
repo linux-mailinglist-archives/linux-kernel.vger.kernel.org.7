@@ -1,134 +1,181 @@
-Return-Path: <linux-kernel+bounces-747852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9843AB13921
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:40:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220B2B13924
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D93A3ADFA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:39:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 001BD7A95AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA692472B0;
-	Mon, 28 Jul 2025 10:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64FA248F4B;
+	Mon, 28 Jul 2025 10:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="htMwnKWe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YM3FyWew"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFB83596E
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9B11B0F1E;
+	Mon, 28 Jul 2025 10:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753699212; cv=none; b=A0nVi0CUs2RRUOjx5maVQ7NichFnCNpkb7ashJtUAJxzv6bUZxsQEndBHOK0cdYG40O+q84Q8GMnMpIZUtEqw+8lK22NdEKw0CW4OycZTytsBBbb+YDPg1GKvP2nlgNwGtVI83B1JSO2KQq962zXyJWHi/dcffpYDTvCNjXPIxc=
+	t=1753699238; cv=none; b=oz3wYkfcaBHMobjUuQYpWhEs0MkJd/Hhf8Rrm+VFaJaSO/OyH6gxVNOQiQOf2Mooaa27ByIVzQv05ASrrMBXaKpBEV9HaXY+Ua7SSmLNOLo5ZIKqNIcm+PCpp0rskICITeJa1rJs9xCmsGTHtwMx6kxOkVAxYnqa+M64NFffs/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753699212; c=relaxed/simple;
-	bh=OmxutnyifGdMHXbLwlAlxjzG3ii/2q2pMTyzvPiwQbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mmL852NrOi4cXRcBqFTkYVpVpQKAEgPxecfksSBfij/qWNu6gubYaWlNko8EFExJdHX89hZcsAoLzZJ12v2oULktwurJyffwTjr5Jbd74RYeJnYPHLp5EFB2aSXz49pT+fvLyYOWMl/kqbw5Fr/Njr+KbiAbp1tjRbPcYY4YwbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=htMwnKWe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96430C4CEF6;
-	Mon, 28 Jul 2025 10:40:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753699212;
-	bh=OmxutnyifGdMHXbLwlAlxjzG3ii/2q2pMTyzvPiwQbg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=htMwnKWes6ArQq+pBUlyRZnfw6mlewaLbRpu1gakrVMYM63flsZrE+RM9O7KiF5rl
-	 /R+pYaeZdyAjRHYitwnxeieWfQGnsCV9n4x/7r7X0iGcp+D22+F0HZquN+5ORQucgY
-	 UU2O3ExcWnf1xyc/UD5qcVoqfCKYpehoIOzTen7k=
-Date: Mon, 28 Jul 2025 12:40:08 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmem: layouts: fix automatic module loading
-Message-ID: <2025072801-kudos-dodge-5b3d@gregkh>
-References: <20250728070726.292579-1-mwalle@kernel.org>
+	s=arc-20240116; t=1753699238; c=relaxed/simple;
+	bh=ZpdH2IUOs7nJEOce8Lb8z4FCmhrAYwR2CjUSeHLZDPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pvue08J3i4+nXJq8xT2QZ9mq65xnP74drW9U0A2dpzf7x7sGu7FbmutLjYd2lvqJa0DBnXaZuIbNYnMyWA81LOVSnurk3EEfsxzsIXvpsNIQ88EWZkStGaWo+hB2wg+tCQjSXxS7pCQ1qreUwvXwy4x82UF4Ji0WFIQEVUArhWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YM3FyWew; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56S4rNqq016874;
+	Mon, 28 Jul 2025 10:40:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	s8cS8tfgNQE29TK9RkGVU1PGvKe/8A7mwK9kLQpNRzw=; b=YM3FyWewkEQsJT6W
+	OuZEY2w/jHcxBkH8XHIRCbnq8UUWXaBbJudSdZanyXTitj7O0EBZWrpa2N10uKZX
+	3QhMX+RxLUxxuMSynS/7NJThJiiqB3lJ6OZ0/6TnfCALP7jfXXlD5g52s83ZMSqJ
+	drLNHNiUBr3G+J+xmyeL8Ku4iS4810gW6eNDNPlb1i86sg65afH3r3VCDtcH1KsU
+	X6FhFin2HC8Ecn6JIBHqdsDTjWLJL7/esPpkLK5DtLpyKSrY48jOaGyq6DBI6aUh
+	dAeuYUqe2hR/ukYOTlHfbrpc7uS0JTFKJGMvLADdT2hj1R00yy4d6Q5hiTrHKOF8
+	1bk2rw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4860ensfnq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 10:40:28 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56SAeSsx009435
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 10:40:28 GMT
+Received: from [10.239.133.66] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 28 Jul
+ 2025 03:40:25 -0700
+Message-ID: <819fb853-59f7-4296-8499-715c142487f5@quicinc.com>
+Date: Mon, 28 Jul 2025 18:40:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728070726.292579-1-mwalle@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
+ resctrl integration
+To: Christian Loehle <christian.loehle@arm.com>, <rafael@kernel.org>,
+        <lenb@kernel.org>, <pavel@kernel.org>, <tony.luck@intel.com>,
+        <reinette.chatre@intel.com>, <Dave.Martin@arm.com>,
+        <james.morse@arm.com>, <ulf.hansson@linaro.org>,
+        <amit.kucheria@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Zhongqiu Han
+	<quic_zhonhan@quicinc.com>
+References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
+ <2379088e-e5d0-4766-9968-756aad04f9a3@arm.com>
+Content-Language: en-US
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+In-Reply-To: <2379088e-e5d0-4766-9968-756aad04f9a3@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: u-Ysbr_cc1Z2GwNUlFEZC5q8GoPFtOjT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA3NyBTYWx0ZWRfXylhAN+Lv2Dj2
+ a2Xx0iKiJi4MOVXN8oR2saTSxsqI1Or8sRg0NMBNcBYquqbKcT6Iv+ASiiXwyBdYL7RDFS9pUBJ
+ BTnU6+AgJ+ocP5uOe403TkZM+5yixYN55bR3DT0HkmvlQj1q/ztCgXkr/No7nyZB00RaUz/Lcwd
+ hQB2rzzrBlOFO14D5rSJB1V2rQE8dfV6vRu9ooTVY5Q2oXv6F9BzpavSKorwmOxasfb+gxLCta1
+ mwTtAKYj0BH6QbwFJLGhEcOWpUa974aawxY2Bq+5+QsdGnPVvlgL5PIzBodV5IuPGSZsK1BRzhA
+ rgVq2PLEha84aIc8hxOPDd2T2OgZxSINe78NMx8kTbsFdDOBGK58uXdEQlioODbnAvHNcvNOwc8
+ RcXhN14NJOEpKKoB9WH+CS1r7FYS11MFgtQupR3WcLspb9q5pgBEYbIVY18gvfv3DlvdnQuA
+X-Authority-Analysis: v=2.4 cv=DIWP4zNb c=1 sm=1 tr=0 ts=6887539c cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=xf8G_7bVrPfR0LIrT9wA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: u-Ysbr_cc1Z2GwNUlFEZC5q8GoPFtOjT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 impostorscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507280077
 
-On Mon, Jul 28, 2025 at 09:07:26AM +0200, Michael Walle wrote:
-> To support loading of a layout module automatically the MODALIAS
-> variable in the uevent is needed. Add it.
+On 7/28/2025 6:09 PM, Christian Loehle wrote:
+> On 7/21/25 13:40, Zhongqiu Han wrote:
+>> Hi all,
+>>
+>> This patch series introduces support for CPU affinity-based latency
+>> constraints in the PM QoS framework. The motivation is to allow
+>> finer-grained power management by enabling latency QoS requests to target
+>> specific CPUs, rather than applying system-wide constraints.
+>>
+>> The current PM QoS framework supports global and per-device CPU latency
+>> constraints. However, in many real-world scenarios, such as IRQ affinity
+>> or CPU-bound kernel threads, only a subset of CPUs are
+>> performance-critical. Applying global constraints in such cases
+>> unnecessarily prevents other CPUs from entering deeper C-states, leading
+>> to increased power consumption.
+>>
+>> This series addresses that limitation by introducing a new interface that
+>> allows latency constraints to be applied to a CPU mask. This is
+>> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
+>> embedded systems where power efficiency is critical for example:
+>>
+>>                          driver A       rt kthread B      module C
+>>    CPU IDs (mask):         0-3              2-5              6-7
+>>    target latency(us):     20               30               100
+>>                            |                |                |
+>>                            v                v                v
+>>                            +---------------------------------+
+>>                            |        PM  QoS  Framework       |
+>>                            +---------------------------------+
+>>                            |                |                |
+>>                            v                v                v
+>>    CPU IDs (mask):        0-3            2-3,4-5            6-7
+>>    runtime latency(us):   20             20, 30             100
+>>
+>> The current implementation includes only cpu_affinity_latency_qos_add()
+>> and cpu_affinity_latency_qos_remove() interfaces. An update interface is
+>> planned for future submission, along with PM QoS optimizations in the UFS
+>> subsystem.
 > 
-> Fixes: fc29fd821d9a ("nvmem: core: Rework layouts to become regular devices")
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
-> I'm still not sure if the sysfs modalias file is required or not. It
-> seems to work without it. I could't find any documentation about it.
-> ---
->  drivers/nvmem/layouts.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/nvmem/layouts.c b/drivers/nvmem/layouts.c
-> index 65d39e19f6ec..f381ce1e84bd 100644
-> --- a/drivers/nvmem/layouts.c
-> +++ b/drivers/nvmem/layouts.c
-> @@ -45,11 +45,24 @@ static void nvmem_layout_bus_remove(struct device *dev)
->  	return drv->remove(layout);
->  }
->  
-> +static int nvmem_layout_bus_uevent(const struct device *dev,
-> +				   struct kobj_uevent_env *env)
-> +{
-> +	int ret;
-> +
-> +	ret = of_device_uevent_modalias(dev, env);
-> +	if (ret != ENODEV)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
->  static const struct bus_type nvmem_layout_bus_type = {
->  	.name		= "nvmem-layout",
->  	.match		= nvmem_layout_bus_match,
->  	.probe		= nvmem_layout_bus_probe,
->  	.remove		= nvmem_layout_bus_remove,
-> +	.uevent		= nvmem_layout_bus_uevent,
->  };
->  
->  int __nvmem_layout_driver_register(struct nvmem_layout_driver *drv,
-> -- 
-> 2.39.5
+> So what's needed for the UFS use-case additionally?
+> Would adding that here be too much?
 > 
 
-Hi,
+Hi Christian,
+Thanks for your review and discussion~
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Currently my plan is only to move forward with the current patch series,
+which includes only the below interfaces:
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+cpu_affinity_latency_qos_add()
+cpu_affinity_latency_qos_remove()
+cpu_affinity_latency_qos_active()
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+For most use-cases, seems these three interfaces already sufficient.
 
-thanks,
 
-greg k-h's patch email bot
+The reason I mentioned UFS is to explain why the update
+interface cpu_affinity_latency_qos_update()
+
+is not included at this stage. The UFS use-case is planned to
+use the cpu_affinity_latency_qos_update() interface in the future, which
+is similar to the global CPU PM QoS interface
+cpu_latency_qos_update_request().
+
+
+
+-- 
+Thx and BRs,
+Zhongqiu Han
 
