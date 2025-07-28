@@ -1,123 +1,185 @@
-Return-Path: <linux-kernel+bounces-747743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98710B1378A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:29:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF73B1378C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11BEF7A206F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2133BA222
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1722222A1;
-	Mon, 28 Jul 2025 09:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CAD235BE1;
+	Mon, 28 Jul 2025 09:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oDLh3FgZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XhU+nFMx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lxPix4xk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XhU+nFMx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lxPix4xk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DC31DF73C;
-	Mon, 28 Jul 2025 09:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E712B22F74B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753694934; cv=none; b=edTcOiT5P5xUmzty9tWiNE3WmBz3B2EuvCbnjP2WY99oYX3kovyv3zzZp2SV3z8DM1ehLKJ9oACbsBLFnql3x+lauDQO1LnAOCkw7jowBPFIR5CIl4VTrhMU9OcXaIlwbvkfAUklwbfeSSvg6HrC7Rv8/WztikxvwOBIXVHVmlY=
+	t=1753694944; cv=none; b=LZ8Ns1W57vWh+CvBSr9rVdLp12hAH1Jb+UuZ4KVMsrAUuMbYO6jbXic15YN/vE3GFU98Vkq0AmByRVqoruwz18I3NJfvrBj5wKc6PsUB4+9c2vsx4d3D3mJiCKjkUoinTAzIunpxEve+wMPqZqlx9n0f2Kgcmlna/IBzPc6JeBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753694934; c=relaxed/simple;
-	bh=pD/CntcXIRk9jjzKrGwbeKx5t7fkyTPoChELwMFLoK0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FTGxMyBUB3HvS/0bDIio9ZQVMJ9boHuBOWt5nA0SoJth4fDckguTdQd9liTNZ5mhDQL1e5XHDXdlnC/JldXXL2sWqivs0GfXHGQZQQT14QJF8KmPikaRiYdttCidG+rhyN7pM+GB8eOrFaWPWin//6N9q/lWfYfNZ6detpW0cEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oDLh3FgZ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753694933; x=1785230933;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=pD/CntcXIRk9jjzKrGwbeKx5t7fkyTPoChELwMFLoK0=;
-  b=oDLh3FgZPb2le7TgtZF9wP5B5Lgmc/GqFFKnp5FuPjDiuDZFK79Voop8
-   K+Iqa1+ZefqoLV7rGiQ7n2V5DdWNYVnoj1i0QVaquq9US2o2a4obbrpjt
-   T8G9RrVRfq5n2hc2DByxGnZR+INN0QWCEMyHxdLWyvPteXcj01gMRglHU
-   NJv7iLnU0UGlxg4DYisrCp+hMCLvFcrVkU5trRWqDiGSmhudfZUCAhRSR
-   Z3yA1bO6qVX4+9ZxVjezgXJfBLWzOtMhLHsMg3hcxNMtxcrWFqteXoXdP
-   f0HXCWXecgY/1ZyJR+EI65pAeO5pNlXOXl3oO6Muu6jvSDnWefmhb5vkm
-   A==;
-X-CSE-ConnectionGUID: W9WKtHSBSuqTtE91dee3Fw==
-X-CSE-MsgGUID: 9zylrluRTB+M4RTXuOtxUQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="66640936"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="66640936"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 02:28:52 -0700
-X-CSE-ConnectionGUID: rOf7qErTT26cfmmC4yR9mA==
-X-CSE-MsgGUID: OjycoPtBShWDCsst43NHGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="161955044"
-Received: from vpanait-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.225])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 02:28:49 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org,
- workflows@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 3/2] docs: changes: better document Python needs
-In-Reply-To: <20250724194306.27b98194@foz.lan>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1752307866.git.mchehab+huawei@kernel.org>
- <58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
- <20250712163155.GA22640@pendragon.ideasonboard.com>
- <20250713002517.7f52b0e9@foz.lan> <875xfhabv0.fsf@trenco.lwn.net>
- <20250724194306.27b98194@foz.lan>
-Date: Mon, 28 Jul 2025 12:28:45 +0300
-Message-ID: <83d12d5293e23c622ae390204fed8fd4453014b1@intel.com>
+	s=arc-20240116; t=1753694944; c=relaxed/simple;
+	bh=ipGjN5GwQxN2Uosq4k/gXtAfMKQ7uSaD2P1eQ+woUII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ee0g0FNBR+Pgya5JG0llEyYyAdEk/2vAu/b2umGkzlVOOkblXPw5XPEw7m5F8z6xnJjlpBuPGgsWyK6yujqR4SJs9dGeNK02+sofOIqPLde2XFZMlLhTxzUGFxUbxWSQBvTy+gJnw16GZ5TMSWzoFKLb2DITmPl1J5r7uJzDYy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XhU+nFMx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lxPix4xk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XhU+nFMx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lxPix4xk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 255BA2117C;
+	Mon, 28 Jul 2025 09:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753694940; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o6bWuZUG4ep5oT8RNr8NTk+O09dTLi9Vqdh56x9MzXg=;
+	b=XhU+nFMxz+Nx5o866XvzIerDc+FFcsW5Ab7ntRMyNeaqLvP6HhUUsRt93mufCgQNMivmhK
+	K0jz2OgP5ocBWvHemfLdA49DGR7jqHDNCL7PxBBWbZqMWEKEACQeiIUlM36H33Y228DYUN
+	VcMJen94WGuQENwUjDF/GYl20+kJne4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753694940;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o6bWuZUG4ep5oT8RNr8NTk+O09dTLi9Vqdh56x9MzXg=;
+	b=lxPix4xkk17VaNo/qF99WSJfzaUtnMvsItufqIdyud5c3bNTMmFg4qW1epSFEic1BjnfUM
+	AanmdWNTuXsW/ABw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753694940; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o6bWuZUG4ep5oT8RNr8NTk+O09dTLi9Vqdh56x9MzXg=;
+	b=XhU+nFMxz+Nx5o866XvzIerDc+FFcsW5Ab7ntRMyNeaqLvP6HhUUsRt93mufCgQNMivmhK
+	K0jz2OgP5ocBWvHemfLdA49DGR7jqHDNCL7PxBBWbZqMWEKEACQeiIUlM36H33Y228DYUN
+	VcMJen94WGuQENwUjDF/GYl20+kJne4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753694940;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o6bWuZUG4ep5oT8RNr8NTk+O09dTLi9Vqdh56x9MzXg=;
+	b=lxPix4xkk17VaNo/qF99WSJfzaUtnMvsItufqIdyud5c3bNTMmFg4qW1epSFEic1BjnfUM
+	AanmdWNTuXsW/ABw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 193411368A;
+	Mon, 28 Jul 2025 09:29:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eboiBtxCh2gMLgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 28 Jul 2025 09:29:00 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CE641A09BE; Mon, 28 Jul 2025 11:28:59 +0200 (CEST)
+Date: Mon, 28 Jul 2025 11:28:59 +0200
+From: Jan Kara <jack@suse.cz>
+To: Yu Kuai <yukuai@kernel.org>
+Cc: jack@suse.cz, dlemoal@kernel.org, axboe@kernel.dk, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, yukuai3@huawei.com, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+Subject: Re: [PATCH v2] blk-ioc: don't hold queue_lock for ioc_lookup_icq()
+Message-ID: <64sbgvovtubkm2zelenee6pjkdciqlgqmri3bmycce6y265sy4@uptdqvz7g2lk>
+References: <20250725180334.40187-1-yukuai@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725180334.40187-1-yukuai@kernel.org>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	URIBL_BLOCKED(0.00)[suse.com:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On Thu, 24 Jul 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> Em Thu, 24 Jul 2025 08:42:59 -0600
-> Jonathan Corbet <corbet@lwn.net> escreveu:
->
->> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
->> 
->> > Maybe I can place instead CONFIG_DRM_I915_WERROR.
->> 
->> I've held off on this series on the expectation that a new version would
->> come.  I guess, at this point, it will be a post-merge-window thing?
->
-> Feel free to postpone. I have already a new version of it here somewhere on
-> my branches, but I had to take some days off. So, I ended not sending you
-> the (probably) final version.
->
-> I intend to send what I have here during the merge window for you to
-> review and apply post-merge-window.
+On Sat 26-07-25 02:03:34, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Currently issue io can grab queue_lock three times from bfq_bio_merge(),
+> bfq_limit_depth() and bfq_prepare_request(), the queue_lock is not
+> necessary if icq is already created because both queue and ioc can't be
+> freed before io issuing is done, hence remove the unnecessary queue_lock
+> and use rcu to protect radix tree lookup.
+> 
+> Noted this is also a prep patch to support request batch dispatching[1].
+> 
+> [1] https://lore.kernel.org/all/20250722072431.610354-1-yukuai1@huaweicloud.com/
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-I think the main questions here are 1) how to handle optional build tool
-dependencies, and 2) whether Python is an optional or required
-dependency.
+Looks good! Just one small comment below. With that fixed feel free to add:
 
-It might be nice to be able to have an actual Kconfig and dependency for
-optional tools. "depends on TOOL_PYTHON" or something. Enable the
-option, and you should have Python.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-This in turn raises the question for allyesconfig. It's cumbersome
-(though not impossible) to add config options that you actually have to
-enable manually.
+> diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+> index ce82770c72ab..ea9c975aaef7 100644
+> --- a/block/blk-ioc.c
+> +++ b/block/blk-ioc.c
+> @@ -308,19 +308,18 @@ int __copy_io(unsigned long clone_flags, struct task_struct *tsk)
+>  
+>  #ifdef CONFIG_BLK_ICQ
+>  /**
+> - * ioc_lookup_icq - lookup io_cq from ioc
+> + * ioc_lookup_icq - lookup io_cq from ioc in io issue path
+>   * @q: the associated request_queue
+>   *
+>   * Look up io_cq associated with @ioc - @q pair from @ioc.  Must be called
+> - * with @q->queue_lock held.
+> + * from io issue path, either return NULL if current issue io to @q for the
+> + * first time, or return a valid icq.
+>   */
+>  struct io_cq *ioc_lookup_icq(struct request_queue *q)
+>  {
+>  	struct io_context *ioc = current->io_context;
+>  	struct io_cq *icq;
+>  
+> -	lockdep_assert_held(&q->queue_lock);
+> -
+>  	/*
+>  	 * icq's are indexed from @ioc using radix tree and hint pointer,
+>  	 * both of which are protected with RCU.  All removals are done
 
-The header test stuff really isn't required to actually build the kernel
-or drm, however DRM_MSM does depend on Python for building the driver.
+In this comment there's still reference to holding 'q lock'. I think you
+should replace that with justification why when called from IO issue path
+we are guaranteed found pointer is safe to use. 
 
-
-BR,
-Jani.
-
+								Honza
 -- 
-Jani Nikula, Intel
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
