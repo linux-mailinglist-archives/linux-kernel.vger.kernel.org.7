@@ -1,109 +1,134 @@
-Return-Path: <linux-kernel+bounces-747509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3F1B134A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:07:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E71B134A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE6FB177F0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:07:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8023B17647C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035AF220F3F;
-	Mon, 28 Jul 2025 06:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B82220F2A;
+	Mon, 28 Jul 2025 06:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdWF3yP+"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eDcwia7B"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2624C21CC44;
-	Mon, 28 Jul 2025 06:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9541C36;
+	Mon, 28 Jul 2025 06:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753682813; cv=none; b=DbnxLhduQwmnAz1Lcq5jeqBt0w7jNJ4HPULTsAYc1bGlX4rvW7E6bJdHZ8a5UnP4tG1Y+MXTrQ9ixvj2iyrgA1iHpJDIrvanu/dqd7uMWiuII+C09fKWAuQjqM8kmi8s+mQ7lOmrdsT//Trra52hvXM4Lcacvb/DV4ae9mUcSwo=
+	t=1753682877; cv=none; b=aRVdvf/N7rBBygSjegj+5RqG18MrHRd8ycs2Ungiou6QxsTaXK8XkHUj2zzRfYnZM3berh3j4O/3NeGOqmdYzFLq1F69YsqbLH+QsYZfCPOlNGBwFMSfgP33AsKpSZhfQ7YSvTqdcLxyThA6scaH3s2en81jqFmaagxB0F1f9WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753682813; c=relaxed/simple;
-	bh=6BuxxmxrMXuD+syryXFAu4e7ozMwiP9HtTVrGgSqrTA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ILKqKQBSmSwsLXLSB0pfNWjjyDgjR0K/nOPT3r0q09l3s5KVABWBRtXmxsg8RQnWN6y671gs2r9kLl3Dm9CJKj3uZUpJECIwyK2LYZrU3N4P3Ik218KttfbIrlbf2/Q0hXB4hNeGUd1jgp3x1o3p0YULtw+1/mxwvdqm5MOTOGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DdWF3yP+; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1753682877; c=relaxed/simple;
+	bh=Ps2TqZoQRyQLblkSoFX3ufLH04yJchIw5x3kr15RME0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jIi+/BigPrXV4hoVshkVC8+ToYIfBr6k3LCD+nXBmy/wvhkOM1v4W7eCP4uiOnJk5BJnT5aRxRCIfFOCnciPgZSt5peKQj3MC/zr+g/z1IVnvPYWV25AwGfNxl3hxxRkgWpO/tiXr/R9k9hM4GEoKV9zkEbrhjtHuGeM15AwK08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eDcwia7B; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23ffd0ec2afso302355ad.2;
-        Sun, 27 Jul 2025 23:06:51 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-455ecacfc32so16874905e9.3;
+        Sun, 27 Jul 2025 23:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753682811; x=1754287611; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6BuxxmxrMXuD+syryXFAu4e7ozMwiP9HtTVrGgSqrTA=;
-        b=DdWF3yP+AfyehxYZXxodrNtHs8JIwt9LlwqVzjP7rbQ9wikiC7pGY+MQNHCaDIv6Ny
-         RlDIQBRPJO6f3Fsd6ho4Jk7AXEogJdypZIJEW8ATncoKqFtg88NDBeJQC6kC+k1/TS6J
-         6ynUwVbr2rkC/QWhNQfQ50XEC0ps/z+qSABCK4wi1e6taOzv+MIgbQuz55IsZwm7O1nd
-         m7CHU913jmKhitDch0djhoQ2daY3TAI3l36LAieCD44Uca7MC9cz3aowJRJTEErbvq70
-         mSMU4QYjnxQ3pcLnoQTxSnxh25bJWHT04Pb415uq28fRsapRrqfNJX6IEsJUu/KTFXlC
-         lbqw==
+        d=gmail.com; s=20230601; t=1753682874; x=1754287674; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lQRkEBKSX0KDbt2DjDVCCEOOHuJVKF3PYKVmG7o05vY=;
+        b=eDcwia7Bx16gxUrgb6Pvzu/2jyV4Z984XdM0w0BcwDcpcGEvSNEKjX3UwW8JlTX9Aw
+         QJ2/ikc5WaXdgrwbmuBZc4w7HPIybUnqoMZuHOd0mI64B/q20QYei1fzLT5HSmvJcXo9
+         cBYQTrAp8SzJnCM4JIMysPYIVPQ68RftedWF2hVYkXfpv/qj42Fw0vXJBl7pcmhAEXVf
+         556zEO8inDc2ndEGDtmiH5OvVNeLWuaMnuwg8BAM8B1EjH0PllsvBAO7YaMXNJTJhUyk
+         ryLVQ6FP5pbsl0yZKoa9mTJuVA+eNR5ydFlXYJ8zqrUI92ckEwBFHbv/AVKT5HeqZ/NG
+         8HSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753682811; x=1754287611;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6BuxxmxrMXuD+syryXFAu4e7ozMwiP9HtTVrGgSqrTA=;
-        b=C5h2UmGg3E1c0y6oIfpkS73R979LoxPwbI5zeB2OpwYhs3pbTYQhIyocLBKPuSVpS+
-         HRqIkgjfzrTkFAVniDNLBnYVKt0NpBFnOPviPNZihS6h6YN7k4Rd7XBw/mG1YWhj5wWU
-         /B4vnW2RyQiH0BrdyjaPzQm+i7Sn1328ZL40sFv55oep3CZzwIyQO8mJGez13+iAc6ww
-         TnaDERcvC7marpEXt/jo2zQ1+/qftw3q9+8BcNB5WJi9ZCVEEg1E0N33Kdw0bhKaDT+Y
-         fFi8rSoZuZoXCiXYQYQcIUlDdvPDk04iyglr+wpg00/NhuHNTFg+v6cxQx3mGe9iMehG
-         eTdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdwNrwKNYjYd0A3LKXkPfNzUUaA6lfPWJ9/BhYIFnbgfQVlCvJQ0TXQExRrNAXHaTVMc2IEzwS99nw/D5j@vger.kernel.org, AJvYcCXWGNpZkezQf5FCtPOnyLblBKxHCFd4qKz+zWdXRmBdTw+fTLHSHHvQZwsDA+EMnqrBjoJKEI8CjglokNM=@vger.kernel.org, AJvYcCXeq3inagD6l2wozqjU+Td6YRWs0lO6ir1cbuPQlIx/n249yNS4qiUYTr3vmzPvU973FCF3c1X60xJ3J79NfJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi7K1ZqhjMtRFT1whRjp9hrfRYRy84HiGIKkyRq1ap2YSBue7m
-	Wbs5gjTXtbzMNCWPsW3JcMUinjejGLAEalrN/wK0i1nb2NOZeEDQE1sTNNIXNr4m2JXB0joLFI4
-	ATppxPJgs3tfj6fda+uDGEXE+if/LqDE=
-X-Gm-Gg: ASbGncvkIu8z8CVAVKQzeNHjQAUlTAASO1mZG8TifAkQtxNiEaUnDUlazuqJEJ9Tie3
-	w5kIYvmusNwZDLOIrT3m47qi2gTFX4Dm6Z48vd8h1mA2JBOSRyczrgWTZ5RHIc4EGoxdM0QlvR6
-	Lqo1ab/UmyyYBzFOygmDmay041VvucL+dvORoMSpXvmptzGWsrhTfB+l0otAV37u4RS4K6Sye6A
-	FS3x8b8
-X-Google-Smtp-Source: AGHT+IHdhVmKZwChbSTO0ZEh7G/lQCCa1ZWLqXuMsDUl5T7xo9Vns0QP4cG8ipR9HWfcbqvofCO6RnASD0hnrFNm+xE=
-X-Received: by 2002:a17:902:e751:b0:240:cb:97bd with SMTP id
- d9443c01a7336-24000cb9c7amr23866415ad.7.1753682811331; Sun, 27 Jul 2025
- 23:06:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753682874; x=1754287674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lQRkEBKSX0KDbt2DjDVCCEOOHuJVKF3PYKVmG7o05vY=;
+        b=dimhv7np0B0xAQ5ycwMLKFoxq9o7fuW0hPFDoKzKvEL9wvJLLjJuHSPvhlQDUjLrbO
+         bYsX5Y2YyO8XlAPCZ4VPLCPsd0bbCTVr9axyOyTn2I8gjiRJ8rGkqGKkkSZdbbQ6I3qH
+         z4h2rRTpPXVDgtC6/o/4+KOrJyN+Irg0KQHnz4Gphe8WWvYIgUBT74CwYj0WQUc+lpbB
+         OOz7oL7EVeZBwNO+ayGz26SFX0Ohheri89rCs5Mc0EoefIdzWLgIVdAMkkMntQkALdb+
+         WckiMZYLbohY4xldmyxV9kLcYjEIbeSt4D6TGnHjF3leLb7mNlGi+PZFyIBFhxS0/nx9
+         4WRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvSjoAbM23a/LoaJoo9VP3jp1/qfUpnb8EmnelFxk1ARCj/4f4x/3qYik39yDXJtoiE9IQ3Y6gkaIluXg=@vger.kernel.org, AJvYcCX9Up0+AxdqHnZVTujU39KN49Er/IqBBW+IFzIGUno2gIBVfKZpaxgHXSu1OKxdhTLlFVEbw3NyiPUEcRkf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKamNKgzy90x2KBVP1ivfEP8aNN47EjXLc5tduQSJxL9p0r1Ob
+	oM7oupwJiNV2w9BMIXBCHQgeUhxWaGoo55pcFWfdsjx/P1so7/vBH+dm
+X-Gm-Gg: ASbGncscRfU8FxWMgBMnJciDHEgatFOevFjUq4lVf7qdBvgT70ENNC8yAy73/Ca8ALl
+	3N+vzSxd/UF7kN5CIopPg6p33plFZGJJmzCU1D6aT/A1Si/WvZce59E4fzjKh43L3H94NH4+n+s
+	D1pvPDXDL2ju2tTQnmhAdpOEH6son348q0NHfwOAfixD71r+R7Oy+xnlGY9ASFV09JXBoBWEeY1
+	f1V68lrRnASUhf4tsGOlKH1LvlgevN15r74rem28TpciNArWa55les/JfX/DQOQVXGjZC9Yr2uQ
+	hORnAHbPqWid/Vqtvar1Z7cuffHmgB0gQceIPx7y55WIhzGtnTCfQd+jWjTAMlfYPxFzdSD8vHi
+	KH6O/fx+wwK/26wW8tUodnEBydYnW7lXGnA==
+X-Google-Smtp-Source: AGHT+IF3AC+lhboN+bDd3GTIQsZ/ijxMvRWFI70HfU8zkixbqEtidrdFYobTIDcSbPLWc1dA/skPGg==
+X-Received: by 2002:a05:600c:1e2a:b0:456:2832:f98d with SMTP id 5b1f17b1804b1-45876556361mr80069655e9.27.1753682873906;
+        Sun, 27 Jul 2025 23:07:53 -0700 (PDT)
+Received: from ws-linux01 ([2a02:2f0e:ca0d:f700:1210:b727:adc8:716])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587abe6ba0sm86195215e9.9.2025.07.27.23.07.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 23:07:53 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: clabbe.montjoie@gmail.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	linux-crypto@vger.kernel.org
+Cc: wens@csie.org,
+	jernej.skrabec@gmail.com,
+	samuel@sholland.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Subject: [PATCH 0/9] sun8i-ce: small cleanups/refactoring
+Date: Mon, 28 Jul 2025 09:06:52 +0300
+Message-ID: <20250728060701.1787607-1-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727092317.2930617-1-ojeda@kernel.org>
-In-Reply-To: <20250727092317.2930617-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 28 Jul 2025 08:06:38 +0200
-X-Gm-Features: Ac12FXx2eH1NIUNOlaMWd3xqdYk4d5QjO6acLe_IbBpmXiVXK0DqqgtW8QrHL5k
-Message-ID: <CANiq72kYpHzp8ydtkfdb7FN+YjfFNjpSqtgC0Hm1tSy05p4n4A@mail.gmail.com>
-Subject: Re: [PATCH] rust: workaround `rustdoc` target modifiers bug
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Guillaume Gomez <guillaume1.gomez@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 27, 2025 at 11:23=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wr=
-ote:
->
-> The issue has been reported upstream [1] and a fix has been submitted
-> [2], including a test similar to the kernel case.
+This series includes only the refactoring commits from [1]. The batching
+related changes were dropped since they are no longer relevant (batching
+support in crypto_engine was retired in [2]).
 
-This is now fixed upstream (thanks Guillaume for the quick review), so
-it will be fixed in Rust 1.90.0 (expected 2025-09-18).
+This series includes various small cleanups and refactoring:
+- move request-specific skcipher and hash data to request context,
+  eliminating the need to allocate extra memory in the digest path
+- make the hashing code more clear and modular
+- reduce a bit of boilerplate/duplicated code
 
-Cheers,
-Miguel
+[1] https://lore.kernel.org/linux-crypto/20250626095813.83963-1-ovidiu.panait.oss@gmail.com/
+[2] c470ffa6f486 ("crypto: engine - remove request batching support")
+
+Ovidiu Panait (9):
+  crypto: sun8i-ce - remove channel timeout field
+  crypto: sun8i-ce - remove boilerplate in sun8i_ce_hash_digest()
+  crypto: sun8i-ce - remove unnecessary __maybe_unused annotations
+  crypto: sun8i-ce - add a new function for dumping task descriptors
+  crypto: sun8i-ce - move bounce_iv and backup_iv to request context
+  crypto: sun8i-ce - fold sun8i_ce_cipher_run() into
+    sun8i_ce_cipher_do_one()
+  crypto: sun8i-ce - pass task descriptor to cipher prepare/unprepare
+  crypto: sun8i-ce - save hash buffers and dma info to request context
+  crytpo: sun8i-ce - factor out prepare/unprepare from
+    sun8i_ce_hash_run()
+
+ .../allwinner/sun8i-ce/sun8i-ce-cipher.c      |  85 +++++-------
+ .../crypto/allwinner/sun8i-ce/sun8i-ce-core.c |  37 ++----
+ .../crypto/allwinner/sun8i-ce/sun8i-ce-hash.c | 124 ++++++++++--------
+ .../crypto/allwinner/sun8i-ce/sun8i-ce-prng.c |   1 -
+ .../crypto/allwinner/sun8i-ce/sun8i-ce-trng.c |   1 -
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h  |  27 +++-
+ 6 files changed, 137 insertions(+), 138 deletions(-)
+
+-- 
+2.50.0
+
 
