@@ -1,158 +1,123 @@
-Return-Path: <linux-kernel+bounces-747742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D86DB13789
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:29:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98710B1378A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20B2B1899937
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:29:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11BEF7A206F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86D62367B5;
-	Mon, 28 Jul 2025 09:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1722222A1;
+	Mon, 28 Jul 2025 09:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tgc4xQSj"
-Received: from out199-6.us.a.mail.aliyun.com (out199-6.us.a.mail.aliyun.com [47.90.199.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oDLh3FgZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA46224B04;
-	Mon, 28 Jul 2025 09:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DC31DF73C;
+	Mon, 28 Jul 2025 09:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753694934; cv=none; b=j70nkJXSeTroPjQzncUaUdup0j0KAV8ak7qGBhfKZZh27icwippmn2iXq24Aow+W8AODaxvVqWV02VatOusVikoP8Vqp0A8W8KdKPxw4LMXeswarNJ56PFbi9ETkxbWcx3T0zw6LZC5aOlw1hMQgGX0owxnOlRQ/CyByf/G97/c=
+	t=1753694934; cv=none; b=edTcOiT5P5xUmzty9tWiNE3WmBz3B2EuvCbnjP2WY99oYX3kovyv3zzZp2SV3z8DM1ehLKJ9oACbsBLFnql3x+lauDQO1LnAOCkw7jowBPFIR5CIl4VTrhMU9OcXaIlwbvkfAUklwbfeSSvg6HrC7Rv8/WztikxvwOBIXVHVmlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753694934; c=relaxed/simple;
-	bh=wEOK1xAURgW6Ytv2Br14Bpge7BO2wUGPNJlIORD5TVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=at0b4WNJHWv72Dalb8jIt29XASu8pfFf8INesD0uqGZKWqRgj3Cfp7F5HFXLQBvWSGdrkT2Go2Uolbpa3RcWOAQzblSAxLZP9mvWrghk74qjl5qZm24MqSSnS0I0gNzEibMYFfigv2RV+O6rQPflRofn8IImN3r0TgiWvnWAbPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tgc4xQSj; arc=none smtp.client-ip=47.90.199.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753694911; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=M8FVPMMMRjlGh3vDVwp+zm4wCWL4AZ9kqfeszC7kZ74=;
-	b=tgc4xQSjpTLJsMSkkKgzQ4XuJTILsbPkfdrkbQizAXq5wZ8nbAGIHZtHZm8ypo1uPOYZS7WigHnT8StrOm4kGIoTOpgd3xgjLEosjUxf3FtskYQLH8sjZR4c0S0+xEvTIWvE6L4bONNakELDT6D9CZnXdvtNFB3L0YR2gQX6OUg=
-Received: from 30.246.181.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WkGaor9_1753694908 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 28 Jul 2025 17:28:29 +0800
-Message-ID: <61ec82be-a081-4b32-aa4a-a3ad6e564d23@linux.alibaba.com>
-Date: Mon, 28 Jul 2025 17:28:28 +0800
+	bh=pD/CntcXIRk9jjzKrGwbeKx5t7fkyTPoChELwMFLoK0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FTGxMyBUB3HvS/0bDIio9ZQVMJ9boHuBOWt5nA0SoJth4fDckguTdQd9liTNZ5mhDQL1e5XHDXdlnC/JldXXL2sWqivs0GfXHGQZQQT14QJF8KmPikaRiYdttCidG+rhyN7pM+GB8eOrFaWPWin//6N9q/lWfYfNZ6detpW0cEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oDLh3FgZ; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753694933; x=1785230933;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=pD/CntcXIRk9jjzKrGwbeKx5t7fkyTPoChELwMFLoK0=;
+  b=oDLh3FgZPb2le7TgtZF9wP5B5Lgmc/GqFFKnp5FuPjDiuDZFK79Voop8
+   K+Iqa1+ZefqoLV7rGiQ7n2V5DdWNYVnoj1i0QVaquq9US2o2a4obbrpjt
+   T8G9RrVRfq5n2hc2DByxGnZR+INN0QWCEMyHxdLWyvPteXcj01gMRglHU
+   NJv7iLnU0UGlxg4DYisrCp+hMCLvFcrVkU5trRWqDiGSmhudfZUCAhRSR
+   Z3yA1bO6qVX4+9ZxVjezgXJfBLWzOtMhLHsMg3hcxNMtxcrWFqteXoXdP
+   f0HXCWXecgY/1ZyJR+EI65pAeO5pNlXOXl3oO6Muu6jvSDnWefmhb5vkm
+   A==;
+X-CSE-ConnectionGUID: W9WKtHSBSuqTtE91dee3Fw==
+X-CSE-MsgGUID: 9zylrluRTB+M4RTXuOtxUQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="66640936"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="66640936"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 02:28:52 -0700
+X-CSE-ConnectionGUID: rOf7qErTT26cfmmC4yR9mA==
+X-CSE-MsgGUID: OjycoPtBShWDCsst43NHGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="161955044"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.225])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 02:28:49 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ workflows@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v2 3/2] docs: changes: better document Python needs
+In-Reply-To: <20250724194306.27b98194@foz.lan>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1752307866.git.mchehab+huawei@kernel.org>
+ <58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
+ <20250712163155.GA22640@pendragon.ideasonboard.com>
+ <20250713002517.7f52b0e9@foz.lan> <875xfhabv0.fsf@trenco.lwn.net>
+ <20250724194306.27b98194@foz.lan>
+Date: Mon, 28 Jul 2025 12:28:45 +0300
+Message-ID: <83d12d5293e23c622ae390204fed8fd4453014b1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/2] PCI: trace: Add a RAS tracepoint to monitor link
- speed changes
-To: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: rostedt@goodmis.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- mattc@purestorage.com, Jonathan.Cameron@huawei.com, bhelgaas@google.com,
- tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org, tianruidong@linux.alibaba.com
-References: <20250723033108.61587-3-xueshuai@linux.alibaba.com>
- <20250725210921.GA3131414@bhelgaas> <aISJHjFrHkxVNFzJ@wunner.de>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <aISJHjFrHkxVNFzJ@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+
+On Thu, 24 Jul 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> Em Thu, 24 Jul 2025 08:42:59 -0600
+> Jonathan Corbet <corbet@lwn.net> escreveu:
+>
+>> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+>> 
+>> > Maybe I can place instead CONFIG_DRM_I915_WERROR.
+>> 
+>> I've held off on this series on the expectation that a new version would
+>> come.  I guess, at this point, it will be a post-merge-window thing?
+>
+> Feel free to postpone. I have already a new version of it here somewhere on
+> my branches, but I had to take some days off. So, I ended not sending you
+> the (probably) final version.
+>
+> I intend to send what I have here during the merge window for you to
+> review and apply post-merge-window.
+
+I think the main questions here are 1) how to handle optional build tool
+dependencies, and 2) whether Python is an optional or required
+dependency.
+
+It might be nice to be able to have an actual Kconfig and dependency for
+optional tools. "depends on TOOL_PYTHON" or something. Enable the
+option, and you should have Python.
+
+This in turn raises the question for allyesconfig. It's cumbersome
+(though not impossible) to add config options that you actually have to
+enable manually.
+
+The header test stuff really isn't required to actually build the kernel
+or drm, however DRM_MSM does depend on Python for building the driver.
 
 
+BR,
+Jani.
 
-在 2025/7/26 15:51, Lukas Wunner 写道:
-> On Fri, Jul 25, 2025 at 04:09:21PM -0500, Bjorn Helgaas wrote:
->>> @@ -319,8 +319,7 @@ int pciehp_check_link_status(struct controller *ctrl)
->>>   		return -1;
->>>   	}
->>>   
->>> -	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA2, &linksta2);
->>> -	__pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status, linksta2);
->>> +	pcie_update_link_speed(ctrl->pcie->port->subordinate, PCIE_HOTPLUG);
->>
->> It kind of bugs me that the hot-add flow reads LNKSTA three times and
->> generates both pci_hp_event LINK_UP and link_event tracepoints:
->>
->>    pciehp_handle_presence_or_link_change
->>      link_active = pciehp_check_link_active()
->>        pcie_capability_read_word(PCI_EXP_LNKSTA)
->>      if (link_active)
->>        ctrl_info(ctrl, "Slot(%s): Link Up\n")
-> 
-> This LNKSTA read decides whether to bring up the slot.
-> It can't be eliminated.
-> 
->>        trace_pci_hp_event(PCI_HOTPLUG_LINK_UP)
->>        pciehp_enable_slot
->>          __pciehp_enable_slot
->>            board_added
->>              pciehp_check_link_status
->>                pcie_capability_read_word(PCI_EXP_LNKSTA)
-> 
-> This is sort of a final check whether the link is (still) active
-> before commencing device enumeration.  Doesn't look like it can
-> safely be eliminated either.
-> 
->>                pcie_update_link_speed
->>                  pcie_capability_read_word(PCI_EXP_LNKSTA)
->>                  pcie_capability_read_word(PCI_EXP_LNKSTA2)
->>                  trace_pcie_link_event(<REASON>)
-> 
-> This third register read is introduced by the present patch and is
-> indeed somewhat a step back, given that pciehp_check_link_status()
-> currently deliberately calls __pcie_update_link_speed() to pass
-> the already read LNKSTA value.
-
-Hi Lukas, and Bjorn:
-
-Thanks for the excellent technical analysis!
-
-You're absolutely right. I introduced an unnecessary regression by
-adding a third LNKSTA read when pciehp_check_link_status() already has
-the LNKSTA value and was specifically designed to pass it to
-__pcie_update_link_speed().
-
-> 
-> I'm wondering if the tracepoint can be moved down to
-> __pcie_update_link_speed()?
-
-Yes, that's a much better approach. Will fix it in next version.
-
-> 
->> And maybe we need both a bare LINK_UP event and a link_event with all
->> the details, but again it seems a little weird to me that there are
->> two tracepoints when there's really only one event and we know all the
->> link_event information from the very first LNKSTA read.
-> 
-> One of the reasons is that a "Link Down" event would have to
-> contain dummy values for link speed etc, so it seemed cleaner
-> to separate the hotplug event from the link speed event.
-> 
-> Thanks,
-> 
-> Lukas
-
-I agree with Lukas and I completely agree with this separation. The two
-tracepoints serve different purposes:
-
-- pci_hp_event: Pure hotplug state changes (LINK_UP/LINK_DOWN,
-   CARD_PRESENT/CARD_NOT_PRESENT)
-- pcie_link_event: Actual link parameter information when meaningful
-   values exist
-
-For LINK_DOWN events, we don't have meaningful speed/width values, so
-forcing them into a single tracepoint would indeed require dummy/invalid
-values, making the interface confusing.
-
-Thanks for the clear technical guidance and for catching my regression!
-
-Best regards,
-Shuai
+-- 
+Jani Nikula, Intel
 
