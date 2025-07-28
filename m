@@ -1,160 +1,144 @@
-Return-Path: <linux-kernel+bounces-747635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B26B13629
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:17:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F2CB1362E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0924218998A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:18:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFCC77A2C6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6C5225785;
-	Mon, 28 Jul 2025 08:17:34 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE5922A817;
+	Mon, 28 Jul 2025 08:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MKZat7Wm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96113229B28
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FA9223335;
+	Mon, 28 Jul 2025 08:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753690654; cv=none; b=kwS7kxQiGzo/Zeb6MYvyibnu4tQfYWkgAYmWXLxhLKnQmpdlzX0wtdJIkt2kU99avjtI3ZuaFqbPjoPPP+UrhShUP5l40ZXLBFEt96j1M9iH5eI2Byv06pSsSqzNUzfwjmTSPDU9Y790zsHyPYotuELMZrHQjwQXWZ7OTaSIK9o=
+	t=1753690780; cv=none; b=ZhQnai637Y+7M3QXiL7gS4uFMDop4pEdMWU4NLlAg6UsWuy+wtEQbHmmznff+67Iqfno8NGFaMAcykSZcpkRd8OCwb9gY0HGsvVPys0qjeoNwswAaCqZQz8Ka5loFRa5kZz4C40APw20NcMXCAyRuSseOmFpwEA/QZYdUeA5W+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753690654; c=relaxed/simple;
-	bh=pgP4SXgreuJwhQOo9oaITtVbd6yuZfPazJKt5RS1v+g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YbmWkzkV6/TZStAbBIjys+yRUPhC5A2oa5kx9b85/E1BZNlLPhuQ56kotGtLbbv680Quw/SjEFtFSkcBa0Wf8ntYJOwEFYc4Cqgr0v826VII1R3DUqAnyMQFlrFhy9jKDQjjCNh9QA8TegIsJd406o8/nt+g4ErjfsncdR92XXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-87b2a58a4c0so436947439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:17:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753690652; x=1754295452;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Di28IITQYUNeX9DGoYvQzMQDoIrq4xMQOoFcmX5YyQ=;
-        b=LiVpuidnIQM5AiRl9Qh1G7KK3WNOWQsAi1ESPz660tHRfU68YU26pdnYwgQGbBS7xN
-         h8uqHtrsnvt9jhIZp/72zqAeZeKpJ9o2mBAPcZbA3c7qZ+wD5DZD6IVbYGlbmofXJQbP
-         QZcpG6T0RvucmWAKTLxqbfNHV0jFovIhBB+E5U3amZxrjEGUz7MxYopXyj8NrjHd3d15
-         rNN74oMMFkFFwIcc/ckVcLgTygd0fhyPPv1+biy9VlpI9zscKo2NWXag4VwpqNAUF8M4
-         FckBDaPQF9A4sIX3BS1PYZLRCoFYKfFKKbDSKMrPEBgltFWz6MmPn6OGJ92h/EsNWOrm
-         DkWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6gFxNHjhljjcgdkRNOiTNo8kewDeNHt859MRJGuaSsDX3DIWMr6z59AKKOr2fj6NPkEWt4hwNIgqRRog=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcmn9CFbJywMLqHy8dosBJh4CYw140iMbrOpC06+oo74rL61qx
-	5HTyROutC6vfcgALHc29DPeqHB2OIZQLNbu8QE6NyfXEzx7izXWYPvecnTDAWTfCU3Pfj774mYJ
-	CVVf0byX7hxfn5E9XwuUnjoa1U1j/yHwI4wCEYbfIStDhqTGUnIGnquNse0g=
-X-Google-Smtp-Source: AGHT+IFTAiSvpBcwD6vor4JSikJ2yt9T6mKhrc0ImuMZDGgx8PTw2YkmzwrUD8n8fNS7IULtjq4ak9jgHyBj8wqY/9GmaUWhB1lB
+	s=arc-20240116; t=1753690780; c=relaxed/simple;
+	bh=r9heF4Jx2oSf4dh7BKMtWEH3wRtjhZSOKr7RdyIDwec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AWXE70sbRnMD9I3kvT4WQUWyhS5l7d2jogMQhlURhY2Vj0ScTkauM7t0eHD2d8ZB+v7kT4o0hhTGHwDS/1Y/YrM6gjgQJsftyJ9TX8sL9kpeWRqxflQ7uQkd7Yg6GGSz45TUyO/VkR4FfwTa2jkUhMoNDS3g2FruNN+pZRrpiWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MKZat7Wm; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753690779; x=1785226779;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r9heF4Jx2oSf4dh7BKMtWEH3wRtjhZSOKr7RdyIDwec=;
+  b=MKZat7Wm9Lq/C7zsf8BV407McsLz2p8O7/BHlqwKvSymmVfsFwP4iFxZ
+   13/hymVB3zAoAFZ4VyqRhMQ+yxnjZfCUFgcYUqAHj0mWvFmTeMHSlg66r
+   Qo3qNs/sSnDT0PhHm1JEnj/jdCnJUbu3LcL9/ln5DPtlLnEpbb3NS8wZT
+   kLA8lPf98tdjFWshzyUFQMDNJw3P5KAwIS7OObeozgBGn5b/g77LLji7W
+   dGGRNHCXUdWNmG+iozn6Eoa7UEx80AGocBOOvbAsdP5kTSaIePodAT4Sm
+   z4b8OhwciODoDNAJxOO1CGtaAOB8wiDJrFElOtCxj3q46nhvNB4fVNqpz
+   A==;
+X-CSE-ConnectionGUID: Mls3EAgBRB+3SWYIO1A/9g==
+X-CSE-MsgGUID: FFVNiOR2Sey00n2nLP/XNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="55142957"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="55142957"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 01:19:38 -0700
+X-CSE-ConnectionGUID: e4j/OyJ1Q+m/OV7eekb6VQ==
+X-CSE-MsgGUID: gR3o9gKhS6iEfbQfGj2kbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="161600047"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 28 Jul 2025 01:19:35 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ugJ52-0000K1-1z;
+	Mon, 28 Jul 2025 08:19:32 +0000
+Date: Mon, 28 Jul 2025 16:19:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>, clabbe.montjoie@gmail.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	linux-crypto@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, wens@csie.org,
+	jernej.skrabec@gmail.com, samuel@sholland.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Subject: Re: [PATCH 3/9] crypto: sun8i-ce - remove unnecessary __maybe_unused
+ annotations
+Message-ID: <202507281638.lcdB5LRY-lkp@intel.com>
+References: <20250728060701.1787607-4-ovidiu.panait.oss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1685:b0:86d:d6:5687 with SMTP id
- ca18e2360f4ac-8800f1039camr2035220539f.6.1753690651654; Mon, 28 Jul 2025
- 01:17:31 -0700 (PDT)
-Date: Mon, 28 Jul 2025 01:17:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6887321b.a00a0220.b12ec.0096.GAE@google.com>
-Subject: [syzbot] [exfat?] KCSAN: data-race in fat32_ent_get / fat32_ent_put
-From: syzbot <syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com>
-To: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728060701.1787607-4-ovidiu.panait.oss@gmail.com>
 
-Hello,
+Hi Ovidiu,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    ec2df4364666 Merge tag 'spi-fix-v6.16-rc7' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1567c782580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c0dd0a92e88efc24
-dashboard link: https://syzkaller.appspot.com/bug?extid=d3c29ed63db6ddf8406e
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+[auto build test WARNING on herbert-cryptodev-2.6/master]
+[also build test WARNING on next-20250728]
+[cannot apply to sunxi/sunxi/for-next herbert-crypto-2.6/master linus/master v6.16]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ovidiu-Panait/crypto-sun8i-ce-remove-channel-timeout-field/20250728-141133
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20250728060701.1787607-4-ovidiu.panait.oss%40gmail.com
+patch subject: [PATCH 3/9] crypto: sun8i-ce - remove unnecessary __maybe_unused annotations
+config: arm-randconfig-002-20250728 (https://download.01.org/0day-ci/archive/20250728/202507281638.lcdB5LRY-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 1b4db78d2eaa070b3f364a2d2b2b826a5439b892)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250728/202507281638.lcdB5LRY-lkp@intel.com/reproduce)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/29b468ddeacc/disk-ec2df436.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/996435d5d9de/vmlinux-ec2df436.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/170fc9879e1c/bzImage-ec2df436.xz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507281638.lcdB5LRY-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com
+All warnings (new ones prefixed by >>):
 
-==================================================================
-BUG: KCSAN: data-race in fat32_ent_get / fat32_ent_put
-
-read-write to 0xffff88810b7b319c of 4 bytes by task 7231 on cpu 0:
- fat32_ent_put+0x4e/0x90 fs/fat/fatent.c:191
- fat_ent_write+0x6c/0xe0 fs/fat/fatent.c:417
- fat_chain_add+0x15b/0x3f0 fs/fat/misc.c:136
- fat_add_cluster fs/fat/inode.c:112 [inline]
- __fat_get_block fs/fat/inode.c:154 [inline]
- fat_get_block+0x46c/0x5e0 fs/fat/inode.c:189
- __block_write_begin_int+0x400/0xf90 fs/buffer.c:2151
- block_write_begin fs/buffer.c:2262 [inline]
- cont_write_begin+0x5fc/0x970 fs/buffer.c:2601
- fat_write_begin+0x4f/0xe0 fs/fat/inode.c:228
- generic_perform_write+0x184/0x490 mm/filemap.c:4112
- __generic_file_write_iter+0xec/0x120 mm/filemap.c:4226
- generic_file_write_iter+0x8d/0x2f0 mm/filemap.c:4255
- new_sync_write fs/read_write.c:593 [inline]
- vfs_write+0x4a0/0x8e0 fs/read_write.c:686
- ksys_write+0xda/0x1a0 fs/read_write.c:738
- __do_sys_write fs/read_write.c:749 [inline]
- __se_sys_write fs/read_write.c:746 [inline]
- __x64_sys_write+0x40/0x50 fs/read_write.c:746
- x64_sys_call+0x2cdd/0x2fb0 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff88810b7b319c of 4 bytes by task 7250 on cpu 1:
- fat32_ent_get+0x24/0x80 fs/fat/fatent.c:149
- fat_count_free_clusters+0x50e/0x760 fs/fat/fatent.c:741
- fat_statfs+0xc0/0x200 fs/fat/inode.c:834
- statfs_by_dentry fs/statfs.c:66 [inline]
- vfs_statfs+0xc8/0x1c0 fs/statfs.c:90
- user_statfs+0x71/0x110 fs/statfs.c:105
- __do_sys_statfs fs/statfs.c:193 [inline]
- __se_sys_statfs fs/statfs.c:190 [inline]
- __x64_sys_statfs+0x65/0xf0 fs/statfs.c:190
- x64_sys_call+0x1edd/0x2fb0 arch/x86/include/generated/asm/syscalls_64.h:138
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x0fffffff -> 0x00000068
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 7250 Comm: syz.4.1276 Not tainted 6.16.0-rc7-syzkaller-00140-gec2df4364666 #0 PREEMPT(voluntary) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-==================================================================
+>> drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c:1066:18: warning: variable 'dbgfs_stats' set but not used [-Wunused-but-set-variable]
+    1066 |                 struct dentry *dbgfs_stats;
+         |                                ^
+   1 warning generated.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +/dbgfs_stats +1066 drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+  1056	
+  1057		v = readl(ce->base + CE_CTR);
+  1058		v >>= CE_DIE_ID_SHIFT;
+  1059		v &= CE_DIE_ID_MASK;
+  1060		dev_info(&pdev->dev, "CryptoEngine Die ID %x\n", v);
+  1061	
+  1062		pm_runtime_put_sync(ce->dev);
+  1063	
+  1064		if (IS_ENABLED(CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG)) {
+  1065			struct dentry *dbgfs_dir;
+> 1066			struct dentry *dbgfs_stats;
+  1067	
+  1068			/* Ignore error of debugfs */
+  1069			dbgfs_dir = debugfs_create_dir("sun8i-ce", NULL);
+  1070			dbgfs_stats = debugfs_create_file("stats", 0444,
+  1071							  dbgfs_dir, ce,
+  1072							  &sun8i_ce_debugfs_fops);
+  1073	
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
