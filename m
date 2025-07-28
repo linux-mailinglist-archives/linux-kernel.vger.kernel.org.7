@@ -1,233 +1,173 @@
-Return-Path: <linux-kernel+bounces-748640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375A5B14408
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D137B14428
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610955412FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:49:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5605217F76B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D90273D96;
-	Mon, 28 Jul 2025 21:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0541F4CA9;
+	Mon, 28 Jul 2025 22:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f3kNuzTP"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="v+W2wslr"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687851A23AC
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22DD137923
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753739345; cv=none; b=VA1JsQItZd/zDeADODTW5uFskMFx2yQIq5tiq1wrcEJ4sHgl3+o3hSXYPhx9vX64oeEceWne7qcb3E8Ye7HWkJTPiKG6llN/GZfToW01EsmALDxPJe4N1bamugS6QUSF40xS3904+mvfi6SOf9aHbjwkVel16pZxZZMuiWNgUPw=
+	t=1753740009; cv=none; b=DnBXjbdrMDGYe/pTlZVmL3GzisSRB8FR/M2eop7RNpnGxJoDBf6Mly/g7CFR36zNfCvK33drKsYEcRfZPf5sKobXxwhyn146pJ3Fomp5NM15KtZ1NLK0XcKnSn85zl09R3hhcdfUfrXb5srCzKvNe1yzwfXG8ShItJiA9k7FX5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753739345; c=relaxed/simple;
-	bh=8tmNEDk1108qFbcscn3yK9EMsFQJwypelzVi8awwSn0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FhK1k6oroMcFCEaJuhYGKkN+ezxTYozCYbxyjXjgkuzGEi2Jh+aPcOobLDi1MrAJUaqiXn2V8vc2FGgXa+l2s4a4aDti2z5d9VG7FdKZMdKltVRaA2BHsTeE1yHGN+HlAORHU4YqErIl19XqJzOWuJ7+wuWvItZOSC9Jq7XPjLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f3kNuzTP; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e8e1ae319c6so1049849276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:49:03 -0700 (PDT)
+	s=arc-20240116; t=1753740009; c=relaxed/simple;
+	bh=/qAK7aYKKFRgAJnNBp3OG1T2f+7X1+5mXUXNzKDQxr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JD1i8cREdAXbAqg3LBsjC3Beul3w6lQFi5jCzy5PvfUy2+zJIQBON4GnOMZBtcUjnM9CepLUXq41xO1lYxsL88OfTus2cfATXc1rD2KUdFQ+0zc2vyEBqQFCpIdJFBlBVIJGpSz655hvQxRNbw9tsrfqk4sCmHP3oau8Xk+Tm6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=v+W2wslr; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3e3cd27178fso12549995ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:00:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753739342; x=1754344142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TNYkKUMqh3Q6zlk7zublZCSOOzAw8JNXG0Uwfynmfio=;
-        b=f3kNuzTPhTA6Wxt2pvE2IbDOhuG99OwMw6b7DluWlujcsO8WiPESWk9O4F1taR2LDi
-         b0iMKhDlpyUARpSHk43H8WLbgFCe/r01XQNdZca2UZcm6PQpjYw3gVqrIPGIbR33zWQc
-         A8PqZGCs9vgvKae6wo2TFjrT7ncuocHBLNJ7OgNYVifQ1xmJ2Heu+a25I+6Lm/VW250Y
-         Qreq5PRJjdP8Knt58GiwvNdcFYekmPEXg7zIY+VpvJjs6iwXcaQ9RX2nMYDvwUvrpEUn
-         Nums49H1XXdWkmkmeDnfHfdZ8PJ3lmmmfkRd7mP0tUS1HyIIJU7SuPdIZZ+GGvYCX2sy
-         ol7g==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753740006; x=1754344806; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SW20ypPIfCwWzDyApEVu137flF7JF7gBm3arCQYvIbI=;
+        b=v+W2wslr5hItGs6yCQ5c+558JTBleRDLv4njzriMThgLURHsc9qoj9mpVU7gnEtzmW
+         Sm11lp2eGHrf4IYNSYxzUKBDiYNCMxcdpUhEA+CeuOKxdSfiT9rJjk/A6VGJUKTM6CIO
+         ifJxFV9woud5CAqsOhuFOAlchAQxMQrvAPLtgrXV77v/tH6yqmTkqS0vKBbK5brBiOWq
+         WprGIa6EC9YGSicNK2Xqo58q7taHmhOxEu6NXNoHcMOTSmvxk1xP5did2BJfZaxLxba5
+         6CVy9frO1nUUIUje7kRFCaVkJynocM7OhbjGt29ygcMynmoueuSalidbiPxsSIVvnjrk
+         pKbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753739342; x=1754344142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TNYkKUMqh3Q6zlk7zublZCSOOzAw8JNXG0Uwfynmfio=;
-        b=RdAu/PwtpCWoQyWHcI2pepIE/pjiQpoxZIKiuyEzMxysn5Yvi7VzQJt7hW8ZcwciIC
-         N8qLP7gmvuG4AIL5KShYosnCIB2mw5rYY5w9bLttTdtgOgKKXpTqXdLyFzw9F6SgU382
-         FsdOLV1Nr9TOx5ZJi5lJjyYV7B1Ydmhcy+onotxFvJFQY9RTuCsbgtM7q9x5OoNN3WOy
-         Wx8dUhUteDUuu87reCIroblWvMeWDSaC3Yn1oOWlaAoUhFIWDAkZsqIfE94rSJAQ+hNw
-         GZNN0VWvzkGOR7O9tAR4RxBP0SZbaR6MLarZhxY7pqTwpDkWqtDVJ6hmPbODXV3uU2Yf
-         5uVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpdlM5SMmvK2279R6WS9uIA8Swhbme3hyQ6PhEtJXsAXQNUGY8tIZ2LgsEA4AGuZr4FvOcK1dQeNWiYPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3M4y4nkGfg7a3JxY0tcspCJqdm7pihWinf3yjwrAjz3p+m22x
-	Xpa2ALAVKhJEJM4jYqEWbk82GMDLp6P9XHqD3FS8LDRzIWv7OAK1sSP2V0UEE7LohKu4QXrLEat
-	76mxlqRavN5hPZhK9F9sXRcCvrnNG/jtFniIcvxJf
-X-Gm-Gg: ASbGnctP4VlTSOpjT/+fdGuMsNN/7c3PVoqhZ8v0ZiXh43JWLSAzh+14KQ8Srgpn/e3
-	sDVRG4PH0sKDVREwKza+BRw2QO26zi1npV/BtgZz1M1zN8oQhaKVjTDtdXGnt2yMSLeRGs4vR0a
-	T0G4vfwM8dY3aXAaYmy0DGGyNZC/BVizX/JAWj08hK6Qd3NMs/g/pjI3VIfsKdIZbZqRD37dV6h
-	C2oyT8sLMZuQ29yT7Usge88cMtHu3XMvjv7ddOO5oTA6paX
-X-Google-Smtp-Source: AGHT+IE2mYs4r6noXBQXIYVkMmGAdIWN2/QiECNIyFYTZbPmpXx9oohnPh0CVYDcsueX6RTXa46JQAWjagLlqUnsgYU=
-X-Received: by 2002:a05:6902:158b:b0:e8d:e898:9c46 with SMTP id
- 3f1490d57ef6-e8df11de957mr14432049276.25.1753739342131; Mon, 28 Jul 2025
- 14:49:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753740006; x=1754344806;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SW20ypPIfCwWzDyApEVu137flF7JF7gBm3arCQYvIbI=;
+        b=Y1xRjkARh+Y3COJhMLBn6wAdEs6NcM7w1lIdSUI22VMDmWQ0M/E/mW9bNE7D+PfKiK
+         ao+vM/7zRcPufbYqXCrPTwJoCJQ7Ulw3j2pLBuKy0FznUN5WJH4M155OWLcFCY+k7bsO
+         GLdFvsi18tnvuKbipy4bW+Z2C/9Kql5PP+xcql2VdyouqmPW2WklbB3ptVfs0icfgHml
+         VnvbbdunT5XQMPrFCKzO2j1yeaxvfXHIjHBcPPJ0B5hXz5ZkOv1WM5VyslBtgMvuiekS
+         aZ2eI7IG5f42e8hUSf2ulkwTbRg9SM5EYGl0rVw0ZO3JP63rZh5jRAuszLOEZuiDpq2i
+         LeHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfULR5a7SlkRyhSQP4FDDmV+1ctLgM3oJxbqfm8H8+anBbzRGyuDLjSBmFZvEi3eyVoexnWRjoQ4P3BwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0Gigg6REx7ZXCeRP1oz5oOhvmCikY/U0yaWNxlUmzMaZOWlGU
+	iZCI4LOmvojP6Cq0zR7+SRTT5tjTxgm34fLSAZBHFqDS7uW7OcH2xX/qYy7iJxzO2g8=
+X-Gm-Gg: ASbGncuN6iLs9MBQVNWEyYiBQ4otn3NxMJzibyFP1QrsdTSWEAuVR6vBBhwuu6ZejQR
+	6vajUUdir88hz4qk3no9Ht50QhNN398/OJr/uJZw09D641jsj/fSKB0+1i6hLyuaISYhsMeks7Y
+	sypc7ofcFJXDYUGR+qlIj3N4+j6ZVmpCAjPJqwn7P7r32A9Ak1KB4ehMyPSDhzS2/1dC51D4Gkm
+	QmKv7U0NVqxs5uPEk8s5NYsaSSXWU+ah26LjZDWoRFZzJ9ktCxsQVZuneTVOCMedVm2mSiizyk2
+	p+fWik/tAw9xgdMAJ3ro/TN3NMeOTGFAeQJqSNRmDPtaol22uKt4KG49oxiSdYWVkwcltIsictM
+	7f8WMIIchR+9AuZAfKDTwbvNSUEr/MPB/1Gsz/ReJ3khiMBrBeGsUdDA4mTyOQ6CqIg==
+X-Google-Smtp-Source: AGHT+IEInGF/Uihao86Df5Hh8l2S/n6kOMKGVWM1LdBNeEbSuGAD9Xt1OLU4ny9gFPGHVpMlKG5tfQ==
+X-Received: by 2002:a05:6e02:1d98:b0:3e3:d185:9163 with SMTP id e9e14a558f8ab-3e3d185932fmr133375445ab.20.1753740005684;
+        Mon, 28 Jul 2025 15:00:05 -0700 (PDT)
+Received: from zippy.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-508c91c9fdfsm2167331173.4.2025.07.28.15.00.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 15:00:05 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dlan@gentoo.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	lkundrak@v3.sk
+Cc: devicetree@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-mediatek@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] dt-bindings: serial: 8250: allow "main" and "uart" as clock names
+Date: Mon, 28 Jul 2025 17:00:01 -0500
+Message-ID: <20250728220002.599554-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707224720.4016504-1-jthoughton@google.com>
- <20250707224720.4016504-4-jthoughton@google.com> <aIFHc83PtfB9fkKB@google.com>
- <CADrL8HW46uQQKYUngYwomzfKWB0Vf4nG1WRjZu84hiXxtHN14Q@mail.gmail.com>
- <CALzav=e0cUTMzox7p3AU37wAFRrOXEDdU24eqe6DX+UZYt9FeQ@mail.gmail.com> <aIft7sUk_w8rV2DB@google.com>
-In-Reply-To: <aIft7sUk_w8rV2DB@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Mon, 28 Jul 2025 14:48:26 -0700
-X-Gm-Features: Ac12FXylAHsC6PnOs8l0sIEXzKpV-hGp0OFEgDGoMNOHrpfgSioRTxQz2Qw5R5w
-Message-ID: <CADrL8HWE+TQ8Vm1a=eb5ZKo2+zeeE-b8-PUXLOS0g5KuJ5kfZQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/7] KVM: x86/mmu: Recover TDP MMU NX huge pages using
- MMU read lock
-To: Sean Christopherson <seanjc@google.com>
-Cc: David Matlack <dmatlack@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Vipin Sharma <vipinsh@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 28, 2025 at 2:38=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Mon, Jul 28, 2025, David Matlack wrote:
-> > On Mon, Jul 28, 2025 at 11:08=E2=80=AFAM James Houghton <jthoughton@goo=
-gle.com> wrote:
-> > > On Wed, Jul 23, 2025 at 1:35=E2=80=AFPM Sean Christopherson <seanjc@g=
-oogle.com> wrote:
-> > > > > @@ -7559,8 +7590,17 @@ static void kvm_recover_nx_huge_pages(stru=
-ct kvm *kvm,
-> > > > >       rcu_read_lock();
-> > > > >
-> > > > >       for ( ; to_zap; --to_zap) {
-> > > > > -             if (list_empty(nx_huge_pages))
-> > > > > +#ifdef CONFIG_X86_64
-> > > >
-> > > > These #ifdefs still make me sad, but I also still think they're the=
- least awful
-> > > > solution.  And hopefully we will jettison 32-bit sooner than later =
-:-)
-> > >
-> > > Yeah I couldn't come up with anything better. :(
-> >
-> > Could we just move the definition of tdp_mmu_pages_lock outside of
-> > CONFIG_X86_64? The only downside I can think of is slightly larger kvm
-> > structs for 32-bit builds.
->
-> Hmm, I was going to say "no, because we'd also need to do spin_lock_init(=
-)", but
-> obviously spin_(un)lock() will only ever be invoked for 64-bit kernels.  =
-I still
-> don't love the idea of making tdp_mmu_pages_lock visible outside of CONFI=
-G_X86_64,
-> it feels like we're just asking to introduce (likely benign) bugs.
->
-> Ugh, and I just noticed this as well:
->
->   #ifndef CONFIG_X86_64
->   #define KVM_TDP_MMU -1
->   #endif
->
-> Rather than expose kvm->arch.tdp_mmu_pages_lock, what about using a singl=
-e #ifdef
-> section to bury both is_tdp_mmu and a local kvm->arch.tdp_mmu_pages_lock =
-pointer?
+There are two compatible strings defined in "8250.yaml" that require
+two clocks to be specified, along with their names:
+  - "spacemit,k1-uart", used in "spacemit/k1.dtsi"
+  - "nxp,lpc1850-uart", used in "lpc/lpc18xx.dtsi"
 
-SGTM.
+When only one clock is used, the name is not required.  However there
+are two places that do specify a name:
+  - In "mediatek/mt7623.dtsi", the clock for the "mediatek,mtk-btif"
+    compatible serial device is named "main"
+  - In "qca/ar9132.dtsi", the clock for the "ns8250" compatible
+    serial device is named "uart"
 
->
-> Alternatively, we could do:
->
->         const bool is_tdp_mmu =3D IS_ENABLED(CONFIG_X86_64) && mmu_type !=
-=3D KVM_SHADOW_MMU;
+In commit d2db0d7815444 ("dt-bindings: serial: 8250: allow clock 'uartclk'
+and 'reg' for nxp,lpc1850-uart"), Frank Li added the restriction that two
+named clocks be used for the NXP platform mentioned above.  Extend that
+so that the two named clocks used by the SpacemiT platform are similarly
+restricted.
 
-I tried something like this before and it didn't work; my compiler
-still complained. Maybe I didn't do it quite right...
+Add "main" and "uart" as allowed names when a single clock is specified.
 
->
-> to avoid referencing KVM_TDP_MMU, but that's quite ugly.  Overall, I thin=
-k the
-> below strikes the best balance between polluting the code with #ifdefs, a=
-nd
-> generating robust code.
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_h=
-ost.h
-> index 52bf6a886bfd..c038d7cd187d 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1372,10 +1372,6 @@ enum kvm_mmu_type {
->         KVM_NR_MMU_TYPES,
->  };
->
-> -#ifndef CONFIG_X86_64
-> -#define KVM_TDP_MMU -1
-> -#endif
-> -
->  struct kvm_arch {
->         unsigned long n_used_mmu_pages;
->         unsigned long n_requested_mmu_pages;
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index a6a1fb42b2d1..e2bde6a5e346 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -7624,8 +7624,14 @@ static bool kvm_mmu_sp_dirty_logging_enabled(struc=
-t kvm *kvm,
->  static void kvm_recover_nx_huge_pages(struct kvm *kvm,
->                                       const enum kvm_mmu_type mmu_type)
->  {
-> +#ifdef CONFIG_X86_64
-> +       const bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
-> +       spinlock_t *tdp_mmu_pages_lock =3D &kvm->arch.tdp_mmu_pages_lock;
-> +#else
-> +       const bool is_tdp_mmu =3D false;
-> +       spinlock_t *tdp_mmu_pages_lock =3D NULL;
-> +#endif
->         unsigned long to_zap =3D nx_huge_pages_to_zap(kvm, mmu_type);
-> -       bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
->         struct list_head *nx_huge_pages;
->         struct kvm_mmu_page *sp;
->         LIST_HEAD(invalid_list);
-> @@ -7648,15 +7654,12 @@ static void kvm_recover_nx_huge_pages(struct kvm =
-*kvm,
->         rcu_read_lock();
->
->         for ( ; to_zap; --to_zap) {
-> -#ifdef CONFIG_X86_64
->                 if (is_tdp_mmu)
-> -                       spin_lock(&kvm->arch.tdp_mmu_pages_lock);
-> -#endif
-> +                       spin_lock(tdp_mmu_pages_lock);
-> +
->                 if (list_empty(nx_huge_pages)) {
-> -#ifdef CONFIG_X86_64
->                         if (is_tdp_mmu)
-> -                               spin_unlock(&kvm->arch.tdp_mmu_pages_lock=
-);
-> -#endif
-> +                               spin_unlock(tdp_mmu_pages_lock);
->                         break;
->                 }
->
-> @@ -7675,10 +7678,8 @@ static void kvm_recover_nx_huge_pages(struct kvm *=
-kvm,
->
->                 unaccount_nx_huge_page(kvm, sp);
->
-> -#ifdef CONFIG_X86_64
->                 if (is_tdp_mmu)
-> -                       spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-> -#endif
-> +                       spin_unlock(tdp_mmu_pages_lock);
->
->                 /*
->                  * Do not attempt to recover any NX Huge Pages that are b=
-eing
-> --
+Fixes: 2c0594f9f0629 ("dt-bindings: serial: 8250: support an optional second clock")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202507160314.wrC51lXX-lkp@intel.com/
+Signed-off-by: Alex Elder <elder@riscstar.com>
+---
+ .../devicetree/bindings/serial/8250.yaml      | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-LGTM! Thanks Sean.
+diff --git a/Documentation/devicetree/bindings/serial/8250.yaml b/Documentation/devicetree/bindings/serial/8250.yaml
+index e46bee8d25bf0..cef52ebd8f7da 100644
+--- a/Documentation/devicetree/bindings/serial/8250.yaml
++++ b/Documentation/devicetree/bindings/serial/8250.yaml
+@@ -61,11 +61,17 @@ allOf:
+             - const: uartclk
+             - const: reg
+     else:
+-      properties:
+-        clock-names:
+-          items:
+-            - const: core
+-            - const: bus
++      if:
++        properties:
++          compatible:
++            contains:
++              const: spacemit,k1-uart
++      then:
++        properties:
++          clock-names:
++            items:
++              - const: core
++              - const: bus
+ 
+ properties:
+   compatible:
+@@ -162,6 +168,9 @@ properties:
+     minItems: 1
+     maxItems: 2
+     oneOf:
++      - enum:
++          - main
++          - uart
+       - items:
+           - const: core
+           - const: bus
+
+base-commit: 0b90c3b6d76ea512dc3dac8fb30215e175b0019a
+-- 
+2.48.1
+
 
