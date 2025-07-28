@@ -1,200 +1,121 @@
-Return-Path: <linux-kernel+bounces-747571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840FFB1355A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:09:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9338DB1355F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC35B177B64
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:09:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8861B3AF6EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07B986338;
-	Mon, 28 Jul 2025 07:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD75B224225;
+	Mon, 28 Jul 2025 07:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Eu4msL2k"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dkfb0xjX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C611865FA;
-	Mon, 28 Jul 2025 07:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBFE223301;
+	Mon, 28 Jul 2025 07:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753686587; cv=none; b=XlhWGfK/z1dgB6CRLt1LeiHBnykpPCM9rbbA1DhOsNzEWTTvgEPYBIOLCiljhzUnJBA4umo7Ut7FCVsU6MPHVUOFCBLNPZs8JNwBW64qoEGVt6dj9nvp+MZWtqJwfCWXPAXGCR+ZP5kCGPYvauCYjwITE9ZL1Hdcd33xNWhVlhg=
+	t=1753686605; cv=none; b=K4hnJ3n726JjZ/gYxcibNbpOdPkNVHp5j2eCeWjHdB7UJH8Ja+dVdliZ49LkNe+g7Zd53RLnLnc5xxBXkGPKM3s6Uld61HvhonkJ2bO1V9k6hFDK6e+6oj2EL4qH/tf6uWAzOpBZ7JymQYElj6fXJ4P5QKAlmRGkOPPWHNgahsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753686587; c=relaxed/simple;
-	bh=r1bq8wBy0jTbwxVWUTT5R9m+mMw9313dzlfYQSQxnPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rh760vr82Qo886uK6f4ywgi09+3NiBNQaS4UqpM24H5OO6TcYNoxxceX0favO/tDcDJrxwcG7JZ77RwcxDYqwIiJ/Ysuw/lLYXfHgEenM5zhdymLrp2puwwSZYdNACfiX2Fxp6D5UlrxB2u9u+OZDDTmhEzjQZgEt4wM8WPlmMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Eu4msL2k; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1753686523;
-	bh=r1bq8wBy0jTbwxVWUTT5R9m+mMw9313dzlfYQSQxnPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Eu4msL2k8vTCSyec58hN5OkM+FXUKU0miDL1uI/Qfuf7JjGGYi44W88AVoHMGuDrd
-	 aNfWPa+OJbvL7tet8UXu5YWfBZUEEA0N4PGi62L9h8Q85XCvjwYA5hncGPi5RGGtJg
-	 nEmMaAkXOKqFkMiKpfBSs0NHxvJUB/5sYU878Vxo=
-X-QQ-mid: zesmtpip2t1753686464te6f70992
-X-QQ-Originating-IP: YAb0L1vdO7c1PX6TQfjfsRKcKUJSJFnpoqeSNqaSGd8=
-Received: from [IPV6:240e:668:120a::212:232] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 28 Jul 2025 15:07:42 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 4090114396778964496
-EX-QQ-RecipientCnt: 12
-Message-ID: <921F8D487468018A+141227fc-070d-4ed9-8828-d446236eccd2@uniontech.com>
-Date: Mon, 28 Jul 2025 15:07:42 +0800
+	s=arc-20240116; t=1753686605; c=relaxed/simple;
+	bh=fELmI1I7WwxoqLk6NoJJj3JbPs2L4fWVDFlsNfL0Py4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sx9E5qpZ1Ykhyyzj9gTsbnAJKTkp946KyPsSEleI59fbcUOvOVxA7jATsDI/SriveoOkVdvlTkDLZmB+X9Md62QCq/fsy5R7xnROB+k8O/U8HgeGQ4JOPmh1vtmQ3UvXLR/pnZ/4pXzGrw30qBy4FE4vw6stJTxIV+jQms/Pnq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dkfb0xjX; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753686604; x=1785222604;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fELmI1I7WwxoqLk6NoJJj3JbPs2L4fWVDFlsNfL0Py4=;
+  b=Dkfb0xjX69nDO7pXot34jXca5xlZUiwZdH8S1VUfyvWhScC7+Qa2Bx3n
+   XBpXJdHNZu1aBsNJLoVNoGo5mOBUJkAcG2LSePGzwwasi5vEWpA+kz7Qz
+   T/feAB0eys3SkG8MKjKGGT8NYLQdwPcU5XUVvEragLD647OPdGD8dXYWw
+   ddRPtLJfv2u/JwgiC1YuP4VcXd+KgHsE1f+ZmNiBOZ1TftanwK5ozXva8
+   Cs9zboavIP8CZ770qnyC1lhr4d56elRgZzQKuHh0jh/Tv0S165GwIJwgv
+   BD/g4kptmdRcEV2ocySc+yyxgmXlgKIae21jaKFWy3HCfddsU6fgs29SS
+   A==;
+X-CSE-ConnectionGUID: 7mIbDmQCREiWvdQINKaMyg==
+X-CSE-MsgGUID: CoGl8GkASrKQkMNmowPG7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="56018455"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="56018455"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 00:10:03 -0700
+X-CSE-ConnectionGUID: 1b5uAKZ1R2WvX6VPVI7RUQ==
+X-CSE-MsgGUID: jWFNKIIRRFOiYMr0h12pjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="162792296"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 28 Jul 2025 00:09:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 7A1A615B; Mon, 28 Jul 2025 10:09:57 +0300 (EEST)
+Date: Mon, 28 Jul 2025 10:09:57 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Alexey Charkov <alchark@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/3] mtd: spi-nor: Add a driver for the VIA/WonderMedia
+ serial flash controller
+Message-ID: <20250728070957.GT2824380@black.fi.intel.com>
+References: <20250510-wmt-sflash-v1-0-02a1ac6adf12@gmail.com>
+ <20250510-wmt-sflash-v1-2-02a1ac6adf12@gmail.com>
+ <mafs01psu89sx.fsf@kernel.org>
+ <CABjd4YyRScBgDbi8Sk0D3vxcmLF8+YBetUdkfhrS_4Y7M+gS1g@mail.gmail.com>
+ <mafs0h5z1snn7.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] input: Add tracepoint support
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: dmitry.torokhov@gmail.com, guanwentao@uniontech.com,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org,
- niecheng1@uniontech.com, wangyuli@deepin.org, zhanjun@uniontech.com,
- Winston Wen <wentao@uniontech.com>
-References: <19571F312EE197A5+20250710072634.3992019-1-wangyuli@uniontech.com>
- <C1C54D7FA3DF3958+20250710073148.3994900-1-wangyuli@uniontech.com>
- <20250722202551.1614f59a@gandalf.local.home>
- <2b31b238-667e-47b9-b61f-76832a1f77a7@efficios.com>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <2b31b238-667e-47b9-b61f-76832a1f77a7@efficios.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------oHWYTD0dDJEH0jV4jUDKX0Al"
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Mh7ao6TKkA3I1hoqrWn6m/sQVYAx8RWrFYGoY0yTiZ+70EzjZCuw/o6J
-	GKL1hsQilLzvK8Ghlkqy+OYStvS65oHYMoQp5X/mK4XfHdhLiNZGmayNRkZ+lTkIlmBX8cI
-	AvO8xysjCYJ0bovWK9jUIMz6He1uQdmpLdaFEAYInb0m/HBQ9DCucYPrbHMT/Y3UN/gxt+2
-	DkAXlQPLt5XXhfQB7wSncyhf+1JhDOPjqd5cHvGtPNVO1XdtNvceb5rskyvD8zzKJ3cTlk6
-	Z9sLBbGwbNrLoBGzGbqtd/n90K8a6DTmf5hgfcfJ1ovJgFqAs/uBlGRKbO+ibQXm69eUGtX
-	MEZmIdGupuBUclzpDh1Ozu3bAWme8V3LZbQzx1iMFjVeubc+dqlFBfL/R1vkeJ+brj1xCX5
-	gVr+TXCEX1mjbfbErdh6oUfa0brJ28D6J2R3jUg9cyNwqT+cZ/WpwG7V29paabWqByufzmq
-	sgbAlnQKvHEvf+F2w4wHPjvlcyMHj+X1cUwPCQyxIAsFUtJI4w9Z1dPFtV39E9hhnxapOIB
-	eW54v+dfCzrLToi0EW+9CrEP6QeJILqQTSvJuaT+pbSw5F0MOR2lBZRcihzVqxHtm8xn1PR
-	I2ozM0s9Lvt4dP2d6RhVXpAczCcIfmaWg1G0ZImbjzbX9WY7pPmQj1X6dsQFJyDglrizyb4
-	wCw4yxSV1YfomFxpf9Hd4Tv7pI2DLtS2BJPb2GOriYRd8tnferfG88E9HxyKIEWO5rN30qT
-	U5YLEfQfP1YoQl5klYDwoTCYS4ONP5piScSq504AHtuiRueVaMPFw8rnQdhYQzL5GZHynFD
-	qekq57fFpUZ2T/GjTSEKTyz7w9f6ARL8NIOGMZlBEnWCw+TtWwuZFkkftX6bJODC+9qEXVI
-	szDnmsL4EyT7vD/+rs1m5vK6yTd+l2CHDg0WHLOsvhWYWMGo9ejU/DSZNjRLbvriXtL6Vbn
-	cHcNHkV2EMKwCJmubYmnA3GsxpsLKiR54wRPV6TcjAMj2GPVK2OfWFt85+tBc0V8BTpJL51
-	lB+FqdKMJHU+WsvvxDm5ElDa5V7dUwqhTSROTUOg0/Qod4x0TqJ270oXPJdZPW9BegRmLjk
-	vP9URXiwNGYy9z9KGLx9UZ1ez4wLhRqIMQWvQvHWbfZni+xX1TGvgsul5i+y798Bg==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <mafs0h5z1snn7.fsf@kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------oHWYTD0dDJEH0jV4jUDKX0Al
-Content-Type: multipart/mixed; boundary="------------tqGbotQOjplZ0kezqXM5oZdY";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: dmitry.torokhov@gmail.com, guanwentao@uniontech.com,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org,
- niecheng1@uniontech.com, wangyuli@deepin.org, zhanjun@uniontech.com,
- Winston Wen <wentao@uniontech.com>
-Message-ID: <141227fc-070d-4ed9-8828-d446236eccd2@uniontech.com>
-Subject: Re: [PATCH 1/2] input: Add tracepoint support
-References: <19571F312EE197A5+20250710072634.3992019-1-wangyuli@uniontech.com>
- <C1C54D7FA3DF3958+20250710073148.3994900-1-wangyuli@uniontech.com>
- <20250722202551.1614f59a@gandalf.local.home>
- <2b31b238-667e-47b9-b61f-76832a1f77a7@efficios.com>
-In-Reply-To: <2b31b238-667e-47b9-b61f-76832a1f77a7@efficios.com>
+Hi,
 
---------------tqGbotQOjplZ0kezqXM5oZdY
-Content-Type: multipart/mixed; boundary="------------fc1I6wLPuEDOv0vTtM2yhlaM"
+On Thu, Jul 24, 2025 at 03:51:08PM +0200, Pratyush Yadav wrote:
+> > From what I understood, spi-mem primarily expects to be talking SPI
+> > opcodes to the controller, and for the controller/driver to bring
+> > their own chip probing routines. This controller on the other hand
+> > abstracts the opcodes away, and wants someone to tell it what its
+> > flash chip can do (the controller itself can only get a chip ID in
+> > "normal" mode, and it needs to somehow know the chip size and
+> > standard/fast read capability of the chip). So pretty much the
+> > opposite, huh.
+> 
+> Does it use SFDP to figure out which opcodes to use? Then it feels very
+> similar to intel-spi. See [0] for example. I know this is fitting a
+> square peg in a round hole, but if it isn't too painful then it would
+> make maintenance on SPI NOR end a bit easier.
+> 
+> Mika (+Cc), you did the conversion of intel-spi to SPI MEM. Maybe you
+> can share how painful/easy the conversion was, and if it ended up being
+> maintainable?
 
---------------fc1I6wLPuEDOv0vTtM2yhlaM
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-SGkgTWF0aGlldSwNCg0KT24gMjAyNS83LzIzIDA5OjI0LCBNYXRoaWV1IERlc25veWVycyB3
-cm90ZToNCj4gSSd2ZSBhbHdheXMgYmVlbiB3b3JyaWVkIGFib3V0IGFkZGluZyB0cmFjZXBv
-aW50IGluc3RydW1lbnRhdGlvbiBvZiB0aGUNCj4gaW5wdXQgc3Vic3lzdGVtIHRoYXQgaW5j
-bHVkZXMgdGhlIGFjdHVhbCBrZXlzdHJva2VzIGludG8gdGhlIGV2ZW50DQo+IHBheWxvYWQu
-IFdoYXQgSSdtIHRyeWluZyB0byBhdm9pZCBoZXJlIGlzIHBlb3BsZSBsZWFraW5nIHRoZWly
-IHBhc3N3b3JkDQo+IGJ5IG1pc3Rha2UganVzdCBiZWNhdXNlIHRoZXkgaGFwcGVuZWQgdG8g
-cmVjb3JkIGEgdHJhY2Ugd2hpbGUNCj4gdHlwaW5nIG9uIHRoZWlyIGtleWJvYXJkLg0KPg0K
-VGhlIGV2dGVzdCB0b29sIGNhbiBhbHNvIGRvIHRoaXMuDQoNCkhvd2V2ZXIsIGl0IGRvZXNu
-J3QgZnVsbHkgcmVwb3J0IGFsbCBldmVudHMgZnJvbSB0aGUgaW5wdXQgc3Vic3lzdGVtLg0K
-DQogRnJvbSBhIGRlYnVnZ2luZyBwZXJzcGVjdGl2ZSwgYWRkaW5nIHRyYWNlcG9pbnRzIHRv
-IHRoZSBpbnB1dCBzdWJzeXN0ZW0gDQppcyBzdGlsbCBtb3JlIGNvbnZlbmllbnQgZm9yIGRl
-YnVnZ2luZy4NCg0KPiBJIGRvbid0IG1pbmQgaWYgdGhpcyBnZXRzIGVuYWJsZWQgd2l0aCBh
-IG5ldyBrZXJuZWwgY29tbWFuZCBsaW5lDQo+IG9wdGlvbnMgInRyYWNpbmdfbGVha19teV9j
-cmVkZW50aWFscz15ZXMiIG9yIHN1Y2gsIGJ1dCBJJ2QgdHJ5IHRvDQo+IGF2b2lkIG1ha2lu
-ZyBpdCBlYXN5IHRvIGVuYWJsZSBieSBtaXN0YWtlIHVubGVzcyB0aGlzIGluZm9ybWF0aW9u
-DQo+IGlzIHNwZWNpZmljYWxseSBuZWVkZWQuDQo+DQpJJ20gbm90IHN1cmUgaWYgdGhpcyBp
-cyBvdmVyLWVuZ2luZWVyaW5nLi4uDQoNCkkgZmVlbCB0aGF0IGFkZGluZyB0b28gbWFueSBj
-b21tYW5kLWxpbmUgcGFyYW1ldGVycyB3aWxsIGluY3JlYXNlIHRoZSANCnVzZXIncyBjb2du
-aXRpdmUgbG9hZC4NCg0KSG93ZXZlciwgdGhlIGxlYWthZ2Ugb2Yga2V5Ym9hcmQgaW5wdXQg
-cmVjb3JkcyBpcyBpbmRlZWQgYSB2ZXJ5LCB2ZXJ5IA0Kc2lnbmlmaWNhbnQgcmlzay4NCg0K
-QXMgYSBjb21wcm9taXNlLCB3b3VsZCBpdCBiZSBiZXR0ZXIgaWYgd2UgYWRkZWQgYSBzZXBh
-cmF0ZSBLY29uZmlnIA0Kb3B0aW9uIHNwZWNpZmljYWxseSBmb3IgdGhlIGlucHV0IHN1YnN5
-c3RlbSdzIHRyYWNlcG9pbnRzIHRvIGRlY2lkZSANCndoZXRoZXIgdG8gZW5hYmxlIHRoZW0g
-YXQgY29tcGlsZSB0aW1lLCBhbmQgdGhlbiBkb2N1bWVudGVkIHRoZSANCnBvdGVudGlhbCBy
-aXNrcyB3aXRoaW4gdGhhdCBLY29uZmlnJ3MgZGVzY3JpcHRpb24/DQo+IEJ1dCBtYXliZSBJ
-J20gYmVpbmcgdG9vIGNhcmVmdWwgYW5kIHBlb3BsZSBzaG91bGQgcmVhbGx5IGxlYXJuIG5v
-dA0KPiB0byBzaGFyZSBrZXJuZWwgdHJhY2VzIHdpdGggb3RoZXJzLg0KPg0KPiBUaG91Z2h0
-cyA/DQo+DQpUaGFua3MsDQotLSANCldhbmdZdWxpDQo=
---------------fc1I6wLPuEDOv0vTtM2yhlaM
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
-
---------------fc1I6wLPuEDOv0vTtM2yhlaM--
-
---------------tqGbotQOjplZ0kezqXM5oZdY--
-
---------------oHWYTD0dDJEH0jV4jUDKX0Al
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCaIchvgUDAAAAAAAKCRDF2h8wRvQL7hIp
-AP0btAUsJm8iM4VDC8j24xR1IrZgEhdWbQHnO71OaDmnyAD+IUcXJ0U8jot3sCQKFSoePfba2iW3
-NEs1tBpw/2d3EwI=
-=znwt
------END PGP SIGNATURE-----
-
---------------oHWYTD0dDJEH0jV4jUDKX0Al--
+Well it is kind of "maintainable" but the driver needs to do whole lot of
+translation to get the SPI opcodes translated into the commands the
+controller can actually execute. This means that if we get new opcodes for
+new chips the driver needs to be updated too. I feel the SPI MEM is not
+really good fit for "higher level" controllers like this.
 
