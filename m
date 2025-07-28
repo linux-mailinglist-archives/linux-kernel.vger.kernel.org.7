@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-747815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B69B138BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:17:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E85CB138C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDE461890BDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239EE188DF58
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C0A256C8D;
-	Mon, 28 Jul 2025 10:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0447A25A323;
+	Mon, 28 Jul 2025 10:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gfNVx2aE"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Zkjm2shC"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3746D220F38;
-	Mon, 28 Jul 2025 10:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8A5225795
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753697833; cv=none; b=F8HEFtGDKOknbs2s33nkiks28oMgU4iaCYOVe8SgI8FLSObQIUMaH4n9vpqvmtV7LRAiyOgsY7I2GvQDlm8ZgDVkK+gyhy7vww4jWdpvPd5Kl4sRCJhVgbiYO/8d5/vfC8u0bvveLx19D2gdCnoS0xlXYQUIKkvHkqKlU54OsVU=
+	t=1753697834; cv=none; b=tWvJHkNVTKiLaH4UE36+JPRWid4J7K6lQaPrwda8eJzANxTTYTjhewECf9Bzvs7pg61BsHoP2Cy2tRGfbuKKLqPFwsYJb6warwvmOf9/pwu0lOQO05HMJSsMZIXrkVSTpwZJD3Oe0+VpndzNPbLliDhmLE67/9vUGI2dzVuiKxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753697833; c=relaxed/simple;
-	bh=93OUSAsdiEU+Lbz5o5xq9Ulb4QwpwChWYeReHfx1RA4=;
+	s=arc-20240116; t=1753697834; c=relaxed/simple;
+	bh=+QSOk1skXADSLgUzo2daFYEATbUux1ldbokGQqMGm08=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HEVFWFp3o+Ehj6KI7cBMBSnXgE5n+DNk+04S+uveZtQU7SBUv0Fc7Tx2E3ZG8Mo9buq1frParqinhn/B1NELv0WwzMYSbOmM3hmgzmPeBY4m0nJBulB/DUcvbHRnq5Kqs1/bDJ98M7McAImn2KkwzIaW3YOc1V6CuDMJm2BADJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gfNVx2aE; arc=none smtp.client-ip=217.70.183.198
+	 MIME-Version:Content-Type; b=oKSvniVozBxVaX8WOxGcuHXyiMXYlvvJyyrCDq4QFMkSWv3LWlCePna04P4V1pJScK8GhzHTFYoQego4j9tQTrtVRCaP2jj/2LgCMmHL/M6nQwxDHwoV5gEkQg0kalVwx1JzbyocV97vtqLVut2qB5MWXBwYVswFfJ6hl3HIPDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Zkjm2shC; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E11B44329A;
-	Mon, 28 Jul 2025 10:17:08 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 533254329B;
+	Mon, 28 Jul 2025 10:17:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753697829;
+	t=1753697830;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pboHQ9RcvBOP/wjmFACMKjqT7sFHUCrx35OKtpXAyO8=;
-	b=gfNVx2aEAmhGmeroxZz0+RRhTArWPK2eT7Ya6u47qy0KW7qlHfusv5OsGxUFx3yi+MSu/w
-	EM+wJBA9CzO5Zrgkbqr4pwjjufn3PNhodvxuyG9hhaJNZvrsPs38OlzsTJ82xXv6hpfRr7
-	GEj0Dd6lhPpHTv94mXav7aE/0viAE7qBGD+FWvo2Z1VYWqarWj1B8y9Elf3Qa7ezoXk7CP
-	M5ryeRD7UbO2ZaPfIym+2gxjPZWmYvZR6LaAyodXBtCXD+5xlrx4GXG3SU/5xCMqS2ZyI9
-	E811zNKaPML2vdCFV6uzOXvKn5c3oVMt/ezVBQyzCVb8YnLs1f9zfYpDX+QgZQ==
+	bh=y2pizfwQKoKGdOMNPF3BacZFLWH5qaDvaOE2TTeK/ok=;
+	b=Zkjm2shC8dNPGEV/0FDraPI/Gg1TM6vzU4y67mQAQKjGs7GIW7cMATKaDnPj+LMlVvAL5v
+	AnhlTFDspYEHISwt70asIz8Bb6M+QkY5nqza3mta+yabDsmRBIpV4GUUeUu5wty2XFvzKg
+	V+lNpJfKQwIPfp+QwGVBLhGf1EJ99eXxPTitG73IkgBtfPEnOAQgqYBViXdQDnagnJzkw9
+	lJ9BFClJWot2fPgP2LTnwTSf1c3JD9gLDrPuNDT7cGzVCUqlQ6/30uZtZPmFhSolXVugiB
+	exNfyxDXBiOPsSQW1YY7ulGIE0acjFwrsheLnC7oLFBSnndJrUhmfxFwYmXQvg==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Richard Weinberger <richard@nod.at>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Gabor Juhos <j4g8y7@gmail.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-In-Reply-To: <20250708-spinand-propagate-wait-timeout-v1-1-76f8c14ea2d7@gmail.com>
-References: <20250708-spinand-propagate-wait-timeout-v1-1-76f8c14ea2d7@gmail.com>
-Subject: Re: [PATCH] mtd: spinand: propagate spinand_wait() errors from
- spinand_write_page()
-Message-Id: <175369782886.102528.14496009254436108539.b4-ty@bootlin.com>
-Date: Mon, 28 Jul 2025 12:17:08 +0200
+To: richard@nod.at, vigneshr@ti.com, nicolas.ferre@microchip.com, 
+ alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
+ dan.carpenter@linaro.org, bbrezillon@kernel.org, 
+ linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
+Cc: Zixun LI <admin@hifiphile.com>, 
+ Ada Couprie Diaz <ada.coupriediaz@arm.com>
+In-Reply-To: <20250721104340.113581-1-balamanikandan.gunasundar@microchip.com>
+References: <20250721104340.113581-1-balamanikandan.gunasundar@microchip.com>
+Subject: Re: [PATCH] mtd: rawnand: atmel: set pmecc data setup time
+Message-Id: <175369782927.102528.5580599335079355284.b4-ty@bootlin.com>
+Date: Mon, 28 Jul 2025 12:17:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,22 +69,20 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeludeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheeifffhueelgfdtleetgfelvefggfehudelvdehuddulefgheelgfehieevvdegnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdegiegnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehjgehgkeihjeesghhmrghilhdrtghomhdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlr
- dhorhhgpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomh
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeludeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheeifffhueelgfdtleetgfelvefggfehudelvdehuddulefgheelgfehieevvdegnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdegiegnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepsggsrhgviihilhhlohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrghlrghmrghnihhkrghnuggrnhdrghhunhgrshhunhgurghrsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheptghlrghuughiuhdrsggviihnvggrsehtu
+ higohhnrdguvghvpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprggumhhinheshhhifhhiphhhihhlvgdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhhitgholhgrshdrfhgvrhhrvgesmhhitghrohgthhhiphdrtghomh
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, 08 Jul 2025 15:11:00 +0200, Gabor Juhos wrote:
-> Since commit 3d1f08b032dc ("mtd: spinand: Use the external ECC engine
-> logic") the spinand_write_page() function ignores the errors returned
-> by spinand_wait(). Change the code to propagate those up to the stack
-> as it was done before the offending change.
+On Mon, 21 Jul 2025 16:13:40 +0530, Balamanikandan Gunasundar wrote:
+> Setup the pmecc data setup time as 3 clock cycles for 133MHz as recommended
+> by the datasheet.
 > 
 > 
 
 Applied to nand/next, thanks!
 
-[1/1] mtd: spinand: propagate spinand_wait() errors from spinand_write_page()
-      commit: e4c896ce424a4aa248c1784c5cef9ddd0e4900fb
+[1/1] mtd: rawnand: atmel: set pmecc data setup time
+      commit: c115e7ed66f0dc6cf96f9bf3e3c46f6c44aa531b
 
 Patche(s) should be available on mtd/linux.git and will be
 part of the next PR (provided that no robot complains by then).
