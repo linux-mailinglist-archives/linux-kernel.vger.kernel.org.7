@@ -1,176 +1,93 @@
-Return-Path: <linux-kernel+bounces-748324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5297B13F90
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:09:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEAE5B13F9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA8327ABF6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:04:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54EC77ADE83
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6012C280CD5;
-	Mon, 28 Jul 2025 16:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E9925B31D;
+	Mon, 28 Jul 2025 16:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9WTJHLh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LduWdqBU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b04X7HrA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B792274B38;
-	Mon, 28 Jul 2025 16:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A105A1B4223;
+	Mon, 28 Jul 2025 16:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753718543; cv=none; b=F0esV9kE9Cx9yv0HQmZOnntIRyOWhsqRGfLBz3yq6vyWb2o18MitJfrUnRlFtUnrb44juAN7WyaIYqm+mfhX8G9zkdHdl+OXdy3yf60hVFrBvsj+VA/xN/dsnXbScFBgnFSDed+HmZZRfG5ip121w96ij/Tq5Osirjvj8v1AKNk=
+	t=1753718579; cv=none; b=F1Jji3thwxFcXsHrHA0iK2RGP32eu2q/1HusqkUskNY051bZuwyxE3QHDF/rMxTvscNSpwnQPuigHBXfBOCCiOcUbXMNBm7VcUa0+kaU/9KCfO8jfXxJqe9O8UbMHn4fFd7Ftf1sSclzJ/Lr4Yf9PY4Z9oj5MINtzYSmo7E21D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753718543; c=relaxed/simple;
-	bh=Re34NdFIFBEjM60ZOokQBSoSZa53NQDJZGofuj8tscY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jXWKxw7GzPE3+WQCow0teMXm4uFYweB81o4miEvo6yoU32KAAKl9cQ+0t65FmhTxfXEY0x+4QPHn8EfUWVBDStfZolJs/rtM3Kz8iORyJpjPsN8rYDIR6EaZ2p1NjeJBwbObfxwM6zpzMZGZKfy8PZaYYyivUMc3M12OaYQ3zlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9WTJHLh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73773C113D0;
-	Mon, 28 Jul 2025 16:02:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753718542;
-	bh=Re34NdFIFBEjM60ZOokQBSoSZa53NQDJZGofuj8tscY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G9WTJHLhvpI0HtXYEFfFu5EMSp8YbHOPg/6SAELkZ/NBvbshoF0lnSEUXAJxlCiiw
-	 zWB3hl78PbGnmveFYqIYmfsJ/08ybTVyAwNjo0JoVw2SsFApYell+BNRf/cQn/+JF5
-	 bu8R9BMJMeBzQbWwJfnkoWQONyMEBXX9KH8dhVDGoin1KAkYAXqbuFADweJyACwb8t
-	 Fp6JOyo56SDrWCQ55JgAcLZeDMbWdQE7ao4ygMqjHoFdiBdQ7fZvmE8dI4UiIR8szz
-	 pHBjAtNyzZIzsTvJu8/nM7N177MrOV7TrfaKAn1iqYI/18nyYm2mTE8K8hG/70atWr
-	 ISLUt9Yu7jkDg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab@kernel.org>)
-	id 1ugQIq-00000000GdK-2OZs;
-	Mon, 28 Jul 2025 18:02:16 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: "Message-ID :" <cover.1752076293.git.mchehab+huawei@kernel.org>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Breno Leitao" <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Donald Hunter" <donald.hunter@gmail.com>,
-	"Eric Dumazet" <edumazet@google.com>,
-	"Ignacio Encinas Rubio" <ignacio@iencinas.com>,
-	"Jakub Kicinski" <kuba@kernel.org>,
-	"Jan Stancek" <jstancek@redhat.com>,
-	"Jonathan Corbet" <corbet@lwn.net>,
-	"Marco Elver" <elver@google.com>,
-	"Paolo Abeni" <pabeni@redhat.com>,
-	"Randy Dunlap" <rdunlap@infradead.org>,
-	"Ruben Wauters" <rubenru09@aol.com>,
-	"Shuah Khan" <skhan@linuxfoundation.org>,
-	"Simon Horman" <horms@kernel.org>,
-	joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev,
-	netdev@vger.kernel.org,
-	peterz@infradead.org,
-	stern@rowland.harvard.edu
-Subject: [PATCH v10 14/14] sphinx: parser_yaml.py: fix line numbers information
-Date: Mon, 28 Jul 2025 18:02:07 +0200
-Message-ID: <af12fc33278d4da49ca4960f896768e311578461.1753718185.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1753718185.git.mchehab+huawei@kernel.org>
-References: <cover.1753718185.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1753718579; c=relaxed/simple;
+	bh=z3927KF6F7SOGPsHOpZC80nRYXP55EShbpHg20Y+ND4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AVsMUdVCbJ+tdleyKV+aQ9lwLO2u3c6XAvHBc0KpckDcuaDDGNjj2zKsj3p23uA854LessrNAaAImWTS/Gddb8Q/2Ppwohe0wKBiOo33D+gna7N0UTNItl+C5qBSVWX5m/WAMzWIaIclBfqITfxnZfeiJYiGSWzsjTDfMIw9iD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LduWdqBU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b04X7HrA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 28 Jul 2025 18:02:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753718575;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PsqX5syA6psCKix2w9fNPFDrZdu9VJhXIYb8N+BAcV4=;
+	b=LduWdqBUrYbxqMr5k5TIPmbFpohZgnT/btPfXshG4ZbGSvaDAiveT7l2tRSiVoegolWRq4
+	26AEF52h3xFx26Y5Tb5YYzrjaqeuLWOrqJADkZrzI8X0Vnu5TJr/g/RDvatxZN+brFFtpO
+	GQdk4OxFIoxsg8hg6bqNnxdOEvyiFz4moRlYCWWmchWRrI3/CaKqd7KsUzfxTrY7yAmbyF
+	TH799VFrHRO+ImelL00AZi+rSkI3uYyIkvk4XQy4dwCXHxjTuy+oOtW3KExWAzzGUD67+F
+	l83NcWDe4mgHK5k2ZiUgV51DF3eTjPIwQbrFBWuDv5z3DHZjsQ/D29Bb0krhEg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753718575;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PsqX5syA6psCKix2w9fNPFDrZdu9VJhXIYb8N+BAcV4=;
+	b=b04X7HrAuyOvwZbpJSqJ47PoHa2Cp7/JZ5bWVjeQp7nOGcDDw+mNgRZjB1KOmG1QNlMj1O
+	SAY4OhKLwYZcXgCA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v5 6/9] sched: Adapt sched tracepoints for RV task model
+Message-ID: <20250728160253.vqgYegmG@linutronix.de>
+References: <20250728135022.255578-1-gmonaco@redhat.com>
+ <20250728135022.255578-7-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728135022.255578-7-gmonaco@redhat.com>
 
-As reported by Donald, this code:
+On Mon, Jul 28, 2025 at 03:50:18PM +0200, Gabriele Monaco wrote:
+> Add the following tracepoint:
+> * sched_set_need_resched(tsk, cpu, tif)
+>     Called when a task is set the need resched [lazy] flag
+> 
+> Remove the unused ip parameter from sched_entry and sched_exit and alter
+> sched_entry to have a value of preempt consistent with the one used in
+> sched_switch.
+> 
+> Also adapt all monitors using sched_{entry,exit} to avoid breaking build.
 
-	rst_parser = RSTParser()
-	rst_parser.parse('\n'.join(result), document)
+Does it make sense to split this patch into two, one for
+sched_set_need_resched and another for sched_{entry,exit}?
 
-breaks line parsing. As an alternative, I tested a variant of it:
-
-	rst_parser.parse(result, document)
-
-but still line number was not preserved. As Donald noted,
-standard Parser classes don't have a direct mechanism to preserve
-line numbers from ViewList().
-
-So, instead, let's use a mechanism similar to what we do already at
-kerneldoc.py: call the statemachine mechanism directly there.
-
-I double-checked when states and statemachine were introduced:
-both were back in 2002. I also tested doc build with docutils 0.16
-and 0.21.2. It worked with both, so it seems to be stable enough
-for our needs.
-
-Reported-by: Donald Hunter <donald.hunter@gmail.com>
-Closes: https://lore.kernel.org/linux-doc/m24ivk78ng.fsf@gmail.com/T/#u
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/sphinx/parser_yaml.py | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/sphinx/parser_yaml.py b/Documentation/sphinx/parser_yaml.py
-index 1602b31f448e..634d84a202fc 100755
---- a/Documentation/sphinx/parser_yaml.py
-+++ b/Documentation/sphinx/parser_yaml.py
-@@ -11,7 +11,9 @@ import sys
- 
- from pprint import pformat
- 
-+from docutils import statemachine
- from docutils.parsers.rst import Parser as RSTParser
-+from docutils.parsers.rst import states
- from docutils.statemachine import ViewList
- 
- from sphinx.util import logging
-@@ -56,6 +58,8 @@ class YamlParser(Parser):
- 
-     re_lineno = re.compile(r"\.\. LINENO ([0-9]+)$")
- 
-+    tab_width = 8
-+
-     def rst_parse(self, inputstring, document, msg):
-         """
-         Receives a ReST content that was previously converted by the
-@@ -66,10 +70,18 @@ class YamlParser(Parser):
- 
-         result = ViewList()
- 
-+        self.statemachine = states.RSTStateMachine(state_classes=states.state_classes,
-+                                                   initial_state='Body',
-+                                                   debug=document.reporter.debug_flag)
-+
-         try:
-             # Parse message with RSTParser
-             lineoffset = 0;
--            for line in msg.split('\n'):
-+
-+            lines = statemachine.string2lines(msg, self.tab_width,
-+                                              convert_whitespace=True)
-+
-+            for line in lines:
-                 match = self.re_lineno.match(line)
-                 if match:
-                     lineoffset = int(match.group(1))
-@@ -77,12 +89,7 @@ class YamlParser(Parser):
- 
-                 result.append(line, document.current_source, lineoffset)
- 
--            # Fix backward compatibility with docutils < 0.17.1
--            if "tab_width" not in vars(document.settings):
--                document.settings.tab_width = 8
--
--            rst_parser = RSTParser()
--            rst_parser.parse('\n'.join(result), document)
-+            self.statemachine.run(result, document)
- 
-         except Exception as e:
-             document.reporter.error("YAML parsing error: %s" % pformat(e))
--- 
-2.49.0
-
+Nam
 
