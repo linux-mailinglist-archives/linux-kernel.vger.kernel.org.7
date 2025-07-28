@@ -1,47 +1,42 @@
-Return-Path: <linux-kernel+bounces-747597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF0DB135C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:38:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2027B135CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7815B18950B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:38:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF061896B3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EC22192FC;
-	Mon, 28 Jul 2025 07:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvHF3H3g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2484E22156A;
+	Mon, 28 Jul 2025 07:40:01 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F03E190676
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28001862A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753688309; cv=none; b=ncYql/rLaK/wqw/+60KIU+5sej67zgPx5781jo6/5m6sw+YtDcb6H4UMKSmJMOIgdwmsuJGmhlZnh7Nanc2+ZdVmSqhx7+xvhQc+Cqe+p5UraVWk9wjQFi4MqthHpoop7vSf1z4SD+g+PQh0Y3fkf3fMLmpZLbMbyC5GH5LEe+o=
+	t=1753688400; cv=none; b=Nw7XwNQLAoTnNzHOMPA4Jg1Juxr7d6Vj1IPl4YH+2LAuIGCStqvtAJWss8QX9PAFDDjdT5Ot8ecv0m/rPqSKKfZArQSSjHKD5lQmf3JtVAp/nWwvjzJ2Gtdsz127jFMxxqmdCBWpgyEAanIPPjCvBgE6SFnidf6MEqGN6JuQXwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753688309; c=relaxed/simple;
-	bh=MXCtCH4Mr1jaHZuM+QGNycFJtdivRPqdSwiI9clW9h4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=E10hFjB8bqM5oe/oMrOKSUT2GRy78ilHLdHc791oV/nd8gXx7dlLl1XEyCIAMXWN8eSsFJuX41o2EbkXL+0ihOGcnyjN8j/4dlh8vQwPoEzYbmLPA9G3BevX/tyWmr2/HQ9XavgAr7oEKASPpFQgn1pv0kbJokpJvABQS2PDYi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvHF3H3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64899C4CEE7;
-	Mon, 28 Jul 2025 07:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753688308;
-	bh=MXCtCH4Mr1jaHZuM+QGNycFJtdivRPqdSwiI9clW9h4=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=KvHF3H3gSLZ5/ut2pHq1z0zyhB/m8iWH3RoMKOocLzap1sk67LGY6BfdseQGJabqr
-	 M78OLmkIt6gJXyUcZ3zkjhQCzV15RV3I05dq/MNqz7NmR7znHjxt+FRWIBjTqKFCT7
-	 TG7kliGEGiPaUm+Ng3y3ZsUG3ERMijlX3hWs6QRNlXtHGDUjE/Vm6Tko6/Aut+DyUE
-	 eCe2xi/1U/gJbemI6q25Oanx1Lvt3wJMcQGeNnW7r1XFOfqGUzUDbO/YK9QcEDPuwZ
-	 gzHcJqT3/uzMZMKTVJX8QDg3kfeePelaFFQTqap3AqsqognwrIBUM602PejI4FWVGl
-	 KGUEL0M7tg06Q==
-Message-ID: <d258ab6d-a97a-4232-bf90-5afedd5cccb2@kernel.org>
-Date: Mon, 28 Jul 2025 15:38:25 +0800
+	s=arc-20240116; t=1753688400; c=relaxed/simple;
+	bh=sEPblR3iWpobKqTK0HuO+9LpWsjdE5r1xMKXRFKQHBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WjgMhk2FA3uu3VDFBsY4DPUS1eVHPvxGsD92QBGDxiD129y196okTPwXTk2nAz0z9Tc1poYLkLGPGxqvU3c0QMRB+Km5Q7beHt6oqVerE8RJQ3KBfELjQLEGxK+9DD64tYioUgQWnZxPuIWjLEd0o7kxWg3q8LF504KKCNf3O8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.202] (p57bd9d4f.dip0.t-ipconnect.de [87.189.157.79])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 93A1961E64849;
+	Mon, 28 Jul 2025 09:39:06 +0200 (CEST)
+Message-ID: <4e5a3a4d-9b6b-443b-b3c2-eac1b44e96e0@molgen.mpg.de>
+Date: Mon, 28 Jul 2025 09:39:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,181 +44,239 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, axboe@kernel.dk, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: f2fs supports uncached buffered I/O read
-To: Qi Han <hanqi@vivo.com>, jaegeuk@kernel.org
-References: <20250725075310.1614614-1-hanqi@vivo.com>
+Subject: Re: athk10: Poll service ready completion by default to avoid warning
+ `failed to receive service ready completion, polling..`?
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Cc: Baochen Qiang <quic_bqiang@quicinc.com>,
+ Jeff Johnson <jjohnson@kernel.org>, ath10k@lists.infradead.org,
+ James Prestwood <prestwoj@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <97a15967-5518-4731-a8ff-d43ff7f437b0@molgen.mpg.de>
+ <3cbe13e1-a820-4804-a28c-a57e2ee7a020@oss.qualcomm.com>
+ <8716a67c-6e33-4a35-8d96-33f81c07c8e0@molgen.mpg.de>
+ <1e797dea-d2e1-4947-8ef3-d2ac5ea0c156@oss.qualcomm.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250725075310.1614614-1-hanqi@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <1e797dea-d2e1-4947-8ef3-d2ac5ea0c156@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 7/25/25 15:53, Qi Han wrote:
-> Jens has already completed the development of uncached buffered I/O
-> in git [1], and in f2fs, uncached buffered I/O read can be enabled
-> simply by setting the FOP_DONTCACHE flag in f2fs_file_operations.
+[CC: +scheduler folks for input on the wait_for_completion_timeout() part]
 
-IIUC, we may suffer lock issue when we call pwritev(.. ,RWF_DONTCACHE)?
-as Jen mentioned in below path, right?
+Dear Baochen,
 
-soft-irq
-- folio_end_writeback()
- - filemap_end_dropbehind_write()
-  - filemap_end_dropbehind()
-   - folio_unmap_invalidate()
-    - lock i_lock
 
-Thanks,
+Thank you for your reply.
 
-> 
-> I have been testing a use case locally, which aligns with Jens' test
-> case [2]. In the read scenario, using uncached buffer I/O results in
-> more stable read performance and a lower load on the background memory
-> reclaim thread (kswapd). So let's enable uncached buffer I/O reads on
-> F2FS.
-> 
-> Read test data without using uncached buffer I/O:
-> reading bs 32768, uncached 0
->    1s: 1856MB/sec, MB=1856
->    2s: 1907MB/sec, MB=3763
->    3s: 1830MB/sec, MB=5594
->    4s: 1745MB/sec, MB=7333
->    5s: 1829MB/sec, MB=9162
->    6s: 1903MB/sec, MB=11075
->    7s: 1878MB/sec, MB=12942
->    8s: 1763MB/sec, MB=14718
->    9s: 1845MB/sec, MB=16549
->   10s: 1915MB/sec, MB=18481
->   11s: 1831MB/sec, MB=20295
->   12s: 1750MB/sec, MB=22066
->   13s: 1787MB/sec, MB=23832
->   14s: 1913MB/sec, MB=25769
->   15s: 1898MB/sec, MB=27668
->   16s: 1795MB/sec, MB=29436
->   17s: 1812MB/sec, MB=31248
->   18s: 1890MB/sec, MB=33139
->   19s: 1880MB/sec, MB=35020
->   20s: 1754MB/sec, MB=36810
-> 
-> 08:36:26      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
-> 08:36:27        0        93    0.00    0.00    0.00    0.00    0.00     7  kswapd0
-> 08:36:28        0        93    0.00    0.00    0.00    0.00    0.00     7  kswapd0
-> 08:36:29        0        93    0.00    0.00    0.00    0.00    0.00     7  kswapd0
-> 08:36:30        0        93    0.00   56.00    0.00    0.00   56.00     7  kswapd0
-> 08:36:31        0        93    0.00   73.00    0.00    0.00   73.00     7  kswapd0
-> 08:36:32        0        93    0.00   83.00    0.00    0.00   83.00     7  kswapd0
-> 08:36:33        0        93    0.00   75.00    0.00    0.00   75.00     7  kswapd0
-> 08:36:34        0        93    0.00   81.00    0.00    0.00   81.00     7  kswapd0
-> 08:36:35        0        93    0.00   54.00    0.00    1.00   54.00     2  kswapd0
-> 08:36:36        0        93    0.00   61.00    0.00    0.00   61.00     0  kswapd0
-> 08:36:37        0        93    0.00   68.00    0.00    0.00   68.00     7  kswapd0
-> 08:36:38        0        93    0.00   53.00    0.00    0.00   53.00     2  kswapd0
-> 08:36:39        0        93    0.00   82.00    0.00    0.00   82.00     7  kswapd0
-> 08:36:40        0        93    0.00   77.00    0.00    0.00   77.00     1  kswapd0
-> 08:36:41        0        93    0.00   74.00    0.00    1.00   74.00     7  kswapd0
-> 08:36:42        0        93    0.00   71.00    0.00    0.00   71.00     7  kswapd0
-> 08:36:43        0        93    0.00   78.00    0.00    0.00   78.00     7  kswapd0
-> 08:36:44        0        93    0.00   85.00    0.00    0.00   85.00     7  kswapd0
-> 08:36:45        0        93    0.00   83.00    0.00    0.00   83.00     7  kswapd0
-> 08:36:46        0        93    0.00   70.00    0.00    0.00   70.00     7  kswapd0
-> 08:36:47        0        93    0.00   78.00    0.00    1.00   78.00     2  kswapd0
-> 08:36:48        0        93    0.00   81.00    0.00    0.00   81.00     3  kswapd0
-> 08:36:49        0        93    0.00   54.00    0.00    0.00   54.00     7  kswapd0
-> 08:36:50        0        93    0.00   76.00    0.00    0.00   76.00     1  kswapd0
-> 08:36:51        0        93    0.00   75.00    0.00    0.00   75.00     0  kswapd0
-> 08:36:52        0        93    0.00   73.00    0.00    0.00   73.00     7  kswapd0
-> 08:36:53        0        93    0.00   61.00    0.00    1.00   61.00     7  kswapd0
-> 08:36:54        0        93    0.00   80.00    0.00    0.00   80.00     7  kswapd0
-> 08:36:55        0        93    0.00   64.00    0.00    0.00   64.00     7  kswapd0
-> 08:36:56        0        93    0.00   56.00    0.00    0.00   56.00     7  kswapd0
-> 08:36:57        0        93    0.00   26.00    0.00    0.00   26.00     2  kswapd0
-> 08:36:58        0        93    0.00   24.00    0.00    1.00   24.00     3  kswapd0
-> 08:36:59        0        93    0.00   22.00    0.00    1.00   22.00     3  kswapd0
-> 08:37:00        0        93    0.00   15.84    0.00    0.00   15.84     3  kswapd0
-> 08:37:01        0        93    0.00    0.00    0.00    0.00    0.00     3  kswapd0
-> 08:37:02        0        93    0.00    0.00    0.00    0.00    0.00     3  kswapd0
-> 
-> Read test data after using uncached buffer I/O:
-> reading bs 32768, uncached 1
->    1s: 1863MB/sec, MB=1863
->    2s: 1903MB/sec, MB=3766
->    3s: 1860MB/sec, MB=5627
->    4s: 1864MB/sec, MB=7491
->    5s: 1860MB/sec, MB=9352
->    6s: 1854MB/sec, MB=11206
->    7s: 1874MB/sec, MB=13081
->    8s: 1874MB/sec, MB=14943
->    9s: 1840MB/sec, MB=16798
->   10s: 1849MB/sec, MB=18647
->   11s: 1863MB/sec, MB=20511
->   12s: 1798MB/sec, MB=22310
->   13s: 1897MB/sec, MB=24207
->   14s: 1817MB/sec, MB=26025
->   15s: 1893MB/sec, MB=27918
->   16s: 1917MB/sec, MB=29836
->   17s: 1863MB/sec, MB=31699
->   18s: 1904MB/sec, MB=33604
->   19s: 1894MB/sec, MB=35499
->   20s: 1907MB/sec, MB=37407
-> 
-> 08:38:00      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
-> 08:38:01        0        93    0.00    0.00    0.00    0.00    0.00     4  kswapd0
-> 08:38:02        0        93    0.00    0.00    0.00    0.00    0.00     4  kswapd0
-> 08:38:03        0        93    0.00    0.00    0.00    0.00    0.00     4  kswapd0
-> 08:38:04        0        93    0.00    0.00    0.00    0.00    0.00     4  kswapd0
-> 08:38:05        0        93    0.00    0.00    0.00    0.00    0.00     4  kswapd0
-> 08:38:06        0        93    0.00    1.00    0.00    1.00    1.00     0  kswapd0
-> 08:38:07        0        93    0.00    0.00    0.00    0.00    0.00     0  kswapd0
-> 08:38:08        0        93    0.00    0.00    0.00    0.00    0.00     0  kswapd0
-> 08:38:09        0        93    0.00    1.00    0.00    0.00    1.00     1  kswapd0
-> 08:38:10        0        93    0.00    0.00    0.00    0.00    0.00     1  kswapd0
-> 08:38:11        0        93    0.00    0.00    0.00    0.00    0.00     1  kswapd0
-> 08:38:12        0        93    0.00    0.00    0.00    0.00    0.00     1  kswapd0
-> 08:38:13        0        93    0.00    0.00    0.00    0.00    0.00     1  kswapd0
-> 08:38:14        0        93    0.00    0.00    0.00    0.00    0.00     1  kswapd0
-> 08:38:15        0        93    0.00    3.00    0.00    0.00    3.00     0  kswapd0
-> 08:38:16        0        93    0.00    0.00    0.00    0.00    0.00     0  kswapd0
-> 08:38:17        0        93    0.00    0.00    0.00    0.00    0.00     0  kswapd0
-> 08:38:18        0        93    0.00    0.00    0.00    0.00    0.00     0  kswapd0
-> 08:38:19        0        93    0.00    0.00    0.00    0.00    0.00     0  kswapd0
-> 08:38:20        0        93    0.00    0.00    0.00    0.00    0.00     0  kswapd0
-> 08:38:21        0        93    0.00    0.00    0.00    0.00    0.00     0  kswapd0
-> 08:38:22        0        93    0.00    0.00    0.00    0.00    0.00     0  kswapd0
-> 08:38:23        0        93    0.00    3.00    0.00    0.00    3.00     4  kswapd0
-> 08:38:24        0        93    0.00    0.00    0.00    0.00    0.00     4  kswapd0
-> 08:38:25        0        93    0.00    0.00    0.00    0.00    0.00     4  kswapd0
-> 08:38:26        0        93    0.00    4.00    0.00    0.00    4.00     3  kswapd0
-> 08:38:27        0        93    0.00    0.00    0.00    0.00    0.00     3  kswapd0
-> 08:38:28        0        93    0.00    0.00    0.00    0.00    0.00     3  kswapd0
-> 08:38:29        0        93    0.00    0.00    0.00    0.00    0.00     3  kswapd0
-> 08:38:30        0        93    0.00    0.00    0.00    0.00    0.00     3  kswapd0
-> 08:38:31        0        93    0.00    0.00    0.00    0.00    0.00     3  kswapd0
-> 08:38:32        0        93    0.00    0.00    0.00    0.00    0.00     3  kswapd0
-> 08:38:33        0        93    0.00    0.00    0.00    0.00    0.00     3  kswapd0
-> 
-> [1]
-> https://lore.kernel.org/all/20241220154831.1086649-10-axboe@kernel.dk/T/#m58520a94b46f543d82db3711453dfc7bb594b2b0
-> 
-> [2]
-> https://pastebin.com/u8eCBzB5
-> 
-> Signed-off-by: Qi Han <hanqi@vivo.com>
-> ---
->  fs/f2fs/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 696131e655ed..d8da1fc2febf 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -5425,5 +5425,5 @@ const struct file_operations f2fs_file_operations = {
->  	.splice_read	= f2fs_file_splice_read,
->  	.splice_write	= iter_file_splice_write,
->  	.fadvise	= f2fs_file_fadvise,
-> -	.fop_flags	= FOP_BUFFER_RASYNC,
-> +	.fop_flags	= FOP_BUFFER_RASYNC | FOP_DONTCACHE,
->  };
+Am 28.07.25 um 04:18 schrieb Baochen Qiang:
+> On 7/25/2025 8:15 PM, Paul Menzel wrote:
 
+>> Am 22.07.25 um 11:38 schrieb Baochen Qiang:
+>>
+>>> On 7/22/2025 4:37 PM, Paul Menzel wrote:
+>>
+>>>> Today, on the Intel Kaby Lake laptop Dell XPS 13 9360 with
+>>>>
+>>>>       $ lspci -nn -s 3a:
+>>>>       3a:00.0 Network controller [0280]: Qualcomm Atheros QCA6174 802.11ac Wireless Network Adapter [168c:003e] (rev 32)
+>>>>
+>>>> resuming from ACPI S3 took longer, as it sometimes does, and looking into this, I see
+>>>> `failed to receive service ready completion, polling..` after a delay of five seconds:
+>>>>
+>>>> ```
+>>>> [    0.000000] Linux version 6.16.0-rc6-00253-g4871b7cb27f4 (build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #90 SMP PREEMPT_DYNAMIC Sat Jul 19 08:53:39 CEST 2025
+>>>> […]
+>>>> [    8.588020] abreu kernel: ath10k_pci 0000:3a:00.0: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
+>>>> [    8.588372] abreu kernel: ath10k_pci 0000:3a:00.0: kconfig debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
+>>>> [    8.588603] abreu kernel: ath10k_pci 0000:3a:00.0: firmware ver WLAN.RM.4.4.1-00309- api 6 features wowlan,ignore-otp,mfp crc32 0793bcf2
+>>>> […]
+>>>> [    9.113550] Bluetooth: hci0: QCA: patch rome 0x302 build 0x3e8, firmware rome 0x302 build 0x111
+>>>> […]
+>>>> [41804.953487] PM: suspend entry (deep)
+>>>> [41804.988361] Filesystems sync: 0.034 seconds
+>>>> [41805.007216] Freezing user space processes
+>>>> [41805.009650] Freezing user space processes completed (elapsed 0.002 seconds)
+>>>> [41805.009663] OOM killer disabled.
+>>>> [41805.009666] Freezing remaining freezable tasks
+>>>> [41805.011383] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+>>>> [41805.011502] printk: Suspending console(s) (use no_console_suspend to debug)
+>>>> [41805.523883] ACPI: EC: interrupt blocked
+>>>> [41805.545779] ACPI: PM: Preparing to enter system sleep state S3
+>>>> [41805.556040] ACPI: EC: event blocked
+>>>> [41805.556045] ACPI: EC: EC stopped
+>>>> [41805.556046] ACPI: PM: Saving platform NVS memory
+>>>> [41805.559408] Disabling non-boot CPUs ...
+>>>> [41805.562480] smpboot: CPU 3 is now offline
+>>>> [41805.567105] smpboot: CPU 2 is now offline
+>>>> [41805.572122] smpboot: CPU 1 is now offline
+>>>> [41805.582034] ACPI: PM: Low-level resume complete
+>>>> [41805.582079] ACPI: EC: EC started
+>>>> [41805.582080] ACPI: PM: Restoring platform NVS memory
+>>>> [41805.583986] Enabling non-boot CPUs ...
+>>>> [41805.584009] smpboot: Booting Node 0 Processor 1 APIC 0x2
+>>>> [41805.584734] CPU1 is up
+>>>> [41805.584749] smpboot: Booting Node 0 Processor 2 APIC 0x1
+>>>> [41805.585514] CPU2 is up
+>>>> [41805.585530] smpboot: Booting Node 0 Processor 3 APIC 0x3
+>>>> [41805.586216] CPU3 is up
+>>>> [41805.589070] ACPI: PM: Waking up from system sleep state S3
+>>>> [41805.623652] ACPI: EC: interrupt unblocked
+>>>> [41805.640074] ACPI: EC: event unblocked
+>>>> [41805.651951] nvme nvme0: 4/0/0 default/read/poll queues
+>>>> [41805.865391] atkbd serio0: Failed to deactivate keyboard on isa0060/serio0
+>>>> [41810.933639] ath10k_pci 0000:3a:00.0: failed to receive service ready completion, polling..
+>>>> [41810.933769] ath10k_pci 0000:3a:00.0: service ready completion received, continuing normally
+>>>> [41810.986330] OOM killer enabled.
+>>>> [41810.986332] Restarting tasks: Starting
+>>>> […]
+>>>> ```
+>>>>
+>>>> Commit e57b7d62a1b2 (wifi: ath10k: poll service ready message before failing) [1][2],
+>>>> present since Linux v6.10-rc1, added this to avoid the hardware not being initialized:
+>>>>
+>>>>           time_left = wait_for_completion_timeout(&ar->wmi.service_ready,
+>>>>                                                   WMI_SERVICE_READY_TIMEOUT_HZ);
+>>>>           if (!time_left) {
+>>>>                   /* Sometimes the PCI HIF doesn't receive interrupt
+>>>>                    * for the service ready message even if the buffer
+>>>>                    * was completed. PCIe sniffer shows that it's
+>>>>                    * because the corresponding CE ring doesn't fires
+>>>>                    * it. Workaround here by polling CE rings once.
+>>>>                    */
+>>>>                   ath10k_warn(ar, "failed to receive service ready completion, polling..\n");
+>>>>
+>>>>                   for (i = 0; i < CE_COUNT; i++)
+>>>>                           ath10k_hif_send_complete_check(ar, i, 1);
+>>>>
+>>>>                   time_left = wait_for_completion_timeout(&ar->wmi.service_ready,
+>>>>                                                           WMI_SERVICE_READY_TIMEOUT_HZ);
+>>>>                   if (!time_left) {
+>>>>                           ath10k_warn(ar, "polling timed out\n");
+>>>>                           return -ETIMEDOUT;
+>>>>                   }
+>>>>
+>>>>                   ath10k_warn(ar, "service ready completion received, continuing normally\n");
+>>>>           }
+>>>>
+>>>> The comment says, it’s a hardware issue. I guess from the Qualcomm device and not the
+>>>> board design, as it happens with several devices like James’?
+>>>>
+>>>> Anyway, should polling be used by default then to avoid the delay?
+>>>
+>>> Adding additional polling before wait seems OK to me
+>>
+>> With the attached diff, I didn’t notice any issue on the Dell XPS 13 9360 with QCA6174.
+> 
+> In the diff you are moving polling ahead of wait, IMO this might introduce some race: what
+> if hardware/firmware send the event right after polling is done?
+> 
+> So how about, instead of moving, just adding a new polling before wait:
+> 
+> 1. polling
+> 2. wait
+> 3. poling again if wait fail
+
+I do not know the hardware behavior/design and the error, so cannot 
+judge, if a race would be possible.
+
+Could Qualcomm take over to cook up a patch
+I’d appreciated if Qualcomm could take over to cook up a patch, as you 
+have the datasheets, erratas and a line to the hardware designers.
+
+>> Unrelated: The only thing I noticed is, that during boot (not resume) the function seems
+>> to be called twice. It looks like once for Wi-Fi and once for Bluetooth:
+>>
+>> ```
+>> [   35.507604] ath10k_pci 0000:3a:00.0: board_file api 2 bmi_id N/A crc32 d2863f91
+>> [   35.516010] usb 1-5: New USB device found, idVendor=0c45, idProduct=670c, bcdDevice=56.26
+>> [   35.516022] usb 1-5: New USB device strings: Mfr=2, Product=1, SerialNumber=0
+>> [   35.516026] usb 1-5: Product: Integrated_Webcam_HD
+>> [   35.516029] usb 1-5: Manufacturer: CN09GTFMLOG008C8B7FWA01
+>> [   35.587852] ath10k_pci 0000:3a:00.0: service ready completion received, continuing normally
+>> [   35.606632] ath10k_pci 0000:3a:00.0: htt-ver 3.87 wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
+>> [   35.628744] mc: Linux media interface: v0.10
+>> [   35.651301] nvme nvme0: using unchecked data buffer
+>> [   35.687466] Bluetooth: Core ver 2.22
+>> [   35.687493] NET: Registered PF_BLUETOOTH protocol family
+>> [   35.687495] Bluetooth: HCI device and connection manager initialized
+>> [   35.687499] Bluetooth: HCI socket layer initialized
+>> [   35.687501] Bluetooth: L2CAP socket layer initialized
+>> [   35.687505] Bluetooth: SCO socket layer initialized
+>> [   35.696050] ath: EEPROM regdomain: 0x6c
+>> [   35.696055] ath: EEPROM indicates we should expect a direct regpair map
+>> [   35.696057] ath: Country alpha2 being used: 00
+>> [   35.696058] ath: Regpair used: 0x6c
+>> [   35.712821] ath10k_pci 0000:3a:00.0 wlp58s0: renamed from wlan0
+>> [   35.716790] input: ELAN Touchscreen as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:04F3:2234.0002/input/input40
+>> [   35.718912] videodev: Linux video capture interface: v2.00
+>> [   35.719492] input: ELAN Touchscreen UNKNOWN as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:04F3:2234.0002/input/input41
+>> [   35.719595] input: ELAN Touchscreen UNKNOWN as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:04F3:2234.0002/input/input42
+>> [   35.720899] hid-multitouch 0003:04F3:2234.0002: input,hiddev0,hidraw1: USB HID v1.10 Device [ELAN Touchscreen] on usb-0000:00:14.0-4/input0
+>> [   35.720947] usbcore: registered new interface driver usbhid
+>> [   35.720949] usbhid: USB HID core driver
+>> [   35.812081] usbcore: registered new interface driver btusb
+>> [   35.815263] Bluetooth: hci0: using rampatch file: qca/rampatch_usb_00000302.bin
+>> [   35.815270] Bluetooth: hci0: QCA: patch rome 0x302 build 0x3e8, firmware rome 0x302 build 0x111
+>> [   36.174345] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
+>> [   36.199643] Bluetooth: hci0: HCI Enhanced Setup Synchronous Connection command is advertised, but not supported.
+>> [   36.398657] ath10k_pci 0000:3a:00.0: service ready completion received, continuing normally
+> 
+> Hmm, I don't think this is for BT as ath10k is not a BT driver. Something must be wrong
+> here ...
+> 
+>> ```
+
+Can you reproduce it?
+
+How would I get a call graph for both function calls?
+
+>>>> Additionally I have two questions regarding the code:
+>>>>
+>>>> 1.  Is `WMI_SERVICE_READY_TIMEOUT_HZ` the right value to pass to
+>>>> `wait_for_completion_timeout(struct completion *done, unsigned long timeout)`?
+>>>>
+>>>> The macro is defined as:
+>>>>
+>>>>       drivers/net/wireless/ath/ath10k/wmi.h:#define WMI_SERVICE_READY_TIMEOUT_HZ (5 * HZ)
+>>>>
+>>>> `timeout` is supposed to be in jiffies, and `CONFIG_HZ_250=y` on my system. I wonder how
+>>>> that amounts to five seconds on my system.
+>>>
+>>> HZ is defined as jiffies per second, so 5 * HZ equals 5 seconds.
+
+Sorry, I missed to comment here in my previous reply. HZ can be defined 
+differently – like 1000 HZ –, so the timeout would very, and then not 
+match the actual timeout required by the hardware? 
+`Documentation/scheduler/completion.rst` contains:
+
+> Timeouts are preferably calculated with msecs_to_jiffies() or usecs_to_jiffies(),
+> to make the code largely HZ-invariant.
+
+
+>>>> The timeout should probably be defined in seconds? Does the WMI specification say
+>>>> something about this?
+>>>>
+>>>> 2.  Is the task interruptable and should `wait_for_completion_interruptible_timeout(struct
+>>>> completion *done, unsigned long timeout)` be used?
+>>>
+>>> While I am not sure for now, may I ask why the question?
+>>
+>> I was just reading up on `wait_for_completion_*()`, and so the different variants.
+> 
+> If there is no obvious benefits I don't think the change is necessary.
+
+Thinking about it, the driver initialization is in the boot path (hot 
+patch) so would block one thread(?) – or is that a wrong assumption –, 
+which is unwanted?
+
+
+Kind regards,
+
+Paul
+
+
+>>>> [1]: https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e57b7d62a1b2f496caf0beba81cec3c90fad80d5
+>>>> [2]: https://lore.kernel.org/all/20240227030409.89702-1-quic_bqiang@quicinc.com/
 
