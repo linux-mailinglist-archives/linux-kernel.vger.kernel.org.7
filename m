@@ -1,137 +1,379 @@
-Return-Path: <linux-kernel+bounces-747573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B36B7B13564
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:15:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF67DB13577
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C491F1897818
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:15:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E905E177D45
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFF5215F7C;
-	Mon, 28 Jul 2025 07:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1040D22F76F;
+	Mon, 28 Jul 2025 07:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxAidLiH"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUWsc8Rd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DD219E992
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F11822A4EA;
+	Mon, 28 Jul 2025 07:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753686922; cv=none; b=n/nRyVGZfdddAE0j/HgJ6IoOUGHx2LiIj5I2YQnh6coMgHVOszv0paNt78yKiSPGwo3SzV4iiNtC5JK1BD1agjhCGuK6LbN1ll1WBMT6XI0fayvj07kKknxt3z+9VjcYGmB/dnPCPOlQ9tNYsnsF3oGfO6fu6eTS/mPDQMGt7WI=
+	t=1753686984; cv=none; b=Cxv/lWtN8coq2onPRZ0YcRS1lB2z5Hes0WYjq11218rDUdEtm1mad7xlqgaxNNkpWr8mMrZXncILOzr2vq1/hiXBCA03xyxlztxBc4khU8b0kCXQV4FH+WKK93kYXAJyOj3J2VxjffueH23sYR4lNxi+9T8uKeHKpBGIZIgETks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753686922; c=relaxed/simple;
-	bh=Qu+DbYB1mcrZ5Kxz/2iCKbV7l5qicmShpukOPKfJbDk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LVlgEpiXMCM/ldDX9KvH6cykV5sIfuY24hd3dQew74zZkXTvmiLNNZVrOebC9Ho9O38t597Q9OCsFBahiZlMEHuhoQTJ0LGy1IalptqxIy90O3+t1SoLJ8c7YKr6QCBxZp0uMNJvLiK5k7mOvUG8DPBkZ7CuiNDz7Ks0KL3Wtew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxAidLiH; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-31effad130bso358690a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 00:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753686920; x=1754291720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E4TfQbNtdnmYD64u0Hy5ONSsQ+kBtDvQt5E0InoDD5M=;
-        b=dxAidLiHP+VXlGO03pj9ytbIWeRMBryen61nHAegbYzS+ZqMYGRMflT9VO24PQWTK3
-         0cl4V9eiXK6TKjt1hxSetLeAUFz+hXNXZklH53KoJICmDaqnqIVXCU/QXpIf9zxFVtpH
-         ujNdhhgsvA514wMZ/Q5WlMwo5UWGiCJCnDmK4SSmrrLIBEKsj/c0hw563KtQjuA8SzZ6
-         X4V5BR+MHPcyarAB2PKzJFYFEfQ2vukNJDGqMfUuu/wbqM3iJ7CcQmOwUGwE5bcW6caJ
-         HdBqkqn23tnra7EkLn5OXz+Ql6n7NP4FIpsxPcQM+E3JXBYHz3y/jMxrCpdUO03R0Wke
-         poIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753686920; x=1754291720;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E4TfQbNtdnmYD64u0Hy5ONSsQ+kBtDvQt5E0InoDD5M=;
-        b=oIO3ThqvGiLbIgx0b6A+Wh6UHdD2MjRqWus9ivlp+pt3mk0d/wK/rUE34VG1dybtRt
-         FzNGU09wfaPxBMOz8ZDsT/09nMAkr0X5Rkm2O8b2nljZPbSne6HoVaZ6mWspKwUwjnbW
-         F9yfRGcWnJag/NrssO1CJ2Gt733bmzIkrDBux9mcLM9ynha585WFbjtUwpV0WOYJu0Tx
-         ABrU1I3mZBqiIN5R8YNaookkqmR4aRE8tHReKx5jQOMYQwA4XguVfEKeb9kd69+ya+bE
-         99S2Es2fLxS1+7fqtDexYxOD7x+aPadgnfEVzAPEgXqTBpsj8FMgmb3AoS/04tXqHVaW
-         I3RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVYa4kBxNmnDypWuJgqk62PGbF1zKODRGCiTqjDNDbiMY+oSX91/4p9s4p7za49U6pPSaX4nyuY1eQYZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh7VCcQJZ4LwmqTI5KiEPDrYV8rBLFhwobO1jt/kcJV2NLmvyu
-	wIXfsfhuvjrcior8H+egla33fNo/0WS2nYYQsK2ay/tejqs4lFyb+HE+i7uaqCD5U4g=
-X-Gm-Gg: ASbGncuHP4ayCCnmfTKgBMkU853k9Fzw7fZ1sQewCyoiJGrOAO/eWz5tPwyrW+HqJlE
-	QiRkxmrTw0mGmZ+4tJIswzwrqNOS+xuKHkCj1nX9YDMdhU2LKsJNA5EDRGPbLTRgSV7t/YD5sZN
-	Aq9iQMtzsiJASeFD4Wmke4sk+JbeiGmkjrQ+mlFswOUETIKzEAR6Ons4ygHjwuzf2Ep2kczy4ph
-	U/TbGFrxewmIjIyn9HYxlB3LJO0LIh/IA7EG5bh5HrKW+4YxZpHQsLb3JlQ71tU2f1bTXGnTbwi
-	ba61PSIo1KbNYC5gB73SqYeEd7aIr8SzmrBhD0zREzW1zSRUcic+9G2pDPi4ORXXk8Pe4KzcIrW
-	Xeo/0+jLIVRqVNjROkjJrtzZ1/zTOXZDYqh7JyU9RUvHbYpvl1w==
-X-Google-Smtp-Source: AGHT+IGXJ0KnID9UZbw+fN4zd48wjafrQVEJxcSOQ1U/Ob6BwjbThrSHvvwYgUHs1ZO4rW36pVWFcg==
-X-Received: by 2002:a17:90b:184e:b0:31f:12f:ffaa with SMTP id 98e67ed59e1d1-31f01300158mr2108633a91.6.1753686920018;
-        Mon, 28 Jul 2025 00:15:20 -0700 (PDT)
-Received: from localhost.localdomain ([49.36.68.217])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e7250db3csm6835609a91.17.2025.07.28.00.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 00:15:19 -0700 (PDT)
-From: Dishank Jogi <jogidishank503@gmail.com>
-To: geert@linux-m68k.org
-Cc: linux-m68k@lists.linux-m68k.org,
-	linux-kernel@vger.kernel.org,
-	darshanrathod475@gmail.com,
-	Dishank Jogi <jogidishank503@gmail.com>
-Subject: [PATCH] zorro: remove extra whitespace in macro definitions
-Date: Mon, 28 Jul 2025 07:14:52 +0000
-Message-ID: <20250728071452.35171-1-jogidishank503@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753686984; c=relaxed/simple;
+	bh=Cnrf2DymUrXTTGJt7WrTFsT9FtK/XbiDM9JmDAYFq0k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qxfwINoYLeIAwTGENiXGn5l9Rj9RXgbRb79Kh/kg6MVrsUy4oZ6ZKqjGEfKJLBMb/I+Npv1B5sbv8M26zyPE++L1d4UVYH861oX6g8Ov4VqJJMXkS++OhmAm3XUsCDeqO5yLeZL2hkwrAEa2oTBVHBH1O+N7xLY+yH5Y7Z7+yoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUWsc8Rd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 95CF3C4CEE7;
+	Mon, 28 Jul 2025 07:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753686983;
+	bh=Cnrf2DymUrXTTGJt7WrTFsT9FtK/XbiDM9JmDAYFq0k=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=WUWsc8RdzA8FcaXtYTbUHaJ3C9ReN/YVC7SPABjGDI+ohnF+WT3U4t8H0NcYg0IHM
+	 MeOzkgS7l+QxmPjdjIOdJ7WO/tFq/SB2UWcuZbiKVlaY2KsJ91RmOr+Nt5anfWOLri
+	 6K3NfaeTxCRReeuzECKEoto/XEwuB0Z/nngmpntT16EiM1eEtsd9SNx3aoGsCX48/A
+	 04n5TfEy6aRzCtHM8UX8tpYW8uHObN//vMknP0eIdX6u/chBeZCyFYHuij60DfET1S
+	 JyYh8cBozw4ci36bV3QHEWPsLxY+07vUhEmKtCjS8o7zhpAhzyjpdP/RwOHLET4v6+
+	 kHg5ds8cHYGQg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F66AC83F26;
+	Mon, 28 Jul 2025 07:16:23 +0000 (UTC)
+From: leqi via B4 Relay <devnull+leqi.qti.qualcomm.com@kernel.org>
+Date: Mon, 28 Jul 2025 15:16:13 +0800
+Subject: [PATCH v2] arm64: dts: qcom: Add initial audio support for
+ Hamoa-IOT-EVK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAL0jh2gC/x3NywrCMBBA0V8pWRsowVTxV0SGaR52sMnEPEqh9
+ N8NLs/m3kMUl8kV8RgOkd1GhTh2qMsgzILx7STZbqFGpceb0pIiVcIVsFliKC0lzhU8Z/g2XA2
+ HAAsGRiCu4LYPzIzZSjOr6e6tNpO+ih5P2Xna/+Pn6zx/VJnmo4gAAAA=
+X-Change-ID: 20250725-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-cb268fd5c654
+To: Konrad Dybcio <konradybcio@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, leqi <leqi@qti.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753686982; l=7436;
+ i=leqi@qti.qualcomm.com; s=20250723; h=from:subject:message-id;
+ bh=eTu7cGdX/a79+bf8N9XCEA3GXv9hwb6h+ovVE0APbJs=;
+ b=1bjLG8g0m84zrVc2qTxu0wyc3DhkaUAptPpkl/OdERjSq9LXmHAUtIeHLlHb3ZGNNtumhbus2
+ XK5eqJHarm8BKNRXRJmpd3Raw4XS+5Bo0utThA8LmeFxPQoTBBmuX/M
+X-Developer-Key: i=leqi@qti.qualcomm.com; a=ed25519;
+ pk=zFi/rGGqo+G9Nw0VmaL7OqH7uu58kmZCRPPUqE9PH64=
+X-Endpoint-Received: by B4 Relay for leqi@qti.qualcomm.com/20250723 with
+ auth_id=470
+X-Original-From: leqi <leqi@qti.qualcomm.com>
+Reply-To: leqi@qti.qualcomm.com
 
-Cleaned up the formatting of MANUF and PRODUCT macro
-definitions in 'drivers/zorro/names.c' by removing extra
-spaces between macro names and their parameters.
+From: leqi <leqi@qti.qualcomm.com>
 
-No functional changes.
+This patch adds initial audio codec support for the Hamoa-IOT-EVK board,
+including WCD9385 configuration, micbias voltage settings, GPIO reset,
+and power supply bindings. It enables basic audio functionality for
+further development. Basic test is good in Hamoa-IOT-EVK board.
 
-Signed-off-by: Dishank Jogi <jogidishank503@gmail.com>
+Signed-off-by: leqi <leqi@qti.qualcomm.com>
 ---
- drivers/zorro/names.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Changes in v2:
+- Updated author email address to leqi@qti.qualcomm.com.
+- Clarified that audio is validated with this change.
+- Link to v1: https://lore.kernel.org/all/20250723-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v1-1-816991701952@quicinc.com/
+---
+ arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 232 +++++++++++++++++++++++++++++
+ 1 file changed, 232 insertions(+)
 
-diff --git a/drivers/zorro/names.c b/drivers/zorro/names.c
-index 077114ccc840..3e0e428a182e 100644
---- a/drivers/zorro/names.c
-+++ b/drivers/zorro/names.c
-@@ -36,21 +36,21 @@ struct zorro_manuf_info {
-  * real memory.. Parse the same file multiple times
-  * to get all the info.
-  */
--#define MANUF( manuf, name )		static char __manufstr_##manuf[] __initdata = name;
-+#define MANUF(manuf, name)		static char __manufstr_##manuf[] __initdata = name;
- #define ENDMANUF()
--#define PRODUCT( manuf, prod, name ) 	static char __prodstr_##manuf##prod[] __initdata = name;
-+#define PRODUCT(manuf, prod, name) 	static char __prodstr_##manuf##prod[] __initdata = name;
- #include "devlist.h"
+diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+index 843f39c9d59286a9303a545411b2518d7649a059..91618e22e86c46c698b3639f60bc19314705b391 100644
+--- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
++++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+@@ -124,6 +124,94 @@ pmic_glink_ss2_con_sbu_in: endpoint {
+ 		};
+ 	};
  
++	sound {
++		compatible = "qcom,x1e80100-sndcard";
++		model = "X1E80100-EVK";
++		audio-routing = "WooferLeft IN", "WSA WSA_SPK1 OUT",
++				"TweeterLeft IN", "WSA WSA_SPK2 OUT",
++				"WooferRight IN", "WSA2 WSA_SPK2 OUT",
++				"TweeterRight IN", "WSA2 WSA_SPK2 OUT",
++				"IN1_HPHL", "HPHL_OUT",
++				"IN2_HPHR", "HPHR_OUT",
++				"AMIC2", "MIC BIAS2",
++				"VA DMIC0", "MIC BIAS3",
++				"VA DMIC1", "MIC BIAS3",
++				"VA DMIC2", "MIC BIAS1",
++				"VA DMIC3", "MIC BIAS1",
++				"VA DMIC0", "VA MIC BIAS3",
++				"VA DMIC1", "VA MIC BIAS3",
++				"VA DMIC2", "VA MIC BIAS1",
++				"VA DMIC3", "VA MIC BIAS1",
++				"TX SWR_INPUT1", "ADC2_OUTPUT";
++
++		wcd-playback-dai-link {
++			link-name = "WCD Playback";
++
++			cpu {
++				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
++			};
++
++			codec {
++				sound-dai = <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
++			};
++
++			platform {
++				sound-dai = <&q6apm>;
++			};
++		};
++
++		wcd-capture-dai-link {
++			link-name = "WCD Capture";
++
++			cpu {
++				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
++			};
++
++			codec {
++				sound-dai = <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
++			};
++
++			platform {
++				sound-dai = <&q6apm>;
++			};
++		};
++
++		wsa-dai-link {
++			link-name = "WSA Playback";
++
++			cpu {
++				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
++			};
++
++			codec {
++				sound-dai = <&left_woofer>, <&left_tweeter>,
++					    <&swr0 0>, <&lpass_wsamacro 0>,
++					    <&right_woofer>, <&right_tweeter>,
++					    <&swr3 0>, <&lpass_wsa2macro 0>;
++			};
++
++			platform {
++				sound-dai = <&q6apm>;
++			};
++		};
++
++		va-dai-link {
++			link-name = "VA Capture";
++
++			cpu {
++				sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
++			};
++
++			codec {
++				sound-dai = <&lpass_vamacro 0>;
++			};
++
++			platform {
++				sound-dai = <&q6apm>;
++			};
++		};
++	};
++
+ 	vph_pwr: regulator-vph-pwr {
+ 		compatible = "regulator-fixed";
  
--#define MANUF( manuf, name )		static struct zorro_prod_info __prods_##manuf[] __initdata = {
-+#define MANUF(manuf, name)		static struct zorro_prod_info __prods_##manuf[] __initdata = {
- #define ENDMANUF()			};
--#define PRODUCT( manuf, prod, name )	{ 0x##prod, 0, __prodstr_##manuf##prod },
-+#define PRODUCT(manuf, prod, name)	{ 0x##prod, 0, __prodstr_##manuf##prod },
- #include "devlist.h"
+@@ -353,6 +441,33 @@ vreg_wwan: regulator-wwan {
+ 		regulator-boot-on;
+ 	};
  
- static struct zorro_manuf_info __initdata zorro_manuf_list[] = {
--#define MANUF( manuf, name )		{ 0x##manuf, ARRAY_SIZE(__prods_##manuf), __manufstr_##manuf, __prods_##manuf },
-+#define MANUF(manuf, name)		{ 0x##manuf, ARRAY_SIZE(__prods_##manuf), __manufstr_##manuf, __prods_##manuf },
- #define ENDMANUF()
--#define PRODUCT( manuf, prod, name )
-+#define PRODUCT(manuf, prod, name)
- #include "devlist.h"
++	wcd938x: audio-codec {
++		compatible = "qcom,wcd9385-codec";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&wcd_default>;
++
++		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
++
++		qcom,micbias1-microvolt = <1800000>;
++		qcom,micbias2-microvolt = <1800000>;
++		qcom,micbias3-microvolt = <1800000>;
++		qcom,micbias4-microvolt = <1800000>;
++		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000
++							  500000 500000 500000 500000>;
++		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
++		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
++		qcom,rx-device = <&wcd_rx>;
++		qcom,tx-device = <&wcd_tx>;
++
++		vdd-buck-supply = <&vreg_l15b_1p8>;
++		vdd-rxtx-supply = <&vreg_l15b_1p8>;
++		vdd-io-supply = <&vreg_l15b_1p8>;
++		vdd-mic-bias-supply = <&vreg_bob1>;
++
++		#sound-dai-cells = <1>;
++	};
++
+ 	wcn7850-pmu {
+ 		compatible = "qcom,wcn7850-pmu";
+ 
+@@ -572,6 +687,32 @@ retimer_ss1_con_sbu_out: endpoint {
+ 	};
  };
  
++&lpass_tlmm {
++	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
++		pins = "gpio12";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-disable;
++		output-low;
++	};
++
++	spkr_23_sd_n_active: spkr-23-sd-n-active-state {
++		pins = "gpio13";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-disable;
++		output-low;
++	};
++};
++
++&lpass_vamacro {
++	pinctrl-0 = <&dmic01_default>, <&dmic23_default>;
++	pinctrl-names = "default";
++
++	vdd-micb-supply = <&vreg_l1b_1p8>;
++	qcom,dmic-sample-rate = <4800000>;
++};
++
+ &pcie6a {
+ 	vddpe-3v3-supply = <&vreg_nvme>;
+ };
+@@ -645,6 +786,90 @@ &smb2360_2_eusb2_repeater {
+ 	vdd3-supply = <&vreg_l8b_3p0>;
+ };
+ 
++&swr0 {
++	status = "okay";
++
++	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
++	pinctrl-names = "default";
++
++	/* WSA8845, Left Woofer */
++	left_woofer: speaker@0,0 {
++		compatible = "sdw20217020400";
++		reg = <0 0>;
++		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
++		#sound-dai-cells = <0>;
++		sound-name-prefix = "WooferLeft";
++		vdd-1p8-supply = <&vreg_l15b_1p8>;
++		vdd-io-supply = <&vreg_l12b_1p2>;
++		qcom,port-mapping = <1 2 3 7 10 13>;
++	};
++
++	/* WSA8845, Left Tweeter */
++	left_tweeter: speaker@0,1 {
++		compatible = "sdw20217020400";
++		reg = <0 1>;
++		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
++		#sound-dai-cells = <0>;
++		sound-name-prefix = "TweeterLeft";
++		vdd-1p8-supply = <&vreg_l15b_1p8>;
++		vdd-io-supply = <&vreg_l12b_1p2>;
++		qcom,port-mapping = <4 5 6 7 11 13>;
++	};
++};
++
++&swr1 {
++	status = "okay";
++
++	/* WCD9385 RX */
++	wcd_rx: codec@0,4 {
++		compatible = "sdw20217010d00";
++		reg = <0 4>;
++		qcom,rx-port-mapping = <1 2 3 4 5>;
++	};
++};
++
++&swr2 {
++	status = "okay";
++
++	/* WCD9385 TX */
++	wcd_tx: codec@0,3 {
++		compatible = "sdw20217010d00";
++		reg = <0 3>;
++		qcom,tx-port-mapping = <2 2 3 4>;
++	};
++};
++
++&swr3 {
++	status = "okay";
++
++	pinctrl-0 = <&wsa2_swr_active>, <&spkr_23_sd_n_active>;
++	pinctrl-names = "default";
++
++	/* WSA8845, Right Woofer */
++	right_woofer: speaker@0,0 {
++		compatible = "sdw20217020400";
++		reg = <0 0>;
++		reset-gpios = <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
++		#sound-dai-cells = <0>;
++		sound-name-prefix = "WooferRight";
++		vdd-1p8-supply = <&vreg_l15b_1p8>;
++		vdd-io-supply = <&vreg_l12b_1p2>;
++		qcom,port-mapping = <1 2 3 7 10 13>;
++	};
++
++	/* WSA8845, Right Tweeter */
++	right_tweeter: speaker@0,1 {
++		compatible = "sdw20217020400";
++		reg = <0 1>;
++		reset-gpios = <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
++		#sound-dai-cells = <0>;
++		sound-name-prefix = "TweeterRight";
++		vdd-1p8-supply = <&vreg_l15b_1p8>;
++		vdd-io-supply = <&vreg_l12b_1p2>;
++		qcom,port-mapping = <4 5 6 7 11 13>;
++	};
++};
++
+ &tlmm {
+ 	eusb3_reset_n: eusb3-reset-n-state {
+ 		pins = "gpio6";
+@@ -733,6 +958,13 @@ usb2_pwr_3p3_reg_en: usb2-pwr-3p3-reg-en-state {
+ 		bias-disable;
+ 	};
+ 
++	wcd_default: wcd-reset-n-active-state {
++		pins = "gpio191";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-disable;
++		output-low;
++	};
+ 
+ 	wcn_bt_en: wcn-bt-en-state {
+ 		pins = "gpio116";
+
+---
+base-commit: 3b28da3245e8c43f3f5948513b4e859a3d0fa820
+change-id: 20250725-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-cb268fd5c654
+
+Best regards,
 -- 
-2.43.0
+leqi <leqi@qti.qualcomm.com>
+
 
 
