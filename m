@@ -1,95 +1,214 @@
-Return-Path: <linux-kernel+bounces-748633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39830B143F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:39:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3FDB143EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BA83B576C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:38:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E0F3B1968
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E59F275B12;
-	Mon, 28 Jul 2025 21:39:09 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C187274B5E;
+	Mon, 28 Jul 2025 21:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3yQSOS4j"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD374A33;
-	Mon, 28 Jul 2025 21:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8855D4A11
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753738749; cv=none; b=RjwGxnaJktp+5944KwCMd+csmJdeA/JuVcE2As/29if8qwQaDhPQuzemtRfSnbX11ELqZgMh2LhJ07/IgPUURxl9x8mIVysTRh1mO6SpqMCHqjN40QmMXBFI6yQluO5vcMI3ETHviWEmfex5FRBpd/cbghoeE3yKWR059Y/2oEI=
+	t=1753738738; cv=none; b=NywMxguYy/df3ShAltWghaHjrKwk4yFbw6MlxHPkjsunLvDzSQK2aIJ3QUoIOpQT34eMQ2IzmHKQ/b6A76z9gWQBr+BZSDSJMq8cSycPlDjVVLHn0pCNaybLaRswsD+5hTqSe5vwj9VbRjS6sM0mLNj70+8Ocr9rRIOMWyjFajU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753738749; c=relaxed/simple;
-	bh=CchdhISbTIkWcFm3lVIK+qgs6Q4ywAKxzx0WP5USmIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RTeK198CT8gQbcnS6yryPryawNHsxWGaFMlROcOzpQm/h8filZSsLHD0E/S3M/iKgL6Uugnm4FHGfcoQ9XbYazEP0Xg5Mpq+B1fQQNznEMNtSwPFD8dmVFAQWItaN/s6ytJt0ajymHnuKaDriSCQbg5kLvcfs1kahwRppUEhGW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56SLcUsI021596;
-	Tue, 29 Jul 2025 06:38:30 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56SLcTFh021593
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 29 Jul 2025 06:38:30 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <0b9799d4-b938-4843-a863-8e2795d33eca@I-love.SAKURA.ne.jp>
-Date: Tue, 29 Jul 2025 06:38:29 +0900
+	s=arc-20240116; t=1753738738; c=relaxed/simple;
+	bh=LOfd0vHjMNejVUvbvNWDBiGEYNfSLM8vMq7V6Z9EF7Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=R3iclh3hJAaKt6gypx1kdKiLlbhLx7ZeRMJ6/RjmuxWUCqrD61YUdGydr2YFKR9Sp4/ZPW+lYuiBMp7tUdcKrp0aZpZIiBdUTUL4zBKMjMcni20udP+0bH3J4y5gw9N6GgbQU4fB1oJk9xAjuyy2BHSVxuNsWHcPVlhqgsxKYwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3yQSOS4j; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b38fc4d8dbaso6081824a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753738736; x=1754343536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Qzsw1VtUTY4pn1HE8xcAZoBHNUjQcfll7dBGQyXeZ8=;
+        b=3yQSOS4jS8DExoaCU89AKXdHCoxApqdRPqCdjg+Lu0WX3V119XPa4lYC1Hri/eI4/G
+         29nR28nWXpsxfAyPDtVTFeqoPAmUnYMPvV0kxpWKvobq8qlJg7D//eEDcOueqtCXssro
+         jTYjwwxA8hdoLgaUxwD+P5Lkqbsqd3cMmOplhe+W7DN2AFMvp5GwMIfTSJ8cgVMLpAXH
+         IwuRex9Q+mbwZ6w7+e3aRHJ7nKsbCftiYkiwMjBN4dNIhoVnzpGDkYRzMpX5OQ2IAzsc
+         jeCcbC9tYjIeWckzJOWLLOkuDHh1X+5RzajOzsVlLyEPe8t0R2VKL6JiSX0UuiJQeUx+
+         agLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753738736; x=1754343536;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+Qzsw1VtUTY4pn1HE8xcAZoBHNUjQcfll7dBGQyXeZ8=;
+        b=JOlRfRhEayZ9zAuaGHg4g1rThfJOW7Rs4Xc/7GMuuCIFytguoeEjDYfczEbD0+GrBn
+         4eoFx4Ai/IZHMtR+WjBuPqpOvtdUuwBoqtW4Rw7EuWy118B6aNEj2yu411B9TtJ+q6GX
+         4yvGMhI+nC23WnyNmVVmSgzUNPyq+ycZgrmMaeojd81eOY7MNpC1zc7ir6g0eqMv+FbP
+         2vIWsXvmp9Wbdfylsh42R0/ewBC1xSbaC3Jnxwe5t7y17Ep0vI/oBow7h3CtC0IvhkVI
+         w5KF4MNHVucoPDewT6jxGE15pph/RTPYv3eBKDLU1RXvd9+2O+br5bA2xSJDqx+hs1Yz
+         YrMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVg8sTk0MAwnMmS1vZSwHYeWRhEvaSuLKSsiT2UtgefmAEKE6m5rcb6Dt4XlJ7Bq2beu4Ta1S3l8zEvtj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVxjgRVjQ7icp1xwgOVEkaNKzIo8VGFuFkIKpQOVGIBJpIUkxi
+	4ZDJkAylkH7Y32A351bOqnAj4h8x2S+6IIJrC4X8iG3VKd4hU6TtjiYc+9C27cXx9r0hfEAvvYe
+	ByVyxbw==
+X-Google-Smtp-Source: AGHT+IEZrkPEJG3cebOIkuivVavvJbQnzIudGhOMIpdjHX58AE2AU/k8vYvp80MKmMTuR8uwmPUPq0yanhw=
+X-Received: from pjqq12.prod.google.com ([2002:a17:90b:584c:b0:2ff:6132:8710])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:320a:b0:23d:d2d2:b511
+ with SMTP id d9443c01a7336-23fb30cb6c3mr186721765ad.19.1753738735880; Mon, 28
+ Jul 2025 14:38:55 -0700 (PDT)
+Date: Mon, 28 Jul 2025 14:38:54 -0700
+In-Reply-To: <CALzav=e0cUTMzox7p3AU37wAFRrOXEDdU24eqe6DX+UZYt9FeQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] hfs: remove BUG() from
- hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "willy@infradead.org" <willy@infradead.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
- <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
- <aH-enGSS7zWq0jFf@casper.infradead.org>
- <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
- <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
- <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
- <c99951ae12dc1f5a51b1f6c82bbf7b61b2f12e02.camel@ibm.com>
- <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
- <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
- <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
- <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
- <d4abeee2-e291-4da4-9e0e-7880a9c213e3@I-love.SAKURA.ne.jp>
- <650d29da-4f3a-4cfe-b633-ea3b1f27de96@I-love.SAKURA.ne.jp>
- <6db77f5cb0a35de69a5b6b26719e4ffb3fdac8c5.camel@ibm.com>
- <1779f2ad-77da-40e3-9ee0-ef6c4cd468fa@I-love.SAKURA.ne.jp>
- <12de16685af71b513f8027a8bfd14bc0322eb043.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <12de16685af71b513f8027a8bfd14bc0322eb043.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav402.rs.sakura.ne.jp
-X-Virus-Status: clean
+Mime-Version: 1.0
+References: <20250707224720.4016504-1-jthoughton@google.com>
+ <20250707224720.4016504-4-jthoughton@google.com> <aIFHc83PtfB9fkKB@google.com>
+ <CADrL8HW46uQQKYUngYwomzfKWB0Vf4nG1WRjZu84hiXxtHN14Q@mail.gmail.com> <CALzav=e0cUTMzox7p3AU37wAFRrOXEDdU24eqe6DX+UZYt9FeQ@mail.gmail.com>
+Message-ID: <aIft7sUk_w8rV2DB@google.com>
+Subject: Re: [PATCH v5 3/7] KVM: x86/mmu: Recover TDP MMU NX huge pages using
+ MMU read lock
+From: Sean Christopherson <seanjc@google.com>
+To: David Matlack <dmatlack@google.com>
+Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vipin Sharma <vipinsh@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/07/29 4:37, Viacheslav Dubeyko wrote:
-> I don't see the point of making modifications here. The modification of
-> hfs_read_inode() should be enough.
+On Mon, Jul 28, 2025, David Matlack wrote:
+> On Mon, Jul 28, 2025 at 11:08=E2=80=AFAM James Houghton <jthoughton@googl=
+e.com> wrote:
+> > On Wed, Jul 23, 2025 at 1:35=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > > > @@ -7559,8 +7590,17 @@ static void kvm_recover_nx_huge_pages(struct=
+ kvm *kvm,
+> > > >       rcu_read_lock();
+> > > >
+> > > >       for ( ; to_zap; --to_zap) {
+> > > > -             if (list_empty(nx_huge_pages))
+> > > > +#ifdef CONFIG_X86_64
+> > >
+> > > These #ifdefs still make me sad, but I also still think they're the l=
+east awful
+> > > solution.  And hopefully we will jettison 32-bit sooner than later :-=
+)
+> >
+> > Yeah I couldn't come up with anything better. :(
+>=20
+> Could we just move the definition of tdp_mmu_pages_lock outside of
+> CONFIG_X86_64? The only downside I can think of is slightly larger kvm
+> structs for 32-bit builds.
 
-Sigh... Did you try
-https://lkml.kernel.org/r/a8f8da77-f099-499b-98e0-39ed159b6a2d@I-love.SAKURA.ne.jp ?
+Hmm, I was going to say "no, because we'd also need to do spin_lock_init()"=
+, but
+obviously spin_(un)lock() will only ever be invoked for 64-bit kernels.  I =
+still
+don't love the idea of making tdp_mmu_pages_lock visible outside of CONFIG_=
+X86_64,
+it feels like we're just asking to introduce (likely benign) bugs.
 
-I'm repeating that the modification of hfs_read_inode() does not fix
-the bug syzbot is reporting.
+Ugh, and I just noticed this as well:
 
+  #ifndef CONFIG_X86_64
+  #define KVM_TDP_MMU -1
+  #endif
+
+Rather than expose kvm->arch.tdp_mmu_pages_lock, what about using a single =
+#ifdef
+section to bury both is_tdp_mmu and a local kvm->arch.tdp_mmu_pages_lock po=
+inter?
+
+Alternatively, we could do:
+
+	const bool is_tdp_mmu =3D IS_ENABLED(CONFIG_X86_64) && mmu_type !=3D KVM_S=
+HADOW_MMU;
+
+to avoid referencing KVM_TDP_MMU, but that's quite ugly.  Overall, I think =
+the
+below strikes the best balance between polluting the code with #ifdefs, and
+generating robust code.
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_hos=
+t.h
+index 52bf6a886bfd..c038d7cd187d 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1372,10 +1372,6 @@ enum kvm_mmu_type {
+        KVM_NR_MMU_TYPES,
+ };
+=20
+-#ifndef CONFIG_X86_64
+-#define KVM_TDP_MMU -1
+-#endif
+-
+ struct kvm_arch {
+        unsigned long n_used_mmu_pages;
+        unsigned long n_requested_mmu_pages;
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index a6a1fb42b2d1..e2bde6a5e346 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -7624,8 +7624,14 @@ static bool kvm_mmu_sp_dirty_logging_enabled(struct =
+kvm *kvm,
+ static void kvm_recover_nx_huge_pages(struct kvm *kvm,
+                                      const enum kvm_mmu_type mmu_type)
+ {
++#ifdef CONFIG_X86_64
++       const bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
++       spinlock_t *tdp_mmu_pages_lock =3D &kvm->arch.tdp_mmu_pages_lock;
++#else
++       const bool is_tdp_mmu =3D false;
++       spinlock_t *tdp_mmu_pages_lock =3D NULL;
++#endif
+        unsigned long to_zap =3D nx_huge_pages_to_zap(kvm, mmu_type);
+-       bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
+        struct list_head *nx_huge_pages;
+        struct kvm_mmu_page *sp;
+        LIST_HEAD(invalid_list);
+@@ -7648,15 +7654,12 @@ static void kvm_recover_nx_huge_pages(struct kvm *k=
+vm,
+        rcu_read_lock();
+=20
+        for ( ; to_zap; --to_zap) {
+-#ifdef CONFIG_X86_64
+                if (is_tdp_mmu)
+-                       spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+-#endif
++                       spin_lock(tdp_mmu_pages_lock);
++
+                if (list_empty(nx_huge_pages)) {
+-#ifdef CONFIG_X86_64
+                        if (is_tdp_mmu)
+-                               spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+-#endif
++                               spin_unlock(tdp_mmu_pages_lock);
+                        break;
+                }
+=20
+@@ -7675,10 +7678,8 @@ static void kvm_recover_nx_huge_pages(struct kvm *kv=
+m,
+=20
+                unaccount_nx_huge_page(kvm, sp);
+=20
+-#ifdef CONFIG_X86_64
+                if (is_tdp_mmu)
+-                       spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+-#endif
++                       spin_unlock(tdp_mmu_pages_lock);
+=20
+                /*
+                 * Do not attempt to recover any NX Huge Pages that are bei=
+ng
+--
 
