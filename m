@@ -1,177 +1,135 @@
-Return-Path: <linux-kernel+bounces-747967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C663B13AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:49:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88BEB13AC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE06A167274
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2DC816623A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75788265CA7;
-	Mon, 28 Jul 2025 12:49:42 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07307265CC5;
+	Mon, 28 Jul 2025 12:50:30 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB29C1F95C;
-	Mon, 28 Jul 2025 12:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C00254739;
+	Mon, 28 Jul 2025 12:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753706982; cv=none; b=eEXXaJ/F7sNpsmn/nCZFQNb/QmgyTdfLXi+4lkjJ5AxFPFEqWwiolNU9JUBXI3tOTt3xtfzrWzt8TrWMHOZoSJ+ersRkv/0Jb5Mx3xiocdjil0v/S1fGY3k2eZozmb9PWTajeRfKRzCIGFoGL4I0iJ8+U0FTTFZtmrOYCdduDH8=
+	t=1753707029; cv=none; b=cBGz9W+sPhDNxlAmMp+jgMQsd+RZ8hOpFF3lip79QKcx9ckjAFBBrSUXRGNDI6Tzvu2/4R4ADBw9zyyTaotYAjDq0qekcVQXn6DUxvwrl5l/DiQ0ycl4DlrJzOVxCvm8b0zquCRqRtCzZE6OcicPpj4rrKRhltUI+Sb7Yil8F5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753706982; c=relaxed/simple;
-	bh=H9qXRbx94MewBNxrR4fM5mh6/UQ6BbG5/scOH9fENcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGgaj0E7Z1JSDkHQFaeP2JEFAJCGid/Q/llOq3N59W+gjvuoqe6YZ1DMFDyQdY4N/YUon9Fz/etqCSw/t+WcuXW6755jhpreFPJibPE+WZUozzOO/4uKfGIonEulnvenhu3QNRYqKtFbmN0AJdTIcnI6NZGPK1uGvYlptWsiXPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 130E5357; Mon, 28 Jul 2025 07:49:37 -0500 (CDT)
-Date: Mon, 28 Jul 2025 07:49:37 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
-	dan.j.williams@intel.com
-Subject: Re: [PATCH v2 2/3] lockdown/kunit: Introduce kunit tests
-Message-ID: <aIdx4Y/lRYKs/quV@mail.hallyn.com>
-References: <20250728111517.134116-1-nik.borisov@suse.com>
- <20250728111517.134116-3-nik.borisov@suse.com>
+	s=arc-20240116; t=1753707029; c=relaxed/simple;
+	bh=HY9n34Ah89ROtpzeuMOXAoMWkIaoA4TzHSvROnIU9DA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MfOdoayDM9pv9rfRmL8Uv62FwQEsIXrXhVaY703b/22wY8NFJcDFKsFT071lGxmaRsces3+APUDgFKzS0AdicCIWVOBM9Ov/ONmwDKW0a0b9icd6AAY3R9/Dteopqe1DEkCwgMUJu5izVUmHi1PwvPmipgS47G5ZFhf4L0L5go8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.213.139])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d7dd7885;
+	Mon, 28 Jul 2025 20:50:20 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: jonas@kwiboo.se
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	robh@kernel.org,
+	ziyao@disroot.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add Radxa E24C
+Date: Mon, 28 Jul 2025 20:50:15 +0800
+Message-Id: <20250728125015.988357-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250727144409.327740-4-jonas@kwiboo.se>
+References: <20250727144409.327740-4-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728111517.134116-3-nik.borisov@suse.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a985115803303a2kunm2afc03fb162f34
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTU8dVkxMSxhKTR9MTRpDGVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSFVKSEJZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSktLVU
+	pCS0tZBg++
 
-On Mon, Jul 28, 2025 at 02:15:16PM +0300, Nikolay Borisov wrote:
-> Add a bunch of tests to ensure lockdown's conversion to bitmap hasn't
-> regressed it.
-> 
-> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+Hi,
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> +	avddl_1v1: avddh_3v3: avdd_rtl8367rb: regulator-avdd-rtl8367rb {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpios = <&gpio1 RK_PC3 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&gpio_8367_en>;
+> +		regulator-name = "avdd_rtl8367rb";
 
-(And I see this answers my question to patch 1, but still a comment
-there would be nice :)
+I don't see the avdd_rtl8367rb regulator in the schematics. It looks like
+DVDDIO (RTL8367RB power) is connected to AVDDH_3V3 via a magnetic bead.
 
-thanks,
--serge
+> +&gmac1 {
+> +	clock_in_out = "output";
+> +	phy-mode = "rgmii-id";
+> +	phy-supply = <&avdd_rtl8367rb>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&rgmii_miim>, <&rgmii_tx_bus2>, <&rgmii_rx_bus2>,
+> +		    <&rgmii_rgmii_clk>, <&rgmii_rgmii_bus>, <&gmac1_rstn_l>;
 
-> ---
->  security/lockdown/Kconfig         |  5 +++
->  security/lockdown/Makefile        |  1 +
->  security/lockdown/lockdown.c      |  5 ++-
->  security/lockdown/lockdown_test.c | 54 +++++++++++++++++++++++++++++++
->  4 files changed, 64 insertions(+), 1 deletion(-)
->  create mode 100644 security/lockdown/lockdown_test.c
-> 
-> diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
-> index e84ddf484010..5fb750da1f8c 100644
-> --- a/security/lockdown/Kconfig
-> +++ b/security/lockdown/Kconfig
-> @@ -6,6 +6,11 @@ config SECURITY_LOCKDOWN_LSM
->  	  Build support for an LSM that enforces a coarse kernel lockdown
->  	  behaviour.
->  
-> +config SECURITY_LOCKDOWN_LSM_TEST
-> +	tristate "Test lockdown functionality" if !KUNIT_ALL_TESTS
-> +	depends on SECURITY_LOCKDOWN_LSM && KUNIT
-> +	default KUNIT_ALL_TESTS
+Should the pinctrl of gmac1_rstn_l be written together with the
+reset-gpios of the rtl8367rb switch?
+
+```
+reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
+pinctrl-0 = <&gmac1_rstn_l>;
+```
+
+> +&i2c0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c0m0_xfer>;
+> +	status = "okay";
 > +
->  config SECURITY_LOCKDOWN_LSM_EARLY
->  	bool "Enable lockdown LSM early in init"
->  	depends on SECURITY_LOCKDOWN_LSM
-> diff --git a/security/lockdown/Makefile b/security/lockdown/Makefile
-> index e3634b9017e7..f35d90e39f1c 100644
-> --- a/security/lockdown/Makefile
-> +++ b/security/lockdown/Makefile
-> @@ -1 +1,2 @@
->  obj-$(CONFIG_SECURITY_LOCKDOWN_LSM) += lockdown.o
-> +obj-$(CONFIG_SECURITY_LOCKDOWN_LSM_TEST) += lockdown_test.o
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index 5014d18c423f..412184121279 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -25,7 +25,10 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
->  /*
->   * Put the kernel into lock-down mode.
->   */
-> -static int lock_kernel_down(const char *where, enum lockdown_reason level)
-> +#if !IS_ENABLED(CONFIG_KUNIT)
-> +static
-> +#endif
-> +int lock_kernel_down(const char *where, enum lockdown_reason level)
->  {
->  
->  	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
-> diff --git a/security/lockdown/lockdown_test.c b/security/lockdown/lockdown_test.c
-> new file mode 100644
-> index 000000000000..3a3c6db5b470
-> --- /dev/null
-> +++ b/security/lockdown/lockdown_test.c
-> @@ -0,0 +1,54 @@
-> +#include <linux/security.h>
-> +#include <kunit/test.h>
-> +
-> +int lock_kernel_down(const char *where, enum lockdown_reason level);
-> +
-> +static void lockdown_test_invalid_level(struct kunit *test)
-> +{
-> +	KUNIT_EXPECT_EQ(test, -EINVAL, lock_kernel_down("TEST", LOCKDOWN_CONFIDENTIALITY_MAX+1));
-> +}
-> +
-> +static void lockdown_test_depth_locking(struct kunit *test)
-> +{
-> +	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_INTEGRITY_MAX));
-> +	for (int i = 1; i < LOCKDOWN_INTEGRITY_MAX; i++)
-> +		KUNIT_EXPECT_EQ_MSG(test, -EPERM, security_locked_down(i), "at i=%d", i);
-> +
-> +	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_INTEGRITY_MAX));
-> +}
-> +
-> +static void lockdown_test_individual_level(struct kunit *test)
-> +{
-> +	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_PERF));
-> +	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_PERF));
-> +	/* Ensure adjacent levels are untouched */
-> +	KUNIT_EXPECT_EQ(test, 0, security_locked_down(LOCKDOWN_TRACEFS));
-> +	KUNIT_EXPECT_EQ(test, 0, security_locked_down(LOCKDOWN_DBG_READ_KERNEL));
-> +}
-> +
-> +static void lockdown_test_no_downgrade(struct kunit *test)
-> +{
-> +	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_CONFIDENTIALITY_MAX));
-> +	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_INTEGRITY_MAX));
-> +	/*
-> +	 * Ensure having locked down to a lower leve after a higher level
-> +	 * lockdown nothing is lost
-> +	 */
-> +	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_TRACEFS));
-> +}
-> +
-> +static struct kunit_case lockdown_tests[] = {
-> +	KUNIT_CASE(lockdown_test_invalid_level),
-> +	KUNIT_CASE(lockdown_test_depth_locking),
-> +	KUNIT_CASE(lockdown_test_individual_level),
-> +	KUNIT_CASE(lockdown_test_no_downgrade),
-> +	{}
-> +};
-> +
-> +static struct kunit_suite lockdown_test_suite = {
-> +	.name = "lockdown test",
-> +	.test_cases = lockdown_tests,
-> +};
-> +kunit_test_suite(lockdown_test_suite);
-> +
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.34.1
-> 
+> +	rk805: pmic@18 {
+> +		compatible = "rockchip,rk805";
+> +		reg = <0x18>;
+> +		interrupt-parent = <&gpio4>;
+> +		interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
+> +		#clock-cells = <1>;
+> +		clock-output-names = "rk805-clkout1", "rk805-clkout2";
+
+The clkout pin is not connected, but the dt-bindings require it.
+Maybe clock-output-names could be made optional?
+
++&mdio1 {
++	reset-delay-us = <25000>;
++	reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
++	reset-post-delay-us = <100000>;
++};
+
+I don't think this is correct, reset-gpios should be written on the
+rtl8365mb switch node. The switch driver has defined the reset time.
+
+```
+&mdio1 {
+	switch@29 {
+		compatible = "realtek,rtl8365mb";
+		reg = <29>;
+		reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
+```
+
+Thanks,
+Chukun
+
+--
+2.25.1
+
+
 
