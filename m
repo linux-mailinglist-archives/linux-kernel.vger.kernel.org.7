@@ -1,160 +1,189 @@
-Return-Path: <linux-kernel+bounces-747628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE22B13615
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:10:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FFBB13619
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D4F3AB640
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:10:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CA9E174C6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368C22222C0;
-	Mon, 28 Jul 2025 08:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1548F223DF9;
+	Mon, 28 Jul 2025 08:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9QZpS4i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ouV4AEEf"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9174E28DD0
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2F028DD0;
+	Mon, 28 Jul 2025 08:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753690241; cv=none; b=WvFSof6WDxqg7kYb3dEJHKMlvN+apu5yrlyqcEVSd24b331q+wjl+armXzQqB5Joe9Tj0Vi0d/+ZKi+5hlCzxDcLbGNOK4acKPk48ZFn4U4/C9xp7+l/vprtzC+2fk3m5ZJSDODhXDRYK8iu+hyMuhy+Oc30YSJMsTChGy6OdtU=
+	t=1753690327; cv=none; b=ctn5AcN4xR3TOGICa+ffdkwZiI6NOkqxNZJkVJXN01BG6C3gpMu3mFeevNO/HvHjRo+u0pGlhWp9i2q+0wJQTBMGKTgwdue82gPkzHsG5g7b9cXsGoVAsmErkQ7A4CGyXCK2XiKNeamKpEmendBymbq6mwooimfgY7oZx/O/oDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753690241; c=relaxed/simple;
-	bh=J2e+GLmMnOhCVKeoQ/p5+Rn7SWm0zUljYsTljYx8HDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eIK9DI89N3Aw5J/4E+q2MKQiG/wsCkllOryh+4FGHcZoF6p1GMeIuR1Pn7gq2FfMvhAo+052XFqNgTk2NO4Vdc42GvlLQNb4Kkpr77EHRG5zg8xJmFTy4zjdUnL1Wfuk/cm/E6dkYdI9nSR5iyHjBH9RU9936qnnqojd3UirgRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9QZpS4i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4B7FC4CEE7;
-	Mon, 28 Jul 2025 08:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753690241;
-	bh=J2e+GLmMnOhCVKeoQ/p5+Rn7SWm0zUljYsTljYx8HDM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E9QZpS4iCDTg0P+RhQHM0ShEggR/T915d8YaAoGajPdrg5aHnm8DLFeDnYuFITZGH
-	 i2IWyH+NIGviDfj175OAg+v6RSuAo9wEmvFxuOhcSb1gqUFg2C1gFvlgjfzYADeSdg
-	 Oqhcn4tpNZeHphi5FDApufj2WEXcekUkVGktfuk7XDXFI3CbB/0gZ7UZ3sWzZTN5vK
-	 qoLEZhKwieNicqBVeY/HGwVc33ITwYNIxBbmPKkJdZibDvnazytVMNWkQeT4J/w3BS
-	 WMz0WO9vQpvHHe/BhXV1I6xu4P5+mAdxoW1cP+hcfhagZXgmdydy0uiLtfMcg9LE/Y
-	 Q0o+3/wU+IvYw==
-Date: Mon, 28 Jul 2025 10:10:38 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Inki Dae <inki.dae@samsung.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] samsung-dsim: move drm_bridge_add() call to probe
-Message-ID: <20250728-diligent-brainy-hyena-109dde@houat>
-References: <20250725-drm-bridge-samsung-dsim-add-in-probe-v1-1-b23d29c23fbd@bootlin.com>
+	s=arc-20240116; t=1753690327; c=relaxed/simple;
+	bh=BEuewBk1IsEGl3eghjVYYbwM2YS0qLIe5ka6Gd1mDoQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V1D9avu/6dFuCJxbZYcpbLsH3vrJkJrnMZTrrBKeprp903QV8Q9Tusoy3h2IicKcp3zy75hFWhYph38ylYKeOYcn8Qd4h2J2Tg9bOVhb8qbW3NE6/WxjfazO/JjoadOZxx0tuFHeHREmtuUBxHj52iz93ie8nOGZrA7r6gLbjP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ouV4AEEf; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56S8B7ox2715293;
+	Mon, 28 Jul 2025 03:11:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753690267;
+	bh=KHcr5mpVfk9mCi5rZVeNOZkpkFw0VJp9vZS5ooiXtHE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ouV4AEEfdgbQ17atKqfIxb5OAjmal+19WqsEDUKuH4ZLcK9HQLJ7KQz1UiGBaR7AE
+	 ow4YjJK+Edb2AJx4vXTNwYpPTKV7r1wqpAs33kEkbgoH2jRrbQELcIH8P7sitnfVQC
+	 4YrOGJLZqXFm9TPdj62uYf9S4FnidrC2qo/RPKTw=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56S8B6Af915220
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 28 Jul 2025 03:11:06 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 28
+ Jul 2025 03:11:06 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 28 Jul 2025 03:11:06 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56S8B08W1426296;
+	Mon, 28 Jul 2025 03:11:01 -0500
+Message-ID: <5f4e1f99-ff71-443f-ba34-39396946e5b4@ti.com>
+Date: Mon, 28 Jul 2025 13:40:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="hhxl6bbucpmtrmqw"
-Content-Disposition: inline
-In-Reply-To: <20250725-drm-bridge-samsung-dsim-add-in-probe-v1-1-b23d29c23fbd@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/5] net: rpmsg-eth: Add basic rpmsg skeleton
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        Mengyuan Lou <mengyuanlou@net-swift.com>,
+        Michael
+ Ellerman <mpe@ellerman.id.au>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Fan
+ Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>,
+        Lorenzo Bianconi
+	<lorenzo@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lukas
+ Bulwahn <lukas.bulwahn@redhat.com>,
+        Parthiban Veerasooran
+	<Parthiban.Veerasooran@microchip.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250723080322.3047826-1-danishanwar@ti.com>
+ <20250723080322.3047826-3-danishanwar@ti.com>
+ <296d6846-6a28-4e53-9e62-3439ac57d9c1@kernel.org>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <296d6846-6a28-4e53-9e62-3439ac57d9c1@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi Krzysztof,
 
---hhxl6bbucpmtrmqw
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] samsung-dsim: move drm_bridge_add() call to probe
-MIME-Version: 1.0
+On 25/07/25 12:48 am, Krzysztof Kozlowski wrote:
+> On 23/07/2025 10:03, MD Danish Anwar wrote:
+>> This patch introduces a basic RPMSG Ethernet driver skeleton. It adds
+> 
+> Please do not use "This commit/patch/change", but imperative mood. See
+> longer explanation here:
+> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+> 
 
-Hi,
+Sure. I will fix this in v2.
 
-On Fri, Jul 25, 2025 at 05:28:03PM +0200, Luca Ceresoli wrote:
-> This bridge driver calls drm_bridge_add() in the DSI host .attach callback
-> instead of in the probe function. This looks strange, even though
-> apparently not a problem for currently supported use cases.
->=20
-> However it is a problem for supporting hotplug of DRM bridges, which is in
-> the works [0][1][2]. The problematic case is when this DSI host is always
-> present while its DSI device is hot-pluggable. In such case with the
-> current code the DRM card will not be populated until after the DSI device
-> attaches to the host, and which could happen a very long time after
-> booting, or even not happen at all.
->=20
-> Supporting hotplug in the latest public draft is based on an ugly
-> workaround in the hotplug-bridge driver code. This is visible in the
-> hotplug_bridge_dsi_attach implementation and documentation in [3] (but
-> keeping in mind that workaround is complicated as it is also circumventing
-> another problem: updating the DSI host format when the DSI device gets
-> connected).
->=20
-> As a preliminary step to supporting hotplug in a proper way, and also make
-> this driver cleaner, move drm_bridge_add() at probe time, so that the
-> bridge is available during boot.
->=20
-> However simply moving drm_bridge_add() prevents populating the whole card
-> when the hot-pluggable addon is not present at boot, for another
-> reason. The reason is:
->=20
->  * now the encoder driver finds this bridge instead of getting
->    -EPROBE_DEFER as before
->  * but it cannot attach it because the bridge attach function in turn tri=
-es
->    to attach to the following bridge, which has not yet been hot-plugged
->=20
-> This needs to be fixed in the bridge attach function by simply returning
-> -EPROBE_DEFER ifs the following bridge (i.e. the DSI device) is not yet
-> present.
->=20
-> [0] https://lpc.events/event/18/contributions/1750/
-> [1] https://lore.kernel.org/lkml/20240924174254.711c7138@booty/
-> [2] https://lore.kernel.org/lkml/20250723-drm-bridge-alloc-getput-for_eac=
-h_bridge-v1-0-be8f4ae006e9@bootlin.com/
-> [3] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-4-bc4dfee=
-61be6@bootlin.com/
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>> support for creating virtual Ethernet devices over RPMSG channels,
+>> allowing user-space programs to send and receive messages using a
+>> standard Ethernet protocol. The driver includes message handling,
+>> probe, and remove functions, along with necessary data structures.
+>>
+> 
+> 
+> ...
+> 
+>> +
+>> +/**
+>> + * rpmsg_eth_get_shm_info - Get shared memory info from device tree
+>> + * @common: Pointer to rpmsg_eth_common structure
+>> + *
+>> + * Return: 0 on success, negative error code on failure
+>> + */
+>> +static int rpmsg_eth_get_shm_info(struct rpmsg_eth_common *common)
+>> +{
+>> +	struct device_node *peer;
+>> +	const __be32 *reg;
+>> +	u64 start_address;
+>> +	int prop_size;
+>> +	int reg_len;
+>> +	u64 size;
+>> +
+>> +	peer = of_find_node_by_name(NULL, "virtual-eth-shm");
+> 
+> 
+> This is new ABI and I do not see earlier patch documenting it.
+> 
+> You cannot add undocumented ABI... but even if you documented it, I am
+> sorry, but I am pretty sure it is wrong. Why are you choosing random
+> nodes just because their name by pure coincidence is "virtual-eth-shm"?
+> I cannot name my ethernet like that?
+> 
 
-There's many things lacking from that commit log to evaluate whether
-it's a good solution or not:
+This series adds a new virtual ethernet driver. The tx / rx happens in a
+shared memory block. I need to have a way for the driver to know what is
+the address / size of this block. This driver can be used by any
+vendors. The vendors can create a new node in their dt and specify the
+base address / size of the shared memory block.
 
-- What is the typical sequence of probe / attach on your board?
+I wanted to keep the name of the node constant so that the driver can
+just look for this name and then grab the address and size.
 
-- Why moving the call to drm_bridge_attach helps?
+I can create a new binding file for this but I didn't create thinking
+it's a virtual device not a physical and I wasn't sure if bindings can
+be created for virtual devices.
 
-- What is the next bridge in your case? Did you try with a device
-  controlled through DCS, or with a bridge connected through I2C/SPI
-  that would typically have a lifetime disconnected from the DSI host.
+In my use case, I am reserving this shared memory and during reserving I
+named the node "virtual-eth-shm". The memory is reserved by the
+ti_k3_r5_remoteproc.c driver. The DT change is not part of this series
+but can be found
+https://gist.github.com/danish-ti/cdd10525ad834fdb20871ab411ff94fb
 
-- If you think it's a pattern that is generic enough, we must document
-  it. If you don't, we must find something else.
+The idea is any vendor who want to use this driver, should name their dt
+node as "virtual-eth-shm" (if they also need to reserve the memory) so
+that the driver can take the address from DT and use it for tx / rx.
 
-- Why returning EPROBE_DEFER from the attach callback helps? Also, this
-  is an undocumented behaviour, so if it does, we must document that
-  it's acceptable.
+If this is not the correct way, can you please let me know of some other
+way to handle this.
 
-Without that, unfortunately, we can't really review that patch.
+One idea I had was to create a new binding for this node, and use
+compatible string to access the node in driver. But the device is
+virtual and not physical so I thought that might not be the way to go so
+I went with the current approach.
 
-Maxime
+> Best regards,
+> Krzysztof
 
---hhxl6bbucpmtrmqw
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Thanks and Regards,
+Danish
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaIcweQAKCRAnX84Zoj2+
-diFrAX0dOWwVJpvrdGrihZ9k9sjqDwnxQlT9ParohkOH/+omSlX7TeDpDUnCGIXJ
-98XetfABf1lgG99jkFFG2UoKMqzFM3Any2hggvq6YPevVkdf8kvI/N2GVns0Hs/7
-Tj81Ojl/YA==
-=gmx9
------END PGP SIGNATURE-----
-
---hhxl6bbucpmtrmqw--
 
