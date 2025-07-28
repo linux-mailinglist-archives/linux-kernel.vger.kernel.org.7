@@ -1,121 +1,272 @@
-Return-Path: <linux-kernel+bounces-747337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162C0B132B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:48:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E8EB132B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 03:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836AE3B27E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:47:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA1181745C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 01:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB5D80BEC;
-	Mon, 28 Jul 2025 00:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F105312E1CD;
+	Mon, 28 Jul 2025 01:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="byVAaXkA"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fqic5nl5"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17D7224D7
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 00:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56902184E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753663697; cv=none; b=PO6EeHxKnnsEjD5867L/u3xsibNN4wM/tgKfktQtzuW+mCcqbMQQUjmnZE2x9yQ8mppMivoNJFQg7fGq3WDKGnv/8Sc5+BWda6ubinYNoc3TOov89UDaR9ibaRdPQtIArUjOddeFerc7jkaWeayPeBQvp9Kbah3V6csSw5ZW64o=
+	t=1753664723; cv=none; b=gCow/Yzdjebq23yT1H58ryy3qGpM4L0k8eUBjic/xvgmbZrVfOiKI/60pE2oNifO3B+PRQNDm/QxoikC9rKI8Py7h8xKPncsN/U6RHvuCRrBVbuHxDQasxVOwuEdkn2+r7l48p+qMZnSFvZXnGhshYOHXMFlPHBH74rGrYqIM/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753663697; c=relaxed/simple;
-	bh=iIX49tiYzPNTP8eihaWpW/U0hIgo3vaKHykOa9R9yFE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=Fhrhpqoh8x8CWtpwmMycxMnqMTlBwSkQcEwkrkKkgpYhPbLDZ8ZiLOl/UzlbPH0W3dDLNJe4qIHrXWr+/CI6z8G8eY84m82Fl2CKYmgTPlHf4VsUM5++rhGerGawMdQz4h4k8nNrn6TMIiX+O3/hK1qNWWKIyY91tx8VRlg80g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=byVAaXkA; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2401248e4aaso6179745ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 17:48:15 -0700 (PDT)
+	s=arc-20240116; t=1753664723; c=relaxed/simple;
+	bh=49bTQJhbu7XxTS20QcKrCCoQXPAXu6H88A0u1bB2hDc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZhCJA64LMhbRrc6zq0UtKX9XSqpLRTrC1dVv8F77ZeZjIIeUn2PSN4gEKZ49UzRC2GjDDco2mvKt1sCC12TE6Irq/orDhOzUU1Hl3PY4MNW/Vc8Ot61yf3vs578qx7uUoeEUUJX5dgSh7D3/lctS5eAF41/QxPSPnBjKQNTgO4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fqic5nl5; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b7889ea74cso45063f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 18:05:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1753663695; x=1754268495; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1753664718; x=1754269518; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q/m2yLXtAPbsmvVSwdPJxGHPEjPAoGD9mowpJ03FJoE=;
-        b=byVAaXkA1PJQMXSQnYb36eBWEZEJBQ+9sLxRycPMtMUN7RLe8B7Nea4RB2kx9jFXCO
-         xGo1kQHC+TsNLt7DUxBZlmiLSiKaBX5LPhSjpJehtiX324tTDO2wg6CDrfnlBtQUr+AX
-         wqdnsudSdbqerPxKP6H6XPQyTWaI1Ng010mSzikxROBxgkS4JVyq6uGcHqm0Ryc2EQqa
-         NVuB+t7Fn4N9yA9vaG6DkhNW9S+rtzjm10BHGmIG+pNWG3Qa/JFNnpCfK3sJ5SnLMUH4
-         fmKcnvL1t9pN/2cyIjB+X4FM3G4AX18lSWG24lSGh4TeBgi9trbvCu8hF+sPZn+tyfaO
-         Cg+g==
+        bh=b0yAlgRTz5Zd4GgIGI64fD+hC9AH6yPyVqGHu8QQlgU=;
+        b=Fqic5nl5G9QdvGpZCg2lHJBmbi5SfdyMskoRYcuLEKAPfSJhpW0MFU4RVDek59mC4T
+         tpRIwKvNc7lFebBbw6Hi9e1Upd7SgMSLt9sAqMwqUfwRKmJOsprf+ZLkC+soNy4XmD5t
+         AGNj1PEmkelZ66wtbo21bcwP1r82Ju3XUdBPoREre7SO1wPncVz8aneTrL6Y/jyGM1jr
+         7XH2yKVBW4ai8e3rlsmhyQMCn2ETBiFCMbiETAUWs5zCjNVB+xAZIcJAXMReOjy/hP4B
+         MnyxPt3Wn6///RPpOzMrZ4OxxnTY6qg2xUIe/46yx9QiGr4hCcLa2DXrnjUeBkOiOlTk
+         FkDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753663695; x=1754268495;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=q/m2yLXtAPbsmvVSwdPJxGHPEjPAoGD9mowpJ03FJoE=;
-        b=R/IuSKlDICNBldGsIX83iqaV7RK0O3HFDI+p4/Fhp/AdZ6fOCAoCD41h9Ty51wK+l6
-         VWp/j986J6IrGvD6A1MO9Kh37NEhhgy0lsuH55ZZuCuIA/tKu8/9pRSPr1qXXOBX5mFH
-         hipW4kh1ex4p5dIeuPgHYKI6CNkyUr1kcy/+ngaX07e2I58wtU2lKWkHF0N+movrdJ/T
-         IduUUfsR6d7XpsrqomVQ+jwCeWZRNfPTq32VT4DyIYPhuc3LP28JXiNz2e+0t2ccGD7q
-         O6LmjVHiB3UThbPckUv9ScD9CxZ1dcfzFfE8o3qOtaxvDTWj8m4sJ5LdZJig/BFkHBne
-         AYKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMCTIOUdbhpas6cBroB5+0zssoNEjY4b6Ld7kv0JAC9ypdNq8M0tFk1E7/B+8IruZy9Bw0MQ77Z/ABb30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoUp4Vp4Vftv9GMQM8tnGqP2MPi+np5RK3OcLiTsRv87ci5Esl
-	N4hcZPgVcFsYKWilGlNCEhI2BXPqfV1uZwbKD2LBVpoV+ZKBWRqXGQTsFK0jv8bR8Us=
-X-Gm-Gg: ASbGncvdCCLCjg2KrZLSI4v/Palkpb9D7D984JGs0g+EeInC+M2urnPLDgZVgGzjiXx
-	61yqq+bYvpYZ8P5ZK1njYDJxBbHNcc9pH8307/V1oAdTPLcQhiSrGyBOTcrmDThb/PSm5T1QzLN
-	oRlU5Y1UVJDTY1wjj/hoE6kKhd5MAkWmLq5t+IQRMQtc1MX4PSzWCGmdx6jMrdmo1zuHSRu5BJl
-	6/nXNRKWEzjV63JgBsDTLAzaRi+T9NaGh+At59Va5H5rS0q20tBObIwnn8JNTJjxF3nDqdhWBsD
-	AR33i3HsV10wph0mfQyGKLNUUaBD4vg3j4yNrkQlSoH+JuwT0vqNrnuGOSk84KPY/Db0yKYZheQ
-	ozRgTGzf0zxpnlw9QbBU=
-X-Google-Smtp-Source: AGHT+IGpUSWz2rXiHT5Ls8XtgdyXyLyQSY2jYkIIzKTp7aIQYL/oUdeBjK25CLIA8d4piIBSPhy18A==
-X-Received: by 2002:a17:902:f54f:b0:240:1ed3:fc1f with SMTP id d9443c01a7336-2401ed3ff16mr35964315ad.12.1753663694957;
-        Sun, 27 Jul 2025 17:48:14 -0700 (PDT)
-Received: from localhost ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe536e4asm40996105ad.163.2025.07.27.17.48.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Jul 2025 17:48:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753664718; x=1754269518;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b0yAlgRTz5Zd4GgIGI64fD+hC9AH6yPyVqGHu8QQlgU=;
+        b=Y5vM4JuQy6lkNCz08NzZtekxkoEXaLIu6wQKaYwOqNVazFgginYQn8QD26ja1EqIm8
+         zD+O7KbYBhDo0sMXVuJsanDh/NdwS058xgvgxap/bGWkYD/9UM8j9bFYmKB7TSDLDYYo
+         Kk1yWk+hXKgLtM0B1UsKrssXycn9WPdBeH6k5P1diUCRi+ORAWimF9K7UhgdEzjEeXZA
+         px3+KV+7b8GOvwRK3MN2rw6JHXNP9vVOhCSCK8VipuB8XjIvYk5TuWKIJSyZPIF3ZAOX
+         nL3h+1qqkwtYgZDPRBX+KG0FtO1MJOaFX1DErwD/8gAtlQEygDjmNh2sB+uHSgcV9rCw
+         36Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSlY2c02SKkO/n37qX1hw8PSyUzeVblgzsSlczuU2abMY9f8LmnklUsUR46yMQx3p07d+UM95CI8bU8bc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKD7MOao8YjaH3c0h/W78UpLPXf9VkTDbBbHJoEPJpxqquQd2g
+	Vowiy9cQZkQN2xqxaz0gXt2z0taROTZlziPs8WxRrJKrgTzbWCrFPh7E6rl+Lv2wj5EwI6G56e8
+	B8opzch8wlcmuyKabIw7PNROf2dL2tMc=
+X-Gm-Gg: ASbGnctz9meF1cHdyEx7FOdJDNTneozRJi4OtsURbAUKvrSKq3k2k8RrwYPohKaIYsa
+	GnJuVZXj+X1o/ED0J2WiZBg+xGhfjTRdKPda64q0H7VKMK3imM6BXm5+U/FShJ07JDA5eg93hL4
+	GgTdmM2zyvWayfo6di6QWzJ7LqbK+ddSHtKyDdQ1MKY2Y11l3fHF9GFSK8Fg0oxevhoTy6A90Pu
+	iVFzJzE
+X-Google-Smtp-Source: AGHT+IHHPvKIQsAP7dKGmzcWQefQFtVx4hPoMsQ+HsUVNN2PtYMWl1O2eUcAaOYoGpDyCWUsu1OYi155hpT0nzDF2WE=
+X-Received: by 2002:a5d:5f92:0:b0:3a5:3369:391c with SMTP id
+ ffacd0b85a97d-3b7766d2d43mr2200021f8f.1.1753664718266; Sun, 27 Jul 2025
+ 18:05:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250725054922.3972265-1-chao@kernel.org>
+In-Reply-To: <20250725054922.3972265-1-chao@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Mon, 28 Jul 2025 09:05:07 +0800
+X-Gm-Features: Ac12FXwqkE8fSsJO0UoEegMdGTPOgVJV_tO03QHQWvLDuYYVwkDYM45AqoWUDuQ
+Message-ID: <CAHJ8P3LBH7oxV8nOiwU3yfQSr+LmK58EvFtyF8YLPQ=usZpqFA@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v3] mkfs.f2fs: support -C [no]hashonly to
+ control linear lookup fallback
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 27 Jul 2025 18:48:10 -0600
-Message-Id: <DBN9W9SJU6MX.F5UH2D1QCJNC@brighamcampbell.com>
-Subject: Re: [PATCH 1/2] drm: Create mipi_dsi_dcs_read_multi()
-From: "Brigham Campbell" <me@brighamcampbell.com>
-To: "Doug Anderson" <dianders@chromium.org>
-Cc: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
- <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
- <linus.walleij@linaro.org>, <neil.armstrong@linaro.org>,
- <jessica.zhang@oss.qualcomm.com>, <sam@ravnborg.org>,
- <skhan@linuxfoundation.org>, <linux-kernel-mentees@lists.linux.dev>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250724202338.648499-1-me@brighamcampbell.com>
- <20250724202338.648499-2-me@brighamcampbell.com>
- <CAD=FV=UZqzWd+Ke2sU-z86jnhKhUo8v0ChyKYnGpmx+s7n0stQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=UZqzWd+Ke2sU-z86jnhKhUo8v0ChyKYnGpmx+s7n0stQ@mail.gmail.com>
 
-On Fri Jul 25, 2025 at 3:16 PM MDT, Doug Anderson wrote:
->> +               dev_err(dev, "transferring dcs message %xh failed: %d\n"=
-, cmd,
+Hi Chao
+
+Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+=E4=BA=8E2025=E5=B9=B47=E6=9C=8825=E6=97=A5=E5=91=A8=E4=BA=94 13:51=E5=86=
+=99=E9=81=93=EF=BC=9A
 >
-> Format code "%xh" is probably not exactly what you want. If the error
-> code is 0x10 it will print 10h, which is not very standard. You
-> probably copied it from the write routine which uses "%*ph". There the
-> "h" means something. See Documentation/core-api/printk-formats.rst.
-> Probably you want "%#x".
+> It provides a way to disable linear lookup fallback during mkfs.
+>
+> Behavior summary:
+>                         Android         Distro
+> By default              disabled        enabled
+>
+> Android case:
+>
+> 1.1) Disable linear lookup:
+> - mkfs.f2fs -f -g android -O casefold -C utf8:hashonly /dev/vdb
+> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+> s_encoding_flags                        [0x       2 : 2]
+>
+> 1.2) Enable linear lookup:
+> - mkfs.f2fs -f -g android -O casefold -C utf8:nohashonly /dev/vdb
+> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+> s_encoding_flags                        [0x       0 : 0]
+>
+> 1.3) By default:
+> - mkfs.f2fs -f -g android -O casefold -C utf8 /dev/vdb
+> Info: set default linear_lookup option: disable
+> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+> s_encoding_flags                        [0x       2 : 2]
+>
+> Distro case:
+>
+> 2.1) Disable linear lookup:
+> - mkfs.f2fs -f -O casefold -C utf8:hashonly /dev/vdb
+> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+> s_encoding_flags                        [0x       2 : 2]
+>
+> 2.2) Enable linear lookup:
+> - mkfs.f2fs -f -O casefold -C utf8:nohashonly /dev/vdb
+> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+> s_encoding_flags                        [0x       0 : 0]
+>
+> 2.3) By default:
+> - mkfs.f2fs -f -O casefold -C utf8 /dev/vdb
+> - dump.f2fs -d3 /dev/vdb |grep s_encoding_flags
+> s_encoding_flags                        [0x       0 : 0]
+>
+It is very clear and easy to understand.
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> v3:
+> - honor [no]hashonly flag for Android case
+> - update testcase and output
+>  include/f2fs_fs.h       |  3 ++-
+>  lib/libf2fs.c           |  6 ++++++
+>  man/mkfs.f2fs.8         |  9 ++++++++-
+>  mkfs/f2fs_format.c      | 11 +++++++++++
+>  mkfs/f2fs_format_main.c |  3 ++-
+>  5 files changed, 29 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+> index f7268d1..a8da8fa 100644
+> --- a/include/f2fs_fs.h
+> +++ b/include/f2fs_fs.h
+> @@ -1478,7 +1478,8 @@ enum {
+>
+>  /* feature list in Android */
+>  enum {
+> -       F2FS_FEATURE_NAT_BITS =3D 0x0001,
+> +       F2FS_FEATURE_NAT_BITS           =3D 0x0001,
+> +       F2FS_FEATURE_LINEAR_LOOKUP      =3D 0x0002,
+>  };
+>
+>  /* nolinear lookup tune */
+> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+> index 2f012c8..1a496b7 100644
+> --- a/lib/libf2fs.c
+> +++ b/lib/libf2fs.c
+> @@ -1424,6 +1424,7 @@ static const struct enc_flags {
+>         char *param;
+>  } encoding_flags[] =3D {
+>         { F2FS_ENC_STRICT_MODE_FL, "strict" },
+> +       { F2FS_ENC_NO_COMPAT_FALLBACK_FL, "hashonly"}
+>  };
+>
+>  /* Return a positive number < 0xff indicating the encoding magic number
+> @@ -1485,6 +1486,11 @@ int f2fs_str2encoding_flags(char **param, __u16 *f=
+lags)
+>                                         *flags |=3D fl->flag;
+>                                 }
+>
+> +                               if (fl->flag =3D=3D F2FS_ENC_NO_COMPAT_FA=
+LLBACK_FL)
+> +                                       c.nolinear_lookup =3D neg ?
+> +                                               LINEAR_LOOKUP_ENABLE :
+> +                                               LINEAR_LOOKUP_DISABLE;
+> +
+>                                 goto next_flag;
+>                         }
+>                 }
+> diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
+> index 8b3b0cc..fcb227c 100644
+> --- a/man/mkfs.f2fs.8
+> +++ b/man/mkfs.f2fs.8
+> @@ -232,10 +232,17 @@ Use UTF-8 for casefolding.
+>  .I flags:
+>  .RS 1.2i
+>  .TP 1.2i
+> -.B strict
+> +.B [no]strict
+>  This flag specifies that invalid strings should be rejected by the files=
+ystem.
+>  Default is disabled.
+>  .RE
+> +.RS 1.2i
+> +.TP 1.2i
+> +.B [no]hashonly
+> +This flag specifies that linear lookup fallback is off during lookup, to=
+ turn
+> +off linear lookup fallback, use nohashonly flag.
+here should "to turn off linear lookup fallback, use hashonly flag"?
+or "to turn on linear lookup fallback, use nohashonly flag"
+1.1) Disable linear lookup:
+- mkfs.f2fs -f -g android -O casefold -C utf8:hashonly /dev/vdb
 
-Ah yes, I had based this change off the "%*ph" format specifier and I
-had mistakenly assumed that the 'h' was a literal 'h'. I'll fix that in
-v2.
-
-> I'd probably also say "dcs read with cmd" rather than "transferring
-> dcs message".
-
-Yes, this sounds more accurate. I'll include this in v2 as well.
-
-Thanks for the review,
-Brigham
+> +For android case, it will disable linear lookup by default.
+> +.RE
+>  .RE
+>  .TP
+>  .BI \-q
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index 2680bd3..04dfc20 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -671,6 +671,17 @@ static int f2fs_prepare_super_block(void)
+>         memcpy(sb->init_version, c.version, VERSION_LEN);
+>
+>         if (c.feature & F2FS_FEATURE_CASEFOLD) {
+> +               /*
+> +                * if [no]hashonly option is not assigned, let's disable
+> +                * linear lookup fallback by default for Android case.
+> +                */
+> +               if ((c.nolinear_lookup =3D=3D LINEAR_LOOKUP_DEFAULT) &&
+> +                       (c.disabled_feature & F2FS_FEATURE_LINEAR_LOOKUP)=
+) {
+> +                       c.s_encoding_flags |=3D F2FS_ENC_NO_COMPAT_FALLBA=
+CK_FL;
+> +                       MSG(0, "Info: set default linear_lookup option: %=
+s\n",
+> +                               c.s_encoding_flags & F2FS_ENC_NO_COMPAT_F=
+ALLBACK_FL ?
+> +                               "disable" : "enable");
+> +               }
+>                 set_sb(s_encoding, c.s_encoding);
+>                 set_sb(s_encoding_flags, c.s_encoding_flags);
+>         }
+> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+> index f0bec4f..8f8e975 100644
+> --- a/mkfs/f2fs_format_main.c
+> +++ b/mkfs/f2fs_format_main.c
+> @@ -143,7 +143,8 @@ static void add_default_options(void)
+>                 force_overwrite =3D 1;
+>                 c.wanted_sector_size =3D F2FS_BLKSIZE;
+>                 c.root_uid =3D c.root_gid =3D 0;
+> -               c.disabled_feature |=3D F2FS_FEATURE_NAT_BITS;
+> +               c.disabled_feature |=3D F2FS_FEATURE_NAT_BITS |
+> +                                       F2FS_FEATURE_LINEAR_LOOKUP;
+>
+>                 /* RO doesn't need any other features */
+>                 if (c.feature & F2FS_FEATURE_RO)
+others look OK to me,so
+Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> --
+> 2.49.0
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
