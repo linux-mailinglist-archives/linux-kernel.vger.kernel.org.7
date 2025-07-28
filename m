@@ -1,128 +1,362 @@
-Return-Path: <linux-kernel+bounces-747707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8F4B1370E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:55:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 028BCB1370F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E36A3B726A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 191DF17866A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEB0231826;
-	Mon, 28 Jul 2025 08:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="LyM5hlQI"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2420D4C6C
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFEA22E004;
+	Mon, 28 Jul 2025 08:56:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD713398B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753692918; cv=none; b=Phrk7chToMU9zOtllNmOjfxjURG2GHFYsmU4lwiCO3m+yruB/5xIcBaxTB/+vPioyTgRbZDLmTpP448f5ScVlmAWB3POGwL1pRfHgoL3UElYJdNbarF48K3QsRiKRsQAcDPuIaveXpMAcTC3bDfE7V364TzKtjPEY2emRThTYp4=
+	t=1753692984; cv=none; b=UN/yYDY32ZXKeMTeXK27llq5u5/uHimsK8pDjOWzW25C5zC5pwhTyNm3IMGUykJSgI6nqxDRNKtK0+S9hwAtkQl2BZjcq+3xvwVOQuPIkxdf/tmnm/DQR02WZHKp42mjrtz3/b0ihpi8gLL1JReTh5ehCm0Yfqw0bgQLmirRkvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753692918; c=relaxed/simple;
-	bh=gnCHQZ1z+8JJt8cCbafcvsbEAy5AmOf/papLmhtzlvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AxZ+xEklfGmy0pOeLUD19yYrG6J4y7qGxrN79eFA7IMwHwNj48LvKefdmU5dOn37k4lNbNAIrnw6ZlzWziK7/GGax2apQJdLpnYxS1ea2w31LOdzcEoqZ0d7PdSaRUVqeTendf8/rpx6tOdPpeGPk5tjiDRPJfRZKSmH3wqFP84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=LyM5hlQI; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=UAQU
-	jGuxUG1E1fe0gubyQ/yevPLFRNpllTNyC2US9Fo=; b=LyM5hlQIgEw39YvSI5xY
-	oio5Iim46ONy+cV4DpCGcUEzbMyu9hPdhTeLudF1PDQ9ihcKeBpHd+cIrVspfzbJ
-	aVlhbSPDrUJ3Yl9wAWKXrxnfEwtnr2qWuwKDoNmixbXoYIiV+2Rej2c331u0PVnG
-	SJfGiCo8V1A1A00vCnYkD2DCLMHrg1x604NKKSdSO+roApHyJbDO9YwtI4jTv0rw
-	S3B+A5ZayX5WDRJzeTgqACIKRqQYDgxoLPV3cIrjRXzoyjyU1ZEiCrVvf5q1nVqO
-	w+N4SFTXLd8N+yfvC5WOeqnMuFGtRQ1yFu3sOnCA2dayuprR8h+EHRaJoxMPu91b
-	xQ==
-Received: (qmail 3374383 invoked from network); 28 Jul 2025 10:55:14 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Jul 2025 10:55:14 +0200
-X-UD-Smtp-Session: l3s3148p1@WXsrc/k6xL4gAwDPXyC3AG0QzsW8mHdp
-Date: Mon, 28 Jul 2025 10:55:13 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Cc: git@amd.com, michal.simek@amd.com, peda@axentia.se,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	radhey.shyam.pandey@amd.com, srinivas.goud@amd.com,
-	shubhrajyoti.datta@amd.com, manikantaguntupalli09@gmail.com,
-	Jonathan Stroud <jonathan.stroud@amd.com>
-Subject: Re: [PATCH 1/1] PCA9541: Increase I2C bus arbitration timeout
-Message-ID: <aIc68UkzN_l0gZ_D@shikoro>
-References: <20250711124503.3390451-1-manikanta.guntupalli@amd.com>
- <20250711124503.3390451-2-manikanta.guntupalli@amd.com>
+	s=arc-20240116; t=1753692984; c=relaxed/simple;
+	bh=JwsVG4vwM16o2Upa0cZep8U+cIAH1eIBnidFbTfdkjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Iamf1J3OrDIgaAhNEkk8pw7z5rVRpvpGezcY2rgIBauDAW2h4vixfb5I46BA+r7/nwSP5V2Hkt5qK8V3OJEALkRxjMC+9H2Q9Ugy49Z5fC3eIj3DeAyxv1JgpdPl42Y8eGyiPMEoJNWBo570cGzFKRO+ra19QiaDXiHjQOp+AXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12C241596;
+	Mon, 28 Jul 2025 01:56:13 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3EB323F66E;
+	Mon, 28 Jul 2025 01:56:17 -0700 (PDT)
+Message-ID: <46e49e66-1da3-433c-bdad-9468133c78a2@arm.com>
+Date: Mon, 28 Jul 2025 09:56:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OhhEuFFUUn3RXVrr"
-Content-Disposition: inline
-In-Reply-To: <20250711124503.3390451-2-manikanta.guntupalli@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 20/36] arm_mpam: Probe the hardware features resctrl
+ supports
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
+ <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+ Carl Worth <carl@os.amperecomputing.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+ <20250711183648.30766-21-james.morse@arm.com>
+Content-Language: en-US
+From: Ben Horgan <ben.horgan@arm.com>
+In-Reply-To: <20250711183648.30766-21-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi James,
 
---OhhEuFFUUn3RXVrr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/11/25 19:36, James Morse wrote:
+> Expand the probing support with the control and monitor types
+> we can use with resctrl.
+> 
+> CC: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>   drivers/platform/arm64/mpam/mpam_devices.c  | 154 +++++++++++++++++++-
+>   drivers/platform/arm64/mpam/mpam_internal.h |  53 +++++++
+>   2 files changed, 206 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
+> index 8646fb85ad09..61911831ab39 100644
+> --- a/drivers/platform/arm64/mpam/mpam_devices.c
+> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
+> @@ -102,7 +102,7 @@ static LLIST_HEAD(mpam_garbage);
+>   
+>   static u32 __mpam_read_reg(struct mpam_msc *msc, u16 reg)
+>   {
+> -	WARN_ON_ONCE(reg > msc->mapped_hwpage_sz);
+> +	WARN_ON_ONCE(reg + sizeof(u32) > msc->mapped_hwpage_sz);
+>   	WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
+>   
+>   	return readl_relaxed(msc->mapped_hwpage + reg);
+> @@ -131,6 +131,20 @@ static inline void _mpam_write_partsel_reg(struct mpam_msc *msc, u16 reg, u32 va
+>   }
+>   #define mpam_write_partsel_reg(msc, reg, val)  _mpam_write_partsel_reg(msc, MPAMCFG_##reg, val)
+>   
+> +static inline u32 _mpam_read_monsel_reg(struct mpam_msc *msc, u16 reg)
+> +{
+> +	mpam_mon_sel_lock_held(msc);
+> +	return __mpam_read_reg(msc, reg);
+> +}
+> +#define mpam_read_monsel_reg(msc, reg) _mpam_read_monsel_reg(msc, MSMON_##reg)
+> +
+> +static inline void _mpam_write_monsel_reg(struct mpam_msc *msc, u16 reg, u32 val)
+> +{
+> +	mpam_mon_sel_lock_held(msc);
+> +	__mpam_write_reg(msc, reg, val);
+> +}
+> +#define mpam_write_monsel_reg(msc, reg, val)   _mpam_write_monsel_reg(msc, MSMON_##reg, val)
+> +
+>   static u64 mpam_msc_read_idr(struct mpam_msc *msc)
+>   {
+>   	u64 idr_high = 0, idr_low;
+> @@ -645,6 +659,137 @@ static struct mpam_msc_ris *mpam_get_or_create_ris(struct mpam_msc *msc,
+>   	return found;
+>   }
+>   
+> +/*
+> + * IHI009A.a has this nugget: "If a monitor does not support automatic behaviour
+> + * of NRDY, software can use this bit for any purpose" - so hardware might not
+> + * implement this - but it isn't RES0.
+> + *
+> + * Try and see what values stick in this bit. If we can write either value,
+> + * its probably not implemented by hardware.
+> + */
+> +#define mpam_ris_hw_probe_hw_nrdy(_ris, _mon_reg, _result)			\
+> +do {										\
+> +	u32 now;								\
+> +	u64 mon_sel;								\
+> +	bool can_set, can_clear;						\
+> +	struct mpam_msc *_msc = _ris->vmsc->msc;				\
+> +										\
+> +	if (WARN_ON_ONCE(!mpam_mon_sel_inner_lock(_msc))) {			\
+> +		_result = false;						\
+> +		break;								\
+> +	}									\
+> +	mon_sel = FIELD_PREP(MSMON_CFG_MON_SEL_MON_SEL, 0) |			\
+> +		  FIELD_PREP(MSMON_CFG_MON_SEL_RIS, _ris->ris_idx);		\
+> +	mpam_write_monsel_reg(_msc, CFG_MON_SEL, mon_sel);			\
+> +										\
+> +	mpam_write_monsel_reg(_msc, _mon_reg, MSMON___NRDY);			\
+> +	now = mpam_read_monsel_reg(_msc, _mon_reg);				\
+> +	can_set = now & MSMON___NRDY;						\
+> +										\
+> +	mpam_write_monsel_reg(_msc, _mon_reg, 0);				\
+> +	now = mpam_read_monsel_reg(_msc, _mon_reg);				\
+> +	can_clear = !(now & MSMON___NRDY);					\
+> +	mpam_mon_sel_inner_unlock(_msc);					\
+> +										\
+> +	_result = (!can_set || !can_clear);					\
+> +} while (0)
+> +
+> +static void mpam_ris_hw_probe(struct mpam_msc_ris *ris)
+> +{
+> +	int err;
+> +	struct mpam_msc *msc = ris->vmsc->msc;
+> +	struct mpam_props *props = &ris->props;
+> +
+> +	lockdep_assert_held(&msc->probe_lock);
+> +	lockdep_assert_held(&msc->part_sel_lock);
+> +
+> +	/* Cache Portion partitioning */
+> +	if (FIELD_GET(MPAMF_IDR_HAS_CPOR_PART, ris->idr)) {
+> +		u32 cpor_features = mpam_read_partsel_reg(msc, CPOR_IDR);
+> +
+> +		props->cpbm_wd = FIELD_GET(MPAMF_CPOR_IDR_CPBM_WD, cpor_features);
+> +		if (props->cpbm_wd)
+> +			mpam_set_feature(mpam_feat_cpor_part, props);
+> +	}
+> +
+> +	/* Memory bandwidth partitioning */
+> +	if (FIELD_GET(MPAMF_IDR_HAS_MBW_PART, ris->idr)) {
+> +		u32 mbw_features = mpam_read_partsel_reg(msc, MBW_IDR);
+> +
+> +		/* portion bitmap resolution */
+> +		props->mbw_pbm_bits = FIELD_GET(MPAMF_MBW_IDR_BWPBM_WD, mbw_features);
+> +		if (props->mbw_pbm_bits &&
+> +		    FIELD_GET(MPAMF_MBW_IDR_HAS_PBM, mbw_features))
+> +			mpam_set_feature(mpam_feat_mbw_part, props);
+> +
+> +		props->bwa_wd = FIELD_GET(MPAMF_MBW_IDR_BWA_WD, mbw_features);
+> +		if (props->bwa_wd && FIELD_GET(MPAMF_MBW_IDR_HAS_MAX, mbw_features))
+> +			mpam_set_feature(mpam_feat_mbw_max, props);
+> +	}
+> +
+> +	/* Performance Monitoring */
+> +	if (FIELD_GET(MPAMF_IDR_HAS_MSMON, ris->idr)) {
+> +		u32 msmon_features = mpam_read_partsel_reg(msc, MSMON_IDR);
+> +
+> +		/*
+> +		 * If the firmware max-nrdy-us property is missing, the
+> +		 * CSU counters can't be used. Should we wait forever?
+> +		 */
+> +		err = device_property_read_u32(&msc->pdev->dev,
+> +					       "arm,not-ready-us",
+> +					       &msc->nrdy_usec);
+> +
+> +		if (FIELD_GET(MPAMF_MSMON_IDR_MSMON_CSU, msmon_features)) {
+> +			u32 csumonidr;
+> +
+> +			csumonidr = mpam_read_partsel_reg(msc, CSUMON_IDR);
+> +			props->num_csu_mon = FIELD_GET(MPAMF_CSUMON_IDR_NUM_MON, csumonidr);
+> +			if (props->num_csu_mon) {
+> +				bool hw_managed;
+> +
+> +				mpam_set_feature(mpam_feat_msmon_csu, props);
+> +
+> +				/* Is NRDY hardware managed? */
+> +				mpam_mon_sel_outer_lock(msc);
+> +				mpam_ris_hw_probe_hw_nrdy(ris, CSU, hw_managed);
+> +				mpam_mon_sel_outer_unlock(msc);
+> +				if (hw_managed)
+> +					mpam_set_feature(mpam_feat_msmon_csu_hw_nrdy, props);
+> +			}
+> +
+> +			/*
+> +			 * Accept the missing firmware property if NRDY appears
+> +			 * un-implemented.
+> +			 */
+> +			if (err && mpam_has_feature(mpam_feat_msmon_csu_hw_nrdy, props))
+> +				pr_err_once("Counters are not usable because not-ready timeout was not provided by firmware.");
+> +		}
+> +		if (FIELD_GET(MPAMF_MSMON_IDR_MSMON_MBWU, msmon_features)) {
+> +			bool hw_managed;
+> +			u32 mbwumonidr = mpam_read_partsel_reg(msc, MBWUMON_IDR);
+> +
+> +			props->num_mbwu_mon = FIELD_GET(MPAMF_MBWUMON_IDR_NUM_MON, mbwumonidr);
+> +			if (props->num_mbwu_mon)
+> +				mpam_set_feature(mpam_feat_msmon_mbwu, props);
+> +
+> +			if (FIELD_GET(MPAMF_MBWUMON_IDR_HAS_RWBW, mbwumonidr))
+> +				mpam_set_feature(mpam_feat_msmon_mbwu_rwbw, props);
+> +
+> +			/* Is NRDY hardware managed? */
+> +			mpam_mon_sel_outer_lock(msc);
+> +			mpam_ris_hw_probe_hw_nrdy(ris, MBWU, hw_managed);
+> +			mpam_mon_sel_outer_unlock(msc);
+> +			if (hw_managed)
+> +				mpam_set_feature(mpam_feat_msmon_mbwu_hw_nrdy, props);
+> +
+> +			/*
+> +			 * Don't warn about any missing firmware property for
+> +			 * MBWU NRDY - it doesn't make any sense!
+> +			 */
+> +		}
+> +	}
+> +}
+> +
+>   static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>   {
+>   	u64 idr;
+> @@ -665,6 +810,7 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>   
+>   	idr = mpam_msc_read_idr(msc);
+>   	mutex_unlock(&msc->part_sel_lock);
+> +
+>   	msc->ris_max = FIELD_GET(MPAMF_IDR_RIS_MAX, idr);
+>   
+>   	/* Use these values so partid/pmg always starts with a valid value */
+> @@ -685,6 +831,12 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>   		ris = mpam_get_or_create_ris(msc, ris_idx);
+>   		if (IS_ERR(ris))
+>   			return PTR_ERR(ris);
+> +		ris->idr = idr;
+> +
+> +		mutex_lock(&msc->part_sel_lock);
+> +		__mpam_part_sel(ris_idx, 0, msc);
+> +		mpam_ris_hw_probe(ris);
+> +		mutex_unlock(&msc->part_sel_lock);
+>   	}
+>   
+>   	spin_lock(&partid_max_lock);
+> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
+> index 42a454d5f914..ae6fd1f62cc4 100644
+> --- a/drivers/platform/arm64/mpam/mpam_internal.h
+> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
+> @@ -136,6 +136,55 @@ static inline void mpam_mon_sel_lock_held(struct mpam_msc *msc)
+>   		lockdep_assert_preemption_enabled();
+>   }
+>   
+> +/*
+> + * When we compact the supported features, we don't care what they are.
+> + * Storing them as a bitmap makes life easy.
+> + */
+> +typedef u16 mpam_features_t;
+> +
+> +/* Bits for mpam_features_t */
+> +enum mpam_device_features {
+> +	mpam_feat_ccap_part = 0,
+> +	mpam_feat_cpor_part,
+> +	mpam_feat_mbw_part,
+> +	mpam_feat_mbw_min,
+> +	mpam_feat_mbw_max,
+> +	mpam_feat_mbw_prop,
+> +	mpam_feat_msmon,
+> +	mpam_feat_msmon_csu,
+> +	mpam_feat_msmon_csu_capture,
+> +	mpam_feat_msmon_csu_hw_nrdy,
+> +	mpam_feat_msmon_mbwu,
+> +	mpam_feat_msmon_mbwu_capture,
+> +	mpam_feat_msmon_mbwu_rwbw,
+> +	mpam_feat_msmon_mbwu_hw_nrdy,
+> +	mpam_feat_msmon_capt,
+> +	MPAM_FEATURE_LAST,
+> +};
+> +#define MPAM_ALL_FEATURES      ((1 << MPAM_FEATURE_LAST) - 1)
 
-Hi,
+Consider a static assert to check the type is big enough.
 
-thanks for your patch.
+static_assert(BITS_PER_TYPE(mpam_features_t) >= MPAM_FEATURE_LAST);
 
->  /* arbitration timeouts, in jiffies */
-> -#define ARB_TIMEOUT	(HZ / 8)	/* 125 ms until forcing bus ownership */
-> -#define ARB2_TIMEOUT	(HZ / 4)	/* 250 ms until acquisition failure */
-> +#define ARB_TIMEOUT	(HZ)		/* 1 s until forcing bus ownership */
-> +#define ARB2_TIMEOUT	(2 * HZ)	/* 2 s until acquisition failure */
+> +
+> +struct mpam_props {
+> +	mpam_features_t		features;
+> +
+> +	u16			cpbm_wd;
+> +	u16			mbw_pbm_bits;
+> +	u16			bwa_wd;
+> +	u16			num_csu_mon;
+> +	u16			num_mbwu_mon;
+> +};
+> +
+> +static inline bool mpam_has_feature(enum mpam_device_features feat,
+> +				    struct mpam_props *props)
+> +{
+> +	return (1 << feat) & props->features;
+> +}
+> +
+> +static inline void mpam_set_feature(enum mpam_device_features feat,
+> +				    struct mpam_props *props)
+> +{
+> +	props->features |= (1 << feat);
+> +}
+> +
+>   struct mpam_class {
+>   	/* mpam_components in this class */
+>   	struct list_head	components;
+> @@ -175,6 +224,8 @@ struct mpam_vmsc {
+>   	/* mpam_msc_ris in this vmsc */
+>   	struct list_head	ris;
+>   
+> +	struct mpam_props	props;
+> +
+>   	/* All RIS in this vMSC are members of this MSC */
+>   	struct mpam_msc		*msc;
+>   
+> @@ -186,6 +237,8 @@ struct mpam_vmsc {
+>   
+>   struct mpam_msc_ris {
+>   	u8			ris_idx;
+> +	u64			idr;
+> +	struct mpam_props	props;
+>   
+>   	cpumask_t		affinity;
+>   
 
-Can't we use the timeout value of the parent struct i2c_adapter? This is
-by default HZ and can be set by userspace via IOCTL depending on the
-actual use case. So, we would use (pseudo-code, probably):
+Thanks,
 
-254         unsigned long timeout =3D jiffies + 2 * client->adapter->timeou=
-t;
-255                 /* give up after this time */
-256=20
-257         data->arb_timeout =3D jiffies + client->adapter->timeout;
+Ben
 
-?
-
-
-> +			dev_info(&client->dev, "I2C Bus Arbiter timeout, forcing take bus\n");
-
-'dev_warn' for both?
-
-Happy hacking,
-
-   Wolfram
-
-
---OhhEuFFUUn3RXVrr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiHOvEACgkQFA3kzBSg
-KbatTQ/+L8h4Vly4HssKkyPlR1LNMN/n6UYsi/FxKfSW6hD56m+7BQ+rhrOfr6So
-+xItBoITdU9ps2srR58symHHsv24qIqNmp7UiDTOClqISFXY4cjsbU0KeLPCuwPx
-fU3/MkgKp/lrYPfAb7r/PU5Ya76xQx8jufM8L2w+2vxHLDFoHZIvQxFXo9ScTJTd
-3h/lpnOBAVOvx++l8L5seqOZ/2KiJmijPjOVfXdkNFDDh3mafXQKXn1D0r9v/Tsp
-ZONfCqVJYNsfYC5VjXby4owsYJYMHp1DvBQ4hFqhAWxFzIMa13j67eSBgN6EEf9u
-CK/w+gqvZfgGHnFfpLggUAOME9xe8CGFy/iCojIxe8dR24uyYgLV+5pwzGKpOouX
-yIZoq2IzAcuSn7TWY5L+QAdmROpv4KoRpxNDIqvY5G9tCmPrsdC6hCERQVXGIBxh
-LzANQh4iYrjOywQrD3ODGLZw7rtlZsDiUQeJOntANYkj/OH4I0iCOLQWDtkFCA3Q
-vBH0PmtOZy9Wditv8D9dCJNr9asDK+RMQFegcR0nTW1h8D3uqIOrWJeU9hYz/GjU
-a9Tj5ZLBpc4xGedzF1BdISApZWp6oN2MhvW+z1s8DU8lZInp0ewYO8MDFt3HBtIc
-4+WD4qlcBtuvpSvuQNP+LQTVuQ/5YNyzjpACfSsXoxIqu+F4gcI=
-=Oc/c
------END PGP SIGNATURE-----
-
---OhhEuFFUUn3RXVrr--
 
