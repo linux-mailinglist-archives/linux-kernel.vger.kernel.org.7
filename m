@@ -1,228 +1,190 @@
-Return-Path: <linux-kernel+bounces-748230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93464B13E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4632AB13E31
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855DB189FF33
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:26:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3739017E1B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7772E2737EA;
-	Mon, 28 Jul 2025 15:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7B4272E75;
+	Mon, 28 Jul 2025 15:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SU1snmtV"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M9Uc4kEO"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAAD2905;
-	Mon, 28 Jul 2025 15:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60AB2727E2
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753716351; cv=none; b=mwRrORkGk/iCPa4KB5yaUJHk5fwKMH6tkjjzecA898FSoqeJAiFz0/ZBEENGmIUjIDBDy3CH7OtZ+wHZsMVlvfKKFlePQCsDtIOY7dRCDiq5Y8rTCMAJg4/Wfo3JO5x0RUdwUYRpOolV5xgddYCFMsnQ2R4E4EmCikHCRfvhEM4=
+	t=1753716318; cv=none; b=NFJYVCqzhOpvGzBvArZZKBEn4hYN+42ORhP7LmlM4vrkmSVZDYooXlm8Iq0I21i6JXo2GL1/nWi1CBmoDnBO/VkTyMpph2NhhorCb2E9c+wsirEgx7X8C4h8IOVZuzPJARUUvIApc45Dcy5kM697Mc8W8aQTZBGJg303S31vyfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753716351; c=relaxed/simple;
-	bh=ExEAhEcPgRQ7bap6YF8+1uVGMr/RRG+T/6x2VRhXXxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b36uxtlbqs/QxrvYufq5co+rvsJZSeVdQKNlwrPo+FjwEBaM0n/RsZRIL8JBZcsAOTzYDY1ejoyvUt57G5K358aVGucX/ijOzfylwRUyIcq1o51t8cOiYOpqiKP2MBDa9UFTnRS3VCQqhjgB4KEWZBQDIt4LSDhpjeVudRm/nOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SU1snmtV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56S9Xxkb018554;
-	Mon, 28 Jul 2025 15:24:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=1TdeY3
-	8yvx2pkN17RGtrmown7LStkd9BlLsganOGKko=; b=SU1snmtV3tJrfwHLzN28CB
-	/d0bLoxvbH+DwDL7gFeoiiIP4YjG2N08RJjzvgM4fxbt75KytqMCOV0Rwm+dFxQy
-	vg5YdQy+DAlYb9p1rwllwn2AkTzTInuSCnclIZRGghYl+3MXbjoswRC6kIdOTDhh
-	eA8UWw2OXbZlEJUU15isOLWsA322LJoYUOPpUbjF8YcDtfNwzF55mlCa9m5MZz6W
-	LyPigDAqTgs4XDh6O/eC2L6ONFOHZ5Y+pANg1xsYBGK4Yl/YRcN5V68lFOC00jJ/
-	TsTLkJvwBU/ZS7arF8+2JYLpBoJDfAOWUDzRU4WPpARKHlnO+4oRXimpAwDcmR3Q
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qd59u3x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 15:24:57 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56SEsfG7006179;
-	Mon, 28 Jul 2025 15:24:56 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 485bjkx5xq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 15:24:56 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56SFOsEa35521220
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 15:24:54 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4C2DC2004B;
-	Mon, 28 Jul 2025 15:24:54 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 18F6C20043;
-	Mon, 28 Jul 2025 15:24:53 +0000 (GMT)
-Received: from [9.111.164.146] (unknown [9.111.164.146])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 28 Jul 2025 15:24:53 +0000 (GMT)
-Message-ID: <5fb8ada0-d90c-4a58-a38d-97b3d0787554@linux.ibm.com>
-Date: Mon, 28 Jul 2025 17:24:52 +0200
+	s=arc-20240116; t=1753716318; c=relaxed/simple;
+	bh=Kptubjw33lIYXvj73r+Ak5WjJnBxiCJjjkNyZ62pUp4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=j3j4eutPW0iVGLBGg8dHeBw1yORTMASEm4Q+IW+BbA24kFvxsXyobZM5a4Wxon6O8zkWeUZHA02aG4MAlbRAaTEmEZOWLmsfTdabu/eOyhZQA5kuh9+avLHRk5UnHW7Fh1smKVSh5g2579Pzu5DXS2XSCcKdRlTfJ++1ReS/+kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M9Uc4kEO; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-456007cfcd7so145565e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753716315; x=1754321115; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FmtiBSyLbULt1UA1JWlLsO3uP2X4WloH9sMbWEu3NzA=;
+        b=M9Uc4kEOKsBMrw1CrnM6QyLh31774WWQTgpOxuz5fA05Qn5HH6Qr8k9Z1AuH5WHiYL
+         ajckt/0WhwSs0EMV1dLemGzVnKCZVI+KFNGBx/NZATFbRp8f4kfyx49r5REwcC7/uv5u
+         N1M1xu8+cd/dBUHLVRl4WvUWf4tkc+I25Oj+s4BoC+nY0xT1A83Qh4vxSd6vaKbQyjcE
+         2S9JRObdtktxLNlacq1yI2zQblnj21ddcTTOBgnzB3h5N2dvYcbpPUtJ/jbSvrvplnxR
+         VuOo0xqnFgToSItjCEN/i8NGAbFNIzwYR/7JC+R1J+RwMJ8aA4paba3LcdnICHAzmWf6
+         +67w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753716315; x=1754321115;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FmtiBSyLbULt1UA1JWlLsO3uP2X4WloH9sMbWEu3NzA=;
+        b=WRy4c+p04E2BxVpl3owrJuX5TL52DFkGbg1q8TaC4oVLm0NEzRn6Tiq/AxPmmzftlz
+         9RkA0upoV9J8CEibeDqXYx0+N54YR1lSjMKMnM2Zbb1R0ECZiOQ22p07uMLrZoBSBN3X
+         zXbXWTGYdL01dQqJr3l9qk75TKYNNR4Ftwx+dHdWtIU/hWPx3+4u9mmiU6kShdOPMPFn
+         Flk3FTZ1oLU/32HdoDRcigoOuK69VxSa1RSMCyNNJcOKZmQ30euHFE7Fm3obQGW8psja
+         3zEfLSjNyfuxh2s2OA1PxKflRbRfSk9zHiLznDwpNLSOXcpRHTux45QtzVjTM1Mp17Kx
+         I0Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCU9TYEoOwNJAW2CmLrByfG5uMYOswgqZvK8VnNC0xnnEZRCmK0cssRaM0MxrdYWvgj1jKPoFcHNSLoCwIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Ifc9Afsp16RTwx61UB6nQcew5fT31uB9vx14dSxSGipvtBcJ
+	xXjZg3GObB7KWyQxEw1husptRSJztQbKwHYok20u1vadA6uRIwfkICGQ9LOAVbXYhA==
+X-Gm-Gg: ASbGncsEQwz6wIDx194gb1MlDlFYe1qR7BIi9inTLI0iiDBIafIYWQKhJRaDmq/tATx
+	DZ9JVXvp/uihCypTCtuIhzUU62XT0FVAvjVaevgvjB3Y07yP9deeuGUSDU0uwBBtkMW7EIsc/xt
+	9+c1V0Gy/GpbT9AZR7s45+JEYFX4fn24Qysf+5+9XDXVE2kxbOjyZ8PRcAP9jftKgd2pPkqsX6C
+	JCAyC/WebqgjPaqHMsu9xS+7b2q/00OlyAFXpl0lP0dAeq+YxQN3jovuRFIMwd+DswR+V6ZUVdV
+	CPEAWu3FCrqm7Hf/A3BmccmXnxa4QDu8jkmHX6s2aWTvc4yeHFqv7wisYhQ1YuvsGqKPBX/pURW
+	78IoEZwDkbQ==
+X-Google-Smtp-Source: AGHT+IFz2/khpbmE7QV+OLQd11BAr9Xk4dyOjWbrlD/05Yad/FhrSGmzWSDF//LF5el6BhaDH3YZQw==
+X-Received: by 2002:a05:600d:11:b0:455:fd3e:4e12 with SMTP id 5b1f17b1804b1-4587c203b63mr3367205e9.4.1753716314556;
+        Mon, 28 Jul 2025 08:25:14 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:ec3e:2435:f96c:43d])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705c4fdasm166070335e9.28.2025.07.28.08.25.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 08:25:14 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Mon, 28 Jul 2025 17:25:07 +0200
+Subject: [PATCH] kasan: add test for SLAB_TYPESAFE_BY_RCU quarantine
+ skipping
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 01/10] unwind_user: Add user space unwinding API with
- frame pointer support
-To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-References: <20250725185512.673587297@kernel.org>
- <20250725185739.233988371@kernel.org>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20250725185739.233988371@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDExMSBTYWx0ZWRfX0YmiIuWmXQbI
- 8n6DNChCzjzPjbZzxVksO0bcz7n0HVBmovQBhdtiwSzAXzvKBb1B2EqdA1gWr2BlYOwlJxJJ10G
- F2JMy2Evq8llS1mxuIvkhvku6kw+yRHgi8QM9Pokb/Mg7VNApYPRSAvLBv1jHDngSfYE4AmwECA
- fzS42tBkTxrXk9K3QtZGfldG694Nr2LqmPfNVS6ZwqNWF+0hJGVKUFip3Snj2A6axk5uHVRokIR
- ZBLhS0bCDPN4eujKjj0Sxq+X4v49QO6/dEnBp+MFusoxqMPTdsBT6T8nRymTebg2II/8YZKiODO
- r05KWY44atF/Eid9tLSKLI3R5AXle8RZTQVw9q08fZPp2Zc2LxCfTIMwDLqZJE7265YfLPyMStn
- CJWwSP3QN88PgvVwTjKh4enDf7fT/tBr1b5fzp1QVFkbeKjLfq7Ww0tKHmkcwKqA+qy0dIO+
-X-Proofpoint-ORIG-GUID: blmFy9mm8Rzf3-Dx_ISYFmMlRBq_EMfh
-X-Authority-Analysis: v=2.4 cv=B9q50PtM c=1 sm=1 tr=0 ts=68879649 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=7d_E57ReAAAA:8
- a=VnNF1IyMAAAA:8 a=meVymXHHAAAA:8 a=Mwpwro7nxz-gx4yFV5sA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=2JgSa4NbpEOStq-L5dxp:22
-X-Proofpoint-GUID: blmFy9mm8Rzf3-Dx_ISYFmMlRBq_EMfh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 mlxscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507280111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250728-kasan-tsbrcu-noquarantine-test-v1-1-fa24d9ab7f41@google.com>
+X-B4-Tracking: v=1; b=H4sIAFKWh2gC/33NSwrCMBSF4a2EOzaQJqax2Yp0kMSrBuHW5lGE0
+ r0brODM4X8G51shY4qYwbIVEi4xx4ladAcG4e7ohjxeWoMUUgsjT/zhsiNesk+hcprm6pKjEgl
+ 5wVy4DkYq1RsUuod28kx4ja8PcB73TjjX5pR9/DGWfRH1B0EpjPfDIFAe7dLBuG1vXjjTucQAA
+ AA=
+X-Change-ID: 20250728-kasan-tsbrcu-noquarantine-test-5c723367e056
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+ Alexander Potapenko <glider@google.com>, 
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, kasan-dev@googlegroups.com, 
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753716310; l=2679;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=Kptubjw33lIYXvj73r+Ak5WjJnBxiCJjjkNyZ62pUp4=;
+ b=63awq6A643TMQphYSCgAxn8VRGNZqIMqOct7AU3rsaLfhYPVM3wE6iOhb9oBMDvAWudz6meau
+ daIFkzIVpRXBf+8r00bPgCO+mafWmDLqF24NHkkqsPzSiRM+jBHA/Z8
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-On 25.07.2025 20:55, Steven Rostedt wrote:
-> From: Josh Poimboeuf <jpoimboe@kernel.org>
-> 
-> Introduce a generic API for unwinding user stacks.
-> 
-> In order to expand user space unwinding to be able to handle more complex
-> scenarios, such as deferred unwinding and reading user space information,
-> create a generic interface that all architectures can use that support the
-> various unwinding methods.
-> 
-> This is an alternative method for handling user space stack traces from
-> the simple stack_trace_save_user() API. This does not replace that
-> interface, but this interface will be used to expand the functionality of
-> user space stack walking.
-> 
-> None of the structures introduced will be exposed to user space tooling.
-> 
-> Support for frame pointer unwinding is added. For an architecture to
-> support frame pointer unwinding it needs to enable
-> CONFIG_HAVE_UNWIND_USER_FP and define ARCH_INIT_USER_FP_FRAME.
-> 
-> By encoding the frame offsets in struct unwind_user_frame, much of this
-> code can also be reused for future unwinder implementations like sframe.
-> 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Co-developed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Link: https://lore.kernel.org/all/20250710164301.3094-2-mathieu.desnoyers@efficios.com/
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Co-developed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Verify that KASAN does not quarantine objects in SLAB_TYPESAFE_BY_RCU slabs
+if CONFIG_SLUB_RCU_DEBUG is off.
 
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Suggested-by: Andrey Konovalov <andreyknvl@gmail.com>
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Feel free to either take this as a separate commit or squash it into the
+preceding "[PATCH] kasan: skip quarantine if object is still accessible
+under RCU".
 
-> diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
+I tested this by running KASAN kunit tests for x86-64 with KASAN
+and tracing manually enabled; there are two failing tests but those
+seem unrelated (kasan_memchr is unexpectedly not detecting some
+accesses, and kasan_strings is also failing).
+---
+ mm/kasan/kasan_test_c.c | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-> +static int unwind_user_next_fp(struct unwind_user_state *state)
-> +{
-> +	struct unwind_user_frame *frame = &fp_frame;
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index 5f922dd38ffa..15d3d82041bf 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -1073,6 +1073,41 @@ static void kmem_cache_rcu_uaf(struct kunit *test)
+ 	kmem_cache_destroy(cache);
+ }
+ 
++/*
++ * Check that SLAB_TYPESAFE_BY_RCU objects are immediately reused when
++ * CONFIG_SLUB_RCU_DEBUG is off, and stay at the same address.
++ */
++static void kmem_cache_rcu_reuse(struct kunit *test)
++{
++	char *p, *p2;
++	struct kmem_cache *cache;
++
++	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_SLUB_RCU_DEBUG);
++
++	cache = kmem_cache_create("test_cache", 16, 0, SLAB_TYPESAFE_BY_RCU,
++				  NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
++
++	p = kmem_cache_alloc(cache, GFP_KERNEL);
++	if (!p) {
++		kunit_err(test, "Allocation failed: %s\n", __func__);
++		kmem_cache_destroy(cache);
++		return;
++	}
++
++	kmem_cache_free(cache, p);
++	p2 = kmem_cache_alloc(cache, GFP_KERNEL);
++	if (!p2) {
++		kunit_err(test, "Allocation failed: %s\n", __func__);
++		kmem_cache_destroy(cache);
++		return;
++	}
++	KUNIT_ASSERT_PTR_EQ(test, p, p2);
++
++	kmem_cache_free(cache, p2);
++	kmem_cache_destroy(cache);
++}
++
+ static void kmem_cache_double_destroy(struct kunit *test)
+ {
+ 	struct kmem_cache *cache;
+@@ -2098,6 +2133,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(kmem_cache_double_free),
+ 	KUNIT_CASE(kmem_cache_invalid_free),
+ 	KUNIT_CASE(kmem_cache_rcu_uaf),
++	KUNIT_CASE(kmem_cache_rcu_reuse),
+ 	KUNIT_CASE(kmem_cache_double_destroy),
+ 	KUNIT_CASE(kmem_cache_accounted),
+ 	KUNIT_CASE(kmem_cache_bulk),
 
-Optional: Pointer to const?
+---
+base-commit: 0df7d6c9705b283d5b71ee0ae86ead05bd3a55a9
+change-id: 20250728-kasan-tsbrcu-noquarantine-test-5c723367e056
+prerequisite-change-id: 20250723-kasan-tsbrcu-noquarantine-e207bb990e24:v1
+prerequisite-patch-id: 4fab9d3a121bfcaacc32a40f606b7c04e0c6fdd0
 
-> +	unsigned long cfa, fp, ra = 0;
-
-Nit: Is initialization of ra really required?  I don't see where ra
-would be getting used without being set beforehand.
-
-> +	unsigned int shift;
-> +
-> +	if (frame->use_fp) {
-> +		if (state->fp < state->sp)
-> +			return -EINVAL;
-> +		cfa = state->fp;
-> +	} else {
-> +		cfa = state->sp;
-> +	}
-> +
-> +	/* Get the Canonical Frame Address (CFA) */
-> +	cfa += frame->cfa_off;
-> +
-> +	/* stack going in wrong direction? */
-> +	if (cfa <= state->sp)
-> +		return -EINVAL;
-> +
-> +	/* Make sure that the address is word aligned */
-> +	shift = sizeof(long) == 4 ? 2 : 3;
-> +	if (cfa & ((1 << shift) - 1))
-> +		return -EINVAL;
-> +
-> +	/* Find the Return Address (RA) */
-> +	if (get_user(ra, (unsigned long *)(cfa + frame->ra_off)))
-> +		return -EINVAL;
-> +
-> +	if (frame->fp_off && get_user(fp, (unsigned long __user *)(cfa + frame->fp_off)))
-> +		return -EINVAL;
-> +
-> +	state->ip = ra;
-> +	state->sp = cfa;
-> +	if (frame->fp_off)
-> +		state->fp = fp;
-> +	return 0;
-> +}
-
-Regards,
-Jens
 -- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+Jann Horn <jannh@google.com>
 
 
