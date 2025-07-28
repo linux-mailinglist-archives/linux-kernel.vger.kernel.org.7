@@ -1,124 +1,135 @@
-Return-Path: <linux-kernel+bounces-748364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA992B14034
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:24:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E41B13FBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8217D17E96B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:24:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF44E7A68E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD7F2882CF;
-	Mon, 28 Jul 2025 16:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s24qwQ/h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6347C274FF9;
+	Mon, 28 Jul 2025 16:16:37 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC89274B44;
-	Mon, 28 Jul 2025 16:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ADB2745C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 16:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753719578; cv=none; b=BiQ1w3wGyZyVEgeIaq6rBcPVsXQ2A/XpKBNmxYYIEH+xK2oj3bC2GAtWuY59muGChxk0m5OWrautbjkHpiHqTug2wSxpGbYq1xgJEiQiALMlJiDhA2SA+oHHr0imY8PMxISjtMfTy0D5GkrAe1Qs/97mjuWB4q8RypZYFevcKbw=
+	t=1753719397; cv=none; b=Qhba9lm9MJTPIJz2F2RVUmpXkHETkQBbCOEwluQfJrXQ3Qxt9oEz1hePSmiMocoifeILZjHIYcHZViGIYWGWvZNBGI/wksuAdhxvuCxgYdwZayZvYKJ59A/hX81tLV6E4nQ6XgFgxfngzCSXZmqWFEKAUhVnfJJUBDWgoq435dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753719578; c=relaxed/simple;
-	bh=jQi+mXuUzQah1hpB0ZmxZMKEYCV600U42oolJxyRpS4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qMIHracvJzhngu4wQDXi//hh/WYRwyDQAge8b8VdF6sYjU/3+ZxirnJrZ7UoceT9jAUtQjriZGuNkO03avzk2OOEGm0khm9wG6MTiuiQZMTPhTdgyfk6LJsvqzlGPxxqkFV/yNQJ9amB0KGeLwE2CiIVnGueV1hufkRGaNTBV7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s24qwQ/h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F56C4CEEF;
-	Mon, 28 Jul 2025 16:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753719577;
-	bh=jQi+mXuUzQah1hpB0ZmxZMKEYCV600U42oolJxyRpS4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=s24qwQ/htiwfp0NOFgFLv3vM7Xckzrq1Dv7PVgT9P10wFh88GdeyNf1R0onrt0wF/
-	 7RFELWG5Gkj3TiH4im0fYgZ8iRGOlQHp27GtRRIBdYnq/X6nADgG3Z9ktA8YSH1Dad
-	 lyJ9siDMB09VJi5oOLlWcavYhtyIb+3XWtDy3YC5GfQm+y9Rfsc1e9ZlrR0+Ssx3uF
-	 MnRazqAkPDhYiPmEk/DF9lq7i0FLyVe+Sps5D7dnB1L7f7uCeKl7+3SmlJms4LYbc+
-	 xLsJlwnsdfCuDYiCcnc9CVqQDJT60sdeIZDJQ7eBfcUQa/0Kp/Jps2kQmyiGOdkuxa
-	 beCA2D5RljB1Q==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Mon, 28 Jul 2025 18:16:24 +0200
-Subject: [PATCH RFC 24/24] arm64: dts: qcom: x1e80100: Describe GPU_CC
- power plumbing requirements
+	s=arc-20240116; t=1753719397; c=relaxed/simple;
+	bh=Ra3EpKFG5lZHIr9+wwD9BF2NKExJ+D9VpKnfYB0xC2o=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MTxY2WSneOs8Dd5AtDUnu2MeYOnajvTl7fStEf0vjEbpUwvrvc92cNpmy7r4XCe3GCOIptX4qJoqgHK3lgNf5D/k46dGgk/r3OdQnP2LXSTPl3KKf2c1861iJKip6oVDO0xDXCsVsXSUuhAnfl0tdhPEtrbGcejSTv0rRGbKdPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4brNpn1yDqz6L5Sd;
+	Tue, 29 Jul 2025 00:14:41 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 154C51402EB;
+	Tue, 29 Jul 2025 00:16:31 +0800 (CST)
+Received: from localhost (10.122.19.247) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 28 Jul
+ 2025 18:16:29 +0200
+Date: Mon, 28 Jul 2025 17:16:28 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Ben Horgan <ben.horgan@arm.com>
+CC: James Morse <james.morse@arm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>, "Rohit
+ Mathew" <rohit.mathew@arm.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	Zeng Heng <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>, Carl
+ Worth <carl@os.amperecomputing.com>, <shameerali.kolothum.thodi@huawei.com>,
+	D Scott Phillips OS <scott@os.amperecomputing.com>, <lcherian@marvell.com>,
+	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
+	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
+	<xhao@linux.alibaba.com>, <peternewman@google.com>, <dfustini@baylibre.com>,
+	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Rex Nie
+	<rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>, Koba Ko
+	<kobak@nvidia.com>
+Subject: Re: [RFC PATCH 20/36] arm_mpam: Probe the hardware features resctrl
+ supports
+Message-ID: <20250728171628.00001cd3@huawei.com>
+In-Reply-To: <eb8a395c-ca21-43d2-a1f9-739dbdc26dc4@arm.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+	<20250711183648.30766-21-james.morse@arm.com>
+	<eb8a395c-ca21-43d2-a1f9-739dbdc26dc4@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-topic-gpucc_power_plumbing-v1-24-09c2480fe3e6@oss.qualcomm.com>
-References: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
-In-Reply-To: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, 
- Johan Hovold <johan+linaro@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Taniya Das <taniya.das@oss.qualcomm.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
- Imran Shaik <quic_imrashai@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Dmitry Baryshkov <lumag@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
- Douglas Anderson <dianders@chromium.org>, Vinod Koul <vkoul@kernel.org>, 
- Richard Acayan <mailingradian@gmail.com>, 
- Andy Gross <andy.gross@linaro.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
- Luca Weiss <luca.weiss@fairphone.com>, Jonathan Marek <jonathan@marek.ca>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jagadeesh Kona <quic_jkona@quicinc.com>, 
- Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753719371; l=1029;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=sXUTyRKeh4DSCEHRkfxr2jS5yhoSyHaN3wcwxWm//xQ=;
- b=uHNiZMtCHnfwiDJByl5EwurECRMfeNH3gWVfdKWL2D954TtfqM4Ve58ycDVCM5o20THjZCPmb
- 4NC4Qwq2o3tCPfVgM+BjaLiZOCUIzwUTswiIr/GfAShZ2dRUSAHnphI
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+}
+> >   
+> > +/*
+> > + * IHI009A.a has this nugget: "If a monitor does not support automatic behaviour
+> > + * of NRDY, software can use this bit for any purpose" - so hardware might not
+> > + * implement this - but it isn't RES0.
+> > + *
+> > + * Try and see what values stick in this bit. If we can write either value,
+> > + * its probably not implemented by hardware.
+> > + */
+> > +#define mpam_ris_hw_probe_hw_nrdy(_ris, _mon_reg, _result)			\
+> > +do {										\
+> > +	u32 now;								\
+> > +	u64 mon_sel;								\
+> > +	bool can_set, can_clear;						\
+> > +	struct mpam_msc *_msc = _ris->vmsc->msc;				\
+> > +										\
+> > +	if (WARN_ON_ONCE(!mpam_mon_sel_inner_lock(_msc))) {			\
+> > +		_result = false;						\
+> > +		break;								\
+> > +	}									\
+> > +	mon_sel = FIELD_PREP(MSMON_CFG_MON_SEL_MON_SEL, 0) |			\
+> > +		  FIELD_PREP(MSMON_CFG_MON_SEL_RIS, _ris->ris_idx);		\
+> > +	mpam_write_monsel_reg(_msc, CFG_MON_SEL, mon_sel);			\
+> > +										\
+> > +	mpam_write_monsel_reg(_msc, _mon_reg, MSMON___NRDY);			\
+> > +	now = mpam_read_monsel_reg(_msc, _mon_reg);				\
+> > +	can_set = now & MSMON___NRDY;						\
+> > +										\
+> > +	mpam_write_monsel_reg(_msc, _mon_reg, 0);				\
+> > +	now = mpam_read_monsel_reg(_msc, _mon_reg);				\
+> > +	can_clear = !(now & MSMON___NRDY);					\
+> > +	mpam_mon_sel_inner_unlock(_msc);					\
+> > +										\
+> > +	_result = (!can_set || !can_clear);					\
+> > +} while (0)  
+> It is a bit surprising that something that looks like a function 
+> modifies a boolean passed by value. Consider continuing the pattern you 
+> have above:
+> #define mpam_ris_hw_probe_hw_nrdy(_ris, _mon_reg, _result) 
+> _mpam_ris_hw_probe_hw_nrdy(_ris, MSMON##_mon_reg, _result)
+> 
+> with signature:
+> void _mpam_ris_hw_probe_hw_nrdy(struct mpam_msc *msc, u16 reg, bool 
+> *hw_managed);
+> 
+> and using the _mpam functions from the new _mpam_ris_hw_probe_hw_nrdy().
+> 
 
-A number of power rails must be powered on in order for GPU_CC to
-function. Ensure that's conveyed to the OS.
+Agreed that this is ugly.  Only a tiny bit of macro stuff is actually going on here.
+I'd make it function.
 
-Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+If you really want to construct MSMON_CSU etc then wrap that helper with
+a macro that builds reg from the name.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 5e9a8fa3cf96468b12775f91192cbd779d5ce946..6620517fbb0f3ed715c4901ec53dcbc6235be88f 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -3928,6 +3928,12 @@ gpucc: clock-controller@3d90000 {
- 			clocks = <&bi_tcxo_div2>,
- 				 <&gcc GCC_GPU_GPLL0_CPH_CLK_SRC>,
- 				 <&gcc GCC_GPU_GPLL0_DIV_CPH_CLK_SRC>;
-+
-+			power-domains = <&rpmhpd RPMHPD_CX>,
-+					<&rpmhpd RPMHPD_MX>,
-+					<&rpmhpd RPMHPD_GFX>,
-+					<&rpmhpd RPMHPD_GMXC>;
-+
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
+I might have missed something though in converting this.
+The version I have has some other changes though so not trivial to post here :(
 
--- 
-2.50.1
+
 
 
