@@ -1,112 +1,86 @@
-Return-Path: <linux-kernel+bounces-748205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2F9B13DDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:07:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBE3B13DE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D57E617E0BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:07:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 716EC7A3844
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC6F2701DF;
-	Mon, 28 Jul 2025 15:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7120526F477;
+	Mon, 28 Jul 2025 15:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b="B1p6GydT"
-Received: from chumsalmon.baetis.net (chumsalmon.baetis.net [209.222.21.150])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="YsXIzZvM"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F8126B093;
-	Mon, 28 Jul 2025 15:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.222.21.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED4C237163
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753715261; cv=none; b=QX3Hp+mQ3HYGJG38ggIrdJ335K76xxZw61Zh+Uq9ANQKPVMRTUBTTAV577bm/iu+QligrBFU9koSQbC+TjB1Ccv5baOF0KsMBtiFt9iOb448HzqGVitp3dK0bwrA9F+fUDRtS7SlT7wYiUZcV4H7ltWMxVXx5p15GoIt+TKDuFw=
+	t=1753715324; cv=none; b=fNX6z8YBRIyc/mEFAePlZq9XjJwMnqXtM92cJCn2wydNg8iXGghdNcnFZDHBW7bZH6ZjIZS9cpIM1Ksfpk5pXJ8B3FhQRFs8ugxvP9AT+aB4JFsQP1q5fn507C8I18c2BgKocF98isDbt8ILuEulNSpQZt05DuVoA0blneqso0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753715261; c=relaxed/simple;
-	bh=uvTHoWDfs2EDKcTU/ctS/fdFesLbnoOsjLa1+Mgz95M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D2fcNmmDgtXSn2lRu0V62wImy1ZT7qdN6T/RS+iW4pwoaNEhOZHZ6bICQ4TirK0go49h/ZrfGQ9COHYAnIv2hV2lmOnjt1Jy4LfmNFyU+4S4H92gj1lpmtzgT37FdFH7H4ioRlBUn7fbJhEzbkvku3fUmfUxYNaiA24mBTI9mAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com; spf=pass smtp.mailfrom=tahomasoft.com; dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b=B1p6GydT; arc=none smtp.client-ip=209.222.21.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tahomasoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tahomasoft.com;
-	s=default; t=1753715258;
-	bh=uvTHoWDfs2EDKcTU/ctS/fdFesLbnoOsjLa1+Mgz95M=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=B1p6GydTvvV9IUlpvSF7BW+R/jZiJLDJk1X1ho3uJX91QeIXLtHkm2SOWG/BbP152
-	 QVSm2nEzgp0cygItof5QokKepy/Jr/fbhGeGaSH4AN96S0GLoQ7ZU7qUAsQSm7y1+z
-	 uc8x0xjOjv+mdqGXlm1WeSvR9A+Wk1md4bPfrrQdaj1zxtgi7RhGNQ/fAYw0s71GMU
-	 KHH5RQ1G6UnMrLqVFr37jTzAKendrQdZkPrJoChDMTIhugh0THUQJKQkuC0l/lNQR8
-	 7vRz6JQjMFxBdumHfY8Roak1PvqFA2mbOwyq9LzfHaDt7yxGzOhhZGI2AKAe/jRSZd
-	 izplVda2lQRZQ==
-Received: from localhost (unknown [IPv6:2600:4040:50b7:b604:31ee:da95:eea2:34e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by chumsalmon.baetis.net (Postfix) with ESMTPSA id 89C9C27E83B;
-	Mon, 28 Jul 2025 15:07:38 +0000 (UTC)
-From: Erik Beck <xunil@tahomasoft.com>
-Date: Mon, 28 Jul 2025 11:07:37 -0400
-Subject: [PATCH v5 2/2] dt-bindings: arm: rockchip: add
- LinkStar-H68k-1432v1
+	s=arc-20240116; t=1753715324; c=relaxed/simple;
+	bh=81lb7JhdkNUJiRGoDCraiiNmLgWiBQkVHxlWlQQbjpU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OGuGn+iylLQKH4uvbZdsHR4VI6tWlRDyB0qkZVMUPA6iEAcRWPqlTqfr9+A1T2B+pv85N4wWzpyi6BKz1A6xhOelQ0q8YITpHXH5hyKSNyHAM8lOQdmteeVFHMf6R1Nm1MauieMaQvg6N0YlfYShvN/kRQ7ot86JH1Yvv0i8XlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=YsXIzZvM; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=HIeh66fvqevC2YKpYfC5ton1/7+U92lXMTA4Rc9xuHg=; b=YsXIzZvMG0ey0I8wKR7Aw5hmJd
+	hKk1B6MYHLgvvq74pedKKS8U3O2YnWL2IJCuiDPWhqw3hShrt86kbcvxQqqTxGXP3DLm2Xy73UHfJ
+	6flVW93oa/pm/5WYHYcnA9KtSPnMv0mJzLRAJLSbtT6HbP6vvo4kJJMKSY6d0QCCmNpeRwfKcYm/L
+	4JTuUHru4Cm1WKMVmLMa4AqvsIvIkXfZiJe0tnFjH/ysnmCcTg7Q5iNtHgOy5hrButRO41iXN/Opa
+	5X3g6u1/jFNOCfP07cabOwp8G/0zLo0mbpieAoGbgtw/XXn9f9edgiGOIsCePjWKjiuZ1DxnfILPU
+	7ed4Bz9A==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1ugPSu-004xby-OC; Mon, 28 Jul 2025 17:08:36 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH] regmap: mmio: Add missing MODULE_DESCRIPTION()
+Date: Mon, 28 Jul 2025 16:08:29 +0100
+Message-ID: <20250728150829.11890-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-linkstarpatch_v5-v5-2-b4ebfeaca652@tahomasoft.com>
-References: <20250728-linkstarpatch_v5-v5-0-b4ebfeaca652@tahomasoft.com>
-In-Reply-To: <20250728-linkstarpatch_v5-v5-0-b4ebfeaca652@tahomasoft.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Erik Beck <xunil@tahomasoft.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753715257; l=1156;
- i=xunil@tahomasoft.com; s=20250724; h=from:subject:message-id;
- bh=uvTHoWDfs2EDKcTU/ctS/fdFesLbnoOsjLa1+Mgz95M=;
- b=jS97AuXubreofn2GtbncJNoEvjWPnHULAnjzCIRTJUVzrXRw9PovBHcnUMte3OHu7lrCE5xGy
- fiSEuxE9MBCANt9dIS6FOxBWnR2t3mw7teMzKH/HlgtZaD33TY7IVlY
-X-Developer-Key: i=xunil@tahomasoft.com; a=ed25519;
- pk=FTZVGUexvkWb4j8v0wbtm7CtJLijIAaa5x0XV72WWC0=
+Content-Transfer-Encoding: 8bit
 
-Add device tree bindings.
+There were already several commits to add module descriptions to regmap
+modules.  But this one was still missing:
 
-This device:
-  - Is a single board travel router made by Seeed, using an rk3568;
-  - Has four ethernet ports;
-  - Has four USB ports;
-  - Has WiFi (MediaTek MT7921e);
-  - Has a real-time clock (rk809)
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-mmio.o
 
-Signed-off-by: Erik Beck <xunil@tahomasoft.com>
+Signed-off-by: Luis Henriques <luis@igalia.com>
 ---
- Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/base/regmap/regmap-mmio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 5772d905f390e53b44f9093d32b869a7e0655db6..7f3904b69293f31fdd4f6080fab5ce054c1abee2 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -1109,6 +1109,11 @@ properties:
-           - const: rockchip,rk3588-toybrick-x0
-           - const: rockchip,rk3588
+diff --git a/drivers/base/regmap/regmap-mmio.c b/drivers/base/regmap/regmap-mmio.c
+index 99d7fd85ca7d..29e5f3175301 100644
+--- a/drivers/base/regmap/regmap-mmio.c
++++ b/drivers/base/regmap/regmap-mmio.c
+@@ -609,4 +609,5 @@ void regmap_mmio_detach_clk(struct regmap *map)
+ }
+ EXPORT_SYMBOL_GPL(regmap_mmio_detach_clk);
  
-+      - description: Seeed LinkStar H68K-1432v1 RK3568
-+        items:
-+          - const: seeed,rk3568-linkstar-h68k-1432v1
-+          - const: rockchip,rk3568
-+
-       - description: Sinovoip RK3308 Banana Pi P2 Pro
-         items:
-           - const: sinovoip,rk3308-bpi-p2pro
-
--- 
-2.43.0
-
++MODULE_DESCRIPTION("regmap MMIO Module");
+ MODULE_LICENSE("GPL v2");
 
