@@ -1,207 +1,156 @@
-Return-Path: <linux-kernel+bounces-747502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD7E6B1348D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:00:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6497B13483
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA34A18976EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:01:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F821883C19
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50C0220F21;
-	Mon, 28 Jul 2025 06:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BD722154D;
+	Mon, 28 Jul 2025 05:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FYQLNztU"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLRAZW2f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B175F216E26;
-	Mon, 28 Jul 2025 06:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB52421765B;
+	Mon, 28 Jul 2025 05:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753682434; cv=none; b=RcHlP3Ov8Oh71C5sj4zWWdHpZRSGx6aM8e6veaQJVM+Nxeccb/sfes2xWEe97YuaVKfGmpuiBkqmT7d6RUScRriTEdVzinfqfGKznn5dou+Gvm092nHvU8fse9KKJRFYoCW5wwxHFS65bBvbYrgTiuhq1NEBfp2ciefX7HBJriQ=
+	t=1753682385; cv=none; b=fSk33Gw4wGiZpGxPH/UrCmbXIJemG5SUtwUTlO90FusJoaiKpRnLx4aONUkIOXNt9o8s9u5Z/B4YXbCDLlacSnSXsVU3yM5v4JYjJh4WEa7BV1lJu8ApEIvfHA87dYPoYyYpv+wDq5BbvGx9l7huypS9Bhmd1p66mrN88i8rGlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753682434; c=relaxed/simple;
-	bh=Ah3R0v2rYJ487XEMoZp7KO92f0egugJX8Gzr7UGw6Bo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ibsmG7TEQjXZMc44KQdE0TfOwh0W8E4KZbgHoIilQgq4Wz5LZrblqJmLzx6FDqf2SMRoS5g9dkkZNiYX7jV2SDAl8aDUzOSKMUXBiOs1hb1rfc7RioGfBYqCuL5H30beEYbCtHqY8woUn6EAVtsN2AHal45SZnDYUw5gheJavyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FYQLNztU; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56S4kjKQ025384;
-	Mon, 28 Jul 2025 06:00:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=r8k5c8iqL9I/tfdQ1
-	FuVzFOAu7J/hlKtF00ZSuzsfbM=; b=FYQLNztUYaw2UDspktLsvL9xbmdVlOf5y
-	TGyaoHYar47SrlzDdymkOTtxtmx03CcCx1lG1lnhxfVv/3W1kLghuRERCB44X26s
-	a3jWyTxxt2xdG+z/LPZLFoPLsT8uRyRp4Y4Zz+BJ2LUBFLah5QVEEhHIkohh1ESU
-	spBGZJAACCzbtIBcvU8gurXal3xkkt3Yh7lEFsOJFpbIoCXHSRKySJrye1NKnAme
-	yCKP7cfz8nuU0IdTnxkvbgqf9MMkUHMW9sqxRJ0nt217+WDmZKIEWEpV/c8+wUC5
-	mZqwwk7Nw84BySNeYqCLrT5xDukg8r2pAJ+JAr4YQJ2qSahkvlZUw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qfqf7yy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 06:00:22 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56S5ux9I013615;
-	Mon, 28 Jul 2025 06:00:21 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qfqf7yt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 06:00:21 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56S4iE6P017275;
-	Mon, 28 Jul 2025 06:00:20 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4859qyvhry-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 06:00:20 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56S60Gej58917174
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 06:00:16 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0BF4520040;
-	Mon, 28 Jul 2025 06:00:16 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A62220043;
-	Mon, 28 Jul 2025 06:00:12 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com.com (unknown [9.124.209.252])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 28 Jul 2025 06:00:12 +0000 (GMT)
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
-Cc: Gautam Menghani <gautam@linux.ibm.com>, maddy@linux.ibm.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] perf python: Add sampling.py as example for sampling
-Date: Mon, 28 Jul 2025 11:29:28 +0530
-Message-ID: <20250728055937.58531-3-gautam@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250728055937.58531-1-gautam@linux.ibm.com>
-References: <20250728055937.58531-1-gautam@linux.ibm.com>
+	s=arc-20240116; t=1753682385; c=relaxed/simple;
+	bh=Wtgy6da4925JfoX9oIjmFDm1ZF05hpuazOLW5+rWCT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0AMSnie5dlWYbewQs0MckGuLGKt6cldOq0qH85G9TdF2PougqfJdPzrwL67AJVVewEJm8+oskVTdezECMOgImBb10X0QxV2gqXKyvruJCztWatKyhoznZyCYqit1NtnkWY6IR+Pl3d+qvSAYSuc+Y/hD/e7vck5RCmtB0nwQ8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLRAZW2f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EB2C4CEE7;
+	Mon, 28 Jul 2025 05:59:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753682385;
+	bh=Wtgy6da4925JfoX9oIjmFDm1ZF05hpuazOLW5+rWCT4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QLRAZW2fgp89hAS8KMPpxnR/+KMonssA4uwm0o++r6oL35ZuOKz1M5amcNcvSLZjA
+	 fxwBXNsRWruxEp8eaZQi7z/GMzheH2dFGj9EliyTASMiBEHBYwSRbz6bhIcxQGdJei
+	 rdNA6eX5E7Uqs6Gs5KCECoYNodzuiO421E9AyseEVG9BJZkqbfVHcDkHteP2KUa2kF
+	 yGfypdJ2IAONs3m3GUhfdBhWgxI/XIhcUXYnpIs8iI1B5qK9GB7IDEKSz17yk8bI7c
+	 ws/shviwI23Wt80DGcEjaeCq6P40OjItkj16mLxdDjPOJcxPcN2AywDQas7KkUhUCd
+	 pz3Ci5jvVhwvw==
+Date: Mon, 28 Jul 2025 01:59:42 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+	josh@joshtriplett.org, konstantin@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org
+Subject: Re: [PATCH 2/4] agents: add core development references
+Message-ID: <aIcRzndNUdh-9R18@lappy>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <20250727195802.2222764-3-sashal@kernel.org>
+ <202507271937.EC44B39@keescook>
+ <aIcD9f_52tlLgE-e@lappy>
+ <202507272203.BECE244@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA0MiBTYWx0ZWRfX/lguueOOtgfM
- Wh7mzELm9hp9A23ZxkM+xfBT9QBQGLzxnRYQafLigDAdJClFtRvxo6gza7EWWKGfosF0ZVV8NVX
- Ffi+f0WA+jIDviodcGRVq7Yb29FWlPFbk2oOqAfSUyZIfszIdpBZWOPC9+qGUBnRPqh1si735U4
- NJgJqczbADFe717U+Djq2pa4jvcqvU6VXecNZN0bvmM2q9WmoCsuvsmcUigRxuatk/loqVXwa8c
- t2u/+At8Pmse54Z/IsbdJhlkV0LCXVhIWfr35+JusxG+LDXWAmXdxqb2I3uy0thKVU4kpS35Xn7
- hW/zFo11WVMebphkfCMHLCkuxGl5N0op8KDRAfm6EuDRZ/DCHBgxPwG0A8UWEXZ50PlHUd7FLn6
- q2jLOLDNXOX0Q4J/wMBVbY62rbjhM+lAyNufJHU7HQGu+1Ep1MS1WkKqqyegvp8hYg5WCn9o
-X-Authority-Analysis: v=2.4 cv=Je28rVKV c=1 sm=1 tr=0 ts=688711f6 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=BcAa_kQfSTLkdWV7I_sA:9
-X-Proofpoint-GUID: 7scDrOH8zODaMPoVWUNU5haszRnReSlp
-X-Proofpoint-ORIG-GUID: Fipa9eN_SySQPQOVzDWZXk-TX3sy7xnd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 clxscore=1015 lowpriorityscore=0 spamscore=0 adultscore=0
- suspectscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- mlxscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507280042
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <202507272203.BECE244@keescook>
 
-Add sampling.py - a python version of sampling.c to demonstrate sampling
-events.
+On Sun, Jul 27, 2025 at 10:10:02PM -0700, Kees Cook wrote:
+>On Mon, Jul 28, 2025 at 01:00:37AM -0400, Sasha Levin wrote:
+>> > If an Agent needs the above list, then so does a human. Everything above
+>> > should already be discoverable by the Agent. If it's not, then we need a
+>> > better summary document _for humans_ that reads like the above.
+>>
+>> Why would an agent read those docs unless we tell it to?
+>
+>When I typed "/init" in claude, it found the references in the Makefile
+>and other files to stuff in Documentation/ and read it. Hence my
+>suggestion to add this in a place that is human (and agent)
+>discoverable, like Makefile, which any sane agent is going to read to
+>look for a "help" target, etc. Any agent that doesn't understand how to
+>figure out what _kind_ of codebase it's working on isn't an agent that
+>is going to deal well with the Linux tree.
+>
+>> Similarily, why would a human read those docs unless we tell it to? :)
+>
+>We do, though. But this is my point: if we _lack_ a good entry point for
+>humans, then we need to solve _that_ problem.
 
-Sample output:
-```
-$ sudo ./sampling.py
-libperf: mmap_per_cpu: nr cpu values 8 nr threads 1
-libperf: idx 0: mmapping fd 3
-libperf: idx 1: mmapping fd 4
-libperf: idx 2: mmapping fd 5
-libperf: idx 3: mmapping fd 6
-libperf: idx 4: mmapping fd 7
-libperf: idx 5: mmapping fd 8
-libperf: idx 6: mmapping fd 9
-libperf: idx 7: mmapping fd 10
-cpu: 0   pid: 4168   tid: 4168   ip: 0x7fb274150c15       period: 345012
-cpu: 1   pid: 57137  tid: 57137  ip: 0xffffffffc0745a2c   period: 286666
-cpu: 2   pid: 6247   tid: 6247   ip: 0x7fe10a883988       period: 391180
-cpu: 3   pid: 0      tid: 0      ip: 0xffffffffa5413e67   period: 245301
-cpu: 4   pid: 4168   tid: 4194   ip: 0xffffffffc086a1cc   period: 269605
-cpu: 5   pid: 0      tid: 0      ip: 0xffffffffa53bfcb1   period: 90978
-cpu: 6   pid: 0      tid: 0      ip: 0xffffffffa6469333   period: 309112
-```
+Thing is, agents won't read the README on their own: they need to be
+prompted to do it.
 
-Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
----
- tools/perf/python/sampling.py | 49 +++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100755 tools/perf/python/sampling.py
+Claude will generate passable commits without a CLAUDE.md for simple
+prompts.
 
-diff --git a/tools/perf/python/sampling.py b/tools/perf/python/sampling.py
-new file mode 100755
-index 000000000000..b5f4e1362c63
---- /dev/null
-+++ b/tools/perf/python/sampling.py
-@@ -0,0 +1,49 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+# -*- python -*-
-+# -*- coding: utf-8 -*-
-+
-+import perf
-+import time
-+
-+def main():
-+    cpus    = perf.cpu_map()
-+    threads = perf.thread_map(-1)
-+
-+    evlist = perf.parse_events('cpu-cycles', cpus, threads)
-+
-+    tgt = perf.target(uses_mmap = True, default_per_cpu = True)
-+    opts = perf.record_opts(freq=1000, target=tgt, sample_time=True,
-+                            sample_cpu=True, no_buffering=True, no_inherit=True)
-+    for ev in evlist:
-+        ev.tracking = False
-+        ev.read_format = 0
-+        ev.sample_type = perf.SAMPLE_IP|perf.SAMPLE_TID|perf.SAMPLE_CPU|perf.SAMPLE_PERIOD
-+    evlist.config(opts)
-+
-+    evlist.open()
-+    evlist.mmap()
-+
-+    evlist.enable()
-+    time.sleep(2)
-+    evlist.disable()
-+
-+    done = False
-+    while done is False:
-+        for cpu in cpus:
-+            event = evlist.read_on_cpu(cpu)
-+            if event is None:
-+                done = True
-+                break
-+
-+            if not isinstance(event, perf.sample_event):
-+                continue
-+
-+            print(f"cpu: {event.sample_cpu:<3} pid: {event.sample_pid:<6} "
-+                    f"tid: {event.sample_tid:<6} ip: {hex(event.sample_ip):<20} "
-+                    f"period: {event.sample_period:<20}")
-+
-+    evlist.close()
-+
-+if __name__ == '__main__':
-+    main()
+I'm assuming we both agree that we need to give the agent some entry
+point which they will automatically process without any user prompts,
+even if it's just saying "Please read the README file!"?
+
+>> Just like with humans, the better context and background you give them
+>> the better of a result you'll get out of it.
+>
+>Both the top of Makefile and the bottom of "make help" refer to reading
+>the README file. I think *that* is where all these kinds of changes
+>should go, and it should be suitable for human consumption. Honestly,
+>README is extremely vague right now:
+>
+>$ cat README
+>Linux kernel
+>============
+>
+>There are several guides for kernel developers and users. These guides can
+>be rendered in a number of formats, like HTML and PDF. Please read
+>Documentation/admin-guide/README.rst first.
+>
+>In order to build the documentation, use ``make htmldocs`` or
+>``make pdfdocs``.  The formatted documentation can also be read online at:
+>
+>    https://www.kernel.org/doc/html/latest/
+>
+>There are various text files in the Documentation/ subdirectory,
+>several of them using the reStructuredText markup notation.
+>
+>Please read the Documentation/process/changes.rst file, as it contains the
+>requirements for building and running the kernel, and information about
+>the problems which may result by upgrading your kernel.
+>
+>
+>
+>
+>"There are several guides..." and "There are various text files in
+>..." is hardly the right language for a human either. And why is doc
+>building in the README? That's, frankly, esoteric for anyone who needs
+>to read the README.
+>
+>Let's fix up the README into something nice for everyone, and any decent
+>agent should already be reading it anyway.
+
+I think it'll be hard to find a common path that works here. README is
+pretty generic because there are different humans that might read it:
+
+  - A university researcher who should be pointed to researcher-guidelines.rst
+  - A security researcher who should be pointed to security-bugs.rst or embargoed-hardware-issues.rst
+  - A newbie trying to set up his mail client and needs to be pointed to email-clients.rst
+  - A coding agent that doesn't care about none of the above.
+
+So we can clean up README and try to make it an entry point that will
+fit most of it's potential readers, but I worry that at the end it will
+end fitting none of them.
+
+Without crafting something more specific for agents, I also worry that
+we'll be stuffing the limited context they already have with information
+that will only hurt their performance (just like humans: there's only so
+much we can remember at a time).
+
 -- 
-2.49.0
-
+Thanks,
+Sasha
 
