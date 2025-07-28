@@ -1,88 +1,47 @@
-Return-Path: <linux-kernel+bounces-747993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65569B13B1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:14:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E57B13B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BD1E188B5F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE57D3AD705
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC23267732;
-	Mon, 28 Jul 2025 13:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4141A266562;
+	Mon, 28 Jul 2025 13:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sy6Z739l"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNF7/bxt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10CD266F00
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8498B4A33;
+	Mon, 28 Jul 2025 13:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753708479; cv=none; b=ZblhtDjIyXZWmqQjThyuYeS9s88K2MTmNNvCWOg8CmyU0b2DXzWx/Cj7cwdqihh0VG25SybRJuL06vGiAoheJIbf5YOUYUigcZFBUenVlTfGJnPYe1H5c5jItH+35EdMSV5n9soKFi9JL8siWQYjAazol5AnWOTgB5hcvY02tBc=
+	t=1753708320; cv=none; b=DG2TbKRPEpI2wQdIJ0UzPw+YOzZbFE0fvF4QeoVxmUKXVpCJtFcxIRSbu4FGO5zXUviUh2FhVkNa55h9hrtEWdRCLC/r4esgcwuUp41ym7FmAbp2FUcyT0RppG2rdGwrOuyXRTqY6uCDZUa3JaWVsgJc1qlUE8Yi2xvP8Rtz7NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753708479; c=relaxed/simple;
-	bh=2daA3AvHNrdtZAsQNYo6fk97zmvbFtSiUvYOSs0DJDM=;
+	s=arc-20240116; t=1753708320; c=relaxed/simple;
+	bh=8QWAdeHIt9M2n7ruuCEiOLK67C47ocnzQTIsLBKfIww=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RG7oU50KoE8krY/VtjcdjlJjmpUF1i9eMEfzbXeqM3jjTGlf7v6SR5KXDoa0GXZq9bPIk2r3zp19+QPFRkhZKbDGUj4R+n+4Zqm+xe3XWBWv4Yd27BqVuLRGwdhLJ8yiYg9Z70rPNiinWzmFUOnGQBEMKE+SEKid3Hmbt7O5Afw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sy6Z739l; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753708476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LvmPhToHOR6HSgjCI2OnycSjK9gNQAEM8DewQu7Vi+A=;
-	b=Sy6Z739lbOxhTtHTWRuozjcbCtsySEdBEcOE7UevKGuQHIbpzPN5raE9CGswdBpy7lOtPR
-	7zcKwJSoO6tjuJ9+jiuiLwMWgIJWYHNNSZFI4AgNcbspKhOKZXfui9Kc7f0y/ygxlSxPid
-	GxIsMf+/qwD+NgKKB04kF+JGuP/tyGw=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-WbNcjbjLMsm8Pa4wPq9myQ-1; Mon, 28 Jul 2025 09:14:32 -0400
-X-MC-Unique: WbNcjbjLMsm8Pa4wPq9myQ-1
-X-Mimecast-MFC-AGG-ID: WbNcjbjLMsm8Pa4wPq9myQ_1753708471
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-555024588e2so2583575e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:14:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753708471; x=1754313271;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LvmPhToHOR6HSgjCI2OnycSjK9gNQAEM8DewQu7Vi+A=;
-        b=UyVwWf6iMuBoN4k3UF/bzSGrW7fS4EIZtCHmK/o4e0G5K4CMOt1jafCXl8H8vi60vI
-         6P/cqi1rn0EZOdAYcx0kpSn6W5mgzXbSdILD9N8ymsaHra18VXwLvp8cxv/ptF+fY+QW
-         EGFOq9ps+6Z+Xchtmmg6/jC5FOuPm7TZfAcqtVC1Zr9IZBrJzoLnwc/hMcqPdgFMpMt0
-         f/lhcXRSk5r+EYGjWZ6FJUEGZQ6pDZPdJqjXRfUPd5X24v65DtUxBxEZ34hhlRLcSAr7
-         0LcI0DpEYoP4u63IQ5AMvDElztDprYt1Fn5286pQIfzbwhOff6AyjL6ke5CYp5c+HeQQ
-         6t8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUkCIRVRg/oP9lTLz94iMyQjtUl1MnLYkXSYUlQwLJxDb7BcE7GNBzPmYNtyDC2xxHEJD1zQ+ExDjCF6aQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaRgmV8fm931jrFRDJgBWjGvgLvw0JcdOpa4Dk4HWEywI1QuPI
-	whjPSagLSMSICVKLQMSzOz3mfY5P7z9SyaDrvMUukP67fQ3HyKLBQTZZNLdaDgAUbPU6PL/pGNZ
-	v7yWEM2+BSKdojcaH+RdXm6cZDWAFaVHP277LL2cdcjelG+3VQzApJ+NH91wpwEZ0MzaKo/+dgZ
-	Cj
-X-Gm-Gg: ASbGncuwtxc1B3ZIhY0rEAvjF59GgPT4IAAtKu+/qkEg8bV+0/57+mY7v2BQ94ORPOG
-	w5ZfWnL0WDvOIHF2evjPa1F3FivZjUPY95G1OoV5w7FvwtF69rCPHrTzxy5MXyslxM5p7ExvS8G
-	pNGRb4vFp7o9z9AknYmHTMoxCeg73XsKXervvBusaTLrM+j11osnrO5UwdIpeTTYaZ4VMYkpHzQ
-	dfxQaBhhwjkWFR0L217v2eJhrCLapEkH36ZHty1J/J7DNtZx9eDXAM5ZeInLIqprfsQkVK8+8gE
-	J/hsaZyUT9t9EuvUdjSreEeFs+ecX/V8q1GpKLkF/CYNstMDApxglWk/viVui0wCD3NpcoYdn4G
-	6aYZKFKHmxoQQvChQYySU/CBfj1oY1pYE9POGUPKOZB12m5pxlBKcgessBLG4WaBU18Y=
-X-Received: by 2002:a05:6512:130c:b0:553:33b3:b944 with SMTP id 2adb3069b0e04-55b5f4d844dmr2964880e87.54.1753708470800;
-        Mon, 28 Jul 2025 06:14:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF7cooNi7EIlieaXAkiyUszr7FMSt+00vQHmfmy7Zn4/r9Ui1z6R8+K731nkAB9nSbSvB1iwA==
-X-Received: by 2002:a05:6000:248a:b0:3b7:8737:7f1d with SMTP id ffacd0b85a97d-3b787378026mr3011013f8f.46.1753708119115;
-        Mon, 28 Jul 2025 06:08:39 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f47:2b00:c5f3:4053:2918:d17c? (p200300d82f472b00c5f340532918d17c.dip0.t-ipconnect.de. [2003:d8:2f47:2b00:c5f3:4053:2918:d17c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587abeb39esm97528125e9.13.2025.07.28.06.08.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 06:08:38 -0700 (PDT)
-Message-ID: <3e88642f-3914-42b0-b864-4ad374b659b5@redhat.com>
-Date: Mon, 28 Jul 2025 15:08:37 +0200
+	 In-Reply-To:Content-Type; b=Seu8P5tG0sHL/12f1HMmvoxqSj+BNk9yu2sKmdgsyFlrRTzkwWcDzCRX1jUxO9cGMRigEpQJBQ0BZlxmN+0dn8SnzhdH0lm0jpoipgVqaiP+XEXWcrPldkZlJBSTvwc6oHg8tqvFX8VJfMp/jK8dT0MU8XgpMSqJBPerCTKOlAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNF7/bxt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037ECC4CEE7;
+	Mon, 28 Jul 2025 13:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753708320;
+	bh=8QWAdeHIt9M2n7ruuCEiOLK67C47ocnzQTIsLBKfIww=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rNF7/bxt5n1URYAUxKyo7pKgEav0xCj90A3q1M3Emob6/sejttWgqoFwrv9DtdHmo
+	 hRHcQd347bxQG0uXGoJJEcoW2SfbOdeV3WcL34e20sZXUBWLbRhzo2qY2ISXOq/KDr
+	 NPDVJumpVI8+ClU80NQlO8CfJKzWPr/QQGOzuPFA3sEdzkcyF/UgXKli9RHxEX78WZ
+	 CQlPOSizJi6ZMRyHEmMDihy+1kyVEberbO3eJTkoRXK+VI1I9nwgh723zZ82n5oFKG
+	 ajZ8jMWifKoUmoK1BzT25Gq7KC/goEiz9nXXxM3tcewSNzQXt4i9YcfNJDRKeHHLmP
+	 jTQZoAOVjoY2Q==
+Message-ID: <3864e374-b045-4317-85bf-ec3a2d3d7940@kernel.org>
+Date: Mon, 28 Jul 2025 15:11:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,84 +49,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
-To: Michal Hocko <mhocko@suse.com>, Hannes Reinecke <hare@suse.de>
-Cc: Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hannes Reinecke <hare@kernel.org>
-References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
- <aIc5XxgkbAwF6wqE@tiehlicka>
- <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
- <aIc9DQ1PwsbiOQwc@tiehlicka>
- <79919ace-9cd2-4600-9615-6dc26ba19e19@redhat.com>
- <f859e5c3-7c96-4d97-a447-75070813450c@suse.de> <aId16W4EaqjANtKR@tiehlicka>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for
+ Sophgo CV1800B SoC
+To: Junhui Liu <junhui.liu@pigmoral.tech>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
+ Inochi Amaoto <inochiama@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <20250728-cv1800-rproc-v2-0-5bbee4abe9dc@pigmoral.tech>
+ <20250728-cv1800-rproc-v2-1-5bbee4abe9dc@pigmoral.tech>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <aId16W4EaqjANtKR@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250728-cv1800-rproc-v2-1-5bbee4abe9dc@pigmoral.tech>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28.07.25 15:06, Michal Hocko wrote:
-> On Mon 28-07-25 11:37:46, Hannes Reinecke wrote:
->> On 7/28/25 11:10, David Hildenbrand wrote:
->> And to make matters worse, we have two competing user-space programs:
->> - udev
->> - daxctl
->> neither of which is (or can be made) aware of each other.
->> This leads to races and/or inconsistencies.
-> 
-> Would it help if generic udev memory hotplug rule exclude anything that
-> is dax backed? Is there a way to check for that? Sorry if this is a
-> stupid question.
-Parsing /proc/iomem, it's indicated as "System RAM (kmem)".
+On 28/07/2025 13:03, Junhui Liu wrote:
+> +
+> +  firmware-name:
+> +    maxItems: 1
+> +
+> +  mbox-names:
+> +    items:
+> +      - const: tx
+> +      - const: rx
+> +
+> +  mboxes:
 
--- 
-Cheers,
+First go mboxes, then mboxes-names. ALWAYS.
 
-David / dhildenb
+> +    description:
+> +      This property is required only if the rpmsg/virtio functionality is used.
+> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
+> +    items:
+> +      - description: mailbox channel to send data to C906L
+> +      - description: mailbox channel to receive data from C906L
+> +
+> +  memory-region:
+> +    description:
+> +      List of phandles to reserved memory regions used by the remote processor.
+> +      The first region is required and provides the firmware region for the
+> +      remote processor. The following regions (vdev buffer, vrings) are optional
+> +      and are only required if rpmsg/virtio functionality is used.
+> +    minItems: 1
 
+Why isn't this constrained?
+
+> +    items:
+> +      - description: firmware region
+> +      - description: vdev buffer
+> +      - description: vring0
+> +      - description: vring1
+> +    additionalItems: true
+
+No, drop. This needs to be constrained.
+
+
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  sophgo,syscon:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      A phandle to the SEC_SYS region, used for configuration of the remote
+> +      processor.
+> +
+> +required:
+> +  - compatible
+> +  - firmware-name
+> +  - memory-region
+> +  - resets
+> +  - sophgo,syscon
+
+Why mboxes are not required?
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    c906l-rproc {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+Best regards,
+Krzysztof
 
