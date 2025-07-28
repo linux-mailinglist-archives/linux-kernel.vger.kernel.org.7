@@ -1,597 +1,182 @@
-Return-Path: <linux-kernel+bounces-747807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD67B1389B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:10:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 359CAB138A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FA3A189058E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C04C189087D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9707B254AE7;
-	Mon, 28 Jul 2025 10:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0ED2550D7;
+	Mon, 28 Jul 2025 10:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hXzG1UzG"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HergTxt5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6249E2E36E2
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF632E36E2;
+	Mon, 28 Jul 2025 10:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753697420; cv=none; b=aJbTgAqVY/bFcVzFige9TWzFVBo7P5PIlVeNKBPkKN75XDCcmixdMWSRkOG4xE0b7M1joY8VyQIvSqJTEFITHGjgtGdwqlsiVnHsVsjAhP1bRX/IeLMBhkDNwVOdrQKo9gs0ie2AZw5neHDv1BXW1FN3BbPxkgQsfGPqqr7wGL0=
+	t=1753697637; cv=none; b=ua64LXAyxjG++7brrSMDcpD2HiIzO/27tsyrQ3o7orNXFjNKWy1FUQ+sPQwzJXrZURfwZUMCtsGxxWLqgRsou0DUPfHGw4c0N0NXqgCgt7Y/hYaFdF9iZOvIP16W2MMVl+z5pRmmtMVI3Hkl3nrg0bBU3e6TchCyFmnyPPzLmkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753697420; c=relaxed/simple;
-	bh=AXwb6EcSLTcCD7BukpDax3iziC48YFsRJA6c7pYNZU0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=ho40BN0RLdgQ2s/H99LHyAGvDLkX3E950KHv020Utn4EzXYsUoQskD5031KiBjoRuvuKgcFCiXf4/KUsoSWrocX+WikH8QlWJLWWG0azu1YoVFRqdG2xLmBsycOJXAo26BeUQEh0lAs/rW3/rUVagU8SKj8Zo/YWqU1f/tbK64A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hXzG1UzG; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45555e3317aso20909535e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 03:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753697417; x=1754302217; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4f1ul7s3KdTjU4SIrTmiy8Q43vS3F/qQcwEa6qTUcuk=;
-        b=hXzG1UzGjEKBHNPzVChm+6KnV4cX6PhO2PdpL5qPcQz/wtxhseIGSJZPZZydU3iM2H
-         aG7iB0cscxmr6dZPVKfOSx/yrAS/s7pYuSz8DCBuvfB5YjxT8jtHd0/29sAPKclYZ/hW
-         DeoP5yJptfx4FMMexA482uY62WLlpw6FNF0o4JPN8m/MqJ/koETWzoQ/g1bUzgaB/Yew
-         XdyHgNIVNqTi7FqR09om7bzc2iu2Fn3ptu5rpivXX+gaAF2EfDsof8jcth2mIlWlO6rj
-         113TSajdCnRw0tIa8TCXV7jCDXv73xOnqt86CgdYbu+wl27DuNddScMiSw4ash/IXj50
-         n2kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753697417; x=1754302217;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4f1ul7s3KdTjU4SIrTmiy8Q43vS3F/qQcwEa6qTUcuk=;
-        b=nZ4bTvs/wTyY+6qb6aLdC6STyeokU76kYPPex/ptnyc2YNsBA/To47hT8FuVK3yCq4
-         BjqcjQNdGnjo9JwujMdz0JDkHu483J45ULfQvf/5rqThoQRYTotmHQEHWeB3LsL7/Lv8
-         lIP1k1Hf+JfpZs0xNkRQpfJqBMyku7J+ld5rdiVqANnbBBwzOHP3zFK9sFrjgaqZh7Ga
-         NHbqkbgxuUnd228CeIUS9Ox72zyqY5HSdnkqejuayUReoCN4WQVd1AwKD+MeUZD4VwcD
-         6tve+83OVX7mUyRamQ+gtkVfkIuGxLt2HFrEn7NsTZUeqIfMYa0sos5w42pu86touiYp
-         2lHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmWsUswmDbW+xF8nKrr3R6q4r2s4LhUIH5OwMwCZ1/eGDFIuSNCRhSDxBi2NxwPTRe1h65LgRLhBt47xE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHjGURBbTLp7HCVnfIWm0mlZOEJDO2JxQFKWFOhvnaVkxiC42S
-	e9xHaYAAo5X8dVANPNxP6IOBw0HyGZJGW+qLJgy3TN1W38QnJ+y6VUfseZnXS9O5CDs=
-X-Gm-Gg: ASbGncudH6xuKMKCACnWtSo0YmBYgGyE8f/gU7Bqw2WZgUUix6/ZJdeUeAi9HaHVxQY
-	h8KD/Qn1RaNvabPQ8x7FEHHrTbrIn1Qlzw0tSknczRC82GHQx1dtuMOFvt3NURVmLdeLNIs91Lj
-	nxxiyK+q7kxUBkTZjE2bbyuKSsjLNSjByoOONrDOz0U205nYzStLgYiuqD+TO2gMHVGdNEfRV6k
-	3lrQHkAqdPNfWs6A1cSZy18bLrt+XdexvNIHFT9Y4LWPNTosiwpni8ckSDU/g6+PMBHB9Yj5xcj
-	tR1UBdXXf9BrhEHrHG+bULBLZACsMGg9xws0eogZlv/sf2tu00mwU36053RP7uQIepsWI8/N8lQ
-	zfHcwilXzi+1q60ornX55iGp6N5ZesRzzJKxFc75X1Lg3HkTCNI1V5zsVTB0GOJSW0awuiOcu
-X-Google-Smtp-Source: AGHT+IGSQVuKkxLWHdWXzAddh95KPMn9prVrT8vSeVvmjWR1D6rdOuS9FcjhBvCwjdss3qoyKXciBg==
-X-Received: by 2002:a05:600d:15a:20b0:439:86fb:7340 with SMTP id 5b1f17b1804b1-45877649344mr59844915e9.30.1753697416493;
-        Mon, 28 Jul 2025 03:10:16 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:cb6f:4c33:aee:566b? ([2a01:e0a:3d9:2080:cb6f:4c33:aee:566b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778eba0e6sm8409045f8f.25.2025.07.28.03.10.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 03:10:16 -0700 (PDT)
-Message-ID: <3b4a4517-fe86-4be0-8b1b-99401fe719c6@linaro.org>
-Date: Mon, 28 Jul 2025 12:10:15 +0200
+	s=arc-20240116; t=1753697637; c=relaxed/simple;
+	bh=daNJNlAwuAlAmQ7p/YMaL/6tdKQoOCGv84U1fRIrrag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A6nUt6t+C2sIbb/10eYuIe028nm4E25SBW/apXxR2cnNpfnrQlOVVoS1X3B0OkOxUB0WKbwPuIs0g/XQ9Bp+PSbr4fW4ZQRisk2m3oNeFFi93ZYUT04O2IS+6tBZ3Xzocl+8TlMMrk1BbwYViTXA3MxrXAIVvSpTyL7o5wNRNIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HergTxt5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE1BC4CEE7;
+	Mon, 28 Jul 2025 10:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753697637;
+	bh=daNJNlAwuAlAmQ7p/YMaL/6tdKQoOCGv84U1fRIrrag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HergTxt5kk4TR3TSd1NLJ1RsWKClShrSfD+8qw6wWjTmWoGROlYKuFOej/vLB4FQ4
+	 kBRBH9motJGn7ADDkbzqwuXEzssSs4HSm0g6QrRwxL5ESr7Gq0sgeXo1ZWEkcFxA5c
+	 38uGB+I6b3eutvofz1hgrZKjHL3yln6PLYAfi1YdtEdmUZQsbY2TYBPgSDAhDWOQe0
+	 E3olCvXGndz1IVvIh5zg193asbIOrIhcnErpIdIC0UnddIgd5y8jEbLizZ3A7VUBRx
+	 f5Aq4u9AoD8s/z97FIlq8gE1GGghk4A8DXRN+mj7vokix4E+z67ExqlxbdFqPuKVtZ
+	 kq57cj7+KekTw==
+Date: Mon, 28 Jul 2025 13:13:32 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	changyuanl@google.com, dmatlack@google.com, rientjes@google.com,
+	corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v2 01/32] kho: init new_physxa->phys_bits to fix lockdep
+Message-ID: <aIdNTN1qd0dTvsQm@kernel.org>
+References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
+ <20250723144649.1696299-2-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] arm64: dts: qcom: sm8650: Sort nodes by unit address
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250727193652.4029-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250727193652.4029-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723144649.1696299-2-pasha.tatashin@soleen.com>
 
-On 27/07/2025 21:36, Krzysztof Kozlowski wrote:
-> Qualcomm DTS uses sorting of MMIO nodes by the unit address, so move
-> few nodes in SM8650 DTSI to fix that.
+On Wed, Jul 23, 2025 at 02:46:14PM +0000, Pasha Tatashin wrote:
+> Lockdep shows the following warning:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> INFO: trying to register non-static key.
+> The code is fine but needs lockdep annotation, or maybe
+> you didn't initialize this object before use?
+> turning off the locking correctness validator.
+> 
+> [<ffffffff810133a6>] dump_stack_lvl+0x66/0xa0
+> [<ffffffff8136012c>] assign_lock_key+0x10c/0x120
+> [<ffffffff81358bb4>] register_lock_class+0xf4/0x2f0
+> [<ffffffff813597ff>] __lock_acquire+0x7f/0x2c40
+> [<ffffffff81360cb0>] ? __pfx_hlock_conflict+0x10/0x10
+> [<ffffffff811707be>] ? native_flush_tlb_global+0x8e/0xa0
+> [<ffffffff8117096e>] ? __flush_tlb_all+0x4e/0xa0
+> [<ffffffff81172fc2>] ? __kernel_map_pages+0x112/0x140
+> [<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
+> [<ffffffff81359556>] lock_acquire+0xe6/0x280
+> [<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
+> [<ffffffff8100b9e0>] _raw_spin_lock+0x30/0x40
+> [<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
+> [<ffffffff813ec327>] xa_load_or_alloc+0x67/0xe0
+> [<ffffffff813eb4c0>] kho_preserve_folio+0x90/0x100
+> [<ffffffff813ebb7f>] __kho_finalize+0xcf/0x400
+> [<ffffffff813ebef4>] kho_finalize+0x34/0x70
+> 
+> This is becase xa has its own lock, that is not initialized in
+> xa_load_or_alloc.
+> 
+> Modifiy __kho_preserve_order(), to properly call
+> xa_init(&new_physxa->phys_bits);
+> 
+> Fixes: fc33e4b44b27 ("kexec: enable KHO support for memory preservation")
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 > ---
->   arch/arm64/boot/dts/qcom/sm8650.dtsi | 414 +++++++++++++--------------
->   1 file changed, 207 insertions(+), 207 deletions(-)
+>  kernel/kexec_handover.c | 29 +++++++++++++++++++++++++----
+>  1 file changed, 25 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> index e14d3d778b71..2360d560dc86 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> @@ -3490,6 +3490,11 @@ &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ACTIVE_ONLY>,
->   			};
->   		};
->   
-> +		rng: rng@10c3000 {
-> +			compatible = "qcom,sm8650-trng", "qcom,trng";
-> +			reg = <0 0x010c3000 0 0x1000>;
-> +		};
+> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+> index 5a21dbe17950..1ff6b242f98c 100644
+> --- a/kernel/kexec_handover.c
+> +++ b/kernel/kexec_handover.c
+> @@ -144,14 +144,35 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
+>  				unsigned int order)
+>  {
+>  	struct kho_mem_phys_bits *bits;
+> -	struct kho_mem_phys *physxa;
+> +	struct kho_mem_phys *physxa, *new_physxa;
+>  	const unsigned long pfn_high = pfn >> order;
+>  
+>  	might_sleep();
+>  
+> -	physxa = xa_load_or_alloc(&track->orders, order, sizeof(*physxa));
+> -	if (IS_ERR(physxa))
+> -		return PTR_ERR(physxa);
+> +	physxa = xa_load(&track->orders, order);
+> +	if (!physxa) {
+> +		new_physxa = kzalloc(sizeof(*physxa), GFP_KERNEL);
+> +		if (!new_physxa)
+> +			return -ENOMEM;
 > +
->   		cnoc_main: interconnect@1500000 {
->   			compatible = "qcom,sm8650-cnoc-main";
->   			reg = <0 0x01500000 0 0x14080>;
-> @@ -3561,11 +3566,6 @@ mmss_noc: interconnect@1780000 {
->   			#interconnect-cells = <2>;
->   		};
->   
-> -		rng: rng@10c3000 {
-> -			compatible = "qcom,sm8650-trng", "qcom,trng";
-> -			reg = <0 0x010c3000 0 0x1000>;
-> -		};
-> -
->   		pcie0: pcie@1c00000 {
->   			device_type = "pci";
->   			compatible = "qcom,pcie-sm8650", "qcom,pcie-sm8550";
-> @@ -3926,38 +3926,6 @@ pcie1_phy: phy@1c0e000 {
->   			status = "disabled";
->   		};
->   
-> -		cryptobam: dma-controller@1dc4000 {
-> -			compatible = "qcom,bam-v1.7.0";
-> -			reg = <0 0x01dc4000 0 0x28000>;
-> -
-> -			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH 0>;
-> -
-> -			#dma-cells = <1>;
-> -
-> -			iommus = <&apps_smmu 0x480 0>,
-> -				 <&apps_smmu 0x481 0>;
-> -
-> -			qcom,ee = <0>;
-> -			qcom,num-ees = <4>;
-> -			num-channels = <20>;
-> -			qcom,controlled-remotely;
-> -		};
-> -
-> -		crypto: crypto@1dfa000 {
-> -			compatible = "qcom,sm8650-qce", "qcom,sm8150-qce", "qcom,qce";
-> -			reg = <0 0x01dfa000 0 0x6000>;
-> -
-> -			interconnects = <&aggre2_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
-> -					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> -			interconnect-names = "memory";
-> -
-> -			dmas = <&cryptobam 4>, <&cryptobam 5>;
-> -			dma-names = "rx", "tx";
-> -
-> -			iommus = <&apps_smmu 0x480 0>,
-> -				 <&apps_smmu 0x481 0>;
-> -		};
-> -
->   		ufs_mem_phy: phy@1d80000 {
->   			compatible = "qcom,sm8650-qmp-ufs-phy";
->   			reg = <0 0x01d80000 0 0x2000>;
-> @@ -4079,6 +4047,38 @@ ice: crypto@1d88000 {
->   			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
->   		};
->   
-> +		cryptobam: dma-controller@1dc4000 {
-> +			compatible = "qcom,bam-v1.7.0";
-> +			reg = <0 0x01dc4000 0 0x28000>;
-> +
-> +			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH 0>;
-> +
-> +			#dma-cells = <1>;
-> +
-> +			iommus = <&apps_smmu 0x480 0>,
-> +				 <&apps_smmu 0x481 0>;
-> +
-> +			qcom,ee = <0>;
-> +			qcom,num-ees = <4>;
-> +			num-channels = <20>;
-> +			qcom,controlled-remotely;
-> +		};
-> +
-> +		crypto: crypto@1dfa000 {
-> +			compatible = "qcom,sm8650-qce", "qcom,sm8150-qce", "qcom,qce";
-> +			reg = <0 0x01dfa000 0 0x6000>;
-> +
-> +			interconnects = <&aggre2_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "memory";
-> +
-> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
-> +			dma-names = "rx", "tx";
-> +
-> +			iommus = <&apps_smmu 0x480 0>,
-> +				 <&apps_smmu 0x481 0>;
-> +		};
-> +
->   		tcsr_mutex: hwlock@1f40000 {
->   			compatible = "qcom,tcsr-mutex";
->   			reg = <0 0x01f40000 0 0x20000>;
-> @@ -4962,6 +4962,176 @@ opp-202000000 {
->   			};
->   		};
->   
-> +		usb_1_hsphy: phy@88e3000 {
-> +			compatible = "qcom,sm8650-snps-eusb2-phy",
-> +				     "qcom,sm8550-snps-eusb2-phy";
-> +			reg = <0 0x088e3000 0 0x154>;
-> +
-> +			clocks = <&tcsr TCSR_USB2_CLKREF_EN>;
-> +			clock-names = "ref";
-> +
-> +			resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
-> +
-> +			#phy-cells = <0>;
-> +
-> +			status = "disabled";
-> +		};
-> +
-> +		usb_dp_qmpphy: phy@88e8000 {
-> +			compatible = "qcom,sm8650-qmp-usb3-dp-phy";
-> +			reg = <0 0x088e8000 0 0x3000>;
-> +
-> +			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
-> +				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
-> +			clock-names = "aux",
-> +				      "ref",
-> +				      "com_aux",
-> +				      "usb3_pipe";
-> +
-> +			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
-> +				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
-> +			reset-names = "phy",
-> +				      "common";
-> +
-> +			power-domains = <&gcc USB3_PHY_GDSC>;
-> +
-> +			#clock-cells = <1>;
-> +			#phy-cells = <1>;
-> +
-> +			orientation-switch;
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					usb_dp_qmpphy_out: endpoint {
-> +					};
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +
-> +					usb_dp_qmpphy_usb_ss_in: endpoint {
-> +						remote-endpoint = <&usb_1_dwc3_ss>;
-> +					};
-> +				};
-> +
-> +				port@2 {
-> +					reg = <2>;
-> +
-> +					usb_dp_qmpphy_dp_in: endpoint {
-> +						remote-endpoint = <&mdss_dp0_out>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		usb_1: usb@a6f8800 {
-> +			compatible = "qcom,sm8650-dwc3", "qcom,dwc3";
-> +			reg = <0 0x0a6f8800 0 0x400>;
-> +
-> +			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH 0>,
-> +					      <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH 0>,
-> +					      <&pdc 14 IRQ_TYPE_EDGE_RISING>,
-> +					      <&pdc 15 IRQ_TYPE_EDGE_RISING>,
-> +					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "pwr_event",
-> +					  "hs_phy_irq",
-> +					  "dp_hs_phy_irq",
-> +					  "dm_hs_phy_irq",
-> +					  "ss_phy_irq";
-> +
-> +			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
-> +				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
-> +				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
-> +				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
-> +				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-> +				 <&tcsr TCSR_USB3_CLKREF_EN>;
-> +			clock-names = "cfg_noc",
-> +				      "core",
-> +				      "iface",
-> +				      "sleep",
-> +				      "mock_utmi",
-> +				      "xo";
-> +
-> +			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-> +					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
-> +			assigned-clock-rates = <19200000>, <200000000>;
-> +
-> +			resets = <&gcc GCC_USB30_PRIM_BCR>;
-> +
-> +			interconnects = <&aggre1_noc MASTER_USB3_0 QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +					 &config_noc SLAVE_USB3_0 QCOM_ICC_TAG_ACTIVE_ONLY>;
-> +			interconnect-names = "usb-ddr",
-> +					     "apps-usb";
-> +
-> +			power-domains = <&gcc USB30_PRIM_GDSC>;
-> +			required-opps = <&rpmhpd_opp_nom>;
-> +
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges;
-> +
-> +			status = "disabled";
-> +
-> +			usb_1_dwc3: usb@a600000 {
-> +				compatible = "snps,dwc3";
-> +				reg = <0 0x0a600000 0 0xcd00>;
-> +
-> +				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH 0>;
-> +
-> +				iommus = <&apps_smmu 0x40 0>;
-> +
-> +				phys = <&usb_1_hsphy>,
-> +				       <&usb_dp_qmpphy QMP_USB43DP_USB3_PHY>;
-> +				phy-names = "usb2-phy",
-> +					    "usb3-phy";
-> +
-> +				snps,hird-threshold = /bits/ 8 <0x0>;
-> +				snps,usb2-gadget-lpm-disable;
-> +				snps,dis_u2_susphy_quirk;
-> +				snps,dis_enblslpm_quirk;
-> +				snps,dis-u1-entry-quirk;
-> +				snps,dis-u2-entry-quirk;
-> +				snps,is-utmi-l1-suspend;
-> +				snps,usb3_lpm_capable;
-> +				snps,usb2-lpm-disable;
-> +				snps,has-lpm-erratum;
-> +				tx-fifo-resize;
-> +
-> +				dma-coherent;
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +
-> +						usb_1_dwc3_hs: endpoint {
-> +						};
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +
-> +						usb_1_dwc3_ss: endpoint {
-> +							remote-endpoint = <&usb_dp_qmpphy_usb_ss_in>;
-> +						};
-> +					};
-> +				};
-> +			};
-> +		};
-> +
->   		iris: video-codec@aa00000 {
->   			compatible = "qcom,sm8650-iris";
->   			reg = <0 0x0aa00000 0 0xf0000>;
-> @@ -5580,176 +5750,6 @@ dispcc: clock-controller@af00000 {
->   			#power-domain-cells = <1>;
->   		};
->   
-> -		usb_1_hsphy: phy@88e3000 {
-> -			compatible = "qcom,sm8650-snps-eusb2-phy",
-> -				     "qcom,sm8550-snps-eusb2-phy";
-> -			reg = <0 0x088e3000 0 0x154>;
-> -
-> -			clocks = <&tcsr TCSR_USB2_CLKREF_EN>;
-> -			clock-names = "ref";
-> -
-> -			resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
-> -
-> -			#phy-cells = <0>;
-> -
-> -			status = "disabled";
-> -		};
-> -
-> -		usb_dp_qmpphy: phy@88e8000 {
-> -			compatible = "qcom,sm8650-qmp-usb3-dp-phy";
-> -			reg = <0 0x088e8000 0 0x3000>;
-> -
-> -			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
-> -				 <&rpmhcc RPMH_CXO_CLK>,
-> -				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
-> -				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
-> -			clock-names = "aux",
-> -				      "ref",
-> -				      "com_aux",
-> -				      "usb3_pipe";
-> -
-> -			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
-> -				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
-> -			reset-names = "phy",
-> -				      "common";
-> -
-> -			power-domains = <&gcc USB3_PHY_GDSC>;
-> -
-> -			#clock-cells = <1>;
-> -			#phy-cells = <1>;
-> -
-> -			orientation-switch;
-> -
-> -			status = "disabled";
-> -
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> -
-> -					usb_dp_qmpphy_out: endpoint {
-> -					};
-> -				};
-> -
-> -				port@1 {
-> -					reg = <1>;
-> -
-> -					usb_dp_qmpphy_usb_ss_in: endpoint {
-> -						remote-endpoint = <&usb_1_dwc3_ss>;
-> -					};
-> -				};
-> -
-> -				port@2 {
-> -					reg = <2>;
-> -
-> -					usb_dp_qmpphy_dp_in: endpoint {
-> -						remote-endpoint = <&mdss_dp0_out>;
-> -					};
-> -				};
-> -			};
-> -		};
-> -
-> -		usb_1: usb@a6f8800 {
-> -			compatible = "qcom,sm8650-dwc3", "qcom,dwc3";
-> -			reg = <0 0x0a6f8800 0 0x400>;
-> -
-> -			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH 0>,
-> -					      <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH 0>,
-> -					      <&pdc 14 IRQ_TYPE_EDGE_RISING>,
-> -					      <&pdc 15 IRQ_TYPE_EDGE_RISING>,
-> -					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
-> -			interrupt-names = "pwr_event",
-> -					  "hs_phy_irq",
-> -					  "dp_hs_phy_irq",
-> -					  "dm_hs_phy_irq",
-> -					  "ss_phy_irq";
-> -
-> -			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
-> -				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
-> -				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
-> -				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
-> -				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-> -				 <&tcsr TCSR_USB3_CLKREF_EN>;
-> -			clock-names = "cfg_noc",
-> -				      "core",
-> -				      "iface",
-> -				      "sleep",
-> -				      "mock_utmi",
-> -				      "xo";
-> -
-> -			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-> -					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
-> -			assigned-clock-rates = <19200000>, <200000000>;
-> -
-> -			resets = <&gcc GCC_USB30_PRIM_BCR>;
-> -
-> -			interconnects = <&aggre1_noc MASTER_USB3_0 QCOM_ICC_TAG_ALWAYS
-> -					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> -					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> -					 &config_noc SLAVE_USB3_0 QCOM_ICC_TAG_ACTIVE_ONLY>;
-> -			interconnect-names = "usb-ddr",
-> -					     "apps-usb";
-> -
-> -			power-domains = <&gcc USB30_PRIM_GDSC>;
-> -			required-opps = <&rpmhpd_opp_nom>;
-> -
-> -			#address-cells = <2>;
-> -			#size-cells = <2>;
-> -			ranges;
-> -
-> -			status = "disabled";
-> -
-> -			usb_1_dwc3: usb@a600000 {
-> -				compatible = "snps,dwc3";
-> -				reg = <0 0x0a600000 0 0xcd00>;
-> -
-> -				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH 0>;
-> -
-> -				iommus = <&apps_smmu 0x40 0>;
-> -
-> -				phys = <&usb_1_hsphy>,
-> -				       <&usb_dp_qmpphy QMP_USB43DP_USB3_PHY>;
-> -				phy-names = "usb2-phy",
-> -					    "usb3-phy";
-> -
-> -				snps,hird-threshold = /bits/ 8 <0x0>;
-> -				snps,usb2-gadget-lpm-disable;
-> -				snps,dis_u2_susphy_quirk;
-> -				snps,dis_enblslpm_quirk;
-> -				snps,dis-u1-entry-quirk;
-> -				snps,dis-u2-entry-quirk;
-> -				snps,is-utmi-l1-suspend;
-> -				snps,usb3_lpm_capable;
-> -				snps,usb2-lpm-disable;
-> -				snps,has-lpm-erratum;
-> -				tx-fifo-resize;
-> -
-> -				dma-coherent;
-> -
-> -				ports {
-> -					#address-cells = <1>;
-> -					#size-cells = <0>;
-> -
-> -					port@0 {
-> -						reg = <0>;
-> -
-> -						usb_1_dwc3_hs: endpoint {
-> -						};
-> -					};
-> -
-> -					port@1 {
-> -						reg = <1>;
-> -
-> -						usb_1_dwc3_ss: endpoint {
-> -							remote-endpoint = <&usb_dp_qmpphy_usb_ss_in>;
-> -						};
-> -					};
-> -				};
-> -			};
-> -		};
-> -
->   		pdc: interrupt-controller@b220000 {
->   			compatible = "qcom,sm8650-pdc", "qcom,pdc";
->   			reg = <0 0x0b220000 0 0x30000>, <0 0x174000f0 0 0x64>;
+> +		xa_init(&new_physxa->phys_bits);
+> +		physxa = xa_cmpxchg(&track->orders, order, NULL, new_physxa,
+> +				    GFP_KERNEL);
+> +		if (xa_is_err(physxa)) {
+> +			int err_ret = xa_err(physxa);
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Just int err should be fine here, otherwise
+
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+> +
+> +			xa_destroy(&new_physxa->phys_bits);
+> +			kfree(new_physxa);
+> +
+> +			return err_ret;
+> +		}
+> +		if (physxa) {
+> +			xa_destroy(&new_physxa->phys_bits);
+> +			kfree(new_physxa);
+> +		} else {
+> +			physxa = new_physxa;
+> +		}
+> +	}
+>  
+>  	bits = xa_load_or_alloc(&physxa->phys_bits, pfn_high / PRESERVE_BITS,
+>  				sizeof(*bits));
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
