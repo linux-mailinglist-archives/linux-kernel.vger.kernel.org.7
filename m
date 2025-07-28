@@ -1,379 +1,164 @@
-Return-Path: <linux-kernel+bounces-747577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF67DB13577
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE551B135AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E905E177D45
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE833A8A0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1040D22F76F;
-	Mon, 28 Jul 2025 07:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4100322D7B1;
+	Mon, 28 Jul 2025 07:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUWsc8Rd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dm0m8TbL"
+Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F11822A4EA;
-	Mon, 28 Jul 2025 07:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265DF1F2B8D;
+	Mon, 28 Jul 2025 07:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753686984; cv=none; b=Cxv/lWtN8coq2onPRZ0YcRS1lB2z5Hes0WYjq11218rDUdEtm1mad7xlqgaxNNkpWr8mMrZXncILOzr2vq1/hiXBCA03xyxlztxBc4khU8b0kCXQV4FH+WKK93kYXAJyOj3J2VxjffueH23sYR4lNxi+9T8uKeHKpBGIZIgETks=
+	t=1753687608; cv=none; b=TV5w7Ny1FbXVQUzFdXh8XNuJ0JVduIgLAfB2m2km47WvKB0LryoFkJewC2m4kYllhoQU145KwNgHhZGZJuhDsWX/o1K76PrBXI1Yeq8XbCgr93tcHNNvJAGCkvkTdU3wwAV49hGdsC75iJY7kqTm3dKEOqMresQp1z9B/rfdO6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753686984; c=relaxed/simple;
-	bh=Cnrf2DymUrXTTGJt7WrTFsT9FtK/XbiDM9JmDAYFq0k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qxfwINoYLeIAwTGENiXGn5l9Rj9RXgbRb79Kh/kg6MVrsUy4oZ6ZKqjGEfKJLBMb/I+Npv1B5sbv8M26zyPE++L1d4UVYH861oX6g8Ov4VqJJMXkS++OhmAm3XUsCDeqO5yLeZL2hkwrAEa2oTBVHBH1O+N7xLY+yH5Y7Z7+yoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUWsc8Rd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 95CF3C4CEE7;
-	Mon, 28 Jul 2025 07:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753686983;
-	bh=Cnrf2DymUrXTTGJt7WrTFsT9FtK/XbiDM9JmDAYFq0k=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=WUWsc8RdzA8FcaXtYTbUHaJ3C9ReN/YVC7SPABjGDI+ohnF+WT3U4t8H0NcYg0IHM
-	 MeOzkgS7l+QxmPjdjIOdJ7WO/tFq/SB2UWcuZbiKVlaY2KsJ91RmOr+Nt5anfWOLri
-	 6K3NfaeTxCRReeuzECKEoto/XEwuB0Z/nngmpntT16EiM1eEtsd9SNx3aoGsCX48/A
-	 04n5TfEy6aRzCtHM8UX8tpYW8uHObN//vMknP0eIdX6u/chBeZCyFYHuij60DfET1S
-	 JyYh8cBozw4ci36bV3QHEWPsLxY+07vUhEmKtCjS8o7zhpAhzyjpdP/RwOHLET4v6+
-	 kHg5ds8cHYGQg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F66AC83F26;
-	Mon, 28 Jul 2025 07:16:23 +0000 (UTC)
-From: leqi via B4 Relay <devnull+leqi.qti.qualcomm.com@kernel.org>
-Date: Mon, 28 Jul 2025 15:16:13 +0800
-Subject: [PATCH v2] arm64: dts: qcom: Add initial audio support for
- Hamoa-IOT-EVK
+	s=arc-20240116; t=1753687608; c=relaxed/simple;
+	bh=WKvlZPyL1Fm7MpFp9b4s0A0mkEyPyIUelorUTt08R+U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OI8KO1aCawhEUN5vzr6z6rHMhRJ4A8ZHpwlgPBb5ZZHP8L5VlC6+qLlu/wg6nyhnlHuNvUdvumCklq8ZFPV8tQZp82uJWVrqgWZts1PqwZtfBph0PK2rJw5CEVgMSuRHH5cT/RmU+I1FpKtzTraiCYR+cuhGz31iPEGNNOljN9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dm0m8TbL; arc=none smtp.client-ip=209.85.215.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-b3507b63c6fso4440233a12.2;
+        Mon, 28 Jul 2025 00:26:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753687606; x=1754292406; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=apq8PjwosLySfRJXp9P4tlu1kD8EEX224uWUFDuZDCQ=;
+        b=dm0m8TbL5o4EsBZSjJ5rqNICQ40NCbYJZY4fKaAk9uwSnLEeSTbERF/wN1KYCeKHEb
+         TgpRc3xqmxJYQ1OSPhfP72wraO+J+PKfP1//lBCx+1Q/+OOLVupTY48Z6IazUN+NNCbA
+         1OU4rLfOiAJeVRcf9vZpSMKARvt5pwq39hskql9pP9b7z8tYh6vtzHEaBBZopn+a5coe
+         luxbX3bJiXUh7znkRyvE6nKY/Yo4JVpLhyD54T4TyH+PTDxe68ak8DtX9VKWb3G2b5sD
+         7AhnKT0dC0g9AEbYoMP9dPReQvA4N6mX1giWgxa+J4HPzgCjuxYZjf53m0/ANkrNl+0u
+         Drgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753687606; x=1754292406;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=apq8PjwosLySfRJXp9P4tlu1kD8EEX224uWUFDuZDCQ=;
+        b=bszXDnjzWYZccXatjg5tjPv5VqcUNOK/yBC15WkDzk6n3yBu4Eg1aRp7sNT5PIYNa0
+         ILBMYU17vul8mfndq06jqHpQybJx2Jb67qpG/K/H+GIlha8kgiXtS7DYfaBB8dt5Nb29
+         oE/rI36VhP8Z8ng3uBvJNPzbqPt8HiYmkJlyHPfNJOBf6Mge8V3XKuM1ts2O9e98/Opm
+         D44qZRVh8ti+kYfdQFtUBqgoM90VzhxhojQNWtteBmtnVjXbg6cxojWUvOpfrIvNXQ4J
+         lSiSNP82/HzVPATyGNo7HPHf5SmXByWnvr7MV42nEPKDV7YhDef2wtx93rax14iaBswm
+         uQ8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVUTlWYkMB/hdFDoGqGnUuGiyp7j1pMm+D3pAMCzv2oUhR6ncSMKfGccZkEUFj/6S7sw/Q=@vger.kernel.org, AJvYcCW8pG3IZ0nN+9m1mzoKEEk9CAXVC5ldOjccH4+AwJNG9qs+8vGmKd6FcjUzKerXri36gOOmwqKKe/47juO8@vger.kernel.org, AJvYcCXDWn7jiGmOjCIdQhrEcphhIoRpir9CQrHCteplZNqC/qhi+A8EUXBX+yJmh3N39Pd+rLqFJ/nB19KaJUo+Yfr1Ez0K@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqwLpRfVmnYO9V4FpNpFxsyUdIRUIt7ViTP4IacVuOcef3USlA
+	cQB9BUeAUX74dP7SeANB0ce/BgPXU6Hf16BYZWcnF1R+3qujt2llUDudRqCRvXTlrg4=
+X-Gm-Gg: ASbGncuwg0pnSlY0bPy7Ay8EgABbnWEwWS4JnXZvhAqbvXAra3ZATfH9PmoLx7gP+4v
+	wfHeZvW9qAeEvOTrP6/5x6FZdRTHTxmM5qXk71MPQycyj0KeLUYER196z9L1mzZPpyFiWux1PEB
+	LAV4NhNwkWGHNOhPZnDnNDyPnuYZzFJjm4j/sSn1wuL+FvW6BBgvO75u9yeJV84cABaLsj+twLt
+	Mhz50lzFlLlFbLYqaWC6j03Z/PtrFgLsQgK4oWiKfrmsVkUZvULgddpAfIib36YwWqSifFeM11t
+	4lwjwoUCSDigljV3RjyaBfbaqyTOZ3o9wDpB8iccnPIYSVSiyVKk9C54enWxk5xRXkIhxoBdG83
+	AVhMVMP7VNQfx87vRMoE=
+X-Google-Smtp-Source: AGHT+IFJMRzQt1dnKwV8TwKyyxpmmXahPcp38uihTtwXhKNLljVtIBA6+++mLJ6BI6hQ77P1Qg2LEQ==
+X-Received: by 2002:a17:90b:3ec6:b0:31c:3669:3bd8 with SMTP id 98e67ed59e1d1-31e77adba28mr17312945a91.21.1753687604213;
+        Mon, 28 Jul 2025 00:26:44 -0700 (PDT)
+Received: from 7950hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e949bbf7asm4459599a91.9.2025.07.28.00.26.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 00:26:43 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: alexei.starovoitov@gmail.com,
+	mhiramat@kernel.org
+Cc: rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	hca@linux.ibm.com,
+	revest@chromium.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH RFC bpf-next v2 0/4] fprobe: use rhashtable for fprobe_ip_table
+Date: Mon, 28 Jul 2025 15:22:49 +0800
+Message-ID: <20250728072637.1035818-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAL0jh2gC/x3NywrCMBBA0V8pWRsowVTxV0SGaR52sMnEPEqh9
- N8NLs/m3kMUl8kV8RgOkd1GhTh2qMsgzILx7STZbqFGpceb0pIiVcIVsFliKC0lzhU8Z/g2XA2
- HAAsGRiCu4LYPzIzZSjOr6e6tNpO+ih5P2Xna/+Pn6zx/VJnmo4gAAAA=
-X-Change-ID: 20250725-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-cb268fd5c654
-To: Konrad Dybcio <konradybcio@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, leqi <leqi@qti.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753686982; l=7436;
- i=leqi@qti.qualcomm.com; s=20250723; h=from:subject:message-id;
- bh=eTu7cGdX/a79+bf8N9XCEA3GXv9hwb6h+ovVE0APbJs=;
- b=1bjLG8g0m84zrVc2qTxu0wyc3DhkaUAptPpkl/OdERjSq9LXmHAUtIeHLlHb3ZGNNtumhbus2
- XK5eqJHarm8BKNRXRJmpd3Raw4XS+5Bo0utThA8LmeFxPQoTBBmuX/M
-X-Developer-Key: i=leqi@qti.qualcomm.com; a=ed25519;
- pk=zFi/rGGqo+G9Nw0VmaL7OqH7uu58kmZCRPPUqE9PH64=
-X-Endpoint-Received: by B4 Relay for leqi@qti.qualcomm.com/20250723 with
- auth_id=470
-X-Original-From: leqi <leqi@qti.qualcomm.com>
-Reply-To: leqi@qti.qualcomm.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: leqi <leqi@qti.qualcomm.com>
+For now, the budget of the hash table that is used for fprobe_ip_table is
+fixed, which is 256, and can cause huge overhead when the hooked functions
+is a huge quantity.
 
-This patch adds initial audio codec support for the Hamoa-IOT-EVK board,
-including WCD9385 configuration, micbias voltage settings, GPIO reset,
-and power supply bindings. It enables basic audio functionality for
-further development. Basic test is good in Hamoa-IOT-EVK board.
+In this series, we use rhltable for fprobe_ip_table to reduce the
+overhead.
 
-Signed-off-by: leqi <leqi@qti.qualcomm.com>
----
-Changes in v2:
-- Updated author email address to leqi@qti.qualcomm.com.
-- Clarified that audio is validated with this change.
-- Link to v1: https://lore.kernel.org/all/20250723-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v1-1-816991701952@quicinc.com/
----
- arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 232 +++++++++++++++++++++++++++++
- 1 file changed, 232 insertions(+)
+Meanwhile, we also add the benchmark testcase "kprobe-multi-all", which
+will hook all the kernel functions during the testing. Before this series,
+the performance is:
+  usermode-count :  875.380 ± 0.366M/s 
+  kernel-count   :  435.924 ± 0.461M/s 
+  syscall-count  :   31.004 ± 0.017M/s 
+  fentry         :  134.076 ± 1.752M/s 
+  fexit          :   68.319 ± 0.055M/s 
+  fmodret        :   71.530 ± 0.032M/s 
+  rawtp          :  202.751 ± 0.138M/s 
+  tp             :   79.562 ± 0.084M/s 
+  kprobe         :   55.587 ± 0.028M/s 
+  kprobe-multi   :   56.481 ± 0.043M/s 
+  kprobe-multi-all:    6.283 ± 0.005M/s << look this
+  kretprobe      :   22.378 ± 0.028M/s 
+  kretprobe-multi:   28.205 ± 0.025M/s
 
-diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-index 843f39c9d59286a9303a545411b2518d7649a059..91618e22e86c46c698b3639f60bc19314705b391 100644
---- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-+++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-@@ -124,6 +124,94 @@ pmic_glink_ss2_con_sbu_in: endpoint {
- 		};
- 	};
- 
-+	sound {
-+		compatible = "qcom,x1e80100-sndcard";
-+		model = "X1E80100-EVK";
-+		audio-routing = "WooferLeft IN", "WSA WSA_SPK1 OUT",
-+				"TweeterLeft IN", "WSA WSA_SPK2 OUT",
-+				"WooferRight IN", "WSA2 WSA_SPK2 OUT",
-+				"TweeterRight IN", "WSA2 WSA_SPK2 OUT",
-+				"IN1_HPHL", "HPHL_OUT",
-+				"IN2_HPHR", "HPHR_OUT",
-+				"AMIC2", "MIC BIAS2",
-+				"VA DMIC0", "MIC BIAS3",
-+				"VA DMIC1", "MIC BIAS3",
-+				"VA DMIC2", "MIC BIAS1",
-+				"VA DMIC3", "MIC BIAS1",
-+				"VA DMIC0", "VA MIC BIAS3",
-+				"VA DMIC1", "VA MIC BIAS3",
-+				"VA DMIC2", "VA MIC BIAS1",
-+				"VA DMIC3", "VA MIC BIAS1",
-+				"TX SWR_INPUT1", "ADC2_OUTPUT";
-+
-+		wcd-playback-dai-link {
-+			link-name = "WCD Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wcd-capture-dai-link {
-+			link-name = "WCD Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wsa-dai-link {
-+			link-name = "WSA Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&left_woofer>, <&left_tweeter>,
-+					    <&swr0 0>, <&lpass_wsamacro 0>,
-+					    <&right_woofer>, <&right_tweeter>,
-+					    <&swr3 0>, <&lpass_wsa2macro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		va-dai-link {
-+			link-name = "VA Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&lpass_vamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+	};
-+
- 	vph_pwr: regulator-vph-pwr {
- 		compatible = "regulator-fixed";
- 
-@@ -353,6 +441,33 @@ vreg_wwan: regulator-wwan {
- 		regulator-boot-on;
- 	};
- 
-+	wcd938x: audio-codec {
-+		compatible = "qcom,wcd9385-codec";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wcd_default>;
-+
-+		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-+
-+		qcom,micbias1-microvolt = <1800000>;
-+		qcom,micbias2-microvolt = <1800000>;
-+		qcom,micbias3-microvolt = <1800000>;
-+		qcom,micbias4-microvolt = <1800000>;
-+		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000
-+							  500000 500000 500000 500000>;
-+		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-+		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-+		qcom,rx-device = <&wcd_rx>;
-+		qcom,tx-device = <&wcd_tx>;
-+
-+		vdd-buck-supply = <&vreg_l15b_1p8>;
-+		vdd-rxtx-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l15b_1p8>;
-+		vdd-mic-bias-supply = <&vreg_bob1>;
-+
-+		#sound-dai-cells = <1>;
-+	};
-+
- 	wcn7850-pmu {
- 		compatible = "qcom,wcn7850-pmu";
- 
-@@ -572,6 +687,32 @@ retimer_ss1_con_sbu_out: endpoint {
- 	};
- };
- 
-+&lpass_tlmm {
-+	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
-+		pins = "gpio12";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+
-+	spkr_23_sd_n_active: spkr-23-sd-n-active-state {
-+		pins = "gpio13";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+};
-+
-+&lpass_vamacro {
-+	pinctrl-0 = <&dmic01_default>, <&dmic23_default>;
-+	pinctrl-names = "default";
-+
-+	vdd-micb-supply = <&vreg_l1b_1p8>;
-+	qcom,dmic-sample-rate = <4800000>;
-+};
-+
- &pcie6a {
- 	vddpe-3v3-supply = <&vreg_nvme>;
- };
-@@ -645,6 +786,90 @@ &smb2360_2_eusb2_repeater {
- 	vdd3-supply = <&vreg_l8b_3p0>;
- };
- 
-+&swr0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
-+	pinctrl-names = "default";
-+
-+	/* WSA8845, Left Woofer */
-+	left_woofer: speaker@0,0 {
-+		compatible = "sdw20217020400";
-+		reg = <0 0>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "WooferLeft";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <1 2 3 7 10 13>;
-+	};
-+
-+	/* WSA8845, Left Tweeter */
-+	left_tweeter: speaker@0,1 {
-+		compatible = "sdw20217020400";
-+		reg = <0 1>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "TweeterLeft";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <4 5 6 7 11 13>;
-+	};
-+};
-+
-+&swr1 {
-+	status = "okay";
-+
-+	/* WCD9385 RX */
-+	wcd_rx: codec@0,4 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 4>;
-+		qcom,rx-port-mapping = <1 2 3 4 5>;
-+	};
-+};
-+
-+&swr2 {
-+	status = "okay";
-+
-+	/* WCD9385 TX */
-+	wcd_tx: codec@0,3 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 3>;
-+		qcom,tx-port-mapping = <2 2 3 4>;
-+	};
-+};
-+
-+&swr3 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&wsa2_swr_active>, <&spkr_23_sd_n_active>;
-+	pinctrl-names = "default";
-+
-+	/* WSA8845, Right Woofer */
-+	right_woofer: speaker@0,0 {
-+		compatible = "sdw20217020400";
-+		reg = <0 0>;
-+		reset-gpios = <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "WooferRight";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <1 2 3 7 10 13>;
-+	};
-+
-+	/* WSA8845, Right Tweeter */
-+	right_tweeter: speaker@0,1 {
-+		compatible = "sdw20217020400";
-+		reg = <0 1>;
-+		reset-gpios = <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "TweeterRight";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <4 5 6 7 11 13>;
-+	};
-+};
-+
- &tlmm {
- 	eusb3_reset_n: eusb3-reset-n-state {
- 		pins = "gpio6";
-@@ -733,6 +958,13 @@ usb2_pwr_3p3_reg_en: usb2-pwr-3p3-reg-en-state {
- 		bias-disable;
- 	};
- 
-+	wcd_default: wcd-reset-n-active-state {
-+		pins = "gpio191";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
- 
- 	wcn_bt_en: wcn-bt-en-state {
- 		pins = "gpio116";
+With this series, the performance is:
+  usermode-count :  902.387 ± 0.762M/s 
+  kernel-count   :  427.356 ± 0.368M/s 
+  syscall-count  :   30.830 ± 0.016M/s 
+  fentry         :  135.554 ± 0.064M/s 
+  fexit          :   68.317 ± 0.218M/s 
+  fmodret        :   70.633 ± 0.275M/s 
+  rawtp          :  193.404 ± 0.346M/s 
+  tp             :   80.236 ± 0.068M/s 
+  kprobe         :   55.200 ± 0.359M/s 
+  kprobe-multi   :   54.304 ± 0.092M/s 
+  kprobe-multi-all:   54.487 ± 0.035M/s << look this
+  kretprobe      :   22.381 ± 0.075M/s 
+  kretprobe-multi:   27.926 ± 0.034M/s
 
----
-base-commit: 3b28da3245e8c43f3f5948513b4e859a3d0fa820
-change-id: 20250725-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-cb268fd5c654
+The benchmark of "kprobe-multi-all" increase from 6.283M/s to 54.487M/s.
 
-Best regards,
+The locking is not handled properly in the first patch. In the
+fprobe_entry, we should use RCU when we access the rhlist_head. However,
+we can't use RCU for __fprobe_handler, as it can sleep. In the origin
+logic, it seems that the usage of hlist_for_each_entry_from_rcu() is not
+protected by rcu_read_lock neither, isn't it? I don't know how to handle
+this part ;(
+
+Menglong Dong (4):
+  fprobe: use rhltable for fprobe_ip_table
+  selftests/bpf: move get_ksyms and get_addrs to trace_helpers.c
+  selftests/bpf: skip recursive functions for kprobe_multi
+  selftests/bpf: add benchmark testing for kprobe-multi-all
+
+ include/linux/fprobe.h                        |   2 +-
+ kernel/trace/fprobe.c                         | 141 ++++++-----
+ tools/testing/selftests/bpf/bench.c           |   2 +
+ .../selftests/bpf/benchs/bench_trigger.c      |  30 +++
+ .../selftests/bpf/benchs/run_bench_trigger.sh |   2 +-
+ .../bpf/prog_tests/kprobe_multi_test.c        | 220 +----------------
+ tools/testing/selftests/bpf/trace_helpers.c   | 230 ++++++++++++++++++
+ tools/testing/selftests/bpf/trace_helpers.h   |   3 +
+ 8 files changed, 348 insertions(+), 282 deletions(-)
+
 -- 
-leqi <leqi@qti.qualcomm.com>
-
+2.50.1
 
 
