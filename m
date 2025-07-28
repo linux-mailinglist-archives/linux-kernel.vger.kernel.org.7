@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-748613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4354B143A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:59:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF55B143B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB34917F4D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:59:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E26057A37F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31EC23498E;
-	Mon, 28 Jul 2025 20:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB32622A4F4;
+	Mon, 28 Jul 2025 21:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XB8Hyc0j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHRDZMbC"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2042B215798;
-	Mon, 28 Jul 2025 20:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD52227E83;
+	Mon, 28 Jul 2025 21:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753736334; cv=none; b=ER1sUCqs/As3E68cZpM1rvBVNq1gju04TA4+14zAHIfQ2brToTlmOYmuGi/2Wf8qBFfivw4mHG/8fKtYOPuWteIJhkRcf+DFSryInAkY3viTo/UYnfmFOHvO0Ctir8NpXoQ2L4NASljlDauDiql/dWCNHphn09vcBJGfIuJyrUg=
+	t=1753736653; cv=none; b=hvw4oJ3ltFeaV4de+y6keK8BwOcYqGd7H/f7QkmAfvNUfDrbkH0rwqCo6lj02j6e9UA2w8XhoQVSI3eh4IYTQa+Rf7OEG0/ntHuZzodRnsaWIKdUtV2ejXTYUrbbxhxqzoGszQRXNPVhjmbwpS+w652a3SNcq9+T8gS9Opxkszg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753736334; c=relaxed/simple;
-	bh=PLzM4UumP/OoUpTWArSfsoC66j4BCJQV+EkLiWusGss=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FUghaRAmNmLAHBqn3y3OcXz/LskgON3gGPcBsxAeXE/YWiX6eZz0Tkx9ZpXkk4oMHMpkhMxhkUUwze2QgA+g95w+EHuMNLbCPxLm1Po4uBaaX+eYuST9DZX0X7N3m2D+ZzI93yYFTcagGLXGh+2fG5cm8fVmSeJNO77A8UNu40k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XB8Hyc0j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F5EC4CEE7;
-	Mon, 28 Jul 2025 20:58:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1753736333;
-	bh=PLzM4UumP/OoUpTWArSfsoC66j4BCJQV+EkLiWusGss=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XB8Hyc0josg3kRfBL/TAuWzvNjY4I1quwAvLgSXlghfiz0tZuhh551krkBpbBuI+s
-	 dQuM50o4a0+3LX4tHYGVjw3wdt8yw1BprjUVKWYIw8kf9+kHN7KunShyFnoFOwc5oP
-	 7ahl52fn6VDbtxAc+yE1YmQUP6NW1oORT1YDStek=
-Date: Mon, 28 Jul 2025 13:58:52 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: jannh@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
- vbabka@suse.cz, pfalcato@suse.de, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] mm: fix a UAF when vma->mm is freed after
- vma->vm_refcnt got dropped
-Message-Id: <20250728135852.1441a6fd58f7171ac2a3dedd@linux-foundation.org>
-In-Reply-To: <20250728175355.2282375-1-surenb@google.com>
-References: <20250728175355.2282375-1-surenb@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753736653; c=relaxed/simple;
+	bh=Oy2QtA3L0mw9Oxz8vg5WindVtsK0mDimZtQF3T4ZTjY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=az1IFMIT6j4iSqJc4AUYDgu927S+xKeBD0NgEEVnBxcdZsTXdlm2Q4a7bDOPH+D7z16GnwTyY7LWlpZi9TDuv3dkIS64i025mCHRXZqsuMueezJRvS62pJno1vmChYG9MDGOzO2ZoNSn/5CEBx1m849P8RMNBUxNIYbKWl+aEy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHRDZMbC; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-31305ee3281so846871a91.0;
+        Mon, 28 Jul 2025 14:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753736651; x=1754341451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SQOZsxNcIwMWPzO0eYphZcFK2aSCHhJ8B+H+YjA4cbQ=;
+        b=LHRDZMbCVkGUXxWvV7TKa7q2BvquP+3svM7ZGQT+Y0oOxZvmZBhDpezMPa/jwe3iFh
+         JjJsyw4f6tJEqI1jcdTiMpO91UuasCcVCs+nHaRlgxKkJ4b/pvflSShCMy09vjaA7CPM
+         Z6nEaLjUP3vm3Fq6INm+RSr7sMPnHml6KpIu5sydSrEYfP/aaed3Bq5vpfTsB6kMkiZ2
+         0h1p0THHgUNlQndBxIfqCKh/RAcsg1QravfxEXCO+di1AwUeM0CAG7rZWvHxYY1QL4hO
+         amw4c+YXxdHLocUQda/KRq55eVyoSOsLkud3/RNr4giH0IoOk+HhEPRIM6c58TaWJBXI
+         FotA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753736651; x=1754341451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SQOZsxNcIwMWPzO0eYphZcFK2aSCHhJ8B+H+YjA4cbQ=;
+        b=FsKNb7mjXMkQzkNA9vuKwq5vKyI64rok84rkSxv0hlJ+tYhr+bBwseDYcC+prBsGUO
+         Yw0N3r1qJTUj1Ncvmoq1tz5Xw7+W9qCixSb10h8DILAjIakG4xhuz8IRxaG79PD6yX42
+         GeCoBI71cgtLP65HKR9YjB7waoitvIYyLC0zkrddvWemrU80IyfnPv6nz+ZTGqr2jBzq
+         PkPuGAZP8LnBFceLRq+syh/XOWJKMGQhrz9a+1R9ZJr2fnzXFlrs4ypkBECTayeJSTMh
+         G98swgMo5jEkL4cPAesfQpHda5Mth99+cSnpEyphrE+TMJPckpqVLpxD50kTxaeODYcN
+         uqfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbH2iBQNjY+MxdZeCbr6ywJ9peu3ro9xFLcGCvQvsLIo+2iYquUA6d57tQqrGh5hzRxd/XffgrBQNicGmg@vger.kernel.org, AJvYcCV8N6gGiWyPn8v4OpXr3+3rho0WkLZM6qXhMvaHDnDi74yfdTCjvCfoyd5dEIUgWlHBTd5C4clovREZ5EFo@vger.kernel.org
+X-Gm-Message-State: AOJu0YynTqVu5eDN0wWDStOzc/xNMAmWIOe2GKArW58bMIhVa242RiuN
+	aDQUba6xdGa4808umshX9/hUA0rgWf5gyyfWqMzh0SW6M5eoFfEQPjpff/kWaWPQUvd41j4KBgV
+	SaGCgtc7NkvNpJWG7vszpkWpjRPpSlqZNQQ==
+X-Gm-Gg: ASbGnctKWxDIkCEBQZO70FXwdnXmtygYwSoD+MHLeBAahGSA4z6Za9YHtrQqJJ0v8lg
+	FVfd4n1t+L7sv5GuHf6HiZIgn8D+jDAfUERxbT7WQjvEHhhfr4M+FM8ysiD0vOPX5UN5ELX9loo
+	t4t6rxfhJv1z7ZeMulMKADjLaghKzfl9mnM1b8wxBftS6n/1h4Ks7EV7Cf2DW+7ijFRZC0PWB87
+	FBRakW8auSm8TE2fA==
+X-Google-Smtp-Source: AGHT+IHXV4AozNz1QhmqR3N4z/5+NI9Qmws9ZNXiu9ZBNY4JEZhI6MM87EguI/j4COGgXvJ2GC/HeH+W5+DXY6EfEJo=
+X-Received: by 2002:a17:90b:4a81:b0:31e:cdc1:999e with SMTP id
+ 98e67ed59e1d1-31ecdc19b15mr3744592a91.1.1753736650794; Mon, 28 Jul 2025
+ 14:04:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250728203412.22573-1-robin.clark@oss.qualcomm.com> <20250728203412.22573-2-robin.clark@oss.qualcomm.com>
+In-Reply-To: <20250728203412.22573-2-robin.clark@oss.qualcomm.com>
+From: Connor Abbott <cwabbott0@gmail.com>
+Date: Mon, 28 Jul 2025 17:03:59 -0400
+X-Gm-Features: Ac12FXxL-grY8XpxM4b1WvaHOSNhuOp0PxeaB_JShxxPOJcM1Ma0s4Hr5Qf_lsc
+Message-ID: <CACu1E7F=Y2oKfiWtD0VYfmLkL24e7JrZYMt8dmoGW7zrq7bd2g@mail.gmail.com>
+Subject: Re: [PATCH 1/7] drm/msm: Add missing "location"s to devcoredump
+To: Rob Clark <robin.clark@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Akhil P Oommen <akhilpo@oss.qualcomm.com>, 
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Jul 2025 10:53:55 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+On Mon, Jul 28, 2025 at 4:43=E2=80=AFPM Rob Clark <robin.clark@oss.qualcomm=
+.com> wrote:
+>
+> This is needed to properly interpret some of the sections.
+>
+> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/dr=
+m/msm/adreno/a6xx_gpu_state.c
+> index faca2a0243ab..e586577e90de 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> @@ -1796,6 +1796,7 @@ static void a7xx_show_shader(struct a6xx_gpu_state_=
+obj *obj,
+>
+>         print_name(p, "  - type: ", a7xx_statetype_names[block->statetype=
+]);
+>         print_name(p, "    - pipe: ", a7xx_pipe_names[block->pipeid]);
+> +       drm_printf(p, "    - location: %d", block->location);
 
-> By inducing delays in the right places, Jann Horn created a reproducer
-> for a hard to hit UAF issue that became possible after VMAs were allowed
-> to be recycled by adding SLAB_TYPESAFE_BY_RCU to their cache.
-> 
-> Race description is borrowed from Jann's discovery report:
-> lock_vma_under_rcu() looks up a VMA locklessly with mas_walk() under
-> rcu_read_lock(). At that point, the VMA may be concurrently freed, and
-> it can be recycled by another process. vma_start_read() then
-> increments the vma->vm_refcnt (if it is in an acceptable range), and
-> if this succeeds, vma_start_read() can return a recycled VMA.
-> 
-> In this scenario where the VMA has been recycled, lock_vma_under_rcu()
-> will then detect the mismatching ->vm_mm pointer and drop the VMA
-> through vma_end_read(), which calls vma_refcount_put().
-> vma_refcount_put() drops the refcount and then calls rcuwait_wake_up()
-> using a copy of vma->vm_mm. This is wrong: It implicitly assumes that
-> the caller is keeping the VMA's mm alive, but in this scenario the caller
-> has no relation to the VMA's mm, so the rcuwait_wake_up() can cause UAF.
-> 
-> The diagram depicting the race:
-> T1         T2         T3
-> ==         ==         ==
-> lock_vma_under_rcu
->   mas_walk
->           <VMA gets removed from mm>
->                       mmap
->                         <the same VMA is reallocated>
->   vma_start_read
->     __refcount_inc_not_zero_limited_acquire
->                       munmap
->                         __vma_enter_locked
->                           refcount_add_not_zero
->   vma_end_read
->     vma_refcount_put
->       __refcount_dec_and_test
->                           rcuwait_wait_event
->                             <finish operation>
->       rcuwait_wake_up [UAF]
-> 
-> Note that rcuwait_wait_event() in T3 does not block because refcount
-> was already dropped by T1. At this point T3 can exit and free the mm
-> causing UAF in T1.
-> To avoid this we move vma->vm_mm verification into vma_start_read() and
-> grab vma->vm_mm to stabilize it before vma_refcount_put() operation.
+We should probably at least try to keep it proper YAML by indenting
+everything after another level...
 
-Thanks, I'll add this to mm-unstable with a plan to include it in the
-second batch of MM-updates->Linus next week.
-
-> Cc: <stable@vger.kernel.org>
-
-The patch won't apply to 6.15 so I expect the -stable maintainers will
-be asking you for a backportable version.
-
+>
+>         for (i =3D 0; i < block->num_sps; i++) {
+>                 drm_printf(p, "      - sp: %d\n", i);
+> @@ -1873,6 +1874,7 @@ static void a7xx_show_dbgahb_cluster(struct a6xx_gp=
+u_state_obj *obj,
+>                 print_name(p, "  - pipe: ", a7xx_pipe_names[dbgahb->pipe_=
+id]);
+>                 print_name(p, "    - cluster-name: ", a7xx_cluster_names[=
+dbgahb->cluster_id]);
+>                 drm_printf(p, "      - context: %d\n", dbgahb->context_id=
+);
+> +               drm_printf(p, "      - location: %d\n", dbgahb->location_=
+id);
+>                 a7xx_show_registers_indented(dbgahb->regs, obj->data, p, =
+4);
+>         }
+>  }
+> --
+> 2.50.1
+>
 
