@@ -1,135 +1,214 @@
-Return-Path: <linux-kernel+bounces-748629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A03B143E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:34:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400A3B143E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4235318C0488
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E61F17B8D2
 	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512B2274B5E;
-	Mon, 28 Jul 2025 21:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10172275AE4;
+	Mon, 28 Jul 2025 21:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SYkmGxe7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B84l7tIG"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014EA21D3DC;
-	Mon, 28 Jul 2025 21:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8347D235055;
+	Mon, 28 Jul 2025 21:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753738486; cv=none; b=EybjF2JHZqbypixEGBTWHnTzBZQrzDs2psLDCRW5M54EsOgN/fEk22D4sK/XMtKYmHvMkv2H3uJU0L0AvzlxJeFWdxp01uWFIOrXKLqWjF7XGQpIy9c6meoMaQVvFzX8dXlI3Ux6OPpdvd/YAAEoDaDFi0pOW5FTq6xVNCWyglY=
+	t=1753738503; cv=none; b=n4ENnCt30ofv7YhXHOdmXdYQNWazVkrueTE8ZBDdWgCedgctri1ONXoR0/G9F9ImRnqqF79mKIPrLN40RH6bu3tvDsaAqF+M1LtGToyDn3RkKearsWkwt+Oz26RenZY4r5CGdo5ymEIlaYuXg+TKWdptyM65pcMhVCUVHZw3krg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753738486; c=relaxed/simple;
-	bh=09+3cj/H9xhQx1h5p2k3oDYMaYndL8xtT5K4eP4BUYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TzuR5a1p0GNwOk1WBU9UOlnMwpk38Xa6DCVD89o3/NmQo7LWS3MjdD1cOp9VeHS1L4SFDiKuGtHPHx7QkYGiuC9nmGm8MW/+aRzTJHgcmHO4FmDaQv+yAYOWXARGhzx8NkcWJpLvlPWr1Wavj02BBov/EFXAX+lvsn76GSiy0Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SYkmGxe7; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753738485; x=1785274485;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=09+3cj/H9xhQx1h5p2k3oDYMaYndL8xtT5K4eP4BUYk=;
-  b=SYkmGxe7N6i3OYlO0qGjCQnmagIqeIbPEtcESHNNF/QiNhbdMnKd5VJA
-   uFYiPA96MKlRZMl1C8zwn1+28jPY+W2wWkg8xLphvrFN4sdVrHAjhKopQ
-   +cKNzv8ptYSTkzlFPtrU663l5HygA/GVH0UbiHNhsFQLPC/BeLWugBabU
-   ayK/b3YYke2emCOyw2oltcTvSnR8Vj21XJf53wWGv6dzzQZbp6uowdgfd
-   HvaFSHOkD3QpBEAwu2bWkMQp1fxKu3YgP2O2pxS072wxyanx0R7EAE4UA
-   7F1WtrXIYGaEIP1fp6jruXsCPddbvWXcKO+Ru9vr4QLF9ZbIYLEggDULg
-   g==;
-X-CSE-ConnectionGUID: 9beFoTmuTeyYjDyk5v229Q==
-X-CSE-MsgGUID: L2ZQwI+bTdOpNMj3UFr9ig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="56148105"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="56148105"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 14:34:45 -0700
-X-CSE-ConnectionGUID: UYXoobVVS/GdHlEUFIp9Jw==
-X-CSE-MsgGUID: 5gsvI4JQRSq1dyoN3+FwYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="162391619"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 28 Jul 2025 14:34:42 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ugVUV-0000m7-1i;
-	Mon, 28 Jul 2025 21:34:39 +0000
-Date: Tue, 29 Jul 2025 05:34:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Derek J. Clark" <derekjohn.clark@gmail.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hansg@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Alok Tiwari <alok.a.tiwari@oracle.com>,
-	David Box <david.e.box@linux.intel.com>,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] platform/x86: (ayn-ec) Add PWM Fan HWMON Interface
-Message-ID: <202507290516.RaQHv1WD-lkp@intel.com>
-References: <20250726204041.516440-2-derekjohn.clark@gmail.com>
+	s=arc-20240116; t=1753738503; c=relaxed/simple;
+	bh=SEhe9b0vm/AdOxyaJpILo6f605w6Ak2F8v9E8gDBsfU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIT+K88YDqXimj86vwtY7ywRVBu6DV7gtl69BPdNK8O3fMCUcYGRjei5LKvckOAm+RXF/j9E8eLACzDqxW9Bq672B+Lm/h0kkQaTiwVLC8WBgE7TuvIIgTwCSMiZlNLqmOU0FfiOUKgbovteoR0Ue+fDGfgvEhu8CFPiURWScNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B84l7tIG; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b7834f2e72so1400493f8f.2;
+        Mon, 28 Jul 2025 14:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753738500; x=1754343300; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ybZ2ooGUwXrsUwDkpZ5EZxx8GK7pJ4GgU7lFxlvYUwU=;
+        b=B84l7tIG7pBj/RidmIqakr4ZeBemS/kUNrr5tuvycMuWh0ARKONm69FZeQmNUnXR33
+         EevvWskM5EaNpeu/poHGj27kC7Mc/9gWVD8V5rnJipBKOtV4lO1ISWaaQjyBfDiSFXjJ
+         EmXkQwGJCuSHz0rPPlN/Idk0pU1TOEizujRBV1KOYFR4A53C2inkO1BmMM8QgF6JAN2d
+         ksX9bSMMPMesXkBO14ReaN8kWCP5VIgWXcpLtOG5NZY5ZSc0YT+ffk/QXP7ujOamlRip
+         GAoo0cJctztFNlWfF/ImtGPoJco6zZMQIboGxjjwzmKYN+QP3vMbcQH+k1VKSm/UhJEH
+         B0hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753738500; x=1754343300;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ybZ2ooGUwXrsUwDkpZ5EZxx8GK7pJ4GgU7lFxlvYUwU=;
+        b=XG5FVmUfOpbSVuSwqaqYe8yv+XyGRYW4aKEBSOCyVOYuBZ/YNoImrM3t7N3V+onaae
+         GILxJhM+/JzTCs3sOjZjAjUDp1vcpf72ax/6UgoTvwztGF82JESD8cK/ZpJA7XZl7oYk
+         mgVrePfAZoXFjC84kPg/1TVFv7i/BPcflchCQLw2qAMc0WmYvw+knOwa7LsV1RIYPWIU
+         +n5tNok5TFOBgF2oc7m2NOnnVLbH3HjG0ZyiF4ko3CEZ/AKV7rGIKpJ2Vzi9TOjgvI0q
+         qbICe5LU88c4vOAEgFGQCLc1hR8wNztKCVOMa0wlQOjjnyyr48nJuHlzGxIolF2ttFN9
+         jgmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUF1S3KThqyRikePO/iM6HvmWWqjHUQhqrk9kUlhWCPHxw+0lZwqABt2zHvkLge7c8lPPw=@vger.kernel.org, AJvYcCUH8tdm1oelYkxbf5QAMlCi9+x/w6omP9nI1f4fuimbTQl6Im90ZCqLCXYjYDJt8kA+Xayt8hZs+K6piKJG@vger.kernel.org, AJvYcCX+/t7sLLu8vG/snbLOgnOxcKVFuLC7wtj419s2pInC8/hbHA15GRNl835f/o3LE5eF4c8LRajYk4fHT1ohUArfPuXK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL7GPe8HePPvjPfNskLpybXUr+NfvpPoD4Au1Qw43mL2JovfDj
+	0jIyTTHA0ZbW551jNWTXeDNuCzoDzqJmoag3lwNOyuym/M/oKWjXRGR0
+X-Gm-Gg: ASbGncvhtKoMiDa7TnaF77rTAEThJcwOYmTw2juBAfYKpKhU3wCq1OV6ZqIYYNgnbHi
+	Q89iKcSWgFX1yqJGZjJob2BYT52X6Xb6cl88IXjB7ScJhoqq+bvHHh8y/7aBGuqaEyVtmhmM3R2
+	tEHpJ95MScrPHuMIWb6OxF7dIpRpTsCUnt4KUSFIsiR7ai58qBBEzS4aQMt/Clg7jlkBzKgYDiA
+	5I4BxacoTmpNXgT0WYd5AaN/AYNicU+XPz7E4OhgI36bMTn4771WU2CMNnC44LdARrULi/7xYlb
+	c3vmJ5Ec8CyPgLyN+6OFQEeLcwFIPAfQ5ceJHMA8koT7BVaeSVwUGiy/E4gBnNk7clcc1jFsCmp
+	n5LNRmvG6uGQVfQggfTuY
+X-Google-Smtp-Source: AGHT+IG/+3lZwfgWo9IUleQbr+IcSEKBYntBQmSRuyUuDrYluDZmYGcJO90j3Rvn6JA7IcpLOqQWiA==
+X-Received: by 2002:a05:6000:40c9:b0:3b7:879c:c15c with SMTP id ffacd0b85a97d-3b7879cca06mr4446572f8f.47.1753738499526;
+        Mon, 28 Jul 2025 14:34:59 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705bccc5sm168755115e9.22.2025.07.28.14.34.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 14:34:59 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 28 Jul 2025 23:34:56 +0200
+To: Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv6 perf/core 10/22] uprobes/x86: Add support to optimize
+ uprobes
+Message-ID: <aIftAJg1hZGYp4NF@krava>
+References: <20250720112133.244369-1-jolsa@kernel.org>
+ <20250720112133.244369-11-jolsa@kernel.org>
+ <20250725191318.554f2f3afe27584e03a0eaa2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250726204041.516440-2-derekjohn.clark@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250725191318.554f2f3afe27584e03a0eaa2@kernel.org>
 
-Hi Derek,
+On Fri, Jul 25, 2025 at 07:13:18PM +0900, Masami Hiramatsu wrote:
+> On Sun, 20 Jul 2025 13:21:20 +0200
+> Jiri Olsa <jolsa@kernel.org> wrote:
+> 
+> > Putting together all the previously added pieces to support optimized
+> > uprobes on top of 5-byte nop instruction.
+> > 
+> > The current uprobe execution goes through following:
+> > 
+> >   - installs breakpoint instruction over original instruction
+> >   - exception handler hit and calls related uprobe consumers
+> >   - and either simulates original instruction or does out of line single step
+> >     execution of it
+> >   - returns to user space
+> > 
+> > The optimized uprobe path does following:
+> > 
+> >   - checks the original instruction is 5-byte nop (plus other checks)
+> >   - adds (or uses existing) user space trampoline with uprobe syscall
+> >   - overwrites original instruction (5-byte nop) with call to user space
+> >     trampoline
+> >   - the user space trampoline executes uprobe syscall that calls related uprobe
+> >     consumers
+> >   - trampoline returns back to next instruction
+> > 
+> > This approach won't speed up all uprobes as it's limited to using nop5 as
+> > original instruction, but we plan to use nop5 as USDT probe instruction
+> > (which currently uses single byte nop) and speed up the USDT probes.
+> > 
+> > The arch_uprobe_optimize triggers the uprobe optimization and is called after
+> > first uprobe hit. I originally had it called on uprobe installation but then
+> > it clashed with elf loader, because the user space trampoline was added in a
+> > place where loader might need to put elf segments, so I decided to do it after
+> > first uprobe hit when loading is done.
+> > 
+> > The uprobe is un-optimized in arch specific set_orig_insn call.
+> > 
+> > The instruction overwrite is x86 arch specific and needs to go through 3 updates:
+> > (on top of nop5 instruction)
+> > 
+> >   - write int3 into 1st byte
+> >   - write last 4 bytes of the call instruction
+> >   - update the call instruction opcode
+> > 
+> > And cleanup goes though similar reverse stages:
+> > 
+> >   - overwrite call opcode with breakpoint (int3)
+> >   - write last 4 bytes of the nop5 instruction
+> >   - write the nop5 first instruction byte
+> > 
+> > We do not unmap and release uprobe trampoline when it's no longer needed,
+> > because there's no easy way to make sure none of the threads is still
+> > inside the trampoline. But we do not waste memory, because there's just
+> > single page for all the uprobe trampoline mappings.
+> > 
+> > We do waste frame on page mapping for every 4GB by keeping the uprobe
+> > trampoline page mapped, but that seems ok.
+> > 
+> > We take the benefit from the fact that set_swbp and set_orig_insn are
+> > called under mmap_write_lock(mm), so we can use the current instruction
+> > as the state the uprobe is in - nop5/breakpoint/call trampoline -
+> > and decide the needed action (optimize/un-optimize) based on that.
+> > 
+> > Attaching the speed up from benchs/run_bench_uprobes.sh script:
+> > 
+> > current:
+> >         usermode-count :  152.604 ± 0.044M/s
+> >         syscall-count  :   13.359 ± 0.042M/s
+> > -->     uprobe-nop     :    3.229 ± 0.002M/s
+> >         uprobe-push    :    3.086 ± 0.004M/s
+> >         uprobe-ret     :    1.114 ± 0.004M/s
+> >         uprobe-nop5    :    1.121 ± 0.005M/s
+> >         uretprobe-nop  :    2.145 ± 0.002M/s
+> >         uretprobe-push :    2.070 ± 0.001M/s
+> >         uretprobe-ret  :    0.931 ± 0.001M/s
+> >         uretprobe-nop5 :    0.957 ± 0.001M/s
+> > 
+> > after the change:
+> >         usermode-count :  152.448 ± 0.244M/s
+> >         syscall-count  :   14.321 ± 0.059M/s
+> >         uprobe-nop     :    3.148 ± 0.007M/s
+> >         uprobe-push    :    2.976 ± 0.004M/s
+> >         uprobe-ret     :    1.068 ± 0.003M/s
+> > -->     uprobe-nop5    :    7.038 ± 0.007M/s
+> >         uretprobe-nop  :    2.109 ± 0.004M/s
+> >         uretprobe-push :    2.035 ± 0.001M/s
+> >         uretprobe-ret  :    0.908 ± 0.001M/s
+> >         uretprobe-nop5 :    3.377 ± 0.009M/s
+> > 
+> > I see bit more speed up on Intel (above) compared to AMD. The big nop5
+> > speed up is partly due to emulating nop5 and partly due to optimization.
+> > 
+> > The key speed up we do this for is the USDT switch from nop to nop5:
+> >         uprobe-nop     :    3.148 ± 0.007M/s
+> >         uprobe-nop5    :    7.038 ± 0.007M/s
+> > 
+> 
+> This also looks good to me.
+> 
+> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-kernel test robot noticed the following build warnings:
+thanks!
 
-[auto build test WARNING on groeck-staging/hwmon-next]
-[also build test WARNING on linus/master v6.16 next-20250728]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Peter, do you have more comments?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Derek-J-Clark/platform-x86-ayn-ec-Add-PWM-Fan-HWMON-Interface/20250727-044332
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20250726204041.516440-2-derekjohn.clark%40gmail.com
-patch subject: [PATCH v3 1/4] platform/x86: (ayn-ec) Add PWM Fan HWMON Interface
-config: i386-randconfig-061-20250728 (https://download.01.org/0day-ci/archive/20250729/202507290516.RaQHv1WD-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250729/202507290516.RaQHv1WD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507290516.RaQHv1WD-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/platform/x86/ayn-ec.c:67:5: sparse: sparse: symbol 'ayn_pwm_curve_registers' was not declared. Should it be static?
-
-vim +/ayn_pwm_curve_registers +67 drivers/platform/x86/ayn-ec.c
-
-    66	
-  > 67	int ayn_pwm_curve_registers[10] = {
-    68		AYN_SENSOR_PWM_FAN_SPEED_1_REG,
-    69		AYN_SENSOR_PWM_FAN_SPEED_2_REG,
-    70		AYN_SENSOR_PWM_FAN_SPEED_3_REG,
-    71		AYN_SENSOR_PWM_FAN_SPEED_4_REG,
-    72		AYN_SENSOR_PWM_FAN_SPEED_5_REG,
-    73		AYN_SENSOR_PWM_FAN_TEMP_1_REG,
-    74		AYN_SENSOR_PWM_FAN_TEMP_2_REG,
-    75		AYN_SENSOR_PWM_FAN_TEMP_3_REG,
-    76		AYN_SENSOR_PWM_FAN_TEMP_4_REG,
-    77		AYN_SENSOR_PWM_FAN_TEMP_5_REG,
-    78	};
-    79	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+thanks,
+jirka
 
