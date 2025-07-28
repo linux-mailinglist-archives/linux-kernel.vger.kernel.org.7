@@ -1,255 +1,365 @@
-Return-Path: <linux-kernel+bounces-748618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FEAB143B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:10:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E0BB143BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:16:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0900F18C18D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:11:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E713BD6CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A0E22DFA7;
-	Mon, 28 Jul 2025 21:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jkFV3HaM"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C8D24BD04;
+	Mon, 28 Jul 2025 21:16:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D20326281
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF3E2E3708;
+	Mon, 28 Jul 2025 21:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753737051; cv=none; b=DyrXeSBMLpcmAMHcpV/4jb450FtbA6BUUTHYHFq34X3wn8ZqRQsLaIWAEVnrXykcBEjRfYxKDw1tjc1sL/lET6MtOGMdPj8b14mWz7/mIie8X3PBi2iC4qihVyL0tDm8wd+c9A4Cl3wb3UBjG4Y4JNzTTGTkLSvqZ+vzBsu0H/I=
+	t=1753737392; cv=none; b=j6hjZC/MA3LCSAPY4M8HXPnw6CjtSpvLDpFkjJcu3g7OLBGCGiqapDbQlphkguSg1MsbEJ2PhFPelyU/39ovdMiTJ3DnqxsWM23g+47Mq//719IXSP1OF1Qaj03gt2Rc5S8e6SkktEl8YK33KovDt1bd+isIiQSTKSvbLofZNUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753737051; c=relaxed/simple;
-	bh=me55bF2V0BigXMenC+uiDcSuBiWoaqZSDCyxoKTYx6s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mcgw1zewooCPRE3qYf4vrdLJY+3rMGCLwlGy8AX7J04U5jvSNg9EDuBeyoeC2WVf8YoyIkqQ53ZHaYFtGv0kw2DviNHk67ZRLsOZWXLEeVQD2TlSnle6NP/fgE48FP6dmgtTMf6Ahg4P2Y6M1aQ/DhFqFGkBW1mbjIbQVhmQ/bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jkFV3HaM; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753737046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lCHvL2Scf+e1WSoCg8/kj1V49NFPpqE13tIgZWNgn8k=;
-	b=jkFV3HaM8MlEwWguYHzSJzwpaeDC/EatiU8OQYi2+tOt4IcXYDSXy3EM/jolJLSah9CI0Y
-	5W+TNVgXh7TiZ7eQXoUOf9uf0rr62BLKb0FZKGImUc/rNFDPAG+5DTA/5sq7b84TY/YB7U
-	nkg9yFU+81cBvk2nyQq6g78EFrG7yhM=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Leon Romanovsky <leon@kernel.org>
-Cc: Ira Weiny <ira.weiny@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH] auxiliary: Automatically generate id
-Date: Mon, 28 Jul 2025 17:10:22 -0400
-Message-Id: <20250728211022.9165-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1753737392; c=relaxed/simple;
+	bh=HFTiZX4uOYzagrAujflQdzvNOpIe9PDy5otb3/CV2pQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JvwnZftU4JJnfMwoZd6AQ+eZclT761XysWz2Di5OS5HmUrHfDkxuuau7tHwPhTyYosqgCn2JH8r/hCwXwggkM4XMwZTsomFG3UfmrOoYKwgtsrhS4/2eZAstuEjM1PWDer2e+IYC4t/ol30D/DeY+ZSvybc5s9hySkHiFxPnmIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 64A8D133BE9;
+	Mon, 28 Jul 2025 21:16:22 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 10D943D;
+	Mon, 28 Jul 2025 21:16:19 +0000 (UTC)
+Date: Mon, 28 Jul 2025 17:15:22 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Namhyung Kim
+ <namhyung@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH] Documentation: tracing: Add documentation about eprobes
+Message-ID: <20250728171522.7d54e116@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 10D943D
+X-Stat-Signature: dcijht1rfbptnqhqc46txghp1upbddg7
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18moGIKDlH+ttBoBSMHyG23VNuu/EKAoZI=
+X-HE-Tag: 1753737379-61758
+X-HE-Meta: U2FsdGVkX19M4g31eFgM8oeMHXUdaUHokp4HhWGHwlUuzKbcoi2ynoY0z48T1xrOcBlbR+3wbSdyns28XpAesaKpVacYfIaZ62gO3HWJE58mDBlgSQtpRgHHtIWGgRuX6JhsFhu0j7T/FvO8jznoEjdAcfxaDQRDYtKuhX5UnTnVvQDQzT7LiTydvecMvisB4QJcwL0EQNaasSwGE3eD8h71jOSEl1Tw2euDhQ78KzQMnAREzpxGhGyzNeH9dB7Stj9RlC5dRefTbmJj08QzbLRlltkTscHsikeeyQzX0sFt2t9OhkBzSY3c45ID+/zlf2IQt0bx7aXp1cMArzebfvyk+RiVMllPdxrccyOI5mOpa5PSWh4y6qZc9fgeyZnq
 
-As it turns out, ids are not allowed to have semantic meaning. Their
-only purpose is to prevent sysfs collisions. To simplify things, just
-generate a unique id for each auxiliary device. Remove all references to
-filling in the id member of the device.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Eprobes was added back in 5.15, but was never documented. It became a
+"secret" interface even though it has been a topic of several
+presentations. For some reason, when eprobes was added, documenting it
+never became a priority, until now.
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
+ Documentation/trace/eprobes.rst | 268 ++++++++++++++++++++++++++++++++
+ Documentation/trace/index.rst   |   1 +
+ 2 files changed, 269 insertions(+)
+ create mode 100644 Documentation/trace/eprobes.rst
 
- drivers/base/auxiliary.c      | 32 +++++++++++++++++++++++---------
- include/linux/auxiliary_bus.h | 26 ++++++++------------------
- 2 files changed, 31 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index dba7c8e13a53..f66067df03ad 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -264,6 +264,8 @@ static const struct bus_type auxiliary_bus_type = {
- 	.pm = &auxiliary_dev_pm_ops,
- };
- 
-+static DEFINE_IDA(auxiliary_id);
+diff --git a/Documentation/trace/eprobes.rst b/Documentation/trace/eprobes.rst
+new file mode 100644
+index 000000000000..c7aa7c867e9e
+--- /dev/null
++++ b/Documentation/trace/eprobes.rst
+@@ -0,0 +1,268 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- /**
-  * auxiliary_device_init - check auxiliary_device and initialize
-  * @auxdev: auxiliary device struct
-@@ -331,20 +333,37 @@ int __auxiliary_device_add(struct auxiliary_device *auxdev, const char *modname)
- 		return -EINVAL;
- 	}
- 
-+	ret = ida_alloc(&auxiliary_id, GFP_KERNEL);
-+	if (ret < 0) {
-+		dev_err(dev, "auxiliary device id_alloc fauiled: %d\n", ret);
-+		return ret;
-+	}
-+	auxdev->id = ret;
++=====================
++Eprobe - Event probes
++=====================
 +
- 	ret = dev_set_name(dev, "%s.%s.%d", modname, auxdev->name, auxdev->id);
- 	if (ret) {
- 		dev_err(dev, "auxiliary device dev_set_name failed: %d\n", ret);
-+		ida_free(&auxiliary_id, auxdev->id);
- 		return ret;
- 	}
- 
- 	ret = device_add(dev);
--	if (ret)
-+	if (ret) {
- 		dev_err(dev, "adding auxiliary device failed!: %d\n", ret);
-+		ida_free(&auxiliary_id, auxdev->id);
-+	}
- 
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(__auxiliary_device_add);
- 
-+void auxiliary_device_delete(struct auxiliary_device *auxdev)
-+{
-+	ida_free(&auxiliary_id, auxdev->id);
-+	device_del(&auxdev->dev);
-+}
-+EXPORT_SYMBOL_GPL(auxiliary_device_delete);
++:Author: Steven Rostedt <rostedt@goodmis.org>
 +
- /**
-  * __auxiliary_driver_register - register a driver for auxiliary bus devices
-  * @auxdrv: auxiliary_driver structure
-@@ -408,7 +427,6 @@ static void auxiliary_device_release(struct device *dev)
-  * @modname: module name used to create the auxiliary driver name.
-  * @devname: auxiliary bus device name
-  * @platform_data: auxiliary bus device platform data
-- * @id: auxiliary bus device id
-  *
-  * Helper to create an auxiliary bus device.
-  * The device created matches driver 'modname.devname' on the auxiliary bus.
-@@ -416,8 +434,7 @@ static void auxiliary_device_release(struct device *dev)
- struct auxiliary_device *auxiliary_device_create(struct device *dev,
- 						 const char *modname,
- 						 const char *devname,
--						 void *platform_data,
--						 int id)
-+						 void *platform_data)
- {
- 	struct auxiliary_device *auxdev;
- 	int ret;
-@@ -426,7 +443,6 @@ struct auxiliary_device *auxiliary_device_create(struct device *dev,
- 	if (!auxdev)
- 		return NULL;
++- Written for v6.17
++
++Overview
++========
++
++Eprobes are dynamic events that are placed on existing events to eiter
++dereference a field that is a pointer, or simply to limit what fields get
++recorded in the trace event.
++
++Eprobes depend on kprobe events so to enable this feature, build your kernel
++with CONFIG_KPROBE_EVENTS=y.
++
++Eprobes are created via the /sys/kernel/tracing/dynamic_events file.
++
++Synopsis of eprobe_events
++-------------------------
++::
++
++  e[:[EGRP/][EEVENT]] GRP.EVENT [FETCHARGS]	: Set a probe
++  -:[EGRP/][EEVENT]				: Clear a probe
++
++ EGRP		: Group name of the new event. If omitted, use "eprobes" for it.
++ EEVENT		: Event name. If omitted, the event name is generated and will
++		  be the same event name as the event it attached to.
++ GRP		: Group name of the event to attach to.
++ EVENT		: Event name of the event to attach to.
++
++ FETCHARGS	: Arguments. Each probe can have up to 128 args.
++  $FIELD	: Fetch the value of the event field called FIELD.
++  @ADDR		: Fetch memory at ADDR (ADDR should be in kernel)
++  @SYM[+|-offs]	: Fetch memory at SYM +|- offs (SYM should be a data symbol)
++  $comm		: Fetch current task comm.
++  +|-[u]OFFS(FETCHARG) : Fetch memory at FETCHARG +|- OFFS address.(\*3)(\*4)
++  \IMM		: Store an immediate value to the argument.
++  NAME=FETCHARG : Set NAME as the argument name of FETCHARG.
++  FETCHARG:TYPE : Set TYPE as the type of FETCHARG. Currently, basic types
++		  (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimal types
++		  (x8/x16/x32/x64), VFS layer common type(%pd/%pD), "char",
++                  "string", "ustring", "symbol", "symstr" and bitfield are
++                  supported.
++
++Types
++-----
++The FETCHARGS above is very similar to the kprobe events as described in 
++Documentation/trace/kprobetrace.rst.
++
++The difference between eprobes and kprobes FETCHARGS is that eprobes has a
++$FIELD command that returns the content of the event field of the event
++that is attached. Eprobes do not have access to registers, stacks and function
++arguments that kprobes has.
++
++If a field argument is a pointer, it may be dereferenced just like a memory
++address using the FETCHARGS syntax.
++
++
++Attaching to dynamic events
++---------------------------
++
++Note that eprobes may attach to dynamic events as well as to normal events. It
++may attach to a kprobe event, a synthetic event or a fprobe event. This is
++useful if the type of a field needs to be changed. See Example 2 below.
++
++Usage examples
++==============
++
++Example 1
++---------
++
++The basic usage of eprobes is to limit the data that is being recorded into
++the tracing buffer. For example, a common event to trace is the sched_switch
++trace event. That has a format of::
++
++	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
++	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
++	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
++	field:int common_pid;	offset:4;	size:4;	signed:1;
++
++	field:char prev_comm[16];	offset:8;	size:16;	signed:0;
++	field:pid_t prev_pid;	offset:24;	size:4;	signed:1;
++	field:int prev_prio;	offset:28;	size:4;	signed:1;
++	field:long prev_state;	offset:32;	size:8;	signed:1;
++	field:char next_comm[16];	offset:40;	size:16;	signed:0;
++	field:pid_t next_pid;	offset:56;	size:4;	signed:1;
++	field:int next_prio;	offset:60;	size:4;	signed:1;
++
++The first four fields are common to all events and can not be limited. But the
++rest of the event has 60 bytes of information. It records the names of the
++previous and next tasks being scheduled out and in, as well as their pids and
++priorities. It also records the state of the previous task. If only the pids
++of the tasks are of interest, why waste the ring buffer with all the other
++fields?
++
++An eprobe can limit what gets recorded. Note, it does not help in performance,
++as all the fields are recorded in a temporary buffer to process the eprobe.
++::
++
++ # echo 'e:sched/switch sched.sched_switch prev=$prev_pid:u32 next=$next_pid:u32' >> /sys/kernel/tracing/dynamic_events
++ # echo 1 > /sys/kernel/tracing/events/sched/switch/enable
++ # cat /sys/kernel/tracing/trace
++
++ # tracer: nop
++ #
++ # entries-in-buffer/entries-written: 2721/2721   #P:8
++ #
++ #                                _-----=> irqs-off/BH-disabled
++ #                               / _----=> need-resched
++ #                              | / _---=> hardirq/softirq
++ #                              || / _--=> preempt-depth
++ #                              ||| / _-=> migrate-disable
++ #                              |||| /     delay
++ #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
++ #              | |         |   |||||     |         |
++     sshd-session-1082    [004] d..4.  5041.239906: switch: (sched.sched_switch) prev=1082 next=0
++             bash-1085    [001] d..4.  5041.240198: switch: (sched.sched_switch) prev=1085 next=141
++    kworker/u34:5-141     [001] d..4.  5041.240259: switch: (sched.sched_switch) prev=141 next=1085
++           <idle>-0       [004] d..4.  5041.240354: switch: (sched.sched_switch) prev=0 next=1082
++             bash-1085    [001] d..4.  5041.240385: switch: (sched.sched_switch) prev=1085 next=141
++    kworker/u34:5-141     [001] d..4.  5041.240410: switch: (sched.sched_switch) prev=141 next=1085
++             bash-1085    [001] d..4.  5041.240478: switch: (sched.sched_switch) prev=1085 next=0
++     sshd-session-1082    [004] d..4.  5041.240526: switch: (sched.sched_switch) prev=1082 next=0
++           <idle>-0       [001] d..4.  5041.247524: switch: (sched.sched_switch) prev=0 next=90
++           <idle>-0       [002] d..4.  5041.247545: switch: (sched.sched_switch) prev=0 next=16
++      kworker/1:1-90      [001] d..4.  5041.247580: switch: (sched.sched_switch) prev=90 next=0
++        rcu_sched-16      [002] d..4.  5041.247591: switch: (sched.sched_switch) prev=16 next=0
++           <idle>-0       [002] d..4.  5041.257536: switch: (sched.sched_switch) prev=0 next=16
++        rcu_sched-16      [002] d..4.  5041.257573: switch: (sched.sched_switch) prev=16 next=0
++ 
++Note, without adding the "u32" after the prev_pid and next_pid, the values
++would default showing in hexadecimal.
++
++Example 2
++---------
++
++If syscall events are not enabled but the raw syscall are (systemcall
++events are not normal events, but are created from the raw_syscall events
++within the kernel). In order to trace the openat system call, one can create
++an event probe on top of the raw_syscall event:
++::
++
++ # cd /sys/kernel/tracing
++ # cat events/raw_syscalls/sys_enter/format
++ name: sys_enter
++ ID: 395
++ format:
++	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
++	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
++	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
++	field:int common_pid;	offset:4;	size:4;	signed:1;
++
++	field:long id;	offset:8;	size:8;	signed:1;
++	field:unsigned long args[6];	offset:16;	size:48;	signed:0;
++
++ print fmt: "NR %ld (%lx, %lx, %lx, %lx, %lx, %lx)", REC->id, REC->args[0], REC->args[1], REC->args[2], REC->args[3], REC->args[4], REC->args[5]
++
++From the source code, the sys_openat() has:
++::
++
++ int sys_openat(int dirfd, const char *path, int flags, mode_t mode)
++ {
++	return my_syscall4(__NR_openat, dirfd, path, flags, mode);
++ }
++
++The path is the second parameter, and that is what is wanted.
++::
++
++ # echo 'e:openat raw_syscalls.sys_enter nr=$id filename=+8($args):ustring' >> dynamic_events
++
++This is being run on x86_64 where the word size is 8 bytes and the openat
++systemcall __NR_openat is set at 257.
++::
++
++ # echo 'nr == 257' > events/eprobes/openat/filter
++
++Now enable the event and look at the trace.
++::
++
++ # echo 1 > events/eprobes/openat/enable
++ # cat trace
++
++ # tracer: nop
++ #
++ # entries-in-buffer/entries-written: 4/4   #P:8
++ #
++ #                                _-----=> irqs-off/BH-disabled
++ #                               / _----=> need-resched
++ #                              | / _---=> hardirq/softirq
++ #                              || / _--=> preempt-depth
++ #                              ||| / _-=> migrate-disable
++ #                              |||| /     delay
++ #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
++ #              | |         |   |||||     |         |
++              cat-1298    [003] ...2.  2060.875970: openat: (raw_syscalls.sys_enter) nr=0x101 filename=(fault)
++              cat-1298    [003] ...2.  2060.876197: openat: (raw_syscalls.sys_enter) nr=0x101 filename=(fault)
++              cat-1298    [003] ...2.  2060.879126: openat: (raw_syscalls.sys_enter) nr=0x101 filename=(fault)
++              cat-1298    [003] ...2.  2060.879639: openat: (raw_syscalls.sys_enter) nr=0x101 filename=(fault)
++
++The filename shows "(fault)". This is likely because the filename has not been
++pulled into memory yet and currently trace events cannot fault in memory that
++is not present. When a eprobe tries to read memory that has not been faulted
++in yet, it will show the "(fault)" text.
++
++To get around this, as the kernel will likely pull in this filename and make
++it present, attaching it to a synthetic event that can pass the address of the
++filename from the entry of the event to the end of the event, this can be used
++to show the filename when the system call returns.
++
++Remove the old eprobe::
++
++ # echo 1 > events/eprobes/openat/enable
++ # echo '-:openat' >> dynamic_events
++
++This time make an eprobe where the address of the filename is saved::
++
++ # echo 'e:openat_start raw_syscalls.sys_enter nr=$id filename=+8($args):x64' >> dynamic_events
++
++Create a synthetic event that passes the address of the filename to the
++end of the event::
++
++ # echo 's:filename u64 file' >> dynamic_events
++ # echo 'hist:keys=common_pid:f=filename if nr == 257' > events/eprobes/openat_start/trigger
++ # echo 'hist:keys=common_pid:file=$f:onmatch(eprobes.openat_start).trace(filename,$file) if id == 257' > events/raw_syscalls/sys_exit/trigger
++
++Now that the address of the filename has been passed to the end of the
++systemcall, create another eprobe to attach to the exit event to show the
++string::
++
++ # echo 'e:openat synthetic.filename filename=+0($file):ustring' >> dynamic_events
++ # echo 1 > events/eprobes/openat/enable
++ # cat trace
++
++ # tracer: nop
++ #
++ # entries-in-buffer/entries-written: 4/4   #P:8
++ #
++ #                                _-----=> irqs-off/BH-disabled
++ #                               / _----=> need-resched
++ #                              | / _---=> hardirq/softirq
++ #                              || / _--=> preempt-depth
++ #                              ||| / _-=> migrate-disable
++ #                              |||| /     delay
++ #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
++ #              | |         |   |||||     |         |
++              cat-1331    [001] ...5.  2944.787977: openat: (synthetic.filename) filename="/etc/ld.so.cache"
++              cat-1331    [001] ...5.  2944.788480: openat: (synthetic.filename) filename="/lib/x86_64-linux-gnu/libc.so.6"
++              cat-1331    [001] ...5.  2944.793426: openat: (synthetic.filename) filename="/usr/lib/locale/locale-archive"
++              cat-1331    [001] ...5.  2944.831362: openat: (synthetic.filename) filename="trace"
++
++Example 3
++---------
++
++If syscall trace events are available, the above would not need the first
++eprobe, but it would still need the last one::
++
++ # echo 's:filename u64 file' >> dynamic_events
++ # echo 'hist:keys=common_pid:f=filename' > events/syscalls/sys_enter_openat/trigger
++ # echo 'hist:keys=common_pid:file=$f:onmatch(syscalls.sys_enter_openat).trace(filename,$file)' > events/syscalls/sys_exit_openat/trigger
++ # echo 'e:openat synthetic.filename filename=+0($file):ustring' >> dynamic_events
++ # echo 1 > events/eprobes/openat/enable
++
++And this would produce the same result as Example 2.
+diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
+index cc1dc5a087e8..812d9a46dd94 100644
+--- a/Documentation/trace/index.rst
++++ b/Documentation/trace/index.rst
+@@ -37,6 +37,7 @@ the Linux kernel.
+    kprobetrace
+    fprobetrace
+    fprobe
++   eprobes
+    ring-buffer-design
  
--	auxdev->id = id;
- 	auxdev->name = devname;
- 	auxdev->dev.parent = dev;
- 	auxdev->dev.platform_data = platform_data;
-@@ -476,7 +492,6 @@ EXPORT_SYMBOL_GPL(auxiliary_device_destroy);
-  * @modname: module name used to create the auxiliary driver name.
-  * @devname: auxiliary bus device name
-  * @platform_data: auxiliary bus device platform data
-- * @id: auxiliary bus device id
-  *
-  * Device managed helper to create an auxiliary bus device.
-  * The device created matches driver 'modname.devname' on the auxiliary bus.
-@@ -484,13 +499,12 @@ EXPORT_SYMBOL_GPL(auxiliary_device_destroy);
- struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
- 							const char *modname,
- 							const char *devname,
--							void *platform_data,
--							int id)
-+							void *platform_data)
- {
- 	struct auxiliary_device *auxdev;
- 	int ret;
- 
--	auxdev = auxiliary_device_create(dev, modname, devname, platform_data, id);
-+	auxdev = auxiliary_device_create(dev, modname, devname, platform_data);
- 	if (!auxdev)
- 		return NULL;
- 
-diff --git a/include/linux/auxiliary_bus.h b/include/linux/auxiliary_bus.h
-index 4086afd0cc6b..c972b5a3c2c4 100644
---- a/include/linux/auxiliary_bus.h
-+++ b/include/linux/auxiliary_bus.h
-@@ -57,7 +57,7 @@
-  *       The release and parent fields of the device structure must be filled
-  *       in
-  * @name: Match name found by the auxiliary device driver,
-- * @id: unique identitier if multiple devices of the same name are exported,
-+ * @id: automatically-generated unique identitier,
-  * @sysfs: embedded struct which hold all sysfs related fields,
-  * @sysfs.irqs: irqs xarray contains irq indices which are used by the device,
-  * @sysfs.lock: Synchronize irq sysfs creation,
-@@ -74,15 +74,11 @@
-  * Registering an auxiliary_device is a three-step process.
-  *
-  * First, a 'struct auxiliary_device' needs to be defined or allocated for each
-- * sub-device desired.  The name, id, dev.release, and dev.parent fields of
-- * this structure must be filled in as follows.
-+ * sub-device desired.  The name, dev.release, and dev.parent fields of this
-+ * structure must be filled in as follows.
-  *
-  * The 'name' field is to be given a name that is recognized by the auxiliary
-- * driver.  If two auxiliary_devices with the same match_name, eg
-- * "foo_mod.foo_dev", are registered onto the bus, they must have unique id
-- * values (e.g. "x" and "y") so that the registered devices names are
-- * "foo_mod.foo_dev.x" and "foo_mod.foo_dev.y".  If match_name + id are not
-- * unique, then the device_add fails and generates an error message.
-+ * driver.
-  *
-  * The auxiliary_device.dev.type.release or auxiliary_device.dev.release must
-  * be populated with a non-NULL pointer to successfully register the
-@@ -113,7 +109,6 @@
-  *
-  *	// Step 1:
-  *	my_aux_dev->name = MY_DEVICE_NAME;
-- *	my_aux_dev->id = my_unique_id_alloc(xxx);
-  *	my_aux_dev->dev.release = my_aux_dev_release;
-  *	my_aux_dev->dev.parent = my_dev;
-  *
-@@ -242,10 +237,7 @@ static inline void auxiliary_device_uninit(struct auxiliary_device *auxdev)
- 	put_device(&auxdev->dev);
- }
- 
--static inline void auxiliary_device_delete(struct auxiliary_device *auxdev)
--{
--	device_del(&auxdev->dev);
--}
-+void auxiliary_device_delete(struct auxiliary_device *auxdev);
- 
- int __auxiliary_driver_register(struct auxiliary_driver *auxdrv, struct module *owner,
- 				const char *modname);
-@@ -257,19 +249,17 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv);
- struct auxiliary_device *auxiliary_device_create(struct device *dev,
- 						 const char *modname,
- 						 const char *devname,
--						 void *platform_data,
--						 int id);
-+						 void *platform_data);
- void auxiliary_device_destroy(void *auxdev);
- 
- struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
- 							const char *modname,
- 							const char *devname,
--							void *platform_data,
--							int id);
-+							void *platform_data);
- 
- #define devm_auxiliary_device_create(dev, devname, platform_data)     \
- 	__devm_auxiliary_device_create(dev, KBUILD_MODNAME, devname,  \
--				       platform_data, 0)
-+				       platform_data)
- 
- /**
-  * module_auxiliary_driver() - Helper macro for registering an auxiliary driver
+ Event Tracing and Analysis
 -- 
-2.35.1.1320.gc452695387.dirty
+2.47.2
 
 
