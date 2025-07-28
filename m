@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-748138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9655B13CF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:22:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF7EB13CB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1150217C746
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:16:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 330457A46D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3E126D4C9;
-	Mon, 28 Jul 2025 14:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2C426D4CF;
+	Mon, 28 Jul 2025 14:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DsnB2J8R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uZcDYfv2"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF9826B748
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD268248F4B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753712165; cv=none; b=jiS29N/lldwmnuUll1wyJuadEZ7khyeRLNVTp+3E+a5GsM0OQZTE1g/2LdokVmTaHr+7tJ7EwT2OSM4HcdSjuKwIwiFq5xXgEoZD7U/r4CHoHZ0PlBf2DkTDgKPt0igkQa4to9jH+DCYPu6Y2RBan5ubHLaBBNRv/8hp5eVEXGg=
+	t=1753712157; cv=none; b=RYxa2R3HPuAAgbQ7GgdHQrIz2qzLNaAEnjwKZkmAe+aAPU40gAt+DZ60lyIjr5su0PLCoR+/4A8hU8tjuOpctFmWsw1WmCpiPHQGZ8XbzoGW8F2fbZn1WARpKhlJfGPJ7UGzR7wSQ0qn4Dv0ZkOABc+SpveCw6WFeDysaZkS+MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753712165; c=relaxed/simple;
-	bh=TMBZw7T+2p4yueLnp9qiicCf6eojz8Xmv4qYvT7W0jA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OoYpaTWsntSm238NtIWewjAez7RWXLIbbu3giRUWPdt43WAxld10YBq4Be2cx6WBKVUY2lmyK12op8JCJiK5C9i8qAWTXqrBul+69HY01lfuPNnsFIHpfN4LoixRglhoXcvrcjS6tyVpu+gf6PODtw7ln5RdsjkQXVC62iLVK/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DsnB2J8R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753712160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cBPoAPqURQrafwJDrZiP8f1JT2Q39loHMmrjHy+nrEw=;
-	b=DsnB2J8RIdgtqSgRKZoZ19Fop617sEC0WyYKShbM8+UTg7JeLBSgvsqHkNiiLw3XFiACeC
-	9JKbYwIVMOiEQb6RRSe0jBm4j6LCKXeWWMS6mVGo8cVXbBALpaA6arv9l0UTRAhjFwljUB
-	3IV9AVJBPfsAcizxW4gRWkdMG3SFYuE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-204-ObA72KOAORKge1j9rPd6lQ-1; Mon,
- 28 Jul 2025 10:15:48 -0400
-X-MC-Unique: ObA72KOAORKge1j9rPd6lQ-1
-X-Mimecast-MFC-AGG-ID: ObA72KOAORKge1j9rPd6lQ_1753712146
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0D3861800876;
-	Mon, 28 Jul 2025 14:15:46 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.45.224.117])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 94FC21955F24;
-	Mon, 28 Jul 2025 14:15:41 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-spdx@vger.kernel.org
-Subject: [PATCH] arch/x86/kvm/ioapic: Remove license boilerplate with bad FSF address
-Date: Mon, 28 Jul 2025 16:15:40 +0200
-Message-ID: <20250728141540.296816-1-thuth@redhat.com>
+	s=arc-20240116; t=1753712157; c=relaxed/simple;
+	bh=jBvO+LGBhqE/ZtUi1WtCmXwaYi2oY/wR656ALdWYXLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pLqd+YjPEQ9dDU10vFhs76YCf2Pvv8B3EGPVvWWjs1ii0LehA64qDncbSFGBGK24cnKWxpXSBvhmn65fX58QNQA1RyS/+e1TMpxWFPGR2fL6H2060IR0qLztEoyKxE4eWIft722TL1ZUpvASF3Kkg64k7WpXphKV7SIPXiBFgik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uZcDYfv2; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61539e2065dso1711003a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:15:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753712154; x=1754316954; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KEuv/0OvcRGSMGgwve29GQ++Tx/D6BPMSmiHsxXgsyA=;
+        b=uZcDYfv27Ljxwu17Bw3FiP0sF5BjqFvDTNy6rm49vj6002/fsukH2qLjiRG4PzMJzG
+         Pw6Et/OHsa7Q3GlpBgcC4lyW9iennXdB/C02pAoSKqGWI4ADTuy/pRe2+U1eBcXbJPER
+         LVxOGO5sY5DU6O9QHXu+wVGaOsvKizgmppB8+kbi5QAcorsbHZT3Im+yYEPOXTWkOS12
+         J+f60FGNTaagGpdLCnWUu3Dgg50Fz+9R5F2r4nPLKJKOR+xO3vyp94HEDoWOauojbQT4
+         OThBp98FRd/DIBeVwaBaaFn76Gaw+tVAqhm8hfr1JhR0mBfyK/cb/29ZF9s6d8UOYxvg
+         bGlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753712154; x=1754316954;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KEuv/0OvcRGSMGgwve29GQ++Tx/D6BPMSmiHsxXgsyA=;
+        b=vyeZVYYOCJusyRzYoE5WJBu8rQLG6IQdSqZcl6aBLZBGOvIt9kJFQLhhbOmTO0vs8I
+         2IKkcRno2MhXrOtSEHH/Vkbbx1FPzu/e4+eWCEEsZlbwfdHQuEimujpY2O9EcA8Gz//h
+         kHgfrFHuFaW9RsDopSsmi4rK8Tjp29GZxazK7amKh2tZ59wHHRsu+RVYvjhQ+/5Ydwce
+         NgqDsEITanV0dfKeNN5uabx0q068SQc93rCltkiyaLSoECa0vYK91suPN1ko1elRIA+X
+         DGmqGhOYzfOtrNI/D90CIOOaIOoJh7eTtTLDaSn4FMviN+MoHG8CmXUa62KltKEjj/Hq
+         yyHg==
+X-Forwarded-Encrypted: i=1; AJvYcCU51gQkAnmsrc/wbN6sKpvib8kYqn0pzq7asgADBjmiUWSlbyhlPqjxJfvuZK4mnhhzcEWTJZwt3Ot2rUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4vHcuKNGHHKOlfNU5RoyMFwMN6/aa6LddL1Sy/9e+piEVczIe
+	m57xlX624hIxObnde6IfNoM7qtNKXcd6qV9J6iZLDDPROgBA/Zo3tHV4m42C5Y8FdSo=
+X-Gm-Gg: ASbGncuA6r7dj9LwIMFuw14+vy+s0MHDMXc5oDUWPINMssjLCz9RIKiBSWWB4pg/Yb5
+	b1Ks75uPQOJiFCBLmCzkWRl7wc6LemroIvrAId+4uyZfHYS7KmZvDeeaO8VryyL7BlQHBEqx/Oe
+	2fTDBWhWIE7RNIq+kLa6nG5WsWM/O41LwRkvhU5PYl0ODCEzBSSYdMwpiRXMUBz77c3a29bANjo
+	PcDpB2POat3uG3Xmm92vIBKzUx39pyZZiAI0QJg51brZXK+FjOEUA288qTdqDB+0NKahNp5WdO5
+	dTFNoGufANo69w3m8B4TZi3MNTyNPemovZi61h6Ylm8EIGthjPaoKu7YSY1KFbpEfcZgdGL2JGy
+	kXrxgLIWW19E+H8KAcM/WKUbKsWV2Z5edDviiwOIlYOY2eC2CjYh4hcv1DqiU5EnMeoJ5sPpgyA
+	==
+X-Google-Smtp-Source: AGHT+IEbup0WGzQKdd/SdReGqdXO/wPA2vfo/bvQOhQ0kc3j2Opi6K31loxxw0o1vQUzbFcAu0y+0A==
+X-Received: by 2002:a17:907:7216:b0:af4:20f2:2dcb with SMTP id a640c23a62f3a-af4c242b969mr1664623966b.9.1753712153796;
+        Mon, 28 Jul 2025 07:15:53 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af63589c8ffsm419726066b.34.2025.07.28.07.15.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 07:15:53 -0700 (PDT)
+Message-ID: <48d78f51-c094-46b4-a9af-91a9d855e296@linaro.org>
+Date: Mon, 28 Jul 2025 15:15:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] media: qcom: camss: Add support for CSIPHY QCS8300
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711131134.215382-1-quic_vikramsa@quicinc.com>
+ <20250711131134.215382-7-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250711131134.215382-7-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Thomas Huth <thuth@redhat.com>
+On 11/07/2025 14:11, Vikram Sharma wrote:
+> Add support for CSIPHY found on QCS8300.
+> 
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
 
-The Free Software Foundation does not reside in "59 Temple Place"
-anymore, so we should not mention that address in the source code here.
-But instead of updating the address to their current location, let's
-rather drop the license boilerplate text here and use a proper SPDX
-license identifier instead. The text talks about the "GNU *Lesser*
-General Public License" and "any later version", so LGPL-2.1+ is the
-right choice here.
+Give the commit log a bit of love here.
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
+Please add more text.
+
 ---
- arch/x86/kvm/ioapic.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
-
-diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
-index 45dae2d5d2f1f..e81f08c98e2f9 100644
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: LGPL-2.1+
- /*
-  *  Copyright (C) 2001  MandrakeSoft S.A.
-  *  Copyright 2010 Red Hat, Inc. and/or its affiliates.
-@@ -8,20 +9,6 @@
-  *    http://www.linux-mandrake.com/
-  *    http://www.mandrakesoft.com/
-  *
-- *  This library is free software; you can redistribute it and/or
-- *  modify it under the terms of the GNU Lesser General Public
-- *  License as published by the Free Software Foundation; either
-- *  version 2 of the License, or (at your option) any later version.
-- *
-- *  This library is distributed in the hope that it will be useful,
-- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- *  Lesser General Public License for more details.
-- *
-- *  You should have received a copy of the GNU Lesser General Public
-- *  License along with this library; if not, write to the Free Software
-- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- *
-  *  Yunhong Jiang <yunhong.jiang@intel.com>
-  *  Yaozu (Eddie) Dong <eddie.dong@intel.com>
-  *  Based on Xen 3.1 code.
--- 
-2.50.1
-
+bod
 
