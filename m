@@ -1,115 +1,134 @@
-Return-Path: <linux-kernel+bounces-747848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6675B13910
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:37:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9843AB13921
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3B117495D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D93A3ADFA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5F2246BD7;
-	Mon, 28 Jul 2025 10:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA692472B0;
+	Mon, 28 Jul 2025 10:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDJocPHw"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="htMwnKWe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341AA2451C3;
-	Mon, 28 Jul 2025 10:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFB83596E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753699051; cv=none; b=BFJNLEbakmJePAs5OlOExNSD/JA1ZWRrZ0Xn4bxmt4OjeiIyyi5iIMI0hcR9NHOCAat+zFL+Pz53RKGsHofL7SFeYg/wvYeSyGn95YhKJ4ZJ73GTaDdBY12hQk12k97rzWTgXfJzM2LGCSO57CbVOgA7EkVxGvBz/URpShYV/ac=
+	t=1753699212; cv=none; b=A0nVi0CUs2RRUOjx5maVQ7NichFnCNpkb7ashJtUAJxzv6bUZxsQEndBHOK0cdYG40O+q84Q8GMnMpIZUtEqw+8lK22NdEKw0CW4OycZTytsBBbb+YDPg1GKvP2nlgNwGtVI83B1JSO2KQq962zXyJWHi/dcffpYDTvCNjXPIxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753699051; c=relaxed/simple;
-	bh=7Is8XXTNOyILK+r8f7Gs6c1X78jzKDdIzy2diFsj8A8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fmJcnSDpRViLv2bhLhCGT9Crno2vXw2HF6TOuL9bCVh/F21YNN4LZ97UJvP9qarilws+/EMBJ7ipIIQZ9ZAvGhBxE+qLb+SAXBMe5h99HlCwBYwthoiDsnNA8a7fmDLkhOoY1YGpGBxidoYA1NEbduj6upnNxzIzljAyErjvSC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDJocPHw; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24041a39005so2277205ad.2;
-        Mon, 28 Jul 2025 03:37:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753699049; x=1754303849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Is8XXTNOyILK+r8f7Gs6c1X78jzKDdIzy2diFsj8A8=;
-        b=SDJocPHwQ7d3VS4axyLgG3RQOhI+ZwoGyKawZ2ZDyVhWNGv0qDhfFN9EpCNeUV2OmV
-         cYCma+y7bk1k/omwl1pnjw15hkBkVPdRuCd9XpmUzOAH4HSKVcYvrcM5ui/O9akyMCOb
-         dTGxEI/XsTUZsCPgEebeRwfJ7v5lRz67P19FqQ8+lp74eAAxdqSqOzPMuZUghK3rMdJG
-         fpQRTnwD8gya2fXD16ympOglh6Z9dsnUyqWZBvjEaKdgOQ39Ta73DiEwgZT5yrxqaoa2
-         Q+KoGrgH+yBShizfo9yCayAg4xR3uzwGLXvvmmHy2XCiOQZ8lNcGiE8RIRiS+/6Y2XIQ
-         d04A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753699049; x=1754303849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Is8XXTNOyILK+r8f7Gs6c1X78jzKDdIzy2diFsj8A8=;
-        b=czPkXQCB6E5/6A894MK+cLCkbXx1RS/r3m2QgK9G0T6iwrNnl87zg6eVoUXXB1c06m
-         WMgx/bdWwAgsJLBVkfSwdaqM2N7egAflsTQ/lofancBY281cBUoH1faA53T1va/lWoR2
-         BxXBAyxEl+WDcsjF9iEKWXoN7koXws5XeXssz6hfKvdJQGYsGe/mMN5+MmjINkRO607a
-         mHsev7rJA44Hka7+Rx50SYnVdzJka8L6G1NLHRB+gUYxZONe0MmX4ZlzqhTSXMmb7RWN
-         EZZ6+tvSTatIBfqI8X5seBRPjqPlmrjBqBuxhR/krKspvAAPg15m6FPND1Qy1vEu+vdH
-         MZ0w==
-X-Forwarded-Encrypted: i=1; AJvYcCU96xHk02bWeRXQ3u6i8s/pNOhX9Y0+hLH9d88R0P2wqk0JUjRFjr2E6kruOpuaPiuDlpzZbxyFkV6pYyn3suG1eA==@vger.kernel.org, AJvYcCXg6FkwTPsl/S2NZTmD8l52C2k3JYo2eetn1XFkB6hD21fgqJGCGSJFTsV8kN6Lnpt4PQHoflPZk6dZEDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjTNGX8nAJp08zjQzdV9H78i3eoy3xCH9sKsq4pa34/U+MmbG7
-	WMbszuAJCgaNIgvBD82jwv9WWKfSdLoKpvnASsCjm5SokpDsnPB8hsEBMb+CBRB7DhzGQWECnp8
-	H9wQYNqqbA37HA08QYg2tW9SyCeb5e04=
-X-Gm-Gg: ASbGnct9Er3UXMy8Dk6fgSdjpfwCF/e9HitbJArdH/ky8BCCYPT6g9OBsTCQYSc7uc0
-	CCZytxO0TUV52ytL5KASk7TE0DNCyob2tNJiT0u4mWVEEjG48IzdBf6tmq6qAEzN5MmY6svnf4O
-	DpioNvpEKDX7KZiyk7Rs3HVm3eaCJYN34N4mYpYvItCdSYnvo8um0FyNZv9XGrgEc6ntbvUZHhq
-	xu/
-X-Google-Smtp-Source: AGHT+IF4QGVaLVSA5ClJtUhy2ZGKo+uZLc9uhqMBNSoOZOe2mbNHozP/VopVOfBiabKiy2Le+9KmLA59gGymrhaOPLc=
-X-Received: by 2002:a17:903:2351:b0:234:f4da:7ecf with SMTP id
- d9443c01a7336-23fb307c7bemr126693305ad.8.1753699049378; Mon, 28 Jul 2025
- 03:37:29 -0700 (PDT)
+	s=arc-20240116; t=1753699212; c=relaxed/simple;
+	bh=OmxutnyifGdMHXbLwlAlxjzG3ii/2q2pMTyzvPiwQbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mmL852NrOi4cXRcBqFTkYVpVpQKAEgPxecfksSBfij/qWNu6gubYaWlNko8EFExJdHX89hZcsAoLzZJ12v2oULktwurJyffwTjr5Jbd74RYeJnYPHLp5EFB2aSXz49pT+fvLyYOWMl/kqbw5Fr/Njr+KbiAbp1tjRbPcYY4YwbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=htMwnKWe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96430C4CEF6;
+	Mon, 28 Jul 2025 10:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753699212;
+	bh=OmxutnyifGdMHXbLwlAlxjzG3ii/2q2pMTyzvPiwQbg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=htMwnKWes6ArQq+pBUlyRZnfw6mlewaLbRpu1gakrVMYM63flsZrE+RM9O7KiF5rl
+	 /R+pYaeZdyAjRHYitwnxeieWfQGnsCV9n4x/7r7X0iGcp+D22+F0HZquN+5ORQucgY
+	 UU2O3ExcWnf1xyc/UD5qcVoqfCKYpehoIOzTen7k=
+Date: Mon, 28 Jul 2025 12:40:08 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvmem: layouts: fix automatic module loading
+Message-ID: <2025072801-kudos-dodge-5b3d@gregkh>
+References: <20250728070726.292579-1-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722075225.544319-1-shengjiu.wang@nxp.com>
-In-Reply-To: <20250722075225.544319-1-shengjiu.wang@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Mon, 28 Jul 2025 13:39:38 +0300
-X-Gm-Features: Ac12FXxqLG3fVa6F9gxX4BalbdOcd_A7WEBuWW7PtouWA-80m-MIDVezM3ly9Hs
-Message-ID: <CAEnQRZBc2X6Yn0X+RbJ9-OSxovnHvoqJ3NXsJKBkuH82GNSAHA@mail.gmail.com>
-Subject: Re: [PATCH v3] remoteproc: imx_dsp_rproc: Add support of recovery and
- coredump process
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728070726.292579-1-mwalle@kernel.org>
 
-On Tue, Jul 22, 2025 at 11:16=E2=80=AFAM Shengjiu Wang <shengjiu.wang@nxp.c=
-om> wrote:
->
-> When enabled FW recovery, but is broken because software reset is missed
-> in this recovery flow. So move software reset from
-> imx_dsp_runtime_resume() to .load() and clear memory before loading
-> firmware to make recovery work.
->
-> Add call rproc_coredump_set_elf_info() to initialize the elf info for
-> coredump, otherwise coredump will report error "ELF class is not set".
->
-> Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver fo=
-r DSP on i.MX")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+On Mon, Jul 28, 2025 at 09:07:26AM +0200, Michael Walle wrote:
+> To support loading of a layout module automatically the MODALIAS
+> variable in the uevent is needed. Add it.
+> 
+> Fixes: fc29fd821d9a ("nvmem: core: Rework layouts to become regular devices")
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+> I'm still not sure if the sysfs modalias file is required or not. It
+> seems to work without it. I could't find any documentation about it.
+> ---
+>  drivers/nvmem/layouts.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/nvmem/layouts.c b/drivers/nvmem/layouts.c
+> index 65d39e19f6ec..f381ce1e84bd 100644
+> --- a/drivers/nvmem/layouts.c
+> +++ b/drivers/nvmem/layouts.c
+> @@ -45,11 +45,24 @@ static void nvmem_layout_bus_remove(struct device *dev)
+>  	return drv->remove(layout);
+>  }
+>  
+> +static int nvmem_layout_bus_uevent(const struct device *dev,
+> +				   struct kobj_uevent_env *env)
+> +{
+> +	int ret;
+> +
+> +	ret = of_device_uevent_modalias(dev, env);
+> +	if (ret != ENODEV)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct bus_type nvmem_layout_bus_type = {
+>  	.name		= "nvmem-layout",
+>  	.match		= nvmem_layout_bus_match,
+>  	.probe		= nvmem_layout_bus_probe,
+>  	.remove		= nvmem_layout_bus_remove,
+> +	.uevent		= nvmem_layout_bus_uevent,
+>  };
+>  
+>  int __nvmem_layout_driver_register(struct nvmem_layout_driver *drv,
+> -- 
+> 2.39.5
+> 
 
-Changes looks good to me:
+Hi,
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-I've tested it with Zephyr synchronization samples inducing a crash
-via debugfs interface. App
-can recover correctly.
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
