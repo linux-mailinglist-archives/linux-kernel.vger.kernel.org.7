@@ -1,134 +1,146 @@
-Return-Path: <linux-kernel+bounces-748561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B5FB142B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:11:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79774B142B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4535421DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:11:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EA2C54230A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF06277029;
-	Mon, 28 Jul 2025 20:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E805C277029;
+	Mon, 28 Jul 2025 20:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lhc03HnT"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ETlIpl5T"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E481EDA2C;
-	Mon, 28 Jul 2025 20:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9A4273D95
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753733502; cv=none; b=kcm8dqgg7bzWJyOzwsVKehTklXdjeaBFM1/4T1SU0MjJnoEpM+jaQc1rpgoPGVGZbtRRIbcp/optOizoA9ccEPMKGBi1+cTm9jHBVofsaItibpw2hwCMfjQyFq25aJ9Gx+TDBvJ8FOJEijCT0DTSgWfyaWphd/dpjXPDX7FogvQ=
+	t=1753733523; cv=none; b=mqpD3UDhrH4IViM1iI303aldVnnhBWLR/HOi+VtAh3bQGkV3zC2+BfRVCgVhuDbtIvEOPojN21nE9OzLg93kp9mIFzdQuvC6GfPP9tW6YoRyyZkrymyOI8wsecOZras2d2ii7IHHfcl5N8UrdmL+b4x5HbxX51rGXqJKLaa0J3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753733502; c=relaxed/simple;
-	bh=vzq27EKg2VCy29xHgaQqsGMLZwzkt8Wg1+tXSx57q6E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jMDXVzbjhXudldAdTkM6eVurukt0j9JCHYEYDet4mQhkxaXrnwjoyvzhmYlUyNETDmqusGye/qk4YChDwvvPDtP4CSnVeLpCtB7k5QrWLlxdu+zITmO7jzjkSdB0UX5UGJU8BtKThBe/bb0hwo4ybOxbCKTp44DHJjtHK6D+3mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lhc03HnT; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b7889ea74cso120054f8f.1;
-        Mon, 28 Jul 2025 13:11:40 -0700 (PDT)
+	s=arc-20240116; t=1753733523; c=relaxed/simple;
+	bh=Lw44dNghmCiq28TogKJdMlT60+fsL5APY9+7UOE+tB8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LtLJ++3hHBqgfDUsaXRjZfkTVxzxgqx1NoaT49XG7LdU6K7qCqIugcd6ZKyrEH9Cv8B6SLW0PsSFS3tQ7Xb5noNR/R6QeWBTB6HGBy6qu3IyFbi5WbzfRsEQOOSjtUpfQqnjinHmlWPBTQ8vl32bZsCzg55IF36LC8zkfsrFFc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ETlIpl5T; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-455b63bfa52so12315e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:12:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753733498; x=1754338298; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8w8E1AFa1gNNtbJ7eBZ6F/bA2uq/FM/15UHeQIe5sxQ=;
-        b=lhc03HnT7NS6V9p+MrGw6uLHcTne5w3hY8PMcHl4vE6M45YrlA6dfLCjAMOxbdYGU8
-         32YZeS9nwXCLPl+JeS+qRMlPjW/nrG4pDg0lVMLPihRtz/4pkOv6Bokh4wQWaySitPJH
-         cjMmWtDj/j2q8vB0ZjGDJZZxm/JVuZKcETUmxTBmFFXvGKWaqXzawrNS/VXmqKQNlhDX
-         fyPKz2JV/Br1BJ0ZaF9DWk2Vi2NoH67qTBgIc+8cCPQT9/Ym8TCOLEapw/+4gV4lt3pk
-         c0RvnioeDL/1kvYDURuC/pxBxUxP3JwuuMZ1r1oV/j9e/jHmzfxqhPsZ3L36uOpFFJvy
-         oNJA==
+        d=google.com; s=20230601; t=1753733520; x=1754338320; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s0cHzSvxGHBD6anMEro7maJOsM/+ZwrFtNd3kS/G7GU=;
+        b=ETlIpl5TZAzx6n4DJhvzYNUJikYxLU9RnsdFK8IAJBKDsURea6tYVWso0aNgXlT4yh
+         +WG0Rkz2WHnSO0Y654eCuBcwCN9wvdnxsBckGx/NN3wBRb/O8tXFw3D8ldTq6ovIVF8S
+         MxSsAxDWQZ8+Zv/8hqYxPaZOblfDyW/ZSqAWTEVBp+U7+02MkujOgM2/4RiZAHN7bkQI
+         sK4nzjAwQl+64ak4xZ+woRKdjm8OyGwpg1TlURYn2Zakgz5/9+AyMLmXCYrZ4nNEOzOi
+         094+1fj70mRwaycO54k86WOY0QlwApzbLzEixIFbObCMH3nRa7UxCuUyT1H4qZSEEa5P
+         E2Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753733499; x=1754338299;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8w8E1AFa1gNNtbJ7eBZ6F/bA2uq/FM/15UHeQIe5sxQ=;
-        b=c/lLV7wlaV/9h/VeaDt+km7C58CMv16gd6Oiyfns8vg592+az2s2w2oRqrw7vZ+7M+
-         h+5xuL6CvxkLZPxlPyVHDY/plgbxxY5vCxWO9Cu+/AOJoPWOOy4AZZ7kqNNTAMfGWSh8
-         XJR8UHpu91rdQEYE0t3pbrmopI9L2s7woCP1DMKtWk/F/kknaq/Mb1d0zhiUgBcGpSar
-         XJfNsfF8frMGRYZIwwySkEbtzqIdcGqlHKpJomY1jqzPD3cHBb3+p6pnb3dyIHkLO7nA
-         7dBdNoGx6IvNvqfEeHIRqXQn/XozcdF41JMy5bgKiSmowuN3CmdaBd0vHW/nxS4d+8H3
-         iH/Q==
-X-Gm-Message-State: AOJu0Yzm2MV9nXH/CFSHI0U+ZMP9RmaA+iS27ZBcj+KYIZvFGKB/ogyP
-	K83o0SXXjFq/RvQnH3NOCDxV+kL2LKaOrG8978h2HDz90ktGxtKKyOhcy4bc2sjqCJI=
-X-Gm-Gg: ASbGncvMOy+rFrJghJESx54RZGKukQ280u1WXd7lN005vS1NHbCuhvQ8PMXk/IR9NST
-	YWBLv9rW5jKETs8my588vsnB1N+XBcY76wiAaz2hFM1d8qTSkIaYyVBaRVdIsSTmRE+WvAJcuVE
-	aooeSYVvFJ74j+IV6kikj+BT5aDh0KxUF3JcEBCqydVmOU12Pz8WgRrD2bege7nGdVVYpc6vFb4
-	C73XIFHKWX8v8ai9oa7UYw4pqc4EmzjG3XpX9mgwItcdL3MXKotO0rnyn9kX/8NpZClu6hktVhK
-	FXcefHKJAFFAKG8Sk2yND/f4K/ZuE0HPnks45TrWuCAzYA8nDUnWJB6Gqa3pWhASi7mWFxscEdU
-	CPzZvPoY/rAKfVoukc5btF0aOUa/zBcxRsowFdkMVtgr/0+iiPYTOAoTqef4CFX9zYMa3/srYGW
-	N945pLsG0S
-X-Google-Smtp-Source: AGHT+IFpgGQrIY3SlL5TvH0uVBovSFoJbINfl5NNalgH7sGCD2hRYHlq6e/YI7Y42k7+vLWQIfRWXQ==
-X-Received: by 2002:a05:6000:4284:b0:3a5:2dae:970f with SMTP id ffacd0b85a97d-3b776758780mr4077171f8f.13.1753733498374;
-        Mon, 28 Jul 2025 13:11:38 -0700 (PDT)
-Received: from pop-os.localdomain (208.77.11.37.dynamic.jazztel.es. [37.11.77.208])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778eb9bbcsm9760389f8f.18.2025.07.28.13.11.37
+        d=1e100.net; s=20230601; t=1753733520; x=1754338320;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s0cHzSvxGHBD6anMEro7maJOsM/+ZwrFtNd3kS/G7GU=;
+        b=NWDpF0AW9cKrcg0/R6DY6dTUSIuvF+WKnoRLAgAceXZ7Rh5rbp9V7vLUMzg5c64IO2
+         x9ILD0pheu4pr4j8J4P4q50YAYkQesh6CqrXkZktXhe3NFxJJDOAurF76S3/sUYb8WxD
+         DCw9Sof1N3CPtxradXldfTmsTSoa1Z6U1gqMoZm8B8POWkKbDXEf6HH2xkxGVsXlcQ/h
+         Ldiy1EGK4JKExc1v474nxV7MN8l2i3/BCfcEJdRZtfsssvFNCJ85EwWWY8etS0Uwq1SF
+         oEWq3iIow2gsg2iqk9a1g1Joal7YzwnoRzNZSAiwdneNw4XU0W/1abTqanrDhnll1oM/
+         8VLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMWiJqHWhk+EYwUin17tAahrtL6/K+PBSNqD4CP6FBcYne13MRleya0NYjdUkNS5tL9ZPJqkfhMAsBGwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIIkAeDycxFd0JKEJVDFtURELvvkBpH0UJY++bvo71C8L64M+p
+	3egWDcPhLeMga/NqosuXiW/bSviTQNWEv4BXCqZJVDO4IsD0Be3L/qjrcUU0p7X25Q==
+X-Gm-Gg: ASbGnctaUSK/OZ6s9UmxiPhr/7A7TsiKbNGYvYJKrjd0smJJfler8sJdAPgpIP5P4K1
+	dzFzn9UIBYTWSf5dzMWZKPSZf9XVKkx/n0N4dEOknSxrUTaBTciFI4eePp/T7uCwRmPFqlTYzts
+	woCEzfym94IrvyLIkgkrkSG5tobyJL7pG+tJmNgFzAfUSoJxC7WEPMLQI2qA4EVDAEalyh/Tv2N
+	XWXOGRE8uWxXu5QWFmlBjUBKI2oyqXuSZCAFRUWoxGfo1JDKSTHdLM2xNTljdGleD7LxSsmyiLc
+	AjrUZLqW//JfRjo+nQSR4KoCg8CWbYuGCuUUcXhWKAxljElg6OURPSPwaST3eMXAnxM/hZJKUqP
+	y0/gdMv5qsA==
+X-Google-Smtp-Source: AGHT+IHayh209RgU2OQ2Ql6nCDUMXhu0axdv21GxFZW8eJ+BL/8tzZhBPIchhicCa1tjRfY4ljX+Ww==
+X-Received: by 2002:a05:600c:1c8f:b0:456:e94:466c with SMTP id 5b1f17b1804b1-4588d6faea0mr193425e9.3.1753733519713;
+        Mon, 28 Jul 2025 13:11:59 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:ec3e:2435:f96c:43d])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705c4fcfsm167139575e9.29.2025.07.28.13.11.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 13:11:37 -0700 (PDT)
-From: =?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
-To: platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	krzk@kernel.org,
-	=?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
-Subject: [PATCH v3] platform/x86: surfacepro3_button: replace deprecated strcpy() with strscpy()
-Date: Mon, 28 Jul 2025 22:11:35 +0200
-Message-Id: <20250728201135.584023-1-miguelgarciaroman8@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250728194942.558194-1-miguelgarciaroman8@gmail.com>
-References: <20250728194942.558194-1-miguelgarciaroman8@gmail.com>
+        Mon, 28 Jul 2025 13:11:59 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Mon, 28 Jul 2025 22:11:54 +0200
+Subject: [PATCH] kasan/test: fix protection against compiler elision
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250728-kasan-kunit-fix-volatile-v1-1-e7157c9af82d@google.com>
+X-B4-Tracking: v=1; b=H4sIAInZh2gC/x2MSQqAMAwAvyI5G6gF16+Ih9SmGpQqrYog/t3ic
+ RhmHogchCN02QOBL4my+QRFnsE4k58YxSYGrXSpat3gQpE8LqeXA53ceG0rHbIyWm1aVxlDdqw
+ h5Xvg5P91P7zvBw59gk5qAAAA
+X-Change-ID: 20250728-kasan-kunit-fix-volatile-d2b9f6bbadc7
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+ Alexander Potapenko <glider@google.com>, 
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Nihar Chaithanya <niharchaithanya@gmail.com>
+Cc: kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753733515; l=1506;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=Lw44dNghmCiq28TogKJdMlT60+fsL5APY9+7UOE+tB8=;
+ b=C6lZbcU2X+AJW0vETjhTQhf3UGiePUoutVdYlhO5KePE7UNaPnUOl8JEhfpjN20q0CI8rf9es
+ golCyt2pFHDBgyH8gSS+VI4ja5yi+aO2ecmGVWz3fDq3wNJKKFrjOeH
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-Replace strcpy() with strscpy() when copying SURFACE_BUTTON_DEVICE_NAME
-into the device’s embedded name buffer returned by acpi_device_name().
-Bound the copy with MAX_ACPI_DEVICE_NAME_LEN to guarantee NUL-termination
-and avoid pointer-sized sizeof() mistakes.
+The kunit test is using assignments to
+"static volatile void *kasan_ptr_result" to prevent elision of memory
+loads, but that's not working:
+In this variable definition, the "volatile" applies to the "void", not to
+the pointer.
+To make "volatile" apply to the pointer as intended, it must follow
+after the "*".
 
-This is a mechanical safety improvement; functional behavior is unchanged.
+This makes the kasan_memchr test pass again on my system.
+The kasan_strings test is still failing because all the definitions of
+load_unaligned_zeropad() are lacking explicit instrumentation hooks and
+ASAN does not instrument asm() memory operands.
 
-Signed-off-by: Miguel García <miguelgarciaroman8@gmail.com>
+Fixes: 5f1c8108e7ad ("mm:kasan: fix sparse warnings: Should it be static?")
+Signed-off-by: Jann Horn <jannh@google.com>
 ---
-v2:
- - Use MAX_ACPI_DEVICE_NAME_LEN instead of sizeof(name).
-
-v3:
- - Add full commit message (v2 was sent without message).
-
-Testing:
- - Build-tested on x86_64 (defconfig, allmodconfig, W=1).
- - No runtime testing on Surface hardware
-
- drivers/platform/surface/surfacepro3_button.c | 2 +-
+ mm/kasan/kasan_test_c.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/surface/surfacepro3_button.c b/drivers/platform/surface/surfacepro3_button.c
-index 2755601f979c..772e107151f6 100644
---- a/drivers/platform/surface/surfacepro3_button.c
-+++ b/drivers/platform/surface/surfacepro3_button.c
-@@ -211,7 +211,7 @@ static int surface_button_add(struct acpi_device *device)
- 	}
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index 5f922dd38ffa..c9cdafdde132 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -47,7 +47,7 @@ static struct {
+  * Some tests use these global variables to store return values from function
+  * calls that could otherwise be eliminated by the compiler as dead code.
+  */
+-static volatile void *kasan_ptr_result;
++static void *volatile kasan_ptr_result;
+ static volatile int kasan_int_result;
  
- 	name = acpi_device_name(device);
--	strcpy(name, SURFACE_BUTTON_DEVICE_NAME);
-+	strscpy(name, SURFACE_BUTTON_DEVICE_NAME, MAX_ACPI_DEVICE_NAME_LEN);
- 	snprintf(button->phys, sizeof(button->phys), "%s/buttons", hid);
- 
- 	input->name = name;
+ /* Probe for console output: obtains test_status lines of interest. */
+
+---
+base-commit: 01a412d06bc5786eb4e44a6c8f0f4659bd4c9864
+change-id: 20250728-kasan-kunit-fix-volatile-d2b9f6bbadc7
+
 -- 
-2.34.1
+Jann Horn <jannh@google.com>
 
 
