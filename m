@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-748017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E862B13B69
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:23:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAAB0B13B67
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A842E3BC7A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7FC7189BAC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAF5264A9E;
-	Mon, 28 Jul 2025 13:23:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187C67261C;
-	Mon, 28 Jul 2025 13:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6F6265CC0;
+	Mon, 28 Jul 2025 13:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HP1gqMlM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D0D7261C;
+	Mon, 28 Jul 2025 13:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753709007; cv=none; b=VGsBn2aAj4u2Wj05f9j+V2dTjKZuGUExCxJIQBvTsmP5KjJy9jNt+X0zEGI5uvxMkOfXlfr4T587pcdA6Vs7cnw/eXeS3+t5uecZOdF5wE3FFQ2ow4LoDHB41zOkIs5gNTnxDHLtrlfeJjZBZNPZazzYVNSt2AICIdtRt0pkIZY=
+	t=1753709002; cv=none; b=f2tI+zxKMSU+kk1PX9U8HpdcB4jHJbdTsJUPPopszFQQjXB8nkCcZis8qsUCb1pn4D3QYT4ZyFoJPT7RPCXT+e3fis59fVWaf8viPmHikwKwEObY7K5B5evXyQTVe3ush+Vdhorl6MDf2O7UTmgEYkJvTuKB9DKUjWYgSexvwW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753709007; c=relaxed/simple;
-	bh=NAQ/zJ7Cd0gCK86SJM5nKyxBxJiSPDXbYTrj9hDZGKs=;
+	s=arc-20240116; t=1753709002; c=relaxed/simple;
+	bh=kxT5qQEdoccDCbNV4vcp4AYNP+/tytHZPwIBmcnm6kI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7Lh9TfNJxfPgAP2RsgjsNToUPJRQh54+IRA3Jz35xwDNd8+b8pc25RRZ/uraa2smVTzXxoRbzOzgfQbKhm/pJO2YQgvS3wJ5VkYIjYDy+Fn/ksaceWCVuq5AddFQUH410gYkNWk5JWH/Sq/NJk40axCPBWb6i3L76sN3lA5MtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A3151516;
-	Mon, 28 Jul 2025 06:23:17 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54A813F66E;
-	Mon, 28 Jul 2025 06:23:20 -0700 (PDT)
-Date: Mon, 28 Jul 2025 14:23:17 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Andre Draszik <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v13 07/10] firmware: psci: Implement vendor-specific
- resets as reboot-mode
-Message-ID: <20250728-exotic-armadillo-of-upgrade-fbebc1@sudeepholla>
-References: <20250727-arm-psci-system_reset2-vendor-reboots-v13-0-6b8d23315898@oss.qualcomm.com>
- <20250727-arm-psci-system_reset2-vendor-reboots-v13-7-6b8d23315898@oss.qualcomm.com>
- <b81aa592-a66b-457b-9f42-df4505b28508@kernel.org>
- <3gtlf5txxtioa5bvo6o467jupyoam4hjhm2mdiw5izv5vbl3tz@drndgp3tcrgo>
- <bcef34c3-98b4-454c-8138-c73729e17081@kernel.org>
- <5e2caeb7-360a-4590-a36f-ff1ec4c20d31@oss.qualcomm.com>
- <2a39c0ab-edd4-402c-95a0-a6286f03102a@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJPSdL/WjmAg0fv6fDjJt4smBbS/Ahu1plskH/IG3nGFSnl2W5sLy+790Dpp6IdQrXjBGkdOTpvUAyrGmiw0KCYvs0mQFqMi4mWfjHvf+yhnHDunA6yUfgGq2bEpIYKYgOQymgmFzlvPY/saP/nXj2nMVVEodRjNK+mXWlr9Exc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HP1gqMlM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679B5C4CEE7;
+	Mon, 28 Jul 2025 13:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753709001;
+	bh=kxT5qQEdoccDCbNV4vcp4AYNP+/tytHZPwIBmcnm6kI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HP1gqMlMNJx4VhqhivuQzgTFFtoNNtf15aiy+54/WmZqrayp1i5O2RicDDQgAD5Bi
+	 UJYQXYYI8J58+/1upE1sKVxPDALievJ0CzY6LKX1zUKu3Lpo7oov1z+7V1rIEkhmLR
+	 NQ8n1CmoAIROdMQYmHkaXSpMdRJg0phC1BdMbpRfO2nW+kQNlbqx7bH/wRXpQUaLNs
+	 OfhfVy0vXAbwJ+TBhXIu9qFZTR1aRSF7Cw3/FYdiQfwTCQX3rE0eBcFCLLHDFdhkxS
+	 5c/PgNKv+DkxLbnRwQ34/sX4ndWwhqGOkK5oyi+ZCdvfkIuZituUCQ+6w1NU4xZmfd
+	 2bFBs01wTsWXQ==
+Date: Mon, 28 Jul 2025 09:23:19 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Greg KH <greg@kroah.com>, corbet@lwn.net, linux-doc@vger.kernel.org,
+	workflows@vger.kernel.org, josh@joshtriplett.org, kees@kernel.org,
+	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
+ kernel
+Message-ID: <aId5x_ocOiWICyZa@lappy>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
+ <2025072854-earthen-velcro-8b32@gregkh>
+ <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
+ <aIdw3-G04QQPvJtU@lappy>
+ <c4974be6-6076-4833-bada-3012d3660a8c@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <2a39c0ab-edd4-402c-95a0-a6286f03102a@kernel.org>
+In-Reply-To: <c4974be6-6076-4833-bada-3012d3660a8c@lucifer.local>
 
-On Mon, Jul 28, 2025 at 02:23:14PM +0200, Krzysztof Kozlowski wrote:
-> On 28/07/2025 14:03, Dmitry Baryshkov wrote:
-> >>
-> >>> and the reboot-mode is defined in the
-> >>> previous patch. So, I'd assume, the path is defined.
-> >>
-> >> As I said, path is not. only psci/reboot-mode is.
-> > 
-> > Do we have an _actual_ use case where PSCI node is not at at root node? 
-> 
-> Yes, many cases, because it belongs as well to firmware node.
-> 
+On Mon, Jul 28, 2025 at 02:13:01PM +0100, Lorenzo Stoakes wrote:
+>On Mon, Jul 28, 2025 at 08:45:19AM -0400, Sasha Levin wrote:
+>> > So at all times I think ensuring the human element is aware that they need
+>> > to do some kind of checking/filtering is key.
+>> >
+>> > But that can be handled by a carefully worded policy document.
+>>
+>> Right. The prupose of this series is not to create a new LLM policy but
+>> rather try and enforce our existing set of policies on LLMs.
+>
+>I get that, but as you can see from my original reply, my concern is more
+>as to the non-technical consequences of this series.
+>
+>I retain my view that we need an explicit AI policy doc first, and ideally
+>this would be tempered by input at the maintainer's summit before any of
+>this proceeds.
+>
+>I think adding anything like this before that would have unfortunate
+>unintended consequences.
+>
+>And as a maintainer who does a fair bit of review, I'm likely to be on the
+>front lines to that :)
 
-+1, I was about to make similar comment. /psci predates the formal push
-to put all firmware related nodes under /firmware, so /firmware/psci is
-equally possible path and should be recommended one so that all such
-firmware related nodes are contained under /firmware.
+Oh, appologies, I'm not trying to push for this to be included urgently:
+if there's interest in waiting with this until after maintainer's
+summit/LPC I don't have any objection with that.
+
+My point was more that I want to get this series in a "happy" state so
+we have it available whenever we come up with a policy.
+
+I'm thinking that no matter what we land on at the end, we'll need
+something like this patch series to try and enforce that on the LLM side
+of things.
 
 -- 
-Regards,
-Sudeep
+Thanks,
+Sasha
 
