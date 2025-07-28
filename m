@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-748232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB2AB13E44
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:26:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6454CB13E45
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 118AA7ACB00
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD6017FE28
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D75273D7F;
-	Mon, 28 Jul 2025 15:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE116273808;
+	Mon, 28 Jul 2025 15:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bhL4Q0op"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gQPkzr0L"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5C6273808
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC66273D8C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753716363; cv=none; b=aC3YOWcs6jo96WpkUn6apBiDkRcKa5LjHs5wnJJaF0w/X2OGxrM1W6Oy5+HvmdpW/5ezXne6VtQH8okTWqzup7xocuvuAJvhdivnjJfAZ/MRSlUawe8p1Bqqu4TEmT4qr0Zwc5OS1/CFojFciCXl0QQ0W3wyrT/Km7zxpSVXMJs=
+	t=1753716366; cv=none; b=C20GOQOCgZKS+YEXyvdllz1WhZUbzjDpYiCVkrGGPNIZh8MpCmPAgFO2K3LFoUrXWPCZ/rFPtv4m7IIH1oxjLu9dxeqgVXmSuDewwhVjWmkQwRW4yYDwF45e+gCAPw5RJJ7wAakju1V3rDU4m7+G/Lh93KtOctjr31xCijBkAAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753716363; c=relaxed/simple;
-	bh=gVNBX5v1fHfBF+/rvqTg/Zf4VYqZlUkchmACzkZ+K8k=;
+	s=arc-20240116; t=1753716366; c=relaxed/simple;
+	bh=B2+rh0rOGraQ7q8XhKBNzeZFAeXpJupBpVJeEQFtmt4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gdB7UDqYkEq3DDRvlA5TLHzh2wrexT9FXiROo8QcoQU8rcSBMtKviuWSG0TvRrfc0X993bz5L0GFVA9s5TO0FC8RW3BWxLLfoQFaiFTpUqme5dKLwU3V7vSa00O+DuG6tyeevVzykmEh0FaRZc1V5Mv3DKViDiGDb/OihLITEfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--glider.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bhL4Q0op; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=lj1NYBl+oVoiIZlhtfEreaFriGOiMe8aiTpto8aPoheG7Y9Womy/pWffOOcxd+RP4/WJthv5OIn22LXN/fSw8+IzXCGoltCsaQrh37B2pgaZ+dHgm0hKPLrpkPLbHZn+oB+6ksJKPuCofuGpX+v2PCu2tQNYNBE+5CR8O2cFoeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--glider.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gQPkzr0L; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--glider.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a6d1394b07so2713929f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:26:01 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45626532e27so25518095e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753716360; x=1754321160; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753716362; x=1754321162; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hA2z1o4ZKLpPx/4s7kZhiOi+XbhOvD8L3886s5YuSNo=;
-        b=bhL4Q0opoJ/IKJx/b2RNy+2CFvGgbJKGlZyZTUNmaKzu5F6ChN0kL+piBenWBWQvQ0
-         uJbBrYgUsd32cFd2RvHWajRVON25UWfxfCVpGOUZOA8HMp/RZSrUGP6ZAriH2KMmWJpl
-         dMEopspM6qZoDi+dmpv5bpGqdNOSr5/GSMRSEM3/b+SMMs4vKKxJL/a1oQ12phT8SKlD
-         giZqTzhl6Cf954O3Lbi49bEO4aYMiCMoeeT8dIPeifv57CXiAt1yf1UrL/S5E2o3cP9I
-         zuS77w2p/PDQmxpGCXYx37ov6HZjQPzmmfniaWrhA/bletbc0gk8jPizm97j3yZs2AQH
-         WwCQ==
+        bh=85Dq+0aWzQbqxgpA60NbQvRp1U2h0O13hIt4+o13Fas=;
+        b=gQPkzr0Lpm/ejv0M8aSx1wm3/0s7+EaHVIozE9tD9unsy0yzmqqrZYfw1oBEomPMdQ
+         59CJiaNqsSy50go2PXBvRQVaTZo13Ydbe6j8dBHeYN5P6+HtGUkbnp8y5sGGHHRVOaxB
+         t30voSe2TY7fuNJlHgrPdCd/kLtleG/liyBWq6dnYmrLT+jLZnJFJ7Kb4ZdiS4itRBZ6
+         /WfWcQeJG1w3fhJhRggTVWRmCVC7ySOwzhg5g+CDhOvYZFzVDVCnMnsVhDtGYLHZ0dBZ
+         aT82Qw2hviXspFRdPAyXxlDGyeodNLFlWmNUSMk6UqeG3BAy9g8tUAx5FZVrlrTxoJZd
+         ze9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753716360; x=1754321160;
+        d=1e100.net; s=20230601; t=1753716363; x=1754321163;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hA2z1o4ZKLpPx/4s7kZhiOi+XbhOvD8L3886s5YuSNo=;
-        b=Hj5Uh3jjAUURtVYzOfP5fyxSXRdAw4PYH0IwPwGUc67RXMUSOgUTOgcTLQaw1TEAP/
-         N3vGUDmYHp2FzolJe9VpVd3WsBftIQzHOX29BBrzvwsbcFGtJohFiAJtu58hzKLTwflw
-         ho+XVVe+9Jm9pBm1F0LTDPsJsqg1q5Wt7OCFf9GuVucnDVPXOxp4XR/1nuuZ/+bOrIN8
-         Ycdtapbp8qvCv6fOXdChMvcAsrBAjF1Ruh/qr5EQKUtbIPOiczbF8XloZSSbSYNfr1p4
-         LZ3uB1YsUGUfXOqUsySQpKG7oH/l0HzyYVLHIEEJSArbmEq0C/Dt9ha01xfGZdSl2UDn
-         mdFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnVIJgqsyqqRM5qS23bDzCzwZQoKfcliy1Lfm3PoyjrMPraHvap/VDaBnZ+3Gj8L+6NcUhr6g3CqVVYTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVa09aHQaeYEWrLRi2FN5R/Jga/QJIrT1Q9OjKphLsLGhECSVA
-	Dd6L0NP6P14Bna8Nu9UER6MuVmdVoBexwiM1EUTcCItvF0wjrxDliScSr9T91kQotQBMHEvhFDI
-	SC5uwVQ==
-X-Google-Smtp-Source: AGHT+IEdqY6eTeVAU3TB+2kdhYBC38PQ/sxXzD1PRV8zVs8UyJbuGs3uNpUw75OIdLQLrdfOizU1DybRo6I=
-X-Received: from wrur18.prod.google.com ([2002:a05:6000:1b92:b0:3a3:6eeb:2a27])
- (user=glider job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:230d:b0:3b7:8d71:9657
- with SMTP id ffacd0b85a97d-3b78d71968amr446780f8f.28.1753716359829; Mon, 28
- Jul 2025 08:25:59 -0700 (PDT)
-Date: Mon, 28 Jul 2025 17:25:39 +0200
+        bh=85Dq+0aWzQbqxgpA60NbQvRp1U2h0O13hIt4+o13Fas=;
+        b=b0JUZ3DFr0RgA9pRmmvCWYU3sf4phDTaMfKf1p9g0A+HF8rFVavYdhh3w5qXXsHJOv
+         4S3XAucgOFTtLqtAetdMr8tTXb2PsRsMoU6zRccb3ie2hk4cyJmDOtR8NEj21U8cZa4/
+         O9BY3j8lRtLJsNYNic8U2OXdRxLX0r74bbbg2uaRcqL/IT65mvzU+lEIB6O0LAP3usld
+         fdYaUssZN5m5c3QYT27pEl+KBSSYTwfdGwMUgOAnYqaeE3urB+LvTrG3imVF3akqnCYH
+         gvSFus7u/w8Zpvzgh++DVlCKP3sgvG55kIaEQBxwFDc2Tw5P8lCeOtluDgeY9tUPTSH/
+         5dyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcYo4i9dBBSsGAscamhzBHTyOTpQKt9RArfUW/MeZCyJeXrBLHIQqC+tU3p+nm71YcEjMrMUaeovUEcrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCGg4Dh+5InBDNoGc5dTmv7wBaUAQpURRv6WwgozCpBmis1ZKM
+	lYTflF7lQnfIWf2GS6NWV+y6iWeCC/lPUl62gWImim5+PyXx5KJrDVgH7VtrupYVGrN09VggN+M
+	Igd8e9Q==
+X-Google-Smtp-Source: AGHT+IF7iuHEqTYX6R6hFk+4Mr2nordQpQph6sAYq6uxKRUPLUn4yemzwfL/jq5aN++p+IChmzkvToBdX1o=
+X-Received: from wrbeh10.prod.google.com ([2002:a05:6000:410a:b0:3b7:76ea:26cd])
+ (user=glider job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:4009:b0:3b7:8d47:6f82
+ with SMTP id ffacd0b85a97d-3b78d476ff0mr666355f8f.57.1753716362501; Mon, 28
+ Jul 2025 08:26:02 -0700 (PDT)
+Date: Mon, 28 Jul 2025 17:25:40 +0200
 In-Reply-To: <20250728152548.3969143-1-glider@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,70 +73,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250728152548.3969143-1-glider@google.com>
 X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
-Message-ID: <20250728152548.3969143-2-glider@google.com>
-Subject: [PATCH v3 01/10] x86: kcov: disable instrumentation of arch/x86/kernel/tsc.c
+Message-ID: <20250728152548.3969143-3-glider@google.com>
+Subject: [PATCH v3 02/10] kcov: elaborate on using the shared buffer
 From: Alexander Potapenko <glider@google.com>
 To: glider@google.com
 Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
-	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Aleksandr Nogikh <nogikh@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
 	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 
-sched_clock() appears to be called from interrupts, producing spurious
-coverage, as reported by CONFIG_KCOV_SELFTEST:
-
-  RIP: 0010:__sanitizer_cov_trace_pc_guard+0x66/0xe0 kernel/kcov.c:288
-  ...
-   fault_in_kernel_space+0x17/0x70 arch/x86/mm/fault.c:1119
-   handle_page_fault arch/x86/mm/fault.c:1477
-   exc_page_fault+0x56/0x110 arch/x86/mm/fault.c:1538
-   asm_exc_page_fault+0x26/0x30 ./arch/x86/include/asm/idtentry.h:623
-  RIP: 0010:__sanitizer_cov_trace_pc_guard+0x66/0xe0 kernel/kcov.c:288
-  ...
-   sched_clock+0x12/0x70 arch/x86/kernel/tsc.c:284
-   __lock_pin_lock kernel/locking/lockdep.c:5628
-   lock_pin_lock+0xd7/0x180 kernel/locking/lockdep.c:5959
-   rq_pin_lock kernel/sched/sched.h:1761
-   rq_lock kernel/sched/sched.h:1838
-   __schedule+0x3a8/0x4b70 kernel/sched/core.c:6691
-   preempt_schedule_irq+0xbf/0x160 kernel/sched/core.c:7090
-   irqentry_exit+0x6f/0x90 kernel/entry/common.c:354
-   asm_sysvec_reschedule_ipi+0x1a/0x20 ./arch/x86/include/asm/idtentry.h:707
-  RIP: 0010:selftest+0x26/0x60 kernel/kcov.c:1223
-  ...
-   kcov_init+0x81/0xa0 kernel/kcov.c:1252
-   do_one_initcall+0x2e1/0x910
-   do_initcall_level+0xff/0x160 init/main.c:1319
-   do_initcalls+0x4a/0xa0 init/main.c:1335
-   kernel_init_freeable+0x448/0x610 init/main.c:1567
-   kernel_init+0x24/0x230 init/main.c:1457
-   ret_from_fork+0x60/0x90 arch/x86/kernel/process.c:153
-   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-   </TASK>
+Add a paragraph about the shared buffer usage to kcov.rst.
 
 Signed-off-by: Alexander Potapenko <glider@google.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 ---
-Change-Id: Ica191d73bf5601b31e893d6e517b91be983e986a
----
- arch/x86/kernel/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+v3:
+ - add Reviewed-by: Dmitry Vyukov
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 0d2a6d953be91..ca134ce03eea9 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -43,6 +43,8 @@ KCOV_INSTRUMENT_dumpstack_$(BITS).o			:= n
- KCOV_INSTRUMENT_unwind_orc.o				:= n
- KCOV_INSTRUMENT_unwind_frame.o				:= n
- KCOV_INSTRUMENT_unwind_guess.o				:= n
-+# Avoid instrumenting code that produces spurious coverage in interrupts.
-+KCOV_INSTRUMENT_tsc.o					:= n
+Change-Id: Ia47ef7c3fcc74789fe57a6e1d93e29a42dbc0a97
+---
+ Documentation/dev-tools/kcov.rst | 55 ++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+diff --git a/Documentation/dev-tools/kcov.rst b/Documentation/dev-tools/kcov.rst
+index 6611434e2dd24..abf3ad2e784e8 100644
+--- a/Documentation/dev-tools/kcov.rst
++++ b/Documentation/dev-tools/kcov.rst
+@@ -137,6 +137,61 @@ mmaps coverage buffer, and then forks child processes in a loop. The child
+ processes only need to enable coverage (it gets disabled automatically when
+ a thread exits).
  
- CFLAGS_head32.o := -fno-stack-protector
- CFLAGS_head64.o := -fno-stack-protector
++Shared buffer for coverage collection
++-------------------------------------
++KCOV employs a shared memory buffer as a central mechanism for efficient and
++direct transfer of code coverage information between the kernel and userspace
++applications.
++
++Calling ``ioctl(fd, KCOV_INIT_TRACE, size)`` initializes coverage collection for
++the current thread associated with the file descriptor ``fd``. The buffer
++allocated will hold ``size`` unsigned long values, as interpreted by the kernel.
++Notably, even in a 32-bit userspace program on a 64-bit kernel, each entry will
++occupy 64 bits.
++
++Following initialization, the actual shared memory buffer is created using::
++
++    mmap(NULL, size * sizeof(unsigned long), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)
++
++The size of this memory mapping, calculated as ``size * sizeof(unsigned long)``,
++must be a multiple of ``PAGE_SIZE``.
++
++This buffer is then shared between the kernel and the userspace. The first
++element of the buffer contains the number of PCs stored in it.
++Both the userspace and the kernel may write to the shared buffer, so to avoid
++race conditions each userspace thread should only update its own buffer.
++
++Normally the shared buffer is used as follows::
++
++              Userspace                                         Kernel
++    -----------------------------------------+-------------------------------------------
++    ioctl(fd, KCOV_INIT_TRACE, size)         |
++                                             |    Initialize coverage for current thread
++    mmap(..., MAP_SHARED, fd, 0)             |
++                                             |    Allocate the buffer, initialize it
++                                             |    with zeroes
++    ioctl(fd, KCOV_ENABLE, KCOV_TRACE_PC)    |
++                                             |    Enable PC collection for current thread
++                                             |    starting at buffer[1] (KCOV_ENABLE will
++                                             |    already write some coverage)
++    Atomically write 0 to buffer[0] to       |
++    reset the coverage                       |
++                                             |
++    Execute some syscall(s)                  |
++                                             |    Write new coverage starting at
++                                             |    buffer[1]
++    Atomically read buffer[0] to get the     |
++    total coverage size at this point in     |
++    time                                     |
++                                             |
++    ioctl(fd, KCOV_DISABLE, 0)               |
++                                             |    Write some more coverage for ioctl(),
++                                             |    then disable PC collection for current
++                                             |    thread
++    Safely read and process the coverage     |
++    up to the buffer[0] value saved above    |
++
++
+ Comparison operands collection
+ ------------------------------
+ 
 -- 
 2.50.1.470.g6ba607880d-goog
 
