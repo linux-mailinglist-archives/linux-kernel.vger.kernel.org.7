@@ -1,263 +1,154 @@
-Return-Path: <linux-kernel+bounces-748013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA20FB13B62
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:21:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2CABB13B65
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA813A2DFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:21:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD4D316A3C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B61D24678A;
-	Mon, 28 Jul 2025 13:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IjSpe84k"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A377264627;
+	Mon, 28 Jul 2025 13:22:35 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A76676025
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7767476025
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753708903; cv=none; b=UUucbQVhz2NYRMpLmOrWHZFi2HU5f3C2Lys31hUTsrIwy7FaEm48INHzJPOpK7Qmdy/M+G3D3AZf8F/5bCWrd7uAEl9GvIxJ7p8ndWwpOalY9DCEwNGA23xmoIe3wAxMza/nV4PtYoccLYLyvAQeIquKfywTPOq5AtgK9c4t0uw=
+	t=1753708955; cv=none; b=aCgI2USCjkmu5iBBjqCQHSZSfFonVwxVot5KiA57gFtVHqwlgBVAJhRz4LWdKeUbYxk05nEO9HMIx9a0EtTXNuVaavGqJMF2MpMXg00PGPZMSiaI3JIKcaemfxQNnGBnqCFop6zXcxEpNgjpyYb7Q0MYxKMFOhHbgA2LrhV/ZRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753708903; c=relaxed/simple;
-	bh=Z5K7LoM3PLBfN43u3ceVJLJHJwkol93Ka++ZjqIVAlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwEUVjFU9gwQ1ytf/XYrc/EpXvBG+itcH8cefXN3vQT69+esehcukLymyR1GGfe98rFJ1gsvchpwGKWprCmbtWSaqEiJTxiYEpFzcgjyQJbgBLBR3sbftZvh68o6LRktf9055tLy79Np+1dz19HRUzTHE9M1We6ZG9IPP4j6xCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IjSpe84k; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753708899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=37h+OxwY37dFS0xXBKuzWk99em7YV/V2JORPqp4C/mM=;
-	b=IjSpe84kPXTkncCvk7z4YaeUtevJQ14BQz+M0yTG5CSmIVia122zV2RT1a5qDi90tNtIbb
-	3IZWXmGp8XMK0JuUNoBRanoNKBEt1xvOSyExypyENd8FWJgDU4zwABRFS9XT9ShJ4sly2v
-	iAc/WLbeeRAv5YmyDsFlBXs2+7ft754=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-22-gmqrjnTOMLeTOFo9Av4cxA-1; Mon,
- 28 Jul 2025 09:21:36 -0400
-X-MC-Unique: gmqrjnTOMLeTOFo9Av4cxA-1
-X-Mimecast-MFC-AGG-ID: gmqrjnTOMLeTOFo9Av4cxA_1753708895
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3AB7319560B2;
-	Mon, 28 Jul 2025 13:21:35 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.88.177])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 57BD61800B6A;
-	Mon, 28 Jul 2025 13:21:33 +0000 (UTC)
-Date: Mon, 28 Jul 2025 09:21:29 -0400
-From: Phil Auld <pauld@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: John Stultz <jstultz@google.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [tip: sched/core] sched: Add CONFIG_SCHED_PROXY_EXEC & boot
- argument to enable/disable
-Message-ID: <20250728132129.GC11434@pauld.westford.csb>
-References: <20250712033407.2383110-2-jstultz@google.com>
- <175266115435.406.15916021190678492115.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1753708955; c=relaxed/simple;
+	bh=o7g4zTvcHtDwGmDT8+bLd4ZcWMpMdAs4lGp6uBJ5z0g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KiV3cvZPa7hKXP00QxKgiw8dEE04seWXXN8CEfXpE80onYT7u5g6xbOFI3TCIhiqdjXoTmk/CbtfqdKuG403doB6/x2PcOCpfy2wOSzaB8WhhIj8HPjV9jTQToIUAxIPu8jdz/+UqW93wk5cwYdfjSB22vWuKD945YzP/gixycQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87c18a52977so377524339f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:22:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753708952; x=1754313752;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M37BM1rS9dk1eOmF/hynrK0dqgjnKGWFuRa9wzdrsm4=;
+        b=QZbqAj+ioxeWrlflTA0tJ5rwwzwn4lmOzeGUSEwl/LPpGU17DnEci9HalLZ4MF1pGB
+         YzNZoPJt2TWEToPNLb/0cOuH5p/sv30ny5CxC9wEQAgo4jhx6zHfG6+IDwo6ykK8gjzy
+         fJKxXXvEkfqnZ5SVUIIFSV5DTlrlYK+Ecs4jxrn1vMjhmGuKnPiz9udbrLNSt4AMY0/l
+         UVM48RKOv8ry/qHnKPPqNNE1Gyky7vojWhHqCeRL0KAnrbZjKAme3S2nM75gHk209zry
+         jlDr9rOHvMrx7jQF0i7ciJZhvTFlWmYDz24aFx/+MBw8Pc6FR4E7Aq9Eejy4zGf+sjmI
+         uU2Q==
+X-Gm-Message-State: AOJu0Yx0qJR8EgVjC6bHUATHJfCLn02uNdcH8S7qNSU5w2/T67KXM/sQ
+	2Be/q8oetxNjEv9X/PEyHyzUuN0UMQ6qXFjXH9jLJA4WNVsAqioPYdmqnoTCvvISoXjXrxFXgjW
+	kvljgUWFk9x95JR1yXSvF/xXfDuxAZBHEhzhEsB4eSSx87IJ8LdEw6AIHgtLAhg==
+X-Google-Smtp-Source: AGHT+IEXFyDd6e9lHNVEP6wEN5d8KyTBn7T+p0OCOd/ju4jy5fpDBacDo8EQ84p3Ng6Jl6VWmWohamAYUbDBoix2DYMComZiqUgA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175266115435.406.15916021190678492115.tip-bot2@tip-bot2>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Received: by 2002:a5d:8d12:0:b0:876:19b9:1aaa with SMTP id
+ ca18e2360f4ac-88022a27cecmr1651783539f.9.1753708952325; Mon, 28 Jul 2025
+ 06:22:32 -0700 (PDT)
+Date: Mon, 28 Jul 2025 06:22:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68877998.050a0220.1a379b.0005.GAE@google.com>
+Subject: [syzbot] [kernel?] WARNING in sched_mm_cid_remote_clear (3)
+From: syzbot <syzbot+c3be4001853e1add0a03@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 16, 2025 at 10:19:14AM -0000 tip-bot2 for John Stultz wrote:
-> The following commit has been merged into the sched/core branch of tip:
->
+Hello,
 
-Cool! Good work John.  "That was easy" ;)
+syzbot found the following issue on:
+
+HEAD commit:    25fae0b93d1d Merge tag 'drm-fixes-2025-07-24' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=136930a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9f175a9275d2cdd7
+dashboard link: https://syzkaller.appspot.com/bug?extid=c3be4001853e1add0a03
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7acf9d19f311/disk-25fae0b9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/532080ae9996/vmlinux-25fae0b9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/47473831ee3b/bzImage-25fae0b9.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c3be4001853e1add0a03@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 cpu_max_bits_warn include/linux/cpumask.h:135 [inline]
+WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 cpumask_check include/linux/cpumask.h:142 [inline]
+WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 cpumask_clear_cpu include/linux/cpumask.h:620 [inline]
+WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 __mm_cid_put kernel/sched/sched.h:3622 [inline]
+WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 sched_mm_cid_remote_clear+0x488/0x4f0 kernel/sched/core.c:10543
+Modules linked in:
+CPU: 1 UID: 0 PID: 12208 Comm: syz.4.2719 Not tainted 6.16.0-rc7-syzkaller-00034-g25fae0b93d1d #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:cpu_max_bits_warn include/linux/cpumask.h:135 [inline]
+RIP: 0010:cpumask_check include/linux/cpumask.h:142 [inline]
+RIP: 0010:cpumask_clear_cpu include/linux/cpumask.h:620 [inline]
+RIP: 0010:__mm_cid_put kernel/sched/sched.h:3622 [inline]
+RIP: 0010:sched_mm_cid_remote_clear+0x488/0x4f0 kernel/sched/core.c:10543
+Code: 0f 01 e8 3b 71 0e 00 eb 9d 4c 89 ef e8 f1 73 97 00 e9 67 fc ff ff e8 e7 73 97 00 e9 47 fd ff ff 89 44 24 48 e9 17 fe ff ff 90 <0f> 0b 90 e9 f0 fd ff ff e8 8b b3 fc 09 e9 06 ff ff ff 48 89 d6 48
+RSP: 0018:ffffc9000480fcc8 EFLAGS: 00010012
+RAX: 0000000000000093 RBX: ffffe8ffffc476c0 RCX: ffffffff8189c611
+RDX: 00000000ffffffff RSI: 0000000000000004 RDI: ffffc9000480fd10
+RBP: 1ffff92000901f9a R08: 0000000000000001 R09: fffff52000901fa2
+R10: 0000000000000003 R11: 0000000000000001 R12: ffff88807b22ed50
+R13: ffffe8ffffc476c8 R14: 0000000000000200 R15: ffff8880b843a2c0
+FS:  000055556f5a3500(0000) GS:ffff888124820000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558d727588 CR3: 00000000668d0000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ sched_mm_cid_remote_clear_old kernel/sched/core.c:10576 [inline]
+ task_mm_cid_work+0x3b4/0x910 kernel/sched/core.c:10626
+ task_work_run+0x14d/0x240 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:114
+ exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
+ do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8ef99c1265
+Code: 24 0c 89 3c 24 48 89 4c 24 18 e8 f6 54 ff ff 4c 8b 54 24 18 48 8b 54 24 10 41 89 c0 8b 74 24 0c 8b 3c 24 b8 e6 00 00 00 0f 05 <44> 89 c7 48 89 04 24 e8 4f 55 ff ff 48 8b 04 24 48 83 c4 28 f7 d8
+RSP: 002b:00007ffe741fc2d0 EFLAGS: 00000293 ORIG_RAX: 00000000000000e6
+RAX: 0000000000000000 RBX: 00007f8ef9bb5fa0 RCX: 00007f8ef99c1265
+RDX: 00007ffe741fc310 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00007f8ef9bb7ba0 R08: 0000000000000000 R09: 00007f8efa7eb000
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000048110
+R13: 00007f8ef9bb6080 R14: ffffffffffffffff R15: 00007ffe741fc450
+ </TASK>
 
 
-Cheers,
-Phil
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> Commit-ID:     25c411fce735dda29de26f58d3fce52d4824380c
-> Gitweb:        https://git.kernel.org/tip/25c411fce735dda29de26f58d3fce52d4824380c
-> Author:        John Stultz <jstultz@google.com>
-> AuthorDate:    Sat, 12 Jul 2025 03:33:42 
-> Committer:     Peter Zijlstra <peterz@infradead.org>
-> CommitterDate: Mon, 14 Jul 2025 17:16:31 +02:00
-> 
-> sched: Add CONFIG_SCHED_PROXY_EXEC & boot argument to enable/disable
-> 
-> Add a CONFIG_SCHED_PROXY_EXEC option, along with a boot argument
-> sched_proxy_exec= that can be used to disable the feature at boot
-> time if CONFIG_SCHED_PROXY_EXEC was enabled.
-> 
-> Also uses this option to allow the rq->donor to be different from
-> rq->curr.
-> 
-> Signed-off-by: John Stultz <jstultz@google.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> Link: https://lkml.kernel.org/r/20250712033407.2383110-2-jstultz@google.com
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  5 +++-
->  include/linux/sched.h                           | 13 +++++++-
->  init/Kconfig                                    | 12 +++++++-
->  kernel/sched/core.c                             | 29 ++++++++++++++++-
->  kernel/sched/sched.h                            | 12 +++++++-
->  5 files changed, 71 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 07e22ba..00b8357 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6387,6 +6387,11 @@
->  	sa1100ir	[NET]
->  			See drivers/net/irda/sa1100_ir.c.
->  
-> +	sched_proxy_exec= [KNL]
-> +			Enables or disables "proxy execution" style
-> +			solution to mutex-based priority inversion.
-> +			Format: <bool>
-> +
->  	sched_verbose	[KNL,EARLY] Enables verbose scheduler debug messages.
->  
->  	schedstats=	[KNL,X86] Enable or disable scheduled statistics.
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 54a9126..f225b6b 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1656,6 +1656,19 @@ struct task_struct {
->  	randomized_struct_fields_end
->  } __attribute__ ((aligned (64)));
->  
-> +#ifdef CONFIG_SCHED_PROXY_EXEC
-> +DECLARE_STATIC_KEY_TRUE(__sched_proxy_exec);
-> +static inline bool sched_proxy_exec(void)
-> +{
-> +	return static_branch_likely(&__sched_proxy_exec);
-> +}
-> +#else
-> +static inline bool sched_proxy_exec(void)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  #define TASK_REPORT_IDLE	(TASK_REPORT + 1)
->  #define TASK_REPORT_MAX		(TASK_REPORT_IDLE << 1)
->  
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 965699c..24dd42d 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -878,6 +878,18 @@ config UCLAMP_BUCKETS_COUNT
->  
->  	  If in doubt, use the default value.
->  
-> +config SCHED_PROXY_EXEC
-> +	bool "Proxy Execution"
-> +	# Avoid some build failures w/ PREEMPT_RT until it can be fixed
-> +	depends on !PREEMPT_RT
-> +	# Need to investigate how to inform sched_ext of split contexts
-> +	depends on !SCHED_CLASS_EXT
-> +	# Not particularly useful until we get to multi-rq proxying
-> +	depends on EXPERT
-> +	help
-> +	  This option enables proxy execution, a mechanism for mutex-owning
-> +	  tasks to inherit the scheduling context of higher priority waiters.
-> +
->  endmenu
->  
->  #
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index e9c8bda..dd9f5c0 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -119,6 +119,35 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
->  
->  DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
->  
-> +#ifdef CONFIG_SCHED_PROXY_EXEC
-> +DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
-> +static int __init setup_proxy_exec(char *str)
-> +{
-> +	bool proxy_enable = true;
-> +
-> +	if (*str && kstrtobool(str + 1, &proxy_enable)) {
-> +		pr_warn("Unable to parse sched_proxy_exec=\n");
-> +		return 0;
-> +	}
-> +
-> +	if (proxy_enable) {
-> +		pr_info("sched_proxy_exec enabled via boot arg\n");
-> +		static_branch_enable(&__sched_proxy_exec);
-> +	} else {
-> +		pr_info("sched_proxy_exec disabled via boot arg\n");
-> +		static_branch_disable(&__sched_proxy_exec);
-> +	}
-> +	return 1;
-> +}
-> +#else
-> +static int __init setup_proxy_exec(char *str)
-> +{
-> +	pr_warn("CONFIG_SCHED_PROXY_EXEC=n, so it cannot be enabled or disabled at boot time\n");
-> +	return 0;
-> +}
-> +#endif
-> +__setup("sched_proxy_exec", setup_proxy_exec);
-> +
->  /*
->   * Debugging: various feature bits
->   *
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index ac953fa..e53d0b8 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1142,10 +1142,15 @@ struct rq {
->  	 */
->  	unsigned long 		nr_uninterruptible;
->  
-> +#ifdef CONFIG_SCHED_PROXY_EXEC
-> +	struct task_struct __rcu	*donor;  /* Scheduling context */
-> +	struct task_struct __rcu	*curr;   /* Execution context */
-> +#else
->  	union {
->  		struct task_struct __rcu *donor; /* Scheduler context */
->  		struct task_struct __rcu *curr;  /* Execution context */
->  	};
-> +#endif
->  	struct sched_dl_entity	*dl_server;
->  	struct task_struct	*idle;
->  	struct task_struct	*stop;
-> @@ -1326,10 +1331,17 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
->  #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
->  #define raw_rq()		raw_cpu_ptr(&runqueues)
->  
-> +#ifdef CONFIG_SCHED_PROXY_EXEC
-> +static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
-> +{
-> +	rcu_assign_pointer(rq->donor, t);
-> +}
-> +#else
->  static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
->  {
->  	/* Do nothing */
->  }
-> +#endif
->  
->  #ifdef CONFIG_SCHED_CORE
->  static inline struct cpumask *sched_group_span(struct sched_group *sg);
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
