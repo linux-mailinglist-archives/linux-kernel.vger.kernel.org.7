@@ -1,185 +1,116 @@
-Return-Path: <linux-kernel+bounces-747979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D1FB13AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:03:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE79DB13AF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C970D3B8AD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:03:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B9AE7A83DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B50257AF0;
-	Mon, 28 Jul 2025 13:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAC7264A9E;
+	Mon, 28 Jul 2025 13:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jFNmqLYo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgXRYpFk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC9C43147
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB4E16DEB1;
+	Mon, 28 Jul 2025 13:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753707806; cv=none; b=pVqX+mqQ1R7k7W+LxrStpESvOI900QD4qAtrrKeJcqtKbuj1/pDHdFTkTQL5qzpgSuK7aEHFw7vWoDIrsUVk/+lE+Q2pZ0XFs5l5IQ/M8bB9BRsTXpitG/Wy1fY3YEzYHPIUBBZ5sG3K/HN0UviRUy7RVfR16c09OLZiA7mlFkg=
+	t=1753707940; cv=none; b=smJjffMyp20w+/odI1QI/g8clkh+nqDHbz3/lijJcw1AVF2oBj2YXZmSxPhf39KpqhelnQDT7RZGb19ISXg41c6dREQX7jCnM3KXAWmkOcjS0xYlwSwJwauwUWXbi8cD/4mqjM9dB5J1XuvnYxlh0dCfLZQVyyS9e3357RzraU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753707806; c=relaxed/simple;
-	bh=7Yvvd0kTEHH72qI1p178Lg9kVktivlhHfZY6+O/mPCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s0DbnvnLnyWt9qz+IQa3opP1bohpPVWICkN5XVLYwiPTh3vQaECucCLG7UJYpOEBrQO7NgLS25ociqeRaOM7XVCfkoETN7dx98ntgKZ9F6AhfGN6FHDSKpLRIqkFxcVOS4sNYX+mm34f/HuWBp4girsoIELKiueOC6p0+gNKPBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jFNmqLYo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753707803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=J0PluGLIH2rBSQgAj0MdwoDFMgB7c8mn+PWxY/wnuMA=;
-	b=jFNmqLYoo4oHxAv16pBid2IRDYkUChN/6fVs0csFlJua2G2n5Jf/DOl2R6rVa0Uqvypyv3
-	wEgVqj0K5LYQvx6KmsRWtyJPFod12sv+jmGxiEWf2oV0CoG8A80j+hEBqACJB0x/JS1M1f
-	TyUi5rqKqRPzKXQai5xu/vaTUN6TyUQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-446-GiSJMyKVMA68E7Ru0HnNhA-1; Mon, 28 Jul 2025 09:03:21 -0400
-X-MC-Unique: GiSJMyKVMA68E7Ru0HnNhA-1
-X-Mimecast-MFC-AGG-ID: GiSJMyKVMA68E7Ru0HnNhA_1753707800
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b7812e887aso979314f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:03:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753707800; x=1754312600;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=J0PluGLIH2rBSQgAj0MdwoDFMgB7c8mn+PWxY/wnuMA=;
-        b=tDgNBLGGzDbZfHZNqZJnM55Vflg6K+F0yLhymE4Z7+cyOMGQyaEzd3MLgd87S+kLf6
-         rwwrnCcjB3iagG2HGGV8qg2Br4bhIqkGBPQ4lHRyNSaHLY+0nFnBMY7/e4SM8M1h0Tpk
-         kt4n27sLei2SRofVFAE97CG2IPnF+rJeUbqGPYNKy96arXK9UA6bcZ0AcXAfCBmedR1p
-         Q9vHXdiUlnKUo2uSF5t0lMqZRFMlM7WBXU9/KLmQ8w3kpvAtGEFjy+rEN++2W0TUj6Jj
-         8GgZFyIdixRu7bw6JwRBrdZXxFUSr32fy/8lZ4JvqTxm+ucbHDJGvBKCjdYK1ifadzwt
-         pEWw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0ao05F4JOlh6J7CMe2jlAxiFgFYUy0U0yvrkahcZU2zWIN//vwjVFhNn/Ak40md9sqWrGY9F0WI38zo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFzyQ11XmM8WZYBJRpuFnEO8gIQRXvdQQZ0cqVFZmN5G2jASmn
-	B7VHBxbCsguesxd6At1spzdeTpBEC0PFa2Nd5s0YFn4mhmcfGRxpcfT1D2ku6/vMZ59BoJOklWO
-	8wpPUk4LT0y3mezu6rp6GojkFfDmhMFh8tH3HPQzRsMs46vfvfwTED0HQGqkG//9/WA==
-X-Gm-Gg: ASbGncvBzQ5DLbb5WLt9RRVsR8c4dA8YwKE1s9hRBqMb2Twh3DsFtikK8Tm9j7+ua7e
-	+fZUrKxVzDTz7lXbKDIHDkZW/R+SO1nneIPGRIMtrSgDNfTSBZdZDdcY9mC4FVqWDfJap8z3PIV
-	jHzpkW15dudytyH/B8ERfvKMsMjJw6MN5m1/3aEn4eSUzARMiRYc9GK+6GeBYPtZ56s6apNq3Cm
-	Ll1oThSBiGxXkcqJ5PtvXzO0if8xxTtc5kn74epNMJPdlw2MQSGK+gCs9UYVlKxTDfd3ZZ4UGah
-	sys3NYM4GLU/QtiLvweLxGp2DORjJ1dpjHCGliPxhIwkB0k93UJlx909fTvMdUuJE8+2IUucHOn
-	A0lFK6UEIgGyomyyh1vedw3EpZzBZBT+nGsblOMXeWtAeEKW8hLH21IIyXtFk+tgLdOw=
-X-Received: by 2002:a5d:64cb:0:b0:3b7:895c:1562 with SMTP id ffacd0b85a97d-3b7895c19c0mr2265641f8f.11.1753707799962;
-        Mon, 28 Jul 2025 06:03:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH9bM25HxST0JsiPjjgsMZ75OiHi2N6n8pmyQKntaVMlMKGwxmNe+fLVHGCDZaplr+sPD5Zog==
-X-Received: by 2002:a5d:64cb:0:b0:3b7:895c:1562 with SMTP id ffacd0b85a97d-3b7895c19c0mr2265554f8f.11.1753707799177;
-        Mon, 28 Jul 2025 06:03:19 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f47:2b00:c5f3:4053:2918:d17c? (p200300d82f472b00c5f340532918d17c.dip0.t-ipconnect.de. [2003:d8:2f47:2b00:c5f3:4053:2918:d17c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778f104ffsm8644052f8f.66.2025.07.28.06.03.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 06:03:18 -0700 (PDT)
-Message-ID: <eabe40da-0136-4bf0-973d-28f39d3053de@redhat.com>
-Date: Mon, 28 Jul 2025 15:03:17 +0200
+	s=arc-20240116; t=1753707940; c=relaxed/simple;
+	bh=R6RI9H1uXWNlU4ETqJK1DDEoTkl/2mn5+ywmuILAy18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IDdLjnF8LU5T2dnTaiGYO0XVIF3zkMtWGN+wVaqi1nvWK87wEhrhmoo5KaBe1MWU9/iuy8a9ImB4uQjtD2TLzjHGEBq1/2gQtV5166GeyeqMYEYK4JcE/8D5Pa1JAfx9Y8eOVZDhwtVrxgw/HnVDdly5C28cqBW5pXgk5tgY6eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgXRYpFk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B52C4CEE7;
+	Mon, 28 Jul 2025 13:05:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753707939;
+	bh=R6RI9H1uXWNlU4ETqJK1DDEoTkl/2mn5+ywmuILAy18=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SgXRYpFkjkwkJw64t2Vwdul68XG1XUcx80GOR6lhsWasEmld1JC39phP0skavgn+Y
+	 vmSo8LB/j6HGgIovw+R0pCuEarSMf90s0d/+5QlkorMVmFWQq/rsI42mV6uHeZ1/qZ
+	 RrLOsqEf1kY4Ast7Rr/gvVYccfE4EyeSIoAC5EC6d1nZxFzxppKrlZoRT7WT83h+oB
+	 vN/kdOXuEG9/8BJgVLp/2b2jnP8DXKGFEMYz7ZyUo8rk3vbVBa2q4jqNjYP2X626q9
+	 waL29A3QqiWxL79xTW5TSsBHX6v3fjZu9GmXd1n0PE/2GzGrRPl2vR97PTS9dV2QWq
+	 +Hu0O/UeMDpIg==
+Date: Mon, 28 Jul 2025 09:05:37 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+	corbet@lwn.net, linux-doc@vger.kernel.org,
+	workflows@vger.kernel.org, josh@joshtriplett.org, kees@kernel.org,
+	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
+ kernel
+Message-ID: <aId1oZn_KFaa0R_Q@lappy>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <75d86e96-cb18-4996-998c-da7ac0e97468@suse.cz>
+ <9afd157a-296d-4f4d-9d65-07b89ab3906f@redhat.com>
+ <2025072832-enrich-pampers-54b9@gregkh>
+ <1bd04ce1-87c0-4e23-b155-84f7235f6072@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
-To: Michal Hocko <mhocko@suse.com>
-Cc: Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hannes Reinecke <hare@kernel.org>
-References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
- <aIc5XxgkbAwF6wqE@tiehlicka>
- <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
- <aIc9DQ1PwsbiOQwc@tiehlicka>
- <79919ace-9cd2-4600-9615-6dc26ba19e19@redhat.com>
- <aIdqVNCY-XMNICng@tiehlicka>
- <1f8d924d-3554-43a6-a75e-66a08d1ce7b9@redhat.com>
- <a06922c2-9dad-4449-991c-913fa7765bc2@redhat.com>
- <aId0UlyH9ErtGDl2@tiehlicka>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <aId0UlyH9ErtGDl2@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1bd04ce1-87c0-4e23-b155-84f7235f6072@redhat.com>
 
-On 28.07.25 15:00, Michal Hocko wrote:
-> On Mon 28-07-25 14:27:29, David Hildenbrand wrote:
-> [...]
->>> I think the whole libdaxctl handling for onlining memory is based on that.
->>>
->>
->> Sorry, forgot to add a pointer:
->>
->> https://github.com/pmem/ndctl/blob/main/daxctl/lib/libdaxctl.c
-> 
-> Thanks for the pointer! I will have a look.
+On Mon, Jul 28, 2025 at 12:47:55PM +0200, David Hildenbrand wrote:
+>We cannot keep complaining about maintainer overload and, at the same 
+>time, encourage people to bombard us with even more of that stuff.
+>
+>Clearly flagging stuff as AI-generated can maybe help. But really, 
+>what we need is a proper AI policy. I think QEMU did a good job 
+>(again, maybe too strict, not sure).
 
-In particular daxctl_memory_op(), used to implement stuff like
+So I've sent this series because I thought it's a parallel effort to the
+effort of creating an "AI Policy".
 
-daxctl online-memory
-daxctl offline-memory
-daxctl reconfigure-device (--no-online, --no-movable)
+Right now we already (implicitly) have a policy as far as these
+contributions go, based on
+https://www.linuxfoundation.org/legal/generative-ai and the lack of
+other guidelines in our codebase, we effectively welcome AI generated
+contributions without any other requirements beyond the ones that affect
+a regular human.
 
+This series of patches attempts to clarify that point to AI: it has to
+follow the same requirements and rules that humans do.
 
-I am not sure if they also offline memory automatically before disabling 
-a device.
+>I'll note one interesting thing in the QEMU commit I linked:
+>
+>"Thus far though, this is has not been matched by a broadly
+>accepted legal interpretation of the licensing implications for code
+>generator outputs. While the vendors may claim there is no problem and
+>a free choice of license is possible, they have an inherent conflict
+>of interest in promoting this interpretation."
+>
+>[1] https://lkml.kernel.org/r/a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com
 
-But in essence, they want to to everything automatically as possible.
+I get why QEMU did this: they don't have the resources, the lawyers, nor
+the interest in dealing with this open question, so they're playing it
+safe until we know more. That sounds like a very smart thing to do on
+their end.
+
+On our end, one of the reasons the kernel is part of the LF is to tackle
+exactly this: none of us are lawyers, but luckily we have lawyers and
+resources on our side to help us navigate these challanges.
+
+I'd like to think that there's no conflict of interests within the LF,
+and that their opinion on this matter best represents their client's
+(both Linux Kernel as well as Linus's) best interests.
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Thanks,
+Sasha
 
