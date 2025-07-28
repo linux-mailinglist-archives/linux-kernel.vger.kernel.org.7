@@ -1,141 +1,131 @@
-Return-Path: <linux-kernel+bounces-747717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5301AB1373C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:08:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012FAB1373F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AA5A7A81D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:06:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648903B77A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8796225785;
-	Mon, 28 Jul 2025 09:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48887223311;
+	Mon, 28 Jul 2025 09:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EakDVqQ3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVPcWcbT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F082A1CF
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6417FBF0;
+	Mon, 28 Jul 2025 09:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753693670; cv=none; b=KlNesZQX3yIQOMiBCz0H1cPM5aBMDjHVCcD009SX+pyVO/KgQhJuXUPw3JO9zLsZveOX1JmicqABfItr7v7jJHEgyXasRhJKxEDokf9TquXISeVwWg39rMtm7P3/O9jHLndkSZu55/2mn/wJYrCbACphKquIXMKA9h25dU6M4dg=
+	t=1753693727; cv=none; b=s5qrLcl7hxF40ElfOtPOnVgLjPkaFLmMavGm/XZ8o9VHqyu9jCZ9nk9UdpBgVjEfl27oEtecGyhgWW4w1CP0QUomp3SEPySWH5kPounDfee4jk7lDJ+GWYcEHgfewacf1I2HRqCEa2sK1Jdwzm3qWPkNX8dlsj6FNXSlIWehtr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753693670; c=relaxed/simple;
-	bh=zvZJc37IM1lXzSOwsBhbEwOaTkTKd3wszmRWIQwbGUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MK9TbTcbqQYMBXAkHhGEf+8Gw8PL2BKLKsSC0uBWkYbHNGyPQu1oAGiMfzzcUJzXUUobri9kr6z55DR2JgO8VO4xtBJUgQq3KfjuQGDkDoo/oo55Tljed5CEM9L/aFSNulf4tbj/NDMLrPuC15kwl16l365y3zfISi65f0VrXbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EakDVqQ3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56S4rRaQ008420
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:07:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OtaOTLSP/DV+d52JHjxMOpsKY7WYh3o1dzdSeMKQJ24=; b=EakDVqQ3QMU8UWWF
-	pa75601iZ3iTooCqVGvx8BFtuU7ylEgwa2wvVGgq9L1Pnfk7PRR/hQJXc2uxab4P
-	jIQeKz4BTFEdEQ5pUVwFvYvxu4J0UoCZdvOxg8CjSpG4+OGxrx1lW+rTaHBR866y
-	t2wOBUkAoNRYffvEZxR6X7IJh59d8G+6sRNXpZnOKKI/4z73H0Bt/Ic54WJyRAtj
-	PZ0vQLW45PvMvJIEpBuiqCwpSXXnvV+JEgHSdMlxIYBFXO2ePtXd4OzFu9BcaseN
-	n0wmPdaqmoX+BblxRobSkk6gMRGKJGkk7164wQGLn75ljldjFp4v3b58leN9eYzq
-	bgEGoA==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484qd9uwey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:07:40 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7073ec538e2so6512736d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:07:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753693660; x=1754298460;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OtaOTLSP/DV+d52JHjxMOpsKY7WYh3o1dzdSeMKQJ24=;
-        b=sLaK4g3aPhsjhCEnorQ2bdIaz9eHWf+q8QUpPlcQZeSAu2GyJ3NJ+XU4z9sz3L0qKP
-         d1WPNF7huVN0y7gcf/4UybnRMC/YnxxMPP6wWcNY7gR9ay16jEPl5unOdG+d5A6i/DvI
-         xDBtcHb0ULLtEUMELQplrJY/LBq+6eAtdRx1JidxU/rAo2Mw2uV8mSVIqThS5Vo99GLB
-         upbGzVONOSGGfCC7iJs+HJC8cso5AeekRcv4F7At8/Q8YCDcuU6lszjVje7adWvKcdDu
-         1EZdx9HtYHGiu6JdkMwRHY1igV0GWURv2GHWxrvN3JWCAPHXn0x7T53rfhjGiEf5rXje
-         XZmg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5/WTClgjsBlibuxy29BbpN7S+j4VkeosRIQ5OzmvOYLlqtJhhO3P2nkFIsM0CbnlLUeIirvBbIz+E+iI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs5d6SqTEqOLppyw1R8/ZemQI7+QS6Kkto1CIUCCxEp+MI7jEa
-	aOgQ/vhfpKXFzo0IPXrKVhmVzQ0RglLWmU4jrURDxD2anwATuNAEE3KkUK/qfxgl9bRWHiE5b+i
-	WtjnG9Hb/54gcyE2pkcCyWN4+5/f51GYqMFR0AuiQm0omxM6a2vvkR0PUzvav4wK4ehgQO/40hT
-	o=
-X-Gm-Gg: ASbGncsTQgu4igp+XlGOQHK7DPaFxN2DvSd+zRCCabRJiBhYJ6UTy4KJa0a+kexT1Uc
-	MiSlyCXBEh0ZUcQz8ClBlPi2od6P+hh0R96UcNirAjdHLcTWmW5yQ4sIXoQPRCo7FhsFYhPKwYt
-	P5njWDIypRKbUCAUQUR9dLr3PzTBlwHK5kSv9vjTq3FrhQdnc9mE49CPMN83er/kH6hp3BBp4k6
-	v5VJ0JaAsBj+xl9I6ltsf5/IGsA99817sKhARHdhJFsyul0c9XhoUQL+fc3hb4TK2xPyqWAMvwW
-	ljK4j9oatBeE3CvvAhk9uWgAzb7IKxvOw9uQgA6vsPj708JbPW8FP60TyOvFxtJ6FBX+qGJW9+D
-	9XWfOyxJP/X0uIHqCFw==
-X-Received: by 2002:a05:620a:390d:b0:7e6:2435:b6a4 with SMTP id af79cd13be357-7e63c1c555cmr619352585a.12.1753693659738;
-        Mon, 28 Jul 2025 02:07:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFS7dcUDok8MlrUYjDETf2C4hAw3upxujHwxwpLTG4xsI+lKYIU6eMEVLJXJKxX9C5Vz8KwrA==
-X-Received: by 2002:a05:620a:390d:b0:7e6:2435:b6a4 with SMTP id af79cd13be357-7e63c1c555cmr619351685a.12.1753693659338;
-        Mon, 28 Jul 2025 02:07:39 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635860143sm398459166b.24.2025.07.28.02.07.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 02:07:38 -0700 (PDT)
-Message-ID: <dbd3653e-95b5-486b-b38c-422fca099df4@oss.qualcomm.com>
-Date: Mon, 28 Jul 2025 11:07:36 +0200
+	s=arc-20240116; t=1753693727; c=relaxed/simple;
+	bh=OfRUM38b3EvY9TW41XVgHbkrwnuWmdvU9NPcj+KLAvs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T+pmoGE3TQVdal/S5Kep6+Gzsrkfnz8hEPM/x6xvEQzGn7uzEuIEmoeuq3m8JVAKJmgwkGVRfFE4lliu4ceFQs01+pix8zj7F13hmJyVQTWVMWS0rVDn8eg9WK1dq5VaBY0F0voFBajxFLUhKZu68WPBIaE+3gSQJdgmPIenxmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVPcWcbT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 33BF8C4CEE7;
+	Mon, 28 Jul 2025 09:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753693727;
+	bh=OfRUM38b3EvY9TW41XVgHbkrwnuWmdvU9NPcj+KLAvs=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=UVPcWcbTjfQXJUIRVAFajDAJ3HLVCEgM17Kx0vXkxsPC7ZpMqX75yAZ31XswwQpXH
+	 7dxwpDeY3KKoiAOL47z74844C80U/jdBbmc73pzV3FjGCMA4Xvs2Um5hXzvrjtUVHZ
+	 utyCw9aiNxwJbDVlG4bpQN1epBysZd0bjwlpdYDb3bweNsh583sriZCVDWPAsm3rGR
+	 vFVDVXTLnaVM1xrxYfFNa89tOgDw2vuFnHbPQ20kDV7DyepLAY97iJqMYD5oexk4ng
+	 MzMj4gHyW66KWxT+rJMzMCBuRggc/1t0gn2g6Yvturl6ZvP3ZPlyym2bY3ZybXIEOv
+	 59/X1kYt/ldNw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1809BC83F17;
+	Mon, 28 Jul 2025 09:08:47 +0000 (UTC)
+From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
+Date: Mon, 28 Jul 2025 17:08:44 +0800
+Subject: [PATCH] Bluetooth: hci_sync: Avoid adding default advertising on
+ startup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sm8650: Sort nodes by unit address
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250727193652.4029-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250727193652.4029-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 0E8YbIjniU2Ubmpq-xVQZZBr2f8V9qB_
-X-Authority-Analysis: v=2.4 cv=Pfv/hjhd c=1 sm=1 tr=0 ts=68873ddc cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=x0-Ntm4DP0gVEan9CnAA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: 0E8YbIjniU2Ubmpq-xVQZZBr2f8V9qB_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA2NiBTYWx0ZWRfX/qSwwmPDNwPu
- alboT2CZpAS7GU/AJJa9BlfDI6qo+NrDnub2/rvCO5bKLwC/Wyfloz9Z++m+HQ7T7i5l2A/bTsv
- tKyedDdpH0qfjKsdIp157Ky8LmMO0033Txf4gQa4P9fDRTU5B0sAfsCDqInDMahRH+6otnexJ4u
- 32ewb2fcJdHz2j2J5IhxoaSKUHl6/GK0MYzspsvm3aO4MTq0ZPruRd1yQEQ4z1y5awTaLDXqHZj
- n5hXhPK7UVxczgPy6u6bhHdz5AVuKbo2/4wT6T463lV+p6xqzuLmbOFQUzXE4uoHXt7kh7yXpZw
- 6vFDGzkCsrJkzMGt+iMIHtb3L5VwQbmPCou9npgRSNe9JerwEtIJ7AwgOLIfj/HFMI7Wd2gHRFt
- a9mS2XNoh3CORTo1smeDLDL/QLgWFI7QKeH7K+3bId/5wBeZ90IVi2E8nzVxR5ZjdcW30nf6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=839 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507280066
+Message-Id: <20250728-default_adv-v1-1-a1164ff502a7@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIABs+h2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcyML3ZTUtMTSnJL4xJQy3WRTUxPzxBTjpOQUIyWgjoKi1LTMCrBp0bG
+ 1tQDCYAdmXQAAAA==
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Johan Hedberg <johan.hedberg@gmail.com>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Yang Li <yang.li@amlogic.com>
+X-Mailer: b4 0.13-dev-f0463
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753693725; l=1557;
+ i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
+ bh=+a7zu6df7P6AdI4x7RiSKdHUqD0wbm828ppOC8TJSaI=;
+ b=3UX/dEiKfIm3KVtx2p0CoOiWQL25So1OuJjvoy/lEZDif1Ww60eWJtqHWw9ayCrEuH8iV8jRV
+ /X/OX2px1S7ChY3zt/VYeNXg5TY9mrMNLvEJI2rntOkkG8hhZ8qIfBh
+X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
+ pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
+X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
+ auth_id=180
+X-Original-From: Yang Li <yang.li@amlogic.com>
+Reply-To: yang.li@amlogic.com
 
-On 7/27/25 9:36 PM, Krzysztof Kozlowski wrote:
-> Qualcomm DTS uses sorting of MMIO nodes by the unit address, so move
-> few nodes in SM8650 DTSI to fix that.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+From: Yang Li <yang.li@amlogic.com>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+list_empty(&hdev->adv_instances) is always true during startup,
+so an advertising instance is added by default.
 
-Konrad
+Call trace:
+  dump_backtrace+0x94/0xec
+  show_stack+0x18/0x24
+  dump_stack_lvl+0x48/0x60
+  dump_stack+0x18/0x24
+  hci_setup_ext_adv_instance_sync+0x17c/0x328
+  hci_powered_update_adv_sync+0xb4/0x12c
+  hci_powered_update_sync+0x54/0x70
+  hci_power_on_sync+0xe4/0x278
+  hci_set_powered_sync+0x28/0x34
+  set_powered_sync+0x40/0x58
+  hci_cmd_sync_work+0x94/0x100
+  process_one_work+0x168/0x444
+  worker_thread+0x378/0x3f4
+  kthread+0x108/0x10c
+  ret_from_fork+0x10/0x20
+
+Fixes: https://github.com/bluez/bluez/issues/1442
+
+Signed-off-by: Yang Li <yang.li@amlogic.com>
+---
+ net/bluetooth/hci_sync.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index 2b4f21fbf9c1..7397b6b50ccb 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -3344,7 +3344,7 @@ static int hci_powered_update_adv_sync(struct hci_dev *hdev)
+ 	 * advertising data. This also applies to the case
+ 	 * where BR/EDR was toggled during the AUTO_OFF phase.
+ 	 */
+-	if (hci_dev_test_flag(hdev, HCI_ADVERTISING) ||
++	if (hci_dev_test_flag(hdev, HCI_ADVERTISING) &&
+ 	    list_empty(&hdev->adv_instances)) {
+ 		if (ext_adv_capable(hdev)) {
+ 			err = hci_setup_ext_adv_instance_sync(hdev, 0x00);
+
+---
+base-commit: d1b3de23042b0aac0145fdf071d6ac81ec3727b4
+change-id: 20250728-default_adv-c5547ad3bcd2
+
+Best regards,
+-- 
+Yang Li <yang.li@amlogic.com>
+
+
 
