@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-747882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12612B139AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:09:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09033B139B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0949D188475D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 210A316BB87
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3DC25B1EA;
-	Mon, 28 Jul 2025 11:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E07A25A33F;
+	Mon, 28 Jul 2025 11:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDqCEAIL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJdPAVXg"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAA8217659;
-	Mon, 28 Jul 2025 11:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413FC38F80;
+	Mon, 28 Jul 2025 11:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753700938; cv=none; b=NpyInyaS3N8zQj4lRX8hO9p3AuB6ne5x0oMKw6YqtuIFlj6nud7oiwagYjlpGAHlFqaTWlP7BNfdiJunRTkih9NSIkt3xwHde92xMYRJgx2mV8jSM8Mru/T1fO+nuvIjJuEP3aZTNjlQb1lVyAWFnCn/f0KAaj08EjBWpZFM93w=
+	t=1753701069; cv=none; b=k/nxTuBfwhl5Jf2x9hbtRT5J9sVF0FkiiUDcYLouLiAPm8GeqcRdI9ZrvujznH5Hv3xBiWUxoylznjs4mtCz3MT4umCjVrmZjo4Yu7TacqDXgCPozYbAQS+nIBPOwo3Ymyt/S0e9LL6b/gnn8PMg05Ol8dNKjpKscgb6/yMM0UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753700938; c=relaxed/simple;
-	bh=Zqm7Z3Z/kdUKXzMqB4JXHSMfTfwdhlcb1iuBPmxSszg=;
+	s=arc-20240116; t=1753701069; c=relaxed/simple;
+	bh=Yyzz3UdbIQBO7aejzRdazhb9pI+IikjCUT2kiqKxMyw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fFaUYroE3RyOiqjdpi6IUG9Ma7IoMdP+CG3qmFrByohTB3BsVqcRtTwlwkHqLPbdEdtesdyQZoU6RIpTjGTiGbLNqtF96AdQp4iHh/NtaIrTgJDBrvQEqzAuk5TRUS1XZJ23GitqViMMB0eF32lCahaKR5RVBP8YgRCixQDbRAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDqCEAIL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA647C4CEE7;
-	Mon, 28 Jul 2025 11:08:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753700937;
-	bh=Zqm7Z3Z/kdUKXzMqB4JXHSMfTfwdhlcb1iuBPmxSszg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dDqCEAILEB7zAWESSNGDkZenpgoWqFuW12YTDRZ2lQDBA//junbXhzUyY4FtfkhSx
-	 g95qIDo+VcrOgjOj4vgF9tfUYs1r2vHvU8XEZSiCE0eXsBH3I5KunB5S2Ayog33iZx
-	 Dd4UbHbZDJiAYrqtR8JZmaURCl14yeCYlvTjJSxP9DEmfrtiykVqS9cE4lp/U/hHNv
-	 tdKOOd2ZrsDTePhVixhpYQvm4yIMnfm+GpnhEBFlYZYbeS8VNuTCMbgGtLOtVN3kUJ
-	 eb5M8WpMcpOTA7biFofmQruYQ4uRk0O34JYWpD5u3sZCVyvGgUyS2FccGCBPNFCVT4
-	 wZoDd3Iy16ABA==
-Message-ID: <172f1a38-d7a8-4799-ad44-f3eea69f297a@kernel.org>
-Date: Mon, 28 Jul 2025 13:08:53 +0200
+	 In-Reply-To:Content-Type; b=Jw9PWLZJA+Z5KH53A6Xcj2Yt75Mhmc0NovHSQYhhPNY9sW9HrE5hIn9iXs9j9oMP9/ALjZ38DN+9Lx4a5xgjYPyYmgJUBsPYupXnPS8YysOm5O+GzMbgR9ggxz00ED4i9rzZSy8C84C8aR8xXJ7YACzKtssgj30J4etvXx4EqCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJdPAVXg; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-73e810dc01aso2347675a34.0;
+        Mon, 28 Jul 2025 04:11:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753701066; x=1754305866; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YelJq5+KqwjZ5s+zSqyZgpj7s0sgr+POM2J5j33U9x0=;
+        b=MJdPAVXgdwva8zTHYJyGqSIkEQpEXyZHemtmiyvjFnznQawXnCUJbMKBGMPUW/B5WZ
+         CBVxV+PvRaw2HKW5mGZeyVICv5B4z8IpAdfxvez/RbO9rf68iCrumP4snunE4dain0kM
+         P5PX/B6Z3LfPuvMfD/kM3uMMYSSdKklsKTs8QVq0W0OH2NZhy9qLgEaGaRSokvhLzJLw
+         Rnaw5mSML20NJvHRPFcBFxUVZgImzbCJLNu3lomvKCEdFn3J8UmjQCynWWBcSDc4P4iS
+         JM67cMZwj2DHJkuBlWqthP/Jqg2fewgilvFLr40NZxF28srHOUvgjih/TlZKdJaiXNyP
+         IEVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753701066; x=1754305866;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YelJq5+KqwjZ5s+zSqyZgpj7s0sgr+POM2J5j33U9x0=;
+        b=Wf4Orx3oTfCYc3+uyKeoldO+QOVph+nW5ktY4DmY8HWam5WRRtFxmlHuVW98Lnb+xo
+         QLnEFlkwQmiVGNjFGHVNmwlPovDHBGmdReYehWrQ6UT0+36BXEaUvevByhL/cOIbyblu
+         htdxX3zTyuC42P+BT6EViEaxsKNsrdZEmQdwhXp6Be7yfaL5JYFnvp1ONuv/9kCthIM/
+         nZUnNTaT768LxrWA57SRCfpUuMLoALAaKPHImkw2HQbUlU2VQp1DwZiXL2eiC5gHswzZ
+         iY73Ulv/RtRilobii5q/GV9yO/jYte1naqpcRKNVaIhrMWcmpzABarLJXA/4Fv+AeGEr
+         AiMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfcF9V6vKLfBeh2I+H9CeWDGmXR/Er3OiwY0bSAglyY48BmdbiMZMFG3hvMNRXQchNHY+2Bdg04H1YujjV4QM=@vger.kernel.org, AJvYcCXf4c9fCej/lvQRc1sqqLwafazIweWry7ucJhXdxdL3Sg0OUa2QwFvETbA7b1g7xMDmYdW8Mgxiaz5hA88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRiqbBmxQPSxVeauqiB0G38NVQrApUpWLDP5ofr4axXHTngLqU
+	hZx/PiwIvEcVW1HhlS3vM2MXaIuv3E+0nG50IFr1+XS7AsVksfAf8c8j
+X-Gm-Gg: ASbGncvGA8YAy80EI/0OhnvDY40wta5ddbhwp/vPJmH+1YoKKfIq5D9pG4tF5DeYTZ/
+	dno71GlVtQY+VMYjZIXidnx67PpEma8rIK8WG1kZK1eYjwpQ3c+EYfwmD++GuuJd64sBn6b2jrX
+	1nefPya5/6tlEWxtdYKOWUhpAm8hlgYDBZN1DmqKD44UM3IIXe7xgNJ/5rMZsleFgstec8WcOql
+	yJjoq6JDMMYtjEY00ZgVsa/ZElVTEKjmBhLZw2TlkNBxmks16jRHsbXLsh9Uq4bv0V9nA+ZEI19
+	fXCV8b95UCGbed/HG05Kizd1S6wYSiCA21IwdQIKCSkNoduxNWBNXtFNhmSCo5rq+xIq8iLa9y+
+	iBguztlUxLvJw8ls1gCpPrNIBUtpNB8ZxJbwpOW100iJ5IMRDYSEp6epw2WjWvm4jXpPPtc4ELj
+	5KglRO
+X-Google-Smtp-Source: AGHT+IE0MGdMlJEMmoauyyGL5IGwz1RfJolQSIkKm13B128tgDOr9GHPwxPr5ZGTrFtGLyQRiODJSw==
+X-Received: by 2002:a05:6830:4d92:20b0:72b:8fd3:e2dc with SMTP id 46e09a7af769-7413dcd7b58mr5857781a34.21.1753701065943;
+        Mon, 28 Jul 2025 04:11:05 -0700 (PDT)
+Received: from [192.168.86.39] (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-741481c5c92sm1027355a34.30.2025.07.28.04.11.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 04:11:05 -0700 (PDT)
+Message-ID: <a4b93eb0-9742-4f24-86d9-486ce87fbed8@gmail.com>
+Date: Mon, 28 Jul 2025 06:11:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,93 +82,169 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: Add initial audio support for
- Hamoa-IOT-EVK
-To: leqi@qti.qualcomm.com, Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/3] rust: maple_tree: add MapleTree::lock() and load()
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org,
+ maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org,
+ linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>
+References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
+ <20250726-maple-tree-v1-2-27a3da7cb8e5@google.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Andrew Ballance <andrewjballance@gmail.com>
+In-Reply-To: <20250726-maple-tree-v1-2-27a3da7cb8e5@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 28/07/2025 09:16, leqi via B4 Relay wrote:
-> From: leqi <leqi@qti.qualcomm.com>
+On 7/26/25 8:23 AM, Alice Ryhl wrote:
+> To load a value, one must be careful to hold the lock while accessing
+> it. To enable this, we add a lock() method so that you can perform
+> operations on the value before the spinlock is released.
 > 
-> This patch adds initial audio codec support for the Hamoa-IOT-EVK board,
-> including WCD9385 configuration, micbias voltage settings, GPIO reset,
-> and power supply bindings. It enables basic audio functionality for
-> further development. Basic test is good in Hamoa-IOT-EVK board.
-> 
-> Signed-off-by: leqi <leqi@qti.qualcomm.com>
+> Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+
+I have a couple of nits, but overall looks good to me.
+
 > ---
-> Changes in v2:
-> - Updated author email address to leqi@qti.qualcomm.com.
-> - Clarified that audio is validated with this change.
-> - Link to v1: https://lore.kernel.org/all/20250723-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v1-1-816991701952@quicinc.com/
-> ---
->  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 232 +++++++++++++++++++++++++++++
->  1 file changed, 232 insertions(+)
+>   rust/kernel/maple_tree.rs | 94 +++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 94 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> index 843f39c9d59286a9303a545411b2518d7649a059..91618e22e86c46c698b3639f60bc19314705b391 100644
-> --- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> @@ -124,6 +124,94 @@ pmic_glink_ss2_con_sbu_in: endpoint {
+> diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
+> index 0f26c173eedc7c79bb8e2b56fe85e8a266b3ae0c..c7ef504a9c78065b3d5752b4f5337fb6277182d1 100644
+> --- a/rust/kernel/maple_tree.rs
+> +++ b/rust/kernel/maple_tree.rs
+> @@ -206,6 +206,23 @@ pub fn erase(&self, index: usize) -> Option<T> {
+>           unsafe { T::try_from_foreign(ret) }
+>       }
+>   
+> +    /// Lock the internal spinlock.
+
+probably should add #[must_use] here.
+
+> +    #[inline]
+> +    pub fn lock(&self) -> MapleLock<'_, T> {
+> +        // SAFETY: It's safe to lock the spinlock in a maple tree.
+> +        unsafe { bindings::spin_lock(self.ma_lock()) };
+> +
+> +        // INVARIANT: We just took the spinlock.
+> +        MapleLock(self)
+> +    }
+> +
+> +    #[inline]
+> +    fn ma_lock(&self) -> *mut bindings::spinlock_t {
+> +        // SAFETY: This pointer offset operation stays in-bounds.
+> +        let lock = unsafe { &raw mut (*self.tree.get()).__bindgen_anon_1.ma_lock };
+> +        lock.cast()
+
+This cast seems unneeded. lock should already be a *mut spinlock_t.
+
+> +    }
+> +
+>       /// Free all `T` instances in this tree.
+>       ///
+>       /// # Safety
+> @@ -248,6 +265,83 @@ fn drop(mut self: Pin<&mut Self>) {
+>       }
+>   }
+>   
+> +/// A reference to a [`MapleTree`] that owns the inner lock.
+> +///
+> +/// # Invariants
+> +///
+> +/// This guard owns the inner spinlock.
+> +pub struct MapleLock<'tree, T: ForeignOwnable>(&'tree MapleTree<T>);
+> +
+> +impl<'tree, T: ForeignOwnable> Drop for MapleLock<'tree, T> {
+> +    #[inline]
+> +    fn drop(&mut self) {
+> +        // SAFETY: By the type invariants, we hold this spinlock.
+> +        unsafe { bindings::spin_unlock(self.0.ma_lock()) };
+> +    }
+> +}
+> +
+> +impl<'tree, T: ForeignOwnable> MapleLock<'tree, T> {
+> +    /// Load the value at the given index.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// Read the value while holding the spinlock.
+> +    ///
+> +    /// ```
+> +    /// use kernel::maple_tree::{MapleTree, InsertErrorKind};
+> +    ///
+> +    /// let tree = KBox::pin_init(MapleTree::<KBox<i32>>::new(), GFP_KERNEL)?;
+> +    ///
+> +    /// let ten = KBox::new(10, GFP_KERNEL)?;
+> +    /// let twenty = KBox::new(20, GFP_KERNEL)?;
+> +    /// tree.insert(100, ten, GFP_KERNEL)?;
+> +    /// tree.insert(200, twenty, GFP_KERNEL)?;
+> +    ///
+> +    /// let mut lock = tree.lock();
+> +    /// assert_eq!(lock.load(100), Some(&mut 10));
+> +    /// assert_eq!(lock.load(200), Some(&mut 20));
+> +    /// assert_eq!(lock.load(300), None);
+> +    /// # Ok::<_, Error>(())
+> +    /// ```
+> +    ///
+> +    /// Increment refcount while holding spinlock and read afterwards.
+> +    ///
+> +    /// ```
+> +    /// use kernel::maple_tree::{MapleTree, InsertErrorKind};
+> +    /// use kernel::sync::Arc;
+> +    ///
+> +    /// let tree = KBox::pin_init(MapleTree::<Arc<i32>>::new(), GFP_KERNEL)?;
+> +    ///
+> +    /// let ten = Arc::new(10, GFP_KERNEL)?;
+> +    /// let twenty = Arc::new(20, GFP_KERNEL)?;
+> +    /// tree.insert(100, ten, GFP_KERNEL)?;
+> +    /// tree.insert(200, twenty, GFP_KERNEL)?;
+> +    ///
+> +    /// // Briefly take the lock to increment the refcount.
+> +    /// let value = Arc::from(tree.lock().load(100).unwrap());
+> +    ///
+> +    /// // At this point, another thread might remove the value.
+> +    /// tree.erase(100);
+> +    ///
+> +    /// // But we can still access it because we took a refcount.
+> +    /// assert_eq!(*value, 10);
+> +    /// # Ok::<_, Error>(())
+> +    /// ```
+> +    #[inline]
+> +    pub fn load(&mut self, index: usize) -> Option<T::BorrowedMut<'_>> {
+> +        // SAFETY: `self.tree` contains a valid maple tree.
+> +        let ret = unsafe { bindings::mtree_load(self.0.tree.get(), index) };
+> +        if ret.is_null() {
+> +            return None;
+> +        }
+> +
+> +        // SAFETY: If the pointer is not null, then it references a valid instance of `T`. It is
+> +        // safe to borrow the instance mutably because the signature of this function enforces that
+> +        // the mutable borrow is not used after the spinlock is dropped.
+> +        Some(unsafe { T::borrow_mut(ret) })
+> +    }
+> +}
+> +
+>   /// Error type for failure to insert a new value.
+>   pub struct InsertError<T> {
+>       /// The value that could not be inserted.
+> 
+
+with or without those fixes, for the entire series,
+Reviewed-by: Andrew Ballance <andrewjballance@gmail.com>
+
+Also, if you need one, I would be happy to be a co-maintainer of the
+rust maple tree bindings.
+
+Best Regards,
+Andrew Ballance
 
 
-This was not merged, was it? Same comment as other patch, when you have
-entire code ready send entire board. Not chunk by chunk.
 
-You are not following properly release early, release often.
-
-Best regards,
-Krzysztof
 
