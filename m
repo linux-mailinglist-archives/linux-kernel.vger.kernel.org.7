@@ -1,133 +1,123 @@
-Return-Path: <linux-kernel+bounces-747431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086E7B133C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:44:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9054FB133C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE121896571
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:44:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6FEE1895A2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19246217719;
-	Mon, 28 Jul 2025 04:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC08EEC3;
+	Mon, 28 Jul 2025 04:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kom+2/9V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZFXQVnu"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFDD7DA73;
-	Mon, 28 Jul 2025 04:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923B442A96;
+	Mon, 28 Jul 2025 04:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753677836; cv=none; b=HVDx3qUKHMRxgVvLM8JaDI8i5VhfdjzpI24dixCW+w5yz1UDliByvq9IQ9OXg1hBwNzYc9yuYHK9QUVZqyGdnvMaL6O+/btmpSyj/Ly0etjN15szcKJLzju5+vcmhWPZNPg8qZC8fwy4Eta8C9cOVdHG6yv9T8nZgatPgiZVFFo=
+	t=1753678129; cv=none; b=fykKmcf6x4/ADY/TTspQFDRZ7j0WbV4DWnwPUl2NC/uiBP0XiaAZRqY8aBe1tjU1kdnsJSgSNKhA2vkCvEIpHBMKb16X+odrlPo6oq9dazTArAPv76DlhcM4rXAqDOHgQomBEPMwZIGMXwcfkEtKJG0TbpFinCTG9OHdNRdsSbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753677836; c=relaxed/simple;
-	bh=mUCxvSTRCDEpiiql5k4HQsjRgZR5GnyT10fpLFbTvw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sxrwZPHqnH5h19qi2HWPXYf3tTiy964r1QYhVdrhE/8lTbOWW1dtD64xrI2sCp24FjK26qnqdzg8/APilcsFVS2CMGuVPVaNE6rpphbPhvE1Ccl82fsej8Pkd2moUVixehEguTS9wwtngUdutb88FkNb7X1sg8jTV21e2hwJJ2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kom+2/9V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8460FC4CEE7;
-	Mon, 28 Jul 2025 04:43:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753677834;
-	bh=mUCxvSTRCDEpiiql5k4HQsjRgZR5GnyT10fpLFbTvw4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kom+2/9VLWh+L8XRpkBzEyshQoDtImaEas94vLO9SdTDAeWCzJA2GHFvx2hqA7c8O
-	 AUVNj/y89fXViIRqmZDLwnewPpqAuPxVBQ71S8vCc3zdoEO/NYIrrMxq0bWh/4rmzE
-	 xsdzoqIZbZCXZTq2m1NAU9gU2xR2HVKhIyXMwGVkvZdnbG3hzN+5D2OYqwJym62TK8
-	 qRm6DNWvSEn0kX2BTES4WpLIqExwRtfuXRBUsuTy1MhllogUkxb+PI/4Ve9nLMPs9B
-	 /qNYf0lCtbtTtWAmPm9jpvaZwD//0y/kcSztcIxQBccC/JJoCazOlD6p/83KmWBcyH
-	 oupPUoiWlkkGA==
-Date: Mon, 28 Jul 2025 00:43:52 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
-	josh@joshtriplett.org, konstantin@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH 1/4] agents: add unified agent coding assistant
- configuration
-Message-ID: <aIcACJhaU-NElyHC@lappy>
-References: <20250727195802.2222764-1-sashal@kernel.org>
- <20250727195802.2222764-2-sashal@kernel.org>
- <202507271934.68E1F0C728@keescook>
+	s=arc-20240116; t=1753678129; c=relaxed/simple;
+	bh=gUKMXU17IwJOI7LCLH6V8bkBVbIZTvkpLS/KBg8tk4g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K093InnFYLydNONtgGhRlqOPRr2pbX1hwFZri3MxnLm2xE4jKYfurCD8C9Fh0+p6N8IwWG5OtESr7pe721z3vR6ylNB/Kc11pg4XoE+Xo0B+lwJgDNPG+TowEiiUKaGiEVpT6rOSo/GjgYTshKl+s4bVD3GoCT3JJKeJORrH4DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZFXQVnu; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2fef7f6d776so1479062fac.2;
+        Sun, 27 Jul 2025 21:48:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753678126; x=1754282926; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nQMLoqWQhQ5MNTIX9+9V8B8tt15mA7M1bW5OJ2Q/PHA=;
+        b=XZFXQVnuplrW286ZA/Dg0m2C9Nflu9EhH2M8S0AcHI0J8pMyVRxBuI2c43PgSp/M8N
+         yu6sz6LKB0yQjM1lVpwxLTJyd1un7LdDRopaICZ4Z1p2bWbNjh9lqaH2omKDZsmZ1CFS
+         GGIKS/SKSTAwvStQhTmGzFAfFoQL0TZV3O4LcMvAlh0hUroIXUdk/6U7JfcJB1qSninF
+         9FTIt35foprwoBzBSTAME+/t/YKfdqG3mxd/sXPkn2hl9hEmFE/L9LX0CvEOBKtEGh2v
+         tOOrhIw24H+sGZqtudg6KjsS2T2VPdoT5vhyg7pfbMaMLcGyh15QUWPb0O0U6iSwGs1C
+         3UAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753678126; x=1754282926;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nQMLoqWQhQ5MNTIX9+9V8B8tt15mA7M1bW5OJ2Q/PHA=;
+        b=XWUWIaKvODsoklASNYV0ZJzzf0j5QViPDfnF/1r27RuS0oYqN31jQtzG86o2cv6fL0
+         o8IubSAVAh/ERX5YCyVh6zcjPrY6O1Sic07nXvGHNidj76Z5oHuGDc6ZXzLmt3hC08++
+         rjnTxxK5bxm8nmVk1PBRTFcntPlRj2FUbAcOOt8oTnsEi3f+APf7Ul/p+TEu/pyXdn2i
+         xhOwAucnYm3yaLSfEv+bBgNdv9c2Fujv9XJw3wV88++/6dmxw7TY4kAMEwWec5KzIq5s
+         Hsdi9bEizEj/oZ3iyM4EWR62h5vmu2gSFw/ckfFA8gnBnKp3Wm1q9iuBvqzwqyv0jqgT
+         CI2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWWcKDPRyOkoPGlfcEW8pv3YrAz47B0BALBcgX26QUyMMmlGcRfddX+InrRqWLoKvtyE7vWtH1nDyZ+Rmfq@vger.kernel.org, AJvYcCWeCk2L5dQsrKL2B2NX6Js8Z4rZP3EnhMjquysg+Us/nzI73mnJZg8X+nHEjboo8RXoHRwnorh6l9nqyyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKRYJwms1ZOfsVf0QHI7XfJPMFsC2lZvbKGQENhExlHnCTUgxh
+	Au4y1FgJaCOvdKP8wWGguQlbiLtb2/DWuqz2i4c3hLbL3vCT7UNj1uWJH7jAGuXX/dSv7Vj9lwJ
+	TijRPlNiAAY2TklxhtRzWvCKqGbma6Kg=
+X-Gm-Gg: ASbGnct6I7M03ZGxWNMb89yyW9D1cLHNnRTOn9yBMzLqTFgFqg2L56YleIRIp7Br8qL
+	GIKktlgmgw9AscPqzhwXXIzZeGYFlULQEkeA7qXAhTiznvfPw2C02upmnRZT+an4+oeLjE998yk
+	A1/He+CXauratrESeQycsEuQibRg6xLpDfsWs17dhI8YsEot3AK0xSv1sxlbG6yYUiMVL+QKEcy
+	Ghbg6cV
+X-Google-Smtp-Source: AGHT+IGSxCyhnHvN6/28pvM0FDfrpKnpP/wq1q/RwfMrs5WaSpldSMS8SGI4S1gQDkicnIvjlu/EJ3PcXpZug29E4Ss=
+X-Received: by 2002:a05:6870:440c:b0:2d5:1232:b081 with SMTP id
+ 586e51a60fabf-30702030ca5mr6854179fac.29.1753678126581; Sun, 27 Jul 2025
+ 21:48:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <202507271934.68E1F0C728@keescook>
+References: <20250727164433.203775-1-suchitkarunakaran@gmail.com> <2025072842-require-smokeless-f98f@gregkh>
+In-Reply-To: <2025072842-require-smokeless-f98f@gregkh>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Mon, 28 Jul 2025 10:18:35 +0530
+X-Gm-Features: Ac12FXw-f8gcLikleOTRRqdRgl4oefUVUcPHLUw7NrAA789EqirUTXN736CWEE0
+Message-ID: <CAO9wTFjuSch0Cc0yXV=PR9vkk+66i_4PSanrPqKYyXXhWjO-QA@mail.gmail.com>
+Subject: Re: [PATCH v3] kconfig/lxdialog: replace strcpy() with strncpy() in inputbox.c
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: masahiroy@kernel.org, nicolas.schier@linux.dev, 
+	linux-kbuild@vger.kernel.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jul 27, 2025 at 07:37:31PM -0700, Kees Cook wrote:
->On Sun, Jul 27, 2025 at 03:57:59PM -0400, Sasha Levin wrote:
->> Create a single source of truth for agent instructions in
->> Documentation/AI/main.md with symlinks for all major coding
->> agents:
->> - CLAUDE.md (Claude Code)
->> - .github/copilot-instructions.md (GitHub Copilot)
->> - .cursorrules (Cursor)
->> - .codeium/instructions.md (Codeium)
->> - .continue/context.md (Continue)
->> - .windsurfrules (Windsurf)
->> - .aider.conf.yml (Aider)
+On Mon, 28 Jul 2025 at 09:59, Greg KH <gregkh@linuxfoundation.org> wrote:
 >
->I *really* don't like this. I use the CLAUDE.md file as my instructions
->for my agent. I think all of these should be .gitignore entries.
-
-Sorry, I might have misunderstood you: how does it play out if we add
-these to .gitignore?
-
-The tool will just end replacing whatever we put in there with something
-customized that doesn't necessarily correspond to what the community
-will consider a "standard" set of rules for agents?
-
->> diff --git a/Documentation/agents/index.rst b/Documentation/agents/index.rst
->> new file mode 100644
->> index 000000000000..109266ca91ec
->> --- /dev/null
->> +++ b/Documentation/agents/index.rst
->> @@ -0,0 +1,10 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +======
->> +Agents
->> +======
->> +
->> +.. toctree::
->> +   :maxdepth: 1
->> +
->> +   main
->> \ No newline at end of file
->> diff --git a/Documentation/agents/main.rst b/Documentation/agents/main.rst
->> new file mode 100644
->> index 000000000000..98aa8250be9d
->> --- /dev/null
->> +++ b/Documentation/agents/main.rst
->> @@ -0,0 +1,7 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +=====================================
->> +Linux Kernel Development Agent Instructions
->> +=====================================
->> +
->> +This is the Linux kernel repository. When working with this codebase, you must follow the Linux kernel development processes and coding standards.
+> On Sun, Jul 27, 2025 at 10:14:33PM +0530, Suchit Karunakaran wrote:
+> > strcpy() performs no bounds checking and can lead to buffer overflows if
+> > the input string exceeds the destination buffer size. This patch replaces
+> > it with strncpy(), and null terminates the input string.
+> >
+> > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> > ---
+> >  scripts/kconfig/lxdialog/inputbox.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdialog/inputbox.c
+> > index 3c6e24b20f5b..5e4a131724f2 100644
+> > --- a/scripts/kconfig/lxdialog/inputbox.c
+> > +++ b/scripts/kconfig/lxdialog/inputbox.c
+> > @@ -39,8 +39,10 @@ int dialog_inputbox(const char *title, const char *prompt, int height, int width
+> >
+> >       if (!init)
+> >               instr[0] = '\0';
+> > -     else
+> > -             strcpy(instr, init);
+> > +     else {
+> > +             strncpy(instr, init, sizeof(dialog_input_result) - 1);
+> > +             instr[sizeof(dialog_input_result) - 1] = '\0';
 >
->And now I start my "this is redundant, why do we have to repeat it in a
->new place?" part of my review comments. :)
+> As this is a userspace tool, why is this change needed at all?  How can
+> this overflow and if it does, what happens?
 >
->I *really* think Agent instructions should only be about stuff specific
->to the agent. It is _supposed_ to be able to find the rest of it on its
->own.
 
-Right - I trimmed down most of these specific callouts, but I left a few
-that I found necessary since in my testing the agent would sometime
-forget about those. I'll comment more on the rest of your review.
-
--- 
-Thanks,
-Sasha
+Hi Greg. The primary motivation for this patch was the deprecation of
+strcpy(). Additionally, I believed there was a possibility of a buffer
+overflow if the initial string accidentally exceeded the length of
+instr, although the chances might be low.
 
