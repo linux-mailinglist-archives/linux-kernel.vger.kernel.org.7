@@ -1,250 +1,144 @@
-Return-Path: <linux-kernel+bounces-748428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022F0B14125
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:23:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0255BB14128
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80E957A230D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:21:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9A117D0B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA22275AE8;
-	Mon, 28 Jul 2025 17:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E93275AF7;
+	Mon, 28 Jul 2025 17:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ucgBpZWk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JyiCo8iG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="oFfqiisZ"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542EC1EDA2C;
-	Mon, 28 Jul 2025 17:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FC1274B49
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753723388; cv=none; b=aMpTtTe7TClO5HWW+MhaMZTGm18K1M3V+rFEIKjaQpnRjsU3EmaesVvTVBrbZ/IAsApsDH2QkEJGkkLtBtubVcThDVwPyx6DouCbghXIjAvF/Ge6Sv3YNxrs672jXwxTCGXa4WaZgNg8XI5WP9i8yQ5alSC3sa/iueOCijwjwwg=
+	t=1753723450; cv=none; b=kEcNzZwsqDS5eGfhJcBSbmYAhh3FRkKbvFPCi04oOqC3mwok6VjVUoA1rofveFB3IFr+wFK9IZyt00xNLCDm56W/mZjCrqTS/7l7EU1REOXkS3z/xzYj5QT1ghJJfqADFsp3X6t8QUbNCXZUgxNOJAiA/FCPWKxOYvAT8bxZVzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753723388; c=relaxed/simple;
-	bh=YD+YID1VDesHXGUkJdbX8qA5nh35vkjM1OptoY5oJ/s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=L9JRPHhC0dkGrgQFQfMPnk/MgxYqSK2qquT6uOS4jfqb1WPSz6SNqurJO1dJlgiIkqmMN93FIWV3A2UooQcXALkUkb/IzWJT6TO3tq2SW2a/nANL/40WdMvMbuyDj1hTp14XzCWFB64cO2EiAKI/QMehgYfHatkatAJn+/HbLfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ucgBpZWk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JyiCo8iG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753723384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jfjsVMj8e2ETr+zcziPiqvFC7IbRwRQfxk5W2jTYgf8=;
-	b=ucgBpZWkwt/agwAjz0329IISVcJLSRKP3Jxo2e7DYuYP1hjzuCsy4YRDtSz0ByQLMyyYqu
-	3tqY6UHxfEM/vmFufInt+SjTTpTgBj4O0VjT/f0Lm8fwY4S/79eK/zmUnR6L9KJwnbTV/r
-	7cOJ98PjzzTGXWntm9ybfBeYi8Ct2koErmSk1pGttGjH+Y6Vs6eR8ePqrk8oaGq/wzyAJh
-	Aq/rnDafMaszc9t6YCqNhSL1+Xyi5cvRK3xqqdf0rNCCIpoAOONZJbC4HMVYrTB08pqHd1
-	RNFvOm6qmO6LzpcXZ5BpsbZlv/CciITqXIoSV7nmzj4ltAO1Ytcd+Ht9tw4bsQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753723384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jfjsVMj8e2ETr+zcziPiqvFC7IbRwRQfxk5W2jTYgf8=;
-	b=JyiCo8iGdEHN3AGtJdF1j/gW2cosdHJYvfowG25nlEHE7VVjL5dSogBNGZq0iYKLGZ+nPf
-	3egVCdDyX3p5tZBg==
-To: Chris Li <chrisl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Len Brown
- <lenb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>, Pasha
- Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, Vipin
- Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, Adithya
- Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>,
- William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, Chris Li
- <chrisl@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky
- <leon@kernel.org>
-Subject: Re: [PATCH RFC 20/25] PCI/LUO: Avoid write to liveupdate devices at
- boot
-In-Reply-To: <20250728-luo-pci-v1-20-955b078dd653@kernel.org>
-References: <20250728-luo-pci-v1-0-955b078dd653@kernel.org>
- <20250728-luo-pci-v1-20-955b078dd653@kernel.org>
-Date: Mon, 28 Jul 2025 19:23:03 +0200
-Message-ID: <87zfconsaw.ffs@tglx>
+	s=arc-20240116; t=1753723450; c=relaxed/simple;
+	bh=2ZdwF4PQYW8147pzn4fPe5HUYoQfVvkk9RKNY+W2sFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZGHafNH82bLD6eeskwjaDqx/seWPctfkwyShfiGwQrlHCQZz2MOwRuWhdNjg15IB39iECxImL+SIq5HKEllbddkGkMd+3RcNIvto3CV5I8NUt0ZWGnGvRXM33Qn0/IZLp1sMb8pzqNuOQpxW8qdo7E/OeZOqDSDXRYOYm18HSRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=oFfqiisZ; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70749d4c5b5so8981036d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:24:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753723448; x=1754328248; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6XdqDqbJDwpBMe3m0FOfH7VD8pnof2gn6I7X5rLReRs=;
+        b=oFfqiisZYO5wCla3SH4BvnBhGCqgeALrVtPIFnG5G5tgZr1Qtj8SKODdsEattfQtIy
+         oAS60hUo8gWsAVZffO4SWt0Vr8NPKV5hQg+uGZ3Qfr+6VH2GA1ZkRDHwFfPFNyWOTNCb
+         QRBZH8uPb4geRq6lZwY7NjWV62eyojt5amb7KoxqLS2LyMR1kChJNta9lIBPYj37Ku/K
+         DNf/u7SlbqYy+Z41nBF32zrOUgtUIuuuOI1guBqApAswaeo/mMZu9Ld5kHY65wtXsfZO
+         UgDB+/szoQ387mzVXm9eTBwGZK9wH89SQPGOYcCbdqlIS/hn0mpAm84uq+xJ/HORWMQr
+         auGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753723448; x=1754328248;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6XdqDqbJDwpBMe3m0FOfH7VD8pnof2gn6I7X5rLReRs=;
+        b=Nax8c/5l6NnHvilltF1+UQfxvzuVuYXLUrGVOZb5zKBzGbK6oqFfnkd2OiyNDlNjEa
+         QUjkkpTcaJ7G0AIT7mbFUZ9MFcNNQZx0WG7Kd0N8gF7smEeQ6A9d+p5iLT9xALuoe4z3
+         XeLChScbAo0tz654X+wP2J6vGM2PODVXNiELtLxxio0/sPnT33Ex7sZNT8Hoe+S+xi1t
+         Tc+ENzO2jVNV9YTz4OYVUm8XuczgYqxtwXtrdfnyyHt6kSHmu3tTm0l027LwSuFk6C9r
+         t6WTkAMA/hKagxuHcIYItUk2T4fXze2m0/PQjkRYWggCxvJN0DeC42XEUl3iwDCIkyLF
+         tlsw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6gokzadQts2B+F/Ky+rLTVx2TvDtS29WNytzKoaCioEfXHonfDH85XRjnp1lLUkYDhDQuRBp/VjNJgaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4P8PGNYaYk23+i96NCpY/giVyPwph9aR+2gj3BUdMsYnkjGi0
+	+hKuZwuSwqXrhKtbdJL+LvqtNt1jyfSyOtfKCsmsFmPC4qw5ZDMzjeXjRIVA4gu86Zc=
+X-Gm-Gg: ASbGncseV81yJkwUdOCX6QUehocyznT+eHu6Mc8Q/Q3NrswTBPR7Z3+qeGTYqgmR9E1
+	sl16NAZDHhg20EgnVGrwGZZN1UDE5Mv4GSoFknw6Ipiy4C+YDamPEnkzSmQjxDC+E4RIFOBcCZ1
+	1uwK+ZTTVQMS1v/EyHwzUbUtO8dhMsHZvJVKXBaX7ftp2z7U8NvZ0Y4EoWAtmruVkCf5PPyb382
+	RB4gM0VrURil8pwRPZDXrRKlWlx7i/mNN6sL5HuES/dGZvbmHlSTVrdJ5nGGCUSMnhm2Gv7dvcO
+	Y+khy9qskogxb/ERp5cHt5rmnbMLH+WtkAeDkg07Cb2wwfK0PJXquk1raJWlqiGvGb7GiM4SDbU
+	qPiH+kqTzyGqsMJ5WtKgRHQ5Kg5anY0ByT5otqr6iUr6i7PeT2J21dkAtOvt/tBNi4cnJfClSYO
+	Y=
+X-Google-Smtp-Source: AGHT+IHY0LkystMqkqxAK7PK7GfR60GTUEUQKdwp2aWknAFkvv9APqEaMLJSHGrUrYhnngwMHSEy0w==
+X-Received: by 2002:ad4:5ccf:0:b0:707:38e8:d10b with SMTP id 6a1803df08f44-70738e8d36amr98246666d6.24.1753723447718;
+        Mon, 28 Jul 2025 10:24:07 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70729c4db6bsm33605116d6.70.2025.07.28.10.24.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 10:24:07 -0700 (PDT)
+Date: Mon, 28 Jul 2025 10:24:03 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>, Jason Wang
+ <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, KY Srinivasan
+ <kys@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
+ <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Michael Kelley
+ <mhklinux@outlook.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>,
+ Kees Cook <kees@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Kuniyuki
+ Iwashima <kuniyu@google.com>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Guillaume Nault <gnault@redhat.com>, Joe
+ Damato <jdamato@fastly.com>, Ahmed Zaki <ahmed.zaki@intel.com>, "open
+ list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, "open
+ list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] netvsc: transfer lower device max tso size
+Message-ID: <20250728102403.14269ea7@hermes.local>
+In-Reply-To: <20250728081907.3de03b67@kernel.org>
+References: <20250718061812.238412-1-lulu@redhat.com>
+	<20250721162834.484d352a@kernel.org>
+	<CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com>
+	<20250721181807.752af6a4@kernel.org>
+	<CACGkMEtEvkSaYP1s+jq-3RPrX_GAr1gQ+b=b4oytw9_dGnSc_w@mail.gmail.com>
+	<20250723080532.53ecc4f1@kernel.org>
+	<SJ2PR21MB40138F71138A809C3A2D903BCA5FA@SJ2PR21MB4013.namprd21.prod.outlook.com>
+	<20250723151622.0606cc99@kernel.org>
+	<20250727200126.2682aa39@hermes.local>
+	<20250728081907.3de03b67@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 28 2025 at 01:24, Chris Li wrote:
-> The liveupdate devices are already initialized by the kernel before the
-> kexec. During the kexec the device is still running. Avoid write to the
-> liveupdate devices during the new kernel boot up.
+On Mon, 28 Jul 2025 08:19:07 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-This change log is way too meager for this kind of change.
+> On Sun, 27 Jul 2025 20:01:26 -0700 Stephen Hemminger wrote:
+> > On Wed, 23 Jul 2025 15:16:22 -0700
+> > Jakub Kicinski <kuba@kernel.org> wrote:  
+> > >  
+> > > > Actually, we had used the common bonding driver 9 years ago. But it's
+> > > > replaced by this kernel/netvsc based "transparent" bonding mode. See
+> > > > the patches listed below.
+> > > > 
+> > > > The user mode bonding scripts were unstable, and difficult to deliver
+> > > > & update for various distros. So Stephen developed the new "transparent"
+> > > > bonding mode, which greatly improves the situation.      
+> > > 
+> > > I specifically highlighted systemd-networkd as the change in the user
+> > > space landscape.    
+> > 
+> > Haiyang tried valiantly but getting every distro to do the right thing
+> > with VF's bonding and hot plug was impossible to support.  
+> 
+> I understand, but I also don't want it to be an upstream Linux problem.
+> 
+> Again, no other cloud provider seems to have this issue, AFAIU.
 
- 1) You want to explain in detail how this works.
-
-    "initialized by the kernel before the kexec" is as vague as it gets.
-
- 2) Avoid write ....
-
-    Again this lacks any information how this is supposed to work correctly.
-
->  drivers/pci/ats.c            |  7 ++--
->  drivers/pci/iov.c            | 58 ++++++++++++++++++------------
->  drivers/pci/msi/msi.c        | 32 ++++++++++++-----
->  drivers/pci/msi/pcidev_msi.c |  4 +--
->  drivers/pci/pci-acpi.c       |  3 ++
->  drivers/pci/pci.c            | 85 +++++++++++++++++++++++++++++---------------
->  drivers/pci/pci.h            |  9 ++++-
->  drivers/pci/pcie/aspm.c      |  7 ++--
->  drivers/pci/pcie/pme.c       | 11 ++++--
->  drivers/pci/probe.c          | 43 +++++++++++++++-------
->  drivers/pci/setup-bus.c      | 10 +++++-
-
-Then you sprinkle this stuff into files, which have completely different
-purposes, without any explanation for the particular instances why they
-are supposed to be correct and how this works.
-
-I'm just looking at the MSI parts, as I have no expertise with the rest.
-
-> diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-> index 6ede55a7c5e652c80b51b10e58f0290eb6556430..7c40fde1ba0f89ad1d72064ac9e80696faeab426 100644
-> --- a/drivers/pci/msi/msi.c
-> +++ b/drivers/pci/msi/msi.c
-> @@ -113,7 +113,8 @@ static int pci_setup_msi_context(struct pci_dev *dev)
->  
->  void pci_msi_update_mask(struct msi_desc *desc, u32 clear, u32 set)
->  {
-> -	raw_spinlock_t *lock = &to_pci_dev(desc->dev)->msi_lock;
-> +	struct pci_dev *pci_dev = to_pci_dev(desc->dev);
-> +	raw_spinlock_t *lock = &pci_dev->msi_lock;
->  	unsigned long flags;
->  
->  	if (!desc->pci.msi_attrib.can_mask)
-> @@ -122,8 +123,9 @@ void pci_msi_update_mask(struct msi_desc *desc, u32 clear, u32 set)
->  	raw_spin_lock_irqsave(lock, flags);
->  	desc->pci.msi_mask &= ~clear;
->  	desc->pci.msi_mask |= set;
-> -	pci_write_config_dword(msi_desc_to_pci_dev(desc), desc->pci.mask_pos,
-> -			       desc->pci.msi_mask);
-> +	if (!pci_lu_adopt(pci_dev))
-> +		pci_write_config_dword(pci_dev, desc->pci.mask_pos,
-> +				       desc->pci.msi_mask);
-
-This results in inconsistent state, which is a bad idea to begin
-with. How is cached software state and hardware state going to be
-brought in sync at some point?
-
-If you analyzed all places, which actually depend on hardware state and
-make decisions based on it, for correctness, then you failed to provide
-that analysis. If not, no comment.
-
->  	raw_spin_unlock_irqrestore(lock, flags);
->  }
->  
-> @@ -190,6 +192,9 @@ static inline void pci_write_msg_msi(struct pci_dev *dev, struct msi_desc *desc,
->  	int pos = dev->msi_cap;
->  	u16 msgctl;
->  
-> +	if (pci_lu_adopt(dev))
-> +		return;
-> +
->  	pci_read_config_word(dev, pos + PCI_MSI_FLAGS, &msgctl);
->  	msgctl &= ~PCI_MSI_FLAGS_QSIZE;
->  	msgctl |= FIELD_PREP(PCI_MSI_FLAGS_QSIZE, desc->pci.msi_attrib.multiple);
-> @@ -214,6 +219,8 @@ static inline void pci_write_msg_msix(struct msi_desc *desc, struct msi_msg *msg
->  
->  	if (desc->pci.msi_attrib.is_virtual)
->  		return;
-> +	if (pci_lu_adopt(to_pci_dev(desc->dev)))
-> +		return;
-
-So you don't allow the new kernel to write the MSI message, but the
-interrupt subsystem has this new message and there are places which
-utilize that cached message. How is this supposed to work?
-
->  	/*
->  	 * The specification mandates that the entry is masked
->  	 * when the message is modified:
-> @@ -279,7 +286,8 @@ static void pci_msi_set_enable(struct pci_dev *dev, int enable)
->  	control &= ~PCI_MSI_FLAGS_ENABLE;
->  	if (enable)
->  		control |= PCI_MSI_FLAGS_ENABLE;
-> -	pci_write_config_word(dev, dev->msi_cap + PCI_MSI_FLAGS, control);
-> +	if (!pci_lu_adopt(dev))
-> +		pci_write_config_word(dev, dev->msi_cap + PCI_MSI_FLAGS, control);
-
-The placement of these conditionals is arbitrary. Some are the begin of
-a function, others just block the write. Is that based on some logic or
-were the places selected by shabby AI queries?
-
->  static int msi_setup_msi_desc(struct pci_dev *dev, int nvec,
-> @@ -553,6 +561,7 @@ static void pci_msix_clear_and_set_ctrl(struct pci_dev *dev, u16 clear, u16 set)
->  {
->  	u16 ctrl;
->  
-> +	BUG_ON(pci_lu_adopt(dev));
-
-Not going to happen. BUG() is only appropriate when there is absolutely
-no way to handle a situation. This is as undocumented as everything else
-here.
-
->  	pci_read_config_word(dev, dev->msix_cap + PCI_MSIX_FLAGS, &ctrl);
->  	ctrl &= ~clear;
->  	ctrl |= set;
-> @@ -720,8 +729,9 @@ static int msix_capability_init(struct pci_dev *dev, struct msix_entry *entries,
->  	 * registers can be accessed.  Mask all the vectors to prevent
->  	 * interrupts coming in before they're fully set up.
->  	 */
-> -	pci_msix_clear_and_set_ctrl(dev, 0, PCI_MSIX_FLAGS_MASKALL |
-> -				    PCI_MSIX_FLAGS_ENABLE);
-> +	if (!pci_lu_adopt(dev))
-> +		pci_msix_clear_and_set_ctrl(dev, 0, PCI_MSIX_FLAGS_MASKALL |
-> +					    PCI_MSIX_FLAGS_ENABLE);
-
-And for enhanced annoyance you sprinkle this condition everywhere into
-the code and then BUG() when you missed an instance. Because putting it
-into the function which is invoked a gazillion of times would be too
-obvious, right? That would at least be tasteful, but that's not the
-primary problem of all this.
-
-Sprinkling these conditionals all over the place is absolutely
-unmaintainable, error prone and burdens everyone with this insanity and
-the related hard to chase bugs.
-
-Especially as there is no concept behind this and zero documentation how
-any of this should work or even be remotely correct.
-
-Before you start the next hackery, please sit down and write up coherent
-explanations:
-
-  What is the general concept of this?
-
-  What is the exact state in which a device is left when the old kernel
-  jumps into the new kernel?
-
-  What is the state of the MSI[-X] or legacy PCI interrupts at this
-  point?
-
-  Can the device raise interrupts during the transition from the old to
-  the new kernel?
-
-  How is the "live" state of the device reflected and restored
-  throughout the interrupt subsystem?
-
-  How is the device driver supposed to attach to the same interrupt
-  state as before?
-
-  How are the potentially different Linux interrupt numbers mapped to
-  the previous state?
-
-Before this materializes and is agreed on, this is not going anywhere.
-
-Thanks,
-
-        tglx
+The problem is that other cloud providers don't expose the VF, the hide it in HW firmware.
+The userspace world is a mess, with systemd, netplan, cloud init, and the SuSe stuff.
+And custom appliances that assume that there is a default eth0 device on boot.
+Yes, there were users that expect to see eth0 all the time.
 
