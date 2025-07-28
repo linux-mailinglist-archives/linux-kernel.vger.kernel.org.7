@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-748221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A043B13E12
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:18:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F407B13E16
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC7D189FE79
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8E133BB363
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A002727FB;
-	Mon, 28 Jul 2025 15:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89AFB271461;
+	Mon, 28 Jul 2025 15:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABCZHSXj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aod8NwN3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F4427380C;
-	Mon, 28 Jul 2025 15:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44261D5145;
+	Mon, 28 Jul 2025 15:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753715890; cv=none; b=MbMSDWdQzvKsBuddC0YJgcN0Oxt/lqAytfniasTUlRgwTDx0AS8UDdBlJBqd4raFnUM48b/mNL3fkMVuGcEk+1dR/8Dw3Ha9RuzyeWGT7OIxikSaGxgVA+oWAJHIElJo3RmuaHJJG3YlH0FWJwiTOSDJAl5wIMRM810/pnilxko=
+	t=1753715949; cv=none; b=R5QD2ekF7d/OlnNRndtvazOikQ0ttkNWOo+83Tmy2GHwW1u/mQW924nLniRX0S0/Q7+pUxkXq99jHCSYe/Qn4/wDjMPaRCIBlEske5nuK8R7tCKjtc9Tin3GI2wVqyV8mKJMJyksqWhK1gE3PhqA4bUI4/ViBUXopA0CAq937Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753715890; c=relaxed/simple;
-	bh=bG4zIdy+dA3Y/597WfQz5S9Yzld1+fhveqk83VwKwGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kEHTmKnlW9ahQ1Qk3TyXBAMUt5ZonxomOIwE+lilqv195mZiZ0NgyyimRodmYhEJlBMdiqUAsC79vUGCIvdgAdKvMT6edW7X14PMD8GXDny3db/SrixUTv2Ke8CQfzA05z8wh2l5Ndhai//KLH+v3VuLRHhCvG0c94G320FZ8PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABCZHSXj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8689C4CEE7;
-	Mon, 28 Jul 2025 15:18:06 +0000 (UTC)
+	s=arc-20240116; t=1753715949; c=relaxed/simple;
+	bh=jtQPl9fdZvZtEb/y/9SCQaBctzLJmmM7srwq7qNJiRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jbts4n2dsA9Q0LzgFVQBBmHQyvwwoL29hC1hY98no5gp3jNh6ERu/4s/R8nMMgtxOQCQn9rpJd0ReC5pPil9OiinqQJVynCs8ice6CiX3cTnHwqPrh61j2I66NfgNyApexvlgLEdORjPdcq4fGzC/tc/GGIP1nsgcvOeseA2cLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aod8NwN3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2AA5C4CEE7;
+	Mon, 28 Jul 2025 15:19:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753715889;
-	bh=bG4zIdy+dA3Y/597WfQz5S9Yzld1+fhveqk83VwKwGo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ABCZHSXjOos49tL59Dk8cHCSKeO/de1eGKwhkkjOA9b/Ozn/9BnHzniY9uP64taSY
-	 m9ipeATvUo2PWSb6yXWgll6sRPVATUU7sA9AO4cnC/QDFNaOTldN+Fw2FPVSMzwuTZ
-	 TJ6J3ZVIB7b19KsYe0H4Am5Tuqx4IJLYl6U4faFUtgGNLhy2AQf6rGd8EDxqdPiDer
-	 L5MQFjICo5WQzyGXdBhXprJUCwFujIMeRNsvwXbefV4JMF+spHFyySgBGkENVzl+4w
-	 I6IwDOoaDltotLINExzJbRySrGQW5KC+SEbwMA/uFST5xL/zmFBgmeQcxQ2jWr4ypp
-	 EWyAkZpwcBXGQ==
-Date: Mon, 28 Jul 2025 17:18:03 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	linux-s390@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v5 10/10] s390: vmlinux.lds.S: Reorder sections
-Message-ID: <aIeUq0qYXoNIePwd@example.org>
-References: <cover.1753354215.git.legion@kernel.org>
- <2860d5a5e7c6279b3836537e20b0fa0c40d2ba0f.1753354215.git.legion@kernel.org>
- <CAK7LNARV+8vZPUtX8iG_hEAt8tCchRPFobK85tv9dbJwVqYgsw@mail.gmail.com>
- <20250728140109.7289Ae1-hca@linux.ibm.com>
+	s=k20201202; t=1753715948;
+	bh=jtQPl9fdZvZtEb/y/9SCQaBctzLJmmM7srwq7qNJiRM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Aod8NwN3/JOlahigpX8mZ9sELREBI4cu7rK1H5sM1/q+xT5ZHCVKqfjGNj6GgoJxL
+	 0aPINQS5wd453yRNHlVQBR4AFlgZP8g0O64eaqAqFhB0RK3lUz0/rTB2Zy232Hm+fu
+	 QY063sbsaWf9gh/4DkQcGVaFH6Hx0O4UoWYTCzhjfdxY6HD7zTv7FXQsqYCbKHWdit
+	 Agd6gVeG0xg1uDYFeqXjArZTucP+rbprdsv+oUOodlg5psJ2/FiuHuMCKEmvwypreK
+	 0FPiURxyPmd0niG04uFJs+OQhUvfTdH02fgTPQnc5NmbNMUAaYwbN8KpBdiY57XgPx
+	 rIk9mOR3HyeNA==
+Date: Mon, 28 Jul 2025 08:19:07 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>, Jason Wang
+ <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, KY Srinivasan
+ <kys@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
+ <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Michael Kelley
+ <mhklinux@outlook.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>,
+ Kees Cook <kees@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Kuniyuki
+ Iwashima <kuniyu@google.com>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Guillaume Nault <gnault@redhat.com>, Joe
+ Damato <jdamato@fastly.com>, Ahmed Zaki <ahmed.zaki@intel.com>, "open
+ list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, "open
+ list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] netvsc: transfer lower device max tso size
+Message-ID: <20250728081907.3de03b67@kernel.org>
+In-Reply-To: <20250727200126.2682aa39@hermes.local>
+References: <20250718061812.238412-1-lulu@redhat.com>
+	<20250721162834.484d352a@kernel.org>
+	<CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com>
+	<20250721181807.752af6a4@kernel.org>
+	<CACGkMEtEvkSaYP1s+jq-3RPrX_GAr1gQ+b=b4oytw9_dGnSc_w@mail.gmail.com>
+	<20250723080532.53ecc4f1@kernel.org>
+	<SJ2PR21MB40138F71138A809C3A2D903BCA5FA@SJ2PR21MB4013.namprd21.prod.outlook.com>
+	<20250723151622.0606cc99@kernel.org>
+	<20250727200126.2682aa39@hermes.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250728140109.7289Ae1-hca@linux.ibm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 28, 2025 at 04:01:09PM +0200, Heiko Carstens wrote:
-> On Sat, Jul 26, 2025 at 07:59:16PM +0900, Masahiro Yamada wrote:
-> > On Thu, Jul 24, 2025 at 10:50 PM Alexey Gladkov <legion@kernel.org> wrote:
-> > >
-> > > Reorder the sections to be placed in the default segment. The
-> > > .vmlinux.info use :NONE to override the default segment and tell the
-> > > linker to not put the section in any segment at all.
-> > >
-> > > >> s390x-linux-ld: .tmp_vmlinux1: warning: allocated section `.modinfo' not in segment
-> > > >> s390x-linux-ld: .tmp_vmlinux2: warning: allocated section `.modinfo' not in segment
-> > > >> s390x-linux-ld: vmlinux.unstripped: warning: allocated section `.modinfo' not in segment
+On Sun, 27 Jul 2025 20:01:26 -0700 Stephen Hemminger wrote:
+> On Wed, 23 Jul 2025 15:16:22 -0700
+> Jakub Kicinski <kuba@kernel.org> wrote:
+> >
+> > > Actually, we had used the common bonding driver 9 years ago. But it's
+> > > replaced by this kernel/netvsc based "transparent" bonding mode. See
+> > > the patches listed below.
+> > > 
+> > > The user mode bonding scripts were unstable, and difficult to deliver
+> > > & update for various distros. So Stephen developed the new "transparent"
+> > > bonding mode, which greatly improves the situation.    
 > > 
-> > Thank you for root-causing!
-> > 
-> > > Cc: Heiko Carstens <hca@linux.ibm.com>
-> > > Cc: Vasily Gorbik <gor@linux.ibm.com>
-> > > Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> > > Cc: linux-s390@vger.kernel.org
-> > 
-> > Hi s390 maintainers,
-> > I need this patch for kbuild tree.
-> > Ack is appreciated.
+> > I specifically highlighted systemd-networkd as the change in the user
+> > space landscape.  
 > 
-> Acked-by: Heiko Carstens <hca@linux.ibm.com>
-> 
-> But can you reorder the series so this patch comes before any of the
-> patches which introduces the above warnings, please?
+> Haiyang tried valiantly but getting every distro to do the right thing
+> with VF's bonding and hot plug was impossible to support.
 
-Sure. I will put it first to avoid warnings.
+I understand, but I also don't want it to be an upstream Linux problem.
 
--- 
-Rgrds, legion
-
+Again, no other cloud provider seems to have this issue, AFAIU.
 
