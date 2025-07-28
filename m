@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-748500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD634B141EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:22:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6508CB141EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C833A27E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:21:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924691789E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CF7275AFF;
-	Mon, 28 Jul 2025 18:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5458275AE0;
+	Mon, 28 Jul 2025 18:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2vvpqoWH"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sdwxLcsn"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC9D221554
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A44D273D65
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753726902; cv=none; b=NqwqOcCe1ikdlJZGpZ5jMexcZt/udVI67V5wf7ceunWTR79DNKAxizsHs73G1pQi6dwZXtvjHoU+s9t0VeMePxELTozLhe0D2YiNvk1phuQYhERlXtAbmypCKwAl6ZQJpavHBBc0XFmRVQrYJW0vLukIvdRM2WC01xpHyHbO+7g=
+	t=1753727019; cv=none; b=cANAEe03LMBCeRamV6g8g3dOnJORTko6VYgcbYI7UoWi0Jbrgv2LYTKKTeq5s4hvyqw3R9hbjp2xObFQnqss3zf8yxkosWahNidIodIwq+BPhDR2WrPssDSh2u7bJ6lwKwwK8+0MM4XZgywy3u/Z+/WVmxidBPgN75o4NCqJzPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753726902; c=relaxed/simple;
-	bh=dG9bHeLM1xk//tApPMXIJ61OroVAnIbOewqczIzkC8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPBZTt4pzkaaGDIAhqnOhAOwBhzeHiyfhvcNG2gqr9AnV10XFCJrMWGJE7hB38x7F7GHo/PifeOshhe4JM74Bkct5fRCizs6f0tdEW9KlQr6MxQjZyBP6+Km7XnL1WDajdhUUv8bEyn6jU6G6Jlk+m8br5Ouhvl5RDaogllIxRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2vvpqoWH; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1753727019; c=relaxed/simple;
+	bh=fJx91lKfzgdhsl7yFezad7/4EJlrVplyv1lwNEgIiw8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tPE6vbhKLkqGByuQA+lFwAihpnF5rL8zWhKrRHEhVJTD4r9EBjs8fRLL5RkPsNdjmdVatRrM+Ebg8/rsasYMKdYMopNcZpqYmDhddIYf28XUIdvebgxRCcK6J5pZFJSDBT7gKG1x0eDTFfamxTphWreit1dG925O/SshZJ4cgxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sdwxLcsn; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-237f18108d2so26105ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:21:40 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a575a988f9so2598245f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:23:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753726900; x=1754331700; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3hmyZvfsTHdwJz4dIDqTvttC6a6u3BEsF8dGiWKG2w=;
-        b=2vvpqoWHblnKEOj90Avdz3B37jWPurYdeg/lZya7Ptkf23uD8B9wXrLUCOn9F4VkPe
-         8beMMMtFJxSVqwiKo5akZZySU1wt0h+avefCmoRVgZJQV/aoifsdajPGiqtjMjctjgK7
-         1p67y5w2nhWQdQSlN0Ytu+9DUVQWnURkxSkHZBKtV7nmg0GcF8RASh059DUd6H8pEpAl
-         oSuqeBl3qMN1vZRZeAzr3ZAbVFoX2XcYRyvxU3ZGsNdZWXmLx+NLBVPBiU4OuvLvJHWq
-         z/Bcq6ipwOyH4fHhMFYgkaZgE72mEN+GLlQD/uYcBXfOT39VF7d9gv6zDbjAnqpdNpnV
-         ZVbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753726900; x=1754331700;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1753727016; x=1754331816; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U3hmyZvfsTHdwJz4dIDqTvttC6a6u3BEsF8dGiWKG2w=;
-        b=dDJeIrOlpgaV0nzyj3eCdbl3RDFzWgwBlPJDUkPmnTcSso6oP9q22vhOJybAAKvLTV
-         mn3IKid2Luj91kSKjHi5jGfQCXoVrs5FqtDEE/P9Q12FPrg+I3GKU5lXfGLZyex2T8Zl
-         9mrijDDA4M2Oh51vKv5jqdpyzkCJDQ14KPK1p8c5VC6UqvQU7Bxfq4nrGmUD84ULAz7K
-         MHKpFsfd+ONTFycgca1+Tuchn9hJifhe7BUCb5r5ocBPO8TgIBxiOowSREtn1QpmkWDO
-         exnyiTcgzkhqEqD2F7aTVZ2sCzKwE06AYCKtAvKvX+9YlkxltJBndyigXcayLjuOf2i4
-         08GA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGtrotn+8fGBSvdwUJhAEQtjSSVoevv1nWkpq9E8NdKEK/Tt2ZgiUGFuhdj00gQfhZ30Zzx6feCqlJZzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJBZLH9h14TKuTBQtoxl7o/44f4W6NbZhDPdizWKPjpthF98hC
-	c9SsSKz2AdVzogajSf6On4Q7Si0LCjAbd+wyZ8oN7bWoA/ImXad92BnoCuEtOkAfJQ==
-X-Gm-Gg: ASbGncugTkvEOPnU7+q81Jmv7PCxbXXYS936u7pGGy08APsF/iHqTMeyF/EC0/gilXP
-	SGQCySK5M0Lwoi+7oSu1OG6ca7CISEfWKjj0H0Nf1bm1J6PoUPXuG/Rqr+m/J1kIt2QXJzDwjg9
-	pc+MFvXAPve2cfcNseA3wUFjIEXzN90B0CEbyfQdzkpMf975S1HIuch0wdGSJu1/sn55YCQXlFA
-	uMyf7ShKcluU83tH1mdAIv2srHX2tdTmaTxmock8byXwqgSCBTFd0Xofy6ajbG1WdCvoT9fmc5h
-	0q/PW8TiGHK367x2dz5trFfY6JgDDuhJzjZasCCk/AOxJMV+baHzU8PaiIw04HGC9v7PfTA/WfO
-	TJ3DTNvvZD97LO1j3f5KFcBQHs2v98+vBCf+smF9EnGewSZsZMPu/aJhIrv6uzeJLxAMf
-X-Google-Smtp-Source: AGHT+IFcpgJb1R5wQYv4TfO2DcoDyNX+OGPn08Wv51Nbvqxg+j9hq2EXJS/j5nO2oSPzqax8ItBhqg==
-X-Received: by 2002:a17:902:e890:b0:240:3c64:8638 with SMTP id d9443c01a7336-2406789b433mr308495ad.6.1753726899944;
-        Mon, 28 Jul 2025 11:21:39 -0700 (PDT)
-Received: from google.com (111.143.125.34.bc.googleusercontent.com. [34.125.143.111])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-768cf25edecsm1635674b3a.137.2025.07.28.11.21.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 11:21:39 -0700 (PDT)
-Date: Mon, 28 Jul 2025 18:21:34 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Yonghong Song <yonghong.song@linux.dev>
-Cc: bpf@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 0/4] Use correct destructor kfunc types
-Message-ID: <20250728182134.GB899009@google.com>
-References: <20250725214401.1475224-6-samitolvanen@google.com>
- <5d7d1ff3-14cd-4c18-a180-3c99e784bbeb@linux.dev>
+        bh=fJx91lKfzgdhsl7yFezad7/4EJlrVplyv1lwNEgIiw8=;
+        b=sdwxLcsnQaH/JJH241kf8OiqNWBQiZSvGDz57NBohWwu53KsEW+Nj1opPHZbigCCkv
+         xcMYRhoj6bIPIY0KJLUktTrcniX24ab3/SUxc7xNqsljvFP8PU+nse3Y+aRGpgZMkRPo
+         6ZtblJQfdpSeaIcH/iiEwzuneRHxRS2UGYgLmc3CFdnewsMZ11siIkB1p8Ya9+c3NvmZ
+         R3TWTSqPMd0V+E23o2Cwyf59NrAOz/1y34Ibv8LAOO4vM54lbYS9QpLNx4nV/hnFvG7A
+         bho1Q5HriW67txt9+XSO63Emf24wY+MccAkT9fpJV+ZjHt2TFi/6Prm8QQtGqcdDtjrH
+         pxZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753727016; x=1754331816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fJx91lKfzgdhsl7yFezad7/4EJlrVplyv1lwNEgIiw8=;
+        b=KE7JMJ0oxr0fRronRK+HWmL9/nzn2IxQtr98WPULyeqRZ+j5ZvtiUetIHt6DP2kkIi
+         ofzBLsHnNYQPhw7cxxinXNkW+zRFP3PjuBBHXO6In1P1whB30LL60AeLdzMRffGt8seO
+         5S9bMb9+LWuluBIbklSDTiWirbFNLDJU4atL4LH+Uz1NHloJzNrv9X5qMe0LCrVVsb9Y
+         umWHG4InVVYDDD2O+/VWMR7K7qP0uIhRrM/pcRurImF2MFMFdiPnkP7i3uPj263r1nIF
+         5hwOLA2/g6Hc7GczuHXrhxqrxhXOkdibSaBixNbDJRqUeGmVw9jhKWhG7JbJ21laBA6g
+         iwiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtUU6gWQSAUJBgmYuHZj5z/rEK+ch0JNsnYBQqBnZyO+y2cqe7tYPUxwdiDk/5pbIrsES/QHJMuAQe9ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws5SnT/ql3MR1cIbQnbOeRrXGNaxiPSks7ZDQU2FgKlY9lQoUm
+	6j2O0YKDT9jw3/VzOscYuDpf6HXSHRkoOHatyXtf7qR2t9SabAbc5FUsdOP8qS2EZN96nq+H4aH
+	xMlhubLX8poUPtaAf0wXUCCTz5CiuVtHCSrKvKhe7
+X-Gm-Gg: ASbGncv/CdD8+R8NiftK0Ct7OqY2dKqvDWzxFHGOvGJRv1wO76U2KXXQ2BN+cz/rT01
+	dXa5h015KTy5hCAKt+Wszum9r9GXNY7wfK6P1i37FxqCQhuEUphMn466pzuC7iA1N7s7b2geiLd
+	HnGUSMzkCUKTD081p3y4VcK6d1X2iKXfrGCqkAYm9zr9k4VuogEFWr1/dYTUEd15QR4cKJvitgE
+	94A4+RC
+X-Google-Smtp-Source: AGHT+IFkf+piymzDEEWeOo9CeIGkE7E/rIRy4j76KaA9Fw18Ysyzuv5Q6jXC2pKQtV+Qwi6zRC+rLwgT+D0YOs9RhNA=
+X-Received: by 2002:a5d:64ec:0:b0:3b6:de9:8079 with SMTP id
+ ffacd0b85a97d-3b77657d03amr9755496f8f.0.1753727015552; Mon, 28 Jul 2025
+ 11:23:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5d7d1ff3-14cd-4c18-a180-3c99e784bbeb@linux.dev>
+References: <20250724185700.557505-1-lyude@redhat.com> <20250724185700.557505-2-lyude@redhat.com>
+ <aIXWOgTWdSODz7EH@google.com> <ad9e2b5518c2e2cbe72b0e61bf2d7701fc306008.camel@redhat.com>
+In-Reply-To: <ad9e2b5518c2e2cbe72b0e61bf2d7701fc306008.camel@redhat.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 28 Jul 2025 20:23:23 +0200
+X-Gm-Features: Ac12FXz24ytrg31AREbfAYQD7jZergph1DC1DHvH7mQGiyK7s3Z8oEcUaZSMfGQ
+Message-ID: <CAH5fLgioqkcaJ_M7q3CEERPniREidqnWxS1=_HM89mFN5=q=iQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: time: Implement Add<Delta>/Sub<Delta> for Instant
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@kernel.org>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 25, 2025 at 04:42:29PM -0700, Yonghong Song wrote:
-> 
-> With this patch set and no CONFIG_CFI_CLANG in .config,
-> the bpf selftests work okay. In bpf ci, CONFIG_CFI_CLANG
-> is not enabled.
-> 
-> But if enabling CONFIG_CFI_CLANG, this patch set fixed
-> ./test_progs run issue, but there are some test failures
-> like
-> 
-> ===
-> test_get_linfo:FAIL:check jited_linfo[1]:ffffffffa000d581 - ffffffffa000d558 > 39
-> processed 4 insns (limit 1000000) max_states_per_insn 0 total_states 0 peak_states 0 mark_read 0
-> #32/186  btf/line_info (No subprog):FAIL
-> 
-> test_get_linfo:FAIL:check jited_linfo[1]:ffffffffa000dee5 - ffffffffa000debc > 39
-> processed 4 insns (limit 1000000) max_states_per_insn 0 total_states 0 peak_states 0 mark_read 0
-> #32/189  btf/line_info (No subprog. zero tailing line_info:FAIL
-> 
-> ...
-> 
-> test_get_linfo:FAIL:check jited_linfo[1]:ffffffffa000e069 - ffffffffa000e040 > 38
-> processed 9 insns (limit 1000000) max_states_per_insn 0 total_states 1 peak_states 1 mark_read 0
-> #32/202  btf/line_info (dead subprog + dead start w/ move):FAIL
-> #32      btf:FAIL
-> ===
-> 
-> The failure probably not related to this patch, but rather related
-> to CONFIG_CFI_CLANG itself. I will debug this separately.
+On Mon, Jul 28, 2025 at 8:21=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
+:
+>
+> On Sun, 2025-07-27 at 07:33 +0000, Alice Ryhl wrote:
+> >
+> > I'm not so sure what to think about this clamp logic. Maybe it is the
+> > best way to go ...
+>
+> Yeah - I was kinda hoping the mailing list would give me the direction to=
+ go
+> on this one. The other thing that I considered that might make more sense=
+ was
+> instead to implement these so that when over/underflow checking is enable=
+d we
+> panic when we get a value out of the range of 0 to KTIME_MAX. Would that =
+make
+> more sense?
 
-Agreed, that looks unrelated to this series.
+Well, it would certainly be more consistent.
 
-Sami
+What does your use-case need?
+
+Alice
 
