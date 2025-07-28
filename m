@@ -1,80 +1,82 @@
-Return-Path: <linux-kernel+bounces-748143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C909B13CFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:23:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1C4B13CE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14443A45C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:20:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 361C17A289D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBFB26D4E4;
-	Mon, 28 Jul 2025 14:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3420226D4CE;
+	Mon, 28 Jul 2025 14:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nT73o+Tp"
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CNT0kvku"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A5026B76D;
-	Mon, 28 Jul 2025 14:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E0126D4CD;
+	Mon, 28 Jul 2025 14:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753712426; cv=none; b=hpSdNwR86GtXitD0NTIyDNj0nqwYfLBeZxYmTpHEeehsV6c8cH+H7SfclTxdN8vJeUljs2aWf0ezZzP5FLcWlWgSn1A9Ciy5YNW3KyZQJu4/kWooCETV7YvlwxjyWo2Fhk9do4jkvA+tKLKlIS6cWJXqqnF26YQDHXVz4vk5K4s=
+	t=1753712434; cv=none; b=uuDawRjBKMnDcs22F10Bm7cF90S8W3SwN9WJ41dHQ6SfOVjruinrdnbMtPoiKQmOwZqE2o901bjry8SOB9tq+wXNtj5VdMPD//JTleBcpQ+ZtYOJKInKgSzt5eb/OaJN011kLrOtChcHpSVKkNtewCEIB+814xkzfKdfezlqdMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753712426; c=relaxed/simple;
-	bh=1PggnwSVufJ15eLoLiPtMJonLerZeCTUUrMLHt/MvWE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XTdsPVYqcB5VOqsAsm8fbbxtC3qywuBzEK7kDvQP4ESZL3t26D5oCrrM4FS8lxZI0Avj9M09kv9KCEjtWqbT7jHfXoK6VFQPDCB4K2K2eVYdPTrjfPtjeIaN+0pgYiwK6HaCx7grcFI5DtodibJRp2gsBMrB9XlcvU8BiGLTz80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nT73o+Tp; arc=none smtp.client-ip=209.85.210.194
+	s=arc-20240116; t=1753712434; c=relaxed/simple;
+	bh=PxJJD5BdYiecz3+HAlAUv0mqXDsb9508pUsTSJAhu14=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VGv9vRqZQbiZTx+3g/3UvyYNoAi1GU8G4AGQtYnm90tL5D3s/qGPDSSceVlCKqZpoQFh7HJnQe58goMWauvLGNvheY4PbxavYvBwSS9jDFSciCGMTZHxN9r2corvY8mhiJmqbgS1t3zGbtxhCwI5Olqdezta8dFbWhJCvjNFM/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CNT0kvku; arc=none smtp.client-ip=209.85.210.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-7426c44e014so3680391b3a.3;
-        Mon, 28 Jul 2025 07:20:24 -0700 (PDT)
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-76858e9e48aso744644b3a.2;
+        Mon, 28 Jul 2025 07:20:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753712423; x=1754317223; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bZbPgCBxEfjAABl7BFhrPe8nrXtS6lUGZ8fQixqxipg=;
-        b=nT73o+TpESLzaVXy5b0GkfG4e3vGAqGVkKvauQNGRTKiUcp7TzXjniXxkCtS7w6Y7Y
-         lPuWa4O/uvbxvYloeFCe61xikZTBCP4QYFgz/kDB/5KiUKVDjBxdQdPPmbWp/9H/eRNV
-         2g0MyagJcG2rasdhECxlZq8lCA4WMB5BnPfY+dEKbiXd1VveQ6rRv+3e8TPkxVJx43q9
-         PjjpMwpLPTQK6/lOOChVDOaxLYZLXOXoS7H1gM6hyViHqDUCL4YcKRJE1c30h4ucq4NF
-         K8/HkLcMwPGcyYUynWX3DfbqIaSfZ23PQ8Qx/+vurGaGg8ibpddXQ2aTtBH3tyYgrtco
-         BIbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753712423; x=1754317223;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1753712432; x=1754317232; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bZbPgCBxEfjAABl7BFhrPe8nrXtS6lUGZ8fQixqxipg=;
-        b=LdE2HQislQ81ZixzbUqRa5Ffir4tD87a192kYiLDPvCvs++Io+cTQxOpKmfSaWV84e
-         LLGPOungEPxp8UFTMfavj3Sk3s1KNx+H46xs3jIjxB+CgsXUqQgbMJhSfEYeO/+zoITR
-         OXQzqlsriSeU5Hzh3dQeME3pyd7tdIsxzWizBD15tl31y6VMk/OhfuK4vSHClnclgTom
-         0P/yvFX2ShOUR5YyhtqU85mY09ffYtIKj/ZWC+Uh2RbS+oGhxZgWZZF9cShimHj3cI6Y
-         ljVs2iOnVW9Wg4MT8BklQCD1zOUBNrwGyrz+ATo6CrNeH57TwYMKWEcHRMWnAAndF/xS
-         Yqag==
-X-Forwarded-Encrypted: i=1; AJvYcCUAtudLmPYWMjSRDLoLsAybTzw0+wjzsGJSQCHqtGnvry/YnuXMUhO5Pt0/b4UOhvcc/GOwGWuSPZt/@vger.kernel.org, AJvYcCWaVoXwNqAhPvf/DiqOhSY1Y5CxWAwFmMz2OJ7Aon8D0FPBer1/AJBBk21i+F/VjwL0ZiabIwIOgBC3vLSr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkRd7iyv+9jZIPaxVZTFNkNCX/q931PrwdIMnAuWXSppCtwv9w
-	lKpTIHYu9+IeFBR8ZKw93Ivi5wZCIjRJiQMji0vex4+aNPGQoIPhty9BH+dpTssLMlHEsQ==
-X-Gm-Gg: ASbGncvfA4Zf8C6Lz3k5cZUUjfs/fpF3fR5NSx242Q7UqMAb9z/6nULTKMDBjBGOH6h
-	t6EZP9eDgf25LkFla6yuQJ11NRuSOInr9Og5y+K8Tub7cKdaoyTo3pI1NbdhatSI1uXTfle86HA
-	95d2k1dZck7u3H0nSi6W/Db7mxeSHO9IQiuHxqqeBCMvUkgAB5IvmX2h1yWhqoklSikUKx90Eti
-	APLkNXLXWEy+9/tBycHFll5e0HBmbcGVOY1i8xc7ztHEXXu3VzT5nrmM7RQJrF/j7H2mUdelIrP
-	ncU8nKXyvdiYNosUxynR1h+FBSmd/MJuH1nxcjvTsPgZQ8xM53ZD3OOcvUQPzaitVkEORQ8sWbD
-	rO66OlKYUprhNpSwypUQQCKHINjIhhC/V
-X-Google-Smtp-Source: AGHT+IHtegYM4BlLYXwS9tWAhPo7ODJPuXBsbqpjo4lyceFKEN4p/yLS5sVZ/sven5XQoNC9rK1+NA==
-X-Received: by 2002:a17:903:2054:b0:23f:f68b:fa0b with SMTP id d9443c01a7336-23ff68bfc5cmr57909205ad.37.1753712423167;
-        Mon, 28 Jul 2025 07:20:23 -0700 (PDT)
+        bh=9fCuuegqOgh7yiTp50CPz7MDoO4s4zlMG+vfGbQq2dc=;
+        b=CNT0kvku/uN25iYxo6BC4NzvGDUoWgJ6cnGmVdjQHzGUFrKmXIXMtgbJholuAtr8/A
+         Uca3NfWfXHq+zrT/674nXMeU+0ztg9z+iL03Nh1aOH9sFeTX66f9MKPTSURCB3ZKRA2F
+         dYfYT7ayS2G0shY7lbqPhOt8/5kgBK4fhVtcmLbivSZuSJavEZrz99YG4B6WniklzdYa
+         vO2JLnuZqj6yu51dawN0HAGHYHhIUjrRgwzlkIz1qTjvIHGXMsW//oKZoaRcsksJhCl+
+         LynY0Mv/daVpOMJ29IJG4XDZna6SXludZuKJT8Br3zdzq95zoDf3BPOyTc20dEZOaOyp
+         Ok7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753712432; x=1754317232;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9fCuuegqOgh7yiTp50CPz7MDoO4s4zlMG+vfGbQq2dc=;
+        b=AWnZdsv8u763GvMMakd4BOFWbQzvR9fbu7YbCRtmwsTiLb9Lt+9LdA1zUa1YdbC0ru
+         9/1vvSwJ/ayJ7kRqqXKMp4b3WMXU+1ZbsZL330BuI0hUgKzZ1qKWTqiR7MgYcCtEu2ON
+         HqTvHBuDGbwStYYj7bjmJ3VBcvBtSATkQq4xz3LMexpvteA5/roTBm+RjXhyZydU0l/y
+         HyWC3xrjTN5K+Ayprw0y8J32VudjUAiNT/jw78YTHjHc4bziIXhtxX3iBX6MgJvT5VXu
+         v6Ifj8g5ybi1WXRJTppnlKUaXYMgkgPerMEXBl4/1PoTBM+U5H74waE6UjNtvccKQe9v
+         OwLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZqIvr/EDDecVccVeXOmaf4Rd2SXstgrnUFUGV86dTyeS9+B3JeWrhdtNZcfpLPNxu9B9209nbutev@vger.kernel.org, AJvYcCVyphXBuC/qjxYGolCA135wwoyAjQ3mscaSHWql3FcV0G21hqRGZ9eijDLeiegubfNorqtdLUL7RHJsfUWV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXiRk1j7QG4qh6Uj+7hcxyTj5MqagDUGAaQP6lG0wN69wPo2sb
+	BcnKciSTDEUqgXIAXvWUlh2YxkZCj/uSMWLzjFpv0UkfhBDNO/a1CEmaHKOycQQyQRmjQA==
+X-Gm-Gg: ASbGnctNOYj+GyHXDZYTDHJGptJzm3OaylqavO74Kb+MMvC56/MQ04IG4aQO0A/tkGl
+	mR3Q2miapzkF2VMmBX8Sagb4wcUl71c0OH7cgbloFb2zJE+423e5UrhFpB5MI9LZAKFTIoHCu8Z
+	msh3gEc/oghfeOAeO+liho3ohtfZhgokZems+bKfj9/NgtxzcvSLB+M7VZ2xetHkxlg6ZgyvW0C
+	IgVnf7L6FyDlBt2Kb7VteyFvTYHiEva+6hO9jtfqiXtcExjayIpatz0B79t4bEUYVMMlOk1lc3Y
+	XoVokdlfbyzRspZwri5b6K/AUn6ii5Uc0hs4aqTLxEN6DQl3i+OhhTY0hv2ror3EXXzayXNculT
+	lQj8gXyN1Ek09EYnxORLVK8hw7aFMY+dd
+X-Google-Smtp-Source: AGHT+IEObfYk/Wz6SuT7jPbvRWcLuE1W9sEClVf+JDsYA2szDPxZRsKWqL3+hYUXv4qBE7HxdUFs+g==
+X-Received: by 2002:a05:6a00:4fcf:b0:749:4fd7:3513 with SMTP id d2e1a72fcca58-763389ac8ddmr17218955b3a.16.1753712431742;
+        Mon, 28 Jul 2025 07:20:31 -0700 (PDT)
 Received: from localhost ([2408:8256:2284:4127:de49:6dc9:a446:157a])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23ffa4bc557sm36791405ad.116.2025.07.28.07.20.21
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-76408feb725sm5638582b3a.60.2025.07.28.07.20.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 07:20:22 -0700 (PDT)
+        Mon, 28 Jul 2025 07:20:31 -0700 (PDT)
 From: Troy Mitchell <troymitchell988@gmail.com>
 X-Google-Original-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: [PATCH v3 0/2] clk: spacemit: fix sspax_clk
-Date: Mon, 28 Jul 2025 22:20:14 +0800
-Message-Id: <20250728-k1-clk-i2s-v3-0-5d7579f02227@linux.spacemit.com>
+Date: Mon, 28 Jul 2025 22:20:15 +0800
+Subject: [PATCH v3 1/2] dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK for
+ SSPA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,11 +85,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAB6Hh2gC/03Myw6CMBCF4Vchs3YIHSCoK97DsIAylQmXkhYJh
- vDuVuLC5X+S8+3g2Ql7uEc7OF7Fi51CpJcIdFdPT0ZpQwMllCeFKrBXqIcehTxyRgUZZW4qbyA
- cZsdGthN7VKE78Yt179Ne6bv+GKJ/ZiVMkMyVW8NpWzdZOcj02mI/15pHWWJtR6iO4/gAm3zi8
- 60AAAA=
-X-Change-ID: 20250717-k1-clk-i2s-e4272f1f915b
+Message-Id: <20250728-k1-clk-i2s-v3-1-5d7579f02227@linux.spacemit.com>
+References: <20250728-k1-clk-i2s-v3-0-5d7579f02227@linux.spacemit.com>
+In-Reply-To: <20250728-k1-clk-i2s-v3-0-5d7579f02227@linux.spacemit.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
  Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
@@ -97,61 +97,39 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
  spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Yao Zi <ziyao@disroot.org>
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753712415; l=1761;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753712415; l=860;
  i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
- bh=1PggnwSVufJ15eLoLiPtMJonLerZeCTUUrMLHt/MvWE=;
- b=8/rLwSFmfnZFKcqahbV5wIBUuymvjJZLulCrEK4AJqVN8GYHfpSpUo+qbM/Du5QUrTG29NJ8b
- ggVx5UlgBWuDTyPGviJ3GCGDdxHb5d8QjCYF9Y8HM990Ykcu7Pyhy3q
+ bh=PxJJD5BdYiecz3+HAlAUv0mqXDsb9508pUsTSJAhu14=;
+ b=AR0VW6KLcEEQ1zKFa+FXIaRCpIsXGTDIiSgdsPRiKOVyzjaJvdb7zMJtedM2MZ2oc3qcz5rlq
+ kuoNFsP3bN4DgKsQQIamO7iA44EY3wLztWmhbxcN0QtEPsV+5GMDkBb
 X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
  pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
 
-In the SpacemiT public document, when the FNCLKSEL field of
-the APBC_SSPAX_CLK_RST register is 7 (3'b111),
-which is a reserved value. And BIT3 of the same register is
-a reserved bit.
+In order to use the virtual clock SSPAx_I2S_BCLK in the device tree and
+register it in the driver, this patch introduces the macro definition.
 
-But the documentation is incorrect. In reality, the value 7 (3'b111)
-of FNCLKSEL is not reserved. Instead, it indicates that i2s_bclk is
-selected as the parent clock. Similarly, bit 3 is not reserved either.
-When FNCLKSEL is set to 7, bit 3 determines whether i2s_bclk is actually
-enabled as the parent clock.
-
-In all other cases (i.e., when FNCLKSEL is not 7), bit 3 has no effect.
-
-Importantly, whenever FNCLKSEL is set to 7, bit 3 must also be set to 1,
-otherwise the selection of i2s_bclk becomes invalid.
-
-Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
 Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
-Changes in v3:
-  - Fixing ABI-breaking behavior
-  - Modify commit msgs
-  - Link to v2: https://lore.kernel.org/r/20250722-k1-clk-i2s-v2-0-2f8edfe3dab4@linux.spacemit.com
----
-Changes in v2:
-  - Use virtual gate instead of new function for sspa
-  - Add Suggested-by tag: Yao Zi
-  - Add Fixes tag
-  - Link to v1: https://lore.kernel.org/all/20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com/
+ include/dt-bindings/clock/spacemit,k1-syscon.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
----
-Troy Mitchell (2):
-      dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK for SSPA
-      clk: spacemit: fix sspax_clk
+diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
+index 35968ae98246609c889eb4a7d08b4ff7360de53b..9be578953d71e79e93eb10eaa35b47b97812e826 100644
+--- a/include/dt-bindings/clock/spacemit,k1-syscon.h
++++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
+@@ -179,6 +179,8 @@
+ #define CLK_SSPA1_BUS		97
+ #define CLK_TSEN_BUS		98
+ #define CLK_IPC_AP2AUD_BUS	99
++#define CLK_SSPA0_I2S_BCLK	100
++#define CLK_SSPA1_I2S_BCLK	101
+ 
+ /* APMU clocks */
+ #define CLK_CCI550		0
 
- drivers/clk/spacemit/ccu-k1.c                  | 25 +++++++++++++++++++++----
- include/dt-bindings/clock/spacemit,k1-syscon.h |  2 ++
- 2 files changed, 23 insertions(+), 4 deletions(-)
----
-base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-change-id: 20250717-k1-clk-i2s-e4272f1f915b
-
-Best regards,
 -- 
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
+2.50.0
 
 
