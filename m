@@ -1,203 +1,153 @@
-Return-Path: <linux-kernel+bounces-748295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C518B13F32
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:50:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471DFB13F27
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488813A71E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:47:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF64618C13ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54278273D8C;
-	Mon, 28 Jul 2025 15:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45FC271A84;
+	Mon, 28 Jul 2025 15:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XKwouImz"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b97a9+QX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DBB272E55;
-	Mon, 28 Jul 2025 15:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5848770813
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753717627; cv=none; b=JbP2zJNh4soC0nQGHKFrnexCthYGUjWiecHFaiaxKrUFHn0JUWxi2xjCnXm5hbnz1gLvVXt594Ebmd6Fz4WbZ6APBcqC4umA0yYP0dKfl6nwMpDr+X/HqP6RQU4juEE5vZqf3c0eXldmmylLRchsi2Oajg5sGjMvvW77WQ5XNsE=
+	t=1753717642; cv=none; b=n38jvPSCGK+JMJFt0izcSFz8U+3N0KvJt8454KgC1Xp6BEy0tSQF2/ssOphL5GCJde3sX0JoOhqRxkkqhETrw/udKCJJzJ8Wkwr8HO5Sy2OeREBQOplx3dC95LkvRt2eqy5ZI6oE0YtFXpflELlb5+H4CJiOaThaU2V8Bk94RR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753717627; c=relaxed/simple;
-	bh=J+l9cKMuczm50aEB9ARRWFUk5tTOBOkHrqIwWDYaHHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7rKE+p5+0EvXmKI1Q0zy7aBZBhO2yCUJoBwwZFYVbBTeU5D/vb1kqg5fYY6pf7rOmeJcNkUliNUzGkAwxijbkIHdxuDINehebGGUbbLisbwCwDIp2RPxppK5iDQ34BtsKPM4oEsAilM22ZQw3OswqPA69uRFy2yN0r3efXiqck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XKwouImz; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SED6eu017476;
-	Mon, 28 Jul 2025 15:46:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=wYshrD
-	h2UwgehPPuM4B8pmbV/cHnjYZjBFsSXFvAlYg=; b=XKwouImzMPhCwWlsYqt3/d
-	D+iAdckJwis7TUif3fGZ1MxYW0nIPok2+HiQpwCcaSsVWpLjWhNNPJA74Def+cUc
-	GxfG6mq0JcaHunv180U+FBLWIMYkiiKv8CYLJH75nphKktHroE8yG95ia+BYk9Oq
-	fNl5N4524yY16b/ZoPfeUOSGzonUgDeGoVW4M83TLyIzB/k8s7qZB5iphLndEBFZ
-	PAFZUsEWotJ8bQUMOIj5jRpWbX1v4OPmd2BEbuvgPfqOqib1qIGzIA0djq5d8Ksr
-	8Q106GY6GYy14cwctF2MlcdrL1R3apcMyYYW2xBSLGIV+fSvX59I7bk/uWRLM30w
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qd59x1w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 15:46:47 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56SDWBvU017965;
-	Mon, 28 Jul 2025 15:46:46 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4859btek3r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 15:46:46 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56SFkitU41484774
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 15:46:44 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A99E520043;
-	Mon, 28 Jul 2025 15:46:44 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9D38E20040;
-	Mon, 28 Jul 2025 15:46:43 +0000 (GMT)
-Received: from [9.111.164.146] (unknown [9.111.164.146])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 28 Jul 2025 15:46:43 +0000 (GMT)
-Message-ID: <a0f9a3ef-f32a-4bff-8ab1-4181ad61780f@linux.ibm.com>
-Date: Mon, 28 Jul 2025 17:46:42 +0200
+	s=arc-20240116; t=1753717642; c=relaxed/simple;
+	bh=egEuEBlsNKwrfzIztqb0TZJdB1FrMTRyzYhn8Er615U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PohBHyk9WVRH796zeEmwYDVS3WuuKuh9sPp4bTrJ2axzfu/wAJcfYf3DAIIFTZUTlgprKTY0sQS33a83rqGRlqSM5jnpWXrzO6EeeVVZPSLq3FwwWdxDmoMX7I1yIkxe2zZ/iK26u7YnC46dHw+zx01gjEplwsET4rUm9PgsAT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b97a9+QX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753717639;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Wtgg7/5DZCONUh3qG3g+QKqH7gdzPFy8ZnZGt8cpek=;
+	b=b97a9+QX85oto6u1X+4Kpg6QFUxytPe8BrWb3qFzYu1GeP6uwhcTL0z+a/NsU3S3klqQef
+	utEHrVB0UVL8LtarL7LQHfjCPRZ77CBN4E0IWNhP15zvb6IOaiy3AZF5Mqn4HRgJunWIyo
+	mhmgvByzyxOm52k1HdgHzrMLMgh70iE=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-627-uN_IRHNuNYaXEd2pDCdVDw-1; Mon, 28 Jul 2025 11:47:15 -0400
+X-MC-Unique: uN_IRHNuNYaXEd2pDCdVDw-1
+X-Mimecast-MFC-AGG-ID: uN_IRHNuNYaXEd2pDCdVDw_1753717634
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b7825a2ca5so10371f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:47:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753717634; x=1754322434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5Wtgg7/5DZCONUh3qG3g+QKqH7gdzPFy8ZnZGt8cpek=;
+        b=HROO92/jCbebB6WiY1lI/Rn9CCrRKllHrw1t7/nnazMBq3ctpHDLSIMd6vtWEpiRug
+         jH6X5rCYRBogSBQUv7oM5ri6fFL4galX8yvpR90/LX0MqLdGdNOBF552/9VHemuty0f7
+         bPIkF3QZvJcKsRGR8pLAtR6MWxPvtQsxNJkx1PDLrnrywaj+lwy+CExdTcCNQ3CSngw2
+         A9PZ8NRazC3T1MgJ4wVxLYe374Mq7XFrFbgk8GGcapenDn0BXbS1erQ3ju9++4aQPyVo
+         F9Z2OW7L+ug6XPt89sRN6XDR3mfrgru/X9Q/5O3pGGiOC/g2T0cZQDJULeJzIgIEIaOU
+         cwtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgtLG8XAd0Mm4w3Eddt3gMsH3Y6Wf9dH5JaKma8ypY6Vaiiq2AAtyxfhe2oEaDdHsu8uZe5wOhS88usCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJrRmwqffKmaj7JULaLPES5Ewg5dxEO5BeDhZME+AI4sxwC1oQ
+	sMQBS8UjFZxGDdFBZi1ehSRhmPKqTBdWQPuGAujVM89nhkkqMeD6cwxdJiHpFn1hJ2grYBTRQB3
+	aPPMZFJLiw6IwpQgjcCY7ixYZ2h1GQtcFpEMhbaNJqVgGt3YCq4YEA7mR9HOA3UWl3lVyNwfmE9
+	8zktPzAeUJaDdiLjxahtSxjqu57ecnWzYdfY9PRUD4
+X-Gm-Gg: ASbGncv3Mm3Hyzgd2++GTQnXsszyd2PgB8AvPpuovQYVT3mVDmKsCKbD27i3Fxq66Ab
+	51HxHHw1fNkBM70Ci3OJkoTJWFeaHBl01ZtxSXCDclbfcb0F4ZDaykFW6KLbx1RDN3QBteVIhbG
+	wSZy2+17fJSXoIwQ2K09YGsw==
+X-Received: by 2002:adf:a392:0:b0:3b6:1e6f:6219 with SMTP id ffacd0b85a97d-3b78e61f76dmr31681f8f.29.1753717633829;
+        Mon, 28 Jul 2025 08:47:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEuUHh2z9sR3e6IbuZjWrbdwq+hlIKVlO+oMmkrmiIewdVjOer41IlJpF2WIwA6ygSq5MtN+KcAQYw/quy6K0=
+X-Received: by 2002:adf:a392:0:b0:3b6:1e6f:6219 with SMTP id
+ ffacd0b85a97d-3b78e61f76dmr31669f8f.29.1753717633375; Mon, 28 Jul 2025
+ 08:47:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 03/10] unwind_user/deferred: Add unwind cache
-To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-References: <20250725185512.673587297@kernel.org>
- <20250725185739.573388765@kernel.org>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20250725185739.573388765@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDExNSBTYWx0ZWRfX9qU48vydE0dS
- JBRrL8veboa1wlAgSDHF+4kJiOxxLTcbs5BZU5keUEvEVaIe8bnpEfzXRDC22Zc3UgxLZhskGqK
- Ahwf5vi2hFkbHn33aeHv9dYNE3NifgN1T41MQNrnllYSzhSWvF5W/OnTZc5MUqh7je+AD8558CL
- J+NzqTTW80cNUswEs6SPQPOms5aitGL3lr+O05p+98nYVXTwaOr1OSTdPqarJ8iqx5iItXCQoA2
- I4bcHcxI2WSDaydUrIy+Nsw8HxdtFA5ImLC68fOC1jSw2rWp/Cb77nXdc5gkj23hqD/rJsMsY6e
- HcGN62v+6RtorGaUQBmqAzFHzK1rn5MTs+3FU2ffsNYmbkuP8rTl6icjqNM0j2GfMaYpmbWFvi8
- rWyQLLHq046rnF/4pV2zCqYl9gZzqpF9wOUyBfPeY5K9Xl9/xDwFVZ7tnDm1Xkxr7V9Z8QQ0
-X-Proofpoint-ORIG-GUID: dHqk4bDI5YrCLzXj-a9OmVFGaIXVMvZO
-X-Authority-Analysis: v=2.4 cv=B9q50PtM c=1 sm=1 tr=0 ts=68879b67 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
- a=meVymXHHAAAA:8 a=m_kX8qD_ECJkvHzc4wwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=2JgSa4NbpEOStq-L5dxp:22
-X-Proofpoint-GUID: dHqk4bDI5YrCLzXj-a9OmVFGaIXVMvZO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 mlxscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507280115
+References: <20250725220713.264711-1-seanjc@google.com> <20250725220713.264711-13-seanjc@google.com>
+In-Reply-To: <20250725220713.264711-13-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 28 Jul 2025 17:47:01 +0200
+X-Gm-Features: Ac12FXwGUZbd9mg0v05ty49eqrNrq8qFqZGXKq22GPDdO5lkh_Fh1cjjSjkkQQk
+Message-ID: <CABgObfZWvtskg-m94LRHqN=_FtJpFtTzOi3sEhiAKZx1rzr=ng@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM: x86: VMX changes for 6.17
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25.07.2025 20:55, Steven Rostedt wrote:
-> From: Josh Poimboeuf <jpoimboe@kernel.org>
-> 
-> Cache the results of the unwind to ensure the unwind is only performed
-> once, even when called by multiple tracers.
-> 
-> The cache nr_entries gets cleared every time the task exits the kernel.
-> When a stacktrace is requested, nr_entries gets set to the number of
-> entries in the stacktrace. If another stacktrace is requested, if
-> nr_entries is not zero, then it contains the same stacktrace that would be
-> retrieved so it is not processed again and the entries is given to the
-> caller.
-> 
-> Co-developed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+On Sat, Jul 26, 2025 at 12:07=E2=80=AFAM Sean Christopherson <seanjc@google=
+.com> wrote:
+>
+> Add a sub-ioctl to allow getting TDX VMs into TEARDOWN before the last re=
+ference
+> to the VM is put, so that reclaiming the VM's memory doesn't have to jump
+> through all the hoops needed to reclaim memory from a live TD, which are =
+quite
+> costly, especially for large VMs.
+>
+> The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf19=
+11:
+>
+>   Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
+>
+> are available in the Git repository at:
+>
+>   https://github.com/kvm-x86/linux.git tags/kvm-x86-vmx-6.17
+>
+> for you to fetch changes up to dcab95e533642d8f733e2562b8bfa5715541e0cf:
+>
+>   KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM (2025-07-21 16:23:02 -0700=
+)
 
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+I haven't pulled this for now because I wonder if it's better to make
+this a general-purpose ioctl and cap (plus a kvm_x86_ops hook).  The
+faster teardown is a TDX module quirk, but for example would it be
+useful if you could trigger kvm_vm_dead() in the selftests?
 
-> diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
+As a side effect it would remove the supported_caps field and separate
+namespace for KVM_TDX_CAP_* capabilities, at least for now.
 
-> +	cache = info->cache;
-> +	trace->entries = cache->entries;
-> +
-> +	if (cache->nr_entries) {
-> +		/*
-> +		 * The user stack has already been previously unwound in this
-> +		 * entry context.  Skip the unwind and use the cache.
-> +		 */
-> +		trace->nr = cache->nr_entries;
-> +		return 0;
-> +	}
-> +
->  	trace->nr = 0;
-> -	trace->entries = info->entries;
->  	unwind_user(trace, UNWIND_MAX_ENTRIES);
->  
-> +	cache->nr_entries = trace->nr;
-> +
+Paolo
 
-Would the following alternative to above excerpt be easier to read?
-
-	/* Use the cache, if the user stack has already been previously
-	 * unwound in this entry context.  If not this will initialize
-	 * trace->nr to zero to trigger the unwind now.
-	 */
-	cache = info->cache;
-	trace->nr = cache->nr_entries;
-	trace->entries = cache->entries;
-
-	if (!trace->nr) {
-		unwind_user(trace, UNWIND_MAX_ENTRIES);
-		cache->nr_entries = trace->nr;
-	}
-
->  	return 0;
->  }
-
-Regards,
-Jens
--- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+> ----------------------------------------------------------------
+> KVM VMX changes for 6.17
+>
+> Add a TDX sub-ioctl, KVM_TDX_TERMINATE_VM, to let userspace mark a VM as =
+dead,
+> and most importantly release its HKID, prior to dropping the last referen=
+ce to
+> the VM.  Releasing the HKID moves the VM to TDX's TEARDOWN state, which a=
+llows
+> pages to be reclaimed directly and ultimately reduces total reclaim time =
+by a
+> factor of 10x or more.
+>
+> ----------------------------------------------------------------
+> Sean Christopherson (1):
+>       KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
+>
+>  Documentation/virt/kvm/x86/intel-tdx.rst | 22 ++++++++++++++++++-
+>  arch/x86/include/uapi/asm/kvm.h          |  7 ++++++-
+>  arch/x86/kvm/vmx/tdx.c                   | 36 +++++++++++++++++++++++++-=
+------
+>  3 files changed, 55 insertions(+), 10 deletions(-)
+>
 
 
