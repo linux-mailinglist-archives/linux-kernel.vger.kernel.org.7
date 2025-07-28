@@ -1,45 +1,82 @@
-Return-Path: <linux-kernel+bounces-747961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D50CB13ABA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C55B13ABC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47C3C7A7BA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEC0D3B2326
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9A0265CCF;
-	Mon, 28 Jul 2025 12:47:04 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CA026561E;
+	Mon, 28 Jul 2025 12:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVrLDUF6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1935B264627;
-	Mon, 28 Jul 2025 12:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89E813D51E;
+	Mon, 28 Jul 2025 12:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753706824; cv=none; b=iKqdptqV37kvX66QKN/vpD61c/NLEO1nRbRWeTM0Oe3Ck/pEN0/ermXf+GncF+yXI1q0Z6wopC/bc1FlSfIiGjMMZ78qgyJ0101aH1JuusYc88hPWTffwNU9vrCUSYzH1XMD1z5cAIybQEnWiTc44Xl7lI16z6Po2whdGm1E9O4=
+	t=1753706844; cv=none; b=lmcHkoFtruIoXKWtkRKhaAcQgIQbmrhfDfcwoT72CQKdluuePXd/vRUVLa5sZrzYXw+lZ/frfX7zzsOF0+C9O+95lTSOfwkrpUV0s/oE/UFSDd855kAA+uBd+r8Lk7pYI+ZuRWa97JFB//k8bAeHdzH3F7rRSMbLLwkOEV3kBFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753706824; c=relaxed/simple;
-	bh=fsnnLn1UnfpY4C73Oqup7ToKbZWZvKEup6NpnHAehaw=;
+	s=arc-20240116; t=1753706844; c=relaxed/simple;
+	bh=8erufKMpAOmnBQJD5AQN3zyqiuSStzu2grxssP0lTyk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1C3aj+Ees22GR3jl+e4LjwRuv4ZODXUmHv62mdujKIRw+VSf+gly9gc+hC2WYo+CTpTsTHVuimYVFG3Q2XaU/zBTa3W74sjzFkhezZe4BPP7aryoQxjSI6q46CQzhb8HVb9Yucg4ShJw/MPy7NhX1Yr0n4k6Zc4rGMj9KWc2JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 6421411B2; Mon, 28 Jul 2025 07:47:00 -0500 (CDT)
-Date: Mon, 28 Jul 2025 07:47:00 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
-	dan.j.williams@intel.com
-Subject: Re: [PATCH v2 1/3] lockdown: Switch implementation to using bitmap
-Message-ID: <aIdxRBW7HyJMNvkh@mail.hallyn.com>
-References: <20250728111517.134116-1-nik.borisov@suse.com>
- <20250728111517.134116-2-nik.borisov@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NKaub0glttFTOtgqaPSV6fK78ojVwjmcMVLzs6l+8F8fb8GfGVNqcPxZjomAoTFrDQQZem3icWONdnG9lz/+D/NpuXvJkRCoGF4/vI3/dVt5Hyt0e/NIJTtJLtoYEN8+bMWPJ+vDRo1srJo11s/QefwyPyMIhwzcSzqVozZa49w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVrLDUF6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6A14C4CEE7;
+	Mon, 28 Jul 2025 12:47:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753706844;
+	bh=8erufKMpAOmnBQJD5AQN3zyqiuSStzu2grxssP0lTyk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fVrLDUF6ALvU1+rw08l0PQQfJJ7diMMEUvcuQzJIilzrRSpYwOlOYK2n15xwoyML4
+	 D4v1V5ouoPMP5Uz79ByW5/BerCfgE3utI4NZmRpjthPrhH6zfjhuvxxdwBw/nduyx5
+	 BrLlHsjfIfQLUwiEsrKJ7Z00EUM59kWy8WUBrjuxruXI8VGjRYFATJyEOBskkNPuBj
+	 cOwpUVMCLcgqoD5XxSL62JtvLUxMBr1zB0b3M8fPyxY2JnP4ebqJETtie1/WquwywI
+	 lFApDm1CkeeTMlruPIC1tMlq6jstGhB1R7LebnE8eV6IkSurORWhWXOaOc/cTwOFqR
+	 53bl3DIV1aZJA==
+Date: Mon, 28 Jul 2025 13:47:14 +0100
+From: Will Deacon <will@kernel.org>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Deepak Gupta <debug@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Monk Chiang <monk.chiang@sifive.com>,
+	Kito Cheng <kito.cheng@sifive.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
+	llvm@lists.linux.dev, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, cleger@rivosinc.com, apatel@ventanamicro.com,
+	ajones@ventanamicro.com, conor.dooley@microchip.com,
+	charlie@rivosinc.com, samuel.holland@sifive.com, bjorn@rivosinc.com,
+	fweimer@redhat.com, jeffreyalaw@gmail.com,
+	heinrich.schuchardt@canonical.com, andrew@sifive.com,
+	ved@rivosinc.com
+Subject: Re: [PATCH 10/11] scs: generic scs code updated to leverage hw
+ assisted shadow stack
+Message-ID: <aIdxUpSc-Co8wLYE@willie-the-truck>
+References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
+ <20250724-riscv_kcfi-v1-10-04b8fa44c98c@rivosinc.com>
+ <20250725161327.GC1724026@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,99 +85,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250728111517.134116-2-nik.borisov@suse.com>
+In-Reply-To: <20250725161327.GC1724026@google.com>
 
-On Mon, Jul 28, 2025 at 02:15:15PM +0300, Nikolay Borisov wrote:
-> Tracking the lockdown at the depth granularity rather than at the
-> individual is somewhat inflexible as it provides an "all or nothing"
-> approach. Instead there are use cases where it  will be useful to be
-> able to lockdown individual features - TDX for example wants to disable
-> access to just /dev/mem.
+On Fri, Jul 25, 2025 at 04:13:27PM +0000, Sami Tolvanen wrote:
+> On Thu, Jul 24, 2025 at 04:37:03PM -0700, Deepak Gupta wrote:
+> > diff --git a/include/linux/scs.h b/include/linux/scs.h
+> > index 4ab5bdc898cf..6ceee07c2d1a 100644
+> > --- a/include/linux/scs.h
+> > +++ b/include/linux/scs.h
+> > @@ -12,6 +12,7 @@
+> >  #include <linux/poison.h>
+> >  #include <linux/sched.h>
+> >  #include <linux/sizes.h>
+> > +#include <asm/scs.h>
+> >  
+> >  #ifdef CONFIG_SHADOW_CALL_STACK
+> >  
+> > @@ -37,22 +38,45 @@ static inline void scs_task_reset(struct task_struct *tsk)
+> >  	 * Reset the shadow stack to the base address in case the task
+> >  	 * is reused.
+> >  	 */
+> > +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+> > +	task_scs_sp(tsk) = task_scs(tsk) + SCS_SIZE;
+> > +#else
+> >  	task_scs_sp(tsk) = task_scs(tsk);
+> > +#endif
+> >  }
+> >
+> >  static inline unsigned long *__scs_magic(void *s)
+> >  {
+> > +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+> > +	return (unsigned long *)(s);
+> > +#else
+> >  	return (unsigned long *)(s + SCS_SIZE) - 1;
+> > +#endif
+> >  }
+> >  
+> >  static inline bool task_scs_end_corrupted(struct task_struct *tsk)
+> >  {
+> >  	unsigned long *magic = __scs_magic(task_scs(tsk));
+> > -	unsigned long sz = task_scs_sp(tsk) - task_scs(tsk);
+> > +	unsigned long sz;
+> > +
+> > +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+> > +	sz = (task_scs(tsk) + SCS_SIZE) - task_scs_sp(tsk);
+> > +#else
+> > +	sz = task_scs_sp(tsk) - task_scs(tsk);
+> > +#endif
+> >  
+> >  	return sz >= SCS_SIZE - 1 || READ_ONCE_NOCHECK(*magic) != SCS_END_MAGIC;
+> >  }
+> >  
+> > +static inline void __scs_store_magic(unsigned long *s, unsigned long magic_val)
+> > +{
+> > +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
+> > +	arch_scs_store(s, magic_val);
+> > +#else
+> > +	*__scs_magic(s) = magic_val;
+> > +#endif
+> > +}
+> > +
 > 
-> To accommodate this use case switch the internal implementation to using
-> a bitmap so that individual lockdown features can be turned on. At the
-> same time retain the existing semantic where
-> INTEGRITY_MAX/CONFIDENTIALITY_MAX are treated as wildcards meaning "lock
-> everything below me".
-> 
-> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
-> ---
->  security/lockdown/lockdown.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index cf83afa1d879..5014d18c423f 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -10,12 +10,13 @@
->   * 2 of the Licence, or (at your option) any later version.
->   */
->  
-> +#include <linux/bitmap.h>
->  #include <linux/security.h>
->  #include <linux/export.h>
->  #include <linux/lsm_hooks.h>
->  #include <uapi/linux/lsm.h>
->  
-> -static enum lockdown_reason kernel_locked_down;
-> +static DECLARE_BITMAP(kernel_locked_down, LOCKDOWN_CONFIDENTIALITY_MAX);
->  
->  static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
->  						 LOCKDOWN_INTEGRITY_MAX,
-> @@ -26,10 +27,15 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
->   */
->  static int lock_kernel_down(const char *where, enum lockdown_reason level)
->  {
-> -	if (kernel_locked_down >= level)
-> -		return -EPERM;
->  
-> -	kernel_locked_down = level;
-> +	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
-> +		return -EINVAL;
-> +
-> +	if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
+> I'm not a huge fan of all the ifdefs. We could clean this up by
+> allowing architectures to simply override some these functions, or at
+> least use if (IS_ENABLED(CONFIG...)) instead. Will, any thoughts about
+> this?
 
-For the reviewer (including me), it would be good to have a comment here or at
-top of fn to ease our minds that this is really what's meant:  So if we lock
-down with reason LOCKDOWN_INTEGRITY_MAX, we want to set all bits up to
-LOCKDOWN_INTEGRITY_MAX, which is not the whole array, and if setting
-LOCKDOWN_CONFIDENTIALITY_MAX, then we want to set *all* bits, right?
-So LOCKDOWN_CONFIDENTIALITY_MAX is a supserset of LOCKDOWN_INTEGRITY_MAX?
+Yeah, I agree that allowing architectures to provide overrides makes
+sense, however I also suspect that some of this needs to be a runtime
+decision because not all CPUs will support the hardware-accelerated
+feature and will presumably want to fall back on the software
+implementation.
 
-And for anything else, set the single bit.
-
-> +		bitmap_set(kernel_locked_down, 1, level);
-> +	else
-> +		bitmap_set(kernel_locked_down, level, 1);
-> +
->  	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
->  		  where);
->  	return 0;
-> @@ -62,13 +68,12 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
->  		 "Invalid lockdown reason"))
->  		return -EPERM;
->  
-> -	if (kernel_locked_down >= what) {
-> +	if (test_bit(what, kernel_locked_down)) {
->  		if (lockdown_reasons[what])
->  			pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
->  				  current->comm, lockdown_reasons[what]);
->  		return -EPERM;
->  	}
-> -
->  	return 0;
->  }
->  
-> @@ -105,7 +110,7 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
->  		if (lockdown_reasons[level]) {
->  			const char *label = lockdown_reasons[level];
->  
-> -			if (kernel_locked_down == level)
-> +			if (test_bit(level, kernel_locked_down))
->  				offset += sprintf(temp+offset, "[%s] ", label);
->  			else
->  				offset += sprintf(temp+offset, "%s ", label);
-> -- 
-> 2.34.1
-> 
+Will
 
