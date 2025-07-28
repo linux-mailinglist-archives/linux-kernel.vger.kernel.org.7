@@ -1,103 +1,230 @@
-Return-Path: <linux-kernel+bounces-747670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F26B136AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:31:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE699B136A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D10017AADC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:30:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E448172387
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7456239E91;
-	Mon, 28 Jul 2025 08:25:26 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D3526658A;
+	Mon, 28 Jul 2025 08:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDlIrPep"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2C5238C20
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E0F26563F;
+	Mon, 28 Jul 2025 08:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753691126; cv=none; b=BXRoAreHTgil3KNSixW82FmnwmGjzFyiAtFy4GZgfVIcci0gp+9bTzJsZrHtzuOinrJkoNPsfZrk7a/5i2mcUcOKddC8JHjMqlQKU5yslHeLWWZjWjGOjli7IrpW8DCrNQJ0/bYutwvgskLwV8fH+k511nmULeLzfA1e08Vz4E8=
+	t=1753691103; cv=none; b=h/m3PqtB3zZsw6IxnMxA9mJhgxtz/SCqdJAk05vIxWnLJwGqaBa8vwHuF2cxdRWTe/9M9d7QXhC1JEjfB0IZmNOBYbrg/HiY0OvNhVEtIKV1n04+uQVxDrCZH3imF+wdFi3PjaoLkF6l4bdKtFLDEcL5LBx247yzUl+gYryVdDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753691126; c=relaxed/simple;
-	bh=anfs0OD7dSebyQsSGsSGtPUMRB2Y201nr9Y4rdxdpTQ=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=Hay1E6Nc7LBaDpE0BUXUv0SFrT9z6sbRyeQg7wN4KhALl2pEMqJyelQuTBM4mjJYlMLz3Woi63VPyeEh6bG4QYrulZzw6e12HgQUncFtypc003DjSsBGOfcP+CGgYxEDVNDDaYpj0IaJjvpQCB1hJ1L2eHUubau+BpgoPdyU/dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4brBP83nnhz8Xs78;
-	Mon, 28 Jul 2025 16:25:16 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 56S8OpbK057580;
-	Mon, 28 Jul 2025 16:24:52 +0800 (+08)
-	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 28 Jul 2025 16:24:54 +0800 (CST)
-Date: Mon, 28 Jul 2025 16:24:54 +0800 (CST)
-X-Zmail-TransId: 2afb688733d6ffffffff909-b1060
-X-Mailer: Zmail v1.0
-Message-ID: <202507281624542763Kn377WvUMXlKHVJUdNjA@zte.com.cn>
+	s=arc-20240116; t=1753691103; c=relaxed/simple;
+	bh=sv3oWelMOQyMoFDHjlmqzXOzxi5DPs/X9scDkrB3vWs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sAhvUHb5jHwt3EbTQhKt1DnzUHgtq4ec9XrtmoQrYl1Vkqs2G6KhgELA3f2gEW2KU1EANRXmvM/aZB0Yzimm/lxygAaUkvs5SAluj15I2MVxKGp195itfb7D4k652aw4dzn5y0tUj+JRu6t4Twc5uCedy06/2HpJzxzwmxI3nRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDlIrPep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4DD8C4CEF7;
+	Mon, 28 Jul 2025 08:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753691103;
+	bh=sv3oWelMOQyMoFDHjlmqzXOzxi5DPs/X9scDkrB3vWs=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=kDlIrPepMU5jvgXNzzNAsZ1eSZzHIUMm5Bef1gYbocK8QkaVlM/6jXkoxRH76HcC8
+	 clW8mIExNRGa6/2qp5cux+WfNZ5N701CPHAru6hYhYhyRUzP2ogkL7n4+JhNU5URgZ
+	 +P2lkA553nlaGy4x92Buyx6I8uRZd9pnPRkuCxMfHeKT4iJYFUok0R//+kYvwKt2kV
+	 ToP/J/ksWQO0wS0+eh8swQxQ/I0GgusKYA6Fsce3WqmN3iyDH/8fHX8uMnu8AaxycQ
+	 4h0Gu/kWonmoixpxUQq1XX7ugpXSEqpaCzCEb/izTzlnOBPJW/ZwnBZGwONM4Mus23
+	 oeABf1ub7eKBA==
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 28 Jul 2025 01:24:54 -0700
+Subject: [PATCH RFC 24/25] PCI: pci-lu-pf-stub: Add a PF stub driver for
+ Live Update testing
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <fan.yu9@zte.com.cn>
-To: <tglx@linutronix.de>, <frederic@kernel.org>, <peterz@infradead.org>,
-        <oleg@redhat.com>, <brauner@kernel.org>, <iro@zeniv.linux.org.uk>,
-        <joel.granados@kernel.org>, <lorenzo.stoakes@oracle.com>
-Cc: <linux-kernel@vger.kernel.org>, <xu.xin16@zte.com.cn>,
-        <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHNpZ25hbDogUmVtb3ZlIG91dGRhdGVkIF9fc2VuZF9zaWduYWwgcmVmZXJlbmNlcyBpbgogZG9fbm90aWZ5X3BhcmVudA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 56S8OpbK057580
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Mon, 28 Jul 2025 16:25:16 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 688733EC.000/4brBP83nnhz8Xs78
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250728-luo-pci-v1-24-955b078dd653@kernel.org>
+References: <20250728-luo-pci-v1-0-955b078dd653@kernel.org>
+In-Reply-To: <20250728-luo-pci-v1-0-955b078dd653@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Len Brown <lenb@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>, 
+ Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
+ Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+ Adithya Jayachandran <ajayachandra@nvidia.com>, 
+ Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
+ Mike Rapoport <rppt@kernel.org>, Chris Li <chrisl@kernel.org>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+X-Mailer: b4 0.14.2
 
-From: Fan Yu <fan.yu9@zte.com.cn>
+The pci-lu-stub driver will always request device in probe(). However if
+the PF driver might be add the liveupdate device list due to "depended" bit
+rather than "requested" bit.
 
-The function __send_signal was renamed to __send_signal_locked in
-commit 157cc18122b4 ("signal: Rename send_signal send_signal_locked"),
-making the existing comments in do_notify_parent obsolete.
+Create the pci-lu-stub-pf driver base on the pci-lu-stuf driver, it will
+not request the device at probe().
 
-This patch removes these outdated references to maintain code clarity
-and prevent confusion about the current implementation.
+For PF device, also restore the number of VFs at probe().
 
-Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+Signed-off-by: Chris Li <chrisl@kernel.org>
 ---
- kernel/signal.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/pci/pci-lu-stub.c | 85 ++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 81 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index e2c928de7d2c..30a52d884f87 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2251,10 +2251,7 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
- 		if (psig->action[SIGCHLD-1].sa.sa_handler == SIG_IGN)
- 			sig = 0;
- 	}
--	/*
--	 * Send with __send_signal as si_pid and si_uid are in the
--	 * parent's namespaces.
--	 */
+diff --git a/drivers/pci/pci-lu-stub.c b/drivers/pci/pci-lu-stub.c
+index ea8142dcb250d31cbf817df957157bc4ec3a876d..ff6230102b83ff3ad646c23b79d4e1b6de58b43f 100644
+--- a/drivers/pci/pci-lu-stub.c
++++ b/drivers/pci/pci-lu-stub.c
+@@ -5,6 +5,8 @@
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ 
++#include "pci.h"
 +
- 	if (valid_signal(sig) && sig)
- 		__send_signal_locked(sig, &info, tsk->parent, PIDTYPE_TGID, false);
- 	__wake_up_parent(tsk, tsk->parent);
+ struct pci_lu_stub_ser {
+ 	u16 dev_id;
+ } __packed;
+@@ -32,15 +34,47 @@ static int validate_folio(struct pci_dev *dev, struct folio *folio)
+ 	return 0;
+ }
+ 
+-static int pci_lu_stub_probe(struct pci_dev *dev, const struct pci_device_id *id)
++static bool is_pf_driver(struct pci_dev *dev)
++{
++	return pci_get_drvdata(dev);
++}
++
++static int check_lu_flags(struct pci_dev *dev, bool is_pf)
++{
++	struct dev_liveupdate *lu = &dev->dev.lu;
++	bool expect_requested = !is_pf;
++	bool expect_depended = is_pf;
++
++	if (lu->requested != expect_requested) {
++		pci_err(dev, "Device requested bit %d not match expected %d\n",
++			lu->requested, expect_requested);
++		return -EINVAL;
++	}
++
++	if (lu->depended != expect_depended) {
++		pci_err(dev, "Device requested bit %d not match expected %d\n",
++			lu->depended, expect_depended);
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static int __pci_lu_stub_probe(struct pci_dev *dev, const struct pci_device_id *id,
++			       bool is_pf)
+ {
+ 	struct folio *folio;
+ 	u64 data;
+ 	int ret;
++	int vfs;
++	struct dev_liveupdate *lu = &dev->dev.lu;
++	struct pci_dev_ser *s;
+ 
++	pci_set_drvdata(dev, (void *)(intptr_t) is_pf);
+ 	if (liveupdate_state_normal()) {
+-		pci_info(dev, "Marking device as liveupdate requested\n");
+-		dev->dev.lu.requested = 1;
++		if (!is_pf) {
++			pci_info(dev, "Marking device as liveupdate requested\n");
++			lu->requested = 1;
++		}
+ 		return 0;
+ 	}
+ 
+@@ -49,6 +83,10 @@ static int pci_lu_stub_probe(struct pci_dev *dev, const struct pci_device_id *id
+ 		return -EOPNOTSUPP;
+ 	}
+ 
++	ret = check_lu_flags(dev, is_pf);
++	if (ret)
++		return ret;
++
+ 	ret = pci_liveupdate_get_driver_data(dev, &data);
+ 	if (ret) {
+ 		pci_err(dev, "Failed to get driver data for device (%d)\n", ret);
+@@ -63,7 +101,31 @@ static int pci_lu_stub_probe(struct pci_dev *dev, const struct pci_device_id *id
+ 		return -ENOENT;
+ 	}
+ 
+-	return validate_folio(dev, folio);
++	ret = validate_folio(dev, folio);
++	if (ret)
++		return ret;
++
++	s = lu->dev_state;
++	vfs = s->num_vfs;
++	if (dev->is_physfn && vfs) {
++		ret = pci_sriov_configure_simple(dev, vfs);
++		if (vfs != ret) {
++			pci_err(dev, "Failed to restore num VFs %d got %d\n",
++				vfs, ret);
++			return (ret < 0) ? ret : -EAGAIN;
++		}
++	}
++	return  0;
++}
++
++static int pci_lu_stub_probe(struct pci_dev *dev, const struct pci_device_id *id)
++{
++	return __pci_lu_stub_probe(dev, id, false);
++}
++
++static int pci_lu_stub_pf_probe(struct pci_dev *dev, const struct pci_device_id *id)
++{
++	return __pci_lu_stub_probe(dev, id, true);
+ }
+ 
+ static void pci_lu_stub_remove(struct pci_dev *dev)
+@@ -74,10 +136,15 @@ static void pci_lu_stub_remove(struct pci_dev *dev)
+ 
+ static int pci_lu_stub_prepare(struct device *dev, u64 *data)
+ {
++	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct pci_lu_stub_ser *ser;
+ 	struct folio *folio;
+ 	int ret;
+ 
++	ret = check_lu_flags(pdev, is_pf_driver(pdev));
++	if (ret)
++		return ret;
++
+ 	folio = folio_alloc(GFP_KERNEL | __GFP_ZERO, get_order(sizeof(*ser)));
+ 	if (!folio)
+ 		return -ENOMEM;
+@@ -135,5 +202,15 @@ static struct pci_driver pci_lu_stub_driver = {
+ 	.driver.lu	= &liveupdate_ops,
+ };
+ 
++static struct pci_driver pci_lu_stub_pf_driver = {
++	.name		= "pci-lu-stub-pf",
++	.id_table	= pci_lu_stub_id_table,
++	.probe		= pci_lu_stub_pf_probe,
++	.remove		= pci_lu_stub_remove,
++	.sriov_configure = pci_sriov_configure_simple,
++	.driver.lu	= &liveupdate_ops,
++};
++
+ module_pci_driver(pci_lu_stub_driver);
++module_pci_driver(pci_lu_stub_pf_driver);
+ MODULE_LICENSE("GPL");
+
 -- 
-2.25.1
+2.50.1.487.gc89ff58d15-goog
+
 
