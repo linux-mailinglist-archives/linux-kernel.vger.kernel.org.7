@@ -1,84 +1,42 @@
-Return-Path: <linux-kernel+bounces-747747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EBAB13795
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:34:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B44EDB13797
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39249176CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:34:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B104A7A394E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A55B2522A7;
-	Mon, 28 Jul 2025 09:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBDHkC3p"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A032522A8;
+	Mon, 28 Jul 2025 09:35:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C3F22C35D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED121231858
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753695282; cv=none; b=ObUdva6TGhF+247xxpBk1PjoUbrCPcIql3MJZ+Jy7kjDr6lzu4uPSm4VgnJiBbW4tH65+0NfHvJa7oDOHMzsdwWpvf8h1jpCSuwxXwpnwToVo6/364/lFCETz/oJUkCb6kosPDcxHv8oEc0j543BwXpBIyPtzuChnSKiGuRt//c=
+	t=1753695300; cv=none; b=X2QBNfh+CnUz/92M6UWDh3MDw36/O/BCWsSCnyfhrLYo6EEmenzFCg7lA7v8WRA588RaTRSErfz9zKNmoTwFik5N9VH4eGoXzTLAsYLAufCYcSNJSkFDpgmTMYhbkXTMx2wFRmfyRpJqGzJVO3wU4p9BRAtzlDaKS2AYjJZP6is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753695282; c=relaxed/simple;
-	bh=FVjrhbgU51oFrsK8FhKQpqxMkotAxlE+hef9bztLMf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gRACm/hOlOIUM+F2MaFl80Y84t1QFbt+Lf3LI0Y4+eHAhLVF72cJqjHTqkDCMbS3tzWE/W7LTHy0xQNLaslzv0swq6DBdyYNOUiIB1FTp1o/b4mYWwHiMXBJOrlNLEzwCXGpwQOXJa3Krj/rUObwg2HQBsLTbOwwnaz1h4i1V5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bBDHkC3p; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24009eeb2a7so7309185ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:34:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753695280; x=1754300080; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZoKs7p6HZYNszKO17OO4KdXekmUg9ugS36Em0DKxuqU=;
-        b=bBDHkC3pwdb7y2/HKoI6BORHAmtbWB7bG6e8ixtp9wpkiO1hmG8mMa18Ev7aRvTV3j
-         W1AsoHJqGPYegF+D9YzMemEqC2NvHBO5AdHFtsdCWZvSXMNgRRyvYemnEYZLHknPn0bc
-         l3VHrfLu1EMXNoFJYgdih+BAUm5t1YrKRN6WSj6i4PRPgEyPMa5EfR71ZHxVlKNpNQs+
-         bx1uqMS4e2UVqi0F6Dmq+HdVRRLUO0y9U8W6p+xhrGSZ9e0vJ3qiJjsJx1B8bUE/9hEx
-         iERmb+GhAt0Url8jHQL2kDEOUX20jJQS49Qqqkffq2i6OKSfJsAMBjV8cYA8En6T21g8
-         7Yag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753695280; x=1754300080;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZoKs7p6HZYNszKO17OO4KdXekmUg9ugS36Em0DKxuqU=;
-        b=vq55uHX1N1m1x71pbYe4si6vkSd+6Rk+pAH0yamd1ukNDFOak7ASs74xooOu0OeAoA
-         nIqTQoM8BTGp73q3P79pdX1ufZcy7a4MU0IjohWk1E30srqIPOunJI3ZJg5TuoHF95uz
-         kgkMyZ+0Chzly7IXLHjq3+9Ezvthn8yCZj1vKHOzB2XkkY9ZpSME/xND39NyzK3gYhwL
-         dHRDHrqIFXQkHOnuFQ4FASM8kbt0U9M9EIIBPaB8Oui6GmY//Nl8hWr/b37G1VgJvBfP
-         J2F0mmUFFkDgZaj1bQ+KBg5uQcIJ3CBCCKwwAYCaG3ZeCw0wHWOThhovoDnyixPVTFnC
-         SUlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMqmGUuvGkGfBSYVkWR5aPJceEx0NEVltYbtKPuL8u2ScYewoa8Xjy20VsAWOlDLdWteuHLS858q7zDUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMpYc+3G0Oq6Ey1eOPsq/9SyUV/guL2ZLlvyRDDMfBxDjUWAxl
-	08YIFx3es6e+SEEYvcR05UpeG0ae/IE5zW1FA3ZawXr7sXYlQcRYpMCk
-X-Gm-Gg: ASbGnctEzY6A8MshFBzvH157mKFHuAsmf/tizWIAO/koV4vvTMhxZaw5kdEEIoCaODi
-	1lbNa7K43iWzwJq+PxqT1grnRwzeTAFUTNnsGZJNBET1E7IKbHGEDNHAryogNIUHd8MAQRkkA14
-	fvqImMVFSIX+zXxYfxJxYlZtvxrSB2eebYXjupTTCWJ75loCqomorj9wC1JvLW4taD0vwpdX0C0
-	uQB3yJg4Aw05sWlaC/WrVH9MpqQ1IJU7sEWKzPv8CBD4HiS2V70OaKD5ySUGf6bHoWoydqQMpoQ
-	4XRL0a3vflTi9cboGCPyelPcxAo5pgHF7J2qiHUn8hJg6jiKMWPt6DJmDnK8PiRWPjNgjUJrZKT
-	mWIN2GpC5VH6kg67j/jFFSxvzg05j/U1lGj4UNa2Uqk8b8Okvnw==
-X-Google-Smtp-Source: AGHT+IGjJPaZL1a0kCFTxQSZwuSbVti44KmI2KrA1FlBXfoREc0LVs07EjrFSf+mheRkE+jWaoW3Qg==
-X-Received: by 2002:a17:903:2345:b0:235:e1d6:4e22 with SMTP id d9443c01a7336-23fb3040f6cmr137246975ad.18.1753695280353;
-        Mon, 28 Jul 2025 02:34:40 -0700 (PDT)
-Received: from localhost.localdomain ([49.36.70.111])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe546bebsm49809855ad.179.2025.07.28.02.34.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 02:34:39 -0700 (PDT)
-From: Dishank Jogi <jogidishank503@gmail.com>
-To: geert@linux-m68k.org
-Cc: linux-m68k@lists.linux-m68k.org,
+	s=arc-20240116; t=1753695300; c=relaxed/simple;
+	bh=nTv/krKUq1pAf23k38ECr9b6F14induhosI1RFjnmPY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G8Q+4Q5cIFFzws0lwEEvR1qQoWeoZtorgPWz09Eie8J8+RjGmqExUy98hB6oVdDJeRWFXCd1O8zrNvRQ0oy3AGPqpxML1d3FfQ+SZ+4cZt4BLXC9yywgV68QvqxQWtDY5OE5LSt9apKvltDdJBzfSd3f9tLeMLagCcDCWclL72Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22144C4CEF4;
+	Mon, 28 Jul 2025 09:34:57 +0000 (UTC)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Greg Ungerer <gerg@linux-m68k.org>,
+	linux-m68k@lists.linux-m68k.org,
 	linux-kernel@vger.kernel.org,
-	darshanrathod475@gmail.com,
-	Dishank Jogi <jogidishank503@gmail.com>
-Subject: [PATCH] zorro: fix checkpatch error by avoiding assignment in if-statement.
-Date: Mon, 28 Jul 2025 09:34:12 +0000
-Message-ID: <20250728093412.48065-1-jogidishank503@gmail.com>
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [GIT PULL] m68k updates for v6.17
+Date: Mon, 28 Jul 2025 11:34:37 +0200
+Message-ID: <20250728093437.223500-1-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -88,41 +46,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These changes improve code readability and bring the file
-in line with the Linux kernel coding style.
+	Hi Linus,
 
-No functional changes.
+The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
 
-Signed-off-by: Dishank Jogi <jogidishank503@gmail.com>
----
- drivers/zorro/gen-devlist.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
 
-diff --git a/drivers/zorro/gen-devlist.c b/drivers/zorro/gen-devlist.c
-index e325c5ce995b..ff4515e02409 100644
---- a/drivers/zorro/gen-devlist.c
-+++ b/drivers/zorro/gen-devlist.c
-@@ -44,7 +44,8 @@ main(void)
- 
- 	while (fgets(line, sizeof(line)-1, stdin)) {
- 		lino++;
--		if ((c = strchr(line, '\n')))
-+		c = strchr(line, '\n')
-+		if (c)
- 			*c = 0;
- 		if (!line[0] || line[0] == '#')
- 			continue;
-@@ -68,7 +69,8 @@ main(void)
- 					fprintf(devf, "\tPRODUCT(%s,%s,\"", manuf, line+1);
- 					pq(devf, c);
- 					fputs("\")\n", devf);
--				} else goto err;
-+				} else
-+					goto err;
- 				break;
- 			default:
- 				goto err;
--- 
-2.43.0
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v6.17-tag1
+
+for you to fetch changes up to c8995932db2bad6fa093ac64dbaf7a3e8870eafa:
+
+  m68k: mac: Improve clocksource driver commentary (2025-07-06 12:53:21 +0200)
+
+----------------------------------------------------------------
+m68k updates for v6.17
+
+  - Ptdescs conversions,
+  - Fix lost column on the graphical debug console,
+  - Replace __ASSEMBLY__ with __ASSEMBLER__ in headers,
+  - Miscellaneous fixes and improvements,
+  - Defconfig updates.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Daniel Palmer (1):
+      m68k: Enable dead code elimination
+
+Finn Thain (5):
+      m68k: Fix lost column on framebuffer debug console
+      m68k: Avoid pointless recursion in debug console rendering
+      m68k: Remove unused "cursor home" code from debug console
+      m68k: Don't unregister boot console needlessly
+      m68k: mac: Improve clocksource driver commentary
+
+Geert Uytterhoeven (1):
+      m68k: defconfig: Update defconfigs for v6.16-rc2
+
+Thomas Huth (2):
+      m68k: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+      m68k: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi headers
+
+Vishal Moola (Oracle) (4):
+      m68k: mm: Convert get_pointer_table() to use ptdescs
+      m68k: mm: Convert free_pointer_table() to use ptdescs
+      m68k: mm: Convert init_pointer_table() to use ptdescs
+      m68k: mm: Convert pointer table macros to use ptdescs
+
+ arch/m68k/Kconfig                         |  1 +
+ arch/m68k/Kconfig.debug                   |  2 +-
+ arch/m68k/configs/amiga_defconfig         |  9 +++-
+ arch/m68k/configs/apollo_defconfig        |  9 +++-
+ arch/m68k/configs/atari_defconfig         |  9 +++-
+ arch/m68k/configs/bvme6000_defconfig      |  9 +++-
+ arch/m68k/configs/hp300_defconfig         |  9 +++-
+ arch/m68k/configs/mac_defconfig           |  9 +++-
+ arch/m68k/configs/multi_defconfig         |  9 +++-
+ arch/m68k/configs/mvme147_defconfig       |  9 +++-
+ arch/m68k/configs/mvme16x_defconfig       |  9 +++-
+ arch/m68k/configs/q40_defconfig           |  9 +++-
+ arch/m68k/configs/sun3_defconfig          |  9 +++-
+ arch/m68k/configs/sun3x_defconfig         |  9 +++-
+ arch/m68k/include/asm/adb_iop.h           |  4 +-
+ arch/m68k/include/asm/bootinfo.h          |  4 +-
+ arch/m68k/include/asm/entry.h             |  4 +-
+ arch/m68k/include/asm/kexec.h             |  4 +-
+ arch/m68k/include/asm/mac_baboon.h        |  4 +-
+ arch/m68k/include/asm/mac_iop.h           |  4 +-
+ arch/m68k/include/asm/mac_oss.h           |  4 +-
+ arch/m68k/include/asm/mac_psc.h           |  4 +-
+ arch/m68k/include/asm/mac_via.h           |  4 +-
+ arch/m68k/include/asm/math-emu.h          |  6 +--
+ arch/m68k/include/asm/mcf_pgtable.h       |  4 +-
+ arch/m68k/include/asm/mcfmmu.h            |  2 +-
+ arch/m68k/include/asm/motorola_pgtable.h  |  4 +-
+ arch/m68k/include/asm/nettel.h            |  4 +-
+ arch/m68k/include/asm/openprom.h          |  4 +-
+ arch/m68k/include/asm/page.h              |  4 +-
+ arch/m68k/include/asm/page_mm.h           |  4 +-
+ arch/m68k/include/asm/page_no.h           |  4 +-
+ arch/m68k/include/asm/pgtable.h           |  2 +-
+ arch/m68k/include/asm/pgtable_mm.h        |  8 +--
+ arch/m68k/include/asm/ptrace.h            |  4 +-
+ arch/m68k/include/asm/setup.h             | 10 ++--
+ arch/m68k/include/asm/sun3_pgtable.h      |  8 +--
+ arch/m68k/include/asm/sun3mmu.h           |  4 +-
+ arch/m68k/include/asm/thread_info.h       |  6 +--
+ arch/m68k/include/asm/traps.h             |  6 +--
+ arch/m68k/include/uapi/asm/bootinfo-vme.h |  4 +-
+ arch/m68k/include/uapi/asm/bootinfo.h     |  8 +--
+ arch/m68k/include/uapi/asm/ptrace.h       |  4 +-
+ arch/m68k/kernel/early_printk.c           | 42 ++++++----------
+ arch/m68k/kernel/head.S                   | 81 ++++++++++++++++---------------
+ arch/m68k/mac/via.c                       | 16 ++++++
+ arch/m68k/math-emu/fp_emu.h               |  8 +--
+ arch/m68k/mm/motorola.c                   | 56 ++++++++++-----------
+ 48 files changed, 270 insertions(+), 180 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 
