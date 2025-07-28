@@ -1,346 +1,191 @@
-Return-Path: <linux-kernel+bounces-748134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B69FEB13CDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:19:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECFEB13CE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54C20188E404
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1DF13BDCA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0AF26B76E;
-	Mon, 28 Jul 2025 14:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F6826B748;
+	Mon, 28 Jul 2025 14:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H2cjUIxd"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DS2MzbO7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8FD5336D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67E3252906;
+	Mon, 28 Jul 2025 14:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753712096; cv=none; b=O0Xfj6+R2ZfVJpBIXmt9f+ZSLBFWymwcITKPX7pkITXt7o842/jRmkmVsHNRu7y/rjTzuC8qe5/eKO7nYqTzaXis5J133ewY2Ezaw99s12bXIecU4WhyOeu6M/m5tiLp/rI4oQX3EVhz2u0xJmGNwabMCcK7NSnz/uxOKVY/sjM=
+	t=1753712144; cv=none; b=DZzb6nznZ9Oyq20zu29shu/S/J1CLvXTMR1eUxfIZxeZVUPXnCfYwGELznzcQLT8RAxFx94asUh908JiZ5bwJ2QjJ7CDs2v4eJ7guA4Gn4uMaQ5zyofBtzAubrVWlODDsugEa/0blvEBgkn/hGA6cQPaEPRvQTct20dJ8XDV69k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753712096; c=relaxed/simple;
-	bh=WmyYEezoqO0MCkUD+vSc5NHbpVGcBK/7QA+pcl8s7h4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nH8KBMZtsKHoUyZDbYqygL+grB4iy7sygQk2jWXeNICom876gFdhHOGRParwlKw51LgbdhAIptPD0vyDQINPp+nuPzOkmEf8Nf2jXQpbQCccRVcKNBxrXGipOVTZVd7/+Bjj5dwPxFyT2IIsgCsjnTf6N7QraNF4EYujtC/5eRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H2cjUIxd; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so8197886a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753712093; x=1754316893; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UYwhbY7Hecbk1qZCl4MdGthfDHIANrmSUOeNszZY1sQ=;
-        b=H2cjUIxdU+0vxOH0EpIfaBxEndbQijavhxOUrpT3VgXEqQUIcVtlJ7KEeSo6Lvi0w1
-         DIfuHWTGroIcByRz0W7T0yPDOO2rFQISU9AcH5/Uhovh4CthOpjj7SgRRVa0rUrofpx/
-         H/izjo+DAt7w5PCMmVQu3V/CDop2TSMbTKA681qWu2gEelZheyy6lw5MGtsPm6l55Fwc
-         iYWU9EOgJ8bRC7tvRJGY2qzKsagMID2vdfhdBkeTSqG+Z2gwhJNhhWdwbKVDXDOoXUfN
-         4s226pwKsO/55c5Ka8kg6RqSPCU1AJ2SFOGfbTtVMz62qlECfo+m+fNnUHS/AghCnEB2
-         NhoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753712093; x=1754316893;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYwhbY7Hecbk1qZCl4MdGthfDHIANrmSUOeNszZY1sQ=;
-        b=XOAhoLyWBZqiXGSGMaGwToRZSPhSUKhH+/UkE9/lEOIlHgyc7+s6D7XmsFGMxkPxlL
-         wVFI6aOGJBGob61EYSYBBG9VAinSZNk+aYDCSWTst9CF4V3v6frXvMo6VbAXgqVH7MZ6
-         0X3pLWz/kiJWoac+V0DTi1c1eRHks5QAfAKdxhFG6V2QwWfjE8YLPjTI94hLXWbQ7LJN
-         Y0W4ZyFCU6+tzezlkLAMYwwqcRHb0YGQmxoEYvMSiCCfKg95Y2+eHuYUMC0LUycpphf7
-         +bK2mA8wusDeW1jmSz4zVIQnFsl3ejNj+nYsjFLFubGSB2otOmtpSmc0r2/BgnIDNcXH
-         QnHw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7eEuFgQQv0ptA9RZASAok+47nSMBhKMvZusMCNgpLkX8xCEj04GtjYmt68OaRTDaOCINACrC0YKY4yEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypi94eNE3G73s0TXzgorYe1Szo4Ub5aNz2DLNkjrp/GBvQChlO
-	GQSxiiNmTKmW7i/gzGsdvzD7h9B1cES+DX83N5iWdgONgrqgm1dIxjHhCM88C3KgAs0=
-X-Gm-Gg: ASbGnctU2Kn3nEVWILLbiVhvI03FlPdjPbeXXNsm9ZAFRXFYoYOmjdhJdRXcrlHsFDN
-	aVJhCy71Og/qGIA8DuOBaDs21oB66SskaNFzK3JSx0vRU88IviSTs9AIAC600p4D43Ki9pBEq5y
-	fCEedd2Alt5myC0rBMve7Mp/+swctbuGH1FF8l1cBKIURW6EAlWDZH2Bh4WpABvPriHSUSzkmlR
-	1EySsycErHvviznSPcA/F7/rnexKc+4mNYqVZt28Tjcz2Pb15LxtFhdHrEyDc1Y7kG+stkDwbYA
-	Cn15072fI9ouMshEZtAWRHbyO0t2XZ5cNZHk4FZbYUhnywJ9KrQ1t6W6jLcDkQy/M2eTOwAsLNA
-	jRzmPNICJI7iknkjkhy2n3Rx8bBRGUv5rpNrgdcsaGv+NPFmEfPDEzMNAjVIPZKc=
-X-Google-Smtp-Source: AGHT+IEHbvVBOTBi2wL3XYw1pOYiWmJ+jSmXZDZm1vhRUWP5YTgClxOi158f8n7e9tR07uWDsbkdCg==
-X-Received: by 2002:a05:6402:2807:b0:612:b0d9:3973 with SMTP id 4fb4d7f45d1cf-614f1def683mr12512939a12.27.1753712092482;
-        Mon, 28 Jul 2025 07:14:52 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61500aed9b7sm3313488a12.65.2025.07.28.07.14.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 07:14:52 -0700 (PDT)
-Message-ID: <a0c910f2-3c7b-4740-b16b-f1efced107db@linaro.org>
-Date: Mon, 28 Jul 2025 15:14:50 +0100
+	s=arc-20240116; t=1753712144; c=relaxed/simple;
+	bh=dtu3KlJUWUhrvmA8qAJUbEP/cmxhlgR0WbIpvIOqiX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qOk7jkranqEgbZVfatb6qtV/lwSIJgSiEg/fH7jwCuddaEh9nBluuGXM7oSPZqe8kRiLhZVvN1nJ2+tvYz1lWQykXbUCUfLaBpzZMgKrjyy7SNRIVfwPZrkaLxb0z642rL77X1U10dSU5oexg62EpAGo4h6S9eWQJ/uRScQJbSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DS2MzbO7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AAF0340E0257;
+	Mon, 28 Jul 2025 14:15:37 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IRVijsMAJqhA; Mon, 28 Jul 2025 14:15:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1753712133; bh=ez8QcFfxV1IA6+WZpvqSuMttUA8cEfmeY7NaeczZ+Mw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DS2MzbO75i+Lpycdjv8k32CtvWmpLMedpuQsw5okhMV3iKk9Wjo5Qvudwro1RT2/M
+	 OXpW4zT08GYnWa9RucY+J20cO5J7Kuf0DVMGdEH1P3CUlCyRT+7CvK7RGunoJh9i0+
+	 HuLMI7SoMO06vO2ytoE96kEpd8aFSdG38dkMk1bnum1XBx5xt4fGrk1Te9XqeP9j5p
+	 QjQK+vzcXRrOkROp5CAw8GMrH6v67nGH+phnxdMuQqHUAyjE/uJWJ53QsXaUJltjr8
+	 oYPUZkk6JybZaLezUDe2Q+1Yjsrb3ExKi+tid4k7b56HLxD2fg7Yz2rKv/a43tzvXn
+	 LgIZlz7poQYzss8rK5N5vensddzB8dIf6ERs47r14DsZMjIzT3SPYvz7ptLPNSUAN2
+	 LdOvtOVRP+VaG/7VNU7jwYOIIT3yJ7cz0XCWNJ0rjK0tRkrvWzaKJKiETt3doGQFkF
+	 ka+ksMBnXE+457K0uQocIU/GozBA4GdGR4e2AxaXB/SCj8LCq/OLUDvvYG0J45z8Nl
+	 REEI9fCM69Twt+ciGwR7QlTDgp0LqCrlbesd0Xwk67fJVCeYVqR7NuqQYfyGHpzEzd
+	 36aFi1ZrZq4EyKP7stE3ynKxBbbI/U/mxYO86u/f+LMv6wuwE2kUIXXGoqfzjikBcp
+	 usdvE0crHDZ4S68yGzpCZzvM=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF19840E0256;
+	Mon, 28 Jul 2025 14:15:30 +0000 (UTC)
+Date: Mon, 28 Jul 2025 16:15:22 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC updates for v6.17-rc1
+Message-ID: <20250728141521.GAaIeF-XYJVbfOQdT6@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] media: qcom: camss: enable vfe 690 for qcs8300
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250711131134.215382-1-quic_vikramsa@quicinc.com>
- <20250711131134.215382-6-quic_vikramsa@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250711131134.215382-6-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 11/07/2025 14:11, Vikram Sharma wrote:
-> The vfe in qcs8300 is version 690, it is same as vfe used in
-> sa8775p. vfe gen3 have support for vfe 690.
-> 
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->   .../platform/qcom/camss/camss-vfe-gen3.c      |   4 +-
->   drivers/media/platform/qcom/camss/camss-vfe.c |   2 +
->   drivers/media/platform/qcom/camss/camss.c     | 180 ++++++++++++++++++
->   3 files changed, 185 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-vfe-gen3.c b/drivers/media/platform/qcom/camss/camss-vfe-gen3.c
-> index a5eddc8c76ae..92ee7c7b8a47 100644
-> --- a/drivers/media/platform/qcom/camss/camss-vfe-gen3.c
-> +++ b/drivers/media/platform/qcom/camss/camss-vfe-gen3.c
-> @@ -13,7 +13,9 @@
->   #include "camss-vfe.h"
->   
->   #define IS_VFE_690(vfe) \
-> -	    (vfe->camss->res->version == CAMSS_8775P ? true : false)
-> +	    ((vfe->camss->res->version == CAMSS_8775P) ||\
-> +	    (vfe->camss->res->version == CAMSS_8300) ?\
-> +	    true : false)
->   
->   #define BUS_REG_BASE_690 \
->   	    (vfe_is_lite(vfe) ? 0x480 : 0x400)
-> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-> index 99cbe09343f2..1d40184d7d04 100644
-> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
-> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-> @@ -344,6 +344,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
->   	case CAMSS_8x96:
->   	case CAMSS_8250:
->   	case CAMSS_8280XP:
-> +	case CAMSS_8300:
->   	case CAMSS_845:
->   	case CAMSS_8550:
->   	case CAMSS_8775P:
-> @@ -1974,6 +1975,7 @@ static int vfe_bpl_align(struct vfe_device *vfe)
->   	case CAMSS_7280:
->   	case CAMSS_8250:
->   	case CAMSS_8280XP:
-> +	case CAMSS_8300:
->   	case CAMSS_845:
->   	case CAMSS_8550:
->   	case CAMSS_8775P:
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-> index b0fd5fd307a1..abfaa489cc0c 100644
-> --- a/drivers/media/platform/qcom/camss/camss.c
-> +++ b/drivers/media/platform/qcom/camss/camss.c
-> @@ -2623,6 +2623,186 @@ static const struct camss_subdev_resources csid_res_8300[] = {
->   	},
->   };
->   
-> +static const struct camss_subdev_resources vfe_res_8300[] = {
-> +	/* VFE0 */
-> +	{
-> +		.regulators = {},
-> +		.clock = { "cpas_vfe0", "vfe0", "vfe0_fast_ahb",
-> +			   "cpas_ahb", "gcc_axi_hf", "gcc_axi_sf",
-> +			   "core_ahb", "cpas_fast_ahb_clk", "camnoc_axi",
-> +			   "icp_ahb"},
-> +		.clock_rate = {
-> +			{ 0 },
-> +			{ 480000000 },
-> +			{ 300000000, 400000000 },
-> +			{ 300000000, 400000000 },
-> +			{ 0 },
-> +			{ 0 },
-> +			{ 0, 80000000 },
-> +			{ 300000000, 400000000 },
-> +			{ 400000000 },
-> +			{ 0 },
-> +		},
-> +		.reg = { "vfe0" },
-> +		.interrupt = { "vfe0" },
-> +		.vfe = {
-> +			.line_num = 3,
-> +			.is_lite = false,
-> +			.has_pd = false,
-> +			.pd_name = NULL,
-> +			.hw_ops = &vfe_ops_gen3,
-> +			.formats_rdi = &vfe_formats_rdi_845,
-> +			.formats_pix = &vfe_formats_pix_845
-> +		}
-> +	},
-> +	/* VFE1 */
-> +	{
-> +		.regulators = {},
-> +		.clock = { "cpas_vfe1", "vfe1", "vfe1_fast_ahb",
-> +			   "cpas_ahb", "gcc_axi_hf", "gcc_axi_sf",
-> +			   "core_ahb", "cpas_fast_ahb_clk", "camnoc_axi",
-> +			   "icp_ahb"},
-> +		.clock_rate = {
-> +			{ 0 },
-> +			{ 480000000 },
-> +			{ 300000000, 400000000 },
-> +			{ 300000000, 400000000 },
-> +			{ 0 },
-> +			{ 0 },
-> +			{ 0, 80000000 },
-> +			{ 300000000, 400000000 },
-> +			{ 400000000 },
-> +			{ 0 },
-> +		},
-> +		.reg = { "vfe1" },
-> +		.interrupt = { "vfe1" },
-> +		.vfe = {
-> +			.line_num = 3,
-> +			.is_lite = false,
-> +			.has_pd = false,
-> +			.pd_name = NULL,
-> +			.hw_ops = &vfe_ops_gen3,
-> +			.formats_rdi = &vfe_formats_rdi_845,
-> +			.formats_pix = &vfe_formats_pix_845
-> +		}
-> +	},
-> +	/* VFE2 (lite) */
-> +	{
-> +		.regulators = {},
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 0, 0  },
-> +			{ 300000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 480000000, 600000000, 600000000, 600000000 },
-> +		},
-> +		.reg = { "vfe_lite0" },
-> +		.interrupt = { "vfe_lite0" },
-> +		.vfe = {
-> +			.line_num = 4,
-> +			.is_lite = true,
-> +			.hw_ops = &vfe_ops_gen3,
-> +			.formats_rdi = &vfe_formats_rdi_845,
-> +			.formats_pix = &vfe_formats_pix_845
-> +		}
-> +	},
-> +	/* VFE3 (lite) */
-> +	{
-> +		.regulators = {},
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 0, 0  },
-> +			{ 300000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 480000000, 600000000, 600000000, 600000000 },
-> +		},
-> +		.reg = { "vfe_lite1" },
-> +		.interrupt = { "vfe_lite1" },
-> +		.vfe = {
-> +			.line_num = 4,
-> +			.is_lite = true,
-> +			.hw_ops = &vfe_ops_gen3,
-> +			.formats_rdi = &vfe_formats_rdi_845,
-> +			.formats_pix = &vfe_formats_pix_845
-> +		}
-> +	},
-> +	/* VFE4 (lite) */
-> +	{
-> +		.regulators = {},
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 0, 0  },
-> +			{ 300000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 480000000, 600000000, 600000000, 600000000 },
-> +		},
-> +		.reg = { "vfe_lite2" },
-> +		.interrupt = { "vfe_lite2" },
-> +		.vfe = {
-> +			.line_num = 4,
-> +			.is_lite = true,
-> +			.hw_ops = &vfe_ops_gen3,
-> +			.formats_rdi = &vfe_formats_rdi_845,
-> +			.formats_pix = &vfe_formats_pix_845
-> +		}
-> +	},
-> +	/* VFE5 (lite) */
-> +	{
-> +		.regulators = {},
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 0, 0  },
-> +			{ 300000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 480000000, 600000000, 600000000, 600000000 },
-> +		},
-> +		.reg = { "vfe_lite3" },
-> +		.interrupt = { "vfe_lite3" },
-> +		.vfe = {
-> +			.line_num = 4,
-> +			.is_lite = true,
-> +			.hw_ops = &vfe_ops_gen3,
-> +			.formats_rdi = &vfe_formats_rdi_845,
-> +			.formats_pix = &vfe_formats_pix_845
-> +		}
-> +	},
-> +	/* VFE6 (lite) */
-> +	{
-> +		.regulators = {},
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 0, 0  },
-> +			{ 300000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 400000000, 400000000, 400000000, 400000000 },
-> +			{ 480000000, 600000000, 600000000, 600000000 },
-> +		},
-> +		.reg = { "vfe_lite4" },
-> +		.interrupt = { "vfe_lite4" },
-> +		.vfe = {
-> +			.line_num = 4,
-> +			.is_lite = true,
-> +			.hw_ops = &vfe_ops_gen3,
-> +			.formats_rdi = &vfe_formats_rdi_845,
-> +			.formats_pix = &vfe_formats_pix_845
-> +		}
-> +	},
-> +};
-> +
->   static const struct camss_subdev_resources csiphy_res_8775p[] = {
->   	/* CSIPHY0 */
->   	{
+Hi Linus,
 
-This generally looks fine. Please have a look at your pretty extensive 
-list of clocks and decide if you really need all of them.
+please pull the EDAC updates for v6.17-rc1.
 
-I'll trust you to come back with the appropriate list, perhaps even the 
-list above.
+There's a small merge conflict with upstream, I've added the resolution at the
+end of this mail if it helps.
+
+Thx.
+
+---
+
+The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
+
+  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_updates_for_v6.17_rc1
+
+for you to fetch changes up to 35928bc38db69a2af26624e35a250c1e0f9a6a3f:
+
+  EDAC/{skx_common,i10nm}: Use scnprintf() for safer buffer handling (2025-07-15 10:06:58 -0700)
+
+----------------------------------------------------------------
+- i10nm:
+ - switch to use scnprintf()
+ - Add Granite Rapids-D support
+
+- synopsys: Make sure ECC error and counter registers are cleared during
+  init/probing to avoid reporting stale errors
+
+- igen6: Add Wildcat Lake SoCs support
+
+- Make sure scrub features sysfs attributes are initialized properly
+
+- Allocate memory repair sysfs attributes statically to reduce stack
+  usage
+
+- Fix DIMM module size computation for DIMMs with total capacity which
+  is a non power-of-two number, in amd64_edac
+
+- Do not be too dramatic when reporting disabled memory controllers in
+  igen6_edac
+
+- Add support to ie31200_edac for the following SoCs:
+ - Core i5-14[67]00
+ - Bartless Lake-S SoCs
+ - Raptor Lake-HX
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      EDAC/mem_repair: Reduce stack usage in edac_mem_repair_get_desc()
+
+George Gaidarov (2):
+      EDAC/ie31200: Enable support for Core i5-14600 and i7-14700
+      EDAC/ie31200: Document which CPUs correspond to each Raptor Lake-S device ID
+
+Lili Li (1):
+      EDAC/igen6: Add Intel Wildcat Lake SoCs support
+
+Qiuxu Zhuo (4):
+      ie31200/EDAC: Add Intel Bartlett Lake-S SoCs support
+      EDAC/igen6: Reduce log level to debug for absent memory controllers
+      EDAC/i10nm: Add Intel Granite Rapids-D support
+      EDAC/ie31200: Add Intel Raptor Lake-HX SoCs support
+
+Shubhrajyoti Datta (1):
+      EDAC/synopsys: Clear the ECC counters on init
+
+Wang Haoran (1):
+      EDAC/{skx_common,i10nm}: Use scnprintf() for safer buffer handling
+
+ drivers/edac/i10nm_base.c    | 30 +++++++++-----
+ drivers/edac/ie31200_edac.c  | 38 +++++++++++++++--
+ drivers/edac/igen6_edac.c    | 17 +++++++-
+ drivers/edac/mem_repair.c    | 56 ++++++++++---------------
+ drivers/edac/skx_common.c    |  4 +-
+ drivers/edac/synopsys_edac.c | 97 +++++++++++++++++++++-----------------------
+ 6 files changed, 140 insertions(+), 102 deletions(-)
+
+---
+
+Merge conflict resolution:
+
+diff --cc drivers/edac/mem_repair.c
+index 70a033a76233,2e4e790e0ffe..000000000000
+--- a/drivers/edac/mem_repair.c
++++ b/drivers/edac/mem_repair.c
+@@@ -331,11 -319,10 +319,11 @@@ static int mem_repair_create_desc(struc
+  		return -ENOMEM;
+  
+  	for (i = 0; i < MR_MAX_ATTRS; i++) {
+- 		memcpy(&ctx->mem_repair_dev_attr[i],
+- 		       &dev_attr[i], sizeof(dev_attr[i]));
++ 		ctx->mem_repair_dev_attr[i].dev_attr = mem_repair_dev_attr[i];
++ 		ctx->mem_repair_dev_attr[i].instance = instance;
+ -		ctx->mem_repair_attrs[i] =
+ -			&ctx->mem_repair_dev_attr[i].dev_attr.attr;
+++
+ +		sysfs_attr_init(&ctx->mem_repair_dev_attr[i].dev_attr.attr);
+- 		ctx->mem_repair_attrs[i] =
+- 			&ctx->mem_repair_dev_attr[i].dev_attr.attr;
+++		ctx->mem_repair_attrs[i] = &ctx->mem_repair_dev_attr[i].dev_attr.attr;
+  	}
+  
+  	sprintf(ctx->name, "%s%d", "mem_repair", instance);
 
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
