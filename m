@@ -1,262 +1,158 @@
-Return-Path: <linux-kernel+bounces-748522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77019B14235
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:47:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CBDB14239
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F24718C1F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:48:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D6116C35A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90549275AF7;
-	Mon, 28 Jul 2025 18:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEC8276058;
+	Mon, 28 Jul 2025 18:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKnacxs2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihrBSZE3"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B786621D3D2;
-	Mon, 28 Jul 2025 18:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C09021CC57;
+	Mon, 28 Jul 2025 18:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753728467; cv=none; b=ALMSmkMsMCaQyX0IxdLVzuDB7bYqjE/6vII/zSi4f7aQShHmQmACupkn6S4ea44gv3t5wXScyCudr++ybzl+9bMzKl5Oti1HfIurFc+Eiit6LRivtNqfKR0JYYUPY9U+7zHEzk1odLo8LUOjtmPBhMbt486FyB27jSrKWZKswFw=
+	t=1753728494; cv=none; b=uw8No4oWApZ6rF3h9Y2c2PInuKHyBRGqELYoFt6zn7gghun76VLtHQ1V06ZWpFxRGCXN2qlvqnA0Dly2Uafu6hhMv2B4dAamVIH75R7ZQhUbrGNu9V/OkkyQMdx9V60s+36vfH4hWusKb92tAg+6JP6EPmygfnkDqLGBDkpxfCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753728467; c=relaxed/simple;
-	bh=cA73/lc9IWHo6yAek5ZnaVyqbHc5bxbJzNBobW6cvdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CVBkPkwa5YPTJk8DpLeRCiFK06mMyBHPSHIljRIGPPtNjjZPn7u+n3vfU79rrrPFs0xjbmeI30Lb74ue3cnj7mqCVU4JFqAormWq3HPjlFpQMD90KQ3DH4aDeD1p/JIy7yb9EkRVtsRMJY2hlFeuS0Qo5eGKgNrKLGV8878ints=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKnacxs2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FD71C4CEE7;
-	Mon, 28 Jul 2025 18:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753728467;
-	bh=cA73/lc9IWHo6yAek5ZnaVyqbHc5bxbJzNBobW6cvdw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RKnacxs2yto7i2z8cOvfComv3mr3h/zxLroMTtPXXEkeinKAK13o00O/3nNYzlQpY
-	 C+SrGjWwQ90V3zo4zA1NHkfESd9bXDvssnbEZ3zDE0qzvl/4LPDxX6fxdEWZnFVyIQ
-	 wzUqATn+FtkgVkrlFce2h6lXaDXOYT0WBX0uVDlwH5UMz4izHd4aoBTH5movFWZY4J
-	 4bWqQ5gR24T0MXs/tqj9VOSLoHGzLCtjtrQPXbqto2MSJ0bB+7zhttKiBdXJvEVVkp
-	 3Modd8sqZHGgsqJWapgM7hSPNaPXPjvUry0nCKNRXuXGPJt0YR8aR52vKaspWdEHVL
-	 Uvqbkw45lThPA==
-Date: Mon, 28 Jul 2025 11:47:45 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v4 5/9] perf annotate: Add --code-with-type support for
- TUI
-Message-ID: <aIfF0X80EhOF2f4J@google.com>
-References: <20250725193755.12276-1-namhyung@kernel.org>
- <20250725193755.12276-6-namhyung@kernel.org>
- <CAP-5=fWapueXS2NBHyd8VAen7XsenZjRGFgyKtLZFuTmCGaA7g@mail.gmail.com>
+	s=arc-20240116; t=1753728494; c=relaxed/simple;
+	bh=HmUFXtsPLKlOxVadQ+y0n2hrEEj+K3jv5Vs3dl1+XSs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S3g5h+07/PCwe8Q5V77H/OG87yv3vwSnAN6NTvWwmGO0zd6Eg834wDe6WHIrAshKG2LkxGTYL9v24rrO0U7648iln8baAvU4PiJmiwrr+2fqmHVHBpnW/9TkwhRInaTUWRnjoy+jpLkWCoLVpaNZkbO3MMZHYlNLuG9X60cgJCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihrBSZE3; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0dd7ac1f5so967506166b.2;
+        Mon, 28 Jul 2025 11:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753728491; x=1754333291; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KPtqArRqu6RKIpD2evhkTp5wjAyR3mIuxIPwkqRJjJg=;
+        b=ihrBSZE3YVPxc2F4rB6i03BeINzq9ZLbmlNAzC7g0mT45APCy3SFwhB6IYDhre+i7h
+         PVt1kfD5kzF3QJ0N361To36T/kbfQMap1mTOYGkuDM5uSQC3gNlHZJahujmwsgaX+khr
+         psie1BQOfL3X1JLpkuDnfahSvGCKVix+Uf16yVHhiUVwQiB6v3jQYRu4FF66hZAXIgzT
+         ny9forDzpyqe4ka0ZXn+TMPJh/cswyAQPeysrJMLRKQnoVHTkOqPYH94STunGLmfgduj
+         qgilMabfR3N2g9fVl2dlqa25gxRezoa9jRe1x/WdsCvCFzXrsXloef52O5siq9UTTNZd
+         qlwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753728491; x=1754333291;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KPtqArRqu6RKIpD2evhkTp5wjAyR3mIuxIPwkqRJjJg=;
+        b=ubI6SYAZtfnhCZekKCyf5BriuPwPxMzQLNtEDByTdwdG3hmLTFcaRXJolJnRCjYzgl
+         99ldF2yChv/RGfIH+TELTW3a9qyw+xA+MHjGDQ/XcETqRmJY8yX+dX2vmRZttxzax67S
+         Sf+NwQvDiDTmxMNib6ug5VxzGk1JXxp+mkeGsGxpmOmv7UdfkOyORFuwLrE95tSitGIL
+         OZxmuFU+/TNX9p21NsvPyxQhhwYPOG9mtBiVfHG71qnFJKNTrbOTTVuSYveBas13Dwqt
+         A0yekyCUtXkpd8ofG+j6fuUlmx5Jbw2ZqX+TZuu3f6pLbEqoAQTdUBZoQGrt//wx6rU7
+         oeaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJrWbVA2fDWJYMEBKElksnetmcWNGvC3zfs0efb+AZ+NIxTT98FAk6zDHl1U256NUpD3a1G1v/@vger.kernel.org, AJvYcCULingRW9SWCTUciHQYGRGdwwdMMQZzMf9COTu6E+xuId9A1z6XFi9mm3Zyrsb4rmpfXdBvCCapaLQbmSmW@vger.kernel.org, AJvYcCV8163SH9Im/pxTJck1HmfERkem3bDd65WcbyAs/Qjni/kRX3qHg/TiN5m+fv+hZ5COpkKJQljHjvxooA==@vger.kernel.org, AJvYcCVcbjmHQQmJ/HvNiVHer/HBQirg2DRgVwsJhIMluaMB9qtZCN7uP352cRU7d442pHgQ9Ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX6Ai77gengSOmIWtI3EX9SHQKV8DlNsUdiq2A7xzJaveg7JGK
+	D+F6xkR5BCtWChsV/P4l1i+RXzn21jDimDzWSWwsIltxFwOmdQXwAKWA
+X-Gm-Gg: ASbGncstQ9CUJp3jXYTO4Sbq0LyjSQr0MHKtE3RouVZ4W27ruu3ZDJHtu3gsL5FIWaG
+	HZ5cHYDiEMZvx8IY+GmaY00I/hippCU2dvKilIGH4AqdUlhXH2XoHA6OiAdRf8snE8vr0Pl91dJ
+	jh2WocxZjdkzfAY2cbBfQ3kPLt837O3qZd5fGRtKBlBX482E296AS47mq+/QpK772+CcqPEvn5n
+	bHSe7IyCFwodSdQjpdqRSVwr85BNJMxFqm1ed1ofQUmeeJJ/9RmEyEwh+kcMXr1jVq7o5olewyY
+	j4o4sSUd4V0OtCgu6xJKd3bkizm5RshF1JhT2Zd7tJvYkNXoGC7LCQOomDglzjYKVXLFVZ53TrR
+	emdVATG0HMRoPAI6GvmfmQ4A77+ww2Gk=
+X-Google-Smtp-Source: AGHT+IGzAV+yc6Tr08lhtVqfYb5YTgQLPzE5kcZfo5vFpSIrj8JxMfbWLpoJFl0I+K+SgA12E6PiOQ==
+X-Received: by 2002:a17:907:d2a:b0:ae3:e378:159e with SMTP id a640c23a62f3a-af617d0afbbmr1521651666b.26.1753728490438;
+        Mon, 28 Jul 2025 11:48:10 -0700 (PDT)
+Received: from [192.168.8.100] ([185.69.144.164])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635aa33f9sm460220966b.98.2025.07.28.11.48.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 11:48:09 -0700 (PDT)
+Message-ID: <da4a9efd-64b3-4dc5-a613-b73e17f160d6@gmail.com>
+Date: Mon, 28 Jul 2025 19:49:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm, page_pool: introduce a new page type for page pool
+ in page type
+To: Mina Almasry <almasrymina@google.com>
+Cc: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel_team@skhynix.com, harry.yoo@oracle.com, ast@kernel.org,
+ daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+ andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+ akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+ brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+ usamaarif642@gmail.com, baolin.wang@linux.alibaba.com, toke@redhat.com,
+ bpf@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <20250728052742.81294-1-byungchul@sk.com>
+ <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
+ <CAHS8izO6t0euQcNyhxXKPbrV7BZ1MfuMjrQiqKr-Y68t5XCGaA@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAHS8izO6t0euQcNyhxXKPbrV7BZ1MfuMjrQiqKr-Y68t5XCGaA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWapueXS2NBHyd8VAen7XsenZjRGFgyKtLZFuTmCGaA7g@mail.gmail.com>
 
-On Fri, Jul 25, 2025 at 05:31:52PM -0700, Ian Rogers wrote:
-> On Fri, Jul 25, 2025 at 12:38 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Until now, the --code-with-type option is available only on stdio.
-> > But it was an artifical limitation because of an implemention issue.
-> >
-> > Implement the same logic in annotation_line__write() for stdio2/TUI.
-> > Make disasm_line__write() return the number of printed characters so
-> > that it can skip unnecessary operations when the screen is full.
+On 7/28/25 19:39, Mina Almasry wrote:
+> On Mon, Jul 28, 2025 at 11:35 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> On 7/28/25 06:27, Byungchul Park wrote:
+>>> Changes from v1:
+>>>        1. Rebase on linux-next.
+>>
+>> net-next is closed, looks like until August 11.
+>>
+>>>        2. Initialize net_iov->pp = NULL when allocating net_iov in
+>>>           net_devmem_bind_dmabuf() and io_zcrx_create_area().
+>>>        3. Use ->pp for net_iov to identify if it's pp rather than
+>>>           always consider net_iov as pp.
+>>>        4. Add Suggested-by: David Hildenbrand <david@redhat.com>.
+>>
+>> Oops, looks you killed my suggested-by tag now. Since it's still
+>> pretty much my diff spliced with David's suggestions, maybe
+>> Co-developed-by sounds more appropriate. Even more so goes for
+>> the second patch getting rid of __netmem_clear_lsb().
+>>
+>> Looks fine, just one comment below.
+>>
+>> ...> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+>>> index 100b75ab1e64..34634552cf74 100644
+>>> --- a/io_uring/zcrx.c
+>>> +++ b/io_uring/zcrx.c
+>>> @@ -444,6 +444,7 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+>>>                area->freelist[i] = i;
+>>>                atomic_set(&area->user_refs[i], 0);
+>>>                niov->type = NET_IOV_IOURING;
+>>> +             niov->pp = NULL;
+>>
+>> It's zero initialised, you don't need it.
+>>
 > 
-> This change seems to be different from the rest of what is the patch,
-> is it possible to have it is a patch before this one?
-
-Yep, will do in the next version.
-
-Thanks,
-Namhyung
-
+> This may be my bad since I said we should check if it's 0 initialized.
 > 
-> > Remove the limitation and update the man page.
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/Documentation/perf-annotate.txt |  1 -
-> >  tools/perf/builtin-annotate.c              |  5 --
-> >  tools/perf/ui/browsers/annotate.c          |  6 +++
-> >  tools/perf/util/annotate.c                 | 61 +++++++++++++++++++---
-> >  4 files changed, 61 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
-> > index 46090c5b42b4762f..547f1a2680185e3c 100644
-> > --- a/tools/perf/Documentation/perf-annotate.txt
-> > +++ b/tools/perf/Documentation/perf-annotate.txt
-> > @@ -170,7 +170,6 @@ include::itrace.txt[]
-> >
-> >  --code-with-type::
-> >         Show data type info in code annotation (for memory instructions only).
-> > -       Currently it only works with --stdio option.
-> >
-> >
-> >  SEE ALSO
-> > diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> > index 5d57d2913f3d9a33..646f43b0f7c4c9b0 100644
-> > --- a/tools/perf/builtin-annotate.c
-> > +++ b/tools/perf/builtin-annotate.c
-> > @@ -917,11 +917,6 @@ int cmd_annotate(int argc, const char **argv)
-> >                 symbol_conf.annotate_data_sample = true;
-> >         } else if (annotate_opts.code_with_type) {
-> >                 symbol_conf.annotate_data_member = true;
-> > -
-> > -               if (!annotate.use_stdio) {
-> > -                       pr_err("--code-with-type only works with --stdio.\n");
-> > -                       goto out_delete;
-> > -               }
-> >         }
-> >
-> >         setup_browser(true);
-> > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> > index 23bea5b165774ae7..cdee1969f3131a7c 100644
-> > --- a/tools/perf/ui/browsers/annotate.c
-> > +++ b/tools/perf/ui/browsers/annotate.c
-> > @@ -4,6 +4,7 @@
-> >  #include "../ui.h"
-> >  #include "../../util/annotate.h"
-> >  #include "../../util/debug.h"
-> > +#include "../../util/debuginfo.h"
-> >  #include "../../util/dso.h"
-> >  #include "../../util/hist.h"
-> >  #include "../../util/sort.h"
-> > @@ -1101,6 +1102,9 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
-> >
-> >         ui_helpline__push("Press ESC to exit");
-> >
-> > +       if (annotate_opts.code_with_type)
-> > +               browser.dbg = debuginfo__new(dso__long_name(dso));
-> > +
-> >         browser.b.width = notes->src->widths.max_line_len;
-> >         browser.b.nr_entries = notes->src->nr_entries;
-> >         browser.b.entries = &notes->src->source;
-> > @@ -1111,6 +1115,8 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
-> >
-> >         ret = annotate_browser__run(&browser, evsel, hbt);
-> >
-> > +       if (annotate_opts.code_with_type)
-> > +               debuginfo__delete(browser.dbg);
-> >         if (not_annotated && !notes->src->tried_source)
-> >                 annotated_source__purge(notes->src);
-> >
-> > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> > index d69e406c1bc289cd..06ddc7a9f58722a4 100644
-> > --- a/tools/perf/util/annotate.c
-> > +++ b/tools/perf/util/annotate.c
-> > @@ -1362,6 +1362,11 @@ static int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp,
-> >         };
-> >         struct annotation_line *al;
-> >
-> > +       if (annotate_opts.code_with_type) {
-> > +               evsel__get_arch(apd->evsel, &apd->arch);
-> > +               apd->dbg = debuginfo__new(dso__long_name(map__dso(apd->he->ms.map)));
-> > +       }
-> > +
-> >         list_for_each_entry(al, &notes->src->source, node) {
-> >                 if (annotation_line__filter(al))
-> >                         continue;
-> > @@ -1370,6 +1375,9 @@ static int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp,
-> >                 wops.first_line = false;
-> >         }
-> >
-> > +       if (annotate_opts.code_with_type)
-> > +               debuginfo__delete(apd->dbg);
-> > +
-> >         return 0;
-> >  }
-> >
-> > @@ -1743,7 +1751,7 @@ static double annotation_line__max_percent(struct annotation_line *al,
-> >         return percent_max;
-> >  }
-> >
-> > -static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
-> > +static int disasm_line__write(struct disasm_line *dl, struct annotation *notes,
-> >                                void *obj, char *bf, size_t size,
-> >                                void (*obj__printf)(void *obj, const char *fmt, ...),
-> >                                void (*obj__write_graph)(void *obj, int graph))
-> > @@ -1771,8 +1779,8 @@ static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
-> >                 obj__printf(obj, "  ");
-> >         }
-> >
-> > -       disasm_line__scnprintf(dl, bf, size, !annotate_opts.use_offset,
-> > -                              notes->src->widths.max_ins_name);
-> > +       return disasm_line__scnprintf(dl, bf, size, !annotate_opts.use_offset,
-> > +                                     notes->src->widths.max_ins_name);
-> >  }
-> >
-> >  static void ipc_coverage_string(char *bf, int size, struct annotation *notes)
-> > @@ -2116,11 +2124,52 @@ void annotation_line__write(struct annotation_line *al, struct annotation *notes
-> >
-> >                 width -= printed + 3;
-> >
-> > -               disasm_line__write(disasm_line(al), notes, obj, bf, sizeof(bf), obj__printf, obj__write_graph);
-> > +               printed = disasm_line__write(disasm_line(al), notes, obj, bf, sizeof(bf),
-> > +                                            obj__printf, obj__write_graph);
-> > +
-> > +               obj__printf(obj, "%s", bf);
-> > +               width -= printed;
-> > +
-> > +               if (annotate_opts.code_with_type && apd->dbg) {
-> > +                       struct annotated_data_type *data_type;
-> > +                       int offset = 0;
-> > +
-> > +                       data_type = __hist_entry__get_data_type(apd->he, apd->arch,
-> > +                                                               apd->dbg,
-> > +                                                               disasm_line(al),
-> > +                                                               &offset);
-> > +                       if (data_type && data_type != NO_TYPE) {
-> > +                               char member[256];
-> > +
-> > +                               printed = scnprintf(bf, sizeof(bf),
-> > +                                                   "\t\t# data-type: %s",
-> > +                                                   data_type->self.type_name);
-> >
-> > -               obj__printf(obj, "%-*s", width, bf);
-> > +                               if (data_type != &stackop_type &&
-> > +                                   data_type != &canary_type &&
-> > +                                   sizeof(bf) > (size_t)printed) {
-> > +                                       printed += scnprintf(bf + printed,
-> > +                                                            sizeof(bf) - printed,
-> > +                                                            " +%#x", offset);
-> > +                               }
-> > +
-> > +                               if (annotated_data_type__get_member_name(data_type,
-> > +                                                                        member,
-> > +                                                                        sizeof(member),
-> > +                                                                        offset) &&
-> > +                                   sizeof(bf) > (size_t)printed) {
-> > +                                       printed += scnprintf(bf + printed,
-> > +                                                            sizeof(bf) - printed,
-> > +                                                            " (%s)", member);
-> > +                               }
-> >
-> > -               (void)apd;
-> > +                               obj__printf(obj, "%-*s", width, bf);
-> > +                       } else {
-> > +                               obj__printf(obj, "%-*s", width, " ");
-> > +                       }
-> > +               } else {
-> > +                       obj__printf(obj, "%-*s", width, " ");
-> > +               }
-> >         }
-> >
-> >  }
-> > --
-> > 2.50.1
-> >
+> It looks like on the devmem side as well we kvmalloc_array the niovs,
+> and if I'm checking through the helpers right, kvmalloc_array does
+> 0-initialize indeed.
+
+I wouldn't rely on that, it's just for zcrx I do:
+
+kvmalloc_array(...,  GFP_KERNEL | __GFP_ZERO);
+
+-- 
+Pavel Begunkov
+
 
