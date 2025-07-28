@@ -1,236 +1,129 @@
-Return-Path: <linux-kernel+bounces-747449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41DDB133FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0FDB133FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F1C3AC1AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:07:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB8A3A9E2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C51021A95D;
-	Mon, 28 Jul 2025 05:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085EB2192FC;
+	Mon, 28 Jul 2025 05:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Vls+F+BH"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMhzU91K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B538218EA1;
-	Mon, 28 Jul 2025 05:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6326629405;
+	Mon, 28 Jul 2025 05:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753679288; cv=none; b=aqHsgV61nmPiD7RmgTPDzqswHC8uQbowFmzZUvYTOKu69uRlQdOlVm2/Aq5ti7Uc/F90cSyD27rxR3Fnc3uhHfvVGeZyIu8zEgNouKGTMrPlVHyUzM0af74oiE8VC2YYQ+pdIamp1QlpuWfkDirYlyZuT3vAe9PISjFR5IcjECc=
+	t=1753679326; cv=none; b=f5+nLHpOo7e9cBXk5s+w0hJrPC4T9p/oFMN84nV/1bGOLkt15L++L505UK4AyY3voBGM8ogddRdolOprOsrkBY5R+G7I9Q6cEGnCMeFfJJSJTy4CC01ytbzGRyRt4vBJ9mmQ9vGAOr6j1HiVcuh/Ih3He4EsCVGTjC4P3WrXqDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753679288; c=relaxed/simple;
-	bh=C2uPb02MiokZGlv8JpAHMlpdLLPVnFYjfQPmyPpiPuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kasaleqNpTo5rm+L0j/Zvj0PeohQWswh2Ez/PVV1rcdk3ZHdS4pIZYDi5+wo/q/kdTKKTe1m9kzkgOIWJek1XrvtBMJvpw+H76WmZDxLG4Mu1i32Ny7Sb1XckQGSznCZwspbvxPbP6JF/df5c5UQQkvsy4djsFaQqHZwC7EEm34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Vls+F+BH; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 1077A23CB1;
-	Mon, 28 Jul 2025 07:07:57 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id b7ANjcg6Zkbp; Mon, 28 Jul 2025 07:07:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1753679275; bh=C2uPb02MiokZGlv8JpAHMlpdLLPVnFYjfQPmyPpiPuU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Vls+F+BHomGstKwi/Wa+rUmALYJRPkRqkZ8KMDCahNlCE4kl2Swb1kf/UeexPqkwe
-	 feubZnvIKYJcZvz8JdyL8fymUyGbvE9inBw4mUHQ7uGtr/qs53PCOeg1S9zlCwKXuK
-	 cK69Rpz+6PlcUP+rxtwufZY2u8kOVh4tm935+/Ft0IC+42DQ6ts3rIBBwXmaHeaRSz
-	 mRH3w+OI4tdBaRFywKMwRF6Q746R9DwITrBs7Gqm9JvSdkf0OP4YJpwtfs8St2KJJk
-	 hGr21MDMSaP9GYdiCwMjqQ3IerXIjubtup851dBy7mkN0V0rVM3j92qI1xooMEecTA
-	 rjD0wYUoBRsow==
-Date: Mon, 28 Jul 2025 05:07:38 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	linux-rockchip@lists.infradead.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>, Chukun Pan <amadeus@jmu.edu.cn>,
-	linux-arm-kernel@lists.infradead.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] phy: rockchip: naneng-combphy: Add RK3528 support
-Message-ID: <aIcFmhQqLuUlLZb_@pie>
-References: <20250624033733.50197-1-ziyao@disroot.org>
- <20250624033733.50197-6-ziyao@disroot.org>
- <eb7c9e40-3c17-488f-98a2-17b972f61e75@kwiboo.se>
- <aIHDSW0XO9BCfch3@pie.lan>
+	s=arc-20240116; t=1753679326; c=relaxed/simple;
+	bh=yk7EIKaMA1+vT3aBsH4QJI9N/7S5/eB9802+31fXP7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Phu207Qiid2L1RzwvQuJ8q09AqZdRHFW+p2iQa5jtZe+1ZHcInY+YKP43R7am9+V7+iFksDuS2+qiNkhGS6c2TFLGjR6RFa7QsWeWmLTVdX8zwXSynoFyEFXpnsJucOA2dRnPotB0H+ZT6RwaY41QrJPBaCwm9YEnaHtKVFcpyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMhzU91K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90836C4CEE7;
+	Mon, 28 Jul 2025 05:08:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753679325;
+	bh=yk7EIKaMA1+vT3aBsH4QJI9N/7S5/eB9802+31fXP7Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BMhzU91KElqo+abIz6lBOndpxSEzIM4+5A9AH4ZWucm/Xj4xAPBN1upHkxsVTz/Iq
+	 5AhbGvEiibiv75bAhA0pcyX7E2ltSRjBBXg14ynbgwTBVkgWXSr4Q/iTcwZmDtJX/O
+	 PGuKvKBK0Ca4/Y/WbDrPmUHfFRCZY7SPERlwaEIfnG1ewEycxRaASGl64QCN1YfMlA
+	 g07OMc93M6z8Q51Dg9PFeZDJygBfdHgtVb2ahGa4Y00cX/Y7Eoh/IIsbSdSc+amJkB
+	 lAD/CihLWwk1A9AGqVeW6aCDnXjOWd0q8Y80XJUn4rR6EsaGEezaNgSP1wVujbruXR
+	 dFwr5Lhh5UFGw==
+Message-ID: <642df1ee-5e92-4f0a-bcdf-7e10dbc0d59b@kernel.org>
+Date: Mon, 28 Jul 2025 07:08:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIHDSW0XO9BCfch3@pie.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] arm64: dts: rockchip: add LinkStar-H68k-1432v1
+To: Erik Beck <xunil@tahomasoft.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250727-linkstarpatch_v4_6-16-rc1-v4-0-0dfa7aa06ec9@tahomasoft.com>
+ <20250727-linkstarpatch_v4_6-16-rc1-v4-2-0dfa7aa06ec9@tahomasoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250727-linkstarpatch_v4_6-16-rc1-v4-2-0dfa7aa06ec9@tahomasoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 05:23:55AM +0000, Yao Zi wrote:
-> On Wed, Jul 23, 2025 at 04:51:15PM +0200, Jonas Karlman wrote:
-> > Hi Yao Zi,
-> > 
-> > On 6/24/2025 5:37 AM, Yao Zi wrote:
-> > > Rockchip RK3528 integrates one naneng-combphy that is able to operate in
-> > > PCIe and USB3 mode. The control logic is similar to previous variants of
-> > > naneng-combphy but the register layout is apperantly different from the
-> > > RK3568 one.
-> > > 
-> > > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> > > Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > > ---
-> > >  .../rockchip/phy-rockchip-naneng-combphy.c    | 186 +++++++++++++++++-
-> > >  1 file changed, 185 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > > index 1d1c7723584b..bf00a85a113b 100644
-> > > --- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> > > +++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-
-...
-
-> > > @@ -398,6 +437,147 @@ static int rockchip_combphy_probe(struct platform_device *pdev)
-> > >  	return PTR_ERR_OR_ZERO(phy_provider);
-> > >  }
-> > >  
-> > > +static int rk3528_combphy_cfg(struct rockchip_combphy_priv *priv)
-> > > +{
-> > > +	const struct rockchip_combphy_grfcfg *cfg = priv->cfg->grfcfg;
-> > > +	unsigned long rate;
-> > > +	u32 val;
-> > > +
-> > > +	/* Set SSC downward spread spectrum */
-> > > +	val = FIELD_PREP(RK3528_PHYREG6_SSC_DIR, RK3528_PHYREG6_SSC_DOWNWARD);
-> > > +	rockchip_combphy_updatel(priv, RK3528_PHYREG6_SSC_DIR, val, RK3528_PHYREG6);
-> > > +
-> > > +	switch (priv->type) {
-> > > +	case PHY_TYPE_PCIE:
-> > > +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con0_for_pcie, true);
-> > > +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con1_for_pcie, true);
-> > > +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con2_for_pcie, true);
-> > > +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con3_for_pcie, true);
-> > > +		break;
-> > > +	case PHY_TYPE_USB3:
-> > > +		/* Enable adaptive CTLE for USB3.0 Rx */
-> > > +		rockchip_combphy_updatel(priv, RK3528_PHYREG80_CTLE_EN, RK3528_PHYREG80_CTLE_EN,
-> > > +					 RK3528_PHYREG80);
-> > > +
-> > > +		/* Set slow slew rate control for PI */
-> > > +		val = FIELD_PREP(RK3528_PHYREG81_SLEW_RATE_CTRL,
-> > > +				 RK3528_PHYREG81_SLEW_RATE_CTRL_SLOW);
-> > > +		rockchip_combphy_updatel(priv, RK3528_PHYREG81_SLEW_RATE_CTRL, val,
-> > > +					 RK3528_PHYREG81);
-> > > +
-> > > +		/* Set CDR phase path with 2x gain */
-> > > +		rockchip_combphy_updatel(priv, RK3528_PHYREG81_CDR_PHASE_PATH_GAIN_2X,
-> > > +					 RK3528_PHYREG81_CDR_PHASE_PATH_GAIN_2X, RK3528_PHYREG81);
-> > > +
-> > > +		/* Set Rx squelch input filler bandwidth */
-> > > +		val = FIELD_PREP(RK3528_PHYREG83_RX_SQUELCH, RK3528_PHYREG83_RX_SQUELCH_VALUE);
-> > > +		rockchip_combphy_updatel(priv, RK3528_PHYREG83_RX_SQUELCH, val, RK3528_PHYREG83);
-> > > +
-> > > +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txcomp_sel, false);
-> > > +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txelec_sel, false);
-> > > +		rockchip_combphy_param_write(priv->phy_grf, &cfg->usb_mode_set, true);
-> > 
-> > I suggest we add something like following here:
-> > 
-> > 		rockchip_combphy_param_write(priv->pipe_grf, &cfg->u3otg0_port_en, true);
-> > 
-> > to ensure that U3 is enabled in case boot firmware disable the U3 port.
+On 28/07/2025 02:03, Erik Beck wrote:
+> Add DTS.
 > 
-> Thanks for the hint, I'm willing to adapt it. Should we handle the case
-> that USB is enabled by firmware but PCIe is going to be used in kernel,
-> too? It's desirable to make fewer assumptions about the state set by
-> firmware.
+> This device:
+>   - Has not been supported previously in the mainline Linux kernel;
+>   - Is a single board travel router made by Seeed, using an rk3568;
+>   - Has four ethernet ports;
+>   - Has four USB ports;
+>   - Has WiFi (MediaTek MT7921e);
+>   - Has a real-time clock (rk809)
 > 
-> P.S., I'm assuming the register should be written as "disabled" value
-> whenever PCIe is used, and "enabled" whenever USB is used, as
-> the LSB of USB_GRF_USB3OTG0_CON1 is said to be "USB 3.0 SS Port Disable
-> control" according to RK3588's TRM, which doesn't look like something
-> compatible with PCIe mode when setting to 1'b0 (port enabled). Please
-> correct me if I'm wrong.
+> Base commit:
+>   - Commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494 (tag: v6.16-rc1);
 
-I've read through the manual and done some tests today, and it seems I
-misunderstood the purpose of USB3OTG0_CON1. This register has only
-something to do with USB3, but not PCIe. Writing either "disabled" or
-"enabled" value to it doesn't affect PCIe functionality. Thus for the
-naneng-combphy driver, it should be enough to only write the "enabled"
-value to u3otg0_port_en if USB-3 mode is used.
+Drop entire commit msg, you are duplicating the binding. Instead:
 
-Anyway, thanks for your remind on this register :) Its reset value
-allows USB-3 to function thus I just forgot about it during clean-up.
-I'll send v5 soon.
+Add DTS for foo bar board, a travel router using Rockchip baz foo SoC.
 
-...
-
-> > > +static const struct rockchip_combphy_grfcfg rk3528_combphy_grfcfgs = {
-> > > +	/* pipe-phy-grf */
-> > > +	.pcie_mode_set		= { 0x0000, 5, 0, 0x00, 0x11 },
-> > > +	.usb_mode_set		= { 0x0000, 5, 0, 0x00, 0x04 },
-> > > +	.pipe_rxterm_set	= { 0x0000, 12, 12, 0x00, 0x01 },
-> > > +	.pipe_txelec_set	= { 0x0004, 1, 1, 0x00, 0x01 },
-> > > +	.pipe_txcomp_set	= { 0x0004, 4, 4, 0x00, 0x01 },
-> > > +	.pipe_clk_24m		= { 0x0004, 14, 13, 0x00, 0x00 },
-> > > +	.pipe_clk_100m		= { 0x0004, 14, 13, 0x00, 0x02 },
-> > > +	.pipe_rxterm_sel	= { 0x0008, 8, 8, 0x00, 0x01 },
-> > > +	.pipe_txelec_sel	= { 0x0008, 12, 12, 0x00, 0x01 },
-> > > +	.pipe_txcomp_sel	= { 0x0008, 15, 15, 0x00, 0x01 },
-> > > +	.pipe_clk_ext		= { 0x000c, 9, 8, 0x02, 0x01 },
-> > > +	.pipe_phy_status	= { 0x0034, 6, 6, 0x01, 0x00 },
-> > > +	.con0_for_pcie		= { 0x0000, 15, 0, 0x00, 0x110 },
-> > > +	.con1_for_pcie		= { 0x0004, 15, 0, 0x00, 0x00 },
-> > > +	.con2_for_pcie		= { 0x0008, 15, 0, 0x00, 0x101 },
-> > > +	.con3_for_pcie		= { 0x000c, 15, 0, 0x00, 0x0200 },
-> > 
-> > And adding something like this:
-> > 
-> > 	/* pipe-grf */
-> > 	.u3otg0_port_en		= { 0x0044, 15, 0, 0x0181, 0x1100 },
-> > 
-> > Should be possible with ("phy: rockchip: naneng-combphy: Enable U3 OTG
-> > port for RK3568") [1].
-> > 
-> > Most RK3528 boards I have come across this far seem to use PCIe instead
-> > of USB3, so having boot firmware disable U3 early (to help support USB
-> > gadget in boot firmware) and instead having this PHY driver re-enable U3
-> > when needed seem most logical to me.
-
-Thank you for the U-Boot patch! While reading through, I saw commit
-"rockchip: rk3528: Disable USB3OTG U3 port early" states,
-
-> Some board designs may not use the COMBPHY for USB3 purpose. For these
-> board to use USB OTG the input clock source must change to use UTMI
-> clk instead of PIPE clk.
-
-Does this mean we should ideally add similar handling for USB3OTG in the
-kernel's usb2phy driver, too? Otherwise if the firmware doesn't handle
-clock stuff well, the kernel'll fail to operate in OTG mode, either.
-
-> > 
-> > I will push an updated U-Boot rk3528 branch [2] where I include such
-> > early U3 port disable once source.denx.de is back online again.
-> > 
-> > [1] https://lore.kernel.org/r/20250723072324.2246498-1-jonas@kwiboo.se
-> > [2] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
-> > 
-> > Regards,
-> > Jonas
-
-Thanks,
-Yao Zi
+Best regards,
+Krzysztof
 
