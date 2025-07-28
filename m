@@ -1,74 +1,39 @@
-Return-Path: <linux-kernel+bounces-747406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51688B13374
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:51:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97351B1337B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336781895FE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 03:51:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1681895FA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 03:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AF120AF67;
-	Mon, 28 Jul 2025 03:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qIi6/QJu"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECF320FA9C;
+	Mon, 28 Jul 2025 03:53:07 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBED1DE3A5
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 03:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7899461;
+	Mon, 28 Jul 2025 03:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753674679; cv=none; b=VVZca9RQ2aNjFPyw5Vm7bk1lLjOCI+m8q7j54Us3gskgceN/Xlh7c7/R36IOwMZvsO+B5mld4GI47MleM3QA5LjS/kU6IdVHH//B42yBGKAm4GvKhINFxK/TD6IGCAIJ9SjeCvrcn5+MMzBPglO6N5cPiAYECwXb/msH5oB/iN8=
+	t=1753674786; cv=none; b=j4FmY1EUf2ecqmwfd8rq8NZxNFvFO7soB/yIwSxZ6nHgfoBLycjjqfgq4V9MBYEDOoXoXaLzY4sMlrk2k1ebalOrFLjabSamTGcsEYg4bluGg1+1P8E9sZFcashsIGwrMmc9LOdHuWRCIYXEcI3OdNDU1hmZ67vaG31QxRFHdio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753674679; c=relaxed/simple;
-	bh=TSzsuQ37d9y7N1sWSOfnSghOZMXjbsLK9YJyk9rz+2E=;
+	s=arc-20240116; t=1753674786; c=relaxed/simple;
+	bh=3EEqrpxyJT+P7AGCzyB1n5QEYpn9isgJLBfImkuvT2c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PYluqT9MkBEm58/hw0uF/f6On+4ZyMf83NJvy1bNjKARUhr10c7ZGIBYRCUY2TiAIV397WlQGNc6fyZsyneeiqmYU4ybGC75BnZiaLuJ7XS11DPAAljhMrlMKtNgnEsAEpCcGKqGvEZq0/CuGA3Frp4AbIdCKPai1nOLZWjF2I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qIi6/QJu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56RGe6e9031356;
-	Mon, 28 Jul 2025 03:51:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=DbOGqW
-	ArItDIBandpG94NYcXnPFCFZMmf3p2FXRkLNo=; b=qIi6/QJupqxP7px10rhsce
-	SQuL9aslFrNCTB4pIhj2iJTiCys8x/nKfSvpXPcccbFTa8+I5kzCbmrwA+1crYvZ
-	QlMG7iqu09p0g/0jtUYS0p/QDwugL4N+tnhfUXhljCWtTSUl2AsV/O5qlkaVg3Rl
-	uggw0Tv1nWz9dWpVv2e9qBCfkh0XO1ZC6OJ+1qrtMPLUs+n6uTEBseci+4MujaZ2
-	oAGXxG3MveFumTOPVqcLvG0bjWWlumC/7IA+qpphCBfuLNJ1aex9pWCcNPzBFstY
-	d9us9hd54MA5fdY02LaBcco0DHgIyiqyXvJb2jo3DPOUVZyGc8TQbuO+40LVocKw
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcfpsfg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 03:51:00 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56S1nfYF006209;
-	Mon, 28 Jul 2025 03:50:59 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 485bjkuuqw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 03:50:58 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56S3ownf42926530
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 03:50:58 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EAC885805E;
-	Mon, 28 Jul 2025 03:50:57 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4305F58056;
-	Mon, 28 Jul 2025 03:50:54 +0000 (GMT)
-Received: from [9.43.67.38] (unknown [9.43.67.38])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 28 Jul 2025 03:50:53 +0000 (GMT)
-Message-ID: <237cb015-feed-4c9c-a23e-8c3dc25466ba@linux.ibm.com>
-Date: Mon, 28 Jul 2025 09:20:52 +0530
+	 In-Reply-To:Content-Type; b=phkQPnvLeLpUZJcwvegX/VJAf9Nsla8gSovxLalYNEN0gESSxFef4Ssnb4I57WH2mrxTech2MfYxN5uWmmp8ecRdZk60VzTOoxTOVJHJO6UvKkbVY2CNO7uhv0Nsj5gqd+oRNIEkhtqKb7g0BcTa1DPlH3ZTIJ6CJ1JAQECU95k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [98.97.27.23])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id 50E99B4E0003;
+	Mon, 28 Jul 2025 05:52:52 +0200 (CEST)
+Message-ID: <8841923c-cbb6-4cce-97f4-a851783b6102@freeshell.de>
+Date: Sun, 27 Jul 2025 20:52:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,57 +41,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmet: Remove unnecessary assignment to ret in
- nvmet_ns_enable()
-To: Mohamed Khalfella <mkhalfella@purestorage.com>,
-        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>
-Cc: Hannes Reinecke <hare@kernel.org>,
-        Randy Jennings
- <randyj@purestorage.com>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250725230639.2017274-1-mkhalfella@purestorage.com>
+Subject: Re: [PATCH] riscv: dts: starfive: jh7110-common: drop no-sdio
+ property from mmc1
+To: Conor Dooley <conor@kernel.org>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, William Qiu <william.qiu@starfivetech.com>,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Hal Feng <hal.feng@starfivetech.com>,
+ Minda Chen <minda.chen@starfivetech.com>
+References: <20250724075600.239522-1-e@freeshell.de>
+ <20250724-equal-limb-2922f240961e@spud>
+ <43c5908c-c478-4e00-b1e5-955296e4ec24@freeshell.de>
+ <20250725-disorder-graceless-23c95454244d@spud>
 Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20250725230639.2017274-1-mkhalfella@purestorage.com>
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <20250725-disorder-graceless-23c95454244d@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDAyNyBTYWx0ZWRfX8Iu/zl8JPzIW
- 45W7lanB45DsZ1oRMihoh8/RX9qtQHuwcFsCM1SfkRiHpb7iliHxAp4zgzjbdP0PBqGvg6+x62C
- vRxlKoFgESbaEeymB2vNVl4GmfuIV+ulxjthLa1qz1SQJ+xIvAvOp+WGN8SXJp3R6JQ9W+EfK2N
- NdoCpwL99YiQR1fPC2uRpf11azmrwPw9dblxq7UBj3rwpsPGjG77E2wvY0HwjhosTAufm/C72+b
- HQpiJJJwGrQ3bucOMSd/9tEbs5Iu2OSYv0PR9G0jEuaBsKfqRWxlO5p5coTbB2mn7He5Vg0+eYu
- yFOrs8TwzjOgxzAhpljy73YKCWkEYy0FiednWlah0qUEbgLmsfjlO8SiujK+TnKO0y+BmRgbMfO
- rOj5kUa1VrGNiD+pdVYafWi2jXrIguXHdNQQQz1axsno0VjLJr7mO9ncHofrXNgewm02IYUE
-X-Proofpoint-ORIG-GUID: LRqPzrUpa55xHa5PNvzZEQe4rhK9nDxr
-X-Authority-Analysis: v=2.4 cv=Lp2Symdc c=1 sm=1 tr=0 ts=6886f3a4 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=WTJdmG3rAAAA:8 a=VnNF1IyMAAAA:8
- a=HMNGUcPwllwntIP3TpoA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
- a=zZCYzV9kfG8A:10 a=q3NGepEMMmKWaCv8Sx90:22
-X-Proofpoint-GUID: LRqPzrUpa55xHa5PNvzZEQe4rhK9nDxr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_01,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
- adultscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0 suspectscore=0
- mlxlogscore=865 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507280027
 
+Adding CC: Hal Feng, Minda Chen
 
-
-On 7/26/25 4:36 AM, Mohamed Khalfella wrote:
-> Commit 74d16965d7ac ("nvmet-loop: avoid using mutex in IO hotpath")
-> moved checking maximum number of namespaces in subsystem from
-> nvmet_ns_enable() to nvmet_ns_alloc(). The assignment to ret in
-> nvmet_ns_enable() is no longer needed, remove it.
+On 7/25/25 11:10, Conor Dooley wrote:
+> On Thu, Jul 24, 2025 at 10:13:47PM -0700, E Shattow wrote:
+>> On 7/24/25 09:51, Conor Dooley wrote:
+>>> On Thu, Jul 24, 2025 at 12:55:53AM -0700, E Shattow wrote:
+>>>> Drop no-sdio property avoids a delete-property on variant board dts
+>>>> having an SDIO wireless module connected to mmc1.
+>>>
+>>> I'm struggling to understand why this change is correct.
+>>>
+>>> If there are specific boards that have wireless modules connected
+>>> instead of using sdcards, how come the no-sdio property isn't moved to the
+>>> the boards that do have sdcard slots?
+>>
+>> Why is 'no-sdio' property there to begin with...
+>>
+>>> The property was added for the visionfive 2, and only on mmc1, so should
+>>> it be retained for boards that match the visionfive 2 in terms of how
+>>> they use mmc?
+>>
+>> Ref.:
+>> https://lore.kernel.org/lkml/20221207131731.1291517-4-william.qiu@starfivetech.com/
+>>
+>> My theory is VisionFive2 board hardware can support connecting up some
+>> SDIO module there with ready-made available adapters, it may be possible
+>> (if unusual) that would work? SDIO is 4-wide and some voltage
+>> requirements, and a couple of GPIO, so I'm aware that's a stretch of a
+>> statement but it could be done without soldering. I wouldn't expect it,
+>> but why restrict this everywhere inheriting from jh7110-common.dtsi with
+>> 'no-sdio' and then (needs testing!) if it doesn't matter one way or the
 > 
-> Fixex: 74d16965d7ac ("nvmet-loop: avoid using mutex in IO hotpath")
-> Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
+> In case it was not clear, I am not questioning removing it from the
+> common file, just that you're removing it entirely.
+> 
+>> other for VisionFive2 just drop it I think as being inaccurate/unnecessary?
+>>
+>> JH7110 CPU supports two interfaces of SDIO3.0/eMMC so it's not clear to
+>> me if there's some reason for 'no-sdio' property to be there. Does
+>> allowing SDIO (?) break eMMC and SD Card devices, is it destructive?
+>>
+>> Not knowing what 'no-sdio' does technically I dropped the property and
+>> tested with the hardware I do have. The 'no-sdio' property
+>> present/absent does not appear to do anything user-impactful on Pine64
+>> Star64 that has SD Card slot on mmc1, and as would be expected on Milk-V
+>> Mars CM Lite WiFi when there's an SDIO module at mmc1 it then fails to
+>> initialize if 'no-sdio' property is present.
+> 
+> The original addition looks very intentional - however I didn't look at
+> the commit message itself last night, just the diff. I wonder if "no-sdio"
+> and "no-mmc" were just added because William intended to restrict SD
+> cards since sdio1 is the SD card slot, rather than because the use of
+> sdio or mmc commands during init would cause problems. The wording of "Set
+> sdioo node to emmc and set sdio1 node to sd" is what makes me think
+> that.
+> 
+>>> Could you add an explanation for why removing this entirely is the right
+>>> thing to do, rather than only removing it for these variant boards?
+>>
+>> Yes, I can rephrase a bit like "relax no-sdio restriction on mmc1 for
+>> jh7110 boards", or else reconsider the approach. I was going to approach
+>> with `/delete-property/ no-sdio;` later elsewhere but after testing on
+>> Pine64 Star64 with similar configuration to VisionFive2 mmc interfaces,
+>> and knowing that Milk-V Mars CM Lite WiFi detects AP6256 SDIO peripheral
+>> at mmc1 when this property is dropped (and with a few additional
+>> things)... I prefer to reduce the problems that would need to be avoided.
+> 
+> I think using /delete-property/ would be unwise, properties shouldn't be
+> in the common dtsi if they are not, in fact, common.
+> 
 
-Looks good to me:
-Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
+Ack, you wanted these moved out into each board dts? That would be okay
+with me. I suspected that `no-sdio` `no-mmc` don't belong so I'm still
+in favor of dropping them overall. I think nothing will break but I want
+more data from users.
+
+>> I have done all the testing I can do with hardware I have. As-is it's
+>> just like I wrote, we'll have to solicit some testing feedback on that
+>> and wait to learn what this does for the other boards.
+> 
+> I'd kinda be inclined to apply this diff, with a better commit message,
+> shortly after -rc1, unless someone comes forward with a justification
+> for it being there on the vf2. I figure it's only in the common dtsi
+> because it was not problematic until now cos noone tried to use the sdio
+> aspect.
+> 
+
+I will revise the commit message v2 and send soon, just for dropping the
+`no-sdio`...  and actively seek testing reports from users of all the
+JH7110 boards to drop `no-sdio` and then also `no-mmc` properties for a
+follow-up.
+
+>> Aside, anyone want to chime in what is the utility of 'no-sdio'
+>> property, how do you know from a schematic if it is appropriate, can it
+>> be simply dropped as I suggest for JH7110 boards?
+> 
+> My (limited) understanding, mostly from looking at the caps in
+> mmc/host.h because I find the binding description obtuse, is that these
+> properties (no-sdio and no-mmc) block the use of commands that would
+> cause a device to malfunction. They don't appear to be required at all just
+> because the board layout doesn't support these types of devices.
+> 
+> Conor.
+
+Hal and/or Minda (from StarFive) any comment about this? I would ask
+William but they are not involved anymore. Can we drop some of these
+suspicious mmc properties, what are the reasons for these?  -E
 
