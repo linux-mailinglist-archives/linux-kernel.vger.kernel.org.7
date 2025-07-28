@@ -1,149 +1,135 @@
-Return-Path: <linux-kernel+bounces-748480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD0FB141A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:01:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29ECAB141A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4433E16F6DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451724E04DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520D5275AF4;
-	Mon, 28 Jul 2025 17:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0CC277CAF;
+	Mon, 28 Jul 2025 17:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Abv2YMt2"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OSgrDda7"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7E827464A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB5F275AFF;
+	Mon, 28 Jul 2025 17:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753725325; cv=none; b=iTnilDvhaFdPqnXfHEZIky+hkqpm4tVdGwdHJgoCqeSvbNo78RumEqEgnybqM57EdkKQ4kralqbfjubbQZkgL0fHbHAaZIMa3FEq19KKCNoHrhA/kPXyo40rKybUAl7aSptxY6gcFk4cToHGPnIwCZyG/kQJCHV1fsGZ23U+a0Y=
+	t=1753725356; cv=none; b=DSTLfw/q9sih1gzkc1/He2XN6qJpJIGCW7iPTe9l+onWt9Zci5XXPkGgpTZsT9WDplJZFQMvlKqtOz15ZNQaO2wZsIuVy1Qm4uKRmBXmxrhJpNCFiIF64bD6QPE4T3cCgoxUiDrS/7io/dlQcshGWB0h2wxt9fs/MP4x6vVtSvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753725325; c=relaxed/simple;
-	bh=zssRUKNEvHB32vwdHkWFVtfA9UN28Yn3UoP25gyDubA=;
+	s=arc-20240116; t=1753725356; c=relaxed/simple;
+	bh=xblCDj0RCsFTuq9WZK/qP7W0pwWR0kB14FpwE2VUBHI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iq8S8eq8+yWSQv65j8pjpie4wJJvKkl36s6s9Bl9/vptrjcPfzy5T0ixDDdB3CvaF8utv7v2uMn09X93bpBOaNU+zsso4G281hVXdplJl0v1KyEc5vg4i+5vf2AzERjxLmNr6iVqEbqEUPBlSBifTMAex8oQ4hSbGuSiU7RXzKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Abv2YMt2; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ab86a29c98so30751cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:55:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=bYvRTnLxcDm2GYCho7wIxIWDYbmi7G/A3EQ1EVYyFHB1HOPUWu1jdAj2eNWiJuuX177kHAKJ7E2gVxMDtgYIRTtYZhFUr2/jRjmCYJK0jWi5xxUcJ0sFHBlboi7UbbUbho4PGU57DFbUT1vxZpj5xmn1WVsqZzf64gHzoV9kKEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OSgrDda7; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4aaaf1a63c1so33113691cf.3;
+        Mon, 28 Jul 2025 10:55:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753725323; x=1754330123; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753725353; x=1754330153; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CQxxK6RbpQQjsAWFxkV8xT67PH0plChmN0vYEGz1peg=;
-        b=Abv2YMt2CkABlV3UdTppUgt/64hZHX6MihIQCuolMY1V1M7rjYxJxWzw8J6iclxrgW
-         ayGxQ+62pbdugM8DEfw8KUJ4rPVBir08BKXIYEmSjFaGEnFisOrLGImgsZ7FfnazMbGB
-         LlpXyrtJTsv0YmOnPR5huSixKAovUfCI4/xeejZNiiQr8KVUCtnqd+wca10z3TetgwZ+
-         LcFEFYv4L89PHoRZ7Ob/XHZFeE3HoPdLHCQ3CgkdVDf/E5TdyQZ37zD5WRnm3OVo+c6a
-         iJp8v2zGlJ5yrnFLjRDiaV+dKgqv8kIeurr8zX1mPcXAvBKglxFUA7QsOfNOPDB2G5Do
-         1gmw==
+        bh=aobxU+eSgbfZ9X4crn912/FDn8oN2UrA+EAoV9ASOEk=;
+        b=OSgrDda7Zph7rvNaxi3UpJbaymgm6wGQwXJIJRJJFeCMcWi+rHxoJzXgUKvPsh130Z
+         RHT9S3KGGpg5a5pGp8RMgMVc76qU2lMpgg9IL+UNL9ltPxD1KFLO646FzhKRn+jKvTV2
+         VYD3oysNLXr4sUwUCkfJUHy/bAXkfxiAxmc+pWWQsoqFPc1v0PutWIqK+zSYfW6vIw4D
+         feVE1mM8yY7CGNo44UoTs5MDB9KGoqQ5VFtPt5E2GonRxcemidc801Tw1eGocyaP/KcZ
+         HaRH7MQIbf3VQt+94kv21Z0vjPxZIJ+nBMCvRaVGXt2Vu4MM/TTwZy51IqsbOGu6y+Gt
+         oRqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753725323; x=1754330123;
+        d=1e100.net; s=20230601; t=1753725353; x=1754330153;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CQxxK6RbpQQjsAWFxkV8xT67PH0plChmN0vYEGz1peg=;
-        b=sB5oFMuo3PiUtxkN6SFKLOtx6PKZ42FRaEY8Ri3kdxowmxZL1gsclzUADPPx+X4Iwy
-         T1wMQi4CCR0PoQTmKkcZr/uien6a+XUv6o9nHAJyqEBVHqgQ9Lj1WsRr86o5PDSYCc4t
-         ka/JVAAlYIYVRePM/jsS1qUS0fZ4Wznr30O6ZSDkc9NABgHxDniNXvhOWV4sxJu5iFC6
-         huP9e6RQ19GPn3rxSS1SAFM3JyRfq3a8gGzUmqg3zy4uQ0SQQGQGM6Mrj41s7MjZL2TX
-         3SUX2mzZ/eEjKzbRlhIQj3/HAmHcC3tnblZ1nz/czItlLuXW1/d0Wtpw8+2axtDJ9mMG
-         v41g==
-X-Forwarded-Encrypted: i=1; AJvYcCVWu+LchOD2g/o4/a1GbTQIjfZQPc4yLBfqauqBd89np/sot/HyqcCHCQTOZ3P/bTDs9FfWr8L5809xnZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2VZofl79igXbXa6AM+OzX/G8X/AZ9luj5U5P1H1u6MI4lbtHJ
-	53xW4n0gkYEzpNJiIKJE9foonDAYK38lQpgzGHneY+jxAS4pPqZOsgnBmDpmgPwK8B8/0cFZIdP
-	txW7XgxGr/kxUAq/UTkLv3bgzVbiRAsM0Tk+S2mBO
-X-Gm-Gg: ASbGnct02Ik7+5G+XoKSV+aVXnKhDNoIr23RO/L961JObW8qkEImFF8v9E+Cv5Eq9js
-	kXQweNjuRD38faJHxplxrwHvawwtRyuEpPSWzj5lB/YILHok+NQGxWvA2x0GS61RJXO869y/Bpq
-	irXd9Y2xWsb+Tdyb65LrOmcL13XplUshsUeuLXaXdPy+hFkakht6OLyrKb3rvGNRB26qVm5geEq
-	BsgmLbsj5sqgnwNgfPXbpm3Gg/jEYWUX3NCzQ==
-X-Google-Smtp-Source: AGHT+IFFnoxBnnNVScW/VpJt6pjdkyu/boiKhrUJzdPlXt0VAhjFqNpn6IGuDGg/1A36+VHGOxFhSv/p5MrjmKydpFI=
-X-Received: by 2002:ac8:5a43:0:b0:49d:88d0:145 with SMTP id
- d75a77b69052e-4aecdec4fdemr7141cf.23.1753725322548; Mon, 28 Jul 2025 10:55:22
- -0700 (PDT)
+        bh=aobxU+eSgbfZ9X4crn912/FDn8oN2UrA+EAoV9ASOEk=;
+        b=l+A2C6MvgcI6MNAU289JBSve8WLX3cO8PUVrlqMeGVdILnYRrRbDuFhVhIN+P2TpJi
+         J+zCIsAm5EIgSUfGKNU+nF+ItY3c14ShqLGWXnDPC/Qy9PmwzB5aKbFC0/w/sPBMY3dl
+         PrznFDo50W331xdPP8z/sDEtePmHmg09+Gs5KeXfoISF/9cs8YxoqtJT45IYr8FuKRtc
+         iv4PxNm8UwcwHzzJKasVJ+iFmuYj9BuYRDuuZlB7AU6GtB4cjEYtKSizq1vBQv6xav8f
+         Nh+wM39S1eiFTnjvKbWTfPSblUX9bDSsNtSmWQfBUIhTABJ8+eOajR6FAOPypC1OXRuM
+         fDvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxPSIE/mBXwh0Kqca7dhavRigsTnAZRFNiOcp4xMHn6tanddqwuNS/T7ep4pw1WpqFHFZXJ0uSo07KSBZi@vger.kernel.org, AJvYcCVDNyERsC5JcUMx7DT1IxOGTJcN0qV9d4WyNIHSVL7E7VdS8YNENJpYKs6UuVaBgU78Ln3y4SreUk7c@vger.kernel.org, AJvYcCWzn0jFvQmH6obt4O6AjCflF8SL3gfDvnnAUuwerP1LCMOlM6dIWkN0rtcFhBwBx80aywD4FY3052IlSKyA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7+PA6GG+JsCuBNrrugKRigRcDPyG0yqMza3+kdJV6qCj/Fbqg
+	aed6wX5nJH1UnAPDUr63p4MDo1xMTK2xnww1SY0fRN6qB7fytBqsSJpwKkQ5XgMYEMAqGjdv/rk
+	2j/Yxt2vcpeAm4x5OlxgbpJn4u6z4Z+E=
+X-Gm-Gg: ASbGncv3rblvX5a9bguwMtmQUejeLqNdQJldiMuKUimWOIqojtMfb0VBBI1GISGzrvS
+	I9Le21uV9LPryNnKuxNQUSgUaqn/2cQKY04OW64lUvVZWOELx5k/F+gwwusuurRjvMgAkF/8Ruo
+	XrWorySyXVj5XXMOi1PiSDEEScO8jBHcDW0VSH1XVlNCVlW/kX+N/NWPiXZq0+Z2xDZx1GjLS8j
+	29RmA8=
+X-Google-Smtp-Source: AGHT+IFeHGuxtySi7CtxaGpGpFO7wyl1QhTknE5mS9v2TjN9AvzGwL7VxfaXPQJETF58ke+oTluka4/SUlAIU2Zvi+s=
+X-Received: by 2002:ac8:594e:0:b0:4ab:ab99:4de with SMTP id
+ d75a77b69052e-4ae8f065189mr200798841cf.26.1753725353322; Mon, 28 Jul 2025
+ 10:55:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728170950.2216966-1-surenb@google.com> <3f8c28f4-6935-4581-83ec-d3bc1e6c400e@suse.cz>
- <CAJuCfpGZXGF_k_QVQqHWZpnypB-sWB8hwZeOYMOD0xmAFOBxkA@mail.gmail.com>
- <97938dc6-5dfe-4591-ba53-3729934c1235@suse.cz> <CAJuCfpHgyzQxmAiriFM59KGi465ocxH6T5nBSBY1fcUazOj9Gw@mail.gmail.com>
-In-Reply-To: <CAJuCfpHgyzQxmAiriFM59KGi465ocxH6T5nBSBY1fcUazOj9Gw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 28 Jul 2025 10:55:11 -0700
-X-Gm-Features: Ac12FXzlgFF7itYZWvvVBXrV-1oKF1zTqyNKqehylT5HcvvNfhoWPx9GYVarnJM
-Message-ID: <CAJuCfpF3543giq6vHuBbmLuxjUYVxNub6PgTzu0M3Zfe0H2xGA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm: fix a UAF when vma->mm is freed after
- vma->vm_refcnt got dropped
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, jannh@google.com, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, pfalcato@suse.de, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
+ <20250723144637.GW2672070@frogsfrogsfrogs> <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
+ <20250723212020.GY2672070@frogsfrogsfrogs> <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
+ <CAJnrk1byTVJtuOyAyZSVYrusjhA-bW6pxBOQQopgHHbD3cDUHw@mail.gmail.com>
+ <CAJnrk1ZYR=hM5k90H57tOv=fe6F-r8dO+f3wNuCT_w3j8YNYNQ@mail.gmail.com> <aIe0ouF9tsuIO58_@casper.infradead.org>
+In-Reply-To: <aIe0ouF9tsuIO58_@casper.infradead.org>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 28 Jul 2025 10:55:42 -0700
+X-Gm-Features: Ac12FXyI95ILYrO-ngDWtex6vWFELuWEcDgcFbDIGZdP_N1ojOFhNj_bSwihkWo
+Message-ID: <CAJnrk1aXvVf7jaK9_2PamK5X+1b+crT+kmn8vktv0nxqCtcW8g@mail.gmail.com>
+Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
+ at fuse_iomap_writeback_range
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Naresh Kamboju <naresh.kamboju@linaro.org>, 
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
+	linux-xfs@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <liam.howlett@oracle.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 28, 2025 at 10:43=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
-com> wrote:
+On Mon, Jul 28, 2025 at 10:34=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
+g> wrote:
 >
-> On Mon, Jul 28, 2025 at 10:39=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz>=
- wrote:
-> >
-> > On 7/28/25 19:37, Suren Baghdasaryan wrote:
-> > > On Mon, Jul 28, 2025 at 10:19=E2=80=AFAM Vlastimil Babka <vbabka@suse=
-.cz> wrote:
-> > >> > +      */
-> > >> > +     if (unlikely(vma->vm_mm !=3D mm)) {
-> > >> > +             /*
-> > >> > +              * __mmdrop() is a heavy operation and we don't need=
- RCU
-> > >> > +              * protection here. Release RCU lock during these op=
-erations.
-> > >> > +              */
-> > >> > +             rcu_read_unlock();
-> > >> > +             mmgrab(vma->vm_mm);
-> > >> > +             vma_refcount_put(vma);
-> > >>
-> > >> The vma can go away here.
-> > >
-> > > No, the vma can't go away here because we are holding vm_refcnt. So,
-> > > the vma and its mm are stable up until vma_refcount_put() drops
-> > > vm_refcnt.
-> >
-> > But that's exactly what we're doing here?
+> On Fri, Jul 25, 2025 at 06:16:15PM -0700, Joanne Koong wrote:
+> > > > > > Also, I just noticed that apparently the blocksize can change
+> > > > > > dynamically for an inode in fuse through getattr replies from t=
+he
+> > > > > > server (see fuse_change_attributes_common()). This is a problem=
+ since
+> > > > > > the iomap uses inode->i_blkbits for reading/writing to the bitm=
+ap. I
+> > > > > > think we will have to cache the inode blkbits in the iomap_foli=
+o_state
+> > > > > > struct unfortunately :( I'll think about this some more and sen=
+d out a
+> > > > > > patch for this.
 >
-> Ah, you are right. At the time of mmdrop() call the vma is already
-> unstable. Let me fix it by copying the mm like we do in
-> vma_refcount_put().
+> Does this actually happen in practice, once you've started _using_ the
+> block device?  Rather than all this complicated stuff to invalidate the
+> page cache based on the fuse server telling us something, maybe just
+> declare the server to be misbehaving and shut the whole filesystem down?
+>
 
-Fixed in v2: https://lore.kernel.org/all/20250728175355.2282375-1-surenb@go=
-ogle.com/
-Thanks!
+I don't think this case is likely at all but I guess one scenario
+where the server might want to change the block size midway through is
+if they send the data to some network filesystem on the backend and if
+that backend shuts down or is at full capacity for whatever reason and
+they need to migrate to another backend that uses a different block
+size then I guess this would be useful for that.
 
->
-> >
-> > >>
-> > >> > +             mmdrop(vma->vm_mm);
-> >
-> > And here we reference the vma again?
-> >
-> > >> So we need to copy the vma->vm_mm first?
-> > >>
-> > >> > +             rcu_read_lock();
-> > >> > +             return NULL;
-> > >> > +     }
-> > >> > +
-> > >> >       /*
-> > >> >        * Overflow of vm_lock_seq/mm_lock_seq might produce false l=
-ocked result.
-> > >> >        * False unlocked result is impossible because we modify and=
- check
+fuse currently does allow the block size to be changed dynamically so
+I'm not sure if we can change that behavior without breaking backwards
+compatibility.
 
