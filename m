@@ -1,218 +1,157 @@
-Return-Path: <linux-kernel+bounces-748505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B47B14204
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:30:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE021B141F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CF5B189DD38
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:30:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC7117A699
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A149276047;
-	Mon, 28 Jul 2025 18:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RxRRx4bW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0479275AE9;
+	Mon, 28 Jul 2025 18:29:38 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52669275B1B
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD08C263C8F
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753727398; cv=none; b=hxApWPCFC88AW+UMcgQtqRlzdK44D4iS+VdIhyezwnQvj9d5MWSwN8O4lTd5utSfS3uLe35rIFro5w6aD1E1VA/XzvXhRD86pCP/chln5xicSpKLb/Q5Zw8OLYtNB7TT32Wu+MH3OD02LvBtdylAPH+Zj9nro0YPh3ycVhrdCTk=
+	t=1753727378; cv=none; b=BvjQu3glvfC4A0xYFj9EQTvpGIxD+ywjz+2Bp68aHVFzgH6zr8S1448k7KV4/3DKy2uQBlodEAu3bzOM0L8fPhKKHRIW95nK3czTdspEJICk+9bYP07XZXknhG9AVwBB5whNuAS++CEffZAV02dxJ+yymOOZm6SX8WYqXjrW/+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753727398; c=relaxed/simple;
-	bh=m39t4hBEDIOE4JkV53k7vdPJAG4/pTKjuu7PU6u/wj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LcxdX+cGii0m3YbJmpHGTLQdOo7vDo+Cy15IOnNwpLSAGTD2kcU0iA2dwU4Oz1A/NlSlLdk2kjvzNxTc5V+SNf8o1LLhjwB1JK7Y26Fx1k/QhfrSigj+y8ejbZLmM4geie0kMG7kSI7SsVK3+xRDTOBAtMplxKzcRdL6AGg7AU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RxRRx4bW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SAlMSq012151
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:29:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oT3tXcSx8+6IFxvzSzWBOGBoJkG+N20NCBDeHWmRh9g=; b=RxRRx4bW+XfnjtNx
-	cXxPfHvYE3kKcnxdM9/MlmG8oFS37+PQ89XZIIdeXMmN9m4UyeGOIbVxbWEfKlvS
-	zXbdCe+sxd7uvON5kJ5bGT5M1SfXV6Nh4gzvfEBbKHpLJwV2XUIHDEXCTdCLaTSf
-	fdQU5TEs2rlvD0xvSabZilWSFqE5tszYf7KDUH92dHYXOiFYSFylsv26+GVCvruN
-	oLRKd4vdPayCzglgYIxJAfQwt4ECUsESUbzoaOoEprCJjLSFPKfcxOx5cBl/kFyp
-	LodkABTEXVQz+ErtotXVSkrcRoUxOYsoMI6/Op+BMlhuE7BcbMVIhZ59POVc5JPe
-	jH82uw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484qsk5g3y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:29:56 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23638e1605dso36057265ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:29:56 -0700 (PDT)
+	s=arc-20240116; t=1753727378; c=relaxed/simple;
+	bh=cYWVqAnhujQdCJ8yjAyXmyxg3NAOnr6hQ/3MIip5HSY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=p0bz0Q2jLbHaDBcAEaB7/Mcsx/J/Z414Y/X8itE4zBPGWE5vbO+eiYwy/JpGiB6buSO165Z7Eayf0kNRNi4Tttwv0VeQ5ne67ljdENQaCsRzBPDiqWRP7TwmenhB/fVteQuKRPdl3ZXrh49bSyodRn+DRv6ypXn8NI6+8C/2uHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e3e6bd9e7eso4512585ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:29:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753727395; x=1754332195;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oT3tXcSx8+6IFxvzSzWBOGBoJkG+N20NCBDeHWmRh9g=;
-        b=nRN6qONyhPSxcDgXtmM+OUVFs3TpENQF/sprHTpsBH3P2SeAu5WwD79vWXsgxREGhA
-         WfibyyNMwkO7zloMJetGO9hYYnPXd9K4uK9zPMJv6R6zMg/MmIjt+7iYm4giZPxb/iis
-         dwAmErQgT9LrwqNUVUUxIW/EXWtruneUPHHWBuF1AlS9uBVm+suOKag3W7u56vPyvljV
-         Se5Ymjid7nVnEg6E35zitni0HrGGwlUtS8W/6GmpEiUult+WlVH8uD6b0i6Qmtej5gM0
-         p9zdYY9WsqPoxw6O8CYLuW85uAN6w5hoT4bBV59Om/MUFybxoVQaEXVo/Buf7kJpXInq
-         e8Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLhhDv464JMfnVYiOon347qyeZTU/dTJStVRiF2a3lbslqzjRH+xZMqLXufydB11IburhxcI2OFy/GnYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBhzqWkeJK7u+MJrWigKHfeGds9eZqnxt4b6hrKmpgTX5xqDGs
-	Arl+wPdcq7qaJLT1O35EQO74WLmKybpScUl5CQw34GaVF0Zxq2bgV7oz8FO0d/uWE9m6SAWf4vQ
-	E+ykwavzrkD7VgtT8uEahUPjNAcytowZRBMXJinfbd0UzypaGKoaNz0O4bmxI1Q9NIXI=
-X-Gm-Gg: ASbGnctwIqM1nSS2br6v52c4s1jItCuupQGTa4q+Lx5eh5OiOWzavV1bDCMk4LA9bng
-	L4WCCHYB/lXJ/rKbh1elcMPpsOlA0ThysMJngZCbP+d5hW8t0YrNakJwX0HXwrhMjIeydH98J/P
-	piIx5g9JXq3iOeka0mfZyqjE4sblY1Y8P2W1Y2HREyzPgFL6tl9sF892Mi9a1CGE1p6X8VazoOR
-	Ix1CovnG9kJtwPLfbyfPmmY0c1IWW3534z8qG115zCXHlzM5VmJMEspHmg4Q2MbxlrmyeB9Nv0n
-	TWq8w2CJWom6uscodySeNccfxqjmeyQMm8gCdEdK+URX5OPLpyq8O+4Vt7E6sOS9/ORqNo8vGP0
-	L1QSy0RCgMkuZocZw95lexQ==
-X-Received: by 2002:a17:902:f30b:b0:23f:f983:5ca1 with SMTP id d9443c01a7336-23ff9835e51mr72280345ad.12.1753727395409;
-        Mon, 28 Jul 2025 11:29:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHAAEQKwWNVIHaeiLUK+6MPkWiAUDHenXFMWUMIoSJAH/g0px54Std4EA5mF2F39xEpbfaLQQ==
-X-Received: by 2002:a17:902:f30b:b0:23f:f983:5ca1 with SMTP id d9443c01a7336-23ff9835e51mr72280055ad.12.1753727394829;
-        Mon, 28 Jul 2025 11:29:54 -0700 (PDT)
-Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fc5a9d219sm55658715ad.98.2025.07.28.11.29.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 11:29:52 -0700 (PDT)
-Message-ID: <8399dc75-6363-4ae1-98cc-59b5b62dc8b5@oss.qualcomm.com>
-Date: Mon, 28 Jul 2025 11:29:31 -0700
+        d=1e100.net; s=20230601; t=1753727376; x=1754332176;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e6gSR+K0MANHv0vyIASIA2YCGJCrixEwa05dyDMZ7kE=;
+        b=TmJEhwnKTYy1eYzu68fTjcCklGFzX8CLi2CVRZPe670VMvrf1U0J0IsEOplGwhTHL8
+         Uhpbbz+G2osLxINqaOiVO8Cg8LPReWSCHG36/I89bKYGSgXz3oL7/II5q9j++RUpG8hg
+         Zw/ZcJZGRIIAQQvYEWObFQZaIazguS4BJU3OQ+Wix6TUpdIKoCG89/YB8Y9iglvyxoPx
+         me39XZGOn8+7PVRuI29bUIR3oN3mf9uoVd++pn+11QNN1KrfzO6n9fhyBLXfXISggf1o
+         WN7WqhsPCTr3tRaIQFKaye5utmssiTiklvRl4Yc/4ZsJaayzJ34kXaNHT3ANzmdGWaBK
+         x9pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz/VRbPWcy/kXzjBi2e8jGSiUZQhkMoYeJA0Vs/z1KhL69BlatMst4s91o1YS+zXWQJJ5Z7OU0D/UYh7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww0zePwE7g2dP51q1TkZ2G5emnwOm91zSit1bcHpH90Yvs1+O0
+	DHp6tFc1y3uT0cW8MC+fYPEvpk9T/AlpTcx451ZymMdc0hbcyPDN2cH/18Nbi548dM1Yj20Ejb8
+	DGXyQX1L9KNTZqD5RVcjrqeOH3P/VtbRkUDSmJ1JZkyY+znIxOfn2Q3/BE9E=
+X-Google-Smtp-Source: AGHT+IFOVG1qEshG+9mVORxycfBFrFHHC7hDcvu/57rmUCwIDnuCJdbvWi9SaDDD5Lft72kbt87utLWInMH4DE2h7BHp/YQCpPkm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: display/msm: dp-controller: allow eDP for
- X1E8 and SA8775P
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Mahadevan <quic_mahap@quicinc.com>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Danila Tikhonov
- <danila@jiaxyga.com>,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Yongxing Mou <quic_yongmou@quicinc.com>
-References: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
- <20250719091445.3126775-1-dmitry.baryshkov@oss.qualcomm.com>
-Content-Language: en-US
-From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-In-Reply-To: <20250719091445.3126775-1-dmitry.baryshkov@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=KdDSsRYD c=1 sm=1 tr=0 ts=6887c1a4 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=wmqSsp3ovfGiw9AtJwoA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: rY7FcCgw6rJCT6ayUuACtQuJ4gVR9o4-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDEzNSBTYWx0ZWRfX+b368Q+7/kAh
- IsdB4wPPp24gqBRG94TVKRmOWiIPP3BGRjTjae5nVmzu5mVFcZCoMNmImrN+qBo6CXtLla0NYi4
- UcDVFzoF7bm8iwtHp++/Ptbf7d12Czrcm2rcXriJa+2XEcBThKaXydphjS7r72417pxnwH8OQU2
- zwBMmEX9gA7svkgmxL7JjAX1A6LHeKQn+OpC0WF4BcGN3aZBvs3kK468XUBJ4kYWNSFHiFKpTDl
- LIr+0DL+ytt6LV5O1SVtWQPwdh70S0nDfhpmE++J0hXZbyCvAaj69ij5yNwWF4l7BhSkmc2cHhP
- BAXOoljOez89vQ0W43P42sKWEFMSoBYpwxOg40Nbgty/pCEACMrz0/1H8gFn95qrNycXnPaS9Nf
- 8EuZsy6orPLZHI0xo6+q2XkKcfccaQ/ha4fLXjA2dw5bYAcqKGz5+1FwI9hwoZgYqUAaiZn0
-X-Proofpoint-ORIG-GUID: rY7FcCgw6rJCT6ayUuACtQuJ4gVR9o4-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 impostorscore=0 mlxscore=0 spamscore=0 bulkscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 clxscore=1015 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507280135
+X-Received: by 2002:a05:6e02:32c9:b0:3e3:d245:8a1 with SMTP id
+ e9e14a558f8ab-3e3d2450a71mr169524415ab.2.1753727375680; Mon, 28 Jul 2025
+ 11:29:35 -0700 (PDT)
+Date: Mon, 28 Jul 2025 11:29:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6887c18f.a00a0220.b12ec.00ab.GAE@google.com>
+Subject: [syzbot] [mm?] WARNING: locking bug in __percpu_counter_limited_add
+From: syzbot <syzbot+57a2bb6f53fad29bd29c@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, hughd@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    94619ea2d933 Merge tag 'ipsec-next-2025-07-23' of git://gi..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1327c0a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ceda48240b85ec34
+dashboard link: https://syzkaller.appspot.com/bug?extid=57a2bb6f53fad29bd29c
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/afd64d9816ee/disk-94619ea2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e1755ce1f83b/vmlinux-94619ea2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2061dff2fbf4/bzImage-94619ea2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+57a2bb6f53fad29bd29c@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(!test_bit(class_idx, lock_classes_in_use))
+WARNING: CPU: 0 PID: 20124 at kernel/locking/lockdep.c:5210 __lock_acquire+0xc0c/0xd20 kernel/locking/lockdep.c:5210
+Modules linked in:
+CPU: 0 UID: 0 PID: 20124 Comm: syz.3.4335 Not tainted 6.16.0-rc6-syzkaller-01673-g94619ea2d933 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:__lock_acquire+0xc0c/0xd20 kernel/locking/lockdep.c:5210
+Code: ff ff 90 e8 36 ad 1e 03 85 c0 74 22 83 3d 2f 14 04 0e 00 75 19 90 48 c7 c7 1d b7 b8 8d 48 c7 c6 ff 5b a0 8d e8 25 cb e5 ff 90 <0f> 0b 90 90 90 e9 8f 00 00 00 90 0f 0b 90 e9 8d fe ff ff 90 e8 fb
+RSP: 0018:ffffc9000524f5c0 EFLAGS: 00010046
+RAX: b837b7aac7381900 RBX: 0000000000000003 RCX: 0000000000080000
+RDX: ffffc90011215000 RSI: 000000000000cba4 RDI: 000000000000cba5
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfaa6c R12: 0000000000000004
+R13: 0000000000000002 R14: ffff8880251d4768 R15: 0000000000000000
+FS:  00007f1c62b736c0(0000) GS:ffff888125c15000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000020000003e000 CR3: 0000000075eea000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ __percpu_counter_limited_add+0x22d/0x710 lib/percpu_counter.c:351
+ percpu_counter_limited_add include/linux/percpu_counter.h:77 [inline]
+ shmem_inode_acct_blocks+0x187/0x470 mm/shmem.c:233
+ shmem_alloc_and_add_folio+0x8bc/0xf60 mm/shmem.c:1920
+ shmem_get_folio_gfp+0x59d/0x1660 mm/shmem.c:2536
+ shmem_get_folio mm/shmem.c:2642 [inline]
+ shmem_write_begin+0xf7/0x2b0 mm/shmem.c:3292
+ generic_perform_write+0x2c7/0x910 mm/filemap.c:4112
+ shmem_file_write_iter+0xf8/0x120 mm/shmem.c:3467
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x548/0xa90 fs/read_write.c:686
+ ksys_write+0x145/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1c61d8e9a9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f1c62b73038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f1c61fb6160 RCX: 00007f1c61d8e9a9
+RDX: 00000000ffffffc1 RSI: 0000200000000200 RDI: 000000000000000a
+RBP: 00007f1c61e10d69 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f1c61fb6160 R15: 00007ffe8452d7f8
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 7/19/2025 2:14 AM, Dmitry Baryshkov wrote:
-> 
-> On Qualcomm SA8775P and X1E80100 the DP controller might be driving
-> either a DisplayPort or a eDP sink (depending on the PHY that is tied to
-> the controller). Reflect that in the schema.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
-> 
-> Jessica, your X1E8 patch also triggers warnings for several X1E8-based
-> laptops. Please include this patch into the series (either separately
-> or, better, by squashing into your first patch).
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Hey Dmitry,
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Thanks for providing this patch -- I'll squash this with patch 1 and add 
-your signed-off-by w/note.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Thanks,
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Jessica Zhang
-
-> 
-> ---
->   .../bindings/display/msm/dp-controller.yaml   | 26 ++++++++++++++-----
->   1 file changed, 20 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> index 4676aa8db2f4..55e37ec74591 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> @@ -176,12 +176,26 @@ allOf:
->         properties:
->           "#sound-dai-cells": false
->       else:
-> -      properties:
-> -        aux-bus: false
-> -        reg:
-> -          minItems: 5
-> -      required:
-> -        - "#sound-dai-cells"
-> +      if:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              enum:
-> +                - qcom,sa8775p-dp
-> +                - qcom,x1e80100-dp
-> +      then:
-> +        oneOf:
-> +          - required:
-> +              - aux-bus
-> +          - required:
-> +              - "#sound-dai-cells"
-> +      else:
-> +        properties:
-> +          aux-bus: false
-> +          reg:
-> +            minItems: 5
-> +        required:
-> +          - "#sound-dai-cells"
->   
->   additionalProperties: false
->   
-
+If you want to undo deduplication, reply with:
+#syz undup
 
