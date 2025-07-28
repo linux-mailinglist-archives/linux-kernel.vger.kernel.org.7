@@ -1,52 +1,59 @@
-Return-Path: <linux-kernel+bounces-747543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A80B13500
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:38:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2906B13503
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CF9C189885F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C633AEBC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E72221550;
-	Mon, 28 Jul 2025 06:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3257E221FBD;
+	Mon, 28 Jul 2025 06:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="W2/ZGzn8"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hovwk7e8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8171411DE;
-	Mon, 28 Jul 2025 06:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8891C214A6A;
+	Mon, 28 Jul 2025 06:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753684686; cv=none; b=g59S+JPx1DXsgfnFzWhVkRRsif+UUXP4kSIgfOyZNfR6Sm1hEBIUCIpA1eqUnjRncGZwyW1N9hVf7ofHpOz4tfI9sH4b8JHm7hqDNJw1l0D4qlwW602kIuB3ZTXzqdvYitpGMLg8xtOF09Cid7ka8b+Zl7kza/wQUXPBresddTo=
+	t=1753684855; cv=none; b=pbS4cLqNm/ttC2um+PSihW/I9NESsvzZNgetiHuMUIZsXwTIxg/vmAz1/tFkUgPQKQsUd8sD/bgLTuug3cPvSBudLBuERyI7HDG258MCqtb8+c9Tdow1PZc1fwprhy/xiovohr7Fr8D7N9STpTuhc0+xysRKwUUKSqv2CWnaQuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753684686; c=relaxed/simple;
-	bh=MV0+xDoir8VqL8d7w4br3Jq1WCP3bum7WCiNz/cycVU=;
+	s=arc-20240116; t=1753684855; c=relaxed/simple;
+	bh=7HB3lxWcDLSb2k+vPs56zG0WwRAzgz2wHlSPdrUB6zc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rCSN25ivfmv8cExIkDEkEPk4Vy1BHoWkLQFzi8QdtWcAW4t8jzQBdRxGHTKQ72fHorz9z0wFm2WqPhKP/1uzoIaLaX3vCLpZFaZOnFRSjJ0qbYyjDGKGs+ypz8HbEdvc73XVWzCPvGK5tn+iCikdW7yv40KOkwVsH7X04ENUvKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=W2/ZGzn8; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1753684675;
-	bh=MV0+xDoir8VqL8d7w4br3Jq1WCP3bum7WCiNz/cycVU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLf5vAxV/W8RORbJHChtzWbfYzKVZEvSkvKcNRKBb1eDeG/4h3cTRub0bApU6A4CnG1WdEx0c37fgleMB86sKijVnjT7o9Kq+/6HRPB1uMVjC+TdF2Ucl9B/p6ZZUUwW6kFUcb9ynZgzssFlTBA8yTJ2vqx8klaa+Tl4zmDZBz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hovwk7e8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04527C4CEE7;
+	Mon, 28 Jul 2025 06:40:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753684855;
+	bh=7HB3lxWcDLSb2k+vPs56zG0WwRAzgz2wHlSPdrUB6zc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W2/ZGzn8ON6sJM/H+Mqu9y3VU5aVwUiX9xk6/mi1ET2ouUus2rgt4g8U9IzWzGIui
-	 tYZ+VgxsVZhzSsnIB3ayfXMfgtSTGxuTfMU/LcW1YTGHrSwaE8MoF06mkqfTyert46
-	 4mvD4SbkSGvodBjw29ddJ/D64fV9DmhafRKA4i/8=
-Date: Mon, 28 Jul 2025 08:37:55 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Akshay Gupta <akshay.gupta@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	gregkh@linuxfoundation.org, arnd@arndb.de, linux@roeck-us.net, Anand.Umarji@amd.com, 
-	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
-Subject: Re: [PATCH v1 2/5] misc: amd-sbi: Add support for SB-RMI over I3C
-Message-ID: <039f9a44-80df-4795-b18d-5fc9c488ca37@t-8ch.de>
-References: <20250728061033.1604169-1-akshay.gupta@amd.com>
- <20250728061033.1604169-2-akshay.gupta@amd.com>
+	b=hovwk7e8BJTy7kh1tMbykfASwd/gsx8XFDCYjPQf9OUXYjQKD4q5CoECljPVsPUoU
+	 gmeSqzq3lUDQIScJ6qAbF5uAj4bJHvwJx0fE+3fvQYMGNrqRcLx4TkyImbQ2Hv7Yrm
+	 Wc1UU6L853QcuHTDYMmxiJfaZA59lv49FTd7fvsdd8d3s3gUFHTz4/BGBNWfFFvZfk
+	 xGZ1yaSgdlGrbg6OtNX/R/sGAkqCyM3peXcssh7wrCovdpRxMC0iNNGr5rgqWEJZEh
+	 ZW7BQBofDlvpU3R3TH1oT323yPymTAAiw95/d8PwrgPPni2ckaWuFtggBscF0rvmVt
+	 NYikTkeCY3YVQ==
+Date: Sun, 27 Jul 2025 23:40:54 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+	Sasha Levin <sashal@kernel.org>, workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	rostedt@goodmis.org, konstantin@linuxfoundation.org, corbet@lwn.net,
+	josh@joshtriplett.org
+Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
+Message-ID: <202507272336.E17C3032D@keescook>
+References: <CACzwLxg=vQeQKA1mPiYV9biu=swo7QDmjB3i=UhYmv+fGRBA4Q@mail.gmail.com>
+ <053939E0-5BAB-483A-9FE4-92BF35201A4C@kernel.org>
+ <aIZJppabYBCDBhYJ@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,186 +62,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250728061033.1604169-2-akshay.gupta@amd.com>
+In-Reply-To: <aIZJppabYBCDBhYJ@gallifrey>
 
-On 2025-07-28 06:10:30+0000, Akshay Gupta wrote:
-(...)
+On Sun, Jul 27, 2025 at 03:45:42PM +0000, Dr. David Alan Gilbert wrote:
+> When doing qemu dev, I frequently run it in a tmux, and start it with
+> '-nographic' which gets you a single stream with both serial and monitor in it;
+> alternatively you can get one pane with the serial output and one with the
+> monitor, that takes a little more setup;
 
-> diff --git a/drivers/misc/amd-sbi/rmi-i3c.c b/drivers/misc/amd-sbi/rmi-i3c.c
-> new file mode 100644
-> index 000000000000..b960743afad1
-> --- /dev/null
-> +++ b/drivers/misc/amd-sbi/rmi-i3c.c
-> @@ -0,0 +1,133 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * rmi-i3c.c - Side band RMI over I3C support for AMD out
-> + *             of band management
-> + *
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/delay.h>
+Yeah, I haven't played with it yet, but I expect I'll need to try several
+approaches and see which the agent can best deal with. It's better with
+non-interactive stuff, so I'm thinking that giving it tooling that will
+run a script at boot or have the image bring up ssh for the agent to run
+individual commands via ssh... it all depends on what the agent can wrap
+its logic around.
 
-Unnecessary include.
-
-> +#include <linux/err.h>
-> +#include <linux/i3c/device.h>
-> +#include <linux/i3c/master.h>
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-
-Ditto.
-
-> +#include <linux/regmap.h>
-> +#include "rmi-core.h"
-> +
-> +static int sbrmi_enable_alert(struct sbrmi_data *data)
-> +{
-> +	int ctrl, ret;
-> +
-> +	/*
-> +	 * Enable the SB-RMI Software alert status
-> +	 * by writing 0 to bit 4 of Control register(0x1)
-> +	 */
-> +	ret = regmap_read(data->regmap, SBRMI_CTRL, &ctrl);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (ctrl & 0x10) {
-
-Magic value? Use a define.
-
-> +		ctrl &= ~0x10;
-> +		return regmap_write(data->regmap, SBRMI_CTRL, ctrl);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int sbrmi_get_max_pwr_limit(struct sbrmi_data *data)
-> +{
-> +	struct apml_mbox_msg msg = { 0 };
-> +	int ret;
-> +
-> +	msg.cmd = SBRMI_READ_PKG_MAX_PWR_LIMIT;
-> +	ret = rmi_mailbox_xfer(data, &msg);
-> +	if (ret < 0)
-> +		return ret;
-> +	data->pwr_limit_max = msg.mb_in_out;
-> +
-> +	return ret;
-> +}
-> +
-> +static int sbrmi_i3c_probe(struct i3c_device *i3cdev)
-> +{
-> +	struct device *dev = &i3cdev->dev;
-
-i3cdev_to_dev();
-
-> +	struct sbrmi_data *data;
-> +	struct regmap_config sbrmi_i3c_regmap_config = {
-> +		.reg_bits = 8,
-> +		.val_bits = 8,
-> +	};
-> +	int ret;
-> +
-> +	data = devm_kzalloc(dev, sizeof(struct sbrmi_data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	mutex_init(&data->lock);
-
-devm_mutex_init().
-
-> +
-> +	data->regmap = devm_regmap_init_i3c(i3cdev, &sbrmi_i3c_regmap_config);
-> +	if (IS_ERR(data->regmap))
-> +		return PTR_ERR(data->regmap);
-> +
-> +	/* Enable alert for SB-RMI sequence */
-> +	ret = sbrmi_enable_alert(data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Cache maximum power limit */
-> +	ret = sbrmi_get_max_pwr_limit(data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * AMD APML I3C devices support static address
-> +	 */
-> +	if (i3cdev->desc->info.static_addr)
-> +		data->dev_static_addr = i3cdev->desc->info.static_addr;
-> +	else
-> +		data->dev_static_addr = i3cdev->desc->info.dyn_addr;
-> +
-> +	dev_set_drvdata(dev, data);
-
-If you get rid of _remove(), then this can go away.
-
-> +
-> +	ret = create_hwmon_sensor_device(dev, data);
-
-That's a very generic name to have exported.
-
-> +	if (ret < 0)
-> +		return ret;
-> +	return create_misc_rmi_device(data, dev);
-> +}
-> +
-> +static void sbrmi_i3c_remove(struct i3c_device *i3cdev)
-> +{
-> +	struct sbrmi_data *data = dev_get_drvdata(&i3cdev->dev);
-> +
-> +	misc_deregister(&data->sbrmi_misc_dev);
-
-create_misc_rmi_device() could use devm_add_action_or_reset() for the
-misc deregister, simplifying the drivers code.
-
-> +	/* Assign fops and parent of misc dev to NULL */
-> +	data->sbrmi_misc_dev.fops = NULL;
-> +	data->sbrmi_misc_dev.parent = NULL;
-
-Why are these two needed? The data is freed anyways right after.
-
-> +	dev_info(&i3cdev->dev, "Removed sbrmi-i3c driver\n");
-
-Unnecessary.
-
-> +}
-> +
-> +static const struct i3c_device_id sbrmi_i3c_id[] = {
-> +	/* PID for AMD SBRMI device */
-> +	I3C_DEVICE_EXTRA_INFO(0x112, 0x0, 0x2, NULL),
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(i3c, sbrmi_i3c_id);
-> +
-> +static struct i3c_driver sbrmi_i3c_driver = {
-> +	.driver = {
-> +		.name = "sbrmi-i3c",
-> +	},
-> +	.probe = sbrmi_i3c_probe,
-> +	.remove = sbrmi_i3c_remove,
-> +	.id_table = sbrmi_i3c_id,
-> +};
-> +
-> +module_i3c_driver(sbrmi_i3c_driver);
-
-You could have the i2c and i3c drivers in the same module using
-module_i3c_i2c_driver().
-
-> +
-> +MODULE_IMPORT_NS("AMD_SBRMI");
-> +MODULE_AUTHOR("Akshay Gupta <akshay.gupta@amd.com>");
-> +MODULE_AUTHOR("Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>");
-> +MODULE_DESCRIPTION("AMD SB-RMI driver over I3C");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.25.1
-> 
+-- 
+Kees Cook
 
