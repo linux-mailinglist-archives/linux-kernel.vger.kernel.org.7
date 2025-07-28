@@ -1,99 +1,92 @@
-Return-Path: <linux-kernel+bounces-747354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC3FB132E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:07:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59906B132E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1A77A92B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:05:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C61BC3B6667
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7011B4156;
-	Mon, 28 Jul 2025 02:06:53 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id ED9252E62C;
-	Mon, 28 Jul 2025 02:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328531B4156;
+	Mon, 28 Jul 2025 02:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9u799yP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC9554918;
+	Mon, 28 Jul 2025 02:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753668413; cv=none; b=fPoMBZ9jek5Ka6wVvZbGspgZm8FIoGC2rpWlBjT/CPgEHzOCZ62Zm17jWzsTdKBI6hT9/DUOc/fTeQ433OnJLL9Ktbcc8JFmLXNfW68a058jFsoHIGX83Jf3jz9f8Hl6qCDP5TTX22Bn6jfO2hXLflyJy5nVsNR14nvv3wHIEw8=
+	t=1753668446; cv=none; b=mvzvfT8tenMxnyiMsKPxK3o1+r54hWvZ638piqYo0KwCF88F3rCSWctkvedL++cgT/6bQUC/SJEssjRHeSU0hul26vMIv7XtWTrn1UZN18sHWYolY+Bgoy6UAON1klBLnzOiKtQMev5IC+JDb2XZZR6orQQodddOF1QrUluSBcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753668413; c=relaxed/simple;
-	bh=KtcrmW5WCqvDoEaHTiCg7QZuxoNla7Wim1WhTTKLCBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=B0WWgAlabWgHCUO3ZR6P9QhWBXzX/jWS9Z/HBYQOmT3/O1XgQZu2Kn6VF25dlyTAqWg+15U0rNRepMy3z+fEUgy4oc9bKnX5vU8oWmFxrPZez/P99UeAqG2WB3NBxv1xcweERnV8ITGXB1zOIcT38YauayYqIYZjE5K82peGQXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.100] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C72CA60108C4C;
-	Mon, 28 Jul 2025 10:06:42 +0800 (CST)
-Message-ID: <e6f14d8a-5d32-473e-ba2d-1064ab8ef8fe@nfschina.com>
-Date: Mon, 28 Jul 2025 10:06:42 +0800
+	s=arc-20240116; t=1753668446; c=relaxed/simple;
+	bh=xsUgJyVXuf5+gMjt9glcjYW0BpsHXxnZVnKaMnI9BBo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VQgWBJWDSWjVJGbiryCdh7TtyF3DNc6mxhOQ+ik/gsrFrSY4+yMX5unHrAwzS1jKrRBquXwIE91mHhQ4FLE/P6ilpsCC4z4grX9kAKTMMlqHnPwtMGp91R8NCmi7AYpfWhefIbAu9/vMXJtiDmwopOquXQyUMepxBGzKuwaEBA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9u799yP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BEF3C4CEEB;
+	Mon, 28 Jul 2025 02:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753668446;
+	bh=xsUgJyVXuf5+gMjt9glcjYW0BpsHXxnZVnKaMnI9BBo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=T9u799yPao0kA0ywO6diwYoKnKT+PZrTW9wdejGcpD2O6oYf1MmBA2/qB+LV4EOds
+	 k0uWeda4ztNfUX4p+ZwTjbgstc/J2kR3l2OlGpFqKEbH7pA2lfY8tmpdpFXSM974pO
+	 jk68RhcDbfrwq5pSiTxRM+uduvqsvbeEy71CwIfVWXO8ZZBQ2RHYXb0OjBxzCzdpXq
+	 1uGFtZEM62K9iAxkjWOfOY5yRoReyaEdgNs4S2pzqbpbPNmEJEBnf2peuGnfCLnkUm
+	 ZU8QWB7p54RPveMbLwqP2VukKvlmL/ofWm0T7X5g3c5NIVpOKoQvG+hEHd6cKuB7/w
+	 TE7+7g6ZamHSQ==
+Date: Mon, 28 Jul 2025 11:07:23 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] tracing: probe: Allocate
+ traceprobe_parse_context from heap
+Message-Id: <20250728110723.caf5846854d578e98db2c375@kernel.org>
+In-Reply-To: <175323425650.57270.280750740753792504.stgit@devnote2>
+References: <175323423662.57270.14650807176845939538.stgit@devnote2>
+	<175323425650.57270.280750740753792504.stgit@devnote2>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: slub: avoid deref of free pointer in sanity checks
- if object is invalid
-Content-Language: en-US
-To: Harry Yoo <harry.yoo@oracle.com>, Matthew Wilcox <willy@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@gentwo.org>,
- David Rientjes <rientjes@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-MD-Sfrom: liqiong@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: liqiong <liqiong@nfschina.com>
-In-Reply-To: <aIQMhSlOMREOTLyl@hyeyoo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 23 Jul 2025 10:30:56 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
+> diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+> index add08ffb04d7..610f8d53be8a 100644
+> --- a/kernel/trace/trace_fprobe.c
+> +++ b/kernel/trace/trace_fprobe.c
+> @@ -1384,14 +1384,17 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  
+>  static int trace_fprobe_create_cb(int argc, const char *argv[])
+>  {
+> -	struct traceprobe_parse_context ctx = {
+> -		.flags = TPARG_FL_KERNEL | TPARG_FL_FPROBE,
+> -	};
+> +	struct traceprobe_parse_context *ctx __free(traceprobe_parse_context) = NULL;
+>  	int ret;
+>  
+> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ctx->flags = TPARG_FL_KERNEL | TPARG_FL_FPROBE,
 
-在 2025/7/26 07:00, Harry Yoo 写道:
-> On Sat, Jul 26, 2025 at 04:55:06AM +0900, Harry Yoo wrote:
->> On Fri, Jul 25, 2025 at 06:10:51PM +0100, Matthew Wilcox wrote:
->>> On Fri, Jul 25, 2025 at 06:47:01PM +0200, Vlastimil Babka wrote:
->>>> On 7/25/25 08:49, Li Qiong wrote:
->>>>> For debugging, object_err() prints free pointer of the object.
->>>>> However, if check_valid_pointer() returns false for a object,
->>>>> dereferncing `object + s->offset` can lead to a crash. Therefore,
->>>>> print the object's address in such cases.
->>>>>  	if (!check_valid_pointer(s, slab, object)) {
->>>>> -		object_err(s, slab, object, "Freelist Pointer check fails");
->>>>> +		slab_err(s, slab, "Invalid object pointer 0x%p", object);
->>>>>  		return 0;
->>> No, the error message is now wrong.  It's not an object, it's the
->>> freelist pointer.
->> Because it's the object is about to be allocated, it will look like
->> this:
->>
->>   object pointer -> obj: [ garbage ][   freelist pointer   ][ garbage ]
->>
->> SLUB uses check_valid_pointer() to check either 1) freelist pointer of
->> an object is valid (e.g. in check_object()), or 2) an object pointer
->> points to a valid address (e.g. in free_debug_processing()).
->>
->> In this case it's an object pointer, not a freelist pointer.
->> Or am I misunderstanding something?
-> Actually, in alloc_debug_processing() the pointer came from slab->freelist,
-> so I think saying either "invalid freelist pointer" or
-> "invalid object pointer" make sense...
+Oops, this last should be ';' instead of ','!
 
-free_consistency_checks()  has 
- 'slab_err(s, slab, "Invalid object pointer 0x%p", object);'
-Maybe  it is better, alloc_consisency_checks() has the same  message.
-
-
-
-
-
->
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
