@@ -1,75 +1,60 @@
-Return-Path: <linux-kernel+bounces-748515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95670B14227
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:44:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F69B14228
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D3B3BEB33
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9907189D13B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B821277038;
-	Mon, 28 Jul 2025 18:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA280275AE0;
+	Mon, 28 Jul 2025 18:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGonoDtf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bThxI2Bs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575C5275865;
-	Mon, 28 Jul 2025 18:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D541DC1AB;
+	Mon, 28 Jul 2025 18:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753728226; cv=none; b=V2Erkn6FJSlzMUtha8X+eM14dsL9ili3mYrIiQfbPpEvONoCP27Ru8PkDsVgMxyt0Ge9202sSICtY6Ck44vYd2fY64q9OnKdhCcWg9HcMnNcXKKMu60Lt80zh/mJ/jE9b0zzU9LPrBUAcblUsrEq0M/Uc5QnCSyeWz449OVjs2E=
+	t=1753728247; cv=none; b=SGM0Q4Ira9ssS5XRJBQgmvtBfhpgmJ2TMthC40HxnH1Z5xV9kbURS8dTzLhC3dCZZLBuqj9MS11Ir02PAfCE0dmMCHdWA1SrOko72a5QGGfh3r8DfNbyr/GTwuW8zvQICBMv/ad7LfnYpTxiHtzYBhVmnCzZrq6qqW8mFQXoLnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753728226; c=relaxed/simple;
-	bh=Xf2hz7TOpHiqBdd1wuMT/dAEUrQ8nRBxTAfDXorLxU8=;
+	s=arc-20240116; t=1753728247; c=relaxed/simple;
+	bh=HMiNWszKPFxlJnq/c0XE4CkHijpzQunzfLGbsLOK6js=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HyJuCpbpWF7d5nVyK9bTIhBlhXcOY2D69fv55y/qSW4oCQdpxHX1iPCQw9ToxI0Ti1hekmN3wSbhHTv0G3TZ2wGuojXoV/zbryUi8OlVHMuXVVDM8AMfrEoqWTy9Dd3ZjdD72z5ydUyjHonFPXAua5Bo9CVQUTxxG3muqpdn6qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGonoDtf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D73DBC4CEE7;
-	Mon, 28 Jul 2025 18:43:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2ldB4g7K5OnGVZIXqeiIzmZQrv5g5bXWWxKc5mzAdvUZ/5rO0LdBXF++qv+gMnEM6/kGet9EdyvliWhfAGX3F6199Bs1OHWl473ojrJ29DwjdrfF6AMpceVWvIH8iNIK8aKupBJceu3V+Rs7j4md0+nC6mfWIiUAPjTX/4d9gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bThxI2Bs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60F1AC4CEE7;
+	Mon, 28 Jul 2025 18:44:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753728225;
-	bh=Xf2hz7TOpHiqBdd1wuMT/dAEUrQ8nRBxTAfDXorLxU8=;
+	s=k20201202; t=1753728246;
+	bh=HMiNWszKPFxlJnq/c0XE4CkHijpzQunzfLGbsLOK6js=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PGonoDtfZcvl4wAegtfBny9SfyLgEdPZ27t2cNxooJOOn3HuA8bv503WJHRlBWw0/
-	 eRHqrzV0jjMHylmDZZNHQmabfShEAPIMCTA+6v1TbNYHmXM5mwc5veRqJOkB9SFatm
-	 QgmCQSwmGMSi8qzCSGVdY0s4VM0QW8NWHY4pcn8hrkYlXjTlhvl+KRJFmH0zOQTjB+
-	 L4nkGlTuiKbMhtS04JXLwE5XksrSz631g+p6/m+cxUPSNQ6fRCEWFJEVcqadPsa5qg
-	 UOmtGppTOwPpVOmC5RhDP0mOrG+qsh2uqkcn2cW7wOipOny757apZjWhLb4uHEWnKM
-	 gFFSo9qi/pHyA==
-Date: Mon, 28 Jul 2025 11:43:45 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-	linux-xfs@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <liam.howlett@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
- at fuse_iomap_writeback_range
-Message-ID: <20250728184345.GD2672070@frogsfrogsfrogs>
-References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
- <20250723144637.GW2672070@frogsfrogsfrogs>
- <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
- <20250723212020.GY2672070@frogsfrogsfrogs>
- <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
- <CAJnrk1byTVJtuOyAyZSVYrusjhA-bW6pxBOQQopgHHbD3cDUHw@mail.gmail.com>
- <CAJnrk1ZYR=hM5k90H57tOv=fe6F-r8dO+f3wNuCT_w3j8YNYNQ@mail.gmail.com>
- <aIe0ouF9tsuIO58_@casper.infradead.org>
- <CAJnrk1aXvVf7jaK9_2PamK5X+1b+crT+kmn8vktv0nxqCtcW8g@mail.gmail.com>
+	b=bThxI2BseDzqW8lKXV6+4ASzHNoxp/iW6NVCcGsKOMe0kvY8gIKJHuG6cGXpmNYal
+	 GZ39uW+Enjb7muoQQ9d4b5fywP6Wl5oDhDHnJ0cwN60AkwzM0vj35qan2K90UiUP0X
+	 zmy7LjJLSOfC/sITiru8kPyhM3RWK/nWxl5xg3Rv0oTtMEEvBZu68rTA/HmN1PoHRE
+	 XZ3AFGx6mkZo4bFgqxJ/hx/nlQzbntC93xh2/US4vYk131Ru531XoUXDflLXHiYQhL
+	 6q5qgS0Z4FLk7mxEeuC0MhaiiZmnQYJKWMeYuKdOUSVVNr1PEOf5OX26siBAzP5V/u
+	 Diqydf8WqsurA==
+Date: Mon, 28 Jul 2025 11:44:05 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v4 3/9] perf annotate: Pass annotation_print_data to
+ annotation_line__write()
+Message-ID: <aIfE9VWrRzPJD314@google.com>
+References: <20250725193755.12276-1-namhyung@kernel.org>
+ <20250725193755.12276-4-namhyung@kernel.org>
+ <CAP-5=fXUyA=kgTTMDUmeOF9hURhQQxfYOFk5_HZEkQsdh7QqSg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,70 +64,37 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1aXvVf7jaK9_2PamK5X+1b+crT+kmn8vktv0nxqCtcW8g@mail.gmail.com>
+In-Reply-To: <CAP-5=fXUyA=kgTTMDUmeOF9hURhQQxfYOFk5_HZEkQsdh7QqSg@mail.gmail.com>
 
-On Mon, Jul 28, 2025 at 10:55:42AM -0700, Joanne Koong wrote:
-> On Mon, Jul 28, 2025 at 10:34 AM Matthew Wilcox <willy@infradead.org> wrote:
+On Fri, Jul 25, 2025 at 05:23:00PM -0700, Ian Rogers wrote:
+> On Fri, Jul 25, 2025 at 12:38 PM Namhyung Kim <namhyung@kernel.org> wrote:
+[SNIP]
+> > diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+> > index 0f640e4871744262..8fad464a870a2b8e 100644
+> > --- a/tools/perf/util/annotate.h
+> > +++ b/tools/perf/util/annotate.h
+> > @@ -199,8 +199,18 @@ struct annotation_write_ops {
+> >         void (*write_graph)(void *obj, int graph);
+> >  };
 > >
-> > On Fri, Jul 25, 2025 at 06:16:15PM -0700, Joanne Koong wrote:
-> > > > > > > Also, I just noticed that apparently the blocksize can change
-> > > > > > > dynamically for an inode in fuse through getattr replies from the
-> > > > > > > server (see fuse_change_attributes_common()). This is a problem since
-> > > > > > > the iomap uses inode->i_blkbits for reading/writing to the bitmap. I
-> > > > > > > think we will have to cache the inode blkbits in the iomap_folio_state
-> > > > > > > struct unfortunately :( I'll think about this some more and send out a
-> > > > > > > patch for this.
-> >
-> > Does this actually happen in practice, once you've started _using_ the
-> > block device?  Rather than all this complicated stuff to invalidate the
-
-For most block device filesystems?  No.  And as far as I can tell, none
-of the filesystems actually support changing i_blkbits on the fly; I
-think only block devices can do that:
-
-$ git grep 'i_blkbits\s=\s'
-block/bdev.c:150:       BD_INODE(bdev)->i_blkbits = blksize_bits(bsize);
-block/bdev.c:209:               inode->i_blkbits = blksize_bits(size);
-fs/ceph/inode.c:81:     inode->i_blkbits = CEPH_FSCRYPT_BLOCK_SHIFT;
-fs/ceph/inode.c:1071:           inode->i_blkbits = CEPH_FSCRYPT_BLOCK_SHIFT;
-fs/ceph/inode.c:1076:           inode->i_blkbits = CEPH_BLOCK_SHIFT;
-fs/ceph/inode.c:1180:           inode->i_blkbits = PAGE_SHIFT;
-fs/direct-io.c:612:     unsigned int i_blkbits = sdio->blkbits + sdio->blkfactor;
-fs/direct-io.c:908:     const unsigned i_blkbits = blkbits + sdio->blkfactor;
-fs/direct-io.c:1110:    unsigned i_blkbits = READ_ONCE(inode->i_blkbits);
-fs/erofs/fscache.c:527: inode->i_blkbits = EROFS_SB(sb)->blkszbits;
-fs/fuse/file_iomap.c:2327:      inode->i_blkbits = new_blkbits;
-fs/fuse/inode.c:304:            inode->i_blkbits = new_blkbits;
-fs/inode.c:234: inode->i_blkbits = sb->s_blocksize_bits;
-fs/libfs.c:1761:        inode->i_blkbits = PAGE_SHIFT;
-fs/ocfs2/aops.c:2123:   unsigned int i_blkbits = inode->i_sb->s_blocksize_bits;
-fs/orangefs/orangefs-utils.c:320:                       inode->i_blkbits = ffs(new_op->downcall.resp.getattr.
-fs/smb/client/cifsfs.c:411:     cifs_inode->netfs.inode.i_blkbits = 14;  /* 2**14 = CIFS_MAX_MSGSIZE */
-fs/stack.c:72:  dest->i_blkbits = src->i_blkbits;
-fs/vboxsf/utils.c:123:  inode->i_blkbits = 12;
-
-> > page cache based on the fuse server telling us something, maybe just
-> > declare the server to be misbehaving and shut the whole filesystem down?
-> >
+> > +struct annotation_print_data {
+> > +       struct hist_entry *he;
+> > +       struct evsel *evsel;
+> > +       struct arch *arch;
+> > +       struct debuginfo *dbg;
+> > +       u64 start;
+> > +       int addr_fmt_width;
+> > +};
 > 
-> I don't think this case is likely at all but I guess one scenario
-> where the server might want to change the block size midway through is
-> if they send the data to some network filesystem on the backend and if
-> that backend shuts down or is at full capacity for whatever reason and
-> they need to migrate to another backend that uses a different block
-> size then I guess this would be useful for that.
+> nit: As the scope of this is now global, is it worth commenting it?
+> For example, where is start relative to?
 
-Maybe, but it would still be pretty extraordinary to change the block
-size on an open file -- any program that tries to do its IO in blocks
-(i.e. not a byte stream) has already stat'd the file and will be very
-confused.
+Sure, I'll add comments.
 
-> fuse currently does allow the block size to be changed dynamically so
-> I'm not sure if we can change that behavior without breaking backwards
-> compatibility.
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-<nod> For fuse+iomap I'm not going to allow it initially if there's
-anything in the pagecache ... but I could be talked into it.
+Thanks,
+Namhyung
 
---D
 
