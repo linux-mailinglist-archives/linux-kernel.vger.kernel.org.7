@@ -1,145 +1,115 @@
-Return-Path: <linux-kernel+bounces-747551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8D7B13513
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC36B1351A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C7513B5534
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:48:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70B23A4E06
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96398221704;
-	Mon, 28 Jul 2025 06:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3FB2222C3;
+	Mon, 28 Jul 2025 06:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moRdVbfz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qZEEM+i4"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14418BE8;
-	Mon, 28 Jul 2025 06:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE75621B9D2;
+	Mon, 28 Jul 2025 06:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753685313; cv=none; b=Gerd38S8yWK2iaqM4tFFhivbX2LDsJI1pgUWqJamr0xHra3yg4eCJbklOkzPVaiiGUwqP2mpNBr7HWI/Yxm56pyWbMwfctlKrurW1lKXI2VGEDaRsCmqpy2OnVWKzfChJr6GB4Em7pHfgsoMPMJQdQQIeBWJD4Zoe7BPeIWEb2Q=
+	t=1753685506; cv=none; b=YK2ycgs/vuo+OkeDzt8a63QEiPMe49bEsvOwN+mQWflP+4ez9ulpztJMGturu//g1qfG7/DorMdqQQS6ChAlBTlXfN5h3D0l99kbo/leP923I244+vch9PxPddDr+e2r39AtVqDSeCXFCJViiLMz3r/T4y8aaKtssTAzxU8UerM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753685313; c=relaxed/simple;
-	bh=k7Nd1SEj8Pv+9T8aTbXxS7qhS46/yo1STbc53+lA/7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fcvor2ODQYmd51UMoeKS9Nq/KndoM1Nw/hfeptzB9eRAe/na1xK66V4x1GLh/zFC07Q4R33w5uBkniGssvVE5NXirsBtJPam76LW2Md+u/0ropAX9lYZazEHdOPXFSwOXVYYESRMS/MpAIkM3f/eKr/7VLl9Rxl3U444Z8IWiQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moRdVbfz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DECBC4CEE7;
-	Mon, 28 Jul 2025 06:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753685312;
-	bh=k7Nd1SEj8Pv+9T8aTbXxS7qhS46/yo1STbc53+lA/7I=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=moRdVbfzBEy/JuL3fAPVGuWLO3d4AobDa7+w40Ug3v1UpnxaD0OkBz8fmrZbTNzBF
-	 vkCVyMxSpcKBWw92lGIUH1bAz4OE0paZTYm/E2Qzu34iLvXqm73MsEw+wbv/2dBtJ8
-	 tnykY1vUe3pGW4FpM2zmCpGdjHYGwDISMRqQyFEbXWfSJK6D2iMf3VSwCLmbj+0LFk
-	 BvLu13q2Coq23f1i+y79huGZy4oZ/oCdeHwJmfX7y0kb62u+41iU1u6AZah762lOVn
-	 6v3+urmQ04q/olO811wtY9tTLcjEvEXHJr+5z6qVbyGLXgtBdTjonseQPdXLbnaP1u
-	 6kYN1hL9Y6jhA==
-Message-ID: <93b81672-0604-42d1-8a10-0fc88ba2efd6@kernel.org>
+	s=arc-20240116; t=1753685506; c=relaxed/simple;
+	bh=bXXezclLq7GUihaytnk+fZzRsjecBR4qfRXrwCRq0MM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXXqhvQNuAxKXZXQBK7Yt2BbKxvOrxUVCQEgEUdCB3vwGkzggdKZN2ZbuEAcKtxAHVcvjFxAxLDRNBgk/iFeWS6RJBnRkUnMOZzy36ez1OC5NXs9GpluCGc0uo/yRdL0X+O4ihqdWZXBgvzHQTnNQ4M3W7NMRFl3zQwNSeG3JlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qZEEM+i4; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1753685504; x=1785221504;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bXXezclLq7GUihaytnk+fZzRsjecBR4qfRXrwCRq0MM=;
+  b=qZEEM+i4tEbtRC+QORMPfDxbMpoOX2duFHLJ2TTmyPqErlTS14Orn/X+
+   fJGoIEIm26zkpIdYPiBpeO427ACx1AyDvlNUVzDzstDpeRmo8q2Q1l4rC
+   JXI71mNocVEfj/VN6aiqi5NiaGtnNgL6w4szWbfdUrvpf4avsk22p16uh
+   Kg65dbtBhUoDmL+355kygISqnGYKOMC1KFP/MI2nbA6V1ncG2ZA6yo190
+   drFeKYgWDvN4ViHdWOZJKo58jLrVekRrs75MGkKQcbRZWta1ec3MXRGOZ
+   UkUoYuLjGXTHMi0zbqnP+rsfNtfmN7m2v8VgA7ea0XPpnagvnXzko4ppp
+   w==;
+X-CSE-ConnectionGUID: XleGp8bISDuSuljufyssoA==
+X-CSE-MsgGUID: /QZttT4jQQ6frzyes6/K+g==
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="49824900"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Jul 2025 23:51:38 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Sun, 27 Jul 2025 23:51:27 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Sun, 27 Jul 2025 23:51:26 -0700
 Date: Mon, 28 Jul 2025 08:48:29 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <o.rempel@pengutronix.de>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 4/4] net: phy: micrel: Add support for lan8842
+Message-ID: <20250728064829.wdcatrtypgb6ihcp@DEN-DL-M31836.microchip.com>
+References: <20250724200826.2662658-1-horatiu.vultur@microchip.com>
+ <20250724200826.2662658-5-horatiu.vultur@microchip.com>
+ <2c681a15-71b0-4514-b0ce-ce6d28c74971@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH 5/5] module: Rename MAX_PARAM_PREFIX_LEN to
- __MODULE_NAME_LEN
-To: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250630143535.267745-1-petr.pavlu@suse.com>
- <20250630143535.267745-6-petr.pavlu@suse.com>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20250630143535.267745-6-petr.pavlu@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <2c681a15-71b0-4514-b0ce-ce6d28c74971@oracle.com>
 
-On 30/06/2025 16.32, Petr Pavlu wrote:
-> The maximum module name length (MODULE_NAME_LEN) is somewhat confusingly
-> defined in terms of the maximum parameter prefix length
-> (MAX_PARAM_PREFIX_LEN), when in fact the dependency is in the opposite
-> direction.
-> 
-> This split originates from commit 730b69d22525 ("module: check kernel param
-> length at compile time, not runtime"). The code needed to use
-> MODULE_NAME_LEN in moduleparam.h, but because module.h requires
-> moduleparam.h, this created a circular dependency. It was resolved by
-> introducing MAX_PARAM_PREFIX_LEN in moduleparam.h and defining
-> MODULE_NAME_LEN in module.h in terms of MAX_PARAM_PREFIX_LEN.
-> 
-> Rename MAX_PARAM_PREFIX_LEN to __MODULE_NAME_LEN for clarity. This matches
-> the similar approach of defining MODULE_INFO in module.h and __MODULE_INFO
-> in moduleparam.h.
-> 
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-> ---
->  include/linux/module.h      |  2 +-
->  include/linux/moduleparam.h | 12 ++++++++----
->  2 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 5faa1fb1f4b4..0f1dde3996d9 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -32,7 +32,7 @@
->  #include <linux/percpu.h>
->  #include <asm/module.h>
->  
-> -#define MODULE_NAME_LEN MAX_PARAM_PREFIX_LEN
-> +#define MODULE_NAME_LEN __MODULE_NAME_LEN
->  
->  struct modversion_info {
->  	unsigned long crc;
-> diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-> index 110e9d09de24..a04a2bc4f51e 100644
-> --- a/include/linux/moduleparam.h
-> +++ b/include/linux/moduleparam.h
-> @@ -6,6 +6,13 @@
->  #include <linux/stringify.h>
->  #include <linux/kernel.h>
->  
-> +/*
-> + * The maximum module name length, including the NUL byte.
-> + * Chosen so that structs with an unsigned long line up, specifically
-> + * modversion_info.
-> + */
-> +#define __MODULE_NAME_LEN (64 - sizeof(unsigned long))
-> +
->  /* You can override this manually, but generally this should match the
->     module name. */
->  #ifdef MODULE
-> @@ -17,9 +24,6 @@
->  #define __MODULE_INFO_PREFIX KBUILD_MODNAME "."
->  #endif
->  
-> -/* Chosen so that structs with an unsigned long line up. */
-> -#define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
-> -
->  #define __MODULE_INFO(tag, name, info)					  \
->  	static const char __UNIQUE_ID(name)[]				  \
->  		__used __section(".modinfo") __aligned(1)		  \
-> @@ -284,7 +288,7 @@ struct kparam_array
->  
->  /* This is the fundamental function for registering boot/module parameters. */
->  #define __module_param_call(prefix, name, ops, arg, perm, level, flags)	\
-> -	static_assert(sizeof(""prefix) - 1 <= MAX_PARAM_PREFIX_LEN);	\
-> +	static_assert(sizeof(""prefix) - 1 <= __MODULE_NAME_LEN);	\
->  	static const char __param_str_##name[] = prefix #name;		\
->  	static struct kernel_param __moduleparam_const __param_##name	\
->  	__used __section("__param")					\
+The 07/26/2025 17:23, ALOK TIWARI wrote:
 
+Hi Alok,
 
-LGTM,
+> 
+> On 7/25/2025 1:38 AM, Horatiu Vultur wrote:
+> > +static void lan8842_get_phy_stats(struct phy_device *phydev,
+> > +                               struct ethtool_eth_phy_stats *eth_stats,
+> > +                               struct ethtool_phy_stats *stats)
+> > +{
+> > +     struct lan8842_priv *priv = phydev->priv;
+> > +
+> > +     stats->rx_packets = priv->phy_stats.rx_packets;
+> > +     stats->rx_errors = priv->phy_stats.rx_errors;
+> > +     stats->tx_packets = priv->phy_stats.tx_packets;
+> > +     stats->tx_errors = priv->phy_stats.rx_errors;
+> 
+> looks like a copy-paste mistake
+> stats->tx_errors = priv->phy_stats.tx_errors;
 
-Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+That is a good catch!
+I will fix it in the next version.
+
+> 
+> > +}
+> > +
+> 
+> 
+> Thanks,
+> Alok
+
+-- 
+/Horatiu
 
