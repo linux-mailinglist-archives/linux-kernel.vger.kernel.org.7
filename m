@@ -1,155 +1,191 @@
-Return-Path: <linux-kernel+bounces-747325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66834B13292
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:00:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2DBB13295
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F2C71760D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:00:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C051895CA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E3642A99;
-	Mon, 28 Jul 2025 00:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DB08479;
+	Mon, 28 Jul 2025 00:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lzU85r33"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b="nF/faPlY"
+Received: from chumsalmon.baetis.net (chumsalmon.baetis.net [209.222.21.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BECB4A35;
-	Mon, 28 Jul 2025 00:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FFF1BC5C;
+	Mon, 28 Jul 2025 00:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.222.21.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753660818; cv=none; b=cTWdkwfmrLSc0+1mgOqsywduYJGwyuqfcZFY5ypv/H+3n4E7hcKFzxMaJEGcbuoj5PRJA1knicQlEm1vZC+nNH2P5VA4Qrd/YAxQ1P8rIngmFfcXlLA7JroLdt6TfLjvYY4o1A+3j633VCHMWSAYPGa4iMhh+XhoO49ErOFUkwE=
+	t=1753661010; cv=none; b=or56p2WWUKnMAakWzTzEqsVkFCVXKR/ZJuMtZZcocL8TLQqTiEFfh70meG2v4pBpcvviM/SmQk1gtOdmm3XivHGZlkLt317qQPAB+rmteOOfoS3Knc0iWii95lFDUgyolW/11MyPm3kqYdFOUioz7qqwXvBu8ZJqMbtnH7SIpp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753660818; c=relaxed/simple;
-	bh=7FOlBTRmd8dEpKVhrzJny7SLB1U+9S1mQl0p3vHcy/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qb4GblF1qWUUsM5X0x/fMX7/7t6gEfGu13ZhhljKmwoqckEoN9FQwWMSaq3/dbCNq/Yfe29EqwMinqazpXyisDDZ/EdNANuLyBDS7Bq1FZaqEh3PKMXZH0CC+lEzTdzVo7wDnqQsxFKe3wcVp5/0eMub74gKfpEvX17rIHEB/VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lzU85r33; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753660605;
-	bh=Od/wQZLkvSFzPvwQn//E457WOuGEkjFsp/yYgUZauwg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lzU85r33v3LoNqXUQWVpqqa4G4IOSwNeapQzem8tGogQ+9agLAC52npiXBS4uZHTm
-	 d7e9LAmHW0lJUTlaAgWxM+5mMuNMu1giYZ1tPqu92H8rFvUhoIwjvUxwQHDzl+qr3n
-	 P9q5qIAlW/w04Qm/1STz9lLdKRTih8rPrs3O072THX6sc0q+/JbySaKYfg/MPjm7Hs
-	 QFt4o6kkl5IUtOTxTD24Byt9qqs9T41fHm08lAN704pcLYcJaBHJ3hTxFHcwcKGnUf
-	 BZrX2o7l9T8QS/8RCCeTYmj5jGlYUnTuz8BJ14AurSTQqdnei2em00IRT2p62DaGUG
-	 UcbgUD//4TdGg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1753661010; c=relaxed/simple;
+	bh=6vrdKbRCJyD0LWK2qqYSjBdh3A5KmFbKK1liI2Tilsg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rTWopblBfy5kvSlgqxaF2q7+wEei1HgV1ITE3kmKXG61rv0ih1cinoiCFtbQJ5VH69GM43bKzr+Fs+dgB5DpiQLGDj8VWrChLv8QDr0L++60T9YWPD4Tp0q9sD0Qk2My5BpaR9tMmRgS+DMriUAe0jlAzyL+EPt7VJCKJ5137Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com; spf=pass smtp.mailfrom=tahomasoft.com; dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b=nF/faPlY; arc=none smtp.client-ip=209.222.21.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tahomasoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tahomasoft.com;
+	s=default; t=1753661002;
+	bh=6vrdKbRCJyD0LWK2qqYSjBdh3A5KmFbKK1liI2Tilsg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=nF/faPlYmOW9P4rXXebpd4UiERUFYUKTcuMP20DkSADBd1mygtip0xkInPMNaEeee
+	 1k+RHG5LWt4AjSfA5GC7UFwBaM6sREQcmxLRT6HDrFWMadlc29A8/QqcA5K60QMmQH
+	 D8slGaMTDNg+K98EEshxgXaq8AmuEvgsoL56FKG+EdbdhbaDnkgQnqPda5ECXhHpqp
+	 9aJqRiZfpFSHV34B7PwcVyFQpWibx1egtsvdnCFMqBu0XroZAfPfxPpuDKCUPizeji
+	 6l7+UUiHINCv5/11YuCULFv69MjQgNH8rB9eTLqgji2sOQXsFBUSpcNPxRtkFqLqVi
+	 VO9EMh2Kqp+Dw==
+Received: from localhost (unknown [IPv6:2600:4040:50b7:b604:6c1:3a28:af02:372c])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bqz6N4sCNz4wxJ;
-	Mon, 28 Jul 2025 09:56:44 +1000 (AEST)
-Date: Mon, 28 Jul 2025 09:59:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the ftrace tree with the tip tree
-Message-ID: <20250728095937.13043cd0@canb.auug.org.au>
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by chumsalmon.baetis.net (Postfix) with ESMTPSA id 4D05827E434;
+	Mon, 28 Jul 2025 00:03:22 +0000 (UTC)
+From: Erik Beck <xunil@tahomasoft.com>
+Subject: [PATCH v4 0/2] Add Support for LinkStar H68K board: ARM64 and
+ RK3568: dts and dt-bindings.
+Date: Sun, 27 Jul 2025 20:03:18 -0400
+Message-Id: <20250727-linkstarpatch_v4_6-16-rc1-v4-0-0dfa7aa06ec9@tahomasoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/sxzXOrs+CYdBtw4VPNTESWS";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEa+hmgC/x3MQQqEMAxA0atI1hOIpVacq8ggtUYNDlVSEUG8u
+ 8XlW/x/QWIVTvAtLlA+JMkaM+yngDD7ODHKkA2GTEW1cfiXuKTd6+b3MHeH7RyWDjWUyLYnCr5
+ vBjKQ+015lPN9t7/7fgDAEerjawAAAA==
+X-Change-ID: 20250726-linkstarpatch_v4_6-16-rc1-e4b00cab9d02
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Erik Beck <xunil@tahomasoft.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753661001; l=3848;
+ i=xunil@tahomasoft.com; s=20250724; h=from:subject:message-id;
+ bh=6vrdKbRCJyD0LWK2qqYSjBdh3A5KmFbKK1liI2Tilsg=;
+ b=K9rdSoH2lM/WDBF63+iwo/GNOV02v80drHgJXnKwGNTfndU8uB0Zx5Pb/uIPc222liiTcqwaN
+ 04bt8KnLApyCKWSSpa1IQKaF0wFWrnAoiHERkggzUT4fBtahoRYTO7o
+X-Developer-Key: i=xunil@tahomasoft.com; a=ed25519;
+ pk=FTZVGUexvkWb4j8v0wbtm7CtJLijIAaa5x0XV72WWC0=
 
---Sig_/sxzXOrs+CYdBtw4VPNTESWS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Provide support for the Seeed LinkStar H68K-1432v1, previously
+unsupported in mainline Linux kernel. It is a compact single board
+travel router with the following features:
 
-Hi all,
+  - Rockchip rk3568 SoC;
+  - Four Gib RAM;
+  - Four ethernet ports:
+    -  Two 1 GigE ports;
+    -  Two 2.5 GigE ports (RTL8125);
+    
+  - Ethernet ports support Precision Time Protocol (PTP IEEE 1588);
+  
+  - Four USB ports:
+    - Three USB 3.0 ports;
+    - Two USB 2.0 ports;
+    
+  - Integrated WiFi:
+    - MediaTek MT7921e
+    
+  - Audio and video outputs:
+    - HDMI;
+    - Headphone;
+    
+  - eMMC (32 Gib) and microSD storage;
+  - Real-time clock (rk809)
+  - Powered by:
+    - USB Type-C;
+    - Barrel connector (DC 12-24v);
+    
+These patches:
+  - Create a devicetree for the board;
+  - Add a (dtb) Makefile entry for the board;
+  - Add the board to dt-bindings;
 
-Today's linux-next merge of the ftrace tree got a conflict in:
+v4:
+  - Responsive to comments received from  Krzysztof Kozlowski <krzk+dt@kernel.org>
+    - https://lore.kernel.org/all/20250725-muskox-of-authentic-gaiety-b8eda4@kuoka/
+    - https://lore.kernel.org/all/20250725-nocturnal-messy-cicada-dbcc10@kuoka/
+    - /* (Thank you Krzysztof!) */
+    
+  - Changes made are:
+    - Clarified the base commit working from;
+    - Base patched against:
+      - Commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494 (tag: v6.16-rc1);
+	
+    - Revised commit message for devicetree to be clearer, contain
+      more details about the hardware, and be more succinct;
 
-  include/linux/entry-common.h
+    - Revised commit message for devicetree binding to be clearer, contain
+      more details about the hardware, and be more succinct;
+  
+v3:
+  Responsive to comments received from:
+  - Chukun Pan <amadeus@jmu.edu.cn>
+  - Krzysztof Kozlowski <krzk+dt@kernel.org>
+  - Rob Herring <robh@kernel.org>
+  - Heiko Stuebner <heiko@sntech.de>
 
-between commit:
+   /* (Thank you all!) */
 
-  a70e9f647f50 ("entry: Split generic entry into generic exception and sysc=
-all entry")
+  Those changes are:
+     - Removed copyright line of <amadeus@jmu.edu.cn> per their request;
+     - Fixed indentations;
+     - Replaced space indentations with tabs;
+     - Packaging this patch set together properly using b4, fixing the threading;
+     - Clarifying versioning and Changelog;
 
-from the tip tree and commit:
+v2: (https://lore.kernel.org/all/20250721201137.233166-1-xunil@tahomasoft.com/)
+  Responding to comments received from Heiko Stuebner <heiko@sntech.de> 
 
-  bfab6646e9d9 ("unwind_user/deferred: Add unwind cache")
+  Those changes are:
 
-from the ftrace tree.
+     - Splits the single commit into two, one for the yaml binding,
+       and the other for the board devicetree plus Makefile addition;
 
-I fixed it up (I used the former version of this file and applied the
-following merge fix patch) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+     - Adds other recipients needed from get_maintainer.pl --nol and --nom;
+     
+     - Uses git send-email to send the patches, to avoid adding line
+       breaks from the MUA;
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 28 Jul 2025 09:53:01 +1000
-Subject: [PATCH] fix up for "unwind_user/deferred: Add unwind cache"
+     - Changes comment style to conform with style guide;
+     - Removes several unneeded comments from the devicetree;
+     - Changes LED naming scheme with more standard nomenclature;
+     - Changes naming of regulators, prepending 'regulator', such as:
+        ~ from: vcc12v_dcin: vcc12v-dcin {}
+        ~ to:   vcc12v_dcin: regulator-vcc12v-dcin {}
 
-interacting with "entry: Split generic entry into generic exception and
-syscall entry" from the tip tree.
+     - Removes unneeded tx_delay/rx_delay from rgmii-id
+        
+v1: (https://lore.kernel.org/all/20250718075058.243a5619.xunil@tahomasoft.com/)
+  - Initial patch to provide support for Seeed LinkStar H68K
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Erik Beck <xunil@tahomasoft.com>
+
 ---
- include/linux/irq-entry-common.h | 2 ++
- 1 file changed, 2 insertions(+)
+Erik Beck (2):
+      dt-bindings: arm: rockchip: add LinkStar-H68k-1432v1
+      arm64: dts: rockchip: add LinkStar-H68k-1432v1
 
-diff --git a/include/linux/irq-entry-common.h b/include/linux/irq-entry-com=
-mon.h
-index 8af374331900..0cd828b4a444 100644
---- a/include/linux/irq-entry-common.h
-+++ b/include/linux/irq-entry-common.h
-@@ -7,6 +7,7 @@
- #include <linux/context_tracking.h>
- #include <linux/tick.h>
- #include <linux/kmsan.h>
-+#include <linux/unwind_deferred.h>
-=20
- #include <asm/entry-common.h>
-=20
-@@ -240,6 +241,7 @@ static __always_inline void exit_to_user_mode(void)
- 	lockdep_hardirqs_on_prepare();
- 	instrumentation_end();
-=20
-+	unwind_reset_info();
- 	user_enter_irqoff();
- 	arch_exit_to_user_mode();
- 	lockdep_hardirqs_on(CALLER_ADDR0);
---=20
-2.50.1
+ .../devicetree/bindings/arm/rockchip.yaml          |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+ .../dts/rockchip/rk3568-linkstar-h68k-1432v1.dts   | 740 +++++++++++++++++++++
+ 3 files changed, 746 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250726-linkstarpatch_v4_6-16-rc1-e4b00cab9d02
 
---=20
-Cheers,
-Stephen Rothwell
+Best regards,
+-- 
+Erik Beck <xunil@tahomasoft.com>
 
---Sig_/sxzXOrs+CYdBtw4VPNTESWS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiGvWoACgkQAVBC80lX
-0Gyz1Af6A8FhiDEvJexDRmRdyLSoim0L1JbHu30uQt6T4cIdHevhFq0vuKig49sU
-m4maZgpoQVen4iD8ocVLgCDx4Qzr+RuRMY66JFNCwgsaulZVFJM0YM+es8Y1SDBB
-fOkMFJEnZmet9b4Y7Y/1VQDeqqPQvFg+aOkNgnd3PW8FxZpvRQSZZUzCIQnkqkyo
-25GsUtgClBNQySzRoLpVPjCE2qZvbHoGT7MoVlifaUNmh8dadBfMY8BXPACYgj4q
-sGwK7Ton6YlJ+hce3v8vr96DKKRZTKNCzyPu+aK4xNqMiWzXjfxt96yZrTNTZZis
-B4jZOn1zuQd4tkI/rdGtFtdxVYgkSw==
-=pqw0
------END PGP SIGNATURE-----
-
---Sig_/sxzXOrs+CYdBtw4VPNTESWS--
 
