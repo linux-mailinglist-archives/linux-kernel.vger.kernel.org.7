@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-747728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E61DB13760
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:18:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8583DB13767
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 793A93A720A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:17:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F377A4062
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3B22153ED;
-	Mon, 28 Jul 2025 09:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A01A23536A;
+	Mon, 28 Jul 2025 09:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="A0yKQPCv"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ra9i7CST"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46832186284;
-	Mon, 28 Jul 2025 09:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425F822F74B;
+	Mon, 28 Jul 2025 09:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753694281; cv=none; b=c2WOK9xrr7tyDy1h2KOUDALsVRv2fl9lyaa5HcBs1INSGqFojXThRqsG7gXn0FxpupjPZWBWw1HrL71rXLCOPl8v/m/C9Nmf4z/qOOsykbQZwNl0Qlxie8Nj/NHcBnBvX4hLZdFCLoH2QOv30lLhftMVLb4TZVYMlQAlqBFjMCQ=
+	t=1753694384; cv=none; b=OhEQG9iizEXPbUfe8M2YDcNPUPvV3NKvff/ckrAneCTALtsDJZ2JJkoOJfvzML70enQo3FdZ5cG7JGD1X+kSsxvz1ZvAKbMFZ09ReLR/jZxBIi8vDVHoCTq25bpc3ujrnQhKiFyow+6MT4MKVnZgZzCoqx0qJdgUb3jfkmb0Xa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753694281; c=relaxed/simple;
-	bh=N90rUimvvI6iTvKlbPRalCTVi/X8aM0kZrvlC/ipPCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UCRvajsNXhjflYuUs5B/hi59v1bRpHHapcOvye2r889ivlJHUSeQBkghEu/EVCToVw0anFai6W9wLa+Cx4cs0R4pJbPI4kq/mHr0EwD7cBcDGOPlWzZ9XBOFra5rxq2FyzN7nrxSPxq5U6V0BGLnfQx8qo3homuHA90wlOJbZiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=A0yKQPCv; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753694270; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=bnQr0tPn6s+2WwfwGAEU2d1/d/+uqBEcAW2G3ILPfGs=;
-	b=A0yKQPCv9QxDITVy/ZoOnmYalddpoVWuZqyC/DVnryeHWgDf7cHOluRL3/qigHNzD2fMNM4ZsJk1dwI3U1RTvFLFonFOdW6+CNDfBT8jcwayKrBZzZNxGv88DXbk49YVkKiVqH540z3rC3E6+PbS1I7ZnNTVXiVZKWLV7iZVizI=
-Received: from 30.246.181.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WkGLE.u_1753694267 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 28 Jul 2025 17:17:48 +0800
-Message-ID: <fe946c32-8fa8-45bf-908c-17aa7374b9ac@linux.alibaba.com>
-Date: Mon, 28 Jul 2025 17:17:47 +0800
+	s=arc-20240116; t=1753694384; c=relaxed/simple;
+	bh=JBe/6VnvMXghy7hG0OQTodzfDN84dQ4C8ehh/E1Ui6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Pfy84LAuB/dM3w7GHsM0sjQ2l7xoThVJc19p5XPY2Kb88v242x8w1SPdU/Gu5Djwlr1z4z0RuxwutuhfljIuoDpG/ZPwpD/HTi7E7MNLEXwUdj0bFiJz46CViwqfBkEarWnmRpXObMpEmyyIchUS1z1vjNpI4x6MAuM3x+uRioo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ra9i7CST; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56S8jfbS023646;
+	Mon, 28 Jul 2025 11:19:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	/n2Y6jUtj/p2PorjZw4FleFZNqzHtoA8QQQ55mAjzHM=; b=ra9i7CSTewtW3PGz
+	EVHG77biSbn99acmZdPMO6Luyd2LqgWttWTP6203xfySIexq4wRZRqdPoI87a5XP
+	l18sBvBmcntaMlsA8dE/2HrpQ1nTISVpKkTKWYZfIL4H2zSuvXOp0GkF1G+S06UX
+	sV8tScxIdCquuTwVi6DwcHNZ1pqxReJleky1vbh5ojubX5Ml4WV0p9hNMl9xEpIy
+	72lUATwhtKv6JnGDWiwwL6IeUN7JLurheXysmn3A8AF0FQq4voIsR7FCuvqgvjT/
+	5H9FFDF8kop6+gwnpHvnhmx/Djv++vi7dKBcLEADglFIsvFluV/i9LP0TZ5zB/o3
+	8+KdhQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 484m58y7xa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 11:19:31 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 27ECF4002D;
+	Mon, 28 Jul 2025 11:18:38 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A1520700A0D;
+	Mon, 28 Jul 2025 11:18:08 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Jul
+ 2025 11:18:08 +0200
+Message-ID: <09384c23-cffe-471c-95b4-82b3d34de4e7@foss.st.com>
+Date: Mon, 28 Jul 2025 11:18:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,134 +66,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/2] PCI: trace: Add a RAS tracepoint to monitor link
- speed changes
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- mattc@purestorage.com, Jonathan.Cameron@huawei.com, bhelgaas@google.com,
- tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org, tianruidong@linux.alibaba.com
-References: <20250725210921.GA3131414@bhelgaas>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250725210921.GA3131414@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ARM: dts: sti: rename SATA phy-names
+To: Raphael Gallais-Pou <rgallaispou@gmail.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250713142424.41236-1-rgallaispou@gmail.com>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20250713142424.41236-1-rgallaispou@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-24_01,2025-03-28_01
 
 
 
-在 2025/7/26 05:09, Bjorn Helgaas 写道:
-> On Wed, Jul 23, 2025 at 11:31:08AM +0800, Shuai Xue wrote:
->> PCIe link speed degradation directly impacts system performance and
->> often indicates hardware issues such as faulty devices, physical layer
->> problems, or configuration errors.
->>
->> To this end, add a RAS tracepoint to monitor link speed changes,
->> enabling proactive health checks and diagnostic analysis.
->>
->> The output is like below:
->>
->> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_link_event/enable
->> $ cat /sys/kernel/debug/tracing/trace_pipe
->> cat /sys/kernel/debug/tracing/trace_pipe
->>             <...>-119     [002] .....   125.776171: pci_hp_event: 0000:00:03.0 slot:30, event:CARD_PRESENT
->>
->>             <...>-119     [002] .....   125.776197: pci_hp_event: 0000:00:03.0 slot:30, event:LINK_UP
->>
->>     irq/57-pciehp-119     [002] .....   125.904335: pcie_link_event: 0000:00:03.0 type:4, reason:4, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:16.0 GT/s PCIe, width:1, flit_mode:0, status:DLLLA
->>
->>     irq/57-pciehp-119     [002] .....   125.907051: pcie_link_event: 0000:00:03.0 type:4, reason:0, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:16.0 GT/s PCIe, width:1, flit_mode:0, status:DLLLA
+On 7/13/25 16:24, Raphael Gallais-Pou wrote:
+> Stick to the documentation and rename both SATA phy-names properties to
+> what is expected.
 > 
-> I guess this example would actually require both of these enables, right?
+> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+> ---
+>  arch/arm/boot/dts/st/stih407-family.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
->    echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
->    echo 1 > /sys/kernel/debug/tracing/events/pci/pci_link_event/enable
-
-Yes, you're absolutely right. I'll correct the commit log to show both
-commands.
-
-(As a side note, echo 1 > /sys/kernel/debug/tracing/events/pci/enable
-would enable both events at once.)
-
-(echo 1 > /sys/kernel/debug/tracing/events/pci/enable will enable both
-of these event.)
-> 
->> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-> 
-> I don't think I've suggested anything that really warrants this ;)
-> 
-
-Fair enough! I'll drop the Suggested-by tag.
-
->> ...
->> @@ -292,7 +292,7 @@ int pciehp_check_link_status(struct controller *ctrl)
->>   {
->>   	struct pci_dev *pdev = ctrl_dev(ctrl);
->>   	bool found;
->> -	u16 lnk_status, linksta2;
->> +	u16 lnk_status;
->>   
->>   	if (!pcie_wait_for_link(pdev, true)) {
->>   		ctrl_info(ctrl, "Slot(%s): No link\n", slot_name(ctrl));
->> @@ -319,8 +319,7 @@ int pciehp_check_link_status(struct controller *ctrl)
->>   		return -1;
->>   	}
->>   
->> -	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA2, &linksta2);
->> -	__pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status, linksta2);
->> +	pcie_update_link_speed(ctrl->pcie->port->subordinate, PCIE_HOTPLUG);
-> 
-> It kind of bugs me that the hot-add flow reads LNKSTA three times and
-> generates both pci_hp_event LINK_UP and link_event tracepoints:
-> 
->    pciehp_handle_presence_or_link_change
->      link_active = pciehp_check_link_active()
->        pcie_capability_read_word(PCI_EXP_LNKSTA)
->      if (link_active)
->        ctrl_info(ctrl, "Slot(%s): Link Up\n")
->        trace_pci_hp_event(PCI_HOTPLUG_LINK_UP)
->        pciehp_enable_slot
->          __pciehp_enable_slot
->            board_added
->              pciehp_check_link_status
->                pcie_capability_read_word(PCI_EXP_LNKSTA)
->                pcie_update_link_speed
->                  pcie_capability_read_word(PCI_EXP_LNKSTA)
->                  pcie_capability_read_word(PCI_EXP_LNKSTA2)
->                  trace_pcie_link_event(<REASON>)
-> 
-> Maybe there are good reasons for reading LNKSTA three times, but it
-> does make me raise my eyebrows.  Not that this is a performance path,
-> but it just offends my sense of propriety.
-> 
-> And maybe we need both a bare LINK_UP event and a link_event with all
-> the details, but again it seems a little weird to me that there are
-> two tracepoints when there's really only one event and we know all the
-> link_event information from the very first LNKSTA read.
-> 
-> Bjorn
-
-I understand your concern about the multiple LNKSTA reads and the
-apparent duplication. Please see comments from Lukas.
-
-Best Regards,
-Shuai
+> diff --git a/arch/arm/boot/dts/st/stih407-family.dtsi b/arch/arm/boot/dts/st/stih407-family.dtsi
+> index 35a55aef7f4b..3e6a0542e3ae 100644
+> --- a/arch/arm/boot/dts/st/stih407-family.dtsi
+> +++ b/arch/arm/boot/dts/st/stih407-family.dtsi
+> @@ -669,7 +669,7 @@ sata0: sata@9b20000 {
+>  			interrupt-names = "hostc";
+>  
+>  			phys = <&phy_port0 PHY_TYPE_SATA>;
+> -			phy-names = "ahci_phy";
+> +			phy-names = "sata-phy";
+>  
+>  			resets = <&powerdown STIH407_SATA0_POWERDOWN>,
+>  				 <&softreset STIH407_SATA0_SOFTRESET>,
+> @@ -692,7 +692,7 @@ sata1: sata@9b28000 {
+>  			interrupt-names = "hostc";
+>  
+>  			phys = <&phy_port1 PHY_TYPE_SATA>;
+> -			phy-names = "ahci_phy";
+> +			phy-names = "sata-phy";
+>  
+>  			resets = <&powerdown STIH407_SATA1_POWERDOWN>,
+>  				 <&softreset STIH407_SATA1_SOFTRESET>,
 
 
+Hi Raphael
 
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-
-
-
-
-
-
-
-
-
-
-
+Thanks
 
