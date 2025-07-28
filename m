@@ -1,550 +1,638 @@
-Return-Path: <linux-kernel+bounces-747860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D0EB13936
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:49:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A33B1393B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA571899132
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:49:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D1403B8AC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B10922D4C5;
-	Mon, 28 Jul 2025 10:49:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E3C259C
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F35D24DD18;
+	Mon, 28 Jul 2025 10:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJDNw2zM"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B3519E96D;
+	Mon, 28 Jul 2025 10:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753699770; cv=none; b=IepKwJzmaURwJoKjeXEEA4CJuy8E6Z+aQtn4r2rDoA/4TE+Nf4mtsZGDt2HeHIVtnbEHp7jO/d8k6z5ZEy/up0pzs/WLG7h6SVRrBCtHT8hppWj9fRl9LEbUMHGUkeaGH28/yN2nkawusfZ1Y/foa8Qloh1Ee/C/159TYgHa9O0=
+	t=1753699870; cv=none; b=DLBr5gx5XoELFJjNriluQ2PT3VV924zvCaIrj15u9bFDjI7MUQZb1rg1m007ltvSUsA1bW3blXjFmvXEK66CgoedF3JeUFFdzJcvn/J8fyc99mQbldWDcTnjV9WUeoyV6Uc/gkggW29NQfk/Q+I+UcS6yfhwMyG5IA98+10PQMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753699770; c=relaxed/simple;
-	bh=gl8x+7+X8sRGiqHvzzmwvm+/PeRp2j7ptZHC+LBowBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XPXI0kkkc+n0gmOA1GvJ5J71D0OkWRSwOKr4xR5BBiTfakbjnQmUgycZjS3WjjgH46NVOVT6jCIHkhZ+iQ9VTq/D4sQ/aPVPIoMpkCxHj4Ul+/RkZG07W67OoC1awCXjdQgK1dkG8t3XxBsSI5UEfT5XjZ+KcMfWWpMMD24pFZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27264152B;
-	Mon, 28 Jul 2025 03:49:20 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33D2E3F673;
-	Mon, 28 Jul 2025 03:49:24 -0700 (PDT)
-Message-ID: <a8dd0921-9d25-4f57-97ee-9b44b8ff5057@arm.com>
-Date: Mon, 28 Jul 2025 11:49:22 +0100
+	s=arc-20240116; t=1753699870; c=relaxed/simple;
+	bh=Yu+Q3LvUsoGxkPzqMz349Pvvfh8xNJbSANdAe7IqmeE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iuH3YHrRghkdx3Z6ijtLWLCBLzrXTwcjprXP2H6TOKxajoRMmKCnszEte87uQTUrokrVlIldnccQEgkpp5p4se66LPn1PYejfdH4lz/kvzOLb1vhHpCdjbMET5Fd7b/aTY9lN4vVyvpJx4/KpuvNz5jLyoOYS+LkKsNiOv3CIuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gJDNw2zM; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-73e88bc3728so765631a34.0;
+        Mon, 28 Jul 2025 03:51:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753699867; x=1754304667; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ysWEIItTJUZ0bNLUAKuLWlbEaNG9uk3pTbNyJxYmCZ0=;
+        b=gJDNw2zM6tamQbmXhuL+kHNoVz7i7ThPkooDYAXvztlswl+Rd8rrxLS/RdI/G+f6n1
+         At8NzQfUiJDcidqKllF5LjUbka0m2LQcKyIzn+QnUuz5R2+wL8fY6LJRpVZ5iYiBN7v6
+         PDz/fl0DNtKMLt8yRIW+PzRdN8yOuOmyY9GvvzfzKgzTouVYPSuJWILLXwVcSgFfL4lv
+         xX40tIh/qajlgjttIiuz94MrKypQvPLeN65hYmSu5jbHyxInOSHPAWZ/n1fcqKG5nr1+
+         GIYLg4L9aI6xV70vk1XT4hJiYpffM1VOcfWn1kkl7VUmq8cLbpWGqsVvy1CytDLoqbR1
+         Trpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753699867; x=1754304667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ysWEIItTJUZ0bNLUAKuLWlbEaNG9uk3pTbNyJxYmCZ0=;
+        b=wZZ8svfz/Lq54+3oYsAeZTy9ukgapX9I8fylxFuS4fgCSsXHiYV6OkpoRQGtSv6LhR
+         FtemZlNqLatuvOFqLzcLNxehazfH4hGCLjGO7JWMzW9UvQHUAOkfeVG5LV+ka/7zG7nu
+         X8K8DZHPXjCiWHwsOry1LtNFhjvUeGBDZqyH5zSCpfZ3CddQ++nbRzENcOtwRlXYaWOa
+         b/4YIZJx4aikEDlDKCUqWyQk1iOgiCA37cqorr8wko06bHWrqM7NDgUvs1U4Dd2mHyLs
+         oKsqnKDgv79GfmgfpKec9xFTXbfgujbIfQB4KTTlXOy92fm3yz1LvULTWTA81dIcNgdE
+         UcIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrkHeMaDp8OOojvfY58zWGKEZEU1B5/AgzkU3KYegfIJF0InxjJzFQ30pdCLmJC73nmKFkPaMqtzDhqBa1@vger.kernel.org, AJvYcCVu2xQjaT/iOjSl9rYOfERp/Or9Ta+Q+gj7DsJ1IAGaham4b+hIpv9cDKv6ldzl+Xe8D7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG4rQy70vPf6WvF1x+rEqyjBNE8WKMUSo/q0/hc9t9fJDUFF6+
+	97dtxbERionEfqcbxW96ZqodVmM6Ao7dgTVXs/fPw74Zxfy2/YJoARhRuBgxnL3oNvRZdyyZlF/
+	V1qC5Dj11viHqUBWRbQweTI/hAeStNNA=
+X-Gm-Gg: ASbGncvSbLE2fhqvC1R4Ar561RdMus5JhpfSuncXf0hBLNkzY4J2GCu50Q7UUMAe5n/
+	0qQtADGr6dc81imeX+6uD1vAgWn9fBgajjxUhhjGqRio6ZEbx+EY8dOLFY4hIWoO4gZCda/jj8U
+	4KB+OvtpE9/CMMO0TFjNe/3KyrC72cOX6gmZWANxhuqYxdk4Cqh2JP35d9Ao382j4eEdKRFWN/v
+	1p/ICc=
+X-Google-Smtp-Source: AGHT+IFiqGHT1d4R1+uI0egl61fGo1G29m+UszUnqYkTMSwisNMeGximtyBzxnL28Z9BFdr6WCbfVMKgDHkXW9af6PM=
+X-Received: by 2002:a05:6808:11cf:b0:40b:3530:98bb with SMTP id
+ 5614622812f47-42bb7bc1477mr7782799b6e.9.1753699867159; Mon, 28 Jul 2025
+ 03:51:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 25/36] arm_mpam: Register and enable IRQs
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-26-james.morse@arm.com>
-Content-Language: en-US
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <20250711183648.30766-26-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250724141929.691853-1-duanchenghao@kylinos.cn> <20250724141929.691853-5-duanchenghao@kylinos.cn>
+In-Reply-To: <20250724141929.691853-5-duanchenghao@kylinos.cn>
+From: Hengqi Chen <hengqi.chen@gmail.com>
+Date: Mon, 28 Jul 2025 18:50:56 +0800
+X-Gm-Features: Ac12FXz28vzO6-yLxji6F0HPky2wLbE2wnXu0OIEbiSR1KWhbJYZmc1g-eJVMy0
+Message-ID: <CAEyhmHTnXZfqawN0st4DHTaXz64AgCTz9WMQw-byuvn9JeQDig@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] LoongArch: BPF: Add bpf trampoline support for Loongarch
+To: Chenghao Duan <duanchenghao@kylinos.cn>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
+	vincent.mc.li@gmail.com, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi James,
-
-On 7/11/25 19:36, James Morse wrote:
-> Register and enable error IRQs. All the MPAM error interrupts indicate a
-> software bug, e.g. out of range partid. If the error interrupt is ever
-> signalled, attempt to disable MPAM.
-> 
-> Only the irq handler accesses the ESR register, so no locking is needed.
-> The work to disable MPAM after an error needs to happen at process
-> context, use a threaded interrupt.
-> 
-> There is no support for percpu threaded interrupts, for now schedule
-> the work to be done from the irq handler.
-> 
-> Enabling the IRQs in the MSC may involve cross calling to a CPU that
-> can access the MSC.
-> 
-> CC: Rohit Mathew <rohit.mathew@arm.com>
-> Tested-by: Rohit Mathew <rohit.mathew@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
+On Thu, Jul 24, 2025 at 10:21=E2=80=AFPM Chenghao Duan <duanchenghao@kylino=
+s.cn> wrote:
+>
+> BPF trampoline is the critical infrastructure of the BPF subsystem, actin=
+g
+> as a mediator between kernel functions and BPF programs. Numerous importa=
+nt
+> features, such as using BPF program for zero overhead kernel introspectio=
+n,
+> rely on this key component.
+>
+> The related tests have passed, Including the following technical points:
+> 1. fentry
+> 2. fmod_ret
+> 3. fexit
+>
+> The following related testcases passed on LoongArch:
+> sudo ./test_progs -a fentry_test/fentry
+> sudo ./test_progs -a fexit_test/fexit
+> sudo ./test_progs -a fentry_fexit
+> sudo ./test_progs -a modify_return
+> sudo ./test_progs -a fexit_sleep
+> sudo ./test_progs -a test_overhead
+> sudo ./test_progs -a trampoline_count
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507100034.wXofj6VX-lkp@i=
+ntel.com/
+> Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> Tested-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> Tested-by: Vincent Li <vincent.mc.li@gmail.com>
+> Reviewed-by: Hengqi Chen <hengqi.chen@gmail.com>
+> Reviewed-by: Huacai Chen <chenhuacai@kernel.org>
 > ---
->   drivers/platform/arm64/mpam/mpam_devices.c  | 304 +++++++++++++++++++-
->   drivers/platform/arm64/mpam/mpam_internal.h |   9 +-
->   2 files changed, 307 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
-> index 145535cd4732..af19cc25d16e 100644
-> --- a/drivers/platform/arm64/mpam/mpam_devices.c
-> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
-> @@ -14,6 +14,9 @@
->   #include <linux/device.h>
->   #include <linux/errno.h>
->   #include <linux/gfp.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdesc.h>
->   #include <linux/list.h>
->   #include <linux/lockdep.h>
->   #include <linux/mutex.h>
-> @@ -62,6 +65,12 @@ static DEFINE_SPINLOCK(partid_max_lock);
->    */
->   static DECLARE_WORK(mpam_enable_work, &mpam_enable);
->   
-> +/*
-> + * All mpam error interrupts indicate a software bug. On receipt, disable the
-> + * driver.
-> + */
-> +static DECLARE_WORK(mpam_broken_work, &mpam_disable);
+>  arch/loongarch/net/bpf_jit.c | 391 +++++++++++++++++++++++++++++++++++
+>  arch/loongarch/net/bpf_jit.h |   6 +
+>  2 files changed, 397 insertions(+)
+>
+> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> index 86504e710..ac5ce3a28 100644
+> --- a/arch/loongarch/net/bpf_jit.c
+> +++ b/arch/loongarch/net/bpf_jit.c
+> @@ -7,9 +7,15 @@
+>  #include <linux/memory.h>
+>  #include "bpf_jit.h"
+>
+> +#define LOONGARCH_MAX_REG_ARGS 8
 > +
->   /*
->    * An MSC is a physical container for controls and monitors, each identified by
->    * their RIS index. These share a base-address, interrupts and some MMIO
-> @@ -159,6 +168,24 @@ static u64 mpam_msc_read_idr(struct mpam_msc *msc)
->   	return (idr_high << 32) | idr_low;
->   }
->   
-> +static void mpam_msc_zero_esr(struct mpam_msc *msc)
+>  #define LOONGARCH_LONG_JUMP_NINSNS 5
+>  #define LOONGARCH_LONG_JUMP_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
+>
+> +#define LOONGARCH_FENTRY_NINSNS 2
+> +#define LOONGARCH_FENTRY_NBYTES (LOONGARCH_FENTRY_NINSNS * 4)
+> +#define LOONGARCH_BPF_FENTRY_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
+> +
+>  #define REG_TCC                LOONGARCH_GPR_A6
+>  #define TCC_SAVED      LOONGARCH_GPR_S5
+>
+> @@ -1407,6 +1413,11 @@ static int gen_jump_or_nops(void *target, void *ip=
+, u32 *insns, bool is_call)
+>                                   (unsigned long)target);
+>  }
+>
+> +static int emit_call(struct jit_ctx *ctx, u64 addr)
 > +{
-> +	__mpam_write_reg(msc, MPAMF_ESR, 0);
-> +	if (msc->has_extd_esr)
-> +		__mpam_write_reg(msc, MPAMF_ESR + 4, 0);
+> +       return emit_jump_and_link(ctx, LOONGARCH_GPR_RA, addr);
 > +}
 > +
-> +static u64 mpam_msc_read_esr(struct mpam_msc *msc)
+>  int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
+>                        void *old_addr, void *new_addr)
+>  {
+> @@ -1464,3 +1475,383 @@ void *bpf_arch_text_copy(void *dst, void *src, si=
+ze_t len)
+>
+>         return dst;
+>  }
+> +
+> +static void store_args(struct jit_ctx *ctx, int nargs, int args_off)
 > +{
-> +	u64 esr_high = 0, esr_low;
+> +       int i;
 > +
-> +	esr_low = __mpam_read_reg(msc, MPAMF_ESR);
-> +	if (msc->has_extd_esr)
-> +		esr_high = __mpam_read_reg(msc, MPAMF_ESR + 4);
-> +
-> +	return (esr_high << 32) | esr_low;
+> +       for (i =3D 0; i < nargs; i++) {
+> +               emit_insn(ctx, std, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_F=
+P, -args_off);
+> +               args_off -=3D 8;
+> +       }
 > +}
 > +
->   static void __mpam_part_sel_raw(u32 partsel, struct mpam_msc *msc)
->   {
->   	lockdep_assert_held(&msc->part_sel_lock);
-> @@ -405,12 +432,12 @@ static void mpam_msc_destroy(struct mpam_msc *msc)
->   
->   	lockdep_assert_held(&mpam_list_lock);
->   
-> -	list_del_rcu(&msc->glbl_list);
-> -	platform_set_drvdata(pdev, NULL);
-> -
->   	list_for_each_entry_safe(ris, tmp, &msc->ris, msc_list)
->   		mpam_ris_destroy(ris);
->   
-> +	list_del_rcu(&msc->glbl_list);
-> +	platform_set_drvdata(pdev, NULL);
-> +
->   	add_to_garbage(msc);
->   	msc->garbage.pdev = pdev;
->   }
-> @@ -828,6 +855,7 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   		pmg_max = FIELD_GET(MPAMF_IDR_PMG_MAX, idr);
->   		msc->partid_max = min(msc->partid_max, partid_max);
->   		msc->pmg_max = min(msc->pmg_max, pmg_max);
-> +		msc->has_extd_esr = FIELD_GET(MPAMF_IDR_HAS_EXT_ESR, idr);
->   
->   		ris = mpam_get_or_create_ris(msc, ris_idx);
->   		if (IS_ERR(ris))
-> @@ -974,6 +1002,13 @@ static void mpam_reset_msc(struct mpam_msc *msc, bool online)
->   	mpam_mon_sel_outer_unlock(msc);
->   }
->   
-> +static void _enable_percpu_irq(void *_irq)
+> +static void restore_args(struct jit_ctx *ctx, int nargs, int args_off)
 > +{
-> +	int *irq = _irq;
+> +       int i;
 > +
-> +	enable_percpu_irq(*irq, IRQ_TYPE_NONE);
+> +       for (i =3D 0; i < nargs; i++) {
+> +               emit_insn(ctx, ldd, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_F=
+P, -args_off);
+> +               args_off -=3D 8;
+> +       }
 > +}
 > +
->   static int mpam_cpu_online(unsigned int cpu)
->   {
->   	int idx;
-> @@ -984,6 +1019,9 @@ static int mpam_cpu_online(unsigned int cpu)
->   		if (!cpumask_test_cpu(cpu, &msc->accessibility))
->   			continue;
->   
-> +		if (msc->reenable_error_ppi)
-> +			_enable_percpu_irq(&msc->reenable_error_ppi);
-> +
->   		if (atomic_fetch_inc(&msc->online_refs) == 0)
->   			mpam_reset_msc(msc, true);
->   	}
-> @@ -1032,6 +1070,9 @@ static int mpam_cpu_offline(unsigned int cpu)
->   		if (!cpumask_test_cpu(cpu, &msc->accessibility))
->   			continue;
->   
-> +		if (msc->reenable_error_ppi)
-> +			disable_percpu_irq(msc->reenable_error_ppi);
-> +
->   		if (atomic_dec_and_test(&msc->online_refs))
->   			mpam_reset_msc(msc, false);
->   	}
-> @@ -1058,6 +1099,51 @@ static void mpam_register_cpuhp_callbacks(int (*online)(unsigned int online),
->   	mutex_unlock(&mpam_cpuhp_state_lock);
->   }
->   
-> +static int __setup_ppi(struct mpam_msc *msc)
+> +static int invoke_bpf_prog(struct jit_ctx *ctx, struct bpf_tramp_link *l=
+,
+> +                          int args_off, int retval_off,
+> +                          int run_ctx_off, bool save_ret)
 > +{
-> +	int cpu;
+> +       int ret;
+> +       u32 *branch;
+> +       struct bpf_prog *p =3D l->link.prog;
+> +       int cookie_off =3D offsetof(struct bpf_tramp_run_ctx, bpf_cookie)=
+;
 > +
-> +	msc->error_dev_id = alloc_percpu_gfp(struct mpam_msc *, GFP_KERNEL);
-> +	if (!msc->error_dev_id)
-> +		return -ENOMEM;
+> +       if (l->cookie) {
+> +               move_imm(ctx, LOONGARCH_GPR_T1, l->cookie, false);
+> +               emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -=
+run_ctx_off + cookie_off);
+> +       } else {
+> +               emit_insn(ctx, std, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_FP,
+> +                         -run_ctx_off + cookie_off);
+> +       }
 > +
-> +	for_each_cpu(cpu, &msc->accessibility) {
-> +		struct mpam_msc *empty = *per_cpu_ptr(msc->error_dev_id, cpu);
+> +       /* arg1: prog */
+> +       move_imm(ctx, LOONGARCH_GPR_A0, (const s64)p, false);
+> +       /* arg2: &run_ctx */
+> +       emit_insn(ctx, addid, LOONGARCH_GPR_A1, LOONGARCH_GPR_FP, -run_ct=
+x_off);
+> +       ret =3D emit_call(ctx, (const u64)bpf_trampoline_enter(p));
+> +       if (ret)
+> +               return ret;
 > +
-> +		if (empty) {
-> +			pr_err_once("%s shares PPI with %s!\n",
-> +				    dev_name(&msc->pdev->dev),
-> +				    dev_name(&empty->pdev->dev));
-> +			return -EBUSY;
-> +		}
-> +		*per_cpu_ptr(msc->error_dev_id, cpu) = msc;
-> +	}
+> +       /* store prog start time */
+> +       move_reg(ctx, LOONGARCH_GPR_S1, LOONGARCH_GPR_A0);
 > +
-> +	return 0;
+> +       /* if (__bpf_prog_enter(prog) =3D=3D 0)
+> +        *      goto skip_exec_of_prog;
+> +        *
+> +        */
+> +       branch =3D (u32 *)ctx->image + ctx->idx;
+> +       /* nop reserved for conditional jump */
+> +       emit_insn(ctx, nop);
+> +
+> +       /* arg1: &args_off */
+> +       emit_insn(ctx, addid, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -args_o=
+ff);
+> +       if (!p->jited)
+> +               move_imm(ctx, LOONGARCH_GPR_A1, (const s64)p->insnsi, fal=
+se);
+> +       ret =3D emit_call(ctx, (const u64)p->bpf_func);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (save_ret) {
+> +               emit_insn(ctx, std, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -=
+retval_off);
+> +               emit_insn(ctx, std, regmap[BPF_REG_0], LOONGARCH_GPR_FP, =
+-(retval_off - 8));
+> +       }
+> +
+> +       /* update branch with beqz */
+> +       if (ctx->image) {
+> +               int offset =3D (void *)(&ctx->image[ctx->idx]) - (void *)=
+branch;
+> +               *branch =3D larch_insn_gen_beq(LOONGARCH_GPR_A0, LOONGARC=
+H_GPR_ZERO, offset);
+> +       }
+> +
+> +       /* arg1: prog */
+> +       move_imm(ctx, LOONGARCH_GPR_A0, (const s64)p, false);
+> +       /* arg2: prog start time */
+> +       move_reg(ctx, LOONGARCH_GPR_A1, LOONGARCH_GPR_S1);
+> +       /* arg3: &run_ctx */
+> +       emit_insn(ctx, addid, LOONGARCH_GPR_A2, LOONGARCH_GPR_FP, -run_ct=
+x_off);
+> +       ret =3D emit_call(ctx, (const u64)bpf_trampoline_exit(p));
+> +
+> +       return ret;
 > +}
 > +
-> +static int mpam_msc_setup_error_irq(struct mpam_msc *msc)
+> +static void invoke_bpf_mod_ret(struct jit_ctx *ctx, struct bpf_tramp_lin=
+ks *tl,
+> +                              int args_off, int retval_off, int run_ctx_=
+off, u32 **branches)
 > +{
-> +	int irq;
+> +       int i;
 > +
-> +	irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +	if (irq <= 0)
-> +		return 0;
-> +
-> +	/* Allocate and initialise the percpu device pointer for PPI */
-> +	if (irq_is_percpu(irq))
-> +		return __setup_ppi(msc);
-> +
-> +	/* sanity check: shared interrupts can be routed anywhere? */
-> +	if (!cpumask_equal(&msc->accessibility, cpu_possible_mask)) {
-> +		pr_err_once("msc:%u is a private resource with a shared error interrupt",
-> +			    msc->id);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
+> +       emit_insn(ctx, std, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_FP, -retval=
+_off);
+> +       for (i =3D 0; i < tl->nr_links; i++) {
+> +               invoke_bpf_prog(ctx, tl->links[i], args_off, retval_off,
+> +                               run_ctx_off, true);
+> +               emit_insn(ctx, ldd, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -=
+retval_off);
+> +               branches[i] =3D (u32 *)ctx->image + ctx->idx;
+> +               emit_insn(ctx, nop);
+> +       }
 > +}
 > +
->   static int mpam_dt_count_msc(void)
->   {
->   	int count = 0;
-> @@ -1266,6 +1352,10 @@ static int mpam_msc_drv_probe(struct platform_device *pdev)
->   			break;
->   		}
->   
-> +		err = mpam_msc_setup_error_irq(msc);
-> +		if (err)
-> +			break;
-> +
->   		if (device_property_read_u32(&pdev->dev, "pcc-channel",
->   					     &msc->pcc_subspace_id))
->   			msc->iface = MPAM_IFACE_MMIO;
-> @@ -1548,11 +1638,193 @@ static void mpam_enable_merge_features(struct list_head *all_classes_list)
->   	}
->   }
->   
-> +static char *mpam_errcode_names[16] = {
-> +	[0] = "No error",
-> +	[1] = "PARTID_SEL_Range",
-> +	[2] = "Req_PARTID_Range",
-> +	[3] = "MSMONCFG_ID_RANGE",
-> +	[4] = "Req_PMG_Range",
-> +	[5] = "Monitor_Range",
-> +	[6] = "intPARTID_Range",
-> +	[7] = "Unexpected_INTERNAL",
-> +	[8] = "Undefined_RIS_PART_SEL",
-> +	[9] = "RIS_No_Control",
-> +	[10] = "Undefined_RIS_MON_SEL",
-> +	[11] = "RIS_No_Monitor",
-> +	[12 ... 15] = "Reserved"
-> +};
-> +
-> +static int mpam_enable_msc_ecr(void *_msc)
+> +u64 bpf_jit_alloc_exec_limit(void)
 > +{
-> +	struct mpam_msc *msc = _msc;
-> +
-> +	__mpam_write_reg(msc, MPAMF_ECR, 1);
-You can use MPAMF_ECR_INTEN.
-> +
-> +	return 0;
+> +       return VMALLOC_END - VMALLOC_START;
 > +}
 > +
-> +static int mpam_disable_msc_ecr(void *_msc)
+> +void *arch_alloc_bpf_trampoline(unsigned int size)
 > +{
-> +	struct mpam_msc *msc = _msc;
-> +
-> +	__mpam_write_reg(msc, MPAMF_ECR, 0);
-> +
-> +	return 0;
+> +       return bpf_prog_pack_alloc(size, jit_fill_hole);
 > +}
 > +
-> +static irqreturn_t __mpam_irq_handler(int irq, struct mpam_msc *msc)
+> +void arch_free_bpf_trampoline(void *image, unsigned int size)
 > +{
-> +	u64 reg;
-> +	u16 partid;
-> +	u8 errcode, pmg, ris;
-> +
-> +	if (WARN_ON_ONCE(!msc) ||
-> +	    WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(),
-> +					   &msc->accessibility)))
-> +		return IRQ_NONE;
-> +
-> +	reg = mpam_msc_read_esr(msc);
-> +
-> +	errcode = FIELD_GET(MPAMF_ESR_ERRCODE, reg);
-> +	if (!errcode)
-> +		return IRQ_NONE;
-> +
-> +	/* Clear level triggered irq */
-> +	mpam_msc_zero_esr(msc);
-> +
-> +	partid = FIELD_GET(MPAMF_ESR_PARTID_OR_MON, reg);
-> +	pmg = FIELD_GET(MPAMF_ESR_PMG, reg);
-> +	ris = FIELD_GET(MPAMF_ESR_PMG, reg);
-> +
-> +	pr_err("error irq from msc:%u '%s', partid:%u, pmg: %u, ris: %u\n",
-> +	       msc->id, mpam_errcode_names[errcode], partid, pmg, ris);
-> +
-> +	if (irq_is_percpu(irq)) {
-> +		mpam_disable_msc_ecr(msc);
-> +		schedule_work(&mpam_broken_work);
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	return IRQ_WAKE_THREAD;
+> +       bpf_prog_pack_free(image, size);
 > +}
 > +
-> +static irqreturn_t mpam_ppi_handler(int irq, void *dev_id)
+> +static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf=
+_tramp_image *im,
+> +                                        const struct btf_func_model *m,
+> +                                        struct bpf_tramp_links *tlinks,
+> +                                        void *func_addr, u32 flags)
 > +{
-> +	struct mpam_msc *msc = *(struct mpam_msc **)dev_id;
+> +       int i;
+> +       int stack_size =3D 0, nargs =3D 0;
+> +       int retval_off, args_off, nargs_off, ip_off, run_ctx_off, sreg_of=
+f;
+> +       struct bpf_tramp_links *fentry =3D &tlinks[BPF_TRAMP_FENTRY];
+> +       struct bpf_tramp_links *fexit =3D &tlinks[BPF_TRAMP_FEXIT];
+> +       struct bpf_tramp_links *fmod_ret =3D &tlinks[BPF_TRAMP_MODIFY_RET=
+URN];
+> +       int ret, save_ret;
+> +       void *orig_call =3D func_addr;
+> +       u32 **branches =3D NULL;
 > +
-> +	return __mpam_irq_handler(irq, msc);
+> +       if (flags & (BPF_TRAMP_F_ORIG_STACK | BPF_TRAMP_F_SHARE_IPMODIFY)=
+)
+> +               return -ENOTSUPP;
+> +
+> +       /*
+> +        * FP + 8       [ RA to parent func ] return address to parent
+> +        *                    function
+> +        * FP + 0       [ FP of parent func ] frame pointer of parent
+> +        *                    function
+> +        * FP - 8       [ T0 to traced func ] return address of traced
+> +        *                    function
+> +        * FP - 16      [ FP of traced func ] frame pointer of traced
+> +        *                    function
+> +        *
+> +        * FP - retval_off  [ return value      ] BPF_TRAMP_F_CALL_ORIG o=
+r
+> +        *                    BPF_TRAMP_F_RET_FENTRY_RET
+> +        *                  [ argN              ]
+> +        *                  [ ...               ]
+> +        * FP - args_off    [ arg1              ]
+> +        *
+> +        * FP - nargs_off   [ regs count        ]
+> +        *
+> +        * FP - ip_off      [ traced func   ] BPF_TRAMP_F_IP_ARG
+> +        *
+> +        * FP - run_ctx_off [ bpf_tramp_run_ctx ]
+> +        *
+> +        * FP - sreg_off    [ callee saved reg  ]
+> +        *
+> +        */
+> +
+> +       if (m->nr_args > LOONGARCH_MAX_REG_ARGS)
+> +               return -ENOTSUPP;
+> +
+> +       if (flags & (BPF_TRAMP_F_ORIG_STACK | BPF_TRAMP_F_SHARE_IPMODIFY)=
+)
+> +               return -ENOTSUPP;
+> +
+> +       stack_size =3D 0;
+> +
+> +       /* room of trampoline frame to store return address and frame poi=
+nter */
+> +       stack_size +=3D 16;
+> +
+> +       save_ret =3D flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FEN=
+TRY_RET);
+> +       if (save_ret) {
+> +               /* Save BPF R0 and A0 */
+> +               stack_size +=3D 16;
+> +               retval_off =3D stack_size;
+> +       }
+> +
+> +       /* room of trampoline frame to store args */
+> +       nargs =3D m->nr_args;
+> +       stack_size +=3D nargs * 8;
+> +       args_off =3D stack_size;
+> +
+> +       /* room of trampoline frame to store args number */
+> +       stack_size +=3D 8;
+> +       nargs_off =3D stack_size;
+> +
+> +       /* room of trampoline frame to store ip address */
+> +       if (flags & BPF_TRAMP_F_IP_ARG) {
+> +               stack_size +=3D 8;
+> +               ip_off =3D stack_size;
+> +       }
+> +
+> +       /* room of trampoline frame to store struct bpf_tramp_run_ctx */
+> +       stack_size +=3D round_up(sizeof(struct bpf_tramp_run_ctx), 8);
+> +       run_ctx_off =3D stack_size;
+> +
+> +       stack_size +=3D 8;
+> +       sreg_off =3D stack_size;
+> +
+> +       stack_size =3D round_up(stack_size, 16);
+> +
+> +       /* For the trampoline called from function entry */
+> +       /* RA and FP for parent function*/
+> +       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -16);
+> +       emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
+> +       emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
+> +       emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 16);
+> +
+> +       /* RA and FP for traced function*/
+> +       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_=
+size);
+> +       emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_siz=
+e - 8);
+> +       emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_siz=
+e - 16);
+> +       emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_s=
+ize);
+> +
+> +       /* callee saved register S1 to pass start time */
+> +       emit_insn(ctx, std, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off=
+);
+> +
+> +       /* store ip address of the traced function */
+> +       if (flags & BPF_TRAMP_F_IP_ARG) {
+> +               move_imm(ctx, LOONGARCH_GPR_T1, (const s64)func_addr, fal=
+se);
+> +               emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -=
+ip_off);
+> +       }
+> +
+> +       /* store nargs number*/
+> +       move_imm(ctx, LOONGARCH_GPR_T1, nargs, false);
+> +       emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -nargs_of=
+f);
+> +
+> +       store_args(ctx, nargs, args_off);
+> +
+> +       /* To traced function */
+> +       /* Ftrace jump skips 2 NOP instructions */
+> +       if (is_kernel_text((unsigned long)orig_call))
+> +               orig_call +=3D LOONGARCH_FENTRY_NBYTES;
+> +       /* Direct jump skips 5 NOP instructions */
+> +       else if (is_bpf_text_address((unsigned long)orig_call))
+> +               orig_call +=3D LOONGARCH_BPF_FENTRY_NBYTES;
+> +
+> +       if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> +               move_imm(ctx, LOONGARCH_GPR_A0, (const s64)im, false);
+> +               ret =3D emit_call(ctx, (const u64)__bpf_tramp_enter);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       for (i =3D 0; i < fentry->nr_links; i++) {
+> +               ret =3D invoke_bpf_prog(ctx, fentry->links[i], args_off, =
+retval_off,
+> +                                     run_ctx_off, flags & BPF_TRAMP_F_RE=
+T_FENTRY_RET);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +       if (fmod_ret->nr_links) {
+> +               branches  =3D kcalloc(fmod_ret->nr_links, sizeof(u32 *), =
+GFP_KERNEL);
+> +               if (!branches)
+> +                       return -ENOMEM;
+> +
+> +               invoke_bpf_mod_ret(ctx, fmod_ret, args_off, retval_off,
+> +                                  run_ctx_off, branches);
+> +       }
+> +
+> +       if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> +               restore_args(ctx, m->nr_args, args_off);
+> +               ret =3D emit_call(ctx, (const u64)orig_call);
+> +               if (ret)
+> +                       goto out;
+> +               emit_insn(ctx, std, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -=
+retval_off);
+> +               emit_insn(ctx, std, regmap[BPF_REG_0], LOONGARCH_GPR_FP, =
+-(retval_off - 8));
+> +               im->ip_after_call =3D ctx->ro_image + ctx->idx;
+> +               /* Reserve space for the move_imm + jirl instruction */
+> +               for (i =3D 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
+> +                       emit_insn(ctx, nop);
+> +       }
+> +
+> +       for (i =3D 0; ctx->image && i < fmod_ret->nr_links; i++) {
+> +               int offset =3D (void *)(&ctx->image[ctx->idx]) - (void *)=
+branches[i];
+> +               *branches[i] =3D larch_insn_gen_bne(LOONGARCH_GPR_T1, LOO=
+NGARCH_GPR_ZERO, offset);
+> +       }
+> +
+> +       for (i =3D 0; i < fexit->nr_links; i++) {
+> +               ret =3D invoke_bpf_prog(ctx, fexit->links[i], args_off, r=
+etval_off,
+> +                                     run_ctx_off, false);
+> +               if (ret)
+> +                       goto out;
+> +       }
+> +
+> +       if (flags & BPF_TRAMP_F_CALL_ORIG) {
+> +               im->ip_epilogue =3D ctx->ro_image + ctx->idx;
+> +               move_imm(ctx, LOONGARCH_GPR_A0, (const s64)im, false);
+> +               ret =3D emit_call(ctx, (const u64)__bpf_tramp_exit);
+> +               if (ret)
+> +                       goto out;
+> +       }
+> +
+> +       if (flags & BPF_TRAMP_F_RESTORE_REGS)
+> +               restore_args(ctx, m->nr_args, args_off);
+> +
+> +       if (save_ret) {
+> +               emit_insn(ctx, ldd, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -=
+retval_off);
+> +               emit_insn(ctx, ldd, regmap[BPF_REG_0], LOONGARCH_GPR_FP, =
+-(retval_off - 8));
+> +       }
+> +
+> +       emit_insn(ctx, ldd, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off=
+);
+> +
+> +       /* trampoline called from function entry */
+> +       emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_siz=
+e - 8);
+> +       emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_siz=
+e - 16);
+> +       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_s=
+ize);
+> +
+> +       emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
+> +       emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
+> +       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, 16);
+> +
+> +       if (flags & BPF_TRAMP_F_SKIP_FRAME)
+> +               /* return to parent function */
+> +               emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA=
+, 0);
+> +       else
+> +               /* return to traced function */
+> +               emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T0=
+, 0);
+> +
+> +       ret =3D ctx->idx;
+> +out:
+> +       kfree(branches);
+> +
+> +       return ret;
 > +}
 > +
-> +static irqreturn_t mpam_spi_handler(int irq, void *dev_id)
+> +int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_ima=
+ge,
+> +                               void *ro_image_end, const struct btf_func=
+_model *m,
+> +                               u32 flags, struct bpf_tramp_links *tlinks=
+,
+> +                               void *func_addr)
 > +{
-> +	struct mpam_msc *msc = dev_id;
+> +       int ret;
+> +       void *image, *tmp;
+> +       u32 size =3D ro_image_end - ro_image;
 > +
-> +	return __mpam_irq_handler(irq, msc);
-> +}
+> +       image =3D kvmalloc(size, GFP_KERNEL);
+> +       if (!image)
+> +               return -ENOMEM;
 > +
-> +static irqreturn_t mpam_disable_thread(int irq, void *dev_id);
-> +
-> +static int mpam_register_irqs(void)
-> +{
-> +	int err, irq, idx;
-> +	struct mpam_msc *msc;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list, srcu_read_lock_held(&mpam_srcu)) {
-> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +		if (irq <= 0)
-> +			continue;
-> +
-> +		/* The MPAM spec says the interrupt can be SPI, PPI or LPI */
-> +		/* We anticipate sharing the interrupt with other MSCs */
-> +		if (irq_is_percpu(irq)) {
-> +			err = request_percpu_irq(irq, &mpam_ppi_handler,
-> +						 "mpam:msc:error",
-> +						 msc->error_dev_id);
-> +			if (err)
-> +				return err;
-> +
-> +			msc->reenable_error_ppi = irq;
-> +			smp_call_function_many(&msc->accessibility,
-> +					       &_enable_percpu_irq, &irq,
-> +					       true);
-> +		} else {
-> +			err = devm_request_threaded_irq(&msc->pdev->dev, irq,
-> +							&mpam_spi_handler,
-> +							&mpam_disable_thread,
-> +							IRQF_SHARED,
-> +							"mpam:msc:error", msc);
-> +			if (err)
-> +				return err;
-> +		}
-> +
-> +		msc->error_irq_requested = true;
-> +		mpam_touch_msc(msc, mpam_enable_msc_ecr, msc);
-> +		msc->error_irq_hw_enabled = true;
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +
-> +	return 0;
-> +}
-> +
-> +static void mpam_unregister_irqs(void)
-> +{
-> +	int irq, idx;
-> +	struct mpam_msc *msc;
-> +
-> +	cpus_read_lock();
-> +	/* take the lock as free_irq() can sleep */
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list, srcu_read_lock_held(&mpam_srcu)) {
-> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +		if (irq <= 0)
-> +			continue;
-> +
-> +		if (msc->error_irq_hw_enabled) {
-> +			mpam_touch_msc(msc, mpam_disable_msc_ecr, msc);
-> +			msc->error_irq_hw_enabled = false;
-> +		}
-> +
-> +		if (msc->error_irq_requested) {
-> +			if (irq_is_percpu(irq)) {
-> +				msc->reenable_error_ppi = 0;
-> +				free_percpu_irq(irq, msc->error_dev_id);
-> +			} else {
-> +				devm_free_irq(&msc->pdev->dev, irq, msc);
-> +			}
-> +			msc->error_irq_requested = false;
-> +		}
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +	cpus_read_unlock();
-> +}
-> +
->   static void mpam_enable_once(void)
->   {
-> +	int err;
-> +
-> +	/*
-> +	 * If all the MSC have been probed, enabling the IRQs happens next.
-> +	 * That involves cross-calling to a CPU that can reach the MSC, and
-> +	 * the locks must be taken in this order:
-> +	 */
-> +	cpus_read_lock();
->   	mutex_lock(&mpam_list_lock);
->   	mpam_enable_merge_features(&mpam_classes);
-> +
-> +	err = mpam_register_irqs();
-> +	if (err)
-> +		pr_warn("Failed to register irqs: %d\n", err);
-> +
->   	mutex_unlock(&mpam_list_lock);
-> +	cpus_read_unlock();
-> +
-> +	if (err) {
-> +		schedule_work(&mpam_broken_work);
-> +		return;
-> +	}
->   
->   	mutex_lock(&mpam_cpuhp_state_lock);
->   	cpuhp_remove_state(mpam_cpuhp_state);
-> @@ -1621,16 +1893,39 @@ static void mpam_reset_class(struct mpam_class *class)
->    * All of MPAMs errors indicate a software bug, restore any modified
->    * controls to their reset values.
->    */
-> -void mpam_disable(void)
-> +static irqreturn_t mpam_disable_thread(int irq, void *dev_id)
->   {
->   	int idx;
->   	struct mpam_class *class;
-> +	struct mpam_msc *msc, *tmp;
-> +
-> +	mutex_lock(&mpam_cpuhp_state_lock);
-> +	if (mpam_cpuhp_state) {
-> +		cpuhp_remove_state(mpam_cpuhp_state);
-> +		mpam_cpuhp_state = 0;
-> +	}
-> +	mutex_unlock(&mpam_cpuhp_state_lock);
-> +
-> +	mpam_unregister_irqs();
->   
->   	idx = srcu_read_lock(&mpam_srcu);
->   	list_for_each_entry_srcu(class, &mpam_classes, classes_list,
->   				 srcu_read_lock_held(&mpam_srcu))
->   		mpam_reset_class(class);
->   	srcu_read_unlock(&mpam_srcu, idx);
-> +
-> +	mutex_lock(&mpam_list_lock);
-> +	list_for_each_entry_safe(msc, tmp, &mpam_all_msc, glbl_list)
-> +		mpam_msc_destroy(msc);
-> +	mutex_unlock(&mpam_list_lock);
-> +	mpam_free_garbage();
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +void mpam_disable(struct work_struct *ignored)
-> +{
-> +	mpam_disable_thread(0, NULL);
->   }
->   
->   /*
-> @@ -1644,7 +1939,6 @@ void mpam_enable(struct work_struct *work)
->   	struct mpam_msc *msc;
->   	bool all_devices_probed = true;
->   
-> -	/* Have we probed all the hw devices? */
-Stray change. Keep the comment or remove it in the patch that introduced it.
->   	mutex_lock(&mpam_list_lock);
->   	list_for_each_entry(msc, &mpam_all_msc, glbl_list) {
->   		mutex_lock(&msc->probe_lock);
-> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
-> index de05eece0a31..e1c6a2676b54 100644
-> --- a/drivers/platform/arm64/mpam/mpam_internal.h
-> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
-> @@ -44,6 +44,11 @@ struct mpam_msc {
->   	struct pcc_mbox_chan	*pcc_chan;
->   	u32			nrdy_usec;
->   	cpumask_t		accessibility;
-> +	bool			has_extd_esr;
-> +
-> +	int				reenable_error_ppi;
-> +	struct mpam_msc * __percpu	*error_dev_id;
-> +
->   	atomic_t		online_refs;
->   
->   	/*
-> @@ -52,6 +57,8 @@ struct mpam_msc {
->   	 */
->   	struct mutex		probe_lock;
->   	bool			probed;
-> +	bool			error_irq_requested;
-> +	bool			error_irq_hw_enabled;
->   	u16			partid_max;
->   	u8			pmg_max;
->   	unsigned long		ris_idxs[128 / BITS_PER_LONG];
-> @@ -280,7 +287,7 @@ extern u8 mpam_pmg_max;
->   
->   /* Scheduled work callback to enable mpam once all MSC have been probed */
->   void mpam_enable(struct work_struct *work);
-> -void mpam_disable(void);
-> +void mpam_disable(struct work_struct *work);
->   
->   int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
->   				   cpumask_t *affinity);
+> +       struct jit_ctx ctx =3D {
+> +               .image =3D (union loongarch_instruction *)image,
+> +               .ro_image =3D (union loongarch_instruction *)ro_image,
+> +               .idx =3D 0,
+> +       };
 
--- 
-Thanks,
+Declare ctx at function entry, please.
 
-Ben
-
+> +
+> +       jit_fill_hole(image, (unsigned int)(ro_image_end - ro_image));
+> +       ret =3D __arch_prepare_bpf_trampoline(&ctx, im, m, tlinks, func_a=
+ddr, flags);
+> +       if (ret > 0 && validate_code(&ctx) < 0) {
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       tmp =3D bpf_arch_text_copy(ro_image, image, size);
+> +       if (IS_ERR(tmp)) {
+> +               ret =3D PTR_ERR(tmp);
+> +               goto out;
+> +       }
+> +
+> +       bpf_flush_icache(ro_image, ro_image_end);
+> +out:
+> +       kvfree(image);
+> +       return ret < 0 ? ret : size;
+> +}
+> +
+> +int arch_bpf_trampoline_size(const struct btf_func_model *m, u32 flags,
+> +                            struct bpf_tramp_links *tlinks, void *func_a=
+ddr)
+> +{
+> +       struct bpf_tramp_image im;
+> +       struct jit_ctx ctx;
+> +       int ret;
+> +
+> +       ctx.image =3D NULL;
+> +       ctx.idx =3D 0;
+> +
+> +       ret =3D __arch_prepare_bpf_trampoline(&ctx, &im, m, tlinks, func_=
+addr, flags);
+> +
+> +       /* Page align */
+> +       return ret < 0 ? ret : round_up(ret * LOONGARCH_INSN_SIZE, PAGE_S=
+IZE);
+> +}
+> diff --git a/arch/loongarch/net/bpf_jit.h b/arch/loongarch/net/bpf_jit.h
+> index f9c569f53..5697158fd 100644
+> --- a/arch/loongarch/net/bpf_jit.h
+> +++ b/arch/loongarch/net/bpf_jit.h
+> @@ -18,6 +18,7 @@ struct jit_ctx {
+>         u32 *offset;
+>         int num_exentries;
+>         union loongarch_instruction *image;
+> +       union loongarch_instruction *ro_image;
+>         u32 stack_size;
+>  };
+>
+> @@ -308,3 +309,8 @@ static inline int emit_tailcall_jmp(struct jit_ctx *c=
+tx, u8 cond, enum loongarch
+>
+>         return -EINVAL;
+>  }
+> +
+> +static inline void bpf_flush_icache(void *start, void *end)
+> +{
+> +       flush_icache_range((unsigned long)start, (unsigned long)end);
+> +}
+> --
+> 2.25.1
+>
 
