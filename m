@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-747430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EEFFB133BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 086E7B133C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B6618964CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:37:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE121896571
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026DA216392;
-	Mon, 28 Jul 2025 04:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19246217719;
+	Mon, 28 Jul 2025 04:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwzHoiP6"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kom+2/9V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042D61E5B91
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 04:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFDD7DA73;
+	Mon, 28 Jul 2025 04:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753677413; cv=none; b=Ft5cWgsVCjo4BcGWQMGTfUHqrv6MQV2R471ktRzw2siconTN1P2dVGw0bv4qnt0RI1kM9YZ8AtOgbdULxlrwufWn+Y+DljAvzFuJvQeBBu6wZ3n52s1DqQylTjnWDfbAjjKwRpwu6BoupIMdurEI+z/9t7jlGpIJO2xZq7J9g60=
+	t=1753677836; cv=none; b=HVDx3qUKHMRxgVvLM8JaDI8i5VhfdjzpI24dixCW+w5yz1UDliByvq9IQ9OXg1hBwNzYc9yuYHK9QUVZqyGdnvMaL6O+/btmpSyj/Ly0etjN15szcKJLzju5+vcmhWPZNPg8qZC8fwy4Eta8C9cOVdHG6yv9T8nZgatPgiZVFFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753677413; c=relaxed/simple;
-	bh=tDWQTnaOByEBiSkO3FvdLGPrQKPyATsUtvQ/bjuirZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QqjyC5u1creXvvXJ+RhYUhmOu3DzMAPyTKJn1HGSrclKeqDmHQFGkdgdQE7sJZ7S+8F/n7kjo9yz2NCkiOXJ+vhtWksyvW5wAWpBTcdJHy7eqjia9R8li3Xgvu4IEur5T3ZGd0cRwpSh9L7M1PMzdBUbwaP+0oyAht/6xk7O0bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwzHoiP6; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7e32c95775aso438052685a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 21:36:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753677411; x=1754282211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vXztVcGyYhcXEUuh9ymdxD2mjy3D+/Xbd03h6w6BTCI=;
-        b=XwzHoiP6X6qHK2bnTHz9+SNiyMOR8inM3hm+zqMvzAiumanfqS03BtWIc9d537UCD8
-         ki5d+iXwqBymqosOpkfX6OTlbMx6XABgHmbBaOzRiISc6LhFY6JdoO2jjqpxCF3J3S49
-         6gX3/6lT3Acr9GIyS13Da/+QNwGoWkmW1XF3Mn9eCotWyMvlrTjSpYGEPABVansNvj4y
-         mkzgSvm0JOmsSfyAr0EMaNhN3Evr5kgVVe40f84K/HTaf2VFsObxuCqkgKxyfPk+g+5U
-         MSKb/8uZogKF6z8Q8thJPrfzxHpMOC6yaEJiBK/GjAYRi1OwE9t0gLVNF4eR0TDQuuMW
-         mq7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753677411; x=1754282211;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vXztVcGyYhcXEUuh9ymdxD2mjy3D+/Xbd03h6w6BTCI=;
-        b=bEhCHXpit/nNrI1FdvoElPNQBBJpC9xtfbtNIkOsZqufaNEsi9evNocPjExOEw6MGl
-         gcxj/t3YMdwFf+RlNAXX6NrYBzz2FrvIfOf3BhU9gNmB32Oq1pnJ0yKMi+aKDO0sFalp
-         DFNgv3+/Mc7isk/g4nVROtpgnJG/hqSJmpyrtD99bPLxkbhGuoOMP3u3SNU+yuYADxkz
-         aPaVRRc2fPMbW02vLt+Btznnr7lJW0PamIl1zAnCG7TasJ0wiisHI6J+6YGz9Oy4StIP
-         yz88CWR3kiK1O4Btfk0c4scC0N5w1ofMX/x6TCWvlLktFwc2sgEZ4zm7mmD357uSnxmx
-         kJDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfS+OLxHnvt6kAorYSy7u0x6JwXiANHI7VTKbhPqIR+CNp3vvsBsO3wsdmLdNZ8SCMsjKVpUV9NGgjwYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2tuxJpgLpv7+f24VhF0Uqgh6dXU/37Lr9BrDxKfNOiMViEaes
-	l2WqlyGNZk7ajv9WOdJMaUyPMqn4P0ezzOblGQq3UqTyABbhSb1PWo2DEHirGQ==
-X-Gm-Gg: ASbGncsFtoci/pdG/WKDd2867kLx1R+a7syx/dL0qTrJMpf5co5uBN/e99q6Mx47ds4
-	NTB5z1/J25PG36DMCtLgpLs0stm4QK0CIHkp7Q+9lzctBeIjRtKYtlmCh9mFmbBkHuJD1PTESdz
-	t23Pu2W1LeaOaSoHBomzSBXl3BIjorpns4ikoQn3EuB1Yff4hKsgMiaKVENTo9Db7x8M3xRpLFy
-	VRsYAAZwolXnWFqj0kvEwi70WE7M3lkZlY1zIR2a5pL3yvAACHHHFkyamykASIMq39zvEHUXUd9
-	oRAiIzpnK5FcTriAKBkgfLv5jMJhDesUpXXdgQ6vOTeZLyJlQAknMfeStC8yOyvbpE8moK1K8uY
-	MZ0UUWF7hyeMW9fzfs8DhH9IDPHShl/3lMTDgDb6ShnkIlR2/J2k=
-X-Google-Smtp-Source: AGHT+IHVRwJVt2WogTeYvQm25w/2dooYaUNg8V/US+F/CTRtqVjHiUxJQADIE41atp6l093H9eWpRw==
-X-Received: by 2002:a05:620a:7002:b0:7e6:440f:50b5 with SMTP id af79cd13be357-7e6440f5113mr997580885a.11.1753677410810;
-        Sun, 27 Jul 2025 21:36:50 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4aeb2e7a7fdsm12694961cf.4.2025.07.27.21.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 21:36:50 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	vivek.balachandhar@gmail.com
-Subject: [PATCH v1 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
-Date: Mon, 28 Jul 2025 04:36:28 +0000
-Message-Id: <20250728043628.421849-1-vivek.balachandhar@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250726043218.386738-4-vivek.balachandhar@gmail.com>
-References: <20250726043218.386738-4-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1753677836; c=relaxed/simple;
+	bh=mUCxvSTRCDEpiiql5k4HQsjRgZR5GnyT10fpLFbTvw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sxrwZPHqnH5h19qi2HWPXYf3tTiy964r1QYhVdrhE/8lTbOWW1dtD64xrI2sCp24FjK26qnqdzg8/APilcsFVS2CMGuVPVaNE6rpphbPhvE1Ccl82fsej8Pkd2moUVixehEguTS9wwtngUdutb88FkNb7X1sg8jTV21e2hwJJ2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kom+2/9V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8460FC4CEE7;
+	Mon, 28 Jul 2025 04:43:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753677834;
+	bh=mUCxvSTRCDEpiiql5k4HQsjRgZR5GnyT10fpLFbTvw4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kom+2/9VLWh+L8XRpkBzEyshQoDtImaEas94vLO9SdTDAeWCzJA2GHFvx2hqA7c8O
+	 AUVNj/y89fXViIRqmZDLwnewPpqAuPxVBQ71S8vCc3zdoEO/NYIrrMxq0bWh/4rmzE
+	 xsdzoqIZbZCXZTq2m1NAU9gU2xR2HVKhIyXMwGVkvZdnbG3hzN+5D2OYqwJym62TK8
+	 qRm6DNWvSEn0kX2BTES4WpLIqExwRtfuXRBUsuTy1MhllogUkxb+PI/4Ve9nLMPs9B
+	 /qNYf0lCtbtTtWAmPm9jpvaZwD//0y/kcSztcIxQBccC/JJoCazOlD6p/83KmWBcyH
+	 oupPUoiWlkkGA==
+Date: Mon, 28 Jul 2025 00:43:52 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+	josh@joshtriplett.org, konstantin@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org
+Subject: Re: [PATCH 1/4] agents: add unified agent coding assistant
+ configuration
+Message-ID: <aIcACJhaU-NElyHC@lappy>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <20250727195802.2222764-2-sashal@kernel.org>
+ <202507271934.68E1F0C728@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <202507271934.68E1F0C728@keescook>
 
-Add a blank line after the definition of rtw_roaming() to separate it from
-the following function (_rtw_roaming()), improving readability and matching
-kernel coding style guidelines.
+On Sun, Jul 27, 2025 at 07:37:31PM -0700, Kees Cook wrote:
+>On Sun, Jul 27, 2025 at 03:57:59PM -0400, Sasha Levin wrote:
+>> Create a single source of truth for agent instructions in
+>> Documentation/AI/main.md with symlinks for all major coding
+>> agents:
+>> - CLAUDE.md (Claude Code)
+>> - .github/copilot-instructions.md (GitHub Copilot)
+>> - .cursorrules (Cursor)
+>> - .codeium/instructions.md (Codeium)
+>> - .continue/context.md (Continue)
+>> - .windsurfrules (Windsurf)
+>> - .aider.conf.yml (Aider)
+>
+>I *really* don't like this. I use the CLAUDE.md file as my instructions
+>for my agent. I think all of these should be .gitignore entries.
 
-No functional changes.
+Sorry, I might have misunderstood you: how does it play out if we add
+these to .gitignore?
 
-Identified using checkpatch.pl.
+The tool will just end replacing whatever we put in there with something
+customized that doesn't necessarily correspond to what the community
+will consider a "standard" set of rules for agents?
 
-Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+>> diff --git a/Documentation/agents/index.rst b/Documentation/agents/index.rst
+>> new file mode 100644
+>> index 000000000000..109266ca91ec
+>> --- /dev/null
+>> +++ b/Documentation/agents/index.rst
+>> @@ -0,0 +1,10 @@
+>> +.. SPDX-License-Identifier: GPL-2.0
+>> +
+>> +======
+>> +Agents
+>> +======
+>> +
+>> +.. toctree::
+>> +   :maxdepth: 1
+>> +
+>> +   main
+>> \ No newline at end of file
+>> diff --git a/Documentation/agents/main.rst b/Documentation/agents/main.rst
+>> new file mode 100644
+>> index 000000000000..98aa8250be9d
+>> --- /dev/null
+>> +++ b/Documentation/agents/main.rst
+>> @@ -0,0 +1,7 @@
+>> +.. SPDX-License-Identifier: GPL-2.0
+>> +
+>> +=====================================
+>> +Linux Kernel Development Agent Instructions
+>> +=====================================
+>> +
+>> +This is the Linux kernel repository. When working with this codebase, you must follow the Linux kernel development processes and coding standards.
+>
+>And now I start my "this is redundant, why do we have to repeat it in a
+>new place?" part of my review comments. :)
+>
+>I *really* think Agent instructions should only be about stuff specific
+>to the agent. It is _supposed_ to be able to find the rest of it on its
+>own.
 
-v1: Addressed review comments from Markus Elfring on changing the 
-    description of the patch regarding readability and separation between 
-    function definitions.
----
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 1 +
- 1 file changed, 1 insertion(+)
+Right - I trimmed down most of these specific callouts, but I left a few
+that I found necessary since in my testing the agent would sometime
+forget about those. I'll comment more on the rest of your review.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 24e505111f1f..b1a427a655ef 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -2449,6 +2449,7 @@ void rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
- 	_rtw_roaming(padapter, tgt_network);
- 	spin_unlock_bh(&pmlmepriv->lock);
- }
-+
- void _rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
- {
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
 -- 
-2.39.5
-
+Thanks,
+Sasha
 
