@@ -1,243 +1,348 @@
-Return-Path: <linux-kernel+bounces-748067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF80B13C16
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:54:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9AC8B13C0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62719189E15B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01562189F4D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D603826B76C;
-	Mon, 28 Jul 2025 13:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBD1270557;
+	Mon, 28 Jul 2025 13:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VG35nO+2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d7lUtLSI"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27D9266EFA;
-	Mon, 28 Jul 2025 13:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6049F26E6E8
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753710755; cv=none; b=Ofe+8wZv2U8Eac3XazPe5Jl/PvkwVLMClCTm9IeXnNszHCm4cPQqfuWmFbyHL0OViy0lVLQ5etPsVgN4uCLDPb2B27h5Vj6tezStEu1KuYYhcUGIxB14r1eNKOhxkp8RwS4pchJx3/qIwgSzMX87fS5cJLSw8bWVbJDaCkDFvuw=
+	t=1753710704; cv=none; b=JwA3Sf1WqThx1IRsc6UyRFD5k2b510dQqGgfsxW9W6xY2iuasude9M9vQUIjDjPQxhnvX44YCQI74ZkV0EvhITr3/yz3hl6zbH6rURXjJ034vU2w272s/8wluT/NMTUlXcB+XT4eIIrWGq4om4/fy0/hMoVmkO7ZVOH18gc4VqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753710755; c=relaxed/simple;
-	bh=zkVKVis6HtjW872Oo0WjCeFxIvs5TPmzZSBo1W+o4ic=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T9ct5SCiM3nBxNP8NVb7xNFIAkAd2sy2R6iftEQm/W9XL/JdGo0UHce2VDzJereVN/R2fu6TBqOEg5Wf1uS0hSBFG93HI+mvVU8pUYdGsBymyFwYSotc0uYmVs2J/OMoYkBtgmOvOmLqzr0pklWdeB+k9inzQ2hES0DYNz0ebag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VG35nO+2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59A0C4CEE7;
-	Mon, 28 Jul 2025 13:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753710754;
-	bh=zkVKVis6HtjW872Oo0WjCeFxIvs5TPmzZSBo1W+o4ic=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VG35nO+2d+/un4WbUwCXEg3hfG6UFg/4vccdyCBui9FHuySJLRR1WlNng2oeS4Uzu
-	 zhcVa+OZMJftGoo4oglYzdYsIOKfdrxNuotOrC2WrT4EXdvd32/AHidDPWIIyvykxW
-	 v+7Bui1zb2m4C55IL9zRNr0mQkLJOwD2JkMRjzeUXCwbT1HCmUICP4wK7ZSaNsZUe1
-	 kC4NMF5XJDn7PbpjLpamSUXV1JtSMOq2a+A5I67E9zE3PE5hNyp+lou2J2K16gb1Ng
-	 UKJ+lOH68COHOxX+ELh4YDcTlqTvsm5YA0mYAcmGwQHEdYWnfn8962NYw+kLJW+LYs
-	 KEtxquiXzirrQ==
-From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-To: linux-coco@lists.linux.dev,
-	kvmarm@lists.linux.dev
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	aik@amd.com,
-	lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Subject: [RFC PATCH v1 00/38] ARM CCA Device Assignment support
-Date: Mon, 28 Jul 2025 19:21:37 +0530
-Message-ID: <20250728135216.48084-1-aneesh.kumar@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753710704; c=relaxed/simple;
+	bh=fquhLiKEHj0fYtenvldhJ7/nlk2RToQq5x7ERru5FgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VKBi+XKdcuOHCjumpTnI4IH3agcCafDxP4Fwp+s/SNGfIImTC254Z18LJDc17uIeDqj9Kn+sZS0g1vC5BsiqKlDClcYEN6rVTh9S/xe7fLhdG8335q8XEhMSTEH31H3DzSk2BlqI6OO419XlxHPKM4dusJUgt/Ud4hxA88ap5qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d7lUtLSI; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b785a69454so885428f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753710701; x=1754315501; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CENTF0ISHbmixWe0j83y9bNXImg/NoofqSDy9p7Nfjs=;
+        b=d7lUtLSIUEuN89G9nQvJm3N1qm3U19o5Q+4t9kZNrFOXSX99b0LtGA8gv+Lq8VqSSV
+         dPJezK10HzD/W+9TXYO9AsBbwbn6gIkIENpi1ka8/v7iLWhQ7Ne8Em98oWy/btSwijna
+         2fPlbqRLTfsUvjO9DuyNUrH1+zJYS4WPNVJuC5buZYXnlGmUbrkUNentAmJTd7n7WisF
+         yrFE4fG74ICRx09ab8e5IJbtyXnGktC1TcwI1IZEyLR1NuUns1/tbwPPSgaUmvlQF1w5
+         fq2B1um9ZDVA/vGnx/570x3ocOWlTQAyFH9V5LKwTsSQh8hlmhEsxUncXq2xqoLKxnU5
+         MxKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753710701; x=1754315501;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CENTF0ISHbmixWe0j83y9bNXImg/NoofqSDy9p7Nfjs=;
+        b=hjFCGSv89sCnbpymaxpgMD1m6nhbEJF/fjBSTyGmhyKe4P7e5mA4kaPOQCVcCghIaJ
+         Kt6qrWoq234Ip6cUkUaBCtXQhet/1py3xwom4FjtCUFe+ZB1NhTzu+VXy04xHGQjfr4q
+         rGJQUEbww7p3e2WhqKNFnbPquYyaO4rfWM9PmdidtzmQ8FOMinTk++cN+Uqhh2j+MJvU
+         E1ECzITnUle50COLD12owT40NAVMYNIAi0MiCsLAR/0o7Jki8ET/ibl+DU0mvyhyEftl
+         TK9Ro5Y1VYO9UhYvBQa777hn8xuqT91cB8coFsft41OjB1CIUmfzk3Q0yqgj8pGbNvqu
+         OFyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXo0O8XjI9HbjLHWyPzzYde73M5UG2CjSqDR08fSC4Zp3TQYc3ke9lbRp5NE29etk7caxc0hpqMVbp7Ahw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4znPb+FTEvaFPVQU511wJNXL/W9KbVlBaW3B08nmTcYEJubNU
+	n7TgWiCo8H4Ry5VMVDNR1E0KM2FWzVwn9YAFvsw8gjh8jbrJmK8OC91zaee/aZAVw3s=
+X-Gm-Gg: ASbGncsnIX1Mj4ZcK3Xwel7FycAWxGHPR7x3S/gqBd0+oS67OEYIzjIDfANuksgrjip
+	KYvoa33l+Dvo4adGBx/PTs7bj3WEerZL/YPlCGVilVZywu0NA2SRjiMqaNL2GriYYIC0csRSxb5
+	pBZ3R/DphjfF5I1RFNNeYlqWKf33uHStCrwpZwf6tYcI7+XmincxJaUpSSC/hHF2C1CyVxRTfOf
+	U6DuLPesh0RLhIeuCAzE2R4hgvZfvCQtWcnJiLzdj7OwBBMkWRCjL/50A9XDN6lgudhmk2Jzart
+	PScZofjBfkmN4fX9Pu7b5xpiLniazl7wm1ICsLnLxQDmf2VTadSiJ01Nx9+LWutm2xOV+kfHN+C
+	Xzof9UUjOkL7Zrqc+boINdm9CTfrZ66qEvjey0CQx/rS8kv/lNVI35nwt2732gnY=
+X-Google-Smtp-Source: AGHT+IGVdzWUOBBFfiYOEkrEFkxq518/+eZQSkut23M7mdFO6PCXHW/ZlaBVEVa5d8CeUSl1+EFZEA==
+X-Received: by 2002:a05:6000:3113:b0:3b4:9721:2b16 with SMTP id ffacd0b85a97d-3b776644006mr7913012f8f.36.1753710700431;
+        Mon, 28 Jul 2025 06:51:40 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587abe61fasm99002615e9.8.2025.07.28.06.51.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 06:51:39 -0700 (PDT)
+Message-ID: <6feef32b-4d1f-428c-9759-2d3318b0f224@linaro.org>
+Date: Mon, 28 Jul 2025 14:51:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/9] media: qcom: camss: Add support for CSIPHY 690
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Wenmeng Liu <quic_wenmliu@quicinc.com>
+References: <20250703171938.3606998-1-quic_vikramsa@quicinc.com>
+ <20250703171938.3606998-7-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250703171938.3606998-7-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch series implements support for Device Assignment in the ARM CCA
-architecture. The code changes are based on Alp12 specification published here
-[1].
+On 03/07/2025 18:19, Vikram Sharma wrote:
+> Add support for CSIPHY found on SA8775P (Titan 690).
+> This implementation is based on the titan 690 implementation.
+> 
+> Co-developed-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   .../qcom/camss/camss-csiphy-3ph-1-0.c         | 84 +++++++++++++++++++
+>   .../media/platform/qcom/camss/camss-csiphy.c  |  5 ++
+>   .../media/platform/qcom/camss/camss-csiphy.h  |  1 +
+>   drivers/media/platform/qcom/camss/camss.c     | 75 +++++++++++++++++
+>   4 files changed, 165 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> index f732a76de93e..bb5ebaa13ec8 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> @@ -64,6 +64,85 @@ struct csiphy_lane_regs {
+>   	u32 csiphy_param_type;
+>   };
+>   
+> +/* GEN2 1.3.0 2PH */
 
-The code builds on the TSM framework patches posted at [2]. We add extension to
-that framework so that TSM is now used in both the host and the guest.
+I'd be nice to include the process node number here. Its not a secret so 
+please add for the edifcation of the reader.
 
-A DA workflow can be summarized as below:
+> +static const struct
+> +csiphy_lane_regs lane_regs_sa8775p[] = {
+> +	{0x0724, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0728, 0x04, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0700, 0x80, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x070C, 0xFF, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0738, 0x1F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x072C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0734, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0710, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x071C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0714, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x073C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0704, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0720, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0708, 0x10, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
+> +	{0x0024, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0000, 0x8D, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0038, 0xFE, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x002C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0034, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0010, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x001C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0014, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x003C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0004, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0020, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0008, 0x10, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
+> +	{0x0224, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0200, 0x8D, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0238, 0xFE, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x022C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0234, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0210, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x021C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0214, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x023C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0204, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0220, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0208, 0x10, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
+> +	{0x0424, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0400, 0x8D, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0438, 0xFE, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x042C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0434, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0410, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x041C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0414, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x043C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0404, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0420, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0408, 0x10, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
+> +	{0x0624, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0600, 0x8D, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0638, 0xFE, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x062C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0634, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0610, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x061C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0614, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x063C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0604, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0620, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0608, 0x10, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
+> +	{0x005C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0060, 0xFD, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0064, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x025C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0260, 0xFD, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0264, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x045C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0460, 0xFD, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0464, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x065C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0660, 0xFD, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +	{0x0664, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
+> +};
+> +
+>   /* GEN2 1.0 2PH */
+>   static const struct
+>   csiphy_lane_regs lane_regs_sdm845[] = {
+> @@ -749,6 +828,7 @@ static bool csiphy_is_gen2(u32 version)
+>   	case CAMSS_8280XP:
+>   	case CAMSS_845:
+>   	case CAMSS_8550:
+> +	case CAMSS_8775P:
+>   	case CAMSS_X1E80100:
+>   		ret = true;
+>   		break;
+> @@ -848,6 +928,10 @@ static int csiphy_init(struct csiphy_device *csiphy)
+>   		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8550);
+>   		regs->offset = 0x1000;
+>   		break;
+> +	case CAMSS_8775P:
+> +		regs->lane_regs = &lane_regs_sa8775p[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sa8775p);
+> +		break;
+>   	default:
+>   		WARN(1, "unknown csiphy version\n");
+>   		return -ENODEV;
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
+> index c622efcc92ff..f6a2ac385953 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+> @@ -103,6 +103,11 @@ const struct csiphy_formats csiphy_formats_8x96 = {
+>   	.formats = formats_8x96
+>   };
+>   
+> +const struct csiphy_formats csiphy_formats_sa8775p = {
+> +	.nformats = ARRAY_SIZE(formats_sdm845),
+> +	.formats = formats_sdm845
+> +};
+> +
+>   const struct csiphy_formats csiphy_formats_sc7280 = {
+>   	.nformats = ARRAY_SIZE(formats_sdm845),
+>   	.formats = formats_sdm845
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
+> index ab91273303b9..842e72b74ce4 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy.h
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
+> @@ -126,6 +126,7 @@ void msm_csiphy_unregister_entity(struct csiphy_device *csiphy);
+>   
+>   extern const struct csiphy_formats csiphy_formats_8x16;
+>   extern const struct csiphy_formats csiphy_formats_8x96;
+> +extern const struct csiphy_formats csiphy_formats_sa8775p;
+>   extern const struct csiphy_formats csiphy_formats_sc7280;
+>   extern const struct csiphy_formats csiphy_formats_sdm845;
+>   
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 3122a29891c2..ebc3b296bb50 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -2483,6 +2483,81 @@ static const struct resources_icc icc_res_sm8550[] = {
+>   	},
+>   };
+>   
+> +static const struct camss_subdev_resources csiphy_res_8775p[] = {
+> +	/* CSIPHY0 */
+> +	{
+> +		.regulators = { "vdda-phy", "vdda-pll" },
+> +
+Drop the dead newline please.
 
-Host:
-step 1.
-echo ${DEVICE} > /sys/bus/pci/devices/${DEVICE}/driver/unbind
-echo vfio-pci > /sys/bus/pci/devices/${DEVICE}/driver_override
-echo ${DEVICE} > /sys/bus/pci/drivers_probe
+> +		.clock = { "csiphy_rx", "csiphy0", "csiphy0_timer"},
+> +		.clock_rate = {
+> +			{ 400000000 },
+> +			{ 0 },
+> +			{ 400000000 },
+> +		},
+> +		.reg = { "csiphy0" },
+> +		.interrupt = { "csiphy0" },
+> +		.csiphy = {
+> +			.id = 0,
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sa8775p
+> +		}
+> +	},
+> +	/* CSIPHY1 */
+> +	{
+> +		.regulators = { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock = { "csiphy_rx", "csiphy1", "csiphy1_timer"},
+> +		.clock_rate = {
+> +			{ 400000000 },
+> +			{ 0 },
+> +			{ 400000000 },
+> +		},
+> +		.reg = { "csiphy1" },
+> +		.interrupt = { "csiphy1" },
+> +		.csiphy = {
+> +			.id = 1,
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sa8775p
+> +		}
+> +	},
+> +	/* CSIPHY2 */
+> +	{
+> +		.regulators = { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock = { "csiphy_rx", "csiphy2", "csiphy2_timer"},
+> +		.clock_rate = {
+> +			{ 400000000 },
+> +			{ 0 },
+> +			{ 400000000 },
+> +		},
+> +		.reg = { "csiphy2" },
+> +		.interrupt = { "csiphy2" },
+> +		.csiphy = {
+> +			.id = 2,
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sa8775p
+> +		}
+> +	},
+> +	/* CSIPHY3 */
+> +	{
+> +		.regulators = { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock = { "csiphy_rx", "csiphy3", "csiphy3_timer"},
+> +		.clock_rate = {
+> +			{ 400000000 },
+> +			{ 0 },
+> +			{ 400000000 },
+> +		},
+> +		.reg = { "csiphy3" },
+> +		.interrupt = { "csiphy3" },
+> +		.csiphy = {
+> +			.id = 3,
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sa8775p
+> +		}
+> +	},
+> +};
+> +
+>   static const struct resources_icc icc_res_sa8775p[] = {
+>   	{
+>   		.name = "ahb",
+Assuming that's done:
 
-step 2.
-echo 1 > /sys/bus/pci/devices/$DEVICE/tsm/connect
-
-Now in the guest we follow the below steps
-
-step 1:
-echo ${DEVICE} > /sys/bus/pci/devices/${DEVICE}/driver/unbind
-
-step 2: Move the device to TDISP LOCK state
-echo 1 > /sys/bus/pci/devices/${DEVICE}/tsm/lock
-
-step 3: Moves the device to TDISP RUN state
-echo 1 > /sys/bus/pci/devices/${DEVICE}/tsm/accept
-
-step 4: Load the driver again.
-echo ${DEVICE} > /sys/bus/pci/drivers_probe
-
-I'm currently working against TSM v3, as TSM v4 lacks the necessary
-callbacks—bind, unbind, and guest_req—required for guest interactions.
-
-The implementation also makes use of RHI interfaces that fall outside the
-current RHI specification [5]. Once the spec is finalized, the code will be aligned
-accordingly.
-
-For now, I’ve retained validate_mmio and vdev_req exit handling within KVM. This
-will transition to a guest_req-based mechanism once the specification is
-updated.
-
-At that point, all device assignment (DA)-specific VM exits will exit directly
-to the VMM, and will use the guest_req ioctl to handle exit reasons. As part of
-this change, the handlers realm_exit_vdev_req_handler,
-realm_exit_vdev_comm_handler, and realm_exit_dev_mem_map_handler will be
-removed.
-
-Full patchset for the kernel and kvmtool can be found at [3] and [4]
-
-[1] https://developer.arm.com/-/cdn-downloads/permalink/Architectures/Armv9/DEN0137_1.1-alp12.zip
-
-[2] https://lore.kernel.org/all/20250516054732.2055093-1-dan.j.williams@intel.com
-
-[3] https://git.gitlab.arm.com/linux-arm/linux-cca.git cca/tdisp-upstream-post-v1
-[4] https://git.gitlab.arm.com/linux-arm/kvmtool-cca.git cca/tdisp-upstream-post-v1
-[5] https://developer.arm.com/documentation/den0148/latest/
-
-
-Aneesh Kumar K.V (Arm) (35):
-  tsm: Add tsm_bind/unbind helpers
-  tsm: Move tsm core outside the host directory
-  tsm: Move dsm_dev from pci_tdi to pci_tsm
-  tsm: Support DMA Allocation from private memory
-  tsm: Don't overload connect
-  iommufd: Add and option to request for bar mapping with
-    IORESOURCE_EXCLUSIVE
-  iommufd/viommu: Add support to associate viommu with kvm instance
-  iommufd/tsm: Add tsm_op iommufd ioctls
-  iommufd/vdevice: Add TSM Guest request uAPI
-  iommufd/vdevice: Add TSM map ioctl
-  KVM: arm64: CCA: register host tsm platform device
-  coco: host: arm64: CCA host platform device driver
-  coco: host: arm64: Create a PDEV with rmm
-  coco: host: arm64: Device communication support
-  coco: host: arm64: Stop and destroy the physical device
-  coco: host: arm64: set_pubkey support
-  coco: host: arm64: Add support for creating a virtual device
-  coco: host: arm64: Add support for virtual device communication
-  coco: host: arm64: Stop and destroy virtual device
-  coco: guest: arm64: Update arm CCA guest driver
-  arm64: CCA: Register guest tsm callback
-  cca: guest: arm64: Realm device lock support
-  KVM: arm64: Add exit handler related to device assignment
-  coco: host: arm64: add RSI_RDEV_GET_INSTANCE_ID related exit handler
-  coco: host: arm64: Add support for device communication exit handler
-  coco: guest: arm64: Add support for collecting interface reports
-  coco: host: arm64: Add support for realm host interface (RHI)
-  coco: guest: arm64: Add support for fetching interface report and
-    certificate chain from host
-  coco: guest: arm64: Add support for guest initiated TDI bind/unbind
-  KVM: arm64: CCA: handle dev mem map/unmap
-  coco: guest: arm64: Validate mmio range found in the interface report
-  coco: guest: arm64: Add Realm device start and stop support
-  KVM: arm64: CCA: enable DA in realm create parameters
-  coco: guest: arm64: Add support for fetching device measurements
-  coco: guest: arm64: Add support for fetching device info
-
-Lukas Wunner (3):
-  X.509: Make certificate parser public
-  X.509: Parse Subject Alternative Name in certificates
-  X.509: Move certificate length retrieval into new helper
-
- arch/arm64/include/asm/kvm_rme.h              |   3 +
- arch/arm64/include/asm/mem_encrypt.h          |   6 +-
- arch/arm64/include/asm/rhi.h                  |  39 +
- arch/arm64/include/asm/rmi_cmds.h             | 173 ++++
- arch/arm64/include/asm/rmi_smc.h              | 210 ++++-
- arch/arm64/include/asm/rsi.h                  |   5 +-
- arch/arm64/include/asm/rsi_cmds.h             | 129 +++
- arch/arm64/include/asm/rsi_smc.h              |  60 ++
- arch/arm64/kernel/Makefile                    |   2 +-
- arch/arm64/kernel/rhi.c                       |  35 +
- arch/arm64/kernel/rsi.c                       |  26 +-
- arch/arm64/kvm/mmu.c                          |  45 +
- arch/arm64/kvm/rme-exit.c                     |  87 ++
- arch/arm64/kvm/rme.c                          | 208 ++++-
- arch/arm64/mm/mem_encrypt.c                   |  10 +
- crypto/asymmetric_keys/x509_cert_parser.c     |   9 +
- crypto/asymmetric_keys/x509_loader.c          |  38 +-
- crypto/asymmetric_keys/x509_parser.h          |  40 +-
- drivers/iommu/iommufd/device.c                |  54 ++
- drivers/iommu/iommufd/iommufd_private.h       |   7 +
- drivers/iommu/iommufd/main.c                  |  13 +
- drivers/iommu/iommufd/viommu.c                | 178 +++-
- drivers/pci/tsm.c                             | 229 ++++-
- drivers/vfio/pci/vfio_pci_core.c              |  20 +-
- drivers/virt/coco/Kconfig                     |   5 +-
- drivers/virt/coco/Makefile                    |   7 +-
- drivers/virt/coco/arm-cca-guest/Kconfig       |  10 +-
- drivers/virt/coco/arm-cca-guest/Makefile      |   3 +
- .../{arm-cca-guest.c => arm-cca.c}            | 175 +++-
- drivers/virt/coco/arm-cca-guest/rsi-da.c      | 576 ++++++++++++
- drivers/virt/coco/arm-cca-guest/rsi-da.h      |  73 ++
- drivers/virt/coco/arm-cca-host/Kconfig        |  17 +
- drivers/virt/coco/arm-cca-host/Makefile       |   5 +
- drivers/virt/coco/arm-cca-host/arm-cca.c      | 384 ++++++++
- drivers/virt/coco/arm-cca-host/rmm-da.c       | 857 ++++++++++++++++++
- drivers/virt/coco/arm-cca-host/rmm-da.h       | 108 +++
- drivers/virt/coco/host/Kconfig                |   6 -
- drivers/virt/coco/host/Makefile               |   6 -
- drivers/virt/coco/{host => }/tsm-core.c       |  27 +
- include/keys/asymmetric-type.h                |   2 +
- include/keys/x509-parser.h                    |  55 ++
- include/linux/device.h                        |   1 +
- include/linux/iommufd.h                       |   4 +
- include/linux/kvm_host.h                      |   1 +
- include/linux/pci-tsm.h                       |  37 +-
- include/linux/swiotlb.h                       |   4 +
- include/linux/tsm.h                           |  29 +
- include/uapi/linux/iommufd.h                  |  69 ++
- 48 files changed, 3887 insertions(+), 200 deletions(-)
- create mode 100644 arch/arm64/include/asm/rhi.h
- create mode 100644 arch/arm64/kernel/rhi.c
- rename drivers/virt/coco/arm-cca-guest/{arm-cca-guest.c => arm-cca.c} (62%)
- create mode 100644 drivers/virt/coco/arm-cca-guest/rsi-da.c
- create mode 100644 drivers/virt/coco/arm-cca-guest/rsi-da.h
- create mode 100644 drivers/virt/coco/arm-cca-host/Kconfig
- create mode 100644 drivers/virt/coco/arm-cca-host/Makefile
- create mode 100644 drivers/virt/coco/arm-cca-host/arm-cca.c
- create mode 100644 drivers/virt/coco/arm-cca-host/rmm-da.c
- create mode 100644 drivers/virt/coco/arm-cca-host/rmm-da.h
- delete mode 100644 drivers/virt/coco/host/Kconfig
- delete mode 100644 drivers/virt/coco/host/Makefile
- rename drivers/virt/coco/{host => }/tsm-core.c (85%)
- create mode 100644 include/keys/x509-parser.h
-
--- 
-2.43.0
-
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
