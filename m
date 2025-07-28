@@ -1,327 +1,263 @@
-Return-Path: <linux-kernel+bounces-748014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC85B13B64
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:22:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA20FB13B62
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F96B3B47F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA813A2DFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CF425F797;
-	Mon, 28 Jul 2025 13:22:06 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B61D24678A;
+	Mon, 28 Jul 2025 13:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IjSpe84k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCFB25DD1E;
-	Mon, 28 Jul 2025 13:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A76676025
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753708926; cv=none; b=HkSRG1MS6hIplENxnZp/0zyccWvLOMHj7i7/PQAJxsBGI9/vdfjNnhlMfTRI8o2QlrPqw2jsoZHffMsqGi7UjTy1Z0G3zJcAYlo60vLMhY+oHBMrteJvTcaBDH2yDM2kypfi50NGfi5uidCjVVFcSGNs0L5YiC60dOJaBkBgnDg=
+	t=1753708903; cv=none; b=UUucbQVhz2NYRMpLmOrWHZFi2HU5f3C2Lys31hUTsrIwy7FaEm48INHzJPOpK7Qmdy/M+G3D3AZf8F/5bCWrd7uAEl9GvIxJ7p8ndWwpOalY9DCEwNGA23xmoIe3wAxMza/nV4PtYoccLYLyvAQeIquKfywTPOq5AtgK9c4t0uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753708926; c=relaxed/simple;
-	bh=tDL89vFeuG0vL0clKk7wWuz1/LSJCmsqiwdgxweSd9c=;
+	s=arc-20240116; t=1753708903; c=relaxed/simple;
+	bh=Z5K7LoM3PLBfN43u3ceVJLJHJwkol93Ka++ZjqIVAlw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOiumXTfzLsZkn5wWpiF2tZHLtvSaOTVyVZvK2aN2kNqv9MbdOdJ051/FnbIDjCIZ5/mYzXo1+Etbk4WqotXzyP2uxnwYJdta70ea6L9JhjC5WZurQi2Jht9K5gJNERkf6MVjODKRbwQiizpyh3N/UaUjFaH3tw/Z1mnRdAxSWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: d3158dbc6bb511f0b29709d653e92f7d-20250728
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
-	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS
-	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
-	AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:c0d97fc1-10e2-4736-b29e-d5ed86f889ad,IP:10,
-	URL:0,TC:0,Content:9,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:14
-X-CID-INFO: VERSION:1.1.45,REQID:c0d97fc1-10e2-4736-b29e-d5ed86f889ad,IP:10,UR
-	L:0,TC:0,Content:9,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:14
-X-CID-META: VersionHash:6493067,CLOUDID:1b88b4a0c112bdf876cd08ad7d1896f6,BulkI
-	D:250728103101KH33AOP9,BulkQuantity:8,Recheck:0,SF:17|19|23|43|64|66|74|78
-	|80|81|82|83|102|841,TC:nil,Content:4|50,EDM:-3,IP:-2,URL:0,File:nil,RT:ni
-	l,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,B
-	RR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: d3158dbc6bb511f0b29709d653e92f7d-20250728
-X-User: duanchenghao@kylinos.cn
-Received: from localhost [(39.144.190.111)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 2004151504; Mon, 28 Jul 2025 21:21:52 +0800
-Date: Mon, 28 Jul 2025 21:21:25 +0800
-From: Chenghao Duan <duanchenghao@kylinos.cn>
-To: Hengqi Chen <hengqi.chen@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	bpf@vger.kernel.org, guodongtai@kylinos.cn, youling.tang@linux.dev,
-	jianghaoran@kylinos.cn, vincent.mc.li@gmail.com
-Subject: Re: [PATCH v4 3/5] LoongArch: BPF: Add bpf_arch_xxxxx support for
- Loongarch
-Message-ID: <20250728132125.GB1439240@chenghao-pc>
-References: <20250724141929.691853-1-duanchenghao@kylinos.cn>
- <20250724141929.691853-4-duanchenghao@kylinos.cn>
- <CAEyhmHREKJ7WQ+SYiGTX+zypeZYcUdPNKtHu6cPxqb1wid7TtQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qwEUVjFU9gwQ1ytf/XYrc/EpXvBG+itcH8cefXN3vQT69+esehcukLymyR1GGfe98rFJ1gsvchpwGKWprCmbtWSaqEiJTxiYEpFzcgjyQJbgBLBR3sbftZvh68o6LRktf9055tLy79Np+1dz19HRUzTHE9M1We6ZG9IPP4j6xCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IjSpe84k; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753708899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=37h+OxwY37dFS0xXBKuzWk99em7YV/V2JORPqp4C/mM=;
+	b=IjSpe84kPXTkncCvk7z4YaeUtevJQ14BQz+M0yTG5CSmIVia122zV2RT1a5qDi90tNtIbb
+	3IZWXmGp8XMK0JuUNoBRanoNKBEt1xvOSyExypyENd8FWJgDU4zwABRFS9XT9ShJ4sly2v
+	iAc/WLbeeRAv5YmyDsFlBXs2+7ft754=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-22-gmqrjnTOMLeTOFo9Av4cxA-1; Mon,
+ 28 Jul 2025 09:21:36 -0400
+X-MC-Unique: gmqrjnTOMLeTOFo9Av4cxA-1
+X-Mimecast-MFC-AGG-ID: gmqrjnTOMLeTOFo9Av4cxA_1753708895
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3AB7319560B2;
+	Mon, 28 Jul 2025 13:21:35 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.88.177])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 57BD61800B6A;
+	Mon, 28 Jul 2025 13:21:33 +0000 (UTC)
+Date: Mon, 28 Jul 2025 09:21:29 -0400
+From: Phil Auld <pauld@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: John Stultz <jstultz@google.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: Re: [tip: sched/core] sched: Add CONFIG_SCHED_PROXY_EXEC & boot
+ argument to enable/disable
+Message-ID: <20250728132129.GC11434@pauld.westford.csb>
+References: <20250712033407.2383110-2-jstultz@google.com>
+ <175266115435.406.15916021190678492115.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEyhmHREKJ7WQ+SYiGTX+zypeZYcUdPNKtHu6cPxqb1wid7TtQ@mail.gmail.com>
+In-Reply-To: <175266115435.406.15916021190678492115.tip-bot2@tip-bot2>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Jul 28, 2025 at 06:47:03PM +0800, Hengqi Chen wrote:
-> On Thu, Jul 24, 2025 at 10:21 PM Chenghao Duan <duanchenghao@kylinos.cn> wrote:
-> >
-> > Implement the functions of bpf_arch_text_poke, bpf_arch_text_copy, and
-> > bpf_arch_text_invalidate on the LoongArch architecture.
-> >
-> > On LoongArch, since symbol addresses in the direct mapping
-> > region cannot be reached via relative jump instructions from the paged
-> > mapping region, we use the move_imm+jirl instruction pair as absolute
-> > jump instructions. These require 2-5 instructions, so we reserve 5 NOP
-> > instructions in the program as placeholders for function jumps.
-> >
-> > larch_insn_text_copy is solely used for BPF. The use of
-> > larch_insn_text_copy() requires page_size alignment. Currently, only
-> > the size of the trampoline is page-aligned.
-> >
-> > Co-developed-by: George Guo <guodongtai@kylinos.cn>
-> > Signed-off-by: George Guo <guodongtai@kylinos.cn>
-> > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
-> > Reviewed-by: Hengqi Chen <hengqi.chen@gmail.com>
-> > Reviewed-by: Huacai Chen <chenhuacai@kernel.org>
-> > ---
-> >  arch/loongarch/include/asm/inst.h |  1 +
-> >  arch/loongarch/kernel/inst.c      | 32 ++++++++++
-> >  arch/loongarch/net/bpf_jit.c      | 97 +++++++++++++++++++++++++++++++
-> >  3 files changed, 130 insertions(+)
-> >
-> > diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/asm/inst.h
-> > index 2ae96a35d..88bb73e46 100644
-> > --- a/arch/loongarch/include/asm/inst.h
-> > +++ b/arch/loongarch/include/asm/inst.h
-> > @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instruction insn, struct pt_regs *regs);
-> >  int larch_insn_read(void *addr, u32 *insnp);
-> >  int larch_insn_write(void *addr, u32 insn);
-> >  int larch_insn_patch_text(void *addr, u32 insn);
-> > +int larch_insn_text_copy(void *dst, void *src, size_t len);
-> >
-> >  u32 larch_insn_gen_nop(void);
-> >  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
-> > diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
-> > index 674e3b322..8d6594968 100644
-> > --- a/arch/loongarch/kernel/inst.c
-> > +++ b/arch/loongarch/kernel/inst.c
-> > @@ -4,6 +4,7 @@
-> >   */
-> >  #include <linux/sizes.h>
-> >  #include <linux/uaccess.h>
-> > +#include <linux/set_memory.h>
-> >
-> >  #include <asm/cacheflush.h>
-> >  #include <asm/inst.h>
-> > @@ -218,6 +219,37 @@ int larch_insn_patch_text(void *addr, u32 insn)
-> >         return ret;
-> >  }
-> >
-> > +int larch_insn_text_copy(void *dst, void *src, size_t len)
-> > +{
-> > +       unsigned long flags;
-> > +       size_t wlen = 0;
-> > +       size_t size;
-> > +       void *ptr;
-> > +       int ret = 0;
-> > +
-> > +       set_memory_rw((unsigned long)dst, round_up(len, PAGE_SIZE) / PAGE_SIZE);
-> > +       raw_spin_lock_irqsave(&patch_lock, flags);
-> > +       while (wlen < len) {
-> > +               ptr = dst + wlen;
-> > +               size = min_t(size_t, PAGE_SIZE - offset_in_page(ptr),
-> > +                            len - wlen);
-> > +
-> > +               ret = copy_to_kernel_nofault(ptr, src + wlen, size);
-> > +               if (ret) {
-> > +                       pr_err("%s: operation failed\n", __func__);
-> > +                       break;
-> > +               }
-> > +               wlen += size;
-> > +       }
-> > +       raw_spin_unlock_irqrestore(&patch_lock, flags);
-> > +       set_memory_rox((unsigned long)dst, round_up(len, PAGE_SIZE) / PAGE_SIZE);
-> > +
-> > +       if (!ret)
-> > +               flush_icache_range((unsigned long)dst, (unsigned long)dst + len);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> >  u32 larch_insn_gen_nop(void)
-> >  {
-> >         return INSN_NOP;
-> > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-> > index 7032f11d3..86504e710 100644
-> > --- a/arch/loongarch/net/bpf_jit.c
-> > +++ b/arch/loongarch/net/bpf_jit.c
-> > @@ -4,8 +4,12 @@
-> >   *
-> >   * Copyright (C) 2022 Loongson Technology Corporation Limited
-> >   */
-> > +#include <linux/memory.h>
-> >  #include "bpf_jit.h"
-> >
-> > +#define LOONGARCH_LONG_JUMP_NINSNS 5
-> > +#define LOONGARCH_LONG_JUMP_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
-> > +
-> >  #define REG_TCC                LOONGARCH_GPR_A6
-> >  #define TCC_SAVED      LOONGARCH_GPR_S5
-> >
-> > @@ -88,6 +92,7 @@ static u8 tail_call_reg(struct jit_ctx *ctx)
-> >   */
-> >  static void build_prologue(struct jit_ctx *ctx)
-> >  {
-> > +       int i;
-> >         int stack_adjust = 0, store_offset, bpf_stack_adjust;
-> >
-> >         bpf_stack_adjust = round_up(ctx->prog->aux->stack_depth, 16);
-> > @@ -98,6 +103,10 @@ static void build_prologue(struct jit_ctx *ctx)
-> >         stack_adjust = round_up(stack_adjust, 16);
-> >         stack_adjust += bpf_stack_adjust;
-> >
-> > +       /* Reserve space for the move_imm + jirl instruction */
-> > +       for (i = 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
-> > +               emit_insn(ctx, nop);
-> > +
-> >         /*
-> >          * First instruction initializes the tail call count (TCC).
-> >          * On tail call we skip this instruction, and the TCC is
-> > @@ -1367,3 +1376,91 @@ bool bpf_jit_supports_subprog_tailcalls(void)
-> >  {
-> >         return true;
-> >  }
-> > +
-> > +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 target)
-> > +{
-> > +       if (!target) {
-> > +               pr_err("bpf_jit: jump target address is error\n");
+On Wed, Jul 16, 2025 at 10:19:14AM -0000 tip-bot2 for John Stultz wrote:
+> The following commit has been merged into the sched/core branch of tip:
+>
+
+Cool! Good work John.  "That was easy" ;)
+
+
+Cheers,
+Phil
+
+> Commit-ID:     25c411fce735dda29de26f58d3fce52d4824380c
+> Gitweb:        https://git.kernel.org/tip/25c411fce735dda29de26f58d3fce52d4824380c
+> Author:        John Stultz <jstultz@google.com>
+> AuthorDate:    Sat, 12 Jul 2025 03:33:42 
+> Committer:     Peter Zijlstra <peterz@infradead.org>
+> CommitterDate: Mon, 14 Jul 2025 17:16:31 +02:00
 > 
-> is error ? is NULL ?
-
-What I mean is: This is an illegal target address.
-
+> sched: Add CONFIG_SCHED_PROXY_EXEC & boot argument to enable/disable
 > 
-> > +               return -EFAULT;
-> > +       }
-> > +
-> > +       move_imm(ctx, LOONGARCH_GPR_T1, target, false);
-> > +       emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool is_call)
-> > +{
-> > +       struct jit_ctx ctx;
-> > +
-> > +       ctx.idx = 0;
-> > +       ctx.image = (union loongarch_instruction *)insns;
-> > +
-> > +       if (!target) {
-> > +               emit_insn((&ctx), nop);
-> > +               emit_insn((&ctx), nop);
-> > +               return 0;
-> > +       }
-> > +
-> > +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T0 : LOONGARCH_GPR_ZERO,
-> > +                                 (unsigned long)target);
-> > +}
-> > +
-> > +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
-> > +                      void *old_addr, void *new_addr)
-> > +{
-> > +       u32 old_insns[LOONGARCH_LONG_JUMP_NINSNS] = {[0 ... 4] = INSN_NOP};
-> > +       u32 new_insns[LOONGARCH_LONG_JUMP_NINSNS] = {[0 ... 4] = INSN_NOP};
-> > +       bool is_call = poke_type == BPF_MOD_CALL;
-> > +       int ret;
-> > +
-> > +       if (!is_kernel_text((unsigned long)ip) &&
-> > +               !is_bpf_text_address((unsigned long)ip))
-> > +               return -ENOTSUPP;
-> > +
-> > +       ret = gen_jump_or_nops(old_addr, ip, old_insns, is_call);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       if (memcmp(ip, old_insns, LOONGARCH_LONG_JUMP_NBYTES))
-> > +               return -EFAULT;
-> > +
-> > +       ret = gen_jump_or_nops(new_addr, ip, new_insns, is_call);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       mutex_lock(&text_mutex);
-> > +       if (memcmp(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES))
-> > +               ret = larch_insn_text_copy(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES);
-> > +       mutex_unlock(&text_mutex);
-> > +       return ret;
-> > +}
-> > +
-> > +int bpf_arch_text_invalidate(void *dst, size_t len)
-> > +{
-> > +       int i;
-> > +       int ret = 0;
-> > +       u32 *inst;
-> > +
-> > +       inst = kvmalloc(len, GFP_KERNEL);
-> > +       if (!inst)
-> > +               return -ENOMEM;
-> > +
-> > +       for (i = 0; i < (len/sizeof(u32)); i++)
-> > +               inst[i] = INSN_BREAK;
-> > +
-> > +       if (larch_insn_text_copy(dst, inst, len))
+> Add a CONFIG_SCHED_PROXY_EXEC option, along with a boot argument
+> sched_proxy_exec= that can be used to disable the feature at boot
+> time if CONFIG_SCHED_PROXY_EXEC was enabled.
 > 
-> Do we need text_mutex here and below for larch_insn_text_copy() ?
-
-As a matter of fact, my use of text_mutex is modeled after the arm64
-code. Arm64 also only adds text_mutex to bpf_arch_text_poke. Therefore,
-I have only added text_mutex to bpf_arch_text_poke as well.
-
-In the next version of the code, I will try to add text_mutex to all
-contexts where larch_insn_text_copy is used and conduct tests accordingly.
+> Also uses this option to allow the rq->donor to be different from
+> rq->curr.
 > 
-> > +               ret = -EINVAL;
-> > +
-> > +       kvfree(inst);
-> > +       return ret;
-> > +}
-> > +
-> > +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
-> > +{
-> > +       if (larch_insn_text_copy(dst, src, len))
-> > +               return ERR_PTR(-EINVAL);
-> > +
-> > +       return dst;
-> > +}
-> > --
-> > 2.25.1
-> >
+> Signed-off-by: John Stultz <jstultz@google.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> Link: https://lkml.kernel.org/r/20250712033407.2383110-2-jstultz@google.com
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  5 +++-
+>  include/linux/sched.h                           | 13 +++++++-
+>  init/Kconfig                                    | 12 +++++++-
+>  kernel/sched/core.c                             | 29 ++++++++++++++++-
+>  kernel/sched/sched.h                            | 12 +++++++-
+>  5 files changed, 71 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 07e22ba..00b8357 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6387,6 +6387,11 @@
+>  	sa1100ir	[NET]
+>  			See drivers/net/irda/sa1100_ir.c.
+>  
+> +	sched_proxy_exec= [KNL]
+> +			Enables or disables "proxy execution" style
+> +			solution to mutex-based priority inversion.
+> +			Format: <bool>
+> +
+>  	sched_verbose	[KNL,EARLY] Enables verbose scheduler debug messages.
+>  
+>  	schedstats=	[KNL,X86] Enable or disable scheduled statistics.
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 54a9126..f225b6b 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1656,6 +1656,19 @@ struct task_struct {
+>  	randomized_struct_fields_end
+>  } __attribute__ ((aligned (64)));
+>  
+> +#ifdef CONFIG_SCHED_PROXY_EXEC
+> +DECLARE_STATIC_KEY_TRUE(__sched_proxy_exec);
+> +static inline bool sched_proxy_exec(void)
+> +{
+> +	return static_branch_likely(&__sched_proxy_exec);
+> +}
+> +#else
+> +static inline bool sched_proxy_exec(void)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+>  #define TASK_REPORT_IDLE	(TASK_REPORT + 1)
+>  #define TASK_REPORT_MAX		(TASK_REPORT_IDLE << 1)
+>  
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 965699c..24dd42d 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -878,6 +878,18 @@ config UCLAMP_BUCKETS_COUNT
+>  
+>  	  If in doubt, use the default value.
+>  
+> +config SCHED_PROXY_EXEC
+> +	bool "Proxy Execution"
+> +	# Avoid some build failures w/ PREEMPT_RT until it can be fixed
+> +	depends on !PREEMPT_RT
+> +	# Need to investigate how to inform sched_ext of split contexts
+> +	depends on !SCHED_CLASS_EXT
+> +	# Not particularly useful until we get to multi-rq proxying
+> +	depends on EXPERT
+> +	help
+> +	  This option enables proxy execution, a mechanism for mutex-owning
+> +	  tasks to inherit the scheduling context of higher priority waiters.
+> +
+>  endmenu
+>  
+>  #
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index e9c8bda..dd9f5c0 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -119,6 +119,35 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
+>  
+>  DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+>  
+> +#ifdef CONFIG_SCHED_PROXY_EXEC
+> +DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
+> +static int __init setup_proxy_exec(char *str)
+> +{
+> +	bool proxy_enable = true;
+> +
+> +	if (*str && kstrtobool(str + 1, &proxy_enable)) {
+> +		pr_warn("Unable to parse sched_proxy_exec=\n");
+> +		return 0;
+> +	}
+> +
+> +	if (proxy_enable) {
+> +		pr_info("sched_proxy_exec enabled via boot arg\n");
+> +		static_branch_enable(&__sched_proxy_exec);
+> +	} else {
+> +		pr_info("sched_proxy_exec disabled via boot arg\n");
+> +		static_branch_disable(&__sched_proxy_exec);
+> +	}
+> +	return 1;
+> +}
+> +#else
+> +static int __init setup_proxy_exec(char *str)
+> +{
+> +	pr_warn("CONFIG_SCHED_PROXY_EXEC=n, so it cannot be enabled or disabled at boot time\n");
+> +	return 0;
+> +}
+> +#endif
+> +__setup("sched_proxy_exec", setup_proxy_exec);
+> +
+>  /*
+>   * Debugging: various feature bits
+>   *
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index ac953fa..e53d0b8 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1142,10 +1142,15 @@ struct rq {
+>  	 */
+>  	unsigned long 		nr_uninterruptible;
+>  
+> +#ifdef CONFIG_SCHED_PROXY_EXEC
+> +	struct task_struct __rcu	*donor;  /* Scheduling context */
+> +	struct task_struct __rcu	*curr;   /* Execution context */
+> +#else
+>  	union {
+>  		struct task_struct __rcu *donor; /* Scheduler context */
+>  		struct task_struct __rcu *curr;  /* Execution context */
+>  	};
+> +#endif
+>  	struct sched_dl_entity	*dl_server;
+>  	struct task_struct	*idle;
+>  	struct task_struct	*stop;
+> @@ -1326,10 +1331,17 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+>  #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
+>  #define raw_rq()		raw_cpu_ptr(&runqueues)
+>  
+> +#ifdef CONFIG_SCHED_PROXY_EXEC
+> +static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+> +{
+> +	rcu_assign_pointer(rq->donor, t);
+> +}
+> +#else
+>  static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+>  {
+>  	/* Do nothing */
+>  }
+> +#endif
+>  
+>  #ifdef CONFIG_SCHED_CORE
+>  static inline struct cpumask *sched_group_span(struct sched_group *sg);
+> 
+
+-- 
+
 
