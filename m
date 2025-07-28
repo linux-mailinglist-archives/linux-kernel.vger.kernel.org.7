@@ -1,203 +1,332 @@
-Return-Path: <linux-kernel+bounces-747857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66063B1392C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:44:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0BCB13930
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904E01734D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:44:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E72871753BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D9A24A067;
-	Mon, 28 Jul 2025 10:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14BC245000;
+	Mon, 28 Jul 2025 10:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gfN0i1LG"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2074.outbound.protection.outlook.com [40.107.237.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqLB/W5e"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32A01D6AA
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753699483; cv=fail; b=uUczbf9x1fBNxXrN73S33rrGJGhozW0TxnYzTyCxO31VTZ4RuS0GzbmKQhKggWdvsGEbzNhSAPbT2OBY4XMyBwKy1JMtzpoYMWpS0DoQDNiz3lRwNyBFh8dmXjb5ebVTITM2rwv9E3ON3Gy+0DuUpKutBJpKq8DlBm0PciJO6EY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753699483; c=relaxed/simple;
-	bh=syidpESPSwv5DWxJ18t3P3z8SBVQOgXIgP3+RNcLaqQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sl08Rxkp1RKiQ79voHmcPeMHAO6BVLX8gySe2IjR4mSVradI9O8Sww8mKRUOo60NKuWKKQ64dy1Y1TUncXanXG0RqxdzHA3EG2e8bpE3owm5rEbzn5tyiRXj2cyleLQZZ/NvTwWTtHq+wBzN8r7arMccYO162idp+ApOuQ4Q9po=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gfN0i1LG; arc=fail smtp.client-ip=40.107.237.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DsGgef71TsahZHGc1QfbLyPaEQ+JzHQ5sJFcFqZUQOkFGwkL0JVXwh8I6gjGBHVIAkR4nV1tRfwSeLE5HKAE/KCODSx66l3wK9oIWET6hS668bWvri82Ta9+wyKwoPOWNXYoTZDdma2+aJV4tfVI2IkMPKDDj/qDsyBoA7wo6XyJGQaM4PN3PXZvWjZL6nBT24KCbhc4hUnACEXjc3RLijlIL6X7InJkpl0T0FIt4T9GDF3mjAsqUwZHA34NZf5792pVY3K7k6gBjq15VWY2K4IQ9nZuu4MTXtzOzcoiMBsi9+susbKXUePj/2eGJ7JHxgMbkz/D7qzQbtS1hXNcog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=88rToXQaTltUddtjhUmeMWgFmmOcIOGGZTdcfQuyV/g=;
- b=UCMkXFOlkC5CTZfN2OnmF91iG69e70oysVmGexWR4ugnnXjZp7ELpDWfbo1VIPwFwrsm3JxTnzRC11iF0TPEp6RvCbuD1O7eZ8gHyedg/EE6ylHJm6zWq0WKeDvVcXXuwlI6XilImOy87y4DRmCrQk/cl4nReUUKEc4oLTAUocDj/mkouUSooDz7Kb5JA9KAUmi0sfb+tj2ZMSks8yFR0MM+pNEI2Vwbf5690CFvDlVKc8s30ufRLYTDCRJBWpGapfGX3D4gXYd8cvqwJOAFMBRuAy7/UMsgB1oaxVJ6nSChMT5td/kb/m3uMMKOx836HNyuxuzyAquJqQRgPLIANQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=bootlin.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=88rToXQaTltUddtjhUmeMWgFmmOcIOGGZTdcfQuyV/g=;
- b=gfN0i1LGXEGw/43HjVPWnpG3Bt8yOjGXA7OxU2Uz2JpYuj4pHsGpDFfePcQkBjgJHD927OM3K8drt1WXvb10XgqnCXNfo13RnnHiXj7FTYjrBU+43MJld5KlaKPD/JOSs20MjUIE/IlIDMHbFGxonM9YQqg7cMEj0YTjTFEK8NI=
-Received: from SJ0PR13CA0154.namprd13.prod.outlook.com (2603:10b6:a03:2c7::9)
- by DS0PR12MB7584.namprd12.prod.outlook.com (2603:10b6:8:13b::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Mon, 28 Jul
- 2025 10:44:36 +0000
-Received: from MWH0EPF000971E2.namprd02.prod.outlook.com
- (2603:10b6:a03:2c7:cafe::65) by SJ0PR13CA0154.outlook.office365.com
- (2603:10b6:a03:2c7::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.11 via Frontend Transport; Mon,
- 28 Jul 2025 10:44:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- MWH0EPF000971E2.mail.protection.outlook.com (10.167.243.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8989.10 via Frontend Transport; Mon, 28 Jul 2025 10:44:35 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Jul
- 2025 05:44:33 -0500
-Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 28 Jul 2025 05:44:29 -0500
-From: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-To: <git@amd.com>, <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>,
-	<wsa+renesas@sang-engineering.com>, <quic_msavaliy@quicinc.com>,
-	<Shyam-sundar.S-k@amd.com>, <xiaopei01@kylinos.cn>,
-	<billy_tsai@aspeedtech.com>, <linux-i3c@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <michal.simek@amd.com>, <radhey.shyam.pandey@amd.com>,
-	<srinivas.goud@amd.com>, <shubhrajyoti.datta@amd.com>,
-	<manion05gk@gmail.com>, Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Subject: [PATCH] i3c: dw: Add shutdown support to dw_i3c_master driver
-Date: Mon, 28 Jul 2025 16:14:25 +0530
-Message-ID: <20250728104425.3878770-1-manikanta.guntupalli@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384D010A1E;
+	Mon, 28 Jul 2025 10:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753699636; cv=none; b=fStHC/NmOCcV7MlFVyfL0FDYZkjKrFiU2QFBLjnwo51eI18Dpdysd3tFzaQsV+dY1xAO/pwlsKCGz1rALcHybGjbFIyT/WYrLadt6vxBvU9PmM/+2ufJ5uPz3Sx+2VsoxZbLGo24Az5CgbacPoygI89eL4RslkUWuvAE1BAJwQY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753699636; c=relaxed/simple;
+	bh=8y3h100MF2waYLHxEYW4tpbWqLpE6NrR9UtGd5nEcfo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nU1aeOMHdp98EIxgJpAfRBRotYgdVdeFFTFlOsESBOnELtijcNdheB45fR9MGTXaMRvkNi6xXli143Xh6o887AF/M8hgns4lHef0N8TdjlRawznX5OZc63OdZOTzwWwEhPZqFRgHhykmeVk+7fch+On89U1px9OriCL46ZE8eDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqLB/W5e; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-73e58d5108dso2498165a34.3;
+        Mon, 28 Jul 2025 03:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753699634; x=1754304434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g1/K1uetCxj7YK34KvSZ6RXT5MvbIvnxlVqahFZoYF8=;
+        b=TqLB/W5erqu6SmAWc3ZXObg9y5pkNpYr0pN5sp79smQhz7ysxiydCf5y3/rWxrk03t
+         4UY2JghAJorFWkPMvfqX7F2WthFcfzlbm4HFkYOfh8Qd9yINfTus/EIqhzGTjEg793B9
+         kkKWah6vXGk24QbwxPuTrAcq7IJtw7MCpzFkZotulaGTp7v/y0QBpmmSZSjWzkT4bzWa
+         FoGw1pqkT7iwgfVz6vISQdrm2DZDYQc9x4tJzJF31f2cCVCsW3lXyzn/yDvU0sE1UUEh
+         4G4Utf62yY7FOpJprHIDqh3bAgY/wDERrbTjcALurvmSn1888guhdLvufWZetqvR4PKV
+         nTEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753699634; x=1754304434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g1/K1uetCxj7YK34KvSZ6RXT5MvbIvnxlVqahFZoYF8=;
+        b=GT7IxK7mW7ihVRsIOhAzK9L30ZYmRKdiyK6RpuKqYkL54vxX5d4dp9Ll6eryZC+CGo
+         gBU2gd/E1LKa8tDFnHgm+V35N0TUqSYkW8bOY6TqwBFxymnm6L31jeInSi/n0JpdKcP6
+         4Rao9i3a2hOjSZmPycKn2eG99E4lzaPJKtib1T+kXU8kQvSsynoYlyq/IgqKGxsYel6s
+         zQGdmmX+fFVpP4g40CLUzDYMaNDkkLl4cv43dJOx6OVpNT50SwOHpm0HAj4nm7eIQPxX
+         LH/RljBf860XHAg+essqQphxwKgUgmMM+md+bLKd4NcgP+tWngLMH0FibqpDzMHamqu/
+         5WFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAmjso6yhijCM4BiPnEE4jLurYkHToD04l2poGA+2T4KHv6ii8257CALr+M714+nS5SwY=@vger.kernel.org, AJvYcCWThwhU/u1grDFF8i29jRNl63j8AY1IlGe3D7S904ogh7W5ckV3//N7aBxKefU3wvBVPY2jDwh/F0ospEqr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpZEdvDk0LRAGX4PPtzqBtBFgyKcTJIGJCp1HMNRlV8jeDrNTQ
+	w7j36CpKDQdMhcNY3yqvzYMQ44axvy4lfUQKCP68W3J2w5BSJ89qlTBIcjt1cLxyDPd06zs0n1k
+	U07YJqZdy21/cYWA3mIxD6AuzW6l5l2Q=
+X-Gm-Gg: ASbGncvW7HbCqPSUHW1nz/vDazTrLfZdbZ6G0xhu+HxH+crb2HaJAHVfirfl+FN0pSD
+	5UWyNY9t9XX3wDkPlMg70BaOh+2g13lSt3phDYnGRTqs61glYJv9KYaOsKa2THOGB+zaR8Lmu5S
+	eIbyGABXac4c6if5pMmANwh0x6bTA1yyxxQvW2XosSn6MNUFGTMho7RcZ4m8tU25H8TIl5A936D
+	Mqy+SI=
+X-Google-Smtp-Source: AGHT+IEbs/CPUvoC207W88gxNUz1R4xGlysm19XDoofeVgAWWcEO1zyWYEniC5FZfj/MitnvPCuEoJ2UHswDpLvRGZ8=
+X-Received: by 2002:a05:6808:bc7:b0:403:50e7:83e1 with SMTP id
+ 5614622812f47-42bb76ddf69mr5464714b6e.11.1753699634038; Mon, 28 Jul 2025
+ 03:47:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: manikanta.guntupalli@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E2:EE_|DS0PR12MB7584:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78cb354b-f655-437d-d466-08ddcdc3be7c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NmZ9qzuZB1kk+/5VLBbFa5+YHjtUG2t2P3Iuusy+JdZ1Z3mZQOMclfvoEVzA?=
- =?us-ascii?Q?Rqo6LSttM1NjiwRvaoUAukH2rsnoTAHzcvTVSmbFzM2l5XyrD1mbt2nhP3rB?=
- =?us-ascii?Q?elAif+kAryFToS1/zbvCW3ruKuK+IUnkK0xbVhB3MYV3DgIO6fGpZjgrxgQf?=
- =?us-ascii?Q?rCHn/kezfJbZat5jmVF4TGBE5gRxJPM2rQ66PXLSEBzPwoJgt1/XZpAWnwXk?=
- =?us-ascii?Q?HtwhO61WuW2cmms9QJefQgef/QlqsLgAnmYNRHKH7VJreV+VFJMzO2tCpNDZ?=
- =?us-ascii?Q?DId5k0W9cLQKNtThtvQjTXS2lGI1H0XxrCL16K/t2zwiAo6Laiy4j+XKk4YH?=
- =?us-ascii?Q?nOhdruRUCQ/RD0yLDA3O3im38NKMRvwTVKihHJSOKIlfvzOPYlMUpPChTPjE?=
- =?us-ascii?Q?to5LMNdJvpTYI5HHAlgTprTozQvEid9YyHIXIeE6+nWDcnmZwmPEFjtdq7JW?=
- =?us-ascii?Q?Z6v0q2cjtsZ2Ng4JfJuencHy3xRsf8N69XsP+I/kAShI49royU5NkpT2+Cz3?=
- =?us-ascii?Q?5DrgXvHfeZz1nmkX/Pac/ZZ3SfrRkqLD4hvTNuqEab5jvt2muHi2Rbp2NaZo?=
- =?us-ascii?Q?nwjNGKiuJNX6SZptZwObLkurAocPEXbLIzXKRBDFu4z6qQntElq1JWrx5jbp?=
- =?us-ascii?Q?TdAiUKSPMP7nPmVk7wUFX2bvH//IC9YzAD+WBYzNQwjH55iyyE2t6K13sUvP?=
- =?us-ascii?Q?ZhORsxM+Ymbjh1YMnsyHyPLSIblgzx+LjngHT2h7Vu6tfmDqfUeiN8N4jnpH?=
- =?us-ascii?Q?LdLguKx9lqWVBCTQo7ar2kjgFt9PUwAbqqBKdtmYsAdfn9+Db/uAbe9jYMif?=
- =?us-ascii?Q?GsxmW5b3NxbtB4+prZ2E9gckd04KJ+HaULo99++gdLI+mI/Ffnxw2MCc/QKu?=
- =?us-ascii?Q?doIOEmFAIaHflQe4h5bJjkdeDyj/lOE0p5aWQ01Y21rfwOHbhaMBeyjhAJ16?=
- =?us-ascii?Q?qxefpOxVhHER1RjZ6c0hESFWKeeNpqpxkMt6wsICYTV8FfWmDefilWToQIML?=
- =?us-ascii?Q?E2oRjWNGgeF+YwYkK99p2OgIxRM4j7IvKxPA7XNoV8kBR5zh0Pu6nkPIpWc7?=
- =?us-ascii?Q?oMsMGvk0Utwo3A2CT2oCgnmJYxMuKFucUB55bWvLGmjjVLUHdPJ/Sblq+iE6?=
- =?us-ascii?Q?2nAwZkAvHLlpLP6Jhc1AhYS0e8i6BfxgaS6mP+D8pnqkbI9gzeO3x3NA9XW0?=
- =?us-ascii?Q?Eej2gLySob1dM7vOn0SGeaKypzK+W+7OlwPi9NGK3/WV8RNHCA4c8Qm8L80g?=
- =?us-ascii?Q?V4+hR1cEb6b7duA8BcT73fOpK6lFyXSdwbv0+KSCOZ6ip2UbJsT5QJYDJ1T5?=
- =?us-ascii?Q?TyPP45WmYy9UjPXaoOcJs8ShSh9zoHsdH/BJ5qRmeE2Lkev913tynfSRfG+5?=
- =?us-ascii?Q?iLHw9dIFTUAyIP/DRcJr609Xwwi+VcJHOIudTmarx02iOT1LMiA1UjHB3q/D?=
- =?us-ascii?Q?TYWMchB5g17XWP8aB+lXjVAL/tL+QOBvVyyog4/HFOyp7eZEzqz3dq92w3Z8?=
- =?us-ascii?Q?IVxgdpS6yrzZKn4rZDFLPl1cm4mDpEYK8vWTkj7T5r1+3Oui030B9q1zbg?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2025 10:44:35.3305
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78cb354b-f655-437d-d466-08ddcdc3be7c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E2.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7584
+References: <20250724141929.691853-1-duanchenghao@kylinos.cn> <20250724141929.691853-4-duanchenghao@kylinos.cn>
+In-Reply-To: <20250724141929.691853-4-duanchenghao@kylinos.cn>
+From: Hengqi Chen <hengqi.chen@gmail.com>
+Date: Mon, 28 Jul 2025 18:47:03 +0800
+X-Gm-Features: Ac12FXz307K8bAIBPzHfaq6qmjqxxiAnHJRSewm21oMjxXanNkTh4bIvMmSs3LQ
+Message-ID: <CAEyhmHREKJ7WQ+SYiGTX+zypeZYcUdPNKtHu6cPxqb1wid7TtQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] LoongArch: BPF: Add bpf_arch_xxxxx support for Loongarch
+To: Chenghao Duan <duanchenghao@kylinos.cn>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
+	vincent.mc.li@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add shutdown handler to the Synopsys DesignWare I3C master driver,
-ensuring the device is gracefully disabled during system shutdown.
+On Thu, Jul 24, 2025 at 10:21=E2=80=AFPM Chenghao Duan <duanchenghao@kylino=
+s.cn> wrote:
+>
+> Implement the functions of bpf_arch_text_poke, bpf_arch_text_copy, and
+> bpf_arch_text_invalidate on the LoongArch architecture.
+>
+> On LoongArch, since symbol addresses in the direct mapping
+> region cannot be reached via relative jump instructions from the paged
+> mapping region, we use the move_imm+jirl instruction pair as absolute
+> jump instructions. These require 2-5 instructions, so we reserve 5 NOP
+> instructions in the program as placeholders for function jumps.
+>
+> larch_insn_text_copy is solely used for BPF. The use of
+> larch_insn_text_copy() requires page_size alignment. Currently, only
+> the size of the trampoline is page-aligned.
+>
+> Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> Reviewed-by: Hengqi Chen <hengqi.chen@gmail.com>
+> Reviewed-by: Huacai Chen <chenhuacai@kernel.org>
+> ---
+>  arch/loongarch/include/asm/inst.h |  1 +
+>  arch/loongarch/kernel/inst.c      | 32 ++++++++++
+>  arch/loongarch/net/bpf_jit.c      | 97 +++++++++++++++++++++++++++++++
+>  3 files changed, 130 insertions(+)
+>
+> diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/a=
+sm/inst.h
+> index 2ae96a35d..88bb73e46 100644
+> --- a/arch/loongarch/include/asm/inst.h
+> +++ b/arch/loongarch/include/asm/inst.h
+> @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instruction i=
+nsn, struct pt_regs *regs);
+>  int larch_insn_read(void *addr, u32 *insnp);
+>  int larch_insn_write(void *addr, u32 insn);
+>  int larch_insn_patch_text(void *addr, u32 insn);
+> +int larch_insn_text_copy(void *dst, void *src, size_t len);
+>
+>  u32 larch_insn_gen_nop(void);
+>  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
+> diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
+> index 674e3b322..8d6594968 100644
+> --- a/arch/loongarch/kernel/inst.c
+> +++ b/arch/loongarch/kernel/inst.c
+> @@ -4,6 +4,7 @@
+>   */
+>  #include <linux/sizes.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/set_memory.h>
+>
+>  #include <asm/cacheflush.h>
+>  #include <asm/inst.h>
+> @@ -218,6 +219,37 @@ int larch_insn_patch_text(void *addr, u32 insn)
+>         return ret;
+>  }
+>
+> +int larch_insn_text_copy(void *dst, void *src, size_t len)
+> +{
+> +       unsigned long flags;
+> +       size_t wlen =3D 0;
+> +       size_t size;
+> +       void *ptr;
+> +       int ret =3D 0;
+> +
+> +       set_memory_rw((unsigned long)dst, round_up(len, PAGE_SIZE) / PAGE=
+_SIZE);
+> +       raw_spin_lock_irqsave(&patch_lock, flags);
+> +       while (wlen < len) {
+> +               ptr =3D dst + wlen;
+> +               size =3D min_t(size_t, PAGE_SIZE - offset_in_page(ptr),
+> +                            len - wlen);
+> +
+> +               ret =3D copy_to_kernel_nofault(ptr, src + wlen, size);
+> +               if (ret) {
+> +                       pr_err("%s: operation failed\n", __func__);
+> +                       break;
+> +               }
+> +               wlen +=3D size;
+> +       }
+> +       raw_spin_unlock_irqrestore(&patch_lock, flags);
+> +       set_memory_rox((unsigned long)dst, round_up(len, PAGE_SIZE) / PAG=
+E_SIZE);
+> +
+> +       if (!ret)
+> +               flush_icache_range((unsigned long)dst, (unsigned long)dst=
+ + len);
+> +
+> +       return ret;
+> +}
+> +
+>  u32 larch_insn_gen_nop(void)
+>  {
+>         return INSN_NOP;
+> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> index 7032f11d3..86504e710 100644
+> --- a/arch/loongarch/net/bpf_jit.c
+> +++ b/arch/loongarch/net/bpf_jit.c
+> @@ -4,8 +4,12 @@
+>   *
+>   * Copyright (C) 2022 Loongson Technology Corporation Limited
+>   */
+> +#include <linux/memory.h>
+>  #include "bpf_jit.h"
+>
+> +#define LOONGARCH_LONG_JUMP_NINSNS 5
+> +#define LOONGARCH_LONG_JUMP_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
+> +
+>  #define REG_TCC                LOONGARCH_GPR_A6
+>  #define TCC_SAVED      LOONGARCH_GPR_S5
+>
+> @@ -88,6 +92,7 @@ static u8 tail_call_reg(struct jit_ctx *ctx)
+>   */
+>  static void build_prologue(struct jit_ctx *ctx)
+>  {
+> +       int i;
+>         int stack_adjust =3D 0, store_offset, bpf_stack_adjust;
+>
+>         bpf_stack_adjust =3D round_up(ctx->prog->aux->stack_depth, 16);
+> @@ -98,6 +103,10 @@ static void build_prologue(struct jit_ctx *ctx)
+>         stack_adjust =3D round_up(stack_adjust, 16);
+>         stack_adjust +=3D bpf_stack_adjust;
+>
+> +       /* Reserve space for the move_imm + jirl instruction */
+> +       for (i =3D 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
+> +               emit_insn(ctx, nop);
+> +
+>         /*
+>          * First instruction initializes the tail call count (TCC).
+>          * On tail call we skip this instruction, and the TCC is
+> @@ -1367,3 +1376,91 @@ bool bpf_jit_supports_subprog_tailcalls(void)
+>  {
+>         return true;
+>  }
+> +
+> +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 target)
+> +{
+> +       if (!target) {
+> +               pr_err("bpf_jit: jump target address is error\n");
 
-The shutdown handler cancels any pending hot-join work and disables
-interrupts.
+is error ? is NULL ?
 
-Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
----
- drivers/i3c/master/dw-i3c-master.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> +               return -EFAULT;
+> +       }
+> +
+> +       move_imm(ctx, LOONGARCH_GPR_T1, target, false);
+> +       emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
+> +
+> +       return 0;
+> +}
+> +
+> +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool is_=
+call)
+> +{
+> +       struct jit_ctx ctx;
+> +
+> +       ctx.idx =3D 0;
+> +       ctx.image =3D (union loongarch_instruction *)insns;
+> +
+> +       if (!target) {
+> +               emit_insn((&ctx), nop);
+> +               emit_insn((&ctx), nop);
+> +               return 0;
+> +       }
+> +
+> +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T0 : LOON=
+GARCH_GPR_ZERO,
+> +                                 (unsigned long)target);
+> +}
+> +
+> +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
+> +                      void *old_addr, void *new_addr)
+> +{
+> +       u32 old_insns[LOONGARCH_LONG_JUMP_NINSNS] =3D {[0 ... 4] =3D INSN=
+_NOP};
+> +       u32 new_insns[LOONGARCH_LONG_JUMP_NINSNS] =3D {[0 ... 4] =3D INSN=
+_NOP};
+> +       bool is_call =3D poke_type =3D=3D BPF_MOD_CALL;
+> +       int ret;
+> +
+> +       if (!is_kernel_text((unsigned long)ip) &&
+> +               !is_bpf_text_address((unsigned long)ip))
+> +               return -ENOTSUPP;
+> +
+> +       ret =3D gen_jump_or_nops(old_addr, ip, old_insns, is_call);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (memcmp(ip, old_insns, LOONGARCH_LONG_JUMP_NBYTES))
+> +               return -EFAULT;
+> +
+> +       ret =3D gen_jump_or_nops(new_addr, ip, new_insns, is_call);
+> +       if (ret)
+> +               return ret;
+> +
+> +       mutex_lock(&text_mutex);
+> +       if (memcmp(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES))
+> +               ret =3D larch_insn_text_copy(ip, new_insns, LOONGARCH_LON=
+G_JUMP_NBYTES);
+> +       mutex_unlock(&text_mutex);
+> +       return ret;
+> +}
+> +
+> +int bpf_arch_text_invalidate(void *dst, size_t len)
+> +{
+> +       int i;
+> +       int ret =3D 0;
+> +       u32 *inst;
+> +
+> +       inst =3D kvmalloc(len, GFP_KERNEL);
+> +       if (!inst)
+> +               return -ENOMEM;
+> +
+> +       for (i =3D 0; i < (len/sizeof(u32)); i++)
+> +               inst[i] =3D INSN_BREAK;
+> +
+> +       if (larch_insn_text_copy(dst, inst, len))
 
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index ae1992665673..6769def5580a 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -1762,6 +1762,29 @@ static const struct dev_pm_ops dw_i3c_pm_ops = {
- 	SET_RUNTIME_PM_OPS(dw_i3c_master_runtime_suspend, dw_i3c_master_runtime_resume, NULL)
- };
- 
-+static void dw_i3c_shutdown(struct platform_device *pdev)
-+{
-+	struct dw_i3c_master *master = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(master->dev);
-+	if (ret < 0) {
-+		dev_err(master->dev,
-+			"<%s> cannot resume i3c bus master, err: %d\n",
-+			__func__, ret);
-+		return;
-+	}
-+
-+	cancel_work_sync(&master->hj_work);
-+
-+	/* Disable interrupts */
-+	writel((u32)~INTR_ALL, master->regs + INTR_STATUS_EN);
-+	writel((u32)~INTR_ALL, master->regs + INTR_SIGNAL_EN);
-+
-+	pm_runtime_mark_last_busy(master->dev);
-+	pm_runtime_put_autosuspend(master->dev);
-+}
-+
- static const struct of_device_id dw_i3c_master_of_match[] = {
- 	{ .compatible = "snps,dw-i3c-master-1.00a", },
- 	{},
-@@ -1777,6 +1800,7 @@ MODULE_DEVICE_TABLE(acpi, amd_i3c_device_match);
- static struct platform_driver dw_i3c_driver = {
- 	.probe = dw_i3c_probe,
- 	.remove = dw_i3c_remove,
-+	.shutdown = dw_i3c_shutdown,
- 	.driver = {
- 		.name = "dw-i3c-master",
- 		.of_match_table = dw_i3c_master_of_match,
--- 
-2.34.1
+Do we need text_mutex here and below for larch_insn_text_copy() ?
 
+> +               ret =3D -EINVAL;
+> +
+> +       kvfree(inst);
+> +       return ret;
+> +}
+> +
+> +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
+> +{
+> +       if (larch_insn_text_copy(dst, src, len))
+> +               return ERR_PTR(-EINVAL);
+> +
+> +       return dst;
+> +}
+> --
+> 2.25.1
+>
 
