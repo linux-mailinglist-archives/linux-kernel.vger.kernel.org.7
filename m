@@ -1,168 +1,116 @@
-Return-Path: <linux-kernel+bounces-747981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA67B13AFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:06:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2636FB13AFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32A9D161B41
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:06:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C3667AA605
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030CF265298;
-	Mon, 28 Jul 2025 13:06:43 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BC1265298;
+	Mon, 28 Jul 2025 13:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gxxvMy9t"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C4816DEB1;
-	Mon, 28 Jul 2025 13:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B7824678A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753708002; cv=none; b=kuRu/UItJTEhzHj2eehOPLjS9yfty96UTdgUbzayJ6zX1pKTB/BUzN9lDVupN4jBzTbtMkiRQsdIriKvzaCTFsbMOJ87Gi7a+/y+kudimt9OZJ7MKaWwa+E4gV1zt1mXr59VZwEPdHu6XqMpPcg/3GST8ldcqDMu5RldMg/t5Ns=
+	t=1753708016; cv=none; b=IUJDUNA0hjzEQn8/nAYgD0s4YH5csyvpnSCjCWzmz0fiuyqG465gKKkkEfqdAbYhthHGmuaN9muDQige3fUxb8w0kg6jjEVl/LkBXj/zLjmttipfyNpk5rvzofddyR6l2E4qz0FVCf2/cH44rymjHXkEBYa63IbyIImvv6X3Vvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753708002; c=relaxed/simple;
-	bh=/QC5Uml2RzEUPlWKdwR99j7fu1LpzpTRb5ePH6MzOdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UZUUX8qExFcUQqTcii9jlXxMW6hbKCyepOtw+J+3E2u2nexmaS0peb/ofzr7ua6LkKoE5m50Ja8EoniDCL1KMByA+k9cdV0XyfU1atSdyxtlOZVe0uO4BohzxuLLY2DTEd+8FW+mKdFnyPVjRt/x1bIDOIPIU+Ton5v7CTOCquU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: aff7d8466bb311f0b29709d653e92f7d-20250728
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:65580000-cbad-4731-8dc5-6e4149e6dd64,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:7a757c635182a2bde344434a80c9e0fe,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: aff7d8466bb311f0b29709d653e92f7d-20250728
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1996137064; Mon, 28 Jul 2025 21:06:34 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 1F3B3E008FA4;
-	Mon, 28 Jul 2025 21:06:34 +0800 (CST)
-X-ns-mid: postfix-688775D9-9540941
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 70404E008FA2;
-	Mon, 28 Jul 2025 21:06:28 +0800 (CST)
-Message-ID: <fa7485e4-a3d9-45ef-a0f5-6a3b9dd12f93@kylinos.cn>
-Date: Mon, 28 Jul 2025 21:06:27 +0800
+	s=arc-20240116; t=1753708016; c=relaxed/simple;
+	bh=LWv4LvXPIWsBIZ9CQoHQIdPcTFcYmm1rCR89Mt/KvKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JuId8jnKTkbQSaBgzrS7sL1/Fp1O982qjDqzDtWcZ8w4v7ZU/76sxG88vhcXn6JUNXjmPD8wHdohTjud8eqqAxBzGpthd1jC542btx5EiVWDq1Di8NpENqvpd8KMfT5kirFQ63mOjaJcprrGwZOlFx2CXkX2Dc7QA4CEsJE1nRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gxxvMy9t; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso7023395a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1753708012; x=1754312812; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e0cA9rfA0/RjVo/W7zMdajkdBMWZ2roOYs7qPdBTCbU=;
+        b=gxxvMy9t9J1Pmd1xLCAwZnqmWLhckLGXmmUMYWrWRrHn1BRhiGjm050JIAfY06n4Hg
+         Yaecy4bccOEpkwAyNOc/sC+vExheUyrDCNmh+28pCcR/0trBsXsBI+IqBaWabxzqXjkS
+         QG56lx6IW53/ftjqGMizTSKzmJC+/iKrt++EwEm+oFA+NXllYbQMOsBIU9B09AnTTNo/
+         KWdKWYoRtiYZPzqC/WGacCz52B0wivEbtV6cSudDCgzNJvnJ0541wBL4KrIFlxt+xExh
+         UCZDuzASUt/T8oY/cn4AjEh6ZnbLBdi7cNWEV1iRe1gk3vzg/nwNcrvg+Y9rDL/P/smH
+         xkrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753708012; x=1754312812;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e0cA9rfA0/RjVo/W7zMdajkdBMWZ2roOYs7qPdBTCbU=;
+        b=qHSbRAFeq/R48bc6YTZPWofpPzmHEL4BJte3kKTlVgfWYuCKAVGKJj1+rTvxbmCwBr
+         zcaN7x4VGGDGc17gCdj6iTuLYRsTYAqZYvCO92I/KsU/TXBn+OR+j8ANTk34gWnSXlgy
+         gEl2DOWdcWeZa50gkLsLGd0v8PZxJJs633XBVCBefCcWr6ziMNU1pvVbtKjV7ww+VIp6
+         UqELQGTJLc0a7t9sxGwzKhrqD6MTolGVQu67niLsrNRZqqZOT0OckYxOGZ1MpZx1oEEc
+         WWr793PlLfTgg0McPJaC9FNLtkjjRt2Gh1qe8HBffnBqU226+t+LeQmu+SV9qqgoA5Kn
+         DLig==
+X-Forwarded-Encrypted: i=1; AJvYcCXjs6dj7XImgamZWxz9QtYIX6V9/QvRbjis933f9i74CF/kzahqvyNwtfSbVieqsZjj8xcPAJXZsKFb/3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXr4TaJnGbgPOkHa32aaVBCkNoarreS4u6iAc4dexIePB4sLI7
+	bNXIAmuXd3Q5XBzkUmDoRFROA4w4/84BwD9u4sDyQmcX6XO6eieuiwvW4tKaUgj9jas=
+X-Gm-Gg: ASbGncuYGLf6Vi9h23q69UF/FBs+4m34fXm777D/4Au46DoaKqcLL5yWgpFoYiuaiaQ
+	hieymBfVLAdUhA3qNXYvEa091WhQHPX3kHpog3MronLahOsPdCh/gbgayOrac4tWRyKcDWIuJcE
+	Cezz9j70O444b1K81sK9vH88+yGAKREtV66wAtpS0fEVnR5sXd/zyIKvfLABxnzK9CZXQAbMvP8
+	L8nVmgBpiFEdnRpvIhqoPndkr8fb3fTgOGqp+zci5VMdSrKtjhZjHkuaO27SR4tsZSDG2wXbDI8
+	WH0sUjRKul5vJSwaZ1+eVATbDAFhA7ZFDxM0ZZc5+OtM8h+w8XpM5YvH0NOiWp/ugMX5Px007Aj
+	gRkliPr3UYNWWUnjv/d1tGzX03P2UxXC9Kh8=
+X-Google-Smtp-Source: AGHT+IG9NBHXdbyzLYH2o7xnbpc3Q/Pq7Orr4I2+N60CLFz7AZwPqB/BkF650wz8S6TPyC8dgZVLCg==
+X-Received: by 2002:a05:6402:210e:b0:615:546a:932f with SMTP id 4fb4d7f45d1cf-615546a93e7mr1693570a12.18.1753708010755;
+        Mon, 28 Jul 2025 06:06:50 -0700 (PDT)
+Received: from localhost (109-81-20-172.rct.o2.cz. [109.81.20.172])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-6153143af17sm1824507a12.62.2025.07.28.06.06.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 06:06:50 -0700 (PDT)
+Date: Mon, 28 Jul 2025 15:06:49 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Hannes Reinecke <hare@suse.de>
+Cc: David Hildenbrand <david@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Hannes Reinecke <hare@kernel.org>
+Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
+Message-ID: <aId16W4EaqjANtKR@tiehlicka>
+References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
+ <aIc5XxgkbAwF6wqE@tiehlicka>
+ <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
+ <aIc9DQ1PwsbiOQwc@tiehlicka>
+ <79919ace-9cd2-4600-9615-6dc26ba19e19@redhat.com>
+ <f859e5c3-7c96-4d97-a447-75070813450c@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] PM: Optionally block user fork during freeze to
- improve performance
-To: David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, rafael@kernel.org,
- len.brown@intel.com, pavel@kernel.org, kees@kernel.org, mingo@redhat.com,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250606062502.19607-1-zhangzihuan@kylinos.cn>
- <20250606082244.GL30486@noisy.programming.kicks-ass.net>
- <83513599-e007-4d07-ac28-386bc5c7552d@kylinos.cn>
- <cd548b13-620e-4df5-9901-1702f904d470@redhat.com>
- <a4370ebc-b1ce-46ba-b3a4-cb628125d7d0@kylinos.cn>
- <aEvNqY5piB02l20T@tiehlicka>
- <ee1de994-e59f-4c6c-96f3-66056b002889@kylinos.cn>
- <775aaf10-3d19-4d5a-bf2b-703211166be4@redhat.com>
- <7d70334a-2e0a-4d1e-b4d0-64d0e3aa5439@kylinos.cn>
- <345a04ad-cf25-4af5-802a-bc8826d37b19@redhat.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <345a04ad-cf25-4af5-802a-bc8826d37b19@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f859e5c3-7c96-4d97-a447-75070813450c@suse.de>
 
-Hi,
+On Mon 28-07-25 11:37:46, Hannes Reinecke wrote:
+> On 7/28/25 11:10, David Hildenbrand wrote:
+> And to make matters worse, we have two competing user-space programs:
+> - udev
+> - daxctl
+> neither of which is (or can be made) aware of each other.
+> This leads to races and/or inconsistencies.
 
-=E5=9C=A8 2025/6/18 19:54, David Hildenbrand =E5=86=99=E9=81=93:
-> On 18.06.25 13:30, Zihuan Zhang wrote:
->> Hi David,
->>
->> =E5=9C=A8 2025/6/16 15:45, David Hildenbrand =E5=86=99=E9=81=93:
->>>
->>>>> [...]
->>>> In our test scenario, although new processes can indeed be created
->>>> during the usleep_range() intervals between freeze iterations, it=E2=
-=80=99s
->>>> actually difficult to make the freezer fail outright. This is becaus=
-e
->>>> user processes are forcibly frozen: when they return to user space a=
-nd
->>>> check for pending signals, they enter try_to_freeze() and transition
->>>> into the refrigerator.
->>>>
->>>> However, since the scheduler is fair by design, it gives both newly
->>>> forked tasks and yet-to-be-frozen tasks a chance to run. This
->>>> competition for CPU time can slightly delay the overall freeze=20
->>>> process.
->>>> While this typically doesn=E2=80=99t lead to failure, it does cause =
-more=20
->>>> retries
->>>> than necessary, especially under CPU pressure.
->>>
->>> I think that goes back to my original comment: why are we even
->>> allowing fork children to run at all when we are currently freezing
->>> all tasks?
->>>
->>> I would imagine that try_to_freeze_tasks() should force any new
->>> processes (forked children) to start in the frozen state directly and
->>> not get scheduled in the first place.
->>>
->> Thanks again for your comments and suggestion.
->>
->> We understand the motivation behind your idea: ideally, newly forked
->> tasks during freezing should either be immediately frozen or prevented
->> from running at all, to avoid unnecessary retries and delays. That mak=
-es
->> perfect sense.
->>
->> However, implementing this seems non-trivial under the current freezer
->> model, as it relies on voluntary transitions and lacks a mechanism to
->> block forked children from being scheduled.
->>
->> Any insights or pointers would be greatly appreciated.
->
-> I'm afraid I can't provide too much guidance on scheduler logic.
->
-> Apparently we have this freezer_active global that forces existing=20
-> frozen pages to enter the freezing_slow_path().
->
-> There, we perform multiple checks, including "pm_freezing &&=20
-> !(p->flags & PF_KTHREAD)".
->
-> I would have thought that we would want to make fork()/clone()=20
-> children while freezing also result in freezing_slow_path()=3D=3Dtrue, =
-and=20
-> stop them from getting scheduled in the first place.
->
-> Again, no scheduler expert, but that's something I would look into.
->
-We=E2=80=99re currently working on a new freeze priority mechanism, which=
- allows=20
-the freezer to freeze user processes in layers rather than treating all=20
-tasks equally.
+Would it help if generic udev memory hotplug rule exclude anything that
+is dax backed? Is there a way to check for that? Sorry if this is a
+stupid question.
 
-With our priority-based model, we can ensure that key processes are=20
-frozen in the correct order to avoid this class of problems entirely. I=20
-believe this approach will address the issue in a more robust and=20
-general way.
+To me it sounds like daxctl should be the one to online the memory
+excluseively and udev should just care about regular memory.
 
-I=E2=80=99ll share the patchset soon for feedback after serval weeks.
-
-
-
+-- 
+Michal Hocko
+SUSE Labs
 
