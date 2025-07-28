@@ -1,224 +1,305 @@
-Return-Path: <linux-kernel+bounces-748251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A8EB13E8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:34:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8849CB13EAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52876168E07
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:33:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8567D16E229
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19BB272811;
-	Mon, 28 Jul 2025 15:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE74276030;
+	Mon, 28 Jul 2025 15:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DnRyA2wt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zchf3Cub"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC539270557;
-	Mon, 28 Jul 2025 15:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70F6275AF4
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753716792; cv=none; b=fY2guuv0g3pA3JCWkjadltk/2TOcklXqnz8mkTJfbusxxuBrHsVWe4G8+Z+9Szuo+v4BVbW+Oy0aMAvNuWLmQJpnDsRjKfitDFQnY65mnZhtyBnxWSMPv7tz/XkZAR4snlMyP/4BAlvczx8ARmcC66JfMmzNffU57X4K7FxqYhM=
+	t=1753716810; cv=none; b=jri6U+3LNWC0tVOU2EQwehgZiy9yxEPCmrIcOgbx9QH9oSqG4Z1JCuM1kJDi4U1j8OngaG6UDs2ElrcnD4EvLmXcfrKZA1cvMVaELttKkwbqv5Ux7qPGdlCZ/QOW6uwgNtHpWlyhY+X597GuPg8B38k9HuuIDMXg9kSlClZT8+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753716792; c=relaxed/simple;
-	bh=rmQ5Dpw7q70m/bVWkQP+hcMEHhICjmYLdatn19PTQ/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i6IZ3co1UupEcwdDzAJsi4zALvtXtB3PmErsa9qp5w0a4g1Q4d+hGYTagGJPm4O/KUt7MPM+qRuRqcHQUoyfKxhbtkWZndcVgJL8+H3iDLioklhiC1ZLhO9ihE9RztK9jdZkJo7lmrl3TD97QzsrWzFCdIFSkgfeiaLtiaHdyJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DnRyA2wt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72029C4CEE7;
-	Mon, 28 Jul 2025 15:33:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753716791;
-	bh=rmQ5Dpw7q70m/bVWkQP+hcMEHhICjmYLdatn19PTQ/Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DnRyA2wtst7FjybA3WjyxHI22SvQoXzZiI86OVKatHrIt7Olm5fnPZjRE4opCIAqw
-	 zUgZalyUSlTjwpP+H2/zLcQ/RsPdG3MIvpdO5ilFzoMWIIZbxMeL4UlQD/Eg38ZwU6
-	 rxBp7tOE2o6FtxmSgeqpec1esN9AfeLJKUa7PfPG3t5Mk+Tm4/lAV416R3lU1bYvGq
-	 vqfPcqSR1UdYFuREWbDxPyCcsTqoceGOvCfOmbeHyodSak5v4noX4I3dA4LlE1mPIs
-	 0hXJxqKOMAsp62MG6nyDGhn25MB6GhzrSbyUnJlS2rfeyb84AMTxKeia1/4Ez+Zv/J
-	 cloEW07gK0iFw==
-Date: Mon, 28 Jul 2025 17:33:06 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org,
- workflows@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 3/2] docs: changes: better document Python needs
-Message-ID: <20250728173306.2ab1409a@sal.lan>
-In-Reply-To: <83d12d5293e23c622ae390204fed8fd4453014b1@intel.com>
-References: <cover.1752307866.git.mchehab+huawei@kernel.org>
-	<58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
-	<20250712163155.GA22640@pendragon.ideasonboard.com>
-	<20250713002517.7f52b0e9@foz.lan>
-	<875xfhabv0.fsf@trenco.lwn.net>
-	<20250724194306.27b98194@foz.lan>
-	<83d12d5293e23c622ae390204fed8fd4453014b1@intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1753716810; c=relaxed/simple;
+	bh=HlMutSnP9e8kI3UBisc6n45rtpmULJ1pipqjo6vBQ2s=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ioE1QWTDvEzQDceIqmyHBuYwsuvkWHsqRQUHBvjUQfEdKAYyc3ucnUxxElYcpXt5goBnLuuMHKhbwnN7BbhWJ2IugtVN+4GOQtweNR0E+dMG4H5SNZPIaGVly7qlglNhLFC6utPeI2rt88qujw3oa5kEgGYnUpF00YdIMUY0Hrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zchf3Cub; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b31f4a9f67cso6048151a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:33:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753716808; x=1754321608; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fOMNGsII1GWvnmWB7ZQ29FecIW9W/uww4YWlhfBQpMk=;
+        b=Zchf3CubojkQRucDe0gd7dMTGpSKjDpeRdzDD+faBMnVpBr9F5qXGAdhuYxOX/CBcZ
+         yjEZhOFz7Aif6vYvELD9NP7mRG+DSSrAWv1y+HicSAzxBB2pUzJkx/GR/ZRwfsfNYu1S
+         LBo0EMZxaT2V2sGIV85KxL0n9Lu0XJEUZJScXkba14p/gAqJkvkr8Yg3BXWSzUU07FNZ
+         tU+PIJGGpugql14BBmo+OKcSToVst/wOIj1OUllTFjClIXrSytECN47KBQ+6Xiw8D4m/
+         q19yisf/Qb2nV8vxNE26T9y682vyP3iOjJDHZJ90Jb1Gy2u0hgjrBuZC/XSsU5Fubqen
+         ieOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753716808; x=1754321608;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fOMNGsII1GWvnmWB7ZQ29FecIW9W/uww4YWlhfBQpMk=;
+        b=ek3CE9A+WhDrImV3VdwEvFpT4j60uotJc/LlM32JjKidQGlpa2Z4wSkTUU92cNRnGK
+         3UtMuvrVDmG2mEofsHYaL4Syx+tGrFXQ6nF8cNvVOxsKQKtNXjMXWbHn205vV1YTJ/Kz
+         ovBsM6ykrl8b74fj57zrJBPtPVljq7VRnTklWGHEKs35Ofs587Ioz1HWIE0UhTZd1bQL
+         VA8NZWhdMDiSF2XYfzHCY0tNp7nH2qtU/MzbXGkx/meMrrR6aNPBt3od/NO7Kykf7lQF
+         UmaQn+nsKuPVA0mG1XQF5QWXnWVmlu1hrV3cenYFunE3NCTHD9ZMA1JkBaSNp/lvn/L3
+         UU3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUhhW6dnWKiNQDAXeAQ79Cdyz12mGjgmkkHRAB41Cym+pN3zT/xTxiX/WmgTWA8Tn/CfEkFXqr7T1yupuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV5WcyAT0E4MYDt92sL5oBQUHR5231k2JFeWMzGGq9gDC6sZpw
+	GAORBr3Q5AqWJwBy1oQo0FGR/gvPe9sZPuZ68I3FApVtHjhOuMk76aSE/kT5qUYTBntiPSNrUco
+	//UyFVg==
+X-Google-Smtp-Source: AGHT+IGxnvonRXYnaAMINBxjwtlZaos5vIwh4h6XxEER3SpElr4t8bWEkkoSwLEGYzccjdmp3ZH9ETxHVGg=
+X-Received: from pjn16.prod.google.com ([2002:a17:90b:5710:b0:311:ff32:a85d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dac7:b0:240:469d:beb0
+ with SMTP id d9443c01a7336-240469dc081mr32575265ad.31.1753716807865; Mon, 28
+ Jul 2025 08:33:27 -0700 (PDT)
+Date: Mon, 28 Jul 2025 08:33:26 -0700
+In-Reply-To: <550a730d-07db-46d7-ac1a-b5b7a09042a6@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+References: <CAMGD6P1Q9tK89AjaPXAVvVNKtD77-zkDr0Kmrm29+e=i+R+33w@mail.gmail.com>
+ <0dc2b8d2-6e1d-4530-898b-3cb4220b5d42@linux.intel.com> <4acfa729-e0ad-4dc7-8958-ececfae8ab80@suse.com>
+ <aIDzBOmjzveLjhmk@google.com> <550a730d-07db-46d7-ac1a-b5b7a09042a6@linux.intel.com>
+Message-ID: <aIeX0GQh1Q_4N597@google.com>
+Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
+From: Sean Christopherson <seanjc@google.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Nikolay Borisov <nik.borisov@suse.com>, Jianxiong Gao <jxgao@google.com>, 
+	"Borislav Petkov (AMD)" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Dionna Glaze <dionnaglaze@google.com>, "H. Peter Anvin" <hpa@zytor.com>, jgross@suse.com, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com, 
+	Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, jiewen.yao@intel.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Em Mon, 28 Jul 2025 12:28:45 +0300
-Jani Nikula <jani.nikula@intel.com> escreveu:
++Jiewen
 
-> On Thu, 24 Jul 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wr=
-ote:
-> > Em Thu, 24 Jul 2025 08:42:59 -0600
-> > Jonathan Corbet <corbet@lwn.net> escreveu:
-> >
-> >> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-> >>=20
-> >> > Maybe I can place instead CONFIG_DRM_I915_WERROR.
-> >>=20
-> >> I've held off on this series on the expectation that a new version wou=
-ld
-> >> come.  I guess, at this point, it will be a post-merge-window thing?
-> >
-> > Feel free to postpone. I have already a new version of it here somewher=
-e on
-> > my branches, but I had to take some days off. So, I ended not sending y=
-ou
-> > the (probably) final version.
-> >
-> > I intend to send what I have here during the merge window for you to
-> > review and apply post-merge-window.
+Summary, with the questions at the end.
+
+Recent upstream kernels running in GCE SNP/TDX VMs fail to probe the TPM du=
+e to
+the TPM driver's ioremap (with UC) failing because the kernel has already m=
+apped
+the range using a cachaeable mapping (WB).
+
+ ioremap error for 0xfed40000-0xfed45000, requested 0x2, got 0x0
+ tpm_tis MSFT0101:00: probe with driver tpm_tis failed with error -12
+
+The "guilty" commit is 8e690b817e38 ("x86/kvm: Override default caching mod=
+e for
+SEV-SNP and TDX"), which as the subject suggests, forces the kernel's MTRR =
+memtype
+to WB.  With SNP and TDX, the virtual MTRR state is (a) controlled by the V=
+MM and
+thus is untrusted, and (b) _should_ be irrelevant because no known hypervis=
+or
+actually honors the memtypes programmed into the virtual MTRRs.
+
+It turns out that the kernel has been relying on the MTRRs to force the TPM=
+ TIS
+region (and potentially other regions) to be UC, so that the kernel ACPI dr=
+iver's
+attempts to map of SystemMemory entries as cacheable get forced to UC.  Wit=
+h MTRRs
+forced WB, x86_acpi_os_ioremap() succeeds in creating a WB mapping, which i=
+n turn
+causes the ioremap infrastructure to reject the TPM driver's UC mapping.
+
+IIUC, the TPM entry(s) in the ACPI tables for GCE VMs are derived (built?) =
+from
+EDK2's TPM ASL.  And (again, IIUC), this code in SecurityPkg/Tcg/Tcg2Acpi/T=
+pm.asl[1]
+
+      //
+      // Operational region for TPM access
+      //
+      OperationRegion (TPMR, SystemMemory, 0xfed40000, 0x5000)
+
+generates the problematic SystemMemory entry that triggers the ACPI driver'=
+s
+auto-mapping logic.
+
+QEMU-based VMs don't suffer the same fate, as QEMU intentionally[2] doesn't=
+ use
+EDK2's AML for the TPM, and QEMU doesn't define a SystemMemory entry, just =
+a
+Memory32Fixed entry.
+
+Presumably this an EDK2 bug?  If it's not an EDK2 bug, then how is the kern=
+el's
+ACPI driver supposed to know that some ranges of SystemMemory must be mappe=
+d UC?
+
+[1] https://github.com/tianocore/edk2/blob/master/SecurityPkg/Tcg/Tcg2Acpi/=
+Tpm.asl#L53
+[2] https://lists.gnu.org/archive/html/qemu-devel/2018-02/msg03397.html
+
+On Thu, Jul 24, 2025, Binbin Wu wrote:
+> On 7/23/2025 10:34 PM, Sean Christopherson wrote:
+> > On Mon, Jul 14, 2025, Nikolay Borisov wrote:
+> > > On 14.07.25 =D0=B3. 12:06 =D1=87., Binbin Wu wrote:
+> > > > On 7/10/2025 12:54 AM, Jianxiong Gao wrote:
+> > > > > I tested this patch on top of commit 8e690b817e38, however we are
+> > > > > still experiencing the same failure.
+> > > > >=20
+> > > > I didn't reproduce the issue with QEMU.
+> > > > After some comparison on how QEMU building the ACPI tables for HPET=
+ and
+> > > > TPM,
+> > > >=20
+> > > > - For HPET, the HPET range is added as Operation Region:
+> > > >   =C2=A0 =C2=A0 aml_append(dev,
+> > > >   =C2=A0 =C2=A0 =C2=A0 =C2=A0 aml_operation_region("HPTM", AML_SYST=
+EM_MEMORY,
+> > > > aml_int(HPET_BASE),
+> > > >   =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0HPET_LEN));
+> > > >=20
+> > > > - For TPM, the range is added as 32-Bit Fixed Memory Range:
+> > > >   =C2=A0 =C2=A0 if (TPM_IS_TIS_ISA(tpm_find())) {
+> > > >   =C2=A0 =C2=A0 =C2=A0 =C2=A0 aml_append(crs, aml_memory32_fixed(TP=
+M_TIS_ADDR_BASE,
+> > > >   =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0TPM_TIS_ADDR_SIZE, AML_READ_WRITE));
+> > > >   =C2=A0 =C2=A0 }
+> > > >=20
+> > > > So, in KVM, the code patch of TPM is different from the trace for H=
+PET in
+> > > > the patch https://lore.kernel.org/kvm/20250201005048.657470-3-seanj=
+c@google.com/,
+> > > > HPET will trigger the code path acpi_os_map_iomem(), but TPM doesn'=
+t.
+> > Argh, I was looking at the wrong TPM resource when poking through QEMU.=
+  I peeked
+> > at TPM_PPI_ADDR_BASE, which gets an AML_SYSTEM_MEMORY entry, not TPM_TI=
+S_ADDR_BASE.
+
+...
+
+> I guess google has defined a ACPI method to access the region for TPM TIS=
+ during
+> ACPI device probe.
 >=20
-> I think the main questions here are 1) how to handle optional build tool
-> dependencies, and 2) whether Python is an optional or required
-> dependency.
+> >=20
+> > In the meantime, can someone who has reproduced the real issue get back=
+traces to
+> > confirm or disprove that acpi_os_map_iomem() is trying to map the TPM T=
+IS range
+> > as WB?  E.g. with something like so:
 
-with regards to (2), besides doc build and kernel-doc --none, there is
-at least another place at the building system requiring Python:=20
-scripts/Makefile.vmlinux_o: There, it has:
+Got confirmation off-list that Google's ACPI tables due trigger the kernel'=
+s
+cachable mapping logic for SYSTEM_MEMORY.
 
-	quiet_cmd_gen_initcalls_lds =3D GEN     $@
-	      cmd_gen_initcalls_lds =3D \
-	        $(PYTHON3) $(srctree)/scripts/jobserver-exec \
-	        $(PERL) $(real-prereqs) > $@
+ Mapping TPM TIS with req_type =3D 0
+ WARNING: CPU: 22 PID: 1 at arch/x86/mm/pat/memtype.c:530 memtype_reserve+0=
+x2ab/0x460
+ Modules linked in:
+ CPU: 22 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.16.0=
+-rc7+ #2 VOLUNTARY=20
+ Tainted: [W]=3DWARN
+ Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Go=
+ogle 05/29/2025
+ RIP: 0010:memtype_reserve+0x2ab/0x460
+  __ioremap_caller+0x16d/0x3d0
+  ioremap_cache+0x17/0x30
+  x86_acpi_os_ioremap+0xe/0x20
+  acpi_os_map_iomem+0x1f3/0x240
+  acpi_os_map_memory+0xe/0x20
+  acpi_ex_system_memory_space_handler+0x273/0x440
+  acpi_ev_address_space_dispatch+0x176/0x4c0
+  acpi_ex_access_region+0x2ad/0x530
+  acpi_ex_field_datum_io+0xa2/0x4f0
+  acpi_ex_extract_from_field+0x296/0x3e0
+  acpi_ex_read_data_from_field+0xd1/0x460
+  acpi_ex_resolve_node_to_value+0x2ee/0x530
+  acpi_ex_resolve_to_value+0x1f2/0x540
+  acpi_ds_evaluate_name_path+0x11b/0x190
+  acpi_ds_exec_end_op+0x456/0x960
+  acpi_ps_parse_loop+0x27a/0xa50
+  acpi_ps_parse_aml+0x226/0x600
+  acpi_ps_execute_method+0x172/0x3e0
+  acpi_ns_evaluate+0x175/0x5f0
+  acpi_evaluate_object+0x213/0x490
+  acpi_evaluate_integer+0x6d/0x140
+  acpi_bus_get_status+0x93/0x150
+  acpi_add_single_object+0x43a/0x7c0
+  acpi_bus_check_add+0x149/0x3a0
+  acpi_bus_check_add_1+0x16/0x30
+  acpi_ns_walk_namespace+0x22c/0x360
+  acpi_walk_namespace+0x15c/0x170
+  acpi_bus_scan+0x1dd/0x200
+  acpi_scan_init+0xe5/0x2b0
+  acpi_init+0x264/0x5b0
+  do_one_initcall+0x5a/0x310
+  kernel_init_freeable+0x34f/0x4f0
+  kernel_init+0x1b/0x200
+  ret_from_fork+0x186/0x1b0
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
 
-	.tmp_initcalls.lds: $(srctree)/scripts/generate_initcall_order.pl \
-	                vmlinux.a $(KBUILD_VMLINUX_LIBS) FORCE
-	        $(call if_changed,gen_initcalls_lds)
-
-	targets :=3D .tmp_initcalls.lds
-
-	ifdef CONFIG_LTO_CLANG
-	initcalls-lds :=3D .tmp_initcalls.lds
-	endif
-
-Now, I didn't check exactly what conditions trigger
-.tmp_initcalls.lds, but there are some places that use
-select:
-
-	arch/Kconfig:   select LTO_CLANG
-
-On a quick look, it sounds that some archs will select this
-automatically when built with clang.
-
-I didn't check if other parts of the building system requires it.
-
-In any case, on its current state, I'd say that currently this
-is not optional.
-
-> It might be nice to be able to have an actual Kconfig and dependency for
-> optional tools. "depends on TOOL_PYTHON" or something. Enable the
-> option, and you should have Python.
-
-That would be an option. The question is: is it worth spending
-time on it?
-
-> This in turn raises the question for allyesconfig. It's cumbersome
-> (though not impossible) to add config options that you actually have to
-> enable manually.
-
-IMO it doesn't make sense to manually enable something with *config.
-If they depend on Python, be it: for such targets, Python is
-mandatory.
-
+> I tried to add an AML_SYSTEM_MEMORY entry as operation region in the ACPI
+> table and modify the _STA method to access the region for TPM TIS in QEMU=
+, then
+> the issue can be reproduced.
 >=20
-> The header test stuff really isn't required to actually build the kernel
-> or drm, however DRM_MSM does depend on Python for building the driver.
+> diff --git a/hw/tpm/tpm_tis_isa.c b/hw/tpm/tpm_tis_isa.c
+> index 876cb02cb5..aca2b2993f 100644
+> --- a/hw/tpm/tpm_tis_isa.c
+> +++ b/hw/tpm/tpm_tis_isa.c
+> @@ -143,6 +143,9 @@ static void build_tpm_tis_isa_aml(AcpiDevAmlIf *adev,=
+ Aml *scope)
+> =C2=A0 =C2=A0 =C2=A0Aml *dev, *crs;
+> =C2=A0 =C2=A0 =C2=A0TPMStateISA *isadev =3D TPM_TIS_ISA(adev);
+> =C2=A0 =C2=A0 =C2=A0TPMIf *ti =3D TPM_IF(isadev);
+> +=C2=A0 =C2=A0 Aml *field;
+> +=C2=A0 =C2=A0 Aml *method;
+> +=C2=A0 =C2=A0 Aml *test =3D aml_local(0);
+>=20
+> =C2=A0 =C2=A0 =C2=A0dev =3D aml_device("TPM");
+> =C2=A0 =C2=A0 =C2=A0if (tpm_tis_isa_get_tpm_version(ti) =3D=3D TPM_VERSIO=
+N_2_0) {
+> @@ -152,7 +155,19 @@ static void build_tpm_tis_isa_aml(AcpiDevAmlIf *adev=
+, Aml *scope)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0aml_append(dev, aml_name_decl("_HID", a=
+ml_eisaid("PNP0C31")));
+> =C2=A0 =C2=A0 =C2=A0}
+> =C2=A0 =C2=A0 =C2=A0aml_append(dev, aml_name_decl("_UID", aml_int(1)));
+> -=C2=A0 =C2=A0 aml_append(dev, aml_name_decl("_STA", aml_int(0xF)));
+> +
+> +=C2=A0 =C2=A0 aml_append(dev, aml_operation_region("TPMM", AML_SYSTEM_ME=
+MORY, aml_int(TPM_TIS_ADDR_BASE),
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0TPM_TIS_ADDR_SIZE));
+> +
+> +=C2=A0 =C2=A0 field =3D aml_field("TPMM", AML_DWORD_ACC, AML_LOCK, AML_P=
+RESERVE);
+> +=C2=A0 =C2=A0 aml_append(field, aml_named_field("TEST", 32));
+> +=C2=A0 =C2=A0 aml_append(dev, field);
+> +
+> +=C2=A0 =C2=A0 method =3D aml_method("_STA", 0, AML_NOTSERIALIZED);
+> +=C2=A0 =C2=A0 aml_append(method, aml_store(aml_name("TEST"), test));
+> +=C2=A0 =C2=A0 aml_append(method, aml_return(aml_int(0xF)));
+> +=C2=A0 =C2=A0 aml_append(dev, method);
 
-Good to know. It means that, for those *config targets:
-
-	arch/arm/configs/imx_v6_v7_defconfig:CONFIG_DRM_MSM=3Dy
-	arch/arm/configs/multi_v7_defconfig:CONFIG_DRM_MSM=3Dm
-	arch/arm/configs/qcom_defconfig:CONFIG_DRM_MSM=3Dm
-
-(plus all{mod|yes}config)
-
-Python is mandatory. As multi_v7_defconfig is one of them, we
-may assume, that, o practical cases, Python 2.7 or 3.2+ is=20
-mandatory for arm support. The current requirement is:
-
-	$ vermin -v --no-tips ./drivers/gpu/drm/msm/registers/gen_header.py
-	Detecting python files..
-	Analyzing using 8 processes..
-	2.7, 3.2     /new_devel/v4l/docs/drivers/gpu/drm/msm/registers/gen_header.=
-py
-	Minimum required versions: 2.7, 3.2
-
-Heh, looking for files that end with .py at Makefile (not all
-Python scripts at the Kernel end with such extension), it seems
-that there are more:
-
-	grep \\\.py $(git ls-files|grep Makefile|grep -v tools)
-
-
-	Makefile:KERNELDOC       =3D $(srctree)/scripts/kernel-doc.py
-	Makefile:		  vmlinux-gdb.py \
-	Makefile:	$(Q)ln -fsn $(abspath $(srctree)/scripts/gdb/vmlinux-gdb.py)
-	Makefile:compile_commands.json: $(srctree)/scripts/clang-tools/gen_compile=
-_commands.py \
-	Makefile:      cmd_clang_tools =3D $(PYTHON3) $(srctree)/scripts/clang-too=
-ls/run-clang-tools.py $@ $<
-	drivers/gpu/drm/msm/Makefile:      cmd_headergen =3D mkdir -p $(obj)/gener=
-ated && $(PYTHON3) $(src)/registers/gen_header.py \
-	drivers/gpu/drm/msm/Makefile:		$(src)/registers/gen_header.py \
-	drivers/gpu/drm/msm/Makefile:		$(src)/registers/gen_header.py \
-	drivers/tty/vt/Makefile:#GENERATE_UCS_TABLES :=3D 2  # invokes gen_ucs_rec=
-ompose_table.py with --full
-	drivers/tty/vt/Makefile:$(obj)/ucs_width_table.h: $(src)/gen_ucs_width_tab=
-le.py
-	drivers/tty/vt/Makefile:$(obj)/ucs_recompose_table.h: $(src)/gen_ucs_recom=
-pose_table.py
-	drivers/tty/vt/Makefile:$(obj)/ucs_fallback_table.h: $(src)/gen_ucs_fallba=
-ck_table.py
-	rust/Makefile:	$(Q)MAKEFLAGS=3D $(srctree)/scripts/generate_rust_analyzer.=
-py \
-	scripts/Makefile.lib:MAKE_FIT :=3D $(srctree)/scripts/make_fit.py
-	scripts/gdb/linux/Makefile:symlinks :=3D $(patsubst $(src)/%,%,$(wildcard =
-$(src)/*.py))
-	scripts/gdb/linux/Makefile:always-y +=3D constants.py
-	scripts/gdb/linux/Makefile:$(obj)/constants.py: $(src)/constants.py.in FOR=
-CE
-	scripts/gdb/linux/Makefile:clean-files :=3D *.pyc *.pyo
-
-(that not including tools/*)
-
-Some seem false positives, but on the other hand, looking for tools,
-several scripts seem to be executed by non-tools Makefiles. I didn't
-check if any of them are written in python, though.
-
-Considering the above, for me it seems that the bus already=20
-departed: there are several cases where Python is required during
-build time. So, adding a "depends on TOOL_PYTHON" doesn't seem
-to be trivial.
-
-=46rom my side, I don't mind much about that, as this is something
-that affects only the Kernel build. I would very much prefer to
-have things like config BPF optional.
-
-Regards,
-Mauro
 
 
