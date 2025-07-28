@@ -1,207 +1,299 @@
-Return-Path: <linux-kernel+bounces-748052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4F4B13BFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 182E6B13C00
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3E8117E2C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:50:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CC817E9AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FDD266EFA;
-	Mon, 28 Jul 2025 13:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F7D26B75C;
+	Mon, 28 Jul 2025 13:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="gX1IxWHK"
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020123.outbound.protection.outlook.com [52.101.195.123])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FqJiKs02"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1738526A0ED;
-	Mon, 28 Jul 2025 13:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753710612; cv=fail; b=DlRJmWdAmx8rWNaL2IU8NWrC+wJ77BWENPaihxbRfY/kdsemhId1QmrnwMB8z48GRYejtvIUengubttdrliWCv8Ew1BrxKBMxHGtFpDhsCHq8pkvDGCjY4KqzQ0lZCfHyhUslQ2zDAQlz6DMAWboL2TT3syYx2qBR6rxeuTplhs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753710612; c=relaxed/simple;
-	bh=buVAc0G3e/LtvftMvEoNXJGORzpFducnqGrPLOfuXNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Qvk0Q3PmX6NRQPk1EBPfTOz0O7u3Ph8OFO4OvcZx/Ni6kZmfbbUWkmNO+EWZFQepziZSowzGvyWZ3evAaR1PuvjxSlkOO+bDS3amXIuBCzQJmAZbeBMTWFLae4anlwgUWFwt4n8TaaLM+/aLEKD+Q0+K/I6Of82hYN0lSqkZb8Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=gX1IxWHK; arc=fail smtp.client-ip=52.101.195.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WfkJS694KHIQL3cwKn/l1LbcAPOAOn13lSY8l/9KuYLOXRmUVD5lV0HVQLiBqU9Lq93+YG0r/Ey93Id+GuNDBrB++SEhNN7x3U702v+BMXMxQpzjr6plLGTiW6+3g0ViR5AZXrvrzRtXa078XSTSfFv2sjfDKXHRVXUJUZwlVytnykB2p0h6BGhFEw7CuWlX/GUSH7+i2IVo3y5hRZEgOcr7e2Rw9REQnCoBIL26NwVJJw1l2vusiUXz3yFdWKfpPZPs1/BUXctbNC84RS0F45a+RpHiRX9SEqK/AU9OMPM2N1PSQUgGkADw33pH7VsqYiwQ/El/If1/VhmmA+a+Iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5HYW6n8GSO/DStIgIKF3gcleaJGlyBGmGIJEpKbAyMU=;
- b=dq3+Bc70wYlln6MKbdoGfk8BHpTBAI2ZKPmbaUfX0sDIexHDgd0wFfoDl7Uf68YKp17Xl/6DLYFbc7ueazcSgE/O5CGEFM1rKB8C9pVMoZFwMwWOPuc6+IqwxNUGUboKgGASnK8ouC/J/7Kmr5jsXHxwIWMmfQeXiYP7iTkpCwISsPY/LphbFYpHOfTriNPp+0Wh97a3gyuQTkm2cBhsAo/gGyVPy77SwCLFDs+sBSUnA8mfGzkn/cG8/Qll14iqZSSkBrkoePOq4hsbQXtSfsfbt3zCNp/w2hywbF/NqVmqp3vcO5Op4KjRhz3TAshBb197+BgyMRjJ7KHnacG1qA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5HYW6n8GSO/DStIgIKF3gcleaJGlyBGmGIJEpKbAyMU=;
- b=gX1IxWHKvG00X57kzCHvkUwM5o28xR5c1s7G+NW/cDCc+SxclzNN8zROTl0+fa75lSwYOtj9KzoUyBg8D/ZkdrtvpzT+TSrDOYLurRVh7nW6Dr+j3iaWZlQKTqFbprReFSDvj4/g3bKup+YyFlo/Za+/M+8ZTp8NiMzrMevAsiE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LO4P265MB3533.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:1b9::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Mon, 28 Jul
- 2025 13:50:07 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.8964.025; Mon, 28 Jul 2025
- 13:50:07 +0000
-Date: Mon, 28 Jul 2025 14:50:04 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, Danilo Krummrich
- <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, Robin
- Murphy <robin.murphy@arm.com>, Andreas Hindborg <a.hindborg@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun
- Feng <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, "Christian S.
- Lima" <christiansantoslima21@gmail.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/2] rust: transmute: add `as_bytes(_mut)` methods
- for `AsBytes` trait
-Message-ID: <20250728145004.51f10d0b@eugeo>
-In-Reply-To: <20250728-as_bytes-v4-0-b9156af37e33@nvidia.com>
-References: <20250728-as_bytes-v4-0-b9156af37e33@nvidia.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0057.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2af::14) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E936326B2CE
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753710645; cv=none; b=FDbHFalcfkwR9LL6hqTj+22gyu9X9VCEi2l27CcEzBQbz+P0+i2BfZtfpkUSgUrpqTik4n8BdPUyFLrG6ValeveIQwsm4iTZy/3XeviXKs2T8eSvxVBVcbY5yK7THVOsCO+ProJWzCwlA1qWsjiu0wz3hHOImlmRerdJcMEBVrI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753710645; c=relaxed/simple;
+	bh=bieLIgNd+EOZuwwUucuKU2Sg8hOtmNS6ilIE4ELil9o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OegrPIkSGj+GRVlzM/N1+AEUiztfl3Zdf620vsVM9mE2Fq05LYk5pCABpuy0iv7gcCRvVlJ7juV+H13KEXWM7IttCZL45Z1Buf2GbIjsgkfWHvR1zYyZynJAYSP6a+kCQQD8k817b9ZhcnbepHrbTOcAuZQ56UX6PdSP3H01mSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FqJiKs02; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753710642;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=BFZRIjcU10MaHofI5gsqySR5reNOh0P7ysmeezziIFE=;
+	b=FqJiKs021UULQaoNNzC5pyCmE7G86fMeOgQLGWoKrsS7sy/dZIZCgErYf8AD7orX4CrsJI
+	J2h2N0sxdd0bVzj8M9fuO7TJTzN3LTpuxcSdzPOxxDc+9FNk2+e0V9kWubSJD6MSJZAyku
+	BQWUa4IZKlzEIRqHDneENir1Y35rjwk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-117-rodV-21BMWGS2kmYRoaiOg-1; Mon,
+ 28 Jul 2025 09:50:39 -0400
+X-MC-Unique: rodV-21BMWGS2kmYRoaiOg-1
+X-Mimecast-MFC-AGG-ID: rodV-21BMWGS2kmYRoaiOg_1753710638
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7EB541956096;
+	Mon, 28 Jul 2025 13:50:38 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.224.215])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8AE781800285;
+	Mon, 28 Jul 2025 13:50:33 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Nam Cao <namcao@linutronix.de>
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: [PATCH v5 0/9] rv: Add monitors to validate task switch
+Date: Mon, 28 Jul 2025 15:50:12 +0200
+Message-ID: <20250728135022.255578-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO4P265MB3533:EE_
-X-MS-Office365-Filtering-Correlation-Id: fb095374-677b-48f4-c39c-08ddcddda9a7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cS4bUAJvvpJ5i2w7yOUUjRj5rnE3CgUtgy2hpm6/LumCWPc0NEV8KUkbIPs9?=
- =?us-ascii?Q?fAN1tfeYLeCU8BFNd77Lwcag5NsL2rx2K2nyslESiEXgJ2ic1tQHyvKOcn7e?=
- =?us-ascii?Q?c5fA4UwL+JTuTLW7mKso+IUCiWnegDh8Y1ii7YhOe69uab9NXQnemwyeXGqk?=
- =?us-ascii?Q?WosK+85+b9iHGZeaZKOR0w/FGCz2CuHlL7QWrzxT5VKKODtXDT8atrT5YLNA?=
- =?us-ascii?Q?CUYy1fvXAuUhaYaRw4ErrB4SnrE/zCDd+UDRghpFzF5ZJkCzBI8gpDxtnAR+?=
- =?us-ascii?Q?45peocWH/Bl0az/uwsy3jCOW1+k0ZNTnlxZlxm9DKFDS3nr73YIVcnDcOoQG?=
- =?us-ascii?Q?nvWEs797ZLe+KjbNIZz/zrqrRppMCoXmDDcp4UsLJJWNtfyoypj5zcXhG5va?=
- =?us-ascii?Q?qbCjoHtN/IVBc4Cp1mvrhPqnVthF+D8+yRdPYQGgk0gtj1BNtUfXQ8WbF5Je?=
- =?us-ascii?Q?gCfXw5ys/3wEt5wmutleeaxlSepDWBP+WdRbYA1SALjSsJVuu4q40UbgdykH?=
- =?us-ascii?Q?U737+aiFd0WiaxquKr8SIX93hR6pz8/XunLeBdKmn6W0lEe1Zeu1FGpM9c+c?=
- =?us-ascii?Q?JBVAEhnEqFXrYPTnKIf0LLDzPi05t11Mye/ZeMc/piA/YZUMcRTsMtNt5qBs?=
- =?us-ascii?Q?PgksfRz/TiXf7Vid2dVoEzRiQtApJmN+9UFWAgVrmYB2cYb637NxptnOoQgE?=
- =?us-ascii?Q?YD+B5PViOps/AXC4bDnWf+fIJPs4YiLwlz4dLzMIGdhE6kaCXXIn57pK4m2t?=
- =?us-ascii?Q?8x7RMM6ot+AWinfHU7+990DY0geDpLMm1SbFc+Fd3T7aChhqZQH4NvkAm9jN?=
- =?us-ascii?Q?cLKqWqyDxINqDj4u8J8iizlBV6gR/+ZcVSz1UZqjNyVSpqMukie54DozNxMO?=
- =?us-ascii?Q?sSKmnynvjEKqoJigI3L0Ag2U3fL32V5jfRAJwiu/iek9DI9IlD6UumuUKBbu?=
- =?us-ascii?Q?x/cAUPbcJ6zis4fMKqFgu1eNS+e4w0o0n0z72fbgY7XeXoyDBF/Kc5V8a4XZ?=
- =?us-ascii?Q?qTq/0ew0KEEBgNtTduGU5Q/I1mSGqm//9h7oZxC3q3EiRLqo+pqInLR93VTm?=
- =?us-ascii?Q?0Uu45YPtybZ7IK+bODxFJ7n6vj5IuSoU3M6K02H6YljDaFEiLzviqZFVN6ie?=
- =?us-ascii?Q?FHJPE6jYtcOX2p1sg4J1akNKKk0i1g8hXuL7KswMMbG0+FWgoB8P9A++qXoY?=
- =?us-ascii?Q?AyHDN7zRa2WuEJ/KUltdidp3HpZbsxd8Ky/cJ25usaoVUFVjxT/rmq9Fw6Rm?=
- =?us-ascii?Q?vdyG30zFGvR68hAkD0dTHUZe5srDknJuD5s0NNHdXwgW5KdKSwNRogxssOHM?=
- =?us-ascii?Q?8kw5NwGanYxrJElG1U11hc/8e5L9tgvi4kjrIHdGnPjQEq1u/HLM2Z+Ik1nq?=
- =?us-ascii?Q?p8Eb7lsJgC3508KFuj2XbDWuuv/Uo8K+FGzywUEU4pKhvEIIcrWzzdyVhO0B?=
- =?us-ascii?Q?25PzdXmYTIo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GP46+UWM1mbmyEYrREHY4tzOBxWlbOjz3Xb9pBOPL6GTwaUvFBMXYz5wfA5m?=
- =?us-ascii?Q?/w7n3cDO+MiLNqCDBjuMSxzzhtyXhF6/Go1fKGZmdYAbDirW7cyOdhOspiiw?=
- =?us-ascii?Q?6QaibbPRP74J0Da/EkulJpbTEZf83GHIdln9fT9KTg8t9RIsHRE03/s+ldFv?=
- =?us-ascii?Q?l/WLtHlr+aXADu0feUVTJNLc+IIs7Ud4sH8V5LDOthVFpJBT9hu78sZiju1n?=
- =?us-ascii?Q?h50M7PoKW8dlc1QEuxmtoPbKhUmQOhLMfo/DXSweY8cCLnDxPL9GqgfaGHBu?=
- =?us-ascii?Q?h/IZO404140lPrYIiICZBhBdt7Tm4OTXSjEjs9uaWjDefs+NzwSQMrytyRRJ?=
- =?us-ascii?Q?pciDFl+yXYr1npuDvKjzPPK2JPaR9bMNxJzzgClpdG9Cb389wgW+Af2BS9YR?=
- =?us-ascii?Q?dcXFfnYG0+UoxFDBZwxhNCkwey0sfEQWZ7JEtAH6MvDoVDaz4BFWu/z1ufPl?=
- =?us-ascii?Q?61hHBdBYSO3pGbjEvYD4R6nli8jB0KBwuwrbPE7nTJS7voLP5yhhWZn/GHl6?=
- =?us-ascii?Q?/0cCHR4STLqcW4i+x2rmPGufce89RRRx7Bh85861Ioj4dJw+XuNzYN0jBKvR?=
- =?us-ascii?Q?w5QC+6mQo4RZTIrNWrfa4jmSLVNGU0ils9tIsXYurvp8lwAYYgISXGBSd/lR?=
- =?us-ascii?Q?wpeKKeaFB4nt+lnEEd/Di2pNT2mPjt5ge+v36rOIQGw+8HHJdHgbmshbXiF8?=
- =?us-ascii?Q?5u4Q370o85tcH6jl23JL0dnRfjmJ9Hne/VzQkF+PoabpcuGCxQkKSUIQ9G5R?=
- =?us-ascii?Q?REwOVuyMgztYlSCEkMpXeop2Ws97VqeA6BfxUqG/GXd9AjzWha3SUT1/WW5l?=
- =?us-ascii?Q?/cD8CeHHvZ6m8v9mLUKEC5xgMa7EY1Awr9hYIbxy7/x7WuGRDm5n7mf1SJX+?=
- =?us-ascii?Q?L3Vgxf7t7FtC3roXp+kwU4LUEsC6gbQbX2VXC77NoTZGazfZsbrkNvl5I1lI?=
- =?us-ascii?Q?DDWdEmvSM4wbiVtx0EjyUa1RLpo3XxHxHd6wNGbcNLnfv/nGDfuyxMPzso5p?=
- =?us-ascii?Q?u+YgiLiD1t37dYA+o2qxRff+VLpqpwlYX736jzurSUxcE/O4FPwyulcHckM1?=
- =?us-ascii?Q?UoFG5yz/oBuSp6Fjni3JMiIwHeZuWrfwuItLAKRJMRizD7ImgcGiHLVauJLS?=
- =?us-ascii?Q?Xjc0Q3C5JvXvbYsT1fDwekRWZoEYz1nANkKLKvh5EAiu+nUgcovbUznhlOLg?=
- =?us-ascii?Q?neIkIK00AtCU1GGH41TkO3qI+e+mVo92XMgXKSfFWBFGfY6+3PxwW0RQWtcJ?=
- =?us-ascii?Q?A3bw/v5WsvSnXCyFKMKxo5TuzUQ0G/6SwSZ2+J0uLNYxndIQ85zk3EuU/aI1?=
- =?us-ascii?Q?Q79N6tNbquMnZr3ylW8bG7IiMCToFQ/1wXNc9Gcbiv0F2HxYU63LuNZdxGJ9?=
- =?us-ascii?Q?hhNmf4lHA0JJljR7tzm2PlAcnJFQ74Ix1DGRJvAdqVwetlujWt+2ulk0aYE8?=
- =?us-ascii?Q?ipVF2mx9qnyUPayUY0WZcEkFATdHiRtfp33f7mOsOua9v9uw69fp5K6Kvi87?=
- =?us-ascii?Q?YqAFur5nOPt2JJONxLKykIRlTVMWqfFgFWdxop4BNioqMZxYjmYoQmH+77sJ?=
- =?us-ascii?Q?o7xf4Tg7N1FV4HLWdvjQygRf3j+QSomYgrnvPArn?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb095374-677b-48f4-c39c-08ddcddda9a7
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2025 13:50:07.6175
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 49seZXiyaDBFwHF32DWf6qwQJm48h9cV0fEsBajcmtDJkPuLX86BaBYbYM9V58w5j2xFXKyOD/dH3mq9rxcTCw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO4P265MB3533
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, 28 Jul 2025 21:47:50 +0900
-Alexandre Courbot <acourbot@nvidia.com> wrote:
+This series adds three monitors to the sched collection, extends and
+replaces previously existing monitors:
 
-> This is the sister patch of [1], providing an `as_bytes` method for
-> `AsBytes`, and an `as_bytes_mut` accessor for types also implementing
-> `FromBytes`.
-> 
-> It is going to be used in Nova, but should also be universally useful -
-> if anything, it felt a bit strange that `AsBytes` did not provide this
-> so far.
-> 
-> [1] https://lore.kernel.org/rust-for-linux/20250624042802.105623-1-christiansantoslima21@gmail.com/
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> Changes in v4:
-> - Add the `as_bytes_mut` method for types also implementing `FromBytes`.
->   (thanks Alice!)
-> - Link to v3: https://lore.kernel.org/r/20250726-as_bytes-v3-1-eb7514faab28@nvidia.com
-> 
-> Changes in v3:
-> - Use `ptr::from_ref` instead of `as *const T`.
-> - Link to v2: https://lore.kernel.org/r/20250725-as_bytes-v2-1-c6584c211a6c@nvidia.com
-> 
-> Changes in v2:
-> - Use `size_of_val` to provide a default implementation for both `Sized`
->   and non-`Sized` types, and remove `AsBytesSized`. (thanks Alice!)
-> - Link to v1: https://lore.kernel.org/r/20250725-as_bytes-v1-1-6f06a3744f69@nvidia.com
-> 
-> ---
-> Alexandre Courbot (2):
->       rust: transmute: add `as_bytes` method for `AsBytes` trait
->       rust: transmute: add `as_bytes_mut` method to `AsBytes` trait
-> 
->  rust/kernel/transmute.rs | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 14ae91a81ec8fa0bc23170d4aa16dd2a20d54105
-> change-id: 20250725-as_bytes-6cbc11f2e8c3
-> 
-> Best regards,
+{tss,snroc} => sts:
+Not only prove that switches occur in scheduling context and scheduling
+needs interrupt disabled but also that each call to the scheduler
+disables interrupts to (optionally) switch.
 
-Reviewed-by: Gary Guo <gary@garyguo.net>
+nrp (NEW):
+* preemption requires need resched which is cleared by any switch
+  (includes a non optimal workaround for /nested/ preemptions)
+
+sssw (NEW):
+* suspension requires setting the task to sleepable and, after the
+  switch occurs, the task requires a wakeup to come back to runnable
+
+opid (NEW):
+* waking and need-resched operations occur with interrupts and
+  preemption disabled or in IRQ without explicitly disabling preemption
+
+Also include some minor cleanup patches (1-4) tracepoints (6) and
+preparatory fixes (5) covering some corner cases:
+
+The series is currently based on the tracing rv/for-next tree.
+
+Patch 1 adds da_handle_start_run_event_ also to per-task monitors
+
+Patch 2 removes a trailing whitespace from the rv tracepoint string
+
+Patch 3 fixes an out-of-bound memory access in DA tracepoints
+
+Patch 4 adjusts monitors to have minimised Kconfig dependencies
+
+Patch 5 detects race conditions when rv monitors run concurrently and
+retries applying the events
+
+Patch 6 adds the need_resched and removes unused arguments from
+schedule entry/exit tracepoints
+
+Patch 7 adds the sts monitor to replace tss and sncid
+
+Patch 8 adds the nrp and sssw monitors
+
+Patch 9 adds the opid monitor
+
+NOTES
+
+The nrp and sssw monitors include workarounds for racy conditions:
+
+* A sleeping task requires to set the state to sleepable, but in case of
+  a task sleeping on an rtlock, the set sleepable and wakeup events race
+  and we don't always see the right order:
+
+ 5d..2. 107.488369: event: 639: sleepable x set_sleepable -> sleepable
+ 4d..5. 107.488369: event: 639: sleepable x wakeup -> running (final)
+ 5d..3. 107.488385: error: 639: switch_suspend not expected in the state running
+
+    wakeup()                    set_state()
+        state=RUNNING
+                                    trace_set_state()
+        trace_wakeup()
+                                    state=SLEEPING
+
+  I added a special event (switch_block) but there may be a better way.
+  Taking a pi_lock in rtlock_slowlock_locked when setting the state to
+  TASK_RTLOCK_WAIT avoids this race, although this is likely not
+  something we want to do.
+
+* I consider preemption any scheduling with preempt==true and assume
+  this can happen only if need resched is set.
+  In practice, however, we may see a preemption where the flag
+  is not set. This can happen in one specific condition:
+
+  need_resched
+                  preempt_schedule()
+                                        preempt_schedule_irq()
+                                            __schedule()
+  !need_resched
+                      __schedule()
+
+  We start a standard preemption (e.g. from preempt_enable when the flag
+  is set), an interrupts occurs before we schedule and, on its exit path,
+  it schedules, which clears the need_resched flag.
+  When the preempted task runs again, we continue the standard
+  preemption started earlier, although the flag is no longer set.
+
+  I added a workaround to allow the model not to fail in this condition,
+  by allowing a preemption without need_resched if an interrupt is
+  received. This might catch false negatives too.
+
+Changes since V4:
+* Drop already applied patches for the tools/ directory
+* Avoid using smp_processor_id() from tracepoint context
+
+Changes since V3 [1]:
+* Fix condition for lines shorter than 100 columns in dot2c.
+* Fix Kconfig tooltip for container monitors in rvgen.
+* Improve condition not to skip pid-0 in userspace tool.
+* Rearrange monitors to reduce needed tracepoints and arguments.
+* Separately track errors when DAs run out of retries due to races.
+* Fix issue in opid with multiple handlers in the same interrupt.
+* Cleanup patches by removing, squashing and reordering.
+
+Changes since RFC2:
+ * Arrange commits to prevent failed build while bisecting.
+ * Avoid dot2k generated files to reach the column limit. (Nam Cao)
+ * Rearrange and simplify da_monitor retry on racing events.
+ * Improve nrp monitor to handle /nested/ preemption on IRQ.
+ * Added minor patches (6-10).
+ * Cleanup and rearrange order.
+Changes since RFC [2]:
+ * Remove wakeup tracepoint in try_to_block_task and use a different
+   flavour of sched_set_state
+ * Split the large srs monitor in two separate monitors for preemption
+   and sleep. These no longer have a concept of running task, they just
+   enforce the requirements for the different types of sched out.
+ * Restore the snroc monitor to describe the relationship between
+   generic sched out and sched in.
+ * Add opid monitor.
+ * Fix some build errors and cleanup.
+
+[1] - https://lore.kernel.org/lkml/20250715071434.22508-1-gmonaco@redhat.com
+[2] - https://lore.kernel.org/lkml/20250404084512.98552-11-gmonaco@redhat.com
+
+To: Ingo Molnar <mingo@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Tomas Glozar <tglozar@redhat.com>
+Cc: Juri Lelli <jlelli@redhat.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: John Kacur <jkacur@redhat.com>
+
+Gabriele Monaco (9):
+  rv: Add da_handle_start_run_event_ to per-task monitors
+  rv: Remove trailing whitespace from tracepoint string
+  rv: Use strings in da monitors tracepoints
+  rv: Adjust monitor dependencies
+  rv: Retry when da monitor detects race conditions
+  sched: Adapt sched tracepoints for RV task model
+  rv: Replace tss and sncid monitors with more complete sts
+  rv: Add nrp and sssw per-task monitors
+  rv: Add opid per-cpu monitor
+
+ Documentation/trace/rv/monitor_sched.rst      | 307 +++++++++++++++---
+ include/linux/rv.h                            |   3 +-
+ include/linux/sched.h                         |   7 +-
+ include/rv/da_monitor.h                       | 131 +++++---
+ include/trace/events/sched.h                  |  12 +-
+ kernel/sched/core.c                           |  13 +-
+ kernel/trace/rv/Kconfig                       |  11 +-
+ kernel/trace/rv/Makefile                      |   6 +-
+ kernel/trace/rv/monitors/{tss => nrp}/Kconfig |  12 +-
+ kernel/trace/rv/monitors/nrp/nrp.c            | 138 ++++++++
+ kernel/trace/rv/monitors/nrp/nrp.h            |  75 +++++
+ kernel/trace/rv/monitors/nrp/nrp_trace.h      |  15 +
+ kernel/trace/rv/monitors/opid/Kconfig         |  19 ++
+ kernel/trace/rv/monitors/opid/opid.c          | 168 ++++++++++
+ kernel/trace/rv/monitors/opid/opid.h          | 104 ++++++
+ .../sncid_trace.h => opid/opid_trace.h}       |   8 +-
+ kernel/trace/rv/monitors/sched/Kconfig        |   1 +
+ kernel/trace/rv/monitors/sco/sco.c            |   4 +-
+ kernel/trace/rv/monitors/scpd/Kconfig         |   2 +-
+ kernel/trace/rv/monitors/scpd/scpd.c          |   4 +-
+ kernel/trace/rv/monitors/sncid/sncid.c        |  95 ------
+ kernel/trace/rv/monitors/sncid/sncid.h        |  49 ---
+ kernel/trace/rv/monitors/snep/Kconfig         |   2 +-
+ kernel/trace/rv/monitors/snep/snep.c          |   4 +-
+ .../trace/rv/monitors/{sncid => sssw}/Kconfig |  10 +-
+ kernel/trace/rv/monitors/sssw/sssw.c          | 116 +++++++
+ kernel/trace/rv/monitors/sssw/sssw.h          | 105 ++++++
+ kernel/trace/rv/monitors/sssw/sssw_trace.h    |  15 +
+ kernel/trace/rv/monitors/sts/Kconfig          |  19 ++
+ kernel/trace/rv/monitors/sts/sts.c            | 156 +++++++++
+ kernel/trace/rv/monitors/sts/sts.h            | 117 +++++++
+ .../{tss/tss_trace.h => sts/sts_trace.h}      |   8 +-
+ kernel/trace/rv/monitors/tss/tss.c            |  90 -----
+ kernel/trace/rv/monitors/tss/tss.h            |  47 ---
+ kernel/trace/rv/monitors/wip/Kconfig          |   2 +-
+ kernel/trace/rv/rv_trace.h                    | 114 ++++---
+ tools/verification/models/sched/nrp.dot       |  29 ++
+ tools/verification/models/sched/opid.dot      |  35 ++
+ tools/verification/models/sched/sncid.dot     |  18 -
+ tools/verification/models/sched/sssw.dot      |  30 ++
+ tools/verification/models/sched/sts.dot       |  38 +++
+ tools/verification/models/sched/tss.dot       |  18 -
+ 42 files changed, 1665 insertions(+), 492 deletions(-)
+ rename kernel/trace/rv/monitors/{tss => nrp}/Kconfig (51%)
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.c
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.h
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp_trace.h
+ create mode 100644 kernel/trace/rv/monitors/opid/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.c
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.h
+ rename kernel/trace/rv/monitors/{sncid/sncid_trace.h => opid/opid_trace.h} (66%)
+ delete mode 100644 kernel/trace/rv/monitors/sncid/sncid.c
+ delete mode 100644 kernel/trace/rv/monitors/sncid/sncid.h
+ rename kernel/trace/rv/monitors/{sncid => sssw}/Kconfig (58%)
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.c
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.h
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw_trace.h
+ create mode 100644 kernel/trace/rv/monitors/sts/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.c
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.h
+ rename kernel/trace/rv/monitors/{tss/tss_trace.h => sts/sts_trace.h} (67%)
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.c
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.h
+ create mode 100644 tools/verification/models/sched/nrp.dot
+ create mode 100644 tools/verification/models/sched/opid.dot
+ delete mode 100644 tools/verification/models/sched/sncid.dot
+ create mode 100644 tools/verification/models/sched/sssw.dot
+ create mode 100644 tools/verification/models/sched/sts.dot
+ delete mode 100644 tools/verification/models/sched/tss.dot
+
+
+base-commit: b8a7fba39cd49eab343bfe561d85bb5dc57541af
+-- 
+2.50.1
+
 
