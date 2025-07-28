@@ -1,179 +1,170 @@
-Return-Path: <linux-kernel+bounces-748030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E4CB13B9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:40:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B73F9B13BA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F9E1884EF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:40:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1985F3AB805
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7B92676E9;
-	Mon, 28 Jul 2025 13:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6D52676DE;
+	Mon, 28 Jul 2025 13:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ur0cYhpS"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e3apBcto"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979801A704B
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1F21A704B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753709991; cv=none; b=c/VdKQcbYhRVO/Gtu0uq2eADuIKFWmfoNLpwkkba0uZpMHjl2DxlaA5aCMdBoDdMXsOBoZ48NCV/epoxmivhD9mphE94VW2N53WlXRxEjGS7iZw7r2fSLmQ1A3DqUg/Ga9tyEkKTduB4724HsMcaoef7P//3J0x+Vvz4Tza2eTo=
+	t=1753710136; cv=none; b=hkkojBVhKx4Iy9cCHZjCaW2QXghYi1Oot2ORk7HjMOt013dony5IG23wcHfQjJUE9n4AyCxkiJ6WWXSRuBrHawe2xPRCzHMo8pI4u7GIQJfqopju36lFm9RsffCb1doHe8t6OtcNO4MJ/JCAqmkxhEknZHAuPF9RTxX2o553GS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753709991; c=relaxed/simple;
-	bh=gnP7Ho82e+2s2JRpLg89JIyPpoGI5zM/Q7VIgOaQq9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=YRWTgWy4NYei88HOgBOBEoxTDrBXo/1Dc9ShjJloJuxn5nvWAX5H21J0kLX3CeDasyVbM11Fvk7vdZyDq5QlVwIU1IBw6WxoR66CRPBVjdudI6UUQvfvdMjLHXTj+uSH2W5/N47BHVy0xMdJK+cBRRNp5kpfHYz6fnh26xLvBgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ur0cYhpS; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250728133941euoutp02df6f135c914923331c8e36f5121441a4~Wbe-Ozynh2865828658euoutp02l
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:39:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250728133941euoutp02df6f135c914923331c8e36f5121441a4~Wbe-Ozynh2865828658euoutp02l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753709981;
-	bh=rLMXzfjtCxJZTFfF29cOu6ADGH4klb3b0shQniuYdUE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=ur0cYhpS/vzbF/MyneBpkfh74lTvzdsSmg/4oiXIcbMt9rjx4b3eCZSPGI7HIxINN
-	 ZxfUED+gU90tcoo+LWSvKxUhRzYzwGAwZR2nueWCaQajSjULxnt/aEiyz3ndqJj7iP
-	 qxk5BrFAtjTkoK/o8s6QwQKeDYzfMvPuibX6ZLr0=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250728133941eucas1p1110f4ef3da6f291256bc704a1835c866~Wbe_1RoxF2005220052eucas1p15;
-	Mon, 28 Jul 2025 13:39:41 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250728133939eusmtip1c509bd530b71e291fc5ec8af00c1a663~Wbe9ocdKY1520215202eusmtip1j;
-	Mon, 28 Jul 2025 13:39:39 +0000 (GMT)
-Message-ID: <d556ddfd-36f0-4ae3-aac4-9dc0f903d7b1@samsung.com>
-Date: Mon, 28 Jul 2025 15:39:39 +0200
+	s=arc-20240116; t=1753710136; c=relaxed/simple;
+	bh=Qi73DRoSdKFUDtg+GqUWUXH46IoLyNyfTl9cXuf39KI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mCGhSBi5tIQwG5PCikWzfMQEEsniDOcZwZe5M3+S9Etn07hmGz4KRTdV/SxxURJP53ThLAPur3mM1cuJcVx8o1Tq0H6PIJi5gAeNTohLgtBiH5V6Kbff97qNhSXI/Uc/Vch/Wpw4t03WltFPOMVvAj1iI9TGr7Dqt4FcQNiPbaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e3apBcto; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753710133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N+z91P0F4/0V3P8rhqCpVUP3XXznNf+Eecy4UXi6zcY=;
+	b=e3apBctoDmGLP9JFRSs8Ym5TdWp2J5pNXMbwkUEu79fCCEbt+9w+DjMtP9jGayuMAf52MA
+	H+N/HzESGQ+ahT5M9Rt4RfXcvgSrzmwKSnc8mSNInWHY3QZN3vzjHwC3X5RxndOGdzBztx
+	TGC53l4yYSVQDT/jVxSnUr1gQsEq8jQ=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-210-BYWfNwx8NyCDB1jS6pYNYA-1; Mon, 28 Jul 2025 09:42:12 -0400
+X-MC-Unique: BYWfNwx8NyCDB1jS6pYNYA-1
+X-Mimecast-MFC-AGG-ID: BYWfNwx8NyCDB1jS6pYNYA_1753710131
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-234f1acc707so40705595ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:42:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753710131; x=1754314931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N+z91P0F4/0V3P8rhqCpVUP3XXznNf+Eecy4UXi6zcY=;
+        b=UbusmhgERPgkYRI5KqDBfae8NUcbS1LFs+QWzzecWrIP3Y7njlxbRfyHBFMo10d1GV
+         W2Z54JcVw1AAouZLXPlQ2JhW2PXk+ayDEZylamZJHyzVs7RCSpsgkM7co0SQQ74/ysdm
+         rsLldGinEs91QhTWLn0MzdFI52GD/1mOTn9hm7ui6JN+TYQ3dEIrfoTzJIMv1yGAcpFG
+         SLzLa1SRKYFZoGaHnEh6gQPPCSXuqNly6BJdb+jO+4wFFb7IWWpO/2a0pZYhxqwlj9Ou
+         yqjkPFQjZtPy8ZRgHeqsz2aK8EWeH96sMPs/RvDqn2AALpWUZ4fvoaE4rDbwydiEjm88
+         vyiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfZWt5Gs2xRDwkTn9JQLkx7oZFXaxYiz7XOnX9EGg91idVgz1MStFJmfPaqPL+qpaN+a/zVFd/L4414xU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZydQADTkNrQCxCLhbzT8zelGS2Y3G9YkFi+EyOpvWh19nNYIQ
+	h8M/cwqb8n3bMXaGqv0r879gNrmtVcOg0FdOuWf7n6gnW7NCvgSokoxjg829im89qe0sduRGTfY
+	dGqIbh8D6LvdZq2VrWlUFeVRxniwgbrAmYkRf6KrzwhVWuyk32N8crX2aFSzduFhNtWYka4ivaa
+	zf61/mx+RYqp16c5OEcOibkBR7eexChDl8fwltlh0J
+X-Gm-Gg: ASbGncsR0SXJm8Y5uHnZqmOGKJBL296bieFL4mtfDztbV3x+O+E5/GWO7RtH8ApSbWI
+	IMg2qGj9knbBE7xaHowdSLQAJxPIFn6huczwyfQ4C95P95dT10wuAcVvPh6Zft+SriS4stHCwzr
+	y++0U6Bf/xajpyDrfQ9mQp
+X-Received: by 2002:a17:903:1c2:b0:234:ef42:5d69 with SMTP id d9443c01a7336-23fb30995c3mr182209905ad.13.1753710130862;
+        Mon, 28 Jul 2025 06:42:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHtpGSH0sdEHyiDtTCdyalB+5CXKfabmBBzxTMxNDt4pqkBUOeol9l7wFkRGUrlKlV1TFiSAWJviDOHFEHtNE=
+X-Received: by 2002:a17:903:1c2:b0:234:ef42:5d69 with SMTP id
+ d9443c01a7336-23fb30995c3mr182209645ad.13.1753710130476; Mon, 28 Jul 2025
+ 06:42:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [v2] block: fix FS_IOC_GETLBMD_CAP parsing in
- blkdev_common_ioctl()
-To: Arnd Bergmann <arnd@kernel.org>, Anuj Gupta <anuj20.g@samsung.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Kanchan Joshi
-	<joshi.k@samsung.com>, Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>, Anders Roxell
-	<anders.roxell@linaro.org>, Jens Axboe <axboe@kernel.dk>, Keith Busch
-	<kbusch@kernel.org>, Caleb Sander Mateos <csander@purestorage.com>, Pavel
-	Begunkov <asml.silence@gmail.com>, Alexey Dobriyan <adobriyan@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+References: <20250724064017.26058-1-jasowang@redhat.com>
+In-Reply-To: <20250724064017.26058-1-jasowang@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 28 Jul 2025 15:41:34 +0200
+X-Gm-Features: Ac12FXzUYMLeBVSoheOigrILsCXTJHp77xuCF_ZnD4KDihWoroctcgBEpSz1Kg0
+Message-ID: <CAJaqyWddTABhmjGjvY5F91g1x5pN4MxCtPnsWt-3H=SqEKO4RQ@mail.gmail.com>
+Subject: Re: [PATCH V4 00/19] virtio_ring in order support
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev, 
 	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250711084708.2714436-1-arnd@kernel.org>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250728133941eucas1p1110f4ef3da6f291256bc704a1835c866
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250728133941eucas1p1110f4ef3da6f291256bc704a1835c866
-X-EPHeader: CA
-X-CMS-RootMailID: 20250728133941eucas1p1110f4ef3da6f291256bc704a1835c866
-References: <20250711084708.2714436-1-arnd@kernel.org>
-	<CGME20250728133941eucas1p1110f4ef3da6f291256bc704a1835c866@eucas1p1.samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11.07.2025 10:46, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Thu, Jul 24, 2025 at 8:40=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
 >
-> Anders and Naresh found that the addition of the FS_IOC_GETLBMD_CAP
-> handling in the blockdev ioctl handler breaks all ioctls with
-> _IOC_NR==2, as the new command is not added to the switch but only
-> a few of the command bits are check.
+> Hello all:
 >
-> Move the check into the blk_get_meta_cap() function itself and make
-> it return -ENOIOCTLCMD for any unsupported command code, including
-> those with a smaller size that previously returned -EINVAL.
+> This sereis tries to implement the VIRTIO_F_IN_ORDER to
+> virtio_ring. This is done by introducing virtqueue ops so we can
+> implement separate helpers for different virtqueue layout/features
+> then the in-order were implemented on top.
 >
-> For consistency this also drops the check for NULL 'arg' that
-> is really useless, as any invalid pointer should return -EFAULT.
+> Tests shows 2%-19% imporvment with packed virtqueue PPS with KVM guest
+> vhost-net/testpmd on the host.
 >
-> Fixes: 9eb22f7fedfc ("fs: add ioctl to query metadata and protection info capabilities")
-> Link: https://lore.kernel.org/all/CA+G9fYvk9HHE5UJ7cdJHTcY6P5JKnp+_e+sdC5U-ZQFTP9_hqQ@mail.gmail.com/
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: add the check in blk-integrity.c instead of ioctl.c
+> Changes since V3:
 >
-> I've left out the maximum-size check this time, as there was no
-> consensus on whether there should be one, or what value.
+> - Re-benchmark with the recent vhost-net in order support
+> - Rename the batched used id and length
+> - Other minor tweaks
 >
-> We still need to come up with a better way of handling these in
-> general, for now the patch just addresses the immediate regression
-> that Naresh found.
+> Changes since V2:
 >
-> I have also sent a handful of patches for other drivers that have
-> variations of the same bug.
-> ---
+> - Fix build warning when DEBUG is enabled
+>
+> Changes since V1:
+>
+> - use const global array of function pointers to avoid indirect
+>   branches to eliminate retpoline when mitigation is enabled
+> - fix used length calculation when processing used ids in a batch
+> - fix sparse warnings
+>
+> Please review.
+>
+> Thanks
+>
+> Jason Wang (19):
+>   virtio_ring: rename virtqueue_reinit_xxx to virtqueue_reset_xxx()
+>   virtio_ring: switch to use vring_virtqueue in virtqueue_poll variants
+>   virtio_ring: unify logic of virtqueue_poll() and more_used()
+>   virtio_ring: switch to use vring_virtqueue for virtqueue resize
+>     variants
+>   virtio_ring: switch to use vring_virtqueue for virtqueue_kick_prepare
+>     variants
+>   virtio_ring: switch to use vring_virtqueue for virtqueue_add variants
+>   virtio: switch to use vring_virtqueue for virtqueue_add variants
+>   virtio_ring: switch to use vring_virtqueue for enable_cb_prepare
+>     variants
+>   virtio_ring: use vring_virtqueue for enable_cb_delayed variants
+>   virtio_ring: switch to use vring_virtqueue for disable_cb variants
+>   virtio_ring: switch to use vring_virtqueue for detach_unused_buf
+>     variants
+>   virtio_ring: use u16 for last_used_idx in virtqueue_poll_split()
+>   virtio_ring: introduce virtqueue ops
+>   virtio_ring: determine descriptor flags at one time
+>   virtio_ring: factor out core logic of buffer detaching
+>   virtio_ring: factor out core logic for updating last_used_idx
+>   virtio_ring: factor out split indirect detaching logic
+>   virtio_ring: factor out split detaching logic
+>   virtio_ring: add in order support
+>
+>  drivers/virtio/virtio_ring.c | 902 +++++++++++++++++++++++++++--------
+>  1 file changed, 690 insertions(+), 212 deletions(-)
+>
 
-In my tests I've found that this patch, merged as commit 42b0ef01e6b5 
-("block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()"), 
-breaks udev operation on some of my test boards - no /dev/disk/* entries 
-and directories are created. Reverting $subject on top of next-20250728 
-fixes/hides this problem. I suspect that another corner case is missing 
-in the checks. I will try to investigate this a bit more later, probably 
-tomorrow.
+I'm happy with this series and it solves the abuse of the DMA API as
+far as I know. As a suggestion, maybe we can get rid of the
+vring_use_map_api function and move it to the vdev? It's actually part
+of the TODO of the function, and this seems ideal.
 
+This can be done on top of course, so
 
->   block/blk-integrity.c | 10 ++++++----
->   block/ioctl.c         |  6 ++++--
->   2 files changed, 10 insertions(+), 6 deletions(-)
->
-> diff --git a/block/blk-integrity.c b/block/blk-integrity.c
-> index 9d9dc9c32083..61a79e19c78f 100644
-> --- a/block/blk-integrity.c
-> +++ b/block/blk-integrity.c
-> @@ -62,10 +62,12 @@ int blk_get_meta_cap(struct block_device *bdev, unsigned int cmd,
->   	struct logical_block_metadata_cap meta_cap = {};
->   	size_t usize = _IOC_SIZE(cmd);
->   
-> -	if (!argp)
-> -		return -EINVAL;
-> -	if (usize < LBMD_SIZE_VER0)
-> -		return -EINVAL;
-> +	if (_IOC_DIR(cmd)  != _IOC_DIR(FS_IOC_GETLBMD_CAP) ||
-> +	    _IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_GETLBMD_CAP) ||
-> +	    _IOC_NR(cmd)   != _IOC_NR(FS_IOC_GETLBMD_CAP) ||
-> +	    _IOC_SIZE(cmd) < LBMD_SIZE_VER0)
-> +		return -ENOIOCTLCMD;
-> +
->   	if (!bi)
->   		goto out;
->   
-> diff --git a/block/ioctl.c b/block/ioctl.c
-> index 9ad403733e19..af2e22e5533c 100644
-> --- a/block/ioctl.c
-> +++ b/block/ioctl.c
-> @@ -566,9 +566,11 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
->   			       void __user *argp)
->   {
->   	unsigned int max_sectors;
-> +	int ret;
->   
-> -	if (_IOC_NR(cmd) == _IOC_NR(FS_IOC_GETLBMD_CAP))
-> -		return blk_get_meta_cap(bdev, cmd, argp);
-> +	ret = blk_get_meta_cap(bdev, cmd, argp);
-> +	if (ret != -ENOIOCTLCMD)
-> +		return ret;
->   
->   	switch (cmd) {
->   	case BLKFLSBUF:
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thanks!
 
 
