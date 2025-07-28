@@ -1,102 +1,179 @@
-Return-Path: <linux-kernel+bounces-747633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A6CB13625
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:17:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3C2B13620
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F7C3B4B7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:16:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85A717893F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771D2224B12;
-	Mon, 28 Jul 2025 08:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B19E226CE5;
+	Mon, 28 Jul 2025 08:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vVOfrBKq"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="yG9Uh0Dj"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718002222A3
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5171F0E2E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753690627; cv=none; b=Msn4kMFc7EAwEUBo5euYraQERvm19CnB/a/Lg863URR7lSB3GfBs7iqjGcih9e5VR6AwTeodgEjaY4CWfcdI6tZkbvVllSTaB5PvexjP1urgl8gjWSFwu9pe5UfuqWiQOVLj/sevR6ZL+ermg13MtiJko5dyuN9pXmi7U4Idi3g=
+	t=1753690601; cv=none; b=iP2d6sggZLlH55w8TJCJPSfFbReFt5avd0EGSWPqVO86NLl+vbRxWEHJcPKOYd71U0saORsd2+RDa1YRFykqozJ4UIs4nbZGgK9fknjH4WGeGTxEFwPvI2fRB5KDoLldiYw3RuGMKBunqqS+jlSANG9CwguK/YOEpu/DdwWb15E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753690627; c=relaxed/simple;
-	bh=oVOsc6ibl2c4BxKOGSlypnNZvk85m52BrD53itvnuCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N5ZlC+J5GNtC+w3vh6GGZX7sqN5Ui4OwtrjLP9vZIPEog5XONw4TEzeKwscEliMONuEUUiHlNP+DpNSegQ3k2bG2B9j0hqtYJb0l4af5pMzoDAKT2D4PKdIDai09B6EWNfLujcoECEncelMfn0hl99FIZxC5QobmzWhceQoLOhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vVOfrBKq; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6fac7147cb8so54778616d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:17:06 -0700 (PDT)
+	s=arc-20240116; t=1753690601; c=relaxed/simple;
+	bh=ATpJw7WzoRud+y6bLFzHZO/ZLPtUwMBPibeII5AvRv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AZw2vXbn/+g1PJJCjFDMx0ngETqsDCBhT3V020RcJPkymd3E81Z6gvegMbI32A+JlX7c6t3juaaG482Ji/SZ6uCNANICoVDzv046yNiFYVAabr6eMaOCJua4mAuHFIrZ2eCzyAcdva1YcIZnbuQ1NBr57kIjhLgNapX/B05wNLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=yG9Uh0Dj; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0c571f137so789132466b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753690625; x=1754295425; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oVOsc6ibl2c4BxKOGSlypnNZvk85m52BrD53itvnuCs=;
-        b=vVOfrBKqXZq82K89blrYjpqba8kIYshhPZ28MnlENhy/eXPoiyesny97PmdYur41io
-         4Eif5JXu1QhjSy9ykPYotE4ZMFK5TZyB32gjOf2gt/b4Sp9UJMdi01g1IL1xfrEqA3gs
-         PMTo7HlzgZrxp7yO3bMTQRpS9EfQNXKkWkZx605Vso0j0draAqohyCNwmj5AHamASmTq
-         kz1Y8cggL19lTavQVjd0XA/li8C4Bv4mHCi8o/QyELbkPp7YEm8Fgo6ZqdeF6N1zeaXm
-         mQrakeNMLPc+Yj64I6o7bKXDB+r/LEppFTbJp+ib3Ga1hYfgwlNT+Zen+29n83VxjYSY
-         QpPQ==
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1753690598; x=1754295398; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BLJsYkXB9VHBJy4TSItaYqbC4HNxg9MAcc9feRLugIQ=;
+        b=yG9Uh0DjdytynVL8wI1c9CtpH7kuDs9BGzxpzb7zoFaWwquic0LXyGvCrOM6cs3jAs
+         Tnmtr38qStSMD4IrC5lLrpWRbpudxC4myw5qyIGXdJJfNLawiGwG6snh1eeOIq53ugdu
+         SRHyvw9rCpjsjKZKrFOIroOKQV3UfG7Hwctq87B7EsWrwBreNOJqQgpbTXpcvgKNkpu+
+         ywgGLo2NmLaIwn/AmlJ8aOff85AHdSkirBJBuMBFKz5a/lD7u3vDCA7ttGv18mJ+DTl8
+         3rg23CDNXpUaR3YRGypGNeU2mVrDRvSZbmRvvcHQS9Ez5UQ1OGZ/OS9VpdaNkHs86VES
+         F5GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753690625; x=1754295425;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oVOsc6ibl2c4BxKOGSlypnNZvk85m52BrD53itvnuCs=;
-        b=ecWiqx2yAAsMqHMdo9dTPjzewe0XG7zQELYaNkiqN9N/tofajhDhKvN9o2nSl9tCPV
-         KANL2ekueIL6UfDlbWxIAB6fEVzfYzmbBZ05czR7se6M7JxEYutSCvBz9OeqxfQNS2OM
-         K5JUa6KZhs3xYCeI5tTwSAAvvF6b7IkXmXXo20/tXwnVgK2y+ZzI9gIlBBT6ttuVLX69
-         uEPPTYugV3MNttX+463Y+ms1BuDOm8zzw3SGV8SJxkecBQ3T2gqm5nPIGH/McoX9Jdj+
-         saQreLmKYWl21fT30wuxJJA5pLjKiZCxz+Jopym1DHcIivDQNtSKyQAOkEy+ct5FRY5i
-         MpKA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5EaKVPYXqwOXf6po0DbwRlymQGfog6Rk3sZ0suiwpww1qk9eay8fiSn0+K0WfEsM+qjpjE+eowTQXhRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc54/lBSW7RKpnFHvl45ee4cqWIFqWaLJTcdY2gKLACxYTjbee
-	DUljA6g35Pqyj5dR8+B1m0oM94YXW86OATZg+z0erm7uwpyRO4aM0/PDQqiCdG/rxfDHHmr38KT
-	OzlDm8Xeutf/d8oQDtwvBxdu2ge2/fwRr00cfvmJ0
-X-Gm-Gg: ASbGnctoIDTsHMKzPpRMllJzWlIVHfT7g4aIAM9+ZZSrTeJ2Fsg2p3liKntxG97/kgZ
-	SEGj+1GLeGIjcxmWFRw0rjFa3le3WI2h6uBZaYUbClI9yPUDj/SVwyteR/fllEi3tc0km500MgP
-	cdOYZ3T1zfqGTC8ULrjYOBx4M/VTcVgZMc0PLsMt/yNLapsepEL3hShFN8RLPg0hiIObJjDJhlQ
-	urScgTls3qDSZxQ+FwHrnIprm/MP190vcH74g==
-X-Google-Smtp-Source: AGHT+IGJVja+BOlBDSueHM4xwgtmGAcntpknGmQBU6g6I7fWUhaq1g+6fNhuHcvRNLAtk8WzaUNpyzvQMZ0Hf40qYp8=
-X-Received: by 2002:a05:6214:5290:b0:704:95c6:f5f1 with SMTP id
- 6a1803df08f44-707205c02c1mr132327006d6.34.1753690625039; Mon, 28 Jul 2025
- 01:17:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753690598; x=1754295398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BLJsYkXB9VHBJy4TSItaYqbC4HNxg9MAcc9feRLugIQ=;
+        b=ntlSfmM4xXd6ox9GLe1m9VPI+kpLXmiq0HERVGRqRWjXJ5dnH3k2QV/9ucrovFFJ1q
+         Xfsei95/zvHrOlaqUkBz00zUHcBcUZSh7Qh8DeW0di+QS5Zw4jz2ZwlRlx/YZ1m6Vjhb
+         drwpxFACy0wcrgxO7J7Le12EEA0Rwpxu+yxpMRjLJlEaANPhx7IbVT1Omk7M6ctk0/h/
+         sXd9AlRRYHiPU98AiOwuihhDSOLi2nYRHUcXdHHXA/xSIau3BmPAH9dHkmEIjKds/PDe
+         A0r1oTsRR06grIljCB53oDwA3slcZyp+PZw3SFYOVuIo0qCdtxka7JerZApp5Imw7OsG
+         A/OA==
+X-Forwarded-Encrypted: i=1; AJvYcCWP6cqK5bNxf7j9boNBPoE8XofS7i/7ckL5cmbF2ch4nE7pORI5iMMZKi5zW0OWV8Nq17vUqrOLPHVgWQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKjNrFBE+d+P3petjqi6rzv1Z3PLxpupMM/zN1pxHBphQWrjD+
+	d9IAL5Z5ZP8rMKW2TToqRDsAehG5Zupz/84gb3/w32YvaEbGK+itnrqDlbnW1afRuGcOP+dVPak
+	Peikz
+X-Gm-Gg: ASbGncuTZuUmSfGXJEizFSz52MxUDNhgCxNfTJ4XEWfSWL7nTRYjecpimtjG1NlirMM
+	Ijq2x4gAv687GT3EwCOFsGRsrKKB83EsKwm8ETkhlkTMFugwdgg15lIWBavq0IWOeE4EZ7nz3Xp
+	kKF1vKcbujeqCYLiK6iEyC+NgFjkG6M9tVwKA7x4yXXRER84z9RBPgkEty5VCVxIW64KDJYi/2z
+	wC5/HDHtwqEFdDrSjSa++rbl/uBC0I0p3vFD96AmYZNxOrwAPbX7gzRe46jcoPqHKfJjnDVv6Mh
+	mylVGOK7hDKxFdUkllF06kR0Rma0eIwf8OZy9prrqOPZkwyNcbyy6B5yHsXEhFiMIEjgOSHdjfS
+	YndP4vhylK0oYk3iC3FEPtpJLQvAD
+X-Google-Smtp-Source: AGHT+IF500Dv6cNp/OyxZXV7NAhtOUjrPP2IhdEwpTckqccDSP/sK78bO43eDzNO9RnW/nn4lGzOqg==
+X-Received: by 2002:a17:906:f04a:b0:af6:361e:664d with SMTP id a640c23a62f3a-af6361e6780mr903788066b.7.1753690598206;
+        Mon, 28 Jul 2025 01:16:38 -0700 (PDT)
+Received: from jiri-mlt ([85.163.81.98])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635a66852sm379805466b.71.2025.07.28.01.16.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 01:16:37 -0700 (PDT)
+Date: Mon, 28 Jul 2025 10:16:36 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Ujwal Kundur <ujwal.kundur@gmail.com>
+Cc: syzbot+8182574047912f805d59@syzkaller.appspotmail.com, 
+	davem@davemloft.net, edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, andrew+netdev@lunn.ch
+Subject: Re: [RFC PATCH] net: team: switch to spinlock in team_change_rx_flags
+Message-ID: <dc2cjhvanb3rhlwljeuegp4euimfadt5q6u35wp55vueb5b5pb@xf4y6oxkjzjn>
+References: <68712acf.a00a0220.26a83e.0051.GAE@google.com>
+ <20250727180921.360-1-ujwal.kundur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <687e09e3.a70a0220.693ce.00eb.GAE@google.com>
-In-Reply-To: <687e09e3.a70a0220.693ce.00eb.GAE@google.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Mon, 28 Jul 2025 10:16:28 +0200
-X-Gm-Features: Ac12FXyuIo8mg0__JhxicCkBMBx-2UyW5BATXdwFGTnJezh5fbSE4P26Te_FKXc
-Message-ID: <CAG_fn=WSae7yjaHh=_iUc7eFALHX1vLQFMw8ryfas4-ijgFTiQ@mail.gmail.com>
-Subject: Re: [syzbot] [apparmor?] linux-next test error: WARNING in apparmor_unix_stream_connect
-To: john.johansen@canonical.com
-Cc: apparmor@lists.ubuntu.com, jmorris@namei.org, john@apparmor.net, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250727180921.360-1-ujwal.kundur@gmail.com>
 
-On Mon, Jul 21, 2025 at 11:35=E2=80=AFAM syzbot
-<syzbot+cd38ee04bcb3866b0c6d@syzkaller.appspotmail.com> wrote:
+Sun, Jul 27, 2025 at 08:09:21PM +0200, ujwal.kundur@gmail.com wrote:
+>Syzkaller reports the following issue:
+>BUG: sleeping function called from invalid context in
+>team_change_rx_flags
 >
-> Hello,
+>3 locks held by syz.1.1814/12326:
+> #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+> #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+> #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
+> #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+> #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+> #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
+> #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
+> #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
+>Preemption disabled at:
+>[<ffffffff895a7d26>] local_bh_disable include/linux/bottom_half.h:20 [inline]
+>^^^^
+>[<ffffffff895a7d26>] netif_addr_lock_bh include/linux/netdevice.h:4804 [inline]
+>[<ffffffff895a7d26>] dev_uc_add+0x56/0x120 net/core/dev_addr_lists.c:689
+>Call Trace:
+> <TASK>
+> dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+> print_lock_invalid_wait_context kernel/locking/lockdep.c:4833 [inline]
+> check_wait_context kernel/locking/lockdep.c:4905 [inline]
+> __lock_acquire+0xbcb/0xd20 kernel/locking/lockdep.c:5190
+> lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+> __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+> __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
+> team_change_rx_flags+0x38/0x220 drivers/net/team/team_core.c:1781
+> dev_change_rx_flags net/core/dev.c:9241 [inline]
+> __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+> netif_set_promiscuity+0x50/0xe0 net/core/dev.c:9305
+> dev_set_promiscuity+0x126/0x260 net/core/dev_api.c:287
+> dev_change_rx_flags net/core/dev.c:9241 [inline]
+> __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+> __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
+> dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
+> macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
+> __dev_open+0x470/0x880 net/core/dev.c:1683
+> __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
+> rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
+> rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
 >
-> syzbot found the following issue on:
+>mutex_lock/mutex_unlock are called from team_change_rx_flags with
+>BH disabled (caused by netif_addr_lock_bh). Switch to spinlock instead
+>to avoid sleeping with BH disabled.
+>
+>Reported-by: syzbot+8182574047912f805d59@syzkaller.appspotmail.com
+>Signed-off-by: Ujwal Kundur <ujwal.kundur@gmail.com>
 
-John, do you have an idea what's going on?
-This is pretty likely to be related to your "apparmor: make sure unix
-socket labeling is correctly updated." patch.
+This is already fixed by:
+bfb4fb77f9a8 ("team: replace team lock with rtnl lock")
+
+
+>---
+> drivers/net/team/team_core.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+>diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
+>index 8bc56186b2a3..4568075fea6e 100644
+>--- a/drivers/net/team/team_core.c
+>+++ b/drivers/net/team/team_core.c
+>@@ -1778,7 +1778,7 @@ static void team_change_rx_flags(struct net_device *dev, int change)
+> 	struct team_port *port;
+> 	int inc;
+> 
+>-	mutex_lock(&team->lock);
+>+	spin_lock(&team->lock);
+> 	list_for_each_entry(port, &team->port_list, list) {
+> 		if (change & IFF_PROMISC) {
+> 			inc = dev->flags & IFF_PROMISC ? 1 : -1;
+>@@ -1789,7 +1789,7 @@ static void team_change_rx_flags(struct net_device *dev, int change)
+> 			dev_set_allmulti(port->dev, inc);
+> 		}
+> 	}
+>-	mutex_unlock(&team->lock);
+>+	spin_unlock(&team->lock);
+> }
+> 
+> static void team_set_rx_mode(struct net_device *dev)
+>-- 
+>2.30.2
+>
 
