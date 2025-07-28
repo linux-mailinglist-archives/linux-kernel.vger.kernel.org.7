@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-747821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C23B138C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:19:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6096EB138BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D45E16D1D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:19:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A74C188E221
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827AE2620E4;
-	Mon, 28 Jul 2025 10:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66DB2571BD;
+	Mon, 28 Jul 2025 10:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DMrEeugy"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gvl8upK1"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5E425A2CD
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D502B1FBE9B;
+	Mon, 28 Jul 2025 10:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753697836; cv=none; b=SPvr943a1mbaBz3oY8cbXz3AZa3838eqxIcuvEXmTo9P2yzq1BmGK3P628m2YXkrqOdI48nwke6UqzRvnCLVAr11VNZoH4K7CEhc91wsVGcp34YeiJDVlSNDTr9QwjoG/tVBoItfCPG/dT8I5BlImZRRnjnmPYClbyHqP7mbc64=
+	t=1753697833; cv=none; b=p5ZtbmVx3P7qc07X4gSpzrEajsrBrfdrITFj7ofokbuRgnKkTWJmaliI2zzPMbrWES4AHJsWW8kIMtNRe368+oUSHG3/Ly9SXNIJ5tAj83VPgb+8CBpon+JLSBIq4Unc0Fj0A1qHpVfuSmpaGykbGOZwEYkS//mvHUPGCFthbPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753697836; c=relaxed/simple;
-	bh=SuW6Jkq4v3NgwKUo5wA4c82RPnlF5A5rHXkcqf+BYbE=;
+	s=arc-20240116; t=1753697833; c=relaxed/simple;
+	bh=++iwmbXGL40I9Dre1hXT3L65MKPkgLEo7jWhER6znfI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HILR7rrxdep0dYv7dsHZrL8ruaGTmfVtofUlWWjYQp5x6RxHZbXnceNE07b6x6WiX1W6R55jkOunJy9R3xqreHyAl3IgBQVBh8/pZEz6Jo6yOUlNFziold3IpAl/LF51U1lvVqVEfhItKVANMx6J6KH2kBQg/auTtPAHXhnVcu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DMrEeugy; arc=none smtp.client-ip=217.70.183.198
+	 MIME-Version:Content-Type; b=DKJA8YYFhH7MWmGc+SFzQ2YhJdzGM8iEAno+InuvlxWWJ0HEUgJLHZCZNhJVN340GmirjJE5i228T09Ke95US66pLWru9c+oMP5TlYo4m9sXsQbUHhZLTI+6h5CNtxpsG4ivbnx1DQtdp/59yh2BxS/9QVX43pUnul/P1LR7wA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gvl8upK1; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CA56143292;
-	Mon, 28 Jul 2025 10:17:06 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B535143295;
+	Mon, 28 Jul 2025 10:17:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753697827;
+	t=1753697828;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ke/PcRqDTW/FMp/3ob8XCd3S2uQ0KPzfCYd8FTbMaV8=;
-	b=DMrEeugyTNMXGKe1CzbreCKWjokenAc8UxJeIvfsxDVtEzNl5HnTdUD/B1HSBTdFQbfjPx
-	P54fmXSzxO9JNTSKsmBchXcE2W1TKHalp8XfoIdmP1VDl3p1xjT3LnC530DFefdYihPyxY
-	IQa2PJ7mH72uV6k2I7cjE5zjT6gXQlv4UexV94XQmbHuatogHWUtssVcsXMDCIo60ye4wZ
-	XPd4RuBLGVIOofanoAO+aajL+GCpNFnwbOQjPFg1Xdn45yBBgiD4QrtAu/NR8sN02G8Pfa
-	zXHcfOvGH+JuHOMZW5uvrKBz6fw2DA6M+0tPwdXSwu3zHjgwHB0/rn+oJATrXA==
+	bh=tB/giJamLwrlrWdb+yV4MiXhuFOprryUVJQyo9azviI=;
+	b=Gvl8upK1SXANWVdQ+RKqeWjUJwzaYa1IC7pSWxIHaT+PJiZxljCfZp8obsC2xIoS0hTWZp
+	t64TYwVMiSipYJV+i5zLQUb/RANjGYc3Tdk8ZVHztV501TnBPfu5Mo6HvzoCqODZYqcZ3Z
+	qSC11MduGjowoht84bSVJd6k3DyIcQDWLNQeq0Xe5MTXKoP04DY3T68TzoWEYMHJvuUYs/
+	aDb492zuOm7qam46TkpgGTPMvGKlOdxLzFHob8xtjmVKkiO2T5BKKfW2ospCLGPO3uen4X
+	ETVav/UWaPfAkKqeEDgXF6XIrGxA2ELKrMAMAMYoyxhRCgUWLYqlhz9WWWhlFQ==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Thomas Fourier <fourier.thomas@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Heiko Stuebner <heiko@sntech.de>, 
+Cc: stable@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, 
  =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
- Jinjie Ruan <ruanjinjie@huawei.com>, 
- Yifeng Zhao <yifeng.zhao@rock-chips.com>, linux-mtd@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ Viresh Kumar <vireshk@kernel.org>, 
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
+ Vipin Kumar <vipin.kumar@st.com>, 
+ David Woodhouse <David.Woodhouse@intel.com>, linux-mtd@lists.infradead.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250707071555.17704-2-fourier.thomas@gmail.com>
-References: <20250707071555.17704-2-fourier.thomas@gmail.com>
-Subject: Re: [PATCH] mtd: rawnand: rockchip: Add missing check after DMA
- map
-Message-Id: <175369782677.102528.4677825344596689403.b4-ty@bootlin.com>
-Date: Mon, 28 Jul 2025 12:17:06 +0200
+In-Reply-To: <20250707073941.22407-2-fourier.thomas@gmail.com>
+References: <20250707073941.22407-2-fourier.thomas@gmail.com>
+Subject: Re: [PATCH v3] mtd: rawnand: fsmc: Add missing check after DMA map
+Message-Id: <175369782769.102528.246537562442649222.b4-ty@bootlin.com>
+Date: Mon, 28 Jul 2025 12:17:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,19 +70,19 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeludeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheeifffhueelgfdtleetgfelvefggfehudelvdehuddulefgheelgfehieevvdegnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdegiegnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprhhurghnjhhinhhjihgvsehhuhgrfigvihdrtghomhdprhgtphhtthhopehurdhklhgvihhnvgdqkhhovghnihhgsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehhvghikhhosehsnhhtvggthhdruggvpdhrtghpthhtoheplhhinhhug
- idqrhhotghktghhihhpsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohephihifhgvnhhgrdiihhgrohesrhhotghkqdgthhhiphhsrdgtohhmpdhrtghpthhtohepfhhouhhrihgvrhdrthhhohhmrghssehgmhgrihhlrdgtohhm
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeludeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheeifffhueelgfdtleetgfelvefggfehudelvdehuddulefgheelgfehieevvdegnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdegiegnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnhhighessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehvihhpihhnrdhkuhhmrghrsehsthdrtghomhdprhgtphhtthhopeffrghvihgurdghohhoughhohhushgvsehinhhtvghlrdgtohhmpdhrtghpthhtoheprhhitghhr
+ ghrugesnhhougdrrghtpdhrtghpthhtohepvhhirhgvshhhkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrthgvmhdrsghithihuhhtshhkihihsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepfhhouhhrihgvrhdrthhhohhmrghssehgmhgrihhlrdgtohhm
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, 07 Jul 2025 09:15:50 +0200, Thomas Fourier wrote:
+On Mon, 07 Jul 2025 09:39:37 +0200, Thomas Fourier wrote:
 > The DMA map functions can fail and should be tested for errors.
 > 
 > 
 
 Applied to nand/next, thanks!
 
-[1/1] mtd: rawnand: rockchip: Add missing check after DMA map
-      commit: fd277532a84f4c9d9129a87e73dde6a6d9f34200
+[1/1] mtd: rawnand: fsmc: Add missing check after DMA map
+      commit: 7c9e7bdd663b238f32c9354938ff65d023f13daf
 
 Patche(s) should be available on mtd/linux.git and will be
 part of the next PR (provided that no robot complains by then).
