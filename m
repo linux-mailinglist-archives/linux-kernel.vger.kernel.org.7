@@ -1,158 +1,389 @@
-Return-Path: <linux-kernel+bounces-748115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF5DB13C8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:12:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BB2B13CA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB1E3ADABA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:05:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 909AC1718EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D96626F44D;
-	Mon, 28 Jul 2025 14:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D196D273D6F;
+	Mon, 28 Jul 2025 14:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LJ+eHBO6"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k/YQACin"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7F1262FF0;
-	Mon, 28 Jul 2025 14:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D347E2737EA
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753711303; cv=none; b=H/qeRVls85WRh5v7iI8lvd2C14c+11/TvA3V/+/p8LIu/mnsGhdxeRP2kIhe6rJwWrXI6Fik519tCKvD48Cc4i+V21h3AUmSG56Ne3LHtDaD8i/LEcFOYEtQ2emrgNHFZF2ddpBS1AUXuJyTCLu3hPunSnfafpb3/yhYRT7GDvc=
+	t=1753711338; cv=none; b=YNPwZBOfBOblZqTo34isvu2NGZynmYoY/2zx4y36hyyphy7Gy6vCcAUIA7DNioNBLQDKTEC1VBG0jddZUlPYBWXpwch9Hn5jmkgbFy4kg9+4o8x7BRma4ISHH2QBvGELVGZTrWP8aQe4A53WhEYnMdO1eWNiWMjLodUysbDBaPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753711303; c=relaxed/simple;
-	bh=hJSzyysV725MXCMSKkwkSQRVtfZ+yRvc1GJ3v6QkPlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g/r/5Fynk79TFf4ggW9OwYaDQbnV1gHniC/79SEZdBmUcwb5Jv+Yi4c2N0FK1JU4IlHAnnjJm7OanR3AWoQ6mBoiYhoaKo3VYmxhvTspcBauIm93HAn+vipOukjlzXDJsJNuVihrDkv8pEGspfuDy96eFGdhhihNQkxN07yPjaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LJ+eHBO6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56S97klR012673;
-	Mon, 28 Jul 2025 14:01:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=CFik1r
-	KaWQ3CDMiu0Ph73wlR8+18iGh/KaEQ3etowo4=; b=LJ+eHBO676jjwSFh6YtW+z
-	Speb9aNsORV1VJs72of1o/vvLDFdniYEqSKWl11T1NYhim8ls74cUurqzraDjCQB
-	N5sy2m2ycOXmCRA2/fs8dn520CFug5QX7m7UgXWauabheyDMCbP7Wcn8FtwuuWaR
-	ACDyP4Q5o+A1Cxoc9FDhc+utxnrxAw9SuaXacZ3mPo5FTgLIRenp6ViffOB7HbNj
-	XXNV9SpdPmEBXR1056w6TJJRIJyBcRZ4DJY5YIlSg4YI0NKQ7Qi5kFYo7L0sSyJR
-	T+yepEaVsbEsxHdZJTzOHQrQQhNUV+JeO+ch5hMDHnVgVxqUQNllxppHTwgw8/nQ
+	s=arc-20240116; t=1753711338; c=relaxed/simple;
+	bh=KO8i/mUp/L1BpdU8Do+Wpmb2CPG3Q3jG+Kb87u47rKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s/LLPB2iwcH57MVKLYgCa2BWZ79e3skQuXs2fXMGnpLFxmw8yUT+vrb0gF99ENjrdB6A6Ifaqg/BOekWgjXJ23/62IOzmBQ5cnhXnZUZucCGDG1PTE4reu+DA4pr8vvtGVms2h1oSgoHFE0UuEounT+n2Ds4PEoyWzTPQv1Mzd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k/YQACin; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45611a6a706so20677115e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:02:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753711334; x=1754316134; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MDgnlrhOp316LKm8qgqTwB9fvvKHrbdRGlvBul5Nxhw=;
+        b=k/YQACiniq1vVuKcRKW0uqjqwoB5EdvCDprEWN2EFVptvsQZd7X/qstseBpaTjhBtk
+         32jcRoFzCM1zxkjRaacKawr/ZewVgWWveHPocX5DHBzTVbzgUOfIQE9D5pdBUo8fVwZg
+         fmvbpSGjbcjh0Dert4lCzCAIWgZlet9uvBCStDUHrEE1/PjbV0pDzsUVkaGYbwlfb7mT
+         CNjvo45T3qnA3QB/4s01WwUE4WpqMoTopuxs0wY+HuKAaxF5daB+ChyQR9Ypq1I58FOB
+         DwuACK/D89v+75CqRCkV86ZHQZZKPXg+mEIfBfqDOk4gbLW0CuM8Qqcr+wJlcj776zV6
+         LE1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753711334; x=1754316134;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MDgnlrhOp316LKm8qgqTwB9fvvKHrbdRGlvBul5Nxhw=;
+        b=ZJRDl7atlqmffhximg0iobrXfGiOlvdkORlVq2Y/OBLkQhBp0DNV2c9oYFk1MFE0dt
+         S9vnVYTQV+gfm2uPy6L0IzYmlcVcjk4nIXihtnN7Gx9FxHED7QfH6TtcoEE6/ZH4qdJ1
+         zWqx89E/xklqeL0a2FUbbXzxyLU3ylysH2Pc8wqZfXgBlyt2ilpF/tslaluYk4CWRsRO
+         4FCB2R19/8DKFhTAuTb8bT6BRtqQMfmWMZcT6LJXglxfhA6SURnIGYjqdDHE3r5t2eAg
+         +uTd06RoqD7s+bJaaG7LeJw8C/pNfzqQCUSzyTprImm40C8r0lqohvtg5wE+k0fDJ+yt
+         cn5w==
+X-Forwarded-Encrypted: i=1; AJvYcCV78bSRWSAg+lVoxv/7W/NvnWqBPZJ9FsgXD0N3ZhbdRGqVlijhlL/MTODBB/JsEuj06nN9+Xi8vlLUxrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbTmwvDle2R49w1WO2c9BD9UQ6XUnk9qlGJ60s6+k5I7pWFkwz
+	BQW6wSQqBrgYa2pqKWlxPX1wCZpSap9HlzVKCP44WKVDbSJ2WJ4qTpWArjhWfYlhXhM=
+X-Gm-Gg: ASbGncvmXO51kw2EPtGMgddkekDY5j2V54V5OSW9ooiWfrZwg/q+ehOLdEEDYZK5WR+
+	QF6BNuQneKXkjj6mCT3tfeIif0cAU6b3CZNuUZiRFJ0ozahh81igIX0iR7pmmzR3WAN1J80ZayW
+	Z4sQct+ZbIUvraPc2KRJLChJvDn3m+/jczYqOwvpkb6QjDrgAPhotCOoupZ/9uKbDYMzEkzPT+N
+	n8NTjt2WSfG/zu18oVwUSPv9aQoi1yPzyTe1WsMrvZUUVWwExuKf94kENxXvP2ohSOEPQsKxWif
+	b+SkY32coplasQ+8hqjm6groO63iyTy0PjR3CuE49nRKX1vSi1qccmfUbWdVbZPKasiWW75FrB/
+	Ag/F+mOpgkZStSy2baCr7G92SML+0ukzgDICo0adFP0HXxQnkbcmHTDPzoYIo20yTDLCLJvDoxA
 	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qemhdqj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 14:01:18 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56SDlFFR022438;
-	Mon, 28 Jul 2025 14:01:18 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qemhdq9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 14:01:18 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56SAm0JD016016;
-	Mon, 28 Jul 2025 14:01:16 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485aumdy4m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 14:01:16 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56SE1ClD55509412
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 14:01:12 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E2132004E;
-	Mon, 28 Jul 2025 14:01:12 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 488AF20040;
-	Mon, 28 Jul 2025 14:01:11 +0000 (GMT)
-Received: from osiris (unknown [9.111.42.157])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 28 Jul 2025 14:01:11 +0000 (GMT)
-Date: Mon, 28 Jul 2025 16:01:09 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Alexey Gladkov <legion@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Daniel Gomez <da.gomez@samsung.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nicolas Schier <nicolas.schier@linux.dev>,
-        linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v5 10/10] s390: vmlinux.lds.S: Reorder sections
-Message-ID: <20250728140109.7289Ae1-hca@linux.ibm.com>
-References: <cover.1753354215.git.legion@kernel.org>
- <2860d5a5e7c6279b3836537e20b0fa0c40d2ba0f.1753354215.git.legion@kernel.org>
- <CAK7LNARV+8vZPUtX8iG_hEAt8tCchRPFobK85tv9dbJwVqYgsw@mail.gmail.com>
+X-Google-Smtp-Source: AGHT+IEVjNzjQfUAHGkG5K1xgvtcGDceKpvleFX8cpLDujOgXcnJhaEFr7U+ftGk/7ClOLjACshFTA==
+X-Received: by 2002:a05:600c:45d1:b0:455:f187:6203 with SMTP id 5b1f17b1804b1-4587654f0camr89203815e9.27.1753711333913;
+        Mon, 28 Jul 2025 07:02:13 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778ebaca7sm9122241f8f.30.2025.07.28.07.02.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 07:02:13 -0700 (PDT)
+Message-ID: <07501287-647f-4bb8-9d6d-42bb37ea04cc@linaro.org>
+Date: Mon, 28 Jul 2025 15:02:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARV+8vZPUtX8iG_hEAt8tCchRPFobK85tv9dbJwVqYgsw@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: BpN6t-kwEAlZRnz5ZPCv9sPjjbBLhHRh
-X-Proofpoint-GUID: zxepZsb5zJ1uI0blirAJ6f0FPt0BIFI3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDEwMSBTYWx0ZWRfX79u1++/Y1O71
- MQRRK7Pup2EyhLxvfBbbluaYkQabYdt8qxBzET/TnrkjJ3s1dJP/cQxQ9Pt0nnxhC0Okh+lTGzY
- yfblsNfds0zRnpy7EL7zRnHO6fy0rj/ANUSgF5L5YAlEaXEZOMfRwkTGj2hfitr989RuaH177EJ
- Y5xnJ4n+U/ENBv2VESf97LWCieQb5XZWN92F7ckEwp1KwjSkF8M7RHCKrRFQintKoGmQClYQblJ
- atvw/X5lyOUTiMHCgDOXEgi679RT24VT2Aa2WgvG1paDRFgFtxfSPPR8o9UBQks1EDIjxHtAb7e
- Rkjgm4vpqJ95+pOYEkVLkHQ8mU1KKfiMPMgOjtutt8VujOY1wwcvr4lB1Kz9pTEdoAFRLbyVZcs
- ThVh2JbSqcjXrnu/kTHLfHI1yc4Vk7aEscM3fG/AQsnoqjPvxWe6f3hPb7FPGcn08+8+wF31
-X-Authority-Analysis: v=2.4 cv=BJOzrEQG c=1 sm=1 tr=0 ts=688782ae cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=tkzU3b79AAAA:8
- a=VnNF1IyMAAAA:8 a=MV5UOnR8UQctMGFKOh0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=uCXMw2ptROQ0LevMJYzM:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
- mlxlogscore=292 priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507280101
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/9] media: qcom: camss: Add support for CSID for
+ sa8775p
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250703171938.3606998-1-quic_vikramsa@quicinc.com>
+ <20250703171938.3606998-8-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250703171938.3606998-8-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 26, 2025 at 07:59:16PM +0900, Masahiro Yamada wrote:
-> On Thu, Jul 24, 2025 at 10:50 PM Alexey Gladkov <legion@kernel.org> wrote:
-> >
-> > Reorder the sections to be placed in the default segment. The
-> > .vmlinux.info use :NONE to override the default segment and tell the
-> > linker to not put the section in any segment at all.
-> >
-> > >> s390x-linux-ld: .tmp_vmlinux1: warning: allocated section `.modinfo' not in segment
-> > >> s390x-linux-ld: .tmp_vmlinux2: warning: allocated section `.modinfo' not in segment
-> > >> s390x-linux-ld: vmlinux.unstripped: warning: allocated section `.modinfo' not in segment
+On 03/07/2025 18:19, Vikram Sharma wrote:
+> The CSID in sa8775p is version 690, This csid is different from
+> csid 780 w.r.t few bit-fields.
 > 
-> Thank you for root-causing!
+> Co-developed-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   .../platform/qcom/camss/camss-csid-gen3.c     |  31 +++-
+>   drivers/media/platform/qcom/camss/camss.c     | 151 ++++++++++++++++++
+>   2 files changed, 175 insertions(+), 7 deletions(-)
 > 
-> > Cc: Heiko Carstens <hca@linux.ibm.com>
-> > Cc: Vasily Gorbik <gor@linux.ibm.com>
-> > Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> > Cc: linux-s390@vger.kernel.org
-> 
-> Hi s390 maintainers,
-> I need this patch for kbuild tree.
-> Ack is appreciated.
+> diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen3.c b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+> index 0941152ec301..f62084fb8287 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+> @@ -47,8 +47,12 @@
+>   #define CSID_CSI2_RX_IRQ_CLEAR		0xA4
+>   #define CSID_CSI2_RX_IRQ_SET		0xA8
+>   
+> +#define IS_CSID_690(csid)	(csid->camss->res->version ==\
+> +					CAMSS_8775P ? true : false)
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+You don't need to make this into a bool.
 
-But can you reorder the series so this patch comes before any of the
-patches which introduces the above warnings, please?
+version == CAMSS_8775P will do exactly the same logical thing.
 
-Thanks!
+>   #define CSID_BUF_DONE_IRQ_STATUS	0x8C
+> -#define		BUF_DONE_IRQ_STATUS_RDI_OFFSET	(csid_is_lite(csid) ? 1 : 14)
+> +#define BUF_DONE_IRQ_STATUS_RDI_OFFSET  (csid_is_lite(csid) ?\
+> +						1 : (IS_CSID_690(csid) ?\
+> +						13 : 14))
+>   #define CSID_BUF_DONE_IRQ_MASK		0x90
+>   #define CSID_BUF_DONE_IRQ_CLEAR		0x94
+>   #define CSID_BUF_DONE_IRQ_SET		0x98
+> @@ -61,6 +65,7 @@
+>   
+>   #define CSID_CSI2_RX_CFG0		0x200
+>   #define		CSI2_RX_CFG0_NUM_ACTIVE_LANES	0
+> +#define		CSI2_RX_CFG0_VC_MODE		3
+>   #define		CSI2_RX_CFG0_DL0_INPUT_SEL	4
+>   #define		CSI2_RX_CFG0_PHY_NUM_SEL	20
+>   
+> @@ -68,7 +73,9 @@
+>   #define		CSI2_RX_CFG1_ECC_CORRECTION_EN	BIT(0)
+>   #define		CSI2_RX_CFG1_VC_MODE		BIT(2)
+>   
+> -#define CSID_RDI_CFG0(rdi)		(0x500 + 0x100 * (rdi))
+> +#define CSID_RDI_CFG0(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
+> +					(0x300 + 0x100 * (rdi)) :\
+> +					(0x500 + 0x100 * (rdi)))
+>   #define		RDI_CFG0_TIMESTAMP_EN		BIT(6)
+>   #define		RDI_CFG0_TIMESTAMP_STB_SEL	BIT(8)
+>   #define		RDI_CFG0_DECODE_FORMAT		12
+> @@ -77,10 +84,14 @@
+>   #define		RDI_CFG0_DT_ID			27
+>   #define		RDI_CFG0_EN			BIT(31)
+>   
+> -#define CSID_RDI_CTRL(rdi)		(0x504 + 0x100 * (rdi))
+> +#define CSID_RDI_CTRL(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
+> +					(0x304 + 0x100 * (rdi)) :\
+> +					(0x504 + 0x100 * (rdi)))
+>   #define		RDI_CTRL_START_CMD		BIT(0)
+>   
+> -#define CSID_RDI_CFG1(rdi)		(0x510 + 0x100 * (rdi))
+> +#define CSID_RDI_CFG1(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
+> +					(0x310 + 0x100 * (rdi)) :\
+> +					(0x510 + 0x100 * (rdi)))
+>   #define		RDI_CFG1_DROP_H_EN		BIT(5)
+>   #define		RDI_CFG1_DROP_V_EN		BIT(6)
+>   #define		RDI_CFG1_CROP_H_EN		BIT(7)
+> @@ -88,9 +99,12 @@
+>   #define		RDI_CFG1_PIX_STORE		BIT(10)
+>   #define		RDI_CFG1_PACKING_FORMAT_MIPI	BIT(15)
+>   
+> -#define CSID_RDI_IRQ_SUBSAMPLE_PATTERN(rdi)	(0x548 + 0x100 * (rdi))
+> -#define CSID_RDI_IRQ_SUBSAMPLE_PERIOD(rdi)	(0x54C + 0x100 * (rdi))
+> -
+> +#define CSID_RDI_IRQ_SUBSAMPLE_PATTERN(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
+> +							(0x348 + 0x100 * (rdi)) :\
+> +							(0x548 + 0x100 * (rdi)))
+> +#define CSID_RDI_IRQ_SUBSAMPLE_PERIOD(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
+> +							(0x34C + 0x100 * (rdi)) :\
+> +							(0x54C + 0x100 * (rdi)))
+>   #define CSI2_RX_CFG0_PHY_SEL_BASE_IDX	1
+>   
+>   static void __csid_configure_rx(struct csid_device *csid,
+> @@ -102,6 +116,9 @@ static void __csid_configure_rx(struct csid_device *csid,
+>   	val |= phy->lane_assign << CSI2_RX_CFG0_DL0_INPUT_SEL;
+>   	val |= (phy->csiphy_id + CSI2_RX_CFG0_PHY_SEL_BASE_IDX) << CSI2_RX_CFG0_PHY_NUM_SEL;
+>   
+> +	if (IS_CSID_690(csid) && (vc > 3))
+> +		val |= 1 << CSI2_RX_CFG0_VC_MODE;
+> +
+
+I remeber that the > 3 has a purpose but, I don't remember of off the 
+top of my head what that is.
+
+Please add a comment to state why "> 3" matters.
+
+BTW should this be "> 3" or ">= 3" please double check.
+
+>   	writel(val, csid->base + CSID_CSI2_RX_CFG0);
+>   
+>   	val = CSI2_RX_CFG1_ECC_CORRECTION_EN;
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index ebc3b296bb50..b2398196b9ff 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -2269,6 +2269,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
+>   	}
+>   };
+>   
+> +static const struct resources_wrapper csid_wrapper_res_sa8775p = {
+> +	.reg = "csid_wrapper",
+> +};
+> +
+>   static const struct resources_wrapper csid_wrapper_res_sm8550 = {
+>   	.reg = "csid_wrapper",
+>   };
+
+Redefining the same string in separate structures over and over again 
+seems wasteful.
+
+Please take the opporunity of this new addition to rationalise down the 
+string declarations and .. if possible the number of struct 
+resources_wrappers we are doing here.
+
+> @@ -2558,6 +2562,153 @@ static const struct camss_subdev_resources csiphy_res_8775p[] = {
+>   	},
+>   };
+>   
+> +static const struct camss_subdev_resources csid_res_8775p[] = {
+> +	/* CSID0 */
+> +	{
+> +		.regulators = {},
+> +
+Zap the newlines.
+> +		.clock = { "csid", "csiphy_rx"},
+> +		.clock_rate = {
+> +			{ 400000000, 400000000},
+> +			{ 400000000, 400000000}
+> +		},
+> +
+> +		.reg = { "csid0" },
+> +		.interrupt = { "csid0" },
+> +		.csid = {
+> +			.is_lite = false,
+> +			.hw_ops = &csid_ops_gen3,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID1 */
+> +	{
+> +		.regulators = {},
+> +
+> +		.clock = { "csid", "csiphy_rx"},
+> +		.clock_rate = {
+> +			{ 400000000, 400000000},
+> +			{ 400000000, 400000000}
+> +		},
+> +
+> +		.reg = { "csid1" },
+> +		.interrupt = { "csid1" },
+> +		.csid = {
+> +			.is_lite = false,
+> +			.hw_ops = &csid_ops_gen3,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +
+> +	/* CSID2 (lite) */
+> +	{
+> +		.regulators = {},
+> +
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 400000000, 400000000, 0},
+> +			{ 0, 0, 400000000, 480000000, 0}
+> +		},
+> +
+> +		.reg = { "csid_lite0" },
+> +		.interrupt = { "csid_lite0" },
+> +		.csid = {
+> +			.is_lite = true,
+> +			.hw_ops = &csid_ops_gen3,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID3 (lite) */
+> +	{
+> +		.regulators = {},
+> +
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 400000000, 400000000, 0},
+> +			{ 0, 0, 400000000, 480000000, 0}
+> +		},
+> +
+> +		.reg = { "csid_lite1" },
+> +		.interrupt = { "csid_lite1" },
+> +		.csid = {
+> +			.is_lite = true,
+> +			.hw_ops = &csid_ops_gen3,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID4 (lite) */
+> +	{
+> +		.regulators = {},
+> +
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 400000000, 400000000, 0},
+> +			{ 0, 0, 400000000, 480000000, 0}
+> +		},
+> +
+> +		.reg = { "csid_lite2" },
+> +		.interrupt = { "csid_lite2" },
+> +		.csid = {
+> +			.is_lite = true,
+> +			.hw_ops = &csid_ops_gen3,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID5 (lite) */
+> +	{
+> +		.regulators = {},
+> +
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 400000000, 400000000, 0},
+> +			{ 0, 0, 400000000, 480000000, 0}
+> +		},
+> +
+> +		.reg = { "csid_lite3" },
+> +		.interrupt = { "csid_lite3" },
+> +		.csid = {
+> +			.is_lite = true,
+> +			.hw_ops = &csid_ops_gen3,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +	/* CSID6 (lite) */
+> +	{
+> +		.regulators = {},
+> +
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 400000000, 400000000, 0},
+> +			{ 0, 0, 400000000, 480000000, 0}
+> +		},
+> +
+> +		.reg = { "csid_lite4" },
+> +		.interrupt = { "csid_lite4" },
+> +		.csid = {
+> +			.is_lite = true,
+> +			.hw_ops = &csid_ops_gen3,
+> +			.parent_dev_ops = &vfe_parent_dev_ops,
+> +			.formats = &csid_formats_gen2
+> +		}
+> +	},
+> +};
+> +
+>   static const struct resources_icc icc_res_sa8775p[] = {
+>   	{
+>   		.name = "ahb",
+
+---
+bod
 
