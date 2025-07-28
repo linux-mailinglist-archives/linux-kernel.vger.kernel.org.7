@@ -1,352 +1,242 @@
-Return-Path: <linux-kernel+bounces-747726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB413B1375B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:15:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B6AB1375C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43CFA3A6733
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:15:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 101243A612E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CCF1D8E1A;
-	Mon, 28 Jul 2025 09:15:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5246B1A83F7
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14011D5146;
+	Mon, 28 Jul 2025 09:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dRjYDqIN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ER9dxc2P";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dRjYDqIN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ER9dxc2P"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0D61A704B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753694134; cv=none; b=vERZOl113hETnpr3KiUTZY3qgmFLRae8OzkBPdLv632V4RjF6f54mOHfO/AUQ9N76YKXDeuwGIIn9/4+nN9eaeZ9eaD8Zy+qDFCBZF/TWRJoSoCvzOSIqf6C/pVnqqTQuHcUftDbF95t55v3M5lG1yixvd1ylpK2ShhBo6lp3Xw=
+	t=1753694212; cv=none; b=XiA4kqRxzK73bXpNeLOLSMXfKn0XRgYXa7M0FfCXKGQ43QosU+qqTiQieyeV8XHFoPcqCPZT7SXPXFxsAiFW3OOKenqBmb3Php0qssxPeB38+jH+rYaWu1yj5LbxvE2c1m77YvPungFKECU24LOVUUlfhjewMS7gVb1D62JFUwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753694134; c=relaxed/simple;
-	bh=qRg0qwgjUIaWoavMmhBBDJ+9uT1v8OJLnygy3gSWJ8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rXskJv3IhNyqjt5JLW/LS/FyBybJhzLiSTege72EgFQ3+JhKAofbYueg4D/hLfwwqYNR6x3tLtf0s5Btuh7SFJpaGb7YLd1+pRzJE39izX0fFnOEiUNnZ1W1yR4xOgElhJ7JJMh7PZPVjujtir1AjS2MGe7NWhRLH3RCt0pmNO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 497171596;
-	Mon, 28 Jul 2025 02:15:23 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C75A3F66E;
-	Mon, 28 Jul 2025 02:15:27 -0700 (PDT)
-Message-ID: <b7f48e6b-2b48-4946-8ab6-fae7a3fec061@arm.com>
-Date: Mon, 28 Jul 2025 10:15:25 +0100
+	s=arc-20240116; t=1753694212; c=relaxed/simple;
+	bh=q41JUvTl8y4IDPwr0bIfiqiaFim7UBkE0XbvdwSRfdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eL330ANId6q19bdAJ2NmVuuRrydi9c4E8Q95lS0f0dkqPs4wLQSh6FYQTp5+pUJu0l6tj/j10+/3Pgdym91e3EtcBqFuRw+uRjvS/uIlwBM1/OSnKVfu4ybfzHPBUjle1eBxSlPX2Mwy0F72VF6W+z0E5HNK75HHHDeB5rjF9s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dRjYDqIN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ER9dxc2P; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dRjYDqIN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ER9dxc2P; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 721281F444;
+	Mon, 28 Jul 2025 09:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753694208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wYLUO9SCf1ieYOdxJxUxSy5fSnkL9djEjNOnTob6B2I=;
+	b=dRjYDqINkB8IfY5WERe3po7VH8WaAY55O4GX3/ntxX8DEtV3gavcVgkbDjZptHr3xyQevy
+	pSm6F+ozqD9RHcYpp5DquFwAsnjmUraUVH9sHHUCyt1fRtR5gs2eb52d+WKYa9tI0GpvT7
+	atZlMDhhBML5fh0dA+CCwGbxnCLKQ0A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753694208;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wYLUO9SCf1ieYOdxJxUxSy5fSnkL9djEjNOnTob6B2I=;
+	b=ER9dxc2PXA706q2avaItvdjrQFqUQGJQd2IprxgVNlwL4UsB0q2juT07TkOEGBOOy1CTYo
+	qtvkf4QAWk5BV0Ag==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dRjYDqIN;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ER9dxc2P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753694208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wYLUO9SCf1ieYOdxJxUxSy5fSnkL9djEjNOnTob6B2I=;
+	b=dRjYDqINkB8IfY5WERe3po7VH8WaAY55O4GX3/ntxX8DEtV3gavcVgkbDjZptHr3xyQevy
+	pSm6F+ozqD9RHcYpp5DquFwAsnjmUraUVH9sHHUCyt1fRtR5gs2eb52d+WKYa9tI0GpvT7
+	atZlMDhhBML5fh0dA+CCwGbxnCLKQ0A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753694208;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wYLUO9SCf1ieYOdxJxUxSy5fSnkL9djEjNOnTob6B2I=;
+	b=ER9dxc2PXA706q2avaItvdjrQFqUQGJQd2IprxgVNlwL4UsB0q2juT07TkOEGBOOy1CTYo
+	qtvkf4QAWk5BV0Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 684E41368A;
+	Mon, 28 Jul 2025 09:16:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cSxyGQBAh2hSKgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 28 Jul 2025 09:16:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 11615A09BE; Mon, 28 Jul 2025 11:16:40 +0200 (CEST)
+Date: Mon, 28 Jul 2025 11:16:40 +0200
+From: Jan Kara <jack@suse.cz>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Liu Shixin <liushixin2@huawei.com>
+Subject: Re: [PATCH] mm: consider disabling readahead if there are signs of
+ thrashing
+Message-ID: <khtydy2lpwip3cysfjiw7sa7effaagpx7tcbvgopqhsdb2h3fc@4xveh6pjxuoq>
+References: <20250710195232.124790-1-roman.gushchin@linux.dev>
+ <at4ojyziprhhktjgtfmuyzrqwfmomnly6fubkvmbtxkdnx6hpb@5nldc3vipwny>
+ <875xffsxj4.fsf@linux.dev>
+ <87jz3vdf9e.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 21/36] arm_mpam: Merge supported features during
- mpam_enable() into mpam_class
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-22-james.morse@arm.com>
-Content-Language: en-US
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <20250711183648.30766-22-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jz3vdf9e.fsf@linux.dev>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	URIBL_BLOCKED(0.00)[linux.dev:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 721281F444
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-Hi James,
-
-On 7/11/25 19:36, James Morse wrote:
-> To make a decision about whether to expose an mpam class as
-> a resctrl resource we need to know its overall supported
-> features and properties.
+On Fri 25-07-25 16:25:49, Roman Gushchin wrote:
+> Roman Gushchin <roman.gushchin@linux.dev> writes:
+> > Jan Kara <jack@suse.cz> writes:
+> >> On Thu 10-07-25 12:52:32, Roman Gushchin wrote:
+> >>> We've noticed in production that under a very heavy memory pressure
+> >>> the readahead behavior becomes unstable causing spikes in memory
+> >>> pressure and CPU contention on zone locks.
+> >>> 
+> >>> The current mmap_miss heuristics considers minor pagefaults as a
+> >>> good reason to decrease mmap_miss and conditionally start async
+> >>> readahead. This creates a vicious cycle: asynchronous readahead
+> >>> loads more pages, which in turn causes more minor pagefaults.
+> >>> This problem is especially pronounced when multiple threads of
+> >>> an application fault on consecutive pages of an evicted executable,
+> >>> aggressively lowering the mmap_miss counter and preventing readahead
+> >>> from being disabled.
+> >>
+> >> I think you're talking about filemap_map_pages() logic of handling
+> >> mmap_miss. It would be nice to mention it in the changelog. There's one
+> >> thing that doesn't quite make sense to me: When there's memory pressure,
+> >> I'd expect the pages to be reclaimed from memory and not just unmapped. 
+> >> Also given your solution uses !uptodate folios suggests the pages were
+> >> actually fully reclaimed and the problem really is that filemap_map_pages()
+> >> treats as minor page fault (i.e., cache hit) what is in fact a major page
+> >> fault (i.e., cache miss)?
+> >>
+> >> Actually, now that I digged deeper I've remembered that based on Liu
+> >> Shixin's report
+> >> (https://lore.kernel.org/all/20240201100835.1626685-1-liushixin2@huawei.com/)
+> >> which sounds a lot like what you're reporting, we have eventually merged his
+> >> fixes (ended up as commits 0fd44ab213bc ("mm/readahead: break read-ahead
+> >> loop if filemap_add_folio return -ENOMEM"), 5c46d5319bde ("mm/filemap:
+> >> don't decrease mmap_miss when folio has workingset flag")). Did you test a
+> >> kernel with these fixes (6.10 or later)? In particular after these fixes
+> >> the !folio_test_workingset() check in filemap_map_folio_range() and
+> >> filemap_map_order0_folio() should make sure we don't decrease mmap_miss
+> >> when faulting fresh pages. Or was in your case page evicted so long ago
+> >> that workingset bit is already clear?
+> >>
+> >> Once we better understand the situation, let me also mention that I have
+> >> two patches which I originally proposed to fix Liu's problems. They didn't
+> >> quite fix them so his patches got merged in the end but the problems
+> >> described there are still somewhat valid:
+> >
+> > Ok, I got a better understanding of the situation now. Basically we have
+> > a multi-threaded application which is under very heavy memory pressure.
+> > I multiple threads are faulting simultaneously into the same page,
+> > do_sync_mmap_readahead() can be called multiple times for the same page.
+> > This creates a negative pressure on the mmap_miss counter, which can't be
+> > matched by do_sync_mmap_readahead(), which is be called only once
+> > for every page. This basically keeps the readahead on, despite the heavy
+> > memory pressure.
+> >
+> > The following patch solves the problem, at least in my test scenario.
+> > Wdyt?
 > 
-> Once we've probed all the resources, we can walk the tree
-> and produced overall values by merging the bitmaps. This
-nit: s/produced/produce/
-> eliminates features that are only supported by some MSC
-> that make up a component or class.
+> Actually, a better version is below. We don't have to avoid the actual
+> readahead, just not decrease mmap_miss if the page is locked.
 > 
-> If bitmap properties are mismatched within a component we
-> cannot support the mismatched feature.
+> --
 > 
-> Care has to be taken as vMSC may hold mismatched RIS.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->   drivers/platform/arm64/mpam/mpam_devices.c  | 215 ++++++++++++++++++++
->   drivers/platform/arm64/mpam/mpam_internal.h |   8 +
->   2 files changed, 223 insertions(+)
-> 
-> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
-> index 61911831ab39..7b042a35405a 100644
-> --- a/drivers/platform/arm64/mpam/mpam_devices.c
-> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
-> @@ -1186,8 +1186,223 @@ static struct platform_driver mpam_msc_driver = {
->   	.remove = mpam_msc_drv_remove,
->   };
->   
-> +/* Any of these features mean the BWA_WD field is valid. */
-> +static bool mpam_has_bwa_wd_feature(struct mpam_props *props)
-> +{
-> +	if (mpam_has_feature(mpam_feat_mbw_min, props))
-> +		return true;
-> +	if (mpam_has_feature(mpam_feat_mbw_max, props))
-> +		return true;
-> +	if (mpam_has_feature(mpam_feat_mbw_prop, props))
-> +		return true;
-> +	return false;
-> +}
-> +
-> +#define MISMATCHED_HELPER(parent, child, helper, field, alias)		\
-> +	helper(parent) &&						\
-> +	((helper(child) && (parent)->field != (child)->field) ||	\
-> +	 (!helper(child) && !(alias)))
-> +
-> +#define MISMATCHED_FEAT(parent, child, feat, field, alias)		     \
-> +	mpam_has_feature((feat), (parent)) &&				     \
-> +	((mpam_has_feature((feat), (child)) && (parent)->field != (child)->field) || \
-> +	 (!mpam_has_feature((feat), (child)) && !(alias)))
-> +
-> +#define CAN_MERGE_FEAT(parent, child, feat, alias)			\
-> +	(alias) && !mpam_has_feature((feat), (parent)) &&		\
-> +	mpam_has_feature((feat), (child))
-> +
-> +/*
-> + * Combime two props fields.
-nit: s/combime/combine/
-> + * If this is for controls that alias the same resource, it is safe to just
-> + * copy the values over. If two aliasing controls implement the same scheme
-> + * a safe value must be picked.
-> + * For non-aliasing controls, these control different resources, and the
-> + * resulting safe value must be compatible with both. When merging values in
-> + * the tree, all the aliasing resources must be handled first.
-> + * On mismatch, parent is modified.
-> + */
-> +static void __props_mismatch(struct mpam_props *parent,
-> +			     struct mpam_props *child, bool alias)
-> +{
-> +	if (CAN_MERGE_FEAT(parent, child, mpam_feat_cpor_part, alias)) {
-> +		parent->cpbm_wd = child->cpbm_wd;
-> +	} else if (MISMATCHED_FEAT(parent, child, mpam_feat_cpor_part,
-> +				   cpbm_wd, alias)) {
-> +		pr_debug("%s cleared cpor_part\n", __func__);
-> +		mpam_clear_feature(mpam_feat_cpor_part, &parent->features);
-> +		parent->cpbm_wd = 0;
-> +	}
-> +
-> +	if (CAN_MERGE_FEAT(parent, child, mpam_feat_mbw_part, alias)) {
-> +		parent->mbw_pbm_bits = child->mbw_pbm_bits;
-> +	} else if (MISMATCHED_FEAT(parent, child, mpam_feat_mbw_part,
-> +				   mbw_pbm_bits, alias)) {
-> +		pr_debug("%s cleared mbw_part\n", __func__);
-> +		mpam_clear_feature(mpam_feat_mbw_part, &parent->features);
-> +		parent->mbw_pbm_bits = 0;
-> +	}
-> +
-> +	/* bwa_wd is a count of bits, fewer bits means less precision */
-> +	if (alias && !mpam_has_bwa_wd_feature(parent) && mpam_has_bwa_wd_feature(child)) {
-> +		parent->bwa_wd = child->bwa_wd;
-> +	} else if (MISMATCHED_HELPER(parent, child, mpam_has_bwa_wd_feature,
-> +				     bwa_wd, alias)) {
-> +		pr_debug("%s took the min bwa_wd\n", __func__);
-> +		parent->bwa_wd = min(parent->bwa_wd, child->bwa_wd);
-> +	}
-> +
-> +	/* For num properties, take the minimum */
-> +	if (CAN_MERGE_FEAT(parent, child, mpam_feat_msmon_csu, alias)) {
-> +		parent->num_csu_mon = child->num_csu_mon;
-> +	} else if (MISMATCHED_FEAT(parent, child, mpam_feat_msmon_csu,
-> +				   num_csu_mon, alias)) {
-> +		pr_debug("%s took the min num_csu_mon\n", __func__);
-> +		parent->num_csu_mon = min(parent->num_csu_mon, child->num_csu_mon);
-> +	}
-> +
-> +	if (CAN_MERGE_FEAT(parent, child, mpam_feat_msmon_mbwu, alias)) {
-> +		parent->num_mbwu_mon = child->num_mbwu_mon;
-> +	} else if (MISMATCHED_FEAT(parent, child, mpam_feat_msmon_mbwu,
-> +				   num_mbwu_mon, alias)) {
-> +		pr_debug("%s took the min num_mbwu_mon\n", __func__);
-> +		parent->num_mbwu_mon = min(parent->num_mbwu_mon, child->num_mbwu_mon);
-> +	}
-> +
-> +	if (alias) {
-> +		/* Merge features for aliased resources */
-> +		parent->features |= child->features;
-> +	} else {
-> +		/* Clear missing features for non aliasing */
-> +		parent->features &= child->features;
-> +	}
-> +}
-> +
-> +/*
-> + * If a vmsc doesn't match class feature/configuration, do the right thing(tm).
-> + * For 'num' properties we can just take the minimum.
-> + * For properties where the mismatched unused bits would make a difference, we
-> + * nobble the class feature, as we can't configure all the resources.
-> + * e.g. The L3 cache is composed of two resources with 13 and 17 portion
-> + * bitmaps respectively.
-> + */
-> +static void
-> +__class_props_mismatch(struct mpam_class *class, struct mpam_vmsc *vmsc)
-> +{
-> +	struct mpam_props *cprops = &class->props;
-> +	struct mpam_props *vprops = &vmsc->props;
-> +
-> +	lockdep_assert_held(&mpam_list_lock); /* we modify class */
-> +
-> +	pr_debug("%s: Merging features for class:0x%lx &= vmsc:0x%lx\n",
-> +		 dev_name(&vmsc->msc->pdev->dev),
-> +		 (long)cprops->features, (long)vprops->features);
-> +
-> +	/* Take the safe value for any common features */
-> +	__props_mismatch(cprops, vprops, false);
-> +}
-> +
-> +static void
-> +__vmsc_props_mismatch(struct mpam_vmsc *vmsc, struct mpam_msc_ris *ris)
-> +{
-> +	struct mpam_props *rprops = &ris->props;
-> +	struct mpam_props *vprops = &vmsc->props;
-> +
-> +	lockdep_assert_held(&mpam_list_lock); /* we modify vmsc */
-> +
-> +	pr_debug("%s: Merging features for vmsc:0x%lx |= ris:0x%lx\n",
-> +		 dev_name(&vmsc->msc->pdev->dev),
-> +		 (long)vprops->features, (long)rprops->features);
-> +
-> +	/*
-> +	 * Merge mismatched features - Copy any features that aren't common,
-> +	 * but take the safe value for any common features.
-> +	 */
-> +	__props_mismatch(vprops, rprops, true);
-> +}
-> +
-> +/*
-> + * Copy the first component's first vMSC's properties and features to the
-> + * class. __class_props_mismatch() will remove conflicts.
-> + * It is not possible to have a class with no components, or a component with
-> + * no resources. The vMSC properties have already been built.
-> + */
-> +static void mpam_enable_init_class_features(struct mpam_class *class)
-> +{
-> +	struct mpam_vmsc *vmsc;
-> +	struct mpam_component *comp;
-> +
-> +	comp = list_first_entry_or_null(&class->components,
-> +					struct mpam_component, class_list);
-> +	if (WARN_ON(!comp))
-> +		return;
-> +
-> +	vmsc = list_first_entry_or_null(&comp->vmsc,
-> +					struct mpam_vmsc, comp_list);
-> +	if (WARN_ON(!vmsc))
-> +		return;
-> +
-> +	class->props = vmsc->props;
-> +}
-> +
-> +static void mpam_enable_merge_vmsc_features(struct mpam_component *comp)
-> +{
-> +	struct mpam_vmsc *vmsc;
-> +	struct mpam_msc_ris *ris;
-> +	struct mpam_class *class = comp->class;
-> +
-> +	list_for_each_entry(vmsc, &comp->vmsc, comp_list) {
-> +		list_for_each_entry(ris, &vmsc->ris, vmsc_list) {
-> +			__vmsc_props_mismatch(vmsc, ris);
-> +			class->nrdy_usec = max(class->nrdy_usec,
-> +					       vmsc->msc->nrdy_usec);
-> +		}
-> +	}
-> +}
-> +
-> +static void mpam_enable_merge_class_features(struct mpam_component *comp)
-> +{
-> +	struct mpam_vmsc *vmsc;
-> +	struct mpam_class *class = comp->class;
-> +
-> +	list_for_each_entry(vmsc, &comp->vmsc, comp_list)
-> +		__class_props_mismatch(class, vmsc);
-> +}
-> +
-> +/*
-> + * Merge all the common resource features into class.
-> + * vmsc features are bitwise-or'd together, this must be done first.
-> + * Next the class features are the bitwise-and of all the vmsc features.
-> + * Other features are the min/max as appropriate.
-> + *
-> + * To avoid walking the whole tree twice, the class->nrdy_usec property is
-> + * updated when working with the vmsc as it is a max(), and doesn't need
-> + * initialising first.
-> + */
-> +static void mpam_enable_merge_features(struct list_head *all_classes_list)
-> +{
-> +	struct mpam_class *class;
-> +	struct mpam_component *comp;
-> +
-> +	lockdep_assert_held(&mpam_list_lock);
-> +
-> +	list_for_each_entry(class, all_classes_list, classes_list) {
-> +		list_for_each_entry(comp, &class->components, class_list)
-> +			mpam_enable_merge_vmsc_features(comp);
-> +
-> +		mpam_enable_init_class_features(class);
-> +
-> +		list_for_each_entry(comp, &class->components, class_list)
-> +			mpam_enable_merge_class_features(comp);
-> +	}
-> +}
-> +
->   static void mpam_enable_once(void)
->   {
-> +	mutex_lock(&mpam_list_lock);
-> +	mpam_enable_merge_features(&mpam_classes);
-> +	mutex_unlock(&mpam_list_lock);
-> +
->   	mutex_lock(&mpam_cpuhp_state_lock);
->   	cpuhp_remove_state(mpam_cpuhp_state);
->   	mpam_cpuhp_state = 0;
-> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
-> index ae6fd1f62cc4..be56234b84b4 100644
-> --- a/drivers/platform/arm64/mpam/mpam_internal.h
-> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
-> @@ -185,12 +185,20 @@ static inline void mpam_set_feature(enum mpam_device_features feat,
->   	props->features |= (1 << feat);
->   }
->   
-> +static inline void mpam_clear_feature(enum mpam_device_features feat,
-> +				      mpam_features_t *supported)
-> +{
-> +	*supported &= ~(1 << feat);
-> +}
-> +
->   struct mpam_class {
->   	/* mpam_components in this class */
->   	struct list_head	components;
->   
->   	cpumask_t		affinity;
->   
-> +	struct mpam_props	props;
-> +	u32			nrdy_usec;
->   	u8			level;
->   	enum mpam_class_types	type;
->   
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 0d0369fb5fa1..1756690dd275 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3323,9 +3323,15 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
+>         if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
+>                 return fpin;
+>  
+> -       mmap_miss = READ_ONCE(ra->mmap_miss);
+> -       if (mmap_miss)
+> -               WRITE_ONCE(ra->mmap_miss, --mmap_miss);
+> +       /* If folio is locked, we're likely racing against another fault,
+> +        * don't decrease the mmap_miss counter to avoid decreasing it
+> +        * multiple times for the same page and break the balance.
+> +        */
+> +       if (likely(!folio_test_locked(folio))) {
 
+I like this, although even more understandable to me would be to have
 
-Thanks,
+	  if (likely(folio_test_uptodate(folio)))
 
-Ben
+which should be more or less equivalent for your situation but would better
+express, whether this is indeed a cache hit or not. But I can live with
+either variant.
 
+								Honza
+
+> +               mmap_miss = READ_ONCE(ra->mmap_miss);
+> +               if (mmap_miss)
+> +                       WRITE_ONCE(ra->mmap_miss, --mmap_miss);
+> +       }
+>  
+>         if (folio_test_readahead(folio)) {
+>                 fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
