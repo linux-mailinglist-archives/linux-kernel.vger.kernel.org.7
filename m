@@ -1,151 +1,245 @@
-Return-Path: <linux-kernel+bounces-747828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5932CB138D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:21:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D10B138D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3733B1692BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:21:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1FBE1883FED
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7FB255240;
-	Mon, 28 Jul 2025 10:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BFC254AE7;
+	Mon, 28 Jul 2025 10:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="czFtDkeW"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Pk4jipK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="y2EgD9b9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xq8iTNCs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5YSIxWB9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25D02472B5
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECDA220F3E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753698044; cv=none; b=nuI5VAcfPS4Ai9VTUdX52+UD3LLCQQom4ZVu6ayfwcV1lXnCdjLi/ZTRWb+H7M9seqy0bBF1m6x6GD5YUOLe4/oEB5Ttcl6Xt1k5Atjf08BNGKMpn3WYK2siwCtfALdae5ga/rFbocx9Nz41YPuVUA2rB6avSAfAgRPPXmjTE6U=
+	t=1753698084; cv=none; b=sah5cWte27WyiAdZSZnkVxQYf9llizfQxfogsNKW2HwqYSbY/xDsWcAy7ZZ6V4vsheH54feNlpZ4LUNRvfxBw/M7IyoVT2ZcVbepX9vPw7rAVYC9eYGqcB8jLZOUwET0EJlyeEM8NUYfhOZBZ0tZh9C7FmERUqlZhZk9DkwUAIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753698044; c=relaxed/simple;
-	bh=pyV7Aetn6gZ7xXS5CT0vvgHUaHHSEVxQJE3ZgGcCT+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jNRjk+LrSNOLM8XsttpRmAQyqk5CHM+mGmTud4lckg32EAgjlaczUNBswoa8oEVxPcL0QtCEPUf+VNgE1JBL1GOcjurGNAOPIC/yA1XRKjwewN5jSbcUe5ngffcpvjA7azQ1hp61FSQ9qOBg+Nnrq4LCOnamrkVNT9JyrWWol8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=czFtDkeW; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4561ca74829so45200875e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 03:20:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753698040; x=1754302840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=219O2xVBqIOUMv3jLy61uyg7qpqwuip52JZjqaIWS2o=;
-        b=czFtDkeW0kusrKZ0fw9jTdFMD0EZomZEs1AhjCn3bARDO6U1pWYX8wv5aGBCxxwxXY
-         Ku/JfUylywWVd6VG7QVu/8+A3EmRLorsS9RRhouH8//1L+VmWmj2EqYTEq+ryjZlaKv/
-         1Nl8FSnfC1uNxrItHGD2we7+td/IrGC/geg9hfgeBih8jqOe6ZXogn3ZU+Dj2xJ99nu8
-         +8XR8hhVUU581fe6uWjJbal3du2z17ZHGTH2lG+hWrvQKMka24x0j55pESkXbDC2XvOE
-         4Z0lFdx00qtKZYmrBn/rKws/OxVLYa4fjvK40EdAmyA5adY7gmhPeFIpRDfOn8CX7Lk0
-         Hv0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753698040; x=1754302840;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=219O2xVBqIOUMv3jLy61uyg7qpqwuip52JZjqaIWS2o=;
-        b=AHeBOqyPSsymNHjAaNuNZ+kbrqVKZLyeZKA1wkwiJaMn/gcKkTGkfBz4ERXFacTltA
-         j5FDkUjJULugqr89HTU9GQvzrcsdus5iABWvHdk9UEPqVm3IIf2LJSRS/rB1ccdC5YiK
-         bj8rMywvNH7/C6W4aOF10vKIK87fQy+MHqIIJp87oL8Lck0sktJGWnlgZ4TENMRgqJcO
-         RXs3Ju9sJs4k3u9L6+jrLi3a754sT8RNKnie8jyJiipiTfDohhFHBeTeLabpodxVKtYc
-         HvaB8AQXNFCyXoP/Gy4TpI1Ti0dzyynwTjPLfb2u9Enq+8whvMy9L277bulnOYYZ6ygT
-         4lcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWc4Ndl3QAzXh8QY3SscEIHAD1I7ryFioHNW29uq820Ju+YDfrrsQqY5dCRzh+ZbDieUkB7rABYNrJUAsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyPr1zprUZuLMlDGBSQx75v0zw7Pmj4Y5FrospjtINLiDSgree
-	LlrV6n1YMlJYWdj9Eu6efuCti0yZW8SfOOudD5pVEVsYwW9tc+lN4cQvYxMxQorxKI8=
-X-Gm-Gg: ASbGncsoXaY8R1LG+HxqrDCimXnzDVyFUMUr0nI00FjgvLB12MqZI1Bb7oAte7CfNWr
-	gROPWnSe3W++LOU3blNx/0Yol5vtAEibDdktT6kDLYvKV0PVPOb0WhrwJlRNWIhXT8EfS7BNJe8
-	IcpvpsTHozvoRZMyxDVY7sNZ/cffdntT5J9hojun21HtbiVjObc3N4VYDXMKMy+GonQcLpboL8m
-	MgA3oL+CDYy6eQOqnt2RMaYAD/qKI56GDkXMi293IbdbYMhFwh/hctEqdiPhr0okubFT+t6oK/o
-	ZtLU50MLSjsrnrWEnRHRRpLvuwCT79yjn0VRtivMBOMftfwbwUQbryb8t4dRreXeHagmtbbvnX6
-	SL8XzjyLZaTI9EEZpO2qLzA==
-X-Google-Smtp-Source: AGHT+IGj5AJyBcYgln1fm6c5zt4uON5qzfUaZeojAc6NG/CRXcwFlI2+uLjZU/QAvrqAIKFbe1ew0w==
-X-Received: by 2002:a05:600c:a010:b0:456:1e5a:8880 with SMTP id 5b1f17b1804b1-4587631a095mr75658865e9.13.1753698039894;
-        Mon, 28 Jul 2025 03:20:39 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:53d4:51a:4d68:dac1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705378f4sm154610875e9.2.2025.07.28.03.20.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 03:20:39 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] power sequencing updates for v6.17-rc1
-Date: Mon, 28 Jul 2025 12:20:30 +0200
-Message-ID: <20250728102030.44816-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1753698084; c=relaxed/simple;
+	bh=2iXxc2X4H+XnyE8Li+VMuh38AZe2PWpUJ34y2E51YQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLypzr0QmLbcEVmmprhSyYSY1/A9O4guJen/W48hwXcioi5USJABSb21qfth7VryU2yqUD+TOlA7sGuNRNgYvNEsy7tm9wkesli9uA8AJIGxVfnEGNvrNL+gWDOcvt/bTNdWg4o3Q/EG3iZNLcmotIz9T3y8q1tmU/770jePyAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Pk4jipK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=y2EgD9b9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xq8iTNCs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5YSIxWB9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E2E681F444;
+	Mon, 28 Jul 2025 10:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753698081; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bhsArjASlgaDmS6hfZQyB3yR9SRWmH4b6qgJSEDURv4=;
+	b=0Pk4jipKkXKgnsuJKi2owCO1LPalrzZ/BdXP7B9udLaHuQEFF3zqos0j/MvNS+lLSz1xr8
+	b2OvSP4am9K1tD+WGoMyp+2M82lWtLQmqdcRxyQnojlZiw+7Q9sqCLKmDryLquDxfj7wNF
+	AEIE+IrRApCKZpcSH5Vd1RPu5RThIYY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753698081;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bhsArjASlgaDmS6hfZQyB3yR9SRWmH4b6qgJSEDURv4=;
+	b=y2EgD9b92LovJM+d93z4tIzHPXe/nVMQG+PdsgkdEOFxppN0oJ1KPEnAmgUUAK3kCQuWVQ
+	LwNUv/EE/0s11vCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Xq8iTNCs;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=5YSIxWB9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753698080; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bhsArjASlgaDmS6hfZQyB3yR9SRWmH4b6qgJSEDURv4=;
+	b=Xq8iTNCs45tlp0C3Y6/kbzBLIbBczh6QVU+Ke9dky1mymCSaye9MaYtb264Rhdl4rsZ4Fu
+	ADsiSgLFlUu/BRGAWuwvuI5DAg9+gGFNLCK7APDAfK3IYk8ES3lEuv41/UUP1TCJjUMAX9
+	xxvAyBcqG9zIXdccMHaFwJJ9CZ0iFok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753698080;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bhsArjASlgaDmS6hfZQyB3yR9SRWmH4b6qgJSEDURv4=;
+	b=5YSIxWB9+ixzFg4bsWkEXImqiQ8h0RXQ7mmSVHQdepGGCOyPmeul8wGTgJTI2LUlvfCdqw
+	qlrzzUsPCj4hrHCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7645138A5;
+	Mon, 28 Jul 2025 10:21:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RvSPNCBPh2igPwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 28 Jul 2025 10:21:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9286AA09BE; Mon, 28 Jul 2025 12:21:16 +0200 (CEST)
+Date: Mon, 28 Jul 2025 12:21:16 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jiufei Xue <jiufei.xue@samsung.com>
+Cc: tj@kernel.org, jack@suse.cz, cgroups@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: writeback: fix use-after-free in __mark_inode_dirty()
+Message-ID: <d6v3y66k2vqy7sqfgn3fzyrbwnfbfrlhxb2udll4du35drimhs@rsjk27kixujb>
+References: <CGME20250728100434epcas5p3995d3444fcec14715c60f73e7a60b1c0@epcas5p3.samsung.com>
+ <20250728100715.3863241-1-jiufei.xue@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728100715.3863241-1-jiufei.xue@samsung.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: E2E681F444
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email,samsung.com:email];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -4.01
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon 28-07-25 18:07:15, Jiufei Xue wrote:
+> An use-after-free issue occurred when __mark_inode_dirty() get the
+> bdi_writeback that was in the progress of switching.
+> 
+> CPU: 1 PID: 562 Comm: systemd-random- Not tainted 6.6.56-gb4403bd46a8e #1
+> ......
+> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __mark_inode_dirty+0x124/0x418
+> lr : __mark_inode_dirty+0x118/0x418
+> sp : ffffffc08c9dbbc0
+> ........
+> Call trace:
+>  __mark_inode_dirty+0x124/0x418
+>  generic_update_time+0x4c/0x60
+>  file_modified+0xcc/0xd0
+>  ext4_buffered_write_iter+0x58/0x124
+>  ext4_file_write_iter+0x54/0x704
+>  vfs_write+0x1c0/0x308
+>  ksys_write+0x74/0x10c
+>  __arm64_sys_write+0x1c/0x28
+>  invoke_syscall+0x48/0x114
+>  el0_svc_common.constprop.0+0xc0/0xe0
+>  do_el0_svc+0x1c/0x28
+>  el0_svc+0x40/0xe4
+>  el0t_64_sync_handler+0x120/0x12c
+>  el0t_64_sync+0x194/0x198
+> 
+> Root cause is:
+> 
+> systemd-random-seed                         kworker
+> ----------------------------------------------------------------------
+> ___mark_inode_dirty                     inode_switch_wbs_work_fn
+> 
+>   spin_lock(&inode->i_lock);
+>   inode_attach_wb
+>   locked_inode_to_wb_and_lock_list
+>      get inode->i_wb
+>      spin_unlock(&inode->i_lock);
+>      spin_lock(&wb->list_lock)
+>   spin_lock(&inode->i_lock)
+>   inode_io_list_move_locked
+>   spin_unlock(&wb->list_lock)
+>   spin_unlock(&inode->i_lock)
+>                                     spin_lock(&old_wb->list_lock)
+>                                       inode_do_switch_wbs
+>                                         spin_lock(&inode->i_lock)
+>                                         inode->i_wb = new_wb
+>                                         spin_unlock(&inode->i_lock)
+>                                     spin_unlock(&old_wb->list_lock)
+>                                     wb_put_many(old_wb, nr_switched)
+>                                       cgwb_release
+>                                       old wb released
+>   wb_wakeup_delayed() accesses wb,
+>   then trigger the use-after-free
+>   issue
+> 
+> Fix this race condition by holding inode spinlock until
+> wb_wakeup_delayed() finished.
+> 
+> Signed-off-by: Jiufei Xue <jiufei.xue@samsung.com>
 
-Linus,
+Looks good! Thanks for the fix. Feel free to add:
 
-Please pull the following set of updates for the power sequencing
-subsystem for v6.17-rc1. We have one new driver and a small set of
-improvements as well as a fix to power sequence unit naming.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thanks,
-Bartosz
+								Honza
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
-
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/pwrseq-updates-for-v6.17-rc1
-
-for you to fetch changes up to 07d59dec6795428983a840de85aa02febaf7e01b:
-
-  power: sequencing: qcom-wcn: fix bluetooth-wifi copypasta for WCN6855 (2025-06-30 09:07:57 +0200)
-
-----------------------------------------------------------------
-power sequencing updates for v6.17-rc1
-
-New drivers:
-- add a power sequencing driver for the T-HEAD TH1520 GPU
-
-Power sequencing core improvements:
-- allow to compile the pwrseq drivers with COMPILE_TEST=y in order to
-  improve the build-test coverage
-- add named defines for the possible return values of the .match()
-  callback and use it in the existing drivers instead of magic values
-
-Fixes:
-- Fix the name of the bluetooth-enable unit for WCN6855
-
-----------------------------------------------------------------
-Bartosz Golaszewski (5):
-      power: sequencing: thead-gpu: add missing header
-      power: sequencing: extend build coverage with COMPILE_TEST=y
-      power: sequencing: add defines for return values of the match() callback
-      power: sequencing: qcom-wcn: use new defines for match() return values
-      power: sequencing: thead-gpu: use new defines for match() return values
-
-Konrad Dybcio (1):
-      power: sequencing: qcom-wcn: fix bluetooth-wifi copypasta for WCN6855
-
-Michal Wilczynski (1):
-      power: sequencing: Add T-HEAD TH1520 GPU power sequencer driver
-
- MAINTAINERS                                 |   1 +
- drivers/power/sequencing/Kconfig            |  10 +-
- drivers/power/sequencing/Makefile           |   1 +
- drivers/power/sequencing/core.c             |   6 +-
- drivers/power/sequencing/pwrseq-qcom-wcn.c  |  10 +-
- drivers/power/sequencing/pwrseq-thead-gpu.c | 249 ++++++++++++++++++++++++++++
- include/linux/pwrseq/provider.h             |   3 +
- 7 files changed, 271 insertions(+), 9 deletions(-)
- create mode 100644 drivers/power/sequencing/pwrseq-thead-gpu.c
+> ---
+>  fs/fs-writeback.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index cc57367fb..a07b8cf73 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -2608,10 +2608,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+>  			wakeup_bdi = inode_io_list_move_locked(inode, wb,
+>  							       dirty_list);
+>  
+> -			spin_unlock(&wb->list_lock);
+> -			spin_unlock(&inode->i_lock);
+> -			trace_writeback_dirty_inode_enqueue(inode);
+> -
+>  			/*
+>  			 * If this is the first dirty inode for this bdi,
+>  			 * we have to wake-up the corresponding bdi thread
+> @@ -2621,6 +2617,11 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+>  			if (wakeup_bdi &&
+>  			    (wb->bdi->capabilities & BDI_CAP_WRITEBACK))
+>  				wb_wakeup_delayed(wb);
+> +
+> +			spin_unlock(&wb->list_lock);
+> +			spin_unlock(&inode->i_lock);
+> +			trace_writeback_dirty_inode_enqueue(inode);
+> +
+>  			return;
+>  		}
+>  	}
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
