@@ -1,241 +1,158 @@
-Return-Path: <linux-kernel+bounces-748332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C47B13FAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:15:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304E0B13FAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD06D3B7BF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:14:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5255B17D1A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA5420B80D;
-	Mon, 28 Jul 2025 16:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E67E274659;
+	Mon, 28 Jul 2025 16:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/f9zBTb"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1D+6kzh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241E2272E55;
-	Mon, 28 Jul 2025 16:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69391E9B28;
+	Mon, 28 Jul 2025 16:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753719306; cv=none; b=R0gtKVqw9tcmr9aoeE+r0TEh+gjdp5BW01ROpfGibwMCQi+jIyrzfD4QlVHImOGaRuuwIKFj5swX9dhzTejQwREILjwrIHr50kyXUbUIqD2LWOLtQxvsSIyT5HOtNvhTDUzfMc48/5OrmCJjgewQxFrJvPpLpTsdZnb9Z/Iyqc4=
+	t=1753719348; cv=none; b=RNF5w0vhEYgcXQRzxKz48dW9mCDTPejdlw69tgLTOypJR5HKcawSBN9UPfdXZ8CbE/mGDfodXQQMK04b2+RBGv6VTqrbJTFERsjc8U/R70sVV4rSF/1jd1Pl02QO9+MJ4mSmtzdjmFXtZoStL/qK+Z4dUVrS6San9lEi26qsFJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753719306; c=relaxed/simple;
-	bh=MEtXJi8fsHcU7CbD/0I9wLTMAo1y0ij4wL521LjXJw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D9fGzluzzPQrRMNybw9iKttRZkEDrOkR1TS6cRNj/NtR6dQQdEy0J+DI0s9S+shqShf3QY3hltoIWBV7EaNJatGhVituzJ4uhGfyYLgMMfbYxTTIuFobRRhSRsRWfYpE0Z1qvXs1OmIT6XCOo0UwXSqd4+H4JpdarjcRUmleHbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/f9zBTb; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-74b50c71b0aso2707414b3a.0;
-        Mon, 28 Jul 2025 09:15:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753719304; x=1754324104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IIgoubiaOXZokJLLdXEo+GMPCF72BsATxsxBrun6GRU=;
-        b=l/f9zBTbjUAupBv4jVRWG0RoCR3J9XT7qj40p5Fkc79pEDlqtwr1wgssIDVU+UnO7r
-         isYW96H+ioMco73a1aXs7a7NpD7to2nG2sRQq/XKwSMU0xYH7hxiQnWd8AqGHkWnCwd+
-         HovxCY61YMRwD4H1bGXntjrut9QR2yogcWpNKL9Bwo3pUC1/L1HeSAr/sjoWoBoko0h4
-         p1FFgYOlcL3zsZlzfQbkD0Uiki/O+DpHzfUstTmR2p5H/5YRfXPrOkb/SpeJXG0TYUv0
-         ka9uNH2S8teyPWlRaTWHU2o5CVrsfEWHvtywvGo40QX9TbDxyj9BXBZ0bGi51BrIGmRG
-         M0mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753719304; x=1754324104;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IIgoubiaOXZokJLLdXEo+GMPCF72BsATxsxBrun6GRU=;
-        b=uu+oDhm5kcpZFCbBYX7jZQ7QTAhkaKTKWmGeqOlu5NJr3dulC4XeJ00WZK3Oh+6oX+
-         doRghdP9zGNyGtsq8wDISbRTh5YEh4fnhiHbZ97bOKlaJuOE/T7H0dvvgKj7T2ebtP4y
-         NBrJ8F6aRc/6GLYz/8iBodVMDpHdyadqfEsHoD4v5Ohc+B6pyZCazr+HPfON7T+S2JsC
-         872IZaP90ASSgZd8FzpwebKTJdOqR5mYMGevMgjp0n7amMIUvANzgHMlcXLRh2BjFY1j
-         Y/txK1qdwbPqgsehXYBklY5LfVLAKH49AtROc/hzckl1/qraTE9sf2OM0CXyN/i7h8Nb
-         QlSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpLjHbGNho9xGNG5BxRrsh7to1hI7erTkL96znuky/7q+DNiEcntEsUzftmo2R0uM/6sWFTqH+Yv8YsSVx@vger.kernel.org, AJvYcCW8wH7HCBdgD6746225DVLuWH81DSZI6X+0kX/aC0P+iFtsbNW21cVFCBYLvSqmhl75kzpu/GORBDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxsIUTmmGO85FxfUXqupOYokOd9jULQUmUJanA+wEZAV2Ac8xR
-	xsk3veuD+mVlGqi6/yDk6vCKTKK/v3O0zFC53g8GE3P2D6Zzuoj2f63/Td1QCA==
-X-Gm-Gg: ASbGncsArVGrXF331LbcTl3tdR/SRPrSNFYCCOZHeRHP62bpFYpkSGT5rrZB7N6lOVI
-	l7i89qXbNMwilsfRcFrDM/OCRFqgvbMbf6xHvg0vDKN0EgoQAIF88LMMdG0d8RItBJGRaO50Qzh
-	/jvtz4uBxXVVwvzp/kYxLGgGYNZblVgBOg1XctxOUS9yuQv/ffZhABx/BweoG3tQD/GludWclD+
-	ume7CKqmBfzxF3eKxkltRztOggO+pRf755bGBPXmJ5dwvnXI9WNza66l5BjuoZJKJxEJLcgNKHV
-	lCthlXFWSikb0l2AhrVfT+PPkpj+uomz2Obu2tq/K5mRsdjGwmngCH96aR7jR262gfVu8TYU0He
-	59gjiij8K4ZZCvr7gHkdYdmdGrdTYwNzKsvAnnQ==
-X-Google-Smtp-Source: AGHT+IFFBJ9MGrtJTObeSKvBpq83ULkcuLQ5PXp1rKGdr47Vxxrf1b3FYSXj7jSFi923GXhmD/jNzQ==
-X-Received: by 2002:a05:6a00:234b:b0:748:f854:b765 with SMTP id d2e1a72fcca58-76332282dc2mr18848585b3a.4.1753719304164;
-        Mon, 28 Jul 2025 09:15:04 -0700 (PDT)
-Received: from akshayaj-lenovo.. ([2401:4900:8838:5dc9:f81a:1a92:3aa2:c5b2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b8b0beesm5901361b3a.125.2025.07.28.09.14.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 09:15:03 -0700 (PDT)
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-To: anshulusr@gmail.com,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org
-Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
-	shuah@kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] iio: light: ltr390: Add debugfs register access support
-Date: Mon, 28 Jul 2025 21:44:41 +0530
-Message-ID: <20250728161445.13261-1-akshayaj.lkd@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753719348; c=relaxed/simple;
+	bh=fbuqAJszbf2AyvtcRsvbMiJsUhKn/DpI54qOjKmeZYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TD9y+rCWj2g2eu3HiN/gpsMP0aEbGXN/a8ZNanvBdQYJmygZjUNB9lWqFHIHXlYuakPdSztcd9NOgW3I/jkaC5h9xKKUB+6mXLiOMdiUaS5q0Yb7hFTs6PK0OV4RQbP9ABQsDiYhtCjM4qPhT1kLKmohxwBsQGr8+y+BkgEWIXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1D+6kzh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C146EC4CEEF;
+	Mon, 28 Jul 2025 16:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753719347;
+	bh=fbuqAJszbf2AyvtcRsvbMiJsUhKn/DpI54qOjKmeZYs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=a1D+6kzhD/8fTEbMIcFmE2J8AHiBj+Tu6cIiYN5Ty02xYjc0RE4DSYSc5AJKEEU0Q
+	 tEIBIeHfOEI0x42z32arNXb5ZwiwfhOtv1k0zRJ7px979FSQtGkK00OO4gXEnug/Az
+	 8tuX5dzDVCfBuihftHpt9r843HHpvv8MnVUs0QZVDodfcJLmio6jo3wsQl69OSkDEk
+	 PvDUzRmJCDn1usZJsW2l6FO0647hSvcxbXRXtHG77JUDftX8m26q4DOTK4Ax7eBg1A
+	 aFhintQGcCqPOHbdgGq0M/gGSWWDMuq3CSVSCWQjEf+9eiR3bHpSWaOlY/1qogMtZk
+	 sjol2OUBSwckw==
+Date: Mon, 28 Jul 2025 12:15:43 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung
+ Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v15 03/10] unwind_user/deferred: Add unwind cache
+Message-ID: <20250728121543.7aaa75eb@batman.local.home>
+In-Reply-To: <a0f9a3ef-f32a-4bff-8ab1-4181ad61780f@linux.ibm.com>
+References: <20250725185512.673587297@kernel.org>
+	<20250725185739.573388765@kernel.org>
+	<a0f9a3ef-f32a-4bff-8ab1-4181ad61780f@linux.ibm.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add support for debugfs_reg_access through the driver's iio_info structure
-to enable low-level register read/write access for debugging.
+On Mon, 28 Jul 2025 17:46:42 +0200
+Jens Remus <jremus@linux.ibm.com> wrote:
 
-Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
----
+> On 25.07.2025 20:55, Steven Rostedt wrote:
+> > From: Josh Poimboeuf <jpoimboe@kernel.org>
+> > 
+> > Cache the results of the unwind to ensure the unwind is only performed
+> > once, even when called by multiple tracers.
+> > 
+> > The cache nr_entries gets cleared every time the task exits the kernel.
+> > When a stacktrace is requested, nr_entries gets set to the number of
+> > entries in the stacktrace. If another stacktrace is requested, if
+> > nr_entries is not zero, then it contains the same stacktrace that would be
+> > retrieved so it is not processed again and the entries is given to the
+> > caller.
+> > 
+> > Co-developed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> 
+> Reviewed-by: Jens Remus <jremus@linux.ibm.com>
 
-Changes since v3:
-=================
-- Merged the regmap_range of LTR390_ALS_DATA with LTR390_UVS_DATA.
-- Keep only macro parameters in parenthesis. Removed from others.
-- Replaced testing details with testing summary.
+Thanks.
 
-Changes since v2:
-================
-- merged the regmap_range of LTR390_UP_THRESH with LTR390_LOW_THRESH.
+> 
+> > diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c  
+> 
+> > +	cache = info->cache;
+> > +	trace->entries = cache->entries;
+> > +
+> > +	if (cache->nr_entries) {
+> > +		/*
+> > +		 * The user stack has already been previously unwound in this
+> > +		 * entry context.  Skip the unwind and use the cache.
+> > +		 */
+> > +		trace->nr = cache->nr_entries;
+> > +		return 0;
+> > +	}
+> > +
+> >  	trace->nr = 0;
+> > -	trace->entries = info->entries;
+> >  	unwind_user(trace, UNWIND_MAX_ENTRIES);
+> >  
+> > +	cache->nr_entries = trace->nr;
+> > +  
+> 
+> Would the following alternative to above excerpt be easier to read?
 
-Changes since v1:
-=================
-- Replaced _[0|1|2] macros with a respective common parameterized macro.
-- Retained base macros to avoid churn.
-- Swapped regmap_write with regmap_read to avoid negate operator.
-- Simplified debugfs function by directly returning return value of
-  regmap_[read|write].
-- Replaced [readable|writeable]_reg with regmap ranges by using
-  [rd|wr]_table property of regmap_config.
-- Updated the testing details with v2 changes.
+Not to me ;-)
 
-Testing details (done for v2):
-==============================
--> Tested on Raspberrypi 4B. Following tests were performed.
+I looked at this and read it a couple of times, but had to go back to
+see what it was replacing before I understood it.
 
-1. Disable sensor via debugfs, verify from i2cget and debugfs.
-2. Disable sensor via debugfs and read data status via debugfs.
-3. Re-enable sensor via debugfs and read data status via debugfs.
-4. Enable interrupts via sysfs and verify via debugfs.
-5. Write falling threshold via debugfs, verify the threshold written via sysfs.
-6. Block light and verify interrupts getting generated. Generated
-interrupts by blocking light.
-7. write value to a non-writeable reg via debugfs.
-8. read value from a non-readable reg via debugfs.
-9. do simple raw reads from debugfs.
--> reading raw value via sysfs
--> reading via debugfs (should be in the same ballpark of sysfs)
-10. Testing reads on registers beyond max_register.
+I prefer the original. It's logic is, "if this was already done, just
+return the cache", where as the below logic is "Assign everything, if
+it hasn't been done, do it now".
 
- drivers/iio/light/ltr390.c | 52 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+Maybe it's just my own preference, but I'm more comfortable with the
+"if it's already been done, exit out early" than the "set everything
+up, and do it if it hasn't been done" approach.
 
-diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-index ee59bbb8aa09..7733830dca67 100644
---- a/drivers/iio/light/ltr390.c
-+++ b/drivers/iio/light/ltr390.c
-@@ -38,12 +38,21 @@
- #define LTR390_ALS_UVS_GAIN		0x05
- #define LTR390_PART_ID			0x06
- #define LTR390_MAIN_STATUS		0x07
-+
- #define LTR390_ALS_DATA			0x0D
-+#define LTR390_ALS_DATA_BYTE(n)		(LTR390_ALS_DATA + (n))
-+
- #define LTR390_UVS_DATA			0x10
-+#define LTR390_UVS_DATA_BYTE(n)		(LTR390_UVS_DATA + (n))
-+
- #define LTR390_INT_CFG			0x19
- #define LTR390_INT_PST			0x1A
-+
- #define LTR390_THRESH_UP		0x21
-+#define LTR390_THRESH_UP_BYTE(n)	(LTR390_THRESH_UP + (n))
-+
- #define LTR390_THRESH_LOW		0x24
-+#define LTR390_THRESH_LOW_BYTE(n)	(LTR390_THRESH_LOW + (n))
- 
- #define LTR390_PART_NUMBER_ID		0xb
- #define LTR390_ALS_UVS_GAIN_MASK	GENMASK(2, 0)
-@@ -98,11 +107,39 @@ struct ltr390_data {
- 	int int_time_us;
- };
- 
-+static const struct regmap_range ltr390_readable_reg_ranges[] = {
-+	regmap_reg_range(LTR390_MAIN_CTRL, LTR390_MAIN_CTRL),
-+	regmap_reg_range(LTR390_ALS_UVS_MEAS_RATE, LTR390_MAIN_STATUS),
-+	regmap_reg_range(LTR390_ALS_DATA_BYTE(0), LTR390_UVS_DATA_BYTE(2)),
-+	regmap_reg_range(LTR390_INT_CFG, LTR390_INT_PST),
-+	regmap_reg_range(LTR390_THRESH_UP_BYTE(0), LTR390_THRESH_LOW_BYTE(2)),
-+};
-+
-+static const struct regmap_access_table ltr390_readable_reg_table = {
-+	.yes_ranges = ltr390_readable_reg_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(ltr390_readable_reg_ranges),
-+};
-+
-+static const struct regmap_range ltr390_writeable_reg_ranges[] = {
-+	regmap_reg_range(LTR390_MAIN_CTRL, LTR390_MAIN_CTRL),
-+	regmap_reg_range(LTR390_ALS_UVS_MEAS_RATE, LTR390_ALS_UVS_GAIN),
-+	regmap_reg_range(LTR390_INT_CFG, LTR390_INT_PST),
-+	regmap_reg_range(LTR390_THRESH_UP_BYTE(0), LTR390_THRESH_LOW_BYTE(2)),
-+};
-+
-+static const struct regmap_access_table ltr390_writeable_reg_table = {
-+	.yes_ranges = ltr390_writeable_reg_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(ltr390_writeable_reg_ranges),
-+};
-+
- static const struct regmap_config ltr390_regmap_config = {
- 	.name = "ltr390",
- 	.reg_bits = 8,
- 	.reg_stride = 1,
- 	.val_bits = 8,
-+	.max_register = LTR390_THRESH_LOW_BYTE(2),
-+	.rd_table = &ltr390_readable_reg_table,
-+	.wr_table = &ltr390_writeable_reg_table,
- };
- 
- /* Sampling frequency is in mili Hz and mili Seconds */
-@@ -586,6 +623,20 @@ static int ltr390_write_event_config(struct iio_dev *indio_dev,
- 	}
- }
- 
-+static int ltr390_debugfs_reg_access(struct iio_dev *indio_dev,
-+						unsigned int reg, unsigned int writeval,
-+						unsigned int *readval)
-+{
-+	struct ltr390_data *data = iio_priv(indio_dev);
-+
-+	guard(mutex)(&data->lock);
-+
-+	if (readval)
-+		return regmap_read(data->regmap, reg, readval);
-+
-+	return regmap_write(data->regmap, reg, writeval);
-+}
-+
- static const struct iio_info ltr390_info = {
- 	.read_raw = ltr390_read_raw,
- 	.write_raw = ltr390_write_raw,
-@@ -594,6 +645,7 @@ static const struct iio_info ltr390_info = {
- 	.read_event_config = ltr390_read_event_config,
- 	.write_event_value = ltr390_write_event_value,
- 	.write_event_config = ltr390_write_event_config,
-+	.debugfs_reg_access = ltr390_debugfs_reg_access,
- };
- 
- static irqreturn_t ltr390_interrupt_handler(int irq, void *private)
--- 
-2.43.0
+-- Steve
+
+
+> 
+> 	/* Use the cache, if the user stack has already been previously
+> 	 * unwound in this entry context.  If not this will initialize
+> 	 * trace->nr to zero to trigger the unwind now.
+> 	 */
+> 	cache = info->cache;
+> 	trace->nr = cache->nr_entries;
+> 	trace->entries = cache->entries;
+> 
+> 	if (!trace->nr) {
+> 		unwind_user(trace, UNWIND_MAX_ENTRIES);
+> 		cache->nr_entries = trace->nr;
+> 	}
+> 
+> >  	return 0;
+> >  }  
+> 
+> Regards,
+> Jens
 
 
