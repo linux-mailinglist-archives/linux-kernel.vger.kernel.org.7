@@ -1,327 +1,177 @@
-Return-Path: <linux-kernel+bounces-747966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E162AB13AC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:49:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C663B13AC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77E61892D5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:49:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE06A167274
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B9B26561E;
-	Mon, 28 Jul 2025 12:49:33 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75788265CA7;
+	Mon, 28 Jul 2025 12:49:42 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BDD1F95C
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB29C1F95C;
+	Mon, 28 Jul 2025 12:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753706973; cv=none; b=C9ZU38HNd1Z/PPzC28zCg6Z9jzErwWsxOiXwV9KfC5oxAJoBLjocKTjcUs2CvIbxdlhEMd4ZHRT74a80rWpOHT0pglI3U8mgkK0iXVXk6EMr5DRYsVqm7CcIQrPBjsf03RAGbKRd8a7vsv4HHo+wEBbwGigxyvmf3wKNhc/T9oc=
+	t=1753706982; cv=none; b=eEXXaJ/F7sNpsmn/nCZFQNb/QmgyTdfLXi+4lkjJ5AxFPFEqWwiolNU9JUBXI3tOTt3xtfzrWzt8TrWMHOZoSJ+ersRkv/0Jb5Mx3xiocdjil0v/S1fGY3k2eZozmb9PWTajeRfKRzCIGFoGL4I0iJ8+U0FTTFZtmrOYCdduDH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753706973; c=relaxed/simple;
-	bh=UXtAyiwmAAmK3apGh/3DjA+dpdu9JpjLDGI0DOFIqHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bGJgj6dhhAjDZ7zQo6kzy/w22nY2UpTR/7UoWTIOU1oEd2m3gw34EHD9o9QEHNnn3IdS+uu99tP0mG7DEG+U53LijmIniD5LeXhiP3EcWGx61OvO+AFO9kK0cQQ0A/s1LG+5uRG1jYeQ7qx4F2y1wYwHgc+ICjjS2G0Bwps2jJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B456261E64850;
-	Mon, 28 Jul 2025 14:48:37 +0200 (CEST)
-Message-ID: <04cd7aaa-e1f6-410c-98e7-49cb7ec8e582@molgen.mpg.de>
-Date: Mon, 28 Jul 2025 14:48:37 +0200
+	s=arc-20240116; t=1753706982; c=relaxed/simple;
+	bh=H9qXRbx94MewBNxrR4fM5mh6/UQ6BbG5/scOH9fENcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGgaj0E7Z1JSDkHQFaeP2JEFAJCGid/Q/llOq3N59W+gjvuoqe6YZ1DMFDyQdY4N/YUon9Fz/etqCSw/t+WcuXW6755jhpreFPJibPE+WZUozzOO/4uKfGIonEulnvenhu3QNRYqKtFbmN0AJdTIcnI6NZGPK1uGvYlptWsiXPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 130E5357; Mon, 28 Jul 2025 07:49:37 -0500 (CDT)
+Date: Mon, 28 Jul 2025 07:49:37 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
+	dan.j.williams@intel.com
+Subject: Re: [PATCH v2 2/3] lockdown/kunit: Introduce kunit tests
+Message-ID: <aIdx4Y/lRYKs/quV@mail.hallyn.com>
+References: <20250728111517.134116-1-nik.borisov@suse.com>
+ <20250728111517.134116-3-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: athk10: Poll service ready completion by default to avoid warning
- `failed to receive service ready completion, polling..`?
-To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,
- Jeff Johnson <jjohnson@kernel.org>, ath10k@lists.infradead.org,
- James Prestwood <prestwoj@gmail.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <97a15967-5518-4731-a8ff-d43ff7f437b0@molgen.mpg.de>
- <3cbe13e1-a820-4804-a28c-a57e2ee7a020@oss.qualcomm.com>
- <8716a67c-6e33-4a35-8d96-33f81c07c8e0@molgen.mpg.de>
- <1e797dea-d2e1-4947-8ef3-d2ac5ea0c156@oss.qualcomm.com>
- <4e5a3a4d-9b6b-443b-b3c2-eac1b44e96e0@molgen.mpg.de>
- <4f00e46c-598e-4661-87fe-cabc6a678be0@oss.qualcomm.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <4f00e46c-598e-4661-87fe-cabc6a678be0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728111517.134116-3-nik.borisov@suse.com>
 
-Dear Baochen,
-
-
-Am 28.07.25 um 10:50 schrieb Baochen Qiang:
-
-> On 7/28/2025 3:39 PM, Paul Menzel wrote:
->> [CC: +scheduler folks for input on the wait_for_completion_timeout() part]
-
->> Am 28.07.25 um 04:18 schrieb Baochen Qiang:
->>> On 7/25/2025 8:15 PM, Paul Menzel wrote:
->>
->>>> Am 22.07.25 um 11:38 schrieb Baochen Qiang:
->>>>
->>>>> On 7/22/2025 4:37 PM, Paul Menzel wrote:
->>>>
->>>>>> Today, on the Intel Kaby Lake laptop Dell XPS 13 9360 with
->>>>>>
->>>>>>        $ lspci -nn -s 3a:
->>>>>>        3a:00.0 Network controller [0280]: Qualcomm Atheros QCA6174 802.11ac Wireless
->>>>>> Network Adapter [168c:003e] (rev 32)
->>>>>>
->>>>>> resuming from ACPI S3 took longer, as it sometimes does, and looking into this, I see
->>>>>> `failed to receive service ready completion, polling..` after a delay of five seconds:
->>>>>>
->>>>>> ```
->>>>>> [    0.000000] Linux version 6.16.0-rc6-00253-g4871b7cb27f4 (build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #90 SMP PREEMPT_DYNAMIC Sat Jul 19 08:53:39 CEST 2025
->>>>>> […]
->>>>>> [    8.588020] abreu kernel: ath10k_pci 0000:3a:00.0: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
->>>>>> [    8.588372] abreu kernel: ath10k_pci 0000:3a:00.0: kconfig debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
->>>>>> [    8.588603] abreu kernel: ath10k_pci 0000:3a:00.0: firmware ver WLAN.RM.4.4.1-00309- api 6 features wowlan,ignore-otp,mfp crc32 0793bcf2
->>>>>> […]
->>>>>> [    9.113550] Bluetooth: hci0: QCA: patch rome 0x302 build 0x3e8, firmware rome 0x302 build 0x111
->>>>>> […]
->>>>>> [41804.953487] PM: suspend entry (deep)
->>>>>> [41804.988361] Filesystems sync: 0.034 seconds
->>>>>> [41805.007216] Freezing user space processes
->>>>>> [41805.009650] Freezing user space processes completed (elapsed 0.002 seconds)
->>>>>> [41805.009663] OOM killer disabled.
->>>>>> [41805.009666] Freezing remaining freezable tasks
->>>>>> [41805.011383] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
->>>>>> [41805.011502] printk: Suspending console(s) (use no_console_suspend to debug)
->>>>>> [41805.523883] ACPI: EC: interrupt blocked
->>>>>> [41805.545779] ACPI: PM: Preparing to enter system sleep state S3
->>>>>> [41805.556040] ACPI: EC: event blocked
->>>>>> [41805.556045] ACPI: EC: EC stopped
->>>>>> [41805.556046] ACPI: PM: Saving platform NVS memory
->>>>>> [41805.559408] Disabling non-boot CPUs ...
->>>>>> [41805.562480] smpboot: CPU 3 is now offline
->>>>>> [41805.567105] smpboot: CPU 2 is now offline
->>>>>> [41805.572122] smpboot: CPU 1 is now offline
->>>>>> [41805.582034] ACPI: PM: Low-level resume complete
->>>>>> [41805.582079] ACPI: EC: EC started
->>>>>> [41805.582080] ACPI: PM: Restoring platform NVS memory
->>>>>> [41805.583986] Enabling non-boot CPUs ...
->>>>>> [41805.584009] smpboot: Booting Node 0 Processor 1 APIC 0x2
->>>>>> [41805.584734] CPU1 is up
->>>>>> [41805.584749] smpboot: Booting Node 0 Processor 2 APIC 0x1
->>>>>> [41805.585514] CPU2 is up
->>>>>> [41805.585530] smpboot: Booting Node 0 Processor 3 APIC 0x3
->>>>>> [41805.586216] CPU3 is up
->>>>>> [41805.589070] ACPI: PM: Waking up from system sleep state S3
->>>>>> [41805.623652] ACPI: EC: interrupt unblocked
->>>>>> [41805.640074] ACPI: EC: event unblocked
->>>>>> [41805.651951] nvme nvme0: 4/0/0 default/read/poll queues
->>>>>> [41805.865391] atkbd serio0: Failed to deactivate keyboard on isa0060/serio0
->>>>>> [41810.933639] ath10k_pci 0000:3a:00.0: failed to receive service ready completion, polling..
->>>>>> [41810.933769] ath10k_pci 0000:3a:00.0: service ready completion received, continuing normally
->>>>>> [41810.986330] OOM killer enabled.
->>>>>> [41810.986332] Restarting tasks: Starting
->>>>>> […]
->>>>>> ```
->>>>>>
->>>>>> Commit e57b7d62a1b2 (wifi: ath10k: poll service ready message before failing) [1][2],
->>>>>> present since Linux v6.10-rc1, added this to avoid the hardware not being initialized:
->>>>>>
->>>>>>            time_left = wait_for_completion_timeout(&ar->wmi.service_ready,
->>>>>>                                                    WMI_SERVICE_READY_TIMEOUT_HZ);
->>>>>>            if (!time_left) {
->>>>>>                    /* Sometimes the PCI HIF doesn't receive interrupt
->>>>>>                     * for the service ready message even if the buffer
->>>>>>                     * was completed. PCIe sniffer shows that it's
->>>>>>                     * because the corresponding CE ring doesn't fires
->>>>>>                     * it. Workaround here by polling CE rings once.
->>>>>>                     */
->>>>>>                    ath10k_warn(ar, "failed to receive service ready completion, polling..\n");
->>>>>>
->>>>>>                    for (i = 0; i < CE_COUNT; i++)
->>>>>>                            ath10k_hif_send_complete_check(ar, i, 1);
->>>>>>
->>>>>>                    time_left = wait_for_completion_timeout(&ar->wmi.service_ready,
->>>>>>                                                            WMI_SERVICE_READY_TIMEOUT_HZ);
->>>>>>                    if (!time_left) {
->>>>>>                            ath10k_warn(ar, "polling timed out\n");
->>>>>>                            return -ETIMEDOUT;
->>>>>>                    }
->>>>>>
->>>>>>                    ath10k_warn(ar, "service ready completion received, continuing normally\n");
->>>>>>            }
->>>>>>
->>>>>> The comment says, it’s a hardware issue. I guess from the Qualcomm device and not the
->>>>>> board design, as it happens with several devices like James’?
->>>>>>
->>>>>> Anyway, should polling be used by default then to avoid the delay?
->>>>>
->>>>> Adding additional polling before wait seems OK to me
->>>>
->>>> With the attached diff, I didn’t notice any issue on the Dell XPS 13 9360 with QCA6174.
->>>
->>> In the diff you are moving polling ahead of wait, IMO this might introduce some race: what
->>> if hardware/firmware send the event right after polling is done?
->>>
->>> So how about, instead of moving, just adding a new polling before wait:
->>>
->>> 1. polling
->>> 2. wait
->>> 3. poling again if wait fail
->>
->> I do not know the hardware behavior/design and the error, so cannot judge, if a race would
->> be possible.
->>
->> Could Qualcomm take over to cook up a patch
->> I’d appreciated if Qualcomm could take over to cook up a patch, as you have the
->> datasheets, erratas and a line to the hardware designers.
+On Mon, Jul 28, 2025 at 02:15:16PM +0300, Nikolay Borisov wrote:
+> Add a bunch of tests to ensure lockdown's conversion to bitmap hasn't
+> regressed it.
 > 
-> sure, I will see what I can do here
+> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
 
-Awesome. Thank you!
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
->>>> Unrelated: The only thing I noticed is, that during boot (not resume) the function seems
->>>> to be called twice. It looks like once for Wi-Fi and once for Bluetooth:
->>>>
->>>> ```
->>>> [   35.507604] ath10k_pci 0000:3a:00.0: board_file api 2 bmi_id N/A crc32 d2863f91
->>>> [   35.516010] usb 1-5: New USB device found, idVendor=0c45, idProduct=670c, bcdDevice=56.26
->>>> [   35.516022] usb 1-5: New USB device strings: Mfr=2, Product=1, SerialNumber=0
->>>> [   35.516026] usb 1-5: Product: Integrated_Webcam_HD
->>>> [   35.516029] usb 1-5: Manufacturer: CN09GTFMLOG008C8B7FWA01
->>>> [   35.587852] ath10k_pci 0000:3a:00.0: service ready completion received, continuing normally
->>>> [   35.606632] ath10k_pci 0000:3a:00.0: htt-ver 3.87 wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
->>>> [   35.628744] mc: Linux media interface: v0.10
->>>> [   35.651301] nvme nvme0: using unchecked data buffer
->>>> [   35.687466] Bluetooth: Core ver 2.22
->>>> [   35.687493] NET: Registered PF_BLUETOOTH protocol family
->>>> [   35.687495] Bluetooth: HCI device and connection manager initialized
->>>> [   35.687499] Bluetooth: HCI socket layer initialized
->>>> [   35.687501] Bluetooth: L2CAP socket layer initialized
->>>> [   35.687505] Bluetooth: SCO socket layer initialized
->>>> [   35.696050] ath: EEPROM regdomain: 0x6c
->>>> [   35.696055] ath: EEPROM indicates we should expect a direct regpair map
->>>> [   35.696057] ath: Country alpha2 being used: 00
->>>> [   35.696058] ath: Regpair used: 0x6c
->>>> [   35.712821] ath10k_pci 0000:3a:00.0 wlp58s0: renamed from wlan0
->>>> [   35.716790] input: ELAN Touchscreen as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:04F3:2234.0002/input/input40
->>>> [   35.718912] videodev: Linux video capture interface: v2.00
->>>> [   35.719492] input: ELAN Touchscreen UNKNOWN as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:04F3:2234.0002/input/input41
->>>> [   35.719595] input: ELAN Touchscreen UNKNOWN as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:04F3:2234.0002/input/input42
->>>> [   35.720899] hid-multitouch 0003:04F3:2234.0002: input,hiddev0,hidraw1: USB HID v1.10 Device [ELAN Touchscreen] on usb-0000:00:14.0-4/input0
->>>> [   35.720947] usbcore: registered new interface driver usbhid
->>>> [   35.720949] usbhid: USB HID core driver
->>>> [   35.812081] usbcore: registered new interface driver btusb
->>>> [   35.815263] Bluetooth: hci0: using rampatch file: qca/rampatch_usb_00000302.bin
->>>> [   35.815270] Bluetooth: hci0: QCA: patch rome 0x302 build 0x3e8, firmware rome 0x302 build 0x111
->>>> [   36.174345] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
->>>> [   36.199643] Bluetooth: hci0: HCI Enhanced Setup Synchronous Connection command is advertised, but not supported.
->>>> [   36.398657] ath10k_pci 0000:3a:00.0: service ready completion received, continuing normally
->>>
->>> Hmm, I don't think this is for BT as ath10k is not a BT driver. Something must be wrong
->>> here ...
->>>
->>>> ```
->>
->> Can you reproduce it?
->>
->> How would I get a call graph for both function calls?
+(And I see this answers my question to patch 1, but still a comment
+there would be nice :)
+
+thanks,
+-serge
+
+> ---
+>  security/lockdown/Kconfig         |  5 +++
+>  security/lockdown/Makefile        |  1 +
+>  security/lockdown/lockdown.c      |  5 ++-
+>  security/lockdown/lockdown_test.c | 54 +++++++++++++++++++++++++++++++
+>  4 files changed, 64 insertions(+), 1 deletion(-)
+>  create mode 100644 security/lockdown/lockdown_test.c
 > 
-> # cd /sys/kernel/debug/tracing/
-> # echo 0 > ./tracing_on
-> # echo function >./current_tracer
-> /* replace function with what you want to trace, e.g. ath10k_wmi_wait_for_service_ready */
-> # echo <function> > ./set_ftrace_filter
-> # echo 1 > ./options/func_stack_trace
-> # echo 1 > ./tracing_on
-> # cat trace_pipe
-> /* reload ath10k driver */
-
-Somehow it did not work for me. I think, reloading the module seems to 
-make it forget the function `ath10k_wmi_wait_for_service_ready()`.
-
-     $ sudo cat /sys/kernel/debug/tracing/set_ftrace_filter
-     ath10k_wmi_wait_for_service_ready [ath10k_core]
-
-Unload the module with `sudo modprobe -r ath10k_pci`.
-
-     $ sudo cat /sys/kernel/debug/tracing/set_ftrace_filter
-     $
-
-Load the module, and it’s still empty:
-
-     $ sudo cat /sys/kernel/debug/tracing/set_ftrace_filter
-     $
-
->>>>>> Additionally I have two questions regarding the code:
->>>>>>
->>>>>> 1.  Is `WMI_SERVICE_READY_TIMEOUT_HZ` the right value to pass to
->>>>>> `wait_for_completion_timeout(struct completion *done, unsigned long timeout)`?
->>>>>>
->>>>>> The macro is defined as:
->>>>>>
->>>>>>        drivers/net/wireless/ath/ath10k/wmi.h:#define WMI_SERVICE_READY_TIMEOUT_HZ (5 * HZ)
->>>>>>
->>>>>> `timeout` is supposed to be in jiffies, and `CONFIG_HZ_250=y` on my system. I wonder how
->>>>>> that amounts to five seconds on my system.
->>>>>
->>>>> HZ is defined as jiffies per second, so 5 * HZ equals 5 seconds.
->>
->> Sorry, I missed to comment here in my previous reply. HZ can be defined differently – like
->> 1000 HZ –, so the timeout would very, and then not match the actual timeout required by
->> the hardware? `Documentation/scheduler/completion.rst` contains:
->>
->>> Timeouts are preferably calculated with msecs_to_jiffies() or usecs_to_jiffies(),
->>> to make the code largely HZ-invariant.
+> diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
+> index e84ddf484010..5fb750da1f8c 100644
+> --- a/security/lockdown/Kconfig
+> +++ b/security/lockdown/Kconfig
+> @@ -6,6 +6,11 @@ config SECURITY_LOCKDOWN_LSM
+>  	  Build support for an LSM that enforces a coarse kernel lockdown
+>  	  behaviour.
+>  
+> +config SECURITY_LOCKDOWN_LSM_TEST
+> +	tristate "Test lockdown functionality" if !KUNIT_ALL_TESTS
+> +	depends on SECURITY_LOCKDOWN_LSM && KUNIT
+> +	default KUNIT_ALL_TESTS
+> +
+>  config SECURITY_LOCKDOWN_LSM_EARLY
+>  	bool "Enable lockdown LSM early in init"
+>  	depends on SECURITY_LOCKDOWN_LSM
+> diff --git a/security/lockdown/Makefile b/security/lockdown/Makefile
+> index e3634b9017e7..f35d90e39f1c 100644
+> --- a/security/lockdown/Makefile
+> +++ b/security/lockdown/Makefile
+> @@ -1 +1,2 @@
+>  obj-$(CONFIG_SECURITY_LOCKDOWN_LSM) += lockdown.o
+> +obj-$(CONFIG_SECURITY_LOCKDOWN_LSM_TEST) += lockdown_test.o
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index 5014d18c423f..412184121279 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -25,7 +25,10 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+>  /*
+>   * Put the kernel into lock-down mode.
+>   */
+> -static int lock_kernel_down(const char *where, enum lockdown_reason level)
+> +#if !IS_ENABLED(CONFIG_KUNIT)
+> +static
+> +#endif
+> +int lock_kernel_down(const char *where, enum lockdown_reason level)
+>  {
+>  
+>  	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
+> diff --git a/security/lockdown/lockdown_test.c b/security/lockdown/lockdown_test.c
+> new file mode 100644
+> index 000000000000..3a3c6db5b470
+> --- /dev/null
+> +++ b/security/lockdown/lockdown_test.c
+> @@ -0,0 +1,54 @@
+> +#include <linux/security.h>
+> +#include <kunit/test.h>
+> +
+> +int lock_kernel_down(const char *where, enum lockdown_reason level);
+> +
+> +static void lockdown_test_invalid_level(struct kunit *test)
+> +{
+> +	KUNIT_EXPECT_EQ(test, -EINVAL, lock_kernel_down("TEST", LOCKDOWN_CONFIDENTIALITY_MAX+1));
+> +}
+> +
+> +static void lockdown_test_depth_locking(struct kunit *test)
+> +{
+> +	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_INTEGRITY_MAX));
+> +	for (int i = 1; i < LOCKDOWN_INTEGRITY_MAX; i++)
+> +		KUNIT_EXPECT_EQ_MSG(test, -EPERM, security_locked_down(i), "at i=%d", i);
+> +
+> +	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_INTEGRITY_MAX));
+> +}
+> +
+> +static void lockdown_test_individual_level(struct kunit *test)
+> +{
+> +	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_PERF));
+> +	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_PERF));
+> +	/* Ensure adjacent levels are untouched */
+> +	KUNIT_EXPECT_EQ(test, 0, security_locked_down(LOCKDOWN_TRACEFS));
+> +	KUNIT_EXPECT_EQ(test, 0, security_locked_down(LOCKDOWN_DBG_READ_KERNEL));
+> +}
+> +
+> +static void lockdown_test_no_downgrade(struct kunit *test)
+> +{
+> +	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_CONFIDENTIALITY_MAX));
+> +	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_INTEGRITY_MAX));
+> +	/*
+> +	 * Ensure having locked down to a lower leve after a higher level
+> +	 * lockdown nothing is lost
+> +	 */
+> +	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_TRACEFS));
+> +}
+> +
+> +static struct kunit_case lockdown_tests[] = {
+> +	KUNIT_CASE(lockdown_test_invalid_level),
+> +	KUNIT_CASE(lockdown_test_depth_locking),
+> +	KUNIT_CASE(lockdown_test_individual_level),
+> +	KUNIT_CASE(lockdown_test_no_downgrade),
+> +	{}
+> +};
+> +
+> +static struct kunit_suite lockdown_test_suite = {
+> +	.name = "lockdown test",
+> +	.test_cases = lockdown_tests,
+> +};
+> +kunit_test_suite(lockdown_test_suite);
+> +
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.34.1
 > 
-> Hmm, new knowledge to me. Will check and update.
-
-Awesome!
-
->>>>>> The timeout should probably be defined in seconds? Does the WMI specification say
->>>>>> something about this?
->>>>>>
->>>>>> 2.  Is the task interruptible and should
->>>>>> `wait_for_completion_interruptible_timeout(struct completion *done, unsigned long timeout)` be used?
->>>>>
->>>>> While I am not sure for now, may I ask why the question?
->>>>
->>>> I was just reading up on `wait_for_completion_*()`, and so the different variants.
->>>
->>> If there is no obvious benefits I don't think the change is necessary.
->>
->> Thinking about it, the driver initialization is in the boot path (hot patch) so would
->> block one thread(?) – or is that a wrong assumption –, which is unwanted?
-> 
-> Indeed a thread would block there ... So you want to make the thread responsible to
-> signals? such as killing it when ath10k goes wrong?
-
-You got me, that I actually do not know, what the downsides are, and 
-what signal/interrupt could be fired, and how it should be handled. As a 
-side note: Other drivers use 
-`wait_for_completion_interruptible_timeout()` also without checking the 
-return value. If nobody else sheds light into this, please ignore my 
-comment.
-
-
-Kind regards,
-
-Paul
-
-
->>>>>> [1]: https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e57b7d62a1b2f496caf0beba81cec3c90fad80d5
->>>>>> [2]: https://lore.kernel.org/all/20240227030409.89702-1-quic_bqiang@quicinc.com/
 
