@@ -1,206 +1,88 @@
-Return-Path: <linux-kernel+bounces-747356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E235B132E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C80EB132E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FDC93B1948
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:12:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C7873B18FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7001C84AE;
-	Mon, 28 Jul 2025 02:13:05 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6897D1D63D8;
+	Mon, 28 Jul 2025 02:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2ft8nFZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F7B3F9FB;
-	Mon, 28 Jul 2025 02:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04F41C862C;
+	Mon, 28 Jul 2025 02:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753668785; cv=none; b=KRyJdvYBQF2qOsD+cq6tLQm7Lqt2arFUs7ix/Xnj8ffvMN9+w/sKKcXFkF5kPFoCQC3mVEbkRqti15UWTPB35rwiCTXmt5H5mRy36dYPfYmKzi/o7vF9WzKotUu9JfHEybzTdOOQ/DH9liBPXgjGAMl9+ZR0H4iaYQJ6yeJlNXE=
+	t=1753668797; cv=none; b=olar3wiyx/Pa1pym2Pl70I5LAME1QkyTDIcZcXBs9+/Uv+FdHzhGZl4HLahkUCfL/9rkVuOQRbbbaRtpHQBqOZelTu9Q40cqwo6AcS6TQkUgmduwD+7Mw8R9hAM1apEjyvh6eNH8/YZXjQJcUhB3Jjbas7kjXgY5T6JHMLQxJhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753668785; c=relaxed/simple;
-	bh=gEcRHz/pVuSpTr3/wCrBqZOo38ZiWgZGeSnXn2wr44M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h4TdKw8nNh/8ypTJvzf3HPCF+0imC/RfMEvy+dNSu9Kau4xtHmWGmLvkL+KLkv5R5lOQEign6e9/F9OXgpj/gxO4FkE3alsA5pylA1LShIbiqtxtRzSRkrROUm9urwbFPKNVT/Io20FLsynKx0VZ2FcbDekaC7QN5QkvZE5lPGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4br22c1K4xz2Cfqw;
-	Mon, 28 Jul 2025 10:08:40 +0800 (CST)
-Received: from kwepemh500018.china.huawei.com (unknown [7.202.181.152])
-	by mail.maildlp.com (Postfix) with ESMTPS id 69C431A016C;
-	Mon, 28 Jul 2025 10:12:52 +0800 (CST)
-Received: from Linux-SUSE12SP5.huawei.com (10.67.136.159) by
- kwepemh500018.china.huawei.com (7.202.181.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 28 Jul 2025 10:12:51 +0800
-From: Yu Jugen <yujugen@huawei.com>
-To: <ohad@wizery.com>, <bjorn.andersson@linaro.org>, <baolin.wang7@gmail.com>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nixiaoming@huawei.com>, <wangliang101@huawei.com>,
-	<yangkangming@huawei.com>, <yujugen@huawei.com>
-Subject: [PATCH] hwspinlock: export structures that affects the KABI
-Date: Mon, 28 Jul 2025 10:11:51 +0800
-Message-ID: <20250728021151.115197-1-yujugen@huawei.com>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1753668797; c=relaxed/simple;
+	bh=FXMtPGsgzG9uF6/+09gEkzGKNwIgnHDiKaw3uPBQcks=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gO1fxa1p7twl5+S54jGecY0flkKQmQHCdTEgFZBnPhe6tI2CAp/YfXBkUiNURTHYEn52FPafDGJcsVaxnd7vE40rmL4Bo9eloQ2YvgAH/sHPbJKAKs6tbpkQNtG3r6uukv+PlNJzzjmg3nfmRSPW8pK0TAQ1+KI4xrdm1O7MMT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2ft8nFZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 059E7C4CEEB;
+	Mon, 28 Jul 2025 02:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753668795;
+	bh=FXMtPGsgzG9uF6/+09gEkzGKNwIgnHDiKaw3uPBQcks=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y2ft8nFZFfgCOvbWATNMSzKFrcUVb68K1YiehubfznbdjL/fNcPch4ey8ItFHeYu7
+	 ceii2IaBmVTbXhb2C5+4vHEy5+IEYrn+cWjl4Ywh2daFIQ0LW32xc0Zu++4B0g+QBd
+	 vm9IsSCmyG5G0js7UEHdTFRSb6dE71PpAxT6c8UdvQkAnjgQQU6rw/LhkVVTVKM22G
+	 LOepWe3xWVn8Lm3O8c8wBdxRzxY+Wu3gJ3WXxtiqtNlOaIQWAAxUag1h41c0KJrV5j
+	 VwnjNH6r1BF6Dh3oYNDS1U76JrolF8sIVDRp9c6rz4pitdxCXPtQ+oNz8naJthOTxP
+	 rRkJTstND1mNg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing: trace_fprobe: Fix typo of the semicolon
+Date: Mon, 28 Jul 2025 11:13:12 +0900
+Message-ID:  <175366879192.487099.5714468217360139639.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
+In-Reply-To: <175323425650.57270.280750740753792504.stgit@devnote2>
+References: <175323425650.57270.280750740753792504.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemh500018.china.huawei.com (7.202.181.152)
 
-From: Jugen Yu <yujugen@huawei.com>
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-The member "hwlock" in struct regmap is defined with struct hwspinlock.
-Both regmap_write and regmap_read use struct regmap as a argument, so
-their KABI are affected by the hwspinlock structures.
+Fix a typo that uses ',' instead of ';' for line delimiter.
 
-Signed-off-by: Jugen Yu <yujugen@huawei.com>
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
- drivers/hwspinlock/hwspinlock_internal.h | 52 ------------------------
- include/linux/hwspinlock.h               | 50 ++++++++++++++++++++++-
- 2 files changed, 49 insertions(+), 53 deletions(-)
+ kernel/trace/trace_fprobe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinlock/hwspinlock_internal.h
-index f298fc0ee5ad..3f22b73c8d50 100644
---- a/drivers/hwspinlock/hwspinlock_internal.h
-+++ b/drivers/hwspinlock/hwspinlock_internal.h
-@@ -10,58 +10,6 @@
- #ifndef __HWSPINLOCK_HWSPINLOCK_H
- #define __HWSPINLOCK_HWSPINLOCK_H
+diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+index 9d14a910fbf7..b36ade43d4b3 100644
+--- a/kernel/trace/trace_fprobe.c
++++ b/kernel/trace/trace_fprobe.c
+@@ -1404,7 +1404,7 @@ static int trace_fprobe_create_cb(int argc, const char *argv[])
+ 	if (!ctx)
+ 		return -ENOMEM;
  
--#include <linux/spinlock.h>
--#include <linux/device.h>
--
--struct hwspinlock_device;
--
--/**
-- * struct hwspinlock_ops - platform-specific hwspinlock handlers
-- *
-- * @trylock: make a single attempt to take the lock. returns 0 on
-- *	     failure and true on success. may _not_ sleep.
-- * @unlock:  release the lock. always succeed. may _not_ sleep.
-- * @bust:    optional, platform-specific bust handler, called by hwspinlock
-- *	     core to bust a specific lock.
-- * @relax:   optional, platform-specific relax handler, called by hwspinlock
-- *	     core while spinning on a lock, between two successive
-- *	     invocations of @trylock. may _not_ sleep.
-- */
--struct hwspinlock_ops {
--	int (*trylock)(struct hwspinlock *lock);
--	void (*unlock)(struct hwspinlock *lock);
--	int (*bust)(struct hwspinlock *lock, unsigned int id);
--	void (*relax)(struct hwspinlock *lock);
--};
--
--/**
-- * struct hwspinlock - this struct represents a single hwspinlock instance
-- * @bank: the hwspinlock_device structure which owns this lock
-- * @lock: initialized and used by hwspinlock core
-- * @priv: private data, owned by the underlying platform-specific hwspinlock drv
-- */
--struct hwspinlock {
--	struct hwspinlock_device *bank;
--	spinlock_t lock;
--	void *priv;
--};
--
--/**
-- * struct hwspinlock_device - a device which usually spans numerous hwspinlocks
-- * @dev: underlying device, will be used to invoke runtime PM api
-- * @ops: platform-specific hwspinlock handlers
-- * @base_id: id index of the first lock in this device
-- * @num_locks: number of locks in this device
-- * @lock: dynamically allocated array of 'struct hwspinlock'
-- */
--struct hwspinlock_device {
--	struct device *dev;
--	const struct hwspinlock_ops *ops;
--	int base_id;
--	int num_locks;
--	struct hwspinlock lock[];
--};
--
- static inline int hwlock_to_id(struct hwspinlock *hwlock)
- {
- 	int local_id = hwlock - &hwlock->bank->lock[0];
-diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
-index f0231dbc4777..5c95cec031fb 100644
---- a/include/linux/hwspinlock.h
-+++ b/include/linux/hwspinlock.h
-@@ -12,6 +12,8 @@
+-	ctx->flags = TPARG_FL_KERNEL | TPARG_FL_FPROBE,
++	ctx->flags = TPARG_FL_KERNEL | TPARG_FL_FPROBE;
  
- #include <linux/err.h>
- #include <linux/sched.h>
-+#include <linux/spinlock.h>
-+#include <linux/device.h>
- 
- /* hwspinlock mode argument */
- #define HWLOCK_IRQSTATE		0x01 /* Disable interrupts, save state */
-@@ -23,7 +25,53 @@ struct device;
- struct device_node;
- struct hwspinlock;
- struct hwspinlock_device;
--struct hwspinlock_ops;
-+
-+/**
-+ * struct hwspinlock_ops - platform-specific hwspinlock handlers
-+ *
-+ * @trylock: make a single attempt to take the lock. returns 0 on
-+ *	     failure and true on success. may _not_ sleep.
-+ * @unlock:  release the lock. always succeed. may _not_ sleep.
-+ * @bust:    optional, platform-specific bust handler, called by hwspinlock
-+ *	     core to bust a specific lock.
-+ * @relax:   optional, platform-specific relax handler, called by hwspinlock
-+ *	     core while spinning on a lock, between two successive
-+ *	     invocations of @trylock. may _not_ sleep.
-+ */
-+struct hwspinlock_ops {
-+	int (*trylock)(struct hwspinlock *lock);
-+	void (*unlock)(struct hwspinlock *lock);
-+	int (*bust)(struct hwspinlock *lock, unsigned int id);
-+	void (*relax)(struct hwspinlock *lock);
-+};
-+
-+/**
-+ * struct hwspinlock - this struct represents a single hwspinlock instance
-+ * @bank: the hwspinlock_device structure which owns this lock
-+ * @lock: initialized and used by hwspinlock core
-+ * @priv: private data, owned by the underlying platform-specific hwspinlock drv
-+ */
-+struct hwspinlock {
-+	struct hwspinlock_device *bank;
-+	spinlock_t lock;
-+	void *priv;
-+};
-+
-+/**
-+ * struct hwspinlock_device - a device which usually spans numerous hwspinlocks
-+ * @dev: underlying device, will be used to invoke runtime PM api
-+ * @ops: platform-specific hwspinlock handlers
-+ * @base_id: id index of the first lock in this device
-+ * @num_locks: number of locks in this device
-+ * @lock: dynamically allocated array of 'struct hwspinlock'
-+ */
-+struct hwspinlock_device {
-+	struct device *dev;
-+	const struct hwspinlock_ops *ops;
-+	int base_id;
-+	int num_locks;
-+	struct hwspinlock lock[];
-+};
- 
- /**
-  * struct hwspinlock_pdata - platform data for hwspinlock drivers
--- 
-2.37.7
+ 	trace_probe_log_init("trace_fprobe", argc, argv);
+ 	ret = trace_fprobe_create_internal(argc, argv, ctx);
 
 
