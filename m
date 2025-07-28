@@ -1,136 +1,181 @@
-Return-Path: <linux-kernel+bounces-747910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13215B13A1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:57:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DC7B13A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B03C174E97
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:57:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189BB3AD1B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82F8261586;
-	Mon, 28 Jul 2025 11:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D8C25F7A4;
+	Mon, 28 Jul 2025 11:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqfwJbyi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InW/quMj"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFC0218858;
-	Mon, 28 Jul 2025 11:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BF3218858;
+	Mon, 28 Jul 2025 11:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753703842; cv=none; b=RMHeEu46aFf5iVo4r3TwJ1XMcNN3siYsIlKBK7wHOaDAxeCovRFSOnj5OUijQVQ5BzVkfrryWW3uud8NbxTUrES0Y9io3+3KFR4UYHJj3JIxOChu5sBDYwP846EPDwI8DiKqOUaHqq0KLBUa9iS9F8SRSJ98Uk+UK+ti6oNwfuQ=
+	t=1753703867; cv=none; b=GMCAN7ua93nqiJnR0f5eolZxIQNmJ7iC5hMGA4+B/IsPelgpX0N31uGCeYWScE7p2sqAGGctjGa+4FyTIOuWBXWbZgNPWW6A5kvUKRGOgcuTNsYByQN5lrDXr/jz22HVIdEEbaNZLuCCkkbzKMuXAcfEX0ZcPGSckyxMVgzeG+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753703842; c=relaxed/simple;
-	bh=KwknBtm3rG8DZ9E+8sUrsu3OOrib3fyBjqPLFr4ycAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNGHeH2t9hG1N0/KT2dCW3xi8n7OTIoToO+JSnRk2jQKmx5GyIpVsnRuiOrmhvejga+VtLccbsRGDqHbJWgsm2NacWPb2E6rNgqwyE2CgGlhvsXXR97qJ4bRuYz/naLSgDFrdCsvy0fzURYcgXbkAxoSnsIn4ep6aEGNam0eHiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqfwJbyi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A28FC4CEE7;
-	Mon, 28 Jul 2025 11:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753703838;
-	bh=KwknBtm3rG8DZ9E+8sUrsu3OOrib3fyBjqPLFr4ycAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RqfwJbyixeU0CGFFCnQZPxoYw0lIQjtYHTfeCRbeKA4fVeubMfZRtZOMK5vibGMIi
-	 ZAhwSX2tIHBJlEebJNoQONALCqV4XQXU4EhG1TmAyee9dGXtbIflgBrVE1tUG7aIK+
-	 YltsV8lPTR5rKPj1EGlsoYzgIegsz0/kAlCC9yNIAw2/0LtibcC71eDLVF/8hK7YzM
-	 E4xsh27AI2ipBu12xiyMTmdvpuQf0VMOta3+t5kAxZPd1tKONDtMDHq4WVcrvBBc9U
-	 FUczJ2bVLW8egOnL6VpKUvhB6od74ihSwOv+Xwoif3T2umZMdU05z10s+X6MVbzTRP
-	 sjoA9F7Jyxgmw==
-Date: Mon, 28 Jul 2025 07:57:16 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
-	josh@joshtriplett.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <aIdlnHcNHvOxVxGF@lappy>
-References: <20250727195802.2222764-1-sashal@kernel.org>
- <75d86e96-cb18-4996-998c-da7ac0e97468@suse.cz>
+	s=arc-20240116; t=1753703867; c=relaxed/simple;
+	bh=ZtT1le3P289gYN9XnvFtj8YV9WSOW1LkgpFqykFEcqI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G0MnipJg6fq2ex+VxSYjcae4viKSJ4hGGnu4LGwCWiIxEqdxd2PV825HiBdYRXlWSnPno3YMAaqfFesQ82iQyJKtDBRERev7fPO1nG1wuINnTpQOBbf9dj7ybB2pUyiVtkMJwZkssVEEew1lxEskQdWF0a4uySC5gTa5srSJqPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InW/quMj; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2401b855635so6625575ad.2;
+        Mon, 28 Jul 2025 04:57:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753703866; x=1754308666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7QH1fCvQmnSC89vnVLs/2ja8LbLIAQjyBUi34DkOfb0=;
+        b=InW/quMjeeIt00PMfihwSdl8pQ72/7y4YX1jpnjEfA74inPe+HHC0MWAw6TZKqgVwn
+         YsyhgOeWA1NMB/n6zXN6qZKN4FDw5mMnbELc5tsRFHotDIXLlYEgfczR6EhjPuob1eu3
+         rUSD7ZuKDZUnERA8l694cAjpaZXGytxDBHe/8UOBmfzf5xJ6UB3Bq1dKV7Uhq73fIr3y
+         g50zeOIP4gwNxosmuoVwKm324W41/K+xwpyHSNLKdt+d0IAwQsIQv8/ZXAAUwzlMnEd9
+         ELbA4j8B0D4XreANLE3DWebXmaxvSPrUjnUHWSfzBXOz2UqrL/X0dcD7G5o+reSRXrOh
+         0UpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753703866; x=1754308666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7QH1fCvQmnSC89vnVLs/2ja8LbLIAQjyBUi34DkOfb0=;
+        b=Ih4brr5vHByHeTxmqmMjh44wEKAtSL0yIMqbxCXgRbkH5zLcaF/J667vlEJcFWusb4
+         P7PbZ9ltBS78vOrHUGt/7wSaNv/kuOA2zede5Zr1aG3bM2NcQNMXIj7t7SsJd8rRsamR
+         5oAC+sGeIDtFzur5cJGyGVwkcejW9z9Hzb3Mpnh0rFPKZGFMumwapzHoKUEWkpju8k8Z
+         iIvszWfazyRVQ60zpePbI5Y7oGvXDrVc0LJGPPkn7bilTV9XwSJh2bXJPLpr8eMCWJSN
+         fGL08lKZtW/C/7MBH9dopxo2a927TzLcLxc5eVi76HKCKQocq6V0RnXXNnHxpEZ8QtCe
+         vHAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFOvFHWoATZWFBpOzmeAwafhqECe8B863KXKquFNCapk0uhaVi+1WHJEJr2mpn9UCPSJeyGha+lJ7k3Hdi6hODaA==@vger.kernel.org, AJvYcCWLNpMjdpACN/lYQS+5i6MdjxLoZCe9CT9jiy7JOiovXAo114u8Fs4cm8uZbA89E5MVpkd9aqpnMQpJ@vger.kernel.org, AJvYcCXD976m6QtpLuuHUHOdgIE/YwaVj3f178hwpSLHTgkyz1y4FrdNp4JsS0iKOLBjUDAM17TokLFYZxh/TU5H@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWbPtwkgOYKI81P1n8oedMAKVpmuaCmMkm6ZA6qscZ548HTL8z
+	YEv5mpAHNkTJdnuVJSRusHIFDSHNXJg/Q0WWsVROPwP4tqVJmkDg4Wl8
+X-Gm-Gg: ASbGnctAMHapL4A8ULpYFIKDq6sPWg5cXaoiVm61FGRQ8kxh3mr2ktdY4MJ9X1TlnF3
+	IU2lZCQAai7D1yL+e9DBv+lJGN2bMoYNLjRx5hlFGi5I05tWg8kHu2PuxI5fGAAMnTVg1vKA1ow
+	+BwIynBZbXFPHwCCjNPjkHE0/Ufe4CTHBKyFAE1EvsjVO3z0lYcrPU74hSMs5DIzt1fLXtxUX0L
+	+foCpByku56cD2FHNhIoByspffw9ZTfHTN9I1ylYvNuBz5VgzQB3GQNFpTaxYXnDJwv7ifke83K
+	K1NxW1SFZQjDNWJlvwmqORaRozH/nvvXnrBpdxLWPVm82Jvxm0fZy42hTm4bOOpftsv7OpSFU/3
+	cueUUQsvUlpr0KGK+UfrS3jYgITfzQ+whobWaJ1z87T8+e7rZbLVlx/Q2
+X-Google-Smtp-Source: AGHT+IGVkxhzM4QAYwzySEvOd+NXUqVS/Jgx0EE1xymZXd3jvGCDUW6EzJ9xB7Zw08erZmtjmgDO+w==
+X-Received: by 2002:a17:902:f546:b0:240:44a6:5027 with SMTP id d9443c01a7336-24044a65233mr19422635ad.15.1753703865413;
+        Mon, 28 Jul 2025 04:57:45 -0700 (PDT)
+Received: from localhost.localdomain ([38.188.108.234])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24007d98b25sm30933685ad.97.2025.07.28.04.57.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 04:57:44 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	guoren@kernel.org,
+	atrajeev@linux.vnet.ibm.com,
+	kjain@linux.ibm.com,
+	linux-perf-users@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org,
+	linux-csky@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH] perf/util: make TYPE_STATE_MAX_REGS architecture-dependent
+Date: Mon, 28 Jul 2025 17:27:19 +0530
+Message-Id: <20250728115719.143372-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <75d86e96-cb18-4996-998c-da7ac0e97468@suse.cz>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 28, 2025 at 09:58:44AM +0200, Vlastimil Babka wrote:
->On 7/27/25 21:57, Sasha Levin wrote:
->> This patch series adds unified configuration and documentation for coding
->> agents working with the Linux kernel codebase. As coding agents
->> become increasingly common in software development, it's important to
->> establish clear guidelines for their use in kernel development.
->
->Hi,
->
->this series seems to me somewhat premature. I think we first need a clear
->policy wrt LLM usage for the *humans* to follow. It seemed this thread [1]
->was going into that direction wrt usage disclosure. BTW I was quite shocked
->by Steven's reply there [2] that he learned from the LWN coverage of a
->conference talk that he had received a patch fully written by LLM without
->any such indication. Now I'm not naive to believe that it's not been
->happening already from e.g. first-time contributors, but if that coverage
->was accurate, the patch came from a very seasoned kernel contributor and I
->really wouldn't expect that to happen.
+Replace the fixed definition of TYPE_STATE_MAX_REGS with architecture-
+specific values for better accuracy across multiple CPU architectures
+including PowerPC, ARM, x86, RISC-V, MIPS, and others. This change ensures
+the type state registers array size matches the actual register count of
+the target platform.
 
-You mean that you had a concern that the same person who wrote
-hashtable.h was using tooling to convert open coded implementations of a
-hashtable to the API provided by hashtable.h?
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+ tools/perf/util/annotate-data.h | 45 ++++++++++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 4 deletions(-)
 
-I've been doing this since 2012 (see 42f8570f437b ("workqueue: use new
-hashtable implementation")) with the various tools that the we have for
-mechanical transmormations of code.
-
-I understand Steve's point of view on this, and this series is here to
-tackle the concerns raised both by him and the rest of the community.
-
->Also I don't know e.g. the copyright and licensing implications of LLM usage
->beyond, say, a smarter automplete are clear? (again, such as writing the
->full patch?) The thread [1] touched on it somewhat but not completely. If
->that's clear already (IANAL), I'd hope that to be also part of such policy.
-
-The LF already has guidance
-(https://www.linuxfoundation.org/legal/generative-ai) for this type of
-contributions that was created by LF's lawyers.
-
-Clearly we can override, expand, or affirm it if we want to, but just
-like you, IANAL.
-
->I know that your series has patch 4, but that seems to be part of what the
->LLM is supposed to include for its prompt (does it make sense to call it
->"legal requirements" then?). If it fails to e.g. add the "Co-developed-by:"
->there seems to be nothing saying the human should check these things in the
->output.
-
-Right - as pointed to later in the thread, that part is already in
-progress.
-
-The approach in this series would be to cover the technical aspects of
-supporting whatever policy we end up with.
-
->So without such policy first, I fear just merging this alone would send the
->message that the kernel is now officially accepting contributions done with
->coding assistants, and those assistants will do the right things based on
->these configuration files, and the developers using the assistants don't
->need to concern themselves with anything more, as it's all covered by the
->configuration.
-
-Note that at the current state of our policies and documentation, if you
-were to pretend to be a developer completely unfamiliar with the Linux
-Kernel project, the conclusion you'd reach is that the project
-"officially" accepts contributions that are in line with LF's policies.
-
-If anything, this series clamps down on that.
-
+diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+index 541fee1a5f0a..0dfb12a8f1cc 100644
+--- a/tools/perf/util/annotate-data.h
++++ b/tools/perf/util/annotate-data.h
+@@ -189,11 +189,48 @@ struct type_state_stack {
+ 	u8 kind;
+ };
+ 
+-/* FIXME: This should be arch-dependent */
+-#ifdef __powerpc__
+-#define TYPE_STATE_MAX_REGS  32
++#if defined(__powerpc__) || defined(__powerpc64__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__aarch64__)
++#define TYPE_STATE_MAX_REGS 31
++#elif defined(__arm__)
++#define TYPE_STATE_MAX_REGS 16
++#elif defined(__x86_64__)
++#define TYPE_STATE_MAX_REGS 16
++#elif defined(__i386__)
++#define TYPE_STATE_MAX_REGS 8
++#elif defined(__riscv)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__mips__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__sparc__) || defined(__sparc64__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__alpha__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__s390__) || defined(__s390x__)
++#define TYPE_STATE_MAX_REGS 16
++#elif defined(__sh__)
++#define TYPE_STATE_MAX_REGS 16
++#elif defined(__nios2__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__hexagon__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__openrisc__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__csky__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__loongarch__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__arc__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__microblaze__)
++#define TYPE_STATE_MAX_REGS 32
++#elif defined(__xtensa__)
++#define TYPE_STATE_MAX_REGS 16
++#elif defined(__m68k__)
++#define TYPE_STATE_MAX_REGS 16
+ #else
+-#define TYPE_STATE_MAX_REGS  16
++#define TYPE_STATE_MAX_REGS 16
+ #endif
+ 
+ /*
 -- 
-Thanks,
-Sasha
+2.39.5
+
 
