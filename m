@@ -1,124 +1,240 @@
-Return-Path: <linux-kernel+bounces-747542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802DCB134FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:35:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A80B13500
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2FD53B80FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CF9C189885F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED109221550;
-	Mon, 28 Jul 2025 06:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E72221550;
+	Mon, 28 Jul 2025 06:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JXfIU0K1"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="W2/ZGzn8"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009C520F062
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8171411DE;
+	Mon, 28 Jul 2025 06:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753684537; cv=none; b=BVrbTPilEq6B+JPTHUS8x3CTeWXA+aOAtUyhq4iBWXVs84bYNbtUECIEAbaxUNbQyzxGj0OFbFJs0y00jDk9GCJK5jFXlLfr2+tZga+EB6hIpeoDHs1aHuX2WEoOv1m2pxnwWKcMw1aMywKIdnezUfNgR1yR+UZGjIs+TQJaeQk=
+	t=1753684686; cv=none; b=g59S+JPx1DXsgfnFzWhVkRRsif+UUXP4kSIgfOyZNfR6Sm1hEBIUCIpA1eqUnjRncGZwyW1N9hVf7ofHpOz4tfI9sH4b8JHm7hqDNJw1l0D4qlwW602kIuB3ZTXzqdvYitpGMLg8xtOF09Cid7ka8b+Zl7kza/wQUXPBresddTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753684537; c=relaxed/simple;
-	bh=+fXDohrWMWo9G8EI9UAt21V6WgzDKIUmV2hR2xxLtzQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e+Z40Dp4SqDm2stfVeq8Keps+G5hGOphIkX20xAfPJRTX6FYcJp0eB5QiJED0qwF3y1GNRCvc37+JZHf2e09EsUCtbUYzbHiGTdDPE0qF6UnY9BDn9lEoBUJc+j4lvd644v3Eo6iBDbb8HQ8M5uG/DdgqzKzm2lhYNc5B6cQbxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JXfIU0K1; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab61ecc1e8so31828591cf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 23:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753684535; x=1754289335; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JnJj4JAljjvMTcZBxH8ZSi1hv9zlYq3kQG99bS/CAPo=;
-        b=JXfIU0K1bRLmQLJNa0xp8B08FXBGsEJqHuCY+gbS50YTEsYP4r/0cvH8tsmfoHAnwg
-         S5jS92mq06jnuPPgshvLlE0gPtcP0qkD3zSq07Y2VjkbwtpuoTjjqB+k5AUu1GgNVswc
-         iHJIyeylksuYl9MXl9NXwwOYfVnDlDy1n/gD6CZddlK7yR7bDtScwJGdXQ2NR4sFD/0A
-         nkeR+X/KrHaZ2ZL6GcgYHpFs3lVj+uzF6NeGuxtUC65+bJ1fHm/Xv7LcEPOJmDTLhl7D
-         APGOBaVwFmwkf3B+nnzHBZOox+aGv6Gd7SHxFSPeG0ckprwI08zEPp6xYtiY2QDSL5xp
-         3a6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753684535; x=1754289335;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JnJj4JAljjvMTcZBxH8ZSi1hv9zlYq3kQG99bS/CAPo=;
-        b=T17WBdjn7CXGAXV9B9HvssIyaTey/JdAPzW/x+LlAFVMlN2uO/UcAeOCs+ESLB6p9I
-         k3SibfC2AFobC0VKeV0WkQ2uUexAWo9hv4mD056/jJcZwDb+Svd7Mlpdd8hKZH9phbbV
-         mO+6WhycpY7x9p6Dp9eehpUEi1OQJ6D5O9+ZGRPZQIfbdyJB9Sx2f3TDei1I8aehz7Eg
-         DcP9iI6JJmyZ2gr7YKiK6hCCqVniXScD0p7N8Jh6SMRG4RKKM/a8VGEaH903oQBRj88M
-         nQ/8MKPJENzcXtlMMDhBRBArZHFcV2X9n3L94tcfVGt1ZYVlvQPmchjXALb8/qUtZR0H
-         CSLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWWJtP8u7/vp0JKQ3CkTf3glc2ujoVKCItOCq0XpZ2JpxPGdixhJhz0tvzIx0M0TGTxUl2p7zS7Xs0G04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIDEHAIjnzLjo5u8sQQx/ZyqFKLtaxpIRxxSrPMA/FFvlLp03p
-	Wb++vslQyl/Ri2USMK1cIpHAKBCy9z9j8AV6o6Jz93FI/Qjs/ImqikRI
-X-Gm-Gg: ASbGncsBCysPvJmsW1HAA7VQYgsM1bNE6FylxS4DS8VuGGfIcl7lv4I2bZaMzFmTtEI
-	04xDgKXocSDHySv/moJ/Wx2oKgQk8WfcR4L2x4Vk4DHD3hzGRE4EPz9vNnHaB2rSu/F5cW43L/u
-	PPVV1lgK+XGrUn+Wto74h6Rve7kb/oK+Pw+DtdWaPFYoQgdBZWrOyUMt2Y3erKlQdEMo+w3Jz2R
-	vd4kIhYi1ziyv3Cfk4gOpQGfi5WcwqTEGdFjyuwLg1oiEuFQxUv7/XkOP3+4JoRbPRsxShi327B
-	6Ds8ZPt55dQfBo5mUacCIos6sf3DYqIMrUobYIV8oy7qPcsFrojigluSwuYzqRYw04IKHKhSU2t
-	0MTpa8IN1oybyeeWdsRaRje0Uw6KezgtoT4vQxkRZcxClTYmyUgc=
-X-Google-Smtp-Source: AGHT+IHkIrJWx/FbtzBKxauRdVEfXuJLg8qiUDLkKh839y0eXpuhwwiXmrYE+HCfGM7zV2yuyOjivQ==
-X-Received: by 2002:ac8:5d45:0:b0:4a7:1401:95a0 with SMTP id d75a77b69052e-4ae8ef1b433mr148830851cf.2.1753684534328;
-        Sun, 27 Jul 2025 23:35:34 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae99544c17sm31612571cf.16.2025.07.27.23.35.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 23:35:33 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	vivek.balachandhar@gmail.com
-Subject: [PATCH v1 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
-Date: Mon, 28 Jul 2025 06:35:10 +0000
-Message-Id: <20250728063510.422849-1-vivek.balachandhar@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250726043218.386738-15-vivek.balachandhar@gmail.com>
-References: <20250726043218.386738-15-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1753684686; c=relaxed/simple;
+	bh=MV0+xDoir8VqL8d7w4br3Jq1WCP3bum7WCiNz/cycVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rCSN25ivfmv8cExIkDEkEPk4Vy1BHoWkLQFzi8QdtWcAW4t8jzQBdRxGHTKQ72fHorz9z0wFm2WqPhKP/1uzoIaLaX3vCLpZFaZOnFRSjJ0qbYyjDGKGs+ypz8HbEdvc73XVWzCPvGK5tn+iCikdW7yv40KOkwVsH7X04ENUvKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=W2/ZGzn8; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1753684675;
+	bh=MV0+xDoir8VqL8d7w4br3Jq1WCP3bum7WCiNz/cycVU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W2/ZGzn8ON6sJM/H+Mqu9y3VU5aVwUiX9xk6/mi1ET2ouUus2rgt4g8U9IzWzGIui
+	 tYZ+VgxsVZhzSsnIB3ayfXMfgtSTGxuTfMU/LcW1YTGHrSwaE8MoF06mkqfTyert46
+	 4mvD4SbkSGvodBjw29ddJ/D64fV9DmhafRKA4i/8=
+Date: Mon, 28 Jul 2025 08:37:55 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Akshay Gupta <akshay.gupta@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	gregkh@linuxfoundation.org, arnd@arndb.de, linux@roeck-us.net, Anand.Umarji@amd.com, 
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
+Subject: Re: [PATCH v1 2/5] misc: amd-sbi: Add support for SB-RMI over I3C
+Message-ID: <039f9a44-80df-4795-b18d-5fc9c488ca37@t-8ch.de>
+References: <20250728061033.1604169-1-akshay.gupta@amd.com>
+ <20250728061033.1604169-2-akshay.gupta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728061033.1604169-2-akshay.gupta@amd.com>
 
-Removed superfluous parentheses around a function call inside an
-if-condition. These extra parentheses are not required and violate
-kernel coding style guidelines.
+On 2025-07-28 06:10:30+0000, Akshay Gupta wrote:
+(...)
 
-Cleaning them up improves code readability without changing logic.
+> diff --git a/drivers/misc/amd-sbi/rmi-i3c.c b/drivers/misc/amd-sbi/rmi-i3c.c
+> new file mode 100644
+> index 000000000000..b960743afad1
+> --- /dev/null
+> +++ b/drivers/misc/amd-sbi/rmi-i3c.c
+> @@ -0,0 +1,133 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * rmi-i3c.c - Side band RMI over I3C support for AMD out
+> + *             of band management
+> + *
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/delay.h>
 
-Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+Unnecessary include.
 
-v2:
-- Fixed incorrect wording: the change was not around assignment
----
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +#include <linux/err.h>
+> +#include <linux/i3c/device.h>
+> +#include <linux/i3c/master.h>
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 3702d7e7a954..d845eaecd615 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -700,7 +700,7 @@ void rtw_surveydone_event_callback(struct adapter	*adapter, u8 *pbuf)
- 	rtw_set_signal_stat_timer(&adapter->recvpriv);
- 
- 	if (pmlmepriv->to_join) {
--		if ((check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
-+		if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true) {
- 			if (check_fwstate(pmlmepriv, _FW_LINKED) == false) {
- 				set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
- 
--- 
-2.39.5
+Ditto.
 
+> +#include <linux/regmap.h>
+> +#include "rmi-core.h"
+> +
+> +static int sbrmi_enable_alert(struct sbrmi_data *data)
+> +{
+> +	int ctrl, ret;
+> +
+> +	/*
+> +	 * Enable the SB-RMI Software alert status
+> +	 * by writing 0 to bit 4 of Control register(0x1)
+> +	 */
+> +	ret = regmap_read(data->regmap, SBRMI_CTRL, &ctrl);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (ctrl & 0x10) {
+
+Magic value? Use a define.
+
+> +		ctrl &= ~0x10;
+> +		return regmap_write(data->regmap, SBRMI_CTRL, ctrl);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int sbrmi_get_max_pwr_limit(struct sbrmi_data *data)
+> +{
+> +	struct apml_mbox_msg msg = { 0 };
+> +	int ret;
+> +
+> +	msg.cmd = SBRMI_READ_PKG_MAX_PWR_LIMIT;
+> +	ret = rmi_mailbox_xfer(data, &msg);
+> +	if (ret < 0)
+> +		return ret;
+> +	data->pwr_limit_max = msg.mb_in_out;
+> +
+> +	return ret;
+> +}
+> +
+> +static int sbrmi_i3c_probe(struct i3c_device *i3cdev)
+> +{
+> +	struct device *dev = &i3cdev->dev;
+
+i3cdev_to_dev();
+
+> +	struct sbrmi_data *data;
+> +	struct regmap_config sbrmi_i3c_regmap_config = {
+> +		.reg_bits = 8,
+> +		.val_bits = 8,
+> +	};
+> +	int ret;
+> +
+> +	data = devm_kzalloc(dev, sizeof(struct sbrmi_data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&data->lock);
+
+devm_mutex_init().
+
+> +
+> +	data->regmap = devm_regmap_init_i3c(i3cdev, &sbrmi_i3c_regmap_config);
+> +	if (IS_ERR(data->regmap))
+> +		return PTR_ERR(data->regmap);
+> +
+> +	/* Enable alert for SB-RMI sequence */
+> +	ret = sbrmi_enable_alert(data);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Cache maximum power limit */
+> +	ret = sbrmi_get_max_pwr_limit(data);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/*
+> +	 * AMD APML I3C devices support static address
+> +	 */
+> +	if (i3cdev->desc->info.static_addr)
+> +		data->dev_static_addr = i3cdev->desc->info.static_addr;
+> +	else
+> +		data->dev_static_addr = i3cdev->desc->info.dyn_addr;
+> +
+> +	dev_set_drvdata(dev, data);
+
+If you get rid of _remove(), then this can go away.
+
+> +
+> +	ret = create_hwmon_sensor_device(dev, data);
+
+That's a very generic name to have exported.
+
+> +	if (ret < 0)
+> +		return ret;
+> +	return create_misc_rmi_device(data, dev);
+> +}
+> +
+> +static void sbrmi_i3c_remove(struct i3c_device *i3cdev)
+> +{
+> +	struct sbrmi_data *data = dev_get_drvdata(&i3cdev->dev);
+> +
+> +	misc_deregister(&data->sbrmi_misc_dev);
+
+create_misc_rmi_device() could use devm_add_action_or_reset() for the
+misc deregister, simplifying the drivers code.
+
+> +	/* Assign fops and parent of misc dev to NULL */
+> +	data->sbrmi_misc_dev.fops = NULL;
+> +	data->sbrmi_misc_dev.parent = NULL;
+
+Why are these two needed? The data is freed anyways right after.
+
+> +	dev_info(&i3cdev->dev, "Removed sbrmi-i3c driver\n");
+
+Unnecessary.
+
+> +}
+> +
+> +static const struct i3c_device_id sbrmi_i3c_id[] = {
+> +	/* PID for AMD SBRMI device */
+> +	I3C_DEVICE_EXTRA_INFO(0x112, 0x0, 0x2, NULL),
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(i3c, sbrmi_i3c_id);
+> +
+> +static struct i3c_driver sbrmi_i3c_driver = {
+> +	.driver = {
+> +		.name = "sbrmi-i3c",
+> +	},
+> +	.probe = sbrmi_i3c_probe,
+> +	.remove = sbrmi_i3c_remove,
+> +	.id_table = sbrmi_i3c_id,
+> +};
+> +
+> +module_i3c_driver(sbrmi_i3c_driver);
+
+You could have the i2c and i3c drivers in the same module using
+module_i3c_i2c_driver().
+
+> +
+> +MODULE_IMPORT_NS("AMD_SBRMI");
+> +MODULE_AUTHOR("Akshay Gupta <akshay.gupta@amd.com>");
+> +MODULE_AUTHOR("Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>");
+> +MODULE_DESCRIPTION("AMD SB-RMI driver over I3C");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.25.1
+> 
 
