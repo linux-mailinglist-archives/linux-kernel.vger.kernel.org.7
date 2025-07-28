@@ -1,166 +1,196 @@
-Return-Path: <linux-kernel+bounces-747938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA1FB13A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:24:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9142EB13A74
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ED573AD6A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:24:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5978189C803
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2C7264630;
-	Mon, 28 Jul 2025 12:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63407264630;
+	Mon, 28 Jul 2025 12:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moTTfd+K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E26ONR4P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32E6263F34
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABDD1C8606;
+	Mon, 28 Jul 2025 12:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753705474; cv=none; b=HzOnunWpULRWyjV7vGfKzKaUlLJChtR+EK4gwRfa2cfL6xlIIc1m8Q0Hz1lGdrS6lPFO5LKIP5NHbCpSa1XjTgfL48hSeFwscLVwlEEbb0zp8zuv5oaISu+Uk6YwDf2UlnN2thSHN2GUIYyLrIYShwgUTHkIW5H7NHI8AvVKTRM=
+	t=1753705487; cv=none; b=FIpHJSR9r0uzSzaaOClGzfOC2RqsSXQpPftWRgdW3xJ31b2x8nNSBEFxdBz1Z9BmzgUW8Hth75uf7Cw3dvNuE4rh0pjIasFASZKcVZWKucYHA05aMgQstsG7TmfuriV7g28qpZnaGoihg2ZQx6wN0SGTlve8N4eJ/0XyXipUhEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753705474; c=relaxed/simple;
-	bh=3wfX7LOWDn+/a+ynSS4YsFbqvDCu6ZVRm+uCK7FhuAM=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=rgJalggKI/09K5lpnWKmxZYg+G6P/6ylzPIlEENHChMDLCkA+udcryZ7FXWDBDoo6B3fQ/Eq32YFMURMWA13wZLGhbuKY742MDAOa7f3YfVDdS5U1/YTJ+J/yu+72rX759XUJcVkx56k68mQAX+/ZLHLPTRPxrS5b3KpR6FNT2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moTTfd+K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58F8CC4CEE7;
-	Mon, 28 Jul 2025 12:24:34 +0000 (UTC)
+	s=arc-20240116; t=1753705487; c=relaxed/simple;
+	bh=GnbJTTc9uc5u8yqjxhZ3d9PZFrYsgp3uI8ziD/c0gYQ=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=RAv5vi0G6kHz/CR+BFriI4lLNjB1fwTi9wTxX2MtfLQi+HDYukSOPIvWBrQ5+AM0XC4nE6IzFQTZ87CwBbJhaZeFTXA+LcIiMvPNmTlrMKVPu46w8L/ZQVqwmpFa1pjRUm9Czm7R9b3qFHgGymYElYi/lwkobx3M3gxefSkggLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E26ONR4P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A93B9C4CEE7;
+	Mon, 28 Jul 2025 12:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753705474;
-	bh=3wfX7LOWDn+/a+ynSS4YsFbqvDCu6ZVRm+uCK7FhuAM=;
+	s=k20201202; t=1753705487;
+	bh=GnbJTTc9uc5u8yqjxhZ3d9PZFrYsgp3uI8ziD/c0gYQ=;
 	h=From:To:Cc:Subject:Date:From;
-	b=moTTfd+KDSKl1/GKsRGQQFhHVSxYyAjM4I8f4QLM1i5ZS3wUYkwh8swRJ6OD4siOw
-	 q9wCSN4ueLFdIjkGgYe0yfa7/bso4Dctt3GQpvpRRqyZE5EdpyftNenTB/5dIMp8LJ
-	 W0gUu05pyVa3ezDhYVP/M7oxR4E/SFvqrxX7n33dW00nZcbRsioD5uSzD0QpndDDct
-	 1dj+W9iqbOQWg8ssRK2qpT6k/OSqylo7N6DuwnBzc/MHNPAo3vV4ZEkUrPEWXEvYRY
-	 neN4aG0dmlFhUQo8BCYUyGBdS3S3TRy9YJxARTFwkuvROg2Nwt1ClmP1O7CS4KhHnh
-	 JeIEEEwesZewA==
-Message-ID: <a887f34ce497dc8d6b92f087e3cc3a65.broonie@kernel.org>
+	b=E26ONR4Pm8x1XYff5eyMxsXgvk+uZSuHCkWRYke1s0XQL+zY9AYJlzlSYAT0+krZX
+	 a6MV2duqJrGUz0exjMpcAaovUAd7jGsErlY5/4Rq7m+w5Qnm/txyFOsd2GbNY3WTw/
+	 qGzNInZzSB2SmYJO0yzM9wERWTC2OnwWNfa2RBocdn2RFEdd9+VwV3jC0ybeYkF6FS
+	 eGiepXYJ0g3Y97tl34DATJWkF78dCP5KWx9emPHKtcAyA+8SEJxqh3AMe8eQELRcIh
+	 ErykXzac5W91IMVBq9x1Ztz+OGAF/gk8nfAVku4cBg5vQmGQ3ljlHldKm9uuEzW+x2
+	 SQU7c2Bq+agUA==
+Message-ID: <ead4b31b9f656b8a7ac9280d368fd210.broonie@kernel.org>
 From: Mark Brown <broonie@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] regulator updates for v6.17
-Date: Mon, 28 Jul 2025 13:24:24 +0100
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI updates for v6.17
+Date: Mon, 28 Jul 2025 13:24:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf1911:
+The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
 
-  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
+  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v6.17
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v6.17
 
-for you to fetch changes up to 0bd042ae771d61ef7ccd5882f7aeca59a25f71d9:
+for you to fetch changes up to 2d442a0c781403702de27ccfbc4bb233721585f5:
 
-  regulator: mt6370: Fix spelling mistake in mt6370_regualtor_register (2025-07-24 18:04:38 +0100)
+  spi: SPISG: Fix less than zero comparison on a u32 variable (2025-07-25 18:46:31 +0100)
 
 ----------------------------------------------------------------
-regulator: Updates for v6.17
+spi: Updates for v6.17
 
-The big change in this release is the addition of Rust bindings from
-Daniel Almeida, allowing fairly basic consumer use with support for
-enable and voltage setting operations.  This should be good for the vast
-majority of consumers.  Otherwise it's been quite quiet, a few new
-devices supported, plus some cleanups and fixes.
+This release is almost entirely driver work, mostly new drivers with the
+usual smattering of per driver updates anf fixes, with only trivial
+changes in the core.  Highlights include:
 
- - Basic Rust bindings.
- - A fix for making large voltage changes on regulators where we limit
-   the size of voltage change we will do in one step, previously we just
-   got as close as we could in one step.
+ - Quite a bit of maintainence work on the STM32 and Qualcomm drivers.
+ - Usage of the newly added devm_dma_request_chan() in the ateml driver,
+   pulling in the relevant dmaengine change.
  - Cleanups of our usage of the PM autosuspend functions, this pulls in
    some PM core changes on a shared tag.
- - Mode setting support for PCA9450.
- - Support for Mediatek MT6893 and MT8196 DVFSRC, Qualcomm PM7550 and
-   PMR735B, Raspberry Pi displays and TI TPS652G1.
-
-The TI driver pulls in the MFD portion of the support for the device and
-the pinctrl driver which was in the same tag.
+ - Support for ADI sigma-delta triggers, Amlogic SPISG, Mediatek MT6991
+   and MT8196, Renesas RZ/V2H(P) and SOPHGO SG2042.
 
 ----------------------------------------------------------------
-Andy Shevchenko (1):
-      regulator: core: Don't use "proxy" headers
+Andra-Teodora Ilie (1):
+      spi: spi-fsl-dspi: Enable modified transfer protocol on S32G
 
-AngeloGioacchino Del Regno (4):
-      dt-bindings: regulator: mediatek-dvfsrc: Add MT6893 support
-      regulator: mtk-dvfsrc: Add support for Dimensity 1200 MT6893
-      dt-bindings: regulator: mediatek-dvfsrc: Add MT8196 support
-      regulator: mtk-dvfsrc: Add support for MediaTek MT8196 DVFSRC
+AngeloGioacchino Del Regno (2):
+      spi: dt-bindings: mediatek,spi-mt65xx: Add support for MT6991/MT8196 SPI
+      spi: spi-mt65xx: Add support for MT6991 Dimensity 9400 SPI IPM
 
-Christophe JAILLET (2):
-      regulator: tps6594-regulator: Constify struct tps6594_regulator_irq_type
-      regulator: tps6594-regulator: Remove a useless static qualifier
+Antonio Quartulli (1):
+      spi: stm32: fix pointer-to-pointer variables usage
 
-Colin Ian King (2):
-      regulator: Kconfig: Fix spelling mistake "regualtor" -> "regulator"
-      regulator: mt6370: Fix spelling mistake in mt6370_regualtor_register
+Bence Csókás (2):
+      dmaengine: Add devm_dma_request_chan()
+      spi: atmel-quadspi: Use `devm_dma_request_chan()`
 
-Daniel Almeida (2):
-      rust: regulator: add a bare minimum regulator abstraction
-      MAINTAINERS: add regulator.rs to the regulator API entry
+Ciprian Marian Costea (2):
+      dt-bindings: spi: dspi: Add S32G support
+      spi: spi-fsl-dspi: Enable support for S32G platforms
 
-Dave Stevenson (2):
-      regulator: rpi-panel-v2: Add regulator for 7" Raspberry Pi 720x1280
-      regulator: rpi-panel-v2: Add shutdown hook
+Clément Le Goffic (7):
+      spi: stm32: Add SPI_READY mode to spi controller
+      spi: stm32: Check for cfg availability in stm32_spi_probe
+      spi: stm32: use STM32 DMA with STM32 MDMA to enhance DDR use
+      spi: stm32: deprecate `st,spi-midi-ns` property
+      spi: dt-bindings: stm32: update bindings with SPI Rx DMA-MDMA chaining
+      spi: dt-bindings: stm32: deprecate `st,spi-midi-ns` property
+      spi: stm32: fix sram pool free in probe error path
 
-Jeff Chang (1):
-      regulator: rt6160: Add rt6166 vout min_uV setting for compatible
+Colin Ian King (1):
+      spi: SPISG: Fix less than zero comparison on a u32 variable
 
-Jisheng Zhang (5):
-      regulator: rt5739: Enable REGCACHE_MAPLE
-      regulator: tps6287x-regulator: Enable REGCACHE_MAPLE
-      regulator: tps6286x-regulator: Enable REGCACHE_MAPLE
-      regulator: sy8827n: make enable gpio NONEXCLUSIVE
-      regulator: tps6286x-regulator: Fix a copy & paste error
+Conor Dooley (2):
+      spi: microchip-core-qspi: set min_speed_hz during probe
+      spi: microchip-core-qspi: remove unused param from mchp_coreqspi_write_op()
 
-Luca Weiss (4):
-      regulator: dt-bindings: qcom,rpmh: Add PM7550 compatible
-      regulator: dt-bindings: qcom,rpmh: Add PMR735B compatible
-      regulator: qcom-rpmh: add support for pmr735b regulators
-      regulator: qcom-rpmh: add support for pm7550 regulators
+Cyril Jean (1):
+      spi: microchip-core-qspi: Add regular transfers
 
-Marek Vasut (3):
-      regulator: dt-bindings: rpi-panel: Add regulator for 7" Raspberry Pi 720x1280
-      regulator: rpi-panel-v2: Add missing GPIOLIB dependency
-      regulator: rpi-panel-v2: Fix missing OF dependency
+Dan Carpenter (2):
+      spi: stm32: delete stray tabs in stm32h7_spi_data_idleness()
+      spi: stm32-ospi: Fix NULL vs IS_ERR() bug in stm32_ospi_get_resources()
 
-Mark Brown (5):
-      regulator: dvfsrc: Add support for MT8196 and
+Darshan Rathod (2):
+      spi: xilinx: Fix block comment style and minor cleanups
+      spi: gpio: Use explicit 'unsigned int' for parameter types
+
+David Lechner (2):
+      dt-bindings: trigger-source: add ADI Util Sigma-Delta SPI
+      spi: offload trigger: add ADI Util Sigma-Delta SPI driver
+
+Fabrizio Castro (2):
+      spi: dt-bindings: Document the RZ/V2H(P) RSPI
+      spi: Add driver for the RZ/V2H(P) RSPI IP
+
+Frank Li (2):
+      spi: dt-bindings: mxs-spi: allow clocks properpty
+      spi: dt-bindings: add nxp,lpc3220-spi.yaml
+
+Gabor Juhos (5):
+      spi: spi-qpic-snand: use NANDC_STEP_SIZE consistently
+      spi: spi-qpic-snand: remove 'qpic_snand_op' structure
+      mtd: nand: qpic-common: add defines for ECC_MODE values
+      spi: spi-qpic-snand: add support for 8 bits ECC strength
+      spi: spi-qpic-snand: simplify bad block marker duplication
+
+Geert Uytterhoeven (2):
+      spi: sh-msiof: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+      spi: rspi: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+
+Heiko Schocher (2):
+      dt-bindings: trivial-devices: Document ABB sensors
+      spi: spidev: Add an entry for the ABB spi sensors
+
+Jakub Czapiga (1):
+      spi: intel: Allow writeable MTD partition with module param
+
+James Clark (2):
+      spi: spi-fsl-dspi: Re-use one volatile regmap for both device types
+      spi: spi-fsl-dspi: Define regmaps per device
+
+Larisa Grigore (4):
+      spi: spi-fsl-dspi: Add config and regmaps for S32G platforms
+      spi: spi-fsl-dspi: Avoid setup_accel logic for DMA transfers
+      spi: spi-fsl-dspi: Use DMA for S32G controller in target mode
+      spi: spi-fsl-dspi: Reinitialize DSPI regs after resuming for S32G
+
+Lukas Bulwahn (1):
+      spi: spi-fsl-dspi: Revert unintended dependency change in config SPI_FSL_DSPI
+
+Marius Trifu (1):
+      spi: spi-fsl-dspi: Use spi_alloc_target for target
+
+Mark Brown (12):
+      spi: spi-fsl-dspi: DSPI support for NXP S32G
+      spi: Merge up fixes
+      spi: microchip-core-qspi: Add regular transfers
+      Add few updates to the STM32 SPI driver
+      Add `devm_dma_request_chan()` to simplify probe
+      iio: adc: ad7173: add SPI offload support
+      spi: spi-qpic-snand: enable 8 bits ECC strength
       treewide: Remove redundant
-      regulator: Merge tps6594 driver changes
-      Add RPMh regulator support for PM7550 & PMR735B
-      Add a bare-minimum Regulator abstraction
+      spidev: introduce trivial abb sensor device
+      support for amlogic the new SPI IP
+      Add RSPI support for RZ/V2H
+      spi: sophgo: Add SPI NOR controller for SG2042
 
-Martijn de Gouw (2):
-      dt-bindings: regulator: add pca9450: Add regulator-allowed-modes
-      regulator: pca9450: Add support for mode operations
+Raphael Gallais-Pou (1):
+      spi: st: Switch from CONFIG_PM_SLEEP guards to pm_sleep_ptr()
 
-Matti Vaittinen (1):
-      regulator: bd718x7: Clarify comment by moving it
-
-Michael Walle (8):
-      mfd: tps6594: Add TI TPS652G1 support
-      misc: tps6594-pfsm: Add TI TPS652G1 PMIC PFSM
-      pinctrl: pinctrl-tps6594: Add TPS652G1 PMIC pinctrl and GPIO
-      dt-bindings: mfd: ti,tps6594: Add TI TPS652G1 PMIC
-      regulator: tps6594-regulator: remove interrupt_count
-      regulator: tps6594-regulator: remove hardcoded buck config
-      regulator: tps6594-regulator: refactor variant descriptions
-      regulator: tps6594-regulator: Add TI TPS652G1 PMIC regulators
-
-Primoz Fiser (1):
-      regulator: pca9450: Support PWM mode also for pca9451a
-
-Romain Gantois (1):
-      regulator: core: repeat voltage setting request for stepped regulators
+Rob Herring (Arm) (3):
+      spi: dt-bindings: Convert marvell,orion-spi to DT schema
+      spi: stm32-ospi: Use of_reserved_mem_region_to_resource() for "memory-region"
+      spi: dt-bindings: spi-mux: Drop "spi-max-frequency" as required
 
 Sakari Ailus (7):
       PM: runtime: Document return values of suspend-related API functions
@@ -169,48 +199,94 @@ Sakari Ailus (7):
       PM: runtime: Mark last busy stamp in pm_runtime_autosuspend()
       PM: runtime: Mark last busy stamp in pm_request_autosuspend()
       Documentation: PM: *_autosuspend() functions update last busy time
-      regulator: stm32-vrefbuf: Remove redundant pm_runtime_mark_last_busy() calls
+      spi: Remove redundant pm_runtime_mark_last_busy() calls
 
- .../devicetree/bindings/mfd/ti,tps6594.yaml        |   1 +
- .../mediatek,mt6873-dvfsrc-regulator.yaml          |   2 +
- .../bindings/regulator/nxp,pca9450-regulator.yaml  |  14 +
- .../bindings/regulator/qcom,rpmh-regulator.yaml    |  35 ++
- ...pberrypi,7inch-touchscreen-panel-regulator.yaml |   7 +-
- Documentation/power/runtime_pm.rst                 |  50 ++-
- MAINTAINERS                                        |   1 +
- drivers/mfd/tps6594-core.c                         |  88 ++++-
- drivers/mfd/tps6594-i2c.c                          |  10 +-
- drivers/mfd/tps6594-spi.c                          |  10 +-
- drivers/misc/tps6594-pfsm.c                        |  31 +-
- drivers/pinctrl/pinctrl-tps6594.c                  |  35 ++
- drivers/regulator/Kconfig                          |  13 +-
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/bd718x7-regulator.c              |  27 +-
- drivers/regulator/core.c                           |  43 ++-
- drivers/regulator/mt6370-regulator.c               |   4 +-
- drivers/regulator/mtk-dvfsrc-regulator.c           |  38 ++
- drivers/regulator/pca9450-regulator.c              | 141 ++++++-
- drivers/regulator/qcom-rpmh-regulator.c            |  58 +++
- drivers/regulator/rpi-panel-v2-regulator.c         | 125 ++++++
- drivers/regulator/rt5739.c                         |   9 +
- drivers/regulator/rt6160-regulator.c               |  19 +-
- drivers/regulator/stm32-vrefbuf.c                  |   6 -
- drivers/regulator/sy8827n.c                        |   3 +-
- drivers/regulator/tps6286x-regulator.c             |   9 +
- drivers/regulator/tps6287x-regulator.c             |   7 +
- drivers/regulator/tps6594-regulator.c              | 275 ++++++++------
- .../dt-bindings/regulator/nxp,pca9450-regulator.h  |  18 +
- include/linux/mfd/tps6594.h                        |   1 +
- include/linux/pm_runtime.h                         | 187 +++++++--
- include/linux/regulator/coupler.h                  |   3 +-
- rust/bindings/bindings_helper.h                    |   1 +
- rust/helpers/helpers.c                             |   1 +
- rust/helpers/regulator.c                           |  43 +++
- rust/kernel/lib.rs                                 |   1 +
- rust/kernel/regulator.rs                           | 418 +++++++++++++++++++++
- 37 files changed, 1513 insertions(+), 222 deletions(-)
- create mode 100644 drivers/regulator/rpi-panel-v2-regulator.c
- create mode 100644 include/dt-bindings/regulator/nxp,pca9450-regulator.h
- create mode 100644 rust/helpers/regulator.c
- create mode 100644 rust/kernel/regulator.rs
+Shiji Yang (1):
+      spi: falcon: mark falcon_sflash_xfer() as static
+
+Sunny Luo (2):
+      spi: dt-bindings: Add binding document of Amlogic SPISG controller
+      spi: Add Amlogic SPISG driver
+
+Thangaraj Samynathan (3):
+      spi: spi-pci1xxxx: Add support for 25MHz Clock frequency in C0
+      spi: spi-pci1xxxx: Add support for per-instance DMA interrupt vectors
+      spi: spi-pci1xxxx: enable concurrent DMA read/write across SPI transfers
+
+Xianwei Zhao (1):
+      MAINTAINERS: Add an entry for Amlogic spi driver
+
+Zixian Zeng (3):
+      spi: dt-bindings: spi-sg2044-nor: Change SOPHGO SG2042
+      spi: spi-sg2044-nor: Add configurable chip_info
+      spi: spi-sg2044-nor: Add SPI-NOR controller for SG2042
+
+ .../devicetree/bindings/spi/amlogic,a4-spisg.yaml  |  59 ++
+ .../devicetree/bindings/spi/fsl,dspi.yaml          |  18 +
+ .../devicetree/bindings/spi/marvell,orion-spi.yaml | 102 +++
+ .../bindings/spi/mediatek,spi-mt65xx.yaml          |   5 +
+ Documentation/devicetree/bindings/spi/mxs-spi.yaml |   3 +
+ .../devicetree/bindings/spi/nxp,lpc3220-spi.yaml   |  44 +
+ .../bindings/spi/renesas,rzv2h-rspi.yaml           |  96 +++
+ Documentation/devicetree/bindings/spi/spi-mux.yaml |   1 -
+ .../devicetree/bindings/spi/spi-orion.txt          |  79 --
+ .../bindings/spi/spi-peripheral-props.yaml         |   1 +
+ .../devicetree/bindings/spi/spi-sg2044-nor.yaml    |   9 +-
+ .../devicetree/bindings/spi/st,stm32-spi.yaml      |  48 +-
+ .../trigger-source/adi,util-sigma-delta-spi.yaml   |  49 ++
+ .../devicetree/bindings/trivial-devices.yaml       |   2 +
+ Documentation/power/runtime_pm.rst                 |  50 +-
+ MAINTAINERS                                        |  16 +-
+ drivers/dma/dmaengine.c                            |  30 +
+ drivers/mtd/nand/raw/qcom_nandc.c                  |   6 +-
+ drivers/spi/Kconfig                                |  26 +-
+ drivers/spi/Makefile                               |   3 +
+ drivers/spi/atmel-quadspi.c                        |  53 +-
+ drivers/spi/spi-amlogic-spisg.c                    | 888 +++++++++++++++++++++
+ drivers/spi/spi-cadence-quadspi.c                  |   2 -
+ drivers/spi/spi-cadence.c                          |   1 -
+ drivers/spi/spi-falcon.c                           |   5 +-
+ drivers/spi/spi-fsl-dspi.c                         | 356 ++++++---
+ drivers/spi/spi-fsl-espi.c                         |   2 -
+ drivers/spi/spi-fsl-lpspi.c                        |   2 -
+ drivers/spi/spi-gpio.c                             |  16 +-
+ drivers/spi/spi-imx.c                              |   3 -
+ drivers/spi/spi-intel.c                            |  13 +-
+ drivers/spi/spi-microchip-core-qspi.c              | 226 +++++-
+ drivers/spi/spi-mt65xx.c                           |  11 +
+ drivers/spi/spi-mtk-nor.c                          |   1 -
+ drivers/spi/spi-nxp-fspi.c                         |   1 -
+ .../spi/spi-offload-trigger-adi-util-sigma-delta.c |  59 ++
+ drivers/spi/spi-omap2-mcspi.c                      |   3 -
+ drivers/spi/spi-pci1xxxx.c                         | 285 ++++---
+ drivers/spi/spi-qpic-snand.c                       |  72 +-
+ drivers/spi/spi-rockchip-sfc.c                     |   3 -
+ drivers/spi/spi-rspi.c                             |   9 +-
+ drivers/spi/spi-rzv2h-rspi.c                       | 466 +++++++++++
+ drivers/spi/spi-s3c64xx.c                          |   3 -
+ drivers/spi/spi-sg2044-nor.c                       |  29 +-
+ drivers/spi/spi-sh-msiof.c                         |  11 +-
+ drivers/spi/spi-sprd.c                             |   1 -
+ drivers/spi/spi-st-ssc4.c                          |  14 +-
+ drivers/spi/spi-stm32-ospi.c                       |  31 +-
+ drivers/spi/spi-stm32-qspi.c                       |   7 -
+ drivers/spi/spi-stm32.c                            | 318 +++++++-
+ drivers/spi/spi-ti-qspi.c                          |   2 -
+ drivers/spi/spi-xilinx.c                           |   5 +-
+ drivers/spi/spi-zynqmp-gqspi.c                     |   1 -
+ drivers/spi/spi.c                                  |   3 -
+ drivers/spi/spidev.c                               |   2 +
+ include/linux/dmaengine.h                          |   7 +
+ include/linux/mtd/nand-qpic-common.h               |   2 +
+ include/linux/pm_runtime.h                         | 187 ++++-
+ 58 files changed, 3150 insertions(+), 597 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/amlogic,a4-spisg.yaml
+ create mode 100644 Documentation/devicetree/bindings/spi/marvell,orion-spi.yaml
+ create mode 100644 Documentation/devicetree/bindings/spi/nxp,lpc3220-spi.yaml
+ create mode 100644 Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+ delete mode 100644 Documentation/devicetree/bindings/spi/spi-orion.txt
+ create mode 100644 Documentation/devicetree/bindings/trigger-source/adi,util-sigma-delta-spi.yaml
+ create mode 100644 drivers/spi/spi-amlogic-spisg.c
+ create mode 100644 drivers/spi/spi-offload-trigger-adi-util-sigma-delta.c
+ create mode 100644 drivers/spi/spi-rzv2h-rspi.c
 
