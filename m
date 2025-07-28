@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-747801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47317B13884
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:03:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5C5B1388C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E23188CC0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E94B53A1CA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1924424678A;
-	Mon, 28 Jul 2025 10:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011E22561D1;
+	Mon, 28 Jul 2025 10:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LHAOC+qK"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YHE4xx0K"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E0B218ABD;
-	Mon, 28 Jul 2025 10:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB3723AB9F;
+	Mon, 28 Jul 2025 10:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753697028; cv=none; b=ZmxNegxVDohUedfYoM3oGM+Mq0Jdv64FdFvykoHC3QE2fy3KAfY/1Ovxx6o5YCXf9TQkITXp/JLe6d/Hl0005xGnkbU3OyjbJZhvbnu1uGt8lyffcSkfOVR6ipXu3+tTRm7nQmy3MbN+o3EGphBGPdZoWcrj/KezRBKAr87sTcI=
+	t=1753697088; cv=none; b=VSGqgSypri+9pGKQRpFj7P4HHo6k49B55/hk90kClUxSYG48OaF4KXK9nLAWEWdqc/OEmID3ZTgqrn0lcjQj60iX5vQkJNIdSsExKxt99PTObRC/D/rtjQwP2o2XNzGuH1OxKRUeWP2Ycn6xfS7UkcrHywu8hur4EzXuYww5P58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753697028; c=relaxed/simple;
-	bh=OJvZOtZWtP5T0PzzfgXr4dA4B4uqn6dYb9pB37Og+Qo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NWZ8Tk3FlzN5KHAFckwDyKZhiizz6wG6aO+u+w5iH48XKvJvavvViog9O26H1BnqjifrS9H7nNWT2KrVvP4ujNojjjXdmVd3dFEuVtRt1iqOx75h97Jo16swKNkjjwzQTiMiG8XDlvwN3gTbGA57PcN3actnuYI8zpoF28rfnYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LHAOC+qK; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753697024;
-	bh=OJvZOtZWtP5T0PzzfgXr4dA4B4uqn6dYb9pB37Og+Qo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LHAOC+qK+AWMxcwoV72yYP6zs6wX8/phcBzKqr6naiqpjjGTPAyxxRTE/tI5OTeC3
-	 QIZWZLvIhjZED6w9aexgk5syMZAh5fbAiUmcJV+oXknfY1l03rSDeQXwC0f3X4O64Q
-	 ZMK96/KhYxU4SUmTCKQL/S+pX0GDFrfnHYfuIrx3R5njbP7qvo2WuunUzfr4MoThzV
-	 cGgpJ2x1/rfTL3wdJWezoTPE+HxUiUvppVqQ+ItE+YgErt8rTW4O+yMnwgb8Z9Gtg3
-	 Uffl4aAgx0NVZP9n7qFmg7mtV+zIRBIxjrd5gKr9tCIpYruEvKgAZXG9uIyGmk7c4N
-	 lVa6F7R6sPHBw==
-Received: from [192.168.1.90] (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EC6F317E0F3F;
-	Mon, 28 Jul 2025 12:03:43 +0200 (CEST)
-Message-ID: <c7c76b11-f7db-4cfd-81ac-c43d8c540472@collabora.com>
-Date: Mon, 28 Jul 2025 13:03:43 +0300
+	s=arc-20240116; t=1753697088; c=relaxed/simple;
+	bh=3X625z+16rlrSUBwNR6x75g+YtnDwZWLVEY9cjb2y/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EynRJiAofEfninDR9HlJ579GXk7bh+uvBI2gEjke3xtBvzpkCpzcoe3bbj5rgo5KtOOg1QiZ8JlEVcSloltETj64iSgQjeO6uo+qNdver/OALw36VV1tOE4jCEe441I0SXZRWhXZhd6XVhW75wkkTCi20gizjrDlSueHjq6C5v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YHE4xx0K; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56SA4Poj2280777;
+	Mon, 28 Jul 2025 05:04:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753697065;
+	bh=4MeCrGZ4jM/mwWrVgLXe9zoaYmXCEGbQlg3VQ9zWfSU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=YHE4xx0Kc2dPbn0pH/EfQnaq8+UU4zfyDALAB0pIR8bJOnLZBfsHAS3XwxKGzUcRs
+	 O2OnFBhkyL73APrxAKYDoCoDhwd1Ks99RWiQjmDemWqfZxOlOXtyAovG+YVUwFaq7q
+	 BbwCTbSoqY2AMK8lQ8XmM5Ub1B9pIFvNW9W8pZ5w=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56SA4Pn3212206
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 28 Jul 2025 05:04:25 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 28
+ Jul 2025 05:04:25 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 28 Jul 2025 05:04:25 -0500
+Received: from [172.24.235.208] (hkshenoy.dhcp.ti.com [172.24.235.208])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56SA4LtQ1566557;
+	Mon, 28 Jul 2025 05:04:21 -0500
+Message-ID: <b9ae56bf-dd61-414d-9d52-30cd6e4642db@ti.com>
+Date: Mon, 28 Jul 2025 15:34:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,76 +64,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/18] usb: vhci-hcd: Prevent suspending virtually
- attached devices
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Valentina Manea <valentina.manea.m@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
- "Brian G. Merrell" <bgmerrell@novell.com>, kernel@collabora.com,
- Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250726-vhci-hcd-suspend-fix-v2-0-189266dfdfaa@collabora.com>
- <20250726-vhci-hcd-suspend-fix-v2-1-189266dfdfaa@collabora.com>
- <2025072637-google-referable-dc99@gregkh>
+Subject: Re: [PATCH v3 0/7] Add DSI display support for TI's Jacinto platforms
+To: Jayesh Choudhary <j-choudhary@ti.com>, <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <u-kumar1@ti.com>, <devarsht@ti.com>
+References: <20250716060114.52122-1-j-choudhary@ti.com>
 Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <2025072637-google-referable-dc99@gregkh>
-Content-Type: text/plain; charset=UTF-8
+From: Harikrishna Shenoy <a0512644@ti.com>
+In-Reply-To: <20250716060114.52122-1-j-choudhary@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 7/26/25 10:06 AM, Greg Kroah-Hartman wrote:
-> On Sat, Jul 26, 2025 at 01:08:03AM +0300, Cristian Ciocaltea wrote:
->> The VHCI platform driver aims to forbid entering system suspend when at
->> least one of the virtual USB ports are bound to an active USB/IP
->> connection.
->>
->> However, in some cases, the detection logic doesn't work reliably, i.e.
->> when all devices attached to the virtual root hub have been already
->> suspended, leading to a broken suspend state, with unrecoverable resume.
->>
->> Ensure the virtually attached devices do not enter suspend by setting
->> the syscore PM flag.  Note this is currently limited to the client side
->> only, since the server side doesn't implement system suspend prevention.
->>
->> Fixes: 04679b3489e0 ("Staging: USB/IP: add client driver")
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/usb/usbip/vhci_hcd.c | 22 ++++++++++++++++++++++
->>  1 file changed, 22 insertions(+)
->>
->> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
->> index e70fba9f55d6a0edf3c5fde56a614dd3799406a1..b4b0ed5d64966214636b157968478600e2e4178a 100644
->> --- a/drivers/usb/usbip/vhci_hcd.c
->> +++ b/drivers/usb/usbip/vhci_hcd.c
->> @@ -765,6 +765,17 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
->>  				 ctrlreq->wValue, vdev->rhport);
->>  
->>  			vdev->udev = usb_get_dev(urb->dev);
->> +			/*
->> +			 * FIXME: A similar operation has been done via
->> +			 * USB_REQ_GET_DESCRIPTOR handler below, which is
->> +			 * supposed to always precede USB_REQ_SET_ADDRESS.
-> 
-> When is this FIXME going to be addressed and by whom?
 
-Actually I should have probably used a NOTE or something similar as this is
-only about the possibility to drop some redundant code, rather then fixing
-something broken.
+On 7/16/25 11:31, Jayesh Choudhary wrote:
+> Hello All,
+>
+> This series adds the dts support to enable DSI on 3 platforms for TI SoCs:
+> - J784S4-EVM
+> - J721S2-EVM
+> - AM68-SK
+>
+> SN65DSI86 driver fix that was essential for display is now merged.
+>
+> There is one more series relevant for driver that makes CDNS-DSI driver
+> work better:
+> https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com/
+>
+> I have locally tested using kmstest utility on all 3 platforms.
+>
+> Changelog v2->v3:
+> - Cosmetic changes like adding padding and new line before child nodes
+> - Using standard node name for regulator and bridge
+> - Remove "regulator-always-on" for dp-regulator in am68 and j721s2 board
+> - Remove interrupt-parent from dsi nodes
+>
+> v2 patch link:
+> https://lore.kernel.org/all/20250624082619.324851-1-j-choudhary@ti.com/
 
->> +			 *
->> +			 * It's not entirely clear if operating on a different
->> +			 * usb_device instance here is a real possibility,
->> +			 * otherwise this call and vdev->udev assignment above
->> +			 * should be dropped.
-> 
-> What is going to need to happen to figure this out?
+Reviewed-by: Harikrishna Shenoy <h-shenoy@ti.com>
 
-I could only do some limited testing on my side, which is definitely not
-enough to confirm it's safe to move on with the code removal, hence I'd very
-much like to get some other opinions on the matter.  Regardless, I think
-it's useful to keep this documented.
+Tested-by: Harikrishna Shenoy <h-shenoy@ti.com>
 
-Thanks,
-Cristian
-
+>
+> Changelog v1->v2:
+> - [4/7]: Add gpio-line-names
+> - [6/7]: Remove unnecessary clocks from TIDSS
+>
+> v1 patch link:
+> https://lore.kernel.org/all/02f1912f-0a05-4446-923a-7935ed305cb3@ti.com/
+>
+> Jayesh Choudhary (5):
+>    arm64: dts: ti: k3-j784s4-j742s2-main-common: add DSI & DSI PHY
+>    arm64: dts: ti: k3-j784s4-j742s2-evm-common: Enable DisplayPort-1
+>    arm64: dts: ti: k3-j721s2-common-proc-board: Add main_i2c4 instance
+>    arm64: dts: ti: k3-j721s2-common-proc-board: Enable DisplayPort-1
+>    arm64: dts: ti: k3-am68-sk: Enable DSI on DisplayPort-0
+>
+> Rahul T R (2):
+>    arm64: dts: ti: k3-j721s2-main: add DSI & DSI PHY
+>    arm64: dts: ti: k3-j721s2-som-p0: add DSI to eDP
+>
+>   .../boot/dts/ti/k3-am68-sk-base-board.dts     |  97 ++++++++++++++
+>   .../dts/ti/k3-j721s2-common-proc-board.dts    | 117 +++++++++++++++++
+>   arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi    |  39 ++++++
+>   arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi  |  51 ++++++++
+>   .../dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 121 +++++++++++++++++-
+>   .../dts/ti/k3-j784s4-j742s2-main-common.dtsi  |  39 ++++++
+>   6 files changed, 463 insertions(+), 1 deletion(-)
+>
 
