@@ -1,182 +1,221 @@
-Return-Path: <linux-kernel+bounces-747605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27EF6B135DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:52:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29702B135DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE9D18984CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 884BE3A2B7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EC9224B04;
-	Mon, 28 Jul 2025 07:51:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9806E221FB1;
-	Mon, 28 Jul 2025 07:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E316221F38;
+	Mon, 28 Jul 2025 07:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DwyEM9YG"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B262153D2
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753689108; cv=none; b=Ty5DQxHzokyH2pBgGeLCkd3jkj/pAiiQen3faxJzAtnK47Fy975IHQ5NtDU6NPxQWeCGP+x61Y++yedBThkGu2SiZGFyZFgpLbGYa/EdwlRvzBO+DqCMih9X0QdEBtxCAsh9VM6nMXQSk3p4BjfCwvJ4KBW6tcL65aaAsABaGd8=
+	t=1753689215; cv=none; b=AujHsshVKdvbeX8WsR58OGYsjpocJEoSARX3SNmdGG+WCE3zkMMxoxeeqzOIAhdtqaD3E8h4QJZQYHJC+sXO32XbkiudC9jCCdaDMbL6lfUvNxrDPHHIpC9OYkEZhnoWw1YpExk8UWTsdSf6EBNSc31rjZmdxaDfZ6Uk7uS/tds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753689108; c=relaxed/simple;
-	bh=PSzDE4EnANpUmLdbzSCZd+h/R7uE6ijqTpScKyAcGEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pUq7N9gur4gQgSCNNwWzmR+F+EQqyfriU399d01B26a9ssUqypDT/84qHddeRw1nmBnpeaqsIHE8EG0lgE7Cizij240b7Lna5C0c/sxFLdE5jKhrW1rcX22XGv1fI6PtyLSzyC9FKL82/tSeMzf/6e5ypUocevyDW2md/7s8nqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCD171596;
-	Mon, 28 Jul 2025 00:51:36 -0700 (PDT)
-Received: from [10.57.53.40] (unknown [10.57.53.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D869F3F673;
-	Mon, 28 Jul 2025 00:51:40 -0700 (PDT)
-Message-ID: <d0ffb55b-690a-4a65-98b5-b83adebfd88b@arm.com>
-Date: Mon, 28 Jul 2025 08:51:38 +0100
+	s=arc-20240116; t=1753689215; c=relaxed/simple;
+	bh=VicJlHgsfxvS0D78zlYt4b9NuI6xwuiXgQC+5ImzMD8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HBVu3dgdj7budmk77UAw9tLuT+d4Y4D77LtJNUBd1dU9wyUSMUqGmWQN4LYTuj5ZtWrYb70+/DNuHPto4CBHQrj5B1wmOc0KuJLtdjW/xN9hRrUoK4NpL//EYdNvb1t11PrdyTGSwwaI1qYcIpCaTiP1FcjAwArD7ngebxd4/0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DwyEM9YG; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23636167b30so37392905ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 00:53:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753689213; x=1754294013; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5loWCTi8sLWbfgpjr5FUZEJQZnH2H/eS0KaFqLlVPog=;
+        b=DwyEM9YGsyJV7zpkg8AlznGAfO60mgXjPbPMA4kJRwaLtCQK6CKK4mUD3JQVynEmEa
+         VyM5Xb37k2EBm04yewtl2ow4y/xZAubjBmf9raA2IDsSGurSecqFQ+s8NBeDfaCF3Ncx
+         wTBw7Yy8G06Xo2Pi02ZwZOTTOwZbRTSvRAx9V20uRk04SMPrTij0ABK85j8WSjzFxAhj
+         YhChkCWnsmbcBX0AxpJYozqAndVChlkLwyAW+iqKQ1iexXZ2uzsdc6TGO8L5lku9i4qa
+         rTpXqZumAZbSxkEr3pxdycoykextJFw8Cro4eGX6DnzCaf4UjJ/rhrgI76kbvRrXXcON
+         Reog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753689213; x=1754294013;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5loWCTi8sLWbfgpjr5FUZEJQZnH2H/eS0KaFqLlVPog=;
+        b=aaIBWI/wJfafSyMo8NmYgBHmkyYJfrLbb2B3iSivGxWlFGkKX4uTMjYc0UejRvdShJ
+         yEwY1l+M0hNknFBr/cc1FgYxaA4S5AwJT/MnbKuIVvf2IEO7zmOtu1QGAAhbkQHFMLEz
+         PexTsKLxvFS2DaOWkgzGK6P17Vpb75pd2G3RYQmxpMdapwdoK8jxkifUPtANoAnq5sYn
+         qgVsUz6tggN0nRzv1MY4LI3syzGJlGohhyVdTdQWrsY31XpXgVhCkXPR38PDIQcT+IC9
+         z2DZ6EjjKW0QKWo4Ph+eXYBYYVLA6RUCud8pTCVtj8HXXdvgI+Ycp/aGrO83tUqub3og
+         VoEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXw/1ll2lJbpVN5D5iKPw1MNZrFG8uwfIJ0MBFmNqr4Y8d+dWXDSpp6KI5GpsV/Tfm6QeaYK5iOeyAe/Y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywAcItdK/Tea3yA875WuPU7GCowKbPCaiBwtq17PSmmfAQjmLW
+	ZQG4Mh9GTNqSmuIwQx1bnn1qzlhU5eqE299ykwDlHlmdfgku3P/7PByi
+X-Gm-Gg: ASbGnctj27PH2SUSEQ3bJWb/DALER6yB6dk1dA3fClGBZCoGFyz404pP7upLxhHLDv5
+	5LbsCmLJqxcl1p69NGuFMheSbUc0Fy8dEfuIK4fwtSOQzWICqS3Tl6jvgCAYSi/6+KSJw170beC
+	nv7OUjYfN3hmzWn+ck5TiR0ypot5EDklZNdrc10P+huzWo+PYQWcZ54qCsKqgjqSPorKqZ3IoSr
+	OUw5Er8iFfIpLoMWzqVM1knHWiDsgJVsSKF5EVYQTHg4Dy2t4YxfRSdmk2t8zh9LDejrNlCGS8c
+	TOZGV+iUw8ajV3jXF8LewocLnallI/FYBXBsKk6NC371V4SIdcaDOxvhffaQNz2F0abr3nnaZdx
+	nwp0w4QM8JAH9vrkR2A6ej4DWOsfjyueK3tJv
+X-Google-Smtp-Source: AGHT+IHKusCfnBHmQMl6Lm7RUhK/1UT4+sICv+y5w2HRMYDAS5IxSyY8hGfomfsZiBcJ+xqMKxUYxQ==
+X-Received: by 2002:a17:903:2a83:b0:235:1171:6d1d with SMTP id d9443c01a7336-23fb2ff9598mr142678195ad.9.1753689212918;
+        Mon, 28 Jul 2025 00:53:32 -0700 (PDT)
+Received: from KASONG-MC4 ([43.132.141.24])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2401866c2a1sm20272305ad.4.2025.07.28.00.53.29
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 28 Jul 2025 00:53:32 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Chris Li <chrisl@kernel.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH v6 0/8] mm/shmem, swap: bugfix and improvement of mTHP swap in
+Date: Mon, 28 Jul 2025 15:52:58 +0800
+Message-ID: <20250728075306.12704-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.50.1
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/19] gpu: nova-core: register: minor grammar and
- spelling fixes
-To: Alexandre Courbot <acourbot@nvidia.com>,
- Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Beata Michalska <beata.michalska@arm.com>, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
- Nouveau <nouveau-bounces@lists.freedesktop.org>
-References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
- <20250718-nova-regs-v2-1-7b6a762aa1cd@nvidia.com>
- <B1AA6359-7854-4284-B533-F5CA3C18AF34@collabora.com>
- <DBNF8SZWLI79.1NRX9AMW5QW45@nvidia.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <DBNF8SZWLI79.1NRX9AMW5QW45@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/07/2025 05:59, Alexandre Courbot wrote:
-> Hi Daniel, thanks for the review!
-> 
-> On Sat Jul 26, 2025 at 1:14 AM JST, Daniel Almeida wrote:
->> Hi Alex. Thank you and John for working on this in general. It will be useful
->> for the whole ecosystem! :) 
->>
->>> On 18 Jul 2025, at 04:26, Alexandre Courbot <acourbot@nvidia.com> wrote:
->>>
->>> From: John Hubbard <jhubbard@nvidia.com>
->>>
->>> There is only one top-level macro in this file at the moment, but the
->>> "macros.rs" file name allows for more. Change the wording so that it
->>> will remain valid even if additional macros are added to the file.
->>>
->>> Fix a couple of spelling errors and grammatical errors, and break up a
->>> run-on sentence, for clarity.
->>>
->>> Cc: Alexandre Courbot <acourbot@nvidia.com>
->>> Cc: Danilo Krummrich <dakr@kernel.org>
->>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
->>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->>> ---
->>> drivers/gpu/nova-core/regs/macros.rs | 14 +++++++-------
->>> 1 file changed, 7 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core/regs/macros.rs
->>> index cdf668073480ed703c89ffa8628f5c9de6494687..864d1e83bed2979f5661e038f4c9fd87d33f69a7 100644
->>> --- a/drivers/gpu/nova-core/regs/macros.rs
->>> +++ b/drivers/gpu/nova-core/regs/macros.rs
->>> @@ -1,17 +1,17 @@
->>> // SPDX-License-Identifier: GPL-2.0
->>>
->>> -//! Macro to define register layout and accessors.
->>> +//! `register!` macro to define register layout and accessors.
->>
->> I would have kept this line as-is. Users will most likely know the name of the
->> macro already. At this point, they will be looking for what it does, so
->> mentioning "register" here is a bit redundant IMHO.
->>
->>> //!
->>> //! A single register typically includes several fields, which are accessed through a combination
->>> //! of bit-shift and mask operations that introduce a class of potential mistakes, notably because
->>> //! not all possible field values are necessarily valid.
->>> //!
->>> -//! The macro in this module allow to define, using an intruitive and readable syntax, a dedicated
->>> -//! type for each register with its own field accessors that can return an error is a field's value
->>> -//! is invalid.
->>> +//! The `register!` macro in this module provides an intuitive and readable syntax for defining a
->>> +//! dedicated type for each register. Each such type comes with its own field accessors that can
->>> +//! return an error if a field's value is invalid.
->>>
->>> -/// Defines a dedicated type for a register with an absolute offset, alongside with getter and
->>> -/// setter methods for its fields and methods to read and write it from an `Io` region.
->>> +/// Defines a dedicated type for a register with an absolute offset, including getter and setter
->>> +/// methods for its fields and methods to read and write it from an `Io` region.
->>
->> +cc Steven Price,
->>
->> Sorry for hijacking this patch, but I think that we should be more flexible and
->> allow for non-literal offsets in the macro.
->>
->> In Tyr, for example, some of the offsets need to be computed at runtime, i.e.:
->>
->> +pub(crate) struct AsRegister(usize);
->> +
->> +impl AsRegister {
->> +    fn new(as_nr: usize, offset: usize) -> Result<Self> {
->> +        if as_nr >= 32 {
->> +            Err(EINVAL)
->> +        } else {
->> +            Ok(AsRegister(mmu_as(as_nr) + offset))
->> +        }
->> +    }
->>
->> Or:
->>
->> +pub(crate) struct Doorbell(usize);
->> +
->> +impl Doorbell {
->> +    pub(crate) fn new(doorbell_id: usize) -> Self {
->> +        Doorbell(0x80000 + (doorbell_id * 0x10000))
->> +    }
->>
->> I don't think this will work with the current macro, JFYI.
-> 
-> IIUC from the comments on the next patches, your need is covered with
-> the relative and array registers definitions, is that correct?
+From: Kairui Song <kasong@tencent.com>
 
-My Rust is somewhat shaky, but I believe "non-contiguous register 
-arrays" will do what we want. Although I'll admit it would be neater for 
-the likes of the AS registers if there was a way to define a "block" of 
-registers and then use an array of blocks. Something vaguely like this 
-(excuse the poor Rust):
+The current THP swapin path have several problems. It may potentially
+hang, may cause redundant faults due to false positive swap cache lookup,
+and it issues redundant Xarray walks. !CONFIG_TRANSPARENT_HUGEPAGE
+builds may also contain unnecessary THP checks.
 
-register_block!(MMU_AS_CONTROL @ 0x2400[16 ; 64], "MMU Address Space registers" {
-	register!(TRANSTAB @ 0x0000, "Translation table base address" {
-		31:0	base as u32;
-	});
-	register!(MEMATTR @ 0x0008, "Memory attributes" {
-		7:0	attr0 as u8;
-		7:0	attr1 as u8;
-		// ...
-	});
-	// More registers
-});
+This series fixes all of the mentioned issues, the code should be more
+robust and prepared for the swap table series. Now 4 walks is reduced
+to 3 (get order & confirm, confirm, insert folio), !CONFIG_TRANSPARENT_HUGEPAGE
+build overhead is also minimized, and comes with a sanity check now.
 
-In particular that would allow a try_() call to access the 'block' 
-followed by normal read()/write() calls for the members in the block.
+The performance is slightly better after this series, sequential swap in of
+24G data from ZRAM, using transparent_hugepage_tmpfs=always (24 samples each):
 
-My Rust is certainly not good enough for me to try prototyping this
-yet though!
+Before:         avg: 10.66s, stddev: 0.04
+After patch 1:  avg: 10.58s, stddev: 0.04
+After patch 2:  avg: 10.65s, stddev: 0.05
+After patch 3:  avg: 10.65s, stddev: 0.04
+After patch 4:  avg: 10.67s, stddev: 0.04
+After patch 5:  avg: 9.79s,  stddev: 0.04
+After patch 6:  avg: 9.79s,  stddev: 0.05
+After patch 7:  avg: 9.78s,  stddev: 0.05
+After patch 8:  avg: 9.79s,  stddev: 0.04
 
-Thanks,
-Steve
+Several patches improve the performance by a little, which is about
+~8% faster in total.
+
+Build kernel test showed very slightly improvement, testing with
+make -j48 with defconfig in a 768M memcg also using ZRAM as swap,
+and transparent_hugepage_tmpfs=always (6 test runs):
+
+Before:         avg: 3334.66s, stddev: 43.76
+After patch 1:  avg: 3349.77s, stddev: 18.55
+After patch 2:  avg: 3325.01s, stddev: 42.96
+After patch 3:  avg: 3354.58s, stddev: 14.62
+After patch 4:  avg: 3336.24s, stddev: 32.15
+After patch 5:  avg: 3325.13s, stddev: 22.14
+After patch 6:  avg: 3285.03s, stddev: 38.95
+After patch 7:  avg: 3287.32s, stddev: 26.37
+After patch 8:  avg: 3295.87s, stddev: 46.24
+
+---
+
+V5: https://lore.kernel.org/linux-mm/20250710033706.71042-1-ryncsn@gmail.com/
+Updates:
+- Add shmem_confirm_swap back for Patch 1, and fix xas_nomem handling:
+  https://lore.kernel.org/linux-mm/CAMgjq7DfPXS4PkpGK-zem2L1gZD0dekbAyHa-CPHjf=eonoFXg@mail.gmail.com/
+- Fix typo and comments [ Baolin Wang, Hugh Dickins ]
+- Rebase the rest of this series. There is basically no change to follow
+  up patches except trivial conflicts. Only patch 1 is a bit different
+  from before.
+- Adding the shmem_confirm_swap back in Patch 1 V6 slowed down shmem
+  swapin by about ~2% compares to V5 but it's still a ~8% gain.
+
+V4: https://lore.kernel.org/linux-mm/20250704181748.63181-1-ryncsn@gmail.com/
+Updates:
+- Merge patch 5 into patch 8 to fix a intermediate code error. [ Baolin
+  Wang ]
+-6517755a04ae4d82d1220d690944359f1dbea686 Instead of passing two swap entries, calculate the new order 0 entry
+  in shmem_swap_alloc_folio, to improve code readability. [ Baolin Wang ]
+- Rebase on top of mm-new.
+
+V3: https://lore.kernel.org/linux-mm/20250627062020.534-1-ryncsn@gmail.com/
+Updates:
+- Split and reorganize a few intermediate patches [ Baolin Wang ]
+- Fix a duplicated fault issue that may occur in one intermediate patch
+  [ Baolin Wang ]
+- Improve variable naming [ Baolin Wang ]
+- Fix a wrong error value problem, return proper error value when direct
+  swapin failed.
+- No major code change from V3.
+
+V2: https://lore.kernel.org/linux-mm/20250619175538.15799-1-ryncsn@gmail.com/
+Updates:
+- Split the clean up patch into 3 individual patches [ Baolin Wang ]
+- Fix a code error in the first patch [ Baolin Wang ]
+- I found there are some other remaining issue that can be fixed after
+  the clean up so includes these too: fix major fault counter, and clean
+  up the goto labels.
+
+V1: https://lore.kernel.org/linux-mm/20250617183503.10527-1-ryncsn@gmail.com/
+Updates:
+- Improve of funtion name and variable names, also commit message [ Kemeng Shi,
+  Dev Jain ]
+- Correct Fixes: tag [ Andrew Morton ]
+- Collect Reviewed-by.
+
+Two of the patches in this series comes from the swap table series [1],
+and worth noting that the performance gain of this series is independent
+to the swap table series, we'll see another bigger performance gain and
+reduce of memory usage after the swap table series.
+
+I found these issues while trying to split the shmem changes out of the
+swap table series for easier reviewing, and found several more issues
+while doing stress tests for performance comparision. Barry also mentioned
+that CONFIG_TRANSPARENT_HUGEPAGE may have redundant checks [2] and I
+managed to clean them up properly too.
+
+No issue found with a few days of stress testing.
+
+Link: https://lore.kernel.org/linux-mm/20250514201729.48420-1-ryncsn@gmail.com/ [1]
+Link: https://lore.kernel.org/linux-mm/CAMgjq7AsKFz7UN+seR5atznE_RBTDC9qjDmwN5saMe+KL3b1mQ@mail.gmail.com/ [2]
+
+Kairui Song (8):
+  mm/shmem, swap: improve cached mTHP handling and fix potential hang
+  mm/shmem, swap: avoid redundant Xarray lookup during swapin
+  mm/shmem, swap: tidy up THP swapin checks
+  mm/shmem, swap: tidy up swap entry splitting
+  mm/shmem, swap: never use swap cache and readahead for
+    SWP_SYNCHRONOUS_IO
+  mm/shmem, swap: simplify swapin path and result handling
+  mm/shmem, swap: rework swap entry and index calculation for large
+    swapin
+  mm/shmem, swap: fix major fault counting
+
+ mm/shmem.c | 275 +++++++++++++++++++++++++++++------------------------
+ 1 file changed, 152 insertions(+), 123 deletions(-)
+
+-- 
+2.50.1
 
 
