@@ -1,284 +1,154 @@
-Return-Path: <linux-kernel+bounces-747789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EAAB13858
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:55:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D599CB1385B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E494D3BEE9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 975653BD3DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE275254876;
-	Mon, 28 Jul 2025 09:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320B321FF4C;
+	Mon, 28 Jul 2025 09:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0rFXn+s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FY7JmOAK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C692528E1;
-	Mon, 28 Jul 2025 09:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108F618871F
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753695958; cv=none; b=ntXPfv/d8zuZ3CsmAtJ2W8osXHS8MfSvv5oPxcORfJ1HaHSCz03TdJfmEbFpD2C2X73g1LbH0Qd/1YvjFqLcNKPJmZRC1OrwrB6ODSqTySe3ay9gwOdaqMFeN8VzMm3qCWwX/AY6WOG4Y65KA7bcAADglZAizgAa11dRXmGu1EA=
+	t=1753696056; cv=none; b=f4Kup1vIVMB7mFebGNjFfe4rUuQP1wmJDaK/STgbU5onqdG5zILbJvEJzl9b9X6+RGo36HHx3Wsw+z10YXbim5PvmBrnOWO9wp2Orb+XEq0S8yVYEd5msrzN9MfyMjgji2MPR2d/YAij3SAqzjqcAcJSLcbFRoCLuRJ7T1K/mxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753695958; c=relaxed/simple;
-	bh=XgeMqHBvZI8GGsevR51bGWO14j9HG8BS2EPLyCs+U74=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JxbWTsazkm71xeSPfH4eYsVC8jrj+HJeUdpzY+j9UgJOvxagGcoXIOMifxbXRdhTsOEpMD++IB/UmdALE8pWt1FtMmomOg68zE4HeSVy86HAPVSp25I68x5QP7xEgCMOmu+PT8u1USh9Eq4zie0nswCOqlhfbr8TgmvbHVlWXzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0rFXn+s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7CEC4CEE7;
-	Mon, 28 Jul 2025 09:45:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753695958;
-	bh=XgeMqHBvZI8GGsevR51bGWO14j9HG8BS2EPLyCs+U74=;
-	h=Date:From:To:Cc:Subject:From;
-	b=F0rFXn+sFrkktutzkUWQWEK0mPthKRax8hZEZ0XMhRz8k13eO39Atb48BZPu9hjbT
-	 3v2U0ghVQXXZBlXSSFbHKe5HwUIqb4JtKfNSwf7fr0pwy4ESqyyWYYv2Vnb1eoggA/
-	 zV6X3AWDVAD2bNr7Rlo8d7VAhSU1VMKzI9Zm3AsdjtJOg8EBHiKWH0auQltoqvxjx4
-	 bYKfpFx3SE0NtpxPVeyvz1U7zZvHE7FFE6XAyp/aoHOA1qkpO0CYXZaQUY0muWPdHl
-	 sj05M8fre29liskB35+aBa4HkCGrSk/Pd79qJ6UNilxRLNNDCAttNsm6vssItdbBk1
-	 0TnQST8ZWyH0Q==
-Date: Mon, 28 Jul 2025 11:45:55 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Guenter Roeck <linux@roeck-us.net>, Lee Jones <lee@kernel.org>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>
-Subject: [GIT PULL] pwm: Changes for v6.17-rc1
-Message-ID: <aukywky7iv22b3noqkzx42hod5zbhgfgrhrt4uddg6c5k7nzlb@oey3yxxhroj6>
+	s=arc-20240116; t=1753696056; c=relaxed/simple;
+	bh=V5v51/y/EDwGpe5nPnEeveCat4hEczx7n5xKlzu2KBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I/nEsYyhvRwYNhsmQI5pcbqubW9nsUiui9xXQFEl6WfJflMS6lpyIklh5Dt8RrmpPrjHxu8emqYgHW8+cpLFPVZliwa8OUFr5WUtFNRTHeGzhVZTkIuJFWatN5csb9pTcaaUlaJ9K5xLz3YR6OV8xBxbmXHGneEM4yk/BSmmOVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FY7JmOAK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56S4rZLH023360
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:47:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=b9Lab31gEFp/hDP2GVsnvv+B
+	yECgPDDTBcTF566eV/0=; b=FY7JmOAK8K89eLGi/UkgJAJ0dqy8rM35QIEd7sDL
+	tyJ0KWGVmtBi2QyffYEmDu7egvhYhTM1YHGUzxNbSaxclh0FH9/StjIB/6zwpn7z
+	KfH+RhU8ZBmUccKkVRr7jlo5Z3xPKE64aU3OsGbtHsQ/fmLjbNcU42qjX3Z+sp6p
+	K5ggEY5E80WyNceoxcMeCQTKu/MVamoh2u1YcLodlcpJGHgG0Y/Eaae4oglsfzZX
+	OAvUS/2PoYz5GDu7KDOTg9fjpNe0IskQ1D6lGkHmOJdm7kZCvD/C2WILdcN21KXb
+	fHRUq6kZSJSM8G+XRMDmpHcWYAHS0+09/sqHcKGIlVoUKA==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 485v1x9eg8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:47:34 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6fb01bb5d9aso66102976d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:47:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753696053; x=1754300853;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b9Lab31gEFp/hDP2GVsnvv+ByECgPDDTBcTF566eV/0=;
+        b=Sec85HCqf7F6XZP753m1z2eplhQuc4m/fId7C0IujNmEuNYUQ5eL7e3Fjn8Oio5Nmz
+         1iSf4CFND6GMhp2K5NxRZ6VTk0ZIgBUgfiHHLxvjbd8nsPJR+eUAHESYL6I9L/HswYzY
+         YEohWl/vpbd9edP9DNCE+gHmBLVvb8qUZIFytW+rBpkWJb+5z8kq2WL8SJyGIiUm8FQ5
+         BvV/xoDgW51gGKUqPHunBhbrmSWJ7szDGsl8R609oVo0Ve3cWnFaDmUN5yKpZQK2KvzV
+         OtRLN6V9ADa12YHT1O94f/37x4y3843OKDiljIiUIanLKxgYfwYraZGw2QL2xF5f0uH5
+         r6qw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Zl/dZT/uXkouKsKfJlsSxdXTjYn4fpb9G//7xWVVXdpuaID4Eyya/zm437LkLeId0GUQugcKNkhT2og=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwaJTa6KP//KYBZNle/cWYnf2hm4NmD75QU9chZhdiQU7w3oc8
+	BqaqyfJDJrD/D1Y5tzg78y23ancPmfA8FFU99qXnoo8Ci5UAodraLYAoTMuB059peDzEBG0TT0d
+	DfrJ7El+f109j+k53iVs/iiZn7hMraurL4gcqEx/uuzz/qNtM4CuSZgVRTK5V7zz/lk0=
+X-Gm-Gg: ASbGnct964eyusWa1QKNOEGoz9Sg8rW+tOI921CkWA2W945fbinNrraCOxnO0iljkNz
+	vYHNDhJLvZ36E30nRqkTkMi0bdUTFuXg0b3ipHQBxbcYPtpKpFnt69atYim4w5eXciiNksDTUJy
+	45bIZtgdgVfOzRtBJCVpEDga3XrvCMDajGzXuXnz02pp9OaWfIx+MAmbkf/QYod4qOcFGsDKnyB
+	BLEZbFuqHKuqQ7yPKuMkDoXtjf1ivKCh5OmdoA+Aupv2z3nHFGPKE1XeWiDlolSZP02mEGE3i7j
+	WQKzKTesGkb9cFBwhdOtizL8Uv8PYdUYssqT5JDLSEoDol/w7RNdy/1Xx+MX+5Olgc6v6QZ+J0S
+	RuH+TUCdBgPZkTMpsPIeMRYTqn8icckvhY4mKcpIhZLZ7BKX6xPAq
+X-Received: by 2002:a05:6214:29e7:b0:707:1ab5:3787 with SMTP id 6a1803df08f44-707205a898dmr117877876d6.30.1753696053026;
+        Mon, 28 Jul 2025 02:47:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG86xL83cEvXn5rUOfw1+S9RzGG5TSNJ9B4gIrX/EQyKkUkuVDASfMailmNVSy39NbPS3hl1g==
+X-Received: by 2002:a05:6214:29e7:b0:707:1ab5:3787 with SMTP id 6a1803df08f44-707205a898dmr117877706d6.30.1753696052457;
+        Mon, 28 Jul 2025 02:47:32 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-331f4297067sm11596761fa.88.2025.07.28.02.47.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 02:47:31 -0700 (PDT)
+Date: Mon, 28 Jul 2025 12:47:29 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] arm64: dts: qcom: sc7280: Flatten usb controller nodes
+Message-ID: <eqj52yo6ke6pfwgbldztmxhm33ut5qs35z6fs77uyvyknngrod@2qs5e6san5tm>
+References: <20250728035812.2762957-1-krishna.kurapati@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7w4iqxp5wccgkzc6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250728035812.2762957-1-krishna.kurapati@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA2OSBTYWx0ZWRfXzXVxEm2/S/vj
+ kuX+YPtz4Z+c0rySJYK1btHh1ZSgyMsQIXRwYuqb4iEhpdB5p9TObCJWM7n6KVLh44w7tbx39+L
+ 0LErUgq6aEtwkpDaYDWsAQXE3fkIqlacU/rt1qoL8Zjkzr9SGiIyBPGKpmuDPJMvo3/ZtgYFQ0E
+ Bj+2GsXQWa1ATbzyL1Nr76L77+g8GpO8CqXr/LK3PkMM/Ra/bq8TvVCroGYutkVn2dkF/RhAtCQ
+ 4DnFe6TMXLs3ttgunNPuYVoG8txkirj8nd337pIpUR3oJHZu3Ek6j+FN7rCGpeOj0UCHk8Ul3kz
+ zAnt9h5qwMcLCntL5ikAbxA3c93T2GLN3+gc+xKHFpyop7cJB25z8lqIjt/yFBS8saY4vqfKA7j
+ KtPv4gR/wQDfvLqg7+TM2fpOhtHHWsR8wuofGxsfG2/PgRD2qQllL1Do3icB3r3kjJxG9X3t
+X-Authority-Analysis: v=2.4 cv=JKw7s9Kb c=1 sm=1 tr=0 ts=68874736 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=OKk1g8ew7IGzsuuaGm4A:9
+ a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-ORIG-GUID: Av8uflxaQZyfpdPOiGPe68zmbWeGSKoe
+X-Proofpoint-GUID: Av8uflxaQZyfpdPOiGPe68zmbWeGSKoe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ mlxlogscore=438 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507280069
 
+On Mon, Jul 28, 2025 at 09:28:12AM +0530, Krishna Kurapati wrote:
+> Flatten usb controller nodes and update to using latest bindings
+> and flattened driver approach.
+> 
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+> This patch has only been compile tested.
+> 
+> Changes in v3:
+> Fixed dt labels as pointed by Dmitry.
+> Fixed DTBS warning pointed by Rob's bot in v2.
+> Flattened second controller as well.
+> 
+> Link to v2:
+> https://lore.kernel.org/all/20250725050216.526327-1-krishna.kurapati@oss.qualcomm.com/
+> 
+> Changes in v2:
+> Fixed reg base address
+> 
+> Link to RFC:
+> https://lore.kernel.org/all/20250720072125.1514823-1-krishna.kurapati@oss.qualcomm.com/
+> 
 
---7w4iqxp5wccgkzc6
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: [GIT PULL] pwm: Changes for v6.17-rc1
-MIME-Version: 1.0
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Hello Linus,
-
-the following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
-
-  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/p=
-wm/for-6.17-rc1
-
-for you to fetch changes up to 68b9272ca7ac948b71aba482ef8244dee8032f46:
-
-  pwm: raspberrypi-poe: Fix spelling mistake "Firwmware" -> "Firmware" (202=
-5-07-24 23:04:16 +0200)
-
-----------------------------------------------------------------
-pwm: Changes for v6.17-rc1
-
-Apart from the usual mix of new drivers (pwm-argon-fan-hat), adding
-support for variants to existing drivers, minor improvements to both
-drivers and docs, device tree documenation updates, the noteworthy
-changes are:
-
- - A pull of pm-runtime-6.17-rc1 to make it possible to apply
-   a582469541a3 ("pwm: img: Remove redundant pm_runtime_mark_last_busy()
-   calls"). Note this updates the base for my tree to 6.16-rc2.
-
- - A hwmon companion driver to pwm-mc33xs2410 living in drivers/hwmon
-   and acked by Guenter Roeck
-
- - chardev support for PWM devices
-   This leverages atomic PWM updates to userspace and at the same time
-   simplifies and accelerates PWM configuration changes.
-
-----------------------------------------------------------------
-
-Lee provided another immutable branch containing patches by Nuno S=E1,
-including PWM changes at
-git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-input=
--pwm-v6.17
-, but I didn't merge it as there is no conflict with my tree and so I
-don't see a benefit in polluting the diffstat of this PR. The pwm
-related changes in there of course have my blessing anyhow.
-
-The three topmost patches are in next only since next-20250725, the
-others are in next since next-20250710. Two of the three "new" patches
-are quite simple. The third is the hwmon change, that I didn't want to
-hold back to free both the hwmon guys and me from the need to coordinate
-this change for a whole development cycle.
-
-I considered waiting a bit with my PR to give these changes a bit more
-exposure in next, but giving your travel plans I decided to create it
-early as usual.
-
-Diffstat below and thanks too all contributors.
-
-Please pull the pwm/for-6.17-rc1 tag into 6.17-rc1.
-
-Thanks
-Uwe
-
-
-AngeloGioacchino Del Regno (3):
-      dt-bindings: pwm: mediatek,mt2712-pwm: Add support for MT6991/MT8196
-      pwm: pwm-mediatek: Pass PWM_CK_26M_SEL from platform data
-      pwm: pwm-mediatek: Add support for PWM IP V3.0.2 in MT6991/MT8196
-
-Colin Ian King (1):
-      pwm: raspberrypi-poe: Fix spelling mistake "Firwmware" -> "Firmware"
-
-David Lechner (1):
-      dt-bindings: pwm: adi,axi-pwmgen: Update documentation link
-
-Dimitri Fedrau (2):
-      pwm: mc33xs2410: add hwmon support
-      hwmon: add support for MC33XS2410 hardware monitoring
-
-Fabrice Gasnier (1):
-      pwm: stm32: add support for stm32mp25
-
-Frank Li (2):
-      dt-bindings: pwm: convert lpc1850-sct-pwm.txt to yaml format
-      dt-bindings: pwm: Convert lpc32xx-pwm.txt to yaml format
-
-Guodong Xu (3):
-      dt-bindings: pwm: marvell,pxa-pwm: Add SpacemiT K1 PWM support
-      pwm: pxa: Add optional reset control
-      pwm: pxa: Allow to enable for SpacemiT K1 SoC
-
-Longbin Li (3):
-      dt-bindings: pwm: sophgo: Add pwm controller for SG2044
-      pwm: sophgo-sg2042: Reorganize the code structure
-      pwm: sophgo-sg2042: Add support for SG2044
-
-Marek Vasut (3):
-      dt-bindings: vendor-prefixes: Document Argon40
-      dt-bindings: pwm: argon40,fan-hat: Document Argon40 Fan HAT
-      pwm: argon-fan-hat: Add Argon40 Fan HAT support
-
-Michal Wilczynski (1):
-      pwm: Expose PWM_WFHWSIZE in public header
-
-Nicolas Frattaroli (1):
-      pwm: rockchip: Round period/duty down on apply, up on get
-
-Nylon Chen (3):
-      riscv: dts: sifive: unleashed/unmatched: Remove PWM controlled LED's =
-active-low properties
-      pwm: sifive: Fix PWM algorithm and clarify inverted compare behavior
-      pwm: sifive: Fix rounding and idempotency issues in apply and get_sta=
-te
-
-Sakari Ailus (7):
-      PM: runtime: Document return values of suspend-related API functions
-      PM: runtime: Mark last busy stamp in pm_runtime_put_autosuspend()
-      PM: runtime: Mark last busy stamp in pm_runtime_put_sync_autosuspend()
-      PM: runtime: Mark last busy stamp in pm_runtime_autosuspend()
-      PM: runtime: Mark last busy stamp in pm_request_autosuspend()
-      Documentation: PM: *_autosuspend() functions update last busy time
-      pwm: img: Remove redundant pm_runtime_mark_last_busy() calls
-
-Uwe Kleine-K=F6nig (13):
-      pwm: Fix invalid state detection
-      pwm: mediatek: Ensure to disable clocks in error path
-      pwm: Add support for pwmchip devices for faster and easier userspace =
-access
-      pwm: atmel: Drop driver local locking
-      pwm: clps711x: Drop driver local locking
-      pwm: fsl-ftm: Drop driver local locking
-      pwm: lpc18xx-sct: Drop driver local locking
-      pwm: microchip-core: Drop driver local locking
-      pwm: sti: Drop driver local locking
-      pwm: sun4i: Drop driver local locking
-      pwm: twl-led: Drop driver local locking
-      docs: pwm: Adapt Locking paragraph to reality
-      Merge tag 'pm-runtime-6.17-rc1' of https://git.kernel.org/pub/scm/lin=
-ux/kernel/git/rafael/linux-pm
-
- .../devicetree/bindings/pwm/adi,axi-pwmgen.yaml    |   2 +-
- .../devicetree/bindings/pwm/argon40,fan-hat.yaml   |  48 +++
- .../devicetree/bindings/pwm/lpc1850-sct-pwm.txt    |  20 --
- .../devicetree/bindings/pwm/lpc32xx-pwm.txt        |  17 -
- .../devicetree/bindings/pwm/marvell,pxa-pwm.yaml   |  35 ++-
- .../bindings/pwm/mediatek,mt2712-pwm.yaml          |   5 +
- .../bindings/pwm/nxp,lpc1850-sct-pwm.yaml          |  54 ++++
- .../devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml   |  44 +++
- .../devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml |   4 +-
- .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
- Documentation/driver-api/pwm.rst                   |  13 +-
- Documentation/hwmon/index.rst                      |   1 +
- Documentation/hwmon/mc33xs2410_hwmon.rst           |  34 ++
- Documentation/power/runtime_pm.rst                 |  50 ++-
- .../riscv/boot/dts/sifive/hifive-unleashed-a00.dts |  12 +-
- .../riscv/boot/dts/sifive/hifive-unmatched-a00.dts |  12 +-
- drivers/hwmon/Kconfig                              |  10 +
- drivers/hwmon/Makefile                             |   1 +
- drivers/hwmon/mc33xs2410_hwmon.c                   | 178 +++++++++++
- drivers/pwm/Kconfig                                |  14 +-
- drivers/pwm/Makefile                               |   1 +
- drivers/pwm/core.c                                 | 350 +++++++++++++++++=
-++--
- drivers/pwm/pwm-argon-fan-hat.c                    | 109 +++++++
- drivers/pwm/pwm-atmel.c                            |  12 -
- drivers/pwm/pwm-clps711x.c                         |   8 -
- drivers/pwm/pwm-fsl-ftm.c                          |  28 +-
- drivers/pwm/pwm-img.c                              |   2 -
- drivers/pwm/pwm-lpc18xx-sct.c                      |  14 -
- drivers/pwm/pwm-mc33xs2410.c                       |  20 +-
- drivers/pwm/pwm-mediatek.c                         |  51 +--
- drivers/pwm/pwm-microchip-core.c                   |  17 +-
- drivers/pwm/pwm-pxa.c                              |   6 +
- drivers/pwm/pwm-rockchip.c                         |  33 +-
- drivers/pwm/pwm-sifive.c                           |  52 ++-
- drivers/pwm/pwm-sophgo-sg2042.c                    | 143 +++++++--
- drivers/pwm/pwm-sti.c                              |  23 +-
- drivers/pwm/pwm-stm32.c                            |  42 ++-
- drivers/pwm/pwm-sun4i.c                            |  10 -
- drivers/pwm/pwm-twl-led.c                          |  49 +--
- include/linux/mc33xs2410.h                         |  16 +
- include/linux/pm_runtime.h                         | 187 +++++++++--
- include/linux/pwm.h                                |   5 +
- include/uapi/linux/pwm.h                           |  53 ++++
- 43 files changed, 1423 insertions(+), 364 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pwm/argon40,fan-hat.y=
-aml
- delete mode 100644 Documentation/devicetree/bindings/pwm/lpc1850-sct-pwm.t=
-xt
- delete mode 100644 Documentation/devicetree/bindings/pwm/lpc32xx-pwm.txt
- create mode 100644 Documentation/devicetree/bindings/pwm/nxp,lpc1850-sct-p=
-wm.yaml
- create mode 100644 Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.y=
-aml
- create mode 100644 Documentation/hwmon/mc33xs2410_hwmon.rst
- create mode 100644 drivers/hwmon/mc33xs2410_hwmon.c
- create mode 100644 drivers/pwm/pwm-argon-fan-hat.c
- create mode 100644 include/linux/mc33xs2410.h
- create mode 100644 include/uapi/linux/pwm.h
-
---7w4iqxp5wccgkzc6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiHRtAACgkQj4D7WH0S
-/k6MpwgArqrVZJCOPE850ZQNJQwjuXH3JBup6TZV5D99NI5tszpuzFEeO4tkEDGt
-wkSRpuneZHRRtEzIAXoqBHc2+gQrwlLMcv+jTSNMWER1frqQo5qaz3ZKeSbHllpH
-SzkEG0jyUGeU3ZeraxNnCp6nbdWWblKESXvSfqdWnnQgAE2knxvCiwcVoCTtAmNH
-H8SP4Os7r1ThJK78Tqf0Ov56UTxnVmi0bDm2MQUniDTlp9W9+SrdSdyNIyRhWXpp
-bJmmhtQEzq5y8swbZYi6Nk1F1qoqL1iaq674p4p3GlH4lN3EHHurpe4lLfKlm6hW
-RkzS+ACPE84f9FE+mSr2ak4Hnb/b7g==
-=0vgo
------END PGP SIGNATURE-----
-
---7w4iqxp5wccgkzc6--
+-- 
+With best wishes
+Dmitry
 
