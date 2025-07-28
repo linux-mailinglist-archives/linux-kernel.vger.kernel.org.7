@@ -1,81 +1,118 @@
-Return-Path: <linux-kernel+bounces-747373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73D4B13317
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:40:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD57B1333D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A647188923F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:41:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3114C3B7F74
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5361F2B8D;
-	Mon, 28 Jul 2025 02:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wyd0E5b4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C58621A437;
+	Mon, 28 Jul 2025 02:55:47 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B62111A8;
-	Mon, 28 Jul 2025 02:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB5D1FBE80;
+	Mon, 28 Jul 2025 02:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753670439; cv=none; b=AVVy8IKBdj5TboLID0KkbyVEAs6D6pVv9bMZJsSeRRORjIKNnDGFsZkcHqrtjSrTFhJTBvom8N8bpNkMIkRk/6Q3bAzYFBtIqAsreslg9su6uDhuL3HYcj/mfoTvFJuff1AeShLjv+zvx9VzB2Pgbv3veasUyZQd1Vk347ixA9M=
+	t=1753671347; cv=none; b=J83/JEObjSmKD0OrwJZ44/Rh9doQSmmLj54cK6v2ihRAV1m/Vy2WJKWkPLctnVBK3cbglwh6vh7Orb8y+p8QTiUWzNrVBldOXC2hxbphrXtILKUNxGh/rFvKpdljHMVR0WbQT/nD2VCFDkrZIgLmvJcXeDlPmrIoMkwkcjcw6XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753670439; c=relaxed/simple;
-	bh=i6+ML5W5kVTFWibxcd3Cgc9dad/0Q1oDR4om9+5KkAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESBQeRPwEBRIcK+ojdkAi7ZGdBCwkJVmneVneMKuSiZ/mHLwDXZ78LjFtmbG9JkTNejw+2LPAJ/3oUqkXOIWSQ4MQORswLiFHk9VtInbT0+H8lkQtcLbLLKkr+YBi9yJJTpspBB+okewLby3Aw6N9YLk1/EC1FeLaFfB2BaVndU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wyd0E5b4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1207C4CEEB;
-	Mon, 28 Jul 2025 02:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753670436;
-	bh=i6+ML5W5kVTFWibxcd3Cgc9dad/0Q1oDR4om9+5KkAI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wyd0E5b43yvCrBytp8SZkndpkUriwWz2/CC13eBLrd1dwO4Oa0BuPH7gOWQkqlOBd
-	 F4ZiUsOiII4FUNaQhtcQxEQ+8QPoz7+jRLxYO0U8BY5qOI9YoWHBwjEVqVZGW1b4Ly
-	 a/moaTBIjJ9DsUJcPknt5+7W/hvKOlDOiIuSMn/jDcOcwTF4HcoXTLf212Fh4pm4+g
-	 fJJ52jlHifhiZ3iIpAohQ0TPznarr9Ej67SJ48e+So0hfgCOhyhD/jDWuRW/HRB+Am
-	 mJ6KTT6t5t5B9WvhWnS/nzCx39etfj9Udwv5eI+Ncxl/zcucgy7Dv9AFfMa33jPsf+
-	 wksNYJEfY+UzA==
-Date: Sun, 27 Jul 2025 19:40:36 -0700
-From: Kees Cook <kees@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
-	josh@joshtriplett.org, konstantin@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH 3/4] agents: add coding style documentation and rules
-Message-ID: <202507271939.D78EC559@keescook>
-References: <20250727195802.2222764-1-sashal@kernel.org>
- <20250727195802.2222764-4-sashal@kernel.org>
+	s=arc-20240116; t=1753671347; c=relaxed/simple;
+	bh=+oL54au+1m3Cp1wMvpFxeLnh9JqL0aaVe+vXbVFj9mE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZNA73wzvfnTpkM0PIHc/+fabm7i/f4LVBv6AAWK31AfSt585NU9ZzUU1FgI/Qn0TG9LWn867acrJXWyl9zI0XVPy/PIClNtICG8EiLk0zWJMEa/M2PEFv51nDeiTJm91ouVj745MIsNPK5VFludOC7qEOADVu+nbeC3vP76ipQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4br34p3bRBzKHMdJ;
+	Mon, 28 Jul 2025 10:55:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 554291A0D7D;
+	Mon, 28 Jul 2025 10:55:37 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP4 (Coremail) with SMTP id gCh0CgDXng+W5oZohS7qBg--.25661S2;
+	Mon, 28 Jul 2025 10:55:35 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	bristot@redhat.com,
+	vschneid@redhat.com,
+	rafael@kernel.org,
+	pavel@ucw.cz
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com
+Subject: [PATCH 6.6 0/5] [Backport] sched,freezer: Remove unnecessary warning in __thaw_task
+Date: Mon, 28 Jul 2025 02:41:16 +0000
+Message-Id: <20250728024121.33864-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2025072421-deviate-skintight-bbd5@gregkh>
+References: <2025072421-deviate-skintight-bbd5@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250727195802.2222764-4-sashal@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXng+W5oZohS7qBg--.25661S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtF1fGF1DCF48Gry7XrykGrg_yoWkJwb_Ka
+	4fGFyxtrykJF1UGFW7KF97XryDKayUJr18GF1qqr45Zry2vr95XF43GrWkur1rX3Z7Xr1D
+	Aryftan7Ar1DKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUF1v3UUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Sun, Jul 27, 2025 at 03:58:01PM -0400, Sasha Levin wrote:
-> +++ b/Documentation/agents/coding-style.rst
+From: Chen Ridong <chenridong@huawei.com>
 
-All of this is redundant.
+To fix the [1] issue, it needs to backport:
+9beb8c5e77dc ("sched,freezer: Remove unnecessary warning...")
+14a67b42cb6f ("Revert 'cgroup_freezer: cgroup freezing: Check if not...'").
 
-> +**No trailing whitespaces**
-> +  Never leave whitespace at the end of lines. Git will warn about patches that introduce trailing whitespace.
+This series aims to backport 9beb8c5e77dc. To avoid conflicts, backport the
+missing patches[2].
 
-If this isn't covered elsewhere in Documentation/, it should be. :)
-Also, "all files end with a newline"
+[1] https://lore.kernel.org/lkml/20250717085550.3828781-1-chenridong@huaweicloud.com/
+[2] https://lore.kernel.org/stable/2025072421-deviate-skintight-bbd5@gregkh/
 
-> +**80 character line limit**
-> +  The preferred limit on the length of a single line is 80 columns. Statements longer than 80 columns should be broken into sensible chunks, unless exceeding 80 columns significantly increases readability and does not hide information.
+Chen Ridong (1):
+  sched,freezer: Remove unnecessary warning in __thaw_task
 
-And this is why redundancy is bad: our line limit is 100, not 80.
+Elliot Berman (4):
+  sched/core: Remove ifdeffery for saved_state
+  freezer,sched: Use saved_state to reduce some spurious wakeups
+  freezer,sched: Do not restore saved_state of a thawed task
+  freezer,sched: Clean saved_state when restoring it during thaw
+
+ include/linux/sched.h |  2 --
+ kernel/freezer.c      | 51 +++++++++++++++++--------------------------
+ kernel/sched/core.c   | 31 +++++++++++++-------------
+ 3 files changed, 35 insertions(+), 49 deletions(-)
 
 -- 
-Kees Cook
+2.34.1
+
 
