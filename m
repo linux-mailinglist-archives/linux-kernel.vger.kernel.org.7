@@ -1,226 +1,159 @@
-Return-Path: <linux-kernel+bounces-748645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673B8B14436
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:06:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EC8B14437
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9BE189B255
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:07:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C16016C2E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D1C2045B6;
-	Mon, 28 Jul 2025 22:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A4A212B2F;
+	Mon, 28 Jul 2025 22:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XUBj/zKP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kowalczyk-ws.20230601.gappssmtp.com header.i=@kowalczyk-ws.20230601.gappssmtp.com header.b="0yXUWkY4"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41838488
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F661F4606
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753740408; cv=none; b=HlNKpuAbZqx7XP7s91feQqWtf9aBPgUNl6tjQLu0kV+v6rhe+ZA+jd5mxu2H16rIjhOK9Y4cvgYhbfE6GmsH+fYFjOmhaGPweejfmiwhLvtB8eWrq9UEXF0YXVoSYCUDlPYVYpZBreMsG6CgLerWlYN9S4ftONA9NwbK7L9GD0U=
+	t=1753740501; cv=none; b=djTQFv0g73lkZjbaCmAE3TFvFQ6OMgUXJwFTZ/puE8FTPOBHsHw7pmtecsXFzD8LmzyTBxwVFOMTy/IL9cD7NHhQ8A8J2EovH2A8Y0my/6yhkvNnRKK3ccetI6vfExdj7Ln6ynfWiC0fLAIKB1jSMH8FfDssWqdBQ5VIqeUv1+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753740408; c=relaxed/simple;
-	bh=mThHqiTS17OsCvCad+mH+DQU08wCwY+kj2vXkXrvzQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=MvDHdjl0p2pAb9lXrWirGn76DtMpjypLZ/EK5fAXYqjVtCF/000P4GD0BsZ4pPRysxFn7hpuL+6pVgTqFDXj+k3miTDxEg2I7wiAygZGXm2OzoLRsymh81v49QI+x7YTQ4eJmlz5NX8rzAfOyDfXqRBIMvlXGzc5ZLNSBj9jxZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XUBj/zKP; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753740406; x=1785276406;
-  h=date:from:to:cc:subject:message-id;
-  bh=mThHqiTS17OsCvCad+mH+DQU08wCwY+kj2vXkXrvzQ4=;
-  b=XUBj/zKP6cQJRLuDoj2hBzzl3i/6iZYo3z+Tn1npLqWEk59oL1LUMXLR
-   CnYsgWR1b7Z7gZStt3uPRYGXa8KQpw6zCoLRcGTtuYAKgE4M8P6bLsgjt
-   BiQCT/KupSJgqd3d3rWyn0DgXvJmXpZFVIlwJC6qBOki018Y3OChEjwLi
-   R5gMqE5AHxA2f7ovOOXPTjN5rzLx8DVQJfRtcyj2EvFMGiY9uPNeJ0EEW
-   bvYQhSKP9RDVSSnJZJY2RKafey9Cb0xTD0O3nBUH0j9vc/STzKqZe40s+
-   7DWB4OB1+i/l0q/B3H/c4OozmwqDKp5jQcvC7QHEVVXSrkBaltd19vjVp
-   g==;
-X-CSE-ConnectionGUID: Da/mpiQ5RS2+3h+12yQkXg==
-X-CSE-MsgGUID: Bs5+VE9UTfmum7skm+n/fw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="56146151"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="56146151"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 15:06:46 -0700
-X-CSE-ConnectionGUID: o8nvXkYTRwegKRFHeLYukA==
-X-CSE-MsgGUID: dyjXeo6ZTXGlLlVgvFM3Lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="163303579"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 28 Jul 2025 15:06:45 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ugVzW-0000nL-1Q;
-	Mon, 28 Jul 2025 22:06:42 +0000
-Date: Tue, 29 Jul 2025 06:05:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- d69139008b6dcd9c18483e956f61d187b0c214a2
-Message-ID: <202507290643.WQjasktk-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1753740501; c=relaxed/simple;
+	bh=yKXV6HTAv1BW9n64K03hbVaBzNxb2EgaomNQLwe4DUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CJqYzBNEiCFKqXdM03R+W373UFKGLqqTbtq2tey6y8aFT7P19dZ16TETa8BGiGlilqpfUqD75oMMXw3V0LPV/lSAIHoJoZBGECiMG0/s3R3ZRBJIp1Opvv5hOVWzjRSqCllvBpdXm+OF/g6hUai+dVCWea/bhe7hXSjkAC1td/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kowalczyk.ws; spf=pass smtp.mailfrom=kowalczyk.ws; dkim=pass (2048-bit key) header.d=kowalczyk-ws.20230601.gappssmtp.com header.i=@kowalczyk-ws.20230601.gappssmtp.com header.b=0yXUWkY4; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kowalczyk.ws
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kowalczyk.ws
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60867565fb5so7630289a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:08:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kowalczyk-ws.20230601.gappssmtp.com; s=20230601; t=1753740496; x=1754345296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oVZlePzGjkHlHhNr3txJWdkuHXKAOIv3uj0JeG3SlOk=;
+        b=0yXUWkY4+HezKQIKnxkFiSasyCUdW0D5sXrfQOsL33YsOBlWmEh2uSFNWmzWv+jPSd
+         LyE4wau2YUAX+PpCVk1A9Ev6kdMNVFCVvoM9QiydTsIMwJmXzsOzSeUx8uq/xB1i0a87
+         ZSThPGasqGf7VAkzfo71yCyhMDXyLgVDSV4eoA1NxEH1Erzbqe5+pCBKgQQ5ykwj/bJP
+         t8A82JooYqo98wMVDWhc0FjD0EeeXYVwO5ZqhsG9jWBSMWMcaRjK9LGsmNLkmgh3VuSw
+         eT3D1VrlCBMSo8MK9Ab/eXkwy4hQgzNPDxWph6e8t7J+ZJAbL+b1SmLltPH2Ue+mdtRw
+         0HIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753740496; x=1754345296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oVZlePzGjkHlHhNr3txJWdkuHXKAOIv3uj0JeG3SlOk=;
+        b=EMtIDMJUvSZ2AAdTo3nfGLLYscJiwHRInbl+G942GaizmvHr12tEgwUl5hpS9EIMVz
+         817XdJ4ojnlDYL+ggFGh31AoB2yq44P3uX6R3DpvFntawHM3b+ajSaNw5kIScb+WxOJQ
+         53loVcIMXa4O+AGFUwUQ+solrvx1vwKZ1i/hp1fOZMcIHZLWniT7FjwMwQdClKVtKuW5
+         ehAzUMM7U/v2u9WTCcgfSJVSv7VBQiQWCE2Y67JGK1lk6S/YEPlXZmczniXFUhna1lWr
+         W0CYHKfE8+BtW4lErBfBeqh/8Dqaaf3/o49w7lQZJZYqV67L78vpm3W8Lrht6Q/snM0i
+         68YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVl2ajdm5tkV7QIrHVvuxbX9R0f3Z/u1vXrFq/KtG+eoIkk6bUKMJgNNDFRwxj4d/w7zKj8gqxqeQBxpTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTSslljgf/2dosqBwGBJ5VJfeudKqIYPpALs97ObH5d6VBY2bJ
+	Qc/Kbvfi03AMJ7IIQYyAIS2WQ0cJYlIQznA7NOpw5ylrah1GQiwKf4kDRPiYPeZtJDh6+RnWJDM
+	l74fMNgQRf7l+EaWtA4fgauG3mC6V/oGTwHEAYeZS
+X-Gm-Gg: ASbGncsfA+BqBqscVHQMgYo5AWvQ5GycXovsEmfWPcUIqkNa+ereP22Achyfb/JUFmp
+	uEyEB2iOxpfd9upDnl8VQ6xsOYCPmtEInjirF62hpNAzGk2QKlVprNwgU7zjxdpe01NSxU98aOn
+	OXqONBVX7D+LiNvjSQmdaJro0rv/nzTwOq4ktNskl2mux9GfM1/XOcYuF1rgKHXTdMLUrsCGMK5
+	VDbYD8mBjdJi/k=
+X-Google-Smtp-Source: AGHT+IF09mPBLrOHTEIB8WHhuFE3I3nCCAFLkKtWOTo/2h9D6SAx8Ni8uYSGEDjY0L/5w9XZjlAxtrdCm0GvAmW8byA=
+X-Received: by 2002:a05:6402:2103:b0:60c:397d:d638 with SMTP id
+ 4fb4d7f45d1cf-614f1d4b520mr12115084a12.14.1753740496343; Mon, 28 Jul 2025
+ 15:08:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <0d734549d5ed073c80b11601da3abdd5223e1889.1753689802.git.baolin.wang@linux.alibaba.com>
+ <20250728144424.208d58d5a95057ee7081ccd8@linux-foundation.org>
+In-Reply-To: <20250728144424.208d58d5a95057ee7081ccd8@linux-foundation.org>
+From: Patryk Kowalczyk <patryk@kowalczyk.ws>
+Date: Tue, 29 Jul 2025 00:08:05 +0200
+X-Gm-Features: Ac12FXx-SLKO8_1dJESpw0d0b6bu9iuRE34W3EgqURU7mQvBpXDzfaq2MkrIgX8
+Message-ID: <CAJCW39+85dtfEjqNejB8xT=JCo2gU5XWY_ohb0OxYKs6G929jg@mail.gmail.com>
+Subject: Re: [PATCH] mm: shmem: fix the shmem large folio allocation for the
+ i915 driver
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, hughd@google.com, 
+	ville.syrjala@linux.intel.com, david@redhat.com, willy@infradead.org, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, jani.nikula@linux.intel.com, 
+	joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, tursulin@ursulin.net, 
+	christian.koenig@amd.com, ray.huang@amd.com, matthew.auld@intel.com, 
+	matthew.brost@intel.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: d69139008b6dcd9c18483e956f61d187b0c214a2  Merge branch into tip/master: 'x86/sev'
+Hi,
+I apologize for the second email; the first one contained HTML content
+that was not accepted by the group.
 
-elapsed time: 925m
+In my tests, the performance drop ranges from a few percent up to 13%
+in Unigine Superposition
+under heavy memory usage on the CPU Core Ultra 155H with the Xe 128 EU GPU.
+Other users have reported performance impact up to 30% on certain workloads=
+.
+Please find more  in the regressions reports:
+https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/14645
+https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/13845
 
-configs tested: 134
-configs skipped: 5
+I believe the change should be backported to all active kernel
+branches after version 6.12.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+best regards,
+Patryk
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20250728    gcc-13.4.0
-arc                   randconfig-002-20250728    gcc-12.5.0
-arc                           tb10x_defconfig    gcc-15.1.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                     am200epdkit_defconfig    gcc-15.1.0
-arm                                 defconfig    clang-22
-arm                   randconfig-001-20250728    clang-22
-arm                   randconfig-002-20250728    clang-22
-arm                   randconfig-003-20250728    clang-22
-arm                   randconfig-004-20250728    gcc-8.5.0
-arm                       spear13xx_defconfig    gcc-15.1.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20250728    clang-22
-arm64                 randconfig-002-20250728    clang-20
-arm64                 randconfig-003-20250728    gcc-11.5.0
-arm64                 randconfig-004-20250728    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20250728    gcc-10.5.0
-csky                  randconfig-002-20250728    gcc-9.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon                             defconfig    clang-22
-hexagon               randconfig-001-20250728    clang-22
-hexagon               randconfig-002-20250728    clang-16
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250728    gcc-12
-i386        buildonly-randconfig-002-20250728    gcc-12
-i386        buildonly-randconfig-003-20250728    gcc-12
-i386        buildonly-randconfig-004-20250728    clang-20
-i386        buildonly-randconfig-005-20250728    gcc-12
-i386        buildonly-randconfig-006-20250728    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20250728    clang-22
-loongarch             randconfig-002-20250728    clang-20
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250728    gcc-11.5.0
-nios2                 randconfig-002-20250728    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250728    gcc-9.5.0
-parisc                randconfig-002-20250728    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                     ep8248e_defconfig    gcc-15.1.0
-powerpc                     ppa8548_defconfig    gcc-15.1.0
-powerpc                      ppc64e_defconfig    gcc-15.1.0
-powerpc               randconfig-001-20250728    gcc-10.5.0
-powerpc               randconfig-002-20250728    gcc-13.4.0
-powerpc               randconfig-003-20250728    gcc-8.5.0
-powerpc64             randconfig-001-20250728    clang-22
-powerpc64             randconfig-002-20250728    clang-22
-powerpc64             randconfig-003-20250728    gcc-8.5.0
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20250728    clang-22
-riscv                 randconfig-002-20250728    gcc-11.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20250728    clang-22
-s390                  randconfig-002-20250728    clang-17
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250728    gcc-14.3.0
-sh                    randconfig-002-20250728    gcc-9.5.0
-sh                          sdk7786_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250728    gcc-8.5.0
-sparc                 randconfig-002-20250728    gcc-14.3.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250728    clang-20
-sparc64               randconfig-002-20250728    gcc-12.5.0
-um                               alldefconfig    clang-22
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250728    clang-22
-um                    randconfig-002-20250728    gcc-12
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250728    clang-20
-x86_64      buildonly-randconfig-002-20250728    clang-20
-x86_64      buildonly-randconfig-003-20250728    clang-20
-x86_64      buildonly-randconfig-004-20250728    clang-20
-x86_64      buildonly-randconfig-005-20250728    clang-20
-x86_64      buildonly-randconfig-006-20250728    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250728    gcc-8.5.0
-xtensa                randconfig-002-20250728    gcc-8.5.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+pon., 28 lip 2025 o 23:44 Andrew Morton <akpm@linux-foundation.org> napisa=
+=C5=82(a):
+>
+> On Mon, 28 Jul 2025 16:03:53 +0800 Baolin Wang <baolin.wang@linux.alibaba=
+.com> wrote:
+>
+> > After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpf=
+s"),
+> > we extend the 'huge=3D' option to allow any sized large folios for tmpf=
+s,
+> > which means tmpfs will allow getting a highest order hint based on the =
+size
+> > of write() and fallocate() paths, and then will try each allowable larg=
+e order.
+> >
+> > However, when the i915 driver allocates shmem memory, it doesn't provid=
+e hint
+> > information about the size of the large folio to be allocated, resultin=
+g in
+> > the inability to allocate PMD-sized shmem, which in turn affects GPU pe=
+rformance.
+> >
+> > To fix this issue, add the 'end' information for shmem_read_folio_gfp()=
+  to help
+> > allocate PMD-sized large folios. Additionally, use the maximum allocati=
+on chunk
+> > (via mapping_max_folio_size()) to determine the size of the large folio=
+s to
+> > allocate in the i915 driver.
+>
+> What is the magnitude of the performance change?
+>
+> > Fixes: acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs")
+> > Reported-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
+> > Reported-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+> > Tested-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
+>
+> This isn't a regression fix, is it?  acd7ccb284b8 adds a new feature
+> and we have now found a flaw in it.
+>
+> Still, we could bend the rules a little bit and backport this, depends
+> on how significant the runtime effect is.
 
