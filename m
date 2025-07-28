@@ -1,287 +1,124 @@
-Return-Path: <linux-kernel+bounces-747870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E468B13959
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:56:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD14B1395C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55656189A80E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E82179466
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6046A254AFF;
-	Mon, 28 Jul 2025 10:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFBE24EA80;
+	Mon, 28 Jul 2025 10:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zt1A3njm"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qirASrLX"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B3824DD18;
-	Mon, 28 Jul 2025 10:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D8B19E96D;
+	Mon, 28 Jul 2025 10:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753700166; cv=none; b=mx2MEY7d3Ce28eV02kEqquoILc1OewU0snx57XgxdyJ+DlAmB2lui6cM/8+tnnXOC8dUiglPw8TSZvkRcWXqk0QOTLXIwnIJnca7KRwxzyQbrkdHrOcB2LA2r2DTDdhV0QTYFt5U212iXmWhVVj4WZMM6jE8lW7lxFgGX4qTkLQ=
+	t=1753700206; cv=none; b=QboT1mV+M8yUd8T/tGc0eq07/GdhyifRywd1AgAntn5MfznxPOa9Sxv1uj48KuaSSGDOA6hlhjlWkZpUJV+R10vOldnWb3Tj8qOPa+qHoz+MaT6+AWUg+sZ3jvZ0DZc9qN/e7fEv11NYUkgJ7SV2syazC32+oY/aXPXTy4g8cHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753700166; c=relaxed/simple;
-	bh=YGleY+BTac5R9ZvEJZtBBPaOkPgNhDZgmq3t8OTsKFU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iUYkZrWZYVRvZ1SdmffdIxediFw9vSaiIyeYX5yvzhvysBd8ALzplU5f9DsQW2rReKUrKky6i+sJfaCDRTWZVX4zJ6nvUXO41G/OH//yHJfGK6f+K6NkJgpwvhy0ib5nHW23bWIWlpBzwlEGSnj58ldTZ+k47wzuqPz2JAcTyLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zt1A3njm; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-41cd87eff4dso2745888b6e.2;
-        Mon, 28 Jul 2025 03:56:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753700164; x=1754304964; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IWL1xu7848dX7PG0tXdUa0Ie1a9/Le0YZIKNkJPCEek=;
-        b=Zt1A3njmWGLLFqFhdEM2dgpa5zYUIAL3qu5MJ15L8LJvO2tevlIOzjaZcdYTGHqEhh
-         XB5QSCm10v0/nUCInCO7HWjz+VncwPJFLqvvfTZgPOykOHeUAITJmxjgvJoh6V2NXLoZ
-         19M22iW1ezKGHz0L/5Hq5qZFg6Tv/J5nzOp6aqimb972FFn//N8Y4fI7/RyHsgIN2d+m
-         vONnZjoXT/ycEuz1408Jz1yO3Vigfhe3TWkxfPZONtzWRbJWUhCaOWjseE/pQnzvv5uQ
-         kRkJUa3yEetIchuGYRb+P+DrD2wH98xDNX9A+mxdI7U9+53S+k8GBbCbu2f5SdzvcNKU
-         Ox6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753700164; x=1754304964;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IWL1xu7848dX7PG0tXdUa0Ie1a9/Le0YZIKNkJPCEek=;
-        b=bTwDlA0LPxZaoP2YQCjD5yBYm9kr/v3Cc/cYwCVl1pjFAIQ3KkAmutuwLStneWCC84
-         AvWhkyhYMhEIw1sP9anzqRYC7lrBPya2sX2xMVcipZq261V6rKLl/N2K7r6udq+tc4ns
-         ULc400yAxR62un0HpO2PeOtJeEMZxDhEu2cD3FhktawabokVSYdT/0VMy0fNNQr1hz/3
-         gXtq70ZRs71XOw5Fibwe48Mmwz8QbpGk9PEIr1O4aqTWB095PKNuqbkeg3GZjjft6iZo
-         8TLYxqaGmo0InIxFSlx+ZpWFc451SXmRglOINzOC6veH+AsLNKTW/+pm5PmrHtx3lGl7
-         eGUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV88wSFlk+VdhWu5SIUdyRL1R4LPVEiChIuj8MbdKFExHGR+t0dCnsBah07ST/W4RyyUdw=@vger.kernel.org, AJvYcCXfpVIo76/J6lLkJfBuFCzWd2aMVvSfbK6zp9/CKXJTRetsz63W9fPG5/syCh59XD6+Az1O3zW/J0Fw4LE9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTLWKvwBbFC2YcshL9sD2yL+/LUiGNhiI5myX1O2aG6M/TF+T0
-	xZykX0GehyJxGOrcCznPO194iefg2Gl7GyL0xjC4D21AlixY5koA9qYRhHeGVfio340Gplx179i
-	ZEv9qnNZmSDeAwROyEKqmfAsTkbhUdU8=
-X-Gm-Gg: ASbGnct/VJ+t3IrxD9YLcHEjJAMzIWcgvF7qOOmbukEYKxHeD+G12gnndlb8Zn1oGdU
-	QUM43746E5r+vmJ2NlrNB40as7W8RYI688Y6wjkN2JFGEgXT+dGT5hyT53GdVnMMinwsSgw+Xb4
-	GqtSgJXNdBL4Skyok5U4npCJpQlMr/XLhrTJlsY71EInlmtRDXB16jWuSodrQiL2NXPYRgOGn4c
-	lfI2QY=
-X-Google-Smtp-Source: AGHT+IGARqiTWQTPDrhfm8cwnocnmRpP9f+DBFyblxvpuVCcS8LapX/WdvEguEftXmefu5EyqAQ3TzJmMAo2H63z4jI=
-X-Received: by 2002:a05:6808:308b:b0:41c:45e4:6c4c with SMTP id
- 5614622812f47-42bb9e01655mr6828338b6e.39.1753700163813; Mon, 28 Jul 2025
- 03:56:03 -0700 (PDT)
+	s=arc-20240116; t=1753700206; c=relaxed/simple;
+	bh=6v5l+SGws6eU5rcGvZDcWB3QUuuC6ppDE6v+bXjfM24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OoiWak8l5d+E8hD4uvqkzf5VWx7torpIAp3kVNCGYXaSIHREcc2bwsQozbXVgKr01ZCFWQugjVRhop8X9b7bgqxoLntHc6RPSjXPAW/Wycdijib2vcKU32Z05uAik4wIrphuoWp/r2QqGi8Q8bOIc6ydu066mRaO7jJHdsq6x18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qirASrLX; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 7EFB7446;
+	Mon, 28 Jul 2025 12:55:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753700159;
+	bh=6v5l+SGws6eU5rcGvZDcWB3QUuuC6ppDE6v+bXjfM24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qirASrLXDOxyLp7/oYBYjS1pQt9kZP4oX9eMvJcyGOfoiBB5mVW516RWU2ZG18UbD
+	 VbV6UXQSuZQXVeEDpqSEjJHW6MIdzcGM8ZtQ29L1XpfZ2yyOt7zuDh9mulsx//I17t
+	 IVewpsqdEUkXOhiCcLtRpxhtnR4XEIzrhfKQ83Qg=
+Date: Mon, 28 Jul 2025 13:56:34 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Greg KH <greg@kroah.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Sasha Levin <sashal@kernel.org>, corbet@lwn.net,
+	linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+	josh@joshtriplett.org, kees@kernel.org,
+	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
+ kernel
+Message-ID: <20250728105634.GF787@pendragon.ideasonboard.com>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
+ <2025072854-earthen-velcro-8b32@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724141929.691853-1-duanchenghao@kylinos.cn> <20250724141929.691853-6-duanchenghao@kylinos.cn>
-In-Reply-To: <20250724141929.691853-6-duanchenghao@kylinos.cn>
-From: Hengqi Chen <hengqi.chen@gmail.com>
-Date: Mon, 28 Jul 2025 18:55:52 +0800
-X-Gm-Features: Ac12FXzP_XUDs2XhXziuxv8yd0WOVmTcIPNArR6GVihQbnffbAuPDxb0KuZCKMA
-Message-ID: <CAEyhmHQKBQbidX_SpUF1ZPv7vkkhSR_UuRvxznyb6y5GYQS3qw@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] LoongArch: BPF: Add struct ops support for trampoline
-To: Chenghao Duan <duanchenghao@kylinos.cn>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
-	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
-	vincent.mc.li@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025072854-earthen-velcro-8b32@gregkh>
 
-On Thu, Jul 24, 2025 at 10:22=E2=80=AFPM Chenghao Duan <duanchenghao@kylino=
-s.cn> wrote:
->
-> From: Tiezhu Yang <yangtiezhu@loongson.cn>
->
-> Use BPF_TRAMP_F_INDIRECT flag to detect struct ops and emit proper
-> prologue and epilogue for this case.
->
-> With this patch, all of the struct_ops related testcases (except
-> struct_ops_multi_pages) passed on LoongArch.
->
-> The testcase struct_ops_multi_pages failed is because the actual
-> image_pages_cnt is 40 which is bigger than MAX_TRAMP_IMAGE_PAGES.
->
-> Before:
->
->   $ sudo ./test_progs -t struct_ops -d struct_ops_multi_pages
->   ...
->   WATCHDOG: test case struct_ops_module/struct_ops_load executes for 10 s=
-econds...
->
-> After:
->
->   $ sudo ./test_progs -t struct_ops -d struct_ops_multi_pages
->   ...
->   #15      bad_struct_ops:OK
->   ...
->   #399     struct_ops_autocreate:OK
->   ...
->   #400     struct_ops_kptr_return:OK
->   ...
->   #401     struct_ops_maybe_null:OK
->   ...
->   #402     struct_ops_module:OK
->   ...
->   #404     struct_ops_no_cfi:OK
->   ...
->   #405     struct_ops_private_stack:SKIP
->   ...
->   #406     struct_ops_refcounted:OK
->   Summary: 8/25 PASSED, 3 SKIPPED, 0 FAILED
->
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  arch/loongarch/net/bpf_jit.c | 71 ++++++++++++++++++++++++------------
->  1 file changed, 47 insertions(+), 24 deletions(-)
->
-> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-> index ac5ce3a28..6a84fb104 100644
-> --- a/arch/loongarch/net/bpf_jit.c
-> +++ b/arch/loongarch/net/bpf_jit.c
-> @@ -1603,6 +1603,7 @@ static int __arch_prepare_bpf_trampoline(struct jit=
-_ctx *ctx, struct bpf_tramp_i
->         struct bpf_tramp_links *fentry =3D &tlinks[BPF_TRAMP_FENTRY];
->         struct bpf_tramp_links *fexit =3D &tlinks[BPF_TRAMP_FEXIT];
->         struct bpf_tramp_links *fmod_ret =3D &tlinks[BPF_TRAMP_MODIFY_RET=
-URN];
-> +       bool is_struct_ops =3D flags & BPF_TRAMP_F_INDIRECT;
->         int ret, save_ret;
->         void *orig_call =3D func_addr;
->         u32 **branches =3D NULL;
-> @@ -1678,18 +1679,31 @@ static int __arch_prepare_bpf_trampoline(struct j=
-it_ctx *ctx, struct bpf_tramp_i
->
->         stack_size =3D round_up(stack_size, 16);
->
-> -       /* For the trampoline called from function entry */
-> -       /* RA and FP for parent function*/
-> -       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -16);
-> -       emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
-> -       emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
-> -       emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 16);
-> -
-> -       /* RA and FP for traced function*/
-> -       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_=
-size);
-> -       emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_siz=
-e - 8);
-> -       emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_siz=
-e - 16);
-> -       emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_s=
-ize);
-> +       if (!is_struct_ops) {
-> +               /*
-> +                * For the trampoline called from function entry,
-> +                * the frame of traced function and the frame of
-> +                * trampoline need to be considered.
-> +                */
-> +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP,=
- -16);
-> +               emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8=
-);
-> +               emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0=
-);
-> +               emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP,=
- 16);
-> +
-> +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP,=
- -stack_size);
-> +               emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, s=
-tack_size - 8);
-> +               emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, s=
-tack_size - 16);
-> +               emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP,=
- stack_size);
-> +       } else {
-> +               /*
-> +                * For the trampoline called directly, just handle
-> +                * the frame of trampoline.
-> +                */
-> +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP,=
- -stack_size);
-> +               emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, s=
-tack_size - 8);
-> +               emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, s=
-tack_size - 16);
-> +               emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP,=
- stack_size);
-> +       }
->
+On Mon, Jul 28, 2025 at 12:35:02PM +0200, Greg KH wrote:
+> On Mon, Jul 28, 2025 at 09:42:27AM +0100, Lorenzo Stoakes wrote:
+> > +cc Linus
+> > 
+> > On Sun, Jul 27, 2025 at 03:57:58PM -0400, Sasha Levin wrote:
+> > > This patch series adds unified configuration and documentation for coding
+> > > agents working with the Linux kernel codebase. As coding agents
+> > > become increasingly common in software development, it's important to
+> > > establish clear guidelines for their use in kernel development.
+> > 
+> > Hi Sasha,
+> > 
+> > I feel like we need to take a step back here and consider some of the
+> > non-technical consqeuences of this change.
+> > 
+> > Firstly, there is no doubt whatsoever that, were this series to land, there
+> > would be significant press which would amount to (whether you like it or
+> > not) 'Linux kernel welcomes AI patches'.
+> > 
+> > I don't feel that a change of this magnitude which is likely to have this
+> > kind of impact should be RFC'd quietly and then, after a weekend, submitted
+> > ready to merge.
+> > 
+> > This change, whether you like it or not - amounts to (or at the very least,
+> > certainly will be perceived to be) kernel policy. And, AFAIK, we don't have
+> > an AI kernel policy doc yet.
+> > 
+> > So to me:
+> > 
+> > - We should establish an official kernel AI policy document.
+> 
+> Steven Rostedt is working on this right now, hopefully he has something
+> "soon".
+> 
+> > - This should be discussed at the maintainers summit before proceeding.
+> 
+> Sounds reasonable as well.
+> 
+> But I think that Kees and my earlier points of "the documentation should
+> be all that an agent needs" might aleviate many of these concerns, if
+> our documentation can be tweaked in a way to make it easier for
+> everyone, humans and bots, to understand.  That should cut down on the
+> "size" of this patch series a lot overall.
+> 
+> > In addition, it's concerning that we're explicitly adding configs for
+> > specific, commercial, products. This might be seen as an endorsement
+> > whether intended or not.
+> 
+> Don't we already have that for a few things already, like .editorconfig?
 
-The diff removes code added in patch 4/5, this should be squashed to
-the trampoline patch if possible.
+We do, but isn't .editorconfig a vendor-neutral solution ?
 
->         /* callee saved register S1 to pass start time */
->         emit_insn(ctx, std, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off=
-);
-> @@ -1779,21 +1793,30 @@ static int __arch_prepare_bpf_trampoline(struct j=
-it_ctx *ctx, struct bpf_tramp_i
->
->         emit_insn(ctx, ldd, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off=
-);
->
-> -       /* trampoline called from function entry */
-> -       emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_siz=
-e - 8);
-> -       emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_siz=
-e - 16);
-> -       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_s=
-ize);
-> +       if (!is_struct_ops) {
-> +               /* trampoline called from function entry */
-> +               emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, s=
-tack_size - 8);
-> +               emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, s=
-tack_size - 16);
-> +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP,=
- stack_size);
-> +
-> +               emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8=
-);
-> +               emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0=
-);
-> +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP,=
- 16);
->
-> -       emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
-> -       emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
-> -       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, 16);
-> +               if (flags & BPF_TRAMP_F_SKIP_FRAME)
-> +                       /* return to parent function */
-> +                       emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARC=
-H_GPR_RA, 0);
-> +               else
-> +                       /* return to traced function */
-> +                       emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARC=
-H_GPR_T0, 0);
-> +       } else {
-> +               /* trampoline called directly */
-> +               emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, s=
-tack_size - 8);
-> +               emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, s=
-tack_size - 16);
-> +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP,=
- stack_size);
->
-> -       if (flags & BPF_TRAMP_F_SKIP_FRAME)
-> -               /* return to parent function */
->                 emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA=
-, 0);
-> -       else
-> -               /* return to traced function */
-> -               emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T0=
-, 0);
-> +       }
->
->         ret =3D ctx->idx;
->  out:
-> --
-> 2.25.1
->
+-- 
+Regards,
+
+Laurent Pinchart
 
