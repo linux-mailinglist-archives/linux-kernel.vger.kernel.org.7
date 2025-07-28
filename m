@@ -1,136 +1,147 @@
-Return-Path: <linux-kernel+bounces-748167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719A2B13D5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:38:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F7FB13D64
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6DF3B5E6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAABF16AA6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576F222F76B;
-	Mon, 28 Jul 2025 14:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333CA26D4E2;
+	Mon, 28 Jul 2025 14:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rm3Q5D5x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRbexJ/j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9AF24DCF9
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADC22E36E6;
+	Mon, 28 Jul 2025 14:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753713527; cv=none; b=EcxkhMWB2sGCNGTKoY8zl/dodMv5fC0OcuT3TQNX5XnBMvGJhA7f5tk0iE/dsZwjOnvRSCFJTQmaf+GYwgqQMMj6Eb3JJoAAFzXUVVtPdEcJz6VDEHQsvEzAqe9Xea8oQYioc8ucJJlOepKzlFEw0UWhE7geLw3oo/yzUoJAvhk=
+	t=1753713599; cv=none; b=BCZEyCJii1j5biUu9XcIHZrRThJ9yzfbrqrHU7kpY2CT0RdpwfrO0fy+FDWLoKZYq9Q2242lAFuuiGWPblj7nD2Wp1HpAx2IqiS0mKrV3gxkxuSUfyhNKhNdlnZzIoLinrk2fb3C1PHiliL7ylQPEe2NytvTsrDV9yWzixwTvno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753713527; c=relaxed/simple;
-	bh=o70mPU2wQuff4uxJtxViiEC625nYOHrn+5MWzkmwLT0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JUNARm2EAZkoFEjA9obEMMVoPs6N1SMced53TUW+l5zSeAsk1bOEHKp3yWfG82GeVkKPGj2r91qXdz+q8RNqDCgeKGAHQSyWFVG2y42E9XmY++nuK0WqdCx1xUWxh0zcfDUYs3+IWIFzyKYVJjaYdpsaxjgpSHplnMxhRBhA72A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rm3Q5D5x; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753713524;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1ddnsUptmbXKH7BOwm60SQvszd1IlPxjs6pIoKDn5Ag=;
-	b=Rm3Q5D5xq80dZEvZewsZNiiQBcN045mGXQQ7KORUn3FiwvMm6sMywIaR9jV4IpmizHFoyW
-	bA2PRctC2tUMlyQmhEqLrsXk5OpUrqU4SxucRFNHvQ7gNnsKgU6OnGGiXJxyHEyrmMTOzb
-	5LTecjbDThXd9iraibNK/tZvm218T8s=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-zBmuHSNaMjqVQswNAbsYWg-1; Mon,
- 28 Jul 2025 10:38:41 -0400
-X-MC-Unique: zBmuHSNaMjqVQswNAbsYWg-1
-X-Mimecast-MFC-AGG-ID: zBmuHSNaMjqVQswNAbsYWg_1753713520
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F2F518003FC;
-	Mon, 28 Jul 2025 14:38:40 +0000 (UTC)
-Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.45.225.226])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EDA77180035E;
-	Mon, 28 Jul 2025 14:38:38 +0000 (UTC)
-From: Andreas Gruenbacher <agruenba@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>,
-	gfs2@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] gfs2 changes for 6.17
-Date: Mon, 28 Jul 2025 16:38:35 +0200
-Message-ID: <20250728143837.137302-1-agruenba@redhat.com>
+	s=arc-20240116; t=1753713599; c=relaxed/simple;
+	bh=PUa5zBanQ9HQ43Rzwvde8BAW3al82mrfE0Q9RjtSTgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=thvIRvLb3loi64neGAiP1AB9cenZlpJloyeIfs2Hz9YaA5KscF9A32jJtjGsfuNByM0sslqdadpGGjpYmHBSLWYa/OcUktZXmyAUNowtH0Rygq3M2nFG2nB4Lcj/QMSEhN+bOcjtg+P5pAxTW2WHo2qLuS5qO7T2UdzjwcOv0U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRbexJ/j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF01C4CEF7;
+	Mon, 28 Jul 2025 14:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753713599;
+	bh=PUa5zBanQ9HQ43Rzwvde8BAW3al82mrfE0Q9RjtSTgQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aRbexJ/jfp/8PjVxvkJBqQNPK9gIP/PYrB+C/kcLS8yOdAznd5nlLl1Ko4tgNI7kY
+	 uAbmaumkPsbj30ABFstvuDip9L9zT5xDtsP0ac3X2yRhtWPz2XMsN2dsH5J/X+250y
+	 k6uGSD8AJqDZwrRpekkENlY9IvysctA11GsWv52xxIaEhteyVVYoIUiEsAO5SrVItN
+	 39aGqOs+kL8XQQfXkm7cLhIyRjNR8aDnhfAFaLyShYDHbOvvEkbUmTIRbF0fd9bBlK
+	 yfftcc4XNgmE2h5Gidcbo62urM5DWE+FZ4XTRzHvl7339IXafoY9Pp2rp6LmF6S8F2
+	 9FNsd23RwVwQA==
+Date: Mon, 28 Jul 2025 20:09:48 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+	Bart Van Assche <bvanassche@acm.org>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, quic_nitirawa@quicinc.com
+Subject: Re: [PATCH] scsi: ufs: core: move some irq handling back to hardirq
+ (with time limit)
+Message-ID: <cvh6t2hy2tvoz4tnokterj6mkdgk5pug7evplux3kuigs4j5mo@s46f32cusvsx>
+References: <20250724-ufshcd-hardirq-v1-1-6398a52f8f02@linaro.org>
+ <f2b85e49152b80a63b20aa5ad67dfbee1190e356.camel@linaro.org>
+ <53bfd619-4066-4dcb-b3f0-d04177e05355@linaro.org>
+ <766fa03c4a9a2667c8c279be932945affb798af0.camel@linaro.org>
+ <4enen7mopxtx4ijl5qyrd2gnxvv3kygtlnhxpr64egckpvkja4@hjli25ndhxwc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <4enen7mopxtx4ijl5qyrd2gnxvv3kygtlnhxpr64egckpvkja4@hjli25ndhxwc>
 
-Dear Linus,
+On Mon, Jul 28, 2025 at 08:06:21PM GMT, Manivannan Sadhasivam wrote:
+> + Nitin
+> 
 
-please consider pulling the following gfs2 changes for 6.17.
+Really added Nitin now.
 
-Thanks,
-Andreas
+> On Thu, Jul 24, 2025 at 02:38:30PM GMT, André Draszik wrote:
+> > On Thu, 2025-07-24 at 13:54 +0200, Neil Armstrong wrote:
+> > > On 24/07/2025 13:44, André Draszik wrote:
+> > > > On Thu, 2025-07-24 at 10:54 +0100, André Draszik wrote:
+> > > > > fio results on Pixel 6:
+> > > > >    read / 1 job     original    after    this commit
+> > > > >      min IOPS        4,653.60   2,704.40    3,902.80
+> > > > >      max IOPS        6,151.80   4,847.60    6,103.40
+> > > > >      avg IOPS        5,488.82   4,226.61    5,314.89
+> > > > >      cpu % usr           1.85       1.72        1.97
+> > > > >      cpu % sys          32.46      28.88       33.29
+> > > > >      bw MB/s            21.46      16.50       20.76
+> > > > > 
+> > > > >    read / 8 jobs    original    after    this commit
+> > > > >      min IOPS       18,207.80  11,323.00   17,911.80
+> > > > >      max IOPS       25,535.80  14,477.40   24,373.60
+> > > > >      avg IOPS       22,529.93  13,325.59   21,868.85
+> > > > >      cpu % usr           1.70       1.41        1.67
+> > > > >      cpu % sys          27.89      21.85       27.23
+> > > > >      bw MB/s            88.10      52.10       84.48
+> > > > > 
+> > > > >    write / 1 job    original    after    this commit
+> > > > >      min IOPS        6,524.20   3,136.00    5,988.40
+> > > > >      max IOPS        7,303.60   5,144.40    7,232.40
+> > > > >      avg IOPS        7,169.80   4,608.29    7,014.66
+> > > > >      cpu % usr           2.29       2.34        2.23
+> > > > >      cpu % sys          41.91      39.34       42.48
+> > > > >      bw MB/s            28.02      18.00       27.42
+> > > > > 
+> > > > >    write / 8 jobs   original    after    this commit
+> > > > >      min IOPS       12,685.40  13,783.00   12,622.40
+> > > > >      max IOPS       30,814.20  22,122.00   29,636.00
+> > > > >      avg IOPS       21,539.04  18,552.63   21,134.65
+> > > > >      cpu % usr           2.08       1.61        2.07
+> > > > >      cpu % sys          30.86      23.88       30.64
+> > > > >      bw MB/s            84.18      72.54       82.62
+> > > > 
+> > > > Given the severe performance drop introduced by the culprit
+> > > > commit, it might make sense to instead just revert it for
+> > > > 6.16 now, while this patch here can mature and be properly
+> > > > reviewed. At least then 6.16 will not have any performance
+> > > > regression of such a scale.
+> > > 
+> > > The original change was designed to stop the interrupt handler
+> > > to starve the system and create display artifact and cause
+> > > timeouts on system controller submission. While imperfect,
+> > > it would require some fine tuning for smaller controllers
+> > > like on the Pixel 6 that when less queues.
+> > 
+> > Well, the patch has solved one problem by creating another problem.
+> > I don't think that's how things are normally done. A 40% bandwidth
+> > and IOPS drop is not negligible.
+> > 
+> > And while I am referencing Pixel 6 above as it's the only device
+> > I have available to test, I suspect all < v4 controllers / devices
+> > are affected in a similar way, given the nature of the change.
+> > 
+> 
+> IMO we should just revert the offending commit for 6.16 and see how to properly
+> implement it in the next release. Even with this series, we are not on par with
+> the original IOPS, which is bad for everyone.
+> 
+> - Mani
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
-The following changes since commit d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af:
-
-  Linux 6.16-rc4 (2025-06-29 13:09:04 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-for-6.17
-
-for you to fetch changes up to deb016c1669002e48c431d6fd32ea1c20ef41756:
-
-  gfs2: No more self recovery (2025-07-16 23:30:32 +0200)
-
-----------------------------------------------------------------
-gfs2 changes
-
-- Prevent cluster nodes from trying to recover their own filesystems
-  during a withdraw.
-
-- Add two missing migrate_folio aops and an additional exhash directory
-  consistency check (both triggered by syzbot bug reports).
-
-- Sanitize how dlm results are processed and clean up a few quirks in
-  the glock code.
-
-- Minor stuff: Get rid of the GIF_ALLOC_FAILED flag; use SECTOR_SIZE and
-  SECTOR_SHIFT.
-
-----------------------------------------------------------------
-Andreas Gruenbacher (7):
-      gfs2: Use SECTOR_SIZE and SECTOR_SHIFT
-      gfs2: Remove GIF_ALLOC_FAILED flag
-      gfs2: Minor do_xmote cancelation fix
-      gfs2: sanitize the gdlm_ast -> finish_xmote interface
-      gfs2: simplify finish_xmote
-      gfs2: a minor finish_xmote cleanup
-      gfs2: No more self recovery
-
-Andrew Price (2):
-      gfs2: Set .migrate_folio in gfs2_{rgrp,meta}_aops
-      gfs2: Validate i_depth for exhash directories
-
- fs/gfs2/dir.c        |  6 ++----
- fs/gfs2/glock.c      | 43 +++++++++++++++++++++----------------------
- fs/gfs2/glock.h      | 10 ++++++++++
- fs/gfs2/glops.c      |  6 ++++++
- fs/gfs2/incore.h     |  1 -
- fs/gfs2/inode.c      |  7 ++-----
- fs/gfs2/inode.h      |  6 +++---
- fs/gfs2/lock_dlm.c   |  9 ++++++---
- fs/gfs2/meta_io.c    | 10 +++++-----
- fs/gfs2/ops_fstype.c | 12 ++++++------
- fs/gfs2/super.c      |  6 ++----
- fs/gfs2/util.c       | 31 +++++++++++--------------------
- 12 files changed, 74 insertions(+), 73 deletions(-)
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
