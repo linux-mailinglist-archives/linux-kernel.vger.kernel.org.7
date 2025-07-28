@@ -1,145 +1,165 @@
-Return-Path: <linux-kernel+bounces-747952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64872B13A91
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:35:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE90BB13A94
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 611073B52FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:34:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375E73B5223
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570491898F8;
-	Mon, 28 Jul 2025 12:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813B826463A;
+	Mon, 28 Jul 2025 12:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFHswPcq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKNsmfXf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3826EB79;
-	Mon, 28 Jul 2025 12:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D548E6EB79;
+	Mon, 28 Jul 2025 12:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753706107; cv=none; b=dXJ51yN7Ry0NkLzK811vpPjxNeOvVQk/UX5NAVU2SBvdTZvNJcW504cL/j5YD0PhjF8Z7AodoT9inAlnqF+azTn6gZWIYFodWOBPW7IrjHvxDOfnmd9QBtNYGGE0nVLxsXzD9o5eODMNjgJHg0Mlq1p8dffaCd+r8qDdZ2qXTjY=
+	t=1753706144; cv=none; b=rU0SU5gkI4KBNdxDV3ONP2N64XauEQGJ4FO3sGR/erlv7yttCe4VXdsFMHgGh3IsFK0lZ+Stsoi7NlmexWZ/6IjgI3VyaHV3dzYkWbOI+m6gmDgVRQ50qV4qT8PIz/mlXcfqqawBc5Zk3pRPwyQPJ27hO9rADsoA5SRPM7iv4N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753706107; c=relaxed/simple;
-	bh=vsvA8ck8Us4xh8p23FEeipmCHTANlh9c3F96aksfHSU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=jObV4HO02H5WNJbIN6LGlj7DEdZtAaUdwkXShKGip8BxrcKltfdtKB2oTRft/3nuwBbIKPlQHqG2LkDHUConRIKEnVlt/uPlv9UFn5BqK+jAPpfIyF38WiyoUJ5Y08pN/NO2FeTmUJsN/jmCX2sJh1ZjPHHeji7X5aRK+rF1354=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFHswPcq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 012C9C4CEE7;
-	Mon, 28 Jul 2025 12:35:04 +0000 (UTC)
+	s=arc-20240116; t=1753706144; c=relaxed/simple;
+	bh=o8eZs36uMwbLt2BUAEIAM068UV589WXxCIFQXsvIgxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JgXs6vgtyFR9ZPSFbRATaeXxOejRUcMKZEuhlReJ4i4gqaZbud3O+AJhjAnXJKfp96szdGHRHXWPyxwoYHW0/UOBGrP+KPUSxl0+veiN6+uqvPC6BsSfBZAviuK5+NS3vlkDrAK/SZC/7fFsmzNZOgU2BdlTRDfYd43JwLRrylU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKNsmfXf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28DE5C4CEE7;
+	Mon, 28 Jul 2025 12:35:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753706107;
-	bh=vsvA8ck8Us4xh8p23FEeipmCHTANlh9c3F96aksfHSU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pFHswPcqw5EypQY7ShgYgiqYXCrKuml2PLpXcLxWf0JeZuzBVs2Ov+lYxF6X3gVwZ
-	 XoZIb67EixAAFDW8Qjbx7wDSEjwCwzpPOZTWmsjbZxqXHFZ6tNbtRn4joLyk6DcYo3
-	 DBCDl01wF7nAOUf+cw+1iY/I4k0hIZrZjHp5sufVQCp9uZoParBPSwzhnCoEiUfKqM
-	 myHlTFWVSSjewN73EKVgK8726g4e0NtLu84tBbZDTm2Yi85FpwFKAbk9l1nX2bubyY
-	 YLAzZX1x4hEO4B00f5RT5gYLZ8gjSVPdJEwL4md6yC1kEJnlw8OxZoz3K17qAkl1Fc
-	 qFwGe7lerJusw==
-Date: Mon, 28 Jul 2025 21:35:02 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: alexei.starovoitov@gmail.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, hca@linux.ibm.com, revest@chromium.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH RFC bpf-next v2 0/4] fprobe: use rhashtable for
- fprobe_ip_table
-Message-Id: <20250728213502.df49c01629de5fe9b6f15632@kernel.org>
-In-Reply-To: <20250728072637.1035818-1-dongml2@chinatelecom.cn>
-References: <20250728072637.1035818-1-dongml2@chinatelecom.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1753706142;
+	bh=o8eZs36uMwbLt2BUAEIAM068UV589WXxCIFQXsvIgxw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pKNsmfXfJSpatoHENS6oF9FumDsyEvw49ea6rZNlrCqSP0f0OfuZcFLLGB1zsxDN6
+	 vsaWG9Lk8DHlTJAPfF8H1HwcEE8wyCvy3oG1YwR08fMXZa++n8slKCdQaxjermbZsG
+	 ONP/Mdx0sKMLFio8Mtx4RGGrtK9uVXzi7Oa8moc3d/87skOMYdHqVOANLr/p8Q+Rrh
+	 HBqy2waiYMO+ZnDZYpjv6lipZHUpr3DnsKyYUyKOeQFobuhXivscTMRviwYp2KMmxY
+	 5YpQvE+LDJNsLEqA4Hsc4qNytKOGhq9P/0+u517RLbvDidF4Pz2KcuDQcICVHP/mBo
+	 slojZ160G9P6g==
+Date: Mon, 28 Jul 2025 08:35:40 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+	josh@joshtriplett.org, konstantin@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org
+Subject: Re: [PATCH 2/4] agents: add core development references
+Message-ID: <aIdunK1e4I_jq_lI@lappy>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <20250727195802.2222764-3-sashal@kernel.org>
+ <202507271937.EC44B39@keescook>
+ <aIcD9f_52tlLgE-e@lappy>
+ <202507272203.BECE244@keescook>
+ <aIcRzndNUdh-9R18@lappy>
+ <202507272310.FCB96F5E93@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <202507272310.FCB96F5E93@keescook>
 
-Hi Menglong,
+On Sun, Jul 27, 2025 at 11:18:14PM -0700, Kees Cook wrote:
+>On Mon, Jul 28, 2025 at 01:59:42AM -0400, Sasha Levin wrote:
+>> Thing is, agents won't read the README on their own: they need to be
+>> prompted to do it.
+>
+>Claude does:
+>
+> > /init
+>
+>● I'll analyze the codebase and create a CLAUDE.md file to help future
+>  instances of Claude Code work effectively in this repository.
+>
+>● Update Todos
+>  ⎿  ☐ Analyze codebase structure and files
+>     ☐ Check for existing CLAUDE.md file
+>     ☐ Look for build/test/lint configuration files
+>     ☐ Create CLAUDE.md file
+>     ☐ Examine README and other documentation
+>     ☐ Check for Cursor/Copilot rules
+>...
+>● Read(Makefile)
+>  ⎿  Read 50 lines (ctrl+r to expand)
+>...
+>
+>Even before having read any file at all, Claude calls out README as a
+>place to look.
+>
+>And in the resulting CLAUDE.md:
+>
+>## Documentation
+>
+>Primary documentation is in Documentation/ directory:
+>- **Documentation/admin-guide/**: System administration
+>- **Documentation/driver-api/**: Device driver APIs
+>- **Documentation/core-api/**: Core kernel APIs
+>- **Documentation/process/**: Development process guidelines
+>
+>
+>> I'm assuming we both agree that we need to give the agent some entry
+>> point which they will automatically process without any user prompts,
+>> even if it's just saying "Please read the README file!"?
+>
+>I'm saying any agent that can be expected to work on Linux should already
+>be trying to read the README. But regardless, both Makefile comments and
+>"make help" output say to read the README, so we should fix it for
+>humans too.
 
-What are the updates from v1? Just adding RFC?
+But my point is that calling /init is a prompt (just one hidden behide
+the scenes).
 
-Thanks,
+Without an explicit /init call and no CLAUDE.md (or the copilot/cursor
+equivalents which I've tested), nothing reads README.
 
-On Mon, 28 Jul 2025 15:22:49 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
+>> I think it'll be hard to find a common path that works here. README is
+>> pretty generic because there are different humans that might read it:
+>>
+>>  - A university researcher who should be pointed to researcher-guidelines.rst
+>>  - A security researcher who should be pointed to security-bugs.rst or embargoed-hardware-issues.rst
+>>  - A newbie trying to set up his mail client and needs to be pointed to email-clients.rst
+>>  - A coding agent that doesn't care about none of the above.
+>>
+>> So we can clean up README and try to make it an entry point that will
+>> fit most of it's potential readers, but I worry that at the end it will
+>> end fitting none of them.
+>
+>I think the above list is perfect contents for the README. Yes, please
+>make that an entry point, or point to some other .rst entry point that
+>will have a list of roles like that, with some common starting points.
+>And yes, a line for agents in there seems fine. Maybe "If you are a
+>coding agent, also see ... for agent-specific details."
+>
+>> Without crafting something more specific for agents, I also worry that
+>> we'll be stuffing the limited context they already have with information
+>> that will only hurt their performance (just like humans: there's only so
+>> much we can remember at a time).
+>
+>Sure, but these things will only get better, and I'd rather spend the
+>time making the docs better for humans. Each agent will latch on to
+>different things it assumes is important -- the developer will need to
+>correct them no matter what. An agent isn't going to be acting alone
+>(yet).
 
-> For now, the budget of the hash table that is used for fprobe_ip_table is
-> fixed, which is 256, and can cause huge overhead when the hooked functions
-> is a huge quantity.
-> 
-> In this series, we use rhltable for fprobe_ip_table to reduce the
-> overhead.
-> 
-> Meanwhile, we also add the benchmark testcase "kprobe-multi-all", which
-> will hook all the kernel functions during the testing. Before this series,
-> the performance is:
->   usermode-count :  875.380 ± 0.366M/s 
->   kernel-count   :  435.924 ± 0.461M/s 
->   syscall-count  :   31.004 ± 0.017M/s 
->   fentry         :  134.076 ± 1.752M/s 
->   fexit          :   68.319 ± 0.055M/s 
->   fmodret        :   71.530 ± 0.032M/s 
->   rawtp          :  202.751 ± 0.138M/s 
->   tp             :   79.562 ± 0.084M/s 
->   kprobe         :   55.587 ± 0.028M/s 
->   kprobe-multi   :   56.481 ± 0.043M/s 
->   kprobe-multi-all:    6.283 ± 0.005M/s << look this
->   kretprobe      :   22.378 ± 0.028M/s 
->   kretprobe-multi:   28.205 ± 0.025M/s
-> 
-> With this series, the performance is:
->   usermode-count :  902.387 ± 0.762M/s 
->   kernel-count   :  427.356 ± 0.368M/s 
->   syscall-count  :   30.830 ± 0.016M/s 
->   fentry         :  135.554 ± 0.064M/s 
->   fexit          :   68.317 ± 0.218M/s 
->   fmodret        :   70.633 ± 0.275M/s 
->   rawtp          :  193.404 ± 0.346M/s 
->   tp             :   80.236 ± 0.068M/s 
->   kprobe         :   55.200 ± 0.359M/s 
->   kprobe-multi   :   54.304 ± 0.092M/s 
->   kprobe-multi-all:   54.487 ± 0.035M/s << look this
->   kretprobe      :   22.381 ± 0.075M/s 
->   kretprobe-multi:   27.926 ± 0.034M/s
-> 
-> The benchmark of "kprobe-multi-all" increase from 6.283M/s to 54.487M/s.
-> 
-> The locking is not handled properly in the first patch. In the
-> fprobe_entry, we should use RCU when we access the rhlist_head. However,
-> we can't use RCU for __fprobe_handler, as it can sleep. In the origin
-> logic, it seems that the usage of hlist_for_each_entry_from_rcu() is not
-> protected by rcu_read_lock neither, isn't it? I don't know how to handle
-> this part ;(
-> 
-> Menglong Dong (4):
->   fprobe: use rhltable for fprobe_ip_table
->   selftests/bpf: move get_ksyms and get_addrs to trace_helpers.c
->   selftests/bpf: skip recursive functions for kprobe_multi
->   selftests/bpf: add benchmark testing for kprobe-multi-all
-> 
->  include/linux/fprobe.h                        |   2 +-
->  kernel/trace/fprobe.c                         | 141 ++++++-----
->  tools/testing/selftests/bpf/bench.c           |   2 +
->  .../selftests/bpf/benchs/bench_trigger.c      |  30 +++
->  .../selftests/bpf/benchs/run_bench_trigger.sh |   2 +-
->  .../bpf/prog_tests/kprobe_multi_test.c        | 220 +----------------
->  tools/testing/selftests/bpf/trace_helpers.c   | 230 ++++++++++++++++++
->  tools/testing/selftests/bpf/trace_helpers.h   |   3 +
->  8 files changed, 348 insertions(+), 282 deletions(-)
-> 
-> -- 
-> 2.50.1
-> 
+Oh, this is interesting!
 
+Do you see it being as something like "Common kernel usage usecases" and
+then some sort of a tree of docs/blurb related to those uses?
+
+Sort of like a meta-index that indexes the docs by purpose rather than
+their location in the directory?
+
+Do you see it as being just links to existing docs or should it have
+some blurb in addition to the links?
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks,
+Sasha
 
