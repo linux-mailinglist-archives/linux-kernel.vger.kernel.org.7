@@ -1,216 +1,139 @@
-Return-Path: <linux-kernel+bounces-747957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37104B13AA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D7DB13ADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C51F3A4DDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:40:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62A617332A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262CC26563F;
-	Mon, 28 Jul 2025 12:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460B9265CCF;
+	Mon, 28 Jul 2025 12:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzJ4uFKv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BkHaMedu"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A5A8BEC;
-	Mon, 28 Jul 2025 12:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A5E2222A3;
+	Mon, 28 Jul 2025 12:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753706429; cv=none; b=ZW8sc/szafK36HP3tomSsWSGVSn90tmpH8HTqic1N5HDqjNIMlWjx/zv/KO+Yz8Kyu9xoTpAnGdZWXuPjKlkjSHIG5nx8Rk/wj8E3t4EvNVB89rYpahkkgyEsXqxe6ukhmZfFr9HzLopSU5W5hXIb9DhYP8f+6kJBAwu+cESUk0=
+	t=1753707559; cv=none; b=tBCrfusLITg/CQcL+vARE5+gq/sIWh90Llaia2tJZEi/zftKs6MQkOXLPb2/w/ysISRfElzRCcgFdU6CsbuuFvwYhgM+SsWdDk/rw6fVTw1UFGGD0J4d5HvK8bvfExmya/c/VU0ru4GhEMENjGa8XQTRYWs3ARIOfe7ZAXxa4JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753706429; c=relaxed/simple;
-	bh=dTg4wWkdKPCRfym32aJgAHjXglH8povDWDAynj04Cbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lJ2G3a/dvHI8nYezZSU44GBgmeZoOimuNJGTdCNaoM4CdncS7s1zhNvvj7eN+NPD/Pu3Wf86w9J8AstciAP0rAdGev+/bIl4ny2VvvhG5Yv5OpAtCkYXUgxdOIk3t6+G6sDSwUx2b1x5QHoGcfQSLXYg8tvNxzG67ml4AXOU9Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzJ4uFKv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AF8EC4CEE7;
-	Mon, 28 Jul 2025 12:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753706428;
-	bh=dTg4wWkdKPCRfym32aJgAHjXglH8povDWDAynj04Cbc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bzJ4uFKvWPrxZswu2/WOHXEn0za6GOHr7iul3iSHpKipGrDHOCdqWFqSlQR2LLv1J
-	 LZ0EmFq6NJSMZkqib/7JgYGPy0LEpdgWKHMDfydtDzwaLaFBcXL8lBTW4wNegSSqxG
-	 sEBa2h1DI7wuXLGNw0PVEBG+mbmqZSaHUjuFvIx8R5n9MWYzBrB4CduNdtSkNgww1g
-	 jE/Oj2VFFC4eOvbr8g5RQFOR1d4H9icwcwWLwzX8tbxruhZpIHmHR2ruxIApWLOvw4
-	 /ONLxRYv6ywGhkkBR4RfSUNWHlOrwHius9M1+wefaij+u3ooAshCyrEMEO0T/DIa1D
-	 o/EAswh8UWkXQ==
-Message-ID: <cabacd59-7cbf-403a-938f-371026980cc7@kernel.org>
-Date: Mon, 28 Jul 2025 14:40:22 +0200
+	s=arc-20240116; t=1753707559; c=relaxed/simple;
+	bh=IhmHfcSsqvi4XakQ4sYwxkmbwY7HX0R7FkhypdAtOrs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzZwaPPq79uT13obV8PwJ/ue8SJKnaOmt7k0Sz3dbl8OzIEphS/UScnT8reWsiUVm6xXTZ47YaTUoHvKq5HS4JxpKUG457wgkak7enfM3eJX4L6qEgbh6BiRZvlWlYXeBv/6tQkeu/XP/d/QWqZpiMWO1ulUCbuYJzqgiea20l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BkHaMedu; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-748d982e97cso3947629b3a.1;
+        Mon, 28 Jul 2025 05:59:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753707556; x=1754312356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZhAzjK5FT+CciFxLwNthNR1VR+Fzupqi6PO9KjFf0r0=;
+        b=BkHaMedu9PWg/72u2ouC51DUv03UQqki8V6/omOur7ehmVug2Csx+EBEEuQr4zYlNU
+         0johkAOXNG86mBN0Q0Xb2mB8rVItx1Fr/J0iHlUarfdhxP6+sZu7uvI74V8pmyuk1U2W
+         QCig81FvCz7IQDLhB05/69+PREG9Z061aodzS0bLw535cVtgixsphHi3CFkJFfEa0IBt
+         Njw3EGfBuaON8PpPZi37CKoPs5/Xnr2ynXseOnsfkCGRO5gQOHfToPFDOpa5I4N+wXMV
+         PHSNaA/2LvqHRGIuQmYjrZGDYSq2lNS/AyLEzSBhwDleVEXtoaVEUkYHMDusAF0sssWq
+         0Vtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753707556; x=1754312356;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZhAzjK5FT+CciFxLwNthNR1VR+Fzupqi6PO9KjFf0r0=;
+        b=o1Xgv7ihsitOaK7RW04bPGMzKskXSQofWTZArJs4FihtXMyWoKwPewjX9NASDnqAlb
+         omu26HK4yJUjsJKN3k4xhomPMfiKIlBItB6TE30GFP9HPeFA2714aom3BWxAEUW0dGSk
+         lf0UIkUooY6NMrjBLsc0BxVbctm9rDhGX+X7D56VsnQCi1tmZ23ZoLAJ0OVJ3ThBPwDp
+         +fIu56SVJc576mNZZWY5OJFLiUPoSv5bZvEe0Qzw1tT9lsz5SBbnsiIcLIALY36gCnwg
+         1arV1RTJRkpV+azvE9uutzVPGdpSk2L4YadUt2lTH78Z+WOTYNYaQIvGMXvX/pUxQJiT
+         eLcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Rj+wrbKmD8Va3gfihMXaSuyvQ+MdBZSjoptst0gCZZsMQsTW8KRVuS22sfDV8oFc/1W94WawsoRr@vger.kernel.org, AJvYcCUS6nnvzPNyHvH809gvZ0hxFFGf+Uf57UxV74YX1dt7GbQJS48lmmNi4mQDFQNSbFruQkfLTV6HL7P+qaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOfiiUxNDoBAQT2xAGiTc0hmMUmLJ3hpX4UgcYzBIyAloCnJMJ
+	JHdv6BYu8rt5zmd5F1tHEI5BViPpnMPkKA0D+HNV3CU9xaXainhRLagc
+X-Gm-Gg: ASbGncv/ojZLNA0TuAP7CjD9SksSt/Y8hZHSSMiT9CxDStADGltd0hnj1HOTX2LHHo3
+	R/PWKmTfEphHzllu11UJ2wjjhJ/FNnXKx2eJLuAd8GG18K/jplpwj+/QdS3JT7yQ88XZPBS8uwS
+	a3kcf0BpqE1dsFaMh2X/3NGRPULZ7LCYXf/PCh/EF4NTxQvT8dNVcfUN1FupJ6ErVWnT9XF06xA
+	a66DcyLtHEIbk0uGluFvv5T+tL73ZR60uhAwRAGs36W2MmNG6jYD94E3L0ZiS5q+YPcVitYZztm
+	/YcxP0NSeBEAlTg4bB9b+hsKFAg5lx7hElp6PecowQQLGvE1x9ZItxxfZsSycxf0m5jNPeHt07s
+	jygFifLZcMV3oEEFB3a9RVf70PIKTuIi9B/hexTtBwNu22P2msfk3QdpRzTRRKsvaZgo8v+EU2U
+	HoicYfwNPR175HdqBg
+X-Google-Smtp-Source: AGHT+IGENH4RfeEDFn/IoEogrzWjFEeRAzJl6HlR7BypR5NTpHuCAK3gs/JhKuMwkxq3MC0ECTtFDQ==
+X-Received: by 2002:a05:6a20:a126:b0:232:fcfc:7209 with SMTP id adf61e73a8af0-23d701a89d9mr19624271637.35.1753707556461;
+        Mon, 28 Jul 2025 05:59:16 -0700 (PDT)
+Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([122.162.223.145])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640863513bsm5589392b3a.8.2025.07.28.05.59.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 05:59:15 -0700 (PDT)
+From: "Darshan R." <rathod.darshan.0896@gmail.com>
+To: lhjeff911@gmail.com
+Cc: broonie@kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Darshan R." <rathod.darshan.0896@gmail.com>
+Subject: [PATCH] spi: sunplus: sp7021: Clean up coding style
+Date: Mon, 28 Jul 2025 12:41:04 +0000
+Message-ID: <20250728124104.6370-1-rathod.darshan.0896@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/5] net: rpmsg-eth: Add basic rpmsg skeleton
-To: MD Danish Anwar <danishanwar@ti.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Mengyuan Lou
- <mengyuanlou@net-swift.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Fan Gong <gongfan1@huawei.com>,
- Lee Trager <lee@trager.us>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>,
- Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250723080322.3047826-1-danishanwar@ti.com>
- <20250723080322.3047826-3-danishanwar@ti.com>
- <296d6846-6a28-4e53-9e62-3439ac57d9c1@kernel.org>
- <5f4e1f99-ff71-443f-ba34-39396946e5b4@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <5f4e1f99-ff71-443f-ba34-39396946e5b4@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/07/2025 10:10, MD Danish Anwar wrote:
-> Hi Krzysztof,
-> 
-> On 25/07/25 12:48 am, Krzysztof Kozlowski wrote:
->> On 23/07/2025 10:03, MD Danish Anwar wrote:
->>> This patch introduces a basic RPMSG Ethernet driver skeleton. It adds
->>
->> Please do not use "This commit/patch/change", but imperative mood. See
->> longer explanation here:
->> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
->>
-> 
-> Sure. I will fix this in v2.
-> 
->>> support for creating virtual Ethernet devices over RPMSG channels,
->>> allowing user-space programs to send and receive messages using a
->>> standard Ethernet protocol. The driver includes message handling,
->>> probe, and remove functions, along with necessary data structures.
->>>
->>
->>
->> ...
->>
->>> +
->>> +/**
->>> + * rpmsg_eth_get_shm_info - Get shared memory info from device tree
->>> + * @common: Pointer to rpmsg_eth_common structure
->>> + *
->>> + * Return: 0 on success, negative error code on failure
->>> + */
->>> +static int rpmsg_eth_get_shm_info(struct rpmsg_eth_common *common)
->>> +{
->>> +	struct device_node *peer;
->>> +	const __be32 *reg;
->>> +	u64 start_address;
->>> +	int prop_size;
->>> +	int reg_len;
->>> +	u64 size;
->>> +
->>> +	peer = of_find_node_by_name(NULL, "virtual-eth-shm");
->>
->>
->> This is new ABI and I do not see earlier patch documenting it.
->>
->> You cannot add undocumented ABI... but even if you documented it, I am
->> sorry, but I am pretty sure it is wrong. Why are you choosing random
->> nodes just because their name by pure coincidence is "virtual-eth-shm"?
->> I cannot name my ethernet like that?
->>
-> 
-> This series adds a new virtual ethernet driver. The tx / rx happens in a
-> shared memory block. I need to have a way for the driver to know what is
-> the address / size of this block. This driver can be used by any
-> vendors. The vendors can create a new node in their dt and specify the
-> base address / size of the shared memory block.
-> 
-> I wanted to keep the name of the node constant so that the driver can
-> just look for this name and then grab the address and size.
+This patch tidies up minor coding style deviations within the Sunplus SP7021 SPI driver, ensuring closer adherence to established kernel coding guidelines.
 
-You should not.
+Specifically, it addresses:
+- Correction of a whitespace inconsistency before a comma in `writel()` calls.
+- Alignment of function parameter indentation for `struct spi_transfer *xfer` in `sp7021_spi_host_transfer_one()` and `sp7021_spi_target_transfer_one()`.
 
-> 
-> I can create a new binding file for this but I didn't create thinking
-> it's a virtual device not a physical and I wasn't sure if bindings can
-> be created for virtual devices.
+While purely cosmetic, these adjustments contribute to improved code readability and maintainability, making future development and review easier.
 
-So you added undocumented ABI intentionally, sorry, that's a no go.
+Signed-off-by: Darshan R. <rathod.darshan.0896@gmail.com>
+---
+ drivers/spi/spi-sunplus-sp7021.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> 
-> In my use case, I am reserving this shared memory and during reserving I
-> named the node "virtual-eth-shm". The memory is reserved by the
-> ti_k3_r5_remoteproc.c driver. The DT change is not part of this series
-> but can be found
-> https://gist.github.com/danish-ti/cdd10525ad834fdb20871ab411ff94fb
-> 
-> The idea is any vendor who want to use this driver, should name their dt
-> node as "virtual-eth-shm" (if they also need to reserve the memory) so
-> that the driver can take the address from DT and use it for tx / rx.
-> 
-> If this is not the correct way, can you please let me know of some other
-> way to handle this.
-> 
-> One idea I had was to create a new binding for this node, and use
-> compatible string to access the node in driver. But the device is
-> virtual and not physical so I thought that might not be the way to go so
-> I went with the current approach.
+diff --git a/drivers/spi/spi-sunplus-sp7021.c b/drivers/spi/spi-sunplus-sp7021.c
+index 7fd4cc6f74c2..256ae07db6be 100644
+--- a/drivers/spi/spi-sunplus-sp7021.c
++++ b/drivers/spi/spi-sunplus-sp7021.c
+@@ -103,7 +103,7 @@ static irqreturn_t sp7021_spi_target_irq(int irq, void *dev)
+ 
+ 	data_status = readl(pspim->s_base + SP7021_DATA_RDY_REG);
+ 	data_status |= SP7021_SLAVE_CLR_INT;
+-	writel(data_status , pspim->s_base + SP7021_DATA_RDY_REG);
++	writel(data_status, pspim->s_base + SP7021_DATA_RDY_REG);
+ 	complete(&pspim->target_isr);
+ 	return IRQ_HANDLED;
+ }
+@@ -296,7 +296,7 @@ static void sp7021_spi_setup_clk(struct spi_controller *ctlr, struct spi_transfe
+ }
+ 
+ static int sp7021_spi_host_transfer_one(struct spi_controller *ctlr, struct spi_device *spi,
+-				       struct spi_transfer *xfer)
++					struct spi_transfer *xfer)
+ {
+ 	struct sp7021_spi_ctlr *pspim = spi_controller_get_devdata(ctlr);
+ 	unsigned long timeout = msecs_to_jiffies(1000);
+@@ -360,7 +360,7 @@ static int sp7021_spi_host_transfer_one(struct spi_controller *ctlr, struct spi_
+ }
+ 
+ static int sp7021_spi_target_transfer_one(struct spi_controller *ctlr, struct spi_device *spi,
+-				       struct spi_transfer *xfer)
++					  struct spi_transfer *xfer)
+ {
+ 	struct sp7021_spi_ctlr *pspim = spi_controller_get_devdata(ctlr);
+ 	struct device *dev = pspim->dev;
+-- 
+2.43.0
 
-virtual devices do not go to DTS anyway. How do you imagine this works?
-You add it to DTS but you do not add bindings and you expect checks to
-succeed?
-
-Provide details how you checked your DTS compliance.
-
-
-
-Best regards,
-Krzysztof
 
