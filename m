@@ -1,93 +1,136 @@
-Return-Path: <linux-kernel+bounces-747824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A41BB138CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:20:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837DFB138D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAAD03B581B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:19:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435E9188FE78
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1D5259CBB;
-	Mon, 28 Jul 2025 10:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CA925BEF4;
+	Mon, 28 Jul 2025 10:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZEn4oMM7"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lY7dVkWs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59C2259498
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72801FBE9B;
+	Mon, 28 Jul 2025 10:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753697911; cv=none; b=AvjXgnq7N9wbqyz08nI/Qvw3IF/UdePPGeT0kQC+51XzFrF+arJkn5cqwEMHOwUbwGWRPKm4106V2nkloiN3lkm4D/Q/LHvAKhVDvxQ3193qDstKGA9fb9Qkd1ozB9W5s6cwcXssWwIlWsnFekxk+dtmAVJxpwDdVk2LAbWP3sI=
+	t=1753697931; cv=none; b=NaTmNGLETJuJd10CIUPN2pm80uN4ai5jytH+YWoCg0vUvyZCJAS0WCUq7a9e3GLgyz2kHQ7F3OBYIEYB/NhcoK2T5i3mFvbGFQ5wNNddZSCGCfk67PRjORlATo6tSEWbX8w0lNpuevuPa7ujibo8NOsH3OCQg08xMEmDP8pKUQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753697911; c=relaxed/simple;
-	bh=3el5hihMWzNALKB9/lgWX1J6i8LyhqKA9nJQX9WOFn0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FdZcNvWAsSolVC654snJyCOJKy2pzN9qxygVs5+61sieD0GhrUTYNjkWcDd9HiCyjqKBVdG+kZJM1e/6dFpvZ0EDf9MWEAR0Rpu7zP5WaReU+KHMque6wG/n2njDe8rvUIjlxsp6gYnwfUuugEdy6vJraIGgT12K1Cc3Gtm45zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZEn4oMM7; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 99ECF43207;
-	Mon, 28 Jul 2025 10:18:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753697902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L4wkqLxHY+RoBc1uK2vAFB86qGeFPMMdWw1AN5D2+K0=;
-	b=ZEn4oMM7Iv+ycDpPwVaonXt85rgzoSjZ3I5sxVaIISnN+aNRaHgQ2RgjwEfygtEEMBjQeX
-	tZWcfVDq0qj7kHjM3K7sIuTQkDxwtxsE4dRCcAyAF4XfZKXXN1H7BKKVOAA8PvlUU/aghT
-	WFZup0ZtoX+xiXBCaiLnUsuQlY/n2/QWwoLeboPzAaafcyo88/yG5pyXTK7xvOzalf+bbk
-	J5IrnLChtCJOJl4/mcdt5EAxBzmIXE2/MgvpSUpv5Jad7IsKXI2Mmu1Glelo7yHSCxPdkF
-	wJy3E8A9bvdVgcrJ2KbtE6YORE7d2A9J8dE1mNQFfJMkD+pzgG1F8uXpRM2UnA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Richard Weinberger <richard@nod.at>, 
- Vignesh Raghavendra <vigneshr@ti.com>
-In-Reply-To: <20250626160812.325940-1-andriy.shevchenko@linux.intel.com>
-References: <20250626160812.325940-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] mtd: map: Don't use "proxy" headers
-Message-Id: <175369790143.102852.15567348497821292698.b4-ty@bootlin.com>
-Date: Mon, 28 Jul 2025 12:18:21 +0200
+	s=arc-20240116; t=1753697931; c=relaxed/simple;
+	bh=zVzQvvAddDP62V30se1D6wE63TQYVFTDCsf+N1N3pAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tb7TFZIvncNQ5VLSU5puvt2AqyzAxmF0axBiKsJDrchDo6PtWx3fOuRMxPUcT3HrQa95WDDHvTT1L+/D5XBwIF/2C39aj58moUqFRKyn5d06Q9jIBasejQDaouPZkJ8Sjy7+xI/leJQXXiA2KV82CnsKrOQXoGGZBcOCxrKxo60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lY7dVkWs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECE45C4CEE7;
+	Mon, 28 Jul 2025 10:18:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753697931;
+	bh=zVzQvvAddDP62V30se1D6wE63TQYVFTDCsf+N1N3pAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lY7dVkWskMdiX3zYFhlvt9M8GbNXRdktQ2KO1GeMS8CxBSPoF3g3EyYYvZVi6rVHn
+	 o24oG5gpVcPqmMef98a/MgQ7qfHb9O2lAwY+Det1Cv+jj0aCXwcFUogaoLgG/VxNwl
+	 8GacG1Xsi1gGQVxTNHktfwVqRtSsaAP9ZGzDci13IP2NgzNOkFXfRYU+JVOb2YQ76O
+	 6ZCvA+4ywB4DSKZT0GpFpjW8KEJFh0fvX8kLV6EnwuLF7kdYUG5TW/r73ln5bZ67Zi
+	 4USeNV6riBWSQW1Q2tdOvlC7Rs0tfw2ZI3I4vmpaL904qlqD0mCpTwo/vb98XKR5c/
+	 0dtySijehknDQ==
+Date: Mon, 28 Jul 2025 13:18:26 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	changyuanl@google.com, dmatlack@google.com, rientjes@google.com,
+	corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v2 04/32] kho: allow to drive kho from within kernel
+Message-ID: <aIdOcmTl-zrxXKAB@kernel.org>
+References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
+ <20250723144649.1696299-5-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeludeltdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheeifffhueelgfdtleetgfelvefggfehudelvdehuddulefgheelgfehieevvdegnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdegiegnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehli
- hhnuhigrdhinhhtvghlrdgtohhm
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723144649.1696299-5-pasha.tatashin@soleen.com>
 
-On Thu, 26 Jun 2025 19:08:12 +0300, Andy Shevchenko wrote:
-> Update header inclusions to follow IWYU (Include What You Use)
-> principle.
+On Wed, Jul 23, 2025 at 02:46:17PM +0000, Pasha Tatashin wrote:
+> Allow to do finalize and abort from kernel modules, so LUO could
+> drive the KHO sequence via its own state machine.
 > 
-> Note that kernel.h is discouraged to be included as it's written
-> at the top of that file.
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
+>  include/linux/kexec_handover.h | 15 +++++++++
+>  kernel/kexec_handover.c        | 58 ++++++++++++++++++++++++++++++++--
+>  2 files changed, 71 insertions(+), 2 deletions(-)
 > 
-> 
-> [...]
+> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
 
-Applied to mtd/next, thanks!
+...
 
-[1/1] mtd: map: Don't use "proxy" headers
-      commit: 56eb7c13b97c6f9e2fed9e9899b01d1a6a595f28
+> -static int kho_finalize(void)
+> +int kho_abort(void)
+> +{
+> +	int ret = 0;
+> +
+> +	if (!kho_enable)
+> +		return -EOPNOTSUPP;
+> +
+> +	mutex_lock(&kho_out.lock);
+> +
+> +	if (!kho_out.finalized) {
+> +		ret = -ENOENT;
+> +		goto unlock;
+> +	}
+> +
+> +	ret = __kho_abort();
+> +	if (ret)
+> +		goto unlock;
+> +
+> +	kho_out.finalized = false;
+> +	ret = kho_out_update_debugfs_fdt();
+> +
+> +unlock:
+> +	mutex_unlock(&kho_out.lock);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(kho_abort);
 
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
+I don't think a module should be able to drive KHO. Please drop
+EXPORT_SYMBOL_GPL here and for kho_finalize().
 
-Kind regards,
-Miquèl
-
+-- 
+Sincerely yours,
+Mike.
 
