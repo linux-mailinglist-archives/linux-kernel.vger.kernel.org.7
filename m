@@ -1,96 +1,126 @@
-Return-Path: <linux-kernel+bounces-748280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BD7B13EFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:43:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B649AB13EFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF54F4E3A9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:40:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B0917AF241
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B295B27146D;
-	Mon, 28 Jul 2025 15:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FF7271A84;
+	Mon, 28 Jul 2025 15:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YFdULwoB"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gp+5VOk5"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FCE145A1F;
-	Mon, 28 Jul 2025 15:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DD218A6AB;
+	Mon, 28 Jul 2025 15:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753717225; cv=none; b=su3EACuDlRpdZzhWc6f/ZKX2b9lQmIb/p2tdF0GT7iCfnHvWEvh7QRhyRtxiNRNNEYaUmJYO2ItTRItw8soK9z3z6wXpkYPvUMXx4AzS4WjRwYsqlMsZHjF26guYxu0yLT/giYlpCm0xpQiNdMl6gwCWRN7x6pc6v8uIbErwI9w=
+	t=1753717290; cv=none; b=F3XiVkvrh0RlpxFlqkbsEId8AYybVXB+912qRMi6YAp+9hMlbufGm710RTfm2QUkU6VyCnF5VOZcT49zcIIetZoe3Hho3WbBQK6+qRyb4+hbUTgWiQZFlDKK3pTRoLXhYMhnZULdlSxsz8iTwTHa3sfFMpGqCcgRi3BFZftucC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753717225; c=relaxed/simple;
-	bh=WeJb/ApjvcbFncdxETVdczEpNUNn1MkfRDrriLyIUzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jScSw+ZLaLbmt/bofqgXPpuKtEE4wQ33DAcK/qzggURIR8rpsmnxlUaG28ZqBuokpif3XMrtaOFX2zBU/+6vDrB9p9/QLk7PIaaXUiRarLEL7er+ppT6gd2VVfYvEfMdxrkg1ZvlQu3dEtgzbTlq9PyPU/SaX+YNwO+ls+nxGPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YFdULwoB; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=q0NF0L3kcXAIrlIUaY/JZCJLHtTs0ZlzHcUdeIHuQes=; b=YFdULwoBKH8lALuAaM6Ubz8QzV
-	wjHrW0iCk5dDulWWurBeJg99G/q/tLpP0xi4V1TdN1kxGQPBiH6PR6QynS+fdE64dxYcbN7TwhsTR
-	4f6sktlQnJnkvbKz846r+1LMZsditTsUH3f7N9H6w1yeviP3WbpZBLT6jX1CZ9c27kSc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ugPxO-0036Tn-0m; Mon, 28 Jul 2025 17:40:06 +0200
-Date: Mon, 28 Jul 2025 17:40:06 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Yao Zi <ziyao@disroot.org>, Chukun Pan <amadeus@jmu.edu.cn>,
-	Heiko Stuebner <heiko@sntech.de>, netdev@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/3] net: dsa: realtek: Add support for use of
- an optional mdio node
-Message-ID: <2f942223-8683-4808-8f7a-4f46e18f402d@lunn.ch>
-References: <20250727180305.381483-1-jonas@kwiboo.se>
- <20250727180305.381483-3-jonas@kwiboo.se>
- <2504b605-24e7-4573-bec0-78f55688a482@lunn.ch>
- <badef015-22ff-4232-a4d0-80d2034113ca@kwiboo.se>
- <9702f3da-f755-4392-bf2b-28814ee0a8c7@lunn.ch>
- <1c639c62-cc07-4b3d-a18b-77f93668b88f@kwiboo.se>
+	s=arc-20240116; t=1753717290; c=relaxed/simple;
+	bh=rMZI/++Sl83oEviYROVHczJ3NA9sNaqcT1YdK0dP1Q0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=okugGTij158/JyyYGyatG59NlQcP5V0SrdlVujhJpL7qmMSaMQsFD+gDuw+RuisbPElHyBqb8mdQ7VuOzZb6hO6HjjlT3+idrt2p+47h7vm0k+3i1dTOahsHvZir3w3Wobceoha3PCtvRgBMu5mT2jYfV7mekEA7bHlWql3tqdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gp+5VOk5; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2363616a1a6so37264225ad.3;
+        Mon, 28 Jul 2025 08:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753717288; x=1754322088; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lf4c4+X3SHCf0c7CaWo3n9zdv/g/JaUx8MF3KOPrPUg=;
+        b=Gp+5VOk5ltFiY5ORrrRlvLeaTgEWlKb+iGtxKH6XZJxeS8CpdoLFGb8NeykA9yvtuo
+         ja+dHhxV/5MFc36B/FDAQ1QTVicnd1N3ghwSO0y9dWuFMlod/FaUy/aPXe2GX7QJXqTd
+         1sRL7yZdkrrM/J7xAk4kM0XDRsMF8MN1ru00yEjs1yPN4O/UsnY6fJT8WMXAMIZ7KzHT
+         efQQu5hW3dmuvBXm688hzV8WnoGbMiycFOi5HdMI8HIFyUuGZ1x2DIjHAGDqUqWPsTE5
+         IH2Vb/KF5MlTXnVBa27I0vSlOWDr4EiCSXwASd0LkY1l5yAsE2y+JfF4KINMBmzZoItW
+         y8CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753717288; x=1754322088;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lf4c4+X3SHCf0c7CaWo3n9zdv/g/JaUx8MF3KOPrPUg=;
+        b=fdT8oNcqD/SGlrXbO0QJu5fOHv7jMZLgq70YMIOcKtK8rSajCE2flIWxbUzD0TS7WG
+         PpOq7T6OKmmt6kizKVshzazBnq9lCsXcWgG4AyGTDmiIXwUG3cIqpZqyGgqHfyreQrj8
+         kT3FLuE3v/beMavJSndjD05MQCjJ31TBFp94Ni7IjDWVw/4Fl6FC+DIakpvgHBJ9u+1w
+         2lV9tJJ9VOjGEScNxWTNqd3GcxTgFdebVROQLuQ2ckDMZK+woBs/JKwMNpCwO7/JoNwI
+         PU9GUa8lHTbyTkH33Xfcm8teJnJAUpO9iGI/OPcQS0QFKYthlUcQtsRdOzm3o4zaoMc7
+         Ngeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoXls9Lh8Q+sJ3hiKEs7XWiQJzKwIkxmAn8FRY6tNNZp+LaoHfmXd8BSLGnpvAq8M8uvfH1ahyTqZW@vger.kernel.org, AJvYcCWJfeq7TmFnKiMpRFVEAFpY3lZhsWvcPT1XpThWlb77uTQRHKxpKXruewQgl8rrEmKGLlKCQjDT4XcLEzKm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvfyenNNafxa85dfucsZ1I3LmHywb8F4KKPF/kmcn6PHustIcd
+	PHupkcbEKPZjYf9Jf0vtdhQaJusBmYXCm/t7elwRE+//DPmg5/uHIBnEByIUPCpbZhJ/ow==
+X-Gm-Gg: ASbGncsOdP53Tfh58ou2LGbrIu4Lm+c0lM4btmThnJS/JYckl4sXy9JBsl/cYp09y5M
+	4fyjBR9J/8Pq5x1aCFznK3vdf01THQxuRxqwTkxMyrK867x+yG9wUJhu6uPJ3Vfm5G3z5ns8wCv
+	o/AYAOuiQYHNgTJIzStejoI4KICtlvTJwJ2F+aJ+dvuyAE3Z3JAc+lJQ/d+W50yLL63ndRMzfx5
+	UDmMtGxhco7VdpSjiPcdDxkzRl4HOHbqyhT595bQbNuLY9o4Id/Hck1rjw/4MEk8fkWFYUniXAn
+	ISL/Y2zVsFB08wr/oyKh07UEWU2g13srD3N9p5rV81fe11Bq3/sxnenCpFYAw9yQZlV0EeUvqx/
+	zjaFXCIXk66vBtCYx6uiFwwB9egvCGA==
+X-Google-Smtp-Source: AGHT+IHHYZnbOE3Rnoq0U8uMtLJaRU8HxAJqhVzzJC1VVDJaztpfjHvSCzur8LQWHtjsVVHq5/0lmA==
+X-Received: by 2002:a17:903:234c:b0:237:cc75:77b0 with SMTP id d9443c01a7336-23fb3129b41mr159525605ad.30.1753717287840;
+        Mon, 28 Jul 2025 08:41:27 -0700 (PDT)
+Received: from archlinux ([205.254.163.16])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2400a07224esm33226435ad.212.2025.07.28.08.41.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 08:41:27 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH] fs/ext4: remove unused variable 'de' in ext4_init_new_dir()
+Date: Mon, 28 Jul 2025 21:11:06 +0530
+Message-ID: <20250728154106.55730-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c639c62-cc07-4b3d-a18b-77f93668b88f@kwiboo.se>
+Content-Transfer-Encoding: 8bit
 
-> When it comes to having the switch being described as an interrupt
-> controller in the DT is also very wrong, the switch only consume a
-> single HW interrupt. The fact that the driver creates virtual irq for
-> each port is purely a software construct and is not something that
-> should be reflected in the DT.
+The variable 'de' was declared but never used in the ext4_init_new_dir()
+function, causing a compiler warning:
+variable 'de' set but not used [-Werror=unused-but-set-variable]
+Remove the unused declaration to clean up the code and fix the warning.
 
-I think that is not always clear cut. Switches can be considered SoC
-of their own. They have multiple hardware blocks, which can be
-described independent, just like a traditional SoC and its .dtsi
-file. The switch blocks can then be connected together in the same way
-SoCs are.
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+ fs/ext4/namei.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-I've not looked at this particular switch driver, but the Marvell
-switches have a similar single interrupt output pin connected to the
-host SoC. Within the switch, there are at least two cascaded interrupt
-controllers. We implement standard Linux interrupt controllers for
-these. That allows us to use standard DT properties to link the
-internal PHY interrupts to these interrupt controllers.
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index d83f91b62317..bb2370829928 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2965,7 +2965,6 @@ int ext4_init_new_dir(handle_t *handle, struct inode *dir,
+ 			     struct inode *inode)
+ {
+ 	struct buffer_head *dir_block = NULL;
+-	struct ext4_dir_entry_2 *de;
+ 	ext4_lblk_t block = 0;
+ 	int err;
+ 
+@@ -2982,7 +2981,6 @@ int ext4_init_new_dir(handle_t *handle, struct inode *dir,
+ 	dir_block = ext4_append(handle, inode, &block);
+ 	if (IS_ERR(dir_block))
+ 		return PTR_ERR(dir_block);
+-	de = (struct ext4_dir_entry_2 *)dir_block->b_data;
+ 	err = ext4_init_dirblock(handle, inode, dir_block, dir->i_ino, NULL, 0);
+ 	if (err)
+ 		goto out;
+-- 
+2.50.1
 
-	 Andrew
 
