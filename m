@@ -1,185 +1,151 @@
-Return-Path: <linux-kernel+bounces-747830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9389B138DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:23:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95ECCB138E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2E4166196
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:23:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71FC18929D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB34220F3E;
-	Mon, 28 Jul 2025 10:23:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C519478
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C115B220F38;
+	Mon, 28 Jul 2025 10:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DGh2E+Eb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TAstKcIW";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XHGQ63LX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9nqtOTCg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC2B202C45
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753698180; cv=none; b=M7UCNFGNUhwjsIsRHs/QWNnU8uH7gAePmL/FBzAxtmuVf7FE29da1lb4L3O4sYpvfpJlFrJuvvSupBAYmtuwhbiqookaTfJugWbd1FYwvckVWion856TCcwr8D8N6zQqZbgckMkCrGMlJR2niw7TM/cjgUSVj/VuG1MGGnk6s4g=
+	t=1753698298; cv=none; b=SWBqvBhMx9NFMdBTdMxrGEXRvX+midQ5NYlRhdcD8ohjcQLatH5bTcRAuzew/tArBtTJzPjDj3hBZJSFglxnv/vQTu6oeVMG/aBTR76GV1gkjAiWPQaAEL8xGfL+UNPAHEbEhwauxzls+W7GkZpGEm7pvbzsAJ2XXm13STYnmSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753698180; c=relaxed/simple;
-	bh=fRV2Qep9cGV9q7FgNe1T6WVdWfGosUva0wSAd4Ek4qI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D5ouuDoZWLy4atW2iGz9V0kcn8vMf7dBTgXumqomPu2WOenreDcOY1+j+sKgiyCFKPkM3nQX0m6Q+fG6y8eg/V7/2yg+gIauwqUMLFD+RPz+p6sUYLYs3eFex2wKRjtQR1bDo+4Rz7AWE18n6xB22OYXBLlh92gAbWZ02d+Tzx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93294152B;
-	Mon, 28 Jul 2025 03:22:49 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 419383F673;
-	Mon, 28 Jul 2025 03:22:54 -0700 (PDT)
-Message-ID: <fcbe5517-0256-48ce-aa50-8017928737d7@arm.com>
-Date: Mon, 28 Jul 2025 11:22:52 +0100
+	s=arc-20240116; t=1753698298; c=relaxed/simple;
+	bh=7UpPgxs1I1TXCEGFmgdE4wxKMzot2oB6O/sQuVIrtiQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jC0ojrJu8TXSPQQAzfqbxn3X9iBH3ZJufBZuJmlzkMvj0HH1LdncyEwYdYB4Cv/CZXqsi1M/W11Fs5JSfr/Ty1yjzq5RUCv+trlXKyaKvhsU9MylwAGohK5edswbxJfHDIsPjmnh/3O6u2AGGAeGxFmWT3eAxk5f2kswSnJrRRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DGh2E+Eb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TAstKcIW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XHGQ63LX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9nqtOTCg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 981792126C;
+	Mon, 28 Jul 2025 10:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753698294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+zASefuuTTStfmBz1vDE4KcNGKpBsyQg0O+52IlyS5k=;
+	b=DGh2E+Ebxra7G9BlcKou2CHl5uiaIyAFesBYmHmuF9gfdwGpUKTZfRtp4P4uOKtoKW/L/A
+	BeDfVQNM0+8bAoSJn1O03kOcVwKiVjNXUna9JkVGfN84wrHmeEJFIBcXh5qG/OsIP6xLGt
+	BkUSY4VsTdW3weLbOZeE+vyc4NR0PWM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753698294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+zASefuuTTStfmBz1vDE4KcNGKpBsyQg0O+52IlyS5k=;
+	b=TAstKcIWGpOIQzPTzpFRPhwOxPU7hl6P/6X05mUkoP9SQqpIAYVfxO0EJhzZoUhI8uZ+KV
+	DrqHKEGqy5OGyLAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753698293; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+zASefuuTTStfmBz1vDE4KcNGKpBsyQg0O+52IlyS5k=;
+	b=XHGQ63LX8b8cPahsvyahbcjzDbLpb6DqzPnE/32hV9kUmZ05cOMorMarZ5C+IMDWbHUDG9
+	ZxZNTltBrV1UrevvYdS0iZDaWnk03qqQyAiQoOXx+sDuwU79iBNXVbQgJnCWHHF5PWdcOi
+	pC+x7HzyIwqdOfnWZjophz6QT8nRe98=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753698293;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+zASefuuTTStfmBz1vDE4KcNGKpBsyQg0O+52IlyS5k=;
+	b=9nqtOTCgbs2V2z0A+mAmk94MhFpL77Pgc7EY8+REk3JejYwaFZmAm9qRKHf51sFPrnrwNq
+	jzReVFMI6k/X72CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 69949138A5;
+	Mon, 28 Jul 2025 10:24:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kDUWGPVPh2jCQAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 28 Jul 2025 10:24:53 +0000
+Date: Mon, 28 Jul 2025 12:24:52 +0200
+Message-ID: <87ecu0vci3.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: edip@medip.dev
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] ALSA: hda/realtek - Fix mute LED for HP Victus 16-r1xxx
+In-Reply-To: <20250725151436.51543-2-edip@medip.dev>
+References: <20250725151436.51543-2-edip@medip.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 24/36] arm_mpam: Extend reset logic to allow devices
- to be reset any time
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-25-james.morse@arm.com>
-Content-Language: en-US
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <20250711183648.30766-25-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[medip.dev:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-Hi James,
-
-On 7/11/25 19:36, James Morse wrote:
-> cpuhp callbacks aren't the only time the MSC configuration may need to
-> be reset. Resctrl has an API call to reset a class.
-> If an MPAM error interrupt arrives it indicates the driver has
-> misprogrammed an MSC. The safest thing to do is reset all the MSCs
-> and disable MPAM.
+On Fri, 25 Jul 2025 17:14:37 +0200,
+edip@medip.dev wrote:
 > 
-> Add a helper to reset RIS via their class. Call this from mpam_disable(),
-> which can be scheduled from the error interrupt handler.
+> From: Edip Hazuri <edip@medip.dev>
 > 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->   drivers/platform/arm64/mpam/mpam_devices.c  | 62 ++++++++++++++++++++-
->   drivers/platform/arm64/mpam/mpam_internal.h |  1 +
->   2 files changed, 61 insertions(+), 2 deletions(-)
+> The mute led on this laptop is using ALC245 but requires a quirk to work
+> This patch enables the existing quirk for the device.
 > 
-> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
-> index 2e32e54cc081..145535cd4732 100644
-> --- a/drivers/platform/arm64/mpam/mpam_devices.c
-> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
-> @@ -916,8 +916,6 @@ static int mpam_reset_ris(void *arg)
->   	u16 partid, partid_max;
->   	struct mpam_msc_ris *ris = arg;
->   
-> -	mpam_assert_srcu_read_lock_held();
-> -
->   	if (ris->in_reset_state)
->   		return 0;
->   
-> @@ -1575,6 +1573,66 @@ static void mpam_enable_once(void)
->   		READ_ONCE(mpam_partid_max) + 1, mpam_pmg_max + 1);
->   }
->   
-> +static void mpam_reset_component_locked(struct mpam_component *comp)
-> +{
-> +	int idx;
-> +	struct mpam_msc *msc;
-> +	struct mpam_vmsc *vmsc;
-> +	struct mpam_msc_ris *ris;
-> +
-> +	might_sleep();
-> +	lockdep_assert_cpus_held();
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_rcu(vmsc, &comp->vmsc, comp_list) {
-> +		msc = vmsc->msc;
-> +
-> +		list_for_each_entry_rcu(ris, &vmsc->ris, vmsc_list) {
-> +			if (!ris->in_reset_state)
-> +				mpam_touch_msc(msc, mpam_reset_ris, ris);
-> +			ris->in_reset_state = true;
-> +		}
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +}
-> +
-> +static void mpam_reset_class_locked(struct mpam_class *class)
-> +{
-> +	int idx;
-> +	struct mpam_component *comp;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_rcu(comp, &class->components, class_list)
-> +		mpam_reset_component_locked(comp);
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +}
-> +
-> +static void mpam_reset_class(struct mpam_class *class)
-> +{
-> +	cpus_read_lock();
-> +	mpam_reset_class_locked(class);
-> +	cpus_read_unlock();
-> +}
-> +
-> +/*
-> + * Called in response to an error IRQ.
-> + * All of MPAMs errors indicate a software bug, restore any modified
-> + * controls to their reset values.
-> + */
-> +void mpam_disable(void)
-> +{
-> +	int idx;
-> +	struct mpam_class *class;
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_srcu(class, &mpam_classes, classes_list,
-> +				 srcu_read_lock_held(&mpam_srcu))
-> +		mpam_reset_class(class);
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +}
-Consider moving to the next patch where you introduce interrupt support.
-> +
->   /*
->    * Enable mpam once all devices have been probed.
->    * Scheduled by mpam_discovery_cpu_online() once all devices have been created.
-> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
-> index f3cc88136524..de05eece0a31 100644
-> --- a/drivers/platform/arm64/mpam/mpam_internal.h
-> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
-> @@ -280,6 +280,7 @@ extern u8 mpam_pmg_max;
->   
->   /* Scheduled work callback to enable mpam once all MSC have been probed */
->   void mpam_enable(struct work_struct *work);
-> +void mpam_disable(void);
->   
->   int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
->   				   cpumask_t *affinity);
+> Tested on Victus 16-r1xxx Laptop. The LED behaviour works
+> as intended.
+> 
+> v2:
+> - adapt the HD-audio code changes and rebase on for-next branch of tiwai/sound.git
+> - link to v1: https://lore.kernel.org/linux-sound/20250724210756.61453-2-edip@medip.dev/
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Edip Hazuri <edip@medip.dev>
+
+Applied now.  Thanks.
 
 
-Thanks,
-
-Ben
-
+Takashi
 
