@@ -1,236 +1,258 @@
-Return-Path: <linux-kernel+bounces-747722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5E3B1374A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:11:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94F3B13750
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5B21178EC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B4B3A0867
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABA821CC49;
-	Mon, 28 Jul 2025 09:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A950F22B8A6;
+	Mon, 28 Jul 2025 09:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RvaByBga"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m8/0JfSo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB0A1581EE
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753693857; cv=none; b=hCwJv8bnue8U52LoO4XDZ21KDXsPJ0leVvE7yrsJxeaYPDK75tkRUIFUWXgD7/sRjvsd+YFZ8l69dPTAQqnNHohr7SRcCJRjHqqlAy6zPy67CrhBleawIj4MHNwYBF2bFxJZN/qlZDfM9GewIkivExTgOkS67zXiuxApRcl51tw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753693857; c=relaxed/simple;
-	bh=2JbtmhQK1sEUlITV+i9TxB7G8WlDd1BwPXQzgYTrwB0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ij15VxNJgpy6fVcX4a3TA0Hjb+63PNaY8CCrIIRgUrj5h3GTE2aklW8GVgSBS883HsH6maX6kj1Xbagm+2U/+OGsOBYJkGJm+d5PX7kvw8W4FB9/5BqZrqZ1tnETxLUGsH+FRHRI+VBRGsdENQ3/Gr0UOlGeRlM2XY1x//1K8SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RvaByBga; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753693855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VnIU+p1vADjcsZojWJn5Yv3hV3lAOB3Vh76xjsPZ41I=;
-	b=RvaByBgasfJNRo5CY4Og0GHbNIjbPAYrBgzI9Xa8boX7oA7e3Z0wSWq18azb+lIEW6jZU1
-	rQ2VK8dqWEddxkCjGF2cRWCd71o9kQCMzsobjVp8B6cD/5MR+tb1Ov6nggpIA81idZtmBm
-	77WXqaP0NdyDyWOFKC6wXeEitm++chw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-194-jOz7eqfQNr2V7p68p6sDYw-1; Mon, 28 Jul 2025 05:10:48 -0400
-X-MC-Unique: jOz7eqfQNr2V7p68p6sDYw-1
-X-Mimecast-MFC-AGG-ID: jOz7eqfQNr2V7p68p6sDYw_1753693847
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b78c983014so7162f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:10:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753693847; x=1754298647;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VnIU+p1vADjcsZojWJn5Yv3hV3lAOB3Vh76xjsPZ41I=;
-        b=rpdPLiRiu6FVbULE9a+AYVoRHekks9F2/J3VfEEArSTCvLPDjB/uFEgyT62Z9vfnI1
-         eBlbp38q4jzi6vhrH2P2GYzhiFMb7aV0UeWbUCJTVbkNq8Q0Kg7mVVlzGGA3aHgz/a9S
-         Qg2wyWXKd3JxyIvS812v3gZnlaf66cAb8vDBN00BYQEz7nvDP3UvtQpuIoXplG2FXcXZ
-         +7KwAmSa4lBXJiJYxijboGWRb1TTsAfDtkVhta7UoDGUhMXfYUHZG/0QVfjrlT9ayf7A
-         tjOT/QqgE5vU8HeTUS7sU1oSkHAt7eqtmhE2yyxbvRixQRKkgVfY7jWUp7wRzKvU0+R6
-         +CmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYf3waYffeIdUqwey0j+vPdqbTLTQGz2dVE2q3xvIu2jUQMVUx1YezcQByX5LJl0C5nfUQWrflp77U5Ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDTa518OQbHgyA+NPh+ssXbM1YutwNj4ATUzdS7le1NkBWhdap
-	LigRVRUq9pr+jqzlN8PaLuxOaJJFasm2jzxhGFMdODk0nGCEf4EC2dV3PTRfXWAhlmwsbDZJ6vE
-	AnEG9Ouh6pd0SJA2TemvJ+x3t+XIDIGqIdVM8MwZ+l4rVZSS5NUqK4Iy+JGXurVsW3g==
-X-Gm-Gg: ASbGncsXJ3x/PGnoTSJroTpJ3Qt4b5N1onzNNBDUHTm83iboP2s2x0uOzLr3jxCfkqM
-	SnCNFrvNkDw6RtTbRw/TUiaJeW0ieJyk/fkwFf+oDkatE+DnfKp7SPT5lj5GaS2CFKD3lY03zyL
-	2ZFYQhYaonnvBZ6t2y46FAtZH7NmqZZZlTbiWE5ncsv1or8YN0qwCIaDq45X4gjB327nBrHv8s2
-	8sKXqzCyjM7Tf2AXJLX46y+sqE/u5wkCTHvaL4nD35TNgY8uf+89eShafovzUqN2Lb2YXdteF5B
-	Su1OZeTwFlflXqGJceKXPSyOdgDO5341PAgsZ6FmBC1Ue3q4zSJ77YLFnp0jf4RMcyePKpGWDZV
-	eIVrnTpGzIU1Y0Qb/cxvmo+SD/hZtvk+xEs31Ku+MQJFJM+xuu/IyHnHdx35++ribeYQ=
-X-Received: by 2002:a05:6000:3107:b0:3b6:13a0:bb20 with SMTP id ffacd0b85a97d-3b77675daf5mr8553824f8f.35.1753693846875;
-        Mon, 28 Jul 2025 02:10:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEazl7CS1NCDJ3qvW/s97bvrfSXmYjKBUMzcWrCBBaAi+pylS/P8t5QGt4045/NplxWthVSUQ==
-X-Received: by 2002:a05:6000:3107:b0:3b6:13a0:bb20 with SMTP id ffacd0b85a97d-3b77675daf5mr8553791f8f.35.1753693846252;
-        Mon, 28 Jul 2025 02:10:46 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f47:2b00:c5f3:4053:2918:d17c? (p200300d82f472b00c5f340532918d17c.dip0.t-ipconnect.de. [2003:d8:2f47:2b00:c5f3:4053:2918:d17c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b783ca028dsm4899301f8f.51.2025.07.28.02.10.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 02:10:45 -0700 (PDT)
-Message-ID: <79919ace-9cd2-4600-9615-6dc26ba19e19@redhat.com>
-Date: Mon, 28 Jul 2025 11:10:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2515B2E3715;
+	Mon, 28 Jul 2025 09:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753693898; cv=fail; b=laM3PQO5O2lUXXiYoKuvsc7Qf8R05gFGJ/nbzv3RxQ7NuwD0zYzGiR9fatYzFJOyCbibJp8IvLWQJTxoTxIpB2O5+KyrUa9WJcEE54O0H4GqNKeK5a/8pEvFRq2ur1NPFO/6Ak0R3qu2R+LqRkOaIymz565ic9Hyiyg1DagkTgg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753693898; c=relaxed/simple;
+	bh=SR56B+T7IUDB6rBfHBGAdheycMNfyvUBfBlLHFWugdw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Kul5urFp9+TqLWdPLtCZmpb7D3Zpyx8tU0/gXN+/rPkahGrneEl6b8c5RosYTQNkRuc0jevNVqoxOAN3VXPK68qbYmq3KPucKlsQAca7J2JNTfllCY9R01Fb2eYLjtHPFyGLBQKduXdfFnprlaESBnixlkZ+S7/mB4HjX4nt3Ro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m8/0JfSo; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753693897; x=1785229897;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=SR56B+T7IUDB6rBfHBGAdheycMNfyvUBfBlLHFWugdw=;
+  b=m8/0JfSoV9OzSvaxwsClUcfLv2eW5dFLTBOyD+l33rScV7xriYOjQ7Rh
+   2ReFOItRjcTp4taQqJfZV+006xmmNwW8DHBbq552ESBM1JhXiThzLloBK
+   pVXdsOEt26xNP27XN2hr546PSa0jB2cBtP7VeajBhVCIg8Y9ch6jgLQLi
+   F31Y09dq8iqVSB/6SoIa0FbGd1ZeGQoEPlB+JjfpfVoQdkQYZpcO71q3G
+   uNNeFlA/b5mVhxq+rGMbqytqzKxH/4zKQoUzMCKi+iUQWRietmjsIoJkK
+   itYCYX8W1RoSgoppNQjO1NhLiE2fLDjg/qdAIerCGVhVFlv8x+n8urQ+9
+   g==;
+X-CSE-ConnectionGUID: oMkbiA7HT4OfSzoVbq18uw==
+X-CSE-MsgGUID: C2vVGAy4S3mCEXeoGpNsZg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="59755075"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="59755075"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 02:11:28 -0700
+X-CSE-ConnectionGUID: SBIOylzzTPmbS2bN97KAqw==
+X-CSE-MsgGUID: xGKUlGoNSgGnk7wfA7nUQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="162240082"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 02:11:28 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 28 Jul 2025 02:11:27 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Mon, 28 Jul 2025 02:11:27 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.66)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 28 Jul 2025 02:11:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ggxy4UsSntG2h14Wq5Ps9hUO4h4s07hjKi+xywWk0gxZxi3E+JwzHk2gIAgWeJy52ZBD9aUoSz+0C2oRUXSOtL6rR3Dk2l4qieMLGES4oPIFxI7y03ocj2MwOZpcxzfUyb/EmsTDcYMVEFSqXje+AYVVuLoAxZ+V/K7GKr2kG7tHpl0K5BMbdO2LYN0vWPnm6k2PoBpNOjrvG6UkvH8HYdluVVOMjLJfTByZ7iPwHbxHMK/TCaGq4F0E2zPdzCmAMSk0avtwgZb9nTmxVjg/yqRXnUc2UPEpTyYDjtVwem/n8VKOPGzMoDK23WAue6S6ZVjs4PdzFa66SAGp4VieYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2Z2WXO1gAtD9YCNeiywPE7yvbc3roC2fs+9U69qjTh0=;
+ b=DOOIYfqYD6zcf88aY7dHf7aasbWbsi3fsOwtXRwmUIkUnkfBdqnQgF9/gmcG/XvpAn5ws6JZCgYF2hhrMZtjdiQQu0j+hL959aWtMQsb9MDW+ebHXP15Amyx5aiV7I94IHApOhOkh/cQO7xErMdy7LE0XWmG74afD7c4h81sJ/vAga5qkMSFJ/zbi6ZjHnBvZshHEuFdgbTr8tSOABbKPkNbgwKKYltyB0NTS5W84y2E50BtUffS/FIn0++s6ti3Ta1+SP72EKbQNmkckLyV7U4k2dwX2Bs5d7tCpT0+W3QzvTAPhFKi73CnoMeGveUW8uHr4l12kb9eqxns42EDQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
+ by MW5PR11MB5907.namprd11.prod.outlook.com (2603:10b6:303:1a1::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Mon, 28 Jul
+ 2025 09:11:25 +0000
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::eeac:69b0:1990:4905]) by IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::eeac:69b0:1990:4905%5]) with mapi id 15.20.8964.025; Mon, 28 Jul 2025
+ 09:11:25 +0000
+Message-ID: <d542b1fa-6e2a-4af1-a14b-eee32a7f3de6@intel.com>
+Date: Mon, 28 Jul 2025 12:11:19 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] mmc: sdhci-brcmstb: rpmb sharing by claiming host for
+ TZOS
+To: Kamal Dasu <kamal.dasu@broadcom.com>, <andersson@kernel.org>,
+	<baolin.wang@linux.alibaba.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <florian.fainelli@broadcom.com>,
+	<ulf.hansson@linaro.org>
+CC: <bcm-kernel-feedback-list@broadcom.com>,
+	<linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mmc@vger.kernel.org>
+References: <20250711154221.928164-1-kamal.dasu@broadcom.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
+ 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
+ 4, Domiciled in Helsinki
+In-Reply-To: <20250711154221.928164-1-kamal.dasu@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DUZPR01CA0109.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bb::28) To IA1PR11MB7198.namprd11.prod.outlook.com
+ (2603:10b6:208:419::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
-To: Michal Hocko <mhocko@suse.com>
-Cc: Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hannes Reinecke <hare@kernel.org>
-References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
- <aIc5XxgkbAwF6wqE@tiehlicka>
- <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
- <aIc9DQ1PwsbiOQwc@tiehlicka>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <aIc9DQ1PwsbiOQwc@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|MW5PR11MB5907:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36be5eca-43a7-417f-9dbb-08ddcdb6ba57
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MWJYLzRiK1lzaCtYalZGVDVNdFFCNDMrZUhVTXVjcXBDK0IwVW1lWDF6ZUlu?=
+ =?utf-8?B?SFV4TWxGbTBjM2ZNeUpRcW0zUjBBM0Fqb1FwOGJ1bEFJMDhDRlNpMEt2TzFS?=
+ =?utf-8?B?TTAvL1ZDZFR1aHhneXdJVHljZk4xVjkza21yVlB0d1IzSlZTQUNUSmhZdzN3?=
+ =?utf-8?B?Zmdaa05CTG9LMlordUZHOVV5WFJ4ZXlTYjlid2VMejR5dnhhc1Y1a2VtUVlH?=
+ =?utf-8?B?Tms1WUJndUJkT3NjbG9SUTVZT2p6dHpQMGZmczZTZmtKR3Zid0NkcExieEpT?=
+ =?utf-8?B?cEw5KzkvQnErUWpFa3EwcE1rNjJ1dmpjdVE5NmYzMWN1RHp1NkhzdGJmVVc3?=
+ =?utf-8?B?alZOR1luQ3hhOXUrMzJMT2ZSdngxZjlkZDJtTDdwZGVIRjNmSGVmc0Fzc0lF?=
+ =?utf-8?B?M1dKVkdMRHNBZnpuWlIwWGpRODlvRUFLSE5UZlNzVXVjd3FIamVrSVBhTXpV?=
+ =?utf-8?B?VkRNSU5sd0gzVjRlakNIZzU1SExTaWxvU2c0UXJoTkhBeFc5bjBYbnNPN09E?=
+ =?utf-8?B?WERMUWxwN0xiRXlocjI4ekdpR1dWWHI1bDFRVFhCdmlRQnh2MlMyazh3WW5X?=
+ =?utf-8?B?NHJJU01Pdk5yaCtYLzR1bjRUenNCQ1RwTkNaclQycm00L2NuVEl3YW9FZGVB?=
+ =?utf-8?B?cVpIT2l1VnZEa0VtZDMyc0dGbTFxZVlEbVNqRFliNHpQVlprY2VnN2g5UzRD?=
+ =?utf-8?B?WGRVMHprdmh1TEMzQnZPRFhHVWQ2ektxRlJXMkxmNjFadkJia0lNRFIyMjBa?=
+ =?utf-8?B?SHMwYlpjODR6Y3dtWUxBZkR4ZjNTYkpKYWFvTWoxZkNrNkdFY3BuZzRxVmpI?=
+ =?utf-8?B?cjVTbzROQ1RtUUJrMTU2MHg3R2dPRTR4NXJ3OVV3OERsa0tGNnpkWWh1eHEz?=
+ =?utf-8?B?Z3ZCazBEZjlDb1p6czhYTlRrM0V6MUV3a1JRRXJYekEyS291NG96Tkw5R003?=
+ =?utf-8?B?QmlrU0ZUeHdJbmhFQzJqaGQ4aHVuWURyQ3hQZTNEdXFzQi9aWEExMlViaGJk?=
+ =?utf-8?B?dUhJY0JWVFM1UVhMZWM4R2ZENCtsdXZobFZxakFkdmUrZ1dxS1MxdjZXVmlz?=
+ =?utf-8?B?WUhjQmhXUzFRZE1YbXdVekVuR25naFdRU3BNeG9TblJlVWxCdWpUdFUyS0Zl?=
+ =?utf-8?B?d2l5NmVmd25RdGZjZHdOQ3BTbXREN1BtU2xITlRCSHRSNmVYcisxNDZiNjFu?=
+ =?utf-8?B?N3UwTnQ2UFQzWFp2ZTZ1Y0lYQVpFN2VwWHNpNUtObXZBajBSQjRSU3VndDJk?=
+ =?utf-8?B?NkhGUHE0QUJlRmYvRzVvNVo0c2NDT1RpeXh1MHBTRE9YUFJNbVdqbUFxd0Ev?=
+ =?utf-8?B?aG9yeXVFYjV6UUlXZE5RNjkxN3VXcUZvQnpKYnRFclhiRlNQRkV2eXcrRDQ1?=
+ =?utf-8?B?aUVhYWZpbTZRdkZKdFJjUlJ6WTdZNHF6eXI2MTZKWndPdXFicnlXY2tkMnND?=
+ =?utf-8?B?NXdFZkZ5ODl6SithY3NuQVBuWXNhMExQMkhpWTB2N2ttRnJHOGxZMVZoMGd3?=
+ =?utf-8?B?dlZzWVhqcVg4U1pOYjVDTzZ1c3dFUjY1WmNha0dqbUdEWmRaZk9scmhjOVVI?=
+ =?utf-8?B?UUZud0syOEhPMFVWL29OdHk2WmxyMmg4V2JMQlF4OW9DZW5tS1Z4S29DbVRu?=
+ =?utf-8?B?c1EwcUxFZmk1YVZrenN2aWlPWDVYV25SUTZzOU01Sis5Uk10OWFMYzd3V2NW?=
+ =?utf-8?B?WnhxZUNSdDlBYWh1ZlpIZFBWTHFWSVNRT1lzLzV2NTEvWFdXK0FaMlFTcVF6?=
+ =?utf-8?B?RWhmU3ZyT1d6dUJ4MkxLekE5TzB0OXJrSVQzTGo1YkxXeXR5MXZ2NWl5WnRJ?=
+ =?utf-8?B?Q1ArM1B1emdLMGJtWk9GbklpcmZYelA5emM2eWlBM3lqajRRZnlod05DcE0w?=
+ =?utf-8?Q?8ehEi2RFAFN4f?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QkVZbzFUa2J0QW1yOFV4cGMyWFdna20rK0ZWY1YrZFoxZW5LQWN2KzM2ZzlZ?=
+ =?utf-8?B?ZE45S1NxWW1iMk1pRkRkNysxb2FCUEtabm8raFpMem16K3YyWjR1SjU3VXJK?=
+ =?utf-8?B?ZmF2MUp6bFZUZWs5WkZwcnN2RE9TWStUcWt0YkQrMkZDaXJsbkVLRkhKNXg4?=
+ =?utf-8?B?Q2I3dTN3NXVyUHMvSmlMMjV6NmQ5b1hDOUgwclZPZXJnRHlld0ZUTndVUC9L?=
+ =?utf-8?B?eDlSTURRQ3F3YjI2VTBBNElaRHRzelJRZ3FzanNINmhZL1F1N0xkV0NpZ21j?=
+ =?utf-8?B?NndKcXJKcE5ManJEOFR1Q1dkZFJldmZUaU0yaWVLTkFzUFRNU1NEcVRiUDJT?=
+ =?utf-8?B?RUgvT0JlS0pnNjF2SG5iMDlaREtBU3lxUXlWNlNuTTMycy9BY3NudWZoR0NU?=
+ =?utf-8?B?cThnUlZtaXJ0dG5MRXBxai9pWlVhYy9JZWNac044ai9ZdDZsdDBLbUdsTzBx?=
+ =?utf-8?B?QURORy9ONkhNSzFLWFdWNzRTOHB4ckdnNmx5eDVYUzlTVWVBdnlHTEp4b0lK?=
+ =?utf-8?B?QXBVRTE3T3YrZGR3SFpuUFcvQ1k2SzNQRUdWb0hKOExZbUpXYWYyT0E5bnB2?=
+ =?utf-8?B?czB0ZHdtcTJQZWRKMnJJSi9YanQyNisvd0dEaFpRZkxxTTZoVFA5UkNELy80?=
+ =?utf-8?B?V0d0ZjJNSXBRUjBvYVgrNWlzbWVoNUxROFpJTkUzQlljZzRRQnlWZXlGSFFI?=
+ =?utf-8?B?eUxQNjlYcWVnd1NXZ29KbzZXSmJ3eUNVREZRVGJWNWIyWjg4VHcvUmRoTlFk?=
+ =?utf-8?B?ODg1SHpGMlJ2U08ycEl4Zlh0MUpIMndEUEY3b2dGT1pYMldMUXZqSFRUVzVV?=
+ =?utf-8?B?cU1vam1HWW81QXdFTHgwSzRFd1dqbVlyNVd2elpCNzZOVUwranQ4R2VjWWFZ?=
+ =?utf-8?B?MDJYYlNyNjcyQks2UTZzUUdYZEdlUVdKSVEzTzNaOGdxbWFiY01kUi9nNjBz?=
+ =?utf-8?B?WVBiWHNBQzBGUXRhKy8reFk5OFQrVk9ER0kzTThGZjZZVzU4QUlmVTVaM0dU?=
+ =?utf-8?B?V0JKTkpkWGViYUYzSER4SEhHN2ZtUXVZUmhBZW5zSDQzV1UySFZKTWg5Mlk1?=
+ =?utf-8?B?NnQvSUZya1hPOEN4bTlYVi9SeHRSWG1qMXo5dnRBaFFvdXBBMld1TWtPYTZW?=
+ =?utf-8?B?Wm1pYVpGQXQvQk51Y0toSHVvVU9tMHRGcExwaWM1NXBkSHh3Yi9HUWJNcU45?=
+ =?utf-8?B?Y3NFaXJvRnE5TVFtVXR3NUdlUUJRUHloZ3NDWk9FUmNXdFR3TkRkdmNHbEhB?=
+ =?utf-8?B?SjJ3NG9ZS000TFozQjZyeDErYysxa0dBNnFGWVhPV1lQVFV4dkZFSlR6QzFa?=
+ =?utf-8?B?WlZWVWpwdUF2YjVKK2lQRWhkR2VBcWlsMklYSDB6TlBsMGZrNnhucEpEV1Nq?=
+ =?utf-8?B?RVZRNUZkRzdvam9NQUhkYlZsS1pLWVNMUlpoRUhMR1JyQlowTHRDc20vWVJv?=
+ =?utf-8?B?dEE3Ris4Ui9QdG9OZ0M0SWRBWUdyVzR0UFgwQlpObVdKdDluVUdtcGRwVmxy?=
+ =?utf-8?B?QTQ0QVRIUk1YQVZXMmgrT0tLUlNuUVJFeTdoRzhMdUgzQmlnZW1yTkpRK3A5?=
+ =?utf-8?B?YTdKLzJjNVRYdmpEZFEwVDhOODRvZm5xdzVUUXVCOGtDcFBGc29Gd2hqQnhM?=
+ =?utf-8?B?M055Tk5zTytDVDZUUVBMblE4dCtJYzUvSlRlOEdIaWFrWnRscHVJVE1YN2cv?=
+ =?utf-8?B?VXJzTFJOeStnVS9keWpWWk02cWIwQVdONTFVU3VCYVJZeWZNdlUwODVRZWkv?=
+ =?utf-8?B?UElDVW5rMTRXZFNNK3FSSDMxcEtHQ21SLzFmZzlIRW5iM0I1bjZtcHpzbnk0?=
+ =?utf-8?B?WVhmak56eVRpcWlPVmNlMWlOd09Oa3FocXMvZHVjTWxoVjNZMXJYMFJ5cVBz?=
+ =?utf-8?B?ZUluTk5wSmVkdk51Ylg0TG9vbUxTVy9SZTkySXUzUi8vZFhxbERoNDlZeFFo?=
+ =?utf-8?B?VTlaeTZOYWJibXNNSG9RY2x0UnFkd2lGZkk5R2pJYUdxOHdORmpmbmVhVElC?=
+ =?utf-8?B?UHJaM0ZSMFo4ZWRKZC9uN0JlazluZlNLY0JtZ2tPRVMvWTRMYnovTW9xRDUw?=
+ =?utf-8?B?YUxldHZzVlhPQ2ZZRXRGcWJoTFh3NnpWbzZjanpwY3lpT3NaSThJOERXRlBu?=
+ =?utf-8?B?UjNUZTlLUEVscmI0T2FnZm1rbU1BZFUvejRseEFBTkFpZEwxU3p3TjE2OW5P?=
+ =?utf-8?B?aEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36be5eca-43a7-417f-9dbb-08ddcdb6ba57
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2025 09:11:25.4464
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: URgc4WdIkeqpqLp06lEarBACvK4/NiKlztrs56JzYgqHw50dgLgO+bSFDydRombf6mWokr4Bct72LhDfVtqBAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR11MB5907
+X-OriginatorOrg: intel.com
 
-On 28.07.25 11:04, Michal Hocko wrote:
-> On Mon 28-07-25 10:53:08, David Hildenbrand wrote:
->> On 28.07.25 10:48, Michal Hocko wrote:
->>> On Mon 28-07-25 10:15:47, Oscar Salvador wrote:
->>>> Hi,
->>>>
->>>> Currently, we have several mechanisms to pick a zone for the new memory we are
->>>> onlining.
->>>> Eventually, we will land on zone_for_pfn_range() which will pick the zone.
->>>>
->>>> Two of these mechanisms are 'movable_node' and 'auto-movable' policy.
->>>> The former will put every single hotpluggled memory in ZONE_MOVABLE
->>>> (unless we can keep zones contiguous by not doing so), while the latter
->>>> will put it in ZONA_MOVABLE IFF we are within the established ratio
->>>> MOVABLE:KERNEL.
->>>>
->>>> It seems, the later doesn't play well with CXL memory where CXL cards hold really
->>>> large amounts of memory, making the ratio fail, and since CXL cards must be removed
->>>> as a unit, it can't be done if any memory block fell within
->>>> !ZONE_MOVABLE zone.
->>>
->>> I suspect this is just an example of how our existing memory hotplug
->>> interface based on memory blocks is just suoptimal and it doesn't fit
->>> new usecases. We should start thinking about how a new v2 api should
->>> look like. I am not sure how that should look like but I believe we
->>> should be able to express a "device" as whole rather than having a very
->>> loosely bound generic memblocks. Anyway this is likely for a longer
->>> discussion and a long term plan rather than addressing this particular
->>> issue.
->>
->> We have that concept with memory groups in the kernel already.
+On 11/07/2025 18:42, Kamal Dasu wrote:
+> This patch adds support to claim host for TZOS RPMB access and synchronized
+> access to the controller hardware using hwspinlock framework.
+> To achieve this Linux OS and the secure TZOS make use of:
+> - shared hardware semaphore register
+> - a set of SDIO shared work registers and
+> - IPI interrupt registers 
 > 
-> I must have missed that. I will have a look, thanks! Do we have any
-> documentation for that? Memory group is an overloaded term in the
-> kernel.
+> The currently running OS that needs access to the controller puts itself in its
+> slot of work register and if its next in line it can try to grab the hardware
+> semaphore and complete its mmc requests. The shared work registers indicate next
+> in queue to access the controller, and current agent in the queue. Next agent
+> queue state is changed under the hwspinlock is owned by the current OS accessing
+> the controller hardware before release the semaphore, send and receive IPI
+> interrupts between linux and secure world are used to indicate completion of
+> transaction to the waiting OS. TZOS has its own RPMB driver which accesses
+> partition when it wants to read/write RPMB frames. Current implementation
+> assumes Linux and TZOS as the two work agents.
+> 
+> This patchset is an alternative method to initial RFC patch:
+> [PATCH RFC 0/3] mmc: sdhci-brcmstb: Add rpmb sharing support	
+> https://lkml.org/lkml/2025/2/6/1711
 
-It's an internal concept so far, the grouping is not exposed to user space.
+Does it address Ulf's comments? i.e.
 
-We have kerneldoc for e.g., "struct memory_group". E.g., from there
-
-"A memory group logically groups memory blocks; each memory block 
-belongs to at most one memory group. A memory group corresponds to a 
-memory device, such as a DIMM or a NUMA node, which spans multiple 
-memory blocks and might even span multiple non-contiguous physical 
-memory ranges."
+	https://lore.kernel.org/all/CAPDyKFrCjo8gGnxmXWP6V39N+b1o62VQH9zwMUNb2_+D3-qrdw@mail.gmail.com/
 
 > 
->> In dax/kmem we register a static memory group. It will be considered one
->> union.
+> Kamal Dasu (4):
+>   dt-bindings: brcmstb-hwspinlock: support for hwspinlock
+>   hwspinlock: brcmstb hardware semaphore support
+>   dt-bindings: mmc: add brcmstb share register and hwlocks reference
+>   mmc: sdhci-brcmstb: rpmb sharing by claiming host for TZOS
 > 
-> But we still do export those memory blocks and let udev or whoever act
-> on those right? If that is the case then ....
-
-Yes.
-
+>  .../hwlock/brcm,brcmstb-hwspinlock.yaml       |  36 +++
+>  .../bindings/mmc/brcm,sdhci-brcmstb.yaml      |  29 ++-
+>  drivers/hwspinlock/Kconfig                    |   9 +
+>  drivers/hwspinlock/Makefile                   |   1 +
+>  drivers/hwspinlock/brcmstb_hwspinlock.c       |  98 +++++++
+>  drivers/mmc/host/sdhci-brcmstb.c              | 243 +++++++++++++++++-
+>  6 files changed, 413 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+>  create mode 100644 drivers/hwspinlock/brcmstb_hwspinlock.c
 > 
-> [...]
-> 
->> daxctl wants to online memory itself. We want to keep that memory offline
->> from a kernel perspective and let daxctl handle it in this case.
->>
->> We have that problem in RHEL where we currently require user space to
->> disable udev rules so daxctl "can win".
-> 
-> ... this is the result. Those shouldn't really race. If udev is suppose
-> to see the device then only in its entirity so regular memory block
-> based onlining rules shouldn't even see that memory. Or am I completely
-> missing the picture?
-
-We can't break user space, which relies on individual memory blocks.
-
-So udev or $whatever will right now see individual memory blocks. We 
-could export the group id to user space if that is of any help, but at 
-least for daxctl purposes, it will be sufficient to identify "oh, this 
-was added by dax/kmem" (which we can obtain from /proc/iomem) and say 
-"okay, I'll let user-space deal with it."
-
-Having the whole thing exposed as a unit is not really solving any 
-problems unless I am missing something important.
-
--- 
-Cheers,
-
-David / dhildenb
 
 
