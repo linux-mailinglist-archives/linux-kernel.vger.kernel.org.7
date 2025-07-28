@@ -1,196 +1,153 @@
-Return-Path: <linux-kernel+bounces-748610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F08DB14395
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:52:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60603B1437A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315874E3527
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:52:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FD8E7A53A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1380127877D;
-	Mon, 28 Jul 2025 20:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65620225793;
+	Mon, 28 Jul 2025 20:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmuBAeIM"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lOiQgbQX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56502235057;
-	Mon, 28 Jul 2025 20:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA61D1C5D53
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753735909; cv=none; b=DVXYuDpTISHtDef54yOidMZkajw7nJ8H30PoIdIXP8YjF0pQPFRq9rXArr1iZ0QO3X6NNqf/+pAbbnX3JpoXqcpYLD4xWyNtQ52qyeV+JiCVhQcIGZG3QNk5lJMgVZgnBGWstfVZWL/w+WQxZoMDeoCeYOmzoABIWs2q/ZueTRw=
+	t=1753735785; cv=none; b=D79q1GSJAR7BVgZSp0AIAoagNF2NMSb1/6GaxARlyxnAKijh4oGvLFEVhWxFC3N68Hw14YwintbBNveGzaA0WYDfc50bqDZyJqQ7aGHhfkMPKw41E+QLwSWu45ux6AtieYQqwugDKMF1c5QhZx0VzlBB6lfIjDGtDrVv37OAS1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753735909; c=relaxed/simple;
-	bh=LbU9QNjIJ9o/RrOlnemX+xU1Ff0wX8+W+xvJQ3POAq0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q3pRWQfYgvdqLVILr7wfhMMo5+wP0HfmiD0SrsD/x8qyb8NUvQtKK+kA0a+bwK3rW3dCxj1igzLAIeoatpW3OykTuH0Vh+6UTFxUfXb9xMCnO5WCDb2ZAwuam4tfNSxARPCv6U+x7Mno77KfcmWCaMUmev5YlCScQQeHferrWYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AmuBAeIM; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso7759244a12.1;
-        Mon, 28 Jul 2025 13:51:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753735905; x=1754340705; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=08lRxFVNZckhlMJF1tDmvh9bauDWalm4tpzq6lHddRU=;
-        b=AmuBAeIMLDUx9eq02HQWDl58LV1z8TJBDQGDDpxgyxJ8h0BnZ5UbhGx0R+uEmcI3JB
-         qxVgeaXd4Djiwy1ginDbGkOVT0BGiclX8IW4PUbZDV1BiC+/tMRGji51sbj6En3mv9qq
-         jrza2cV7CHZ7Ens7oKPD22reHGnsdBe9inIS1Zt6rgv2FtsF6z/iloPEMh2C6ltYNndD
-         oWS92U3GoxawS3zAN2oS4drCxpKQep4Td8GppTUwf8fPVzsdODp7KqjHH685J2m/lVLA
-         SwFulHWeHh2EjADPCZV0oBl2Iux8eeOJnGuwZ+Xsvk3X4vho6b4xFCCMpopOJV7I3jbZ
-         Kmiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753735905; x=1754340705;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=08lRxFVNZckhlMJF1tDmvh9bauDWalm4tpzq6lHddRU=;
-        b=ukF3qQLZfLnk00DSgDk/TdtbYbNdfa8iLA8290OmO019XUSC6nhgJ/MfRa63Bkg/Vn
-         aGRfF6X567Tuc3zwtY/lmMYE70wsp0PSH2NfnPBk/imnYoWl2rThZmZv/RbnNYOROTlv
-         mRYXSfB+HfsVijykEPDlUjoDsjRiMdn2RsgnvpUijED0HlgEHKKS5g5JcFS8UK94H0au
-         h3BoyYU0pZf6Dl2MHKZ7OVXNZCHIQAQ2kcfiP6UnwoF+3PDEuWv6GxJeSWGC0WV5uY4i
-         HG5s5gQr0y0tN0mj1q0HFrLB+z9BsphtPU/2QWo0q0Lbp3uQKHdrhLQb7Xk99BP54SXi
-         S9uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSObcEwysDhrU1CnFEauwt0JoT19+Y1XaHuk3TgYcD3MQsJncZMR8Qbn8iL5mKPxfgHO8j8E0sHIc=@vger.kernel.org, AJvYcCX+pFF3OAkimakjrFDoxV3bYcpEPi6Cj8TOmPITkJwP04tV9iY/wlnmgVSVLscsQd/Q1bzk42u+H4MgmFw=@vger.kernel.org, AJvYcCX0Od46Q03QJ2Zq8I9dp6C7swKiinVqASkWP93h+4i2f7S63lo7VlKFr+C5CjfqQ+E4IJ4+JpvdrNdrP8yn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLVo+p1xRZq/N60ZYwuWvGQ8uFvulTPlK9v2IPLyNENRRp17DP
-	pvzXvPbBM6uIS9/NsFbK2/lien6aAB1h932xYGQM1kxNE1833fRCSCz0
-X-Gm-Gg: ASbGnct38jJIzFdRCKnIVIZ9LhAECcdiJKrpCPaPOb5GgePCO48rJ8S1p4y+RQuH978
-	eG1WA5OphkiRYAlLhGN/PePEZ6elAAMrcRn4tGMVqf977IYRoUJ18fSnjGb7/HT890mPNo4in5L
-	q9v6HGzyyXxt1qEYfRVcI282ikBozgPvSJz8hDT8pwlo+mPymfGXZ3tgv/OGXdX9mgB91KKPmX4
-	a2CKSKZxO42oZooy3NJ04weOBJfqQyvuMIhKHUieY18sBtHJehdIRut1Y9NA345ILYQdVwyVsdk
-	1Nx0SasQ9vYCAeuwhei5YFBPz9U6KuR33TIdiZMR7ZlLgbkYH03v6JBQXKfwPp1vWFjqYViAh8q
-	VNYIporKbGKC8ay8qdUQ9G9CzRn90DXeAj1JVnDX4clXnClny/MIPUumi6C806aK/+IwHQw6E//
-	ptaroEgmO9bVIWEAwQNbUpvTk=
-X-Google-Smtp-Source: AGHT+IHQ3CHb4jb+VIygIExljfM3JmMajc+rt5xDIR0ZNFFyFiSDaKq+XZKeWIc95ztLMnrVrUJ7WA==
-X-Received: by 2002:a17:907:a0d1:b0:af6:36d0:d28d with SMTP id a640c23a62f3a-af636d0d31fmr1090744566b.22.1753735905358;
-        Mon, 28 Jul 2025 13:51:45 -0700 (PDT)
-Received: from puma.museclub.art (p200300cf9f013400cc194b80e1760d4a.dip0.t-ipconnect.de. [2003:cf:9f01:3400:cc19:4b80:e176:d4a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635ad589csm469943066b.118.2025.07.28.13.51.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 13:51:44 -0700 (PDT)
-From: Eugene Shalygin <eugene.shalygin@gmail.com>
-To: eugene.shalygin@gmail.com
-Cc: Nicholas Flintham <nick@flinny.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] hwmon: (asus-ec-sensors) add ROG STRIX Z790E GAMING WIFI II
-Date: Mon, 28 Jul 2025 22:49:10 +0200
-Message-ID: <20250728205133.15487-4-eugene.shalygin@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250728205133.15487-1-eugene.shalygin@gmail.com>
-References: <20250728205133.15487-1-eugene.shalygin@gmail.com>
+	s=arc-20240116; t=1753735785; c=relaxed/simple;
+	bh=GL3gqrUHwJIdpjZoUxL4Ley0U3X51sHP+vg76SPtul4=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=JVefPXTR0zU5puOu5zuXnMrLdzKQ6rgH3aTbBbGDVq6Ytm+MtarOXS4jesE8XaTJIkIxZbD7kK6MnOlNcu6rmNddIbLHGCx1q8st/evCZeMGxYUmZ7xv3nAFRB/m+fbz21lctHH6N5BPrCZzbQ8uoVj+yl7lzSMaJmaLBEL5tJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lOiQgbQX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F90C4CEF6;
+	Mon, 28 Jul 2025 20:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753735785;
+	bh=GL3gqrUHwJIdpjZoUxL4Ley0U3X51sHP+vg76SPtul4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lOiQgbQXyVsH+JWpx/72FhOmuq+j2wZkuPuhiEyZMggY4F1dysQlliXXEpRmX42V6
+	 WWsgp2l+HWwiEUCsZWYmjL78Um+KLLISUTH/lcPrBrvSkjWtUB0pBxHZUzEqUsauZH
+	 sJnVSLXDOgSBg+kuTvwt5aRcDg0sw8djf1/BmgM2LRd9wkJIYvMeXkoYn0UdrBPIn4
+	 GrGaJY8lfuUvJA/hnoKwRVgrjAsNeyh3yvbYZ251t3Ad6WQT8Tk53toR9BRkpcK5LM
+	 Kl29RrkuPb4yV0nMLScMS2qPZ+pglEZHQqjGS3ZBziqRLHk34RC9Tf9fmom/2GVsPM
+	 dieG7pvNg2pqA==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1ugUnF-000000042tn-3mIN;
+	Mon, 28 Jul 2025 16:49:57 -0400
+Message-ID: <20250728204934.281385756@kernel.org>
+User-Agent: quilt/0.68
+Date: Mon, 28 Jul 2025 16:49:34 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>,
+ John Kacur <jkacur@redhat.com>
+Subject: [for-next][PATCH 00/11] verification: Updates for v6.17
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Nicholas Flintham <nick@flinny.org>
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+rv/for-next
 
-Adds support for the ROG STRIX Z790E GAMING WIFI II board
+Head SHA1: 614384533dfe99293a7ff1bce3d4389adadbb759
 
-Signed-off-by: Nicholas Flintham <nick@flinny.org>
-Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
----
- Documentation/hwmon/asus_ec_sensors.rst |  1 +
- drivers/hwmon/asus-ec-sensors.c         | 25 ++++++++++++++++++++++++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
-index 1e8274dba35f..da9a00111d1c 100644
---- a/Documentation/hwmon/asus_ec_sensors.rst
-+++ b/Documentation/hwmon/asus_ec_sensors.rst
-@@ -34,6 +34,7 @@ Supported boards:
-  * ROG STRIX Z390-F GAMING
-  * ROG STRIX Z490-F GAMING
-  * ROG STRIX Z690-A GAMING WIFI D4
-+ * ROG STRIX Z790-E GAMING WIFI II
-  * ROG ZENITH II EXTREME
-  * ROG ZENITH II EXTREME ALPHA
-  * TUF GAMING X670E PLUS
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index 0b19d148f65d..b9543eda2522 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -56,6 +56,8 @@ static char *mutex_path_override;
- 
- #define ASUS_HW_ACCESS_MUTEX_RMTW_ASMX	"\\RMTW.ASMX"
- 
-+#define ASUS_HW_ACCESS_MUTEX_SB_PC00_LPCB_SIO1_MUT0 "\\_SB.PC00.LPCB.SIO1.MUT0"
-+
- #define ASUS_HW_ACCESS_MUTEX_SB_PCI0_SBRG_SIO1_MUT0 "\\_SB_.PCI0.SBRG.SIO1.MUT0"
- 
- #define MAX_IDENTICAL_BOARD_VARIATIONS	3
-@@ -168,7 +170,8 @@ enum board_family {
- 	family_amd_800_series,
- 	family_intel_300_series,
- 	family_intel_400_series,
--	family_intel_600_series
-+	family_intel_600_series,
-+	family_intel_700_series
- };
- 
- /*
-@@ -323,6 +326,14 @@ static const struct ec_sensor_info sensors_family_intel_600[] = {
- 		EC_SENSOR("Water_Block_In", hwmon_temp, 1, 0x01, 0x02),
- };
- 
-+static const struct ec_sensor_info sensors_family_intel_700[] = {
-+	[ec_sensor_temp_t_sensor] =
-+		EC_SENSOR("T_Sensor", hwmon_temp, 1, 0x01, 0x09),
-+	[ec_sensor_temp_vrm] = EC_SENSOR("VRM", hwmon_temp, 1, 0x00, 0x33),
-+	[ec_sensor_fan_cpu_opt] =
-+		EC_SENSOR("CPU_Opt", hwmon_fan, 2, 0x00, 0xb0),
-+};
-+
- /* Shortcuts for common combinations */
- #define SENSOR_SET_TEMP_CHIPSET_CPU_MB                                         \
- 	(SENSOR_TEMP_CHIPSET | SENSOR_TEMP_CPU | SENSOR_TEMP_MB)
-@@ -568,6 +579,13 @@ static const struct ec_board_info board_info_strix_z690_a_gaming_wifi_d4 = {
- 	.family = family_intel_600_series,
- };
- 
-+static const struct ec_board_info board_info_strix_z790_e_gaming_wifi_ii = {
-+	.sensors = SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
-+		SENSOR_FAN_CPU_OPT,
-+	.mutex_path = ASUS_HW_ACCESS_MUTEX_SB_PC00_LPCB_SIO1_MUT0,
-+	.family = family_intel_700_series,
-+};
-+
- static const struct ec_board_info board_info_zenith_ii_extreme = {
- 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_T_SENSOR |
- 		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
-@@ -660,6 +678,8 @@ static const struct dmi_system_id dmi_table[] = {
- 					&board_info_strix_z490_f_gaming),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z690-A GAMING WIFI D4",
- 					&board_info_strix_z690_a_gaming_wifi_d4),
-+	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z790-E GAMING WIFI II",
-+					&board_info_strix_z790_e_gaming_wifi_ii),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG ZENITH II EXTREME",
- 					&board_info_zenith_ii_extreme),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG ZENITH II EXTREME ALPHA",
-@@ -1142,6 +1162,9 @@ static int asus_ec_probe(struct platform_device *pdev)
- 	case family_intel_600_series:
- 		ec_data->sensors_info = sensors_family_intel_600;
- 		break;
-+	case family_intel_700_series:
-+		ec_data->sensors_info = sensors_family_intel_700;
-+		break;
- 	default:
- 		dev_err(dev, "Unknown board family: %d",
- 			ec_data->board_info->family);
--- 
-2.50.1
+Gabriele Monaco (9):
+      rv: Add da_handle_start_run_event_ to per-task monitors
+      rv: Remove trailing whitespace from tracepoint string
+      rv: Use strings in da monitors tracepoints
+      rv: Adjust monitor dependencies
+      rv: Retry when da monitor detects race conditions
+      sched: Adapt sched tracepoints for RV task model
+      rv: Replace tss and sncid monitors with more complete sts
+      rv: Add nrp and sssw per-task monitors
+      rv: Add opid per-cpu monitor
 
+Nam Cao (2):
+      rv: Fix wrong type cast in monitors_show()
+      rv: Fix wrong type cast in reactors_show() and monitor_reactor_show()
+
+----
+ Documentation/trace/rv/monitor_sched.rst           | 307 ++++++++++++++++++---
+ include/linux/rv.h                                 |   3 +-
+ include/linux/sched.h                              |   7 +-
+ include/rv/da_monitor.h                            | 131 +++++----
+ include/trace/events/sched.h                       |  12 +-
+ kernel/sched/core.c                                |  13 +-
+ kernel/trace/rv/Kconfig                            |  11 +-
+ kernel/trace/rv/Makefile                           |   6 +-
+ kernel/trace/rv/monitors/{tss => nrp}/Kconfig      |  12 +-
+ kernel/trace/rv/monitors/nrp/nrp.c                 | 138 +++++++++
+ kernel/trace/rv/monitors/nrp/nrp.h                 |  75 +++++
+ kernel/trace/rv/monitors/nrp/nrp_trace.h           |  15 +
+ kernel/trace/rv/monitors/opid/Kconfig              |  19 ++
+ kernel/trace/rv/monitors/opid/opid.c               | 168 +++++++++++
+ kernel/trace/rv/monitors/opid/opid.h               | 104 +++++++
+ .../{sncid/sncid_trace.h => opid/opid_trace.h}     |   8 +-
+ kernel/trace/rv/monitors/sched/Kconfig             |   1 +
+ kernel/trace/rv/monitors/sco/sco.c                 |   4 +-
+ kernel/trace/rv/monitors/scpd/Kconfig              |   2 +-
+ kernel/trace/rv/monitors/scpd/scpd.c               |   4 +-
+ kernel/trace/rv/monitors/sncid/sncid.c             |  95 -------
+ kernel/trace/rv/monitors/sncid/sncid.h             |  49 ----
+ kernel/trace/rv/monitors/snep/Kconfig              |   2 +-
+ kernel/trace/rv/monitors/snep/snep.c               |   4 +-
+ kernel/trace/rv/monitors/{sncid => sssw}/Kconfig   |  10 +-
+ kernel/trace/rv/monitors/sssw/sssw.c               | 116 ++++++++
+ kernel/trace/rv/monitors/sssw/sssw.h               | 105 +++++++
+ kernel/trace/rv/monitors/sssw/sssw_trace.h         |  15 +
+ kernel/trace/rv/monitors/sts/Kconfig               |  19 ++
+ kernel/trace/rv/monitors/sts/sts.c                 | 156 +++++++++++
+ kernel/trace/rv/monitors/sts/sts.h                 | 117 ++++++++
+ .../monitors/{tss/tss_trace.h => sts/sts_trace.h}  |   8 +-
+ kernel/trace/rv/monitors/tss/tss.c                 |  90 ------
+ kernel/trace/rv/monitors/tss/tss.h                 |  47 ----
+ kernel/trace/rv/monitors/wip/Kconfig               |   2 +-
+ kernel/trace/rv/rv.c                               |   2 +-
+ kernel/trace/rv/rv_reactors.c                      |   4 +-
+ kernel/trace/rv/rv_trace.h                         | 114 +++++---
+ tools/verification/models/sched/nrp.dot            |  29 ++
+ tools/verification/models/sched/opid.dot           |  35 +++
+ tools/verification/models/sched/sncid.dot          |  18 --
+ tools/verification/models/sched/sssw.dot           |  30 ++
+ tools/verification/models/sched/sts.dot            |  38 +++
+ tools/verification/models/sched/tss.dot            |  18 --
+ 44 files changed, 1668 insertions(+), 495 deletions(-)
+ rename kernel/trace/rv/monitors/{tss => nrp}/Kconfig (51%)
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.c
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.h
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp_trace.h
+ create mode 100644 kernel/trace/rv/monitors/opid/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.c
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.h
+ rename kernel/trace/rv/monitors/{sncid/sncid_trace.h => opid/opid_trace.h} (66%)
+ delete mode 100644 kernel/trace/rv/monitors/sncid/sncid.c
+ delete mode 100644 kernel/trace/rv/monitors/sncid/sncid.h
+ rename kernel/trace/rv/monitors/{sncid => sssw}/Kconfig (58%)
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.c
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.h
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw_trace.h
+ create mode 100644 kernel/trace/rv/monitors/sts/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.c
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.h
+ rename kernel/trace/rv/monitors/{tss/tss_trace.h => sts/sts_trace.h} (67%)
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.c
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.h
+ create mode 100644 tools/verification/models/sched/nrp.dot
+ create mode 100644 tools/verification/models/sched/opid.dot
+ delete mode 100644 tools/verification/models/sched/sncid.dot
+ create mode 100644 tools/verification/models/sched/sssw.dot
+ create mode 100644 tools/verification/models/sched/sts.dot
+ delete mode 100644 tools/verification/models/sched/tss.dot
 
