@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-748057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C8CB13C05
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:52:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632A0B13C0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A20D3BFE31
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:51:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873C017E5F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCE826D4E9;
-	Mon, 28 Jul 2025 13:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967F526C3B5;
+	Mon, 28 Jul 2025 13:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cqjSIitV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O+sluaVf"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A97126B2D7
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D3A26C3B3
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753710657; cv=none; b=kZemUjjsD5vzXR/LhYjzQhG4m01Q3ltjGCcLTsXplF1WnM+/TJT2PkCrBozWaTMdXlDNqu6FC+P8UM3RuOShZkhyW7sUDILmY6BxRh/T637cxyYfL9h84yjNMrdSHU94rbsukBqZorZSk5w+gWeC7Tezxi/gXXO9OWCNtBDzX8Q=
+	t=1753710666; cv=none; b=X2FY9EthNSGfWNaN/uwADy4OT1SWHf/X/LjRROuTWh2GvIAkBfb0V/U+/WmQNE/+7jQLBbk3JzcTcaU5/RbIO23KoiLwJHElVDWPrd1kccSOIF9EMWCxoWIwucO4d2PxyATlI0Lznlk9QHQ1flV7Adw2DjAxmTDfhR1r9WkJ66M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753710657; c=relaxed/simple;
-	bh=R+/yV0o+JJnLpKjC8wFlT8d76sjjU7GgmQ3rxh0TbUE=;
+	s=arc-20240116; t=1753710666; c=relaxed/simple;
+	bh=r29Q9FG0WKRLs0uX3uFtig4KnkopRaaSrLZsGP9yLUQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g1FP/xSzKgvohI7csRm9mofjCX55M2BhjhlRK3GI0zGzoYS77IQUxB9NuIMh5q7bLIeMRy+NdS7l+NuXPukp8RfRf4IJVIxanX2XpAB2pb8u8jOxen9TfduUIQEkrBUPPyl2cW8W3gfZzE/w7qHjwQgQ/TRG+LwV7VoEOKmUDCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cqjSIitV; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=CbYtsdGo14y8ABn2OLyxbc6xLxCMNmFmbMMah62TckIhLLQV6aQuupJUuizkWR0Nq0JF4UyHjpJ6wXu/uF6ni+kEXdHhO6qv9VH1Wy/FG08boeaKsofeW4ITURde74o5rs8TQ/BT6eyueLkF7M4rVBM1k0r7wRNYMVygGs+7WGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O+sluaVf; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753710654;
+	s=mimecast20190719; t=1753710663;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=33+qEpO2Qn72iKBG/1o3SKyae0IY1w7svQavRlY7+HE=;
-	b=cqjSIitV43BfWiE82rUtg+AK7lWPNRW88W03K5mCU9s9ukXUNFV4uu0d1xMG8rLVyRTTNh
-	g9zgCoS1pLt4F5VskdjBWawc+rIrAOwaeIRHd/M5scUiwojGXYrUxTyuFGndhzYn9r8obh
-	Po3SrJqz4qRZo3hOHD5Ou6XY6be+RX8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+	bh=dHfOkuQeKnChCXoWnOaIjVjwkLjX5/enoun8tALv5yQ=;
+	b=O+sluaVfSCBRfcMbqRls6cDITo3VrVmpvdvmg1q5ZHMmxLifbZHJ4uUQ5Ju7/JQIXGNKHg
+	4iuuRJ23brBBsmYIv8JGQj68/91PKFnwJRh2KZIG4PNJZtJgLGzj9ZETGWfeg/sAk1eY5V
+	AtPI9dL7nBiwLRmIQfTE/oEieuQ2kE8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-551-8Trl0vo5PGKkezOVXM_GLw-1; Mon,
- 28 Jul 2025 09:50:53 -0400
-X-MC-Unique: 8Trl0vo5PGKkezOVXM_GLw-1
-X-Mimecast-MFC-AGG-ID: 8Trl0vo5PGKkezOVXM_GLw_1753710651
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-199-0jjsgZ18OGWsFWjkuv8nDg-1; Mon,
+ 28 Jul 2025 09:50:59 -0400
+X-MC-Unique: 0jjsgZ18OGWsFWjkuv8nDg-1
+X-Mimecast-MFC-AGG-ID: 0jjsgZ18OGWsFWjkuv8nDg_1753710658
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CE6551800366;
-	Mon, 28 Jul 2025 13:50:51 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62477180044F;
+	Mon, 28 Jul 2025 13:50:58 +0000 (UTC)
 Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.224.215])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 218B81800D88;
-	Mon, 28 Jul 2025 13:50:45 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C28511800285;
+	Mon, 28 Jul 2025 13:50:52 +0000 (UTC)
 From: Gabriele Monaco <gmonaco@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	Steven Rostedt <rostedt@goodmis.org>,
@@ -69,9 +69,9 @@ Cc: Gabriele Monaco <gmonaco@redhat.com>,
 	Juri Lelli <jlelli@redhat.com>,
 	Clark Williams <williams@redhat.com>,
 	John Kacur <jkacur@redhat.com>
-Subject: [PATCH v5 2/9] rv: Remove trailing whitespace from tracepoint string
-Date: Mon, 28 Jul 2025 15:50:14 +0200
-Message-ID: <20250728135022.255578-3-gmonaco@redhat.com>
+Subject: [PATCH v5 3/9] rv: Use strings in da monitors tracepoints
+Date: Mon, 28 Jul 2025 15:50:15 +0200
+Message-ID: <20250728135022.255578-4-gmonaco@redhat.com>
 In-Reply-To: <20250728135022.255578-1-gmonaco@redhat.com>
 References: <20250728135022.255578-1-gmonaco@redhat.com>
 Precedence: bulk
@@ -83,55 +83,173 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-RV event tracepoints print a line with the format:
-    "event_xyz: S0 x event -> S1 "
-    "event_xyz: S1 x event -> S0 (final)"
+Using DA monitors tracepoints with KASAN enabled triggers the following
+warning:
 
-While printing an event leading to a non-final state, the line
-has a trailing white space (visible above before the closing ").
+ BUG: KASAN: global-out-of-bounds in do_trace_event_raw_event_event_da_monitor+0xd6/0x1a0
+ Read of size 32 at addr ffffffffaada8980 by task ...
+ Call Trace:
+  <TASK>
+ [...]
+  do_trace_event_raw_event_event_da_monitor+0xd6/0x1a0
+  ? __pfx_do_trace_event_raw_event_event_da_monitor+0x10/0x10
+  ? trace_event_sncid+0x83/0x200
+  trace_event_sncid+0x163/0x200
+ [...]
+ The buggy address belongs to the variable:
+  automaton_snep+0x4e0/0x5e0
 
-Adapt the format string not to print the trailing whitespace if we are
-not printing "(final)".
+This is caused by the tracepoints reading 32 bytes __array instead of
+__string from the automata definition. Such strings are literals and
+reading 32 bytes ends up in out of bound memory accesses (e.g. the next
+automaton's data in this case).
+The error is harmless as, while printing the string, we stop at the null
+terminator, but it should still be fixed.
 
+Use the __string facilities while defining the tracepoints to avoid
+reading out of bound memory.
+
+Fixes: 792575348ff7 ("rv/include: Add deterministic automata monitor definition via C macros")
 Reviewed-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 ---
- kernel/trace/rv/rv_trace.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/trace/rv/rv_trace.h | 76 +++++++++++++++++++-------------------
+ 1 file changed, 38 insertions(+), 38 deletions(-)
 
 diff --git a/kernel/trace/rv/rv_trace.h b/kernel/trace/rv/rv_trace.h
-index b6f310498466..17ba07329b67 100644
+index 17ba07329b67..d38e0d3abdfd 100644
 --- a/kernel/trace/rv/rv_trace.h
 +++ b/kernel/trace/rv/rv_trace.h
-@@ -29,11 +29,11 @@ DECLARE_EVENT_CLASS(event_da_monitor,
- 		__entry->final_state		= final_state;
+@@ -16,23 +16,23 @@ DECLARE_EVENT_CLASS(event_da_monitor,
+ 	TP_ARGS(state, event, next_state, final_state),
+ 
+ 	TP_STRUCT__entry(
+-		__array(	char,	state,		MAX_DA_NAME_LEN	)
+-		__array(	char,	event,		MAX_DA_NAME_LEN	)
+-		__array(	char,	next_state,	MAX_DA_NAME_LEN	)
+-		__field(	bool,	final_state			)
++		__string(	state,		state		)
++		__string(	event,		event		)
++		__string(	next_state,	next_state	)
++		__field(	bool,		final_state	)
  	),
  
--	TP_printk("%s x %s -> %s %s",
-+	TP_printk("%s x %s -> %s%s",
- 		__entry->state,
- 		__entry->event,
- 		__entry->next_state,
--		__entry->final_state ? "(final)" : "")
-+		__entry->final_state ? " (final)" : "")
+ 	TP_fast_assign(
+-		memcpy(__entry->state,		state,		MAX_DA_NAME_LEN);
+-		memcpy(__entry->event,		event,		MAX_DA_NAME_LEN);
+-		memcpy(__entry->next_state,	next_state,	MAX_DA_NAME_LEN);
+-		__entry->final_state		= final_state;
++		__assign_str(state);
++		__assign_str(event);
++		__assign_str(next_state);
++		__entry->final_state = final_state;
+ 	),
+ 
+ 	TP_printk("%s x %s -> %s%s",
+-		__entry->state,
+-		__entry->event,
+-		__entry->next_state,
++		__get_str(state),
++		__get_str(event),
++		__get_str(next_state),
+ 		__entry->final_state ? " (final)" : "")
  );
  
- DECLARE_EVENT_CLASS(error_da_monitor,
-@@ -90,12 +90,12 @@ DECLARE_EVENT_CLASS(event_da_monitor_id,
- 		__entry->final_state		= final_state;
+@@ -43,18 +43,18 @@ DECLARE_EVENT_CLASS(error_da_monitor,
+ 	TP_ARGS(state, event),
+ 
+ 	TP_STRUCT__entry(
+-		__array(	char,	state,		MAX_DA_NAME_LEN	)
+-		__array(	char,	event,		MAX_DA_NAME_LEN	)
++		__string(	state,	state	)
++		__string(	event,	event	)
  	),
  
--	TP_printk("%d: %s x %s -> %s %s",
-+	TP_printk("%d: %s x %s -> %s%s",
+ 	TP_fast_assign(
+-		memcpy(__entry->state,		state,		MAX_DA_NAME_LEN);
+-		memcpy(__entry->event,		event,		MAX_DA_NAME_LEN);
++		__assign_str(state);
++		__assign_str(event);
+ 	),
+ 
+ 	TP_printk("event %s not expected in the state %s",
+-		__entry->event,
+-		__entry->state)
++		__get_str(event),
++		__get_str(state))
+ );
+ 
+ #include <monitors/wip/wip_trace.h>
+@@ -75,26 +75,26 @@ DECLARE_EVENT_CLASS(event_da_monitor_id,
+ 	TP_ARGS(id, state, event, next_state, final_state),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	int,	id				)
+-		__array(	char,	state,		MAX_DA_NAME_LEN	)
+-		__array(	char,	event,		MAX_DA_NAME_LEN	)
+-		__array(	char,	next_state,	MAX_DA_NAME_LEN	)
+-		__field(	bool,	final_state			)
++		__field(	int,		id		)
++		__string(	state,		state		)
++		__string(	event,		event		)
++		__string(	next_state,	next_state	)
++		__field(	bool,		final_state	)
+ 	),
+ 
+ 	TP_fast_assign(
+-		memcpy(__entry->state,		state,		MAX_DA_NAME_LEN);
+-		memcpy(__entry->event,		event,		MAX_DA_NAME_LEN);
+-		memcpy(__entry->next_state,	next_state,	MAX_DA_NAME_LEN);
+-		__entry->id			= id;
+-		__entry->final_state		= final_state;
++		__assign_str(state);
++		__assign_str(event);
++		__assign_str(next_state);
++		__entry->id		= id;
++		__entry->final_state	= final_state;
+ 	),
+ 
+ 	TP_printk("%d: %s x %s -> %s%s",
  		__entry->id,
- 		__entry->state,
- 		__entry->event,
- 		__entry->next_state,
--		__entry->final_state ? "(final)" : "")
-+		__entry->final_state ? " (final)" : "")
+-		__entry->state,
+-		__entry->event,
+-		__entry->next_state,
++		__get_str(state),
++		__get_str(event),
++		__get_str(next_state),
+ 		__entry->final_state ? " (final)" : "")
  );
  
- DECLARE_EVENT_CLASS(error_da_monitor_id,
+@@ -105,21 +105,21 @@ DECLARE_EVENT_CLASS(error_da_monitor_id,
+ 	TP_ARGS(id, state, event),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	int,	id				)
+-		__array(	char,	state,		MAX_DA_NAME_LEN	)
+-		__array(	char,	event,		MAX_DA_NAME_LEN	)
++		__field(	int,	id	)
++		__string(	state,	state	)
++		__string(	event,	event	)
+ 	),
+ 
+ 	TP_fast_assign(
+-		memcpy(__entry->state,		state,		MAX_DA_NAME_LEN);
+-		memcpy(__entry->event,		event,		MAX_DA_NAME_LEN);
+-		__entry->id			= id;
++		__assign_str(state);
++		__assign_str(event);
++		__entry->id	= id;
+ 	),
+ 
+ 	TP_printk("%d: event %s not expected in the state %s",
+ 		__entry->id,
+-		__entry->event,
+-		__entry->state)
++		__get_str(event),
++		__get_str(state))
+ );
+ 
+ #include <monitors/wwnr/wwnr_trace.h>
 -- 
 2.50.1
 
