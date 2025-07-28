@@ -1,140 +1,362 @@
-Return-Path: <linux-kernel+bounces-748438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2741CB14152
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:43:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877DBB14155
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA6F3BF344
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F82189B88F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE06B21D3DC;
-	Mon, 28 Jul 2025 17:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A85275AFF;
+	Mon, 28 Jul 2025 17:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tSb9UqeX"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k03IEOti"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4336274FEE
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0C42741CB;
+	Mon, 28 Jul 2025 17:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753724621; cv=none; b=KZeFTnrp4vpfcp6KRnCW4ygzXBK3VDy26g/lU+ZgCCNS5qY0stPoBs/Oh4YTPFFk9yDA8b0nudeDeAYLMv5euWS4Y2TvKRUh4AVDQb3UVIw9cUGUCIzXNUoR908OGpyEDlM07n2FVNRE8rpLC6f6TIAghnDTHUORxB79k6qzrPY=
+	t=1753724657; cv=none; b=jU5cBFqe6sxw/OaXMTe/stoYfDOmijc8EBIBpTOdy7hbsbLkuzN0bI+exnBFbKCPtFcyHSI2wvjHR50F+ymHOI/1uInk3jcTBuFhl3WtsIT1GmUJt4bfDFyt910W3A5VnDKz9a6z2qKxgcgujJkD0fK22ln115n8YPnd9w/aQm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753724621; c=relaxed/simple;
-	bh=tTSVZFhM/8KfEpOJ5B/nufZRthIAg5fmsk2+H3mu4/s=;
+	s=arc-20240116; t=1753724657; c=relaxed/simple;
+	bh=myGplgNPnuSBD9zdlw6Nm6KJEWtu9mFVbOvE5vk4288=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VaYQ12XGuQErFNLQFVKqJlXaatq2DhTpdridx+nR589YIgvL2vrXOVrQRFKRIHvgmvdmcLRxuzMuskzPJryvfKT9/LvQ2Z/s8dfaQ/iZ+ADZxnVSEkfrZJsfMFaTgf9Wx/zSfmoILSD6+63NeWm+lRt8aJs/19LF4m0l526YHtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tSb9UqeX; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso51771cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:43:39 -0700 (PDT)
+	 To:Cc:Content-Type; b=W0A55z9BR7EE38DoQq3mpmArnu1T5Iw2L38uK9jQ947htFBybY0YC3JclGPjuyF8w9W38DJHK0jNlZA3zKmpYsxpBqg4jHpinffexeHDNO9CkX/Tkdc3qY4GixUmqqL3idHCwkSgdSomPgwCgCaeygawwy5mPNKpS/DSNOOQdy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k03IEOti; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ab8403b6daso50360571cf.2;
+        Mon, 28 Jul 2025 10:44:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753724619; x=1754329419; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753724653; x=1754329453; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BEghI5pYEjufZFW6NqCQuT9m+lJJtlDUIlnDJTdNb/A=;
-        b=tSb9UqeXfXEhdjHdDTR3Xjz4HwRb/8dGO5gCvsdjYKoQWYt//2LlFmGm7ZU6kYbl29
-         EeumAVt+bat0o158Hi26Vdp2pxWQihLuhBP3iy9Ryp6SR1JjBNdaMgjyKkP5P0QN9mx6
-         bv3bjngXbxxwybmCddG1k7Of3LnjUSSJEy8c905a0r3v+gzVtNpNTlrcRbB1XglxG4UT
-         JmEmYrtKrzGrwi199UzxaoFvk5jQ0O8BfPtFM31jTQYF0sno2OIAlbs66NZqAsVB01xr
-         kFntR05YnOQDVx2ox62N+BTUhVdRhUmwHPYNXopHPv7L61f2TybcqsyTaVNplYki/XJF
-         +59A==
+        bh=WaNs6TAtiLS9Zn84sgyHz2QFRjPypF9PY+lV+Xzno3c=;
+        b=k03IEOtibm6YenDXjEJEH5/CFeaw6M0iKpr22wzhITiFqdoqIAJSc1mfix9spj/D3E
+         CfNHHhjUinYIv4i5q8TSIuaL5m+BZZA/6ZPmgZT7GTT7AX40Lw1w0sHMq1hYQt1caxGb
+         t9RJOeRnhW80D4ofdZcMZLmVvU0e5DLOmoDn2DjKeIRv3OcH3W98qAR1ahxJ2jsP7lxj
+         mbSqdOw+EiTv2vBe3vwGysH8kZtT1CBbUpnV5WM1QPwNqz13BgcOZyGYqTzidoUlKzur
+         INmpo4J1B+44L1xurpRsNRuweYdloVE5pjERdGCYybGQcs+BG4cZl4Dxajg5xU0yHvRd
+         Nw5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753724619; x=1754329419;
+        d=1e100.net; s=20230601; t=1753724653; x=1754329453;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BEghI5pYEjufZFW6NqCQuT9m+lJJtlDUIlnDJTdNb/A=;
-        b=PNL1u50qQSzZZqx3JO9xT4vwDY+Rlon+IUVZaH0Bq7EhU8TIj/cHcjyUxzOgFTPS1v
-         Ui1t6SexnyvEoZvkbfb6XG5lg5A57/pjytAyZyv/MougayMySRXyuYCcErmyWHu0X2PJ
-         jmHmrsPDlFLL+WjA9nHLaL9M/H0msysmhKzD3PjgUqmIylgyXaooFKC6agTEm+afYHfS
-         wjYy7sePe43pglwatdRexBS1pxvf3CtJxdKJ0ej57i2EeeUShlKs+f5T5+MA3/ERNEK9
-         OhtvZir45z1Qut4R5z3uHrnG14yMtVMtZJgq0xAoD7FGdlewJ5Vxob+M5Dn7fuZww/n1
-         7YlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBPBsSxM9CqvFvGAz1kVd6Ewb/43O8IRCiBX00hIfC2rSyFDDmrN9E9zejFNybqGqUCi3EJLb4pKs2O6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2kmkWpVAKFjkbEXZMV/vWdP9sUE8P5PkboTm4864523EYBYdk
-	bMcri43FDyxTmLPLHkmAR4LF08koOtZFiCKTxZ5ma9KHCDOPeIp3/RLYAOp1ZaFuf3iI8Iu77w6
-	OpG1K+yEe/o+JdNsBCSpVFPvPHiOmfQk4/VESh6n+
-X-Gm-Gg: ASbGnctKvtK25mzmHXhRa3Htng7sQIpk7C1ebFyCePM4QDyxeOjUqQVMbpDbH9jYUwd
-	HW3/+Uelr6xdjJv0FiN7pGlvgkNYxfAhmIVwQQ1/zqA9LU/sOvmIJBptidOUPe/ZnCKiH+A+MUM
-	XyY1LU1cOVxCYbqN1L4v+IiIkh+egj38SkHeixToA9STTj/XiupFadGiHa/5o6F/dSYVNCU4CCP
-	CCsEh6SF413vyAm
-X-Google-Smtp-Source: AGHT+IHxByOEzP2Xq3Dzg1Babc28QbNqFKhq4fL9Ckik/VGrbhh3ukcLUktDijqaR+JqVUL0Q5B2QLam3WeUYEHkrQI=
-X-Received: by 2002:a05:622a:143:b0:4a9:a4ef:35c2 with SMTP id
- d75a77b69052e-4ae9e887e3cmr7745801cf.23.1753724618069; Mon, 28 Jul 2025
- 10:43:38 -0700 (PDT)
+        bh=WaNs6TAtiLS9Zn84sgyHz2QFRjPypF9PY+lV+Xzno3c=;
+        b=OGmPFFXIq7RKA4CLSQjNtC46i5F9uIU+tCmjKUiE4PnXUDvSSyauo+Cnt6bymXYlf6
+         ZgTpErGwG5mCX/9vBO5oPzt3Bs53d87H6cK5fBtHmPzX119swbnzCy4W+VaIw+0nH+30
+         fp1q55Tn6c581TMl7yd/OpiHKq20m0j1QWVpxsndaV3F0vxIWn0JavMn/z24QxX1A9FV
+         VEc/qByAQeigMmOlissNRXez/iuDSwJtsQN7FyO50KvMCGF4FZVMqPbVS4dcw4bUnats
+         2eTXDiDxgU3D/7UzrSrHmAr3fIlXabo0jpxy7BAdcTpzO2raIEk6PY4MUgtC0d9Zqdvs
+         0v0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVwG9hijFoCeA3QNZY9ybx5SwlMIFie9n/gqvUIwWzF20KVYA4U+t4aFR8H7joYIgQw10Hh8CQGRAoZ8lbh@vger.kernel.org, AJvYcCW011cnfqPlSd9sQXIsFi+Dl/m07cdSV8qcYaXycQtbU9FegHIWQovse7KFJjWYS6XLWUgd/nfj1NZ6@vger.kernel.org, AJvYcCXFQ84cVUodsBw4TwYy23vfaYHMaSUUVAPEMQFxP1VI5IkH7vN7MNIaf8wVtqKsU45y75Ka/V+0ZUyOVkTC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC8xz5VDc+IWacZv3K5vQ9c/lugQoXO1nyg1f88FiOGWPiWCzw
+	jlx8rjeF0BRhszNjOIiFcWhQcWq1UJvCx8VVOktEDZlmJF0nhneWS4C4Rix6UIJ7vSDm11XXP96
+	A7mH4L/FNzdlkvIF5ZCP9DiH3xnccZ+k=
+X-Gm-Gg: ASbGncuNazCKbwR4zvogWqGVlpEVuszR5TlJw0bM1HnIYBZHvxBg3zEpJYDwyY6NE96
+	Q257NmBRc0iOS+dMI19Sf07q+ztp5efnO66H5SuzPswjy5bqjJ0fNQrYDOYI58Gsk78/pKrmDZm
+	H1PrZtSQcJzpUD7Drhv61Db2J8PtUKQ0Y4nkkX9ZzgYgtOb/JXWxv8807LoLB/iC4CtCDyCfZFh
+	mKMkbgrKHPCKo8V0Q==
+X-Google-Smtp-Source: AGHT+IGte50fwChvEi9kJQNzD68kbG1EMNvci8he6MVBVKPQmFhf/9CW//FXjrAlW6QX8pLJYLCknnZzhpsStOhCE6k=
+X-Received: by 2002:ac8:5a44:0:b0:4ab:6c75:620 with SMTP id
+ d75a77b69052e-4ae8ef62b14mr151522531cf.1.1753724652975; Mon, 28 Jul 2025
+ 10:44:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728170950.2216966-1-surenb@google.com> <3f8c28f4-6935-4581-83ec-d3bc1e6c400e@suse.cz>
- <CAJuCfpGZXGF_k_QVQqHWZpnypB-sWB8hwZeOYMOD0xmAFOBxkA@mail.gmail.com> <97938dc6-5dfe-4591-ba53-3729934c1235@suse.cz>
-In-Reply-To: <97938dc6-5dfe-4591-ba53-3729934c1235@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 28 Jul 2025 10:43:27 -0700
-X-Gm-Features: Ac12FXy5kos_F88NmjNLuh5BxW7TbmMP21eggfxR6rOr4N2InO9laPUKFKTi9xY
-Message-ID: <CAJuCfpHgyzQxmAiriFM59KGi465ocxH6T5nBSBY1fcUazOj9Gw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm: fix a UAF when vma->mm is freed after
- vma->vm_refcnt got dropped
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, jannh@google.com, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, pfalcato@suse.de, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
+ <20250723144637.GW2672070@frogsfrogsfrogs> <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
+ <20250723212020.GY2672070@frogsfrogsfrogs> <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
+ <CAJnrk1byTVJtuOyAyZSVYrusjhA-bW6pxBOQQopgHHbD3cDUHw@mail.gmail.com>
+ <CAJnrk1ZYR=hM5k90H57tOv=fe6F-r8dO+f3wNuCT_w3j8YNYNQ@mail.gmail.com> <20250728171425.GR2672029@frogsfrogsfrogs>
+In-Reply-To: <20250728171425.GR2672029@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 28 Jul 2025 10:44:01 -0700
+X-Gm-Features: Ac12FXwC8Bb-k9tFwYfIA8TgFEpNMPte-Anh_9X52L95AlRm8wPx7oIuVouRTN8
+Message-ID: <CAJnrk1bBesBijYRD1Wf_01OSBykJ0VzwFZKZFev0wPn9wYc98Q@mail.gmail.com>
+Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
+ at fuse_iomap_writeback_range
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, linux-xfs@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <liam.howlett@oracle.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 28, 2025 at 10:39=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
-rote:
+On Mon, Jul 28, 2025 at 10:14=E2=80=AFAM Darrick J. Wong <djwong@kernel.org=
+> wrote:
 >
-> On 7/28/25 19:37, Suren Baghdasaryan wrote:
-> > On Mon, Jul 28, 2025 at 10:19=E2=80=AFAM Vlastimil Babka <vbabka@suse.c=
-z> wrote:
-> >> > +      */
-> >> > +     if (unlikely(vma->vm_mm !=3D mm)) {
-> >> > +             /*
-> >> > +              * __mmdrop() is a heavy operation and we don't need R=
-CU
-> >> > +              * protection here. Release RCU lock during these oper=
-ations.
-> >> > +              */
-> >> > +             rcu_read_unlock();
-> >> > +             mmgrab(vma->vm_mm);
-> >> > +             vma_refcount_put(vma);
-> >>
-> >> The vma can go away here.
+> On Fri, Jul 25, 2025 at 06:16:15PM -0700, Joanne Koong wrote:
+> > On Thu, Jul 24, 2025 at 12:14=E2=80=AFPM Joanne Koong <joannelkoong@gma=
+il.com> wrote:
+> > >
+> > > On Wed, Jul 23, 2025 at 3:37=E2=80=AFPM Joanne Koong <joannelkoong@gm=
+ail.com> wrote:
+> > > >
+> > > > On Wed, Jul 23, 2025 at 2:20=E2=80=AFPM Darrick J. Wong <djwong@ker=
+nel.org> wrote:
+> > > > >
+> > > > > On Wed, Jul 23, 2025 at 11:42:42AM -0700, Joanne Koong wrote:
+> > > > > > On Wed, Jul 23, 2025 at 7:46=E2=80=AFAM Darrick J. Wong <djwong=
+@kernel.org> wrote:
+> > > > > > >
+> > > > > > > [cc Joanne]
+> > > > > > >
+> > > > > > > On Wed, Jul 23, 2025 at 05:14:28PM +0530, Naresh Kamboju wrot=
+e:
+> > > > > > > > Regressions found while running LTP msync04 tests on qemu-a=
+rm64 running
+> > > > > > > > Linux next-20250721, next-20250722 and next-20250723 with 1=
+6K and 64K
+> > > > > > > > page size enabled builds.
+> > > > > > > >
+> > > > > > > > CONFIG_ARM64_64K_PAGES=3Dy ( kernel warning as below )
+> > > > > > > > CONFIG_ARM64_16K_PAGES=3Dy ( kernel warning as below )
+> > > > > > > >
+> > > > > > > > No warning noticed with 4K page size.
+> > > > > > > > CONFIG_ARM64_4K_PAGES=3Dy works as expected
+> > > > > > >
+> > > > > > > You might want to cc Joanne since she's been working on large=
+ folio
+> > > > > > > support in fuse.
+> > > > > > >
+> > > > > > > > First seen on the tag next-20250721.
+> > > > > > > > Good: next-20250718
+> > > > > > > > Bad:  next-20250721 to next-20250723
+> > > > > >
+> > > > > > Thanks for the report. Is there a link to the script that mount=
+s the
+> > > > > > fuse server for these tests? I'm curious whether this was mount=
+ed as a
+> > > > > > fuseblk filesystem.
+> > > > > >
+> > > > > > > >
+> > > > > > > > Regression Analysis:
+> > > > > > > > - New regression? Yes
+> > > > > > > > - Reproducibility? Yes
+> > > > > > > >
+> > > > > > > > Test regression: next-20250721 arm64 16K and 64K page size =
+WARNING fs
+> > > > > > > > fuse file.c at fuse_iomap_writeback_range
+> > > > > > > >
+> > > > > > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.o=
+rg>
+> > > > > > > >
+> > > > > > > > ## Test log
+> > > > > > > > ------------[ cut here ]------------
+> > > > > > > > [  343.828105] WARNING: fs/fuse/file.c:2146 at
+> > > > > > > > fuse_iomap_writeback_range+0x478/0x558 [fuse], CPU#0: msync=
+04/4190
+> > > > > > >
+> > > > > > >         WARN_ON_ONCE(len & (PAGE_SIZE - 1));
+> > > > > > >
+> > > > > > > /me speculates that this might be triggered by an attempt to =
+write back
+> > > > > > > some 4k fsblock within a 16/64k base page?
+> > > > > > >
+> > > > > >
+> > > > > > I think this can happen on 4k base pages as well actually. On t=
+he
+> > > > > > iomap side, the length passed is always block-aligned and in fu=
+se, we
+> > > > > > set blkbits to be PAGE_SHIFT so theoretically block-aligned is =
+always
+> > > > > > page-aligned, but I missed that if it's a "fuseblk" filesystem,=
+ that
+> > > > > > isn't true and the blocksize is initialized to a default size o=
+f 512
+> > > > > > or whatever block size is passed in when it's mounted.
+> > > > >
+> > > > > <nod> I think you're correct.
+> > > > >
+> > > > > > I'll send out a patch to remove this line. It doesn't make any
+> > > > > > difference for fuse_iomap_writeback_range() logic whether len i=
+s
+> > > > > > page-aligned or not; I had added it as a sanity-check against s=
+ketchy
+> > > > > > ranges.
+> > > > > >
+> > > > > > Also, I just noticed that apparently the blocksize can change
+> > > > > > dynamically for an inode in fuse through getattr replies from t=
+he
+> > > > > > server (see fuse_change_attributes_common()). This is a problem=
+ since
+> > > > > > the iomap uses inode->i_blkbits for reading/writing to the bitm=
+ap. I
+> > > > > > think we will have to cache the inode blkbits in the iomap_foli=
+o_state
+> > > > > > struct unfortunately :( I'll think about this some more and sen=
+d out a
+> > > > > > patch for this.
+> > > > >
+> > > > > From my understanding of the iomap code, it's possible to do that=
+ if you
+> > > > > flush and unmap the entire pagecache (whilst holding i_rwsem and
+> > > > > mmap_invalidate_lock) before you change i_blkbits.  Nobody *does*=
+ this
+> > > > > so I have no idea if it actually works, however.  Note that even =
+I don't
+> > > > > implement the flush and unmap bit; I just scream loudly and do no=
+thing:
+> > > >
+> > > > lol! i wish I could scream loudly and do nothing too for my case.
+> > > >
+> > > > AFAICT, I think I just need to flush and unmap that file and can le=
+ave
+> > > > the rest of the files/folios in the pagecache as is? But then if th=
+e
+> > > > file has active refcounts on it or has been pinned into memory, can=
+ I
+> > > > still unmap and remove it from the page cache? I see the
+> > > > invalidate_inode_pages2() function but my understanding is that the
+> > > > page still stays in the cache if it has has active references, and =
+if
+> > > > the page gets mmaped and there's a page fault on it, it'll end up
+> > > > using the preexisting old page in the page cache.
+> > >
+> > > Never mind, I was mistaken about this. Johannes confirmed that even i=
+f
+> > > there's active refcounts on the folio, it'll still get removed from
+> > > the page cache after unmapping and the page cache reference will get
+> > > dropped.
+> > >
+> > > I think I can just do what you suggested and call
+> > > filemap_invalidate_inode() in fuse_change_attributes_common() then if
+> > > the inode blksize gets changed. Thanks for the suggestion!
+> > >
 > >
-> > No, the vma can't go away here because we are holding vm_refcnt. So,
-> > the vma and its mm are stable up until vma_refcount_put() drops
-> > vm_refcnt.
+> > Thinking about this some more, I don't think this works after all
+> > because the writeback + page cache removal and inode blkbits update
+> > needs to be atomic, else after we write back and remove the pages from
+> > the page cache, a write could be issued right before we update the
+> > inode blkbits. I don't think we can hold the inode lock the whole time
+> > for it either since writeback could be intensive. (also btw, I
+> > realized in hindsight that invalidate_inode_pages2_range() would have
+> > been the better function to call instead of
+> > filemap_invalidate_inode()).
+> >
+> > > >
+> > > > I don't think I really need to have it removed from the page cache =
+so
+> > > > much as just have the ifs state for all the folios in the file free=
+d
+> > > > (after flushing the file) so that it can start over with a new ifs.
+> > > > Ideally we could just flush the file, then iterate through all the
+> > > > folios in the mapping in order of ascending index, and kfree their
+> > > > ->private, but I'm not seeing how we can prevent the case of new
+> > > > writes / a new ifs getting allocated for folios at previous indexes
+> > > > while we're trying to do the iteration/kfreeing.
+> > > >
+> >
+> > Going back to this idea, I think this can work. I realized we don't
+> > need to flush the file, it's enough to free the ifs, then update the
+> > inode->i_blkbits, then reallocate the ifs (which will now use the
+> > updated blkbits size), and if we hold the inode lock throughout, that
+> > prevents any concurrent writes.
+> > Something like:
+> >      inode_lock(inode);
+> >      XA_STATE(xas, &mapping->i_pages, 0);
+> >      xa_lock_irq(&mapping->i_pages);
+> >      xas_for_each_marked(&xas, folio, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
+> >           folio_lock(folio);
+> >           if (folio_test_dirty(folio)) {
+> >                   folio_wait_writeback(folio);
+> >                   kfree(folio->private);
+> >           }
+> >           folio_unlock(folio);
+> >      }
+> >     inode->i_blkbits =3D new_blkbits_size;
 >
-> But that's exactly what we're doing here?
+> The trouble is, you also have to resize the iomap_folio_state objects
+> attached to each folio if you change i_blkbits...
 
-Ah, you are right. At the time of mmdrop() call the vma is already
-unstable. Let me fix it by copying the mm like we do in
-vma_refcount_put().
+I think the iomap_folio_state objects automatically get resized here,
+no? We first kfree the folio->private which kfrees the entire ifs,
+then we change inode->i_blkbits to the new size, then when we call
+folio_mark_dirty(), it'll create the new ifs which creates a new folio
+state object using the new/updated i_blkbits size
 
 >
-> >>
-> >> > +             mmdrop(vma->vm_mm);
+> >     xas_set(&xas, 0);
+> >     xas_for_each_marked(&xas, folio, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
+> >           folio_lock(folio);
+> >           if (folio_test_dirty(folio) && !folio_test_writeback(folio))
+> >                  folio_mark_dirty(folio);
 >
-> And here we reference the vma again?
+> ...because iomap_dirty_folio doesn't know how to reallocate the folio
+> state object in response to i_blkbits having changed.
 >
-> >> So we need to copy the vma->vm_mm first?
-> >>
-> >> > +             rcu_read_lock();
-> >> > +             return NULL;
-> >> > +     }
-> >> > +
-> >> >       /*
-> >> >        * Overflow of vm_lock_seq/mm_lock_seq might produce false loc=
-ked result.
-> >> >        * False unlocked result is impossible because we modify and c=
-heck
+> --D
+>
+> >           folio_unlock(folio);
+> >     }
+> >     xa_unlock_irq(&mapping->i_pages);
+> >     inode_unlock(inode);
+> >
+> >
+> > I think this is the only approach that doesn't require changes to iomap=
+.
+> >
+> > I'm going to think about this some more next week and will try to send
+> > out a patch for this then.
+> >
+> >
+> > Thanks,
+> > Joanne
+> >
+> > > > >
+> > > > > void fuse_iomap_set_i_blkbits(struct inode *inode, u8 new_blkbits=
+)
+> > > > > {
+> > > > >         trace_fuse_iomap_set_i_blkbits(inode, new_blkbits);
+> > > > >
+> > > > >         if (inode->i_blkbits =3D=3D new_blkbits)
+> > > > >                 return;
+> > > > >
+> > > > >         if (!S_ISREG(inode->i_mode))
+> > > > >                 goto set_it;
+> > > > >
+> > > > >         /*
+> > > > >          * iomap attaches per-block state to each folio, so we ca=
+nnot allow
+> > > > >          * the file block size to change if there's anything in t=
+he page cache.
+> > > > >          * In theory, fuse servers should never be doing this.
+> > > > >          */
+> > > > >         if (inode->i_mapping->nrpages > 0) {
+> > > > >                 WARN_ON(inode->i_blkbits !=3D new_blkbits &&
+> > > > >                         inode->i_mapping->nrpages > 0);
+> > > > >                 return;
+> > > > >         }
+> > > > >
+> > > > > set_it:
+> > > > >         inode->i_blkbits =3D new_blkbits;
+> > > > > }
+> > > > >
+> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.=
+git/commit/?h=3Dfuse-iomap-attrs&id=3Dda9b25d994c1140aae2f5ebf10e54d0872f5c=
+884
+> > > > >
+> > > > > --D
+> > > > >
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Joanne
+> > > > > >
+> >
 
