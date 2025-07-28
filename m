@@ -1,153 +1,226 @@
-Return-Path: <linux-kernel+bounces-748644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A4AB14433
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:05:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673B8B14436
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F97B54222B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:05:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9BE189B255
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B84D218AB4;
-	Mon, 28 Jul 2025 22:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D1C2045B6;
+	Mon, 28 Jul 2025 22:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MaeEw8qt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XUBj/zKP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F0B1A316E;
-	Mon, 28 Jul 2025 22:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41838488
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753740349; cv=none; b=k+WwbrEqo9cLbAsVjz5f02qBC66IXeJdLYxIeqfeemVRnV8vyucHEV3HWL17TSHf51ypErlhcU4r0L5V8rlJBdzkqNME0zA85/djayA2kHfVv1SO3MbE/D56kXhqZkqAP2R8+oMvY8vZKWtxYkLZ+IT0aRwEHfjKerMGTyM4FzU=
+	t=1753740408; cv=none; b=HlNKpuAbZqx7XP7s91feQqWtf9aBPgUNl6tjQLu0kV+v6rhe+ZA+jd5mxu2H16rIjhOK9Y4cvgYhbfE6GmsH+fYFjOmhaGPweejfmiwhLvtB8eWrq9UEXF0YXVoSYCUDlPYVYpZBreMsG6CgLerWlYN9S4ftONA9NwbK7L9GD0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753740349; c=relaxed/simple;
-	bh=kJsi3IgGKmtRibPIrWNWaBJJCyE8e9J8FoD/26+TC1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJVWAiJ25z70INE8LAricB61CI8hjE2EskATfdP8gzP0lgzaSWJHwVAHkzCT1rtQi4V98Mnum0M7GmmZjSnxCkYU/hvyyro4VuIi9an7HfO4UAGXypVuyGM29fQLhJqTlgjgJlqGeaTKY8rvJLAopzouLn0NqppD/4nGCXyI52w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MaeEw8qt; arc=none smtp.client-ip=198.175.65.13
+	s=arc-20240116; t=1753740408; c=relaxed/simple;
+	bh=mThHqiTS17OsCvCad+mH+DQU08wCwY+kj2vXkXrvzQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=MvDHdjl0p2pAb9lXrWirGn76DtMpjypLZ/EK5fAXYqjVtCF/000P4GD0BsZ4pPRysxFn7hpuL+6pVgTqFDXj+k3miTDxEg2I7wiAygZGXm2OzoLRsymh81v49QI+x7YTQ4eJmlz5NX8rzAfOyDfXqRBIMvlXGzc5ZLNSBj9jxZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XUBj/zKP; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753740348; x=1785276348;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kJsi3IgGKmtRibPIrWNWaBJJCyE8e9J8FoD/26+TC1w=;
-  b=MaeEw8qtmZY1BjUA/CZhgBtpp1yL+lADIPiF8VGIbNYf3cKSgssicrOi
-   Q+ZcIkQTK+2w69y4/jOT/hS54tHpXACkp4mbYzhAKZusLclMF7JbereRO
-   JqoOEGSUWb8BJte2QYW0IJyIjMcJ07I09Iy8VrCh76h9ACnrAqNIhxOp8
-   rCUrqC8vPjTGf/0LCMyQM6rWY1i/icxqYRAAaas5+zIkLT/xJiAVnWc4v
-   7VJ4luXmsQLbtlocmsZCR+7LUZg6cTkGT0cgd9Upum5wYAw7191wsh5Re
-   DbH8z82eEsi/y2JSkjW8nudPijwrGZYssO3ELaMvguAcqqjv7Ydh0CTRY
-   w==;
-X-CSE-ConnectionGUID: my7CTukZROWEbHa1Nq/ydw==
-X-CSE-MsgGUID: BWP3vUgDSyqkaD0A5UzWiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="67083340"
+  t=1753740406; x=1785276406;
+  h=date:from:to:cc:subject:message-id;
+  bh=mThHqiTS17OsCvCad+mH+DQU08wCwY+kj2vXkXrvzQ4=;
+  b=XUBj/zKP6cQJRLuDoj2hBzzl3i/6iZYo3z+Tn1npLqWEk59oL1LUMXLR
+   CnYsgWR1b7Z7gZStt3uPRYGXa8KQpw6zCoLRcGTtuYAKgE4M8P6bLsgjt
+   BiQCT/KupSJgqd3d3rWyn0DgXvJmXpZFVIlwJC6qBOki018Y3OChEjwLi
+   R5gMqE5AHxA2f7ovOOXPTjN5rzLx8DVQJfRtcyj2EvFMGiY9uPNeJ0EEW
+   bvYQhSKP9RDVSSnJZJY2RKafey9Cb0xTD0O3nBUH0j9vc/STzKqZe40s+
+   7DWB4OB1+i/l0q/B3H/c4OozmwqDKp5jQcvC7QHEVVXSrkBaltd19vjVp
+   g==;
+X-CSE-ConnectionGUID: Da/mpiQ5RS2+3h+12yQkXg==
+X-CSE-MsgGUID: Bs5+VE9UTfmum7skm+n/fw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="56146151"
 X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="67083340"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 15:05:47 -0700
-X-CSE-ConnectionGUID: eLd5rzdARqS1sDBQP5aHgQ==
-X-CSE-MsgGUID: pPEcEzuGT+eVmeOMHzKIyg==
+   d="scan'208";a="56146151"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 15:06:46 -0700
+X-CSE-ConnectionGUID: o8nvXkYTRwegKRFHeLYukA==
+X-CSE-MsgGUID: dyjXeo6ZTXGlLlVgvFM3Lw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="166778407"
+   d="scan'208";a="163303579"
 Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 28 Jul 2025 15:05:44 -0700
+  by fmviesa010.fm.intel.com with ESMTP; 28 Jul 2025 15:06:45 -0700
 Received: from kbuild by 160750d4a34c with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1ugVyY-0000nF-0q;
-	Mon, 28 Jul 2025 22:05:42 +0000
-Date: Tue, 29 Jul 2025 06:04:45 +0800
+	id 1ugVzW-0000nL-1Q;
+	Mon, 28 Jul 2025 22:06:42 +0000
+Date: Tue, 29 Jul 2025 06:05:55 +0800
 From: kernel test robot <lkp@intel.com>
-To: Nikolay Borisov <nik.borisov@suse.com>,
-	linux-security-module@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com,
-	jmorris@namei.org, dan.j.williams@intel.com,
-	Nikolay Borisov <nik.borisov@suse.com>
-Subject: Re: [PATCH v2 2/3] lockdown/kunit: Introduce kunit tests
-Message-ID: <202507290540.9IANrMED-lkp@intel.com>
-References: <20250728111517.134116-3-nik.borisov@suse.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ d69139008b6dcd9c18483e956f61d187b0c214a2
+Message-ID: <202507290643.WQjasktk-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728111517.134116-3-nik.borisov@suse.com>
 
-Hi Nikolay,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: d69139008b6dcd9c18483e956f61d187b0c214a2  Merge branch into tip/master: 'x86/sev'
 
-kernel test robot noticed the following build warnings:
+elapsed time: 925m
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.16 next-20250728]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+configs tested: 134
+configs skipped: 5
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nikolay-Borisov/lockdown-Switch-implementation-to-using-bitmap/20250728-191807
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250728111517.134116-3-nik.borisov%40suse.com
-patch subject: [PATCH v2 2/3] lockdown/kunit: Introduce kunit tests
-config: arm-randconfig-004-20250729 (https://download.01.org/0day-ci/archive/20250729/202507290540.9IANrMED-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 1b4db78d2eaa070b3f364a2d2b2b826a5439b892)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250729/202507290540.9IANrMED-lkp@intel.com/reproduce)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507290540.9IANrMED-lkp@intel.com/
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                                 defconfig    gcc-15.1.0
+arc                   randconfig-001-20250728    gcc-13.4.0
+arc                   randconfig-002-20250728    gcc-12.5.0
+arc                           tb10x_defconfig    gcc-15.1.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    gcc-15.1.0
+arm                     am200epdkit_defconfig    gcc-15.1.0
+arm                                 defconfig    clang-22
+arm                   randconfig-001-20250728    clang-22
+arm                   randconfig-002-20250728    clang-22
+arm                   randconfig-003-20250728    clang-22
+arm                   randconfig-004-20250728    gcc-8.5.0
+arm                       spear13xx_defconfig    gcc-15.1.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                               defconfig    gcc-15.1.0
+arm64                 randconfig-001-20250728    clang-22
+arm64                 randconfig-002-20250728    clang-20
+arm64                 randconfig-003-20250728    gcc-11.5.0
+arm64                 randconfig-004-20250728    clang-22
+csky                              allnoconfig    gcc-15.1.0
+csky                                defconfig    gcc-15.1.0
+csky                  randconfig-001-20250728    gcc-10.5.0
+csky                  randconfig-002-20250728    gcc-9.5.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon                             defconfig    clang-22
+hexagon               randconfig-001-20250728    clang-22
+hexagon               randconfig-002-20250728    clang-16
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250728    gcc-12
+i386        buildonly-randconfig-002-20250728    gcc-12
+i386        buildonly-randconfig-003-20250728    gcc-12
+i386        buildonly-randconfig-004-20250728    clang-20
+i386        buildonly-randconfig-005-20250728    gcc-12
+i386        buildonly-randconfig-006-20250728    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch                           defconfig    clang-19
+loongarch             randconfig-001-20250728    clang-22
+loongarch             randconfig-002-20250728    clang-20
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                                defconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250728    gcc-11.5.0
+nios2                 randconfig-002-20250728    gcc-11.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250728    gcc-9.5.0
+parisc                randconfig-002-20250728    gcc-8.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-22
+powerpc                     ep8248e_defconfig    gcc-15.1.0
+powerpc                     ppa8548_defconfig    gcc-15.1.0
+powerpc                      ppc64e_defconfig    gcc-15.1.0
+powerpc               randconfig-001-20250728    gcc-10.5.0
+powerpc               randconfig-002-20250728    gcc-13.4.0
+powerpc               randconfig-003-20250728    gcc-8.5.0
+powerpc64             randconfig-001-20250728    clang-22
+powerpc64             randconfig-002-20250728    clang-22
+powerpc64             randconfig-003-20250728    gcc-8.5.0
+riscv                            allmodconfig    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                               defconfig    clang-22
+riscv                 randconfig-001-20250728    clang-22
+riscv                 randconfig-002-20250728    gcc-11.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    clang-22
+s390                  randconfig-001-20250728    clang-22
+s390                  randconfig-002-20250728    clang-17
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                    randconfig-001-20250728    gcc-14.3.0
+sh                    randconfig-002-20250728    gcc-9.5.0
+sh                          sdk7786_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250728    gcc-8.5.0
+sparc                 randconfig-002-20250728    gcc-14.3.0
+sparc64                             defconfig    clang-20
+sparc64               randconfig-001-20250728    clang-20
+sparc64               randconfig-002-20250728    gcc-12.5.0
+um                               alldefconfig    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-22
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250728    clang-22
+um                    randconfig-002-20250728    gcc-12
+um                           x86_64_defconfig    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250728    clang-20
+x86_64      buildonly-randconfig-002-20250728    clang-20
+x86_64      buildonly-randconfig-003-20250728    clang-20
+x86_64      buildonly-randconfig-004-20250728    clang-20
+x86_64      buildonly-randconfig-005-20250728    clang-20
+x86_64      buildonly-randconfig-006-20250728    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250728    gcc-8.5.0
+xtensa                randconfig-002-20250728    gcc-8.5.0
 
-All warnings (new ones prefixed by >>):
-
->> security/lockdown/lockdown.c:31:5: warning: no previous prototype for function 'lock_kernel_down' [-Wmissing-prototypes]
-      31 | int lock_kernel_down(const char *where, enum lockdown_reason level)
-         |     ^
-   security/lockdown/lockdown.c:31:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      31 | int lock_kernel_down(const char *where, enum lockdown_reason level)
-         | ^
-         | static 
-   1 warning generated.
-
-
-vim +/lock_kernel_down +31 security/lockdown/lockdown.c
-
-    20	
-    21	static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
-    22							 LOCKDOWN_INTEGRITY_MAX,
-    23							 LOCKDOWN_CONFIDENTIALITY_MAX};
-    24	
-    25	/*
-    26	 * Put the kernel into lock-down mode.
-    27	 */
-    28	#if !IS_ENABLED(CONFIG_KUNIT)
-    29	static
-    30	#endif
-  > 31	int lock_kernel_down(const char *where, enum lockdown_reason level)
-    32	{
-    33	
-    34		if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
-    35			return -EINVAL;
-    36	
-    37		if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
-    38			bitmap_set(kernel_locked_down, 1, level);
-    39		else
-    40			bitmap_set(kernel_locked_down, level, 1);
-    41	
-    42		pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
-    43			  where);
-    44		return 0;
-    45	}
-    46	
-
--- 
+--
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
 
