@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-748010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A667B13B5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:19:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9E5B13B5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B0043B4287
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:18:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D6977A1FE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AA526773C;
-	Mon, 28 Jul 2025 13:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5EE264623;
+	Mon, 28 Jul 2025 13:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G+qo2EUZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhdyKEvC"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDF225F7A4;
-	Mon, 28 Jul 2025 13:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F6B24678A;
+	Mon, 28 Jul 2025 13:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753708623; cv=none; b=fnNLVLf4vNbSGcDf+swamzffSeFJxjdNdLCGvIYbhZqGQZAOWIBNZaXnB5QEGAGefzkGv5xlsYLfrZd0OQOtOlzuAdqmMTUIgv4dT3OFf8BsOsht1XJeziDcRv7I0uNqqVBlOgSjwA/KsDXzFJhxElUdnQMSf0QB1ajXkOyhVN8=
+	t=1753708786; cv=none; b=EvujIYrRYpCB/ekHlJ9cN5sJHjSxf6WSNxkOaaSXGHAUVJ6Bd4ZZ4ZJSQ0rBwuho1/iCiiJgNsx5XwkkjA7AwLcoJPe02p0aBKx0IO8HJmKctLTAEK5phBM1JnA6Wff55LecBTPb9tNdd7R7NIiQHJI0/aSnHxvil98kLKTQuM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753708623; c=relaxed/simple;
-	bh=K1X+GjJICl++iuPaSTlChGNvy4DLCEyzYkUZMgPjXK4=;
+	s=arc-20240116; t=1753708786; c=relaxed/simple;
+	bh=J1lkMDI/BRDa7tWiFtEJ9itXbbeI08A0BYzHRlb95Rs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C4wn6je3v1Hh+Kdwdi4a9add911zz5O9OlbMb0/c+xH/j8QfeYPn49Mv7D+7KuqogAH+WM5cQz4ref1a8ZtqY6zujKznpj1eSGaKpHyTb+Be3tirfMo1XVkWQO5brKvwVxPr+c0irxhqW+wGyGb0cP+d3e+qJbLJvDtn+dS9mfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G+qo2EUZ; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753708621; x=1785244621;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=K1X+GjJICl++iuPaSTlChGNvy4DLCEyzYkUZMgPjXK4=;
-  b=G+qo2EUZ2ZeQzX+2CQP0QmNSjTj5GEwmfqZwCS4MhZmJiCV9lkwOahw8
-   eG07SSPWKDARH2XgEERJxcJMJxfRCpu1KegK753KR99HFRMpPkSpMO5th
-   SCELHn8mVmHEZQZhTDu3L+0qX+XqLmtJLdQfCSuVj/dEtABJyuZaR/eTr
-   gvNsDz/USKPM2+sg9vghkSTBaHIqummr3zNhDy2k00geFWNKqk3qhuyva
-   C/qARFSS2pvCRqFTwZ3hysgFkEO5xHQS8Gt0+vzvCsj4KKRAlidAoyIKa
-   Y4o7gOFvF/EYOQJ1C+QuAD3kSg5t1cA3mmCLxnRuBc3nYIkBBYgVUZsEJ
-   g==;
-X-CSE-ConnectionGUID: R7StVrKAQlOZQwNHE6TiPw==
-X-CSE-MsgGUID: hEHZ3LwdQMaMcm6mCqb4YQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="59774312"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="59774312"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 06:17:00 -0700
-X-CSE-ConnectionGUID: 8Yg7e5nESYKsJ8j965U0eA==
-X-CSE-MsgGUID: IzWaxWdSQ5CmPsKVFbJKrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="167739883"
-Received: from mnyman-desk.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
-  by fmviesa004.fm.intel.com with ESMTP; 28 Jul 2025 06:16:52 -0700
-Message-ID: <094f9822-9f12-4c67-b648-84a48c2e154b@linux.intel.com>
-Date: Mon, 28 Jul 2025 16:16:51 +0300
+	 In-Reply-To:Content-Type; b=iqQ7Bb2lZ31CuifVw16n5/uDHZtmnMnNFh0eGHMKcw8AF5BYYjrQkNDzNVRbflZ8s1DP507DYGwXzNsl9F1IveqNXUhNgmF83dfI9G1waT+L4+6imagFqXzvIsyos0bf2Kp9ZZOCpZ/cFI3chdLakWqaBCNCsed4SmL0sYoALnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhdyKEvC; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b78bca0890so303466f8f.3;
+        Mon, 28 Jul 2025 06:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753708783; x=1754313583; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fh8ivYdxvZqAr4NAtGDvGF5i11OMSJKfBEXYWVw7xKc=;
+        b=KhdyKEvC/jJZQPvu2MTkvbM/xNWFlqupDNGyq/P4mfpwM6tQnDCHJ9TP2F05X9ZmDt
+         8d7cqGqm0K15X+X0z28QIAGcaZkbSXSf98dUZA6Mw8X4qwXsPLRYdRZ7dg62RpjfU4Rj
+         TuRZSS3DGlCS3LtwhYX52kCdqNJkHQnMxADiOWvJAovczGKfHV+0vHLEBaAo4S2wfF2k
+         TJbQrch4NKB5BW2XoAVOXTEgyBEOX7v8rGXgn173I4GGMIXSyYwiO5knlGtuKuyaUCnI
+         lS9Jub2QfHfsinDp1+lm8rupiIKv5yrZrw2CDLvfw/vyUOvNVGocrMzlqWsBHLemr16Z
+         LFqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753708783; x=1754313583;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fh8ivYdxvZqAr4NAtGDvGF5i11OMSJKfBEXYWVw7xKc=;
+        b=ixOTOr7qY9fI1HJrAc7xH377qtiP/fqtaq0nzvIo+h45sAwMwkNYH80GDXTP+MT+h3
+         nGIkY4SUvBiD5HpOde7dMersX1wtDzTshc36suJ8TZooUOisGK8aA8MTl1Oh6Vvo18Ve
+         IWlohCHLEc837NSLvRpDFTwrpe9zk7KXGNY8APye+NngnQQGaNywx0x1HtmqR1+S5VZ5
+         AMYE+vvzjvdNRxOzXcrIgDhbVRE2g6UXNdcfKwKY5F2TT7U+i+zeD5FI6hMJsR6Nt31y
+         DZlNXjqiESh4LI+NW64Ol6Gtg+EAI0pD36QD2AVLW9BRRtGFje9LdeUWseZMPhYRgFYM
+         TO6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXTgF8EExghtX3fQlNEZUo+knzzXZDMjf4r8h9Tffo/+GjrlAce1sHkWeRYYdrHAGDKoDpuGESOF+6OE3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv6iMNL1vl7XhtZfj1kn423WTJlBMkbxzPAS36YM/iq/5Vkh8g
+	nnYMLCcekeG5zFkDN3qRarF9vlPU257/rV4oCk52A7OBtaAHTUNIFRUCWGcLdA==
+X-Gm-Gg: ASbGnct/g9ZcfazWGCKfp9sB2SkLSseqcYZYmgtjxR0kDuUQghVMetIIgb0z9/sSIAr
+	7Cz1H3054IJLZ8kVmYB1IMwonYl+3u+ELlpmXiRFeJdCgtjXMWe863HQn3u2jpy5SweZ33/RFyG
+	F2zF9GrTsnwfF/WhotekDVpzf7PdIIynGwKLtkn8syfFni17V4gLHnLRhnEulywAxLWPbhqLLHv
+	vBnBsbVrwGiN9s1M+BMFoFPV/LEI4kLlcVuRhl9tnoO/ZjaStadoV8Fx6e/yKV3F2V6ER0sMRlx
+	srjGysATp262dZZjZ8YvXw1i1bPudvuCmzC+yQR3i4ZuA95RHQtjarSWaBj/LxIRP28Cj2Irovy
+	eD649EcdWwSyxRAUzrBmmijTaW8jfj0koQvKnJ9ZBax1LGlrLf+5no1HRGKte1n/PUok5eTs6O9
+	eq64acHCYolA==
+X-Google-Smtp-Source: AGHT+IHdYC2ElDuPYayKBgjf57H/wSso+U6gI155XMCYMadu8KVC/igHxS0oKul7GVyBUiaceuDviw==
+X-Received: by 2002:a05:6000:290c:b0:3b7:8525:e9cc with SMTP id ffacd0b85a97d-3b78525edb8mr3914527f8f.18.1753708782629;
+        Mon, 28 Jul 2025 06:19:42 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587abe7d47sm99942535e9.10.2025.07.28.06.19.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 06:19:42 -0700 (PDT)
+Message-ID: <08deec62-e20a-4a54-a655-38a0335a74cd@gmail.com>
+Date: Mon, 28 Jul 2025 14:19:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,224 +82,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usb:xhci:Fix slot_id resource race conflict
-To: Weitao Wang <WeitaoWang-oc@zhaoxin.com>, gregkh@linuxfoundation.org,
- mathias.nyman@intel.com, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: WeitaoWang@zhaoxin.com, wwt8723@163.com, CobeChen@zhaoxin.com,
- stable@vger.kernel.org
-References: <20250725185101.8375-1-WeitaoWang-oc@zhaoxin.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20250725185101.8375-1-WeitaoWang-oc@zhaoxin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] net: Fix typos
+To: Bjorn Helgaas <helgaas@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <20250723201528.2908218-1-helgaas@kernel.org>
+Content-Language: en-GB
+From: Edward Cree <ecree.xilinx@gmail.com>
+In-Reply-To: <20250723201528.2908218-1-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25.7.2025 21.51, Weitao Wang wrote:
-> In such a scenario, device-A with slot_id equal to 1 is disconnecting
-> while device-B is enumerating, device-B will fail to enumerate in the
-> follow sequence.
+On 23/07/2025 21:15, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> 1.[device-A] send disable slot command
-> 2.[device-B] send enable slot command
-> 3.[device-A] disable slot command completed and wakeup waiting thread
-> 4.[device-B] enable slot command completed with slot_id equal to 1 and
-> wakeup waiting thread
-> 5.[device-B] driver check this slot_id was used by someone(device-A) in
-> xhci_alloc_virt_device, this device fails to enumerate as this conflict
-> 6.[device-A] xhci->devs[slot_id] set to NULL in xhci_free_virt_device
+> Fix typos in comments and error messages.
 > 
-> To fix driver's slot_id resources conflict, let the xhci_free_virt_device
-> functionm call in the interrupt handler when disable slot command success.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 7faac1953ed1 ("xhci: avoid race between disable slot command and host runtime suspend")
-> Signed-off-by: Weitao Wang <WeitaoWang-oc@zhaoxin.com>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Nice catch, good to get this fixed.
+Sorry I wasn't able to get to this in time (had email issues last week).
 
-This however has the downside of doing a lot in interrupt context.
+> diff --git a/drivers/net/ethernet/sfc/mcdi_pcol.h b/drivers/net/ethernet/sfc/mcdi_pcol.h
+> index 9cb339c461fb..b9866e389e6d 100644
+> --- a/drivers/net/ethernet/sfc/mcdi_pcol.h
+> +++ b/drivers/net/ethernet/sfc/mcdi_pcol.h
 
-what if we only clear some strategic pointers in the interrupt context,
-and then do all the actual unmapping and endpoint ring segments freeing,
-contexts freeing ,etc later?
+mcdi_pcol.h is automatically generated from an external source (it comes
+ from the firmware development team), these fixes will likely be
+ overwritten next time we pull in updates.  I will try to get them fed
+ back into the upstream sources.
 
-Pseudocode:
+> diff --git a/drivers/net/ethernet/sfc/tc_encap_actions.c b/drivers/net/ethernet/sfc/tc_encap_actions.c
+> index 87443f9dfd22..2258f854e5be 100644
+> --- a/drivers/net/ethernet/sfc/tc_encap_actions.c
+> +++ b/drivers/net/ethernet/sfc/tc_encap_actions.c
+> @@ -442,7 +442,7 @@ static void efx_tc_update_encap(struct efx_nic *efx,
+>  			rule = container_of(acts, struct efx_tc_flow_rule, acts);
+>  			if (rule->fallback)
+>  				fallback = rule->fallback;
+> -			else /* fallback fallback: deliver to PF */
+> +			else /* fallback: deliver to PF */
+>  				fallback = &efx->tc->facts.pf;
+>  			rc = efx_mae_update_rule(efx, fallback->fw_id,
+>  						 rule->fw_id);
 
-xhci_handle_cmd_disable_slot(xhci, slot_id, comp_code)
-{
-     if (cmd_comp_code == COMP_SUCCESS) {
-         xhci->dcbaa->dev_context_ptrs[slot_id] = 0;
-         xhci->devs[slot_id] = NULL;
-     }
-}
-
-xhci_disable_and_free_slot(xhci, slot_id)
-{
-     struct xhci_virt_device *vdev = xhci->devs[slot_id];
-
-     xhci_disable_slot(xhci, slot_id);
-     xhci_free_virt_device(xhci, vdev, slot_id);
-}
-
-xhci_free_virt_device(xhci, vdev, slot_id)
-{
-     if (xhci->dcbaa->dev_context_ptrs[slot_id] == vdev->out_ctx->dma)
-         xhci->dcbaa->dev_context_ptrs[slot_id] = 0;
-
-     // free and unmap things just like before
-     ...
-
-     if (xhci->devs[slot_id] == vdev)
-         xhci->devs[slot_id] = NULL;
-
-     kfee(vdev);
-}
-
-
-> ---
-> v1->v2
->   - Adjust the lock position in the function xhci_free_dev.
-> 
->   drivers/usb/host/xhci-hub.c  |  5 +++--
->   drivers/usb/host/xhci-ring.c |  7 +++++--
->   drivers/usb/host/xhci.c      | 35 +++++++++++++++++++++++++----------
->   3 files changed, 33 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-> index 92bb84f8132a..fd8a64aa5779 100644
-> --- a/drivers/usb/host/xhci-hub.c
-> +++ b/drivers/usb/host/xhci-hub.c
-> @@ -705,10 +705,11 @@ static int xhci_enter_test_mode(struct xhci_hcd *xhci,
->   			continue;
->   
->   		retval = xhci_disable_slot(xhci, i);
-> -		xhci_free_virt_device(xhci, i);
-> -		if (retval)
-> +		if (retval) {
->   			xhci_err(xhci, "Failed to disable slot %d, %d. Enter test mode anyway\n",
->   				 i, retval);
-> +			xhci_free_virt_device(xhci, i);
-> +		}
->   	}
->   	spin_lock_irqsave(&xhci->lock, *flags);
->   	/* Put all ports to the Disable state by clear PP */
-> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-> index 94c9c9271658..93dc28399c3c 100644
-> --- a/drivers/usb/host/xhci-ring.c
-> +++ b/drivers/usb/host/xhci-ring.c
-> @@ -1589,7 +1589,8 @@ static void xhci_handle_cmd_enable_slot(int slot_id, struct xhci_command *comman
->   		command->slot_id = 0;
->   }
->   
-> -static void xhci_handle_cmd_disable_slot(struct xhci_hcd *xhci, int slot_id)
-> +static void xhci_handle_cmd_disable_slot(struct xhci_hcd *xhci, int slot_id,
-> +					u32 cmd_comp_code)
->   {
->   	struct xhci_virt_device *virt_dev;
->   	struct xhci_slot_ctx *slot_ctx;
-> @@ -1604,6 +1605,8 @@ static void xhci_handle_cmd_disable_slot(struct xhci_hcd *xhci, int slot_id)
->   	if (xhci->quirks & XHCI_EP_LIMIT_QUIRK)
->   		/* Delete default control endpoint resources */
->   		xhci_free_device_endpoint_resources(xhci, virt_dev, true);
-> +	if (cmd_comp_code == COMP_SUCCESS)
-> +		xhci_free_virt_device(xhci, slot_id);
->   }
->   
->   static void xhci_handle_cmd_config_ep(struct xhci_hcd *xhci, int slot_id)
-> @@ -1853,7 +1856,7 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
->   		xhci_handle_cmd_enable_slot(slot_id, cmd, cmd_comp_code);
->   		break;
->   	case TRB_DISABLE_SLOT:
-> -		xhci_handle_cmd_disable_slot(xhci, slot_id);
-> +		xhci_handle_cmd_disable_slot(xhci, slot_id, cmd_comp_code);
->   		break;
->   	case TRB_CONFIG_EP:
->   		if (!cmd->completion)
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index 8a819e853288..6c6f6ebb8953 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -3931,13 +3931,14 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
->   		 * the USB device has been reset.
->   		 */
->   		ret = xhci_disable_slot(xhci, udev->slot_id);
-> -		xhci_free_virt_device(xhci, udev->slot_id);
->   		if (!ret) {
->   			ret = xhci_alloc_dev(hcd, udev);
->   			if (ret == 1)
->   				ret = 0;
->   			else
->   				ret = -EINVAL;
-> +		} else {
-> +			xhci_free_virt_device(xhci, udev->slot_id);
->   		}
->   		return ret;
->   	}
-> @@ -4085,11 +4086,12 @@ static void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev)
->   	for (i = 0; i < 31; i++)
->   		virt_dev->eps[i].ep_state &= ~EP_STOP_CMD_PENDING;
->   	virt_dev->udev = NULL;
-> -	xhci_disable_slot(xhci, udev->slot_id);
-> -
-> -	spin_lock_irqsave(&xhci->lock, flags);
-> -	xhci_free_virt_device(xhci, udev->slot_id);
-> -	spin_unlock_irqrestore(&xhci->lock, flags);
-> +	ret = xhci_disable_slot(xhci, udev->slot_id);
-> +	if (ret) {
-> +		spin_lock_irqsave(&xhci->lock, flags);
-> +		xhci_free_virt_device(xhci, udev->slot_id);
-> +		spin_unlock_irqrestore(&xhci->lock, flags);
-> +	}
->   
->   }
->   
-> @@ -4128,9 +4130,20 @@ int xhci_disable_slot(struct xhci_hcd *xhci, u32 slot_id)
->   
->   	wait_for_completion(command->completion);
->   
-> -	if (command->status != COMP_SUCCESS)
-> +	if (command->status != COMP_SUCCESS) {
->   		xhci_warn(xhci, "Unsuccessful disable slot %u command, status %d\n",
->   			  slot_id, command->status);
-> +		switch (command->status) {
-> +		case COMP_COMMAND_ABORTED:
-> +		case COMP_COMMAND_RING_STOPPED:
-> +			xhci_warn(xhci, "Timeout while waiting for disable slot command\n");
-> +			ret = -ETIME;
-> +			break;
-> +		default:
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +	}
->   
->   	xhci_free_command(xhci, command);
->   
-> @@ -4243,8 +4256,9 @@ int xhci_alloc_dev(struct usb_hcd *hcd, struct usb_device *udev)
->   	return 1;
->   
->   disable_slot:
-> -	xhci_disable_slot(xhci, udev->slot_id);
-> -	xhci_free_virt_device(xhci, udev->slot_id);
-> +	ret = xhci_disable_slot(xhci, udev->slot_id);
-> +	if (ret)
-> +		xhci_free_virt_device(xhci, udev->slot_id);
->   
->   	return 0;
->   }
-> @@ -4381,10 +4395,11 @@ static int xhci_setup_device(struct usb_hcd *hcd, struct usb_device *udev,
->   
->   		mutex_unlock(&xhci->mutex);
->   		ret = xhci_disable_slot(xhci, udev->slot_id);
-> -		xhci_free_virt_device(xhci, udev->slot_id);
->   		if (!ret) {
->   			if (xhci_alloc_dev(hcd, udev) == 1)
->   				xhci_setup_addressable_virt_dev(xhci, udev);
-> +		} else {
-> +			xhci_free_virt_device(xhci, udev->slot_id);
->   		}
->   		kfree(command->completion);
->   		kfree(command);
-
+This wording was intentional, not a type: delivery to the PF is the
+ second-layer fallback when there is no fallback action, which makes it
+ the fallback to the fallback.
+I will post a partial revert to change this line back.
 
