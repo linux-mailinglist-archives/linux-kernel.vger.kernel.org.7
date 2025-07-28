@@ -1,150 +1,667 @@
-Return-Path: <linux-kernel+bounces-747890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C384B139C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:19:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9780EB139D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF0007A491F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:18:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 446E87A4229
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F6322C32D;
-	Mon, 28 Jul 2025 11:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pomFTSss"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05641DDF7
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8107F25BF1B;
+	Mon, 28 Jul 2025 11:24:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387B5221FA1
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753701584; cv=none; b=gnsIEKx2p4l+jU+GT6b9CI/Jj5qddNy1DAykmU/bIUw8+mvcteMniTKf9GRya8QuOuVRejXz611C9lOvZNmutA38JIjkTUPkxnc/E9ArIjHJ6t+gbXr4jvCb69SEug5BCcFdq+2wUj//zbeh8ORgGVHmjiwXZ3cqg+0mGbRzcJE=
+	t=1753701849; cv=none; b=RcgkAqzAE+k0N3olUzn3jvnDUgHZyG93wD7njlqrt5JH8CbtRhgTG+bzfmsxcNI5JJRPtR85BKiVM4RfbSk7aKYjLVlUo6MBLPqOx17j4p1fk0g42gqZFjU7MQ4TqKrHD7T/hepAvSqJY05R3YU1FJ6oKetJJ06v3xyTeuFSL9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753701584; c=relaxed/simple;
-	bh=fMvFtqY0dZeTgFscTQ6EikQG17iQn9yAO5mQTlzzO6Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=StreHYnId2xI+6ZZv24u4vJcdn13WLWmG8rHGWUhphKAHabIFYMTwN3fBvPwSpWyErByCHkTXWdeK9X7166oPqwDOt0nSfK67Ofq6/yYySGR/7EY8rFTy8vwjZU0Q9rV/iihr+0oiT/tvY7ze0Er56DzdYb4xxvrZeHZLunFo2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pomFTSss; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4f379662cso3017949f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 04:19:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753701581; x=1754306381; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gbmSA0QipmAIbHbKw8GhXr6SE1pl+CI9qEcVQNYIoK4=;
-        b=pomFTSssg9OZS78aX3B2oQCP66eYFLleaf8LeMbmqb0u9lPSCqOGon0bBkcedsjAIa
-         cv8xrVYcHkkl0CoqxGk5GpCLjDSVDgD6UfNPwD8+sQXUgltn+NGaAYqlSuvA1HRdBLml
-         iePnVcTXn5ldKmJj7sYQDdpiJh/duiq2Wd+ZDl32ooQVTU+mRRQN2MMHTObLLwr+YUsj
-         t3/iRWgOgAaUz8+3l+tgLxqY5fQA0L0sYtXa40qPFvu/yJs9DrHTnTY+eZdyMUer8U8y
-         2CysKo5CIalA4LVATua72YJoLWM372YfV1BYV1jGWRHVKdWO/2U01CcGO6EVuRcot8sj
-         29oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753701581; x=1754306381;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gbmSA0QipmAIbHbKw8GhXr6SE1pl+CI9qEcVQNYIoK4=;
-        b=ncm8F6BXVaENiuNyrdYB86zTNYql4HQGGkuJvfL0vBU8Eg4ZRrSD3HcciFJBKh2AtP
-         xNemhYizc9uvfR1nzp8j7buxNPce+GUkBILQjXp1rgAvdHIZzk0tXI0yW6wB2Hjxjm3O
-         wTvv1JOrOLe5jOJzDfylUYhVS/m/ZOla4vvmkqrxHDUo6it/Bzkyo1TluYJalameTifO
-         ai3+f1oYXDf/GUM6ch0eq+K281XdVAPdP5o7NU5vdOgN+Ug7XS0nGWNdis1sHardZDoV
-         La5Ezwk9MydSL4apfnIaojDTT6N5dhQtcgJnNQ6w7dPlya5qiLRVANDnhRXCiunOMpCo
-         RYqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVg7K4Vum/xtx44O/S2EUWidGdDky0USIt4nbJ1hiaO2f2laAurKuLd2eM/s38+GnG5f0HCtvNxe0aeKD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybQbe2WwUcxb1lO5GNzym1/LDuOtmDEQm8QZS2cG2zrUTM6F+p
-	TOzFEK4YJAKXQOMbVmg0P1Bdrz2s5Bb9PPsTtEYesjqj3AwEFeLIIL4A3MgvR/8vE1abEDMkNpC
-	sNaI+5/5jf42A+CqznmdQI82/nQzFJTZVx8T2Je2v
-X-Gm-Gg: ASbGncs9jnsS010SDSuLSXX6r/M4Z/2qRdV+rvbJO1ui6bvxhk1dBZtEF4XT4Gtqzmi
-	6Oy/YCqCVygOMk1hBnfW6CRsyuLHwJlPiWlBuxr4/Li4WVkPhZkARimH3A9JRx0kw3Ge2vVaTtZ
-	iKsj2lq5tFaVu96uom/K0JJTCNPIgHb5+dW/IJwYYrmsIo9XJdYtOna8BEaZB1X2KajD+bU0foK
-	Jp1MdXTB/2lGsHhZ530SE9OOIq0DzONXQIL2w==
-X-Google-Smtp-Source: AGHT+IH67iNxNSkrojY3fM95xQae5TfwbJj4xs2uDRg40WNQDB01MpvP3CEcQwXZKV/Ly+szDBAKEgcdFxAhv/DfOFQ=
-X-Received: by 2002:a05:6000:290c:b0:3b7:8832:fde5 with SMTP id
- ffacd0b85a97d-3b78832fff5mr2866538f8f.13.1753701580696; Mon, 28 Jul 2025
- 04:19:40 -0700 (PDT)
+	s=arc-20240116; t=1753701849; c=relaxed/simple;
+	bh=pBKlKg9g7mifa7N0+i/JHVsqVmfGXpJX0ml9pJXHVGQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TYQfHEaiAsujrsSC+vuJb6nQIK7QXX1plqF9d/Xa0Xh2MF7c7scQdM+brz8kWngnFTLz7aOSVzNNqUKnGBfbF+/vc3MWLDh19KwY8SeGjx26j61wKYK2EDMvhDVic4WHRavJkJk34XKr5BB5gPVdRs3ciuSXOmNq0vNQ/h+1E7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F919152B;
+	Mon, 28 Jul 2025 04:23:58 -0700 (PDT)
+Received: from [10.57.53.40] (unknown [10.57.53.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C5303F66E;
+	Mon, 28 Jul 2025 04:24:04 -0700 (PDT)
+Message-ID: <35246e11-3faf-47c3-9332-9d2ff7036cdc@arm.com>
+Date: Mon, 28 Jul 2025 12:24:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
- <20250726-maple-tree-v1-2-27a3da7cb8e5@google.com> <a4b93eb0-9742-4f24-86d9-486ce87fbed8@gmail.com>
-In-Reply-To: <a4b93eb0-9742-4f24-86d9-486ce87fbed8@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 28 Jul 2025 13:19:28 +0200
-X-Gm-Features: Ac12FXytrZNUlSdOYgH1ca32A8QXnXdUtZWRs5mU3kT7ILNpSGtpDjWYR9OsYM0
-Message-ID: <CAH5fLghK9RhbEXAW4fYS=61Dps34+jgv1UGAOMf7_LD0DVO6rA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] rust: maple_tree: add MapleTree::lock() and load()
-To: Andrew Ballance <andrewjballance@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
-	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org, 
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/9] drm/panthor: add devcoredump support
+To: Chia-I Wu <olvaffe@gmail.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20250720000146.1405060-1-olvaffe@gmail.com>
+ <20250720000146.1405060-2-olvaffe@gmail.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250720000146.1405060-2-olvaffe@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 28, 2025 at 1:11=E2=80=AFPM Andrew Ballance
-<andrewjballance@gmail.com> wrote:
->
-> On 7/26/25 8:23 AM, Alice Ryhl wrote:
-> > To load a value, one must be careful to hold the lock while accessing
-> > it. To enable this, we add a lock() method so that you can perform
-> > operations on the value before the spinlock is released.
-> >
-> > Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
-> > Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> I have a couple of nits, but overall looks good to me.
->
-> > ---
-> >   rust/kernel/maple_tree.rs | 94 ++++++++++++++++++++++++++++++++++++++=
-+++++++++
-> >   1 file changed, 94 insertions(+)
-> >
-> > diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
-> > index 0f26c173eedc7c79bb8e2b56fe85e8a266b3ae0c..c7ef504a9c78065b3d5752b=
-4f5337fb6277182d1 100644
-> > --- a/rust/kernel/maple_tree.rs
-> > +++ b/rust/kernel/maple_tree.rs
-> > @@ -206,6 +206,23 @@ pub fn erase(&self, index: usize) -> Option<T> {
-> >           unsafe { T::try_from_foreign(ret) }
-> >       }
-> >
-> > +    /// Lock the internal spinlock.
->
-> probably should add #[must_use] here.
->
-> > +    #[inline]
-> > +    pub fn lock(&self) -> MapleLock<'_, T> {
-> > +        // SAFETY: It's safe to lock the spinlock in a maple tree.
-> > +        unsafe { bindings::spin_lock(self.ma_lock()) };
-> > +
-> > +        // INVARIANT: We just took the spinlock.
-> > +        MapleLock(self)
-> > +    }
-> > +
-> > +    #[inline]
-> > +    fn ma_lock(&self) -> *mut bindings::spinlock_t {
-> > +        // SAFETY: This pointer offset operation stays in-bounds.
-> > +        let lock =3D unsafe { &raw mut (*self.tree.get()).__bindgen_an=
-on_1.ma_lock };
-> > +        lock.cast()
->
-> This cast seems unneeded. lock should already be a *mut spinlock_t.
+On 20/07/2025 01:01, Chia-I Wu wrote:
+> Create a devcoredump on any faulty or fatal event. The coredump data is
+> in YAML format for readability and flexibility.
+> 
+> Only panthor_group state is captured for now.
+> 
+> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
+> ---
+>  drivers/gpu/drm/panthor/Makefile           |   2 +
+>  drivers/gpu/drm/panthor/panthor_coredump.c | 225 +++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_coredump.h |  68 +++++++
+>  drivers/gpu/drm/panthor/panthor_device.h   |   6 +
+>  drivers/gpu/drm/panthor/panthor_sched.c    |  69 +++++++
+>  drivers/gpu/drm/panthor/panthor_sched.h    |   5 +
+>  6 files changed, 375 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_coredump.c
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_coredump.h
+> 
+> diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
+> index 15294719b09c..9fd1e74af1df 100644
+> --- a/drivers/gpu/drm/panthor/Makefile
+> +++ b/drivers/gpu/drm/panthor/Makefile
+> @@ -11,4 +11,6 @@ panthor-y := \
+>  	panthor_mmu.o \
+>  	panthor_sched.o
+>  
+> +panthor-$(CONFIG_DEV_COREDUMP) += panthor_coredump.o
+> +
+>  obj-$(CONFIG_DRM_PANTHOR) += panthor.o
+> diff --git a/drivers/gpu/drm/panthor/panthor_coredump.c b/drivers/gpu/drm/panthor/panthor_coredump.c
+> new file mode 100644
+> index 000000000000..767f3327e3e8
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panthor/panthor_coredump.c
+> @@ -0,0 +1,225 @@
+> +// SPDX-License-Identifier: GPL-2.0 or MIT
+> +/* Copyright 2025 Google LLC */
+> +
+> +#include <drm/drm_drv.h>
+> +#include <drm/drm_print.h>
+> +#include <drm/drm_managed.h>
+> +#include <generated/utsrelease.h>
+> +#include <linux/devcoredump.h>
+> +#include <linux/err.h>
+> +#include <linux/slab.h>
+> +#include <linux/timekeeping.h>
+> +
+> +#include "panthor_coredump.h"
+> +#include "panthor_device.h"
+> +#include "panthor_sched.h"
+> +
+> +/**
+> + * enum panthor_coredump_mask - Coredump state
+> + */
+> +enum panthor_coredump_mask {
+> +	PANTHOR_COREDUMP_GROUP = BIT(0),
+> +};
+> +
+> +/**
+> + * struct panthor_coredump_header - Coredump header
+> + */
+> +struct panthor_coredump_header {
+> +	enum panthor_coredump_reason reason;
+> +	ktime_t timestamp;
+> +};
+> +
+> +/**
+> + * struct panthor_coredump - Coredump
+> + */
+> +struct panthor_coredump {
+> +	/** @ptdev: Device. */
+> +	struct panthor_device *ptdev;
+> +
+> +	/** @work: Bottom half of panthor_coredump_capture. */
+> +	struct work_struct work;
+> +
+> +	/** @header: Header. */
+> +	struct panthor_coredump_header header;
+> +
+> +	/** @mask: Bitmask of captured states. */
+> +	u32 mask;
+> +
+> +	struct panthor_coredump_group_state group;
+> +
+> +	/* @data: Serialized coredump data. */
+> +	void *data;
+> +
+> +	/* @size: Serialized coredump size. */
+> +	size_t size;
+> +};
+> +
+> +static const char *reason_str(enum panthor_coredump_reason reason)
+> +{
+> +	switch (reason) {
+> +	case PANTHOR_COREDUMP_REASON_MMU_FAULT:
+> +		return "MMU_FAULT";
+> +	case PANTHOR_COREDUMP_REASON_CSG_REQ_TIMEOUT:
+> +		return "CSG_REQ_TIMEOUT";
+> +	case PANTHOR_COREDUMP_REASON_CSG_UNKNOWN_STATE:
+> +		return "CSG_UNKNOWN_STATE";
+> +	case PANTHOR_COREDUMP_REASON_CSG_PROGRESS_TIMEOUT:
+> +		return "CSG_PROGRESS_TIMEOUT";
+> +	case PANTHOR_COREDUMP_REASON_CS_FATAL:
+> +		return "CS_FATAL";
+> +	case PANTHOR_COREDUMP_REASON_CS_FAULT:
+> +		return "CS_FAULT";
+> +	case PANTHOR_COREDUMP_REASON_CS_TILER_OOM:
+> +		return "CS_TILER_OOM";
+> +	case PANTHOR_COREDUMP_REASON_JOB_TIMEOUT:
+> +		return "JOB_TIMEOUT";
+> +	default:
+> +		return "UNKNOWN";
+> +	}
+> +}
 
-In some configurations, the type is BindgenUnionField<spinlock_t>.
+I'd recommend using a macro to reduce the repetition, e.g. take a look
+at PANTHOR_EXCEPTION().
 
-Alice
+> +
+> +static void print_group(struct drm_printer *p,
+> +			const struct panthor_coredump_group_state *group)
+> +{
+> +	drm_puts(p, "group:\n");
+> +	drm_printf(p, "  priority: %d\n", group->priority);
+> +	drm_printf(p, "  queue_count: %u\n", group->queue_count);
+> +	drm_printf(p, "  pid: %d\n", group->pid);
+> +	drm_printf(p, "  comm: %s\n", group->comm);
+
+I can see the attraction of YAML, but here "comm" might contain
+characters that break the YAML parsing. So either we need to correctly
+quote such characters, or accept this isn't YAML.
+
+In particular YAML starts to become ugly in the final patch when you are
+dumping buffer objects. Although AFAICT that is quoted successfully.
+
+> +	drm_printf(p, "  destroyed: %d\n", group->destroyed);
+> +	drm_printf(p, "  csg_id: %d\n", group->csg_id);
+> +}
+> +
+> +static void print_header(struct drm_printer *p,
+> +			 const struct panthor_coredump_header *header,
+> +			 const struct drm_driver *drv)
+> +{
+> +	drm_puts(p, "header:\n");
+> +	drm_puts(p, "  kernel: " UTS_RELEASE "\n");
+> +	drm_puts(p, "  module: " KBUILD_MODNAME "\n");
+> +	drm_printf(p, "  driver_version: %d.%d\n", drv->major, drv->minor);
+> +
+> +	drm_printf(p, "  reason: %s\n", reason_str(header->reason));
+> +	drm_printf(p, "  timestamp: %lld\n", ktime_to_ns(header->timestamp));
+> +}
+> +
+> +static void print_cd(struct drm_printer *p, const struct panthor_coredump *cd)
+> +{
+> +	/* in YAML format */
+> +	drm_puts(p, "---\n");
+> +	print_header(p, &cd->header, cd->ptdev->base.driver);
+> +
+> +	if (cd->mask & PANTHOR_COREDUMP_GROUP)
+> +		print_group(p, &cd->group);
+> +}
+> +
+> +static void process_cd(struct panthor_device *ptdev,
+> +		       struct panthor_coredump *cd)
+> +{
+> +	struct drm_print_iterator iter = {
+> +		.remain = SSIZE_MAX,
+> +	};
+> +	struct drm_printer p = drm_coredump_printer(&iter);
+> +
+> +	print_cd(&p, cd);
+> +
+> +	iter.remain = SSIZE_MAX - iter.remain;
+> +	iter.data = kvmalloc(iter.remain, GFP_USER);
+> +	if (!iter.data)
+> +		return;
+> +
+> +	cd->data = iter.data;
+> +	cd->size = iter.remain;
+> +
+> +	drm_info(&ptdev->base, "generating coredump of size %zu\n", cd->size);
+> +
+> +	p = drm_coredump_printer(&iter);
+> +	print_cd(&p, cd);
+> +}
+
+I think this would be better written in the style suggested in the
+drm_print.h header, moving the iterator into print_cd():
+
+static ssize_t print_cd(char *buffer, ssize_t count, const struct
+panthor_coredump *cd)
+{
+	struct drm_print_iterator iter = {
+		.data = buffer,
+		.remain = count,
+	};
+	struct drm_printer p = drm_coredump_printer(&iter);
+
+	/* in YAML format */
+	drm_puts(p, "---\n");
+	print_header(p, &cd->header, cd->ptdev->base.driver);
+
+	if (cd->mask & PANTHOR_COREDUMP_GROUP)
+		print_group(p, &cd->group);
+
+	return count - iter.remain;
+}
+
+static void process_cd(struct panthor_device *ptdev,
+		       struct panthor_coredump *cd)
+{
+	ssize_t count = print_cd(NULL, SSIZE_MAX, cd);
+
+	cd->data = kvmalloc(count, GFP_USER);
+	if (!cd->data)
+		return;
+	cd->size = count;
+
+	drm_info(&ptdev->base, "generating coredump of size %zu\n", count);
+	print_cd(cd->data, cd->size, cd);
+}
+
+> +
+> +static void capture_cd(struct panthor_device *ptdev,
+> +		       struct panthor_coredump *cd, struct panthor_group *group)
+> +{
+> +	drm_info(&ptdev->base, "capturing coredump states\n");
+> +
+> +	if (group) {
+> +		panthor_group_capture_coredump(group, &cd->group);
+> +		cd->mask |= PANTHOR_COREDUMP_GROUP;
+> +	}
+> +}
+> +
+> +static void panthor_coredump_free(void *data)
+> +{
+> +	struct panthor_coredump *cd = data;
+> +	struct panthor_device *ptdev = cd->ptdev;
+> +
+> +	kvfree(cd->data);
+> +	kfree(cd);
+> +
+> +	atomic_set(&ptdev->coredump.pending, 0);
+> +}
+> +
+> +static ssize_t panthor_coredump_read(char *buffer, loff_t offset, size_t count,
+> +				     void *data, size_t datalen)
+> +{
+> +	const struct panthor_coredump *cd = data;
+> +
+> +	if (offset >= cd->size)
+> +		return 0;
+> +
+> +	if (count > cd->size - offset)
+> +		count = cd->size - offset;
+> +
+> +	memcpy(buffer, cd->data + offset, count);
+> +
+> +	return count;
+> +}
+> +
+> +static void panthor_coredump_process_work(struct work_struct *work)
+> +{
+> +	struct panthor_coredump *cd =
+> +		container_of(work, struct panthor_coredump, work);
+> +	struct panthor_device *ptdev = cd->ptdev;
+> +
+> +	process_cd(ptdev, cd);
+> +
+> +	dev_coredumpm(ptdev->base.dev, THIS_MODULE, cd, 0, GFP_KERNEL,
+> +		      panthor_coredump_read, panthor_coredump_free);
+
+Is there a good reason to reinvent the read/free functionality of
+devcoredump? Can we not just use dev_coredumpv() instead? The only
+benefit I can see if the automatic rearming of coredump.pending, but
+panfrost handles this by having a "panfrost_dump_core" flag which is
+re-armed manually from user space.
+
+Given core dumps might be large and fairly expensive to create, it seems
+sensible to not automatically re-arm.
+
+> +}
+> +
+> +void panthor_coredump_capture(struct panthor_coredump *cd,
+> +			      struct panthor_group *group)
+> +{
+> +	struct panthor_device *ptdev = cd->ptdev;
+> +
+> +	capture_cd(ptdev, cd, group);
+> +
+> +	queue_work(system_unbound_wq, &cd->work);
+> +}
+
+So I can see why you want to move the work onto a workqueue, but I'm a
+little worried about lifetimes.
+
+It seems slightly odd that you are capturing the data into a binary
+format (struct panthor_coredump_group_state, and later
+panthor_coredump_gpu_state, panthor_coredump_glb_state,
+panthor_coredump_csg_state etc) and then kicking off a separate
+workqueue item to convert it all to YAML.
+
+> +
+> +struct panthor_coredump *
+> +panthor_coredump_alloc(struct panthor_device *ptdev,
+> +		       enum panthor_coredump_reason reason, gfp_t gfp)
+> +{
+> +	struct panthor_coredump *cd;
+> +
+> +	/* reject all but the first coredump until it is handled */
+> +	if (atomic_cmpxchg(&ptdev->coredump.pending, 0, 1)) {
+> +		drm_dbg(&ptdev->base, "skip subsequent coredump\n");
+> +		return NULL;
+> +	}
+> +
+> +	cd = kzalloc(sizeof(*cd), gfp);
+> +	if (!cd) {
+> +		atomic_set(&ptdev->coredump.pending, 0);
+> +		return NULL;
+> +	}
+> +
+> +	cd->ptdev = ptdev;
+> +	INIT_WORK(&cd->work, panthor_coredump_process_work);
+> +
+> +	cd->header.reason = reason;
+> +	cd->header.timestamp = ktime_get_real();
+> +
+> +	return cd;
+> +}
+> diff --git a/drivers/gpu/drm/panthor/panthor_coredump.h b/drivers/gpu/drm/panthor/panthor_coredump.h
+> new file mode 100644
+> index 000000000000..dd1fe1c2e175
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panthor/panthor_coredump.h
+> @@ -0,0 +1,68 @@
+> +/* SPDX-License-Identifier: GPL-2.0 or MIT */
+> +/* Copyright 2019 Collabora ltd. */
+> +
+> +#ifndef __PANTHOR_COREDUMP_H__
+> +#define __PANTHOR_COREDUMP_H__
+> +
+> +#include <drm/panthor_drm.h>
+> +#include <linux/sched.h>
+> +#include <linux/types.h>
+> +
+> +struct panthor_coredump;
+> +struct panthor_device;
+> +struct panthor_group;
+> +
+> +/**
+> + * enum panthor_coredump_reason - Coredump reason
+> + */
+> +enum panthor_coredump_reason {
+> +	PANTHOR_COREDUMP_REASON_MMU_FAULT,
+> +	PANTHOR_COREDUMP_REASON_CSG_REQ_TIMEOUT,
+> +	PANTHOR_COREDUMP_REASON_CSG_UNKNOWN_STATE,
+> +	PANTHOR_COREDUMP_REASON_CSG_PROGRESS_TIMEOUT,
+> +	PANTHOR_COREDUMP_REASON_CS_FATAL,
+> +	PANTHOR_COREDUMP_REASON_CS_FAULT,
+> +	PANTHOR_COREDUMP_REASON_CS_TILER_OOM,
+> +	PANTHOR_COREDUMP_REASON_JOB_TIMEOUT,
+> +};
+> +
+> +/**
+> + * struct panthor_coredump_group_state - Coredump group state
+> + *
+> + * Interesting panthor_group fields.
+> + */
+> +struct panthor_coredump_group_state {
+> +	enum drm_panthor_group_priority priority;
+> +	u32 queue_count;
+> +	pid_t pid;
+> +	char comm[TASK_COMM_LEN];
+> +	bool destroyed;
+> +	int csg_id;
+> +};
+> +
+> +#ifdef CONFIG_DEV_COREDUMP
+> +
+> +struct panthor_coredump *
+> +panthor_coredump_alloc(struct panthor_device *ptdev,
+> +		       enum panthor_coredump_reason reason, gfp_t gfp);
+> +
+> +void panthor_coredump_capture(struct panthor_coredump *cd,
+> +			      struct panthor_group *group);
+> +
+> +#else /* CONFIG_DEV_COREDUMP */
+> +
+> +static inline struct panthor_coredump *
+> +panthor_coredump_alloc(struct panthor_device *ptdev,
+> +		       enum panthor_coredump_reason reason, gfp_t gfp)
+> +{
+> +	return NULL;
+> +}
+> +
+> +static inline void panthor_coredump_capture(struct panthor_coredump *cd,
+> +					    struct panthor_group *group)
+> +{
+> +}
+
+panthor_coredump_alloc() is always called immediately before
+panthor_coredump_capture(). So instead we could just export a wrapper
+than combines both functions. This also avoids the caller having to deal
+with panthor_coredump_alloc() failing.
+
+Thanks,
+Steve
+
+> +
+> +#endif /* CONFIG_DEV_COREDUMP */
+> +
+> +#endif /* __PANTHOR_COREDUMP_H__ */
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index 4fc7cf2aeed5..766e53c25cfa 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -197,6 +197,12 @@ struct panthor_device {
+>  		atomic_t recovery_needed;
+>  	} pm;
+>  
+> +	/** @coredump: Coredump-related data. */
+> +	struct {
+> +		/** @pending: True if there is a pending coredump. */
+> +		atomic_t pending;
+> +	} coredump;
+> +
+>  	/** @profile_mask: User-set profiling flags for job accounting. */
+>  	u32 profile_mask;
+>  
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index a2248f692a03..eb45b5ad9774 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  
+> +#include "panthor_coredump.h"
+>  #include "panthor_devfreq.h"
+>  #include "panthor_device.h"
+>  #include "panthor_fw.h"
+> @@ -1031,6 +1032,10 @@ group_unbind_locked(struct panthor_group *group)
+>  	return 0;
+>  }
+>  
+> +static void panthor_sched_coredump_locked(struct panthor_device *ptdev,
+> +					  enum panthor_coredump_reason reason,
+> +					  struct panthor_group *group);
+> +
+>  /**
+>   * cs_slot_prog_locked() - Program a queue slot
+>   * @ptdev: Device.
+> @@ -1249,6 +1254,10 @@ csg_slot_sync_state_locked(struct panthor_device *ptdev, u32 csg_id)
+>  		drm_err(&ptdev->base, "Invalid state on CSG %d (state=%d)",
+>  			csg_id, csg_state);
+>  		new_state = PANTHOR_CS_GROUP_UNKNOWN_STATE;
+> +
+> +		panthor_sched_coredump_locked(
+> +			ptdev, PANTHOR_COREDUMP_REASON_CSG_UNKNOWN_STATE,
+> +			group);
+>  		break;
+>  	}
+>  
+> @@ -1378,6 +1387,9 @@ cs_slot_process_fatal_event_locked(struct panthor_device *ptdev,
+>  		 panthor_exception_name(ptdev, CS_EXCEPTION_TYPE(fatal)),
+>  		 (unsigned int)CS_EXCEPTION_DATA(fatal),
+>  		 info);
+> +
+> +	panthor_sched_coredump_locked(ptdev, PANTHOR_COREDUMP_REASON_CS_FATAL,
+> +				      group);
+>  }
+>  
+>  static void
+> @@ -1426,6 +1438,9 @@ cs_slot_process_fault_event_locked(struct panthor_device *ptdev,
+>  		 panthor_exception_name(ptdev, CS_EXCEPTION_TYPE(fault)),
+>  		 (unsigned int)CS_EXCEPTION_DATA(fault),
+>  		 info);
+> +
+> +	panthor_sched_coredump_locked(ptdev, PANTHOR_COREDUMP_REASON_CS_FAULT,
+> +				      group);
+>  }
+>  
+>  static int group_process_tiler_oom(struct panthor_group *group, u32 cs_id)
+> @@ -1480,6 +1495,10 @@ static int group_process_tiler_oom(struct panthor_group *group, u32 cs_id)
+>  		drm_warn(&ptdev->base, "Failed to extend the tiler heap\n");
+>  		group->fatal_queues |= BIT(cs_id);
+>  		sched_queue_delayed_work(sched, tick, 0);
+> +
+> +		panthor_sched_coredump_locked(
+> +			ptdev, PANTHOR_COREDUMP_REASON_CS_TILER_OOM, group);
+> +
+>  		goto out_put_heap_pool;
+>  	}
+>  
+> @@ -1639,6 +1658,9 @@ csg_slot_process_progress_timer_event_locked(struct panthor_device *ptdev, u32 c
+>  		group->timedout = true;
+>  
+>  	sched_queue_delayed_work(sched, tick, 0);
+> +
+> +	panthor_sched_coredump_locked(
+> +		ptdev, PANTHOR_COREDUMP_REASON_CSG_PROGRESS_TIMEOUT, group);
+>  }
+>  
+>  static void sched_process_csg_irq_locked(struct panthor_device *ptdev, u32 csg_id)
+> @@ -1858,8 +1880,16 @@ static int csgs_upd_ctx_apply_locked(struct panthor_device *ptdev,
+>  
+>  		if (ret && acked != req_mask &&
+>  		    ((csg_iface->input->req ^ csg_iface->output->ack) & req_mask) != 0) {
+> +			struct panthor_csg_slot *csg_slot =
+> +				&sched->csg_slots[csg_id];
+> +			struct panthor_group *group = csg_slot->group;
+> +
+>  			drm_err(&ptdev->base, "CSG %d update request timedout", csg_id);
+>  			ctx->timedout_mask |= BIT(csg_id);
+> +
+> +			panthor_sched_coredump_locked(
+> +				ptdev, PANTHOR_COREDUMP_REASON_CSG_REQ_TIMEOUT,
+> +				group);
+>  		}
+>  	}
+>  
+> @@ -2027,6 +2057,10 @@ tick_ctx_init(struct panthor_scheduler *sched,
+>  		 * CSG IRQs, so we can flag the faulty queue.
+>  		 */
+>  		if (panthor_vm_has_unhandled_faults(group->vm)) {
+> +			panthor_sched_coredump_locked(
+> +				ptdev, PANTHOR_COREDUMP_REASON_MMU_FAULT,
+> +				group);
+> +
+>  			sched_process_csg_irq_locked(ptdev, i);
+>  
+>  			/* No fatal fault reported, flag all queues as faulty. */
+> @@ -3237,6 +3271,10 @@ queue_timedout_job(struct drm_sched_job *sched_job)
+>  
+>  		group_queue_work(group, term);
+>  	}
+> +
+> +	panthor_sched_coredump_locked(
+> +		ptdev, PANTHOR_COREDUMP_REASON_JOB_TIMEOUT, group);
+> +
+>  	mutex_unlock(&sched->lock);
+>  
+>  	queue_start(queue);
+> @@ -3627,6 +3665,37 @@ int panthor_group_get_state(struct panthor_file *pfile,
+>  	return 0;
+>  }
+>  
+> +static void panthor_sched_coredump_locked(struct panthor_device *ptdev,
+> +					  enum panthor_coredump_reason reason,
+> +					  struct panthor_group *group)
+> +{
+> +	struct panthor_coredump *cd;
+> +
+> +	lockdep_assert_held(&ptdev->scheduler->lock);
+> +
+> +	/* GFP_NOWAIT because this may be called from fence signaling path */
+> +	cd = panthor_coredump_alloc(ptdev, reason, GFP_NOWAIT);
+> +	if (!cd)
+> +		return;
+> +
+> +	panthor_coredump_capture(cd, group);
+> +}
+> +
+> +void panthor_group_capture_coredump(const struct panthor_group *group,
+> +				    struct panthor_coredump_group_state *state)
+> +{
+> +	const struct panthor_device *ptdev = group->ptdev;
+> +
+> +	/* this is called from panthor_coredump_capture */
+> +	lockdep_assert_held(&ptdev->scheduler->lock);
+> +
+> +	state->priority = group->priority;
+> +	state->queue_count = group->queue_count;
+> +	/* TODO state->pid and state->comm */
+> +	state->destroyed = group->destroyed;
+> +	state->csg_id = group->csg_id;
+> +}
+> +
+>  int panthor_group_pool_create(struct panthor_file *pfile)
+>  {
+>  	struct panthor_group_pool *gpool;
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
+> index 742b0b4ff3a3..6c564153133e 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.h
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.h
+> @@ -14,8 +14,10 @@ struct drm_panthor_group_create;
+>  struct drm_panthor_queue_create;
+>  struct drm_panthor_group_get_state;
+>  struct drm_panthor_queue_submit;
+> +struct panthor_coredump_group_state;
+>  struct panthor_device;
+>  struct panthor_file;
+> +struct panthor_group;
+>  struct panthor_group_pool;
+>  struct panthor_job;
+>  
+> @@ -26,6 +28,9 @@ int panthor_group_destroy(struct panthor_file *pfile, u32 group_handle);
+>  int panthor_group_get_state(struct panthor_file *pfile,
+>  			    struct drm_panthor_group_get_state *get_state);
+>  
+> +void panthor_group_capture_coredump(const struct panthor_group *group,
+> +				    struct panthor_coredump_group_state *state);
+> +
+>  struct drm_sched_job *
+>  panthor_job_create(struct panthor_file *pfile,
+>  		   u16 group_handle,
+
 
