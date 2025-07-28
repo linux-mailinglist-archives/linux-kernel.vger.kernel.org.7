@@ -1,141 +1,113 @@
-Return-Path: <linux-kernel+bounces-747960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1841EB13AB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A85B13AB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163EB1798B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:46:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6E3173189
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC470265CD0;
-	Mon, 28 Jul 2025 12:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2081F265CA2;
+	Mon, 28 Jul 2025 12:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="d2TpskC8"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/FcKi+h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8039413D51E;
-	Mon, 28 Jul 2025 12:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753706787; cv=pass; b=fO3lTkUIQSsM1QHJ60t1wYGHEtMVQvwDWL7WNmSr+i9nmu729K1z7du1AKQCppC5c3mE/UVsd1ecOTvd+8UCP6ahbPMUj5Mhb1dhhhht5c1ss3tAiuT1Vf5pjeHkXtgliJb9ATz38yd6yvrXSreVTgslAsCZy/DlEWIlM8GHEFM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753706787; c=relaxed/simple;
-	bh=kV8CJI/+KnMlti7TMONXwOLw9gZXIDDlxj16Vo3N7eY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=lCGZYLRbCF38E17gbNyxztqMXO3x8YmfohJHFvDR1YQbUgvT+0c3npj/lJJHo1DnnhXYnIGloKn9k5MnwoOjveMRhotShzuYVKuVnlYctxe99KgDuFULMRIH1mTzV+zq2kCcEn4rN7Vpo5p/+IPOdiaZXuWP5XAaU+9QpGx6UEw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=d2TpskC8; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753706704; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jtdd1t1JN/f4Z96MpnLWjYbm85CyGjLA3c1VeRZEwmeZT0ax+rFOx1jbHw7uwmcEOToL5l/+wd9SW18SBQNkckeu0uKIj4fHrQuuW3gGcHabn58EMRaF2J1ub41c72kfkGNP/yxD+/YV91pn0ULK49IK+kapjRbC5Oe1sSA9KOA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753706704; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kV8CJI/+KnMlti7TMONXwOLw9gZXIDDlxj16Vo3N7eY=; 
-	b=RoIDKrmGatcUCMkxBtBtwjorlqQ1TIUHDX+kEZbxTCNvDuwpaG22d0TX72a9q3X2CBiIXcRVHO0pdtiIbyAcX4SC3H0gKeiOPDMle6I6AWW3Dhrr4s2uhaW17+I7ITutnravNd3EwGWBKYKcvqomhN8jhxIqpsgdyJ1dcC7EAPk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753706704;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=kV8CJI/+KnMlti7TMONXwOLw9gZXIDDlxj16Vo3N7eY=;
-	b=d2TpskC8W8Dt/+ME6qROJSfeTd5XSw1E4PiPjd/5VjaB3FSSstCRYKvVfle0y51H
-	ifom2Nnto6ENZDftIF7GQ7QOmQIM7w3FvRUY3KB7JpI5//7fLBjMmgOoIHoqW2X6VKL
-	bG9kINxg5FGH1Bs2HQ6dp5sNl9LBQajWujeqaegE=
-Received: by mx.zohomail.com with SMTPS id 1753706698669132.7674815409531;
-	Mon, 28 Jul 2025 05:44:58 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7702B13D51E;
+	Mon, 28 Jul 2025 12:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753706722; cv=none; b=gdSzBy2y2wSq6QfFOOdQ4DXukQGTayV1UJUgtdfpJVRMKAIjbXgDPmHkO61ws++sXhCZdbxt/KgU8VERjOch4UegwCfimCETPJk0YyLXKWW2c8TvFlsApSn1t94FcVY5q46k5yP5PA+1VTldyUltV8NON0mSOcbjfNSBOFb1ZaQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753706722; c=relaxed/simple;
+	bh=GugSHvy+IJFFREl/nAn10zyTSudtGXDdHs192vJUo3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cA32a2/k/Z8Bv02Erkv5u8qCrRWkWhFHFnbDtBEOMUWaW1rvIc1RY5+tlFxNOmIzX+EzkM5OTjIcVFYpxcF22HjT+PdYt9d49b3siK9Djuuc7ypI5LTzcnv6SLIqhXz09XsEY+aLztKeyGMtfRng6q3/TnYB2V0CNw0ZQfSa3Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/FcKi+h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4175CC4CEE7;
+	Mon, 28 Jul 2025 12:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753706721;
+	bh=GugSHvy+IJFFREl/nAn10zyTSudtGXDdHs192vJUo3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J/FcKi+hjv9Iqn2RYaI04kXyLfzYaJ0EgCdEefTIVQYhMRE4SG64xA2v937xYdk2/
+	 A6bibL8mGIajh5Hmaoket1pqclZACy7UljY7IhoFvs9MsYHJD50c9F4PJPHJ066ghF
+	 1iT+HlVnom4L8fCYSKvY1JicpPLt3rToYizVt/mla6cTyXiwrlZQnsXLJEIKkU7AAh
+	 RzJx3e/IiE0H6dexSi+y3Syq9vgMdhf6drHB/jrhntmHY2OydFJTUrFxDKsuAnAl2I
+	 /9IeKbTDPjfYIFAEOO5g1dwCzor1jFw1+DjiXEnJp1LWpSsDJ60jdPyJ1sMASF06Po
+	 crjPWKqWJIh3g==
+Date: Mon, 28 Jul 2025 08:45:19 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Greg KH <greg@kroah.com>, corbet@lwn.net, linux-doc@vger.kernel.org,
+	workflows@vger.kernel.org, josh@joshtriplett.org, kees@kernel.org,
+	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
+ kernel
+Message-ID: <aIdw3-G04QQPvJtU@lappy>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
+ <2025072854-earthen-velcro-8b32@gregkh>
+ <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250220070611.214262-8-fujita.tomonori@gmail.com>
-Date: Mon, 28 Jul 2025 09:44:39 -0300
-Cc: linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- netdev@vger.kernel.org,
- andrew@lunn.ch,
- hkallweit1@gmail.com,
- tmgross@umich.edu,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- benno.lossin@proton.me,
- a.hindborg@samsung.com,
- aliceryhl@google.com,
- anna-maria@linutronix.de,
- frederic@kernel.org,
- tglx@linutronix.de,
- arnd@arndb.de,
- jstultz@google.com,
- sboyd@kernel.org,
- mingo@redhat.com,
- peterz@infradead.org,
- juri.lelli@redhat.com,
- vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com,
- rostedt@goodmis.org,
- bsegall@google.com,
- mgorman@suse.de,
- vschneid@redhat.com,
- tgunders@redhat.com,
- me@kloenk.dev,
- david.laight.linux@gmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FC2BC3FF-21F2-4166-9ACD-E14FE722793D@collabora.com>
-References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
- <20250220070611.214262-8-fujita.tomonori@gmail.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
 
-Hi Fujita,
+On Mon, Jul 28, 2025 at 11:52:47AM +0100, Lorenzo Stoakes wrote:
+>One thing to note is that I struggled to get an LLM to read MAINTAINERS
+>properly recently (it assured me, with absolute confidence, that the SLAB
+>ALLOCATOR section was in fact 'SLAB ALLOCATORS' + provided me with
+>completely incorrect contents, and told me that if I didn't believe it I
+>should go check :)
 
-> On 20 Feb 2025, at 04:06, FUJITA Tomonori <fujita.tomonori@gmail.com> =
-wrote:
->=20
-> Add read_poll_timeout functions which poll periodically until a
-> condition is met or a timeout is reached.
->=20
-> The C's read_poll_timeout (include/linux/iopoll.h) is a complicated
-> macro and a simple wrapper for Rust doesn't work. So this implements
-> the same functionality in Rust.
->=20
-> The C version uses usleep_range() while the Rust version uses
-> fsleep(), which uses the best sleep method so it works with spans that
-> usleep_range() doesn't work nicely with.
->=20
-> The sleep_before_read argument isn't supported since there is no user
-> for now. It's rarely used in the C version.
->=20
-> read_poll_timeout() can only be used in a nonatomic context. This
-> requirement is not checked by these abstractions, but it is intended
-> that klint [1] or a similar tool will be used to check it in the
-> future.
->=20
-> Link: https://rust-for-linux.com/klint [1]
-> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Heh, I wouldn't trust LLM with anything more than mechanical
+transformations or test writing at this point :)
 
-This appears to be the last version of this patch. Do you have any plans =
-to
-keep working on it? Is there anything I can do to help? :)
+>So at all times I think ensuring the human element is aware that they need
+>to do some kind of checking/filtering is key.
+>
+>But that can be handled by a carefully worded policy document.
 
-If you don=E2=80=99t have the time to work on this, I can pick it up for =
-you.
+Right. The prupose of this series is not to create a new LLM policy but
+rather try and enforce our existing set of policies on LLMs.
 
-=E2=80=94 Daniel
+Right now the "official" policy of our project is that we accept agent
+generated contributions without any requirements beyond what applies to
+regular humans, which most LLMs promptly skip reading and go do their
+own thing...
 
+So I wanted to at least force LLMs to go RTFM before writing code.
+
+>>
+>> > In addition, it's concerning that we're explicitly adding configs for
+>> > specific, commercial, products. This might be seen as an endorsement
+>> > whether intended or not.
+>>
+>> Don't we already have that for a few things already, like .editorconfig?
+>
+>Right, but I think it's a whole other level when it's a subscription
+>service. I realise we have to be practical, but it's just something to be
+>aware of.
+>
+>Perhaps an entry in the AI doc along the lines of 'provision of
+>configuration for a service is not advocating for that service, it is
+>simply provided for convenience' or similar might help.
+
+It also gives us the option of dropping some of these if we find them to
+be either horrible at their job or just being abused.
+
+-- 
+Thanks,
+Sasha
 
