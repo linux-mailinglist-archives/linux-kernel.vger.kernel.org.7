@@ -1,173 +1,106 @@
-Return-Path: <linux-kernel+bounces-748712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98146B1450C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:53:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A175AB1450D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED653BE621
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07421AA1491
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308C6235BEE;
-	Mon, 28 Jul 2025 23:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A78C2356BE;
+	Mon, 28 Jul 2025 23:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMbltTOx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ipO+PyZg"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EC0D27E;
-	Mon, 28 Jul 2025 23:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC7CD27E;
+	Mon, 28 Jul 2025 23:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753746806; cv=none; b=hvXIdjDes3x43sQIfVzNXZ7Vb/l7yNetOzjCEPc6ZNtU7jJOvLFXosjINK8eGdO9ZMgFd8s3z3bOm0Q8obrLvKcqEOjM8ea1ctlssWE21hIHiNP6vqMAEiX3LJsHxfbE7ObttIlseL1oi3rFcNCTFCkjzSg3YiEbvSYPH+xnRag=
+	t=1753746963; cv=none; b=WFLEl5ZehbdYlZDH3D4TzcIM/MeTFnarlgCtVv6FHuinQoNtushl9icmt9OeGlMwVfgKjku9QlF3K3PTkHu+2ZOXZ12K2uvGIjX0uWa+i5ppK6vE+uzfqQKVlMROgLhJO/8/3eM5UXez3F4nMOoZW1T+++6zVn6IQI+S6tyC9bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753746806; c=relaxed/simple;
-	bh=0FnPYo5/wk60MCrkVcHV8SfvxdhIefY2gSPs4N0QSxY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=m9OK7nzT+V032pW7MWgtede66hokCjTit5AIIyC21ad/Q90icqx1fpa4lOREPSWZfVXBD+iMBwo25thIOtl0JRH+YeLCwhSNrVPjyAqqsvWdqohMx1j3sv6XXYkSCHziG9OJRnh8Qfirr9vhdFMzqxp1KlZEvL5lG8LY6C36Di0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMbltTOx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA69C4CEE7;
-	Mon, 28 Jul 2025 23:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753746806;
-	bh=0FnPYo5/wk60MCrkVcHV8SfvxdhIefY2gSPs4N0QSxY=;
+	s=arc-20240116; t=1753746963; c=relaxed/simple;
+	bh=RcLh+MszlNhjcX8HX1WjD43FEcWOgVJ3DAd6Nv6m844=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aAyKj/HzzxNiTcULXpOO6z+oP/NJbU4HIY/7HkFzcr1wTqWkx6SU8ITNsE1eAxM+CqRU90/1v+apWk9yhXsDojPHcWlRv9q9RKhfGCjmGmheFORF5MlWVPbEsYXArhP/CmyW9nBD+J3CbKfo1SVTfOA68ybSetbwczbxmpTMc3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ipO+PyZg; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753746751;
+	bh=H0F390pxwdtIa41vnoqaKWBaQIq2b+l89tRmHkpGU2g=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RMbltTOxR411c2mwbHxAJfesEU3iiRJQm9vJmGev+vfOxRoNyABPYs448LdwNzl9U
-	 HVYnBsNpO5ltJoT1Zk60A/AmjHjVMo+v8fxUTj1Wxlke5u7iDMdhFjZ2BlQl3D91W+
-	 kzEX9R8ecyZXucMRg28msriC9ghEB5LsB1aSY4lKfKRCtwhl4Dro1WjEN499I2tt4Q
-	 S91Z1JCn7evEGsXjVSMVzFXRXGq9GqmxoBUF1mglO8OdnlImuAFpwXrCqGqFRS1wJq
-	 kvqB8mMpDBup2X8Ats69PTXs9qYuyp2NMQZvSl/gzADujXAbGEzYhJ6jaBhxvPQAsa
-	 clTRbFka7NRnQ==
-Date: Tue, 29 Jul 2025 08:53:23 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: alexei.starovoitov@gmail.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, hca@linux.ibm.com, revest@chromium.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH RFC bpf-next v2 0/4] fprobe: use rhashtable for
- fprobe_ip_table
-Message-Id: <20250729085323.b2685e50c394eabd2f0d43e5@kernel.org>
-In-Reply-To: <CADxym3b=-tGOVqnoPeDb0q3EZZ-DMjkM0fiaSS6=Q+y07azYMg@mail.gmail.com>
-References: <20250728072637.1035818-1-dongml2@chinatelecom.cn>
-	<20250728213502.df49c01629de5fe9b6f15632@kernel.org>
-	<CADxym3b=-tGOVqnoPeDb0q3EZZ-DMjkM0fiaSS6=Q+y07azYMg@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=ipO+PyZgUI6G8zT1nz7leZoJ79sHAOrC+cNlCqw18kfKQHJaiFNvaxRzGCw1jtghH
+	 rvBbSs1Fi86Yq3b3TIv6+VnbrmxKGnl44STsyFMx4oPuKMyBqIAM1hdBj3r5F9oAWU
+	 2c7DiLYofAr+IwalbeG99C8zc1ML2raC6+gvrlUd0C+++hWr/QU2pLoTo55Jsm2xqL
+	 ggkTtQ4uhtWgNBRwMPvUZBpEGVA8exHvcKaoh48Z0aWkm22EfC6q/b4qOAu9fHzem5
+	 P5FX5YIaaCY9MjGFeFsESgyTxj/UOD7VuyPKgcjEnML/z491WYFSDyyLr2ouYGCrkl
+	 DDgTc0V9TdSSw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brZz2712xz4wb0;
+	Tue, 29 Jul 2025 09:52:30 +1000 (AEST)
+Date: Tue, 29 Jul 2025 09:55:57 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Sterba <dsterba@suse.com>
+Cc: torvalds@linux-foundation.org, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Btrfs updates for 6.17
+Message-ID: <20250729095557.30be0750@canb.auug.org.au>
+In-Reply-To: <cover.1753226358.git.dsterba@suse.com>
+References: <cover.1753226358.git.dsterba@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/n8Y5k22YP7zojwmAF1sRl1A";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, 28 Jul 2025 22:26:27 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
+--Sig_/n8Y5k22YP7zojwmAF1sRl1A
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Jul 28, 2025 at 8:35 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > Hi Menglong,
-> >
-> > What are the updates from v1? Just adding RFC?
-> 
-> No, the V1 uses rhashtable, which is wrong, and makes the
-> function address unique in the hash table.
-> 
-> And in the V2, I use rhltable instead, which supports duplicate
-> keys.
+Hi David,
 
-Ah, thanks for the explanation!
+On Wed, 23 Jul 2025 01:23:47 +0200 David Sterba <dsterba@suse.com> wrote:
+>
+> Hi,
+>=20
+> there's are number of usability and feature updates, scattered
+> performance improvements and fixes.  Highlight of the core changes is
+> getting closer to enabling large folios (now behind a config option).
 
-> 
-> Sorry that I forgot to add the changelog :/
+It looks like this was all rebased from what is in linux-next :-(
 
-Yeah, the changelog helps us to review the differences.
+Please clean up the btrfs trees in linux-next.
 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell
 
-> 
-> >
-> > Thanks,
-> >
-> > On Mon, 28 Jul 2025 15:22:49 +0800
-> > Menglong Dong <menglong8.dong@gmail.com> wrote:
-> >
-> > > For now, the budget of the hash table that is used for fprobe_ip_table is
-> > > fixed, which is 256, and can cause huge overhead when the hooked functions
-> > > is a huge quantity.
-> > >
-> > > In this series, we use rhltable for fprobe_ip_table to reduce the
-> > > overhead.
-> > >
-> > > Meanwhile, we also add the benchmark testcase "kprobe-multi-all", which
-> > > will hook all the kernel functions during the testing. Before this series,
-> > > the performance is:
-> > >   usermode-count :  875.380 ± 0.366M/s
-> > >   kernel-count   :  435.924 ± 0.461M/s
-> > >   syscall-count  :   31.004 ± 0.017M/s
-> > >   fentry         :  134.076 ± 1.752M/s
-> > >   fexit          :   68.319 ± 0.055M/s
-> > >   fmodret        :   71.530 ± 0.032M/s
-> > >   rawtp          :  202.751 ± 0.138M/s
-> > >   tp             :   79.562 ± 0.084M/s
-> > >   kprobe         :   55.587 ± 0.028M/s
-> > >   kprobe-multi   :   56.481 ± 0.043M/s
-> > >   kprobe-multi-all:    6.283 ± 0.005M/s << look this
-> > >   kretprobe      :   22.378 ± 0.028M/s
-> > >   kretprobe-multi:   28.205 ± 0.025M/s
-> > >
-> > > With this series, the performance is:
-> > >   usermode-count :  902.387 ± 0.762M/s
-> > >   kernel-count   :  427.356 ± 0.368M/s
-> > >   syscall-count  :   30.830 ± 0.016M/s
-> > >   fentry         :  135.554 ± 0.064M/s
-> > >   fexit          :   68.317 ± 0.218M/s
-> > >   fmodret        :   70.633 ± 0.275M/s
-> > >   rawtp          :  193.404 ± 0.346M/s
-> > >   tp             :   80.236 ± 0.068M/s
-> > >   kprobe         :   55.200 ± 0.359M/s
-> > >   kprobe-multi   :   54.304 ± 0.092M/s
-> > >   kprobe-multi-all:   54.487 ± 0.035M/s << look this
-> > >   kretprobe      :   22.381 ± 0.075M/s
-> > >   kretprobe-multi:   27.926 ± 0.034M/s
-> > >
-> > > The benchmark of "kprobe-multi-all" increase from 6.283M/s to 54.487M/s.
-> > >
-> > > The locking is not handled properly in the first patch. In the
-> > > fprobe_entry, we should use RCU when we access the rhlist_head. However,
-> > > we can't use RCU for __fprobe_handler, as it can sleep. In the origin
-> > > logic, it seems that the usage of hlist_for_each_entry_from_rcu() is not
-> > > protected by rcu_read_lock neither, isn't it? I don't know how to handle
-> > > this part ;(
-> > >
-> > > Menglong Dong (4):
-> > >   fprobe: use rhltable for fprobe_ip_table
-> > >   selftests/bpf: move get_ksyms and get_addrs to trace_helpers.c
-> > >   selftests/bpf: skip recursive functions for kprobe_multi
-> > >   selftests/bpf: add benchmark testing for kprobe-multi-all
-> > >
-> > >  include/linux/fprobe.h                        |   2 +-
-> > >  kernel/trace/fprobe.c                         | 141 ++++++-----
-> > >  tools/testing/selftests/bpf/bench.c           |   2 +
-> > >  .../selftests/bpf/benchs/bench_trigger.c      |  30 +++
-> > >  .../selftests/bpf/benchs/run_bench_trigger.sh |   2 +-
-> > >  .../bpf/prog_tests/kprobe_multi_test.c        | 220 +----------------
-> > >  tools/testing/selftests/bpf/trace_helpers.c   | 230 ++++++++++++++++++
-> > >  tools/testing/selftests/bpf/trace_helpers.h   |   3 +
-> > >  8 files changed, 348 insertions(+), 282 deletions(-)
-> > >
-> > > --
-> > > 2.50.1
-> > >
-> >
-> >
-> > --
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--Sig_/n8Y5k22YP7zojwmAF1sRl1A
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIDg0ACgkQAVBC80lX
+0GzAzwgAirm5fxgQtl7o18ZLJO6EtHmvkHgGBsA4r/uGHHnKSMITXD73yZHgyajD
+S4FuiD3JzTldF0rYJdNREL4ONxqxehyL1LFzYU+kmHgsE0PQcgHiGjnITO2+c/qZ
+ggrSBd7B4Si+OAOkkJkDlbmzKmYybWFmbdiSFwQkRfCeg5v5WM/yKRYzlsD+qFxE
+05ItxghlUfkIu0njHOzrsj70VljvE+bcvojdFXUBZzEgb+106mImnGDHhWXRw/jx
+9c6UctNSb6IhmcJMjnrGc1TAqk6mnyIPhsz4ri27yGcltdcWCPQZ86C9htmjY3gv
+RbYVSa69i5Y3V47lBepSNkQ6MVrHIw==
+=SQmI
+-----END PGP SIGNATURE-----
+
+--Sig_/n8Y5k22YP7zojwmAF1sRl1A--
 
