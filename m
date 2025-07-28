@@ -1,251 +1,132 @@
-Return-Path: <linux-kernel+bounces-747407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C46AB13377
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:51:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51688B13374
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F9D0175F84
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 03:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336781895FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 03:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD6E216E1B;
-	Mon, 28 Jul 2025 03:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AF120AF67;
+	Mon, 28 Jul 2025 03:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWf2QjR2"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qIi6/QJu"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE03E1EA7C4;
-	Mon, 28 Jul 2025 03:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBED1DE3A5
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 03:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753674681; cv=none; b=kc4CEANhrVJmRyggBM49lxQLWINLON1xPkwuLaT8WSSA0488VT2jjEyimOuXuxIUWIQ6aSLa+RjDXsnPczINvWul4XTl7kwEZ9CEz42PItXE5XgroVaa2uyW7EebFVh3Znlb+5gEgmhAgqijfgJPvhmWfS92H8lESKmbCd3I4fQ=
+	t=1753674679; cv=none; b=VVZca9RQ2aNjFPyw5Vm7bk1lLjOCI+m8q7j54Us3gskgceN/Xlh7c7/R36IOwMZvsO+B5mld4GI47MleM3QA5LjS/kU6IdVHH//B42yBGKAm4GvKhINFxK/TD6IGCAIJ9SjeCvrcn5+MMzBPglO6N5cPiAYECwXb/msH5oB/iN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753674681; c=relaxed/simple;
-	bh=R+Szdc9IZEupB29lbdW/bHnVnpDKxXmiFUCekZcQk1M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B9RfIM9Ix5FMQrnHTaQtaVod26jEmPazrQgBvp5szP1NkANnFqCp+fKBNAh+E0ujd8uy4XUZIFKKYQ/BZ6n+SQsaYofGpnSTETpo4AwH5p5s/OboGOlsMSemYrWs9TdCZCUiuc5eK4hmAtDwJA3WxtYwvAWyjgSOC6SLzriC51c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWf2QjR2; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71a04654b82so7523697b3.2;
-        Sun, 27 Jul 2025 20:51:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753674678; x=1754279478; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rrehipaAg9x4RIFKtETchHQEThsc/Gdzu3QWzY579jk=;
-        b=JWf2QjR2gkaAmZOjpw4g1fFfj/DVt02E4Ba7NxG7KSErmhLRv3DDRH/1rH+GdTtlaZ
-         OZqQT9oEJZ0gTkplqnPkseW26KX88HOnciNBkQQe621b2fKxrjhvac/1Ydt/EUCPBdbU
-         Uddj7xv7so7r2KZiJpdCphuwWWot1Bpuvca6FRrXkEJrUvhJaplHDXMvWfGS6HMkqKCi
-         rH3xdCrf49FNCV52ziveHKznRrwPp1qv4MJ7Cl//UMSo+5myhM4UKVpeT9DnYSdVwAk0
-         KalYda+M0xhYJB0yuWDhRctcMJ4/7CVC9XdZVAqo0Q2XAEDDqZ4V5HaHD3b4W+eqTUBq
-         aQOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753674678; x=1754279478;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rrehipaAg9x4RIFKtETchHQEThsc/Gdzu3QWzY579jk=;
-        b=G1JvOgcuH42zrX+9Atq4HQ2n8OHI+i0eMKlzY94oROzMGh6SuFGIVB5AXqzxqNTuvp
-         glODB7z0J+cSqs3H9wg6QXn70QoeeZ0iY1f3i2alnlO6kerYo4hhjt7hIjNXuwZd9UXP
-         Ir4a42fq+ivgfZXysynBRIhzcxtXOmOIRMgDTyiqgrYR453s73o5uroJD92NdAbzVi/r
-         izrwfYb4V+ti9rDiVWKNGvzGj0uEJOyrn9vwWzJehuKFS54kNPcF+3WsZsccrSUjaipE
-         u1YvD7a8pA7o1jic8sxBZUyESZxQEcK+R5rhl6PgW9M5hDxl9hrtw3dXO7zvigYefHn+
-         K0WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOrUCLD2wbMNf5uRGeUobgAYtYNRbZR0UjiNZrkL7pD6zL/1DiEm8KgQycM6DxwrRqTHJnW5AwAWxUee0=@vger.kernel.org, AJvYcCVGGWYr8Z5lI4ursjscv/cOO0UB+TRN55201xtcoVxNyFmLA5vE9ecLm04wAmlEway8IW1obd9Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb0m6+lbMZcRyc0cg49B8R8ErO0bb7udwXImvw4b6THyXAcip0
-	MwzaayFe+aY6wsju6BNVQ34JZ2HqgwS9nO29k9GRLhoTU5QZzHoudmf410T9+7Bkh3W6YdGA2+f
-	h2hSMmbJTjrAzwfLMlmEBUx1pbktlhK0=
-X-Gm-Gg: ASbGncsCpENhIzDrfMsSCx20efzjQvPD4D8Nu8Fuc0UkewluVxpcQjK59bWNk4kFfWy
-	VNTAN3UEiDD6+ZpUQ1l6IS3mUrwcO3UDtTozNXnn3eETqjJa2ngwsBLFatLvM2Z2mw5TPDHQfy5
-	v2VSai+gLxN1D40Wu8HfRfKUZRBdMqX1cs4C1p+WpLIYkLd8oRs/NuyfJjqCRNnosEYWzm4HhCy
-	fPY8b2+H+4TEs/Nhdz4aMtklCgdfe7wBCFgDM2vLQ==
-X-Google-Smtp-Source: AGHT+IEe8t4zH9Jep2O4bZaR1QE3V/MNiGneZNNvs4ZGlVtrTRVKeRdxtgbxH/VTFPO9qqV5hxccBCyovNKBN973ZDI=
-X-Received: by 2002:a05:690c:6f02:b0:71a:2c7d:d2a0 with SMTP id
- 00721157ae682-71a2c7e2642mr738037b3.12.1753674677854; Sun, 27 Jul 2025
- 20:51:17 -0700 (PDT)
+	s=arc-20240116; t=1753674679; c=relaxed/simple;
+	bh=TSzsuQ37d9y7N1sWSOfnSghOZMXjbsLK9YJyk9rz+2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PYluqT9MkBEm58/hw0uF/f6On+4ZyMf83NJvy1bNjKARUhr10c7ZGIBYRCUY2TiAIV397WlQGNc6fyZsyneeiqmYU4ybGC75BnZiaLuJ7XS11DPAAljhMrlMKtNgnEsAEpCcGKqGvEZq0/CuGA3Frp4AbIdCKPai1nOLZWjF2I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qIi6/QJu; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56RGe6e9031356;
+	Mon, 28 Jul 2025 03:51:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=DbOGqW
+	ArItDIBandpG94NYcXnPFCFZMmf3p2FXRkLNo=; b=qIi6/QJupqxP7px10rhsce
+	SQuL9aslFrNCTB4pIhj2iJTiCys8x/nKfSvpXPcccbFTa8+I5kzCbmrwA+1crYvZ
+	QlMG7iqu09p0g/0jtUYS0p/QDwugL4N+tnhfUXhljCWtTSUl2AsV/O5qlkaVg3Rl
+	uggw0Tv1nWz9dWpVv2e9qBCfkh0XO1ZC6OJ+1qrtMPLUs+n6uTEBseci+4MujaZ2
+	oAGXxG3MveFumTOPVqcLvG0bjWWlumC/7IA+qpphCBfuLNJ1aex9pWCcNPzBFstY
+	d9us9hd54MA5fdY02LaBcco0DHgIyiqyXvJb2jo3DPOUVZyGc8TQbuO+40LVocKw
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcfpsfg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 03:51:00 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56S1nfYF006209;
+	Mon, 28 Jul 2025 03:50:59 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 485bjkuuqw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 03:50:58 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56S3ownf42926530
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Jul 2025 03:50:58 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EAC885805E;
+	Mon, 28 Jul 2025 03:50:57 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4305F58056;
+	Mon, 28 Jul 2025 03:50:54 +0000 (GMT)
+Received: from [9.43.67.38] (unknown [9.43.67.38])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 28 Jul 2025 03:50:53 +0000 (GMT)
+Message-ID: <237cb015-feed-4c9c-a23e-8c3dc25466ba@linux.ibm.com>
+Date: Mon, 28 Jul 2025 09:20:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724083005.3918375-1-wangliang74@huawei.com>
- <688235273230f_39271d29430@willemb.c.googlers.com.notmuch>
- <bef878c0-4d7f-4e9a-a05d-30f6fde31e3c@huawei.com> <68865594e28d8_9f93f29443@willemb.c.googlers.com.notmuch>
- <68865ecee5cc4_b1f6a29442@willemb.c.googlers.com.notmuch> <CACGkMEvAWj5CFPwXx=zWjvZnMUYBORuXm-mMQe89P8xdBRid5w@mail.gmail.com>
-In-Reply-To: <CACGkMEvAWj5CFPwXx=zWjvZnMUYBORuXm-mMQe89P8xdBRid5w@mail.gmail.com>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Sun, 27 Jul 2025 23:50:40 -0400
-X-Gm-Features: Ac12FXwPKd7szapBYuV4uvG7PKjftRwBqchAR0LB9d-9bKC_MUvlni1NjW3v80o
-Message-ID: <CAF=yD-+Mzk0ibfgByXqiS_y=FoKqLVtATKQF4PPpUL4Pk8hosw@mail.gmail.com>
-Subject: Re: [PATCH net] net: check the minimum value of gso size in virtio_net_hdr_to_skb()
-To: Jason Wang <jasowang@redhat.com>
-Cc: Wang Liang <wangliang74@huawei.com>, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
-	eperezma@redhat.com, pabeni@redhat.com, davem@davemloft.net, 
-	willemb@google.com, atenart@kernel.org, yuehaibing@huawei.com, 
-	zhangchangzhong@huawei.com, netdev@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	steffen.klassert@secunet.com, tobias@strongswan.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvmet: Remove unnecessary assignment to ret in
+ nvmet_ns_enable()
+To: Mohamed Khalfella <mkhalfella@purestorage.com>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>
+Cc: Hannes Reinecke <hare@kernel.org>,
+        Randy Jennings
+ <randyj@purestorage.com>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250725230639.2017274-1-mkhalfella@purestorage.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250725230639.2017274-1-mkhalfella@purestorage.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDAyNyBTYWx0ZWRfX8Iu/zl8JPzIW
+ 45W7lanB45DsZ1oRMihoh8/RX9qtQHuwcFsCM1SfkRiHpb7iliHxAp4zgzjbdP0PBqGvg6+x62C
+ vRxlKoFgESbaEeymB2vNVl4GmfuIV+ulxjthLa1qz1SQJ+xIvAvOp+WGN8SXJp3R6JQ9W+EfK2N
+ NdoCpwL99YiQR1fPC2uRpf11azmrwPw9dblxq7UBj3rwpsPGjG77E2wvY0HwjhosTAufm/C72+b
+ HQpiJJJwGrQ3bucOMSd/9tEbs5Iu2OSYv0PR9G0jEuaBsKfqRWxlO5p5coTbB2mn7He5Vg0+eYu
+ yFOrs8TwzjOgxzAhpljy73YKCWkEYy0FiednWlah0qUEbgLmsfjlO8SiujK+TnKO0y+BmRgbMfO
+ rOj5kUa1VrGNiD+pdVYafWi2jXrIguXHdNQQQz1axsno0VjLJr7mO9ncHofrXNgewm02IYUE
+X-Proofpoint-ORIG-GUID: LRqPzrUpa55xHa5PNvzZEQe4rhK9nDxr
+X-Authority-Analysis: v=2.4 cv=Lp2Symdc c=1 sm=1 tr=0 ts=6886f3a4 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=WTJdmG3rAAAA:8 a=VnNF1IyMAAAA:8
+ a=HMNGUcPwllwntIP3TpoA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
+ a=zZCYzV9kfG8A:10 a=q3NGepEMMmKWaCv8Sx90:22
+X-Proofpoint-GUID: LRqPzrUpa55xHa5PNvzZEQe4rhK9nDxr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_01,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
+ adultscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=865 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507280027
 
-On Sun, Jul 27, 2025 at 11:21=E2=80=AFPM Jason Wang <jasowang@redhat.com> w=
-rote:
->
-> On Mon, Jul 28, 2025 at 1:16=E2=80=AFAM Willem de Bruijn
-> <willemdebruijn.kernel@gmail.com> wrote:
-> >
-> > Willem de Bruijn wrote:
-> > > Wang Liang wrote:
-> > > >
-> > > > =E5=9C=A8 2025/7/24 21:29, Willem de Bruijn =E5=86=99=E9=81=93:
-> > > > > Wang Liang wrote:
-> > > > >> When sending a packet with virtio_net_hdr to tun device, if the =
-gso_type
-> > > > >> in virtio_net_hdr is SKB_GSO_UDP and the gso_size is less than u=
-dphdr
-> > > > >> size, below crash may happen.
-> > > > >>
-> > > > > gso_size is the size of the segment payload, excluding the transp=
-ort
-> > > > > header.
-> > > > >
-> > > > > This is probably not the right approach.
-> > > > >
-> > > > > Not sure how a GSO skb can be built that is shorter than even the
-> > > > > transport header. Maybe an skb_dump of the GSO skb can be elucida=
-ting.
-> > > > >>                          return -EINVAL;
-> > > > >>
-> > > > >>                  /* Too small packets are not really GSO ones. *=
-/
-> > > > >> --
-> > > > >> 2.34.1
-> > > > >>
-> > > >
-> > > > Thanks for your review!
-> > >
-> > > Thanks for the dump and repro.
-> > >
-> > > I can indeed reproduce, only with the UDP_ENCAP_ESPINUDP setsockopt.
-> > >
-> > > > Here is the skb_dump result:
-> > > >
-> > > >      skb len=3D4 headroom=3D98 headlen=3D4 tailroom=3D282
-> > > >      mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98
-> > > >      shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D0 type=3D0 segs=3D0=
-))
-> > > >      csum(0x8c start=3D140 offset=3D0 ip_summed=3D1 complete_sw=3D0=
- valid=3D1 level=3D0)
-> > >
-> > > So this is as expected not the original GSO skb, but a segment,
-> > > after udp_rcv_segment from udp_queue_rcv_skb.
-> > >
-> > > It is a packet with skb->data pointing to the transport header, and
-> > > only 4B length. So this is an illegal UDP packet with length shorter
-> > > than sizeof(struct udphdr).
-> > >
-> > > The packet does not enter xfrm4_gro_udp_encap_rcv, so we can exclude
-> > > that.
-> > >
-> > > It does enter __xfrm4_udp_encap_rcv, which will return 1 because the
-> > > pskb_may_pull will fail. There is a negative integer overflow just
-> > > before that:
-> > >
-> > >         len =3D skb->len - sizeof(struct udphdr);
-> > >         if (!pskb_may_pull(skb, sizeof(struct udphdr) + min(len, 8)))
-> > >                 return 1;
-> > >
-> > > This is true for all the segments btw, not just the last one. On
-> > > return of 1 here, the packet does not enter encap_rcv but gets
-> > > passed to the socket as a normal UDP packet:
-> > >
-> > >       /* If it's a keepalive packet, then just eat it.
-> > >        * If it's an encapsulated packet, then pass it to the
-> > >        * IPsec xfrm input.
-> > >        * Returns 0 if skb passed to xfrm or was dropped.
-> > >        * Returns >0 if skb should be passed to UDP.
-> > >        * Returns <0 if skb should be resubmitted (-ret is protocol)
-> > >        */
-> > >       int xfrm4_udp_encap_rcv(struct sock *sk, struct sk_buff *skb)
-> > >
-> > > But so the real bug, an skb with 4B in the UDP layer happens before
-> > > that.
-> > >
-> > > An skb_dump in udp_queue_rcv_skb of the GSO skb shows
-> > >
-> > > [  174.151409] skb len=3D190 headroom=3D64 headlen=3D190 tailroom=3D6=
-6
-> > > [  174.151409] mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98
-> > > [  174.151409] shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D4 type=3D65=
-538 segs=3D0))
-> > > [  174.151409] csum(0x8c start=3D140 offset=3D0 ip_summed=3D3 complet=
-e_sw=3D0 valid=3D1 level=3D0)
-> > > [  174.151409] hash(0x0 sw=3D0 l4=3D0) proto=3D0x0800 pkttype=3D2 iif=
-=3D8
-> > > [  174.151409] priority=3D0x0 mark=3D0x0 alloc_cpu=3D1 vlan_all=3D0x0
-> > > [  174.151409] encapsulation=3D0 inner(proto=3D0x0000, mac=3D0, net=
-=3D0, trans=3D0)
-> > > [  174.152101] dev name=3Dtun0 feat=3D0x00002000000048c1
-> > >
-> > > And of segs[0] after segmentation
-> > >
-> > > [  103.081442] skb len=3D38 headroom=3D64 headlen=3D38 tailroom=3D218
-> > > [  103.081442] mac=3D(64,14) mac_len=3D14 net=3D(78,20) trans=3D98
-> > > [  103.081442] shinfo(txflags=3D0 nr_frags=3D0 gso(size=3D0 type=3D0 =
-segs=3D0))
-> > > [  103.081442] csum(0x8c start=3D140 offset=3D0 ip_summed=3D1 complet=
-e_sw=3D0 valid=3D1 level=3D0)
-> > > [  103.081442] hash(0x0 sw=3D0 l4=3D0) proto=3D0x0800 pkttype=3D2 iif=
-=3D8
-> > > [  103.081442] priority=3D0x0 mark=3D0x0 alloc_cpu=3D0 vlan_all=3D0x0
-> > > [  103.081442] encapsulation=3D0 inner(proto=3D0x0000, mac=3D0, net=
-=3D0, trans=3D0)
-> > >
-> > > So here translen is already 38 - (98-64) =3D=3D 38 - 34 =3D=3D 4.
-> > >
-> > > So the bug happens in segmentation.
-> > >
-> > > [ongoing ..]
-> >
-> > Oh of course, this is udp fragmentation offload (UFO):
-> > VIRTIO_NET_HDR_GSO_UDP.
-> >
-> > So only the first packet has an UDP header, and that explains why the
-> > other packets are only 4B.
-> >
-> > They are not UDP packets, but they have already entered the UDP stack
-> > due to this being GSO applied in udp_queue_rcv_skb.
-> >
-> > That was never intended to be used for UFO. Only for GRO, which does
-> > not build such packets.
-> >
-> > Maybe we should just drop UFO (SKB_GSO_UDP) packets in this code path?
-> >
->
-> Just to make sure I understand this. Did you mean to disable UFO for
-> guest -> host path? If yes, it seems can break some appllication.
 
-No, I mean inside the special segmentation path inside UDP receive.
 
-I know that we have to keep UFO segmentation around because existing
-guests may generate those packets and these features cannot be
-re-negotiated once enabled, even on migration. But no new kernel
-generates UFO packets.
+On 7/26/25 4:36 AM, Mohamed Khalfella wrote:
+> Commit 74d16965d7ac ("nvmet-loop: avoid using mutex in IO hotpath")
+> moved checking maximum number of namespaces in subsystem from
+> nvmet_ns_enable() to nvmet_ns_alloc(). The assignment to ret in
+> nvmet_ns_enable() is no longer needed, remove it.
+> 
+> Fixex: 74d16965d7ac ("nvmet-loop: avoid using mutex in IO hotpath")
+> Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
 
-Segmentation inside UDP receive was added when UDP_GRO was added, in
-case packets accidentally add up at a local socket receive path that
-does not support large packets.
-
-Since GRO never builds UFO packets, such packets should not arrive at
-such sockets to begin with.
-
-Evidently we forgot about looping virtio_net_hdr packets. They were
-never intended to be supported in this new path, nor clearly have they
-ever worked. We just need to mitigate them without crashing.
+Looks good to me:
+Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
 
