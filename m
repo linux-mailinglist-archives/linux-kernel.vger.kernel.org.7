@@ -1,229 +1,102 @@
-Return-Path: <linux-kernel+bounces-747631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D62BB1361E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:16:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A6CB13625
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 752F6177E39
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F7C3B4B7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B7E224B12;
-	Mon, 28 Jul 2025 08:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771D2224B12;
+	Mon, 28 Jul 2025 08:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YOHmIu6c";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pQ+UXydN";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YOHmIu6c";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pQ+UXydN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vVOfrBKq"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D84C1DC9B5
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718002222A3
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753690563; cv=none; b=KqnmOgrTGGJIi32A7WVKS8F8LN7cPIhiEykH1RGnc1cZ+WBRz0yyIYbhq5Uj59UpuO8StpjCraG5CpVgr62TEcx8or+55VcGAONughpTyyUBrKSl/gRcFMOI5Uhvi6aQ2cQ4Mi+ASD2QFuOIP04PIEk4+0wEsUdr3enSL4bXnbw=
+	t=1753690627; cv=none; b=Msn4kMFc7EAwEUBo5euYraQERvm19CnB/a/Lg863URR7lSB3GfBs7iqjGcih9e5VR6AwTeodgEjaY4CWfcdI6tZkbvVllSTaB5PvexjP1urgl8gjWSFwu9pe5UfuqWiQOVLj/sevR6ZL+ermg13MtiJko5dyuN9pXmi7U4Idi3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753690563; c=relaxed/simple;
-	bh=PcD6AUaKMhrQKNEzKtDh8L0CzKuVz0LArTcjrvQqk5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ozZIS/i1LWi0DkRm6/dR1qK/KITMwWa6Oi8fOpAQI5Au/jGB4qwDdANnddMrWPW0PbPArM1PpOr75HTXYW9JsMEUavVG2fUBDUp+zB3BeaMvp0jSY66q5LZ5lSBpyrvDRqbQeXiOmDT3L62EWqhP+bVXu/57Yk8WGrXbYd+HETc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YOHmIu6c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pQ+UXydN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YOHmIu6c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pQ+UXydN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 35130216EE;
-	Mon, 28 Jul 2025 08:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753690554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=HXhzMaFuh7vb5Rrfd9w/8LMRu0pb0blUMzRiad8fKbo=;
-	b=YOHmIu6cvuvYkmWFnd1acUhY1cMMwLMAoPiyU8zd6MVLu2mR/qKBHWvArwtJz2jYPOxGzM
-	rK+om4zwmjJt9NAMFlGRM0hC0fOmo+7JKOyu+yujxzdUCMLzJ9iRildyRljuqZpouVVCUN
-	4UXbK2eS1Xc385L9LHRJtNs5TSy/X7A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753690554;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=HXhzMaFuh7vb5Rrfd9w/8LMRu0pb0blUMzRiad8fKbo=;
-	b=pQ+UXydNBn8vugRHXLpfN/zC9+2Y2K6NVoKYrKFd8fB67MbEnix0itIqkID7uar3NyA9lg
-	bX/HAeoUvc+tYnCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753690554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=HXhzMaFuh7vb5Rrfd9w/8LMRu0pb0blUMzRiad8fKbo=;
-	b=YOHmIu6cvuvYkmWFnd1acUhY1cMMwLMAoPiyU8zd6MVLu2mR/qKBHWvArwtJz2jYPOxGzM
-	rK+om4zwmjJt9NAMFlGRM0hC0fOmo+7JKOyu+yujxzdUCMLzJ9iRildyRljuqZpouVVCUN
-	4UXbK2eS1Xc385L9LHRJtNs5TSy/X7A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753690554;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=HXhzMaFuh7vb5Rrfd9w/8LMRu0pb0blUMzRiad8fKbo=;
-	b=pQ+UXydNBn8vugRHXLpfN/zC9+2Y2K6NVoKYrKFd8fB67MbEnix0itIqkID7uar3NyA9lg
-	bX/HAeoUvc+tYnCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7CB3138A5;
-	Mon, 28 Jul 2025 08:15:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +3bxMbkxh2haFwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 28 Jul 2025 08:15:53 +0000
-Date: Mon, 28 Jul 2025 10:15:47 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: david@redhat.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>, Hannes Reinecke <hare@kernel.org>
-Subject: [RFC] Disable auto_movable_ratio for selfhosted memmap
-Message-ID: <aIcxs2nk3RNWWbD6@localhost.localdomain>
+	s=arc-20240116; t=1753690627; c=relaxed/simple;
+	bh=oVOsc6ibl2c4BxKOGSlypnNZvk85m52BrD53itvnuCs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N5ZlC+J5GNtC+w3vh6GGZX7sqN5Ui4OwtrjLP9vZIPEog5XONw4TEzeKwscEliMONuEUUiHlNP+DpNSegQ3k2bG2B9j0hqtYJb0l4af5pMzoDAKT2D4PKdIDai09B6EWNfLujcoECEncelMfn0hl99FIZxC5QobmzWhceQoLOhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vVOfrBKq; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6fac7147cb8so54778616d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:17:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753690625; x=1754295425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oVOsc6ibl2c4BxKOGSlypnNZvk85m52BrD53itvnuCs=;
+        b=vVOfrBKqXZq82K89blrYjpqba8kIYshhPZ28MnlENhy/eXPoiyesny97PmdYur41io
+         4Eif5JXu1QhjSy9ykPYotE4ZMFK5TZyB32gjOf2gt/b4Sp9UJMdi01g1IL1xfrEqA3gs
+         PMTo7HlzgZrxp7yO3bMTQRpS9EfQNXKkWkZx605Vso0j0draAqohyCNwmj5AHamASmTq
+         kz1Y8cggL19lTavQVjd0XA/li8C4Bv4mHCi8o/QyELbkPp7YEm8Fgo6ZqdeF6N1zeaXm
+         mQrakeNMLPc+Yj64I6o7bKXDB+r/LEppFTbJp+ib3Ga1hYfgwlNT+Zen+29n83VxjYSY
+         QpPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753690625; x=1754295425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oVOsc6ibl2c4BxKOGSlypnNZvk85m52BrD53itvnuCs=;
+        b=ecWiqx2yAAsMqHMdo9dTPjzewe0XG7zQELYaNkiqN9N/tofajhDhKvN9o2nSl9tCPV
+         KANL2ekueIL6UfDlbWxIAB6fEVzfYzmbBZ05czR7se6M7JxEYutSCvBz9OeqxfQNS2OM
+         K5JUa6KZhs3xYCeI5tTwSAAvvF6b7IkXmXXo20/tXwnVgK2y+ZzI9gIlBBT6ttuVLX69
+         uEPPTYugV3MNttX+463Y+ms1BuDOm8zzw3SGV8SJxkecBQ3T2gqm5nPIGH/McoX9Jdj+
+         saQreLmKYWl21fT30wuxJJA5pLjKiZCxz+Jopym1DHcIivDQNtSKyQAOkEy+ct5FRY5i
+         MpKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5EaKVPYXqwOXf6po0DbwRlymQGfog6Rk3sZ0suiwpww1qk9eay8fiSn0+K0WfEsM+qjpjE+eowTQXhRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc54/lBSW7RKpnFHvl45ee4cqWIFqWaLJTcdY2gKLACxYTjbee
+	DUljA6g35Pqyj5dR8+B1m0oM94YXW86OATZg+z0erm7uwpyRO4aM0/PDQqiCdG/rxfDHHmr38KT
+	OzlDm8Xeutf/d8oQDtwvBxdu2ge2/fwRr00cfvmJ0
+X-Gm-Gg: ASbGnctoIDTsHMKzPpRMllJzWlIVHfT7g4aIAM9+ZZSrTeJ2Fsg2p3liKntxG97/kgZ
+	SEGj+1GLeGIjcxmWFRw0rjFa3le3WI2h6uBZaYUbClI9yPUDj/SVwyteR/fllEi3tc0km500MgP
+	cdOYZ3T1zfqGTC8ULrjYOBx4M/VTcVgZMc0PLsMt/yNLapsepEL3hShFN8RLPg0hiIObJjDJhlQ
+	urScgTls3qDSZxQ+FwHrnIprm/MP190vcH74g==
+X-Google-Smtp-Source: AGHT+IGJVja+BOlBDSueHM4xwgtmGAcntpknGmQBU6g6I7fWUhaq1g+6fNhuHcvRNLAtk8WzaUNpyzvQMZ0Hf40qYp8=
+X-Received: by 2002:a05:6214:5290:b0:704:95c6:f5f1 with SMTP id
+ 6a1803df08f44-707205c02c1mr132327006d6.34.1753690625039; Mon, 28 Jul 2025
+ 01:17:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_FIVE(0.00)[5]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+References: <687e09e3.a70a0220.693ce.00eb.GAE@google.com>
+In-Reply-To: <687e09e3.a70a0220.693ce.00eb.GAE@google.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Mon, 28 Jul 2025 10:16:28 +0200
+X-Gm-Features: Ac12FXyuIo8mg0__JhxicCkBMBx-2UyW5BATXdwFGTnJezh5fbSE4P26Te_FKXc
+Message-ID: <CAG_fn=WSae7yjaHh=_iUc7eFALHX1vLQFMw8ryfas4-ijgFTiQ@mail.gmail.com>
+Subject: Re: [syzbot] [apparmor?] linux-next test error: WARNING in apparmor_unix_stream_connect
+To: john.johansen@canonical.com
+Cc: apparmor@lists.ubuntu.com, jmorris@namei.org, john@apparmor.net, 
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Jul 21, 2025 at 11:35=E2=80=AFAM syzbot
+<syzbot+cd38ee04bcb3866b0c6d@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
 
-Currently, we have several mechanisms to pick a zone for the new memory we are
-onlining.
-Eventually, we will land on zone_for_pfn_range() which will pick the zone.
-
-Two of these mechanisms are 'movable_node' and 'auto-movable' policy.
-The former will put every single hotpluggled memory in ZONE_MOVABLE
-(unless we can keep zones contiguous by not doing so), while the latter
-will put it in ZONA_MOVABLE IFF we are within the established ratio
-MOVABLE:KERNEL.
-
-It seems, the later doesn't play well with CXL memory where CXL cards hold really
-large amounts of memory, making the ratio fail, and since CXL cards must be removed
-as a unit, it can't be done if any memory block fell within
-!ZONE_MOVABLE zone.
-
-One way to tackle this would be update the ratio every time a new CXL
-card gets inserted, but this seems suboptimal.
-Another way is that since CXL memory works with selfhosted memmap, we could relax
-the check when 'auto-movable' and only look at the ratio if we aren't
-working with selfhosted memmap.
-
-Something like the following (acthung: it's just a PoC)
-Comments? Ideas? 
-
- diff --git a/drivers/base/memory.c b/drivers/base/memory.c
- index 5c6c1d6bb59f..ff87cfb3881a 100644
- --- a/drivers/base/memory.c
- +++ b/drivers/base/memory.c
- @@ -234,7 +234,7 @@ static int memory_block_online(struct memory_block *mem)
-  		return -EHWPOISON;
- 
-  	zone = zone_for_pfn_range(mem->online_type, mem->nid, mem->group,
- -				  start_pfn, nr_pages);
- +				  start_pfn, nr_pages, mem->altmap);
- 
-  	/*
-  	 * Although vmemmap pages have a different lifecycle than the pages
- @@ -473,11 +473,11 @@ static ssize_t phys_device_show(struct device *dev,
-  static int print_allowed_zone(char *buf, int len, int nid,
-  			      struct memory_group *group,
-  			      unsigned long start_pfn, unsigned long nr_pages,
- -			      int online_type, struct zone *default_zone)
- +			      int online_type, struct zone *default_zone, struct vmem_altmap *altmap)
-  {
-  	struct zone *zone;
- 
- -	zone = zone_for_pfn_range(online_type, nid, group, start_pfn, nr_pages);
- +	zone = zone_for_pfn_range(online_type, nid, group, start_pfn, nr_pages, altmap);
-  	if (zone == default_zone)
-  		return 0;
- 
- @@ -509,13 +509,13 @@ static ssize_t valid_zones_show(struct device *dev,
-  	}
- 
-  	default_zone = zone_for_pfn_range(MMOP_ONLINE, nid, group,
- -					  start_pfn, nr_pages);
- +					  start_pfn, nr_pages, mem->altmap);
- 
-  	len = sysfs_emit(buf, "%s", default_zone->name);
-  	len += print_allowed_zone(buf, len, nid, group, start_pfn, nr_pages,
- -				  MMOP_ONLINE_KERNEL, default_zone);
- +				  MMOP_ONLINE_KERNEL, default_zone, mem->altmap);
-  	len += print_allowed_zone(buf, len, nid, group, start_pfn, nr_pages,
- -				  MMOP_ONLINE_MOVABLE, default_zone);
- +				  MMOP_ONLINE_MOVABLE, default_zone, mem->altmap);
-  	len += sysfs_emit_at(buf, len, "\n");
-  	return len;
-  }
- diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
- index 23f038a16231..89f7b9c5d995 100644
- --- a/include/linux/memory_hotplug.h
- +++ b/include/linux/memory_hotplug.h
- @@ -328,7 +328,7 @@ extern struct page *sparse_decode_mem_map(unsigned long coded_mem_map,
-  					  unsigned long pnum);
-  extern struct zone *zone_for_pfn_range(int online_type, int nid,
-  		struct memory_group *group, unsigned long start_pfn,
- -		unsigned long nr_pages);
- +		unsigned long nr_pages, struct vmem_altmap *altmap);
-  extern int arch_create_linear_mapping(int nid, u64 start, u64 size,
-  				      struct mhp_params *params);
-  void arch_remove_linear_mapping(u64 start, u64 size);
- diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
- index 69a636e20f7b..6c6600a9c839 100644
- --- a/mm/memory_hotplug.c
- +++ b/mm/memory_hotplug.c
- @@ -1048,7 +1048,7 @@ static inline struct zone *default_zone_for_pfn(int nid, unsigned long start_pfn
- 
-  struct zone *zone_for_pfn_range(int online_type, int nid,
-  		struct memory_group *group, unsigned long start_pfn,
- -		unsigned long nr_pages)
- +		unsigned long nr_pages, struct vmem_altmap *altmap)
-  {
-  	if (online_type == MMOP_ONLINE_KERNEL)
-  		return default_kernel_zone_for_pfn(nid, start_pfn, nr_pages);
- @@ -1056,6 +1056,10 @@ struct zone *zone_for_pfn_range(int online_type, int nid,
-  	if (online_type == MMOP_ONLINE_MOVABLE)
-  		return &NODE_DATA(nid)->node_zones[ZONE_MOVABLE];
- 
- +	/* Selfhosted memmap, skip ratio check */
- +	if (online_policy == ONLINE_POLICY_AUTO_MOVABLE && altmap)
- +		return &NODE_DATA(nid)->node_zones[ZONE_MOVABLE];
- +
-  	if (online_policy == ONLINE_POLICY_AUTO_MOVABLE)
-  		return auto_movable_zone_for_pfn(nid, group, start_pfn, nr_pages);
-
--- 
-Oscar Salvador
-SUSE Labs
+John, do you have an idea what's going on?
+This is pretty likely to be related to your "apparmor: make sure unix
+socket labeling is correctly updated." patch.
 
