@@ -1,243 +1,126 @@
-Return-Path: <linux-kernel+bounces-748443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C62B14164
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0568EB14167
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AECFD3BFD2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:47:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EFEE18C0517
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E412273D8E;
-	Mon, 28 Jul 2025 17:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D83273D8C;
+	Mon, 28 Jul 2025 17:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="FsHhCp3y"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="at4j5/jp"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEA621C166
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF55021C9EA
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753724895; cv=none; b=cQfgWAgJoJpoJfb/FdPE7RXQ43k6ewnVgyaNjV4Xo4j/FQNEDHC9rHbug43qw/kttKNsnrOnXhIOtpB1nPYldMwBWKK/EPKqM/odng6SRTA2PFe/GNiO1bS8TJEapd7FeTFnc3oWGXIp6kvjPtrZ/rbTgyKXhpkX5vErX7wuk10=
+	t=1753725054; cv=none; b=NTSPx6s7g8ohJndZlbVixEMc9wwxk+7wfGLz7uFiArcScXC1LJAK0wAxq/58TrCWAIms64O9fVEHtfNO6TF4V8t35aNypCcNbn6FR8PApNzi4pk5vvmnpdVcX2MYf6GxXwqQ4/SA2HtTOi3C45vNErM4JIf6iVP0K7I8B4ViPok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753724895; c=relaxed/simple;
-	bh=hh6zViyTLFJ5MZJcb9GHpRrQp8Vl4Gt/wvCtOdiR/NU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S2wJKr0kiigRHDTB9M/SI43zNW0Df0WOt8hGsmihvKqSuVHc+8wz/iaOekvm6aRXkVcrRXn007EKAJnRudT89lm5WbX37semeZ6CNjpzhD2BWj5iRrSBSXJig3Ehg6XV0zuBIgunv5hvjDmBiWt8ig4PAwfOFPpPTyNSO3htjIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=FsHhCp3y; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1753724893;
- bh=CoB5tasYH7GrZPehMHvuHgB7MplGLckmtYJLeYrDXq4=;
- b=FsHhCp3yRtLLtoRqlbXEX8Q5rFzEEh9QRCR/7Le8sdw5zLwuTuEbXHWurxoX/2ha7byTfyilU
- CjOcGDZ6/yeLPUb/KLfOJriqfflAd+J3dx0ey+XrASe5slFmUkQ0evgcMUBXzVfw7mKRXOSt+Xg
- LNKy+7kAhNfMcw7ANedoc0v01k8RZFD8FAQ4ATtM/AJEk7tX0ML5DXysH53gK2wx9/m6t34ymWK
- 141VK7mIwCDaPW0nG14AsbaPvKXFKolGz8xNS1qE58ONYqqMIeUQPoJoPKVDPFiRAb6UUZBLkrp
- 9OhLmSXKpa4P7tYBhEr/QgKsS3i353CTP4tEoAunqCOw==
-X-Forward-Email-ID: 6887b7c8351ec66b15a2df24
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.1.8
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <5bdd0009-589f-49bc-914f-62e5dc4469e9@kwiboo.se>
-Date: Mon, 28 Jul 2025 19:47:44 +0200
+	s=arc-20240116; t=1753725054; c=relaxed/simple;
+	bh=sg/0XBFo+UsTvzYsQHQs1/AiXKiYrbdoZpE+bRMvgAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=a4ctu7rjfXj+YqgdrhiksyIgvmWAMwQgyscAqFb9R4CuubsFgUMiV1zlwB8dhdfUs3hf6rd2bQhRb1bj5z6Mg+/T/d6To11ymJF5I2j8S1euJBxmjbHQc8IyOw6w05w1cgOjqEc++Q5NdwAirMXY8bh17QGLWRwIptFmLnmGIWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=at4j5/jp; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9A37C40E0256;
+	Mon, 28 Jul 2025 17:50:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FmmVDvhxLdIE; Mon, 28 Jul 2025 17:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1753725035; bh=HK+EOgpTW+nwgA8tE7jMrn9ZgTVBuG6a4qhs3XQi+2o=;
+	h=Date:From:To:Cc:Subject:From;
+	b=at4j5/jpUulzf8zgaQnfHhHoj9bO4RfxjBJjTd34NxBfe/V7UjKMDmit5Bh/RuB70
+	 3RKf09S5zyF24coVLc+talsW/XExKu0CmQB1oiYQUuiXVX3P/3gh7jW5mYAQRllBpG
+	 8uyaVCvBneJjIobHs6/EeomG0Ce4sfcKlCKiNGZubW0C13kQTkgbcmGx/lExvSFOKr
+	 W787w5tEzs2WDmIxC3oUXVK7kPKJdntpVzzxqfLGTgVqLDEGSZXluG7V0XvYI7ONNn
+	 FD3F0te5ind5fZMeruNB9N2zIlBMlc8LeEkN/gppWNEHkbly1hwXdevWoGnJDQtopu
+	 S1ndQS9Z+qErBiE4ANyf8ZjD4ed3S/6Zyu9PHyjmIl4xsIfalUi8QPKnbT7X4fWclO
+	 dl/YXlB/zkxJ1gL0QEl/bgvmTYDQkjgXrfJBWjeaqxyFceO8pgleSs/8i6v8RtueZE
+	 fuRyDqhP0ZPuZkSyLN9bMYtLZz6bSTngX4DWxCZER6QIKWBq+793eKdQ/WEhYOLtTl
+	 qo4eMinuX5U6uumtbuuqeYG3YpKMdSaNNfpKVOY6xQBLa+timj5NZJODH87m94AB8M
+	 EfLQND8+FVLRVvpNqiK1MmXE6VtVHkYw1iHGQ/a08YeQ22Usws648+y3wFLkTl2saQ
+	 WCPWWGpx8Hc7vOeg/5tc2jUA=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B3A2E40E0255;
+	Mon, 28 Jul 2025 17:50:32 +0000 (UTC)
+Date: Mon, 28 Jul 2025 19:50:24 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/core for v6.17-rc1
+Message-ID: <20250728175024.GAaIe4YLM-e-HL3BvH@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add RTL8367RB-VB switch to
- Radxa E24C
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: alsi@bang-olufsen.dk, andrew@lunn.ch, conor+dt@kernel.org,
- davem@davemloft.net, devicetree@vger.kernel.org, edumazet@google.com,
- heiko@sntech.de, krzk+dt@kernel.org, kuba@kernel.org,
- linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- netdev@vger.kernel.org, olteanv@gmail.com, pabeni@redhat.com,
- robh@kernel.org, ziyao@disroot.org
-References: <20250727180305.381483-4-jonas@kwiboo.se>
- <20250728143020.1007374-1-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250728143020.1007374-1-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Hi Chukun,
+Hi Linus,
 
-On 7/28/2025 4:30 PM, Chukun Pan wrote:
-> Hi,
-> 
->> Initial testing with iperf3 showed ~930-940 Mbits/sec in one direction
->> and only around ~1-2 Mbits/sec in the other direction.
-> 
->> Any mix of MAC (rx/tx delay) and switch (rx/tx internal delay) did not
->> seem to resolve this speed issue, however dropping snps,tso seems to fix
->> that issue.
-> 
-> Have you tried setting phy-mode to rgmii? (just for testing)
-> Usually this problem is caused by incorrect rx/tx delay.
+please pull the x86/core lineup for v6.17-rc1.
 
-The issue is with TSO and RX checksum offload, with those disabled on
-the conduit interface (gmac1/eth0) my issues disappeared.
+Thx.
 
-Use of rgmii-id "RX and TX delays are not provided by the PCB." as
-defined by the dt-bindings seem to most correctly describe the HW.
+---
 
-Describing switches is new to me, so I could be wrong :-)
+The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
 
-> 
->> +	ethernet-switch@1d {
->> +		compatible = "realtek,rtl8365mb";
->> +		reg = <0x1d>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&rtl8367rb_eint>;
-> 
-> Shouldn't this pinctrl be written in interrupts?
+  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
 
-Not necessarily, in my mind the pinctrl is applied for the switch
-interface to the SoC, not the internal workings of the switch.
+are available in the Git repository at:
 
-> 
->> +			ethernet-port@6 {
->> +				reg = <6>;
->> +				ethernet = <&gmac1>;
->> +				label = "cpu";
-> 
-> No need for label = "cpu":
-> https://github.com/torvalds/linux/commit/567f38317054e66647fd59cfa4e261219a2a21db
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_core_for_v6.17_rc1
 
-Thanks, will drop in v2.
+for you to fetch changes up to 4fdc3431e03b9c11803f399f91837fca487029a1:
 
-> 
->> This series relaxes the realtek dsa drivers requirement of having a mdio
->> child OF node to probe and instead have it register a user_mii_bus to
->> make it function when a mdio child OF node is missing.
-> 
-> This is weird, the switch is connected to the gmac via mdio.
-> Can you try the following and see if it works? I tried it on
-> a rk3568 + rtl8367s board and it worked:
+  x86/lib: Add WBINVD and WBNOINVD helpers to target multiple CPUs (2025-07-10 13:30:17 +0200)
 
-With a 'mdio' child node 'make CHECK_DTBS=y' report something like:
+----------------------------------------------------------------
+- Add helpers for WB{NO,}INVD with the purpose of using them in KVM and thus
+  diminish the number of invalidations needed. With preceding cleanups, as
+  always
 
-   rockchip/rk3528-radxa-e24c.dtb: ethernet-switch@1d (realtek,rtl8365mb): mdio: False schema does not allow { [snip] }
-         from schema $id: http://devicetree.org/schemas/net/dsa/realtek.yaml#
+----------------------------------------------------------------
+Kevin Loughlin (1):
+      x86/lib: Add WBNOINVD helper functions
 
-With a mdio node the driver is happy and dtschema is sad, and without
-the mdio node it was the other way around.
+Sean Christopherson (2):
+      drm/gpu: Remove dead checks on wbinvd_on_all_cpus()'s return value
+      x86/lib: Drop the unused return value from wbinvd_on_all_cpus()
 
-The plan is to drop this patch and instead modify the dt-binding to
-allow describing a mdio node when the switch node has a reg prop in v2.
+Zheyun Shen (1):
+      x86/lib: Add WBINVD and WBNOINVD helpers to target multiple CPUs
 
-Regards,
-Jonas
+ arch/x86/include/asm/smp.h           | 23 ++++++++++++++++++++---
+ arch/x86/include/asm/special_insns.h | 29 ++++++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c                   |  3 +--
+ arch/x86/lib/cache-smp.c             | 26 ++++++++++++++++++++++++--
+ drivers/gpu/drm/drm_cache.c          |  9 +++------
+ 5 files changed, 76 insertions(+), 14 deletions(-)
 
-> 
-> ```
-> &mdio1 {
-> 	switch@29 {
-> 		compatible = "realtek,rtl8365mb";
-> 		reg = <29>;
-> 		reset-gpios = ...
-> 
-> 		switch_intc: interrupt-controller {
-> 			interrupt-parent = ...
-> 			interrupts = ...
-> 			interrupt-controller;
-> 			#address-cells = <0>;
-> 			#interrupt-cells = <1>;
-> 		};
-> 
-> 		mdio {
-> 			#address-cells = <1>;
-> 			#size-cells = <0>;
-> 
-> 			phy0: ethernet-phy@0 {
-> 				reg = <0>;
-> 				interrupt-parent = <&switch_intc>;
-> 				interrupts = <0>;
-> 			};
-> 
-> 			phy1: ethernet-phy@1 {
-> 				reg = <1>;
-> 				interrupt-parent = <&switch_intc>;
-> 				interrupts = <1>;
-> 			};
-> 
-> 			phy2: ethernet-phy@2 {
-> 				reg = <2>;
-> 				interrupt-parent = <&switch_intc>;
-> 				interrupts = <2>;
-> 			};
-> 
-> 			phy3: ethernet-phy@3 {
-> 				reg = <3>;
-> 				interrupt-parent = <&switch_intc>;
-> 				interrupts = <3>;
-> 			};
-> 		};
-> 
-> 		ports {
-> 			#address-cells = <1>;
-> 			#size-cells = <0>;
-> 
-> 			port@0 {
-> 				reg = <0>;
-> 				label = "wan";
-> 				phy-handle = <&phy0>;
-> 			};
-> 
-> 			port@1 {
-> 				reg = <1>;
-> 				label = "lan1";
-> 				phy-handle = <&phy1>;
-> 			};
-> 
-> 			port@2 {
-> 				reg = <2>;
-> 				label = "lan2";
-> 				phy-handle = <&phy2>;
-> 			};
-> 
-> 			port@3 {
-> 				reg = <3>;
-> 				label = "lan3";
-> 				phy-handle = <&phy3>;
-> 			};
-> 
-> 			port@x {
-> 				reg = <x>;
-> 				ethernet = <&gmac1>;
-> 				phy-mode = "rgmii";
-> 
-> 				fixed-link {
-> 					speed = <1000>;
-> 					full-duplex;
-> 				};
-> 			};
-> 		};
-> 	};
-> };
-> ```
-> 
-> Thanks,
-> Chukun
-> 
-> --
-> 2.25.1
-> 
-> 
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
