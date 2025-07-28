@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-747765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CE6B137DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F427B137E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061393BB6F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7103BD8BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F042566D9;
-	Mon, 28 Jul 2025 09:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B671B259C83;
+	Mon, 28 Jul 2025 09:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cAXGc/H2"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="E6Y5UYCz"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D92B2566E8
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B88F253F2C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753695738; cv=none; b=hcVl2hl4YPjhNnBtvvwW4308THIQNYqMvCHB3Qo1kGnl9SGJbLiY3R7TdH5uWnLGr82xIb0BeYJIRikt33ar1xNjJOaLb9MSj39ePmuLqbdyu0MnL9wGv0GSSmzmbpOM1lsecNgGJNvyhi9pumhcRypJtixKikT4PlaCfKt3t4c=
+	t=1753695749; cv=none; b=bAcgg/6VFEIJ1dC7eVYgfNZy3TYxp355o+Dk0Sv7R4sUBhDn+N1mhAzrJ6J8yeKvZx87r6e3ikwhbeIy/ARF9nBRzq1kDtmG7e13Vs7Hf+USKyPA6zs7LQlOtxtkk7xJJkBk3Xm/qoVKmPMZt0RxKpWBlRapQuTFbw+zGhiMVEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753695738; c=relaxed/simple;
-	bh=dNnAUr+2trSDmCnQ7YgS/ZuDyO2yPRTU4DJLikPf2R4=;
+	s=arc-20240116; t=1753695749; c=relaxed/simple;
+	bh=gqZpMXPd6DL/+kfXUibwUL8SSmPMehps7IgssTY7RG4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aptXtMFRHL+ZrboLIx+zYAgQxyRY+QmLk6SoaTDShrZuPAP5sTjMOtdnHwqM+rzbLNirS30Op6vh9leB68veKTWeKv6LvNPAPgo//TWZrC44ZqUKkVBqv3X4wdKEkPrWtnl63ZrTZFkioGj2q+l7j65x4vDiebwKMc5oKw4SZsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cAXGc/H2; arc=none smtp.client-ip=209.85.216.54
+	 MIME-Version; b=XlZZu1slyM1dPwv7i5QgjJBVxmKkrKJ5BWyTTsGl3ohZQ+8BrYmSkwLXYeEhJT+G38RS9m/7aWX/iKXR7G52nPg9jf0oyBhjPAl4DOZFC2ma6gcqrDLaL9maDY1pd0PpkTRFvDxh+mnfjS3yYssS0CYm8WHfZ6lGPclJorLhmEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=E6Y5UYCz; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-31c4a546cc2so3454040a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:42:17 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3137c2021a0so3469776a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:42:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1753695736; x=1754300536; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1753695747; x=1754300547; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X+ejybDVQT/aGz6Lcll3wkVRKaiK+174ISdzaVIOfkE=;
-        b=cAXGc/H20wK0RQyxEaEfP7afvbchZxTmin8MaZLJmaNJ4/QlCeBX5yDuaSUgcNegrZ
-         ifqc4WDaIUTU5A5rJzSOniSD+e45smpWwSgpp6eJOkWItm0C3IavvlbKsxTsHVlFzIjW
-         dAMpBb81B7oBbFMG5DiNoZcVFOETVbF8uTVPVRq5OJg6sHFHqHyaWxlIYG5Qak8x+FMa
-         ZmODj2LqIELQop8hajQMia4eqlY00GYEMSItnNRgrdFMY6TL+UYL7GDbN668e7MdPH7H
-         bXbyOteI0yXraTKbEiLiJwVNm/X9ftBOrefA6sPolxQWNmsheRZM7jrOO/M+Pml4SIZv
-         36fg==
+        bh=zMRC5c9xXUgo6eKv4jcoCHH6TENqo9cqAPQxW1Kbofo=;
+        b=E6Y5UYCzp5TdNTw9k5ohUabkOSgaOQGqHbabmoP9W8SOJCwO3tlKfVR1SBT0DKepYc
+         j/yts+CxP4oShUgoaeKNNWWnmc5IXx9u/5ie0hTRQEfj2OuCrx/nqrTZhk2oDpBb7I+F
+         r+PEd/I12YiaIizmK8PsWW+Hr+wO88Xu9dC+nw0dHauiuQVpa9mkRdM+D/OEiDUGCDYD
+         mIooCLQUSrZhhh6pIJKf/ysMBx2f+rt7BHoN80SQy1v+rY9WMO6ip6A1O6DCI7Bl5wma
+         1l3n/vijVx5sSPXMWE6+xXku4d+WXCvWA3VnW15ulJO3G3NDTOKLepHzlMMC9z3sWaMM
+         x5Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753695736; x=1754300536;
+        d=1e100.net; s=20230601; t=1753695747; x=1754300547;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X+ejybDVQT/aGz6Lcll3wkVRKaiK+174ISdzaVIOfkE=;
-        b=kun17x+MNbtVnQZBpyF2qd8zvSSZbSh6ujzt7oQG70rNc1X0bOTMfGX/xmNmhhxx8V
-         LpTDBr5Ip1WBmtbd7oUCGijl4cf1ACNL5alZO0i096zicWi5jbMHDPXXVgk8mrR6FJoo
-         JA7SQ7T8RgotXUof7UcVqFkFrgNpKHEIEj5JEOZ9OYp8efQFmhxv4d7IOgmZ4roqwXPd
-         7xfDBuVIYWayJzXnKvEWHgdMG2Zkp0vNb5tKWYYzOhLtsaisu6M1MO/imCvrA2+9Ct2l
-         a2hxx43GHr7OQm2Ih72iGNK580VFRbmEvGTeKk1njj+2hVp0aHe3cfE2FFcUBTBVe4Er
-         X8bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWd/uWQ1itI2cMr097UTbVnnXACM1SsLstalT5yXAsw4ThL7IgB/TYbhzQ4G7VO2CZ2/KgDym77phtJCMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbo9dzHy2oO8knGGMLy/iSK75o/WlOKnYT5PtIeKfqmXPtKf4l
-	mZ3Y6LwOGbkXiIJ64UhKxPEZK9hPMMyCZx5YYVHhrRXD4xsqa9k7WxQuUI3kIl6JyaU=
-X-Gm-Gg: ASbGncv5Uq5ukEP0CPOj3ruGfR5P2Z9c182ePGOfKNyOw7SMwL2i5HBWYJ9UmjIVkDr
-	CkQ9EjAqqwpqsbQgbzU5EUbrk9sZit6ka20D7Cn8bQ61bxTDKqgSBk2LEE0BEZH89mG+TBt+kFD
-	L/Ad9jgymDcc3d9kgz/UHzyqeUURfNcBDLyQRVLeMsU6AvwN7vvPJBx0nuLS4mZAE+YsBntCFIK
-	B3aA0fJoib503ZlXdSUCPHej266TotLNoHjOmy/mXkMLISSYCs1VZ4iSEgBH4/xVJFue/UDkNEu
-	h3Jerbf6sTcPuJg6pLhCUByDjea8reWjnefR1KShsvcU9Kf7/At1VQdW202s7vzc37tnegPbbh8
-	pOXbqvZCqLNgdOumYt4lPPii6tDry3vo3rAH1T+rbk6OOUwzM6CCjBg0ZCFpX
-X-Google-Smtp-Source: AGHT+IGMNexUFTZgfnglCwA8dHkB4ePGnpWD+DuX2cDV9JJRgC1BszN5eGUa1rBL9rVd8I8xmDxQIg==
-X-Received: by 2002:a17:90b:1d88:b0:31f:d0:95bc with SMTP id 98e67ed59e1d1-31f00d09a88mr2516269a91.25.1753695736376;
-        Mon, 28 Jul 2025 02:42:16 -0700 (PDT)
+        bh=zMRC5c9xXUgo6eKv4jcoCHH6TENqo9cqAPQxW1Kbofo=;
+        b=MrmcBwMYSIxWJVao6rSeBocs8pwfjhXNRoGFm2j0/ZprxjTpdV+7ZyfhBAdIqgezKz
+         xlxrqNwYdJ/q7Cix1otfRTGE9vo//zKO/tteh5lhDZ9UEpO6Y1CdJA7YXP8ylIUbJMgW
+         lP96AuxPVgKLNFdz8szrQHNDygmPTibUzByNAnREF3V002Ew7G9wLpZSp9muZK2ekykF
+         BVDIC4xWdqEbum1pGtkODAdi839HrtPAvMrqojEGUQ6IqqUYjRwQpKOAj107CHcmKfCU
+         t5FNEL1+Len/6tQmoWsKLFnPMNOPhFmcuL+dJkS7he6ChmP01u/9Lv+uQM2+3htf7uSs
+         VOXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYO5FsFlTIkOZaHXUfz1TY7aCyavwSL8iS9BmgLjMeTruA2CirY0pqjxzoWkFqOWenQ5H37WDzNZfQfXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPYtwYD9NYNb9e1OnkyUT3ZNMxN+837Ekt+HFPOT0s6monNfZw
+	6yBj1REuDjy4TFuy2nXQqzZj205txVOv2EU7Wd7exKKJpN6J8qU4N/RwImIOKu+v2EE=
+X-Gm-Gg: ASbGncvr6GVGplSL1W6UiUZKb6LS0kt0JEepMSPg6T7pdWUJicEBxLpNL6jr8mymVZ9
+	BRQKGFE0H89HSPqWCR62DulBOtdMF2MAKC6QQ7rJJDnxtfoP9ZC7ubKSyLwrV7+wTL1NzlWbEb3
+	UWi4I1EM7iWPl2qkayEIKTKL7VkBZtLC4Xor0qTukqh0c9MUfwBXyoyzb0wM/SMoLd4ddA3QKyz
+	+N9R+K+4kUZ7RiyjzAySQ76JnQSEK+JMBe6Xn8Ue6M51gR91BZEghHdbseWnp41HtAYkLZtnlwD
+	jZ8mcj7z/+fUd7kpjGNntl5xPwR/QrxYcltUFPWgl52+F/6/2tfBpY/5Om9LaOv8pQUPguYStEw
+	U4vbKdXc0j/llbL/Clw3hcbeuO3WR5CnCvpRiSYlSL+OAGa/DH1XeN10z5+E9
+X-Google-Smtp-Source: AGHT+IET1sWMZD/6AnfrHKkMC7OglTaiVF3qSrY2in0HUadzd58C0Shm9ghMuxb6ibvRVRWuWVfN2w==
+X-Received: by 2002:a17:90a:d2c3:b0:31e:d643:6cb9 with SMTP id 98e67ed59e1d1-31ed6436e56mr3137835a91.1.1753695746628;
+        Mon, 28 Jul 2025 02:42:26 -0700 (PDT)
 Received: from anup-ubuntu-vm.localdomain ([122.171.19.28])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e832fbf99sm5396230a91.1.2025.07.28.02.42.06
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e832fbf99sm5396230a91.1.2025.07.28.02.42.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 02:42:15 -0700 (PDT)
+        Mon, 28 Jul 2025 02:42:26 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -104,9 +104,9 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-kernel@vger.kernel.org,
 	Anup Patel <apatel@ventanamicro.com>,
 	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v9 08/24] dt-bindings: clock: Add RPMI clock service message proxy bindings
-Date: Mon, 28 Jul 2025 15:10:16 +0530
-Message-ID: <20250728094032.63545-9-apatel@ventanamicro.com>
+Subject: [PATCH v9 09/24] dt-bindings: clock: Add RPMI clock service controller bindings
+Date: Mon, 28 Jul 2025 15:10:17 +0530
+Message-ID: <20250728094032.63545-10-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250728094032.63545-1-apatel@ventanamicro.com>
 References: <20250728094032.63545-1-apatel@ventanamicro.com>
@@ -119,32 +119,32 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Add device tree bindings for the RPMI clock service group based
-message proxy implemented by the SBI implementation (machine mode
-firmware or hypervisor).
+controller for the supervisor software.
 
 The RPMI clock service group is defined by the RISC-V platform
 management interface (RPMI) specification.
 
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- .../bindings/clock/riscv,rpmi-mpxy-clock.yaml | 64 +++++++++++++++++++
+ .../bindings/clock/riscv,rpmi-clock.yaml      | 64 +++++++++++++++++++
  1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml b/Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
+diff --git a/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml b/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
 new file mode 100644
-index 000000000000..76f2a1b3d30d
+index 000000000000..5d62bf8215c8
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
 @@ -0,0 +1,64 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/riscv,rpmi-mpxy-clock.yaml#
++$id: http://devicetree.org/schemas/clock/riscv,rpmi-clock.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: RISC-V RPMI clock service group based message proxy
++title: RISC-V RPMI clock service group based clock controller
 +
 +maintainers:
 +  - Anup Patel <anup@brainfault.org>
@@ -156,9 +156,9 @@ index 000000000000..76f2a1b3d30d
 +  or some dedicated supervisor-mode RPMI transport.
 +
 +  The RPMI specification [1] defines clock service group for accessing
-+  system clocks managed by a platform microcontroller. The SBI implementation
-+  (machine mode firmware or hypervisor) can implement an SBI MPXY channel
-+  to allow RPMI clock service group access to the supervisor software.
++  system clocks managed by a platform microcontroller. The supervisor
++  software can access RPMI clock service group via SBI MPXY channel or
++  some dedicated supervisor-mode RPMI transport.
 +
 +  ===========================================
 +  References
@@ -173,33 +173,33 @@ index 000000000000..76f2a1b3d30d
 +properties:
 +  compatible:
 +    description:
-+      Intended for use by the SBI implementation.
-+    const: riscv,rpmi-mpxy-clock
++      Intended for use by the supervisor software.
++    const: riscv,rpmi-clock
 +
 +  mboxes:
 +    maxItems: 1
 +    description:
-+      Mailbox channel of the underlying RPMI transport.
++      Mailbox channel of the underlying RPMI transport or SBI message proxy channel.
 +
-+  riscv,sbi-mpxy-channel-id:
-+    $ref: /schemas/types.yaml#/definitions/uint32
++  "#clock-cells":
++    const: 1
 +    description:
-+      The SBI MPXY channel id to be used for providing RPMI access to
-+      the supervisor software.
++      Platform specific CLOCK_ID as defined by the RISC-V Platform Management
++      Interface (RPMI) specification.
 +
 +required:
 +  - compatible
 +  - mboxes
-+  - riscv,sbi-mpxy-channel-id
++  - "#clock-cells"
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    clock-service {
-+        compatible = "riscv,rpmi-mpxy-clock";
-+        mboxes = <&rpmi_shmem_mbox 0x8>;
-+        riscv,sbi-mpxy-channel-id = <0x1000>;
++    clock-controller {
++        compatible = "riscv,rpmi-clock";
++        mboxes = <&mpxy_mbox 0x1000 0x0>;
++        #clock-cells = <1>;
 +    };
 +...
 -- 
