@@ -1,198 +1,231 @@
-Return-Path: <linux-kernel+bounces-747918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902F3B13A38
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:05:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8CFB13A42
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A283B7770
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ED033BD03A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F100B262FDB;
-	Mon, 28 Jul 2025 12:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95F3263892;
+	Mon, 28 Jul 2025 12:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O/09t9if"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7Dxswoe"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966E91B412A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86839111A8;
+	Mon, 28 Jul 2025 12:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753704321; cv=none; b=VxsB/MHFDsUckw4hFWqzW6NxKZKnAh/y7lkcLdaPNhzr0u7wVRk0wXwvjHtkVqU5tLukRti/Q/+bClZBJzNeR7T2KYx+QJYB4AzH/pKy2k20ZlWOCk3Nvfg3sSKjroEgVTC27D/QxIAgYqil/3EdlUtuuFbdtRcpIwJdYcO/xuM=
+	t=1753704791; cv=none; b=sRp95fo4MIs3BhAj/14H4BWCNRgvjIwHVBT+alGfAoyXi/5FKvpAyHZ1p97yhJzqBf8P1NJw2y0Yzncmyar2T4K2ne5cUWLprKL9M2YjEvrqKRQyNZnQFeh8GjANCSVSBQEV9zV/k9Tdr6XVCFhUiY3CCGcH8e2L38MmLZ9l0D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753704321; c=relaxed/simple;
-	bh=k2RWxP/WKnsMkHTWmUDQ087InDb7cjcO9LVdeqkD0kA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxMLUyqD/KaSymT2RJKuoFma6E99x//PjkJ+OGKxtKlsmrfF8YJ3vPVOTshqki8R0ssAokqrMNWXdfgLiuIRFXbrFwr7riuh0GmZYD4BkhCr79sA401/JXGay8dJV59fLzOICHeCusQ+/rblVpPiCC4fHXKmBaV16T/uY11w5gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O/09t9if; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SAlJvt012554
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:05:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=MLMkHEXhcpE9zqxnDSOUT7LZ
-	JSw53zS0jCgPn9nQ6+g=; b=O/09t9ifQZ5pb1vgPcIgB4ft+YBrnr3NSj2lG8HH
-	POO+dTiTkFe87ThnmxxXAY/3hNC9AY/qkpFt9yOkTp9buD7tG5o4So5ilDJSiHcT
-	IbrApJia0nx3Yk0fh44+TzLDPGuUEXrNKW49zlTd0lh5kq1A1y7H9wekO+TdyKCw
-	gsdgObcQ0Khe1RgBrpY9SVIvkM+PpZOjdoX9noy6s5+Z9HqX5Q4VzEvm2G5ZQr0D
-	Qkc1zYcO329+XCB6xDLDLN+4gf3uAmFy1Ngz9e1WwyYl/e0z7Pxn2c+C4bTiZOk/
-	h5xJ6Tl/iUnBOO4Y2GtroCJiMPewTlVJ7tYkmCzsULqtww==
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484qd9vep3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:05:18 +0000 (GMT)
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-74127ea1e8aso1730233a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 05:05:17 -0700 (PDT)
+	s=arc-20240116; t=1753704791; c=relaxed/simple;
+	bh=HYUWhbWOKlbw8muyuXJSNrhK49HJSYsKQccZBl/mdO0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YRM4dgRVud1n7xve7yoG4DO0bDSaENlTH1kLJLkYXf/iWblnFvG6FoxrFolyN8RVVknCpLqksbjppvVLiBpEGMPQmtWDyeGeJrgnxSG7J8AAt7SKI/Ww4Ms1ArS7pl8ewp5b9gfMVcTF9phK+BMXsJBx8XcziMxsGCK10upQ/rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7Dxswoe; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e8e21180c55so217592276.3;
+        Mon, 28 Jul 2025 05:13:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753704788; x=1754309588; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zsezd7035FWrqFWuFHCh68rbnE7LES6kmMFx8Udf+XY=;
+        b=J7Dxswoe0RJqGJjjtJSEdjYbGHYStA+r5NMz1SePJxowfgbIGR2JQLUSTAVZLroZo8
+         l5GF1M2CXytKb6Qn864fur8oVEeelNqttKWhRUHhzyg8SaXKj7hutfHBb+sHKlV+azQE
+         oC2cmglOkycrfvn0U25InpJ+jtWB1KF9lCVAID1KlPNKeaFYNtqaiDt31tySaxBk/D2g
+         FDjBcO/pz4uHtWrwGuWs7Hm2y691uTDfTT4CpWRjcRKYwbqZJ+86VtINxkPKZf8bbjoZ
+         y6W0Sw4G4HDRSsxukz/wIyhtI+MejYwaqAwMzV1CrTh+yprI4+1lPjYBstxrrqjXxo6L
+         KBbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753704317; x=1754309117;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MLMkHEXhcpE9zqxnDSOUT7LZJSw53zS0jCgPn9nQ6+g=;
-        b=BU7VgyUqw8YrZPf0cOAERevQ0z1SxH5tPZaWB+E7FKX0y0uwZLhmIiKyyPnZ1Zbq2X
-         EnnWWMCKQBJZB17NqkpH9hsYhi0ys9IVSIt2glWvASlH0B79nq24cI/KXswBhxGsFAdh
-         xZ2DK3BPgjrG5RhxZMmAu+oWzU9C5o9kBVQYEgJ36k8p+rJyAm+VvhmxPCQoETbY7V2u
-         PpM+NOvfyQICc6OygevFqx/ULQSQHOLUo/1j19AB6yUp/P+yGxzPe7e9l5ofsfrv2Dxx
-         pxkhMuyye+Zd67/1nWM2uM6yNxBrQdq5AMZ2moTnRbcqqgyRSKFUmzXVxEMO+NHz2Cm7
-         3muw==
-X-Forwarded-Encrypted: i=1; AJvYcCUO9lDVi84vL3jX1pZ1Eyhf250mdOoJYIxtNpgTBiUVL7zkh0bdQpPArPVA8FnmRP6fF+90jGrIUTtM9oI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywcVFrIF6aAv1I5vJf0xM8w4nhsvpqrZEmW7pjxnES9WLOwOVZ
-	1ZAMW8X14FfGtom/tpEv0k13VZoNo10bOuo1rpgZrciKt6hNTiFdM4pzN2uMMRSS+clOOmsgQrO
-	wBJkIgQvPTB4159bQLgPUswhBzBXDMEL880irfqoVMZRUSa9xBcPfO4ow9Qpq1xEPK7A=
-X-Gm-Gg: ASbGncv2P+eZC92Vc3Q4ak8nOz27KH+0YaPyVpSN6xIzBTLW2XEdACDcDMbJKzo5c0s
-	55sS1AGdouFX0GLJN3o06Yud4t67HH4xnSDjNzPF5b1P9R5BgsS0r2FxidzZV4o0wgz2H5MNfP8
-	cy6LMfCc49xVYb/RIDKV2J4S3yDsaIy4YrUB8buLqPzmZu7APKWVdwUz23u1NQiSPJT4QN86tfR
-	6OJxPly03MxIdVa42qIGYwokv860T2Nebz0dBo+ufp5IOtdsGcctwPmAodk+SCuv01mgAyYT24r
-	sewQrgbaxtM2tKeZ1af+C4qjTu8HU1m/XtzRZB4cpE6NBhtNSPqCGS3NYyrdEQRa7jul8FnQEX1
-	WcsKGV8Ylp+wirUzCqx8/jpqb8Mhc3UFYY2rIPpVdYPTJ8kwCccE6
-X-Received: by 2002:a05:6808:1511:b0:3f9:2fdc:ee93 with SMTP id 5614622812f47-42bba1f2b8amr5993478b6e.30.1753704317197;
-        Mon, 28 Jul 2025 05:05:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHSfeWv4VHXW2+zlLwrnah8CuiseIJTrikxH8XMRdQkuCbQ7xwR1kFZq9NS64k4Bn807RS+w==
-X-Received: by 2002:a05:6808:1511:b0:3f9:2fdc:ee93 with SMTP id 5614622812f47-42bba1f2b8amr5993452b6e.30.1753704316668;
-        Mon, 28 Jul 2025 05:05:16 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b63375932sm1240730e87.152.2025.07.28.05.05.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 05:05:15 -0700 (PDT)
-Date: Mon, 28 Jul 2025 15:05:14 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Andy Yan <andyshrk@163.com>
-Cc: heiko@sntech.de, hjc@rock-chips.com, mripard@kernel.org, naoki@radxa.com,
-        stephen@radxa.com, cristian.ciocaltea@collabora.com,
-        neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com,
-        yubing.zhang@rock-chips.com, krzk+dt@kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, robh@kernel.org,
-        sebastian.reichel@collabora.com, Andy Yan <andy.yan@rock-chips.com>
-Subject: Re: [PATCH v6 02/10] drm/bridge: synopsys: Add DW DPTX Controller
- support library
-Message-ID: <soz3wrbwlogzv6pi7i2cf5iq5gxhspkrti3pcxn5cdhztghwww@xxcdbp2n5cvq>
-References: <20250728082846.3811429-1-andyshrk@163.com>
- <20250728082846.3811429-3-andyshrk@163.com>
+        d=1e100.net; s=20230601; t=1753704788; x=1754309588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zsezd7035FWrqFWuFHCh68rbnE7LES6kmMFx8Udf+XY=;
+        b=FAYAU1AWICGgRUMLjtZq+Dk6Gwv/xa38GzLQ9WHHF0FUw6dKzIND8Ya8cAQo/6o9/M
+         TUxtOpVQ74Ym2k8NXQr/EFAJaKWYp9JFjxu2usIBcmn2c9aeXIiP5Db41eLQBzQjc3/L
+         B4y//GRE+5SL5YGjvVI0imYN27G4dAmrBpDIjBahQzZHK1elNVYkCO/j7agBBHOzt2Ky
+         JzzOKfQKBPLbFBZXxxtD5ml1YVfAFWfggWhQeykeMeWuze3PuAdhCqIqShdw1TZhqTvy
+         11F9biIys9qx748nIe5bjoUFQS1q+3jNqSxjSpLbq6HSZpmjm/r+4Z3mTJKgdNfFalUd
+         UHyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUilqV5uPsUnbckqNI+OnSYXHFQlAO00+cWvlGL8YVaZQVDEhV8Kbr4G31EMOnO5/RjosYUTdVAKkAWfQkC@vger.kernel.org, AJvYcCUnLd2hBKQqbnNTjiXt0uNhuRzgEG2tYOGcSmJ4LtaQo7GfpF2yDW+11oQMhISkHcW44y1S63G4d6LA@vger.kernel.org
+X-Gm-Message-State: AOJu0YznqbImCygU476Wlk8Hr2s9TVsfP7WLnJo0kDThGiDCOebQhHlU
+	b82BHDvSUmQ8C0MtWaMpRIWeaC9DoVjEgBIWCXIaKdkh53u3lXhaaQUM5Vrg3gMBrOzxuTBhAlf
+	g+J2IbMM9ejINq8DhBbM8YIgOA93Ngyw=
+X-Gm-Gg: ASbGncuIDzmp8p/ofuCIRafydEGs08eX4NNhSDQKuZFOCrFCOevoiY0g+L5qF+A87V2
+	g3DDTsaBy27utjV3S0b8usX9RPQUiN9L02fu6GNuosCJPG7bP3OzjpSHsXbPRl3hXknWaB2lBco
+	h4uWi7hSkWLPoKiR0wUWObhCtFe9xJiizzVRCZrT6ZrOz4WiVrz4hrSUm9uR6/vesOCQsAbTX04
+	AZmZfVRobatNO0qu2A=
+X-Google-Smtp-Source: AGHT+IE8FetLs5kAG2M95H1SElMF1ElnmLebXhF8d1vIxkrificfFFIDGgsiSxE7aw3pmWHgxRWdkzdSkbDxAbeKrdU=
+X-Received: by 2002:a05:6902:120d:b0:e8d:72e4:d9d4 with SMTP id
+ 3f1490d57ef6-e8df113b799mr11716674276.16.1753704788230; Mon, 28 Jul 2025
+ 05:13:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728082846.3811429-3-andyshrk@163.com>
-X-Proofpoint-ORIG-GUID: KWVHrO_6yyMovpUFwxrM5-YQrVRMlR7k
-X-Authority-Analysis: v=2.4 cv=Pfv/hjhd c=1 sm=1 tr=0 ts=6887677e cx=c_pps
- a=7uPEO8VhqeOX8vTJ3z8K6Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=s8YR1HE3AAAA:8 a=EUspDBNiAAAA:8 a=rZy2__OW2t70H_ViVZ0A:9
- a=CjuIK1q_8ugA:10 a=EXS-LbY8YePsIyqnH6vw:22 a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-GUID: KWVHrO_6yyMovpUFwxrM5-YQrVRMlR7k
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA4NyBTYWx0ZWRfX0YghVOI15s0q
- 8CIyZEQ89cKdTCzKJz3nnLXxaQpEkIqdhy7y7F5ias67CNDOMFUS1e5cr+gAkfM+NQRd/RVnmap
- B0nNHDj1ZohJr33lRXP1LD7MfAtsERuJ+BBSUoE9VFB9fEgzAJzLCggmcvE3t+0hPhq/LJ63DRa
- 9F8TduvR7RONJ/3tVnEA1REv064BSWKa0aNvcGLPF52UAVRUa8nLaf4claq9M9xYqtmfOJaBdq7
- ujrrjA1OVzIwG3lsSLkze2zJaZ4/9jV/kkNp502Hz+3VVaCE3wEC7N8tOYBqk8Gdxvr83QjLdIZ
- BlAVIvEjQJrAE45V0J7HyaqlzV8hYlGyOY2OgQhynrg4lC2Ui/IHtO/j3T60MP9a8yrHbiLJBOL
- tGBMpf6tUCwPxMKUN0gzYR/nM2K3eARYUcaLm9pspO2ZlgRJvpjZYYj9dB1fsTmhbf21BRzu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507280087
+References: <20250717135336.3974758-1-tmaimon77@gmail.com> <20250717135336.3974758-3-tmaimon77@gmail.com>
+ <91119587-789e-485d-9cf1-da2c500f241c@linaro.org>
+In-Reply-To: <91119587-789e-485d-9cf1-da2c500f241c@linaro.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Mon, 28 Jul 2025 15:12:57 +0300
+X-Gm-Features: Ac12FXzZw67wcluhlx6LMwL2nF0Ah8oDkSDAC4rYqJ1oF1eanGYALYu78M07rHs
+Message-ID: <CAP6Zq1gN28y-6_OwnzMbJ+EiubtABVw+FUqbmAo5bvBW-5tDdw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] arm64: dts: nuvoton: npcm845-evb: Add peripheral nodes
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	avifishman70@gmail.com, tali.perry1@gmail.com, joel@jms.id.au, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 28, 2025 at 04:28:27PM +0800, Andy Yan wrote:
-> From: Andy Yan <andy.yan@rock-chips.com>
-> 
-> The DW DP TX Controller is compliant with the DisplayPort Specification
-> Version 1.4 with the following features:
-> 
-> * DisplayPort 1.4a
-> * Main Link: 1/2/4 lanes
-> * Main Link Support 1.62Gbps, 2.7Gbps, 5.4Gbps and 8.1Gbps
-> * AUX channel 1Mbps
-> * Single Stream Transport(SST)
-> * Multistream Transport (MST)
-> * Type-C support (alternate mode)
-> * HDCP 2.2, HDCP 1.3
-> * Supports up to 8/10 bits per color component
-> * Supports RBG, YCbCr4:4:4, YCbCr4:2:2, YCbCr4:2:0
-> * Pixel clock up to 594MHz
-> * I2S, SPDIF audio interface
-> 
-> Add library with common helpers to make it can be shared with
-> other SoC.
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> 
-> ---
-> 
-> Changes in v6:
-> - Use drm_dp_vsc_sdp_supported
-> - Store bpc/bpp/color format in dw_dp_bridge_state
-> 
-> Changes in v5:
-> - Use drm_dp_read_sink_count_cap instead of the private implementation.
-> 
-> Changes in v4:
-> - Drop unnecessary header files
-> - Switch to devm_drm_bridge_alloc
-> 
-> Changes in v3:
-> - Rebase on drm-misc-next
-> - Switch to common helpers to power up/down dp link
-> - Only pass parameters to phy that should be set
-> 
-> Changes in v2:
-> - Fix compile error when build as module
-> - Add phy init
-> - Only use one dw_dp_link_train_set
-> - inline dw_dp_phy_update_vs_emph
-> - Use dp_sdp
-> - Check return value of drm_modeset_lock
-> - Merge code in atomic_pre_enable/mode_fixup to atomic_check
-> - Return NULL if can't find a supported output format
-> - Fix max_link_rate from plat_data
-> 
->  drivers/gpu/drm/bridge/synopsys/Kconfig  |    7 +
->  drivers/gpu/drm/bridge/synopsys/Makefile |    1 +
->  drivers/gpu/drm/bridge/synopsys/dw-dp.c  | 2094 ++++++++++++++++++++++
->  include/drm/bridge/dw_dp.h               |   20 +
->  4 files changed, 2122 insertions(+)
->  create mode 100644 drivers/gpu/drm/bridge/synopsys/dw-dp.c
->  create mode 100644 include/drm/bridge/dw_dp.h
-> 
+Hi Krzysztof,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+On Thu, 17 Jul 2025 at 17:25, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 17/07/2025 15:53, Tomer Maimon wrote:
+> > Enable peripheral support for the Nuvoton NPCM845 Evaluation Board by
+> > adding device nodes for Ethernet controllers, MMC controller, SPI
+> > controllers, USB device controllers, random number generator, ADC,
+> > PWM-FAN controller, I2C controllers, and PECI interface.
+> > Include MDIO nodes for Ethernet PHYs, reserved memory for TIP, and
+> > aliases for device access.
+> > This patch enhances functionality for NPCM845-EVB platform.
+> >
+> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> > ---
+> >  .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts  | 445 ++++++++++++++++++
+> >  1 file changed, 445 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+> > index 2638ee1c3846..46d5bd1c2129 100644
+> > --- a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+> > +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+> > @@ -10,6 +10,42 @@ / {
+> >
+> >       aliases {
+> >               serial0 = &serial0;
+> > +             ethernet1 = &gmac1;
+> > +             ethernet2 = &gmac2;
+> > +             ethernet3 = &gmac3;
+> > +             mdio-gpio0 = &mdio0;
+> > +             mdio-gpio1 = &mdio1;
+> > +             fiu0 = &fiu0;
+> > +             fiu1 = &fiu3;
+> > +             fiu2 = &fiux;
+> > +             fiu3 = &fiu1;
+> > +             i2c0 = &i2c0;
+> > +             i2c1 = &i2c1;
+> > +             i2c2 = &i2c2;
+> > +             i2c3 = &i2c3;
+> > +             i2c4 = &i2c4;
+> > +             i2c5 = &i2c5;
+> > +             i2c6 = &i2c6;
+> > +             i2c7 = &i2c7;
+> > +             i2c8 = &i2c8;
+> > +             i2c9 = &i2c9;
+> > +             i2c10 = &i2c10;
+> > +             i2c11 = &i2c11;
+> > +             i2c12 = &i2c12;
+> > +             i2c13 = &i2c13;
+> > +             i2c14 = &i2c14;
+> > +             i2c15 = &i2c15;
+> > +             i2c16 = &i2c16;
+> > +             i2c17 = &i2c17;
+> > +             i2c18 = &i2c18;
+> > +             i2c19 = &i2c19;
+> > +             i2c20 = &i2c20;
+> > +             i2c21 = &i2c21;
+> > +             i2c22 = &i2c22;
+> > +             i2c23 = &i2c23;
+> > +             i2c24 = &i2c24;
+> > +             i2c25 = &i2c25;
+> > +             i2c26 = &i2c26;
+> >       };
+> >
+> >       chosen {
+> > @@ -25,12 +61,421 @@ refclk: refclk-25mhz {
+> >               clock-frequency = <25000000>;
+> >               #clock-cells = <0>;
+> >       };
+> > +
+> > +     reserved-memory {
+> > +             #address-cells = <2>;
+> > +             #size-cells = <2>;
+> > +             ranges;
+> > +
+> > +             tip_reserved: tip@0 {
+> > +                     reg = <0x0 0x0 0x0 0x6200000>;
+> > +             };
+> > +     };
+> > +
+> > +     mdio0: mdio@0 {
+>
+> Huh... this should fail checks. It's not MMIO node, is it?
+No, it's MDIO node,
+https://elixir.bootlin.com/linux/v6.16-rc7/source/Documentation/devicetree/bindings/net/mdio-gpio.yaml#L48
+Should I modify the node name? If yes, which node name should I use?
+>
+>
+> > +             compatible = "virtual,mdio-gpio";
+>
+> where is the reg?
+It does not include reg in the mother node, but only in the child.
+>
+> Please confirm that you introduced no new dtbs_check W=1 warnings.
+>
+> > +             gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>,
+> > +                     <&gpio1 26 GPIO_ACTIVE_HIGH>;
+> > +             #address-cells = <1>;
+> > +             #size-cells = <0>;
+> > +
+> > +             phy0: ethernet-phy@1 {
+> > +             };
+> > +     };
+> > +
+>
+> ...
+>
+> > +             reg = <0x05>;
+> > +             fan-tach-ch = /bits/ 8 <0x0A 0x0B>;
+> > +             cooling-levels = /bits/ 8 <127 255>;
+> > +     };
+> > +     fan@6 {
+> > +             reg = <0x06>;
+> > +             fan-tach-ch = /bits/ 8 <0x0C 0x0D>;
+> > +             cooling-levels = /bits/ 8 <127 255>;
+> > +     };
+> > +     fan@7 {
+> > +             reg = <0x07>;
+> > +             fan-tach-ch = /bits/ 8 <0x0E 0x0F>;
+> > +             cooling-levels = /bits/ 8 <127 255>;
+> > +     };
+> > +};
+> > +
+> > +&pspi {
+> > +     cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+> > +     status = "okay";
+> > +     Flash@0 {
+>
+> DTS coding style, naming...
+>
+>
+>
+> Best regards,
+> Krzysztof
 
+Thanks,
 
--- 
-With best wishes
-Dmitry
+Tomer
 
