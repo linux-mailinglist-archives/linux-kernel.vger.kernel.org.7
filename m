@@ -1,88 +1,61 @@
-Return-Path: <linux-kernel+bounces-747624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FC4B13603
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:05:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5A9B1361D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28DA53B7FA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:04:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD84C7A699B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655E721D5B5;
-	Mon, 28 Jul 2025 08:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7EE224225;
+	Mon, 28 Jul 2025 08:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gL7/u70B"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="jssV+K4G"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8411993B7
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB8A28DD0;
+	Mon, 28 Jul 2025 08:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753689917; cv=none; b=CVWJHDNiCaWGylpzOCxdgW9NSPfJFItFFbr8TMmaYohnCKbeRACF3UFTJIufZBBvXfuwaelHKU9bJekvN5bRJ1yOxFjUWVuEdG2SzXn36oYtBAuqJXCHowJ0+s9o47ysPterAdwRuRaYJGz17Z1vjfdupx4+tI572G6mJeqJEfE=
+	t=1753690417; cv=none; b=iPb66SEUP1xiP8XVXKynzmOARm1Zsl6JNl/HR3C8h1xSVgqa+2wN3EnKNTPePt1xlvOfHLFlt3lOFysqGherQemkN8z6QI+EfNDTDyv44cNei16RJ5cAu2YOdxbAntVv1SrNLiVNA+Rb/3Ix0Jq5Ktjmwdesg4BLVUzBngesz4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753689917; c=relaxed/simple;
-	bh=NvRheiuw5llbSfehMjIWn6sJASkkZsxB1P34xtvXJ0Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OmWudfQAu0B8cTMkqLy3d9OaszEpbkN+CQpYTrL4ZZyyBE+42rujJbWUUf6Xh+OBXLWezyZzjOhhzDTKA/AdmuemfdxUtMWEyxmWJJ9R70Ul+SnPWPVZK2TzqdMqOYZNyh1mbS0RFEmgNVr1p1Sa9GzQ7a+iTgri/psq/Xc7MoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gL7/u70B; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-73c17c770a7so4380419b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:05:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753689916; x=1754294716; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c3Oc+mR2KuG3z3xaNZHJFJeibphFim3rI0DGIkQkO6A=;
-        b=gL7/u70BrOSdzOY2utdFnoboziosV/EE29W+spdiqpdqCi0NHWg58ldP/tfBMi2HBE
-         kRa1bXxNl0jRPeZLEfwwWeN6WFuoVyAgU8ww70WyRc/dvXhctojPIoxaZ+gn5OhXnRXb
-         KTHnTfH3H+ZC+UkeNFDEYKAq5OjwZZbsaoEZnwxpqOqW5RZAX3+yP/5+lPNu2VNo6v4h
-         wrSz19EaJoCM0IOHSwsJYEERNlb6VJHfILB6/NC92Wc7/2JqlPGqxQPTThgyqQ5/uR9K
-         M4tGQqu8ZapKqlya5S2OERWvcnXckKf9P+RYLp09bUG8bbW8Oo4/AZVCT/jonkE4eZn6
-         J7Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753689916; x=1754294716;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c3Oc+mR2KuG3z3xaNZHJFJeibphFim3rI0DGIkQkO6A=;
-        b=FyCND7hUAe2PHLA/0mFSLqZA81iUVRsOo93MzOTX0OGKKstocAw7iaNDviu6mcMaLr
-         hiXDZjQubdDe408zfkPO+mYU8mlJZ8E/kApFr5m+smRlH5e/Sup86emMnv3pVMPVM1JZ
-         4fpb4QMJqcq3jXBTraDSlR0xzA2YYAhPZFxD+oJc5sG5Y+wDGmm5kJBpeCCsVtjMkXYW
-         mU/YGICK1lWDdyghQzZ72HjZoIttJcoHPbMjTO3pA7D5miXauPgiiUEVWpPIQuIy75W7
-         xYw28J/OGYBvgvgl56YNuAwlrMnOg7sco06SGaIUqPYjde79Gvs9u0uFBYuxp+UO12N/
-         eWaQ==
-X-Gm-Message-State: AOJu0Yz0T+wSjsA4y+6lYj6NTqIoG428M2CjAprltFOE2vIM4EBja1hw
-	T3r2uyjHJBSIMOOosK5Pb86Jcr8TRTGHE1UEGvfDmTnbIoYFXfoqj1q4
-X-Gm-Gg: ASbGnctG1Aenhy1AdfKCkEun7/v19zlrPpAM1flfn+MxeN3cVaWlZVLaKmqvV57C60f
-	QqYmcdYiqpg4UgCCfnCkHEYqSN8+lNCtGz/jWdmH2h6qCyPOTsKlCQoCG4FlLpNfDE4/NzNYhcY
-	Aj/BJxU8ai43uFU57C5GF+0Y/0KRnp6LJopnoWsv0D0qb4Z1s3dXY0+CMdbVieW0gxq30YESM74
-	02wzAjwtfb8sGqiupo1pU34qxgs24oq3maQmr2iUq/3hT+aS8jE65IKRjlnUmazAUCOt7CuL8D3
-	ECPLrgcAB7qRvl/D56hqmAmkuOm/l25UFmHSdPUAwe39zRAGjpyoiGUXNxxpgTauyHySruZQpUM
-	H4heWYC8gxqp+KL9eWMmMdCMNAZAwV+5F
-X-Google-Smtp-Source: AGHT+IH1hanGyoNS1mZu3A6pq3+qut8z3SbX7sMFBOxpHlREXfl3yRlupsfBR6nUWReumhCBMpt7ZA==
-X-Received: by 2002:a05:6a00:2ea8:b0:748:f135:4fe6 with SMTP id d2e1a72fcca58-76335980736mr13588630b3a.10.1753689915606;
-        Mon, 28 Jul 2025 01:05:15 -0700 (PDT)
-Received: from cs20-buildserver.lan ([2402:7500:400:60db:2e0:4cff:fe68:863])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640adfbf7asm4908203b3a.75.2025.07.28.01.05.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 01:05:15 -0700 (PDT)
-From: Stanley Chu <stanley.chuys@gmail.com>
-X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
-To: frank.li@nxp.com,
-	miquel.raynal@bootlin.com,
-	alexandre.belloni@bootlin.com,
-	linux-i3c@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	tomer.maimon@nuvoton.com,
-	kwliu@nuvoton.com,
-	yschu@nuvoton.com
-Subject: [PATCH v2] i3c: master: svc: Fix npcm845 FIFO_EMPTY quirk
-Date: Mon, 28 Jul 2025 16:05:08 +0800
-Message-Id: <20250728080508.1743052-1-yschu@nuvoton.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753690417; c=relaxed/simple;
+	bh=bspyMyfXSuZW3FNveNcAHk2ud17hz9PySexk26AC+cs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YN2May3p5eNMrU3z6afXl5UCvstSR83D7NKhrvbhI0d3ttB0n2UmNcthDTqn5xbeMKJdHQ2fRkdDfPNQMBQUOX65pYnMOxI25k8nevhxZGGHteMKAKByUdjyBimWnPKVYH13qtpa6ikiNIMw2vDrfYdQd2BxmCbQ6zUDXoWtLaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=jssV+K4G; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fedora.intra.ispras.ru (unknown [10.10.165.5])
+	by mail.ispras.ru (Postfix) with ESMTPSA id F044C552F527;
+	Mon, 28 Jul 2025 08:07:35 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru F044C552F527
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1753690056;
+	bh=/vuzXHoV461VpNRzvkTf8kRcfq0lz2FOYbCpEU5ub5I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jssV+K4GZbG+RkiBKu8vbd7rShwzQ7Gfnt2aiSizA2k1k71I0y3b3fowxzEz7UhvR
+	 Ff5bGkHEO9hk8FLPBDssrWXQlHeHBXt6I9FrcelDhjY91loj9O8eiuBJYCNCwrATDJ
+	 UWVJ1BlxQDJjkUXx026QPeoWH54AMPQ6v9oTEky0=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: "David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Eric Dumazet <edumazet@google.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH net] netlink: avoid infinite retry looping in netlink_unicast()
+Date: Mon, 28 Jul 2025 11:06:47 +0300
+Message-ID: <20250728080727.255138-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,66 +64,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Stanley Chu <yschu@nuvoton.com>
+netlink_attachskb() checks for the socket's read memory allocation
+constraints. Firstly, it has:
 
-In a private write transfer, the driver pre-fills the FIFO to work around
-the FIFO_EMPTY quirk. However, if an IBIWON event occurs, the hardware
-emits a NACK and the driver initiates a retry. During the retry, driver
-attempts to pre-fill the FIFO again if there is remaining data, but since
-the FIFO is already full, this leads to data loss.
-This patch adds a condition to ensure that data is only written when there
-is available space in the FIFO.
+  rmem < READ_ONCE(sk->sk_rcvbuf)
 
-Fixes: 4008a74e0f9b ("i3c: master: svc: Fix npcm845 FIFO empty issue")
-Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+to check if the just increased rmem value fits into the socket's receive
+buffer. If not, it proceeds and tries to wait for the memory under:
+
+  rmem + skb->truesize > READ_ONCE(sk->sk_rcvbuf)
+
+The checks don't cover the case when skb->truesize + sk->sk_rmem_alloc is
+equal to sk->sk_rcvbuf. Thus the function neither successfully accepts
+these conditions, nor manages to reschedule the task - and is called in
+retry loop for indefinite time which is caught as:
+
+  rcu: INFO: rcu_sched self-detected stall on CPU
+  rcu:     0-....: (25999 ticks this GP) idle=ef2/1/0x4000000000000000 softirq=262269/262269 fqs=6212
+  (t=26000 jiffies g=230833 q=259957)
+  NMI backtrace for cpu 0
+  CPU: 0 PID: 22 Comm: kauditd Not tainted 5.10.240 #68
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-4.fc42 04/01/2014
+  Call Trace:
+  <IRQ>
+  dump_stack lib/dump_stack.c:120
+  nmi_cpu_backtrace.cold lib/nmi_backtrace.c:105
+  nmi_trigger_cpumask_backtrace lib/nmi_backtrace.c:62
+  rcu_dump_cpu_stacks kernel/rcu/tree_stall.h:335
+  rcu_sched_clock_irq.cold kernel/rcu/tree.c:2590
+  update_process_times kernel/time/timer.c:1953
+  tick_sched_handle kernel/time/tick-sched.c:227
+  tick_sched_timer kernel/time/tick-sched.c:1399
+  __hrtimer_run_queues kernel/time/hrtimer.c:1652
+  hrtimer_interrupt kernel/time/hrtimer.c:1717
+  __sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1113
+  asm_call_irq_on_stack arch/x86/entry/entry_64.S:808
+  </IRQ>
+
+  netlink_attachskb net/netlink/af_netlink.c:1234
+  netlink_unicast net/netlink/af_netlink.c:1349
+  kauditd_send_queue kernel/audit.c:776
+  kauditd_thread kernel/audit.c:897
+  kthread kernel/kthread.c:328
+  ret_from_fork arch/x86/entry/entry_64.S:304
+
+Restore the original behavior of the check which commit in Fixes
+accidentally missed when restructuring the code.
+
+Found by Linux Verification Center (linuxtesting.org).
+
+Fixes: ae8f160e7eb2 ("netlink: Fix wraparounds of sk->sk_rmem_alloc.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 ---
-Changes since v1:
- remove svc_i3c_master_tx_empty helper, instead check for available FIFO space
 
- drivers/i3c/master/svc-i3c-master.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+Similar rmem and sk->sk_rcvbuf comparing pattern in
+netlink_broadcast_deliver() accepts these values being equal, while
+the netlink_dump() case does not - but it goes all the way down to
+f9c2288837ba ("netlink: implement memory mapped recvmsg()") and looks
+like an irrelevant issue without any real consequences. Though might be
+cleaned up if needed.
 
-diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index 7e1a7cb94b43..ece563353895 100644
---- a/drivers/i3c/master/svc-i3c-master.c
-+++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -104,6 +104,7 @@
- #define   SVC_I3C_MDATACTRL_TXTRIG_FIFO_NOT_FULL GENMASK(5, 4)
- #define   SVC_I3C_MDATACTRL_RXTRIG_FIFO_NOT_EMPTY 0
- #define   SVC_I3C_MDATACTRL_RXCOUNT(x) FIELD_GET(GENMASK(28, 24), (x))
-+#define   SVC_I3C_MDATACTRL_TXCOUNT(x) FIELD_GET(GENMASK(20, 16), (x))
- #define   SVC_I3C_MDATACTRL_TXFULL BIT(30)
- #define   SVC_I3C_MDATACTRL_RXEMPTY BIT(31)
+Updated sk->sk_rmem_alloc vs sk->sk_rcvbuf checks throughout the kernel
+diverse in treating the corner case of them being equal.
+
+ net/netlink/af_netlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 6332a0e06596..0fc3f045fb65 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -1218,7 +1218,7 @@ int netlink_attachskb(struct sock *sk, struct sk_buff *skb,
+ 	nlk = nlk_sk(sk);
+ 	rmem = atomic_add_return(skb->truesize, &sk->sk_rmem_alloc);
  
-@@ -1304,14 +1305,19 @@ static int svc_i3c_master_xfer(struct svc_i3c_master *master,
- 		 * FIFO start filling as soon as possible after EmitStartAddr.
- 		 */
- 		if (svc_has_quirk(master, SVC_I3C_QUIRK_FIFO_EMPTY) && !rnw && xfer_len) {
--			u32 end = xfer_len > SVC_I3C_FIFO_SIZE ? 0 : SVC_I3C_MWDATAB_END;
--			u32 len = min_t(u32, xfer_len, SVC_I3C_FIFO_SIZE);
--
--			writesb(master->regs + SVC_I3C_MWDATAB1, out, len - 1);
--			/* Mark END bit if this is the last byte */
--			writel(out[len - 1] | end, master->regs + SVC_I3C_MWDATAB);
--			xfer_len -= len;
--			out += len;
-+			u32 space, end, len;
-+
-+			reg = readl(master->regs + SVC_I3C_MDATACTRL);
-+			space = SVC_I3C_FIFO_SIZE - SVC_I3C_MDATACTRL_TXCOUNT(reg);
-+			if (space) {
-+				end = xfer_len > space ? 0 : SVC_I3C_MWDATAB_END;
-+				len = min_t(u32, xfer_len, space);
-+				writesb(master->regs + SVC_I3C_MWDATAB1, out, len - 1);
-+				/* Mark END bit if this is the last byte */
-+				writel(out[len - 1] | end, master->regs + SVC_I3C_MWDATAB);
-+				xfer_len -= len;
-+				out += len;
-+			}
- 		}
- 
- 		ret = readl_poll_timeout(master->regs + SVC_I3C_MSTATUS, reg,
+-	if ((rmem == skb->truesize || rmem < READ_ONCE(sk->sk_rcvbuf)) &&
++	if ((rmem == skb->truesize || rmem <= READ_ONCE(sk->sk_rcvbuf)) &&
+ 	    !test_bit(NETLINK_S_CONGESTED, &nlk->state)) {
+ 		netlink_skb_set_owner_r(skb, sk);
+ 		return 0;
 -- 
-2.34.1
+2.50.1
 
 
