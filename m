@@ -1,132 +1,105 @@
-Return-Path: <linux-kernel+bounces-748246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914C5B13E59
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:30:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11324B13EF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3DFB4E1BD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:29:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 980A9165C62
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F48A2749D2;
-	Mon, 28 Jul 2025 15:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E087E27465A;
+	Mon, 28 Jul 2025 15:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ge2Jh4DY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="tQZYj3yJ"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DC7274649
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4691C18A6AB;
+	Mon, 28 Jul 2025 15:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753716539; cv=none; b=gjAk7pDb2AgqPt22TkahfAwFZU8+jxcXgySSlgmXr7Cbzu1dNpq6jdbVua3ExWodz7SE7ht/gBNV1AeyYpVIuWlegbyLqSk64r+tNSbrdxIvAwdU01/0Wg7Hxpvi/c8/6XgUiXEQVgJOaV8jJhsTvwkSSPdXsI6wZAG84vXW5Oc=
+	t=1753717116; cv=none; b=pm0BtK6u9mC6D0eF8ox1S+ozmx+XmAtbp3CEiilgSJ2wLaTItS+QFrUqc4+eWTRD/RL/93UyTSHDU5mhgcYIEE5wrveq6wf4D2VGBZckzkKOqaDIswPnwXwCr7kwJvwq174xbPdGpqbqaal8XLseuxGlhXRc8xJnwJhHCpLUYVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753716539; c=relaxed/simple;
-	bh=Is8oyg2/N+59TfixNCdXQx2xGV4bt1ob9Dnl+MK8YP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DsUMAfMUMM4hBSCmU98RaEQ4vbN08gG5VHfalY7KC/r1X3fusL90tH6mCnRcfHObffZ/cjAF0Xs9faFnB72HJc2/2U2G32Knt38xbtuwyqMjGNqDS4SJ+gtUN9iNX5iufNj4muboPQOOE1v1Ed19sRrdBFeq2l6SZD11/+oHVW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ge2Jh4DY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753716536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oPUbpFdhDjx738ED6Igrtjj1Rv4vpulmUrhFrKZepIo=;
-	b=Ge2Jh4DYMpWy43HZW6YTWpXM/1tQZSN8yTB3UO5X/R+ycnzv0NAhGRAU0t/vre20BYfc6r
-	/0bnvnxh+ibXkdEOmZFdrwe8of76akEOyBseyuYGihmJg/y5PJkXrOJ/6PPfAAJ94eKpud
-	mGZn6kIx5Hu1g9//HWrnLs+nNmtOVCo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-265-5cBuTXNlOkWN7dhjZSRcgA-1; Mon,
- 28 Jul 2025 11:28:52 -0400
-X-MC-Unique: 5cBuTXNlOkWN7dhjZSRcgA-1
-X-Mimecast-MFC-AGG-ID: 5cBuTXNlOkWN7dhjZSRcgA_1753716531
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BAB8E19560B1;
-	Mon, 28 Jul 2025 15:28:50 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.45.224.117])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B0D9C19560A2;
-	Mon, 28 Jul 2025 15:28:45 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-spdx@vger.kernel.org
-Subject: [PATCH v2] arch/x86/kvm/ioapic: Remove license boilerplate with bad FSF address
-Date: Mon, 28 Jul 2025 17:28:43 +0200
-Message-ID: <20250728152843.310260-1-thuth@redhat.com>
+	s=arc-20240116; t=1753717116; c=relaxed/simple;
+	bh=hIf20LhUK1tUQLzGj8ydW/4r2tbZmoAN+UJUY1w+mX0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sJ+3/CNGMW+2wvWWuhX2B0PI31R/IyXSeFPC9j1oarIsiaPml9XKrsCsLMH9Nrb7BWhxqaJwoAY0nQLct+l81H7aqMPGrT/eNOowiR23RsWPHZITpuQ+XADXqW2DKmzwr6glpajzdWFCYlKPpc3CpzxVyl+gv3EtcnPdWb7m6yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=tQZYj3yJ; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 3A60EA036C;
+	Mon, 28 Jul 2025 17:30:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=abci0am6LSqs1O5WrmEN62h6sTg5U/wf/gniUsN48as=; b=
+	tQZYj3yJYmJJpzFbkfaY5r3+049jvj3BoWvr/7cdYPPEF0KefVodqmQoiSSy4UtL
+	/SFb8XviXiVgVgDUFsb/XB0IAP8hF7G5rdkYnwXqYsKUOTbgpMSZ7Jrk2UyJe3nT
+	LD0NChh+2jFvjjj2bMgJStyiipVKuSGX+pU5DREJB+eo2b+VUXY4WRbmEMndmvPg
+	NwMPkGHSseolAMglCsOES4210i6Uk4Z9j5t5kW3wLJSo4j26lgdOQRlrDvFrVchx
+	1r+w/tKgQeEpCvHYGVOmvkls2p7quNqW0ap8HJtbd+lzjdsNSIRxbnTEaic6jWRR
+	5i6bj48cE4xHOjYeg8qEfqP3rzsKgsBsNZ4iAAr3sniZ8L/jTmgdR+UsgZSk58Wv
+	A6v4FNbaGM1MmlEMRonUewylkGx5kgkbENUQeyUy1v8FqGU6nzijC6LyNM/6gjcm
+	9Zr9wAwOvhpcwGKdWgtu9lOeOdLTOG2NdlqSvc9b3jHwCFTmTsyWMZ8aD6Jgl0IX
+	R5olLS++l9k5ulAo6dqrdNhWbSZvTg46fotTSOVb0TDVBLSrFzgH5RmzAwaWPpMs
+	061q3EH6KPS6g4aLdP3YMJftlm4xRQ55dMk8z48DYkL3ROcbOvc7llVZEfTDswAS
+	rbhh13HSm3bJRGmW9fFLXnmfN3Cftm9Se2LihZwV7Gc=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Buday Csaba <buday.csaba@prolan.hu>, =?UTF-8?q?Cs=C3=B3k=C3=A1s=20Bence?=
+	<csokas.bence@prolan.hu>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+	<hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net resubmit] net: phy: smsc: add proper reset flags for LAN8710A
+Date: Mon, 28 Jul 2025 17:29:16 +0200
+Message-ID: <20250728152916.46249-2-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1753716650;VERSION=7994;MC=255693352;ID=388555;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2998FD515E677063
 
-From: Thomas Huth <thuth@redhat.com>
+From: Buday Csaba <buday.csaba@prolan.hu>
 
-The Free Software Foundation does not reside in "59 Temple Place"
-anymore, so we should not mention that address in the source code here.
-But instead of updating the address to their current location, let's
-rather drop the license boilerplate text here and use a proper SPDX
-license identifier instead. The text talks about the "GNU *Lesser*
-General Public License" and "any later version", so LGPL-2.1+ is the
-right choice here.
+According to the LAN8710A datasheet (Rev. B, section 3.8.5.1), a hardware
+reset is required after power-on, and the reference clock (REF_CLK) must be
+established before asserting reset.
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
+Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+Cc: Csókás Bence <csokas.bence@prolan.hu>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- v2: Don't use the deprecated LGPL-2.1+ identifier
+ drivers/net/phy/smsc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/x86/kvm/ioapic.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+diff --git a/drivers/net/phy/smsc.c b/drivers/net/phy/smsc.c
+index b6489da5cfcd..48487149c225 100644
+--- a/drivers/net/phy/smsc.c
++++ b/drivers/net/phy/smsc.c
+@@ -785,6 +785,7 @@ static struct phy_driver smsc_phy_driver[] = {
+ 
+ 	/* PHY_BASIC_FEATURES */
+ 
++	.flags		= PHY_RST_AFTER_CLK_EN,
+ 	.probe		= smsc_phy_probe,
+ 
+ 	/* basic functions */
 
-diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
-index 45dae2d5d2f1f..69b9f8e9dfcda 100644
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
- /*
-  *  Copyright (C) 2001  MandrakeSoft S.A.
-  *  Copyright 2010 Red Hat, Inc. and/or its affiliates.
-@@ -8,20 +9,6 @@
-  *    http://www.linux-mandrake.com/
-  *    http://www.mandrakesoft.com/
-  *
-- *  This library is free software; you can redistribute it and/or
-- *  modify it under the terms of the GNU Lesser General Public
-- *  License as published by the Free Software Foundation; either
-- *  version 2 of the License, or (at your option) any later version.
-- *
-- *  This library is distributed in the hope that it will be useful,
-- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- *  Lesser General Public License for more details.
-- *
-- *  You should have received a copy of the GNU Lesser General Public
-- *  License along with this library; if not, write to the Free Software
-- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-- *
-  *  Yunhong Jiang <yunhong.jiang@intel.com>
-  *  Yaozu (Eddie) Dong <eddie.dong@intel.com>
-  *  Based on Xen 3.1 code.
+base-commit: fa582ca7e187a15e772e6a72fe035f649b387a60
 -- 
-2.50.1
+2.43.0
+
 
 
