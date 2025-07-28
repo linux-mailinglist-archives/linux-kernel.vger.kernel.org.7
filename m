@@ -1,130 +1,172 @@
-Return-Path: <linux-kernel+bounces-748051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFB6B13BF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB67B13BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25E7017C964
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:50:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DACD189DBB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D0726AA98;
-	Mon, 28 Jul 2025 13:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE4526B0BC;
+	Mon, 28 Jul 2025 13:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yscf9AB0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5fhWGAN0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FBpsdSPC"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBBA26A091;
-	Mon, 28 Jul 2025 13:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0501F265CDD
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753710608; cv=none; b=l6XphEa5zbqYqyjupGnf3ccYB0vqxWZC0LIhpTAycyUayHVezRN2yBueXcJONiARHBJuzKDc31bwfEb5vVmTxC+BJZu78N0cpdvoQl+2Z38PGUrlUAUIQtCt8EC5hLhG4iH2xxQKA+DI4c/w1aDNvbfVb2dnxdHBKYyrkynBd68=
+	t=1753710521; cv=none; b=E0i7KujeP7UuSC/wYppYioEaRaAVb1qkPs+0Y3CmAq/oZ1UXzvZbkcF/yrPKQy8eH7SRAYt6DA2Sv9jcOgUo7nFk7XwHdNovwnz22tN9O9O4Cgi2n+j7Q6D/xBdyzddalLFMLwB9amhyVXdYcsxKD64gP3H/0SN6TH4GEvwcwDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753710608; c=relaxed/simple;
-	bh=LsHkGtgxHUQSyTRiyZSRZl/XbqaRVfaN2VI9Uo4QE8A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=C5cqyxEL7zWRnfv4IiRFBh2h3ph+Iwu14isG5eCTq3lExdfhbSCEZyiCLlX4FxLb6yYF8pl6xn5YenKA8FN8+gdROjMr1JtG8TzqgWoS6Vw7jSUqaYFj16tvUVwiWlru2o6e5ghPtenOvLDSx/egJvK+f6j+PmikeNr2Sm8WODo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yscf9AB0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5fhWGAN0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753710600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6BBq5p1cXLMtI7Ayy8NN84orKUGzwumMAlIBivLG7ms=;
-	b=Yscf9AB04Be+kAJfhNDUwQoAJnCG6G2A+IaZNPQx2nv7aijiRJiSOgshuPfry5cVau3d3n
-	dToP3My+yLPHClg6P+3liBEzQMR36RVxwwSCYC+LhbiYY+MsG+F5kUpccGpI1A/i2YSsNY
-	WTsqLAw5J0CoKOinyVwcM2x+e51q9a9ha5K8ojXycT+BTTmVaxLMQfqZmz3egSMKN7Arz4
-	8+3YdFrrnSEWHjsXCCxgjuNOx0VN3GkP8/5ej//BftInxootLAtER04IsKJ52P9Q4X7zlE
-	l2x75P0CoxsbQ1nFcGNy4uFzbvZeo0wKxYlSK2/1EA3nOI6JuN4vKwLwnMSfVQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753710600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6BBq5p1cXLMtI7Ayy8NN84orKUGzwumMAlIBivLG7ms=;
-	b=5fhWGAN0KXldw7o9njnZOVtqAefF0nejeVpy8TOnYchi54rnSvQZZM4S4xSfI1Bw5Pbngo
-	+fuXB5nIZknbWPAg==
-Date: Mon, 28 Jul 2025 15:47:37 +0200
-Subject: [PATCH v2] kbuild: userprogs: use correct linker when mixing clang
- and GNU ld
+	s=arc-20240116; t=1753710521; c=relaxed/simple;
+	bh=7xYiPiwMPmCKG3Rb8ODYtqdcgFby8L44/hiz+sqse64=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bBSTy8UEGS1lB7sWCfc/4TGT/BVFlTVTxMn+r8p4/YgD8WqC+cQ+ZdNYMFYsnAH1PzauL4sqkYDHUuyH75cGMXUoeOYAFk3IhNNRSFHsZYFowLol5KO1z+8PgssEFGbcEiuQU1Go7vgYN14+fIfXLJXues1VLrZXjm/C+JuTKz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FBpsdSPC; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-455ecacfc32so18716935e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:48:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753710518; x=1754315318; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GySiiFaaabiZQ4Il8d89HhZwj5V40q8muWzbkZdlYfk=;
+        b=FBpsdSPChJxvCI0Q9iJdpiZQRbt1FGfCORhgABTx4FdGViq5ydA1VsG0HZWRxbOzVB
+         MDVR5O2STGFzMFHa5urCAb42dbl2qJ4IAeoK89XVFkKNOFoNPb+BPSGyCKzttDC/SVoY
+         sD2+FdFLFR5fhXPl8xywviBGdXI2QYc/FLfypsQl91l5m2ieEzjIqe3TPGCDA1MvIGbN
+         dYFvRX0IR/vKbfuhw1WbEX4t82Jo4WepVAiXEPFkwcrwtBjAsFrHVkYsiGRue7tWuDzG
+         JS/4dZo3O4saAoWTyZ0Ocwlp5UXeb//nJ2hi271raIF6oiKvRQJ7vBTrtrnWgOXJdP1W
+         3KhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753710518; x=1754315318;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GySiiFaaabiZQ4Il8d89HhZwj5V40q8muWzbkZdlYfk=;
+        b=dh+JhEQz1ijL2aKfN7vccWqnO45taQ1A2fzwuj+a6LuUYSq/ZZ7R/r7Iw4vh/tnRxB
+         9+ws2Ov2iyTKJOncm9msAT97Vh6mHFptblbehuwiucY/PKNSYn23cLGa83D3LHDox4An
+         fd6VDc9WAUMpTDkICGNjQ5WWAuXzDBAotJVF8tg9Eqtb7zXsnBOLxPZWZ8ci1DGOdb7Q
+         Bv5NrR5l2xk0eEacvIQbol2sR7zKND2kKvpHXSpTju/PtWXkZKaf++tiAJ5r3Uzo8QBg
+         nDBsRfFv8d7C91583KQ6TEvVu7xpJqavGPMWTtaDN834LNmb4Mk0JR3f4MYhQBexiY9M
+         w2Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWsaIUxWQo+6+V5Ox+zxZAWa+WrKJK/+KvKWM8oRxbc98vXlWjhcrtSEIqQddMfC8tS9XgVpYd/ZpbD5yU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5FtC6wVFs4O2RKglhQFXfrV4PLOkspme+VokTiahyuHJt/Z+E
+	Q8yjgfNVYME7kj3gyqn6UpucRhctqTvgCE3rJn1q+Kr/bgKy5fRHgCAgiRRxTHj6GoI=
+X-Gm-Gg: ASbGncva7OhTnqh9/doTxWna0mVQ71+xpn1Y4NBk5brZ5kLjCf+2Tmw5vKWy8bPhMw2
+	hbONjmmCvkowMQitze7JBqcTsqJmXMxPzXy06d8jqxKjibe2hVhKBAwmtd7ZbtZ8MCjo2wqeIOM
+	rKEml0hGb37rF3Sj9aE4lmN5I/niT9g8BQgOE7Q08L/pFYZ2PHP/3axH0zO13KQtxkjaVo9eik5
+	LABhXXWxs6alzx9REgtIJG8TKKAHF3DrfG5PoAn6QNJnY/lwmjMUMqkX6vJnQ80OqRIueItxvxK
+	oL5MQe6j8P6EdZkjRaco/t0MqGyJZGnWvsCyGPEbnuZeYA3hw/er8nmr/VMYUx8j1KkxS8RwgGg
+	EKVj3nM6F2EJNigREIDv4gzNQUIzNpxnGj9mWeKSq7G7FXTKw4UDf8PdxDQWmRYE=
+X-Google-Smtp-Source: AGHT+IFc0a/dVlHIMLVOyP9kKSGycnWL7vZKmINSvzq5X/lptb5FMCqb9vFSczBjeGl5NDbg5XFrqQ==
+X-Received: by 2002:a05:600c:4f14:b0:453:5c30:a1fd with SMTP id 5b1f17b1804b1-4587a6ab65cmr76381245e9.8.1753710518174;
+        Mon, 28 Jul 2025 06:48:38 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587ac66ed6sm100843815e9.28.2025.07.28.06.48.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 06:48:37 -0700 (PDT)
+Message-ID: <ef93c737-1a85-4b8b-bd70-5dcebe0a1f18@linaro.org>
+Date: Mon, 28 Jul 2025 14:48:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250728-userprogs-clang-gnu-ld-v2-1-58464d681407@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAHh/h2gC/3WNzQqDMBCEX0X23C35qU3pyfcoHiRZ44IkkqhYx
- HdvKvTY4zfDfLNDpsSU4VntkGjlzDEUUJcK7NAFT8iuMCihamGUxqUMphR9RjuWHn1YcHRoOmn
- lvbePWjko4ylRz9spfrWFB85zTO/zZ5Xf9Ke8/VOuEiVqp50wkmrdmWbksMwpBt6ujqA9juMD+
- pP2mMAAAAA=
-X-Change-ID: 20250723-userprogs-clang-gnu-ld-7a1c16fc852d
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753710464; l=1713;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=LsHkGtgxHUQSyTRiyZSRZl/XbqaRVfaN2VI9Uo4QE8A=;
- b=0YziVHsqKPdinX0gQcLsPz+gLcof4pnE3j/vNNO/TBiwrg/+lx3O4AekEUwSwGaS4J+rXVK9M
- 1o7zlGP6+GSD3QRfQsS1CW8kxW1WR4g4FuDe960t9A9yfUxi9d3elfh
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/9] arm64: dts: qcom: sa8775p: Add support for camss
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250703171938.3606998-1-quic_vikramsa@quicinc.com>
+ <20250703171938.3606998-5-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250703171938.3606998-5-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The userprogs infrastructure does not expect clang being used with GNU ld
-and in that case uses /usr/bin/ld for linking, not the configured $(LD).
-This fallback is problematic as it will break when cross-compiling.
-Mixing clang and GNU ld is used for example when building for SPARC64,
-as ld.lld is not sufficient; see Documentation/kbuild/llvm.rst.
+On 03/07/2025 18:19, Vikram Sharma wrote:
+> Add changes to support the camera subsystem on the SA8775P.
+> 
+> Co-developed-by: Suresh Vankadara<quic_svankada@quicinc.com>
+> Signed-off-by: Suresh Vankadara<quic_svankada@quicinc.com>
+> Signed-off-by: Vikram Sharma<quic_vikramsa@quicinc.com>
+> Reviewed-by: Konrad Dybcio<konrad.dybcio@oss.qualcomm.com>
+> ---
+>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 185 ++++++++++++++++++++++++++
+>   1 file changed, 185 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index fed34717460f..38ac33b082c8 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -12,6 +12,7 @@
+>   #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
+>   #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
+>   #include <dt-bindings/clock/qcom,sa8775p-videocc.h>
+> +#include <dt-bindings/clock/qcom,sa8775p-camcc.h>
+>   #include <dt-bindings/dma/qcom-gpi.h>
+>   #include <dt-bindings/interconnect/qcom,osm-l3.h>
+>   #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
+> @@ -4345,6 +4346,190 @@ videocc: clock-controller@abf0000 {
+>   			#power-domain-cells = <1>;
+>   		};
+>   
+> +		camss: isp@ac7a000 {
+> +			compatible = "qcom,sa8775p-camss";
+> +
+> +			reg = <0x0 0xac7a000 0x0 0x0f00>,
+> +			      <0x0 0xac7c000 0x0 0x0f00>,
+> +			      <0x0 0xac84000 0x0 0x0f00>,
+> +			      <0x0 0xac88000 0x0 0x0f00>,
+> +			      <0x0 0xac8c000 0x0 0x0f00>,
+> +			      <0x0 0xac90000 0x0 0x0f00>,
+> +			      <0x0 0xac94000 0x0 0x0f00>,
+> +			      <0x0 0xac78000 0x0 0x1000>,
+> +			      <0x0 0xac9c000 0x0 0x2000>,
+> +			      <0x0 0xac9e000 0x0 0x2000>,
+> +			      <0x0 0xaca0000 0x0 0x2000>,
+> +			      <0x0 0xaca2000 0x0 0x2000>,
+> +			      <0x0 0xacac000 0x0 0x0400>,
+> +			      <0x0 0xacad000 0x0 0x0400>,
+> +			      <0x0 0xacae000 0x0 0x0400>,
+> +			      <0x0 0xac4d000 0x0 0xd000>,
+> +			      <0x0 0xac5a000 0x0 0xd000>,
+> +			      <0x0 0xac85000 0x0 0x0d00>,
+> +			      <0x0 0xac89000 0x0 0x0d00>,
+> +			      <0x0 0xac8d000 0x0 0x0d00>,
+> +			      <0x0 0xac91000 0x0 0x0d00>,
+> +			      <0x0 0xac95000 0x0 0x0d00>;
+> +			reg-names = "csid0",
+> +				    "csid1",
+> +				    "csid_lite0",
+> +				    "csid_lite1",
+> +				    "csid_lite2",
+> +				    "csid_lite3",
+> +				    "csid_lite4",
+> +				    "csid_wrapper",
 
-Relax the check around --ld-path so it gets used for all linkers.
 
-Fixes: dfc1b168a8c4 ("kbuild: userprogs: use correct lld when linking through clang")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
----
-Changes in v2:
-- Use plain ifdef instead of ifneq
-- Rebase onto v6.16
-- Pick up review tag from Nathan
-- Link to v1: https://lore.kernel.org/r/20250724-userprogs-clang-gnu-ld-v1-1-3d3d071e53a7@linutronix.de
----
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You can add my RB here with csid_wrapper as the first register bank.
 
-diff --git a/Makefile b/Makefile
-index 478f2004602da03c9039044e3288f24a13833cc7..7d24245d118c0e903119263b871d2e5c2759f48a 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1134,7 +1134,7 @@ KBUILD_USERCFLAGS  += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD
- KBUILD_USERLDFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
- 
- # userspace programs are linked via the compiler, use the correct linker
--ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_LD_IS_LLD),yy)
-+ifdef CONFIG_CC_IS_CLANG
- KBUILD_USERLDFLAGS += --ld-path=$(LD)
- endif
- 
+The reason for this is CSID wrapper contains a mux for the CSID register 
+banks and so its the "boss" so to speak.
 
----
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-change-id: 20250723-userprogs-clang-gnu-ld-7a1c16fc852d
+Please update and then add my.
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
