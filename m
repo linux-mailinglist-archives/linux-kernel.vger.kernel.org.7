@@ -1,63 +1,53 @@
-Return-Path: <linux-kernel+bounces-748155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356C1B13D2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:31:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD18B13D2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A961898EEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:31:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92C917A9540
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B5526F467;
-	Mon, 28 Jul 2025 14:30:39 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E891C862C;
+	Mon, 28 Jul 2025 14:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Muy8J/6/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A609846C;
-	Mon, 28 Jul 2025 14:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76267944F;
+	Mon, 28 Jul 2025 14:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753713039; cv=none; b=DVD54Ch2JPucluaIo2pLbyGCHH4263Yhkxjc+XwVqygFw29Tuo3VdUFPrg6Zzd/wBcKnzVoXlGiMxVG8jyAF+aD5etnSiP1c+0z0c6TAk47xEGX1I6Qi07BHs2kDtZZWO8SSwpDeufZNAHTK5+LkLKjNZhhU9LnFEolpk5PlY1I=
+	t=1753713036; cv=none; b=C9r29/fsnKxyUJdRb6OjLt9FPMKrBE/GZaRKVhQnixucFo6dv00YOeCqBaYPZvWl/jxk4DNs90Weu+GRxwTrj7JKg3gMx37qzWnw2QueN8AliTrdb0crMLQTcVxrki/kQ8/GKxuWZonTGoxSMxrvYo64wsaFrh0aYhp0Z1SEggU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753713039; c=relaxed/simple;
-	bh=6PaRtqi9Eq4LuRAvpNXPtd78EBWa56zGor/v+aDDIpk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=J/GyFjOCSBgxhol11vHHRuyr3FkydyQ71PZkX78ksLH5BNLAknTOLv5UlQSV15u9wwB3wAL/BsM/VmzD4skAPoUfLpdDtttWf+i27SuACf+mICf9eM6EME0g2SZ/43raMqGM2mDzMxwi/0f1TgyObMwmSxTfmuokG4OdW8hxK4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.213.139])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1d7f3d120;
-	Mon, 28 Jul 2025 22:30:25 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: jonas@kwiboo.se
-Cc: alsi@bang-olufsen.dk,
-	amadeus@jmu.edu.cn,
-	andrew@lunn.ch,
-	conor+dt@kernel.org,
-	davem@davemloft.net,
-	devicetree@vger.kernel.org,
-	edumazet@google.com,
-	heiko@sntech.de,
-	krzk+dt@kernel.org,
-	kuba@kernel.org,
-	linus.walleij@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	netdev@vger.kernel.org,
-	olteanv@gmail.com,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	ziyao@disroot.org
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add RTL8367RB-VB switch to Radxa E24C
-Date: Mon, 28 Jul 2025 22:30:20 +0800
-Message-Id: <20250728143020.1007374-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250727180305.381483-4-jonas@kwiboo.se>
-References: <20250727180305.381483-4-jonas@kwiboo.se>
+	s=arc-20240116; t=1753713036; c=relaxed/simple;
+	bh=RuC5Q1mW4T9AJ+bufHiWxQmW+y+CvWAKnVIcpkxRlSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sSl68JKZeq61ZBL4Ry1pPjWPvQU6k07uLCgiwb6Pw8WhkBNOs/6vHlHJEGKrTs4JqfhiqJJRD03icR84OVtOJeLbDYRMOhhZH7UWya2UPQyVf2VQE1KqDxPRkR6QrpOsuqwLXBcJTtVt1XtQBkbzl+Fsx2VPt5r8O70KVi5FXw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Muy8J/6/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACC0C4CEE7;
+	Mon, 28 Jul 2025 14:30:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753713035;
+	bh=RuC5Q1mW4T9AJ+bufHiWxQmW+y+CvWAKnVIcpkxRlSc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Muy8J/6/aERmHrdANO/EodSdcVtBoA8q0GzseBMTRUfVWsVY69MZJVv7nvJ7sGaIL
+	 dLSPEIg36Zpj2QtAMelOA6NEuoGxH8SXb5RZxGPIBcX0O2zKGrzsGkrnHq5blZjy63
+	 KBVKO0qSgV10qgrZtnbegJztGamYcnfWnVaFlXnPg0PCEUF58K/Cwbr7OuewaJUzfr
+	 yDo7d8D1Hg+6kGUultHPcjp5goewjbtLAYEPIbeWBk6G/cnxfZZcrvTGe9NDXDHE4G
+	 3MRqDvbDyIiOVe4Cqan2bZatD9hLdbX/7HgItLO5bjy/CZmykeBhrj8hBDdEL+mojV
+	 xDNy+7Wvw8LDQ==
+From: Chuck Lever <cel@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <linux-nfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	Jeff Layton <jlayton@kernel.org>
+Subject: [GIT PULL] NFSD changes for v6.17
+Date: Mon, 28 Jul 2025 10:30:33 -0400
+Message-ID: <20250728143033.70585-1-cel@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,141 +55,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a985171201503a2kunm2adcc85416a3a7
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGk0aVh5JSBhDHR1MSE9LT1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSFVKSEJZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0tVSktLVU
-	tZBg++
 
-Hi,
+The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf1911:
 
-> Initial testing with iperf3 showed ~930-940 Mbits/sec in one direction
-> and only around ~1-2 Mbits/sec in the other direction.
+  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
 
-> Any mix of MAC (rx/tx delay) and switch (rx/tx internal delay) did not
-> seem to resolve this speed issue, however dropping snps,tso seems to fix
-> that issue.
+are available in the Git repository at:
 
-Have you tried setting phy-mode to rgmii? (just for testing)
-Usually this problem is caused by incorrect rx/tx delay.
+  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.17
 
-> +	ethernet-switch@1d {
-> +		compatible = "realtek,rtl8365mb";
-> +		reg = <0x1d>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&rtl8367rb_eint>;
+for you to fetch changes up to e339967eecf1305557f7c697e1bc10b5cc495454:
 
-Shouldn't this pinctrl be written in interrupts?
+  nfsd: Drop dprintk in blocklayout xdr functions (2025-07-14 12:46:50 -0400)
 
-> +			ethernet-port@6 {
-> +				reg = <6>;
-> +				ethernet = <&gmac1>;
-> +				label = "cpu";
+----------------------------------------------------------------
+NFSD 6.17 Release Notes
 
-No need for label = "cpu":
-https://github.com/torvalds/linux/commit/567f38317054e66647fd59cfa4e261219a2a21db
+NFSD is finally able to offer write delegations to clients that open
+files with O_WRONLY, thanks to patches from Dai Ngo. We're expecting
+this to accelerate a few interesting corner cases.
 
-> This series relaxes the realtek dsa drivers requirement of having a mdio
-> child OF node to probe and instead have it register a user_mii_bus to
-> make it function when a mdio child OF node is missing.
+The cap on the number of operations per NFSv4 COMPOUND has been
+lifted. Now, clients that send COMPOUNDs containing dozens of
+operations (for example, a long stream of LOOKUP operations to walk
+a pathname in a single round trip) will no longer be rejected.
 
-This is weird, the switch is connected to the gmac via mdio.
-Can you try the following and see if it works? I tried it on
-a rk3568 + rtl8367s board and it worked:
+This release re-enables the ability for NFSD to perform NFSv4.2 COPY
+operations asynchronously. This feature has been disabled to
+mitigate the risk of denial-of-service when too many such requests
+arrive.
 
-```
-&mdio1 {
-	switch@29 {
-		compatible = "realtek,rtl8365mb";
-		reg = <29>;
-		reset-gpios = ...
+Many thanks to the contributors, reviewers, testers, and bug
+reporters who participated during the v6.17 development cycle.
 
-		switch_intc: interrupt-controller {
-			interrupt-parent = ...
-			interrupts = ...
-			interrupt-controller;
-			#address-cells = <0>;
-			#interrupt-cells = <1>;
-		};
+----------------------------------------------------------------
+Christoph Hellwig (3):
+      sunrpc: simplify xdr_init_encode_pages
+      sunrpc: simplify xdr_partial_copy_from_skb
+      sunrpc: unexport csum_partial_copy_to_xdr
 
-		mdio {
-			#address-cells = <1>;
-			#size-cells = <0>;
+Chuck Lever (14):
+      NFSD: Rename a function parameter
+      NFSD: Make nfsd_genl_rqstp::rq_ops array best-effort
+      NFSD: Remove the cap on number of operations per NFSv4 COMPOUND
+      NFSD: Remove definition for trace_nfsd_file_unhash_and_queue
+      NFSD: Remove definitions for unused trace_nfsd_file_lru trace points
+      NFSD: Remove definition for trace_nfsd_file_gc_recent
+      NFSD: Remove definition for trace_nfsd_ctl_maxconn
+      NFSD: Clean up kdoc for nfsd_file_put_local()
+      NFSD: Clean up kdoc for nfsd_open_local_fh()
+      NFSD: Use vfs_iocb_iter_read()
+      NFSD: Use vfs_iocb_iter_write()
+      Revert "NFSD: Force all NFSv4.2 COPY requests to be synchronous"
+      NFSD: Access a knfsd_fh's fsid by pointer
+      NFSD: Simplify struct knfsd_fh
 
-			phy0: ethernet-phy@0 {
-				reg = <0>;
-				interrupt-parent = <&switch_intc>;
-				interrupts = <0>;
-			};
+Dai Ngo (3):
+      NFSD: Offer write delegation for OPEN with OPEN4_SHARE_ACCESS_WRITE
+      NFSD: release read access of nfs4_file when a write delegation is returned
+      NFSD: detect mismatch of file handle and delegation stateid in OPEN op
 
-			phy1: ethernet-phy@1 {
-				reg = <1>;
-				interrupt-parent = <&switch_intc>;
-				interrupts = <1>;
-			};
+Gustavo A. R. Silva (1):
+      NFSD: Avoid multiple -Wflex-array-member-not-at-end warnings
 
-			phy2: ethernet-phy@2 {
-				reg = <2>;
-				interrupt-parent = <&switch_intc>;
-				interrupts = <2>;
-			};
+Jeff Layton (8):
+      sunrpc: new tracepoints around svc thread wakeups
+      nfsd: handle get_client_locked() failure in nfsd4_setclientid_confirm()
+      sunrpc: fix handling of unknown auth status codes
+      sunrpc: remove SVC_SYSERR
+      sunrpc: reset rq_accept_statp when starting a new RPC
+      sunrpc: return better error in svcauth_gss_accept() on alloc failure
+      sunrpc: rearrange struct svc_rqst for fewer cachelines
+      sunrpc: make svc_tcp_sendmsg() take a signed sentp pointer
 
-			phy3: ethernet-phy@3 {
-				reg = <3>;
-				interrupt-parent = <&switch_intc>;
-				interrupts = <3>;
-			};
-		};
+Sergey Bashirov (2):
+      nfsd: Use correct error code when decoding extents
+      nfsd: Drop dprintk in blocklayout xdr functions
 
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
+Su Hui (1):
+      nfsd: Change the type of ek_fsidtype from int to u8 and use kstrtou8
 
-			port@0 {
-				reg = <0>;
-				label = "wan";
-				phy-handle = <&phy0>;
-			};
-
-			port@1 {
-				reg = <1>;
-				label = "lan1";
-				phy-handle = <&phy1>;
-			};
-
-			port@2 {
-				reg = <2>;
-				label = "lan2";
-				phy-handle = <&phy2>;
-			};
-
-			port@3 {
-				reg = <3>;
-				label = "lan3";
-				phy-handle = <&phy3>;
-			};
-
-			port@x {
-				reg = <x>;
-				ethernet = <&gmac1>;
-				phy-mode = "rgmii";
-
-				fixed-link {
-					speed = <1000>;
-					full-duplex;
-				};
-			};
-		};
-	};
-};
-```
-
-Thanks,
-Chukun
-
---
-2.25.1
-
-
+ fs/nfsd/blocklayout.c             |  20 +++--
+ fs/nfsd/blocklayoutxdr.c          | 111 +++++++++++++++-----------
+ fs/nfsd/blocklayoutxdr.h          |   8 +-
+ fs/nfsd/export.c                  |   8 +-
+ fs/nfsd/export.h                  |   2 +-
+ fs/nfsd/filecache.c               |   2 +-
+ fs/nfsd/localio.c                 |   2 +-
+ fs/nfsd/nfs3proc.c                |   2 +-
+ fs/nfsd/nfs4layouts.c             |   4 +-
+ fs/nfsd/nfs4proc.c                |  21 +----
+ fs/nfsd/nfs4state.c               | 119 ++++++++++++++++++++--------
+ fs/nfsd/nfs4xdr.c                 |   4 +-
+ fs/nfsd/nfsctl.c                  |  31 ++++----
+ fs/nfsd/nfsd.h                    |   6 +-
+ fs/nfsd/nfsfh.c                   |  16 ++--
+ fs/nfsd/nfsfh.h                   |  26 +++---
+ fs/nfsd/nfsproc.c                 |   2 +-
+ fs/nfsd/state.h                   |   1 +
+ fs/nfsd/trace.h                   |  27 +------
+ fs/nfsd/vfs.c                     |  17 ++--
+ fs/nfsd/xdr4.h                    |   1 -
+ include/linux/sunrpc/msg_prot.h   |  18 +++--
+ include/linux/sunrpc/svc.h        |   6 +-
+ include/linux/sunrpc/svcauth.h    |   1 -
+ include/linux/sunrpc/xdr.h        |   5 +-
+ include/trace/events/sunrpc.h     |  25 ++++--
+ net/sunrpc/auth_gss/svcauth_gss.c |   3 +-
+ net/sunrpc/socklib.c              | 162 ++++++++++++++------------------------
+ net/sunrpc/svc.c                  |  20 +++--
+ net/sunrpc/svcsock.c              |   5 +-
+ net/sunrpc/xdr.c                  |  11 +--
+ 31 files changed, 340 insertions(+), 346 deletions(-)
 
