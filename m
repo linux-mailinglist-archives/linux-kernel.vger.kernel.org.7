@@ -1,189 +1,171 @@
-Return-Path: <linux-kernel+bounces-747629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43FFBB13619
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:12:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21051B1364D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CA9E174C6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E6B188A639
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1548F223DF9;
-	Mon, 28 Jul 2025 08:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A2223535A;
+	Mon, 28 Jul 2025 08:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ouV4AEEf"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dn1p5S1+"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2F028DD0;
-	Mon, 28 Jul 2025 08:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89792E36E6
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753690327; cv=none; b=ctn5AcN4xR3TOGICa+ffdkwZiI6NOkqxNZJkVJXN01BG6C3gpMu3mFeevNO/HvHjRo+u0pGlhWp9i2q+0wJQTBMGKTgwdue82gPkzHsG5g7b9cXsGoVAsmErkQ7A4CGyXCK2XiKNeamKpEmendBymbq6mwooimfgY7oZx/O/oDU=
+	t=1753691047; cv=none; b=DONqBz4ibDIso0kxIUKJWrc/QrzAhWPQmjz1jv2iKAp7UurgpumReiJWHOm+G/mGuJh2By2WVZPee5STZXOzTAEJn23V0fNew/nLzsIs3zj4bWYrCjcK2Pgex34PIMpuRrgC1Zy3TYS52SIWmgmiStsJ9f4fR19J0yRDGVvDGX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753690327; c=relaxed/simple;
-	bh=BEuewBk1IsEGl3eghjVYYbwM2YS0qLIe5ka6Gd1mDoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V1D9avu/6dFuCJxbZYcpbLsH3vrJkJrnMZTrrBKeprp903QV8Q9Tusoy3h2IicKcp3zy75hFWhYph38ylYKeOYcn8Qd4h2J2Tg9bOVhb8qbW3NE6/WxjfazO/JjoadOZxx0tuFHeHREmtuUBxHj52iz93ie8nOGZrA7r6gLbjP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ouV4AEEf; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56S8B7ox2715293;
-	Mon, 28 Jul 2025 03:11:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753690267;
-	bh=KHcr5mpVfk9mCi5rZVeNOZkpkFw0VJp9vZS5ooiXtHE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ouV4AEEfdgbQ17atKqfIxb5OAjmal+19WqsEDUKuH4ZLcK9HQLJ7KQz1UiGBaR7AE
-	 ow4YjJK+Edb2AJx4vXTNwYpPTKV7r1wqpAs33kEkbgoH2jRrbQELcIH8P7sitnfVQC
-	 4YrOGJLZqXFm9TPdj62uYf9S4FnidrC2qo/RPKTw=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56S8B6Af915220
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 28 Jul 2025 03:11:06 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 28
- Jul 2025 03:11:06 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 28 Jul 2025 03:11:06 -0500
-Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56S8B08W1426296;
-	Mon, 28 Jul 2025 03:11:01 -0500
-Message-ID: <5f4e1f99-ff71-443f-ba34-39396946e5b4@ti.com>
-Date: Mon, 28 Jul 2025 13:40:59 +0530
+	s=arc-20240116; t=1753691047; c=relaxed/simple;
+	bh=nV4/PTmUEYP9KwMf532+qDjUVUN0GHVZDZLIsvcU80w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s9qqQakf1/qF+UTqH0mDxCBOEKekLpSnwL2cdhlMlDgFjz9GcVi7LoGTgnGiKgeiLPG5+vQAVcnbzBLzy+MWUFlWZohu+NoxNN8OddnSNVjHJ0T6zjR1Pxavqm/GfkOSKdJQBj+MJCTSyBNaxdzYoSBOfMEuYG11qEBUA9BkPAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=dn1p5S1+; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-7074bad055eso2215126d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753691045; x=1754295845; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aS8c0DmZhV/h10pO2Kk++8G/v4lwXvV7Mu1YBRRf+B8=;
+        b=dn1p5S1+ho/aTvhjiloNb5cICGlRS/ln8LntU9/7fZPfyBFxSa/URrSxj5Ezni40gK
+         8l8SVy6UmG+9bfUX81Aa3egxqesA6d9OXO9iB6y7W/uoOK8WwT5D2yGatGFTg48pX27s
+         4OcaybDgJpt68fJqZ19SqIW86DwmU7wpF5Nzc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753691045; x=1754295845;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aS8c0DmZhV/h10pO2Kk++8G/v4lwXvV7Mu1YBRRf+B8=;
+        b=JcEhjAXyW98zfn3ueXHK6KxGpzYmmoBsIdpQX6mEZgwUuOVsr2bKxM3oZkc3+6NoiW
+         ao09DvGQzG/wAU3YzZW4XjmiKYVulFW0g6WhTCa8+Zco1FRts72eXelxwAemSrQXcX4J
+         v8ek8WfOUWkm4Q//+4sK9h/ub4ZdxreeixsIqW5llGzEc/ZImTTnTQp0/4ngOiPa2IHq
+         ttDmihB7yzo7xziLbS7TROxfIYW0kOZcq0xIt/E3vZY0kvSquaq3GIiflZc7n1KphAGD
+         M4sI82DES8BxzI158Ya1UbQ+SIBbfE4+uFyi6R8PaEVqBBN/miEOFFCF7oEosHlFirsT
+         9mZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbfhRSPfUok2rr8dsSgfOnS1v/Md3cU81jTJ1tvQlFA/wrBU8gyoN3idZXe3PploCOpqFQBL76ftkz0CY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhYx5xjM5lcxFPcdSmWSyTHiBfIJj2Fh78VMhy2De7bWF7ckm9
+	ef0ukaHhIJ+j+U1afHVaxy5AuCzYxmJB37OylWab9197JRlMGqHfP6sJugOYALsoVQ==
+X-Gm-Gg: ASbGncuwiRs11Ul3SvU6TA17KNDUmaXiPCVtR38GQDqvvrSRryzb1+lElXuVxQ1YhVf
+	u6TuzN6bRHcRlCUHnSyee99+QzmWjQJtjmSb65ZX6wDW8i8gYkvJVDWAQKiSevwiWS/DF4iqsdS
+	FwDCvnnRFcrpoYBDGnwkJcyPpOCr2LBVN5d/PeizAxEB2yi3IdpjUzy4UCRHfj3+x5653ylkihw
+	/F6xhyVxRrRj3UtwhPxUxc0gzjzellVzHTeiARbr9hgHImvksgvmXfaXwqU4fP3YQU/2Vj6MQCh
+	NRccYtFvjkpVvbX/sYvhxMxD5+MTgd8LvpZ1kFLL2PpdPhwHi6crdO3Udm11GU3HNmoMZK1lUzC
+	959HB2IpExD/qIePeO5VPMXxTba16HFYWw92nTRmQJNJbjycZO8tBTbDj0xl/24yDyDB4CFOVt2
+	k=
+X-Google-Smtp-Source: AGHT+IEd9Qtbq/Axeuxm78yPvalIEBxFUnS73+vOHypPFZ6GDCTmnUWa4pzwHujXD4fPbZeOJA0urQ==
+X-Received: by 2002:ad4:5de9:0:b0:704:f94e:b5d6 with SMTP id 6a1803df08f44-707205e99f1mr163132936d6.46.1753691044726;
+        Mon, 28 Jul 2025 01:24:04 -0700 (PDT)
+Received: from shivania.lvn.broadcom.net ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-707299ff0f1sm27786876d6.9.2025.07.28.01.24.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 01:24:04 -0700 (PDT)
+From: Shivani Agarwal <shivani.agarwal@broadcom.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	richardcochran@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	vdronov@redhat.com,
+	netdev@vger.kernel.org,
+	Yang Yingliang <yangyingliang@huawei.com>,
+	Hulk Robot <hulkci@huawei.com>,
+	Sasha Levin <sashal@kernel.org>,
+	Shivani Agarwal <shivani.agarwal@broadcom.com>
+Subject: [PATCH v5.10] ptp: Fix possible memory leak in ptp_clock_register()
+Date: Mon, 28 Jul 2025 01:11:21 -0700
+Message-Id: <20250728081121.95098-1-shivani.agarwal@broadcom.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/5] net: rpmsg-eth: Add basic rpmsg skeleton
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
-	<andrew+netdev@lunn.ch>,
-        Mengyuan Lou <mengyuanlou@net-swift.com>,
-        Michael
- Ellerman <mpe@ellerman.id.au>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Fan
- Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>,
-        Lorenzo Bianconi
-	<lorenzo@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lukas
- Bulwahn <lukas.bulwahn@redhat.com>,
-        Parthiban Veerasooran
-	<Parthiban.Veerasooran@microchip.com>
-CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250723080322.3047826-1-danishanwar@ti.com>
- <20250723080322.3047826-3-danishanwar@ti.com>
- <296d6846-6a28-4e53-9e62-3439ac57d9c1@kernel.org>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <296d6846-6a28-4e53-9e62-3439ac57d9c1@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-On 25/07/25 12:48 am, Krzysztof Kozlowski wrote:
-> On 23/07/2025 10:03, MD Danish Anwar wrote:
->> This patch introduces a basic RPMSG Ethernet driver skeleton. It adds
-> 
-> Please do not use "This commit/patch/change", but imperative mood. See
-> longer explanation here:
-> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
-> 
+[ Upstream commit 4225fea1cb28370086e17e82c0f69bec2779dca0 ]
 
-Sure. I will fix this in v2.
+I got memory leak as follows when doing fault injection test:
 
->> support for creating virtual Ethernet devices over RPMSG channels,
->> allowing user-space programs to send and receive messages using a
->> standard Ethernet protocol. The driver includes message handling,
->> probe, and remove functions, along with necessary data structures.
->>
-> 
-> 
-> ...
-> 
->> +
->> +/**
->> + * rpmsg_eth_get_shm_info - Get shared memory info from device tree
->> + * @common: Pointer to rpmsg_eth_common structure
->> + *
->> + * Return: 0 on success, negative error code on failure
->> + */
->> +static int rpmsg_eth_get_shm_info(struct rpmsg_eth_common *common)
->> +{
->> +	struct device_node *peer;
->> +	const __be32 *reg;
->> +	u64 start_address;
->> +	int prop_size;
->> +	int reg_len;
->> +	u64 size;
->> +
->> +	peer = of_find_node_by_name(NULL, "virtual-eth-shm");
-> 
-> 
-> This is new ABI and I do not see earlier patch documenting it.
-> 
-> You cannot add undocumented ABI... but even if you documented it, I am
-> sorry, but I am pretty sure it is wrong. Why are you choosing random
-> nodes just because their name by pure coincidence is "virtual-eth-shm"?
-> I cannot name my ethernet like that?
-> 
+unreferenced object 0xffff88800906c618 (size 8):
+  comm "i2c-idt82p33931", pid 4421, jiffies 4294948083 (age 13.188s)
+  hex dump (first 8 bytes):
+    70 74 70 30 00 00 00 00                          ptp0....
+  backtrace:
+    [<00000000312ed458>] __kmalloc_track_caller+0x19f/0x3a0
+    [<0000000079f6e2ff>] kvasprintf+0xb5/0x150
+    [<0000000026aae54f>] kvasprintf_const+0x60/0x190
+    [<00000000f323a5f7>] kobject_set_name_vargs+0x56/0x150
+    [<000000004e35abdd>] dev_set_name+0xc0/0x100
+    [<00000000f20cfe25>] ptp_clock_register+0x9f4/0xd30 [ptp]
+    [<000000008bb9f0de>] idt82p33_probe.cold+0x8b6/0x1561 [ptp_idt82p33]
 
-This series adds a new virtual ethernet driver. The tx / rx happens in a
-shared memory block. I need to have a way for the driver to know what is
-the address / size of this block. This driver can be used by any
-vendors. The vendors can create a new node in their dt and specify the
-base address / size of the shared memory block.
+When posix_clock_register() returns an error, the name allocated
+in dev_set_name() will be leaked, the put_device() should be used
+to give up the device reference, then the name will be freed in
+kobject_cleanup() and other memory will be freed in ptp_clock_release().
 
-I wanted to keep the name of the node constant so that the driver can
-just look for this name and then grab the address and size.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: a33121e5487b ("ptp: fix the race between the release of ptp_clock and cdev")
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+[Shivani: Modified to apply on 5.10.y, Removed 
+kfree(ptp->vclock_index) in the ptach, since vclock_index is 
+introduced in later versions]
+Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+---
+ drivers/ptp/ptp_clock.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-I can create a new binding file for this but I didn't create thinking
-it's a virtual device not a physical and I wasn't sure if bindings can
-be created for virtual devices.
-
-In my use case, I am reserving this shared memory and during reserving I
-named the node "virtual-eth-shm". The memory is reserved by the
-ti_k3_r5_remoteproc.c driver. The DT change is not part of this series
-but can be found
-https://gist.github.com/danish-ti/cdd10525ad834fdb20871ab411ff94fb
-
-The idea is any vendor who want to use this driver, should name their dt
-node as "virtual-eth-shm" (if they also need to reserve the memory) so
-that the driver can take the address from DT and use it for tx / rx.
-
-If this is not the correct way, can you please let me know of some other
-way to handle this.
-
-One idea I had was to create a new binding for this node, and use
-compatible string to access the node in driver. But the device is
-virtual and not physical so I thought that might not be the way to go so
-I went with the current approach.
-
-> Best regards,
-> Krzysztof
-
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index c895e26b1f17..869023f0987e 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -283,15 +283,20 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ 	/* Create a posix clock and link it to the device. */
+ 	err = posix_clock_register(&ptp->clock, &ptp->dev);
+ 	if (err) {
++		if (ptp->pps_source)
++			pps_unregister_source(ptp->pps_source);
++
++		if (ptp->kworker)
++			kthread_destroy_worker(ptp->kworker);
++
++		put_device(&ptp->dev);
++
+ 		pr_err("failed to create posix clock\n");
+-		goto no_clock;
++		return ERR_PTR(err);
+ 	}
+ 
+ 	return ptp;
+ 
+-no_clock:
+-	if (ptp->pps_source)
+-		pps_unregister_source(ptp->pps_source);
+ no_pps:
+ 	ptp_cleanup_pin_groups(ptp);
+ no_pin_groups:
 -- 
-Thanks and Regards,
-Danish
+2.40.4
 
 
