@@ -1,148 +1,182 @@
-Return-Path: <linux-kernel+bounces-747604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33091B135DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:51:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27EF6B135DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B0EA7A91EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE9D18984CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855F12165EC;
-	Mon, 28 Jul 2025 07:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TNEWAEhf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YMr/2LGD";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TNEWAEhf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YMr/2LGD"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4421119E97A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EC9224B04;
+	Mon, 28 Jul 2025 07:51:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9806E221FB1;
+	Mon, 28 Jul 2025 07:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753689103; cv=none; b=s+okIFNUALcMmyeP1+h1hnWGfuZ8mVgVhCFEDZoRzJnoqxQj32+DAUlSKokEr2cHoYdvgDk2+KwH7WICuhRkmRRk6OEWstp2BR+fy5AoJe73GJEV8z9BD0ty//qgnTf3yC612O7WJ936t31Q2QI8bKAnfwrzHsX9IyLLgMr4y38=
+	t=1753689108; cv=none; b=Ty5DQxHzokyH2pBgGeLCkd3jkj/pAiiQen3faxJzAtnK47Fy975IHQ5NtDU6NPxQWeCGP+x61Y++yedBThkGu2SiZGFyZFgpLbGYa/EdwlRvzBO+DqCMih9X0QdEBtxCAsh9VM6nMXQSk3p4BjfCwvJ4KBW6tcL65aaAsABaGd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753689103; c=relaxed/simple;
-	bh=SxWgn7HVnhivKlRNCeBL1hfo6OlmnPIbpZAA69eZUIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mKYLQ3KBdQeBtrEL1mMp8M1knlOD79JnxC2LNVZf1a2rFdzgtwkDxNh1c3FmRFjX43wcvzdbISifw6/JLsQXxtKlYm2EX1CC9xK40Az6qfk+PAtBDCsPKYve7gXSJBBm4/WhCCxfgFpX8rTN2hXZN2eE7b5r7ok3mqr6bVsOVIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TNEWAEhf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YMr/2LGD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TNEWAEhf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YMr/2LGD; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 461691F750;
-	Mon, 28 Jul 2025 07:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753689100; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jt+LF63WPq9M7qfyoZDi9ix/UMLVruye6wA/WsxEDGA=;
-	b=TNEWAEhfmMvgidAn9FpW3SEOjxUDcLGCMI1W7iTWwg9RqwshklTRNldiiej4NDQL1aJ7t1
-	Dvz9YLc59jH/5ZJtUWK2433gdzsH3upXNLH4njHM8QfzjRHhpDiHRtI7PSiNnmm8Ji9sRi
-	wzpuDc2cNBzbd9ib4eHBnvFXuZXTECM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753689100;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jt+LF63WPq9M7qfyoZDi9ix/UMLVruye6wA/WsxEDGA=;
-	b=YMr/2LGD88wN7gz09qZLyeD25hyo+JQ5s/mUnMUv7ObjFQhHZqJKAE4pW1RkUa3Wdx79X/
-	5oIHVZHsa0QsjCBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753689100; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jt+LF63WPq9M7qfyoZDi9ix/UMLVruye6wA/WsxEDGA=;
-	b=TNEWAEhfmMvgidAn9FpW3SEOjxUDcLGCMI1W7iTWwg9RqwshklTRNldiiej4NDQL1aJ7t1
-	Dvz9YLc59jH/5ZJtUWK2433gdzsH3upXNLH4njHM8QfzjRHhpDiHRtI7PSiNnmm8Ji9sRi
-	wzpuDc2cNBzbd9ib4eHBnvFXuZXTECM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753689100;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jt+LF63WPq9M7qfyoZDi9ix/UMLVruye6wA/WsxEDGA=;
-	b=YMr/2LGD88wN7gz09qZLyeD25hyo+JQ5s/mUnMUv7ObjFQhHZqJKAE4pW1RkUa3Wdx79X/
-	5oIHVZHsa0QsjCBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36C021368A;
-	Mon, 28 Jul 2025 07:51:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CSJjDAwsh2i5DgAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Mon, 28 Jul 2025 07:51:40 +0000
-Date: Mon, 28 Jul 2025 09:51:31 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Mohamed Khalfella <mkhalfella@purestorage.com>
-Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>, 
-	Hannes Reinecke <hare@kernel.org>, Randy Jennings <randyj@purestorage.com>, 
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmet: Initialize discovery subsys after debugfs is
- initialized
-Message-ID: <630f5d07-ad66-4b1a-b13d-670012e5fab9@flourine.local>
-References: <20250725205005.1983426-1-mkhalfella@purestorage.com>
+	s=arc-20240116; t=1753689108; c=relaxed/simple;
+	bh=PSzDE4EnANpUmLdbzSCZd+h/R7uE6ijqTpScKyAcGEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pUq7N9gur4gQgSCNNwWzmR+F+EQqyfriU399d01B26a9ssUqypDT/84qHddeRw1nmBnpeaqsIHE8EG0lgE7Cizij240b7Lna5C0c/sxFLdE5jKhrW1rcX22XGv1fI6PtyLSzyC9FKL82/tSeMzf/6e5ypUocevyDW2md/7s8nqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCD171596;
+	Mon, 28 Jul 2025 00:51:36 -0700 (PDT)
+Received: from [10.57.53.40] (unknown [10.57.53.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D869F3F673;
+	Mon, 28 Jul 2025 00:51:40 -0700 (PDT)
+Message-ID: <d0ffb55b-690a-4a65-98b5-b83adebfd88b@arm.com>
+Date: Mon, 28 Jul 2025 08:51:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725205005.1983426-1-mkhalfella@purestorage.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,purestorage.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/19] gpu: nova-core: register: minor grammar and
+ spelling fixes
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Beata Michalska <beata.michalska@arm.com>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
+References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
+ <20250718-nova-regs-v2-1-7b6a762aa1cd@nvidia.com>
+ <B1AA6359-7854-4284-B533-F5CA3C18AF34@collabora.com>
+ <DBNF8SZWLI79.1NRX9AMW5QW45@nvidia.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <DBNF8SZWLI79.1NRX9AMW5QW45@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 25, 2025 at 01:50:05PM -0700, Mohamed Khalfella wrote:
-> During nvme target initialization discovery subsystem is initialized
-> before "nvmet" debugfs directory is created. This results in discovery
-> subsystem debugfs directory to be created in debugfs root directory.
+On 28/07/2025 05:59, Alexandre Courbot wrote:
+> Hi Daniel, thanks for the review!
 > 
-> nvmet_init() ->
->   nvmet_init_discovery() ->
->     nvmet_subsys_alloc() ->
->       nvmet_debugfs_subsys_setup()
+> On Sat Jul 26, 2025 at 1:14 AM JST, Daniel Almeida wrote:
+>> Hi Alex. Thank you and John for working on this in general. It will be useful
+>> for the whole ecosystem! :) 
+>>
+>>> On 18 Jul 2025, at 04:26, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>>>
+>>> From: John Hubbard <jhubbard@nvidia.com>
+>>>
+>>> There is only one top-level macro in this file at the moment, but the
+>>> "macros.rs" file name allows for more. Change the wording so that it
+>>> will remain valid even if additional macros are added to the file.
+>>>
+>>> Fix a couple of spelling errors and grammatical errors, and break up a
+>>> run-on sentence, for clarity.
+>>>
+>>> Cc: Alexandre Courbot <acourbot@nvidia.com>
+>>> Cc: Danilo Krummrich <dakr@kernel.org>
+>>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+>>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>>> ---
+>>> drivers/gpu/nova-core/regs/macros.rs | 14 +++++++-------
+>>> 1 file changed, 7 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core/regs/macros.rs
+>>> index cdf668073480ed703c89ffa8628f5c9de6494687..864d1e83bed2979f5661e038f4c9fd87d33f69a7 100644
+>>> --- a/drivers/gpu/nova-core/regs/macros.rs
+>>> +++ b/drivers/gpu/nova-core/regs/macros.rs
+>>> @@ -1,17 +1,17 @@
+>>> // SPDX-License-Identifier: GPL-2.0
+>>>
+>>> -//! Macro to define register layout and accessors.
+>>> +//! `register!` macro to define register layout and accessors.
+>>
+>> I would have kept this line as-is. Users will most likely know the name of the
+>> macro already. At this point, they will be looking for what it does, so
+>> mentioning "register" here is a bit redundant IMHO.
+>>
+>>> //!
+>>> //! A single register typically includes several fields, which are accessed through a combination
+>>> //! of bit-shift and mask operations that introduce a class of potential mistakes, notably because
+>>> //! not all possible field values are necessarily valid.
+>>> //!
+>>> -//! The macro in this module allow to define, using an intruitive and readable syntax, a dedicated
+>>> -//! type for each register with its own field accessors that can return an error is a field's value
+>>> -//! is invalid.
+>>> +//! The `register!` macro in this module provides an intuitive and readable syntax for defining a
+>>> +//! dedicated type for each register. Each such type comes with its own field accessors that can
+>>> +//! return an error if a field's value is invalid.
+>>>
+>>> -/// Defines a dedicated type for a register with an absolute offset, alongside with getter and
+>>> -/// setter methods for its fields and methods to read and write it from an `Io` region.
+>>> +/// Defines a dedicated type for a register with an absolute offset, including getter and setter
+>>> +/// methods for its fields and methods to read and write it from an `Io` region.
+>>
+>> +cc Steven Price,
+>>
+>> Sorry for hijacking this patch, but I think that we should be more flexible and
+>> allow for non-literal offsets in the macro.
+>>
+>> In Tyr, for example, some of the offsets need to be computed at runtime, i.e.:
+>>
+>> +pub(crate) struct AsRegister(usize);
+>> +
+>> +impl AsRegister {
+>> +    fn new(as_nr: usize, offset: usize) -> Result<Self> {
+>> +        if as_nr >= 32 {
+>> +            Err(EINVAL)
+>> +        } else {
+>> +            Ok(AsRegister(mmu_as(as_nr) + offset))
+>> +        }
+>> +    }
+>>
+>> Or:
+>>
+>> +pub(crate) struct Doorbell(usize);
+>> +
+>> +impl Doorbell {
+>> +    pub(crate) fn new(doorbell_id: usize) -> Self {
+>> +        Doorbell(0x80000 + (doorbell_id * 0x10000))
+>> +    }
+>>
+>> I don't think this will work with the current macro, JFYI.
 > 
-> In other words, the codepath above is exeucted before nvmet_debugfs is
-> created. We get /sys/kernel/debug/nqn.2014-08.org.nvmexpress.discovery
-> instead of /sys/kernel/debug/nvmet/nqn.2014-08.org.nvmexpress.discovery.
-> Move nvmet_init_discovery() call after nvmet_init_debugfs() to fix it.
-> 
-> Fixes: 649fd41420a8 ("nvmet: add debugfs support")
-> Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
+> IIUC from the comments on the next patches, your need is covered with
+> the relative and array registers definitions, is that correct?
 
-Reviewed-by: Daniel Wagner <dwagner@suse.de>
+My Rust is somewhat shaky, but I believe "non-contiguous register 
+arrays" will do what we want. Although I'll admit it would be neater for 
+the likes of the AS registers if there was a way to define a "block" of 
+registers and then use an array of blocks. Something vaguely like this 
+(excuse the poor Rust):
+
+register_block!(MMU_AS_CONTROL @ 0x2400[16 ; 64], "MMU Address Space registers" {
+	register!(TRANSTAB @ 0x0000, "Translation table base address" {
+		31:0	base as u32;
+	});
+	register!(MEMATTR @ 0x0008, "Memory attributes" {
+		7:0	attr0 as u8;
+		7:0	attr1 as u8;
+		// ...
+	});
+	// More registers
+});
+
+In particular that would allow a try_() call to access the 'block' 
+followed by normal read()/write() calls for the members in the block.
+
+My Rust is certainly not good enough for me to try prototyping this
+yet though!
+
+Thanks,
+Steve
+
 
