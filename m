@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-748416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DE6B140F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:08:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BE6B140F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68ACC189A76B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C384E54DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D9427510F;
-	Mon, 28 Jul 2025 17:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F0F2750FD;
+	Mon, 28 Jul 2025 17:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8R+Bf6X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="apYcas1z"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5782737E3;
-	Mon, 28 Jul 2025 17:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6EF212B2F
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753722526; cv=none; b=b94YF0CthcGMZFiMEm1Jp0gVV3Eo5/FfMoHNG9PAp81Crm/P/7G6V5y3oXVOrNEZs04tqnjWHwjGzpWrvFQPFf8MD6SBOILbQz4er7xA1VH5ROQg2ADiei4/IvqkeCo5X8lQcUROYcTBfhKp83M3NtBIurWzPxgjeS3aB8E2USk=
+	t=1753722583; cv=none; b=hzCgOZRdcN3xjZuNT6L7Mj9x24tUGFThWzTmVPGzKt9/R3kZbVIVVysiTZu+ol136WZRlOB02TDNCjXweo8VrEyDu0RODJRD3H6UrJgn4UeVAFcQuFz/TdImsT6x9L7QSP70gdisOZRMR2h8o3/mCC80RFtRiMH8lojNvRFzwAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753722526; c=relaxed/simple;
-	bh=SHUD7JaD1vv7oqQPznOq9ukykwMfLFPM3jklsusef4I=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FFnEei1DrpUNF544r0LKzW/SH/iH2fTHi+rSpike5u7fBgBOUtKPgeeiPyJi88K5m+E+Mlb2XS2K9IGWyN24e7KYbT9y2iP1dKf+krqsqK+fv5EAiO4TjjA8i3oO2kBE76cG7wBn8xiUtoIbtHS0WUA2uH4qgrYtnWGJdWpCvG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8R+Bf6X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8510CC4CEE7;
-	Mon, 28 Jul 2025 17:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753722526;
-	bh=SHUD7JaD1vv7oqQPznOq9ukykwMfLFPM3jklsusef4I=;
-	h=Date:From:Reply-To:Subject:To:Cc:References:In-Reply-To:From;
-	b=L8R+Bf6X9lusCj5uRPFr1kbTPN4bYkHS2qrlDkWpBIDqt+xR2TJsl4uzzQWLINgZu
-	 y8DnnVWLldB9vIUprrWB1EWy5peMM5u3VV6S6ea7jbIOttxG1C4xXyt47dA/rbCMu2
-	 rWnd+s6vzTpzNFa0UTdsKcHK924RZD72YGzM0YbVuqd+YfXyOTRFSXx6JSUdaW8bzl
-	 5/AGc3nu6w5PHcBpJVNzMFgpCp/+KXpYn0fDsJWx40cPkBbORMltNHeQcvuKfF31W1
-	 iYTdy4dihyPjBu9cmkSdu06XNDHAf+MMAd5/Fo2r6bp6KBXP4AsxjGbebPvvlqXN92
-	 4UeK9801rs+7w==
-Message-ID: <9dc51c34-1e5d-4da2-bc00-a89e7c173073@kernel.org>
-Date: Tue, 29 Jul 2025 01:08:40 +0800
+	s=arc-20240116; t=1753722583; c=relaxed/simple;
+	bh=1RRB5mcT6XkxVvImVlknYsFQxEXTXSs1Fy1yDu34bZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eCHV6v0DkVwOBJi9ZVVU7LG+3trRFaUVhcHp8b0Rd5s4o9XOQ+vZkzU9dL3Bre7bzAYmXMoZg7Bfl+v7kpyX6OPCdd1Dc04uQKkhw8GzyU1vqyYqnCmvmPXQSIvyh+VEnpRDwpHtvNJboiPtezS7+9NaEg7ftaLE4/+MXR5KBUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=apYcas1z; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1753722580;
+ bh=o1SAkKfZM3NhF3wZAPT2jfOda4w4lWqHgHvXSycv5Gc=;
+ b=apYcas1zRvWrusiROXe1jSQkmSJA5WYX12wDbJ5QxExI3w/CDIgBbp/Pu9MscBV9Y4HtVV7My
+ Uwz/+//yfpq5I0Etpl4q+3fpE2ZpvyNuuVnX/VTCnaqKHOmYN49XrHCaXEDYeNWTm/+NIGBad1N
+ 2lM6IMe+eWbjMHKZYbmctoBzOimZRKSyuLUVYSNkIYjJsKU5eG0RlIaEAxQCt3AceGHnRumoO9H
+ LoL07U4xuP8ShO+pp4WLlBeu4G+kVUcjCQru7E6bGvGrqvbSoBRtvjI7/v8p5nGATGHo9Np+XVd
+ B9BLIazpP6cVTe3lHFeFJlNY4YzhxiXR/MxOrIU/1ApQ==
+X-Forward-Email-ID: 6887aebc351ec66b15a29e9b
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.1.8
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <e2fd11db-543a-43eb-b118-9f246ff149b5@kwiboo.se>
+Date: Mon, 28 Jul 2025 19:09:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,91 +57,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Yu Kuai <yukuai@kernel.org>
-Reply-To: yukuai@kernel.org
-Subject: Re: [PATCH v2] blk-ioc: don't hold queue_lock for ioc_lookup_icq()
-To: Jan Kara <jack@suse.cz>
-Cc: dlemoal@kernel.org, axboe@kernel.dk, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250725180334.40187-1-yukuai@kernel.org>
- <64sbgvovtubkm2zelenee6pjkdciqlgqmri3bmycce6y265sy4@uptdqvz7g2lk>
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add Radxa E24C
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ robh@kernel.org, ziyao@disroot.org
+References: <20250727144409.327740-4-jonas@kwiboo.se>
+ <20250728125015.988357-1-amadeus@jmu.edu.cn>
 Content-Language: en-US
-In-Reply-To: <64sbgvovtubkm2zelenee6pjkdciqlgqmri3bmycce6y265sy4@uptdqvz7g2lk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250728125015.988357-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi Chukun,
 
-在 2025/7/28 17:28, Jan Kara 写道:
-> On Sat 26-07-25 02:03:34, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Currently issue io can grab queue_lock three times from bfq_bio_merge(),
->> bfq_limit_depth() and bfq_prepare_request(), the queue_lock is not
->> necessary if icq is already created because both queue and ioc can't be
->> freed before io issuing is done, hence remove the unnecessary queue_lock
->> and use rcu to protect radix tree lookup.
->>
->> Noted this is also a prep patch to support request batch dispatching[1].
->>
->> [1] https://lore.kernel.org/all/20250722072431.610354-1-yukuai1@huaweicloud.com/
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> Looks good! Just one small comment below. With that fixed feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
->
->> diff --git a/block/blk-ioc.c b/block/blk-ioc.c
->> index ce82770c72ab..ea9c975aaef7 100644
->> --- a/block/blk-ioc.c
->> +++ b/block/blk-ioc.c
->> @@ -308,19 +308,18 @@ int __copy_io(unsigned long clone_flags, struct task_struct *tsk)
->>   
->>   #ifdef CONFIG_BLK_ICQ
->>   /**
->> - * ioc_lookup_icq - lookup io_cq from ioc
->> + * ioc_lookup_icq - lookup io_cq from ioc in io issue path
->>    * @q: the associated request_queue
->>    *
->>    * Look up io_cq associated with @ioc - @q pair from @ioc.  Must be called
->> - * with @q->queue_lock held.
->> + * from io issue path, either return NULL if current issue io to @q for the
->> + * first time, or return a valid icq.
->>    */
->>   struct io_cq *ioc_lookup_icq(struct request_queue *q)
->>   {
->>   	struct io_context *ioc = current->io_context;
->>   	struct io_cq *icq;
->>   
->> -	lockdep_assert_held(&q->queue_lock);
->> -
->>   	/*
->>   	 * icq's are indexed from @ioc using radix tree and hint pointer,
->>   	 * both of which are protected with RCU.  All removals are done
-> In this comment there's still reference to holding 'q lock'. I think you
-> should replace that with justification why when called from IO issue path
-> we are guaranteed found pointer is safe to use.
-Thanks for the review! How about:
+On 7/28/2025 2:50 PM, Chukun Pan wrote:
+> Hi,
+> 
+>> +	avddl_1v1: avddh_3v3: avdd_rtl8367rb: regulator-avdd-rtl8367rb {
+>> +		compatible = "regulator-fixed";
+>> +		enable-active-high;
+>> +		gpios = <&gpio1 RK_PC3 GPIO_ACTIVE_HIGH>;
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&gpio_8367_en>;
+>> +		regulator-name = "avdd_rtl8367rb";
+> 
+> I don't see the avdd_rtl8367rb regulator in the schematics. It looks like
+> DVDDIO (RTL8367RB power) is connected to AVDDH_3V3 via a magnetic bead.
 
-diff --git a/block/blk-ioc.c b/block/blk-ioc.c
-index ea9c975aaef7..fd77e655544f 100644
---- a/block/blk-ioc.c
-+++ b/block/blk-ioc.c
-@@ -322,9 +322,9 @@ struct io_cq *ioc_lookup_icq(struct request_queue *q)
+Both avddl_1v1 and avddh_3v3 are controlled by the same gpio, I do not
+remember if using two regulators with same gpios is supported, can only
+remember it being an issue in the past, so I opted to just describe it
+as a single regulator and gave it a new name and added labels for the
+name used in schematic.
 
-         /*
-          * icq's are indexed from @ioc using radix tree and hint pointer,
--        * both of which are protected with RCU.  All removals are done
--        * holding both q and ioc locks, and we're holding q lock - if we
--        * find a icq which points to us, it's guaranteed to be valid.
-+        * both of which are protected with RCU, io issue path ensures that
-+        * both request_queue and current task are valid, the founded icq
-+        * is guaranteed to be valid until the io is done.
-          */
-         rcu_read_lock();
-         icq = rcu_dereference(ioc->icq_hint);
+Would calling it vdd_8367 (after gpio_8367_en) be better or do you have
+any other suggestion on how to describe these?
 
->
-> 								Honza
+I will at least add a comment related to this regulator for v2.
+
+> 
+>> +&gmac1 {
+>> +	clock_in_out = "output";
+>> +	phy-mode = "rgmii-id";
+>> +	phy-supply = <&avdd_rtl8367rb>;
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&rgmii_miim>, <&rgmii_tx_bus2>, <&rgmii_rx_bus2>,
+>> +		    <&rgmii_rgmii_clk>, <&rgmii_rgmii_bus>, <&gmac1_rstn_l>;
+> 
+> Should the pinctrl of gmac1_rstn_l be written together with the
+> reset-gpios of the rtl8367rb switch?
+
+When defining pinctrl to the mdio1 node they are not applied, and there
+was issues probing the switch when using reset-gpios of the switch.
+So I opted to describe the switch reset as the mdio bus reset.
+
+I guess we should describe the HW and not work around SW issues, will
+change in v2.
+
+> 
+> ```
+> reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
+> pinctrl-0 = <&gmac1_rstn_l>;
+> ```
+> 
+>> +&i2c0 {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&i2c0m0_xfer>;
+>> +	status = "okay";
+>> +
+>> +	rk805: pmic@18 {
+>> +		compatible = "rockchip,rk805";
+>> +		reg = <0x18>;
+>> +		interrupt-parent = <&gpio4>;
+>> +		interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
+>> +		#clock-cells = <1>;
+>> +		clock-output-names = "rk805-clkout1", "rk805-clkout2";
+> 
+> The clkout pin is not connected, but the dt-bindings require it.
+> Maybe clock-output-names could be made optional?
+
+Seem the using just #clock-cells = <0> is valid without
+clock-output-names, will use that in v2, thanks.
+
+> 
+> +&mdio1 {
+> +	reset-delay-us = <25000>;
+> +	reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
+> +	reset-post-delay-us = <100000>;
+> +};
+> 
+> I don't think this is correct, reset-gpios should be written on the
+> rtl8365mb switch node. The switch driver has defined the reset time.
+
+See above, I had issues using the reset-gpios of the switch, because the
+switch was probed twice, once deferred by gmac, and by the second probe
+failed with -BUSY because of the reset-gpios still being claimd by the
+first probe.
+
+I can change to describe the reset pin in the switch, however that will
+likely mean Ethernet is unusable until the issue in devres/gpiolib is
+tracked down and fixed by someone.
+
+> 
+> ```
+> &mdio1 {
+> 	switch@29 {
+> 		compatible = "realtek,rtl8365mb";
+> 		reg = <29>;
+> 		reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
+> ```
+
+As mentioned above, this caused probe issues and an unusable switch.
+I would rather skip describing this reset pin as it does not seem to be
+needed it self reset when the regulator is powered on.
+
+Any thoughts on what is better of the two? Skip describing the reset pin
+or describe it and leave the switch possible unusable? Probing gmac
+before the switch should leave it in a working state.
+
+Regards,
+Jonas
+
+> 
+> Thanks,
+> Chukun
+> 
+> --
+> 2.25.1
+> 
+> 
 
 
