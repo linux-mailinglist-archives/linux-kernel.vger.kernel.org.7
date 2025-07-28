@@ -1,173 +1,107 @@
-Return-Path: <linux-kernel+bounces-748651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8D6B14445
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:16:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFC9B14450
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B571317C730
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:16:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859B94E36F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42286223DE8;
-	Mon, 28 Jul 2025 22:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5F3224893;
+	Mon, 28 Jul 2025 22:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DGDy9uCu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RCRhzBwW"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B9541C69
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34FA238C06
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753740980; cv=none; b=idvoI9zXAnBk6GSBrQTclC/be+OHNAs0P4VbFiR+8tygaDCgnv9mnwWHc8Lgc/2L39QBE90BusqG//ELaFytLL4sBw4WqRL1j0ayg+JpQYPvKgzVRs2OR4ObdZLO/yU80k0ayrwWwX1mzI7s04DBt58t4wwmwTraywY1+xA34CY=
+	t=1753741123; cv=none; b=Sl/62X2un7JUqhI6Sd/7NYChdwyITNvwd8JbcG4b74D89YPehtOgCiO+N5odSJ/XLaEYj9+M9EgUpugFonUd0PpP0aqiIb/cS8CxkKQeQbNQXrUqaY7WC7AVAGAnZqmyEp/MUsZ/tK0mLeVO9WMZ/Iy2P3q+tpd8CJqT2bLZrjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753740980; c=relaxed/simple;
-	bh=4Z6NO3fpfP3PkGAYr4VN3SdMP9a1cfmGhR3r/uvjDFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPcxUW7wt8vzTYoFozQigpY9owOJk0EHxY3tyM9j2letTx5eAERDkf3SETKNICDbRrOhscnju1lkV7as+2UVzGVloesu1dd9qbqKi9uo5KBo2/bmBNkNIQVpVokHKZwBWFXbQu22PjP8II3jASJrk2wlgO3vZGubK+w4gi2V+nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DGDy9uCu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753740977;
+	s=arc-20240116; t=1753741123; c=relaxed/simple;
+	bh=K89Sbciy9IKPrC7+QLg4lIglWg4Feo3nIoG4lOmFdb8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OIN3pdpIi/hiBJIN23O+Yxh0lnNu8h5CJwM5UKg0rs2FLxZGKCk549GBXRoTq9I0VwTT+f//4DR0vA7f+VgdWSyypuvZGZLX3g3HkAf6mlqhyUPWRxeG2CbTD2fBKZL0jF2U5B7E0L8za7HTQ+NPkWoLQz+O3qzJCc0KcNk1CxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RCRhzBwW; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753741110;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fQLMDseKGWHJD2POGwLcDzuQw7GqfZnec1/2NK1Likk=;
-	b=DGDy9uCuVHH3rR2bQoJhdV5nPB81aFwfS5VByVOYNa3M3UpheBx2JrufLVcezX5pLtZUmp
-	ZOdG8SavRYjrYDPBEc+v4wWvpxXizn6xVZwTMTGwCM8HeCihr36ZTS5oFR18+d9xt4Xkty
-	Lk3qlpauYXulhsZ/toW0sJLOmm1roA4=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-496-Is_hZFOBMI-t-vZ80znGpg-1; Mon, 28 Jul 2025 18:16:16 -0400
-X-MC-Unique: Is_hZFOBMI-t-vZ80znGpg-1
-X-Mimecast-MFC-AGG-ID: Is_hZFOBMI-t-vZ80znGpg_1753740976
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e207330a45so734630085a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:16:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753740975; x=1754345775;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fQLMDseKGWHJD2POGwLcDzuQw7GqfZnec1/2NK1Likk=;
-        b=epyPXyvYPXY7jMUj1i+wVFH+CMohHntCEcnpPui6sfQNW69puJAgnaVNzOX1c1s+lx
-         JszkUa1CAiH0LV5BD9jY5XAFliSm+Klod8qdOSQj6SG8MAyMjf+phA2KD92G/Dk45tMJ
-         bGTqkYAaMe7eNkYwypsyS5nXJWV5apx6N6INykZHsVT/vf6KczBlg4guORCRz2MMKzo4
-         PC2tofUr9ywWmZCICqKAdFodojf0BStkI2UeSWXPb/9rgI/r7lkc91jieljRtBHTeYKe
-         rH59B8gkXfrVNnRMJnLSEYUc1HwhMAVKv8xC6wIdzYYAkIpfzIwlhS2CAmys/5v0t9my
-         Iihg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJoNzDMtmyPJf0iLQDu35rxMLSEeunCQmZvtfCAwKw/9spnoNvP4IoDGuh+iSK58jXWUekJ+3nMOydeNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYlFUDxqsdJhSR1nmtEk0z5Z3+/MrxkcVocA3H1K/pt1+N++PM
-	4rFHg5Md1tY5DK6H2NmqFWPwatNQG66URQl8v3RcVZDlM2gErLT9VU7tdL71e/IXbKXqTzf3VbY
-	GKZyV3L7sIpn0n7S0H5rEcFd1ytS8lgOP/HO4Y2SXPzHqO4QgeRIvWKTkwL1PDmLkJQ==
-X-Gm-Gg: ASbGncvU29+mUyeHC/5i6UwjONEvIFav3Vx7Q7xkvuRzo8/gZhJWD6l1lVQIhelHa9w
-	xZDhpIQS/FuNtz3tTsCJoKXDkppVYwApiCZXVHg0JYXGZTbUEmTFtqelJWAxsT74XAiIb3wSTqb
-	hUICOZs1Ci0z36q1sQn0Bq0nQ9pA5XgKCp6FwZzGXcuU3ZbKltDzA6va2WHJ3cVJcFlPKnExhij
-	MErYFjVyhvHBrC0zcwDvVicmobgv70LVgxBEWr+cV4cRuUSX0MKflaDo5K/MRWLjuGJy961yOME
-	NcqJOMnA5ihk19WJDCtX03VCPB6EhlxuFa53LC1yAdk6/3gSUbefVVvNsrPXofq3GRq73Q6Vqx8
-	rsIa2oy/R7jXCbgpqyCg=
-X-Received: by 2002:a05:620a:4115:b0:7e0:cb93:6fb1 with SMTP id af79cd13be357-7e63be38459mr1706409585a.9.1753740975673;
-        Mon, 28 Jul 2025 15:16:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQwOMA45NHxMdfz4vJNq3bTetD2CGSGS5/pyyMXVW/7CjvcbO1B0Dw4GZTowHILHIDFFoFhA==
-X-Received: by 2002:a05:620a:4115:b0:7e0:cb93:6fb1 with SMTP id af79cd13be357-7e63be38459mr1706406385a.9.1753740975283;
-        Mon, 28 Jul 2025 15:16:15 -0700 (PDT)
-Received: from [192.168.1.17] (pool-68-160-160-85.bstnma.fios.verizon.net. [68.160.160.85])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e64327aa0esm343713185a.12.2025.07.28.15.16.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 15:16:14 -0700 (PDT)
-Message-ID: <fab6d382-fad4-4d91-90e0-2d0e9dfae216@redhat.com>
-Date: Mon, 28 Jul 2025 18:16:13 -0400
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RoBkZ5QUGz1TAZ0kZZyxij8ERJRPO6rkWOERhOGR4E4=;
+	b=RCRhzBwWB66EFMEUo4+SlMC8Wf8eO3Ct6LmhikouZYnDrwGVRTBN39NDKZUtC2PGZLvUoP
+	o37D2sNdjPLPrTPsgw4uY7JEXYbQg7ciI+aqjdEL9DG6NJelWJ0vD+9m6uCcNuoy9Xk7vH
+	ysbM2DLWFBMnjef8LnqeK/K2O6NXsnE=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Leon Romanovsky <leon@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH net-next v3 0/7] net: axienet: Fix deferred probe loop
+Date: Mon, 28 Jul 2025 18:18:16 -0400
+Message-Id: <20250728221823.11968-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kernel/livepatch/core: Fixed the issue of parsing failure
- caused by symbols carrying '-' generated by the kpatch software
-To: Li kunyu <likunyu10@163.com>, jpoimboe@kernel.org, jikos@kernel.org,
- mbenes@suse.cz, pmladek@suse.com
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250720205059.138877-1-likunyu10@163.com>
-Content-Language: en-US
-From: Joe Lawrence <joe.lawrence@redhat.com>
-Autocrypt: addr=joe.lawrence@redhat.com; keydata=
- xsFNBFgTlmsBEADfrZirrMsj9Z9umoJ5p1rgOitLBABITvPO2x5eGBRfXbT306zr226bhfPj
- +SDlaeIRwKoQvY9ydB3Exq8bKObYZ+6/OAVIDPHBVlnZbysutSHsgdaGqTH9fgYhoJlUIApz
- suQL0MIRkPi0y+gABbH472f2dUceGpEuudIcGvpnNVTYxqwbWqsSsfT1DaAz9iBCeN+T/f/J
- 5qOXyZT7lC6vLy07eGg0uBh9jQznhbfXPIev0losNe7HxvgaPaVQ+BS9Q8NF8qpvbgpO+vWQ
- ZD5+tRJ5t85InNiWR3bv01GcGXEjEVTnExYypajVuHxumqJeqGNeWvx26cfNRQJQxVQNV7Gz
- iyAmJO7UulyWQiJqHZPcXAfoWyeKKAJ37YIYfE3k+rm6ekIwSgc9Lacf+KBfESNooU1LnwoQ
- ok9Q6R5r7wqnhCziqXHfyN2YGhm0Wx4s7s6xIVrx3C5K0LjXBisjAthG/hbPhJvsCz5rTOmP
- jkr+GSwBy2XUdOmtgq1IheBFwvWf08vrzNRCqz3iI1CvRpz0ZYBazmkz924u4ul6W7JuCdgy
- qW3UDLA77XlzFrA7nJ6rb77aZF7LJlkahX7lMaKZUzH+K4aVKTdvZ3szm9K+v0iixsM0TEnz
- oWsZgrkAA0OX2lpLfXvskoujQ84lY989IF+nUwy0wRMJPeqNxwARAQABzSZKb2UgTGF3cmVu
- Y2UgPGpvZS5sYXdyZW5jZUByZWRoYXQuY29tPsLBlgQTAQgAQAIbAwcLCQgHAwIBBhUIAgkK
- CwQWAgMBAh4BAheAFiEEXzkJ3py1AClxRoHJx96nQticmuUFAmF2uf8FCRLJJRQACgkQx96n
- QticmuU69A/9FB5eF5kc392ifa/G6/m8q5BKVUXBMWy/RcRaEVUwl9lulJd99tkZT5KwwdIU
- eYSpmT4SXrMzHj3mWe8RcFT9S39RvmZA6UKQkt9mJ+dvUVyDW1pqAB+S6+AEJyzw9AoVPSIG
- WcHTCHdJZfZOMmFjDyduww7n94qXLO0oRMhjvR9vUqfBgEBSLzRSK96HI38brAcj33Q3lCkf
- 8uNLEAHVxN57bsNXxMYKo/i7ojFNCOyFEdPCWUMSF+M0D9ScXZRZCwbx0369yPSoNDgSIS8k
- iC/hbP2YMqaqYjxuoBzTTFuIS60glJu61RNealNjzvdlVz3RnNvD4yKz2JUsEsNGEGi4dRy7
- tvULj0njbwdvxV/gRnKboWhXVmlvB1qSfimSNkkoCJHXCApOdW0Og5Wyi+Ia6Qym3h0hwG0r
- r+w8USCn4Mj5tBcRqJKITm92IbJ73RiJ76TVJksC0yEfbLd6x1u6ifNQh5Q7xMYk0t4VF6bR
- 56GG+3v1ci1bwwY5g1qfr7COU7in2ZOxhEpHtdt08MDSDFB3But4ko8zYqywP4sxxrJFzIdq
- 7Kv8a2FsLElJ3xG7jM260sWJfgZNI5fD0anbrzn9Pe1hShZY+4LXVJR/k3H01FkU9jWan0G/
- 8vF04bVKng8ZUBBT/6OYoNQHzQ9z++h5ywgMTITy5EK+HhnOwU0EWBOWawEQALxzFFomZI1s
- 4i0a6ZUn4eQ6Eh2vBTZnMR2vmgGGPZNZdd1Ww62VnpZamDKFddMAQySNuBG1ApgjlFcpX0kV
- zm8PCi8XvUo0O7LHPKUkOpPM1NJKE1E3n5KqVbcTIftdTu3E/87lwBfEWBHIC+2K6K4GwSLX
- AMZvFnwqkdyxm9v0UiMSg87Xtf2kXYnqkR5duFudMrY1Wb56UU22mpZmPZ3IUzjV7YTC9Oul
- DYjkWI+2IN+NS8DXvLW8Dv4ursCiP7TywkxaslVT8z1kqtTUFPjH10aThjsXB5y/uISlj7av
- EJEmj2Cbt14ps6YOdCT8QOzXcrrBbH2YtKp2PwA3G3hyEsCFdyal8/9h0IBgvRFNilcCxxzq
- 3gVtrYljN1IcXmx87fbkV8uqNuk+FxR/dK1zgjsGPtuWg1Dj/TrcLst7S+5VdEq87MXahQAE
- O5qqPjsh3oqW2LtqfXGSQwp7+HRQxRyNdZBTOvhG0sys4GLlyKkqAR+5c6K3Qxh3YGuA77Qb
- 1vGLwQPfGaUo3soUWVWRfBw8Ugn1ffFbZQnhAs2jwQy3CILhSkBgLSWtNEn80BL/PMAzsh27
- msvNMMwVj/M1R9qdk+PcuEJXvjqQA4x/F9ly/eLeiIvspILXQ5LodsITI1lBN2hQSbFFYECy
- a4KuPkYHPZ3uhcfB0+KroLRxABEBAAHCwXwEGAEIACYCGwwWIQRfOQnenLUAKXFGgcnH3qdC
- 2Jya5QUCYXa52AUJEskk7QAKCRDH3qdC2Jya5awND/9d9YntR015FVdn910u++9v64fchT+m
- LqD+WL24hTUMOKUzAVxq+3MLN4XRIcig4vnLmZ2sZ7VXstsukBCNGdm8y7Y8V1tXqeor82IY
- aPzfFhcTtMWOvrb3/CbwxHWM0VRHWEjR7UXG0tKt2Sen0e9CviScU/mbPHAYsQDkkbkNFmaV
- KJjtiVlTaIwq/agLZUOTzvcdTYD5QujvfnrcqSaBdSn1+LH3af5T7lANU6L6kYMBKO+40vvk
- r5w5pyr1AmFU0LCckT2sNeXQwZ7jR8k/7n0OkK3/bNQMlLx3lukVZ1fjKrB79b6CJUpvTUfg
- 9uxxRFUmO+cWAjd9vOHT1Y9pgTIAELucjmlmoiMSGpbhdE8HNesdtuTEgZotpT1Q2qY7KV5y
- 46tK1tjphUw8Ln5dEJpNv6wFYFKpnKsiiHgWAaOuWkpHWScKfNHwdbXOw7kvIOrHV0euKhFa
- 0j0S2Arb+WjjMSJQ7WpC9rzkq1kcpUtdWnKUC24WyZdZ1ZUX2dW2AAmTI1hFtHw42skGRCXO
- zOpdA5nOdOrGzIu0D9IQD4+npnpSIL5IW9pwZMkkgoD47pdeekzG/xmnvU7CF6iDBzwuG3CC
- FPtyZxmwRVoS/YeBgzoyEDTwUJDzNGrkkNKnaUbDpg4TLRSCUUhmDUguj0QCa4n8kYoaAw9S
- pNzsRQ==
-In-Reply-To: <20250720205059.138877-1-likunyu10@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 7/20/25 4:50 PM, Li kunyu wrote:
-> A possible issue with the kpatch software was discovered during testing
-> in the 6.6 and above kernel:
-> livepatch: symbol .klp.sym.vmlinux-bringup_idt_table,5438511 has an
-> incorrectly formatted name.
-> 
+Fix a deferred-probe loop by splitting the MAC and MDIO functionality
+into separate drivers. Please refer to the last patch for an extended
+look at the problem this series is attempting to solve.
 
-Hmm, how did the dash get in the symbol name?  If I build a defconfig
-x86_64 kernel from today, I see the "bringup_idt_table" symbol in
-vmlinux, but as per Documentation/livepatch/module-elf-format.rst
-shouldn't it be:
+This is a rather large fix for a rather rare bug, so I have sent it
+for net-next. The first patch is a smaller fix, however, and could go
+via net.
 
-  .klp.sym.vmlinux.bringup_idt_table,<sympos>
+Changes in v3:
+- Use ioread32/iowrite32 directly in MDIO
+- Use MDIO bus device in prints
+- Use device variable to probe
+- Rework to use a separate axienet_common structure, as netdevs cannot
+  be reused once registered.
+- Use ida_alloc for aux id
 
-(which btw, sympos of 5438511 seems a little bit large?)
+Changes in v2:
+- Fix building as a module
+- Expand commit message with much more info on the problem and possible
+  solutions
 
-Can you reference which kpatch-build project you are using (there are
-several forks floating around, plus downstream versions) and then how to
-reproduce this.
+Sean Anderson (7):
+  net: axienet: Fix resource release ordering
+  net: axienet: Use ioread32/iowrite32 directly
+  net: axienet: Use MDIO bus device in prints
+  net: axienet: Simplify axienet_mdio_setup
+  net: axienet: Use device variable in probe
+  net: axienet: Rearrange lifetime functions
+  net: axienet: Split into MAC and MDIO drivers
 
-Thanks!
+ drivers/net/ethernet/xilinx/Kconfig           |   1 +
+ drivers/net/ethernet/xilinx/xilinx_axienet.h  |  45 +-
+ .../net/ethernet/xilinx/xilinx_axienet_main.c | 383 +++++++++++-------
+ .../net/ethernet/xilinx/xilinx_axienet_mdio.c | 158 ++++----
+ 4 files changed, 350 insertions(+), 237 deletions(-)
 
 -- 
-Joe
+2.35.1.1320.gc452695387.dirty
 
 
