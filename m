@@ -1,123 +1,275 @@
-Return-Path: <linux-kernel+bounces-747709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87CFB13712
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:56:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 210C8B13717
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3811789C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:56:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60F61881B38
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B462E233133;
-	Mon, 28 Jul 2025 08:56:33 +0000 (UTC)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B23231858;
+	Mon, 28 Jul 2025 08:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L1gLHnZL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6554C6C;
-	Mon, 28 Jul 2025 08:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4954C6C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753692993; cv=none; b=hKXVkAnr7KxQuUjS9mZCK3JiMtowEYZTZFyMYmCoyObYDl9lHVAsHwk+BLPGUzWe75lvh65xxuOQPPRp/8+DIf+FJL4BdkXi9CxEZPIoO3hSeUTBJ8rsIzk8uMFZYGugws9tbTqlX8L3OpFKA5NbY8LNJDjvazgG0KxBqe7IVms=
+	t=1753693144; cv=none; b=l2xKxnS5y1UHtjH+u3X2gJU3hqflmCoCHGf4LDLpjwftf9mwWizzw/kda9t/GWQ0LJnSh78CnYiwrv79KMlzpfjFkMnoC0geEtH8jVHwGlFa/nFY82FWIEOas53XZ/CxX9yRhqw690dpD/7rR0UGSnDjm4Ub+68DLaMMXgMpQ50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753692993; c=relaxed/simple;
-	bh=qN/u6PndEBo0zcprrAbjEabx1dNlsBZarLJkYS0zCDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qbySThLLYtQItDk/bF1DOT28PPhI/zJhc4NXDyRRWiZBFeVSmTwpTHcDQPaJw7rYZ8C+yzREwcgCqiXsp3fFhEW+rplsJc4K7khxI6tOHYorAGg6WVeVj1ceP3inmWREDqNCQTkWmijyc3iDn3n09rxN1Lhghpak5/NmyMvCn8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4e8135adfccso1315521137.1;
-        Mon, 28 Jul 2025 01:56:31 -0700 (PDT)
+	s=arc-20240116; t=1753693144; c=relaxed/simple;
+	bh=YsC5pSNo2+8uKmZVqEClllwgubyM526llula6bBH7T0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHuodlgsGkKRDeZNStLwhp0+9oLHdSFw7sGNv3o4d3ouu+mqE9lQnQXLG9rBcfTYW/rqkeNJf6TXJDUxNFcfP+3E6/8GIOgPMz9v0hyRgBxG2LWR/Y5Lqg3zWRoMLFoqheYzesyuFE+j3S1MGI9BUMPGkkd+R6KUbQsSw1Tm9KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L1gLHnZL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753693141;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nUEIR7WJnZzl7oIEmEa+5NqIiSVYYM4qbIYv3z78KTk=;
+	b=L1gLHnZL2Gd50goCCufmRvpcWtSLyF4akQbwQiPTRK3y2d5tAlARRDh4t+PINnDLIPttOE
+	CmA0+VLgyRDm9Q6hBjjrQZkh4orzZnsSXhUkaelf68nB4gu1spxLrbM3SoXgMm4ETPuN44
+	W/UGc28DQyP8UU55asxMbWiLCAoAVSw=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-39-hsCf6L_INGqAff58AUzLBQ-1; Mon, 28 Jul 2025 04:58:59 -0400
+X-MC-Unique: hsCf6L_INGqAff58AUzLBQ-1
+X-Mimecast-MFC-AGG-ID: hsCf6L_INGqAff58AUzLBQ_1753693138
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-23fe28867b7so19329465ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:58:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753692990; x=1754297790;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2OXkPqeczMASzZj9IrcbhthBG0cCCHz+IouD66QuiFU=;
-        b=j460hDjYLpuB52W8sWHFU9d8JBjurcM7ZNsj6jvZfaHA+VEmWI76QEa4/nQOu5qboi
-         1uURTcCAYI+b5Huodag2FG17npO627uAWGG15jLGspfyHfKohejKIMrMUg1mNDCqMwm3
-         xyPjGURnRVV0SZI4KWTg+o9tgIyXEuR5Py35AgKSfmdDQU+xhejnDMWE1tRYiRohLa9P
-         z3f32L6CfCnyS+sNAWKghvqvl1kkuHQ9AEuwuyGopPSqAmaVfj3PwwnbWsc+uFPd1BmN
-         Aey0T8I0XPt8T20Ub48rxbx83KynUOrWS5uNz/Eaao4Od26WiiZ64sBBaQfd237N0BaR
-         nEbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCeKmzRJwjAVGKicCbj1y1Kci9pCvhD4ImZmDr/mQ5VqSgjGlhn/vnIz2xsRNE9sEv7QNBWGCHBbZQceld4ibZvxc=@vger.kernel.org, AJvYcCXpeQ9iz7bK3eeYX1GzwBq9OQgSHpmhMaJP2SoCkbra3lC6+rtPdkshN7tBrqAJ2zmu0eqnmT+c1Ix+gSw=@vger.kernel.org, AJvYcCXsr6hIMqsETq4+hUINPfczK+BmEbMeUp7TZXIZj5Kj/cjv4mtBNfvd7v0cM/BP1G/Z1rgcA4DbCvoW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHdpIGYpbh3gVqqEgy32qFrXYP3bA8g2uBD5m48i7Hi6CQPn4m
-	uSXnXSEHC4qDWb2CUX7bnetryPls9U4L8EXwzLcoaDJP3Vc9wrwy4X7zFRwn5gx4
-X-Gm-Gg: ASbGncvNCVNn6utWz4w60RUXsoAxQ25QPBcw8JntJZNNx3e5n9G6tZN82s/Fu4J9gXG
-	rkqwPo/p+oTQCW5tQHg1RXDaMdrDJsaXd+kNf6K6X5k4BuAXV/JU/UFPtF/JYGcKripY8P27461
-	dYd4b6wVC8KsiCKKyQdm152WD7qQnp7aYJg5EbsIOgcYiMp53+AMNrJu8rhjU4tyaMotqqKmrOx
-	w63DcGnpAH8N+GLZ32vYz9MPDNqMQnO3D7RqmnPwCD+kFBdVgs+LHmV6Osq6LZH8SzPtLjj3jlt
-	OawpElJDJOALD54/Y452hbA0utZ0L/p/s/6NPdylDyyTP7t5dVU70g/Wy9OLqvI+0yyopk4UtlX
-	JgFiubNSDkZZmULwzft18ondoOv+Nx+4l4cgb6xkRiHHSo8hpqzs9ppytmUpj
-X-Google-Smtp-Source: AGHT+IEkHNv0DO5DfC6qk4oX32RAlUqGhCVlG/4DQTl0VoNKU+8hB2h9w9YdEVoL2/4nwvqOm/2bXQ==
-X-Received: by 2002:a05:6102:160e:b0:4de:d08f:6727 with SMTP id ada2fe7eead31-4fa3fc4c897mr3768174137.13.1753692989967;
-        Mon, 28 Jul 2025 01:56:29 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b8dcf7645sm1241734241.20.2025.07.28.01.56.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 01:56:29 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4e8135adfccso1315514137.1;
-        Mon, 28 Jul 2025 01:56:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBurErtr4WfJb55cP6+POj2thSguEt/4Jz6giEcNI4aH8cMqEot+CJqgComti370JtwqVdU5hMpXCe@vger.kernel.org, AJvYcCWCi59m8ak2w7nMl3MctDz9UZEhenpJSoGnZmwypzAtKLMyU+0hSShvfelDnqc13eFBBdbI9eNwPxnsGB4=@vger.kernel.org, AJvYcCWHwqgfCeU+/6CGmmFDXA2WEkIHJIGszpk2IbXk/B1hePx54eMeX8HgKRiuDVclOy6yg+NO/6UjxBsVcw6RK//SaTc=@vger.kernel.org
-X-Received: by 2002:a05:6102:2b88:b0:4e2:c6e4:ab1e with SMTP id
- ada2fe7eead31-4fa3fa713f6mr4025248137.7.1753692989166; Mon, 28 Jul 2025
- 01:56:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753693138; x=1754297938;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nUEIR7WJnZzl7oIEmEa+5NqIiSVYYM4qbIYv3z78KTk=;
+        b=JEk+Q4WaNQDJtewt09YEuEubHWVA096Lbcy/Df+lv7TiLNDQiIX/AuOQevVnFkVBvZ
+         r87VqODM4VHAmOjbWzPDScUoJa0emVr2GqG3aD0Dx66JNCnCplsZzA+WlxA1C0dAfGYO
+         enYwrSt2P2CVENicHnYcH4kxrtKinDXnUzaeuyHOORM5/tw5OmyZ+bl48ZY5/vJLcCxT
+         SbFWUMpS3T5gLEROleDWqm5ciE3OWTH6ZPqF6YneYaPPyix338BOjnZ0831f8K9OrZYT
+         Ae6sR4g48MUW38e4yrOcvO+QP1E8n6EH/yfg0eWMMiCx3uk/X877ZqCGcWpSaeNBwrGa
+         NDjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUt7EV6vyfQQtX72hzP5i/yRxPLgA5Et+XBoYCnb3s3uurIN/nawodGWxsNcHu4VOPR/Ro6hclfsY9Xypg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOdFY8opgpWdjzUyzkw4ASQLBG9mGisCxlTqaty3G7r2zIlrXz
+	g1aEHs0f9H+Ub4A9JTzgZwES9vhUoaPBZxY0IsfAVBOuWxbpC9rVUjyey4/GHnji4M+qD14Uc9w
+	3beXhaIcEg+odSEMQX2w0KuhOj1oqPLRk7uxBwpdzXnHlwv+MOPwSzdqXfRES4YL4vg==
+X-Gm-Gg: ASbGnctK3Io250k1kI4fRIF4q4783sRVZGR/XCSuw9yHLz3ne/qq+LJRhmbWl2yMB1v
+	1PYuhGKKsDKb2XPIVUlF3wEXJSKUAiOBzbizQCCGQezc7BZFEInzJU7xg/AFjZenE/mfznbDwwW
+	4jsNrf9z+xGmFzfgGTbg7cSfUh0xJrQPOlh2EAKcMNVXmJ1jFKcVR3XFWhi8mNBtC9ypETouRnr
+	jF8DO+Trln68oGm+Zbnj7yJdANiyG2xz2cpTFbH8+5d9l/Shz0qGDJvWHUAn8gPt/EgoaHK47Xj
+	bchaIjNg5QzpLU5IUS/RuxkC858kju//sLjBpAFCKy++Vu+lGBEwTrV7Qr/AIkxZUMBUQduvCMR
+	S68R/
+X-Received: by 2002:a17:902:d587:b0:240:1395:320c with SMTP id d9443c01a7336-24013953464mr64775335ad.10.1753693137923;
+        Mon, 28 Jul 2025 01:58:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpf57NT+dfadgccMj4Szku5Msa7e1Ss/m0YH0fWaHCzzyP6VnhsZ6Gebhfd7e6D8aknc9OQA==
+X-Received: by 2002:a17:902:d587:b0:240:1395:320c with SMTP id d9443c01a7336-24013953464mr64775025ad.10.1753693137433;
+        Mon, 28 Jul 2025 01:58:57 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe4fd676sm49353245ad.87.2025.07.28.01.58.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 01:58:57 -0700 (PDT)
+Date: Mon, 28 Jul 2025 16:58:51 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 06/13] generic/1227: Add atomic write test using fio
+ verify on file mixed mappings
+Message-ID: <20250728085851.i3rqef5zssralmvl@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <f2d4a366f32ca56e1d47897dc5cf6cc8d85328b4.1752329098.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724092006.21216-1-johan@kernel.org>
-In-Reply-To: <20250724092006.21216-1-johan@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 28 Jul 2025 10:56:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU0E_d3XMj6sDeJy8P_UL7ua-_6CnTYqvf2-TD-WXiR3Q@mail.gmail.com>
-X-Gm-Features: Ac12FXzigXzLEEByExo9veTydL_Yz5MWFF66kC_gKPBrr86D05FC6p_RGKNNTnU
-Message-ID: <CAMuHMdU0E_d3XMj6sDeJy8P_UL7ua-_6CnTYqvf2-TD-WXiR3Q@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: udc: renesas_usb3: drop unused module alias
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2d4a366f32ca56e1d47897dc5cf6cc8d85328b4.1752329098.git.ojaswin@linux.ibm.com>
 
-Hi Johan,
+On Sat, Jul 12, 2025 at 07:42:48PM +0530, Ojaswin Mujoo wrote:
+> From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+> 
+> This tests uses fio to first create a file with mixed mappings. Then it
+> does atomic writes using aio dio with parallel jobs to the same file
+> with mixed mappings. This forces the filesystem allocator to allocate
+> extents over mixed mapping regions to stress FS block allocators.
+> 
+> Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> ---
 
-Thanks for your patch, which is now commit 7b4b5591d4551efe
-("usb: gadget: udc: renesas_usb3: drop unused module alias") in
-usb/usb-next.
+This patch looks good to me, just the subject:
+ "generic/1227: Add atomic write test using fio verify on file mixed mappings"
 
-On Thu, 24 Jul 2025 at 11:21, Johan Hovold <johan@kernel.org> wrote:
-> Since commit f3323cd03e58 ("usb: gadget: udc: renesas_usb3: remove R-Car
-> H3 ES1.* handling") the driver only supports OF probe so drop the unused
-> platform module alias.
->
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+generally if we write a new test case, we don't use a temporary case number
+in commit subject, you can just write as "generic: add atomic write test using ..."
 
-While I don't debate the actual change, I would like to comment on
-the patch description.  The driver only ever supported OF probe.
-The call to soc_device_match() was just used to override the match
-data for quirk handling.
+Other patches (with new test cases) refer to this.
 
-> --- a/drivers/usb/gadget/udc/renesas_usb3.c
-> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
-> @@ -3024,4 +3024,3 @@ module_platform_driver(renesas_usb3_driver);
->  MODULE_DESCRIPTION("Renesas USB3.0 Peripheral driver");
->  MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>");
-> -MODULE_ALIAS("platform:renesas_usb3");
+With this change,
+Reviewed-by: Zorro Lang <zlang@redhat.com>
 
-Gr{oetje,eeting}s,
 
-                        Geert
+>  tests/generic/1227     | 123 +++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/1227.out |   2 +
+>  2 files changed, 125 insertions(+)
+>  create mode 100755 tests/generic/1227
+>  create mode 100644 tests/generic/1227.out
+> 
+> diff --git a/tests/generic/1227 b/tests/generic/1227
+> new file mode 100755
+> index 00000000..cfdc54ec
+> --- /dev/null
+> +++ b/tests/generic/1227
+> @@ -0,0 +1,123 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
+> +#
+> +# FS QA Test 1227
+> +#
+> +# Validate FS atomic write using fio crc check verifier on mixed mappings
+> +# of a file.
+> +#
+> +. ./common/preamble
+> +. ./common/atomicwrites
+> +
+> +_begin_fstest auto aio rw atomicwrites
+> +
+> +_require_scratch_write_atomic_multi_fsblock
+> +_require_odirect
+> +_require_aio
+> +
+> +_scratch_mkfs >> $seqres.full 2>&1
+> +_scratch_mount
+> +
+> +touch "$SCRATCH_MNT/f1"
+> +awu_min_write=$(_get_atomic_write_unit_min "$SCRATCH_MNT/f1")
+> +awu_max_write=$(_get_atomic_write_unit_max "$SCRATCH_MNT/f1")
+> +aw_bsize=$(_max "$awu_min_write" "$((awu_max_write/4))")
+> +
+> +fsbsize=$(_get_block_size $SCRATCH_MNT)
+> +
+> +fio_prep_config=$tmp.prep.fio
+> +fio_aw_config=$tmp.aw.fio
+> +fio_verify_config=$tmp.verify.fio
+> +fio_out=$tmp.fio.out
+> +
+> +FIO_LOAD=$(($(nproc) * 2 * LOAD_FACTOR))
+> +SIZE=$((128 * 1024 * 1024))
+> +
+> +cat >$fio_prep_config <<EOF
+> +# prep file to have mixed mappings
+> +[global]
+> +ioengine=libaio
+> +fallocate=none
+> +filename=$SCRATCH_MNT/test-file
+> +filesize=$SIZE
+> +bs=$fsbsize
+> +direct=1
+> +group_reporting=1
+> +
+> +# Create written extents
+> +[prep_written_blocks]
+> +ioengine=libaio
+> +rw=randwrite
+> +io_size=$((SIZE/3))
+> +random_generator=lfsr
+> +
+> +# Create unwritten extents
+> +[prep_unwritten_blocks]
+> +ioengine=falloc
+> +rw=randwrite
+> +io_size=$((SIZE/3))
+> +random_generator=lfsr
+> +EOF
+> +
+> +cat >$fio_aw_config <<EOF
+> +# atomic write to mixed mappings of written/unwritten/holes
+> +[atomic_write_job]
+> +ioengine=libaio
+> +rw=randwrite
+> +direct=1
+> +atomic=1
+> +random_generator=lfsr
+> +group_reporting=1
+> +
+> +filename=$SCRATCH_MNT/test-file
+> +size=$SIZE
+> +bs=$aw_bsize
+> +iodepth=$FIO_LOAD
+> +numjobs=$FIO_LOAD
+> +
+> +verify_state_save=0
+> +verify=crc32c
+> +do_verify=0
+> +EOF
+> +
+> +cat >$fio_verify_config <<EOF
+> +# verify atomic writes done by previous job
+> +[verify_job]
+> +ioengine=libaio
+> +rw=randwrite
+> +random_generator=lfsr
+> +group_reporting=1
+> +
+> +filename=$SCRATCH_MNT/test-file
+> +size=$SIZE
+> +bs=$aw_bsize
+> +iodepth=$FIO_LOAD
+> +
+> +verify_state_save=0
+> +verify_only=1
+> +verify=crc32c
+> +verify_fatal=1
+> +verify_write_sequence=0
+> +EOF
+> +
+> +_require_fio $fio_aw_config
+> +_require_fio $fio_verify_config
+> +
+> +cat $fio_prep_config >> $seqres.full
+> +cat $fio_aw_config >> $seqres.full
+> +cat $fio_verify_config >> $seqres.full
+> +
+> +#prepare file with mixed mappings
+> +$FIO_PROG $fio_prep_config >> $seqres.full
+> +
+> +# do atomic writes without verifying
+> +$FIO_PROG $fio_aw_config >> $seqres.full
+> +
+> +# verify data is not torn
+> +$FIO_PROG $fio_verify_config >> $seqres.full
+> +
+> +# success, all done
+> +echo Silence is golden
+> +status=0
+> +exit
+> diff --git a/tests/generic/1227.out b/tests/generic/1227.out
+> new file mode 100644
+> index 00000000..2605d062
+> --- /dev/null
+> +++ b/tests/generic/1227.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 1227
+> +Silence is golden
+> -- 
+> 2.49.0
+> 
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
