@@ -1,71 +1,69 @@
-Return-Path: <linux-kernel+bounces-748451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44CBB14175
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C01B14174
 	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA402169B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:53:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC83E3B4F20
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52F227602F;
-	Mon, 28 Jul 2025 17:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D38827780C;
+	Mon, 28 Jul 2025 17:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KaMe3nUj"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2hMVvXTu"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9292727F6
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E97B275B0A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753725216; cv=none; b=D0G6Ee5S6edHL7223hAFMYYyJFb+kC0gw1p1SSxal3ikMvSsKo0QdCmZj68j7vMjYUPVyX69esGmMSaV0VSga/e6BC3ZgPIEzPtV9AVphg1x1uw5aK5eWmo3wSqg+Lr0oYJkvMbZPs9MEcgKiD0kQADIujUMs/JcSQmidMdRjsE=
+	t=1753725217; cv=none; b=gzwwuOVb8nY/IT85Yh6eUfcDp8p/nN0l1jXrmFjg9w/7kj5EB0wDPw/qsuGDaDWQOj7ylG5O7S3HZPu6mMKB4X36pRdhAS5yqSNYJNnfllUpENqMHUDI5gsHOVBJzQM723U5V0En+9yTNj63HA6Tm8NHWqzPv+qTwuAnqBg+f/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753725216; c=relaxed/simple;
-	bh=hP1ezwqITfAGTxjXJCCUqo8/yzlLtMVaX1yiItE74oY=;
+	s=arc-20240116; t=1753725217; c=relaxed/simple;
+	bh=nRn9Dsf3QfyBnEBl4Hr7BBBiduTa1EIYJ+DzHW4mP0E=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EvhMgRGug2YsC1W1zMwDGGhUFGpheQyA8R2PQYXigQneFoZrnZHYV5xIHysiuldgbmFop+IoijZPUazNeQcsPDBytJsaX8S7YPCUf0kVNP8h2ExesPY7ctW/4TiJHL8t4CcDUCkNkMALf2wX7azBF38FICfREA0LIWCDZLC8Zfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KaMe3nUj; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=NPSClTe/KY9V1iJZLYzkDdiLcZq7ilxqYMk005EkyNTJ7teWNjPgeTc9FgmqwqCM7GhzjY3r+/AbQ7TAmz/Bda9wltarvjo/uyj7VQKySWahevEB86LrDYT6R/lb4ZVc4IYQ6bST/OT0BayrC+i/HLaHDQPXyYjwl5NbbuiygSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2hMVvXTu; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-456175dba68so28132265e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:53:34 -0700 (PDT)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b785aee904so902993f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753725212; x=1754330012; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LTlCwgzIOF5QQeq25ycyuKVefVmukIB/XqIN+TFnUGg=;
-        b=KaMe3nUjdj9q9xpRUq/bTDk7JK9CuiJpSuBep/PB1076wdt0e7mUKGpN3Sn1DGqZAR
-         6HyLFtOQiIvJQ7yxdnAvut5VI+zS2oreVCZqktXy2NvTvVeDdnZA9DV1qDbeRTkQMb9w
-         rrGDUnDpA+3m7vOVuAJ6nHMvw9vIfT6l7FeuWGPX6+czJpBaQ2YEYpP4Bu3gA8fJkcT2
-         0diCxo4Xmrh6l3Icmdclqa72D0s9osJHNIA9F3K0L7ZCi/SEGLv0TbLA/ye6+agDy7+R
-         cGWcXOPpP8gPNQQCmC2nLFzMwJYF21ojyaqKywasnKj4vcJJP4YvL1MSeShvADWA9PsR
-         jcGg==
+        d=google.com; s=20230601; t=1753725214; x=1754330014; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UBRRf2ok05qV4V10RyprFxOV/7isNWPsP0/960vxN5o=;
+        b=2hMVvXTuAG1x5j6qktF+zVhxIYT7edX8WOGYNCTS18FCz09r4LDaXJS7f7sPdA5e30
+         joNzWN4EBcGzvK//DWKy+68qPn1tyqI7/4gZnDobEKRUWpEwJNmPnnypnCFaAtSRRdLX
+         6aXefiUmxy+ZOmWftb9hMkTcWk8tR2I0VVkHYSpKR9ohcn2CBXVou7eAy6IUqT1taPO7
+         rCdtzZ/U+iiHlC6zvEPMYFVFXbfsozJqGP1Cvz7xjsIeK1nUKoKqT+W/OgkC2nht+U4P
+         sO4rnm93CJgyYXqs09LU0yBi+VsLpa4WyGKaqmTYkGygxAJFwDcbMiOM0siBVIrjsJqQ
+         SK6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753725212; x=1754330012;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LTlCwgzIOF5QQeq25ycyuKVefVmukIB/XqIN+TFnUGg=;
-        b=s250pk0XDWHgIA0s8G7WZU+FEMngxaHsJyZpyqDCB16VGHdzdFiC5HIJi5eiI45iyT
-         6G5tZdP9zjI1Lu4yI5LD5v2frcHNI/KU+x4zgwhhS79Of5LM7bdHtplgN8PABVovEiUD
-         Ss2h6Fk7OxzNXFt7M2vzsfrEP+ehmxFOPyTyFIgHZ1bpY08w1wEVqAkBx9LpIS1WcAfR
-         oe2/mVf8is8h4/EfhRumzyHEMNMYj9ZC+mL8AwjKhuWLfmT1d/uG0ntYr1D6bdnxN5oM
-         ToPpSnK4fDxk24ZGf5CsV+Rl+f9IS+TMRE4UVgNws/y1Y/yODxyJVreHd4ud+dj7GEAn
-         G/KA==
-X-Gm-Message-State: AOJu0Yzk/jcdQ81zd7XtAaMmEiFavrEzBDXrv/zDnoTybYc7ZOzMc+Zr
-	qxX3IGgrqCK2/1TWBfW0EI8370g1aH1S+ZZKjIQk53D7cUtAB3usxHoo8uf1X6N+Kaeg/0VRWiI
-	TR3QjCMfELL/1Wyr26mdMFGhPwLnCQ2F9bybzKdFGW517EpzZlCPyjS1ACJSs4HNOZ+/3mXX7yf
-	tOdYldxjREDV5igISE+E3YGQVeD5Kusn26HVYJjFEFHtfAuqd/ZvgWxWc=
-X-Google-Smtp-Source: AGHT+IFCITa28zMUxk5yrbhT5rLbfbzrHT5VY8BBjpTdvUFIiWEDdOt68tV9XBv1JfmpoFATXqpljTOFgxfv6g==
-X-Received: from wmbhj25.prod.google.com ([2002:a05:600c:5299:b0:456:1824:5884])
+        d=1e100.net; s=20230601; t=1753725214; x=1754330014;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UBRRf2ok05qV4V10RyprFxOV/7isNWPsP0/960vxN5o=;
+        b=rf7rYZ4TSN//EPQ/cLVJaxGGG03DoOQmlMnDg5UTMNcUZ/EctDrahcNOL69KGVps1c
+         h0NLprz8quPGU5kq4Uc4+Adai6FT7PLbGo7ZvdAreLetX/H7I1L1Fz+mC+LgNyqoc6VS
+         7FCcfmdJEG7/NlhzhmljiAGD9mcch54udvAVT2iiYqFV0UyXfx1+LbBoC1Sem0kPcAa0
+         AJ2aYfOV1Scyb3Bwn7R53TmSz4BXeRkS3T9gS3vpMzWG2HWUr6Snhd8PVe7zUwkm9Rpa
+         ePwiAGvP7VXeqAo3vg7+uEpugwTARPwjVJPqiHUq4DSy5MNxZhfmxk2jUlmgRmiGvdBv
+         FB/g==
+X-Gm-Message-State: AOJu0YwiUd7Nk5hxyRTKhJN7gv3idXoG2RnI1R4V08T3Y6WpVl3sRnOj
+	aH+T/2H35uIXiWS9oU2eqmCucf5jE+S/kenjg6cLFlgxQvtnvq3jkrL5xkUGM5Xg9KZRokRgu8D
+	o2lR33/qrEaJ34IigL9Vym/tBwoWRJjUkDarbKz9vDDlPd3H0daAnU9hpv6o0pxl90VXWS2fazf
+	VRMkjfEhk6mBnQ2yogwTv0XrqwJPdtH8TyzAUXYM6tPp522T1S6ASbBTc=
+X-Google-Smtp-Source: AGHT+IEdo5UmQraGXTZJ9gCaHcWtxJIv/tFc5vNP8HwnzGiRANkg0buplE/XnYHC6sojxb0f1IZVCz/ntN1JZg==
+X-Received: from wmbji2.prod.google.com ([2002:a05:600c:a342:b0:456:214c:845d])
  (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:8218:b0:456:10a8:ff7 with SMTP id 5b1f17b1804b1-4587655b79cmr98218285e9.28.1753725212532;
- Mon, 28 Jul 2025 10:53:32 -0700 (PDT)
-Date: Mon, 28 Jul 2025 17:52:49 +0000
+ 2002:a05:6000:290d:b0:3b5:f93a:bcc with SMTP id ffacd0b85a97d-3b77675be5amr9578336f8f.35.1753725213520;
+ Mon, 28 Jul 2025 10:53:33 -0700 (PDT)
+Date: Mon, 28 Jul 2025 17:52:50 +0000
 In-Reply-To: <20250728175316.3706196-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250728175316.3706196-1-smostafa@google.com>
 X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250728175316.3706196-3-smostafa@google.com>
-Subject: [PATCH v3 02/29] KVM: arm64: Donate MMIO to the hypervisor
+Message-ID: <20250728175316.3706196-4-smostafa@google.com>
+Subject: [PATCH v3 03/29] KVM: arm64: pkvm: Add pkvm_time_get()
 From: Mostafa Saleh <smostafa@google.com>
 To: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, 
 	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
@@ -86,158 +84,95 @@ Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
 	qperret@google.com, tabba@google.com, jgg@ziepe.ca, mark.rutland@arm.com, 
 	praan@google.com, Mostafa Saleh <smostafa@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Add a function to donate MMIO to the hypervisor so IOMMU hypervisor
-drivers can use that to protect the MMIO of IOMMU.
-The initial attempt to implement this was to have a new flag to
-"___pkvm_host_donate_hyp" to accept MMIO. However that had many problems,
-it was quite intrusive for host/hyp to check/set page state to make it
-aware of MMIO and to encode the state in the page table in that case.
-Which is called in paths that can be sensitive to performance (FFA, VMs..)
+Add a function to return time in us.
 
-As donating MMIO is very rare, and we don=E2=80=99t need to encode the full=
- state,
-it=E2=80=99s reasonable to have a separate function to do this.
-It will init the host s2 page table with an invalid leaf with the owner ID
-to prevent the host from mapping the page on faults.
-
-Also, prevent kvm_pgtable_stage2_unmap() from removing owner ID from
-stage-2 PTEs, as this can be triggered from recycle logic under memory
-pressure. There is no code relying on this, as all ownership changes is
-done via kvm_pgtable_stage2_set_owner()
-
-For error path in IOMMU drivers, add a function to donate MMIO back
-from hyp to host.
+This can be used from IOMMU drivers while waiting for conditions as
+for SMMUv3 TLB invalidation waiting for sync.
 
 Signed-off-by: Mostafa Saleh <smostafa@google.com>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
 ---
- arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  2 +
- arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 64 +++++++++++++++++++
- arch/arm64/kvm/hyp/pgtable.c                  |  9 +--
- 3 files changed, 68 insertions(+), 7 deletions(-)
+ arch/arm64/kvm/hyp/include/nvhe/pkvm.h |  2 ++
+ arch/arm64/kvm/hyp/nvhe/setup.c        |  4 ++++
+ arch/arm64/kvm/hyp/nvhe/timer-sr.c     | 33 ++++++++++++++++++++++++++
+ 3 files changed, 39 insertions(+)
 
-diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm=
-/hyp/include/nvhe/mem_protect.h
-index 52d7ee91e18c..98e173da0f9b 100644
---- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-+++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-@@ -37,6 +37,8 @@ int __pkvm_host_share_hyp(u64 pfn);
- int __pkvm_host_unshare_hyp(u64 pfn);
- int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages);
- int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot p=
-rot);
-+int __pkvm_host_donate_hyp_mmio(u64 pfn);
-+int __pkvm_hyp_donate_host_mmio(u64 pfn);
- int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages);
- int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
- int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
-diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvh=
-e/mem_protect.c
-index 861e448183fd..c9a15ef6b18d 100644
---- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-+++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-@@ -799,6 +799,70 @@ int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enu=
-m kvm_pgtable_prot prot)
- 	return ret;
+diff --git a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
+index ce31d3b73603..6c19691720cd 100644
+--- a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
++++ b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
+@@ -87,4 +87,6 @@ bool kvm_handle_pvm_restricted(struct kvm_vcpu *vcpu, u64 *exit_code);
+ void kvm_init_pvm_id_regs(struct kvm_vcpu *vcpu);
+ int kvm_check_pvm_sysreg_table(void);
+ 
++int pkvm_timer_init(void);
++u64 pkvm_time_get(void);
+ #endif /* __ARM64_KVM_NVHE_PKVM_H__ */
+diff --git a/arch/arm64/kvm/hyp/nvhe/setup.c b/arch/arm64/kvm/hyp/nvhe/setup.c
+index a48d3f5a5afb..ee6435473204 100644
+--- a/arch/arm64/kvm/hyp/nvhe/setup.c
++++ b/arch/arm64/kvm/hyp/nvhe/setup.c
+@@ -304,6 +304,10 @@ void __noreturn __pkvm_init_finalise(void)
+ 	};
+ 	pkvm_pgtable.mm_ops = &pkvm_pgtable_mm_ops;
+ 
++	ret = pkvm_timer_init();
++	if (ret)
++		goto out;
++
+ 	ret = fix_host_ownership();
+ 	if (ret)
+ 		goto out;
+diff --git a/arch/arm64/kvm/hyp/nvhe/timer-sr.c b/arch/arm64/kvm/hyp/nvhe/timer-sr.c
+index ff176f4ce7de..e166cd5a56b8 100644
+--- a/arch/arm64/kvm/hyp/nvhe/timer-sr.c
++++ b/arch/arm64/kvm/hyp/nvhe/timer-sr.c
+@@ -11,6 +11,10 @@
+ #include <asm/kvm_hyp.h>
+ #include <asm/kvm_mmu.h>
+ 
++#include <nvhe/pkvm.h>
++
++static u32 timer_freq;
++
+ void __kvm_timer_set_cntvoff(u64 cntvoff)
+ {
+ 	write_sysreg(cntvoff, cntvoff_el2);
+@@ -68,3 +72,32 @@ void __timer_enable_traps(struct kvm_vcpu *vcpu)
+ 
+ 	sysreg_clear_set(cnthctl_el2, clr, set);
  }
-=20
-+int __pkvm_host_donate_hyp_mmio(u64 pfn)
++
++static u64 pkvm_ticks_get(void)
 +{
-+	u64 phys =3D hyp_pfn_to_phys(pfn);
-+	void *virt =3D __hyp_va(phys);
-+	int ret;
-+	kvm_pte_t pte;
-+
-+	host_lock_component();
-+	hyp_lock_component();
-+
-+	ret =3D kvm_pgtable_get_leaf(&host_mmu.pgt, phys, &pte, NULL);
-+	if (ret)
-+		goto unlock;
-+
-+	if (pte && !kvm_pte_valid(pte)) {
-+		ret =3D -EPERM;
-+		goto unlock;
-+	}
-+
-+	ret =3D kvm_pgtable_get_leaf(&pkvm_pgtable, (u64)virt, &pte, NULL);
-+	if (ret)
-+		goto unlock;
-+	if (pte) {
-+		ret =3D -EBUSY;
-+		goto unlock;
-+	}
-+
-+	ret =3D pkvm_create_mappings_locked(virt, virt + PAGE_SIZE, PAGE_HYP_DEVI=
-CE);
-+	if (ret)
-+		goto unlock;
-+	/*
-+	 * We set HYP as the owner of the MMIO pages in the host stage-2, for:
-+	 * - host aborts: host_stage2_adjust_range() would fail for invalid non z=
-ero PTEs.
-+	 * - recycle under memory pressure: host_stage2_unmap_dev_all() would cal=
-l
-+	 *   kvm_pgtable_stage2_unmap() which will not clear non zero invalid pte=
-s (counted).
-+	 * - other MMIO donation: Would fail as we check that the PTE is valid or=
- empty.
-+	 */
-+	WARN_ON(host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt, phys=
-,
-+				PAGE_SIZE, &host_s2_pool, PKVM_ID_HYP));
-+unlock:
-+	hyp_unlock_component();
-+	host_unlock_component();
-+
-+	return ret;
++	return __arch_counter_get_cntvct();
 +}
 +
-+int __pkvm_hyp_donate_host_mmio(u64 pfn)
++#define SEC_TO_US 1000000
++
++int pkvm_timer_init(void)
 +{
-+	u64 phys =3D hyp_pfn_to_phys(pfn);
-+	u64 virt =3D (u64)__hyp_va(phys);
-+	size_t size =3D PAGE_SIZE;
-+
-+	host_lock_component();
-+	hyp_lock_component();
-+
-+	WARN_ON(kvm_pgtable_hyp_unmap(&pkvm_pgtable, virt, size) !=3D size);
-+	WARN_ON(host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt, phys=
-,
-+				PAGE_SIZE, &host_s2_pool, PKVM_ID_HOST));
-+	hyp_unlock_component();
-+	host_unlock_component();
-+
++	timer_freq = read_sysreg(cntfrq_el0);
++	/*
++	 * TODO: The highest privileged level is supposed to initialize this
++	 * register. But on some systems (which?), this information is only
++	 * contained in the device-tree, so we'll need to find it out some other
++	 * way.
++	 */
++	if (!timer_freq || timer_freq < SEC_TO_US)
++		return -ENODEV;
 +	return 0;
 +}
 +
- int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
- {
- 	return ___pkvm_host_donate_hyp(pfn, nr_pages, PAGE_HYP);
-diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-index c351b4abd5db..ba06b0c21d5a 100644
---- a/arch/arm64/kvm/hyp/pgtable.c
-+++ b/arch/arm64/kvm/hyp/pgtable.c
-@@ -1095,13 +1095,8 @@ static int stage2_unmap_walker(const struct kvm_pgta=
-ble_visit_ctx *ctx,
- 	kvm_pte_t *childp =3D NULL;
- 	bool need_flush =3D false;
-=20
--	if (!kvm_pte_valid(ctx->old)) {
--		if (stage2_pte_is_counted(ctx->old)) {
--			kvm_clear_pte(ctx->ptep);
--			mm_ops->put_page(ctx->ptep);
--		}
--		return 0;
--	}
-+	if (!kvm_pte_valid(ctx->old))
-+		return stage2_pte_is_counted(ctx->old) ? -EPERM : 0;
-=20
- 	if (kvm_pte_table(ctx->old, ctx->level)) {
- 		childp =3D kvm_pte_follow(ctx->old, mm_ops);
---=20
++#define pkvm_time_ticks_to_us(ticks) ((u64)(ticks) * SEC_TO_US / timer_freq)
++
++/* Return time in us. */
++u64 pkvm_time_get(void)
++{
++	return pkvm_time_ticks_to_us(pkvm_ticks_get());
++}
+-- 
 2.50.1.552.g942d659e1b-goog
 
 
