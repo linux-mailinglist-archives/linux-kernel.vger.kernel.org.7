@@ -1,209 +1,180 @@
-Return-Path: <linux-kernel+bounces-748591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07EC2B14367
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:36:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91907B14372
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250C016D2FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDB423B7435
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759C6279915;
-	Mon, 28 Jul 2025 20:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A1C26D4F9;
+	Mon, 28 Jul 2025 20:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KSajxShd"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UQnJb8OL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80522798F5
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C8327FB07
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753734886; cv=none; b=X2JJqjtUgQfi3JFZr6jTF1+yjpHiKFNuV3/NHSSrodbO/U4GC5Kk8vdwKDSXX5ZuWP3Ivdip+lTZtw5ljhZ1U9TYS9BfPxgps6wB/FqCZWWtO2OhjHHapAsL+OZkEBWF6fY8hej76beO/cKjatXkyc6z966gKqvQbgADcqhabb0=
+	t=1753734875; cv=none; b=MKmDfaMVqyoDN6M/EFmi23UHVyPa0GvKUtRb+moSQmypYBCXCiOrli0SQagJOsLKzkqjk8rJWPXg5smj9w8XP6QB/X7lSI7rbPgE2xxCAv6osaTqybysbv97DSZtSLyXLkQNwkwRDEQoX0JTsbM6OWLLmGu4QicwcY0HcE0HxcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753734886; c=relaxed/simple;
-	bh=ZV232Dxo6P1lXxwl/8XNtSFqtMaix+T+IL0Z7bfuL8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YE0k12I5oOVtb0MJW9gOey3uIVgMKWWoGW0xGxsTNTJMK8B6Z6YrTPzgYSiaF5kPPYuPteed0xl/54Fmiq7OnqnW8nPOyRJUvhTC2f6/82ThzvIV7ju+8YZc+0OvcdyP/PkE0ewJkYvJNw+KppQIR6BFrEGfkN8RGp16+0rhqRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KSajxShd; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6154c7b3ee7so3608a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753734883; x=1754339683; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5cIuEYX17XiPrfyxPlwLzcOeQJGvPzMkyLjuQxbOTNU=;
-        b=KSajxShdG5yVJdFBlcGQgjV0xUzqxDtEezygy0iwGpLivmS4oDZn7SszGJmASwPgFg
-         4tFlebsyL9c7mGvxsfTB96rpcJITlrJDQgCogJMMomQdXTj08QJ7VIKyDd+caw2vfVVz
-         /SQyUB+R14dkK01wAR1+FEOr/DXuFX2RwhUY9IUpcrOJVGJgGQ+q6trXtoIxhRXhjajZ
-         dkIgRDIq+p+mLTBOBcmi21K7sAk6GasXo+zWXPwacMBG1H7f+W3P0oorI2djA4DRcZ3B
-         EltYGRsuaG9fTUbtbTIkqBl9azVCyaQWib7Qy4YjXKyWq8YmtWYWKFKqokicVaFqkAFn
-         K4pQ==
+	s=arc-20240116; t=1753734875; c=relaxed/simple;
+	bh=a1xn1H8/fa/A9qraVB8eAftc2nCQicSPOhezcVcH5EQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hUUZ4r2l3ymLDchr+Msp6E2w8QAr1Y+IFPuXXjpy5C40dLBZm0STZIZ6AgrMN77KAM6UwM8TSBsyqcU0EpfSfQ69lewSkSHbQ/4MFO1zQNwgRylvvzUJSWrOQpC/tz2l4NM2D5f/nJthn7N7QgXu+ggzAw/L7IXN5MOH/J3jnGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UQnJb8OL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SAlInu027612
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=V9+fcbz7W94
+	r3G/u7UQJHN/TfdQW561mZf8p47PIeZU=; b=UQnJb8OLWP9QwXGogs/DlkXf7Vm
+	zpe+3nPYqDV73hH5QmVsF1roKS4OGWEL3pbWD4iayMxZm3VJe4BZ5NZMEtKL2MbX
+	A7KgUc9TvKS2opSSx9Zyf65Fhsi2r1OC4fGNmWZlCVqZ4qJe5pE/N92kvaoYyR+e
+	siRfoXrTEpn/JqYkFYnQL6t/YwtpTGkBG4uLuoyqH6680TT5IjXnxxhA2+eUh9Ya
+	J/nXg0CdXetsjayL53lOMwl0D6vdiDj9uNVaJTQSFbNAH7tApY1sFKfM3npPLy8h
+	J15A4g04+UcUrb4/1Hp3n1EpzdqyTiJN8FeR5xFmjrRsDtrbvnbINTzmXpw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4860enu0hf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:28 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23632fd6248so49486285ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:34:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753734883; x=1754339683;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753734868; x=1754339668;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5cIuEYX17XiPrfyxPlwLzcOeQJGvPzMkyLjuQxbOTNU=;
-        b=UnAsNBdam/njrxc59n+MOX3x7dBr3Wl9dZudo8wngbiiGydsZGA7uMNVkkKAdKaZDv
-         5qdWCB10600a5IogKDBxJ8+/V4aiyO8ph84M5BK8UGvCIpawBCSKTFCQ7/haJgn1TVTr
-         V8Zm2JB8URWV41UxRmXfoZo4+JCUp30HRwG4yJdgWwjNPwwjDXFyAInr8Umhm1I1XX+0
-         fKrdFFtD/oBS5EWSlrCcs7d6T16dPbmDnY7i5yPU3C729xeah1wLdAL78unzv44t3q5L
-         nmpzSBDJodg5zqgC3ijZrCWo/umOAbZP87Iivwwh/X0vHiRL/TucAqaARUMGjSQf26zz
-         F8SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcmY+mZZpK9IL1KP2WjuARAtsxLg6JUqq+K2VAbCDTRttUnBYeXtWuVSqKO4teWtjUiDPFqg5PtGCwVh4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJLBya0YpK4jtxJd3YU7vM/gXqEAWirAVu1K9BgTmdOBoXXWpv
-	+EYvG1Pl2VOxHAEJqv1ufNvgV0Agq2mlAfUKy69z1ZecWJOYVPUTR5pSmbpAc8VfQxU+wP+ndXk
-	baJ1vIxbDPCg3Pnzf8riSU6MKFNvOIAG3H8DAUa7j
-X-Gm-Gg: ASbGncsVJh+hHPSNWPy5bA8Dto+NscS647kppo9esZ06i0z5Rpmg2f6Qy8LxQ5ihJBQ
-	KWR6sgoyqckzu3jbxFF9OAGlYls5T7BQPX3+83Z7g6uwBHplZhPcikcE7BG467Rh+Polfx5XzZT
-	NxhCg8VuOa0lbnxnhkk6XhRhF8RS9exlvozBenZzFBvnpSJRZvmzO/iqB/g9X5jYals1R2A8iYr
-	zQzAM+WBbReCNGSVMRhjuXYgnE0YYoiaQ==
-X-Google-Smtp-Source: AGHT+IGSwHNM1lMm6iRvrNhpLZM/44NLBcht7A9ZyhiiFAeshkQMQrkJ5OQp5Ak5DNIjWjjK+SMh7cZBKnKVJBMgOHw=
-X-Received: by 2002:a05:6402:2291:b0:615:3301:25c3 with SMTP id
- 4fb4d7f45d1cf-61567304ce8mr13512a12.6.1753734883112; Mon, 28 Jul 2025
- 13:34:43 -0700 (PDT)
+        bh=V9+fcbz7W94r3G/u7UQJHN/TfdQW561mZf8p47PIeZU=;
+        b=SDqw1YHU58A2eIdL6Ul7Az0Mvp6sIT4YDtuMlVBwuNob67Zs5bMD/Xr5lQevwp9TlN
+         eu3eZqV01gqpgRSQYDI1Ej+FSWk2AiszeZv2Jz6zjl/CNjI/YFLIYJfWjluVMxvbtgpe
+         uNYdrDKxrkpDMhMnJs4ZdkUmXyrYZ5RU5X1S/eSDIciKYXHO6Q8xHyLrfl5ceD3Ay2j/
+         sQBLOYSlmufHY3NGLGPpIpG0JzDBj+dSaX0sW8jVCSFAcl3BFSkDAASwANvWkO4OPjwz
+         CTpb/CgFoIUnwztgqvaTK+37/n9ddMs68E+URbzLf95L7224tHRBHrSRIDbbhLsJpljj
+         QuPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlnPI7gB0/AX9+frPekNom6WHBblL+wJZwP6b37pvnEu7IcrvbmuyHi9MmzF1zmwTB1dOpYmxZdZA1VDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQePU0R8SVi/xCNOn3Dy+AjiJJyrTUm+NT0yASlBc/XOQ78jRt
+	AOe572IjWZYdVo1389WdOWPV0NVg6Ccx/PNERRQiJRxx4kfoJDkRI5oYH2qHtSUn2ICsrtfhepT
+	Xu8v7FtTFsuaSkNUnbkrP4hJg0UXHE7BTjBL1cmOaxF84kHi0zV8gy58syRHQmQbYXjY=
+X-Gm-Gg: ASbGncs9AAEM04V4q7NEAkFLADcMtmLdXmaZ70Saj5mjzwv1pSxAnB7HtZb6tNnsI0p
+	+Y0k7bkexXEydOgZib42MglP2Ewg4yO6pgyKRt1PgoSH6UjmxcggUm8Uw8lFz4Sq2WwKM/cqAR/
+	i8cPgSeoaNT4hyPkIPD0x8VQAEqsokcJShX5UMzmQSvyYOr4QoELB+rJEe2ZbqC6O0PhXCbRGx3
+	mnSwUmb3fgECgh/VIPonaWGxjJ3CXGwWXWmcSOi/4LMScpuC4aVveFtaIr9OmvbGaf7Ur0X12UT
+	0QQhtIQneC6sE4p2sVAaLAJX97Otp5XcGvxJENK2Ys5ppT5X6io=
+X-Received: by 2002:a17:902:f083:b0:23f:ecc1:ed6f with SMTP id d9443c01a7336-23fecc1f05dmr88609075ad.17.1753734867984;
+        Mon, 28 Jul 2025 13:34:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHeYWCqRtE24tEVyEPFKQ+MJ3KSpNHmjoUKuOAzp/vLakvO+2T4gVctQrTsB7zyfP/q9HW23Q==
+X-Received: by 2002:a17:902:f083:b0:23f:ecc1:ed6f with SMTP id d9443c01a7336-23fecc1f05dmr88608795ad.17.1753734867535;
+        Mon, 28 Jul 2025 13:34:27 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe4fd62dsm61122835ad.111.2025.07.28.13.34.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 13:34:27 -0700 (PDT)
+From: Rob Clark <robin.clark@oss.qualcomm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 7/7] drm/msm: Fix a7xx TPL1 cluster snapshot
+Date: Mon, 28 Jul 2025 13:34:07 -0700
+Message-ID: <20250728203412.22573-8-robin.clark@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250728203412.22573-1-robin.clark@oss.qualcomm.com>
+References: <20250728203412.22573-1-robin.clark@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1753711160.git.lorenzo.stoakes@oracle.com> <386ba8fc99adb7c796d3fc5b867c581d0ad376c7.1753711160.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <386ba8fc99adb7c796d3fc5b867c581d0ad376c7.1753711160.git.lorenzo.stoakes@oracle.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 28 Jul 2025 22:34:07 +0200
-X-Gm-Features: Ac12FXxZWrVG9lHiMIdLtQnur6MhrtrOas81mqHV8KcQZRHD1RU90YYt9ttm5Qw
-Message-ID: <CAG48ez2rQfWJwnpAspNr8OtLXgPadG55Re0KoK5ovBKqE3AcbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] man/man2/mremap.2: describe multiple mapping move
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: eFi3-gGOOO1M5tU-IvR1zw0FZLSQZseT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDE0OSBTYWx0ZWRfX4Qz+MuaDBz9D
+ SXpsPCiuy3KjwzdHiE6H6XC8eiXs5OlNBSQ8eqdSxgSGuCH9hbFBgVik12KZVS8q3yqi1ixyjAd
+ e4yTnfDQyM6EcBFiPJ3QkIFRxMy8hUsUdKs+ZKpL7KUMeVnUc7Glh+oLMOBa9ifROegb9Fq2mD7
+ HGrAkCX5u2ZY3Gg5Vio50u1K1M7bnhUxtjncOYWvjJ5dJEceO4wWEUJaDvCHGreZMeuUywzXbtt
+ AulwhCsoiXyOWojVwV/DjJfK6Ie/TlQ8Wkk+KdyCaBXnVrbfTvkBuO1OJAZtFFLrHsdBu4VA84o
+ JTrhsYTdgiEqwLdqVqnxH8fCZO/+eB8gMDXrv2WiAxCMoLEtbtI2HGfPc/p51zxt7IIrKkRuTZQ
+ lQFpAEFEc7xTTWiw3zhpBP+pqA7/gj6jtGykv4Q8T0CBZoOXkIS5uDdFhRUOC9iBCTzT4d3Q
+X-Authority-Analysis: v=2.4 cv=DIWP4zNb c=1 sm=1 tr=0 ts=6887ded4 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10
+ a=EUspDBNiAAAA:8 a=zhZQclFZcvAaLIcfx54A:9 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-ORIG-GUID: eFi3-gGOOO1M5tU-IvR1zw0FZLSQZseT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 impostorscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507280149
 
-On Mon, Jul 28, 2025 at 4:05=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> Document the new behaviour introduced in Linux 6.17 whereby it is now
-> possible to move multiple mappings in a single operation, as long as the
-> operation is purely a move, that is old_size is equal to new_size and
-> MREMAP_FIXED is specified.
->
-> To make things clearer, also describe this 'pure move' operation, before
-> expanding upon it to describe the newly introduced behaviour.
->
-> This change also explains the limitations of of this method and the
-> possibility of partial failure.
->
-> Finally, we pluralise language where it makes sense to so the documentati=
-on
-> does not contradict either this new capability nor the pre-existing edge
-> case.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  man/man2/mremap.2 | 78 ++++++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 67 insertions(+), 11 deletions(-)
->
-> diff --git a/man/man2/mremap.2 b/man/man2/mremap.2
-> index 2168ca728..cb3412591 100644
-> --- a/man/man2/mremap.2
-> +++ b/man/man2/mremap.2
-> @@ -25,18 +25,41 @@ moving it at the same time (controlled by the
->  argument and
->  the available virtual address space).
->  .P
-> +Mappings can simply be moved by specifying equal
+Later gens have both a PIPE_BR and PIPE_NONE section.  The snapshot tool
+seems to expect this for x1-85 as well.  I guess this was just a bug in
+downstream kgsl, which went unnoticed?
 
-(Bikeshedding: This "simply" sounds weird to me. If you're trying to
-define a "simple move" with this, the rest of this block is not very
-specific about what exactly that is supposed to be. In my opinion,
-"pure" would also be a nicer word than "simple" if you're looking for
-an expression that means "a move that doesn't do other things".)
+Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+---
+ drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h | 11 +++++++++--
+ drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h |  2 ++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-> +.I old_size
-> +and
-> +.I new_size
-> +and specifying
-> +.IR new_address ,
-> +see the description of
-> +.B MREMAP_FIXED
-> +below.
-> +Since Linux 6.17,
-> +while
-> +.I old_address
-> +must reside within a mapping,
-> +.I old_size
-> +may span multiple mappings
-> +which do not have to be
-> +adjacent to one another.
-> +.P
-> +If the operation is not a simple move
-> +then
-> +.I old_size
-> +must span only a single mapping.
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h b/drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h
+index afcc7498983f..04b49d385f9d 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h
++++ b/drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h
+@@ -668,12 +668,19 @@ static const u32 gen7_0_0_sp_noncontext_pipe_lpac_usptp_registers[] = {
+ };
+ static_assert(IS_ALIGNED(sizeof(gen7_0_0_sp_noncontext_pipe_lpac_usptp_registers), 8));
+ 
+-/* Block: TPl1 Cluster: noncontext Pipeline: A7XX_PIPE_BR */
+-static const u32 gen7_0_0_tpl1_noncontext_pipe_br_registers[] = {
++/* Block: TPl1 Cluster: noncontext Pipeline: A7XX_PIPE_NONE */
++static const u32 gen7_0_0_tpl1_noncontext_pipe_none_registers[] = {
+ 	0x0b600, 0x0b600, 0x0b602, 0x0b602, 0x0b604, 0x0b604, 0x0b608, 0x0b60c,
+ 	0x0b60f, 0x0b621, 0x0b630, 0x0b633,
+ 	UINT_MAX, UINT_MAX,
+ };
++static_assert(IS_ALIGNED(sizeof(gen7_0_0_tpl1_noncontext_pipe_none_registers), 8));
++
++/* Block: TPl1 Cluster: noncontext Pipeline: A7XX_PIPE_BR */
++static const u32 gen7_0_0_tpl1_noncontext_pipe_br_registers[] = {
++	 0x0b600, 0x0b600,
++	 UINT_MAX, UINT_MAX,
++};
+ static_assert(IS_ALIGNED(sizeof(gen7_0_0_tpl1_noncontext_pipe_br_registers), 8));
+ 
+ /* Block: TPl1 Cluster: noncontext Pipeline: A7XX_PIPE_LPAC */
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h b/drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h
+index 6569f12bf12f..772652eb61f3 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h
++++ b/drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h
+@@ -573,6 +573,8 @@ static const struct gen7_sptp_cluster_registers gen7_2_0_sptp_clusters[] = {
+ 		gen7_0_0_sp_noncontext_pipe_lpac_usptp_registers, 0xaf80 },
+ 	{ A7XX_CLUSTER_NONE, A7XX_TP0_NCTX_REG, A7XX_PIPE_BR, 0, A7XX_USPTP,
+ 		gen7_0_0_tpl1_noncontext_pipe_br_registers, 0xb600 },
++	{ A7XX_CLUSTER_NONE, A7XX_TP0_NCTX_REG, A7XX_PIPE_NONE, 0, A7XX_USPTP,
++		gen7_0_0_tpl1_noncontext_pipe_none_registers, 0xb600 },
+ 	{ A7XX_CLUSTER_NONE, A7XX_TP0_NCTX_REG, A7XX_PIPE_LPAC, 0, A7XX_USPTP,
+ 		gen7_0_0_tpl1_noncontext_pipe_lpac_registers, 0xb780 },
+ 	{ A7XX_CLUSTER_SP_PS, A7XX_SP_CTX0_3D_CPS_REG, A7XX_PIPE_BR, 0, A7XX_HLSQ_STATE,
+-- 
+2.50.1
 
-I'm reading between the lines that "simple move" is supposed to mean
-"the size is not changing and MREMAP_DONTUNMAP is not set", which then
-implies that in order to actually make anything happen, MREMAP_FIXED
-must be specified?
-
-> +.P
->  .I old_address
-> -is the old address of the virtual memory block that you
-> -want to expand (or shrink).
-> +is the old address of the first virtual memory block that you
-> +want to expand, shrink, and/or move.
->  Note that
->  .I old_address
->  has to be page aligned.
->  .I old_size
-> -is the old size of the
-> -virtual memory block.
-> +is the size of the range containing
-> +virtual memory blocks to be manipulated.
->  .I new_size
->  is the requested size of the
-> -virtual memory block after the resize.
-> +virtual memory blocks after the resize.
->  An optional fifth argument,
->  .IR new_address ,
->  may be provided; see the description of
-> @@ -105,13 +128,43 @@ If
->  is specified, then
->  .B MREMAP_MAYMOVE
->  must also be specified.
-> +.IP
-> +Since Linux 6.17,
-> +if
-> +.I old_size
-> +is equal to
-> +.I new_size
-> +and
-> +.B MREMAP_FIXED
-> +is specified, then
-> +.I old_size
-> +may span beyond the mapping in which
-> +.I old_address
-> +resides.
-> +In this case,
-> +gaps between mappings in the original range
-> +are maintained in the new range.
-> +The whole operation is performed atomically
-> +unless an error arises,
-> +in which case the operation may be partially
-> +completed,
-> +that is,
-> +some mappings may be moved and others not.
-
-This is much clearer to me.
 
