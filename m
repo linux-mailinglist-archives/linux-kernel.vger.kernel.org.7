@@ -1,142 +1,147 @@
-Return-Path: <linux-kernel+bounces-748582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB74DB14359
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:34:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30894B1435B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6104B4E608A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084FE3AC648
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C3A27877D;
-	Mon, 28 Jul 2025 20:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0BE2264BC;
+	Mon, 28 Jul 2025 20:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hotN5DPh"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SOV+dHYK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8313C1C8631
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4522E219A89
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753734807; cv=none; b=toVpFbxNSnpefpKhNQeyHNPwdc03A0sM1nn4gvYoLn1tUqDXSjHlQsX042My4mKpGGaQWhBiN35S3vQ/aUXoTLQW2kUlu6ok7ohtBIEImc2ifpT7T6l2+CbAKm9IWOX628SuKWgeOyPLxhTJifdcsMMN2ZV4v89N+5YScLUiAHw=
+	t=1753734861; cv=none; b=WHu6N/FeRJMttGhjkSi2H1mBssrP6z8kCq1w4IEc8MrhRvAGAUx3o46dry+S+LDXQxyOt82oQnQbkfDeBrhlAxpWbH59eMQJpYNKLPFfLt0TC+qLXL0enzvJ8CvSROyhG6CoqMkYxmnx0eCNOW9HHl6KNp5O2OyU+5LZ9fa65l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753734807; c=relaxed/simple;
-	bh=teayqiuCzSaQjJnQj70/U/ADAw/StTCH/gj4tVb3cPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rre4jUEsjKciatPq0tksId75qd2EkmVi4H3QFRILwgK4IWI9ltKEo2bzEZJBKklWq7BdhQPym+VUaamS2k3tEnkx3VGntCFALUqa2PoZalhQ5BUIjVjNZ+iTBoNRBgIU7MKw7JLT6wqfSldgK1YPzxyUTB5gtrIaBVLe7NbOU8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hotN5DPh; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-31ecd1f0e71so1888642a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753734805; x=1754339605; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OUBXSlb6O3h9wA9dBxb9GAArtBxswFFmvqz7tVHohcQ=;
-        b=hotN5DPhzQRUvkd8L0Bl4kjfeyMihh9gIroLKPz5P47lpuBBfTq6uxqNZbJ1sn3rHY
-         LLwfYYsYoVjGPxtR8Pjm0BeZJSy93KqcE8MEVbR0/oAlI6h/Z0nPDbmb6nljCRdcH0B8
-         i8GhycY6LLIov770V75lxLxe+jUBWbhkW4iQE4aRY23UexB+Wf4ihxrP31cpbiNUeGEV
-         9dbLhKd8eIegCCsEh8I3D39N2ez13TyOBu2w1tVoa2Dk8hsccerapAKRGYLj2KmbkQoD
-         pv1CwUzgL89n4k7bVDbPhvLwL6OJbu1WV8G4le4WXrDXFefRBTe1l6pr4BufR02vdgmR
-         I0Gg==
+	s=arc-20240116; t=1753734861; c=relaxed/simple;
+	bh=cKdFC1SVSPgpyZumkMcdQr9+XbDPl6Xq75PSfnUrhdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QL2BnCTDYC/A1skQyMagDGvr9O3VRfki3IMZ18EBzmcxXt1DjgMkJAfmaNbKhig/yU84LX+tP1F9c4LxofoW269UpJbjILPS14IX+NbMswreXNrpmPRVVxdKDzNAMgUI2fenH/cVeu2VXw6u1WYbHQJhINNpJSALQQGOY3SrLc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SOV+dHYK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SAlWNk005322
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=Vx9YOMF9/vaXXfGAitKrXqT/YmN37duAwQA
+	vLpyxaqo=; b=SOV+dHYK+WJTfpTVBLvWtAMYbSlZzjo1WkmIzRaTjaOOviYOA0A
+	JvCLdsPn/jE/Nncto1gn36Pyynu6vdxV4ForI/qlFJmJEBquwn3RKP3qSU5JwLBK
+	arKBt2Hcp1qmIKlrBjlnIzYmqQEM7S71EdGONwPlvqFTy2vIHJzS2iExCf6Cwsuy
+	YAuqT4JtQic/ytbL2etrz2qokMFPAhR8HBtaTg950tIshxXTwuCEF5Z1cZx+vbFM
+	6RYC0rQNVKPUbOKSDw1vteVC+4IF01RcxlWMcNPyXNWiTHcDx+AmWA4AG9hvvWn+
+	KGCxEfVezrIa55qdmphmQUCPa6BTNXRMDFg==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484nytx06j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:19 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7492da755a1so4328253b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:34:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753734805; x=1754339605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753734858; x=1754339658;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OUBXSlb6O3h9wA9dBxb9GAArtBxswFFmvqz7tVHohcQ=;
-        b=PK7/qp2ee7l/4A+K5yiyyJfzif6AMtW9+Ni51odpuARPi8iCtsBZcQu5dwU+5rPvES
-         NQ/MskO/SuW7r2DrEoM1pzcRZjOD/KHPkrKJexwAaBKpuZSqbpM939ueUxx1NosXArx9
-         0w/8WO1HO/t7qQ++9Eo5oaenLl1kAGXyDmp2buagtLtRqhZtPJnW/5Ap+EU5eW9IS3vC
-         Ro4m9R/tiXggPb4T5zKYOgi/lsn0InqeJlkKBTWLqTtO5RE2EwvNWYizb0EbbNqBH9It
-         SRukBt7277y8CzWDCt91cQmnCyneQ/UBr47Tn46mHZ+RIfOTyOM2qNQDGQyaTKhm52qh
-         K6+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWI2fs7V5EQaODc3QPJ9UP1OhGZV+E1qTEXpB3UCG8r5yr6nmptIdY9YZBmgZQcB8Hf+6k+UtlGzEzl2xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx24hfxG9Qf5YPO+IYijkraSWVDF+xQGPjfC5ugOZ+pakAhmHZr
-	kj5PVBbughGDx6hseNIRL8uE5mO5GNkeoeI/yZpAO/7gTOYZLCdSva4xIW5+yKF9hsYnKDyLBmN
-	byQ3arr+u0d/Uwsq+2KIu7YCuh4w1v4OjPeMRf5T/
-X-Gm-Gg: ASbGnctyBTKhCBjhpR4q5YQUTG+9eDv2aI7sxWPp0ZJ9zWuEuh6IUjSalu0gj0qQIB8
-	eGV3Q3ceLXKP53gvgiy5UrdJvDf9a3dwECbeJ9I/1h+1r6JONnlmxUEH/7tp0sl8mtJeWz3lRTl
-	IiYiw54QCX/zopkXccEYzerAIxUmwmy1jhkdMG+5LbQKjlKPwcJJCJ/mwvlWzreGj7i1yglFcjs
-	PShHZNJNsVF/Fg6k91AEib8BXMQmlVsHOkBvQs=
-X-Google-Smtp-Source: AGHT+IHK3kKWFUOpDo+1w4dpi3jl6CKAuy4IN5RkLlqGNNAA1K92Ca+e/wtI2hICx9qG3l198YLwP1IzabAVSNvIOkI=
-X-Received: by 2002:a17:90b:4c:b0:31f:1db2:69b1 with SMTP id
- 98e67ed59e1d1-31f1db27000mr3287346a91.18.1753734804686; Mon, 28 Jul 2025
- 13:33:24 -0700 (PDT)
+        bh=Vx9YOMF9/vaXXfGAitKrXqT/YmN37duAwQAvLpyxaqo=;
+        b=G4aJVFlYADWb8YT2Rzy7xZlQQt5pyZQbAkpbbIhW9mcOZvB3BNsGgV+19BYInOkVjq
+         fhqksXStfNtzybpjNn5t+Mxyb/2obCxx+JhDUcg81MKa3wsLtxjLJ0E3znWatrpNaCpJ
+         4uvCHqv4/5Qp/WuSpcOYoYyAg6hhUx+RCdkFCs/b5qetuXVnkN0erWkeaBD2r1/5bDyf
+         hBkNF5mq282Ose+UXqGA2iteXYgD5mFU9kez124Vl1sTJP958mvzrxuMQUD7Q8h7fJRs
+         IdnJo7kXJ20fQzwLLdqP4kju3Shk1DCSVdcsZ8fF4SVWrQNQPR7R8J8JAjiA6CpJXwqp
+         cJbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeUBoQphr/YoygZJMywQsnVP3lKQH+ee/hjShpsV6pDvGl4V+TGyt8dJbbgq/ysmrg61F9cZ17Y0k9IYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7u0sisWi4jTNcNcokLfwPxkyZpP4lmttGfAZ8G0aTzBD7y5/y
+	vYlDbIr7dNKtiOGoe8tKcETh1NK5qLTLE3580ct3fSMssIlS2f+ZkuCfGkT/b/M0sfiUXn1EXrP
+	siLKdIfo/0YTfl257bb2X38D83JaKqqOxbn/+Zgl/dmIfZbvZyM7m7DCh+jGHRBx9wHE=
+X-Gm-Gg: ASbGnct211K8KwetnAuxlWSY0Yt2rQUmppFm+B5zaJsC8EFiSWT8P7f4jnkIormo+b4
+	9tFK3ZNl4oysKItODSMUjzxwITYyAKdVpyXlp8INpe/Qb2qOpj8BrU9q0b5cS3Fb9jTQh7DZZmj
+	GK9sbMc5PAQlJU9fZEkUnZsboxlmZG/BNCajRV7zR9nKV4L37mFM/9ly37j9HZTOk9oYpnm+bUa
+	pR3ZDkCmotG2ICN2pxw49q7r8fN0WymhnWk30OZ5h64xKvtAxHq7eWA3SkAl+MdqrZsRYCh8CyE
+	a1oNCFlycDgTRWdvSH40Yvo5jnJv0e5UFsVapEl6jrsxqXDbwTY=
+X-Received: by 2002:a05:6a20:3d82:b0:238:3f54:78ef with SMTP id adf61e73a8af0-23d7020a87cmr21229908637.45.1753734858339;
+        Mon, 28 Jul 2025 13:34:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF2NfubVkX7OmnivNJmSnmau6UKEHaNttBxrPWDyk7ZRlG/54KN/lEb53AfFRyD8rGryWhf+Q==
+X-Received: by 2002:a05:6a20:3d82:b0:238:3f54:78ef with SMTP id adf61e73a8af0-23d7020a87cmr21229878637.45.1753734857904;
+        Mon, 28 Jul 2025 13:34:17 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f6ae43bsm5545654a12.49.2025.07.28.13.34.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 13:34:17 -0700 (PDT)
+From: Rob Clark <robin.clark@oss.qualcomm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        linux-kernel@vger.kernel.org (open list),
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Subject: [PATCH 0/7] drm/msm: Various snapshot fixes
+Date: Mon, 28 Jul 2025 13:34:00 -0700
+Message-ID: <20250728203412.22573-1-robin.clark@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728184318.1839137-1-soham.bagchi@utah.edu> <20250728184318.1839137-2-soham.bagchi@utah.edu>
-In-Reply-To: <20250728184318.1839137-2-soham.bagchi@utah.edu>
-From: Marco Elver <elver@google.com>
-Date: Mon, 28 Jul 2025 22:32:48 +0200
-X-Gm-Features: Ac12FXxrA0KuBzkm3AL3l8gRNoz9nEwCgGw777gfr_Ks9ZDLjrKOw5hgi17LW5w
-Message-ID: <CANpmjNPWzJZrAFT3-013GJhksK0jkB6n0HmF+h0hdoQUwGuxfA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kcov: load acquire coverage count in user-space code
-To: Soham Bagchi <soham.bagchi@utah.edu>
-Cc: dvyukov@google.com, andreyknvl@gmail.com, akpm@linux-foundation.org, 
-	tglx@linutronix.de, glider@google.com, sohambagchi@outlook.com, arnd@arndb.de, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, corbet@lwn.net, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: bljP4hMRnPtJQswIYZDlPfiu7P_u1XEC
+X-Proofpoint-ORIG-GUID: bljP4hMRnPtJQswIYZDlPfiu7P_u1XEC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDE1MSBTYWx0ZWRfX4qhDxULZ7egX
+ AZdlhaWe7JXtw0M7+xbC00CndyBxSalILr837ahTxfzqV3+UGRIi1uLlWnrbWlGUCXbMua0cQCa
+ t+9CFsOfxcM1RDkhTJ7qJBTrvnh+S2exBc+zFBGe8VCz5VHBIF+2Iua4Xy5xsXSaVlsTsB2sqHc
+ cxTswU9/FMJDnwR5mZ3rz7biELx7abzif8iONPmpekgJkC8tbh0y5JlGrUPoiFm5Jjq2Jzs3ZXd
+ kJhiuKL24a86+e2OltAL4bg1cU8DXmM/6FgYZCkIpK5s+WwImpUPxEHEbnELdDyZ4lVsv6r5tKl
+ ZpOh8zwxzBGQJoMEfax5g6H8gvtDN88chXrDHXkM4G/rdKTQjnWHtNaPZ8hInPqQgR2Y7C+UWlJ
+ L0JZ6F5B3sZ84KaYnymc0sK1QrXEJwdZKWSaTOc5ELFVtr2L34fpw15+ZXDzlzSHImVTd6VH
+X-Authority-Analysis: v=2.4 cv=CLoqXQrD c=1 sm=1 tr=0 ts=6887decb cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10
+ a=w1cFhwVCMIBtwBHhTYMA:9 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507280151
 
-On Mon, 28 Jul 2025 at 20:43, Soham Bagchi <soham.bagchi@utah.edu> wrote:
->
-> Updating the KCOV documentation to use a load-acquire
-> operation for the first element of the shared memory
-> buffer between kernel-space and user-space.
->
-> The load-acquire pairs with the write memory barrier
-> used in kcov_move_area()
->
-> Signed-off-by: Soham Bagchi <soham.bagchi@utah.edu>
-> ---
->  Documentation/dev-tools/kcov.rst | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/dev-tools/kcov.rst b/Documentation/dev-tools/kcov.rst
-> index 6611434e2dd..46450fb46fe 100644
-> --- a/Documentation/dev-tools/kcov.rst
-> +++ b/Documentation/dev-tools/kcov.rst
-> @@ -287,6 +287,11 @@ handle instance id.
->  The following program demonstrates using KCOV to collect coverage from both
->  local tasks spawned by the process and the global task that handles USB bus #1:
->
-> +The user-space code for KCOV should also use an acquire to fetch the count
-> +of coverage entries in the shared buffer. This acquire pairs with the
-> +corresponding write memory barrier (smp_wmb()) on the kernel-side in
-> +kcov_move_area().
-> +
+Various fixes I've found so far while ingesting upstream devcore dumps
+into internal tools.
 
-This new paragraph is misplaced.
-You've added it after the "... handles USB bus #1:" part which clearly
-should be right before the code (note the colon).
+Rob Clark (7):
+  drm/msm: Add missing "location"s to devcoredump
+  drm/msm: Fix section names and sizes
+  drm/msm: Fix order of selector programming in cluster snapshot
+  drm/msm: Constify snapshot tables
+  drm/msm: Fix a7xx debugbus read
+  drm/msm: Fix debugbus snapshot
+  drm/msm: Fix a7xx TPL1 cluster snapshot
 
-Why not add what you wrote here as a block-comment (similar in style
-to comment above the sleep()) right above the __atomic_load_n below? I
-think those details probably don't quite belong into the high level
-text, but the detailed code example.
+ drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c   | 26 +++++++++----
+ drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h   | 38 +++++++++----------
+ .../drm/msm/adreno/adreno_gen7_0_0_snapshot.h | 19 +++++++---
+ .../drm/msm/adreno/adreno_gen7_2_0_snapshot.h | 10 +++--
+ .../drm/msm/adreno/adreno_gen7_9_0_snapshot.h | 34 ++++++++---------
+ 5 files changed, 73 insertions(+), 54 deletions(-)
 
->  .. code-block:: c
->
->      /* Same includes and defines as above. */
-> @@ -361,7 +366,7 @@ local tasks spawned by the process and the global task that handles USB bus #1:
->          */
->         sleep(2);
->
-> -       n = __atomic_load_n(&cover[0], __ATOMIC_RELAXED);
-> +       n = __atomic_load_n(&cover[0], __ATOMIC_ACQUIRE);
->         for (i = 0; i < n; i++)
->                 printf("0x%lx\n", cover[i + 1]);
->         if (ioctl(fd, KCOV_DISABLE, 0))
-> --
-> 2.34.1
->
+-- 
+2.50.1
+
 
