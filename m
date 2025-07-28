@@ -1,283 +1,285 @@
-Return-Path: <linux-kernel+bounces-748217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89064B13DFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:15:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E54CAB13E01
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6964F17FBA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:15:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07500189FA6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9159A271455;
-	Mon, 28 Jul 2025 15:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFE52737FF;
+	Mon, 28 Jul 2025 15:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XqKxQW23"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i12jXtjY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB67327057B;
-	Mon, 28 Jul 2025 15:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753715694; cv=fail; b=Tr53/1JQzuetA8DpwbZe5FGRG1ZGdi0PCmAhAhwPOCZSQzjRBO6aDR8eyzPvGfDKuOqO/X4ZdOuSUuDjJFp5G+2egviP/EWHQ4erlvzMKbDtppZndPyHqu6RxALGdRwH1Z35bOfLRYwgNzxq9nPCu8tEOWP2gZ0zwIXKa0zlxyM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753715694; c=relaxed/simple;
-	bh=hXn9ABqj9gICajmmuOfZXb/rNrZPw1YjUSJfrctBJwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fBBhTF+VALBsSajtXbvBB1VZ/wqzlL27mn17zvF1YJliLzltxwG+vmL6YI81GboFhz000K9nkgS2Pw25sk3w0CGMsXYv2w12SdBroa9n9oDSEg9Hr5cCr9yTEHc7L2Kbg5iYjRtZQt2XsfR1HbaTBUBokYsTio1pqF1EXsw5uRo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XqKxQW23; arc=fail smtp.client-ip=40.107.220.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cITaZNs8GOoi5PC0einzu9P14Ngec4mdKhAwmyhrFE9U/TR4rgrkoLB0WiNKgagkdTZdXjNTWmqyhYOWlx8/dONUDFPkvmYuJYwj6Wq6LNV0gemsukiWNgb07e4HjoVfzr5El48AHcuegLRYkPxw6iIQiGqlgM1uMm0ZYHHgldUfUqEMSmfvsqTgrEzqReKNJ9vDsU0Tx+o9sUgHAZGuSdbxtrtc3n19HSf1KyWO2HKZdxT7sCbdI5jdavp5BQwyWbshreE3MCHaIF6hRJX3roM5Wz6/2lUFGbNhhZtMgJQNOeVoOkMDJBeb+eYh6bvSXS8rvRMyAcjF/79NjxR2OA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KHr9IdV2Fbm56uRCFV3FNIPwHTknjLYDX36my8LNnSI=;
- b=wXbhPWipld7KoUvhv5cRWoO1YWxnydHhNsNdIei4cCCKAOMSOvhuqjbHinqfHE5mCbdjFmYXIG9w/dlkhDQdbVtPWbgNX05UoF6dLdBJ6ExaF1k7bACWTv3Bm2ITYLBw+6bdSYpyyQZ0oXow6ngJA0mnvE6Ndx98JZmtK8sAUZw8S/pBiC4EwTQTRg7nB0IhEfDzQ9vDFkKn+pgnKeTBhXpT4Dkj9Bl9flzJicmYxAIdy0yb3Tuhy9cCI5msLe7H0x4qkTEG66rt1C/oOyCnL7KsmsCnkkn1JCqbW1duaiLatkY76MpOhRoD2r4lVZ/tUUMGAqDvKwp+Epdzud0WUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KHr9IdV2Fbm56uRCFV3FNIPwHTknjLYDX36my8LNnSI=;
- b=XqKxQW23olb42tUy1i/Aux+cpgyxKqjtEft7sa6oEPTp73gBkwNHzoTrGQmlXSIV674sN0tu41PGZ6Krk5wB3F6FELDAg97EdJp3yo7hwqty+JyASXv4e033ZewpgBN7S9QjPZKGrI3y+wWM2P/UbY/hnmxjWKlo9XiJsVIrOlk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- SA3PR12MB7997.namprd12.prod.outlook.com (2603:10b6:806:307::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.26; Mon, 28 Jul
- 2025 15:14:49 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8964.025; Mon, 28 Jul 2025
- 15:14:49 +0000
-Date: Mon, 28 Jul 2025 11:14:40 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, bp@alien8.de, john.allen@amd.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] EDAC/amd64: Incorporate DRAM Address in EDAC message
-Message-ID: <20250728151440.GB33292@yaz-khff2.amd.com>
-References: <20250717165622.1162091-1-avadhut.naik@amd.com>
- <20250717165622.1162091-3-avadhut.naik@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717165622.1162091-3-avadhut.naik@amd.com>
-X-ClientProxiedBy: BN0PR08CA0021.namprd08.prod.outlook.com
- (2603:10b6:408:142::16) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C11271456
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753715710; cv=none; b=g0yGFAIPJW3fPRUB30/gasdXaWB1VfYEhak6cEaeX7vmSwY+kcblrWBVw6xo/EKXjNg9p3k/ES77HpBp7HrKe4QSGJEyc0TdWvrMCh07KOszpw1n7zIeDYcpvJe7mJyNVlmf1WH62yrF2nYfwnOPidbDpUz65pFy0mPOYxqBMyA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753715710; c=relaxed/simple;
+	bh=bVEUEruTA04cqUCuVkdAjMIqDFpt+gMGh8+t8uN2bkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e1QFJfFylNfKeCDwlFWO+unqCZrs3BOmfjSQTmtC8MtO5ivOxay8xKZt+RWf2UNoeeWCD6OVivVpcgYLzYHaCX840Hb5v7sEEavxYn0UQHisY5hUEXJQxl7Pu+LV/thICSGHEJNRL1ukEnIgMjf82ALxXKD6BXbCui3DaB3gBKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i12jXtjY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753715707;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cFu6x9LoVQ1xdj0Ds1jK1/RRFvn+MmOixRu+6RDQgAk=;
+	b=i12jXtjYUt0/u7lEJ1sb1Ts8WtkSX56CwudRjRjUJdRwaQLG+KAm1BNfC0BtL7/41j91AQ
+	pzn+ss8U8zxj65xNpttRm5ZxL7Vb8+JwgYzfdNuqrB6P2R39NM+zenslpZurX/3zFs0OUx
+	m/3gueGrNcGZqLu2K5N0ccTup5PdPPI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-599-IJ3JKQgPPiecbb3hdvzl2g-1; Mon, 28 Jul 2025 11:15:05 -0400
+X-MC-Unique: IJ3JKQgPPiecbb3hdvzl2g-1
+X-Mimecast-MFC-AGG-ID: IJ3JKQgPPiecbb3hdvzl2g_1753715704
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45611579300so30903695e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:15:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753715704; x=1754320504;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cFu6x9LoVQ1xdj0Ds1jK1/RRFvn+MmOixRu+6RDQgAk=;
+        b=F9zotDlBhu53AE96pkljRMK1e/atf2RhvZ2HG8NvV5Wg6P5lJ1iqcSG272ipflH8PT
+         X1qXk7OTB4Bxb7XoCjD90+JGhwsxom7K+RVO+3HkAhErEh6L0ZZeydUUBnsBpPkOSumY
+         rbce+/9nRD/HqdAZY4b8KUPsC0eduYBA4fGrxQWGpxNLFkAUtVqaTlpSqnKNAvuXg6EE
+         qqqkWCprtLC3TFgn4kXe1YngHJH1227kUu94tAUx1mdkNivuGDRMaMytDu1Bl38uBffr
+         6ePvMeZs7kvFvv9B9NcvFk9PcktslmzJw4MjVhVciSabaRLFg6I5T/D8wFU/JMuNmvt1
+         kfaA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9oOcESZnLxNDZzwuy7MNhk1wK9yfZhwX7X6Japf1JkJBbQeJZiPu5Xub2OSUMi7CHnMHV/wJVcpOqFYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgtOG3D6EAAbNqIq21qOpmsTJHslxRfpj9H3qvLsm+aMmizXkC
+	iAuXcc4/kwQsRugrhzORTRrOOAg68Hpvhzah//6mBwmQIfqi5zaWZDssPAEoOBHGwURTP8KCK/J
+	ILW3z7npGxNhT5lY/63EVzAxyZP8G4Uo62t7X9u+M4SMSSYO1xvhQV0sTgECz2rtyvg==
+X-Gm-Gg: ASbGnctbvX610Std2dsxfDPYR3ZM8fnBDQuegewgEvDQnlC7zmykngLGmxw0qndC+6w
+	hBe/0oQOOxAlxaf0oCqwDXjDaJPHOProAKaUradRUldPU4hXOIMhMyEy+gI9jfAlLmb891Fl66K
+	vBoazCHUk/iCJebI/dyZIfguK/VK9HNdlImhGCKl3MWHimwUIYO1OFoS+/rl9NXHC4AyZnp8T83
+	eJxuydiSE7JNC+LPGh9lrHJrCTKi5J6Cp9CTIgsPSFI0EIaigTCWN5GsdFqs1bO58jG/IvYzUsR
+	+1FInWnzNMjALYfmAoUnaGwxLAltPh7cHfvQrqFECSM4hyBq59u1570pj+9rBF27VrIlwJzLBU/
+	PZmp8GbG7UVqQEAdO9b2ZYBcYw9ee4Q/eXslokbrrD+zLcZwbtzOW4bb3qytjAXv4aIg=
+X-Received: by 2002:a05:600c:1c94:b0:456:1442:86e with SMTP id 5b1f17b1804b1-4587911e78amr76809085e9.21.1753715704250;
+        Mon, 28 Jul 2025 08:15:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEYgLa7yl+fyDCD5pCKzn8BbvKweRCfmV2xlQtPD8ua6fwJTJSoqSSEdQnuHq68gLQ0j11fEQ==
+X-Received: by 2002:a05:600c:1c94:b0:456:1442:86e with SMTP id 5b1f17b1804b1-4587911e78amr76808825e9.21.1753715703645;
+        Mon, 28 Jul 2025 08:15:03 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f47:2b00:c5f3:4053:2918:d17c? (p200300d82f472b00c5f340532918d17c.dip0.t-ipconnect.de. [2003:d8:2f47:2b00:c5f3:4053:2918:d17c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705377f0sm159681105e9.6.2025.07.28.08.15.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 08:15:03 -0700 (PDT)
+Message-ID: <09794c70-06a2-44dc-8e54-bc6e6a7d6c74@redhat.com>
+Date: Mon, 28 Jul 2025 17:15:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SA3PR12MB7997:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31b70a09-b2b7-4fbc-7e79-08ddcde97e51
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kaOKYJWdFOoaTMUo6AcppF9yhW/ptPaaAhBY35uIX09SBzXDWum/W2wDYUf+?=
- =?us-ascii?Q?Cu0WLF6GduVO0mUquC5z/rw1m0d2axPiMb6pN9VUq52hgrPCO6hPKC3S1DUT?=
- =?us-ascii?Q?A1BYQzarn1VUJYaLpen5mtkUwO8DBGxNLAGyNlfM3te9h/YGjQSSJhq4yIhY?=
- =?us-ascii?Q?iA3eImLvfkT08L0khtBa6C+/Dj4RSd+/ft7v3RocGJQ+qusQtUmc8YO9CSCi?=
- =?us-ascii?Q?5HfUuCzFjgTGfqXt9cRI6Wdf+Q3vtLxHq9L+hElC8ds0saxnKrS5352/eCFu?=
- =?us-ascii?Q?gtufsc3hb4FIVewbG/dYxm54VLQJrK/b45B7VrhnF5Oa6i86m3Hv74tjLJ+F?=
- =?us-ascii?Q?wVMcjzOcL14xCiSvq3qcvdxnR3ZnYbVFcGYIkf/zO96cYpcGrnRW+ggHaYnH?=
- =?us-ascii?Q?pYaXz8wM/jEmOzBKyUw2ob8cfJLH/aT9PoNWXJ860wsWLLdG6E2CmbRbBDbG?=
- =?us-ascii?Q?h12+/z9x8aBrIYRp5xEX3RUeKgPI4KcxgIPfqVp44fDfE5gDriDfLz6RIfMP?=
- =?us-ascii?Q?IQ5LVmpwhQ4t6aOE8LV6PMeP5T+78tJOBU1n+6AqitVuzEa6JiW9NoijPZej?=
- =?us-ascii?Q?Aq4jl3f0zQ3AJxbO5z5SvKTesl5doHwE/OhXgF0ZXzqFr86EYxEzBuyUpYxM?=
- =?us-ascii?Q?Fdpf7RV91wXzkkiTt+AJ2vU2O011Fa2hAkQw8ZBnbOY0T8h7mcpHchLoLRAf?=
- =?us-ascii?Q?dK8sRa7ieHO0HAq9h8u2C4buMXe2inwiT6c5r3HN5Gew9OWfYm6x11WNYw+o?=
- =?us-ascii?Q?zKR9FrX/wyIuqH/llKpEzuoW3+TFz5pe5iGgJn8Fq6lORO4UrGsppr61M3eT?=
- =?us-ascii?Q?f4uzYJIM6ve231jOjNDkRfy2TDV2GE1LSC2Z7UyZm6oWMFkrvASVdEnMaYUv?=
- =?us-ascii?Q?/7c9NB4/SYPK4ZEYXH/IJ2cCIz5Shd6HmCCdMDalYZCWSn61DTc9zVqxZUaP?=
- =?us-ascii?Q?bmlh+VHziIJzQhwmix29JEMn9EmKDUMumeozS3Teso6hC3lMCNCD1PweNhot?=
- =?us-ascii?Q?Zpp9M49D8pDDcR6Ra/SdaYkH9RROvQy1abBuL/dejmnicTeZzLBPBB9RplgH?=
- =?us-ascii?Q?baOVCZ8/L2+bhMzHO15npvuk3PFWiUXVCmfVFqOCS9BNxdAUjQVp1sWiUQeZ?=
- =?us-ascii?Q?Lisjr93+jkjBQHP31wQ4CMfk4Hm8UWc5gnkSdAeFgPilw0+O24Qabadhqj1n?=
- =?us-ascii?Q?eV1IdZlM4/65+WMnCW2kiHVom9ayyznGQlXNaYe9hqTpHEft4tSCGzxiUeVw?=
- =?us-ascii?Q?vfDT3lkGfbqx8WVRDpULz0uAU0YjeHTqkoF3S26B1bg4XfP1P2/7Y6tGlI9/?=
- =?us-ascii?Q?OS02XHq8YRBPz8san+KQPJIgSTZf/DyZyEt1zABYZY56llTkZnt28XzeRENx?=
- =?us-ascii?Q?KS5JJDDeO+BUjU8B5BOeLqDUabuQwEFwDM+GQgjn7biIzscTVMOLdQwbM3ep?=
- =?us-ascii?Q?+6ct7VOviJ4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DqikBcW+mezFubqovoyr2Tqw5CDQx8hpVxC+Q9Nw8fByI5d9d32gdomeaXZO?=
- =?us-ascii?Q?AGWgLKXLgpqAw12/Znb2C1q5JSk0txYjNSXjd1b/sp9Uk9qpxZ/JTp828o/N?=
- =?us-ascii?Q?KpfZpIJFE34PEs4ZJPP2did58TWcTMkxfstKQ/Z9rhamMwVfLIEKcAuzbjtF?=
- =?us-ascii?Q?JlQVETn+7tLSIjhVHy3GYe3bfKOk1Oa1i5gwDF1k5YAw/rXKgUPC9/JqDaRs?=
- =?us-ascii?Q?94GbZ0UEcDg1iuHEm/CFTVYD4kb9AtHm+yyWy7iE+zcCKPlQhM6r9tWMh088?=
- =?us-ascii?Q?LRtV8ONfpBVVapM/QFqwgKFbTvk4/MsRwnD4C3ltPbL6RCkCI9hng9cdOEcd?=
- =?us-ascii?Q?DWvBXiH5baTMGi1MVpCt7xmtS+QygjAK+ItRKgclo0jdAJ9x0Tp7VN1Uv3z0?=
- =?us-ascii?Q?ZQxRs7gfl+cnYAabSkZtCgxKQjs1QOuQfuuljJrcUP33jG43QRX9kOP44Gz+?=
- =?us-ascii?Q?HyiVIqHU8eA1/cAapDtVnrQSVtRiPrK7ql0ufXWEWnaexhKcW7e0TyQOCLu2?=
- =?us-ascii?Q?SYeH2CU6xX5YIuW0Wbm5KrqnOV3ewYUKDAyCUlpvesQ61bgcsCC8rUqS4IUu?=
- =?us-ascii?Q?l+/SERDDYkIEv9LbeCT0GYTP0wfxFvKsAdphjJ1O4bFS544dL+cZR3Kp4sSa?=
- =?us-ascii?Q?06QpOuDOYFAIeEZ6gJpZYoyW8CtQBd6r11MD7pAqJso9EmzuJEEWYkC1A7Po?=
- =?us-ascii?Q?eA5ogwZezTynokrqdM6ebfXMCSzC4gLzhMXdIP3SnNL6bbOpnQpotplCvtz3?=
- =?us-ascii?Q?iZfnAhn+o75h+zAASFG4odmH+OB4lvb+MAXm8amK6BTKqcnmQJ7Qft/0yEkn?=
- =?us-ascii?Q?5HwVilErRqYGil0FhGGaiYZ34se9PgT0VYnB4YRggqyQlbJPTrVuWtqIcXoU?=
- =?us-ascii?Q?SBmb7EacgoDHy8U2GyUyRjFJxJ4HJqraEXHf6vhRw0XGMqW1xtYRi3BMvIw1?=
- =?us-ascii?Q?48NUvDhspr6zNmcSVCjjP8L583/UNaZ7r5J6NAot7S0NIvope4pTi5FNaB7j?=
- =?us-ascii?Q?hUpgCAXspLDcYZb2UZaExQFiHrVfCfsxMa88A5r3Xh3Ip7buUohR9EicZ3j5?=
- =?us-ascii?Q?TbXvJCPG3y+GkFzq1AneczjGJZTf+8Svbx4vmyr7q5oPQ+cQN7Jq/zVdzNWM?=
- =?us-ascii?Q?mCa8pQbeYWv1a8uzc3vA8OycJa1GXTVB1PZatrWH8R1ZcKqJ/JoQynzCz8/s?=
- =?us-ascii?Q?+faywy8pDXVVbqoU0H9KiTFdqY+P2TLF23hzIqm7RIU/wzMcGwGMoKb2+ZnD?=
- =?us-ascii?Q?I132gdiqyGHADycLVZTv7Cq3u4n25Pl7jkA5xGQeRScjjaSs1kVDAYJ3FlMg?=
- =?us-ascii?Q?urYGf/xTc2CiXM4TIEHtO+1soYxq2Kd7v0UzoiqaWhYG6UoF4TONKAWa+XbX?=
- =?us-ascii?Q?e9go9ljd46O2IAUI9SRFJcDeAyST2gSJTc3Z4CxuItrmqtXo3qgvLPfXVPej?=
- =?us-ascii?Q?XNC0JVAMEUWY6I+3oDqo5bpDIZCFMc/km9jmV3H2RgpExp3s1+/0MyMk1oko?=
- =?us-ascii?Q?CubvhbR3FBFLC0oFIZAmk27WsNkU5Wm6v6ATEYtA17ot4OTJnjFW1FWFnQFK?=
- =?us-ascii?Q?5WuoLrLg8EgrtWIngAq7DSl1ecYM/GDOHI4DHCAd?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31b70a09-b2b7-4fbc-7e79-08ddcde97e51
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2025 15:14:49.0824
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZD0QWMz2LD2QDuuOopPrjEgSP9dSKbMrqsRuWCBhqR2IwSu7l6KK8AwkUoY6JuQHGosgZMNnjRUSrqG1DoblXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7997
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
+To: Hannes Reinecke <hare@suse.de>, Michal Hocko <mhocko@suse.com>
+Cc: Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Hannes Reinecke <hare@kernel.org>
+References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
+ <aIc5XxgkbAwF6wqE@tiehlicka>
+ <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
+ <aIc9DQ1PwsbiOQwc@tiehlicka>
+ <79919ace-9cd2-4600-9615-6dc26ba19e19@redhat.com>
+ <f859e5c3-7c96-4d97-a447-75070813450c@suse.de>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
+ 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
+ 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
+ OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
+ kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
+ GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
+ s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
+ Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
+ FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
+ OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
+ NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
+ Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
+ 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
+ /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
+ bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
+ RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
+ m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
+ CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
+ vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
+ WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <f859e5c3-7c96-4d97-a447-75070813450c@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 17, 2025 at 04:48:43PM +0000, Avadhut Naik wrote:
-> Currently, the amd64_edac module only provides UMC normalized and system
+On 28.07.25 11:37, Hannes Reinecke wrote:
+> On 7/28/25 11:10, David Hildenbrand wrote:
+>> On 28.07.25 11:04, Michal Hocko wrote:
+>>> On Mon 28-07-25 10:53:08, David Hildenbrand wrote:
+>>>> On 28.07.25 10:48, Michal Hocko wrote:
+>>>>> On Mon 28-07-25 10:15:47, Oscar Salvador wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> Currently, we have several mechanisms to pick a zone for the new
+>>>>>> memory we are
+>>>>>> onlining.
+>>>>>> Eventually, we will land on zone_for_pfn_range() which will pick
+>>>>>> the zone.
+>>>>>>
+>>>>>> Two of these mechanisms are 'movable_node' and 'auto-movable' policy.
+>>>>>> The former will put every single hotpluggled memory in ZONE_MOVABLE
+>>>>>> (unless we can keep zones contiguous by not doing so), while the
+>>>>>> latter
+>>>>>> will put it in ZONA_MOVABLE IFF we are within the established ratio
+>>>>>> MOVABLE:KERNEL.
+>>>>>>
+>>>>>> It seems, the later doesn't play well with CXL memory where CXL
+>>>>>> cards hold really
+>>>>>> large amounts of memory, making the ratio fail, and since CXL cards
+>>>>>> must be removed
+>>>>>> as a unit, it can't be done if any memory block fell within
+>>>>>> !ZONE_MOVABLE zone.
+>>>>>
+>>>>> I suspect this is just an example of how our existing memory hotplug
+>>>>> interface based on memory blocks is just suoptimal and it doesn't fit
+>>>>> new usecases. We should start thinking about how a new v2 api should
+>>>>> look like. I am not sure how that should look like but I believe we
+>>>>> should be able to express a "device" as whole rather than having a very
+>>>>> loosely bound generic memblocks. Anyway this is likely for a longer
+>>>>> discussion and a long term plan rather than addressing this particular
+>>>>> issue.
+>>>>
+>>>> We have that concept with memory groups in the kernel already.
+>>>
+>>> I must have missed that. I will have a look, thanks! Do we have any
+>>> documentation for that? Memory group is an overloaded term in the
+>>> kernel.
+>>
+>> It's an internal concept so far, the grouping is not exposed to user space.
+>>
+>> We have kerneldoc for e.g., "struct memory_group". E.g., from there
+>>
+>> "A memory group logically groups memory blocks; each memory block
+>> belongs to at most one memory group. A memory group corresponds to a
+>> memory device, such as a DIMM or a NUMA node, which spans multiple
+>> memory blocks and might even span multiple non-contiguous physical
+>> memory ranges."
+>>
+>>>
+>>>> In dax/kmem we register a static memory group. It will be considered one
+>>>> union.
+>>>
+>>> But we still do export those memory blocks and let udev or whoever act
+>>> on those right? If that is the case then ....
+>>
+>> Yes.
+>>
+>>>
+>>> [...]
+>>>
+>>>> daxctl wants to online memory itself. We want to keep that memory
+>>>> offline
+>>>> from a kernel perspective and let daxctl handle it in this case.
+>>>>
+>>>> We have that problem in RHEL where we currently require user space to
+>>>> disable udev rules so daxctl "can win".
+>>>
+>>> ... this is the result. Those shouldn't really race. If udev is suppose
+>>> to see the device then only in its entirity so regular memory block
+>>> based onlining rules shouldn't even see that memory. Or am I completely
+>>> missing the picture?
+>>
+>> We can't break user space, which relies on individual memory blocks.
+>>
+>> So udev or $whatever will right now see individual memory blocks. We
+>> could export the group id to user space if that is of any help, but at
+>> least for daxctl purposes, it will be sufficient to identify "oh, this
+>> was added by dax/kmem" (which we can obtain from /proc/iomem) and say
+>> "okay, I'll let user-space deal with it."
+>>
+>> Having the whole thing exposed as a unit is not really solving any
+>> problems unless I am missing something important.
+>>
+> Basically it boils down to:
+> Who should be responsible for onlining the memory?
+> 
+> As it stands we have two methods:
+> - user-space as per sysfs attributes
+> - kernel policy
+> 
+> And to make matters worse, we have two competing user-space programs:
+> - udev
+> - daxctl
+> neither of which is (or can be made) aware of each other.
+> This leads to races and/or inconsistencies.
+> 
+> As we've seen the current kernel policy (cf the 'ratio' discussion)
+> doesn't really fit how users expect CXL to work, so one is tempted to
+> not having the kernel to do the onlining. But then the user is caught
+> in the udev vs daxctl race, requiring awkward cludges on either side.
+ > > Can't we make daxctl aware of udev? IE updating daxctl call out to
+> udev and just wait for udev to complete its thing?
+> At worst we're running into a timeout if some udev rules are garbage,
+> but daxctl will be able to see the final state and we would avoid
+> the need for modifying and/or moving udev rules.
+> (Which, incidentally, is required on SLES, too :-)
 
-The amd64_edac module provides data for the EDAC interface. This is only
-the system physical address (PFN + offset). The UMC normalized address
-comes from MCA error decoding.
+I will try moving away from udev for memory onlining completely in RHEL 
+-- let's see if I will succeed ;) .
 
-> physical address when a DRAM ECC error occurs. DRAM Address on which the
-> error has occurred is not provided since the support required to translate
-> the normalized address into DRAM address has not yet been implemented.
+We really want to make use of auto-onlining in the kernel where 
+possible, and do it manually in user space only in a handful of cases 
+(e.g., CXL, standby memory on s390x). Configuring auto-onlining is the 
+nasty bit that still needs to be done manually by the admin, and that's 
+really the nasty bit.
 
-I don't think this last sentence is necessary.
 
 > 
-> This support however, has now been implemented through an earlier patch
-> (RAS/AMD/ATL: Translate UMC normalized address to DRAM address using PRM)
-> and DRAM address, which provides additional debugging information relating
-> to the error received, can now be logged by the module.
-> 
-> Add the required support to log DRAM address on which the error has been
-> received in dmesg and through the RAS tracepoint.
+> Discussion point for LPC?
 
-These last two paragraphs could be something like this:
+Yes, probably.
 
-"Use the new PRM call in the AMD Address Translation Library to gather the
-DRAM address of an error. Include this data in the EDAC 'string' so it
-is available in the kernel messages and EDAC trace event." 
+-- 
+Cheers,
 
-> 
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> ---
->  drivers/edac/amd64_edac.c | 23 +++++++++++++++++++++++
->  drivers/edac/amd64_edac.h |  1 +
->  2 files changed, 24 insertions(+)
-> 
-> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-> index 07f1e9dc1ca7..36b46cd81bb2 100644
-> --- a/drivers/edac/amd64_edac.c
-> +++ b/drivers/edac/amd64_edac.c
-> @@ -2724,6 +2724,22 @@ static void __log_ecc_error(struct mem_ctl_info *mci, struct err_info *err,
->  	switch (err->err_code) {
->  	case DECODE_OK:
->  		string = "";
-> +		if (err->dram_addr) {
-> +			char s[100];
-> +
-> +			memset(s, 0, 100);
-> +			sprintf(s, "Cs: 0x%x Bank Grp: 0x%x Bank Addr: 0x%x"
-> +					   " Row: 0x%x Column: 0x%x"
-> +					   " RankMul: 0x%x SubChannel: 0x%x",
+David / dhildenb
 
-There's a checkpatch warning here about splitting user-visible strings.
-
-Why not use scnprintf() or the like?
-
-> +					   err->dram_addr->chip_select,
-> +					   err->dram_addr->bank_group,
-> +					   err->dram_addr->bank_addr,
-> +					   err->dram_addr->row_addr,
-> +					   err->dram_addr->col_addr,
-> +					   err->dram_addr->rank_mul,
-> +					   err->dram_addr->sub_ch);
-> +			string = s;
-
-Looking at the description for 'edac_mc_handle_error()', it seems that
-"other_detail" would be more appropriate for this info.
-
-I do think we should consider updating the EDAC interface if multiple
-vendors are gathering this data.
-
-> +		}
->  		break;
->  	case ERR_NODE:
->  		string = "Failed to map error addr to a node";
-> @@ -2808,11 +2824,13 @@ static void umc_get_err_info(struct mce *m, struct err_info *err)
->  static void decode_umc_error(int node_id, struct mce *m)
->  {
->  	u8 ecc_type = (m->status >> 45) & 0x3;
-> +	struct dram_addr dram_addr;
->  	struct mem_ctl_info *mci;
->  	unsigned long sys_addr;
->  	struct amd64_pvt *pvt;
->  	struct atl_err a_err;
->  	struct err_info err;
-> +	int ret;
->  
->  	node_id = fixup_node_id(node_id, m);
->  
-> @@ -2822,6 +2840,7 @@ static void decode_umc_error(int node_id, struct mce *m)
->  
->  	pvt = mci->pvt_info;
->  
-> +	memset(&dram_addr, 0, sizeof(dram_addr));
->  	memset(&err, 0, sizeof(err));
->  
->  	if (m->status & MCI_STATUS_DEFERRED)
-> @@ -2853,6 +2872,10 @@ static void decode_umc_error(int node_id, struct mce *m)
->  		goto log_error;
->  	}
->  
-> +	ret = amd_convert_umc_mca_addr_to_dram_addr(&a_err, &dram_addr);
-> +	if (!ret)
-> +		err.dram_addr = &dram_addr;
-
-I feel like it is not necessary to pass a second struct if it is already
-contained in another.
-
-You could just clear (or not set) that field if an error occurs.
-
-> +
->  	error_address_to_page_and_offset(sys_addr, &err);
->  
->  log_error:
-> diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-> index 17228d07de4c..88b0b8425ab3 100644
-> --- a/drivers/edac/amd64_edac.h
-> +++ b/drivers/edac/amd64_edac.h
-> @@ -399,6 +399,7 @@ struct err_info {
->  	u16 syndrome;
->  	u32 page;
->  	u32 offset;
-> +	struct dram_addr *dram_addr;
->  };
->  
->  static inline u32 get_umc_base(u8 channel)
-> -- 
-
-Thanks,
-Yazen
 
