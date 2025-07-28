@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-747986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E57B13B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:12:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E3DDB13B54
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE57D3AD705
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAFDA189D6C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4141A266562;
-	Mon, 28 Jul 2025 13:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D67E26FA4E;
+	Mon, 28 Jul 2025 13:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNF7/bxt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="nXLFmQf0"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8498B4A33;
-	Mon, 28 Jul 2025 13:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8861B268C55;
+	Mon, 28 Jul 2025 13:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753708320; cv=none; b=DG2TbKRPEpI2wQdIJ0UzPw+YOzZbFE0fvF4QeoVxmUKXVpCJtFcxIRSbu4FGO5zXUviUh2FhVkNa55h9hrtEWdRCLC/r4esgcwuUp41ym7FmAbp2FUcyT0RppG2rdGwrOuyXRTqY6uCDZUa3JaWVsgJc1qlUE8Yi2xvP8Rtz7NM=
+	t=1753708566; cv=none; b=TzhGMyNaDV2YsdqJOLSodJOPoj5nIg512b28yA1HPPEEOGHqIQCUJLWbeYq97n9/fppw9jvDtAfdZPIo1iU4J5QFaRWs28q44MBUP3PuxRJSM19v+7bCfdxUQkSCUj8RbKMuO/NQdS9a/DzAeSav82vHi38NJLTVX4sod1/nDX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753708320; c=relaxed/simple;
-	bh=8QWAdeHIt9M2n7ruuCEiOLK67C47ocnzQTIsLBKfIww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Seu8P5tG0sHL/12f1HMmvoxqSj+BNk9yu2sKmdgsyFlrRTzkwWcDzCRX1jUxO9cGMRigEpQJBQ0BZlxmN+0dn8SnzhdH0lm0jpoipgVqaiP+XEXWcrPldkZlJBSTvwc6oHg8tqvFX8VJfMp/jK8dT0MU8XgpMSqJBPerCTKOlAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNF7/bxt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037ECC4CEE7;
-	Mon, 28 Jul 2025 13:11:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753708320;
-	bh=8QWAdeHIt9M2n7ruuCEiOLK67C47ocnzQTIsLBKfIww=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rNF7/bxt5n1URYAUxKyo7pKgEav0xCj90A3q1M3Emob6/sejttWgqoFwrv9DtdHmo
-	 hRHcQd347bxQG0uXGoJJEcoW2SfbOdeV3WcL34e20sZXUBWLbRhzo2qY2ISXOq/KDr
-	 NPDVJumpVI8+ClU80NQlO8CfJKzWPr/QQGOzuPFA3sEdzkcyF/UgXKli9RHxEX78WZ
-	 CQlPOSizJi6ZMRyHEmMDihy+1kyVEberbO3eJTkoRXK+VI1I9nwgh723zZ82n5oFKG
-	 ajZ8jMWifKoUmoK1BzT25Gq7KC/goEiz9nXXxM3tcewSNzQXt4i9YcfNJDRKeHHLmP
-	 jTQZoAOVjoY2Q==
-Message-ID: <3864e374-b045-4317-85bf-ec3a2d3d7940@kernel.org>
-Date: Mon, 28 Jul 2025 15:11:54 +0200
+	s=arc-20240116; t=1753708566; c=relaxed/simple;
+	bh=W+KZZXncins1T9GC8mCt4jsiJpGpKp81eBfzguGPl9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=s4wuBx+1qfLoZ06WJoVMGTQWvlxUglb2M1tqorCnedJ/zaMjD2LcxOgRA5tf/zzJIUkU5EQBo8kVjPIpK7oD45voq2qBgJoaWap3sRFnJb0CulOp0K4H4VqKW03+AkVr5uAx4UpxvnRkax+M+WY6zvK001SBUympzjUV3ojrYV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=nXLFmQf0; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SD78TP018548;
+	Mon, 28 Jul 2025 15:15:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	6ozDjiR1DVr/3HRBmHIYQGBx0Ek2Vvu4LxeRw9hd+a0=; b=nXLFmQf0lGgLF+X9
+	gLaWXmG2IiruQBxDjVB3d0J9Ofg68aZEG/2O2+ed85NLa0ZUIb38INT2yw99xAha
+	GeWHUQUbt9Ee9sBaFLbw0iV/iylfIbXTpieHZ5iRxvZuPYBbNhWhsftdqVMTq2kA
+	qO47UfA862g9kGKb8NK1f5lMnbAg6DH0LirQxfuGPtNyn2QGyKdomZF10fINxa4N
+	c58PWHscY3P7erPOeAhAqQCbcZZwIu8sAV3/dXtKh9i7y0PRVectbVhOv0pxvfym
+	WNZY0Hh69RNseI6BCwCaLQ1OkIuuX6pYQ8bmP2+kiT1a3eGUqRcYNsiqYHzbM9Fp
+	kVfLKg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 484m5906v7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 15:15:27 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0285640055;
+	Mon, 28 Jul 2025 15:13:50 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A04F177E309;
+	Mon, 28 Jul 2025 15:12:24 +0200 (CEST)
+Received: from [10.252.23.100] (10.252.23.100) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Jul
+ 2025 15:12:23 +0200
+Message-ID: <2ceafbbe-064e-4227-8b44-edc67d22f6b4@foss.st.com>
+Date: Mon, 28 Jul 2025 15:12:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,143 +66,273 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for
- Sophgo CV1800B SoC
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20250728-cv1800-rproc-v2-0-5bbee4abe9dc@pigmoral.tech>
- <20250728-cv1800-rproc-v2-1-5bbee4abe9dc@pigmoral.tech>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 12/19] perf: stm32: introduce DDRPERFM driver
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Le
+ Goffic <legoffic.clement@gmail.com>,
+        Julius Werner <jwerner@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com>
+ <20250722-ddrperfm-upstream-v3-12-7b7a4f3dc8a0@foss.st.com>
+ <20250725115655.00002304@huawei.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250728-cv1800-rproc-v2-1-5bbee4abe9dc@pigmoral.tech>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <20250725115655.00002304@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
 
-On 28/07/2025 13:03, Junhui Liu wrote:
-> +
-> +  firmware-name:
-> +    maxItems: 1
-> +
-> +  mbox-names:
-> +    items:
-> +      - const: tx
-> +      - const: rx
-> +
-> +  mboxes:
+Hi Jonathan
 
-First go mboxes, then mboxes-names. ALWAYS.
+On 7/25/25 12:56, Jonathan Cameron wrote:
+> On Tue, 22 Jul 2025 16:03:29 +0200
+> Clément Le Goffic <clement.legoffic@foss.st.com> wrote:
+> 
+>> Introduce the driver for the DDR Performance Monitor available on
+>> STM32MPU SoC.
+>>
+>> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
+>> that come from the DDR Controller such as read or write events.
+>>
+>> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
+>> counter, there is a notion of set of events.
+>> Events from different sets cannot be monitored at the same time.
+>> The first chosen event selects the set.
+>> The set is coded in the first two bytes of the config value which is on 4
+>> bytes.
+>>
+>> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controller
+>> and may be secured by bootloaders.
+>> Access controllers allow to check access to a resource. Use the access
+>> controller defined in the devicetree to know about the access to the
+>> DDRPERFM clock.
+>>
+>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> Hi Clément,
+> 
+> Minor comments inline.,
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+>> --- /dev/null
+>> +++ b/drivers/perf/stm32_ddr_pmu.c
+>> @@ -0,0 +1,896 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) 2025, STMicroelectronics - All Rights Reserved
+>> + * Author: Clément Le Goffic <clement.legoffic@foss.st.com> for STMicroelectronics.
+>> + */
+>> +
+>> +#include <linux/bus/stm32_firewall_device.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/hrtimer.h>
+>> +#include <linux/io.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_platform.h>
+> Why?
+For of_device_id and platform_device structs
+> Looks like of.h is needed so you should include that directly.
+> 
+> Check all your headers.  mod_devicetable.h should be here
+> for instance.
 
-> +    description:
-> +      This property is required only if the rpmsg/virtio functionality is used.
-> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
-> +    items:
-> +      - description: mailbox channel to send data to C906L
-> +      - description: mailbox channel to receive data from C906L
-> +
-> +  memory-region:
-> +    description:
-> +      List of phandles to reserved memory regions used by the remote processor.
-> +      The first region is required and provides the firmware region for the
-> +      remote processor. The following regions (vdev buffer, vrings) are optional
-> +      and are only required if rpmsg/virtio functionality is used.
-> +    minItems: 1
+mod_devicetable.h is already included in of_platform.h but imagine it 
+should be directly include as I do not use any symbol from of_platform.h
 
-Why isn't this constrained?
+Thank you for pointing this out.
+I'll have a look on other includes.
 
-> +    items:
-> +      - description: firmware region
-> +      - description: vdev buffer
-> +      - description: vring0
-> +      - description: vring1
-> +    additionalItems: true
+Do you have any method to include directly what you need ?
+As of here symbols were available through other include but this is not 
+correct.
+Is there any tool nor tips to find the right include directly and easily ?
 
-No, drop. This needs to be constrained.
+>> +#include <linux/perf_event.h>
+>> +#include <linux/reset.h>
+> 
+>> +
+>> +static void stm32_ddr_pmu_event_del(struct perf_event *event, int flags)
+>> +{
+>> +	struct stm32_ddr_pmu *pmu = to_stm32_ddr_pmu(event->pmu);
+>> +	struct stm32_ddr_cnt *counter = event->pmu_private;
+>> +	bool events = true;
+>> +
+>> +	stm32_ddr_pmu_event_stop(event, PERF_EF_UPDATE);
+>> +
+>> +	stm32_ddr_pmu_free_counter(pmu, counter);
+>> +
+>> +	for (int i = 0; i < pmu->cfg->counters_nb; i++)
+>> +		events = !list_empty(&pmu->counters[i]);
+> What is this trying to do?  It seems to be only setting
+> 	events = !list_empty(&pmu->counters[pmu->cfg_counters_nb - 1]);
+> 
+> If so just check that but my guess it you care if there is anything
+> in any of them lists.
 
+Indeed the test must be in the for loop, thanks.
+The idea here is to loop over the counters and check if one of them is 
+still active so we don't stop the HW.
 
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  sophgo,syscon:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      A phandle to the SEC_SYS region, used for configuration of the remote
-> +      processor.
-> +
-> +required:
-> +  - compatible
-> +  - firmware-name
-> +  - memory-region
-> +  - resets
-> +  - sophgo,syscon
+I'll do:
+	for (int i = 0; i < pmu->cfg->counters_nb; i++) {
+		events = !list_empty(&pmu->counters[i]);
+		if (events) /* If there is activity nothing to do */
+			return;
+	}
 
-Why mboxes are not required?
+> 
+>> +
+>> +	/* If there is activity nothing to do */
+>> +	if (events)
+>> +		return;
+>> +
+>> +	hrtimer_cancel(&pmu->hrtimer);
+>> +	stm32_ddr_stop_counters(pmu);
+>> +
+>> +	pmu->selected_set = -1;
+>> +
+>> +	clk_disable(pmu->clk);
+>> +}
+> 
+> 
+>> +static int stm32_ddr_pmu_get_memory_type(struct stm32_ddr_pmu *pmu)
+>> +{
+>> +	struct platform_device *pdev = to_platform_device(pmu->dev);
+>> +	struct device_node *memchan;
+>> +
+>> +	memchan = of_parse_phandle(pdev->dev.of_node, "memory-channel", 0);
+>> +	if (!memchan)
+>> +		return dev_err_probe(&pdev->dev, -EINVAL,
+>> +				     "Missing device-tree property 'memory-channel'\n");
+>> +
+>> +	if (of_device_is_compatible(memchan, "jedec,lpddr4-channel"))
+> 
+> Random thought, feel free to ignore.
+> I wonder if it's worth using an of_device_id match table here?
+I don't think it would be worth it but if wanted I can switch.
+>
+>> +		pmu->dram_type = STM32_DDR_PMU_LPDDR4;
+>> +	else if (of_device_is_compatible(memchan, "jedec,lpddr3-channel"))
+>> +		pmu->dram_type = STM32_DDR_PMU_LPDDR3;
+>> +	else if (of_device_is_compatible(memchan, "jedec,ddr4-channel"))
+>> +		pmu->dram_type = STM32_DDR_PMU_DDR4;
+>> +	else if (of_device_is_compatible(memchan, "jedec,ddr3-channel"))
+>> +		pmu->dram_type = STM32_DDR_PMU_DDR3;
+>> +	else
+>> +		return dev_err_probe(&pdev->dev, -EINVAL, "Unsupported memory channel type\n");
+>> +
+>> +	if (pmu->dram_type == STM32_DDR_PMU_LPDDR3)
+>> +		dev_warn(&pdev->dev,
+>> +			 "LPDDR3 supported by DDRPERFM but not supported by DDRCTRL/DDRPHY\n");
+>> +
+>> +	return 0;
+>> +}
+> 
+>> +static struct attribute *stm32_ddr_pmu_events_attrs_mp[] = {
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_rd, PERF_OP_IS_RD),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_wr, PERF_OP_IS_WR),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_activate, PERF_OP_IS_ACTIVATE),
+>> +	STM32_DDR_PMU_EVENT_ATTR(ctl_idle, CTL_IDLE),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_req_with_no_credit, PERF_HPR_REQ_WITH_NO_CREDIT),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_req_with_no_credit, PERF_LPR_REQ_WITH_NO_CREDIT),
+>> +	STM32_DDR_PMU_EVENT_ATTR(cactive_ddrc, CACTIVE_DDRC),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_enter_powerdown, PERF_OP_IS_ENTER_POWERDOWN),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_refresh, PERF_OP_IS_REFRESH),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_selfresh_mode, PERF_SELFRESH_MODE),
+>> +	STM32_DDR_PMU_EVENT_ATTR(dfi_lp_req, DFI_LP_REQ),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_xact_when_critical, PERF_HPR_XACT_WHEN_CRITICAL),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_xact_when_critical, PERF_LPR_XACT_WHEN_CRITICAL),
+>> +	STM32_DDR_PMU_EVENT_ATTR(perf_wr_xact_when_critical, PERF_WR_XACT_WHEN_CRITICAL),
+>> +	STM32_DDR_PMU_EVENT_ATTR(dfi_lp_req_cpy, DFI_LP_REQ),  /* Suffixed '_cpy' to allow the
+>> +								* choice between sets 2 and 3
+>> +								*/
+>> +	STM32_DDR_PMU_EVENT_ATTR(time_cnt, TIME_CNT),
+>> +	NULL,
+> 
+> No trailing comma for a terminating entry like this.  You got the other cases
+> so I guess this one just got missed.
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    c906l-rproc {
+Ack.
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+>> +};
+> 
+>> +static int stm32_ddr_pmu_device_probe(struct platform_device *pdev)
+>> +{
+>> +	struct stm32_firewall firewall;
+>> +	struct stm32_ddr_pmu *pmu;
+>> +	struct reset_control *rst;
+>> +	struct resource *res;
+>> +	int ret;
+>> +
+>> +	pmu = devm_kzalloc(&pdev->dev, struct_size(pmu, counters, MP2_CNT_NB), GFP_KERNEL);
+>> +	if (!pmu)
+>> +		return -ENOMEM;
+>> +
+>> +	platform_set_drvdata(pdev, pmu);
+>> +	pmu->dev = &pdev->dev;
+>> +
+>> +	pmu->cfg = device_get_match_data(pmu->dev);
+>> +
+>> +	pmu->membase = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+>> +	if (IS_ERR(pmu->membase))
+>> +		return PTR_ERR(pmu->membase);
+>> +
+>> +	if (of_property_present(pmu->dev->of_node, "access-controllers")) {
+>> +		ret = stm32_firewall_get_firewall(pmu->dev->of_node, &firewall, 1);
+> 
+> Jiri is busy driving dev_fwnode() thorugh to get rid of all the directly references
+> to of_node.  Probably better to use that here from the start.
+> 
+> 
+>> +		if (ret)
+>> +			return dev_err_probe(pmu->dev, ret, "Failed to get firewall\n");
+>> +		ret = stm32_firewall_grant_access_by_id(&firewall, firewall.firewall_id);
+>> +		if (ret)
+>> +			return dev_err_probe(pmu->dev, ret, "Failed to grant access\n");
+>> +	}
+>> +
+>> +	pmu->clk = devm_clk_get_optional_enabled(pmu->dev, NULL);
+>> +	if (IS_ERR(pmu->clk))
+>> +		return dev_err_probe(pmu->dev, PTR_ERR(pmu->clk), "Failed to get prepare clock\n");
+> 
+> Comment doesn't match code. This is going to enabled, not just prepared.
+Indeed.
 
+>> +
+>> +	rst = devm_reset_control_get_optional_exclusive(pmu->dev, NULL);
+>> +	if (IS_ERR(rst))
+>> +		return dev_err_probe(pmu->dev, PTR_ERR(rst), "Failed to get reset\n");
+> 
+>> +}
 
 Best regards,
-Krzysztof
+Clément
 
