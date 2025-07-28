@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-747450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0FDB133FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:08:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D2EB13400
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB8A3A9E2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF26176314
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085EB2192FC;
-	Mon, 28 Jul 2025 05:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2217C218EA1;
+	Mon, 28 Jul 2025 05:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMhzU91K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+whWOiU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6326629405;
-	Mon, 28 Jul 2025 05:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D018290F;
+	Mon, 28 Jul 2025 05:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753679326; cv=none; b=f5+nLHpOo7e9cBXk5s+w0hJrPC4T9p/oFMN84nV/1bGOLkt15L++L505UK4AyY3voBGM8ogddRdolOprOsrkBY5R+G7I9Q6cEGnCMeFfJJSJTy4CC01ytbzGRyRt4vBJ9mmQ9vGAOr6j1HiVcuh/Ih3He4EsCVGTjC4P3WrXqDc=
+	t=1753679370; cv=none; b=ugaUPPVQGP2QdKBmk149ay80KKo/rjo6yLUkZEqCX63vyuoYUzNVjp4mZAVQxE7q2k0S6kN3lRw4DBoYDKQbzNKa8ihfpEw1duM2FlNLhgJgzeFFDvDarV+neAnmB3brSwBYgaMIKFmn4F4uStxXXy1ADd7qNTiBtFxBMqRNrJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753679326; c=relaxed/simple;
-	bh=yk7EIKaMA1+vT3aBsH4QJI9N/7S5/eB9802+31fXP7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Phu207Qiid2L1RzwvQuJ8q09AqZdRHFW+p2iQa5jtZe+1ZHcInY+YKP43R7am9+V7+iFksDuS2+qiNkhGS6c2TFLGjR6RFa7QsWeWmLTVdX8zwXSynoFyEFXpnsJucOA2dRnPotB0H+ZT6RwaY41QrJPBaCwm9YEnaHtKVFcpyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMhzU91K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90836C4CEE7;
-	Mon, 28 Jul 2025 05:08:43 +0000 (UTC)
+	s=arc-20240116; t=1753679370; c=relaxed/simple;
+	bh=T9lo0t6P/L6EZKk6AfmRjZYXVJYgMvSsSmmuIkFH45g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=L62aeJya6EkKH/0+lamXZf4ePalM8wAKYBlLec8zOyX566r3Dl+l0RUakUgpB3RWnhGQQlotQ07zQUgvrW5Z/Nw1U6yEyuCwugC/n1TTPQbWefWTqXpsYKERc821VjD1vS4gnoVhndeTS7WrV3Sy9ghLFCID2Wz4bIUtL0xooLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+whWOiU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0561C4CEE7;
+	Mon, 28 Jul 2025 05:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753679325;
-	bh=yk7EIKaMA1+vT3aBsH4QJI9N/7S5/eB9802+31fXP7Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BMhzU91KElqo+abIz6lBOndpxSEzIM4+5A9AH4ZWucm/Xj4xAPBN1upHkxsVTz/Iq
-	 5AhbGvEiibiv75bAhA0pcyX7E2ltSRjBBXg14ynbgwTBVkgWXSr4Q/iTcwZmDtJX/O
-	 PGuKvKBK0Ca4/Y/WbDrPmUHfFRCZY7SPERlwaEIfnG1ewEycxRaASGl64QCN1YfMlA
-	 g07OMc93M6z8Q51Dg9PFeZDJygBfdHgtVb2ahGa4Y00cX/Y7Eoh/IIsbSdSc+amJkB
-	 lAD/CihLWwk1A9AGqVeW6aCDnXjOWd0q8Y80XJUn4rR6EsaGEezaNgSP1wVujbruXR
-	 dFwr5Lhh5UFGw==
-Message-ID: <642df1ee-5e92-4f0a-bcdf-7e10dbc0d59b@kernel.org>
-Date: Mon, 28 Jul 2025 07:08:41 +0200
+	s=k20201202; t=1753679370;
+	bh=T9lo0t6P/L6EZKk6AfmRjZYXVJYgMvSsSmmuIkFH45g=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=a+whWOiUBkCLaHGeCZ6XV8zVeP/UdSNkBSXpz4A0DKjW9mRwFdgKCTHK4cMMid6qA
+	 IXdpnqSUtqVyFKA4LYv47lVy/YNyKR5/LHK2njzJeWos0UL5PjIuLpEa0FsLIsrapO
+	 +sXPKOfTSZb5713S+wfWyWdI0uuEz7aiw6Cm+l6dryeOssFj1wrmx8JDHuH66lTm3S
+	 yMhA2za1kY+nskSyQqIJdMOrKI9JlwpgzdJjoQHwa2a3DJ14AWmKKHpZ4y57AVincc
+	 HzUWZ4U/RaKX6aJ3stJ0xBQkO53m//w8h+oLtts/5HrcZVWVp8EcatZXQIbydHtzFe
+	 ripkUCHVp0KOw==
+Message-ID: <93c39b36-07c8-4883-bd23-7d0194c50a7a@kernel.org>
+Date: Mon, 28 Jul 2025 07:09:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: rockchip: add LinkStar-H68k-1432v1
-To: Erik Beck <xunil@tahomasoft.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250727-linkstarpatch_v4_6-16-rc1-v4-0-0dfa7aa06ec9@tahomasoft.com>
- <20250727-linkstarpatch_v4_6-16-rc1-v4-2-0dfa7aa06ec9@tahomasoft.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: rockchip: add LinkStar-H68k-1432v1
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Erik Beck <xunil@tahomasoft.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250724-linkstar-h68k-patchv3-v3-0-b9f87b7306e5@tahomasoft.com>
+ <20250724-linkstar-h68k-patchv3-v3-2-b9f87b7306e5@tahomasoft.com>
+ <20250725-muskox-of-authentic-gaiety-b8eda4@kuoka>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -102,27 +103,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250727-linkstarpatch_v4_6-16-rc1-v4-2-0dfa7aa06ec9@tahomasoft.com>
+In-Reply-To: <20250725-muskox-of-authentic-gaiety-b8eda4@kuoka>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/07/2025 02:03, Erik Beck wrote:
-> Add DTS.
+On 25/07/2025 09:26, Krzysztof Kozlowski wrote:
+> On Thu, Jul 24, 2025 at 05:37:59PM -0400, Erik Beck wrote:
+>> Adds dts for LinkStar-H68K-1432v1 board, using rk3568.  Also modifies
 > 
-> This device:
->   - Has not been supported previously in the mainline Linux kernel;
->   - Is a single board travel router made by Seeed, using an rk3568;
->   - Has four ethernet ports;
->   - Has four USB ports;
->   - Has WiFi (MediaTek MT7921e);
->   - Has a real-time clock (rk809)
-> 
-> Base commit:
->   - Commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494 (tag: v6.16-rc1);
+> Add DTS
 
-Drop entire commit msg, you are duplicating the binding. Instead:
-
-Add DTS for foo bar board, a travel router using Rockchip baz foo SoC.
+Add DTS and here goes the rest. Not "Add DTS full stop".
 
 Best regards,
 Krzysztof
