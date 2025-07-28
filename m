@@ -1,171 +1,164 @@
-Return-Path: <linux-kernel+bounces-747900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B4EB139FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:37:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A16B13A16
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 396591774EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:37:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEAE218960B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B4C25DCE9;
-	Mon, 28 Jul 2025 11:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C743125F781;
+	Mon, 28 Jul 2025 11:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcR81GNN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="VUoTQR5R"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCED21CA0C;
-	Mon, 28 Jul 2025 11:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B59EC4;
+	Mon, 28 Jul 2025 11:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753702621; cv=none; b=uQi9P2GuroVsXrb9ET0soxafCFKuNyZfGXL9mLwsXhQcIPhx699ls6JbUB/Ao56NMpLXfXOwohP4IMYcI5IWUJbj3sdsj2n1mDb1PHNeFfuH5gaMmDUPPY+9r5JN5acjKWTML/WdUM/hpLF4Q5Ff+1+jNFryHyykylpLctph1QA=
+	t=1753703735; cv=none; b=j1jKXGG0PVx9QaCcB/lRBbdn8PaRA+cKb8ugGOeTotLQ0gkjLwNFUv2rpCW/G00h84iN7NPKiaYdz8mNT6KcRlEyZEDHF22rZlXPekdbSz0upd+rRsmgQuW8Lpzia+HjNf2cdci4W5RUPv9ed7oJkyCZyxTCoL9X3La58TXTXfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753702621; c=relaxed/simple;
-	bh=2Jf+hnJN4REnGQk5VFSNOD1c2NERXFX5MULoUGyYvt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jHxP71+E4BfPTjMb82y45249CiqRRGNw9jjbIoOtU9Lmvh6OXAMbJ51hs4HY2kw4BSl/66nRMNRiNseNcjNcmC6OVogCbfBM5A25qL71SOhDf9qQFpszpHYjbQRHmdRZLefSPSaNy2CLV3iqLzvMANADP1isBH0Hw7xHHCYFSng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PcR81GNN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD842C4CEF6;
-	Mon, 28 Jul 2025 11:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753702620;
-	bh=2Jf+hnJN4REnGQk5VFSNOD1c2NERXFX5MULoUGyYvt4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PcR81GNNNE+91UM0GR5CNUwyFAu+Fl23f3VdiVf3BSudX3wKrHrlEzkLMd+NRZ1ZZ
-	 ctKNHOG/ZeL5CcmRvQRN4Hygl9YFAeyzjJ8vg2r91KcdVx1eYWFHQUtECw1S7oMChb
-	 zSmavO3sN6LlJS0OoWwh6RqcFI9Wz2t0MuWwtR/NzDby6EpwDMSceH3cY2flaSo5Mn
-	 yM0aKZiyQogu0VXpBKYryMLnhhlxa6wXA2I4gnZPWTt3Re3DQ3lbl/TEyYcfJyDkSt
-	 QdNCVMyhxHFJeJXTL0f4x5UbEIyLvHjLwOkcmjUOWZp1NUSczcjOXUP4+fktimuuT+
-	 rl4hHrowMemhQ==
-Date: Mon, 28 Jul 2025 12:36:56 +0100
-From: Simon Horman <horms@kernel.org>
-To: Charalampos Mitrodimas <charmitro@posteo.net>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com
-Subject: Re: [PATCH net v2] net: ipv6: fix buffer overflow in AH output
-Message-ID: <20250728113656.GA1367887@horms.kernel.org>
-References: <20250727-ah6-buffer-overflow-v2-1-c7b5f0984565@posteo.net>
+	s=arc-20240116; t=1753703735; c=relaxed/simple;
+	bh=fcbwt3G52MNMFEwRUpp6XzY8fadc4uM0f7svg+Tc4m0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=M22XmbD6fw3kxfERak065WscZzTGIJLARBcKn5DSLB/YxORC1BVX5nWqV22CQoalWP0cDdSCUvfi8h9oA5QGhA1RZSQFxuLOgQOgzVLnxNIai9FpDXdyR1iKKYwq6+jteIz0PkhwvSZYF6+ch1HUk5umpD9lZzI9DIYFrmdAU2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=VUoTQR5R; arc=none smtp.client-ip=43.163.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1753703426; bh=u+wviN/hLzceW2iD5s9fB1HpIjf+7vyOm5QzlyTZVcY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=VUoTQR5RrIa/uEDgKCl/aNOfQCfKfOHCF/JU1uERxf7bdQLsCR5X7R4b5uLH6Guna
+	 gYAinB1Vemcr//pQJKIpmX3VTMXp8iL/PPwElfnQj0K2nL5EGOctGJNDFQDhGxw5as
+	 vMq4cvknkrl3mEgvKDkxcMvC97kJyEzNYRnzxklY=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.231.14])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id 94699896; Mon, 28 Jul 2025 19:37:06 +0800
+X-QQ-mid: xmsmtpt1753702626t5x85pive
+Message-ID: <tencent_E34B081B4A25E3BA9DBBB733019E4E1BD408@qq.com>
+X-QQ-XMAILINFO: MdKyu+guYNCkFDxrwLRKyiNvIRw+VQ+MwHsKdohCAw3OeJzhatMqQYcb4RdcDj
+	 iIEggLLoxAzaxjOETm6snsoFmaTxHlsNftErvAX4CGzKM8jWngyEFmH8xR4aSHr1ZhTNmCYhixcv
+	 f4nvdbAN7e4w8NmmG7h0R2VFP0j1lCqQEOapi8FA3g3GbmHyWEKi6D9NYOEhZaXSh0CXcKNnrEck
+	 kW6j2qO8D8RpkOZiL0K9rq4yZ7PKqvrfinEl1zsCIedD3Jdi+NEBdFFq2WrFzr4lqzdEd1pbSA93
+	 vknROccbh1UlJ/grTSo1f+nl5/YEP2RDJ+f/y3TuQ/dS/SBEXyNi6w9CiNaMz2E/LHmNznNlRLdb
+	 aocU5ax7yHh7onm0WW2MbowMW2p4AdKOXaltS6HTktgzYCbLygHXnIPHsjoDnwIGu6oSNEPyKbJJ
+	 fZ6rY/tjUzmpTOwRR7X+0QnOLE5jCHEQpqpwfjYJpC5kBtytgWjGdwEwmP+PywbtafhjzW9eQqyP
+	 5KwFwOpOHbxqF/LKp2NfKEog54Qk9ORZGuf3ZPLag6rEDIG793b76zUYfbvonM0YOXQod10F/v25
+	 WfCFg9xSli8xX1l9Hk+Xu3g5nt3eCpJBmYM4A5RYzfEUE9mJ86BuNiTwYVYD+8glqWll/os6fRjb
+	 lR1OP66Wy+hCXZof9cOwdYb/hwtA/aOcHBjMfvd9BaEC1JwDeT1DYhe40cFjhT4ReKBkihHqyIEr
+	 BVpGO05LG+l7FCq8XRNsBXFL5pBf6EWK+XRPsQMXrCe0lEvoDFLJH8mA/WbzCItRMttFz0mAQu9r
+	 BZobdeDCyU0oLufXHAfQECQbgobbjMRnTtJw2y/MJNmdPEEFF//Y7hEox4kTmJqJ1yBHa/FMAZEJ
+	 25npiA7QXRzihMnxH9UCGKS5nrdiMx+t+nyM4QrV9cMsk+Av858O/oFCu0JPmMhbQzdDP8Mwi+Vq
+	 w+grHw2/a1mZVxtv+XdNyV0icj+Ugb/hBoNO0Hj9lLhaNpdbLw9A==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com
+Cc: hirofumi@mail.parknet.co.jp,
+	linkinjeon@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sj1557.seo@samsung.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] fat: Prevent the race of read/write the FAT16 and FAT32 entry
+Date: Mon, 28 Jul 2025 19:37:02 +0800
+X-OQ-MSGID: <20250728113701.2185548-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <6887321b.a00a0220.b12ec.0096.GAE@google.com>
+References: <6887321b.a00a0220.b12ec.0096.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250727-ah6-buffer-overflow-v2-1-c7b5f0984565@posteo.net>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 27, 2025 at 09:51:40PM +0000, Charalampos Mitrodimas wrote:
-> Fix a buffer overflow where extension headers are incorrectly copied
-> to the IPv6 address fields, resulting in a field-spanning write of up
-> to 40 bytes into a 16-byte field (IPv6 address).
-> 
->   memcpy: detected field-spanning write (size 40) of single field "&top_iph->saddr" at net/ipv6/ah6.c:439 (size 16)
->   WARNING: CPU: 0 PID: 8838 at net/ipv6/ah6.c:439 ah6_output+0xe7e/0x14e0 net/ipv6/ah6.c:439
-> 
-> The issue occurs in ah6_output() and ah6_output_done() where the code
-> attempts to save/restore extension headers by copying them to/from the
-> IPv6 source/destination address fields based on the CONFIG_IPV6_MIP6
-> setting.
-> 
-> Reported-by: syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=01b0667934cdceb4451c
-> Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
-> ---
-> Changes in v2:
-> - Link correct syzbot dashboard link in patch tags
-> - Link to v1: https://lore.kernel.org/r/20250727-ah6-buffer-overflow-v1-1-1f3e11fa98db@posteo.net
+The writer and reader access FAT32 entry without any lock, so the data
+obtained by the reader is incomplete.
 
-You posted two versions of this patch within a few minutes.
-Please don't do that. Rather, please wait 24h to allow review to occur.
+Add spin lock to solve the race condition that occurs when accessing
+FAT32 entry.
 
-https://docs.kernel.org/process/maintainer-netdev.html
+FAT16 entry has the same issue and is handled together.
 
-> ---
->  net/ipv6/ah6.c | 24 +++++-------------------
->  1 file changed, 5 insertions(+), 19 deletions(-)
-> 
-> diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
-> index eb474f0987ae016b9d800e9f83d70d73171b21d2..0fa3ed3c64c4ed1a1907d73fb3477e11ef0bd5b8 100644
-> --- a/net/ipv6/ah6.c
-> +++ b/net/ipv6/ah6.c
-> @@ -301,13 +301,8 @@ static void ah6_output_done(void *data, int err)
->  	memcpy(ah->auth_data, icv, ahp->icv_trunc_len);
->  	memcpy(top_iph, iph_base, IPV6HDR_BASELEN);
->  
-> -	if (extlen) {
-> -#if IS_ENABLED(CONFIG_IPV6_MIP6)
-> -		memcpy(&top_iph->saddr, iph_ext, extlen);
-> -#else
-> -		memcpy(&top_iph->daddr, iph_ext, extlen);
-> -#endif
-> -	}
-> +	if (extlen)
-> +		memcpy((u8 *)(top_iph + 1), iph_ext, extlen);
+Reported-by: syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=d3c29ed63db6ddf8406e
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/fat/fatent.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-nit: The cast seems unnecessary.
-
->  
->  	kfree(AH_SKB_CB(skb)->tmp);
->  	xfrm_output_resume(skb->sk, skb, err);
-
-I am somewhat confused about both your description of the problem,
-and the solution.
-
-It seems to me that:
-
-1. The existing memcpy (two variants, depending on CONFIG_IPV6_MIP6),
-   are copying data to the correct location (else this fetuare would not work).
-2. Due to the structure layout of struct ipv6hdr, syzcaller is warning that
-   the write overruns he end of the structure.
-3. Although that syzcaller is correct about the structure field being too
-   small for the data, there is space to write into.
-
-Are these three points correct?
-
-If so, I don't think it is correct to describe this as a buffer overflow
-in the patch description. But rather a warning about one, that turns
-out to be a false positive. And if so, I think this patch is more of
-a clean-up for ipsec-next, rather than a fix for ipsec or net.
-
-Also, if so, I don't think your patch is correct because it changes the
-destination address that data is written to from towards the end of
-top_iph, to immediately after the end of top_iph (which is further into
-overflow territory, if that is the problem).
-
-I'm unsure of a concise way to resolve this problem, but it seems to me
-that the following is correct (compile tested only!):
-
-diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
-index eb474f0987ae..5bf22b007053 100644
---- a/net/ipv6/ah6.c
-+++ b/net/ipv6/ah6.c
-@@ -303,10 +303,10 @@ static void ah6_output_done(void *data, int err)
+diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
+index a7061c2ad8e4..0e64875e932c 100644
+--- a/fs/fat/fatent.c
++++ b/fs/fat/fatent.c
+@@ -19,6 +19,8 @@ struct fatent_operations {
+ };
  
- 	if (extlen) {
- #if IS_ENABLED(CONFIG_IPV6_MIP6)
--		memcpy(&top_iph->saddr, iph_ext, extlen);
--#else
--		memcpy(&top_iph->daddr, iph_ext, extlen);
-+		top_iph->saddr = iph_ext->saddr;
- #endif
-+		top_iph->daddr = iph_ext->daddr;
-+		memcpy(top_iph + 1, &iph_ext->hdrs, extlen - sizeof(*iph_ext));
- 	}
+ static DEFINE_SPINLOCK(fat12_entry_lock);
++static DEFINE_SPINLOCK(fat16_entry_lock);
++static DEFINE_SPINLOCK(fat32_entry_lock);
  
- 	kfree(AH_SKB_CB(skb)->tmp);
+ static void fat12_ent_blocknr(struct super_block *sb, int entry,
+ 			      int *offset, sector_t *blocknr)
+@@ -137,8 +139,13 @@ static int fat12_ent_get(struct fat_entry *fatent)
+ 
+ static int fat16_ent_get(struct fat_entry *fatent)
+ {
+-	int next = le16_to_cpu(*fatent->u.ent16_p);
++	int next;
++
++	spin_lock(&fat16_entry_lock);
++	next = le16_to_cpu(*fatent->u.ent16_p);
+ 	WARN_ON((unsigned long)fatent->u.ent16_p & (2 - 1));
++	spin_unlock(&fat16_entry_lock);
++
+ 	if (next >= BAD_FAT16)
+ 		next = FAT_ENT_EOF;
+ 	return next;
+@@ -146,8 +153,13 @@ static int fat16_ent_get(struct fat_entry *fatent)
+ 
+ static int fat32_ent_get(struct fat_entry *fatent)
+ {
+-	int next = le32_to_cpu(*fatent->u.ent32_p) & 0x0fffffff;
++	int next;
++
++	spin_lock(&fat32_entry_lock);
++	next = le32_to_cpu(*fatent->u.ent32_p) & 0x0fffffff;
+ 	WARN_ON((unsigned long)fatent->u.ent32_p & (4 - 1));
++	spin_unlock(&fat32_entry_lock);
++
+ 	if (next >= BAD_FAT32)
+ 		next = FAT_ENT_EOF;
+ 	return next;
+@@ -180,15 +192,21 @@ static void fat16_ent_put(struct fat_entry *fatent, int new)
+ 	if (new == FAT_ENT_EOF)
+ 		new = EOF_FAT16;
+ 
++	spin_lock(&fat16_entry_lock);
+ 	*fatent->u.ent16_p = cpu_to_le16(new);
++	spin_unlock(&fat16_entry_lock);
++
+ 	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
+ }
+ 
+ static void fat32_ent_put(struct fat_entry *fatent, int new)
+ {
+ 	WARN_ON(new & 0xf0000000);
++	spin_lock(&fat32_entry_lock);
+ 	new |= le32_to_cpu(*fatent->u.ent32_p) & ~0x0fffffff;
+ 	*fatent->u.ent32_p = cpu_to_le32(new);
++	spin_unlock(&fat32_entry_lock);
++
+ 	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
+ }
+ 
+-- 
+2.43.0
 
-I would also suggest adding a helper (or two), to avoid (repeatedly) open
-coding whatever approach is taken.
-
-...
 
