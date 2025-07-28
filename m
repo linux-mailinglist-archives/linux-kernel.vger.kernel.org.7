@@ -1,77 +1,140 @@
-Return-Path: <linux-kernel+bounces-747378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64B2B13328
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:50:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8331EB1332A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 942A71891B94
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:50:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A893E17441D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B2E1F7904;
-	Mon, 28 Jul 2025 02:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8F61F5434;
+	Mon, 28 Jul 2025 02:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oPQLvFP3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PsPxrXbB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121C02EAE5;
-	Mon, 28 Jul 2025 02:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320047404E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753670991; cv=none; b=VWijXYAhQRi6i+Oa0hwwhvZSUncrUMklGzhdHw1765R+mekGOK+rEfGSRzwp0gpi+ZVBsrNUY3SnOLIjrNIIjX8L4X0mxdrjubnwcLek1ywMSOaxzmtsXNpT0mBaUtztH8N8fd1j273jK2pRNdXOKV4koJAxijdkj7nJQBXBcTs=
+	t=1753671084; cv=none; b=iWXuvnf2ev6l8EPE4Ly2ZnWJwuMQljBCIXtfHvpfO/IEiPp4HGzqthnCnlbefhHKrtLuIFKvD+y7zBEPecxAx+gDXila14GuXuw2X3JXSwSmmy7m+pMSh3Yf+QTvKtCIoWCPlwCLTZHTmOuoC0Xol468aog6fzFumtmrOrIT90U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753670991; c=relaxed/simple;
-	bh=AVuRZOvYZsiFfwU6cAIHhxNEFaYF8i+dnfrjAK3EgsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g9WD6fLJcQQ6QuLo7fNMWm1XuoT7sAwLsMDAhseYKrdPyxgsH0Dp9kDS3fZ32iM1bVhgkRorcHKJmztVdcz8wnjbUZKl/NpUhzkjDdIJWtRwmjp4AgLc9ZQc2QZiuzqRyvfgIAT9eowN5JuM/WeG6Yku0M1tginqXw3hV6xEOjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oPQLvFP3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=as/pGkfaKJZ4VchcYP1ApYHiu/TLHPFvOgtxMx7Fe6k=; b=oPQLvFP38Eb+Qifd2IydHclM2/
-	F7Quz3N0r9OT54iE+OzE8LA/ZQ+90hyp1bSbA8Tq3IpbntFNshji7Qe/Esu5A3L1WN6HSiqWAi+YZ
-	QNU8eB0FFqjTQvDuv7wf/9OleEljzvLYJXifdMk7sO/0pEF6/DWHjp5gpiO6DSZzzFxs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ugDvg-00337A-0n; Mon, 28 Jul 2025 04:49:32 +0200
-Date: Mon, 28 Jul 2025 04:49:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tian <27392025k@gmail.com>
-Cc: irusskikh@marvell.com, netdev@vger.kernel.org, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: atlantic: fix overwritten return value in Aquantia
- driver
-Message-ID: <c42fc24b-2cd5-4598-a4bf-b088325c3d14@lunn.ch>
-References: <20250727231750.25626-1-27392025k@gmail.com>
+	s=arc-20240116; t=1753671084; c=relaxed/simple;
+	bh=Ka6HpcbV3v4iMb9TmNQTjH+8ndDpD9uqux9pQEtKHHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=D6dTm3hVhUVgrrH3ZU4BX2in2dq5kU3dBUY1+ueCuAw3QULwgvMRn3Bk8Bi4g/L7fPyoI7/p5Fg+L2u52wxQQin6yhaf5ILDN5SNKxyPle6OW5UVaWXyDmaQBCURKNaGatsmzu5OpSPX4jAsnciWVbql6Xv/Ebs6LYh/RT2VrHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PsPxrXbB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 447BFC4CEEB;
+	Mon, 28 Jul 2025 02:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753671082;
+	bh=Ka6HpcbV3v4iMb9TmNQTjH+8ndDpD9uqux9pQEtKHHs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PsPxrXbBdGMIHEzpyoCyyxn+Zjb7ljzpblXmSkEP0ehpURkfbCBQ4gNodymblMm0A
+	 4d5gR94vKhoaPeBro7pu2oDwgpmVLcRDyk5lwI+TUFd/3ww/PJ3SWsnlkMt46pxry+
+	 81L4J5Nt2PLk9ZdClQuEvrVIOvcZ2k9nzabcyY31mc2ukOq73RksJE1V/a2y/fochA
+	 e8SI9qD4KMV5bfNjdXfCkYH27c23HjxBBdE/NfV6yQBaAl59QrbWtOUG7D2fIXHgv4
+	 9CWc9SL9laRqrHmy1xbdkD/Yjc68ry3+tkkfus/bnGs1+ygM4lwK7VwM3BAmEvLiv6
+	 3qKVQ0tyGycuw==
+Date: Mon, 28 Jul 2025 10:51:16 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+	Chao Yu <chao@kernel.org>, Bo Liu <liubo03@inspur.com>,
+	Hongbo Li <lihongbo22@huawei.com>
+Subject: [GIT PULL] erofs updates for 6.17-rc1
+Message-ID: <aIblpKzSWEEYwQ06@debian>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+	Chao Yu <chao@kernel.org>, Bo Liu <liubo03@inspur.com>,
+	Hongbo Li <lihongbo22@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250727231750.25626-1-27392025k@gmail.com>
 
-On Sun, Jul 27, 2025 at 04:17:50PM -0700, Tian wrote:
-> From: tian <27392025k@gmail.com>
-> 
-> In hw_atl_utils.c and hw_atl_utils_fw2x.c, a return value is set and then
-> immediately overwritten by another call, which causes the original result
-> to be lost. This may hide errors that should be returned to the caller.
-> 
-> This patch fixes the logic to preserve the intended return values.
+Hi Linus,
 
-Please include in the commit message why it is safe to OR together two
-error codes.
+Could you consider this pull request for 6.17-rc1?
 
-	Andrew
+In this cycle, metadata compression is now supported due to user
+requests [1].  It can be useful for embedded use cases or archiving
+a large number of small files.
+
+Additionally, readdir performance has been improved by enabling
+readahead (note that it was already common practice for ext3/4 non-dx
+and f2fs directories).  We may consider further improvements later to
+align with ext4's s_inode_readahead_blks behavior for slow devices too.
+
+The remaining commits are minor.  All commits have been in -next and no
+potential merge conflict is observed.
+
+[1] https://issues.redhat.com/browse/RHEL-75783
+
+Thanks,
+Gao Xiang 
+
+The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
+
+  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.17-rc1
+
+for you to fetch changes up to df0ce6cefa453d2236381645e529a27ef2f0a573:
+
+  erofs: support to readahead dirent blocks in erofs_readdir() (2025-07-24 19:44:08 +0800)
+
+----------------------------------------------------------------
+Changes since last update:
+
+ - Add support for metadata compression;
+
+ - Enable readahead for directories to improve readdir performance;
+
+ - Minor fixes and cleanups.
+
+----------------------------------------------------------------
+Bo Liu (OpenAnolis) (2):
+      erofs: fix build error with CONFIG_EROFS_FS_ZIP_ACCEL=y
+      erofs: implement metadata compression
+
+Chao Yu (2):
+      erofs: do sanity check on m->type in z_erofs_load_compact_lcluster()
+      erofs: support to readahead dirent blocks in erofs_readdir()
+
+Gao Xiang (6):
+      erofs: get rid of {get,put}_page() for ztailpacking data
+      erofs: remove need_kmap in erofs_read_metabuf()
+      erofs: unify meta buffers in z_erofs_fill_inode()
+      erofs: refine erofs_iomap_begin()
+      erofs: remove ENOATTR definition
+      erofs: add on-disk definition for metadata compression
+
+ Documentation/ABI/testing/sysfs-fs-erofs |  10 ++-
+ fs/erofs/Kconfig                         |   2 +
+ fs/erofs/data.c                          |  64 ++++++++------
+ fs/erofs/decompressor.c                  |   2 +-
+ fs/erofs/dir.c                           |  17 +++-
+ fs/erofs/erofs_fs.h                      |  15 +++-
+ fs/erofs/fileio.c                        |   2 +-
+ fs/erofs/fscache.c                       |   3 +-
+ fs/erofs/inode.c                         |  21 ++---
+ fs/erofs/internal.h                      |  40 ++++++++-
+ fs/erofs/super.c                         |  23 ++++-
+ fs/erofs/sysfs.c                         |   4 +
+ fs/erofs/xattr.c                         |  56 +++++++------
+ fs/erofs/xattr.h                         |   3 -
+ fs/erofs/zdata.c                         |  20 +++--
+ fs/erofs/zmap.c                          | 140 +++++++++++++------------------
+ 16 files changed, 255 insertions(+), 167 deletions(-)
 
