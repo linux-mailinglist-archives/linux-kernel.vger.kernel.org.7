@@ -1,466 +1,283 @@
-Return-Path: <linux-kernel+bounces-748216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9BFB13DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:15:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89064B13DFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 269E47A4703
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6964F17FBA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4660626FA76;
-	Mon, 28 Jul 2025 15:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9159A271455;
+	Mon, 28 Jul 2025 15:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IXQDuXwZ"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XqKxQW23"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8A2635
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753715692; cv=none; b=XXFB4B5DSsXG2ENhCz1AJ+rAhOlpMx//wT99oLvThHTb1fz8wYNoFpO36eSs7Zitx+tvcWbNC5j2pHAYh/b5w88hFCHlbnoheCgLsSsTOokySYzN8TUDzj2r27VFV8mEfv8t6Cyh/1c5r4O7LXUHa08dNozTX9O2LS2AqMO4oUQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753715692; c=relaxed/simple;
-	bh=3uOVGmNwgK5gxVbeDgyOLkESUku60HgwCyvFC1QrHCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ClghFvCSh4XY5m8IZjdY+NRWxHG2IxjuuA0uMoBaG/gAN70ZkAse1q2nAl+a4pgtW4/kcJRIAjtPYBHIolFzW6pDFOeymM2hszNwj4vhkdWnQymdvHUFhUZ2BhG8plV5v/VwXeeSWAsnfgBrmhGyNVA0XAnHA3ZcHl/wJpN7Hec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IXQDuXwZ; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 28 Jul 2025 11:14:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753715677;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=Vjd+rO5hKnZBaLM1KBwy76vbP9gNplEkFV26xBGir74=;
-	b=IXQDuXwZWbKBcT7spXwSGyfzFd3sQ7WoU0PHQ7DjfbdoMQlNMT+/HtCqX1qoDP0gX9RNEV
-	8OFN+uH5ungPjk12FO9NgFFk7Ff/SUfw9n66bTAg9UDlobz1tLQYdp9R6mkvi13VTEJEnj
-	U7YuK+yHs1oxQZfSA+wkRWcsX8T4vOc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB67327057B;
+	Mon, 28 Jul 2025 15:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753715694; cv=fail; b=Tr53/1JQzuetA8DpwbZe5FGRG1ZGdi0PCmAhAhwPOCZSQzjRBO6aDR8eyzPvGfDKuOqO/X4ZdOuSUuDjJFp5G+2egviP/EWHQ4erlvzMKbDtppZndPyHqu6RxALGdRwH1Z35bOfLRYwgNzxq9nPCu8tEOWP2gZ0zwIXKa0zlxyM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753715694; c=relaxed/simple;
+	bh=hXn9ABqj9gICajmmuOfZXb/rNrZPw1YjUSJfrctBJwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fBBhTF+VALBsSajtXbvBB1VZ/wqzlL27mn17zvF1YJliLzltxwG+vmL6YI81GboFhz000K9nkgS2Pw25sk3w0CGMsXYv2w12SdBroa9n9oDSEg9Hr5cCr9yTEHc7L2Kbg5iYjRtZQt2XsfR1HbaTBUBokYsTio1pqF1EXsw5uRo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XqKxQW23; arc=fail smtp.client-ip=40.107.220.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cITaZNs8GOoi5PC0einzu9P14Ngec4mdKhAwmyhrFE9U/TR4rgrkoLB0WiNKgagkdTZdXjNTWmqyhYOWlx8/dONUDFPkvmYuJYwj6Wq6LNV0gemsukiWNgb07e4HjoVfzr5El48AHcuegLRYkPxw6iIQiGqlgM1uMm0ZYHHgldUfUqEMSmfvsqTgrEzqReKNJ9vDsU0Tx+o9sUgHAZGuSdbxtrtc3n19HSf1KyWO2HKZdxT7sCbdI5jdavp5BQwyWbshreE3MCHaIF6hRJX3roM5Wz6/2lUFGbNhhZtMgJQNOeVoOkMDJBeb+eYh6bvSXS8rvRMyAcjF/79NjxR2OA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KHr9IdV2Fbm56uRCFV3FNIPwHTknjLYDX36my8LNnSI=;
+ b=wXbhPWipld7KoUvhv5cRWoO1YWxnydHhNsNdIei4cCCKAOMSOvhuqjbHinqfHE5mCbdjFmYXIG9w/dlkhDQdbVtPWbgNX05UoF6dLdBJ6ExaF1k7bACWTv3Bm2ITYLBw+6bdSYpyyQZ0oXow6ngJA0mnvE6Ndx98JZmtK8sAUZw8S/pBiC4EwTQTRg7nB0IhEfDzQ9vDFkKn+pgnKeTBhXpT4Dkj9Bl9flzJicmYxAIdy0yb3Tuhy9cCI5msLe7H0x4qkTEG66rt1C/oOyCnL7KsmsCnkkn1JCqbW1duaiLatkY76MpOhRoD2r4lVZ/tUUMGAqDvKwp+Epdzud0WUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KHr9IdV2Fbm56uRCFV3FNIPwHTknjLYDX36my8LNnSI=;
+ b=XqKxQW23olb42tUy1i/Aux+cpgyxKqjtEft7sa6oEPTp73gBkwNHzoTrGQmlXSIV674sN0tu41PGZ6Krk5wB3F6FELDAg97EdJp3yo7hwqty+JyASXv4e033ZewpgBN7S9QjPZKGrI3y+wWM2P/UbY/hnmxjWKlo9XiJsVIrOlk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ SA3PR12MB7997.namprd12.prod.outlook.com (2603:10b6:806:307::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.26; Mon, 28 Jul
+ 2025 15:14:49 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8964.025; Mon, 28 Jul 2025
+ 15:14:49 +0000
+Date: Mon, 28 Jul 2025 11:14:40 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: linux-edac@vger.kernel.org, bp@alien8.de, john.allen@amd.com,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs changes for 6.17
-Message-ID: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+Subject: Re: [PATCH 2/2] EDAC/amd64: Incorporate DRAM Address in EDAC message
+Message-ID: <20250728151440.GB33292@yaz-khff2.amd.com>
+References: <20250717165622.1162091-1-avadhut.naik@amd.com>
+ <20250717165622.1162091-3-avadhut.naik@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717165622.1162091-3-avadhut.naik@amd.com>
+X-ClientProxiedBy: BN0PR08CA0021.namprd08.prod.outlook.com
+ (2603:10b6:408:142::16) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SA3PR12MB7997:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31b70a09-b2b7-4fbc-7e79-08ddcde97e51
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kaOKYJWdFOoaTMUo6AcppF9yhW/ptPaaAhBY35uIX09SBzXDWum/W2wDYUf+?=
+ =?us-ascii?Q?Cu0WLF6GduVO0mUquC5z/rw1m0d2axPiMb6pN9VUq52hgrPCO6hPKC3S1DUT?=
+ =?us-ascii?Q?A1BYQzarn1VUJYaLpen5mtkUwO8DBGxNLAGyNlfM3te9h/YGjQSSJhq4yIhY?=
+ =?us-ascii?Q?iA3eImLvfkT08L0khtBa6C+/Dj4RSd+/ft7v3RocGJQ+qusQtUmc8YO9CSCi?=
+ =?us-ascii?Q?5HfUuCzFjgTGfqXt9cRI6Wdf+Q3vtLxHq9L+hElC8ds0saxnKrS5352/eCFu?=
+ =?us-ascii?Q?gtufsc3hb4FIVewbG/dYxm54VLQJrK/b45B7VrhnF5Oa6i86m3Hv74tjLJ+F?=
+ =?us-ascii?Q?wVMcjzOcL14xCiSvq3qcvdxnR3ZnYbVFcGYIkf/zO96cYpcGrnRW+ggHaYnH?=
+ =?us-ascii?Q?pYaXz8wM/jEmOzBKyUw2ob8cfJLH/aT9PoNWXJ860wsWLLdG6E2CmbRbBDbG?=
+ =?us-ascii?Q?h12+/z9x8aBrIYRp5xEX3RUeKgPI4KcxgIPfqVp44fDfE5gDriDfLz6RIfMP?=
+ =?us-ascii?Q?IQ5LVmpwhQ4t6aOE8LV6PMeP5T+78tJOBU1n+6AqitVuzEa6JiW9NoijPZej?=
+ =?us-ascii?Q?Aq4jl3f0zQ3AJxbO5z5SvKTesl5doHwE/OhXgF0ZXzqFr86EYxEzBuyUpYxM?=
+ =?us-ascii?Q?Fdpf7RV91wXzkkiTt+AJ2vU2O011Fa2hAkQw8ZBnbOY0T8h7mcpHchLoLRAf?=
+ =?us-ascii?Q?dK8sRa7ieHO0HAq9h8u2C4buMXe2inwiT6c5r3HN5Gew9OWfYm6x11WNYw+o?=
+ =?us-ascii?Q?zKR9FrX/wyIuqH/llKpEzuoW3+TFz5pe5iGgJn8Fq6lORO4UrGsppr61M3eT?=
+ =?us-ascii?Q?f4uzYJIM6ve231jOjNDkRfy2TDV2GE1LSC2Z7UyZm6oWMFkrvASVdEnMaYUv?=
+ =?us-ascii?Q?/7c9NB4/SYPK4ZEYXH/IJ2cCIz5Shd6HmCCdMDalYZCWSn61DTc9zVqxZUaP?=
+ =?us-ascii?Q?bmlh+VHziIJzQhwmix29JEMn9EmKDUMumeozS3Teso6hC3lMCNCD1PweNhot?=
+ =?us-ascii?Q?Zpp9M49D8pDDcR6Ra/SdaYkH9RROvQy1abBuL/dejmnicTeZzLBPBB9RplgH?=
+ =?us-ascii?Q?baOVCZ8/L2+bhMzHO15npvuk3PFWiUXVCmfVFqOCS9BNxdAUjQVp1sWiUQeZ?=
+ =?us-ascii?Q?Lisjr93+jkjBQHP31wQ4CMfk4Hm8UWc5gnkSdAeFgPilw0+O24Qabadhqj1n?=
+ =?us-ascii?Q?eV1IdZlM4/65+WMnCW2kiHVom9ayyznGQlXNaYe9hqTpHEft4tSCGzxiUeVw?=
+ =?us-ascii?Q?vfDT3lkGfbqx8WVRDpULz0uAU0YjeHTqkoF3S26B1bg4XfP1P2/7Y6tGlI9/?=
+ =?us-ascii?Q?OS02XHq8YRBPz8san+KQPJIgSTZf/DyZyEt1zABYZY56llTkZnt28XzeRENx?=
+ =?us-ascii?Q?KS5JJDDeO+BUjU8B5BOeLqDUabuQwEFwDM+GQgjn7biIzscTVMOLdQwbM3ep?=
+ =?us-ascii?Q?+6ct7VOviJ4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DqikBcW+mezFubqovoyr2Tqw5CDQx8hpVxC+Q9Nw8fByI5d9d32gdomeaXZO?=
+ =?us-ascii?Q?AGWgLKXLgpqAw12/Znb2C1q5JSk0txYjNSXjd1b/sp9Uk9qpxZ/JTp828o/N?=
+ =?us-ascii?Q?KpfZpIJFE34PEs4ZJPP2did58TWcTMkxfstKQ/Z9rhamMwVfLIEKcAuzbjtF?=
+ =?us-ascii?Q?JlQVETn+7tLSIjhVHy3GYe3bfKOk1Oa1i5gwDF1k5YAw/rXKgUPC9/JqDaRs?=
+ =?us-ascii?Q?94GbZ0UEcDg1iuHEm/CFTVYD4kb9AtHm+yyWy7iE+zcCKPlQhM6r9tWMh088?=
+ =?us-ascii?Q?LRtV8ONfpBVVapM/QFqwgKFbTvk4/MsRwnD4C3ltPbL6RCkCI9hng9cdOEcd?=
+ =?us-ascii?Q?DWvBXiH5baTMGi1MVpCt7xmtS+QygjAK+ItRKgclo0jdAJ9x0Tp7VN1Uv3z0?=
+ =?us-ascii?Q?ZQxRs7gfl+cnYAabSkZtCgxKQjs1QOuQfuuljJrcUP33jG43QRX9kOP44Gz+?=
+ =?us-ascii?Q?HyiVIqHU8eA1/cAapDtVnrQSVtRiPrK7ql0ufXWEWnaexhKcW7e0TyQOCLu2?=
+ =?us-ascii?Q?SYeH2CU6xX5YIuW0Wbm5KrqnOV3ewYUKDAyCUlpvesQ61bgcsCC8rUqS4IUu?=
+ =?us-ascii?Q?l+/SERDDYkIEv9LbeCT0GYTP0wfxFvKsAdphjJ1O4bFS544dL+cZR3Kp4sSa?=
+ =?us-ascii?Q?06QpOuDOYFAIeEZ6gJpZYoyW8CtQBd6r11MD7pAqJso9EmzuJEEWYkC1A7Po?=
+ =?us-ascii?Q?eA5ogwZezTynokrqdM6ebfXMCSzC4gLzhMXdIP3SnNL6bbOpnQpotplCvtz3?=
+ =?us-ascii?Q?iZfnAhn+o75h+zAASFG4odmH+OB4lvb+MAXm8amK6BTKqcnmQJ7Qft/0yEkn?=
+ =?us-ascii?Q?5HwVilErRqYGil0FhGGaiYZ34se9PgT0VYnB4YRggqyQlbJPTrVuWtqIcXoU?=
+ =?us-ascii?Q?SBmb7EacgoDHy8U2GyUyRjFJxJ4HJqraEXHf6vhRw0XGMqW1xtYRi3BMvIw1?=
+ =?us-ascii?Q?48NUvDhspr6zNmcSVCjjP8L583/UNaZ7r5J6NAot7S0NIvope4pTi5FNaB7j?=
+ =?us-ascii?Q?hUpgCAXspLDcYZb2UZaExQFiHrVfCfsxMa88A5r3Xh3Ip7buUohR9EicZ3j5?=
+ =?us-ascii?Q?TbXvJCPG3y+GkFzq1AneczjGJZTf+8Svbx4vmyr7q5oPQ+cQN7Jq/zVdzNWM?=
+ =?us-ascii?Q?mCa8pQbeYWv1a8uzc3vA8OycJa1GXTVB1PZatrWH8R1ZcKqJ/JoQynzCz8/s?=
+ =?us-ascii?Q?+faywy8pDXVVbqoU0H9KiTFdqY+P2TLF23hzIqm7RIU/wzMcGwGMoKb2+ZnD?=
+ =?us-ascii?Q?I132gdiqyGHADycLVZTv7Cq3u4n25Pl7jkA5xGQeRScjjaSs1kVDAYJ3FlMg?=
+ =?us-ascii?Q?urYGf/xTc2CiXM4TIEHtO+1soYxq2Kd7v0UzoiqaWhYG6UoF4TONKAWa+XbX?=
+ =?us-ascii?Q?e9go9ljd46O2IAUI9SRFJcDeAyST2gSJTc3Z4CxuItrmqtXo3qgvLPfXVPej?=
+ =?us-ascii?Q?XNC0JVAMEUWY6I+3oDqo5bpDIZCFMc/km9jmV3H2RgpExp3s1+/0MyMk1oko?=
+ =?us-ascii?Q?CubvhbR3FBFLC0oFIZAmk27WsNkU5Wm6v6ATEYtA17ot4OTJnjFW1FWFnQFK?=
+ =?us-ascii?Q?5WuoLrLg8EgrtWIngAq7DSl1ecYM/GDOHI4DHCAd?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31b70a09-b2b7-4fbc-7e79-08ddcde97e51
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2025 15:14:49.0824
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZD0QWMz2LD2QDuuOopPrjEgSP9dSKbMrqsRuWCBhqR2IwSu7l6KK8AwkUoY6JuQHGosgZMNnjRUSrqG1DoblXg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7997
 
-Schedule notes for users:
+On Thu, Jul 17, 2025 at 04:48:43PM +0000, Avadhut Naik wrote:
+> Currently, the amd64_edac module only provides UMC normalized and system
 
-I've been digging through the bug tracker and polling users to see what
-bugs are still outstanding, and - it's not much.
+The amd64_edac module provides data for the EDAC interface. This is only
+the system physical address (PFN + offset). The UMC normalized address
+comes from MCA error decoding.
 
-So, the experimental label is coming off in 6.18. 
+> physical address when a DRAM ECC error occurs. DRAM Address on which the
+> error has occurred is not provided since the support required to translate
+> the normalized address into DRAM address has not yet been implemented.
 
-As always, if you do hit a bug, please report it.
+I don't think this last sentence is necessary.
 
--------------------------------
+> 
+> This support however, has now been implemented through an earlier patch
+> (RAS/AMD/ATL: Translate UMC normalized address to DRAM address using PRM)
+> and DRAM address, which provides additional debugging information relating
+> to the error received, can now be logged by the module.
+> 
+> Add the required support to log DRAM address on which the error has been
+> received in dmesg and through the RAS tracepoint.
 
-The following changes since commit c37495fe3531647db4ae5787a80699ae1438d7cf:
+These last two paragraphs could be something like this:
 
-  bcachefs: Add missing snapshots_seen_add_inorder() (2025-07-24 22:56:37 -0400)
+"Use the new PRM call in the AMD Address Translation Library to gather the
+DRAM address of an error. Include this data in the EDAC 'string' so it
+is available in the kernel messages and EDAC trace event." 
 
-are available in the Git repository at:
+> 
+> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+> ---
+>  drivers/edac/amd64_edac.c | 23 +++++++++++++++++++++++
+>  drivers/edac/amd64_edac.h |  1 +
+>  2 files changed, 24 insertions(+)
+> 
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index 07f1e9dc1ca7..36b46cd81bb2 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -2724,6 +2724,22 @@ static void __log_ecc_error(struct mem_ctl_info *mci, struct err_info *err,
+>  	switch (err->err_code) {
+>  	case DECODE_OK:
+>  		string = "";
+> +		if (err->dram_addr) {
+> +			char s[100];
+> +
+> +			memset(s, 0, 100);
+> +			sprintf(s, "Cs: 0x%x Bank Grp: 0x%x Bank Addr: 0x%x"
+> +					   " Row: 0x%x Column: 0x%x"
+> +					   " RankMul: 0x%x SubChannel: 0x%x",
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-07-28
+There's a checkpatch warning here about splitting user-visible strings.
 
-for you to fetch changes up to c0d938c16b674bfe9e710579344653b703b92a49:
+Why not use scnprintf() or the like?
 
-  bcachefs: Add missing error_throw to bch2_set_version_incompat() (2025-07-25 12:03:48 -0400)
+> +					   err->dram_addr->chip_select,
+> +					   err->dram_addr->bank_group,
+> +					   err->dram_addr->bank_addr,
+> +					   err->dram_addr->row_addr,
+> +					   err->dram_addr->col_addr,
+> +					   err->dram_addr->rank_mul,
+> +					   err->dram_addr->sub_ch);
+> +			string = s;
 
-----------------------------------------------------------------
-bcachefs changes for 6.17-rc1
+Looking at the description for 'edac_mc_handle_error()', it seems that
+"other_detail" would be more appropriate for this info.
 
-No noteworthy feature work: we're in hard freeze.
+I do think we should consider updating the EDAC interface if multiple
+vendors are gathering this data.
 
-Lots of bugfixes. Assorted user visible changes and fixes:
+> +		}
+>  		break;
+>  	case ERR_NODE:
+>  		string = "Failed to map error addr to a node";
+> @@ -2808,11 +2824,13 @@ static void umc_get_err_info(struct mce *m, struct err_info *err)
+>  static void decode_umc_error(int node_id, struct mce *m)
+>  {
+>  	u8 ecc_type = (m->status >> 45) & 0x3;
+> +	struct dram_addr dram_addr;
+>  	struct mem_ctl_info *mci;
+>  	unsigned long sys_addr;
+>  	struct amd64_pvt *pvt;
+>  	struct atl_err a_err;
+>  	struct err_info err;
+> +	int ret;
+>  
+>  	node_id = fixup_node_id(node_id, m);
+>  
+> @@ -2822,6 +2840,7 @@ static void decode_umc_error(int node_id, struct mce *m)
+>  
+>  	pvt = mci->pvt_info;
+>  
+> +	memset(&dram_addr, 0, sizeof(dram_addr));
+>  	memset(&err, 0, sizeof(err));
+>  
+>  	if (m->status & MCI_STATUS_DEFERRED)
+> @@ -2853,6 +2872,10 @@ static void decode_umc_error(int node_id, struct mce *m)
+>  		goto log_error;
+>  	}
+>  
+> +	ret = amd_convert_umc_mca_addr_to_dram_addr(&a_err, &dram_addr);
+> +	if (!ret)
+> +		err.dram_addr = &dram_addr;
 
-- Fix a major performance bug when deleting many files: this was caused
-  by the key cache caching keys that had been deleted, causing certain
-  lookups in the inode triggers to scan excessively.
+I feel like it is not necessary to pass a second struct if it is already
+contained in another.
 
-- The "io_read_nopromote" counter has been broken out into sub-counters;
-  these can be seen with 'bcachefs fs top' on a recent bcachefs-tools.
-  This helps when diagnosing why reads aren't coming from the cache.
+You could just clear (or not set) that field if an error occurs.
 
-- Congestion tracking is now a bit less aggressive (this controls when
-  we decide to do a promote); this area still needs more work.
+> +
+>  	error_address_to_page_and_offset(sys_addr, &err);
+>  
+>  log_error:
+> diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
+> index 17228d07de4c..88b0b8425ab3 100644
+> --- a/drivers/edac/amd64_edac.h
+> +++ b/drivers/edac/amd64_edac.h
+> @@ -399,6 +399,7 @@ struct err_info {
+>  	u16 syndrome;
+>  	u32 page;
+>  	u32 offset;
+> +	struct dram_addr *dram_addr;
+>  };
+>  
+>  static inline u32 get_umc_base(u8 channel)
+> -- 
 
-- Metadata writes are no longer throttled by writeback throttling
-
-- Nocow writes can now be rebalanced (e.g. background_target,
-  background_compression options)
-
-- (Almost) all recovery passes now have progress indicators.
-
-- Repair improvements: we'll now reconstruct missing inodes if we find
-  contents for that inode (more than one or two keys), not just if the
-  inodes btree was damaged: similarly for 'dirent to missing inode'.
-
-- Btree node tracepoint improvements: they've been converted to more
-  modern printbuf tracepoints, and include significantly more info.
-
-- Fix in-memory accounting going out of sync with the accounting btree
-  when doing accounting updates before going RW.
-
-- BCH_MIN_NR_BUCKETS (minimum number of buckets per device) has been
-  increased from 64 to 512. In the unlikely event that anyone anyone
-  actually was using bcachefs on sub 128M filesystems and doesn't want
-  to lose access (modern tools will format these small filesystems with
-  a more appropriate bucket size), please file a report or contact me.
-
-  (This was just a syzbot issue, so far as I know).
-
-- CLASS()/guard() conversion: a great deal of code has been converted to
-  the new __cleanup based resource handling, and away from 'goto err'
-  cleanup.
-
-----------------------------------------------------------------
-Alan Huang (5):
-      bcachefs: Don't memcpy more than needed
-      bcachefs: Refactor trans->mem allocation
-      bcachefs: Shut up clang warning
-      bcachefs: Don't lock exec_update_lock
-      bcachefs: Use user_backed_iter instead of iter_is_iovec
-
-Anindya Sundar Gayen (1):
-      bcachefs: remove extraneous ; after statements
-
-George Hu (1):
-      bcachefs: use union for bch_compression_opt to make encode & decode easier
-
-Kent Overstreet (193):
-      bcachefs: Fix UAF by journal write path
-      bcachefs: async_objs: update iter pos after obj printed
-      bcachefs: fsck: dir_loop, subvol_loop now autofix
-      bcachefs: kill darray_u32_has()
-      bcachefs: Reduce __bch2_btree_node_alloc() stack usage
-      bcachefs: Allow CONFIG_UNICODE=m
-      bcachefs: use scoped_guard() in fast_list.c
-      bcachefs: DEFINE_CLASS()es for dev refcounts
-      bcachefs: More errcode conversions
-      bcachefs: add an unlikely() to trans_begin()
-      bcachefs: Plumb trans_kmalloc ip to trans_log_msg
-      bcachefs: Don't log error twice in allocator async repair
-      bcachefs: bch2_trans_has_updates()
-      bcachefs: Improve inode deletion
-      bcachefs: Don't peek key cache unless we have a real key
-      bcachefs: Evict/bypass key cache when deleting
-      bcachefs: -o fix_errors may now be used without -o fsck
-      bcachefs: Improved btree node tracepoints
-      bcachefs: Finish error_throw tracepoints
-      bcachefs: Improve inode_create behaviour on old filesystems
-      bcachefs: Before removing dangling dirents, check for contents
-      bcachefs: check_key_has_inode() reconstructs more aggressively
-      bcachefs: bch_fs.devs_removed
-      bcachefs: ptr_to_removed_device
-      bcachefs: bch2_journal_entry_missing_range()
-      bcachefs: Faster checking for missing journal entries
-      bcachefs: Add missing bch2_log_msg_start()
-      bcachefs: Print errcode when bch2_read_extent() sees error
-      bcachefs: Fix error message in buffered read path
-      bcachefs: Debug param for injecting btree node corruption on read
-      bcachefs: device add now properly sets c->online_devs
-      bcachefs: silence userspace build warning
-      bcachefs: Update path flags cleanups
-      bcachefs: add missing log message newline
-      bcachefs: add missing includes
-      bcachefs: silence userspace build warning
-      bcachefs: trace_data_update_done_no_rw_devs
-      bcachefs: use kvzalloc() for journal bios
-      bcachefs: Improve nopromote visibility
-      bcachefs: unsigned -> enum bch_trans_commit_flags
-      bcachefs: __bch2_btree_node_alloc() now respects target
-      bcachefs: bch2_btree_write_buffer_insert_checks()
-      bcachefs: don't call get_update_rebalance_opts() on btree ptrs
-      bcachefs: kill bch2_err_str() BUG_ON()
-      bcachefs: bch2_read_bio_to_text(): tabstops
-      bcachefs: kill __bch2_print_str()
-      bcachefs: bch_log()
-      bcachefs: c->loglevel
-      bcachefs: Zero list_idx when deleting from async obj lists
-      bcachefs: fix device add before fs started
-      bcachefs: fast_list: warn if non-empty on exit
-      bcachefs: bch2_journal_key_insert_take() accumulates accounting updates
-      bcachefs: bch2_fs_initialize() now runs journal replay
-      bcachefs: do_bch2_trans_commit_to_journal_replay handles accounting
-      bcachefs: bch2_set_nr_journal_buckets_iter() always marks
-      bcachefs: bch2_fs_initialize() initializes before going RW
-      bcachefs: Improve bch2_read_bio_to_text()
-      bcachefs: Fix replicas max options
-      bcachefs: Better congestion visibilty in sysfs
-      bcachefs: nopromote sub counters
-      bcachefs: make congestion tracking less aggressive
-      bcachefs: __bset_aux_tree_verify_ro()
-      bcachefs: Add missing bch2_bkey_set_needs_rebalance to nocow write path
-      bcachefs: delete useless null ptr check
-      bcachefs: Also create snapshots with CAP_FOWNER
-      bcachefs: Fix missing compat code in check_subvol()
-      bcachefs: Fix UAF in check_dirent()
-      bcachefs: Fix journal assertion
-      bcachefs: Fix __bch2_fs_read_write() error path
-      bcachefs: Give debugfs cached btree nodes better indentation
-      bcachefs: Silence clang warning about enum types
-      bcachefs: kill bkey_journal_seq()
-      bcachefs: don't pass bch_ioctl_data by value
-      bcachefs: better device too small error message
-      bcachefs: check_i_sectors now prints paths
-      bcachefs: simplify bch2_trans_do()
-      bcachefs: DEFINE_GUARD(printbuf_atomic)
-      bcachefs: convert super-io.c to CLASS/guards
-      bcachefs: convert super.c to CLASS/guards
-      bcachefs: convert acl.c to CLASS/guards
-      bcachefs: convert xattr.c to CLASS/guards
-      bcachefs: convert thread_with_file.c to CLASS/guards
-      bcachefs: convert unit tests to CLASS/guards
-      bcachefs: convert util.[ch] to CLASS/guards
-      bcachefs: convert six.c to guards
-      bcachefs: convert progress.c to guards
-      bcachefs: convert enumerated_ref.c to guards
-      bcachefs: convert opts.c to CLASS/guards
-      bcachefs: convert sysfs.c to CLASS/guards
-      bcachefs: convert buckets_waiting_for_journal.c to CLASS/guards
-      bcachefs: convert quota.c to CLASS/guards
-      bcachefs: convert sb-clean.c to CLASS/guards
-      bcachefs: convert sb-downgrade.c to CLASS/guards
-      bcachefs: convert sb-errors.c to CLASS/guards
-      bcachefs: convert sb-members.c to CLASS/guards
-      bcachefs: convert clock.c to CLASS/guards
-      bcachefs: convert debug.c to CLASS/guards
-      bcachefs: convert nocow_locking.c to CLASS/guards
-      bcachefs: convert replicas.c to CLASS/guards
-      bcachefs: convert bset.c to CLASS
-      bcachefs: convert bkey.c to CLASS
-      bcachefs: convert chardev.c to CLASS
-      bcachefs: convert fs-ioctl.c to CLASS/guards
-      bcachefs: convert disk_groups.c to guards
-      bcachefs: convert checksum.c to CLASS/guards
-      bcachefs: convert compress.c to guards
-      bcachefs: convert rebalance.c to CLASS/guards
-      bcachefs: convert migrate.c to CLASS/guards
-      bcachefs: convert move.c to CLASS/guards
-      bcachefs: convert movinggc.c to CLASS
-      bcachefs: convert data_update.c to CLASS/guards
-      bcachefs: convert reflink.c to CLASS/guards
-      bcachefs: convert snapshot.c to CLASS/guards
-      bcachefs: convert subvolume.c to CLASS/guards
-      bcachefs: convert str_hash.c to CLASS
-      bcachefs: convert recovery_passes.c to CLASS/guards
-      bcachefs: convert recovery.c to CLASS/guards
-      bcachefs: convert lru.c to CLASS
-      bcachefs: convert extents.c to guards
-      bcachefs: convert logged_ops.c to CLASS
-      bcachefs: convert inode.c to CLASS
-      bcachefs: convert dirent.c to CLASS
-      bcachefs: convert namei.c to CLASS
-      bcachefs: convert io_read.c to CLASS/guards
-      bcachefs: convert io_write.c to CLASS/guards
-      bcachefs: convert io_misc.c to CLASS/guards
-      bcachefs: convert fsck.c to CLASS/guards
-      bcachefs: convert disk_accounting.c to CLASS/guards
-      bcachefs: convert buckets.c to CLASS/guards
-      bcachefs: convert ec.c to CLASS/guards
-      bcachefs: convert backpointers.c to CLASS/guards
-      bcachefs: convert alloc_background.c to CLASS/guards
-      bcachefs: convert alloc_foreground.c to CLASS/guards
-      bcachefs: convert fs.c to CLASS/guards
-      bcachefs: convert fs-io.c to CLASS/guards
-      bcachefs: convert fs-io-pagecache.c to CLASS/guards
-      bcachefs: convert fs-io-buffered.c to CLASS/guards
-      bcachefs: convert fs-io-direct.c to CLASS/guards
-      bcachefs: convert btree_node_scan.c to CLASS/guards
-      bcachefs: convert journal.c to CLASS/guards
-      bcachefs: convert journal_io.c to CLASS/guards
-      bcachefs: convert journal_reclaim.c to CLASS/guards
-      bcachefs: convert journal_seq_blacklist.c to CLASS/guards
-      bcachefs: convert btree_cache.c to CLASS/guards
-      bcachefs: convert btree_gc.c to CLASS/guards
-      bcachefs: convert btree_write_buffer.c to CLASS/guards
-      bcachefs: convert btree_update.c to CLASS/guards
-      bcachefs: convert btree_update_interior.c to CLASS/guards
-      bcachefs: convert btree_trans_commit.c to CLASS/guards
-      bcachefs: convert btree_key_cache.c to CLASS/guards
-      bcachefs: convert btree_io.c to CLASS/guards
-      bcachefs: convert btree_iter.c to CLASS/guards
-      bcachefs: convert btree_locking.c to CLASS/guards
-      bcachefs: convert btree_journal_iter.c to CLASS/guards
-      bcachefs: bch2_run_recovery_pass() now prints errors
-      bcachefs: convert error.c to CLASS/guards
-      bcachefs: Fix padding zeroout when creating casefolded dirents
-      bcachefs: Don't call bch2_recovery_pass_want_ratelimit without sb_lock
-      bcachefs: Tell wbt throttling not to throttle metadata writes
-      bcachefs: Kill redundant write_super() when running recovery passes
-      bcachefs: Add comment to journal_flush_done()
-      bcachefs: Don't emit empty journal entry for accounting
-      bcachefs: sysfs trigger_btree_write_buffer_flush
-      closures: Improve warnings on bad put
-      bcachefs: Fix unhandled key type in fiemap_fill_extent
-      bcachefs: Ensure we don't return with closure on waitlist
-      bcachefs: bch2_move_data() now walks btree nodes
-      bcachefs: rereplicate flushes interior updates
-      bcachefs: can_use_btree_node()
-      bcachefs: Fix error handling in btree_iter_peek_slot
-      bcachefs: fix assert in bch2_btree_path_traverse_cached()
-      bcachefs: Fix allocate_dropping_locks() usage
-      bcachefs: log devices we're scanning in btree node scan
-      bcachefs: Fix refs to undefined fields in __bch2_alloc_v4_to_text()
-      bcachefs: fix check_extent_overbig() call
-      bcachefs: Convert topology repair errs to standard error codes
-      bcachefs: Fix __bch2_alloc_to_v4 copy
-      bcachefs: Flush btree_interior_update_work before freeing fs
-      bcachefs: Only track read latency for congestion tracking
-      bcachefs: Clean up btree_node_read_work() error handling
-      bcachefs: Ensure pick_read_device() returns error for btree pointers
-      bcachefs: btree_lost_data: mark a few more errors for silent fixing
-      bcachefs: Don't allow mounting with crazy numbers of dirty journal entries
-      bcachefs: Add pass_done to recovery_pass_status_to_text()
-      bcachefs: Increase BCH_MIN_NR_NBUCKETS
-      bcachefs: Hook up progress indicators for most recovery passes
-      bcachefs: recovery_pass_will_run()
-      bcachefs: journal_entry_btree_keys_to_text() is more careful
-      bcachefs: dirent_to_text() now uses prt_bytes()
-      bcachefs: Add missing ei_last_dirtied update
-      bcachefs: snapshots: pass snapshot_table where appropriate
-      bcachefs: live_child() no longer uses recursion
-      bcachefs: Add missing error_throw to bch2_set_version_incompat()
-
-Nikita Ofitserov (1):
-      bcachefs: Suppress unnecessary inode_i_sectors_wrong fsck error
-
-Youling Tang (2):
-      bcachefs: Simplify bch2_bio_map()
-      bcachefs: Use bio_add_folio_nofail() for unfailable operations
-
- fs/bcachefs/acl.c                         |  19 +-
- fs/bcachefs/alloc_background.c            | 300 +++++++---------
- fs/bcachefs/alloc_background.h            |   9 +-
- fs/bcachefs/alloc_foreground.c            | 209 +++++------
- fs/bcachefs/alloc_foreground.h            |   9 +-
- fs/bcachefs/async_objs.c                  |  29 +-
- fs/bcachefs/async_objs.h                  |   7 +-
- fs/bcachefs/async_objs_types.h            |   2 +-
- fs/bcachefs/backpointers.c                |  63 ++--
- fs/bcachefs/bcachefs.h                    |  72 ++--
- fs/bcachefs/bkey.c                        |   4 +-
- fs/bcachefs/bset.c                        |  74 ++--
- fs/bcachefs/btree_cache.c                 |  38 +-
- fs/bcachefs/btree_cache.h                 |  11 +
- fs/bcachefs/btree_gc.c                    | 122 +++----
- fs/bcachefs/btree_io.c                    | 119 ++++---
- fs/bcachefs/btree_iter.c                  | 129 ++++---
- fs/bcachefs/btree_iter.h                  |  22 +-
- fs/bcachefs/btree_journal_iter.c          |  20 +-
- fs/bcachefs/btree_key_cache.c             |  16 +-
- fs/bcachefs/btree_locking.c               |  17 +-
- fs/bcachefs/btree_node_scan.c             |  32 +-
- fs/bcachefs/btree_trans_commit.c          | 121 ++++---
- fs/bcachefs/btree_types.h                 |  22 +-
- fs/bcachefs/btree_update.c                | 171 +++++----
- fs/bcachefs/btree_update.h                |  79 +++--
- fs/bcachefs/btree_update_interior.c       | 335 +++++++++---------
- fs/bcachefs/btree_update_interior.h       |  12 +-
- fs/bcachefs/btree_write_buffer.c          |  45 ++-
- fs/bcachefs/btree_write_buffer.h          |   6 +-
- fs/bcachefs/buckets.c                     | 212 +++++------
- fs/bcachefs/buckets_waiting_for_journal.c |  30 +-
- fs/bcachefs/chardev.c                     | 120 ++-----
- fs/bcachefs/checksum.c                    |  54 ++-
- fs/bcachefs/clock.c                       |  17 +-
- fs/bcachefs/compress.c                    |  29 +-
- fs/bcachefs/compress.h                    |  36 +-
- fs/bcachefs/data_update.c                 |  33 +-
- fs/bcachefs/debug.c                       |  92 +++--
- fs/bcachefs/dirent.c                      |  42 +--
- fs/bcachefs/dirent.h                      |   4 +-
- fs/bcachefs/disk_accounting.c             | 266 +++++++-------
- fs/bcachefs/disk_accounting.h             |   9 +-
- fs/bcachefs/disk_groups.c                 |  27 +-
- fs/bcachefs/ec.c                          | 239 +++++--------
- fs/bcachefs/ec.h                          |   2 +-
- fs/bcachefs/enumerated_ref.c              |   4 +-
- fs/bcachefs/errcode.c                     |   3 +-
- fs/bcachefs/errcode.h                     |  13 +
- fs/bcachefs/error.c                       |  65 ++--
- fs/bcachefs/extents.c                     |  38 +-
- fs/bcachefs/extents.h                     |   3 +
- fs/bcachefs/fast_list.c                   |  32 +-
- fs/bcachefs/fast_list.h                   |   2 +-
- fs/bcachefs/fs-io-buffered.c              |  79 ++---
- fs/bcachefs/fs-io-direct.c                |  11 +-
- fs/bcachefs/fs-io-pagecache.c             |  55 ++-
- fs/bcachefs/fs-io.c                       | 127 ++++---
- fs/bcachefs/fs-io.h                       |  19 +-
- fs/bcachefs/fs-ioctl.c                    |  33 +-
- fs/bcachefs/fs.c                          | 192 +++++-----
- fs/bcachefs/fsck.c                        | 427 ++++++++++++----------
- fs/bcachefs/inode.c                       | 101 +++---
- fs/bcachefs/io_misc.c                     |  36 +-
- fs/bcachefs/io_read.c                     | 157 +++++---
- fs/bcachefs/io_read.h                     |  20 +-
- fs/bcachefs/io_write.c                    |  46 +--
- fs/bcachefs/journal.c                     | 253 ++++++-------
- fs/bcachefs/journal.h                     |   3 +-
- fs/bcachefs/journal_io.c                  | 248 ++++++-------
- fs/bcachefs/journal_io.h                  |   7 +
- fs/bcachefs/journal_reclaim.c             | 220 ++++++------
- fs/bcachefs/journal_seq_blacklist.c       |  56 ++-
- fs/bcachefs/journal_seq_blacklist.h       |   3 +
- fs/bcachefs/logged_ops.c                  |  14 +-
- fs/bcachefs/lru.c                         |  24 +-
- fs/bcachefs/migrate.c                     |  21 +-
- fs/bcachefs/move.c                        | 218 +++++-------
- fs/bcachefs/move.h                        |  14 +-
- fs/bcachefs/movinggc.c                    |   6 +-
- fs/bcachefs/namei.c                       |  26 +-
- fs/bcachefs/nocow_locking.c               |  10 +-
- fs/bcachefs/opts.c                        |  33 +-
- fs/bcachefs/opts.h                        |   8 +-
- fs/bcachefs/printbuf.h                    |   4 +
- fs/bcachefs/progress.c                    |   6 +-
- fs/bcachefs/progress.h                    |   3 +
- fs/bcachefs/quota.c                       |  96 ++---
- fs/bcachefs/rebalance.c                   |  57 ++-
- fs/bcachefs/recovery.c                    | 213 +++++------
- fs/bcachefs/recovery_passes.c             |  68 ++--
- fs/bcachefs/recovery_passes.h             |   9 +-
- fs/bcachefs/reflink.c                     |  63 ++--
- fs/bcachefs/replicas.c                    | 147 ++++----
- fs/bcachefs/sb-clean.c                    |  36 +-
- fs/bcachefs/sb-counters_format.h          |   6 +
- fs/bcachefs/sb-downgrade.c                |  19 +-
- fs/bcachefs/sb-errors.c                   |  45 +--
- fs/bcachefs/sb-errors_format.h            |   9 +-
- fs/bcachefs/sb-members.c                  |  48 ++-
- fs/bcachefs/sb-members.h                  |  19 +-
- fs/bcachefs/sb-members_format.h           |   2 +-
- fs/bcachefs/six.c                         |  21 +-
- fs/bcachefs/snapshot.c                    | 179 ++++------
- fs/bcachefs/snapshot.h                    |  32 +-
- fs/bcachefs/snapshot_types.h              |   2 +-
- fs/bcachefs/str_hash.c                    |  23 +-
- fs/bcachefs/str_hash.h                    |   4 +-
- fs/bcachefs/subvolume.c                   | 106 +++---
- fs/bcachefs/super-io.c                    |  81 ++---
- fs/bcachefs/super.c                       | 570 ++++++++++++++----------------
- fs/bcachefs/sysfs.c                       |  28 +-
- fs/bcachefs/tests.c                       | 198 +++++------
- fs/bcachefs/thread_with_file.c            |  52 +--
- fs/bcachefs/time_stats.c                  |   7 +-
- fs/bcachefs/trace.h                       | 152 ++------
- fs/bcachefs/util.c                        |  28 +-
- fs/bcachefs/util.h                        |  10 +-
- fs/bcachefs/xattr.c                       |  52 ++-
- lib/closure.c                             |  12 +-
- 120 files changed, 3972 insertions(+), 4388 deletions(-)
+Thanks,
+Yazen
 
