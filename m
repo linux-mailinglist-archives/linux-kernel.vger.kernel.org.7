@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-748678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1079FB144A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:15:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC4CB144A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3231B17C89A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:15:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779143BB4D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56C721A95D;
-	Mon, 28 Jul 2025 23:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F6621507F;
+	Mon, 28 Jul 2025 23:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0dDEMGs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVYmlHop"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA1C17BBF;
-	Mon, 28 Jul 2025 23:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E14F645;
+	Mon, 28 Jul 2025 23:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753744533; cv=none; b=dOkJmQv4Yt7KwM8YPdJP9B1VLO1g2zQJst2giBF17oYmnnI4uA1if8A+yIZVPhp0X5GSg3alg7pRR4x/YuWmwqMErso3yhwlr6WASVzO6j1NXB4jDe7P4/3w6WVUNhWMEbTp4uwDHyF6gZ8PuBmrYovvQpCHpdMmP56HNycgyPk=
+	t=1753744863; cv=none; b=k4a/n69pqRF+JXsyHuzJxyG+qVa+JnQcM40+8rvqe9NRnGlheYU/HGP/Vuu412Hz7OR1b3wyKs44l9iZbFpqFLJyd3mcL50LrYaTW/1rLU0puu1F/qc5JhbKpSp+/uEJDb7ufst47bYPIM0TTAizki3/NaJkPfjGVAiwcWCWMGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753744533; c=relaxed/simple;
-	bh=Dcv0ckOfiKhRbeqcMEMeTGdMeh0Kj2RQGBbpto32XEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jiy1fXSCoUd5jTI7bvoikuROSCfJJZb9DxCi1ypdZmhsRD+3fEG5L3hnT9R8sp7MdxA34BsjmTjCGHaqx1Ln0g1X5x377AhJDf3yLIFno2W+2aD4VD9qbREUu2GQS0RVJDEKsvSz0NQNg6rwC0EjkbK1GIFD2Eh/0O/xAVuuUdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0dDEMGs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B8A2C4CEE7;
-	Mon, 28 Jul 2025 23:15:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753744532;
-	bh=Dcv0ckOfiKhRbeqcMEMeTGdMeh0Kj2RQGBbpto32XEk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=J0dDEMGsoL6lrrvb8hm0rOPOWdBTm/YbyqD1JlsoRKDDJV3GdwHlJNUEcgoZQellR
-	 /QCRZcwvlvwMMwykO5PYaaPIEMddLmNl35mtl7Wn91JQQABZiqNjnHDwytLigxgBiC
-	 k3e+RKWGv6RIAbXUEKzfy6+bb4pzw3MQDlkNcaK2ZhUsYSx8iYjxTLaGCuyeEjOcsx
-	 Wl/Oc86DmcI7xhrAiu4IDwKldJgH1XAXaTsMIndhOW+xOCOOXqPN+8aOzwCMaJEtSj
-	 MOmHQ1sjb7kzwImTgMcJLZSBhPzEI5S4v32mry75L7XS7uB9AcLfbEhn7y9396w5TV
-	 MoTk7QZMOKAxQ==
-Message-ID: <9f8d9590-eb2c-4985-82e2-73744980313a@kernel.org>
-Date: Tue, 29 Jul 2025 08:15:30 +0900
+	s=arc-20240116; t=1753744863; c=relaxed/simple;
+	bh=NTnHYw9mQuuVS1VJSbGiyD5vbjMPtmMnRZr3v5fZLdY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=l2SnC8Ek3TcNG3OkOqeR1WvmAOfkSsd3n4hrNxnHPazJ21ZakYJmZCKgYTQFH8DiBomMaW0Bifnv/7r9JaBix2qv01oA3YgiwV/scJTS58ORughWuShbojbu+rnz+UGXAbUiCmARsu4KLa/hC68I8JMi/hZ9AE7Yhb7HDiRpFWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVYmlHop; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e29d5f7672so452712785a.3;
+        Mon, 28 Jul 2025 16:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753744860; x=1754349660; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VqiXYxogPPCleKAdsmkaWwQGQdBb1Nm2nmSw4/oIOiA=;
+        b=QVYmlHopMscf+kGVRPxbCNeNOxbJ4qYc5d73/ZbnPhtsvX6Dq8SfHd5h5Gly2OoTjM
+         ZYqPeohnt280ySAyNo8uU1d/mIF7rvFs+sKAQ6tYrZRx/RKkOlL+I9EVRWNopPlOCyYL
+         UhltClphAkFL0/ECMYU7g3D0uGD+yzcQ3BeNpYcJY6JKjDBCnA9pQrJy7/HL9ByQC9sJ
+         SAN11UpMC8cvq9VINaFcofjUcsNQ90/ihMW0PMlHt5yEnBU5k7H5uA0FmU27nKfFM7DW
+         Eq2AM3UAmRHWyDm3w6FWRzyK9MCEiwEUTXvRNyEKhMbptR69Wm/zkOjow/LTBraNnyoq
+         Nv8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753744860; x=1754349660;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VqiXYxogPPCleKAdsmkaWwQGQdBb1Nm2nmSw4/oIOiA=;
+        b=M8ckFTNVJ3zLA6EUuPwrJnL1Lw0LaY5JKWIZaoN4YS3MkQqCQvOULPutkVWjMEPARk
+         gn3AaHaIVAe/0Pt7O6PMp0O2kKsv1vlYJknc5YbWR7TRrsxCFN63GoGqGQfz6OmwE/GQ
+         XhfDhmarMXxPnq3Lfx6hyDpyWMG2pHomNXY1mAeWxIjiGBEJjnqy6SOV0w+vcxnWgL8n
+         zPN4GQhrUUgw2Qw6PHe2OHASo2HGSSOT3O6pAAgU+/70TvUsLxFTFGmqFV+NuRZCyRaa
+         9VkFNNif3JF5va1trh8SuJ0eyHJGH3Enl78SxvyfY6/kxtGg3YcVMK1B1ua7HUnBUUh3
+         bedw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuV+J5R3PIqcbwNDDW1Rppgw0+U8D7yD/WYUThy1gnfd1Dgii+PaJb9c7EZPQhaiY+9j+NqSMRh5c2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPHXetqyOe5JGEYRnIzn1/wOosKfJAWXLel4ADA0GX2UsIL92n
+	bAb7rTHYuy/LykWK3s6Em9HVxO8JquRWAbRJlsb40mERL4ESXYaKVJGmuDu6jCfdrh+0IFnMrJ0
+	NxxuwW4Me+ioZupMjToIq1yHFXAFgvn0=
+X-Gm-Gg: ASbGncvSsm+l0jj8x8o1ryMV57EBE6I11kJqCpWrXd4rvBxfcSO0Wzvw8JVtk/WGAFB
+	5eFXps+xI0pX+5s6sbSUMJ/F5/azGK6JlAzMjDNUIVVEc1/s9eiIZYNRZDYT++jKIXPnvoV604Q
+	3+fXclJJWcC6URwrHR5phtvHhifAYg6jPggEd57+WgQMyIhwZpbtSydY7wPgZD/Xgrf8KSeMiz7
+	9yuVjDr1i6IKg6Nl1GuSjitlEHFGRML74F9Z/vRcw==
+X-Google-Smtp-Source: AGHT+IGGwijIvkF1t+/HBm8/6p/0XxYnaneePuw0YWbLuMLtrPcwAkNTcJyzXkLuRACofgTtYR7D38csY/cOrQgll+k=
+X-Received: by 2002:a05:620a:40c1:b0:7e6:2177:dd74 with SMTP id
+ af79cd13be357-7e63be3b64emr1809792485a.9.1753744860254; Mon, 28 Jul 2025
+ 16:21:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] scsi: sd: fix sd shutdown to issue START STOP UNIT
- command appropriately
-To: Bart Van Assche <bvanassche@acm.org>,
- Salomon Dushimirimana <salomondush@google.com>
-Cc: James.Bottomley@hansenpartnership.com, ipylypiv@google.com,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- martin.petersen@oracle.com, vishakhavc@google.com
-References: <20250724212137.105270-1-salomondush@google.com>
- <20250724214520.112927-1-salomondush@google.com>
- <325a7f60-955c-4e3d-bd16-e5377462fa33@acm.org>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <325a7f60-955c-4e3d-bd16-e5377462fa33@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 28 Jul 2025 18:20:47 -0500
+X-Gm-Features: Ac12FXxRf3TliFbppBKwbqc2MxsbiRXFhErp2OQ7gh3xQjZVN-W6BOOmqOD1fDg
+Message-ID: <CAH2r5ms0_hBugivNhSKW1TG22D6pTZA6WV=p+uOmcYmNp4Xvww@mail.gmail.com>
+Subject: [GIT PULL] smb3 server fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	Namjae Jeon <linkinjeon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/29/25 00:47, Bart Van Assche wrote:
-> On 7/24/25 2:45 PM, Salomon Dushimirimana wrote:
->> Commit aa3998dbeb3a ("ata: libata-scsi: Disable scsi device
->> manage_system_start_stop") enabled libata EH to manage device power mode
->> trasitions for system suspend/resume and removed the flag from
->> ata_scsi_dev_config. However, since the sd_shutdown() function still
->> relies on the manage_system_start_stop flag, a spin-down command is not
->> issued to the disk with command "echo 1 > /sys/block/sdb/device/delete"
->>
->> sd_shutdown() can be called for both system/runtime start stop
->> operations, so utilize the manage_run_time_start_stop flag set in the
->> ata_scsi_dev_config and issue a spin-down command during disk removal
->> when the system is running. This is in addition to when the system is
->> powering off and manage_shutdown flag is set. The
->> manage_system_start_stop flag will still be used for drivers that still
->> set the flag.
->>
->> Fixes: aa3998dbeb3a ("ata: libata-scsi: Disable scsi device manage_system_start_stop")
->> Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
->> ---
->> Changes in v3:
->> - Removed unnecessary tag
->>
->>   drivers/scsi/sd.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
->> index eeaa6af294b81..282000c761f8e 100644
->> --- a/drivers/scsi/sd.c
->> +++ b/drivers/scsi/sd.c
->> @@ -4173,7 +4173,9 @@ static void sd_shutdown(struct device *dev)
->>   	if ((system_state != SYSTEM_RESTART &&
->>   	     sdkp->device->manage_system_start_stop) ||
->>   	    (system_state == SYSTEM_POWER_OFF &&
->> -	     sdkp->device->manage_shutdown)) {
->> +	     sdkp->device->manage_shutdown) ||
->> +	    (system_state == SYSTEM_RUNNING &&
->> +	     sdkp->device->manage_runtime_start_stop)) {
->>   		sd_printk(KERN_NOTICE, sdkp, "Stopping disk\n");
->>   		sd_start_stop_device(sdkp, 0);
->>   	}
-> 
-> Runtime power management is not related at all to deleting a LUN through
-> sysfs. This patch makes it impossible to understand the sd_shutdown()
-> implementation without studying the ATA subsystem and its history.
-> Additionally, this patch makes the documentation of
-> .manage_runtime_start_stop incorrect.
-> 
-> There are only two drivers that set .manage_runtime_start_stop: libata
-> and the unmaintained sbp2 driver. Has it been considered to test
-> sdkp->device->is_ata instead of sdkp->device->manage_runtime_start_stop?
+Please pull the following changes since commit
+89be9a83ccf1f88522317ce02f854f30d6115c41:
 
-I would rather prefer to not spread the use of device->is_ata further than it
-already is. We are not even supposed to be needing that one in the first place,
-but SAT is not a perfect specification.
+  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
 
-But nevertheless, feel free to send cleanup patches to make this code prettier :)
+are available in the Git repository at:
 
+  git://git.samba.org/ksmbd.git tags/v6.17-rc-smb3-server-fixes
+
+for you to fetch changes up to 4f8ff9486fd94b9d6a4932f2aefb9f2fc3bd0cf6:
+
+  ksmbd: fix corrupted mtime and ctime in smb2_open (2025-07-24 22:55:29 -0500)
+
+----------------------------------------------------------------
+Eight SMB3 server fixes
+- Fix mtime/ctime reporting issue
+- Three auth fixes, including two session setup race bugs reported by ZDI
+- Locking improvement in query directory
+- Fix for potential deadlock in creating hardlinks
+- Two improvements to path name processing
+----------------------------------------------------------------
+Namjae Jeon (4):
+      ksmbd: fix null pointer dereference error in generate_encryptionkey
+      ksmbd: check return value of xa_store() in krb5_authenticate
+      ksmbd: fix Preauh_HashValue race condition
+      ksmbd: fix corrupted mtime and ctime in smb2_open
+
+NeilBrown (4):
+      smb/server: use lookup_one_unlocked()
+      smb/server: simplify ksmbd_vfs_kern_path_locked()
+      smb/server: avoid deadlock when linking with ReplaceIfExists
+      smb/server: add ksmbd_vfs_kern_path()
+
+ fs/smb/server/smb2pdu.c |  91 +++++++++---------
+ fs/smb/server/vfs.c     | 240 ++++++++++++++++++++++++++----------------------
+ fs/smb/server/vfs.h     |   7 +-
+ 3 files changed, 174 insertions(+), 164 deletions(-)
 
 -- 
-Damien Le Moal
-Western Digital Research
+Thanks,
+
+Steve
 
