@@ -1,168 +1,142 @@
-Return-Path: <linux-kernel+bounces-747684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0195B136C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:35:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814DCB136CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C56188B855
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E248A164404
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9509423535A;
-	Mon, 28 Jul 2025 08:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30A623534D;
+	Mon, 28 Jul 2025 08:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PmpKUwyj"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="iHO4WXGY"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBC71A23AC
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D75C1D63C7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753691523; cv=none; b=koN3/n7lERUtyc81qwMxX1kEhQc72WPtFWn/T9tQhl9xOUUag49sTgRhxxIBVVrziJ72pjkElPl5ZeId7Y6QWW7L9jMOUek0xm5d8BJWlPZmtLDmawwNQ7Gl7Gsnct+b6WxucHgFosJWxGY22062wV+P01iNU2xxPlKbHta4Z78=
+	t=1753691738; cv=none; b=eNuy838dF2t7IVogFUwkupgVfeEtLs7uwfbOEj7c8PY8EcGtgN4Thk+D6CPDBcK1oi3w/VWmT5Xvcn58QgnpBDuUvQwF0ogoeH1888p6w/uq776nuGDr7iJjh4QcugUTbTH7QdzhJ+zY3EECo1bbsnA/nzNn+2QVAUiNj6ghvFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753691523; c=relaxed/simple;
-	bh=D7pfw83HKjmeYSbCg9q/HWCeeMtzQpB4wfkfixOnxIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZJANZimbvfOQzlr1B54e4NnakXj+d1w4mMf0ILnFGWFRVLeoydvS8aE6vDWAK1cQ1z1M0QPAkDfYkfs1qbylvrjpqt6lShPDyG20wHMt1cljATjDG/wRobx+A3eOaNyj6+6SPUgX+V5wiIzToOTI9tgV5yutvqEAVfEOalUZBwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PmpKUwyj; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so44091305e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:32:01 -0700 (PDT)
+	s=arc-20240116; t=1753691738; c=relaxed/simple;
+	bh=uq+ImxcXIDpT7koBCX+UcC0xIpCmcUr0MukPByOa2Mk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BgZ2NhacC1Zl3HRAbPkli8tdN3PoB+4WXcdMnx52tQo+ZaWzUauXs9GhIok4BwJDSpruLG10ZWAoVxj9tm3M9/rSOkeV9TT9I59ozkcocID3tTcG+69ivDHQe3NZvXrfgKLZi+TOjrCyISFLDJgHa5hGPfNxxeqDk8LGc8F24Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=iHO4WXGY; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6097d144923so9005263a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753691520; x=1754296320; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CTRs1zuaDG/eDPc9Bkp/G1YcBLDCJtrXRmfR3K8EioE=;
-        b=PmpKUwyjECz1rqv2LSUqjCjb1wF9aCQvT2/udzDmOhlizQ6pLsCYzUtAzUYGGSnnKX
-         LTetmfDHgrpGoXyOOw9GPR2y4u8zHUpciw48yX5DGFin+LansiGwiHtt+k0WrZAFmNK2
-         EnaKxRZBNlWbPd+uVILyiVoIWJFOgwKgGOaTEy4tz0kEr27zBBtq3V5zqVC9pmo32Irr
-         UOaNBqrNxTmAsF2zGZUZLgFyGz0NMzSh5DhlxmQvW2bvh12xjAc7ij2HoYMerImIQiuq
-         MxIE1QV9vOnYCMh/+9UcMZSu44Acq3jQ0ufCD298SQtvOsJ5iB1eFGzsZI/vtmIHKE2w
-         ISrw==
+        d=fairphone.com; s=fair; t=1753691733; x=1754296533; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O+GMtvbjmv8Vnpzhp5frnyGTe3+Arr4kqBd4arPc9h0=;
+        b=iHO4WXGY17tmTrWpKiCTGLB0bjUBddLJDr0B6lBJppd1FND0bmlXlIFlRHYNPjL63P
+         M4YQ/ceoa2KK6x+u2Nr4KaRCd8ZyDpk/9NRR0l7ysOKUaZBwmVXtt4lzEKmm6ojOTO9n
+         2uk4//BrhSc4jCSA2F5UtreHjuGO76NdbCU2hzAxRO49pHtcljQTc3ss+q4yNYDjwgdf
+         xxiT7bfZD4gmiJ6qglL6OUHql5BUidfOyykhzo1X6ddf1eHJFLAvVVyIxVGwebxAtxFC
+         px/xQ6YNoESAEQ2iq0+H/2C1flqfBRpLSX/ErTewbva/XOueJQIgDIQv21D3667OAEd4
+         FBeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753691520; x=1754296320;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CTRs1zuaDG/eDPc9Bkp/G1YcBLDCJtrXRmfR3K8EioE=;
-        b=pDs9CKM7X8cuGj+HwKeC9a7FfSumW5lM16B7G5fgYSa7phQ3U/JnKUQ23qCo7pINGr
-         tHoZJaK9RxyHhdmym7v82FfmwGXLRWIPwH3FFrw6p2q3KRTICST8AESYPrXt39FXUXE2
-         QQ4lmLuOAs62/kNs3B04NMpE/Z+ey+Ih6aRCgRmRTzGW9bCXZSu/bDnWHcHJdV/d/kaQ
-         Yw/xaxx4gsNNd3LmHDQIBjLsLIHmrwIUor6OyZRtSzJqxqumLueQjzr6iZHw4C4OCsfs
-         z4j3uCe3a3QHJVDASoPQ70bwkuXNiYWKyd4wokfEw/u82NhM/9n7JpAFd+nMJLA9nD/W
-         8clg==
-X-Forwarded-Encrypted: i=1; AJvYcCUP6l2JdEX4AGXFVww2n5r5pcJWOLFUCUbEaEs7VT5giBWOSP38enRXsTrqE4tCaoIAfpkbXIQcnZpTIdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7JOodx8w5uwinuHCxL9Gcg3QuNw3Jg9k96yD+kd8015N+XyLN
-	4RPwAnE8rBL+ilM0VKFiazWwhsWWfYO9RvYHn4j4lE4ogL0XCq4GR88D1PUwfCp74b8=
-X-Gm-Gg: ASbGncvN/3dLtNKlodNeIKA/D9Sj9vVZRRIudIPWI7QPGxDr77F6XLum4C8icCHbDdf
-	7zuyLfNKkBgyAaPUYKE0kIREtmOo307jbJUo5hFGTTmnudBqBUPb1gNW0sshtpCbN5esALtxjZW
-	2S9yuTEnIozN9z/9znYIjgijoIDPj8147ckpH0k0dfZxYvq2sEMV840Gej/K/Ny2cPTPIt7bFTV
-	qx1XO7zuxcOS3uxdidbp8bvsPdAZoFItR9hGgG7vNOiLzdunGwj21/CYHa7/ettrzWSzmgwrpsB
-	ZtKhHuuiG/NB2dtpIEug5Tzq8Dj33sc08IYa1VTwjXAmsbUMqijouVbEDY4hVViJdJjSRCLJKJt
-	BYln3BFGFYtzbb9NeMsvTKcuHenc2lWH1rhUcGxj3YZw1/xbl6BtAdy7b6BcqRQ==
-X-Google-Smtp-Source: AGHT+IGmBCvpjMes/urRtuq4upKfeVU6jjvOk5RpZhkKZnjMUdjkeQMnkRUGIBkdwvVR89mnD8GGJQ==
-X-Received: by 2002:a05:600c:1c94:b0:456:1442:86e with SMTP id 5b1f17b1804b1-4587911e78amr65369135e9.21.1753691520025;
-        Mon, 28 Jul 2025 01:32:00 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-458705bccc5sm146250205e9.22.2025.07.28.01.31.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 01:31:59 -0700 (PDT)
-Message-ID: <52c93bb5-d114-4be2-864e-87e9efee3cec@linaro.org>
-Date: Mon, 28 Jul 2025 10:31:58 +0200
+        d=1e100.net; s=20230601; t=1753691733; x=1754296533;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O+GMtvbjmv8Vnpzhp5frnyGTe3+Arr4kqBd4arPc9h0=;
+        b=FYhttbXFkEXoKjEdWtF8wX72PRnUeehRqV4k0qcgfg0wogtVWr8SAx75I55Tr/BhR8
+         azYTdZXaTMURbw+NH/5z3Fh7kU3oR2wVDkiGwPugubkig5cZUfnxNG/UneeeC/96Rrzo
+         3GHcaDta2s+k6xRycP/bcwpmBxeC/qfS88rAJKqHzOtSC4273ErTywBk4pltlKuhF7/r
+         q6fS72mLiQS2S/lbRV3MnpAqOgfigTOQbeAT8CPco22RgO5C0uC5MJbfEhrH7nDowVHq
+         mtAVt5HjCt0vCitMBZdgtkOloNnDutInLGIMZeEgZIOmbMTnt9W07dqOpcTf1kDMkwNC
+         11ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7prJJ6E6OV9tXlmjAeJCuZLwp9qpJcEwFoUG2TB+Jd0MTOdxsnsjL8WaYkzmMnOjsgzCvHbGSckO6xSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM9zRv0o0TlS3cwO1U/wouhut76ZT7N6+/ImsduWDyhJZYZQ7l
+	JpE4uuP/8aQyEXeGC+72cNVGRw+Agh2IU0iU/R213pQTKlriBPUi1ZIiNGNzgYqUz4A=
+X-Gm-Gg: ASbGnctXAbwaLWmmzX7/oZQsxobcQU+6J6BJIYD8YIjRyBZyl+2h1Jy86X+aepNYkO0
+	0m1+ydZ/VcvPlqwiOJugSvIssH+gofzB9+R8e9qS3MhhM/50gn49ZWUdn7ue4T6RU09Q0SiGDja
+	ft7mV3okeI7n+h4i+D7bi6nMndCgk0aoHs3+zpPqbDhSFjfaLGmuhBYy1xxjLHW6M/ApHF0Sdg4
+	MHMTMb3QrgjvEKgh4AprmlfpciaLOBO33023Dz8epymWFZohNrgG/vG5dLUhg8YI3wqxKAZSLB6
+	9KvKxqMzLoa1mY5Xxv95nmgr45wCpXaeWoHp4CQM/pfioDsyCQTaR4BHqV5ofj3PxOO+gxvE7Ng
+	aLkc473bJ2TB++m8pv8W8NS7zotdYrUtspciyRBa43nfXd/l8BO0Z9koqJ1JYhnZgLhnF
+X-Google-Smtp-Source: AGHT+IEBOjDm49OG5iajjv5/g2Kv4L9dOcAdyp+LmUUVb1D/Ep2oTi+pZ65JkiAVimwgzoOcYQbOYw==
+X-Received: by 2002:aa7:c6d5:0:b0:615:3a2a:e14e with SMTP id 4fb4d7f45d1cf-6153a2ae3a0mr2467948a12.0.1753691733390;
+        Mon, 28 Jul 2025 01:35:33 -0700 (PDT)
+Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61500a5a014sm2968551a12.20.2025.07.28.01.35.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 01:35:33 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Mon, 28 Jul 2025 10:35:24 +0200
+Subject: [PATCH] net: ipa: add IPA v5.1 and v5.5 to ipa_version_string()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/20] clocksource/drivers/nxp-pit: Add NXP Automotive
- s32g2 / s32g3 support
-To: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, tglx@linutronix.de
-Cc: S32@nxp.com, linux-kernel@vger.kernel.org
-References: <20250705160129.3688026-1-daniel.lezcano@linaro.org>
- <20250705160129.3688026-19-daniel.lezcano@linaro.org>
- <9a16e06c-c96f-4a86-a017-b02e8f067498@oss.nxp.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <9a16e06c-c96f-4a86-a017-b02e8f067498@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250728-ipa-5-1-5-5-version_string-v1-1-d7a5623d7ece@fairphone.com>
+X-B4-Tracking: v=1; b=H4sIAEs2h2gC/x2MSQqAMAwAvyI5G7CF4PIVEak2ai5VUhGh+Herh
+ zkMDJMgsgpH6IoEypdE2UMWUxYwby6sjOKzg60sVbVtUA6HhCZDeLF+/RhPlbCiI6r93Ey+NQ7
+ y4FBe5P7n/fA8L5RlE0NsAAAA
+X-Change-ID: 20250728-ipa-5-1-5-5-version_string-a557dc8bd91a
+To: Alex Elder <elder@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753691732; l=1189;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=uq+ImxcXIDpT7koBCX+UcC0xIpCmcUr0MukPByOa2Mk=;
+ b=G2dTIgCPaZQDwhSQBS8d3RRhaJYTgThtBtF6HvSRKoozUXXxKyIRBsuhIuvD5vSc+6YhRgF8b
+ 69DChLOqCBiAHNo5Qr44J9qFsvTOU6dnTVrTZzCAhGRVB9PCbSuTTns
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-On 07/07/2025 14:02, Ghennadi Procopciuc wrote:
-> On 7/5/2025 7:01 PM, Daniel Lezcano wrote:
->> The S32G platform has two Periodic Interrupt Timer (PIT). The IP is
->> exactly the same as the VF platform.
->>
->> The setup found for this platform is each timer instance is bound to
->> CPU0 and CPU1.
->>
->> The changes bring the support for multiple timer instances. When we
->> reach the maximum PIT instances for this platform, which is described
->> in the match table data, the hotplug callbacks are called where they
->> finish the per CPU setup.
->>
->> Tested on a s32g274a-rdb2.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
-> 
-> The current description does not clearly explain how the resources are used within the driver. It would be helpful to mention that channel 2 is used as the clocksource, while channel 3 is designated for clockevents.
+Handle the case for v5.1 and v5.5 instead of returning "0.0".
 
-The changes are to allow to support multiple instances of the PIT timer. 
-The way the channels are used is unchanged. I can put a sentence to 
-remind how they are used.
+Also reword the comment below since I don't see any evidence of such a
+check happening, and - since 5.5 has been missing - can happen.
 
-> Additionally, the S32G2 platform supports suspend and resume functionality. However, this capability is not yet implemented in the driver. Do you plan to include support for it in a future patch?
+Fixes: 3aac8ec1c028 ("net: ipa: add some new IPA versions")
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ drivers/net/ipa/ipa_sysfs.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Yes, usually PM is added after.
+diff --git a/drivers/net/ipa/ipa_sysfs.c b/drivers/net/ipa/ipa_sysfs.c
+index a59bd215494c9b7cbdd1f000d9f23e100c18ee1e..a53e9e6f6cdf50103e94e496fd06b55636ba02f4 100644
+--- a/drivers/net/ipa/ipa_sysfs.c
++++ b/drivers/net/ipa/ipa_sysfs.c
+@@ -37,8 +37,12 @@ static const char *ipa_version_string(struct ipa *ipa)
+ 		return "4.11";
+ 	case IPA_VERSION_5_0:
+ 		return "5.0";
++	case IPA_VERSION_5_1:
++		return "5.1";
++	case IPA_VERSION_5_5:
++		return "5.5";
+ 	default:
+-		return "0.0";	/* Won't happen (checked at probe time) */
++		return "0.0";	/* Should not happen */
+ 	}
+ }
+ 
 
-> [...]
-> 
->> -static int __init pit_timer_init(struct device_node *np)
->> +static int pit_timer_init(struct device_node *np)
->>   {
->>   	struct pit_timer *pit;
->>   	struct clk *pit_clk;
->> @@ -261,16 +296,31 @@ static int __init pit_timer_init(struct device_node *np)
->>   
->>   	clk_rate = clk_get_rate(pit_clk);
->>   
->> -	/* enable the pit module */
->> -	pit_module_enable(timer_base);
->> +	pit_module_disable(timer_base);
->>   
->>   	ret = pit_clocksource_init(pit, name, timer_base, clk_rate);
->> -	if (ret)
->> +	if (ret) {
->> +		pr_err("Failed to initialize clocksource '%pOF'\n", np);
->>   		goto out_pit_module_disable;
->> +	}
->>   
->> -	ret = pit_clockevent_init(pit, name, timer_base, clk_rate, irq, 0);
->> -	if (ret)
->> +	ret = pit_clockevent_per_cpu_init(pit, name, timer_base, clk_rate, irq, pit_instances);
->> +	if (ret) {
->> +		pr_err("Failed to initialize clockevent '%pOF'\n", np);
->>   		goto out_pit_clocksource_unregister;
->> +	}
-> 
-> This mechanism is very restrictive and will allow to assign the PIT0 and PIT1 to CPU0 and CPU1 only. Have you considered alternatives where the mapping is given as mask through early_param?
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250728-ipa-5-1-5-5-version_string-a557dc8bd91a
 
-Yes, we can consider putting in place a mechanism to configure how the 
-PIT are mapped to a CPU but that would be a separate feature to be added 
-later.
-
-
+Best regards,
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Luca Weiss <luca.weiss@fairphone.com>
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
