@@ -1,106 +1,109 @@
-Return-Path: <linux-kernel+bounces-748555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF63B14296
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:49:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868D0B142A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D46018C0298
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:50:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6174D7ADDFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D88F22A4F6;
-	Mon, 28 Jul 2025 19:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CF122A4F6;
+	Mon, 28 Jul 2025 19:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBLWkWPV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qJ9qEawZ"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9E113AF2;
-	Mon, 28 Jul 2025 19:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC2D1FC0E2;
+	Mon, 28 Jul 2025 19:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753732188; cv=none; b=pISLAf21rcr+M9l4B5EoA3D7aOVu+ZykNj78rn3WSNirSQ00ekj+ReCLwoXm1wCgzz0/H3eTgye2R8tTyGEVR0Zmti9iSw0atddGVATLqN101RP1VLP6pjwCIV7l2fCcefKMT7zNcejdEktQlo86NXwnEKvjF+UH0EAM5zemIhU=
+	t=1753732354; cv=none; b=UlIoigw/+F7SZGurUPL65/Mu4SNFlFgpUbNNwBm7oS7KCWAHyn8VwqM4SX0q3y2twdoTS1WRtc/TDwElycFXMKyXJ+XR1kr/A08KmMtlHwT2iWSU+N/P80aZfSA88rEFauvDgifCzxkFWMtkEHPA9svU6iwpw6EVBcRe464QmRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753732188; c=relaxed/simple;
-	bh=dVuYR2JK8lQErH+V3apfJf/fOloyZjZZO7Nr2BU7KLY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sB7/yaVXrLThyoQ/h7/cDhQ/oMP0JsFwuqXiQAr5oR0+37CP0EAZxp1OnnXPjomQkXsNGys0goycA9WWzk/dGbpii40yjZTplGZdpvO1gH2deuZHi1oArGK9jepLD99Ol89M7tEULC92KC5gooRvUOWUM/jubQYDtV0BaoZVf2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBLWkWPV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB73C4CEE7;
-	Mon, 28 Jul 2025 19:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753732188;
-	bh=dVuYR2JK8lQErH+V3apfJf/fOloyZjZZO7Nr2BU7KLY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NBLWkWPVbujXqeOatsO4cCgk90lSHlOu/yKBBnE2kIY5zYkG1qRBoZXtg7K/D54uE
-	 3ftJcRiam9gOXM8OZBeM6RIMZFS8NYPbF1Hd9qQvo8Tdz9gXlCd6q36f1PpF3X3u7e
-	 5n9c9IxUspZNlygkPjdcZ4AvkBNEhyPSMRkSocnLDTdzoiOf+9TjjWn4Fn7ULXK/H8
-	 Gnj0wPdPkn+lZRngv46wsk4BBqsGCfp6TI/6QjNafCFkuECIV6DmMxybXGyS0GUmL9
-	 MBm3GY4745Dlc5/SFYKZcBBYSAaolUR6qAppkuDPsgMoLryTFbk+cthLLTTt3aysCs
-	 BjCmkq7ppCOGg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D70383BF5F;
-	Mon, 28 Jul 2025 19:50:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753732354; c=relaxed/simple;
+	bh=09P3yCEpacc3WDalIzSbr2UF8KnwRKgzIsPGtlWljfY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=li5Et5KUIUkfuvaKGq7LC0b9ZYUVyOs7r6vxexsVDlEURaO2SqYRmX4l4x3tNptWKsURB8Ms739sllntef4TKh5qK4S/odWWlXHXhmSVnaIzDtp3AAiUeVwgyopE3W56uuQqSoowwSjeNtq319//lGCxPPIx/U5TC/SMOXt/nvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qJ9qEawZ; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0B62340AD0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1753732352; bh=p0Qxnvd1AgjyaWlP/R22ncSoW42OkFWOvQkgj5NJMv4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qJ9qEawZZl39PWLPwAjoqnBTl8ibX/X2wi6gu4iuLKbkzJMiVfEsunBondL7uNh0X
+	 Ff6t6VqrKa5eYWMDF+wRDxsL8TXldb26QRXIiFGIrL4RW6mvXqKuz4Qp9gBShfXd8X
+	 AdE1bLJoRRXD4UYBSy7iO44bViJ+r3sKP5VPAZopXSwtfa2XjhL+5DK/tKqxscIYsC
+	 pq9eW9BW+8e5GoKssObR+rcRHzSxSP5mC4g4gFnqvhDZOSKvSAda21VLZdYgfYpT2h
+	 OHBrAkq+Pu9ULsFS/Clc/vLp/YbD+H8Mc2Iw+k/ngeLinslnGlYsFwvoIiUW2zZ53o
+	 eTRj8VaQUtTnQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 0B62340AD0;
+	Mon, 28 Jul 2025 19:52:31 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: =?utf-8?B?xaB0xJtww6FuIE7Em21lYw==?= <stepnem@smrk.net>
+Cc: "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: admin-guide: update to current minimum pipe size
+ default
+In-Reply-To: <20250728193030Z.1636311400-stepnem@smrk.net>
+References: <20250728-pipedoc-v1-1-2dae082a56f5@smrk.net>
+ <87seigxhf5.fsf@trenco.lwn.net>
+ <20250728193030Z.1636311400-stepnem@smrk.net>
+Date: Mon, 28 Jul 2025 13:52:31 -0600
+Message-ID: <87fregxfcw.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: hci_sync: Avoid adding default advertising on
- startup
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <175373220501.825563.16644815912043056202.git-patchwork-notify@kernel.org>
-Date: Mon, 28 Jul 2025 19:50:05 +0000
-References: <20250728-default_adv-v1-1-a1164ff502a7@amlogic.com>
-In-Reply-To: <20250728-default_adv-v1-1-a1164ff502a7@amlogic.com>
-To: Yang Li <yang.li@amlogic.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+=C5=A0t=C4=9Bp=C3=A1n N=C4=9Bmec <stepnem@smrk.net> writes:
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Mon, 28 Jul 2025 17:08:44 +0800 you wrote:
-> From: Yang Li <yang.li@amlogic.com>
-> 
-> list_empty(&hdev->adv_instances) is always true during startup,
-> so an advertising instance is added by default.
-> 
-> Call trace:
->   dump_backtrace+0x94/0xec
->   show_stack+0x18/0x24
->   dump_stack_lvl+0x48/0x60
->   dump_stack+0x18/0x24
->   hci_setup_ext_adv_instance_sync+0x17c/0x328
->   hci_powered_update_adv_sync+0xb4/0x12c
->   hci_powered_update_sync+0x54/0x70
->   hci_power_on_sync+0xe4/0x278
->   hci_set_powered_sync+0x28/0x34
->   set_powered_sync+0x40/0x58
->   hci_cmd_sync_work+0x94/0x100
->   process_one_work+0x168/0x444
->   worker_thread+0x378/0x3f4
->   kthread+0x108/0x10c
->   ret_from_fork+0x10/0x20
-> 
+> On Mon, 28 Jul 2025 13:07:58 -0600
+> Jonathan Corbet wrote:
+>
+>> =C5=A0t=C4=9Bp=C3=A1n N=C4=9Bmec <stepnem@smrk.net> writes:
+>>
+>>> Fixes: 46c4c9d1beb7 ("pipe: increase minimum default pipe size to 2 pag=
+es")
+>>> Signed-off-by: =C5=A0t=C4=9Bp=C3=A1n N=C4=9Bmec <stepnem@smrk.net>
+>>> ---
+>
 > [...]
+>
+>> This seems like a reasonable change, but can I ask you to resubmit it
+>> with a proper changelog, please?
+>
+> Do you mean a better/longer commit message?
+>
+> I felt that the Subject: and Fixes: says it all and didn't
+> want to duplicate information (contained in its commit
+> message and comments added by that change, as well as the
+> very paragraph we're updating here).
+>
+> Would adding something like
+>
+>   The pipe size limit used when the fs.pipe-user-pages-soft
+>   sysctl value is reached was increased from one to two
+>   pages in commit 46c4c9d1beb7; update the documentation to
+>   match the new reality.
+>=20=20=20
+> work?
 
-Here is the summary with links:
-  - Bluetooth: hci_sync: Avoid adding default advertising on startup
-    https://git.kernel.org/bluetooth/bluetooth-next/c/b88313f2a6c3
+Yes, that is what I had in mind.  Patches should always explain
+themselves without making people chase down Fixes tags and such.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Thanks,
 
-
+jon
 
