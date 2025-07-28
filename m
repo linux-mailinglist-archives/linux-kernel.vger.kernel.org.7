@@ -1,112 +1,100 @@
-Return-Path: <linux-kernel+bounces-747473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A85B1343D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:39:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA26B13440
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3AC3ABF4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:39:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F823ABCA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF012221278;
-	Mon, 28 Jul 2025 05:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E5E222593;
+	Mon, 28 Jul 2025 05:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9uS2TTt"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ln6kQ6Fl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B108A220F3E;
-	Mon, 28 Jul 2025 05:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF06322126A;
+	Mon, 28 Jul 2025 05:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753681184; cv=none; b=JuT6F84rPIvWlEvw2mz9SG/pl8rGjZwgkWRkYMr9NWBkQ7sjT8PoB4XWqD4+mPAXxm4F8j6LcZrHYUhoVHRFupWokotI5FTtuzO6pOQixVu+1FXH4HFx6ba/leZfND4Mtpx/4rFJkhUd5rVQVZlSO/sZPskVZ/HLCba6hLe8/is=
+	t=1753681198; cv=none; b=p2ek5UsFW1JypUeEnmNclxm2DyMpfSKXBCqv8yGDE4DzPLZl/Z9mhzIm4aVgpjBlh9eXSxz25TKRboFb9+LAi0r7hSAyiEDiczuxQtPJcCqr98ZN38gPMR4QVpYgQdfUa2nQDg9sJKaoWGz0xGz+MNI9MwG215S9AmZnnjMkCGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753681184; c=relaxed/simple;
-	bh=X2bxsZlx5MDp5rTn5Ctwe1YI0HsO/qA41QXsv818O5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qMtlq9TSvJXVHbKahuV2KboPXOD9kuZnbohW3HXeBHJ1ebRyLws4FCecDk2VMp/iKGjut7XC7hAdamGOgukW01baTE9uK4IlXm3Isa1wg6Iwqk/p2uyNKxyMBEiftPu7ZtcjzDDLhSBpoUzxO9XEIvDPBtUkwn9WvsZ+2jZWuko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9uS2TTt; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61591e51092so2061432eaf.0;
-        Sun, 27 Jul 2025 22:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753681181; x=1754285981; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gaFBcY6PhjoQyS7AKQsTykSazBAoA4FN2Ql58j0Zd1k=;
-        b=U9uS2TTtPGCdxkcS8YrQRW2IVg8y/Ehw6lONJJSuVVTyTVqEHH7sdF8IWm4RBRjhdG
-         zUpNjDEzteiQ+dqJPm/AeAwwuSEqKYE7GypW0K9GkM6XzgTE4G4ZkvXnsnk//yuR3YKn
-         oBWyz0kg9R0lg8oPQY0AH3AGSXOkPeU86tTlEgjXA167EfB7K5cmkEPUwRbzFAu8YxJM
-         q0u8KXQ8lGCfjKwGAZ0C8e5atQ4NDGz65xnvPP6StRkcy7IyrkRRIhsfVXAEfKju+Mwu
-         /WiFnaE6NGc7t3E8xHK9pcNOXyWVvbcob0z9O/DKxIyr99gs/TY/U3PQO1eBm/E2FTnj
-         jLtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753681181; x=1754285981;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gaFBcY6PhjoQyS7AKQsTykSazBAoA4FN2Ql58j0Zd1k=;
-        b=HUn/bxO+kEWii8kOzwsFzvir/QD8mm+xLpaBOPixYY2si22hgOuHiI+3iyRG+cjJ+s
-         hUY1LdZzaQ9YuzpcDDWoUaHZwNqIuwaX4DwQcSsk3KLnW11uNw+adBtFvK3Oxzv5cZl+
-         1dYtHKWh+pxju7VW2ASgLUrfOY8uuSXjLttRw7douQb8LLJ7yyx2rCqJSw5ZyVKtAug7
-         BaZPKHZScokLig+GnlOBU5KfWgIkvI3F0X2dIKi6q2ViGj2GIR8/JebESrmR0CTXfwIA
-         55nHYvjTe7bJrjE/UZymyLkNARCFI+0Zb9GgtzfgIsBdhDFNPRKxoelhqGFt19mo9Zai
-         B+HA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8Fyw+lNPJU2NsV/OoDPahQZ3C/MZrvUGMFRaHcRjwg/AXt4LeFaneCJzIRuFfMycXnrblwzNlsYJb6xo=@vger.kernel.org, AJvYcCXn3hjj6gbBfamJgvz2FiXNNDe0WFsgSJ6LQ5RuvsUmckt7pejp0r4iS0k7jso/bQfYmRS2JL9d267z1fb9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpjhdjxd6Z85iDeYA4xwQa+AhPSjCwJ9t1fhO2yMB5MEl4PhOt
-	mbXS3WT6zyzpGzStVXMs06QlRHqQE8T7iZrmrryHGRjt9lHkfKlOFAw1jpXOb1sLx2jiKYe5KJY
-	Fh5vOGl1VEJ/U2XgeZQILziEwJZrLdjKTKVQ3IS+fG4Ds
-X-Gm-Gg: ASbGnctZK4jvcg51A+Jv9DdshjRYtEUxFk3YEcx8aV8IhAhAEiAJZddc7mo9bVNW100
-	qALOIeexylOXRxgkRbqdL491JlPhvnMsASJ4YCwDwK16F874cGnh4/yW69Fn9hgdyV+l5jXUMas
-	ePUh3FgsdJtHuNa28yAPCTK6t0CKxOXHxBneJ5O6L/UrMYRTGYzWPGu+1t0ESrlgNsqKbP7IcA4
-	c7G3+Yk
-X-Google-Smtp-Source: AGHT+IEOQZX1TnyqFEysH5JWrVs+NdZCp4hQ6hPN27tb8Q3DoxM2fDOyldoc2nyIYWXXmhSrzBUlcKuXUODEcA/HxX8=
-X-Received: by 2002:a05:6870:f21f:b0:2ff:a399:c0fc with SMTP id
- 586e51a60fabf-30701f50aa2mr7883563fac.5.1753681181671; Sun, 27 Jul 2025
- 22:39:41 -0700 (PDT)
+	s=arc-20240116; t=1753681198; c=relaxed/simple;
+	bh=es73wKdlYBlv7OZ0ela7vy5OHBeQcYgfaUIBDQInJIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NtTyZUCgrW4fwcKqRCiG8p18EXq4jFiwyvz5y7mCZDVhdBjAnA2hvvkmo4mqqNQ527ufaPSlIG4mw6QlDoZujQWbfbffUOJYuR+Ug+Kfl+uHIMYz/5deiq6PeDYhV5qF2vL1Mnw93IJc2F9oIels0vSvP0VuKrLAs5792ocvY4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ln6kQ6Fl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1CAC4CEEF;
+	Mon, 28 Jul 2025 05:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753681197;
+	bh=es73wKdlYBlv7OZ0ela7vy5OHBeQcYgfaUIBDQInJIc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ln6kQ6Flz7uAUQv44hSyDMlQ1YVrn2RfqNWhFKsfeT/D0Gx1zCbxmsaf4b9Kle5EK
+	 ZLpED5TmuPLoYJp1UcuGEGKJasVFA7KsbzlUuGrHvsOzgCaOsz3LIgazfyFyOEVN9t
+	 iRBo8XxmWEnYOSI8EcwezqP169UEgkxy6zZpS2BuZ/fo7MNw5NHG4RFIEhAHGhHxF8
+	 FM9ZoCrj/KA9factZ3XI9v/FMJCfqM+9y/UyDrkrP5YoLol/hshwiZFVzH7w5M6Jo7
+	 RmJvQFKkC56Hz2pPBf4uFd6ephrPLQlORaOwYQU9uy0XbwC0sHPXBTj+T4Oxi1TBu/
+	 FoDCfBr4q8QUQ==
+Date: Mon, 28 Jul 2025 07:39:53 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [GIT PULL] Performance events updates for v6.17
+Message-ID: <aIcNKXiXOFPFhh8B@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727164433.203775-1-suchitkarunakaran@gmail.com>
- <2025072842-require-smokeless-f98f@gregkh> <CAO9wTFjuSch0Cc0yXV=PR9vkk+66i_4PSanrPqKYyXXhWjO-QA@mail.gmail.com>
- <2025072809-pursuit-hardwired-d894@gregkh> <CAO9wTFi+atf1vwMrDJBa-X4W5UcQ8K80spgiGhMyhZj4aRJ3Zw@mail.gmail.com>
-In-Reply-To: <CAO9wTFi+atf1vwMrDJBa-X4W5UcQ8K80spgiGhMyhZj4aRJ3Zw@mail.gmail.com>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Mon, 28 Jul 2025 11:09:30 +0530
-X-Gm-Features: Ac12FXwH01iH8tBLme1s9rlFzUYcbaVyzXI2-YL89UVDP9me8f7MB2yZF_f_AKE
-Message-ID: <CAO9wTFi7ejkMbtT80EB2AAOQp7fi+GEf1eJWwfj4j6xU0iEhaQ@mail.gmail.com>
-Subject: Re: [PATCH v3] kconfig/lxdialog: replace strcpy() with strncpy() in inputbox.c
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: masahiroy@kernel.org, nicolas.schier@linux.dev, 
-	linux-kbuild@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Resending because I unknowingly disabled plain text mode. Sorry about that.
+Linus,
 
->
-> Is strcpy() being deprecated in userspace?  I think it's a core part of
-> the C language specification :)
->
+Please pull the latest perf/core Git tree from:
 
-My apologies. I was under the assumption that all folders within the
-kernel repository adhered to the kernel coding guidelines, only to
-realize that these guidelines primarily apply to kernel space code.
-You're right, strcpy() isn't deprecated in userspace but as far as I
-know some compilers emit warnings to replace it with other functions
-since it's unsafe.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-core-2025-07-28
 
-> Again, how can that buffer be "too large"?
->
+   # HEAD: 829f5a6308ce11c3edaa31498a825f8c41b9e9aa perf/x86/intel/uncore: Add iMC freerunning for Panther Lake
 
-Tbh I'm not sure. I was glancing through the code in mconf.c and there
-were some calls to dialog_inputbox() with file names and a variable
-length string being passed for the init argument. So, I thought there
-might be some chance of overflowing.
+Performance events updates for v6.17:
+
+Intel uncore driver enhancements (Kan Liang):
+
+ - Support MSR portal for discovery tables
+ - Support customized MMIO map size
+ - Add Panther Lake support
+ - Add IMC freerunning support for Panther Lake
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Kan Liang (4):
+      perf/x86/intel/uncore: Support MSR portal for discovery tables
+      perf/x86/intel/uncore: Support customized MMIO map size
+      perf/x86/intel/uncore: Add Panther Lake support
+      perf/x86/intel/uncore: Add iMC freerunning for Panther Lake
+
+
+ arch/x86/events/intel/uncore.c           |  7 +++
+ arch/x86/events/intel/uncore.h           |  2 +
+ arch/x86/events/intel/uncore_discovery.c | 89 ++++++++++++++++++++++++--------
+ arch/x86/events/intel/uncore_discovery.h |  7 +++
+ arch/x86/events/intel/uncore_snb.c       | 79 ++++++++++++++++++++++++++++
+ arch/x86/events/intel/uncore_snbep.c     |  4 +-
+ 6 files changed, 166 insertions(+), 22 deletions(-)
 
