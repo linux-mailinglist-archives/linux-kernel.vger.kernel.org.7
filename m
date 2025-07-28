@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-747913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6023DB13A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:59:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6F6B13A2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD411681BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05373B807E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC11A26057A;
-	Mon, 28 Jul 2025 11:59:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236F2171C9
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F90F25FA13;
+	Mon, 28 Jul 2025 12:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNQEaGnv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2D41B412A;
+	Mon, 28 Jul 2025 12:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753703961; cv=none; b=KSrmHDrsSerr+8r8/74LG8Qm+omLwq9AaLRJoNR0v669YDwDgIy9CzKlua2blYFoqaWDWfM5o78i6h9isBjrcT9m/ZzV7Rl5FRQs0ytt45BREBNL3B2Z93jo4HQ2YHx9SGUklm9mBYs6oTNqGUFTYBSunhWjtdCLaIn2KKzfcWc=
+	t=1753704068; cv=none; b=X8Wjzat/1YZOLHRcT16cDEgWlpeZFySTEQ1+xLwfqD5EQjdYR8P8GPcW6YX0vsFN9z4D3pqTEvRxGqfv4vle8J4YOX/dGQBLyk0ylbxaXt3674DffC9RNmEOkMJQh4gJbTHS2/SmIVw8ClLXP1v24NAQ2CAs/EKm6H+3OZrfqvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753703961; c=relaxed/simple;
-	bh=NkQEdXyQz5IvzoGUDKgxc1i5OBP3bZ59y6A+QLlFYRU=;
+	s=arc-20240116; t=1753704068; c=relaxed/simple;
+	bh=AT9yKQg5kRN8nra0kolGIDcgq8P5PHiV3m58mHJz5rw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kG1p2DWVa0BUJgDynzkFwXArm7DuciInCRhR9UpWCCGfQqr6DnQUPLMIZQgSibHXmvrkK7/zpHAAnirEXB1BjIVFo1Yt/vhZ84GzYzvwpapgEeJJGRDofHttANJl/RNlY4ER/H/X0Bz5fzBjuIiLViNwdBsFAJ0zKc6FMePEbJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 468E9152B;
-	Mon, 28 Jul 2025 04:59:10 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55D4F3F673;
-	Mon, 28 Jul 2025 04:59:14 -0700 (PDT)
-Message-ID: <7ab40c09-3922-4e0c-85dd-00ff05be4ce6@arm.com>
-Date: Mon, 28 Jul 2025 12:59:12 +0100
+	 In-Reply-To:Content-Type; b=pRZUskksrSn4XB67yGfoJvE0nk9RbsF92PnOedQYNDCwvjuMqZDPwzGAnD6MD3aAyh1r20wSEEm4g23/FlDgrX9PUFROYjUTioFd4ghOHJxMsXsvWR8Y/Gye74o5tQDK5SpYS/yRR3x/sLPpFyeDVXTY8xiBMr2iVx1wkUo616w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNQEaGnv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63D59C4CEE7;
+	Mon, 28 Jul 2025 12:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753704068;
+	bh=AT9yKQg5kRN8nra0kolGIDcgq8P5PHiV3m58mHJz5rw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hNQEaGnvdB8vZbpyHKEoHvYZlMF6Z3S0L4w0ht6X57FtC2rpGIk7AnL1SV0vh7HtQ
+	 PSBrRWAolXqHOLYPJrFdIvLaVOf8BGUnhaec1Vqd4aBwzly6MLMd2uyHC6yo84aG+J
+	 p/fGkzu735OIRpgeHPJ7S+ulyCofvBfRq8f9bUdQ0vosb4EgbSPlRHM1VwTnZqfY0o
+	 aNxEOQWb5yPp9TTbUeye3B9e/OtAqGc+KuAOLdDIHYcmHu0pEogvdVP0vCRzF/oIuG
+	 e4xIns42Nr+HIx4i/zf3qi8+GNIJ2NTxj5ra8fudKgo7me9hq+9jVnkvtCoOpm4lXW
+	 //GYp7n1lkAbg==
+Message-ID: <8d6ba467-d418-441f-aa49-8b615f3c333a@kernel.org>
+Date: Mon, 28 Jul 2025 14:01:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,463 +49,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 27/36] arm_mpam: Allow configuration to be applied and
- restored during cpu online
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+Subject: Re: [PATCH v2 4/7] dt-bindings: display: mediatek: disp-tdshp: Add
+ support for MT8196
+To: Jay Liu <jay.liu@mediatek.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Hsin-Yi Wang <hsinyi@chromium.org>, CK Hu <ck.hu@mediatek.com>,
+ Yongqiang Niu <yongqiang.niu@mediatek.com>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-28-james.morse@arm.com>
+References: <20250727071609.26037-1-jay.liu@mediatek.com>
+ <20250727071609.26037-5-jay.liu@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <20250711183648.30766-28-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250727071609.26037-5-jay.liu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi James,
-
-On 7/11/25 19:36, James Morse wrote:
-> When CPUs come online the original configuration should be restored.
-> Once the maximum partid is known, allocate an configuration array for
-> each component, and reprogram each RIS configuration from this.
+On 27/07/2025 09:15, Jay Liu wrote:
+> Add disp-tdshp hardware description for MediaTek MT8196 SoC
 > 
-> The MPAM spec describes how multiple controls can interact. To prevent
-> this happening by accident, always reset controls that don't have a
-> valid configuration. This allows the same helper to be used for
-> configuration and reset.
-> 
-> CC: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->   drivers/platform/arm64/mpam/mpam_devices.c  | 236 ++++++++++++++++++--
->   drivers/platform/arm64/mpam/mpam_internal.h |  26 ++-
->   2 files changed, 234 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
-> index bb3695eb84e9..f3ecfda265d2 100644
-> --- a/drivers/platform/arm64/mpam/mpam_devices.c
-> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
-> @@ -374,12 +374,16 @@ static void mpam_class_destroy(struct mpam_class *class)
->   	add_to_garbage(class);
->   }
->   
-> +static void __destroy_component_cfg(struct mpam_component *comp);
-> +
->   static void mpam_comp_destroy(struct mpam_component *comp)
->   {
->   	struct mpam_class *class = comp->class;
->   
->   	lockdep_assert_held(&mpam_list_lock);
->   
-> +	__destroy_component_cfg(comp);
-> +
->   	list_del_rcu(&comp->class_list);
->   	add_to_garbage(comp);
->   
-> @@ -909,51 +913,90 @@ static void mpam_reset_msc_bitmap(struct mpam_msc *msc, u16 reg, u16 wd)
->   		__mpam_write_reg(msc, reg, bm);
->   }
->   
-> -static void mpam_reset_ris_partid(struct mpam_msc_ris *ris, u16 partid)
-> +/* Called via IPI. Call while holding an SRCU reference */
-> +static void mpam_reprogram_ris_partid(struct mpam_msc_ris *ris, u16 partid,
-> +				      struct mpam_config *cfg)
->   {
->   	u16 bwa_fract = MPAMCFG_MBW_MAX_MAX;
->   	struct mpam_msc *msc = ris->vmsc->msc;
->   	struct mpam_props *rprops = &ris->props;
->   
-> -	mpam_assert_srcu_read_lock_held();
-> -
->   	mutex_lock(&msc->part_sel_lock);
->   	__mpam_part_sel(ris->ris_idx, partid, msc);
->   
-> -	if (mpam_has_feature(mpam_feat_cpor_part, rprops))
-> -		mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM, rprops->cpbm_wd);
-> +	if (mpam_has_feature(mpam_feat_cpor_part, rprops)) {
-> +		if (mpam_has_feature(mpam_feat_cpor_part, cfg))
-> +			mpam_write_partsel_reg(msc, CPBM, cfg->cpbm);
-> +		else
-> +			mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM,
-> +					      rprops->cpbm_wd);
-> +	}
->   
-> -	if (mpam_has_feature(mpam_feat_mbw_part, rprops))
-> -		mpam_reset_msc_bitmap(msc, MPAMCFG_MBW_PBM, rprops->mbw_pbm_bits);
-> +	if (mpam_has_feature(mpam_feat_mbw_part, rprops)) {
-> +		if (mpam_has_feature(mpam_feat_mbw_part, cfg))
-> +			mpam_write_partsel_reg(msc, MBW_PBM, cfg->mbw_pbm);
-> +		else
-> +			mpam_reset_msc_bitmap(msc, MPAMCFG_MBW_PBM,
-> +					      rprops->mbw_pbm_bits);
-> +	}
->   
->   	if (mpam_has_feature(mpam_feat_mbw_min, rprops))
->   		mpam_write_partsel_reg(msc, MBW_MIN, 0);
->   
-> -	if (mpam_has_feature(mpam_feat_mbw_max, rprops))
-> -		mpam_write_partsel_reg(msc, MBW_MAX, bwa_fract);
-> +	if (mpam_has_feature(mpam_feat_mbw_max, rprops)) {
-> +		if (mpam_has_feature(mpam_feat_mbw_max, cfg))
-> +			mpam_write_partsel_reg(msc, MBW_MAX, cfg->mbw_max);
-> +		else
-> +			mpam_write_partsel_reg(msc, MBW_MAX, bwa_fract);
-> +	}
->   
->   	if (mpam_has_feature(mpam_feat_mbw_prop, rprops))
->   		mpam_write_partsel_reg(msc, MBW_PROP, bwa_fract);
->   	mutex_unlock(&msc->part_sel_lock);
->   }
->   
-> +struct reprogram_ris {
-> +	struct mpam_msc_ris *ris;
-> +	struct mpam_config *cfg;
-> +};
-> +
-> +/* Call with MSC lock held */
-> +static int mpam_reprogram_ris(void *_arg)
-> +{
-> +	u16 partid, partid_max;
-> +	struct reprogram_ris *arg = _arg;
-> +	struct mpam_msc_ris *ris = arg->ris;
-> +	struct mpam_config *cfg = arg->cfg;
-> +
-> +	if (ris->in_reset_state)
-> +		return 0;
-> +
-> +	spin_lock(&partid_max_lock);
-> +	partid_max = mpam_partid_max;
-> +	spin_unlock(&partid_max_lock);
-> +	for (partid = 0; partid <= partid_max; partid++)
-> +		mpam_reprogram_ris_partid(ris, partid, cfg);
-> +
-> +	return 0;
-> +}
-> +
->   /*
->    * Called via smp_call_on_cpu() to prevent migration, while still being
->    * pre-emptible.
->    */
->   static int mpam_reset_ris(void *arg)
->   {
-> -	u16 partid, partid_max;
->   	struct mpam_msc_ris *ris = arg;
-> +	struct reprogram_ris reprogram_arg;
-> +	struct mpam_config empty_cfg = { 0 };
->   
->   	if (ris->in_reset_state)
->   		return 0;
->   
-> -	spin_lock(&partid_max_lock);
-> -	partid_max = mpam_partid_max;
-> -	spin_unlock(&partid_max_lock);
-> -	for (partid = 0; partid < partid_max; partid++)
-> -		mpam_reset_ris_partid(ris, partid);
-> +	reprogram_arg.ris = ris;
-> +	reprogram_arg.cfg = &empty_cfg;
-> +
-> +	mpam_reprogram_ris(&reprogram_arg);
->   
->   	return 0;
->   }
-> @@ -984,13 +1027,11 @@ static int mpam_touch_msc(struct mpam_msc *msc, int (*fn)(void *a), void *arg)
->   
->   static void mpam_reset_msc(struct mpam_msc *msc, bool online)
->   {
-> -	int idx;
->   	struct mpam_msc_ris *ris;
->   
->   	mpam_assert_srcu_read_lock_held();
->   
->   	mpam_mon_sel_outer_lock(msc);
-> -	idx = srcu_read_lock(&mpam_srcu);
->   	list_for_each_entry_srcu(ris, &msc->ris, msc_list, srcu_read_lock_held(&mpam_srcu)) {
->   		mpam_touch_msc(msc, &mpam_reset_ris, ris);
->   
-> @@ -1000,10 +1041,38 @@ static void mpam_reset_msc(struct mpam_msc *msc, bool online)
->   		 */
->   		ris->in_reset_state = online;
->   	}
-> -	srcu_read_unlock(&mpam_srcu, idx);
->   	mpam_mon_sel_outer_unlock(msc);
->   }
->   
-> +static void mpam_reprogram_msc(struct mpam_msc *msc)
-> +{
-> +	int idx;
-> +	u16 partid;
-> +	bool reset;
-> +	struct mpam_config *cfg;
-> +	struct mpam_msc_ris *ris;
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_rcu(ris, &msc->ris, msc_list) {
-> +		if (!mpam_is_enabled() && !ris->in_reset_state) {
-> +			mpam_touch_msc(msc, &mpam_reset_ris, ris);
-> +			ris->in_reset_state = true;
-> +			continue;
-> +		}
-> +
-> +		reset = true;
-> +		for (partid = 0; partid <= mpam_partid_max; partid++) {
-Do we need to consider 'partid_max_lock' here?
-> +			cfg = &ris->vmsc->comp->cfg[partid];
-> +			if (cfg->features)
-> +				reset = false;
-> +
-> +			mpam_reprogram_ris_partid(ris, partid, cfg);
-> +		}
-> +		ris->in_reset_state = reset;
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +}
-> +
->   static void _enable_percpu_irq(void *_irq)
->   {
->   	int *irq = _irq;
-> @@ -1025,7 +1094,7 @@ static int mpam_cpu_online(unsigned int cpu)
->   			_enable_percpu_irq(&msc->reenable_error_ppi);
->   
->   		if (atomic_fetch_inc(&msc->online_refs) == 0)
-> -			mpam_reset_msc(msc, true);
-> +			mpam_reprogram_msc(msc);
->   	}
->   	srcu_read_unlock(&mpam_srcu, idx);
->   
-> @@ -1806,6 +1875,43 @@ static void mpam_unregister_irqs(void)
->   	cpus_read_unlock();
->   }
->   
-> +static void __destroy_component_cfg(struct mpam_component *comp)
-> +{
-> +	add_to_garbage(comp->cfg);
-> +}
-> +
-> +static int __allocate_component_cfg(struct mpam_component *comp)
-> +{
-> +	if (comp->cfg)
-> +		return 0;
-> +
-> +	comp->cfg = kcalloc(mpam_partid_max + 1, sizeof(*comp->cfg), GFP_KERNEL);
-And here?
-> +	if (!comp->cfg)
-> +		return -ENOMEM;
-> +	init_garbage(comp->cfg);
-> +
-> +	return 0;
-> +}
-> +
-> +static int mpam_allocate_config(void)
-> +{
-> +	int err = 0;
-> +	struct mpam_class *class;
-> +	struct mpam_component *comp;
-> +
-> +	lockdep_assert_held(&mpam_list_lock);
-> +
-> +	list_for_each_entry(class, &mpam_classes, classes_list) {
-> +		list_for_each_entry(comp, &class->components, class_list) {
-> +			err = __allocate_component_cfg(comp);
-> +			if (err)
-> +				return err;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static void mpam_enable_once(void)
->   {
->   	int err;
-> @@ -1817,12 +1923,21 @@ static void mpam_enable_once(void)
->   	 */
->   	cpus_read_lock();
->   	mutex_lock(&mpam_list_lock);
-> -	mpam_enable_merge_features(&mpam_classes);
-> +	do {
-> +		mpam_enable_merge_features(&mpam_classes);
->   
-> -	err = mpam_register_irqs();
-> -	if (err)
-> -		pr_warn("Failed to register irqs: %d\n", err);
-> +		err = mpam_allocate_config();
-> +		if (err) {
-> +			pr_err("Failed to allocate configuration arrays.\n");
-> +			break;
-> +		}
->   
-> +		err = mpam_register_irqs();
-> +		if (err) {
-> +			pr_warn("Failed to register irqs: %d\n", err);
-> +			break;
-> +		}
-> +	} while (0);
->   	mutex_unlock(&mpam_list_lock);
->   	cpus_read_unlock();
->   
-> @@ -1861,6 +1976,8 @@ static void mpam_reset_component_locked(struct mpam_component *comp)
->   	might_sleep();
->   	lockdep_assert_cpus_held();
->   
-> +	memset(comp->cfg, 0, (mpam_partid_max * sizeof(*comp->cfg)));
-And here?
-> +
->   	idx = srcu_read_lock(&mpam_srcu);
->   	list_for_each_entry_rcu(vmsc, &comp->vmsc, comp_list) {
->   		msc = vmsc->msc;
-> @@ -1963,6 +2080,79 @@ void mpam_enable(struct work_struct *work)
->   		mpam_enable_once();
->   }
->   
-> +struct mpam_write_config_arg {
-> +	struct mpam_msc_ris *ris;
-> +	struct mpam_component *comp;
-> +	u16 partid;
-> +};
-> +
-> +static int __write_config(void *arg)
-> +{
-> +	struct mpam_write_config_arg *c = arg;
-> +
-> +	mpam_reprogram_ris_partid(c->ris, c->partid, &c->comp->cfg[c->partid]);
-> +
-> +	return 0;
-> +}
-> +
-> +#define maybe_update_config(cfg, feature, newcfg, member, changes) do { \
-> +	if (mpam_has_feature(feature, newcfg) &&			\
-> +	    (newcfg)->member != (cfg)->member) {			\
-> +		(cfg)->member = (newcfg)->member;			\
-> +		cfg->features |= (1 << feature);			\
-> +									\
-> +		(changes) |= (1 << feature);				\
-> +	}								\
-> +} while (0)
-> +
-> +static mpam_features_t mpam_update_config(struct mpam_config *cfg,
-> +					  const struct mpam_config *newcfg)
-> +{
-> +	mpam_features_t changes = 0;
-> +
-> +	maybe_update_config(cfg, mpam_feat_cpor_part, newcfg, cpbm, changes);
-> +	maybe_update_config(cfg, mpam_feat_mbw_part, newcfg, mbw_pbm, changes);
-> +	maybe_update_config(cfg, mpam_feat_mbw_max, newcfg, mbw_max, changes);
-> +
-> +	return changes;
-> +}
-> +
-> +/* TODO: split into write_config/sync_config */
-> +/* TODO: add config_dirty bitmap to drive sync_config */
-> +int mpam_apply_config(struct mpam_component *comp, u16 partid,
-> +		      struct mpam_config *cfg)
-> +{
-> +	struct mpam_write_config_arg arg;
-> +	struct mpam_msc_ris *ris;
-> +	struct mpam_vmsc *vmsc;
-> +	struct mpam_msc *msc;
-> +	int idx;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	/* Don't pass in the current config! */
-> +	WARN_ON_ONCE(&comp->cfg[partid] == cfg);
-> +
-> +	if (!mpam_update_config(&comp->cfg[partid], cfg))
-> +		return 0;
-> +
-> +	arg.comp = comp;
-> +	arg.partid = partid;
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_rcu(vmsc, &comp->vmsc, comp_list) {
-> +		msc = vmsc->msc;
-> +
-> +		list_for_each_entry_rcu(ris, &vmsc->ris, vmsc_list) {
-> +			arg.ris = ris;
-> +			mpam_touch_msc(msc, __write_config, &arg);
-> +		}
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +
-> +	return 0;
-> +}
-> +
->   /*
->    * MSC that are hidden under caches are not created as platform devices
->    * as there is no cache driver. Caches are also special-cased in
-> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
-> index 1a24424b48df..029ec89f56f2 100644
-> --- a/drivers/platform/arm64/mpam/mpam_internal.h
-> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
-> @@ -190,11 +190,7 @@ struct mpam_props {
->   	u16			num_mbwu_mon;
->   };
->   
-> -static inline bool mpam_has_feature(enum mpam_device_features feat,
-> -				    struct mpam_props *props)
-> -{
-> -	return (1 << feat) & props->features;
-> -}
-> +#define mpam_has_feature(_feat, x)	((1 << (_feat)) & (x)->features)
->   
->   static inline void mpam_set_feature(enum mpam_device_features feat,
->   				    struct mpam_props *props)
-> @@ -225,6 +221,17 @@ struct mpam_class {
->   	struct mpam_garbage	garbage;
->   };
->   
-> +struct mpam_config {
-> +	/* Which configuration values are valid. 0 is used for reset */
-> +	mpam_features_t		features;
-> +
-> +	u32	cpbm;
-> +	u32	mbw_pbm;
-> +	u16	mbw_max;
-> +
-> +	struct mpam_garbage	garbage;
-> +};
-> +
->   struct mpam_component {
->   	u32			comp_id;
->   
-> @@ -233,6 +240,12 @@ struct mpam_component {
->   
->   	cpumask_t		affinity;
->   
-> +	/*
-> +	 * Array of configuration values, indexed by partid.
-> +	 * Read from cpuhp callbacks, hold the cpuhp lock when writing.
-> +	 */
-> +	struct mpam_config	*cfg;
-> +
->   	/* member of mpam_class:components */
->   	struct list_head	class_list;
->   
-> @@ -297,6 +310,9 @@ extern u8 mpam_pmg_max;
->   void mpam_enable(struct work_struct *work);
->   void mpam_disable(struct work_struct *work);
->   
-> +int mpam_apply_config(struct mpam_component *comp, u16 partid,
-> +		      struct mpam_config *cfg);
-> +
->   int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
->   				   cpumask_t *affinity);
->   
+> Signed-off-by: Jay Liu <jay.liu@mediatek.com>
+> Signed-off-by: 20220315152503 created <jay.liu@mediatek.com>
 
--- 
-Thanks,
 
-Ben
+Who is this person?
 
+Test your bindings BEFORE you send them, not after. That's v2 so I don't
+get why this is not tested at this point.
+
+
+Best regards,
+Krzysztof
 
