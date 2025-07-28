@@ -1,156 +1,185 @@
-Return-Path: <linux-kernel+bounces-748648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DA3B1443B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:13:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0BCB14440
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70C78173841
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 144C43BBE56
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE8D21CC74;
-	Mon, 28 Jul 2025 22:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8557121C18A;
+	Mon, 28 Jul 2025 22:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="PzCZPpmr"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EOOZcutJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18F51A76DE;
-	Mon, 28 Jul 2025 22:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495F570813
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753740812; cv=none; b=cWEq2Bs81orMvnfom3OOHR6hVHE+NirfCKbzNd3zkEzxZBBpaGkOJHHV2F8UXiuDUQ3VH6V0/AATNGzg45j0CoeEsefRQzLTwm/WSnkHc4JwvRQ8DSxaF+mbJO0j0yoK31goPEUZy0Qa/ThLToQJ7SI8ooWgiEJkDqABEqvRA+o=
+	t=1753740923; cv=none; b=REQ/RfYP7a8iJ02n1M2p9t3J/90nrJcueaZReWYmG4Y01jiMNwmpvITbSFDDjkv6q1CQ+ipaaTTAvReZhnhaccUxSUKRuEDD1BV+xJeL5ZjaULnnjtidYKvfCCVWZLnt0QMx4zSoTT/2JJeV4X5OoZhpLCDYf6ELQu2rBI1gYWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753740812; c=relaxed/simple;
-	bh=/TLuZ3CPSQL3Qo/GcI7XH17VsD7QZtZ6rwFQgREGAAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UFSXuHwORtER6Hj2cRXYiRHUCALb8w6dS24ggtfLP9xof6mKz7ldAJHon4OHqwZAP/ixf61jMZm+hNhlTCkoN4Xs07Y64TVeX7t2bx8CD+i/w4EdVoCfvJ1ltFJv8HlGRqnTP6+ZdNKGR1HilUfepT8vsxm6XlSghrgNoN5DHv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=PzCZPpmr; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1753740808; x=1754345608; i=w_armin@gmx.de;
-	bh=/TLuZ3CPSQL3Qo/GcI7XH17VsD7QZtZ6rwFQgREGAAI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=PzCZPpmrujBTB7xLToUJ/kr6kAgWiPf+L2OJ8Lj5CGWZUG1tNPvPa+igA2R8r8Ou
-	 nQnrPtKk20m8LtrYX0g+l0PjULyXTQtSz8URSUjST6qrhkBnVuAcMFujtA+jGGgLB
-	 9P1o/D8oD8LQpkRAaTzYno7+nsXIIrMKVa//Q9u/qc7UCexSC3ZMS524so9wgDLtK
-	 ovAyS5NHPfzvGNA0cCWZs5TAwVewyHzb8h9Eokk5sQrYiUZ1T+hwOGIF48XWbNxfK
-	 PzzWMPStFmfGPNrVIJWjuvy9Qpu2Bupaf0QndZ002tMCOqtwaujPfvT7eDMPW+pvd
-	 yHZq2M/KEHulXkzM6Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MmlXA-1uEI5p2u7a-00hZmb; Tue, 29
- Jul 2025 00:13:27 +0200
-Message-ID: <4e0de0c3-395d-4e70-816c-72a8e75eff8f@gmx.de>
-Date: Tue, 29 Jul 2025 00:13:26 +0200
+	s=arc-20240116; t=1753740923; c=relaxed/simple;
+	bh=zLQdrVxX2PRWd5WJQiNUkj73ADxmmzT9JOuFxjTOoyM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QEX5gOyb+lrZ7JqtTTjfBntmsK5Xpe+t1eFO4QBdJT+DeeoZmODvhw0y2fybk2z1wlftaS1jaxIujYbN0h4UvJO7NRlgJkxsWmaj4RRBdTN5Paz3rpxJFYaWc6ndPb32CFTxsPrsSDoSszv9GZtCIVGxiEo7bRtZgxIHoiGAtMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EOOZcutJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SL0Heg016257
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:15:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=Lll6iG9jjiafodgAXUYVjtDfwGIt1eByg5KgSum8/2o=; b=EO
+	OZcutJvKonX2omZ+NL3a/EO4wrH3sBDazzrQasl0tJGJfX3rM5H/MfDm6wuLZED8
+	IHpt8lRWYwOg8B0032HGRNnWtJtk0aawEsSW8+62FzH52gaYRgIUruNCbDHdrFOc
+	8ZtJhGkU8lL1qAxQtV69KZpJj8HoKBEWJf6ZaalGWEifUrtRX9hdirpKeWg1iLdP
+	Qrx5RIwEMFRimF6enBlXmp17SYatnZuQtBERhJ+Z1i8b+AGAvMLJSioAiVuj6QvO
+	k+wpN74hwyunZ6Jts6uat0/Klco639TMKUn9x7DzqAiz4ST1GL713384m337aTwX
+	ZAXgd5KkpO7uV3U8KEsg==
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484qd9wy1a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:15:20 +0000 (GMT)
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-41c66de9ac8so2128419b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:15:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753740920; x=1754345720;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lll6iG9jjiafodgAXUYVjtDfwGIt1eByg5KgSum8/2o=;
+        b=L8y2j8z07F4RHqqSw0+CExV65b3pqAp7tZJI2DFgKsHkJmSHlOdHbLeJEEURHXrWU6
+         kXX14xd2541uTn7wcwHGUHZmyjN3ylR2Qd20G3UTjvhK5RK0I7BKRWKShycrUsm3TmzV
+         GkN9tG2JL0eo/BLIhJ9J8M2jrf9kFK2o0sBa3R9CQhFpWqnbSxM59qxvv2vcl8mFsm8W
+         fcAOct8QpGwOduudn1p0iPNV/NweQlSqWJ186otTGA6j0HSUCaCfC9zXLPJlP4YVnKBO
+         6CqVVm4ZTMDab1sqyAZE087bwswu+Ns4tZ0ndHR3BQW4P2x4n9uHUd9c98vYw6Teaiik
+         QPqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYHMCELz5i8vcEqqY0vnzBPc/AhK/dmnp4UkdlhQok9v30RbTrUevBXXa7birVvzd0pzBt2vpUp6QPU+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydbPRe0AkyEcoExbirl7LXTgEcoDy7ORN9uCTu6Zd7WjSR1swy
+	jxrIq/TKCTPS3QCr2AZsO4bGFnnc1AV6aoxLlPOn2Uhm1axj+xbwR//u8zpM6NTFAKSCEb4hLyZ
+	sZwGWYMreIYD3LTiAgqvI7zgCLWzcOvHLSs5OSjYJTeP5VMhc8bxHBMYg3BwO9vemPJaXrk63h/
+	4VbXTKrUgDnxTTVwzkJJxmmK/T27RS4mEuFmQAMjvy2A==
+X-Gm-Gg: ASbGncs3oOHot/RIRhiYf8WmaEvkLxaSGlJbYsniJziw0vtdmmMR/c79Nj9DYPz98fw
+	qTKoyVFpe+LSyeSSWkyUrvTex/hijLa3vwM44Wmbe3HiPs5ODGEgM0CHww/mW0Wxn3CBBHQgpsR
+	KJyqfJsy1S5ghPO819wxjHOInJumwZJMNPNi8uyoRZoKlV3d+MBF6N
+X-Received: by 2002:a05:6808:14cc:b0:40b:3816:6637 with SMTP id 5614622812f47-42bb92437famr7502071b6e.24.1753740920059;
+        Mon, 28 Jul 2025 15:15:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFUWxjH77ANgUCz1gxut5vOzlfOsvuZGqBiRxeSnrpoSOaKr0Axu+0/yp56ejEjtW4vvXW/jn7lkoZRFSnkaJw=
+X-Received: by 2002:a05:6808:14cc:b0:40b:3816:6637 with SMTP id
+ 5614622812f47-42bb92437famr7502059b6e.24.1753740919614; Mon, 28 Jul 2025
+ 15:15:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: EC: Ignore ECDT tables with an invalid ID string
-To: Ilya K <me@0upti.me>, rafael@kernel.org
-Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, glpnk@proton.me
-References: <CAJZ5v0iWS=tHAuauHNHb+N9_GjJTX2-RY01eAS8-sjS_2UZaoA@mail.gmail.com>
- <9323b4ab-f2c2-41ec-be0e-779d327205ca@0upti.me>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <9323b4ab-f2c2-41ec-be0e-779d327205ca@0upti.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:+GDBuVF9BzM3jkyAE12QsXdRzbqNwcHw8WFnWAIpp6zbs9L0ouY
- 007iKBw8rix4WrBQfCIHNaLF3LHpdvlKsReTt6k16+dRjYZ/2O6acYqLNfLixV2ZJeXFjst
- aEj8rYNQ/plohMidCIeYD3hW/xxGPnDprY5LHtf03My29BL1C9A4PmVhYdUefQ+KUO8wJqv
- OTbXIG7JmCVGnAHgzusQg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:k7l9fI4b9+w=;PZFynOMJDoKgsxUKHVR8agNyO5C
- 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
- nl+9ppRb7t/dikCmEyNnJ4+QcXSNjZQo=
+References: <20250728203412.22573-1-robin.clark@oss.qualcomm.com>
+ <20250728203412.22573-2-robin.clark@oss.qualcomm.com> <CACu1E7F=Y2oKfiWtD0VYfmLkL24e7JrZYMt8dmoGW7zrq7bd2g@mail.gmail.com>
+In-Reply-To: <CACu1E7F=Y2oKfiWtD0VYfmLkL24e7JrZYMt8dmoGW7zrq7bd2g@mail.gmail.com>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Mon, 28 Jul 2025 15:15:08 -0700
+X-Gm-Features: Ac12FXxKcQE-jGXesSBh-SermxAqmB7IQG6RNGuaqlm9uwFHrxNfWtJsGTe3B_k
+Message-ID: <CACSVV02W28L0MS32J0n1PTpEsaq_6RxEPgb_6y6G=6TryGEPQw@mail.gmail.com>
+Subject: Re: [PATCH 1/7] drm/msm: Add missing "location"s to devcoredump
+To: Connor Abbott <cwabbott0@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        Akhil P Oommen <akhilpo@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: TxCb4x8Dk55YHR38e8xJadz9bc1QDcL8
+X-Authority-Analysis: v=2.4 cv=Pfv/hjhd c=1 sm=1 tr=0 ts=6887f679 cx=c_pps
+ a=AKZTfHrQPB8q3CcvmcIuDA==:117 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=GWzUntYCYND7tZVuv0EA:9 a=QEXdDO2ut3YA:10
+ a=pF_qn-MSjDawc0seGVz6:22
+X-Proofpoint-GUID: TxCb4x8Dk55YHR38e8xJadz9bc1QDcL8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDE2NCBTYWx0ZWRfXwZYdhskUNvrV
+ SEt6C61mrk9qbZH8HEhuAQMF/IuzSnDHAvEhJ3Tz88D58diZV9wNsSJ7COaTe9+TvHAPNQ0lABB
+ Kmzo30u+ZPHzi34QavJSqI9aCryXGKx7dsbnWx/b1Iv1p93YkZsHKcL9nLpnYhaIEk2+cMCRZpo
+ Xg1wBmerfDGAari2OCr1ACtOLvNgn/O+zX+tXW3ssEDLLS/z6NeHXxhe4V+YnNzUBE3e0nJFqbv
+ 742kq0LeS7zu/k4nQOOFJ4FA8wyHY8LPXQNgEZgrnc2QHd4OiqM7WiJOeLMiydhgq9bES5N3sgj
+ wXpLT5QubhVq8Gb1+jQ96wFAMD940U3JBAiIIe6n1KpEfDosXUu2/GzVMkv1TGFzWicAXXvXErN
+ cWGkujQ4EvT3rSl4ubZfHWEEnAjfaHWBCMYbMHvjrpoTncGH0cffevuJ4ClvSJp67Qp83KAn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_04,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
+ spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507280164
 
-Am 28.07.25 um 11:57 schrieb Ilya K:
-
-> Hello folks!
+On Mon, Jul 28, 2025 at 2:04=E2=80=AFPM Connor Abbott <cwabbott0@gmail.com>=
+ wrote:
 >
-> It looks like this change makes the touchpad stop being detected entirely on my ThinkBook 14 G7 IML[0].
+> On Mon, Jul 28, 2025 at 4:43=E2=80=AFPM Rob Clark <robin.clark@oss.qualco=
+mm.com> wrote:
+> >
+> > This is needed to properly interpret some of the sections.
+> >
+> > Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/=
+drm/msm/adreno/a6xx_gpu_state.c
+> > index faca2a0243ab..e586577e90de 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> > @@ -1796,6 +1796,7 @@ static void a7xx_show_shader(struct a6xx_gpu_stat=
+e_obj *obj,
+> >
+> >         print_name(p, "  - type: ", a7xx_statetype_names[block->statety=
+pe]);
+> >         print_name(p, "    - pipe: ", a7xx_pipe_names[block->pipeid]);
+> > +       drm_printf(p, "    - location: %d", block->location);
 >
-> The kernel log says: > ACPI: EC: [Firmware Bug]: Ignoring ECDT due to invalid ID string "_SB.PC00.LPCB.EC0"
-> Which looks technically invalid, but also probably important? :)
+> We should probably at least try to keep it proper YAML by indenting
+> everything after another level...
+
+this made me realize I missed a \n... but otherwise I think the indent
+is correct?  Or should location not have a leading '-'?
+
+BR,
+-R
+
 >
-> Reverting the change makes things work again. I'm going to try a firmware update and pray to
-> whatever dark gods are responsible for Lenovo firmware that they fixed their ACPI tables, but
-> that requires getting Windows on the machine, so it'll take a bit.
->
-> [0]: https://psref.lenovo.com/Product/ThinkBook/ThinkBook_14_G7_IML
->
-> (resend -glpnk because my mail server is a shit)
-
-Oh no, that sounds horrible :(
-
-Can you share the output of "acpidump" once the system is running the latest firmware? If a BIOS update
-does not solve the issue then we could give the ID string check a more leeway so that only empty strings
-are considered invalid.
-
-P.S: You could try if the BIOS update tool also works using Windows PE (https://wiki.archlinux.org/title/Windows_PE).
-I used this method a couple of times on my notebook and it worked flawlessly.
-
-Thanks,
-Armin Wolf
-
+> >
+> >         for (i =3D 0; i < block->num_sps; i++) {
+> >                 drm_printf(p, "      - sp: %d\n", i);
+> > @@ -1873,6 +1874,7 @@ static void a7xx_show_dbgahb_cluster(struct a6xx_=
+gpu_state_obj *obj,
+> >                 print_name(p, "  - pipe: ", a7xx_pipe_names[dbgahb->pip=
+e_id]);
+> >                 print_name(p, "    - cluster-name: ", a7xx_cluster_name=
+s[dbgahb->cluster_id]);
+> >                 drm_printf(p, "      - context: %d\n", dbgahb->context_=
+id);
+> > +               drm_printf(p, "      - location: %d\n", dbgahb->locatio=
+n_id);
+> >                 a7xx_show_registers_indented(dbgahb->regs, obj->data, p=
+, 4);
+> >         }
+> >  }
+> > --
+> > 2.50.1
+> >
 
