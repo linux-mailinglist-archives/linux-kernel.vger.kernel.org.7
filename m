@@ -1,133 +1,172 @@
-Return-Path: <linux-kernel+bounces-747689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4AFCB136D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:37:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6A7B136D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0495D188650E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5835D3A5F82
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39402220F30;
-	Mon, 28 Jul 2025 08:37:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEA721CC5B
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C85B225785;
+	Mon, 28 Jul 2025 08:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhNUxpGT"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031F121CC5B;
+	Mon, 28 Jul 2025 08:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753691872; cv=none; b=u5tCPLOqHbpfDllmjQJWkBmbJ5Dnh08hObHVq2JfLIX93Z8Yz6R8Le5bGR7zmoVxe2FYuuU8znPVWVyv9yOw+5PNLwHI7vTSWpK93qoHryNGWTyVMG5X2YPzFB+eQmVR860lcG8wy9rlGP7LEe82OkdDE7Rw2A4U8IwC9Ebyb6c=
+	t=1753691956; cv=none; b=Z5rFoR1GVDNgT6YWoioKgSC6JmpkQN4q2V6Bp7QJ2+FkUew8C/XG5wS03NaRShaUNCNGnlCDuZFNVNuthjQQ6KyhcB/+E5AgWo1sES0UkJaAc+x4RSazcqPTxqxA+RjpQKJ2TXvj93uabx770GxMQtaq/uBiRNEDqT/vzcy7gw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753691872; c=relaxed/simple;
-	bh=jLahd8ERP63WgTSf7meyqkC0WOm3tKsaAaqAwyju330=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c9G7u65wS5VH1BtqOQqsLwhCg7qt4lmrrQd78igRRTxtLxAmpPzETgWW4sKvuFA0pEQXHGMCS18ledAx1lcYpot1pjdVDBbcwN5BR1qc1wqBeLhRpqlBrWVkMhCRuDQZywcAYW4ugyBzw9yuRjmGTBiiYSddXcS4hqnxZ8RpKXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1ECAC1596;
-	Mon, 28 Jul 2025 01:37:42 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26F6A3F673;
-	Mon, 28 Jul 2025 01:37:46 -0700 (PDT)
-Message-ID: <f14db9e0-95c8-4389-9a27-69f0ba9b5329@arm.com>
-Date: Mon, 28 Jul 2025 09:37:44 +0100
+	s=arc-20240116; t=1753691956; c=relaxed/simple;
+	bh=gF8ZwmejygbZnCW0HUWh1Dm2FMCNOyZhGOr1l6wnPOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CdLae+N5EXiUTjCwVyvHSzZNx9EEep34kjVSr77eJ2IauNBzQhIBBmUvtyfR0pr8NzcTdcpIzGZ2ROniw/ICnmAzdlAugex5du3+iRgYrImC2RplzGZWKVo8I99obAz5SRYHh1LWFohFpKc6R1VsAIEHsE5p4OqZDUJ4wjym5GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhNUxpGT; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74b54af901bso2632866b3a.2;
+        Mon, 28 Jul 2025 01:39:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753691954; x=1754296754; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vya5qGpzWoc5p9TRlcPu5vfiEaBpqyQ4uDCZUUCsHs0=;
+        b=nhNUxpGTH08fNOaxl/v8jySv5JrAZr3vL8vyJZIfJuojD3owMPgy4p96tp6T9M3Iqi
+         IpdQOS+Gpa7pvFxv6s3IZfinQdpyXjUBpjWIBNjuZh6w50NtwFBqOqG9WWVggoW45vdG
+         zOvBneNhTTHDtSZNL5knxpQaiyth6gGE/rqKFz50XNU/OiLP+NAaw79ZPRSkAHllE3F4
+         Y3cw/HylwgTL4Xm5woUQmYnItklTRiDgryk1ECJoXeWE0dzhpljglXVnOsFFr919q2w7
+         G0nU9VKLKFvnoBxa+2pt0N/ebjU9LZchJc5axMWk6Q8LVBDKlzWi0I6hG1PXuTQLoKJl
+         w0dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753691954; x=1754296754;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vya5qGpzWoc5p9TRlcPu5vfiEaBpqyQ4uDCZUUCsHs0=;
+        b=DuVHsog53hIUVAaffATG3KLHlfXyfVEWm6tInuXQxHIbQWk24D2IO0WEPLjh9SeTOY
+         ZSQXD9UGVUifoCeG6v+bPM3ziJJUDDpv/iyDlzgdNAmhuKfutIzk+btc6NGG/QzV4+xQ
+         0WCUVl7CPBKybpzMBpQW7Z/6q27LRZeYVP7dIW19NQpAip/PBzAK5rzl6nnM9reZlyw3
+         uHibMIYmE5Y/2uJrKCDAMAn5WDCoiO85fqgic2YFggveenW6hFPddreFP3SPKuDj712C
+         AtZLfYQ5rGSPfbbCKZfA0KcAfxa6P6AF2ijqBzGVC9tPITvV2Jq09nDdhOqrwbF2fA2w
+         cWQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFxKF24MqdqY+XkP5j+9cFoT1RqwyU1nsVQkoWgzNeifWbtgmc/Qk6/aRxk7zUb+FCxb9qcNTJ1cCNrnM=@vger.kernel.org, AJvYcCWcBlMI/WjuJ8Ry/uQRAyzobKck7r3v/OU2mi2jvL/1Ul8qEyyeiTv763yxh6ciWHoQyZMckIfze2JopEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGkLk+7YUR1k+wQWLa/tpO16pY0443vjE3qZ7YoYl6vcb/S8hv
+	PQSri7ybefUHirOJrW4G3hCL9usSrVUqGJiG0cgwFNcfTnM0hsRYLDR+
+X-Gm-Gg: ASbGncu07ipXF25nOn+pXX3mJWz19y3dK2M4v/VUsKB7AKhB8PLl38iyIg/pP5lqlos
+	0KbEzhoQCIE5N6S7od5poyX6+bWqHoIrIcDvJO7JWo1Yyeh07vhMPDvxb0BH1+HXMv5Wz99gsKA
+	77xcTOiaN/NAzXS5rpx40linx8JRXZ9vKhMbeS0KldhVPmh5tfXpjXcsQPQLeMFak7oMwlILw8J
+	XNqTce8oJcMMF1GNxrc+C0TjQuejtELT/jgcPepC/jEL53dT3/jTqueNW3aUHezFT87Lu12Kwwr
+	PTh7UYBc+JZq8Ey6M1ssmrHIh8ZWTQ+9M7ZBXfk4jauDtvXe0IzEmO8C8cXfJDbhjT0UioaKD8f
+	Fy1IYoSFMVFBNCBUuVk8hKgTlxJaP7t+76jnApLr85krPzVNDMo7JGxTpX4q/tWaYKN5DGz5DM1
+	gd7g==
+X-Google-Smtp-Source: AGHT+IEH2/sc/SWyEm3YwKUm+g3xqVnAUkH4+qhsnIfwtnWuwd9hSNX3nrpt7A9JzeGixvSqgN7rjg==
+X-Received: by 2002:a05:6a21:998b:b0:215:efed:acfc with SMTP id adf61e73a8af0-23d6ffe5ee1mr17612525637.7.1753691954094;
+        Mon, 28 Jul 2025 01:39:14 -0700 (PDT)
+Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([49.36.70.111])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f6b54e8sm4275819a12.57.2025.07.28.01.39.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 01:39:13 -0700 (PDT)
+From: "Darshan R." <rathod.darshan.0896@gmail.com>
+To: hansg@kernel.org
+Cc: mchehab@kernel.org,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jogidishank503@gmail.com,
+	Darshan R <rathod.darshan.0896@gmail.com>
+Subject: [PATCH v2] staging: media: atomisp: Fix indentation and styling in output kernel code
+Date: Mon, 28 Jul 2025 08:39:43 +0000
+Message-ID: <20250728083943.10851-1-rathod.darshan.0896@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 04/36] cacheinfo: Expose the code to generate a
- cache-id from a device_node
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-5-james.morse@arm.com>
- <bfc4d1b5-c8c4-45de-b52a-833486368336@arm.com>
- <ccbf2f40-7e69-4b51-953f-113695b8c16e@arm.com>
-Content-Language: en-US
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <ccbf2f40-7e69-4b51-953f-113695b8c16e@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi James,
+From: Darshan R <rathod.darshan.0896@gmail.com>
 
-On 7/25/25 18:08, James Morse wrote:
-> Hi Ben,
-> 
-> On 14/07/2025 12:40, Ben Horgan wrote:
->> On 7/11/25 19:36, James Morse wrote:
->>> The MPAM driver identifies caches by id for use with resctrl. It
->>> needs to know the cache-id when probe-ing, but the value isn't set
->>> in cacheinfo until device_initcall().
->>>
->>> Expose the code that generates the cache-id. The parts of the MPAM
->>> driver that run early can use this to set up the resctrl structures
->>> before cacheinfo is ready in device_initcall().
-> 
->>> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
->>> index 613410705a47..0fdd6358ee73 100644
->>> --- a/drivers/base/cacheinfo.c
->>> +++ b/drivers/base/cacheinfo.c
->>> @@ -207,8 +207,7 @@ static bool match_cache_node(struct device_node *cpu,
->>>    #define arch_compact_of_hwid(_x)    (_x)
->>>    #endif
->>>    -static void cache_of_set_id(struct cacheinfo *this_leaf,
->>> -                struct device_node *cache_node)
->>> +unsigned long cache_of_calculate_id(struct device_node *cache_node)
->>>    {
->>>        struct device_node *cpu;
->>>        u32 min_id = ~0;
->>> @@ -219,15 +218,23 @@ static void cache_of_set_id(struct cacheinfo *this_leaf,
->>>            id = arch_compact_of_hwid(id);
->>>            if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
->>>                of_node_put(cpu);
->>> -            return;
->>> +            return ~0UL;
->>>            }
->>>              if (match_cache_node(cpu, cache_node))
->>>                min_id = min(min_id, id);
->>>        }
->>>    -    if (min_id != ~0) {
->>> -        this_leaf->id = min_id;
->>> +    return min_id;
-> 
->> Looks like some 32bit/64bit confusion. Don't we want to return ~0UL if min_id == ~0?
-> 
-> Certainly some confusion - yup, because cache_of_calculate_id() needs to return something
-> that is out of range and (u32)-1 might be valid...
-> 
-> I think changing min_id to be defined as:
-> |	unsigned long min_id = ~0UL;
-> 
-> fixes this - any trip round the loop that doesn't match anything will eventually return ~0UL.
-Yes, that would work.
+Update formatting of function definitions and if statements to match kernel
+coding standards. This improves readability and ensures consistency across
+the codebase.
 
-> 
-> 
-> Thanks! - I always get the 'UL' suffixes wrong.
-> 
-> James
+These are non-functional changes intended to address common checkpatch
+warnings and prepare the driver for eventual mainline inclusion.
 
-Thanks,
+Signed-off-by: Darshan R. <rathod.darshan.0896@gmail.com>
+---
+ .../output/output_1.0/ia_css_output.host.c    | 22 ++++++++++---------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-Ben
+diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/output/output_1.0/ia_css_output.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/output/output_1.0/ia_css_output.host.c
+index d09365e0c471..4f84c6d3622a 100644
+--- a/drivers/staging/media/atomisp/pci/isp/kernels/output/output_1.0/ia_css_output.host.c
++++ b/drivers/staging/media/atomisp/pci/isp/kernels/output/output_1.0/ia_css_output.host.c
+@@ -34,9 +34,9 @@ static const struct ia_css_output1_configuration default_output1_configuration
+ 
+ void
+ ia_css_output_encode(
+-    struct sh_css_isp_output_params *to,
+-    const struct ia_css_output_config *from,
+-    unsigned int size)
++	struct sh_css_isp_output_params *to,
++	const struct ia_css_output_config *from,
++	unsigned int size)
+ {
+ 	(void)size;
+ 	to->enable_hflip = from->enable_hflip;
+@@ -74,7 +74,7 @@ int ia_css_output0_config(struct sh_css_isp_output_isp_config       *to,
+ }
+ 
+ int ia_css_output1_config(struct sh_css_isp_output_isp_config       *to,
+-		          const struct ia_css_output1_configuration *from,
++			  const struct ia_css_output1_configuration *from,
+ 			  unsigned int size)
+ {
+ 	return ia_css_output_config(to, (const struct ia_css_output_configuration *)from, size);
+@@ -95,7 +95,7 @@ int ia_css_output_configure(const struct ia_css_binary     *binary,
+ }
+ 
+ int ia_css_output0_configure(const struct ia_css_binary    *binary,
+-			    const struct ia_css_frame_info *info)
++			     const struct ia_css_frame_info *info)
+ {
+ 	if (info) {
+ 		struct ia_css_output0_configuration config =
+@@ -124,10 +124,12 @@ int ia_css_output1_configure(const struct ia_css_binary     *binary,
+ 
+ void
+ ia_css_output_dump(
+-    const struct sh_css_isp_output_params *output,
+-    unsigned int level)
++	const struct sh_css_isp_output_params *output,
++	unsigned int level)
+ {
+-	if (!output) return;
++	if (!output)
++		return;
++
+ 	ia_css_debug_dtrace(level, "Horizontal Output Flip:\n");
+ 	ia_css_debug_dtrace(level, "\t%-32s = %d\n",
+ 			    "enable", output->enable_hflip);
+@@ -138,8 +140,8 @@ ia_css_output_dump(
+ 
+ void
+ ia_css_output_debug_dtrace(
+-    const struct ia_css_output_config *config,
+-    unsigned int level)
++	const struct ia_css_output_config *config,
++	unsigned int level)
+ {
+ 	ia_css_debug_dtrace(level,
+ 			    "config.enable_hflip=%d",
+-- 
+2.43.0
 
 
