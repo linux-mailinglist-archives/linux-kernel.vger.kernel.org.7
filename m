@@ -1,102 +1,235 @@
-Return-Path: <linux-kernel+bounces-748222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F407B13E16
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:19:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A04AB13E1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8E133BB363
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A475404CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89AFB271461;
-	Mon, 28 Jul 2025 15:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D3E273808;
+	Mon, 28 Jul 2025 15:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aod8NwN3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FXlezz4/"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44261D5145;
-	Mon, 28 Jul 2025 15:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C7B72621;
+	Mon, 28 Jul 2025 15:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753715949; cv=none; b=R5QD2ekF7d/OlnNRndtvazOikQ0ttkNWOo+83Tmy2GHwW1u/mQW924nLniRX0S0/Q7+pUxkXq99jHCSYe/Qn4/wDjMPaRCIBlEske5nuK8R7tCKjtc9Tin3GI2wVqyV8mKJMJyksqWhK1gE3PhqA4bUI4/ViBUXopA0CAq937Wo=
+	t=1753715976; cv=none; b=OwShnHzHXiUR1h6PH/bcpftRBN4yQCYT58JR7Hlkpt8wLnvgI72rsqyGNJeal8293w72gQDFpQm0+OtqVBIsjIWa7x26wASzDuVz+cDRAgb0vs8CQ5tXmVJMOwFg4Hbn43NPG81ZMtugqjHc4j8pyA8OIs5cO0w/7wwxg2Ghpzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753715949; c=relaxed/simple;
-	bh=jtQPl9fdZvZtEb/y/9SCQaBctzLJmmM7srwq7qNJiRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jbts4n2dsA9Q0LzgFVQBBmHQyvwwoL29hC1hY98no5gp3jNh6ERu/4s/R8nMMgtxOQCQn9rpJd0ReC5pPil9OiinqQJVynCs8ice6CiX3cTnHwqPrh61j2I66NfgNyApexvlgLEdORjPdcq4fGzC/tc/GGIP1nsgcvOeseA2cLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aod8NwN3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2AA5C4CEE7;
-	Mon, 28 Jul 2025 15:19:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753715948;
-	bh=jtQPl9fdZvZtEb/y/9SCQaBctzLJmmM7srwq7qNJiRM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Aod8NwN3/JOlahigpX8mZ9sELREBI4cu7rK1H5sM1/q+xT5ZHCVKqfjGNj6GgoJxL
-	 0aPINQS5wd453yRNHlVQBR4AFlgZP8g0O64eaqAqFhB0RK3lUz0/rTB2Zy232Hm+fu
-	 QY063sbsaWf9gh/4DkQcGVaFH6Hx0O4UoWYTCzhjfdxY6HD7zTv7FXQsqYCbKHWdit
-	 Agd6gVeG0xg1uDYFeqXjArZTucP+rbprdsv+oUOodlg5psJ2/FiuHuMCKEmvwypreK
-	 0FPiURxyPmd0niG04uFJs+OQhUvfTdH02fgTPQnc5NmbNMUAaYwbN8KpBdiY57XgPx
-	 rIk9mOR3HyeNA==
-Date: Mon, 28 Jul 2025 08:19:07 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>, Jason Wang
- <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, KY Srinivasan
- <kys@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
- <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Michael Kelley
- <mhklinux@outlook.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>,
- Kees Cook <kees@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Kuniyuki
- Iwashima <kuniyu@google.com>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, Guillaume Nault <gnault@redhat.com>, Joe
- Damato <jdamato@fastly.com>, Ahmed Zaki <ahmed.zaki@intel.com>, "open
- list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, "open
- list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] netvsc: transfer lower device max tso size
-Message-ID: <20250728081907.3de03b67@kernel.org>
-In-Reply-To: <20250727200126.2682aa39@hermes.local>
-References: <20250718061812.238412-1-lulu@redhat.com>
-	<20250721162834.484d352a@kernel.org>
-	<CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com>
-	<20250721181807.752af6a4@kernel.org>
-	<CACGkMEtEvkSaYP1s+jq-3RPrX_GAr1gQ+b=b4oytw9_dGnSc_w@mail.gmail.com>
-	<20250723080532.53ecc4f1@kernel.org>
-	<SJ2PR21MB40138F71138A809C3A2D903BCA5FA@SJ2PR21MB4013.namprd21.prod.outlook.com>
-	<20250723151622.0606cc99@kernel.org>
-	<20250727200126.2682aa39@hermes.local>
+	s=arc-20240116; t=1753715976; c=relaxed/simple;
+	bh=wIxcjcNEkyPDjmdkRrJ3cR3fiA648H006TZTC+uVUHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=trqR3C/Lht5RHb0Ww4KCFNP8WByahgVYuSvzRDDu3Nx5fBlHpqB49i457LIiBsPh92ppDHzdg+YOJISRa24PZqiL10dNMWVF0XVUftq2ooDfOoG1HIHRwUNZFhFYC5eEJLSYamvwOa+nqSddSbmxAmBLSsE8DnbEuYGIYJNYtNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FXlezz4/; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4brMb44BjHzm0yVN;
+	Mon, 28 Jul 2025 15:19:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1753715965; x=1756307966; bh=wyvxwcIBKz4/1qVBx/Glm6HG
+	EcWTzuLIGUB0WKeP3wA=; b=FXlezz4/MQUqElceeHYKDWHaX6UdUZFANqL4A8rM
+	d6nTLdhAci116llAi7+noO5nZp2pNaIuRS4uXjQ0bVcAJqJ8yigmkixAmcjTmd2T
+	2MqZRJYkoIBmvM4BlvB2VXpq/tCixZBnIK2jIIJQjLFgA5w2K9JybDHLkl7ZsZT4
+	xMqxWIrh04vLwcBiW3wW99UhAEozoAyQhZI8Nksa3UHdK+6NlHS7t2A9bY0fYWDW
+	xADjqEJ4pDFay50VBT5F4+BU412a3A19QwSMtl2BUURtFmopxBeg300i14kIql8a
+	RYPUaZujSxdpHZIVfriBS3LOOHRU4AcUtWp7hYv2hRX7Lg==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id zCbeK2nZy5RL; Mon, 28 Jul 2025 15:19:25 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4brMZp20Ktzm0ySj;
+	Mon, 28 Jul 2025 15:19:12 +0000 (UTC)
+Message-ID: <c385f1c4-f27b-4dc7-b4a2-d35a9fc77a91@acm.org>
+Date: Mon, 28 Jul 2025 08:19:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] scsi: ufs: core: move some irq handling back to
+ hardirq (with time limit)
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>,
+ Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com,
+ linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
+ <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
+ <a008c613-58d6-4368-ae2f-55db4ac82a02@linaro.org>
+ <76af97e49cb7f36c8dc6edc62c84e72d6bb4669c.camel@linaro.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <76af97e49cb7f36c8dc6edc62c84e72d6bb4669c.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 27 Jul 2025 20:01:26 -0700 Stephen Hemminger wrote:
-> On Wed, 23 Jul 2025 15:16:22 -0700
-> Jakub Kicinski <kuba@kernel.org> wrote:
-> >
-> > > Actually, we had used the common bonding driver 9 years ago. But it's
-> > > replaced by this kernel/netvsc based "transparent" bonding mode. See
-> > > the patches listed below.
-> > > 
-> > > The user mode bonding scripts were unstable, and difficult to deliver
-> > > & update for various distros. So Stephen developed the new "transparent"
-> > > bonding mode, which greatly improves the situation.    
-> > 
-> > I specifically highlighted systemd-networkd as the change in the user
-> > space landscape.  
-> 
-> Haiyang tried valiantly but getting every distro to do the right thing
-> with VF's bonding and hot plug was impossible to support.
+On 7/28/25 7:49 AM, Andr=C3=A9 Draszik wrote:
+> Btw, my complete command was (should probably have added that
+> to the commit message in the first place):
+>=20
+> for rw in read write ; do
+>      echo "rw: ${rw}"
+>      for jobs in 1 8 ; do
+>          echo "jobs: ${jobs}"
+>          for it in $(seq 1 5) ; do
+>              fio --name=3Drand${rw} --rw=3Drand${rw} \
+>                  --ioengine=3Dlibaio --direct=3D1 \
+>                  --bs=3D4k --numjobs=3D${jobs} --size=3D32m \
+>                  --runtime=3D30 --time_based --end_fsync=3D1 \
+>                  --group_reporting --filename=3D/foo \
+>              | grep -E '(iops|sys=3D|READ:|WRITE:)'
+>              sleep 5
+>          done
+>      done
+> done
 
-I understand, but I also don't want it to be an upstream Linux problem.
+Please run performance tests in recovery mode against a block
+device (/dev/block/sd...) instead of running performance tests on
+top of a filesystem. One possible approach for retrieving the block
+device name is as follows:
 
-Again, no other cloud provider seems to have this issue, AFAIU.
+adb shell readlink /dev/block/by-name/userdata
+
+There may be other approaches for retrieving the name of the block
+device associated with /data. Additionally, tuning for maximum
+performance is useful because it eliminates impact from the process
+scheduler on block device performance measurement. An extract from a
+scrip that I use myself to measure block device performance on Pixel
+devices is available below.
+
+Best regards,
+
+Bart.
+
+
+optimize() {
+     local clkgate_enable c d devfreq disable_cpuidle governor nomerges=20
+iostats
+     local target_freq ufs_irq_path
+
+     if [ "$1" =3D performance ]; then
+	clkgate_enable=3D0
+	devfreq=3Dmax
+	disable_cpuidle=3D1
+	governor=3Dperformance
+	# Enable I/O statistics because the performance impact is low and
+	# because fio reports the I/O statistics.
+	iostats=3D1
+	# Disable merging to make tests follow the fio arguments.
+	nomerges=3D2
+	target_freq=3Dcpuinfo_max_freq
+	persist_logs=3Dfalse
+     else
+	clkgate_enable=3D1
+	devfreq=3Dmin
+	disable_cpuidle=3D0
+	governor=3Dsched_pixel
+	iostats=3D1
+	nomerges=3D0
+	target_freq=3Dcpuinfo_min_freq
+	persist_logs=3Dtrue
+     fi
+
+     for c in $(adb shell "echo /sys/devices/system/cpu/cpu[0-9]*"); do
+	for d in $(adb shell "echo $c/cpuidle/state[1-9]*"); do
+	    adb shell "if [ -e $d ]; then echo $disable_cpuidle > $d/disable; fi=
+"
+	done
+	adb shell "cat $c/cpufreq/cpuinfo_max_freq > $c/cpufreq/scaling_max_freq=
+;
+                    cat $c/cpufreq/${target_freq} >=20
+$c/cpufreq/scaling_min_freq;
+                    echo ${governor} > $c/cpufreq/scaling_governor; true"=
+ \
+             2>/dev/null
+     done
+
+     if [ "$(adb shell grep -c ufshcd /proc/interrupts)" =3D 1 ]; then
+	# No MCQ or MCQ disabled. Make the fastest CPU core process UFS
+	# interrupts.
+	# shellcheck disable=3DSC2016
+	ufs_irq_path=3D$(adb shell 'a=3D$(echo /proc/irq/*/ufshcd); echo ${a%/uf=
+shcd}')
+	adb shell "echo ${fastest_cpucore} > ${ufs_irq_path}/smp_affinity_list;=20
+true"
+     else
+	# MCQ is enabled. Distribute the completion interrupts over the
+	# available CPU cores.
+	local i=3D0
+	local irqs
+	irqs=3D$(adb shell "sed -n 's/:.*GIC.*ufshcd.*//p' /proc/interrupts")
+	for irq in $irqs; do
+	    adb shell "echo $i > /proc/irq/$irq/smp_affinity_list; true"
+	    i=3D$((i+1))
+	done
+     fi
+
+     for d in $(adb shell echo /sys/class/devfreq/*); do
+	case "$d" in
+	    *gpu0)
+		continue
+		;;
+	esac
+	local min_freq
+	min_freq=3D$(adb shell "cat $d/available_frequencies |
+		tr ' ' '\n' |
+		sort -n |
+		case $devfreq in
+			min) head -n1;;
+			max) tail -n1;;
+		esac")
+	adb shell "echo $min_freq > $d/min_freq"
+	# shellcheck disable=3DSC2086
+	if [ "$devfreq" =3D "max" ]; then
+	    echo "$(basename $d)/min_freq: $(adb shell cat $d/min_freq) <>=20
+$min_freq"
+	fi
+     done
+
+     for d in $(adb shell echo /sys/devices/platform/*.ufs); do
+	adb shell "echo $clkgate_enable > $d/clkgate_enable"
+     done
+
+     adb shell setprop logd.logpersistd.enable ${persist_logs}
+
+     adb shell "for b in /sys/class/block/{sd[a-z],dm*}; do
+		    if [ -e \$b ]; then
+			[ -e \$b/queue/iostats     ] && echo ${iostats}   >\$b/queue/iostats;
+			[ -e \$b/queue/nomerges    ] && echo ${nomerges}  >\$b/queue/nomerges;
+			[ -e \$b/queue/rq_affinity ] && echo 2            >\$b/queue/rq_affini=
+ty;
+			[ -e \$b/queue/scheduler   ] && echo ${iosched}   >\$b/queue/scheduler=
+;
+		    fi
+		done; true"
+
+     adb shell "grep -q '^[^[:blank:]]* /sys/kernel/debug' /proc/mounts=20
+|| mount -t debugfs none /sys/kernel/debug"
+}
+
 
