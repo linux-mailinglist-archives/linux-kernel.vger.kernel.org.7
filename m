@@ -1,190 +1,421 @@
-Return-Path: <linux-kernel+bounces-748228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4632AB13E31
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:25:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F086B13E32
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3739017E1B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:25:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929E13BFE3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7B4272E75;
-	Mon, 28 Jul 2025 15:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EE12727E2;
+	Mon, 28 Jul 2025 15:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M9Uc4kEO"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RmEZXQN6"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60AB2727E2
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465C2272819
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753716318; cv=none; b=NFJYVCqzhOpvGzBvArZZKBEn4hYN+42ORhP7LmlM4vrkmSVZDYooXlm8Iq0I21i6JXo2GL1/nWi1CBmoDnBO/VkTyMpph2NhhorCb2E9c+wsirEgx7X8C4h8IOVZuzPJARUUvIApc45Dcy5kM697Mc8W8aQTZBGJg303S31vyfc=
+	t=1753716323; cv=none; b=TChTQjlyV9a37+EI00LfLOM45NwSiw3KJQN/ypf/FUY8dsagoPNTlJMbF+E8Criyeal6vfdMe0Wwf8dZoPlhYNc/2cBWkdoYi/PkKbHAJ42bZuD4T0VYOqfsdaAYOS5P9YryZyeERRzUtqqxKVl3+5kumOIRz0JG9V7KWkc/DVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753716318; c=relaxed/simple;
-	bh=Kptubjw33lIYXvj73r+Ak5WjJnBxiCJjjkNyZ62pUp4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=j3j4eutPW0iVGLBGg8dHeBw1yORTMASEm4Q+IW+BbA24kFvxsXyobZM5a4Wxon6O8zkWeUZHA02aG4MAlbRAaTEmEZOWLmsfTdabu/eOyhZQA5kuh9+avLHRk5UnHW7Fh1smKVSh5g2579Pzu5DXS2XSCcKdRlTfJ++1ReS/+kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M9Uc4kEO; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-456007cfcd7so145565e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753716315; x=1754321115; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FmtiBSyLbULt1UA1JWlLsO3uP2X4WloH9sMbWEu3NzA=;
-        b=M9Uc4kEOKsBMrw1CrnM6QyLh31774WWQTgpOxuz5fA05Qn5HH6Qr8k9Z1AuH5WHiYL
-         ajckt/0WhwSs0EMV1dLemGzVnKCZVI+KFNGBx/NZATFbRp8f4kfyx49r5REwcC7/uv5u
-         N1M1xu8+cd/dBUHLVRl4WvUWf4tkc+I25Oj+s4BoC+nY0xT1A83Qh4vxSd6vaKbQyjcE
-         2S9JRObdtktxLNlacq1yI2zQblnj21ddcTTOBgnzB3h5N2dvYcbpPUtJ/jbSvrvplnxR
-         VuOo0xqnFgToSItjCEN/i8NGAbFNIzwYR/7JC+R1J+RwMJ8aA4paba3LcdnICHAzmWf6
-         +67w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753716315; x=1754321115;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FmtiBSyLbULt1UA1JWlLsO3uP2X4WloH9sMbWEu3NzA=;
-        b=WRy4c+p04E2BxVpl3owrJuX5TL52DFkGbg1q8TaC4oVLm0NEzRn6Tiq/AxPmmzftlz
-         9RkA0upoV9J8CEibeDqXYx0+N54YR1lSjMKMnM2Zbb1R0ECZiOQ22p07uMLrZoBSBN3X
-         zXbXWTGYdL01dQqJr3l9qk75TKYNNR4Ftwx+dHdWtIU/hWPx3+4u9mmiU6kShdOPMPFn
-         Flk3FTZ1oLU/32HdoDRcigoOuK69VxSa1RSMCyNNJcOKZmQ30euHFE7Fm3obQGW8psja
-         3zEfLSjNyfuxh2s2OA1PxKflRbRfSk9zHiLznDwpNLSOXcpRHTux45QtzVjTM1Mp17Kx
-         I0Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCU9TYEoOwNJAW2CmLrByfG5uMYOswgqZvK8VnNC0xnnEZRCmK0cssRaM0MxrdYWvgj1jKPoFcHNSLoCwIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5Ifc9Afsp16RTwx61UB6nQcew5fT31uB9vx14dSxSGipvtBcJ
-	xXjZg3GObB7KWyQxEw1husptRSJztQbKwHYok20u1vadA6uRIwfkICGQ9LOAVbXYhA==
-X-Gm-Gg: ASbGncsEQwz6wIDx194gb1MlDlFYe1qR7BIi9inTLI0iiDBIafIYWQKhJRaDmq/tATx
-	DZ9JVXvp/uihCypTCtuIhzUU62XT0FVAvjVaevgvjB3Y07yP9deeuGUSDU0uwBBtkMW7EIsc/xt
-	9+c1V0Gy/GpbT9AZR7s45+JEYFX4fn24Qysf+5+9XDXVE2kxbOjyZ8PRcAP9jftKgd2pPkqsX6C
-	JCAyC/WebqgjPaqHMsu9xS+7b2q/00OlyAFXpl0lP0dAeq+YxQN3jovuRFIMwd+DswR+V6ZUVdV
-	CPEAWu3FCrqm7Hf/A3BmccmXnxa4QDu8jkmHX6s2aWTvc4yeHFqv7wisYhQ1YuvsGqKPBX/pURW
-	78IoEZwDkbQ==
-X-Google-Smtp-Source: AGHT+IFz2/khpbmE7QV+OLQd11BAr9Xk4dyOjWbrlD/05Yad/FhrSGmzWSDF//LF5el6BhaDH3YZQw==
-X-Received: by 2002:a05:600d:11:b0:455:fd3e:4e12 with SMTP id 5b1f17b1804b1-4587c203b63mr3367205e9.4.1753716314556;
-        Mon, 28 Jul 2025 08:25:14 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:ec3e:2435:f96c:43d])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705c4fdasm166070335e9.28.2025.07.28.08.25.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 08:25:14 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Mon, 28 Jul 2025 17:25:07 +0200
-Subject: [PATCH] kasan: add test for SLAB_TYPESAFE_BY_RCU quarantine
- skipping
+	s=arc-20240116; t=1753716323; c=relaxed/simple;
+	bh=HdclEY6D/ELo3mqAWfqroObatxW0H5QIu+N0Gk80oWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aG9Rs3irmkY2A4TmV+wlSw/ljGnFJ7/zDfsEEhKhdD76bs8mz05l8RIRNjFCo1cFCk5M8YBycY2rF/C8no11qUn4U2ZuZtEdCDY/9Wd7WbqdSpiSclvOJrRrWecDlSzo/NdrydL0g8kgyLl16XyUzBInb0nTqpMRjIp/WxOw8Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RmEZXQN6; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8e6cd484-43f6-410e-a580-3671642a7e65@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753716317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=43bTjxENVZrLQD/4l+zrHdTaGZI/A43tISDWdUvDAjQ=;
+	b=RmEZXQN6NJEfqrllCKvpHFDLS2DrYpaJ6mTz+Qf+UYgvnnG98dbfSiY4Ptyyz/huhjX6f8
+	cuK1lKqp/yZ7UCu/xrf6bcklUNcaZmX9rZ7LyBX8kD7DRGasXVgwZy6Oa2n4Qfle0tMd4+
+	uh9rVTt03EOZjwQrquNhlxhQMyj8kQs=
+Date: Mon, 28 Jul 2025 23:25:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-kasan-tsbrcu-noquarantine-test-v1-1-fa24d9ab7f41@google.com>
-X-B4-Tracking: v=1; b=H4sIAFKWh2gC/33NSwrCMBSF4a2EOzaQJqax2Yp0kMSrBuHW5lGE0
- r0brODM4X8G51shY4qYwbIVEi4xx4ladAcG4e7ohjxeWoMUUgsjT/zhsiNesk+hcprm6pKjEgl
- 5wVy4DkYq1RsUuod28kx4ja8PcB73TjjX5pR9/DGWfRH1B0EpjPfDIFAe7dLBuG1vXjjTucQAA
- AA=
-X-Change-ID: 20250728-kasan-tsbrcu-noquarantine-test-5c723367e056
-To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
- Alexander Potapenko <glider@google.com>, 
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, kasan-dev@googlegroups.com, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753716310; l=2679;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=Kptubjw33lIYXvj73r+Ak5WjJnBxiCJjjkNyZ62pUp4=;
- b=63awq6A643TMQphYSCgAxn8VRGNZqIMqOct7AU3rsaLfhYPVM3wE6iOhb9oBMDvAWudz6meau
- daIFkzIVpRXBf+8r00bPgCO+mafWmDLqF24NHkkqsPzSiRM+jBHA/Z8
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+Subject: Re: [PATCH bpf-next v4 1/3] bpftool: Add bpf_token show
+To: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ kuba@kernel.org, hawk@kernel.org
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org
+References: <20250723144442.1427943-1-chen.dylane@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <20250723144442.1427943-1-chen.dylane@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Verify that KASAN does not quarantine objects in SLAB_TYPESAFE_BY_RCU slabs
-if CONFIG_SLUB_RCU_DEBUG is off.
+在 2025/7/23 22:44, Tao Chen 写道:
 
-Suggested-by: Andrey Konovalov <andreyknvl@gmail.com>
-Signed-off-by: Jann Horn <jannh@google.com>
----
-Feel free to either take this as a separate commit or squash it into the
-preceding "[PATCH] kasan: skip quarantine if object is still accessible
-under RCU".
+Ping...
 
-I tested this by running KASAN kunit tests for x86-64 with KASAN
-and tracing manually enabled; there are two failing tests but those
-seem unrelated (kasan_memchr is unexpectedly not detecting some
-accesses, and kasan_strings is also failing).
----
- mm/kasan/kasan_test_c.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Hi,
 
-diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-index 5f922dd38ffa..15d3d82041bf 100644
---- a/mm/kasan/kasan_test_c.c
-+++ b/mm/kasan/kasan_test_c.c
-@@ -1073,6 +1073,41 @@ static void kmem_cache_rcu_uaf(struct kunit *test)
- 	kmem_cache_destroy(cache);
- }
- 
-+/*
-+ * Check that SLAB_TYPESAFE_BY_RCU objects are immediately reused when
-+ * CONFIG_SLUB_RCU_DEBUG is off, and stay at the same address.
-+ */
-+static void kmem_cache_rcu_reuse(struct kunit *test)
-+{
-+	char *p, *p2;
-+	struct kmem_cache *cache;
-+
-+	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_SLUB_RCU_DEBUG);
-+
-+	cache = kmem_cache_create("test_cache", 16, 0, SLAB_TYPESAFE_BY_RCU,
-+				  NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
-+
-+	p = kmem_cache_alloc(cache, GFP_KERNEL);
-+	if (!p) {
-+		kunit_err(test, "Allocation failed: %s\n", __func__);
-+		kmem_cache_destroy(cache);
-+		return;
-+	}
-+
-+	kmem_cache_free(cache, p);
-+	p2 = kmem_cache_alloc(cache, GFP_KERNEL);
-+	if (!p2) {
-+		kunit_err(test, "Allocation failed: %s\n", __func__);
-+		kmem_cache_destroy(cache);
-+		return;
-+	}
-+	KUNIT_ASSERT_PTR_EQ(test, p, p2);
-+
-+	kmem_cache_free(cache, p2);
-+	kmem_cache_destroy(cache);
-+}
-+
- static void kmem_cache_double_destroy(struct kunit *test)
- {
- 	struct kmem_cache *cache;
-@@ -2098,6 +2133,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
- 	KUNIT_CASE(kmem_cache_double_free),
- 	KUNIT_CASE(kmem_cache_invalid_free),
- 	KUNIT_CASE(kmem_cache_rcu_uaf),
-+	KUNIT_CASE(kmem_cache_rcu_reuse),
- 	KUNIT_CASE(kmem_cache_double_destroy),
- 	KUNIT_CASE(kmem_cache_accounted),
- 	KUNIT_CASE(kmem_cache_bulk),
+Quentin has reviewed this patchset, could someone review this again, thanks.
 
----
-base-commit: 0df7d6c9705b283d5b71ee0ae86ead05bd3a55a9
-change-id: 20250728-kasan-tsbrcu-noquarantine-test-5c723367e056
-prerequisite-change-id: 20250723-kasan-tsbrcu-noquarantine-e207bb990e24:v1
-prerequisite-patch-id: 4fab9d3a121bfcaacc32a40f606b7c04e0c6fdd0
-
+> Add `bpftool token show` command to get token info
+> from bpffs in /proc/mounts.
+> 
+> Example plain output for `token show`:
+> token_info  /sys/fs/bpf/token
+> 	allowed_cmds:
+> 	  map_create          prog_load
+> 	allowed_maps:
+> 	allowed_progs:
+> 	  kprobe
+> 	allowed_attachs:
+> 	  xdp
+> token_info  /sys/fs/bpf/token2
+> 	allowed_cmds:
+> 	  map_create          prog_load
+> 	allowed_maps:
+> 	allowed_progs:
+> 	  kprobe
+> 	allowed_attachs:
+> 	  xdp
+> 
+> Example json output for `token show`:
+> [{
+> 	"token_info": "/sys/fs/bpf/token",
+> 	"allowed_cmds": ["map_create", "prog_load"],
+> 	"allowed_maps": [],
+> 	"allowed_progs": ["kprobe"],
+> 	"allowed_attachs": ["xdp"]
+> }, {
+> 	"token_info": "/sys/fs/bpf/token2",
+> 	"allowed_cmds": ["map_create", "prog_load"],
+> 	"allowed_maps": [],
+> 	"allowed_progs": ["kprobe"],
+> 	"allowed_attachs": ["xdp"]
+> }]
+> 
+> Reviewed-by: Quentin Monnet <qmo@kernel.org>
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> ---
+>   tools/bpf/bpftool/main.c  |   3 +-
+>   tools/bpf/bpftool/main.h  |   1 +
+>   tools/bpf/bpftool/token.c | 225 ++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 228 insertions(+), 1 deletion(-)
+>   create mode 100644 tools/bpf/bpftool/token.c
+> 
+> Change list:
+>   v3 -> v4:
+>    - patch1
+>     - fix CHECK coding style with 'checkpatch.pl --strict'
+>     - repalce [tab] with space when show help information
+>    - patchset reviewed-by Quentin
+>   v3: https://lore.kernel.org/bpf/20250723033107.1411154-1-chen.dylane@linux.dev
+> 
+>   v2 -> v3:
+>    Quentin suggested:
+>    - patch1
+>     - remove print when token not found.
+>    - patch2
+>     - refactor description message.
+>    - patch3
+>     - update commit message.
+>   v2: https://lore.kernel.org/bpf/20250722115815.1390761-1-chen.dylane@linux.dev
+>       https://lore.kernel.org/bpf/20250722120912.1391604-2-chen.dylane@linux.dev
+>    
+>   v1 -> v2:
+>    Quentin suggested:
+>    - patch1
+>     - remove zclose macro.
+>     - rename __json_array_str to split_json_array_str
+>     - print empty array when value is null for json format.
+>     - show all tokens info and format plain output for readable.
+>     - add info when token not found.
+>     - add copyright in token.c
+>    - patch2
+>     - update 'eBPF progs' to 'eBPF tokens'.
+>     - update description.
+>    - patch3
+>     - add bash-completion.
+>   v1: https://lore.kernel.org/bpf/20250720173310.1334483-1-chen.dylane@linux.dev
+> 
+> diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+> index 2b7f2bd3a7d..0f1183b2ed0 100644
+> --- a/tools/bpf/bpftool/main.c
+> +++ b/tools/bpf/bpftool/main.c
+> @@ -61,7 +61,7 @@ static int do_help(int argc, char **argv)
+>   		"       %s batch file FILE\n"
+>   		"       %s version\n"
+>   		"\n"
+> -		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter }\n"
+> +		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter | token }\n"
+>   		"       " HELP_SPEC_OPTIONS " |\n"
+>   		"                    {-V|--version} }\n"
+>   		"",
+> @@ -87,6 +87,7 @@ static const struct cmd commands[] = {
+>   	{ "gen",	do_gen },
+>   	{ "struct_ops",	do_struct_ops },
+>   	{ "iter",	do_iter },
+> +	{ "token",	do_token },
+>   	{ "version",	do_version },
+>   	{ 0 }
+>   };
+> diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
+> index 6db704fda5c..a2bb0714b3d 100644
+> --- a/tools/bpf/bpftool/main.h
+> +++ b/tools/bpf/bpftool/main.h
+> @@ -166,6 +166,7 @@ int do_tracelog(int argc, char **arg) __weak;
+>   int do_feature(int argc, char **argv) __weak;
+>   int do_struct_ops(int argc, char **argv) __weak;
+>   int do_iter(int argc, char **argv) __weak;
+> +int do_token(int argc, char **argv) __weak;
+>   
+>   int parse_u32_arg(int *argc, char ***argv, __u32 *val, const char *what);
+>   int prog_parse_fd(int *argc, char ***argv);
+> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+> new file mode 100644
+> index 00000000000..6312e662a12
+> --- /dev/null
+> +++ b/tools/bpf/bpftool/token.c
+> @@ -0,0 +1,225 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/* Copyright (C) 2025 Didi Technology Co., Tao Chen */
+> +
+> +#ifndef _GNU_SOURCE
+> +#define _GNU_SOURCE
+> +#endif
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <stdbool.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <unistd.h>
+> +#include <mntent.h>
+> +#include <sys/types.h>
+> +#include <sys/stat.h>
+> +
+> +#include "json_writer.h"
+> +#include "main.h"
+> +
+> +#define MOUNTS_FILE "/proc/mounts"
+> +
+> +static bool has_delegate_options(const char *mnt_ops)
+> +{
+> +	return strstr(mnt_ops, "delegate_cmds") ||
+> +	       strstr(mnt_ops, "delegate_maps") ||
+> +	       strstr(mnt_ops, "delegate_progs") ||
+> +	       strstr(mnt_ops, "delegate_attachs");
+> +}
+> +
+> +static char *get_delegate_value(const char *opts, const char *key)
+> +{
+> +	char *token, *rest, *ret = NULL;
+> +	char *opts_copy = strdup(opts);
+> +
+> +	if (!opts_copy)
+> +		return NULL;
+> +
+> +	for (token = strtok_r(opts_copy, ",", &rest); token;
+> +			token = strtok_r(NULL, ",", &rest)) {
+> +		if (strncmp(token, key, strlen(key)) == 0 &&
+> +		    token[strlen(key)] == '=') {
+> +			ret = token + strlen(key) + 1;
+> +			break;
+> +		}
+> +	}
+> +	free(opts_copy);
+> +
+> +	return ret;
+> +}
+> +
+> +static void print_items_per_line(const char *input, int items_per_line)
+> +{
+> +	char *str, *rest, *strs;
+> +	int cnt = 0;
+> +
+> +	if (!input)
+> +		return;
+> +
+> +	strs = strdup(input);
+> +	if (!strs)
+> +		return;
+> +
+> +	for (str = strtok_r(strs, ":", &rest); str;
+> +			str = strtok_r(NULL, ":", &rest)) {
+> +		if (cnt % items_per_line == 0)
+> +			printf("\n\t  ");
+> +
+> +		printf("%-20s", str);
+> +		cnt++;
+> +	}
+> +
+> +	free(strs);
+> +}
+> +
+> +#define ITEMS_PER_LINE 4
+> +static void show_token_info_plain(struct mntent *mntent)
+> +{
+> +	char *value;
+> +
+> +	printf("token_info  %s", mntent->mnt_dir);
+> +
+> +	printf("\n\tallowed_cmds:");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
+> +	print_items_per_line(value, ITEMS_PER_LINE);
+> +
+> +	printf("\n\tallowed_maps:");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
+> +	print_items_per_line(value, ITEMS_PER_LINE);
+> +
+> +	printf("\n\tallowed_progs:");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
+> +	print_items_per_line(value, ITEMS_PER_LINE);
+> +
+> +	printf("\n\tallowed_attachs:");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
+> +	print_items_per_line(value, ITEMS_PER_LINE);
+> +	printf("\n");
+> +}
+> +
+> +static void split_json_array_str(const char *input)
+> +{
+> +	char *str, *rest, *strs;
+> +
+> +	if (!input) {
+> +		jsonw_start_array(json_wtr);
+> +		jsonw_end_array(json_wtr);
+> +		return;
+> +	}
+> +
+> +	strs = strdup(input);
+> +	if (!strs)
+> +		return;
+> +
+> +	jsonw_start_array(json_wtr);
+> +	for (str = strtok_r(strs, ":", &rest); str;
+> +			str = strtok_r(NULL, ":", &rest)) {
+> +		jsonw_string(json_wtr, str);
+> +	}
+> +	jsonw_end_array(json_wtr);
+> +
+> +	free(strs);
+> +}
+> +
+> +static void show_token_info_json(struct mntent *mntent)
+> +{
+> +	char *value;
+> +
+> +	jsonw_start_object(json_wtr);
+> +
+> +	jsonw_string_field(json_wtr, "token_info", mntent->mnt_dir);
+> +
+> +	jsonw_name(json_wtr, "allowed_cmds");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
+> +	split_json_array_str(value);
+> +
+> +	jsonw_name(json_wtr, "allowed_maps");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
+> +	split_json_array_str(value);
+> +
+> +	jsonw_name(json_wtr, "allowed_progs");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
+> +	split_json_array_str(value);
+> +
+> +	jsonw_name(json_wtr, "allowed_attachs");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
+> +	split_json_array_str(value);
+> +
+> +	jsonw_end_object(json_wtr);
+> +}
+> +
+> +static int __show_token_info(struct mntent *mntent)
+> +{
+> +	if (json_output)
+> +		show_token_info_json(mntent);
+> +	else
+> +		show_token_info_plain(mntent);
+> +
+> +	return 0;
+> +}
+> +
+> +static int show_token_info(void)
+> +{
+> +	FILE *fp;
+> +	struct mntent *ent;
+> +
+> +	fp = setmntent(MOUNTS_FILE, "r");
+> +	if (!fp) {
+> +		p_err("Failed to open: %s", MOUNTS_FILE);
+> +		return -1;
+> +	}
+> +
+> +	if (json_output)
+> +		jsonw_start_array(json_wtr);
+> +
+> +	while ((ent = getmntent(fp)) != NULL) {
+> +		if (strncmp(ent->mnt_type, "bpf", 3) == 0) {
+> +			if (has_delegate_options(ent->mnt_opts))
+> +				__show_token_info(ent);
+> +		}
+> +	}
+> +
+> +	if (json_output)
+> +		jsonw_end_array(json_wtr);
+> +
+> +	endmntent(fp);
+> +
+> +	return 0;
+> +}
+> +
+> +static int do_show(int argc, char **argv)
+> +{
+> +	if (argc)
+> +		return BAD_ARG();
+> +
+> +	return show_token_info();
+> +}
+> +
+> +static int do_help(int argc, char **argv)
+> +{
+> +	if (json_output) {
+> +		jsonw_null(json_wtr);
+> +		return 0;
+> +	}
+> +
+> +	fprintf(stderr,
+> +		"Usage: %1$s %2$s { show | list }\n"
+> +		"       %1$s %2$s help\n"
+> +		"\n"
+> +		"",
+> +		bin_name, argv[-2]);
+> +	return 0;
+> +}
+> +
+> +static const struct cmd cmds[] = {
+> +	{ "show",	do_show },
+> +	{ "list",	do_show },
+> +	{ "help",	do_help },
+> +	{ 0 }
+> +};
+> +
+> +int do_token(int argc, char **argv)
+> +{
+> +	return cmd_select(cmds, argc, argv, do_help);
+> +}
 -- 
-Jann Horn <jannh@google.com>
-
+Best Regards
+Tao Chen
 
