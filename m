@@ -1,196 +1,168 @@
-Return-Path: <linux-kernel+bounces-747679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D6AB136C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:34:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0195B136C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2247A189B9BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:32:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C56188B855
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE55255F2D;
-	Mon, 28 Jul 2025 08:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9509423535A;
+	Mon, 28 Jul 2025 08:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="S/8GCnmo"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4579922FE15;
-	Mon, 28 Jul 2025 08:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PmpKUwyj"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBC71A23AC
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753691413; cv=none; b=oufBjp58ZkQ+kv8EfeMGPu1ad8MF72EZnO7u4Z1/MF09t221749BZIY1udxVK1q6uRjQJkNaimb7u2eezUGCF0syncKiUn4EUEtn+mrIsVcHcB2E8qbakvKLyIb6IyXFXcaH5Y08ILlU4EVH+GTknbNNojeFPAMpJYjlgKiVWS0=
+	t=1753691523; cv=none; b=koN3/n7lERUtyc81qwMxX1kEhQc72WPtFWn/T9tQhl9xOUUag49sTgRhxxIBVVrziJ72pjkElPl5ZeId7Y6QWW7L9jMOUek0xm5d8BJWlPZmtLDmawwNQ7Gl7Gsnct+b6WxucHgFosJWxGY22062wV+P01iNU2xxPlKbHta4Z78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753691413; c=relaxed/simple;
-	bh=zkIQ13/H9CnTVLK6A7Z4pxO6LqziG5oPt4Wp5fwiZIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pFk53xawzxPnjRmW8F8akUMe5dCOn2TwDfsz8tcQWA8m5c6lC5BHiD7GNf/+qwl4eqhEV99S1ftTAo8CFMCvIhwfCURts+mvWyiFULkCaOVnp6UogZZ8jo/smmo5HjGFwutdb2vwv5L0cxa8hklt/dlCz54GQqCG5+beqGrwRKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=S/8GCnmo; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=h8
-	8O4dZwxfFg63Pi6AQ85/YvjoNhwX4BJiQNP+yOVJw=; b=S/8GCnmoj8Kfm9VupZ
-	dKSCGhnACu89x2h3z4niFY8fu3Pnkv+op9tmYteLfuW1pvm5F8mpsK5w8vNzBcDA
-	OCqG6cQeHqgrrolnkjPMTddhuV+XIhmLfNPM7Arp+M2+dThFz+AeOzpU9b+yjrOD
-	1tvZNBYa5qpdTwnLEtWnutZfs=
-Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBn0Oy_NIdoxboRIA--.27423S12;
-	Mon, 28 Jul 2025 16:29:08 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: dmitry.baryshkov@oss.qualcomm.com,
-	heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	mripard@kernel.org,
-	naoki@radxa.com,
-	stephen@radxa.com,
-	cristian.ciocaltea@collabora.com,
-	neil.armstrong@linaro.org,
-	Laurent.pinchart@ideasonboard.com,
-	yubing.zhang@rock-chips.com,
-	krzk+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v6 10/10] arm64: dts: rockchip: Enable DP2HDMI for ROCK 5 ITX
-Date: Mon, 28 Jul 2025 16:28:35 +0800
-Message-ID: <20250728082846.3811429-11-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250728082846.3811429-1-andyshrk@163.com>
-References: <20250728082846.3811429-1-andyshrk@163.com>
+	s=arc-20240116; t=1753691523; c=relaxed/simple;
+	bh=D7pfw83HKjmeYSbCg9q/HWCeeMtzQpB4wfkfixOnxIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZJANZimbvfOQzlr1B54e4NnakXj+d1w4mMf0ILnFGWFRVLeoydvS8aE6vDWAK1cQ1z1M0QPAkDfYkfs1qbylvrjpqt6lShPDyG20wHMt1cljATjDG/wRobx+A3eOaNyj6+6SPUgX+V5wiIzToOTI9tgV5yutvqEAVfEOalUZBwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PmpKUwyj; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so44091305e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753691520; x=1754296320; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CTRs1zuaDG/eDPc9Bkp/G1YcBLDCJtrXRmfR3K8EioE=;
+        b=PmpKUwyjECz1rqv2LSUqjCjb1wF9aCQvT2/udzDmOhlizQ6pLsCYzUtAzUYGGSnnKX
+         LTetmfDHgrpGoXyOOw9GPR2y4u8zHUpciw48yX5DGFin+LansiGwiHtt+k0WrZAFmNK2
+         EnaKxRZBNlWbPd+uVILyiVoIWJFOgwKgGOaTEy4tz0kEr27zBBtq3V5zqVC9pmo32Irr
+         UOaNBqrNxTmAsF2zGZUZLgFyGz0NMzSh5DhlxmQvW2bvh12xjAc7ij2HoYMerImIQiuq
+         MxIE1QV9vOnYCMh/+9UcMZSu44Acq3jQ0ufCD298SQtvOsJ5iB1eFGzsZI/vtmIHKE2w
+         ISrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753691520; x=1754296320;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CTRs1zuaDG/eDPc9Bkp/G1YcBLDCJtrXRmfR3K8EioE=;
+        b=pDs9CKM7X8cuGj+HwKeC9a7FfSumW5lM16B7G5fgYSa7phQ3U/JnKUQ23qCo7pINGr
+         tHoZJaK9RxyHhdmym7v82FfmwGXLRWIPwH3FFrw6p2q3KRTICST8AESYPrXt39FXUXE2
+         QQ4lmLuOAs62/kNs3B04NMpE/Z+ey+Ih6aRCgRmRTzGW9bCXZSu/bDnWHcHJdV/d/kaQ
+         Yw/xaxx4gsNNd3LmHDQIBjLsLIHmrwIUor6OyZRtSzJqxqumLueQjzr6iZHw4C4OCsfs
+         z4j3uCe3a3QHJVDASoPQ70bwkuXNiYWKyd4wokfEw/u82NhM/9n7JpAFd+nMJLA9nD/W
+         8clg==
+X-Forwarded-Encrypted: i=1; AJvYcCUP6l2JdEX4AGXFVww2n5r5pcJWOLFUCUbEaEs7VT5giBWOSP38enRXsTrqE4tCaoIAfpkbXIQcnZpTIdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7JOodx8w5uwinuHCxL9Gcg3QuNw3Jg9k96yD+kd8015N+XyLN
+	4RPwAnE8rBL+ilM0VKFiazWwhsWWfYO9RvYHn4j4lE4ogL0XCq4GR88D1PUwfCp74b8=
+X-Gm-Gg: ASbGncvN/3dLtNKlodNeIKA/D9Sj9vVZRRIudIPWI7QPGxDr77F6XLum4C8icCHbDdf
+	7zuyLfNKkBgyAaPUYKE0kIREtmOo307jbJUo5hFGTTmnudBqBUPb1gNW0sshtpCbN5esALtxjZW
+	2S9yuTEnIozN9z/9znYIjgijoIDPj8147ckpH0k0dfZxYvq2sEMV840Gej/K/Ny2cPTPIt7bFTV
+	qx1XO7zuxcOS3uxdidbp8bvsPdAZoFItR9hGgG7vNOiLzdunGwj21/CYHa7/ettrzWSzmgwrpsB
+	ZtKhHuuiG/NB2dtpIEug5Tzq8Dj33sc08IYa1VTwjXAmsbUMqijouVbEDY4hVViJdJjSRCLJKJt
+	BYln3BFGFYtzbb9NeMsvTKcuHenc2lWH1rhUcGxj3YZw1/xbl6BtAdy7b6BcqRQ==
+X-Google-Smtp-Source: AGHT+IGmBCvpjMes/urRtuq4upKfeVU6jjvOk5RpZhkKZnjMUdjkeQMnkRUGIBkdwvVR89mnD8GGJQ==
+X-Received: by 2002:a05:600c:1c94:b0:456:1442:86e with SMTP id 5b1f17b1804b1-4587911e78amr65369135e9.21.1753691520025;
+        Mon, 28 Jul 2025 01:32:00 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-458705bccc5sm146250205e9.22.2025.07.28.01.31.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 01:31:59 -0700 (PDT)
+Message-ID: <52c93bb5-d114-4be2-864e-87e9efee3cec@linaro.org>
+Date: Mon, 28 Jul 2025 10:31:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 19/20] clocksource/drivers/nxp-pit: Add NXP Automotive
+ s32g2 / s32g3 support
+To: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, tglx@linutronix.de
+Cc: S32@nxp.com, linux-kernel@vger.kernel.org
+References: <20250705160129.3688026-1-daniel.lezcano@linaro.org>
+ <20250705160129.3688026-19-daniel.lezcano@linaro.org>
+ <9a16e06c-c96f-4a86-a017-b02e8f067498@oss.nxp.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <9a16e06c-c96f-4a86-a017-b02e8f067498@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBn0Oy_NIdoxboRIA--.27423S12
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CrykKw18Xw43uF4kCrWkXrb_yoW8KrWrpF
-	nF9rs5GryxuryYqw1FvF1kZFs8Krs5ua93Jr1aqry0yFW7Xas5K3WrWr9YqFyjvF1xXw4a
-	yr4kXa4j93WDXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jcvtZUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0g2YXmiHMZxh5gAAsc
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On 07/07/2025 14:02, Ghennadi Procopciuc wrote:
+> On 7/5/2025 7:01 PM, Daniel Lezcano wrote:
+>> The S32G platform has two Periodic Interrupt Timer (PIT). The IP is
+>> exactly the same as the VF platform.
+>>
+>> The setup found for this platform is each timer instance is bound to
+>> CPU0 and CPU1.
+>>
+>> The changes bring the support for multiple timer instances. When we
+>> reach the maximum PIT instances for this platform, which is described
+>> in the match table data, the hotplug callbacks are called where they
+>> finish the per CPU setup.
+>>
+>> Tested on a s32g274a-rdb2.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+> 
+> The current description does not clearly explain how the resources are used within the driver. It would be helpful to mention that channel 2 is used as the clocksource, while channel 3 is designated for clockevents.
 
-The HDMI0(Port next to Headphone Jack) is drived by DP1 on rk3588
-via RA620(a dp2hdmi converter).
+The changes are to allow to support multiple instances of the PIT timer. 
+The way the channels are used is unchanged. I can put a sentence to 
+remind how they are used.
 
-Add related dt nodes to enable it.
+> Additionally, the S32G2 platform supports suspend and resume functionality. However, this capability is not yet implemented in the driver. Do you plan to include support for it in a future patch?
 
-Note: ROCKCHIP_VOP2_EP_DP1 is defined as 11 in dt-binding header,
-but it will trigger a dtc warning like "graph node unit address
-error, expected "b"" if we use it directly after endpoint, so we
-use "b" instead here.
+Yes, usually PM is added after.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> [...]
+> 
+>> -static int __init pit_timer_init(struct device_node *np)
+>> +static int pit_timer_init(struct device_node *np)
+>>   {
+>>   	struct pit_timer *pit;
+>>   	struct clk *pit_clk;
+>> @@ -261,16 +296,31 @@ static int __init pit_timer_init(struct device_node *np)
+>>   
+>>   	clk_rate = clk_get_rate(pit_clk);
+>>   
+>> -	/* enable the pit module */
+>> -	pit_module_enable(timer_base);
+>> +	pit_module_disable(timer_base);
+>>   
+>>   	ret = pit_clocksource_init(pit, name, timer_base, clk_rate);
+>> -	if (ret)
+>> +	if (ret) {
+>> +		pr_err("Failed to initialize clocksource '%pOF'\n", np);
+>>   		goto out_pit_module_disable;
+>> +	}
+>>   
+>> -	ret = pit_clockevent_init(pit, name, timer_base, clk_rate, irq, 0);
+>> -	if (ret)
+>> +	ret = pit_clockevent_per_cpu_init(pit, name, timer_base, clk_rate, irq, pit_instances);
+>> +	if (ret) {
+>> +		pr_err("Failed to initialize clockevent '%pOF'\n", np);
+>>   		goto out_pit_clocksource_unregister;
+>> +	}
+> 
+> This mechanism is very restrictive and will allow to assign the PIT0 and PIT1 to CPU0 and CPU1 only. Have you considered alternatives where the mapping is given as mask through early_param?
 
----
+Yes, we can consider putting in place a mechanism to configure how the 
+PIT are mapped to a CPU but that would be a separate feature to be added 
+later.
 
-(no changes since v3)
 
-Changes in v3:
-- Add RA620 into bridge chain.
-
- .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 59 +++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-index 7de17117df7ae..903ad42f97177 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
-@@ -57,6 +57,29 @@ analog-sound {
- 			  "Headphone", "Headphones";
- 	};
- 
-+	bridge {
-+		compatible = "radxa,ra620";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			port@0 {
-+				reg = <0>;
-+				hdmi_bridge_in: endpoint {
-+					remote-endpoint = <&dp1_out_con>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				hdmi_bridge_out: endpoint {
-+					remote-endpoint = <&hdmi_con_in>;
-+				};
-+			};
-+		};
-+	};
-+
- 	gpio-leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -73,6 +96,17 @@ hdd-led2 {
- 		};
- 	};
- 
-+	hdmi0-con {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_bridge_out>;
-+			};
-+		};
-+	};
-+
- 	hdmi1-con {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -268,6 +302,24 @@ &cpu_l3 {
- 	cpu-supply = <&vdd_cpu_lit_s0>;
- };
- 
-+&dp1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&dp1m0_pins>;
-+};
-+
-+&dp1_in {
-+	dp1_in_vp2: endpoint {
-+		remote-endpoint = <&vp2_out_dp1>;
-+	};
-+};
-+
-+&dp1_out {
-+	dp1_out_con: endpoint {
-+		remote-endpoint = <&hdmi_bridge_in>;
-+	};
-+};
-+
- &gpu {
- 	mali-supply = <&vdd_gpu_s0>;
- 	status = "okay";
-@@ -1261,3 +1313,10 @@ vp1_out_hdmi1: endpoint@ROCKCHIP_VOP2_EP_HDMI1 {
- 		remote-endpoint = <&hdmi1_in_vp1>;
- 	};
- };
-+
-+&vp2 {
-+	vp2_out_dp1: endpoint@b {
-+		reg = <ROCKCHIP_VOP2_EP_DP1>;
-+		remote-endpoint = <&dp1_in_vp2>;
-+	};
-+};
 -- 
-2.43.0
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
