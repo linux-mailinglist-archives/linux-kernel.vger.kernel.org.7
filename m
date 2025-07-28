@@ -1,332 +1,190 @@
-Return-Path: <linux-kernel+bounces-747858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0BCB13930
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:47:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12C8B13934
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E72871753BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:47:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569B93B82DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14BC245000;
-	Mon, 28 Jul 2025 10:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E45B22D4C5;
+	Mon, 28 Jul 2025 10:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqLB/W5e"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qxlf7sMz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384D010A1E;
-	Mon, 28 Jul 2025 10:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4A61FECD4
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753699636; cv=none; b=fStHC/NmOCcV7MlFVyfL0FDYZkjKrFiU2QFBLjnwo51eI18Dpdysd3tFzaQsV+dY1xAO/pwlsKCGz1rALcHybGjbFIyT/WYrLadt6vxBvU9PmM/+2ufJ5uPz3Sx+2VsoxZbLGo24Az5CgbacPoygI89eL4RslkUWuvAE1BAJwQY=
+	t=1753699683; cv=none; b=LajpeYIhrGGJLDiDQKvLEY4V8hUCExoqliRfBaEukvOWOx+p8kHVfk1olBj9wWS7OJ1s4PtNLTC64aT1UUpKp3fPO4+vIVyv0GOVVqA6prfeq3umDxoL2wX3DhNwP6ph3VAjisnohx7ul/bM1isAs9KFFJZwWIZ1AyD1NHSFBKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753699636; c=relaxed/simple;
-	bh=8y3h100MF2waYLHxEYW4tpbWqLpE6NrR9UtGd5nEcfo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nU1aeOMHdp98EIxgJpAfRBRotYgdVdeFFTFlOsESBOnELtijcNdheB45fR9MGTXaMRvkNi6xXli143Xh6o887AF/M8hgns4lHef0N8TdjlRawznX5OZc63OdZOTzwWwEhPZqFRgHhykmeVk+7fch+On89U1px9OriCL46ZE8eDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqLB/W5e; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-73e58d5108dso2498165a34.3;
-        Mon, 28 Jul 2025 03:47:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753699634; x=1754304434; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g1/K1uetCxj7YK34KvSZ6RXT5MvbIvnxlVqahFZoYF8=;
-        b=TqLB/W5erqu6SmAWc3ZXObg9y5pkNpYr0pN5sp79smQhz7ysxiydCf5y3/rWxrk03t
-         4UY2JghAJorFWkPMvfqX7F2WthFcfzlbm4HFkYOfh8Qd9yINfTus/EIqhzGTjEg793B9
-         kkKWah6vXGk24QbwxPuTrAcq7IJtw7MCpzFkZotulaGTp7v/y0QBpmmSZSjWzkT4bzWa
-         FoGw1pqkT7iwgfVz6vISQdrm2DZDYQc9x4tJzJF31f2cCVCsW3lXyzn/yDvU0sE1UUEh
-         4G4Utf62yY7FOpJprHIDqh3bAgY/wDERrbTjcALurvmSn1888guhdLvufWZetqvR4PKV
-         nTEQ==
+	s=arc-20240116; t=1753699683; c=relaxed/simple;
+	bh=z0GLawByPTffgMB7davdlXOFTvSc7eRtTsfylma/s2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r1zww3V+tJ1N8/Th99hlUCWP6HdGr5tFesvCxfYwc96MmxJXJW2uK6h+PXr7Oolug04f9DprlBAMe0e/B8IrdzcOUl3aM3KqyD7lVCFgBqhHWPZlNqCGb7WnbbWFYkvk0yjmkYInvkPRRoY+pFeLHtZgN1ECTua/V6G7WyCAzL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qxlf7sMz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753699680;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wGgLEUzhCfQ33/UxK58XR8TwLzqryp1OVfYZsE74bDc=;
+	b=Qxlf7sMzYmxauWEgXbd2LF6AAIvQE1imK2b9FARkL7ikE6mdxavamF+Dq/OKXi1kiB6Ay3
+	cqBAYDVqrSIoug4R7yrylkMkrmP6QwOO8Ah4MRU29p/hPwysDd9rGONvbrnmtCnxToBdcV
+	yh2xDEFAxZibk0ntPUTTh+Rt/JFII44=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-640-WY-vl9N_OBe4gzPlIfNqbA-1; Mon, 28 Jul 2025 06:47:58 -0400
+X-MC-Unique: WY-vl9N_OBe4gzPlIfNqbA-1
+X-Mimecast-MFC-AGG-ID: WY-vl9N_OBe4gzPlIfNqbA_1753699678
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45626e0d3e1so27391175e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 03:47:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753699634; x=1754304434;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g1/K1uetCxj7YK34KvSZ6RXT5MvbIvnxlVqahFZoYF8=;
-        b=GT7IxK7mW7ihVRsIOhAzK9L30ZYmRKdiyK6RpuKqYkL54vxX5d4dp9Ll6eryZC+CGo
-         gBU2gd/E1LKa8tDFnHgm+V35N0TUqSYkW8bOY6TqwBFxymnm6L31jeInSi/n0JpdKcP6
-         4Rao9i3a2hOjSZmPycKn2eG99E4lzaPJKtib1T+kXU8kQvSsynoYlyq/IgqKGxsYel6s
-         zQGdmmX+fFVpP4g40CLUzDYMaNDkkLl4cv43dJOx6OVpNT50SwOHpm0HAj4nm7eIQPxX
-         LH/RljBf860XHAg+essqQphxwKgUgmMM+md+bLKd4NcgP+tWngLMH0FibqpDzMHamqu/
-         5WFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAmjso6yhijCM4BiPnEE4jLurYkHToD04l2poGA+2T4KHv6ii8257CALr+M714+nS5SwY=@vger.kernel.org, AJvYcCWThwhU/u1grDFF8i29jRNl63j8AY1IlGe3D7S904ogh7W5ckV3//N7aBxKefU3wvBVPY2jDwh/F0ospEqr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpZEdvDk0LRAGX4PPtzqBtBFgyKcTJIGJCp1HMNRlV8jeDrNTQ
-	w7j36CpKDQdMhcNY3yqvzYMQ44axvy4lfUQKCP68W3J2w5BSJ89qlTBIcjt1cLxyDPd06zs0n1k
-	U07YJqZdy21/cYWA3mIxD6AuzW6l5l2Q=
-X-Gm-Gg: ASbGncvW7HbCqPSUHW1nz/vDazTrLfZdbZ6G0xhu+HxH+crb2HaJAHVfirfl+FN0pSD
-	5UWyNY9t9XX3wDkPlMg70BaOh+2g13lSt3phDYnGRTqs61glYJv9KYaOsKa2THOGB+zaR8Lmu5S
-	eIbyGABXac4c6if5pMmANwh0x6bTA1yyxxQvW2XosSn6MNUFGTMho7RcZ4m8tU25H8TIl5A936D
-	Mqy+SI=
-X-Google-Smtp-Source: AGHT+IEbs/CPUvoC207W88gxNUz1R4xGlysm19XDoofeVgAWWcEO1zyWYEniC5FZfj/MitnvPCuEoJ2UHswDpLvRGZ8=
-X-Received: by 2002:a05:6808:bc7:b0:403:50e7:83e1 with SMTP id
- 5614622812f47-42bb76ddf69mr5464714b6e.11.1753699634038; Mon, 28 Jul 2025
- 03:47:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753699678; x=1754304478;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wGgLEUzhCfQ33/UxK58XR8TwLzqryp1OVfYZsE74bDc=;
+        b=lScQkiiyptIX9HjUy5Gwzgw3Y6Qb5NAwfI22iJooPE3c2NuqPUSliyVJJ95DxQo1N+
+         fRZWe+274Owyasmr63EcimKKTLXI3Y+vsPtsm64nK0D+EhMRL6l+GmxcRNeuEHvzjeLO
+         dEG7T94rPOQdX+XFQCv/HGbX7IfCTwfDDRFRX9e49C4cERgfbNdokw3cA7isTEoLITKN
+         k27Szwh2H8ADXCLj21x4aKHREaoOCoBkwaPJfn/jT55xR++vhk9PHBSA9KSj0FyxJX+9
+         t8ITcdgAEC8ZWpFCGpDU/v/cZ5gexZ88qjCVDvFAspfeh7ZA54JzN7HMpvxRTBBSWyKz
+         p0Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCUALJcuouG8BmJ60vHwApQOODzGzC2XU4Sh2NN4lVRFfkDUWEaBtpjotjhC1uN7KwDtrbj6/t506NAd/6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUDqHLtrzFPnON4uPM0iOTwaOzQAOzmMXsFPAGR+GxFDusAT0c
+	5ky3DFUZddHoA+08DMXmVXhw0vcUtwwJrzeZIrUfXuJ7h9dg3Xf08Xyiy2g9+QWPit62fviTwOu
+	QRiR1udaxW6C14SiDuvWqfmFdwvWT+eNJI4eIUBRJEdufJiElHixvA8XXTdSJyuLPeA==
+X-Gm-Gg: ASbGnct2vyzk9+Y0nCaW7YoS25KImzjlEB5YgbkJKqwPML52ClVs7CU35EGJS8C0t2t
+	rsbORoN8ZERwWDm2f9knvvYDwDOA8yyhzYJd4hnWj2b8TgLAJR4dbazfSLp5ua8jfRdCjbPD7fz
+	Sf6lNJh91NRaJb8ND8AzibQAtXUvobzc1tM9v7+zlzXIcph0F7DEC/8pS0y3hsy5y0pL/zuXsgM
+	KfPcja/n+zmeMFcK71Gm1Ak7hWjYM1ApGvbaPw5w4JpdoAdjPpK4iIKldzi5/Prg55ODiJLAV9s
+	LbG257XQ95wvY+ISZj/FPodon7HMY0OQZNvJGQx0xtTAu2cGuqgAbxH7zHJCfP9l+yobb39ZPz1
+	1NvKw8dgq7CDNKSX3WmzSsj9XsQNinnBze22RSQOPcePAKAIxNu/5FbTWmW4togB75w8=
+X-Received: by 2002:a05:600c:614a:b0:456:18ca:68db with SMTP id 5b1f17b1804b1-4587630d8femr93068415e9.8.1753699677595;
+        Mon, 28 Jul 2025 03:47:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGQ50PB9dgZ4xP9VjklRd2e7i2NCSV2a6Z62Kb4eGiWaZo3Faj4BUItITIL+0likdgswRRY4w==
+X-Received: by 2002:a05:600c:614a:b0:456:18ca:68db with SMTP id 5b1f17b1804b1-4587630d8femr93068135e9.8.1753699677081;
+        Mon, 28 Jul 2025 03:47:57 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f47:2b00:c5f3:4053:2918:d17c? (p200300d82f472b00c5f340532918d17c.dip0.t-ipconnect.de. [2003:d8:2f47:2b00:c5f3:4053:2918:d17c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587abc2804sm93619965e9.5.2025.07.28.03.47.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 03:47:56 -0700 (PDT)
+Message-ID: <1bd04ce1-87c0-4e23-b155-84f7235f6072@redhat.com>
+Date: Mon, 28 Jul 2025 12:47:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724141929.691853-1-duanchenghao@kylinos.cn> <20250724141929.691853-4-duanchenghao@kylinos.cn>
-In-Reply-To: <20250724141929.691853-4-duanchenghao@kylinos.cn>
-From: Hengqi Chen <hengqi.chen@gmail.com>
-Date: Mon, 28 Jul 2025 18:47:03 +0800
-X-Gm-Features: Ac12FXz307K8bAIBPzHfaq6qmjqxxiAnHJRSewm21oMjxXanNkTh4bIvMmSs3LQ
-Message-ID: <CAEyhmHREKJ7WQ+SYiGTX+zypeZYcUdPNKtHu6cPxqb1wid7TtQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] LoongArch: BPF: Add bpf_arch_xxxxx support for Loongarch
-To: Chenghao Duan <duanchenghao@kylinos.cn>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
-	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
-	vincent.mc.li@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
+ kernel
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Sasha Levin <sashal@kernel.org>,
+ corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+ josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, rostedt@goodmis.org
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <75d86e96-cb18-4996-998c-da7ac0e97468@suse.cz>
+ <9afd157a-296d-4f4d-9d65-07b89ab3906f@redhat.com>
+ <2025072832-enrich-pampers-54b9@gregkh>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <2025072832-enrich-pampers-54b9@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 10:21=E2=80=AFPM Chenghao Duan <duanchenghao@kylino=
-s.cn> wrote:
->
-> Implement the functions of bpf_arch_text_poke, bpf_arch_text_copy, and
-> bpf_arch_text_invalidate on the LoongArch architecture.
->
-> On LoongArch, since symbol addresses in the direct mapping
-> region cannot be reached via relative jump instructions from the paged
-> mapping region, we use the move_imm+jirl instruction pair as absolute
-> jump instructions. These require 2-5 instructions, so we reserve 5 NOP
-> instructions in the program as placeholders for function jumps.
->
-> larch_insn_text_copy is solely used for BPF. The use of
-> larch_insn_text_copy() requires page_size alignment. Currently, only
-> the size of the trampoline is page-aligned.
->
-> Co-developed-by: George Guo <guodongtai@kylinos.cn>
-> Signed-off-by: George Guo <guodongtai@kylinos.cn>
-> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
-> Reviewed-by: Hengqi Chen <hengqi.chen@gmail.com>
-> Reviewed-by: Huacai Chen <chenhuacai@kernel.org>
-> ---
->  arch/loongarch/include/asm/inst.h |  1 +
->  arch/loongarch/kernel/inst.c      | 32 ++++++++++
->  arch/loongarch/net/bpf_jit.c      | 97 +++++++++++++++++++++++++++++++
->  3 files changed, 130 insertions(+)
->
-> diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/a=
-sm/inst.h
-> index 2ae96a35d..88bb73e46 100644
-> --- a/arch/loongarch/include/asm/inst.h
-> +++ b/arch/loongarch/include/asm/inst.h
-> @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instruction i=
-nsn, struct pt_regs *regs);
->  int larch_insn_read(void *addr, u32 *insnp);
->  int larch_insn_write(void *addr, u32 insn);
->  int larch_insn_patch_text(void *addr, u32 insn);
-> +int larch_insn_text_copy(void *dst, void *src, size_t len);
->
->  u32 larch_insn_gen_nop(void);
->  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
-> diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
-> index 674e3b322..8d6594968 100644
-> --- a/arch/loongarch/kernel/inst.c
-> +++ b/arch/loongarch/kernel/inst.c
-> @@ -4,6 +4,7 @@
->   */
->  #include <linux/sizes.h>
->  #include <linux/uaccess.h>
-> +#include <linux/set_memory.h>
->
->  #include <asm/cacheflush.h>
->  #include <asm/inst.h>
-> @@ -218,6 +219,37 @@ int larch_insn_patch_text(void *addr, u32 insn)
->         return ret;
->  }
->
-> +int larch_insn_text_copy(void *dst, void *src, size_t len)
-> +{
-> +       unsigned long flags;
-> +       size_t wlen =3D 0;
-> +       size_t size;
-> +       void *ptr;
-> +       int ret =3D 0;
-> +
-> +       set_memory_rw((unsigned long)dst, round_up(len, PAGE_SIZE) / PAGE=
-_SIZE);
-> +       raw_spin_lock_irqsave(&patch_lock, flags);
-> +       while (wlen < len) {
-> +               ptr =3D dst + wlen;
-> +               size =3D min_t(size_t, PAGE_SIZE - offset_in_page(ptr),
-> +                            len - wlen);
-> +
-> +               ret =3D copy_to_kernel_nofault(ptr, src + wlen, size);
-> +               if (ret) {
-> +                       pr_err("%s: operation failed\n", __func__);
-> +                       break;
-> +               }
-> +               wlen +=3D size;
-> +       }
-> +       raw_spin_unlock_irqrestore(&patch_lock, flags);
-> +       set_memory_rox((unsigned long)dst, round_up(len, PAGE_SIZE) / PAG=
-E_SIZE);
-> +
-> +       if (!ret)
-> +               flush_icache_range((unsigned long)dst, (unsigned long)dst=
- + len);
-> +
-> +       return ret;
-> +}
-> +
->  u32 larch_insn_gen_nop(void)
->  {
->         return INSN_NOP;
-> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-> index 7032f11d3..86504e710 100644
-> --- a/arch/loongarch/net/bpf_jit.c
-> +++ b/arch/loongarch/net/bpf_jit.c
-> @@ -4,8 +4,12 @@
->   *
->   * Copyright (C) 2022 Loongson Technology Corporation Limited
->   */
-> +#include <linux/memory.h>
->  #include "bpf_jit.h"
->
-> +#define LOONGARCH_LONG_JUMP_NINSNS 5
-> +#define LOONGARCH_LONG_JUMP_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
-> +
->  #define REG_TCC                LOONGARCH_GPR_A6
->  #define TCC_SAVED      LOONGARCH_GPR_S5
->
-> @@ -88,6 +92,7 @@ static u8 tail_call_reg(struct jit_ctx *ctx)
->   */
->  static void build_prologue(struct jit_ctx *ctx)
->  {
-> +       int i;
->         int stack_adjust =3D 0, store_offset, bpf_stack_adjust;
->
->         bpf_stack_adjust =3D round_up(ctx->prog->aux->stack_depth, 16);
-> @@ -98,6 +103,10 @@ static void build_prologue(struct jit_ctx *ctx)
->         stack_adjust =3D round_up(stack_adjust, 16);
->         stack_adjust +=3D bpf_stack_adjust;
->
-> +       /* Reserve space for the move_imm + jirl instruction */
-> +       for (i =3D 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
-> +               emit_insn(ctx, nop);
-> +
->         /*
->          * First instruction initializes the tail call count (TCC).
->          * On tail call we skip this instruction, and the TCC is
-> @@ -1367,3 +1376,91 @@ bool bpf_jit_supports_subprog_tailcalls(void)
->  {
->         return true;
->  }
-> +
-> +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 target)
-> +{
-> +       if (!target) {
-> +               pr_err("bpf_jit: jump target address is error\n");
+On 28.07.25 12:37, Greg KH wrote:
+> On Mon, Jul 28, 2025 at 11:27:48AM +0200, David Hildenbrand wrote:
+>> This must not be the new mechanism to DoS kernel maintainers with AI slop.
+> 
+> I will note that we are already getting this kind of "slop" today, with
+> the numbers going up on a weekly basis.  Be lucky if you haven't seen it
+> in your subsystem yet...
 
-is error ? is NULL ?
+It's getting more (but in core-mm not too bad for now), and I hope that 
+there will be a reasonable "use of AI" policy for the kernel soon.
 
-> +               return -EFAULT;
-> +       }
-> +
-> +       move_imm(ctx, LOONGARCH_GPR_T1, target, false);
-> +       emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
-> +
-> +       return 0;
-> +}
-> +
-> +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool is_=
-call)
-> +{
-> +       struct jit_ctx ctx;
-> +
-> +       ctx.idx =3D 0;
-> +       ctx.image =3D (union loongarch_instruction *)insns;
-> +
-> +       if (!target) {
-> +               emit_insn((&ctx), nop);
-> +               emit_insn((&ctx), nop);
-> +               return 0;
-> +       }
-> +
-> +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T0 : LOON=
-GARCH_GPR_ZERO,
-> +                                 (unsigned long)target);
-> +}
-> +
-> +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
-> +                      void *old_addr, void *new_addr)
-> +{
-> +       u32 old_insns[LOONGARCH_LONG_JUMP_NINSNS] =3D {[0 ... 4] =3D INSN=
-_NOP};
-> +       u32 new_insns[LOONGARCH_LONG_JUMP_NINSNS] =3D {[0 ... 4] =3D INSN=
-_NOP};
-> +       bool is_call =3D poke_type =3D=3D BPF_MOD_CALL;
-> +       int ret;
-> +
-> +       if (!is_kernel_text((unsigned long)ip) &&
-> +               !is_bpf_text_address((unsigned long)ip))
-> +               return -ENOTSUPP;
-> +
-> +       ret =3D gen_jump_or_nops(old_addr, ip, old_insns, is_call);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (memcmp(ip, old_insns, LOONGARCH_LONG_JUMP_NBYTES))
-> +               return -EFAULT;
-> +
-> +       ret =3D gen_jump_or_nops(new_addr, ip, new_insns, is_call);
-> +       if (ret)
-> +               return ret;
-> +
-> +       mutex_lock(&text_mutex);
-> +       if (memcmp(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES))
-> +               ret =3D larch_insn_text_copy(ip, new_insns, LOONGARCH_LON=
-G_JUMP_NBYTES);
-> +       mutex_unlock(&text_mutex);
-> +       return ret;
-> +}
-> +
-> +int bpf_arch_text_invalidate(void *dst, size_t len)
-> +{
-> +       int i;
-> +       int ret =3D 0;
-> +       u32 *inst;
-> +
-> +       inst =3D kvmalloc(len, GFP_KERNEL);
-> +       if (!inst)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < (len/sizeof(u32)); i++)
-> +               inst[i] =3D INSN_BREAK;
-> +
-> +       if (larch_insn_text_copy(dst, inst, len))
+At some point I even assumed Sasha was AI-slopping us [1].
 
-Do we need text_mutex here and below for larch_insn_text_copy() ?
+We cannot keep complaining about maintainer overload and, at the same 
+time, encourage people to bombard us with even more of that stuff.
 
-> +               ret =3D -EINVAL;
-> +
-> +       kvfree(inst);
-> +       return ret;
-> +}
-> +
-> +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
-> +{
-> +       if (larch_insn_text_copy(dst, src, len))
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       return dst;
-> +}
-> --
-> 2.25.1
->
+Clearly flagging stuff as AI-generated can maybe help. But really, what 
+we need is a proper AI policy. I think QEMU did a good job (again, maybe 
+too strict, not sure).
+
+I'll note one interesting thing in the QEMU commit I linked:
+
+"Thus far though, this is has not been matched by a broadly
+accepted legal interpretation of the licensing implications for code
+generator outputs. While the vendors may claim there is no problem and
+a free choice of license is possible, they have an inherent conflict
+of interest in promoting this interpretation."
+
+[1] 
+https://lkml.kernel.org/r/a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
