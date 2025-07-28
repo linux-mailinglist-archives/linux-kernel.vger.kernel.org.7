@@ -1,136 +1,168 @@
-Return-Path: <linux-kernel+bounces-747926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DA0B13A56
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3014AB13A59
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E46D3ABCC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:17:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A6E3BD547
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA58263C8C;
-	Mon, 28 Jul 2025 12:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF56D264627;
+	Mon, 28 Jul 2025 12:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KeF9C9Go"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Mla2ryas"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A3E21CA16
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0AC2638BF
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753705049; cv=none; b=b/QIRvQ1UWr0Q/ZjUSpjdb2SFc5W2HXvUOpHWucKT4ZZma05uCtsp7G+TPVIHk8PS1MVyFsaqHxn0YiuZdoq/HV9TZ+fAVJRnz/LiNQaGd2JIJBDNgGOJqzoIrychUICaRopswLpDWvm1rOwMzUajnAYop91JvSz8JjbF2hSQA4=
+	t=1753705111; cv=none; b=XbDrqekAiJyeS6aEgDDjpDFv0L+bdEm7S9YnaoJBI+DAokAfVvmuk3yt375Os7CSnUCYW4m+BY1N8/aTsnibQD0sEEZOTz/TU1Cr9mYqSnvdkO5I+HQOPP8CwWa5nJ3hHrqdWXe3eNzBx6wkDK+23H8gHEDzt9j400pHsDmFSSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753705049; c=relaxed/simple;
-	bh=BnQwapfJoscpLgxcU/NN1z8/XuKaWSyXgU7dtSWS5Rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qiBlsWCGW+pgKtcVFAZQFTmaLLH2YV61Gy6gl3cQu1zY9ndPsnuVzdCqyKRWFrtYVomJ9OKiUIOsxnN8dEb0Z7FqovRe/wMJ4mMo51EV+7MNEN/QiwZJLmKHOQ1NCIxRytqS9GBfNh5krXmCqQM3J9asS255Niy/vmKMC3FIxo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KeF9C9Go; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6097d144923so9419022a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 05:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1753705045; x=1754309845; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MKwFshXl6708YNUqX8UUs/w8wlLbfeDR+Z4nlVVWrlQ=;
-        b=KeF9C9GorUcSXFmMb6RopAHdlrns52gHKv0HMNJhnQQ6e2R9/yCO5MswBeAdW8e7C2
-         wnZ56rEHLF9zTB97uj6MvJ9q0DrDy8tBUcmgjM+DzV28cbZVwy43awp/X431K6wV361R
-         SBbxPCAUEXSXcMZfRl91wzm5ZJavrc7OVviJiOaBYX08drgN/YYMrnr0FlL0i8KkzW/I
-         wfLZ0ElwwHht1qebwQHrCZq8yYStjNuf5y9d63ytxZ3gko9JlQR7tZcGX/BNEY1czkol
-         sNp5N+2vjAVystTa89InZTa7DS2i+ct70jMGCXGl4CeXkXGRHh0a77x9DwlWqrZDmqq6
-         Xicg==
+	s=arc-20240116; t=1753705111; c=relaxed/simple;
+	bh=M38ztUaJC2lhdH7j2nFkM9hqv0YhD+Yd8t2Mfs5xBEc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RauGHjpmjbr8elGycq8csvI9H40whxi8Zp5QubirJJdx7w4PMjDsXRiFATw1+sd68FfULcLwK7so5RHXYmQCtbsgwxmu5/rYlRGyCVqga9JExzo12WUFUBrPMYsGBHkenD3ecfK+5chwFt/t6RWDQauhQ0B1KxzMS1mg4gqqxFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Mla2ryas; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SAlMte012151
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:18:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ptZuHaxxZdoWHu82b8or6U
+	lvOYiK665hzjqcsDuocac=; b=Mla2ryasFfujnFqb9TEC4V6mq2D56FmtKDPMHQ
+	syaM5fiJ9ELkXzDR3qAIn5RRipQgktuXX3R23qlIugKEdTxCQXdnj3mdIzLHJNva
+	T/7froIuidXw+S9MCtEB5tmDJ7x1zr5FmvBs0Ravd9pmuL5GX92CWD8a4Sa76XNP
+	8vz42ZLEA8xjMnCLELqIS6GfBoSnR0h1eBI6OEdDdmZpJ99N2p6wGHvAAbg6qAxl
+	NYnvSib0n7LnIZIiNYDisfpPSohTNSe+FhpX6zjRqryIKSamSTN6utpEOi4SgQTU
+	1t4tdCfOT0N3Uq2WbgzrehM1K3rucrwFUn7eBhEvXVqSdVMA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484qsk4ge9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:18:29 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70708748fbaso72737416d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 05:18:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753705045; x=1754309845;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MKwFshXl6708YNUqX8UUs/w8wlLbfeDR+Z4nlVVWrlQ=;
-        b=ZKVDo7VsUx+xayieyK5950blRMNbYjfE4/LiuNp6faIKSQKH0CHR9qF1+tKV1rFoV0
-         i6aWupbDNmvneFVGB2CFb9mB3y1fHbOksA62LiNbT5f3Hu6BfWDW67h+cDlmp4opq7UQ
-         HQeGXpcBY9lSrKURmVgIsd2DN20Ial69zLCAjR3l0wOFXLybntcTWR7WnyxgCbMCJ6Go
-         eb4H18CUbaUQfCZfSrL0KGH77ckg+QkO8/w9EzWkc++OfdVb0ffSmjTRi+Q7ieKxWj6r
-         C/ny86ixTi79v98hckEEoH8lGaGNk15zXxphEvFNLC7cwAziAi9ISp5j/+nLPn+R4InJ
-         OWlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLP5D65wl/oEotN8APRsvcomhm5QR/JW+XrM3Q0zP8iuaOeXtke+FVwYKnW4HzUfbQhd4KoY48qQS7dOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUPUc1uF7qkrb3ZVswPZNpY9Haelq4YC0lwM5C29H135nEcM/t
-	/L825V4mYA4BJeh7cQD/DknMm/P/smVRIJHc0Thic0t6bDtkv11h+nSI2xMJp3MjM9Q=
-X-Gm-Gg: ASbGnctjMfr9lcc89wh79LmZz8JL8WJCJPOb6W96sE8uNuuTjf2GGpdFIgtu7Y9OwYR
-	XANP+Kn1xhgiRxE9R65TsHod08xAemb0jdpXDOVFFCQXsxwtvzfrszPK42rx3FMIkgMC2DB9/5L
-	pwkvEfHBbqa1naqRCr4CLICWduFOs2fkbc2EpATLdWaCVTTNzOD59SHyT/RttoW74I5EvihbTLw
-	wiXwFb2inmLneniT5/CINcr3FZ+Wvkdmy3mbWmzNmkntHxmupnfoomJ9a6u3XMZojdBJHOGKzIu
-	mRVR+EzN6810eEpf6wnPr/2Vfxioq/S8trnmW332qFdPu/E48eivPJw531pw6rSzvRxZ9mqHHR1
-	lLxu8Wg/XfpTjVLrJUY7tjAiDVjrgzAz6/dg=
-X-Google-Smtp-Source: AGHT+IEspdWBkQ2+iy97ADb3/zSC34bCTFsjLQt5CCCoZjDD9JKrJbrhr/jWrpDBsGuoj3FtA9QQOA==
-X-Received: by 2002:a50:c00e:0:b0:612:e841:5630 with SMTP id 4fb4d7f45d1cf-614d1b47fd6mr10815474a12.6.1753705045248;
-        Mon, 28 Jul 2025 05:17:25 -0700 (PDT)
-Received: from localhost (109-81-20-172.rct.o2.cz. [109.81.20.172])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-61548bca6acsm817008a12.17.2025.07.28.05.17.24
+        d=1e100.net; s=20230601; t=1753705107; x=1754309907;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ptZuHaxxZdoWHu82b8or6UlvOYiK665hzjqcsDuocac=;
+        b=rDJ97exCpoi5zzUwlEY6UIA12Q+A2gyWmIz8IaVgxBQbPJoYiS+UnLfIFt1YFBj+p6
+         fuH9NoSOo/k+hLyqS1G0FkN4P6iqYC0Plo9xj3CtwsPaiFD4GAr+BFX2vXhUthHdnhgr
+         /FpAO9dCW9zsjPvixXEqA4MxEnRmtx1+hb1kQpoSvy0o6TLUqcoyNeRittXluw0SuZCh
+         tqT9s6SiDfHj1In9ZwJ6g8KOcGFiAE6wqSJ7es3qj8ZuqVHpP4NQt9auF+rqvQuK2Z1C
+         qUZx4O1VDb65it0ZAftQEXdjGNO2jCdIc2+jxitj+oUzUpyGB2VfjkBHdivPuohDiKvN
+         Elyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXX1RZ9qqJ8BqX0xd0wSR8NuP+ttvUa5pBXFwPHp0BdEBYbTtTM3Gb2kw+g58uDwy9O+Aorao56DhyV3BY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8BvFzM+8z1xfEANm53i/tVr7vHcyj7GybTfCyrFeZaMVgsHVI
+	u3kG1gqrLQ5f6LwD6Dj6CO8ZPyEqZPAhUVSk0NStlo3eRBUQuBSwGu036X1j2dx0oA0j18hTRpW
+	s/0Xjwkk2xhY1odylSXIcqjHZl6jF1xYjVXkI/THWAAkJ61itWCE1VWeut8mFAbcagu1ZIuej+B
+	A=
+X-Gm-Gg: ASbGnctESNjiLydN6G4/9H5elpXOSTf+XR86Lq465BnagPWXzW6bDAz3IGLb+Nv+t+D
+	rqynwG0/eQx9jJcwLjVu2nogeWCq/Ytbkwz9TAe6H7+QAI2v19vGjhmLq44gBexIUbMci7tQhap
+	1M0ckBO025ieNzv1tXr5bY/qsf4tzKKa72HtrCYew+joO773PI5aLj37+KjHkPVCW3xrkSb3D1e
+	9jk7bD0fVLzzxzJjp3MHVvEegnfc0nYWF1QF133E/sPfnuvTe48MfPKjhCGkLdc2GNqDIyULCnJ
+	BF8MsiUgmxjj5Xf3IouMvD5hckVtJz6+dAKbbaoFiQSE4lSBsG0gjwFWDOmzhQQJBapXUUrafTx
+	UC30/bv9DmVRkxUvmE9lyQmRA5UuqqtdR/CkLq4F8A050U4C6iAoe
+X-Received: by 2002:a05:6214:4f04:b0:707:2c79:e7e0 with SMTP id 6a1803df08f44-7072c79fba3mr117172576d6.26.1753705107159;
+        Mon, 28 Jul 2025 05:18:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFN2YeovA7z4Fa9KoKkrBt/mxaEt659mNHLOy9z26g41eJUXyUfEXi6Fre24yRnj636ygzN7Q==
+X-Received: by 2002:a05:6214:4f04:b0:707:2c79:e7e0 with SMTP id 6a1803df08f44-7072c79fba3mr117171596d6.26.1753705106181;
+        Mon, 28 Jul 2025 05:18:26 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b633b9d7dsm1241315e87.209.2025.07.28.05.18.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 05:17:24 -0700 (PDT)
-Date: Mon, 28 Jul 2025 14:17:24 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Hannes Reinecke <hare@kernel.org>
-Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
-Message-ID: <aIdqVNCY-XMNICng@tiehlicka>
-References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
- <aIc5XxgkbAwF6wqE@tiehlicka>
- <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
- <aIc9DQ1PwsbiOQwc@tiehlicka>
- <79919ace-9cd2-4600-9615-6dc26ba19e19@redhat.com>
+        Mon, 28 Jul 2025 05:18:25 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH v2 0/2] thermal: qcom: lmh: enable COMPILE_TEST testing
+Date: Mon, 28 Jul 2025 15:18:22 +0300
+Message-Id: <20250728-lmh-scm-v2-0-33bc58388ca5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79919ace-9cd2-4600-9615-6dc26ba19e19@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI5qh2gC/2WMwQ7CIBAFf6XZszRAwVZP/ofpgeBWSEqprBJNw
+ 7+LvXp5ybxMZgPC5JHg3GyQMHvycakgDw1YZ5Y7Mn+rDJJLzXup2RwcIxuYRmtEh7w3kkO114S
+ Tf++l61jZeXrG9NnDWfze/0YWTLBBSXU8DWJSnb5EovbxMrONIbR1YCylfAEj3AYApQAAAA==
+X-Change-ID: 20250725-lmh-scm-5eca13e07a20
+To: Amit Kucheria <amitk@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        Jackie Liu <liuyun01@kylinos.cn>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=712;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=M38ztUaJC2lhdH7j2nFkM9hqv0YhD+Yd8t2Mfs5xBEc=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoh2qQzPrWOTULAa+8LQPK9aromyl5o7bomWPML
+ St+6PoYc8OJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaIdqkAAKCRCLPIo+Aiko
+ 1ZUgB/4zTD3s+0wa80N9eIBYbJ+kXG2H5AQ9sOnzAJ2rcgICH02fujCfgkalb52Mjf4ME8EPyEa
+ 7Zfa4bRBYVSCjq1ga8nCUu5q4wkydwNCASDHtf/yIkDAQy53SGaCGY3YAEv2aA13eZ+vBDOy1lQ
+ qPlvM9idqXLF4/WgfIZN5bWFSTRpvtyw3h3a0WvIZAnWOSXnlbQ41wAAhWPz3CR9FEfUieQKzaN
+ NBpdTk6U2CgiZeX6nnno9arYjOmmDn7FzcP68OMXbRfSJyggkxzoZm9Extv/MUKbVHjM3x/eQ9v
+ WRZPjCKaKdpll+TJw1+5YVl/X+sDTNXkqx8g1TYLLLV6dNEJ
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Authority-Analysis: v=2.4 cv=KdDSsRYD c=1 sm=1 tr=0 ts=68876a95 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=2jyfk5HOav9ef5UL-FMA:9
+ a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-GUID: qug9UM_0mT26hCW-wiS26PVzlfZM3Ku0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA5MCBTYWx0ZWRfXzD1M6xFa9vva
+ Gtkvux/zK/gXclwJpo7uu3n6FP+OQd5sliYe+zbEoeQhP8ks+46w4W6OFsNampOMfuHp92/YOpU
+ sq09yPzKBrK3i8Z6dDz4sVYD5jGxkm918pTeOBFbvfkLgViAEFnOsW/ch6Xf16TYwNwJSObAsnI
+ AK6zpykCaDmJHodBDsUKEe/PO/d6Kreb2h/iSGjzA8e3mbW7fMB7pRMjqHmQ5AZ2Yp7ofX0mOxq
+ uJ5k/8sngiUFzoisa9r/BnchUonrxl0/lIdMT070WbV4WR+gUB7z4bQ7SWMTm+Dw7HAzUE6tVe/
+ 0cEWnlSs/x2X29K8KZSA+9bnwUxTb7j0XLKehn2/Fd0e3ZZECW2NwwwwsWhkrvNmPWPFYsCn/Nh
+ sN5ueGnAlcXiCFGkh/sLxzsLOGg/I63Gfw1M7kz+oHvwF+YOYnUARcqy4AoxQ6ZtMcirN+b5
+X-Proofpoint-ORIG-GUID: qug9UM_0mT26hCW-wiS26PVzlfZM3Ku0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 impostorscore=0 mlxscore=0 spamscore=0 bulkscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
+ lowpriorityscore=0 phishscore=0 clxscore=1015 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507280090
 
-On Mon 28-07-25 11:10:44, David Hildenbrand wrote:
-> On 28.07.25 11:04, Michal Hocko wrote:
-> > On Mon 28-07-25 10:53:08, David Hildenbrand wrote:
-[...]
-> > > daxctl wants to online memory itself. We want to keep that memory offline
-> > > from a kernel perspective and let daxctl handle it in this case.
-> > > 
-> > > We have that problem in RHEL where we currently require user space to
-> > > disable udev rules so daxctl "can win".
-> > 
-> > ... this is the result. Those shouldn't really race. If udev is suppose
-> > to see the device then only in its entirity so regular memory block
-> > based onlining rules shouldn't even see that memory. Or am I completely
-> > missing the picture?
-> 
-> We can't break user space, which relies on individual memory blocks.
+Rework Kconfig dependencies and make LMH driver subject to the
+COMPILE_TEST testing.
 
-We do have userspace which onlines specific memory blocks and we cannot
-break that. But do we have any userspace that wants to online CXL like
-memory (or in general dax like memory) that would need to operate on
-those memory blocks with that kind of granularity?
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+Changes in v2:
+- Added missing includes (LKP)
+- Link to v1: https://lore.kernel.org/r/20250725-lmh-scm-v1-1-84246981f435@oss.qualcomm.com
 
-In other words what would break if we didn't expose CXL memory through
-memory blocks in sysfs?
+---
+Dmitry Baryshkov (2):
+      thermal: qcom: make LMH select QCOM_SCM
+      thermal: qcom: lmh: add missing IRQ includes
 
-> So udev or $whatever will right now see individual memory blocks. We could
-> export the group id to user space if that is of any help, but at least for
-> daxctl purposes, it will be sufficient to identify "oh, this was added by
-> dax/kmem" (which we can obtain from /proc/iomem) and say "okay, I'll let
-> user-space deal with it."
-> 
-> Having the whole thing exposed as a unit is not really solving any problems
-> unless I am missing something important.
+ drivers/thermal/qcom/Kconfig | 3 ++-
+ drivers/thermal/qcom/lmh.c   | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+---
+base-commit: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
+change-id: 20250725-lmh-scm-5eca13e07a20
 
-If we need to handle that thing as whole we should have an interface
-that allows for that. Per block breakdown doesn't really help anything.
-It just makes the whole problem much more complex.
+Best regards,
 -- 
-Michal Hocko
-SUSE Labs
+With best wishes
+Dmitry
+
 
