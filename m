@@ -1,187 +1,202 @@
-Return-Path: <linux-kernel+bounces-748326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319AEB13F94
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:09:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1ADB13F8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B53818C11E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:08:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 891483B2D1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93FD2741B0;
-	Mon, 28 Jul 2025 16:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58C3274676;
+	Mon, 28 Jul 2025 16:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctyGDkPu"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A36/Ik78"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BB51EA7C4;
-	Mon, 28 Jul 2025 16:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A6027465B;
+	Mon, 28 Jul 2025 16:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753718600; cv=none; b=mf8wD1IT8XDSIVDwXuZf6kNVaInPIT5lvpGW7DwmvJMsPjNboNuaSC25ulvSKGIR5DM75nVv2t04xRvBYVPcAvhr3rNL7q25Dpst3FMkdp68a5Vbk7mjlnpTPQrO79Te6+B8XkX7EZYUMRYB2ki1G6GzNDZplXcp5yEMCnXbKQg=
+	t=1753718656; cv=none; b=AeYOO69MCHD+QAMCTTdcz0uUqk3v2FCRKfFVeKsTJp/tB2PFEHqIeQHEsegOLPPgweIAAgjiD27Cb+WbPWFOIuxufmJgi9Au1BsbgZS8lSDEfVIM3Goc/XoZeez7t+yBQtRyZFTIMyMIQK5PDUksf/fAGXYHspUZfPu1K1BNT1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753718600; c=relaxed/simple;
-	bh=Vd04XinkrY9V6s58I+0wLyccYoaGwzVbLbsZih8Qz1M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V4ZGN3xcwj6F8eYsVrPHb0NFtuLgsyWuE0ID8y9b8Ai/Fqyk66kMaBiNsbgB+q6vmbnacv0HAjOWXre8UKWmer9EtQxgxPl00WEScIJFQhKu9Hq4TS+YWA1OElxteqX9FU1ZaYnjDz3EIeqH+WxvKL015qGlPZ/JfcefwQdBBbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctyGDkPu; arc=none smtp.client-ip=209.85.216.53
+	s=arc-20240116; t=1753718656; c=relaxed/simple;
+	bh=agDLCpdC8g2e8J4abTCfvumW9noFxzdN+V6Xz5PYvlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cpyYc80qy39hH6bmiKeZ71JNK0wM5ojC3TfUiW4g6M9yms5H+t8Vm1PuS64pknG4mNhXHinpOs+HomwVakV4ErGLxoOIHXyuEZtIb+Tk9gMzRfHbuLo0T8YZCFXrh95KwZHHVD4LzKe26A6TBzGU2bw7YlATDBWZ9lmB16HVRyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A36/Ik78; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-31ecd1f0e71so1595163a91.3;
-        Mon, 28 Jul 2025 09:03:17 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e62a1cbf81so677629485a.0;
+        Mon, 28 Jul 2025 09:04:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753718597; x=1754323397; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YUDQg3XmWX+OAIimODJTb+EgGGX3athOf1YMNT5RADU=;
-        b=ctyGDkPurbiJyWka0eJN9M5jgIeBqz4DH5MBwXL//CsCPsgHroD+cRZx3oqmyYgKSY
-         9brsSKYxOUqyK6cmWvu3litYuIUe0ubntRO+4X22KD6CRSq5retELiQMczX8wyRJ+MZK
-         ELkI9IoofkThs3tHK0kmcaeb0HbHIhBWvPGKuikU1ERSnoska+icXPEg7lV4J41aBr/d
-         fMu5ASIlc+yvmpB5kzjh34ncZSFuoYDewyqPdQFbLsb9E0bECh0eJuKFPYHLH1MAa4+t
-         XeSKqCq1ufFQbiILPhE9MwS8ZA5JWc80+/wUucho9CBvucnKZf+7ojUVnKPMv1DwlKNR
-         8ZLg==
+        d=gmail.com; s=20230601; t=1753718654; x=1754323454; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HgVIowzMLl/c31IEtlhtiNAMDBO1tT9OzRoFR/KHf0s=;
+        b=A36/Ik782HXOclxZwgdPoQE8bq9SqZotXX6QlQ+PeP/22Z+8963LChOCbDtjjPycu5
+         gpMNwKdi83xDSc7fLrwwuGo5TltUPXJsnl3oxgQzGUemZ5C+XPVqsnv2lAcQ20S4B7+w
+         orJQHaQiZXQ1gqZY3NW8S9pwvwEAJTxvOxqBXSavmGyFtNFH32XY0X6/iZuEFVe+Scz8
+         mSeb6lxqZNfYmXINbOxvJxdj6hVie4iEtSXJFJLwADW13hNJdOSrUX6QmQUvfTwgq+4D
+         SnEod9CFJYda3fnzP82jCG5YRR6RvfoSIWAoYLjWxWz3OSExhjIP49B9H1XvkBre/TZC
+         J8HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753718597; x=1754323397;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YUDQg3XmWX+OAIimODJTb+EgGGX3athOf1YMNT5RADU=;
-        b=clKg+/JT0hd9zKMPKpWnOMp/PdNNqiZxmcZEUCVpJVXPZqTRxMPxdDaOX5czSkSO0R
-         QsLk1hHT4J4lrpLa3cF0gNHOsEcGMW749ZA1JohdzqBpjn1TeWD+qcCfgG7DstRDplT2
-         TB2q4OfwKppNQ2gO7+puBF4cCa0oYaUA1urScxZkQP3bnoZ91q8X1UD2ekjmpHGkQBtP
-         5RhDnz5Mtx/ejrPRwv2ZG7y5WCVZJbd9mWAEbaC89dvAEpH6SloOOH+7G8AuJSsreT31
-         YkgogBMkt6a6IEbnEZTSFuLCfFLk22St2BvUzHcW6GuLK/p0iZ0ie9edg29uqDQSO14D
-         FESQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6VHZUL+SGaIFFM20GdO4vX2VZuDutYvk19SnsDDLw4KlzE5VHckj2pLdXJrq59VDgEoT2OPsOTRwMcV0=@vger.kernel.org, AJvYcCVBx1QUqMziNpT+1f56iKTMP2YbUu1dTIp9OKet92AZ4XqMKEMlyhVLuTrjMVA7Rx1MRZYZxzBWjczSFWvf75IC@vger.kernel.org
-X-Gm-Message-State: AOJu0YywZOmGkhlGc0ZaHyKRFJDgPDdlzLRcsVFwTaOcPz+r8Ll8XlWO
-	qmqd0KCLl49VsjW4+o+29k3JWlNc/rsO/P6dVaeuqqzc/jJ41ZU+zjur
-X-Gm-Gg: ASbGncsoa2FqYqnuV0rrCKD3gbiMaInqHWcUM9uQfM7aHMGmG4Xye02FrLAg9JhQyxM
-	3RGVKAVtsRJjwG32Y5pDNod1eGtqNQpCvhl/FBuIUIJ60z+UUp7QBpYghe0S+l0c3QJIHwMN1v0
-	VMoDPdIUANL0putn+dEJd/NdYirNTWIzsD9KgegLYSKKoYR3K6f37PEIIjXWlXGZREuWPJTJBCE
-	Wt85cptBjDSFn07g1DlmZc+Kf5wdOWY874yDUTr0odm+7VJ70GJ2G7ltlgo2v6GND4VpCK9uNU6
-	EjgeQgzPpvuf2jzmy2WyKFp8nf4VysWtUpwtp5g8asZeGTJGZb6lcMj+EH4OScdnv+LY2+7+OAl
-	VYAY5JAHg0A/46nPLvkWNhFjinOLuUKO6WxF2sWl3TA==
-X-Google-Smtp-Source: AGHT+IHaJeGJgN3n9xkUV3EFeBxZWRIywWMNHTWB2XQ49uze3qWPpkHUwhIPfszwfiIgoObUO/x9jQ==
-X-Received: by 2002:a17:90b:3c0c:b0:315:cbe0:13b3 with SMTP id 98e67ed59e1d1-31e77a0a590mr16261994a91.7.1753718596566;
-        Mon, 28 Jul 2025 09:03:16 -0700 (PDT)
-Received: from localhost.localdomain ([2405:201:d021:481c:67c7:4b27:6088:74d5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31eb413d7basm4401098a91.16.2025.07.28.09.03.13
+        d=1e100.net; s=20230601; t=1753718654; x=1754323454;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HgVIowzMLl/c31IEtlhtiNAMDBO1tT9OzRoFR/KHf0s=;
+        b=Ers3Eki/1KU5CGshenC73pNeTI9voPqvXYjGJHqYHCKUNOGIh9DltV8N7GlVeNJ6x3
+         sI0OVCVCL5ftva7EpLg5UsIoDCncY3OrqeKVO5XFHU/XFWGH6wh0VN3bTpTa4SaNZHqA
+         tHxQUYXC7SnYAc82skOO6DVHls1D3kiBiV4TO4ED5IsyYjZoKGzgcSFXCTJ5w3FGUqn0
+         6LuQGLpIX3R+xTIgeAF+Q6Bof7f3ONbOZO/jRodhuii54RooCQeHnNYGDxJYlRa7wv3h
+         hXJFN/aMxyqeyB/BquKdP167E+deVsOSBONQva5oYA/tUvuw2ICRVkSCqdrOAoHA2UWR
+         gw4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVwiekfXDG8Fp69tR2g9AGE6AQrGJ0qfFI39no2wwB1B+TGhyKwwe+zp6TU79JhZcXGirOHTh3mtQUfWQJxMrI=@vger.kernel.org, AJvYcCWe5yCllWSDqbOfpbMYNnjGTYH3PC244kK4kyhVN9wnKPT4wxvrRe36/yt9LPIQjjqWkdsvlwhTv6CDxzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxe83F4vsYgNvnY81WXwotArnOSzlLjrV33eBkSSiXcetzpT/2
+	DUOCQxW1eH53nbGkBp8XhpIQZqMhGauk7OYKvEPhK5AvcG1eEDSe+MEA
+X-Gm-Gg: ASbGncuM7MgvGZJyDlfakSGyrhIN76mBbrs4CQ2GUCA9jg31BJKvIMe7+sksNtxg1hO
+	CCfQgyKEW5/u8COrAzlJppsqR8AmOQn6KzLeHKOOB2hC8jGQukDVfIAwrmaW2CXQG4ok2Ckvg74
+	caxwfKg/AfNH1SAyy70xLG3jjp8pCKhFgfOF3SDbJ94XSOkbO3k7tQASuvOrgVvQjjt8DEdO5SF
+	WpeveaUnwtsEX+Wve+zLQWRegLazRIOaZz5DIpfWCHqwvNQuTxNMydEABvVG1uGEXNdwTHc6T6J
+	ZXR9txa4dg7q5/5XyZIDsp16wdT4tyf3P5unwRXBdDBvsFF4W4qhtpI7VplmFzkuXDJipK/RY8r
+	smnTo1OZUbi2XBkFDFIyynOLVL4X549EyOk5nKOksKiY0R12jPHYAxjZEN122zUSqHNF/h2G80L
+	9HUwbVbxAbIajLcJ10sr0pIuw=
+X-Google-Smtp-Source: AGHT+IEmoTOimrTi2PNwl6GvbwncBwk/yYnnS0+QBiPbPf62rdY0sZGQQYXhaQaKI8ltuQpaCRWGkw==
+X-Received: by 2002:a05:620a:563c:b0:7e3:35dd:4829 with SMTP id af79cd13be357-7e63c1b69d0mr1382664085a.46.1753718653785;
+        Mon, 28 Jul 2025 09:04:13 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e64327a9f8sm310642085a.11.2025.07.28.09.04.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 09:03:15 -0700 (PDT)
-From: Vishal Parmar <vishistriker@gmail.com>
-To: shuah@kernel.org
-Cc: anna-maria@linutronix.de,
-	frederic@kernel.org,
-	tglx@linutronix.de,
-	jstultz@google.com,
-	sboyd@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Vishal Parmar <vishistriker@gmail.com>
-Subject: [PATCH] selftests: timers: improve adjtick output readability
-Date: Mon, 28 Jul 2025 21:33:04 +0530
-Message-Id: <20250728160304.929942-1-vishistriker@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Mon, 28 Jul 2025 09:04:13 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id C91B1F40068;
+	Mon, 28 Jul 2025 12:04:12 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Mon, 28 Jul 2025 12:04:12 -0400
+X-ME-Sender: <xms:fJ-HaJVwNHByxbizTaFL_NER2N37NTwgoKEb0jMl_OQ3uuyT1UGY6g>
+    <xme:fJ-HaETTgsEhTJJspf20pgVrxrirrLIuAUkbGpWuk_MnzyG8y31p7gVlOvYMUbARZ
+    w-OUHSWcJfW_OyAmQ>
+X-ME-Received: <xmr:fJ-HaOHVtFYOz-xyAP51tE2ZT7cGGndoVjmgWD9UoGjNqfN1scySsbEpqZ8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelvdeitdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprghkph
+    hmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihgrmhdr
+    hhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhorhgvnhiiohdrsh
+    htohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheprghnughrvgifjhgsrghllhgrnhgtvgesghhmrghilh
+    drtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthho
+    pegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehloh
+    hsshhinheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:fJ-HaDfZiGYJ_3Y_Tv78lK9koMKzRMQkbu7rYDJsdsrEbSNIOqdc-Q>
+    <xmx:fJ-HaFKlZNUj93B0NFuErw-NffZVTfT6I5JbtLUsxxYl9m3pfbB50A>
+    <xmx:fJ-HaCqs2447yRAv2B1Ykj6aWSNTyAolHdv0LNj7tNbnUbzNyX5fOg>
+    <xmx:fJ-HaLXik3XNSFJN8ohWVPRYXN1vi75UQF_g-Y_c0dyVx1NzL7qszw>
+    <xmx:fJ-HaN3XQe-MWz8vmkHtMpvdV3nVjiKoFXbQb-7JmpYAAkaNBgRNAID6>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 28 Jul 2025 12:04:12 -0400 (EDT)
+Date: Mon, 28 Jul 2025 09:04:11 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Andrew Ballance <andrewjballance@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/3] rust: maple_tree: add MapleTree
+Message-ID: <aIefe_MEPd_yicde@tardis-2.local>
+References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
+ <20250726-maple-tree-v1-1-27a3da7cb8e5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250726-maple-tree-v1-1-27a3da7cb8e5@google.com>
 
-Reformat the output of the `adjtick` test in tools/testing/selftests/timers/
-to display results in a clean tabular format.
+On Sat, Jul 26, 2025 at 01:23:22PM +0000, Alice Ryhl wrote:
+> The maple tree will be used in the Tyr driver to allocate and keep track
+> of GPU allocations created internally (i.e. not by userspace). It will
+> likely also be used in the Nova driver eventually.
+> 
+> This adds the simplest methods for additional and removal that do not
+> require any special care with respect to concurrency.
+> 
+> This implementation is based on the RFC by Andrew but with significant
+> changes to simplify the implementation.
+> 
+> Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+[...]
+> +    /// Free all `T` instances in this tree.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// This frees Rust data referenced by the maple tree without removing it from the maple tree.
+> +    /// The caller must ensure that no reference that remains in the maple tree is used incorrectly
+> +    /// after this call.
+> +    unsafe fn free_all_entries(self: Pin<&mut Self>) {
+> +        // SAFETY: The pointer references a valid maple tree.
+> +        let ma_state = unsafe { Opaque::new(bindings::MA_STATE(self.tree.get(), 0, usize::MAX)) };
+> +
 
-Previously, the output was printed in a free-form manner like this:
+A meta comment here for the future direction: I think it really makes a
+lot of sense if we could have the Rust abstraction for struct ma_state,
+that'll allow us to have flexible locking strategy and Iterator-like
+interface. Maybe it's something Andrew can take a deeper look when
+MapleTree binding is in-tree (no word play intented ;-))?
 
-  Each iteration takes about 15 seconds
-  Estimating tick (act: 9000 usec, -100000 ppm): 9000 usec, -100000 ppm [OK]
+For example, with a ma_state binding, we can do:
 
-This format made it hard to visually compare values across iterations or parse
-results in scripts.
+    let mas = MAState::new(self, 0..);
 
-The new output is aligned in a table with clearly labeled columns:
+    while let Some(v) = mas.next() {
+    	drop(v)
+    }
 
-  Each iteration takes about 15 seconds
-   ---------------------------------------------------------------
-   | Requested (usec) | Expected (ppm) | Measured (ppm) | Result  |
-   |------------------|----------------|----------------|---------|
-   | 9000             | -100000        | -100001        | [ OK ]  |
-   | 9250             | -75000         | -75000         | [ OK ]  |
-   ...
-   ---------------------------------------------------------------
+Regards,
+Boqun
 
-This improves readability, consistency, and log usability for automated tooling.
-
-Signed-off-by: Vishal Parmar <vishistriker@gmail.com>
----
- tools/testing/selftests/timers/adjtick.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/tools/testing/selftests/timers/adjtick.c b/tools/testing/selftests/timers/adjtick.c
-index 777d9494b683..b6b3de04d6ae 100644
---- a/tools/testing/selftests/timers/adjtick.c
-+++ b/tools/testing/selftests/timers/adjtick.c
-@@ -128,18 +128,18 @@ int check_tick_adj(long tickval)
- 	sleep(1);
- 
- 	ppm = ((long long)tickval * MILLION)/systick - MILLION;
--	printf("Estimating tick (act: %ld usec, %lld ppm): ", tickval, ppm);
-+	printf(" | %-16ld | %-14lld |", tickval, ppm);
- 
- 	eppm = get_ppm_drift();
--	printf("%lld usec, %lld ppm", systick + (systick * eppm / MILLION), eppm);
-+	printf(" %-14lld |", eppm);
- 	fflush(stdout);
- 
- 	tx1.modes = 0;
- 	adjtimex(&tx1);
- 
- 	if (tx1.offset || tx1.freq || tx1.tick != tickval) {
--		printf("	[ERROR]\n");
--		printf("\tUnexpected adjtimex return values, make sure ntpd is not running.\n");
-+		printf(" [ERROR]  |\n");
-+		printf("   Unexpected adjtimex return values, make sure ntpd is not running.\n");
- 		return -1;
- 	}
- 
-@@ -153,10 +153,10 @@ int check_tick_adj(long tickval)
- 	 * room for interruptions during the measurement.
- 	 */
- 	if (llabs(eppm - ppm) > 100) {
--		printf("	[FAILED]\n");
-+		printf(" [FAILED]\n");
- 		return -1;
- 	}
--	printf("	[OK]\n");
-+	printf(" [ OK ]  |\n");
- 
- 	return  0;
- }
-@@ -175,7 +175,10 @@ int main(int argc, char **argv)
- 		return -1;
- 	}
- 
--	printf("Each iteration takes about 15 seconds\n");
-+	printf("\n Each iteration takes about 15 seconds\n");
-+	printf(" ---------------------------------------------------------------\n");
-+	printf(" | Requested (usec) | Expected (ppm) | Measured (ppm) | Result  |\n");
-+	printf(" |------------------|----------------|----------------|---------|\n");
- 
- 	systick = sysconf(_SC_CLK_TCK);
- 	systick = USEC_PER_SEC/sysconf(_SC_CLK_TCK);
-@@ -188,6 +191,7 @@ int main(int argc, char **argv)
- 			break;
- 		}
- 	}
-+	printf(" ---------------------------------------------------------------\n");
- 
- 	/* Reset things to zero */
- 	tx1.modes	 = ADJ_TICK;
--- 
-2.39.5
-
+> +        loop {
+> +            // SAFETY: The maple tree is valid. This call to `free_all_entries` has exclusive
+> +            // access to the maple tree, so no further synchronization is required.
+> +            let ptr = unsafe { bindings::mas_find(ma_state.get(), usize::MAX) };
+> +            if ptr.is_null() {
+> +                break;
+> +            }
+> +            // SAFETY: By the type invariants, this pointer references a valid value of type `T`.
+> +            // By the safety requirements, it is okay to free it without removing it from the maple
+> +            // tree.
+> +            unsafe { drop(T::from_foreign(ptr)) };
+> +        }
+> +    }
+> +}
+> +
+[...]
 
