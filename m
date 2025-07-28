@@ -1,362 +1,123 @@
-Return-Path: <linux-kernel+bounces-747708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028BCB1370F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A87CFB13712
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 191DF17866A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3811789C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFEA22E004;
-	Mon, 28 Jul 2025 08:56:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD713398B
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B462E233133;
+	Mon, 28 Jul 2025 08:56:33 +0000 (UTC)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6554C6C;
+	Mon, 28 Jul 2025 08:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753692984; cv=none; b=UN/yYDY32ZXKeMTeXK27llq5u5/uHimsK8pDjOWzW25C5zC5pwhTyNm3IMGUykJSgI6nqxDRNKtK0+S9hwAtkQl2BZjcq+3xvwVOQuPIkxdf/tmnm/DQR02WZHKp42mjrtz3/b0ihpi8gLL1JReTh5ehCm0Yfqw0bgQLmirRkvg=
+	t=1753692993; cv=none; b=hKXVkAnr7KxQuUjS9mZCK3JiMtowEYZTZFyMYmCoyObYDl9lHVAsHwk+BLPGUzWe75lvh65xxuOQPPRp/8+DIf+FJL4BdkXi9CxEZPIoO3hSeUTBJ8rsIzk8uMFZYGugws9tbTqlX8L3OpFKA5NbY8LNJDjvazgG0KxBqe7IVms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753692984; c=relaxed/simple;
-	bh=JwsVG4vwM16o2Upa0cZep8U+cIAH1eIBnidFbTfdkjg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iamf1J3OrDIgaAhNEkk8pw7z5rVRpvpGezcY2rgIBauDAW2h4vixfb5I46BA+r7/nwSP5V2Hkt5qK8V3OJEALkRxjMC+9H2Q9Ugy49Z5fC3eIj3DeAyxv1JgpdPl42Y8eGyiPMEoJNWBo570cGzFKRO+ra19QiaDXiHjQOp+AXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12C241596;
-	Mon, 28 Jul 2025 01:56:13 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3EB323F66E;
-	Mon, 28 Jul 2025 01:56:17 -0700 (PDT)
-Message-ID: <46e49e66-1da3-433c-bdad-9468133c78a2@arm.com>
-Date: Mon, 28 Jul 2025 09:56:15 +0100
+	s=arc-20240116; t=1753692993; c=relaxed/simple;
+	bh=qN/u6PndEBo0zcprrAbjEabx1dNlsBZarLJkYS0zCDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qbySThLLYtQItDk/bF1DOT28PPhI/zJhc4NXDyRRWiZBFeVSmTwpTHcDQPaJw7rYZ8C+yzREwcgCqiXsp3fFhEW+rplsJc4K7khxI6tOHYorAGg6WVeVj1ceP3inmWREDqNCQTkWmijyc3iDn3n09rxN1Lhghpak5/NmyMvCn8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4e8135adfccso1315521137.1;
+        Mon, 28 Jul 2025 01:56:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753692990; x=1754297790;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2OXkPqeczMASzZj9IrcbhthBG0cCCHz+IouD66QuiFU=;
+        b=j460hDjYLpuB52W8sWHFU9d8JBjurcM7ZNsj6jvZfaHA+VEmWI76QEa4/nQOu5qboi
+         1uURTcCAYI+b5Huodag2FG17npO627uAWGG15jLGspfyHfKohejKIMrMUg1mNDCqMwm3
+         xyPjGURnRVV0SZI4KWTg+o9tgIyXEuR5Py35AgKSfmdDQU+xhejnDMWE1tRYiRohLa9P
+         z3f32L6CfCnyS+sNAWKghvqvl1kkuHQ9AEuwuyGopPSqAmaVfj3PwwnbWsc+uFPd1BmN
+         Aey0T8I0XPt8T20Ub48rxbx83KynUOrWS5uNz/Eaao4Od26WiiZ64sBBaQfd237N0BaR
+         nEbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCeKmzRJwjAVGKicCbj1y1Kci9pCvhD4ImZmDr/mQ5VqSgjGlhn/vnIz2xsRNE9sEv7QNBWGCHBbZQceld4ibZvxc=@vger.kernel.org, AJvYcCXpeQ9iz7bK3eeYX1GzwBq9OQgSHpmhMaJP2SoCkbra3lC6+rtPdkshN7tBrqAJ2zmu0eqnmT+c1Ix+gSw=@vger.kernel.org, AJvYcCXsr6hIMqsETq4+hUINPfczK+BmEbMeUp7TZXIZj5Kj/cjv4mtBNfvd7v0cM/BP1G/Z1rgcA4DbCvoW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHdpIGYpbh3gVqqEgy32qFrXYP3bA8g2uBD5m48i7Hi6CQPn4m
+	uSXnXSEHC4qDWb2CUX7bnetryPls9U4L8EXwzLcoaDJP3Vc9wrwy4X7zFRwn5gx4
+X-Gm-Gg: ASbGncvNCVNn6utWz4w60RUXsoAxQ25QPBcw8JntJZNNx3e5n9G6tZN82s/Fu4J9gXG
+	rkqwPo/p+oTQCW5tQHg1RXDaMdrDJsaXd+kNf6K6X5k4BuAXV/JU/UFPtF/JYGcKripY8P27461
+	dYd4b6wVC8KsiCKKyQdm152WD7qQnp7aYJg5EbsIOgcYiMp53+AMNrJu8rhjU4tyaMotqqKmrOx
+	w63DcGnpAH8N+GLZ32vYz9MPDNqMQnO3D7RqmnPwCD+kFBdVgs+LHmV6Osq6LZH8SzPtLjj3jlt
+	OawpElJDJOALD54/Y452hbA0utZ0L/p/s/6NPdylDyyTP7t5dVU70g/Wy9OLqvI+0yyopk4UtlX
+	JgFiubNSDkZZmULwzft18ondoOv+Nx+4l4cgb6xkRiHHSo8hpqzs9ppytmUpj
+X-Google-Smtp-Source: AGHT+IEkHNv0DO5DfC6qk4oX32RAlUqGhCVlG/4DQTl0VoNKU+8hB2h9w9YdEVoL2/4nwvqOm/2bXQ==
+X-Received: by 2002:a05:6102:160e:b0:4de:d08f:6727 with SMTP id ada2fe7eead31-4fa3fc4c897mr3768174137.13.1753692989967;
+        Mon, 28 Jul 2025 01:56:29 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b8dcf7645sm1241734241.20.2025.07.28.01.56.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 01:56:29 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4e8135adfccso1315514137.1;
+        Mon, 28 Jul 2025 01:56:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBurErtr4WfJb55cP6+POj2thSguEt/4Jz6giEcNI4aH8cMqEot+CJqgComti370JtwqVdU5hMpXCe@vger.kernel.org, AJvYcCWCi59m8ak2w7nMl3MctDz9UZEhenpJSoGnZmwypzAtKLMyU+0hSShvfelDnqc13eFBBdbI9eNwPxnsGB4=@vger.kernel.org, AJvYcCWHwqgfCeU+/6CGmmFDXA2WEkIHJIGszpk2IbXk/B1hePx54eMeX8HgKRiuDVclOy6yg+NO/6UjxBsVcw6RK//SaTc=@vger.kernel.org
+X-Received: by 2002:a05:6102:2b88:b0:4e2:c6e4:ab1e with SMTP id
+ ada2fe7eead31-4fa3fa713f6mr4025248137.7.1753692989166; Mon, 28 Jul 2025
+ 01:56:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 20/36] arm_mpam: Probe the hardware features resctrl
- supports
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-21-james.morse@arm.com>
-Content-Language: en-US
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <20250711183648.30766-21-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250724092006.21216-1-johan@kernel.org>
+In-Reply-To: <20250724092006.21216-1-johan@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 28 Jul 2025 10:56:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU0E_d3XMj6sDeJy8P_UL7ua-_6CnTYqvf2-TD-WXiR3Q@mail.gmail.com>
+X-Gm-Features: Ac12FXzigXzLEEByExo9veTydL_Yz5MWFF66kC_gKPBrr86D05FC6p_RGKNNTnU
+Message-ID: <CAMuHMdU0E_d3XMj6sDeJy8P_UL7ua-_6CnTYqvf2-TD-WXiR3Q@mail.gmail.com>
+Subject: Re: [PATCH] usb: gadget: udc: renesas_usb3: drop unused module alias
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi James,
+Hi Johan,
 
-On 7/11/25 19:36, James Morse wrote:
-> Expand the probing support with the control and monitor types
-> we can use with resctrl.
-> 
-> CC: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->   drivers/platform/arm64/mpam/mpam_devices.c  | 154 +++++++++++++++++++-
->   drivers/platform/arm64/mpam/mpam_internal.h |  53 +++++++
->   2 files changed, 206 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
-> index 8646fb85ad09..61911831ab39 100644
-> --- a/drivers/platform/arm64/mpam/mpam_devices.c
-> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
-> @@ -102,7 +102,7 @@ static LLIST_HEAD(mpam_garbage);
->   
->   static u32 __mpam_read_reg(struct mpam_msc *msc, u16 reg)
->   {
-> -	WARN_ON_ONCE(reg > msc->mapped_hwpage_sz);
-> +	WARN_ON_ONCE(reg + sizeof(u32) > msc->mapped_hwpage_sz);
->   	WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
->   
->   	return readl_relaxed(msc->mapped_hwpage + reg);
-> @@ -131,6 +131,20 @@ static inline void _mpam_write_partsel_reg(struct mpam_msc *msc, u16 reg, u32 va
->   }
->   #define mpam_write_partsel_reg(msc, reg, val)  _mpam_write_partsel_reg(msc, MPAMCFG_##reg, val)
->   
-> +static inline u32 _mpam_read_monsel_reg(struct mpam_msc *msc, u16 reg)
-> +{
-> +	mpam_mon_sel_lock_held(msc);
-> +	return __mpam_read_reg(msc, reg);
-> +}
-> +#define mpam_read_monsel_reg(msc, reg) _mpam_read_monsel_reg(msc, MSMON_##reg)
-> +
-> +static inline void _mpam_write_monsel_reg(struct mpam_msc *msc, u16 reg, u32 val)
-> +{
-> +	mpam_mon_sel_lock_held(msc);
-> +	__mpam_write_reg(msc, reg, val);
-> +}
-> +#define mpam_write_monsel_reg(msc, reg, val)   _mpam_write_monsel_reg(msc, MSMON_##reg, val)
-> +
->   static u64 mpam_msc_read_idr(struct mpam_msc *msc)
->   {
->   	u64 idr_high = 0, idr_low;
-> @@ -645,6 +659,137 @@ static struct mpam_msc_ris *mpam_get_or_create_ris(struct mpam_msc *msc,
->   	return found;
->   }
->   
-> +/*
-> + * IHI009A.a has this nugget: "If a monitor does not support automatic behaviour
-> + * of NRDY, software can use this bit for any purpose" - so hardware might not
-> + * implement this - but it isn't RES0.
-> + *
-> + * Try and see what values stick in this bit. If we can write either value,
-> + * its probably not implemented by hardware.
-> + */
-> +#define mpam_ris_hw_probe_hw_nrdy(_ris, _mon_reg, _result)			\
-> +do {										\
-> +	u32 now;								\
-> +	u64 mon_sel;								\
-> +	bool can_set, can_clear;						\
-> +	struct mpam_msc *_msc = _ris->vmsc->msc;				\
-> +										\
-> +	if (WARN_ON_ONCE(!mpam_mon_sel_inner_lock(_msc))) {			\
-> +		_result = false;						\
-> +		break;								\
-> +	}									\
-> +	mon_sel = FIELD_PREP(MSMON_CFG_MON_SEL_MON_SEL, 0) |			\
-> +		  FIELD_PREP(MSMON_CFG_MON_SEL_RIS, _ris->ris_idx);		\
-> +	mpam_write_monsel_reg(_msc, CFG_MON_SEL, mon_sel);			\
-> +										\
-> +	mpam_write_monsel_reg(_msc, _mon_reg, MSMON___NRDY);			\
-> +	now = mpam_read_monsel_reg(_msc, _mon_reg);				\
-> +	can_set = now & MSMON___NRDY;						\
-> +										\
-> +	mpam_write_monsel_reg(_msc, _mon_reg, 0);				\
-> +	now = mpam_read_monsel_reg(_msc, _mon_reg);				\
-> +	can_clear = !(now & MSMON___NRDY);					\
-> +	mpam_mon_sel_inner_unlock(_msc);					\
-> +										\
-> +	_result = (!can_set || !can_clear);					\
-> +} while (0)
-> +
-> +static void mpam_ris_hw_probe(struct mpam_msc_ris *ris)
-> +{
-> +	int err;
-> +	struct mpam_msc *msc = ris->vmsc->msc;
-> +	struct mpam_props *props = &ris->props;
-> +
-> +	lockdep_assert_held(&msc->probe_lock);
-> +	lockdep_assert_held(&msc->part_sel_lock);
-> +
-> +	/* Cache Portion partitioning */
-> +	if (FIELD_GET(MPAMF_IDR_HAS_CPOR_PART, ris->idr)) {
-> +		u32 cpor_features = mpam_read_partsel_reg(msc, CPOR_IDR);
-> +
-> +		props->cpbm_wd = FIELD_GET(MPAMF_CPOR_IDR_CPBM_WD, cpor_features);
-> +		if (props->cpbm_wd)
-> +			mpam_set_feature(mpam_feat_cpor_part, props);
-> +	}
-> +
-> +	/* Memory bandwidth partitioning */
-> +	if (FIELD_GET(MPAMF_IDR_HAS_MBW_PART, ris->idr)) {
-> +		u32 mbw_features = mpam_read_partsel_reg(msc, MBW_IDR);
-> +
-> +		/* portion bitmap resolution */
-> +		props->mbw_pbm_bits = FIELD_GET(MPAMF_MBW_IDR_BWPBM_WD, mbw_features);
-> +		if (props->mbw_pbm_bits &&
-> +		    FIELD_GET(MPAMF_MBW_IDR_HAS_PBM, mbw_features))
-> +			mpam_set_feature(mpam_feat_mbw_part, props);
-> +
-> +		props->bwa_wd = FIELD_GET(MPAMF_MBW_IDR_BWA_WD, mbw_features);
-> +		if (props->bwa_wd && FIELD_GET(MPAMF_MBW_IDR_HAS_MAX, mbw_features))
-> +			mpam_set_feature(mpam_feat_mbw_max, props);
-> +	}
-> +
-> +	/* Performance Monitoring */
-> +	if (FIELD_GET(MPAMF_IDR_HAS_MSMON, ris->idr)) {
-> +		u32 msmon_features = mpam_read_partsel_reg(msc, MSMON_IDR);
-> +
-> +		/*
-> +		 * If the firmware max-nrdy-us property is missing, the
-> +		 * CSU counters can't be used. Should we wait forever?
-> +		 */
-> +		err = device_property_read_u32(&msc->pdev->dev,
-> +					       "arm,not-ready-us",
-> +					       &msc->nrdy_usec);
-> +
-> +		if (FIELD_GET(MPAMF_MSMON_IDR_MSMON_CSU, msmon_features)) {
-> +			u32 csumonidr;
-> +
-> +			csumonidr = mpam_read_partsel_reg(msc, CSUMON_IDR);
-> +			props->num_csu_mon = FIELD_GET(MPAMF_CSUMON_IDR_NUM_MON, csumonidr);
-> +			if (props->num_csu_mon) {
-> +				bool hw_managed;
-> +
-> +				mpam_set_feature(mpam_feat_msmon_csu, props);
-> +
-> +				/* Is NRDY hardware managed? */
-> +				mpam_mon_sel_outer_lock(msc);
-> +				mpam_ris_hw_probe_hw_nrdy(ris, CSU, hw_managed);
-> +				mpam_mon_sel_outer_unlock(msc);
-> +				if (hw_managed)
-> +					mpam_set_feature(mpam_feat_msmon_csu_hw_nrdy, props);
-> +			}
-> +
-> +			/*
-> +			 * Accept the missing firmware property if NRDY appears
-> +			 * un-implemented.
-> +			 */
-> +			if (err && mpam_has_feature(mpam_feat_msmon_csu_hw_nrdy, props))
-> +				pr_err_once("Counters are not usable because not-ready timeout was not provided by firmware.");
-> +		}
-> +		if (FIELD_GET(MPAMF_MSMON_IDR_MSMON_MBWU, msmon_features)) {
-> +			bool hw_managed;
-> +			u32 mbwumonidr = mpam_read_partsel_reg(msc, MBWUMON_IDR);
-> +
-> +			props->num_mbwu_mon = FIELD_GET(MPAMF_MBWUMON_IDR_NUM_MON, mbwumonidr);
-> +			if (props->num_mbwu_mon)
-> +				mpam_set_feature(mpam_feat_msmon_mbwu, props);
-> +
-> +			if (FIELD_GET(MPAMF_MBWUMON_IDR_HAS_RWBW, mbwumonidr))
-> +				mpam_set_feature(mpam_feat_msmon_mbwu_rwbw, props);
-> +
-> +			/* Is NRDY hardware managed? */
-> +			mpam_mon_sel_outer_lock(msc);
-> +			mpam_ris_hw_probe_hw_nrdy(ris, MBWU, hw_managed);
-> +			mpam_mon_sel_outer_unlock(msc);
-> +			if (hw_managed)
-> +				mpam_set_feature(mpam_feat_msmon_mbwu_hw_nrdy, props);
-> +
-> +			/*
-> +			 * Don't warn about any missing firmware property for
-> +			 * MBWU NRDY - it doesn't make any sense!
-> +			 */
-> +		}
-> +	}
-> +}
-> +
->   static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   {
->   	u64 idr;
-> @@ -665,6 +810,7 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   
->   	idr = mpam_msc_read_idr(msc);
->   	mutex_unlock(&msc->part_sel_lock);
-> +
->   	msc->ris_max = FIELD_GET(MPAMF_IDR_RIS_MAX, idr);
->   
->   	/* Use these values so partid/pmg always starts with a valid value */
-> @@ -685,6 +831,12 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   		ris = mpam_get_or_create_ris(msc, ris_idx);
->   		if (IS_ERR(ris))
->   			return PTR_ERR(ris);
-> +		ris->idr = idr;
-> +
-> +		mutex_lock(&msc->part_sel_lock);
-> +		__mpam_part_sel(ris_idx, 0, msc);
-> +		mpam_ris_hw_probe(ris);
-> +		mutex_unlock(&msc->part_sel_lock);
->   	}
->   
->   	spin_lock(&partid_max_lock);
-> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
-> index 42a454d5f914..ae6fd1f62cc4 100644
-> --- a/drivers/platform/arm64/mpam/mpam_internal.h
-> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
-> @@ -136,6 +136,55 @@ static inline void mpam_mon_sel_lock_held(struct mpam_msc *msc)
->   		lockdep_assert_preemption_enabled();
->   }
->   
-> +/*
-> + * When we compact the supported features, we don't care what they are.
-> + * Storing them as a bitmap makes life easy.
-> + */
-> +typedef u16 mpam_features_t;
-> +
-> +/* Bits for mpam_features_t */
-> +enum mpam_device_features {
-> +	mpam_feat_ccap_part = 0,
-> +	mpam_feat_cpor_part,
-> +	mpam_feat_mbw_part,
-> +	mpam_feat_mbw_min,
-> +	mpam_feat_mbw_max,
-> +	mpam_feat_mbw_prop,
-> +	mpam_feat_msmon,
-> +	mpam_feat_msmon_csu,
-> +	mpam_feat_msmon_csu_capture,
-> +	mpam_feat_msmon_csu_hw_nrdy,
-> +	mpam_feat_msmon_mbwu,
-> +	mpam_feat_msmon_mbwu_capture,
-> +	mpam_feat_msmon_mbwu_rwbw,
-> +	mpam_feat_msmon_mbwu_hw_nrdy,
-> +	mpam_feat_msmon_capt,
-> +	MPAM_FEATURE_LAST,
-> +};
-> +#define MPAM_ALL_FEATURES      ((1 << MPAM_FEATURE_LAST) - 1)
+Thanks for your patch, which is now commit 7b4b5591d4551efe
+("usb: gadget: udc: renesas_usb3: drop unused module alias") in
+usb/usb-next.
 
-Consider a static assert to check the type is big enough.
+On Thu, 24 Jul 2025 at 11:21, Johan Hovold <johan@kernel.org> wrote:
+> Since commit f3323cd03e58 ("usb: gadget: udc: renesas_usb3: remove R-Car
+> H3 ES1.* handling") the driver only supports OF probe so drop the unused
+> platform module alias.
+>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-static_assert(BITS_PER_TYPE(mpam_features_t) >= MPAM_FEATURE_LAST);
+While I don't debate the actual change, I would like to comment on
+the patch description.  The driver only ever supported OF probe.
+The call to soc_device_match() was just used to override the match
+data for quirk handling.
 
-> +
-> +struct mpam_props {
-> +	mpam_features_t		features;
-> +
-> +	u16			cpbm_wd;
-> +	u16			mbw_pbm_bits;
-> +	u16			bwa_wd;
-> +	u16			num_csu_mon;
-> +	u16			num_mbwu_mon;
-> +};
-> +
-> +static inline bool mpam_has_feature(enum mpam_device_features feat,
-> +				    struct mpam_props *props)
-> +{
-> +	return (1 << feat) & props->features;
-> +}
-> +
-> +static inline void mpam_set_feature(enum mpam_device_features feat,
-> +				    struct mpam_props *props)
-> +{
-> +	props->features |= (1 << feat);
-> +}
-> +
->   struct mpam_class {
->   	/* mpam_components in this class */
->   	struct list_head	components;
-> @@ -175,6 +224,8 @@ struct mpam_vmsc {
->   	/* mpam_msc_ris in this vmsc */
->   	struct list_head	ris;
->   
-> +	struct mpam_props	props;
-> +
->   	/* All RIS in this vMSC are members of this MSC */
->   	struct mpam_msc		*msc;
->   
-> @@ -186,6 +237,8 @@ struct mpam_vmsc {
->   
->   struct mpam_msc_ris {
->   	u8			ris_idx;
-> +	u64			idr;
-> +	struct mpam_props	props;
->   
->   	cpumask_t		affinity;
->   
+> --- a/drivers/usb/gadget/udc/renesas_usb3.c
+> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
+> @@ -3024,4 +3024,3 @@ module_platform_driver(renesas_usb3_driver);
+>  MODULE_DESCRIPTION("Renesas USB3.0 Peripheral driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_AUTHOR("Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>");
+> -MODULE_ALIAS("platform:renesas_usb3");
 
-Thanks,
+Gr{oetje,eeting}s,
 
-Ben
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
