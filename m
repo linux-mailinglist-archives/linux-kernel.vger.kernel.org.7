@@ -1,148 +1,189 @@
-Return-Path: <linux-kernel+bounces-747724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFF7B13752
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:12:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9BDB13754
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA4C3A8955
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:11:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9690179980
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA8822D780;
-	Mon, 28 Jul 2025 09:11:56 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E4222DFA3;
+	Mon, 28 Jul 2025 09:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+MuaV4J"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7720E1D90DD;
-	Mon, 28 Jul 2025 09:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0D521CC49;
+	Mon, 28 Jul 2025 09:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753693915; cv=none; b=NvpO+vNRrELzCGeqsvtXLo1KSJt//aF5Z6YSW3rfy5QVT88BUPpcQ02yDiCdM5DHp/7sG3lxiU68XPg6pmfvC20Ne2047tKe18hPDXBjKntzyEffpSEOPJ6Cnu9rlZ/qsqyl8MZruyegTP26piSnGPldgu0w9dqiAb+1KZXAIes=
+	t=1753693922; cv=none; b=drQjhHkv2AYFW195wf7v95I1KCj7aIKqo1veUbzIL0tkz30zZfwcxKtqxzpYo10AjpbIaGBsafYB07MOkuy2IUpyROddces1u1WTp8LLYFsoHDhiFgskxyIlssyx8WA1bAwEDxCcCsKJsHS04b+xndk/jLO4gT7aryIYqd//aTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753693915; c=relaxed/simple;
-	bh=ojDcrEmvPgqQJN+tqQibo+gCjxqoqo5f/CEBGMRfMSc=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=Jk3t8XIrq8RU/v+6jXNPN57neGzQxWoZCSqCiyWW4zQeh2UI7tUwJNiVPp9zRdQE1gyfqTNHqPgMAyYZd1C4Gw2jjRXV3+sDQe5tA9wAGnKnG2iRhB7OryQrrhHdhdr/2PwbLqGuOOLjgUPWFPSKKxtb9rVZH4tcFwXmvvXQ+ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4brCQp5DL9z8Xs71;
-	Mon, 28 Jul 2025 17:11:46 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 56S9BZcg096074;
-	Mon, 28 Jul 2025 17:11:35 +0800 (+08)
-	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 28 Jul 2025 17:11:37 +0800 (CST)
-Date: Mon, 28 Jul 2025 17:11:37 +0800 (CST)
-X-Zmail-TransId: 2afa68873ec9ffffffffe1e-02525
-X-Mailer: Zmail v1.0
-Message-ID: <202507281711372379BW_PL4oZvcBoW5Xti7yO@zte.com.cn>
-In-Reply-To: <aIO+CKQ/kvpX5lMo@pop-os.localdomain>
-References: 20250724212837119BP9HOs0ibXDRWgsXMMir7@zte.com.cn,aIO+CKQ/kvpX5lMo@pop-os.localdomain
+	s=arc-20240116; t=1753693922; c=relaxed/simple;
+	bh=0gSQ24/p4HRUPOHRsyobhPrSNgYDn4mi1ZqXF6Iocyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhMQ7vIEw9ovS4BEzDkamIDXAxI0zivRyEYYMbuAIYUx1Fe+mpqWDr2/bVjYEXRGXBv/TNyljT47hmhQU7ksYBRS63zOb1SOnXuA0/JklAKLTZxQA9GCCu6YwoBV4RBb0GKCtbVrPQHCgX7/lCzilfTWq9S7j6U73qw3ws7+0WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V+MuaV4J; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4f2f2f22c1aso2362504137.0;
+        Mon, 28 Jul 2025 02:12:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753693920; x=1754298720; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2SYCb8FDUa9FDjnH8D2qgYFn8gA2NGM9COLDxTOfYjk=;
+        b=V+MuaV4JuOd+g7IdWIlC/IGzNu5jzf1gMv8vuoVQkRptpXvQ+1cLTwYaBg1OHP5G1o
+         DWIJfzP59WhqPc6qLa1ksmFGNypH8aeqor94/Si0rvNJCOShVGHwKnIgkYBLVGSxzgHF
+         a7lAECOX310To1bNPWJMhG3K6EVoBtTrYa19OYxK7zRZM+enr5Ol88UtAmFYP0mJJXY2
+         fzm+Pb2qs272QJ60ga5oVDnWZZnqzg9J3DSHmyOCLtTwNd4dQvh++ue63FrvUph7CDQ1
+         l8uLrz83XYI6JKqqR5MqFtrPtfyIBDzHltsVtHtgWgXuvGwSVqo4K9FCt49ksGsxiAXR
+         Pcag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753693920; x=1754298720;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2SYCb8FDUa9FDjnH8D2qgYFn8gA2NGM9COLDxTOfYjk=;
+        b=dEPZsQdDPhgWaE4GISw8LYiQ70YDOluJweORJu6+OfnFbZXkWKVBYftrz9+FhEg/Ky
+         tG3lKEqjb45AXegNpBrcIch1/M0EzR/AV3U8Us5W4aeQ8wvg+32+j52rDseN4G02qiG+
+         hUsljgsFtL1V2netibjlIIr7irS3l7PDFGSkIPnmYfrClcZuzTir7Zv4E8Oq/Ai0gAJJ
+         pErurBy4/Y6yIy1r66Bn4elA8nIv9bd49AnPW7kjTlAvyV6nrvugbZyw92/w5cLhk8KG
+         RLL3UYDt+pT4iigBw5aOxrcWngIKMHAe5ec8sMJ/55FS4VrmVn18euHifqKquF3NaCIu
+         EJQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLyPaxuxDFLIE9tNlH0bSeV0Jb2dvVRGYaAR3MAeb7VAu9wWNcWYPta6I/ybkFubdIhGFh/FurM6fdPJqT@vger.kernel.org, AJvYcCXvAHpD7DDkSgnT0Vc7ddYMLnx9IYIR82Cgoi59pTLBK7idgqRmGxv7ttY9hdRYPx1cHs/w+vt4ojo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV2TAc6ygGCRZrvMDY3cP7IEj3c48Prv4q2RCyJt/woiHu9RJK
+	6K89E4C3ZXEVlYpEsKig8Svr5y/ICNionK/to1evs9BTKT+u5g711N8D
+X-Gm-Gg: ASbGncvUyOrI1Bw9WocLr84ALKw0b97uK5VJw/onOwoxcOQVjmEHymkYWszR7p/Bvg8
+	lqIQ/XFrMRdknDjWRTRcufw9WCdUxkvMJpWFgHhiIcJVC0KoE53ntOu/YzCufd7Ws3NAax8RvFH
+	j2e1Ho3AO42pVkdstRLMc5fkelyUx0SdpPP7vZI9P4Vnn3lQMZv+qP2GmUVJTG/ZitAKwRrpOG/
+	Mk+9AEigZ07FFTJsB47Br/4n3nxbqBgA0o7wb2+J7VIB38/Fz3w1NGyXEisOS7UmkYqEPII28Aa
+	IouLM6wLS5mpoRLiSnIIrcxaDNU7muDSC9Uyr3pDgwASBbBdFx3ogHXdc4SNSaSMdyn3qp/cmtE
+	nBp8fROfm0CZx
+X-Google-Smtp-Source: AGHT+IFJdYInd3vcSVl7Wb2ND0culrX/w/55qkepuhg8Ua3GKi+uUJW0NsjpBP97JmiR3r/zKwpEQA==
+X-Received: by 2002:a05:6102:1623:b0:4fa:dd4:6877 with SMTP id ada2fe7eead31-4fa2eb0ce5dmr5919865137.4.1753693920004;
+        Mon, 28 Jul 2025 02:12:00 -0700 (PDT)
+Received: from nsa ([45.144.113.55])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b8dcd2199sm1229210241.17.2025.07.28.02.11.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 02:11:58 -0700 (PDT)
+Date: Mon, 28 Jul 2025 10:12:11 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad7124: fix channel lookup in syscalib
+ functions
+Message-ID: <nja2lfh3vnmsfvvvl4stxm4n433ktfeftdpb6g6criwslev2bj@ksqx3y7umo3c>
+References: <20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-v1-1-b9d14bb684af@baylibre.com>
+ <20250727133135.385fa7c5@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <fan.yu9@zte.com.cn>
-To: <xiyou.wangcong@gmail.com>
-Cc: <dumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <horms@kernel.org>, <davem@davemloft.net>, <jiri@resnulli.us>,
-        <jhs@mojatatu.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xu.xin16@zte.com.cn>,
-        <yang.yang29@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <jiang.kun2@zte.com.cn>, <wang.yaxin@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <he.peilin@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBuZXQtbmV4dF0gbmV0L3NjaGVkOiBBZGQgcHJlY2lzZSBkcm9wIHJlYXNvbiBmb3IgcGZpZm9fZmFzdCBxdWV1ZSBvdmVyZmxvd3M=?=
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL:mse-fl2.zte.com.cn 56S9BZcg096074
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Mon, 28 Jul 2025 17:11:46 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68873ED2.000/4brCQp5DL9z8Xs71
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250727133135.385fa7c5@jic23-huawei>
 
+On Sun, Jul 27, 2025 at 01:31:35PM +0100, Jonathan Cameron wrote:
+> On Sat, 26 Jul 2025 11:28:48 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+> > Fix possible incorrect channel lookup in the syscalib functions by using
+> > the correct channel address instead of the channel number.
+> > 
+> > In the ad7124 driver, the channel field of struct iio_chan_spec is the
+> > input pin number of the positive input of the channel. This can be, but
+> > is not always the same as the index in the channels array. The correct
+> > index in the channels array is stored in the address field (and also
+> > scan_index). We use the address field to perform the correct lookup.
+> > 
+> > Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> Seems fine to me and i'll queue it up, but I would welcome another set of
+> eyes on this one.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
 
+The fix seems valid to me:
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+Reviewed-by: Nuno Sá <nuno.sa@analog.com>
 
-
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
-
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PiBCVFcsIGl0IHNlZW1zIG5ldC1uZXh0IGlzIGNsb3NlZCwgeW91IG1heSBuZWVkIHRvIHJlc2Vu
-ZCBpdCBhZnRlciBpdCBpcz4gcmUtb3Blbi4+PiBUaGFua3MuDQoNCkhpIENvbmcsICANClRoYW5r
-IHlvdSBmb3IgeW91ciByZXZpZXcgYW5kIHRoZSBmZWVkYmFjayENCkNvdWxkIHlvdSBraW5kbHkg
-c2hhcmUgaG93IHRvIHRyYWNrIHRoZSBzdGF0dXMgb2YgdGhlIG5ldC1uZXh0IG1lcmdlIHdpbmRv
-dz8NClNob3VsZCBJIG1vbml0b3IgdGhlIGxpbnV4LW5ldGRldiBtYWlsaW5nIGxpc3QgZm9yIGFu
-bm91bmNlbWVudHMsIG9yIGlzIHRoZXJlIGEgc3BlY2lmaWMgc2NoZWR1bGUgSSBjYW4gZm9sbG93
-PyANCg0KQmVzdCBSZWdhcmRzLCAgDQpGYW4gWXU=
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTogQXJp
-YWwsICZxdW90O01pY3Jvc29mdCBZYWhlaSZxdW90OywgJnF1b3Q7THVjaWRhIEdyYW5kZSZxdW90
-OywgVmVyZGFuYSwgTHVjaWRhLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGJhY2tncm91bmQtY29s
-b3I6IHJnYigyNTUsIDI1NSwgMjU1KTsiPiZndDsgQlRXLCZuYnNwO2l0Jm5ic3A7c2VlbXMmbmJz
-cDtuZXQtbmV4dCZuYnNwO2lzJm5ic3A7Y2xvc2VkLCZuYnNwO3lvdSZuYnNwO21heSZuYnNwO25l
-ZWQmbmJzcDt0byZuYnNwO3Jlc2VuZCZuYnNwO2l0Jm5ic3A7YWZ0ZXImbmJzcDtpdCZuYnNwO2lz
-PC9zcGFuPjxiciBzdHlsZT0iYm94LXNpemluZzogYm9yZGVyLWJveDsgb3V0bGluZTogMHB4OyBm
-b250LWZhbWlseTogQXJpYWwsICZxdW90O01pY3Jvc29mdCBZYWhlaSZxdW90OywgJnF1b3Q7THVj
-aWRhIEdyYW5kZSZxdW90OywgVmVyZGFuYSwgTHVjaWRhLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7
-IHdoaXRlLXNwYWNlOiBub3JtYWw7IGJhY2tncm91bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1
-KTsiPjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsICZxdW90O01pY3Jvc29mdCBZYWhl
-aSZxdW90OywgJnF1b3Q7THVjaWRhIEdyYW5kZSZxdW90OywgVmVyZGFuYSwgTHVjaWRhLCBIZWx2
-ZXRpY2EsIHNhbnMtc2VyaWY7IGJhY2tncm91bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1KTsi
-PiZndDsgcmUtb3Blbi48L3NwYW4+PGJyIHN0eWxlPSJib3gtc2l6aW5nOiBib3JkZXItYm94OyBv
-dXRsaW5lOiAwcHg7IGZvbnQtZmFtaWx5OiBBcmlhbCwgJnF1b3Q7TWljcm9zb2Z0IFlhaGVpJnF1
-b3Q7LCAmcXVvdDtMdWNpZGEgR3JhbmRlJnF1b3Q7LCBWZXJkYW5hLCBMdWNpZGEsIEhlbHZldGlj
-YSwgc2Fucy1zZXJpZjsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgYmFja2dyb3VuZC1jb2xvcjogcmdi
-KDI1NSwgMjU1LCAyNTUpOyI+Jmd0OzxiciBzdHlsZT0iYm94LXNpemluZzogYm9yZGVyLWJveDsg
-b3V0bGluZTogMHB4OyBmb250LWZhbWlseTogQXJpYWwsICZxdW90O01pY3Jvc29mdCBZYWhlaSZx
-dW90OywgJnF1b3Q7THVjaWRhIEdyYW5kZSZxdW90OywgVmVyZGFuYSwgTHVjaWRhLCBIZWx2ZXRp
-Y2EsIHNhbnMtc2VyaWY7IHdoaXRlLXNwYWNlOiBub3JtYWw7IGJhY2tncm91bmQtY29sb3I6IHJn
-YigyNTUsIDI1NSwgMjU1KTsiPjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsICZxdW90
-O01pY3Jvc29mdCBZYWhlaSZxdW90OywgJnF1b3Q7THVjaWRhIEdyYW5kZSZxdW90OywgVmVyZGFu
-YSwgTHVjaWRhLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGJhY2tncm91bmQtY29sb3I6IHJnYigy
-NTUsIDI1NSwgMjU1KTsiPiZndDsgVGhhbmtzLjwvc3Bhbj48L3A+PHA+PGJyPjwvcD48cD5IaSBD
-b25nLCZuYnNwOyZuYnNwOzwvcD48cD5UaGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3IGFuZCB0aGUg
-ZmVlZGJhY2shPC9wPjxwPkNvdWxkIHlvdSBraW5kbHkgc2hhcmUgaG93IHRvIHRyYWNrIHRoZSBz
-dGF0dXMgb2YgdGhlIG5ldC1uZXh0IG1lcmdlIHdpbmRvdz88L3A+PHA+U2hvdWxkIEkgbW9uaXRv
-ciB0aGUgbGludXgtbmV0ZGV2IG1haWxpbmcgbGlzdCBmb3IgYW5ub3VuY2VtZW50cywgb3IgaXMg
-dGhlcmUgYSBzcGVjaWZpYyBzY2hlZHVsZSBJIGNhbiBmb2xsb3c/Jm5ic3A7PC9wPjxwPjxicj48
-L3A+PHA+QmVzdCBSZWdhcmRzLCZuYnNwOyZuYnNwOzwvcD48cD5GYW4gWXUmbmJzcDsmbmJzcDs8
-L3A+PC9kaXY+
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
-
+> > ---
+> >  drivers/iio/adc/ad7124.c | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> > index 9808df2e92424283a86e9c105492c7447d071e44..4d8c6bafd1c3171054c72a0d2b13d6b1afc4e51a 100644
+> > --- a/drivers/iio/adc/ad7124.c
+> > +++ b/drivers/iio/adc/ad7124.c
+> > @@ -849,7 +849,7 @@ enum {
+> >  static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan_spec *chan)
+> >  {
+> >  	struct device *dev = &st->sd.spi->dev;
+> > -	struct ad7124_channel *ch = &st->channels[chan->channel];
+> > +	struct ad7124_channel *ch = &st->channels[chan->address];
+> >  	int ret;
+> >  
+> >  	if (ch->syscalib_mode == AD7124_SYSCALIB_ZERO_SCALE) {
+> > @@ -865,8 +865,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
+> >  		if (ret < 0)
+> >  			return ret;
+> >  
+> > -		dev_dbg(dev, "offset for channel %d after zero-scale calibration: 0x%x\n",
+> > -			chan->channel, ch->cfg.calibration_offset);
+> > +		dev_dbg(dev, "offset for channel %lu after zero-scale calibration: 0x%x\n",
+> > +			chan->address, ch->cfg.calibration_offset);
+> >  	} else {
+> >  		ch->cfg.calibration_gain = st->gain_default;
+> >  
+> > @@ -880,8 +880,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
+> >  		if (ret < 0)
+> >  			return ret;
+> >  
+> > -		dev_dbg(dev, "gain for channel %d after full-scale calibration: 0x%x\n",
+> > -			chan->channel, ch->cfg.calibration_gain);
+> > +		dev_dbg(dev, "gain for channel %lu after full-scale calibration: 0x%x\n",
+> > +			chan->address, ch->cfg.calibration_gain);
+> >  	}
+> >  
+> >  	return 0;
+> > @@ -924,7 +924,7 @@ static int ad7124_set_syscalib_mode(struct iio_dev *indio_dev,
+> >  {
+> >  	struct ad7124_state *st = iio_priv(indio_dev);
+> >  
+> > -	st->channels[chan->channel].syscalib_mode = mode;
+> > +	st->channels[chan->address].syscalib_mode = mode;
+> >  
+> >  	return 0;
+> >  }
+> > @@ -934,7 +934,7 @@ static int ad7124_get_syscalib_mode(struct iio_dev *indio_dev,
+> >  {
+> >  	struct ad7124_state *st = iio_priv(indio_dev);
+> >  
+> > -	return st->channels[chan->channel].syscalib_mode;
+> > +	return st->channels[chan->address].syscalib_mode;
+> >  }
+> >  
+> >  static const struct iio_enum ad7124_syscalib_mode_enum = {
+> > 
+> > ---
+> > base-commit: e4d9886ad25adae72f38f2b12f41649b101581ae
+> > change-id: 20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-e28c933ead2a
+> > 
+> > Best regards,
+> 
 
