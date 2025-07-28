@@ -1,153 +1,207 @@
-Return-Path: <linux-kernel+bounces-747740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE53EB13781
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:28:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCE2B13782
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D52933B44ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4DD1899828
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC827238D22;
-	Mon, 28 Jul 2025 09:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1E8234984;
+	Mon, 28 Jul 2025 09:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JAdjIL5i"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ioWZsHh7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZVY8ht/t";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ioWZsHh7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZVY8ht/t"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F782327A3;
-	Mon, 28 Jul 2025 09:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B9022F74B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753694887; cv=none; b=XAU99Mozz3WPTrPcBXuuf7Weq3pVk85YHb801MAryupdI5jFxNs3OKlv1TywqKMCxK61FCRWgoeb8n1V3CU5O/rpsgHVmQ74kIE17syfRSNUhTXc3yA52jw+i623mjG6NIzXv1GQzFxK9vVcWAzVJ2sYyLHbUpuVwuWXlb83QkM=
+	t=1753694903; cv=none; b=AKMugs6wqSPx6eaAUWxoZoumEIW+aE6EyZSwUm86skqn4OqGjMDEUgba66H5iiWAow1niDrQfkoZOOKMEjR9Fa9Sgi8qN+XYsaAko9ELJRraYEhhS6nnIISSHYVJCAcV81k6CPS0wUe70fwDZpCZOxpL6Yl5Rgd55MqCJJOsgIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753694887; c=relaxed/simple;
-	bh=CZztvEBOuWTUFsVJ+SgZuF1TKLAMvk8pdthyCh8jm7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BBHQRfY0IS2K6ANWGIHv2m0PaGSmzISAOGvwHlxVim4d3pLw81gSajDNmp8a1LZ7q3JPYrTpHHAxrXCuxaq5GQwRa5avgvO1Y1/93MFVT0NLYVUzFQVKzYWt9I5cITmHSevTWxWYxRGnqvbC+glvzS+R59n2vYolXHBm6f/RkqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JAdjIL5i; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56RKEgMd018791;
-	Mon, 28 Jul 2025 09:27:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=HDCX7nDeRDVxcRMYL3E+nIsT0huRc0
-	lyhrUsIeB8CdM=; b=JAdjIL5isd85TpbCWTKx1t2DKSR0hFZP3rp/8bn4Viw68u
-	4ZYEpnlDYJYVQOLFKBoTEYZHQRT+7PjzKTRtEJ5S+6pDpyA/U577eBOTZa5P1zQ6
-	O3lD2cNKax7++TG9UcqQ04l9RDsYZ6LdYmD8Pd91+k4tqSfkBYiooEuubUl1nv8q
-	OXHDPfLgpAhTUNS6TrSEfCVdCiQ7gIhXQE1OWhi50EI4Teslq+XwnMibtDcrfVeY
-	44EVlnba90LkeJo8qBB3ABcG3V6EzqgoS4yNQyMj/VMJwZjX4knei3Brl59Jezo+
-	DqqrqcwfUN2uqe9eZf52FvApUedntu+hvrxq6Lig==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qd585cy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 09:27:57 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56S9N57R025085;
-	Mon, 28 Jul 2025 09:27:57 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qd585cw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 09:27:57 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56S79Mod028782;
-	Mon, 28 Jul 2025 09:27:56 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 485c22cv20-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 09:27:56 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56S9RsFc18874648
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 09:27:54 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 98C3D2004B;
-	Mon, 28 Jul 2025 09:27:54 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CECB620040;
-	Mon, 28 Jul 2025 09:27:52 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 28 Jul 2025 09:27:52 +0000 (GMT)
-Date: Mon, 28 Jul 2025 14:57:50 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zorro Lang <zlang@redhat.com>
-Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 06/13] generic/1227: Add atomic write test using fio
- verify on file mixed mappings
-Message-ID: <aIdClh24QRu6mzcm@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <f2d4a366f32ca56e1d47897dc5cf6cc8d85328b4.1752329098.git.ojaswin@linux.ibm.com>
- <20250728085851.i3rqef5zssralmvl@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+	s=arc-20240116; t=1753694903; c=relaxed/simple;
+	bh=gWcYkzDPjyeOgSC8rzQS4l0hOydtKGHRmteU/O+O9HQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FXB/jPaoLPHdFnm4JMdDj2mFlBM25td4c+zqa4PxrXXt7hTIvxvH/eFtxVgz7jRwJrknoOme1uW1YTLfEiZG25nToZWYl54eGsUFWeHaUmbE6vfeUEFQTpvGGQNnRnhrdH3t/vc2P2lNlXBR+v+flhdza3Wv7GxbTRv5XF5LtWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ioWZsHh7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZVY8ht/t; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ioWZsHh7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZVY8ht/t; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CF2E5211E8;
+	Mon, 28 Jul 2025 09:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753694899; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kjYo15ietrTmGWvWcwTpqo5y+WyN26WO+iCcHTM/8SI=;
+	b=ioWZsHh74FPZy5H5yUw+e8ewR6lhBj2FB5MoHptFtjEHVvUuqNSQDFzVK3anmHh/WC4F+s
+	kAA+O9UfzikwL8MNBm6XZUI+a9PXndQpsdpZ499Ld5ppm0eaHJTfg6hUtEU6e/McUOE8iy
+	NhJcUnipkTtCGHS1HNOtYubywmTfLGo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753694899;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kjYo15ietrTmGWvWcwTpqo5y+WyN26WO+iCcHTM/8SI=;
+	b=ZVY8ht/tSiPXpV6h5mOtv0cZNiXg+8NVSh/3fqq9iKzOwOkbcgfm7iui3B3ewFBmd2aRWm
+	fJdF34E1+6wx4WBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753694899; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kjYo15ietrTmGWvWcwTpqo5y+WyN26WO+iCcHTM/8SI=;
+	b=ioWZsHh74FPZy5H5yUw+e8ewR6lhBj2FB5MoHptFtjEHVvUuqNSQDFzVK3anmHh/WC4F+s
+	kAA+O9UfzikwL8MNBm6XZUI+a9PXndQpsdpZ499Ld5ppm0eaHJTfg6hUtEU6e/McUOE8iy
+	NhJcUnipkTtCGHS1HNOtYubywmTfLGo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753694899;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kjYo15ietrTmGWvWcwTpqo5y+WyN26WO+iCcHTM/8SI=;
+	b=ZVY8ht/tSiPXpV6h5mOtv0cZNiXg+8NVSh/3fqq9iKzOwOkbcgfm7iui3B3ewFBmd2aRWm
+	fJdF34E1+6wx4WBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B3BCC1368A;
+	Mon, 28 Jul 2025 09:28:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VthqK7NCh2jBLQAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 28 Jul 2025 09:28:19 +0000
+Message-ID: <273a3376-c45a-4d41-85b4-9c4f3428f268@suse.de>
+Date: Mon, 28 Jul 2025 11:28:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728085851.i3rqef5zssralmvl@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA2OCBTYWx0ZWRfXxSAZMkZOJobD
- eOZTtY2Yq5HeY2wRnUdnZ4IO4t//F6RtiHgymJEgL+7G8GXkT9lgEtaw38vFdO+McxM/U34AIL1
- vEzwib2ICP05FLc9scJyRWk92fus1ae5uwFYmuAXb1xB6M/rl0soqKFXDKGagz1mMD98xI3hyCV
- 4LMXp9VBmJ1q8HwCqmCOqyrECOGTNTHUIM9vgm+7RZzYxPvHyGsxO6vbV560x8FlD6glnBsVhSQ
- 7qRvB97EzzVvmVeudeutIGEVnZQ/JrJwUyW4aGiHuYWPTjUg/Qsom7zc/Avdg0x2crJNHNZ2qO1
- UA74sEOaVr+lyEURxeXLesczy8Cme7Cx9+kC0sxK4WbMMWhUk4JQ25bHrM5nCQqtnWZfDY1FLUZ
- sCRf/kv7EMqhqX2hSHyqnMhvwFGAN3DeczJ4pyKDi/0RW4UANUR4AaI9E5DRS9tWJ6Ehpx9/
-X-Proofpoint-ORIG-GUID: lrK2P6grwbxr7KbrfJhsZW8ameibfw9B
-X-Authority-Analysis: v=2.4 cv=B9q50PtM c=1 sm=1 tr=0 ts=6887429d cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
- a=20KFwNOVAAAA:8 a=o97Vj5sRf2UnNAzqRT0A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: nXy_P4_aX6Bqiym-X9oeU0Ivt_VwgxHr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 mlxscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507280068
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
+To: David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Michal Hocko <mhocko@suse.com>, Hannes Reinecke <hare@kernel.org>
+References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
+ <4057479d-6ece-49a2-b823-99748e8c9c35@redhat.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <4057479d-6ece-49a2-b823-99748e8c9c35@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Mon, Jul 28, 2025 at 04:58:51PM +0800, Zorro Lang wrote:
-> On Sat, Jul 12, 2025 at 07:42:48PM +0530, Ojaswin Mujoo wrote:
-> > From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-> > 
-> > This tests uses fio to first create a file with mixed mappings. Then it
-> > does atomic writes using aio dio with parallel jobs to the same file
-> > with mixed mappings. This forces the filesystem allocator to allocate
-> > extents over mixed mapping regions to stress FS block allocators.
-> > 
-> > Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
+On 7/28/25 10:44, David Hildenbrand wrote:
+> On 28.07.25 10:15, Oscar Salvador wrote:
+>> Hi,
+[ .. ]
+>>
+>> One way to tackle this would be update the ratio every time a new CXL
+>> card gets inserted, but this seems suboptimal.
+>> Another way is that since CXL memory works with selfhosted memmap, we 
+>> could relax
+>> the check when 'auto-movable' and only look at the ratio if we aren't
+>> working with selfhosted memmap.
 > 
-> This patch looks good to me, just the subject:
->  "generic/1227: Add atomic write test using fio verify on file mixed mappings"
+> The memmap is only a small piece of unmovable data we require late at 
+> runtime (a bigger factor is user space page tables actually mapping that 
+> memory). The zone ratio we have configured in the kernel dates back to 
+> the highmem times, where such ratios were considered safe. Maybe there 
+> are better defaults for the ratios today, but it really depends on the 
+> workload.
 > 
-> generally if we write a new test case, we don't use a temporary case number
-> in commit subject, you can just write as "generic: add atomic write test using ..."
-> 
-> Other patches (with new test cases) refer to this.
-> 
-> With this change,
-> Reviewed-by: Zorro Lang <zlang@redhat.com>
+Point is, the ratio is accounted for the _entire_ memory.
+Which means that you have to _know_ how much memory you are going to
+plug in prior to plugging that in.
+So to make that correct one would need to update the ratio prior to
+plug in one module, check if that succeeded, update the ratio, plug
+in the next module, check that, etc.
 
-Hi Zorro, thanks for pointing it out. I'll make the change in next
-revision.
+Really?
 
-Regards,
-Ojaswin
+> One could find ways of subtracting the selfhosted part, to account it 
+> differently in the kernel, but the memmap is not the only consumer that 
+> affects the ratio.
+> 
+> I mean, the memmap is roughly 1.6%, I don't think that really makes a 
+> difference for you, does it? Can you share some real-life examples?
+> 
+> 
+> I have a colleague working on one of my old prototypes (memoryhotplugd) 
+> for replacing udev rules.
+> 
+> The idea there is, to detect that CXL memory is getting hotplugged and 
+> keep it offline. Because user space hotplugging that memory (daxctl) 
+> will explicitly online it to the proper zone.
+> 
+> Things like virtio-mem, DIMMs etc can happily use the auto-movable 
+> behavior. But the auto-movable behavior doesn't quite make sense if (a) 
+> you want everything movable and (b) daxctl already expects to online the 
+> memory itself, usually to ZONE_MOVABLE.
+> 
+> So I think this is mostly a user-space problem to solve.
+> 
+Hmm.
+Yes, and no.
 
+While CXL memory is hotpluggable (it's a PCI device, after all),
+it won't be hotplugged on a regular basis.
+So the current use-case I'm aware of is that the system will be
+configured once, and then it will be expected to come up in the
+very same state after reboot.
+As such a daemon is a bit of an overkill, as the number of events
+it would need to listen to is in the very low single-digit range.
+
+Udev rules would work fine, though (in fact, we already have one ...)
+so I'd be happy to keep CXL memory offline after boot / hotplug
+and let udev / daxctl handle things.
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
