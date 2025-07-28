@@ -1,127 +1,99 @@
-Return-Path: <linux-kernel+bounces-747805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F363B13895
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:09:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD35B13898
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BCF63B50B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F6C118904A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78104254849;
-	Mon, 28 Jul 2025 10:08:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C592512FF
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB38253F13;
+	Mon, 28 Jul 2025 10:09:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AF324678A;
+	Mon, 28 Jul 2025 10:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753697339; cv=none; b=B4XwtxV7FKdvdDOHjD6vLP+BjYXSUoyi0DVhyjTzLS0s09IU45Ps3QBmJY7cZo5EvQElE+rnEP3q4r6B9FYJUhLWQr6oMw0hCfnI40o9j1MtyjSjIg5nwlPqdp+WSuhnRvzGyJ/QNTokWzgKEW5dwpetge9mCBWHjQ6FFUnaJHA=
+	t=1753697369; cv=none; b=t4d+ZxftWa6vARTphwz3Qc2UdOrn/1ANHMXNNn78e0VekhEEkIQO607ROfBd1oHKifSvAJ6pjE1cdl6MbXNLarto9nW2UwPRAi52ipkFHk8DvsOXO2BgwyLvcwndTaBmamZlHyrU4ud9IPZCoKOZJa7P+FauZEKTAhb+utUjS1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753697339; c=relaxed/simple;
-	bh=8/98U5yc2Mcr4KY7KhfBWnyPJpkI5PPnRKE9o4VWtNc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SafExoz5rcqER6qdMoF6YtdP96sfAn9/zT8hsUpr8oTz1Ab6LZE3OGbw418avlQXQuUocBdmaDXe/6USH4it9esNDbcoV5z+cCoH8jVt3JJMRe8YgZ5p9rr3bYZZOGpv3eZdlUadGTSTTT2l0BP+IMn12DFNnRRfascw6EPi9Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4brDfb5q5Rz6L5fX;
-	Mon, 28 Jul 2025 18:07:03 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C71F41402F3;
-	Mon, 28 Jul 2025 18:08:52 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 28 Jul
- 2025 12:08:51 +0200
-Date: Mon, 28 Jul 2025 11:08:49 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Rob Herring <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>, "Rohit
- Mathew" <rohit.mathew@arm.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	Zeng Heng <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>, Carl
- Worth <carl@os.amperecomputing.com>, <shameerali.kolothum.thodi@huawei.com>,
-	D Scott Phillips OS <scott@os.amperecomputing.com>, <lcherian@marvell.com>,
-	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
-	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, "Xin
- Hao" <xhao@linux.alibaba.com>, <peternewman@google.com>,
-	<dfustini@baylibre.com>, <amitsinght@marvell.com>, David Hildenbrand
-	<david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>, Dave Martin
-	<dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-Subject: Re: [RFC PATCH 10/36] ACPI / MPAM: Parse the MPAM table
-Message-ID: <20250728110849.00004062@huawei.com>
-In-Reply-To: <20250716180725.0000452d@huawei.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
-	<20250711183648.30766-11-james.morse@arm.com>
-	<20250716180725.0000452d@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753697369; c=relaxed/simple;
+	bh=YwpDbtQ4igtklqZ11ynCP/oC/wE+ptOrTHoGDSXNf7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nAK7OVKd3anYS59/rdK8g+lF6aF+LF4weY7zEoRvrVCNGTYZ/8+vDU0oXJGa1Pi589sOfGuv2hLHvATi4Dy0S13hRzgTDeyUECok+1XifaacWrGZoWqUakTNr+aqUa11TSFLAEhaSb80zRyPDPgcg/D/ZoFGMlBOueoAtqnsgBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91A841515;
+	Mon, 28 Jul 2025 03:09:19 -0700 (PDT)
+Received: from [10.57.71.150] (unknown [10.57.71.150])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 145D93F673;
+	Mon, 28 Jul 2025 03:09:24 -0700 (PDT)
+Message-ID: <2379088e-e5d0-4766-9968-756aad04f9a3@arm.com>
+Date: Mon, 28 Jul 2025 11:09:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
+ resctrl integration
+To: Zhongqiu Han <quic_zhonhan@quicinc.com>, rafael@kernel.org,
+ lenb@kernel.org, pavel@kernel.org, tony.luck@intel.com,
+ reinette.chatre@intel.com, Dave.Martin@arm.com, james.morse@arm.com,
+ ulf.hansson@linaro.org, amit.kucheria@linaro.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
+On 7/21/25 13:40, Zhongqiu Han wrote:
+> Hi all,
+> 
+> This patch series introduces support for CPU affinity-based latency
+> constraints in the PM QoS framework. The motivation is to allow
+> finer-grained power management by enabling latency QoS requests to target
+> specific CPUs, rather than applying system-wide constraints.
+> 
+> The current PM QoS framework supports global and per-device CPU latency
+> constraints. However, in many real-world scenarios, such as IRQ affinity
+> or CPU-bound kernel threads, only a subset of CPUs are
+> performance-critical. Applying global constraints in such cases
+> unnecessarily prevents other CPUs from entering deeper C-states, leading
+> to increased power consumption.
+> 
+> This series addresses that limitation by introducing a new interface that
+> allows latency constraints to be applied to a CPU mask. This is
+> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
+> embedded systems where power efficiency is critical for example:
+> 
+>                         driver A       rt kthread B      module C
+>   CPU IDs (mask):         0-3              2-5              6-7
+>   target latency(us):     20               30               100
+>                           |                |                |
+>                           v                v                v
+>                           +---------------------------------+
+>                           |        PM  QoS  Framework       |
+>                           +---------------------------------+
+>                           |                |                |
+>                           v                v                v
+>   CPU IDs (mask):        0-3            2-3,4-5            6-7
+>   runtime latency(us):   20             20, 30             100
+> 
+> The current implementation includes only cpu_affinity_latency_qos_add()
+> and cpu_affinity_latency_qos_remove() interfaces. An update interface is
+> planned for future submission, along with PM QoS optimizations in the UFS
+> subsystem.
 
-> > +static struct acpi_table_header *get_table(void)
-> > +{
-> > +	struct acpi_table_header *table;
-> > +	acpi_status status;
-> > +
-> > +	if (acpi_disabled || !system_supports_mpam())
-> > +		return NULL;
-> > +
-> > +	status = acpi_get_table(ACPI_SIG_MPAM, 0, &table);
-> > +	if (ACPI_FAILURE(status))
-> > +		return NULL;
-> > +
-> > +	if (table->revision != 1)
+So what's needed for the UFS use-case additionally?
+Would adding that here be too much?
 
-Missing an acpi_put_table()
-
-I'm messing around with ACQUIRE() that is queued in the CXL tree
-for the coming merge window and noticed this.
-https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/log/?h=for-6.17/cleanup-acquire
-
-Interestingly this is a new corner case where we want conditional locking
-style handling but with return_ptr() style handling. Maybe too much of a niche
-to bother with infrastructure.
-
-Worth noting though that one layer up it is probably worth something like:
-
-DEFINE_FREE(acpi_table_mpam, struct acpi_table_header *, if (_T) acpi_put_table(_T));
-
-That enables nice clean code like:
-
-
-static int __init acpi_mpam_parse(void)
-{
-	struct acpi_table_header *mpam = __free(acpi_table_mpam) = get_table();
-
-	if (!mpam)
-		return 0;
-
-	return _parse_table;
-}
-
-This series was big enough that I'm spinning a single 'suggested changes'
-patch on top of it that includes stuff like this.  Might take another day or so.
-
-Jonathan
-
-
-
-> > +		return NULL;
-> > +
-> > +	return table;
-> > +}
 
