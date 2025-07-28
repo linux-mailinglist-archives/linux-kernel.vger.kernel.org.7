@@ -1,81 +1,103 @@
-Return-Path: <linux-kernel+bounces-748019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FCFB13B70
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:26:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C222B13B76
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63A3F189C563
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1126B3A7656
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9182676DF;
-	Mon, 28 Jul 2025 13:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F962673AF;
+	Mon, 28 Jul 2025 13:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFqfYIKT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VrR9kCVE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30E126658F;
-	Mon, 28 Jul 2025 13:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEF3264FB5;
+	Mon, 28 Jul 2025 13:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753709155; cv=none; b=mhNZPHVHwsDajBWatS8nqfckYy3PSyE/X5Bh7jAH381eMmiGzQIXZ+AgHBMqa3g1vlm7YuCO5F4LlW3Zsf/9xqero8rDe7V4091GB2cYKXx73a4VP4y6fa3jBB01EF/YnBd8CwutIG0uQpneGEm3y/k1EztnWMGmyigqAlNAhJU=
+	t=1753709231; cv=none; b=D8SSvRZ3xnLQNQfv6ynuvGHCwUj66/NZfU1BBKI6+JY3t4S4421vJuInWPpwZ2ht2NRuaaoCr/eFcOJDbipViwoS10SjM1cBkxQEkur5cI8SOfUNc7qO8PenZbjmO8x1Tyw0wYfD8W5yWb1sM+8D0RSpsLwTYatbu0nSyhGhy6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753709155; c=relaxed/simple;
-	bh=rDm3Fm72ZlOTFamAPbV74WlAfxnrI5Knrz05ONOH8G0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lYSzRdtt+SOCR/Ee6W9AK9x922/H6zqbZga7pjPqfUHcWlV/JgbzdA5V0gLW0tkmZ4mNAnFS8AnBOB5IIdlC4hpZTFNR5W1VguISu6zCzVFqaEPSefaahEz5ezRhiUAhIaGyKKD2TFgrwWEwrIUJagVgWf5X7ke+0Zh4MYIxm+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFqfYIKT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EFA9C4CEE7;
-	Mon, 28 Jul 2025 13:25:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753709154;
-	bh=rDm3Fm72ZlOTFamAPbV74WlAfxnrI5Knrz05ONOH8G0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aFqfYIKTrLVYdxJWqRoIPRFA8BuxEJHgjBOIkETzsbWwRtpc/oJFwYAD1fOQWnngB
-	 yCby1BEc0GxrVBeUZcXaaM3t18MDAylYsgEhB2cEC+5eHfjWCIA7VcFX+g8IRAZo4M
-	 ir6+XnaYmsGS3vNQ0goe1TDCtUcoENZl/jLLe3ZOR2vp10ebGm1RKa3kM8AnWr+J41
-	 eOaVwxrv20pdmrpoTM/a2gjmb9Yx820KuPezuMat4Cacv1vY3B9Sy6MYs9LQaLWb9Q
-	 nU/pO5I7vium0CWWHweneRQS3k92rufVa1RBTZYnpulvzwnxJgm5BKwypcnJ0ufG4Q
-	 PeXUa4+Wse7dQ==
-Message-ID: <c0a91512-785a-418a-b8e4-b8994c497bbb@kernel.org>
-Date: Mon, 28 Jul 2025 15:25:49 +0200
+	s=arc-20240116; t=1753709231; c=relaxed/simple;
+	bh=KnpOVuLTmoxEh/UdwCPbXWtITz8xrUN/fXAXPmfAYeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9+t1l+A5PoXoJxl0Qqqa41Fzun7jJ8LpHtk+i6kXe/PoC7MyngkfFUMEw3I9/ViwQ8vdra7etpupWk4naRjbRq/7g1AiIkve2hG2ZuNPhWbOFuuIH1p9p9iHzfTjF5/p8deJv5llpav5tnhruhy0+4Lc1vTdop9Oc5eIFXcv3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VrR9kCVE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=RwK1KXVV9DfcATRhcZwiQsKsRwhCv003V4YhKjirnLo=; b=VrR9kCVEPI9teFRbKMwKz6V1xM
+	zjZO71Ly5imGqMDfptEjiKSxKeSM1nmZMSaUzxakm3IG3vLugrnSWpp63wutky7J1fkhkiF6Kf+bT
+	VvP8IxAnil/Mxuvn6tc3vXSmTjgSAkjBdiRx6ZTRhJQiY/5kESLyUkwrswG5kM1/doTc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ugNsY-0035jj-7R; Mon, 28 Jul 2025 15:26:58 +0200
+Date: Mon, 28 Jul 2025 15:26:58 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ujwal Kundur <ujwal.kundur@gmail.com>
+Cc: syzbot+8182574047912f805d59@syzkaller.appspotmail.com,
+	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com, jiri@resnulli.us,
+	andrew+netdev@lunn.ch
+Subject: Re: [RFC PATCH] net: team: switch to spinlock in team_change_rx_flags
+Message-ID: <df06dba7-f5bd-4ee1-b9af-c5dd4b5d4434@lunn.ch>
+References: <68712acf.a00a0220.26a83e.0051.GAE@google.com>
+ <20250727180921.360-1-ujwal.kundur@gmail.com>
+ <e89ca1c2-abb6-4030-9c52-f64c1ca15bf6@lunn.ch>
+ <CALkFLL+qhX94cQfFhm7JFLE5s2JtEcgZnf_kfsaaE091xyzNvw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] rust: transmute: add `as_bytes_mut` method to
- `AsBytes` trait
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Robin Murphy <robin.murphy@arm.com>, Andreas Hindborg
- <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- "Christian S. Lima" <christiansantoslima21@gmail.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250728-as_bytes-v4-0-b9156af37e33@nvidia.com>
- <20250728-as_bytes-v4-2-b9156af37e33@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250728-as_bytes-v4-2-b9156af37e33@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALkFLL+qhX94cQfFhm7JFLE5s2JtEcgZnf_kfsaaE091xyzNvw@mail.gmail.com>
 
-On 7/28/25 2:47 PM, Alexandre Courbot wrote:
-> Types that implement both `AsBytes` and `FromBytes` can be safely
-> modified as a slice of bytes. Add a `as_bytes_mut` method for that
-> purpose.
+On Mon, Jul 28, 2025 at 10:55:13AM +0530, Ujwal Kundur wrote:
+> > Did not compile this change? I doubt you did, or you would of get warnings, maybe errors.
 > 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Ah sorry, I shouldn't have relied on static analysis -- clangd did not
+> complain so I did not wait for the compilation to succeed.
+> 
+> > And what about all the other users of team->lock?
+> 
+> I see the mutex is defined in `struct team` and cannot be changed as
+> I've proposed here. Would switching to a spinlock across the board
+> degrade performance?
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+Sorry, team is not my area of expertise. 
+
+> >From what I understand, the NDO for ndo_change_rx_flags doesn't seem
+> to disable BHs unlike ndo_set_rx_mode [1][2] so this seems to occur
+> only when a new unicast address is being added via dev_uc_add [3]
+> (which does disable BHs).
+> Comparing other operations that use mutex_lock / mutex_unlock, looks
+> like a few of them do not have RCU protection for their NDOs requiring
+> lock / unlock pairs in the code, but none of them disable BHs (AFAICT)
+> apart from the operations dealing with unicast / multicast addressing.
+> If this is indeed the case, perhaps we can use a dedicated spinlock
+> for team_change_rx_flags? Or switch back to rcu_read_lock as I believe
+> it's being used in team_set_rx_mode [4] for precisely this reason. To
+> be honest, I do not understand the intent behind this change as
+> mentioned in 6b1d3c5f675cc794a015138b115afff172fb4c58.
+
+I'm guessing, but is this about passing ndo_set_rx_mode from the upper
+device down to the lower devices? Maybe look at how this is
+implemented for other stacked devices. A VLAN interface on a base
+interface for example? A bridge interface on top of an interface.
+
+	Andrew
 
