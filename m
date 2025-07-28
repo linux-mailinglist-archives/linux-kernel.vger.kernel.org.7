@@ -1,139 +1,141 @@
-Return-Path: <linux-kernel+bounces-747973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D7DB13ADE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1841EB13AB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62A617332A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:59:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163EB1798B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460B9265CCF;
-	Mon, 28 Jul 2025 12:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC470265CD0;
+	Mon, 28 Jul 2025 12:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BkHaMedu"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="d2TpskC8"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A5E2222A3;
-	Mon, 28 Jul 2025 12:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753707559; cv=none; b=tBCrfusLITg/CQcL+vARE5+gq/sIWh90Llaia2tJZEi/zftKs6MQkOXLPb2/w/ysISRfElzRCcgFdU6CsbuuFvwYhgM+SsWdDk/rw6fVTw1UFGGD0J4d5HvK8bvfExmya/c/VU0ru4GhEMENjGa8XQTRYWs3ARIOfe7ZAXxa4JM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753707559; c=relaxed/simple;
-	bh=IhmHfcSsqvi4XakQ4sYwxkmbwY7HX0R7FkhypdAtOrs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzZwaPPq79uT13obV8PwJ/ue8SJKnaOmt7k0Sz3dbl8OzIEphS/UScnT8reWsiUVm6xXTZ47YaTUoHvKq5HS4JxpKUG457wgkak7enfM3eJX4L6qEgbh6BiRZvlWlYXeBv/6tQkeu/XP/d/QWqZpiMWO1ulUCbuYJzqgiea20l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BkHaMedu; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-748d982e97cso3947629b3a.1;
-        Mon, 28 Jul 2025 05:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753707556; x=1754312356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZhAzjK5FT+CciFxLwNthNR1VR+Fzupqi6PO9KjFf0r0=;
-        b=BkHaMedu9PWg/72u2ouC51DUv03UQqki8V6/omOur7ehmVug2Csx+EBEEuQr4zYlNU
-         0johkAOXNG86mBN0Q0Xb2mB8rVItx1Fr/J0iHlUarfdhxP6+sZu7uvI74V8pmyuk1U2W
-         QCig81FvCz7IQDLhB05/69+PREG9Z061aodzS0bLw535cVtgixsphHi3CFkJFfEa0IBt
-         Njw3EGfBuaON8PpPZi37CKoPs5/Xnr2ynXseOnsfkCGRO5gQOHfToPFDOpa5I4N+wXMV
-         PHSNaA/2LvqHRGIuQmYjrZGDYSq2lNS/AyLEzSBhwDleVEXtoaVEUkYHMDusAF0sssWq
-         0Vtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753707556; x=1754312356;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZhAzjK5FT+CciFxLwNthNR1VR+Fzupqi6PO9KjFf0r0=;
-        b=o1Xgv7ihsitOaK7RW04bPGMzKskXSQofWTZArJs4FihtXMyWoKwPewjX9NASDnqAlb
-         omu26HK4yJUjsJKN3k4xhomPMfiKIlBItB6TE30GFP9HPeFA2714aom3BWxAEUW0dGSk
-         lf0UIkUooY6NMrjBLsc0BxVbctm9rDhGX+X7D56VsnQCi1tmZ23ZoLAJ0OVJ3ThBPwDp
-         +fIu56SVJc576mNZZWY5OJFLiUPoSv5bZvEe0Qzw1tT9lsz5SBbnsiIcLIALY36gCnwg
-         1arV1RTJRkpV+azvE9uutzVPGdpSk2L4YadUt2lTH78Z+WOTYNYaQIvGMXvX/pUxQJiT
-         eLcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Rj+wrbKmD8Va3gfihMXaSuyvQ+MdBZSjoptst0gCZZsMQsTW8KRVuS22sfDV8oFc/1W94WawsoRr@vger.kernel.org, AJvYcCUS6nnvzPNyHvH809gvZ0hxFFGf+Uf57UxV74YX1dt7GbQJS48lmmNi4mQDFQNSbFruQkfLTV6HL7P+qaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOfiiUxNDoBAQT2xAGiTc0hmMUmLJ3hpX4UgcYzBIyAloCnJMJ
-	JHdv6BYu8rt5zmd5F1tHEI5BViPpnMPkKA0D+HNV3CU9xaXainhRLagc
-X-Gm-Gg: ASbGncv/ojZLNA0TuAP7CjD9SksSt/Y8hZHSSMiT9CxDStADGltd0hnj1HOTX2LHHo3
-	R/PWKmTfEphHzllu11UJ2wjjhJ/FNnXKx2eJLuAd8GG18K/jplpwj+/QdS3JT7yQ88XZPBS8uwS
-	a3kcf0BpqE1dsFaMh2X/3NGRPULZ7LCYXf/PCh/EF4NTxQvT8dNVcfUN1FupJ6ErVWnT9XF06xA
-	a66DcyLtHEIbk0uGluFvv5T+tL73ZR60uhAwRAGs36W2MmNG6jYD94E3L0ZiS5q+YPcVitYZztm
-	/YcxP0NSeBEAlTg4bB9b+hsKFAg5lx7hElp6PecowQQLGvE1x9ZItxxfZsSycxf0m5jNPeHt07s
-	jygFifLZcMV3oEEFB3a9RVf70PIKTuIi9B/hexTtBwNu22P2msfk3QdpRzTRRKsvaZgo8v+EU2U
-	HoicYfwNPR175HdqBg
-X-Google-Smtp-Source: AGHT+IGENH4RfeEDFn/IoEogrzWjFEeRAzJl6HlR7BypR5NTpHuCAK3gs/JhKuMwkxq3MC0ECTtFDQ==
-X-Received: by 2002:a05:6a20:a126:b0:232:fcfc:7209 with SMTP id adf61e73a8af0-23d701a89d9mr19624271637.35.1753707556461;
-        Mon, 28 Jul 2025 05:59:16 -0700 (PDT)
-Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([122.162.223.145])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640863513bsm5589392b3a.8.2025.07.28.05.59.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 05:59:15 -0700 (PDT)
-From: "Darshan R." <rathod.darshan.0896@gmail.com>
-To: lhjeff911@gmail.com
-Cc: broonie@kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Darshan R." <rathod.darshan.0896@gmail.com>
-Subject: [PATCH] spi: sunplus: sp7021: Clean up coding style
-Date: Mon, 28 Jul 2025 12:41:04 +0000
-Message-ID: <20250728124104.6370-1-rathod.darshan.0896@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8039413D51E;
+	Mon, 28 Jul 2025 12:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753706787; cv=pass; b=fO3lTkUIQSsM1QHJ60t1wYGHEtMVQvwDWL7WNmSr+i9nmu729K1z7du1AKQCppC5c3mE/UVsd1ecOTvd+8UCP6ahbPMUj5Mhb1dhhhht5c1ss3tAiuT1Vf5pjeHkXtgliJb9ATz38yd6yvrXSreVTgslAsCZy/DlEWIlM8GHEFM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753706787; c=relaxed/simple;
+	bh=kV8CJI/+KnMlti7TMONXwOLw9gZXIDDlxj16Vo3N7eY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=lCGZYLRbCF38E17gbNyxztqMXO3x8YmfohJHFvDR1YQbUgvT+0c3npj/lJJHo1DnnhXYnIGloKn9k5MnwoOjveMRhotShzuYVKuVnlYctxe99KgDuFULMRIH1mTzV+zq2kCcEn4rN7Vpo5p/+IPOdiaZXuWP5XAaU+9QpGx6UEw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=d2TpskC8; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753706704; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jtdd1t1JN/f4Z96MpnLWjYbm85CyGjLA3c1VeRZEwmeZT0ax+rFOx1jbHw7uwmcEOToL5l/+wd9SW18SBQNkckeu0uKIj4fHrQuuW3gGcHabn58EMRaF2J1ub41c72kfkGNP/yxD+/YV91pn0ULK49IK+kapjRbC5Oe1sSA9KOA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753706704; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=kV8CJI/+KnMlti7TMONXwOLw9gZXIDDlxj16Vo3N7eY=; 
+	b=RoIDKrmGatcUCMkxBtBtwjorlqQ1TIUHDX+kEZbxTCNvDuwpaG22d0TX72a9q3X2CBiIXcRVHO0pdtiIbyAcX4SC3H0gKeiOPDMle6I6AWW3Dhrr4s2uhaW17+I7ITutnravNd3EwGWBKYKcvqomhN8jhxIqpsgdyJ1dcC7EAPk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753706704;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=kV8CJI/+KnMlti7TMONXwOLw9gZXIDDlxj16Vo3N7eY=;
+	b=d2TpskC8W8Dt/+ME6qROJSfeTd5XSw1E4PiPjd/5VjaB3FSSstCRYKvVfle0y51H
+	ifom2Nnto6ENZDftIF7GQ7QOmQIM7w3FvRUY3KB7JpI5//7fLBjMmgOoIHoqW2X6VKL
+	bG9kINxg5FGH1Bs2HQ6dp5sNl9LBQajWujeqaegE=
+Received: by mx.zohomail.com with SMTPS id 1753706698669132.7674815409531;
+	Mon, 28 Jul 2025 05:44:58 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250220070611.214262-8-fujita.tomonori@gmail.com>
+Date: Mon, 28 Jul 2025 09:44:39 -0300
+Cc: linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ netdev@vger.kernel.org,
+ andrew@lunn.ch,
+ hkallweit1@gmail.com,
+ tmgross@umich.edu,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me,
+ a.hindborg@samsung.com,
+ aliceryhl@google.com,
+ anna-maria@linutronix.de,
+ frederic@kernel.org,
+ tglx@linutronix.de,
+ arnd@arndb.de,
+ jstultz@google.com,
+ sboyd@kernel.org,
+ mingo@redhat.com,
+ peterz@infradead.org,
+ juri.lelli@redhat.com,
+ vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com,
+ rostedt@goodmis.org,
+ bsegall@google.com,
+ mgorman@suse.de,
+ vschneid@redhat.com,
+ tgunders@redhat.com,
+ me@kloenk.dev,
+ david.laight.linux@gmail.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FC2BC3FF-21F2-4166-9ACD-E14FE722793D@collabora.com>
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+ <20250220070611.214262-8-fujita.tomonori@gmail.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-This patch tidies up minor coding style deviations within the Sunplus SP7021 SPI driver, ensuring closer adherence to established kernel coding guidelines.
+Hi Fujita,
 
-Specifically, it addresses:
-- Correction of a whitespace inconsistency before a comma in `writel()` calls.
-- Alignment of function parameter indentation for `struct spi_transfer *xfer` in `sp7021_spi_host_transfer_one()` and `sp7021_spi_target_transfer_one()`.
+> On 20 Feb 2025, at 04:06, FUJITA Tomonori <fujita.tomonori@gmail.com> =
+wrote:
+>=20
+> Add read_poll_timeout functions which poll periodically until a
+> condition is met or a timeout is reached.
+>=20
+> The C's read_poll_timeout (include/linux/iopoll.h) is a complicated
+> macro and a simple wrapper for Rust doesn't work. So this implements
+> the same functionality in Rust.
+>=20
+> The C version uses usleep_range() while the Rust version uses
+> fsleep(), which uses the best sleep method so it works with spans that
+> usleep_range() doesn't work nicely with.
+>=20
+> The sleep_before_read argument isn't supported since there is no user
+> for now. It's rarely used in the C version.
+>=20
+> read_poll_timeout() can only be used in a nonatomic context. This
+> requirement is not checked by these abstractions, but it is intended
+> that klint [1] or a similar tool will be used to check it in the
+> future.
+>=20
+> Link: https://rust-for-linux.com/klint [1]
+> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
-While purely cosmetic, these adjustments contribute to improved code readability and maintainability, making future development and review easier.
+This appears to be the last version of this patch. Do you have any plans =
+to
+keep working on it? Is there anything I can do to help? :)
 
-Signed-off-by: Darshan R. <rathod.darshan.0896@gmail.com>
----
- drivers/spi/spi-sunplus-sp7021.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If you don=E2=80=99t have the time to work on this, I can pick it up for =
+you.
 
-diff --git a/drivers/spi/spi-sunplus-sp7021.c b/drivers/spi/spi-sunplus-sp7021.c
-index 7fd4cc6f74c2..256ae07db6be 100644
---- a/drivers/spi/spi-sunplus-sp7021.c
-+++ b/drivers/spi/spi-sunplus-sp7021.c
-@@ -103,7 +103,7 @@ static irqreturn_t sp7021_spi_target_irq(int irq, void *dev)
- 
- 	data_status = readl(pspim->s_base + SP7021_DATA_RDY_REG);
- 	data_status |= SP7021_SLAVE_CLR_INT;
--	writel(data_status , pspim->s_base + SP7021_DATA_RDY_REG);
-+	writel(data_status, pspim->s_base + SP7021_DATA_RDY_REG);
- 	complete(&pspim->target_isr);
- 	return IRQ_HANDLED;
- }
-@@ -296,7 +296,7 @@ static void sp7021_spi_setup_clk(struct spi_controller *ctlr, struct spi_transfe
- }
- 
- static int sp7021_spi_host_transfer_one(struct spi_controller *ctlr, struct spi_device *spi,
--				       struct spi_transfer *xfer)
-+					struct spi_transfer *xfer)
- {
- 	struct sp7021_spi_ctlr *pspim = spi_controller_get_devdata(ctlr);
- 	unsigned long timeout = msecs_to_jiffies(1000);
-@@ -360,7 +360,7 @@ static int sp7021_spi_host_transfer_one(struct spi_controller *ctlr, struct spi_
- }
- 
- static int sp7021_spi_target_transfer_one(struct spi_controller *ctlr, struct spi_device *spi,
--				       struct spi_transfer *xfer)
-+					  struct spi_transfer *xfer)
- {
- 	struct sp7021_spi_ctlr *pspim = spi_controller_get_devdata(ctlr);
- 	struct device *dev = pspim->dev;
--- 
-2.43.0
+=E2=80=94 Daniel
 
 
