@@ -1,192 +1,173 @@
-Return-Path: <linux-kernel+bounces-748711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43300B14509
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:50:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98146B1450C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB091AA0B38
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:51:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED653BE621
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B842192FC;
-	Mon, 28 Jul 2025 23:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308C6235BEE;
+	Mon, 28 Jul 2025 23:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="J2j1TmvL"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMbltTOx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD84237A4F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 23:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EC0D27E;
+	Mon, 28 Jul 2025 23:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753746638; cv=none; b=slKDZh7tDokMMHR72GOblVjTI7maS/ktkWUsih1h9BQ2c42PMDAoXlbaiE2TcqBC6X8HQGq5x1iN/yaYy6sT1tUvLGik6F77E1s7aRj7weRrIFosm9z0kNMi9n/PU3I13WtcsCQemKVw1hVcFKaI5KhYEDw09AJkr4cjy6GGL5Y=
+	t=1753746806; cv=none; b=hvXIdjDes3x43sQIfVzNXZ7Vb/l7yNetOzjCEPc6ZNtU7jJOvLFXosjINK8eGdO9ZMgFd8s3z3bOm0Q8obrLvKcqEOjM8ea1ctlssWE21hIHiNP6vqMAEiX3LJsHxfbE7ObttIlseL1oi3rFcNCTFCkjzSg3YiEbvSYPH+xnRag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753746638; c=relaxed/simple;
-	bh=bqbmIx4Du4hIR7pgkpCEuX8kp0ClRuQ21aSOgiCJ+GU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfcDkjBVO0QryRD5CykY2UQQ014Pk7AsInNi4+fbLKBSBPELfU8TWEPZupe3FAirPZ+igY3SC0t68tYh49T3SkrUaK9cg6TkoUQ58fpZYPx3kcaktesgz3+9yxobH9L6Ncj+KndD+391KVColbX8LvUobIVwF1v7zVZfAN9+Pwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=J2j1TmvL; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6fafb6899c2so5928406d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 16:50:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1753746634; x=1754351434; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iueJ8Cgzeh/WMUBkqRkXiA9X4V1jFkOTholgp1vPz/A=;
-        b=J2j1TmvLn5McGs2lOjm+xMI+J1qdaUAm2G++Ks0G5loe6mSckRKMEh42O051SFZ0hz
-         O2IK+9byyPUO5iPuih9fN6TkASTQr/bP6sPivIYvwkpK/wyFGLGAd6+8mwd5T7G43iUx
-         y8i2OVtQKFJ0nTJUdpKeiYEBNI+2gi0yHoZuSLgeHIX3Xb6X04T5LJdfQxiHviwlZFv2
-         oXVCx9xHmxTt0mn7r51Gwz8F1Th/WBnK0Yg2Gu88TIJ/+8P/j6E2wtPmitxpXj6DUnzq
-         H2/u+A7B71knNv3RSmdM/Skf3x2h/3tx2AVdA5FB4cte92EfrCCW/ryNoNYIYy49beL7
-         /H7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753746634; x=1754351434;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iueJ8Cgzeh/WMUBkqRkXiA9X4V1jFkOTholgp1vPz/A=;
-        b=gmYNzamii7aexlcF5vMRDNKdEaVNChm1LUj+xt1wANaxuIE2Jbn9zyv1kiVa1tRkho
-         /wUe5d4apT9wVjhMX95W94J+kwd2LIsM1RcUYrzknXyRrltEky95MO51WXWTx1rbndwD
-         9LdYVxhrFmcRhRX52igikIHlVeJTYn0uFw2VglOZOvd7F4TsLi1oR2AJu1DZQ2U1fPw5
-         D2kOypRHrkCpWlA2Wikgr2XUXJo9juoLFwCACEGlsufyFfSZyaT7C8LOwUAMIaPb2TB5
-         vFVoDbKhum0+6Zf2089xx858OIEbSQtFrrVUX4G1wPRffEs2KZ3y2kwXfF7XhBHrO0c8
-         KOag==
-X-Forwarded-Encrypted: i=1; AJvYcCUkc6duAyPf9CNV/UZesYkaHfRVAHwQNzEcsMKTBM+cvCpgQUzxhp4OWE3KDLiMm9Cx8oqXbayq8sVWJTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbrg2N1Pzj3teCK16w58otUCGwhLnIPZ7Wf68h50NNxBsqgmOP
-	WJyqIDAiT29WF+8tAyUrjDPc55Ttmib6n//mE+q5EnVgfPhbMQZIrXxT5hK/y3v2adg=
-X-Gm-Gg: ASbGncss9x1KQQyVj44lhBbWDhKKQs3gtcGgVhwse3kWssXkHURs6H7q/i+3jPfW3bE
-	yLOmIDs7OXStiBE/7i+RuGkgDWN6DQ4gfUmCWchrXpBokvXBt6ReJed/qxjx9R6XzHqDzQ5VyXH
-	HeCAdF+PBSDZLRSNo2ikXNJYpVBlTaUN8QxQlTFVe2FDU0ZRYBEl3JR9Dm2SR7czALj3svBLYWA
-	3uSDvsFIwNvACSC8w9c9yTnqPIYgxZ66W3GW8n4Is7Ze7T6ssA5fpNn0FcNQzPYzvH/Jgjwb+Um
-	mDCvujcmHV4LAuahv6MDBjF5P43yxYpTVpkyaIoeeFJWCCs9tPTtqs9YjUcMuAkxLJ/uQBEery8
-	027vUVaiurMPSErcX06mEgiYiL4J9mZj4Ubui58h9APR9C3G8yMKNp7zz7UVHMD2gOmAdMMyEfF
-	n6gIo=
-X-Google-Smtp-Source: AGHT+IEVaheib8zj47fKcSWQJltZlk4J0oGiuI5fe3RI2VMlrZImtfSO5GomGgwyvIbxd+4KYaZHHg==
-X-Received: by 2002:a05:6214:3107:b0:707:4aae:9a06 with SMTP id 6a1803df08f44-70757bdd975mr26289916d6.19.1753746633936;
-        Mon, 28 Jul 2025 16:50:33 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7074bacaa25sm14883496d6.0.2025.07.28.16.50.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 16:50:33 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1ugXc0-00000000Fiu-3dXC;
-	Mon, 28 Jul 2025 20:50:32 -0300
-Date: Mon, 28 Jul 2025 20:50:32 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Chris Li <chrisl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
-	Pasha Tatashin <tatashin@google.com>,
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
-Subject: Re: [PATCH RFC 20/25] PCI/LUO: Avoid write to liveupdate devices at
- boot
-Message-ID: <20250728235032.GE26511@ziepe.ca>
-References: <20250728-luo-pci-v1-0-955b078dd653@kernel.org>
- <20250728-luo-pci-v1-20-955b078dd653@kernel.org>
- <87zfconsaw.ffs@tglx>
+	s=arc-20240116; t=1753746806; c=relaxed/simple;
+	bh=0FnPYo5/wk60MCrkVcHV8SfvxdhIefY2gSPs4N0QSxY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=m9OK7nzT+V032pW7MWgtede66hokCjTit5AIIyC21ad/Q90icqx1fpa4lOREPSWZfVXBD+iMBwo25thIOtl0JRH+YeLCwhSNrVPjyAqqsvWdqohMx1j3sv6XXYkSCHziG9OJRnh8Qfirr9vhdFMzqxp1KlZEvL5lG8LY6C36Di0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMbltTOx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA69C4CEE7;
+	Mon, 28 Jul 2025 23:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753746806;
+	bh=0FnPYo5/wk60MCrkVcHV8SfvxdhIefY2gSPs4N0QSxY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RMbltTOxR411c2mwbHxAJfesEU3iiRJQm9vJmGev+vfOxRoNyABPYs448LdwNzl9U
+	 HVYnBsNpO5ltJoT1Zk60A/AmjHjVMo+v8fxUTj1Wxlke5u7iDMdhFjZ2BlQl3D91W+
+	 kzEX9R8ecyZXucMRg28msriC9ghEB5LsB1aSY4lKfKRCtwhl4Dro1WjEN499I2tt4Q
+	 S91Z1JCn7evEGsXjVSMVzFXRXGq9GqmxoBUF1mglO8OdnlImuAFpwXrCqGqFRS1wJq
+	 kvqB8mMpDBup2X8Ats69PTXs9qYuyp2NMQZvSl/gzADujXAbGEzYhJ6jaBhxvPQAsa
+	 clTRbFka7NRnQ==
+Date: Tue, 29 Jul 2025 08:53:23 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: alexei.starovoitov@gmail.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, hca@linux.ibm.com, revest@chromium.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH RFC bpf-next v2 0/4] fprobe: use rhashtable for
+ fprobe_ip_table
+Message-Id: <20250729085323.b2685e50c394eabd2f0d43e5@kernel.org>
+In-Reply-To: <CADxym3b=-tGOVqnoPeDb0q3EZZ-DMjkM0fiaSS6=Q+y07azYMg@mail.gmail.com>
+References: <20250728072637.1035818-1-dongml2@chinatelecom.cn>
+	<20250728213502.df49c01629de5fe9b6f15632@kernel.org>
+	<CADxym3b=-tGOVqnoPeDb0q3EZZ-DMjkM0fiaSS6=Q+y07azYMg@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zfconsaw.ffs@tglx>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 28, 2025 at 07:23:03PM +0200, Thomas Gleixner wrote:
-> On Mon, Jul 28 2025 at 01:24, Chris Li wrote:
-> > The liveupdate devices are already initialized by the kernel before the
-> > kexec. During the kexec the device is still running. Avoid write to the
-> > liveupdate devices during the new kernel boot up.
+On Mon, 28 Jul 2025 22:26:27 +0800
+Menglong Dong <menglong8.dong@gmail.com> wrote:
+
+> On Mon, Jul 28, 2025 at 8:35 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >
+> > Hi Menglong,
+> >
+> > What are the updates from v1? Just adding RFC?
 > 
-> This change log is way too meager for this kind of change.
+> No, the V1 uses rhashtable, which is wrong, and makes the
+> function address unique in the hash table.
 > 
->  1) You want to explain in detail how this works.
+> And in the V2, I use rhltable instead, which supports duplicate
+> keys.
+
+Ah, thanks for the explanation!
+
 > 
->     "initialized by the kernel before the kexec" is as vague as it gets.
+> Sorry that I forgot to add the changelog :/
+
+Yeah, the changelog helps us to review the differences.
+
+Thanks,
+
 > 
->  2) Avoid write ....
-> 
->     Again this lacks any information how this is supposed to work correctly.
-> 
-> >  drivers/pci/ats.c            |  7 ++--
-> >  drivers/pci/iov.c            | 58 ++++++++++++++++++------------
-> >  drivers/pci/msi/msi.c        | 32 ++++++++++++-----
-> >  drivers/pci/msi/pcidev_msi.c |  4 +--
-> >  drivers/pci/pci-acpi.c       |  3 ++
-> >  drivers/pci/pci.c            | 85 +++++++++++++++++++++++++++++---------------
-> >  drivers/pci/pci.h            |  9 ++++-
-> >  drivers/pci/pcie/aspm.c      |  7 ++--
-> >  drivers/pci/pcie/pme.c       | 11 ++++--
-> >  drivers/pci/probe.c          | 43 +++++++++++++++-------
-> >  drivers/pci/setup-bus.c      | 10 +++++-
-> 
-> Then you sprinkle this stuff into files, which have completely different
-> purposes, without any explanation for the particular instances why they
-> are supposed to be correct and how this works.
+> >
+> > Thanks,
+> >
+> > On Mon, 28 Jul 2025 15:22:49 +0800
+> > Menglong Dong <menglong8.dong@gmail.com> wrote:
+> >
+> > > For now, the budget of the hash table that is used for fprobe_ip_table is
+> > > fixed, which is 256, and can cause huge overhead when the hooked functions
+> > > is a huge quantity.
+> > >
+> > > In this series, we use rhltable for fprobe_ip_table to reduce the
+> > > overhead.
+> > >
+> > > Meanwhile, we also add the benchmark testcase "kprobe-multi-all", which
+> > > will hook all the kernel functions during the testing. Before this series,
+> > > the performance is:
+> > >   usermode-count :  875.380 ± 0.366M/s
+> > >   kernel-count   :  435.924 ± 0.461M/s
+> > >   syscall-count  :   31.004 ± 0.017M/s
+> > >   fentry         :  134.076 ± 1.752M/s
+> > >   fexit          :   68.319 ± 0.055M/s
+> > >   fmodret        :   71.530 ± 0.032M/s
+> > >   rawtp          :  202.751 ± 0.138M/s
+> > >   tp             :   79.562 ± 0.084M/s
+> > >   kprobe         :   55.587 ± 0.028M/s
+> > >   kprobe-multi   :   56.481 ± 0.043M/s
+> > >   kprobe-multi-all:    6.283 ± 0.005M/s << look this
+> > >   kretprobe      :   22.378 ± 0.028M/s
+> > >   kretprobe-multi:   28.205 ± 0.025M/s
+> > >
+> > > With this series, the performance is:
+> > >   usermode-count :  902.387 ± 0.762M/s
+> > >   kernel-count   :  427.356 ± 0.368M/s
+> > >   syscall-count  :   30.830 ± 0.016M/s
+> > >   fentry         :  135.554 ± 0.064M/s
+> > >   fexit          :   68.317 ± 0.218M/s
+> > >   fmodret        :   70.633 ± 0.275M/s
+> > >   rawtp          :  193.404 ± 0.346M/s
+> > >   tp             :   80.236 ± 0.068M/s
+> > >   kprobe         :   55.200 ± 0.359M/s
+> > >   kprobe-multi   :   54.304 ± 0.092M/s
+> > >   kprobe-multi-all:   54.487 ± 0.035M/s << look this
+> > >   kretprobe      :   22.381 ± 0.075M/s
+> > >   kretprobe-multi:   27.926 ± 0.034M/s
+> > >
+> > > The benchmark of "kprobe-multi-all" increase from 6.283M/s to 54.487M/s.
+> > >
+> > > The locking is not handled properly in the first patch. In the
+> > > fprobe_entry, we should use RCU when we access the rhlist_head. However,
+> > > we can't use RCU for __fprobe_handler, as it can sleep. In the origin
+> > > logic, it seems that the usage of hlist_for_each_entry_from_rcu() is not
+> > > protected by rcu_read_lock neither, isn't it? I don't know how to handle
+> > > this part ;(
+> > >
+> > > Menglong Dong (4):
+> > >   fprobe: use rhltable for fprobe_ip_table
+> > >   selftests/bpf: move get_ksyms and get_addrs to trace_helpers.c
+> > >   selftests/bpf: skip recursive functions for kprobe_multi
+> > >   selftests/bpf: add benchmark testing for kprobe-multi-all
+> > >
+> > >  include/linux/fprobe.h                        |   2 +-
+> > >  kernel/trace/fprobe.c                         | 141 ++++++-----
+> > >  tools/testing/selftests/bpf/bench.c           |   2 +
+> > >  .../selftests/bpf/benchs/bench_trigger.c      |  30 +++
+> > >  .../selftests/bpf/benchs/run_bench_trigger.sh |   2 +-
+> > >  .../bpf/prog_tests/kprobe_multi_test.c        | 220 +----------------
+> > >  tools/testing/selftests/bpf/trace_helpers.c   | 230 ++++++++++++++++++
+> > >  tools/testing/selftests/bpf/trace_helpers.h   |   3 +
+> > >  8 files changed, 348 insertions(+), 282 deletions(-)
+> > >
+> > > --
+> > > 2.50.1
+> > >
+> >
+> >
+> > --
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Yeah, everyting needs to be very carefully explained.
 
-For instance I'm not sure we should be doing *anything* to the
-MSI. Why did you think so?
-
-MSI should be fully cleared by the new kernel and the new VFIO should
-re-establish all the MSI routing from scratch as part of adopting the
-device. We already accept that any interrupts are lost during the
-kexec process so what reason is there to do anything except start up the
-new kernel with a fully disabled MSI and cleared MSI?
-
-If otherwise it should be explained why we can't work this way - and
-then explain how the new kernel will adopt the inherited operating MSI
-(hint: I doubt it can) without disrupting it.
-
-Same remark for everything. Explain in the commits and perhaps a well
-placed comment why anything needs to be done and why exactly we can't
-use the cold boot flow for each item.
-
-eg "we can't use the cold boot flow for BAR sizing because BAR sizing
-requires changing the BAR register and that will break ongoing P2P
-DMAs"
-
-"we can't use the cold boot flow for bridge windows because changing
-the bridge windows in any way will break ongoing P2P DMAs" (though you
-also need to explain why the cold boot flow would change the bridge
-windows)
-
-etc etc.
-
-There is also some complication here as the iommu driver technically
-owns some of the PCI state, and we really don't want the PCI Core to
-change it, but we do need theiommu driver to affirm what the in-use
-state should be because it is responsible to clean it up.
-
-This may actually require some restructing of the iommu driver/pci
-core interfaces to switch from an enable/disbale language to a 'target
-state' language. Ie "ATS shall be on and ATS page size shall be X".
-
-This series is very big, so I would probably try to break it up into
-smaller chunks. Like you don't need to preserve bridge windows and
-BARs if you don't support P2P. You don't need to worry about ATS and
-PASID if you don't support those, etc, etc.
-
-Yes, in the end all needs to be supported, but going bit by bit will
-be easier for people to understand. Basic VFIO support with a basic
-IOMMU using basic PCI with no P2P is the simplest thing you can do,
-and I think it needs surprisingly little preservation.
-
-Jason
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
