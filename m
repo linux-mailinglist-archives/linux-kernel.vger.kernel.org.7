@@ -1,335 +1,133 @@
-Return-Path: <linux-kernel+bounces-747498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349CFB13481
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:59:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA7BB1348A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558FE17784C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:59:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6603AC48B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAEB221F1A;
-	Mon, 28 Jul 2025 05:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E3310E3;
+	Mon, 28 Jul 2025 06:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RGWUJT87"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="E4LkIScR"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DBD21FF50;
-	Mon, 28 Jul 2025 05:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93C71D7995;
+	Mon, 28 Jul 2025 06:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753682262; cv=none; b=hTpCHyI73qBHR+dpKalJ4L8fUNuirnkTcl4tALMOmClgpSWc7OWv2aulqRudX0Y2h6K5qRxBNi8yWSq9CWgiB5gxzemZLY0qI4fRzaEecXBBUau4ns8808fl44wkjuCuZ6XwflXHSKf+YED9pdtyFxfH2bbbNhc+ER4PtKgUeys=
+	t=1753682410; cv=none; b=cFirODJ7Mfvzj/CgeLBb6VSuZhEbJQp/H2u/gmFCG4x0hnCVo+gY+bBWAw2+eNGaYwyU4jL1GxK6QHzZ7aqXkDhdybBv8+tRnT55rcEWxunLWoBmbNmcspFjP5nGd4Rvb3z9L4qBj1loUo0TffmsTg6cZc9JHxdbZ95rl1W3UtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753682262; c=relaxed/simple;
-	bh=93FmW8XV2jJxelvz++7T6HWXvhNpHYrpAeDkgbikgKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXE+JMBv1P+U0vZmDLpo4DiTRHHAah4CxbJbXKkcLHWxCTySAb00sCXz3zzIt3s5hG3YpivTHI3ZWYxkeCCNcxSwbOXpwAU/+JeRBYmqZst7WWHiGLLsi8ChcQSI4iMo7G0u47wCrs2jjfe6EpTDiwmwpz4heSK5RNwrZQ/qeEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RGWUJT87; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753682260; x=1785218260;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=93FmW8XV2jJxelvz++7T6HWXvhNpHYrpAeDkgbikgKQ=;
-  b=RGWUJT87d1gYTqOJHeRHdNOhtSSbQypWm7qhpEXDgAb0M4YXUgJ2QJLP
-   gdEnNOSHqhmgQXBnpZYGPC/g325pXruj1YR5Jpr/Ap6i5hDRcubUNrXdZ
-   C0f5QmzlGi3yiI3b6ZwAL6joIIf6i9zHLZho4WTY9Hlxay278YKogIhE+
-   HuFbJoT4MlLAuHI99UwJZCWHXurPlrw3Fj8+Py9xJW1mUPJ9ku6jbZh9z
-   znaIbGq/L5HSuxPu2T6XqKA+4qmGWJMK74MyhKFIXO7c5zg8bRoNHxT0c
-   tYu7s3mLRlSXiI3tQ5OByCyMiSj4CJSXte0DIo+Ok27FtVYcU2MsP00p+
-   g==;
-X-CSE-ConnectionGUID: mXWtSjVvR2m9e2ox+88sKA==
-X-CSE-MsgGUID: 1ZjU8vhuSpmw3vENRs4eQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="58543784"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="58543784"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 22:57:39 -0700
-X-CSE-ConnectionGUID: Pn+BF0l3Swm79I6tIvPCSQ==
-X-CSE-MsgGUID: TA+jyJIVQYyuoKCKw1yjyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="162647152"
-Received: from opintica-mobl1 (HELO kekkonen.fi.intel.com) ([10.245.245.174])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 22:57:36 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 196AA1202CF;
-	Mon, 28 Jul 2025 08:57:33 +0300 (EEST)
-Date: Mon, 28 Jul 2025 05:57:33 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Bin Du <Bin.Du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com,
-	bryan.odonoghue@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com, Svetoslav.Stoilov@amd.com
-Subject: Re: [PATCH v2 2/8] media: platform: amd: low level support for isp4
- firmware
-Message-ID: <aIcRTapInMVSIkx5@kekkonen.localdomain>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-3-Bin.Du@amd.com>
+	s=arc-20240116; t=1753682410; c=relaxed/simple;
+	bh=+SpQp5k+dSm+VowT1vpWGXLhuaNHHNcLJ9PAufaxNwA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HgKOEzbBpgivGaMz8vlF5TmhMNrbCilvL43pyhjDjCxyKA3MVIg4pB2m2UnWLeCOenozrtyFMxjO7mM+wIxhz0Bu6LwrDK4k670rWS62z+A9FZOBcLovJoOlQ1AbuV4bXp6R/A8WOYWOuQ9mp1xQbplHBAVS8N3xPCSeBsLe/Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=E4LkIScR; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56REoaYR029728;
+	Mon, 28 Jul 2025 05:59:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=ITq+MgH58jemDKsFvf+K5CorgLIfnkTscklFxBT7x
+	Cc=; b=E4LkIScR/QJJEYZug4cyBpQFCC+4cGuSj4BaWO5TwTegOHBmC0ay4S3wJ
+	twY4vzpFozaLHsVaLbdei0vmjfdCgGi4SZHRU7vGvuDKvPse7WBc6N+aJ5RKz+mt
+	UVedphNcV4/Dls3zyu88axSJQmWmALroE+TXBcp5rePD99X5v11y0io6+SOKhK3U
+	klJg+1WXHmjShxdVsTKW7JF/fgXK4o+HKy1THC5IkiXbJvPpy4NdGBWjvai94E+k
+	LbxGeTPhzhlFp5l6qVXL+s5iGHD2xh++um6E6vWH3arw1QwNl3mf4/bqpYzkNnhs
+	pXsAXFeYbAclIbiRECHfdeP6fDtPA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcfq7dp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 05:59:54 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56S5xrkO022419;
+	Mon, 28 Jul 2025 05:59:53 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcfq7dm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 05:59:53 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56S1kSSF006252;
+	Mon, 28 Jul 2025 05:59:52 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 485bjkv84e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 05:59:52 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56S5xmAM53084622
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Jul 2025 05:59:48 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CEBED20043;
+	Mon, 28 Jul 2025 05:59:48 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3FA382004B;
+	Mon, 28 Jul 2025 05:59:45 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com.com (unknown [9.124.209.252])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 28 Jul 2025 05:59:45 +0000 (GMT)
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
+Cc: Gautam Menghani <gautam@linux.ibm.com>, maddy@linux.ibm.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] perf python: Add an example for sampling
+Date: Mon, 28 Jul 2025 11:29:26 +0530
+Message-ID: <20250728055937.58531-1-gautam@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618091959.68293-3-Bin.Du@amd.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA0MiBTYWx0ZWRfXwbkkgtZD27bE
+ H9ICkJHcICcUddi92KfQnVA7sgt8iBo9h0kA++hZIGvPHxoRDygo+ZM6cX1Easy5dWYoChTMkis
+ DSMZmTl0jMJ8KkhMc4y1PqRmS6BotEROzBB181dEj1XXGn1ZGdR2lnSowFHoWf/U4vT8LlG0agY
+ rtrSOEKYL7kFbR/dJHJreLUX1rV2bVJRAZz/dHiXqGEP0eXUkjGwSSrd+cgYVnGEi699b/AlTiE
+ MxoLX6nCIb/v7M8Or9+h3XhHg4x2/732h244+CgPztQoIqOvM73CDjTB4f0H3ws0sbGpWp8Y8ZO
+ qbl+gsELpaVuWTXHLeJZuO792dyo26fhXjh78e0a/lV1AN7Z16sFHjogcyC4N6wJbTqdO1FSoIK
+ //FTUd1bDjzi5o5FHX5dNTG4QabfH+Zv3KIM7n2QYCQCziY8BKOMvea9kyBRRduqHP4huVsh
+X-Proofpoint-ORIG-GUID: 9O8Uv4lXej472yh_Hz6q9RzYi8cytbRR
+X-Authority-Analysis: v=2.4 cv=Lp2Symdc c=1 sm=1 tr=0 ts=688711da cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=Wb1JkmetP80A:10 a=t4_jG_yIud4H_G3xeh4A:9
+X-Proofpoint-GUID: 3j_gcEsKLfkUtVBqvC-Isu8WtGfyfOsB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=932 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507280042
 
-Hi Bin,
+Add an example for sampling events with python. Patch 1 adds support for
+record_opts struct and patch 2 adds an example for sampling. The example
+also demonstrates usage of the record_opts struct to customize the evsel
+initialization from python.
 
-On Wed, Jun 18, 2025 at 05:19:53PM +0800, Bin Du wrote:
-> Low level functions for access the registers and mapping to their ranges.
-> This change also includes register definitions for ring buffer used to
-> communicate with ISP Firmware.
-> Ring buffer is the communication interface between driver and ISP Firmware.
-> Command and responses are exchanged through the ring buffer.
+Gautam Menghani (2):
+  perf python: Add support for record_opts struct
+  perf python: Add sampling.py as example for sampling
 
-Please rewrap this, the third line could well be longer.
-
-> 
-> Signed-off-by: Bin Du <Bin.Du@amd.com>
-> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> ---
->  drivers/media/platform/amd/isp4/Makefile      |   3 +-
->  drivers/media/platform/amd/isp4/isp4_hw.c     |  46 +++++++
->  drivers/media/platform/amd/isp4/isp4_hw.h     |  14 +++
->  drivers/media/platform/amd/isp4/isp4_hw_reg.h | 116 ++++++++++++++++++
->  4 files changed, 178 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_hw.c
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_hw.h
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_hw_reg.h
-> 
-> diff --git a/drivers/media/platform/amd/isp4/Makefile b/drivers/media/platform/amd/isp4/Makefile
-> index e9e84160517d..8ca1c4dfe246 100644
-> --- a/drivers/media/platform/amd/isp4/Makefile
-> +++ b/drivers/media/platform/amd/isp4/Makefile
-> @@ -3,7 +3,8 @@
->  # Copyright (C) 2025 Advanced Micro Devices, Inc.
->  
->  obj-$(CONFIG_AMD_ISP4) += amd_capture.o
-> -amd_capture-objs := isp4.o
-> +amd_capture-objs := isp4.o	\
-> +			isp4_hw.o	\
->  
->  ccflags-y += -I$(srctree)/drivers/media/platform/amd/isp4
->  ccflags-y += -I$(srctree)/include
-> diff --git a/drivers/media/platform/amd/isp4/isp4_hw.c b/drivers/media/platform/amd/isp4/isp4_hw.c
-> new file mode 100644
-> index 000000000000..e5315330a514
-> --- /dev/null
-> +++ b/drivers/media/platform/amd/isp4/isp4_hw.c
-> @@ -0,0 +1,46 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/types.h>
-> +
-> +#include "isp4_hw.h"
-> +#include "isp4_hw_reg.h"
-> +
-> +#define RMMIO_SIZE 524288
-> +
-> +u32 isp4hw_rreg(void __iomem *base, u32 reg)
-> +{
-> +	void __iomem *reg_addr;
-> +
-> +	if (reg >= RMMIO_SIZE)
-> +		return RREG_FAILED_VAL;
-> +
-> +	if (reg < ISP_MIPI_PHY0_REG0)
-> +		reg_addr = base + reg;
-> +	else if (reg <= ISP_MIPI_PHY0_REG0 + ISP_MIPI_PHY0_SIZE)
-> +		reg_addr = base + (reg - ISP_MIPI_PHY0_REG0);
-
-Redundant parentheses.
-
-> +	else
-> +		return RREG_FAILED_VAL;
-> +
-> +	return readl(reg_addr);
-> +};
-> +
-> +void isp4hw_wreg(void __iomem *base, u32 reg, u32 val)
-> +{
-> +	void __iomem *reg_addr;
-> +
-> +	if (reg >= RMMIO_SIZE)
-> +		return;
-> +
-> +	if (reg < ISP_MIPI_PHY0_REG0)
-> +		reg_addr = base + reg;
-> +	else if (reg <= ISP_MIPI_PHY0_REG0 + ISP_MIPI_PHY0_SIZE)
-> +		reg_addr = base + (reg - ISP_MIPI_PHY0_REG0);
-
-Ditto.
-
-> +	else
-> +		return;
-> +
-> +	writel(val, reg_addr);
-> +};
-> diff --git a/drivers/media/platform/amd/isp4/isp4_hw.h b/drivers/media/platform/amd/isp4/isp4_hw.h
-> new file mode 100644
-> index 000000000000..072d135b9e3a
-> --- /dev/null
-> +++ b/drivers/media/platform/amd/isp4/isp4_hw.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/*
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#ifndef _ISP4_HW_H_
-> +#define _ISP4_HW_H_
-> +
-> +#define RREG_FAILED_VAL 0xFFFFFFFF
-> +
-> +u32 isp4hw_rreg(void __iomem *base, u32 reg);
-> +void isp4hw_wreg(void __iomem *base, u32 reg, u32 val);
-> +
-> +#endif
-> diff --git a/drivers/media/platform/amd/isp4/isp4_hw_reg.h b/drivers/media/platform/amd/isp4/isp4_hw_reg.h
-> new file mode 100644
-> index 000000000000..b11f12ba6c56
-> --- /dev/null
-> +++ b/drivers/media/platform/amd/isp4/isp4_hw_reg.h
-> @@ -0,0 +1,116 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/*
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#ifndef _ISP4_HW_REG_H_
-> +#define _ISP4_HW_REG_H_
-> +
-> +#define ISP_SOFT_RESET		0x62000
-> +#define ISP_SYS_INT0_EN		0x62010
-> +#define ISP_SYS_INT0_STATUS	0x62014
-> +#define ISP_SYS_INT0_ACK	0x62018
-> +#define ISP_CCPU_CNTL		0x62054
-> +#define ISP_STATUS		0x62058
-> +#define ISP_LOG_RB_BASE_LO0	0x62148
-> +#define ISP_LOG_RB_BASE_HI0	0x6214C
-
-Lower case hexadecimals, please.
-
-> +#define ISP_LOG_RB_SIZE0	0x62150
-> +#define ISP_LOG_RB_RPTR0	0x62154
-> +#define ISP_LOG_RB_WPTR0	0x62158
-> +#define ISP_RB_BASE_LO1		0x62170
-> +#define ISP_RB_BASE_HI1		0x62174
-> +#define ISP_RB_SIZE1		0x62178
-> +#define ISP_RB_RPTR1		0x6217C
-> +#define ISP_RB_WPTR1		0x62180
-> +#define ISP_RB_BASE_LO2		0x62184
-> +#define ISP_RB_BASE_HI2		0x62188
-> +#define ISP_RB_SIZE2		0x6218C
-> +#define ISP_RB_RPTR2		0x62190
-> +#define ISP_RB_WPTR2		0x62194
-> +#define ISP_RB_BASE_LO3		0x62198
-> +#define ISP_RB_BASE_HI3		0x6219C
-> +#define ISP_RB_SIZE3		0x621A0
-> +#define ISP_RB_RPTR3		0x621A4
-> +#define ISP_RB_WPTR3		0x621A8
-> +#define ISP_RB_BASE_LO4		0x621AC
-> +#define ISP_RB_BASE_HI4		0x621B0
-> +#define ISP_RB_SIZE4		0x621B4
-> +#define ISP_RB_RPTR4		0x621B8
-> +#define ISP_RB_WPTR4		0x621BC
-> +#define ISP_RB_BASE_LO5		0x621C0
-> +#define ISP_RB_BASE_HI5		0x621C4
-> +#define ISP_RB_SIZE5		0x621C8
-> +#define ISP_RB_RPTR5		0x621CC
-> +#define ISP_RB_WPTR5		0x621D0
-> +#define ISP_RB_BASE_LO6		0x621D4
-> +#define ISP_RB_BASE_HI6		0x621D8
-> +#define ISP_RB_SIZE6		0x621DC
-> +#define ISP_RB_RPTR6		0x621E0
-> +#define ISP_RB_WPTR6		0x621E4
-> +#define ISP_RB_BASE_LO7		0x621E8
-> +#define ISP_RB_BASE_HI7		0x621EC
-> +#define ISP_RB_SIZE7		0x621F0
-> +#define ISP_RB_RPTR7		0x621F4
-> +#define ISP_RB_WPTR7		0x621F8
-> +#define ISP_RB_BASE_LO8		0x621FC
-> +#define ISP_RB_BASE_HI8		0x62200
-> +#define ISP_RB_SIZE8		0x62204
-> +#define ISP_RB_RPTR8		0x62208
-> +#define ISP_RB_WPTR8		0x6220C
-> +#define ISP_RB_BASE_LO9		0x62210
-> +#define ISP_RB_BASE_HI9		0x62214
-> +#define ISP_RB_SIZE9		0x62218
-> +#define ISP_RB_RPTR9		0x6221C
-> +#define ISP_RB_WPTR9		0x62220
-> +#define ISP_RB_BASE_LO10	0x62224
-> +#define ISP_RB_BASE_HI10	0x62228
-> +#define ISP_RB_SIZE10		0x6222C
-> +#define ISP_RB_RPTR10		0x62230
-> +#define ISP_RB_WPTR10		0x62234
-> +#define ISP_RB_BASE_LO11	0x62238
-> +#define ISP_RB_BASE_HI11	0x6223C
-> +#define ISP_RB_SIZE11		0x62240
-> +#define ISP_RB_RPTR11		0x62244
-> +#define ISP_RB_WPTR11		0x62248
-> +#define ISP_RB_BASE_LO12	0x6224C
-> +#define ISP_RB_BASE_HI12	0x62250
-> +#define ISP_RB_SIZE12		0x62254
-> +#define ISP_RB_RPTR12		0x62258
-> +#define ISP_RB_WPTR12		0x6225C
-> +
-> +#define ISP_POWER_STATUS	0x60000
-> +
-> +#define ISP_MIPI_PHY0_REG0	0x66700
-> +#define ISP_MIPI_PHY1_REG0	0x66780
-> +#define ISP_MIPI_PHY2_REG0	0x67400
-> +
-> +#define ISP_MIPI_PHY0_SIZE	0xD30
-> +
-> +/* ISP_SOFT_RESET */
-> +#define ISP_SOFT_RESET__CCPU_SOFT_RESET_MASK			0x00000001UL
-> +
-> +/* ISP_CCPU_CNTL */
-> +#define ISP_CCPU_CNTL__CCPU_HOST_SOFT_RST_MASK			0x00040000UL
-> +
-> +/* ISP_STATUS */
-> +#define ISP_STATUS__CCPU_REPORT_MASK				0x000000feUL
-> +
-> +/* ISP_SYS_INT0_STATUS */
-> +#define ISP_SYS_INT0_STATUS__SYS_INT_RINGBUFFER_WPT9_INT_MASK	0x00010000UL
-> +#define ISP_SYS_INT0_STATUS__SYS_INT_RINGBUFFER_WPT10_INT_MASK	0x00040000UL
-> +#define ISP_SYS_INT0_STATUS__SYS_INT_RINGBUFFER_WPT11_INT_MASK	0x00100000UL
-> +#define ISP_SYS_INT0_STATUS__SYS_INT_RINGBUFFER_WPT12_INT_MASK	0x00400000UL
-> +
-> +/* ISP_SYS_INT0_EN */
-> +#define ISP_SYS_INT0_EN__SYS_INT_RINGBUFFER_WPT9_EN_MASK	0x00010000UL
-> +#define ISP_SYS_INT0_EN__SYS_INT_RINGBUFFER_WPT10_EN_MASK	0x00040000UL
-> +#define ISP_SYS_INT0_EN__SYS_INT_RINGBUFFER_WPT11_EN_MASK	0x00100000UL
-> +#define ISP_SYS_INT0_EN__SYS_INT_RINGBUFFER_WPT12_EN_MASK	0x00400000UL
-> +
-> +/* ISP_SYS_INT0_ACK */
-> +#define ISP_SYS_INT0_ACK__SYS_INT_RINGBUFFER_WPT9_ACK_MASK	0x00010000UL
-> +#define ISP_SYS_INT0_ACK__SYS_INT_RINGBUFFER_WPT10_ACK_MASK	0x00040000UL
-> +#define ISP_SYS_INT0_ACK__SYS_INT_RINGBUFFER_WPT11_ACK_MASK	0x00100000UL
-> +#define ISP_SYS_INT0_ACK__SYS_INT_RINGBUFFER_WPT12_ACK_MASK	0x00400000UL
-> +
-> +#endif
+ tools/perf/python/sampling.py |  49 +++++++++
+ tools/perf/util/python.c      | 186 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 232 insertions(+), 3 deletions(-)
+ create mode 100755 tools/perf/python/sampling.py
 
 -- 
-Kind regards,
+2.49.0
 
-Sakari Ailus
 
