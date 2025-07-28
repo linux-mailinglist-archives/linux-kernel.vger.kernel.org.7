@@ -1,156 +1,109 @@
-Return-Path: <linux-kernel+bounces-747508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB8AB134A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:06:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3F1B134A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDAFE7A9DEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:05:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE6FB177F0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBEC2206B2;
-	Mon, 28 Jul 2025 06:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035AF220F3F;
+	Mon, 28 Jul 2025 06:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jx5NMleA";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="szmbmlG2"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdWF3yP+"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F42821CC44
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2624C21CC44;
+	Mon, 28 Jul 2025 06:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753682785; cv=none; b=fu2yLjrQe2MQOEb5RiYx6HtMOyJw0FreKik9Mk525U23dt4BBrwhQU8+V+tM7orckxyTgGUMEBsyCJSHFiDPvop+mqIbXqi56t90vxYndDKgVuh+Sv+JPKOL/SOJFyGgtJ9y+VGtNdilthbnNa/YnJKkBTuNgbdzcUsuA3+EYoU=
+	t=1753682813; cv=none; b=DbnxLhduQwmnAz1Lcq5jeqBt0w7jNJ4HPULTsAYc1bGlX4rvW7E6bJdHZ8a5UnP4tG1Y+MXTrQ9ixvj2iyrgA1iHpJDIrvanu/dqd7uMWiuII+C09fKWAuQjqM8kmi8s+mQ7lOmrdsT//Trra52hvXM4Lcacvb/DV4ae9mUcSwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753682785; c=relaxed/simple;
-	bh=/MOGhL1naZv0C+l6p3luEogLWWM+KwheHTNHnT3XDaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fkZpyDhPgtilrga+ykz/wgB9wlPkbEnsE+kyBHZZu56VSyI57vTRpKq0vozrxguwzTnC0sSYWpLThggUvoYrl9qwSxBdTp+MzarJJgV2/TDk5pEAl4a5dOb7RubBozWsoUoNLwk5I81QwQghaeeuvq+tSjZqHPVwBemMk3f0A0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jx5NMleA; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=szmbmlG2; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 96ED41F7FD;
-	Mon, 28 Jul 2025 06:06:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1753682776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=3n8KTJ9XQxHiiQiPEZNY8Dlf+2L80OyLJ/0a+7zM3BM=;
-	b=jx5NMleALgYxKjWMjCvWq1BNj7/qQ10JXpksYyiZ7Tl0A/1kqtGXvt1OEIPwCAQ5fm2agJ
-	KLpwgxV8s896L7rsMocR9bl5XYXeoMYZwfbAZyhDe/8Vk0TnVPQGjtRoOrkX4i8mrMOeyP
-	7z2SekU2GIuO8L04TG7iXQNvADapHXs=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1753682775; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=3n8KTJ9XQxHiiQiPEZNY8Dlf+2L80OyLJ/0a+7zM3BM=;
-	b=szmbmlG2MUPu/Jag4zu2tgYUm+uPmEGYHFBfkakCspELZQFmIQqspbxRHsvFqJkmrYjuPL
-	oiVQRhs59yFMpkJRA4olyonL8NZm3U9Y+kHWktz2KMw0tL7+Gwfoi4TjW3Q+/1RAbx6VGb
-	UcRRacw/OPqi4Xu2DFrL4af+m7OfVCc=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E0251368A;
-	Mon, 28 Jul 2025 06:06:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Y31tGVcTh2iYcAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Mon, 28 Jul 2025 06:06:15 +0000
-From: Juergen Gross <jgross@suse.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	sstabellini@kernel.org
-Subject: [GIT PULL] xen: branch for v6.17-rc1
-Date: Mon, 28 Jul 2025 08:06:14 +0200
-Message-ID: <20250728060614.4875-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753682813; c=relaxed/simple;
+	bh=6BuxxmxrMXuD+syryXFAu4e7ozMwiP9HtTVrGgSqrTA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ILKqKQBSmSwsLXLSB0pfNWjjyDgjR0K/nOPT3r0q09l3s5KVABWBRtXmxsg8RQnWN6y671gs2r9kLl3Dm9CJKj3uZUpJECIwyK2LYZrU3N4P3Ik218KttfbIrlbf2/Q0hXB4hNeGUd1jgp3x1o3p0YULtw+1/mxwvdqm5MOTOGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DdWF3yP+; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23ffd0ec2afso302355ad.2;
+        Sun, 27 Jul 2025 23:06:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753682811; x=1754287611; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6BuxxmxrMXuD+syryXFAu4e7ozMwiP9HtTVrGgSqrTA=;
+        b=DdWF3yP+AfyehxYZXxodrNtHs8JIwt9LlwqVzjP7rbQ9wikiC7pGY+MQNHCaDIv6Ny
+         RlDIQBRPJO6f3Fsd6ho4Jk7AXEogJdypZIJEW8ATncoKqFtg88NDBeJQC6kC+k1/TS6J
+         6ynUwVbr2rkC/QWhNQfQ50XEC0ps/z+qSABCK4wi1e6taOzv+MIgbQuz55IsZwm7O1nd
+         m7CHU913jmKhitDch0djhoQ2daY3TAI3l36LAieCD44Uca7MC9cz3aowJRJTEErbvq70
+         mSMU4QYjnxQ3pcLnoQTxSnxh25bJWHT04Pb415uq28fRsapRrqfNJX6IEsJUu/KTFXlC
+         lbqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753682811; x=1754287611;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6BuxxmxrMXuD+syryXFAu4e7ozMwiP9HtTVrGgSqrTA=;
+        b=C5h2UmGg3E1c0y6oIfpkS73R979LoxPwbI5zeB2OpwYhs3pbTYQhIyocLBKPuSVpS+
+         HRqIkgjfzrTkFAVniDNLBnYVKt0NpBFnOPviPNZihS6h6YN7k4Rd7XBw/mG1YWhj5wWU
+         /B4vnW2RyQiH0BrdyjaPzQm+i7Sn1328ZL40sFv55oep3CZzwIyQO8mJGez13+iAc6ww
+         TnaDERcvC7marpEXt/jo2zQ1+/qftw3q9+8BcNB5WJi9ZCVEEg1E0N33Kdw0bhKaDT+Y
+         fFi8rSoZuZoXCiXYQYQcIUlDdvPDk04iyglr+wpg00/NhuHNTFg+v6cxQx3mGe9iMehG
+         eTdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdwNrwKNYjYd0A3LKXkPfNzUUaA6lfPWJ9/BhYIFnbgfQVlCvJQ0TXQExRrNAXHaTVMc2IEzwS99nw/D5j@vger.kernel.org, AJvYcCXWGNpZkezQf5FCtPOnyLblBKxHCFd4qKz+zWdXRmBdTw+fTLHSHHvQZwsDA+EMnqrBjoJKEI8CjglokNM=@vger.kernel.org, AJvYcCXeq3inagD6l2wozqjU+Td6YRWs0lO6ir1cbuPQlIx/n249yNS4qiUYTr3vmzPvU973FCF3c1X60xJ3J79NfJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi7K1ZqhjMtRFT1whRjp9hrfRYRy84HiGIKkyRq1ap2YSBue7m
+	Wbs5gjTXtbzMNCWPsW3JcMUinjejGLAEalrN/wK0i1nb2NOZeEDQE1sTNNIXNr4m2JXB0joLFI4
+	ATppxPJgs3tfj6fda+uDGEXE+if/LqDE=
+X-Gm-Gg: ASbGncvkIu8z8CVAVKQzeNHjQAUlTAASO1mZG8TifAkQtxNiEaUnDUlazuqJEJ9Tie3
+	w5kIYvmusNwZDLOIrT3m47qi2gTFX4Dm6Z48vd8h1mA2JBOSRyczrgWTZ5RHIc4EGoxdM0QlvR6
+	Lqo1ab/UmyyYBzFOygmDmay041VvucL+dvORoMSpXvmptzGWsrhTfB+l0otAV37u4RS4K6Sye6A
+	FS3x8b8
+X-Google-Smtp-Source: AGHT+IHdhVmKZwChbSTO0ZEh7G/lQCCa1ZWLqXuMsDUl5T7xo9Vns0QP4cG8ipR9HWfcbqvofCO6RnASD0hnrFNm+xE=
+X-Received: by 2002:a17:902:e751:b0:240:cb:97bd with SMTP id
+ d9443c01a7336-24000cb9c7amr23866415ad.7.1753682811331; Sun, 27 Jul 2025
+ 23:06:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+References: <20250727092317.2930617-1-ojeda@kernel.org>
+In-Reply-To: <20250727092317.2930617-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 28 Jul 2025 08:06:38 +0200
+X-Gm-Features: Ac12FXx2eH1NIUNOlaMWd3xqdYk4d5QjO6acLe_IbBpmXiVXK0DqqgtW8QrHL5k
+Message-ID: <CANiq72kYpHzp8ydtkfdb7FN+YjfFNjpSqtgC0Hm1tSy05p4n4A@mail.gmail.com>
+Subject: Re: [PATCH] rust: workaround `rustdoc` target modifiers bug
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Guillaume Gomez <guillaume1.gomez@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Sun, Jul 27, 2025 at 11:23=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wr=
+ote:
+>
+> The issue has been reported upstream [1] and a fix has been submitted
+> [2], including a test similar to the kernel case.
 
-Please git pull the following tag:
+This is now fixed upstream (thanks Guillaume for the quick review), so
+it will be fixed in Rust 1.90.0 (expected 2025-09-18).
 
- git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-6.17-rc1-tag
-
-xen: branch for v6.17-rc1
-
-It contains the following patches:
-
-- A fix for a UAF in the xen gntdev-dmabuf driver
-- A fix in the xen netfront driver avoiding spurious interrupts
-- A fix in the gntdev driver avoiding a large stack allocation
-- A cleanup removing some dead code
-- A build warning fix
-- A cleanup of the sysfs code in the xen-pciback driver
-
-Thanks.
-
-Juergen
-
- drivers/net/xen-netfront.c         |  5 ---
- drivers/xen/gntdev-common.h        |  4 +++
- drivers/xen/gntdev-dmabuf.c        | 28 ++++++---------
- drivers/xen/gntdev.c               | 71 +++++++++++++++++++++++++++-----------
- drivers/xen/manage.c               |  6 ----
- drivers/xen/time.c                 |  8 -----
- drivers/xen/xen-pciback/pci_stub.c | 12 +++----
- drivers/xen/xenbus/xenbus_client.c |  2 ++
- drivers/xen/xenbus/xenbus_xs.c     | 17 ---------
- include/xen/xen-ops.h              |  2 --
- include/xen/xenbus.h               |  2 --
- 11 files changed, 72 insertions(+), 85 deletions(-)
-
-Al Viro (1):
-      xen: fix UAF in dmabuf_exp_from_pages()
-
-Anthoine Bourgeois (1):
-      xen/netfront: Fix TX response spurious interrupts
-
-Dr. David Alan Gilbert (1):
-      xen: Remove some deadcode (x)
-
-Juergen Gross (1):
-      xen/gntdev: remove struct gntdev_copy_batch from stack
-
-Peng Jiang (1):
-      xen/xenbus: fix W=1 build warning in xenbus_va_dev_error function
-
-Ryan Chung (1):
-      xen-pciback: Replace scnprintf() with sysfs_emit_at()
+Cheers,
+Miguel
 
