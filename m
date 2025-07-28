@@ -1,82 +1,89 @@
-Return-Path: <linux-kernel+bounces-748407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14539B140CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:56:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318E9B140CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DE054E4C7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9F0654117F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49FA1DE4EF;
-	Mon, 28 Jul 2025 16:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F4A274B4D;
+	Mon, 28 Jul 2025 16:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aA2vj60T"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ui9QGaq5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p8NH4+hy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ui9QGaq5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p8NH4+hy"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A7E19AD70
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 16:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86A41C5F13
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 16:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753721763; cv=none; b=eXuN37VSo3P2Sl4RJnDm8FJVe2p8bKgDTan3hCEFDzPxrlqqBslpNN1i+z21llFU/lxKSP3EZ0xWiV8UjFMqN8TxiHc3r08yxpqXZh1fKi9Y+v1ZJCDEJYOL6/14V/YJP3ze1PpfGuKWLLB8JX8Omyw4L3YR5OWlpKOCcjTobMw=
+	t=1753721805; cv=none; b=olvL/mvzd5LxQIukvK8mXy1jnemxSevAuMzsb9vB4gnyZZ0o/xv4oF7sxD7EahKo3ZRKq52pFGYn2+qyxXCTsZ5561Rr26s8xnFdfsiK0vFOKLEwx1vptC/6BdIO9AjOO3qvM3a6z5md9WP93iAzo6i3IDQxWAMPUj3XkpiXXS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753721763; c=relaxed/simple;
-	bh=IWsGqj4X/57So5/KOCkog10/14qVQ42Z3he9db1V0CM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hxeyK4gnpOKLU7bLw1TiiYc5VXaqWPkzOhXjWLG/yBrNkbNK/blkVyTpkalS2MsOvPCU+C5ILuuRpXXy/UBjWQcMLJyfOw74YCjoo4IysTkvtEd7y1XyNVd0i0SsrG41DIG3jCm4Zhzihtwqdul0KfaUjrkCJf3i8qAK+k+0ASo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aA2vj60T; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-451d3f72391so43376805e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:56:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753721760; x=1754326560; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TAxb14cobKpHubh6WgkRHXv7TaPrn2iBxtX5EmmWVHA=;
-        b=aA2vj60TiBy0IuGtW68+02dvm3V1jGqje2CLUerYKOmAFV5lk6DK+5JCoexE6i3X3k
-         Mgo/2phz6oFCDn1fS6K5/q6QszTJ6fJvPxmCJ3IRIoCXhtfQk5+9Nx1Fo8nlCB08MSV9
-         P70VgTIPJBFRGuh1XuVj29rineCjHeSLKLGXoyERJ3lugBHd737eu5ZBSdqfrsjMadRz
-         OnRLW5XzG9vqzrQxHIAtRoRNT5aqso9kOMaC7pq8lVO1u7gb2RfTOZEjE9xtLYcbH965
-         m+DGJzLcUMTeD5itNaajilew3qm6B3Iwu5OnCLxL+hGfSpJvkcK/DW34u5KkcY/x2lRB
-         kTaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753721760; x=1754326560;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TAxb14cobKpHubh6WgkRHXv7TaPrn2iBxtX5EmmWVHA=;
-        b=nx0FTbB0wqqk2MWpD4jByjCvDsJlJc9N6FZK2JTiKdjsIIaXShlJJXplAt5S1gINun
-         WvcHR0GR/5eRPI1t6Icw7DIBfyroAK5ObrFvg3Bw82e2EBKdj5tXDQsDgM5XXIB9de/q
-         KKBbDvZOteW0Tx0GuwU/ZAAHfZWacfhgIz4Eo1o7QtB7qXxyE0XwmW4vkBRu0RBIv3Ya
-         cw7THgGeRY7OFg8T7zv3AotvZo+PwDyVw5S3YrzPQP/lAzGvF7lmSp8wZU+7raw/OkT3
-         gS+E8t3eE/RMccS9v0EP4UevY5Jtj0AM3dbynA6xqxMWaOkYpgpoG6Qyhwmw464HL4Kr
-         TMTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvBC9f4OFM6F4tlQbsoZMpdm5pATa9e/GauUKm8i/f9BJwHEdrtmsNXTqif5kV1VubBK5BM2mRfRM6RlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwjGbtseNbftAST/be77cQCPTVMcGZ4I5OFw2PVTBqajeJ8kBi
-	Cpzxkc0IA1VcshSi8+aFU3b/1AWTOblR0T4C4zr/DRXJM1YAAl5Emajtt/nPBRSg/1M=
-X-Gm-Gg: ASbGncvy0usDVOHsl8q/VmAoKr4iUgvKkf15t8kAMSsnxim/vzrPGBeN809BCCKHg/U
-	Z9CEQidT4jpBNJVJSXk7Gbpat/MV5dGNrlLskCqbRxNHWLaEAmDIKAU4aa8t3mbbKJcMa2Kz3Bk
-	JSpYzcIOOfdiwPM/CiSp+i52y9cSWP2m4z5ABwM6Jx264671DVf+TF3qEPUMJSacZBMz24nDG12
-	i5FyENtaOslDR+Tsj9Wd5KYUmV5yTXCBr6lAfGYZseZ3DoC00iw9t4pOkzoIm03HXV7PF2ee0fJ
-	Omo9oGS9bVI4tTK4UkWsDU6B6DGM0i5mqe3qP0K61cqN2GEjbs15UXuVCyrn7TNb3s6bzLv6LYz
-	m/ypz+LFQGUBB8ueafCblVvN2Rzqx47U3pIW0q40HCTjnjkPwj5h8Zw3O/hWKrD4acn5wdeIl2D
-	A=
-X-Google-Smtp-Source: AGHT+IFv/mCKWlYRYe8nNdhN89iYbatzxBXqKrypW2/czFDeKXBJ+e1kssS72dYc1FY0iwFYXrIwAQ==
-X-Received: by 2002:a05:600c:1e85:b0:453:dbe:7574 with SMTP id 5b1f17b1804b1-45876315613mr89213245e9.12.1753721759591;
-        Mon, 28 Jul 2025 09:55:59 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:9019:46ec:c6f1:c165? ([2a01:e0a:3d9:2080:9019:46ec:c6f1:c165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705e39b1sm157399365e9.34.2025.07.28.09.55.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 09:55:59 -0700 (PDT)
-Message-ID: <7192f729-8267-4beb-976a-97b2e51c07f0@linaro.org>
-Date: Mon, 28 Jul 2025 18:55:58 +0200
+	s=arc-20240116; t=1753721805; c=relaxed/simple;
+	bh=fbYLNExcnPOC80aCtdJrSGN4NFhvmB9b/KptI+tqHaI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Eh2E4jVO4Z9n1eS9dMdqnbvOMh3ex2kYhhXkJfcSRCaa1+vhAHjqliO9dYYwIGHE/hAZBMslGbEx4EgZ1BIfuhXPWQGlVDWm0kzTmJV8YrO+glvqSifcwR1hi55RCO8df2YyYb5npfiWJbBh1uke23BEp8RkgL3gvFCYpsdk+C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ui9QGaq5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p8NH4+hy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ui9QGaq5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p8NH4+hy; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 032DD21235;
+	Mon, 28 Jul 2025 16:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753721801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=T4hxrER/Y5bQt1JVTtC7jjVd6hI2iYvgAd3Nm1Rz0kY=;
+	b=ui9QGaq5b73c0I5teTjwg02Y+cUSwq1e5Z0ZKX2xNLJhf8US8Ae1tMtozgTyE2icr1KKjp
+	QqPGMXzriKfQoyyu4wGXRAQAc+3AcWgIvEn0ePS5VDOzsXYR/Fs/NqywbaQ9tM2DAAuN0K
+	ebLgecfYmKNeqt0irMID2cNN4JUE3TA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753721801;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=T4hxrER/Y5bQt1JVTtC7jjVd6hI2iYvgAd3Nm1Rz0kY=;
+	b=p8NH4+hyBGl8oORcTjkZLCeMBX4hUOhTCNX8ygV1yzMMk2clU7i20L2qKX+emAozrVIcmc
+	kmX7ESWYvR+vqPDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753721801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=T4hxrER/Y5bQt1JVTtC7jjVd6hI2iYvgAd3Nm1Rz0kY=;
+	b=ui9QGaq5b73c0I5teTjwg02Y+cUSwq1e5Z0ZKX2xNLJhf8US8Ae1tMtozgTyE2icr1KKjp
+	QqPGMXzriKfQoyyu4wGXRAQAc+3AcWgIvEn0ePS5VDOzsXYR/Fs/NqywbaQ9tM2DAAuN0K
+	ebLgecfYmKNeqt0irMID2cNN4JUE3TA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753721801;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=T4hxrER/Y5bQt1JVTtC7jjVd6hI2iYvgAd3Nm1Rz0kY=;
+	b=p8NH4+hyBGl8oORcTjkZLCeMBX4hUOhTCNX8ygV1yzMMk2clU7i20L2qKX+emAozrVIcmc
+	kmX7ESWYvR+vqPDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DC618138A5;
+	Mon, 28 Jul 2025 16:56:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rxp3Ncirh2hBQgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 28 Jul 2025 16:56:40 +0000
+Message-ID: <450d3876-90a9-4b1c-8d73-62ac19048991@suse.cz>
+Date: Mon, 28 Jul 2025 18:56:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,300 +91,153 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2 2/2] scsi: ufs: core: move some irq handling back to
- hardirq (with time limit)
-To: Bart Van Assche <bvanassche@acm.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>,
- Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com,
- linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
- <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
- <a008c613-58d6-4368-ae2f-55db4ac82a02@linaro.org>
- <76af97e49cb7f36c8dc6edc62c84e72d6bb4669c.camel@linaro.org>
- <c385f1c4-f27b-4dc7-b4a2-d35a9fc77a91@acm.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <c385f1c4-f27b-4dc7-b4a2-d35a9fc77a91@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Vlastimil Babka <vbabka@suse.cz>
+Subject: [GIT PULL] slab updates for 6.17
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>,
+ Christoph Lameter <cl@gentwo.org>, Roman Gushchin
+ <roman.gushchin@linux.dev>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Pedro Falcato <pfalcato@suse.de>, Bernard Metzler
+ <bernard.metzler@linux.dev>,
+ "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+ David Howells <dhowells@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-Hi,
+Hi Linus,
 
-On 28/07/2025 17:19, Bart Van Assche wrote:
-> On 7/28/25 7:49 AM, André Draszik wrote:
->> Btw, my complete command was (should probably have added that
->> to the commit message in the first place):
->>
->> for rw in read write ; do
->>      echo "rw: ${rw}"
->>      for jobs in 1 8 ; do
->>          echo "jobs: ${jobs}"
->>          for it in $(seq 1 5) ; do
->>              fio --name=rand${rw} --rw=rand${rw} \
->>                  --ioengine=libaio --direct=1 \
->>                  --bs=4k --numjobs=${jobs} --size=32m \
->>                  --runtime=30 --time_based --end_fsync=1 \
->>                  --group_reporting --filename=/foo \
->>              | grep -E '(iops|sys=|READ:|WRITE:)'
->>              sleep 5
->>          done
->>      done
->> done
-> 
-> Please run performance tests in recovery mode against a block
-> device (/dev/block/sd...) instead of running performance tests on
-> top of a filesystem. One possible approach for retrieving the block
-> device name is as follows:
-> 
-> adb shell readlink /dev/block/by-name/userdata
-> 
-> There may be other approaches for retrieving the name of the block
-> device associated with /data. Additionally, tuning for maximum
-> performance is useful because it eliminates impact from the process
-> scheduler on block device performance measurement. An extract from a
-> scrip that I use myself to measure block device performance on Pixel
-> devices is available below.
+please pull the latest slab updates from:
 
-Of course, I did all that and ran on the SM8650 QRD & HDK boards, one has
-an UFS 3.1 device and the other an UFS 4.0 device.
+  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.17
 
-Here's the raw data:
+We've hit a last-minute snag last week when lkp reported [1] the commit
+"mm, slab: use frozen pages for large kmalloc" exposed a pre-existing bug
+in siw_tcp_sendpages(). Pedro has been fixing it [2] so hopefully that will
+result in a PR soon, which you can pull before this one - or perhaps take
+the fix directly. If that gets stuck for some reason and taking the fix
+later would be unacceptable, I can do another PR with my commit taken out.
 
-Board: sm8650-qrd
-read / 1 job
-                     v6.15               v6.16                   v6.16 + this commit
-min IOPS            3,996.00            5,921.60                           3,424.80
-max IOPS            4,772.80            6,491.20                           4,541.20
-avg IOPS            4,526.25            6,295.31                           4,320.58
-cpu % usr               4.62                2.96                               4.50
-cpu % sys              21.45               17.88                              21.62
-bw MB/s                18.54               25.78                              17.64
+[1] https://lore.kernel.org/all/202507220801.50a7210-lkp@intel.com/
+[2] https://lore.kernel.org/all/20250723104123.190518-1-pfalcato@suse.de/
 
-read / 8 job
-                     v6.15               v6.16                   v6.16 + this commit
-min IOPS           51,867.60           51,575.40                          45,257.00
-max IOPS           67,513.60           64,456.40                          56,336.00
-avg IOPS           64,314.80           62,136.76                          52,505.72
-cpu % usr               3.98                3.72                               3.52
-cpu % sys              16.70               17.16                              18.74
-bw MB/s               263.60              254.40                             215.00
+Thanks,
+Vlastimil
 
-write / 1 job
-                     v6.15               v6.16                   v6.16 + this commit
-min IOPS            5,654.80            8,060.00                           5,730.80
-max IOPS            6,720.40            8,852.00                           6,981.20
-avg IOPS            6,576.91            8,579.81                           6,726.51
-cpu % usr               7.48                3.79                               8.49
-cpu % sys              41.09               23.27                              34.86
-bw MB/s                26.96               35.16                              27.52
+======================================
 
-write / 8 job
-                     v6.15               v6.16                   v6.16 + this commit
-min IOPS           84,687.80           95,043.40                          74,799.60
-max IOPS          107,620.80          113,572.00                          96,377.20
-avg IOPS           97,910.86          105,927.38                          87,239.07
-cpu % usr               5.43                4.38                               3.72
-cpu % sys              21.73               20.29                              30.97
-bw MB/s               400.80              433.80                             357.40
+* Convert struct slab to its own flags instead of referencing page flags,
+  which is another preparation step before separating it from struct page
+  completely. Along with that, a bunch of documentation fixes and cleanups.
+  (Matthew Wilcox)
 
-Board: sm8650-hdk
-read / 1 job
-                     v6.15               v6.16                   v6.16 + this commit
-min IOPS            4,867.20            5,596.80                           4,242.80
-max IOPS            5,211.60            5,970.00                           4,548.80
-avg IOPS            5,126.12            5,847.93                           4,370.14
-cpu % usr               3.83                2.81                               2.62
-cpu % sys              18.29               13.44                              16.89
-bw MB/s                20.98               17.88                              23.96
+* Convert large kmalloc to use frozen pages in order to be consistent with
+  non-large kmalloc slabs (Vlastimil Babka)
 
-read / 8 job
-                     v6.15               v6.16                   v6.16 + this commit
-min IOPS           47,583.80           46,831.60                          47,671.20
-max IOPS           58,913.20           59,442.80                          56,282.80
-avg IOPS           53,609.04           44,396.88                          53,621.46
-cpu % usr               3.57                3.06                               3.11
-cpu % sys              15.23               19.31                              15.90
-bw MB/s               219.40              219.60                             210.80
+* MAINTAINERS updates (Matthew Wilcox, Lorenzo Stoakes)
 
-write / 1 job
-                     v6.15               v6.16                   v6.16 + this commit
-min IOPS            6,529.42            8,367.20                           6,492.80
-max IOPS            7,856.92            9,244.40                           7,184.80
-avg IOPS            7,676.21            8,991.67                           6,904.67
-cpu % usr              10.17                7.98                               3.68
-cpu % sys              37.55               34.41                              23.07
-bw MB/s                31.44               28.28                              36.84
+* Restore NUMA policy support for large kmalloc, broken by mistake in v6.1
+  (Vlastimil Babka)
 
-write / 8 job
-                     v6.15               v6.16                   v6.16 + this commit
-min IOPS           86,304.60           94,288.80                          78,433.60
-max IOPS          105,670.80          110,373.60                          96,330.80
-avg IOPS           97,418.81          103,789.76                          88,468.27
-cpu % usr               4.98                3.27                               3.67
-cpu % sys              21.45               30.85                              20.08
-bw MB/s               399.00              362.40                             425.00
+----------------------------------------------------------------
+Jonathan Corbet (1):
+      slub: Fix a documentation build error for krealloc()
 
-Assisted analysis gives:
+Lorenzo Stoakes (1):
+      MAINTAINERS: add missing files to slab section
 
-IOPS (Input/Output Operations Per Second):
-The v6.16 kernel shows a slight increase in average IOPS compared to v6.15 (43245.69 vs. 42144.88).
-The v6.16+fix kernel significantly reduces average IOPS, dropping to 36946.17.
+Matthew Wilcox (Oracle) (9):
+      doc: Move SLUB documentation to the admin guide
+      slab: Rename slab->__page_flags to slab->flags
+      slab: Add SL_partial flag
+      slab: Add SL_pfmemalloc flag
+      doc: Add slab internal kernel-doc
+      vmcoreinfo: Remove documentation of PG_slab and PG_hugetlb
+      kfence: Remove mention of PG_slab
+      memcg_slabinfo: Fix use of PG_slab
+      slab: Update MAINTAINERS entry
 
-Bandwidth (MB/s):
-The v6.16 kernel shows an increase in average bandwidth compared to v6.15 (180.72 MB/s vs. 172.59 MB/s).
-The v6.16 with this commit significantly reduces average bandwidth, dropping to 151.32 MB/s.
+Vlastimil Babka (2):
+      mm, slab: restore NUMA policy support for large kmalloc
+      mm, slab: use frozen pages for large kmalloc
 
-Detailed Analysis:
-Impact of v6.16 Kernel:
-The v6.16 kernel introduces a minor improvement in IO performance compared to v6.15.
-Both average IOPS and average bandwidth saw a small increase. This suggests that the v6.16
-kernel might have introduced some optimizations that slightly improved overall IO performance.
-
-Impact of the Fix:
-The potential introduced appears to have a negative impact on both IOPS and bandwidth.
-Both metrics show a substantial decrease compared to both v6.15 and v6.16.
-This indicates that the fix might be detrimental to IO performance.
-
-The threaded IRQ change did increase IOPS and Bandwidth, and stopped starving interrupts.
-This change gives worse numbers than before the threaded IRQ.
-
-Neil
-
-> 
-> Best regards,
-> 
-> Bart.
-> 
-> 
-> optimize() {
->      local clkgate_enable c d devfreq disable_cpuidle governor nomerges iostats
->      local target_freq ufs_irq_path
-> 
->      if [ "$1" = performance ]; then
->      clkgate_enable=0
->      devfreq=max
->      disable_cpuidle=1
->      governor=performance
->      # Enable I/O statistics because the performance impact is low and
->      # because fio reports the I/O statistics.
->      iostats=1
->      # Disable merging to make tests follow the fio arguments.
->      nomerges=2
->      target_freq=cpuinfo_max_freq
->      persist_logs=false
->      else
->      clkgate_enable=1
->      devfreq=min
->      disable_cpuidle=0
->      governor=sched_pixel
->      iostats=1
->      nomerges=0
->      target_freq=cpuinfo_min_freq
->      persist_logs=true
->      fi
-> 
->      for c in $(adb shell "echo /sys/devices/system/cpu/cpu[0-9]*"); do
->      for d in $(adb shell "echo $c/cpuidle/state[1-9]*"); do
->          adb shell "if [ -e $d ]; then echo $disable_cpuidle > $d/disable; fi"
->      done
->      adb shell "cat $c/cpufreq/cpuinfo_max_freq > $c/cpufreq/scaling_max_freq;
->                     cat $c/cpufreq/${target_freq} > $c/cpufreq/scaling_min_freq;
->                     echo ${governor} > $c/cpufreq/scaling_governor; true" \
->              2>/dev/null
->      done
-> 
->      if [ "$(adb shell grep -c ufshcd /proc/interrupts)" = 1 ]; then
->      # No MCQ or MCQ disabled. Make the fastest CPU core process UFS
->      # interrupts.
->      # shellcheck disable=SC2016
->      ufs_irq_path=$(adb shell 'a=$(echo /proc/irq/*/ufshcd); echo ${a%/ufshcd}')
->      adb shell "echo ${fastest_cpucore} > ${ufs_irq_path}/smp_affinity_list; true"
->      else
->      # MCQ is enabled. Distribute the completion interrupts over the
->      # available CPU cores.
->      local i=0
->      local irqs
->      irqs=$(adb shell "sed -n 's/:.*GIC.*ufshcd.*//p' /proc/interrupts")
->      for irq in $irqs; do
->          adb shell "echo $i > /proc/irq/$irq/smp_affinity_list; true"
->          i=$((i+1))
->      done
->      fi
-> 
->      for d in $(adb shell echo /sys/class/devfreq/*); do
->      case "$d" in
->          *gpu0)
->          continue
->          ;;
->      esac
->      local min_freq
->      min_freq=$(adb shell "cat $d/available_frequencies |
->          tr ' ' '\n' |
->          sort -n |
->          case $devfreq in
->              min) head -n1;;
->              max) tail -n1;;
->          esac")
->      adb shell "echo $min_freq > $d/min_freq"
->      # shellcheck disable=SC2086
->      if [ "$devfreq" = "max" ]; then
->          echo "$(basename $d)/min_freq: $(adb shell cat $d/min_freq) <> $min_freq"
->      fi
->      done
-> 
->      for d in $(adb shell echo /sys/devices/platform/*.ufs); do
->      adb shell "echo $clkgate_enable > $d/clkgate_enable"
->      done
-> 
->      adb shell setprop logd.logpersistd.enable ${persist_logs}
-> 
->      adb shell "for b in /sys/class/block/{sd[a-z],dm*}; do
->              if [ -e \$b ]; then
->              [ -e \$b/queue/iostats     ] && echo ${iostats}   >\$b/queue/iostats;
->              [ -e \$b/queue/nomerges    ] && echo ${nomerges}  >\$b/queue/nomerges;
->              [ -e \$b/queue/rq_affinity ] && echo 2            >\$b/queue/rq_affinity;
->              [ -e \$b/queue/scheduler   ] && echo ${iosched}   >\$b/queue/scheduler;
->              fi
->          done; true"
-> 
->      adb shell "grep -q '^[^[:blank:]]* /sys/kernel/debug' /proc/mounts || mount -t debugfs none /sys/kernel/debug"
-> }
-> 
-
-
-
+ Documentation/ABI/testing/sysfs-kernel-slab        |  5 +-
+ Documentation/admin-guide/kdump/vmcoreinfo.rst     |  8 +--
+ Documentation/admin-guide/kernel-parameters.txt    | 12 ++--
+ Documentation/admin-guide/mm/index.rst             |  1 +
+ .../{mm/slub.rst => admin-guide/mm/slab.rst}       | 19 +++--
+ Documentation/mm/index.rst                         |  1 -
+ Documentation/mm/slab.rst                          |  7 ++
+ MAINTAINERS                                        | 17 +++--
+ include/linux/mm.h                                 |  4 +-
+ mm/kfence/core.c                                   |  4 +-
+ mm/slab.h                                          | 28 +-------
+ mm/slub.c                                          | 80 ++++++++++++++++------
+ tools/cgroup/memcg_slabinfo.py                     |  4 +-
+ 13 files changed, 110 insertions(+), 80 deletions(-)
+ rename Documentation/{mm/slub.rst => admin-guide/mm/slab.rst} (97%)
 
