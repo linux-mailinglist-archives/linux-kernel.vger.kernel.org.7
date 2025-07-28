@@ -1,65 +1,58 @@
-Return-Path: <linux-kernel+bounces-747863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB171B1393E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:51:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B6BB13941
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA62A7A364C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:50:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6F6189968B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DDE24A07A;
-	Mon, 28 Jul 2025 10:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E937A24A06D;
+	Mon, 28 Jul 2025 10:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNraNSpY"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hYYvaVnw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB4A246BA5;
-	Mon, 28 Jul 2025 10:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C9C245000;
+	Mon, 28 Jul 2025 10:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753699908; cv=none; b=QU2zNSO1LZQSqv1uohgabpMMLbUUFTYszaekSY/MeYq0NoLOXePxy1Rviu7ORgR8ARFPH+I/8kcRxiNsfTnKOrUppMyjyoJ5v/ZLLSwQJIgGdaRLr+6ZefvLfxZkOdx5YJDj9oauGz6G5Grqt4eQvWfnb1Ri0IqKZwNQTNnCagE=
+	t=1753699928; cv=none; b=UfVrXSO7IgUD9XKA1DWe7O32f4Y5I6n6pe1wAq6FEdnCAylhvBuThPBC6jzeS8cpDClb7Q/+6NUfCNCLlS+tDfS7VYHmJIbfnkUUAq3rqTv5CStZxDqTcOeYDMDA+V+ZYfm3wQH8XV0tr9jmUdpv16ZuYqORp41bpCzf9R7IiSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753699908; c=relaxed/simple;
-	bh=zqnx9HuowZ+lHyObY59ewf0mnjXI/dNEhmmcovb74DI=;
+	s=arc-20240116; t=1753699928; c=relaxed/simple;
+	bh=5xhS0LgHPXnMNMu7zQCvjpXnRD5j9EtWrqFbAN3k2r4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BV86KOcdvnBUczIeU3UZMF9qF7zQJUaPhgmwh04paiC4yjp/p9TUUtDVCvdVKEkHrdM4ulqAAMeAUCrXphCuIde9NadulOmqJymeb8C0gb2sCyOudOorBtpLqYdRa6saRfiL82m90lQ/3omy472/IX+bZktChmMKmrLwab00LwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNraNSpY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF5F7C4CEE7;
-	Mon, 28 Jul 2025 10:51:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753699907;
-	bh=zqnx9HuowZ+lHyObY59ewf0mnjXI/dNEhmmcovb74DI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=amuLWmO/+pT5e+6OEJZsn80cVz6VyD4rUpcUpIpNfXrABRwxUJRXzGTjdNAiizh1HMzCI/EBwJtDzWXN8YMfoetQ9ePTIXfbc5q4R4nJRe6cLH1HslKhK6xn4b+g4EYjqfNDEZbPNgFbgRT6afqEoF8vyQpec1fCgFH/lCz5jEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hYYvaVnw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F26C0C4CEE7;
+	Mon, 28 Jul 2025 10:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753699927;
+	bh=5xhS0LgHPXnMNMu7zQCvjpXnRD5j9EtWrqFbAN3k2r4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nNraNSpYEiG8XjSnMc8aUz9uHrdzsWQAEbAWu1xhb7mnCgD+rdHM7S6M1PMnAhRvF
-	 pJEss3vzIcDjh1X4nphyBLQLOw/9e+ktT05YSxfB26BnAE742YD00VBHFpFNFm/sKX
-	 99Q5mjHSh9FD+9i2hc2lsBzcLmNEKMHnWoe6VnuMGAPkMBqFKUBYxnYtrNWMe4QW5U
-	 25DKhcSS6ZUd7QQu/fI2UqfJZHzVIfkqj9n2lhZ7MzmnEy9ObZmO8nr6ueKpuJxwtV
-	 e7/1DyBChj7oPDlahFGsSnDKF4H5dQl5yfUUQGuH+LkW53wr6/HuQX5yr/OkCK0y1D
-	 sbU67Op6o9JvQ==
-Date: Mon, 28 Jul 2025 11:51:42 +0100
-From: Simon Horman <horms@kernel.org>
-To: Mihai Moldovan <ionic@ionic.de>
-Cc: linux-arm-msm@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
-	Denis Kenzior <denkenz@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemb@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH v3 04/11] net: qrtr: support identical node ids
-Message-ID: <20250728105142.GZ1367887@horms.kernel.org>
-References: <cover.1753312999.git.ionic@ionic.de>
- <8fc53fad3065a9860e3f44cf8853494dd6eb6b47.1753312999.git.ionic@ionic.de>
- <20250724130836.GL1150792@horms.kernel.org>
- <a42d70aa-76b8-4034-9695-2e639e6471a2@ionic.de>
- <20250727144014.GX1367887@horms.kernel.org>
- <19b393bf-6ba3-406b-8b5b-48a60e5aa855@ionic.de>
+	b=hYYvaVnw4+raQUimNXSJFUZKhQwO2aCBoJjZvCo7LhOivn7qRo0OXO0PyU9d/Bt2E
+	 OT/JJLVvMYyhKFzkjB7oK1EPkPWdu3uQn9ufqK2+aSteVooWHiaq1xO5vBUF62iX5M
+	 1IgaBC9oM7nBL4RWDNmSRMdAplhFbo7BwC/e7n7w=
+Date: Mon, 28 Jul 2025 12:52:04 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+Cc: broonie@kernel.org, alsa-devel@alsa-project.org,
+	Vijendar.Mukunda@amd.com, Basavaraj.Hiregoudar@amd.com,
+	Sunil-kumar.Dommati@amd.com, syed.sabakareem@amd.com,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: amd: acp: Adjust pdm dmic gain using module
+ parameter
+Message-ID: <2025072814-stardom-anointer-0a62@gregkh>
+References: <20250728094243.3824450-1-venkataprasad.potturu@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,31 +61,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <19b393bf-6ba3-406b-8b5b-48a60e5aa855@ionic.de>
+In-Reply-To: <20250728094243.3824450-1-venkataprasad.potturu@amd.com>
 
-On Sun, Jul 27, 2025 at 07:33:58PM +0200, Mihai Moldovan wrote:
-> * On 7/27/25 16:40, Simon Horman wrote:
-> > I tried again with the latest head,
-> > commit 2fb2b9093c5d ("sleep_info: The synchronize_srcu() sleeps").
-> > And in that case I no longer see the 1st warning, about locking.
-> > I think this is what you saw too.
+On Mon, Jul 28, 2025 at 03:12:27PM +0530, Venkata Prasad Potturu wrote:
+> Adjust pdm dimc gain value using module param.
+> In case of regressions for any users that the new pdm_gain value is
+> too high and for additional debugging, introduce a module parameter
+> that would let them configure it.
 > 
-> Exactly! Together with impossible condition warnings, but those are actually
-> fine/intended.
-
-Yeah, I saw them too.
-I agree they are not correctness issues.
-
+> This parameter should be removed in the future:
+>  * If it's determined that the parameter is not needed, just hardcode
+>    the correct value as before
+>  * If users do end up using it to debug and report different values
+>    we should introduce a config knob that can have policy set by ucm.
 > 
-> > This seems to a regression in Smatch wrt this particular case for this
-> > code. I bisected Smatch and it looks like it was introduced in commit
-> > d0367cd8a993 ("ranges: use absolute instead implied for possibly_true/false")
-> Oh, thank you very much. I suspected that I'm just missing a special script
-> or option or even addition to Smash (given that Dan seems to have revamped
-> its locking check code in 2020), especially since it seems to be so widely
-> used in kernel development, but not a bug in the software itself.
+> Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+> ---
+>  sound/soc/amd/acp/acp-legacy-common.c | 3 ++-
+>  sound/soc/amd/acp/acp-pdm.c           | 3 ++-
+>  sound/soc/amd/acp/amd.h               | 6 +++++-
+>  3 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/sound/soc/amd/acp/acp-legacy-common.c b/sound/soc/amd/acp/acp-legacy-common.c
+> index 57982d057c3a..dd804fb95790 100644
+> --- a/sound/soc/amd/acp/acp-legacy-common.c
+> +++ b/sound/soc/amd/acp/acp-legacy-common.c
+> @@ -173,7 +173,8 @@ static void set_acp_pdm_clk(struct snd_pcm_substream *substream,
+>  	/* Enable default ACP PDM clk */
+>  	writel(PDM_CLK_FREQ_MASK, chip->base + ACP_WOV_CLK_CTRL);
+>  	pdm_ctrl = readl(chip->base + ACP_WOV_MISC_CTRL);
+> -	pdm_ctrl |= PDM_MISC_CTRL_MASK;
+> +	pdm_ctrl &= ~ACP_WOV_GAIN_CONTROL;
+> +	pdm_ctrl |= FIELD_PREP(ACP_WOV_GAIN_CONTROL, clamp(pdm_gain, 0, 3));
+>  	writel(pdm_ctrl, chip->base + ACP_WOV_MISC_CTRL);
+>  	set_acp_pdm_ring_buffer(substream, dai);
+>  }
+> diff --git a/sound/soc/amd/acp/acp-pdm.c b/sound/soc/amd/acp/acp-pdm.c
+> index 1bfc34c2aa53..ffb622a7a69a 100644
+> --- a/sound/soc/amd/acp/acp-pdm.c
+> +++ b/sound/soc/amd/acp/acp-pdm.c
+> @@ -38,7 +38,8 @@ static int acp_dmic_prepare(struct snd_pcm_substream *substream,
+>  	/* Enable default DMIC clk */
+>  	writel(PDM_CLK_FREQ_MASK, chip->base + ACP_WOV_CLK_CTRL);
+>  	dmic_ctrl = readl(chip->base + ACP_WOV_MISC_CTRL);
+> -	dmic_ctrl |= PDM_MISC_CTRL_MASK;
+> +	dmic_ctrl &= ~ACP_WOV_GAIN_CONTROL;
+> +	dmic_ctrl |= FIELD_PREP(ACP_WOV_GAIN_CONTROL, clamp(pdm_gain, 0, 3));
+>  	writel(dmic_ctrl, chip->base + ACP_WOV_MISC_CTRL);
+>  
+>  	period_bytes = frames_to_bytes(substream->runtime,
+> diff --git a/sound/soc/amd/acp/amd.h b/sound/soc/amd/acp/amd.h
+> index cb8d97122f95..f2567e06ccd3 100644
+> --- a/sound/soc/amd/acp/amd.h
+> +++ b/sound/soc/amd/acp/amd.h
+> @@ -130,7 +130,7 @@
+>  #define PDM_DMA_INTR_MASK       0x10000
+>  #define PDM_DEC_64              0x2
+>  #define PDM_CLK_FREQ_MASK       0x07
+> -#define PDM_MISC_CTRL_MASK      0x10
+> +#define ACP_WOV_GAIN_CONTROL	GENMASK(4, 3)
+>  #define PDM_ENABLE              0x01
+>  #define PDM_DISABLE             0x00
+>  #define DMA_EN_MASK             0x02
+> @@ -138,6 +138,10 @@
+>  #define PDM_TIMEOUT             1000
+>  #define ACP_REGION2_OFFSET      0x02000000
+>  
+> +static int pdm_gain = 3;
+> +module_param(pdm_gain, int, 0644);
+> +MODULE_PARM_DESC(pdm_gain, "Gain control (0-3)");
 
-Likewise, thanks for pointing out this problem.
+This is not the 1990's, please do not add new module parameters, it will
+not work for modern systems and is a horrible thing to attempt to
+support over time :(
 
+Please do this properly, with a per-device setting.
 
+thanks,
+
+greg k-h
 
