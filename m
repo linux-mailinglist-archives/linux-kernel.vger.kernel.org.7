@@ -1,148 +1,187 @@
-Return-Path: <linux-kernel+bounces-747669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A7BB136A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:31:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2D4B136BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5D83BC439
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D228D3BACA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36012673A9;
-	Mon, 28 Jul 2025 08:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D9A255F5E;
+	Mon, 28 Jul 2025 08:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz29zVDR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5C2266581;
-	Mon, 28 Jul 2025 08:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lWA+0Oth"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36CE1547F2;
+	Mon, 28 Jul 2025 08:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753691104; cv=none; b=WdCvvAgMo2NEWx8IwVUYFFK9J5h+b3pz8oL7FMJGdBDF8FxeZNnzJ7NYRYEPfEKqDPzCoZrXmdEvjI7uehfd43L//yExMgx2UvT4SakCtuN42y0NRlnP6xuOUcNShBTqELu8kSZ1h11BnkuIVt4TIXs6lWnFuJX3XMekAxIcZVI=
+	t=1753691412; cv=none; b=hm9BWNVTzHFs1oarK1ZGqH2J6olpQhgPaEVsINF1/l7T2tigVMRFQNUMR4S4YequukOgC1mTMnZMPfOE1+RBAWxPjQFyYVc7YIfabgP+o0mdCzenHNfRXnnC/PTkAOoNqtA+VyOScN0DFITLPNx6+haTePpdqcxKFK3+pCNqw4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753691104; c=relaxed/simple;
-	bh=3vcIBee/NbsvEu80GFPtvaNBMX//h7roLKyHUYZ6P1c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UszJr5q479JR7mVqs7RNQ07kz4hp/+ZPxF7w/z9lp1cSNoakOhOkVXoChojImFU7BBYnSzjlm8bmGttW4r8uQZSGgOtAR5RSaBYDBkCBtVxHxPNOhhke5j7Mc8sLgTZ7wqp8L68MuKmKrLHkyglZLnhWRNfFb4TRIefXl542euk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz29zVDR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71D1BC4CEE7;
-	Mon, 28 Jul 2025 08:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753691104;
-	bh=3vcIBee/NbsvEu80GFPtvaNBMX//h7roLKyHUYZ6P1c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mz29zVDRT8liVIK8t1ESFDAN2IRTTIukTWs75GH8BWCt2F2vEfkPVXkwiIe51qLbh
-	 w4WPMdfQfuBndExKcVFjpoOkMJCZG7WsfeluFPGwYZoDfT9j876pLJSbxji/1zNsd9
-	 U5g9pgg4K/aNFsngP3s7pZI3fZixnZ5zIvA/a1T0P+XssZBoCasqk2oR7iFWTmyB8d
-	 TS0BZQEat3oRiMwx0T2J4cnlxNxTZBufZKYaxtQIuI07SlXsFD/qy73Y/aFzqufFh+
-	 60k8+YVDowgzieP3HJgDvNj1odFWrVwaLM9Lq0XobcypLlE7gdF17NNhc5pBYy8GNi
-	 ptC54BXElc+5A==
-From: chrisl@kernel.org
-Date: Mon, 28 Jul 2025 01:24:55 -0700
-Subject: [PATCH RFC 25/25] PCI/LUO: Clean up PCI_SER_GET()
+	s=arc-20240116; t=1753691412; c=relaxed/simple;
+	bh=ePnKoScw1Zb7gO1ooVzck271XvPONNsCU5hmoIo6RSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O5ykUY+8iV2zM7Ism1a7NoNz6HAIUuhK/7APutRpc5Uy7O40x3e92bm/izFFMMNRTzKEac0TiA5PWgcfc/1RWgLWGmzD1moIwWhztA4sW6rbboyps1rXsKnWCcobj/RG9fMlI0r2v4xAidN6/4sVFueeJC8f/oC0oG9wB4TQCL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lWA+0Oth; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Dj
+	jFBCe3IwFoF7vbm3D2L+aiGAx6K4P572W2v5hfWHo=; b=lWA+0Othdq4fDJlCTO
+	YwExYRRGGQFBlRU8SRUg40XG1MPgyvo1R5o8V4R72D0rfaQvD2avfEDiSeGC9HOj
+	z/xAnLRDLf0/fKaDlHu6UDTC+zt+8mflBmU/f6r7nVv1kLEY5SXBvn98Q0Sa/po8
+	6jhXpJfMIyp12E6mcQFhTCvTk=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBn0Oy_NIdoxboRIA--.27423S2;
+	Mon, 28 Jul 2025 16:28:52 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: dmitry.baryshkov@oss.qualcomm.com,
+	heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	mripard@kernel.org,
+	naoki@radxa.com,
+	stephen@radxa.com,
+	cristian.ciocaltea@collabora.com,
+	neil.armstrong@linaro.org,
+	Laurent.pinchart@ideasonboard.com,
+	yubing.zhang@rock-chips.com,
+	krzk+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	robh@kernel.org,
+	sebastian.reichel@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v6 00/10] Add support for RK3588 DisplayPort Controller
+Date: Mon, 28 Jul 2025 16:28:25 +0800
+Message-ID: <20250728082846.3811429-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-luo-pci-v1-25-955b078dd653@kernel.org>
-References: <20250728-luo-pci-v1-0-955b078dd653@kernel.org>
-In-Reply-To: <20250728-luo-pci-v1-0-955b078dd653@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Len Brown <lenb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>, 
- Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
- Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
- Adithya Jayachandran <ajayachandra@nvidia.com>, 
- Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
- Mike Rapoport <rppt@kernel.org>, Chris Li <chrisl@kernel.org>, 
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBn0Oy_NIdoxboRIA--.27423S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZrWUZrWxJr1fJF1xJFy8Grg_yoWrZF15pa
+	yUAry5JrWUuFW2qrs2kFn7ursav3ZrA3yFgwn3J342vF12kFyUAwnI9FsxXr9rJF17AFW2
+	krnxXr17KrW7ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j4CJPUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwGYXmiHLt27ywAAsY
 
-From: David Matlack <dmatlack@google.com>
+From: Andy Yan <andy.yan@rock-chips.com>
 
-Refactor PCI_SER_GET() to be more readable by storing the pointer
-to struct pci_dev_ser in an intermediate variable and adding a helper
-function to_pci_dev_ser().
 
-Change pci_lu_adopt() to return a boolean since it is only used to check
-if a device has preserved state.
+There are two DW DPTX based DisplayPort Controller on rk3588 which
+are compliant with the DisplayPort Specification Version 1.4 with
+the following features:
 
-Opportunistically fix the formatting on the static inline prototype of
-pci_liveupdate_reclaim_resource() as well.
+* DisplayPort 1.4a
+* Main Link: 1/2/4 lanes
+* Main Link Support 1.62Gbps, 2.7Gbps, 5.4Gbps and 8.1Gbps
+* AUX channel 1Mbps
+* Single Stream Transport(SST)
+* Multistream Transport (MST)
+* Type-C support (alternate mode)
+* HDCP 2.2, HDCP 1.3
+* Supports up to 8/10 bits per color component
+* Supports RBG, YCbCr4:4:4, YCbCr4:2:2, YCbCr4:2:0
+* Pixel clock up to 594MHz
+* I2S, SPDIF audio interface
 
-No functional change intended.
+The current version of this patch series only supports basic display outputs.
+I conducted tests with DP0 in 1080p and 4K@60 YCbCr4:2:0 modes; the ALT/Type-C
+mode was tested on Rock 5B, DP1 was tested on Rock 5 ITX by Stephen and Piotr.
+HDCP and audio features remain unimplemented.
+For RK3588, it's only support SST, while in the upcoming RK3576, it can support
+MST output.
 
-Signed-off-by: David Matlack <dmatlack@google.com>
-Signed-off-by: Chris Li <chrisl@kernel.org>
----
- drivers/pci/pci.h | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 7af32edb128faef9c5e2665ca5055374f7fd30ea..d092cea96dc22cca5d3526c720cfb8b330c47683 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -1196,27 +1196,37 @@ static inline int pci_msix_write_tph_tag(struct pci_dev *pdev, unsigned int inde
- 	 PCI_CONF1_EXT_REG(reg))
- 
- #ifdef CONFIG_LIVEUPDATE
--#define PCI_SER_GET(__pci_dev, __var, __def)			\
--	(__pci_dev->dev.lu.dev_state) ?				\
--	((struct pci_dev_ser *)__pci_dev->dev.lu.dev_state)->__var : __def
--
- void pci_liveupdate_restore(struct pci_dev *dev);
- void pci_liveupdate_override_driver(struct pci_dev *dev);
--static inline struct pci_dev_ser *pci_lu_adopt(struct pci_dev *dev)
-+static inline struct pci_dev_ser *to_pci_dev_ser(struct pci_dev *dev)
-+{
-+	return dev->dev.lu.dev_state;
-+}
-+static inline bool pci_lu_adopt(struct pci_dev *dev)
- {
--	return dev->dev.lu.requested ? dev->dev.lu.dev_state : NULL;
-+	return dev->dev.lu.requested && to_pci_dev_ser(dev);
- }
- int pci_liveupdate_reclaim_resource(struct pci_dev *dev);
- #else
--#define PCI_SER_GET(__dev, __var, __def) __def
--
- static inline void pci_liveupdate_restore(struct pci_dev *dev) {}
- static inline void pci_liveupdate_override_driver(struct pci_dev *dev) {}
--static inline struct pci_dev_ser *pci_lu_adopt(struct pci_dev *dev)
-+static inline struct pci_dev_ser *to_pci_dev_ser(struct pci_dev *dev)
- {
- 	return NULL;
- }
--static inline int pci_liveupdate_reclaim_resource(
--	struct pci_dev *dev) { return -ENXIO; }
-+static inline bool pci_lu_adopt(struct pci_dev *dev)
-+{
-+	return false;
-+}
-+static inline int pci_liveupdate_reclaim_resource(struct pci_dev *dev)
-+{
-+	return -ENXIO;
-+}
- #endif
-+
-+#define PCI_SER_GET(__pci_dev, __field, __default) ({			\
-+	struct pci_dev_ser *__ser = to_pci_dev_ser(__pci_dev);		\
-+									\
-+	__ser ? __ser->__field : __default;				\
-+})
- #endif /* DRIVERS_PCI_H */
+Changes in v6:
+- Use drm_dp_vsc_sdp_supported
+- Store bpc/bpp/color format in dw_dp_bridge_state
+- Collect Reviewed-by tags
+- Link to V5: https://lore.kernel.org/linux-rockchip/20250716100440.816351-1-andyshrk@163.com/
+
+Changes in v5:
+- Use drm_dp_read_sink_count_cap instead of the private implementation.
+- First included in this version.
+- Link to V4: https://lore.kernel.org/linux-rockchip/20250619063900.700491-1-andyshrk@163.com/
+
+Changes in v4:
+- Drop unnecessary header files
+- Switch to devm_drm_bridge_alloc
+- Drop unused function
+- Add platform_set_drvdata
+- Link to V3: https://lore.kernel.org/linux-rockchip/20250403033748.245007-1-andyshrk@163.com/
+
+
+Changes in v3:
+- Rebase on drm-misc-next
+- Switch to common helpers to power up/down dp link
+- Only pass parameters to phy that should be set
+- First introduced in this version.
+- First introduced in this version.
+- Add RA620 into bridge chain.
+- Link to V2: https://lore.kernel.org/linux-rockchip/20250312104214.525242-1-andyshrk@163.com/
+
+Changes in v2:
+- Fix a character encoding issue
+- Fix compile error when build as module
+- Add phy init
+- Only use one dw_dp_link_train_set
+- inline dw_dp_phy_update_vs_emph
+- Use dp_sdp
+- Check return value of drm_modeset_lock
+- Merge code in atomic_pre_enable/mode_fixup to atomic_check
+- Return NULL if can't find a supported output format
+- Fix max_link_rate from plat_data
+- no include uapi path
+- switch to drmm_encoder_init
+- Sort in alphabetical order
+- Link to V1: https://lore.kernel.org/linux-rockchip/20250223113036.74252-1-andyshrk@163.com/
+
+Andy Yan (10):
+  dt-bindings: display: rockchip: Add schema for RK3588 DPTX Controller
+  drm/bridge: synopsys: Add DW DPTX Controller support library
+  drm/rockchip: Add RK3588 DPTX output support
+  MAINTAINERS: Add entry for DW DPTX Controller bridge
+  dt-bindings: display: simple-bridge: Add ra620 compatible
+  drm/birdge: simple-bridge: Add support for radxa ra620
+  arm64: dts: rockchip: Add DP0 for rk3588
+  arm64: dts: rockchip: Add DP1 for rk3588
+  arm64: dts: rockchip: Enable DisplayPort for rk3588s Cool Pi 4B
+  arm64: dts: rockchip: Enable DP2HDMI for ROCK 5 ITX
+
+ .../display/bridge/simple-bridge.yaml         |    1 +
+ .../display/rockchip/rockchip,dw-dp.yaml      |  150 ++
+ MAINTAINERS                                   |    8 +
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi |   30 +
+ .../arm64/boot/dts/rockchip/rk3588-extra.dtsi |   30 +
+ .../boot/dts/rockchip/rk3588-rock-5-itx.dts   |   59 +
+ .../boot/dts/rockchip/rk3588s-coolpi-4b.dts   |   37 +
+ drivers/gpu/drm/bridge/simple-bridge.c        |    5 +
+ drivers/gpu/drm/bridge/synopsys/Kconfig       |    7 +
+ drivers/gpu/drm/bridge/synopsys/Makefile      |    1 +
+ drivers/gpu/drm/bridge/synopsys/dw-dp.c       | 2094 +++++++++++++++++
+ drivers/gpu/drm/rockchip/Kconfig              |    9 +
+ drivers/gpu/drm/rockchip/Makefile             |    1 +
+ drivers/gpu/drm/rockchip/dw_dp-rockchip.c     |  150 ++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |    1 +
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h   |    1 +
+ include/drm/bridge/dw_dp.h                    |   20 +
+ 17 files changed, 2604 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,dw-dp.yaml
+ create mode 100644 drivers/gpu/drm/bridge/synopsys/dw-dp.c
+ create mode 100644 drivers/gpu/drm/rockchip/dw_dp-rockchip.c
+ create mode 100644 include/drm/bridge/dw_dp.h
 
 -- 
-2.50.1.487.gc89ff58d15-goog
+2.43.0
 
 
