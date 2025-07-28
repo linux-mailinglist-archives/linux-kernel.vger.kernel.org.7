@@ -1,231 +1,221 @@
-Return-Path: <linux-kernel+bounces-747565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355E8B13542
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 208BEB1352F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF332188D550
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BEC21711EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0C422154D;
-	Mon, 28 Jul 2025 07:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FFC223311;
+	Mon, 28 Jul 2025 06:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ujDjvBvy"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mh2uaANc"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111627404E;
-	Mon, 28 Jul 2025 07:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FCF26AF3;
+	Mon, 28 Jul 2025 06:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753686027; cv=none; b=l0pCXGaBaxXT8WwZ+mMVkktcLCGd5lZYY3p7Y5VCPq0g6J5DSBF4PqMu/XQIpJLbjXXcSlY6eG8Ce0jROCvEMGp7U4ML45RuH3tvTQfTOyex8A2SZns/jlXwHT8MWkYhrDS3lhJjpiQ/OHYMKNtPDgOw9N6qLiMTgCo5rG2iVA8=
+	t=1753685927; cv=none; b=A3V75lMZ0bft3I0OQkDpZhs5wlQGYnou7TjeE5slBXUJHdtgYs1Q1MFKMkCxTg0KbiCKB96hqGBfuNBsckf+NkSfXBGr75w9/alLqADzj6XXKq7l+YWZ238BTGELcR1f1e1+0cQSmyS9WoUFlcBQkp/73FqVldbrtjS01G5dxyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753686027; c=relaxed/simple;
-	bh=Pqzvk7wNdC1fgZEn4Fcn44FxjsmLU9AcZQxluHZxnLc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FTuI6Y1NOExwSqm4M5xpuxHIObrjlyKxudgUPjP6mdO/jDOAIsHElockLO4a+HAE2BVge9sGYKF1nR9ozHmoJZ61ufnRPpalKnlwMMDaiJG7h2Cs0lrHzxpJqfnKLuFHrTNfBpC4mgZbQlkOMIBueHDKt9w+3Bn309uf8yMlKzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ujDjvBvy; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1753686025; x=1785222025;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Pqzvk7wNdC1fgZEn4Fcn44FxjsmLU9AcZQxluHZxnLc=;
-  b=ujDjvBvy+DdN964bWKaO2c2tvxtTHUPKPbCYJQevobBW3qeoH37ARiOr
-   lVlL5F9JySAROaqOO6xrV1FytHOTWm/0vXjj0FBxSaMuztK3BEDYw6hzB
-   VTqCBA2CMQdZ81/S/93yXr9NvahOynCGWTlHccYzGsUd1r6MZ5Zt3Agpo
-   hkfhbelPJAKK9Sa/eQKSLHIhfyEKTK21IwvKaf/TcboOJYp9kIW+nF7yq
-   1rz8NFZQMiRB1zP0RtzoSFb59/BquOlCbJgjPuiIJPe8Q6XneGTalJIOQ
-   33e7FK/X0tOZ1dOtoY/zWGCZbzgwqgjK/XwVB03UuKRBZFQ6fqJ1gc19E
-   A==;
-X-CSE-ConnectionGUID: Ia+OUj9HS7KJCkW2hMR6bQ==
-X-CSE-MsgGUID: aOXMy5zaRjGrLIqDEx8WXg==
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="211919683"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Jul 2025 00:00:18 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Sun, 27 Jul 2025 23:59:43 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Sun, 27 Jul 2025 23:59:42 -0700
-Date: Mon, 28 Jul 2025 08:56:46 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-CC: "Russell King (Oracle)" <linux@armlinux.org.uk>, <andrew@lunn.ch>,
-	<hkallweit1@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <richardcochran@gmail.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 3/4] net: phy: micrel: Replace hardcoded
- pages with defines
-Message-ID: <20250728065646.c7bozpk4pxkqrswz@DEN-DL-M31836.microchip.com>
-References: <20250724200826.2662658-1-horatiu.vultur@microchip.com>
- <20250724200826.2662658-4-horatiu.vultur@microchip.com>
- <aIKbaS8ASndR7Xe_@shell.armlinux.org.uk>
- <20250725064839.psuzyuxfmyvudfka@DEN-DL-M31836.microchip.com>
- <aIRz_EvHUWSNAUVH@pengutronix.de>
+	s=arc-20240116; t=1753685927; c=relaxed/simple;
+	bh=4S2t+qE/5uPuO5jpqSVMCJS2M7xGHBGq71JIsDLV/m8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NVOnwhwBWKsX7s0Ta266UG018UJmns1ejQhgcEgkwWtMSsBgWdAq/jePUoSI672PCi+iJPFYWYj3PL6CMgMDTV6abRy3+/JfUcc5AX2KkA4/hxszSOEJpZQAP8n5YtU/+QIlzS9cCUauySVmYyEWv1GDg//o3w9xxRCew0h9KKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mh2uaANc; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so5086921a12.0;
+        Sun, 27 Jul 2025 23:58:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753685925; x=1754290725; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N5cFTI0lWvo1waLhWHtuy0Wvvax1ffCK1XjtpE5A23Y=;
+        b=mh2uaANc8YsBsZQ5nI6sjLjYddMh2iMjQXSsyh8MQXfxB/cKqNQII+Kmp/btR3lc6D
+         EtBjDTSvowNSfO7dlI1gW1XYhLesni06meSMUU5TUiP8y14WERsiksrnB079h+YLPE72
+         ZGl79vS1bE+eRWPdaFT7qRPXkF3zeVSMAO8jKSX3NCylYFZlOZC61QrtIOrIAjUDt4/v
+         ncvZX/5ejpBhch/WThN6pj/PjeNkLeg7Qu9//w12gcUmLecjqvg+CsWd724uETwktxYU
+         17FK/qaMz9whdDkjlYbHxRWHXSTMDRWEdUI3U4kr6O3I0RV5Kv0QAXSKBn9N/XFZml9Q
+         dFcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753685925; x=1754290725;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N5cFTI0lWvo1waLhWHtuy0Wvvax1ffCK1XjtpE5A23Y=;
+        b=Gv6XkFxwnR9k2PrUzlgwN6O+PxseJsB21Rvq6PvpuQG/urIsIlrjP1EULTtj3Tjbyg
+         9ycnDQ5kdru8xxs3lF7SvWvNtVfBxsmNaMyzXO+CZMDRwXYUMXLASMkzWaLI1XrvZabH
+         bYvWfdCXFlEHyAuouFXk6uvgPP+GQiWNqXbkALHQ/E3M9LNzu7aqBl8D7ztbKf1CLVUt
+         JSgBCyC3OqHkoNoyeeuLM6sJgaXG0JRQU1xrypVWto4281qig9mxGt6guo+iOubFC4eu
+         GJz8VgfWeGTX5fz8Jw+6n9IFE6OS5Hbru+4SeLOM4ndBAx4XIZ3zIrpD+lkJK+rOXhxO
+         JD0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUp+6p2HIHCLGU7tflFF84XRyRF3AxKuUPfe8Vh8VUa20G8RAFKtT8gh/ZCm+NCKm6i9WiliMzotaO/@vger.kernel.org, AJvYcCVb5g6m2cbl6bx3cRH8lEzgYQKpQQAw2LDef/4CkWKW6+40dBYSz/Pn3xqrUtq5/mG1aQrfj4koeSPV7w==@vger.kernel.org, AJvYcCWCXCZZd960CYOulE9ZOX8Q5Q/hpWRb1pF06axzm6APBCV6J76bBQyKoxhBQLAgllGpvJYzJFHfeOzjsSAd@vger.kernel.org, AJvYcCXBhzRlvvUxeeoMMCooMReHa61RZcGXFgluQ9coBYc82PFlwXW93GLfSQiW5uhEP31DHUSKCrHCQ6iY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsBi8j6f7j2742s9J7rgMKr6bI5v4C1RIG2wdLq+bZfisJTaw6
+	FORLeQ8vyyQWVev6dmeGAMgM78YMe+26m0lSpLYMBGhS/XXwBWJTlmZscsKe8Q==
+X-Gm-Gg: ASbGnctHWYlEG4mP57jljTQGnYrEUfpp7+yDb5aQUaspdMb0a2qvgUUdjC33uw4LJYj
+	zMpILCL7ZWaEHnzA+d4K+Y7SMZQNUGwgd06Ko+w+lfrV5stUy/5hglDNrQi00a6v0QVJk9GqvmB
+	8znQmTB6Oa6XIVu0hDGq6xozocrtMuDZfR9tImIPbz+K8ElZ/ikU03WRscuL1/rk787YK+lOWKa
+	0wHzVdUbWpkjSmR2gQXMHB2HjxpPpaDMSRNbBE35el6tUchkWi6VZVmP6L/FOLV0B7DDi9J/4Z8
+	xNwGs7y+LPHU383g55ptLotBmvLIIPkI7AHBJKC2zkI/P6d8xJKc5YRPkNXFDdNV6u2671YwHbX
+	W5xYH1s2d9SvoRRjx1qMJthuyymWq+E2SYPgVaQ==
+X-Google-Smtp-Source: AGHT+IHgfOPWQBuZl5oOkQDaDWLh6wqR5YW4Al2wbx1wv9gBtekJsIggGTh7yezzG7sQujt7lN8pEg==
+X-Received: by 2002:a17:90b:5623:b0:31a:9004:899d with SMTP id 98e67ed59e1d1-31e779fe9b7mr18874964a91.18.1753685925265;
+        Sun, 27 Jul 2025 23:58:45 -0700 (PDT)
+Received: from localhost.localdomain ([171.254.200.159])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31eff8b20d7sm1050375a91.38.2025.07.27.23.58.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 23:58:44 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: lee@kernel.org
+Cc: pavel@kernel.org,
+	rdunlap@infradead.org,
+	christophe.jaillet@wanadoo.fr,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	corbet@lwn.net,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Nam Tran <trannamatk@gmail.com>
+Subject: [PATCH v12 0/4] leds: add new LED driver for TI LP5812
+Date: Mon, 28 Jul 2025 13:58:10 +0700
+Message-Id: <20250728065814.120769-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <aIRz_EvHUWSNAUVH@pengutronix.de>
+Content-Transfer-Encoding: 8bit
 
-The 07/26/2025 08:21, Oleksij Rempel wrote:
+This patch series adds initial support for the TI LP5812,
+a 4x3 matrix RGB LED driver with autonomous engine control.
+This version provides a minimal, clean implementation focused
+on core functionality only. The goal is to upstream a solid
+foundation, with the expectation that additional features can
+be added incrementally in future patches.
 
-Hi,
+The driver integrates with the LED multicolor framework and
+supports a set of basic sysfs interfaces for LED control and
+chip management.
 
-> 
-> On Fri, Jul 25, 2025 at 08:48:39AM +0200, Horatiu Vultur wrote:
-> > The 07/24/2025 21:45, Russell King (Oracle) wrote:
-> > >
-> > > On Thu, Jul 24, 2025 at 10:08:25PM +0200, Horatiu Vultur wrote:
-> > > > diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-> > > > index b04c471c11a4a..d20f028106b7d 100644
-> > > > --- a/drivers/net/phy/micrel.c
-> > > > +++ b/drivers/net/phy/micrel.c
-> > > > @@ -2788,6 +2788,13 @@ static int ksz886x_cable_test_get_status(struct phy_device *phydev,
-> > > >       return ret;
-> > e >  }
-> > > >
-> > > > +#define LAN_EXT_PAGE_0                                       0
-> > > > +#define LAN_EXT_PAGE_1                                       1
-> > > > +#define LAN_EXT_PAGE_2                                       2
-> > > > +#define LAN_EXT_PAGE_4                                       4
-> > > > +#define LAN_EXT_PAGE_5                                       5
-> > > > +#define LAN_EXT_PAGE_31                                      31
-> >
-> > Hi Russell,
-> >
-> > >
-> > > I don't see the point of this change. This is almost as bad as:
-> > >
-> > > #define ZERO 0
-> > > #define ONE 1
-> > > #define TWO 2
-> > > #define THREE 3
-> > > ...
-> > > #define ONE_HUNDRED_AND_FIFTY_FIVE 155
-> > > etc
-> > >
-> > > It doesn't give us any new information, and just adds extra clutter,
-> > > making the code less readable.
-> > >
-> > > The point of using register definitions is to describe the purpose
-> > > of the number, giving the number a meaning, not to just hide the
-> > > number because we don't want to see such things in C code.
-> > >
-> > > I'm sorry if you were asked to do this in v1, but I think if you
-> > > were asked to do it, it would've been assuming that the definitions
-> > > could be more meaningful.
-> >
-> > You are right, I have been ask to change this in version 1:
-> > https://lkml.org/lkml/2025/7/23/672
-> >
-> > I have mentioned it that the extended pages don't have any meaningfull
-> > names also in the register description document. But Oleksij says he
-> > will be fine with xxxx_EXT_PAGE_0, so maybe I have missunderstood Oleksij
-> 
-> Hi,
-> 
-> I requested these defines because it's much easier to search for a specific
-> define than for a raw number - especially when debugging or comparing with
-> datasheets. Even if the names are generic, it helps track down usage when
-> documentation becomes available or evolves.
-> 
-> To improve the situation, I reviewed the LAN8814 documentation and observed how
-> the existing driver and patches (for LAN8842) use these extended pages.
-> Based on that, I suggest following names:
-> 
-> Documented Extended Pages:
-> 
-> These are described in the LAN8814 documentation:
-> 
-> /**
->  * LAN8814_PAGE_COMMON_REGS - Selects Extended Page 4.
->  *
->  * This page contains device-common registers that affect the entire chip.
->  * It includes controls for chip-level resets, strap status, GPIO,
->  * QSGMII, the shared 1588 PTP block, and the PVT monitor.
->  */
-> #define LAN8814_PAGE_COMMON_REGS 4
-> 
-> /**
->  * LAN8814_PAGE_PORT_REGS - Selects Extended Page 5.
->  *
->  * This page contains port-specific registers that must be accessed
->  * on a per-port basis. It includes controls for port LEDs, QSGMII PCS,
->  * rate adaptation FIFOs, and the per-port 1588 TSU block.
->  */
-> #define LAN8814_PAGE_PORT_REGS 5
-> 
-> Undocumented Pages (based on driver and patch analysis):
-> 
-> These pages are not officially documented, but their use is visible in the
-> driver and LAN8842 patch:
-> 
-> /**
->  * LAN8814_PAGE_AFE_PMA - Selects Extended Page 1.
->  *
->  * This page appears to control the Analog Front-End (AFE) and Physical
->  * Medium Attachment (PMA) layers. It is used to access registers like
->  * LAN8814_PD_CONTROLS and LAN8814_LINK_QUALITY.
->  */
-> #define LAN8814_PAGE_AFE_PMA 1
-> 
-> /**
->  * LAN8814_PAGE_PCS_DIGITAL - Selects Extended Page 2.
->  *
->  * This page seems dedicated to the Physical Coding Sublayer (PCS) and other
->  * digital logic. It is used for MDI-X alignment (LAN8814_ALIGN_SWAP) and EEE
->  * state (LAN8814_EEE_STATE) in the LAN8814, and is repurposed for statistics
->  * and self-test counters in the LAN8842.
->  */
-> #define LAN8814_PAGE_PCS_DIGITAL 2
-> 
-> /**
->  * LAN8814_PAGE_SYSTEM_CTRL - Selects Extended Page 31.
->  *
->  * This page appears to hold fundamental system or global controls. In the
->  * driver, it is used by the related LAN8804 to access the
->  * LAN8814_CLOCK_MANAGEMENT register.
->  */
-> #define LAN8814_PAGE_SYSTEM_CTRL 31
-> 
-> While these names are not official, they still give useful hints and make the
-> code more readable. I doubt the LAN8842 has an identical layout, but it looks
-> similar enough to reuse these patterns for now.
+Signed-off-by: Nam Tran <trannamatk@gmail.com>
+---
+Changes in v12:
+- Reordered helper functions above lp5812_probe() for better structure.
+- Clarified DT-only support by removing fallback paths and i2c_device_id table.
+- Directly assign platform_data to the correct pointer instead of relying on
+  string comparisons (LP5812_SC_LED, LP5812_MC_LED) and container_of() casting.
+  This simplifies the logic and avoids unnecessary type checks.
+- Removed redundant messages.
+- Update ABI documentation to reflect reduced feature set.
+- Link to v11: https://lore.kernel.org/lkml/20250714172355.84609-1-trannamatk@gmail.com/
 
-I think the name of the defines matches pretty good with the
-functionality of those pages.
+Changes in v11:
+- Drop autonomous animation and other advanced features; reduce driver to core functionality only.
+- Simplify LED parsing to use a unified path.
+- Clean up and streamline code
+  - Use alphabetically ordered includes
+  - Remove redundant comments
+  - Fix style issues (e.g., comment capitalization, code placement)
+- Update ABI documentation to reflect reduced feature set.
+- Link to v10: https://lore.kernel.org/lkml/20250618183205.113344-1-trannamatk@gmail.com/
 
-> 
-> Are there any plans to make the LAN8842 register documentation public? That
-> would help clarify this further and improve upstream support.
+Changes in v10:
+- Address feedback on v9 regarding missing Reviewed-by tag
+- Added explanation: binding structure changed significantly to integrate
+  with the standard leds-class-multicolor.yaml schema and support multi-led@
+  nodes with nested led@ subnodes. This change introduced a new patternProperties
+  hierarchy and removed the previous flat led@ layout used in the earlier versions.
+  So the Reviewed-by tag was dropped out of caution.
+- Address binding document feedback
+  - Use consistent quotes
+  - Replace 'max-cur' with the standard 'led-max-microamp'
+  - Remove 'led-cur' property
+  - Fix mixed indentation
+- Updated core driver to align with the updated binding schema.
+- Address core driver feedback
+  - Use for_each_available_child_of_node_scoped() to simplify the code
+  - Add a return checks for lp5812_write() and lp5812_read()
+  - Remove unneeded trailing commas
+  - Fix unsafe usage of stack-allocated strings
+- Link to v9: https://lore.kernel.org/lkml/20250617154020.7785-1-trannamatk@gmail.com/
 
-I don't know exactly but I have started to ask around when and if they will
-make the lan8842 register description public.
+Changes in v9:
+- Move driver back to drivers/leds/rgb/
+- Integrate with LED multicolor framework
+- Refactor and simplify custom sysfs handling
+- Extend Device Tree binding to support multi-led@ nodes using leds-class-multicolor.yaml
+- Update documentation to reflect the updated sysfs.
+- Link to v8: https://lore.kernel.org/lkml/20250427082447.138359-1-trannamatk@gmail.com/
 
-> 
-> Best regards,
-> Oleksij
-> --
-> Pengutronix e.K.                           |                             |
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Changes in v8:
+- Move driver to drivers/auxdisplay/ instead of drivers/leds/.
+- Rename files from leds-lp5812.c/.h to lp5812.c/.h.
+- Move ti,lp5812.yaml binding to auxdisplay/ directory,
+  and update the title and $id to match new path.
+- No functional changes to the binding itself (keep Reviewed-by).
+- Update commit messages and patch titles to reflect the move.
+- Link to v7: https://lore.kernel.org/linux-leds/20250422190121.46839-1-trannamatk@gmail.com/
 
+Changes in v7:
+- Mark `chip_leds_map` as const.
+- Use consistent `ret` initialization.
+- Simplify the function `set_mix_sel_led()`.
+- Refactor `dev_config_show()` and `led_auto_animation_show()` to avoid temp buffer, malloc/free.
+- Simplify the code and ensure consistent use of mutex lock/unlock in show/store functions.
+- Remove `total_leds` and `total_aeu`.
+- Link to v6: https://lore.kernel.org/linux-leds/20250419184333.56617-1-trannamatk@gmail.com/
+
+Changes in v6:
+- Add `vcc-supply` property to describe the LP5812 power supply.
+- Remove `chan-name` property and entire LED subnodes, as they are not needed.
+- Update LP5812 LED driver node to Raspberry Pi 4 B Device Tree, based on updated binding.
+- Link to v5: https://lore.kernel.org/linux-leds/20250414145742.35713-1-trannamatk@gmail.com/
+
+Changes in v5:
+- Rebase on v6.15-rc2
+- Removed unused functions (lp5812_dump_regs, lp5812_update_bit).
+- Address Krzysztof's review comments
+- Link to v4: https://lore.kernel.org/linux-leds/20250405183246.198568-1-trannamatk@gmail.com/
+---
+
+Nam Tran (4):
+  dt-bindings: leds: add TI/National Semiconductor LP5812 LED Driver
+  leds: add basic support for TI/National Semiconductor LP5812 LED
+    Driver
+  docs: ABI: Document LP5812 LED sysfs interfaces
+  docs: leds: Document TI LP5812 LED driver
+
+ .../ABI/testing/sysfs-bus-i2c-devices-lp5812  |   32 +
+ .../ABI/testing/sysfs-class-led-lp5812        |   32 +
+ .../devicetree/bindings/leds/ti,lp5812.yaml   |  229 ++++
+ Documentation/leds/index.rst                  |    1 +
+ Documentation/leds/leds-lp5812.rst            |   46 +
+ MAINTAINERS                                   |   13 +
+ drivers/leds/rgb/Kconfig                      |   13 +
+ drivers/leds/rgb/Makefile                     |    1 +
+ drivers/leds/rgb/leds-lp5812.c                | 1086 +++++++++++++++++
+ drivers/leds/rgb/leds-lp5812.h                |  164 +++
+ 10 files changed, 1617 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-lp5812
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-lp5812
+ create mode 100644 Documentation/devicetree/bindings/leds/ti,lp5812.yaml
+ create mode 100644 Documentation/leds/leds-lp5812.rst
+ create mode 100644 drivers/leds/rgb/leds-lp5812.c
+ create mode 100644 drivers/leds/rgb/leds-lp5812.h
+
+
+base-commit: f09079bd04a924c72d555cd97942d5f8d7eca98c
 -- 
-/Horatiu
+2.25.1
+
 
