@@ -1,83 +1,75 @@
-Return-Path: <linux-kernel+bounces-747507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED4CB1349F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:06:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB8AB134A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6502A3B8791
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:05:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDAFE7A9DEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14A822068F;
-	Mon, 28 Jul 2025 06:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBEC2206B2;
+	Mon, 28 Jul 2025 06:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="UDjtvuWl";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="oh9g3DYI"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jx5NMleA";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="szmbmlG2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF11319F40A;
-	Mon, 28 Jul 2025 06:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F42821CC44
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753682769; cv=none; b=NyM9tG7JifTwwlav6COG97oLUgKmlACrUQx/aX74MQUAZe2dCfP4Pyf/3S7cZnMzPZfAtkccZnDcmk6qKh+gDLpmw0vR31w9INcUPkJXPxMi/ZW0aOa3xoPuQepnGPypOoltpImuwP0YgtJH/Yzw9aK6GrLcDAJQLlErmZeKiDQ=
+	t=1753682785; cv=none; b=fu2yLjrQe2MQOEb5RiYx6HtMOyJw0FreKik9Mk525U23dt4BBrwhQU8+V+tM7orckxyTgGUMEBsyCJSHFiDPvop+mqIbXqi56t90vxYndDKgVuh+Sv+JPKOL/SOJFyGgtJ9y+VGtNdilthbnNa/YnJKkBTuNgbdzcUsuA3+EYoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753682769; c=relaxed/simple;
-	bh=6vTjO/cynC+dj+pDFDq/WIqqZaida7ljLfk9SDTISGA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TmRA7VxXU0KdgRW9UaIv4szZ+tP3R/bYp3PqHGWq159MdeCxP9W1oUxQx4C94LSSTH1j5S/OvX/7pvDIdcVkyR2pkOMMs9OCmSwbA7q9eFtz4oHq/aurP9fubHwUY9LqBL4XuVYD6nqjapOYkdkseJEANxV2+7JOdrqGeG3Xg60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=UDjtvuWl; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=oh9g3DYI reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1753682764; x=1785218764;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=JjSYGmuLm2Hp4MqcZuZg1hPjsmb4clQ4mOoZCeNonbs=;
-  b=UDjtvuWlFRK6C66qs1CbVKVnyxuy3GFEFQRRySKQKFAfQT5PlIFuSOlL
-   Q3RVUdRJqX6Uz5fGp1OMruVlNezuIZLgHB6yAzHGjoGrRrPGM/9kxqF/B
-   uqRRPCoP7eXGuLfggkgKhERinI9bIgrkgrLRlygYN1zQZXanNJZzYV4fd
-   cnvv2jEpb/Cb6M2R96AzyvQULhH/wX0vHL0oWIQ1bRKVvZpfEAiPDnLQR
-   NpJK4AqGnS9QLbPy56GST5l1/89ihkDLdhXZFObb8mfMTkPyrp3uXcY3a
-   FiNoFmciF5A+LgzjmxLECrhDLsX8J7eXu2tBQTjWd0DhGUk3rfffDvUDJ
-   w==;
-X-CSE-ConnectionGUID: LuVdxQooQWywzzukvPuoDg==
-X-CSE-MsgGUID: tSUhUxs7SjGmYTS1cQrlpA==
-X-IronPort-AV: E=Sophos;i="6.16,339,1744063200"; 
-   d="scan'208";a="45440332"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 28 Jul 2025 08:05:51 +0200
-X-CheckPoint: {68871340-A-BB1FFBB0-EB2CC75E}
-X-MAIL-CPID: 154A4088696352CA20E2E8C7001DE7E1_2
-X-Control-Analysis: str=0001.0A002106.6887134A.008B,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A938E16568B;
-	Mon, 28 Jul 2025 08:05:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1753682747;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=JjSYGmuLm2Hp4MqcZuZg1hPjsmb4clQ4mOoZCeNonbs=;
-	b=oh9g3DYI0g2Ihh111neIBiKYeOBcsinYlR9XMSILJwIObcOmA5eB3dYyvC8wwLQxrDbq5q
-	TDue0UOUfjc6qvBGVcpfGQgRoOaUUuApM6qp8u3XV0kbAO2WWKa/Ojo1jsb5kvPSaGyTZ3
-	FqEyJ8MZSkrwvEnl8RTD+2BwN/dKWwhzXWOKWJ5TNOi/onxB89OGjv/hZg0yeZtHolvYXD
-	Rm3GkSeNmxHLodTJx4tZ9b9IJvZ2tLmKuSV7Y+bUeJMOUTYdByPimye8d5m/OL0u9VR9sc
-	7jW5b8QXdC8A2WhFUr0LOs9IlmSmltBoUsvoUGHO6adfBJxN35gDfR9m6C3v0g==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/1] gpio: stmpe: Allow to compile as a module
-Date: Mon, 28 Jul 2025 08:05:43 +0200
-Message-ID: <20250728060544.18169-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1753682785; c=relaxed/simple;
+	bh=/MOGhL1naZv0C+l6p3luEogLWWM+KwheHTNHnT3XDaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fkZpyDhPgtilrga+ykz/wgB9wlPkbEnsE+kyBHZZu56VSyI57vTRpKq0vozrxguwzTnC0sSYWpLThggUvoYrl9qwSxBdTp+MzarJJgV2/TDk5pEAl4a5dOb7RubBozWsoUoNLwk5I81QwQghaeeuvq+tSjZqHPVwBemMk3f0A0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jx5NMleA; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=szmbmlG2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 96ED41F7FD;
+	Mon, 28 Jul 2025 06:06:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1753682776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=3n8KTJ9XQxHiiQiPEZNY8Dlf+2L80OyLJ/0a+7zM3BM=;
+	b=jx5NMleALgYxKjWMjCvWq1BNj7/qQ10JXpksYyiZ7Tl0A/1kqtGXvt1OEIPwCAQ5fm2agJ
+	KLpwgxV8s896L7rsMocR9bl5XYXeoMYZwfbAZyhDe/8Vk0TnVPQGjtRoOrkX4i8mrMOeyP
+	7z2SekU2GIuO8L04TG7iXQNvADapHXs=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1753682775; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=3n8KTJ9XQxHiiQiPEZNY8Dlf+2L80OyLJ/0a+7zM3BM=;
+	b=szmbmlG2MUPu/Jag4zu2tgYUm+uPmEGYHFBfkakCspELZQFmIQqspbxRHsvFqJkmrYjuPL
+	oiVQRhs59yFMpkJRA4olyonL8NZm3U9Y+kHWktz2KMw0tL7+Gwfoi4TjW3Q+/1RAbx6VGb
+	UcRRacw/OPqi4Xu2DFrL4af+m7OfVCc=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E0251368A;
+	Mon, 28 Jul 2025 06:06:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Y31tGVcTh2iYcAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 28 Jul 2025 06:06:15 +0000
+From: Juergen Gross <jgross@suse.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	sstabellini@kernel.org
+Subject: [GIT PULL] xen: branch for v6.17-rc1
+Date: Mon, 28 Jul 2025 08:06:14 +0200
+Message-ID: <20250728060614.4875-1-jgross@suse.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,74 +78,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
-Add the necessary boilerplate to also make this driver modular.
-Keep the subsys_initcall to not change registration order for built-in.
-Also add OF match table for module autoloading.
+Linus,
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v2:
-* Do not touch subsys_initcall
-* Add module_exit instead
-* Adjust commit message
+Please git pull the following tag:
 
- drivers/gpio/Kconfig      |  2 +-
- drivers/gpio/gpio-stmpe.c | 20 ++++++++++++++++++--
- 2 files changed, 19 insertions(+), 3 deletions(-)
+ git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-6.17-rc1-tag
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 500d839f65ee8..0621832d045fa 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1559,7 +1559,7 @@ config GPIO_SL28CPLD
- 	  called gpio-sl28cpld.
- 
- config GPIO_STMPE
--	bool "STMPE GPIOs"
-+	tristate "STMPE GPIOs"
- 	depends on MFD_STMPE
- 	depends on OF_GPIO
- 	select GPIOLIB_IRQCHIP
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 0a270156e0bea..97d6c4f98eaf7 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -534,10 +534,16 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
- 	return devm_gpiochip_add_data(dev, &stmpe_gpio->chip, stmpe_gpio);
- }
- 
-+static const struct of_device_id stmpe_gpio_of_matches[] = {
-+	{ .compatible = "st,stmpe-gpio", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, stmpe_gpio_of_matches);
-+
- static struct platform_driver stmpe_gpio_driver = {
- 	.driver = {
--		.suppress_bind_attrs	= true,
--		.name			= "stmpe-gpio",
-+		.name = "stmpe-gpio",
-+		.of_match_table = stmpe_gpio_of_matches,
- 	},
- 	.probe		= stmpe_gpio_probe,
- };
-@@ -547,3 +553,13 @@ static int __init stmpe_gpio_init(void)
- 	return platform_driver_register(&stmpe_gpio_driver);
- }
- subsys_initcall(stmpe_gpio_init);
-+
-+static void __exit stmpe_gpio_exit(void)
-+{
-+	platform_driver_unregister(&stmpe_gpio_driver);
-+}
-+module_exit(stmpe_gpio_exit);
-+
-+MODULE_DESCRIPTION("STMPE expander GPIO");
-+MODULE_AUTHOR("Rabin Vincent <rabin.vincent@stericsson.com>");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
+xen: branch for v6.17-rc1
 
+It contains the following patches:
+
+- A fix for a UAF in the xen gntdev-dmabuf driver
+- A fix in the xen netfront driver avoiding spurious interrupts
+- A fix in the gntdev driver avoiding a large stack allocation
+- A cleanup removing some dead code
+- A build warning fix
+- A cleanup of the sysfs code in the xen-pciback driver
+
+Thanks.
+
+Juergen
+
+ drivers/net/xen-netfront.c         |  5 ---
+ drivers/xen/gntdev-common.h        |  4 +++
+ drivers/xen/gntdev-dmabuf.c        | 28 ++++++---------
+ drivers/xen/gntdev.c               | 71 +++++++++++++++++++++++++++-----------
+ drivers/xen/manage.c               |  6 ----
+ drivers/xen/time.c                 |  8 -----
+ drivers/xen/xen-pciback/pci_stub.c | 12 +++----
+ drivers/xen/xenbus/xenbus_client.c |  2 ++
+ drivers/xen/xenbus/xenbus_xs.c     | 17 ---------
+ include/xen/xen-ops.h              |  2 --
+ include/xen/xenbus.h               |  2 --
+ 11 files changed, 72 insertions(+), 85 deletions(-)
+
+Al Viro (1):
+      xen: fix UAF in dmabuf_exp_from_pages()
+
+Anthoine Bourgeois (1):
+      xen/netfront: Fix TX response spurious interrupts
+
+Dr. David Alan Gilbert (1):
+      xen: Remove some deadcode (x)
+
+Juergen Gross (1):
+      xen/gntdev: remove struct gntdev_copy_batch from stack
+
+Peng Jiang (1):
+      xen/xenbus: fix W=1 build warning in xenbus_va_dev_error function
+
+Ryan Chung (1):
+      xen-pciback: Replace scnprintf() with sysfs_emit_at()
 
