@@ -1,264 +1,1108 @@
-Return-Path: <linux-kernel+bounces-747866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8444B13946
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:53:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABF9B13949
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 408993B8815
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:52:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBE23B8C2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA038254876;
-	Mon, 28 Jul 2025 10:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958C624EA80;
+	Mon, 28 Jul 2025 10:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jFOaMG2p";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="X5+k2/9k"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MlLPVjwz"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C4C22F74B;
-	Mon, 28 Jul 2025 10:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753699986; cv=fail; b=kiUALfgs2E50VCBRuC/ZdTrfzmu8hz2aw7BODvp4R2f4s44PXYBz5rwkz3G5koO3ZM5mthRLKRiNKv7qKEw7wIlCpuVxBHuB4N01e1d087hlyyvARZ4amvnryox+SyH/QFjLvOulRUp2DtyT75Pl5I0hdwY6OAXs4dQIbQ6TquI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753699986; c=relaxed/simple;
-	bh=xhyQ1bUz1NkcfPu0xa0Yo6+FX2cY1Po9NBOK5ZNNziU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=p6UFhMcahqTZ4u8uCUT771qtkbGN768YIjUozV+XrGo868NhzcLNeDQ7QCIoy5CKxF8QzHLl4MRFvznTvhf28e+L4PJQ/vYvJbhXmLfm1MZpCzBeTkHAHlYe5r/n+oegUMHVmuJputxjBGghwXt/qSl9hzM2WWuaBs3M96uDPrM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=jFOaMG2p; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=X5+k2/9k; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56S7g18a015299;
-	Mon, 28 Jul 2025 10:52:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=2Wul1zJ6wPku1hDH7c
-	TrHB8oNvIQvytr4LWtcaHLIr8=; b=jFOaMG2p7LzKY34k6Qx892vbldx1cjeQ4Q
-	Yam0Q7sa9FSo5rpu7jzMKnlspernPPkoi1+9DP8zrWnTkXdn67PCZ3JgfR7P+3V9
-	GwNdRaBrHyabML88l9/P/o8z+V0iynYsWj1I0WaB/xtphVqzrYdtO5bgYGuPZAD3
-	e4JS2wCgq9qNcuJzXvUw4NonP1egKxIV5WCOFVLMV91PUqSVuos/aPsH1G0usd3w
-	RtQf8TEf5lYhYaveGaAV38HWf+qM899iGl/Nk75dDcyRXnB6cqDZ03IcuaVGZ0m3
-	mS2xEypTsy3Knjf/KXyBKnfdYgleEDce2jqzESU6j6JN85NFXM8w==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 484q4yaxhy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 10:52:56 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56SAGPmK010491;
-	Mon, 28 Jul 2025 10:52:56 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2063.outbound.protection.outlook.com [40.107.94.63])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 484nf85099-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 10:52:55 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XzFAeDnc0w/iyKe8k7IXqnHfggXK3iX9BpMRfX+uoHnSDBZVwsExHCWjI352qOebbKH8zcGNgFmmV0r4rEl2r/TrEtQlM7PEDKwCLvsVNWY0aS1YuINaW6NaPIRf7iTchRUDzghVCNE1BC2UqhyoAK1wlgz2EedG2n1/+JVokz0uyRqr2Gp/BvFjBB5siejQ7KNNooRQ+X2Mt2b2E9Cu4JyFMdr0F89zHNP22GpBlyP2A6Ynv2dAVydrCx47tbTlF/joiHdsML8J82IZKy4YcFy/5osLXyoblh6vd/u6XGM6PFwDSrvbLOz0p1ExY6LP5IeFhu9VDeYpVCudqR6paw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2Wul1zJ6wPku1hDH7cTrHB8oNvIQvytr4LWtcaHLIr8=;
- b=SQ1Md5i03W6wGDUjkY2lQ0xoogTO1H79l6PFUefBIvZeMFx50aXQSyc6hyjzrIbLlaInrnbjWn316/e75u2qYMARPdMF8i4UkuYQonmPJ2NvJel/kmsfnssLhvwDBViq9sRfczeYFCJLckK0tMR5rn2nBV2AoHJBFpl4FVi0O7+JGmECITxWBbOpIPnCD1HtNKB4Z1a7fjstrT2dXQxi3KbErMjJ06gCcCVSuFR10ELdjx3rkCunbrbraaNe7lH43Yg+Cf9DSfsVfp2gg3HQyfJFCi0vlnS1W/3oeWJiXl+1Tfnhbph8H4901zQYdBEzssCxRD9xsz1wO1HoBNPY4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303D124DCED
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753700016; cv=none; b=JEXqRd2HCF0jVZ2qfRKWROYm0dn3bvh3p305y0yxEXcyZ9fhUOQa4eQ3ruWkGMS8kC1Q1ZiDOQylOBpzFc9iJBgYY16ey4/pE0rLT0oaGC31vvlarvbSya9+PoHObAHalbBQbTDKzaSN2OGpnygVkvkPbqNWto3n/J+zhfaddEs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753700016; c=relaxed/simple;
+	bh=m8eCXO3L+8RijsrHYqj+UEAgze044qzMaTyUrpjUTcM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jTJK/RFQEjbcFpsLrm598FnWtTuAwf8HmS/u1toecwCiJ+7mSrdKZXgM/MYsen6chE4q7HWHxim7TGzPrhCTqUtmqRY5FV9Xm3KfX3VH866CP4/UfJid2MnAIQFoEnhunwz0MT8Z0/LtU+2WwaZeuZyn51bQmH/Z9J2KyVuGz/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MlLPVjwz; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55a4befb8ccso4498758e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 03:53:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Wul1zJ6wPku1hDH7cTrHB8oNvIQvytr4LWtcaHLIr8=;
- b=X5+k2/9k8TsEzr2rKv/Dqrw1TmYUqfie7E/5o9/8/W0aLZ7W00pLVTl7v/WdM3GmS17L0c5U5Yq+58Pr1gAjlkxKyJMg5amLtwrGD4LYIyNf1lLqsPz95f5UruEzuvahK2XGWTRZAjGTmlhwLxTyr5CGhGdIq+spF2qbbwt8eNk=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SJ0PR10MB5550.namprd10.prod.outlook.com (2603:10b6:a03:3d3::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Mon, 28 Jul
- 2025 10:52:52 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8964.025; Mon, 28 Jul 2025
- 10:52:52 +0000
-Date: Mon, 28 Jul 2025 11:52:47 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Greg KH <greg@kroah.com>
-Cc: Sasha Levin <sashal@kernel.org>, corbet@lwn.net, linux-doc@vger.kernel.org,
-        workflows@vger.kernel.org, josh@joshtriplett.org, kees@kernel.org,
-        konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
-References: <20250727195802.2222764-1-sashal@kernel.org>
- <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
- <2025072854-earthen-velcro-8b32@gregkh>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025072854-earthen-velcro-8b32@gregkh>
-X-ClientProxiedBy: MM0P280CA0019.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:a::11) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=chromium.org; s=google; t=1753700012; x=1754304812; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xbEcANya7x8dKqNJP5/IXrYIzyujIU66YYTF0gljpjs=;
+        b=MlLPVjwzNWE1Iy1UKYfHBo/ZGJbfMiDftiI/xLZjBr58jE6TNTX1Jcr0+pP4iQiVIQ
+         GgItA/khV/wBzIm/FY9UoRLgWIDIRR0MjxE6rL1OH0UwCTU7YzNloTIlytD8cvNP4/0a
+         QEuhDc5cJqer8d8tTvxXDtDP/LhY6mugbTUmM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753700012; x=1754304812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xbEcANya7x8dKqNJP5/IXrYIzyujIU66YYTF0gljpjs=;
+        b=HfGwnWEXj5i0u2q18T5Dm2JdV3nR4dhiAFSbbeD2/MJkshvz8+Rd/vFDP2OI3NIYV9
+         aj7wG2e9wqmDR0gQ4V42TZI6oePuYAuD8Wf5J2XAapHzSnnZCb75+DUrFfAFEhGXdSuj
+         7oHvfJPY5Ux975fkTLxwyZOr2K/KhmWGgpm11A06ULgeK7aT8wCIWJc9G7+9FvH4S4hx
+         6eJE6WMCsMWp3g1ejYcsPUgw8toflHyAPwp8e8SnWvQpSahgLoi9fZwvJhUH/yUCLsEc
+         DndXt5PlNVi6dEpOywqJqcm0JgAj1zmzuzEx4kSJA8VMk74pa8sW8GruHwK2o2cimcbQ
+         WLOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtXi1K+ZOJsBkJIj7DCDe3fXzCh0BFyRqi8yhed92GJILPrsLMOkJsBSTT+YimETViUUePnVms2KEgAtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHJGXnabNeiba55fkIb5T2MuR54pyfL/NoeteqWB9GDtMh/PI9
+	dIji7H72dR5uPreyCp/hVAXMSuoh89Tro00+i5QNkSiKQKrVsummgpiJv+QpaUpgtX7gWbVlL2p
+	b8ditCDXvOqG9+29clgrHzHgvwyYL0JLrSbOtTaXb
+X-Gm-Gg: ASbGncvZaur4OabE0SAdvxAvd8LDX8x3gz4SFjdGi/VXmZ6kXXivzCUmqb8z0BJLnVW
+	zDw7ZHHjpn9N8PXhPQGCLHeOLO76cQq2lhv1hlmEghVw2kL7XZHPRQUg4+CxYJEB+9v8CMN80i8
+	EYvBfmEXo17le9QtZ8t2pVOVNOyxQ1hUNlxpS3yJrH+vWOd9YpoqcJHNtNKk3SJOaoaANN+u6EX
+	RfizqpqP8Ugt7WxbSly7RssI+cCiAOrvg==
+X-Google-Smtp-Source: AGHT+IHvOy29bTUO/0MbozHnDCxAoYyhAjTOQPyV1Fm+FaW+g9GHL39FgPBY7JoQtbvS0svu4Ef0/KyvBpPsY8f8YqI=
+X-Received: by 2002:a05:6512:3daa:b0:553:2668:6f34 with SMTP id
+ 2adb3069b0e04-55b5f4aac43mr2816049e87.45.1753700012135; Mon, 28 Jul 2025
+ 03:53:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB5550:EE_
-X-MS-Office365-Filtering-Correlation-Id: f423bda9-f4c1-4e4d-85c3-08ddcdc4e681
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/NCYXtfIWyv6DgjGZn5RHI3glU7DaxNKB5wNX/goSqi0mtQLm9TqjesyyN1/?=
- =?us-ascii?Q?ESm2snrZSwAw4F2D2NF/Qu0DFNdIfjyM+XcpgKwtgZRmhKi7eXGJK43MWoHZ?=
- =?us-ascii?Q?KN8Q8+dsg9z4ldoCEyNewYMx+ehZq0A9cb3QUVc/QT4794TJvopfpkbauUeW?=
- =?us-ascii?Q?RK3R2WwSyrzrRo9gU6B+pCY9/2K2EAu3DAnJwTVyYT8ewuR97Mc/6Hb8YKQA?=
- =?us-ascii?Q?EWKoEvY03Gu/wzRJxZadDTa4G0Rw8K/GL+VOxFqFvCcdEvhizW99Kj+i0Ouq?=
- =?us-ascii?Q?wVWnwm6LN0fZagk59ZuTO4yI4tvG30Dw9tqj2eEFi0Mx4YjJGGyySePsBBK7?=
- =?us-ascii?Q?OzNDMpb4FgKo7EG9pPa0ELTyWJQEl7HMDtR2b+jPuEu2pGL1g2Nf+iaz77PC?=
- =?us-ascii?Q?m9idK7wushCzvfZqeH+pg5WsXCK1ajBDrvWGveIX8uhb8+yXga+s3qI0nqlk?=
- =?us-ascii?Q?rLnsCdbQ3ZIZyMusIm4Z6rXtmZ8t8x99Kd3O+KXbiTeNLGOpHum17NbrkjIt?=
- =?us-ascii?Q?qs+lT2x8o4G5yFCkI/kwJDmoaK6esFLwhxvG3Zc+U5+QumpsBiAgRE/Oz4LU?=
- =?us-ascii?Q?PaEvm1iAF0H3Xl35izVRa/cT9IE27Zvjev0Os3SdvuJ8VEIrS5V9hHEZiefM?=
- =?us-ascii?Q?+Q8AsFDXC4aEEYJWflIeUXwvGq5q9JQSf6PWtnNWsHgOx4zj+UO8AJzYvvJw?=
- =?us-ascii?Q?ndTaWYTbke7ax0YLY5xiksyU72NGstsKamVQgl/juNPVZCHg/ztpstpBvxi3?=
- =?us-ascii?Q?YY/H0RyYw5ALUCTm7IB0IyfkBzdaSKNRPAR04A0XdgymX40qnYeJHTQoUEyJ?=
- =?us-ascii?Q?+Zo0GuBOnLFQZyPGCIoVEckPsp7NZZ5l3dvCYZPQmXy+RKrpHjl72qPpMV+d?=
- =?us-ascii?Q?8io9i2jmNeB1yZ3SFr5OoZmPASCnRiO6eb1B/hdHN1uhacdwARzMzbwLIa0o?=
- =?us-ascii?Q?gOlr59QXd4LkqnsKb930HI1YGGZ2Y3ytZr2NyZXSeLLKVd0nx28SATnw/xoz?=
- =?us-ascii?Q?iTYPkbXmbUqw9kKKg/34l11U+pYCZPYvfTVpIhUSYNGJN8J9qDBbtyAMPcvO?=
- =?us-ascii?Q?Sriyn5Eq9c3b3GLuZ7yJ78/8bWtH4Bjk9/Pd3f6dvVdMia9JHMLif+o9fJPX?=
- =?us-ascii?Q?TUAL+CGGZNMOpBaWv2zko+GHr6q+xmsPcBdH/Kf2q3Z2zmjdt7LssXKthTmR?=
- =?us-ascii?Q?u0vDgcdi3kyc8d8UtLXQRMCbl/ixwwMpnsKgRf/SCjqgJs0fwUSMewpInsVX?=
- =?us-ascii?Q?+nqmvwbEf5pyMcbds/pQ1ONxB62prL+KCuMtlphrOEKnZ+Go1gqiXYJGf6hC?=
- =?us-ascii?Q?yIV6dhn1yyBsLOCnIxEOidzd5wTXSS6+b3LQj0OW5KLxtGed2wWsFefq5+cV?=
- =?us-ascii?Q?tg++8chzX1ehWJh9TBgXk4j+PRFXt3J0CsUL3awpb415IS62CGL6MjLTpGIx?=
- =?us-ascii?Q?NLmVgqz2+aI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?laW/vl3fen+aZdpfbPi9Y3BtItS/iNhPg+4RX0GH4h8gtaDPaF8p4qZlE5Wj?=
- =?us-ascii?Q?gljnKKXvDMowiM8EAhGbUY1fbt009aZGCkXs1F27kixzixrCHSdrtf2GyVYQ?=
- =?us-ascii?Q?6Ftrnyxt2ixK/9MIQEVUcG3YXCxdPSaqC92ytQYS4M4u+3uPcWDLZd3U8oSv?=
- =?us-ascii?Q?nC+J+xF7XwxXfA9Xxkpv88mQf3Ibcp9nERnwJloR0FqpStUgZi1tIaUz6yWP?=
- =?us-ascii?Q?XYh+XIDjlSkLxTBcIjL/H+E86KKZNVQftU+JsIgQutPS5+BeAQ/bK626kut4?=
- =?us-ascii?Q?6xS5xJJdvX5DAytts9UlmKUIjvJrheBllk7G70aBKPgDLa25Z5KUXlkyaBBc?=
- =?us-ascii?Q?/Omqy4T1etyEASlN83XJJ2d4gOh0L+03Vzjf+P9/Ucytirnwsd15dwT9P9jR?=
- =?us-ascii?Q?HdnEMNjCL/s4AuY4jkkthClyFd55UNsd4Xg6A35Q8RxI8WVNh/wLWdVrnvmj?=
- =?us-ascii?Q?NhINnU0c6dgI0vRAXmryqBzAesx2p3JFDWnLHIL12S8GMrwfV7tTvEUGMjJA?=
- =?us-ascii?Q?KkXYG6HmeGuz2C/Ac7bABSjxkwGh9K+5HtKJ5m7MHsRoiukN+8UK99qbut96?=
- =?us-ascii?Q?woMtYtGgCl8CBRT/lN6qGwj6Y41faPqvm1AuXrP/lzAR1i7h5rbMRgtovtiM?=
- =?us-ascii?Q?71FjV0HxKlUD8DfB1R7Hgl6TcSJP0d0kl6Um41iGrNm83LzPvX9TUe46qaPY?=
- =?us-ascii?Q?bnCfCcme0q1W77i6LlTXR/oQj/XRSloJDw+SbVvITOxDqUMP0IpeEvN8LGmF?=
- =?us-ascii?Q?SgUbtCkqjT6ioNMP1vZEneVx22u45pxsCAV3ovp378W3xGgVNEo0cRlY8YCM?=
- =?us-ascii?Q?8D/DaD9yN6dKN92Ed8MQZedxePrHa/1T/QK1qZ2NZQGck/kXFe9nqXtwDVsW?=
- =?us-ascii?Q?igKwEDLdaidTFN4Ll+oa0TCFk/fsuBSpppMLZ86RvDB5bDT8x/NV7r5BCOY4?=
- =?us-ascii?Q?eJFtuOJ6X/Fy0UjTCWGWJze1fdcpzq4Tf6OA4bMoyWEhnzzJBDvfoe2EYO1b?=
- =?us-ascii?Q?vTnaUiUHAHLhoySmXpYZTPkKKH9tZERSR0O5j8oh3x7rt5qSfH6aM7138Xtk?=
- =?us-ascii?Q?nRTCmJochHVO6Ur/Xqe4vuZ+NIedrc1TiQT/e2UZHdZ8m5ofNonXrPpBpnKj?=
- =?us-ascii?Q?A6iI39uowYy/rn+P7BEz1iiAORVfK+VGiSKrYJKMsLig9GkkRJNfBiasgJam?=
- =?us-ascii?Q?/8uCOBdJEfov4oxqMnpamkS+gID9BJ5ypbdUqrWWSUE31/HGxEbFAnT8uvr4?=
- =?us-ascii?Q?bWmxxs26ijQctgPE5eWczAhAx/H5PfoZtwp9sBqlrsfAoAvMI8TM3m+fl0Mw?=
- =?us-ascii?Q?juSYgUn9NVcedFxDbBc4uW9d5oYgRm7YtbF1AxVLPoSRdgkKlphS9nR+07H8?=
- =?us-ascii?Q?NNeLqiN5uDXfmGcUYOK07YW4bSUCzXdD1BIsp1v8y/Z8/9e/2sr0ERleoFjS?=
- =?us-ascii?Q?t4vuHVKmQLNr390B9pOZTZZHByfAf67W/zzK0bmaYSv9c8czD6valjfvsuD6?=
- =?us-ascii?Q?gVBy11BkYbZXwPR85IoTIZQ4ScKseWCV9GguD8FBPn0kSIuvMfzvgS33AXI8?=
- =?us-ascii?Q?y4vzcSHkUh0PGzFXBY2qhCua1qL9rGVGCJtkFwRLt4kghPiH6e7iSDtZJXJa?=
- =?us-ascii?Q?zA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	HPwEotDDfnIi+yhAcB8SrFLdxridLmwr7GcANCFwEj/8WQjMxwDxJObqrzHXLBRczPsgtqETgQFMw+uEtnkB66/Nbu3ZPJw9OnMVa+RSpshffZN/fWQhptzd/6KZ2CKICSlHaR+y1dtSqtOAfrHzACh2l2qOCFJfJ+jKk7vaCd1lkAX//S6QomBPzVIHWV7CjrxWdUlIAK7thg3CfhfxNle1Kp7Ib744wBFrlBdHa/6NTK1llR2HEawwqgf2B9oF7ShZYK2hEaRzXUZ0ser4Q8CVBnDKfDd1eZ7fLUGz9lj6U8I/ET7jNx84npU//K3fhI4PZh88gYKR8P18FROAlasvQxBkNsEn8HuRuvOkErjwPWF5acG6sKoRv8HswSKLQQi+osO1oKzvvcUt0EC0r1BULV7X1yH/gUcHBc/FYCNfLAoEoXFNZ7a+B+agSjZaI6al5/Plna+y9lbFV6PVCTv0TNZC8sHzcRK/1VUtd7x7z6Eqd1G4SHuMBCA8LqEZvN6Ey4v/633j/efALrxLf9Jizfvia9NXuB9P0L7Ce/CBVvJGu9ltYXHJqZiU9FqEO8udjdsCpPEdaxxCAd0tzndey1uLLaUnG8DrxgSTfIk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f423bda9-f4c1-4e4d-85c3-08ddcdc4e681
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2025 10:52:52.1686
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9HG88tUepGCcOEcMntWL+DDiuWtTneBIOrUNsorRCNqU+cO57+YAoEPEWw+cfksTlUlmySQCjh9UJVEWbMe8KFj+z3ixeD2RjsIQ/ABv4oo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5550
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- suspectscore=0 malwarescore=0 bulkscore=0 spamscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507280079
-X-Proofpoint-GUID: ij6Jl20dR4kFd_n-fhJPqlJiBMg5c7ED
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA4MCBTYWx0ZWRfXyXsharp3OkLA
- du0Bc0rgseuJ0ebwQmH6KkT8tS4jOY6aXmPkYtHpcSFXzBNYH63CRIMitGGvQlpfNqTsPnhmtZF
- /eBcOpYC2poihb+L1jl/1ZZkiMnYbdD2j9Z1kMz4XOZKb+Pf1VcEWJ2rwH+kBm39+lZBsMwtWay
- dZOVtBApZhcithOK7HuDTFuVxBePD7Ww1lb1DV5BALzkZzjt9/5YqRAvNcKyKv+CxsJm3xkRLZw
- U9N+yTEWhe/jhzD+J+3o/aTlEta+ZJFW39++9GtFZ5kLRGzpksqWpdRoPUm/baueVY56UNr3hVl
- ph3zFgbVEV5vpWFuhkISFC1uqO59g9wqZKTEt56YrChk90VQopFUk2BcUoMgYczbb4avBT+ve6J
- kp5q1KpYmN5UoBgoJm7/R97NOqOM5d6B/vpskHna8xrS8NrvXB5zNhC1Vt3VqgDfqaLrLwbP
-X-Authority-Analysis: v=2.4 cv=ZMjXmW7b c=1 sm=1 tr=0 ts=68875688 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=yYb74XyXo8kRV01AmWYA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:13600
-X-Proofpoint-ORIG-GUID: ij6Jl20dR4kFd_n-fhJPqlJiBMg5c7ED
+References: <20250708111806.3992-1-darren.ye@mediatek.com> <20250708111806.3992-7-darren.ye@mediatek.com>
+In-Reply-To: <20250708111806.3992-7-darren.ye@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 28 Jul 2025 18:53:20 +0800
+X-Gm-Features: Ac12FXw_98P-cqzhOJhc_X0WTP1HZ0X8o93z68BX-_DzENXnnLfNmr1MN89I0kw
+Message-ID: <CAGXv+5Ht8dKb_7KSxqj=Pk+V_7h_N_2YPhTfH9Fr=7TxEqwQKQ@mail.gmail.com>
+Subject: Re: [PATCH v6 06/10] ASoC: mediatek: mt8196: support TDM in platform driver
+To: "Darren.Ye" <darren.ye@mediatek.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 28, 2025 at 12:35:02PM +0200, Greg KH wrote:
-> > So to me:
-> >
-> > - We should establish an official kernel AI policy document.
+On Tue, Jul 8, 2025 at 7:34=E2=80=AFPM Darren.Ye <darren.ye@mediatek.com> w=
+rote:
 >
-> Steven Rostedt is working on this right now, hopefully he has something
-> "soon".
-
-Great! Thanks for looking at that Steve.
-
-I think a key element here has to be maintainer opt-in.
-
+> From: Darren Ye <darren.ye@mediatek.com>
 >
-> > - This should be discussed at the maintainers summit before proceeding.
+> Add mt8196 TDM DAI driver support.
 >
-> Sounds reasonable as well.
-
-Thanks.
-
+> Signed-off-by: Darren Ye <darren.ye@mediatek.com>
+> ---
+>  sound/soc/mediatek/mt8196/mt8196-dai-tdm.c | 836 +++++++++++++++++++++
+>  1 file changed, 836 insertions(+)
+>  create mode 100644 sound/soc/mediatek/mt8196/mt8196-dai-tdm.c
 >
-> But I think that Kees and my earlier points of "the documentation should
-> be all that an agent needs" might aleviate many of these concerns, if
-> our documentation can be tweaked in a way to make it easier for
-> everyone, humans and bots, to understand.  That should cut down on the
-> "size" of this patch series a lot overall.
+> diff --git a/sound/soc/mediatek/mt8196/mt8196-dai-tdm.c b/sound/soc/media=
+tek/mt8196/mt8196-dai-tdm.c
+> new file mode 100644
+> index 000000000000..dcbde41fb61c
+> --- /dev/null
+> +++ b/sound/soc/mediatek/mt8196/mt8196-dai-tdm.c
+> @@ -0,0 +1,836 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + *  MediaTek ALSA SoC Audio DAI TDM Control
+> + *
+> + *  Copyright (c) 2024 MediaTek Inc.
+> + *  Author: Darren Ye <darren.ye@mediatek.com>
+> + */
+> +
+> +#include <linux/regmap.h>
+> +#include <sound/pcm_params.h>
+> +#include "mt8196-afe-clk.h"
+> +#include "mt8196-afe-common.h"
+> +#include "mt8196-interconnection.h"
+> +
+> +struct mtk_afe_tdm_priv {
+> +       int bck_id;
+> +       int bck_rate;
+> +
+> +       int mclk_id;
+> +       int mclk_multiple; /* according to sample rate */
+> +       int mclk_rate;
+> +       int mclk_apll;
+> +};
+> +
+> +enum {
+> +       TDM_WLEN_16_BIT =3D 1,
+> +       TDM_WLEN_32_BIT =3D 2,
 
-That'd be ideal, but I think either way we need to be clear to the humans
-running these things what the rules are.
+I believe this was mentioned in another patch, but consecutive values
+do not need to be assigned. Nor does a 0 starting value. I won't mention
+this below, but please check all the enums.
 
-One thing to note is that I struggled to get an LLM to read MAINTAINERS
-properly recently (it assured me, with absolute confidence, that the SLAB
-ALLOCATOR section was in fact 'SLAB ALLOCATORS' + provided me with
-completely incorrect contents, and told me that if I didn't believe it I
-should go check :)
+> +};
+> +
+> +enum {
+> +       TDM_CHANNEL_BCK_16 =3D 0,
+> +       TDM_CHANNEL_BCK_24 =3D 1,
+> +       TDM_CHANNEL_BCK_32 =3D 2,
+> +};
+> +
+> +enum {
+> +       TDM_CHANNEL_NUM_2 =3D 0,
+> +       TDM_CHANNEL_NUM_4 =3D 1,
+> +       TDM_CHANNEL_NUM_8 =3D 2,
+> +};
+> +
+> +enum  {
+> +       TDM_CH_START_O30_O31 =3D 0,
+> +       TDM_CH_START_O32_O33,
+> +       TDM_CH_START_O34_O35,
+> +       TDM_CH_START_O36_O37,
+> +       TDM_CH_ZERO,
+> +};
+> +
+> +enum {
+> +       DPTX_CHANNEL_2,
+> +       DPTX_CHANNEL_8,
+> +};
+> +
+> +enum {
+> +       DPTX_WLEN_24_BIT,
+> +       DPTX_WLEN_16_BIT,
+> +};
+> +
+> +enum {
+> +       DPTX_CH_EN_MASK_2CH =3D 0x3,
+> +       DPTX_CH_EN_MASK_4CH =3D 0xf,
+> +       DPTX_CH_EN_MASK_6CH =3D 0x3f,
+> +       DPTX_CH_EN_MASK_8CH =3D 0xff,
+> +};
 
-So at all times I think ensuring the human element is aware that they need
-to do some kind of checking/filtering is key.
+I'm not entirely confident, but I think normally we use macros for register
+values, and enums for internal / software state values.
 
-But that can be handled by a carefully worded policy document.
+> +
+> +static unsigned int get_tdm_wlen(snd_pcm_format_t format)
+> +{
+> +       return snd_pcm_format_physical_width(format) <=3D 16 ?
+> +              TDM_WLEN_16_BIT : TDM_WLEN_32_BIT;
 
+Looking at the datasheet, this also supports 8 bit and 24 bit word lengths?
+
+This could just be written as:
+
+         return snd_pcm_format_physical_width(format) / 8;
+
+> +}
+> +
+> +static unsigned int get_tdm_channel_bck(snd_pcm_format_t format)
+> +{
+> +       return snd_pcm_format_physical_width(format) <=3D 16 ?
+> +              TDM_CHANNEL_BCK_16 : TDM_CHANNEL_BCK_32;
+
+I don't think this is correct. I believe this refers to the TDM slot
+width, which is separate from how wide or how many bits are valid in
+a given sample. The TDM slot width is something set by the machine
+driver by calling snd_soc_dai_set_tdm_slot(), much like calling
+snd_soc_dai_set_sysclk().
+
+The TDM driver here needs to implement the .set_tdm_slot callback,
+and store the slot width and slots.
+
+This function here should be something like:
+
+    static unsigned int get_tdm_channel_bck(...)
+    {
+         return tdm_slot_width;
+    }
+
+> +}
+> +
+> +static unsigned int get_tdm_lrck_width(snd_pcm_format_t format)
+> +{
+> +       return snd_pcm_format_physical_width(format) - 1;
+
+This needs to be multiplied by the number of channels / 2, since
+the LRCK spans the entirety of the odd or even number channels.
+Also, it should be based on the TDM slot width, not the sample width.
+
+> +}
+> +
+> +static unsigned int get_tdm_ch(unsigned int ch)
+> +{
+> +       switch (ch) {
+> +       case 1:
+> +       case 2:
+> +               return TDM_CHANNEL_NUM_2;
+> +       case 3:
+> +       case 4:
+> +               return TDM_CHANNEL_NUM_4;
+> +       case 5:
+> +       case 6:
+> +       case 7:
+> +       case 8:
+> +       default:
+> +               return TDM_CHANNEL_NUM_8;
+> +       }
+> +}
+> +
+> +static unsigned int get_dptx_ch_enable_mask(unsigned int ch)
+> +{
+> +       switch (ch) {
+> +       case 1:
+> +       case 2:
+> +               return DPTX_CH_EN_MASK_2CH;
+> +       case 3:
+> +       case 4:
+> +               return DPTX_CH_EN_MASK_4CH;
+> +       case 5:
+> +       case 6:
+> +               return DPTX_CH_EN_MASK_6CH;
+> +       case 7:
+> +       case 8:
+> +               return DPTX_CH_EN_MASK_8CH;
+> +       default:
+> +               pr_info("invalid channel num, default use 2ch\n");
+
+Please pass in |struct device *| and use the dev_printk variants.
+And maybe consider making this a warning?
+
+Also there is some inconsistency here,
+
+> +               return DPTX_CH_EN_MASK_2CH;
+> +       }
+> +}
+> +
+> +static unsigned int get_dptx_ch(unsigned int ch)
+> +{
+> +       if (ch =3D=3D 2)
+> +               return DPTX_CHANNEL_2;
+> +       else
+> +               return DPTX_CHANNEL_8;
+> +}
+> +
+> +static unsigned int get_dptx_wlen(snd_pcm_format_t format)
+> +{
+> +       return snd_pcm_format_physical_width(format) <=3D 16 ?
+> +              DPTX_WLEN_16_BIT : DPTX_WLEN_24_BIT;
+> +}
+> +
+> +/* interconnection */
+> +enum {
+> +       HDMI_CONN_CH0 =3D 0,
+> +       HDMI_CONN_CH1,
+> +       HDMI_CONN_CH2,
+> +       HDMI_CONN_CH3,
+> +       HDMI_CONN_CH4,
+> +       HDMI_CONN_CH5,
+> +       HDMI_CONN_CH6,
+> +       HDMI_CONN_CH7,
+> +};
+> +
+> +static const char *const hdmi_conn_mux_map[] =3D {
+> +       "CH0", "CH1", "CH2", "CH3",
+> +       "CH4", "CH5", "CH6", "CH7",
+
+Nit: This could fit in one line.
+
+> +};
+> +
+> +static int hdmi_conn_mux_map_value[] =3D {
+> +       HDMI_CONN_CH0,
+> +       HDMI_CONN_CH1,
+> +       HDMI_CONN_CH2,
+> +       HDMI_CONN_CH3,
+> +       HDMI_CONN_CH4,
+> +       HDMI_CONN_CH5,
+> +       HDMI_CONN_CH6,
+> +       HDMI_CONN_CH7,
+
+Nit: You could fit four values on one line.
+
+> +};
+> +
+> +static SOC_VALUE_ENUM_SINGLE_DECL(hdmi_ch0_mux_map_enum,
+> +                                 AFE_HDMI_CONN0,
+> +                                 HDMI_O_0_SFT,
+> +                                 HDMI_O_0_MASK,
+> +                                 hdmi_conn_mux_map,
+> +                                 hdmi_conn_mux_map_value);
+> +
+> +static const struct snd_kcontrol_new hdmi_ch0_mux_control =3D
+> +       SOC_DAPM_ENUM("HDMI_CH0_MUX", hdmi_ch0_mux_map_enum);
+
+Please name the controls based on the standard ALSA control name scheme:
+
+    https://docs.kernel.org/sound/designs/control-names.html
+
+This should be something like "HDMI CH0 Source Playback Route". Same
+applies to the other ones.
+
+> +
+> +static SOC_VALUE_ENUM_SINGLE_DECL(hdmi_ch1_mux_map_enum,
+> +                                 AFE_HDMI_CONN0,
+> +                                 HDMI_O_1_SFT,
+> +                                 HDMI_O_1_MASK,
+> +                                 hdmi_conn_mux_map,
+> +                                 hdmi_conn_mux_map_value);
+> +
+> +static const struct snd_kcontrol_new hdmi_ch1_mux_control =3D
+> +       SOC_DAPM_ENUM("HDMI_CH1_MUX", hdmi_ch1_mux_map_enum);
+> +
+> +static SOC_VALUE_ENUM_SINGLE_DECL(hdmi_ch2_mux_map_enum,
+> +                                 AFE_HDMI_CONN0,
+> +                                 HDMI_O_2_SFT,
+> +                                 HDMI_O_2_MASK,
+> +                                 hdmi_conn_mux_map,
+> +                                 hdmi_conn_mux_map_value);
+> +
+> +static const struct snd_kcontrol_new hdmi_ch2_mux_control =3D
+> +       SOC_DAPM_ENUM("HDMI_CH2_MUX", hdmi_ch2_mux_map_enum);
+> +
+> +static SOC_VALUE_ENUM_SINGLE_DECL(hdmi_ch3_mux_map_enum,
+> +                                 AFE_HDMI_CONN0,
+> +                                 HDMI_O_3_SFT,
+> +                                 HDMI_O_3_MASK,
+> +                                 hdmi_conn_mux_map,
+> +                                 hdmi_conn_mux_map_value);
+> +
+> +static const struct snd_kcontrol_new hdmi_ch3_mux_control =3D
+> +       SOC_DAPM_ENUM("HDMI_CH3_MUX", hdmi_ch3_mux_map_enum);
+> +
+> +static SOC_VALUE_ENUM_SINGLE_DECL(hdmi_ch4_mux_map_enum,
+> +                                 AFE_HDMI_CONN0,
+> +                                 HDMI_O_4_SFT,
+> +                                 HDMI_O_4_MASK,
+> +                                 hdmi_conn_mux_map,
+> +                                 hdmi_conn_mux_map_value);
+> +
+> +static const struct snd_kcontrol_new hdmi_ch4_mux_control =3D
+> +       SOC_DAPM_ENUM("HDMI_CH4_MUX", hdmi_ch4_mux_map_enum);
+> +
+> +static SOC_VALUE_ENUM_SINGLE_DECL(hdmi_ch5_mux_map_enum,
+> +                                 AFE_HDMI_CONN0,
+> +                                 HDMI_O_5_SFT,
+> +                                 HDMI_O_5_MASK,
+> +                                 hdmi_conn_mux_map,
+> +                                 hdmi_conn_mux_map_value);
+> +
+> +static const struct snd_kcontrol_new hdmi_ch5_mux_control =3D
+> +       SOC_DAPM_ENUM("HDMI_CH5_MUX", hdmi_ch5_mux_map_enum);
+> +
+> +static SOC_VALUE_ENUM_SINGLE_DECL(hdmi_ch6_mux_map_enum,
+> +                                 AFE_HDMI_CONN0,
+> +                                 HDMI_O_6_SFT,
+> +                                 HDMI_O_6_MASK,
+> +                                 hdmi_conn_mux_map,
+> +                                 hdmi_conn_mux_map_value);
+> +
+> +static const struct snd_kcontrol_new hdmi_ch6_mux_control =3D
+> +       SOC_DAPM_ENUM("HDMI_CH6_MUX", hdmi_ch6_mux_map_enum);
+> +
+> +static SOC_VALUE_ENUM_SINGLE_DECL(hdmi_ch7_mux_map_enum,
+> +                                 AFE_HDMI_CONN0,
+> +                                 HDMI_O_7_SFT,
+> +                                 HDMI_O_7_MASK,
+> +                                 hdmi_conn_mux_map,
+> +                                 hdmi_conn_mux_map_value);
+> +
+> +static const struct snd_kcontrol_new hdmi_ch7_mux_control =3D
+> +       SOC_DAPM_ENUM("HDMI_CH7_MUX", hdmi_ch7_mux_map_enum);
+> +
+> +static const char *const tdm_out_mux_map[] =3D {
+> +       "Disconnect", "Connect",
+> +};
+> +
+> +static int tdm_out_mux_map_value[] =3D {
+> +       0, 1,
+> +};
+> +
+> +static SOC_VALUE_ENUM_SINGLE_AUTODISABLE_DECL(hdmi_out_mux_map_enum,
+> +               SND_SOC_NOPM,
+> +               0,
+> +               1,
+> +               tdm_out_mux_map,
+> +               tdm_out_mux_map_value);
+
+Please align with the left parentheses.
+
+> +static const struct snd_kcontrol_new hdmi_out_mux_control =3D
+> +       SOC_DAPM_ENUM("HDMI_OUT_MUX", hdmi_out_mux_map_enum);
+> +
+> +static SOC_VALUE_ENUM_SINGLE_AUTODISABLE_DECL(dptx_out_mux_map_enum,
+> +               SND_SOC_NOPM,
+> +               0,
+> +               1,
+> +               tdm_out_mux_map,
+> +               tdm_out_mux_map_value);
+
+Same here.
+
+> +static const struct snd_kcontrol_new dptx_out_mux_control =3D
+> +       SOC_DAPM_ENUM("DPTX_OUT_MUX", dptx_out_mux_map_enum);
+> +
+> +static SOC_VALUE_ENUM_SINGLE_AUTODISABLE_DECL(dptx_virtual_out_mux_map_e=
+num,
+> +               SND_SOC_NOPM,
+> +               0,
+> +               1,
+> +               tdm_out_mux_map,
+> +               tdm_out_mux_map_value);
+
+Same here.
+
+> +
+> +static const struct snd_kcontrol_new dptx_virtual_out_mux_control =3D
+> +       SOC_DAPM_ENUM("DPTX_VIRTUAL_OUT_MUX", dptx_virtual_out_mux_map_en=
+um);
+> +
+> +enum {
+> +       SUPPLY_SEQ_APLL,
+> +       SUPPLY_SEQ_TDM_MCK_EN,
+> +       SUPPLY_SEQ_TDM_BCK_EN,
+> +       SUPPLY_SEQ_TDM_DPTX_MCK_EN,
+> +       SUPPLY_SEQ_TDM_DPTX_BCK_EN,
+> +       SUPPLY_SEQ_TDM_CG_EN,
+> +};
+> +
+> +static int get_tdm_id_by_name(const char *name)
+> +{
+> +       if (strstr(name, "DPTX"))
+> +               return MT8196_DAI_TDM_DPTX;
+> +       else
+> +               return MT8196_DAI_TDM;
+> +}
+> +
+> +static int mtk_tdm_bck_en_event(struct snd_soc_dapm_widget *w,
+> +                               struct snd_kcontrol *kcontrol,
+> +                               int event)
+> +{
+> +       struct snd_soc_component *cmpnt =3D snd_soc_dapm_to_component(w->=
+dapm);
+> +       struct mtk_base_afe *afe =3D snd_soc_component_get_drvdata(cmpnt)=
+;
+> +       struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> +       int dai_id =3D get_tdm_id_by_name(w->name);
+> +       struct mtk_afe_tdm_priv *tdm_priv =3D afe_priv->dai_priv[dai_id];
+> +
+> +       dev_dbg(cmpnt->dev, "name %s, event 0x%x, dai_id %d\n",
+> +               w->name, event, dai_id);
+> +
+> +       switch (event) {
+> +       case SND_SOC_DAPM_PRE_PMU:
+> +               mt8196_mck_enable(afe, tdm_priv->bck_id, tdm_priv->bck_ra=
+te);
+> +               break;
+> +       case SND_SOC_DAPM_POST_PMD:
+> +               mt8196_mck_disable(afe, tdm_priv->bck_id);
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int mtk_tdm_mck_en_event(struct snd_soc_dapm_widget *w,
+> +                               struct snd_kcontrol *kcontrol,
+> +                               int event)
+> +{
+> +       struct snd_soc_component *cmpnt =3D snd_soc_dapm_to_component(w->=
+dapm);
+> +       struct mtk_base_afe *afe =3D snd_soc_component_get_drvdata(cmpnt)=
+;
+> +       struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> +       int dai_id =3D get_tdm_id_by_name(w->name);
+> +       struct mtk_afe_tdm_priv *tdm_priv =3D afe_priv->dai_priv[dai_id];
+> +
+> +       dev_dbg(cmpnt->dev, "name %s, event 0x%x, dai_id %d\n",
+> +               w->name, event, dai_id);
+> +
+> +       switch (event) {
+> +       case SND_SOC_DAPM_PRE_PMU:
+> +               mt8196_mck_enable(afe, tdm_priv->mclk_id, tdm_priv->mclk_=
+rate);
+> +               break;
+> +       case SND_SOC_DAPM_POST_PMD:
+> +               tdm_priv->mclk_rate =3D 0;
+> +               mt8196_mck_disable(afe, tdm_priv->mclk_id);
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct snd_soc_dapm_widget mtk_dai_tdm_widgets[] =3D {
+> +       SND_SOC_DAPM_MUX("HDMI_CH0_MUX", SND_SOC_NOPM, 0, 0,
+> +                        &hdmi_ch0_mux_control),
+> +       SND_SOC_DAPM_MUX("HDMI_CH1_MUX", SND_SOC_NOPM, 0, 0,
+> +                        &hdmi_ch1_mux_control),
+> +       SND_SOC_DAPM_MUX("HDMI_CH2_MUX", SND_SOC_NOPM, 0, 0,
+> +                        &hdmi_ch2_mux_control),
+> +       SND_SOC_DAPM_MUX("HDMI_CH3_MUX", SND_SOC_NOPM, 0, 0,
+> +                        &hdmi_ch3_mux_control),
+> +       SND_SOC_DAPM_MUX("HDMI_CH4_MUX", SND_SOC_NOPM, 0, 0,
+> +                        &hdmi_ch4_mux_control),
+> +       SND_SOC_DAPM_MUX("HDMI_CH5_MUX", SND_SOC_NOPM, 0, 0,
+> +                        &hdmi_ch5_mux_control),
+> +       SND_SOC_DAPM_MUX("HDMI_CH6_MUX", SND_SOC_NOPM, 0, 0,
+> +                        &hdmi_ch6_mux_control),
+> +       SND_SOC_DAPM_MUX("HDMI_CH7_MUX", SND_SOC_NOPM, 0, 0,
+> +                        &hdmi_ch7_mux_control),
+
+I don't think we really need these widgets. These select which channel
+from the input map to which channel on the output. However AFAIK DAPM
+doesn't really do multichannel tracking. Also since at least one channel
+is getting passed through, the route is always connected and there
+really isn't anything for DAPM to manage. Having simple kcontrols
+should be enough.
+
+> +       SND_SOC_DAPM_MUX("HDMI_OUT_MUX", SND_SOC_NOPM, 0, 0,
+
+This should be named "HDMI_OUT Playback Route". This changes the kcontrol
+name seen in userspace. AFAICT, for muxes and demuxes the userspace kcontro=
+l
+name comes from the widget, not the underlying kcontrol definition.
+
+> +                        &hdmi_out_mux_control),
+> +       SND_SOC_DAPM_MUX("DPTX_OUT_MUX", SND_SOC_NOPM, 0, 0,
+
+This one "DPTX_OUT Playback Route".
+
+> +                        &dptx_out_mux_control),
+> +
+> +       SND_SOC_DAPM_SUPPLY_S("TDM_BCK", SUPPLY_SEQ_TDM_BCK_EN,
+> +                             SND_SOC_NOPM, 0, 0,
+> +                             mtk_tdm_bck_en_event,
+> +                             SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PM=
+D),
+> +
+> +       SND_SOC_DAPM_SUPPLY_S("TDM_MCK", SUPPLY_SEQ_TDM_MCK_EN,
+> +                             SND_SOC_NOPM, 0, 0,
+> +                             mtk_tdm_mck_en_event,
+> +                             SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PM=
+D),
+> +
+> +       SND_SOC_DAPM_SUPPLY_S("TDM_DPTX_BCK", SUPPLY_SEQ_TDM_DPTX_BCK_EN,
+> +                             SND_SOC_NOPM, 0, 0,
+> +                             mtk_tdm_bck_en_event,
+> +                             SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PM=
+D),
+> +
+> +       SND_SOC_DAPM_SUPPLY_S("TDM_DPTX_MCK", SUPPLY_SEQ_TDM_DPTX_MCK_EN,
+> +                             SND_SOC_NOPM, 0, 0,
+> +                             mtk_tdm_mck_en_event,
+> +                             SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PM=
+D),
+> +
+> +       /* cg */
+> +       SND_SOC_DAPM_SUPPLY_S("TDM_CG", SUPPLY_SEQ_TDM_CG_EN,
+> +                             AUDIO_TOP_CON2, PDN_TDM_OUT_SFT, 1,
+> +                             NULL, 0),
+> +
+> +       SND_SOC_DAPM_MUX("DPTX_VIRTUAL_OUT_MUX",
+> +                        SND_SOC_NOPM, 0, 0, &dptx_virtual_out_mux_contro=
+l),
+
+"DPTX_VIRTUAL_OUT Playback Route"
+
+> +       SND_SOC_DAPM_OUTPUT("DPTX_VIRTUAL_OUT"),
+> +};
+> +
+> +static int mtk_afe_tdm_apll_connect(struct snd_soc_dapm_widget *source,
+> +                                   struct snd_soc_dapm_widget *sink)
+> +{
+> +       struct snd_soc_dapm_widget *w =3D sink;
+> +       struct snd_soc_component *cmpnt =3D snd_soc_dapm_to_component(w->=
+dapm);
+
+Just combine the two? Having the placeholder `w` doesn't help readability.
+Instead you could just slightly go over the 80 character limit here.
+
+> +       struct mtk_base_afe *afe =3D snd_soc_component_get_drvdata(cmpnt)=
+;
+> +       struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> +       int dai_id =3D get_tdm_id_by_name(w->name);
+> +       struct mtk_afe_tdm_priv *tdm_priv =3D afe_priv->dai_priv[dai_id];
+> +       int cur_apll;
+> +
+> +       /* which apll */
+> +       cur_apll =3D mt8196_get_apll_by_name(afe, source->name);
+> +
+> +       return (tdm_priv->mclk_apll =3D=3D cur_apll) ? 1 : 0;
+> +}
+> +
+> +static const struct snd_soc_dapm_route mtk_dai_tdm_routes[] =3D {
+> +       {"HDMI_CH0_MUX", "CH0", "HDMI"},
+> +       {"HDMI_CH0_MUX", "CH1", "HDMI"},
+> +       {"HDMI_CH0_MUX", "CH2", "HDMI"},
+> +       {"HDMI_CH0_MUX", "CH3", "HDMI"},
+> +       {"HDMI_CH0_MUX", "CH4", "HDMI"},
+> +       {"HDMI_CH0_MUX", "CH5", "HDMI"},
+> +       {"HDMI_CH0_MUX", "CH6", "HDMI"},
+> +       {"HDMI_CH0_MUX", "CH7", "HDMI"},
+> +
+> +       {"HDMI_CH1_MUX", "CH0", "HDMI"},
+> +       {"HDMI_CH1_MUX", "CH1", "HDMI"},
+> +       {"HDMI_CH1_MUX", "CH2", "HDMI"},
+> +       {"HDMI_CH1_MUX", "CH3", "HDMI"},
+> +       {"HDMI_CH1_MUX", "CH4", "HDMI"},
+> +       {"HDMI_CH1_MUX", "CH5", "HDMI"},
+> +       {"HDMI_CH1_MUX", "CH6", "HDMI"},
+> +       {"HDMI_CH1_MUX", "CH7", "HDMI"},
+> +
+> +       {"HDMI_CH2_MUX", "CH0", "HDMI"},
+> +       {"HDMI_CH2_MUX", "CH1", "HDMI"},
+> +       {"HDMI_CH2_MUX", "CH2", "HDMI"},
+> +       {"HDMI_CH2_MUX", "CH3", "HDMI"},
+> +       {"HDMI_CH2_MUX", "CH4", "HDMI"},
+> +       {"HDMI_CH2_MUX", "CH5", "HDMI"},
+> +       {"HDMI_CH2_MUX", "CH6", "HDMI"},
+> +       {"HDMI_CH2_MUX", "CH7", "HDMI"},
+> +
+> +       {"HDMI_CH3_MUX", "CH0", "HDMI"},
+> +       {"HDMI_CH3_MUX", "CH1", "HDMI"},
+> +       {"HDMI_CH3_MUX", "CH2", "HDMI"},
+> +       {"HDMI_CH3_MUX", "CH3", "HDMI"},
+> +       {"HDMI_CH3_MUX", "CH4", "HDMI"},
+> +       {"HDMI_CH3_MUX", "CH5", "HDMI"},
+> +       {"HDMI_CH3_MUX", "CH6", "HDMI"},
+> +       {"HDMI_CH3_MUX", "CH7", "HDMI"},
+> +
+> +       {"HDMI_CH4_MUX", "CH0", "HDMI"},
+> +       {"HDMI_CH4_MUX", "CH1", "HDMI"},
+> +       {"HDMI_CH4_MUX", "CH2", "HDMI"},
+> +       {"HDMI_CH4_MUX", "CH3", "HDMI"},
+> +       {"HDMI_CH4_MUX", "CH4", "HDMI"},
+> +       {"HDMI_CH4_MUX", "CH5", "HDMI"},
+> +       {"HDMI_CH4_MUX", "CH6", "HDMI"},
+> +       {"HDMI_CH4_MUX", "CH7", "HDMI"},
+> +
+> +       {"HDMI_CH5_MUX", "CH0", "HDMI"},
+> +       {"HDMI_CH5_MUX", "CH1", "HDMI"},
+> +       {"HDMI_CH5_MUX", "CH2", "HDMI"},
+> +       {"HDMI_CH5_MUX", "CH3", "HDMI"},
+> +       {"HDMI_CH5_MUX", "CH4", "HDMI"},
+> +       {"HDMI_CH5_MUX", "CH5", "HDMI"},
+> +       {"HDMI_CH5_MUX", "CH6", "HDMI"},
+> +       {"HDMI_CH5_MUX", "CH7", "HDMI"},
+> +
+> +       {"HDMI_CH6_MUX", "CH0", "HDMI"},
+> +       {"HDMI_CH6_MUX", "CH1", "HDMI"},
+> +       {"HDMI_CH6_MUX", "CH2", "HDMI"},
+> +       {"HDMI_CH6_MUX", "CH3", "HDMI"},
+> +       {"HDMI_CH6_MUX", "CH4", "HDMI"},
+> +       {"HDMI_CH6_MUX", "CH5", "HDMI"},
+> +       {"HDMI_CH6_MUX", "CH6", "HDMI"},
+> +       {"HDMI_CH6_MUX", "CH7", "HDMI"},
+> +
+> +       {"HDMI_CH7_MUX", "CH0", "HDMI"},
+> +       {"HDMI_CH7_MUX", "CH1", "HDMI"},
+> +       {"HDMI_CH7_MUX", "CH2", "HDMI"},
+> +       {"HDMI_CH7_MUX", "CH3", "HDMI"},
+> +       {"HDMI_CH7_MUX", "CH4", "HDMI"},
+> +       {"HDMI_CH7_MUX", "CH5", "HDMI"},
+> +       {"HDMI_CH7_MUX", "CH6", "HDMI"},
+> +       {"HDMI_CH7_MUX", "CH7", "HDMI"},
+> +
+> +       {"HDMI_OUT_MUX", "Connect", "HDMI_CH0_MUX"},
+> +       {"HDMI_OUT_MUX", "Connect", "HDMI_CH1_MUX"},
+> +       {"HDMI_OUT_MUX", "Connect", "HDMI_CH2_MUX"},
+> +       {"HDMI_OUT_MUX", "Connect", "HDMI_CH3_MUX"},
+> +       {"HDMI_OUT_MUX", "Connect", "HDMI_CH4_MUX"},
+> +       {"HDMI_OUT_MUX", "Connect", "HDMI_CH5_MUX"},
+> +       {"HDMI_OUT_MUX", "Connect", "HDMI_CH6_MUX"},
+> +       {"HDMI_OUT_MUX", "Connect", "HDMI_CH7_MUX"},
+> +
+> +       {"DPTX_OUT_MUX", "Connect", "HDMI_CH0_MUX"},
+> +       {"DPTX_OUT_MUX", "Connect", "HDMI_CH1_MUX"},
+> +       {"DPTX_OUT_MUX", "Connect", "HDMI_CH2_MUX"},
+> +       {"DPTX_OUT_MUX", "Connect", "HDMI_CH3_MUX"},
+> +       {"DPTX_OUT_MUX", "Connect", "HDMI_CH4_MUX"},
+> +       {"DPTX_OUT_MUX", "Connect", "HDMI_CH5_MUX"},
+> +       {"DPTX_OUT_MUX", "Connect", "HDMI_CH6_MUX"},
+> +       {"DPTX_OUT_MUX", "Connect", "HDMI_CH7_MUX"},
+
+As mentioned above the channel mux widgets don't really do anything.
+Just use normal kcontrols and the aboue routes can be simplified to just
+
+          { "HDMI_OUT_MUX", "Connect", "HDMI" }
+          { "DPTX_OUT_MUX", "Connect", "HDMI" },
+
+Also note that there should be one space between the braces ("{}") and
+the elements.
+
+> +       {"TDM", NULL, "HDMI_OUT_MUX"},
+> +       {"TDM", NULL, "TDM_BCK"},
+> +       {"TDM", NULL, "TDM_CG"},
+> +
+> +       {"TDM_DPTX", NULL, "DPTX_OUT_MUX"},
+> +       {"TDM_DPTX", NULL, "TDM_DPTX_BCK"},
+> +       {"TDM_DPTX", NULL, "TDM_CG"},
+> +
+> +       {"TDM_BCK", NULL, "TDM_MCK"},
+> +       {"TDM_DPTX_BCK", NULL, "TDM_DPTX_MCK"},
+> +       {"TDM_MCK", NULL, APLL1_W_NAME, mtk_afe_tdm_apll_connect},
+> +       {"TDM_MCK", NULL, APLL2_W_NAME, mtk_afe_tdm_apll_connect},
+> +       {"TDM_DPTX_MCK", NULL, APLL1_W_NAME, mtk_afe_tdm_apll_connect},
+> +       {"TDM_DPTX_MCK", NULL, APLL2_W_NAME, mtk_afe_tdm_apll_connect},
+> +
+> +       {"DPTX_VIRTUAL_OUT_MUX", "Connect", "TDM_DPTX"},
+> +       {"DPTX_VIRTUAL_OUT", NULL, "DPTX_VIRTUAL_OUT_MUX"},
+> +};
+> +
+> +/* dai ops */
+> +static int mtk_dai_tdm_cal_mclk(struct mtk_base_afe *afe,
+> +                               struct mtk_afe_tdm_priv *tdm_priv,
+> +                               int freq)
+> +{
+> +       int apll;
+> +       int apll_rate;
+> +
+> +       apll =3D mt8196_get_apll_by_rate(afe, freq);
+> +       apll_rate =3D mt8196_get_apll_rate(afe, apll);
+> +
+> +       if (freq > apll_rate)
+> +               return -EINVAL;
+> +
+> +       if (apll_rate % freq !=3D 0)
+> +               return -EINVAL;
+> +
+> +       tdm_priv->mclk_rate =3D freq;
+> +       tdm_priv->mclk_apll =3D apll;
+> +
+> +       return 0;
+> +}
+> +
+> +static int mtk_dai_tdm_hw_params(struct snd_pcm_substream *substream,
+> +                                struct snd_pcm_hw_params *params,
+> +                                struct snd_soc_dai *dai)
+> +{
+> +       struct mtk_base_afe *afe =3D snd_soc_dai_get_drvdata(dai);
+> +       struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> +       int tdm_id =3D dai->id;
+> +       struct mtk_afe_tdm_priv *tdm_priv;
+> +       unsigned int rate =3D params_rate(params);
+> +       unsigned int channels =3D params_channels(params);
+> +       snd_pcm_format_t format =3D params_format(params);
+> +       unsigned int tdm_con =3D 0;
+> +
+> +       if (tdm_id >=3D MT8196_DAI_NUM || tdm_id < 0)
+> +               return -EINVAL;
+> +
+> +       tdm_priv =3D afe_priv->dai_priv[tdm_id];
+> +
+> +       if (!tdm_priv)
+> +               return -EINVAL;
+> +
+> +       /* calculate mclk_rate, if not set explicitly */
+> +       if (!tdm_priv->mclk_rate) {
+> +               tdm_priv->mclk_rate =3D rate * tdm_priv->mclk_multiple;
+> +               mtk_dai_tdm_cal_mclk(afe,
+> +                                    tdm_priv,
+> +                                    tdm_priv->mclk_rate);
+> +       }
+> +
+> +       /* calculate bck */
+> +       tdm_priv->bck_rate =3D rate *
+> +                            channels *
+> +                            snd_pcm_format_physical_width(format);
+> +
+> +       if (tdm_priv->bck_rate > tdm_priv->mclk_rate)
+> +               return -EINVAL;
+> +
+> +       if (tdm_priv->mclk_rate % tdm_priv->bck_rate !=3D 0)
+> +               return -EINVAL;
+> +
+> +       dev_info(afe->dev, "id %d, rate %d, channels %d, format %d, mclk_=
+rate %d, bck_rate %d\n",
+> +                tdm_id, rate, channels, format,
+> +                tdm_priv->mclk_rate, tdm_priv->bck_rate);
+
+Please make this debug level.
+
+> +
+> +       /* set tdm */
+> +       tdm_con =3D 0 << BCK_INVERSE_SFT;
+> +       tdm_con |=3D 0 << LRCK_INVERSE_SFT;
+> +       tdm_con |=3D 0 << DELAY_DATA_SFT;
+> +       tdm_con |=3D 1 << LEFT_ALIGN_SFT;
+> +       tdm_con |=3D get_tdm_wlen(format) << WLEN_SFT;
+> +       tdm_con |=3D get_tdm_ch(channels) << CHANNEL_NUM_SFT;
+> +       tdm_con |=3D get_tdm_channel_bck(format) << CHANNEL_BCK_CYCLES_SF=
+T;
+> +       tdm_con |=3D get_tdm_lrck_width(format) << LRCK_TDM_WIDTH_SFT;
+> +       regmap_write(afe->regmap, AFE_TDM_CON1, tdm_con);
+> +
+> +       /* set dptx */
+> +       if (tdm_id =3D=3D MT8196_DAI_TDM_DPTX) {
+> +               regmap_update_bits(afe->regmap, AFE_DPTX_CON,
+> +                                  DPTX_CHANNEL_ENABLE_MASK_SFT,
+> +                                  get_dptx_ch_enable_mask(channels) <<
+> +                                  DPTX_CHANNEL_ENABLE_SFT);
+> +               regmap_update_bits(afe->regmap, AFE_DPTX_CON,
+> +                                  DPTX_CHANNEL_NUMBER_MASK_SFT,
+> +                                  get_dptx_ch(channels) <<
+> +                                  DPTX_CHANNEL_NUMBER_SFT);
+> +               regmap_update_bits(afe->regmap, AFE_DPTX_CON,
+> +                                  DPTX_16BIT_MASK_SFT,
+> +                                  get_dptx_wlen(format) << DPTX_16BIT_SF=
+T);
+> +       }
+
+
+> +               switch (channels) {
+> +               case 1:
+> +               case 2:
+> +                       tdm_con =3D TDM_CH_START_O30_O31 << ST_CH_PAIR_SO=
+UT0_SFT;
+> +                       tdm_con |=3D TDM_CH_ZERO << ST_CH_PAIR_SOUT1_SFT;
+> +                       tdm_con |=3D TDM_CH_ZERO << ST_CH_PAIR_SOUT2_SFT;
+> +                       tdm_con |=3D TDM_CH_ZERO << ST_CH_PAIR_SOUT3_SFT;
+> +                       break;
+> +               case 3:
+> +               case 4:
+> +                       tdm_con =3D TDM_CH_START_O30_O31 << ST_CH_PAIR_SO=
+UT0_SFT;
+> +                       tdm_con |=3D TDM_CH_START_O32_O33 << ST_CH_PAIR_S=
+OUT1_SFT;
+> +                       tdm_con |=3D TDM_CH_ZERO << ST_CH_PAIR_SOUT2_SFT;
+> +                       tdm_con |=3D TDM_CH_ZERO << ST_CH_PAIR_SOUT3_SFT;
+> +                       break;
+> +               case 5:
+> +               case 6:
+> +                       tdm_con =3D TDM_CH_START_O30_O31 << ST_CH_PAIR_SO=
+UT0_SFT;
+> +                       tdm_con |=3D TDM_CH_START_O32_O33 << ST_CH_PAIR_S=
+OUT1_SFT;
+> +                       tdm_con |=3D TDM_CH_START_O34_O35 << ST_CH_PAIR_S=
+OUT2_SFT;
+> +                       tdm_con |=3D TDM_CH_ZERO << ST_CH_PAIR_SOUT3_SFT;
+> +                       break;
+> +               case 7:
+> +               case 8:
+> +                       tdm_con =3D TDM_CH_START_O30_O31 << ST_CH_PAIR_SO=
+UT0_SFT;
+> +                       tdm_con |=3D TDM_CH_START_O32_O33 << ST_CH_PAIR_S=
+OUT1_SFT;
+> +                       tdm_con |=3D TDM_CH_START_O34_O35 << ST_CH_PAIR_S=
+OUT2_SFT;
+> +                       tdm_con |=3D TDM_CH_START_O36_O37 << ST_CH_PAIR_S=
+OUT3_SFT;
+> +                       break;
+> +               default:
+> +                       tdm_con =3D 0;
+> +               }
+
+The indentation for this block is incorrect.
+
+> +       regmap_write(afe->regmap, AFE_TDM_CON2, tdm_con);
+> +       regmap_update_bits(afe->regmap, AFE_HDMI_OUT_CON0,
+> +                          HDMI_CH_NUM_MASK_SFT,
+> +                          channels << HDMI_CH_NUM_SFT);
+> +
+> +       return 0;
+> +}
+> +
+> +static int mtk_dai_tdm_trigger(struct snd_pcm_substream *substream,
+> +                              int cmd,
+> +                              struct snd_soc_dai *dai)
+> +{
+> +       struct mtk_base_afe *afe =3D snd_soc_dai_get_drvdata(dai);
+> +       int tdm_id =3D dai->id;
+> +
+> +       dev_dbg(afe->dev, "cmd %d, tdm_id %d\n", cmd, tdm_id);
+> +
+> +       switch (cmd) {
+> +       case SNDRV_PCM_TRIGGER_START:
+> +       case SNDRV_PCM_TRIGGER_RESUME:
+> +               /* enable Out control */
+> +               regmap_update_bits(afe->regmap, AFE_HDMI_OUT_CON0,
+> +                                  HDMI_OUT_ON_MASK_SFT,
+> +                                  0x1 << HDMI_OUT_ON_SFT);
+
+This is already controlled from the "HDMI" PCM component driver.
+The DAI driver should not touch it.
+
+> +
+> +               /* enable dptx */
+> +               if (tdm_id =3D=3D MT8196_DAI_TDM_DPTX) {
+> +                       regmap_update_bits(afe->regmap, AFE_DPTX_CON,
+> +                                          DPTX_ON_MASK_SFT, 0x1 <<
+> +                                          DPTX_ON_SFT);
+> +               }
+> +
+> +               /* enable tdm */
+> +               regmap_update_bits(afe->regmap, AFE_TDM_CON1,
+> +                                  TDM_EN_MASK_SFT, 0x1 << TDM_EN_SFT);
+> +               break;
+> +       case SNDRV_PCM_TRIGGER_STOP:
+> +       case SNDRV_PCM_TRIGGER_SUSPEND:
+> +               /* disable tdm */
+> +               regmap_update_bits(afe->regmap, AFE_TDM_CON1,
+> +                                  TDM_EN_MASK_SFT, 0);
+> +
+> +               /* disable dptx */
+> +               if (tdm_id =3D=3D MT8196_DAI_TDM_DPTX) {
+> +                       regmap_update_bits(afe->regmap, AFE_DPTX_CON,
+> +                                          DPTX_ON_MASK_SFT, 0);
+> +               }
+> +
+> +               /* disable Out control */
+> +               regmap_update_bits(afe->regmap, AFE_HDMI_OUT_CON0,
+> +                                  HDMI_OUT_ON_MASK_SFT, 0);
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int mtk_dai_tdm_set_sysclk(struct snd_soc_dai *dai,
+> +                                 int clk_id, unsigned int freq, int dir)
+> +{
+> +       struct mtk_base_afe *afe =3D dev_get_drvdata(dai->dev);
+> +       struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> +       struct mtk_afe_tdm_priv *tdm_priv;
+> +
+> +       if (dai->id >=3D MT8196_DAI_NUM || dai->id < 0)
+> +               return -EINVAL;
+> +
+> +       tdm_priv =3D afe_priv->dai_priv[dai->id];
+> +
+> +       if (!tdm_priv)
+> +               return -EINVAL;
+> +
+> +       if (dir !=3D SND_SOC_CLOCK_OUT)
+> +               return -EINVAL;
+> +
+> +       dev_dbg(afe->dev, "freq %d\n", freq);
+> +
+> +       return mtk_dai_tdm_cal_mclk(afe, tdm_priv, freq);
+> +}
+> +
+> +static const struct snd_soc_dai_ops mtk_dai_tdm_ops =3D {
+> +       .hw_params =3D mtk_dai_tdm_hw_params,
+> +       .trigger =3D mtk_dai_tdm_trigger,
+> +       .set_sysclk =3D mtk_dai_tdm_set_sysclk,
+> +};
+> +
+> +/* dai driver */
+> +#define MTK_TDM_RATES (SNDRV_PCM_RATE_8000_48000 |\
+> +                      SNDRV_PCM_RATE_88200 |\
+> +                      SNDRV_PCM_RATE_96000 |\
+> +                      SNDRV_PCM_RATE_176400 |\
+> +                      SNDRV_PCM_RATE_192000)
+> +
+> +#define MTK_TDM_FORMATS (SNDRV_PCM_FMTBIT_S16_LE |\
+> +                        SNDRV_PCM_FMTBIT_S24_LE |\
+> +                        SNDRV_PCM_FMTBIT_S32_LE)
+> +
+> +static struct snd_soc_dai_driver mtk_dai_tdm_driver[] =3D {
+> +       {
+> +               .name =3D "TDM",
+> +               .id =3D MT8196_DAI_TDM,
+> +               .playback =3D {
+> +                       .stream_name =3D "TDM",
+> +                       .channels_min =3D 2,
+> +                       .channels_max =3D 8,
+> +                       .rates =3D MTK_TDM_RATES,
+> +                       .formats =3D MTK_TDM_FORMATS,
+> +               },
+> +               .ops =3D &mtk_dai_tdm_ops,
+> +       },
+> +       {
+> +               .name =3D "TDM_DPTX",
+> +               .id =3D MT8196_DAI_TDM_DPTX,
+> +               .playback =3D {
+> +                       .stream_name =3D "TDM_DPTX",
+> +                       .channels_min =3D 2,
+> +                       .channels_max =3D 8,
+> +                       .rates =3D MTK_TDM_RATES,
+> +                       .formats =3D MTK_TDM_FORMATS,
+> +               },
+> +               .ops =3D &mtk_dai_tdm_ops,
+> +       },
+> +};
+> +
+> +static struct mtk_afe_tdm_priv *init_tdm_priv_data(struct mtk_base_afe *=
+afe,
+> +                                                  int id)
+> +{
+> +       struct mtk_afe_tdm_priv *tdm_priv;
+> +
+> +       tdm_priv =3D devm_kzalloc(afe->dev, sizeof(struct mtk_afe_tdm_pri=
+v),
+> +                               GFP_KERNEL);
+> +       if (!tdm_priv)
+> +               return NULL;
+> +
+> +       if (id =3D=3D MT8196_DAI_TDM_DPTX)
+> +               tdm_priv->mclk_multiple =3D 256;
+> +       else
+> +               tdm_priv->mclk_multiple =3D 128;
+> +
+> +       tdm_priv->bck_id =3D MT8196_TDMOUT_BCK;
+> +       tdm_priv->mclk_id =3D MT8196_TDMOUT_MCK;
+> +
+> +       return tdm_priv;
+> +}
+> +
+> +int mt8196_dai_tdm_register(struct mtk_base_afe *afe)
+> +{
+> +       struct mt8196_afe_private *afe_priv =3D afe->platform_priv;
+> +       struct mtk_afe_tdm_priv *tdm_priv, *tdm_dptx_priv;
+> +       struct mtk_base_afe_dai *dai;
+> +
+> +       dai =3D devm_kzalloc(afe->dev, sizeof(*dai), GFP_KERNEL);
+> +       if (!dai)
+> +               return -ENOMEM;
+> +
+> +       list_add(&dai->list, &afe->sub_dais);
+
+This should be the final step in this function, after everything has
+been initialized correctly.
+
+> +
+> +       dai->dai_drivers =3D mtk_dai_tdm_driver;
+> +       dai->num_dai_drivers =3D ARRAY_SIZE(mtk_dai_tdm_driver);
+> +
+> +       dai->dapm_widgets =3D mtk_dai_tdm_widgets;
+> +       dai->num_dapm_widgets =3D ARRAY_SIZE(mtk_dai_tdm_widgets);
+> +       dai->dapm_routes =3D mtk_dai_tdm_routes;
+> +       dai->num_dapm_routes =3D ARRAY_SIZE(mtk_dai_tdm_routes);
+> +
+> +       tdm_priv =3D init_tdm_priv_data(afe, MT8196_DAI_TDM);
+> +       if (!tdm_priv)
+> +               return -ENOMEM;
+
+Or you end up with a bad entry in the list here.
+
+> +
+> +       tdm_dptx_priv =3D init_tdm_priv_data(afe, MT8196_DAI_TDM_DPTX);
+> +       if (!tdm_dptx_priv)
+> +               return -ENOMEM;
+
+Or here.
+
+
+ChenYu
+
+> +
+> +       afe_priv->dai_priv[MT8196_DAI_TDM] =3D tdm_priv;
+> +       afe_priv->dai_priv[MT8196_DAI_TDM_DPTX] =3D tdm_dptx_priv;
+> +
+> +       return 0;
+> +}
+> +
+> --
+> 2.45.2
 >
-> > In addition, it's concerning that we're explicitly adding configs for
-> > specific, commercial, products. This might be seen as an endorsement
-> > whether intended or not.
 >
-> Don't we already have that for a few things already, like .editorconfig?
-
-Right, but I think it's a whole other level when it's a subscription
-service. I realise we have to be practical, but it's just something to be
-aware of.
-
-Perhaps an entry in the AI doc along the lines of 'provision of
-configuration for a service is not advocating for that service, it is
-simply provided for convenience' or similar might help.
-
-Thanks, Lorenzo
 
