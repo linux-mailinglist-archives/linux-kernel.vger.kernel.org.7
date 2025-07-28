@@ -1,108 +1,207 @@
-Return-Path: <linux-kernel+bounces-747332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47228B132A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:15:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB90B132A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CCFB1896734
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:16:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D44175BE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 00:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323473597C;
-	Mon, 28 Jul 2025 00:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE94823DD;
+	Mon, 28 Jul 2025 00:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="RPbTfdr5"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmEXzFgG"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C24E79CF
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 00:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3AC2EAE3;
+	Mon, 28 Jul 2025 00:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753661743; cv=none; b=cCKzRNcwmSLxytlRjQJ9ZFf1xekzmGrAnU3UPpgGiJ14m2ShoOcp4z+buQnQ4vbXSKH3Vzkzk97YdrXUWKSxWNV2keGWAtR8klMt7gYd0/3IIGy+3Rdtehe0yHGfbhPRLnMMLKw6uLqXQThAIzpmb/A5DXu9ITUhWRFHR8KtElM=
+	t=1753663250; cv=none; b=KdlH4hdVscjm4REpIv93iunAGYmxPOHGsD8vvVqyKx2h+mEr/m2kPi9KMQjl3lmk+4ONMERDHqYCd2bi4UNusijS13L3IPqVqVzDD1o5n9ZBgPVQqJQFz5WPREmAYwEYzN+qMqiQABMD8ggXljp2yerJeMwGT7/f1w3xFy/bVGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753661743; c=relaxed/simple;
-	bh=5k8JYmHT2cWOWtGfELADGc92fbkTdz1tEljYzoDyHO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jXYJbYsaFHbDxJLYspiJhFHm8e4e8HtmxvIs+R85qvJPXihY+7ANBOJB070g24/wYC6ELWMZZiFIwv9O3ggUUz4feQTRAwzI0g+ALomSkcOuAb90ndMFMs0qyD0m4ImCh/FcBsTqQaCxHty/VryLuj9A9HGgeYOuJ7sev4jiVWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=RPbTfdr5; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 5EE52104C1CB
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 05:45:28 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 5EE52104C1CB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1753661728; bh=5k8JYmHT2cWOWtGfELADGc92fbkTdz1tEljYzoDyHO0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RPbTfdr5ubQ/Ie0C5V9yg/krhtrN1zu2JngvovCUqM54zyAyv3uxoXkeQAfDD6hsX
-	 09w6G31zxeqAlxBucisd1MD8NCzSJyyC1b7PYQu0CgeO74OvG/AiTgiwa5sz0BVfPR
-	 fNfwKQ8TweWe07lsfBrtC0uOjEttlJoM17jhtWTU=
-Received: (qmail 23478 invoked by uid 510); 28 Jul 2025 05:45:28 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.875186 secs; 28 Jul 2025 05:45:28 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 28 Jul 2025 05:45:24 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id D4A563414DD;
-	Mon, 28 Jul 2025 05:45:23 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id AA8EA1E8128E;
-	Mon, 28 Jul 2025 05:45:23 +0530 (IST)
-Date: Mon, 28 Jul 2025 05:45:17 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: thierry.reding@gmail.com, mperttunen@nvidia.com, airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
-	skhan@linuxfoundation.org
-Subject: [PATCH] gpu: host1x: use dev_err_probe() in probe path
-Message-ID: <aIbBFQqgZalOMc6r@bhairav-test.ee.iitb.ac.in>
+	s=arc-20240116; t=1753663250; c=relaxed/simple;
+	bh=o60Dll9O4EAU54DVF4mqz2Sx8yC6bleB2ld1/34rZx4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xn751/xxBHl0Pu4G9JHMnnXVBuFlUDGOczENfXX2eJ0/ueNb5D4OE1bq/Xh9S8ouzMULisKj0O/+J7Qrn+5Hy4jtUQE+SWT1MPMuFTrCkB9SwFuF57t6oE8nYd6qlG1yEHMBTH+83PO9sIgjDnTAAawomoaja1aLApJl5+Yz9Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TmEXzFgG; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b3be5c0eb99so3259106a12.1;
+        Sun, 27 Jul 2025 17:40:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753663248; x=1754268048; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8jN1ybFJ4mjJ67hCFHmSsX1qnjm+wYzVsMcdr0kINfg=;
+        b=TmEXzFgGD+RsNMyqMjpIoM98M247CJeipISJ/3rIqQXZ+MJErbUQs/i0rb7ErHmu2Q
+         uuXrzVzX0gar36fwwysejw8crpJGg4+RGJ4zus5C+L4ZblMzJFC+c8jDJMCCnB5Qyl+w
+         Z8BDvwcu2yP2wqwOK6na8pTpaW2Ed7B/kEYppQ5ChOfrDDuC4l4ks1ORHEY86V2Fhj+l
+         qLPdy/4sRS76GJa6uhAH0kzNsq+pI/5zqxw0cGTBADABHxyLgfX9wrDxXd5rjT4200cq
+         0n5PCJACK7JARo+aR3q/Mqj6KY3j3Uh8PHKcOG+cdM+BAoWV3aWhcSEVvCWuAe6Z9AEi
+         p8Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753663248; x=1754268048;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8jN1ybFJ4mjJ67hCFHmSsX1qnjm+wYzVsMcdr0kINfg=;
+        b=Awv6PpmNNLgBNhemZB3fnHD4cUfErZYnCYV4H43vaOc1DVxDAovIuBjwCnEa/6y8kK
+         6nqPAz9KJqg7G3HdJSmfeUfpDvJNsl+dow2SpjbD1lxyrys3ogN8Gzp7YkTtvxZO98Wi
+         XsuaU1YBWodmoOl80sCgFaRU0koj/VrXyTiKSuwIGwk57pD/tFuLKG11FIKe4ZyfyGjj
+         Az6BBtxncAsuUXs6yOuWO4ZZroVLbJtFKYsoRWNtMFpCVW7QmbHIpbqQ78hrICzx2l+t
+         w80m6dhmt9s+80n0l2bavOl6w7XinKmVzaWHqyY23RlPazoFET+ArdGi4ITcH9BpR0Sc
+         4wmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGu+kBOFAPlXFPCfbQyi9vVc3FHuxT75zPY6+Lk3AGmYxZgdzcyin/TdCb+OOMqrEminj/QD77sbfUfsMI@vger.kernel.org, AJvYcCXBZqHkI5woWZyarWc21uQTbdE2gpwpa//Xv40d3qSTu/6ajFEj2uuE8oVPn1ByQnb+k4HuxdyqMX27@vger.kernel.org, AJvYcCXkLschJqUXIbR3H4YlwI6TXUf51zkPDf7yrhtWZIWnQhJzFxFgY5yjTZ3045AzkF5uiiM1ml797HOO@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy8a3H/fX4e+fpGcL7vhNnl0tMtznFjr7YP9ybcMEpTeDLCXMa
+	zcjaQ05Pxc/kn9kAukajeJ60XKT72M4fInE3ZTcKaBMSGdFjklBR6/l/
+X-Gm-Gg: ASbGncvp2hW40OR1lYrxPi5IgfkjWvXTJEDvvRpu/T3DgWtbkildDMDZ3Lhm9LwQhDj
+	4oVTsr4Gi7WUG/bXlthCd7ZFut0+3THLMpK+kF8RxRCaljQU8fdCBoef7ZSIlkITxoOjOcyEZIS
+	wICUMA8HjxVk3km+nuHbiwnkPElj/DTyDV49TuYAeY0W9/xWeCR6A5jU7Ea0OjtawSrC/pAFnhm
+	lkIFaFdcNMFfqzTdhDaH3idTE7nzUy/jcGVd2fFxY4BO0DkvZ+S1krUNqJwJXePlvSVZ3A7B1Xk
+	5SPQ1/lle86JXPfnhS3LuWT1ir1W10Nq7veR6HMTyk4r0yI8VM5Awm03RCZV4box3zhPB2SgmOH
+	0cq06PKH1t1QnqzICRckOm3iFRv0ylAf+usWrg6KlFPZ9jQ==
+X-Google-Smtp-Source: AGHT+IFQOo3nYh+Ds3CoNN3ioRG8uZVkPbRyQMR++/clkWEuffto6B6YCIo4wAepXcWGc/hME0pZ3w==
+X-Received: by 2002:a17:902:ebcd:b0:240:1f25:d455 with SMTP id d9443c01a7336-2401f25d734mr36642185ad.50.1753663248068;
+        Sun, 27 Jul 2025 17:40:48 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14d:4c64:81ec:4bc4:d34b:cde0:106b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fcd8fb34asm36275515ad.33.2025.07.27.17.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 17:40:47 -0700 (PDT)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	conor+dt@kernel.org,
+	krzk+dt@kernel.org,
+	jean-baptiste.maneyrol@tdk.com,
+	robh@kernel.org
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: iio: pressure: add invensense,icp10100
+Date: Sun, 27 Jul 2025 21:32:02 -0300
+Message-ID: <20250728004039.8634-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Use dev_err_probe() helper as recommended by core driver model in
-drivers/base/core.c to handle deferred probe error. Improve code
-consistency and debuggability using standard helper.
+There is no txt file for it, add yaml for invensense,icp10100
+which is already used in the driver. Also, document other compatibles
+for ICP-101xx family and add invensense,icp10100 as a fallback.
 
-Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
 ---
- drivers/gpu/host1x/dev.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Just for the record from v2:
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 1f93e5e276c0..e6f3cbeb9ae5 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -587,11 +587,7 @@ static int host1x_probe(struct platform_device *pdev)
- 	host->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(host->clk)) {
- 		err = PTR_ERR(host->clk);
--
--		if (err != -EPROBE_DEFER)
--			dev_err(&pdev->dev, "failed to get clock: %d\n", err);
--
--		return err;
-+		return dev_err_probe(&pdev->dev, err, "failed to get clock: %d\n", err);
- 	}
- 
- 	err = host1x_get_resets(host);
+On 7/3/25 04:38, Krzysztof Kozlowski wrote:
+> On Tue, Jul 01, 2025 at 07:05:43PM -0300, Rodrigo Gobbi wrote:
+>> +$id: http://devicetree.org/schemas/iio/pressure/invensense,icp10100.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: InvenSense ICP-101xx Barometric Pressure Sensors
+>> +
+>> +maintainers:
+>> +  - Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+>> +
+>> +description: |
+>> +  Support for ICP-101xx family: ICP-10100, ICP-10101, ICP-10110, ICP-10111.
+> 
+> The problem with title and description here is that they do not match
+> compatible. oneOf:
+> 
+> 1. Your statement is correct, but then compatibles are incomplete and
+> will encourage people to use incomplete compatibles for e.g. ICP-10111.
+> 2. Compatible is correct but your statement is not correct, so then fix
+> the statement - drop other devices.
+> 
+> Assuming 1 is closer to truth, then I suggest to express it with
+> documenting these compatibles and using invensense,icp10100 as fallback.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+...reviewed the datasheet again and I think we should go with 1. I`ve changed that,
+documented the rest of the family and added a fallback for it.
+Tks and regards.
+
+Changelog:
+v3: add other compatible names and add a fallback for it
+v2: https://lore.kernel.org/linux-devicetree/20250701221700.34921-1-rodrigo.gobbi.7@gmail.com/
+v1: https://lore.kernel.org/all/20250626212742.7986-1-rodrigo.gobbi.7@gmail.com/
+---
+ .../iio/pressure/invensense,icp10100.yaml     | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/pressure/invensense,icp10100.yaml
+
+diff --git a/Documentation/devicetree/bindings/iio/pressure/invensense,icp10100.yaml b/Documentation/devicetree/bindings/iio/pressure/invensense,icp10100.yaml
+new file mode 100644
+index 000000000000..df875d6d03dc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/pressure/invensense,icp10100.yaml
+@@ -0,0 +1,50 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/pressure/invensense,icp10100.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: InvenSense ICP-101xx Barometric Pressure Sensors
++
++maintainers:
++  - Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
++
++description: |
++  Support for ICP-101xx family: ICP-10100, ICP-10101, ICP-10110, ICP-10111.
++  Those devices uses a simple I2C communication bus, measuring the pressure
++  in a ultra-low noise at the lowest power.
++  Datasheet: https://product.tdk.com/system/files/dam/doc/product/sensor/pressure/capacitive-pressure/data_sheet/ds-000186-icp-101xx.pdf
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - invensense,icp10101
++          - invensense,icp10110
++          - invensense,icp10111
++      - const: invensense,icp10100
++
++  reg:
++    maxItems: 1
++
++  vdd-supply: true
++
++required:
++  - compatible
++  - reg
++  - vdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        pressure@63 {
++            compatible = "invensense,icp10101", "invensense,icp10100";
++            reg = <0x63>;
++            vdd-supply = <&vdd_1v8>;
++        };
++    };
++...
 -- 
-2.34.1
+2.48.1
 
 
