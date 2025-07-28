@@ -1,185 +1,257 @@
-Return-Path: <linux-kernel+bounces-748447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64F6B1416F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF6BB14172
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1DAE3A7A49
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:51:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633DE18C06D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CF127464A;
-	Mon, 28 Jul 2025 17:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABA027464A;
+	Mon, 28 Jul 2025 17:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="G9nJLyxR"
-Received: from outbound.mail.protection.outlook.com (mail-bn8nam11on2076.outbound.protection.outlook.com [40.107.236.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vRUrGmcp"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A933F1E5B60
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753725115; cv=fail; b=HsjKx17ioKyJl7/xNu+F4B1EpzmZptXB1Oh3ELgK0rDo4Dr2Nts2Pz4gEVQaYQgA2VChZ/rRX+q0W9Ej4vU5eUBXT01EBK5j3Gne05t/dYrnYqEE4W4yxYHFJ/RZ/cvwZA1LjYpL95LVOiw5VHk5eeq4b0El5IOnQSPZGp1ro6Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753725115; c=relaxed/simple;
-	bh=H97AIEZ1T7+XYZjyUkKW9EHYi8Ob7iYWdJSw8BFFMrw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lHEdwr++G5LGrb6xkju6ZELLTN+iHlmB7z2scwId7iMzlnQuLOm47xqi86SI4asF2F+R+wqg4kNvShBbxh7Sq0UKtJa+ASdMW02n1padSZLOFdXHkBaqOJRQafCJEjpbqlnlc5VW5Eo96kSiocF7PYXV1FgkPbSeE68FnKspmso=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=G9nJLyxR; arc=fail smtp.client-ip=40.107.236.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FkFxUqzwh/wdCOemRXL6WW9fr7Tyakkz46FB4XCuQcBbfR48QBo1zgld3MpO4D7xtsJmG9plH+F8yUH1J9FMnS+tWjgD8DeUdDgx7mVp4nUU21bWPPpCRr+uzi6EkzdNfBfQ8yYUkz8qDRr7RvUCBNv5GzvQdVB66hvNLmjKECPPJIUzQ8rliy493fE8OsDymdHBfVyh7sPVoFGO7phRkcBdQWWCfYI58wxe4pf9wo3sHxmmLQlyh8DLLpdVZYfQpJN4NsGvb1TKDQmXbTx8JZhfGe4B2B5zt0a/9FKawuXn1XQ811mrLgC45UtjUASpmFraeFUJ/yB1IYE3N2e0Zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H97AIEZ1T7+XYZjyUkKW9EHYi8Ob7iYWdJSw8BFFMrw=;
- b=rtSr8dmkdByBCsk5wh3i5AL5L6Q8BDv2UMi/1BEevXsWejRt55gmWCe9KKCVYDMg0tMwjcu35OyxfApJVP1qUEc5uePCzvINBFImouk++fanjnHHsfJkPt5hhS2zc+CXiQ2ajgWsHKjRDSkUoGneDFc7aEIi6EKlCu+fi8qLBXMKrWeJxIsyAkTSf51WK3eScWNM6n7fmsP+eUJ9kh1RXLL6ipS0P7J6Nu76EV7I6wK2l3+KgF5aFxXyVS7d5xMhKlBH0Arkz3TtGZjeFUqJCjKAB2MSgw3aKl7AMDOKuFK9un5ftGlxAatSmKi6CQ3dqp75qDd9sD5j0YRydQ9rfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H97AIEZ1T7+XYZjyUkKW9EHYi8Ob7iYWdJSw8BFFMrw=;
- b=G9nJLyxRtRfWWgqoGoE1z6urQ0UrjUHT9U5S6r1sqik42GI65e8hk/6G/9ek9esqdEu47nS+DTSiuO7gcY9ODna2kw5UJivWIFKchXuAQXbkc65s0MVOPNOOyCzKyR9NVbJ8P2kO5qgM3/hf8aj4gkDmFuMqXZ3kdF3T6SyHFzd9jXrtmJ2wINzPHvzwoRbNi2Bqnl3ovuDwPRn8PTRd2wF2jhrPmHx7YJka95AaA3AlSGiktPXWSG67z04wDPSbic/vZMzr8d5S+DjHEKuix3A9QoccmVY23R+RNLMZjLRDT5/E7b6d0LXZAlDq/lgWyT4FheOCzC9K23PxRGbJhw==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by CH2PR12MB4296.namprd12.prod.outlook.com (2603:10b6:610:af::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Mon, 28 Jul
- 2025 17:51:48 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%3]) with mapi id 15.20.8964.025; Mon, 28 Jul 2025
- 17:51:48 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, Keith Busch <kbusch@kernel.org>, Jens
- Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
-	<sagi@grimberg.me>
-CC: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>
-Subject: Re: [PATCH] nvme: Fix typos
-Thread-Topic: [PATCH] nvme: Fix typos
-Thread-Index: AQHb/BBef9S4buvEgUa9jy9kD65wgbRH2HMA
-Date: Mon, 28 Jul 2025 17:51:48 +0000
-Message-ID: <39947536-f953-46fd-a63b-6cb616cebe59@nvidia.com>
-References: <20250723202801.2909506-1-helgaas@kernel.org>
-In-Reply-To: <20250723202801.2909506-1-helgaas@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|CH2PR12MB4296:EE_
-x-ms-office365-filtering-correlation-id: 4eb59800-2617-4e22-2ac0-08ddcdff6d0d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?U3JzLzdLa0ZyZktyNHBva21oVE9pWElnYjBLTFR4RU5vVUhpb2JXUmFsQ0Fm?=
- =?utf-8?B?UXR0UkR0aHlldWxxTnpLMEVxVXdqZUJZaUdOZFJ6ckE5ak5PMFVlK0loS3I0?=
- =?utf-8?B?dFA2aGk5MmtHUG9xWnVLbFI0SlFTL1FlTEYxbmN6ZStGaVpKN0pZU1pHUWRD?=
- =?utf-8?B?UDRMM2c3ZThYRzVDM1ZHRzFCeVdkNG1xTWNqUCtYRWpWWmYwUDBVRkJ5WFRZ?=
- =?utf-8?B?bXBBUFBybmk0enllcDlEeW5SUTJnWURiWEQrVFkycnVMdUlYLy9ld3FORnha?=
- =?utf-8?B?bVJWY1Q5LzNERktKSWRya1diSDdlS3pHM1V0RUhac0hTUDBMYzdXeUdwOHl3?=
- =?utf-8?B?R25kajFxeCtiam8yZTljSEsxT1pvMTFlWWZEYjFwYU9USHpJd1M3MWJHenVB?=
- =?utf-8?B?N3IxY0oxZEJGV2ZuckZpMlBLb3JtbGUxUXJYMmtnQWJUU2JCK1FzTDB2ZkpJ?=
- =?utf-8?B?enNiK2xTcy9DeGhybElRSWt3dVZtOU5pR3J5dGlmVC9OWldiRGZGLzRYa2x5?=
- =?utf-8?B?SjdRWURoMWluWCtXaVJIbDJjUWd2cENZaDRVQWh6WFRHMldKbXBFcnBqaU9h?=
- =?utf-8?B?TnZ3OFJqam5qNW1WZjZ2akpsZyt6Uy90Qzg3KzVFSHlwR0YwMEJiWEY5Mk50?=
- =?utf-8?B?T3ltdWlha2VvMW9pMGNqOXdaVkx0ajYvejNiTXFKYzhpYVlja1BOUUZWdHdL?=
- =?utf-8?B?cW5hQ3dPcmZ4ZmkrUnk1MEloWkNsOXBGM0JlU0ROb2VORER4SnRlTTI4bmI2?=
- =?utf-8?B?TURBaktwQlJLS3ZocDVyMnRROW9abkVSNlo0c0o4cUx5dkJpTW51U2xZRjAr?=
- =?utf-8?B?SEVlS0xuRkdxRTdhZG84ckprckxQUElJeFJhY09HOGExSi96aHFMS1I1WHJV?=
- =?utf-8?B?Y1NndExjb1B5M3M5emdNV0hhbWhaS0NSK0dhRjZxbXF0OE51RVA3UlQ5dmx6?=
- =?utf-8?B?UVArVlRQNlVsT2w2MktsNWZubUU2L0sxOENJWTN6UjVHNExkUWYvRWMrb1Q3?=
- =?utf-8?B?cFFOWFdXNDNWY3J5U3M4YTA3dVRySWVSNE43R24xcHc0OXJSenNDd2pmdG5Y?=
- =?utf-8?B?bjRJSmFLd0FDaWNjYUFMMjJnSWFMeG9EelhpUGVhUFYyeDBRUGNuZGdoZU5n?=
- =?utf-8?B?cmx2TWRiWnpuaVBzR2hvZ3BSTnk3NXNNc0F4SXVDaGpjR1luTzBuQnlLV21q?=
- =?utf-8?B?dzZYQlA0OEpvU2VqTHl4eG9mWDJLdCsxcFpFdkNiQmVzWG53MEFBSTZLRWdm?=
- =?utf-8?B?dnd4T1JlTlNUZkV6VHRGQjFsaW56THR5dExYNE16Q1U2VkQ2T01xVDlzT2Y2?=
- =?utf-8?B?MXdMb0lEaERoMWRkTHlRRmdLMjlDOU5jdlU0NklYVzk1aVlUazlPdnVDajNU?=
- =?utf-8?B?d1hSa09EdnE5RG9zQnUzenVFQU93eGZ4VitPay82ZlhKQ2hubGd6QllGV1Jv?=
- =?utf-8?B?ZC9uek9jTml1WjhBRzVURTkrMWFOaFJQZ2tEekpOeUZtdVZNdnBuaGZkTFNo?=
- =?utf-8?B?V3BFcG4waHdSZHYzMnlsVjA2MTkrbXR1Sng1N3VKWm5pMVJqMDRpaytPZDZL?=
- =?utf-8?B?TWxGOUxXTTBuemtLT25UbmVWdjBZNmpncFVvb3FyTTllV1BoUXF4NWo3Ky85?=
- =?utf-8?B?cU16cFN5OUVwQXlCb25EUGNKVFRQRVEvTUdoNHBMWGxoTCs3SXJFZVRwWTFn?=
- =?utf-8?B?aGc2cy8zdmpsV0lIdndYaHFrL3NUZGRjazlzVXBIWTF2T2Z0ZHh2K0xIZUFz?=
- =?utf-8?B?eFMzUU1SWWpsUkJMckJxWTBlQ1hjMEJEWGgveXhncVRFMklFdFF6RDNFQW1L?=
- =?utf-8?B?d0xhbTJPL3NabXhZaThEdlRsMkxlRUNUakJRbDI2cHNOUmRmOEhoZzhNbWFU?=
- =?utf-8?B?WUtJUlRoNVc4bTk1bk83dm9lTS93SStLejRZUlBZN0FoR21SM2g3MU90V00y?=
- =?utf-8?B?ZWdONHoxMEY4Yk4zUUlPWDJldzFzS0d6Wk1TSExVc1YrTUxFUEVmZEJoZG9O?=
- =?utf-8?B?L0tHQndGb0J3PT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VHBnWEZLem5ydUhZd2hoQTdwTnRLWHpwZVI4cmQvVVJlRU9YL2ZIdjdROFQr?=
- =?utf-8?B?eTVLVncyM2hiWHJhWUMxenVjWDF2aU4ycm9uK2crVXJFQmtndTZzMGx1WjlL?=
- =?utf-8?B?NFRkcC80WmQzRGJqcWhkOFllKzNQNVdGWnNvWEJzNDRJenczYVZxc2puL0V6?=
- =?utf-8?B?d2JmVTlLRkl6cUkrcjRsa01paG44VHZRdXUvTFlrVzR3YVRlc1crT2o5cHEr?=
- =?utf-8?B?aWhJWDRteXZMdWFXczA0ZTZRS0RuVzhaSHNIOUJpb1NLQWNQanNmZzVxbFNj?=
- =?utf-8?B?R01lWUxLUlpuR1FrUDNpREJ2N1BBNVBPcytZRXczUzYrR21hRFUrMGt4dmlv?=
- =?utf-8?B?T0IreXdvRjRhV2R4eXJNTGljb3VTdlhLcFhzS2VCZm5ZU1NxeWp3VU5ubkJN?=
- =?utf-8?B?bmc0Nk1UcFNicjloQUNXbWhrOFNrdHhFYmtZNWtCZSthOVZTNEdBdzk5TXdl?=
- =?utf-8?B?TWRzdHIyMEQrSjlmMXgwTXBmRTIzSlVkWmNIQm1PNmszS3hsL3EzSDJVMStY?=
- =?utf-8?B?bnlkMDNkT3U0d3lxd2VnVzZzWTdWY3A4Q1hrRjF5bVN1QXJRQktVTHJtU3hS?=
- =?utf-8?B?QWhVQktNZGJxU0ZKa2JvbnZ3TXlkcEY0bW1ZU3h2QXFRSlNUWm1sc2lCL0pn?=
- =?utf-8?B?OEhpdktjcGtjd3RWZUpQUUMzUWswdXVzWjNxK01DZEtXVnRaZmh1b0hSb0tM?=
- =?utf-8?B?SDlld3loekZYZHlrdWx4VmtKb3oyMmdkb0RNL1phUkFYTzZUN1FrS2k0TW1Y?=
- =?utf-8?B?ZExFODFwSGNMSVJjemZDWlQ1NnhDaER6UGxjOGQvYjFhd3FNTE10R0c5bzgy?=
- =?utf-8?B?TnRLdUhlUXlVbGZsZldscUdzdTZQYlJKdmlTNS91RzhLbXhvNTJEMXk1L1dE?=
- =?utf-8?B?K0tZVUVIQjNLMkhOcHg3NlVXL0hIZWtsK1dSUHNHR1F1U1E0VE5ncU5idzBu?=
- =?utf-8?B?QzJuZVBPK0FFMW1yTGkwK0RkR250Z0VjTG1CQmZKVW81NTYvcWNmTUhubmtx?=
- =?utf-8?B?bnNOQmxaK2hyamtZdlNBdnNPWllUeWNaMnU2TTBwUmw4dGp4RndzSUF2a0JW?=
- =?utf-8?B?NEE0RzRWNTlGU2N1Mjd3K3ZZSUROZUNweXR3ektZUkIyNTloSHVMcFRuNkJw?=
- =?utf-8?B?eG1Ba0VxN1BNZ1hPTkl4MFBoWmRlb0QrWjg1Z3U3UWw2aENMR1ZNWERmcmls?=
- =?utf-8?B?ZkF4b2g4cE41TWU2YWg1eGZ4Z3FpZE9SU1dZYXh1WXdkZDBPQ1pDUVZ1RlNy?=
- =?utf-8?B?U0cxK3NOaWZ6eVFLT2NJd0ppZ1pQazBUN1lnTnEybmk2TEt2dTFJTEpoaGNR?=
- =?utf-8?B?V3BxbkJvRHBYejgvcU9RV0owbHdTaWJ1TGtVQnB0aEZ1YmJpdW1wY3A0WHN6?=
- =?utf-8?B?ejBLRGJOTVFoMy9rQWhXeFJKejYvYldQdCtTRDdIZXBXK2Y2YnQwS3lvazNO?=
- =?utf-8?B?b21hbzNwOGk2TUJpWFBhTW9CKy9sRzNtUFFWZnBhRmhZZE9HbGJzMjBMMmZM?=
- =?utf-8?B?dWR0Qkp6U1dBc0hqQk9QOHN4NCtjK3FpOS9YV3pQZEoxdmZGcXp0cEtXdFJw?=
- =?utf-8?B?RlU0eEtaSDFPaEx5MVJTcXNUS09RcVNCRDZ2NGZwcUdQZ0pFelN1NTQ4aS9Z?=
- =?utf-8?B?TVIwU1k2RUdzZk91akUzOGE3SEFud0xybDdFZ2ltSm5FUU9RZSs0NEdOeng2?=
- =?utf-8?B?aWhqdzl3ckJJZXpmaFZidlIwU3duREZ5VU5tb2hYUGg4OVBGR3ZaWTFDSFNj?=
- =?utf-8?B?dDlCSzJiTW04eE55TGI1VWxBMTZRVlJEMXRWdnczV2xIbFNCWGtyVnloUlk2?=
- =?utf-8?B?Ty90Z2hRdkJGMzRRekxGS0NLMkdZdTJWMjN5VlJReHY4Uzh0Y0ptV2lKUVQ5?=
- =?utf-8?B?SndRUkRUamh3dmptellCNDFiSG9Mai92b1ZBTUU1VlU2aFg3NWs1V1NUbEUr?=
- =?utf-8?B?Z2JPR1hjWnNqM1o0TzdRcEFDdC9WL3VSckJ1ekt4cGlZc2R4TXFpRVhVWjVw?=
- =?utf-8?B?QW9VMElueXgrVVVlNzhIRkt5NDJFLzRJdHlUa1VoZk1WVkZPaFhKd3FqU3RC?=
- =?utf-8?B?YUdTbDRzRnlRcjl0SXNlcDAzWWNuSThXYjZ3cjErSTN1WXkzeVR3aEhzMGZv?=
- =?utf-8?Q?JDpHYN89sGgf1ol9B8lBAnrbL?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3BA6F83B5F4B5E4DB20216126D8F4F1E@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CACA219A89
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753725214; cv=none; b=jdMXYWjumJ+oqaVnBpwz5t8PaqzR7ev+nuSCibqgw3LKSY9dOaxr9hzJVmN03+XApmiBZ61QsOMuwtAOJLeKZ1aTmkg490OXGIACRMGA+afFQgMkExaQwrZeHQmWPsLCCa7zBrZ/JA9R/kELuCqFjsRWWAy87M+Ua37N03el+CU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753725214; c=relaxed/simple;
+	bh=vm+16aMp3Hj96bAQIzHygIiRcER8sN0pB9SdWCvxidc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hHEgcPBT+Ui7u8uifE++saUrvfvNg5IJHA6n/GpkuahKpr/yqxebJO1mk67/sfSPC00pYBYP/cFgLziqXc3EiFRAqzETvNq3NSugKjv9p38eaS1hhJAJtONg94VJFgYEJ5PG46IObLs7BMwea+XwJz/isXaiLbhZLT1XGVy9yK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vRUrGmcp; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4eb6fcd88so2859160f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753725211; x=1754330011; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8yreLd+QpacId3F3pRUlLCmWTAXUiBp3fqE2+4w1mPs=;
+        b=vRUrGmcpBFAs69OUVQnPFUK7f3AfWkx8tuB6IR3kYSBfTWKyA1vRxQDXoFTHbmSDv1
+         B5VTPlspwbPyZM6zl2DAyKWAFAaXouIpfSJ6pCcwWEcGwl89qmFDkxgc3of3TMOwGkBI
+         Miam8Qt7r5Koqw6QFJC0vlwGdxq1J7KuIigMkM1XSqlfku/UCpoybFurd0Pi0tsqWOFL
+         xOkMb5US3rpWc6B3RU/Pljfv4sj8bD3byfZphmxHkp7bOEnCFYFEaBXCtVgZPNN4lOcc
+         wObDGa8FN+C5syG+IdDoari9fvFaJhg6iW1AxElsDAF5G5tzmZCYHmr1pFqWBmGfcAWW
+         1gEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753725211; x=1754330011;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8yreLd+QpacId3F3pRUlLCmWTAXUiBp3fqE2+4w1mPs=;
+        b=voUUPLeQKQREi6P1ClSqv5F/rFbobz3T5gY6HsR8meTucif3UjwV/V9MPQrjJwCEKD
+         Z7OYx9KialyiP7o0Ywj+bhB0JBaJ5gOeiYD2h6nwpHZebE/Xoupml0KkZM2DT5+Y3Z9g
+         1fogY9Gq0hnz/ZPJzgr/w/2jfNhXu2Z+0wW/4W08lvTgqvlk30z3RM6I2iLcSpkWqmAt
+         tzsx0t4N1Sc9ZU3Xf9ePkdWQk7cIW0EdPcgKVeNcFOtVcN6g4DFZ0BlX4R8XHpgb7IsC
+         5JzvikyG/Hs5ImYjYlg+oszdNAuKkpESoSjXLQxzuaKUUeQQniItQLo3KUrqKX6M+1UQ
+         d08w==
+X-Gm-Message-State: AOJu0YzYRJNFvu0byjcIMs2f2/A6+x7g+G/li972RyhtS9iso6uJ5yND
+	xi6VF3e56YEegi47mCw297lLMKHzdxPuTUx0Fki7UqqKRSy0kfaoIvSXjyV9Km1kIVCmE67+orD
+	tTrJFPsmrJjhS9J3/voG2pr7dJs3HEeOllRTLkNC1q1IP2b2SZV8vQHVaJylqeQxx1HTKcCiYCu
+	/UP5kbR1SPK92gXFsZzr3E7dBkNJEETImUmKR8TOKEBBxgD8nI2rVgCJg=
+X-Google-Smtp-Source: AGHT+IHdGQE2wwXM49+MVAqJUkEY8InyH8twrQm1c7DxW3HjRHCRjNGwP+usERmU6WFHjlMI/yRPQ1WqhtAlzg==
+X-Received: from wmco2.prod.google.com ([2002:a05:600c:a302:b0:455:e7d7:cae9])
+ (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2410:b0:3b7:8b88:e3a2 with SMTP id ffacd0b85a97d-3b78b88e59fmr1783148f8f.58.1753725210911;
+ Mon, 28 Jul 2025 10:53:30 -0700 (PDT)
+Date: Mon, 28 Jul 2025 17:52:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4eb59800-2617-4e22-2ac0-08ddcdff6d0d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2025 17:51:48.5832
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ut/HkiLOywa4o8edOCmCDAyvRX0fU53C+4mb+ot1thWd/CUmB24/rdpQbMQYoF3lLz6tB02EAjOM3Ov7JHVfFA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4296
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250728175316.3706196-1-smostafa@google.com>
+Subject: [PATCH v3 00/29] KVM: arm64: SMMUv3 driver for pKVM
+From: Mostafa Saleh <smostafa@google.com>
+To: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
+Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, 
+	will@kernel.org, robin.murphy@arm.com, jean-philippe@linaro.org, 
+	qperret@google.com, tabba@google.com, jgg@ziepe.ca, mark.rutland@arm.com, 
+	praan@google.com, Mostafa Saleh <smostafa@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-T24gNy8yMy8yNSAxMzoyNywgQmpvcm4gSGVsZ2FhcyB3cm90ZToNCj4gRnJvbTogQmpvcm4gSGVs
-Z2FhczxiaGVsZ2Fhc0Bnb29nbGUuY29tPg0KPg0KPiBGaXggdHlwb3MgaW4gY29tbWVudHMuDQo+
-DQo+IFNpZ25lZC1vZmYtYnk6IEJqb3JuIEhlbGdhYXM8YmhlbGdhYXNAZ29vZ2xlLmNvbT4NCg0K
-TG9va3MgZ29vZC4NCg0KUmV2aWV3ZWQtYnk6IENoYWl0YW55YSBLdWxrYXJuaSA8a2NoQG52aWRp
-YS5jb20+DQoNCi1jaw0KDQoNCg==
+This is v3 of the support for DMA isolation with SMMUv3 on pKVM.
+v2: https://lore.kernel.org/kvmarm/20241212180423.1578358-1-smostafa@google.com/
+v1: https://lore.kernel.org/kvmarm/20230201125328.2186498-1-jean-philippe@linaro.org/
+
+Main changes (see design section for details):
+- This version applies directly to upstream with no out of tree pKVM
+  dependencies and is not an RFC
+- This version adds minimum support for DMA isolation by identity
+  mapping the SMMU S2 as opposed to the paravirtual interface in the
+  previous versions.
+- This version has much more code re-use as a new shared file (and
+  structs, macros) for hyp-kernel smmu-v3 code, which makes the
+  hyp SMMUv3 specific code smaller.
+
+pKVM overview:
+=============
+The pKVM hypervisor arm64, provides a separation of privileges
+between the host and hypervisor parts of KVM, where the hypervisor
+is trusted by guests but the host is not [1][2]. The host is initially
+trusted during boot, but its privileges are reduced after KVM is
+initialized so that, if an adversary later gains access to the large
+attack surface of the host, it cannot access guest data.
+
+Currently with pKVM, the host can still instruct DMA-capable devices
+like the GPU to access guest and hypervisor memory, which undermines
+this isolation. Preventing DMA attacks requires an IOMMU, owned by the
+hypervisor.
+
+This series adds a hypervisor driver for the Arm SMMUv3 IOMMU. Since the
+hypervisor part of pKVM (called nVHE here) is minimal, moving the whole
+host SMMU driver into nVHE isn't really an option. It is too large and
+complex and requires infrastructure from all over the kernel. We add a
+reduced nVHE driver that deals with populating the SMMU tables and the
+command queue, and the host driver still deals with probing and some
+Initialization.
+
+Most of SMMUv3 specific source code would still be shared through common source files.
+
+Patches overview
+================
+The patches are split as follows:
+
+Patches 01-03: Core hypervisor: Add donation for NC, dealing with MMIO,
+               and arch timer abstraction.
+Patches 04-13: SMMUv3 driver split: Split the SMMUv3 driver to 3 parts
+               (shared kernel, shared hyp, driver specific) and io-pgtable-arm
+               to 2 parts (shared hyp, driver specific)
+               Most of these patches are better viewed with --color-moved
+Patches 14-17: Hypervisor IOMMU core: two hypercall to enable/disable
+               devices, IOMMU pagetable management
+Patches 18-25: Hypervisor KVM SMMUv3 driver: Setup shadow pgtables, STEs...
+Patches 26-29 Kernel KVM SMMUv3 driver: Probe of devices, and populating
+              info to the hypervisor, IOMMU ops
+
+A development branch is available at:
+https://android-kvm.googlesource.com/linux/+log/refs/heads/for-upstream/pkvm-smmu-v3
+
+Design and future work
+===============
+This patch series is designed to be minimal and include patches only
+required for functionality.
+
+The hypervisor SMMUv3 driver will load early before KVM initialises
+and registers itself as a KVM IOMMU driver; if it finds SMMUv3 on the platform.
+
+Then after KVM initialises and before it de-privileges it will initialise
+the kernel part of the driver, that will probe the SMMUs, initialise some
+of the HW and populate a list of SMMUs to the hypervisor part to deal with.
+The kernel driver exposes an IOMMU driver to the kernel that only supports
+IDENTITY domains.
+
+Then the hypervisor part of the driver will initialise before de-privilege
+which then take over the shared structs, cmdq and create a shadow page table
+for the SMMU.
+
+In addition to the patches in this series, I am working on part-2 which adds
+more features (EVTQ support for debuggability and RPM and possibly some
+optimizations such as sharing page tables, split block unmap logic...)
+https://android-kvm.googlesource.com/linux/+log/refs/heads/for-upstream/pkvm-smmu-v3-part-2
+
+After that I plan to post 2 RFCs which adds support for translating
+domains, one with paravirtual interface(similar to V2) and one with SMMUv3
+emulation (similar to[3])
+
+This series is tested on Morello board and Qemu.
+
+[1] https://lore.kernel.org/kvmarm/20220519134204.5379-1-will@kernel.org/
+[2] https://www.youtube.com/watch?v=9npebeVFbFw
+[3] https://android-kvm.googlesource.com/linux/+log/refs/heads/smostafa/android15-6.6-smmu-nesting-wip-2
+
+
+Jean-Philippe Brucker (11):
+  iommu/io-pgtable-arm: Split initialization
+  iommu/arm-smmu-v3: Move some definitions to a new common file
+  iommu/arm-smmu-v3: Extract driver-specific bits from probe function
+  iommu/arm-smmu-v3: Move some functions to arm-smmu-v3-common.c
+  iommu/arm-smmu-v3: Move firmware probe to arm-smmu-v3-common
+  iommu/arm-smmu-v3: Move IOMMU registration to arm-smmu-v3-common.c
+  iommu/arm-smmu-v3-kvm: Add SMMUv3 driver
+  iommu/arm-smmu-v3-kvm: Initialize registers
+  iommu/arm-smmu-v3-kvm: Reset the device
+  iommu/arm-smmu-v3-kvm: Add host driver for pKVM
+  iommu/arm-smmu-v3-kvm: Pass a list of SMMU devices to the hypervisor
+
+Mostafa Saleh (18):
+  KVM: arm64: Add a new function to donate memory with prot
+  KVM: arm64: Donate MMIO to the hypervisor
+  KVM: arm64: pkvm: Add pkvm_time_get()
+  iommu/io-pgtable-arm: Split the page table driver
+  iommu/arm-smmu-v3: Move queue and table allocation to
+    arm-smmu-v3-common.c
+  iommu/arm-smmu-v3: Split cmdq code with hyp
+  iommu/arm-smmu-v3: Move TLB range invalidation into a macro
+  KVM: arm64: iommu: Introduce IOMMU driver infrastructure
+  KVM: arm64: iommu: Shadow host stage-2 page table
+  KVM: arm64: iommu: Add a memory pool
+  KVM: arm64: iommu: Add enable/disable hypercalls
+  iommu/arm-smmu-v3-kvm: Setup command queue
+  iommu/arm-smmu-v3-kvm: Setup stream table
+  iommu/arm-smmu-v3-kvm: Support io-pgtable
+  iommu/arm-smmu-v3-kvm: Shadow the CPU stage-2 page table
+  iommu/arm-smmu-v3-kvm: Add enable/disable device HVCs
+  iommu/arm-smmu-v3-kvm: Allocate structures and reset device
+  iommu/arm-smmu-v3-kvm: Add IOMMU ops
+
+ arch/arm64/include/asm/kvm_asm.h              |   2 +
+ arch/arm64/include/asm/kvm_host.h             |  14 +
+ arch/arm64/kvm/Makefile                       |   3 +-
+ arch/arm64/kvm/arm.c                          |   8 +-
+ arch/arm64/kvm/hyp/include/nvhe/iommu.h       |  23 +
+ arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |   3 +
+ arch/arm64/kvm/hyp/include/nvhe/pkvm.h        |   2 +
+ arch/arm64/kvm/hyp/nvhe/Makefile              |  10 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c            |  19 +
+ arch/arm64/kvm/hyp/nvhe/iommu/iommu.c         | 129 +++
+ arch/arm64/kvm/hyp/nvhe/mem_protect.c         |  80 +-
+ arch/arm64/kvm/hyp/nvhe/setup.c               |  17 +
+ arch/arm64/kvm/hyp/nvhe/timer-sr.c            |  33 +
+ arch/arm64/kvm/hyp/pgtable.c                  |   9 +-
+ arch/arm64/kvm/iommu.c                        |  65 ++
+ arch/arm64/kvm/pkvm.c                         |   1 +
+ drivers/iommu/Makefile                        |   2 +-
+ drivers/iommu/arm/Kconfig                     |   9 +
+ drivers/iommu/arm/arm-smmu-v3/Makefile        |   6 +
+ .../arm/arm-smmu-v3/arm-smmu-v3-common-hyp.c  | 114 +++
+ .../arm/arm-smmu-v3/arm-smmu-v3-common.c      | 700 ++++++++++++++
+ .../arm/arm-smmu-v3/arm-smmu-v3-common.h      | 624 ++++++++++++
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c   | 393 ++++++++
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 904 +-----------------
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   | 532 +----------
+ .../iommu/arm/arm-smmu-v3/pkvm/arm-smmu-v3.c  | 676 +++++++++++++
+ .../iommu/arm/arm-smmu-v3/pkvm/arm_smmu_v3.h  |  51 +
+ .../arm/arm-smmu-v3/pkvm/io-pgtable-arm.c     | 115 +++
+ drivers/iommu/io-pgtable-arm-common.c         | 694 ++++++++++++++
+ drivers/iommu/io-pgtable-arm.c                | 870 +----------------
+ drivers/iommu/io-pgtable-arm.h                | 274 +++++-
+ 31 files changed, 4102 insertions(+), 2280 deletions(-)
+ create mode 100644 arch/arm64/kvm/hyp/include/nvhe/iommu.h
+ create mode 100644 arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
+ create mode 100644 arch/arm64/kvm/iommu.c
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common-hyp.c
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.c
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.h
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/pkvm/arm-smmu-v3.c
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/pkvm/arm_smmu_v3.h
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/pkvm/io-pgtable-arm.c
+ create mode 100644 drivers/iommu/io-pgtable-arm-common.c
+
+-- 
+2.50.1.552.g942d659e1b-goog
+
 
