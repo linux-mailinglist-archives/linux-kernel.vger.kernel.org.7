@@ -1,230 +1,255 @@
-Return-Path: <linux-kernel+bounces-748617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B66B143B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:08:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4FEAB143B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D89A17E687
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:08:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0900F18C18D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC4822A4F4;
-	Mon, 28 Jul 2025 21:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A0E22DFA7;
+	Mon, 28 Jul 2025 21:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HignA7MK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jkFV3HaM"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569CE273FE
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D20326281
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753736909; cv=none; b=AWeNMpn4vrioKXdX0nGVrtArAUsCcsHFOzZk7SF6VI0pvD3sZyjy4xtn9MrA6jg6gWpta1tAn0bAafVUIdC1hH0JjwSX2lUZrzCDlzE3TjmG0RUo6W2FQZOVMrTOMdfCNWBHN1dm+9Y0QMJix1IkB9B9wAe3LreJauUhIGr/Y8g=
+	t=1753737051; cv=none; b=DyrXeSBMLpcmAMHcpV/4jb450FtbA6BUUTHYHFq34X3wn8ZqRQsLaIWAEVnrXykcBEjRfYxKDw1tjc1sL/lET6MtOGMdPj8b14mWz7/mIie8X3PBi2iC4qihVyL0tDm8wd+c9A4Cl3wb3UBjG4Y4JNzTTGTkLSvqZ+vzBsu0H/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753736909; c=relaxed/simple;
-	bh=8EEgDW6/RcHGmiG2NCg7tQMeIXZ1gt/z210A8m1EEm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hugLlC3aLk2WLFAjOhNblMoZEiGcTd17M5glDALvgY2AVMRCYpPryBp+LnyYNyu/i2gCv3MOSY5zokE8opus3h+sgvhkc9cn1TED9jqZPs1hmfBy6aAI1+1XDMbrFinmosqUDDUtZv4/JkbLxdrkBEBj7adHXaKyX7UZ1hfCn7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HignA7MK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753736906;
+	s=arc-20240116; t=1753737051; c=relaxed/simple;
+	bh=me55bF2V0BigXMenC+uiDcSuBiWoaqZSDCyxoKTYx6s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mcgw1zewooCPRE3qYf4vrdLJY+3rMGCLwlGy8AX7J04U5jvSNg9EDuBeyoeC2WVf8YoyIkqQ53ZHaYFtGv0kw2DviNHk67ZRLsOZWXLEeVQD2TlSnle6NP/fgE48FP6dmgtTMf6Ahg4P2Y6M1aQ/DhFqFGkBW1mbjIbQVhmQ/bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jkFV3HaM; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753737046;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tcBiW6OrDuRkE61U2oZHQtibrdiKqEiJ1zyfrij+HuE=;
-	b=HignA7MK4ZhY7ZBk+lXkuz2MwKiyDFCfKz1YuXgPFzhS7Uom3wM9MyfrV+fK43NX0nSsx8
-	pBqN8ORoIRfJKj/iYhvKTkDX/BYn8t8wWMPLBpmrSoYhIZMONydpAaGRlG6KVvY9h+zZqB
-	yBE4qHQW0bvlxQoRGocK1XZ8OX/uMLs=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-468-gdMFZ2bNMcWyMFbBV9ZHNQ-1; Mon, 28 Jul 2025 17:08:22 -0400
-X-MC-Unique: gdMFZ2bNMcWyMFbBV9ZHNQ-1
-X-Mimecast-MFC-AGG-ID: gdMFZ2bNMcWyMFbBV9ZHNQ_1753736902
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4aeb2e0cb98so31330521cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:08:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753736902; x=1754341702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tcBiW6OrDuRkE61U2oZHQtibrdiKqEiJ1zyfrij+HuE=;
-        b=jQO/OY2Kqsnq+OIxk4GPPnKOU8RFuuyDdhq2lqm0izyyIFSuyOfgm/LTGd9ioJ8k5M
-         m8pWyp26O2nUxunb9WnYccM8PA8VyN9lSR2Dxq7MnvW6cOnXgGyTAL+D39JSoJJZ6ApU
-         iLGlxOgs2p7KF/3ksjpVOVPVRaKqFfGihA0msl9V0Yb/UIATrLl8V7gM4jzex9kE7lHt
-         3Rt5zhtWoRiyMKKPFtsNcEllHSG+xdrL9hjHMg359z++wc4q+I8k7NisGwhqlvJ0Mz+O
-         1pkggP+K69+eA36aSrU17DGiic+KlLa1StOaga/86JvdHq0PEYvD7a7Y4sslycN0MH6h
-         zQAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsGI50NMGCknSNwb3pLU2ub7Urcsq6gmSHFdJmKVRjL/h2A7tbyyYbTs87DdJVbbdlC5RxWAsmfsupzj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyvqw/rUCJ/6FfNfWLoX8imWyDgyizCOkh15GtuR9OfX+Djfvo
-	7kjcvOh14IJizO96TWEFYavp5aZlUAgBmQpZS66CjQ2dr7WiC2KuW69B2o5pvlDADq+2oreLHRL
-	dZCyQ8a8wnCLsbODmqgtvFHpkMwiWWdIwTv39YOhslFh7WO6TN0gWtdULBfh+hjAhGA==
-X-Gm-Gg: ASbGnctEEtjX6+rKkFs0EDAn5NO9hKBQ0H/lHYC0yBMcOwVCTyIha86y7XLoSPVj9/e
-	LVu+2m2/XjY898xItBGn8XhyMzDEXouOrj4+rbeJqGXUqxU/mgcjSTaaV1ExGgRF1e8e0nZ1CiI
-	El+7YAk4G/2kChza3jBpJ5r3V1gkUNzmO9euFzq6Xv5VD5mH15iA6S3oYVdlixiUrVeQ1zdSa2U
-	RlRPbS8q4JQxonzVUxw1G8BfVK2LlfEZVtm2Jyia8pJ6Ul8TpYX5CH428bQiaTuclEi77dJcfdn
-	mNjkdHQ6elYzeoKTfz8Gu6Xr9vigl5o=
-X-Received: by 2002:a05:622a:13d3:b0:4ab:c00c:250b with SMTP id d75a77b69052e-4ae8f0ddb39mr185285221cf.40.1753736902128;
-        Mon, 28 Jul 2025 14:08:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFUd/cHhjwzB9/l8otidGgToOpAIoiGahsj8p23nz+4w2+2F/XUHPOFR0hUr0kib0c+Eh6EjA==
-X-Received: by 2002:a05:622a:13d3:b0:4ab:c00c:250b with SMTP id d75a77b69052e-4ae8f0ddb39mr185284811cf.40.1753736901647;
-        Mon, 28 Jul 2025 14:08:21 -0700 (PDT)
-Received: from x1.local ([142.189.11.29])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae99516482sm39780351cf.7.2025.07.28.14.08.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 14:08:18 -0700 (PDT)
-Date: Mon, 28 Jul 2025 17:08:15 -0400
-From: Peter Xu <peterx@redhat.com>
-To: syzbot <syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-	Lokesh Gidra <lokeshgidra@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in
- move_pages
-Message-ID: <aIfmv-qSxKxWgzur@x1.local>
-References: <68794b5c.a70a0220.693ce.0050.GAE@google.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lCHvL2Scf+e1WSoCg8/kj1V49NFPpqE13tIgZWNgn8k=;
+	b=jkFV3HaM8MlEwWguYHzSJzwpaeDC/EatiU8OQYi2+tOt4IcXYDSXy3EM/jolJLSah9CI0Y
+	5W+TNVgXh7TiZ7eQXoUOf9uf0rr62BLKb0FZKGImUc/rNFDPAG+5DTA/5sq7b84TY/YB7U
+	nkg9yFU+81cBvk2nyQq6g78EFrG7yhM=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Leon Romanovsky <leon@kernel.org>
+Cc: Ira Weiny <ira.weiny@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH] auxiliary: Automatically generate id
+Date: Mon, 28 Jul 2025 17:10:22 -0400
+Message-Id: <20250728211022.9165-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <68794b5c.a70a0220.693ce.0050.GAE@google.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Copy Lokesh and Suren.
+As it turns out, ids are not allowed to have semantic meaning. Their
+only purpose is to prevent sysfs collisions. To simplify things, just
+generate a unique id for each auxiliary device. Remove all references to
+filling in the id member of the device.
 
-On Thu, Jul 17, 2025 at 12:13:32PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    e8352908bdcd Add linux-next specific files for 20250716
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=17f81382580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b7b0e60e17dc5717
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b446dbe27035ef6bd6c2
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10041382580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eb158c580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/ae8cc81c1781/disk-e8352908.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/57aaea991896/vmlinux-e8352908.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/feb871619bd4/bzImage-e8352908.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
-> 
-> BUG: unable to handle page fault for address: ffffea6000391008
-> #PF: supervisor read access in kernel mode
-> #PF: error_code(0x0000) - not-present page
-> PGD 13fff8067 P4D 13fff8067 PUD 0 
-> Oops: Oops: 0000 [#1] SMP KASAN PTI
-> CPU: 1 UID: 0 PID: 5860 Comm: syz-executor832 Not tainted 6.16.0-rc6-next-20250716-syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
-> RIP: 0010:move_pages+0xbe6/0x1430 mm/userfaultfd.c:1824
-> Code: c1 ec 06 4b 8d 1c 2c 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 9a 30 f4 ff <48> 8b 1b 48 89 de 48 83 e6 01 31 ff e8 59 70 8f ff 48 89 d8 48 83
-> RSP: 0018:ffffc90003f778a8 EFLAGS: 00010246
-> RAX: 1ffffd4c00072201 RBX: ffffea6000391008 RCX: dffffc0000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
-> R10: dffffc0000000000 R11: fffff520007eef00 R12: 0000006000391000
-> R13: ffffea0000000000 R14: 200018000e4401fd R15: 00002000003ab000
-> FS:  00007ff35708f6c0(0000) GS:ffff8881258aa000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffffea6000391008 CR3: 0000000074390000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  userfaultfd_move fs/userfaultfd.c:1923 [inline]
->  userfaultfd_ioctl+0x2e8b/0x4c80 fs/userfaultfd.c:2046
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:598 [inline]
->  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7ff3570d6519
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ff35708f218 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007ff357160308 RCX: 00007ff3570d6519
-> RDX: 0000200000000180 RSI: 00000000c028aa05 RDI: 0000000000000003
-> RBP: 00007ff357160300 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff35712d074
-> R13: 0000200000000180 R14: 0000200000000188 R15: 00002000002b9000
->  </TASK>
-> Modules linked in:
-> CR2: ffffea6000391008
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
-> RIP: 0010:move_pages+0xbe6/0x1430 mm/userfaultfd.c:1824
-> Code: c1 ec 06 4b 8d 1c 2c 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 9a 30 f4 ff <48> 8b 1b 48 89 de 48 83 e6 01 31 ff e8 59 70 8f ff 48 89 d8 48 83
-> RSP: 0018:ffffc90003f778a8 EFLAGS: 00010246
-> RAX: 1ffffd4c00072201 RBX: ffffea6000391008 RCX: dffffc0000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
-> R10: dffffc0000000000 R11: fffff520007eef00 R12: 0000006000391000
-> R13: ffffea0000000000 R14: 200018000e4401fd R15: 00002000003ab000
-> FS:  00007ff35708f6c0(0000) GS:ffff8881258aa000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffffea6000391008 CR3: 0000000074390000 CR4: 00000000003526f0
-> ----------------
-> Code disassembly (best guess):
->    0:	c1 ec 06             	shr    $0x6,%esp
->    3:	4b 8d 1c 2c          	lea    (%r12,%r13,1),%rbx
->    7:	48 83 c3 08          	add    $0x8,%rbx
->    b:	48 89 d8             	mov    %rbx,%rax
->    e:	48 c1 e8 03          	shr    $0x3,%rax
->   12:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
->   19:	fc ff df
->   1c:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1)
->   20:	74 08                	je     0x2a
->   22:	48 89 df             	mov    %rbx,%rdi
->   25:	e8 9a 30 f4 ff       	call   0xfff430c4
-> * 2a:	48 8b 1b             	mov    (%rbx),%rbx <-- trapping instruction
->   2d:	48 89 de             	mov    %rbx,%rsi
->   30:	48 83 e6 01          	and    $0x1,%rsi
->   34:	31 ff                	xor    %edi,%edi
->   36:	e8 59 70 8f ff       	call   0xff8f7094
->   3b:	48 89 d8             	mov    %rbx,%rax
->   3e:	48                   	rex.W
->   3f:	83                   	.byte 0x83
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+---
 
+ drivers/base/auxiliary.c      | 32 +++++++++++++++++++++++---------
+ include/linux/auxiliary_bus.h | 26 ++++++++------------------
+ 2 files changed, 31 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+index dba7c8e13a53..f66067df03ad 100644
+--- a/drivers/base/auxiliary.c
++++ b/drivers/base/auxiliary.c
+@@ -264,6 +264,8 @@ static const struct bus_type auxiliary_bus_type = {
+ 	.pm = &auxiliary_dev_pm_ops,
+ };
+ 
++static DEFINE_IDA(auxiliary_id);
++
+ /**
+  * auxiliary_device_init - check auxiliary_device and initialize
+  * @auxdev: auxiliary device struct
+@@ -331,20 +333,37 @@ int __auxiliary_device_add(struct auxiliary_device *auxdev, const char *modname)
+ 		return -EINVAL;
+ 	}
+ 
++	ret = ida_alloc(&auxiliary_id, GFP_KERNEL);
++	if (ret < 0) {
++		dev_err(dev, "auxiliary device id_alloc fauiled: %d\n", ret);
++		return ret;
++	}
++	auxdev->id = ret;
++
+ 	ret = dev_set_name(dev, "%s.%s.%d", modname, auxdev->name, auxdev->id);
+ 	if (ret) {
+ 		dev_err(dev, "auxiliary device dev_set_name failed: %d\n", ret);
++		ida_free(&auxiliary_id, auxdev->id);
+ 		return ret;
+ 	}
+ 
+ 	ret = device_add(dev);
+-	if (ret)
++	if (ret) {
+ 		dev_err(dev, "adding auxiliary device failed!: %d\n", ret);
++		ida_free(&auxiliary_id, auxdev->id);
++	}
+ 
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(__auxiliary_device_add);
+ 
++void auxiliary_device_delete(struct auxiliary_device *auxdev)
++{
++	ida_free(&auxiliary_id, auxdev->id);
++	device_del(&auxdev->dev);
++}
++EXPORT_SYMBOL_GPL(auxiliary_device_delete);
++
+ /**
+  * __auxiliary_driver_register - register a driver for auxiliary bus devices
+  * @auxdrv: auxiliary_driver structure
+@@ -408,7 +427,6 @@ static void auxiliary_device_release(struct device *dev)
+  * @modname: module name used to create the auxiliary driver name.
+  * @devname: auxiliary bus device name
+  * @platform_data: auxiliary bus device platform data
+- * @id: auxiliary bus device id
+  *
+  * Helper to create an auxiliary bus device.
+  * The device created matches driver 'modname.devname' on the auxiliary bus.
+@@ -416,8 +434,7 @@ static void auxiliary_device_release(struct device *dev)
+ struct auxiliary_device *auxiliary_device_create(struct device *dev,
+ 						 const char *modname,
+ 						 const char *devname,
+-						 void *platform_data,
+-						 int id)
++						 void *platform_data)
+ {
+ 	struct auxiliary_device *auxdev;
+ 	int ret;
+@@ -426,7 +443,6 @@ struct auxiliary_device *auxiliary_device_create(struct device *dev,
+ 	if (!auxdev)
+ 		return NULL;
+ 
+-	auxdev->id = id;
+ 	auxdev->name = devname;
+ 	auxdev->dev.parent = dev;
+ 	auxdev->dev.platform_data = platform_data;
+@@ -476,7 +492,6 @@ EXPORT_SYMBOL_GPL(auxiliary_device_destroy);
+  * @modname: module name used to create the auxiliary driver name.
+  * @devname: auxiliary bus device name
+  * @platform_data: auxiliary bus device platform data
+- * @id: auxiliary bus device id
+  *
+  * Device managed helper to create an auxiliary bus device.
+  * The device created matches driver 'modname.devname' on the auxiliary bus.
+@@ -484,13 +499,12 @@ EXPORT_SYMBOL_GPL(auxiliary_device_destroy);
+ struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
+ 							const char *modname,
+ 							const char *devname,
+-							void *platform_data,
+-							int id)
++							void *platform_data)
+ {
+ 	struct auxiliary_device *auxdev;
+ 	int ret;
+ 
+-	auxdev = auxiliary_device_create(dev, modname, devname, platform_data, id);
++	auxdev = auxiliary_device_create(dev, modname, devname, platform_data);
+ 	if (!auxdev)
+ 		return NULL;
+ 
+diff --git a/include/linux/auxiliary_bus.h b/include/linux/auxiliary_bus.h
+index 4086afd0cc6b..c972b5a3c2c4 100644
+--- a/include/linux/auxiliary_bus.h
++++ b/include/linux/auxiliary_bus.h
+@@ -57,7 +57,7 @@
+  *       The release and parent fields of the device structure must be filled
+  *       in
+  * @name: Match name found by the auxiliary device driver,
+- * @id: unique identitier if multiple devices of the same name are exported,
++ * @id: automatically-generated unique identitier,
+  * @sysfs: embedded struct which hold all sysfs related fields,
+  * @sysfs.irqs: irqs xarray contains irq indices which are used by the device,
+  * @sysfs.lock: Synchronize irq sysfs creation,
+@@ -74,15 +74,11 @@
+  * Registering an auxiliary_device is a three-step process.
+  *
+  * First, a 'struct auxiliary_device' needs to be defined or allocated for each
+- * sub-device desired.  The name, id, dev.release, and dev.parent fields of
+- * this structure must be filled in as follows.
++ * sub-device desired.  The name, dev.release, and dev.parent fields of this
++ * structure must be filled in as follows.
+  *
+  * The 'name' field is to be given a name that is recognized by the auxiliary
+- * driver.  If two auxiliary_devices with the same match_name, eg
+- * "foo_mod.foo_dev", are registered onto the bus, they must have unique id
+- * values (e.g. "x" and "y") so that the registered devices names are
+- * "foo_mod.foo_dev.x" and "foo_mod.foo_dev.y".  If match_name + id are not
+- * unique, then the device_add fails and generates an error message.
++ * driver.
+  *
+  * The auxiliary_device.dev.type.release or auxiliary_device.dev.release must
+  * be populated with a non-NULL pointer to successfully register the
+@@ -113,7 +109,6 @@
+  *
+  *	// Step 1:
+  *	my_aux_dev->name = MY_DEVICE_NAME;
+- *	my_aux_dev->id = my_unique_id_alloc(xxx);
+  *	my_aux_dev->dev.release = my_aux_dev_release;
+  *	my_aux_dev->dev.parent = my_dev;
+  *
+@@ -242,10 +237,7 @@ static inline void auxiliary_device_uninit(struct auxiliary_device *auxdev)
+ 	put_device(&auxdev->dev);
+ }
+ 
+-static inline void auxiliary_device_delete(struct auxiliary_device *auxdev)
+-{
+-	device_del(&auxdev->dev);
+-}
++void auxiliary_device_delete(struct auxiliary_device *auxdev);
+ 
+ int __auxiliary_driver_register(struct auxiliary_driver *auxdrv, struct module *owner,
+ 				const char *modname);
+@@ -257,19 +249,17 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv);
+ struct auxiliary_device *auxiliary_device_create(struct device *dev,
+ 						 const char *modname,
+ 						 const char *devname,
+-						 void *platform_data,
+-						 int id);
++						 void *platform_data);
+ void auxiliary_device_destroy(void *auxdev);
+ 
+ struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
+ 							const char *modname,
+ 							const char *devname,
+-							void *platform_data,
+-							int id);
++							void *platform_data);
+ 
+ #define devm_auxiliary_device_create(dev, devname, platform_data)     \
+ 	__devm_auxiliary_device_create(dev, KBUILD_MODNAME, devname,  \
+-				       platform_data, 0)
++				       platform_data)
+ 
+ /**
+  * module_auxiliary_driver() - Helper macro for registering an auxiliary driver
 -- 
-Peter Xu
+2.35.1.1320.gc452695387.dirty
 
 
