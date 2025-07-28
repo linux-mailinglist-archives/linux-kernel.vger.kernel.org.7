@@ -1,105 +1,81 @@
-Return-Path: <linux-kernel+bounces-747456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79AC2B13410
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:16:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2FCB13413
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12953AADE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:16:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AA1B7A33C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB39219A89;
-	Mon, 28 Jul 2025 05:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D4521ABD5;
+	Mon, 28 Jul 2025 05:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBHwKt8Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAU4jnuM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57572E3708;
-	Mon, 28 Jul 2025 05:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52D32E3708;
+	Mon, 28 Jul 2025 05:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753679793; cv=none; b=lTJXymIYRsCYmpBI2NoLj7ZHXemVF1vJB/KJf3qOFJ7ljo4DD3E8FBvPXHJsbrR8jR7yxLTmFYvJrcpYXXdqo2q3R/iVPtwwCH7odi6zusyYXiwfO55isfQq8ixcOrwLd+UEkewRh8FG5zTbNDWxo/JHyNCnBmizkh0LTZKm1ns=
+	t=1753679944; cv=none; b=CqGTz+LZGbKk1vo03vlpqTD9ucOWkSQ1V8jpjmtGlVKt6z8hF1fsy6AGxLKYm6QsNkkI51HL/DRXeCWAqW80+OxT+FwwAlCU5rqjwQia2DTZBghbj0XFqgesDpyKW3LWusG9FNmsB/eON+26LYlFElKs5hVganTgHOEPJC2pwwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753679793; c=relaxed/simple;
-	bh=qDx1ZZBo1UzQGdbqP1eOsZx6AQniOsrKTheh7dQ0KWE=;
+	s=arc-20240116; t=1753679944; c=relaxed/simple;
+	bh=KWCLB5ShRmghHY/hmUPXAF5gevknUvBoBlaPpRZjE0k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gvZaZ9YeylpvuhShQcE5T0h2zuvElTuqkZQIu1IrlZgMwSxaqydD5op9NFrFvT+Ie3bC1a02ZBpUkzocCJN8Xu+mhPaNPLRn+QtVM6yxKwvYx51CE/dUtdz3JaKFft4V8p64GwWNOuYOSxVS8GigvMPSnvj+LtzLCXc+TDaGrhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBHwKt8Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36ADFC4CEE7;
-	Mon, 28 Jul 2025 05:16:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=d5OIcq1NCUsJpLcSbQZ6CBPgLCKYXLAA2ZB7/GZhPHY++TPqxn7oauTpiVELI1CtprmXr9HwZtz0ukoMi/RuO7rRdPtYorpuAPUG9J6CLUznm54G1lOW9dsCgAVO2joYc3cDnD6AiVRoxL/trsKn7BrSwwHc8Jtx+7lKGFBV6Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAU4jnuM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E1CC4CEE7;
+	Mon, 28 Jul 2025 05:19:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753679793;
-	bh=qDx1ZZBo1UzQGdbqP1eOsZx6AQniOsrKTheh7dQ0KWE=;
+	s=k20201202; t=1753679944;
+	bh=KWCLB5ShRmghHY/hmUPXAF5gevknUvBoBlaPpRZjE0k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uBHwKt8YkXgqU5WcQS8B8y1kLGmpBI0IeapO8CHJ+Vi7y1LYoB59vJiY0f5dYne0F
-	 8QS0iR1xht/8/hg3DbNcm8qBHWVVFGElIavUKQA8+yQWiEmXGvulcO8Mco14ICs6AC
-	 bJ1RlCR68Fl4mBBv5xV1Fr1YmPCNBDy9aky1zG6EVNs3o3NV00eD8jC0IDdTOt6F1R
-	 6v4mKuSe9i7pQ2D6GRMbcO8rH4yVOowBKkyuZi0nu0EqJ6gstj/6yk/0CZHJuuTSeI
-	 dWAeAzDUEenrB65nABdW3tufjRYmpq7isyKy6d+Lt+TdvczzKMlXl3pHYf2xkwr0CX
-	 8nezvnZVGndnw==
-Date: Sun, 27 Jul 2025 22:16:32 -0700
-From: Kees Cook <kees@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
-	josh@joshtriplett.org, konstantin@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH 1/4] agents: add unified agent coding assistant
- configuration
-Message-ID: <202507272210.E8E64F6C@keescook>
-References: <20250727195802.2222764-1-sashal@kernel.org>
- <20250727195802.2222764-2-sashal@kernel.org>
- <202507271934.68E1F0C728@keescook>
- <aIcACJhaU-NElyHC@lappy>
+	b=hAU4jnuM4K0Rwfnuj5eJdGSReVV/ySCD2tYpTjIEbPekH0wx9p3b/jMnmAbDoq2AA
+	 aj9g0zeLtEZfpNDKLmdpq+ZvIwhBphbsYvyvlQoUgghlYznZXIMzepuIgi+inMuatP
+	 EWv0rB0gEuWoGVrZZ/6bbHt8yrbLyAjuxENPF/zD1XjnAN3oCrRco/N+2+79hD7msP
+	 9Cr458EittBZ5jjrCBOaZe1rxQCT7lFMMPuTp2c8RRit2iJhoLvi6JxHMmwRd3xC71
+	 dRJ9HxoW9DunWmuqmKLYaaEtdp2p33ePxMFUzFCx6km0UgAjckviqVavBxV2mDwjzW
+	 i6PUJebl2r3oA==
+Date: Mon, 28 Jul 2025 07:19:01 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org, 
+	jean-baptiste.maneyrol@tdk.com, robh@kernel.org, ~lkcamp/patches@lists.sr.ht, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: iio: pressure: add invensense,icp10100
+Message-ID: <20250728-outrageous-snobbish-hoatzin-ebdc03@kuoka>
+References: <20250728004039.8634-1-rodrigo.gobbi.7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aIcACJhaU-NElyHC@lappy>
+In-Reply-To: <20250728004039.8634-1-rodrigo.gobbi.7@gmail.com>
 
-On Mon, Jul 28, 2025 at 12:43:52AM -0400, Sasha Levin wrote:
-> On Sun, Jul 27, 2025 at 07:37:31PM -0700, Kees Cook wrote:
-> > On Sun, Jul 27, 2025 at 03:57:59PM -0400, Sasha Levin wrote:
-> > > Create a single source of truth for agent instructions in
-> > > Documentation/AI/main.md with symlinks for all major coding
-> > > agents:
-> > > - CLAUDE.md (Claude Code)
-> > > - .github/copilot-instructions.md (GitHub Copilot)
-> > > - .cursorrules (Cursor)
-> > > - .codeium/instructions.md (Codeium)
-> > > - .continue/context.md (Continue)
-> > > - .windsurfrules (Windsurf)
-> > > - .aider.conf.yml (Aider)
-> > 
-> > I *really* don't like this. I use the CLAUDE.md file as my instructions
-> > for my agent. I think all of these should be .gitignore entries.
-> 
-> Sorry, I might have misunderstood you: how does it play out if we add
-> these to .gitignore?
+On Sun, Jul 27, 2025 at 09:32:02PM -0300, Rodrigo Gobbi wrote:
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - invensense,icp10101
+> +          - invensense,icp10110
+> +          - invensense,icp10111
+> +      - const: invensense,icp10100
 
-Then what claude learns about my workflows and preference can be
-correctly stored in CLAUDE.me (which is how claude is designed to work).
-I would think of it like why we don't ship a debian/ package build tree:
-it's going to be different for everyone. And if you look in .gitignore
-you can already see that /debian/ is there. :) These agent files are for
-developer-specific use, and adding them to .gitignore is the right
-approach (at least for Claude and Gemini). Which reminds me, please
-also include GEMINI.md in your list. :)
+This does not allow using invensense,icp10100 alone. Try it yourself on
+DTS - you will see warnings.
 
-> The tool will just end replacing whatever we put in there with something
-> customized that doesn't necessarily correspond to what the community
-> will consider a "standard" set of rules for agents?
+You need oneOf, just takek a peak at some random bindings.
 
-Right, and then it will always be a git diff delta and cause pain. For
-the agents that are designed to _write_ to their files, then it needs
-to be in .gitignore.
+Best regards,
+Krzysztof
 
--- 
-Kees Cook
 
