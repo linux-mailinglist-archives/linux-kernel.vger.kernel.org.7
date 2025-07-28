@@ -1,362 +1,416 @@
-Return-Path: <linux-kernel+bounces-748439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877DBB14155
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D1CB1415A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F82189B88F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723D3189E464
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A85275AFF;
-	Mon, 28 Jul 2025 17:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFCF275B09;
+	Mon, 28 Jul 2025 17:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k03IEOti"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IdfU6ZAf"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0C42741CB;
-	Mon, 28 Jul 2025 17:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565152741CB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753724657; cv=none; b=jU5cBFqe6sxw/OaXMTe/stoYfDOmijc8EBIBpTOdy7hbsbLkuzN0bI+exnBFbKCPtFcyHSI2wvjHR50F+ymHOI/1uInk3jcTBuFhl3WtsIT1GmUJt4bfDFyt910W3A5VnDKz9a6z2qKxgcgujJkD0fK22ln115n8YPnd9w/aQm0=
+	t=1753724686; cv=none; b=sx20dGxseyqL3IpucFtSXQvavEiVC1nuZpebCRrC/ips9pdr4B4UGIhNr36tEFxjyISOGbE7d+d2PGR8TgRIZy/w5s4f6k3kGEm1n9K+TE6IKZ3LvMdm27eSl5cTuA7EE+QvOFHSOzdDZ4a2ENKsgiyBepHHROoUcJ1iEfBdt/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753724657; c=relaxed/simple;
-	bh=myGplgNPnuSBD9zdlw6Nm6KJEWtu9mFVbOvE5vk4288=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W0A55z9BR7EE38DoQq3mpmArnu1T5Iw2L38uK9jQ947htFBybY0YC3JclGPjuyF8w9W38DJHK0jNlZA3zKmpYsxpBqg4jHpinffexeHDNO9CkX/Tkdc3qY4GixUmqqL3idHCwkSgdSomPgwCgCaeygawwy5mPNKpS/DSNOOQdy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k03IEOti; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ab8403b6daso50360571cf.2;
-        Mon, 28 Jul 2025 10:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753724653; x=1754329453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WaNs6TAtiLS9Zn84sgyHz2QFRjPypF9PY+lV+Xzno3c=;
-        b=k03IEOtibm6YenDXjEJEH5/CFeaw6M0iKpr22wzhITiFqdoqIAJSc1mfix9spj/D3E
-         CfNHHhjUinYIv4i5q8TSIuaL5m+BZZA/6ZPmgZT7GTT7AX40Lw1w0sHMq1hYQt1caxGb
-         t9RJOeRnhW80D4ofdZcMZLmVvU0e5DLOmoDn2DjKeIRv3OcH3W98qAR1ahxJ2jsP7lxj
-         mbSqdOw+EiTv2vBe3vwGysH8kZtT1CBbUpnV5WM1QPwNqz13BgcOZyGYqTzidoUlKzur
-         INmpo4J1B+44L1xurpRsNRuweYdloVE5pjERdGCYybGQcs+BG4cZl4Dxajg5xU0yHvRd
-         Nw5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753724653; x=1754329453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WaNs6TAtiLS9Zn84sgyHz2QFRjPypF9PY+lV+Xzno3c=;
-        b=OGmPFFXIq7RKA4CLSQjNtC46i5F9uIU+tCmjKUiE4PnXUDvSSyauo+Cnt6bymXYlf6
-         ZgTpErGwG5mCX/9vBO5oPzt3Bs53d87H6cK5fBtHmPzX119swbnzCy4W+VaIw+0nH+30
-         fp1q55Tn6c581TMl7yd/OpiHKq20m0j1QWVpxsndaV3F0vxIWn0JavMn/z24QxX1A9FV
-         VEc/qByAQeigMmOlissNRXez/iuDSwJtsQN7FyO50KvMCGF4FZVMqPbVS4dcw4bUnats
-         2eTXDiDxgU3D/7UzrSrHmAr3fIlXabo0jpxy7BAdcTpzO2raIEk6PY4MUgtC0d9Zqdvs
-         0v0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVwG9hijFoCeA3QNZY9ybx5SwlMIFie9n/gqvUIwWzF20KVYA4U+t4aFR8H7joYIgQw10Hh8CQGRAoZ8lbh@vger.kernel.org, AJvYcCW011cnfqPlSd9sQXIsFi+Dl/m07cdSV8qcYaXycQtbU9FegHIWQovse7KFJjWYS6XLWUgd/nfj1NZ6@vger.kernel.org, AJvYcCXFQ84cVUodsBw4TwYy23vfaYHMaSUUVAPEMQFxP1VI5IkH7vN7MNIaf8wVtqKsU45y75Ka/V+0ZUyOVkTC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC8xz5VDc+IWacZv3K5vQ9c/lugQoXO1nyg1f88FiOGWPiWCzw
-	jlx8rjeF0BRhszNjOIiFcWhQcWq1UJvCx8VVOktEDZlmJF0nhneWS4C4Rix6UIJ7vSDm11XXP96
-	A7mH4L/FNzdlkvIF5ZCP9DiH3xnccZ+k=
-X-Gm-Gg: ASbGncuNazCKbwR4zvogWqGVlpEVuszR5TlJw0bM1HnIYBZHvxBg3zEpJYDwyY6NE96
-	Q257NmBRc0iOS+dMI19Sf07q+ztp5efnO66H5SuzPswjy5bqjJ0fNQrYDOYI58Gsk78/pKrmDZm
-	H1PrZtSQcJzpUD7Drhv61Db2J8PtUKQ0Y4nkkX9ZzgYgtOb/JXWxv8807LoLB/iC4CtCDyCfZFh
-	mKMkbgrKHPCKo8V0Q==
-X-Google-Smtp-Source: AGHT+IGte50fwChvEi9kJQNzD68kbG1EMNvci8he6MVBVKPQmFhf/9CW//FXjrAlW6QX8pLJYLCknnZzhpsStOhCE6k=
-X-Received: by 2002:ac8:5a44:0:b0:4ab:6c75:620 with SMTP id
- d75a77b69052e-4ae8ef62b14mr151522531cf.1.1753724652975; Mon, 28 Jul 2025
- 10:44:12 -0700 (PDT)
+	s=arc-20240116; t=1753724686; c=relaxed/simple;
+	bh=luGdhc5EgtUzh+z4uozJQwFyWHL8xQqouXz9RiZhHUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Pso9XqpCjKKHFQSBMq4gDebAkMNpmUuPEwgEuMuIdjHAJ79DRlspqCUQzvkpaXXRBgR9UKloFu6UL+k9aYObUQlJ6y2ld+b+QhtNgcbvRWbszXivQoSnG7cTD6Uruj3LRKjz7iNutmD9p52Ws0DEZfTArw2VVr6gIlJiL+jd9lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IdfU6ZAf; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B2E44430D1;
+	Mon, 28 Jul 2025 17:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753724674;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WofW9M6HdnQTRJah1TC+0LjDvwdUiZOFZ6xWlfFRkcQ=;
+	b=IdfU6ZAfvmA1YBvKoWPIV1aAq8sYZnCs4iahjokEH/Uu1kNKMEh2B2gWINpZm8zeV+D9Nk
+	hilJODy77duzSw17mAXup58rLSBDKioY4WYXtJxZUEOaIebqyTJqN3anfK6sp2L9AhnEcM
+	F9cZJDwS4iTX5lO0uGCQVEHZwAoCHEdxsUl/z3+qBGsqznbOEdNui0EX3L+BIOxoeRc55c
+	7Qj4VLQi0ix1p9RJtVzuGFgJd74cXAHjk7WqSJrjcVc3nG/yJUYKSid4KXTlOT9tk7oT7Q
+	NXXnYaH7I0JeyDlOqIE2GyMQlg7GedxwHCPSIofYGqj2eMeDp6VJCpYxS+DDrA==
+Date: Mon, 28 Jul 2025 19:44:30 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Inki Dae <inki.dae@samsung.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] samsung-dsim: move drm_bridge_add() call to probe
+Message-ID: <20250728194430.082f9952@booty>
+In-Reply-To: <20250728-diligent-brainy-hyena-109dde@houat>
+References: <20250725-drm-bridge-samsung-dsim-add-in-probe-v1-1-b23d29c23fbd@bootlin.com>
+	<20250728-diligent-brainy-hyena-109dde@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
- <20250723144637.GW2672070@frogsfrogsfrogs> <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
- <20250723212020.GY2672070@frogsfrogsfrogs> <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
- <CAJnrk1byTVJtuOyAyZSVYrusjhA-bW6pxBOQQopgHHbD3cDUHw@mail.gmail.com>
- <CAJnrk1ZYR=hM5k90H57tOv=fe6F-r8dO+f3wNuCT_w3j8YNYNQ@mail.gmail.com> <20250728171425.GR2672029@frogsfrogsfrogs>
-In-Reply-To: <20250728171425.GR2672029@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 28 Jul 2025 10:44:01 -0700
-X-Gm-Features: Ac12FXwC8Bb-k9tFwYfIA8TgFEpNMPte-Anh_9X52L95AlRm8wPx7oIuVouRTN8
-Message-ID: <CAJnrk1bBesBijYRD1Wf_01OSBykJ0VzwFZKZFev0wPn9wYc98Q@mail.gmail.com>
-Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
- at fuse_iomap_writeback_range
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-fsdevel@vger.kernel.org, 
-	linux-mm <linux-mm@kvack.org>, linux-xfs@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <liam.howlett@oracle.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelvdektdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekleeujefffeeiheevtddtffejieeivdefkeeugfegffdttdeffeevffduvdetvdenucffohhmrghinheplhhptgdrvghvvghnthhspdhkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehinhhkihdruggrvgesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehjr
+ ghgrghnsegrmhgrrhhulhgrshholhhuthhiohhnshdrtghomhdprhgtphhtthhopehmrdhsiiihphhrohifshhkihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Mon, Jul 28, 2025 at 10:14=E2=80=AFAM Darrick J. Wong <djwong@kernel.org=
-> wrote:
->
-> On Fri, Jul 25, 2025 at 06:16:15PM -0700, Joanne Koong wrote:
-> > On Thu, Jul 24, 2025 at 12:14=E2=80=AFPM Joanne Koong <joannelkoong@gma=
-il.com> wrote:
-> > >
-> > > On Wed, Jul 23, 2025 at 3:37=E2=80=AFPM Joanne Koong <joannelkoong@gm=
-ail.com> wrote:
-> > > >
-> > > > On Wed, Jul 23, 2025 at 2:20=E2=80=AFPM Darrick J. Wong <djwong@ker=
-nel.org> wrote:
-> > > > >
-> > > > > On Wed, Jul 23, 2025 at 11:42:42AM -0700, Joanne Koong wrote:
-> > > > > > On Wed, Jul 23, 2025 at 7:46=E2=80=AFAM Darrick J. Wong <djwong=
-@kernel.org> wrote:
-> > > > > > >
-> > > > > > > [cc Joanne]
-> > > > > > >
-> > > > > > > On Wed, Jul 23, 2025 at 05:14:28PM +0530, Naresh Kamboju wrot=
-e:
-> > > > > > > > Regressions found while running LTP msync04 tests on qemu-a=
-rm64 running
-> > > > > > > > Linux next-20250721, next-20250722 and next-20250723 with 1=
-6K and 64K
-> > > > > > > > page size enabled builds.
-> > > > > > > >
-> > > > > > > > CONFIG_ARM64_64K_PAGES=3Dy ( kernel warning as below )
-> > > > > > > > CONFIG_ARM64_16K_PAGES=3Dy ( kernel warning as below )
-> > > > > > > >
-> > > > > > > > No warning noticed with 4K page size.
-> > > > > > > > CONFIG_ARM64_4K_PAGES=3Dy works as expected
-> > > > > > >
-> > > > > > > You might want to cc Joanne since she's been working on large=
- folio
-> > > > > > > support in fuse.
-> > > > > > >
-> > > > > > > > First seen on the tag next-20250721.
-> > > > > > > > Good: next-20250718
-> > > > > > > > Bad:  next-20250721 to next-20250723
-> > > > > >
-> > > > > > Thanks for the report. Is there a link to the script that mount=
-s the
-> > > > > > fuse server for these tests? I'm curious whether this was mount=
-ed as a
-> > > > > > fuseblk filesystem.
-> > > > > >
-> > > > > > > >
-> > > > > > > > Regression Analysis:
-> > > > > > > > - New regression? Yes
-> > > > > > > > - Reproducibility? Yes
-> > > > > > > >
-> > > > > > > > Test regression: next-20250721 arm64 16K and 64K page size =
-WARNING fs
-> > > > > > > > fuse file.c at fuse_iomap_writeback_range
-> > > > > > > >
-> > > > > > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.o=
-rg>
-> > > > > > > >
-> > > > > > > > ## Test log
-> > > > > > > > ------------[ cut here ]------------
-> > > > > > > > [  343.828105] WARNING: fs/fuse/file.c:2146 at
-> > > > > > > > fuse_iomap_writeback_range+0x478/0x558 [fuse], CPU#0: msync=
-04/4190
-> > > > > > >
-> > > > > > >         WARN_ON_ONCE(len & (PAGE_SIZE - 1));
-> > > > > > >
-> > > > > > > /me speculates that this might be triggered by an attempt to =
-write back
-> > > > > > > some 4k fsblock within a 16/64k base page?
-> > > > > > >
-> > > > > >
-> > > > > > I think this can happen on 4k base pages as well actually. On t=
-he
-> > > > > > iomap side, the length passed is always block-aligned and in fu=
-se, we
-> > > > > > set blkbits to be PAGE_SHIFT so theoretically block-aligned is =
-always
-> > > > > > page-aligned, but I missed that if it's a "fuseblk" filesystem,=
- that
-> > > > > > isn't true and the blocksize is initialized to a default size o=
-f 512
-> > > > > > or whatever block size is passed in when it's mounted.
-> > > > >
-> > > > > <nod> I think you're correct.
-> > > > >
-> > > > > > I'll send out a patch to remove this line. It doesn't make any
-> > > > > > difference for fuse_iomap_writeback_range() logic whether len i=
-s
-> > > > > > page-aligned or not; I had added it as a sanity-check against s=
-ketchy
-> > > > > > ranges.
-> > > > > >
-> > > > > > Also, I just noticed that apparently the blocksize can change
-> > > > > > dynamically for an inode in fuse through getattr replies from t=
-he
-> > > > > > server (see fuse_change_attributes_common()). This is a problem=
- since
-> > > > > > the iomap uses inode->i_blkbits for reading/writing to the bitm=
-ap. I
-> > > > > > think we will have to cache the inode blkbits in the iomap_foli=
-o_state
-> > > > > > struct unfortunately :( I'll think about this some more and sen=
-d out a
-> > > > > > patch for this.
-> > > > >
-> > > > > From my understanding of the iomap code, it's possible to do that=
- if you
-> > > > > flush and unmap the entire pagecache (whilst holding i_rwsem and
-> > > > > mmap_invalidate_lock) before you change i_blkbits.  Nobody *does*=
- this
-> > > > > so I have no idea if it actually works, however.  Note that even =
-I don't
-> > > > > implement the flush and unmap bit; I just scream loudly and do no=
-thing:
-> > > >
-> > > > lol! i wish I could scream loudly and do nothing too for my case.
-> > > >
-> > > > AFAICT, I think I just need to flush and unmap that file and can le=
-ave
-> > > > the rest of the files/folios in the pagecache as is? But then if th=
-e
-> > > > file has active refcounts on it or has been pinned into memory, can=
- I
-> > > > still unmap and remove it from the page cache? I see the
-> > > > invalidate_inode_pages2() function but my understanding is that the
-> > > > page still stays in the cache if it has has active references, and =
-if
-> > > > the page gets mmaped and there's a page fault on it, it'll end up
-> > > > using the preexisting old page in the page cache.
-> > >
-> > > Never mind, I was mistaken about this. Johannes confirmed that even i=
-f
-> > > there's active refcounts on the folio, it'll still get removed from
-> > > the page cache after unmapping and the page cache reference will get
-> > > dropped.
-> > >
-> > > I think I can just do what you suggested and call
-> > > filemap_invalidate_inode() in fuse_change_attributes_common() then if
-> > > the inode blksize gets changed. Thanks for the suggestion!
-> > >
-> >
-> > Thinking about this some more, I don't think this works after all
-> > because the writeback + page cache removal and inode blkbits update
-> > needs to be atomic, else after we write back and remove the pages from
-> > the page cache, a write could be issued right before we update the
-> > inode blkbits. I don't think we can hold the inode lock the whole time
-> > for it either since writeback could be intensive. (also btw, I
-> > realized in hindsight that invalidate_inode_pages2_range() would have
-> > been the better function to call instead of
-> > filemap_invalidate_inode()).
-> >
-> > > >
-> > > > I don't think I really need to have it removed from the page cache =
-so
-> > > > much as just have the ifs state for all the folios in the file free=
-d
-> > > > (after flushing the file) so that it can start over with a new ifs.
-> > > > Ideally we could just flush the file, then iterate through all the
-> > > > folios in the mapping in order of ascending index, and kfree their
-> > > > ->private, but I'm not seeing how we can prevent the case of new
-> > > > writes / a new ifs getting allocated for folios at previous indexes
-> > > > while we're trying to do the iteration/kfreeing.
-> > > >
-> >
-> > Going back to this idea, I think this can work. I realized we don't
-> > need to flush the file, it's enough to free the ifs, then update the
-> > inode->i_blkbits, then reallocate the ifs (which will now use the
-> > updated blkbits size), and if we hold the inode lock throughout, that
-> > prevents any concurrent writes.
-> > Something like:
-> >      inode_lock(inode);
-> >      XA_STATE(xas, &mapping->i_pages, 0);
-> >      xa_lock_irq(&mapping->i_pages);
-> >      xas_for_each_marked(&xas, folio, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
-> >           folio_lock(folio);
-> >           if (folio_test_dirty(folio)) {
-> >                   folio_wait_writeback(folio);
-> >                   kfree(folio->private);
-> >           }
-> >           folio_unlock(folio);
-> >      }
-> >     inode->i_blkbits =3D new_blkbits_size;
->
-> The trouble is, you also have to resize the iomap_folio_state objects
-> attached to each folio if you change i_blkbits...
+Hi Maxime,
 
-I think the iomap_folio_state objects automatically get resized here,
-no? We first kfree the folio->private which kfrees the entire ifs,
-then we change inode->i_blkbits to the new size, then when we call
-folio_mark_dirty(), it'll create the new ifs which creates a new folio
-state object using the new/updated i_blkbits size
+thanks for the quick feedback.
 
->
-> >     xas_set(&xas, 0);
-> >     xas_for_each_marked(&xas, folio, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
-> >           folio_lock(folio);
-> >           if (folio_test_dirty(folio) && !folio_test_writeback(folio))
-> >                  folio_mark_dirty(folio);
->
-> ...because iomap_dirty_folio doesn't know how to reallocate the folio
-> state object in response to i_blkbits having changed.
->
-> --D
->
-> >           folio_unlock(folio);
-> >     }
-> >     xa_unlock_irq(&mapping->i_pages);
-> >     inode_unlock(inode);
-> >
-> >
-> > I think this is the only approach that doesn't require changes to iomap=
-.
-> >
-> > I'm going to think about this some more next week and will try to send
-> > out a patch for this then.
-> >
-> >
-> > Thanks,
-> > Joanne
-> >
-> > > > >
-> > > > > void fuse_iomap_set_i_blkbits(struct inode *inode, u8 new_blkbits=
-)
-> > > > > {
-> > > > >         trace_fuse_iomap_set_i_blkbits(inode, new_blkbits);
-> > > > >
-> > > > >         if (inode->i_blkbits =3D=3D new_blkbits)
-> > > > >                 return;
-> > > > >
-> > > > >         if (!S_ISREG(inode->i_mode))
-> > > > >                 goto set_it;
-> > > > >
-> > > > >         /*
-> > > > >          * iomap attaches per-block state to each folio, so we ca=
-nnot allow
-> > > > >          * the file block size to change if there's anything in t=
-he page cache.
-> > > > >          * In theory, fuse servers should never be doing this.
-> > > > >          */
-> > > > >         if (inode->i_mapping->nrpages > 0) {
-> > > > >                 WARN_ON(inode->i_blkbits !=3D new_blkbits &&
-> > > > >                         inode->i_mapping->nrpages > 0);
-> > > > >                 return;
-> > > > >         }
-> > > > >
-> > > > > set_it:
-> > > > >         inode->i_blkbits =3D new_blkbits;
-> > > > > }
-> > > > >
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.=
-git/commit/?h=3Dfuse-iomap-attrs&id=3Dda9b25d994c1140aae2f5ebf10e54d0872f5c=
-884
-> > > > >
-> > > > > --D
-> > > > >
-> > > > > >
-> > > > > > Thanks,
-> > > > > > Joanne
-> > > > > >
-> >
+On Mon, 28 Jul 2025 10:10:38 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
+
+> Hi,
+> 
+> On Fri, Jul 25, 2025 at 05:28:03PM +0200, Luca Ceresoli wrote:
+> > This bridge driver calls drm_bridge_add() in the DSI host .attach callback
+> > instead of in the probe function. This looks strange, even though
+> > apparently not a problem for currently supported use cases.
+> > 
+> > However it is a problem for supporting hotplug of DRM bridges, which is in
+> > the works [0][1][2]. The problematic case is when this DSI host is always
+> > present while its DSI device is hot-pluggable. In such case with the
+> > current code the DRM card will not be populated until after the DSI device
+> > attaches to the host, and which could happen a very long time after
+> > booting, or even not happen at all.
+> > 
+> > Supporting hotplug in the latest public draft is based on an ugly
+> > workaround in the hotplug-bridge driver code. This is visible in the
+> > hotplug_bridge_dsi_attach implementation and documentation in [3] (but
+> > keeping in mind that workaround is complicated as it is also circumventing
+> > another problem: updating the DSI host format when the DSI device gets
+> > connected).
+> > 
+> > As a preliminary step to supporting hotplug in a proper way, and also make
+> > this driver cleaner, move drm_bridge_add() at probe time, so that the
+> > bridge is available during boot.
+> > 
+> > However simply moving drm_bridge_add() prevents populating the whole card
+> > when the hot-pluggable addon is not present at boot, for another
+> > reason. The reason is:
+> > 
+> >  * now the encoder driver finds this bridge instead of getting
+> >    -EPROBE_DEFER as before
+> >  * but it cannot attach it because the bridge attach function in turn tries
+> >    to attach to the following bridge, which has not yet been hot-plugged
+> > 
+> > This needs to be fixed in the bridge attach function by simply returning
+> > -EPROBE_DEFER ifs the following bridge (i.e. the DSI device) is not yet
+> > present.
+> > 
+> > [0] https://lpc.events/event/18/contributions/1750/
+> > [1] https://lore.kernel.org/lkml/20240924174254.711c7138@booty/
+> > [2] https://lore.kernel.org/lkml/20250723-drm-bridge-alloc-getput-for_each_bridge-v1-0-be8f4ae006e9@bootlin.com/
+> > [3] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-4-bc4dfee61be6@bootlin.com/
+> > 
+> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
+> 
+> There's many things lacking from that commit log to evaluate whether
+> it's a good solution or not:
+
+Before answering your questions: I realized my patch is incomplete, it
+should also move drm_bridge_remove() to samsung_dsim_remove() for
+symmetry. This is a trivial change and it's done and tested locally:
+
+@@ -1825,8 +1825,6 @@ static int samsung_dsim_host_detach(struct mipi_dsi_host *host,
+ 
+ 	samsung_dsim_unregister_te_irq(dsi);
+ 
+-	drm_bridge_remove(&dsi->bridge);
+-
+ 	return 0;
+ }
+ 
+@@ -2069,6 +2067,8 @@ void samsung_dsim_remove(struct platform_device *pdev)
+ {
+ 	struct samsung_dsim *dsi = platform_get_drvdata(pdev);
+ 
++	drm_bridge_remove(&dsi->bridge);
++
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	if (dsi->plat_data->host_ops && dsi->plat_data->host_ops->unregister_host)
+
+
+Let me reorder your questions so the replies follow a step-by-step
+path.
+
+> - What is the next bridge in your case? Did you try with a device
+>   controlled through DCS, or with a bridge connected through I2C/SPI
+>   that would typically have a lifetime disconnected from the DSI host.
+
+The pipeline is the following:
+
+|--------------------- fixed components --------------------|     |-------- hot-pluggable addon --------| 
+|--------------- i.MX8MP ------------|                       
+
++----------------+    +------------+     +------------------+     +-------------------+      +----------+
+|                |    |samsung-dsim|     |hotplug DSI bridge|     |   TI SN65DSI84    |      |LVDS panel|
+|fsl,imx8mp-lcdif| A  |            |  B  |                  |  C  |                   |  D   |          |
+|                +--->|    DSI host+---->|device        host+---->|DSI host   LVDS out+----->|LVDS in   |
++----------------+    +------------+ DSI +------------------+ DSI +-------------------+ LVDS +----------+
+                                                                           ^
+                                                                      I2C -'
+
+This is a device tree based system (i.MX8MP, ARM64).
+
+This is the only hot-pluggable hardware I have access to and there is no
+DCS.
+
+In the hardware the next bridge after the samsung-dsim is the sn65dsi84
+(ti-sn65dsi83.c driver), and there the hotplug connector is between
+them.
+
+In the software implementation the next bridge is currently the
+hotplug-bridge, which "represents" the hotplug connector (!= DRM
+connector). As discussed in the past, the hotplug-bridge may be removed
+in future implementations but at the current stage of my work on DRM it
+is still needed.
+
+The hotplug-bridge is not (yet?) in mainline, and so aren't some other
+bits. However they haven't changed much since my old v4 series [0].
+
+Also, I expect this patch to be mostly valid regardless of whether the
+hotplug-bridge will or not be in the final design.
+
+> - What is the typical sequence of probe / attach on your board?
+
+The probe/attach sequence before this patch is the following. This is
+in the case the hotpluggable addon is not connected during boot, which
+is the most problematic one.
+
+ 1) The lcdif starts probing, but probe is deferred until (6.)
+    because the samsung-dsim has not probed yet.
+    Code path: lcdif_probe() -> lcdif_load() -> lcdif_attach_bridge() ->
+               devm_drm_of_get_bridge() -> -EPROBE_DEFER
+ 2) samsung-dsim probes, but does not drm_bridge_add() itself, so the
+    lcdif driver cannot find it
+ 3) lcdif tries to probe again
+    A) it does not find the next bridge and returns -EPROBE_DEFER
+ 4) hotplug-bridge probes, including:
+    A) drm_bridge_add()
+    B) mipi_dsi_attach() to register as a "fake" DSI device to
+       the samsung-dsim DSI host
+       - this registration is fake, meaning it has a fake format;
+         it's needed or the samsung-dsim driver would not
+         drm_bridge_add() itself and the lcdif would not populate the
+         DRM card
+    C) look for the next bridge but in the typical case the TI bridge
+       has not probed yet; this is not fatal by design of the
+       hotplug-bridge (that's its goal indeed)
+ 5) reacting to 4.B, in the samsung_dsim_host_attach() func does, among
+    other things, drm_bridge_add() itself
+ 6) lcdif tries to probe again
+    A) this triggers a chain of drm_bridge_attach:
+       * lcdif calls drm_bridge_attach() on the samsung-dsim
+       * samsung-dsim calls drm_bridge_attach() on the hotplug-bridge
+    B) the DRM card is populated and accessible to userspace
+
+When the addon is connected (can be hours later or even never):
+
+ 7) the TI SN65DSI84 driver probes, including:
+    * drm_bridge_add()
+       - thanks to notifiers ([0] patch 2) the hotplug bridge is
+         informed and takes note of its next_bridge
+    * does mipi_dsi_attach() on its host (hotplug bridge)
+ 8) the hotplug-bridge DSI host side reacts to the mipi_dsi_attach() from
+    the TI DSI device by calling:
+    * mipi_dsi_detach() on the samsung-dsim to remove the
+      fake registration
+    * mipi_dsi_attach() with the correct format from the sn65dsi84
+
+Note: after 5) the global bridge_list has a samsung-dsim bridge, while
+after an addon insertion/removal there is no samsung-dsim in there
+anymore. This is due to the fake registration, which happens only the
+first time: at every addon removal samsung_dsim_host_detach() will
+drm_bridge_remove() itself.
+
+With the patch applied the sequence would become:
+
+ 1) The lcdif starts probing multiple times, but probe is deferred
+    until (5.) because the samsung-dsim has not probed yet.
+    (so far no changes)
+ 2) samsung-dsim probes, _and_ does drm_bridge_add() itself
+ 3) lcdif tries to probe again
+    A) this triggers a lcdif probe and a chain of drm_bridge_attach:
+       * lcdif calls drm_bridge_attach() on the samsung-dsim
+       * samsung-dsim returns -EPROBE_DEFER because there is no next
+         bridge yet (with another error the lcdif would fail without
+         further deferral)
+ 4) the hotplug-bridge probes
+ 5) lcdif tries to probe again
+    A) this triggers a lcdif probe and a chain of drm_bridge_attach:
+       * lcdif calls drm_bridge_attach() on the samsung-dsim
+       * samsung-dsim calls drm_bridge_attach() on the hotplug-bridge
+    B) the DRM card is populated and accessible to userspace
+
+When the addon is connected (can be hours later or even never):
+
+ 6) the TI SN65DSI84 driver probes, including:
+    A) drm_bridge_add()
+       - thanks to notifiers ([0] patch 2) the hotplug bridge is
+         informed and takes note of its next_bridge
+    B) does mipi_dsi_attach() on its host (hotplug bridge)
+    (so far no changes)
+ 7) the hotplug-bridge DSI host side reacts to the mipi_dsi_attach() from
+    the TI DSI device without detaching/attaching from/to the
+    samsung-dsim, but only by notifying to samsung-dsim the new format;
+    for this my current draft adds a .format_changed op to struct
+    mipi_dsi_host_ops, so the hotplug bridge can inform about the new
+    format, but in the end we might as well get rid of the hotplug
+    bridge entirely
+
+> - Why moving the call to drm_bridge_attach helps?
+
+You mean _from_ drm_bridge_attach, I guess.
+
+Some drawbacks of current code are because at every DSI attach/detach,
+the samsung-dsim does drm_bridge_add/remove() itself:
+
+ * To me this looks like a bad design, the samsung-dsim is always
+   present and not hotpluggable, so why should it add/remove itself?
+
+ * I have a debugfs patch to show in $BUDUGFS/dri/bridges_removed all
+   the removes bridges: bridges after drm_bridge_remove() but not yet
+   freed because refcount still > 0. But it causes crashes due to the
+   samsung-dsim going backwards from "removed" to "added", and further
+   hacks are needed to avoid this crash.
+
+ * At LPC 2024 we had discussed the idea of a ".gone" flag in struct
+   drm_bridge, and drm_bridge_enter/exit() macros similar to
+   drm_dev_enter/exit() to avoid races between bridge removal and bridge
+   usage. I drafted something, but the samsung-dsim would be "ungone"
+   when it does a drm_bridge_remove/add() sequence, so more flags and
+   hacks would be needed for the .gone flag to work correctly.
+
+Additionally this patch removes the need for a fake registration to get
+a DRM card up. The fake registration has many drawbacks:
+
+ * It's a horrible hack to start with, as guaranteed by its author O:-)
+   (see the code in [0] patch 4 -> hotplug_bridge_dsi_attach).
+
+ * This hack is better not done by all bridge drivers, to it must stay
+   in the hotplug-bridge, preventing the idea of its removal.
+
+ * The samsung-dsim appears present in the global bridge_list after
+   initial probe, but absent after a hotplug+hotunplug sequence (as
+   described in the Note above)
+
+> - If you think it's a pattern that is generic enough, we must document
+>   it. If you don't, we must find something else.
+
+Intuitively it looks to me that a bridge driver should drm_bridge_add()
+itself wen probing: I probe, ergo I exist, ergo I add myself to the
+global bridge_list.
+
+But that's not too relevant, code is not necessarily intuitive, I know. :)
+
+However if we want to support a DSI device that is pluggable while the
+DSI host is always present, we need to support multiple
+mipi_dsi_host_attach/detach cycles for the same DSI host instance. So
+we have two options:
+
+ 1. the DSI host bridge does drm_bridge_add/remove() in probe as this
+    patch proposes, so it is "stable" regardless of how many
+    dsi_attach/detach cycles it gets:
+
+    xyz_probe
+    drm_bridge_add
+    N x {
+       dsi_attach
+       dsi_remove
+    }
+    drm_bridge_remove
+    xyz_remove
+
+ 2. we support devices that can be drm_device_add/remove() themselves
+    multiple times during the lifetime of a single instance:
+
+    xyz_probe
+    N x {
+       drm_bridge_add
+       dsi_attach
+       dsi_remove
+       drm_bridge_remove
+    } x N
+    xyz_remove
+
+As mentioned above, supporting case 2 would introduce problems in many
+areas, including the ".gone" flag which seems fundamental. I'm
+obviously biased in favor of option 1, at the moment, but open to
+discussion.
+
+So it boils down to what is the meaning of "add" and "remove". I'm
+giving up on my intuitive interpretation and waiting for your point of
+view here. :)
+
+> - Why returning EPROBE_DEFER from the attach callback helps? Also, this
+>   is an undocumented behaviour, so if it does, we must document that
+>   it's acceptable.
+
+(Note: this question is surely relevant but I think it is a side topic,
+not affecting the reasoning about whether drm_bridge_add() should be
+called in probe or in dsi_host.attach)
+
+After your question I'm not sure returning -EPROBE_DEFER is the correct
+approach indeed.
+
+It currently works well because it means for the samsung-dsim driver:
+"there is no hotplug-bridge yet, so I'll ask the lcdif to try again
+later". Later the hotplug-bridge will be present and it will take care
+of "pretending" the bridge chain is complete (its .attach knows the next
+bridge might be absent) and can be fully attached.
+
+However this might not be the most generic solution in the case we want
+to support hotplug without the hotplug-bridge (which I think is
+something you'd prefer). In such case we need to allow an encoder to
+continue probing the card when the encoder chain is not yet complete.
+So a bridge that fails attaching the next bridge must not make the
+previous bridge fail. This looks like a relevant change to the current
+design, where the hotplug-bridge makes things simpler as it lets other
+components continue working as they always did.
+
+I'm not sure about the best way to do this. Thinking out loud, we may
+introduce a return value from .attach funcs that means "I, the invoked
+bridge, did successfully perform attach operations correctly on myself,
+but the following bridge is not found so I cannot attach to it as of
+now". In such case the previous element (bridge or encoder) knows it
+can continue successfully. A bridge may come later on to complete the
+encoder chain.
+
+[0] https://lore.kernel.org/all/20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com/
+
+Best regards,
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
