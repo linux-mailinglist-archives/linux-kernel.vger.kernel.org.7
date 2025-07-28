@@ -1,164 +1,194 @@
-Return-Path: <linux-kernel+bounces-747389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689E6B1333E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:56:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C130AB13319
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7AE63B7D6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:56:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21521631BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3DA21B9D2;
-	Mon, 28 Jul 2025 02:55:47 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7F31F5846;
+	Mon, 28 Jul 2025 02:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6DcBs3W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAF71F4606;
-	Mon, 28 Jul 2025 02:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2517E7DA93;
+	Mon, 28 Jul 2025 02:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753671347; cv=none; b=tGVj6HlsI7T59s1/XLmuadB10ubY9XPOJA4WR+xz5CEEwLhWJNEJz7WNdoBu9IUnnDGve/vC/WoJ9XuL2st653WWNYE66SSSfOaHsgaEZs5GwYdE7L/c+Gvy9oaFH+bQ7CF/x5ZAbsAH8CpQbYMbpo3o96iOURQRAwwP24HcW2E=
+	t=1753670578; cv=none; b=l1/5QW3jXRr2kl1FRPyTTiLfUiIzrQN4J3IFMcfDGJUDmozhJfENfdy1fE0MuajSBw963ZFU0GHodlzsXaNVDchL/lGXbfCmR1J3/mZhi8AYqT8cBgvgskpBDTaN3RCf4LvxedHxhOoeMj38AtJvmJBRhNFo+1/XdRwjNGgeT9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753671347; c=relaxed/simple;
-	bh=k7f9xVVqnBIV5Abjt6ftreSV9DcoUd/iT8/KPTbL79k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WGtWeV3ZZyRBkYtSNPVCs6AbnxsBR3L1bILJBurnjNh4I0blcW/XKx1Z695A2JdCfWksGlZRqkc5Ni3xr5QgfXKA5vV4Gas//Z0XHnYg3S5L1gSTq8pGLY4nOaVZSyVsUtFW4KaO0GyoxBkotOIxzhvPSMsX1l+8FF6eqICcKgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4br34p63d2zKHMgr;
-	Mon, 28 Jul 2025 10:55:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id AAFF71A19F3;
-	Mon, 28 Jul 2025 10:55:37 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgDXng+W5oZohS7qBg--.25661S7;
-	Mon, 28 Jul 2025 10:55:37 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	bristot@redhat.com,
-	vschneid@redhat.com,
-	rafael@kernel.org,
-	pavel@ucw.cz
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH 6.6 5/5] sched,freezer: Remove unnecessary warning in __thaw_task
-Date: Mon, 28 Jul 2025 02:41:21 +0000
-Message-Id: <20250728024121.33864-6-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250728024121.33864-1-chenridong@huaweicloud.com>
-References: <2025072421-deviate-skintight-bbd5@gregkh>
- <20250728024121.33864-1-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1753670578; c=relaxed/simple;
+	bh=+ZFXkLf61aLkfibNILDeIzWrO9OCofPYG73YDnpuTgM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P3pOXSzYIsUVoHdGHm5YpQ6ZtMRMXfgnGc8siHOj4jMpPpd9V8IKUVXjYPKcD74VKhgcFCGfUD0g4XSkKMflEr55r4mFGOoPPoF1ZfsaAR6knbB7GlPYDtJALJ1pPZV5aFNNGBZn8TVDeU15ObheiEcqxvhqWojjlNGp6qp2Zrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6DcBs3W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE4EC4AF09;
+	Mon, 28 Jul 2025 02:42:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753670577;
+	bh=+ZFXkLf61aLkfibNILDeIzWrO9OCofPYG73YDnpuTgM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=F6DcBs3Wpqfm/cGFxQUJEGUwMDIzbAaCJ/yX0eBfmSobqng+GqCCO7pXfkuGUn6FB
+	 HYelZkqfFZQQI3C//ORpzasxUhO+0JZWcZS5WaKwXMdSV5A0ZfQ8BpevTe12TJQZZt
+	 0uwLpHqzgKSbma9GoIKWbuyolcXlgHbYfj/XrxxARYJYfkkiloNY0QWK4j+sdnXan7
+	 ppxY/OxVOAou9dEsGYPWpKPc4Mg4MvAI7NHHKrQskGm/wcx/EwhbB/BKN92WLQBmOJ
+	 bZoyrNmncS7+5M7y/5iF9cFuPe0OPJdTEZUp2ct8qkiuAbmCCZGRXJt50+AfrOzqGZ
+	 MhVboyQSosvOQ==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aec5a714ae9so549080166b.3;
+        Sun, 27 Jul 2025 19:42:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWMZluTlyOD1zOFIMxEuAeqquwQskHcLFoIIuDgjvQWwph+IyPMiJTh7paboFhK9BeZ6ZBF5H8DBWU0aPOh@vger.kernel.org, AJvYcCXsxc2s/IC4qJHknE8c17NR/1iGjcNeTTAeZ7MGEq7HY31t396dg+ZSf2ZVfH32E3HwLVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyog7DF/FRSfiRRT9JDPDkEJV64TeJ3Q6oAFfr9vm5/wfSicpe3
+	RpDaIjYQ9JGE7G8rOPfFlED1Vjq7ScQ9cE4p9XkrkMGwKE8+xz30Z0Kv4ghF8hEbq9uLt6UoeU8
+	s5slT10+2Rke/8EUZWsiOZE+yPKEb2sM=
+X-Google-Smtp-Source: AGHT+IHndJ+0yahCGSN8pkWQx7GixFZRTGUFgRMI6PGyIdHt+uIOCB4oJ9hM+wyRpr22uFUEABlyiFCvIn9LOv3YE10=
+X-Received: by 2002:a17:907:3d0d:b0:ae2:60ba:da91 with SMTP id
+ a640c23a62f3a-af61ca99878mr1194111166b.15.1753670576128; Sun, 27 Jul 2025
+ 19:42:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXng+W5oZohS7qBg--.25661S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15JrykWFWrGF48Xr47Jwb_yoW5JFykpw
-	s3Ww4xKr48tr1jyrWUJa10qFyDKan3Xw4UGrykGr18XF43XasYqrn7AryYg34jvrWIgry5
-	t3Z0gr40y3yDZ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
-	AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
-	W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-	0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7I
-	U1aLvJUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <20250724141929.691853-1-duanchenghao@kylinos.cn> <c4bf63161e13ce1b51a288b1fd0f3fb0b1170f22.camel@kernel.org>
+In-Reply-To: <c4bf63161e13ce1b51a288b1fd0f3fb0b1170f22.camel@kernel.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 28 Jul 2025 10:42:45 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H67QrAOf=u2onBO-13m8grVn8PxMaF+huxK5tQTWWHUsA@mail.gmail.com>
+X-Gm-Features: Ac12FXw6DsLQatIhv84ndR_uR-p0z2VH5B2EE3ZtCtDioi3KHw1nxBErgy4wb4E
+Message-ID: <CAAhV-H67QrAOf=u2onBO-13m8grVn8PxMaF+huxK5tQTWWHUsA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] Support trampoline for LoongArch
+To: Geliang Tang <geliang@kernel.org>
+Cc: Chenghao Duan <duanchenghao@kylinos.cn>, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, yangtiezhu@loongson.cn, hengqi.chen@gmail.com, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
+	vincent.mc.li@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen Ridong <chenridong@huawei.com>
+On Sun, Jul 27, 2025 at 9:00=E2=80=AFAM Geliang Tang <geliang@kernel.org> w=
+rote:
+>
+> Hi Chenghao, Huacai, Tuezhu,
+>
+> I first discovered this Loongarch BPF trampoline issue when debugging
+> MPTCP BPF selftests on a Loongarch machine last June (see my commit
+> eef0532e900c "selftests/bpf: Null checks for links in bpf_tcp_ca"), and
+> reported it to Huachui. Tiezhu and I started implementing BPF
+> trampoline last June. I also called on more Chinese kernel engineers to
+> participate in the development of the Loongarch BPF trampoline at the
+> openEuler Developer Day 2024 and CLSF 2024 conferences. Although this
+> work was finally handed over to Chenghao, it is also necessary to
+> mention me as the reporter and our early developers in the commit log.
+Thank you for reminding me, since the 3rd patch need to be fixed,
+chenghao can do that as soon as possible, then adjust the SOB together
+in V5.
 
-[ Upstream commit 9beb8c5e77dc10e3889ff5f967eeffba78617a88 ]
+Huacai
 
-Commit cff5f49d433f ("cgroup_freezer: cgroup_freezing: Check if not
-frozen") modified the cgroup_freezing() logic to verify that the FROZEN
-flag is not set, affecting the return value of the freezing() function,
-in order to address a warning in __thaw_task.
-
-A race condition exists that may allow tasks to escape being frozen. The
-following scenario demonstrates this issue:
-
-CPU 0 (get_signal path)		CPU 1 (freezer.state reader)
-try_to_freeze			read freezer.state
-__refrigerator			freezer_read
-				update_if_frozen
-WRITE_ONCE(current->__state, TASK_FROZEN);
-				...
-				/* Task is now marked frozen */
-				/* frozen(task) == true */
-				/* Assuming other tasks are frozen */
-				freezer->state |= CGROUP_FROZEN;
-/* freezing(current) returns false */
-/* because cgroup is frozen (not freezing) */
-break out
-__set_current_state(TASK_RUNNING);
-/* Bug: Task resumes running when it should remain frozen */
-
-The existing !frozen(p) check in __thaw_task makes the
-WARN_ON_ONCE(freezing(p)) warning redundant. Removing this warning enables
-reverting commit cff5f49d433f ("cgroup_freezer: cgroup_freezing: Check if
-not frozen") to resolve the issue.
-
-This patch removes the warning from __thaw_task. A subsequent patch will
-revert commit cff5f49d433f ("cgroup_freezer: cgroup_freezing: Check if
-not frozen") to complete the fix.
-
-Reported-by: Zhong Jiawei<zhongjiawei1@huawei.com>
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/freezer.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/freezer.c b/kernel/freezer.c
-index f57aaf96b829..d8db479af478 100644
---- a/kernel/freezer.c
-+++ b/kernel/freezer.c
-@@ -196,18 +196,9 @@ static int __restore_freezer_state(struct task_struct *p, void *arg)
- 
- void __thaw_task(struct task_struct *p)
- {
--	unsigned long flags;
--
--	spin_lock_irqsave(&freezer_lock, flags);
--	if (WARN_ON_ONCE(freezing(p)))
--		goto unlock;
--
--	if (!frozen(p) || task_call_func(p, __restore_freezer_state, NULL))
--		goto unlock;
--
--	wake_up_state(p, TASK_FROZEN);
--unlock:
--	spin_unlock_irqrestore(&freezer_lock, flags);
-+	guard(spinlock_irqsave)(&freezer_lock);
-+	if (frozen(p) && !task_call_func(p, __restore_freezer_state, NULL))
-+		wake_up_state(p, TASK_FROZEN);
- }
- 
- /**
--- 
-2.34.1
-
+>
+> Thanks,
+> -Geliang
+>
+> On Thu, 2025-07-24 at 22:19 +0800, Chenghao Duan wrote:
+> > v4:
+> > 1. Delete the #3 patch of version V3.
+> >
+> > 2. Add 5 NOP instructions in build_prologue().
+> >    Reserve space for the move_imm + jirl instruction.
+> >
+> > 3. Differentiate between direct jumps and ftrace jumps of trampoline:
+> >    direct jumps skip 5 instructions.
+> >    ftrace jumps skip 2 instructions.
+> >
+> > 4. Remove the generation of BL jump instructions in
+> > emit_jump_and_link().
+> >    After the trampoline ends, it will jump to the specified register.
+> >    The BL instruction writes PC+4 to r1 instead of allowing the
+> >    specification of rd.
+> >
+> > ---------------------------------------------------------------------
+> > --
+> > Historical Version:
+> > v3:
+> > 1. Patch 0003 adds EXECMEM_BPF memory type to the execmem subsystem.
+> >
+> > 2. Align the size calculated by arch_bpf_trampoline_size to page
+> > boundaries.
+> >
+> > 3. Add the flush icache operation to larch_insn_text_copy.
+> >
+> > 4. Unify the implementation of bpf_arch_xxx into the patch
+> > "0004-LoongArch-BPF-Add-bpf_arch_xxxxx-support-for-Loong.patch".
+> >
+> > 5. Change the patch order. Move the patch
+> > "0002-LoongArch-BPF-Update-the-code-to-rename-validate_.patch" before
+> > "0005-LoongArch-BPF-Add-bpf-trampoline-support-for-Loon.patch".
+> >
+> > URL for version v3:
+> > https://lore.kernel.org/all/20250709055029.723243-1-duanchenghao@kylino=
+s.cn/
+> > ---------
+> > v2:
+> > 1. Change the fixmap in the instruction copy function to
+> > set_memory_xxx.
+> >
+> > 2. Change the implementation method of the following code.
+> >       - arch_alloc_bpf_trampoline
+> >       - arch_free_bpf_trampoline
+> >       Use the BPF core's allocation and free functions.
+> >
+> >       - bpf_arch_text_invalidate
+> >       Operate with the function larch_insn_text_copy that carries
+> >       memory attribute modifications.
+> >
+> > 3. Correct the incorrect code formatting.
+> >
+> > URL for version v2:
+> > https://lore.kernel.org/all/20250618105048.1510560-1-duanchenghao@kylin=
+os.cn/
+> > ---------
+> > v1:
+> > Support trampoline for LoongArch. The following feature tests have
+> > been
+> > completed:
+> >       1. fentry
+> >       2. fexit
+> >       3. fmod_ret
+> >
+> > TODO: The support for the struct_ops feature will be provided in
+> > subsequent patches.
+> >
+> > URL for version v1:
+> > https://lore.kernel.org/all/20250611035952.111182-1-duanchenghao@kylino=
+s.cn/
+> > ---------------------------------------------------------------------
+> > --
+> >
+> > Chenghao Duan (4):
+> >   LoongArch: Add larch_insn_gen_{beq,bne} helpers
+> >   LoongArch: BPF: Update the code to rename validate_code to
+> >     validate_ctx
+> >   LoongArch: BPF: Add bpf_arch_xxxxx support for Loongarch
+> >   LoongArch: BPF: Add bpf trampoline support for Loongarch
+> >
+> > Tiezhu Yang (1):
+> >   LoongArch: BPF: Add struct ops support for trampoline
+> >
+> >  arch/loongarch/include/asm/inst.h |   3 +
+> >  arch/loongarch/kernel/inst.c      |  60 ++++
+> >  arch/loongarch/net/bpf_jit.c      | 521
+> > +++++++++++++++++++++++++++++-
+> >  arch/loongarch/net/bpf_jit.h      |   6 +
+> >  4 files changed, 589 insertions(+), 1 deletion(-)
 
