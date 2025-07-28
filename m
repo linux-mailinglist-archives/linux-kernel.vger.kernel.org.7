@@ -1,147 +1,229 @@
-Return-Path: <linux-kernel+bounces-748506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AB5B1420C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:35:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C734FB14211
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49EEE18C1C82
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:36:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2783541135
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E69E275AFE;
-	Mon, 28 Jul 2025 18:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABD8275861;
+	Mon, 28 Jul 2025 18:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LhOsPQIq"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQJT0ufQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299F84A11;
-	Mon, 28 Jul 2025 18:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221808F48;
+	Mon, 28 Jul 2025 18:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753727740; cv=none; b=OpQTN4B/+0+wRwLybqfchjVRDkDna7KGNmQdHZDWr35fT5ry6yNVVkx7La4xuQXoeH1B/KPgFJn8z4kJeMOWZtRK6W5wxcVPwHbkemGePGQR8V5/F7TstYJhjsa6fxyFxrCoF039ELYl+ZrZv3ePcrWZRGGEVmAnPAPSvWMd8vg=
+	t=1753727989; cv=none; b=rjuFWP67J3vu+fJf0JxQvYqOTMLH8/s/79xdfFoUVwxMDk8yNLVcF4+o6FxnPc8WqrZRUByP5VBtphwYkh+xzR24zilPHI0ZRdnZxApuxU3SpaT0ZmVWJGPk6cxRWIQl/LjbPg3y9nW4HueZkbIB8bgNXDZHSLqLBU9T8iwbiSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753727740; c=relaxed/simple;
-	bh=MvMjX+N/9Bpj0G7UWl4UtsPuVtDv2i0dpYKJH2tfm7o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SFXbokNWXUYJ6XbIRwW5FoAG+tp3a1kgSE31rgOjSMXNUDShoDzfqzveVyBrf+RCAkw6gy21ED7W2rFFYRjRCJSC9o66YFiy4+KRxI2y/cf+AA8Uumnsh6vKM5ygFeDhcmSXLC1lPRPEtgJc6HFN1/WZzpjMA2A2UYxNdE/yDVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LhOsPQIq; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aec5a714ae9so686112966b.3;
-        Mon, 28 Jul 2025 11:35:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753727736; x=1754332536; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=78uPmEmg1jJUm+vcAxFvheQL2RNbyr9u5uHfG0T4KU0=;
-        b=LhOsPQIqQfUAtRMm9phQO+s2ZhOOmVMoviiW/1FBcqTzRK6yNmPmG39ZZi+wyrU6rR
-         YZ6cpklAl8IAeawcJARctHZY9Th/k0nvmw2sB6RGOwQ1359M16RFHwHmAu1dekeJiqVU
-         Dz3KqgDbWRqY2Y0cit56jtBmBBfOjQJd3QX+0Y4zuNjG8ollKpAZ8tiGuV6aogx44CmE
-         FINsFArkwGTqzv8p6RZ8vg38UzEItfyOSh9NDicly3c0VDpe03u9/xapDmXuw2qQAr98
-         rsjugMxIzH2W7bRm5RHEmIw5bqpAajqToibqEhW1xqmWWYjHMwrLkc6zNnaWJC0ZgB+T
-         rSfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753727736; x=1754332536;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=78uPmEmg1jJUm+vcAxFvheQL2RNbyr9u5uHfG0T4KU0=;
-        b=bGbvjAsBPKlZ/LHPdFPDTAdDxFuiq0+Q7FcGDEAFB3qUclYEbaFFtmIqn0muUp4K+7
-         CdWUH6DXnl2dtRHscrMykCuLnACY0tknk2CnobavfENMHtEBF87EjO1d31UTNiHBPoxD
-         QqKwLv9l+42Uy70SGWtXF+Gpzxlc/gQ8Qq+EQUfkUY+IAXRHwmi7JNmxXHd6HHPv74sy
-         J9lHTTiEFXke6eukn/dhY2lMpRzwINXDfB2Ic+dNvy3thuedjJWLKiMjN3thnRwurS2H
-         rKglcAhTWpYCn6FdFHn1szqZORe1wLYbmRnA5KMP7GW1URwkjd2N8Dlwa0Irw8EHlKwv
-         zUYg==
-X-Forwarded-Encrypted: i=1; AJvYcCU03/OfL06PeYeZA77iELaRTJos4KakX1l1m5ml3/C/lUYxqnv71KMrP1i2y3Do3RjlLTM=@vger.kernel.org, AJvYcCW6o9Cuh+GOtV8Bt7awkg1GFEMFf5ApfO6q2fiRNCuh6Lz7me+R9gBDgivnaud1BDr38rAjUEfIuPVSHw==@vger.kernel.org, AJvYcCWWWQDxRaNoelLa2Ca+AxjbFXqLaOHXURAHfF9uCgMyX7TzArbS8lxcfJo0AlmvjXEfXXExsPLU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzuikDlQAhJozqNkxjptuCq+AWVW4cnpJUGs4Gq4B/9o6U2h01
-	SnhSrbnnaH2tB6JWv1RBvaYadJGFqcI0V8ACmg6Ru82E5jZ56bFm5GaG
-X-Gm-Gg: ASbGncumdsj6pF9dyTU+Mb9h9cTfsS3yYD7Dy1io5jcu6YSp5UzauKEMmD0ia1dqEuL
-	sOb8F1gM2/bA4SqkVRe8FgYMaPBN5XC5k3HH/pk2qaF7BbLU3yZ2rqjiclYLQimayVCjHXJ14gS
-	ZfLSYwoWzbP1ECNw8H/sG/RELntFhGaMNQ9qC/l+zKmpiWPfNdWMG0Q3vgpb8UKUgn09I1NVzM7
-	0lJX98dvaok6ybek0ArK27cYZl0jcGTiPAs9nposZbHAsdjCJSQh4TeKdYxU0Y0llsz5rdufXh5
-	VtD5fcaFOPDOJDmccb0HG8044X4aA/f9r3BDl0Rcm96DgGaQ/mtHojSkCuyBYWWfX7mEcNJ39IS
-	R5fdinMPbQ2SOmegruEK3/Wpj3mwZsg8=
-X-Google-Smtp-Source: AGHT+IFgxhpFnrUM7/Tj+j4V+oCATiKKeV1GCz2P0yLgvuPSqvqeNh/T3kaG38PILpE4Urdvmq1apg==
-X-Received: by 2002:a17:906:4fd6:b0:ae0:d804:5bca with SMTP id a640c23a62f3a-af61ca9ed34mr1318179566b.17.1753727736013;
-        Mon, 28 Jul 2025 11:35:36 -0700 (PDT)
-Received: from [192.168.8.100] ([185.69.144.164])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61500addc6asm3584548a12.53.2025.07.28.11.35.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 11:35:35 -0700 (PDT)
-Message-ID: <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
-Date: Mon, 28 Jul 2025 19:36:54 +0100
+	s=arc-20240116; t=1753727989; c=relaxed/simple;
+	bh=uF+e44nBnH40h2WHsDgmsp9aWWZE+kzMmLQfxJkbwdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PE6kckOoIgmBJ1mfb3qeJAgf5F90dFkC0KmOEONxBxefR/fRY1uBy/tdIgMeUSt0W1Uv0mNQ11fu04LRh/FYhROzCV0WZH6xITBLxALE3JRNgi8RWuniWm8wD3xteVtrZP6ECA9niVfy08uev3wab9kcOW9MiVXXtCAm4AmzZ8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQJT0ufQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45C67C4CEF4;
+	Mon, 28 Jul 2025 18:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753727988;
+	bh=uF+e44nBnH40h2WHsDgmsp9aWWZE+kzMmLQfxJkbwdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lQJT0ufQ5fO/Z5Ojk5PimpYnAdq24dq5G06Fq9nROGgE4unZ/EIrW3+9gbWM1ogW7
+	 my4IQD4mpaxVcwTF5C915h+1K0/+uUllaTI7WJiWTF98ZlHz/qllH2FURgh9831tie
+	 F/EvQ0R1q1V87Gbn9Zcrh+7R8RE8j9LrxGl//KPOn3nrkyNsOaJGRy7RJ+bJLocs0G
+	 tt8ZFIn0FzmMsKJ5/8280/VyumXjOajpmGYSiCE4uFlOgWhzBBw6FXlg1tW352zFFU
+	 aaUvE6f9xO7wrRxTCn57+OJlsebg0u0CYXJJEtKr4WDualOTYf2OT6i4yZy3UQe/wN
+	 7NMbi3NDiW/Xw==
+Date: Mon, 28 Jul 2025 11:39:46 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v4 1/9] perf annotate: Rename to
+ __hist_entry__tui_annotate()
+Message-ID: <aIfD8gwyLA61upIG@google.com>
+References: <20250725193755.12276-1-namhyung@kernel.org>
+ <20250725193755.12276-2-namhyung@kernel.org>
+ <CAP-5=fXcBfQCbsrYmyrr4X+Svoo7iJW_62G8jG9C7f7hwwQAfA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm, page_pool: introduce a new page type for page pool
- in page type
-To: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
- harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
- ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
- brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
- usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
- almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
- linux-rdma@vger.kernel.org
-References: <20250728052742.81294-1-byungchul@sk.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250728052742.81294-1-byungchul@sk.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXcBfQCbsrYmyrr4X+Svoo7iJW_62G8jG9C7f7hwwQAfA@mail.gmail.com>
 
-On 7/28/25 06:27, Byungchul Park wrote:
-> Changes from v1:
-> 	1. Rebase on linux-next.
+On Fri, Jul 25, 2025 at 05:16:39PM -0700, Ian Rogers wrote:
+> On Fri, Jul 25, 2025 at 12:38 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > There are three different but similar functions for annotation on TUI.
+> > Rename it to __hist_entry__tui_annotate() and make sure it passes 'he'.
+> > It's not used for now but it'll be needed for later use.
+> >
+> > Also remove map_symbol__tui_annotate() which was a simple wrapper.
+> >
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/ui/browsers/annotate.c | 17 +++++++----------
+> >  tools/perf/ui/browsers/hists.c    |  2 +-
+> >  tools/perf/util/annotate.h        | 12 ------------
+> >  tools/perf/util/hist.h            | 12 +++++++-----
+> >  4 files changed, 15 insertions(+), 28 deletions(-)
+> >
+> > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+> > index 183902dac042ecb0..28ef146f29e8e742 100644
+> > --- a/tools/perf/ui/browsers/annotate.c
+> > +++ b/tools/perf/ui/browsers/annotate.c
+> > @@ -27,6 +27,7 @@ struct annotate_browser {
+> >         struct rb_node             *curr_hot;
+> >         struct annotation_line     *selection;
+> >         struct arch                *arch;
+> > +       struct hist_entry          *he;
+> 
+> nit: as you are here is it worth commenting this, for example, who owns "he"?
 
-net-next is closed, looks like until August 11.
+Hmm.. good point.  The hist entries can be deleted by perf top display
+thread so we cannot guarantee it's live during the annotation.  Maybe we
+need a copy and with proper reference counting on its fields.  I'll
+think about it more.
 
-> 	2. Initialize net_iov->pp = NULL when allocating net_iov in
-> 	   net_devmem_bind_dmabuf() and io_zcrx_create_area().
-> 	3. Use ->pp for net_iov to identify if it's pp rather than
-> 	   always consider net_iov as pp.
-> 	4. Add Suggested-by: David Hildenbrand <david@redhat.com>.
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-Oops, looks you killed my suggested-by tag now. Since it's still
-pretty much my diff spliced with David's suggestions, maybe
-Co-developed-by sounds more appropriate. Even more so goes for
-the second patch getting rid of __netmem_clear_lsb().
+Thanks for your review!
+Namhyung
 
-Looks fine, just one comment below.
-
-...> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> index 100b75ab1e64..34634552cf74 100644
-> --- a/io_uring/zcrx.c
-> +++ b/io_uring/zcrx.c
-> @@ -444,6 +444,7 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
->   		area->freelist[i] = i;
->   		atomic_set(&area->user_refs[i], 0);
->   		niov->type = NET_IOV_IOURING;
-> +		niov->pp = NULL;
-
-It's zero initialised, you don't need it.
-
-And a friendly reminder, please never send patches modifying a
-subsystem without CC'ing it, especially kept in another tree.
-Sure, you CC'ed me, but it's easy to lose.
-
--- 
-Pavel Begunkov
-
+> 
+> >         bool                        searching_backwards;
+> >         char                        search_bf[128];
+> >  };
+> > @@ -557,7 +558,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
+> >         target_ms.map = ms->map;
+> >         target_ms.sym = dl->ops.target.sym;
+> >         annotation__unlock(notes);
+> > -       symbol__tui_annotate(&target_ms, evsel, hbt);
+> > +       __hist_entry__tui_annotate(browser->he, &target_ms, evsel, hbt);
+> >         sym_title(ms->sym, ms->map, title, sizeof(title), annotate_opts.percent_type);
+> >         ui_browser__show_title(&browser->b, title);
+> >         return true;
+> > @@ -1032,12 +1033,6 @@ static int annotate_browser__run(struct annotate_browser *browser,
+> >         return key;
+> >  }
+> >
+> > -int map_symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> > -                            struct hist_browser_timer *hbt)
+> > -{
+> > -       return symbol__tui_annotate(ms, evsel, hbt);
+> > -}
+> > -
+> >  int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
+> >                              struct hist_browser_timer *hbt)
+> >  {
+> > @@ -1046,11 +1041,12 @@ int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
+> >         SLang_init_tty(0, 0, 0);
+> >         SLtty_set_suspend_state(true);
+> >
+> > -       return map_symbol__tui_annotate(&he->ms, evsel, hbt);
+> > +       return __hist_entry__tui_annotate(he, &he->ms, evsel, hbt);
+> >  }
+> >
+> > -int symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> > -                        struct hist_browser_timer *hbt)
+> > +int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+> > +                              struct evsel *evsel,
+> > +                              struct hist_browser_timer *hbt)
+> >  {
+> >         struct symbol *sym = ms->sym;
+> >         struct annotation *notes = symbol__annotation(sym);
+> > @@ -1064,6 +1060,7 @@ int symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> >                         .priv    = ms,
+> >                         .use_navkeypressed = true,
+> >                 },
+> > +               .he = he,
+> >         };
+> >         struct dso *dso;
+> >         int ret = -1, err;
+> > diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+> > index d9d3fb44477ac6d5..487c0b08c0038710 100644
+> > --- a/tools/perf/ui/browsers/hists.c
+> > +++ b/tools/perf/ui/browsers/hists.c
+> > @@ -2484,8 +2484,8 @@ do_annotate(struct hist_browser *browser, struct popup_action *act)
+> >         else
+> >                 evsel = hists_to_evsel(browser->hists);
+> >
+> > -       err = map_symbol__tui_annotate(&act->ms, evsel, browser->hbt);
+> >         he = hist_browser__selected_entry(browser);
+> > +       err = __hist_entry__tui_annotate(he, &act->ms, evsel, browser->hbt);
+> >         /*
+> >          * offer option to annotate the other branch source or target
+> >          * (if they exists) when returning from annotate
+> > diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+> > index 8b5131d257b01e3e..0f640e4871744262 100644
+> > --- a/tools/perf/util/annotate.h
+> > +++ b/tools/perf/util/annotate.h
+> > @@ -471,18 +471,6 @@ int hist_entry__annotate_printf(struct hist_entry *he, struct evsel *evsel);
+> >  int hist_entry__tty_annotate(struct hist_entry *he, struct evsel *evsel);
+> >  int hist_entry__tty_annotate2(struct hist_entry *he, struct evsel *evsel);
+> >
+> > -#ifdef HAVE_SLANG_SUPPORT
+> > -int symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> > -                        struct hist_browser_timer *hbt);
+> > -#else
+> > -static inline int symbol__tui_annotate(struct map_symbol *ms __maybe_unused,
+> > -                               struct evsel *evsel  __maybe_unused,
+> > -                               struct hist_browser_timer *hbt __maybe_unused)
+> > -{
+> > -       return 0;
+> > -}
+> > -#endif
+> > -
+> >  void annotation_options__init(void);
+> >  void annotation_options__exit(void);
+> >
+> > diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+> > index 70438d03ca9c33b1..c64005278687cb02 100644
+> > --- a/tools/perf/util/hist.h
+> > +++ b/tools/perf/util/hist.h
+> > @@ -713,8 +713,9 @@ struct block_hist {
+> >  #include "../ui/keysyms.h"
+> >  void attr_to_script(char *buf, struct perf_event_attr *attr);
+> >
+> > -int map_symbol__tui_annotate(struct map_symbol *ms, struct evsel *evsel,
+> > -                            struct hist_browser_timer *hbt);
+> > +int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+> > +                              struct evsel *evsel,
+> > +                              struct hist_browser_timer *hbt);
+> >
+> >  int hist_entry__tui_annotate(struct hist_entry *he, struct evsel *evsel,
+> >                              struct hist_browser_timer *hbt);
+> > @@ -742,9 +743,10 @@ int evlist__tui_browse_hists(struct evlist *evlist __maybe_unused,
+> >  {
+> >         return 0;
+> >  }
+> > -static inline int map_symbol__tui_annotate(struct map_symbol *ms __maybe_unused,
+> > -                                          struct evsel *evsel __maybe_unused,
+> > -                                          struct hist_browser_timer *hbt __maybe_unused)
+> > +static inline int __hist_entry__tui_annotate(struct hist_entry *he __maybe_unused,
+> > +                                            struct map_symbol *ms __maybe_unused,
+> > +                                            struct evsel *evsel __maybe_unused,
+> > +                                            struct hist_browser_timer *hbt __maybe_unused)
+> >  {
+> >         return 0;
+> >  }
+> > --
+> > 2.50.1
+> >
 
