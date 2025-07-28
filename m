@@ -1,158 +1,190 @@
-Return-Path: <linux-kernel+bounces-748523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CBDB14239
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:48:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129C8B1423A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D6116C35A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:48:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E82E18C2B4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEC8276058;
-	Mon, 28 Jul 2025 18:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D0E275B1D;
+	Mon, 28 Jul 2025 18:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihrBSZE3"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qabTawZl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C09021CC57;
-	Mon, 28 Jul 2025 18:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715498BE8;
+	Mon, 28 Jul 2025 18:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753728494; cv=none; b=uw8No4oWApZ6rF3h9Y2c2PInuKHyBRGqELYoFt6zn7gghun76VLtHQ1V06ZWpFxRGCXN2qlvqnA0Dly2Uafu6hhMv2B4dAamVIH75R7ZQhUbrGNu9V/OkkyQMdx9V60s+36vfH4hWusKb92tAg+6JP6EPmygfnkDqLGBDkpxfCg=
+	t=1753728707; cv=none; b=V6LqfEQQ+73UBtq8PVNcYgXHipzluZm1s6qLG88Ah6VqvcIc9QRR7RCjOzZBZBLItJmXJZJuvSP0RBM3cJP9KMX3Gp10lzSPjmxLpwwaVJyxUuhdmIJVYfhE10rGvpzodjamh22pYlf2gkvZcRZeIwJzd9FdbJj8HqVd5SN4qEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753728494; c=relaxed/simple;
-	bh=HmUFXtsPLKlOxVadQ+y0n2hrEEj+K3jv5Vs3dl1+XSs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S3g5h+07/PCwe8Q5V77H/OG87yv3vwSnAN6NTvWwmGO0zd6Eg834wDe6WHIrAshKG2LkxGTYL9v24rrO0U7648iln8baAvU4PiJmiwrr+2fqmHVHBpnW/9TkwhRInaTUWRnjoy+jpLkWCoLVpaNZkbO3MMZHYlNLuG9X60cgJCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihrBSZE3; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0dd7ac1f5so967506166b.2;
-        Mon, 28 Jul 2025 11:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753728491; x=1754333291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KPtqArRqu6RKIpD2evhkTp5wjAyR3mIuxIPwkqRJjJg=;
-        b=ihrBSZE3YVPxc2F4rB6i03BeINzq9ZLbmlNAzC7g0mT45APCy3SFwhB6IYDhre+i7h
-         PVt1kfD5kzF3QJ0N361To36T/kbfQMap1mTOYGkuDM5uSQC3gNlHZJahujmwsgaX+khr
-         psie1BQOfL3X1JLpkuDnfahSvGCKVix+Uf16yVHhiUVwQiB6v3jQYRu4FF66hZAXIgzT
-         ny9forDzpyqe4ka0ZXn+TMPJh/cswyAQPeysrJMLRKQnoVHTkOqPYH94STunGLmfgduj
-         qgilMabfR3N2g9fVl2dlqa25gxRezoa9jRe1x/WdsCvCFzXrsXloef52O5siq9UTTNZd
-         qlwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753728491; x=1754333291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KPtqArRqu6RKIpD2evhkTp5wjAyR3mIuxIPwkqRJjJg=;
-        b=ubI6SYAZtfnhCZekKCyf5BriuPwPxMzQLNtEDByTdwdG3hmLTFcaRXJolJnRCjYzgl
-         99ldF2yChv/RGfIH+TELTW3a9qyw+xA+MHjGDQ/XcETqRmJY8yX+dX2vmRZttxzax67S
-         Sf+NwQvDiDTmxMNib6ug5VxzGk1JXxp+mkeGsGxpmOmv7UdfkOyORFuwLrE95tSitGIL
-         OZxmuFU+/TNX9p21NsvPyxQhhwYPOG9mtBiVfHG71qnFJKNTrbOTTVuSYveBas13Dwqt
-         A0yekyCUtXkpd8ofG+j6fuUlmx5Jbw2ZqX+TZuu3f6pLbEqoAQTdUBZoQGrt//wx6rU7
-         oeaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJrWbVA2fDWJYMEBKElksnetmcWNGvC3zfs0efb+AZ+NIxTT98FAk6zDHl1U256NUpD3a1G1v/@vger.kernel.org, AJvYcCULingRW9SWCTUciHQYGRGdwwdMMQZzMf9COTu6E+xuId9A1z6XFi9mm3Zyrsb4rmpfXdBvCCapaLQbmSmW@vger.kernel.org, AJvYcCV8163SH9Im/pxTJck1HmfERkem3bDd65WcbyAs/Qjni/kRX3qHg/TiN5m+fv+hZ5COpkKJQljHjvxooA==@vger.kernel.org, AJvYcCVcbjmHQQmJ/HvNiVHer/HBQirg2DRgVwsJhIMluaMB9qtZCN7uP352cRU7d442pHgQ9Ho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX6Ai77gengSOmIWtI3EX9SHQKV8DlNsUdiq2A7xzJaveg7JGK
-	D+F6xkR5BCtWChsV/P4l1i+RXzn21jDimDzWSWwsIltxFwOmdQXwAKWA
-X-Gm-Gg: ASbGncstQ9CUJp3jXYTO4Sbq0LyjSQr0MHKtE3RouVZ4W27ruu3ZDJHtu3gsL5FIWaG
-	HZ5cHYDiEMZvx8IY+GmaY00I/hippCU2dvKilIGH4AqdUlhXH2XoHA6OiAdRf8snE8vr0Pl91dJ
-	jh2WocxZjdkzfAY2cbBfQ3kPLt837O3qZd5fGRtKBlBX482E296AS47mq+/QpK772+CcqPEvn5n
-	bHSe7IyCFwodSdQjpdqRSVwr85BNJMxFqm1ed1ofQUmeeJJ/9RmEyEwh+kcMXr1jVq7o5olewyY
-	j4o4sSUd4V0OtCgu6xJKd3bkizm5RshF1JhT2Zd7tJvYkNXoGC7LCQOomDglzjYKVXLFVZ53TrR
-	emdVATG0HMRoPAI6GvmfmQ4A77+ww2Gk=
-X-Google-Smtp-Source: AGHT+IGzAV+yc6Tr08lhtVqfYb5YTgQLPzE5kcZfo5vFpSIrj8JxMfbWLpoJFl0I+K+SgA12E6PiOQ==
-X-Received: by 2002:a17:907:d2a:b0:ae3:e378:159e with SMTP id a640c23a62f3a-af617d0afbbmr1521651666b.26.1753728490438;
-        Mon, 28 Jul 2025 11:48:10 -0700 (PDT)
-Received: from [192.168.8.100] ([185.69.144.164])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635aa33f9sm460220966b.98.2025.07.28.11.48.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 11:48:09 -0700 (PDT)
-Message-ID: <da4a9efd-64b3-4dc5-a613-b73e17f160d6@gmail.com>
-Date: Mon, 28 Jul 2025 19:49:30 +0100
+	s=arc-20240116; t=1753728707; c=relaxed/simple;
+	bh=GTSwy1O36/JRknrJGF9qlur4Q0A4yngcbkrPXG+BwBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=miAEHjKj5uUWiPbbH3YUppuT+WxE5MbKVQgcjLBsKFZCGho1y4lI7RLlGQIVcm3vd76CHma+3arH+6VHCxM9lxCGYIFhJ2nwAXf1ZA8gaMPdDu9395zLP6Dvg4yz352hgbbkNHpsS13yFcWn8i6P3XlftA60weQZgPrf2jxqmX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qabTawZl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96055C4CEE7;
+	Mon, 28 Jul 2025 18:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753728707;
+	bh=GTSwy1O36/JRknrJGF9qlur4Q0A4yngcbkrPXG+BwBc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qabTawZluY8Nu9pQ0XqTVqYvFj7sDBgUZhwD5R3yx1Z26wHJ0XclF/Jx9zbmjCcxJ
+	 dyqwaN/+4pi0ZSqtSc3Xn1UtJ5gh7RYp4lJm0sd1Xmg17/Q8aVgoXR/zqaWA0iP0pB
+	 sCGptbDF7XHWQDpEwm4As2AdheAWFUSUtCyoZ16c3YFVt/H+/j0M7qO5ZSNT2vWg1k
+	 QywwfMBNZYuyKbGxGDz4cuyGrejVcv7aWVRWUySO2CtaVKo+rKKA+5An2VX5JWXHgu
+	 9qBFY7kfw8s7atliIOcVnCiD7hYbY9ayH/SaMnwF+nMAAE3NZzDZ6Jn+eHktFZ+Z2E
+	 TACseWXDrIt0w==
+Date: Mon, 28 Jul 2025 11:51:45 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v4 8/9] perf annotate: Hide data-type for stack operation
+ and canary
+Message-ID: <aIfGwdcRZ_gwyhiC@google.com>
+References: <20250725193755.12276-1-namhyung@kernel.org>
+ <20250725193755.12276-9-namhyung@kernel.org>
+ <CAP-5=fWJxCq97Oss3NXbXEKHeNXbif9-yWvktNRQvwtm3H3jbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm, page_pool: introduce a new page type for page pool
- in page type
-To: Mina Almasry <almasrymina@google.com>
-Cc: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel_team@skhynix.com, harry.yoo@oracle.com, ast@kernel.org,
- daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
- ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
- brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
- usamaarif642@gmail.com, baolin.wang@linux.alibaba.com, toke@redhat.com,
- bpf@vger.kernel.org, linux-rdma@vger.kernel.org
-References: <20250728052742.81294-1-byungchul@sk.com>
- <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
- <CAHS8izO6t0euQcNyhxXKPbrV7BZ1MfuMjrQiqKr-Y68t5XCGaA@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izO6t0euQcNyhxXKPbrV7BZ1MfuMjrQiqKr-Y68t5XCGaA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWJxCq97Oss3NXbXEKHeNXbif9-yWvktNRQvwtm3H3jbA@mail.gmail.com>
 
-On 7/28/25 19:39, Mina Almasry wrote:
-> On Mon, Jul 28, 2025 at 11:35 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> On 7/28/25 06:27, Byungchul Park wrote:
->>> Changes from v1:
->>>        1. Rebase on linux-next.
->>
->> net-next is closed, looks like until August 11.
->>
->>>        2. Initialize net_iov->pp = NULL when allocating net_iov in
->>>           net_devmem_bind_dmabuf() and io_zcrx_create_area().
->>>        3. Use ->pp for net_iov to identify if it's pp rather than
->>>           always consider net_iov as pp.
->>>        4. Add Suggested-by: David Hildenbrand <david@redhat.com>.
->>
->> Oops, looks you killed my suggested-by tag now. Since it's still
->> pretty much my diff spliced with David's suggestions, maybe
->> Co-developed-by sounds more appropriate. Even more so goes for
->> the second patch getting rid of __netmem_clear_lsb().
->>
->> Looks fine, just one comment below.
->>
->> ...> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
->>> index 100b75ab1e64..34634552cf74 100644
->>> --- a/io_uring/zcrx.c
->>> +++ b/io_uring/zcrx.c
->>> @@ -444,6 +444,7 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
->>>                area->freelist[i] = i;
->>>                atomic_set(&area->user_refs[i], 0);
->>>                niov->type = NET_IOV_IOURING;
->>> +             niov->pp = NULL;
->>
->> It's zero initialised, you don't need it.
->>
+On Fri, Jul 25, 2025 at 05:44:33PM -0700, Ian Rogers wrote:
+> On Fri, Jul 25, 2025 at 12:38 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > It's mostly unnecessary to print when it has no actual type information
+> > like in the stack operations and canary.  Let's have them if -v option
+> > is given.
+> >
+> > Before:
+> >   $ perf annotate --code-with-type
+> >   ...
+> >          : 0    0xd640 <_dl_relocate_object>:
+> >     0.00 :      0:       endbr64
+> >     0.00 :      4:       pushq   %rbp           # data-type: (stack operation)
+> >     0.00 :      5:       movq    %rsp, %rbp
+> >     0.00 :      8:       pushq   %r15           # data-type: (stack operation)
+> >     0.00 :      a:       pushq   %r14           # data-type: (stack operation)
+> >     0.00 :      c:       pushq   %r13           # data-type: (stack operation)
+> >     0.00 :      e:       pushq   %r12           # data-type: (stack operation)
+> >     0.00 :     10:       pushq   %rbx           # data-type: (stack operation)
 > 
-> This may be my bad since I said we should check if it's 0 initialized.
+> I believe the intent in the dwarf is to say where the caller's callee
+> saves are, but the stack slots should just be saved and restored and
+> won't be used for anything interesting, perhaps for exception
+> handling. An annotation like:
+> # caller's RBX at stack frame offset -48
+> could perhaps be useful.
+
+The main purpose of the annotation of the stack operation is to sync
+with the output of data type profiling.  As it can report lots of
+accesses were from the stack operation, this can answer where they are.
+
 > 
-> It looks like on the devmem side as well we kvmalloc_array the niovs,
-> and if I'm checking through the helpers right, kvmalloc_array does
-> 0-initialize indeed.
+> >     0.00 :     11:       subq    $0xf8, %rsp
+> >     ...
+> >     0.00 :     d4:       testl   %eax, %eax
+> >     0.00 :     d6:       jne     0xf424
+> >     0.00 :     dc:       movq    0xf0(%r14), %rbx               # data-type: struct link_map +0xf0
+> >     0.00 :     e3:       testq   %rbx, %rbx
+> >     0.00 :     e6:       jne     0xf2dd
+> >     0.00 :     ec:       cmpq    $0, 0xf8(%r14)         # data-type: struct link_map +0xf8
+> >     ...
+> >
+> > After:
+> >          : 0    0xd640 <_dl_relocate_object>:
+> >     0.00 :      0:       endbr64
+> >     0.00 :      4:       pushq   %rbp
+> >     0.00 :      5:       movq    %rsp, %rbp
+> >     0.00 :      8:       pushq   %r15
+> >     0.00 :      a:       pushq   %r14
+> >     0.00 :      c:       pushq   %r13
+> >     0.00 :      e:       pushq   %r12
+> >     0.00 :     10:       pushq   %rbx
+> >     0.00 :     11:       subq    $0xf8, %rsp
+> >     ...
+> >     0.00 :     d4:       testl   %eax, %eax
+> >     0.00 :     d6:       jne     0xf424
+> >     0.00 :     dc:       movq    0xf0(%r14), %rbx               # data-type: struct link_map +0xf0
+> >     0.00 :     e3:       testq   %rbx, %rbx
+> >     0.00 :     e6:       jne     0xf2dd
+> >     0.00 :     ec:       cmpq    $0, 0xf8(%r14)         # data-type: struct link_map +0xf8
+> >     ...
+> >
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/util/annotate.c | 15 +++++++++++++--
+> >  1 file changed, 13 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> > index 06ddc7a9f58722a4..6fc07971631ac8a3 100644
+> > --- a/tools/perf/util/annotate.c
+> > +++ b/tools/perf/util/annotate.c
+> > @@ -765,6 +765,17 @@ __hist_entry__get_data_type(struct hist_entry *he, struct arch *arch,
+> >                             struct debuginfo *dbg, struct disasm_line *dl,
+> >                             int *type_offset);
+> >
+> > +static bool needs_type_info(struct annotated_data_type *data_type)
+> > +{
+> > +       if (data_type == NULL || data_type == NO_TYPE)
+> > +               return false;
+> > +
+> > +       if (verbose)
+> > +               return true;
+> 
+> lgtm given the many overloaded meanings of verbose.
 
-I wouldn't rely on that, it's just for zcrx I do:
+:-)
 
-kvmalloc_array(...,  GFP_KERNEL | __GFP_ZERO);
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
--- 
-Pavel Begunkov
-
+Thanks for your careful review!
+Namhyung
+ 
+> > +
+> > +       return (data_type != &stackop_type) && (data_type != &canary_type);
+> > +}
+> > +
+> >  static int
+> >  annotation_line__print(struct annotation_line *al, struct annotation_print_data *apd,
+> >                        struct annotation_options *opts, int printed,
+> > @@ -844,7 +855,7 @@ annotation_line__print(struct annotation_line *al, struct annotation_print_data
+> >
+> >                         data_type = __hist_entry__get_data_type(apd->he, apd->arch,
+> >                                                                 apd->dbg, dl, &offset);
+> > -                       if (data_type && data_type != NO_TYPE) {
+> > +                       if (needs_type_info(data_type)) {
+> >                                 char buf[4096];
+> >
+> >                                 printf("\t\t# data-type: %s",
+> > @@ -2138,7 +2149,7 @@ void annotation_line__write(struct annotation_line *al, struct annotation *notes
+> >                                                                 apd->dbg,
+> >                                                                 disasm_line(al),
+> >                                                                 &offset);
+> > -                       if (data_type && data_type != NO_TYPE) {
+> > +                       if (needs_type_info(data_type)) {
+> >                                 char member[256];
+> >
+> >                                 printed = scnprintf(bf, sizeof(bf),
+> > --
+> > 2.50.1
+> >
 
