@@ -1,157 +1,209 @@
-Return-Path: <linux-kernel+bounces-748589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B986B14363
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:35:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07EC2B14367
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B58169708
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:35:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250C016D2FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9778E27E04C;
-	Mon, 28 Jul 2025 20:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759C6279915;
+	Mon, 28 Jul 2025 20:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gxT81nkX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KSajxShd"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ED127CCF2
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80522798F5
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753734869; cv=none; b=WWzg6/D53bqbJ7s3+ilx9CMbkmt5ukyhtFCbVXx/FYvDjLXmgm0kJbZdfBZU6FidjdPoTkSfe2Je/gvadFSSj584+cNZAuANdKon+ZQjEfEOTgVRh0ykCkmQu69ImEuBUYx/u2vlAABP0WSNQS3e/yj2oRVlp18wUX80Y9AU4r8=
+	t=1753734886; cv=none; b=X2JJqjtUgQfi3JFZr6jTF1+yjpHiKFNuV3/NHSSrodbO/U4GC5Kk8vdwKDSXX5ZuWP3Ivdip+lTZtw5ljhZ1U9TYS9BfPxgps6wB/FqCZWWtO2OhjHHapAsL+OZkEBWF6fY8hej76beO/cKjatXkyc6z966gKqvQbgADcqhabb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753734869; c=relaxed/simple;
-	bh=DkcFgrXlcxwrYVvJKTGLyt7PuaR841KGpI8Wprw//10=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H1nLc5J3QstHhiaTMHTna1kPdwyaDHaRQgGlC6XzxlMDm6DzgrdfueJyYMT07kLuLEkQtO3j15ij+kwJ9In6IQPHDtTs7lq1lOXGuyu+A7xB60UjmOxfH0Lb/9/oj5mNQxqUPQzf53aIcXXxbUV+O5QEOeD4ExetRw4BDLRzR4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gxT81nkX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SAlMAG018859
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=9HL2ElAARF0
-	/fbev6G08+6TVwHe8Nc/ReEeD7pJWGHU=; b=gxT81nkXjsjgayio9XdonbnMeD7
-	L2+voPgFoghEPofYHzvzSJ3hLfkheUpUwp6AJecqOkRU/RpXsAyZVmft8OLRHRnp
-	OSDvwcAEzcHv/ElcJ3SY/f1Qbxxtxxa+xYZ4qM17D4MU5kHoyDqkRFBXqyE92xrg
-	DENhi4NVNJJ8NBdEu/wuWBSRQKoO9FfrcFszkovsvso92EplmAaXrABkXkSeOgXn
-	fWB0pahpyQocRVNF4ucOqG89ghmh/G9mxs8epGopELP7oQ97O6fGXcHyR6TM2+G8
-	0SEehKRpk9xWcynZbgpAh4d1yU/CcuhsMleGjbACtCb06aQ1m8BJo5lihjA==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484q85wu31-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 20:34:27 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-31f2dd30823so225723a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:34:27 -0700 (PDT)
+	s=arc-20240116; t=1753734886; c=relaxed/simple;
+	bh=ZV232Dxo6P1lXxwl/8XNtSFqtMaix+T+IL0Z7bfuL8o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YE0k12I5oOVtb0MJW9gOey3uIVgMKWWoGW0xGxsTNTJMK8B6Z6YrTPzgYSiaF5kPPYuPteed0xl/54Fmiq7OnqnW8nPOyRJUvhTC2f6/82ThzvIV7ju+8YZc+0OvcdyP/PkE0ewJkYvJNw+KppQIR6BFrEGfkN8RGp16+0rhqRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KSajxShd; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6154c7b3ee7so3608a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:34:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753734883; x=1754339683; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5cIuEYX17XiPrfyxPlwLzcOeQJGvPzMkyLjuQxbOTNU=;
+        b=KSajxShdG5yVJdFBlcGQgjV0xUzqxDtEezygy0iwGpLivmS4oDZn7SszGJmASwPgFg
+         4tFlebsyL9c7mGvxsfTB96rpcJITlrJDQgCogJMMomQdXTj08QJ7VIKyDd+caw2vfVVz
+         /SQyUB+R14dkK01wAR1+FEOr/DXuFX2RwhUY9IUpcrOJVGJgGQ+q6trXtoIxhRXhjajZ
+         dkIgRDIq+p+mLTBOBcmi21K7sAk6GasXo+zWXPwacMBG1H7f+W3P0oorI2djA4DRcZ3B
+         EltYGRsuaG9fTUbtbTIkqBl9azVCyaQWib7Qy4YjXKyWq8YmtWYWKFKqokicVaFqkAFn
+         K4pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753734866; x=1754339666;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753734883; x=1754339683;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9HL2ElAARF0/fbev6G08+6TVwHe8Nc/ReEeD7pJWGHU=;
-        b=JePXXzAVcUp5HBWrAjM0CoUQNUtdBHpKt8Mn1Ic/BZvwyU1Iw782h9JZeeijsEI/kB
-         d4MwcR9+PUkYfmXwQteZrV1aTFHVkgEQaUKxSKPqRe+CjQh+eAZUh2Zxz0Os3Kn/iqU+
-         rTtxvR2it9GBq7wJzjXU1WqNV/4QeX/Nl4fg/YFiEzdpO0jyM8H9rsAy7ChgVHUxZg0B
-         DedpW8spoIoao06DqgGh9La5hYcygfxG1exbBUBrR2ZEw8B3ujD1HgPqOmyTFv1HGWfe
-         yUEsvdlUITRI/MoflmglHJZ6ZLTie+0l2zUzxgheZHaH2CNHhJJUnTcRyfOH9yIXaq1F
-         XtOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiuH8sP2/2NQPNUudfNO7xoWNYUnxF9tYT7PKrQC5OFoxhrmlSN4Vrt7MeU9i6A6C/i9rXtjkyZH8GVmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfrbZGWg72iV1MseUT+LN//dQ0I6QGfqTboE7gQSJwk7HynXza
-	DkYWlUqawBHT5i07Cw7Bb6DsJKWlVoISLeaafmSfnCLGXzKwrKHP5UtpbmKAd2Ayj6sPx9qp0UC
-	fHfzKhbJWPxsz0xGqPpZAZpO1sWi0IjDgQMSmDddqUK6dz41Cmhbt9n/XRK1Exe8fFkI=
-X-Gm-Gg: ASbGncsCrMKXDpI0LbDjHE/yJ7OOwlimXMRWHPyq/jsLXFbe+e1zMf0r0rjQ5QtOiR4
-	lsJdNI9l2u6BWq7D1N5FmWT/cnsJO2y/nB/rwwm5zmsGOUc2O+Q6tAQ87QImSlAEVIqJ0FBO3ha
-	HX5rMMkqkMTHcbVh2xMBv4A8NUcskTVkVdcl2MWsDDMq7YJysuwUPDyVO5EdvcHM5t+K1Gpxas+
-	h06KYmuZZzMTd3AtBVIWi38p5Uuxs1UFtogOzcmvHJcU7UIEeQykF6/IOEy9EHM2hJ/Abzv8Bp6
-	uOHOAu1S1/KsMHIuk4Re+GdquLxnQfeP+FF64rOhyL5+c6ngtSw=
-X-Received: by 2002:a17:90b:564f:b0:313:1e60:584d with SMTP id 98e67ed59e1d1-31e778582ffmr20598902a91.11.1753734866629;
-        Mon, 28 Jul 2025 13:34:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEdJ9/dscUM4BqdHSg4PGTK5hxCSdAWWgSIKT1qLZOsCkP8tbWQs3GjcAPYzq2dmolO2Bt7g==
-X-Received: by 2002:a17:90b:564f:b0:313:1e60:584d with SMTP id 98e67ed59e1d1-31e778582ffmr20598863a91.11.1753734866210;
-        Mon, 28 Jul 2025 13:34:26 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e83545d23sm6505289a91.31.2025.07.28.13.34.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 13:34:25 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Connor Abbott <cwabbott0@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 6/7] drm/msm: Fix debugbus snapshot
-Date: Mon, 28 Jul 2025 13:34:06 -0700
-Message-ID: <20250728203412.22573-7-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250728203412.22573-1-robin.clark@oss.qualcomm.com>
-References: <20250728203412.22573-1-robin.clark@oss.qualcomm.com>
+        bh=5cIuEYX17XiPrfyxPlwLzcOeQJGvPzMkyLjuQxbOTNU=;
+        b=UnAsNBdam/njrxc59n+MOX3x7dBr3Wl9dZudo8wngbiiGydsZGA7uMNVkkKAdKaZDv
+         5qdWCB10600a5IogKDBxJ8+/V4aiyO8ph84M5BK8UGvCIpawBCSKTFCQ7/haJgn1TVTr
+         V8Zm2JB8URWV41UxRmXfoZo4+JCUp30HRwG4yJdgWwjNPwwjDXFyAInr8Umhm1I1XX+0
+         fKrdFFtD/oBS5EWSlrCcs7d6T16dPbmDnY7i5yPU3C729xeah1wLdAL78unzv44t3q5L
+         nmpzSBDJodg5zqgC3ijZrCWo/umOAbZP87Iivwwh/X0vHiRL/TucAqaARUMGjSQf26zz
+         F8SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcmY+mZZpK9IL1KP2WjuARAtsxLg6JUqq+K2VAbCDTRttUnBYeXtWuVSqKO4teWtjUiDPFqg5PtGCwVh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJLBya0YpK4jtxJd3YU7vM/gXqEAWirAVu1K9BgTmdOBoXXWpv
+	+EYvG1Pl2VOxHAEJqv1ufNvgV0Agq2mlAfUKy69z1ZecWJOYVPUTR5pSmbpAc8VfQxU+wP+ndXk
+	baJ1vIxbDPCg3Pnzf8riSU6MKFNvOIAG3H8DAUa7j
+X-Gm-Gg: ASbGncsVJh+hHPSNWPy5bA8Dto+NscS647kppo9esZ06i0z5Rpmg2f6Qy8LxQ5ihJBQ
+	KWR6sgoyqckzu3jbxFF9OAGlYls5T7BQPX3+83Z7g6uwBHplZhPcikcE7BG467Rh+Polfx5XzZT
+	NxhCg8VuOa0lbnxnhkk6XhRhF8RS9exlvozBenZzFBvnpSJRZvmzO/iqB/g9X5jYals1R2A8iYr
+	zQzAM+WBbReCNGSVMRhjuXYgnE0YYoiaQ==
+X-Google-Smtp-Source: AGHT+IGSwHNM1lMm6iRvrNhpLZM/44NLBcht7A9ZyhiiFAeshkQMQrkJ5OQp5Ak5DNIjWjjK+SMh7cZBKnKVJBMgOHw=
+X-Received: by 2002:a05:6402:2291:b0:615:3301:25c3 with SMTP id
+ 4fb4d7f45d1cf-61567304ce8mr13512a12.6.1753734883112; Mon, 28 Jul 2025
+ 13:34:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDE0OSBTYWx0ZWRfX4oGML3raIRg6
- HrB8uFEy7rBfECNZhYSkyEeKrajo3633iXGvY8QwU8XqgwoFTtAZg4o34ycihb4VnpShIBx6lk4
- cepcCINoq/Lse6gvFrLl6/S/y0s5xjJR8Y+IpaZUvl39shmwH6aX2ZQ9OekvxgnDORBr5Ob2qMi
- 5YulHBu0BQ/9OKttft2g3nD9QNtMNi/ycSSXVVLfzFtsgO0d/jOWStMOkcvRHN8SV6+lp6+4DxP
- +82zEPPPvFna8G0QN38Acg6Wj2huHqkkxcvv6unlKwvCUrSpPADd1zm/89c1HfdEFfg4hOpamBL
- d4Jb2kdU19bhhMTVatNSXjRBlzBxsMDYWca2corvMrC0FAEOARWQA/UJ2EDtAeaLV4hDqv8lUnm
- 3OfVv0UPMCaRb8VCfLUwYue2uq1aRCLWZ2GCqYEGLQwbEyyZZmKaPdAJ4fneb4Ac6P3mcC4A
-X-Authority-Analysis: v=2.4 cv=TqLmhCXh c=1 sm=1 tr=0 ts=6887ded3 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10
- a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=Q8ed3UK4sgpFGPsrdooA:9
- a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: zadFZwKJzpzcBZGeOIqvyBJpWQA4SZNL
-X-Proofpoint-GUID: zadFZwKJzpzcBZGeOIqvyBJpWQA4SZNL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
- malwarescore=0 adultscore=0 spamscore=0 priorityscore=1501 clxscore=1015
- impostorscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507280149
+References: <cover.1753711160.git.lorenzo.stoakes@oracle.com> <386ba8fc99adb7c796d3fc5b867c581d0ad376c7.1753711160.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <386ba8fc99adb7c796d3fc5b867c581d0ad376c7.1753711160.git.lorenzo.stoakes@oracle.com>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 28 Jul 2025 22:34:07 +0200
+X-Gm-Features: Ac12FXxZWrVG9lHiMIdLtQnur6MhrtrOas81mqHV8KcQZRHD1RU90YYt9ttm5Qw
+Message-ID: <CAG48ez2rQfWJwnpAspNr8OtLXgPadG55Re0KoK5ovBKqE3AcbQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] man/man2/mremap.2: describe multiple mapping move
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We weren't setting the # of captured debugbus blocks.
+On Mon, Jul 28, 2025 at 4:05=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> Document the new behaviour introduced in Linux 6.17 whereby it is now
+> possible to move multiple mappings in a single operation, as long as the
+> operation is purely a move, that is old_size is equal to new_size and
+> MREMAP_FIXED is specified.
+>
+> To make things clearer, also describe this 'pure move' operation, before
+> expanding upon it to describe the newly introduced behaviour.
+>
+> This change also explains the limitations of of this method and the
+> possibility of partial failure.
+>
+> Finally, we pluralise language where it makes sense to so the documentati=
+on
+> does not contradict either this new capability nor the pre-existing edge
+> case.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  man/man2/mremap.2 | 78 ++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 67 insertions(+), 11 deletions(-)
+>
+> diff --git a/man/man2/mremap.2 b/man/man2/mremap.2
+> index 2168ca728..cb3412591 100644
+> --- a/man/man2/mremap.2
+> +++ b/man/man2/mremap.2
+> @@ -25,18 +25,41 @@ moving it at the same time (controlled by the
+>  argument and
+>  the available virtual address space).
+>  .P
+> +Mappings can simply be moved by specifying equal
 
-Reported-by: Connor Abbott <cwabbott0@gmail.com>
-Suggested-by: Connor Abbott <cwabbott0@gmail.com>
-Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+(Bikeshedding: This "simply" sounds weird to me. If you're trying to
+define a "simple move" with this, the rest of this block is not very
+specific about what exactly that is supposed to be. In my opinion,
+"pure" would also be a nicer word than "simple" if you're looking for
+an expression that means "a move that doesn't do other things".)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-index 33df12898902..4f0d8c0e6ac5 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-@@ -430,8 +430,9 @@ static void a7xx_get_debugbus_blocks(struct msm_gpu *gpu,
- 				a6xx_state, &a7xx_debugbus_blocks[gbif_debugbus_blocks[i]],
- 				&a6xx_state->debugbus[i + debugbus_blocks_count]);
- 		}
--	}
- 
-+		a6xx_state->nr_debugbus = total_debugbus_blocks;
-+	}
- }
- 
- static void a6xx_get_debugbus(struct msm_gpu *gpu,
--- 
-2.50.1
+> +.I old_size
+> +and
+> +.I new_size
+> +and specifying
+> +.IR new_address ,
+> +see the description of
+> +.B MREMAP_FIXED
+> +below.
+> +Since Linux 6.17,
+> +while
+> +.I old_address
+> +must reside within a mapping,
+> +.I old_size
+> +may span multiple mappings
+> +which do not have to be
+> +adjacent to one another.
+> +.P
+> +If the operation is not a simple move
+> +then
+> +.I old_size
+> +must span only a single mapping.
 
+I'm reading between the lines that "simple move" is supposed to mean
+"the size is not changing and MREMAP_DONTUNMAP is not set", which then
+implies that in order to actually make anything happen, MREMAP_FIXED
+must be specified?
+
+> +.P
+>  .I old_address
+> -is the old address of the virtual memory block that you
+> -want to expand (or shrink).
+> +is the old address of the first virtual memory block that you
+> +want to expand, shrink, and/or move.
+>  Note that
+>  .I old_address
+>  has to be page aligned.
+>  .I old_size
+> -is the old size of the
+> -virtual memory block.
+> +is the size of the range containing
+> +virtual memory blocks to be manipulated.
+>  .I new_size
+>  is the requested size of the
+> -virtual memory block after the resize.
+> +virtual memory blocks after the resize.
+>  An optional fifth argument,
+>  .IR new_address ,
+>  may be provided; see the description of
+> @@ -105,13 +128,43 @@ If
+>  is specified, then
+>  .B MREMAP_MAYMOVE
+>  must also be specified.
+> +.IP
+> +Since Linux 6.17,
+> +if
+> +.I old_size
+> +is equal to
+> +.I new_size
+> +and
+> +.B MREMAP_FIXED
+> +is specified, then
+> +.I old_size
+> +may span beyond the mapping in which
+> +.I old_address
+> +resides.
+> +In this case,
+> +gaps between mappings in the original range
+> +are maintained in the new range.
+> +The whole operation is performed atomically
+> +unless an error arises,
+> +in which case the operation may be partially
+> +completed,
+> +that is,
+> +some mappings may be moved and others not.
+
+This is much clearer to me.
 
