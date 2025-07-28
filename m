@@ -1,258 +1,316 @@
-Return-Path: <linux-kernel+bounces-748634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0781DB143F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:41:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DC3B143FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC5877ABCC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9574E2A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB452777E4;
-	Mon, 28 Jul 2025 21:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD3F23182B;
+	Mon, 28 Jul 2025 21:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XbtR4Oum";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zy1Nm/o8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xy/Y2BC7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QWcMK3FP"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yKp8n9Lu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IcXzhZDj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O42lQOT5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c8b42eqb"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C6922FE11
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFD2192D8A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753738878; cv=none; b=WB3GlW5AMrVrlDHU+hcWG91t4Fnbvp39tAkBpX4Pmz97ARPZhk74QL7BsVUlkvq09kKLlI10ZB5pQkUmxVcOZEGaALbsPKjL7e9sLsQR3c1ez3QcgsRtkLyH5hRFT/hFjphkkG/sxkGQ9RqBM+kyNF4FkioDWclpU5VZNVgGGVY=
+	t=1753738972; cv=none; b=d9Jhv4pq5G+h4iEWt185mB1LcAj9wsbcqk6LZoAqRrrXCYAgQYo0ykyEXHUNz6mDYhJRkCusc6865A453N8GaTxWR1hVI/2A2dlvJIfHl2BUzy1HEVHxwBBhdN3x8g/sd4HVPyNBBjnNy2Bn9hmRcSNExxjoEhvOXEfUprJHefo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753738878; c=relaxed/simple;
-	bh=NIIY6VCbzybM0Ga1w/myWtJNAZm/f0a2U3/kFelhNtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OHOrEs4Ck5QKNAO14WylGJi5XbWExlMKrnz7Z2jVOrHsJklaKOG7NDLXlRpTgzk1262PzNuOBiaUmOIP+aCmZ2bfQyicWCs1a2j/X1f4qS2MIhcwWZ19oCJZ2QFAT8dJytVL5P6c0FjAbIs26gFN/iClrhelmSxZgIcaPF/KYKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XbtR4Oum; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zy1Nm/o8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xy/Y2BC7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QWcMK3FP; arc=none smtp.client-ip=195.135.223.131
+	s=arc-20240116; t=1753738972; c=relaxed/simple;
+	bh=wYCY8RjdFV5iq7MmZrHeJvy3x1u6kkQjRxL8tgZ3+9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fLajK3Guu3WfjebBjeWvXqaIdYAFneJmjuRWj00ykwsi8XpsR6HYl4diz3OVNFs0r1hEpidqwTjRjjMZBSJXsWSNIemTgiBGfDkJvmBioOd9Q+EzK17VPTBGGA944V0NwAbpKj8ATIr4Kw2olCSDLVu/vrWiHgv7uq3uM89Lir4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yKp8n9Lu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IcXzhZDj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O42lQOT5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c8b42eqb; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DD0F31F44E;
-	Mon, 28 Jul 2025 21:41:13 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A390A21289;
+	Mon, 28 Jul 2025 21:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753738874; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1753738969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q9O56YyqeVaJQCz/ISaqSwOUxMc7uJmdn3oyjBRRc2o=;
-	b=XbtR4OumB61xt+vHk9Ik/QJ6Ri48LZc8Iczfw+Cq6Bwv4X0KjS4pIir03HW9OoOpGhrNxx
-	ehktAqhhzVuRO4Cl6Krz6rRrtFbSM+d4kEPX3MYQjgZyO1zwfifKqQQjqlnP/mB5CEDEKo
-	uy//PVBuw5BVUZED9wTS9gt41BdVJSI=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6kYLrjhTCwgiO/q5O0ScJ+Y3bmPYFFc08jN4aiaBZLs=;
+	b=yKp8n9Lu65/pFksaSm0Cx5OX9tRIbQshueFX/jBmJnWOnJz1KOQ6dA3jE60KWsxiPrrraL
+	NPKnEXkx164CnsgVF+kvYiTazEu7XGe1MGT8v6n2PrKSTE4gAwHJFnD2AYTnRN/qVv14do
+	dyMR2UHQGl8Qwa15SYZZlaMkYDCKM0M=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753738874;
+	s=susede2_ed25519; t=1753738969;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q9O56YyqeVaJQCz/ISaqSwOUxMc7uJmdn3oyjBRRc2o=;
-	b=zy1Nm/o8pNhTrmKvbDE2LG3d6ONLIYpXesUBTN3+kNhz+ejzSsCZQGQLKJkU1688rpWjyh
-	veTH0bMVOg+VNEAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="xy/Y2BC7";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QWcMK3FP
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6kYLrjhTCwgiO/q5O0ScJ+Y3bmPYFFc08jN4aiaBZLs=;
+	b=IcXzhZDjDjR6g6ERlgdlz8yyDsvYYF9adQm2odt44Pb09nOIDG6sX5WPcTvaeiK/jZmn9l
+	WyuDQZIIFdr06NCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753738873; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1753738967; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q9O56YyqeVaJQCz/ISaqSwOUxMc7uJmdn3oyjBRRc2o=;
-	b=xy/Y2BC7ik8U92NZ4B+fijUmxNBjHaOe+xjGD6/YRDcPq8sbA0mfSQ7d9jLCqFIS3p4/XL
-	Aus9f00zUE8q7OVBsjZVaw8flfttlmSWwzRA/hkZYv4T723R83VSw9yGgpGKLGTOIEtTXt
-	MeIXYR98aWuh/LTSIpstdbo1Vwcv9PM=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6kYLrjhTCwgiO/q5O0ScJ+Y3bmPYFFc08jN4aiaBZLs=;
+	b=O42lQOT5z03gbYYF/pi0808TLVL+MGfIctZ21WDWl/zots9kHSl1ZQ+NSoBf5c2gTNDa8o
+	acpyEDJvep9KDGl5AgG58nekVnoHoKrwaEnBY/eTBTYV+2JQvF56VNXV0lXN1SVZe5A39s
+	wqS8RHJmOiJ9dWldp6FO/KomvMhuw0k=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753738873;
+	s=susede2_ed25519; t=1753738967;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q9O56YyqeVaJQCz/ISaqSwOUxMc7uJmdn3oyjBRRc2o=;
-	b=QWcMK3FPoqVlU8FgvB33KRdB66oZOpmVHB5xMCfW9AOVQkdgMGhaGWNcrP7JVJgi/OrTG2
-	w6BsWTb0hxf6yKBQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6kYLrjhTCwgiO/q5O0ScJ+Y3bmPYFFc08jN4aiaBZLs=;
+	b=c8b42eqb36caReC8Qza4Fx22d8mdh6OPCg53YYswZ1aidvfB5VYbDifalXaLEAKeZL4BgE
+	/8E4S7bsrJo678Dw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEDDF1368A;
-	Mon, 28 Jul 2025 21:41:13 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8CFFF1368A;
+	Mon, 28 Jul 2025 21:42:47 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id afM5Mnnuh2ihDgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 28 Jul 2025 21:41:13 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 526DCA09E7; Mon, 28 Jul 2025 23:41:09 +0200 (CEST)
-Date: Mon, 28 Jul 2025 23:41:09 +0200
-From: Jan Kara <jack@suse.cz>
-To: Dai Junbing <daijunbing@vivo.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] fs: Prevent spurious wakeups with TASK_FREEZABLE
-Message-ID: <vgi3yig4zi3t54pfqdbsspge4wa3n5mucx5antazw7at36c4ja@wi7gtgu7itsu>
-References: <20250725030341.520-1-daijunbing@vivo.com>
+	id sWUNItfuh2gKDwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 28 Jul 2025 21:42:47 +0000
+Message-ID: <39fbeb2c-ef42-4898-b0f8-9340a6e9988e@suse.cz>
+Date: Mon, 28 Jul 2025 23:42:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725030341.520-1-daijunbing@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] mm: fix a UAF when vma->mm is freed after
+ vma->vm_refcnt got dropped
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: jannh@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
+ pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250728175355.2282375-1-surenb@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250728175355.2282375-1-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: DD0F31F44E
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
+X-Spamd-Result: default: False [-4.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	ARC_NA(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Fri 25-07-25 11:03:39, Dai Junbing wrote:
-> From: junbing dai <daijunbing@vivo.com>
+On 7/28/25 19:53, Suren Baghdasaryan wrote:
+> By inducing delays in the right places, Jann Horn created a reproducer
+> for a hard to hit UAF issue that became possible after VMAs were allowed
+> to be recycled by adding SLAB_TYPESAFE_BY_RCU to their cache.
 > 
-> During system suspend, processes in TASK_INTERRUPTIBLE state get
-> forcibly awakened. By applying TASK_FREEZABLE flag, we prevent these
-> unnecessary wakeups and reduce suspend/resume overhead
+> Race description is borrowed from Jann's discovery report:
+> lock_vma_under_rcu() looks up a VMA locklessly with mas_walk() under
+> rcu_read_lock(). At that point, the VMA may be concurrently freed, and
+> it can be recycled by another process. vma_start_read() then
+> increments the vma->vm_refcnt (if it is in an acceptable range), and
+> if this succeeds, vma_start_read() can return a recycled VMA.
 > 
-> Signed-off-by: junbing dai <daijunbing@vivo.com>
+> In this scenario where the VMA has been recycled, lock_vma_under_rcu()
+> will then detect the mismatching ->vm_mm pointer and drop the VMA
+> through vma_end_read(), which calls vma_refcount_put().
+> vma_refcount_put() drops the refcount and then calls rcuwait_wake_up()
+> using a copy of vma->vm_mm. This is wrong: It implicitly assumes that
+> the caller is keeping the VMA's mm alive, but in this scenario the caller
+> has no relation to the VMA's mm, so the rcuwait_wake_up() can cause UAF.
+> 
+> The diagram depicting the race:
+> T1         T2         T3
+> ==         ==         ==
+> lock_vma_under_rcu
+>   mas_walk
+>           <VMA gets removed from mm>
+>                       mmap
+>                         <the same VMA is reallocated>
+>   vma_start_read
+>     __refcount_inc_not_zero_limited_acquire
+>                       munmap
+>                         __vma_enter_locked
+>                           refcount_add_not_zero
+>   vma_end_read
+>     vma_refcount_put
+>       __refcount_dec_and_test
+>                           rcuwait_wait_event
+>                             <finish operation>
+>       rcuwait_wake_up [UAF]
+> 
+> Note that rcuwait_wait_event() in T3 does not block because refcount
+> was already dropped by T1. At this point T3 can exit and free the mm
+> causing UAF in T1.
+> To avoid this we move vma->vm_mm verification into vma_start_read() and
+> grab vma->vm_mm to stabilize it before vma_refcount_put() operation.
+> 
+> Fixes: 3104138517fc ("mm: make vma cache SLAB_TYPESAFE_BY_RCU")
+> Reported-by: Jann Horn <jannh@google.com>
+> Closes: https://lore.kernel.org/all/CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com/
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Cc: <stable@vger.kernel.org>
 
-Thanks for the patch but I have two: This is actually less obvious than you
-make it sound because if we are holding other locks when going to
-interruptible sleep then the behavior of TASK_FREEZABLE vs
-TASK_INTERRUPTIBLE is different (you'd suspend the task while holding those
-locks). So at each place you need to make sure no other locks are held -
-this belongs to the changelog.
-
-And because these changes are not obvious, it is good to separate them per
-site or perhaps per subsystem so that changelogs can be appropriate and
-also so that maintainers can review them properly.
-
-								Honza
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 > ---
->  fs/eventpoll.c    | 2 +-
->  fs/fuse/dev.c     | 2 +-
->  fs/jbd2/journal.c | 2 +-
->  fs/pipe.c         | 4 ++--
->  fs/select.c       | 4 ++--
->  5 files changed, 7 insertions(+), 7 deletions(-)
+> Changes since v1 [1]
+> - Made a copy of vma->mm before using it in vma_start_read(),
+> per Vlastimil Babka
 > 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 0fbf5dfedb24..6020575bdbab 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -2094,7 +2094,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->  		 * the same lock on wakeup ep_poll_callback() side, so it
->  		 * is safe to avoid an explicit barrier.
->  		 */
-> -		__set_current_state(TASK_INTERRUPTIBLE);
-> +		__set_current_state(TASK_INTERRUPTIBLE|TASK_FREEZABLE);
->  
->  		/*
->  		 * Do the final check under the lock. ep_start/done_scan()
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index e80cd8f2c049..b3dbd113e2e2 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -1418,7 +1418,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
->  
->  		if (file->f_flags & O_NONBLOCK)
->  			return -EAGAIN;
-> -		err = wait_event_interruptible_exclusive(fiq->waitq,
-> +		err = wait_event_freezable_exclusive(fiq->waitq,
->  				!fiq->connected || request_pending(fiq));
->  		if (err)
->  			return err;
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index d480b94117cd..a6ca1468ccfe 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -222,7 +222,7 @@ static int kjournald2(void *arg)
->  		DEFINE_WAIT(wait);
->  
->  		prepare_to_wait(&journal->j_wait_commit, &wait,
-> -				TASK_INTERRUPTIBLE);
-> +				TASK_INTERRUPTIBLE|TASK_FREEZABLE);
->  		transaction = journal->j_running_transaction;
->  		if (transaction == NULL ||
->  		    time_before(jiffies, transaction->t_expires)) {
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 45077c37bad1..a0e624fc734c 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -385,7 +385,7 @@ anon_pipe_read(struct kiocb *iocb, struct iov_iter *to)
->  		 * since we've done any required wakeups and there's no need
->  		 * to mark anything accessed. And we've dropped the lock.
->  		 */
-> -		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
-> +		if (wait_event_freezable_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
->  			return -ERESTARTSYS;
->  
->  		wake_next_reader = true;
-> @@ -1098,7 +1098,7 @@ static int wait_for_partner(struct pipe_inode_info *pipe, unsigned int *cnt)
->  	int cur = *cnt;
->  
->  	while (cur == *cnt) {
-> -		prepare_to_wait(&pipe->rd_wait, &rdwait, TASK_INTERRUPTIBLE);
-> +		prepare_to_wait(&pipe->rd_wait, &rdwait, TASK_INTERRUPTIBLE|TASK_FREEZABLE);
->  		pipe_unlock(pipe);
->  		schedule();
->  		finish_wait(&pipe->rd_wait, &rdwait);
-> diff --git a/fs/select.c b/fs/select.c
-> index 9fb650d03d52..0903a08b8067 100644
-> --- a/fs/select.c
-> +++ b/fs/select.c
-> @@ -600,7 +600,7 @@ static noinline_for_stack int do_select(int n, fd_set_bits *fds, struct timespec
->  			to = &expire;
->  		}
->  
-> -		if (!poll_schedule_timeout(&table, TASK_INTERRUPTIBLE,
-> +		if (!poll_schedule_timeout(&table, TASK_INTERRUPTIBLE|TASK_FREEZABLE,
->  					   to, slack))
->  			timed_out = 1;
->  	}
-> @@ -955,7 +955,7 @@ static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
->  			to = &expire;
->  		}
->  
-> -		if (!poll_schedule_timeout(wait, TASK_INTERRUPTIBLE, to, slack))
-> +		if (!poll_schedule_timeout(wait, TASK_INTERRUPTIBLE|TASK_FREEZABLE, to, slack))
->  			timed_out = 1;
->  	}
->  	return count;
-> -- 
-> 2.25.1
+> Notes:
+> - Applies cleanly over mm-unstable.
+> - Should be applied to 6.15 and 6.16 but these branches do not
+> have lock_next_vma() function, so the change in lock_next_vma() should be
+> skipped when applying to those branches.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> [1] https://lore.kernel.org/all/20250728170950.2216966-1-surenb@google.com/
+> 
+>  include/linux/mmap_lock.h | 23 +++++++++++++++++++++++
+>  mm/mmap_lock.c            | 10 +++-------
+>  2 files changed, 26 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+> index 1f4f44951abe..da34afa2f8ef 100644
+> --- a/include/linux/mmap_lock.h
+> +++ b/include/linux/mmap_lock.h
+> @@ -12,6 +12,7 @@ extern int rcuwait_wake_up(struct rcuwait *w);
+>  #include <linux/tracepoint-defs.h>
+>  #include <linux/types.h>
+>  #include <linux/cleanup.h>
+> +#include <linux/sched/mm.h>
+>  
+>  #define MMAP_LOCK_INITIALIZER(name) \
+>  	.mmap_lock = __RWSEM_INITIALIZER((name).mmap_lock),
+> @@ -183,6 +184,28 @@ static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm,
+>  	}
+>  
+>  	rwsem_acquire_read(&vma->vmlock_dep_map, 0, 1, _RET_IP_);
+> +
+> +	/*
+> +	 * If vma got attached to another mm from under us, that mm is not
+> +	 * stable and can be freed in the narrow window after vma->vm_refcnt
+> +	 * is dropped and before rcuwait_wake_up(mm) is called. Grab it before
+> +	 * releasing vma->vm_refcnt.
+> +	 */
+> +	if (unlikely(vma->vm_mm != mm)) {
+> +		/* Use a copy of vm_mm in case vma is freed after we drop vm_refcnt */
+> +		struct mm_struct *other_mm = vma->vm_mm;
+> +		/*
+> +		 * __mmdrop() is a heavy operation and we don't need RCU
+> +		 * protection here. Release RCU lock during these operations.
+> +		 */
+> +		rcu_read_unlock();
+> +		mmgrab(other_mm);
+> +		vma_refcount_put(vma);
+> +		mmdrop(other_mm);
+> +		rcu_read_lock();
+> +		return NULL;
+> +	}
+> +
+>  	/*
+>  	 * Overflow of vm_lock_seq/mm_lock_seq might produce false locked result.
+>  	 * False unlocked result is impossible because we modify and check
+> diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
+> index 729fb7d0dd59..aa3bc42ecde0 100644
+> --- a/mm/mmap_lock.c
+> +++ b/mm/mmap_lock.c
+> @@ -164,8 +164,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+>  	 */
+>  
+>  	/* Check if the vma we locked is the right one. */
+> -	if (unlikely(vma->vm_mm != mm ||
+> -		     address < vma->vm_start || address >= vma->vm_end))
+> +	if (unlikely(address < vma->vm_start || address >= vma->vm_end))
+>  		goto inval_end_read;
+>  
+>  	rcu_read_unlock();
+> @@ -236,11 +235,8 @@ struct vm_area_struct *lock_next_vma(struct mm_struct *mm,
+>  		goto fallback;
+>  	}
+>  
+> -	/*
+> -	 * Verify the vma we locked belongs to the same address space and it's
+> -	 * not behind of the last search position.
+> -	 */
+> -	if (unlikely(vma->vm_mm != mm || from_addr >= vma->vm_end))
+> +	/* Verify the vma is not behind of the last search position. */
+> +	if (unlikely(from_addr >= vma->vm_end))
+>  		goto fallback_unlock;
+>  
+>  	/*
+> 
+> base-commit: c617a4dd7102e691fa0fb2bc4f6b369e37d7f509
+
 
