@@ -1,220 +1,112 @@
-Return-Path: <linux-kernel+bounces-747422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55604B133A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:21:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58BAAB133AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 06:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 525F13B8461
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9890618962F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F412215F42;
-	Mon, 28 Jul 2025 04:21:17 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D231C36;
-	Mon, 28 Jul 2025 04:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB64215F4A;
+	Mon, 28 Jul 2025 04:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xNIt4i/P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC70D1C36
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 04:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753676477; cv=none; b=XjnLGCCrCPgLZ2QXxX0dPILAI6cj+sc9KThTyvjqR1sS6lqp5B9bWKb9LD+/JdCw0ZzjPhCUKeR8tQ5RblY+uA31/WZfOUXrhKJlquPvXcgnD9v2PJgmoXjCJsN1swrGLtLQ7Vzoq8b/JZFN3fQAo7Ht0k09G6Qn0lvAgJcGntg=
+	t=1753676523; cv=none; b=NoqLTH8Q5ejGrDjJN8bK8m1SZLxk7zYrHase6Y8lltpO/etSGrgl55zi60rW/iofY/06RQjZgURENuPGtJof2feOHavlZpZdZUMXWuV1+g0fc5wOpF6YUAYaBrLXpY7Q4iicoZ5Of+aWyizZ/oNof3OIuBTYz2IXYNShYgea5/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753676477; c=relaxed/simple;
-	bh=w86KR5FHkwPycOHZuKnays9MGzpZ9OSrzPKVwgR4qus=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=RAPsSb9gFfv130tfHbWHOWIcKX4UP/Rj2vyTHjcWwnALhT4SGpLtB81VGb8Gnpu17WkMqxG/NXhgRY0rJ8Ihgli4y8lLpkcb69IEI3TnpoAi3abODOti/BG0R0INFpxg+SzhINBbH7Y5h6vcXnvb5zQtOy5xM9CrQbxUEOsKKyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-3e-6886faacf898
-From: Byungchul Park <byungchul@sk.com>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	almasrymina@google.com,
-	hawk@kernel.org,
-	toke@redhat.com,
-	asml.silence@gmail.com
-Subject: [RFC net-next] netmem: replace __netmem_clear_lsb() with netmem_to_nmdesc()
-Date: Mon, 28 Jul 2025 13:20:50 +0900
-Message-Id: <20250728042050.24228-1-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42LhesuzUHfNr7YMg8n3NSxW/6iwmLNqG6PF
-	nPMtLBZPjz1it9jTvp3Z4lH/CTaLC9v6WC0u75rDZnFsgZjFt9NvGC0uHX7E4sDtsWXlTSaP
-	nbPusnss2FTqsWlVJ5vH+31X2Tw+b5ILYIvisklJzcksSy3St0vgymjYeo2tYIJWxdqV91ga
-	GDcqdzFycEgImEisnZjTxcgJZj6edIAVxGYTUJe4ceMnM4gtImAl0bBxHZDNxcEscIRRYsez
-	t2AJYYEQicaDT1lAbBYBVYmdm7+ygczkFTCV+Pk5BGKmvMTqDQfAeiUE3rJKfLi8gxkiISlx
-	cMUNlgmM3AsYGVYxCmXmleUmZuaY6GVU5mVW6CXn525iBAbSsto/0TsYP10IPsQowMGoxMP7
-	wrwtQ4g1say4MvcQowQHs5IIb8FSoBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFeo2/lKUIC6Ykl
-	qdmpqQWpRTBZJg5OqQbGebxmdmWPqxWPZ8YyWE0tfbowPKJAOmvWW+/Jp6cs4tRft2S2bktT
-	WU/mrIi9VQt2yF37YJTNaR0i5KSuvjwyZ62LbvID3RvPT7BE2Sv0qXAmfNF04bf7lbzI11Nn
-	v/+bzSW/arfZTcs/H/LsdueJ9r0b1ap+JixX+D/zmdIL/svrZsQq6O5TYinOSDTUYi4qTgQA
-	/9nyhCACAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNJMWRmVeSWpSXmKPExsXC5WfdrLvmV1uGwdGPcharf1RYzFm1jdFi
-	zvkWFounxx6xW+xp385s8aj/BJvFhW19rBaXd81hszi2QMzi2+k3jBaXDj9iceD22LLyJpPH
-	zll32T0WbCr12LSqk83j/b6rbB6fN8kFsEVx2aSk5mSWpRbp2yVwZTRsvcZWMEGrYu3KeywN
-	jBuVuxg5OSQETCQeTzrACmKzCahL3LjxkxnEFhGwkmjYuA7I5uJgFjjCKLHj2VuwhLBAiETj
-	wacsIDaLgKrEzs1f2boYOTh4BUwlfn4OgZgpL7F6wwHmCYwcCxgZVjGKZOaV5SZm5pjqFWdn
-	VOZlVugl5+duYgQGwbLaPxN3MH657H6IUYCDUYmH94V5W4YQa2JZcWXuIUYJDmYlEd6CpUAh
-	3pTEyqrUovz4otKc1OJDjNIcLErivF7hqQlCAumJJanZqakFqUUwWSYOTqkGRv2P8Sqa9tzJ
-	8bsy5jhPvcz+v/XqJTuB+Zzs2xo7PJVkLiQvsSw+n/jOaWaF6NU3L5aI2PTtmt766kNZUMi7
-	xJwCvqU2O6ddqzZliF0e2rR27fE0til2Ra1PX0g197xc0pzsFqRvqjZjfYk7U+GlLVOC/z3r
-	eKPzlvWStv2OOa+mmL07/eBVuBJLcUaioRZzUXEiAKmXYzj+AQAA
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1753676523; c=relaxed/simple;
+	bh=1CHNSu+rR/PEfFBzDRLDqMVnlwN8zYMliQAW/YkOQkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mAWX4Ah0oxyO4dPY0VPc9JdB8wiXLneUTgdPy7w1WrBDUWKVVsdbIjdXgPtcuJqiGeenDjdc6y6A2svkPQwd2WQW/eOhUq9GgMp8VLdx5XDydYN9izKmZ/iYy9v+HnNYiQC73nfayRx9zG3Rquj18SM3DFPB2tJ+b+guRBSvEfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xNIt4i/P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E71B6C4CEE7;
+	Mon, 28 Jul 2025 04:22:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753676523;
+	bh=1CHNSu+rR/PEfFBzDRLDqMVnlwN8zYMliQAW/YkOQkg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xNIt4i/Pi1Sjrz6PVONpG8njTlk3zJouuQds4MeWK7356l4a+z1aqyIGmyMnbB9VI
+	 hLfaOkYk7yay7bjQx3YhB6qcrCmkgbIoK7dlkcNyo8G/FQN56bPb8dWL00/RP9+Y8P
+	 +3PjphdUXTQGecOvyMPh34X/8CbmVJN1KFUqIAxc=
+Date: Mon, 28 Jul 2025 06:21:59 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Tian <27392025k@gmail.com>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de
+Subject: Re: [PATCH] misc: cardreader: fix overwritten return value in
+ RTS5260 driver
+Message-ID: <2025072844-stingray-eskimo-9422@gregkh>
+References: <20250727234134.26540-1-27392025k@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250727234134.26540-1-27392025k@gmail.com>
 
-Now that we have struct netmem_desc, it'd better access the pp fields
-via struct netmem_desc rather than struct net_iov.
+On Sun, Jul 27, 2025 at 04:41:34PM -0700, Tian wrote:
+> In both rts5260.c and rtsx_pcr.c, a return value is set and then
+> overwritten by a later function call, which makes the original value
+> unused. This patch ensures the return value is handled properly
+> to avoid ignoring possible error conditions.
+> 
+> Signed-off-by: Tian <27392025k@gmail.com>
 
-Introduce netmem_to_nmdesc() for safely converting netmem_ref to
-netmem_desc regardless of the type underneath e.i. netmem_desc, net_iov.
+Please use your ful name as per the kernel documentation.
 
-While at it, remove __netmem_clear_lsb() and make netmem_to_nmdesc()
-used instead.
+> ---
+>  drivers/misc/cardreader/rts5260.c  | 2 +-
+>  drivers/misc/cardreader/rtsx_pcr.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/misc/cardreader/rts5260.c b/drivers/misc/cardreader/rts5260.c
+> index d2d3a6ccb8f7..ed8adaab54a8 100644
+> --- a/drivers/misc/cardreader/rts5260.c
+> +++ b/drivers/misc/cardreader/rts5260.c
+> @@ -269,7 +269,7 @@ static int rts5260_card_power_off(struct rtsx_pcr *pcr, int card)
+>  	rts5260_card_before_power_off(pcr);
+>  	err = rtsx_pci_write_register(pcr, LDO_VCC_CFG1,
+>  			 LDO_POW_SDVDD1_MASK, LDO_POW_SDVDD1_OFF);
+> -	err = rtsx_pci_write_register(pcr, LDO_CONFIG2,
+> +	err |= rtsx_pci_write_register(pcr, LDO_CONFIG2,
+>  			 DV331812_POWERON, DV331812_POWEROFF);
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- include/net/netmem.h   | 33 ++++++++++++++++-----------------
- net/core/netmem_priv.h | 16 ++++++++--------
- 2 files changed, 24 insertions(+), 25 deletions(-)
+How was this tested?
 
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index f7dacc9e75fd..33ae444a9745 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -265,24 +265,23 @@ static inline struct netmem_desc *__netmem_to_nmdesc(netmem_ref netmem)
- 	return (__force struct netmem_desc *)netmem;
- }
- 
--/* __netmem_clear_lsb - convert netmem_ref to struct net_iov * for access to
-- * common fields.
-- * @netmem: netmem reference to extract as net_iov.
-+/* netmem_to_nmdesc - convert netmem_ref to struct netmem_desc * for
-+ * access to common fields.
-+ * @netmem: netmem reference to get netmem_desc.
-  *
-- * All the sub types of netmem_ref (page, net_iov) have the same pp, pp_magic,
-- * dma_addr, and pp_ref_count fields at the same offsets. Thus, we can access
-- * these fields without a type check to make sure that the underlying mem is
-- * net_iov or page.
-+ * All the sub types of netmem_ref (netmem_desc, net_iov) have the same
-+ * pp, pp_magic, dma_addr, and pp_ref_count fields via netmem_desc.
-  *
-- * The resulting value of this function can only be used to access the fields
-- * that are NET_IOV_ASSERT_OFFSET'd. Accessing any other fields will result in
-- * undefined behavior.
-- *
-- * Return: the netmem_ref cast to net_iov* regardless of its underlying type.
-+ * Return: the pointer to struct netmem_desc * regardless of its
-+ * underlying type.
-  */
--static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
-+static inline struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
- {
--	return (struct net_iov *)((__force unsigned long)netmem & ~NET_IOV);
-+	if (netmem_is_net_iov(netmem))
-+		return &((struct net_iov *)((__force unsigned long)netmem &
-+					    ~NET_IOV))->desc;
-+
-+	return __netmem_to_nmdesc(netmem);
- }
- 
- /* XXX: How to extract netmem_desc from page must be changed, once
-@@ -320,12 +319,12 @@ static inline struct page_pool *__netmem_get_pp(netmem_ref netmem)
- 
- static inline struct page_pool *netmem_get_pp(netmem_ref netmem)
- {
--	return __netmem_clear_lsb(netmem)->pp;
-+	return netmem_to_nmdesc(netmem)->pp;
- }
- 
- static inline atomic_long_t *netmem_get_pp_ref_count_ref(netmem_ref netmem)
- {
--	return &__netmem_clear_lsb(netmem)->pp_ref_count;
-+	return &netmem_to_nmdesc(netmem)->pp_ref_count;
- }
- 
- static inline bool netmem_is_pref_nid(netmem_ref netmem, int pref_nid)
-@@ -390,7 +389,7 @@ static inline bool netmem_is_pfmemalloc(netmem_ref netmem)
- 
- static inline unsigned long netmem_get_dma_addr(netmem_ref netmem)
- {
--	return __netmem_clear_lsb(netmem)->dma_addr;
-+	return netmem_to_nmdesc(netmem)->dma_addr;
- }
- 
- void get_netmem(netmem_ref netmem);
-diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
-index cd95394399b4..23175cb2bd86 100644
---- a/net/core/netmem_priv.h
-+++ b/net/core/netmem_priv.h
-@@ -5,19 +5,19 @@
- 
- static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
- {
--	return __netmem_clear_lsb(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
-+	return netmem_to_nmdesc(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
- }
- 
- static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
- {
--	__netmem_clear_lsb(netmem)->pp_magic |= pp_magic;
-+	netmem_to_nmdesc(netmem)->pp_magic |= pp_magic;
- }
- 
- static inline void netmem_clear_pp_magic(netmem_ref netmem)
- {
--	WARN_ON_ONCE(__netmem_clear_lsb(netmem)->pp_magic & PP_DMA_INDEX_MASK);
-+	WARN_ON_ONCE(netmem_to_nmdesc(netmem)->pp_magic & PP_DMA_INDEX_MASK);
- 
--	__netmem_clear_lsb(netmem)->pp_magic = 0;
-+	netmem_to_nmdesc(netmem)->pp_magic = 0;
- }
- 
- static inline bool netmem_is_pp(netmem_ref netmem)
-@@ -27,13 +27,13 @@ static inline bool netmem_is_pp(netmem_ref netmem)
- 
- static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
- {
--	__netmem_clear_lsb(netmem)->pp = pool;
-+	netmem_to_nmdesc(netmem)->pp = pool;
- }
- 
- static inline void netmem_set_dma_addr(netmem_ref netmem,
- 				       unsigned long dma_addr)
- {
--	__netmem_clear_lsb(netmem)->dma_addr = dma_addr;
-+	netmem_to_nmdesc(netmem)->dma_addr = dma_addr;
- }
- 
- static inline unsigned long netmem_get_dma_index(netmem_ref netmem)
-@@ -43,7 +43,7 @@ static inline unsigned long netmem_get_dma_index(netmem_ref netmem)
- 	if (WARN_ON_ONCE(netmem_is_net_iov(netmem)))
- 		return 0;
- 
--	magic = __netmem_clear_lsb(netmem)->pp_magic;
-+	magic = netmem_to_nmdesc(netmem)->pp_magic;
- 
- 	return (magic & PP_DMA_INDEX_MASK) >> PP_DMA_INDEX_SHIFT;
- }
-@@ -57,6 +57,6 @@ static inline void netmem_set_dma_index(netmem_ref netmem,
- 		return;
- 
- 	magic = netmem_get_pp_magic(netmem) | (id << PP_DMA_INDEX_SHIFT);
--	__netmem_clear_lsb(netmem)->pp_magic = magic;
-+	netmem_to_nmdesc(netmem)->pp_magic = magic;
- }
- #endif
+And why do the second write if the first one failed?
 
-base-commit: fa582ca7e187a15e772e6a72fe035f649b387a60
--- 
-2.17.1
 
+>  	if (pcr->option.ocp_en)
+>  		rtsx_pci_disable_ocp(pcr);
+
+Why do this if the write failed?
+
+> diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+> index a7b066c48740..9fb22f2cedbd 100644
+> --- a/drivers/misc/cardreader/rtsx_pcr.c
+> +++ b/drivers/misc/cardreader/rtsx_pcr.c
+> @@ -1196,7 +1196,7 @@ static int rtsx_pci_init_hw(struct rtsx_pcr *pcr)
+>  		/* Gating real mcu clock */
+>  		err = rtsx_pci_write_register(pcr, RTS5261_FW_CFG1,
+>  			RTS5261_MCU_CLOCK_GATING, 0);
+> -		err = rtsx_pci_write_register(pcr, RTS5261_REG_FPDCTL,
+> +		err |= rtsx_pci_write_register(pcr, RTS5261_REG_FPDCTL,
+>  			SSC_POWER_DOWN, 0);
+
+Is this even going to ever happen?  Same for above, how was this tested?
+
+thanks,
+
+greg k-h
 
