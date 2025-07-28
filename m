@@ -1,88 +1,86 @@
-Return-Path: <linux-kernel+bounces-747698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A5EB136EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AE5B136EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781C73AB674
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:43:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B8E3AA48C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F0F22538F;
-	Mon, 28 Jul 2025 08:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B7D3398B;
+	Mon, 28 Jul 2025 08:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z7aI8LO7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cX9YQp8d"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DFD2AE68
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CB52E36EC
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753692261; cv=none; b=G32hNsnCRw7XBEBCJRoiea3VccLKti9z0mH6spw7FinZQH/ZgUqWxZ1WJ5kc4feHcXTVGf9Bt/YoMOBLinysJvXAWtRftNGCUDYk+pmX1Oxq9F5xl9z+h6YyyCWIZqo/ZXRDGyMKzd2eJ1wAeFQn4OZsjU6L0nqLiGlPB7p3xsY=
+	t=1753692333; cv=none; b=obwy3pKqSaRtR8E61AOmQk7EjZXtUn/JYvgWemu5CygFAvelMD1FKJZ++UIalpd8mzQqXDkYnhQmp9qOtXbNON4WghlJdSJZPD8sSpKbUue7mWXVd0y0MNGK47DaLe1F78IuiYK4I62FUJBQz6pD2VNlmrBYU+C866tNNoFw4PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753692261; c=relaxed/simple;
-	bh=EiKn87jOIjGLXIOVof4Wp8gCZH8OZNLgi51jQhfE0CU=;
+	s=arc-20240116; t=1753692333; c=relaxed/simple;
+	bh=HJZXsA11lxr8BqYgWr8HoEhcYGee8uuvfqpfw8y1UJo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CUmAWYODbTwvhohJn/9pnFzDSpJmbThAdQYMPV4Ajd0einLnYwva4Z66XyDOwzw6RZdGCYuZKDlQNI916F5TI5Zb5UpXuM1lhmmC7LV77XOyN4fUvT6CmoQ1ZJGoUhWzElcnJ43yjlMlaaHgQe0LOWGB3b7i2oqkeIJHxpD3jQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z7aI8LO7; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=WtPmflK4i42jmrX1rrMg3NW2eMRSZabTi1Bhiyass6sMDoewaHfoSfGHKVO+VUItMISISwVrNfnEeV741HZMeQCzH2RccY0yzZSBAy7M974xplBxUDyqJNu0V9pkiKVyRU6/hTOikFJtAN/hPtSY6g2UQ3EihToWYff2M3U6Eg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cX9YQp8d; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753692258;
+	s=mimecast20190719; t=1753692331;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5z3VFCWPYn+gmTSxxeyfj7eJ1ITAoaTTjNvudffwKO0=;
-	b=Z7aI8LO7JwauPGPdl4A6R6xRloruLiNcXTXq2a/viUAsBDd+7pcO0fSjaxHZxg1CbAESd5
-	5XoDsLIn9uke81dJGO3YYt0eLztQ+CG3M17gu2+IVWWtTMGLTLfz9uChZaEkoTO1tk9bDt
-	jLdkB1TTOQ5RPVZM+I7Rh+6h4OsdRtU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=xOI/nhsp0FQxSML+6RN9rUzsV1D1LgxO16j6gmYC+9k=;
+	b=cX9YQp8d4tDASB7UilIfCtmzCAlddBxCXl7i+PzrwNN4eqZwyKsv1RBtRgrcokecXPrcoX
+	akR2FxFOMEEHOfS3/z8ThBMRV28L2HloZwbOS+TYwa8/v5x2EPUBq2WxFxBVwWskO86F3m
+	glz7EGwqdFscCA5r3NXwfZ2Rb6jNMQQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-656-t0Xyv0RvM9quj_z_RayobA-1; Mon, 28 Jul 2025 04:44:16 -0400
-X-MC-Unique: t0Xyv0RvM9quj_z_RayobA-1
-X-Mimecast-MFC-AGG-ID: t0Xyv0RvM9quj_z_RayobA_1753692255
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b7886bfc16so467492f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:44:16 -0700 (PDT)
+ us-mta-654-_04SKQAPPZ-Mn-nmRLnxVg-1; Mon, 28 Jul 2025 04:45:28 -0400
+X-MC-Unique: _04SKQAPPZ-Mn-nmRLnxVg-1
+X-Mimecast-MFC-AGG-ID: _04SKQAPPZ-Mn-nmRLnxVg_1753692327
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45626e0d3e1so26587275e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:45:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753692255; x=1754297055;
+        d=1e100.net; s=20230601; t=1753692327; x=1754297127;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=5z3VFCWPYn+gmTSxxeyfj7eJ1ITAoaTTjNvudffwKO0=;
-        b=kbYhiDMcneDjMYJFlOSoVtsd8/26bBBBcMrLAB750JSiPy+Rweqd15Bb75aLQh+vBR
-         vPnEm+zG41YTOQux8kBIix3zMg7LCx84cT4H9PD9cn0B62rTR3TqlHuotTlxrmT7M/LQ
-         gtIit2GDcHDIJJVH85CsIqPu65cjG2n2OMipmka+V0HUMBDmvk3vYIMEOCGbsaf5r02q
-         b+DmngTO+HcqE2xsOwUiB+2GAVIJGvwM/LqWqdv10osHnh4hFjOlgBKR3M6y8jMAAAzC
-         GAiT7MHthX16dx+FgPnwaQ4Z8Ux9NNxWZfr36xVOtzD2p4tDPmbl9gi/opj78/hSPP8K
-         ZOUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVID9ymg7yVUVb6AYk6bcgjsF/4xgfNQkXJU/BI3JuVQNwb0VuTz9tVYEt3nyEUxkPCUbSPYxlo2ZwN7Rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/s9xCTeO56s7Vw0ESEFGwT/2gUJYZSXyAuMaSO4WCQWrfyZyz
-	6LyvzYBUMRyER8ydxipaXi0dMhl0GJgM9xLnT8Sc8YKP7+9v+SCHosz44m523oXsvj4a8Z9DLmz
-	Jf2lu2g5W1CmuOrfWjEiH1hk0Qa9lPh+17xskajBfwwyCBgP+19qZ9lpC5fqyty5tnJ3sU3mRr+
-	TZ
-X-Gm-Gg: ASbGncvI2Ku2dhpmtGwFMvTDxruMdDIGkjOGs8VBjbrIKoVy1ci4w0B7bSrstmUHISG
-	yz0WgVv4ElY2P/0UqKrDLBxB6PqxQFnErnOikG0kHd5s1Ruz9mWr2sgshH8XFZSa4PG5htv7ied
-	hIVQ2pvwJPDwOx34DdIYM04k6Ftfpwes1IM3dO+zesZEFd2GeEz+Qt++Zwh/FwZl5p/JWhH1zu7
-	bb+8fO3wZdWA3PYPbgaWEuMWTd+CD+shf+eK9jgkuVmoKzkmZua4OKjBuwJIU0/1zszD5tbujP/
-	cPpKUmRxwK7x9pWM2MNHbEU/TfjzdmPP28Xi3/TrmbCdra276Db+hltNEBINtcnqqnALjNoFz59
-	feSFkQtHI+NQXt7v3WZ4/+bDKTcG0Gv3+lmKd+UK09WCvS7AN6FHbyPxRD2wmRNyzrBE=
-X-Received: by 2002:a05:6000:3111:b0:3b7:6828:5f71 with SMTP id ffacd0b85a97d-3b7767269f8mr7807410f8f.9.1753692255083;
-        Mon, 28 Jul 2025 01:44:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHd6G4uLhKMUYr/Rv5FJNEPLTk3+fMSTOpDvXYMNFZlfI0HQaNGucKbuqA4Wirb9CWkg7bKLQ==
-X-Received: by 2002:a05:6000:3111:b0:3b7:6828:5f71 with SMTP id ffacd0b85a97d-3b7767269f8mr7807386f8f.9.1753692254590;
-        Mon, 28 Jul 2025 01:44:14 -0700 (PDT)
+        bh=xOI/nhsp0FQxSML+6RN9rUzsV1D1LgxO16j6gmYC+9k=;
+        b=BRiJgLbg/rMD4bfVDpqR+HFPzvrt62nc6N2NoghG+EPPszOAJmv1Om9z1tIn/eiX+E
+         oHBx5Kul0iDSfmoKXhgbJ83qWoN79yklRbhgfGgAvA18CwQFbrAR0dgMYS/ovoODBPC5
+         9JCjV/QW+Ns234dOEiVJabuiViK/S8EKgWoL07O/eSKBzO3kJlSJe3rNJ+v6t6Vx5R0C
+         RUnaEPFb17MNMqrCe2GGtcaVjVlf2/BzZcQbkZHFDs3xfV1iMQgakIxLTDKexqZzJgAZ
+         tA+adZ42ZXLBEdrPLzO5GueoGimUA0ifauZi4ZNPiiWLhiV9wTcTOt3eaOYmIHY0ZVZL
+         G5VA==
+X-Gm-Message-State: AOJu0YyAQgo/6827L2x9F4Sguhmd1Sbh83viqxDgFWCZmRhUEbUy2tbK
+	KeZcjDtAeAO0qMUslZ6j2t5XMC0HXcXrhgzQeHibJxYFAzFIaNI1zNv/9AICucHvdk/mfBmru6J
+	YEmIXU/TkU1KM9jufdUOcuiXhtjq9G4oeJ2mBdrLMokW4uJRgbMwkanbWZpHS1TYlXw==
+X-Gm-Gg: ASbGncsTb495k8kVXq9SsJ4G9v/w2MJVuPbYx9vELGtM5LYGP1ilo0TaKJoUu5eMWP3
+	IgNybLD0NUYJ/tJIYHMYZ3fdsAeW8X+b/YeYxESuXN9O4OgyU0qFh5g+p0kWNYo+0N81UBu4FAi
+	2NT+QdgUpPvzlKEhSCzg8zQJYL+iZSwJYqwbXh9PEATjiOyqeratZKm2p2LZ+azE0QUxEgAEsMh
+	idXkXUF2ZCCIV5c2ng2zw4LrvPxdNxATT3jt4UvOnfOf9fqYBSPd4RtRFeI8u34loJU0YzfTAhF
+	ED2+CI3SAKXdXoq40mS4pSDq3VBYoO/U5QfUuwdlumsZRmEi2ji81UumERGcb+eDGSvpKDDS7X7
+	Czf/z2hm/GvPXWirDTMvt4u3vDqeAwrJ/bVIxqgluywpugpPsqHKwc+d7cZrQQ5BbCmM=
+X-Received: by 2002:a05:600c:c4a5:b0:456:1006:5418 with SMTP id 5b1f17b1804b1-458763179bcmr74260215e9.13.1753692326823;
+        Mon, 28 Jul 2025 01:45:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH0ytbTFRQr+toJytfGYg9ytmkAf7bGWIT/KNRNPVSHmspPTjkBiFTwTnkeGrsjvDaNVuTIwA==
+X-Received: by 2002:a05:600c:c4a5:b0:456:1006:5418 with SMTP id 5b1f17b1804b1-458763179bcmr74259825e9.13.1753692326327;
+        Mon, 28 Jul 2025 01:45:26 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f47:2b00:c5f3:4053:2918:d17c? (p200300d82f472b00c5f340532918d17c.dip0.t-ipconnect.de. [2003:d8:2f47:2b00:c5f3:4053:2918:d17c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b7811b82c6sm6510602f8f.49.2025.07.28.01.44.13
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705c4fa5sm151414405e9.26.2025.07.28.01.45.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 01:44:14 -0700 (PDT)
-Message-ID: <4057479d-6ece-49a2-b823-99748e8c9c35@redhat.com>
-Date: Mon, 28 Jul 2025 10:44:13 +0200
+        Mon, 28 Jul 2025 01:45:25 -0700 (PDT)
+Message-ID: <558720e0-f145-469b-89b8-c8d6ec41da0c@redhat.com>
+Date: Mon, 28 Jul 2025 10:45:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,11 +88,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
-To: Oscar Salvador <osalvador@suse.de>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Michal Hocko <mhocko@suse.com>, Hannes Reinecke <hare@kernel.org>
-References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
+Subject: Re: [PATCH v2] mm, page_pool: introduce a new page type for page pool
+ in page type
+To: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+ andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+ akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+ brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+ usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+ almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
+ bpf@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <20250728052742.81294-1-byungchul@sk.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -142,78 +154,52 @@ Autocrypt: addr=david@redhat.com; keydata=
  WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
  g3eXuA==
 Organization: Red Hat
-In-Reply-To: <aIcxs2nk3RNWWbD6@localhost.localdomain>
+In-Reply-To: <20250728052742.81294-1-byungchul@sk.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 28.07.25 10:15, Oscar Salvador wrote:
-> Hi,
-
-Hi,
-
+On 28.07.25 07:27, Byungchul Park wrote:
+> Changes from v1:
+> 	1. Rebase on linux-next.
+> 	2. Initialize net_iov->pp = NULL when allocating net_iov in
+> 	   net_devmem_bind_dmabuf() and io_zcrx_create_area().
+> 	3. Use ->pp for net_iov to identify if it's pp rather than
+> 	   always consider net_iov as pp.
+> 	4. Add Suggested-by: David Hildenbrand <david@redhat.com>.
 > 
-> Currently, we have several mechanisms to pick a zone for the new memory we are
-> onlining.
-> Eventually, we will land on zone_for_pfn_range() which will pick the zone.
+> ---8<---
+>  From 08b65324282bbe683a2479faef8eb24df249fd18 Mon Sep 17 00:00:00 2001
+> From: Byungchul Park <byungchul@sk.com>
+> Date: Mon, 28 Jul 2025 14:07:17 +0900
+> Subject: [PATCH v2] mm, page_pool: introduce a new page type for page pool in page type
 > 
-> Two of these mechanisms are 'movable_node' and 'auto-movable' policy.
-> The former will put every single hotpluggled memory in ZONE_MOVABLE
-> (unless we can keep zones contiguous by not doing so), while the latter
-> will put it in ZONA_MOVABLE IFF we are within the established ratio
-> MOVABLE:KERNEL.
-
-It's more complicated, because we have the concept of memory groups.
-
-Dynamic memory groups allow for a mixture of MOVABLE vs. NORMAL within 
-the group, static memory groups want a single type.
-
-Hotplugging a large DIMM would online it either as MOVABLE or NORMAL. 
-Similarly with CXL.
-
+> ->pp_magic field in struct page is current used to identify if a page
+> belongs to a page pool.  However, ->pp_magic will be removed and page
+> type bit in struct page e.i. PGTY_netpp can be used for that purpose.
 > 
-> It seems, the later doesn't play well with CXL memory where CXL cards hold really
-> large amounts of memory, making the ratio fail, and since CXL cards must be removed
-> as a unit, it can't be done if any memory block fell within
-> !ZONE_MOVABLE zone.
-
-So, user space configured a ratio and the kernel does exactly that: obey 
-the ratio.
-
+> Introduce and use the page type APIs e.g. PageNetpp(), __SetPageNetpp(),
+> and __ClearPageNetpp() instead, and remove the existing APIs accessing
+> ->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
+> netmem_clear_pp_magic().
 > 
-> One way to tackle this would be update the ratio every time a new CXL
-> card gets inserted, but this seems suboptimal.
-> Another way is that since CXL memory works with selfhosted memmap, we could relax
-> the check when 'auto-movable' and only look at the ratio if we aren't
-> working with selfhosted memmap.
+> For net_iov, use ->pp to identify if it's pp, with making sure that ->pp
+> is NULL for non-pp net_iov.
+> 
+> This work was inspired by the following link:
+> 
+> [1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@gmail.com/
+> 
+> While at it, move the sanity check for page pool to on free.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> ---
 
-The memmap is only a small piece of unmovable data we require late at 
-runtime (a bigger factor is user space page tables actually mapping that 
-memory). The zone ratio we have configured in the kernel dates back to 
-the highmem times, where such ratios were considered safe. Maybe there 
-are better defaults for the ratios today, but it really depends on the 
-workload.
+Nothing jumped at me, so
 
-One could find ways of subtracting the selfhosted part, to account it 
-differently in the kernel, but the memmap is not the only consumer that 
-affects the ratio.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-I mean, the memmap is roughly 1.6%, I don't think that really makes a 
-difference for you, does it? Can you share some real-life examples?
-
-
-I have a colleague working on one of my old prototypes (memoryhotplugd) 
-for replacing udev rules.
-
-The idea there is, to detect that CXL memory is getting hotplugged and 
-keep it offline. Because user space hotplugging that memory (daxctl) 
-will explicitly online it to the proper zone.
-
-Things like virtio-mem, DIMMs etc can happily use the auto-movable 
-behavior. But the auto-movable behavior doesn't quite make sense if (a) 
-you want everything movable and (b) daxctl already expects to online the 
-memory itself, usually to ZONE_MOVABLE.
-
-So I think this is mostly a user-space problem to solve.
+for the MM bits.
 
 -- 
 Cheers,
