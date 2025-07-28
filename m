@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-747459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D1CB13417
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33645B13419
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4883C3B811B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7CF189076C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3E921ABD5;
-	Mon, 28 Jul 2025 05:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF8A21ABD5;
+	Mon, 28 Jul 2025 05:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Sfkq+PGU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcQ3ZzV0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1D460DCF;
-	Mon, 28 Jul 2025 05:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E4829405;
+	Mon, 28 Jul 2025 05:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753680049; cv=none; b=nyw+eBmML1WtdgTisfgEr6sYu6Wo6NbJQoteRgieem1RBhS/xrWs1jGPHMq14Lz6U5XJQtWazz7BkoxWYEd/agfkXN4Zcz8+udGC1wLvA644gV6JHS944qa96lk2EKEItpktwC3t4Un/kmJjflo/nDkFv+zHz3KmK9WoGdhYPUo=
+	t=1753680101; cv=none; b=rL1vRa42/+Ziu6JHw6FDNYjGhAcfs8c0nC09koOTkwRQ0cBquNUc3dMpP7QNLS9x6BcQQdPv2cYNhIva/FvvzOeu3do+cMbAqU83P5qERTsAQWTe0ZqgjC9+YSKYLyIbu/XRh19jWAa/KoAmOVNd9KcYnIaU4WnDhDo0/85ze84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753680049; c=relaxed/simple;
-	bh=v+I/yE5AAfGPdFCg6YeOFNThMNSTK2a5A3m+QZPkj7c=;
+	s=arc-20240116; t=1753680101; c=relaxed/simple;
+	bh=zKqo6s0uP0m/eJSU28JeyvlFsZxsc++2K/tJff8xD4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MSp/sPDfw6RC2WXfw1rn0bfLDrda82BGKFFoBz+0JTBoO67/CJo4TftKr/crAJjJzTt8WfioGMio0yjUo14E0CouvGzjSjSlMn8vRJ2Hal40GdINOshEiBDdzen9Qw67UWbws5MUgc7fHui9HSYNppkhryw1pxZbYU2f0XdEmYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Sfkq+PGU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFACDC4CEE7;
-	Mon, 28 Jul 2025 05:20:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753680049;
-	bh=v+I/yE5AAfGPdFCg6YeOFNThMNSTK2a5A3m+QZPkj7c=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=FeX5o5SxaqSJ5kDumFq7SoRjJdglki9AYKlNw3Sl/wozLe1UIDocUoCECE08z3e1JpNAgcGMP+93WI43n72BcNwelM0W4OrBha5rFJFAPybgq0Y5DKes+aybGX0HcgHyHlTgeRncOT1IOCnnYuj5/a9v77duPh+qBvJkBOK0n08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcQ3ZzV0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1DD6C4CEE7;
+	Mon, 28 Jul 2025 05:21:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753680100;
+	bh=zKqo6s0uP0m/eJSU28JeyvlFsZxsc++2K/tJff8xD4k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sfkq+PGUiEYeGZ/tsCO5vEn4Yg0s9DPQ8gW+ppKjVnwqQEOANEeD2XcP/vjjD5yVH
-	 oxFvOPadZadJVQnjXOz/6JLt1/XdDCXp101ngeBplUcfZUZzgIKKZqKIbApxTObDCD
-	 tyt5LTnYY8QncfdY1z1EGNVC6+ygLTMYALvb71II=
-Date: Mon, 28 Jul 2025 07:20:44 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Suchit K <suchitkarunakaran@gmail.com>
-Cc: masahiroy@kernel.org, nicolas.schier@linux.dev,
-	linux-kbuild@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] kconfig/lxdialog: replace strcpy() with strncpy() in
- inputbox.c
-Message-ID: <2025072809-pursuit-hardwired-d894@gregkh>
-References: <20250727164433.203775-1-suchitkarunakaran@gmail.com>
- <2025072842-require-smokeless-f98f@gregkh>
- <CAO9wTFjuSch0Cc0yXV=PR9vkk+66i_4PSanrPqKYyXXhWjO-QA@mail.gmail.com>
+	b=XcQ3ZzV0mutTxCY3Hl1kk/5AFyx6wDjq0/dAT/Juq4NjhuaLgaJwHL6RXe6zLtn5r
+	 X63V3kB9rL/v06jd1gZpvTV9eCWAxZNoDuQSNVzZC0KmGTIOFyWJ5Tl5JkHx0kMl0B
+	 xoOTdh8TtU1hhcybVQzsntU71Rm4x0U/kY52p1WYDARe6zPuhqi5X8ICd1V13S6UmR
+	 DDyTLxaCuP7VkYv8CGq2OXH1Q8AbYxWt/kaPFhvlvWgQeYlzLgwLz6mjnGcSsGlbui
+	 8hMjJtRYKmvDwqQmkYIq/wkcXP4TfXBi/1DtsiLZg65jJDsUS+aTKPsXA5quhDuBpF
+	 +TRqIrHIUj7zg==
+Date: Sun, 27 Jul 2025 22:21:40 -0700
+From: Kees Cook <kees@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+	josh@joshtriplett.org, konstantin@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org
+Subject: Re: [PATCH 3/4] agents: add coding style documentation and rules
+Message-ID: <202507272219.4BF02B6@keescook>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <20250727195802.2222764-4-sashal@kernel.org>
+ <202507271939.D78EC559@keescook>
+ <aIcGQR8tjmjr8dlb@lappy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,50 +60,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAO9wTFjuSch0Cc0yXV=PR9vkk+66i_4PSanrPqKYyXXhWjO-QA@mail.gmail.com>
+In-Reply-To: <aIcGQR8tjmjr8dlb@lappy>
 
-On Mon, Jul 28, 2025 at 10:18:35AM +0530, Suchit K wrote:
-> On Mon, 28 Jul 2025 at 09:59, Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Sun, Jul 27, 2025 at 10:14:33PM +0530, Suchit Karunakaran wrote:
-> > > strcpy() performs no bounds checking and can lead to buffer overflows if
-> > > the input string exceeds the destination buffer size. This patch replaces
-> > > it with strncpy(), and null terminates the input string.
-> > >
-> > > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-> > > ---
-> > >  scripts/kconfig/lxdialog/inputbox.c | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdialog/inputbox.c
-> > > index 3c6e24b20f5b..5e4a131724f2 100644
-> > > --- a/scripts/kconfig/lxdialog/inputbox.c
-> > > +++ b/scripts/kconfig/lxdialog/inputbox.c
-> > > @@ -39,8 +39,10 @@ int dialog_inputbox(const char *title, const char *prompt, int height, int width
-> > >
-> > >       if (!init)
-> > >               instr[0] = '\0';
-> > > -     else
-> > > -             strcpy(instr, init);
-> > > +     else {
-> > > +             strncpy(instr, init, sizeof(dialog_input_result) - 1);
-> > > +             instr[sizeof(dialog_input_result) - 1] = '\0';
-> >
-> > As this is a userspace tool, why is this change needed at all?  How can
-> > this overflow and if it does, what happens?
-> >
+On Mon, Jul 28, 2025 at 01:10:25AM -0400, Sasha Levin wrote:
+> On Sun, Jul 27, 2025 at 07:40:36PM -0700, Kees Cook wrote:
+> > On Sun, Jul 27, 2025 at 03:58:01PM -0400, Sasha Levin wrote:
+> > > +**80 character line limit**
+> > > +  The preferred limit on the length of a single line is 80 columns.
+>
+> Hrm, it is?
 > 
-> Hi Greg. The primary motivation for this patch was the deprecation of
-> strcpy(). Additionally, I believed there was a possibility of a buffer
-> overflow if the initial string accidentally exceeded the length of
-> instr, although the chances might be low.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst#n104
+> claims:
+> 
+> 	The preferred limit on the length of a single line is 80 columns.
+> 
+> 	Statements longer than 80 columns should be broken into sensible chunks,
+> 	unless exceeding 80 columns significantly increases readability and does
+> 	not hide information.
 
-Is strcpy() being deprecated in userspace?  I think it's a core part of
-the C language specification :)
+That's true, it's not called out well enough. 80 is "preferred
+limit" but not the hard limit, which is 100. See commit bdc48fa11e46
+("checkpatch/coding-style: deprecate 80-column warning")
 
-Again, how can that buffer be "too large"?
+-Kees
 
-thanks,
-
-greg k-h
+-- 
+Kees Cook
 
