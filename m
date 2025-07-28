@@ -1,128 +1,284 @@
-Return-Path: <linux-kernel+bounces-748034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA2DB13BB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E566B13BB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E15165E3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:44:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E44517C33E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CFE8BEC;
-	Mon, 28 Jul 2025 13:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A7A26A095;
+	Mon, 28 Jul 2025 13:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UD56bzIY"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R+HQha42"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6022243147
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00DD2690DB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753710254; cv=none; b=W51297UxAmz1KPknC5jwQuCxyFFd6WZP02w4YZY8vPB+Z1ofDEgdmN6vjGIpEXFE4SNlacjEuvUdcuDXh4E986tabKJXKaZnF252yct22vVRk+6zsNVi9qHZZKoG2YXFnC2LDkVmteVb02LwyjZrOyQAd61AZwGNj3ipKUto4u0=
+	t=1753710291; cv=none; b=jXnoqzJTjfZAR9Ouks2QbHN2vxyi1VviLyPzfVBp/cNjnthWpDg4ODYVpCfcvPLmULoLHrnGj5AJqZEmQL39ggnyEwBMOTY0vojj7N68n0erEJn/UabP+jIlsIgN0Ya3LAPz7hoAkcR1NDlRgx69hUeKsYI5XIxnqyuNm+6bOdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753710254; c=relaxed/simple;
-	bh=su4CDo1Zx/MDVYD4tBXm+oYEvEdyMFDhJC+yOzR/FkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PmaHp3TyeeNsyTYPmnmAJgHv3mrNo4t86uR/ccXY3fcWS582DNgZ4OF+lP3RmYEWFyxLvELQrI3A9Vh7YU+DjObd4c5JZ2bovSQBLZa3VeDRRl8cfyJWEF148S1drsXWdIYZ32O4kKkp/ehWfx91EMyEwNF5086Yb1iMAtQFT9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UD56bzIY; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4555f89b236so36440775e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:44:12 -0700 (PDT)
+	s=arc-20240116; t=1753710291; c=relaxed/simple;
+	bh=7kEmjD7J1ByYEPN6gK5wIGaNyoEK7cRCpksvz+MpqDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QhVWmsyBa73SG3sAnO/GqEBeJpeg/t6IU+mShQR72fOuv1k1HCqlpj4uES99GBFl9jF4TMdfPKo1Rw9V0rUCJJf1ErY35vRTwdcYnnL5wslJNMvORX/YN5wiVrcPNOltcRwV+1cUcJzrFhLWAa5OcVi1gCYCFC7iAmbcO1eCHIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R+HQha42; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae36dc91dc7so730672666b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:44:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753710251; x=1754315051; darn=vger.kernel.org;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MrIeEid5T15sP2bmZ2K6W0oyz6k1/QdANuHbM57Jiz4=;
-        b=UD56bzIYPJs00JwnMFeODjsaidrlq3z2SvkAzaXPaLBo6YnsM5FJV9K8nCe4ftvdeZ
-         uMPnXGXxWJoGi1J+Ldgu9ODIEAJ2k/8wt9pq5SktcxpNZkZrNFPWva6zz2zjSu6PQTBN
-         z08rHZc2G8waYoG+K/6V7VMecl74CFYSrjBN+362/z1yLgXH6wCXJW9XGoTe6slW7nSX
-         S+d5atTZI/R9UiRR/oJ2DTgYYuFM4yHM+1Xy7FiQil29ZtZaR9w3eGDIUFZdCiWo+WfG
-         ADw1gmYmu/Ww9BdJqun6rhwDK5oQi9HCX2g8aHsy5BqlYNbJMOptLk/w/Jskib0LS8EA
-         BfNw==
+        d=linaro.org; s=google; t=1753710288; x=1754315088; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RC668nCt8mHHP3FnT6kcpHmAaYm5QP6my+V/404SJa4=;
+        b=R+HQha42Vqw9TWuBjg8AV52UGW5XNhAOixTpOalAjMsZ1H8AOGXtBbdmGPfU2nVyMk
+         vZIrgBXOlszX0g13BEBsZwMq57KW3lv5xfGpfyI/9gAi22y+Ndv3JAQTC69L9K4GhtCU
+         dTDCm7xvNxxPYBPzM6rmdZbPb2QV0CYygmHyTgHF79dKVQt+k9+gyW2KO9ibTRpMbW20
+         F96ACUpEyOWqIekFz4PKrzDaA8POPUhzdmATL1LwlLwYuhpGUzac+o3VArx9KgZHubWu
+         5/stw37OaFfXjf4cmNU3BGAYETCwgZDJ4SYbSay2wzGZoLbd77p6rc+/J2ekmPpVEzAY
+         VTMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753710251; x=1754315051;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MrIeEid5T15sP2bmZ2K6W0oyz6k1/QdANuHbM57Jiz4=;
-        b=lrJsImjwmm8PE0TVoGd7Veko0MUNb4f6ZALHxmoALhJ7vvLIo4LLzB5wMzcxpM5XF8
-         zJdVWkqU2oVs03Dlylop1ZZM3fYkSDvMdGsMpKrr+FDseOVceTJmPnOGpnDl/nxVrldG
-         fnn8hxPewpA2n5OSANemxU9zZd7EvZY4GM2jCYUXtfval/4nr3Cy8JZIVIwYzdEl+OaL
-         rCsxlXgRGSgOt5ZjVxgj6hTIteFBQ37ovUMaYhbnuw22GuJr1J+aeaYaXwW4j3B8Eb6G
-         NeRO8GsRIl8D6X1paTtrB8Mw1yZznmiLlJeRHdYUUNzODVHFV1Z5TJp42m0UmfPVGqr0
-         Pimw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuK8kq5QA7pVJBwnRT23YZdNVK92TaUyZi3PHDLwkRgXd+/9IJYBOaE5stQ2FcBLIeKFzG02NbXwg3N7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzub1N9rN4wgW/P60Lfof56yiK64AAAPZl41XkY7GTrApIEpFV+
-	bXv3cJRGUyLpbcA7ea5Hra+buehUTmHMoV+ZoU2rQ9aTjvyGjA0pRIdlTHhJ/qunPCQrvEcKqU1
-	T5hhXbJBg
-X-Gm-Gg: ASbGncsglU8yEchuUuBITSn0fVuJGrhoq393z+rF2L5YTcsqs8MJ4FQR2rOtPo8Jayy
-	lQSZb7DcpAExq9l8frF7SZHKCsSCME4C/fYkhChCRRniEIAN5PKcGi9+Eh2jcs6kOlXRShY5yRj
-	J0qkg+DlLfajX8s/n0+RduTP/oTZE+0AEfxdqTcZ/kSfb8bgd0Jn3bWxteFFai+IT4irh221ykP
-	YP2/3uXZkaHWsJ5MteIefdqiOzxVYwA3O9Of2zKmoU9H4TjqJw2OaJTfumXKqLfU7V/kNXcKm9O
-	b7rZkBgL0U8pPY1fZYslXGMYFKyEZu3QUK9nByEESm/a3kPnNrtTaeZu8W6ONv89XmC5PQNmj+u
-	QOc8GPcDa0UNrT+IP6+j0eHpiqJ1qsiEw7CHRKbr90JvLQhRS3RSJe3UdjfU=
-X-Google-Smtp-Source: AGHT+IGH8BKLghgh+jT+3SxZRS57k0kDQ+wmtofkoLYv5wUmCJPfv2l6WQ2mCOYxIedsywIzk/iIdg==
-X-Received: by 2002:a05:600c:1992:b0:455:fc16:9eb3 with SMTP id 5b1f17b1804b1-45876656c6fmr81389815e9.33.1753710250471;
-        Mon, 28 Jul 2025 06:44:10 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:2834:9:4524:5552:e4f3:8548])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705e39b1sm152270025e9.34.2025.07.28.06.44.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 06:44:09 -0700 (PDT)
-Date: Mon, 28 Jul 2025 15:44:03 +0200
-From: Marco Elver <elver@google.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] KCSAN updates for v6.17
-Message-ID: <aId-o3ijDLf38vtc@elver.google.com>
+        d=1e100.net; s=20230601; t=1753710288; x=1754315088;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RC668nCt8mHHP3FnT6kcpHmAaYm5QP6my+V/404SJa4=;
+        b=qT5pLz+mnsq+aUO8WaWkGI1c/vBZDOV7Fs77YwqaGBmY5ig6t0OKVEngcx2ZwNnkCZ
+         wmBXtRvZeT41uGvYNGz2UN43AjiXAp1GOZCpa0mzuDbUgigauKBIcBdBdiK+yxCHufOh
+         fuFzxAoXCWqOEyWZTp+1otF2X3vCC1R+Nl7zywGhSRpHlVTnYsmpFgFd2TQaD76TtpD2
+         tdyQ97zunfbOARjKP5d7Lj9zvOVsIm3Ih7yuctETqhBnSsAfZZl//8TXNj6FIxtyHrsO
+         myshFBWftJiHQGhJJeMCZWJMPk3p7C92KRzjjP6M/+4HOV1+LafL73wFqij7ypVtuxy/
+         Xt0w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2JgJiiwWNrUGtgaJN6lTM0R6fv51kyTIkLl7F0g0un6TI7GNgVLDqe/NRr5m3LAzJObGTJwozL6mnOdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx94JsmbOw6bBjLNJFPTpy177pL3mI8h2SObjYaw+qCx1+E+ptB
+	oV5eUp7gZ6h3Hl/l6NxTGQQlinMjnt1VUeVZfHAJN9CorQMxHJLwWpT1xgyc9QmKNUs=
+X-Gm-Gg: ASbGncvmoY4B4zYQXlfa5o+LRlLwmPWOqfCvz2/XnrjVWZA2W/6e0lZWLzWPosTGOFn
+	iF5n2vgsZci5td9CVBQd0jU3pMOIp7wMQ63F14xyrREJdTBeEYufzKKkCyoQ+0x+JSb2vcalXIF
+	vv1ZjhpGbJ513yQZ2ExRQnugBrmZIjsqaZv8m+gx0Irk76IT/jDT4rYkbzUoH+ooIAyt0Qyabsh
+	Aohg6DX/ef0v5QBrI5V7vJUkuZomFFadaVxDHACSdbUg3bYXEQx6xKLaFaE9PQV0Z6dY9g/W9Pp
+	dw+siu0fIRXkrteQAD7MdjajlESiy0vXBIaHlanyW5epdrqipP4qLeMlh5uyVTILbu8wrjD5MOl
+	0vE+Mm/hI7CSL/2Lhx0u6rPDMEfOSiivrywIrWZAm+bvGEUAgUVOJpiOePFl5/2M=
+X-Google-Smtp-Source: AGHT+IELW+a3KhmjkLCdMZPX2WGb73CXN0xX5TnTiHq9x7ZvKzBuKTWC2hjTDdFNf3HgtVm9iVz32w==
+X-Received: by 2002:a17:907:da5:b0:ae3:4f99:a5a5 with SMTP id a640c23a62f3a-af61c2aededmr1250106966b.6.1753710287770;
+        Mon, 28 Jul 2025 06:44:47 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635a6314asm425521366b.91.2025.07.28.06.44.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 06:44:46 -0700 (PDT)
+Message-ID: <5ac76f1e-21d1-4265-8afe-b4b7209cfc5a@linaro.org>
+Date: Mon, 28 Jul 2025 14:44:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/2.2.13 (2024-03-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/9] media: qcom: camss: Rename camss-csid-780.c to
+ camss-csid-gen3.c
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250703171938.3606998-1-quic_vikramsa@quicinc.com>
+ <20250703171938.3606998-2-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250703171938.3606998-2-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Linus,
+On 03/07/2025 18:19, Vikram Sharma wrote:
+> Rename the file camss-csid-780.c to camss-csid-gen3.c to enable
+> reuse of CSID logic across multiple SoCs.
+> 
+> The SA8775P SoC includes CSID 690, which is functionally very
+> similar to CSID 780, with only minor differences in register
+> bitfields. This rename prepares the codebase for supporting
+> additional SoCs without duplicating CSID logic.
+> 
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/camss/Makefile             |  2 +-
+>   .../qcom/camss/{camss-csid-780.c => camss-csid-gen3.c} |  8 +++++---
+>   .../qcom/camss/{camss-csid-780.h => camss-csid-gen3.h} |  9 +++++----
+>   drivers/media/platform/qcom/camss/camss-csid.h         |  2 +-
+>   drivers/media/platform/qcom/camss/camss.c              | 10 +++++-----
+>   5 files changed, 17 insertions(+), 14 deletions(-)
+>   rename drivers/media/platform/qcom/camss/{camss-csid-780.c => camss-csid-gen3.c} (98%)
+>   rename drivers/media/platform/qcom/camss/{camss-csid-780.h => camss-csid-gen3.h} (84%)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/Makefile b/drivers/media/platform/qcom/camss/Makefile
+> index d26a9c24a430..ee869e69521a 100644
+> --- a/drivers/media/platform/qcom/camss/Makefile
+> +++ b/drivers/media/platform/qcom/camss/Makefile
+> @@ -8,7 +8,7 @@ qcom-camss-objs += \
+>   		camss-csid-4-7.o \
+>   		camss-csid-680.o \
+>   		camss-csid-gen2.o \
+> -		camss-csid-780.o \
+> +		camss-csid-gen3.o \
+>   		camss-csiphy-2ph-1-0.o \
+>   		camss-csiphy-3ph-1-0.o \
+>   		camss-csiphy.o \
+> diff --git a/drivers/media/platform/qcom/camss/camss-csid-780.c b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+> similarity index 98%
+> rename from drivers/media/platform/qcom/camss/camss-csid-780.c
+> rename to drivers/media/platform/qcom/camss/camss-csid-gen3.c
+> index 4c720d177731..0941152ec301 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csid-780.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+> @@ -4,6 +4,8 @@
+>    *
+>    * Copyright (c) 2024 Qualcomm Technologies, Inc.
+>    */
+> +
+> +
 
-Please pull the below KCSAN updates for v6.17-rc1.
+Dead newlines.
 
-Many thanks,
--- Marco
+>   #include <linux/completion.h>
+>   #include <linux/delay.h>
+>   #include <linux/interrupt.h>
+> @@ -13,7 +15,7 @@
+>   
+>   #include "camss.h"
+>   #include "camss-csid.h"
+> -#include "camss-csid-780.h"
+> +#include "camss-csid-gen3.h"
+>   
+>   #define CSID_IO_PATH_CFG0(csid)		(0x4 * (csid))
+>   #define		OUTPUT_IFE_EN			0x100
+> @@ -259,7 +261,7 @@ static irqreturn_t csid_isr(int irq, void *dev)
+>   
+>   			if (buf_done_val & BIT(BUF_DONE_IRQ_STATUS_RDI_OFFSET + i)) {
+>   				/*
+> -				 * For Titan 780, bus done and RUP IRQ have been moved to
+> +				 * For Titan Gen3, bus done and RUP IRQ have been moved to
+>   				 * CSID from VFE. Once CSID received bus done, need notify
+>   				 * VFE of this event. Trigger VFE to handle bus done process.
+>   				 */
+> @@ -325,7 +327,7 @@ static void csid_subdev_init(struct csid_device *csid)
+>   	csid->testgen.nmodes = CSID_PAYLOAD_MODE_DISABLED;
+>   }
+>   
+> -const struct csid_hw_ops csid_ops_780 = {
+> +const struct csid_hw_ops csid_ops_gen3 = {
+>   	.configure_stream = csid_configure_stream,
+>   	.configure_testgen_pattern = csid_configure_testgen_pattern,
+>   	.hw_version = csid_hw_version,
+> diff --git a/drivers/media/platform/qcom/camss/camss-csid-780.h b/drivers/media/platform/qcom/camss/camss-csid-gen3.h
+> similarity index 84%
+> rename from drivers/media/platform/qcom/camss/camss-csid-780.h
+> rename to drivers/media/platform/qcom/camss/camss-csid-gen3.h
+> index a990c66a60ff..e6298042ae74 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csid-780.h
+> +++ b/drivers/media/platform/qcom/camss/camss-csid-gen3.h
+> @@ -1,13 +1,13 @@
+>   /* SPDX-License-Identifier: GPL-2.0 */
+>   /*
+> - * camss-csid-780.h
+> + * camss-csid-gen3.h
+>    *
+>    * Qualcomm MSM Camera Subsystem - CSID (CSI Decoder) Module Generation 3
+>    *
+>    * Copyright (c) 2024 Qualcomm Technologies, Inc.
+>    */
+> -#ifndef __QC_MSM_CAMSS_CSID_780_H__
+> -#define __QC_MSM_CAMSS_CSID_780_H__
+> +#ifndef __QC_MSM_CAMSS_CSID_GEN3_H__
+> +#define __QC_MSM_CAMSS_CSID_GEN3_H__
+>   
+>   #define DECODE_FORMAT_UNCOMPRESSED_8_BIT	0x1
+>   #define DECODE_FORMAT_UNCOMPRESSED_10_BIT	0x2
+> @@ -18,8 +18,9 @@
+>   #define DECODE_FORMAT_UNCOMPRESSED_24_BIT	0x7
+>   #define DECODE_FORMAT_PAYLOAD_ONLY		0xf
+>   
+> +
+another dead newline
 
------- >8 ------
+>   #define PLAIN_FORMAT_PLAIN8	0x0 /* supports DPCM, UNCOMPRESSED_6/8_BIT */
+>   #define PLAIN_FORMAT_PLAIN16	0x1 /* supports DPCM, UNCOMPRESSED_10/16_BIT */
+>   #define PLAIN_FORMAT_PLAIN32	0x2 /* supports UNCOMPRESSED_20_BIT */
+>   
+> -#endif /* __QC_MSM_CAMSS_CSID_780_H__ */
+> +#endif /* __QC_MSM_CAMSS_CSID_GEN3_H__ */
+> diff --git a/drivers/media/platform/qcom/camss/camss-csid.h b/drivers/media/platform/qcom/camss/camss-csid.h
+> index 9dc826d8c8f6..62273ca9f199 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csid.h
+> +++ b/drivers/media/platform/qcom/camss/camss-csid.h
+> @@ -215,7 +215,7 @@ extern const struct csid_hw_ops csid_ops_4_1;
+>   extern const struct csid_hw_ops csid_ops_4_7;
+>   extern const struct csid_hw_ops csid_ops_680;
+>   extern const struct csid_hw_ops csid_ops_gen2;
+> -extern const struct csid_hw_ops csid_ops_780;
+> +extern const struct csid_hw_ops csid_ops_gen3;
+>   
+>   /*
+>    * csid_is_lite - Check if CSID is CSID lite.
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 06f42875702f..1431e08dc04a 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -2285,7 +2285,7 @@ static const struct camss_subdev_resources csid_res_8550[] = {
+>   		.csid = {
+>   			.is_lite = false,
+>   			.parent_dev_ops = &vfe_parent_dev_ops,
+> -			.hw_ops = &csid_ops_780,
+> +			.hw_ops = &csid_ops_gen3,
+>   			.formats = &csid_formats_gen2
+>   		}
+>   	},
+> @@ -2300,7 +2300,7 @@ static const struct camss_subdev_resources csid_res_8550[] = {
+>   		.csid = {
+>   			.is_lite = false,
+>   			.parent_dev_ops = &vfe_parent_dev_ops,
+> -			.hw_ops = &csid_ops_780,
+> +			.hw_ops = &csid_ops_gen3,
+>   			.formats = &csid_formats_gen2
+>   		}
+>   	},
+> @@ -2315,7 +2315,7 @@ static const struct camss_subdev_resources csid_res_8550[] = {
+>   		.csid = {
+>   			.is_lite = false,
+>   			.parent_dev_ops = &vfe_parent_dev_ops,
+> -			.hw_ops = &csid_ops_780,
+> +			.hw_ops = &csid_ops_gen3,
+>   			.formats = &csid_formats_gen2
+>   		}
+>   	},
+> @@ -2330,7 +2330,7 @@ static const struct camss_subdev_resources csid_res_8550[] = {
+>   		.csid = {
+>   			.is_lite = true,
+>   			.parent_dev_ops = &vfe_parent_dev_ops,
+> -			.hw_ops = &csid_ops_780,
+> +			.hw_ops = &csid_ops_gen3,
+>   			.formats = &csid_formats_gen2
+>   		}
+>   	},
+> @@ -2345,7 +2345,7 @@ static const struct camss_subdev_resources csid_res_8550[] = {
+>   		.csid = {
+>   			.is_lite = true,
+>   			.parent_dev_ops = &vfe_parent_dev_ops,
+> -			.hw_ops = &csid_ops_780,
+> +			.hw_ops = &csid_ops_gen3,
+>   			.formats = &csid_formats_gen2
+>   		}
+>   	}
 
-The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
+I can fix those newlines, no need for a v4.
 
-  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/melver/linux.git tags/kcsan-20250728-v6.17-rc1
-
-for you to fetch changes up to 9872916ad1a1a5e7d089e05166c85dbd65e5b0e8:
-
-  kcsan: test: Initialize dummy variable (2025-07-23 08:51:32 +0200)
-
-----------------------------------------------------------------
-Kernel Concurrency Sanitizer (KCSAN) updates for v6.17
-
-- A single fix to silence an uninitialized variable warning
-
-This change has had a few days of linux-next exposure.
-
-----------------------------------------------------------------
-Marco Elver (1):
-      kcsan: test: Initialize dummy variable
-
- kernel/kcsan/kcsan_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
