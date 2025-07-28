@@ -1,189 +1,352 @@
-Return-Path: <linux-kernel+bounces-747725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9BDB13754
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:12:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB413B1375B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9690179980
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43CFA3A6733
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E4222DFA3;
-	Mon, 28 Jul 2025 09:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+MuaV4J"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0D521CC49;
-	Mon, 28 Jul 2025 09:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CCF1D8E1A;
+	Mon, 28 Jul 2025 09:15:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5246B1A83F7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753693922; cv=none; b=drQjhHkv2AYFW195wf7v95I1KCj7aIKqo1veUbzIL0tkz30zZfwcxKtqxzpYo10AjpbIaGBsafYB07MOkuy2IUpyROddces1u1WTp8LLYFsoHDhiFgskxyIlssyx8WA1bAwEDxCcCsKJsHS04b+xndk/jLO4gT7aryIYqd//aTk=
+	t=1753694134; cv=none; b=vERZOl113hETnpr3KiUTZY3qgmFLRae8OzkBPdLv632V4RjF6f54mOHfO/AUQ9N76YKXDeuwGIIn9/4+nN9eaeZ9eaD8Zy+qDFCBZF/TWRJoSoCvzOSIqf6C/pVnqqTQuHcUftDbF95t55v3M5lG1yixvd1ylpK2ShhBo6lp3Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753693922; c=relaxed/simple;
-	bh=0gSQ24/p4HRUPOHRsyobhPrSNgYDn4mi1ZqXF6Iocyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RhMQ7vIEw9ovS4BEzDkamIDXAxI0zivRyEYYMbuAIYUx1Fe+mpqWDr2/bVjYEXRGXBv/TNyljT47hmhQU7ksYBRS63zOb1SOnXuA0/JklAKLTZxQA9GCCu6YwoBV4RBb0GKCtbVrPQHCgX7/lCzilfTWq9S7j6U73qw3ws7+0WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V+MuaV4J; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4f2f2f22c1aso2362504137.0;
-        Mon, 28 Jul 2025 02:12:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753693920; x=1754298720; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2SYCb8FDUa9FDjnH8D2qgYFn8gA2NGM9COLDxTOfYjk=;
-        b=V+MuaV4JuOd+g7IdWIlC/IGzNu5jzf1gMv8vuoVQkRptpXvQ+1cLTwYaBg1OHP5G1o
-         DWIJfzP59WhqPc6qLa1ksmFGNypH8aeqor94/Si0rvNJCOShVGHwKnIgkYBLVGSxzgHF
-         a7lAECOX310To1bNPWJMhG3K6EVoBtTrYa19OYxK7zRZM+enr5Ol88UtAmFYP0mJJXY2
-         fzm+Pb2qs272QJ60ga5oVDnWZZnqzg9J3DSHmyOCLtTwNd4dQvh++ue63FrvUph7CDQ1
-         l8uLrz83XYI6JKqqR5MqFtrPtfyIBDzHltsVtHtgWgXuvGwSVqo4K9FCt49ksGsxiAXR
-         Pcag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753693920; x=1754298720;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2SYCb8FDUa9FDjnH8D2qgYFn8gA2NGM9COLDxTOfYjk=;
-        b=dEPZsQdDPhgWaE4GISw8LYiQ70YDOluJweORJu6+OfnFbZXkWKVBYftrz9+FhEg/Ky
-         tG3lKEqjb45AXegNpBrcIch1/M0EzR/AV3U8Us5W4aeQ8wvg+32+j52rDseN4G02qiG+
-         hUsljgsFtL1V2netibjlIIr7irS3l7PDFGSkIPnmYfrClcZuzTir7Zv4E8Oq/Ai0gAJJ
-         pErurBy4/Y6yIy1r66Bn4elA8nIv9bd49AnPW7kjTlAvyV6nrvugbZyw92/w5cLhk8KG
-         RLL3UYDt+pT4iigBw5aOxrcWngIKMHAe5ec8sMJ/55FS4VrmVn18euHifqKquF3NaCIu
-         EJQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLyPaxuxDFLIE9tNlH0bSeV0Jb2dvVRGYaAR3MAeb7VAu9wWNcWYPta6I/ybkFubdIhGFh/FurM6fdPJqT@vger.kernel.org, AJvYcCXvAHpD7DDkSgnT0Vc7ddYMLnx9IYIR82Cgoi59pTLBK7idgqRmGxv7ttY9hdRYPx1cHs/w+vt4ojo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV2TAc6ygGCRZrvMDY3cP7IEj3c48Prv4q2RCyJt/woiHu9RJK
-	6K89E4C3ZXEVlYpEsKig8Svr5y/ICNionK/to1evs9BTKT+u5g711N8D
-X-Gm-Gg: ASbGncvUyOrI1Bw9WocLr84ALKw0b97uK5VJw/onOwoxcOQVjmEHymkYWszR7p/Bvg8
-	lqIQ/XFrMRdknDjWRTRcufw9WCdUxkvMJpWFgHhiIcJVC0KoE53ntOu/YzCufd7Ws3NAax8RvFH
-	j2e1Ho3AO42pVkdstRLMc5fkelyUx0SdpPP7vZI9P4Vnn3lQMZv+qP2GmUVJTG/ZitAKwRrpOG/
-	Mk+9AEigZ07FFTJsB47Br/4n3nxbqBgA0o7wb2+J7VIB38/Fz3w1NGyXEisOS7UmkYqEPII28Aa
-	IouLM6wLS5mpoRLiSnIIrcxaDNU7muDSC9Uyr3pDgwASBbBdFx3ogHXdc4SNSaSMdyn3qp/cmtE
-	nBp8fROfm0CZx
-X-Google-Smtp-Source: AGHT+IFJdYInd3vcSVl7Wb2ND0culrX/w/55qkepuhg8Ua3GKi+uUJW0NsjpBP97JmiR3r/zKwpEQA==
-X-Received: by 2002:a05:6102:1623:b0:4fa:dd4:6877 with SMTP id ada2fe7eead31-4fa2eb0ce5dmr5919865137.4.1753693920004;
-        Mon, 28 Jul 2025 02:12:00 -0700 (PDT)
-Received: from nsa ([45.144.113.55])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b8dcd2199sm1229210241.17.2025.07.28.02.11.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 02:11:58 -0700 (PDT)
-Date: Mon, 28 Jul 2025 10:12:11 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad7124: fix channel lookup in syscalib
- functions
-Message-ID: <nja2lfh3vnmsfvvvl4stxm4n433ktfeftdpb6g6criwslev2bj@ksqx3y7umo3c>
-References: <20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-v1-1-b9d14bb684af@baylibre.com>
- <20250727133135.385fa7c5@jic23-huawei>
+	s=arc-20240116; t=1753694134; c=relaxed/simple;
+	bh=qRg0qwgjUIaWoavMmhBBDJ+9uT1v8OJLnygy3gSWJ8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rXskJv3IhNyqjt5JLW/LS/FyBybJhzLiSTege72EgFQ3+JhKAofbYueg4D/hLfwwqYNR6x3tLtf0s5Btuh7SFJpaGb7YLd1+pRzJE39izX0fFnOEiUNnZ1W1yR4xOgElhJ7JJMh7PZPVjujtir1AjS2MGe7NWhRLH3RCt0pmNO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 497171596;
+	Mon, 28 Jul 2025 02:15:23 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C75A3F66E;
+	Mon, 28 Jul 2025 02:15:27 -0700 (PDT)
+Message-ID: <b7f48e6b-2b48-4946-8ab6-fae7a3fec061@arm.com>
+Date: Mon, 28 Jul 2025 10:15:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250727133135.385fa7c5@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 21/36] arm_mpam: Merge supported features during
+ mpam_enable() into mpam_class
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
+ <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+ Carl Worth <carl@os.amperecomputing.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+ <20250711183648.30766-22-james.morse@arm.com>
+Content-Language: en-US
+From: Ben Horgan <ben.horgan@arm.com>
+In-Reply-To: <20250711183648.30766-22-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 27, 2025 at 01:31:35PM +0100, Jonathan Cameron wrote:
-> On Sat, 26 Jul 2025 11:28:48 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
-> 
-> > Fix possible incorrect channel lookup in the syscalib functions by using
-> > the correct channel address instead of the channel number.
-> > 
-> > In the ad7124 driver, the channel field of struct iio_chan_spec is the
-> > input pin number of the positive input of the channel. This can be, but
-> > is not always the same as the index in the channels array. The correct
-> > index in the channels array is stored in the address field (and also
-> > scan_index). We use the address field to perform the correct lookup.
-> > 
-> > Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
-> > Signed-off-by: David Lechner <dlechner@baylibre.com>
-> Seems fine to me and i'll queue it up, but I would welcome another set of
-> eyes on this one.
-> 
-> Thanks,
-> 
-> Jonathan
-> 
+Hi James,
 
-The fix seems valid to me:
-
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
-
-> > ---
-> >  drivers/iio/adc/ad7124.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> > index 9808df2e92424283a86e9c105492c7447d071e44..4d8c6bafd1c3171054c72a0d2b13d6b1afc4e51a 100644
-> > --- a/drivers/iio/adc/ad7124.c
-> > +++ b/drivers/iio/adc/ad7124.c
-> > @@ -849,7 +849,7 @@ enum {
-> >  static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan_spec *chan)
-> >  {
-> >  	struct device *dev = &st->sd.spi->dev;
-> > -	struct ad7124_channel *ch = &st->channels[chan->channel];
-> > +	struct ad7124_channel *ch = &st->channels[chan->address];
-> >  	int ret;
-> >  
-> >  	if (ch->syscalib_mode == AD7124_SYSCALIB_ZERO_SCALE) {
-> > @@ -865,8 +865,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
-> >  		if (ret < 0)
-> >  			return ret;
-> >  
-> > -		dev_dbg(dev, "offset for channel %d after zero-scale calibration: 0x%x\n",
-> > -			chan->channel, ch->cfg.calibration_offset);
-> > +		dev_dbg(dev, "offset for channel %lu after zero-scale calibration: 0x%x\n",
-> > +			chan->address, ch->cfg.calibration_offset);
-> >  	} else {
-> >  		ch->cfg.calibration_gain = st->gain_default;
-> >  
-> > @@ -880,8 +880,8 @@ static int ad7124_syscalib_locked(struct ad7124_state *st, const struct iio_chan
-> >  		if (ret < 0)
-> >  			return ret;
-> >  
-> > -		dev_dbg(dev, "gain for channel %d after full-scale calibration: 0x%x\n",
-> > -			chan->channel, ch->cfg.calibration_gain);
-> > +		dev_dbg(dev, "gain for channel %lu after full-scale calibration: 0x%x\n",
-> > +			chan->address, ch->cfg.calibration_gain);
-> >  	}
-> >  
-> >  	return 0;
-> > @@ -924,7 +924,7 @@ static int ad7124_set_syscalib_mode(struct iio_dev *indio_dev,
-> >  {
-> >  	struct ad7124_state *st = iio_priv(indio_dev);
-> >  
-> > -	st->channels[chan->channel].syscalib_mode = mode;
-> > +	st->channels[chan->address].syscalib_mode = mode;
-> >  
-> >  	return 0;
-> >  }
-> > @@ -934,7 +934,7 @@ static int ad7124_get_syscalib_mode(struct iio_dev *indio_dev,
-> >  {
-> >  	struct ad7124_state *st = iio_priv(indio_dev);
-> >  
-> > -	return st->channels[chan->channel].syscalib_mode;
-> > +	return st->channels[chan->address].syscalib_mode;
-> >  }
-> >  
-> >  static const struct iio_enum ad7124_syscalib_mode_enum = {
-> > 
-> > ---
-> > base-commit: e4d9886ad25adae72f38f2b12f41649b101581ae
-> > change-id: 20250726-iio-adc-ad7124-fix-channel-lookup-in-syscalib-e28c933ead2a
-> > 
-> > Best regards,
+On 7/11/25 19:36, James Morse wrote:
+> To make a decision about whether to expose an mpam class as
+> a resctrl resource we need to know its overall supported
+> features and properties.
 > 
+> Once we've probed all the resources, we can walk the tree
+> and produced overall values by merging the bitmaps. This
+nit: s/produced/produce/
+> eliminates features that are only supported by some MSC
+> that make up a component or class.
+> 
+> If bitmap properties are mismatched within a component we
+> cannot support the mismatched feature.
+> 
+> Care has to be taken as vMSC may hold mismatched RIS.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>   drivers/platform/arm64/mpam/mpam_devices.c  | 215 ++++++++++++++++++++
+>   drivers/platform/arm64/mpam/mpam_internal.h |   8 +
+>   2 files changed, 223 insertions(+)
+> 
+> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
+> index 61911831ab39..7b042a35405a 100644
+> --- a/drivers/platform/arm64/mpam/mpam_devices.c
+> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
+> @@ -1186,8 +1186,223 @@ static struct platform_driver mpam_msc_driver = {
+>   	.remove = mpam_msc_drv_remove,
+>   };
+>   
+> +/* Any of these features mean the BWA_WD field is valid. */
+> +static bool mpam_has_bwa_wd_feature(struct mpam_props *props)
+> +{
+> +	if (mpam_has_feature(mpam_feat_mbw_min, props))
+> +		return true;
+> +	if (mpam_has_feature(mpam_feat_mbw_max, props))
+> +		return true;
+> +	if (mpam_has_feature(mpam_feat_mbw_prop, props))
+> +		return true;
+> +	return false;
+> +}
+> +
+> +#define MISMATCHED_HELPER(parent, child, helper, field, alias)		\
+> +	helper(parent) &&						\
+> +	((helper(child) && (parent)->field != (child)->field) ||	\
+> +	 (!helper(child) && !(alias)))
+> +
+> +#define MISMATCHED_FEAT(parent, child, feat, field, alias)		     \
+> +	mpam_has_feature((feat), (parent)) &&				     \
+> +	((mpam_has_feature((feat), (child)) && (parent)->field != (child)->field) || \
+> +	 (!mpam_has_feature((feat), (child)) && !(alias)))
+> +
+> +#define CAN_MERGE_FEAT(parent, child, feat, alias)			\
+> +	(alias) && !mpam_has_feature((feat), (parent)) &&		\
+> +	mpam_has_feature((feat), (child))
+> +
+> +/*
+> + * Combime two props fields.
+nit: s/combime/combine/
+> + * If this is for controls that alias the same resource, it is safe to just
+> + * copy the values over. If two aliasing controls implement the same scheme
+> + * a safe value must be picked.
+> + * For non-aliasing controls, these control different resources, and the
+> + * resulting safe value must be compatible with both. When merging values in
+> + * the tree, all the aliasing resources must be handled first.
+> + * On mismatch, parent is modified.
+> + */
+> +static void __props_mismatch(struct mpam_props *parent,
+> +			     struct mpam_props *child, bool alias)
+> +{
+> +	if (CAN_MERGE_FEAT(parent, child, mpam_feat_cpor_part, alias)) {
+> +		parent->cpbm_wd = child->cpbm_wd;
+> +	} else if (MISMATCHED_FEAT(parent, child, mpam_feat_cpor_part,
+> +				   cpbm_wd, alias)) {
+> +		pr_debug("%s cleared cpor_part\n", __func__);
+> +		mpam_clear_feature(mpam_feat_cpor_part, &parent->features);
+> +		parent->cpbm_wd = 0;
+> +	}
+> +
+> +	if (CAN_MERGE_FEAT(parent, child, mpam_feat_mbw_part, alias)) {
+> +		parent->mbw_pbm_bits = child->mbw_pbm_bits;
+> +	} else if (MISMATCHED_FEAT(parent, child, mpam_feat_mbw_part,
+> +				   mbw_pbm_bits, alias)) {
+> +		pr_debug("%s cleared mbw_part\n", __func__);
+> +		mpam_clear_feature(mpam_feat_mbw_part, &parent->features);
+> +		parent->mbw_pbm_bits = 0;
+> +	}
+> +
+> +	/* bwa_wd is a count of bits, fewer bits means less precision */
+> +	if (alias && !mpam_has_bwa_wd_feature(parent) && mpam_has_bwa_wd_feature(child)) {
+> +		parent->bwa_wd = child->bwa_wd;
+> +	} else if (MISMATCHED_HELPER(parent, child, mpam_has_bwa_wd_feature,
+> +				     bwa_wd, alias)) {
+> +		pr_debug("%s took the min bwa_wd\n", __func__);
+> +		parent->bwa_wd = min(parent->bwa_wd, child->bwa_wd);
+> +	}
+> +
+> +	/* For num properties, take the minimum */
+> +	if (CAN_MERGE_FEAT(parent, child, mpam_feat_msmon_csu, alias)) {
+> +		parent->num_csu_mon = child->num_csu_mon;
+> +	} else if (MISMATCHED_FEAT(parent, child, mpam_feat_msmon_csu,
+> +				   num_csu_mon, alias)) {
+> +		pr_debug("%s took the min num_csu_mon\n", __func__);
+> +		parent->num_csu_mon = min(parent->num_csu_mon, child->num_csu_mon);
+> +	}
+> +
+> +	if (CAN_MERGE_FEAT(parent, child, mpam_feat_msmon_mbwu, alias)) {
+> +		parent->num_mbwu_mon = child->num_mbwu_mon;
+> +	} else if (MISMATCHED_FEAT(parent, child, mpam_feat_msmon_mbwu,
+> +				   num_mbwu_mon, alias)) {
+> +		pr_debug("%s took the min num_mbwu_mon\n", __func__);
+> +		parent->num_mbwu_mon = min(parent->num_mbwu_mon, child->num_mbwu_mon);
+> +	}
+> +
+> +	if (alias) {
+> +		/* Merge features for aliased resources */
+> +		parent->features |= child->features;
+> +	} else {
+> +		/* Clear missing features for non aliasing */
+> +		parent->features &= child->features;
+> +	}
+> +}
+> +
+> +/*
+> + * If a vmsc doesn't match class feature/configuration, do the right thing(tm).
+> + * For 'num' properties we can just take the minimum.
+> + * For properties where the mismatched unused bits would make a difference, we
+> + * nobble the class feature, as we can't configure all the resources.
+> + * e.g. The L3 cache is composed of two resources with 13 and 17 portion
+> + * bitmaps respectively.
+> + */
+> +static void
+> +__class_props_mismatch(struct mpam_class *class, struct mpam_vmsc *vmsc)
+> +{
+> +	struct mpam_props *cprops = &class->props;
+> +	struct mpam_props *vprops = &vmsc->props;
+> +
+> +	lockdep_assert_held(&mpam_list_lock); /* we modify class */
+> +
+> +	pr_debug("%s: Merging features for class:0x%lx &= vmsc:0x%lx\n",
+> +		 dev_name(&vmsc->msc->pdev->dev),
+> +		 (long)cprops->features, (long)vprops->features);
+> +
+> +	/* Take the safe value for any common features */
+> +	__props_mismatch(cprops, vprops, false);
+> +}
+> +
+> +static void
+> +__vmsc_props_mismatch(struct mpam_vmsc *vmsc, struct mpam_msc_ris *ris)
+> +{
+> +	struct mpam_props *rprops = &ris->props;
+> +	struct mpam_props *vprops = &vmsc->props;
+> +
+> +	lockdep_assert_held(&mpam_list_lock); /* we modify vmsc */
+> +
+> +	pr_debug("%s: Merging features for vmsc:0x%lx |= ris:0x%lx\n",
+> +		 dev_name(&vmsc->msc->pdev->dev),
+> +		 (long)vprops->features, (long)rprops->features);
+> +
+> +	/*
+> +	 * Merge mismatched features - Copy any features that aren't common,
+> +	 * but take the safe value for any common features.
+> +	 */
+> +	__props_mismatch(vprops, rprops, true);
+> +}
+> +
+> +/*
+> + * Copy the first component's first vMSC's properties and features to the
+> + * class. __class_props_mismatch() will remove conflicts.
+> + * It is not possible to have a class with no components, or a component with
+> + * no resources. The vMSC properties have already been built.
+> + */
+> +static void mpam_enable_init_class_features(struct mpam_class *class)
+> +{
+> +	struct mpam_vmsc *vmsc;
+> +	struct mpam_component *comp;
+> +
+> +	comp = list_first_entry_or_null(&class->components,
+> +					struct mpam_component, class_list);
+> +	if (WARN_ON(!comp))
+> +		return;
+> +
+> +	vmsc = list_first_entry_or_null(&comp->vmsc,
+> +					struct mpam_vmsc, comp_list);
+> +	if (WARN_ON(!vmsc))
+> +		return;
+> +
+> +	class->props = vmsc->props;
+> +}
+> +
+> +static void mpam_enable_merge_vmsc_features(struct mpam_component *comp)
+> +{
+> +	struct mpam_vmsc *vmsc;
+> +	struct mpam_msc_ris *ris;
+> +	struct mpam_class *class = comp->class;
+> +
+> +	list_for_each_entry(vmsc, &comp->vmsc, comp_list) {
+> +		list_for_each_entry(ris, &vmsc->ris, vmsc_list) {
+> +			__vmsc_props_mismatch(vmsc, ris);
+> +			class->nrdy_usec = max(class->nrdy_usec,
+> +					       vmsc->msc->nrdy_usec);
+> +		}
+> +	}
+> +}
+> +
+> +static void mpam_enable_merge_class_features(struct mpam_component *comp)
+> +{
+> +	struct mpam_vmsc *vmsc;
+> +	struct mpam_class *class = comp->class;
+> +
+> +	list_for_each_entry(vmsc, &comp->vmsc, comp_list)
+> +		__class_props_mismatch(class, vmsc);
+> +}
+> +
+> +/*
+> + * Merge all the common resource features into class.
+> + * vmsc features are bitwise-or'd together, this must be done first.
+> + * Next the class features are the bitwise-and of all the vmsc features.
+> + * Other features are the min/max as appropriate.
+> + *
+> + * To avoid walking the whole tree twice, the class->nrdy_usec property is
+> + * updated when working with the vmsc as it is a max(), and doesn't need
+> + * initialising first.
+> + */
+> +static void mpam_enable_merge_features(struct list_head *all_classes_list)
+> +{
+> +	struct mpam_class *class;
+> +	struct mpam_component *comp;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	list_for_each_entry(class, all_classes_list, classes_list) {
+> +		list_for_each_entry(comp, &class->components, class_list)
+> +			mpam_enable_merge_vmsc_features(comp);
+> +
+> +		mpam_enable_init_class_features(class);
+> +
+> +		list_for_each_entry(comp, &class->components, class_list)
+> +			mpam_enable_merge_class_features(comp);
+> +	}
+> +}
+> +
+>   static void mpam_enable_once(void)
+>   {
+> +	mutex_lock(&mpam_list_lock);
+> +	mpam_enable_merge_features(&mpam_classes);
+> +	mutex_unlock(&mpam_list_lock);
+> +
+>   	mutex_lock(&mpam_cpuhp_state_lock);
+>   	cpuhp_remove_state(mpam_cpuhp_state);
+>   	mpam_cpuhp_state = 0;
+> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
+> index ae6fd1f62cc4..be56234b84b4 100644
+> --- a/drivers/platform/arm64/mpam/mpam_internal.h
+> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
+> @@ -185,12 +185,20 @@ static inline void mpam_set_feature(enum mpam_device_features feat,
+>   	props->features |= (1 << feat);
+>   }
+>   
+> +static inline void mpam_clear_feature(enum mpam_device_features feat,
+> +				      mpam_features_t *supported)
+> +{
+> +	*supported &= ~(1 << feat);
+> +}
+> +
+>   struct mpam_class {
+>   	/* mpam_components in this class */
+>   	struct list_head	components;
+>   
+>   	cpumask_t		affinity;
+>   
+> +	struct mpam_props	props;
+> +	u32			nrdy_usec;
+>   	u8			level;
+>   	enum mpam_class_types	type;
+>   
+
+
+Thanks,
+
+Ben
+
 
