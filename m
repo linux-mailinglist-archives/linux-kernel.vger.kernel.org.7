@@ -1,109 +1,243 @@
-Return-Path: <linux-kernel+bounces-748058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF7AB13C07
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:52:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF80B13C16
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3630F4E0073
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62719189E15B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855CA26E714;
-	Mon, 28 Jul 2025 13:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D603826B76C;
+	Mon, 28 Jul 2025 13:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4sRG9pD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VG35nO+2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E207A26B75A;
-	Mon, 28 Jul 2025 13:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27D9266EFA;
+	Mon, 28 Jul 2025 13:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753710660; cv=none; b=oMiZRLHVdlc1UHpfFNq/9yNk2WE7bUQ16Oy5f/9NQxjRMGGAGK8hRHLm3cPCKatkK+2wAWj/zpv+tdKK51E1lqfXQJeY0/2WG3X+UHkZJqOi2fu2Xb1kgesJToIRCZiGAKvb/Y38hyGm9nkWjKB45mYyWbAL2M51qHg8A6Q8V98=
+	t=1753710755; cv=none; b=Ofe+8wZv2U8Eac3XazPe5Jl/PvkwVLMClCTm9IeXnNszHCm4cPQqfuWmFbyHL0OViy0lVLQ5etPsVgN4uCLDPb2B27h5Vj6tezStEu1KuYYhcUGIxB14r1eNKOhxkp8RwS4pchJx3/qIwgSzMX87fS5cJLSw8bWVbJDaCkDFvuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753710660; c=relaxed/simple;
-	bh=4pbNI0SICMOu4Zo8/H01bCrOP5bo1xtHTwzmH+cI7gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADg60F9jpDIYd9S+itQPvNOwtey4zrbsdxkvlBpiaDMPFH4qwBH6eHXQu/hkgZ/DOHF3u1eIRbwjal9M470PChxcFDtfI+r2mSyuEkL6Zbd+X7E4q3DrJZAKI54sP0hCKfXg2DCg6eFpkm+BEd3mP0/2FFJJEdg/SK0Z7OVlFHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4sRG9pD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88FA1C4CEF7;
-	Mon, 28 Jul 2025 13:50:57 +0000 (UTC)
+	s=arc-20240116; t=1753710755; c=relaxed/simple;
+	bh=zkVKVis6HtjW872Oo0WjCeFxIvs5TPmzZSBo1W+o4ic=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T9ct5SCiM3nBxNP8NVb7xNFIAkAd2sy2R6iftEQm/W9XL/JdGo0UHce2VDzJereVN/R2fu6TBqOEg5Wf1uS0hSBFG93HI+mvVU8pUYdGsBymyFwYSotc0uYmVs2J/OMoYkBtgmOvOmLqzr0pklWdeB+k9inzQ2hES0DYNz0ebag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VG35nO+2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59A0C4CEE7;
+	Mon, 28 Jul 2025 13:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753710659;
-	bh=4pbNI0SICMOu4Zo8/H01bCrOP5bo1xtHTwzmH+cI7gw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A4sRG9pDsDloV+pwcP2poqgvO57NZiupR72zuDifjiJChNhhqZ0qqVELzK4I+4qLj
-	 1F7Hy7eIkCBdSb2v7hg/0ibWSEPERSEai4RZpB4RETFGpLXVxoaE1vky7XNQzP5gAJ
-	 efltHWmgHYpvs+Brpf5JP6Q1X4CvjQtuBz+XrtzT/2VLlJNAbZIWj9zYB1jpWEhgzj
-	 EX/Y0dzwuUTTCo+t7rd85f8JNNoEc/FoBUrhfyvB8RJs6fFgLtFopl0dnnrratgQsj
-	 LOnJC2OqnlqSnunqL+41ExhwkHCr3ro07iU/SoWwO0PtOPF8b3AzTPrFgQnatDs4Ps
-	 JVZLy3KYXea6A==
-Date: Mon, 28 Jul 2025 14:50:55 +0100
-From: Simon Horman <horms@kernel.org>
-To: Charalampos Mitrodimas <charmitro@posteo.net>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com
-Subject: Re: [PATCH net v2] net: ipv6: fix buffer overflow in AH output
-Message-ID: <20250728135055.GA1877762@horms.kernel.org>
-References: <20250727-ah6-buffer-overflow-v2-1-c7b5f0984565@posteo.net>
- <20250728113656.GA1367887@horms.kernel.org>
- <871pq05w74.fsf@posteo.net>
+	s=k20201202; t=1753710754;
+	bh=zkVKVis6HtjW872Oo0WjCeFxIvs5TPmzZSBo1W+o4ic=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VG35nO+2d+/un4WbUwCXEg3hfG6UFg/4vccdyCBui9FHuySJLRR1WlNng2oeS4Uzu
+	 zhcVa+OZMJftGoo4oglYzdYsIOKfdrxNuotOrC2WrT4EXdvd32/AHidDPWIIyvykxW
+	 v+7Bui1zb2m4C55IL9zRNr0mQkLJOwD2JkMRjzeUXCwbT1HCmUICP4wK7ZSaNsZUe1
+	 kC4NMF5XJDn7PbpjLpamSUXV1JtSMOq2a+A5I67E9zE3PE5hNyp+lou2J2K16gb1Ng
+	 UKJ+lOH68COHOxX+ELh4YDcTlqTvsm5YA0mYAcmGwQHEdYWnfn8962NYw+kLJW+LYs
+	 KEtxquiXzirrQ==
+From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+To: linux-coco@lists.linux.dev,
+	kvmarm@lists.linux.dev
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aik@amd.com,
+	lukas@wunner.de,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Subject: [RFC PATCH v1 00/38] ARM CCA Device Assignment support
+Date: Mon, 28 Jul 2025 19:21:37 +0530
+Message-ID: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871pq05w74.fsf@posteo.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 28, 2025 at 12:36:18PM +0000, Charalampos Mitrodimas wrote:
-> Simon Horman <horms@kernel.org> writes:
-> 
-> > On Sun, Jul 27, 2025 at 09:51:40PM +0000, Charalampos Mitrodimas wrote:
+This patch series implements support for Device Assignment in the ARM CCA
+architecture. The code changes are based on Alp12 specification published here
+[1].
 
-...
+The code builds on the TSM framework patches posted at [2]. We add extension to
+that framework so that TSM is now used in both the host and the guest.
 
-> >> Changes in v2:
-> >> - Link correct syzbot dashboard link in patch tags
-> >> - Link to v1: https://lore.kernel.org/r/20250727-ah6-buffer-overflow-v1-1-1f3e11fa98db@posteo.net
-> >
-> > You posted two versions of this patch within a few minutes.
-> > Please don't do that. Rather, please wait 24h to allow review to occur.
-> 
-> I'm aware. The reason for posting the second version so soon was because
-> I did not want people to get confused about which syzbot report this
-> solves, as the one in v1 was the wrong.
+A DA workflow can be summarized as below:
 
-Understood. FWIIW, I think it would have been better
-to respond to v1 with corrected syzbot information.
+Host:
+step 1.
+echo ${DEVICE} > /sys/bus/pci/devices/${DEVICE}/driver/unbind
+echo vfio-pci > /sys/bus/pci/devices/${DEVICE}/driver_override
+echo ${DEVICE} > /sys/bus/pci/drivers_probe
 
-...
+step 2.
+echo 1 > /sys/bus/pci/devices/$DEVICE/tsm/connect
 
-> This is much better actually, thanks a lot. I tested it with the syzbot
-> reproducer and no issues were found.
+Now in the guest we follow the below steps
 
-Excellent.
+step 1:
+echo ${DEVICE} > /sys/bus/pci/devices/${DEVICE}/driver/unbind
 
-> > I would also suggest adding a helper (or two), to avoid (repeatedly) open
-> > coding whatever approach is taken.
->
-> I'll do that and go on with a patch targetting ipsec-next. Is it okay to
-> keep the the versioning or it should a completely new patch?
+step 2: Move the device to TDISP LOCK state
+echo 1 > /sys/bus/pci/devices/${DEVICE}/tsm/lock
 
-I think that keeping the versioning is fine, although it is up to you.
-If you do so, please do include a link to earlier versions
-(as you did in this patch) as I assume the subject will change.
+step 3: Moves the device to TDISP RUN state
+echo 1 > /sys/bus/pci/devices/${DEVICE}/tsm/accept
+
+step 4: Load the driver again.
+echo ${DEVICE} > /sys/bus/pci/drivers_probe
+
+I'm currently working against TSM v3, as TSM v4 lacks the necessary
+callbacks—bind, unbind, and guest_req—required for guest interactions.
+
+The implementation also makes use of RHI interfaces that fall outside the
+current RHI specification [5]. Once the spec is finalized, the code will be aligned
+accordingly.
+
+For now, I’ve retained validate_mmio and vdev_req exit handling within KVM. This
+will transition to a guest_req-based mechanism once the specification is
+updated.
+
+At that point, all device assignment (DA)-specific VM exits will exit directly
+to the VMM, and will use the guest_req ioctl to handle exit reasons. As part of
+this change, the handlers realm_exit_vdev_req_handler,
+realm_exit_vdev_comm_handler, and realm_exit_dev_mem_map_handler will be
+removed.
+
+Full patchset for the kernel and kvmtool can be found at [3] and [4]
+
+[1] https://developer.arm.com/-/cdn-downloads/permalink/Architectures/Armv9/DEN0137_1.1-alp12.zip
+
+[2] https://lore.kernel.org/all/20250516054732.2055093-1-dan.j.williams@intel.com
+
+[3] https://git.gitlab.arm.com/linux-arm/linux-cca.git cca/tdisp-upstream-post-v1
+[4] https://git.gitlab.arm.com/linux-arm/kvmtool-cca.git cca/tdisp-upstream-post-v1
+[5] https://developer.arm.com/documentation/den0148/latest/
+
+
+Aneesh Kumar K.V (Arm) (35):
+  tsm: Add tsm_bind/unbind helpers
+  tsm: Move tsm core outside the host directory
+  tsm: Move dsm_dev from pci_tdi to pci_tsm
+  tsm: Support DMA Allocation from private memory
+  tsm: Don't overload connect
+  iommufd: Add and option to request for bar mapping with
+    IORESOURCE_EXCLUSIVE
+  iommufd/viommu: Add support to associate viommu with kvm instance
+  iommufd/tsm: Add tsm_op iommufd ioctls
+  iommufd/vdevice: Add TSM Guest request uAPI
+  iommufd/vdevice: Add TSM map ioctl
+  KVM: arm64: CCA: register host tsm platform device
+  coco: host: arm64: CCA host platform device driver
+  coco: host: arm64: Create a PDEV with rmm
+  coco: host: arm64: Device communication support
+  coco: host: arm64: Stop and destroy the physical device
+  coco: host: arm64: set_pubkey support
+  coco: host: arm64: Add support for creating a virtual device
+  coco: host: arm64: Add support for virtual device communication
+  coco: host: arm64: Stop and destroy virtual device
+  coco: guest: arm64: Update arm CCA guest driver
+  arm64: CCA: Register guest tsm callback
+  cca: guest: arm64: Realm device lock support
+  KVM: arm64: Add exit handler related to device assignment
+  coco: host: arm64: add RSI_RDEV_GET_INSTANCE_ID related exit handler
+  coco: host: arm64: Add support for device communication exit handler
+  coco: guest: arm64: Add support for collecting interface reports
+  coco: host: arm64: Add support for realm host interface (RHI)
+  coco: guest: arm64: Add support for fetching interface report and
+    certificate chain from host
+  coco: guest: arm64: Add support for guest initiated TDI bind/unbind
+  KVM: arm64: CCA: handle dev mem map/unmap
+  coco: guest: arm64: Validate mmio range found in the interface report
+  coco: guest: arm64: Add Realm device start and stop support
+  KVM: arm64: CCA: enable DA in realm create parameters
+  coco: guest: arm64: Add support for fetching device measurements
+  coco: guest: arm64: Add support for fetching device info
+
+Lukas Wunner (3):
+  X.509: Make certificate parser public
+  X.509: Parse Subject Alternative Name in certificates
+  X.509: Move certificate length retrieval into new helper
+
+ arch/arm64/include/asm/kvm_rme.h              |   3 +
+ arch/arm64/include/asm/mem_encrypt.h          |   6 +-
+ arch/arm64/include/asm/rhi.h                  |  39 +
+ arch/arm64/include/asm/rmi_cmds.h             | 173 ++++
+ arch/arm64/include/asm/rmi_smc.h              | 210 ++++-
+ arch/arm64/include/asm/rsi.h                  |   5 +-
+ arch/arm64/include/asm/rsi_cmds.h             | 129 +++
+ arch/arm64/include/asm/rsi_smc.h              |  60 ++
+ arch/arm64/kernel/Makefile                    |   2 +-
+ arch/arm64/kernel/rhi.c                       |  35 +
+ arch/arm64/kernel/rsi.c                       |  26 +-
+ arch/arm64/kvm/mmu.c                          |  45 +
+ arch/arm64/kvm/rme-exit.c                     |  87 ++
+ arch/arm64/kvm/rme.c                          | 208 ++++-
+ arch/arm64/mm/mem_encrypt.c                   |  10 +
+ crypto/asymmetric_keys/x509_cert_parser.c     |   9 +
+ crypto/asymmetric_keys/x509_loader.c          |  38 +-
+ crypto/asymmetric_keys/x509_parser.h          |  40 +-
+ drivers/iommu/iommufd/device.c                |  54 ++
+ drivers/iommu/iommufd/iommufd_private.h       |   7 +
+ drivers/iommu/iommufd/main.c                  |  13 +
+ drivers/iommu/iommufd/viommu.c                | 178 +++-
+ drivers/pci/tsm.c                             | 229 ++++-
+ drivers/vfio/pci/vfio_pci_core.c              |  20 +-
+ drivers/virt/coco/Kconfig                     |   5 +-
+ drivers/virt/coco/Makefile                    |   7 +-
+ drivers/virt/coco/arm-cca-guest/Kconfig       |  10 +-
+ drivers/virt/coco/arm-cca-guest/Makefile      |   3 +
+ .../{arm-cca-guest.c => arm-cca.c}            | 175 +++-
+ drivers/virt/coco/arm-cca-guest/rsi-da.c      | 576 ++++++++++++
+ drivers/virt/coco/arm-cca-guest/rsi-da.h      |  73 ++
+ drivers/virt/coco/arm-cca-host/Kconfig        |  17 +
+ drivers/virt/coco/arm-cca-host/Makefile       |   5 +
+ drivers/virt/coco/arm-cca-host/arm-cca.c      | 384 ++++++++
+ drivers/virt/coco/arm-cca-host/rmm-da.c       | 857 ++++++++++++++++++
+ drivers/virt/coco/arm-cca-host/rmm-da.h       | 108 +++
+ drivers/virt/coco/host/Kconfig                |   6 -
+ drivers/virt/coco/host/Makefile               |   6 -
+ drivers/virt/coco/{host => }/tsm-core.c       |  27 +
+ include/keys/asymmetric-type.h                |   2 +
+ include/keys/x509-parser.h                    |  55 ++
+ include/linux/device.h                        |   1 +
+ include/linux/iommufd.h                       |   4 +
+ include/linux/kvm_host.h                      |   1 +
+ include/linux/pci-tsm.h                       |  37 +-
+ include/linux/swiotlb.h                       |   4 +
+ include/linux/tsm.h                           |  29 +
+ include/uapi/linux/iommufd.h                  |  69 ++
+ 48 files changed, 3887 insertions(+), 200 deletions(-)
+ create mode 100644 arch/arm64/include/asm/rhi.h
+ create mode 100644 arch/arm64/kernel/rhi.c
+ rename drivers/virt/coco/arm-cca-guest/{arm-cca-guest.c => arm-cca.c} (62%)
+ create mode 100644 drivers/virt/coco/arm-cca-guest/rsi-da.c
+ create mode 100644 drivers/virt/coco/arm-cca-guest/rsi-da.h
+ create mode 100644 drivers/virt/coco/arm-cca-host/Kconfig
+ create mode 100644 drivers/virt/coco/arm-cca-host/Makefile
+ create mode 100644 drivers/virt/coco/arm-cca-host/arm-cca.c
+ create mode 100644 drivers/virt/coco/arm-cca-host/rmm-da.c
+ create mode 100644 drivers/virt/coco/arm-cca-host/rmm-da.h
+ delete mode 100644 drivers/virt/coco/host/Kconfig
+ delete mode 100644 drivers/virt/coco/host/Makefile
+ rename drivers/virt/coco/{host => }/tsm-core.c (85%)
+ create mode 100644 include/keys/x509-parser.h
 
 -- 
-pw-bot: cr
+2.43.0
+
 
