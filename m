@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-748457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B328B1417D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:55:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FAEB1417A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E79367AED0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:53:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 982E618919DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFB927C17E;
-	Mon, 28 Jul 2025 17:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B3827B51C;
+	Mon, 28 Jul 2025 17:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GORkTaXv"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c7AWUwvF"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BB927780E
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D364279783
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753725224; cv=none; b=sFlfpO3t9UN7zim1w5Onk/5t31Xnhm1LvGbUBaQvPCttP1dg6zMrrGubOK5HSmRwEaGqiEgL8unB7cpBdGp1xGXboGEP1hoC6vhZIM0krwZMV+l0jqpYesD4H/iCGmt1ALN/gNgW+iQPIaMzbvCjG0FKTm5hWc9JWfQ2P0LpcOw=
+	t=1753725224; cv=none; b=qe5bpASn2Wn1I04nykAVp++iEcEztcTpe4fLdsYKZ3EgonUP49E3fZ2MH4mZZ8W1st/RZlnNDAGnuOfqc1Y/Lqcpy1DUZ42rGN01BqoOr7PJcKqnGIlhPi7uf7Zm3j2yoPVC/OussCc80vVrRTjnqaWE7Qqj96+ecIzoaQvEH94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753725224; c=relaxed/simple;
-	bh=hdFdVnXWmHHAnCtmElmK1omGOKbz9U/9DiC1wMK96bE=;
+	bh=iN8UDiWtSG+cvaQC+7TzrDQjgMSjDkVsvgAbx6R6bzk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=m6dJFQrN9bkPBexdmOXM17/qpWFQyrQcShCLNN8y599nZXThw0YLfTAkNbZLPaxEQ8Fk+V5KAiAfqxUBT+doUkeQdxiiw51qNGzGmolDdl4rg2K6X5FhXyMFIR4+bH3aE8RFthZQHrGBqte/rsjh8lVU3iCEJTHLDbCnAjPiR5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GORkTaXv; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=t/zGxZLm2YGeTRwBFT1mwJLkIIts4nBzq8xFOMbMZfrPyPqzaD6tgo2HbSdML4ocLTrYdWX2lVGqGvvSNKbgixteTS6hXjH2kFT+CmtpjLVXW96aDwGnixcUcmrohUkO4xUljdk+JHcfiylcSytdYLJMbpUZ1Eo1Z5chsCTixFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c7AWUwvF; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b604541741so3108163f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:53:40 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4538f375e86so36588005e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:53:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20230601; t=1753725219; x=1754330019; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkzslG+EoAj657pVViZ0KqcF9Wef8uH7jIrIUPDZB0Q=;
-        b=GORkTaXvbbMu6egA0yPZl5I+5NYinA1pTrld7gGwfcPTr93oTaJ5QuigoQiJodZz0W
-         2UcGcbGtwsiYG/9H3sTiovCkb0eHMOMAaGhpjQG1zkdNCBNym4tqmhVvaB/cD+8N50ku
-         0r1OA+SkfWeoZLb/XEIM61zFOeKRWVdMrjdx5Hc0nxO89NtxyiU8LDaQxTjfE8TKQjhl
-         ajkb4fDwHkNk4gZiGSIZ9TfQJeGK83Beq8xJajJv8Nc61Q8WRBmDRssp3Hwp3YQ4oLFX
-         lDrCXPp2JdN0K293lmHg+CvIUv8ZEKPkAqxuWZGdU2vuHinXkNS6kg6dHRP11Ds0I6aK
-         4CWw==
+        bh=evFXKgAxCDSoFJrfdZvMg8MZGEd3jtNNqfoUuy8K9/0=;
+        b=c7AWUwvFP9XegadSwMcTkNtpjNHGO4CNtK9zdJFFdS/F/ZXQHCLH/vtlCDNiQ4WOhH
+         h3/thqk3soZiWdL62dH7Kpv9HPhhFptpNnKZ7va0yKi67k01qZZ/8n9ASptydQSPDgDF
+         dZhZCIFkPDwuG7vUVwCUl1XQ/yrdagN55V+pH2E/cSub+BxQVXpmIL3KAbvqM83iE4bu
+         EjdSeHNmpK0YFsyI6Ar+BR7mbxXV8KCWP1c4W0xdueFhxs5FTcBxpePmfSgr6jL+kBY8
+         CrcDPXJ2Ik848QOa93Cb9v0bpxWatJrftuQWo3iXr+zRuv5vfJmUBNXvHS+sdriYroD+
+         qMwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1753725219; x=1754330019;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkzslG+EoAj657pVViZ0KqcF9Wef8uH7jIrIUPDZB0Q=;
-        b=kQowwBdOAeDI0S06prgkRIsi0RnCrKG+sBIcsf9CEvhwtBpIzy+MFvW/rrjk4kPn4f
-         lpqYDWDoVhDOlhV1HZjmVoBYRteKkNpgfEy+VRhF6eIZsyYttvnJxb+H9aTmKbYmYWTc
-         Ds17HQf0IP4ypk0Q/toLPb67GboAGGr3v1msCV27dyiBm8QR2315WNpWjyai8bcEEv3A
-         ml8U+MNM8lC3GlgT97AFkw/QZVvr67tMOrm14AXIRP1l/tdL1rx0lfO6cmrvgGLcj8Pv
-         XOqUxjFex/3GomVOI3sOULYBo3YYPH2Oc77KjMdz9WdmWT/ZuxLHAwDSyMGhI3/roVvN
-         /2Fg==
-X-Gm-Message-State: AOJu0YzlJ91vnO77ppl2DYbJVksD+Dr2dY9WZGX+PwDYlO48MubnNl1j
-	HL3AcC/9Ak3DXicXGAKmt0w9Qn66GBbkZUBbjuWo+mgP2Rdjac0WXlmLI0V40pF+EONePK7wgQd
-	KVcB/+dJz7LHMrzVpZ9CJD5PCV/hIHVv+EDSvjKiA7FOKiGJDL4/Ry8UHtBtqP1v8v/2U1YolKj
-	nogVI32ab1T4WwvTvZxmma3BIhZOK/8O3AbhHz//FFjJ2T94aYexHfNgM=
-X-Google-Smtp-Source: AGHT+IE5NASS7Rnx/u2nUpf4AaA6N49oHp8BNhnh/LYQOEbhaNPMrBAnWkAEqxZtU+ZBr9B4KuzrThxEPyukwQ==
-X-Received: from wrvi14.prod.google.com ([2002:a5d:558e:0:b0:3b7:86b6:8da6])
+        bh=evFXKgAxCDSoFJrfdZvMg8MZGEd3jtNNqfoUuy8K9/0=;
+        b=NG4crGpchQhC/Dtto+siQ4TiJfFC8jPfIgo6wpLmOEYnSp6znOQpKslW43cxQNB7ZE
+         aG6JHpgH23zdxVoXzj6IXMmkE53rp6MHCgXCD4qMxTgbJ4n+LzV6VtNG9DRydTGIIEcE
+         IqUl/VfyiCmKqDi8+tavBUw5KtSECDT2iCZyiXqPVTT9fY1HBXKII0XcDVw7qEbCcUBf
+         nhM00aKLJcEwHCnz8kmGz2OE0v+h+00KRfzl/OR7eH5HygHhLLbFL0//EFVH8K0ZE0Vy
+         vkkCMG7bBuNe3SZuM5/BmohIG2AnZJi70qBTsQl1UbimGFa9PE9PohyQWYBc/wT548We
+         73Mw==
+X-Gm-Message-State: AOJu0YzMI7Aq3+hfrH75Ru3GOedwNIcyMyvJHwuExoBske1xW/cTnmKj
+	jm6yJ9IrsEtZgRKJCXDNho/NrzCF2kcsG8u1t3H8svNMJOcEgqLzv8JgCHbip+ji8NIb9J6D98P
+	r0EhRWBqXLg5ha+gQqTahjMm33Gb897MFyaPNmNwNW24V2bnprsP4iewncu/K8ZqWQ9J3ozciG0
+	tJ2FM+ph6/rOT7aEuMRYORkUBFosvhsPl/8hcsi6HAa6pibSjonCV88C0=
+X-Google-Smtp-Source: AGHT+IG+0YUT5evXVnzrsmZ/u5tA/GE8rdYTVIETUaQ+H7lNGrhgDPgErstj87+LdJlLnheF6/yjXPJPX/pn2Q==
+X-Received: from wmsp29.prod.google.com ([2002:a05:600c:1d9d:b0:456:3aa2:2152])
  (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5d89:0:b0:3a4:f8e9:cef2 with SMTP id ffacd0b85a97d-3b776667125mr8438950f8f.36.1753725218563;
- Mon, 28 Jul 2025 10:53:38 -0700 (PDT)
-Date: Mon, 28 Jul 2025 17:52:55 +0000
+ 2002:a05:600c:3484:b0:43d:fa59:af97 with SMTP id 5b1f17b1804b1-4587666ae80mr93314205e9.32.1753725219574;
+ Mon, 28 Jul 2025 10:53:39 -0700 (PDT)
+Date: Mon, 28 Jul 2025 17:52:56 +0000
 In-Reply-To: <20250728175316.3706196-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250728175316.3706196-1-smostafa@google.com>
 X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250728175316.3706196-9-smostafa@google.com>
-Subject: [PATCH v3 08/29] iommu/arm-smmu-v3: Move some functions to arm-smmu-v3-common.c
+Message-ID: <20250728175316.3706196-10-smostafa@google.com>
+Subject: [PATCH v3 09/29] iommu/arm-smmu-v3: Move queue and table allocation
+ to arm-smmu-v3-common.c
 From: Mostafa Saleh <smostafa@google.com>
 To: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, 
 	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
@@ -85,848 +86,458 @@ Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
 	praan@google.com, Mostafa Saleh <smostafa@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Move more code to arm-smmu-v3-common.c, so that the KVM driver can reuse
+it.
 
-Move functions that can be shared between normal and KVM drivers to
-arm-smmu-v3-common.c
-
-Only straightforward moves here. More subtle factoring will be done in
-then next patches.
+Also, make sure that allocated memory is aligned as it its going
+to protected by the hypervisor stage-2.
 
 Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
 Signed-off-by: Mostafa Saleh <smostafa@google.com>
 ---
- drivers/iommu/arm/arm-smmu-v3/Makefile        |   1 +
- .../arm/arm-smmu-v3/arm-smmu-v3-common.c      | 367 ++++++++++++++++++
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 366 -----------------
+ .../arm/arm-smmu-v3/arm-smmu-v3-common.c      | 160 ++++++++++++++++
+ .../arm/arm-smmu-v3/arm-smmu-v3-common.h      |  12 ++
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 171 +-----------------
  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |   8 +
- 4 files changed, 376 insertions(+), 366 deletions(-)
- create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.c
+ 4 files changed, 181 insertions(+), 170 deletions(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/Makefile b/drivers/iommu/arm/arm-smmu-v3/Makefile
-index 493a659cc66b..0bc0c116b851 100644
---- a/drivers/iommu/arm/arm-smmu-v3/Makefile
-+++ b/drivers/iommu/arm/arm-smmu-v3/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_ARM_SMMU_V3) += arm_smmu_v3.o
- arm_smmu_v3-y := arm-smmu-v3.o
-+arm_smmu_v3-y += arm-smmu-v3-common.o
- arm_smmu_v3-$(CONFIG_ARM_SMMU_V3_IOMMUFD) += arm-smmu-v3-iommufd.o
- arm_smmu_v3-$(CONFIG_ARM_SMMU_V3_SVA) += arm-smmu-v3-sva.o
- arm_smmu_v3-$(CONFIG_TEGRA241_CMDQV) += tegra241-cmdqv.o
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.c
-new file mode 100644
-index 000000000000..c2b14b0c9f53
---- /dev/null
+index c2b14b0c9f53..6cd5187d62a1 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.c
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.c
-@@ -0,0 +1,367 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/dma-mapping.h>
-+#include <linux/iopoll.h>
-+#include <linux/pci.h>
-+#include <linux/string_choices.h>
+@@ -3,6 +3,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/pci.h>
+ #include <linux/string_choices.h>
++#include <kunit/visibility.h>
+ 
+ #include "arm-smmu-v3.h"
+ #include "../../dma-iommu.h"
+@@ -365,3 +366,162 @@ void arm_smmu_get_resv_regions(struct device *dev, struct list_head *head)
+ 
+ 	iommu_dma_get_resv_regions(dev, head);
+ }
 +
-+#include "arm-smmu-v3.h"
-+#include "../../dma-iommu.h"
-+
-+#define IIDR_IMPLEMENTER_ARM		0x43b
-+#define IIDR_PRODUCTID_ARM_MMU_600	0x483
-+#define IIDR_PRODUCTID_ARM_MMU_700	0x487
-+
-+static void arm_smmu_device_iidr_probe(struct arm_smmu_device *smmu)
++int arm_smmu_init_one_queue(struct arm_smmu_device *smmu,
++			    struct arm_smmu_queue *q, void __iomem *page,
++			    unsigned long prod_off, unsigned long cons_off,
++			    size_t dwords, const char *name)
 +{
-+	u32 reg;
-+	unsigned int implementer, productid, variant, revision;
++	size_t qsz;
 +
-+	reg = readl_relaxed(smmu->base + ARM_SMMU_IIDR);
-+	implementer = FIELD_GET(IIDR_IMPLEMENTER, reg);
-+	productid = FIELD_GET(IIDR_PRODUCTID, reg);
-+	variant = FIELD_GET(IIDR_VARIANT, reg);
-+	revision = FIELD_GET(IIDR_REVISION, reg);
-+
-+	switch (implementer) {
-+	case IIDR_IMPLEMENTER_ARM:
-+		switch (productid) {
-+		case IIDR_PRODUCTID_ARM_MMU_600:
-+			/* Arm erratum 1076982 */
-+			if (variant == 0 && revision <= 2)
-+				smmu->features &= ~ARM_SMMU_FEAT_SEV;
-+			/* Arm erratum 1209401 */
-+			if (variant < 2)
-+				smmu->features &= ~ARM_SMMU_FEAT_NESTING;
++	do {
++		qsz = ((1 << q->llq.max_n_shift) * dwords) << 3;
++		q->base = dmam_alloc_coherent(smmu->dev, qsz, &q->base_dma,
++					      GFP_KERNEL);
++		if (q->base || qsz < PAGE_SIZE)
 +			break;
-+		case IIDR_PRODUCTID_ARM_MMU_700:
-+			/* Arm erratum 2812531 */
-+			smmu->features &= ~ARM_SMMU_FEAT_BTM;
-+			smmu->options |= ARM_SMMU_OPT_CMDQ_FORCE_SYNC;
-+			/* Arm errata 2268618, 2812531 */
-+			smmu->features &= ~ARM_SMMU_FEAT_NESTING;
-+			break;
-+		}
-+		break;
-+	}
-+}
 +
-+static void arm_smmu_get_httu(struct arm_smmu_device *smmu, u32 reg)
-+{
-+	u32 fw_features = smmu->features & (ARM_SMMU_FEAT_HA | ARM_SMMU_FEAT_HD);
-+	u32 hw_features = 0;
++		q->llq.max_n_shift--;
++	} while (1);
 +
-+	switch (FIELD_GET(IDR0_HTTU, reg)) {
-+	case IDR0_HTTU_ACCESS_DIRTY:
-+		hw_features |= ARM_SMMU_FEAT_HD;
-+		fallthrough;
-+	case IDR0_HTTU_ACCESS:
-+		hw_features |= ARM_SMMU_FEAT_HA;
++	if (!q->base) {
++		dev_err(smmu->dev,
++			"failed to allocate queue (0x%zx bytes) for %s\n",
++			qsz, name);
++		return -ENOMEM;
 +	}
 +
-+	if (smmu->dev->of_node)
-+		smmu->features |= hw_features;
-+	else if (hw_features != fw_features)
-+		/* ACPI IORT sets the HTTU bits */
-+		dev_warn(smmu->dev,
-+			 "IDR0.HTTU features(0x%x) overridden by FW configuration (0x%x)\n",
-+			  hw_features, fw_features);
-+}
-+
-+int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
-+{
-+	u32 reg;
-+	bool coherent = smmu->features & ARM_SMMU_FEAT_COHERENCY;
-+
-+	/* IDR0 */
-+	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR0);
-+
-+	/* 2-level structures */
-+	if (FIELD_GET(IDR0_ST_LVL, reg) == IDR0_ST_LVL_2LVL)
-+		smmu->features |= ARM_SMMU_FEAT_2_LVL_STRTAB;
-+
-+	if (reg & IDR0_CD2L)
-+		smmu->features |= ARM_SMMU_FEAT_2_LVL_CDTAB;
-+
-+	/*
-+	 * Translation table endianness.
-+	 * We currently require the same endianness as the CPU, but this
-+	 * could be changed later by adding a new IO_PGTABLE_QUIRK.
-+	 */
-+	switch (FIELD_GET(IDR0_TTENDIAN, reg)) {
-+	case IDR0_TTENDIAN_MIXED:
-+		smmu->features |= ARM_SMMU_FEAT_TT_LE | ARM_SMMU_FEAT_TT_BE;
-+		break;
-+#ifdef __BIG_ENDIAN
-+	case IDR0_TTENDIAN_BE:
-+		smmu->features |= ARM_SMMU_FEAT_TT_BE;
-+		break;
-+#else
-+	case IDR0_TTENDIAN_LE:
-+		smmu->features |= ARM_SMMU_FEAT_TT_LE;
-+		break;
-+#endif
-+	default:
-+		dev_err(smmu->dev, "unknown/unsupported TT endianness!\n");
-+		return -ENXIO;
++	if (!WARN_ON(q->base_dma & (qsz - 1))) {
++		dev_info(smmu->dev, "allocated %u entries for %s\n",
++			 1 << q->llq.max_n_shift, name);
 +	}
 +
-+	/* Boolean feature flags */
-+	if (IS_ENABLED(CONFIG_PCI_PRI) && reg & IDR0_PRI)
-+		smmu->features |= ARM_SMMU_FEAT_PRI;
++	q->prod_reg	= page + prod_off;
++	q->cons_reg	= page + cons_off;
++	q->ent_dwords	= dwords;
 +
-+	if (IS_ENABLED(CONFIG_PCI_ATS) && reg & IDR0_ATS)
-+		smmu->features |= ARM_SMMU_FEAT_ATS;
++	q->q_base  = Q_BASE_RWA;
++	q->q_base |= q->base_dma & Q_BASE_ADDR_MASK;
++	q->q_base |= FIELD_PREP(Q_BASE_LOG2SIZE, q->llq.max_n_shift);
 +
-+	if (reg & IDR0_SEV)
-+		smmu->features |= ARM_SMMU_FEAT_SEV;
-+
-+	if (reg & IDR0_MSI) {
-+		smmu->features |= ARM_SMMU_FEAT_MSI;
-+		if (coherent)
-+			smmu->options |= ARM_SMMU_OPT_MSIPOLL;
-+	}
-+
-+	if (reg & IDR0_HYP) {
-+		smmu->features |= ARM_SMMU_FEAT_HYP;
-+		if (cpus_have_cap(ARM64_HAS_VIRT_HOST_EXTN))
-+			smmu->features |= ARM_SMMU_FEAT_E2H;
-+	}
-+
-+	arm_smmu_get_httu(smmu, reg);
-+
-+	/*
-+	 * The coherency feature as set by FW is used in preference to the ID
-+	 * register, but warn on mismatch.
-+	 */
-+	if (!!(reg & IDR0_COHACC) != coherent)
-+		dev_warn(smmu->dev, "IDR0.COHACC overridden by FW configuration (%s)\n",
-+			 str_true_false(coherent));
-+
-+	switch (FIELD_GET(IDR0_STALL_MODEL, reg)) {
-+	case IDR0_STALL_MODEL_FORCE:
-+		smmu->features |= ARM_SMMU_FEAT_STALL_FORCE;
-+		fallthrough;
-+	case IDR0_STALL_MODEL_STALL:
-+		smmu->features |= ARM_SMMU_FEAT_STALLS;
-+	}
-+
-+	if (reg & IDR0_S1P)
-+		smmu->features |= ARM_SMMU_FEAT_TRANS_S1;
-+
-+	if (reg & IDR0_S2P)
-+		smmu->features |= ARM_SMMU_FEAT_TRANS_S2;
-+
-+	if (!(reg & (IDR0_S1P | IDR0_S2P))) {
-+		dev_err(smmu->dev, "no translation support!\n");
-+		return -ENXIO;
-+	}
-+
-+	/* We only support the AArch64 table format at present */
-+	switch (FIELD_GET(IDR0_TTF, reg)) {
-+	case IDR0_TTF_AARCH32_64:
-+		smmu->ias = 40;
-+		fallthrough;
-+	case IDR0_TTF_AARCH64:
-+		break;
-+	default:
-+		dev_err(smmu->dev, "AArch64 table format not supported!\n");
-+		return -ENXIO;
-+	}
-+
-+	/* ASID/VMID sizes */
-+	smmu->asid_bits = reg & IDR0_ASID16 ? 16 : 8;
-+	smmu->vmid_bits = reg & IDR0_VMID16 ? 16 : 8;
-+
-+	/* IDR1 */
-+	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR1);
-+	if (reg & (IDR1_TABLES_PRESET | IDR1_QUEUES_PRESET | IDR1_REL)) {
-+		dev_err(smmu->dev, "embedded implementation not supported\n");
-+		return -ENXIO;
-+	}
-+
-+	if (reg & IDR1_ATTR_TYPES_OVR)
-+		smmu->features |= ARM_SMMU_FEAT_ATTR_TYPES_OVR;
-+
-+	/* Queue sizes, capped to ensure natural alignment */
-+	smmu->cmdq.q.llq.max_n_shift = min_t(u32, CMDQ_MAX_SZ_SHIFT,
-+					     FIELD_GET(IDR1_CMDQS, reg));
-+	if (smmu->cmdq.q.llq.max_n_shift <= ilog2(CMDQ_BATCH_ENTRIES)) {
-+		/*
-+		 * We don't support splitting up batches, so one batch of
-+		 * commands plus an extra sync needs to fit inside the command
-+		 * queue. There's also no way we can handle the weird alignment
-+		 * restrictions on the base pointer for a unit-length queue.
-+		 */
-+		dev_err(smmu->dev, "command queue size <= %d entries not supported\n",
-+			CMDQ_BATCH_ENTRIES);
-+		return -ENXIO;
-+	}
-+
-+	smmu->evtq.q.llq.max_n_shift = min_t(u32, EVTQ_MAX_SZ_SHIFT,
-+					     FIELD_GET(IDR1_EVTQS, reg));
-+	smmu->priq.q.llq.max_n_shift = min_t(u32, PRIQ_MAX_SZ_SHIFT,
-+					     FIELD_GET(IDR1_PRIQS, reg));
-+
-+	/* SID/SSID sizes */
-+	smmu->ssid_bits = FIELD_GET(IDR1_SSIDSIZE, reg);
-+	smmu->sid_bits = FIELD_GET(IDR1_SIDSIZE, reg);
-+	smmu->iommu.max_pasids = 1UL << smmu->ssid_bits;
-+
-+	/*
-+	 * If the SMMU supports fewer bits than would fill a single L2 stream
-+	 * table, use a linear table instead.
-+	 */
-+	if (smmu->sid_bits <= STRTAB_SPLIT)
-+		smmu->features &= ~ARM_SMMU_FEAT_2_LVL_STRTAB;
-+
-+	/* IDR3 */
-+	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR3);
-+	if (FIELD_GET(IDR3_RIL, reg))
-+		smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
-+	if (FIELD_GET(IDR3_FWB, reg))
-+		smmu->features |= ARM_SMMU_FEAT_S2FWB;
-+
-+	/* IDR5 */
-+	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
-+
-+	/* Maximum number of outstanding stalls */
-+	smmu->evtq.max_stalls = FIELD_GET(IDR5_STALL_MAX, reg);
-+
-+	/* Page sizes */
-+	if (reg & IDR5_GRAN64K)
-+		smmu->pgsize_bitmap |= SZ_64K | SZ_512M;
-+	if (reg & IDR5_GRAN16K)
-+		smmu->pgsize_bitmap |= SZ_16K | SZ_32M;
-+	if (reg & IDR5_GRAN4K)
-+		smmu->pgsize_bitmap |= SZ_4K | SZ_2M | SZ_1G;
-+
-+	/* Input address size */
-+	if (FIELD_GET(IDR5_VAX, reg) == IDR5_VAX_52_BIT)
-+		smmu->features |= ARM_SMMU_FEAT_VAX;
-+
-+	/* Output address size */
-+	switch (FIELD_GET(IDR5_OAS, reg)) {
-+	case IDR5_OAS_32_BIT:
-+		smmu->oas = 32;
-+		break;
-+	case IDR5_OAS_36_BIT:
-+		smmu->oas = 36;
-+		break;
-+	case IDR5_OAS_40_BIT:
-+		smmu->oas = 40;
-+		break;
-+	case IDR5_OAS_42_BIT:
-+		smmu->oas = 42;
-+		break;
-+	case IDR5_OAS_44_BIT:
-+		smmu->oas = 44;
-+		break;
-+	case IDR5_OAS_52_BIT:
-+		smmu->oas = 52;
-+		smmu->pgsize_bitmap |= 1ULL << 42; /* 4TB */
-+		break;
-+	default:
-+		dev_info(smmu->dev,
-+			 "unknown output address size. Truncating to 48-bit\n");
-+		fallthrough;
-+	case IDR5_OAS_48_BIT:
-+		smmu->oas = 48;
-+	}
-+
-+	/* Set the DMA mask for our table walker */
-+	if (dma_set_mask_and_coherent(smmu->dev, DMA_BIT_MASK(smmu->oas)))
-+		dev_warn(smmu->dev,
-+			 "failed to set DMA mask for table walker\n");
-+
-+	smmu->ias = max(smmu->ias, smmu->oas);
-+
-+	if ((smmu->features & ARM_SMMU_FEAT_TRANS_S1) &&
-+	    (smmu->features & ARM_SMMU_FEAT_TRANS_S2))
-+		smmu->features |= ARM_SMMU_FEAT_NESTING;
-+
-+	arm_smmu_device_iidr_probe(smmu);
-+
-+	dev_info(smmu->dev, "ias %lu-bit, oas %lu-bit (features 0x%08x)\n",
-+		 smmu->ias, smmu->oas, smmu->features);
++	q->llq.prod = q->llq.cons = 0;
 +	return 0;
 +}
 +
-+int arm_smmu_write_reg_sync(struct arm_smmu_device *smmu, u32 val,
-+			    unsigned int reg_off, unsigned int ack_off)
++/* Stream table manipulation functions */
++static int arm_smmu_init_strtab_2lvl(struct arm_smmu_device *smmu)
 +{
-+	u32 reg;
++	u32 l1size;
++	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
++	unsigned int last_sid_idx =
++		arm_smmu_strtab_l1_idx((1ULL << smmu->sid_bits) - 1);
 +
-+	writel_relaxed(val, smmu->base + reg_off);
-+	return readl_relaxed_poll_timeout(smmu->base + ack_off, reg, reg == val,
-+					  1, ARM_SMMU_POLL_TIMEOUT_US);
++	/* Calculate the L1 size, capped to the SIDSIZE. */
++	cfg->l2.num_l1_ents = min(last_sid_idx + 1, STRTAB_MAX_L1_ENTRIES);
++	if (cfg->l2.num_l1_ents <= last_sid_idx)
++		dev_warn(smmu->dev,
++			 "2-level strtab only covers %u/%u bits of SID\n",
++			 ilog2(cfg->l2.num_l1_ents * STRTAB_NUM_L2_STES),
++			 smmu->sid_bits);
++
++	l1size = cfg->l2.num_l1_ents * sizeof(struct arm_smmu_strtab_l1);
++	cfg->l2.l1tab = dmam_alloc_coherent(smmu->dev, l1size, &cfg->l2.l1_dma,
++					    GFP_KERNEL);
++	if (!cfg->l2.l1tab) {
++		dev_err(smmu->dev,
++			"failed to allocate l1 stream table (%u bytes)\n",
++			l1size);
++		return -ENOMEM;
++	}
++
++	cfg->l2.l2ptrs = devm_kcalloc(smmu->dev, cfg->l2.num_l1_ents,
++				      sizeof(*cfg->l2.l2ptrs), GFP_KERNEL);
++	if (!cfg->l2.l2ptrs)
++		return -ENOMEM;
++
++	return 0;
 +}
 +
-+/* GBPA is "special" */
-+int arm_smmu_update_gbpa(struct arm_smmu_device *smmu, u32 set, u32 clr)
++void arm_smmu_make_abort_ste(struct arm_smmu_ste *target)
++{
++	memset(target, 0, sizeof(*target));
++	target->data[0] = cpu_to_le64(
++		STRTAB_STE_0_V |
++		FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_ABORT));
++}
++
++/*
++ * This can safely directly manipulate the STE memory without a sync sequence
++ * because the STE table has not been installed in the SMMU yet.
++ */
++void arm_smmu_init_initial_stes(struct arm_smmu_ste *strtab,
++				unsigned int nent)
++{
++	unsigned int i;
++
++	for (i = 0; i < nent; ++i) {
++		arm_smmu_make_abort_ste(strtab);
++		strtab++;
++	}
++}
++
++static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
++{
++	u32 size;
++	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
++
++	size = (1 << smmu->sid_bits) * sizeof(struct arm_smmu_ste);
++	cfg->linear.table = dmam_alloc_coherent(smmu->dev, size,
++						&cfg->linear.ste_dma,
++						GFP_KERNEL);
++	if (!cfg->linear.table) {
++		dev_err(smmu->dev,
++			"failed to allocate linear stream table (%u bytes)\n",
++			size);
++		return -ENOMEM;
++	}
++	cfg->linear.num_ents = 1 << smmu->sid_bits;
++
++	arm_smmu_init_initial_stes(cfg->linear.table, cfg->linear.num_ents);
++	return 0;
++}
++
++int arm_smmu_init_strtab(struct arm_smmu_device *smmu)
 +{
 +	int ret;
-+	u32 reg, __iomem *gbpa = smmu->base + ARM_SMMU_GBPA;
 +
-+	ret = readl_relaxed_poll_timeout(gbpa, reg, !(reg & GBPA_UPDATE),
-+					 1, ARM_SMMU_POLL_TIMEOUT_US);
++	if (smmu->features & ARM_SMMU_FEAT_2_LVL_STRTAB)
++		ret = arm_smmu_init_strtab_2lvl(smmu);
++	else
++		ret = arm_smmu_init_strtab_linear(smmu);
 +	if (ret)
 +		return ret;
 +
-+	reg &= ~clr;
-+	reg |= set;
-+	writel_relaxed(reg | GBPA_UPDATE, gbpa);
-+	ret = readl_relaxed_poll_timeout(gbpa, reg, !(reg & GBPA_UPDATE),
-+					 1, ARM_SMMU_POLL_TIMEOUT_US);
++	ida_init(&smmu->vmid_map);
 +
-+	if (ret)
-+		dev_err(smmu->dev, "GBPA not responding to update\n");
-+	return ret;
++	return 0;
 +}
 +
-+int arm_smmu_device_disable(struct arm_smmu_device *smmu)
++void arm_smmu_write_strtab(struct arm_smmu_device *smmu)
 +{
-+	int ret;
++	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
++	dma_addr_t dma;
++	u32 reg;
 +
-+	ret = arm_smmu_write_reg_sync(smmu, 0, ARM_SMMU_CR0, ARM_SMMU_CR0ACK);
-+	if (ret)
-+		dev_err(smmu->dev, "failed to clear cr0\n");
-+
-+	return ret;
++	if (smmu->features & ARM_SMMU_FEAT_2_LVL_STRTAB) {
++		reg = FIELD_PREP(STRTAB_BASE_CFG_FMT,
++				 STRTAB_BASE_CFG_FMT_2LVL) |
++		      FIELD_PREP(STRTAB_BASE_CFG_LOG2SIZE,
++				 ilog2(cfg->l2.num_l1_ents) + STRTAB_SPLIT) |
++		      FIELD_PREP(STRTAB_BASE_CFG_SPLIT, STRTAB_SPLIT);
++		dma = cfg->l2.l1_dma;
++	} else {
++		reg = FIELD_PREP(STRTAB_BASE_CFG_FMT,
++				 STRTAB_BASE_CFG_FMT_LINEAR) |
++		      FIELD_PREP(STRTAB_BASE_CFG_LOG2SIZE, smmu->sid_bits);
++		dma = cfg->linear.ste_dma;
++	}
++	writeq_relaxed((dma & STRTAB_BASE_ADDR_MASK) | STRTAB_BASE_RA,
++		       smmu->base + ARM_SMMU_STRTAB_BASE);
++	writel_relaxed(reg, smmu->base + ARM_SMMU_STRTAB_BASE_CFG);
 +}
-+
-+struct iommu_group *arm_smmu_device_group(struct device *dev)
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.h
+index 0f9ae032680d..3bcb5d94f21a 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.h
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-common.h
+@@ -2,6 +2,7 @@
+ #ifndef _ARM_SMMU_V3_COMMON_H
+ #define _ARM_SMMU_V3_COMMON_H
+ 
++#include <linux/bits.h>
+ #include <linux/bitfield.h>
+ 
+ /* MMIO registers */
+@@ -459,4 +460,15 @@ struct arm_smmu_cmdq_ent {
+ #define ARM_SMMU_FEAT_HD		(1 << 22)
+ #define ARM_SMMU_FEAT_S2FWB		(1 << 23)
+ 
++static inline void arm_smmu_write_strtab_l1_desc(struct arm_smmu_strtab_l1 *dst,
++						 dma_addr_t l2ptr_dma)
 +{
-+	struct iommu_group *group;
++	u64 val = 0;
 +
-+	/*
-+	 * We don't support devices sharing stream IDs other than PCI RID
-+	 * aliases, since the necessary ID-to-device lookup becomes rather
-+	 * impractical given a potential sparse 32-bit stream ID space.
-+	 */
-+	if (dev_is_pci(dev))
-+		group = pci_device_group(dev);
-+	else
-+		group = generic_device_group(dev);
++	val |= FIELD_PREP(STRTAB_L1_DESC_SPAN, STRTAB_SPLIT + 1);
++	val |= l2ptr_dma & STRTAB_L1_DESC_L2PTR_MASK;
 +
-+	return group;
++	/* The HW has 64 bit atomicity with stores to the L2 STE table */
++	WRITE_ONCE(dst->l2ptr, cpu_to_le64(val));
 +}
-+
-+int arm_smmu_of_xlate(struct device *dev, const struct of_phandle_args *args)
-+{
-+	return iommu_fwspec_add_ids(dev, args->args, 1);
-+}
-+
-+void arm_smmu_get_resv_regions(struct device *dev, struct list_head *head)
-+{
-+	struct iommu_resv_region *region;
-+	int prot = IOMMU_WRITE | IOMMU_NOEXEC | IOMMU_MMIO;
-+
-+	region = iommu_alloc_resv_region(MSI_IOVA_BASE, MSI_IOVA_LENGTH,
-+					 prot, IOMMU_RESV_SW_MSI, GFP_KERNEL);
-+	if (!region)
-+		return;
-+
-+	list_add_tail(&region->list, head);
-+
-+	iommu_dma_get_resv_regions(dev, head);
-+}
+ #endif /* _ARM_SMMU_V3_COMMON_H */
+\ No newline at end of file
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 801b792dda36..fc4bf270c365 100644
+index fc4bf270c365..6e6ac64a5399 100644
 --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -17,7 +17,6 @@
- #include <linux/err.h>
- #include <linux/interrupt.h>
- #include <linux/io-pgtable.h>
--#include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of.h>
-@@ -26,12 +25,10 @@
- #include <linux/pci.h>
- #include <linux/pci-ats.h>
- #include <linux/platform_device.h>
--#include <linux/string_choices.h>
- #include <kunit/visibility.h>
- #include <uapi/linux/iommufd.h>
- 
- #include "arm-smmu-v3.h"
--#include "../../dma-iommu.h"
- 
- static bool disable_msipolling;
- module_param(disable_msipolling, bool, 0444);
-@@ -2030,8 +2027,6 @@ static irqreturn_t arm_smmu_priq_thread(int irq, void *dev)
- 	return IRQ_HANDLED;
+@@ -1504,19 +1504,6 @@ static void arm_smmu_free_cd_tables(struct arm_smmu_master *master)
+ 	}
  }
  
--static int arm_smmu_device_disable(struct arm_smmu_device *smmu);
+-/* Stream table manipulation functions */
+-static void arm_smmu_write_strtab_l1_desc(struct arm_smmu_strtab_l1 *dst,
+-					  dma_addr_t l2ptr_dma)
+-{
+-	u64 val = 0;
 -
- static irqreturn_t arm_smmu_gerror_handler(int irq, void *dev)
+-	val |= FIELD_PREP(STRTAB_L1_DESC_SPAN, STRTAB_SPLIT + 1);
+-	val |= l2ptr_dma & STRTAB_L1_DESC_L2PTR_MASK;
+-
+-	/* The HW has 64 bit atomicity with stores to the L2 STE table */
+-	WRITE_ONCE(dst->l2ptr, cpu_to_le64(val));
+-}
+-
+ struct arm_smmu_ste_writer {
+ 	struct arm_smmu_entry_writer writer;
+ 	u32 sid;
+@@ -1569,13 +1556,7 @@ static void arm_smmu_write_ste(struct arm_smmu_master *master, u32 sid,
+ 	}
+ }
+ 
+-void arm_smmu_make_abort_ste(struct arm_smmu_ste *target)
+-{
+-	memset(target, 0, sizeof(*target));
+-	target->data[0] = cpu_to_le64(
+-		STRTAB_STE_0_V |
+-		FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_ABORT));
+-}
++/* Defined in arm-smmu-v3-common.c */
+ EXPORT_SYMBOL_IF_KUNIT(arm_smmu_make_abort_ste);
+ 
+ VISIBLE_IF_KUNIT
+@@ -1702,21 +1683,6 @@ void arm_smmu_make_s2_domain_ste(struct arm_smmu_ste *target,
+ }
+ EXPORT_SYMBOL_IF_KUNIT(arm_smmu_make_s2_domain_ste);
+ 
+-/*
+- * This can safely directly manipulate the STE memory without a sync sequence
+- * because the STE table has not been installed in the SMMU yet.
+- */
+-static void arm_smmu_init_initial_stes(struct arm_smmu_ste *strtab,
+-				       unsigned int nent)
+-{
+-	unsigned int i;
+-
+-	for (i = 0; i < nent; ++i) {
+-		arm_smmu_make_abort_ste(strtab);
+-		strtab++;
+-	}
+-}
+-
+ static int arm_smmu_init_l2_strtab(struct arm_smmu_device *smmu, u32 sid)
  {
- 	u32 gerror, gerrorn, active;
-@@ -3615,45 +3610,6 @@ static int arm_smmu_set_dirty_tracking(struct iommu_domain *domain,
- 	return 0;
- }
+ 	dma_addr_t l2ptr_dma;
+@@ -3667,47 +3633,6 @@ static struct iommu_dirty_ops arm_smmu_dirty_ops = {
+ };
  
--static struct iommu_group *arm_smmu_device_group(struct device *dev)
+ /* Probing and initialisation functions */
+-int arm_smmu_init_one_queue(struct arm_smmu_device *smmu,
+-			    struct arm_smmu_queue *q, void __iomem *page,
+-			    unsigned long prod_off, unsigned long cons_off,
+-			    size_t dwords, const char *name)
 -{
--	struct iommu_group *group;
+-	size_t qsz;
 -
--	/*
--	 * We don't support devices sharing stream IDs other than PCI RID
--	 * aliases, since the necessary ID-to-device lookup becomes rather
--	 * impractical given a potential sparse 32-bit stream ID space.
--	 */
--	if (dev_is_pci(dev))
--		group = pci_device_group(dev);
--	else
--		group = generic_device_group(dev);
--
--	return group;
--}
--
--static int arm_smmu_of_xlate(struct device *dev,
--			     const struct of_phandle_args *args)
--{
--	return iommu_fwspec_add_ids(dev, args->args, 1);
--}
--
--static void arm_smmu_get_resv_regions(struct device *dev,
--				      struct list_head *head)
--{
--	struct iommu_resv_region *region;
--	int prot = IOMMU_WRITE | IOMMU_NOEXEC | IOMMU_MMIO;
--
--	region = iommu_alloc_resv_region(MSI_IOVA_BASE, MSI_IOVA_LENGTH,
--					 prot, IOMMU_RESV_SW_MSI, GFP_KERNEL);
--	if (!region)
--		return;
--
--	list_add_tail(&region->list, head);
--
--	iommu_dma_get_resv_regions(dev, head);
--}
--
- /*
-  * HiSilicon PCIe tune and trace device can be used to trace TLP headers on the
-  * PCIe link and save the data to memory by DMA. The hardware is restricted to
-@@ -3897,38 +3853,6 @@ static int arm_smmu_init_structures(struct arm_smmu_device *smmu)
- 	return 0;
- }
- 
--static int arm_smmu_write_reg_sync(struct arm_smmu_device *smmu, u32 val,
--				   unsigned int reg_off, unsigned int ack_off)
--{
--	u32 reg;
--
--	writel_relaxed(val, smmu->base + reg_off);
--	return readl_relaxed_poll_timeout(smmu->base + ack_off, reg, reg == val,
--					  1, ARM_SMMU_POLL_TIMEOUT_US);
--}
--
--/* GBPA is "special" */
--static int arm_smmu_update_gbpa(struct arm_smmu_device *smmu, u32 set, u32 clr)
--{
--	int ret;
--	u32 reg, __iomem *gbpa = smmu->base + ARM_SMMU_GBPA;
--
--	ret = readl_relaxed_poll_timeout(gbpa, reg, !(reg & GBPA_UPDATE),
--					 1, ARM_SMMU_POLL_TIMEOUT_US);
--	if (ret)
--		return ret;
--
--	reg &= ~clr;
--	reg |= set;
--	writel_relaxed(reg | GBPA_UPDATE, gbpa);
--	ret = readl_relaxed_poll_timeout(gbpa, reg, !(reg & GBPA_UPDATE),
--					 1, ARM_SMMU_POLL_TIMEOUT_US);
--
--	if (ret)
--		dev_err(smmu->dev, "GBPA not responding to update\n");
--	return ret;
--}
--
- static void arm_smmu_free_msis(void *data)
- {
- 	struct device *dev = data;
-@@ -4075,17 +3999,6 @@ static int arm_smmu_setup_irqs(struct arm_smmu_device *smmu)
- 	return 0;
- }
- 
--static int arm_smmu_device_disable(struct arm_smmu_device *smmu)
--{
--	int ret;
--
--	ret = arm_smmu_write_reg_sync(smmu, 0, ARM_SMMU_CR0, ARM_SMMU_CR0ACK);
--	if (ret)
--		dev_err(smmu->dev, "failed to clear cr0\n");
--
--	return ret;
--}
--
- static void arm_smmu_write_strtab(struct arm_smmu_device *smmu)
- {
- 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
-@@ -4243,285 +4156,6 @@ static int arm_smmu_device_reset(struct arm_smmu_device *smmu)
- 	return 0;
- }
- 
--#define IIDR_IMPLEMENTER_ARM		0x43b
--#define IIDR_PRODUCTID_ARM_MMU_600	0x483
--#define IIDR_PRODUCTID_ARM_MMU_700	0x487
--
--static void arm_smmu_device_iidr_probe(struct arm_smmu_device *smmu)
--{
--	u32 reg;
--	unsigned int implementer, productid, variant, revision;
--
--	reg = readl_relaxed(smmu->base + ARM_SMMU_IIDR);
--	implementer = FIELD_GET(IIDR_IMPLEMENTER, reg);
--	productid = FIELD_GET(IIDR_PRODUCTID, reg);
--	variant = FIELD_GET(IIDR_VARIANT, reg);
--	revision = FIELD_GET(IIDR_REVISION, reg);
--
--	switch (implementer) {
--	case IIDR_IMPLEMENTER_ARM:
--		switch (productid) {
--		case IIDR_PRODUCTID_ARM_MMU_600:
--			/* Arm erratum 1076982 */
--			if (variant == 0 && revision <= 2)
--				smmu->features &= ~ARM_SMMU_FEAT_SEV;
--			/* Arm erratum 1209401 */
--			if (variant < 2)
--				smmu->features &= ~ARM_SMMU_FEAT_NESTING;
+-	do {
+-		qsz = ((1 << q->llq.max_n_shift) * dwords) << 3;
+-		q->base = dmam_alloc_coherent(smmu->dev, qsz, &q->base_dma,
+-					      GFP_KERNEL);
+-		if (q->base || qsz < PAGE_SIZE)
 -			break;
--		case IIDR_PRODUCTID_ARM_MMU_700:
--			/* Arm erratum 2812531 */
--			smmu->features &= ~ARM_SMMU_FEAT_BTM;
--			smmu->options |= ARM_SMMU_OPT_CMDQ_FORCE_SYNC;
--			/* Arm errata 2268618, 2812531 */
--			smmu->features &= ~ARM_SMMU_FEAT_NESTING;
--			break;
--		}
--		break;
--	}
--}
 -
--static void arm_smmu_get_httu(struct arm_smmu_device *smmu, u32 reg)
--{
--	u32 fw_features = smmu->features & (ARM_SMMU_FEAT_HA | ARM_SMMU_FEAT_HD);
--	u32 hw_features = 0;
+-		q->llq.max_n_shift--;
+-	} while (1);
 -
--	switch (FIELD_GET(IDR0_HTTU, reg)) {
--	case IDR0_HTTU_ACCESS_DIRTY:
--		hw_features |= ARM_SMMU_FEAT_HD;
--		fallthrough;
--	case IDR0_HTTU_ACCESS:
--		hw_features |= ARM_SMMU_FEAT_HA;
+-	if (!q->base) {
+-		dev_err(smmu->dev,
+-			"failed to allocate queue (0x%zx bytes) for %s\n",
+-			qsz, name);
+-		return -ENOMEM;
 -	}
 -
--	if (smmu->dev->of_node)
--		smmu->features |= hw_features;
--	else if (hw_features != fw_features)
--		/* ACPI IORT sets the HTTU bits */
--		dev_warn(smmu->dev,
--			 "IDR0.HTTU features(0x%x) overridden by FW configuration (0x%x)\n",
--			  hw_features, fw_features);
--}
--
--static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
--{
--	u32 reg;
--	bool coherent = smmu->features & ARM_SMMU_FEAT_COHERENCY;
--
--	/* IDR0 */
--	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR0);
--
--	/* 2-level structures */
--	if (FIELD_GET(IDR0_ST_LVL, reg) == IDR0_ST_LVL_2LVL)
--		smmu->features |= ARM_SMMU_FEAT_2_LVL_STRTAB;
--
--	if (reg & IDR0_CD2L)
--		smmu->features |= ARM_SMMU_FEAT_2_LVL_CDTAB;
--
--	/*
--	 * Translation table endianness.
--	 * We currently require the same endianness as the CPU, but this
--	 * could be changed later by adding a new IO_PGTABLE_QUIRK.
--	 */
--	switch (FIELD_GET(IDR0_TTENDIAN, reg)) {
--	case IDR0_TTENDIAN_MIXED:
--		smmu->features |= ARM_SMMU_FEAT_TT_LE | ARM_SMMU_FEAT_TT_BE;
--		break;
--#ifdef __BIG_ENDIAN
--	case IDR0_TTENDIAN_BE:
--		smmu->features |= ARM_SMMU_FEAT_TT_BE;
--		break;
--#else
--	case IDR0_TTENDIAN_LE:
--		smmu->features |= ARM_SMMU_FEAT_TT_LE;
--		break;
--#endif
--	default:
--		dev_err(smmu->dev, "unknown/unsupported TT endianness!\n");
--		return -ENXIO;
+-	if (!WARN_ON(q->base_dma & (qsz - 1))) {
+-		dev_info(smmu->dev, "allocated %u entries for %s\n",
+-			 1 << q->llq.max_n_shift, name);
 -	}
 -
--	/* Boolean feature flags */
--	if (IS_ENABLED(CONFIG_PCI_PRI) && reg & IDR0_PRI)
--		smmu->features |= ARM_SMMU_FEAT_PRI;
+-	q->prod_reg	= page + prod_off;
+-	q->cons_reg	= page + cons_off;
+-	q->ent_dwords	= dwords;
 -
--	if (IS_ENABLED(CONFIG_PCI_ATS) && reg & IDR0_ATS)
--		smmu->features |= ARM_SMMU_FEAT_ATS;
+-	q->q_base  = Q_BASE_RWA;
+-	q->q_base |= q->base_dma & Q_BASE_ADDR_MASK;
+-	q->q_base |= FIELD_PREP(Q_BASE_LOG2SIZE, q->llq.max_n_shift);
 -
--	if (reg & IDR0_SEV)
--		smmu->features |= ARM_SMMU_FEAT_SEV;
--
--	if (reg & IDR0_MSI) {
--		smmu->features |= ARM_SMMU_FEAT_MSI;
--		if (coherent)
--			smmu->options |= ARM_SMMU_OPT_MSIPOLL;
--	}
--
--	if (reg & IDR0_HYP) {
--		smmu->features |= ARM_SMMU_FEAT_HYP;
--		if (cpus_have_cap(ARM64_HAS_VIRT_HOST_EXTN))
--			smmu->features |= ARM_SMMU_FEAT_E2H;
--	}
--
--	arm_smmu_get_httu(smmu, reg);
--
--	/*
--	 * The coherency feature as set by FW is used in preference to the ID
--	 * register, but warn on mismatch.
--	 */
--	if (!!(reg & IDR0_COHACC) != coherent)
--		dev_warn(smmu->dev, "IDR0.COHACC overridden by FW configuration (%s)\n",
--			 str_true_false(coherent));
--
--	switch (FIELD_GET(IDR0_STALL_MODEL, reg)) {
--	case IDR0_STALL_MODEL_FORCE:
--		smmu->features |= ARM_SMMU_FEAT_STALL_FORCE;
--		fallthrough;
--	case IDR0_STALL_MODEL_STALL:
--		smmu->features |= ARM_SMMU_FEAT_STALLS;
--	}
--
--	if (reg & IDR0_S1P)
--		smmu->features |= ARM_SMMU_FEAT_TRANS_S1;
--
--	if (reg & IDR0_S2P)
--		smmu->features |= ARM_SMMU_FEAT_TRANS_S2;
--
--	if (!(reg & (IDR0_S1P | IDR0_S2P))) {
--		dev_err(smmu->dev, "no translation support!\n");
--		return -ENXIO;
--	}
--
--	/* We only support the AArch64 table format at present */
--	switch (FIELD_GET(IDR0_TTF, reg)) {
--	case IDR0_TTF_AARCH32_64:
--		smmu->ias = 40;
--		fallthrough;
--	case IDR0_TTF_AARCH64:
--		break;
--	default:
--		dev_err(smmu->dev, "AArch64 table format not supported!\n");
--		return -ENXIO;
--	}
--
--	/* ASID/VMID sizes */
--	smmu->asid_bits = reg & IDR0_ASID16 ? 16 : 8;
--	smmu->vmid_bits = reg & IDR0_VMID16 ? 16 : 8;
--
--	/* IDR1 */
--	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR1);
--	if (reg & (IDR1_TABLES_PRESET | IDR1_QUEUES_PRESET | IDR1_REL)) {
--		dev_err(smmu->dev, "embedded implementation not supported\n");
--		return -ENXIO;
--	}
--
--	if (reg & IDR1_ATTR_TYPES_OVR)
--		smmu->features |= ARM_SMMU_FEAT_ATTR_TYPES_OVR;
--
--	/* Queue sizes, capped to ensure natural alignment */
--	smmu->cmdq.q.llq.max_n_shift = min_t(u32, CMDQ_MAX_SZ_SHIFT,
--					     FIELD_GET(IDR1_CMDQS, reg));
--	if (smmu->cmdq.q.llq.max_n_shift <= ilog2(CMDQ_BATCH_ENTRIES)) {
--		/*
--		 * We don't support splitting up batches, so one batch of
--		 * commands plus an extra sync needs to fit inside the command
--		 * queue. There's also no way we can handle the weird alignment
--		 * restrictions on the base pointer for a unit-length queue.
--		 */
--		dev_err(smmu->dev, "command queue size <= %d entries not supported\n",
--			CMDQ_BATCH_ENTRIES);
--		return -ENXIO;
--	}
--
--	smmu->evtq.q.llq.max_n_shift = min_t(u32, EVTQ_MAX_SZ_SHIFT,
--					     FIELD_GET(IDR1_EVTQS, reg));
--	smmu->priq.q.llq.max_n_shift = min_t(u32, PRIQ_MAX_SZ_SHIFT,
--					     FIELD_GET(IDR1_PRIQS, reg));
--
--	/* SID/SSID sizes */
--	smmu->ssid_bits = FIELD_GET(IDR1_SSIDSIZE, reg);
--	smmu->sid_bits = FIELD_GET(IDR1_SIDSIZE, reg);
--	smmu->iommu.max_pasids = 1UL << smmu->ssid_bits;
--
--	/*
--	 * If the SMMU supports fewer bits than would fill a single L2 stream
--	 * table, use a linear table instead.
--	 */
--	if (smmu->sid_bits <= STRTAB_SPLIT)
--		smmu->features &= ~ARM_SMMU_FEAT_2_LVL_STRTAB;
--
--	/* IDR3 */
--	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR3);
--	if (FIELD_GET(IDR3_RIL, reg))
--		smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
--	if (FIELD_GET(IDR3_FWB, reg))
--		smmu->features |= ARM_SMMU_FEAT_S2FWB;
--
--	/* IDR5 */
--	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
--
--	/* Maximum number of outstanding stalls */
--	smmu->evtq.max_stalls = FIELD_GET(IDR5_STALL_MAX, reg);
--
--	/* Page sizes */
--	if (reg & IDR5_GRAN64K)
--		smmu->pgsize_bitmap |= SZ_64K | SZ_512M;
--	if (reg & IDR5_GRAN16K)
--		smmu->pgsize_bitmap |= SZ_16K | SZ_32M;
--	if (reg & IDR5_GRAN4K)
--		smmu->pgsize_bitmap |= SZ_4K | SZ_2M | SZ_1G;
--
--	/* Input address size */
--	if (FIELD_GET(IDR5_VAX, reg) == IDR5_VAX_52_BIT)
--		smmu->features |= ARM_SMMU_FEAT_VAX;
--
--	/* Output address size */
--	switch (FIELD_GET(IDR5_OAS, reg)) {
--	case IDR5_OAS_32_BIT:
--		smmu->oas = 32;
--		break;
--	case IDR5_OAS_36_BIT:
--		smmu->oas = 36;
--		break;
--	case IDR5_OAS_40_BIT:
--		smmu->oas = 40;
--		break;
--	case IDR5_OAS_42_BIT:
--		smmu->oas = 42;
--		break;
--	case IDR5_OAS_44_BIT:
--		smmu->oas = 44;
--		break;
--	case IDR5_OAS_52_BIT:
--		smmu->oas = 52;
--		smmu->pgsize_bitmap |= 1ULL << 42; /* 4TB */
--		break;
--	default:
--		dev_info(smmu->dev,
--			"unknown output address size. Truncating to 48-bit\n");
--		fallthrough;
--	case IDR5_OAS_48_BIT:
--		smmu->oas = 48;
--	}
--
--	/* Set the DMA mask for our table walker */
--	if (dma_set_mask_and_coherent(smmu->dev, DMA_BIT_MASK(smmu->oas)))
--		dev_warn(smmu->dev,
--			 "failed to set DMA mask for table walker\n");
--
--	smmu->ias = max(smmu->ias, smmu->oas);
--
--	if ((smmu->features & ARM_SMMU_FEAT_TRANS_S1) &&
--	    (smmu->features & ARM_SMMU_FEAT_TRANS_S2))
--		smmu->features |= ARM_SMMU_FEAT_NESTING;
--
--	arm_smmu_device_iidr_probe(smmu);
--
--	dev_info(smmu->dev, "ias %lu-bit, oas %lu-bit (features 0x%08x)\n",
--		 smmu->ias, smmu->oas, smmu->features);
+-	q->llq.prod = q->llq.cons = 0;
 -	return 0;
 -}
 -
- #ifdef CONFIG_ACPI
- #ifdef CONFIG_TEGRA241_CMDQV
- static void acpi_smmu_dsdt_probe_tegra241_cmdqv(struct acpi_iort_node *node,
+ int arm_smmu_cmdq_init(struct arm_smmu_device *smmu,
+ 		       struct arm_smmu_cmdq *cmdq)
+ {
+@@ -3762,76 +3687,6 @@ static int arm_smmu_init_queues(struct arm_smmu_device *smmu)
+ 				       PRIQ_ENT_DWORDS, "priq");
+ }
+ 
+-static int arm_smmu_init_strtab_2lvl(struct arm_smmu_device *smmu)
+-{
+-	u32 l1size;
+-	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
+-	unsigned int last_sid_idx =
+-		arm_smmu_strtab_l1_idx((1ULL << smmu->sid_bits) - 1);
+-
+-	/* Calculate the L1 size, capped to the SIDSIZE. */
+-	cfg->l2.num_l1_ents = min(last_sid_idx + 1, STRTAB_MAX_L1_ENTRIES);
+-	if (cfg->l2.num_l1_ents <= last_sid_idx)
+-		dev_warn(smmu->dev,
+-			 "2-level strtab only covers %u/%u bits of SID\n",
+-			 ilog2(cfg->l2.num_l1_ents * STRTAB_NUM_L2_STES),
+-			 smmu->sid_bits);
+-
+-	l1size = cfg->l2.num_l1_ents * sizeof(struct arm_smmu_strtab_l1);
+-	cfg->l2.l1tab = dmam_alloc_coherent(smmu->dev, l1size, &cfg->l2.l1_dma,
+-					    GFP_KERNEL);
+-	if (!cfg->l2.l1tab) {
+-		dev_err(smmu->dev,
+-			"failed to allocate l1 stream table (%u bytes)\n",
+-			l1size);
+-		return -ENOMEM;
+-	}
+-
+-	cfg->l2.l2ptrs = devm_kcalloc(smmu->dev, cfg->l2.num_l1_ents,
+-				      sizeof(*cfg->l2.l2ptrs), GFP_KERNEL);
+-	if (!cfg->l2.l2ptrs)
+-		return -ENOMEM;
+-
+-	return 0;
+-}
+-
+-static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
+-{
+-	u32 size;
+-	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
+-
+-	size = (1 << smmu->sid_bits) * sizeof(struct arm_smmu_ste);
+-	cfg->linear.table = dmam_alloc_coherent(smmu->dev, size,
+-						&cfg->linear.ste_dma,
+-						GFP_KERNEL);
+-	if (!cfg->linear.table) {
+-		dev_err(smmu->dev,
+-			"failed to allocate linear stream table (%u bytes)\n",
+-			size);
+-		return -ENOMEM;
+-	}
+-	cfg->linear.num_ents = 1 << smmu->sid_bits;
+-
+-	arm_smmu_init_initial_stes(cfg->linear.table, cfg->linear.num_ents);
+-	return 0;
+-}
+-
+-static int arm_smmu_init_strtab(struct arm_smmu_device *smmu)
+-{
+-	int ret;
+-
+-	if (smmu->features & ARM_SMMU_FEAT_2_LVL_STRTAB)
+-		ret = arm_smmu_init_strtab_2lvl(smmu);
+-	else
+-		ret = arm_smmu_init_strtab_linear(smmu);
+-	if (ret)
+-		return ret;
+-
+-	ida_init(&smmu->vmid_map);
+-
+-	return 0;
+-}
+-
+ static int arm_smmu_init_structures(struct arm_smmu_device *smmu)
+ {
+ 	int ret;
+@@ -3999,30 +3854,6 @@ static int arm_smmu_setup_irqs(struct arm_smmu_device *smmu)
+ 	return 0;
+ }
+ 
+-static void arm_smmu_write_strtab(struct arm_smmu_device *smmu)
+-{
+-	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
+-	dma_addr_t dma;
+-	u32 reg;
+-
+-	if (smmu->features & ARM_SMMU_FEAT_2_LVL_STRTAB) {
+-		reg = FIELD_PREP(STRTAB_BASE_CFG_FMT,
+-				 STRTAB_BASE_CFG_FMT_2LVL) |
+-		      FIELD_PREP(STRTAB_BASE_CFG_LOG2SIZE,
+-				 ilog2(cfg->l2.num_l1_ents) + STRTAB_SPLIT) |
+-		      FIELD_PREP(STRTAB_BASE_CFG_SPLIT, STRTAB_SPLIT);
+-		dma = cfg->l2.l1_dma;
+-	} else {
+-		reg = FIELD_PREP(STRTAB_BASE_CFG_FMT,
+-				 STRTAB_BASE_CFG_FMT_LINEAR) |
+-		      FIELD_PREP(STRTAB_BASE_CFG_LOG2SIZE, smmu->sid_bits);
+-		dma = cfg->linear.ste_dma;
+-	}
+-	writeq_relaxed((dma & STRTAB_BASE_ADDR_MASK) | STRTAB_BASE_RA,
+-		       smmu->base + ARM_SMMU_STRTAB_BASE);
+-	writel_relaxed(reg, smmu->base + ARM_SMMU_STRTAB_BASE_CFG);
+-}
+-
+ static int arm_smmu_device_reset(struct arm_smmu_device *smmu)
+ {
+ 	int ret;
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 3b88f19fcefc..367529538eb8 100644
+index 367529538eb8..09c1cf85cccc 100644
 --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -545,6 +545,14 @@ void arm_smmu_install_ste_for_dev(struct arm_smmu_master *master,
- int arm_smmu_cmdq_issue_cmdlist(struct arm_smmu_device *smmu,
- 				struct arm_smmu_cmdq *cmdq, u64 *cmds, int n,
- 				bool sync);
-+int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu);
-+int arm_smmu_write_reg_sync(struct arm_smmu_device *smmu, u32 val,
-+			    unsigned int reg_off, unsigned int ack_off);
-+int arm_smmu_update_gbpa(struct arm_smmu_device *smmu, u32 set, u32 clr);
-+int arm_smmu_device_disable(struct arm_smmu_device *smmu);
-+struct iommu_group *arm_smmu_device_group(struct device *dev);
-+int arm_smmu_of_xlate(struct device *dev, const struct of_phandle_args *args);
-+void arm_smmu_get_resv_regions(struct device *dev, struct list_head *head);
+@@ -553,6 +553,14 @@ int arm_smmu_device_disable(struct arm_smmu_device *smmu);
+ struct iommu_group *arm_smmu_device_group(struct device *dev);
+ int arm_smmu_of_xlate(struct device *dev, const struct of_phandle_args *args);
+ void arm_smmu_get_resv_regions(struct device *dev, struct list_head *head);
++int arm_smmu_init_strtab(struct arm_smmu_device *smmu);
++void arm_smmu_write_strtab(struct arm_smmu_device *smmu);
++void arm_smmu_init_initial_stes(struct arm_smmu_ste *strtab,
++				unsigned int nent);
++int arm_smmu_init_one_queue(struct arm_smmu_device *smmu,
++			    struct arm_smmu_queue *q, void __iomem *page,
++			    unsigned long prod_off, unsigned long cons_off,
++			    size_t dwords, const char *name);
  
  #ifdef CONFIG_ARM_SMMU_V3_SVA
  bool arm_smmu_sva_supported(struct arm_smmu_device *smmu);
