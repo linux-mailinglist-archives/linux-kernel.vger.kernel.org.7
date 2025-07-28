@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-747997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8B6B13B35
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:15:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 972FEB13B3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E3F1893CC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E335189ADBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C75B26AA8F;
-	Mon, 28 Jul 2025 13:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994DC26A1C1;
+	Mon, 28 Jul 2025 13:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vf0PzZTY"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NdpivSNj"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A52A26A1C1
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EAE266F15
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753708505; cv=none; b=pDN4av9DJCt8kb4P6ICMAxkl6bcAiikuEIa4vqOhtM8aAGXxLFlkFIiS829SQtxG36kmy22xvbwd8Db1y9/T0RrnZaUUsLMom7DZ+eRKRqt1frRyf4ry9rt3WmzvJPLtku4lUDQpa/Bfsc7n+aGsDRQ9xUT3hJo8wdBO1rD4uuE=
+	t=1753708512; cv=none; b=gOLZlOlIYCvdiI0SoGKhvXDwOBVsleDhP4rTMntMH83jsDJJIuwHTNT1wmQn8JqioDAn/vDk21U70l6myaeDn0n+WDXAif0aW5ZKFAlCmAoy1c2Hd36wEGbX1560hDMWjChJQ8auGAV8V/3AS2H4vTQzTUDqJ/OxAt+vgvNWcDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753708505; c=relaxed/simple;
-	bh=OO2Z7mIWJju/0AAWi0QFQrEeFkD+xuMhO5TmIsG9bFo=;
+	s=arc-20240116; t=1753708512; c=relaxed/simple;
+	bh=flbnou7XSx1ETCmAxdlZnvB3+bqdNxru9LUU48yIE7A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q6mvhuBUGunbCQI8YZS4Jus9hDNDOJl/XZYgQ2IVj9wS4czuwOsNhSBraLsPsbrdwXstfw1NktrMlUHC/eFoXZy1iJUFP8n+TrHtcIxsy8uoL3a5QTrLBkverNhtaPn+RSDTi65troLhpDcEH52Ot2OPs2/P5XO5cXuh90fK/4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vf0PzZTY; arc=none smtp.client-ip=209.85.210.181
+	 In-Reply-To:To:Cc; b=V54Qh0pko6AKMnAAkZ0iXdn8+z0HA+tqxMPtT0MVpR5dghNJjefWG6dUlJYWN+I/GrXFC3y7CksHPDEcvUpX/UB04oketwbnp+CXvtb0922/hh6oM2Gtqv5GZOlhVN/6hpVIlAhpQmFzz3K2sZr254DhyZC2epNkMCf9RuJNuAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NdpivSNj; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-75bd436d970so2700967b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:15:04 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74b50c71b0aso2523457b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:15:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753708503; x=1754313303; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1753708510; x=1754313310; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XDSLLULuQro4tZ+C6kFbdQGbu24iHgqnLikNbErS/QE=;
-        b=Vf0PzZTYTsOz3DpA6H5cYLiAUXmyTP8CRm4pQ2R0x1pwnVAjE5eXtnD4Sjc/iwsMsk
-         qUlAN44kSj1A3nXZx9U8Bfe+edo+FpzKdfBgLfGOQd64EqtoUl8Y0gAHwaoirz34t3lv
-         Zk654PPwEYrbXDKpkoXMOQbyN4hExUQUGJqh6GxI3F9yEcItqs2qsQ0snKkSri2iB0Lx
-         FdL40RCwJ8Zhea7ImrLuA4JuRmVJmlDYwm56xah5xs9fY0tolTIY/6SQyGGkxpT5gNJ6
-         8hCADk7URVyAZO8xdxTukLTCH+Aq43GJbbAd+d5ouOCNOcVcyRG+QXjrbxCEJleQ7Ixp
-         F80g==
+        bh=gZKppSrZ04BhPYsPEMDVl7eb2YZ+sFy//28ARL2GCmc=;
+        b=NdpivSNj4xvvsPOJLLtASC/NYx7TL9hlJeciWpP641x9Ls2vSX55bDDGCM1zTOpcNQ
+         ae/v89VN0vX2Wij3G52RjvvdBYX72mvQrYju5JULCvlzXpvsvK67vj4sw/Rum58kjeXe
+         98rPz9WRBmpskvK6ZDulHRTw8cGPqsxj01YSN8lF+c3WbIjemhKHDjQA+t61bIP+JIQr
+         B0pBh3k54lRI7pK/L3uy/zsevZ87EUqLK2AtfH0x5SY95FchHVFutCfCJJ73QyBe5iUH
+         kt1NcP0blOk1wY5vHPYlqfBBliTclsW6MU01t2XGPojuCuq5Elc2DSQXn5l7eNE07+Rf
+         Q3EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753708503; x=1754313303;
+        d=1e100.net; s=20230601; t=1753708510; x=1754313310;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XDSLLULuQro4tZ+C6kFbdQGbu24iHgqnLikNbErS/QE=;
-        b=Tu7j1AWgdTn2whdCUbou3LDxrCanjYhQTgvX+ZzO/rsZLGsx1ixklK0Z9vP1vC2FEI
-         2q/xbEvHryjNMtnxJgU2doaBadGdVK6DvJ80iCXHoWmYyUKfXelhd7Dk9Ngb/zBl+zGI
-         8PBKe1IU46ilZ7zabxR/G5SuTCN6VDIvA/aQ2N7XeGdtcEEvR5gNtxIhPFBkb6E/aPLg
-         O0jEu7KyOulldLtPXFkz7KtIAI7wXCIvi549dYSVqsM7d2m7p2mwrK+SjBtZGh/BdDiS
-         PoMGkZPo58yCtm2w8dSAGwceGvuZrY2pGSvfT59YiyDr14KBLMN/nh6BGLQCijp0ikIa
-         Wb7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWR1vuKuZWkwstVkJ9SLoc7RXE/K7cXzG5lnMPuQzOxzIdHXrA3pU8+NJXD4S+6Oybued1Pex0XNl3XKII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL1amwr+BMurF5pRiApfrGn24hgIyM2D/R5CbzgtPa4E+MG6PU
-	jvSdPTyyKa0wqotBRwtiRljBPJDeAHH6Zq8yGmLES6OO2xODN4UG280pJMUvm72IBCA=
-X-Gm-Gg: ASbGncvXsJGHMAxxiBwTaGOnDExbo1HiBnc/Q448L5yn5IxEloqGsAxsRm2Ki4JKBwn
-	JHFnkw1/tfIqS2LO4TVpa30tbRpfr0u8R2eA2cwGyV1+KTPXPjNOPjC2ThgTBkQcZ6w2f5UdWsk
-	+/hc6U2LThzUrDFs0gcABtq0rXLCxQa79DcNqks+iaSsYDKQf/XYJmMpm6D8H6aDwXsVaSdoxVu
-	ARCfLOCZxsNw/qjlRs4Es+2rM7/cAzMMA1FXcUfI5aIJBLPjpaG9cmJfKzVHkOx47wYWzJiDQqj
-	EMzge4h2ZWhQMLKHENbX3BH/34CIfGHih57fKLTB2G5P5e4Hovjrmr5uO52/tyzJjjuf8asN1+l
-	ozYjJXl7McdRUaZT85A==
-X-Google-Smtp-Source: AGHT+IFj2E3U/6YpkOvYCA8ArMdplIVsCoa2oY8AWe4ZUCEotDWUm+laRMwrkmmmmbNPtBLZanSIFQ==
-X-Received: by 2002:a05:6a20:a121:b0:23d:54cb:2df6 with SMTP id adf61e73a8af0-23d70052901mr16496549637.3.1753708503406;
-        Mon, 28 Jul 2025 06:15:03 -0700 (PDT)
+        bh=gZKppSrZ04BhPYsPEMDVl7eb2YZ+sFy//28ARL2GCmc=;
+        b=ptug2eTSz9hvxRMVCg6md6JZ3QU2ros0QArjXb7RtMZwKjkxZOaZizGnQ15qWbQGvI
+         YVnc+cQMUmo2oTaZByFzhnzOgxGSUYbwMScP79mB3JIO/gZKSLwm8uviUewyqbBR9pSA
+         JNNlGPIqoaQ32rHPXLQs7U5G8ey5tDvrqo3g4R5viWAT3k5XxGC3tIIu9mgNdM2cyvEN
+         JqJ03pYzkebh8OjbCZ8fXI4VGKJaLcac6Xf2OvGHDwFwIUlTwUGqIKx0xPsLfmgOTkRE
+         yZSmr3Nqs+4benIhVaY7MtLf8k3LFIaXWbXjOZGJo3y8kk05/jIu/bdBHOvu/F+7j0cu
+         bbbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVatuJCmb2iiZbGagyYd1yjkXGGYrONoOV77It+wySbDa9vXmN8EYhBpYIQMImlEvAhbiQ84mW/O3IcVqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLEbX9a6gXA1UhG/aq9AUISbotvxxoTea/KVH4c+OoMA/a5RrA
+	AUIOFlGi2+MloMcsoUsrhh5m03LT30MzKVdVll5JiuxtCycsiZqo5TDWZhsm14NUwAY=
+X-Gm-Gg: ASbGnctcIW3FLtxWjpJIAcKP+ihzeeez1eVInZhxOQV1Y6GQ5HGRw2PI6eRWN8ZifY2
+	Rv19J3RSQUD89jIrwftAw3QHkivrCBgszhuQxWedyrYtbl65S9rTTJ7dDo11d7jTGV+Leq5iBN5
+	h0chTJtCvSnZP8MMIaWpoXq2vJ0NUYmJ+Uk2XfCX0I+kI9HJW1tlRH7TKTtKgD4vdZXQWR6Jo4r
+	kFs3fcuhOwtnRPQN3oLYUS/yXoy8Zg3k0UDEYPuwMwJyyYDopOaV4z3hHrPHqGyY2jxsasFTKpS
+	VKznBqfv/3rYsE192ipZqHo65wVrm6GfXKYhlQltI9FsKEJP3JhV/QQsrzP/hQ6cy+6cilo7N8I
+	Fq7NaQ3bFSgl76EaP7jDcU4EKY9/4
+X-Google-Smtp-Source: AGHT+IG+JbwyDUG7pX0QI1BqFWP0lb0OYydB+BpasTxsom5LPqVzrzwiajyvHToI6cH2mOOlOZF3xw==
+X-Received: by 2002:a05:6a00:10c6:b0:748:ff4d:b585 with SMTP id d2e1a72fcca58-763347bdacdmr17649834b3a.19.1753708509513;
+        Mon, 28 Jul 2025 06:15:09 -0700 (PDT)
 Received: from [127.0.1.1] ([112.64.60.64])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76408c0287fsm5590318b3a.47.2025.07.28.06.14.55
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76408c0287fsm5590318b3a.47.2025.07.28.06.15.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 06:15:03 -0700 (PDT)
+        Mon, 28 Jul 2025 06:15:09 -0700 (PDT)
 From: Jun Nie <jun.nie@linaro.org>
-Date: Mon, 28 Jul 2025 21:14:27 +0800
-Subject: [PATCH v13 03/12] drm/msm/dpu: fix mixer number counter on
- allocation
+Date: Mon, 28 Jul 2025 21:14:28 +0800
+Subject: [PATCH v13 04/12] drm/msm/dpu: bind correct pingpong for quad pipe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-v6-16-rc2-quad-pipe-upstream-v13-3-954e4917fe4f@linaro.org>
+Message-Id: <20250728-v6-16-rc2-quad-pipe-upstream-v13-4-954e4917fe4f@linaro.org>
 References: <20250728-v6-16-rc2-quad-pipe-upstream-v13-0-954e4917fe4f@linaro.org>
 In-Reply-To: <20250728-v6-16-rc2-quad-pipe-upstream-v13-0-954e4917fe4f@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
@@ -97,45 +96,55 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Jun Nie <jun.nie@linaro.org>, Dmitry Baryshkov <lumag@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753708472; l=1366;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753708472; l=1809;
  i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=OO2Z7mIWJju/0AAWi0QFQrEeFkD+xuMhO5TmIsG9bFo=;
- b=1mgRp4HOTSbHr7EQxPhuUonHpasr6Cq6GSUykYOQvvzIjqlRzPVAefXzpymPuLtdRZmR0RIlb
- ZTopy74UAxhBMLncqhnjq7wEJ9ZjeYT4uM658ifKa6cUe5E0h6w6SJ6
+ bh=flbnou7XSx1ETCmAxdlZnvB3+bqdNxru9LUU48yIE7A=;
+ b=Ze5paCQmaim3zJLE+SGSxm+xuFv+T0ykWoQxHFa9eh0exvmqLFyGEoTIgJBruGpU5h0dCU5bQ
+ XzB2G6FTTm8APL+bSd7UT2Q3ACByObc4/Y7dSxbfgklxj9Ilef2hIEf
 X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
  pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-Current code only supports usage cases with one pair of mixers at
-most. To support quad-pipe usage case, two pairs of mixers need to
-be reserved. The lm_count for all pairs is cleared if a peer
-allocation fails in current implementation. Reset the current lm_count
-to an even number instead of completely clearing it. This prevents all
-pairs from being cleared in cases where multiple LM pairs are needed.
+There are 2 interfaces and 4 pingpong in quad pipe. Map the 2nd
+interface to 3rd PP instead of the 2nd PP.
 
 Signed-off-by: Jun Nie <jun.nie@linaro.org>
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-index 2c77c74fac0fda649da8ce19b7b3c6cb32b9535c..3f344322b7f214d0050986e675b32522f8eb0ba7 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-@@ -374,7 +374,11 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
- 		if (!rm->mixer_blks[i])
- 			continue;
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index b476d3c97ac9b6b4c5ca2963aa4a5805d57c8d7e..2d88d9129ec787df6dac70e6f4488ab77c6aeeed 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -1158,7 +1158,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+ 	struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_ENC];
+ 	struct dpu_hw_blk *hw_dsc[MAX_CHANNELS_PER_ENC];
+ 	struct dpu_hw_blk *hw_cwb[MAX_CHANNELS_PER_ENC];
+-	int num_ctl, num_pp, num_dsc;
++	int num_ctl, num_pp, num_dsc, num_pp_per_intf;
+ 	int num_cwb = 0;
+ 	bool is_cwb_encoder;
+ 	unsigned int dsc_mask = 0;
+@@ -1237,10 +1237,16 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+ 		dpu_enc->cur_master->hw_cdm = hw_cdm ? to_dpu_hw_cdm(hw_cdm) : NULL;
+ 	}
  
--		lm_count = 0;
-+		/*
-+		 * Reset lm_count to an even index. This will drop the previous
-+		 * primary mixer if failed to find its peer.
-+		 */
-+		lm_count &= ~1;
- 		lm_idx[lm_count] = i;
++	/*
++	 * There may be 4 PP and 2 INTF for quad pipe case, so INTF is not
++	 * mapped to PP 1:1. Let's calculate the stride with pipe/INTF
++	 */
++	num_pp_per_intf = num_pp / dpu_enc->num_phys_encs;
++
+ 	for (i = 0; i < dpu_enc->num_phys_encs; i++) {
+ 		struct dpu_encoder_phys *phys = dpu_enc->phys_encs[i];
  
- 		if (!_dpu_rm_check_lm_and_get_connected_blks(rm, global_state,
+-		phys->hw_pp = dpu_enc->hw_pp[i];
++		phys->hw_pp = dpu_enc->hw_pp[num_pp_per_intf * i];
+ 		if (!phys->hw_pp) {
+ 			DPU_ERROR_ENC(dpu_enc,
+ 				"no pp block assigned at idx: %d\n", i);
 
 -- 
 2.34.1
