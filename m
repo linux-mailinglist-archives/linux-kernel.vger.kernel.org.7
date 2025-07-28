@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-747977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70842B13AEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:02:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F75B13AF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C59173F97
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:02:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4231894F1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACB116DEB1;
-	Mon, 28 Jul 2025 13:02:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA904A33
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7329C266F00;
+	Mon, 28 Jul 2025 13:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzfTz7oi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6557261C;
+	Mon, 28 Jul 2025 13:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753707762; cv=none; b=Glisb5hTEWThJaGfwhby06GaYlyLdfwiD06cbfvqKpC45vt2VL54miVJZJEo/+xxIyU8Bi8CBsrI2WnwjlMtlPmPYUGvVvBXra5elNscb8D2YmPoZZO4NtEgvWo2UAgcgUVtyJqHb3PDEyg8ibWSWmpWXluEW86twap5u9XXbgE=
+	t=1753707770; cv=none; b=cs9YahHlOm0b8Sa7D7hVNvdn1GqXKOEwLoEuZ0qhFhMkytHGsg4EbGuoPyqw8J7tm1TmNEk4ISxA7LQcTFm0yH6G5hfMBPg8oYkGRXqVkodmyejwhvxgMAaD8tddvmEOFyuqDXIQti6Dt/aTdpVhAhaVousvh6b6ky7uMWKuS60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753707762; c=relaxed/simple;
-	bh=iXCEHKlIeIFGrPLIhwIWshXnVNbj11QzgzqsdHcmM1A=;
+	s=arc-20240116; t=1753707770; c=relaxed/simple;
+	bh=R1fGAE8YOzEwmxRKgWpof//eBo5lBECXbGbbv/3X41g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yu2Va36OCqyPVyx7/7H6T61avvSOeYSi2nP4+1zimwbpY44oP/4fQWibINMsocMhJ8ggWBMWR+jhGGEQJm27ijd0V58d6y1IvPe//TmxEN9HeIgJiyD2iRv3rAQjmtmeCbihGxPlWPWcDuXadNFo/NL74H+3/snIJPUNuwniWtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8117E1516;
-	Mon, 28 Jul 2025 06:02:30 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF5933F66E;
-	Mon, 28 Jul 2025 06:02:34 -0700 (PDT)
-Message-ID: <55f60d44-504c-4b8b-8969-3b0ce2ba2946@arm.com>
-Date: Mon, 28 Jul 2025 14:02:33 +0100
+	 In-Reply-To:Content-Type; b=o0exUCZHZu4oq7VlpOimgDeLojY/EJilxeVKVf3il8FFdxd1kwfC9yfrnsC8cfRg2VUWWexvW8JcabVC5igQ64Pc0JdnG9H/EpPERre67WLrN1UUXnuyLYAyD7XeyoNxtILzzYU8SGP35vEsQvC9gCyX95PhwmhoUowWp76CCG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzfTz7oi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAAFDC4CEE7;
+	Mon, 28 Jul 2025 13:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753707770;
+	bh=R1fGAE8YOzEwmxRKgWpof//eBo5lBECXbGbbv/3X41g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OzfTz7oiEhQ3Y0e6IV83aeWKIw6PNBAHpG7HEgH7rxrUGF2Cujl6SW8EKMtBpxUaX
+	 9XhExXPihup5v63jBsk29aYaFXAiZnBMdnf7nS/AsACE5yGQ0Pu8Qr/yuch0OobfVV
+	 ptpSQJBrePrmCLUhO/AEH5dYKEypIgq5ai2oLkpUY9t+w7iUlCgBIdZsLagdRQTMMr
+	 MLmMmFQ4tRzQUZRfB+hXQXI6j07zaKI6gwhLyIagb9YpSuUyN9+mbtJgrEBFi0cup0
+	 5uJv30H6hyMP7lEFF/s0W9qiCWqO52YNTOcNj0/uN8+CS3XUZh3UMkr6dX9Ro3I944
+	 cVTBK2VTSf1cA==
+Message-ID: <4bc486cb-9d94-4bad-ae07-e9a7aeed481a@kernel.org>
+Date: Mon, 28 Jul 2025 15:02:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,322 +49,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 30/36] arm_mpam: Add mpam_msmon_read() to read monitor
- value
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-31-james.morse@arm.com>
+Subject: Re: [PATCH v3 2/3] ASoC: codecs: wsa883x: Add devm action to safely
+ disable regulator on device removal
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, quic_pkumpatl@quicinc.com,
+ kernel@oss.qualcomm.com
+References: <20250727083117.2415725-1-mohammad.rafi.shaik@oss.qualcomm.com>
+ <20250727083117.2415725-3-mohammad.rafi.shaik@oss.qualcomm.com>
+ <07faf0cc-a8e6-426d-b397-dfc321a7f3df@kernel.org>
+ <aae92260-5169-4af1-97b0-48f364612dca@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <20250711183648.30766-31-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aae92260-5169-4af1-97b0-48f364612dca@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi James,
-
-On 7/11/25 19:36, James Morse wrote:
-> Reaing a monitor involves configuring what you want to monitor, and
-nit: s/Reaing/Reading/
-> reading the value. Components made up of multiple MSC may need values
-> from each MSC. MSCs may take time to configure, returning 'not ready'.
-> The maximum 'not ready' time should have been provided by firmware.
+On 28/07/2025 14:36, Mohammad Rafi Shaik wrote:
 > 
-> Add mpam_msmon_read() to hide all this. If (one of) the MSC returns
-> not ready, then wait the full timeout value before trying again.
 > 
-> CC: Shanker Donthineni <sdonthineni@nvidia.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->   drivers/platform/arm64/mpam/mpam_devices.c  | 222 ++++++++++++++++++++
->   drivers/platform/arm64/mpam/mpam_internal.h |  18 ++
->   2 files changed, 240 insertions(+)
+> On 7/27/2025 3:00 PM, Krzysztof Kozlowski wrote:
+>> On 27/07/2025 10:31, Mohammad Rafi Shaik wrote:
+>>> To prevent potential warnings from _regulator_put() during device
+>>
+>> Warning is either there or not. Either you fix real, specific issue or
+>> not. The code looks correct at first glance, so please describe exactly
+>> how these warnings happen or how what is the bug being fixed.
+>>
 > 
-> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
-> index b11503d8ef1b..7d2d2929b292 100644
-> --- a/drivers/platform/arm64/mpam/mpam_devices.c
-> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
-> @@ -960,6 +960,228 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   	return 0;
->   }
->   
-> +struct mon_read {
-> +	struct mpam_msc_ris		*ris;
-> +	struct mon_cfg			*ctx;
-> +	enum mpam_device_features	type;
-> +	u64				*val;
-> +	int				err;
-> +};
-> +
-> +static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
-> +				   u32 *flt_val)
-> +{
-> +	struct mon_cfg *ctx = m->ctx;
-> +
-> +	switch (m->type) {
-> +	case mpam_feat_msmon_csu:
-> +		*ctl_val = MSMON_CFG_MBWU_CTL_TYPE_CSU;
-> +		break;
-> +	case mpam_feat_msmon_mbwu:
-> +		*ctl_val = MSMON_CFG_MBWU_CTL_TYPE_MBWU;
-> +		break;
-> +	default:
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * For CSU counters its implementation-defined what happens when not
-> +	 * filtering by partid.
-> +	 */
-> +	*ctl_val |= MSMON_CFG_x_CTL_MATCH_PARTID;
-> +
-> +	*flt_val = FIELD_PREP(MSMON_CFG_MBWU_FLT_PARTID, ctx->partid);
-> +	if (m->ctx->match_pmg) {
-> +		*ctl_val |= MSMON_CFG_x_CTL_MATCH_PMG;
-> +		*flt_val |= FIELD_PREP(MSMON_CFG_MBWU_FLT_PMG, ctx->pmg);
-> +	}
-> +
-> +	if (mpam_has_feature(mpam_feat_msmon_mbwu_rwbw, &m->ris->props))
-> +		*flt_val |= FIELD_PREP(MSMON_CFG_MBWU_FLT_RWBW, ctx->opts);
-> +}
-> +
-> +static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
-> +				    u32 *flt_val)
-> +{
-> +	struct mpam_msc *msc = m->ris->vmsc->msc;
-> +
-> +	switch (m->type) {
-> +	case mpam_feat_msmon_csu:
-> +		*ctl_val = mpam_read_monsel_reg(msc, CFG_CSU_CTL);
-> +		*flt_val = mpam_read_monsel_reg(msc, CFG_CSU_FLT);
-> +		break;
-> +	case mpam_feat_msmon_mbwu:
-> +		*ctl_val = mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
-> +		*flt_val = mpam_read_monsel_reg(msc, CFG_MBWU_FLT);
-> +		break;
-> +	default:
-> +		return;
-> +	}
-> +}
-> +
-> +/* Remove values set by the hardware to prevent aparant mismatches. */
-> +static void clean_msmon_ctl_val(u32 *cur_ctl)
-> +{
-> +	*cur_ctl &= ~MSMON_CFG_x_CTL_OFLOW_STATUS;
-> +}
-> +
-> +static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
-> +				     u32 flt_val)
-> +{
-> +	struct mpam_msc *msc = m->ris->vmsc->msc;
-> +
-> +	/*
-> +	 * Write the ctl_val with the enable bit cleared, reset the counter,
-> +	 * then enable counter.
-> +	 */
-> +	switch (m->type) {
-> +	case mpam_feat_msmon_csu:
-> +		mpam_write_monsel_reg(msc, CFG_CSU_FLT, flt_val);
-> +		mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val);
-> +		mpam_write_monsel_reg(msc, CSU, 0);
-> +		mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
-> +		break;
-> +	case mpam_feat_msmon_mbwu:
-> +		mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
-> +		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
-> +		mpam_write_monsel_reg(msc, MBWU, 0);
-> +		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
-> +		break;
-> +	default:
-> +		return;
-> +	}
-> +}
-> +
-> +/* Call with MSC lock held */
-> +static void __ris_msmon_read(void *arg)
-> +{
-> +	u64 now;
-> +	bool nrdy = false;
-> +	struct mon_read *m = arg;
-> +	struct mon_cfg *ctx = m->ctx;
-> +	struct mpam_msc_ris *ris = m->ris;
-> +	struct mpam_props *rprops = &ris->props;
-> +	struct mpam_msc *msc = m->ris->vmsc->msc;
-> +	u32 mon_sel, ctl_val, flt_val, cur_ctl, cur_flt;
-> +
-> +	if (!mpam_mon_sel_inner_lock(msc)) {
-> +		m->err = -EIO;
-> +		return;
-> +	}
-> +	mon_sel = FIELD_PREP(MSMON_CFG_MON_SEL_MON_SEL, ctx->mon) |
-> +		  FIELD_PREP(MSMON_CFG_MON_SEL_RIS, ris->ris_idx);
-> +	mpam_write_monsel_reg(msc, CFG_MON_SEL, mon_sel);
-> +
-> +	/*
-> +	 * Read the existing configuration to avoid re-writing the same values.
-> +	 * This saves waiting for 'nrdy' on subsequent reads.
-> +	 */
-> +	read_msmon_ctl_flt_vals(m, &cur_ctl, &cur_flt);
-> +	clean_msmon_ctl_val(&cur_ctl);
-> +	gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
-> +	if (cur_flt != flt_val || cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN))
-> +		write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
-> +
-> +	switch (m->type) {
-> +	case mpam_feat_msmon_csu:
-> +		now = mpam_read_monsel_reg(msc, CSU);
-> +		if (mpam_has_feature(mpam_feat_msmon_csu_hw_nrdy, rprops))
-> +			nrdy = now & MSMON___NRDY;
-> +		break;
-> +	case mpam_feat_msmon_mbwu:
-> +		now = mpam_read_monsel_reg(msc, MBWU);
-> +		if (mpam_has_feature(mpam_feat_msmon_mbwu_hw_nrdy, rprops))
-> +			nrdy = now & MSMON___NRDY;
-> +		break;
-> +	default:
-> +		m->err = -EINVAL;
-> +		break;
-> +	}
-> +	mpam_mon_sel_inner_unlock(msc);
-> +
-> +	if (nrdy) {
-> +		m->err = -EBUSY;
-> +		return;
-> +	}
-> +
-> +	now = FIELD_GET(MSMON___VALUE, now);
-> +	*m->val += now;
-> +}
-> +
-> +static int _msmon_read(struct mpam_component *comp, struct mon_read *arg)
-> +{
-> +	int err, idx;
-> +	struct mpam_msc *msc;
-> +	struct mpam_vmsc *vmsc;
-> +	struct mpam_msc_ris *ris;
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_rcu(vmsc, &comp->vmsc, comp_list) {
-> +		msc = vmsc->msc;
-> +
-> +		mpam_mon_sel_outer_lock(msc);
-> +		list_for_each_entry_rcu(ris, &vmsc->ris, vmsc_list) {
-> +			arg->ris = ris;
-> +
-> +			err = smp_call_function_any(&msc->accessibility,
-> +						    __ris_msmon_read, arg,
-> +						    true);
-> +			if (!err && arg->err)
-> +				err = arg->err;
-> +			if (err)
-> +				break;
-> +		}
-> +		mpam_mon_sel_outer_unlock(msc);
-> +		if (err)
-> +			break;
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +
-> +	return err;
-> +}
-> +
-> +int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg *ctx,
-> +		    enum mpam_device_features type, u64 *val)
-> +{
-> +	int err;
-> +	struct mon_read arg;
-> +	u64 wait_jiffies = 0;
-> +	struct mpam_props *cprops = &comp->class->props;
-> +
-> +	might_sleep();
-> +
-> +	if (!mpam_is_enabled())
-> +		return -EIO;
-> +
-> +	if (!mpam_has_feature(type, cprops))
-> +		return -EOPNOTSUPP;
-> +
-> +	memset(&arg, 0, sizeof(arg));
-> +	arg.ctx = ctx;
-> +	arg.type = type;
-> +	arg.val = val;
-> +	*val = 0;
-> +
-> +	err = _msmon_read(comp, &arg);
-> +	if (err == -EBUSY && comp->class->nrdy_usec)
-> +		wait_jiffies = usecs_to_jiffies(comp->class->nrdy_usec);
-> +
-> +	while (wait_jiffies)
-> +		wait_jiffies = schedule_timeout_uninterruptible(wait_jiffies);
-> +
-> +	if (err == -EBUSY) {
-> +		memset(&arg, 0, sizeof(arg));
-> +		arg.ctx = ctx;
-> +		arg.type = type;
-> +		arg.val = val;
-> +		*val = 0;
-> +
-> +		err = _msmon_read(comp, &arg);
-> +	}
-> +
-> +	return err;
-> +}
-> +
->   static void mpam_reset_msc_bitmap(struct mpam_msc *msc, u16 reg, u16 wd)
->   {
->   	u32 num_words, msb;
-> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
-> index aca91f7dfbf6..4aabef96fb7a 100644
-> --- a/drivers/platform/arm64/mpam/mpam_internal.h
-> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
-> @@ -308,6 +308,21 @@ struct mpam_msc_ris {
->   	struct mpam_garbage	garbage;
->   };
->   
-> +/* The values for MSMON_CFG_MBWU_FLT.RWBW */
-> +enum mon_filter_options {
-> +	COUNT_BOTH	= 0,
-> +	COUNT_WRITE	= 1,
-> +	COUNT_READ	= 2,
-> +};
-> +
-> +struct mon_cfg {
-> +	u16                     mon;
-> +	u8                      pmg;
-> +	bool                    match_pmg;
-> +	u32                     partid;
-> +	enum mon_filter_options opts;
-> +};
-> +
->   static inline int mpam_alloc_csu_mon(struct mpam_class *class)
->   {
->   	struct mpam_props *cprops = &class->props;
-> @@ -360,6 +375,9 @@ void mpam_disable(struct work_struct *work);
->   int mpam_apply_config(struct mpam_component *comp, u16 partid,
->   		      struct mpam_config *cfg);
->   
-> +int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg *ctx,
-> +		    enum mpam_device_features, u64 *val);
-> +
->   int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
->   				   cpumask_t *affinity);
->   
+> The current wsa883x codec driver manually enables and disables 
+> regulators during probe and remove.
+> In patch v3-0003, reset functionality was added using 
+> devm_reset_control_get_optional_shared_deasserted() for shared gpios.
 
--- 
-Thanks,
 
-Ben
+There is no such code at this point. Each patch is a separate commit and
+must stand on its own. With its own explanation. You cannot say that you
+add bugs later, so you need to fix something now.
 
+Describe actual problem here. If there is no problem here, describe why
+you are doing this.
+
+> 
+> However, during cleanup, this led to a warning:
+> "WARNING: CPU: 2 PID: 195 at drivers/regulator/core.c:2450 
+> _regulator_put+0x50/0x58"
+> 
+> This occurs because the regulator is still enabled/released when the 
+> devm-managed cleanup path attempts to release it.
+
+So that patch was broken? You just did not properly clean up there?
+
+> 
+> To resolve this, remove the manual regulator disable logic and instead 
+> register a devm-managed cleanup action using devm_add_action_or_reset(). 
+> This ensures proper cleanup and avoids regulator misuse warnings.
+> 
+> For reference, the wsa884x codec driver already follows this approach by 
+> using devm actions for regulator management.
+> 
+>>> removal, register a devm-managed cleanup action using
+>>> devm_add_action_or_reset() to safely disable the regulator
+>>> associated with the WSA883x codec, ensuring that the regulator
+>>> is properly disabled when the device is removed, even if the
+>>
+>> Device cannot be removed/unloaded, AFAIK, because of suppressed bind.
+>> Regulator is already disabled during error paths, so that part of above
+>> sentences is just misleading.
+>>
+>> How can one trigger the warnings?
+>>
+> 
+> The warning in _regulator_put() can be triggered by applying patch 
+> v3-0003, which introduces reset functionality using 
+> devm_reset_control_get_optional_shared_deasserted().
+
+
+There is no such code now. You say "potential warnings" are here.
+
+> 
+> Since the existing driver handles regulator enable/disable manually, the 
+> devm-managed reset cleanup path may attempt to release regulators that 
+> are still enabled, leading to the warning.
+> 
+> This issue highlights the need to replace manual regulator handling with 
+> devm_add_action_or_reset() to ensure proper cleanup and avoid such warnings.
+> 
+>>
+>>> probe fails or the driver is unloaded unexpectedly.
+>>
+>> How driver can be unloaded unexpectedly?
+>>
+> 
+> "Unloaded" might not be the most accurate term here. What I meant is 
+> that the driver’s probe can fail due to an error—such as missing 
+> resources or improper regulator handling.
+
+
+Use standard Linux terms, e.g. probe failure, probe deferral etc.
+
+Best regards,
+Krzysztof
 
