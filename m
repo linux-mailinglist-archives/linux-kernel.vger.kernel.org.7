@@ -1,389 +1,133 @@
-Return-Path: <linux-kernel+bounces-748116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23BB2B13CA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:14:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394CFB13CA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 909AC1718EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:06:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92F51545574
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D196D273D6F;
-	Mon, 28 Jul 2025 14:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D15270EAD;
+	Mon, 28 Jul 2025 14:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k/YQACin"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="r/ZfobB5"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D347E2737EA
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0BD26FA50
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 14:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753711338; cv=none; b=YNPwZBOfBOblZqTo34isvu2NGZynmYoY/2zx4y36hyyphy7Gy6vCcAUIA7DNioNBLQDKTEC1VBG0jddZUlPYBWXpwch9Hn5jmkgbFy4kg9+4o8x7BRma4ISHH2QBvGELVGZTrWP8aQe4A53WhEYnMdO1eWNiWMjLodUysbDBaPk=
+	t=1753711396; cv=none; b=ceAI5uGSf3/l3LMuVOgxoPemw9RthRr5EVNsZxvuNRcumvsue7qZxDim1L80cKO9WlnWq27lHrwIKT4htnnVSqRQs4MAHQIt/bo4wh6D3FopVYWJ8Fz23lLJ0Qs28k1oGZxVe6NeRV+VXnWVwKyQRmvUSg1IkrscJlxGQLffEds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753711338; c=relaxed/simple;
-	bh=KO8i/mUp/L1BpdU8Do+Wpmb2CPG3Q3jG+Kb87u47rKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s/LLPB2iwcH57MVKLYgCa2BWZ79e3skQuXs2fXMGnpLFxmw8yUT+vrb0gF99ENjrdB6A6Ifaqg/BOekWgjXJ23/62IOzmBQ5cnhXnZUZucCGDG1PTE4reu+DA4pr8vvtGVms2h1oSgoHFE0UuEounT+n2Ds4PEoyWzTPQv1Mzd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k/YQACin; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45611a6a706so20677115e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 07:02:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753711334; x=1754316134; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MDgnlrhOp316LKm8qgqTwB9fvvKHrbdRGlvBul5Nxhw=;
-        b=k/YQACiniq1vVuKcRKW0uqjqwoB5EdvCDprEWN2EFVptvsQZd7X/qstseBpaTjhBtk
-         32jcRoFzCM1zxkjRaacKawr/ZewVgWWveHPocX5DHBzTVbzgUOfIQE9D5pdBUo8fVwZg
-         fmvbpSGjbcjh0Dert4lCzCAIWgZlet9uvBCStDUHrEE1/PjbV0pDzsUVkaGYbwlfb7mT
-         CNjvo45T3qnA3QB/4s01WwUE4WpqMoTopuxs0wY+HuKAaxF5daB+ChyQR9Ypq1I58FOB
-         DwuACK/D89v+75CqRCkV86ZHQZZKPXg+mEIfBfqDOk4gbLW0CuM8Qqcr+wJlcj776zV6
-         LE1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753711334; x=1754316134;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MDgnlrhOp316LKm8qgqTwB9fvvKHrbdRGlvBul5Nxhw=;
-        b=ZJRDl7atlqmffhximg0iobrXfGiOlvdkORlVq2Y/OBLkQhBp0DNV2c9oYFk1MFE0dt
-         S9vnVYTQV+gfm2uPy6L0IzYmlcVcjk4nIXihtnN7Gx9FxHED7QfH6TtcoEE6/ZH4qdJ1
-         zWqx89E/xklqeL0a2FUbbXzxyLU3ylysH2Pc8wqZfXgBlyt2ilpF/tslaluYk4CWRsRO
-         4FCB2R19/8DKFhTAuTb8bT6BRtqQMfmWMZcT6LJXglxfhA6SURnIGYjqdDHE3r5t2eAg
-         +uTd06RoqD7s+bJaaG7LeJw8C/pNfzqQCUSzyTprImm40C8r0lqohvtg5wE+k0fDJ+yt
-         cn5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV78bSRWSAg+lVoxv/7W/NvnWqBPZJ9FsgXD0N3ZhbdRGqVlijhlL/MTODBB/JsEuj06nN9+Xi8vlLUxrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbTmwvDle2R49w1WO2c9BD9UQ6XUnk9qlGJ60s6+k5I7pWFkwz
-	BQW6wSQqBrgYa2pqKWlxPX1wCZpSap9HlzVKCP44WKVDbSJ2WJ4qTpWArjhWfYlhXhM=
-X-Gm-Gg: ASbGncvmXO51kw2EPtGMgddkekDY5j2V54V5OSW9ooiWfrZwg/q+ehOLdEEDYZK5WR+
-	QF6BNuQneKXkjj6mCT3tfeIif0cAU6b3CZNuUZiRFJ0ozahh81igIX0iR7pmmzR3WAN1J80ZayW
-	Z4sQct+ZbIUvraPc2KRJLChJvDn3m+/jczYqOwvpkb6QjDrgAPhotCOoupZ/9uKbDYMzEkzPT+N
-	n8NTjt2WSfG/zu18oVwUSPv9aQoi1yPzyTe1WsMrvZUUVWwExuKf94kENxXvP2ohSOEPQsKxWif
-	b+SkY32coplasQ+8hqjm6groO63iyTy0PjR3CuE49nRKX1vSi1qccmfUbWdVbZPKasiWW75FrB/
-	Ag/F+mOpgkZStSy2baCr7G92SML+0ukzgDICo0adFP0HXxQnkbcmHTDPzoYIo20yTDLCLJvDoxA
-	==
-X-Google-Smtp-Source: AGHT+IEVjNzjQfUAHGkG5K1xgvtcGDceKpvleFX8cpLDujOgXcnJhaEFr7U+ftGk/7ClOLjACshFTA==
-X-Received: by 2002:a05:600c:45d1:b0:455:f187:6203 with SMTP id 5b1f17b1804b1-4587654f0camr89203815e9.27.1753711333913;
-        Mon, 28 Jul 2025 07:02:13 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778ebaca7sm9122241f8f.30.2025.07.28.07.02.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 07:02:13 -0700 (PDT)
-Message-ID: <07501287-647f-4bb8-9d6d-42bb37ea04cc@linaro.org>
-Date: Mon, 28 Jul 2025 15:02:11 +0100
+	s=arc-20240116; t=1753711396; c=relaxed/simple;
+	bh=RTHUsWGnTosevy6Q8OKwIgh47UnQ066Os9T+V5HyCAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNBKBY8mOtECikcC0FleQA8G7lZkXu8KdGkDT1DNsSjGe6H8IvA1OZBwt7NGRR7AjP6NUf0wochRc2RMmg8p+xhSSDX4FU9JTEJY0+XDAMI+K6jxRSj3HWOwT61l0ZaxD80aXq1/EoUDp2iAQOgCuSv9u67cdk3OEH9wyjHyhJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=r/ZfobB5; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 7893F1014A61
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 19:33:04 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 7893F1014A61
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1753711384; bh=RTHUsWGnTosevy6Q8OKwIgh47UnQ066Os9T+V5HyCAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r/ZfobB5RIU1lH78OFU/2CURMEDbXorXxcHijCNqRyYod+3h+YMx7a7kURDoc2b+j
+	 1KJkJ80raDWweC/ymmspijuyCl9rIoIHH2iFqYCwBCqVl2Dv3hxLa38wKckxI/7nGs
+	 iiFPHH4XPOm1WRZ86SGNlTEznNJJwxf1+iivk4VU=
+Received: (qmail 21921 invoked by uid 510); 28 Jul 2025 19:33:04 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.530725 secs; 28 Jul 2025 19:33:04 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 28 Jul 2025 19:33:01 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id DBA1336003D;
+	Mon, 28 Jul 2025 19:33:00 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 9DD2B1E8126F;
+	Mon, 28 Jul 2025 19:33:00 +0530 (IST)
+Date: Mon, 28 Jul 2025 19:32:54 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	marcelo.schmitt1@gmail.com, gshahrouzi@gmail.com,
+	hridesh699@gmail.com, linux-iio@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
+Subject: Re: [PATCH] staging: iio: ad5933: Fix implicit fall-through in
+ switch()
+Message-ID: <aIeDDsRurrgXqRQn@bhairav-test.ee.iitb.ac.in>
+References: <aIdKAJVnskdAVUMi@bhairav-test.ee.iitb.ac.in>
+ <2025072835-singer-penny-a421@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/9] media: qcom: camss: Add support for CSID for
- sa8775p
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250703171938.3606998-1-quic_vikramsa@quicinc.com>
- <20250703171938.3606998-8-quic_vikramsa@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250703171938.3606998-8-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025072835-singer-penny-a421@gregkh>
 
-On 03/07/2025 18:19, Vikram Sharma wrote:
-> The CSID in sa8775p is version 690, This csid is different from
-> csid 780 w.r.t few bit-fields.
+On Mon, Jul 28, 2025 at 12:39:21PM +0200, Greg KH wrote:
+> On Mon, Jul 28, 2025 at 03:29:28PM +0530, Akhilesh Patil wrote:
+> > Add default case in switch() codeblock in ad5933_read_raw().
+> > Convert implicit error return due to switch fallthrough to explicit return
+> > to make intent clear. Follow kernel switch fall-thorugh guidelines at
+> > Documentation/process/deprecated.rst
+> > 
+> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> > ---
+> > Checked build for 6.16.0 kernel with ad5933
+> > ---
+> >  drivers/staging/iio/impedance-analyzer/ad5933.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> > index 85a4223295cd..6547a259b8a0 100644
+> > --- a/drivers/staging/iio/impedance-analyzer/ad5933.c
+> > +++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> > @@ -533,9 +533,10 @@ static int ad5933_read_raw(struct iio_dev *indio_dev,
+> >  		*val = 1000;
+> >  		*val2 = 5;
+> >  		return IIO_VAL_FRACTIONAL_LOG2;
+> > +	default:
+> > +		return -EINVAL;
 > 
-> Co-developed-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->   .../platform/qcom/camss/camss-csid-gen3.c     |  31 +++-
->   drivers/media/platform/qcom/camss/camss.c     | 151 ++++++++++++++++++
->   2 files changed, 175 insertions(+), 7 deletions(-)
+> What tool is requiring this to be added?  It's totally redundant and
+> needs to have the tool fixed instead.
+
+This patch is not inspired by any tool as such.
+I observed this code pattern while manually reading the staging area iio
+code. From my eyes, there is implicit intention to return from switch block if
+no match is found which can be improved in readibility by explicit
+default block returning error.
+I agree this is redundant and will not have any functional impact.
+However, imo - this can help support kernel wide efforts to
+clarify switch() blocks.
+
+The motivation for this patch is from a035d552 which talks about
+eleminating ambiguity by clearly defining swich() case blocks.
+
+Thanks for the review, 
+
+Akhilesh
+
 > 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen3.c b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-> index 0941152ec301..f62084fb8287 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-> @@ -47,8 +47,12 @@
->   #define CSID_CSI2_RX_IRQ_CLEAR		0xA4
->   #define CSID_CSI2_RX_IRQ_SET		0xA8
->   
-> +#define IS_CSID_690(csid)	(csid->camss->res->version ==\
-> +					CAMSS_8775P ? true : false)
-
-You don't need to make this into a bool.
-
-version == CAMSS_8775P will do exactly the same logical thing.
-
->   #define CSID_BUF_DONE_IRQ_STATUS	0x8C
-> -#define		BUF_DONE_IRQ_STATUS_RDI_OFFSET	(csid_is_lite(csid) ? 1 : 14)
-> +#define BUF_DONE_IRQ_STATUS_RDI_OFFSET  (csid_is_lite(csid) ?\
-> +						1 : (IS_CSID_690(csid) ?\
-> +						13 : 14))
->   #define CSID_BUF_DONE_IRQ_MASK		0x90
->   #define CSID_BUF_DONE_IRQ_CLEAR		0x94
->   #define CSID_BUF_DONE_IRQ_SET		0x98
-> @@ -61,6 +65,7 @@
->   
->   #define CSID_CSI2_RX_CFG0		0x200
->   #define		CSI2_RX_CFG0_NUM_ACTIVE_LANES	0
-> +#define		CSI2_RX_CFG0_VC_MODE		3
->   #define		CSI2_RX_CFG0_DL0_INPUT_SEL	4
->   #define		CSI2_RX_CFG0_PHY_NUM_SEL	20
->   
-> @@ -68,7 +73,9 @@
->   #define		CSI2_RX_CFG1_ECC_CORRECTION_EN	BIT(0)
->   #define		CSI2_RX_CFG1_VC_MODE		BIT(2)
->   
-> -#define CSID_RDI_CFG0(rdi)		(0x500 + 0x100 * (rdi))
-> +#define CSID_RDI_CFG0(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
-> +					(0x300 + 0x100 * (rdi)) :\
-> +					(0x500 + 0x100 * (rdi)))
->   #define		RDI_CFG0_TIMESTAMP_EN		BIT(6)
->   #define		RDI_CFG0_TIMESTAMP_STB_SEL	BIT(8)
->   #define		RDI_CFG0_DECODE_FORMAT		12
-> @@ -77,10 +84,14 @@
->   #define		RDI_CFG0_DT_ID			27
->   #define		RDI_CFG0_EN			BIT(31)
->   
-> -#define CSID_RDI_CTRL(rdi)		(0x504 + 0x100 * (rdi))
-> +#define CSID_RDI_CTRL(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
-> +					(0x304 + 0x100 * (rdi)) :\
-> +					(0x504 + 0x100 * (rdi)))
->   #define		RDI_CTRL_START_CMD		BIT(0)
->   
-> -#define CSID_RDI_CFG1(rdi)		(0x510 + 0x100 * (rdi))
-> +#define CSID_RDI_CFG1(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
-> +					(0x310 + 0x100 * (rdi)) :\
-> +					(0x510 + 0x100 * (rdi)))
->   #define		RDI_CFG1_DROP_H_EN		BIT(5)
->   #define		RDI_CFG1_DROP_V_EN		BIT(6)
->   #define		RDI_CFG1_CROP_H_EN		BIT(7)
-> @@ -88,9 +99,12 @@
->   #define		RDI_CFG1_PIX_STORE		BIT(10)
->   #define		RDI_CFG1_PACKING_FORMAT_MIPI	BIT(15)
->   
-> -#define CSID_RDI_IRQ_SUBSAMPLE_PATTERN(rdi)	(0x548 + 0x100 * (rdi))
-> -#define CSID_RDI_IRQ_SUBSAMPLE_PERIOD(rdi)	(0x54C + 0x100 * (rdi))
-> -
-> +#define CSID_RDI_IRQ_SUBSAMPLE_PATTERN(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
-> +							(0x348 + 0x100 * (rdi)) :\
-> +							(0x548 + 0x100 * (rdi)))
-> +#define CSID_RDI_IRQ_SUBSAMPLE_PERIOD(rdi)	(csid_is_lite(csid) && IS_CSID_690(csid) ?\
-> +							(0x34C + 0x100 * (rdi)) :\
-> +							(0x54C + 0x100 * (rdi)))
->   #define CSI2_RX_CFG0_PHY_SEL_BASE_IDX	1
->   
->   static void __csid_configure_rx(struct csid_device *csid,
-> @@ -102,6 +116,9 @@ static void __csid_configure_rx(struct csid_device *csid,
->   	val |= phy->lane_assign << CSI2_RX_CFG0_DL0_INPUT_SEL;
->   	val |= (phy->csiphy_id + CSI2_RX_CFG0_PHY_SEL_BASE_IDX) << CSI2_RX_CFG0_PHY_NUM_SEL;
->   
-> +	if (IS_CSID_690(csid) && (vc > 3))
-> +		val |= 1 << CSI2_RX_CFG0_VC_MODE;
-> +
-
-I remeber that the > 3 has a purpose but, I don't remember of off the 
-top of my head what that is.
-
-Please add a comment to state why "> 3" matters.
-
-BTW should this be "> 3" or ">= 3" please double check.
-
->   	writel(val, csid->base + CSID_CSI2_RX_CFG0);
->   
->   	val = CSI2_RX_CFG1_ECC_CORRECTION_EN;
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-> index ebc3b296bb50..b2398196b9ff 100644
-> --- a/drivers/media/platform/qcom/camss/camss.c
-> +++ b/drivers/media/platform/qcom/camss/camss.c
-> @@ -2269,6 +2269,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
->   	}
->   };
->   
-> +static const struct resources_wrapper csid_wrapper_res_sa8775p = {
-> +	.reg = "csid_wrapper",
-> +};
-> +
->   static const struct resources_wrapper csid_wrapper_res_sm8550 = {
->   	.reg = "csid_wrapper",
->   };
-
-Redefining the same string in separate structures over and over again 
-seems wasteful.
-
-Please take the opporunity of this new addition to rationalise down the 
-string declarations and .. if possible the number of struct 
-resources_wrappers we are doing here.
-
-> @@ -2558,6 +2562,153 @@ static const struct camss_subdev_resources csiphy_res_8775p[] = {
->   	},
->   };
->   
-> +static const struct camss_subdev_resources csid_res_8775p[] = {
-> +	/* CSID0 */
-> +	{
-> +		.regulators = {},
-> +
-Zap the newlines.
-> +		.clock = { "csid", "csiphy_rx"},
-> +		.clock_rate = {
-> +			{ 400000000, 400000000},
-> +			{ 400000000, 400000000}
-> +		},
-> +
-> +		.reg = { "csid0" },
-> +		.interrupt = { "csid0" },
-> +		.csid = {
-> +			.is_lite = false,
-> +			.hw_ops = &csid_ops_gen3,
-> +			.parent_dev_ops = &vfe_parent_dev_ops,
-> +			.formats = &csid_formats_gen2
-> +		}
-> +	},
-> +	/* CSID1 */
-> +	{
-> +		.regulators = {},
-> +
-> +		.clock = { "csid", "csiphy_rx"},
-> +		.clock_rate = {
-> +			{ 400000000, 400000000},
-> +			{ 400000000, 400000000}
-> +		},
-> +
-> +		.reg = { "csid1" },
-> +		.interrupt = { "csid1" },
-> +		.csid = {
-> +			.is_lite = false,
-> +			.hw_ops = &csid_ops_gen3,
-> +			.parent_dev_ops = &vfe_parent_dev_ops,
-> +			.formats = &csid_formats_gen2
-> +		}
-> +	},
-> +
-> +	/* CSID2 (lite) */
-> +	{
-> +		.regulators = {},
-> +
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 400000000, 400000000, 0},
-> +			{ 0, 0, 400000000, 480000000, 0}
-> +		},
-> +
-> +		.reg = { "csid_lite0" },
-> +		.interrupt = { "csid_lite0" },
-> +		.csid = {
-> +			.is_lite = true,
-> +			.hw_ops = &csid_ops_gen3,
-> +			.parent_dev_ops = &vfe_parent_dev_ops,
-> +			.formats = &csid_formats_gen2
-> +		}
-> +	},
-> +	/* CSID3 (lite) */
-> +	{
-> +		.regulators = {},
-> +
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 400000000, 400000000, 0},
-> +			{ 0, 0, 400000000, 480000000, 0}
-> +		},
-> +
-> +		.reg = { "csid_lite1" },
-> +		.interrupt = { "csid_lite1" },
-> +		.csid = {
-> +			.is_lite = true,
-> +			.hw_ops = &csid_ops_gen3,
-> +			.parent_dev_ops = &vfe_parent_dev_ops,
-> +			.formats = &csid_formats_gen2
-> +		}
-> +	},
-> +	/* CSID4 (lite) */
-> +	{
-> +		.regulators = {},
-> +
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 400000000, 400000000, 0},
-> +			{ 0, 0, 400000000, 480000000, 0}
-> +		},
-> +
-> +		.reg = { "csid_lite2" },
-> +		.interrupt = { "csid_lite2" },
-> +		.csid = {
-> +			.is_lite = true,
-> +			.hw_ops = &csid_ops_gen3,
-> +			.parent_dev_ops = &vfe_parent_dev_ops,
-> +			.formats = &csid_formats_gen2
-> +		}
-> +	},
-> +	/* CSID5 (lite) */
-> +	{
-> +		.regulators = {},
-> +
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 400000000, 400000000, 0},
-> +			{ 0, 0, 400000000, 480000000, 0}
-> +		},
-> +
-> +		.reg = { "csid_lite3" },
-> +		.interrupt = { "csid_lite3" },
-> +		.csid = {
-> +			.is_lite = true,
-> +			.hw_ops = &csid_ops_gen3,
-> +			.parent_dev_ops = &vfe_parent_dev_ops,
-> +			.formats = &csid_formats_gen2
-> +		}
-> +	},
-> +	/* CSID6 (lite) */
-> +	{
-> +		.regulators = {},
-> +
-> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
-> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
-> +			   "vfe_lite"},
-> +		.clock_rate = {
-> +			{ 0, 0, 400000000, 400000000, 0},
-> +			{ 0, 0, 400000000, 480000000, 0}
-> +		},
-> +
-> +		.reg = { "csid_lite4" },
-> +		.interrupt = { "csid_lite4" },
-> +		.csid = {
-> +			.is_lite = true,
-> +			.hw_ops = &csid_ops_gen3,
-> +			.parent_dev_ops = &vfe_parent_dev_ops,
-> +			.formats = &csid_formats_gen2
-> +		}
-> +	},
-> +};
-> +
->   static const struct resources_icc icc_res_sa8775p[] = {
->   	{
->   		.name = "ahb",
-
----
-bod
+> sorry,
+> 
+> greg k-h
 
