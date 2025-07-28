@@ -1,81 +1,112 @@
-Return-Path: <linux-kernel+bounces-747798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD35FB13873
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:59:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9739FB13874
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24413AB694
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5288D188C713
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF778246BAF;
-	Mon, 28 Jul 2025 09:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5605B244698;
+	Mon, 28 Jul 2025 09:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="nkSTUiy1"
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="cJ5ozXf6"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E731D6AA;
-	Mon, 28 Jul 2025 09:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9C721D3C9
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753696645; cv=none; b=o/C71t8ZuVYlikbbxDDKz1/+XY4IxR5qMIC1KjfRls8WCLrS4NQB3ptf8plm4dI+dwcNiukcZ2EYQ2wPY0uQrJT3YwSaaq1MAf/X1xuB3Ke9yn4zgmBt4RJoCOBz+0RlfD0oSRgwYYl+69DD7Rx9DcB61cO/B1m3exkCom0iOqI=
+	t=1753696786; cv=none; b=bTi4c+9YLWw5t6QrAdigrSnxdHP048rDvvoYryE07BtcYjHqd4MotDhWDhDgemmbWlj46zbqw5/hdf2TP5qUaCbb1hL17DI+mJnjpjLesFEpHRk4yLmpdQml1UDKrbqEKxpF4cjoxZTQ4Z5Ot3FW31WU0/hHEGiNo77iW6dFXGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753696645; c=relaxed/simple;
-	bh=Rrf/eppo8NzkyzsMrgFlMQNnLJw3fN0dBCoG1NqHTa0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=tGtIJlZgb9kmbKWC10U9Fw8kkA5wJhaw6AxCJmKzHSlGqDLwtcZfJ+CnFDA+bHMjnEAaLXQVr8zSM6Pqry/AJloJuTafeYOpg9x8vTe3YAQJB1xjZAAhF0JAHv3HUzBh4ZBZyJKrF4VBsdSMbR7mYqYykVdkO82z5gUKvmdlEGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=nkSTUiy1; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
-Received: from mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:152c:0:640:d236:0])
-	by forward502d.mail.yandex.net (Yandex) with ESMTPS id E52C8C13BC;
-	Mon, 28 Jul 2025 12:57:13 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id CvU7JV6R1Cg0-tMfugOc2;
-	Mon, 28 Jul 2025 12:57:13 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
-	t=1753696633; bh=Rrf/eppo8NzkyzsMrgFlMQNnLJw3fN0dBCoG1NqHTa0=;
-	h=From:Subject:In-Reply-To:Cc:Date:References:To:Message-ID;
-	b=nkSTUiy1CAplAJSpvxJ/Ujei6wMbX8OE1EUhTXqlH6Vi3lfkwzZLATHV30frA9Nzq
-	 McKIRllXnA4KZT927FVNonogbsvmSpX6i3GHoKJPlNfHAxM0mlYY9z8NtzFFYmqcnS
-	 9WBfXjrV65hGeJcVhTVXhFuD//N6sTWcwq/h6F1s=
-Authentication-Results: mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net; dkim=pass header.i=@0upti.me
-Message-ID: <9323b4ab-f2c2-41ec-be0e-779d327205ca@0upti.me>
-Date: Mon, 28 Jul 2025 12:57:12 +0300
+	s=arc-20240116; t=1753696786; c=relaxed/simple;
+	bh=CpIgJcNBH57ZIxVFm8Q8IGWglEPgaFmOCVA6ku4RpsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=J2Lxbv7LRY5bnn5Blq1G09aXjqJ2JA8AMyxkIG5D7kXsEqB6b6yQht0yU9caAcLjDz3oMcFHukd/PJZqWmgxocMN5cv5Yp71R81GUGRLNgXin45z3l/kQiUiR6ThIaYpdm6YMwVyMgTPSeDc+c523psXSR+HAYh41V5OX833NCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=cJ5ozXf6; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 92BCA1005C8D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:29:37 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 92BCA1005C8D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1753696777; bh=CpIgJcNBH57ZIxVFm8Q8IGWglEPgaFmOCVA6ku4RpsY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cJ5ozXf6nkIu3soufTZknNlwQDIx6pw0dWLGh7hZYGqo3MXJg7CtDNz5b4qWRpjg3
+	 6yZpOcoZno5SkBXg4Gyhu/7SBQEQWhhSkcIbZJ09P7k1lr0//nYKfk/GIi1DXteBbY
+	 OFT1K7v6R0qN2WiWkk3abJFelFRMglI/ySE9caCw=
+Received: (qmail 17700 invoked by uid 510); 28 Jul 2025 15:29:37 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(-6.0/7.0):. Processed in 2.540206 secs; 28 Jul 2025 15:29:37 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 28 Jul 2025 15:29:34 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 3386336003B;
+	Mon, 28 Jul 2025 15:29:34 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id E1EAC1E81273;
+	Mon, 28 Jul 2025 15:29:33 +0530 (IST)
+Date: Mon, 28 Jul 2025 15:29:28 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	gregkh@linuxfoundation.org, marcelo.schmitt1@gmail.com,
+	gshahrouzi@gmail.com, hridesh699@gmail.com, akhilesh@ee.iitb.ac.in
+Cc: linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH] staging: iio: ad5933: Fix implicit fall-through in switch()
+Message-ID: <aIdKAJVnskdAVUMi@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: rafael@kernel.org
-Cc: W_Armin@gmx.de, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CAJZ5v0iWS=tHAuauHNHb+N9_GjJTX2-RY01eAS8-sjS_2UZaoA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: EC: Ignore ECDT tables with an invalid ID string
-Content-Language: en-US
-From: Ilya K <me@0upti.me>
-In-Reply-To: <CAJZ5v0iWS=tHAuauHNHb+N9_GjJTX2-RY01eAS8-sjS_2UZaoA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Add default case in switch() codeblock in ad5933_read_raw().
+Convert implicit error return due to switch fallthrough to explicit return
+to make intent clear. Follow kernel switch fall-thorugh guidelines at
+Documentation/process/deprecated.rst
 
-Hello folks!
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+---
+Checked build for 6.16.0 kernel with ad5933
+---
+ drivers/staging/iio/impedance-analyzer/ad5933.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-It looks like this change makes the touchpad stop being detected entirely on my ThinkBook 14 G7 IML[0].
+diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
+index 85a4223295cd..6547a259b8a0 100644
+--- a/drivers/staging/iio/impedance-analyzer/ad5933.c
++++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
+@@ -533,9 +533,10 @@ static int ad5933_read_raw(struct iio_dev *indio_dev,
+ 		*val = 1000;
+ 		*val2 = 5;
+ 		return IIO_VAL_FRACTIONAL_LOG2;
++	default:
++		return -EINVAL;
+ 	}
+ 
+-	return -EINVAL;
+ out:
+ 	iio_device_release_direct(indio_dev);
+ 	return ret;
+-- 
+2.34.1
 
-The kernel log says: > ACPI: EC: [Firmware Bug]: Ignoring ECDT due to invalid ID string "_SB.PC00.LPCB.EC0"
-Which looks technically invalid, but also probably important? :)
-
-Reverting the change makes things work again. I'm going to try a firmware update and pray to
-whatever dark gods are responsible for Lenovo firmware that they fixed their ACPI tables, but
-that requires getting Windows on the machine, so it'll take a bit.
-
-[0]: https://psref.lenovo.com/Product/ThinkBook/ThinkBook_14_G7_IML
-
-(resend -glpnk because my mail server is a shit)
 
