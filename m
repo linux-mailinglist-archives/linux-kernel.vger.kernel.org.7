@@ -1,134 +1,141 @@
-Return-Path: <linux-kernel+bounces-747880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE81EB139A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:08:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12612B139AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 745BE3A2818
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0949D188475D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB3121ADB9;
-	Mon, 28 Jul 2025 11:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3DC25B1EA;
+	Mon, 28 Jul 2025 11:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SFtYPbyN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDqCEAIL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD13256C8A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAA8217659;
+	Mon, 28 Jul 2025 11:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753700858; cv=none; b=l0uAq+gza0qoNfyBwCqaAfveEwlwCJjMe1pQGvUTnDxl7F6U+fpOLQhhW8FSdS7x/jDaIDhu+7Wmu2eJnYGfv4V/CAINeuY4AZ3PZbmoMjoJ0q314Wwp3rP1tUns0BGpt76BneHBt12FdK39jCdZ7FYMZ83B3BaQvX3qJtr9oqo=
+	t=1753700938; cv=none; b=NpyInyaS3N8zQj4lRX8hO9p3AuB6ne5x0oMKw6YqtuIFlj6nud7oiwagYjlpGAHlFqaTWlP7BNfdiJunRTkih9NSIkt3xwHde92xMYRJgx2mV8jSM8Mru/T1fO+nuvIjJuEP3aZTNjlQb1lVyAWFnCn/f0KAaj08EjBWpZFM93w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753700858; c=relaxed/simple;
-	bh=3pLYVdF0nsoFSAeexE3LC5Q4ZaY3uvZPzbJ5RP104kw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JXYJ5yL+KdrlSxtBhncnDq4uiE+DGU156QuTksSZci+HXk3pshYzAT1qlAstXBOJ5mFTHuz3w/8nOWt9y7DXM2BPeYa8M4DzipVlNyrGkAIJcmTkaHsvuxRA7KDBIiZ9x3d7JSR6ZqNGixRr5Lx36zERg2drwDTu4VvEdN9oWrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SFtYPbyN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753700855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3pLYVdF0nsoFSAeexE3LC5Q4ZaY3uvZPzbJ5RP104kw=;
-	b=SFtYPbyN7O9idVotXqppmllDRewcGD++72RQ8jRZ0W2lpqesLqTt9c1s0Cud1XbC92k+Ph
-	rehI1a588A7o0foZQZssgMCFb5lPd7lPgYEM1dvHw4P4nPk+BjanikLTHItV4k97N1sqdm
-	tBzJ60etsUK8FqvRPAkSAgdXx5SXtts=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-30-BFHVw7cHPQG2qNib3i3Evg-1; Mon, 28 Jul 2025 07:07:34 -0400
-X-MC-Unique: BFHVw7cHPQG2qNib3i3Evg-1
-X-Mimecast-MFC-AGG-ID: BFHVw7cHPQG2qNib3i3Evg_1753700853
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b788d00e26so456813f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 04:07:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753700853; x=1754305653;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3pLYVdF0nsoFSAeexE3LC5Q4ZaY3uvZPzbJ5RP104kw=;
-        b=nQCOhW9SsLOfr/ohvcuBmd2w2tAkLxlF7dVb/fS0L/4p//99lx1++NzqKxl9gJgK8z
-         xyZAyW9a1MLTGEBslQ9VQ228D82/NkgkYeoqaQsVDD5+E7DAJY7gQezxNq1SxUTr0wBf
-         3WOuZJION1tgnem25at3Cd+5bp34ANDhW1EvAhKzHD2gXAZam6xBWqMqPPpi75NFD4Vs
-         bszsYyJhCyIoOKjdpvXdg5In7Ayv+MPnOIAFXZVCwEndiUpAaASuVtqf7ELTu3y8JXP+
-         LTP8jSeWdzVPBgwEPX+mLYc4svdHt5QdqG7IKHkQNR3fZYP6PonEHMLIU1vLaj8VOda/
-         B8Og==
-X-Forwarded-Encrypted: i=1; AJvYcCWX+D/6x7MAZWCX6b4HNLDa4EP5ClBG4qz3L//+Hv/n5I4NicBj7XB5NLL1S7vxXfEJ0aZc0/J2XckcWWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFIs/Gl0T0cncN/qVB+iRvVVHHU1eTawzLHJL4tb4xeK4D9HPe
-	+4tfwZhLh/cVLDyYReHMbdYOqw6MTvyZzoGytTsOHt/3X0h5Yjq26WZL+umalizPLIMnkynM3LN
-	xYuHeaVuvxBQcnO5YOOAdLuxmwViqSDE6a/8eUgVsh0plJSbNXnMFSrPlO4rLt1rSmw==
-X-Gm-Gg: ASbGnct1MYyIpiiEkjgZn9hIUfcVSDZbYS/eg3+0o/PiLIM1NwmISiRpGHTb4FMNJnC
-	0eBzn+QSWq7j+buO6abYYaR4oB8p+ugiJKi+UbQ9+sNotwVkJxP3bCtZv7w+UJ3JdWXcifQ6Vds
-	MRpApeAkVILVHatMQ+SbVEkHq28CW/Rr8dEdnTxLRvrw/oHJZJ7qrpRTwR65uzeXSvjl2fbOF0D
-	x1S5XAQ3gww4nv+Mr+P3pEpuev7BFkGTqzm85HnlzmZ44zUPMRKbjwdykci8RK4+H/Ha+FfTm+O
-	Cdo8OR32jnyfByKupf+00M+xbgJsHZp2ODNSM61TdTesIj6r5+YNNFlJ6ijDRd9XvQ==
-X-Received: by 2002:a5d:5d0d:0:b0:3b7:8ac1:5e30 with SMTP id ffacd0b85a97d-3b78ac161c4mr1349607f8f.52.1753700852643;
-        Mon, 28 Jul 2025 04:07:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHc9z70EWwmlpMr+OkfM8TnShKy6POOVuw5YobTxWmrC2LyX9zPwQLNTb4Hr7NxYaUNLOK9aQ==
-X-Received: by 2002:a5d:5d0d:0:b0:3b7:8ac1:5e30 with SMTP id ffacd0b85a97d-3b78ac161c4mr1349575f8f.52.1753700852173;
-        Mon, 28 Jul 2025 04:07:32 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587abeb39esm93840635e9.13.2025.07.28.04.07.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 04:07:31 -0700 (PDT)
-Message-ID: <8d2c34e9d1ac5534ccf856242c13f2fd3c1000bd.camel@redhat.com>
-Subject: Re: [PATCH 1/2] rv: Fix wrong type cast in monitors_show()
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 28 Jul 2025 13:07:30 +0200
-In-Reply-To: <20250728092756.C8zMlJtT@linutronix.de>
-References: <cover.1753625621.git.namcao@linutronix.de>
-	 <35e49e97696007919ceacf73796487a2e15a3d02.1753625621.git.namcao@linutronix.de>
-	 <786688d8a5ab0d5228d271861416d49cc3a8ebc3.camel@redhat.com>
-	 <20250728092756.C8zMlJtT@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1753700938; c=relaxed/simple;
+	bh=Zqm7Z3Z/kdUKXzMqB4JXHSMfTfwdhlcb1iuBPmxSszg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fFaUYroE3RyOiqjdpi6IUG9Ma7IoMdP+CG3qmFrByohTB3BsVqcRtTwlwkHqLPbdEdtesdyQZoU6RIpTjGTiGbLNqtF96AdQp4iHh/NtaIrTgJDBrvQEqzAuk5TRUS1XZJ23GitqViMMB0eF32lCahaKR5RVBP8YgRCixQDbRAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDqCEAIL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA647C4CEE7;
+	Mon, 28 Jul 2025 11:08:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753700937;
+	bh=Zqm7Z3Z/kdUKXzMqB4JXHSMfTfwdhlcb1iuBPmxSszg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dDqCEAILEB7zAWESSNGDkZenpgoWqFuW12YTDRZ2lQDBA//junbXhzUyY4FtfkhSx
+	 g95qIDo+VcrOgjOj4vgF9tfUYs1r2vHvU8XEZSiCE0eXsBH3I5KunB5S2Ayog33iZx
+	 Dd4UbHbZDJiAYrqtR8JZmaURCl14yeCYlvTjJSxP9DEmfrtiykVqS9cE4lp/U/hHNv
+	 tdKOOd2ZrsDTePhVixhpYQvm4yIMnfm+GpnhEBFlYZYbeS8VNuTCMbgGtLOtVN3kUJ
+	 eb5M8WpMcpOTA7biFofmQruYQ4uRk0O34JYWpD5u3sZCVyvGgUyS2FccGCBPNFCVT4
+	 wZoDd3Iy16ABA==
+Message-ID: <172f1a38-d7a8-4799-ad44-f3eea69f297a@kernel.org>
+Date: Mon, 28 Jul 2025 13:08:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: qcom: Add initial audio support for
+ Hamoa-IOT-EVK
+To: leqi@qti.qualcomm.com, Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-07-28 at 11:36 +0200, Nam Cao wrote:
-> On Mon, Jul 28, 2025 at 10:59:01AM +0200, Gabriele Monaco wrote:
-> > Good catch, thanks! The container_of is the way to go.
-> > Do you have valid reasons not to move the list_head to the top?
-> > It's
-> > not a big deal but it would save computing and summing the offset.
-> > It
-> > doesn't seem name (the current first element) really needs to stay
-> > there.
->=20
-> I checked x86_64 and riscv64, the generated assembly of this function
-> before & after moving the list_head on top is almost the same except
-> for
-> some instructions' intermediate values. Both architectures have
-> instructions which load data at (pointer + offset), so this offset
-> computing does not require any extra instruction.
->=20
-> Best regards,
-> Nam
+On 28/07/2025 09:16, leqi via B4 Relay wrote:
+> From: leqi <leqi@qti.qualcomm.com>
+> 
+> This patch adds initial audio codec support for the Hamoa-IOT-EVK board,
+> including WCD9385 configuration, micbias voltage settings, GPIO reset,
+> and power supply bindings. It enables basic audio functionality for
+> further development. Basic test is good in Hamoa-IOT-EVK board.
+> 
+> Signed-off-by: leqi <leqi@qti.qualcomm.com>
+> ---
+> Changes in v2:
+> - Updated author email address to leqi@qti.qualcomm.com.
+> - Clarified that audio is validated with this change.
+> - Link to v1: https://lore.kernel.org/all/20250723-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v1-1-816991701952@quicinc.com/
+> ---
+>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 232 +++++++++++++++++++++++++++++
+>  1 file changed, 232 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> index 843f39c9d59286a9303a545411b2518d7649a059..91618e22e86c46c698b3639f60bc19314705b391 100644
+> --- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> @@ -124,6 +124,94 @@ pmic_glink_ss2_con_sbu_in: endpoint {
 
-Alright then, thanks for checking!
 
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+This was not merged, was it? Same comment as other patch, when you have
+entire code ready send entire board. Not chunk by chunk.
 
+You are not following properly release early, release often.
+
+Best regards,
+Krzysztof
 
