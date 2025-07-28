@@ -1,246 +1,136 @@
-Return-Path: <linux-kernel+bounces-748546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30CE1B1427C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAFD2B14280
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 21:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48B1218C1482
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:24:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52A4540737
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA87278173;
-	Mon, 28 Jul 2025 19:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737EB27874A;
+	Mon, 28 Jul 2025 19:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="i08LGgih"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="biJPsuNe"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90313275AE8
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 19:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ADC1C8606;
+	Mon, 28 Jul 2025 19:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753730642; cv=none; b=sUuLdM5/sdQN01yCKbSOt6WV4enctGLkhRgFwI24v9tT3z8PxdWS1AaQpXVuPyvUveeU8ctXV4B9a5O4YYfqyDDYgPWAsyO+wUfM1Slu8mpgveAqOBtvuD+Yh411we9fr59E/u6k1LXHy4J5vRAXAYKPs3wkqAzx/SiHvW4eYb8=
+	t=1753731013; cv=none; b=kOmJl71oJqeqODKz1XCpQdMNNGSIwaLKbFrHsPeSTn3vZrK2Xf3oy3hF5mjvS8d29GFy1TdBG8FoO1og49khmBs3hx7Mzj3+jIS0Ypafc9gY3DPll9lJMpRXc1NSnF0BOFLuWAzUNFREFvnDNh+/vJTpsPIs1XxafnyTPSa+JKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753730642; c=relaxed/simple;
-	bh=fPSNOGH7XyRNlYLuvoJbmFgPLyv4gtFTW/Z1XDOcJBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KnizSQklfr7xCsmTPtThHUp/7hGr9A9UJsBu3wJQOgupj6FL+cmhXT/HvwkhFxECmPeQb5/nH9CzgGG2O59KRFO6mX3anwBvaQBrY2FPEBOsb8DC1xDTovffFQ6FsQ08gGNTi7kD+IUvMZ1QymC0UA29Nr6eALQ8a5CcFGU9dEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=i08LGgih; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74b52bf417cso3272799b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:24:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1753730640; x=1754335440; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=I3EpnuB7zTUqYSeFqP3vThQ9a5pqY5H3+hi7C80bQ0U=;
-        b=i08LGgihmCj3CtZe2bVhbMnrtkhDIG2x3+wNBtAVGsGTeyRCPfbh6Obk3RIdIaSoGe
-         ZR5eG744bxQOY9dNxHPyh9GS5SWFSvuKoFf6m/puJFHCN9BDc5bKvLrRumuPjnIvWqiH
-         vufdgMqTsKzGpBBD+u9DMishG15H/ulAFhNWKtNm2VgVLtQ1uO2KZRt0Bl3SxkgsqRO8
-         iNd9F1Dsp0bdOti6REFlr0Zgd8Ete60zpBRU977q/9ongv1324Fg0nY19pyaWwMoEuVa
-         oklNtOGABX9FYfoxT2c8IJiHavV1W049fAKkwTELbi2xAftp7bzSag74GkOU0rf/bqzA
-         ul0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753730640; x=1754335440;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I3EpnuB7zTUqYSeFqP3vThQ9a5pqY5H3+hi7C80bQ0U=;
-        b=POiwKNYHcMxgy5Fzm4f3UexeHmPB+dYUgwrsL33ipiBYP7Dk2Pa0Xs4JocjKQlJZH1
-         Zr2tAk1eRRLh1Otu30EohdbKBmDf9KPi+n+E4nmpeo/FwqXqo4r5hqGcDBnB4d7f7Ks+
-         kbeGMIPy15QiVhq090i3bcy0AT2K6WOZCcq7NhwGyToHOBiiV+XtWqqH2AZtA1gqlQX+
-         mJaKbEjAYSbSrlzIf5i8SAAHXSs5BlyM9VRD5efWBAT9MEEyPJ+/6ijKr8DqKYZLmtp6
-         Te6Tt46FKqCx0CLOvLHkVnUG7USmS7i8dJqppEeSweCA1GGRlo0jXkGTsIF/lqiBbQO1
-         aHCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnNBE6fslFBLme+SX4dqw09vgU/WRquYSL3JzYR4Av8jpG8NX9mfdPZNgfAhk+978u6r9Qb6RWB0kA/n8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfDgSFNhLy698vCa1dEhO4Yp3rTlolKDNZSqIHYrsdaUu7U9HF
-	NJUsKfjuugX5mGrMxnGXZkCpSymeANMJm468D8BYHmHwhBKeA8N+A6brF/IuQk1l0ZI=
-X-Gm-Gg: ASbGncv8YBxkHcdOfa0KJBAQXkZ6F1UuriBVHCyfR7nK3Tk8+WW8ahsbKewpGUvmQfh
-	ij2YLLGAkp7Ce4m43xBWs+gg4eOvWPemYyy/xU9x5mUwayEQOgvCjbo4+Bvtwo3IbXPD6k7IKyC
-	0OilaW0fxUYV3J/xQI0l1xxb5DCuRSGGau24jmNy+YTXrzWa2VfmrNi6BNqj0zOr456Kffk/K6F
-	ph01Y+ejFP9X9HCq8jFtdBKT8+DyIpo/T/9R5YAGvmBx4zBLEgclySAZy3gQ/I/pDqEt7UPtUwh
-	+m/y/2a8KE/kDK2N1OsvSDoUZVY1OpwrlSVcj2nuADX6gs7+fZVMtU481jUlRxKsTbl4r/X7rDN
-	zRGZuT8Zkkveotq73gju4YO+tACnsKiVx
-X-Google-Smtp-Source: AGHT+IEBPPMIaQlSu5uKVWCdzZHJc0FhuYbrfheptoNcuXeIv+/Kd5lGGATtoszSal7LwhGI4xAJ2w==
-X-Received: by 2002:a05:6a21:6d96:b0:220:9e54:d5cc with SMTP id adf61e73a8af0-23d70190c47mr24772860637.31.1753730639759;
-        Mon, 28 Jul 2025 12:23:59 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f67a8basm4451072a12.40.2025.07.28.12.23.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 12:23:59 -0700 (PDT)
-Date: Mon, 28 Jul 2025 12:23:56 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "nathan@kernel.org" <nathan@kernel.org>,
-	"kito.cheng@sifive.com" <kito.cheng@sifive.com>,
-	"jeffreyalaw@gmail.com" <jeffreyalaw@gmail.com>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"mhocko@suse.com" <mhocko@suse.com>,
-	"charlie@rivosinc.com" <charlie@rivosinc.com>,
-	"david@redhat.com" <david@redhat.com>,
-	"masahiroy@kernel.org" <masahiroy@kernel.org>,
-	"samitolvanen@google.com" <samitolvanen@google.com>,
-	"conor.dooley@microchip.com" <conor.dooley@microchip.com>,
-	"bjorn@rivosinc.com" <bjorn@rivosinc.com>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"nicolas.schier@linux.dev" <nicolas.schier@linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"andrew@sifive.com" <andrew@sifive.com>,
-	"monk.chiang@sifive.com" <monk.chiang@sifive.com>,
-	"justinstitt@google.com" <justinstitt@google.com>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"morbo@google.com" <morbo@google.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"nick.desaulniers+lkml@gmail.com" <nick.desaulniers+lkml@gmail.com>,
-	"rppt@kernel.org" <rppt@kernel.org>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"ved@rivosinc.com" <ved@rivosinc.com>,
-	"heinrich.schuchardt@canonical.com" <heinrich.schuchardt@canonical.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"alex@ghiti.fr" <alex@ghiti.fr>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-	"cleger@rivosinc.com" <cleger@rivosinc.com>,
-	"samuel.holland@sifive.com" <samuel.holland@sifive.com>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"apatel@ventanamicro.com" <apatel@ventanamicro.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [PATCH 10/11] scs: generic scs code updated to leverage hw
- assisted shadow stack
-Message-ID: <aIfOTC6CfyCsaEpv@debug.ba.rivosinc.com>
-References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
- <20250724-riscv_kcfi-v1-10-04b8fa44c98c@rivosinc.com>
- <3d579a8c2558391ff6e33e7b45527a83aa67c7f5.camel@intel.com>
- <aIO8uSqiplnyyNOd@debug.ba.rivosinc.com>
- <a19c1338f2fa4cb19a4f8b7552ff54ded20b403a.camel@intel.com>
+	s=arc-20240116; t=1753731013; c=relaxed/simple;
+	bh=miWKbLoWcAZBvkXpveWN9SG1oVBtIGyLvi5kZTHp83I=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=DKV5KYjlCHHtwhzx6L1JQcGbIRNtUf3hKe0XH/lf1ws7piEHwqJ9ZdkkI7pV1zhvye2iMJLyjb4hX4ZOo48/BMsvSi9oZYwwc/Lu3J5eraxFcHmtmc5kEA2FRaqEeZjioPZSagVwhQvXGSNmNlj8qdqThBNqQYX61x9hDbNRj6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=biJPsuNe; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56SJSYSu416102
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 28 Jul 2025 12:28:34 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56SJSYSu416102
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1753730918;
+	bh=qaSC4sqEzLaCELCha6qIBiTeeIabGiKR5v+0QyZ4F8s=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=biJPsuNeTxri3H9MoWJpmgZkkGQNuk21lGUNd/UGX0E+jkA7IRHGFfwvqnzYLgjyI
+	 7IrpYPjZCNHFc5xhuao9cALcv4MeTy6uWXNU1I0k3t/294PzXyodbOHbGu2cA76VYo
+	 TAxPmVGfVrjyntoadhsM8Di3RcccftzUDh7SYtUkXoOYlXT4076MMnuuTCePmG1Tqd
+	 FZjJBQYK4/sS8CDtE3Qx7ADrtn5VrfwXWDV5MESUXcS0dk5cKyErIwQk/5eZz+uaQL
+	 KERCz0I6QmZGsVz49Hz5YeDL3KDckKzAv8qlRwG6LKQ+w+MVo+7L25amYHBzmODrCi
+	 cgqFA+v4RU8fg==
+Date: Mon, 28 Jul 2025 12:28:33 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: David Laight <david.laight.linux@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+CC: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Xiongwei Song <xiongwei.song@windriver.com>,
+        Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>,
+        Alexey Kardashevskiy <aik@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+        Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
+        Breno Leitao <leitao@debian.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+        Juergen Gross <jgross@suse.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
+        Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+        Huang Shijie <shijie@os.amperecomputing.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCHv9_02/16=5D_x86/alternatives=3A_Disa?=
+ =?US-ASCII?Q?ble_LASS_when_patching_kernel_alternatives?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250728201137.113d0f45@pumpkin>
+References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com> <20250707080317.3791624-3-kirill.shutemov@linux.intel.com> <20250728201137.113d0f45@pumpkin>
+Message-ID: <98BE7799-DA6C-4267-9E03-E6F68263D250@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a19c1338f2fa4cb19a4f8b7552ff54ded20b403a.camel@intel.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 25, 2025 at 06:05:22PM +0000, Edgecombe, Rick P wrote:
->On Fri, 2025-07-25 at 10:19 -0700, Deepak Gupta wrote:
->> > This doesn't update the direct map alias I think. Do you want to protect it?
->>
->> Yes any alternate address mapping which is writeable is a problem and dilutes
->> the mechanism. How do I go about updating direct map ? (I pretty new to linux
->> kernel and have limited understanding on which kernel api's to use here to
->> unmap
->> direct map)
+On July 28, 2025 12:11:37 PM PDT, David Laight <david=2Elaight=2Elinux@gmai=
+l=2Ecom> wrote:
+>On Mon,  7 Jul 2025 11:03:02 +0300
+>"Kirill A=2E Shutemov" <kirill=2Eshutemov@linux=2Eintel=2Ecom> wrote:
 >
->Here is some info on how it works:
+>> From: Sohil Mehta <sohil=2Emehta@intel=2Ecom>
+>>=20
+>> For patching, the kernel initializes a temporary mm area in the lower
+>> half of the address range=2E See commit 4fc19708b165 ("x86/alternatives=
+:
+>> Initialize temporary mm for patching")=2E
+>>=20
+>> Disable LASS enforcement during patching to avoid triggering a #GP
+>> fault=2E
+>>=20
+>> The objtool warns due to a call to a non-allowed function that exists
+>> outside of the stac/clac guard, or references to any function with a
+>> dynamic function pointer inside the guard=2E See the Objtool warnings
+>> section #9 in the document tools/objtool/Documentation/objtool=2Etxt=2E
+>>=20
+>> Considering that patching is usually small, replace the memcpy() and
+>> memset() functions in the text poking functions with their open coded
+>> versions=2E
+>=2E=2E=2E
 >
->set_memory_foo() variants should (I didn't check riscv implementation, but on
->x86) update the target addresses passed in *and* the direct map alias. And flush
->the TLB.
+>Or just write a byte copy loop in C with (eg) barrier() inside it
+>to stop gcc converting it to memcpy()=2E
 >
->vmalloc_node_range() will just set the permission on the vmalloc alias and not
->touch the direct map alias.
->
->vfree() works by trying to batch the flushing for unmap operations to avoid
->flushing the TLB too much. When memory is unmapped in userspace, it will only
->flush on the CPU's with that MM (process address space). But for kernel memory
->the mappings are shared between all CPUs. So, like on a big server or something,
->it requires way more work and distance IPIs, etc. So vmalloc will try to be
->efficient and keep zapped mappings unflushed until it has enough to clean them
->up in bulk. In the meantime it won't reuse that vmalloc address space.
->
->But this means there can also be other vmalloc aliases still in the TLB for any
->page that gets allocated from the page allocator. If you want to be fully sure
->there are no writable aliases, you need to call vm_unmap_aliases() each time you
->change kernel permissions, which will do the vmalloc TLB flush immediately. Many
->set_memory() implementations call this automatically, but it looks like not
->riscv.
->
->
->So doing something like vmalloc(), set_memory_shadow_stack() on alloc and
->set_memory_rw(), vfree() on free is doing the expensive flush (depends on the
->device how expensive) in a previously fast path. Ignoring the direct map alias
->is faster. A middle ground would be to do the allocation/conversion and freeing
->of a bunch of stacks at once, and recycle them.
->
->
->You could make it tidy first and then optimize it later, or make it faster first
->and maximally secure later. Or try to do it all at once. But there have long
->been discussions on batching type kernel memory permission solutions. So it
->would could be a whole project itself.
+>	David
 
-Thanks Rick. Another approach I am thinking could be making vmalloc
-intrinsically aware of certain range to be security sensitive. Meaning during
-vmalloc initialization itself, it could reserve a range which is ensured to be
-not direct mapped. Whenever `PAGE_SHADOWSTACK` is requested, it always comes
-from this range (which is guaranteed to be never direct mapped).
-
-I do not expect hardware assisted shadow stack to be more than 4K in size
-(should support should 512 call-depth). A system with 30,000 active threads
-(taking a swag number here), will need 30,000 * 2 (one for guard) = 60000 pages.
-That's like ~245 MB address range. We can be conservative and have 1GB range in
-vmalloc larger range reserved for shadow stack. vmalloc ensures that this
-range's direct mappping always have read-only encoding in ptes. Sure this number
-(shadow stack range in larget vmalloc range) could be configured so that user
-can do their own trade off.
-
-Does this approach look okay?
-
->
->>
->> >
->> > >
->> > >   out:
->> > > @@ -59,7 +72,7 @@ void *scs_alloc(int node)
->> > >   	if (!s)
->> > >   		return NULL;
->> > >
->> > > -	*__scs_magic(s) = SCS_END_MAGIC;
->> > > +	__scs_store_magic(__scs_magic(s), SCS_END_MAGIC);
->> > >
->> > >   	/*
->> > >   	 * Poison the allocation to catch unintentional accesses to
->> > > @@ -87,6 +100,16 @@ void scs_free(void *s)
->> > >   			return;
->> > >
->> > >   	kasan_unpoison_vmalloc(s, SCS_SIZE, KASAN_VMALLOC_PROT_NORMAL);
->> > > +	/*
->> > > +	 * Hardware protected shadow stack is not writeable by regular
->> > > stores
->> > > +	 * Thus adding this back to free list will raise faults by
->> > > vmalloc
->> > > +	 * It needs to be writeable again. It's good sanity as well
->> > > because
->> > > +	 * then it can't be inadvertently accesses and if done, it will
->> > > fault.
->> > > +	 */
->> > > +#ifdef CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK
->> > > +	set_memory_rw((unsigned long)s, (SCS_SIZE/PAGE_SIZE));
->> >
->> > Above you don't update the direct map permissions. So I don't think you need
->> > this. vmalloc should flush the permissioned mapping before re-using it with
->> > the
->> > lazy cleanup scheme.
->>
->> If I didn't do this, I was getting a page fault on this vmalloc address. It
->> directly
->> uses first 8 bytes to add it into some list and that was the location of
->> fault.
->
->Ah right! Because it is using the vfree atomic variant.
->
->You could create your own WQ in SCS and call vfree() in non-atomic context. If
->you want to avoid thr set_memory_rw() on free, in the ignoring the direct map
->case.
+Great=2E It's rep movsb without any of the performance=2E
 
