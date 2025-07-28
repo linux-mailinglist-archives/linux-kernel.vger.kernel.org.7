@@ -1,45 +1,88 @@
-Return-Path: <linux-kernel+bounces-747716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F201AB1372E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:05:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5301AB1373C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139B11892248
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:05:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AA5A7A81D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C38321D3EF;
-	Mon, 28 Jul 2025 09:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8796225785;
+	Mon, 28 Jul 2025 09:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RNaYNqKU"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EakDVqQ3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFA6199EAD;
-	Mon, 28 Jul 2025 09:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F082A1CF
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753693532; cv=none; b=OT10GTVvu4MmiYjumuoLMeotyOrGoAmzVKBVY1ztB3QRXlgnikFhzr89ndxkzdTLUrrKeNBbpZgRnO+2y/z+0IwGfAS8syAkQyM4tAiI/tEJgUnSmYHyi2EDBnfARBkm2BwV7BVNyNYyVqT3SUBryLDrjGDqhjABozZbrEywb7M=
+	t=1753693670; cv=none; b=KlNesZQX3yIQOMiBCz0H1cPM5aBMDjHVCcD009SX+pyVO/KgQhJuXUPw3JO9zLsZveOX1JmicqABfItr7v7jJHEgyXasRhJKxEDokf9TquXISeVwWg39rMtm7P3/O9jHLndkSZu55/2mn/wJYrCbACphKquIXMKA9h25dU6M4dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753693532; c=relaxed/simple;
-	bh=ZC1PBwzhgJuuOcx5rmgZcY9QFnKGOwDm6B46DS0dnFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dHtil8Out6lZBtJAkzIzmO4g0F1gWS4ajYn2+1G0yrf4EkEuCTwbcjyJzSr+O5DbiGkH8XZBvBCK2eozE5eJAY34EakySm+mRgnib9l3V4kLTq/JNV0qzBMwbJWR+503fJNaDhnLJuvgZdqQP+rWbW9ycy9FsTHejEU/Qmmql5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RNaYNqKU; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753693526; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=T8LcCGaO+6i8uxsy1cdV0D7zwVU5uHMOV2qU0c01c9o=;
-	b=RNaYNqKUsi+4GmgioPacoK1ZdJp/0/JtntzhbCmCUYYK7DtR3X4rmxgm7iB/OtxCInbgIkmsHosYdoLt1Kqe7QaSoYQffrZAO6b/ovgmBztrOxsATI32rtDT5NRETsDDt6HQ5ZnIpziopF3BtSBEsWR6soUHASmVvD/eyr4bvsA=
-Received: from 30.246.181.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WkGahay_1753693523 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 28 Jul 2025 17:05:25 +0800
-Message-ID: <09cc9d71-5375-4e35-bbd9-5eec7930ddc7@linux.alibaba.com>
-Date: Mon, 28 Jul 2025 17:05:22 +0800
+	s=arc-20240116; t=1753693670; c=relaxed/simple;
+	bh=zvZJc37IM1lXzSOwsBhbEwOaTkTKd3wszmRWIQwbGUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MK9TbTcbqQYMBXAkHhGEf+8Gw8PL2BKLKsSC0uBWkYbHNGyPQu1oAGiMfzzcUJzXUUobri9kr6z55DR2JgO8VO4xtBJUgQq3KfjuQGDkDoo/oo55Tljed5CEM9L/aFSNulf4tbj/NDMLrPuC15kwl16l365y3zfISi65f0VrXbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EakDVqQ3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56S4rRaQ008420
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:07:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OtaOTLSP/DV+d52JHjxMOpsKY7WYh3o1dzdSeMKQJ24=; b=EakDVqQ3QMU8UWWF
+	pa75601iZ3iTooCqVGvx8BFtuU7ylEgwa2wvVGgq9L1Pnfk7PRR/hQJXc2uxab4P
+	jIQeKz4BTFEdEQ5pUVwFvYvxu4J0UoCZdvOxg8CjSpG4+OGxrx1lW+rTaHBR866y
+	t2wOBUkAoNRYffvEZxR6X7IJh59d8G+6sRNXpZnOKKI/4z73H0Bt/Ic54WJyRAtj
+	PZ0vQLW45PvMvJIEpBuiqCwpSXXnvV+JEgHSdMlxIYBFXO2ePtXd4OzFu9BcaseN
+	n0wmPdaqmoX+BblxRobSkk6gMRGKJGkk7164wQGLn75ljldjFp4v3b58leN9eYzq
+	bgEGoA==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484qd9uwey-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:07:40 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7073ec538e2so6512736d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:07:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753693660; x=1754298460;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OtaOTLSP/DV+d52JHjxMOpsKY7WYh3o1dzdSeMKQJ24=;
+        b=sLaK4g3aPhsjhCEnorQ2bdIaz9eHWf+q8QUpPlcQZeSAu2GyJ3NJ+XU4z9sz3L0qKP
+         d1WPNF7huVN0y7gcf/4UybnRMC/YnxxMPP6wWcNY7gR9ay16jEPl5unOdG+d5A6i/DvI
+         xDBtcHb0ULLtEUMELQplrJY/LBq+6eAtdRx1JidxU/rAo2Mw2uV8mSVIqThS5Vo99GLB
+         upbGzVONOSGGfCC7iJs+HJC8cso5AeekRcv4F7At8/Q8YCDcuU6lszjVje7adWvKcdDu
+         1EZdx9HtYHGiu6JdkMwRHY1igV0GWURv2GHWxrvN3JWCAPHXn0x7T53rfhjGiEf5rXje
+         XZmg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5/WTClgjsBlibuxy29BbpN7S+j4VkeosRIQ5OzmvOYLlqtJhhO3P2nkFIsM0CbnlLUeIirvBbIz+E+iI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs5d6SqTEqOLppyw1R8/ZemQI7+QS6Kkto1CIUCCxEp+MI7jEa
+	aOgQ/vhfpKXFzo0IPXrKVhmVzQ0RglLWmU4jrURDxD2anwATuNAEE3KkUK/qfxgl9bRWHiE5b+i
+	WtjnG9Hb/54gcyE2pkcCyWN4+5/f51GYqMFR0AuiQm0omxM6a2vvkR0PUzvav4wK4ehgQO/40hT
+	o=
+X-Gm-Gg: ASbGncsTQgu4igp+XlGOQHK7DPaFxN2DvSd+zRCCabRJiBhYJ6UTy4KJa0a+kexT1Uc
+	MiSlyCXBEh0ZUcQz8ClBlPi2od6P+hh0R96UcNirAjdHLcTWmW5yQ4sIXoQPRCo7FhsFYhPKwYt
+	P5njWDIypRKbUCAUQUR9dLr3PzTBlwHK5kSv9vjTq3FrhQdnc9mE49CPMN83er/kH6hp3BBp4k6
+	v5VJ0JaAsBj+xl9I6ltsf5/IGsA99817sKhARHdhJFsyul0c9XhoUQL+fc3hb4TK2xPyqWAMvwW
+	ljK4j9oatBeE3CvvAhk9uWgAzb7IKxvOw9uQgA6vsPj708JbPW8FP60TyOvFxtJ6FBX+qGJW9+D
+	9XWfOyxJP/X0uIHqCFw==
+X-Received: by 2002:a05:620a:390d:b0:7e6:2435:b6a4 with SMTP id af79cd13be357-7e63c1c555cmr619352585a.12.1753693659738;
+        Mon, 28 Jul 2025 02:07:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFS7dcUDok8MlrUYjDETf2C4hAw3upxujHwxwpLTG4xsI+lKYIU6eMEVLJXJKxX9C5Vz8KwrA==
+X-Received: by 2002:a05:620a:390d:b0:7e6:2435:b6a4 with SMTP id af79cd13be357-7e63c1c555cmr619351685a.12.1753693659338;
+        Mon, 28 Jul 2025 02:07:39 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635860143sm398459166b.24.2025.07.28.02.07.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 02:07:38 -0700 (PDT)
+Message-ID: <dbd3653e-95b5-486b-b38c-422fca099df4@oss.qualcomm.com>
+Date: Mon, 28 Jul 2025 11:07:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,186 +90,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/2] PCI: trace: Add a generic RAS tracepoint for
- hotplug event
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- mattc@purestorage.com, Jonathan.Cameron@huawei.com, bhelgaas@google.com,
- tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org, tianruidong@linux.alibaba.com
-References: <20250725210913.GA3130903@bhelgaas>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250725210913.GA3130903@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] arm64: dts: qcom: sm8650: Sort nodes by unit address
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250727193652.4029-2-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250727193652.4029-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: 0E8YbIjniU2Ubmpq-xVQZZBr2f8V9qB_
+X-Authority-Analysis: v=2.4 cv=Pfv/hjhd c=1 sm=1 tr=0 ts=68873ddc cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=x0-Ntm4DP0gVEan9CnAA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: 0E8YbIjniU2Ubmpq-xVQZZBr2f8V9qB_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA2NiBTYWx0ZWRfX/qSwwmPDNwPu
+ alboT2CZpAS7GU/AJJa9BlfDI6qo+NrDnub2/rvCO5bKLwC/Wyfloz9Z++m+HQ7T7i5l2A/bTsv
+ tKyedDdpH0qfjKsdIp157Ky8LmMO0033Txf4gQa4P9fDRTU5B0sAfsCDqInDMahRH+6otnexJ4u
+ 32ewb2fcJdHz2j2J5IhxoaSKUHl6/GK0MYzspsvm3aO4MTq0ZPruRd1yQEQ4z1y5awTaLDXqHZj
+ n5hXhPK7UVxczgPy6u6bhHdz5AVuKbo2/4wT6T463lV+p6xqzuLmbOFQUzXE4uoHXt7kh7yXpZw
+ 6vFDGzkCsrJkzMGt+iMIHtb3L5VwQbmPCou9npgRSNe9JerwEtIJ7AwgOLIfj/HFMI7Wd2gHRFt
+ a9mS2XNoh3CORTo1smeDLDL/QLgWFI7QKeH7K+3bId/5wBeZ90IVi2E8nzVxR5ZjdcW30nf6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=839 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
+ spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507280066
 
-Hi, Bjorn,
-
-在 2025/7/26 05:09, Bjorn Helgaas 写道:
-> On Wed, Jul 23, 2025 at 11:31:07AM +0800, Shuai Xue wrote:
->> Hotplug events are critical indicators for analyzing hardware health,
->> and surprise link downs can significantly impact system performance and
->> reliability.
->>
->> Define a new TRACING_SYSTEM named "pci", add a generic RAS tracepoint
->> for hotplug event to help health checks. Add enum pci_hotplug_event in
->> include/uapi/linux/pci.h so applications like rasdaemon can register
->> tracepoint event handlers for it.
->>
->> The output is like below:
->>
->> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
->> $ cat /sys/kernel/debug/tracing/trace_pipe
->>      <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_DOWN
->>
->>      <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_NOT_PRESENT
+On 7/27/25 9:36 PM, Krzysztof Kozlowski wrote:
+> Qualcomm DTS uses sorting of MMIO nodes by the unit address, so move
+> few nodes in SM8650 DTSI to fix that.
 > 
-> I asked about documentation earlier [1], but didn't see any response.
-> I think these tracepoints are important and will be widely used, so it
-> seems like some kind of user guide would be helpful.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Sorry for missing your earlier email about documentation.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> Is there any convention for documenting tracepoints somewhere?  It
-> looks like there's some doc in Documentation/trace/?  Should we be
-> adding something there?
-
-Regarding tracepoint documentation conventions, you raise a good point.
-Looking at Documentation/trace/, most of the existing documentation
-focuses on the tracing infrastructure itself rather than individual
-tracepoint events.
-
-For tracepoint events like the ones I'm familiar with (aer_event,
-memory_failure_event, mce_event, mc_event), the typical approach has
-been:
-
-     - Self-documenting through code - The TRACE_EVENT() definitions in
-       include/trace/events/ serve as the primary specification
-     - UAPI headers - Enums and structures in include/uapi/ provide the
-       interface definitions
-     - Commit messages - Detailed explanations of when/why events are
-       generated
-
-However, there are some exceptions where specific events do have
-dedicated documentation:
-
-     - Documentation/trace/events-power.rst - Power management events
-     - Documentation/trace/events-kmem.rst - Kernel memory allocation events
-     - Documentation/trace/events-nmi.rst - NMI events
-     - Documentation/trace/events-msr.rst - MSR (Model Specific Register) events
-
-Given your point about these PCI tracepoints potentially being widely
-used, I think adding documentation would be valuable. Bellow is the RFC
-doc, are you happy with this?
-
-diff --git a/Documentation/trace/events-pci.rst b/Documentation/trace/events-pci.rst
-new file mode 100644
-index 000000000000..f2f7cacba862
---- /dev/null
-+++ b/Documentation/trace/events-pci.rst
-@@ -0,0 +1,72 @@
-+===========================
-+Subsystem Trace Points: PCI
-+===========================
-+
-+Overview
-+========
-+The PCI tracing system provides tracepoints to monitor critical hardware events
-+that can impact system performance and reliability. These events normally show
-+up here:
-+
-+       /sys/kernel/tracing/events/pci
-+
-+Cf. include/trace/events/pci.h for the events definitions.
-+
-+Available Tracepoints
-+=====================
-+
-+pci_hp_event
-+------------
-+
-+Monitors PCI hotplug events including card insertion/removal and link
-+state changes.
-+::
-+
-+    pci_hp_event  "%s slot:%s, event:%s\n"
-+
-+**Event Types**:
-+
-+* ``LINK_UP`` - PCIe link established
-+* ``LINK_DOWN`` - PCIe link lost
-+* ``CARD_PRESENT`` - Card detected in slot
-+* ``CARD_NOT_PRESENT`` - Card removed from slot
-+
-+**Example Usage**:
-+
-+    # Enable the tracepoint
-+    echo 1> /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
-+
-+    # Monitor events
-+    cat /sys/kernel/debug/tracing/trace_pipe
-+    <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_DOWN
-+
-+    <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_NOT_PRESENT
-+
-+
-+pcie_link_event
-+---------------
-+
-+Monitors PCIe link speed changes and provides detailed link status information.
-+::
-+
-+    pcie_link_event  "%s type:%d, reason:%d, cur_bus_speed:%s, max_bus_speed:%s, width:%u, flit_mode:%u, status:%s\n"
-+
-+**Parameters**:
-+
-+* ``type`` - PCIe device type (4=Root Port, etc.)
-+* ``reason`` - Reason for link change:
-+
-+  - ``0`` - Link retrain
-+  - ``1`` - Bus enumeration
-+  - ``2`` - Bandwidth controller enable
-+  - ``3`` - Bandwidth controller IRQ
-+  - ``4`` - Hotplug event
-+
-+
-+**Example Usage**::
-+
-+    # Enable the tracepoint
-+    echo1 > /sys/kernel/debug/tracing/events/pci/pcie_link_event/enable
-+
-+    # Monitor link events
-+    cat /sys/kernel/debug/tracing/trace_pipe
-
-
-> 
->> Suggested-by: Lukas Wunner <lukas@wunner.de>
->> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Nit: I assume this came from the patch I had applied to pci/trace, but
-> you shouldn't include any sign-offs from people to whom you send
-> patches [2].
-
-Yep, I copied the commit log from your applied patch in pci/trace. I
-will drop your sign-offs.
-
-> 
-> Bjorn
-> 
-> [1] https://lore.kernel.org/all/20250717192950.GA2594528@bhelgaas/#t
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.13#n449
-
-
-Thanks for the guidance!
-
-Best regards,
-Shuai
-
-
+Konrad
 
