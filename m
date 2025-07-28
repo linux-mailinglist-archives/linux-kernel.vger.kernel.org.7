@@ -1,224 +1,156 @@
-Return-Path: <linux-kernel+bounces-747623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7BEB13600
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:04:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FC4B13603
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 849853B7F23
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:03:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28DA53B7FA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 08:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E1322539D;
-	Mon, 28 Jul 2025 08:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655E721D5B5;
+	Mon, 28 Jul 2025 08:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kepHxj6K"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gL7/u70B"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA10223DE9
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8411993B7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 08:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753689855; cv=none; b=q4xCUeW8GS1wBE5YMBRtdWcNXqLtdq/JBbgq9xz4tw5shiG0aztzbYXVAYFLb1uFJQMdqZfb9hGu4csHKACQsheFEoSma8F+HbKH4RMymvhFeXK1S61VHqqkEHC2xvSJNIEDOg0S1BTd+ZJ4xXapyqza7KXDS+6nIFXyV9Gy4ao=
+	t=1753689917; cv=none; b=CVWJHDNiCaWGylpzOCxdgW9NSPfJFItFFbr8TMmaYohnCKbeRACF3UFTJIufZBBvXfuwaelHKU9bJekvN5bRJ1yOxFjUWVuEdG2SzXn36oYtBAuqJXCHowJ0+s9o47ysPterAdwRuRaYJGz17Z1vjfdupx4+tI572G6mJeqJEfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753689855; c=relaxed/simple;
-	bh=kpUv0DUXwxdXmL7Qqpmu2Pj3VF4c3OdoDqZ5lfZkulM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LcALP2Z4VB4N/ISs3BK9PAml+xwHsUJeOT6yDv4HXVEOYwO4BKDOm+lG/YgTciBhAU+Hh7ft7tAbDQ9NdrTd1459ABCurUKdWs5ATqBfngK6MfZbWi1yOOJVwnblUY4V5dDlKGXw3+4zBjYQLh5iTwpx5QvgKr3fy9HCVQ5f/qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kepHxj6K; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753689843; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=R5JhzFAe2+pi/8yqRFPN+PrUVu7txCrojFI/LNAgGtk=;
-	b=kepHxj6K2WQ5b1O0Lk+ZXTbEgcjH7EbyQxYr62pv2TqS5uCU/qmJteoI0u3H0JOF/d6UzIcMP4XGTy6z4VvpeFC60qK8DqgpoVH3w0iJff0o67gPiyLAAFgweZ64trQ0XGtMFIGalkAmUbDK6hSKr87xy/oDyQRRETJ4kgRrtL4=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WkFS0FZ_1753689841 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 28 Jul 2025 16:04:01 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: patryk@kowalczyk.ws,
-	ville.syrjala@linux.intel.com,
-	david@redhat.com,
-	willy@infradead.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jani.nikula@linux.intel.com,
-	joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	tursulin@ursulin.net,
-	christian.koenig@amd.com,
-	ray.huang@amd.com,
-	matthew.auld@intel.com,
-	matthew.brost@intel.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] mm: shmem: fix the shmem large folio allocation for the i915 driver
-Date: Mon, 28 Jul 2025 16:03:53 +0800
-Message-ID: <0d734549d5ed073c80b11601da3abdd5223e1889.1753689802.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1753689917; c=relaxed/simple;
+	bh=NvRheiuw5llbSfehMjIWn6sJASkkZsxB1P34xtvXJ0Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OmWudfQAu0B8cTMkqLy3d9OaszEpbkN+CQpYTrL4ZZyyBE+42rujJbWUUf6Xh+OBXLWezyZzjOhhzDTKA/AdmuemfdxUtMWEyxmWJJ9R70Ul+SnPWPVZK2TzqdMqOYZNyh1mbS0RFEmgNVr1p1Sa9GzQ7a+iTgri/psq/Xc7MoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gL7/u70B; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-73c17c770a7so4380419b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 01:05:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753689916; x=1754294716; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c3Oc+mR2KuG3z3xaNZHJFJeibphFim3rI0DGIkQkO6A=;
+        b=gL7/u70BrOSdzOY2utdFnoboziosV/EE29W+spdiqpdqCi0NHWg58ldP/tfBMi2HBE
+         kRa1bXxNl0jRPeZLEfwwWeN6WFuoVyAgU8ww70WyRc/dvXhctojPIoxaZ+gn5OhXnRXb
+         KTHnTfH3H+ZC+UkeNFDEYKAq5OjwZZbsaoEZnwxpqOqW5RZAX3+yP/5+lPNu2VNo6v4h
+         wrSz19EaJoCM0IOHSwsJYEERNlb6VJHfILB6/NC92Wc7/2JqlPGqxQPTThgyqQ5/uR9K
+         M4tGQqu8ZapKqlya5S2OERWvcnXckKf9P+RYLp09bUG8bbW8Oo4/AZVCT/jonkE4eZn6
+         J7Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753689916; x=1754294716;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c3Oc+mR2KuG3z3xaNZHJFJeibphFim3rI0DGIkQkO6A=;
+        b=FyCND7hUAe2PHLA/0mFSLqZA81iUVRsOo93MzOTX0OGKKstocAw7iaNDviu6mcMaLr
+         hiXDZjQubdDe408zfkPO+mYU8mlJZ8E/kApFr5m+smRlH5e/Sup86emMnv3pVMPVM1JZ
+         4fpb4QMJqcq3jXBTraDSlR0xzA2YYAhPZFxD+oJc5sG5Y+wDGmm5kJBpeCCsVtjMkXYW
+         mU/YGICK1lWDdyghQzZ72HjZoIttJcoHPbMjTO3pA7D5miXauPgiiUEVWpPIQuIy75W7
+         xYw28J/OGYBvgvgl56YNuAwlrMnOg7sco06SGaIUqPYjde79Gvs9u0uFBYuxp+UO12N/
+         eWaQ==
+X-Gm-Message-State: AOJu0Yz0T+wSjsA4y+6lYj6NTqIoG428M2CjAprltFOE2vIM4EBja1hw
+	T3r2uyjHJBSIMOOosK5Pb86Jcr8TRTGHE1UEGvfDmTnbIoYFXfoqj1q4
+X-Gm-Gg: ASbGnctG1Aenhy1AdfKCkEun7/v19zlrPpAM1flfn+MxeN3cVaWlZVLaKmqvV57C60f
+	QqYmcdYiqpg4UgCCfnCkHEYqSN8+lNCtGz/jWdmH2h6qCyPOTsKlCQoCG4FlLpNfDE4/NzNYhcY
+	Aj/BJxU8ai43uFU57C5GF+0Y/0KRnp6LJopnoWsv0D0qb4Z1s3dXY0+CMdbVieW0gxq30YESM74
+	02wzAjwtfb8sGqiupo1pU34qxgs24oq3maQmr2iUq/3hT+aS8jE65IKRjlnUmazAUCOt7CuL8D3
+	ECPLrgcAB7qRvl/D56hqmAmkuOm/l25UFmHSdPUAwe39zRAGjpyoiGUXNxxpgTauyHySruZQpUM
+	H4heWYC8gxqp+KL9eWMmMdCMNAZAwV+5F
+X-Google-Smtp-Source: AGHT+IH1hanGyoNS1mZu3A6pq3+qut8z3SbX7sMFBOxpHlREXfl3yRlupsfBR6nUWReumhCBMpt7ZA==
+X-Received: by 2002:a05:6a00:2ea8:b0:748:f135:4fe6 with SMTP id d2e1a72fcca58-76335980736mr13588630b3a.10.1753689915606;
+        Mon, 28 Jul 2025 01:05:15 -0700 (PDT)
+Received: from cs20-buildserver.lan ([2402:7500:400:60db:2e0:4cff:fe68:863])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640adfbf7asm4908203b3a.75.2025.07.28.01.05.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 01:05:15 -0700 (PDT)
+From: Stanley Chu <stanley.chuys@gmail.com>
+X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
+To: frank.li@nxp.com,
+	miquel.raynal@bootlin.com,
+	alexandre.belloni@bootlin.com,
+	linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com,
+	yschu@nuvoton.com
+Subject: [PATCH v2] i3c: master: svc: Fix npcm845 FIFO_EMPTY quirk
+Date: Mon, 28 Jul 2025 16:05:08 +0800
+Message-Id: <20250728080508.1743052-1-yschu@nuvoton.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"),
-we extend the 'huge=' option to allow any sized large folios for tmpfs,
-which means tmpfs will allow getting a highest order hint based on the size
-of write() and fallocate() paths, and then will try each allowable large order.
+From: Stanley Chu <yschu@nuvoton.com>
 
-However, when the i915 driver allocates shmem memory, it doesn't provide hint
-information about the size of the large folio to be allocated, resulting in
-the inability to allocate PMD-sized shmem, which in turn affects GPU performance.
+In a private write transfer, the driver pre-fills the FIFO to work around
+the FIFO_EMPTY quirk. However, if an IBIWON event occurs, the hardware
+emits a NACK and the driver initiates a retry. During the retry, driver
+attempts to pre-fill the FIFO again if there is remaining data, but since
+the FIFO is already full, this leads to data loss.
+This patch adds a condition to ensure that data is only written when there
+is available space in the FIFO.
 
-To fix this issue, add the 'end' information for shmem_read_folio_gfp()  to help
-allocate PMD-sized large folios. Additionally, use the maximum allocation chunk
-(via mapping_max_folio_size()) to determine the size of the large folios to
-allocate in the i915 driver.
-
-Fixes: acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs")
-Reported-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
-Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Tested-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Fixes: 4008a74e0f9b ("i3c: master: svc: Fix npcm845 FIFO empty issue")
+Signed-off-by: Stanley Chu <yschu@nuvoton.com>
 ---
- drivers/gpu/drm/drm_gem.c                 | 2 +-
- drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 7 ++++++-
- drivers/gpu/drm/ttm/ttm_backup.c          | 2 +-
- include/linux/shmem_fs.h                  | 4 ++--
- mm/shmem.c                                | 7 ++++---
- 5 files changed, 14 insertions(+), 8 deletions(-)
+Changes since v1:
+ remove svc_i3c_master_tx_empty helper, instead check for available FIFO space
 
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 4bf0a76bb35e..5ed34a9211a4 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -627,7 +627,7 @@ struct page **drm_gem_get_pages(struct drm_gem_object *obj)
- 	i = 0;
- 	while (i < npages) {
- 		long nr;
--		folio = shmem_read_folio_gfp(mapping, i,
-+		folio = shmem_read_folio_gfp(mapping, i, 0,
- 				mapping_gfp_mask(mapping));
- 		if (IS_ERR(folio))
- 			goto fail;
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-index f263615f6ece..778290f49853 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-@@ -69,6 +69,7 @@ int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
- 	struct scatterlist *sg;
- 	unsigned long next_pfn = 0;	/* suppress gcc warning */
- 	gfp_t noreclaim;
-+	size_t chunk;
- 	int ret;
+ drivers/i3c/master/svc-i3c-master.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index 7e1a7cb94b43..ece563353895 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -104,6 +104,7 @@
+ #define   SVC_I3C_MDATACTRL_TXTRIG_FIFO_NOT_FULL GENMASK(5, 4)
+ #define   SVC_I3C_MDATACTRL_RXTRIG_FIFO_NOT_EMPTY 0
+ #define   SVC_I3C_MDATACTRL_RXCOUNT(x) FIELD_GET(GENMASK(28, 24), (x))
++#define   SVC_I3C_MDATACTRL_TXCOUNT(x) FIELD_GET(GENMASK(20, 16), (x))
+ #define   SVC_I3C_MDATACTRL_TXFULL BIT(30)
+ #define   SVC_I3C_MDATACTRL_RXEMPTY BIT(31)
  
- 	if (overflows_type(size / PAGE_SIZE, page_count))
-@@ -94,6 +95,7 @@ int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
- 	mapping_set_unevictable(mapping);
- 	noreclaim = mapping_gfp_constraint(mapping, ~__GFP_RECLAIM);
- 	noreclaim |= __GFP_NORETRY | __GFP_NOWARN;
-+	chunk = mapping_max_folio_size(mapping);
+@@ -1304,14 +1305,19 @@ static int svc_i3c_master_xfer(struct svc_i3c_master *master,
+ 		 * FIFO start filling as soon as possible after EmitStartAddr.
+ 		 */
+ 		if (svc_has_quirk(master, SVC_I3C_QUIRK_FIFO_EMPTY) && !rnw && xfer_len) {
+-			u32 end = xfer_len > SVC_I3C_FIFO_SIZE ? 0 : SVC_I3C_MWDATAB_END;
+-			u32 len = min_t(u32, xfer_len, SVC_I3C_FIFO_SIZE);
+-
+-			writesb(master->regs + SVC_I3C_MWDATAB1, out, len - 1);
+-			/* Mark END bit if this is the last byte */
+-			writel(out[len - 1] | end, master->regs + SVC_I3C_MWDATAB);
+-			xfer_len -= len;
+-			out += len;
++			u32 space, end, len;
++
++			reg = readl(master->regs + SVC_I3C_MDATACTRL);
++			space = SVC_I3C_FIFO_SIZE - SVC_I3C_MDATACTRL_TXCOUNT(reg);
++			if (space) {
++				end = xfer_len > space ? 0 : SVC_I3C_MWDATAB_END;
++				len = min_t(u32, xfer_len, space);
++				writesb(master->regs + SVC_I3C_MWDATAB1, out, len - 1);
++				/* Mark END bit if this is the last byte */
++				writel(out[len - 1] | end, master->regs + SVC_I3C_MWDATAB);
++				xfer_len -= len;
++				out += len;
++			}
+ 		}
  
- 	sg = st->sgl;
- 	st->nents = 0;
-@@ -105,10 +107,13 @@ int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
- 			0,
- 		}, *s = shrink;
- 		gfp_t gfp = noreclaim;
-+		loff_t bytes = (page_count - i) << PAGE_SHIFT;
-+		loff_t pos = i << PAGE_SHIFT;
- 
-+		bytes = min_t(loff_t, chunk, bytes);
- 		do {
- 			cond_resched();
--			folio = shmem_read_folio_gfp(mapping, i, gfp);
-+			folio = shmem_read_folio_gfp(mapping, i, pos + bytes, gfp);
- 			if (!IS_ERR(folio))
- 				break;
- 
-diff --git a/drivers/gpu/drm/ttm/ttm_backup.c b/drivers/gpu/drm/ttm/ttm_backup.c
-index 6f2e58be4f3e..0c90ae338afb 100644
---- a/drivers/gpu/drm/ttm/ttm_backup.c
-+++ b/drivers/gpu/drm/ttm/ttm_backup.c
-@@ -100,7 +100,7 @@ ttm_backup_backup_page(struct file *backup, struct page *page,
- 	struct folio *to_folio;
- 	int ret;
- 
--	to_folio = shmem_read_folio_gfp(mapping, idx, alloc_gfp);
-+	to_folio = shmem_read_folio_gfp(mapping, idx, 0, alloc_gfp);
- 	if (IS_ERR(to_folio))
- 		return PTR_ERR(to_folio);
- 
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 6d0f9c599ff7..203eebad6b38 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -156,12 +156,12 @@ enum sgp_type {
- int shmem_get_folio(struct inode *inode, pgoff_t index, loff_t write_end,
- 		struct folio **foliop, enum sgp_type sgp);
- struct folio *shmem_read_folio_gfp(struct address_space *mapping,
--		pgoff_t index, gfp_t gfp);
-+		pgoff_t index, loff_t end, gfp_t gfp);
- 
- static inline struct folio *shmem_read_folio(struct address_space *mapping,
- 		pgoff_t index)
- {
--	return shmem_read_folio_gfp(mapping, index, mapping_gfp_mask(mapping));
-+	return shmem_read_folio_gfp(mapping, index, 0, mapping_gfp_mask(mapping));
- }
- 
- static inline struct page *shmem_read_mapping_page(
-diff --git a/mm/shmem.c b/mm/shmem.c
-index e6cdfda08aed..c79f5760cfc9 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -5960,6 +5960,7 @@ int shmem_zero_setup(struct vm_area_struct *vma)
-  * shmem_read_folio_gfp - read into page cache, using specified page allocation flags.
-  * @mapping:	the folio's address_space
-  * @index:	the folio index
-+ * @end:	end of a read if allocating a new folio
-  * @gfp:	the page allocator flags to use if allocating
-  *
-  * This behaves as a tmpfs "read_cache_page_gfp(mapping, index, gfp)",
-@@ -5972,14 +5973,14 @@ int shmem_zero_setup(struct vm_area_struct *vma)
-  * with the mapping_gfp_mask(), to avoid OOMing the machine unnecessarily.
-  */
- struct folio *shmem_read_folio_gfp(struct address_space *mapping,
--		pgoff_t index, gfp_t gfp)
-+		pgoff_t index, loff_t end, gfp_t gfp)
- {
- #ifdef CONFIG_SHMEM
- 	struct inode *inode = mapping->host;
- 	struct folio *folio;
- 	int error;
- 
--	error = shmem_get_folio_gfp(inode, index, 0, &folio, SGP_CACHE,
-+	error = shmem_get_folio_gfp(inode, index, end, &folio, SGP_CACHE,
- 				    gfp, NULL, NULL);
- 	if (error)
- 		return ERR_PTR(error);
-@@ -5998,7 +5999,7 @@ EXPORT_SYMBOL_GPL(shmem_read_folio_gfp);
- struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
- 					 pgoff_t index, gfp_t gfp)
- {
--	struct folio *folio = shmem_read_folio_gfp(mapping, index, gfp);
-+	struct folio *folio = shmem_read_folio_gfp(mapping, index, 0, gfp);
- 	struct page *page;
- 
- 	if (IS_ERR(folio))
+ 		ret = readl_poll_timeout(master->regs + SVC_I3C_MSTATUS, reg,
 -- 
-2.43.5
+2.34.1
 
 
