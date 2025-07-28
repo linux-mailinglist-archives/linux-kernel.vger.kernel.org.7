@@ -1,150 +1,232 @@
-Return-Path: <linux-kernel+bounces-747715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A54B13726
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:04:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F201AB1372E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867233B7917
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139B11892248
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489411DFD9A;
-	Mon, 28 Jul 2025 09:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C38321D3EF;
+	Mon, 28 Jul 2025 09:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="grTU3/QE"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RNaYNqKU"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998ED20DD42
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFA6199EAD;
+	Mon, 28 Jul 2025 09:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753693458; cv=none; b=ojHofp5wJwgAtxQjQAfFVWAGR9IwCIf0pRK2oS0aLAheYrRJZZQGohTndLyoDIBPLJ4tj1SALSXDRIaFeU9bS4hEtL+7GIc27df0fE5sHeGi9pK15tq9R2eib2jQPxZQrmJN8x1cST9o4kGxiFSuo2leGSoCYk8+ErVxr2T7kN0=
+	t=1753693532; cv=none; b=OT10GTVvu4MmiYjumuoLMeotyOrGoAmzVKBVY1ztB3QRXlgnikFhzr89ndxkzdTLUrrKeNBbpZgRnO+2y/z+0IwGfAS8syAkQyM4tAiI/tEJgUnSmYHyi2EDBnfARBkm2BwV7BVNyNYyVqT3SUBryLDrjGDqhjABozZbrEywb7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753693458; c=relaxed/simple;
-	bh=RH+Jko+Tb1m7SJqaKfCbTFyWtMVP2/FOi/lR8OyAC3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YWKJ3DSLVs/XZMdvPlL8+oEpacuT3gCc+UxjgE3KKS+Ef1or+PdLlDggT1rDWQFq1iHOGOX77VaXBI167bdyW7NRFy7eQOYwS+o/NMgAcxcrEJsct8iMtNB8FuMwd1am+s4xclb+wSsZLiXmcyIj6y0EdiE5V+OjD8BaBLVbXmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=grTU3/QE; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae0c571f137so796676966b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1753693455; x=1754298255; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S68O6AzwEdKLqEq8namz/L+It2W3CWex5pQxYxKgojs=;
-        b=grTU3/QEaHpSuq/pDeJ3cKrrVCYEc1v0acJ3KWL/3274kqbsjEILGMUtS50CeUskK6
-         T/TZKMuILtKrcpwPGpluCOhYXbBfe9mbvy8wIvAMVqUtc/35aAk9AX7z8n6vAfiCkYor
-         X+MCi2+Y9u0Sf20yIxLpICAhogkoHu0KFZp36ynl6cAaFr78RavTfmK4+YP7SLfwHCRM
-         D6QnC+4OUlO6jMjfAMxFVfBacU5abqnAOTp5K0brdb/Nofh05ZulbFEgA5CD48MMGCWw
-         Tcvu6IHnST/2OuNr7r0/QKgsItZfAR6Flvm7pTvRT/K12o8bCzc7JSjN3Xx9T7iBXJqw
-         dLlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753693455; x=1754298255;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S68O6AzwEdKLqEq8namz/L+It2W3CWex5pQxYxKgojs=;
-        b=DsDw3RaP1T3pn4b3bZa7rQzuMdY5cEnkQFb+PlCPtvM9c3psSDTk80w8RzHB/ts1ae
-         8MwHamiXcVNxCOAMGcBzye3OEUk/7WjBuwUmhoOVIaB0wCGQBQFfCy70TgSvzjXd8bH0
-         CNcygk/ERMf8USt/Kr3IiW9jhHX+7mNd2grKUcjtRAZM5a57RGtznAN1Tm2gBGuI+tHo
-         T0nxIGPElRR8HZfa//OCGwcQCoyg25FvcTw5R6umV8KgmQzrM32KaGH4+rcLEFAZ9dYz
-         lwqdLVQK4yfcR1CYvBp3Zjd69KaB/67XMM+S7JcZ7HQ2IJqpvYCjrwlS6ZbZZ+2Do8D4
-         8Mpw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaxcC8TGxbRR+X5afV9VjFcTpIcNcSRwkukc7tPlkV38Vzy7PO9qrEGL2injoRfDxoBY7thlpoOxzptrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqCW/puRJCe8/uV/3S31+r749raC4OdfrEQQrZW2Xn/sHXPS+m
-	JpbvXiEE9XJB7i0W5SNcWfjr7c/ByEM2L7yXKL/Gjm6jc2x7yqCBVUqomyniWhNFcrc=
-X-Gm-Gg: ASbGnctJxmN6VzzWkPC+xst8dehYUWfofaxKggfO35uF5I2Kb2Rpq3kcS6Kd2VkaO3n
-	zmQ/sZL3JAOmULTUZOzZEEqlzuwPYV7qy3ve/NAqlxpaQLJHi6gN01nyGx8pGW3kTziwJfd7xix
-	KxThh/5y72BzboUoC5tV9UwxIjV8QxnhU8R9qMjuOwtgfr7XkN7egKIN7qv7Vgwwc2B2ZKKd61e
-	epreyQfyu0JpaRXXZIZbcrqrn2pdGHHMHgfDUkdnMiKLCDX6Vn9j308DTp+RPL8TYwh/cdMp/73
-	09x2x71qwhMvx755VxPtr6Kon28rL9pVLGoU58TxGvur1v+Lrx892QAcw5REuszpr861dNVt4xO
-	Ndj6P//sb/Qu3k6OoiRbhpzE1cGx3aO/tV80=
-X-Google-Smtp-Source: AGHT+IEzh/qHTBwjwxEhORlk/lRtm1Z2u7uAFeJXCmfVLX4GecccD/ls2PXjMoHMCkKaDwgZUeZLtQ==
-X-Received: by 2002:a17:907:3f03:b0:ad5:42bd:dfab with SMTP id a640c23a62f3a-af6191eedbamr1150118566b.30.1753693454544;
-        Mon, 28 Jul 2025 02:04:14 -0700 (PDT)
-Received: from localhost (109-81-20-172.rct.o2.cz. [109.81.20.172])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-af635aea689sm393941666b.125.2025.07.28.02.04.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 02:04:14 -0700 (PDT)
-Date: Mon, 28 Jul 2025 11:04:13 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Hannes Reinecke <hare@kernel.org>
-Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
-Message-ID: <aIc9DQ1PwsbiOQwc@tiehlicka>
-References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
- <aIc5XxgkbAwF6wqE@tiehlicka>
- <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
+	s=arc-20240116; t=1753693532; c=relaxed/simple;
+	bh=ZC1PBwzhgJuuOcx5rmgZcY9QFnKGOwDm6B46DS0dnFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dHtil8Out6lZBtJAkzIzmO4g0F1gWS4ajYn2+1G0yrf4EkEuCTwbcjyJzSr+O5DbiGkH8XZBvBCK2eozE5eJAY34EakySm+mRgnib9l3V4kLTq/JNV0qzBMwbJWR+503fJNaDhnLJuvgZdqQP+rWbW9ycy9FsTHejEU/Qmmql5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RNaYNqKU; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753693526; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=T8LcCGaO+6i8uxsy1cdV0D7zwVU5uHMOV2qU0c01c9o=;
+	b=RNaYNqKUsi+4GmgioPacoK1ZdJp/0/JtntzhbCmCUYYK7DtR3X4rmxgm7iB/OtxCInbgIkmsHosYdoLt1Kqe7QaSoYQffrZAO6b/ovgmBztrOxsATI32rtDT5NRETsDDt6HQ5ZnIpziopF3BtSBEsWR6soUHASmVvD/eyr4bvsA=
+Received: from 30.246.181.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WkGahay_1753693523 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 28 Jul 2025 17:05:25 +0800
+Message-ID: <09cc9d71-5375-4e35-bbd9-5eec7930ddc7@linux.alibaba.com>
+Date: Mon, 28 Jul 2025 17:05:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 1/2] PCI: trace: Add a generic RAS tracepoint for
+ hotplug event
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
+ mattc@purestorage.com, Jonathan.Cameron@huawei.com, bhelgaas@google.com,
+ tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
+ davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
+ peterz@infradead.org, tianruidong@linux.alibaba.com
+References: <20250725210913.GA3130903@bhelgaas>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250725210913.GA3130903@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon 28-07-25 10:53:08, David Hildenbrand wrote:
-> On 28.07.25 10:48, Michal Hocko wrote:
-> > On Mon 28-07-25 10:15:47, Oscar Salvador wrote:
-> > > Hi,
-> > > 
-> > > Currently, we have several mechanisms to pick a zone for the new memory we are
-> > > onlining.
-> > > Eventually, we will land on zone_for_pfn_range() which will pick the zone.
-> > > 
-> > > Two of these mechanisms are 'movable_node' and 'auto-movable' policy.
-> > > The former will put every single hotpluggled memory in ZONE_MOVABLE
-> > > (unless we can keep zones contiguous by not doing so), while the latter
-> > > will put it in ZONA_MOVABLE IFF we are within the established ratio
-> > > MOVABLE:KERNEL.
-> > > 
-> > > It seems, the later doesn't play well with CXL memory where CXL cards hold really
-> > > large amounts of memory, making the ratio fail, and since CXL cards must be removed
-> > > as a unit, it can't be done if any memory block fell within
-> > > !ZONE_MOVABLE zone.
-> > 
-> > I suspect this is just an example of how our existing memory hotplug
-> > interface based on memory blocks is just suoptimal and it doesn't fit
-> > new usecases. We should start thinking about how a new v2 api should
-> > look like. I am not sure how that should look like but I believe we
-> > should be able to express a "device" as whole rather than having a very
-> > loosely bound generic memblocks. Anyway this is likely for a longer
-> > discussion and a long term plan rather than addressing this particular
-> > issue.
+Hi, Bjorn,
+
+在 2025/7/26 05:09, Bjorn Helgaas 写道:
+> On Wed, Jul 23, 2025 at 11:31:07AM +0800, Shuai Xue wrote:
+>> Hotplug events are critical indicators for analyzing hardware health,
+>> and surprise link downs can significantly impact system performance and
+>> reliability.
+>>
+>> Define a new TRACING_SYSTEM named "pci", add a generic RAS tracepoint
+>> for hotplug event to help health checks. Add enum pci_hotplug_event in
+>> include/uapi/linux/pci.h so applications like rasdaemon can register
+>> tracepoint event handlers for it.
+>>
+>> The output is like below:
+>>
+>> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
+>> $ cat /sys/kernel/debug/tracing/trace_pipe
+>>      <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_DOWN
+>>
+>>      <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_NOT_PRESENT
 > 
-> We have that concept with memory groups in the kernel already.
+> I asked about documentation earlier [1], but didn't see any response.
+> I think these tracepoints are important and will be widely used, so it
+> seems like some kind of user guide would be helpful.
 
-I must have missed that. I will have a look, thanks! Do we have any
-documentation for that? Memory group is an overloaded term in the
-kernel.
+Sorry for missing your earlier email about documentation.
 
-> In dax/kmem we register a static memory group. It will be considered one
-> union.
+> Is there any convention for documenting tracepoints somewhere?  It
+> looks like there's some doc in Documentation/trace/?  Should we be
+> adding something there?
 
-But we still do export those memory blocks and let udev or whoever act
-on those right? If that is the case then ....
+Regarding tracepoint documentation conventions, you raise a good point.
+Looking at Documentation/trace/, most of the existing documentation
+focuses on the tracing infrastructure itself rather than individual
+tracepoint events.
 
-[...] 
+For tracepoint events like the ones I'm familiar with (aer_event,
+memory_failure_event, mce_event, mc_event), the typical approach has
+been:
 
-> daxctl wants to online memory itself. We want to keep that memory offline
-> from a kernel perspective and let daxctl handle it in this case.
+     - Self-documenting through code - The TRACE_EVENT() definitions in
+       include/trace/events/ serve as the primary specification
+     - UAPI headers - Enums and structures in include/uapi/ provide the
+       interface definitions
+     - Commit messages - Detailed explanations of when/why events are
+       generated
+
+However, there are some exceptions where specific events do have
+dedicated documentation:
+
+     - Documentation/trace/events-power.rst - Power management events
+     - Documentation/trace/events-kmem.rst - Kernel memory allocation events
+     - Documentation/trace/events-nmi.rst - NMI events
+     - Documentation/trace/events-msr.rst - MSR (Model Specific Register) events
+
+Given your point about these PCI tracepoints potentially being widely
+used, I think adding documentation would be valuable. Bellow is the RFC
+doc, are you happy with this?
+
+diff --git a/Documentation/trace/events-pci.rst b/Documentation/trace/events-pci.rst
+new file mode 100644
+index 000000000000..f2f7cacba862
+--- /dev/null
++++ b/Documentation/trace/events-pci.rst
+@@ -0,0 +1,72 @@
++===========================
++Subsystem Trace Points: PCI
++===========================
++
++Overview
++========
++The PCI tracing system provides tracepoints to monitor critical hardware events
++that can impact system performance and reliability. These events normally show
++up here:
++
++       /sys/kernel/tracing/events/pci
++
++Cf. include/trace/events/pci.h for the events definitions.
++
++Available Tracepoints
++=====================
++
++pci_hp_event
++------------
++
++Monitors PCI hotplug events including card insertion/removal and link
++state changes.
++::
++
++    pci_hp_event  "%s slot:%s, event:%s\n"
++
++**Event Types**:
++
++* ``LINK_UP`` - PCIe link established
++* ``LINK_DOWN`` - PCIe link lost
++* ``CARD_PRESENT`` - Card detected in slot
++* ``CARD_NOT_PRESENT`` - Card removed from slot
++
++**Example Usage**:
++
++    # Enable the tracepoint
++    echo 1> /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
++
++    # Monitor events
++    cat /sys/kernel/debug/tracing/trace_pipe
++    <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_DOWN
++
++    <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_NOT_PRESENT
++
++
++pcie_link_event
++---------------
++
++Monitors PCIe link speed changes and provides detailed link status information.
++::
++
++    pcie_link_event  "%s type:%d, reason:%d, cur_bus_speed:%s, max_bus_speed:%s, width:%u, flit_mode:%u, status:%s\n"
++
++**Parameters**:
++
++* ``type`` - PCIe device type (4=Root Port, etc.)
++* ``reason`` - Reason for link change:
++
++  - ``0`` - Link retrain
++  - ``1`` - Bus enumeration
++  - ``2`` - Bandwidth controller enable
++  - ``3`` - Bandwidth controller IRQ
++  - ``4`` - Hotplug event
++
++
++**Example Usage**::
++
++    # Enable the tracepoint
++    echo1 > /sys/kernel/debug/tracing/events/pci/pcie_link_event/enable
++
++    # Monitor link events
++    cat /sys/kernel/debug/tracing/trace_pipe
+
+
 > 
-> We have that problem in RHEL where we currently require user space to
-> disable udev rules so daxctl "can win".
+>> Suggested-by: Lukas Wunner <lukas@wunner.de>
+>> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Nit: I assume this came from the patch I had applied to pci/trace, but
+> you shouldn't include any sign-offs from people to whom you send
+> patches [2].
 
-... this is the result. Those shouldn't really race. If udev is suppose
-to see the device then only in its entirity so regular memory block
-based onlining rules shouldn't even see that memory. Or am I completely
-missing the picture?
--- 
-Michal Hocko
-SUSE Labs
+Yep, I copied the commit log from your applied patch in pci/trace. I
+will drop your sign-offs.
+
+> 
+> Bjorn
+> 
+> [1] https://lore.kernel.org/all/20250717192950.GA2594528@bhelgaas/#t
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.13#n449
+
+
+Thanks for the guidance!
+
+Best regards,
+Shuai
+
+
 
