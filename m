@@ -1,156 +1,182 @@
-Return-Path: <linux-kernel+bounces-748666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0489B14478
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F5DB1447C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 078997A56D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:43:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24AA518C166E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E445A23535A;
-	Mon, 28 Jul 2025 22:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57F8236431;
+	Mon, 28 Jul 2025 22:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fzGslW6k"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jz3AhKYX"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527B62165E2
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6E82E3708;
+	Mon, 28 Jul 2025 22:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753742681; cv=none; b=BSKETHpqYiiXJYASExykQLtnTOXLMAK/19rQtmn5cRTl2vp0HCb7WVMvgpsSbb5AktbprvJUGkpu+4xplxO7yrxcPthC5D59UnhVQPe8JecoFC+6KkJ4XC/xlmEkcwpPi3IrsQswge5UU7thEQVA8R7d97A+NAHcJnDvvOoDUzA=
+	t=1753743044; cv=none; b=PYKYkR7tjJ18WMANyEUiR6rNCSgdl1rQowsMZZz6kue33tYT9sLI+8DlHRWaVyeYQPXXB23ER6N7m//mNgvDpEQWshrqx0Ui7uKdVEGGAlGHNBqdcM5VV7sAFoi0rEitB2CvIVESdQYsXVBOAHLLXep3WKP+6y0pXi5lK7ndC88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753742681; c=relaxed/simple;
-	bh=Ky/PMGLyUDQZC9gL7CyrG5pqZrnrhZeqsFDICY7TrN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r++oQnDIaZpN0znJKXP7bmfBzk5C8d+N3Dm0C8qVgU1BmwLCh+6uFTzRLSchajUJf6WcpQpC6ZH8BrZ7XoQWYf3dinx6h2V8WpJdadMDjIEW7zQvJS4PKQLzoeu+DTcmO2p+UvvTMmnmkjJpSwIh72a75T62BnK9KEk6/c6AujI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fzGslW6k; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0ccf7735-6a2c-473a-ab67-ae0c5ff9a335@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753742675;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k5/0co1W+cu2shaBxXBw2d5dMLF1j3owv/slrDbSyAk=;
-	b=fzGslW6kZZkYeu4/WJy+c5tm8uXUHreJ17xnA4jnLRtASHmQk+lzNA/LsSevM76wH9Qxii
-	0OL0tyBHi9z04+P2gJ1q0SkKib7Eb2zdOFnQGgoV0u/zf7gkLeW21YjueCgdiSz56o0dTs
-	btnPKWyjyrT6QbnX1FYvmoAG8/Ug1eo=
-Date: Mon, 28 Jul 2025 18:44:30 -0400
+	s=arc-20240116; t=1753743044; c=relaxed/simple;
+	bh=aUFYEhrBDCMb4rwh/p3Q8a9jltXCwz63SKfYeyEBQ9c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=V374/Bd8lQWuTVZ6WVJhnR0+eRY1wtHYjBndG4Q0RCQ1GuojjI1HyEeIaqP9CczVTqfRiZgbfGQ0yHavIRkQphxorzafXLH+177R63GW/189RjPUkuz9U/g7BHi0fWtGI8Fhy2vGh/HLqjCBAQxs212IUxPgO5iZFvB9tzJAj9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jz3AhKYX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753743040;
+	bh=aUFYEhrBDCMb4rwh/p3Q8a9jltXCwz63SKfYeyEBQ9c=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=jz3AhKYXHiMcXAa5/TA6plvdh9o27whoXtIwBXldnVh6kY0wZbIFp7Bd0PdmUBkhV
+	 JrSb5Qui32vWAwBDerTapR7pJhoeT4wXj4fJJeWefITauKHpqg2AL5Yh1h1qhWqiA/
+	 wM7TRDt5Yt7gVJdy1ohMmrHfFyjdZgWcBbjnGzzVGZwIG/+Ov+oZSBVsGyGCGyH3bu
+	 LVjpw2IRptw6sFa87JZKElLRc5vpiGkiMDbSo/1tftTGTjrO/+3QLoLvRSDC63Va6a
+	 gr5bYx9CTVwRQujAPVn1n4NYndKo7cQ6lZHX3c40SKA2+yKYme+4aZV2jJWgWjJd18
+	 7NAzEwERFL0iQ==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E982017E0FA8;
+	Tue, 29 Jul 2025 00:50:38 +0200 (CEST)
+Message-ID: <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
+Subject: Re: [PATCH] media: rkvdec: Fix an error handling path in
+ rkvdec_probe()
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Detlev Casanova	
+ <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Heiko Stuebner	 <heiko@sntech.de>, Hans Verkuil
+ <hverkuil@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 28 Jul 2025 18:50:36 -0400
+In-Reply-To: <b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
+References: 
+	<b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPU=
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-HBQA1dSSAY++JW3+CEB6"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/7] iio: Add in-kernel API for events
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org,
- Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, linux-kernel@vger.kernel.org,
- David Lechner <dlechner@baylibre.com>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
- <20250715012023.2050178-4-sean.anderson@linux.dev>
- <d8e5c8fbeaee42e9e0708460c47bd68053cd8710.camel@gmail.com>
- <9b187e7f-a116-4aea-a9a6-b9222562868d@linux.dev>
- <20250727172126.35d0a477@jic23-huawei>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20250727172126.35d0a477@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 7/27/25 12:21, Jonathan Cameron wrote:
-> On Tue, 15 Jul 2025 12:52:19 -0400
-> Sean Anderson <sean.anderson@linux.dev> wrote:
-> 
->> On 7/15/25 07:09, Nuno Sá wrote:
->> > On Mon, 2025-07-14 at 21:20 -0400, Sean Anderson wrote:  
->> >> Add an API to notify consumers about events. Events still need to be
->> >> enabled using the iio_read_event/iio_write_event functions. Of course,
->> >> userspace can also manipulate the enabled events. I don't think this is
->> >> too much of an issue, since userspace can also manipulate the event
->> >> thresholds. But enabling events may cause existing programs to be
->> >> surprised when they get something unexpected. Maybe we should set the
->> >> interface as busy when there are any in-kernel listeners?
->> >>   
->> > 
->> > Sensible question. I'm not that familiar with events but I suspect is not
->> > trivial (if doable) to do a similar approach as with buffers? With buffers, an
->> > inkernal consumer get's it's own buffer object (that goes into a list of active
->> > buffers in the iio device) with all channels enabled and then we demux the
->> > appropriate channels for each consumer.  
->> 
->> For in-kernel consumers I think it's reasonable to expect them to handle
->> events they didn't explicitly enable. I'm not sure about userspace
->> consumers.
-> 
-> This already happens because we don't have a demux equivalent (what we do
-> for buffered data flow) so if a device only has a single enable bit that covers
-> multiple events (annoyingly common for accelerometers for example) then
-> userspace will get events it didn't ask for.   We 'could' fix that,
-> but it's never really been worth the effort.
-> 
-> Events tend to be low data rate so an occasionally extra is rather different
-> to having to have much larger data buffers to handle a range of channels you
-> never asked for.
-> 
-> Lets be careful to document this behaviour as 'may enable extra events'
-> as then if we decide later to do demux type stuff we won't be breaking ABI.
-> No one will mind getting fewer spurious events due to a core improvement.
 
-Where would this get documented?
+--=-HBQA1dSSAY++JW3+CEB6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->> 
->> > Independent of the above, we can argue that having both inkernel and userspace
->> > changing thresholds is ok (I mean, there's nothing stopping two userspace apps
->> > doing that) but we should likely be careful with enabling/disabling. If multiple
->> > consumers enable the same event, one of them disabling it should not disable it
->> > for all the consumers, right?  
->> 
->> Right now the HWMON consumer never permanently disable events to avoid this
->> issue. It does toggle the enable to determine if an alarm should stay
->> enabled:
->>              ________
->> condition __/        \________
->>           _____    ____    ___
->> enable         \__/    \__/
->> 
->> event       |     |
->>              __    ____
->> alarm     __/  \__/    \_____
->> 
->> read           1       1    0
->> 
->> I suppose this could also be done by comparing the raw threshold to the
->> channel.
-> 
-> I wonder if we should add the option to do a 'get_exclusive' or similar
-> to block the IIO user interfaces if something critical is using the device.
-> 
-> If we were for instance to use this to block the IOCTL to get the events
-> fd then any built in driver etc will almost certainly load before anyone
-> can call the ioctl so it will fairly cleanly block things.
+Hi,
 
-This is how it currently works for userspace. Only one process can create
-the event fd, and everyone else gets -EBUSY.
+Le dimanche 27 juillet 2025 =C3=A0 12:02 +0200, Christophe JAILLET a =C3=A9=
+crit=C2=A0:
+> If an error occurs after a successful iommu_paging_domain_alloc() call, i=
+t
+> should be undone by a corresponding iommu_domain_free() call, as already
+> done in the remove function.
+>=20
+> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only
+> ---
+> =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++++++---
+> =C2=A01 file changed, 8 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> index d707088ec0dc..eb0d41f85d89 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> @@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_device *p=
+dev)
+> =C2=A0	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+> =C2=A0
+> =C2=A0	irq =3D platform_get_irq(pdev, 0);
+> -	if (irq <=3D 0)
+> -		return -ENXIO;
+> +	if (irq <=3D 0) {
+> +		ret =3D -ENXIO;
+> +		goto err_free_domain;
+> +	}
+> =C2=A0
+> =C2=A0	ret =3D devm_request_threaded_irq(&pdev->dev, irq, NULL,
+> =C2=A0					rkvdec_irq_handler, IRQF_ONESHOT,
+> =C2=A0					dev_name(&pdev->dev), rkvdec);
+> =C2=A0	if (ret) {
+> =C2=A0		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
+> -		return ret;
+> +		goto err_free_domain;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
 
-Of course, it would be pretty surprising to have an IIO device where
-some channels were used by userspace and others were used by hwmon and
-then have your daemon stop working after you update your kernel because
-now the hwmon driver takes exclusive event access.
+Have you considered moving the allocation of the domain right above the abo=
+ve
+line instead ? The empty domain can't possibly be used unless the probe hav=
+e
+fully completed.
 
-I originally had kernel users read from the kfifo just like userspace,
-but I was concerned about the above scenario.
+Nicolas
 
---Sean
+> @@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device *pde=
+v)
+> =C2=A0err_disable_runtime_pm:
+> =C2=A0	pm_runtime_dont_use_autosuspend(&pdev->dev);
+> =C2=A0	pm_runtime_disable(&pdev->dev);
+> +err_free_domain:
+> +	if (rkvdec->empty_domain)
+> +		iommu_domain_free(rkvdec->empty_domain);
+> =C2=A0	return ret;
+> =C2=A0}
+> =C2=A0
+
+--=-HBQA1dSSAY++JW3+CEB6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaIf+vAAKCRBxUwItrAao
+HIh7AJ9siqERzUwFpo03WB/ccY47zYm2BwCcDeERz+YrhGQaSfBNmTmJ7h2Kxgw=
+=gy7Q
+-----END PGP SIGNATURE-----
+
+--=-HBQA1dSSAY++JW3+CEB6--
 
