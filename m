@@ -1,221 +1,204 @@
-Return-Path: <linux-kernel+bounces-747949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0E1B13A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:31:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BE0B13A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D9C3AE365
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F00353B509E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C67B264A9C;
-	Mon, 28 Jul 2025 12:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA38E218858;
+	Mon, 28 Jul 2025 12:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W5X4L7zx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="QGlgfvI+"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012069.outbound.protection.outlook.com [40.107.75.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3E3264A60;
-	Mon, 28 Jul 2025 12:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753705776; cv=none; b=BwFFRikpo6SnU8gdoRlO372mbych8tOShnnCsAqLqEYD/65Cbddm+OVcDfKAbpDeDiOuAR6tQctirB22mc3xoB36q1zkObkRSzbTP3st4LCF0LQ+iRr963GrYXmCSWHRCvXZaO/R7FcY98R5rm9M00G5N6Y398LkG79UAfIcHO4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753705776; c=relaxed/simple;
-	bh=2i8R7WqbMuksduAgSp+rs6HAumU9dIeQQFpDSr5corI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PqlWVZQeSn+xVOwcdlqxUXdCs5dY4Pmf7AvewaEqrHdg36S1CPVA9POO2HZ20eV8igvL9kSquQ5CZSP02dNixPhOlaqA7P+BnIg7Vy3kr+y67N/VPjPv5mjybKHbi8aLEvXlgqCUdvgfBGc2gfiRmIIm9c2Q+OU31R+jtl10MxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W5X4L7zx; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753705775; x=1785241775;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2i8R7WqbMuksduAgSp+rs6HAumU9dIeQQFpDSr5corI=;
-  b=W5X4L7zxU49C2o0nHm62T9m0NLQC2m1pMHuvdQJGFDC4BEwNI5dDHJA4
-   bnIL7+bk++4kbnGp4PGsAMWxi5TrjZKwlYvpFRaLQyMIOXx3m4lbx9NR4
-   qjLIu2w8AlvMwUQMGHHhHRuVQcp5vnMoHvcKw0o47yOFAoE2vmneXrGNX
-   x97hIpTr4TRz1tUE/kvu8FNs71xZuYfpJhO/8X0RMWgpYEvTbm4jV3n5i
-   v/KX64FhKlCLqjoE/uuwKG+1arpvdBCJu944mM8s5sAzeg+06Z8WAnNkf
-   PbntSD9nWov5/s0V1NLki42FJA9By6x7AC4SsIFt0gp+vUx/fUdT56f4Q
-   A==;
-X-CSE-ConnectionGUID: AZe8YjvlRKq5LJFupNPvnw==
-X-CSE-MsgGUID: VRFdJ4iYTH+kSFM3Jq8wMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="56043393"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="56043393"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 05:29:35 -0700
-X-CSE-ConnectionGUID: qs8xHEBNRYCb/4dCnrX/+g==
-X-CSE-MsgGUID: jnsd1L3ATpmUrz8Xn9BvVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="193375653"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.220.205])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 05:29:29 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	bp@alien8.de,
-	tglx@linutronix.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	thomas.lendacky@amd.com
-Cc: x86@kernel.org,
-	kas@kernel.org,
-	rick.p.edgecombe@intel.com,
-	dwmw@amazon.co.uk,
-	linux-kernel@vger.kernel.org,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org,
-	reinette.chatre@intel.com,
-	isaku.yamahata@intel.com,
-	dan.j.williams@intel.com,
-	ashish.kalra@amd.com,
-	nik.borisov@suse.com,
-	chao.gao@intel.com,
-	sagis@google.com,
-	Farrah Chen <farrah.chen@intel.com>,
-	Binbin Wu <binbin.wu@linux.intel.com>
-Subject: [PATCH v5 7/7] KVM: TDX: Explicitly do WBINVD when no more TDX SEAMCALLs
-Date: Tue, 29 Jul 2025 00:28:41 +1200
-Message-ID: <c29f7a3348a95f687c83ac965ebc92ff5f253e87.1753679792.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1753679792.git.kai.huang@intel.com>
-References: <cover.1753679792.git.kai.huang@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EA08BEC
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753706003; cv=fail; b=AwXzwX1jWauW/CryNgIxsZGYsWQCCgXk9AUkJPSKSPYqotSn48/KY0N3J/jMENFc+T6tnf05MLLS/x+vcXGISdNyKgi4PVbEQPvdui5gNpM+QQpDQAJb4abEJjAQHEXhm5Qp82c4KulDfMd6j1CMrrQrka54+miHu/QllyZC+1s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753706003; c=relaxed/simple;
+	bh=S1lrEPAHM7rYf9jC4ro5kWiuSABymRb92RC+BpV7FOY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=SfRMx4nPXvEK3Hq8gjNkf1YOPoVO26485+KRGTiG6GISsR/dRyMDvUWCKXfv3yIQsXMSKkO1PoxK8PjU+eO/e1s8reB8rjcF8kKfthUzH6q8FgdT4CNmTuJEMAv+IoSV4V0DnPLhd573Cds5oz/QSpdTsuMnMN8uxUnKhwWKzMA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=QGlgfvI+; arc=fail smtp.client-ip=40.107.75.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eWpNR+Z0dxYf6UHk0fCOagq1f94XmAxoh/RG9UUTwFrLpmVZalTF81DVucesQDFRUmgqC/ps/l0MPxcXUv/URj+C1h6G7RY07VZpnwpiSuL7kqll2gg7N/vCt+W7TVmYGkBd+FoKPCzWvjTRkNucsW9tntzyEHyz86C40/p7iyO6Zxaa1qF86amoFa3Ov75KDmzzzeNtfvlHl1g7e9vF8c2+HKWwaXx7JPWNat+I18XfbNla9AADXC77DHRseCVU4STmXMM1u+K/D/cgA/DHYeEWC9p6WOiCRtAyOEgyKqUVQHHBY0WYfO1z+h/DgunOWrL0d97AVx5O49qKWI29FQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3zZ5Xl0t1IL4tPBNQK5DOZNwtZ9yZTohqH++WnJQK/g=;
+ b=NGzh/JYIDZ8WF5Fp8lwtYboskK5KximTUBK62kRWbTrEnrU2ECrHdhEjQypTNT7k55Rj+tgAE9JmYQt7V1MSxsHLMiYOHcSFa2SjnSwCyKWp0s2nvBBOIu3Nj3sTJ76wi9NfUzOPi0QF45aLxlzacxy3y+cZukDsW+diDvfBv14Av9FWnY3eo1EngApmvjPb6DcBtSbP5ysGyLjIJJJbIhCwirbSESc/OxvwGfdemZj6eyy4+ZVsPmNGGEle1GH247/ajR++dIkcN58AVniS4x2E5HrQ5cR7L67XjPpcazKHYOdqFel+pwvWT/PbNAfQq1aLcZL3F51pAz1xoFy9uQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3zZ5Xl0t1IL4tPBNQK5DOZNwtZ9yZTohqH++WnJQK/g=;
+ b=QGlgfvI+g8wZhQQQUPARq55ysMajVOk1wlG3j/3nWBUWZshuApEzu9TEOJqQ4ajcjnc3UKDsZHSg+9TPWUoEc68wRD1XqTqxThIzMPUGDt0pEpA1a3Om97AqETZPKt7ucdkrEoFDwqbRBNldvL0vACh2vElmUX05DU/aK+8YPJxvrwgKQS9tCFi/wmHOqHCAbgrzMWg7cZRTZdK3I5M247jmyf/0Wuz0a1g1FMrbE/HCRRLq2gzPw9KQWwwMXZplnqixu19Jt2anCMfKByxBTu4Id1K5MTr6kaD6uu5u108ZYZ9W4D9q9lFb+QshOFT1Sca2sAOTvB6JOldztdU0wQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEYPR06MB8068.apcprd06.prod.outlook.com (2603:1096:101:2d4::11)
+ by KU2PPF81451D190.apcprd06.prod.outlook.com (2603:1096:d18::4a0) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Mon, 28 Jul
+ 2025 12:33:16 +0000
+Received: from SEYPR06MB8068.apcprd06.prod.outlook.com
+ ([fe80::e524:973f:e6ef:299b]) by SEYPR06MB8068.apcprd06.prod.outlook.com
+ ([fe80::e524:973f:e6ef:299b%6]) with mapi id 15.20.8964.025; Mon, 28 Jul 2025
+ 12:33:15 +0000
+From: Pan Chuang <panchuang@vivo.com>
+To: tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Cc: miquel.raynal@bootlin.com,
+	Jonathan.Cameron@Huawei.com,
+	u.kleine-koenig@pengutronix.de,
+	angeg.delregno@collabora.com,
+	krzk@kernel.org,
+	a.fatoum@pengutronix.de,
+	frank.li@vivo.com,
+	Pan Chuang <panchuang@vivo.com>
+Subject: [PATCH v7 0/1] genirq/devres: Add dev_err_probe() in devm_request_threaded_irq() and devm_request_any_context_irq()
+Date: Mon, 28 Jul 2025 20:32:50 +0800
+Message-Id: <20250728123251.384375-1-panchuang@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY1PR01CA0203.jpnprd01.prod.outlook.com (2603:1096:403::33)
+ To SEYPR06MB8068.apcprd06.prod.outlook.com (2603:1096:101:2d4::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR06MB8068:EE_|KU2PPF81451D190:EE_
+X-MS-Office365-Filtering-Correlation-Id: d05306d3-9cc1-4324-1b62-08ddcdd2ec44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZYgSbeMEE8L5bGUhiI5YxHCoqJuZcRLOWvrRC7gsDpQRqVBeks612wlz8kLm?=
+ =?us-ascii?Q?LME2Q83O0M8yJF23gr/J0ika/fcRHcjms0vkTglMcpkHK5eHFDwY/u+Dk+zo?=
+ =?us-ascii?Q?3gMQXhBa39VAnNn8lFtjebm3oS7A4fWS3y4EbIWLftl/DlG3aMvHkAYoycgS?=
+ =?us-ascii?Q?CO9nLONejcnAd/7Q3DANaLtomqi+rcShDPfYsnKmUfZsQErBVXaPMjifBSQd?=
+ =?us-ascii?Q?9Rtez+2ONlQztHvjnj7hF14mtbQyZW8PZq+It33gMb/VnCQ8Hiam94smh4ka?=
+ =?us-ascii?Q?osON1WLMtfsSYnLghm1uFN817pXuAc/YZhjt8mHvwE6gdUqwGQucBa7soUTV?=
+ =?us-ascii?Q?IbKb+yo/7sUZuBdyhn73LLwvGaBfE46ENqo1zdbTtUJyxrupHiwoPXlKAY/r?=
+ =?us-ascii?Q?EV99S2d5OgTBlfuqZZh4569GpgEXn77GVgAHzLLqV3286U5yVoILKGZamhaf?=
+ =?us-ascii?Q?4BuJo2xsDJ5okFVqjulWK4aFYffruMxuV1Us0BhK/X3Xxrs908JLCW7uRTmZ?=
+ =?us-ascii?Q?TQEVm1qNATKVfW8/DGaYArwbCP7emGm4xPQRl5wc89svoBSsIbxtXt/VI7Wj?=
+ =?us-ascii?Q?0eaDeKJiX5Lbzl5nAIPCjMXQwza2kEERe0ZMybTdIgW8x8Gb52XoQrvkl7u0?=
+ =?us-ascii?Q?DZtCypmi4aOHzKvyxbbgXiGvZhoTIbKbmt61frqM9lBZY1opBg0htmQ3en32?=
+ =?us-ascii?Q?RGtBGGkLffuVZgOG31FL6EYdZwmDZiCJLxzJja5YTowXCptQvUZCo3+O0+fE?=
+ =?us-ascii?Q?NpCAPLdF9EMBSXuR6jL5jpXFJJnIZnOw3Ty49GBJ1+fz4CMe/263Fe4c4P5p?=
+ =?us-ascii?Q?r4zNAFWu09Jqz4p0JbMirAoO4C/5gdgI8ge6osXU+slGTzaYOHpDUMnrUsm6?=
+ =?us-ascii?Q?vbaG8swev2Yo+gxptLEVyL1Zcg2N8YRjjqtgoyNrtSiOTUV0pgLB2WT3NpMQ?=
+ =?us-ascii?Q?DN0WSLONBXyB8wOC1rOo+IktILYtLpmOP1INnWH6XAtvDUPSm41G3NMA9g8x?=
+ =?us-ascii?Q?neNIUUbxkDtVAYaQJEsFmd9Ly5TRB17zAZkRbudBAulBUF6b8LCh1EYfzdkj?=
+ =?us-ascii?Q?/C7zrT4Pcg7vTEXhieuEmdfz34aFkRTOFBofuQqWIyC2xH37DP1IwNMq2WOv?=
+ =?us-ascii?Q?p1Np+J3hai4hKZy1ikbnyy/zQBxXCup+s30EJBW88AFdppZ2NUh1HirGqLxH?=
+ =?us-ascii?Q?H6KkaOVM7XSFf0U8FmVk2B4bf7+80h89Hp8ufdWs/WXy92g6yHXNcK3520ng?=
+ =?us-ascii?Q?GoNa1i1rmrfeerVyA/N33znrO58lYLiPthd9sBe83ac5Q0SG4ZEr7m7xMu2Q?=
+ =?us-ascii?Q?EEkXV9FXAemHGDGpNY3wLdoXnpZFntJmGs6YTz6xAAi1S3J5VLlgTRIQ/qqw?=
+ =?us-ascii?Q?ftNIMGg0NHRNjMFtTOf3yAhlF/dPnyMkxpBsW3YIKNlJOZdcOvlhmvxZUjOm?=
+ =?us-ascii?Q?PBkN7UVsEl96dapz1UotMZkMTEXoYP6KdAzwim4jwf31YDKTen6FrO1GSHTI?=
+ =?us-ascii?Q?OnkIC1WF6OqXpXE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB8068.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aeFDUG4N5DhxOgCWcxBkjjvdq6d/eV22PCVQhUeEu9KhKCkHWLMlG/ufmern?=
+ =?us-ascii?Q?JpaVwb7p6ci3nyQyyg0QB1kGLh2X5Bkbcq9zxhcJVXagvmWnu3Yv+5quKaJ8?=
+ =?us-ascii?Q?XKHgQiLAnopCoi3vo94POpAyKGvUSMP2Bu6O8R5E+IHyaBe2VuvTVMzC3iI2?=
+ =?us-ascii?Q?TNckS8iBTSqBaueTooYPfB58fj55KAV4vEzZmhTUwGmTaT5Zv1dpESujQs1S?=
+ =?us-ascii?Q?kZOv3Fmx+P/qAcnsv6r0+CSem4QDkcHi7VExU4a8jtyoRu6ys9eScr8gJQsg?=
+ =?us-ascii?Q?JkIirnaCWUTxz3Ddtjs7JJfo8rGoXqyVTdgReVAAonRH9IZVAxME/1MToUiJ?=
+ =?us-ascii?Q?N+f6dbeuGW57EhAtSl/BHa++FjzEma/9gEArXPtZIXexN5+LPqk3Twv6p0vw?=
+ =?us-ascii?Q?8Zc6y3jGREQMlHevaNH+qQh6jISprj4CFOWei6qN02QFQl2h2/wqcjQ5ZQNU?=
+ =?us-ascii?Q?CUlbl8yok53jJmyR710igpRObvObh/LC0sJhQNZrRF+OOvDOMfaVuL0f5QxM?=
+ =?us-ascii?Q?ZvC6QKhxotbGua+vWShm6iLjs2GoXwaEm0Zga+XgTqmn2Q2MD59eFh6jk4/K?=
+ =?us-ascii?Q?/Xd0ExGYqgzoZ0XNySbobNjtSMlqoKgxUfJkBni1B22szVr67Vvcl4WMxLe7?=
+ =?us-ascii?Q?aaEwonRn1ggGJuLAW0vXzLvSPNsjYMtmKXrX0ivZs+sYs+leF2Wez+fSi0Wr?=
+ =?us-ascii?Q?vlzxdmUfu38lMcGlFrowJi1t8f/8xC8cS05LEWfGxYmMcqiQjpoYnZgFvWPP?=
+ =?us-ascii?Q?W7ULpddBPl/SG3SrDSl+IhCQQB6qyPELCa0277tAuf4G6kt66Ah+tcxrc0jU?=
+ =?us-ascii?Q?dZUZrpYxBHIVUbvJf+PHp1XwNqTutnIP56AGcsusWpXwm6WGv/IZfZECDF7b?=
+ =?us-ascii?Q?072dot9oqxkEN67sekxv8LahOBCMYNYC0e6sQEpBZty7orVoZXNrP8iIruai?=
+ =?us-ascii?Q?HnPjwPLOkcD8oLi5S6heMkd39B0bcYr5B5c42Wea340adHCzcI9W1z4Ykx2E?=
+ =?us-ascii?Q?dn3tGXRbO2B5zP4X4GGAFlEUHRcH8AFkFFjxzEuZFCorQ7KLOG8o5LORBHFv?=
+ =?us-ascii?Q?bxdiGQx1KoiOs6jPU3N6vnyaiz5l8V1uh5yJmlTB2NRi/4QnDeTeRjyiUphA?=
+ =?us-ascii?Q?8soluQVnDlMTdBfeytOm0f4cub7wrQDhnNGD+0mkOcSIclY2lfjvOy0milHZ?=
+ =?us-ascii?Q?/Yw5AI4Yn4C3NhGkWTITMeQGF/S72H35/MCbMei+xSDmNuNlIyXiQM1oZq2b?=
+ =?us-ascii?Q?A+z/Hn4+/2NdzxTT/fAqV7h1wbj/3yrT6Z2ch0SxGKdfu/66gsGz9O1wjSoq?=
+ =?us-ascii?Q?vBoQbhF2QQlzAuOjQ9nTvHt3kwo6q6+AH06pJVgb2LG79fyUjyG7LPvzXUVK?=
+ =?us-ascii?Q?BpRM1MpXcryL/ldoHW3Ya11WfEl11ZOq9lFat7rCEeXrJnZRRKEnSAvPkOpI?=
+ =?us-ascii?Q?61icOprged0D1+KOkAsIPQM7h94pINyJPlP0d3rdPOY0ViSiu6BykV8kmeE0?=
+ =?us-ascii?Q?4JI66/b6s+/t0VLVLQ01Di4CxSZoalLwlfT8qRHsr6B8Jo6nuqKNP3d0voD/?=
+ =?us-ascii?Q?siIAygzr7M072DdvOvFw7uAxctjsOZiTKuRMZBcJ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d05306d3-9cc1-4324-1b62-08ddcdd2ec44
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB8068.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2025 12:33:14.9684
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wGbah5UlU6HD9aefOwnF7MFhxPhSKTimEErx43KyUFf4OVwXguknsYHBvFnHq/2AjIYiuuPcG8XMNwX1RNMTGQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU2PPF81451D190
 
-On TDX platforms, during kexec, the kernel needs to make sure there are
-no dirty cachelines of TDX private memory before booting to the new
-kernel to avoid silent memory corruption to the new kernel.
+There are over 700 calls to devm_request_threaded_irq() and more than 1000
+calls to devm_request_irq() in the kernel. Currently, most drivers implement
+repetitive and inconsistent error handling for these functions:
 
-During kexec, the kexec-ing CPU firstly invokes native_stop_other_cpus()
-to stop all remote CPUs before booting to the new kernel.  The remote
-CPUs will then execute stop_this_cpu() to stop themselves.
+1. Over 2000 lines of code are dedicated to error messages
+2. Analysis shows 519 unique error messages with 323 variants after normalization
+3. 186 messages provide no useful debugging information
+4. Only a small fraction deliver meaningful error context
 
-The kernel has a percpu boolean to indicate whether the cache of a CPU
-may be in incoherent state.  In stop_this_cpu(), the kernel does WBINVD
-if that percpu boolean is true.
+As tglx pointed out:
+  "It's not a general allocator like kmalloc(). It's specialized and in the
+   vast majority of cases failing to request the interrupt causes the device
+   probe to fail. So having proper and consistent information why the device
+   cannot be used is useful."
 
-TDX turns on that percpu boolean on a CPU when the kernel does SEAMCALL.
-This makes sure the caches will be flushed during kexec.
+This patch implements a standardized error reporting approach[1]:
 
-However, the native_stop_other_cpus() and stop_this_cpu() have a "race"
-which is extremely rare to happen but could cause the system to hang.
+1. Renames existing functions to __devm_request_threaded_irq() and
+   __devm_request_any_context_irq()
+2. Creates new devm_request_threaded_irq() and devm_request_any_context_irq()
+   functions that:
+   a) Invoke the underscore-prefixed variants
+   b) On error, call dev_err_probe() to provide consistent diagnostics
 
-Specifically, the native_stop_other_cpus() firstly sends normal reboot
-IPI to remote CPUs and waits one second for them to stop.  If that times
-out, native_stop_other_cpus() then sends NMIs to remote CPUs to stop
-them.
+The new error format provides complete debugging context:
+  "<device>: error -<errcode>: request_irq(<irq>) <handler> <thread_fn> <devname>"
 
-The aforementioned race happens when NMIs are sent.  Doing WBINVD in
-stop_this_cpu() makes each CPU take longer time to stop and increases
-the chance of the race happening.
+Example from our QEMU testing:
+  test_irq_device: error -EINVAL: request_irq(1001) test_handler+0x0/0x10 [test_irq] test_thread_fn+0x0/0x10 [test_irq] irq-1001-failure
 
-Explicitly flush cache in tdx_disable_virtualization_cpu() after which
-no more TDX activity can happen on this cpu.  This moves the WBINVD to
-an earlier stage than stop_this_cpus(), avoiding a possibly lengthy
-operation at a time where it could cause this race.
+Patch Link (v6):
+https://lore.kernel.org/all/20250623123054.472216-2-panchuang@vivo.com/
 
-Signed-off-by: Kai Huang <kai.huang@intel.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Tested-by: Farrah Chen <farrah.chen@intel.com>
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
----
+[1]https://lore.kernel.org/all/87qzy9tvso.ffs@tglx/
 
-v4 -> v5:
- - No change
+Pan Chuang (1):
+  genirq/devres: Add dev_err_probe() in devm_request_threaded_irq() and
+    devm_request_any_context_irq()
 
-v3 -> v4:
- - Change doing wbinvd() from rebooting notifier to
-   tdx_disable_virtualization_cpu() to cover the case where more
-   SEAMCALL can be made after cache flush, i.e., doing kexec when
-   there's TD alive.  - Chao.
- - Add check to skip wbinvd if the boolean is false. -- Chao
- - Fix typo in the comment -- Binbin.
+ kernel/irq/devres.c | 78 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 74 insertions(+), 4 deletions(-)
 
-
----
- arch/x86/include/asm/tdx.h  |  2 ++
- arch/x86/kvm/vmx/tdx.c      | 12 ++++++++++++
- arch/x86/virt/vmx/tdx/tdx.c | 12 ++++++++++++
- 3 files changed, 26 insertions(+)
-
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index 488274959cd5..b7c978281934 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -217,6 +217,7 @@ u64 tdh_mem_page_remove(struct tdx_td *td, u64 gpa, u64 level, u64 *ext_err1, u6
- u64 tdh_phymem_cache_wb(bool resume);
- u64 tdh_phymem_page_wbinvd_tdr(struct tdx_td *td);
- u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct page *page);
-+void tdx_cpu_flush_cache(void);
- #else
- static inline void tdx_init(void) { }
- static inline int tdx_cpu_enable(void) { return -ENODEV; }
-@@ -224,6 +225,7 @@ static inline int tdx_enable(void)  { return -ENODEV; }
- static inline u32 tdx_get_nr_guest_keyids(void) { return 0; }
- static inline const char *tdx_dump_mce_info(struct mce *m) { return NULL; }
- static inline const struct tdx_sys_info *tdx_get_sysinfo(void) { return NULL; }
-+static inline void tdx_cpu_flush_cache(void) { }
- #endif	/* CONFIG_INTEL_TDX_HOST */
- 
- #endif /* !__ASSEMBLER__ */
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index ec79aacc446f..93477233baae 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -442,6 +442,18 @@ void tdx_disable_virtualization_cpu(void)
- 		tdx_flush_vp(&arg);
- 	}
- 	local_irq_restore(flags);
-+
-+	/*
-+	 * No more TDX activity on this CPU from here.  Flush cache to
-+	 * avoid having to do WBINVD in stop_this_cpu() during kexec.
-+	 *
-+	 * Kexec calls native_stop_other_cpus() to stop remote CPUs
-+	 * before booting to new kernel, but that code has a "race"
-+	 * when the normal REBOOT IPI times out and NMIs are sent to
-+	 * remote CPUs to stop them.  Doing WBINVD in stop_this_cpu()
-+	 * could potentially increase the possibility of the "race".
-+	 */
-+	tdx_cpu_flush_cache();
- }
- 
- #define TDX_SEAMCALL_RETRIES 10000
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index d6ee4e5a75d2..c098a6e0382b 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1870,3 +1870,15 @@ u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct page *page)
- 	return seamcall(TDH_PHYMEM_PAGE_WBINVD, &args);
- }
- EXPORT_SYMBOL_GPL(tdh_phymem_page_wbinvd_hkid);
-+
-+void tdx_cpu_flush_cache(void)
-+{
-+	lockdep_assert_preemption_disabled();
-+
-+	if (!this_cpu_read(cache_state_incoherent))
-+		return;
-+
-+	wbinvd();
-+	this_cpu_write(cache_state_incoherent, false);
-+}
-+EXPORT_SYMBOL_GPL(tdx_cpu_flush_cache);
 -- 
-2.50.1
+2.34.1
 
 
