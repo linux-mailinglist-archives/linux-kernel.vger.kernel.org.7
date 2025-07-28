@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-747745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61AC6B1378D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:32:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C3EB13791
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 763A417076A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:32:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 698C6176A76
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCAF1A316E;
-	Mon, 28 Jul 2025 09:32:18 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60CC252900;
+	Mon, 28 Jul 2025 09:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWbBe3tr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DA31E4AB
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248A49463;
+	Mon, 28 Jul 2025 09:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753695138; cv=none; b=JJd6GQ1tpWcrZ2wynIjsZozZsehlHZsnnscolGRInValXszB/2o1aFopsydrpVFYQbnGdGboY24aHHAdiBsTnslvli7WQs3uoayl/gV+a57A9Pi/4+tDJ5vtG5HO9s9gKehH3KOqCWovWXiamZvF1h1wwFHGfNQobQXRBayeP5Q=
+	t=1753695239; cv=none; b=gXd3NXvRlxBOO9QDfQLHRB1Xa4UC0B34Y6uNxtNP9udalcb6t/52IkEIfohuSWZjdoXBC2ZdbrWy1cL1WLQ7nJbF+oaHuiOBsoRzvHrzAECI3cFBWwO7uW1cPzeCIe4jNz9uv5AKixAQUqn9X2YNsw93C/uS29l1uc3GQbSUJo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753695138; c=relaxed/simple;
-	bh=eksEz9DNPzwUs8IiRgjj2ibqU2hzBNPGLV8Wa4eqZ7I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bdO84tw85YTYbudGaFa4r4MitN+FJy9wYIkp3qKT1ax21QJn2x5ony/YLuQTvbUzmkRFpAP5PFFm4grtYUQAbcMZa2OZwf8tGqzFSimaLJlr99q+djFwt8D8Mmfdi8R5eJbF9RXDsrBTVzt2hfYbK1MBwpI2FVYG5ryLjP+5tGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.8/8.18.1.8) with ESMTP id 56S5t1AH1480006;
-	Mon, 28 Jul 2025 02:31:57 -0700
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 484ta1sa8c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 28 Jul 2025 02:31:56 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Mon, 28 Jul 2025 02:31:55 -0700
-Received: from pek-lpg-core6.wrs.com (10.11.232.110) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
- 15.1.2507.57 via Frontend Transport; Mon, 28 Jul 2025 02:31:54 -0700
-From: <changqing.li@windriver.com>
-To: <namhyung@kernel.org>, <james.clark@linaro.org>, <irogers@google.com>,
-        <charlie@rivosinc.com>, <linux-kernel@vger.kernel.org>
-CC: <changqing.li@windriver.com>
-Subject: [PATCH] tools/build: make in-target rule robust against too long argument error
-Date: Mon, 28 Jul 2025 17:31:53 +0800
-Message-ID: <20250728093153.2330009-1-changqing.li@windriver.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753695239; c=relaxed/simple;
+	bh=xgvpcMi4xVt5i3iu1enJ7NxI7jGYXAm7Dz6/uB75rOY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ttXbVpnPvI32WG25Q7Ti2UWWIqeRjYqDoBKrpoY3QG5EtZcDyyFkqoj5Q3km+LfmxXqJ0c4sAEZdMhHUi025ykur7m6TRUBgzVCxntrrT7t20YR0ETMMmf1sp+d7+7SEep6Ocez161eXnMoNQYcWUUFemrUDEx92F6OKTClROuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWbBe3tr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE8CC4CEE7;
+	Mon, 28 Jul 2025 09:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753695238;
+	bh=xgvpcMi4xVt5i3iu1enJ7NxI7jGYXAm7Dz6/uB75rOY=;
+	h=From:Date:Subject:To:Cc:From;
+	b=RWbBe3tr4CKS+J/B6qWYTHCDoYGeLU0+BqxHzDqAtpLnvCj747bZmrUdM682wp1KQ
+	 Z1EUarHby9qaEdOhHjEIBYuTQfURa4x1QR9pBmvx3yjVXOBmnQdZHSg9gwSkk1OKep
+	 deG1M5VxIBCbv5MFHYvk7GHo55XMm5JjigANYIyRCnXvJQfvZvmv4dc+edDLn4vT6d
+	 rVQrdb6eR+sOv3+VBFjWpBK5oHEHef70TZljSAnQ1bMrwX7z+7bueHN03FXaJPn6PJ
+	 knanufzmNZLkXuKgnlrIb9HRHiM+BHbnxXY5XWngFJ4POXYRwlMu6985XJldVNF4Zo
+	 j6LAK8lj8zUWw==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Mon, 28 Jul 2025 11:33:52 +0200
+Subject: [PATCH] arm64: dts: qcom: sc7280-chrome-common: Remove duplicate
+ node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: R_EhvhvK3IdvKDr3Z04dM4x5PfYoPgRY
-X-Proofpoint-GUID: R_EhvhvK3IdvKDr3Z04dM4x5PfYoPgRY
-X-Authority-Analysis: v=2.4 cv=OYOYDgTY c=1 sm=1 tr=0 ts=6887438d cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=Wb1JkmetP80A:10 a=t7CeM3EgAAAA:8 a=ZsBBRxGF-X5fSI_XCv0A:9
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDA3MCBTYWx0ZWRfX9BsPh3RwjaXf
- YlRnJN80V9rrRCi88//aT7rx5ktK/l6TsEIfeUXscT24bZPICde/n5e79zT8l+aWjGX7nC3T3FH
- c+Y2XP79tuV/97UbuqD1KkfEBDhqNxr95N9aknpqm+zV4boKGxjQoBtW5D0o0J9m/N0aO+bC1jl
- dv9woPhhXC4BvT0Za+96B4Qdkgr8T4gg2dqP/5bKlHKopoWacMK8/ebGQDVSHtcpLMXp14PD4PF
- PGGTdk2MGMc4dl+s+yJUkLzQGOpCWwHg46olEW6MUAmhaCbFJwKPNxrwgUtQEZQT7zy+90ecn2C
- 2nHwY5C8UOKRy/ThDk1ACpcikTw+eumOrGJvX3NqSxb3Bi37UNIrTlGDElk77cB6GD2E30aZaOG
- /RoaULVc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_03,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 malwarescore=0 priorityscore=1501 adultscore=0
- suspectscore=0 phishscore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2507210000 definitions=main-2507260059
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250728-topic-chrome_dt_fixup-v1-1-1fc38a95d5ea@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAP9Dh2gC/x2MWwqAIBAArxL7nWDS+yoRketa+1GKVgTR3ZM+h
+ 2HmgUiBKUKfPRDo4shuT1DkGeA67wsJNolBSVXJRrXicJ5R4BrcRpM5Jsv36YUtS1PrBrGzGlL
+ rAyXxf4fxfT+VX0EBZwAAAA==
+X-Change-ID: 20250728-topic-chrome_dt_fixup-f44d6b7cc9fb
+To: cros-qcom-dts-watchers@chromium.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753695235; l=1117;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=iQM1UCMj9uQFICgEonSsjJqyIfrM8L7vyNrS4l0aPBw=;
+ b=A7YoltDkgU23tATyvj8vbLap5YbjTYMRFXH6uXIT9nWPoIQa+ib27mtYPno9gNVb14Sa3ikjf
+ Q8/DmqCImr0CdKQ2lAn0KGPI5VFxRJHJFI/Z96SunKLsftcuDG69KvY
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Changqing Li <changqing.li@windriver.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-The command length of in-target scales with the depth of the directory
-times the number of objects in the Makefile. When there are many
-objects, and O=[absolute_path] is set, and the absolute_path is
-relatively long. It is possile that this line "$(call
-if_changed,$(host)ld_multi)" will report error:
-"make[4]: /bin/sh: Argument list too long"
+sc7280.dtsi already includes the very same definition (bar 'memory@'
+vs 'video@', which doesn't matter). Remove the duplicate to fix a lot
+of dtbs W=1 warning instances (unique_unit_address_if_enabled).
 
-For example, build perf tools with O=/long/output/path
-
-Like built-in.a and *.mod rules in scripts/Makefile.build, add
-$(objpredix)/ by the shell command instead of by Make's builtin
-function.
-
-Signed-off-by: Changqing Li <changqing.li@windriver.com>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 ---
- tools/build/Makefile.build | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/tools/build/Makefile.build b/tools/build/Makefile.build
-index 3584ff308607..39066a3ef2fc 100644
---- a/tools/build/Makefile.build
-+++ b/tools/build/Makefile.build
-@@ -70,11 +70,13 @@ quiet_cmd_gen = GEN     $@
- # If there's nothing to link, create empty $@ object.
- quiet_cmd_ld_multi = LD      $@
-       cmd_ld_multi = $(if $(strip $(obj-y)),\
--                     $(LD) -r -o $@  $(filter $(obj-y),$^),rm -f $@; $(AR) rcs $@)
-+                     printf "$(objprefix)%s " $(patsubst $(objprefix)%,%,$(filter $(obj-y),$^)) | \
-+                     xargs $(LD) -r -o $@,rm -f $@; $(AR) rcs $@)
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+index 8b4239f13748fe591b68a163f37993f9e84c2de0..84c6d662b54f8c87de56c02100e2b491094f90b3 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+@@ -44,11 +44,6 @@ camera_mem: memory@8ad00000 {
+ 			reg = <0x0 0x8ad00000 0x0 0x500000>;
+ 			no-map;
+ 		};
+-
+-		venus_mem: memory@8b200000 {
+-			reg = <0x0 0x8b200000 0x0 0x500000>;
+-			no-map;
+-		};
+ 	};
+ };
  
- quiet_cmd_host_ld_multi = HOSTLD  $@
-       cmd_host_ld_multi = $(if $(strip $(obj-y)),\
--                          $(HOSTLD) -r -o $@  $(filter $(obj-y),$^),rm -f $@; $(HOSTAR) rcs $@)
-+                          printf "$(objprefix)%s " $(patsubst $(objprefix)%,%,$(filter $(obj-y),$^)) | \
-+                          xargs $(HOSTLD) -r -o $@,rm -f $@; $(HOSTAR) rcs $@)
- 
- ifneq ($(filter $(obj),$(hostprogs)),)
-   host = host_
+
+---
+base-commit: d7af19298454ed155f5cf67201a70f5cf836c842
+change-id: 20250728-topic-chrome_dt_fixup-f44d6b7cc9fb
+
+Best regards,
 -- 
-2.34.1
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
