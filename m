@@ -1,152 +1,177 @@
-Return-Path: <linux-kernel+bounces-748525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10291B1423B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:54:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC72B1423E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 20:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4C13A741B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:53:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 798563A8870
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 18:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436F1275B09;
-	Mon, 28 Jul 2025 18:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFE5276038;
+	Mon, 28 Jul 2025 18:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCJGtZs5"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2PYwWB9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C94378F3A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC73178F3A;
+	Mon, 28 Jul 2025 18:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753728838; cv=none; b=J+44x4oZeEdnYN2yQgOPptdqkwscKHlzQvJcM/DmzTC8dnbdBgy0OhXJ1Zwz78BD3vJS8Hf3j8RW0eBDlTnYml9ma/dQ9bl6ThkU4QtJwqxoCwZOjBzNsDs65xLgs4nrf+QY20mb6/M14uK/WawUV7mlAg//POvqU+cs8SQjIBI=
+	t=1753728897; cv=none; b=mfBPj76oLxj7Voz6qW85dT31vABmUbvLTit7+2EVSmlvwHA8txFFBH+Y1d5nIO/f44XR3eFuV/NkxzDly45voFJZV9eGGG0HHeBAeeeVZXPrlmxbv0gWHCB4Haqcd7OsBAYmE5ffqiNjXgBrYncipWbhCShEOv1td5rcZoQ3Ur4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753728838; c=relaxed/simple;
-	bh=lkpX40Be1iPj/ILGvqUHD+ZPLvj4gBNuMUzfJoFdVbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ahvddBaKueyuOSIV03umnbNAbdSqm1S20DvjYvtnUwtrcWgkwnOFVjSTGjT8thg3Zht6Yyce8Ei6g5N1UQVhjAqgGzPT2Uo+v7k6cSmKwtYIMAIgL4AF0kp7B2VvhFvHK+sZmACzoLh4QAQm0+O7QzhPcCEeKJML+ebE/oyUhPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCJGtZs5; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4563cfac19cso50918685e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:53:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753728835; x=1754333635; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b2mmj693l0jXSLhGLWNPDSNMUvi9J/Ob3dq0ELmQUR4=;
-        b=bCJGtZs52EmgOVzuhBF2WITv0qTRxCLfxbHKrIdq8btBlJ8yypna0772WnXV+L7c0b
-         ae11Uwcp9QLaUqtSSDxrTs5kIoT+sqEh3DXu/hZ68QVViJMA1eCCp/AGYcwkzW+HrIOA
-         hDhqOkBsbzzGiAa5lsaPapuamuCbCfYwxUeIz3LRcYha/6/QHoaSB8iMehmoqn1G/jpH
-         AFQAGsbnMlFz3/bRUuJdZi+2XZB0vJQUGU1A1k0Q4bdg0oVblBHaEdWf7B5gI6u8fUhZ
-         MunkgQkvq6Vz/8SlaPVr6/qQcshNJ5xK7udRel22WeAP714ZWe7idL7Epvne5elMZaTa
-         QXSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753728835; x=1754333635;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b2mmj693l0jXSLhGLWNPDSNMUvi9J/Ob3dq0ELmQUR4=;
-        b=M3m+uKBWDnqJpcv5//wq5cL8SeI8+kHyjxZgVRnQQ4Hsmsr4hY/e6K8yl53TCU3RUd
-         OYEtjXKU8b7Tafk3fMSHxDc7HdknWpHOokkmn59pq9umkZ8sI+n0H3D0V1bvVLftXo97
-         DYTHE5wkvvXW1/gIJ2QqtpgmwyfsyuU//QHn6MzEmslzFWmUhQ9cqCHekSEGVKpW+yzV
-         tnfVsFyJtaQfR+G6SPpzrOF2DXasU4JXBksrdsXRXQA5P3YVVG6xcKoRH4X/KkeYCVWQ
-         /PiF+XJDOG0/7uYKsZUtaexP0TDos94ylhnBO8KtC5bgF2Sjxf0afzH9DLihuhtVmWOS
-         snpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeTGKAgoL620h+xMIJSH7RD0LZvNzvgmVRF2uVs5/rBbPJeQh1LTR8dWleN8foPqycuAjRfJoQv3NxzXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx7IeYetZ8d1qtolXb6mJtaVkYRuvTSPPF48hSJeB0ORT3i+oV
-	imIpNPSMHA6S9f9nlnfcme7aAbxRyXJIt37aqp1Pay7e8KQZrvZcstwt
-X-Gm-Gg: ASbGncsIlF0hFzfjkWVLRAjvfj+EtyLEwyNJlBo4cb8pPD3eR3QV/DQ9+uPsWMof5Rp
-	aZ1h/JGgHqbE6KonVQz/ED6gWwWUYZaqarrJCjSYZf1B0lDClCsOJQB2eAt9WGlELt00UYHzXNk
-	NaHktemi8691RbxoDT3YY4nQvog9DQEMvbjHWhzLItAv2Iuz5tJcqMqj+iKyWFzKTmeMmkNfBtM
-	unA6TM7LNVpZzcCLe9RHpHowquZTKAaci3hjfHheTzkpz0H8FScYiwNcZi5/Vs9yZc66xjb+jll
-	IyEnV0wSjRSq6jcIkSkG29eN27iaDzfq5ukCklMajILdAiFB1NKh4lGvhywtiG0kDXnYUj1ljIG
-	Q1xWokrlBB0tmrLbVESacd74YQkFyj6UmX5JOgoUIi1vjtJ3QVyJBweCc6t+M
-X-Google-Smtp-Source: AGHT+IHqTsTpA5tlZyL4WvAL61122t6dmEgzCs0VxY6V/yE5yEe/E2O9fHr5WaqbBSXW2eU+UMxVsw==
-X-Received: by 2002:a05:600c:810c:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-458765475bcmr113432065e9.18.1753728834982;
-        Mon, 28 Jul 2025 11:53:54 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587c9155a5sm99741715e9.19.2025.07.28.11.53.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 11:53:54 -0700 (PDT)
-Date: Mon, 28 Jul 2025 19:53:53 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "Li,Rongqing" <lirongqing@baidu.com>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2] x86/math64: handle #DE in mul_u64_u64_div_u64()
-Message-ID: <20250728195353.631affdd@pumpkin>
-In-Reply-To: <20250727123458.GA16775@redhat.com>
-References: <20250721130422.GA31640@redhat.com>
-	<20250727123458.GA16775@redhat.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1753728897; c=relaxed/simple;
+	bh=WnEp3RagWtEHBySiC59fYeCvC2c0jxhYSbMXiCFkVo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNb+X4iwGEAWlk6A1wWWl+EThJ0z6+I7gWvzFp8nhXtDBh44KRLwa6vQgm5dB1dhtcG2mAyDb8T6bhCEdiTODIZVxOgPXJMZimoYHKXlfdSm+WxwxiQSRXoWThGaVtJs0YCg0+mbHtO9EwvDu6q2bo8As7SYDF06vYg+YsdLUsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2PYwWB9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7226C4CEE7;
+	Mon, 28 Jul 2025 18:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753728897;
+	bh=WnEp3RagWtEHBySiC59fYeCvC2c0jxhYSbMXiCFkVo8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I2PYwWB9EJ8zXLWPLfbodljZbQiOWuCTHO64dVw5sblznyOhO5B5a4Oth78XM9vIZ
+	 DB8BKRua7Onozl11c1bxts35o82FKUvJ49/h1Dl83GQEw2SzlDRUMp/4Ow40Xvv/xk
+	 RcfK2fUEmsLp6ae/wwI+zttlF416BRQK3LLO74LJuOzi8Tz84bMRgMRZ/JB+7ax6gr
+	 doTj2Quvnt4bBsP5YdP2ADTMDG07eTaSUTXc9t1cUqJBcjvJX7D8MIuRaemxLo4Ld0
+	 /ja57/kl0QjwQksju432JnPEZ7Ijnrja4XNOXmMy2L5Qsnj1msiPWBoWYbaNHiH19p
+	 c/EQmmU+1pKNA==
+Date: Mon, 28 Jul 2025 11:54:55 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v4 9/9] perf annotate: Add dso__debuginfo() helper
+Message-ID: <aIfHf7lAvsETtkFP@google.com>
+References: <20250725193755.12276-1-namhyung@kernel.org>
+ <20250725193755.12276-10-namhyung@kernel.org>
+ <CAP-5=fXj5pcuut9dTVqZfmipTb-sRkZXUwjhJ41rTDNOKDJPQQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXj5pcuut9dTVqZfmipTb-sRkZXUwjhJ41rTDNOKDJPQQ@mail.gmail.com>
 
-On Sun, 27 Jul 2025 14:34:58 +0200
-Oleg Nesterov <oleg@redhat.com> wrote:
-
-> Change mul_u64_u64_div_u64() to return ULONG_MAX if the result doesn't
-> fit into u64 or div == 0. The former matches the generic implementation
-> in lib/math/div64.c, the latter doesn't. Perhaps we will add a WARN()
-> into the fixup_exception() paths later.
+On Fri, Jul 25, 2025 at 05:46:48PM -0700, Ian Rogers wrote:
+> On Fri, Jul 25, 2025 at 12:38 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > It'd be great if it can get the correct debug information using DSO
+> > build-Id not just the path name.  Instead of adding new callsites of
+> > debuginfo__new(), let's add dso__debuginfo() which can hide the access
+> > using the pathname and help the future conversion.
+> >
+> > Suggested-by: Ian Rogers <irogers@google.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 > 
-> No need to use _ASM_EXTABLE_TYPE_REG(), we know that the target register
-> is pt_regs->ax with offset == 0, so a simple EX_DATA_REG(0) should work
-> just fine.
-> 
-> Reported-by: Li RongQing <lirongqing@baidu.com>
-> Link: https://lore.kernel.org/all/78a0d7bb20504c0884d474868eccd858@baidu.com/
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> :-) and my prior review comments now make less sense. I think putting
+> the ui__warning into dso__debugingo makes sense, wdyt?
+ 
+I think it depends on what the caller does.  This code is just to get
+the debuginfo from DSO and it cannot know if it's ok to print messages.
+So it'd be better for callers to handle the case IMHO.
 
-Reviewed-by: David Laight <david.laight.linux@gmail.com>
+Thanks,
+Namhyung
 
-> ---
->  arch/x86/include/asm/div64.h | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
-> index 9931e4c7d73f..0bf2c6afe66e 100644
-> --- a/arch/x86/include/asm/div64.h
-> +++ b/arch/x86/include/asm/div64.h
-> @@ -79,18 +79,21 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
->  
->  #else
->  # include <asm-generic/div64.h>
-> +# include <asm/asm.h>
->  
->  /*
-> - * Will generate an #DE when the result doesn't fit u64, could fix with an
-> - * __ex_table[] entry when it becomes an issue.
-> + * Returns ULONG_MAX if the result doesn't fit u64 or div == 0.
->   */
->  static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
->  {
->  	u64 q;
->  
-> -	asm ("mulq %2; divq %3" : "=a" (q)
-> -				: "a" (a), "rm" (mul), "rm" (div)
-> -				: "rdx");
-> +	asm ("mulq %2; 1: divq %3; 2:\n"
-> +		_ASM_EXTABLE_TYPE(1b, 2b,
-> +			EX_TYPE_IMM_REG | EX_DATA_REG(0) | EX_DATA_IMM(-1))
-> +		: "=a" (q)
-> +		: "a" (a), "rm" (mul), "rm" (div)
-> +		: "rdx");
->  
->  	return q;
->  }
-
+> > ---
+> >  tools/perf/ui/browsers/annotate.c |  4 ++--
+> >  tools/perf/util/annotate.c        |  6 +++---
+> >  tools/perf/util/dso.h             | 10 ++++++++++
+> >  3 files changed, 15 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+> > index 2a4db5bdcdb7e9d8..54610621c5f910fe 100644
+> > --- a/tools/perf/ui/browsers/annotate.c
+> > +++ b/tools/perf/ui/browsers/annotate.c
+> > @@ -1042,7 +1042,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+> >                 case 'T':
+> >                         annotate_opts.code_with_type ^= 1;
+> >                         if (browser->dbg == NULL)
+> > -                               browser->dbg = debuginfo__new(dso__long_name(map__dso(ms->map)));
+> > +                               browser->dbg = dso__debuginfo(map__dso(ms->map));
+> >                         annotate_browser__show(&browser->b, title, help);
+> >                         annotate_browser__debuginfo_warning(browser);
+> >                         continue;
+> > @@ -1128,7 +1128,7 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
+> >         ui_helpline__push("Press ESC to exit");
+> >
+> >         if (annotate_opts.code_with_type)
+> > -               browser.dbg = debuginfo__new(dso__long_name(dso));
+> > +               browser.dbg = dso__debuginfo(dso);
+> >
+> >         browser.b.width = notes->src->widths.max_line_len;
+> >         browser.b.nr_entries = notes->src->nr_entries;
+> > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> > index 6fc07971631ac8a3..05eb19b110ab7dcf 100644
+> > --- a/tools/perf/util/annotate.c
+> > +++ b/tools/perf/util/annotate.c
+> > @@ -1270,7 +1270,7 @@ int hist_entry__annotate_printf(struct hist_entry *he, struct evsel *evsel)
+> >         apd.addr_fmt_width = annotated_source__addr_fmt_width(&notes->src->source,
+> >                                                               apd.start);
+> >         evsel__get_arch(evsel, &apd.arch);
+> > -       apd.dbg = debuginfo__new(filename);
+> > +       apd.dbg = dso__debuginfo(dso);
+> >
+> >         list_for_each_entry(pos, &notes->src->source, node) {
+> >                 int err;
+> > @@ -1375,7 +1375,7 @@ static int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp,
+> >
+> >         if (annotate_opts.code_with_type) {
+> >                 evsel__get_arch(apd->evsel, &apd->arch);
+> > -               apd->dbg = debuginfo__new(dso__long_name(map__dso(apd->he->ms.map)));
+> > +               apd->dbg = dso__debuginfo(map__dso(apd->he->ms.map));
+> >         }
+> >
+> >         list_for_each_entry(al, &notes->src->source, node) {
+> > @@ -2888,7 +2888,7 @@ struct annotated_data_type *hist_entry__get_data_type(struct hist_entry *he)
+> >                 di_cache.dso = dso__get(map__dso(ms->map));
+> >
+> >                 debuginfo__delete(di_cache.dbg);
+> > -               di_cache.dbg = debuginfo__new(dso__long_name(di_cache.dso));
+> > +               di_cache.dbg = dso__debuginfo(di_cache.dso);
+> >         }
+> >
+> >         if (di_cache.dbg == NULL) {
+> > diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+> > index 7df1673f08d3ddb4..fd8e95de77f78dfc 100644
+> > --- a/tools/perf/util/dso.h
+> > +++ b/tools/perf/util/dso.h
+> > @@ -10,6 +10,7 @@
+> >  #include <stdio.h>
+> >  #include <linux/bitops.h>
+> >  #include "build-id.h"
+> > +#include "debuginfo.h"
+> >  #include "mutex.h"
+> >  #include <internal/rc_check.h>
+> >
+> > @@ -914,4 +915,13 @@ u64 dso__findnew_global_type(struct dso *dso, u64 addr, u64 offset);
+> >  bool perf_pid_map_tid(const char *dso_name, int *tid);
+> >  bool is_perf_pid_map_name(const char *dso_name);
+> >
+> > +/*
+> > + * In the future, we may get debuginfo using build-ID (w/o path).
+> > + * Add this helper is for the smooth conversion.
+> > + */
+> > +static inline struct debuginfo *dso__debuginfo(struct dso *dso)
+> > +{
+> > +       return debuginfo__new(dso__long_name(dso));
+> > +}
+> > +
+> >  #endif /* __PERF_DSO */
+> > --
+> > 2.50.1
+> >
 
