@@ -1,193 +1,215 @@
-Return-Path: <linux-kernel+bounces-748417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BE6B140F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:09:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5110FB140F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 19:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C384E54DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:09:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 295AC7A4F68
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F0F2750FD;
-	Mon, 28 Jul 2025 17:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FB927585E;
+	Mon, 28 Jul 2025 17:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="apYcas1z"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tbzjYWYn"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6EF212B2F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13B22737E3
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753722583; cv=none; b=hzCgOZRdcN3xjZuNT6L7Mj9x24tUGFThWzTmVPGzKt9/R3kZbVIVVysiTZu+ol136WZRlOB02TDNCjXweo8VrEyDu0RODJRD3H6UrJgn4UeVAFcQuFz/TdImsT6x9L7QSP70gdisOZRMR2h8o3/mCC80RFtRiMH8lojNvRFzwAc=
+	t=1753722597; cv=none; b=ETOczU63CYAjy4Ml6Izq73QCYGZzDiH7zLNwZNxw/bwFqZ44Unuqtc9OhRzauVAZLRUkUF+OdZ2gvTYNv/QLH3JMUcYp+KkopLtvTbaz0QtXi6odzZ4+9l/pCoiA709aVHb1HDhqYO+89N7grkn/rvEysTbaoxkfP7+b/M2WLGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753722583; c=relaxed/simple;
-	bh=1RRB5mcT6XkxVvImVlknYsFQxEXTXSs1Fy1yDu34bZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eCHV6v0DkVwOBJi9ZVVU7LG+3trRFaUVhcHp8b0Rd5s4o9XOQ+vZkzU9dL3Bre7bzAYmXMoZg7Bfl+v7kpyX6OPCdd1Dc04uQKkhw8GzyU1vqyYqnCmvmPXQSIvyh+VEnpRDwpHtvNJboiPtezS7+9NaEg7ftaLE4/+MXR5KBUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=apYcas1z; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1753722580;
- bh=o1SAkKfZM3NhF3wZAPT2jfOda4w4lWqHgHvXSycv5Gc=;
- b=apYcas1zRvWrusiROXe1jSQkmSJA5WYX12wDbJ5QxExI3w/CDIgBbp/Pu9MscBV9Y4HtVV7My
- Uwz/+//yfpq5I0Etpl4q+3fpE2ZpvyNuuVnX/VTCnaqKHOmYN49XrHCaXEDYeNWTm/+NIGBad1N
- 2lM6IMe+eWbjMHKZYbmctoBzOimZRKSyuLUVYSNkIYjJsKU5eG0RlIaEAxQCt3AceGHnRumoO9H
- LoL07U4xuP8ShO+pp4WLlBeu4G+kVUcjCQru7E6bGvGrqvbSoBRtvjI7/v8p5nGATGHo9Np+XVd
- B9BLIazpP6cVTe3lHFeFJlNY4YzhxiXR/MxOrIU/1ApQ==
-X-Forward-Email-ID: 6887aebc351ec66b15a29e9b
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.1.8
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <e2fd11db-543a-43eb-b118-9f246ff149b5@kwiboo.se>
-Date: Mon, 28 Jul 2025 19:09:10 +0200
+	s=arc-20240116; t=1753722597; c=relaxed/simple;
+	bh=x9Cc64+uX9uy7kysTTeQw3VcqvwgtcaGPnvVgkhGfC4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=S9hD14Exixdea5/prmhdJawvADLIYP9CJFeUaF857ia4z6kBEHaRwpaosfjCcR/fxl9LnDSDqOQORNCyOVi76H1Xced37twJvOzlguRC2w8yYuznYsZZSNsbH/exqKeCBeYgmyI/1CiB1eeDDG9XLND6BZ66rVioW1pgdtUXjlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tbzjYWYn; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2403c86ff97so10888695ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:09:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753722595; x=1754327395; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eh6IvKrrVHAEt11I1o/Ron2ZJq2dRDEO+l/5Ggjas3E=;
+        b=tbzjYWYntnOrl+xZeMx3WwbGKe9QS6I/TuxAeNAlhaARlwNh//Vlw3f2e2snENkZi2
+         Rq9MMy0vuoPPXnRlNQgIc9iSX02LdqY13xFbPOT9or6J/odyCscxTMZTNaNcJfB3s1J4
+         ZiBJe/pQBD4Gq7TQ/4tFuryxp9xKT3BFLqQiSdI8HLtPSVvhVrXmpXEvfMTSNZrEiwa1
+         IZaub4mh7hHvjJLulGMRPGxeDGrgjqAm7dB3jfbWP20e5xW4RZTnlKQ5K4ISiS7TLfBX
+         cJWpaQR1NovJkwuwEwrxhsSPR76Qy4wchn+pF38DXpsZAyGOzjD+VKuMJDqA2PYkkODO
+         aNEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753722595; x=1754327395;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eh6IvKrrVHAEt11I1o/Ron2ZJq2dRDEO+l/5Ggjas3E=;
+        b=GFy628xXavgasOeM60y9TGIpIs1f1zhbv5uURVeAuym8GUR/Y/6sy8zNsVOS1NeWWG
+         ViSzhqX8kAOjxgeVHfpkwJr5N8ICyTCk8sxpHcll4XtWnyfETivIEEyfUPxv06hbH/m7
+         jBkeYfMx+p7s0C1L7rK8qCscW8vCl9v6B2s8Xr36CozOWcCIKdnme0czsCfbN0ZBTKT9
+         8rD3+CveiGpjW5mpGWsD9OPSE2zG2F7oXF9V5di4y+WjVizlm0csTl+LxdgcCGivxOj2
+         vQdTgimMzpWT/PxC3o0CCU4DckvKvg4zHuKs1QsuD5GFVHPx0ZwsHza6kayTT1j2A3NS
+         zrZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCJZBU/6rEomQTVTpRXEXKO7SzH7Bwfb/zulHPqmpDo+LgtZpZb8nShf4LitVORA6/tBFnhzZV4BqO6as=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdi+LgriOHnV3bVHVKlJ68GBsj6lS8r+K8kYyUi4J6Jwg9QD2M
+	i3uJ/Y0JTNMYlkTnah8+AmJD5NRSeLQrXzZMKEfCQbwDlcO7KiDBHNHHTaxWSXVlQu0m6UHHX3Z
+	HW/54cA==
+X-Google-Smtp-Source: AGHT+IFd2+VRWI3M+Kfoauwo/cT4HXIsIJL90+W0WrGWufYg6PKRrmk/3I6NP6HrbQ2n89hPQHxfP8Zj3x4=
+X-Received: from plwp15.prod.google.com ([2002:a17:903:248f:b0:240:1be2:19ee])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:4b07:b0:240:4b3b:334f
+ with SMTP id d9443c01a7336-2404b3b34a8mr26618875ad.34.1753722595188; Mon, 28
+ Jul 2025 10:09:55 -0700 (PDT)
+Date: Mon, 28 Jul 2025 10:09:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add Radxa E24C
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- robh@kernel.org, ziyao@disroot.org
-References: <20250727144409.327740-4-jonas@kwiboo.se>
- <20250728125015.988357-1-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250728125015.988357-1-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
+Message-ID: <20250728170950.2216966-1-surenb@google.com>
+Subject: [PATCH 1/1] mm: fix a UAF when vma->mm is freed after vma->vm_refcnt
+ got dropped
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: jannh@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	vbabka@suse.cz, pfalcato@suse.de, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, surenb@google.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Chukun,
+By inducing delays in the right places, Jann Horn created a reproducer
+for a hard to hit UAF issue that became possible after VMAs were allowed
+to be recycled by adding SLAB_TYPESAFE_BY_RCU to their cache.
 
-On 7/28/2025 2:50 PM, Chukun Pan wrote:
-> Hi,
-> 
->> +	avddl_1v1: avddh_3v3: avdd_rtl8367rb: regulator-avdd-rtl8367rb {
->> +		compatible = "regulator-fixed";
->> +		enable-active-high;
->> +		gpios = <&gpio1 RK_PC3 GPIO_ACTIVE_HIGH>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&gpio_8367_en>;
->> +		regulator-name = "avdd_rtl8367rb";
-> 
-> I don't see the avdd_rtl8367rb regulator in the schematics. It looks like
-> DVDDIO (RTL8367RB power) is connected to AVDDH_3V3 via a magnetic bead.
+Race description is borrowed from Jann's discovery report:
+lock_vma_under_rcu() looks up a VMA locklessly with mas_walk() under
+rcu_read_lock(). At that point, the VMA may be concurrently freed, and
+it can be recycled by another process. vma_start_read() then
+increments the vma->vm_refcnt (if it is in an acceptable range), and
+if this succeeds, vma_start_read() can return a recycled VMA.
 
-Both avddl_1v1 and avddh_3v3 are controlled by the same gpio, I do not
-remember if using two regulators with same gpios is supported, can only
-remember it being an issue in the past, so I opted to just describe it
-as a single regulator and gave it a new name and added labels for the
-name used in schematic.
+In this scenario where the VMA has been recycled, lock_vma_under_rcu()
+will then detect the mismatching ->vm_mm pointer and drop the VMA
+through vma_end_read(), which calls vma_refcount_put().
+vma_refcount_put() drops the refcount and then calls rcuwait_wake_up()
+using a copy of vma->vm_mm. This is wrong: It implicitly assumes that
+the caller is keeping the VMA's mm alive, but in this scenario the caller
+has no relation to the VMA's mm, so the rcuwait_wake_up() can cause UAF.
 
-Would calling it vdd_8367 (after gpio_8367_en) be better or do you have
-any other suggestion on how to describe these?
+The diagram depicting the race:
+T1         T2         T3
+==         ==         ==
+lock_vma_under_rcu
+  mas_walk
+          <VMA gets removed from mm>
+                      mmap
+                        <the same VMA is reallocated>
+  vma_start_read
+    __refcount_inc_not_zero_limited_acquire
+                      munmap
+                        __vma_enter_locked
+                          refcount_add_not_zero
+  vma_end_read
+    vma_refcount_put
+      __refcount_dec_and_test
+                          rcuwait_wait_event
+                            <finish operation>
+      rcuwait_wake_up [UAF]
 
-I will at least add a comment related to this regulator for v2.
+Note that rcuwait_wait_event() in T3 does not block because refcount
+was already dropped by T1. At this point T3 can exit and free the mm
+causing UAF in T1.
+To avoid this we move vma->vm_mm verification into vma_start_read() and
+grab vma->vm_mm to stabilize it before vma_refcount_put() operation.
 
-> 
->> +&gmac1 {
->> +	clock_in_out = "output";
->> +	phy-mode = "rgmii-id";
->> +	phy-supply = <&avdd_rtl8367rb>;
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&rgmii_miim>, <&rgmii_tx_bus2>, <&rgmii_rx_bus2>,
->> +		    <&rgmii_rgmii_clk>, <&rgmii_rgmii_bus>, <&gmac1_rstn_l>;
-> 
-> Should the pinctrl of gmac1_rstn_l be written together with the
-> reset-gpios of the rtl8367rb switch?
+Fixes: 3104138517fc ("mm: make vma cache SLAB_TYPESAFE_BY_RCU")
+Reported-by: Jann Horn <jannh@google.com>
+Closes: https://lore.kernel.org/all/CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com/
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Cc: <stable@vger.kernel.org>
+---
+- Applies cleanly over mm-unstable.
+- Should be applied to 6.15 and 6.16 but these branches do not
+have lock_next_vma() function, so the change in lock_next_vma() should be
+skipped when applying to those branches.
 
-When defining pinctrl to the mdio1 node they are not applied, and there
-was issues probing the switch when using reset-gpios of the switch.
-So I opted to describe the switch reset as the mdio bus reset.
+ include/linux/mmap_lock.h | 21 +++++++++++++++++++++
+ mm/mmap_lock.c            | 10 +++-------
+ 2 files changed, 24 insertions(+), 7 deletions(-)
 
-I guess we should describe the HW and not work around SW issues, will
-change in v2.
+diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+index 1f4f44951abe..4ee4ab835c41 100644
+--- a/include/linux/mmap_lock.h
++++ b/include/linux/mmap_lock.h
+@@ -12,6 +12,7 @@ extern int rcuwait_wake_up(struct rcuwait *w);
+ #include <linux/tracepoint-defs.h>
+ #include <linux/types.h>
+ #include <linux/cleanup.h>
++#include <linux/sched/mm.h>
+ 
+ #define MMAP_LOCK_INITIALIZER(name) \
+ 	.mmap_lock = __RWSEM_INITIALIZER((name).mmap_lock),
+@@ -183,6 +184,26 @@ static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm,
+ 	}
+ 
+ 	rwsem_acquire_read(&vma->vmlock_dep_map, 0, 1, _RET_IP_);
++
++	/*
++	 * If vma got attached to another mm from under us, that mm is not
++	 * stable and can be freed in the narrow window after vma->vm_refcnt
++	 * is dropped and before rcuwait_wake_up(mm) is called. Grab it before
++	 * releasing vma->vm_refcnt.
++	 */
++	if (unlikely(vma->vm_mm != mm)) {
++		/*
++		 * __mmdrop() is a heavy operation and we don't need RCU
++		 * protection here. Release RCU lock during these operations.
++		 */
++		rcu_read_unlock();
++		mmgrab(vma->vm_mm);
++		vma_refcount_put(vma);
++		mmdrop(vma->vm_mm);
++		rcu_read_lock();
++		return NULL;
++	}
++
+ 	/*
+ 	 * Overflow of vm_lock_seq/mm_lock_seq might produce false locked result.
+ 	 * False unlocked result is impossible because we modify and check
+diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
+index 729fb7d0dd59..aa3bc42ecde0 100644
+--- a/mm/mmap_lock.c
++++ b/mm/mmap_lock.c
+@@ -164,8 +164,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+ 	 */
+ 
+ 	/* Check if the vma we locked is the right one. */
+-	if (unlikely(vma->vm_mm != mm ||
+-		     address < vma->vm_start || address >= vma->vm_end))
++	if (unlikely(address < vma->vm_start || address >= vma->vm_end))
+ 		goto inval_end_read;
+ 
+ 	rcu_read_unlock();
+@@ -236,11 +235,8 @@ struct vm_area_struct *lock_next_vma(struct mm_struct *mm,
+ 		goto fallback;
+ 	}
+ 
+-	/*
+-	 * Verify the vma we locked belongs to the same address space and it's
+-	 * not behind of the last search position.
+-	 */
+-	if (unlikely(vma->vm_mm != mm || from_addr >= vma->vm_end))
++	/* Verify the vma is not behind of the last search position. */
++	if (unlikely(from_addr >= vma->vm_end))
+ 		goto fallback_unlock;
+ 
+ 	/*
 
-> 
-> ```
-> reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
-> pinctrl-0 = <&gmac1_rstn_l>;
-> ```
-> 
->> +&i2c0 {
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&i2c0m0_xfer>;
->> +	status = "okay";
->> +
->> +	rk805: pmic@18 {
->> +		compatible = "rockchip,rk805";
->> +		reg = <0x18>;
->> +		interrupt-parent = <&gpio4>;
->> +		interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
->> +		#clock-cells = <1>;
->> +		clock-output-names = "rk805-clkout1", "rk805-clkout2";
-> 
-> The clkout pin is not connected, but the dt-bindings require it.
-> Maybe clock-output-names could be made optional?
-
-Seem the using just #clock-cells = <0> is valid without
-clock-output-names, will use that in v2, thanks.
-
-> 
-> +&mdio1 {
-> +	reset-delay-us = <25000>;
-> +	reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
-> +	reset-post-delay-us = <100000>;
-> +};
-> 
-> I don't think this is correct, reset-gpios should be written on the
-> rtl8365mb switch node. The switch driver has defined the reset time.
-
-See above, I had issues using the reset-gpios of the switch, because the
-switch was probed twice, once deferred by gmac, and by the second probe
-failed with -BUSY because of the reset-gpios still being claimd by the
-first probe.
-
-I can change to describe the reset pin in the switch, however that will
-likely mean Ethernet is unusable until the issue in devres/gpiolib is
-tracked down and fixed by someone.
-
-> 
-> ```
-> &mdio1 {
-> 	switch@29 {
-> 		compatible = "realtek,rtl8365mb";
-> 		reg = <29>;
-> 		reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
-> ```
-
-As mentioned above, this caused probe issues and an unusable switch.
-I would rather skip describing this reset pin as it does not seem to be
-needed it self reset when the regulator is powered on.
-
-Any thoughts on what is better of the two? Skip describing the reset pin
-or describe it and leave the switch possible unusable? Probing gmac
-before the switch should leave it in a working state.
-
-Regards,
-Jonas
-
-> 
-> Thanks,
-> Chukun
-> 
-> --
-> 2.25.1
-> 
-> 
+base-commit: c617a4dd7102e691fa0fb2bc4f6b369e37d7f509
+-- 
+2.50.1.487.gc89ff58d15-goog
 
 
