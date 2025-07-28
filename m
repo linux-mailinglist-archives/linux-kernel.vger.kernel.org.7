@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-747778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD56B13802
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:48:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F574B137F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D3A17CEAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:46:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 271A57A9EFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 09:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32742253950;
-	Mon, 28 Jul 2025 09:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0A2262FED;
+	Mon, 28 Jul 2025 09:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cWzB7nAn"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="lAKuSiyo"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD8E256C8A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227482571D7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 09:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753695818; cv=none; b=tMkxjlGVY836i/J5WiHdfaaIJDWF5T8QVmRvxE28PpXpB2Do6Ec+3DKFd4KeUh1YfGZJ9Lf9LNvb35k6dcECCy1TFZ/Sc88lC9BlVBva///oe/1uepl/o/myBjaoa11SvInFc61cN6j6kM0s+cztnTdWTHfsYZ2dAh7AMv1uh10=
+	t=1753695828; cv=none; b=LdlPS5SnCMPENqiF5cl6HqAaxxC1IW1cu5Qy2iSrnzKvw2yPnUwtb43Xi6rp9db074EbdrAJoVeknXZh875sv7lH5tlzw5ydI2IifLdrWzPuWSex3c5aiJ/RQ3te/rwqPvAz+9Nuq3OWzxtzQ7X5LEJrwQ+ZEEVjzfmkf2GG/uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753695818; c=relaxed/simple;
-	bh=kOJ0GefeAd9UEbFEyV014zsaaRwCNdDHSJBAudKVMFQ=;
+	s=arc-20240116; t=1753695828; c=relaxed/simple;
+	bh=uLkW3DQcKIIgVHib4AKQIVSEPy4uT4MPjoilFNj5tRA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fM0mcTtCS2OVd0pQXRFIzIegFm2iIILxugptyj6v3EZ6YTfVEPj+TNv4bSSwVQ/MB8AiwxwfGh0obCJL88eny3OnZnzSC3KmVOprlUfJtu5/jpbCRowijTLF6dTqaMvyCoKUyfygT2cN4I03KkG8P+1Sl4Z0iohDLDqc/q8922Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cWzB7nAn; arc=none smtp.client-ip=209.85.215.175
+	 MIME-Version; b=tHPQGPfg653DCxfwWV80oldpoxjHA4YfsoDUVq9HQh9e37l2ADyvR8TO/iX0RfRuEvN6RXkOIBO7lOiIniQb31JTcwHW8ILEaj+WPFAMErhRuXu6vqBF2wv2TCEZzC7JJ9d4t2SWhtmBqlnqUxqhdziU8Vp2PKTveKs6yk4Desc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=lAKuSiyo; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b3bcb168fd5so3740048a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:43:35 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24049d1643aso1521825ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 02:43:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1753695815; x=1754300615; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1753695825; x=1754300625; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RQx4DIh4Piuq7HhjaN41eXcQRyGY2O2ucSjN2pwnllI=;
-        b=cWzB7nAne7WaBgumQDLegBZ4RXLzfBSG/L294xG/VxC/UnUVMFt17qjq3E/JmIfoUj
-         QWA5olhy3v+z50MJnYBbBCgxTrBVC4I5wYMDbBgSLm9ZwDCHlFLlbNAN2PpcDSgPG1hA
-         wZSmRCXrU1VvgR7/7ibyd/R+cPWy3ygDBcPL+FrDzNQqJBa9PVSjSAs+tvNtkvpAXKg/
-         OMzWtuy5Nh9hHK5Qgd/7l+KfooZuDye7YDvdAqCNGb/uLLgRJcVn6TO9FkZLenJ6VxKa
-         X2febJTHe7WCB3D+PEtgYPzQRbItyWOYEqo/OpftRm6UAgaQ4trgn7YaqXk2ji+lSTIc
-         jHIg==
+        bh=yiu9LW4OQPcl48oQrH2DU+mLfm2FHbXqcRasNtW9C8A=;
+        b=lAKuSiyopFg3EsGL9UpfO/sDfXII6rV5nZVqgP/YGrMW4FdbKUpOZY8I7RXLyQr/1/
+         y0wpFuGAEYxfUpFwep5PQadGvMWxYoWIg9mVHXGAQLEcCfsOVxqS1tnGLtEDvgHBg31Y
+         gK6o4fycn0kd9ReJBHvsheK3WY+ZzO0xRQPJI/T+/x/cyxx21jOonaT0c8M5Yt2/Wurt
+         AfCzc1Ckf0Gf2/BcxfqtA9W0O6Ac04NvgyfuLDKCFZqZsk4u0wlL30Uv3jdbhIofEQEU
+         r7q0WekIjE3M/ZaIBzF9QgytIGQB5TbE2V7BTJaMw5G7bP4Zwy3U+yQFrPsX5pqY8q7x
+         x1Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753695815; x=1754300615;
+        d=1e100.net; s=20230601; t=1753695825; x=1754300625;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RQx4DIh4Piuq7HhjaN41eXcQRyGY2O2ucSjN2pwnllI=;
-        b=HX9HdZEQdGhbL6pZPJlocwQNNC2ZAa+es0oNBZfeffaycmwWVQMI5WtDvd09WAVa8h
-         jLOtV0IYfeIHdrhpb1AGNNAQBl6eCrIu5PkB1tQlLn64Rt3Lt5L3MXP+K5XFQUrivn+E
-         m1W3fKiRXHEQh2UmuK2ZAiSSAFTROH8CakidQFEPl5npAqe1YOtu9khm7HuZSF3z8nY8
-         BJIfp94cq/tGe0FyswQ24SZbjC+WPa3slCTBxpiR+mexSqcdjtJVk7ISIEKEKcUwE6bm
-         leHMi+jEJ4ZP6RDNmdf65gLjLpPN2m/oyHutvUHF355nL4RcSgpePuLfCKJXD5cWdGBV
-         LcEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqp67vLEm859ZLfZTkPkjugIujrOZbXd1oFSdKLSl4mn3yVN0mHWq7RfPGW6f+ZGxshaztV6ws1GfOwRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgsyyzYi1ELivpbFVup/ugdJHtGQcLOxt6Dwq9NN6FoqPucGGj
-	KP+f3JzzkZZErqt8xDidSfX2vTzF8rEGTc2FhuzphLtSt/UCzViehMQ63UAEsqPO9Mk=
-X-Gm-Gg: ASbGncuzRvPf9AIZfWhCyUduXEyK+3QtcPj2uD3MmN/bAaSYUwAQTo+q3NBcL5PLjkv
-	5m419DgSUH28pWUKzRV1WDXJZ1rkbG4J+DL8n+PBS5ICqe/8FXW6z8vgfKDDAKVEcfDYD1I/Ifl
-	bsj1Wqw5NO8YUhY/g349/CpMck6wj/AHDiT7p3qXZmdorn5II+aSnaiHxhWrwOuD+czSJ5EWWLU
-	1QEf1D6RHrZIVkUe0dpliw2dOCloc/9QbMPKPlW7hzTGP9cmsUfy3xkUhaDw2cdh8fPrIVvQVN0
-	8M42eZbpLLAFyTW71VLa6YPCqohWRfPggVywvhrkjDpIdj0qrd5AKT0RV5tH9EFKjwYjdSN+qc/
-	YtYMdaDEDjl/T1GNa+2iD9FbtZByFq3aZIdy0PZBkpgyxO3AsqfnlgbJf/tSO
-X-Google-Smtp-Source: AGHT+IFdcj9UyigKt6rPUnP9ob7R5oKYx3exa18ogG0RTJ8u+ssoeGzkdetp2bS/IhUP8p/ILwtVag==
-X-Received: by 2002:a17:90b:584b:b0:311:e305:4e97 with SMTP id 98e67ed59e1d1-31e77a01261mr16532165a91.19.1753695815287;
-        Mon, 28 Jul 2025 02:43:35 -0700 (PDT)
+        bh=yiu9LW4OQPcl48oQrH2DU+mLfm2FHbXqcRasNtW9C8A=;
+        b=KQgo/RJv5Lzv2JGSQfhPY9JyywRMAhDv3kXNABtSnq1U0tcRnQiTGMoBr40BuXZ7Gu
+         W4FFgciBvivx2UgR4s9RrA3MOhKgzP9EaODJEXncVpR2pZcteCy/nbgbPksE3NP3cATF
+         zlL7gMy/H4PiKLUykL/W+IoFg8LDZse0GidxDy4zvsSb44W5nCoiCHsAtwpaDuaFGOA6
+         M2nTkuq8dNwMsMSg8mT60WXzrrpAzO0W9FJD1VaLLjhurnNqo0svG9o9qIGdT6Gq8lan
+         jOpVfPpttmbNVkrw0L6soNfYuL6dJFOgHgetGrU0yaqYLwzF2WLPOjaGlcaeuPFCf90J
+         6UEw==
+X-Forwarded-Encrypted: i=1; AJvYcCURhZ/M07GwPPY3jzJfCpp/vIJsF5bbRH0r0KrjiECfpE/Xdzp90qwmtzpEqAdLjYjv7nzesQopnAq2dS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc4Tl4F6uIDfujqORKaifL02WyJc3Vn1Ly2TLsEfo+/D2eLINr
+	mApNS0LEjT0ycALllFCWJTGynSpfPQ+Pvg6NkPh4Vwfy5TytzKizh1HT6WsT1nPmhvA=
+X-Gm-Gg: ASbGnctgv2j9yyZG/nKzh0dcBQvbO//NJ2K3Yh3egrqMkqOiQKlImODApCeT4irq/g2
+	rO8YjEHD6anO6jGY9Hs3BnETYgmKlSoY4EYSJ/lODLCuhcpg5TpJ48B0OSDS6g5c6rRLQ32bVbV
+	yLvAKlBo0BT3/XiiLW+C7qIRlOQ0/aTDRFXnQafusH5PNLHWGeuYv6/Ugx+qVicZwVZqcyg0BAf
+	sprVPp7nI0jQDwm195m0xUai69PnJ84XpAgkn7fXaE+k2PF1k3XSWzAAJWRBFOz8UCDK9KeObPm
+	NEAo5vUs+4ZEJ9wpvIHJjeWAimeWACIT+URoHnX94lU4TWozo5wUfRHTalOmF0oIEuqCFgrcZZM
+	zyjs1+VQuYUNl3+PppVi1V37R3rsAwcufS3nMIJ7zGwqLcgYqpUezMSeEfeVQ
+X-Google-Smtp-Source: AGHT+IFS53uLoHppmjznOMdJcZkAmiTSfCzfdzzbbuX7HdvnQYvfyEZtYQl8EZXF/rrU4jEX1LYO1A==
+X-Received: by 2002:a17:902:e887:b0:234:bfcb:5bfa with SMTP id d9443c01a7336-23fb302a71amr154565295ad.15.1753695825111;
+        Mon, 28 Jul 2025 02:43:45 -0700 (PDT)
 Received: from anup-ubuntu-vm.localdomain ([122.171.19.28])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e832fbf99sm5396230a91.1.2025.07.28.02.43.25
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e832fbf99sm5396230a91.1.2025.07.28.02.43.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 02:43:34 -0700 (PDT)
+        Mon, 28 Jul 2025 02:43:44 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -102,12 +102,10 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-acpi@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Atish Patra <atishp@rivosinc.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v9 16/24] ACPI: scan: Update honor list for RPMI System MSI
-Date: Mon, 28 Jul 2025 15:10:24 +0530
-Message-ID: <20250728094032.63545-17-apatel@ventanamicro.com>
+Subject: [PATCH v9 17/24] ACPI: RISC-V: Create interrupt controller list in sorted order
+Date: Mon, 28 Jul 2025 15:10:25 +0530
+Message-ID: <20250728094032.63545-18-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250728094032.63545-1-apatel@ventanamicro.com>
 References: <20250728094032.63545-1-apatel@ventanamicro.com>
@@ -121,35 +119,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Sunil V L <sunilvl@ventanamicro.com>
 
-The RPMI System MSI interrupt controller (just like PLIC and APLIC)
-needs to probed prior to devices like GED which use interrupts provided
-by it. Also, it has dependency on the SBI MPXY mailbox device.
+Currently, the interrupt controller list is created without any order.
+Create the list sorted with the GSI base of the interrupt controllers.
 
-Add HIDs of RPMI System MSI and SBI MPXY mailbox devices to the honor
-list so that those dependencies are handled.
-
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- drivers/acpi/scan.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/riscv/irq.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index fb1fe9f3b1a3..54181b03b345 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -858,6 +858,8 @@ static const char * const acpi_honor_dep_ids[] = {
- 	"INTC10CF", /* IVSC (MTL) driver must be loaded to allow i2c access to camera sensors */
- 	"RSCV0001", /* RISC-V PLIC */
- 	"RSCV0002", /* RISC-V APLIC */
-+	"RSCV0005", /* RISC-V SBI MPXY MBOX */
-+	"RSCV0006", /* RISC-V RPMI SYSMSI */
- 	"PNP0C0F",  /* PCI Link Device */
- 	NULL
- };
+diff --git a/drivers/acpi/riscv/irq.c b/drivers/acpi/riscv/irq.c
+index cced960c2aef..33c073e2e71d 100644
+--- a/drivers/acpi/riscv/irq.c
++++ b/drivers/acpi/riscv/irq.c
+@@ -115,7 +115,7 @@ struct fwnode_handle *riscv_acpi_get_gsi_domain_id(u32 gsi)
+ static int __init riscv_acpi_register_ext_intc(u32 gsi_base, u32 nr_irqs, u32 nr_idcs,
+ 					       u32 id, u32 type)
+ {
+-	struct riscv_ext_intc_list *ext_intc_element;
++	struct riscv_ext_intc_list *ext_intc_element, *node;
+ 
+ 	ext_intc_element = kzalloc(sizeof(*ext_intc_element), GFP_KERNEL);
+ 	if (!ext_intc_element)
+@@ -125,7 +125,12 @@ static int __init riscv_acpi_register_ext_intc(u32 gsi_base, u32 nr_irqs, u32 nr
+ 	ext_intc_element->nr_irqs = nr_irqs;
+ 	ext_intc_element->nr_idcs = nr_idcs;
+ 	ext_intc_element->id = id;
+-	list_add_tail(&ext_intc_element->list, &ext_intc_list);
++	list_for_each_entry(node, &ext_intc_list, list) {
++		if (node->gsi_base < ext_intc_element->gsi_base)
++			break;
++	}
++
++	list_add_tail(&ext_intc_element->list, &node->list);
+ 	return 0;
+ }
+ 
 -- 
 2.43.0
 
