@@ -1,136 +1,300 @@
-Return-Path: <linux-kernel+bounces-747869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84835B13955
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:55:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B130DB13952
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C129E189A7D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8A441764D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B570424EA80;
-	Mon, 28 Jul 2025 10:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD63254876;
+	Mon, 28 Jul 2025 10:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PozsuNcv"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z4GnV0Rh"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA08246BAF
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63D419E96D;
+	Mon, 28 Jul 2025 10:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753700142; cv=none; b=sRGk1wdMufScALWThFMF+XI9YpduOSECFD8S1dtUrWGemdavPaLg2W2cB0xQhTFFSlz/xD1Sthzld7bLuF3nPQzJ1/IKvQSlNzEdrUWw47TAe7Y+cM7UieXnNUh14VfJueQBzlAgHz7N2X9024FenqiiD+ChPqcvcjoqm7g1EL4=
+	t=1753700116; cv=none; b=ZNr2TTJmSCgNRtRvhREXd3z4B6b6jzPbNQp3p22jhzLBbamVDhOGtK304k0XHt884ipftYJT8535Kb0rt4cnV8cEYrjixmy3cGc6AeYRcRhaND/9aRjWefA1ZVv7xrH5NoCwswEle82kYIDDxaZTjWB/x7AmhHHosd4SzZww53U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753700142; c=relaxed/simple;
-	bh=T3yVWyLqsLby4OnM5n5I2GurkAPr7cuQQb0vT9XHXzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qiiaVrnP0RshXztqINn+LaEWEA5m5jPqTruZQQl0bY52CQNKwmjntRe9ujpFSQlWdoyIm//s5xfwFeNZatMaNfn+GAFQXEz7DOTdLc01B/ms/GoJjnqGHz1sATctca8CB/jq1UGYqzMGl2wKrF3QeiFmG04OqTX+HodsEfnJ514=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PozsuNcv; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3137c20213cso4153567a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 03:55:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753700140; x=1754304940; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Adsk8sZq9q3h5/nndLVo9ECCof8eNE45Q3IOI8YE3aM=;
-        b=PozsuNcvKYkRcrzRuKFMywZDPNQ3XAcYiXyJrxgsbTKN7Se3hb+8OVtg3FA5UZC6X0
-         0G5At5370gbMlRsfIzwcW3R9rOhVghXL0wMo0jy4BT/WAytuVyj4C0btn8+cb8Ff+4Rt
-         /h19aJP+9AuH+7o2o09GJ0YUgnyq5iHQJH43XARLAQgs4rheveXO3azZ+5GwlPR2k2+z
-         topUxK9bn8CZsZXM3WyQ1nuCFvQupmaoLh9eaYLj5pN0ifDjNwDQCKVLLYvIlUxalupA
-         eWKqbY7cibov0fr2ZFhs/YZPKzIRGRYfTX/SXw8MeOCMQWTKaauSX1ZKL7p6CLMfMe71
-         5uqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753700140; x=1754304940;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Adsk8sZq9q3h5/nndLVo9ECCof8eNE45Q3IOI8YE3aM=;
-        b=VXjYYMf3TgVemT9OjARMmXe+6Pw3jrIbe9Azbcyk0ygsMlxbyzERjrTx67uSku0RZ6
-         ErnH1EF7FjuDMq4Voiqe+z6N5W9IXkrmtz478jOkVMBpRJj2mlrV8HZyll/yRGjgg8sO
-         vfmsmo++v1DeheyKD2Z7yVQ5q3z4DlYazCx5zLirdc2shTrK0wRh8ALaUiYB4/KNRLTR
-         dDSmvraBe27yeFdaqI5o8ux2umLmYgqRNrYPJSrIA7hGMNgkI0SQg8y/5bf9+w9UAp3o
-         IwiL2x1dNoCusW5RV6+WMf7FUlpDgGMu83lpzIVSxMMt8l8JBJHKsBrzaGnXlqsol//N
-         hNPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAYFSJcJ4BnwqtomLtHsl8rZRQ4/AtRdDGI1vyo1SN6gZqDePBvMc9jFdO+Tio7LYJeyqohlz3c6tlRXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2DyHXh/Rq21LrYfYTlTN4qvscR0X5JqRqbRtdWDpyes9QRS9x
-	WWOGOAQ4tjTlDfmybNJIIdusHvBHvXF24Dm/CaLCzA2ocpRDPaXY4/5Ok/zMGCC/E0k7p7YAd6T
-	KcE4NH4ww7EzoQM9M8/lrZP+N7X6mCqthJ1TFaoUR
-X-Gm-Gg: ASbGncs7pOALVptwA1JIFEngW+1VO6n33GRdiUTw8vG5HpyUwzMcLGlSN8q0CwxlWmx
-	9Q9ZgSKO2RbIVI/Mc1dDtP4CHhuRp8gkbX70poJVKFQffmmWBTa/e5lnxnKIyMMHpt8wRKFtUF5
-	SaNPF+nDwhdBVanHQLoOd7CTlhZ98Zn99XhBpxGoFikSbjV7N9gRnSNPghd7xCYKi1AIU7Bz5VZ
-	R4fvOQVrRkndvSHC6ThWnH29VGhZeOBAnf7hgY=
-X-Google-Smtp-Source: AGHT+IF7MUuluWh/tPkYh48F9HQt6qlgnz5zHSAe1liO/KN0LO7XylyhxU89wQ89Tv6910OZiq3r1F7PERYaOPl8sMk=
-X-Received: by 2002:a17:90b:2fcb:b0:31f:168f:c0b5 with SMTP id
- 98e67ed59e1d1-31f168fc27fmr749827a91.30.1753700139773; Mon, 28 Jul 2025
- 03:55:39 -0700 (PDT)
+	s=arc-20240116; t=1753700116; c=relaxed/simple;
+	bh=W/a1/xZzEgZMEVHhYSue9fgjv4ZrPtKFHh6NMQSoygU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lZrNZP5fDLMegLnYH1qu/WpJPMgRU0IXzm6qfOSgbmz2Ohm3rhIgun6xJlNSbNRDRQjxJ6tfjwpM+75aerenbXmyQGeVrlaFKNsIo61/L9qg++PZYoGSybpWzPf0WSIc2GRBzlWEaNw+bELzvi380jAISi3FF+K6LsELfO8dL1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z4GnV0Rh; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753700111;
+	bh=W/a1/xZzEgZMEVHhYSue9fgjv4ZrPtKFHh6NMQSoygU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z4GnV0RhagZI/l+vTFifPA3DWnvbrrycblRTy62QNPy0HMqJq7wn7Ocqo4aRxl41C
+	 wAiBoWnqsQuKyCk23pnPVHMnQi8cQclM4RqiYlM+la+UKFBbBVv5cXIoKTiMKB89+E
+	 9pmt6SJyXxYmlWvEbWfdb1o0HXPUWUB6h09prEJJrl1OlCaMB0LqlLa02kpIZHWWmc
+	 BLml2gDUkClRvinF4cK7aKSjCsWgvXWIOc07U2mZfOuJBCgIpyUC9XteWI+GtxJg32
+	 o/BNTUaeiOsgQnk1gRSLcbl03vd3WOCgtozzwfmHwpz4T0SIMU2hieX9GAkqpuuvVA
+	 E6RE832yEBBtQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1F4DC17E00EC;
+	Mon, 28 Jul 2025 12:55:09 +0200 (CEST)
+Message-ID: <f804c19f-622e-41af-8be5-3751532c4e9c@collabora.com>
+Date: Mon, 28 Jul 2025 12:55:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728104327.48469-1-jogidishank503@gmail.com>
-In-Reply-To: <20250728104327.48469-1-jogidishank503@gmail.com>
-From: Marco Elver <elver@google.com>
-Date: Mon, 28 Jul 2025 12:55:03 +0200
-X-Gm-Features: Ac12FXyBK8DcCBqGyQPdxNkl9Qg0JHmvrSElApqOqMPaILY5OOBqZMtidrJDC3o
-Message-ID: <CANpmjNN-xAqYrPUoC5Vka=uohtJzhOfJsD9hhqhPJzQGt=CHGQ@mail.gmail.com>
-Subject: Re: [PATCH] kcsan: clean up redundant empty macro arguments in atomic ops.
-To: Dishank Jogi <jogidishank503@gmail.com>
-Cc: dvyukov@google.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, rathod.darshan.0896@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/38] MediaTek devicetree/bindings warnings sanitization
+To: Rob Herring <robh@kernel.org>, Matthias Brugger
+ <matthias.bgg@kernel.org>, Julien Massot <julien.massot@collabora.com>,
+ Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, herbert@gondor.apana.org.au,
+ davem@davemloft.net, krzk+dt@kernel.org, conor+dt@kernel.org,
+ chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+ simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, jassisinghbrar@gmail.com, mchehab@kernel.org,
+ matthias.bgg@gmail.com, chunfeng.yun@mediatek.com, vkoul@kernel.org,
+ kishon@kernel.org, sean.wang@kernel.org, linus.walleij@linaro.org,
+ lgirdwood@gmail.com, broonie@kernel.org, andersson@kernel.org,
+ mathieu.poirier@linaro.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
+ atenart@kernel.org, jitao.shi@mediatek.com, ck.hu@mediatek.com,
+ houlong.wei@mediatek.com, kyrie.wu@mediatek.corp-partner.google.com,
+ andy.teng@mediatek.com, tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com,
+ shane.chien@mediatek.com, olivia.wen@mediatek.com, granquet@baylibre.com,
+ eugen.hristev@linaro.org, arnd@arndb.de, sam.shih@mediatek.com,
+ jieyy.yang@mediatek.com, frank-w@public-files.de, mwalle@kernel.org,
+ fparent@baylibre.com, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-gpio@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-sound@vger.kernel.org
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+ <CAL_JsqJGNdp3Z0sXaEXWY8nqXD+0kSCo+BYCkcGstE7zcVVcXw@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAL_JsqJGNdp3Z0sXaEXWY8nqXD+0kSCo+BYCkcGstE7zcVVcXw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Jul 2025 at 12:43, Dishank Jogi <jogidishank503@gmail.com> wrote:
->
-> ---------------------------------------------------------
->
-> - Removed unnecessary trailing commas from DEFINE_TSAN_ATOMIC_RMW() macro
->   calls within DEFINE_TSAN_ATOMIC_OPS() in kernel/kcsan/core.c
->
-> - It passes checkpatch.pl with no errors or warnings and
->   introduces no functional changes.
->
-> ---------------------------------------------------------
->
-> Signed-off-by: Dishank Jogi <jogidishank503@gmail.com>
+Il 25/07/25 15:52, Rob Herring ha scritto:
+> On Thu, Jul 24, 2025 at 3:39 AM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> As Rob pointed out, MediaTek devicetrees are *poor* in the dtbs_check
+>> tests, and got an infinite load of warnings.
+>>
+>> This series starts attacking this situation.
+>>
+>> I didn't really count how many warnings I have resolved - it's a lot
+>> of them anyway - and I think that this is a good start in any case.
+> 
+> 40 out of 125 (on arm64) fixed! Thanks! FYI, here's the ones that
+> remain (first number is number of times the warning occurs):
+> 
 
-Nack.
+Thanks Rob!
 
-Did you compile the kernel with this?
+I know that there are more warnings to be fixed - but I am unable to do that
+right now, as I'm going on holiday in a few days.
 
-> ---
->  kernel/kcsan/core.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-> index 8a7baf4e332e..f2ec7fa4a44d 100644
-> --- a/kernel/kcsan/core.c
-> +++ b/kernel/kcsan/core.c
-> @@ -1257,12 +1257,12 @@ static __always_inline void kcsan_atomic_builtin_memorder(int memorder)
->  #define DEFINE_TSAN_ATOMIC_OPS(bits)                                                               \
->         DEFINE_TSAN_ATOMIC_LOAD_STORE(bits);                                                       \
->         DEFINE_TSAN_ATOMIC_RMW(exchange, bits, _n);                                                \
-> -       DEFINE_TSAN_ATOMIC_RMW(fetch_add, bits, );                                                 \
-> -       DEFINE_TSAN_ATOMIC_RMW(fetch_sub, bits, );                                                 \
-> -       DEFINE_TSAN_ATOMIC_RMW(fetch_and, bits, );                                                 \
-> -       DEFINE_TSAN_ATOMIC_RMW(fetch_or, bits, );                                                  \
-> -       DEFINE_TSAN_ATOMIC_RMW(fetch_xor, bits, );                                                 \
-> -       DEFINE_TSAN_ATOMIC_RMW(fetch_nand, bits, );                                                \
-> +       DEFINE_TSAN_ATOMIC_RMW(fetch_add, bits);                                                 \
-> +       DEFINE_TSAN_ATOMIC_RMW(fetch_sub, bits);                                                 \
-> +       DEFINE_TSAN_ATOMIC_RMW(fetch_and, bits);                                                 \
-> +       DEFINE_TSAN_ATOMIC_RMW(fetch_or, bits);                                                  \
-> +       DEFINE_TSAN_ATOMIC_RMW(fetch_xor, bits);                                                 \
-> +       DEFINE_TSAN_ATOMIC_RMW(fetch_nand, bits);                                                \
->         DEFINE_TSAN_ATOMIC_CMPXCHG(bits, strong, 0);                                               \
->         DEFINE_TSAN_ATOMIC_CMPXCHG(bits, weak, 1);                                                 \
->         DEFINE_TSAN_ATOMIC_CMPXCHG_VAL(bits)
-> --
-> 2.43.0
->
+However, I will ask to some colleagues of mine (Ariel and Julien, added to this
+thread so that they also get your log and can take action) to try to solve
+some more warnings while I am away, starting with the easiest ones so that we
+reduce this bad number.
+
+In that pinctrl dt fixes commit, you made me realize how many (old leftover and
+new) warnings we had on MediaTek - it's bad, and must be fixed.. but in the
+meanwhile, thanks again for making me notice.
+
+Speaking of holidays, I'll also ask to Matthias to manage this merge window, so
+that those commits won't have to wait for the next one (as I'll be back in early
+September, I'm not sure how much time will be left until the window closes).
+
+Cheers!
+Angelo
+
+>       29 (mediatek,mt8183-mfgcfg): 'power-domains' does not match any
+> of the regexes: '^pinctrl-[0-9]+$'
+>       29 failed to match any schema with compatible:
+> ['mediatek,mt8183-audiosys', 'syscon']
+>       29 failed to match any schema with compatible: ['mediatek,mt8183-audio']
+>       27 (mediatek,mt8183-pinctrl): 'gpio-line-names' does not match
+> any of the regexes: '-pins(-[a-z]+)?$', '^pinctrl-[0-9]+$'
+>       22 (mediatek,mt6359): '#sound-dai-cells' does not match any of
+> the regexes: '^pinctrl-[0-9]+$'
+>       14 failed to match any schema with compatible:
+> ['mediatek,mt8183_mt6358_ts3a227_max98357']
+>       12 (mediatek,mt8186-mt6366-rt1019-rt5682s-sound): 'model' is a
+> required property
+>       12 failed to match any schema with compatible: ['mediatek,mt8173-mdp-rsz']
+>        9 (mediatek,mt8195-iommu-infra): interrupts: [[0, 795, 4, 0],
+> [0, 796, 4, 0], [0, 797, 4, 0], [0, 798, 4, 0], [0, 799, 4, 0]] is too
+> long
+>        8 failed to match any schema with compatible: ['mediatek,mt8173-mdp-wrot']
+>        8 failed to match any schema with compatible:
+> ['mediatek,mt8173-mdp-rdma', 'mediatek,mt8173-mdp']
+>        6 failed to match any schema with compatible:
+> ['mediatek,mt8183_da7219_rt1015p']
+>        5 (mediatek,mt7986-eth): interrupts: [[0, 196, 4], [0, 197, 4],
+> [0, 198, 4], [0, 199, 4]] is too short
+>        5 failed to match any schema with compatible:
+> ['mediatek,mt8183_mt6358_ts3a227_rt1015p']
+>        4 (mediatek,mt8173-mmsys): 'assigned-clock-rates',
+> 'assigned-clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
+>        4 (mediatek,mt8173-disp-ufoe): 'mediatek,gce-client-reg' does
+> not match any of the regexes: '^pinctrl-[0-9]+$'
+>        4 (mediatek,mt8173-disp-od): 'mediatek,gce-client-reg' does not
+> match any of the regexes: '^pinctrl-[0-9]+$'
+>        4 (mediatek,mt6360): #interrupt-cells: 1 was expected
+>        4 failed to match any schema with compatible: ['mediatek,mt8173-vpu']
+>        4 failed to match any schema with compatible: ['mediatek,mt8173-mdp-wdma']
+>        4 failed to match any schema with compatible: ['mediatek,mt8173-mdp-rdma']
+>        4 failed to match any schema with compatible: ['mediatek,mt7622-pcie']
+>        3 (mediatek,mt8192-audsys): 'mt8192-afe-pcm' does not match any
+> of the regexes: '^pinctrl-[0-9]+$'
+>        3 (mediatek,mt8173-thermal): Unevaluated properties are not
+> allowed ('bank0-supply', 'bank1-supply' were unexpected)
+>        3 (mediatek,mt8173-pinctrl): 'gpio-line-names' does not match
+> any of the regexes: '^pinctrl-[0-9]+$', 'pins$'
+>        3 (mediatek,mt8173-dsi): Unevaluated properties are not allowed
+> ('ports' was unexpected)
+>        3 (mediatek,mt8173-dsi): ports: 'port@1' is a required property
+>        3 (mediatek,mt8173-dsi): ports: 'port@0' is a required property
+>        3 failed to match any schema with compatible: ['mediatek,mt8173-rt5650']
+>        2 (mediatek,mt8192_mt6359_rt1015p_rt5682): 'model' is a required property
+>        2 (mediatek,mt8192-i2c): Unevaluated properties are not allowed
+> ('clock-stretch-ns' was unexpected)
+>        2 (mediatek,mt8186-spmi): Unevaluated properties are not allowed
+> ('interrupts' was unexpected)
+>        2 (mediatek,mt7986-tphy): usb-phy@700:reg: [[0, 1792], [0,
+> 2304]] is too long
+>        2 (mediatek,mt7622-pwrap): 'regulators' does not match any of
+> the regexes: '^pinctrl-[0-9]+$'
+>        2 (mediatek,mt7622-pciesys): compatible: 'oneOf' conditional
+> failed, one must be fixed:
+>        2 (mediatek,mt7622-audsys): audio-controller: 'power-domains' is
+> a required property
+>        2 (mediatek,mt7622-audsys): audio-controller:clock-names:
+> ['infra_sys_audio_clk', 'top_audio_mux1_sel
+> ', 'top_audio_mux2_sel', 'top_audio_a1sys_hp', 'top_audio_a2sys_hp',
+> 'i2s0_src_sel', 'i2s1_src_sel', 'i2s2_
+> src_sel', 'i2s3_src_sel', 'i2s0_src_div', 'i2s1_src_div',
+> 'i2s2_src_div', 'i2s3_src_div', 'i2s0_mclk_en','
+> i2s1_mclk_en', 'i2s2_mclk_en', 'i2s3_mclk_en', 'i2so0_hop_ck',
+> 'i2so1_hop_ck', 'i2so2_hop_ck', 'i2so3_hop_c
+> k', 'i2si0_hop_ck', 'i2si1_hop_ck', 'i2si2_hop_ck', 'i2si3_hop_ck',
+> 'asrc0_out_ck', 'asrc1_out_ck', 'asrc2_
+> out_ck', 'asrc3_out_ck', 'audio_afe_pd', 'audio_afe_conn_pd',
+> 'audio_a1sys_pd', 'audio_a2sys_pd'] is too sh
+> ort
+>        2 (mediatek,mt7622-audio): 'power-domains' is a required property
+>        2 (mediatek,mt7622-audio): clock-names: ['infra_sys_audio_clk',
+> 'top_audio_mux1_sel', 'top_audio_mux2
+> _sel', 'top_audio_a1sys_hp', 'top_audio_a2sys_hp', 'i2s0_src_sel',
+> 'i2s1_src_sel', 'i2s2_src_sel', 'i2s3_sr
+> c_sel', 'i2s0_src_div', 'i2s1_src_div', 'i2s2_src_div',
+> 'i2s3_src_div', 'i2s0_mclk_en', 'i2s1_mclk_en', 'i2
+> s2_mclk_en', 'i2s3_mclk_en', 'i2so0_hop_ck', 'i2so1_hop_ck',
+> 'i2so2_hop_ck', 'i2so3_hop_ck', 'i2si0_hop_ck'
+> , 'i2si1_hop_ck', 'i2si2_hop_ck', 'i2si3_hop_ck', 'asrc0_out_ck',
+> 'asrc1_out_ck', 'asrc2_out_ck', 'asrc3_ou
+> t_ck', 'audio_afe_pd', 'audio_afe_conn_pd', 'audio_a1sys_pd',
+> 'audio_a2sys_pd'] is too short
+>        2 (mediatek,mt6795-mmsys): 'assigned-clock-rates',
+> 'assigned-clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
+>        2 (mediatek,mt6795-mmc): Unevaluated properties are not allowed
+> ('pinctrl-names' was unexpected)
+>        2 (mediatek,mt6795-mmc): pinctrl-names: ['default'] is too short
+>        2 (mediatek,mt6795-mmc): 'pinctrl-1' is a required property
+>        2 (mediatek,mt6795-disp-ufoe): 'mediatek,gce-client-reg' does
+> not match any of the regexes: '^pinctrl-[0-9]+$'
+>        2 (mediatek,mt6795-disp-od): 'mediatek,gce-client-reg' does not
+> match any of the regexes: '^pinctrl-[0-9]+$'
+>        2 failed to match any schema with compatible:
+> ['mediatek,mt8183_da7219_max98357']
+>        2 failed to match any schema with compatible:
+> ['mediatek,mt7622-scpsys', 'syscon']
+>        2 failed to match any schema with compatible: ['mediatek,mt6797-scpsys']
+>        2 failed to match any schema with compatible:
+> ['mediatek,mt6380-regulator']
+>        2 failed to match any schema with compatible: ['mediatek,mt2712-pcie']
+>        1 (mediatek,mt8516-topckgen): compatible: 'oneOf' conditional
+> failed, one must be fixed:
+>        1 (mediatek,mt8516-apmixedsys): compatible: 'oneOf' conditional
+> failed, one must be fixed:
+>        1 (mediatek,mt8186-mt6366-rt5682s-max98360-sound): 'model' is a
+> required property
+>        1 (mediatek,mt8186-cci): 'proc-supply' is a required property
+>        1 (mediatek,mt8183-pinctrl): 'i2c0', 'i2c1', 'i2c2', 'i2c3',
+> 'i2c4', 'i2c5', 'mmc0', 'mmc0default', 'mmc1', 'mmc1default', 'pwm1',
+> 'spi0', 'spi1', 'spi2', 'spi3', 'spi4', 'spi5' do not match any of the
+> regexes: '-pins(-[a-z]+)?$', '^pinctrl-[0-9]+$'
+>        1 (mediatek,mt8183-pinctrl): 'i2c0', 'i2c1', 'i2c2', 'i2c3',
+> 'i2c4', 'i2c5', 'i2c6', 'keyboard' do not match any of the regexes:
+> '-pins(-[a-z]+)?$', '^pinctrl-[0-9]+$'
+>        1 (mediatek,mt8183-pinctrl): bt-pins-wakeup: 'piins-bt-wakeup'
+> does not match any of the regexes: '^pinctrl-[0-9]+$', '^pins'
+>        1 (mediatek,mt8173-pwrap): 'power-domains' does not match any of
+> the regexes: '^pinctrl-[0-9]+$'
+>        1 (mediatek,mt7622-pinctrl): 'asm-sel-hog' does not match any of
+> the regexes: '-pins(-[a-z]+)?$', '^pinctrl-[0-9]+$'
+>        1 (mediatek,mt7622-audsys): audio-controller:clocks: [[2, 2],
+> [18, 80], [18, 81], [18, 107], [18, 108], [18, 89], [18, 90], [18,
+> 91], [18, 92], [18, 95], [18, 96], [18, 97], [18, 98], [18, 103], [18,
+> 104], [18, 105], [18, 106], [38, 8], [38, 9], [38, 10], [38, 11], [38,
+> 4], [38, 5], [38, 6], [38, 7], [38, 14], [38, 15], [38, 39], [38, 40],
+> [38, 0], [38, 46], [38, 17], [38, 18]] is too short
+>        1 (mediatek,mt7622-audsys): audio-controller:clocks: [[2, 2],
+> [18, 80], [18, 81], [18, 107], [18, 108], [18, 89], [18, 90], [18,
+> 91], [18, 92], [18, 95], [18, 96], [18, 97], [18, 98], [18, 103], [18,
+> 104], [18, 105], [18, 106], [37, 8], [37, 9], [37, 10], [37, 11], [37,
+> 4], [37, 5], [37, 6], [37, 7], [37, 14], [37, 15], [37, 39], [37, 40],
+> [37, 0], [37, 46], [37, 17], [37, 18]] is too short
+>        1 (mediatek,mt7622-audio): clocks: [[2, 2], [18, 80], [18, 81],
+> [18, 107], [18, 108], [18, 89], [18, 90], [18, 91], [18, 92], [18,
+> 95], [18, 96], [18, 97], [18, 98], [18, 103], [18, 104], [18, 105],
+> [18, 106], [38, 8], [38, 9], [38, 10], [38, 11], [38, 4], [38, 5],
+> [38, 6], [38, 7], [38, 14], [38, 15], [38, 39], [38, 40], [38, 0],
+> [38, 46], [38, 17], [38, 18]] is too short
+>        1 (mediatek,mt7622-audio): clocks: [[2, 2], [18, 80], [18, 81],
+> [18, 107], [18, 108], [18, 89], [18, 90], [18, 91], [18, 92], [18,
+> 95], [18, 96], [18, 97], [18, 98], [18, 103], [18, 104], [18, 105],
+> [18, 106], [37, 8], [37, 9], [37, 10], [37, 11], [37, 4], [37, 5],
+> [37, 6], [37, 7], [37, 14], [37, 15], [37, 39], [37, 40], [37, 0],
+> [37, 46], [37, 17], [37, 18]] is too short
+>        1 (mediatek,mt7531): 'interrupts' is a dependency of
+> 'interrupt-controller'
+>        1 (mediatek,mt6357): 'adc' does not match any of the regexes:
+> '^pinctrl-[0-9]+$'
+>        1 (mediatek,mt6331): regulators:compatible: 'oneOf' conditional
+> failed, one must be fixed:
+>        1 (mediatek,mt6331-regulator): 'ldo-vio28' does not match any of
+> the regexes: '^buck-v(core2|io18|dvfs11|dvfs12|dvfs13|dvfs14)$',
+> '^ldo-(avdd32aud|vauxa32)$',
+> '^ldo-v(dig18|emc33|ibr|mc|mch|mipi|rtc|sim1|sim2|sram|usb10)$',
+> '^ldo-vcam(a|af|d|io)$', '^ldo-vgp[1234]$', '^ldo-vtcxo[12]$',
+> '^pinctrl-[0-9]+$'
+>        1 (mediatek,mt6331-regulator): ldo-vcamio:regulator-name:0:
+> 'vcam_io' does not match '^vcam(a|_af|d|io)$'
+>        1 (mediatek,mt6331): 'mt6332-led' does not match any of the
+> regexes: '^pinctrl-[0-9]+$'
+>        1 failed to match any schema with compatible:
+> ['mediatek,mt6779-audio', 'syscon']
+>        1 failed to match any schema with compatible:
+> ['mediatek,mt2712-scpsys', 'syscon']
+
+
 
