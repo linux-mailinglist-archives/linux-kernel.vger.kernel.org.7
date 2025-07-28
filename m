@@ -1,228 +1,150 @@
-Return-Path: <linux-kernel+bounces-747889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86FB0B139C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:19:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C384B139C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C033B4260
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:19:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF0007A491F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C106244698;
-	Mon, 28 Jul 2025 11:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F6322C32D;
+	Mon, 28 Jul 2025 11:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AEUb43C3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pomFTSss"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDC118FDBE
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05641DDF7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753701568; cv=none; b=MaR6BMk/PxlgLiGIGob1Bq7xWJgg4z3D1rk8zgOtUJK1QpUaHxykDJyFzajRSdQKErOOYBxg8Ya68OmwtO5phx0RYRDC0LfY5RsZHbgrqtddwY5xuwiOXFa0UVWCCBjQShesVhh0PHLVI0JRylLXHkAJGQkKI2zFCvV4uqpY3hs=
+	t=1753701584; cv=none; b=gnsIEKx2p4l+jU+GT6b9CI/Jj5qddNy1DAykmU/bIUw8+mvcteMniTKf9GRya8QuOuVRejXz611C9lOvZNmutA38JIjkTUPkxnc/E9ArIjHJ6t+gbXr4jvCb69SEug5BCcFdq+2wUj//zbeh8ORgGVHmjiwXZ3cqg+0mGbRzcJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753701568; c=relaxed/simple;
-	bh=UASadEwMto6eZAN2FdlhaFDfLWT16VuVLwVrDXV7bqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jEjZJsLW1gNyLpkGw9h444yLEbtfbMFnLCxIlzxGimWN7juk2sEu+uH/gJRRxjK5mrirCXeOHB71pxK6EPnlcuWMGdz2sanLWYUSO4St2GQ1QnTY2+Tnl72QKFbyKNJ/AbhVwGwuqz7JodnbqnZE4gxiQhdbMYFMCzKZCUOgcBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AEUb43C3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753701565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=knoW5hXdYfxlMfaIaGdm6JpvBEpBbVPIky2WIJsx7bU=;
-	b=AEUb43C3mDHx91kdf8LUenjbE8FY0kGqE7KHdt4efL8/uRK3LEUWJ0xeB6foNa9stLVmg3
-	SzUPxq4mX/LWA7kOYp0bDKsf4zYy1jVXvaN4FhFN3MepgvCO8Zspu+HoBpzhf7MNg+KVWJ
-	0ISml27D54ca7zErF56lqsH68M3TuO8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-28-zOj9HKQVOuKjhOMhX3w-og-1; Mon, 28 Jul 2025 07:19:24 -0400
-X-MC-Unique: zOj9HKQVOuKjhOMhX3w-og-1
-X-Mimecast-MFC-AGG-ID: zOj9HKQVOuKjhOMhX3w-og_1753701563
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b782c29be3so1171336f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 04:19:23 -0700 (PDT)
+	s=arc-20240116; t=1753701584; c=relaxed/simple;
+	bh=fMvFtqY0dZeTgFscTQ6EikQG17iQn9yAO5mQTlzzO6Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=StreHYnId2xI+6ZZv24u4vJcdn13WLWmG8rHGWUhphKAHabIFYMTwN3fBvPwSpWyErByCHkTXWdeK9X7166oPqwDOt0nSfK67Ofq6/yYySGR/7EY8rFTy8vwjZU0Q9rV/iihr+0oiT/tvY7ze0Er56DzdYb4xxvrZeHZLunFo2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pomFTSss; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4f379662cso3017949f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 04:19:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753701581; x=1754306381; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gbmSA0QipmAIbHbKw8GhXr6SE1pl+CI9qEcVQNYIoK4=;
+        b=pomFTSssg9OZS78aX3B2oQCP66eYFLleaf8LeMbmqb0u9lPSCqOGon0bBkcedsjAIa
+         cv8xrVYcHkkl0CoqxGk5GpCLjDSVDgD6UfNPwD8+sQXUgltn+NGaAYqlSuvA1HRdBLml
+         iePnVcTXn5ldKmJj7sYQDdpiJh/duiq2Wd+ZDl32ooQVTU+mRRQN2MMHTObLLwr+YUsj
+         t3/iRWgOgAaUz8+3l+tgLxqY5fQA0L0sYtXa40qPFvu/yJs9DrHTnTY+eZdyMUer8U8y
+         2CysKo5CIalA4LVATua72YJoLWM372YfV1BYV1jGWRHVKdWO/2U01CcGO6EVuRcot8sj
+         29oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753701563; x=1754306363;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=knoW5hXdYfxlMfaIaGdm6JpvBEpBbVPIky2WIJsx7bU=;
-        b=E8Jcej1QqfFwxPQEiw42cTuOcR3FCBU8PT7SNR1x9PEfwnkapppMhapKHYLZ96hqMC
-         HFBVBp1WE+y5/bg7CbMTXFWsfVLoxl2/xR7EapLX++H84MO623Dj4peHSjty0m9NlJSO
-         0i+4BQJMmWaQpYWH0SxPwHVOIa/zLT567o3sDVOID42GYThbE4thLeBULU3NidtgmWOv
-         gSZj2iYrk0ekIJeJQxhiarrH9Ub0aYYjN0BHwZmeyS0GULP8SNPlxW5A+ivWmLcy5nz0
-         fDNRz9UQRurmp/EJ0wQBJAH97AlBQ/IvM/vrx78dONXVE71X/8NXL/DHfzRLYxJWXC32
-         9c5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVfasIJpdreulXRIfBDOjgk/IXmcF2AgAZR7YRq9UyL/HKVd+MK0EIRcVEHxmD/HU7+kmK18g0Z8yyrxqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJndpsUn21T5aSkXKP8SGRE3+ZhgjR8tit/5DLKt9qGEUD1S7H
-	xqbsfh2hIpQmVeeGiuLPfNGENyTmYe+cg6OOD75ZyTw/PHvVJQT5IEp5R0AVThbUZieebUqt8Dy
-	Mm3Ae2/oVrr/5puXejhb9yamZr23kdDRmPSNUXcZoKCa0omXZfV8oUJv3ayCjnGzEqQ==
-X-Gm-Gg: ASbGncuOFtaO/5CrTVQvxo+p7vYxJ9fVc2j5KK/c3BZ3HiMVcweDzCntE55QHpz9KWZ
-	baBuvhN9A6BVxzBtHwSaQAR3KNiUT2fDX4XvOMeDWMo5uBMJRxUNuoYxdMTyoedeEkp9JuyPF8o
-	M8h+tB+q85wcXzv9wTZarzpZ/2POiE1/Mlwx+VmpDEo2nHT/CBHyM8FO5rZyQugFxaAxOlfGaO6
-	0gQakEVlIgnR/zPfyv1t/FM+dG5aerqQ9ayBquMEqGl4sBUUT8zgaSsPumzOrxo0172Ycr/TljB
-	GxyZelEC4Lp2BzItBFmtdw2D6xgqfpxKH4rHQwXOR/g3x9nkGRjkg23eujWSOmt8poPJo/ThEuy
-	abZ8=
-X-Received: by 2002:a05:6000:188e:b0:3b7:6d95:56d2 with SMTP id ffacd0b85a97d-3b776726a56mr8486690f8f.7.1753701562458;
-        Mon, 28 Jul 2025 04:19:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFuXibLYD4lVfKwwNJUe9jSKZO7qPSJvy9uo0aYNRx6AYDFqEJHDqBJXZr+qlT8lrhUVJX5RA==
-X-Received: by 2002:a05:6000:188e:b0:3b7:6d95:56d2 with SMTP id ffacd0b85a97d-3b776726a56mr8486656f8f.7.1753701561737;
-        Mon, 28 Jul 2025 04:19:21 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:d5:a000:d252:5640:545:41db? ([2a01:e0a:d5:a000:d252:5640:545:41db])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587ac5816dsm94919535e9.17.2025.07.28.04.19.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 04:19:21 -0700 (PDT)
-Message-ID: <a7ada116-5613-4518-a151-7c8db9874ede@redhat.com>
-Date: Mon, 28 Jul 2025 13:19:19 +0200
+        d=1e100.net; s=20230601; t=1753701581; x=1754306381;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gbmSA0QipmAIbHbKw8GhXr6SE1pl+CI9qEcVQNYIoK4=;
+        b=ncm8F6BXVaENiuNyrdYB86zTNYql4HQGGkuJvfL0vBU8Eg4ZRrSD3HcciFJBKh2AtP
+         xNemhYizc9uvfR1nzp8j7buxNPce+GUkBILQjXp1rgAvdHIZzk0tXI0yW6wB2Hjxjm3O
+         wTvv1JOrOLe5jOJzDfylUYhVS/m/ZOla4vvmkqrxHDUo6it/Bzkyo1TluYJalameTifO
+         ai3+f1oYXDf/GUM6ch0eq+K281XdVAPdP5o7NU5vdOgN+Ug7XS0nGWNdis1sHardZDoV
+         La5Ezwk9MydSL4apfnIaojDTT6N5dhQtcgJnNQ6w7dPlya5qiLRVANDnhRXCiunOMpCo
+         RYqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVg7K4Vum/xtx44O/S2EUWidGdDky0USIt4nbJ1hiaO2f2laAurKuLd2eM/s38+GnG5f0HCtvNxe0aeKD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybQbe2WwUcxb1lO5GNzym1/LDuOtmDEQm8QZS2cG2zrUTM6F+p
+	TOzFEK4YJAKXQOMbVmg0P1Bdrz2s5Bb9PPsTtEYesjqj3AwEFeLIIL4A3MgvR/8vE1abEDMkNpC
+	sNaI+5/5jf42A+CqznmdQI82/nQzFJTZVx8T2Je2v
+X-Gm-Gg: ASbGncs9jnsS010SDSuLSXX6r/M4Z/2qRdV+rvbJO1ui6bvxhk1dBZtEF4XT4Gtqzmi
+	6Oy/YCqCVygOMk1hBnfW6CRsyuLHwJlPiWlBuxr4/Li4WVkPhZkARimH3A9JRx0kw3Ge2vVaTtZ
+	iKsj2lq5tFaVu96uom/K0JJTCNPIgHb5+dW/IJwYYrmsIo9XJdYtOna8BEaZB1X2KajD+bU0foK
+	Jp1MdXTB/2lGsHhZ530SE9OOIq0DzONXQIL2w==
+X-Google-Smtp-Source: AGHT+IH67iNxNSkrojY3fM95xQae5TfwbJj4xs2uDRg40WNQDB01MpvP3CEcQwXZKV/Ly+szDBAKEgcdFxAhv/DfOFQ=
+X-Received: by 2002:a05:6000:290c:b0:3b7:8832:fde5 with SMTP id
+ ffacd0b85a97d-3b78832fff5mr2866538f8f.13.1753701580696; Mon, 28 Jul 2025
+ 04:19:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 03/10] drm/i915/display/i9xx: Add a disable_tiling()
- for i9xx planes
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Christian Koenig
- <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>,
- Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250618094011.238154-1-jfalempe@redhat.com>
- <20250618094011.238154-4-jfalempe@redhat.com> <aHviiKb0EnQbNksL@intel.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <aHviiKb0EnQbNksL@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
+ <20250726-maple-tree-v1-2-27a3da7cb8e5@google.com> <a4b93eb0-9742-4f24-86d9-486ce87fbed8@gmail.com>
+In-Reply-To: <a4b93eb0-9742-4f24-86d9-486ce87fbed8@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 28 Jul 2025 13:19:28 +0200
+X-Gm-Features: Ac12FXytrZNUlSdOYgH1ca32A8QXnXdUtZWRs5mU3kT7ILNpSGtpDjWYR9OsYM0
+Message-ID: <CAH5fLghK9RhbEXAW4fYS=61Dps34+jgv1UGAOMf7_LD0DVO6rA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rust: maple_tree: add MapleTree::lock() and load()
+To: Andrew Ballance <andrewjballance@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
+	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org, 
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19/07/2025 20:23, Ville Syrjälä wrote:
-> On Wed, Jun 18, 2025 at 11:31:21AM +0200, Jocelyn Falempe wrote:
->> drm_panic draws in linear framebuffer, so it's easier to re-use the
->> current framebuffer, and disable tiling in the panic handler, to show
->> the panic screen.
->> This assumes that the alignment restriction is always smaller in
->> linear than in tiled.
->> It also assumes that the linear framebuffer size is always smaller
->> than the tiled.
->>
->> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
->> ---
->>
->> v7:
->>   * Reword commit message about alignment/size when disabling tiling (Ville Syrjälä)
->>
->>   drivers/gpu/drm/i915/display/i9xx_plane.c     | 23 +++++++++++++++++++
->>   .../drm/i915/display/intel_display_types.h    |  2 ++
->>   2 files changed, 25 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/i915/display/i9xx_plane.c b/drivers/gpu/drm/i915/display/i9xx_plane.c
->> index 8f15333a4b07..0807fae12450 100644
->> --- a/drivers/gpu/drm/i915/display/i9xx_plane.c
->> +++ b/drivers/gpu/drm/i915/display/i9xx_plane.c
->> @@ -905,6 +905,27 @@ static const struct drm_plane_funcs i8xx_plane_funcs = {
->>   	.format_mod_supported_async = intel_plane_format_mod_supported_async,
->>   };
->>   
->> +static void i9xx_disable_tiling(struct intel_plane *plane)
->> +{
->> +	struct intel_display *display = to_intel_display(plane);
->> +	enum i9xx_plane_id i9xx_plane = plane->i9xx_plane;
->> +	u32 dspcntr;
->> +	u32 reg;
->> +
->> +	dspcntr = intel_de_read_fw(display, DSPCNTR(display, i9xx_plane));
->> +	dspcntr &= ~DISP_TILED;
->> +	intel_de_write_fw(display, DSPCNTR(display, i9xx_plane), dspcntr);
->> +
->> +	if (DISPLAY_VER(display) >= 4) {
->> +		reg = intel_de_read_fw(display, DSPSURF(display, i9xx_plane));
->> +		intel_de_write_fw(display, DSPSURF(display, i9xx_plane), reg);
->> +
->> +	} else {
->> +		reg = intel_de_read_fw(display, DSPADDR(display, i9xx_plane));
->> +		intel_de_write_fw(display, DSPADDR(display, i9xx_plane), reg);
->> +	}
->> +}
-> 
-> I thought I already shot this down before, but apparently this
-> got merged now :(
+On Mon, Jul 28, 2025 at 1:11=E2=80=AFPM Andrew Ballance
+<andrewjballance@gmail.com> wrote:
+>
+> On 7/26/25 8:23 AM, Alice Ryhl wrote:
+> > To load a value, one must be careful to hold the lock while accessing
+> > it. To enable this, we add a lock() method so that you can perform
+> > operations on the value before the spinlock is released.
+> >
+> > Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
+> > Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>
+> I have a couple of nits, but overall looks good to me.
+>
+> > ---
+> >   rust/kernel/maple_tree.rs | 94 ++++++++++++++++++++++++++++++++++++++=
++++++++++
+> >   1 file changed, 94 insertions(+)
+> >
+> > diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
+> > index 0f26c173eedc7c79bb8e2b56fe85e8a266b3ae0c..c7ef504a9c78065b3d5752b=
+4f5337fb6277182d1 100644
+> > --- a/rust/kernel/maple_tree.rs
+> > +++ b/rust/kernel/maple_tree.rs
+> > @@ -206,6 +206,23 @@ pub fn erase(&self, index: usize) -> Option<T> {
+> >           unsafe { T::try_from_foreign(ret) }
+> >       }
+> >
+> > +    /// Lock the internal spinlock.
+>
+> probably should add #[must_use] here.
+>
+> > +    #[inline]
+> > +    pub fn lock(&self) -> MapleLock<'_, T> {
+> > +        // SAFETY: It's safe to lock the spinlock in a maple tree.
+> > +        unsafe { bindings::spin_lock(self.ma_lock()) };
+> > +
+> > +        // INVARIANT: We just took the spinlock.
+> > +        MapleLock(self)
+> > +    }
+> > +
+> > +    #[inline]
+> > +    fn ma_lock(&self) -> *mut bindings::spinlock_t {
+> > +        // SAFETY: This pointer offset operation stays in-bounds.
+> > +        let lock =3D unsafe { &raw mut (*self.tree.get()).__bindgen_an=
+on_1.ma_lock };
+> > +        lock.cast()
+>
+> This cast seems unneeded. lock should already be a *mut spinlock_t.
 
-Sorry for that. I replied to that thread, but I didn't get answer [1]
+In some configurations, the type is BindgenUnionField<spinlock_t>.
 
-> 
-> Just to reiterate why we don't want these 'disable tiling' hacks:
-> - different tiling formats have different stride/alignment/watermark
->    requirements so one can't safely change from one tiling to another
-
-I agree that going from one tiling format to another is not safe. But 
-from my understanding, going from tiling to linear should be possible.
-Do you have an example, where the stride/alignment/watermark requirement 
-in tiled would be incompatible in Linear (for the same resolution)?
-
-> - this completely fails to account for the TILEOFF vs. LINOFF stuff
-
-Pardon my ignorance, can you explain what it is, and how it can break or 
-make the output unreadable?
-
-> - etc.
-> 
-> So IMO these hacks must be removed and instead the code must learn how
-> to propetly write the tiled data. igt has all the code for that btw
-> (twice over IIRC) so shouldn't be that hard.
-
-Regarding the tiling format, I usually test on hardware to check that 
-the image is correct. But I have only a few of them, and as the format 
-is platform dependent, and sometime also depends on the memory 
-configuration. For me it looks very hard to get it right.
-I've done it only for Y-tile and 4-tile, but only when DPT is enabled 
-(which means it's only the few latest generations).
-
-> 
-> I suppose the only hack we need to keep is to disable compression,
-> mainly because (IIRC) on flat CCS systems the CPU doesn't have access
-> to the AUX data to clear it manually.
-> 
-> I also wonder if there are actual igts for this? I think what is needed
-> is a test that sets random things (different panning, rotation, pixel
-> foramts, etc.) and triggers the dumper. Not quite sure how the test
-> could validate that the output is correct though. CRCs might be a bit
-> tricky since you need an identical reference image.
-
-No, I didn't write igts for this yet. I test by triggering a kernel 
-panic, as it's the only way to make sure it works.
-Also I didn't consider rotation yet, I think if the panic screen is not 
-rotated, it's still useful.
-
-> 
-> /me off to summer vacation. Good luck
-> 
-
-Sorry for that, my goal is just to have drm panic working on intel GPU.
-Enjoy your vacation, and let's find a solution when you're back.
-
-[1] 
-https://lore.kernel.org/intel-gfx/72fa1da6-caaa-41c9-aef1-4e780bde6acf@redhat.com/
-
-Best regards,
-
--- 
-
-Jocelyn
-
+Alice
 
