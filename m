@@ -1,113 +1,146 @@
-Return-Path: <linux-kernel+bounces-747958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A85B13AB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:45:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D50CB13ABA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6E3173189
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:45:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47C3C7A7BA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2081F265CA2;
-	Mon, 28 Jul 2025 12:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/FcKi+h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9A0265CCF;
+	Mon, 28 Jul 2025 12:47:04 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7702B13D51E;
-	Mon, 28 Jul 2025 12:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1935B264627;
+	Mon, 28 Jul 2025 12:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753706722; cv=none; b=gdSzBy2y2wSq6QfFOOdQ4DXukQGTayV1UJUgtdfpJVRMKAIjbXgDPmHkO61ws++sXhCZdbxt/KgU8VERjOch4UegwCfimCETPJk0YyLXKWW2c8TvFlsApSn1t94FcVY5q46k5yP5PA+1VTldyUltV8NON0mSOcbjfNSBOFb1ZaQ=
+	t=1753706824; cv=none; b=iKqdptqV37kvX66QKN/vpD61c/NLEO1nRbRWeTM0Oe3Ck/pEN0/ermXf+GncF+yXI1q0Z6wopC/bc1FlSfIiGjMMZ78qgyJ0101aH1JuusYc88hPWTffwNU9vrCUSYzH1XMD1z5cAIybQEnWiTc44Xl7lI16z6Po2whdGm1E9O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753706722; c=relaxed/simple;
-	bh=GugSHvy+IJFFREl/nAn10zyTSudtGXDdHs192vJUo3M=;
+	s=arc-20240116; t=1753706824; c=relaxed/simple;
+	bh=fsnnLn1UnfpY4C73Oqup7ToKbZWZvKEup6NpnHAehaw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cA32a2/k/Z8Bv02Erkv5u8qCrRWkWhFHFnbDtBEOMUWaW1rvIc1RY5+tlFxNOmIzX+EzkM5OTjIcVFYpxcF22HjT+PdYt9d49b3siK9Djuuc7ypI5LTzcnv6SLIqhXz09XsEY+aLztKeyGMtfRng6q3/TnYB2V0CNw0ZQfSa3Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/FcKi+h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4175CC4CEE7;
-	Mon, 28 Jul 2025 12:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753706721;
-	bh=GugSHvy+IJFFREl/nAn10zyTSudtGXDdHs192vJUo3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J/FcKi+hjv9Iqn2RYaI04kXyLfzYaJ0EgCdEefTIVQYhMRE4SG64xA2v937xYdk2/
-	 A6bibL8mGIajh5Hmaoket1pqclZACy7UljY7IhoFvs9MsYHJD50c9F4PJPHJ066ghF
-	 1iT+HlVnom4L8fCYSKvY1JicpPLt3rToYizVt/mla6cTyXiwrlZQnsXLJEIKkU7AAh
-	 RzJx3e/IiE0H6dexSi+y3Syq9vgMdhf6drHB/jrhntmHY2OydFJTUrFxDKsuAnAl2I
-	 /9IeKbTDPjfYIFAEOO5g1dwCzor1jFw1+DjiXEnJp1LWpSsDJ60jdPyJ1sMASF06Po
-	 crjPWKqWJIh3g==
-Date: Mon, 28 Jul 2025 08:45:19 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Greg KH <greg@kroah.com>, corbet@lwn.net, linux-doc@vger.kernel.org,
-	workflows@vger.kernel.org, josh@joshtriplett.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <aIdw3-G04QQPvJtU@lappy>
-References: <20250727195802.2222764-1-sashal@kernel.org>
- <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
- <2025072854-earthen-velcro-8b32@gregkh>
- <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1C3aj+Ees22GR3jl+e4LjwRuv4ZODXUmHv62mdujKIRw+VSf+gly9gc+hC2WYo+CTpTsTHVuimYVFG3Q2XaU/zBTa3W74sjzFkhezZe4BPP7aryoQxjSI6q46CQzhb8HVb9Yucg4ShJw/MPy7NhX1Yr0n4k6Zc4rGMj9KWc2JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 6421411B2; Mon, 28 Jul 2025 07:47:00 -0500 (CDT)
+Date: Mon, 28 Jul 2025 07:47:00 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
+	dan.j.williams@intel.com
+Subject: Re: [PATCH v2 1/3] lockdown: Switch implementation to using bitmap
+Message-ID: <aIdxRBW7HyJMNvkh@mail.hallyn.com>
+References: <20250728111517.134116-1-nik.borisov@suse.com>
+ <20250728111517.134116-2-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
+In-Reply-To: <20250728111517.134116-2-nik.borisov@suse.com>
 
-On Mon, Jul 28, 2025 at 11:52:47AM +0100, Lorenzo Stoakes wrote:
->One thing to note is that I struggled to get an LLM to read MAINTAINERS
->properly recently (it assured me, with absolute confidence, that the SLAB
->ALLOCATOR section was in fact 'SLAB ALLOCATORS' + provided me with
->completely incorrect contents, and told me that if I didn't believe it I
->should go check :)
+On Mon, Jul 28, 2025 at 02:15:15PM +0300, Nikolay Borisov wrote:
+> Tracking the lockdown at the depth granularity rather than at the
+> individual is somewhat inflexible as it provides an "all or nothing"
+> approach. Instead there are use cases where it  will be useful to be
+> able to lockdown individual features - TDX for example wants to disable
+> access to just /dev/mem.
+> 
+> To accommodate this use case switch the internal implementation to using
+> a bitmap so that individual lockdown features can be turned on. At the
+> same time retain the existing semantic where
+> INTEGRITY_MAX/CONFIDENTIALITY_MAX are treated as wildcards meaning "lock
+> everything below me".
+> 
+> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+> ---
+>  security/lockdown/lockdown.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index cf83afa1d879..5014d18c423f 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -10,12 +10,13 @@
+>   * 2 of the Licence, or (at your option) any later version.
+>   */
+>  
+> +#include <linux/bitmap.h>
+>  #include <linux/security.h>
+>  #include <linux/export.h>
+>  #include <linux/lsm_hooks.h>
+>  #include <uapi/linux/lsm.h>
+>  
+> -static enum lockdown_reason kernel_locked_down;
+> +static DECLARE_BITMAP(kernel_locked_down, LOCKDOWN_CONFIDENTIALITY_MAX);
+>  
+>  static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+>  						 LOCKDOWN_INTEGRITY_MAX,
+> @@ -26,10 +27,15 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+>   */
+>  static int lock_kernel_down(const char *where, enum lockdown_reason level)
+>  {
+> -	if (kernel_locked_down >= level)
+> -		return -EPERM;
+>  
+> -	kernel_locked_down = level;
+> +	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
+> +		return -EINVAL;
+> +
+> +	if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
 
-Heh, I wouldn't trust LLM with anything more than mechanical
-transformations or test writing at this point :)
+For the reviewer (including me), it would be good to have a comment here or at
+top of fn to ease our minds that this is really what's meant:  So if we lock
+down with reason LOCKDOWN_INTEGRITY_MAX, we want to set all bits up to
+LOCKDOWN_INTEGRITY_MAX, which is not the whole array, and if setting
+LOCKDOWN_CONFIDENTIALITY_MAX, then we want to set *all* bits, right?
+So LOCKDOWN_CONFIDENTIALITY_MAX is a supserset of LOCKDOWN_INTEGRITY_MAX?
 
->So at all times I think ensuring the human element is aware that they need
->to do some kind of checking/filtering is key.
->
->But that can be handled by a carefully worded policy document.
+And for anything else, set the single bit.
 
-Right. The prupose of this series is not to create a new LLM policy but
-rather try and enforce our existing set of policies on LLMs.
-
-Right now the "official" policy of our project is that we accept agent
-generated contributions without any requirements beyond what applies to
-regular humans, which most LLMs promptly skip reading and go do their
-own thing...
-
-So I wanted to at least force LLMs to go RTFM before writing code.
-
->>
->> > In addition, it's concerning that we're explicitly adding configs for
->> > specific, commercial, products. This might be seen as an endorsement
->> > whether intended or not.
->>
->> Don't we already have that for a few things already, like .editorconfig?
->
->Right, but I think it's a whole other level when it's a subscription
->service. I realise we have to be practical, but it's just something to be
->aware of.
->
->Perhaps an entry in the AI doc along the lines of 'provision of
->configuration for a service is not advocating for that service, it is
->simply provided for convenience' or similar might help.
-
-It also gives us the option of dropping some of these if we find them to
-be either horrible at their job or just being abused.
-
--- 
-Thanks,
-Sasha
+> +		bitmap_set(kernel_locked_down, 1, level);
+> +	else
+> +		bitmap_set(kernel_locked_down, level, 1);
+> +
+>  	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
+>  		  where);
+>  	return 0;
+> @@ -62,13 +68,12 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
+>  		 "Invalid lockdown reason"))
+>  		return -EPERM;
+>  
+> -	if (kernel_locked_down >= what) {
+> +	if (test_bit(what, kernel_locked_down)) {
+>  		if (lockdown_reasons[what])
+>  			pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
+>  				  current->comm, lockdown_reasons[what]);
+>  		return -EPERM;
+>  	}
+> -
+>  	return 0;
+>  }
+>  
+> @@ -105,7 +110,7 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
+>  		if (lockdown_reasons[level]) {
+>  			const char *label = lockdown_reasons[level];
+>  
+> -			if (kernel_locked_down == level)
+> +			if (test_bit(level, kernel_locked_down))
+>  				offset += sprintf(temp+offset, "[%s] ", label);
+>  			else
+>  				offset += sprintf(temp+offset, "%s ", label);
+> -- 
+> 2.34.1
+> 
 
