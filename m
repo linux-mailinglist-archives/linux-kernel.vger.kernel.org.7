@@ -1,182 +1,169 @@
-Return-Path: <linux-kernel+bounces-748212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEBEDB13DF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:10:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3256FB13DF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08B7F188947E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:11:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7628F17E4CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145DB26FD9B;
-	Mon, 28 Jul 2025 15:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="rgA+2Xiu";
-	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="7w1OAFFb"
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB0E26D4E9;
+	Mon, 28 Jul 2025 15:10:59 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0871F1517;
-	Mon, 28 Jul 2025 15:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E48D22B8C2
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 15:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753715445; cv=none; b=bOTtstLU725tsjJaGT1Bg7Fs6qy9Vrkxp7oiWi8h2qfy8A7ijzPHohbX31aMGhKIWUNzzMFMpJ0Ek/njsdAHZqbFvMXVBdXTIweQPfxeVjdPnvC+VJkAZZJvuD75Kd+lfySkxYKp/d7OKpB9gB5LcnZhXDFbqQ0lfmwF0y0isbw=
+	t=1753715458; cv=none; b=YczSunCFKo1wYHNExze5/v6u7UzBTgZ/kUdbpFthwPNve25++b0LYq4smJRDtJ29F3mdJItG0RZvMEChmHSKUVK+Egy6KA3MZYEkbpU/oZqakA4SNYz2HMqhYmI2uU1pDGBywUUPcZglk1IO9Y1RGVrPKDXuPKch5kSJvBO5CLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753715445; c=relaxed/simple;
-	bh=y3O17yF6OPOSNbZuaED7N7zoZamz2jnz/0qwkNUR9A4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=E/qhxDnMj7pPIyOvr+0pRlKkxO4q9n6GDXqYEuQWO8YFs24EUbYUcRCup+/ClTRYAzmJ5U5amFM8LJxAjr7dt3iBKz7NvMp7t/mDmhoLReJPahGwj6QtVz8vwgVDrA1IRqy4V6wpbnRW60gdBpaAGaWQYLIIPR9qdd0pjlkuP9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=rgA+2Xiu; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=7w1OAFFb; arc=none smtp.client-ip=210.171.160.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-	by mail.parknet.co.jp (Postfix) with ESMTPSA id A2EEA2096798;
-	Tue, 29 Jul 2025 00:10:33 +0900 (JST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114; t=1753715433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3nk93NjHHk9vOcXrtlULci5a5hCR0YeSKMM2/RWppiI=;
-	b=rgA+2XiuL+QfhYbqXXo/u1z5NoLhNRbSO7LM7dM5/TCBnLzKp3NeOZQtQ9xne6hhZCn3zE
-	WVhv/Rw+E3PA2blSQi2ppskyUJEP7p3IHNMEPHDQNbkrnoeFibmpEHtit1ZBQYw75Ra/zc
-	IqiYeBuqj/BbHe8PUYG+FjZSc0w5F4n8gVLlfPn5R8+uRed7sXLDMb4Zi0eRBUJrc0rtZD
-	tprRkdxFS7RyQrHpYa+cSbeVD96J4YLzjYWxZu/Fa1M+MMDn0moXDlIFtBeOV376qkj83Q
-	ulyBnKT77bSfyykMhWld+HqiZtl5ci2COcS0o3RC1ezkipXx/uuyBR+hcvVCmQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114-ed25519; t=1753715433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3nk93NjHHk9vOcXrtlULci5a5hCR0YeSKMM2/RWppiI=;
-	b=7w1OAFFbI+y9veaNACWCLvIOCF7dtlrKK1SQKfVpn1jW1lyt5hfaWGczuK2H9ftiBKe4X7
-	IQcgNO+mLI+ZxFAA==
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 56SFAWsP182221
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 00:10:33 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 56SFAWib512076
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 00:10:32 +0900
-Received: (from hirofumi@localhost)
-	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 56SFAV9e512074;
-	Tue, 29 Jul 2025 00:10:31 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com,
-        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] fat: Prevent the race of read/write the FAT16 and FAT32
- entry
-In-Reply-To: <tencent_E34B081B4A25E3BA9DBBB733019E4E1BD408@qq.com>
-References: <6887321b.a00a0220.b12ec.0096.GAE@google.com>
-	<tencent_E34B081B4A25E3BA9DBBB733019E4E1BD408@qq.com>
-Date: Tue, 29 Jul 2025 00:10:31 +0900
-Message-ID: <874iuwxsew.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1753715458; c=relaxed/simple;
+	bh=Urnls7LTsgyCqhDUiCZtRYKkQj1nlVu3vG4zU+q9BNE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZRzvMLavz9kW8TT1Nq2npgW014pUvC/wgZYA/h0fARL7TCXuX5/HRrSi0ccAuukqF9jM6f5eWvw4H4YLjsWCV7MJZVLtO7+gG76H/ZgKfS8kteD0L17NUOfdNPFCFGYUtiFXlbB9ZlyQYdR7u8y0Im2n1ILh4y1AVu5EN3f4j7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4brMMM1GGDz6H7NX;
+	Mon, 28 Jul 2025 23:09:19 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5517B140446;
+	Mon, 28 Jul 2025 23:10:52 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 28 Jul
+ 2025 17:10:51 +0200
+Date: Mon, 28 Jul 2025 16:10:50 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Pan Chuang <panchuang@vivo.com>
+CC: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
+	<miquel.raynal@bootlin.com>, <u.kleine-koenig@pengutronix.de>,
+	<angeg.delregno@collabora.com>, <krzk@kernel.org>, <a.fatoum@pengutronix.de>,
+	<frank.li@vivo.com>
+Subject: Re: [PATCH v7 1/1] genirq/devres: Add dev_err_probe() in
+ devm_request_threaded_irq() and devm_request_any_context_irq()
+Message-ID: <20250728161050.000018f2@huawei.com>
+In-Reply-To: <20250728123251.384375-2-panchuang@vivo.com>
+References: <20250728123251.384375-1-panchuang@vivo.com>
+	<20250728123251.384375-2-panchuang@vivo.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Edward Adam Davis <eadavis@qq.com> writes:
+On Mon, 28 Jul 2025 20:32:51 +0800
+Pan Chuang <panchuang@vivo.com> wrote:
 
-> The writer and reader access FAT32 entry without any lock, so the data
-> obtained by the reader is incomplete.
->
-> Add spin lock to solve the race condition that occurs when accessing
-> FAT32 entry.
->
-> FAT16 entry has the same issue and is handled together.
-
-What is the real issue? Counting free entries doesn't care whether EOF
-(0xffffff) or allocate (0x000068), so it should be same result on both
-case.
-
-We may want to use READ_ONCE/WRITE_ONCE though, I can't see the reason
-to add spin_lock.
-
-Thanks.
-
-> Reported-by: syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=d3c29ed63db6ddf8406e
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> Modify devm_request_thread_irq() and devm_request_any_context_irq(), in
+> order to print an error message by default when the request fails.
+> 
+> Converting drivers to use this API has the following benefits:
+> 
+>   1.More than 2,000 lines of code can be saved by removing redundant error
+>   messages in drivers.
+> 
+>   2.Upper-layer functions can directly return error codes without missing
+>   debugging information.
+> 
+>   3.Having proper and consistent information about why the device cannot
+>   be used is useful.
+> 
+> Signed-off-by: Pan Chuang <panchuang@vivo.com>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 > ---
->  fs/fat/fatent.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
-> index a7061c2ad8e4..0e64875e932c 100644
-> --- a/fs/fat/fatent.c
-> +++ b/fs/fat/fatent.c
-> @@ -19,6 +19,8 @@ struct fatent_operations {
->  };
->  
->  static DEFINE_SPINLOCK(fat12_entry_lock);
-> +static DEFINE_SPINLOCK(fat16_entry_lock);
-> +static DEFINE_SPINLOCK(fat32_entry_lock);
->  
->  static void fat12_ent_blocknr(struct super_block *sb, int entry,
->  			      int *offset, sector_t *blocknr)
-> @@ -137,8 +139,13 @@ static int fat12_ent_get(struct fat_entry *fatent)
->  
->  static int fat16_ent_get(struct fat_entry *fatent)
->  {
-> -	int next = le16_to_cpu(*fatent->u.ent16_p);
-> +	int next;
-> +
-> +	spin_lock(&fat16_entry_lock);
-> +	next = le16_to_cpu(*fatent->u.ent16_p);
->  	WARN_ON((unsigned long)fatent->u.ent16_p & (2 - 1));
-> +	spin_unlock(&fat16_entry_lock);
-> +
->  	if (next >= BAD_FAT16)
->  		next = FAT_ENT_EOF;
->  	return next;
-> @@ -146,8 +153,13 @@ static int fat16_ent_get(struct fat_entry *fatent)
->  
->  static int fat32_ent_get(struct fat_entry *fatent)
->  {
-> -	int next = le32_to_cpu(*fatent->u.ent32_p) & 0x0fffffff;
-> +	int next;
-> +
-> +	spin_lock(&fat32_entry_lock);
-> +	next = le32_to_cpu(*fatent->u.ent32_p) & 0x0fffffff;
->  	WARN_ON((unsigned long)fatent->u.ent32_p & (4 - 1));
-> +	spin_unlock(&fat32_entry_lock);
-> +
->  	if (next >= BAD_FAT32)
->  		next = FAT_ENT_EOF;
->  	return next;
-> @@ -180,15 +192,21 @@ static void fat16_ent_put(struct fat_entry *fatent, int new)
->  	if (new == FAT_ENT_EOF)
->  		new = EOF_FAT16;
->  
-> +	spin_lock(&fat16_entry_lock);
->  	*fatent->u.ent16_p = cpu_to_le16(new);
-> +	spin_unlock(&fat16_entry_lock);
-> +
->  	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
+>  kernel/irq/devres.c | 78 ++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 74 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
+> index eb16a58e0322..a1b934c1ecc8 100644
+> --- a/kernel/irq/devres.c
+> +++ b/kernel/irq/devres.c
+> @@ -31,7 +31,7 @@ static int devm_irq_match(struct device *dev, void *res, void *data)
 >  }
 >  
->  static void fat32_ent_put(struct fat_entry *fatent, int new)
->  {
->  	WARN_ON(new & 0xf0000000);
-> +	spin_lock(&fat32_entry_lock);
->  	new |= le32_to_cpu(*fatent->u.ent32_p) & ~0x0fffffff;
->  	*fatent->u.ent32_p = cpu_to_le32(new);
-> +	spin_unlock(&fat32_entry_lock);
-> +
->  	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
->  }
+>  /**
+> - *	devm_request_threaded_irq - allocate an interrupt line for a managed device
+> + *	__devm_request_threaded_irq - allocate an interrupt line for a managed device
+>   *	@dev: device to request interrupt for
+>   *	@irq: Interrupt line to allocate
+>   *	@handler: Function to be called when the IRQ occurs
+> @@ -49,7 +49,7 @@ static int devm_irq_match(struct device *dev, void *res, void *data)
+>   *	If an IRQ allocated with this function needs to be freed
+>   *	separately, devm_free_irq() must be used.
+>   */
+> -int devm_request_threaded_irq(struct device *dev, unsigned int irq,
+> +static int __devm_request_threaded_irq(struct device *dev, unsigned int irq,
+>  			      irq_handler_t handler, irq_handler_t thread_fn,
 
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Parameters were previously aligned after (
+Probably best to realign them to keep that style.
+
+>  			      unsigned long irqflags, const char *devname,
+>  			      void *dev_id)
+> @@ -78,10 +78,46 @@ int devm_request_threaded_irq(struct device *dev, unsigned int irq,
+>  
+>  	return 0;
+>  }
+> +
+> +/**
+> + * devm_request_threaded_irq - allocate an interrupt line for a managed device with error logging
+> + * @dev:	Device to request interrupt for
+> + * @irq:	Interrupt line to allocate
+> + * @handler:	Function to be called when the IRQ occurs
+> + * @thread_fn:	Function to be called in a threaded interrupt context. NULL
+> + *		for devices which handle everything in @handler
+> + * @irqflags:	Interrupt type flags
+> + * @devname:	An ascii name for the claiming device, dev_name(dev) if NULL
+> + * @dev_id:	A cookie passed back to the handler function
+> + *
+> + * This function extends __devm_request_threaded_irq by adding detailed error
+> + * logging via dev_err_probe() when the underlying request fails. It ensures the
+> + * interrupt is automatically freed on driver detach and provides contextual
+> + * information (e.g., IRQ number, handler address, device name) in error messages.
+> + *
+> + * Return: 0 on success or a negative error number.
+> + */
+> +int devm_request_threaded_irq(struct device *dev, unsigned int irq,
+> +			      irq_handler_t handler, irq_handler_t thread_fn,
+> +			      unsigned long irqflags, const char *devname,
+> +			      void *dev_id)
+> +{
+> +	int rc;
+> +
+> +	rc = __devm_request_threaded_irq(dev, irq, handler, thread_fn, irqflags,
+> +					 devname, dev_id);
+> +	if (rc < 0) {
+
+I'm in two minds about this.
+The internals of __devm_request_threaded_irq() use if (rc)
+so we know that will be fine here.
+
+However, given you are passing it to dev_err_probe() locally being sure
+that we don't have a value > 0 perhaps makes sense.
+
+> +		return dev_err_probe(dev, rc, "request_irq(%u) %pS %pS %s\n",
+> +				     irq, handler, thread_fn,
+> +				     devname ? : dev_name(dev));
+> +	}
+> +
+> +	return 0;
+> +}
+>  EXPORT_SYMBOL(devm_request_threaded_irq);
+
+Same comments apply to remaining code.
+
+Jonathan
+
 
