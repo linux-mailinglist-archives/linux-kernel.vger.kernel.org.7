@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-748672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD68DB1448C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:08:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD78B1448F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D239617CDDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:08:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA25C18C0360
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 23:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C79721D3D2;
-	Mon, 28 Jul 2025 23:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734CA217F53;
+	Mon, 28 Jul 2025 23:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="d3t6tgEu"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NaBdrsQm"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC93CC2C9
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 23:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4506021C160
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 23:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753744091; cv=none; b=sufHAVPzLzEz4+rEzD0+SQvWoR7Pvubv6K/rjXd9UP2DzkSwW1s6C7pu+htTxblttW5dY5d4/8HO8IT0OXvell61xeer3d/j27+h4XgfZJEp1PA8VBEuxiz6wBLgbF38RMEb1zQUiKPLtHKdXTIUvUVWZPJ7scqyCtFIFRMc4LA=
+	t=1753744112; cv=none; b=WABSS/kCnD/lMglOmLV8vAUMaiYCUO6sQTBW44D1YBLgzh40WpqB8hZ8YLBaJv5HyR+5EL8IyPuiQDlTdduy1kW2rikf9ChzZ9dKQj+ZhDdjHudFy2xko9titJ0fPCZXTG3Qy0obvHTJDmc5F0VLDv2JRIRPMPMis7AQgkC453Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753744091; c=relaxed/simple;
-	bh=3KwB3D7apCTLi2B/PzN4GcMBuEZIOjbqWsj72q0Qjjo=;
+	s=arc-20240116; t=1753744112; c=relaxed/simple;
+	bh=hOXb4gtCl1CYW/VGeucW14FVtx4CfkE0DPqvGmwHY2I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZrxznwAVlhvopLBOFdhUuLJ4UE40RZabubxi65h1/882hme77uWkTwmBKs6U/82j1h4r2DmDSLgMS5q/sihSTraoP0RSMx19xJwFEF1ka394rVKya/CYMrzoJBWbcOSZ5MGUyv6IkuZFodJdV8uONMXEYEXgC3O96nbE21N84tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=d3t6tgEu; arc=none smtp.client-ip=91.218.175.182
+	 In-Reply-To:Content-Type; b=TiWOQSUA3DMr05HGJD2rXtHaK3kCA9OcpZIHsR4xuzKPYVvR+Sj/kwic8xR3TNPAkFSKjv/rXKL/1YEr5u90OxF+qjqHcQNgZx9hhNXsSTdOx4gy96sN9mZ6Pe+kecpsasfi33zogvBKSZKZcqGbG24R2uJMAWfWb5CnqIwxXPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NaBdrsQm; arc=none smtp.client-ip=91.218.175.185
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <66f4a64c-a6fa-478b-bc79-495a9def10c8@linux.dev>
+Message-ID: <3c3c1d6b-8748-4ae4-8e77-70d7d50c5f9a@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753744077;
+	t=1753744109;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NSRV8xtJBo0Hs5hGzkNd3Im3++PoIWb28AxiDkWp4uQ=;
-	b=d3t6tgEuSRVO+u6fMP9M/cqRcrdXmE2f5N3tRdjNreZtyotJi7g1cE4j1Sd8K2LleyGcq9
-	oQhmloe5TM27fMjC0cO1OjKgqUFQABhBFN3CJXft4j51kagozyHSxiInd++e3UwJ/SsCed
-	ErT0w+nEjWAuzHTgk5EAq1hxR6x2GHA=
-Date: Mon, 28 Jul 2025 16:07:49 -0700
+	bh=hOXb4gtCl1CYW/VGeucW14FVtx4CfkE0DPqvGmwHY2I=;
+	b=NaBdrsQmvVRtk1YgZLusEv7iP351qv60KO2HFE87dsMee+dgCr2mYQMPl4XrVepw8W+d9Q
+	Zb0aX9KUPzGHx/DxppkaYU9F5wx46okpUx8Wiui2P1qxeT+lxO//QojdcotB8LQbRAf01X
+	FIGUC6a5021fP1kYpCwh1XD32yO22wg=
+Date: Mon, 28 Jul 2025 16:08:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3 1/4] bpf: crypto: Use the correct destructor
- kfunc type
+Subject: Re: [PATCH bpf-next v3 2/4] bpf: net_sched: Use the correct
+ destructor kfunc type
 Content-Language: en-GB
 To: Sami Tolvanen <samitolvanen@google.com>, bpf@vger.kernel.org
 Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
@@ -63,10 +63,10 @@ Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
  Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20250728202656.559071-6-samitolvanen@google.com>
- <20250728202656.559071-7-samitolvanen@google.com>
+ <20250728202656.559071-8-samitolvanen@google.com>
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250728202656.559071-7-samitolvanen@google.com>
+In-Reply-To: <20250728202656.559071-8-samitolvanen@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
@@ -75,19 +75,11 @@ X-Migadu-Flow: FLOW_OUT
 
 On 7/28/25 1:26 PM, Sami Tolvanen wrote:
 > With CONFIG_CFI_CLANG enabled, the kernel strictly enforces that
-> indirect function calls use a function pointer type that matches the
-> target function. I ran into the following type mismatch when running
-> BPF self-tests:
->
->    CFI failure at bpf_obj_free_fields+0x190/0x238 (target:
->      bpf_crypto_ctx_release+0x0/0x94; expected type: 0xa488ebfc)
->    Internal error: Oops - CFI: 00000000f2008228 [#1]  SMP
->    ...
->
-> As bpf_crypto_ctx_release() is also used in BPF programs and using
-> a void pointer as the argument would make the verifier unhappy, add
-> a simple stub function with the correct type and register it as the
-> destructor kfunc instead.
+> indirect function calls use a function pointer type that matches
+> the target function. As bpf_kfree_skb() signature differs from the
+> btf_dtor_kfunc_t pointer type used for the destructor calls in
+> bpf_obj_free_fields(), add a stub function with the correct type to
+> fix the type mismatch.
 >
 > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 
